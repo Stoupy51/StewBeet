@@ -1,0 +1,11 @@
+{
+	"comparator_output": 15,
+	"length_in_seconds": 128,
+	"sound_event": {
+		"sound_id": "your_namespace:shazinho"
+	},
+	"description": {
+		"translate":"your_namespace.shazinho"
+	}
+}
+

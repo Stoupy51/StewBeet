@@ -1,0 +1,33 @@
+{
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "minecraft:item",
+					"name": "minecraft:furnace",
+					"functions": [
+						{
+							"function": "minecraft:set_components",
+							"components": {
+								"minecraft:custom_data": {
+									"smithed": {"dict": {"block": {"super_iron": true}},"ignore": {"functionality": true,"crafting": true}},
+									"your_namespace": {"super_iron_block": true}
+								},
+								"minecraft:custom_model_data": 30001,
+								"minecraft:item_name": "{'translate':'your_namespace.super_iron_block', 'italic': false, 'color': 'white'}",
+								"minecraft:lore": [
+									"{'translate':'your_namespace.template', 'italic': true, 'color': 'blue'}"
+								],
+								"minecraft:container": [
+									{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "your_namespace:super_iron_block","from": "your_namespace"}}}}}}
+								]
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}
+

@@ -1,0 +1,36 @@
+{
+	"type": "minecraft:blasting",
+	"ingredient": {
+		"item": "minecraft:furnace"
+	},
+	"result": {
+		"id": "minecraft:command_block",
+		"count": 1,
+		"components": {
+			"minecraft:custom_data": {
+				"smithed": {
+					"dict": {
+						"ingot": {
+							"super_iron": true
+						}
+					},
+					"ignore": {
+						"functionality": true,
+						"crafting": true
+					}
+				},
+				"your_namespace": {
+					"super_iron_ingot": true
+				}
+			},
+			"minecraft:custom_model_data": 30005,
+			"minecraft:item_name": "{'translate':'your_namespace.super_iron_ingot', 'italic': false, 'color': 'white'}",
+			"minecraft:lore": [
+				"{'translate':'your_namespace.template', 'italic': true, 'color': 'blue'}"
+			]
+		}
+	},
+	"experience": 0.8,
+	"cookingtime": 100
+}
+

@@ -1,0 +1,11 @@
+{
+	"condition": "minecraft:any_of",
+	"terms": [
+		{"condition": "minecraft:entity_properties","entity": "this","predicate": {"nbt": "{Tags:[\"your_namespace.vanilla.minecraft_deepslate_iron_ore\"]}","location": {"block": {"blocks": "minecraft:deepslate_iron_ore"}}}},
+		{"condition": "minecraft:entity_properties","entity": "this","predicate": {"nbt": "{Tags:[\"your_namespace.vanilla.minecraft_iron_block\"]}","location": {"block": {"blocks": "minecraft:iron_block"}}}},
+		{"condition": "minecraft:entity_properties","entity": "this","predicate": {"nbt": "{Tags:[\"your_namespace.vanilla.minecraft_iron_ore\"]}","location": {"block": {"blocks": "minecraft:iron_ore"}}}},
+		{"condition": "minecraft:entity_properties","entity": "this","predicate": {"nbt": "{Tags:[\"your_namespace.vanilla.minecraft_raw_iron_block\"]}","location": {"block": {"blocks": "minecraft:raw_iron_block"}}}},
+		{"condition": "minecraft:entity_properties","entity": "this","predicate": {"nbt": "{Tags:[\"your_namespace.vanilla.minecraft_stone\"]}","location": {"block": {"blocks": "minecraft:stone"}}}}
+	]
+}
+

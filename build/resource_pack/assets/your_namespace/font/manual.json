@@ -1,0 +1,22 @@
+{
+	"providers": [
+		{"type": "bitmap","file": "your_namespace:font/category/categories_page.png","ascent": 0,"height": 130,"chars": ["\u1021"]},
+		{"type": "bitmap","file": "your_namespace:font/page/_logo.png","ascent": 0,"height": 40,"chars": ["\u1020"]},
+		{"type": "bitmap","file": "your_namespace:font/none.png","ascent": 8,"height": 20,"chars": ["\u0020"]},
+		{"type": "bitmap","file": "your_namespace:font/none.png","ascent": 8,"height": 18,"chars": ["\u0021"]},
+		{"type": "bitmap","file": "your_namespace:font/none.png","ascent": 7,"height": 7,"chars": ["\u0022"]},
+		{"type": "bitmap","file": "your_namespace:font/none.png","ascent": 0,"height": 2,"chars": ["\u0023"]},
+		{"type": "bitmap","file": "your_namespace:font/none.png","ascent": 0,"height": 1,"chars": ["\u0024"]},
+		{"type": "bitmap","file": "your_namespace:font/none.png","ascent": 7,"height": 16,"chars": ["\u0025"]},
+		{"type": "bitmap","file": "your_namespace:font/invisible_item.png","ascent": 7,"height": 16,"chars": ["\u002f"]},
+		{"type": "bitmap","file": "your_namespace:font/wiki_information.png","ascent": 8,"height": 16,"chars": ["\u0026"]},
+		{"type": "bitmap","file": "your_namespace:font/wiki_result_of_craft.png","ascent": 8,"height": 16,"chars": ["\u0027"]},
+		{"type": "bitmap","file": "your_namespace:font/wiki_ingredient_of_craft.png","ascent": 8,"height": 16,"chars": ["\u0028"]},
+		{"type": "bitmap","file": "your_namespace:font/shaped_3x3.png","ascent": 1,"height": 58,"chars": ["\u002a"]},
+		{"type": "bitmap","file": "your_namespace:font/shaped_2x2.png","ascent": 1,"height": 58,"chars": ["\u0029"]},
+		{"type": "bitmap","file": "your_namespace:font/furnace.png","ascent": 1,"height": 58,"chars": ["\u002b"]},
+		{"type": "bitmap","file": "your_namespace:font/shaped_3x3.png","ascent": -4,"height": 58,"chars": ["\u002d"]},
+		{"type": "bitmap","file": "your_namespace:font/shaped_2x2.png","ascent": -2,"height": 58,"chars": ["\u002c"]},
+		{"type": "bitmap","file": "your_namespace:font/furnace.png","ascent": -3,"height": 58,"chars": ["\u002e"]}
+	]
+}
