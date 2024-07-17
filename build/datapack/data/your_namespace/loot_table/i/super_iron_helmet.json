@@ -1,0 +1,38 @@
+{
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "minecraft:item",
+					"name": "minecraft:leather_helmet",
+					"functions": [
+						{
+							"function": "minecraft:set_components",
+							"components": {
+								"minecraft:custom_data": {
+									"smithed": {"dict": {"armor": {"super_iron": true,"helmet": true}},"ignore": {"functionality": true,"crafting": true}},
+									"your_namespace": {"super_iron_helmet": true}
+								},
+								"minecraft:dyed_color": {
+									"rgb": 4605510,
+									"show_in_tooltip": false
+								},
+								"minecraft:max_damage": 495,
+								"minecraft:attribute_modifiers": [
+									{"type": "generic.armor","amount": 2.5,"operation": "add_value","slot": "head","id": "your_namespace:generic.armor.head"}
+								],
+								"minecraft:custom_model_data": 30008,
+								"minecraft:item_name": "{'translate':'your_namespace.super_iron_helmet', 'italic': false, 'color': 'white'}",
+								"minecraft:lore": [
+									"{'translate':'your_namespace.template', 'italic': true, 'color': 'blue'}"
+								]
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}
+

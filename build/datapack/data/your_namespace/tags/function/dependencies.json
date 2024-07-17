@@ -1,0 +1,10 @@
+{
+	"values": [
+		{"id": "#common_signals:load","required": false},
+		{"id": "#smithed.custom_block:load","required": false},
+		{"id": "#smithed.crafter:load","required": false},
+		{"id": "#furnace_nbt_recipes:load","required": false},
+		{"id": "#smart_ore_generation:load","required": false}
+	]
+}
+

@@ -1,0 +1,7 @@
+{
+	"parent": "minecraft:item/iron_axe",
+	"textures": {
+		"layer0": "your_namespace:item/super_iron_axe"
+	}
+}
+

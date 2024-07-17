@@ -1,0 +1,10 @@
+{
+	"parent": "item/generated",
+	"textures": {
+		"layer0": "item/written_book"
+	},
+	"overrides": [
+		{ "predicate": { "custom_model_data": 29999}, "model": "your_namespace:item/manual" }
+	]
+}
+

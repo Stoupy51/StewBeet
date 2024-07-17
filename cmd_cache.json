@@ -1,0 +1,21 @@
+{
+	"super_iron_block": 30000,
+	"super_iron_ore": 30001,
+	"deepslate_super_iron_ore": 30002,
+	"raw_super_iron_block": 30003,
+	"super_iron_ingot": 30004,
+	"super_iron_nugget": 30005,
+	"raw_super_iron": 30006,
+	"super_iron_dust": 30007,
+	"super_iron_helmet": 30008,
+	"super_iron_chestplate": 30009,
+	"super_iron_leggings": 30010,
+	"super_iron_boots": 30011,
+	"super_iron_sword": 30012,
+	"super_iron_pickaxe": 30013,
+	"super_iron_axe": 30014,
+	"super_iron_shovel": 30015,
+	"super_iron_hoe": 30016,
+	"shazinho": 30017,
+	"super_stone": 30018
+}

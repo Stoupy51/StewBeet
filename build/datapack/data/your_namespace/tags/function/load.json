@@ -1,0 +1,11 @@
+{
+	"values": [
+		{
+			"id": "#your_namespace:dependencies",
+			"required": false
+		},
+		"#your_namespace:enumerate",
+		"#your_namespace:resolve"
+	]
+}
+

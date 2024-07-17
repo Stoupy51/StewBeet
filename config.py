@@ -19,7 +19,7 @@ HAS_MANUAL: bool = True								# Do the program generate a manual/guide? (WARNIN
 DATABASE_DEBUG: str = f"{ROOT}/database_debug.json"	# Dump of the database for debugging purposes
 CMD_CACHE: str = f"{ROOT}/cmd_cache.json"			# Cache of all items Custom Model Data
 ENABLE_TRANSLATIONS: bool = True					# Will convert all the text components to translate and generate a lang file (WARNING: The algorithm is pretty slow, so it's recommended to disable it when not needed)
-MERGE_LIBS: bool = False								# Make new zip of merged libraries with the datapack and resource pack using Smithed Weld
+MERGE_LIBS: bool = True								# Make new zip of merged libraries with the datapack and resource pack using Smithed Weld
 
 
 # Datapack related constants

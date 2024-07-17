@@ -1,0 +1,10 @@
+{
+	"parent": "item/handheld",
+	"textures": {
+		"layer0": "item/iron_hoe"
+	},
+	"overrides": [
+		{ "predicate": { "custom_model_data": 30016}, "model": "your_namespace:item/super_iron_hoe" }
+	]
+}
+

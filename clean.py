@@ -17,6 +17,7 @@ if configuration.get("manual_path") is not None:
 # Delete database_debug, debug_manual, and cmd_cache json files
 for x in ["database_debug", "manual_debug", "cmd_cache"]:
 	if configuration.get(x) is not None:
-		os.remove(configuration[x])
-		print(f"Deleted {x} file '{configuration[x]}'")
+		if os.path.exists(configuration[x]):
+			os.remove(configuration[x])
+			print(f"Deleted {x} file '{configuration[x]}'")
 

@@ -1,0 +1,38 @@
+{
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "minecraft:item",
+					"name": "minecraft:leather_chestplate",
+					"functions": [
+						{
+							"function": "minecraft:set_components",
+							"components": {
+								"minecraft:custom_data": {
+									"smithed": {"dict": {"armor": {"super_iron": true,"chestplate": true}},"ignore": {"functionality": true,"crafting": true}},
+									"your_namespace": {"super_iron_chestplate": true}
+								},
+								"minecraft:dyed_color": {
+									"rgb": 4605510,
+									"show_in_tooltip": false
+								},
+								"minecraft:max_damage": 720,
+								"minecraft:attribute_modifiers": [
+									{"type": "generic.armor","amount": 6.5,"operation": "add_value","slot": "chest","id": "your_namespace:generic.armor.chest"}
+								],
+								"minecraft:custom_model_data": 30009,
+								"minecraft:item_name": "{'translate':'your_namespace.super_iron_chestplate', 'italic': false, 'color': 'white'}",
+								"minecraft:lore": [
+									"{'translate':'your_namespace.template', 'italic': true, 'color': 'blue'}"
+								]
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}
+

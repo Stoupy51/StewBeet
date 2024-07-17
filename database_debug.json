@@ -1,0 +1,198 @@
+{
+	"super_iron_block": {
+		"id": "minecraft:furnace",
+		"category": "material",
+		"custom_data": {"smithed": {"dict": {"block": {"super_iron": true}},"ignore": {"functionality": true,"crafting": true}},"your_namespace": {"super_iron_block": true}},
+		"result_of_crafting": [{"type": "crafting_shaped","result_count": 1,"group": "super_iron","category": "misc","shape": ["XXX","XXX","XXX"],"ingredients": {"X": {"components": {"minecraft:custom_data": {"your_namespace": {"super_iron_ingot": true}}}}}}],
+		"vanilla_block": {"id": "minecraft:iron_block","apply_facing": false},
+		"custom_model_data": 30000,
+		"item_name": "{'text': 'Super Iron Block', 'italic': false, 'color': 'white'}",
+		"lore": ["{'text': 'Template', 'italic': true, 'color': 'blue'}"]
+	},
+	"super_iron_ore": {
+		"id": "minecraft:furnace",
+		"category": "material",
+		"custom_data": {"smithed": {"dict": {"block": {"super_iron": true},"ore": {"super_iron": true}},"ignore": {"functionality": true,"crafting": true}},"your_namespace": {"super_iron_ore": true}},
+		"vanilla_block": {"id": "minecraft:polished_deepslate","apply_facing": false},
+		"no_silk_touch_drop": "raw_super_iron",
+		"custom_model_data": 30001,
+		"item_name": "{'text': 'Super Iron Ore', 'italic': false, 'color': 'white'}",
+		"lore": ["{'text': 'Template', 'italic': true, 'color': 'blue'}"]
+	},
+	"deepslate_super_iron_ore": {
+		"id": "minecraft:furnace",
+		"category": "material",
+		"custom_data": {"smithed": {"dict": {"block": {"super_iron": true},"ore": {"super_iron": true}},"ignore": {"functionality": true,"crafting": true}},"your_namespace": {"deepslate_super_iron_ore": true}},
+		"vanilla_block": {"id": "minecraft:polished_deepslate","apply_facing": false},
+		"no_silk_touch_drop": "raw_super_iron",
+		"custom_model_data": 30002,
+		"item_name": "{'text': 'Deepslate Super Iron Ore', 'italic': false, 'color': 'white'}",
+		"lore": ["{'text': 'Template', 'italic': true, 'color': 'blue'}"]
+	},
+	"raw_super_iron_block": {
+		"id": "minecraft:furnace",
+		"category": "material",
+		"custom_data": {"smithed": {"dict": {"block": {"super_iron": true}},"ignore": {"functionality": true,"crafting": true}},"your_namespace": {"raw_super_iron_block": true}},
+		"result_of_crafting": [{"type": "crafting_shaped","result_count": 1,"group": "super_iron","category": "misc","shape": ["XXX","XXX","XXX"],"ingredients": {"X": {"components": {"minecraft:custom_data": {"your_namespace": {"raw_super_iron": true}}}}}}],
+		"vanilla_block": {"id": "minecraft:raw_iron_block","apply_facing": false},
+		"custom_model_data": 30003,
+		"item_name": "{'text': 'Raw Super Iron Block', 'italic': false, 'color': 'white'}",
+		"lore": ["{'text': 'Template', 'italic': true, 'color': 'blue'}"]
+	},
+	"super_iron_ingot": {
+		"id": "minecraft:command_block",
+		"category": "material",
+		"custom_data": {"smithed": {"dict": {"ingot": {"super_iron": true}},"ignore": {"functionality": true,"crafting": true}},"your_namespace": {"super_iron_ingot": true}},
+		"result_of_crafting": [{"type": "crafting_shapeless","result_count": 9,"category": "misc","group": "super_iron","ingredients": [{"components": {"minecraft:custom_data": {"your_namespace": {"super_iron_block": true}}}}]},{"type": "crafting_shaped","result_count": 1,"category": "misc","group": "super_iron","shape": ["XXX","XXX","XXX"],"ingredients": {"X": {"components": {"minecraft:custom_data": {"your_namespace": {"super_iron_nugget": true}}}}}},{"type": "smelting","result_count": 1,"category": "misc","group": "super_iron","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"your_namespace": {"raw_super_iron": true}}}}},{"type": "blasting","result_count": 1,"category": "misc","group": "super_iron","experience": 0.8,"cookingtime": 100,"ingredient": {"components": {"minecraft:custom_data": {"your_namespace": {"raw_super_iron": true}}}}},{"type": "smelting","result_count": 1,"category": "misc","group": "super_iron","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"your_namespace": {"super_iron_dust": true}}}}},{"type": "blasting","result_count": 1,"category": "misc","group": "super_iron","experience": 0.8,"cookingtime": 100,"ingredient": {"components": {"minecraft:custom_data": {"your_namespace": {"super_iron_dust": true}}}}},{"type": "smelting","result_count": 1,"category": "misc","group": "super_iron","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"your_namespace": {"super_iron_ore": true}}}}},{"type": "blasting","result_count": 1,"category": "misc","group": "super_iron","experience": 0.8,"cookingtime": 100,"ingredient": {"components": {"minecraft:custom_data": {"your_namespace": {"super_iron_ore": true}}}}},{"type": "smelting","result_count": 1,"category": "misc","group": "super_iron","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"your_namespace": {"deepslate_super_iron_ore": true}}}}},{"type": "blasting","result_count": 1,"category": "misc","group": "super_iron","experience": 0.8,"cookingtime": 100,"ingredient": {"components": {"minecraft:custom_data": {"your_namespace": {"deepslate_super_iron_ore": true}}}}}],
+		"custom_model_data": 30004,
+		"item_name": "{'text': 'Super Iron Ingot', 'italic': false, 'color': 'white'}",
+		"lore": ["{'text': 'Template', 'italic': true, 'color': 'blue'}"]
+	},
+	"super_iron_nugget": {
+		"id": "minecraft:command_block",
+		"category": "material",
+		"custom_data": {"smithed": {"dict": {"nugget": {"super_iron": true}},"ignore": {"functionality": true,"crafting": true}},"your_namespace": {"super_iron_nugget": true}},
+		"result_of_crafting": [{"type": "smelting","result_count": 1,"category": "equipment","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"your_namespace": {"super_iron_helmet": true}}}}},{"type": "smelting","result_count": 1,"category": "equipment","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"your_namespace": {"super_iron_chestplate": true}}}}},{"type": "smelting","result_count": 1,"category": "equipment","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"your_namespace": {"super_iron_leggings": true}}}}},{"type": "smelting","result_count": 1,"category": "equipment","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"your_namespace": {"super_iron_boots": true}}}}},{"type": "smelting","result_count": 1,"category": "equipment","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"your_namespace": {"super_iron_sword": true}}}}},{"type": "smelting","result_count": 1,"category": "equipment","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"your_namespace": {"super_iron_pickaxe": true}}}}},{"type": "smelting","result_count": 1,"category": "equipment","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"your_namespace": {"super_iron_axe": true}}}}},{"type": "smelting","result_count": 1,"category": "equipment","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"your_namespace": {"super_iron_shovel": true}}}}},{"type": "smelting","result_count": 1,"category": "equipment","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"your_namespace": {"super_iron_hoe": true}}}}}],
+		"custom_model_data": 30005,
+		"item_name": "{'text': 'Super Iron Nugget', 'italic': false, 'color': 'white'}",
+		"lore": ["{'text': 'Template', 'italic': true, 'color': 'blue'}"]
+	},
+	"raw_super_iron": {
+		"id": "minecraft:command_block",
+		"category": "material",
+		"custom_data": {"smithed": {"dict": {"raw": {"super_iron": true}},"ignore": {"functionality": true,"crafting": true}},"your_namespace": {"raw_super_iron": true}},
+		"custom_model_data": 30006,
+		"item_name": "{'text': 'Raw Super Iron', 'italic': false, 'color': 'white'}",
+		"lore": ["{'text': 'Template', 'italic': true, 'color': 'blue'}"]
+	},
+	"super_iron_dust": {
+		"id": "minecraft:command_block",
+		"category": "material",
+		"custom_data": {"smithed": {"dict": {"dust": {"super_iron": true}},"ignore": {"functionality": true,"crafting": true}},"your_namespace": {"super_iron_dust": true}},
+		"custom_model_data": 30007,
+		"item_name": "{'text': 'Super Iron Dust', 'italic': false, 'color': 'white'}",
+		"lore": ["{'text': 'Template', 'italic': true, 'color': 'blue'}"]
+	},
+	"super_iron_helmet": {
+		"id": "minecraft:leather_helmet",
+		"category": "equipment",
+		"custom_data": {"smithed": {"dict": {"armor": {"super_iron": true,"helmet": true}},"ignore": {"functionality": true,"crafting": true}},"your_namespace": {"super_iron_helmet": true}},
+		"dyed_color": {"rgb": 4605510,"show_in_tooltip": false},
+		"result_of_crafting": [{"type": "crafting_shaped","result_count": 1,"category": "equipment","shape": ["XXX","X X"],"ingredients": {"X": {"components": {"minecraft:custom_data": {"your_namespace": {"super_iron_ingot": true}}}}}}],
+		"max_damage": 495,
+		"attribute_modifiers": [{"type": "generic.armor","amount": 2.5,"operation": "add_value","slot": "head","id": "your_namespace:generic.armor.head"}],
+		"custom_model_data": 30008,
+		"item_name": "{'text': 'Super Iron Helmet', 'italic': false, 'color': 'white'}",
+		"lore": ["{'text': 'Template', 'italic': true, 'color': 'blue'}"]
+	},
+	"super_iron_chestplate": {
+		"id": "minecraft:leather_chestplate",
+		"category": "equipment",
+		"custom_data": {"smithed": {"dict": {"armor": {"super_iron": true,"chestplate": true}},"ignore": {"functionality": true,"crafting": true}},"your_namespace": {"super_iron_chestplate": true}},
+		"dyed_color": {"rgb": 4605510,"show_in_tooltip": false},
+		"result_of_crafting": [{"type": "crafting_shaped","result_count": 1,"category": "equipment","shape": ["X X","XXX","XXX"],"ingredients": {"X": {"components": {"minecraft:custom_data": {"your_namespace": {"super_iron_ingot": true}}}}}}],
+		"max_damage": 720,
+		"attribute_modifiers": [{"type": "generic.armor","amount": 6.5,"operation": "add_value","slot": "chest","id": "your_namespace:generic.armor.chest"}],
+		"custom_model_data": 30009,
+		"item_name": "{'text': 'Super Iron Chestplate', 'italic': false, 'color': 'white'}",
+		"lore": ["{'text': 'Template', 'italic': true, 'color': 'blue'}"]
+	},
+	"super_iron_leggings": {
+		"id": "minecraft:leather_leggings",
+		"category": "equipment",
+		"custom_data": {"smithed": {"dict": {"armor": {"super_iron": true,"leggings": true}},"ignore": {"functionality": true,"crafting": true}},"your_namespace": {"super_iron_leggings": true}},
+		"dyed_color": {"rgb": 4605510,"show_in_tooltip": false},
+		"result_of_crafting": [{"type": "crafting_shaped","result_count": 1,"category": "equipment","shape": ["XXX","X X","X X"],"ingredients": {"X": {"components": {"minecraft:custom_data": {"your_namespace": {"super_iron_ingot": true}}}}}}],
+		"max_damage": 675,
+		"attribute_modifiers": [{"type": "generic.armor","amount": 5.5,"operation": "add_value","slot": "legs","id": "your_namespace:generic.armor.legs"}],
+		"custom_model_data": 30010,
+		"item_name": "{'text': 'Super Iron Leggings', 'italic': false, 'color': 'white'}",
+		"lore": ["{'text': 'Template', 'italic': true, 'color': 'blue'}"]
+	},
+	"super_iron_boots": {
+		"id": "minecraft:leather_boots",
+		"category": "equipment",
+		"custom_data": {"smithed": {"dict": {"armor": {"super_iron": true,"boots": true}},"ignore": {"functionality": true,"crafting": true}},"your_namespace": {"super_iron_boots": true}},
+		"dyed_color": {"rgb": 4605510,"show_in_tooltip": false},
+		"result_of_crafting": [{"type": "crafting_shaped","result_count": 1,"category": "equipment","shape": ["X X","X X"],"ingredients": {"X": {"components": {"minecraft:custom_data": {"your_namespace": {"super_iron_ingot": true}}}}}}],
+		"max_damage": 585,
+		"attribute_modifiers": [{"type": "generic.armor","amount": 2.5,"operation": "add_value","slot": "feet","id": "your_namespace:generic.armor.feet"}],
+		"custom_model_data": 30011,
+		"item_name": "{'text': 'Super Iron Boots', 'italic': false, 'color': 'white'}",
+		"lore": ["{'text': 'Template', 'italic': true, 'color': 'blue'}"]
+	},
+	"super_iron_sword": {
+		"id": "minecraft:iron_sword",
+		"category": "equipment",
+		"custom_data": {"smithed": {"dict": {"tools": {"super_iron": true,"sword": true}},"ignore": {"functionality": true,"crafting": true}},"your_namespace": {"super_iron_sword": true}},
+		"max_damage": 750,
+		"result_of_crafting": [{"type": "crafting_shaped","result_count": 1,"category": "equipment","shape": ["X","X","S"],"ingredients": {"X": {"components": {"minecraft:custom_data": {"your_namespace": {"super_iron_ingot": true}}}},"S": {"item": "minecraft:stick"}}}],
+		"attribute_modifiers": [{"type": "generic.attack_damage","amount": 7,"operation": "add_value","slot": "mainhand","id": "your_namespace:generic.attack_damage.mainhand"},{"type": "generic.attack_speed","amount": -2.5,"operation": "add_value","slot": "mainhand","id": "your_namespace:generic.attack_speed.mainhand"},{"type": "player.mining_efficiency","amount": 0.2,"operation": "add_value","slot": "mainhand","id": "your_namespace:player.mining_efficiency.mainhand"}],
+		"custom_model_data": 30012,
+		"item_name": "{'text': 'Super Iron Sword', 'italic': false, 'color': 'white'}",
+		"lore": ["{'text': 'Template', 'italic': true, 'color': 'blue'}"]
+	},
+	"super_iron_pickaxe": {
+		"id": "minecraft:iron_pickaxe",
+		"category": "equipment",
+		"custom_data": {"smithed": {"dict": {"tools": {"super_iron": true,"pickaxe": true}},"ignore": {"functionality": true,"crafting": true}},"your_namespace": {"super_iron_pickaxe": true}},
+		"max_damage": 750,
+		"result_of_crafting": [{"type": "crafting_shaped","result_count": 1,"category": "equipment","shape": ["XXX"," S "," S "],"ingredients": {"X": {"components": {"minecraft:custom_data": {"your_namespace": {"super_iron_ingot": true}}}},"S": {"item": "minecraft:stick"}}}],
+		"attribute_modifiers": [{"type": "generic.attack_damage","amount": 5,"operation": "add_value","slot": "mainhand","id": "your_namespace:generic.attack_damage.mainhand"},{"type": "generic.attack_speed","amount": -2.75,"operation": "add_value","slot": "mainhand","id": "your_namespace:generic.attack_speed.mainhand"},{"type": "player.mining_efficiency","amount": 0.2,"operation": "add_value","slot": "mainhand","id": "your_namespace:player.mining_efficiency.mainhand"}],
+		"custom_model_data": 30013,
+		"item_name": "{'text': 'Super Iron Pickaxe', 'italic': false, 'color': 'white'}",
+		"lore": ["{'text': 'Template', 'italic': true, 'color': 'blue'}"]
+	},
+	"super_iron_axe": {
+		"id": "minecraft:iron_axe",
+		"category": "equipment",
+		"custom_data": {"smithed": {"dict": {"tools": {"super_iron": true,"axe": true}},"ignore": {"functionality": true,"crafting": true}},"your_namespace": {"super_iron_axe": true}},
+		"max_damage": 750,
+		"result_of_crafting": [{"type": "crafting_shaped","result_count": 1,"category": "equipment","shape": ["XX","XS"," S"],"ingredients": {"X": {"components": {"minecraft:custom_data": {"your_namespace": {"super_iron_ingot": true}}}},"S": {"item": "minecraft:stick"}}}],
+		"attribute_modifiers": [{"type": "generic.attack_damage","amount": 10,"operation": "add_value","slot": "mainhand","id": "your_namespace:generic.attack_damage.mainhand"},{"type": "generic.attack_speed","amount": -3.1,"operation": "add_value","slot": "mainhand","id": "your_namespace:generic.attack_speed.mainhand"},{"type": "player.mining_efficiency","amount": 0.2,"operation": "add_value","slot": "mainhand","id": "your_namespace:player.mining_efficiency.mainhand"}],
+		"custom_model_data": 30014,
+		"item_name": "{'text': 'Super Iron Axe', 'italic': false, 'color': 'white'}",
+		"lore": ["{'text': 'Template', 'italic': true, 'color': 'blue'}"]
+	},
+	"super_iron_shovel": {
+		"id": "minecraft:iron_shovel",
+		"category": "equipment",
+		"custom_data": {"smithed": {"dict": {"tools": {"super_iron": true,"shovel": true}},"ignore": {"functionality": true,"crafting": true}},"your_namespace": {"super_iron_shovel": true}},
+		"max_damage": 750,
+		"result_of_crafting": [{"type": "crafting_shaped","result_count": 1,"category": "equipment","shape": ["X","S","S"],"ingredients": {"X": {"components": {"minecraft:custom_data": {"your_namespace": {"super_iron_ingot": true}}}},"S": {"item": "minecraft:stick"}}}],
+		"attribute_modifiers": [{"type": "generic.attack_damage","amount": 5.5,"operation": "add_value","slot": "mainhand","id": "your_namespace:generic.attack_damage.mainhand"},{"type": "generic.attack_speed","amount": -3.1,"operation": "add_value","slot": "mainhand","id": "your_namespace:generic.attack_speed.mainhand"},{"type": "player.mining_efficiency","amount": 0.2,"operation": "add_value","slot": "mainhand","id": "your_namespace:player.mining_efficiency.mainhand"}],
+		"custom_model_data": 30015,
+		"item_name": "{'text': 'Super Iron Shovel', 'italic': false, 'color': 'white'}",
+		"lore": ["{'text': 'Template', 'italic': true, 'color': 'blue'}"]
+	},
+	"super_iron_hoe": {
+		"id": "minecraft:iron_hoe",
+		"category": "equipment",
+		"custom_data": {"smithed": {"dict": {"tools": {"super_iron": true,"hoe": true}},"ignore": {"functionality": true,"crafting": true}},"your_namespace": {"super_iron_hoe": true}},
+		"max_damage": 750,
+		"result_of_crafting": [{"type": "crafting_shaped","result_count": 1,"category": "equipment","shape": ["XX"," S"," S"],"ingredients": {"X": {"components": {"minecraft:custom_data": {"your_namespace": {"super_iron_ingot": true}}}},"S": {"item": "minecraft:stick"}}}],
+		"attribute_modifiers": [{"type": "generic.attack_damage","amount": 2,"operation": "add_value","slot": "mainhand","id": "your_namespace:generic.attack_damage.mainhand"},{"type": "generic.attack_speed","amount": -1.0,"operation": "add_value","slot": "mainhand","id": "your_namespace:generic.attack_speed.mainhand"},{"type": "player.mining_efficiency","amount": 0.2,"operation": "add_value","slot": "mainhand","id": "your_namespace:player.mining_efficiency.mainhand"}],
+		"custom_model_data": 30016,
+		"item_name": "{'text': 'Super Iron Hoe', 'italic': false, 'color': 'white'}",
+		"lore": ["{'text': 'Template', 'italic': true, 'color': 'blue'}"]
+	},
+	"shazinho": {
+		"id": "minecraft:command_block",
+		"custom_data": {"your_namespace": {"shazinho": true},"smithed": {"dict": {"record": {"shazinho": true}},"ignore": {"functionality": true,"crafting": true}}},
+		"item_name": "{'text':'Music Disc', 'italic': false}",
+		"jukebox_playable": {"song": "your_namespace:shazinho","show_in_tooltip": true},
+		"max_stack_size": 1,
+		"rarity": "rare",
+		"custom_model_data": 30017,
+		"lore": ["{'text': 'Template', 'italic': true, 'color': 'blue'}"]
+	},
+	"super_stone": {
+		"id": "minecraft:furnace",
+		"vanilla_block": {"id": "minecraft:stone","apply_facing": false},
+		"result_of_crafting": [{"type": "crafting_shaped","result_count": 1,"group": "super_stone","category": "blocks","shape": ["XXX","XXX","XXX"],"ingredients": {"X": {"item": "minecraft:stone"}}},{"type": "crafting_shapeless","result_count": 1,"group": "super_stone","category": "blocks","ingredients": [{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"}]}],
+		"custom_model_data": 30018,
+		"item_name": "{'text': 'Super Stone', 'italic': false, 'color': 'white'}",
+		"lore": ["{'text': 'Template', 'italic': true, 'color': 'blue'}"],
+		"custom_data": {"your_namespace": {"super_stone": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}}
+	}
+}

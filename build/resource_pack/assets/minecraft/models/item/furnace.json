@@ -1,0 +1,11 @@
+{
+	"parent": "block/furnace",
+	"overrides": [
+		{ "predicate": { "custom_model_data": 30000}, "model": "your_namespace:block/super_iron_block" },
+		{ "predicate": { "custom_model_data": 30001}, "model": "your_namespace:block/super_iron_ore" },
+		{ "predicate": { "custom_model_data": 30002}, "model": "your_namespace:block/deepslate_super_iron_ore" },
+		{ "predicate": { "custom_model_data": 30003}, "model": "your_namespace:block/raw_super_iron_block" },
+		{ "predicate": { "custom_model_data": 30018}, "model": "your_namespace:block/super_stone" }
+	]
+}
+
