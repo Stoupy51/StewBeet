@@ -1,8 +1,0 @@
-{
-	"values": [
-		{"id": "#smithed.custom_block:load","required": false},
-		{"id": "#smithed.crafter:load","required": false},
-		{"id": "#furnace_nbt_recipes:load","required": false}
-	]
-}
-

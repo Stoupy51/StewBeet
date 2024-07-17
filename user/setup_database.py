@@ -22,11 +22,10 @@ ORES_CONFIGS: dict[str, EquipmentsConfig|None] = {
 
 # Main function should return a database
 def main(config: dict) -> dict[str, dict]:
-	database = {}
+	database: dict[str,dict] = {}
 
 	# Generate ores in database
-	generate_everything_about_these_ores(config, database, ORES_CONFIGS)
-	# TODO: add world geenration ore
+	generate_everything_about_these_materials(config, database, ORES_CONFIGS)
 
 	# Generate custom disc records
 	generate_custom_records(config, database, "auto")
@@ -42,8 +41,8 @@ def main(config: dict) -> dict[str, dict]:
 
 	# Don't forget to add the vanilla blocks for the custom blocks
 	database["super_iron_block"][VANILLA_BLOCK] = {"id": "minecraft:iron_block", "apply_facing": False}
-	database["super_iron_ore"][VANILLA_BLOCK] = {"id": "minecraft:iron_ore", "apply_facing": False}
-	database["deepslate_super_iron_ore"][VANILLA_BLOCK] = {"id": "minecraft:deepslate_iron_ore", "apply_facing": False}
+	database["super_iron_ore"].update({VANILLA_BLOCK: VANILLA_BLOCK_FOR_ORES, NO_SILK_TOUCH_DROP: "raw_super_iron"})
+	database["deepslate_super_iron_ore"].update({VANILLA_BLOCK: VANILLA_BLOCK_FOR_ORES, NO_SILK_TOUCH_DROP: "raw_super_iron"})
 	database["raw_super_iron_block"][VANILLA_BLOCK] = {"id": "minecraft:raw_iron_block", "apply_facing": False}
 
 	# Final adjustments

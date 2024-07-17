@@ -2,6 +2,7 @@
 # Imports
 from config import configuration
 import shutil
+import os
 
 # Delete build folder
 if configuration.get("build_folder") is not None:
@@ -16,6 +17,6 @@ if configuration.get("manual_path") is not None:
 # Delete database_debug, debug_manual, and cmd_cache json files
 for x in ["database_debug", "manual_debug", "cmd_cache"]:
 	if configuration.get(x) is not None:
-		shutil.rmtree(configuration[x], ignore_errors = True)
+		os.remove(configuration[x])
 		print(f"Deleted {x} file '{configuration[x]}'")
 
