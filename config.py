@@ -39,8 +39,8 @@ DEPENDENCIES: dict[str, dict[str, list[int] | str]] = {
 	# The main key is the dependency namespace to check for
 	# The name can be whatever you want, it's just used in messages
 	
-	# Example for DatapackEnergy >= 1.7.0
-	#"energy": {"version":[1, 7, 0], "name":"DatapackEnergy", "url":"https://github.com/ICY105/DatapackEnergy"},
+	# Example for DatapackEnergy >= 1.8.0
+	#"energy": {"version":[1, 8, 0], "name":"DatapackEnergy", "url":"https://github.com/ICY105/DatapackEnergy"},
 }
 
 
@@ -59,7 +59,7 @@ MANUAL_NAME: str = f"{DATAPACK_NAME} Manual"		# Name of the manual, used for the
 MAX_ITEMS_PER_ROW: int = 5							# Max number of items per row in the manual, should not exceed 6
 MAX_ROWS_PER_PAGE: int = 5							# Max number of rows per page in the manual, should not exceed 6
 OPENGL_RESOLUTION: int = 256						# Resolution of the OpenGL renders used in the manual, best value is 256 <--- 256x256
-MANUAL_FIRST_PAGE_TEXT: list[dict] = [{"text":"The following manual will guide you through recipes and energy statistics about devices.", "color":"#505050"}]	# Text for the first page of the manual
+MANUAL_FIRST_PAGE_TEXT: list[dict] = [{"text":"Modify in config.py the text that will be shown in this first manual page", "color":"#505050"}]	# Text for the first page of the manual
 
 
 
