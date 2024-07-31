@@ -9,6 +9,7 @@ Here is a list of features that the library provides (the template is using all 
 - Versioned load, and clock functions such as `tick`, `second`, `minute`.
 - Loot tables for every item in the `database` along with a proper `_give_all` function that gives named chests.
 - Automatic generation of a really advanced and interactive items `manual`.
+- Automatic generation of a `en-us.json` lang file in the resource pack if configuration is set.
 - Official libraries integrations:
   - Automatic support for NBT Recipes with [`Smithed Crafter`](https://wiki.smithed.dev/libraries/crafter/) and [`Furnace NBT Recipes`](https://github.com/Stoupy51/FurnaceNbtRecipes/)
   - Placement and destruction for every custom block in the `database` with support for blockstates, ore drops (fortune, silk touch), with [`Smithed Custom Blocks`](https://wiki.smithed.dev/libraries/custom-block/).
