@@ -1,0 +1,27 @@
+
+#> your_namespace:_stats_custom_blocks
+#
+# @within	???
+#
+
+scoreboard players add #total_custom_blocks your_namespace.data 0
+scoreboard players add #total_vanilla_stone your_namespace.data 0
+scoreboard players add #total_vanilla_raw_iron_block your_namespace.data 0
+scoreboard players add #total_vanilla_polished_deepslate your_namespace.data 0
+scoreboard players add #total_vanilla_iron_block your_namespace.data 0
+scoreboard players add #total_super_stone your_namespace.data 0
+scoreboard players add #total_raw_super_iron_block your_namespace.data 0
+scoreboard players add #total_deepslate_super_iron_ore your_namespace.data 0
+scoreboard players add #total_super_iron_ore your_namespace.data 0
+scoreboard players add #total_super_iron_block your_namespace.data 0
+tellraw @s [{"translate":"your_namespace.total_super_iron_block","color":"gold"},{"score":{"name":"#total_super_iron_block","objective":"your_namespace.data"},"color":"yellow"}]
+tellraw @s [{"translate":"your_namespace.total_super_iron_ore","color":"gold"},{"score":{"name":"#total_super_iron_ore","objective":"your_namespace.data"},"color":"yellow"}]
+tellraw @s [{"translate":"your_namespace.total_deepslate_super_iron_ore","color":"gold"},{"score":{"name":"#total_deepslate_super_iron_ore","objective":"your_namespace.data"},"color":"yellow"}]
+tellraw @s [{"translate":"your_namespace.total_raw_super_iron_block","color":"gold"},{"score":{"name":"#total_raw_super_iron_block","objective":"your_namespace.data"},"color":"yellow"}]
+tellraw @s [{"translate":"your_namespace.total_super_stone","color":"gold"},{"score":{"name":"#total_super_stone","objective":"your_namespace.data"},"color":"yellow"}]
+tellraw @s [{"translate":"your_namespace.vanilla_minecraft_iron_block","color":"gray"},{"score":{"name":"#total_vanilla_iron_block","objective":"your_namespace.data"},"color":"white"}]
+tellraw @s [{"translate":"your_namespace.vanilla_minecraft_polished_deepslate","color":"gray"},{"score":{"name":"#total_vanilla_polished_deepslate","objective":"your_namespace.data"},"color":"white"}]
+tellraw @s [{"translate":"your_namespace.vanilla_minecraft_raw_iron_block","color":"gray"},{"score":{"name":"#total_vanilla_raw_iron_block","objective":"your_namespace.data"},"color":"white"}]
+tellraw @s [{"translate":"your_namespace.vanilla_minecraft_stone","color":"gray"},{"score":{"name":"#total_vanilla_stone","objective":"your_namespace.data"},"color":"white"}]
+tellraw @s [{"translate":"your_namespace.total_custom_blocks","color":"dark_aqua"},{"score":{"name":"#total_custom_blocks","objective":"your_namespace.data"},"color":"aqua"}]
+

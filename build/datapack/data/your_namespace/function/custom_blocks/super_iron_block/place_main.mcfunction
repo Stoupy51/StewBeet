@@ -10,3 +10,8 @@ setblock ~ ~ ~ minecraft:iron_block
 execute align xyz positioned ~.5 ~.5 ~.5 summon item_display at @s run function your_namespace:custom_blocks/super_iron_block/place_secondary
 tag @s remove your_namespace.placer
 
+# Increment count scores
+scoreboard players add #total_custom_blocks your_namespace.data 1
+scoreboard players add #total_vanilla_iron_block your_namespace.data 1
+scoreboard players add #total_super_iron_block your_namespace.data 1
+
