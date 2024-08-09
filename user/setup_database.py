@@ -17,6 +17,9 @@ ORES_CONFIGS: dict[str, EquipmentsConfig|None] = {
 		# And, does 1 more damage per hit, and has 0.5 more armor, and mines 20% faster
 		attributes = {"generic.attack_damage": 1, "generic.armor": 0.5, "player.mining_efficiency": 0.2}
 	),
+
+	# Simple material stone, this will automatically detect stone stick and rod textures.
+	"minecraft:stone": None,
 }
 
 # Main function should return a database
