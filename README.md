@@ -40,7 +40,7 @@ Since this template is using all the features of the library, you can remove the
 The Minecraft version will depend on the version of the library you are using.<br>
 Currently, this template is using the `1.21.0.x` version of the library.<br>
 As you can see, the `x` is the version of the library and the `1.21.0` is the Minecraft version.<br>
-If you have Python knowledge, you can use previous versions of the library with `pip install python_datapack==1.20.0.x`.<br>
+If you have Python knowledge, you can use previous versions of the library with `pip install python_datapack==1.21.0.x`.<br>
 But warning, the template could use features that are not available in the previous versions.<br>
 
 
@@ -48,6 +48,8 @@ But warning, the template could use features that are not available in the previ
 There are a lot of features in the library, you could check the template to see how to use them.<br>
 Or you could check the [documentation folder](docs/)<br>
 Here a list of all the currently available guides:
-- [Writing to files](docs/writing_to_files.md)
+- [Project structure](docs/1_project_structure.md)
+- [Setup database](docs/2_setup_database.md)
+- [Writing to files](docs/3_writing_to_files.md)
 - None yet
 

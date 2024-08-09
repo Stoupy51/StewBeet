@@ -2,8 +2,6 @@
 # Script that compress all ogg files to 64 kbps by default
 # Requires ffmpeg to be installed.
 
-## I do not recommend using it unless you really need to because it will decrease audio quality a lot.
-
 import os
 import subprocess
 from multiprocessing import Pool

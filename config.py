@@ -1,7 +1,7 @@
 
 # Imports
 import os
-ROOT: str = os.path.dirname(os.path.realpath(__file__)).replace("\\", "/")
+ROOT: str = os.path.dirname(os.path.realpath(__file__)).replace("\\", "/")	# This line gets the full root path to this folder, don't change it unless you know what you're doing.
 IGNORE_UNSET: bool = False							# If True, the program will ignore unset optionnal values in the configuration dictionnary
 
 
@@ -11,7 +11,7 @@ BUILD_FOLDER: str = f"{ROOT}/build"					# Folder where the final datapack and re
 ASSETS_FOLDER: str = f"{ROOT}/assets"				# Folder containing the all assets (textures, sounds, ...) for the datapack
 TEXTURES_FOLDER: str = f"{ASSETS_FOLDER}/textures"	# Folder containing the textures for the datapack
 LIBS_FOLDER: str = f"{ROOT}/libs"					# The libraries are copied to the build destination, and merged with the datapack using Weld
-BUILD_COPY_DESTINATIONS: tuple[list, list] = (["D:/latest_snapshot/world/datapacks"], ["D:/minecraft/snapshot/resourcepacks"])	# Can be empty lists if you don't want to copy the generated files
+BUILD_COPY_DESTINATIONS: tuple[list, list] = (["D:/latest_snapshot/world/datapacks"], ["D:/minecraft/snapshot/resourcepacks"])	# Can be empty lists if you don't want to copy the generated files to other folders.
 
 
 # Dev constants
@@ -28,7 +28,7 @@ DATAPACK_NAME: str = "Template"			# Name of the datapack, used for messages and 
 MINECRAFT_VERSION: str = "1.21"			# Text used when loading the datapack to warn the user when the data version is not right
 DATA_VERSION: int = 3947				# Depending on MC version, given by /data get entity @p DataVersion to check if the datapack is not running in an older version of MC
 VERSION: str = "1.0.0"					# Datapack version in the following mandatory format: major.minor.patch, ex: 1.0.0 or 1.21.615
-NAMESPACE: str = "your_namespace"		# Should be the same you use in the merge folder. Used to namespace functions, tags, etc.
+NAMESPACE: str = "your_namespace"		# Simplified version of the datapack name. Should be the same you use in the merge folder. Used to namespace functions, tags, etc.
 DATAPACK_FORMAT: int = 48				# Pack format version, see https://minecraft.wiki/w/Pack_format#List_of_data_pack_formats
 RESOURCE_PACK_FORMAT: int = 34			# Resource pack format version, see https://minecraft.wiki/w/Pack_format#List_of_resource_pack_formats
 DESCRIPTION = f"{DATAPACK_NAME} [{VERSION}] by {AUTHOR}"	# Pack description displayed in pack.mcmeta
