@@ -49,7 +49,7 @@ There are a lot of features in the library, you could check the template to see 
 Or you could check the [documentation folder](docs/)<br>
 Here a list of all the currently available guides:
 - [Project structure](docs/1_project_structure.md)
-- [Setup database](docs/2_setup_database.md)
+- [Database setup](docs/2_database_setup.md)
 - [Writing to files](docs/3_writing_to_files.md)
 - None yet
 

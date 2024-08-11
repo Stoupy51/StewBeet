@@ -3,6 +3,7 @@
 
 # Import database helper and setup constants
 from python_datapack.utils.database_helper import *
+from python_datapack.constants import *
 STARTING_CMD: int = 30000	# Prefix for custom_model_data
 
 # Configuration to generate everything about the material based on "super_iron_ingot"
@@ -43,11 +44,12 @@ def main(config: dict) -> dict[str, dict]:
 
 	# Don't forget to add the vanilla blocks for the custom blocks
 	database["super_iron_block"][VANILLA_BLOCK] = {"id": "minecraft:iron_block", "apply_facing": False}
-	database["super_iron_ore"].update({VANILLA_BLOCK: VANILLA_BLOCK_FOR_ORES, NO_SILK_TOUCH_DROP: "raw_super_iron"})
-	database["deepslate_super_iron_ore"].update({VANILLA_BLOCK: VANILLA_BLOCK_FOR_ORES, NO_SILK_TOUCH_DROP: "raw_super_iron"})
 	database["raw_super_iron_block"][VANILLA_BLOCK] = {"id": "minecraft:raw_iron_block", "apply_facing": False}
-
-	# Final adjustments
+	for ore in ["super_iron_ore","deepslate_super_iron_ore"]:
+		database[ore][VANILLA_BLOCK] = VANILLA_BLOCK_FOR_ORES
+		database[ore][NO_SILK_TOUCH_DROP] = "raw_super_iron"
+	
+	# Final adjustments, you definitively should keep them!
 	deterministic_custom_model_data(config, database, STARTING_CMD, black_list = ["item_names","you_don't_want","in_that","list"])
 	add_item_name_and_lore_if_missing(config, database)
 	add_private_custom_data_for_namespace(config, database)
