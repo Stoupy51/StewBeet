@@ -46,7 +46,7 @@ But warning, the template could use features that are not available in the previ
 
 ## 📚 Documentation
 There are a lot of features in the library, you could check the template to see how to use them.<br>
-Or you could check the [documentation folder](docs/)<br>
+Or you could check the **strongly detailled** [documentation folder](docs/)<br>
 Here a list of all the currently available guides:
 - [Project structure](docs/1_project_structure.md)
 - [Database setup](docs/2_database_setup.md)

@@ -3,7 +3,9 @@
 
 # Import database helper and setup constants
 from python_datapack.utils.database_helper import *
+from python_datapack.utils.ingredients import *
 from python_datapack.constants import *
+from config import NAMESPACE
 STARTING_CMD: int = 30000	# Prefix for custom_model_data
 
 # Configuration to generate everything about the material based on "super_iron_ingot"
