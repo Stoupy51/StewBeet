@@ -10,6 +10,7 @@ Here is a list of features that the library provides (the template is using all 
 - Loot tables for every item in the `database` along with a proper `_give_all` function that gives named chests.
 - Automatic generation of a really advanced and interactive items `manual`.
 - Automatic generation of a `en-us.json` lang file in the resource pack if configuration is set.
+- Automatic headers for every function in `functions` folders.
 - Official libraries integrations:
   - Automatic support for NBT Recipes with [`Smithed Crafter`](https://wiki.smithed.dev/libraries/crafter/) and [`Furnace NBT Recipes`](https://github.com/Stoupy51/FurnaceNbtRecipes/)
   - Placement and destruction for every custom block in the `database` with support for blockstates, ore drops (fortune, silk touch), with [`Smithed Custom Blocks`](https://wiki.smithed.dev/libraries/custom-block/).
@@ -27,7 +28,7 @@ Here is a list of features that the library provides (the template is using all 
 
 
 ## 📦 How to use
-In order to use the library, you need to have [Python 3.10](https://www.python.org/downloads/) or higher installed on your computer.<br>
+In order to use the library, you need to have at least [Python 3.10](https://www.python.org/downloads/) or higher installed on your computer.<br>
 Then, you can clone this repository and start configuring the `config.py` script.<br>
 Every configuration is explained in the file.<br>
 Once you have configured the script, you can run the `build.py` script.<br>
