@@ -11,7 +11,7 @@ def main(config: dict) -> None:
 
 	# Generate ores in the world
 	CustomOreGeneration.all_with_config(config, ore_configs = {
-		"super_iron_ore": [
+		"steel_ore": [
 			CustomOreGeneration(
 				dimensions = ["minecraft:overworld","stardust:cavern","some_other:dimension"],
 				maximum_height = 50,
@@ -20,7 +20,7 @@ def main(config: dict) -> None:
 				vein_size_logic = 0.4,
 			)
 		],
-		"deepslate_super_iron_ore": [
+		"deepslate_steel_ore": [
 			CustomOreGeneration(
 				dimensions = ["minecraft:overworld"],
 				maximum_height = 0,

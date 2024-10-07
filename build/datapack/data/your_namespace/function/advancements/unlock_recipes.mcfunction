@@ -11,6 +11,8 @@ advancement revoke @s only your_namespace:unlock_recipes
 # minecraft:stone
 scoreboard players set #success your_namespace.data 0
 execute store success score #success your_namespace.data if items entity @s container.* minecraft:stone
+execute if score #success your_namespace.data matches 1 run recipe give @s your_namespace:stone_rod
+execute if score #success your_namespace.data matches 1 run recipe give @s your_namespace:stone_stick
 execute if score #success your_namespace.data matches 1 run recipe give @s your_namespace:super_stone
 
 # minecraft:deepslate

@@ -3,8 +3,8 @@
 The database is the thing where you will define all your custom items and blocks. The main function in [`setup_database.py`](../user/setup_database.py) must return a dictionnary where keys are items ids, and values are a dictionnary that defines the item:
 ```json
 {
-    "super_iron_block": {...},
-    "super_iron_ore": {...},
+    "steel_block": {...},
+    "steel_ore": {...},
     ...
 }
 ```
@@ -18,7 +18,7 @@ Along with this, if you set up the configuration correctly, a dump of your datab
 ### ❗️ Mandatory keys
 The value dictionnary must have some key/value pairs to define an item.
 1. The `id` key: the value must be a string to a minecraft item like "minecraft:stone". But, if you want your item to not act like a vanilla item, you can use the `CUSTOM_ITEM_VANILLA` constant that will point to an item that can be used in survival mode.
-2. The `item_name` key: the value must be a string containing a Text Component such as `'{"text":"My Item"}'`. Prefer using the `add_item_name_and_lore_if_missing()` function that will automatically adds the item_name key based on the item id, ex: "super_iron_block" -> "Super Iron Block".
+2. The `item_name` key: the value must be a string containing a Text Component such as `'{"text":"My Item"}'`. Prefer using the `add_item_name_and_lore_if_missing()` function that will automatically adds the item_name key based on the item id, ex: "steel_block" -> "Super Iron Block".
 
 
 ### 📦 Custom blocks
@@ -36,10 +36,10 @@ The reason is that the library will use an optimization trick which also include
 Additionnally, the `NO_SILK_TOUCH_DROP` key should lead to an item id you made in the database, see example here:<br>
 ```json
 {
-    "super_iron_ore": {
+    "steel_ore": {
       ...,
       VANILLA_BLOCK: VANILLA_BLOCK_FOR_ORES,
-      NO_SILK_TOUCH_DROP: "raw_super_iron"
+      NO_SILK_TOUCH_DROP: "raw_steel"
     },
     ...
 }
@@ -50,7 +50,7 @@ Additionnally, the `NO_SILK_TOUCH_DROP` key should lead to an item id you made i
 The recipes in the database must be defined the same way as [vanilla recipes](https://misode.github.io/recipe/) but with little changes.<br>
 An utility function `ingr_repr()` is available to "encode" ingredients or result of a recipe to a dictionnary.<br>
 If you want the representation of a vanilla item, you will write `ingr_repr("minecraft:stone")` for example.<br>
-Alternatively, if you want the representation of a custom item you made, use the function like this: `ingr_repr("super_iron_ingot", NAMESPACE)` where the namespace is the one you put in the [`config.py`](../config.py) file.<br>
+Alternatively, if you want the representation of a custom item you made, use the function like this: `ingr_repr("steel_ingot", NAMESPACE)` where the namespace is the one you put in the [`config.py`](../config.py) file.<br>
 The reason of this format is to bring NBT crafting as much simple as possible, don't need to worry everything will be automatic.
 
 You have two ways of writing recipes in the database:
@@ -66,7 +66,7 @@ database["super_diamond"] = {
 	...
 
 	RESULT_OF_CRAFTING: [
-		{"type":"crafting_shaped","result_count":1,"group":"super_diamond","category":"misc","shape":["XXX","XIX","XXX"],"ingredients": {"X": ingr_repr("minecraft:diamond"), "I":ingr_repr("super_iron_ingot", NAMESPACE)}},
+		{"type":"crafting_shaped","result_count":1,"group":"super_diamond","category":"misc","shape":["XXX","XIX","XXX"],"ingredients": {"X": ingr_repr("minecraft:diamond"), "I":ingr_repr("steel_ingot", NAMESPACE)}},
 	],
 
   USED_FOR_CRAFTING: [
@@ -86,9 +86,9 @@ A few more keys are available for the database setup:
 You may want to add other [components](https://minecraft.wiki/w/Data_component_format) such as food, durability, dyed color, etc.
 Those are automatically recognized, you don't need to put them in a "components" key for an item:
 ```json
-"super_iron_helmet": {
+"steel_helmet": {
   "id": "minecraft:leather_helmet",
-  "custom_data": {"smithed": {"dict": {"armor": {"super_iron": true,"helmet": true}},"ignore": {"functionality": true,"crafting": true}},"your_namespace": {"super_iron_helmet": true}},
+  "custom_data": {"smithed": {"dict": {"armor": {"steel": true,"helmet": true}},"ignore": {"functionality": true,"crafting": true}},"your_namespace": {"steel_helmet": true}},
   "dyed_color": {"rgb": 4605510,"show_in_tooltip": false},
   "max_damage": 495,
   "attribute_modifiers": [{"type": "generic.armor","amount": 2.5,"operation": "add_value","slot": "head","id": "your_namespace:generic.armor.head"}],

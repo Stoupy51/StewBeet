@@ -1,0 +1,38 @@
+{
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "minecraft:item",
+					"name": "minecraft:leather_boots",
+					"functions": [
+						{
+							"function": "minecraft:set_components",
+							"components": {
+								"minecraft:custom_data": {
+									"smithed": {"dict": {"armor": {"steel": true,"boots": true}},"ignore": {"functionality": true,"crafting": true}},
+									"your_namespace": {"steel_boots": true}
+								},
+								"minecraft:dyed_color": {
+									"rgb": 5460819,
+									"show_in_tooltip": false
+								},
+								"minecraft:max_damage": 585,
+								"minecraft:attribute_modifiers": [
+									{"type": "generic.armor","amount": 2.5,"operation": "add_value","slot": "feet","id": "your_namespace:generic.armor.feet"}
+								],
+								"minecraft:custom_model_data": 30011,
+								"minecraft:item_name": "{'translate':'your_namespace.steel_boots', 'italic': false, 'color': 'white'}",
+								"minecraft:lore": [
+									"{'translate':'your_namespace.template', 'italic': true, 'color': 'blue'}"
+								]
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}
+

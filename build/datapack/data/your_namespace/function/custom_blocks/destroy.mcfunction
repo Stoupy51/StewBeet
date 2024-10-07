@@ -1,9 +1,9 @@
 
 #> your_namespace:custom_blocks/destroy
 #
-# @within	your_namespace:v1.0.0/tick_2
-#			your_namespace:v1.0.0/second
-#			your_namespace:v1.0.0/second_5
+# @within	your_namespace:v1.21.615/tick_2
+#			your_namespace:v1.21.615/second
+#			your_namespace:v1.21.615/second_5
 #			your_namespace:calls/common_signals/on_ore_destroyed
 #
 

@@ -1,0 +1,30 @@
+{
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "minecraft:item",
+					"name": "minecraft:command_block",
+					"functions": [
+						{
+							"function": "minecraft:set_components",
+							"components": {
+								"minecraft:custom_data": {
+									"smithed": {"dict": {"ingot": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},
+									"your_namespace": {"steel_ingot": true}
+								},
+								"minecraft:custom_model_data": 30004,
+								"minecraft:item_name": "{'translate':'your_namespace.steel_ingot', 'italic': false, 'color': 'white'}",
+								"minecraft:lore": [
+									"{'translate':'your_namespace.template', 'italic': true, 'color': 'blue'}"
+								]
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}
+

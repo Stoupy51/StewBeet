@@ -1,8 +1,0 @@
-{
-	"parent": "minecraft:item/leather_boots",
-	"textures": {
-		"layer0": "your_namespace:item/super_iron_boots",
-		"layer1": "your_namespace:item/super_iron_boots"
-	}
-}
-

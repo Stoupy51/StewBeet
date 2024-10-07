@@ -5,7 +5,7 @@
 		"layer1": "item/leather_leggings_overlay"
 	},
 	"overrides": [
-		{ "predicate": { "custom_model_data": 30010}, "model": "your_namespace:item/super_iron_leggings" }
+		{ "predicate": { "custom_model_data": 30010}, "model": "your_namespace:item/steel_leggings" }
 	]
 }
 
