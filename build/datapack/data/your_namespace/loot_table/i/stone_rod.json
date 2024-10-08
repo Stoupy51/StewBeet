@@ -14,7 +14,7 @@
 									"smithed": {"dict": {"rod": {"stone": true}},"ignore": {"functionality": true,"crafting": true}},
 									"your_namespace": {"stone_rod": true}
 								},
-								"minecraft:custom_model_data": 30018,
+								"minecraft:custom_model_data": 30019,
 								"minecraft:item_name": "{'translate':'your_namespace.stone_rod', 'italic': false, 'color': 'white'}",
 								"minecraft:lore": [
 									"{'translate':'your_namespace.template', 'italic': true, 'color': 'blue'}"

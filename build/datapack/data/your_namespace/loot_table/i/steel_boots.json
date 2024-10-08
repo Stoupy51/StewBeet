@@ -22,7 +22,7 @@
 								"minecraft:attribute_modifiers": [
 									{"type": "generic.armor","amount": 2.5,"operation": "add_value","slot": "feet","id": "your_namespace:generic.armor.feet"}
 								],
-								"minecraft:custom_model_data": 30011,
+								"minecraft:custom_model_data": 30012,
 								"minecraft:item_name": "{'translate':'your_namespace.steel_boots', 'italic': false, 'color': 'white'}",
 								"minecraft:lore": [
 									"{'translate':'your_namespace.template', 'italic': true, 'color': 'blue'}"

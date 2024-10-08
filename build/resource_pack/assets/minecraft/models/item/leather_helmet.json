@@ -5,7 +5,7 @@
 		"layer1": "item/leather_helmet_overlay"
 	},
 	"overrides": [
-		{ "predicate": { "custom_model_data": 30008}, "model": "your_namespace:item/steel_helmet" }
+		{ "predicate": { "custom_model_data": 30009}, "model": "your_namespace:item/steel_helmet" }
 	]
 }
 

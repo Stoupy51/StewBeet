@@ -1,0 +1,20 @@
+{
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "minecraft:loot_table",
+					"value": "your_namespace:i/steel_nugget",
+					"functions": [
+						{
+							"function": "minecraft:set_count",
+							"count": 9
+						}
+					]
+				}
+			]
+		}
+	]
+}
+

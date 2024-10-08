@@ -1,5 +1,5 @@
 
-# Project Structure
+# 🗃️ Project Structure
 This guide will be presenting to you the structure of the template, where things must go, and more...<br>
 
 ## 📂 Content and description
@@ -27,9 +27,9 @@ By default, the root folder contains several files and folders:
   - [`link.py`](../user/link.py): This script is called at the end of the build process just before making zip files. You can use it to run any code, write to any file you want, and write dynamically your datapack. This is also the place where you define your custom ore generation. For instance, the datapack [`SimplEnergy`](https://github.com/Stoupy51/SimplEnergy/blob/main/user/link.py) wrote all its features inside this file (with proper scripts management) without the use of the merge folder, making it very easy to update for future Minecraft versions.
 
 
-## 🗞 Conclusion
+## 📚 Conclusion
 If you understood properly everything above, congratulations!<br>
 You passed the hardest (in my opinion), if you are feeling confident you can now properly start your project.<br>
 If at any point you need more information about a part, read the next documentation files about the topic you want!<br>
-Thank you for reading.
+Thank you for reading 🙌.
 

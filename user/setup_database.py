@@ -10,7 +10,7 @@ STARTING_CMD: int = 30000	# Prefix for custom_model_data
 # Configuration to generate everything about the material based on "steel_ingot"
 ORES_CONFIGS: dict[str, EquipmentsConfig|None] = {
 	"steel_ingot":	EquipmentsConfig(
-		# This super iron is equivalent to iron,
+		# This steel is equivalent to iron,
 		equivalent_to = DEFAULT_ORE.IRON,
 
 		# But, has more durability (3 times more)

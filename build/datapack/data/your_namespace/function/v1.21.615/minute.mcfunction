@@ -6,5 +6,5 @@
 
 # Reset timer
 scoreboard players set #minute your_namespace.data 1
-say This is a message every minute
+execute if score #spam your_namespace.data matches 1 run say This is a message every minute
 

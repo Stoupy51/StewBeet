@@ -5,6 +5,8 @@
 #
 
 execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input{"components": {"minecraft:custom_data": {"your_namespace": {"raw_steel": true}}}} run loot replace block ~ ~ ~ container.3 loot your_namespace:i/steel_ingot
+execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input{"components": {"minecraft:custom_data": {"your_namespace": {"steel_dust": true}}}} run loot replace block ~ ~ ~ container.3 loot your_namespace:i/steel_ingot
 execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input{"components": {"minecraft:custom_data": {"your_namespace": {"steel_ore": true}}}} run loot replace block ~ ~ ~ container.3 loot your_namespace:i/steel_ingot
 execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input{"components": {"minecraft:custom_data": {"your_namespace": {"deepslate_steel_ore": true}}}} run loot replace block ~ ~ ~ container.3 loot your_namespace:i/steel_ingot
+execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input{"components": {"minecraft:custom_data": {"your_namespace": {"steel_dust": true}}}} run loot replace block ~ ~ ~ container.3 loot your_namespace:i/steel_ingot
 

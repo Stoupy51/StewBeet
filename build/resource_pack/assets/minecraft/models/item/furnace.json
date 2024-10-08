@@ -5,7 +5,7 @@
 		{ "predicate": { "custom_model_data": 30001}, "model": "your_namespace:block/steel_ore" },
 		{ "predicate": { "custom_model_data": 30002}, "model": "your_namespace:block/deepslate_steel_ore" },
 		{ "predicate": { "custom_model_data": 30003}, "model": "your_namespace:block/raw_steel_block" },
-		{ "predicate": { "custom_model_data": 30020}, "model": "your_namespace:block/super_stone" }
+		{ "predicate": { "custom_model_data": 30021}, "model": "your_namespace:block/super_stone" }
 	]
 }
 

@@ -20,7 +20,7 @@
 									{"type": "generic.attack_speed","amount": -1.0,"operation": "add_value","slot": "mainhand","id": "your_namespace:generic.attack_speed.mainhand"},
 									{"type": "player.mining_efficiency","amount": 0.2,"operation": "add_value","slot": "mainhand","id": "your_namespace:player.mining_efficiency.mainhand"}
 								],
-								"minecraft:custom_model_data": 30016,
+								"minecraft:custom_model_data": 30017,
 								"minecraft:item_name": "{'translate':'your_namespace.steel_hoe', 'italic': false, 'color': 'white'}",
 								"minecraft:lore": [
 									"{'translate':'your_namespace.template', 'italic': true, 'color': 'blue'}"

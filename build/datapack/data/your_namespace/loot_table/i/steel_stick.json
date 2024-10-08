@@ -14,7 +14,7 @@
 									"smithed": {"dict": {"stick": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},
 									"your_namespace": {"steel_stick": true}
 								},
-								"minecraft:custom_model_data": 30007,
+								"minecraft:custom_model_data": 30008,
 								"minecraft:item_name": "{'translate':'your_namespace.steel_stick', 'italic': false, 'color': 'white'}",
 								"minecraft:lore": [
 									"{'translate':'your_namespace.template', 'italic': true, 'color': 'blue'}"

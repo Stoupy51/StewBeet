@@ -22,7 +22,7 @@
 								"minecraft:attribute_modifiers": [
 									{"type": "generic.armor","amount": 2.5,"operation": "add_value","slot": "head","id": "your_namespace:generic.armor.head"}
 								],
-								"minecraft:custom_model_data": 30008,
+								"minecraft:custom_model_data": 30009,
 								"minecraft:item_name": "{'translate':'your_namespace.steel_helmet', 'italic': false, 'color': 'white'}",
 								"minecraft:lore": [
 									"{'translate':'your_namespace.template', 'italic': true, 'color': 'blue'}"

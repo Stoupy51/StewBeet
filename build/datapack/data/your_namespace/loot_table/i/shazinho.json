@@ -21,7 +21,7 @@
 								},
 								"minecraft:max_stack_size": 1,
 								"minecraft:rarity": "rare",
-								"minecraft:custom_model_data": 30019,
+								"minecraft:custom_model_data": 30020,
 								"minecraft:lore": [
 									"{'translate':'your_namespace.template', 'italic': true, 'color': 'blue'}"
 								]
