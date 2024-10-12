@@ -225,5 +225,14 @@
 		"item_name": "{'text': 'Super Stone', 'italic': false, 'color': 'white'}",
 		"lore": ["{'text': 'Template', 'italic': true, 'color': 'blue'}"],
 		"custom_data": {"your_namespace": {"super_stone": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}}
+	},
+	"manual": {
+		"id": "minecraft:written_book",
+		"category": "misc",
+		"item_name": "\"Template Manual\"",
+		"result_of_crafting": [{"type": "crafting_shapeless","result_count": 1,"group": "manual","category": "misc","ingredients": [{"item": "minecraft:book"},{"components": {"minecraft:custom_data": {"your_namespace": {"steel_ingot": true}}}}]},{"type": "crafting_shapeless","result_count": 1,"group": "manual","category": "misc","ingredients": [{"components": {"minecraft:custom_data": {"your_namespace": {"manual": true}}}}]}],
+		"custom_model_data": 30022,
+		"lore": ["{'text': 'Template', 'italic': true, 'color': 'blue'}"],
+		"custom_data": {"your_namespace": {"manual": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}}
 	}
 }

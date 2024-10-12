@@ -27,6 +27,7 @@ ORES_CONFIGS: dict[str, EquipmentsConfig|None] = {
 # Main function should return a database
 def main(config: dict) -> dict[str, dict]:
 	database: dict[str,dict] = {}
+	namespace: str = config["namespace"]
 
 	# Generate ores in database (add every stuff related to steel and stone found in the textures folder to the database)
 	generate_everything_about_these_materials(config, database, ORES_CONFIGS)
@@ -50,6 +51,19 @@ def main(config: dict) -> dict[str, dict]:
 	for ore in ["steel_ore","deepslate_steel_ore"]:
 		database[ore][VANILLA_BLOCK] = VANILLA_BLOCK_FOR_ORES	# Placeholder for the base block (required for custom ores)
 		database[ore][NO_SILK_TOUCH_DROP] = "raw_steel"			# Drop without silk touch (raw_steel is an item in the database)
+
+	# Add a recipe for the future generated manual (the manual recipe will show up in itself)
+	manual_name: str = config.get("manual_name", "Manual")
+	database["manual"] = {
+		"id": "minecraft:written_book", "category": "misc", "item_name": f'"{manual_name}"',
+		RESULT_OF_CRAFTING: [
+			# Put a book and a steel ingot in the crafting grid to get the manual
+			{"type":"crafting_shapeless","result_count":1,"group":"manual","category":"misc","ingredients": [ingr_repr("minecraft:book"), ingr_repr("steel_ingot", namespace)]},
+
+			# Put the manual in the crafting grid to get the manual back (update the manual)
+			{"type":"crafting_shapeless","result_count":1,"group":"manual","category":"misc","ingredients": [ingr_repr("manual", namespace)]},
+		],
+	}
 	
 	# Add item categories to the remaining items (should select 'shazinho' and 'super_stone')
 	for item in database.values():
