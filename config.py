@@ -51,6 +51,7 @@ SOURCE_LORE: list[dict] = [{"text": DATAPACK_NAME,"italic":True,"color":"blue"}]
 # Manual configuration
 DEBUG_MODE: bool = False							# Shows up grids in manual
 MANUAL_PATH: str = f"{ROOT}/manual"					# Cached manual assets
+MANUAL_OVERRIDES: str = f"{ASSETS_FOLDER}/manual_overrides"	# Path to a folder containing manual overrides to replace the default manual assets
 MANUAL_HIGH_RESOLUTION: bool = True					# Enable the high resolution for the manual to increase the craft resolutions
 CACHE_MANUAL_ASSETS: bool = True					# Caches the MC assets and the items renders for the manual (manual/items/*.png)
 CACHE_MANUAL_PAGES: bool = True						# Caches the content of the manual and the images (manual/pages/*.png)
@@ -101,5 +102,6 @@ configuration = {
 	"opengl_resolution": OPENGL_RESOLUTION,
 	"manual_first_page_text": MANUAL_FIRST_PAGE_TEXT,
 	"manual_high_resolution": MANUAL_HIGH_RESOLUTION,
+	"manual_overrides": MANUAL_OVERRIDES,
 }
 
