@@ -1,7 +1,7 @@
 
 # Python Datapack Template
 ## ❓ What is `python_datapack`
-`python_datapack` is a Python library aiming to provide huge automation for creating Minecraft datapacks.<br>
+`python_datapack` is a Python package aiming to provide huge automation for creating Minecraft datapacks.<br>
 It is designed to be very simple to use and very convenient for developers.<br>
 Here is a list of features that the library provides (the template is using all of them with clear comments):
 
