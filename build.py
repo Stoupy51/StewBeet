@@ -1,5 +1,5 @@
 
-# Install required library
+# Install required package
 import sys
 import os
 try:

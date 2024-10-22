@@ -32,7 +32,7 @@ When defining a custom block in the database, you must define more key/value pai
   - the `apply_facing` key must lead to a boolean (true/false). Usually, this is set to true when placing furnaces, barrels, ladders, etc. (every block having a facing property)
 
 If you want to setup a custom ore, the recommendation is to use the `VANILLA_BLOCK_FOR_ORES` constant for the value of the `VANILLA_BLOCK` key.<br>
-The reason is that the library will use an optimization trick ⚒️ which also includes fortune and silk touch enchantments support.<br>
+The reason is that the package will use an optimization trick ⚒️ which also includes fortune and silk touch enchantments support.<br>
 Additionnally, the `NO_SILK_TOUCH_DROP` key should lead to an item id you made in the database, see example here or in the [`database setup`](../user/setup_database.py):<br>
 ```json
 {

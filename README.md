@@ -3,7 +3,7 @@
 ## ❓ What is `python_datapack`
 `python_datapack` is a Python package aiming to provide huge automation for creating Minecraft datapacks.<br>
 It is designed to be very simple to use and very convenient for developers.<br>
-Here is a list of features that the library provides (the template is using all of them with clear comments):
+Here is a list of features that the package provides (the template is using all of them with clear comments):
 
 - 🔄 Automatic resource pack files generation (models, textures, sounds, music discs) with the ability to override them with help of the `assets` folder.
 - ⏳ Versioned load, and clock functions such as `tick`, `second`, `minute`.
@@ -29,29 +29,49 @@ Here is a list of features that the library provides (the template is using all 
 
 
 ## 📦 How to use
-In order to use the library, you need to have at least [Python 3.10](https://www.python.org/downloads/) or higher installed on your computer.<br>
+In order to use the package, you need to have at least [Python 3.10](https://www.python.org/downloads/) or higher installed on your computer.<br>
 Then, you can clone this repository and start configuring the `config.py` script.<br>
 Every configuration is explained in the file.<br>
 Once you have configured the script, you can run the `build.py` script.<br>
 The script will generate a datapack and a resource pack in the `build` folder.<br>
-And that's it! 🎉 That is very simple to use the library.<br>
-Since this template is using all the features of the library, you can remove the parts you don't need! 🧹<br>
+And that's it! 🎉 That is very simple to use the package.<br>
+Since this template is using all the features of the package, you can remove the parts you don't need! 🧹<br>
 
 
 ## 🔧 Minecraft version
-The Minecraft version will depend on the version of the library you are using.<br>
-Currently, this template is using the `1.21.0.x` version of the library.<br>
-As you can see, the `x` is the version of the library and the `1.21.0` is the Minecraft version.<br>
-If you have Python knowledge, you can use previous versions of the library with `pip install python_datapack==1.21.0.x`.<br>
+The Minecraft version will depend on the version of the package you are using.<br>
+Currently, this template is using the `1.21.0.x` version of the package.<br>
+As you can see, the `x` is the version of the package and the `1.21.0` is the Minecraft version.<br>
+If you have Python knowledge, you can use previous versions of the package with `pip install python_datapack==1.21.0.x`.<br>
 But warned ⚠️, the template could use features that are not available in the previous versions.<br>
 
 
 ## 📚 Documentation
-There are a lot of features in the library, you could check the template to see how to use them.<br>
+There are a lot of features in the package, you could check the template to see how to use them.<br>
 Or you could check the **strongly detailled** [documentation folder](docs/)<br>
 Here a list of all the currently available guides:
 - [Project structure](docs/1_project_structure.md)
 - [Database setup](docs/2_database_setup.md)
 - [Writing to files](docs/3_writing_to_files.md)
 - None yet
+
+
+## 📜 What projects use Python Datapack?
+To search for projects that use the package, I search like [this.](https://github.com/search?q=%22from+python_datapack+import+build_process%22&type=code)<br>
+Here is a list of projects that use the package:<br>
+- Actual projects:
+  - Your next project here!
+  - https://github.com/e-psi-lon/Armored-Elytra
+  - https://github.com/Stoupy51/SimplEnergy
+  - https://github.com/Stoupy51/ImagineYourCraftDatapack
+  - https://github.com/Stoupy51/LifeSteal
+  - https://github.com/Stoupy51/Survisland
+  - https://github.com/Stoupy51/SmithedSummit
+  - https://github.com/Stoupy51/SheepWars
+  - https://github.com/Stoupy51/MoreApples
+  - https://github.com/Stoupy51/CauldronConcretePowder
+
+- Libraries or tools:
+  - https://github.com/Stoupy51/SmartOreGeneration
+  - https://github.com/Stoupy51/CommonSignals
 
