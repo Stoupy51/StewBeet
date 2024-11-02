@@ -54,7 +54,9 @@ Here a list of all the currently available guides:
 - [Project structure](docs/1_project_structure.md)
 - [Database setup](docs/2_database_setup.md)
 - [Writing to files](docs/3_writing_to_files.md)
-- None yet
+- [External dependencies](docs/4_external_dependencies.md)
+- [Miscellaneous](docs/5_miscellaneous.md)
+- More soon!
 
 
 ## 📜 What projects use Python Datapack?

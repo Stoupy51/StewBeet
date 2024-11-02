@@ -6,6 +6,7 @@ This guide will be presenting to you the structure of the template, where things
 By default, the root folder contains several files and folders:
 - [`config.py`](../config.py) ⚙️: The most important file for your project. It has been decided to be a python script instead of a JSON or YAML file in order to properly show the types for constants and having the ability to use previously defined constants.
 - [`build.py`](../build.py) 🛠️: It shouldn't be modified unless you know what you are doing. Running this script will launch all the build process and install `python_datapack` module automatically if not done yet.
+- [`watcher.py`](../watcher.py) 🔍: This script is used to watch for changes and automatically launch the build process each time a file is modified (Not very eco-friendly 🌍).
 - [`clean.py`](../clean.py) 🧹: By default, running this script will delete every auto-generated files. Some people prefers modifying this script so that the [`cmd_cache.json`](../cmd_cache.json) file doesn't get cleaned.
 - [`upgrade_build.py`](../upgrade_build.py) ⬆️: Very simple script trying to upgrade the `python_datapack` module version to the latest.
 - 🎨 [`assets` folder](../assets/): This folder contains textures, sounds, jukebox records, pack icon, and some utility scripts.

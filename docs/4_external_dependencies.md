@@ -1,8 +1,8 @@
 
-# 🗃️ Using External Libraries
+# 🗃️ Using External Libraries 📚
 When creating datapacks, you might want to use items from other datapacks in your recipes or interact with their functionality.<br>
-Or maybe, you saw a library you want to use for your project.<br>
-This documentation will explain how to do both!
+Or maybe, you want to use a library for your project.<br>
+This documentation will explain how to do both! ✨
 
 
 ## 🔗 Adding Dependencies
@@ -20,18 +20,18 @@ DEPENDENCIES: dict[str, dict] = {
 	"energy": {"version":[1, 8, 0], "name":"DatapackEnergy", "url":"https://github.com/ICY105/DatapackEnergy"},
 }
 ```
-By default, an example dependency is already added to the template as you can see above.<br>
+🔍 By default, an example dependency is already added to the template as you can see above.<br>
 The only purpose of this constant is to automatically check for the presence of the dependency and suggest where to get it if not found on load.<br>
-DISCLAIMER: The dependency must use [LanternLoad](https://github.com/LanternMC/load) with [proper versioning](https://github.com/Gunivers/Bookshelf/issues/272) (e.g. `#your_namespace.major load.status` scoreboard, and same for `minor` and `patch`).
+⚠️ DISCLAIMER: The dependency must use [LanternLoad](https://github.com/LanternMC/load) with [proper versioning](https://github.com/Gunivers/Bookshelf/issues/272) (e.g. `#your_namespace.major load.status` scoreboard, and same for `minor` and `patch`).
 
 Now, you can add the datapack/library to your `libs` folder and configure whether it should be merged with your pack using the `MERGE_LIBS` option.<br>
 When building, the `libs/datapack` folder will be copied to the `BUILD_COPY_DESTINATIONS` folders (only datapacks, not resourcepacks).
 
 
 ## 📦 External Database Setup
-The [`setup_external_database.py`](../user/setup_external_database.py) script is used to define items from other datapacks that you want to use in your recipes.<br>
-This currently is the only use-case for the external database.<br>
-DISCLAIMER: This script is currently very scuffed, I'm still figuring out how to properly handle external items.
+The 📝 [`setup_external_database.py`](../user/setup_external_database.py) script is used to define items from other datapacks that you want to use in your recipes 🛠️.<br>
+This currently is the only use-case for the external database 📦.<br>
+⚠️ DISCLAIMER: This script is currently very scuffed, I'm still figuring out how to properly handle external items.
 
 
 ## 📚 Conclusion
