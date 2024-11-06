@@ -19,10 +19,14 @@
 									"show_in_tooltip": false
 								},
 								"minecraft:max_damage": 585,
+								"minecraft:equippable": {
+									"slot": "feet",
+									"model": "your_namespace:steel"
+								},
 								"minecraft:attribute_modifiers": [
-									{"type": "generic.armor","amount": 2.5,"operation": "add_value","slot": "feet","id": "your_namespace:generic.armor.feet"}
+									{"type": "armor","amount": 2.5,"operation": "add_value","slot": "feet","id": "your_namespace:armor.feet"}
 								],
-								"minecraft:custom_model_data": 30012,
+								"minecraft:item_model": "your_namespace:steel_boots",
 								"minecraft:item_name": "{'translate':'your_namespace.steel_boots', 'italic': false, 'color': 'white'}",
 								"minecraft:lore": [
 									"{'translate':'your_namespace.template', 'italic': true, 'color': 'blue'}"

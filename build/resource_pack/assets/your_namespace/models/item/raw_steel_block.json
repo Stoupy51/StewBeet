@@ -1,7 +1,7 @@
 {
 	"parent": "block/cube_all",
 	"textures": {
-		"all": "your_namespace:block/deepslate_steel_ore"
+		"all": "your_namespace:item/raw_steel_block"
 	}
 }
 

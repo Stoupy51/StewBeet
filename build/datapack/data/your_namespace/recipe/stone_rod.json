@@ -7,9 +7,7 @@
 		"X"
 	],
 	"key": {
-		"X": {
-			"item": "minecraft:stone"
-		}
+		"X": "minecraft:stone"
 	},
 	"result": {
 		"id": "minecraft:command_block",
@@ -24,7 +22,7 @@
 					"stone_rod": true
 				}
 			},
-			"minecraft:custom_model_data": 30019,
+			"minecraft:item_model": "your_namespace:stone_rod",
 			"minecraft:item_name": "{'translate':'your_namespace.stone_rod', 'italic': false, 'color': 'white'}",
 			"minecraft:lore": [
 				"{'translate':'your_namespace.template', 'italic': true, 'color': 'blue'}"

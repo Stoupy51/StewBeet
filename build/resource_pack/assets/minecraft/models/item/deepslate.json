@@ -1,7 +1,0 @@
-{
-	"parent": "block/deepslate",
-	"overrides": [
-		{ "predicate": { "custom_model_data": 2010000}, "model": "minecraft:item/none" }
-	]
-}
-

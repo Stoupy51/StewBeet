@@ -1,8 +1,6 @@
 {
 	"type": "minecraft:smelting",
-	"ingredient": {
-		"item": "minecraft:command_block"
-	},
+	"ingredient": "minecraft:command_block",
 	"result": {
 		"id": "minecraft:command_block",
 		"count": 1,
@@ -23,7 +21,7 @@
 					"steel_ingot": true
 				}
 			},
-			"minecraft:custom_model_data": 30004,
+			"minecraft:item_model": "your_namespace:steel_ingot",
 			"minecraft:item_name": "{'translate':'your_namespace.steel_ingot', 'italic': false, 'color': 'white'}",
 			"minecraft:lore": [
 				"{'translate':'your_namespace.template', 'italic': true, 'color': 'blue'}"

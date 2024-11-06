@@ -16,11 +16,11 @@
 								},
 								"minecraft:max_damage": 750,
 								"minecraft:attribute_modifiers": [
-									{"type": "generic.attack_damage","amount": 5.5,"operation": "add_value","slot": "mainhand","id": "your_namespace:generic.attack_damage.mainhand"},
-									{"type": "generic.attack_speed","amount": -3.1,"operation": "add_value","slot": "mainhand","id": "your_namespace:generic.attack_speed.mainhand"},
-									{"type": "player.mining_efficiency","amount": 0.2,"operation": "add_value","slot": "mainhand","id": "your_namespace:player.mining_efficiency.mainhand"}
+									{"type": "attack_damage","amount": 5.5,"operation": "add_value","slot": "mainhand","id": "your_namespace:attack_damage.mainhand"},
+									{"type": "attack_speed","amount": -3.1,"operation": "add_value","slot": "mainhand","id": "your_namespace:attack_speed.mainhand"},
+									{"type": "mining_efficiency","amount": 0.2,"operation": "add_value","slot": "mainhand","id": "your_namespace:mining_efficiency.mainhand"}
 								],
-								"minecraft:custom_model_data": 30016,
+								"minecraft:item_model": "your_namespace:steel_shovel",
 								"minecraft:item_name": "{'translate':'your_namespace.steel_shovel', 'italic': false, 'color': 'white'}",
 								"minecraft:lore": [
 									"{'translate':'your_namespace.template', 'italic': true, 'color': 'blue'}"

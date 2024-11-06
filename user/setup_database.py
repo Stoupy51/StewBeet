@@ -5,7 +5,6 @@
 from python_datapack.utils.database_helper import *
 from python_datapack.utils.ingredients import *
 from python_datapack.constants import *
-STARTING_CMD: int = 30000	# Prefix for custom_model_data
 
 # Configuration to generate everything about the material based on "steel_ingot"
 ORES_CONFIGS: dict[str, EquipmentsConfig|None] = {
@@ -17,7 +16,7 @@ ORES_CONFIGS: dict[str, EquipmentsConfig|None] = {
 		pickaxe_durability = 3 * VanillaEquipments.PICKAXE.value[DEFAULT_ORE.IRON]["durability"],
 
 		# And, does 1 more damage per hit (mainhand), and has 0.5 more armor, and mines 20% faster (pickaxe)
-		attributes = {"generic.attack_damage": 1, "generic.armor": 0.5, "player.mining_efficiency": 0.2}
+		attributes = {"attack_damage": 1, "armor": 0.5, "mining_efficiency": 0.2}
 	),
 
 	# Simple material stone, this will automatically detect stone stick and rod textures.
@@ -31,6 +30,10 @@ def main(config: dict) -> dict[str, dict]:
 
 	# Generate ores in database (add every stuff related to steel and stone found in the textures folder to the database)
 	generate_everything_about_these_materials(config, database, ORES_CONFIGS)
+	database["steel_ingot"][WIKI_COMPONENT] = [
+		{"text":"Here is an example of a wiki component, this text component will be displayed as a button in the manual.\n"},
+		{"text":"You can write anything you want here.","color":"yellow"},
+	]
 
 	# Generate custom disc records
 	generate_custom_records(config, database, "auto")
@@ -64,14 +67,14 @@ def main(config: dict) -> dict[str, dict]:
 			{"type":"crafting_shapeless","result_count":1,"group":"manual","category":"misc","ingredients": [ingr_repr("manual", namespace)]},
 		],
 	}
-	
+
 	# Add item categories to the remaining items (should select 'shazinho' and 'super_stone')
 	for item in database.values():
 		if not item.get("category"):
 			item["category"] = "misc"
 
 	# Final adjustments, you definitively should keep them!
-	deterministic_custom_model_data(config, database, STARTING_CMD, black_list = ["item_names","you_don't_want","in_that","list"])
+	add_item_model_component(config, database, black_list = ["item_ids","you_don't_want","in_that","list"])
 	add_item_name_and_lore_if_missing(config, database)
 	add_private_custom_data_for_namespace(config, database)		# Add a custom namespace for easy item detection
 	add_smithed_ignore_vanilla_behaviours_convention(database)	# Smithed items convention

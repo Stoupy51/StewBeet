@@ -1,7 +1,7 @@
 {
 	"parent": "block/cube_all",
 	"textures": {
-		"all": "your_namespace:block/raw_steel_block"
+		"all": "your_namespace:item/super_stone"
 	}
 }
 

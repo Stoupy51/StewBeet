@@ -19,10 +19,14 @@
 									"show_in_tooltip": false
 								},
 								"minecraft:max_damage": 720,
+								"minecraft:equippable": {
+									"slot": "chest",
+									"model": "your_namespace:steel"
+								},
 								"minecraft:attribute_modifiers": [
-									{"type": "generic.armor","amount": 6.5,"operation": "add_value","slot": "chest","id": "your_namespace:generic.armor.chest"}
+									{"type": "armor","amount": 6.5,"operation": "add_value","slot": "chest","id": "your_namespace:armor.chest"}
 								],
-								"minecraft:custom_model_data": 30010,
+								"minecraft:item_model": "your_namespace:steel_chestplate",
 								"minecraft:item_name": "{'translate':'your_namespace.steel_chestplate', 'italic': false, 'color': 'white'}",
 								"minecraft:lore": [
 									"{'translate':'your_namespace.template', 'italic': true, 'color': 'blue'}"

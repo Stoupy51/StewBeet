@@ -14,7 +14,7 @@
 									"smithed": {"dict": {"block": {"steel": true},"ore": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},
 									"your_namespace": {"deepslate_steel_ore": true}
 								},
-								"minecraft:custom_model_data": 30002,
+								"minecraft:item_model": "your_namespace:deepslate_steel_ore",
 								"minecraft:item_name": "{'translate':'your_namespace.deepslate_steel_ore', 'italic': false, 'color': 'white'}",
 								"minecraft:lore": [
 									"{'translate':'your_namespace.template', 'italic': true, 'color': 'blue'}"

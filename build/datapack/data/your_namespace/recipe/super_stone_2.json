@@ -3,39 +3,21 @@
 	"category": "blocks",
 	"group": "super_stone",
 	"ingredients": [
-		{
-			"item": "minecraft:deepslate"
-		},
-		{
-			"item": "minecraft:deepslate"
-		},
-		{
-			"item": "minecraft:deepslate"
-		},
-		{
-			"item": "minecraft:deepslate"
-		},
-		{
-			"item": "minecraft:deepslate"
-		},
-		{
-			"item": "minecraft:deepslate"
-		},
-		{
-			"item": "minecraft:deepslate"
-		},
-		{
-			"item": "minecraft:deepslate"
-		},
-		{
-			"item": "minecraft:deepslate"
-		}
+		"minecraft:deepslate",
+		"minecraft:deepslate",
+		"minecraft:deepslate",
+		"minecraft:deepslate",
+		"minecraft:deepslate",
+		"minecraft:deepslate",
+		"minecraft:deepslate",
+		"minecraft:deepslate",
+		"minecraft:deepslate"
 	],
 	"result": {
 		"id": "minecraft:furnace",
 		"count": 1,
 		"components": {
-			"minecraft:custom_model_data": 30021,
+			"minecraft:item_model": "your_namespace:super_stone",
 			"minecraft:item_name": "{'translate':'your_namespace.super_stone', 'italic': false, 'color': 'white'}",
 			"minecraft:lore": [
 				"{'translate':'your_namespace.template', 'italic': true, 'color': 'blue'}"

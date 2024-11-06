@@ -16,7 +16,6 @@ BUILD_COPY_DESTINATIONS: tuple[list, list] = (["D:/latest_snapshot/world/datapac
 # Dev constants
 HAS_MANUAL: bool = True								# Do the program generate a manual/guide? (WARNING: if an item is malformed in the database, the server log will be flooded on load by the manual hiding the malformed item)
 DATABASE_DEBUG: str = f"{ROOT}/database_debug.json"	# Dump of the database for debugging purposes
-CMD_CACHE: str = f"{ROOT}/cmd_cache.json"			# Cache of all items Custom Model Data
 ENABLE_TRANSLATIONS: bool = True					# Will convert all the text components to translate and generate a lang file in the resource pack. Meaning you can easily translate the datapack in multiple languages!
 MERGE_LIBS: bool = True								# Make new zip of merged libraries with the datapack and resource pack using Smithed Weld
 
@@ -73,7 +72,6 @@ configuration = {
 	"has_manual": HAS_MANUAL,
 	"debug_mode": DEBUG_MODE,
 	"database_debug": DATABASE_DEBUG,
-	"cmd_cache": CMD_CACHE,
 	"cache_manual_assets": CACHE_MANUAL_ASSETS,
 	"cache_manual_pages": CACHE_MANUAL_PAGES,
 	"manual_debug": MANUAL_DEBUG,

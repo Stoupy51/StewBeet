@@ -14,7 +14,7 @@
 									"smithed": {"dict": {"nugget": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},
 									"your_namespace": {"steel_nugget": true}
 								},
-								"minecraft:custom_model_data": 30005,
+								"minecraft:item_model": "your_namespace:steel_nugget",
 								"minecraft:item_name": "{'translate':'your_namespace.steel_nugget', 'italic': false, 'color': 'white'}",
 								"minecraft:lore": [
 									"{'translate':'your_namespace.template', 'italic': true, 'color': 'blue'}"

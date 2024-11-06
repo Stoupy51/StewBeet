@@ -14,7 +14,7 @@
 									"smithed": {"dict": {"block": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},
 									"your_namespace": {"raw_steel_block": true}
 								},
-								"minecraft:custom_model_data": 30003,
+								"minecraft:item_model": "your_namespace:raw_steel_block",
 								"minecraft:item_name": "{'translate':'your_namespace.raw_steel_block', 'italic': false, 'color': 'white'}",
 								"minecraft:lore": [
 									"{'translate':'your_namespace.template', 'italic': true, 'color': 'blue'}"
