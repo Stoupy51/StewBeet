@@ -1,7 +1,7 @@
 
 # Python Datapack Template
 ## ❓ What is `python_datapack`
-`python_datapack` is a Python package (and a template) aiming to provide huge automation for creating Minecraft datapacks.<br>
+`python_datapack` is a [Python package](https://github.com/Stoupy51/python_datapack) 📦 (and a template) aiming to provide huge automation for creating Minecraft datapacks.<br>
 It is designed to be very simple to use and very convenient for developers.<br>
 Here is a list of features that the package provides (the template is using all of them with clear comments):
 
@@ -57,6 +57,19 @@ Here a list of all the currently available guides:
 - [External dependencies](docs/4_external_dependencies.md)
 - [Miscellaneous](docs/5_miscellaneous.md)
 - More soon!
+
+
+## 🤝 Contribute
+Want to help improve Python Datapack? 🔍<br>
+Make sure first you contribute on the right repository, such as the [package 📦 itself](https://github.com/Stoupy51/python_datapack).<br>
+Here's how you can contribute:
+- 🐛 **Report Bugs**: Found a bug? Open an issue on GitHub describing what happened and how to reproduce it.
+- ✨ **Suggest Features**: Have an idea for a new feature? Share it in the issues section!
+- 🔧 **Submit Pull Requests**: Feel free to fix bugs or add new features by submitting pull requests.
+- 📚 **Improve Documentation**: Help make our docs better by fixing errors or adding examples.
+- 💬 **Help Others**: Join our [Discord server](https://discord.gg/anxzu6rA9F) and help other users with their questions.
+
+All contributions are welcome! Please make sure to read our contribution guidelines before making a pull request.
 
 
 ## 📜 What projects use Python Datapack?
