@@ -94,7 +94,7 @@ Those are automatically recognized, you don't need to put them in a "components"
   "custom_data": {"smithed": {"dict": {"armor": {"steel": true,"helmet": true}},"ignore": {"functionality": true,"crafting": true}},"your_namespace": {"steel_helmet": true}},
   "dyed_color": {"rgb": 4605510,"show_in_tooltip": false},
   "max_damage": 495,
-  "attribute_modifiers": [{"type": "generic.armor","amount": 2.5,"operation": "add_value","slot": "head","id": "your_namespace:generic.armor.head"}],
+  "attribute_modifiers": [{"type": "armor","amount": 2.5,"operation": "add_value","slot": "head","id": "your_namespace:armor.head"}],
   "custom_model_data": 30008,
   "item_name": "{'text': 'Steel Helmet', 'italic': false, 'color': 'white'}",
   "lore": ["{'text': 'Template', 'italic': true, 'color': 'blue'}"]
