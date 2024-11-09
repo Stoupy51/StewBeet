@@ -54,5 +54,8 @@ say Here is a message when loading the datapack, located in `user/link.py`
 	#	write_to_tick_file(config, ...)
 	#	write_to_versioned_file(config, "tick", ...)
 
+	# Create a random function
+	write_to_function(config, f"{namespace}:path/to/a/random/function/i/guess", "say Hello world!")
+
 	pass
 

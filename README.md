@@ -56,6 +56,7 @@ Here a list of all the currently available guides:
 - [Writing to files](docs/3_writing_to_files.md)
 - [External dependencies](docs/4_external_dependencies.md)
 - [Miscellaneous](docs/5_miscellaneous.md)
+- [Migration guide](docs/6_migration_guide.md)
 - More soon!
 
 
