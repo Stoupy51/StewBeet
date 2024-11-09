@@ -13,7 +13,7 @@ Before migrating your project, make sure you have:
 1. Clone or download this template repository.
 2. Move your datapack and resource pack files into the [`merge` folder](../merge).
 3. Configure your [`config.py`](../config.py) with your project details.
-4. Run `build.py` and check the generated files in `build/`.
+4. Run `build.py` and check the generated files in the [`build` folder](../build).
 
 
 ## 🚨 Important Notes
