@@ -8,7 +8,15 @@ I **highly recommend** using the second method, as it is easier and faster.
 
 ## 📝 Method 1: Direct Database Entry
 The first method involves directly defining the sword in your database.<br>
-I'll go progressively through the code, explaining each part.
+I'll go progressively through the code, explaining each part.<br>
+Item definition should be written in the `main()` function:
+```py
+...
+def main():
+	...
+	database["test_sword"] = {...}
+	...
+```
 
 The simplest way is to simply define the item in the database like this:
 ```py
