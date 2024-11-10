@@ -57,6 +57,7 @@ Here a list of all the currently available guides:
 - [External dependencies](docs/4_external_dependencies.md)
 - [Miscellaneous](docs/5_miscellaneous.md)
 - [Migration guide](docs/6_migration_guide.md)
+- [Adding a sword](docs/specific_guides/adding_a_sword.md)
 - More soon!
 
 
