@@ -16,9 +16,8 @@
 								},
 								"minecraft:max_damage": 750,
 								"minecraft:attribute_modifiers": [
-									{"type": "attack_damage","amount": 7,"operation": "add_value","slot": "mainhand","id": "your_namespace:attack_damage.mainhand"},
-									{"type": "attack_speed","amount": -2.5,"operation": "add_value","slot": "mainhand","id": "your_namespace:attack_speed.mainhand"},
-									{"type": "mining_efficiency","amount": 0.2,"operation": "add_value","slot": "mainhand","id": "your_namespace:mining_efficiency.mainhand"}
+									{"type": "attack_damage","amount": 6,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_damage"},
+									{"type": "attack_speed","amount": -2.4,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_speed"}
 								],
 								"minecraft:item_model": "your_namespace:steel_sword",
 								"minecraft:item_name": "{'translate':'your_namespace.steel_sword', 'italic': false, 'color': 'white'}",

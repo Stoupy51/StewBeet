@@ -97,7 +97,7 @@
 		"custom_data": {"smithed": {"dict": {"tools": {"steel": true,"sword": true}},"ignore": {"functionality": true,"crafting": true}},"your_namespace": {"steel_sword": true}},
 		"max_damage": 750,
 		"result_of_crafting": [{"type": "crafting_shaped","result_count": 1,"category": "equipment","shape": ["X","X","S"],"ingredients": {"X": {"components": {"minecraft:custom_data": {"your_namespace": {"steel_ingot": true}}}},"S": {"item": "minecraft:stick"}}}],
-		"attribute_modifiers": [{"type": "attack_damage","amount": 7,"operation": "add_value","slot": "mainhand","id": "your_namespace:attack_damage.mainhand"},{"type": "attack_speed","amount": -2.5,"operation": "add_value","slot": "mainhand","id": "your_namespace:attack_speed.mainhand"},{"type": "mining_efficiency","amount": 0.2,"operation": "add_value","slot": "mainhand","id": "your_namespace:mining_efficiency.mainhand"}],
+		"attribute_modifiers": [{"type": "attack_damage","amount": 6,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_damage"},{"type": "attack_speed","amount": -2.4,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_speed"}],
 		"item_model": "your_namespace:steel_sword",
 		"item_name": "{'text': 'Steel Sword', 'italic': false, 'color': 'white'}",
 		"lore": ["{'text': 'Template', 'italic': true, 'color': 'blue'}"]
@@ -108,7 +108,7 @@
 		"custom_data": {"smithed": {"dict": {"tools": {"steel": true,"pickaxe": true}},"ignore": {"functionality": true,"crafting": true}},"your_namespace": {"steel_pickaxe": true}},
 		"max_damage": 750,
 		"result_of_crafting": [{"type": "crafting_shaped","result_count": 1,"category": "equipment","shape": ["XXX"," S "," S "],"ingredients": {"X": {"components": {"minecraft:custom_data": {"your_namespace": {"steel_ingot": true}}}},"S": {"item": "minecraft:stick"}}}],
-		"attribute_modifiers": [{"type": "attack_damage","amount": 5,"operation": "add_value","slot": "mainhand","id": "your_namespace:attack_damage.mainhand"},{"type": "attack_speed","amount": -2.75,"operation": "add_value","slot": "mainhand","id": "your_namespace:attack_speed.mainhand"},{"type": "mining_efficiency","amount": 0.2,"operation": "add_value","slot": "mainhand","id": "your_namespace:mining_efficiency.mainhand"}],
+		"attribute_modifiers": [{"type": "attack_damage","amount": 4,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_damage"},{"type": "attack_speed","amount": -2.8,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_speed"},{"type": "mining_efficiency","amount": 0.2,"operation": "add_value","slot": "mainhand","id": "your_namespace:mining_efficiency.mainhand"}],
 		"item_model": "your_namespace:steel_pickaxe",
 		"item_name": "{'text': 'Steel Pickaxe', 'italic': false, 'color': 'white'}",
 		"lore": ["{'text': 'Template', 'italic': true, 'color': 'blue'}"]
@@ -119,7 +119,7 @@
 		"custom_data": {"smithed": {"dict": {"tools": {"steel": true,"axe": true}},"ignore": {"functionality": true,"crafting": true}},"your_namespace": {"steel_axe": true}},
 		"max_damage": 750,
 		"result_of_crafting": [{"type": "crafting_shaped","result_count": 1,"category": "equipment","shape": ["XX","XS"," S"],"ingredients": {"X": {"components": {"minecraft:custom_data": {"your_namespace": {"steel_ingot": true}}}},"S": {"item": "minecraft:stick"}}}],
-		"attribute_modifiers": [{"type": "attack_damage","amount": 10,"operation": "add_value","slot": "mainhand","id": "your_namespace:attack_damage.mainhand"},{"type": "attack_speed","amount": -3.1,"operation": "add_value","slot": "mainhand","id": "your_namespace:attack_speed.mainhand"},{"type": "mining_efficiency","amount": 0.2,"operation": "add_value","slot": "mainhand","id": "your_namespace:mining_efficiency.mainhand"}],
+		"attribute_modifiers": [{"type": "attack_damage","amount": 9,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_damage"},{"type": "attack_speed","amount": -3.1,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_speed"},{"type": "mining_efficiency","amount": 0.2,"operation": "add_value","slot": "mainhand","id": "your_namespace:mining_efficiency.mainhand"}],
 		"item_model": "your_namespace:steel_axe",
 		"item_name": "{'text': 'Steel Axe', 'italic': false, 'color': 'white'}",
 		"lore": ["{'text': 'Template', 'italic': true, 'color': 'blue'}"]
@@ -130,7 +130,7 @@
 		"custom_data": {"smithed": {"dict": {"tools": {"steel": true,"shovel": true}},"ignore": {"functionality": true,"crafting": true}},"your_namespace": {"steel_shovel": true}},
 		"max_damage": 750,
 		"result_of_crafting": [{"type": "crafting_shaped","result_count": 1,"category": "equipment","shape": ["X","S","S"],"ingredients": {"X": {"components": {"minecraft:custom_data": {"your_namespace": {"steel_ingot": true}}}},"S": {"item": "minecraft:stick"}}}],
-		"attribute_modifiers": [{"type": "attack_damage","amount": 5.5,"operation": "add_value","slot": "mainhand","id": "your_namespace:attack_damage.mainhand"},{"type": "attack_speed","amount": -3.1,"operation": "add_value","slot": "mainhand","id": "your_namespace:attack_speed.mainhand"},{"type": "mining_efficiency","amount": 0.2,"operation": "add_value","slot": "mainhand","id": "your_namespace:mining_efficiency.mainhand"}],
+		"attribute_modifiers": [{"type": "attack_damage","amount": 4.5,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_damage"},{"type": "attack_speed","amount": -3.0,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_speed"},{"type": "mining_efficiency","amount": 0.2,"operation": "add_value","slot": "mainhand","id": "your_namespace:mining_efficiency.mainhand"}],
 		"item_model": "your_namespace:steel_shovel",
 		"item_name": "{'text': 'Steel Shovel', 'italic': false, 'color': 'white'}",
 		"lore": ["{'text': 'Template', 'italic': true, 'color': 'blue'}"]
@@ -141,7 +141,7 @@
 		"custom_data": {"smithed": {"dict": {"tools": {"steel": true,"hoe": true}},"ignore": {"functionality": true,"crafting": true}},"your_namespace": {"steel_hoe": true}},
 		"max_damage": 750,
 		"result_of_crafting": [{"type": "crafting_shaped","result_count": 1,"category": "equipment","shape": ["XX"," S"," S"],"ingredients": {"X": {"components": {"minecraft:custom_data": {"your_namespace": {"steel_ingot": true}}}},"S": {"item": "minecraft:stick"}}}],
-		"attribute_modifiers": [{"type": "attack_damage","amount": 2,"operation": "add_value","slot": "mainhand","id": "your_namespace:attack_damage.mainhand"},{"type": "attack_speed","amount": -1.0,"operation": "add_value","slot": "mainhand","id": "your_namespace:attack_speed.mainhand"},{"type": "mining_efficiency","amount": 0.2,"operation": "add_value","slot": "mainhand","id": "your_namespace:mining_efficiency.mainhand"}],
+		"attribute_modifiers": [{"type": "attack_damage","amount": 1,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_damage"},{"type": "attack_speed","amount": -1.0,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_speed"},{"type": "mining_efficiency","amount": 0.2,"operation": "add_value","slot": "mainhand","id": "your_namespace:mining_efficiency.mainhand"}],
 		"item_model": "your_namespace:steel_hoe",
 		"item_name": "{'text': 'Steel Hoe', 'italic': false, 'color': 'white'}",
 		"lore": ["{'text': 'Template', 'italic': true, 'color': 'blue'}"]
