@@ -11,9 +11,9 @@
 							"function": "minecraft:set_components",
 							"components": {
 								"minecraft:item_model": "your_namespace:super_stone",
-								"minecraft:item_name": "{'translate':'your_namespace.super_stone', 'italic': false, 'color': 'white'}",
+								"minecraft:item_name": "{\"translate\":\"your_namespace.super_stone\", \"italic\": false, \"color\": \"white\"}",
 								"minecraft:lore": [
-									"{'translate':'your_namespace.template', 'italic': true, 'color': 'blue'}"
+									"{\"translate\":\"your_namespace.template\", \"italic\": true, \"color\": \"blue\"}"
 								],
 								"minecraft:custom_data": {
 									"your_namespace": {"super_stone": true},

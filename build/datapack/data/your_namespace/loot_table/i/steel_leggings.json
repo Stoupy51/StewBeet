@@ -27,9 +27,9 @@
 									{"type": "armor","amount": 5.5,"operation": "add_value","slot": "legs","id": "your_namespace:armor.legs"}
 								],
 								"minecraft:item_model": "your_namespace:steel_leggings",
-								"minecraft:item_name": "{'translate':'your_namespace.steel_leggings', 'italic': false, 'color': 'white'}",
+								"minecraft:item_name": "{\"translate\":\"your_namespace.steel_leggings\", \"italic\": false, \"color\": \"white\"}",
 								"minecraft:lore": [
-									"{'translate':'your_namespace.template', 'italic': true, 'color': 'blue'}"
+									"{\"translate\":\"your_namespace.template\", \"italic\": true, \"color\": \"blue\"}"
 								]
 							}
 						}

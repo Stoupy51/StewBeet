@@ -28,8 +28,9 @@ def main(config: dict) -> dict[str, dict]:
 	database: dict[str,dict] = {}
 	namespace: str = config["namespace"]
 
-	# Generate ores in database (add every stuff related to steel and stone found in the textures folder to the database)
+	# Generate ores in database (add every stuff (found in the textures folder) related to the given materials, to the database)
 	generate_everything_about_these_materials(config, database, ORES_CONFIGS)
+
 	database["steel_ingot"][WIKI_COMPONENT] = [
 		{"text":"Here is an example of a wiki component, this text component will be displayed as a button in the manual.\n"},
 		{"text":"You can write anything you want here.","color":"yellow"},

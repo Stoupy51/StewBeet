@@ -15,9 +15,9 @@
 									"your_namespace": {"steel_dust": true}
 								},
 								"minecraft:item_model": "your_namespace:steel_dust",
-								"minecraft:item_name": "{'translate':'your_namespace.steel_dust', 'italic': false, 'color': 'white'}",
+								"minecraft:item_name": "{\"translate\":\"your_namespace.steel_dust\", \"italic\": false, \"color\": \"white\"}",
 								"minecraft:lore": [
-									"{'translate':'your_namespace.template', 'italic': true, 'color': 'blue'}"
+									"{\"translate\":\"your_namespace.template\", \"italic\": true, \"color\": \"blue\"}"
 								]
 							}
 						}

@@ -22,9 +22,9 @@
 				}
 			},
 			"minecraft:item_model": "your_namespace:steel_nugget",
-			"minecraft:item_name": "{'translate':'your_namespace.steel_nugget', 'italic': false, 'color': 'white'}",
+			"minecraft:item_name": "{\"translate\":\"your_namespace.steel_nugget\", \"italic\": false, \"color\": \"white\"}",
 			"minecraft:lore": [
-				"{'translate':'your_namespace.template', 'italic': true, 'color': 'blue'}"
+				"{\"translate\":\"your_namespace.template\", \"italic\": true, \"color\": \"blue\"}"
 			]
 		}
 	},

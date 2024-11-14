@@ -27,9 +27,9 @@
 									{"type": "armor","amount": 2.5,"operation": "add_value","slot": "feet","id": "your_namespace:armor.feet"}
 								],
 								"minecraft:item_model": "your_namespace:steel_boots",
-								"minecraft:item_name": "{'translate':'your_namespace.steel_boots', 'italic': false, 'color': 'white'}",
+								"minecraft:item_name": "{\"translate\":\"your_namespace.steel_boots\", \"italic\": false, \"color\": \"white\"}",
 								"minecraft:lore": [
-									"{'translate':'your_namespace.template', 'italic': true, 'color': 'blue'}"
+									"{\"translate\":\"your_namespace.template\", \"italic\": true, \"color\": \"blue\"}"
 								]
 							}
 						}
