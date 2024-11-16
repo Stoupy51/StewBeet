@@ -14,10 +14,6 @@
 									"smithed": {"dict": {"armor": {"steel": true,"helmet": true}},"ignore": {"functionality": true,"crafting": true}},
 									"your_namespace": {"steel_helmet": true}
 								},
-								"minecraft:dyed_color": {
-									"rgb": 5460819,
-									"show_in_tooltip": false
-								},
 								"minecraft:max_damage": 495,
 								"minecraft:equippable": {
 									"slot": "head",

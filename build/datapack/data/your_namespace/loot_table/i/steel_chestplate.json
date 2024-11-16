@@ -14,10 +14,6 @@
 									"smithed": {"dict": {"armor": {"steel": true,"chestplate": true}},"ignore": {"functionality": true,"crafting": true}},
 									"your_namespace": {"steel_chestplate": true}
 								},
-								"minecraft:dyed_color": {
-									"rgb": 5460819,
-									"show_in_tooltip": false
-								},
 								"minecraft:max_damage": 720,
 								"minecraft:equippable": {
 									"slot": "chest",

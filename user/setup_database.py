@@ -52,9 +52,6 @@ def main(config: dict) -> dict[str, dict]:
     # Don't forget to add the vanilla blocks for the custom blocks (not automatic even though they was recognized by generate_everything_about_these_materials())
     database["steel_block"][VANILLA_BLOCK] = {"id": "minecraft:iron_block", "apply_facing": False}			# Placeholder for the base block
     database["raw_steel_block"][VANILLA_BLOCK] = {"id": "minecraft:raw_iron_block", "apply_facing": False}	# Placeholder for the base block
-    for ore in ["steel_ore","deepslate_steel_ore"]:
-        database[ore][VANILLA_BLOCK] = VANILLA_BLOCK_FOR_ORES	# Placeholder for the base block (required for custom ores)
-        database[ore][NO_SILK_TOUCH_DROP] = "raw_steel"			# Drop without silk touch (raw_steel is an item in the database)
 
     # Add a recipe for the future generated manual (the manual recipe will show up in itself)
     manual_name: str = config.get("manual_name", "Manual")
