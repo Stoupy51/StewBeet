@@ -1,5 +1,9 @@
 
 # Python Datapack Template
+
+[![GitHub](https://img.shields.io/github/v/release/Stoupy51/python_datapack?logo=github&label=GitHub)](https://github.com/Stoupy51/python_datapack/releases/latest)
+[![Discord](https://img.shields.io/discord/1216400498488377467?label=Discord&logo=discord)](https://discord.gg/anxzu6rA9F)
+
 ## ❓ What is `python_datapack`
 `python_datapack` is a [Python package](https://github.com/Stoupy51/python_datapack) 📦 (and a template) aiming to provide huge automation for creating Minecraft datapacks.<br>
 It is designed to be very simple to use and very convenient for developers.<br>
