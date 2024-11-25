@@ -44,9 +44,9 @@ Since this template is using all the features of the package, you can remove the
 
 ## 🔧 Minecraft version
 The Minecraft version will depend on the version of the package you are using.<br>
-Currently, this template is using the `1.21.0.x` version of the package.<br>
-As you can see, the `x` is the version of the package and the `1.21.0` is the Minecraft version.<br>
-If you have Python knowledge, you can use previous versions of the package with `pip install python_datapack==1.21.0.x`.<br>
+Currently, this template is using the `1.21.3.x` version of the package.<br>
+As you can see, the `x` is the version of the package and the `1.21.3` is the Minecraft version.<br>
+If you have Python knowledge, you can use previous versions of the package with `pip install python_datapack==1.21.3.x`.<br>
 But warned ⚠️, the template could use features that are not available in the previous versions.<br>
 
 
