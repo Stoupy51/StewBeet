@@ -1,5 +1,5 @@
 
-#> your_namespace:path/to/a/random
+#> your_namespace:path/to/a/random/function/i/guess
 #
 # @within	???
 #

@@ -82,10 +82,10 @@
 	"your_namespace.total_custom_blocks": "- Total custom blocks: ",
 	"your_namespace.template_error_this_version_is_made_for_minecraft_1_21_3": "Template Error: This version is made for Minecraft 1.21.3+.",
 	"your_namespace.template_error_libraries_are_missingplease_download_the_right_te": "Template Error: Libraries are missing\nplease download the right Template datapack\nor download each of these libraries one by one:",
-	"your_namespace.common_signals_v0_0_5": "- [Common Signals (v0.0.5+)]",
+	"your_namespace.common_signals_v0_1_0": "- [Common Signals (v0.1.0+)]",
 	"your_namespace.smithed_custom_block_v0_5_0": "- [Smithed Custom Block (v0.5.0+)]",
 	"your_namespace.smithed_crafter_v0_5_0": "- [Smithed Crafter (v0.5.0+)]",
-	"your_namespace.furnace_nbt_recipes_v1_7_0": "- [Furnace NBT Recipes (v1.7.0+)]",
-	"your_namespace.smart_ore_generation_v1_6_0": "- [Smart Ore Generation (v1.6.0+)]"
+	"your_namespace.furnace_nbt_recipes_v1_8_0": "- [Furnace NBT Recipes (v1.8.0+)]",
+	"your_namespace.smartoregeneration_v1_7_1": "- [SmartOreGeneration (v1.7.1+)]"
 }
 

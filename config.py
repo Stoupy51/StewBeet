@@ -24,7 +24,7 @@ MERGE_LIBS: bool = True                             # Make new zip of merged lib
 AUTHOR: str = "Stoupy51"                # Author(s) name(s) displayed in pack.mcmeta, also used to add convention.debug tag to the players of the same name(s) <-- showing additionnal displays like datapack loading
 PROJECT_NAME: str = "Template"          # Name of the datapack, used for messages and items lore
 VERSION: str = "1.21.615"               # Project version in the following mandatory format: major.minor.patch, ex: 1.0.0 or 1.21.615
-NAMESPACE: str = "your_namespace"       # Simplified version of the datapack name. Should be the same you use in the merge folder. Used to namespace functions, tags, etc.
+NAMESPACE: str = "your_namespace"       # Simplified version of the datapack name. Used to namespace functions, tags, etc. Should be the same you use in the merge folder.
 DESCRIPTION = f"{PROJECT_NAME} [{VERSION}] by {AUTHOR}" # Pack description displayed in pack.mcmeta
 DEPENDENCIES: dict[str, dict[str, list[int] | str]] = {
     # Automagically, the datapack will check for the presence of dependencies and their minimum required versions at runtime
