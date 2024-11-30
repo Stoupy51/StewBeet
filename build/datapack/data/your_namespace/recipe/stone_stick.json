@@ -24,7 +24,7 @@
 			"minecraft:item_model": "your_namespace:stone_stick",
 			"minecraft:item_name": "{\"translate\":\"your_namespace.stone_stick\", \"italic\": false, \"color\": \"white\"}",
 			"minecraft:lore": [
-				"{\"translate\":\"your_namespace.template\", \"italic\": true, \"color\": \"blue\"}"
+				"{\"translate\":\"your_namespace.python_datapack_template\", \"italic\": true, \"color\": \"blue\"}"
 			]
 		}
 	}

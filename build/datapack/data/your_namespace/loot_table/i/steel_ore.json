@@ -17,7 +17,7 @@
 								"minecraft:item_model": "your_namespace:steel_ore",
 								"minecraft:item_name": "{\"translate\":\"your_namespace.steel_ore\", \"italic\": false, \"color\": \"white\"}",
 								"minecraft:lore": [
-									"{\"translate\":\"your_namespace.template\", \"italic\": true, \"color\": \"blue\"}"
+									"{\"translate\":\"your_namespace.python_datapack_template\", \"italic\": true, \"color\": \"blue\"}"
 								],
 								"minecraft:container": [
 									{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "your_namespace:steel_ore","from": "your_namespace"}}}}}}

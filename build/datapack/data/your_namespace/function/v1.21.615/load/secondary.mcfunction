@@ -4,7 +4,7 @@
 # @within	your_namespace:v1.21.615/load/main
 #
 
-# Template
+# Python Datapack Template
 scoreboard objectives add your_namespace.data dummy
 tag Stoupy51 add convention.debug
 
