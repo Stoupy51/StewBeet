@@ -219,7 +219,7 @@
 	},
 	"super_stone": {
 		"id": "minecraft:furnace",
-		"vanilla_block": {"id": "minecraft:stone","apply_facing": false},
+		"vanilla_block": {"id": "minecraft:cobblestone","apply_facing": false},
 		"result_of_crafting": [{"type": "crafting_shaped","result_count": 1,"group": "super_stone","category": "blocks","shape": ["XXX","XXX","XXX"],"ingredients": {"X": {"item": "minecraft:stone"}}},{"type": "crafting_shapeless","result_count": 1,"group": "super_stone","category": "blocks","ingredients": [{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"}]}],
 		"category": "misc",
 		"item_model": "your_namespace:super_stone",

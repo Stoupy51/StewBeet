@@ -11,7 +11,7 @@ tag @s add smithed.entity
 tag @s add smithed.block
 tag @s add your_namespace.custom_block
 tag @s add your_namespace.super_stone
-tag @s add your_namespace.vanilla.minecraft_stone
+tag @s add your_namespace.vanilla.minecraft_cobblestone
 
 # Modify item display entity to match the custom block
 item replace entity @s container.0 with minecraft:furnace[item_model="your_namespace:super_stone"]

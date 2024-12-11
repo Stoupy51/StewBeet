@@ -1,5 +1,5 @@
 
-#> your_namespace:custom_blocks/_groups/minecraft_stone
+#> your_namespace:custom_blocks/_groups/minecraft_cobblestone
 #
 # @within	your_namespace:custom_blocks/destroy
 #

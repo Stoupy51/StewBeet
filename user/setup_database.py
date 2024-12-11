@@ -39,11 +39,11 @@ def main(config: dict) -> dict[str, dict]:
     # Generate custom disc records
     generate_custom_records(config, database, "auto")
 
-    # Add a super stone block that can be crafted with 9 deepslate or stone, and has stone as base block
+    # Add a super stone block that can be crafted with 9 deepslate or stone, and has cobblestone as base block
     database["super_stone"] = {
-        "id": CUSTOM_BLOCK_VANILLA,											# Placeholder for the base block
-        VANILLA_BLOCK: {"id": "minecraft:stone", "apply_facing": False},	# Base block
-        RESULT_OF_CRAFTING: [												# Crafting recipes (shaped and shapeless examples)
+        "id": CUSTOM_BLOCK_VANILLA,												# Placeholder for the base block
+        VANILLA_BLOCK: {"id": "minecraft:cobblestone", "apply_facing": False},	# Base block
+        RESULT_OF_CRAFTING: [													# Crafting recipes (shaped and shapeless examples)
             {"type":"crafting_shaped","result_count":1,"group":"super_stone","category":"blocks","shape":["XXX","XXX","XXX"],"ingredients": {"X": ingr_repr("minecraft:stone")}},
             {"type":"crafting_shapeless","result_count":1,"group":"super_stone","category":"blocks","ingredients": 9 * [ingr_repr("minecraft:deepslate")] },
         ],

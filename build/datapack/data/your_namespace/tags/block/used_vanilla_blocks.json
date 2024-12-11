@@ -1,9 +1,9 @@
 {
 	"values": [
+		"minecraft:cobblestone",
 		"minecraft:iron_block",
 		"minecraft:polished_deepslate",
-		"minecraft:raw_iron_block",
-		"minecraft:stone"
+		"minecraft:raw_iron_block"
 	]
 }
 
