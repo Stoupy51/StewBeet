@@ -17,7 +17,7 @@
 								"minecraft:max_damage": 495,
 								"minecraft:equippable": {
 									"slot": "head",
-									"model": "your_namespace:steel"
+									"asset_id": "your_namespace:steel"
 								},
 								"minecraft:attribute_modifiers": [
 									{"type": "armor","amount": 2.5,"operation": "add_value","slot": "head","id": "your_namespace:armor.head"}

@@ -1,0 +1,7 @@
+{
+	"model": {
+		"type": "minecraft:model",
+		"model": "your_namespace:item/steel_stick"
+	}
+}
+

@@ -17,7 +17,7 @@
 								"minecraft:max_damage": 585,
 								"minecraft:equippable": {
 									"slot": "feet",
-									"model": "your_namespace:steel"
+									"asset_id": "your_namespace:steel"
 								},
 								"minecraft:attribute_modifiers": [
 									{"type": "armor","amount": 2.5,"operation": "add_value","slot": "feet","id": "your_namespace:armor.feet"}
