@@ -221,6 +221,7 @@
 		"id": "minecraft:furnace",
 		"vanilla_block": {"id": "minecraft:cobblestone","apply_facing": false},
 		"result_of_crafting": [{"type": "crafting_shaped","result_count": 1,"group": "super_stone","category": "blocks","shape": ["XXX","XXX","XXX"],"ingredients": {"X": {"item": "minecraft:stone"}}},{"type": "crafting_shapeless","result_count": 1,"group": "super_stone","category": "blocks","ingredients": [{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"}]}],
+		"used_for_crafting": [{"type": "smelting","result_count": 1,"cookingtime": 200,"experience": 0.1,"group": "super_stone","category": "blocks","ingredient": {"components": {"minecraft:custom_data": {"your_namespace": {"super_stone": true}}}},"result": {"item": "minecraft:diamond"}}],
 		"category": "misc",
 		"item_model": "your_namespace:super_stone",
 		"item_name": "{\"text\": \"Super Stone\", \"italic\": false, \"color\": \"white\"}",

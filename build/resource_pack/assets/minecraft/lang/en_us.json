@@ -67,6 +67,7 @@
 	"your_namespace.x3_stone": "\n- x3 Stone",
 	"your_namespace.x9_stone": "\n- x9 Stone",
 	"your_namespace.x9_deepslate": "\n- x9 Deepslate",
+	"your_namespace.x1_super_stone": "\n- x1 Super Stone",
 	"your_namespace.manual": "Manual\n",
 	"your_namespace.x1_manual": "\n- x1 Manual",
 	"your_namespace.loaded_python_datapack_template_v1_21_615": "[Loaded Python Datapack Template v1.21.615]",
@@ -85,7 +86,7 @@
 	"your_namespace.common_signals_v0_1_0": "- [Common Signals (v0.1.0+)]",
 	"your_namespace.smithed_custom_block_v0_6_2": "- [Smithed Custom Block (v0.6.2+)]",
 	"your_namespace.smithed_crafter_v0_6_2": "- [Smithed Crafter (v0.6.2+)]",
-	"your_namespace.furnace_nbt_recipes_v1_8_0": "- [Furnace NBT Recipes (v1.8.0+)]",
+	"your_namespace.furnace_nbt_recipes_v1_9_0": "- [Furnace NBT Recipes (v1.9.0+)]",
 	"your_namespace.smartoregeneration_v1_7_1": "- [SmartOreGeneration (v1.7.1+)]"
 }
 

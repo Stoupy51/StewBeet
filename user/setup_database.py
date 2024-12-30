@@ -47,6 +47,10 @@ def main(config: dict) -> dict[str, dict]:
             {"type":"crafting_shaped","result_count":1,"group":"super_stone","category":"blocks","shape":["XXX","XXX","XXX"],"ingredients": {"X": ingr_repr("minecraft:stone")}},
             {"type":"crafting_shapeless","result_count":1,"group":"super_stone","category":"blocks","ingredients": 9 * [ingr_repr("minecraft:deepslate")] },
         ],
+        # Exemple of recipe with vanilla result (not custom item)
+        USED_FOR_CRAFTING: [
+            {"type":"smelting","result_count":1,"cookingtime":200,"experience":0.1,"group":"super_stone","category":"blocks","ingredient":ingr_repr("super_stone", namespace),"result":ingr_repr("minecraft:diamond")},
+        ]
     }
 
     # Don't forget to add the vanilla blocks for the custom blocks (not automatic even though they was recognized by generate_everything_about_these_materials())
