@@ -25,7 +25,7 @@
 								"minecraft:item_model": "your_namespace:steel_chestplate",
 								"minecraft:item_name": "{\"translate\":\"your_namespace.steel_chestplate\", \"italic\": false, \"color\": \"white\"}",
 								"minecraft:lore": [
-									"{\"translate\":\"your_namespace.python_datapack_template\", \"italic\": true, \"color\": \"blue\"}"
+									"[\"\", {\"text\":\"I\", \"color\": \"white\", \"italic\": false, \"font\": \"your_namespace:icons\"}, {\"translate\":\"your_namespace.python_datapack_template\", \"italic\": true, \"color\": \"blue\"}]"
 								]
 							}
 						}
