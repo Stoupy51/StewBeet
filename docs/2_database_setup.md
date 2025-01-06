@@ -95,7 +95,7 @@ Those are automatically recognized, you don't need to put them in a "components"
   "dyed_color": {"rgb": 4605510,"show_in_tooltip": false},
   "max_damage": 495,
   "attribute_modifiers": [{"type": "armor","amount": 2.5,"operation": "add_value","slot": "head","id": "your_namespace:armor.head"}],
-  "custom_model_data": 30008,
+  "item_model": "your_namespace:steel_helmet",
   "item_name": "{'text': 'Steel Helmet', 'italic': false, 'color': 'white'}",
   "lore": ["{'text': 'Template', 'italic': true, 'color': 'blue'}"]
 },
@@ -108,7 +108,7 @@ This section will not detail function parameters but will just enumerate them, c
 - `generate_everything_about_these_materials()`: 🧪 Will seek for every item related to the given materials such as armor, tool, nugget, etc.
 - `add_recipes_for_all_dusts()`: ⚙️ Add recipes for dusts using special compatiblity with SimplEnergy's pulverizer.
 - `generate_custom_records()`: 🎶 Will seek for every .ogg file in the [records folder](../assets/records/) and add them to the database.
-- `deterministic_custom_model_data()`: 📜 Uses the [`cmd_cache.json`](../cmd_cache.json) file to give custom model data to every item in the database.
+- `add_item_model_component()`: 📜 Adds the item model to every item in the database if missing.
 - `add_item_name_and_lore_if_missing()`: 🧻 Adds item name and lore components for every item in the database if missing.
 - `add_private_custom_data_for_namespace()`: 🔍 Adds a custom data component to easily identify the item with commands.
 - `add_smithed_ignore_vanilla_behaviours_convention()`: 🚫 As the name implies, adds custom data for a Smithed convention.
