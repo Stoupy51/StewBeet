@@ -23,9 +23,13 @@
 									{"type": "armor","amount": 6.5,"operation": "add_value","slot": "chest","id": "your_namespace:armor.chest"}
 								],
 								"minecraft:item_model": "your_namespace:steel_chestplate",
-								"minecraft:item_name": "{\"translate\":\"your_namespace.steel_chestplate\", \"italic\": false, \"color\": \"white\"}",
+								"minecraft:item_name": {
+									"translate":"your_namespace.steel_chestplate",
+									"italic": false,
+									"color": "white"
+								},
 								"minecraft:lore": [
-									"[\"\", {\"text\":\"I\", \"color\": \"white\", \"italic\": false, \"font\": \"your_namespace:icons\"}, {\"translate\":\"your_namespace.python_datapack_template\", \"italic\": true, \"color\": \"blue\"}]"
+									["",{"text":"I","color": "white","italic": false,"font": "your_namespace:icons"},{"translate":"your_namespace.python_datapack_template","italic": true,"color": "blue"}]
 								]
 							}
 						}

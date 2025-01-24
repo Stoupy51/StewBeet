@@ -20,9 +20,13 @@
 									{"type": "attack_speed","amount": -2.4,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_speed"}
 								],
 								"minecraft:item_model": "your_namespace:steel_sword",
-								"minecraft:item_name": "{\"translate\":\"your_namespace.steel_sword\", \"italic\": false, \"color\": \"white\"}",
+								"minecraft:item_name": {
+									"translate":"your_namespace.steel_sword",
+									"italic": false,
+									"color": "white"
+								},
 								"minecraft:lore": [
-									"[\"\", {\"text\":\"I\", \"color\": \"white\", \"italic\": false, \"font\": \"your_namespace:icons\"}, {\"translate\":\"your_namespace.python_datapack_template\", \"italic\": true, \"color\": \"blue\"}]"
+									["",{"text":"I","color": "white","italic": false,"font": "your_namespace:icons"},{"translate":"your_namespace.python_datapack_template","italic": true,"color": "blue"}]
 								]
 							}
 						}

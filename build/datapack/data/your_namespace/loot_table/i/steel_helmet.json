@@ -23,9 +23,13 @@
 									{"type": "armor","amount": 2.5,"operation": "add_value","slot": "head","id": "your_namespace:armor.head"}
 								],
 								"minecraft:item_model": "your_namespace:steel_helmet",
-								"minecraft:item_name": "{\"translate\":\"your_namespace.steel_helmet\", \"italic\": false, \"color\": \"white\"}",
+								"minecraft:item_name": {
+									"translate":"your_namespace.steel_helmet",
+									"italic": false,
+									"color": "white"
+								},
 								"minecraft:lore": [
-									"[\"\", {\"text\":\"I\", \"color\": \"white\", \"italic\": false, \"font\": \"your_namespace:icons\"}, {\"translate\":\"your_namespace.python_datapack_template\", \"italic\": true, \"color\": \"blue\"}]"
+									["",{"text":"I","color": "white","italic": false,"font": "your_namespace:icons"},{"translate":"your_namespace.python_datapack_template","italic": true,"color": "blue"}]
 								]
 							}
 						}

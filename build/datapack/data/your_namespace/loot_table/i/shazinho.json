@@ -14,16 +14,16 @@
 									"your_namespace": {"shazinho": true},
 									"smithed": {"dict": {"record": {"shazinho": true}},"ignore": {"functionality": true,"crafting": true}}
 								},
-								"minecraft:item_name": "{'translate':'your_namespace.music_disc', 'italic': false}",
-								"minecraft:jukebox_playable": {
-									"song": "your_namespace:shazinho",
-									"show_in_tooltip": true
+								"minecraft:item_name": {
+									"translate":"your_namespace.music_disc",
+									"italic": false
 								},
+								"minecraft:jukebox_playable": "your_namespace:shazinho",
 								"minecraft:max_stack_size": 1,
 								"minecraft:rarity": "rare",
 								"minecraft:item_model": "your_namespace:shazinho",
 								"minecraft:lore": [
-									"[\"\", {\"text\":\"I\", \"color\": \"white\", \"italic\": false, \"font\": \"your_namespace:icons\"}, {\"translate\":\"your_namespace.python_datapack_template\", \"italic\": true, \"color\": \"blue\"}]"
+									["",{"text":"I","color": "white","italic": false,"font": "your_namespace:icons"},{"translate":"your_namespace.python_datapack_template","italic": true,"color": "blue"}]
 								]
 							}
 						}
