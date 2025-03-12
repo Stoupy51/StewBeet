@@ -12,7 +12,7 @@ execute store result score #game_version your_namespace.data run data get entity
 
 # Check if the game version is supported
 scoreboard players set #mcload_error your_namespace.data 0
-execute unless score #game_version your_namespace.data matches 4082.. run scoreboard players set #mcload_error your_namespace.data 1
+execute unless score #game_version your_namespace.data matches 4321.. run scoreboard players set #mcload_error your_namespace.data 1
 
 # Decode errors
 execute if score #mcload_error your_namespace.data matches 1 run tellraw @a {"translate":"your_namespace.python_datapack_template_error_this_version_is_made_for_minecraf","color":"red"}

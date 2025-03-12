@@ -47,9 +47,9 @@ say Here is a message when loading the datapack, located in `user/link.py`
 
     ## Clock functions
     # When you write to the following files: "tick_2", "second", "second_5", "minute"... the tick function will automatically call them, ex:
-    write_to_versioned_file(config, "minute", f"execute if score #spam {namespace}.data matches 1 run say This is a message every minute\n")
-    write_to_versioned_file(config, "second_5", f"execute if score #spam {namespace}.data matches 1 run say This is a SPAM message every 5 seconds\n")
-    write_to_versioned_file(config, "tick_2", f"execute if score #spam {namespace}.data matches 1 run say This is a SPAM message every 2 ticks\n")
+    write_to_versioned_function(config, "minute", f"execute if score #spam {namespace}.data matches 1 run say This is a message every minute\n")
+    write_to_versioned_function(config, "second_5", f"execute if score #spam {namespace}.data matches 1 run say This is a SPAM message every 5 seconds\n")
+    write_to_versioned_function(config, "tick_2", f"execute if score #spam {namespace}.data matches 1 run say This is a SPAM message every 2 ticks\n")
     # The two following functions calls are equivalent:
     #	write_to_tick_file(config, ...)
     #	write_to_versioned_file(config, "tick", ...)

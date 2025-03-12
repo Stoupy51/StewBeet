@@ -1,6 +1,6 @@
 
 # Get start time & Enable colors in Windows 10 console
-from python_datapack.utils.print import *
+import stouputils as stp
 import os
 import time
 START_TIME = time.perf_counter()
@@ -29,9 +29,9 @@ for root, _, files in os.walk("./"):
 		
 		# Save image
 		image.save(filepath)
-		info(f"Optimized '{file}'")
+		stp.info(f"Optimized '{file}'")
 
 # Total time
 total_time = time.perf_counter() - START_TIME
-info(f"Textures optimized in {total_time:.3f} seconds")
+stp.info(f"Textures optimized in {total_time:.3f} seconds")
 

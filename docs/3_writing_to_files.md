@@ -26,12 +26,6 @@ The module provides several functions for managing files:
 - `write_all_files()`: 💾 Write all queued files to disk, optionally filtering by path (you'll probably don't need this unless you are debugging or use an external tool to read the files)
 
 
-## ⚙️ JSON Dump
-If you are experienced with Python, you may know how to use the `json.dumps()` function 📜.<br>
-However, the `python_datapack.utils.io` import provides to you the `super_json_dump()` function where you can precise the indentation depth level.<br>
-It is used pretty much everywhere during the build process because it is very convenient to make JSON files readable, such as the [`database_debug.json`](../database_debug.json) file using a max_level of 2.
-
-
 ## 📚 Conclusion
 This guide was pretty much simple as there wasn't much to cover but I hope you understood it well!<br>
 Thank you for reading 🙌.

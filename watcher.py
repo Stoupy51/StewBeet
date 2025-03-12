@@ -10,15 +10,15 @@ except ImportError:
 	sys.exit(-1)
 
 # Import configuration and watcher
+import stouputils as stp
 from config import configuration, ROOT
-from python_datapack.utils.print import error
 from python_datapack.watcher import watcher
 
 
 # Main
 if __name__ == "__main__":
 	if not check_config_format(configuration):
-		error("Invalid config format, please check the documentation")
+		stp.error("Invalid config format, please check the documentation")
 
 	# Setup and start file watcher
 	configs_to_get: list[str] = ["merge_folder", "assets_folder", "libs_folder"]

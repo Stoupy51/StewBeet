@@ -4,8 +4,11 @@ import sys
 import os
 try:
 	from python_datapack import build_process
-except ImportError:
-	print("python_datapack package not found, installing it...")
+except ImportError as e:
+	import traceback
+	traceback.print_exc()
+
+	print("\npython_datapack package not found, installing it...")
 	os.system(f"{sys.executable} -m pip install python_datapack")
 	print("\npython_datapack package has been installed.\nPlease restart the build script!")
 	sys.exit(-1)
