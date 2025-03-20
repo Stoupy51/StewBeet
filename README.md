@@ -37,7 +37,7 @@ Here is a list of features that the package provides (the template is using all 
 
 
 ## 📦 How to use
-In order to use the package, you need to have at least [Python 3.10](https://www.python.org/downloads/) or higher installed on your computer.<br>
+In order to use the package, you need to have at least [Python 3.12](https://www.python.org/downloads/) or higher installed on your computer.<br>
 Then, you can clone this repository and start configuring the `config.py` script.<br>
 Every configuration is explained in the file.<br>
 Once you have configured the script, you can run the `build.py` script.<br>

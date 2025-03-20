@@ -7,16 +7,16 @@ To avoid this issue, the `python_datapack` module brings a system for writing fi
 
 ## 📚 Reading and writing functions
 - `read_file()`: 📖 This function takes a file path and returns its content without raising any error if the file path doesn't exists
-- `write_to_file()`: ✍️ Taking the file path and its content, you can indicate if you want to prepend the content, or if you want to overwrite it. If you write to a json file but there are already content in it, both content will be merged unless you put the overwrite boolean to true.
-- `write_to_function()`: 📝 Write content to a function file using Minecraft function notation (e.g., "namespace:folder/function_name"). If no namespace is provided, it defaults to "minecraft".
+- `write_file()`: ✍️ Taking the file path and its content, you can indicate if you want to prepend the content, or if you want to overwrite it. If you write to a json file but there are already content in it, both content will be merged unless you put the overwrite boolean to true.
+- `write_function()`: 📝 Write content to a function file using Minecraft function notation (e.g., "namespace:folder/function_name"). If no namespace is provided, it defaults to "minecraft".
 
 
 ## 🔧 Versioned functions
 As you may know, a few functions such as the load and tick functions 🗂️ are located in a folder containing the version of your datapack with a path like `build/datapack/data/<namespace>/function/v1.0.0/tick.mcfunction`.<br>
 Writing the entire file path again and again can be sometimes annoying, so I created 3 functions to help you out:
-- `write_to_load_file()`: ⚡ Allows you to write directly to the load file.
-- `write_to_tick_file()`: ⏱️ Allows you to write directly to the tick file.
-- `write_to_versioned_file()`: ⏳ This function will automatically prepend the whole path to the folder and append `.mcfunction` at the end, so to write to the tick file for example you can give this relative path: `tick`.
+- `write_load_file()`: ⚡ Allows you to write directly to the load file.
+- `write_tick_file()`: ⏱️ Allows you to write directly to the tick file.
+- `write_versioned_file()`: ⏳ This function will automatically prepend the whole path to the folder and append `.mcfunction` at the end, so to write to the tick file for example you can give this relative path: `tick`.
 
 
 ## 🗑️ File Management

@@ -4,7 +4,7 @@ This guide will help you migrate your project to use Python Datapack in a few si
 
 ## 🔧 Prerequisites
 Before migrating your project, make sure you have:
-- Python 3.10 or higher installed.
+- Python 3.12 or higher installed.
 - A working datapack that you want to migrate.
 - Understood the [project structure](./1_project_structure.md) with the guide.
 

@@ -13,5 +13,5 @@ The format is the same as the setup_database.py file.
 ## link.py
 This script is used to run your own python code before the build process finalize.
 You can use this script to dynamically write files in the build folder.
-If so, you must use the efficient `write_to_file` function in `python_datapack.utils.io` module.
+If so, you must use the efficient `write_file` function in `python_datapack.utils.io` module.
 
