@@ -60,8 +60,8 @@
 	"your_namespace.python_datapack_template_error_this_version_is_made_for_minecraf": "Python Datapack Template Error: This version is made for Minecraft 1.21.5+.",
 	"your_namespace.python_datapack_template_error_libraries_are_missingplease_downl": "Python Datapack Template Error: Libraries are missing\nplease download the right Python Datapack Template datapack\nor download each of these libraries one by one:",
 	"your_namespace.common_signals_v0_1_0": "- [Common Signals (v0.1.0+)]",
-	"your_namespace.smithed_custom_block_v0_6_2": "- [Smithed Custom Block (v0.6.2+)]",
-	"your_namespace.smithed_crafter_v0_6_2": "- [Smithed Crafter (v0.6.2+)]",
+	"your_namespace.smithed_custom_block_v0_7_0": "- [Smithed Custom Block (v0.7.0+)]",
+	"your_namespace.smithed_crafter_v0_7_0": "- [Smithed Crafter (v0.7.0+)]",
 	"your_namespace.furnace_nbt_recipes_v1_9_0": "- [Furnace NBT Recipes (v1.9.0+)]",
 	"your_namespace.smartoregeneration_v1_7_1": "- [SmartOreGeneration (v1.7.1+)]"
 }
