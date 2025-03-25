@@ -5,7 +5,7 @@
 #
 
 # Replace the item with the custom one
-execute as @e[type=item,nbt={Item:{id:"minecraft:cobblestone"}},limit=1,sort=nearest,distance=..1] run function your_namespace:custom_blocks/super_stone/replace_item
+execute as @n[type=item,nbt={Item:{id:"minecraft:cobblestone"}},distance=..1] run function your_namespace:custom_blocks/super_stone/replace_item
 
 # Decrease count scores
 scoreboard players remove #total_custom_blocks your_namespace.data 1

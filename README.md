@@ -18,7 +18,7 @@ Here is a list of features that the package provides (the template is using all 
 - 🗃️ Loot tables for every item in the `database` along with a proper `_give_all` function that gives named chests.
 - 📖 Automatic generation of a really [advanced and interactive items `manual`](./assets/in_game_manual_example.png).
 - 📝 Automatic generation of a `en-us.json` lang file in the resource pack if configuration is set.
-- 🖼️ Automatic headers for every function in `functions` folders.
+- 🖼️ Automatic headers for every function in `function` folders.
 - 📦 Minecraft like vanilla recipes unlocking.
 - 📚 Official libraries integrations:
   - 🧪 Automatic support for NBT Recipes with [`Smithed Crafter`](https://wiki.smithed.dev/libraries/crafter/) and [`Furnace NBT Recipes`](https://github.com/Stoupy51/FurnaceNbtRecipes/)
