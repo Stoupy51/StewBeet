@@ -10,7 +10,11 @@
 
 ## ❓ What is `python_datapack`
 `python_datapack` is a [Python package](https://github.com/Stoupy51/python_datapack) 📦 (and a template) aiming to provide huge automation for creating Minecraft datapacks.<br>
-It is designed to be very simple to use and very convenient for developers.<br>
+It is designed to be very simple to use and very convenient for developers.
+
+![Demo](https://i.imgur.com/dtuAG99.gif)
+
+
 Here is a list of features that the package provides (the template is using all of them with clear comments):
 
 - 🔄 Automatic resource pack files generation (models, textures, sounds, music discs) with the ability to override them with help of the `assets` folder.
