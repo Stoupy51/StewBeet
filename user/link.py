@@ -57,5 +57,14 @@ say Here is a message when loading the datapack, located in `user/link.py`
     # Create a random function
     write_function(config, f"{namespace}:path/to/a/random/function/i/guess", "say Hello world!")
 
+    # Call a bookshelf module
+    write_function(config, f"{namespace}:bookshelf/test", f"""
+# Once
+scoreboard players set $math.divide.x bs.in 9
+scoreboard players set $math.divide.y bs.in 5
+function #bs.math:divide
+tellraw @a [{{"text": "9 / 5 = ", "color": "dark_gray"}},{{"score":{{"name":"$math.divide", "objective": "bs.out"}}, "color": "gold"}}]
+""")
+
     pass
 
