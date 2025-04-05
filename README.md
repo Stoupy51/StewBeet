@@ -27,6 +27,7 @@ Here is a list of features that the package provides (the template is using all 
 - 📚 Official libraries integrations:
   - 🧪 Automatic support for NBT Recipes with [`Smithed Crafter`](https://wiki.smithed.dev/libraries/crafter/) and [`Furnace NBT Recipes`](https://github.com/Stoupy51/FurnaceNbtRecipes/)
   - 🛠️ Placement and destruction for every custom block in the `database` with support for blockstates, ore drops (fortune, silk touch), with [`Smithed Custom Blocks`](https://wiki.smithed.dev/libraries/custom-block/).
+  - 📚 Each module from [`Bookshelf`](https://github.com/mcbookshelf/bookshelf) is automatically added if you are using it, ex: `function #bs.math:...` will add the `bs.math` module to the datapack.
   - ⛏️ Custom ore generation with [`Smart Ore Generation`](https://github.com/Stoupy51/SmartOreGeneration).
   - 📦 Item transportation / container declaration with [`ItemIO`](https://github.com/edayot/ItemIO) when making custom containers.
   - 🔔 Events such as new items detection with [`Common Signals`](https://github.com/Stoupy51/CommonSignals).
