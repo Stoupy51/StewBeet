@@ -57,7 +57,7 @@ say Here is a message when loading the datapack, located in `user/link.py`
     # Create a random function
     write_function(config, f"{namespace}:path/to/a/random/function/i/guess", "say Hello world!")
 
-    # Call a bookshelf module
+    # Call a bookshelf module (Every single module from https://docs.mcbookshelf.dev/en/latest/ is supported)
     write_function(config, f"{namespace}:bookshelf/test", f"""
 # Once
 scoreboard players set $math.divide.x bs.in 9

@@ -5,7 +5,7 @@
 		{"id": "#smithed.crafter:load","required": false},
 		{"id": "#furnace_nbt_recipes:load","required": false},
 		{"id": "#smart_ore_generation:load","required": false},
-		{"id": "#bs.math:load","required": false}
+		{"id": "#bs.load:load","required": false}
 	]
 }
 
