@@ -12,7 +12,7 @@ execute store result score #game_version your_namespace.data run data get entity
 
 # Check if the game version is supported
 scoreboard players set #mcload_error your_namespace.data 0
-execute unless score #game_version your_namespace.data matches 4321.. run scoreboard players set #mcload_error your_namespace.data 1
+execute unless score #game_version your_namespace.data matches 4429.. run scoreboard players set #mcload_error your_namespace.data 1
 
 # Decode errors
 execute if score #mcload_error your_namespace.data matches 1 run tellraw @a {"translate":"your_namespace.python_datapack_template_error_this_version_is_made_for_minecraf","color":"red"}
@@ -28,8 +28,9 @@ execute if score #dependency_error your_namespace.data matches 1 if score #furna
 execute if score #dependency_error your_namespace.data matches 1 unless score #smart_ore_generation.major load.status matches 1.. run tellraw @a {"translate":"your_namespace.smartoregeneration_v1_7_1","color":"gold","click_event":{"action":"open_url","url":"https://github.com/Stoupy51/SmartOreGeneration"}}
 execute if score #dependency_error your_namespace.data matches 1 if score #smart_ore_generation.major load.status matches 1 unless score #smart_ore_generation.minor load.status matches 7.. run tellraw @a {"translate":"your_namespace.smartoregeneration_v1_7_1","color":"gold","click_event":{"action":"open_url","url":"https://github.com/Stoupy51/SmartOreGeneration"}}
 execute if score #dependency_error your_namespace.data matches 1 if score #smart_ore_generation.major load.status matches 1 if score #smart_ore_generation.minor load.status matches 7 unless score #smart_ore_generation.patch load.status matches 1.. run tellraw @a {"translate":"your_namespace.smartoregeneration_v1_7_1","color":"gold","click_event":{"action":"open_url","url":"https://github.com/Stoupy51/SmartOreGeneration"}}
-execute if score #dependency_error your_namespace.data matches 1 unless score $bs.math.major load.status matches 3.. run tellraw @a {"translate":"your_namespace.bookshelf_math_v3_0_0","color":"gold","click_event":{"action":"open_url","url":"https://github.com/mcbookshelf/bookshelf/releases"}}
-execute if score #dependency_error your_namespace.data matches 1 if score $bs.math.major load.status matches 3 unless score $bs.math.minor load.status matches 0.. run tellraw @a {"translate":"your_namespace.bookshelf_math_v3_0_0","color":"gold","click_event":{"action":"open_url","url":"https://github.com/mcbookshelf/bookshelf/releases"}}
+execute if score #dependency_error your_namespace.data matches 1 unless score $bs.math.major load.status matches 3.. run tellraw @a {"translate":"your_namespace.bookshelf_math_v3_0_2","color":"gold","click_event":{"action":"open_url","url":"https://github.com/mcbookshelf/bookshelf/releases"}}
+execute if score #dependency_error your_namespace.data matches 1 if score $bs.math.major load.status matches 3 unless score $bs.math.minor load.status matches 0.. run tellraw @a {"translate":"your_namespace.bookshelf_math_v3_0_2","color":"gold","click_event":{"action":"open_url","url":"https://github.com/mcbookshelf/bookshelf/releases"}}
+execute if score #dependency_error your_namespace.data matches 1 if score $bs.math.major load.status matches 3 if score $bs.math.minor load.status matches 0 unless score $bs.math.patch load.status matches 2.. run tellraw @a {"translate":"your_namespace.bookshelf_math_v3_0_2","color":"gold","click_event":{"action":"open_url","url":"https://github.com/mcbookshelf/bookshelf/releases"}}
 
 # Load Python Datapack Template
 execute if score #game_version your_namespace.data matches 1.. if score #mcload_error your_namespace.data matches 0 if score #dependency_error your_namespace.data matches 0 run function your_namespace:v1.21.615/load/confirm_load

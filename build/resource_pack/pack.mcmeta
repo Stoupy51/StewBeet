@@ -1,6 +1,6 @@
 {
 	"pack": {
-		"pack_format": 55,
+		"pack_format": 62,
 		"description": "Python Datapack Template [1.21.615] by Stoupy51"
 	},
 	"id": "your_namespace"
