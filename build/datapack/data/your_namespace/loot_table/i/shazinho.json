@@ -11,11 +11,16 @@
 							"function": "minecraft:set_components",
 							"components": {
 								"minecraft:custom_data": {
-									"your_namespace": {"shazinho": true},
-									"smithed": {"dict": {"record": {"shazinho": true}},"ignore": {"functionality": true,"crafting": true}}
+									"your_namespace": {
+										"shazinho": true
+									},
+									"smithed": {
+										"dict": {"record": {"shazinho": true}},
+										"ignore": {"functionality": true,"crafting": true}
+									}
 								},
 								"minecraft:item_name": {
-									"translate":"your_namespace.music_disc",
+									"translate": "your_namespace.music_disc",
 									"italic": false
 								},
 								"minecraft:jukebox_playable": "your_namespace:shazinho",
@@ -23,7 +28,11 @@
 								"minecraft:rarity": "rare",
 								"minecraft:item_model": "your_namespace:shazinho",
 								"minecraft:lore": [
-									["",{"text":"I","color": "white","italic": false,"font": "your_namespace:icons"},{"translate":"your_namespace.python_datapack_template","italic": true,"color": "blue"}]
+									[
+										"",
+										{"text": "I","color": "white","italic": false,"font": "your_namespace:icons"},
+										{"translate": "your_namespace.python_datapack_template","italic": true,"color": "blue"}
+									]
 								]
 							}
 						}

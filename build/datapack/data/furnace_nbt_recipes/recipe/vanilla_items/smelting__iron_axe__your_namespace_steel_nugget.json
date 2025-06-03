@@ -23,7 +23,7 @@
 			},
 			"minecraft:item_model": "your_namespace:steel_nugget",
 			"minecraft:item_name": {
-				"translate":"your_namespace.steel_nugget",
+				"translate": "your_namespace.steel_nugget",
 				"italic": false,
 				"color": "white"
 			},
@@ -31,13 +31,13 @@
 				[
 					"",
 					{
-						"text":"I",
+						"text": "I",
 						"color": "white",
 						"italic": false,
 						"font": "your_namespace:icons"
 					},
 					{
-						"translate":"your_namespace.python_datapack_template",
+						"translate": "your_namespace.python_datapack_template",
 						"italic": true,
 						"color": "blue"
 					}

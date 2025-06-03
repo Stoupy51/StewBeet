@@ -11,8 +11,13 @@
 							"function": "minecraft:set_components",
 							"components": {
 								"minecraft:custom_data": {
-									"smithed": {"dict": {"armor": {"steel": true,"helmet": true}},"ignore": {"functionality": true,"crafting": true}},
-									"your_namespace": {"steel_helmet": true}
+									"smithed": {
+										"dict": {"armor": {"steel": true,"helmet": true}},
+										"ignore": {"functionality": true,"crafting": true}
+									},
+									"your_namespace": {
+										"steel_helmet": true
+									}
 								},
 								"minecraft:max_damage": 495,
 								"minecraft:equippable": {
@@ -20,16 +25,26 @@
 									"asset_id": "your_namespace:steel"
 								},
 								"minecraft:attribute_modifiers": [
-									{"type": "armor","amount": 2.5,"operation": "add_value","slot": "head","id": "your_namespace:armor.head"}
+									{
+										"type": "armor",
+										"amount": 2.5,
+										"operation": "add_value",
+										"slot": "head",
+										"id": "your_namespace:armor.head"
+									}
 								],
 								"minecraft:item_model": "your_namespace:steel_helmet",
 								"minecraft:item_name": {
-									"translate":"your_namespace.steel_helmet",
+									"translate": "your_namespace.steel_helmet",
 									"italic": false,
 									"color": "white"
 								},
 								"minecraft:lore": [
-									["",{"text":"I","color": "white","italic": false,"font": "your_namespace:icons"},{"translate":"your_namespace.python_datapack_template","italic": true,"color": "blue"}]
+									[
+										"",
+										{"text": "I","color": "white","italic": false,"font": "your_namespace:icons"},
+										{"translate": "your_namespace.python_datapack_template","italic": true,"color": "blue"}
+									]
 								]
 							}
 						}

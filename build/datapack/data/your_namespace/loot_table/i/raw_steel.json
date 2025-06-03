@@ -11,17 +11,26 @@
 							"function": "minecraft:set_components",
 							"components": {
 								"minecraft:custom_data": {
-									"smithed": {"dict": {"raw": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},
-									"your_namespace": {"raw_steel": true}
+									"smithed": {
+										"dict": {"raw": {"steel": true}},
+										"ignore": {"functionality": true,"crafting": true}
+									},
+									"your_namespace": {
+										"raw_steel": true
+									}
 								},
 								"minecraft:item_model": "your_namespace:raw_steel",
 								"minecraft:item_name": {
-									"translate":"your_namespace.raw_steel",
+									"translate": "your_namespace.raw_steel",
 									"italic": false,
 									"color": "white"
 								},
 								"minecraft:lore": [
-									["",{"text":"I","color": "white","italic": false,"font": "your_namespace:icons"},{"translate":"your_namespace.python_datapack_template","italic": true,"color": "blue"}]
+									[
+										"",
+										{"text": "I","color": "white","italic": false,"font": "your_namespace:icons"},
+										{"translate": "your_namespace.python_datapack_template","italic": true,"color": "blue"}
+									]
 								]
 							}
 						}

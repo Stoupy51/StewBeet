@@ -24,15 +24,15 @@
 			},
 			"minecraft:item_model": "your_namespace:stone_rod",
 			"minecraft:item_name": {
-				"translate":"your_namespace.stone_rod",
+				"translate": "your_namespace.stone_rod",
 				"italic": false,
 				"color": "white"
 			},
 			"minecraft:lore": [
 				[
 					"",
-					{"text":"I","color": "white","italic": false,"font": "your_namespace:icons"},
-					{"translate":"your_namespace.python_datapack_template","italic": true,"color": "blue"}
+					{"text": "I","color": "white","italic": false,"font": "your_namespace:icons"},
+					{"translate": "your_namespace.python_datapack_template","italic": true,"color": "blue"}
 				]
 			]
 		}

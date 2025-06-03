@@ -14,7 +14,7 @@ tag @s add your_namespace.super_stone
 tag @s add your_namespace.vanilla.minecraft_cobblestone
 
 # Add a custom name
-data merge entity @s {"CustomName": {"translate":"your_namespace.super_stone","italic": false,"color": "white"}}
+data merge entity @s {"CustomName": {"translate": "your_namespace.super_stone","italic": false,"color": "white"}}
 
 
 # Modify item display entity to match the custom block

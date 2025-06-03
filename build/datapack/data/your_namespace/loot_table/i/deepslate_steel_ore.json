@@ -11,23 +11,37 @@
 							"function": "minecraft:set_components",
 							"components": {
 								"minecraft:custom_data": {
-									"smithed": {"dict": {"block": {"steel": true},"ore": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},
-									"your_namespace": {"deepslate_steel_ore": true}
+									"smithed": {
+										"dict": {"block": {"steel": true},"ore": {"steel": true}},
+										"ignore": {"functionality": true,"crafting": true}
+									},
+									"your_namespace": {
+										"deepslate_steel_ore": true
+									}
 								},
 								"minecraft:item_model": "your_namespace:deepslate_steel_ore",
 								"minecraft:item_name": {
-									"translate":"your_namespace.deepslate_steel_ore",
+									"translate": "your_namespace.deepslate_steel_ore",
 									"italic": false,
 									"color": "white"
 								},
 								"minecraft:lore": [
-									["",{"text":"I","color": "white","italic": false,"font": "your_namespace:icons"},{"translate":"your_namespace.python_datapack_template","italic": true,"color": "blue"}]
+									[
+										"",
+										{"text": "I","color": "white","italic": false,"font": "your_namespace:icons"},
+										{"translate": "your_namespace.python_datapack_template","italic": true,"color": "blue"}
+									]
 								],
 								"minecraft:container": [
-									{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "your_namespace:deepslate_steel_ore","from": "your_namespace"}}}}}}
+									{
+										"slot": 0,
+										"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "your_namespace:deepslate_steel_ore","from": "your_namespace"}}}}}
+									}
 								],
 								"minecraft:tooltip_display": {
-									"hidden_components": ["minecraft:container"]
+									"hidden_components": [
+										"minecraft:container"
+									]
 								}
 							}
 						}

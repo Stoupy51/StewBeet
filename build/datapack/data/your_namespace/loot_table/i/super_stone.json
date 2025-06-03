@@ -12,22 +12,35 @@
 							"components": {
 								"minecraft:item_model": "your_namespace:super_stone",
 								"minecraft:item_name": {
-									"translate":"your_namespace.super_stone",
+									"translate": "your_namespace.super_stone",
 									"italic": false,
 									"color": "white"
 								},
 								"minecraft:lore": [
-									["",{"text":"I","color": "white","italic": false,"font": "your_namespace:icons"},{"translate":"your_namespace.python_datapack_template","italic": true,"color": "blue"}]
+									[
+										"",
+										{"text": "I","color": "white","italic": false,"font": "your_namespace:icons"},
+										{"translate": "your_namespace.python_datapack_template","italic": true,"color": "blue"}
+									]
 								],
 								"minecraft:custom_data": {
-									"your_namespace": {"super_stone": true},
-									"smithed": {"ignore": {"functionality": true,"crafting": true}}
+									"your_namespace": {
+										"super_stone": true
+									},
+									"smithed": {
+										"ignore": {"functionality": true,"crafting": true}
+									}
 								},
 								"minecraft:container": [
-									{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "your_namespace:super_stone","from": "your_namespace"}}}}}}
+									{
+										"slot": 0,
+										"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "your_namespace:super_stone","from": "your_namespace"}}}}}
+									}
 								],
 								"minecraft:tooltip_display": {
-									"hidden_components": ["minecraft:container"]
+									"hidden_components": [
+										"minecraft:container"
+									]
 								}
 							}
 						}
