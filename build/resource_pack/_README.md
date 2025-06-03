@@ -1,1 +1,4 @@
-E:/my_folders/advanced_desktop/PythonDatapackTemplate/merge/resource_pack/_README.md
+
+## merge/resource_pack folder
+Every file and subfolders will be merged to the build resource_pack folder.
+

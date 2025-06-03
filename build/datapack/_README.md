@@ -1,1 +1,4 @@
-E:/my_folders/advanced_desktop/PythonDatapackTemplate/merge/datapack/_README.md
+
+## merge/datapack folder
+Every file and subfolders will be merged to the build datapack folder.
+
