@@ -1,7 +1,0 @@
-{
-	"parent": "block/cube_all",
-	"textures": {
-		"all": "your_namespace:item/steel_ore"
-	}
-}
-

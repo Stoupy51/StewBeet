@@ -1,0 +1,38 @@
+
+name: Bookshelf latest release download
+
+on:
+  workflow_call:
+  workflow_dispatch:
+    # Triggered by the tick.yml workflow
+
+jobs:
+  process-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install stouputils
+
+      - name: Run the bookshelf release script
+        run: python python_package/scripts/on_bookshelf_release.py
+
+      - name: Commit and push changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git diff --cached --quiet || git commit -m "chore: 🔨 Updated Bookshelf modules"
+          git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} HEAD:${{ github.ref_name }}
+

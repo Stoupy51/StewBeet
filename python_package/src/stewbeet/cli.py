@@ -1,0 +1,78 @@
+
+# Imports
+import importlib
+import os
+import shutil
+import subprocess
+import sys
+
+from beet import ProjectConfig, load_config
+from box import Box
+from stouputils.decorators import LogLevels, handle_error
+from stouputils.io import relative_path
+from stouputils.print import info
+
+
+@handle_error(message="Error while running 'stewbeet'")
+def main():
+    second_arg: str = sys.argv[1] if len(sys.argv) == 2 else ""
+
+    # Try to find and load the beet configuration file
+    for ext in (".json", ".yml", ".yaml", ".toml"):
+        if os.path.exists(f"beet{ext}"):
+            cfg: ProjectConfig = load_config(filename=f"beet{ext}")
+            break
+
+    # Check if the command is "clean" or "rebuild"
+    if second_arg in ["clean", "rebuild"]:
+
+        # Remove the beet cache directory
+        info("Removing beet cache directory...")
+        subprocess.run(["beet", "cache", "-c"], check=False)
+        if os.path.exists(".beet_cache"):
+            shutil.rmtree(".beet_cache", ignore_errors=True)
+
+        # Remove the output directory specified in the config
+        info(f"Removing output directory: {relative_path(cfg.output)}")
+        shutil.rmtree(cfg.output, ignore_errors=True)
+
+        # Remove all __pycache__ folders
+        info("Removing all __pycache__ directories...")
+        for root, dirs, _ in os.walk("."):
+            if "__pycache__" in dirs:
+                cache_dir: str = os.path.join(root, "__pycache__")
+                shutil.rmtree(cache_dir, ignore_errors=True)
+
+        # Load metadata from config into a Box
+        meta: Box = Box(cfg.meta, default_box=True, default_box_attr={})
+
+        # Remove manual cache directory if specified in metadata
+        cache_path: str = meta.stewbeet.manual.cache_path
+        if cache_path and os.path.exists(cache_path):
+            info(f"Removing manual cache directory: '{relative_path(cache_path)}'")
+            shutil.rmtree(cache_path, ignore_errors=True)
+
+        # Remove debug database file if it exists
+        database_debug: str = meta.stewbeet.database_debug
+        if database_debug and os.path.exists(database_debug):
+            info(f"Removing debug database file: '{relative_path(database_debug)}'")
+            os.remove(database_debug)
+
+    if second_arg != "clean":
+
+        # Add current directory to Python path
+        current_dir: str = os.getcwd()
+        if current_dir not in sys.path:
+            sys.path.insert(0, current_dir)
+
+        # Try to import all pipeline
+        for plugin in cfg.pipeline:
+            handle_error(importlib.import_module, error_log=LogLevels.ERROR_TRACEBACK)(plugin)
+
+        # Run beet with all remaining arguments
+        subprocess.run(["beet"] + [x for x in sys.argv[1:] if x != "rebuild"], check=False)
+
+
+if __name__ == "__main__":
+    main()
+

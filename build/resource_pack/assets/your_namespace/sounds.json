@@ -1,7 +1,0 @@
-{
-	"shazinho": {
-		"category": "music",
-		"sounds": [{"name": "your_namespace:shazinho","stream": true}]
-	}
-}
-

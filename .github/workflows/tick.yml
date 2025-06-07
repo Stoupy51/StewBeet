@@ -1,0 +1,46 @@
+
+name: Bookshelf version check
+
+on:
+  schedule:
+    # Run every 24 hours at midnight UTC
+    - cron: '0 0 * * *'
+  
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  check-for-updates:
+    runs-on: ubuntu-latest
+    
+    outputs:
+      update_available: ${{ steps.check-version.outputs.update_available }}
+    
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      
+      - name: Install dependencies
+        run: |
+          pip install stouputils
+      
+      - name: Check for new version
+        id: check-version
+        run: |
+          # Run a Python script to check for new version
+          # If a new version is found, set the output variable
+          UPDATE_AVAILABLE=$(python python_package/scripts/check_bookshelf_version.py)
+          echo "update_available=$UPDATE_AVAILABLE" >> $GITHUB_OUTPUT
+          echo "Update available: $UPDATE_AVAILABLE"
+  
+  # New job to call the reusable workflow conditionally
+  release:
+    needs: check-for-updates
+    if: needs.check-for-updates.outputs.update_available == 'true'
+    uses: ./.github/workflows/on_bookshelf_release.yml
+

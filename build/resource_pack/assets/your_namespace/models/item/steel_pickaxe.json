@@ -1,7 +1,0 @@
-{
-	"parent": "minecraft:item/iron_pickaxe",
-	"textures": {
-		"layer0": "your_namespace:item/steel_pickaxe"
-	}
-}
-
