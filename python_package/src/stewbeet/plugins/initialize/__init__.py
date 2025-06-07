@@ -3,6 +3,7 @@
 from beet import Context
 from beet.core.utils import TextComponent
 from box import Box
+from stouputils import relative_path
 
 from ...core import Mem
 
@@ -24,6 +25,9 @@ def beet_default(ctx: Context):
 	manual_name: TextComponent = Mem.ctx.meta.stewbeet.manual.name
 	if not manual_name:
 		Mem.ctx.meta.stewbeet.manual.name = f"{ctx.project_name} Manual"
+
+	# Convert paths to relative ones
+	object.__setattr__(ctx, "output_directory", relative_path(Mem.ctx.output_directory))
 
 	pass
 

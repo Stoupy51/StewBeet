@@ -2,11 +2,11 @@
 # Imports
 from __future__ import annotations
 
-from beet import Function
 from stouputils.print import debug, error
 
 from ..__memory__ import Mem
 from ..constants import official_lib_used
+from ..utils.io import write_function
 
 
 class CustomOreGeneration:
@@ -129,7 +129,7 @@ scoreboard players set #max_height smart_ore_generation.data {self.maximum_heigh
 		content += self.veins_per_region * place_vein
 
 		# Write file
-		Mem.ctx.data[f"{Mem.ctx.project_id}:calls/smart_one_generation/generate_ores"] = Function(content)
+		write_function(f"{Mem.ctx.project_id}:calls/smart_ore_generation/generate_ores", content)
 
 	def _generate_vein_function(self, beautify_ore: str, vein_path: str) -> None:
 		""" Generate the vein function for ore generation.
@@ -159,7 +159,7 @@ execute at @s if block ~ ~ ~ {self.provider} {self.placer_command}
 				radius += 1
 
 		# Write file
-		Mem.ctx.data[vein_path] = Function(content)
+		write_function(vein_path, content)
 
 	@staticmethod
 	def all_with_config(ore_configs: dict[str, list[CustomOreGeneration]]) -> None:

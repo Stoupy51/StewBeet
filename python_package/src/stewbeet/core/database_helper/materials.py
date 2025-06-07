@@ -3,9 +3,9 @@
 # Imports
 from pathlib import Path
 
-from beet import Equipment
+from beet import Equipment, Texture
 from stouputils.decorators import handle_error
-from stouputils.io import clean_path, relative_path, super_copy, super_json_dump
+from stouputils.io import clean_path, relative_path, super_json_dump
 from stouputils.print import error
 
 from ..__memory__ import Mem, assert_ctx
@@ -77,7 +77,6 @@ def generate_everything_about_this_material(
 
 	## Armor equipment entity (top layer and leggings)
 	# Define the resource pack namespace and initialize model data
-	namespace_rp: str = f"{Mem.ctx.output_directory}/resource_pack/assets/{Mem.ctx.project_id}"
 	model_data: dict = {"layers": {}}
 
 	# Helper function to handle armor layer textures and model data
@@ -90,10 +89,10 @@ def generate_everything_about_this_material(
 
 			# Define source and destination paths for texture copying
 			source: str = f"{textures_folder}/{textures[layer_file]}"
-			destination: str = f"{namespace_rp}/textures/entity/equipment/{humanoid_type}/{textures[layer_file]}"
+			destination: str = f"{Mem.ctx.project_id}:entity/equipment/{humanoid_type}/{textures[layer_file]}"
 
 			# Copy the texture file
-			super_copy(source, destination)
+			Mem.ctx.assets[destination] = Texture(source_path=source)
 
 			# Add the layer to the model data
 			model_data["layers"][humanoid_type] = [{"texture": f"{Mem.ctx.project_id}:{textures[layer_file].replace('.png', '')}"}]

@@ -9,7 +9,6 @@ import sys
 from beet import ProjectConfig, load_config
 from box import Box
 from stouputils.decorators import LogLevels, handle_error
-from stouputils.io import relative_path
 from stouputils.print import info
 
 
@@ -25,19 +24,17 @@ def main():
 
     # Check if the command is "clean" or "rebuild"
     if second_arg in ["clean", "rebuild"]:
+        info("Cleaning project and caches...")
 
         # Remove the beet cache directory
-        info("Removing beet cache directory...")
-        subprocess.run(["beet", "cache", "-c"], check=False)
+        subprocess.run(["beet", "cache", "-c"], check=False, capture_output=True)
         if os.path.exists(".beet_cache"):
             shutil.rmtree(".beet_cache", ignore_errors=True)
 
         # Remove the output directory specified in the config
-        info(f"Removing output directory: {relative_path(cfg.output)}")
         shutil.rmtree(cfg.output, ignore_errors=True)
 
         # Remove all __pycache__ folders
-        info("Removing all __pycache__ directories...")
         for root, dirs, _ in os.walk("."):
             if "__pycache__" in dirs:
                 cache_dir: str = os.path.join(root, "__pycache__")
@@ -49,14 +46,13 @@ def main():
         # Remove manual cache directory if specified in metadata
         cache_path: str = meta.stewbeet.manual.cache_path
         if cache_path and os.path.exists(cache_path):
-            info(f"Removing manual cache directory: '{relative_path(cache_path)}'")
             shutil.rmtree(cache_path, ignore_errors=True)
 
         # Remove debug database file if it exists
         database_debug: str = meta.stewbeet.database_debug
         if database_debug and os.path.exists(database_debug):
-            info(f"Removing debug database file: '{relative_path(database_debug)}'")
             os.remove(database_debug)
+        info("Cleaning done!")
 
     if second_arg != "clean":
 

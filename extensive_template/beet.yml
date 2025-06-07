@@ -27,10 +27,12 @@ require:
 
 # Takes a nested pack config, see PackConfig() documentation
 data_pack:
+    name: "datapack"
     load: ["src/datapack"]
 
 # Takes a nested pack config, see PackConfig() documentation
 resource_pack:
+    name: resource_pack
     load: ["src/resource_pack"]
 
 # A list of strings or dicts representing "plugins".

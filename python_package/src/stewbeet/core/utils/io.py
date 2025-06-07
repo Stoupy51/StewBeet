@@ -17,7 +17,8 @@ def write_function(path: str, content: str, overwrite: bool = False, prepend: bo
 	if overwrite:
 		Mem.ctx.data[path] = Function(content)
 	else:
-		existing_content: str = str(Mem.ctx.data.functions.get(path, ""))
+		func: Function | None = Mem.ctx.data.functions.get(path, None)
+		existing_content: str = func.to_str(func.lines) if func is not None else ""
 		if prepend:
 			Mem.ctx.data[path] = Function(content + existing_content)
 		else:
