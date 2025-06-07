@@ -1,4 +1,9 @@
 
+#> _your_namespace:calls/smart_ore_generation/generate_ores
+#
+# @within	???
+#
+
 # Generate Steel Ore (x2)
 scoreboard players set #dimension smart_ore_generation.data -1
 execute if dimension minecraft:overworld run scoreboard players set #dimension smart_ore_generation.data 0
@@ -30,3 +35,4 @@ execute if score #dimension smart_ore_generation.data matches 0.. run function _
 execute if score #dimension smart_ore_generation.data matches 0.. run function _your_namespace:calls/smart_ore_generation/veins/deepslate_steel_ore_1
 execute if score #dimension smart_ore_generation.data matches 0.. run function _your_namespace:calls/smart_ore_generation/veins/deepslate_steel_ore_1
 execute if score #dimension smart_ore_generation.data matches 0.. run function _your_namespace:calls/smart_ore_generation/veins/deepslate_steel_ore_1
+
