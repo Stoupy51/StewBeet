@@ -1,0 +1,7 @@
+{
+	"parent": "minecraft:item/leather_helmet",
+	"textures": {
+		"layer0": "_your_namespace:item/steel_helmet",
+		"layer1": "_your_namespace:item/steel_helmet"
+	}
+}

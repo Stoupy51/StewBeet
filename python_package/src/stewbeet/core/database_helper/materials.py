@@ -34,7 +34,7 @@ def generate_everything_about_this_material(
 
 	# Prepare constants
 	textures: dict[str, str] = {
-		clean_path(str(p)).split("/")[-1]: relative_path(p, textures_folder)
+		clean_path(str(p)).split("/")[-1]: relative_path(p)
 		for p in Path(textures_folder).rglob("*.png")
 	}
 	if equipments_config:
@@ -88,14 +88,14 @@ def generate_everything_about_this_material(
 		if any(f"{material_base}_{gear}.png" in textures for gear in gear_types) and layer_file in textures:
 
 			# Define source and destination paths for texture copying
-			source: str = f"{textures_folder}/{textures[layer_file]}"
-			destination: str = f"{Mem.ctx.project_id}:entity/equipment/{humanoid_type}/{textures[layer_file]}"
+			source: str = relative_path(textures[layer_file], textures_folder)
+			destination: str = f"{Mem.ctx.project_id}:entity/equipment/{humanoid_type}/{source}"
 
 			# Copy the texture file
-			Mem.ctx.assets[destination] = Texture(source_path=source)
+			Mem.ctx.assets[destination] = Texture(source_path=textures[layer_file])
 
 			# Add the layer to the model data
-			model_data["layers"][humanoid_type] = [{"texture": f"{Mem.ctx.project_id}:{textures[layer_file].replace('.png', '')}"}]
+			model_data["layers"][humanoid_type] = [{"texture": f"{Mem.ctx.project_id}:{source.replace('.png', '')}"}]
 			return True
 		return False
 

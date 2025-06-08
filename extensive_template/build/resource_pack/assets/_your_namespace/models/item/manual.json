@@ -1,0 +1,6 @@
+{
+	"parent": "minecraft:item/written_book",
+	"textures": {
+		"layer0": "_your_namespace:item/manual"
+	}
+}

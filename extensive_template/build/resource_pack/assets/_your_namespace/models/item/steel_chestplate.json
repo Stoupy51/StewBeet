@@ -1,0 +1,7 @@
+{
+	"parent": "minecraft:item/leather_chestplate",
+	"textures": {
+		"layer0": "_your_namespace:item/steel_chestplate",
+		"layer1": "_your_namespace:item/steel_chestplate"
+	}
+}
