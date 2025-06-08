@@ -1,0 +1,41 @@
+{
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "minecraft:item",
+					"name": "minecraft:command_block",
+					"functions": [
+						{
+							"function": "minecraft:set_components",
+							"components": {
+								"minecraft:custom_data": {
+									"smithed": {
+										"dict": {"dust": {"steel": true}},
+										"ignore": {"functionality": true,"crafting": true}
+									},
+									"_your_namespace": {
+										"steel_dust": true
+									}
+								},
+								"minecraft:item_model": "_your_namespace:steel_dust",
+								"minecraft:item_name": {
+									"translate": "_your_namespace.steel_dust",
+									"italic": false,
+									"color": "white"
+								},
+								"minecraft:lore": [
+									[
+										{"translate": "_your_namespace.icon"},
+										{"translate": "_your_namespace.stewbeet_extensive_template","italic": true,"color": "blue"}
+									]
+								]
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}

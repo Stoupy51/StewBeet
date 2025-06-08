@@ -1,0 +1,55 @@
+{
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "minecraft:item",
+					"name": "minecraft:leather_leggings",
+					"functions": [
+						{
+							"function": "minecraft:set_components",
+							"components": {
+								"minecraft:custom_data": {
+									"smithed": {
+										"dict": {"armor": {"steel": true,"leggings": true}},
+										"ignore": {"functionality": true,"crafting": true}
+									},
+									"_your_namespace": {
+										"steel_leggings": true
+									}
+								},
+								"minecraft:max_damage": 675,
+								"minecraft:equippable": {
+									"slot": "legs",
+									"asset_id": "_your_namespace:steel"
+								},
+								"minecraft:attribute_modifiers": [
+									{
+										"type": "armor",
+										"amount": 5.5,
+										"operation": "add_value",
+										"slot": "legs",
+										"id": "_your_namespace:armor.legs"
+									}
+								],
+								"minecraft:item_model": "_your_namespace:steel_leggings",
+								"minecraft:item_name": {
+									"translate": "_your_namespace.steel_leggings",
+									"italic": false,
+									"color": "white"
+								},
+								"minecraft:lore": [
+									[
+										{"translate": "_your_namespace.icon"},
+										{"translate": "_your_namespace.stewbeet_extensive_template","italic": true,"color": "blue"}
+									]
+								]
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}

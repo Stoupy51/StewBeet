@@ -1,0 +1,41 @@
+{
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "minecraft:item",
+					"name": "minecraft:furnace",
+					"functions": [
+						{
+							"function": "minecraft:set_components",
+							"components": {
+								"minecraft:custom_data": {
+									"smithed": {
+										"dict": {"block": {"steel": true}},
+										"ignore": {"functionality": true,"crafting": true}
+									},
+									"_your_namespace": {
+										"steel_block": true
+									}
+								},
+								"minecraft:item_model": "_your_namespace:steel_block",
+								"minecraft:item_name": {
+									"translate": "_your_namespace.steel_block",
+									"italic": false,
+									"color": "white"
+								},
+								"minecraft:lore": [
+									[
+										{"translate": "_your_namespace.icon"},
+										{"translate": "_your_namespace.stewbeet_extensive_template","italic": true,"color": "blue"}
+									]
+								]
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}

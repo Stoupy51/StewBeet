@@ -49,8 +49,8 @@ pipeline:
     - "stewbeet.plugins.custom_recipes"
     - "stewbeet.plugins.ingame_manual"  # TODO
     - "stewbeet.plugins.datapack.loading"
-    - "stewbeet.plugins.datapack.custom_blocks"  # TODO
-    - "stewbeet.plugins.datapack.loot_tables"  # TODO
+    - "stewbeet.plugins.datapack.custom_blocks"
+    - "stewbeet.plugins.datapack.loot_tables"
     - "stewbeet.plugins.compatibilities.simpledrawer"  # TODO
     - "stewbeet.plugins.compatibilities.neo_enchant"  # TODO
     - "src.link" # User code

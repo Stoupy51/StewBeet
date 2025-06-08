@@ -36,7 +36,7 @@ class SmithedRecipeHandler:
         """ Generate a Smithed Crafter shapeless recipe.
 
         Args:
-            recipe (Dict[str, Any]): The recipe data.
+            recipe (dict[str, Any]): The recipe data.
             result_loot (str): The loot table for the result.
 
         Returns:
@@ -56,7 +56,10 @@ class SmithedRecipeHandler:
                 unique_ingredients[index] = (unique_ingredients[index][0] + 1, unique_ingredients[index][1])
 
         # Write the line
-        line: str = f"execute if score @s smithed.data matches 0 store result score @s smithed.data if score count smithed.data matches {len(unique_ingredients)} if data storage smithed.crafter:input "
+        line: str = (
+            "execute if score @s smithed.data matches 0 store result score @s smithed.data "
+            f"if score count smithed.data matches {len(unique_ingredients)} if data storage smithed.crafter:input "
+        )
         r: dict[str, list[dict[str, Any]]] = {"recipe": []}
         for count, ingr in unique_ingredients:
             item: dict[str, Any] = {"count": count}
@@ -68,7 +71,7 @@ class SmithedRecipeHandler:
             line += f" run {recipe['smithed_crafter_command']}"
         else:
             line += f" run loot replace block ~ ~ ~ container.16 loot {result_loot}"
-        return line + "\n"
+        return line
 
     @simple_cache()
     def smithed_shaped_recipe(self, recipe: dict[str, Any], result_loot: str) -> str:

@@ -1,0 +1,55 @@
+{
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "minecraft:item",
+					"name": "minecraft:leather_helmet",
+					"functions": [
+						{
+							"function": "minecraft:set_components",
+							"components": {
+								"minecraft:custom_data": {
+									"smithed": {
+										"dict": {"armor": {"steel": true,"helmet": true}},
+										"ignore": {"functionality": true,"crafting": true}
+									},
+									"_your_namespace": {
+										"steel_helmet": true
+									}
+								},
+								"minecraft:max_damage": 495,
+								"minecraft:equippable": {
+									"slot": "head",
+									"asset_id": "_your_namespace:steel"
+								},
+								"minecraft:attribute_modifiers": [
+									{
+										"type": "armor",
+										"amount": 2.5,
+										"operation": "add_value",
+										"slot": "head",
+										"id": "_your_namespace:armor.head"
+									}
+								],
+								"minecraft:item_model": "_your_namespace:steel_helmet",
+								"minecraft:item_name": {
+									"translate": "_your_namespace.steel_helmet",
+									"italic": false,
+									"color": "white"
+								},
+								"minecraft:lore": [
+									[
+										{"translate": "_your_namespace.icon"},
+										{"translate": "_your_namespace.stewbeet_extensive_template","italic": true,"color": "blue"}
+									]
+								]
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}
