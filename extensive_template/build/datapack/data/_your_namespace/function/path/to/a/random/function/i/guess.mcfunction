@@ -4,5 +4,5 @@
 # @within	???
 #
 
-say Hello world!
+tellraw @a {"translate": "_your_namespace.hello_world"}
 

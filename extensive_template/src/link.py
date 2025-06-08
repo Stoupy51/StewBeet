@@ -57,7 +57,7 @@ say Here is a message when loading the datapack, located in `src/link.py`
     #	write_versioned_file(config, "tick", ...)
 
     # Create a random function
-    write_function(f"{ns}:path/to/a/random/function/i/guess", "say Hello world!")
+    write_function(f"{ns}:path/to/a/random/function/i/guess", """tellraw @a {"text":"Hello world!"}""")
 
     # Call a bookshelf module (Every single module from https://docs.mcbookshelf.dev/en/latest/ is supported)
     write_function(f"{ns}:bookshelf/test", """
