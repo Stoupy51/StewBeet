@@ -82,7 +82,7 @@ def ingr_to_id(ingredient: dict, add_namespace: bool = True) -> str:
 					id = next(iter(cd_data.keys()))
 					break
 		if not namespace:
-			error(f"No namespace found in custom data: {custom_data}")
+			error(f"No namespace found in custom data: {custom_data}, ingredient: {ingredient}")
 		if add_namespace:
 			return namespace + ":" + id
 		return id

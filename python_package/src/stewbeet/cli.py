@@ -6,10 +6,11 @@ import shutil
 import subprocess
 import sys
 
-from beet import ProjectConfig, load_config
+from beet import ProjectConfig, load_config, locate_config
 from box import Box
 from stouputils.decorators import LogLevels, handle_error
-from stouputils.print import info
+from stouputils.io import clean_path
+from stouputils.print import error, info
 
 
 @handle_error(message="Error while running 'stewbeet'")
@@ -17,10 +18,13 @@ def main():
     second_arg: str = sys.argv[1] if len(sys.argv) == 2 else ""
 
     # Try to find and load the beet configuration file
-    for ext in (".json", ".yml", ".yaml", ".toml"):
-        if os.path.exists(f"beet{ext}"):
-            cfg: ProjectConfig = load_config(filename=f"beet{ext}")
-            break
+    cfg: ProjectConfig | None = None
+    if config_path := locate_config(os.getcwd(), parents=True):
+        cfg = load_config(filename=config_path)
+        if cfg:
+            os.chdir(config_path.parent)
+    if not cfg:
+        error(f"No beet config file found in the current directory '{clean_path(os.getcwd())}'")
 
     # Check if the command is "clean" or "rebuild"
     if second_arg in ["clean", "rebuild"]:
@@ -55,7 +59,6 @@ def main():
         info("Cleaning done!")
 
     if second_arg != "clean":
-
         # Add current directory to Python path
         current_dir: str = os.getcwd()
         if current_dir not in sys.path:
@@ -71,4 +74,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

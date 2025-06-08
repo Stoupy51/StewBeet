@@ -69,11 +69,9 @@ def handle_file(ctx: Context, file: str, content: Function | LootTable) -> None:
 	"""
 	# Read content
 	if isinstance(content, Function):
-		string: str = content.to_str(content.lines)
+		string: str = content.text
 	elif isinstance(content, LootTable):
-		# TODO: Fix this
-		string: str = content.get_content()
-		breakpoint(string)
+		string: str = content.text
 	else:
 		raise ValueError(f"Unsupported content type: {type(content)}")
 

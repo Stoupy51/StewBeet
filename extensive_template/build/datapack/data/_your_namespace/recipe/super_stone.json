@@ -1,0 +1,48 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"category": "blocks",
+	"group": "super_stone",
+	"pattern": [
+		"XXX",
+		"XXX",
+		"XXX"
+	],
+	"key": {
+		"X": "minecraft:stone"
+	},
+	"result": {
+		"id": "minecraft:furnace",
+		"count": 1,
+		"components": {
+			"minecraft:item_model": "_your_namespace:super_stone",
+			"minecraft:item_name": {
+				"text": "Super Stone",
+				"italic": false,
+				"color": "white"
+			},
+			"minecraft:lore": [
+				[
+					{
+						"text": "ICON"
+					},
+					{
+						"text": " StewBeet Extensive Template",
+						"italic": true,
+						"color": "blue"
+					}
+				]
+			],
+			"minecraft:custom_data": {
+				"_your_namespace": {
+					"super_stone": true
+				},
+				"smithed": {
+					"ignore": {
+						"functionality": true,
+						"crafting": true
+					}
+				}
+			}
+		}
+	}
+}

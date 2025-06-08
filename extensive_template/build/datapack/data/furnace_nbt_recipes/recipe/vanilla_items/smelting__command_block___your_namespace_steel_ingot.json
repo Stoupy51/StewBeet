@@ -1,0 +1,46 @@
+{
+	"type": "minecraft:smelting",
+	"ingredient": "minecraft:command_block",
+	"result": {
+		"id": "minecraft:command_block",
+		"count": 1,
+		"components": {
+			"minecraft:custom_data": {
+				"smithed": {
+					"dict": {
+						"ingot": {
+							"steel": true
+						}
+					},
+					"ignore": {
+						"functionality": true,
+						"crafting": true
+					}
+				},
+				"_your_namespace": {
+					"steel_ingot": true
+				}
+			},
+			"minecraft:item_model": "_your_namespace:steel_ingot",
+			"minecraft:item_name": {
+				"text": "Steel Ingot",
+				"italic": false,
+				"color": "white"
+			},
+			"minecraft:lore": [
+				[
+					{
+						"text": "ICON"
+					},
+					{
+						"text": " StewBeet Extensive Template",
+						"italic": true,
+						"color": "blue"
+					}
+				]
+			]
+		}
+	},
+	"experience": 0.8,
+	"cookingtime": 200
+}

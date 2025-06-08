@@ -1,0 +1,51 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"category": "misc",
+	"pattern": [
+		"X",
+		"X"
+	],
+	"key": {
+		"X": "minecraft:stone"
+	},
+	"result": {
+		"id": "minecraft:command_block",
+		"count": 4,
+		"components": {
+			"minecraft:custom_data": {
+				"smithed": {
+					"dict": {
+						"stick": {
+							"stone": true
+						}
+					},
+					"ignore": {
+						"functionality": true,
+						"crafting": true
+					}
+				},
+				"_your_namespace": {
+					"stone_stick": true
+				}
+			},
+			"minecraft:item_model": "_your_namespace:stone_stick",
+			"minecraft:item_name": {
+				"text": "Stone Stick",
+				"italic": false,
+				"color": "white"
+			},
+			"minecraft:lore": [
+				[
+					{
+						"text": "ICON"
+					},
+					{
+						"text": " StewBeet Extensive Template",
+						"italic": true,
+						"color": "blue"
+					}
+				]
+			]
+		}
+	}
+}

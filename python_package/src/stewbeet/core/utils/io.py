@@ -1,11 +1,27 @@
 
 # Imports
-from beet import Function
+from beet import Function, FunctionTag
+from beet.core.utils import JsonDict
+from stouputils.io import super_json_dump
 
 from ..__memory__ import Mem
 
 
 # Functions
+def write_function_tag(path: str, functions: list[str] | None = None, prepend: bool = False) -> None:
+    """ Write a function tag at the given path.
+
+    Args:
+        path        (str):  The path to the function tag (ex: "namespace:something" for 'data/namespace/tags/function/something.json')
+        functions   (list[str] | None): The functions to add to the tag
+        prepend     (bool): If the functions should be prepended instead of appended
+    """
+    tag: FunctionTag = Mem.ctx.data.function_tags.setdefault(path)
+    data: JsonDict = tag.data
+    data.update({"values": functions or []})
+    tag.encoder = super_json_dump
+
+
 def read_function(path: str) -> str:
     """ Read the content of a function at the given path.
 
@@ -15,11 +31,10 @@ def read_function(path: str) -> str:
     Returns:
         str: The content of the function
     """
-    f: Function = Mem.ctx.data.functions[path]
-    return f.to_str(f.lines)
+    return Mem.ctx.data.functions[path].text
 
 
-def write_function(path: str, content: str, overwrite: bool = False, prepend: bool = False) -> None:
+def write_function(path: str, content: str, overwrite: bool = False, prepend: bool = False, tags: list[str] | None = None) -> None:
     """ Write the content to the function at the given path.
 
     Args:
@@ -27,6 +42,7 @@ def write_function(path: str, content: str, overwrite: bool = False, prepend: bo
         content         (str):  The content to write
         overwrite       (bool): If the file should be overwritten (default: Append the content)
         prepend         (bool): If the content should be prepended instead of appended (not used if overwrite is True)
+        tags            (list[str] | None): The function tags to add to the function (ex: ["namespace:something"] for 'data/namespace/tags/function/something.json')
     """
     if overwrite:
         Mem.ctx.data.functions[path] = Function(content)
@@ -35,6 +51,9 @@ def write_function(path: str, content: str, overwrite: bool = False, prepend: bo
             Mem.ctx.data.functions.setdefault(path).prepend(content)
         else:
             Mem.ctx.data.functions.setdefault(path).append(content)
+    if tags:
+        for tag in tags:
+            write_function_tag(tag, [path], prepend)
 
 
 def write_load_file(content: str, overwrite: bool = False, prepend: bool = False) -> None:
