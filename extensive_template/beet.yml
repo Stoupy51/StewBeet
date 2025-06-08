@@ -51,8 +51,8 @@ pipeline:
     - "stewbeet.plugins.datapack.loading"
     - "stewbeet.plugins.datapack.custom_blocks"
     - "stewbeet.plugins.datapack.loot_tables"
-    - "stewbeet.plugins.compatibilities.simpledrawer"  # TODO
-    - "stewbeet.plugins.compatibilities.neo_enchant"  # TODO
+    - "stewbeet.plugins.compatibilities.simpledrawer"
+    - "stewbeet.plugins.compatibilities.neo_enchant"
     - "src.link" # User code
     - "stewbeet.plugins.finalyze.custom_blocks_ticking"  # TODO
     - "stewbeet.plugins.finalyze.basic_datapack_structure"  # TODO
