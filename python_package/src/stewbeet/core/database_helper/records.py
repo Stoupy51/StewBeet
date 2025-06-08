@@ -9,8 +9,9 @@ from stouputils.decorators import handle_error
 from stouputils.io import clean_path, super_json_dump
 from stouputils.print import error, warning
 
-from ..__memory__ import Mem, assert_ctx
+from ..__memory__ import Mem
 from ..constants import CATEGORY, CUSTOM_ITEM_VANILLA
+from ..utils.sounds import add_sound
 
 
 # Cleaning function
@@ -44,8 +45,8 @@ def generate_custom_records(records: dict[str, str] | str | None = "auto", categ
 	assert records is None or isinstance(records, dict) or records in ["auto", "all"], (
         f"Error during custom record generation: records must be a dictionary, 'auto', or 'all' (got {type(records).__name__})"
 	)
-	assert_ctx("meta.stewbeet.records_folder")
-	records_folder: str = clean_path(Mem.ctx.meta.stewbeet.records_folder)
+	records_folder: str = clean_path(Mem.ctx.meta.get("stewbeet", {}).get("records_folder", ""))
+	assert records_folder != "", "Records folder path not found in 'ctx.meta.stewbeet.records_folder'. Please set a directory path in project configuration."
 
 	# If no records specified, search in the records folder
 	if not records or records in ["auto", "all"]:
@@ -64,7 +65,7 @@ def generate_custom_records(records: dict[str, str] | str | None = "auto", categ
 			continue
 
 		# Extract item name from sound file
-		item_name: str = ".".join(sound.split(".")[:-1])	# Remove the file extension
+		item_name: str = os.path.splitext(sound)[0]	# Remove the file extension
 
 		# Create database entry for the record
 		Mem.database[record] = {
@@ -95,7 +96,7 @@ def generate_custom_records(records: dict[str, str] | str | None = "auto", categ
 				Mem.ctx.data[f"{Mem.ctx.project_id}:{record}"] = JukeboxSong(super_json_dump(json_song))
 
 				# Create and write sound
-				Mem.ctx.assets[f"{Mem.ctx.project_id}:{record}"] = Sound(source_path=file_path, stream=True)
+				add_sound(Mem.ctx, sounds=Sound(source_path=file_path, stream=True), name=record)
 
 			except Exception as e:
 				error(f"Error during custom record generation of '{file_path}', make sure it is using proper Ogg format: {e}")

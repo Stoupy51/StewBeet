@@ -8,7 +8,7 @@ from stouputils.decorators import handle_error
 from stouputils.io import clean_path, relative_path, super_json_dump
 from stouputils.print import error
 
-from ..__memory__ import Mem, assert_ctx
+from ..__memory__ import Mem
 from ..constants import CATEGORY, CUSTOM_BLOCK_VANILLA, CUSTOM_ITEM_VANILLA, NO_SILK_TOUCH_DROP, PULVERIZING, RESULT_OF_CRAFTING, USED_FOR_CRAFTING, VANILLA_BLOCK, VANILLA_BLOCK_FOR_ORES
 from ..ingredients import ingr_repr
 from .equipments import SLOTS, EquipmentsConfig, VanillaEquipments, format_attributes
@@ -29,8 +29,8 @@ def generate_everything_about_this_material(
 		equipments_config	(EquipmentsConfig):	The base multiplier to apply
 	"""
 	# Assertions
-	assert_ctx("meta.stewbeet.textures_folder")
-	textures_folder: str = clean_path(Mem.ctx.meta.stewbeet.textures_folder)
+	textures_folder: str = relative_path(Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", ""))
+	assert textures_folder != "", "Textures folder path not found in 'ctx.meta.stewbeet.textures_folder'. Please set a directory path in project configuration."
 
 	# Prepare constants
 	textures: dict[str, str] = {
@@ -259,8 +259,8 @@ def add_recipes_for_dust(material: str, pulverize: list[str|dict], smelt_to: dic
 		smelt_to	(dict):				The ingredient representation of the result of smelting the dust, ex: ingr_repr("minecraft:copper_ingot")}
 	"""
 	# Assertions
-	assert_ctx("meta.stewbeet.textures_folder")
-	textures_folder: str = clean_path(Mem.ctx.meta.stewbeet.textures_folder)
+	textures_folder: str = relative_path(Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", ""))
+	assert textures_folder != "", "Textures folder path not found in 'ctx.meta.stewbeet.textures_folder'. Please set a directory path in project configuration."
 
 	# Prepare constants
 	textures_set: set[str] = {clean_path(str(p)).split("/")[-1] for p in Path(textures_folder).rglob("*.png")}
