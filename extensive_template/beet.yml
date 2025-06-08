@@ -4,7 +4,7 @@ id: "_your_namespace"
 # Project name that will be used in messages, item lore, etc.
 name: "StewBeet Extensive Template"
 # Pack description for pack.mcmeta. Defaults to "{name} [{version}] by {author}" if empty.
-description: "" # TODO
+description: ""
 # Author(s) name(s) displayed in pack.mcmeta, also used to add 'convention.debug' tag to the players of the same name(s) <-- showing additionnal displays like datapack loading
 author: "Stoupy51"
 # Project version in semantic versioning format: major.minor.patch (e.g., 1.0.0 or 2.84.615).
@@ -47,23 +47,23 @@ pipeline:
     - "stewbeet.plugins.resource_pack.item_models"
     - "stewbeet.plugins.resource_pack.check_power_of_2"
     - "stewbeet.plugins.custom_recipes"
-    - "stewbeet.plugins.ingame_manual"
+    - "stewbeet.plugins.ingame_manual"  # TODO
     - "stewbeet.plugins.datapack.loading"
-    - "stewbeet.plugins.datapack.custom_blocks"
-    - "stewbeet.plugins.datapack.loot_tables"
-    - "stewbeet.plugins.compatibilities.simpledrawer"
-    - "stewbeet.plugins.compatibilities.neo_enchant"
+    - "stewbeet.plugins.datapack.custom_blocks"  # TODO
+    - "stewbeet.plugins.datapack.loot_tables"  # TODO
+    - "stewbeet.plugins.compatibilities.simpledrawer"  # TODO
+    - "stewbeet.plugins.compatibilities.neo_enchant"  # TODO
     - "src.link" # User code
-    - "stewbeet.plugins.finalyze.custom_blocks_ticking"
-    - "stewbeet.plugins.finalyze.basic_datapack_structure"
-    - "stewbeet.plugins.finalyze.dependencies"
-    - "stewbeet.plugins.finalyze.check_unused_textures"
+    - "stewbeet.plugins.finalyze.custom_blocks_ticking"  # TODO
+    - "stewbeet.plugins.finalyze.basic_datapack_structure"  # TODO
+    - "stewbeet.plugins.finalyze.dependencies"  # TODO
+    - "stewbeet.plugins.finalyze.check_unused_textures"  # TODO
     - "stewbeet.plugins.auto.lang_file"
     - "stewbeet.plugins.auto.headers"
-    - "stewbeet.plugins.archive"
-    - "stewbeet.plugins.merge_smithed_weld"
-    - "stewbeet.plugins.copy_to_destination"
-    - "stewbeet.plugins.compute_sha1"
+    - "stewbeet.plugins.archive"  # TODO
+    - "stewbeet.plugins.merge_smithed_weld"  # TODO
+    - "stewbeet.plugins.copy_to_destination"  # TODO
+    - "stewbeet.plugins.compute_sha1"  # TODO
 
 # Generic dict which holds extra information usable by plugins
 meta:

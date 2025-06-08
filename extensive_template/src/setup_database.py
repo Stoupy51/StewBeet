@@ -78,5 +78,4 @@ def beet_default(ctx: Context):
     core.add_item_name_and_lore_if_missing()
     core.add_private_custom_data_for_namespace()		# Add a custom namespace for easy item detection
     core.add_smithed_ignore_vanilla_behaviours_convention()	# Smithed items convention
-    print()
 
