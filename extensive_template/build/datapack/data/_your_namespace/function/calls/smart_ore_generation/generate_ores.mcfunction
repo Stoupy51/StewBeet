@@ -1,7 +1,7 @@
 
 #> _your_namespace:calls/smart_ore_generation/generate_ores
 #
-# @within	???
+# @within	#smart_ore_generation:v1/signals/generate_ores
 #
 
 # Generate Steel Ore (x2)

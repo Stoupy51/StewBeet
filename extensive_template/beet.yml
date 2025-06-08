@@ -56,7 +56,7 @@ pipeline:
     - "src.link" # User code
     - "stewbeet.plugins.finalyze.custom_blocks_ticking"
     - "stewbeet.plugins.finalyze.basic_datapack_structure"
-    - "stewbeet.plugins.finalyze.dependencies"  # TODO
+    - "stewbeet.plugins.finalyze.dependencies"
     - "stewbeet.plugins.finalyze.check_unused_textures"  # TODO
     - "stewbeet.plugins.auto.lang_file"
     - "stewbeet.plugins.auto.headers"

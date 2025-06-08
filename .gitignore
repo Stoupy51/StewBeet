@@ -4,7 +4,7 @@ venv
 .env
 .venv
 __pycache__
-continuous_delivery/
+extensive_template/continuous_delivery/
 upload.py
 perf.html
 .beet_cache

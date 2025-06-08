@@ -1,24 +1,34 @@
 
 # Imports
+from typing import Any
+
 from beet import Function, FunctionTag
 from beet.core.utils import JsonDict
+from stouputils.collections import unique_list
 from stouputils.io import super_json_dump
 
 from ..__memory__ import Mem
 
 
 # Functions
-def write_function_tag(path: str, functions: list[str] | None = None, prepend: bool = False) -> None:
+def write_function_tag(path: str, functions: list[Any] | None = None, prepend: bool = False) -> None:
     """ Write a function tag at the given path.
 
     Args:
         path        (str):  The path to the function tag (ex: "namespace:something" for 'data/namespace/tags/function/something.json')
-        functions   (list[str] | None): The functions to add to the tag
+        functions   (list[Any] | None): The functions to add to the tag
         prepend     (bool): If the functions should be prepended instead of appended
     """
     tag: FunctionTag = Mem.ctx.data.function_tags.setdefault(path)
     data: JsonDict = tag.data
-    data.update({"values": functions or []})
+    if not data.get("values"):
+        data["values"] = functions or []
+
+    if prepend:
+        data["values"] = functions + data["values"]
+    else:
+        data["values"].extend(functions or [])
+    data["values"] = unique_list(data["values"])
     tag.encoder = super_json_dump
 
 

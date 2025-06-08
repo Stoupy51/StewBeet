@@ -1,0 +1,8 @@
+{
+	"values": [
+		{"id": "#common_signals:load","required": false},
+		{"id": "#smithed.custom_block:load","required": false},
+		{"id": "#smart_ore_generation:load","required": false},
+		{"id": "#bs.load:load","required": false}
+	]
+}

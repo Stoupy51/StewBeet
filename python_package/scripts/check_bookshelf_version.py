@@ -1,6 +1,6 @@
 """ Script to check if a new Bookshelf version is available.
 
-This script checks the current installed Bookshelf version against the latest 
+This script checks the current installed Bookshelf version against the latest
 available version and outputs 'true' if an update is available.
 
 Returns:
@@ -13,33 +13,32 @@ import os
 from typing import Any
 
 import requests
-import stouputils as stp
-
-# Constants
 from on_bookshelf_release import API_URL, CONFIG_PATH
+from stouputils.decorators import handle_error
+from stouputils.print import warning
 
 
 def load_current_version() -> str | None:
-	"""Load the current Bookshelf version from config.
-	
+	""" Load the current Bookshelf version from config.
+
 	Returns:
 		str | None: The current version or None if not found
 	"""
 	if not os.path.exists(CONFIG_PATH):
 		return None
-	
+
 	try:
-		with open(CONFIG_PATH, "r") as f:
+		with open(CONFIG_PATH) as f:
 			config: dict[str, Any] = json.load(f)
 			return config.get("version")
 	except (json.JSONDecodeError, FileNotFoundError) as e:
-		stp.warning(f"Failed to load current version: {e}")
+		warning(f"Failed to load current version: {e}")
 		return None
 
 
 def get_latest_version() -> str | None:
-	"""Fetch the latest Bookshelf version from the API.
-	
+	""" Fetch the latest Bookshelf version from the API.
+
 	Returns:
 		str | None: The latest version or None if request failed
 	"""
@@ -50,13 +49,13 @@ def get_latest_version() -> str | None:
 		# Assuming the version is in the tag_name field
 		return data.get("tag_name", "")
 	except (requests.RequestException, json.JSONDecodeError) as e:
-		stp.warning(f"Failed to fetch latest version: {e}")
+		warning(f"Failed to fetch latest version: {e}")
 		return None
 
 
-@stp.handle_error()
+@handle_error()
 def main() -> None:
-	""" Main function that checks for updates and prints result."""
+	""" Main function that checks for updates and prints result. """
 	current_version: str | None = load_current_version()
 	latest_version: str | None = get_latest_version()
 

@@ -37,5 +37,11 @@
 	"_your_namespace.total_steel_ore": "- Total 'Steel Ore': ",
 	"_your_namespace.total_steel_block": "- Total 'Steel Block': ",
 	"_your_namespace.chest_1_1": "Chest [1/1]",
-	"_your_namespace.hello_world": "Hello world!"
+	"_your_namespace.hello_world": "Hello world!",
+	"_your_namespace.bookshelf_math_v3_0_2": "- [Bookshelf Math (v3.0.2+)]",
+	"_your_namespace.smartoregeneration_v1_7_1": "- [SmartOreGeneration (v1.7.1+)]",
+	"_your_namespace.smithed_custom_block_v0_7_0": "- [Smithed Custom Block (v0.7.0+)]",
+	"_your_namespace.common_signals_v0_1_0": "- [Common Signals (v0.1.0+)]",
+	"_your_namespace.stewbeet_extensive_template_error_libraries_are_missingplease_do": "StewBeet Extensive Template Error: Libraries are missing\nplease download the right StewBeet Extensive Template datapack\nor download each of these libraries one by one:",
+	"_your_namespace.stewbeet_extensive_template_error_this_version_is_made_for_minec": "StewBeet Extensive Template Error: This version is made for Minecraft 1.21.6 Pre-Release1+."
 }
