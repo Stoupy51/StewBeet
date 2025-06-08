@@ -21,3 +21,11 @@ item replace entity @s container.0 with minecraft:furnace[item_model="_your_name
 data modify entity @s transformation.scale set value [1.002f,1.002f,1.002f]
 data modify entity @s brightness set value {block:15,sky:15}
 
+# Add tag for loop every second
+tag @s add _your_namespace.second
+scoreboard players add #second_entities _your_namespace.data 1
+
+# Add tag for loop every tick
+tag @s add _your_namespace.tick
+scoreboard players add #tick_entities _your_namespace.data 1
+

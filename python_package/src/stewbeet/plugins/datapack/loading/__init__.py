@@ -17,7 +17,7 @@ from ....core.utils.io import write_function_tag, write_load_file, write_version
 def beet_default(ctx: Context):
 	""" Main entry point for the datapack loading plugin.
 
-	Requires plugin `stewbeet.plugins.dependencies` later in the pipeline to complete.
+	Requires plugin `stewbeet.plugins.finalyze.dependencies` later in the pipeline to complete.
 
 	Args:
 		ctx (Context): The beet context.

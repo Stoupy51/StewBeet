@@ -68,5 +68,15 @@ function #bs.math:divide
 tellraw @a [{"text": "9 / 5 = ", "color": "dark_gray"},{"score":{"name":"$math.divide", "objective": "bs.out"}, "color": "gold"}]
 """)
 
+    # A custom block ticking example
+    write_function(f"{ns}:custom_blocks/steel_block/tick", """
+# This function is called every tick for the custom block "steel_block"
+particle minecraft:heart ~ ~1 ~ 1.5 1.5 1.5 0.01 10
+""")
+    write_function(f"{ns}:custom_blocks/steel_block/second", """
+# This function is called every second for the custom block "steel_block"
+particle minecraft:heart ~ ~1 ~ 1.5 1.5 1.5 0.01 1000
+""")
+
     pass
 

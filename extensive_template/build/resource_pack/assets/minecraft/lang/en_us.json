@@ -24,6 +24,8 @@
 	"_your_namespace.steel_ore": "Steel Ore",
 	"_your_namespace.steel_block": "Steel Block",
 	"_your_namespace.loaded_your_namespace_v2_0_0": "[Loaded _your_namespace v2.0.0]",
+	"_your_namespace.tick_tag_function": "- 'tick' tag function: ",
+	"_your_namespace.second_tag_function": "- 'second' tag function: ",
 	"_your_namespace.total_custom_blocks": "- Total custom blocks: ",
 	"_your_namespace.vanilla_minecraft_raw_iron_block": "- Vanilla 'minecraft:raw_iron_block': ",
 	"_your_namespace.vanilla_minecraft_polished_deepslate": "- Vanilla 'minecraft:polished_deepslate': ",

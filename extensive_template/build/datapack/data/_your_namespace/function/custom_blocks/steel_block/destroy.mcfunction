@@ -15,3 +15,9 @@ scoreboard players remove #total_steel_block _your_namespace.data 1
 # Kill the custom block entity
 kill @s
 
+# Decrease the number of entities with second tag
+scoreboard players remove #second_entities _your_namespace.data 1
+
+# Decrease the number of entities with tick tag
+scoreboard players remove #tick_entities _your_namespace.data 1
+
