@@ -55,7 +55,7 @@ pipeline:
     - "stewbeet.plugins.compatibilities.neo_enchant"
     - "src.link" # User code
     - "stewbeet.plugins.finalyze.custom_blocks_ticking"
-    - "stewbeet.plugins.finalyze.basic_datapack_structure"  # TODO
+    - "stewbeet.plugins.finalyze.basic_datapack_structure"
     - "stewbeet.plugins.finalyze.dependencies"  # TODO
     - "stewbeet.plugins.finalyze.check_unused_textures"  # TODO
     - "stewbeet.plugins.auto.lang_file"
