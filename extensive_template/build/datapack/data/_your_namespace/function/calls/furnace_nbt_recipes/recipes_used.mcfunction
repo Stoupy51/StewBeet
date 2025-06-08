@@ -5,42 +5,23 @@
 #
 
 execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input{"components": {"minecraft:custom_data": {"_your_namespace": {"raw_steel": true}}}, "item": {}} run function _your_namespace:calls/furnace_nbt_recipes/xp_reward/0.8
-
 execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input{"components": {"minecraft:custom_data": {"_your_namespace": {"raw_steel": true}}}, "item": {}} run function _your_namespace:calls/furnace_nbt_recipes/xp_reward/0.8
-
 execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input{"components": {"minecraft:custom_data": {"_your_namespace": {"steel_dust": true}}}, "item": {}} run function _your_namespace:calls/furnace_nbt_recipes/xp_reward/0.8
-
 execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input{"components": {"minecraft:custom_data": {"_your_namespace": {"steel_dust": true}}}, "item": {}} run function _your_namespace:calls/furnace_nbt_recipes/xp_reward/0.8
-
 execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input{"components": {"minecraft:custom_data": {"_your_namespace": {"steel_ore": true}}}, "item": {}} run function _your_namespace:calls/furnace_nbt_recipes/xp_reward/0.8
-
 execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input{"components": {"minecraft:custom_data": {"_your_namespace": {"steel_ore": true}}}, "item": {}} run function _your_namespace:calls/furnace_nbt_recipes/xp_reward/0.8
-
 execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input{"components": {"minecraft:custom_data": {"_your_namespace": {"deepslate_steel_ore": true}}}, "item": {}} run function _your_namespace:calls/furnace_nbt_recipes/xp_reward/0.8
-
 execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input{"components": {"minecraft:custom_data": {"_your_namespace": {"deepslate_steel_ore": true}}}, "item": {}} run function _your_namespace:calls/furnace_nbt_recipes/xp_reward/0.8
-
 execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input{"components": {"minecraft:custom_data": {"_your_namespace": {"steel_helmet": true}}}, "item": {}} run function _your_namespace:calls/furnace_nbt_recipes/xp_reward/0.8
-
 execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input{"components": {"minecraft:custom_data": {"_your_namespace": {"steel_chestplate": true}}}, "item": {}} run function _your_namespace:calls/furnace_nbt_recipes/xp_reward/0.8
-
 execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input{"components": {"minecraft:custom_data": {"_your_namespace": {"steel_leggings": true}}}, "item": {}} run function _your_namespace:calls/furnace_nbt_recipes/xp_reward/0.8
-
 execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input{"components": {"minecraft:custom_data": {"_your_namespace": {"steel_boots": true}}}, "item": {}} run function _your_namespace:calls/furnace_nbt_recipes/xp_reward/0.8
-
 execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input{"components": {"minecraft:custom_data": {"_your_namespace": {"steel_sword": true}}}, "item": {}} run function _your_namespace:calls/furnace_nbt_recipes/xp_reward/0.8
-
 execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input{"components": {"minecraft:custom_data": {"_your_namespace": {"steel_pickaxe": true}}}, "item": {}} run function _your_namespace:calls/furnace_nbt_recipes/xp_reward/0.8
-
 execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input{"components": {"minecraft:custom_data": {"_your_namespace": {"steel_axe": true}}}, "item": {}} run function _your_namespace:calls/furnace_nbt_recipes/xp_reward/0.8
-
 execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input{"components": {"minecraft:custom_data": {"_your_namespace": {"steel_shovel": true}}}, "item": {}} run function _your_namespace:calls/furnace_nbt_recipes/xp_reward/0.8
-
 execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input{"components": {"minecraft:custom_data": {"_your_namespace": {"steel_hoe": true}}}, "item": {}} run function _your_namespace:calls/furnace_nbt_recipes/xp_reward/0.8
-
 execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input{"components": {"minecraft:custom_data": {"_your_namespace": {"steel_dust": true}}}, "item": {}} run function _your_namespace:calls/furnace_nbt_recipes/xp_reward/0.8
-
 execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input{"components": {"minecraft:custom_data": {"_your_namespace": {"steel_dust": true}}}, "item": {}} run function _your_namespace:calls/furnace_nbt_recipes/xp_reward/0.8
-
 execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input{"components": {"minecraft:custom_data": {"_your_namespace": {"super_stone": true}}}, "item": {}} run function _your_namespace:calls/furnace_nbt_recipes/xp_reward/0.1
 

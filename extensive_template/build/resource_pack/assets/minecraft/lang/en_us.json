@@ -24,5 +24,15 @@
 	"_your_namespace.steel_ore": "Steel Ore",
 	"_your_namespace.steel_block": "Steel Block",
 	"_your_namespace.loaded_your_namespace_v2_0_0": "[Loaded _your_namespace v2.0.0]",
+	"_your_namespace.total_custom_blocks": "- Total custom blocks: ",
+	"_your_namespace.vanilla_minecraft_raw_iron_block": "- Vanilla 'minecraft:raw_iron_block': ",
+	"_your_namespace.vanilla_minecraft_polished_deepslate": "- Vanilla 'minecraft:polished_deepslate': ",
+	"_your_namespace.vanilla_minecraft_iron_block": "- Vanilla 'minecraft:iron_block': ",
+	"_your_namespace.vanilla_minecraft_cobblestone": "- Vanilla 'minecraft:cobblestone': ",
+	"_your_namespace.total_super_stone": "- Total 'Super Stone': ",
+	"_your_namespace.total_raw_steel_block": "- Total 'Raw Steel Block': ",
+	"_your_namespace.total_deepslate_steel_ore": "- Total 'Deepslate Steel Ore': ",
+	"_your_namespace.total_steel_ore": "- Total 'Steel Ore': ",
+	"_your_namespace.total_steel_block": "- Total 'Steel Block': ",
 	"_your_namespace.hello_world": "Hello world!"
 }

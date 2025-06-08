@@ -49,7 +49,7 @@ class FurnaceRecipeHandler:
                         "execute if score #reset furnace_nbt_recipes.data matches 0 "
                         "store success score #reset furnace_nbt_recipes.data "
                         "if data storage furnace_nbt_recipes:main "
-                        f"input{{\"id\":\"{item}\"}}\n"
+                        f"input{{\"id\":\"{item}\"}}"
                     ),
                     tags=["furnace_nbt_recipes:v1/disable_cooking"]
                 )
@@ -88,7 +88,7 @@ class FurnaceRecipeHandler:
         line: str = "execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input"
         line += json.dumps(ingredient)
         line += f" run loot replace block ~ ~ ~ container.3 loot {result_loot}"
-        return line + "\n"
+        return line
 
     @simple_cache()
     def furnace_xp_reward(self, recipe: dict[str, Any], experience: float) -> str:
@@ -126,7 +126,7 @@ scoreboard players reset #count furnace_nbt_recipes.data
         line: str = "execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input"
         ingredient: dict[str, Any] = recipe["ingredient"]
         line += json.dumps(ingredient)
-        line += f" run function {Mem.ctx.project_id}:calls/furnace_nbt_recipes/xp_reward/{experience}\n"
+        line += f" run function {Mem.ctx.project_id}:calls/furnace_nbt_recipes/xp_reward/{experience}"
         return line
 
     def generate_recipes(self) -> None:

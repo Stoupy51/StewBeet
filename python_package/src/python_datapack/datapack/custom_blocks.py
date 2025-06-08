@@ -15,7 +15,7 @@ from ...stewbeet.core.constants import (
 	VANILLA_BLOCK_FOR_ORES,
 	official_lib_used,
 )
-from ..utils.io import write_file, write_function, write_versioned_function
+from ...utils.io import write_file, write_function, write_versioned_function
 
 
 def main(config: dict):
