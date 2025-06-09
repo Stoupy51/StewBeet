@@ -11,12 +11,16 @@ from stouputils.decorators import measure_time
 from stouputils.io import super_json_dump
 from stouputils.print import progress, warning
 
+from .source_lore_font import make_source_lore_font
 from ...core import Mem
 
 
 # Main entry point
 @measure_time(progress, message="Execution time of 'stewbeet.plugins.initialize'")
 def beet_default(ctx: Context):
+
+	# Assertions
+	assert ctx.project_id, "Project ID must be set in the project configuration."
 
 	# Store the Box object in ctx for access throughout the codebase
 	meta_box: Box = Box(ctx.meta, default_box=True, default_box_attr={})
@@ -33,6 +37,7 @@ def beet_default(ctx: Context):
 	source_lore: TextComponent = Mem.ctx.meta.stewbeet.source_lore
 	if not source_lore or source_lore == "auto":
 		Mem.ctx.meta.stewbeet.source_lore = [{"text":"ICON"},{"text":f" {ctx.project_name}","italic":True,"color":"blue"}]
+	make_source_lore_font(Mem.ctx.meta.stewbeet.source_lore)
 
 	# Preprocess manual name
 	manual_name: TextComponent = Mem.ctx.meta.stewbeet.manual.name

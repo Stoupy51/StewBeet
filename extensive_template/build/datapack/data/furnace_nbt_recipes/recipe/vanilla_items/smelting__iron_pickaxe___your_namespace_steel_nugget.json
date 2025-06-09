@@ -29,8 +29,12 @@
 			},
 			"minecraft:lore": [
 				[
+					"",
 					{
-						"text": "ICON"
+						"text": "I",
+						"color": "white",
+						"italic": false,
+						"font": "_your_namespace:icons"
 					},
 					{
 						"text": " StewBeet Extensive Template",
