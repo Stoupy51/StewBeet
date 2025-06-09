@@ -154,7 +154,7 @@ def upload_version(
 	changelog: str,
 	file_parts: list[str],
 	headers: dict[str, str],
-	dependencies: list[str] = []
+	dependencies: list[str] | None = None
 ) -> dict:
 	""" Upload new version
 
@@ -170,6 +170,8 @@ def upload_version(
 	Returns:
 		dict: Upload response data
 	"""
+	if dependencies is None:
+		dependencies = []
 	stp.progress(f"Creating version {version}")
 	files: dict[str, bytes] = {}
 	for file_part in file_parts:

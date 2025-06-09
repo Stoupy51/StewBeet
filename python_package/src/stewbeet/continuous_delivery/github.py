@@ -1,4 +1,5 @@
 
+# ruff: noqa: E501
 # Imports
 import os
 
@@ -40,7 +41,7 @@ def validate_credentials(credentials: dict[str, dict[str, str]]) -> tuple[str, d
 		raise ValueError("The credentials file must contain a 'github' key, which is a dictionary containing a 'api_key' key (a PAT for the GitHub API: https://github.com/settings/tokens) and a 'username' key (the username of the account to use)")
 	if "username" not in credentials["github"]:
 		raise ValueError("The credentials file must contain a 'github' key, which is a dictionary containing a 'api_key' key (a PAT for the GitHub API: https://github.com/settings/tokens) and a 'username' key (the username of the account to use)")
-	
+
 	api_key: str = credentials["github"]["api_key"]
 	owner: str = credentials["github"]["username"]
 	headers: dict[str, str] = {"Authorization": f"Bearer {api_key}"}
@@ -62,7 +63,7 @@ def validate_config(github_config: dict[str, str]) -> tuple[str, str, str]:
 		raise ValueError("The github_config file must contain a 'version' key, which is the version of the project")
 	if "build_folder" not in github_config:
 		raise ValueError("The github_config file must contain a 'build_folder' key, which is the folder containing the build of the project (datapack and resourcepack zip files)")
-	
+
 	return github_config["project_name"], github_config["version"], github_config["build_folder"]
 
 def handle_existing_tag(owner: str, project_name: str, version: str, headers: dict[str, str]) -> bool:
@@ -117,7 +118,7 @@ def delete_existing_tag(tag_url: str, headers: dict[str, str]) -> None:
 	"""
 	delete_response = requests.delete(tag_url, headers=headers)
 	handle_response(delete_response, "Failed to delete existing tag")
-	stp.info(f"Deleted existing tag")
+	stp.info("Deleted existing tag")
 
 def version_to_int(version: str) -> int:
 	""" Version format: major.minor.patch.something_else.... infinitely """
@@ -169,7 +170,7 @@ def get_commits_since_tag(owner: str, project_name: str, latest_tag_sha: str|Non
 	"""
 	commits_url: str = f"{PROJECT_ENDPOINT}/{owner}/{project_name}/commits"
 	commits_params: dict[str, str] = {"per_page": "100"}
-	
+
 	# If there is a latest tag, use it to get the commits since the tag date
 	if latest_tag_sha:
 
@@ -178,10 +179,10 @@ def get_commits_since_tag(owner: str, project_name: str, latest_tag_sha: str|Non
 		tag_response = requests.get(tag_commit_url, headers=headers)
 		handle_response(tag_response, "Failed to get tag commit")
 		tag_date = tag_response.json()["commit"]["committer"]["date"]
-		
+
 		# Use the date as the 'since' parameter to get all commits after that date
 		commits_params["since"] = tag_date
-	
+
 	# Get the commits
 	response = requests.get(commits_url, headers=headers, params=commits_params)
 	handle_response(response, "Failed to get commits")
@@ -230,10 +231,10 @@ def generate_changelog(commits: list[dict], owner: str, project_name: str, lates
 		for desc, sha in commit_groups[type_][::-1]:
 			changelog += f"- {desc} ([{sha[:7]}](https://github.com/{owner}/{project_name}/commit/{sha}))\n"
 		changelog += "\n"
-	
+
 	if latest_tag_version:
 		changelog += f"**Full Changelog**: https://github.com/{owner}/{project_name}/compare/v{latest_tag_version}...v{version}\n"
-	
+
 	return changelog
 
 def create_tag(owner: str, project_name: str, version: str, headers: dict[str, str]) -> None:
@@ -248,17 +249,17 @@ def create_tag(owner: str, project_name: str, version: str, headers: dict[str, s
 	stp.progress(f"Creating tag v{version}")
 	create_tag_url = f"{PROJECT_ENDPOINT}/{owner}/{project_name}/git/refs"
 	latest_commit_url = f"{PROJECT_ENDPOINT}/{owner}/{project_name}/git/refs/heads/main"
-	
+
 	commit_response = requests.get(latest_commit_url, headers=headers)
 	if commit_response.status_code != 200:
 		raise ValueError(f"Failed to get latest commit: {commit_response.text}")
-	
+
 	commit_sha: str = commit_response.json()["object"]["sha"]
 	tag_data: dict[str, str] = {
 		"ref": f"refs/tags/v{version}",
 		"sha": commit_sha
 	}
-	
+
 	response = requests.post(create_tag_url, headers=headers, json=tag_data)
 	handle_response(response, "Failed to create tag")
 
@@ -283,7 +284,7 @@ def create_release(owner: str, project_name: str, version: str, changelog: str, 
 		"draft": False,
 		"prerelease": False
 	}
-	
+
 	response = requests.post(release_url, headers=headers, json=release_data)
 	handle_response(response, "Failed to create release")
 	return response.json()["id"]
@@ -301,12 +302,12 @@ def upload_assets(owner: str, project_name: str, release_id: int, build_folder: 
 	if not build_folder:
 		return
 	stp.progress("Uploading assets")
-	
+
 	response = requests.get(f"{PROJECT_ENDPOINT}/{owner}/{project_name}/releases/{release_id}", headers=headers)
 	handle_response(response, "Failed to get release details")
 	upload_url_template: str = response.json()["upload_url"]
 	upload_url_base: str = upload_url_template.split("{")[0]
-	
+
 	for file in os.listdir(build_folder):
 		if file.endswith(".zip"):
 			file_path: str = os.path.join(build_folder, file)
@@ -338,17 +339,17 @@ def upload_to_github(credentials: dict[str, dict[str, str]], github_config: dict
 	"""
 	owner, headers = validate_credentials(credentials)
 	project_name, version, build_folder = validate_config(github_config)
-	
+
 	can_create: bool = handle_existing_tag(owner, project_name, version, headers)
-	
+
 	latest_tag_sha, latest_tag_version = get_latest_tag(owner, project_name, version, headers)
 	commits = get_commits_since_tag(owner, project_name, latest_tag_sha, headers)
 	changelog = generate_changelog(commits, owner, project_name, latest_tag_version, version)
-	
+
 	if can_create:
 		create_tag(owner, project_name, version, headers)
 		release_id = create_release(owner, project_name, version, changelog, headers)
-		upload_assets(owner, project_name, release_id, build_folder, headers)	
+		upload_assets(owner, project_name, release_id, build_folder, headers)
 		stp.info(f"Project {project_name} updated on GitHub!")
 	return changelog
 

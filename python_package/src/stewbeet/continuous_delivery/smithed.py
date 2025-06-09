@@ -1,7 +1,7 @@
 
+# ruff: noqa: E501
 # Imports
 import json
-import os
 
 import requests
 import stouputils as stp
@@ -46,11 +46,11 @@ def validate_config(smithed_config: dict[str, str]) -> tuple[str, str, str]:
 		"project_name": "name of the project on Smithed",
 		"version": "version of the project",
 	}
-	
+
 	for key in required_keys:
 		if key not in smithed_config:
 			raise ValueError(f"The smithed_config dictionary must contain a '{key}' key, which is the {error_messages[key]}")
-	
+
 	return (
 		smithed_config["project_id"],
 		smithed_config["project_name"],
@@ -88,7 +88,7 @@ def upload_version(project_id: str, project_name: str, version: str, api_key: st
 			value = value.replace("_with_libs", "")
 			if requests.get(value).status_code == 200:
 				data["downloads"][key] = value
-	
+
 	response = requests.post(
 		post_url,
 		headers = {"Content-Type": "application/json"},
