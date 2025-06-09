@@ -1,6 +1,7 @@
 
 # ruff: noqa: B008, E501
 # Imports
+import os
 from pathlib import Path
 
 from beet import Equipment, Texture
@@ -88,14 +89,14 @@ def generate_everything_about_this_material(
 		if any(f"{material_base}_{gear}.png" in textures for gear in gear_types) and layer_file in textures:
 
 			# Define source and destination paths for texture copying
-			source: str = relative_path(textures[layer_file], textures_folder)
-			destination: str = f"{Mem.ctx.project_id}:entity/equipment/{humanoid_type}/{source}"
+			source: str = relative_path(os.path.splitext(textures[layer_file])[0], textures_folder)
+			destination: str = f"entity/equipment/{humanoid_type}/{source}"
 
 			# Copy the texture file
-			Mem.ctx.assets[destination] = Texture(source_path=textures[layer_file])
+			Mem.ctx.assets[Mem.ctx.project_id].textures[destination] = Texture(source_path=textures[layer_file])
 
 			# Add the layer to the model data
-			model_data["layers"][humanoid_type] = [{"texture": f"{Mem.ctx.project_id}:{source.replace('.png', '')}"}]
+			model_data["layers"][humanoid_type] = [{"texture": f"{Mem.ctx.project_id}:{source}"}]
 			return True
 		return False
 
