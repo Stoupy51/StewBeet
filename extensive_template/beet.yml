@@ -60,7 +60,7 @@ pipeline:
     - "stewbeet.plugins.finalyze.check_unused_textures"
     - "stewbeet.plugins.auto.lang_file"
     - "stewbeet.plugins.auto.headers"
-    - "stewbeet.plugins.archive"  # TODO
+    - "stewbeet.plugins.archive"
     - "stewbeet.plugins.merge_smithed_weld"  # TODO
     - "stewbeet.plugins.copy_to_destination"  # TODO
     - "stewbeet.plugins.compute_sha1"  # TODO
