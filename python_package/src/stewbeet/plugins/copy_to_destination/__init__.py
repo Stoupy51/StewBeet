@@ -1,11 +1,13 @@
 
 # Imports
 import os
+import shutil
+import time
 
 from beet import Context
-from stouputils.decorators import measure_time
+from stouputils.decorators import handle_error, measure_time
 from stouputils.io import relative_path
-from stouputils.print import info, progress
+from stouputils.print import info, progress, warning
 
 from ...core.constants import OFFICIAL_LIBS
 from ...dependencies import OFFICIAL_LIBS_PATH
@@ -13,6 +15,7 @@ from ...dependencies import OFFICIAL_LIBS_PATH
 
 # Main entry point
 @measure_time(progress, message="Execution time of 'stewbeet.plugins.copy_to_destination'")
+@handle_error(message="Error during 'stewbeet.plugins.copy_to_destination'")
 def beet_default(ctx: Context) -> None:
 	""" Copy destination plugin for StewBeet.
 	Copies the datapack (not merged) and all libs zips to all datapack destinations.
@@ -55,7 +58,7 @@ def beet_default(ctx: Context) -> None:
 
 
 def _copy_datapacks(output_path: str, project_name_simple: str, libs_folder: str, destinations: list[str]) -> None:
-	""" Copy the main datapack and all library datapacks to specified destinations using symlinks.
+	""" Copy the main datapack and all library datapacks to specified destinations using file copying.
 
 	Args:
 		output_path (str): The output directory path.
@@ -69,11 +72,8 @@ def _copy_datapacks(output_path: str, project_name_simple: str, libs_folder: str
 		for dest in destinations:
 			os.makedirs(dest, exist_ok=True)
 			dest_file = relative_path(f"{dest}/{os.path.basename(main_datapack)}")
-			# Remove existing symlink/file if it exists
-			if os.path.exists(dest_file) or os.path.islink(dest_file):
-				os.unlink(dest_file)
-			os.symlink(os.path.abspath(main_datapack), dest_file)
-			info(f"Symlinked normal datapack to: '{dest_file}'")
+			_copy_with_retry(main_datapack, dest_file)
+			info(f"Copied normal datapack to: '{dest_file}'")
 
 	# Copy all library datapacks
 	if libs_folder:
@@ -85,15 +85,12 @@ def _copy_datapacks(output_path: str, project_name_simple: str, libs_folder: str
 					for dest in destinations:
 						os.makedirs(dest, exist_ok=True)
 						dest_file = relative_path(f"{dest}/{lib_zip}")
-						# Remove existing symlink/file if it exists
-						if os.path.exists(dest_file) or os.path.islink(dest_file):
-							os.unlink(dest_file)
-						os.symlink(os.path.abspath(lib_zip_path), dest_file)
-						info(f"Symlinked library datapack to: '{dest_file}'")
+						_copy_with_retry(lib_zip_path, dest_file)
+						info(f"Copied library datapack to: '{dest_file}'")
 
 
 def _copy_resource_packs(output_path: str, project_name_simple: str, destinations: list[str]) -> None:
-	""" Copy the resource pack (merged if available, otherwise normal) to specified destinations using symlinks.
+	""" Copy the resource pack (merged if available, otherwise normal) to specified destinations using file copying.
 
 	Args:
 		output_path (str): The output directory path.
@@ -112,16 +109,13 @@ def _copy_resource_packs(output_path: str, project_name_simple: str, destination
 			# Use original name (without _with_libs suffix) for the destination
 			dest_name = f"{project_name_simple}_resource_pack.zip"
 			dest_file = relative_path(f"{dest}/{dest_name}")
-			# Remove existing symlink/file if it exists
-			if os.path.exists(dest_file) or os.path.islink(dest_file):
-				os.unlink(dest_file)
-			os.symlink(os.path.abspath(resource_pack_to_copy), dest_file)
+			_copy_with_retry(resource_pack_to_copy, dest_file)
 			pack_type = "merged" if resource_pack_to_copy == merged_resource_pack else "normal"
-			info(f"Symlinked {pack_type} resource pack to: '{dest_file}'")
+			info(f"Copied {pack_type} resource pack to: '{dest_file}'")
 
 
 def _copy_official_libs(datapack_destinations: list[str]) -> None:
-	""" Copy official libraries to specified destinations using symlinks.
+	""" Copy official libraries to specified destinations using file copying.
 
 	Args:
 		datapack_destinations (list[str]): List of destination paths for datapacks.
@@ -143,8 +137,34 @@ def _copy_official_libs(datapack_destinations: list[str]) -> None:
 					for dest in datapack_destinations:
 						os.makedirs(dest, exist_ok=True)
 						dest_file = relative_path(f"{dest}/{lib_zip}")
-						# Remove existing symlink/file if it exists
-						if os.path.exists(dest_file) or os.path.islink(dest_file):
-							os.unlink(dest_file)
-						os.symlink(os.path.abspath(lib_zip_path), dest_file)
+						_copy_with_retry(lib_zip_path, dest_file)
+						info(f"Copied official library to: '{dest_file}'")
+
+
+def _copy_with_retry(src: str, dst: str, max_retries: int = 10, delay: float = 1.0) -> None:
+	""" Copy a file with retry logic to handle permission errors.
+
+	Args:
+		src (str): Source file path.
+		dst (str): Destination file path.
+		max_retries (int): Maximum number of retry attempts.
+		delay (float): Delay in seconds between retries.
+	"""
+	# Delete the destination file if it exists
+	if os.path.exists(dst):
+		os.remove(dst)
+
+	# Ensure the destination directory exists
+	os.makedirs(os.path.dirname(dst), exist_ok=True)
+
+	# Attempt to copy the file with retries
+	for attempt in range(max_retries):
+		try:
+			shutil.copy(src, dst)
+			return
+		except PermissionError as e:
+			if attempt == max_retries - 1:
+				raise e
+			warning(f"Failed to copy '{src}' the destinations ({e.__class__.__name__}). Retrying in {delay} seconds...")
+			time.sleep(delay)
 
