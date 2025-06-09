@@ -4,7 +4,7 @@ from beet import Context, FunctionTag
 from beet.core.utils import JsonDict
 from stouputils.decorators import measure_time
 from stouputils.io import super_json_dump
-from stouputils.print import progress
+from stouputils.print import debug, progress
 
 from ....core.__memory__ import Mem
 from ....core.constants import RESULT_OF_CRAFTING
@@ -156,5 +156,5 @@ data modify storage simpledrawer:io material set value {{material: "{ns}.{materi
 			write_function(f"{ns}:calls/simpledrawer/{material_base}/main", content)
 
 		# Debug message
-		progress("Special datapack compatibility done for SimpleDrawer's compacting drawer!")
+		debug("Special datapack compatibility done for SimpleDrawer's compacting drawer!")
 

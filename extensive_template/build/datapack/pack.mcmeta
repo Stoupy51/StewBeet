@@ -1,6 +1,7 @@
 {
-  "pack": {
-    "pack_format": 71,
-    "description": "Author: Stoupy51\nVersion: 2.0.0"
-  }
+	"pack": {
+		"pack_format": 71,
+		"description": "StewBeet Extensive Template [2.0.0] by Stoupy51"
+	},
+	"id": "_your_namespace"
 }
