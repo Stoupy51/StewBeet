@@ -99,3 +99,38 @@ def write_versioned_function(path: str, content: str, overwrite: bool = False, p
     """
     write_function(f"{Mem.ctx.project_id}:v{Mem.ctx.project_version}/{path}", content, overwrite, prepend)
 
+
+# Merge two dict recuirsively
+def super_merge_dict(dict1: dict, dict2: dict) -> dict:
+	""" Merge the two dictionnaries recursively without modifying originals
+	Args:
+		dict1 (dict): The first dictionnary
+		dict2 (dict): The second dictionnary
+	Returns:
+		dict: The merged dictionnary
+	"""
+	# Copy first dictionnary
+	new_dict = {}
+	for key, value in dict1.items():
+		new_dict[key] = value
+
+	# For each key of the second dictionnary,
+	for key, value in dict2.items():
+
+		# If key exists in dict1, and both values are also dict, merge recursively
+		if key in dict1 and isinstance(dict1[key], dict) and isinstance(value, dict):
+			new_dict[key] = super_merge_dict(dict1[key], value)
+
+		# Else if it's a list, merge it
+		elif key in dict1 and isinstance(dict1[key], list) and isinstance(value, list):
+			new_dict[key] = dict1[key] + value
+			if not any(isinstance(x, dict) for x in new_dict[key]):
+				new_dict[key] = unique_list(new_dict[key])
+
+		# Else, just overwrite or add value
+		else:
+			new_dict[key] = value
+
+	# Return the new dict
+	return new_dict
+

@@ -12,21 +12,29 @@ from ...core import Mem
 
 
 # Utility functions
+def find_pack_png() -> str | None:
+	"""Find pack.png file in common locations."""
+	pack_icon: str = ""
+	for path in ("src/pack.png", "assets/pack.png"):
+		if os.path.exists(path):
+			pack_icon = path
+			break
+	if not pack_icon:
+		pack_icon = next(Path(".").glob("*pack.png"), None)
+	if not pack_icon:
+		return None  # If the pack.png does not exist, return None
+	return pack_icon
+
+
+# Main function to create the source lore font
 def make_source_lore_font(source_lore: TextComponent) -> None:
 
 	# If the source_lore has an ICON text component and pack_icon is present,
 	if source_lore and any(isinstance(component, dict) and "ICON" == component.get("text") for component in source_lore):
 
-		# Look for a pack.png (first in src/, then in assets/, else with a glob(*pack.png))
-		pack_icon: str = ""
-		for path in ("src/pack.png", "assets/pack.png"):
-			if os.path.exists(path):
-				pack_icon = path
-				break
+		pack_icon = find_pack_png()
 		if not pack_icon:
-			pack_icon = next(Path(".").glob("*pack.png"), None)
-		if not pack_icon:
-			return None # If the original_icon does not exist, return None
+			return None
 
 		# Create the font file
 		Mem.ctx.assets[Mem.ctx.project_id].fonts["icons"] = Font(
@@ -37,7 +45,7 @@ def make_source_lore_font(source_lore: TextComponent) -> None:
 		image: Image.Image = Image.open(pack_icon).convert("RGBA")
 		if image.width > 256:
 			image = image.resize((256, 256))
-		Mem.ctx.assets[Mem.ctx.project_id].textures["font/original_icon"] = Texture(image.tobytes())
+		Mem.ctx.assets[Mem.ctx.project_id].textures["font/original_icon"] = Texture(image)
 
 		# Replace every ICON text component with the original icon
 		for component in source_lore:

@@ -47,7 +47,7 @@ pipeline:
     - "stewbeet.plugins.resource_pack.item_models"
     - "stewbeet.plugins.resource_pack.check_power_of_2"
     - "stewbeet.plugins.custom_recipes"
-    - "stewbeet.plugins.ingame_manual"  # TODO
+    - "stewbeet.plugins.ingame_manual"
     - "stewbeet.plugins.datapack.loading"
     - "stewbeet.plugins.datapack.custom_blocks"
     - "stewbeet.plugins.datapack.loot_tables"
@@ -63,7 +63,7 @@ pipeline:
     - "stewbeet.plugins.archive"
     - "stewbeet.plugins.merge_smithed_weld"
     - "stewbeet.plugins.copy_to_destination"
-    - "stewbeet.plugins.compute_sha1"  # TODO
+    - "stewbeet.plugins.compute_sha1"
 
 # Generic dict which holds extra information usable by plugins
 meta:
@@ -113,15 +113,15 @@ meta:
             # Path to directory containing custom manual assets that override defaults
             manual_overrides: "assets/manual_overrides"
             # Enables high-resolution crafting displays in the manual
-            manual_high_resolution: true
+            high_resolution: true
             # Directory for storing cached manual assets
             cache_path: "manual_cache"
             # Enables caching of Minecraft assets and item renders
             cache_assets: true
             # Enables caching of manual content and images
             cache_pages: false
-            # Path for manual debug dump (auto-prefixed by cache_path)
-            json_dump_path: "content.json"
+            # Path for manual debug dump
+            json_dump_path: "manual_cache/content.json"
             # Manual title used in book and first page. Defaults to "{name} Manual"
             name: ""
             # Maximum number of items displayed per row in manual (max: 6)
@@ -131,5 +131,5 @@ meta:
             # Resolution for OpenGL renders in manual (recommended: 256x256)
             opengl_resolution: 256
             # Text component used for the manual's first page
-            manual_first_page_text: [{"text":"Modify in config.py the text that will be shown in this first manual page", "color":"#505050"}]
+            first_page_text: [{"text":"Modify in config.py the text that will be shown in this first manual page", "color":"#505050"}]
 

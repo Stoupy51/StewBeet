@@ -11,8 +11,8 @@ from stouputils.decorators import measure_time
 from stouputils.io import super_json_dump
 from stouputils.print import progress, warning
 
-from .source_lore_font import make_source_lore_font
 from ...core import Mem
+from .source_lore_font import make_source_lore_font
 
 
 # Main entry point

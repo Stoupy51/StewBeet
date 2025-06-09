@@ -23,6 +23,7 @@ def beet_default(ctx: Context):
 	# Stewbeet Initialized
 	if Mem.ctx is None:
 		Mem.ctx = ctx
+
 	# Textures folder
 	textures_folder: str = relative_path(Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", ""))
 	assert textures_folder != "", "Textures folder path not found in 'ctx.meta.stewbeet.textures_folder'. Please set a directory path in project configuration."

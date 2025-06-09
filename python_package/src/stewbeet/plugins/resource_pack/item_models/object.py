@@ -24,17 +24,18 @@ class AutoModel:
 		block_or_item   (str):            Whether this is a block or item model.
 		used_textures   (set[str]):       Set of used textures.
 		source_textures (dict[str, str]): Dictionary of source textures.
+		ignore_textures (bool):           Whether to ignore texture-related errors.
 	"""
 	# Class variables
 	DEFAULT_PARENT: str = "item/generated"
-
-	def __init__(self, item_name: str, data: dict, source_textures: dict[str, str]):
+	def __init__(self, item_name: str, data: dict, source_textures: dict[str, str], ignore_textures: bool = False):
 		""" Initialize the AutoModel.
 
 		Args:
 			item_name (str): The name of the item.
 			data (dict): The item data from the database.
 			source_textures (dict[str, str]): Dictionary of source textures.
+			ignore_textures (bool): Whether to ignore texture-related errors.
 		"""
 		self.item_name: str = item_name
 		self.data: dict = data
@@ -42,24 +43,26 @@ class AutoModel:
 		self.block_or_item: str = "item"
 		self.used_textures: set[str] = set()
 		self.source_textures: dict[str, str] = source_textures
+		self.ignore_textures: bool = ignore_textures
 
 		# Initialize model data
 		self.parent = self.data.get("parent", self.DEFAULT_PARENT)
 		self.textures = self.data.get("textures", {})
 
 	@classmethod
-	def from_database(cls, item_name: str, data: dict, source_textures: dict[str, str]) -> AutoModel:
+	def from_database(cls, item_name: str, data: dict, source_textures: dict[str, str], ignore_textures: bool = False) -> AutoModel:
 		""" Create an AutoModel from a database entry.
 
 		Args:
 			item_name (str): The name of the item.
 			data (dict): The item data from the database.
 			source_textures (dict[str, str]): Dictionary of source textures.
+			ignore_textures (bool): Whether to ignore textures in the model.
 
 		Returns:
 			AutoModel: The created AutoModel instance.
 		"""
-		return cls(item_name, data, source_textures)
+		return cls(item_name, data, source_textures, ignore_textures)
 
 	def get_powered_texture(self, variants: list[str], side: str, on_off: str) -> str:
 		""" Get the powered texture for a given side.
@@ -79,7 +82,8 @@ class AutoModel:
 		for texture in variants:
 			if texture.endswith(side):
 				return texture
-		error(f"Couldn't find texture for side '{side}' in '{variants}', consider adding missing texture or override the model")
+		if not self.ignore_textures:
+			error(f"Couldn't find texture for side '{side}' in '{variants}', consider adding missing texture or override the model")
 		return ""
 
 	def model_in_variants(self, models: list[str], variants: list[str]) -> bool:
@@ -149,51 +153,49 @@ class AutoModel:
 						cake = ["bottom", "side", "top", "inner"]
 						cube_bottom_top = ["bottom", "side", "top"]
 						orientable = ["front", "side", "top"]
-						cube_column = ["end", "side"]
-
-						# Check cake model
+						cube_column = ["end", "side"]						# Check cake model
 						if self.model_in_variants(cake, variants):
 							content["parent"] = "block/cake"
 							for side in cake:
-								content["textures"][side.replace("inner","inside")] = f"{self.namespace}:item/" + self.get_powered_texture(variants, side, on_off)
+								texture_key = side.replace("inner", "inside")
+								texture_path = f"{self.namespace}:item/" + self.get_powered_texture(variants, side, on_off)
+								content["textures"][texture_key] = texture_path
 
 							# Generate 6 models for each cake slice
 							for i in range(1, 7):
 								name: str = f"{self.item_name}_slice{i}"
 								slice_content = {"parent": f"block/cake_slice{i}", "textures": content["textures"]}
-								Mem.ctx.assets[f"{self.namespace}:item/{name}{on_off}"] = Model(super_json_dump(slice_content, max_level=4))
-
-						# Check cube_bottom_top model
+								Mem.ctx.assets[f"{self.namespace}:item/{name}{on_off}"] = Model(super_json_dump(slice_content, max_level=4))						# Check cube_bottom_top model
 						elif self.model_in_variants(cube_bottom_top, variants):
 							content["parent"] = "block/cube_bottom_top"
 							for side in cube_bottom_top:
-								content["textures"][side] = f"{self.namespace}:item/" + self.get_powered_texture(variants, side, on_off)
-
-						# Check orientable model
+								texture_path = f"{self.namespace}:item/" + self.get_powered_texture(variants, side, on_off)
+								content["textures"][side] = texture_path						# Check orientable model
 						elif self.model_in_variants(orientable, variants):
 							content["parent"] = "block/orientable"
 							for side in orientable:
-								content["textures"][side] = f"{self.namespace}:item/" + self.get_powered_texture(variants, side, on_off)
-
-						# Check cube_column model
+								texture_path = f"{self.namespace}:item/" + self.get_powered_texture(variants, side, on_off)
+								content["textures"][side] = texture_path						# Check cube_column model
 						elif self.model_in_variants(cube_column, variants):
 							content["parent"] = "block/cube_column"
 							for side in cube_column:
-								content["textures"][side] = f"{self.namespace}:item/" + self.get_powered_texture(variants, side, on_off)
+								texture_path = f"{self.namespace}:item/" + self.get_powered_texture(variants, side, on_off)
+								content["textures"][side] = texture_path
 
 						# Else, if there are no textures override, show error
 						elif not self.data.get(OVERRIDE_MODEL, {}).get("textures"):
-							patterns = super_json_dump({
-								"cake": cake,
-								"cube_bottom_top": cube_bottom_top,
-								"orientable": orientable,
-								"cube_column": cube_column
-							}, max_level=1)
-							error(
-								f"Block '{self.item_name}' has invalid variants: {variants},\n"
-								"consider overriding the model or adding missing textures to match up one of the following patterns:"
-								f"\n{patterns}"
-							)
+							if not self.ignore_textures:
+								patterns = super_json_dump({
+									"cake": cake,
+									"cube_bottom_top": cube_bottom_top,
+									"orientable": orientable,
+									"cube_column": cube_column
+								}, max_level=1)
+								error(
+									f"Block '{self.item_name}' has invalid variants: {variants},\n"
+									"consider overriding the model or adding missing textures to match up one of the following patterns:"
+									f"\n{patterns}"
+								)
 
 				# Else, it's an item
 				else:
@@ -260,7 +262,9 @@ class AutoModel:
 									})
 
 							# Add the items/bow.json file
-							Mem.ctx.assets[f"{self.namespace}:{self.item_name}{on_off}"] = ItemModel(super_json_dump(items_content, max_level=4))
+							im: ItemModel = ItemModel(items_content)
+							im.encoder = lambda x: super_json_dump(x, max_level=4)  # Use custom encoder to avoid beet's default encoder
+							Mem.ctx.assets[f"{self.namespace}:{self.item_name}{on_off}"] = im
 
 			# Add overrides
 			for key, value in overrides.items():
@@ -278,9 +282,7 @@ class AutoModel:
 				for texture in content["textures"].values():
 					if texture.startswith("minecraft:"):
 						continue
-					self.used_textures.add(texture)
-
-			# Copy used textures
+					self.used_textures.add(texture)			# Copy used textures
 			if content.get("textures"):
 				for texture in content["textures"].values():
 					# Ignore if minecraft namespace
@@ -294,15 +296,20 @@ class AutoModel:
 						if os.path.exists(self.source_textures[texture_name] + ".mcmeta"):
 							Mem.ctx.assets[f"{texture}.mcmeta"] = Texture(source_path=self.source_textures[texture_name] + ".mcmeta")
 					else:
-						error(f"Texture '{texture_name}' not found in source textures")
+						if not self.ignore_textures:
+							error(f"Texture '{texture_name}' not found in source textures")
 
 			# Add model to assets
 			if self.data.get(OVERRIDE_MODEL, None) != {}:
-				Mem.ctx.assets[f"{self.namespace}:item/{self.item_name}{on_off}"] = Model(super_json_dump(content, max_level=4))
+				m: Model = Model(content)
+				m.encoder = lambda x: super_json_dump(x, max_level=4)  # Use custom encoder to avoid beet's default encoder
+				Mem.ctx.assets[f"{self.namespace}:item/{self.item_name}{on_off}"] = m
 			Mem.ctx.meta["stewbeet"]["rendered_item_models"].add(self.data["item_model"])
 
 			# Generate the json file required in items/
 			if not self.data["id"].endswith("bow"):
 				items_model = {"model": {"type": "minecraft:model", "model": f"{self.namespace}:item/{self.item_name}{on_off}"}}
-				Mem.ctx.assets[f"{self.namespace}:{self.item_name}{on_off}"] = ItemModel(super_json_dump(items_model, max_level=4))
+				im: ItemModel = ItemModel(items_model)
+				im.encoder = lambda x: super_json_dump(x, max_level=4)  # Use custom encoder to avoid beet's default encoder
+				Mem.ctx.assets[f"{self.namespace}:{self.item_name}{on_off}"] = im
 
