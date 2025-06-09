@@ -28,12 +28,12 @@ require:
 # Takes a nested pack config, see PackConfig() documentation
 data_pack:
     name: "datapack"
-    load: ["src/datapack"]
+    load: ["src"]
 
 # Takes a nested pack config, see PackConfig() documentation
 resource_pack:
     name: resource_pack
-    load: ["src/resource_pack"]
+    load: ["src"]
 
 # A list of strings or dicts representing "plugins".
 # - These plugins will execute after the pack is loaded
@@ -62,7 +62,7 @@ pipeline:
     - "stewbeet.plugins.auto.headers"
     - "stewbeet.plugins.archive"
     - "stewbeet.plugins.merge_smithed_weld"
-    - "stewbeet.plugins.copy_to_destination"  # TODO
+    - "stewbeet.plugins.copy_to_destination"
     - "stewbeet.plugins.compute_sha1"  # TODO
 
 # Generic dict which holds extra information usable by plugins
@@ -91,9 +91,9 @@ meta:
         # Optional list of destination paths where generated files will be copied
         build_copy_destinations:
             # Paths to copy the datapack(s) to
-            - ["D:/latest_snapshot/world/datapacks"]
+            datapack: ["D:/latest_snapshot/world/datapacks"]
             # Paths to copy the resource pack(s) to
-            - ["D:/minecraft/snapshot/resourcepacks"]
+            resource_pack: ["D:/minecraft/snapshot/resourcepacks"]
         # Custom item lore configuration. If set to "auto" or unset, uses project icon followed by PROJECT_NAME
         source_lore: "auto"
         # Automagically checks for dependencies and their minimum required versions at runtime.
