@@ -48,9 +48,9 @@ def get_consistent_timestamp(ctx: Context) -> tuple[int, ...]:
 	try:
 		# Use the beet cache .gitignore file modification time for consistent timestamps
 		cache_directory = ctx.cache.directory.parent
-		gitignore_path = cache_directory / ".gitignore"
-		if gitignore_path.exists():
-			time_float = gitignore_path.stat().st_mtime
+		default_directory = cache_directory / "default"
+		if default_directory.exists():
+			time_float = default_directory.stat().st_mtime
 			return time.localtime(time_float)[:6]
 	except (AttributeError, OSError):
 		# Fall back to default time if gitignore file is not available
