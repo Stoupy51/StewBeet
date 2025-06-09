@@ -41,6 +41,24 @@ from stouputils.parallel import multithreading
 from stouputils.print import progress
 
 
+def get_consistent_timestamp(ctx: Context) -> tuple[int, ...]:
+	""" Get a consistent timestamp for archive files based on beet cache .gitignore file modification time. """
+	default_time = (2025, 1, 1, 0, 0, 0)  # Default time: 2025-01-01 00:00:00
+
+	try:
+		# Use the beet cache .gitignore file modification time for consistent timestamps
+		cache_directory = ctx.cache.directory.parent
+		gitignore_path = cache_directory / ".gitignore"
+		if gitignore_path.exists():
+			time_float = gitignore_path.stat().st_mtime
+			return time.localtime(time_float)[:6]
+	except (AttributeError, OSError):
+		# Fall back to default time if gitignore file is not available
+		pass
+
+	return default_time
+
+
 # Main entry point
 @measure_time(progress, message="Execution time of 'stewbeet.plugins.archive'")
 def beet_default(ctx: Context) -> None:
@@ -57,23 +75,7 @@ def beet_default(ctx: Context) -> None:
 	# Ensure output directory exists
 	os.makedirs(ctx.output_directory, exist_ok=True)
 
-	def get_consistent_timestamp() -> tuple[int, ...]:
-		""" Get a consistent timestamp for archive files based on beet cache .gitignore file modification time. """
-		default_time = (2025, 1, 1, 0, 0, 0)  # Default time: 2025-01-01 00:00:00
-
-		try:
-			# Use the beet cache .gitignore file modification time for consistent timestamps
-			cache_directory = ctx.cache.directory.parent
-			gitignore_path = cache_directory / ".gitignore"
-			if gitignore_path.exists():
-				time_float = gitignore_path.stat().st_mtime
-				return time.localtime(time_float)[:6]
-		except (AttributeError, OSError):
-			# Fall back to default time if gitignore file is not available
-			pass
-
-		return default_time
-	consistent_time = get_consistent_timestamp()
+	consistent_time = get_consistent_timestamp(ctx)
 
 	# Create archives for each pack
 	@handle_error
