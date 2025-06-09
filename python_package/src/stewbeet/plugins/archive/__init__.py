@@ -75,7 +75,7 @@ def beet_default(ctx: Context) -> None:
 	# Ensure output directory exists
 	os.makedirs(ctx.output_directory, exist_ok=True)
 
-	consistent_time = get_consistent_timestamp(ctx)
+	consistent_time: tuple[int, ...] = get_consistent_timestamp(ctx)
 
 	# Create archives for each pack
 	@handle_error
@@ -88,7 +88,7 @@ def beet_default(ctx: Context) -> None:
 		if isinstance(pack, DataPack):
 			pack_type = "datapack"
 		elif isinstance(pack, ResourcePack):
-			pack_type = "resourcepack"		# Create archive filename
+			pack_type = "resource_pack"		# Create archive filename
 		archive_path = f"{ctx.output_directory}/{pack_name}_{pack_type}.zip"
 
 		# Create zip archive using pack.dump() to avoid interfering with existing directories

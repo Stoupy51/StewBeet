@@ -30,11 +30,11 @@ def beet_default(ctx: Context) -> None:
 
 	# Generate destination paths for merged files
 	datapack_dest = str(Path(ctx.output_directory) / f"{project_name_simple}_datapack_with_libs.zip")
-	resource_pack_dest = str(Path(ctx.output_directory) / f"{project_name_simple}_resourcepack_with_libs.zip")
+	resource_pack_dest = str(Path(ctx.output_directory) / f"{project_name_simple}_resource_pack_with_libs.zip")
 
 	# Call weld functions if the base archives exist
 	datapack_source = str(Path(ctx.output_directory) / f"{project_name_simple}_datapack.zip")
-	resource_pack_source = str(Path(ctx.output_directory) / f"{project_name_simple}_resourcepack.zip")
+	resource_pack_source = str(Path(ctx.output_directory) / f"{project_name_simple}_resource_pack.zip")
 
 	if os.path.exists(datapack_source):
 		weld_datapack(ctx, datapack_dest)

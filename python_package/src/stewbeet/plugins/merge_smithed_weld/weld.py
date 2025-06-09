@@ -112,7 +112,7 @@ def weld_resource_pack(ctx: Context, dest_path: str) -> float:
 
 	# Get all paths to merge
 	resource_packs_to_merge = [
-		str(Path(ctx.output_directory) / f"{project_name_simple}_resourcepack.zip")
+		str(Path(ctx.output_directory) / f"{project_name_simple}_resource_pack.zip")
 	]
 	if libs_folder:
 		resource_packs_to_merge.append(f"{libs_folder}/resource_pack/*.zip")
