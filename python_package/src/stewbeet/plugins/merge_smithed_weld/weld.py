@@ -11,6 +11,7 @@ from stouputils.decorators import handle_error, silent
 from ...core.constants import OFFICIAL_LIBS
 from ...dependencies import OFFICIAL_LIBS_PATH
 from ..archive import get_consistent_timestamp
+from ..initialize.source_lore_font import find_pack_png
 
 
 # Weld datapack
@@ -76,9 +77,8 @@ def weld_datapack(ctx: Context, dest_path: str) -> float:
 				zip.writestr(info, ctx.data.mcmeta.text.encode('utf-8'))
 
 			# Check if pack.png exists and add it to the final zip if it does
-			datapack_path = Path(ctx.output_directory) / f"{project_name_simple}_datapack"
-			pack_png_path = datapack_path / "pack.png"
-			if pack_png_path.exists():
+			pack_png_path = find_pack_png()
+			if pack_png_path:
 				info: ZipInfo = ZipInfo("pack.png")
 				info.compress_type = ZIP_DEFLATED
 				info.date_time = constant_time
@@ -153,9 +153,8 @@ def weld_resource_pack(ctx: Context, dest_path: str) -> float:
 				zip.writestr(info, ctx.assets.mcmeta.text.encode('utf-8'))
 
 			# Check if pack.png exists and add it to the final zip if it does
-			resourcepack_path = Path(ctx.output_directory) / f"{project_name_simple}_resourcepack"
-			pack_png_path = resourcepack_path / "pack.png"
-			if pack_png_path.exists():
+			pack_png_path = find_pack_png()
+			if pack_png_path:
 				info: ZipInfo = ZipInfo("pack.png")
 				info.compress_type = ZIP_DEFLATED
 				info.date_time = constant_time
