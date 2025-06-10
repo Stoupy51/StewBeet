@@ -106,6 +106,8 @@ def routine():
 	manual_name: str = manual_config.get("name", "")
 	if not manual_name:
 		manual_name = f"{Mem.ctx.project_name} Manual"
+	if len(manual_name) >= 32:
+		error(f"Manual name '{manual_name}' is too long (max 32 characters), Minecraft does not support it. Please change it in the stewbeet config.")
 
 	# If smithed crafter is used, add it to the manual (last page that we will move to the second page)
 	if OFFICIAL_LIBS["smithed.crafter"]["is_used"]:
@@ -674,7 +676,7 @@ def routine():
 		Mem.definitions["manual"] = manual_definitions["manual"]
 	else:
 		Mem.definitions["manual"] = super_merge_dict(manual_definitions["manual"], Mem.definitions["manual"])
-	add_item_name_and_lore_if_missing(Mem.definitions, black_list=[item for item in Mem.definitions if item != "manual"])
+	add_item_name_and_lore_if_missing(black_list=[item for item in Mem.definitions if item != "manual"])
 
 	# Add the model to the resource pack if it doesn't already exist
 	if not manual_already_exists:
