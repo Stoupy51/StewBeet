@@ -4,6 +4,7 @@ from beet import Context
 from stouputils.decorators import measure_time
 from stouputils.print import progress
 
+from ....core.__memory__ import Mem
 from ....core.utils.io import read_function, write_function
 from .object import Header
 
@@ -16,6 +17,9 @@ def beet_default(ctx: Context):
     Args:
         ctx (Context): The beet context.
     """
+    if Mem.ctx is None:
+        Mem.ctx = ctx
+
     # Get all mcfunctions paths
     mcfunctions: dict[str, Header] = {}
     for path in ctx.data.functions:
