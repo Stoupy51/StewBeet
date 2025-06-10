@@ -150,9 +150,12 @@ def _copy_with_retry(src: str, dst: str, max_retries: int = 10, delay: float = 1
 		max_retries (int): Maximum number of retry attempts.
 		delay (float): Delay in seconds between retries.
 	"""
-	# Delete the destination file if it exists
+	# Delete the destination file if it exists (optional)
 	if os.path.exists(dst):
-		os.remove(dst)
+		try:
+			os.remove(dst)
+		except PermissionError:
+			pass
 
 	# Ensure the destination directory exists
 	os.makedirs(os.path.dirname(dst), exist_ok=True)
