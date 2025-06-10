@@ -4,7 +4,7 @@
 # @within	_your_namespace:v2.0.0/load/main
 #
 
-# StewBeet Extensive Template
+# Extensive Template
 scoreboard objectives add _your_namespace.data dummy
 tag Stoupy51 add convention.debug
 

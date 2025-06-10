@@ -7,7 +7,7 @@
 		"vanilla_block": {"id": "minecraft:iron_block","apply_facing": false},
 		"item_model": "_your_namespace:steel_block",
 		"item_name": {"text": "Steel Block","italic": false,"color": "white"},
-		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " StewBeet Extensive Template","italic": true,"color": "blue"}]]
+		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
 	},
 	"steel_ore": {
 		"id": "minecraft:furnace",
@@ -17,7 +17,7 @@
 		"no_silk_touch_drop": "raw_steel",
 		"item_model": "_your_namespace:steel_ore",
 		"item_name": {"text": "Steel Ore","italic": false,"color": "white"},
-		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " StewBeet Extensive Template","italic": true,"color": "blue"}]]
+		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
 	},
 	"deepslate_steel_ore": {
 		"id": "minecraft:furnace",
@@ -27,7 +27,7 @@
 		"no_silk_touch_drop": "raw_steel",
 		"item_model": "_your_namespace:deepslate_steel_ore",
 		"item_name": {"text": "Deepslate Steel Ore","italic": false,"color": "white"},
-		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " StewBeet Extensive Template","italic": true,"color": "blue"}]]
+		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
 	},
 	"raw_steel_block": {
 		"id": "minecraft:furnace",
@@ -37,7 +37,7 @@
 		"vanilla_block": {"id": "minecraft:raw_iron_block","apply_facing": false},
 		"item_model": "_your_namespace:raw_steel_block",
 		"item_name": {"text": "Raw Steel Block","italic": false,"color": "white"},
-		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " StewBeet Extensive Template","italic": true,"color": "blue"}]]
+		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
 	},
 	"steel_helmet": {
 		"id": "minecraft:leather_helmet",
@@ -49,7 +49,7 @@
 		"attribute_modifiers": [{"type": "armor","amount": 2.5,"operation": "add_value","slot": "head","id": "_your_namespace:armor.head"}],
 		"item_model": "_your_namespace:steel_helmet",
 		"item_name": {"text": "Steel Helmet","italic": false,"color": "white"},
-		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " StewBeet Extensive Template","italic": true,"color": "blue"}]]
+		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
 	},
 	"steel_chestplate": {
 		"id": "minecraft:leather_chestplate",
@@ -61,7 +61,7 @@
 		"attribute_modifiers": [{"type": "armor","amount": 6.5,"operation": "add_value","slot": "chest","id": "_your_namespace:armor.chest"}],
 		"item_model": "_your_namespace:steel_chestplate",
 		"item_name": {"text": "Steel Chestplate","italic": false,"color": "white"},
-		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " StewBeet Extensive Template","italic": true,"color": "blue"}]]
+		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
 	},
 	"steel_leggings": {
 		"id": "minecraft:leather_leggings",
@@ -73,7 +73,7 @@
 		"attribute_modifiers": [{"type": "armor","amount": 5.5,"operation": "add_value","slot": "legs","id": "_your_namespace:armor.legs"}],
 		"item_model": "_your_namespace:steel_leggings",
 		"item_name": {"text": "Steel Leggings","italic": false,"color": "white"},
-		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " StewBeet Extensive Template","italic": true,"color": "blue"}]]
+		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
 	},
 	"steel_boots": {
 		"id": "minecraft:leather_boots",
@@ -85,7 +85,7 @@
 		"attribute_modifiers": [{"type": "armor","amount": 2.5,"operation": "add_value","slot": "feet","id": "_your_namespace:armor.feet"}],
 		"item_model": "_your_namespace:steel_boots",
 		"item_name": {"text": "Steel Boots","italic": false,"color": "white"},
-		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " StewBeet Extensive Template","italic": true,"color": "blue"}]]
+		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
 	},
 	"steel_sword": {
 		"id": "minecraft:iron_sword",
@@ -96,7 +96,7 @@
 		"attribute_modifiers": [{"type": "attack_damage","amount": 6,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_damage"},{"type": "attack_speed","amount": -2.4,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_speed"}],
 		"item_model": "_your_namespace:steel_sword",
 		"item_name": {"text": "Steel Sword","italic": false,"color": "white"},
-		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " StewBeet Extensive Template","italic": true,"color": "blue"}]]
+		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
 	},
 	"steel_pickaxe": {
 		"id": "minecraft:iron_pickaxe",
@@ -107,7 +107,7 @@
 		"attribute_modifiers": [{"type": "attack_damage","amount": 4,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_damage"},{"type": "attack_speed","amount": -2.8,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_speed"},{"type": "mining_efficiency","amount": 0.2,"operation": "add_value","slot": "mainhand","id": "_your_namespace:mining_efficiency.mainhand"}],
 		"item_model": "_your_namespace:steel_pickaxe",
 		"item_name": {"text": "Steel Pickaxe","italic": false,"color": "white"},
-		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " StewBeet Extensive Template","italic": true,"color": "blue"}]]
+		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
 	},
 	"steel_axe": {
 		"id": "minecraft:iron_axe",
@@ -118,7 +118,7 @@
 		"attribute_modifiers": [{"type": "attack_damage","amount": 9,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_damage"},{"type": "attack_speed","amount": -3.1,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_speed"},{"type": "mining_efficiency","amount": 0.2,"operation": "add_value","slot": "mainhand","id": "_your_namespace:mining_efficiency.mainhand"}],
 		"item_model": "_your_namespace:steel_axe",
 		"item_name": {"text": "Steel Axe","italic": false,"color": "white"},
-		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " StewBeet Extensive Template","italic": true,"color": "blue"}]]
+		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
 	},
 	"steel_shovel": {
 		"id": "minecraft:iron_shovel",
@@ -129,7 +129,7 @@
 		"attribute_modifiers": [{"type": "attack_damage","amount": 4.5,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_damage"},{"type": "attack_speed","amount": -3.0,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_speed"},{"type": "mining_efficiency","amount": 0.2,"operation": "add_value","slot": "mainhand","id": "_your_namespace:mining_efficiency.mainhand"}],
 		"item_model": "_your_namespace:steel_shovel",
 		"item_name": {"text": "Steel Shovel","italic": false,"color": "white"},
-		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " StewBeet Extensive Template","italic": true,"color": "blue"}]]
+		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
 	},
 	"steel_hoe": {
 		"id": "minecraft:iron_hoe",
@@ -140,7 +140,7 @@
 		"attribute_modifiers": [{"type": "attack_damage","amount": 1,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_damage"},{"type": "attack_speed","amount": -1.0,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_speed"},{"type": "mining_efficiency","amount": 0.2,"operation": "add_value","slot": "mainhand","id": "_your_namespace:mining_efficiency.mainhand"}],
 		"item_model": "_your_namespace:steel_hoe",
 		"item_name": {"text": "Steel Hoe","italic": false,"color": "white"},
-		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " StewBeet Extensive Template","italic": true,"color": "blue"}]]
+		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
 	},
 	"steel_ingot": {
 		"id": "minecraft:command_block",
@@ -150,7 +150,7 @@
 		"wiki_components": [{"text": "Here is an example of a wiki component, this text component will be displayed as a button in the manual.\n"},{"text": "You can write anything you want here.","color": "yellow"}],
 		"item_model": "_your_namespace:steel_ingot",
 		"item_name": {"text": "Steel Ingot","italic": false,"color": "white"},
-		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " StewBeet Extensive Template","italic": true,"color": "blue"}]]
+		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
 	},
 	"steel_nugget": {
 		"id": "minecraft:command_block",
@@ -159,7 +159,7 @@
 		"result_of_crafting": [{"type": "crafting_shapeless","result_count": 9,"category": "misc","group": "steel","ingredients": [{"components": {"minecraft:custom_data": {"_your_namespace": {"steel_ingot": true}}}}]},{"type": "smelting","result_count": 1,"category": "equipment","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_helmet": true}}}}},{"type": "smelting","result_count": 1,"category": "equipment","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_chestplate": true}}}}},{"type": "smelting","result_count": 1,"category": "equipment","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_leggings": true}}}}},{"type": "smelting","result_count": 1,"category": "equipment","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_boots": true}}}}},{"type": "smelting","result_count": 1,"category": "equipment","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_sword": true}}}}},{"type": "smelting","result_count": 1,"category": "equipment","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_pickaxe": true}}}}},{"type": "smelting","result_count": 1,"category": "equipment","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_axe": true}}}}},{"type": "smelting","result_count": 1,"category": "equipment","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_shovel": true}}}}},{"type": "smelting","result_count": 1,"category": "equipment","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_hoe": true}}}}}],
 		"item_model": "_your_namespace:steel_nugget",
 		"item_name": {"text": "Steel Nugget","italic": false,"color": "white"},
-		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " StewBeet Extensive Template","italic": true,"color": "blue"}]]
+		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
 	},
 	"raw_steel": {
 		"id": "minecraft:command_block",
@@ -167,7 +167,7 @@
 		"custom_data": {"smithed": {"dict": {"raw": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"raw_steel": true}},
 		"item_model": "_your_namespace:raw_steel",
 		"item_name": {"text": "Raw Steel","italic": false,"color": "white"},
-		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " StewBeet Extensive Template","italic": true,"color": "blue"}]]
+		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
 	},
 	"steel_dust": {
 		"id": "minecraft:command_block",
@@ -177,7 +177,7 @@
 		"used_for_crafting": [{"type": "smelting","result_count": 1,"category": "misc","group": "steel","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_dust": true}}}},"result": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_ingot": true}}}}},{"type": "blasting","result_count": 1,"category": "misc","group": "steel","experience": 0.8,"cookingtime": 100,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_dust": true}}}},"result": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_ingot": true}}}}}],
 		"item_model": "_your_namespace:steel_dust",
 		"item_name": {"text": "Steel Dust","italic": false,"color": "white"},
-		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " StewBeet Extensive Template","italic": true,"color": "blue"}]]
+		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
 	},
 	"steel_stick": {
 		"id": "minecraft:command_block",
@@ -186,7 +186,7 @@
 		"result_of_crafting": [{"type": "crafting_shaped","result_count": 4,"category": "misc","shape": ["X","X"],"ingredients": {"X": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_ingot": true}}}}}}],
 		"item_model": "_your_namespace:steel_stick",
 		"item_name": {"text": "Steel Stick","italic": false,"color": "white"},
-		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " StewBeet Extensive Template","italic": true,"color": "blue"}]]
+		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
 	},
 	"stone_stick": {
 		"id": "minecraft:command_block",
@@ -195,7 +195,7 @@
 		"result_of_crafting": [{"type": "crafting_shaped","result_count": 4,"category": "misc","shape": ["X","X"],"ingredients": {"X": {"item": "minecraft:stone"}}}],
 		"item_model": "_your_namespace:stone_stick",
 		"item_name": {"text": "Stone Stick","italic": false,"color": "white"},
-		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " StewBeet Extensive Template","italic": true,"color": "blue"}]]
+		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
 	},
 	"stone_rod": {
 		"id": "minecraft:command_block",
@@ -204,7 +204,7 @@
 		"result_of_crafting": [{"type": "crafting_shaped","result_count": 1,"category": "misc","shape": ["X","X","X"],"ingredients": {"X": {"item": "minecraft:stone"}}}],
 		"item_model": "_your_namespace:stone_rod",
 		"item_name": {"text": "Stone Rod","italic": false,"color": "white"},
-		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " StewBeet Extensive Template","italic": true,"color": "blue"}]]
+		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
 	},
 	"shazinho": {
 		"id": "minecraft:command_block",
@@ -215,7 +215,7 @@
 		"rarity": "rare",
 		"category": "misc",
 		"item_model": "_your_namespace:shazinho",
-		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " StewBeet Extensive Template","italic": true,"color": "blue"}]]
+		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
 	},
 	"super_stone": {
 		"id": "minecraft:furnace",
@@ -225,16 +225,16 @@
 		"category": "misc",
 		"item_model": "_your_namespace:super_stone",
 		"item_name": {"text": "Super Stone","italic": false,"color": "white"},
-		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " StewBeet Extensive Template","italic": true,"color": "blue"}]],
+		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]],
 		"custom_data": {"_your_namespace": {"super_stone": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}}
 	},
 	"manual": {
 		"id": "minecraft:written_book",
 		"category": "misc",
-		"item_name": "StewBeet Extensive Template Manual",
+		"item_name": "Extensive Template Manual",
 		"result_of_crafting": [{"type": "crafting_shapeless","result_count": 1,"group": "manual","category": "misc","ingredients": [{"item": "minecraft:book"},{"components": {"minecraft:custom_data": {"_your_namespace": {"steel_ingot": true}}}}]},{"type": "crafting_shapeless","result_count": 1,"group": "manual","category": "misc","ingredients": [{"components": {"minecraft:custom_data": {"_your_namespace": {"manual": true}}}}]}],
 		"item_model": "_your_namespace:manual",
-		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " StewBeet Extensive Template","italic": true,"color": "blue"}]],
+		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]],
 		"custom_data": {"_your_namespace": {"manual": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}}
 	}
 }

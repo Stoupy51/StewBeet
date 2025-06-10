@@ -67,6 +67,14 @@ def beet_default(ctx: Context) -> None:
 	project_name: str = ctx.project_name
 	author: str = ctx.project_author
 
+	# Find if furnace_nbt_recipes is used
+	if ns != "furnace_nbt_recipes":
+		for function in ctx.data.functions.values():
+			if "furnace_nbt_recipes" in function.text:
+				if not official_lib_used("furnace_nbt_recipes"):
+					debug("Found the use of official supported library 'furnace_nbt_recipes', adding it to the datapack")
+				break
+
 	# Find if common_signals is used
 	if ns != "common_signals":
 		for function in ctx.data.functions.values():

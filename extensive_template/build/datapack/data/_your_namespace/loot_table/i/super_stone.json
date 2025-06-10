@@ -20,7 +20,7 @@
 									[
 										"",
 										{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},
-										{"translate": "_your_namespace.stewbeet_extensive_template","italic": true,"color": "blue"}
+										{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}
 									]
 								],
 								"minecraft:custom_data": {
@@ -30,6 +30,17 @@
 									"smithed": {
 										"ignore": {"functionality": true,"crafting": true}
 									}
+								},
+								"minecraft:container": [
+									{
+										"slot": 0,
+										"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:super_stone","from": "_your_namespace"}}}}}
+									}
+								],
+								"minecraft:tooltip_display": {
+									"hidden_components": [
+										"minecraft:container"
+									]
 								}
 							}
 						}

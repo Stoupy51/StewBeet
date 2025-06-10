@@ -2,7 +2,7 @@
 # Project identifier used for namespacing functions and tags. Should align with the namespace in the source folder.
 id: "_your_namespace"
 # Project name that will be used in messages, item lore, etc.
-name: "StewBeet Extensive Template"
+name: "Extensive Template"
 # Pack description for pack.mcmeta. Defaults to "{name} [{version}] by {author}" if empty.
 description: ""
 # Author(s) name(s) displayed in pack.mcmeta, also used to add 'convention.debug' tag to the players of the same name(s) <-- showing additionnal displays like datapack loading
@@ -48,7 +48,7 @@ pipeline:
     - "stewbeet.plugins.resource_pack.item_models"
     - "stewbeet.plugins.resource_pack.check_power_of_2"
     - "stewbeet.plugins.custom_recipes"
-    #- "stewbeet.plugins.ingame_manual"
+    - "stewbeet.plugins.ingame_manual"
     - "stewbeet.plugins.datapack.loading"
     - "stewbeet.plugins.datapack.custom_blocks"
     - "stewbeet.plugins.datapack.loot_tables"
@@ -132,5 +132,5 @@ meta:
             # Resolution for OpenGL renders in manual (recommended: 256x256)
             opengl_resolution: 256
             # Text component used for the manual's first page
-            first_page_text: [{"text":"Modify in config.py the text that will be shown in this first manual page", "color":"#505050"}]
+            first_page_text: [{"text":"Modify in beet.yml the text that will be shown in this first manual page", "color":"#505050"}]
 

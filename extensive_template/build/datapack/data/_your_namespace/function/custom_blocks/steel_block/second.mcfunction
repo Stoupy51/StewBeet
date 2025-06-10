@@ -5,5 +5,5 @@
 #
 
 # This function is called every second for the custom block "steel_block"
-particle minecraft:heart ~ ~1 ~ 1.5 1.5 1.5 0.01 1000
+particle angry_villager ~ ~1 ~ 0.2 0.2 0.2 0.01 10
 

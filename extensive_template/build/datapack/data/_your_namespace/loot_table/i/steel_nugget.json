@@ -29,7 +29,7 @@
 									[
 										"",
 										{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},
-										{"translate": "_your_namespace.stewbeet_extensive_template","italic": true,"color": "blue"}
+										{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}
 									]
 								]
 							}
