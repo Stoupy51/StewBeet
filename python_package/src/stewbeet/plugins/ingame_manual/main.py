@@ -126,7 +126,7 @@ def routine():
 				{"type":"crafting_shaped","shape":["###","#C#","SSS"],"ingredients":{"#":ingr_repr("minecraft:oak_log"),"C":ingr_repr("minecraft:crafting_table"),"S":ingr_repr("minecraft:smooth_stone")}}
 			]
 		}
-		AutoModel.from_database("heavy_workbench", Mem.database["heavy_workbench"], {}, ignore_textures = True)
+		AutoModel.from_database("heavy_workbench", Mem.database["heavy_workbench"], {}, ignore_textures = True).process()
 
 	# Prework
 	os.makedirs(f"{SharedMemory.cache_path}/font/page", exist_ok=True)
