@@ -55,6 +55,7 @@ pipeline:
     - "stewbeet.plugins.compatibilities.simpledrawer"
     - "stewbeet.plugins.compatibilities.neo_enchant"
     - "src.link" # User code
+    - "mecha"
     - "stewbeet.plugins.finalyze.custom_blocks_ticking"
     - "stewbeet.plugins.finalyze.basic_datapack_structure"
     - "stewbeet.plugins.finalyze.dependencies"
