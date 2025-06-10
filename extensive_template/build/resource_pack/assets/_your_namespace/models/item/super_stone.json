@@ -1,6 +1,0 @@
-{
-	"parent": "block/cube_all",
-	"textures": {
-		"all": "_your_namespace:item/super_stone"
-	}
-}

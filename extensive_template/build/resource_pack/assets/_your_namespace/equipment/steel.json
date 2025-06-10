@@ -1,6 +1,0 @@
-{
-	"layers": {
-		"humanoid": [{"texture": "_your_namespace:steel_layer_1"}],
-		"humanoid_leggings": [{"texture": "_your_namespace:steel_layer_2"}]
-	}
-}

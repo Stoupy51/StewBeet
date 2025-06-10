@@ -1,6 +1,0 @@
-{
-	"parent": "item/generated",
-	"textures": {
-		"layer0": "_your_namespace:item/steel_dust"
-	}
-}
