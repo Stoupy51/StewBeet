@@ -107,7 +107,8 @@ def _copy_resource_packs(output_path: str, project_name_simple: str, destination
 		for dest in destinations:
 			os.makedirs(dest, exist_ok=True)
 			# Use original name (without _with_libs suffix) for the destination
-			dest_name = f"{project_name_simple}_resource_pack.zip"
+			with_libs = "_with_libs" if resource_pack_to_copy == merged_resource_pack else ""
+			dest_name = f"{project_name_simple}_resource_pack{with_libs}.zip"
 			dest_file = relative_path(f"{dest}/{dest_name}")
 			_copy_with_retry(resource_pack_to_copy, dest_file)
 			pack_type = "merged" if resource_pack_to_copy == merged_resource_pack else "normal"
