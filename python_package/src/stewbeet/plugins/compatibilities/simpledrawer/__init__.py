@@ -22,8 +22,8 @@ def get_result_count(item: str, ingr_to_seek: str) -> int:
 	if item and ingr_to_seek:
 
 		# Get recipes
-		database: dict[str, dict] = Mem.database
-		recipes: list[dict] = database[item].get(RESULT_OF_CRAFTING, [])
+		definitions: dict[str, dict] = Mem.definitions
+		recipes: list[dict] = definitions[item].get(RESULT_OF_CRAFTING, [])
 		for recipe in recipes:			# If crafting shaped and only one ingredient, return the result count if the ingredient is the ingot item
 			if recipe["type"] == "crafting_shaped" and len(recipe["ingredients"]) == 1:
 				ingredient: dict = next(iter(recipe["ingredients"].values()))
@@ -58,7 +58,7 @@ def beet_default(ctx: Context):
 
 	# For each material block, collect materials and their variants
 	simpledrawer_materials: list[dict[str, str]] = []
-	for item, data in Mem.database.items():
+	for item, data in Mem.definitions.items():
 		if item.endswith("_block"):
 			variants: dict[str, str] = {"block": item}
 
@@ -71,7 +71,7 @@ def beet_default(ctx: Context):
 			# If raw material block, add the ingot raw item if available
 			if item.startswith("raw_"):
 				variants["material"] = "raw_" + material_base
-				if f"raw_{material_base}" in Mem.database:
+				if f"raw_{material_base}" in Mem.definitions:
 					variants["ingot"] = f"raw_{material_base}"
 
 			# Else, get the ingot material and the nugget form if any
@@ -82,14 +82,14 @@ def beet_default(ctx: Context):
 				ingot_types: list = [material_base, f"{material_base}_ingot", f"{material_base}_fragment"]
 				ingot_type: str | None = None
 				for ingot in ingot_types:
-					if ingot in Mem.database:
+					if ingot in Mem.definitions:
 						ingot_type = ingot
 						break
 				if ingot_type:
 					variants["ingot"] = ingot_type
 
 				# Get nugget if any
-				if f"{material_base}_nugget" in Mem.database:
+				if f"{material_base}_nugget" in Mem.definitions:
 					variants["nugget"] = f"{material_base}_nugget"
 
 			if len(variants) > 2:

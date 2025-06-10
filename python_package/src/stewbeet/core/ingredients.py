@@ -13,7 +13,7 @@ FURNACES_RECIPES_TYPES: tuple[str, ...] = ("smelting", "blasting", "smoking", "c
 CRAFTING_RECIPES_TYPES: tuple[str, ...] = ("crafting_shaped", "crafting_shapeless")
 SPECIAL_RECIPES_TYPES: tuple[str, ...] = (PULVERIZING, )
 
-# Function mainly used for database generation
+# Function mainly used for definitions generation
 @simple_cache
 def ingr_repr(id: str, ns: str|None = None, count: int|None = None) -> dict:
 	""" Get the identity of the ingredient from its id for custom crafts
@@ -102,19 +102,19 @@ def get_vanilla_item_id_from_ingredient(ingredient: dict, add_namespace: bool = 
 	ns, ingr_id = ingr_to_id(ingredient).split(":")
 	if ns == Mem.ctx.project_id:
 		if add_namespace:
-			return Mem.database[ingr_id]["id"]
-		return Mem.database[ingr_id]["id"].split(":")[1]
+			return Mem.definitions[ingr_id]["id"]
+		return Mem.definitions[ingr_id]["id"].split(":")[1]
 	elif ns == "minecraft":
 		if add_namespace:
 			return f"{ns}:{ingr_id}"
 		return ingr_id
 	else:
-		if Mem.external_database.get(f"{ns}:{ingr_id}"):
+		if Mem.external_definitions.get(f"{ns}:{ingr_id}"):
 			if add_namespace:
-				return Mem.external_database[f"{ns}:{ingr_id}"]["id"]
-			return Mem.external_database[f"{ns}:{ingr_id}"]["id"].split(":")[1]
+				return Mem.external_definitions[f"{ns}:{ingr_id}"]["id"]
+			return Mem.external_definitions[f"{ns}:{ingr_id}"]["id"].split(":")[1]
 		else:
-			error(f"External item '{ns}:{ingr_id}' not found in the external database")
+			error(f"External item '{ns}:{ingr_id}' not found in the external definitions")
 	return ""
 
 # Used for recipes
@@ -131,9 +131,9 @@ def get_item_from_ingredient(ingredient: dict) -> dict:
 	ingr_id = ingr_to_id(ingredient)
 	ns, id = ingr_id.split(":")
 
-	# Get from internal database
+	# Get from internal definitions
 	if ns == Mem.ctx.project_id:
-		item_data: dict = Mem.database[id].copy()
+		item_data: dict = Mem.definitions[id].copy()
 		result: dict = {"id": item_data.pop("id"), "count": 1}
 
 		# Add components
@@ -144,9 +144,9 @@ def get_item_from_ingredient(ingredient: dict) -> dict:
 				result["components"][f"minecraft:{k}"] = v
 		return result
 
-	# External database
-	if Mem.external_database.get(ingr_id):
-		item_data: dict = Mem.external_database[ingr_id].copy()
+	# External definitions
+	if Mem.external_definitions.get(ingr_id):
+		item_data: dict = Mem.external_definitions[ingr_id].copy()
 		result: dict = {"id": item_data.pop("id"), "count": 1}
 
 		# Add components
@@ -160,7 +160,7 @@ def get_item_from_ingredient(ingredient: dict) -> dict:
 	# Minecraft item
 	if ns == "minecraft":
 		return {"id": id, "count": 1}
-	error(f"External item '{ingr_id}' not found in the external database")
+	error(f"External item '{ingr_id}' not found in the external definitions")
 	return {}
 
 

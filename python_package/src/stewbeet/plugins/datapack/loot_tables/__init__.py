@@ -15,7 +15,7 @@ from ....core.utils.io import write_function
 @measure_time(progress, message="Execution time of 'stewbeet.plugins.datapack.loot_tables'")
 def beet_default(ctx: Context):
 	""" Main entry point for the loot tables plugin.
-	This plugin sets up loot tables for items in the database and external items.
+	This plugin sets up loot tables for items in the definitions and external items.
 
 	Args:
 		ctx (Context): The beet context.
@@ -28,8 +28,8 @@ def beet_default(ctx: Context):
 	assert ctx.project_id, "Project ID is not set. Please set it in the project configuration."
 	ns: str = ctx.project_id
 
-	# For each item in the database, create a loot table
-	for item, data in Mem.database.items():
+	# For each item in the definitions, create a loot table
+	for item, data in Mem.definitions.items():
 		loot_table: JsonDict = {
 			"pools": [{
 				"rolls": 1,
@@ -56,7 +56,7 @@ def beet_default(ctx: Context):
 		ctx.data[ns].loot_tables[f"i/{item}"] = LootTable(super_json_dump(loot_table, max_level = 10))
 
 	# Same for external items
-	for item, data in Mem.external_database.items():
+	for item, data in Mem.external_definitions.items():
 		ext_ns, item_name = item.split(":")
 		loot_table: JsonDict = {
 			"pools": [{
@@ -80,7 +80,7 @@ def beet_default(ctx: Context):
 		ctx.data[ns].loot_tables[f"external/{ext_ns}/{item_name}"] = LootTable(super_json_dump(loot_table, max_level=10))
 
 	# Loot tables for items with crafting recipes
-	for item, data in Mem.database.items():
+	for item, data in Mem.definitions.items():
 		if data.get(RESULT_OF_CRAFTING):
 			results = []
 			for d in data[RESULT_OF_CRAFTING]:
@@ -107,7 +107,7 @@ def beet_default(ctx: Context):
 				ctx.data[ns].loot_tables[f"i/{item}_x{result_count}"] = LootTable(super_json_dump(loot_table, max_level=10))
 
 	# Second loot table for the manual (if present)
-	if "manual" in Mem.database:
+	if "manual" in Mem.definitions:
 		loot_table: JsonDict = {
 			"pools": [{
 				"rolls": 1,
@@ -121,22 +121,22 @@ def beet_default(ctx: Context):
 
 	# Make a give all command that gives chests with all the items
 	CHEST_SIZE: int = 27
-	total_chests: int = (len(Mem.database) + CHEST_SIZE - 1) // CHEST_SIZE
+	total_chests: int = (len(Mem.definitions) + CHEST_SIZE - 1) // CHEST_SIZE
 
 	# Get source lore from context metadata
 	source_lore: JsonDict = ctx.meta["stewbeet"]["source_lore"]
 	lore = super_json_dump(source_lore, max_level=0).strip()
 
 	chests = []
-	database_copy = list(Mem.database.items())
+	definitions_copy = list(Mem.definitions.items())
 	for i in range(total_chests):
 		chest_contents = []
 
 		# For each slot of the chest, append an item and remove it from the copy
 		for j in range(CHEST_SIZE):
-			if not database_copy:
+			if not definitions_copy:
 				break
-			item, data = database_copy.pop(0)
+			item, data = definitions_copy.pop(0)
 			data = data.copy()
 			id = data.get("id")
 			for k in NOT_COMPONENTS:	# Remove non-component data

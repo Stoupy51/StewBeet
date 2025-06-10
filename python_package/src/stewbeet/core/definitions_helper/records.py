@@ -34,12 +34,12 @@ def clean_record_name(name: str) -> str:
 # Custom records
 @handle_error
 def generate_custom_records(records: dict[str, str] | str | None = "auto", category: str | None = None) -> None:
-	""" Generate custom records by searching in assets/records/ for the files and copying them to the database and resource pack folder.
+	""" Generate custom records by searching in assets/records/ for the files and copying them to the definitions and resource pack folder.
 
 	Args:
-		database	(dict[str, dict]):	The database to add the custom records items to, ex: {"record_1": "song.ogg", "record_2": "another_song.ogg"}
+		definitions	(dict[str, dict]):	The definitions to add the custom records items to, ex: {"record_1": "song.ogg", "record_2": "another_song.ogg"}
 		records		(dict[str, str]):	The custom records to apply, ex: {"record_1": "My first Record.ogg", "record_2": "A second one.ogg"}
-		category	(str):				The database category to apply to the custom records (ex: "music").
+		category	(str):				The definitions category to apply to the custom records (ex: "music").
 	"""
 	# Assertions
 	assert records is None or isinstance(records, dict) or records in ["auto", "all"], (
@@ -55,7 +55,7 @@ def generate_custom_records(records: dict[str, str] | str | None = "auto", categ
 	else:
 		records_to_check = records # type: ignore
 
-	# For each record, add it to the database
+	# For each record, add it to the definitions
 	for record, sound in records_to_check.items():
 		# Validate sound file format
 		if not isinstance(sound, str):
@@ -67,8 +67,8 @@ def generate_custom_records(records: dict[str, str] | str | None = "auto", categ
 		# Extract item name from sound file
 		item_name: str = os.path.splitext(sound)[0]	# Remove the file extension
 
-		# Create database entry for the record
-		Mem.database[record] = {
+		# Create definitions entry for the record
+		Mem.definitions[record] = {
 			"id": CUSTOM_ITEM_VANILLA,
 			"custom_data": {Mem.ctx.project_id:{record: True}, "smithed":{"dict":{"record": {record: True}}}},
 			"item_name": {"text":"Music Disc", "italic": False},
@@ -77,7 +77,7 @@ def generate_custom_records(records: dict[str, str] | str | None = "auto", categ
 			"rarity": "rare",
 		}
 		if category:
-			Mem.database[record][CATEGORY] = category
+			Mem.definitions[record][CATEGORY] = category
 
 		# Process sound file
 		file_path: str = f"{records_folder}/{sound}"

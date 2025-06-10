@@ -94,9 +94,9 @@ class CustomOreGeneration:
 			self.placer_command = f"run function {Mem.ctx.project_id}:custom_blocks/{custom_ore}/place_main"
 
 			# Handle deepslate variants
-			if custom_ore.startswith("deepslate_") and custom_ore.replace("deepslate_", "") in Mem.database:
+			if custom_ore.startswith("deepslate_") and custom_ore.replace("deepslate_", "") in Mem.definitions:
 				self.placer_command = "unless block ~ ~ ~ minecraft:stone " + self.placer_command
-			elif f"deepslate_{custom_ore}" in Mem.database:
+			elif f"deepslate_{custom_ore}" in Mem.definitions:
 				self.placer_command = "unless block ~ ~ ~ minecraft:deepslate " + self.placer_command
 
 	def _generate_main_function(self, beautify_ore: str, vein_path: str) -> None:

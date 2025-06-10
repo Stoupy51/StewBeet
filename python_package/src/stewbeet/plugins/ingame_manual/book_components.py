@@ -71,23 +71,23 @@ def get_item_component(ingredient: dict|str, only_those_components: list[str] | 
 	if isinstance(ingredient, dict) and ingredient.get("item"):
 		formatted["hover_event"]["id"] = ingredient["item"]
 	else:
-		# Get the item in the database
+		# Get the item in the definitions
 		if isinstance(ingredient, str):
 			id = ingredient
-			item = Mem.database[ingredient]
+			item = Mem.definitions[ingredient]
 		else:
 			custom_data: dict = ingredient["components"]["minecraft:custom_data"]
 			id = ingr_to_id(ingredient, add_namespace = False)
 			if custom_data.get(Mem.ctx.project_id):
-				item = Mem.database.get(id)
+				item = Mem.definitions.get(id)
 			else:
 				ns = next(iter(custom_data.keys())) + ":"
 				for data in custom_data.values():
-					item = Mem.external_database.get(ns + next(iter(data.keys())))
+					item = Mem.external_definitions.get(ns + next(iter(data.keys())))
 					if item:
 						break
 		if not item:
-			error("Item not found in database or external database: " + str(ingredient))
+			error("Item not found in definitions or external definitions: " + str(ingredient))
 
 		# Copy id and components
 		formatted["hover_event"]["id"] = item["id"].replace("minecraft:", "")

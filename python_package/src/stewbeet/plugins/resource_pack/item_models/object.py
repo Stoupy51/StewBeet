@@ -33,7 +33,7 @@ class AutoModel:
 
 		Args:
 			item_name (str): The name of the item.
-			data (dict): The item data from the database.
+			data (dict): The item data from the definitions.
 			source_textures (dict[str, str]): Dictionary of source textures.
 			ignore_textures (bool): Whether to ignore texture-related errors.
 		"""
@@ -50,12 +50,12 @@ class AutoModel:
 		self.textures = self.data.get("textures", {})
 
 	@classmethod
-	def from_database(cls, item_name: str, data: dict, source_textures: dict[str, str], ignore_textures: bool = False) -> AutoModel:
-		""" Create an AutoModel from a database entry.
+	def from_definitions(cls, item_name: str, data: dict, source_textures: dict[str, str], ignore_textures: bool = False) -> AutoModel:
+		""" Create an AutoModel from a definitions entry.
 
 		Args:
 			item_name (str): The name of the item.
-			data (dict): The item data from the database.
+			data (dict): The item data from the definitions.
 			source_textures (dict[str, str]): Dictionary of source textures.
 			ignore_textures (bool): Whether to ignore textures in the model.
 

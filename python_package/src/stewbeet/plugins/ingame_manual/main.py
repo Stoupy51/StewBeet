@@ -24,7 +24,7 @@ from ...core.constants import (
 	USED_FOR_CRAFTING,
 	WIKI_COMPONENT,
 )
-from ...core.database_helper import add_item_name_and_lore_if_missing
+from ...core.definitions_helper import add_item_name_and_lore_if_missing
 from ...core.ingredients import ingr_repr, ingr_to_id
 from ...core.utils.io import super_merge_dict, write_load_file
 from ..initialize.source_lore_font import find_pack_png
@@ -84,7 +84,7 @@ from .shared_import import (
 def deepcopy(x):
 	return json.loads(json.dumps(x))
 
-@measure_time(info, "Added manual to the database")
+@measure_time(info, "Added manual to the definitions")
 def main():
 	# Copy everything in the manual assets folder to the templates folder
 	os.makedirs(TEMPLATES_PATH, exist_ok = True)
@@ -110,7 +110,7 @@ def routine():
 	# If smithed crafter is used, add it to the manual (last page that we will move to the second page)
 	if OFFICIAL_LIBS["smithed.crafter"]["is_used"]:
 		Mem.ctx.assets[Mem.ctx.project_id].textures["item/heavy_workbench"] = Texture(source_path=f"{TEMPLATES_PATH}/heavy_workbench.png")
-		Mem.database["heavy_workbench"] = {
+		Mem.definitions["heavy_workbench"] = {
 			"id": CUSTOM_BLOCK_VANILLA,
 			"item_name": "'Heavy Workbench'",
 			"item_model": f"{Mem.ctx.project_id}:heavy_workbench",
@@ -126,7 +126,7 @@ def routine():
 				{"type":"crafting_shaped","shape":["###","#C#","SSS"],"ingredients":{"#":ingr_repr("minecraft:oak_log"),"C":ingr_repr("minecraft:crafting_table"),"S":ingr_repr("minecraft:smooth_stone")}}
 			]
 		}
-		AutoModel.from_database("heavy_workbench", Mem.database["heavy_workbench"], {}, ignore_textures = True).process()
+		AutoModel.from_definitions("heavy_workbench", Mem.definitions["heavy_workbench"], {}, ignore_textures = True).process()
 
 	# Prework
 	os.makedirs(f"{SharedMemory.cache_path}/font/page", exist_ok=True)
@@ -169,7 +169,7 @@ def routine():
 
 		# Generate categories list
 		categories: dict[str, list] = {}
-		for item, data in Mem.database.items():
+		for item, data in Mem.definitions.items():
 
 			if CATEGORY not in data:
 				suggestion(f"Item '{item}' has no category key. Skipping.")
@@ -193,7 +193,7 @@ def routine():
 			if len(items) > MAX_ITEMS_PER_PAGE:
 				s += f" (splitted into {len(items) // MAX_ITEMS_PER_PAGE + 1} pages)"
 		nb_categories: int = len(categories) - (1 if HEAVY_WORKBENCH_CATEGORY in categories else 0)
-		debug(f"Found {nb_categories} categories in the database:{s}")
+		debug(f"Found {nb_categories} categories in the definitions:{s}")
 
 		# Split up categories into pages
 		categories_pages = {}
@@ -218,10 +218,10 @@ def routine():
 			SharedMemory.manual_pages.append({"number": i, "name": page_name, "raw_data": items, "type": CATEGORY})
 
 		# Append items (sorted by category)
-		items_with_category = [(item, data) for item, data in Mem.database.items() if CATEGORY in data]
+		items_with_category = [(item, data) for item, data in Mem.definitions.items() if CATEGORY in data]
 		category_list = list(categories.keys())
-		sorted_database_on_category = sorted(items_with_category, key = lambda x: category_list.index(x[1][CATEGORY]))
-		for item, data in sorted_database_on_category:
+		sorted_definitions_on_category = sorted(items_with_category, key = lambda x: category_list.index(x[1][CATEGORY]))
+		for item, data in sorted_definitions_on_category:
 			i += 1
 			SharedMemory.manual_pages.append({"number": i, "name": item, "raw_data": data, "type": "item"})
 
@@ -428,7 +428,7 @@ def routine():
 						# If there is a result to the craft, try to add the click_event that change to that page
 						if "result" in craft:
 							result_item = ingr_to_id(craft["result"], False)
-							if result_item in Mem.database:
+							if result_item in Mem.definitions:
 								info_buttons[-1]["click_event"] = {
 									"action": "change_page",
 									"page": get_page_number(result_item)
@@ -592,7 +592,7 @@ def routine():
 		book_content: list[dict|list|str] = list(optimize_element(book_content_deepcopy))
 
 		## Insert at 2nd page the heavy workbench
-		if "heavy_workbench" in Mem.database:
+		if "heavy_workbench" in Mem.definitions:
 			heavy_workbench_page = book_content.pop(-1)
 			book_content.insert(1, heavy_workbench_page)
 
@@ -654,9 +654,9 @@ def routine():
 			if len(fp["chars"]) < 1 or (len(fp["chars"]) == 1 and not fp["chars"][0]):
 				error(f"Font provider '{path}' has no chars")
 
-	# Finally, prepend the manual to the database
-	manual_already_exists: bool = "manual" in Mem.database
-	manual_database = {
+	# Finally, prepend the manual to the definitions
+	manual_already_exists: bool = "manual" in Mem.definitions
+	manual_definitions = {
 		"manual": {
 			"id": "minecraft:written_book",
 			"written_book_content": {
@@ -669,19 +669,19 @@ def routine():
 			"max_stack_size": 1
 		}
 	}
-	if not Mem.database.get("manual"):
-		Mem.database["manual"] = manual_database["manual"]
+	if not Mem.definitions.get("manual"):
+		Mem.definitions["manual"] = manual_definitions["manual"]
 	else:
-		Mem.database["manual"] = super_merge_dict(manual_database["manual"], Mem.database["manual"])
-	add_item_name_and_lore_if_missing(Mem.database, black_list=[item for item in Mem.database if item != "manual"])
+		Mem.definitions["manual"] = super_merge_dict(manual_definitions["manual"], Mem.definitions["manual"])
+	add_item_name_and_lore_if_missing(Mem.definitions, black_list=[item for item in Mem.definitions if item != "manual"])
 
 	# Add the model to the resource pack if it doesn't already exist
 	if not manual_already_exists:
-		AutoModel.from_database("manual", Mem.database["manual"], {})
+		AutoModel.from_definitions("manual", Mem.definitions["manual"], {})
 
-	# Remove the heavy workbench from the database
+	# Remove the heavy workbench from the definitions
 	if OFFICIAL_LIBS["smithed.crafter"]["is_used"]:
-		del Mem.database["heavy_workbench"]
+		del Mem.definitions["heavy_workbench"]
 		del Mem.ctx.assets[Mem.ctx.project_id].textures["item/heavy_workbench"]
 		del Mem.ctx.assets[Mem.ctx.project_id].models["item/heavy_workbench"]
 		del Mem.ctx.assets[Mem.ctx.project_id].item_models["heavy_workbench"]

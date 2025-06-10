@@ -20,9 +20,9 @@ from ...core.constants import (
 from .shared_import import SharedMemory
 
 
-# Generate iso renders for every item in the database
+# Generate iso renders for every item in the definitions
 def generate_all_iso_renders():
-	database: dict[str, dict] = Mem.database
+	definitions: dict[str, dict] = Mem.definitions
 	namespace: str = Mem.ctx.project_id
 
 	# Create the items folder
@@ -33,7 +33,7 @@ def generate_all_iso_renders():
 	cache_assets: bool = Mem.ctx.meta.get("stewbeet",{}).get("manual", {}).get("cache_assets", True)
 	textures_folder: str = Mem.ctx.meta.get("stewbeet",{}).get("textures_folder", "assets/textures")
 	for_model_resolver: dict[str, str] = {}
-	for item, data in database.items():
+	for item, data in definitions.items():
 
 		# Skip items that don't have models
 		if not data.get("item_model"):
@@ -85,7 +85,7 @@ def generate_all_iso_renders():
 	## Copy every used vanilla items
 	# Get every used vanilla items
 	used_vanilla_items = set()
-	for data in database.values():
+	for data in definitions.values():
 		all_crafts: list[dict] = list(data.get(RESULT_OF_CRAFTING,[]))
 		all_crafts += list(data.get(USED_FOR_CRAFTING,[]))
 		for recipe in all_crafts:

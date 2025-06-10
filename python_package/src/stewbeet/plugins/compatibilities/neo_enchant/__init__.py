@@ -23,7 +23,7 @@ def beet_default(ctx: Context):
 		Mem.ctx = ctx
 
 	# If any block use the vanilla block for ores, add the compatibility
-	if any(VANILLA_BLOCK_FOR_ORES == data.get(VANILLA_BLOCK) for data in Mem.database.values()):
+	if any(VANILLA_BLOCK_FOR_ORES == data.get(VANILLA_BLOCK) for data in Mem.definitions.values()):
 
 		# Add the block to veinminer tag
 		tag_content: JsonDict = {"values": [VANILLA_BLOCK_FOR_ORES["id"]]}

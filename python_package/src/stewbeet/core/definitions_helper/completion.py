@@ -13,14 +13,14 @@ from ..__memory__ import Mem
 
 # Add item model component
 def add_item_model_component(black_list: list[str] | None = None) -> None:
-	""" Add an item model component to all items in the database.
+	""" Add an item model component to all items in the definitions.
 
 	Args:
 		black_list	(list[str]):		The list of items to ignore.
 	"""
 	if black_list is None:
 		black_list = []
-	for item, data in Mem.database.items():
+	for item, data in Mem.definitions.items():
 		if item in black_list or data.get("item_model", None) is not None:
 			continue
 		data["item_model"] = f"{Mem.ctx.project_id}:{item}"
@@ -28,10 +28,10 @@ def add_item_model_component(black_list: list[str] | None = None) -> None:
 
 # Add item name and lore
 def add_item_name_and_lore_if_missing(is_external: bool = False, black_list: list[str] | None = None) -> None:
-	""" Add item name and lore to all items in the database if they are missing.
+	""" Add item name and lore to all items in the definitions if they are missing.
 
 	Args:
-		is_external	(bool):				Whether the database is the external one or not (meaning the namespace is in the item name).
+		is_external	(bool):				Whether the definitions is the external one or not (meaning the namespace is in the item name).
 		black_list	(list[str]):		The list of items to ignore.
 	"""
 	# Load the source lore
@@ -40,7 +40,7 @@ def add_item_name_and_lore_if_missing(is_external: bool = False, black_list: lis
 	source_lore: TextComponent = Mem.ctx.meta.stewbeet.source_lore
 
 	# For each item, add item name and lore if missing (if not in black_list)
-	for item, data in Mem.database.items():
+	for item, data in Mem.definitions.items():
 		if item in black_list:
 			continue
 
@@ -78,12 +78,12 @@ def add_item_name_and_lore_if_missing(is_external: bool = False, black_list: lis
 
 # Add private custom data for namespace
 def add_private_custom_data_for_namespace(is_external: bool = False) -> None:
-	""" Add private custom data for namespace to all items in the database if they are missing.
+	""" Add private custom data for namespace to all items in the definitions if they are missing.
 
 	Args:
-		is_external	(bool):				Whether the database is the external one or not (meaning the namespace is in the item name).
+		is_external	(bool):				Whether the definitions is the external one or not (meaning the namespace is in the item name).
 	"""
-	for item, data in Mem.database.items():
+	for item, data in Mem.definitions.items():
 		if not data.get("custom_data"):
 			data["custom_data"] = {}
 		if not is_external:
@@ -97,11 +97,11 @@ def add_private_custom_data_for_namespace(is_external: bool = False) -> None:
 
 # Smithed ignore convention
 def add_smithed_ignore_vanilla_behaviours_convention() -> None:
-	""" Add smithed convention to all items in the database if they are missing.
+	""" Add smithed convention to all items in the definitions if they are missing.
 
 	Refer to https://wiki.smithed.dev/conventions/tag-specification/#custom-items for more information.
 	"""
-	for data in Mem.database.values():
+	for data in Mem.definitions.values():
 		data["custom_data"] = Box(data.get("custom_data", {}), default_box=True, default_box_attr={}, default_box_create_on_get=True)
 		data["custom_data"].smithed.ignore.functionality = True
 		data["custom_data"].smithed.ignore.crafting = True

@@ -12,9 +12,9 @@ class Mem:
     """ Global context object that holds the beet project configuration.
     This is set during plugins.initialize and used throughout the codebase. """
 
-    database: JsonDict = {}
-    """ Main database that stores all item and block data for the project. """
+    definitions: JsonDict = {}
+    """ JsonDict storing all item and block definitions for the project. """
 
-    external_database: JsonDict = {}
-    """ Secondary database for storing external dependencies and compatibility data. """
+    external_definitions: JsonDict = {}
+    """ Secondary JsonDict for storing external items or blocks most likely for recipes. """
 

@@ -23,8 +23,8 @@ def beet_default(ctx: Context):
 	if Mem.ctx is None:
 		Mem.ctx = ctx
 
-	# Only generate manual if we have database items
-	if not Mem.database:
+	# Only generate manual if we have definitions items
+	if not Mem.definitions:
 		warning("Database is empty, skipping manual generation.")
 		return
 

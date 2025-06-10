@@ -52,10 +52,10 @@ def main():
         if cache_path and os.path.exists(cache_path):
             shutil.rmtree(cache_path, ignore_errors=True)
 
-        # Remove debug database file if it exists
-        database_debug: str = meta.stewbeet.database_debug
-        if database_debug and os.path.exists(database_debug):
-            os.remove(database_debug)
+        # Remove debug definitions file if it exists
+        definitions_debug: str = meta.stewbeet.definitions_debug
+        if definitions_debug and os.path.exists(definitions_debug):
+            os.remove(definitions_debug)
         info("Cleaning done!")
 
     if second_arg != "clean":

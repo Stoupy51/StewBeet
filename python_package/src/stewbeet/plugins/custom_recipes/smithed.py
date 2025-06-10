@@ -149,7 +149,7 @@ class SmithedRecipeHandler:
 
     def generate_recipes(self) -> None:
         """Generate all Smithed Crafter recipes."""
-        for item, data in Mem.database.items():
+        for item, data in Mem.definitions.items():
             crafts: list[dict[str, Any]] = list(data.get("result_of_crafting", []))
             crafts += list(data.get("used_for_crafting", []))
 

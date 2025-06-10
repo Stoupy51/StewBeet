@@ -69,10 +69,10 @@ execute unless score #{ctx.project_id}.loaded load.status matches 1 run function
 """)
 
 	# Confirm load
-	items_storage = ""	# Storage representation of every item in the database
-	if Mem.database:
+	items_storage = ""	# Storage representation of every item in the definitions
+	if Mem.definitions:
 		items_storage += f"\n# Items storage\ndata modify storage {ctx.project_id}:items all set value {{}}\n"
-		for item, data in Mem.database.items():
+		for item, data in Mem.definitions.items():
 
 			# Prepare storage data with item_model component in first
 			mc_data = {"id":"","count":1, "components":{"minecraft:item_model":""}}
@@ -94,7 +94,7 @@ execute unless score #{ctx.project_id}.loaded load.status matches 1 run function
 			if mc_data["components"]["minecraft:item_model"] == "":
 				del mc_data["components"]["minecraft:item_model"]
 
-			# Append to the storage database, json_dump adds
+			# Append to the storage definitions, json_dump adds
 			items_storage += f"data modify storage {ctx.project_id}:items all.{item} set value " + super_json_dump(mc_data, max_level = 0)
 
 	# Write the loading tellraw and score, along with the final dataset

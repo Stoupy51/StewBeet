@@ -26,7 +26,7 @@ from ....core.utils.io import write_function, write_function_tag, write_versione
 @measure_time(progress, message="Execution time of 'stewbeet.plugins.datapack.custom_blocks'")
 def beet_default(ctx: Context):
 	""" Main entry point for the custom blocks plugin.
-	This plugin sets up custom blocks in the datapack based of the given database configuration.
+	This plugin sets up custom blocks in the datapack based of the given definitions configuration.
 
 	Args:
 		ctx (Context): The beet context.
@@ -40,7 +40,7 @@ def beet_default(ctx: Context):
 	ns: str = ctx.project_id
 
 	# Stop if not custom block
-	if not any(data.get(VANILLA_BLOCK) for data in Mem.database.values()):
+	if not any(data.get(VANILLA_BLOCK) for data in Mem.definitions.values()):
 		return
 
 	# Predicates
@@ -71,7 +71,7 @@ execute if score #rotation {ns}.data matches 0 if predicate {ns}:facing/west run
 
 	# For each custom block,
 	unique_blocks = set()
-	for item, data in Mem.database.items():
+	for item, data in Mem.definitions.items():
 		item: str
 		data: dict[str, Any]
 		item_name: str = item.replace("_", " ").title()
@@ -79,6 +79,21 @@ execute if score #rotation {ns}.data matches 0 if predicate {ns}:facing/west run
 
 		# Custom block
 		if data.get(VANILLA_BLOCK):
+
+			# Add additional data to the custom blocks
+			if data.get("id") == CUSTOM_BLOCK_VANILLA:
+				data["container"] = [
+					{"slot":0,"item":{"id":"minecraft:stone","count":1,"components":{"minecraft:custom_data":{"smithed":{"block":{"id":f"{ctx.project_id}:{item}","from":ctx.project_id}}}}}}
+				]
+
+				# Hide the container tooltip
+				if not data.get("tooltip_display"):
+					data["tooltip_display"] = {"hidden_components": []}
+				elif not data["tooltip_display"].get("hidden_components"):
+					data["tooltip_display"]["hidden_components"] = []
+				data["tooltip_display"]["hidden_components"].append("minecraft:container")
+
+			# Get the vanilla block data
 			block = data[VANILLA_BLOCK]
 			block_id = block["id"]
 			path = f"{ns}:custom_blocks/{item}"
@@ -177,12 +192,12 @@ execute if score #rotation {ns}.data matches 4 run data modify entity @s Rotatio
 		pass
 
 	# Link the custom block library to the datapack
-	smithed_custom_blocks = [1 for data in Mem.database.values() if data.get("id") == CUSTOM_BLOCK_VANILLA]
+	smithed_custom_blocks = [1 for data in Mem.definitions.values() if data.get("id") == CUSTOM_BLOCK_VANILLA]
 	if smithed_custom_blocks:
 
 		# Change is_used state
 		if not official_lib_used("smithed.custom_block"):
-			debug("Found custom blocks using CUSTOM_BLOCK_VANILLA in the database, adding 'smithed.custom_block' to the dependencies")
+			debug("Found custom blocks using CUSTOM_BLOCK_VANILLA in the definitions, adding 'smithed.custom_block' to the dependencies")
 
 		# Write function tag to link with the library
 		write_function_tag("smithed.custom_block:event/on_place", [f"{ns}:custom_blocks/on_place"])
@@ -195,7 +210,7 @@ execute if score #rotation {ns}.data matches 4 run data modify entity @s Rotatio
 
 		# Write the function that will place the custom blocks
 		content = f"tag @s add {ns}.placer\n"
-		for item, data in Mem.database.items():
+		for item, data in Mem.definitions.items():
 			if data.get("id") == CUSTOM_BLOCK_VANILLA:
 				content += f"execute if data storage smithed.custom_block:main blockApi{{id:\"{ns}:{item}\"}} run function {ns}:custom_blocks/{item}/place_main\n"
 		content += f"tag @s remove {ns}.placer\n"
@@ -235,7 +250,7 @@ execute if score #rotation {ns}.data matches 4 run data modify entity @s Rotatio
 		content = "\n"
 
 		# For every custom block, add a tag check for destroy if it's the right vanilla block
-		for item, data in Mem.database.items():
+		for item, data in Mem.definitions.items():
 			if data.get(VANILLA_BLOCK):
 
 				# Get the vanilla block
@@ -249,7 +264,7 @@ execute if score #rotation {ns}.data matches 4 run data modify entity @s Rotatio
 		write_function(f"{ns}:custom_blocks/_groups/{block_underscore}", content + "\n")
 
 	# For each custom block, make it's destroy function
-	for item, data in Mem.database.items():
+	for item, data in Mem.definitions.items():
 		if data.get(VANILLA_BLOCK):
 			block = data[VANILLA_BLOCK]
 			path = f"{ns}:custom_blocks/{item}"
@@ -349,7 +364,7 @@ execute if {score_check} as @e[type=item_display,tag={ns}.custom_block,predicate
 """)
 
 	## Custom ores break detection (if any custom ore)
-	if any(data.get(VANILLA_BLOCK) == VANILLA_BLOCK_FOR_ORES for data in Mem.database.values()):
+	if any(data.get(VANILLA_BLOCK) == VANILLA_BLOCK_FOR_ORES for data in Mem.definitions.values()):
 		write_function_tag("common_signals:signals/on_new_item", [f"{ns}:calls/common_signals/new_item"])
 		write_function(f"{ns}:calls/common_signals/new_item",
 f"""
@@ -378,7 +393,7 @@ execute as @e[tag={ns}.custom_block,dx=0,dy=0,dz=0] at @s run function {ns}:cust
 	)
 
 	## Custom blocks using player_head
-	for item, data in Mem.database.items():
+	for item, data in Mem.definitions.items():
 		if data["id"] == CUSTOM_BLOCK_HEAD and data.get(VANILLA_BLOCK):
 
 			# Make advancement

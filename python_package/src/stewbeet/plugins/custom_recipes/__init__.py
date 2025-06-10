@@ -17,7 +17,7 @@ def beet_default(ctx: Context) -> None:
     """ Main entry point for the custom recipes plugin.
     This plugin handles the generation of custom recipes for the datapack.
 
-    Requires a valid database in Mem.database in order to function properly.
+    Requires a valid definitions in Mem.definitions in order to function properly.
 
     Args:
         ctx (Context): The beet context.

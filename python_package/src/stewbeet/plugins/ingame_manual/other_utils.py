@@ -110,7 +110,7 @@ def generate_otherside_crafts(item: str) -> list[dict]:
 	"""
 	# Get all crafts that use the item
 	crafts = []
-	for key, value in Mem.database.items():
+	for key, value in Mem.definitions.items():
 		if key != item and value.get(RESULT_OF_CRAFTING):
 			for craft in value[RESULT_OF_CRAFTING]:
 				craft: dict = craft

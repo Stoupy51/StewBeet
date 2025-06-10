@@ -37,9 +37,9 @@ def beet_default(ctx: Context):
 	# Initialize rendered_item_models set in ctx.meta
 	Mem.ctx.meta["stewbeet"]["rendered_item_models"] = set()
 
-	# Get all item models from database
+	# Get all item models from definitions
 	item_models: dict[str, AutoModel] = {}
-	for item_name, data in Mem.database.items():
+	for item_name, data in Mem.definitions.items():
 
 		# Skip items without models or already rendered
 		item_model: str = data.get("item_model", "")
@@ -50,8 +50,8 @@ def beet_default(ctx: Context):
 		if not item_model.startswith(Mem.ctx.project_id):
 			continue
 
-		# Create an MyItemModel object from the database entry
-		item_models[item_name] = AutoModel.from_database(item_name, data, textures)
+		# Create an MyItemModel object from the definitions entry
+		item_models[item_name] = AutoModel.from_definitions(item_name, data, textures)
 
 	# Process each item model
 	for model in item_models.values():
