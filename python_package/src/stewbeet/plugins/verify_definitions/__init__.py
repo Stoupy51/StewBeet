@@ -1,12 +1,10 @@
 
 # ruff: noqa: E501
 # Imports
-import os
-
 from beet import Context
 from beet.core.utils import JsonDict
 from stouputils.decorators import measure_time
-from stouputils.io import clean_path, super_json_dump, super_open
+from stouputils.io import relative_path, super_json_dump, super_open
 from stouputils.print import debug, error, info, progress
 
 from ...core.__memory__ import Mem
@@ -54,12 +52,10 @@ def beet_default(ctx: Context) -> None:
 			del definitions_copy[item]["override_model"]
 
 	# Export definitions to JSON for debugging generation
-	if definitions_debug:
+	if definitions_debug and definitions_copy:
 		with super_open(definitions_debug, "w") as f:
 			super_json_dump(definitions_copy, file = f)
-
-	rel_debug: str = clean_path(os.path.relpath(definitions_debug, os.getcwd()))
-	debug(f"Received definitions exported to './{rel_debug}'")
+		debug(f"Received definitions exported to './{relative_path(definitions_debug)}'")
 
 	# Check every single thing in the definitions
 	errors: list[str] = []

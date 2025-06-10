@@ -1,0 +1,140 @@
+
+## Beet configuration template file for a project using stewbeet, bolt, and mecha.
+# All configurations are filled with default values, and you can remove any that you don't need.
+
+# Project identifier used for namespacing functions and tags. Should align with the namespace in the source folder.
+id: "blank_template"
+# Project name that will be used in messages, item lore, etc.
+name: "Blank Template"
+# Pack description for pack.mcmeta. Defaults to "{name} [{version}] by {author}" if empty.
+description: ""
+# Author(s) name(s) displayed in pack.mcmeta, also used to add 'convention.debug' tag to the players of the same name(s) <-- showing additionnal displays like datapack loading
+author: "Stoupy51"
+# Project version in semantic versioning format: major.minor.patch (e.g., 1.0.0 or 2.84.615).
+version: "0.0.1"
+# Minecraft version. Determines what resources beet loads (plugins like `mecha` determine what commands to use). Defaults: Latest
+minecraft: ""
+
+# Defines the directory that beet uses for the base path
+directory: "."
+# Path to a folder for beet to output. If not defined, no files will visibly output
+output: "build"
+# List of files or glob patterns that should be ignored by the file watcher and not cause any rebuild when using `$ beet watch`
+ignore: []
+
+# A list of importable plugin strings
+require:
+    - "bolt"
+    - "mecha.contrib.relative_location"
+    - "mecha.contrib.nested_location"
+
+# Takes a nested pack config, see PackConfig() documentation
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+# Takes a nested pack config, see PackConfig() documentation
+resource_pack:
+    name: resource_pack
+    load: ["src"]
+
+# A list of strings or dicts representing "plugins".
+# - These plugins will execute after the pack is loaded
+# - If item = str, should be a path to an importable plugin (ex: "stewbeet.plugins.auto_lang")
+# - If item = dict, should be a nestable project config
+#     - Each sub-pipeline creates a temp context inheriting the parent context
+pipeline:
+    - "stewbeet.plugins.initialize"
+    - "src.setup_definitions" # User code
+    - "stewbeet.plugins.verify_definitions"
+    - "stewbeet.plugins.resource_pack.sounds"
+    - "stewbeet.plugins.resource_pack.item_models"
+    - "stewbeet.plugins.resource_pack.check_power_of_2"
+    - "stewbeet.plugins.custom_recipes"
+    - "stewbeet.plugins.ingame_manual"
+    - "stewbeet.plugins.datapack.loading"
+    - "stewbeet.plugins.datapack.custom_blocks"
+    - "stewbeet.plugins.datapack.loot_tables"
+    - "stewbeet.plugins.compatibilities.simpledrawer"
+    - "stewbeet.plugins.compatibilities.neo_enchant"
+    - "src.link" # User code
+    - "mecha"
+    - "stewbeet.plugins.finalyze.custom_blocks_ticking"
+    - "stewbeet.plugins.finalyze.basic_datapack_structure"
+    - "stewbeet.plugins.finalyze.dependencies"
+    - "stewbeet.plugins.finalyze.check_unused_textures"
+    - "stewbeet.plugins.auto.lang_file"
+    - "stewbeet.plugins.auto.headers"
+    - "stewbeet.plugins.archive"
+    - "stewbeet.plugins.merge_smithed_weld"
+    - "stewbeet.plugins.copy_to_destination"
+    - "stewbeet.plugins.compute_sha1"
+
+# Generic dict which holds extra information usable by plugins
+meta:
+    # Model resolver configuration for caching models
+    model_resolver:
+        use_cache: true
+
+    # Mecha configuration for multiline support and pattern matching
+    mecha:
+        multiline: true
+        match: ["_your_namespace:**"]
+
+    # Python datapack specific configuration
+    stewbeet:
+        # Directory containing all project textures
+        textures_folder: "assets/textures"
+        # Directory containing all custom sounds
+        sounds_folder: "assets/sounds"
+        # Directory containing all jukebox records
+        records_folder: "assets/records"
+        # Directory containing libraries that will be copied to the build destination, and merged using Smithed Weld if enabled.
+        libs_folder: "libs"
+        # Path where definitions debug information will be dumped
+        definitions_debug: "definitions_debug.json"
+        # Optional list of destination paths where generated files will be copied
+        build_copy_destinations:
+            # Paths to copy the datapack(s) to (See extensive_template/beet.yml for example)
+            datapack: []
+            # Paths to copy the resource pack(s) to (See extensive_template/beet.yml for example)
+            resource_pack: []
+        # Custom item lore configuration. If set to "auto" or unset, uses project icon followed by PROJECT_NAME
+        source_lore: "auto"
+        # Automagically checks for dependencies and their minimum required versions at runtime.
+        # The url is used when the dependency is not found to suggest where to get it.
+        # The version dict key contains the minimum required version of the dependency in [major, minor, patch] format.
+        # The main key is the dependency namespace to check for.
+        # The name can be whatever you want, it's just used in messages
+        load_dependencies: {
+            # Example for DatapackEnergy >= 1.8.0
+            # "energy": {"version":[1, 8, 0], "name":"DatapackEnergy", "url":"https://github.com/ICY105/DatapackEnergy"},
+        }
+
+        # Configuration for in-game manual
+        manual:
+            # Enables grid display in the manual for debugging
+            debug_mode: false
+            # Path to directory containing custom manual assets that override defaults
+            manual_overrides: "assets/manual_overrides"
+            # Enables high-resolution crafting displays in the manual
+            high_resolution: true
+            # Directory for storing cached manual assets
+            cache_path: "manual_cache"
+            # Enables caching of Minecraft assets and item renders
+            cache_assets: true
+            # Enables caching of manual content and images
+            cache_pages: false
+            # Path for manual debug dump
+            json_dump_path: "manual_cache/content.json"
+            # Manual title used in book and first page. Defaults to "{name} Manual"
+            name: ""
+            # Maximum number of items displayed per row in manual (max: 6)
+            max_items_per_row: 5
+            # Maximum number of rows displayed per page in manual (max: 6)
+            max_rows_per_page: 5
+            # Resolution for OpenGL renders in manual (recommended: 256x256)
+            opengl_resolution: 256
+            # Text component used for the manual's first page
+            first_page_text: [{"text":"Modify in beet.yml the text that will be shown in this first manual page", "color":"#505050"}]
+
