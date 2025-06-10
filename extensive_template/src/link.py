@@ -9,7 +9,7 @@ from stewbeet.core.utils.io import *
 # Main entry point (ran just before making finalyzing the build process (zip, headers, lang, ...))
 def beet_default(ctx: Context):
     ns: str = ctx.project_id
-    database: JsonDict = core.Mem.database  # noqa: F841
+    definitions: JsonDict = core.Mem.definitions  # noqa: F841
 
     # Generate ores in the world
     core.CustomOreGeneration.all_with_config(ore_configs = {
@@ -71,11 +71,11 @@ tellraw @a [{"text": "9 / 5 = ", "color": "dark_gray"},{"score":{"name":"$math.d
     # A custom block ticking example
     write_function(f"{ns}:custom_blocks/steel_block/tick", """
 # This function is called every tick for the custom block "steel_block"
-particle minecraft:heart ~ ~1 ~ 1.5 1.5 1.5 0.01 10
+particle heart ~ ~1 ~ 0.5 0.5 0.5 0.01 1
 """)
     write_function(f"{ns}:custom_blocks/steel_block/second", """
 # This function is called every second for the custom block "steel_block"
-particle minecraft:heart ~ ~1 ~ 1.5 1.5 1.5 0.01 1000
+particle angry_villager ~ ~1 ~ 0.2 0.2 0.2 0.01 10
 """)
 
     pass

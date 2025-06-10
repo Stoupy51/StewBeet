@@ -2,32 +2,32 @@
 # ⚔️ Adding a Custom Sword
 This guide will show you two different ways to add a custom sword named `test_sword` to your project.<br>
 First, you'll have to put the `test_sword.png` texture file in the [`assets/textures`](../../assets/textures/) folder.<br>
-Then, you'll have to add it to the database with one of the following methods through the [`setup_database.py`](../../user/setup_database.py) script.<br>
+Then, you'll have to add it to the definitions with one of the following methods through the [`setup_definitions.py`](../../user/setup_definitions.py) script.<br>
 I **highly recommend** using the second method, as it is easier and faster.
 
 
 ## 📝 Method 1: Direct Database Entry
-The first method involves directly defining the sword in your database.<br>
+The first method involves directly defining the sword in your definitions.<br>
 I'll go progressively through the code, explaining each part.<br>
 Item definition should be written in the `main()` function:
 ```py
 ...
 def main():
 	...
-	database["test_sword"] = {...}
+	definitions["test_sword"] = {...}
 	...
 ```
 
-The simplest way is to simply define the item in the database like this:
+The simplest way is to simply define the item in the definitions like this:
 ```py
-database["test_sword"] = {"id": "minecraft:diamond_sword"}
+definitions["test_sword"] = {"id": "minecraft:diamond_sword"}
 ```
 This will automatically generate the sword with the same properties as the diamond sword and use the `test_sword.png` texture.
 
 You may want to customize the properties of the sword, such as its durability or attributes.<br>
 You can do this by adding more keys to the dictionary:
 ```py
-database["test_sword"] = {
+definitions["test_sword"] = {
 	"id": "minecraft:diamond_sword",	# Base item
 
 	# Components that will be added to the item like '/give @s diamond_sword[max_damage=1000,attribute_modifiers=[...]]'
@@ -44,7 +44,7 @@ database["test_sword"] = {
 
 Finally, if you come up with a fully custom sword, you can define it like this:
 ```py
-database["test_sword"] = {
+definitions["test_sword"] = {
 	# Base item definition
 	"id": "minecraft:diamond_sword",  # Using diamond sword as base
 	"category": "combat",             # For in-game manual organization
@@ -99,7 +99,7 @@ ORES_CONFIGS: dict[str, EquipmentsConfig|None] = {
 ...
 
 # Generate everything about test_ingot (including sword)
-generate_everything_about_these_materials(config, database, ORES_CONFIGS)
+generate_everything_about_these_materials(config, definitions, ORES_CONFIGS)
 ```
 
 

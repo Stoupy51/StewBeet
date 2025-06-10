@@ -19,14 +19,14 @@ Here is a list of features that the package provides (the template is using all 
 
 - 🔄 Automatic resource pack files generation (models, textures, sounds, music discs) with the ability to override them with help of the `assets` folder.
 - ⏳ Versioned load, and clock functions such as `tick`, `second`, `minute`.
-- 🗃️ Loot tables for every item in the `database` along with a proper `_give_all` function that gives named chests.
+- 🗃️ Loot tables for every item in the `definitions` along with a proper `_give_all` function that gives named chests.
 - 📖 Automatic generation of a really [advanced and interactive items `manual`](./assets/in_game_manual_example.png).
 - 📝 Automatic generation of a `en-us.json` lang file in the resource pack if configuration is set.
 - 🖼️ Automatic headers for every function in `function` folders.
 - 📦 Minecraft like vanilla recipes unlocking.
 - 📚 Official libraries integrations:
   - 🧪 Automatic support for NBT Recipes with [`Smithed Crafter`](https://wiki.smithed.dev/libraries/crafter/) and [`Furnace NBT Recipes`](https://github.com/Stoupy51/FurnaceNbtRecipes/)
-  - 🛠️ Placement and destruction for every custom block in the `database` with support for blockstates, ore drops (fortune, silk touch), with [`Smithed Custom Blocks`](https://wiki.smithed.dev/libraries/custom-block/).
+  - 🛠️ Placement and destruction for every custom block in the `definitions` with support for blockstates, ore drops (fortune, silk touch), with [`Smithed Custom Blocks`](https://wiki.smithed.dev/libraries/custom-block/).
   - 📚 Each module from [`Bookshelf`](https://github.com/mcbookshelf/bookshelf) is automatically added if you are using it, ex: `function #bs.math:...` will add the `bs.math` module to the datapack.
   - ⛏️ Custom ore generation with [`Smart Ore Generation`](https://github.com/Stoupy51/SmartOreGeneration).
   - 📦 Item transportation / container declaration with [`ItemIO`](https://github.com/edayot/ItemIO) when making custom containers.
@@ -65,7 +65,7 @@ Alternatively, you could join the [Discord server](https://discord.gg/anxzu6rA9F
 Or, you could check the **highly detailed** [documentation folder](docs/)<br>
 Here a list of all the currently available guides:
 - [Project structure](docs/1_project_structure.md)
-- [Database setup](docs/2_database_setup.md)
+- [Database setup](docs/2_definitions_setup.md)
 - [Writing to files](docs/3_writing_to_files.md)
 - [External dependencies](docs/4_external_dependencies.md)
 - [Miscellaneous](docs/5_miscellaneous.md)

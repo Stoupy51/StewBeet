@@ -665,6 +665,7 @@ def routine():
 				"pages": book_content,
 			},
 			"item_model": f"{Mem.ctx.project_id}:manual",
+			"item_name": manual_name,
 			"enchantment_glint_override": False,
 			"max_stack_size": 1
 		}

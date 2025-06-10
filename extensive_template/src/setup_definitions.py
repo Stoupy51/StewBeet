@@ -1,8 +1,8 @@
 
 # Imports
 from beet import Context
-from beet.core.utils import JsonDict
 from stewbeet import core
+from stewbeet.core import Mem
 
 # Configuration to generate everything about the material based on "steel_ingot"
 ORES_CONFIGS: dict[str, core.EquipmentsConfig|None] = {
@@ -24,12 +24,11 @@ ORES_CONFIGS: dict[str, core.EquipmentsConfig|None] = {
 # Main entry point
 def beet_default(ctx: Context):
     ns: str = ctx.project_id
-    database: JsonDict = core.Mem.database
 
-    # Generate ores in database (add every stuff (found in the textures folder) related to the given materials, to the database)
+    # Generate ores in definitions (add every stuff (found in the textures folder) related to the given materials, to the definitions)
     core.generate_everything_about_these_materials(ORES_CONFIGS)
 
-    database["steel_ingot"][core.WIKI_COMPONENT] = [
+    Mem.definitions["steel_ingot"][core.WIKI_COMPONENT] = [
         {"text":"Here is an example of a wiki component, this text component will be displayed as a button in the manual.\n"},
         {"text":"You can write anything you want here.","color":"yellow"},
     ]
@@ -38,7 +37,7 @@ def beet_default(ctx: Context):
     core.generate_custom_records("auto")
 
     # Add a super stone block that can be crafted with 9 deepslate or stone, and has cobblestone as base block
-    database["super_stone"] = {
+    Mem.definitions["super_stone"] = {
         "id": core.CUSTOM_BLOCK_VANILLA,												# Placeholder for the base block
         core.VANILLA_BLOCK: {"id": "minecraft:cobblestone", "apply_facing": False},	# Base block
         core.RESULT_OF_CRAFTING: [													# Crafting recipes (shaped and shapeless examples)
@@ -53,11 +52,11 @@ def beet_default(ctx: Context):
     }
 
     # Don't forget to add the vanilla blocks for the custom blocks (not automatic even though they was recognized by generate_everything_about_these_materials())
-    database["steel_block"][core.VANILLA_BLOCK] = {"id": "minecraft:iron_block", "apply_facing": False}			# Placeholder for the base block
-    database["raw_steel_block"][core.VANILLA_BLOCK] = {"id": "minecraft:raw_iron_block", "apply_facing": False}	# Placeholder for the base block
+    Mem.definitions["steel_block"][core.VANILLA_BLOCK] = {"id": "minecraft:iron_block", "apply_facing": False}			# Placeholder for the base block
+    Mem.definitions["raw_steel_block"][core.VANILLA_BLOCK] = {"id": "minecraft:raw_iron_block", "apply_facing": False}	# Placeholder for the base block
 
     # Add a recipe for the future generated manual (the manual recipe will show up in itself)
-    database["manual"] = {
+    Mem.definitions["manual"] = {
         "id": "minecraft:written_book", "category": "misc", "item_name": ctx.meta.stewbeet.manual.name,
         core.RESULT_OF_CRAFTING: [
             # Put a book and a steel ingot in the crafting grid to get the manual
@@ -69,7 +68,7 @@ def beet_default(ctx: Context):
     }
 
     # Add item categories to the remaining items (should select 'shazinho' and 'super_stone')
-    for item in database.values():
+    for item in Mem.definitions.values():
         if not item.get("category"):
             item["category"] = "misc"
 

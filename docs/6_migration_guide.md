@@ -51,9 +51,9 @@ assets/
 
 ### Custom Items and Blocks Database Setup 🛠️
 
-1. **Understanding the Database Structure** 📊: The core of Python Datapack is the database system in `user/database.py`. This is where you define all your custom items and blocks.
+1. **Understanding the Database Structure** 📊: The core of Python Datapack is the definitions system in `user/definitions.py`. This is where you define all your custom items and blocks.
 
-2. **Basic Database Structure** 📝: Each item in the database is a dictionary entry with properties that define its behavior:
+2. **Basic Database Structure** 📝: Each item in the definitions is a dictionary entry with properties that define its behavior:
    - Use the `id` key to specify the base vanilla item (like `minecraft:command_block` for items) 🔑
    - For custom blocks, use `CUSTOM_BLOCK_VANILLA` constant as the ID 🧱
    - Define your item's appearance with `item_model` and other visual properties ✨

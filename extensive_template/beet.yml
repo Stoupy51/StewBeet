@@ -42,12 +42,13 @@ resource_pack:
 #     - Each sub-pipeline creates a temp context inheriting the parent context
 pipeline:
     - "stewbeet.plugins.initialize"
-    - "src.setup_database"
+    - "src.setup_definitions" # User code
+    - "stewbeet.plugins.verify_definitions"
     - "stewbeet.plugins.resource_pack.sounds"
     - "stewbeet.plugins.resource_pack.item_models"
     - "stewbeet.plugins.resource_pack.check_power_of_2"
     - "stewbeet.plugins.custom_recipes"
-    - "stewbeet.plugins.ingame_manual"
+    #- "stewbeet.plugins.ingame_manual"
     - "stewbeet.plugins.datapack.loading"
     - "stewbeet.plugins.datapack.custom_blocks"
     - "stewbeet.plugins.datapack.loot_tables"
@@ -86,8 +87,8 @@ meta:
         records_folder: "assets/records"
         # Directory containing libraries that will be copied to the build destination, and merged using Smithed Weld if enabled.
         libs_folder: "libs"
-        # Path where database debug information will be dumped
-        database_debug: "database_debug.json"
+        # Path where definitions debug information will be dumped
+        definitions_debug: "definitions_debug.json"
         # Optional list of destination paths where generated files will be copied
         build_copy_destinations:
             # Paths to copy the datapack(s) to

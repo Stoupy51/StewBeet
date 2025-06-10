@@ -29,8 +29,8 @@ When building, the `libs/datapack` folder will be copied to the `BUILD_COPY_DEST
 
 
 ## 📦 External Database Setup
-The 📝 [`setup_external_database.py`](../user/setup_external_database.py) script is used to define items from other datapacks that you want to use in your recipes 🛠️.<br>
-This currently is the only use-case for the external database 📦.<br>
+The 📝 [`setup_external_definitions.py`](../user/setup_external_definitions.py) script is used to define items from other datapacks that you want to use in your recipes 🛠️.<br>
+This currently is the only use-case for the external definitions 📦.<br>
 ⚠️ DISCLAIMER: This script is currently very scuffed, I'm still figuring out how to properly handle external items.
 
 
@@ -38,7 +38,7 @@ This currently is the only use-case for the external database 📦.<br>
 Now you know how to:
 - Add dependencies to your project and check for their presence at runtime
 - Configure whether libraries should be merged with your pack
-- Set up an external database to use items from other datapacks in your recipes
+- Set up an external definitions to use items from other datapacks in your recipes
 This will help you create more complex datapacks that interact with other datapacks and libraries!
 Thank you for reading 🙌.
 

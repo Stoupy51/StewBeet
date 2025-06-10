@@ -1,6 +1,6 @@
 
 # 🗃️ Database setup
-The database is the thing where you will define all your custom items and blocks. The main function in [`setup_database.py`](../user/setup_database.py) must return a dictionnary where keys are items ids, and values are a dictionnary that defines the item:
+The definitions is the thing where you will define all your custom items and blocks. The main function in [`setup_definitions.py`](../user/setup_definitions.py) must return a dictionnary where keys are items ids, and values are a dictionnary that defines the item:
 ```json
 {
     "steel_block": {...},
@@ -10,9 +10,9 @@ The database is the thing where you will define all your custom items and blocks
 ```
 
 ## 📚 Defining the item
-When you are defining an item in your database, there are many things to know.<br>
-Don't be afraid to miss something, there is a database verification 🛡️ at run time that will point you out some errors you might have done during your setup.<br>
-Along with this, if you set up the configuration correctly, a [dump](../database_debug.json) of your database will be done at the same moment for you to review 📊.<br>
+When you are defining an item in your definitions, there are many things to know.<br>
+Don't be afraid to miss something, there is a definitions verification 🛡️ at run time that will point you out some errors you might have done during your setup.<br>
+Along with this, if you set up the configuration correctly, a [dump](../definitions_debug.json) of your definitions will be done at the same moment for you to review 📊.<br>
 
 
 ### ❗️ Mandatory keys
@@ -26,14 +26,14 @@ Dealing with custom blocks in Minecraft vanilla is very hard because of challeng
 To simplify, you will use the `CUSTOM_BLOCK_VANILLA` constant for the `id` key which is basically a furnace (to get facing when placing block)<br>
 Alternatively, you should use the `CUSTOM_BLOCK_ALTERNATIVE` constant if your block is placeable on walls (like ladders) or on a player (like flowers and seeds).
 
-When defining a custom block in the database, you must define more key/value pairs such as:
+When defining a custom block in the definitions, you must define more key/value pairs such as:
 - `VANILLA_BLOCK` constant key: the value must be a dictionnary of 2 key/value pairs to define the block properties when placed, ex: `{"id": "minecraft:iron_block", "apply_facing": False}`
   - the `id` key must lead to a valid vanilla block. Actually, it can be any string that is valid within a /setblock command, like `minecraft:barrel[container=[...]]`
   - the `apply_facing` key must lead to a boolean (true/false). Usually, this is set to true when placing furnaces, barrels, ladders, etc. (every block having a facing property)
 
 If you want to setup a custom ore, the recommendation is to use the `VANILLA_BLOCK_FOR_ORES` constant for the value of the `VANILLA_BLOCK` key.<br>
 The reason is that the package will use an optimization trick ⚒️ which also includes fortune and silk touch enchantments support.<br>
-Additionnally, the `NO_SILK_TOUCH_DROP` key should lead to an item id you made in the database, see example here or in the [`database setup`](../user/setup_database.py):<br>
+Additionnally, the `NO_SILK_TOUCH_DROP` key should lead to an item id you made in the definitions, see example here or in the [`definitions setup`](../user/setup_definitions.py):<br>
 ```json
 {
     "steel_ore": {
@@ -47,22 +47,22 @@ Additionnally, the `NO_SILK_TOUCH_DROP` key should lead to an item id you made i
 
 
 ### 🍳 Recipes
-The recipes in the database must be defined the same way as [vanilla recipes](https://misode.github.io/recipe/) but with little changes.<br>
+The recipes in the definitions must be defined the same way as [vanilla recipes](https://misode.github.io/recipe/) but with little changes.<br>
 An utility function `ingr_repr()` is available to "encode" ingredients or result of a recipe to a dictionnary.<br>
 If you want the representation of a vanilla item, you will write `ingr_repr("minecraft:stone")` for example.<br>
 Alternatively, if you want the representation of a custom item you made, use the function like this: `ingr_repr("steel_ingot", NAMESPACE)` where the namespace is the one you put in the [`config.py`](../config.py) file.<br>
 The reason of this format is to bring NBT crafting 🧪 as simple as possible, don't need to worry everything will be automatic.
 
-You have two ways of writing recipes in the database:
+You have two ways of writing recipes in the definitions:
 1. The `RESULT_OF_CRAFTING` key should lead to a list of recipes where the result is by default the item where you are writing recipes for (so the result key is omitted).
 2. The `USED_FOR_CRAFTING` key should also lead to a list of recipes but the result is mandatory. I strongly recommend you not using this key but `RESULT_OF_CRAFTING` instead whenever it is possible, the reason is to keep consistency 🔁 within your recipes.
 
 Not all recipe types are recognized, only crafting table and all smelting types are recognized along with custom type `PULVERIZING` (from SimplEnergy).<br>
 Meaning that you should use the [`link.py`](../user/link.py) script to write missing recipes yourself or use the [`merge`](../merge/) folder 🔗.
 
-Now, let's imagine a super diamond made of 8 diamonds and a steel ingot, we also want the super diamond to uncraft to 5 diamond block, then you will write something like this in the database setup:
+Now, let's imagine a super diamond made of 8 diamonds and a steel ingot, we also want the super diamond to uncraft to 5 diamond block, then you will write something like this in the definitions setup:
 ```py
-database["super_diamond"] = {
+definitions["super_diamond"] = {
 	...
 
 	RESULT_OF_CRAFTING: [
@@ -76,10 +76,10 @@ database["super_diamond"] = {
 ```
 
 ### 💫 More special keys
-A few more keys are available for the database setup:
+A few more keys are available for the definitions setup:
 - `CATEGORY`: Leading to a simple string, the category is used to organize the manual 📖. If an item doesn't have a category, a warning message will be shown in console during build process and the item won't show up in the in-game manual.
-- `OVERRIDE_MODEL`: Since the build process will automatically try to recognize textures patterns, it might fail or you want to put a custom model 🧰 to your item. This is why you can override parts or everything in the generated model by bringing the model in the value of this key. For instance, [SimplEnergy's Electric Brewing Stand](https://github.com/Stoupy51/SimplEnergy/blob/main/user/database/additions.py) use it.
-- `SMITHED_CRAFTER_COMMAND`: Crafts with custom ingredients are not possible in vanilla, so we use the Smithed Crafter library to handle that. By default, the build process will automatically generate loot tables 🗃️ for recipes and use them for the smithed crafter. You can override the loot table command by using this key **__in the recipe definition__** to run whatever you want, such as running a function instead of a loot table. For instance, [Armored-Elytra](https://github.com/e-psi-lon/Armored-Elytra/blob/main/user/setup_database.py#L22) use it.
+- `OVERRIDE_MODEL`: Since the build process will automatically try to recognize textures patterns, it might fail or you want to put a custom model 🧰 to your item. This is why you can override parts or everything in the generated model by bringing the model in the value of this key. For instance, [SimplEnergy's Electric Brewing Stand](https://github.com/Stoupy51/SimplEnergy/blob/main/user/definitions/additions.py) use it.
+- `SMITHED_CRAFTER_COMMAND`: Crafts with custom ingredients are not possible in vanilla, so we use the Smithed Crafter library to handle that. By default, the build process will automatically generate loot tables 🗃️ for recipes and use them for the smithed crafter. You can override the loot table command by using this key **__in the recipe definition__** to run whatever you want, such as running a function instead of a loot table. For instance, [Armored-Elytra](https://github.com/e-psi-lon/Armored-Elytra/blob/main/user/setup_definitions.py#L22) use it.
 
 
 ### 🔑 The other keys
@@ -103,18 +103,18 @@ Those are automatically recognized, you don't need to put them in a "components"
 
 
 ### 🛠️ Utility functions
-Within the `database_helper` import, multiple functions are present to help you complete your database.<br>
+Within the `definitions_helper` import, multiple functions are present to help you complete your definitions.<br>
 This section will not detail function parameters but will just enumerate them, check the template for use cases.
 - `generate_everything_about_these_materials()`: 🧪 Will seek for every item related to the given materials such as armor, tool, nugget, etc.
 - `add_recipes_for_all_dusts()`: ⚙️ Add recipes for dusts using special compatiblity with SimplEnergy's pulverizer.
-- `generate_custom_records()`: 🎶 Will seek for every .ogg file in the [records folder](../assets/records/) and add them to the database.
-- `add_item_model_component()`: 📜 Adds the item model to every item in the database if missing.
-- `add_item_name_and_lore_if_missing()`: 🧻 Adds item name and lore components for every item in the database if missing.
+- `generate_custom_records()`: 🎶 Will seek for every .ogg file in the [records folder](../assets/records/) and add them to the definitions.
+- `add_item_model_component()`: 📜 Adds the item model to every item in the definitions if missing.
+- `add_item_name_and_lore_if_missing()`: 🧻 Adds item name and lore components for every item in the definitions if missing.
 - `add_private_custom_data_for_namespace()`: 🔍 Adds a custom data component to easily identify the item with commands.
 - `add_smithed_ignore_vanilla_behaviours_convention()`: 🚫 As the name implies, adds custom data for a Smithed convention.
 
 
 ## 📚 Conclusion
-As there are many things to cover when setting up the database, you probably don't need to know everything for your project. The important thing is to know where you can find information, come back here when you'll need it!<br>
+As there are many things to cover when setting up the definitions, you probably don't need to know everything for your project. The important thing is to know where you can find information, come back here when you'll need it!<br>
 Thank you for reading 🙌.
 
