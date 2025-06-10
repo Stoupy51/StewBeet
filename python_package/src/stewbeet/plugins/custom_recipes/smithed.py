@@ -4,8 +4,10 @@ import json
 from typing import Any
 
 from stouputils.decorators import simple_cache
+from stouputils.print import debug
 
 from ...core.__memory__ import Mem
+from ...core.constants import official_lib_used
 from ...core.ingredients import (
     ingr_repr,
     item_to_id_ingr_repr,
@@ -160,6 +162,20 @@ class SmithedRecipeHandler:
                     result_loot_table = loot_table_from_ingredient(ingr_repr(item, Mem.ctx.project_id), recipe["result_count"])
                 else:
                     result_loot_table = loot_table_from_ingredient(recipe["result"], recipe["result_count"])
+
+                # Transform ingr to a list of dicts
+                if isinstance(ingr, dict):
+                    ingr = list(ingr.values())
+                if not ingr:
+                    ingr = [recipe.get("ingredient", {})]
+
+                # If there is a component in the ingredients of shaped/shapeless, use smithed crafter
+                if recipe.get("type") in ["crafting_shapeless", "crafting_shaped"] and any(i.get("components") for i in ingr):
+                    if not official_lib_used("smithed.crafter"):
+                        debug("Found a crafting table recipe using custom item in ingredients, adding 'smithed.crafter' dependency")
+
+                        # Add to the give_all function the heavy workbench give command
+                        write_function(f"{Mem.ctx.project_id}:_give_all", "loot give @s loot smithed.crafter:blocks/table\n", prepend=True)
 
                 # Generate recipe based on type
                 if recipe["type"] == "crafting_shapeless":
