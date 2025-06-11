@@ -21,7 +21,7 @@ jobs:
           pip install stewbeet m2r2 myst_parser pydata_sphinx_theme
       - name: Build version docs
         run: |
-          python python_package/scripts/create_docs.py ${GITHUB_REF#refs/tags/v}
+          cd python_package && python scripts/create_docs.py ${GITHUB_REF#refs/tags/v}
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
