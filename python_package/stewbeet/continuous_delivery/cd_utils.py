@@ -4,7 +4,7 @@ import os
 
 from stouputils.continuous_delivery.cd_utils import handle_response, load_credentials  # noqa: F401
 
-from ...stewbeet.core.constants import MINECRAFT_VERSION
+from ..core.constants import MINECRAFT_VERSION
 
 
 # Function that replace the "~" by the user's home directory
