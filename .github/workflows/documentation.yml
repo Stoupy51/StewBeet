@@ -1,0 +1,33 @@
+
+name: documentation
+
+on: 
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+      - name: Install dependencies
+        run: |
+          pip install stewbeet m2r2 myst_parser pydata_sphinx_theme
+      - name: Build version docs
+        run: |
+          python python_package/scripts/create_docs.py ${GITHUB_REF#refs/tags/v}
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          publish_branch: gh-pages
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs/build/html
+          keep_files: true
+          force_orphan: false
+

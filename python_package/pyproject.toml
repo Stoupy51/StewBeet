@@ -42,3 +42,6 @@ typeCheckingMode = "basic"
 [tool.setuptools]
 license-files = ["LICENSE"]
 
+[tool.hatch.build]
+include = ["stewbeet"]
+
