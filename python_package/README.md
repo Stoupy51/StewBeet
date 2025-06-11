@@ -2,7 +2,7 @@
 # 📦 Package Link
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/stewbeet?logo=python&label=PyPI%20downloads)](https://pypi.org/project/stewbeet/)
 
-# 🐍 Python Datapack
+# 🐍 StewBeet
 Here is a template to a GitHub repository using this Python package: 📝
 [https://github.com/Stoupy51/StewBeetTemplate](https://github.com/Stoupy51/StewBeetTemplate)
 

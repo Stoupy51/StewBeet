@@ -73,8 +73,8 @@ def beet_default(ctx: Context) -> None:
 				errors.append(f"'id' key should be a string for '{item}'")
 			elif ":" not in data["id"]:
 				errors.append(f"'id' key should be namespaced in the format 'minecraft:{data['id']}' for '{item}'")
-			elif data["id"] == "minecraft:deepslate":
-				errors.append(f"'id' key should not be 'minecraft:deepslate' for '{item}', it's a reserved ID")
+			elif data["id"] == VANILLA_BLOCK_FOR_ORES["id"]:
+				errors.append(f"'id' key should not be '{VANILLA_BLOCK_FOR_ORES['id']}' for '{item}', it's a reserved ID")
 
 			# Force VANILLA_BLOCK key for custom blocks
 			elif data["id"] in [CUSTOM_BLOCK_VANILLA, CUSTOM_BLOCK_ALTERNATIVE]:

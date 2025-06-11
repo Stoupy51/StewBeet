@@ -3,7 +3,7 @@
 This guide will explain how to set up automatic deployment of your datapack to various platforms like GitHub, Modrinth, Smithed, and PlanetMinecraft.
 
 ## 📋 What is Continuous Delivery?
-Continuous Delivery is the process of automatically publishing your datapack to distribution platforms whenever a new version is ready. The Python Datapack Template provides tooling to make this process simple and consistent across multiple platforms.
+Continuous Delivery is the process of automatically publishing your datapack to distribution platforms whenever a new version is ready. The StewBeet Template provides tooling to make this process simple and consistent across multiple platforms.
 
 ## 🛠️ Setup Process
 To set up continuous delivery for your datapack, follow these steps:

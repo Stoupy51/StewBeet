@@ -42,7 +42,7 @@ def beet_default(ctx: Context):
 
 	# Get all sound files
 	all_files: list[str] = [os.path.join(root, file) for root, _, files in os.walk(sounds_folder) for file in files]
-	sounds_names: list[str] = [sound for sound in all_files if sound.endswith((".ogg", ".wav"))]
+	sounds_names: list[str] = [sound for sound in all_files if sound.endswith(".ogg")]
 	if not sounds_names:
 		return
 

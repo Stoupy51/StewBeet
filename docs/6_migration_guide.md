@@ -1,6 +1,6 @@
 
 # 🔄 Migration Guide
-This guide will help you migrate your project to use Python Datapack in a few simple steps.
+This guide will help you migrate your project to use StewBeet in a few simple steps.
 
 ## 🔧 Prerequisites
 Before migrating your project, make sure you have:
@@ -15,7 +15,7 @@ Before migrating your project, make sure you have:
 3. ⚙️ Configure your [`config.py`](../config.py) with your project details.
 4. 🚀 Run `build.py` and check the generated files in the [`build` folder](../build).
 
-⚠️ Note that by doing this, you will not use efficiently the Python Datapack features (custom items, blocks, etc.).<br>
+⚠️ Note that by doing this, you will not use efficiently the StewBeet features (custom items, blocks, etc.).<br>
 I recommend you read the next section "Advanced Migration Steps" for a better migration.
 
 ### 🚨 Important Notes
@@ -51,7 +51,7 @@ assets/
 
 ### Custom Items and Blocks Database Setup 🛠️
 
-1. **Understanding the Database Structure** 📊: The core of Python Datapack is the definitions system in `user/definitions.py`. This is where you define all your custom items and blocks.
+1. **Understanding the Database Structure** 📊: The core of StewBeet is the definitions system in `user/definitions.py`. This is where you define all your custom items and blocks.
 
 2. **Basic Database Structure** 📝: Each item in the definitions is a dictionary entry with properties that define its behavior:
    - Use the `id` key to specify the base vanilla item (like `minecraft:command_block` for items) 🔑
@@ -75,12 +75,12 @@ assets/
 
 ### Avoiding Conflicts Between Merge Files and Generated Files ⚠️
 
-1. **Versioned Function Structure** 🔢: Python Datapack creates functions with version numbers in the path (e.g., `v1.21.615/tick.mcfunction`). When migrating:
+1. **Versioned Function Structure** 🔢: StewBeet creates functions with version numbers in the path (e.g., `v1.21.615/tick.mcfunction`). When migrating:
 
    - **Option 1** ❌: Modify your merge folder structure to match the versioned paths (bad practice since you'll have to update it every time you update the project version)
    - **Option 2** ✅: Create custom calls in `user/link.py` to connect versioned functions with your existing ones (recommended)
 
-2. **Understanding Function Generation** 🔄: Python Datapack automatically generates various functions:
+2. **Understanding Function Generation** 🔄: StewBeet automatically generates various functions:
    - Load and tick functions ⏱️
    - Custom block placement and interaction functions 🧱
    - Recipe unlock functions 🔓
@@ -88,7 +88,7 @@ assets/
 
 3. **Working with Legacy Code** 📜: If you have existing functionality:
    - Add/Modify function calls to connect the generated system with your existing functions 🔗
-   - Gradually migrate features to use Python Datapack's native capabilities 📈
+   - Gradually migrate features to use StewBeet's native capabilities 📈
 
 4. **Incremental Migration** 🚶‍♂️: Consider migrating your datapack in phases:
    - Start with basic structure and essential files 🏗️
@@ -99,17 +99,17 @@ assets/
 ## 🎯 Next Steps
 After migrating:
 1. Test in Minecraft to ensure everything works
-2. Start using Python Datapack's features to enhance your datapack!
+2. Start using StewBeet's features to enhance your datapack!
 
 
 ## 📚 Conclusion
 You now know how to:
-- Migrate an existing project to use Python Datapack
+- Migrate an existing project to use StewBeet
 - Handle potential conflicts with tick/load functions
-- Start enhancing your project with Python Datapack features
+- Start enhancing your project with StewBeet features
 
-Migration can seem daunting at first, but Python Datapack makes it as simple as possible! 🎉<br>
-The benefits of using Python Datapack will quickly become apparent as you explore its features.
+Migration can seem daunting at first, but StewBeet makes it as simple as possible! 🎉<br>
+The benefits of using StewBeet will quickly become apparent as you explore its features.
 
 Thank you for reading 🙌
 

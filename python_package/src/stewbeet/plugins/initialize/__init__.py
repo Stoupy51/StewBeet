@@ -77,7 +77,7 @@ def beet_default(ctx: Context):
 		}
 
 		# Get all texture files
-		texture_files = [f for f in os.listdir(textures_folder) if f.endswith(('.png', '.jpg', '.jpeg'))]
+		texture_files = [f for f in os.listdir(textures_folder) if f.endswith(('.png', '.jpg', '.jpeg', ".mcmeta"))]
 
 		for file in texture_files:
 			new_name = file.lower()
