@@ -1,7 +1,7 @@
 
 # 🔗 stewbeet.plugins.merge_smithed_weld
 
-📄 **Source Code**: [stewbeet/plugins/merge_smithed_weld/__init__.py](../../python_package/src/stewbeet/plugins/merge_smithed_weld/__init__.py) 🔗
+📄 **Source Code**: [stewbeet/plugins/merge_smithed_weld/__init__.py](../../python_package/stewbeet/plugins/merge_smithed_weld/__init__.py) 🔗
 
 ## 📋 Overview
 The `merge_smithed_weld` plugin merges generated datapacks and resource packs with their dependencies.<br>
@@ -49,42 +49,42 @@ meta:
 ## ✨ Features
 
 ### 🔍 Archive Detection System
-Automatically detects and validates base archives for merging: [`__init__.py#L29-L37`](../../python_package/src/stewbeet/plugins/merge_smithed_weld/__init__.py#L29-L37)
+Automatically detects and validates base archives for merging: [`__init__.py#L29-L37`](../../python_package/stewbeet/plugins/merge_smithed_weld/__init__.py#L29-L37)
 - 📦 Looks for project datapack and resource pack archives
 - ✅ Only processes packs when base archives exist
 - 🏷️ Uses sanitized project names for consistent file naming
 - 📁 Ensures output directory structure is properly created
 
 ### 🔗 Smithed Weld Integration
-Uses Smithed Weld CLI for professional pack merging: [`weld.py#L31-L35, #L117-L121`](../../python_package/src/stewbeet/plugins/merge_smithed_weld/weld.py#L31-L35)
+Uses Smithed Weld CLI for professional pack merging: [`weld.py#L31-L35, #L117-L121`](../../python_package/stewbeet/plugins/merge_smithed_weld/weld.py#L31-L35)
 - ⚡ Leverages Smithed's battle-tested merging algorithms
 - 🛡️ Handles conflict resolution and dependency management
 - 🔧 Configures error-only logging for clean output
 - 📊 Creates temporary files for safe processing
 
 ### 🏛️ Official Library Integration
-Automatically includes used official libraries in merged packs: [`weld.py#L37-L43, #L123-L129`](../../python_package/src/stewbeet/plugins/merge_smithed_weld/weld.py#L37-L43)
+Automatically includes used official libraries in merged packs: [`weld.py#L37-L43, #L123-L129`](../../python_package/stewbeet/plugins/merge_smithed_weld/weld.py#L37-L43)
 - 📚 Reads from OFFICIAL_LIBS registry for available libraries
 - ✅ Only includes libraries marked as used in the project
 - 📁 Supports separate datapack and resource pack library paths
 - 🔍 Validates library existence before inclusion
 
 ### 📦 Custom Library Support
-Integrates custom libraries from configured folders: [`weld.py#L29-L30, #L115-L116`](../../python_package/src/stewbeet/plugins/merge_smithed_weld/weld.py#L29-L30)
+Integrates custom libraries from configured folders: [`weld.py#L29-L30, #L115-L116`](../../python_package/stewbeet/plugins/merge_smithed_weld/weld.py#L29-L30)
 - 📁 Scans configured libs_folder for datapack and resource pack archives
 - 🔍 Uses glob patterns to find all zip files in respective folders
 - 🎯 Supports organized library structure with separate pack types
 - ✅ Gracefully handles missing or empty library folders
 
 ### 🛠️ Metadata Preservation System
-Ensures proper pack.mcmeta and pack.png handling: [`weld.py#L52-L72, #L138-L158`](../../python_package/src/stewbeet/plugins/merge_smithed_weld/weld.py#L52-L72)
+Ensures proper pack.mcmeta and pack.png handling: [`weld.py#L52-L72, #L138-L158`](../../python_package/stewbeet/plugins/merge_smithed_weld/weld.py#L52-L72)
 - 🔄 Excludes conflicting metadata from merged libraries
 - 📝 Uses project's original pack.mcmeta for final archive
 - 🖼️ Preserves project's pack.png if available
 - ✅ Ensures proper metadata precedence and consistency
 
 ### 🕐 Timestamp and Compression Management
-Maintains consistent timestamps and optimal compression: [`weld.py#L47-L51, #L74-L76`](../../python_package/src/stewbeet/plugins/merge_smithed_weld/weld.py#L47-L51)
+Maintains consistent timestamps and optimal compression: [`weld.py#L47-L51, #L74-L76`](../../python_package/stewbeet/plugins/merge_smithed_weld/weld.py#L47-L51)
 - ⏰ Uses get_consistent_timestamp for reproducible builds
 - 🗜️ Applies ZIP_DEFLATED compression with level 6
 - 📊 Creates proper ZipInfo objects for all entries

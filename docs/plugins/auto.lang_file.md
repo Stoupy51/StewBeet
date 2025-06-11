@@ -1,7 +1,7 @@
 
 # 🌐 stewbeet.plugins.auto.lang_file
 
-📄 **Source Code**: [stewbeet/plugins/auto/lang_file/__init__.py](../../python_package/src/stewbeet/plugins/auto/lang_file/__init__.py) 🔗
+📄 **Source Code**: [stewbeet/plugins/auto/lang_file/__init__.py](../../python_package/stewbeet/plugins/auto/lang_file/__init__.py) 🔗
 
 ## 📋 Overview
 The `auto.lang_file` plugin automatically generates language files for datapacks.<br>
@@ -44,42 +44,42 @@ a comprehensive `en_us.json` language file for internationalization support.
 ## ✨ Features
 
 ### 🔍 Text Extraction Engine
-Scans content for hardcoded text using regex patterns: [`utils.py#L9-L16`](../../python_package/src/stewbeet/plugins/auto/lang_file/utils.py#L9-L16)
+Scans content for hardcoded text using regex patterns: [`utils.py#L9-L16`](../../python_package/stewbeet/plugins/auto/lang_file/utils.py#L9-L16)
 - 📝 Uses advanced regex to find `"text": "value"` patterns
 - 🔄 Handles escaped characters and various quote styles
 - 📍 Tracks text positions for accurate replacement
 - 🎯 Processes both single and double quoted strings
 
 ### 🏷️ Translation Key Generation
-Creates standardized translation keys with project namespacing: [`utils.py#L37-L48`](../../python_package/src/stewbeet/plugins/auto/lang_file/utils.py#L37-L48)
+Creates standardized translation keys with project namespacing: [`utils.py#L37-L48`](../../python_package/stewbeet/plugins/auto/lang_file/utils.py#L37-L48)
 - 🧹 Cleans text by removing special characters and normalizing case
 - 📏 Limits key length to 64 characters for compatibility
 - 🔧 Uses project ID prefix for unique namespacing
 - ✅ Validates keys to ensure they contain meaningful content
 
 ### 🔄 Content Replacement System
-Replaces hardcoded text with translate components: [`utils.py#L69-L91`](../../python_package/src/stewbeet/plugins/auto/lang_file/utils.py#L69-L91)
+Replaces hardcoded text with translate components: [`utils.py#L69-L91`](../../python_package/stewbeet/plugins/auto/lang_file/utils.py#L69-L91)
 - 🔄 Converts `"text": "value"` to `"translate": "key"`
 - 📍 Processes matches in reverse order to maintain position accuracy
 - 🧹 Handles escape sequences and special characters properly
 - ✅ Preserves JSON structure and formatting during replacement
 
 ### 🚀 Parallel Processing System
-Efficiently processes multiple files using multi-threading: [`__init__.py#L19-L28`](../../python_package/src/stewbeet/plugins/auto/lang_file/__init__.py#L19-L28)
+Efficiently processes multiple files using multi-threading: [`__init__.py#L19-L28`](../../python_package/stewbeet/plugins/auto/lang_file/__init__.py#L19-L28)
 - ⚡ Uses up to 32 worker threads for fast processing
 - 📊 Processes both functions and loot tables simultaneously
 - 🎨 Provides colored progress indicators during execution
 - 🔧 Optimizes worker count based on file quantity
 
 ### 📋 Language File Management
-Generates and updates the English language file: [`__init__.py#L30-L32`](../../python_package/src/stewbeet/plugins/auto/lang_file/__init__.py#L30-L32)
+Generates and updates the English language file: [`__init__.py#L30-L32`](../../python_package/stewbeet/plugins/auto/lang_file/__init__.py#L30-L32)
 - 📝 Creates `minecraft:en_us` language resource
 - 🔄 Merges with existing language data if present
 - 💾 Uses proper JSON formatting for compatibility
 - 🌐 Sets up foundation for multi-language support
 
 ### 🧹 Content Validation System
-Ensures only meaningful text gets processed: [`utils.py#L75-L81`](../../python_package/src/stewbeet/plugins/auto/lang_file/utils.py#L75-L81)
+Ensures only meaningful text gets processed: [`utils.py#L75-L81`](../../python_package/stewbeet/plugins/auto/lang_file/utils.py#L75-L81)
 - ✅ Skips text without alphanumeric characters
 - 🔍 Validates minimum key length requirements
 - 🚫 Excludes Unicode escapes and template variables

@@ -1,7 +1,7 @@
 
 # 📦 stewbeet.plugins.compatibilities.simpledrawer
 
-📄 **Source Code**: [stewbeet/plugins/compatibilities/simpledrawer/__init__.py](../../python_package/src/stewbeet/plugins/compatibilities/simpledrawer/__init__.py) 🔗
+📄 **Source Code**: [stewbeet/plugins/compatibilities/simpledrawer/__init__.py](../../python_package/stewbeet/plugins/compatibilities/simpledrawer/__init__.py) 🔗
 
 ## 📋 Overview
 The `compatibilities.simpledrawer` plugin provides integration with the SimpleDrawer datapack's<br>
@@ -44,7 +44,7 @@ to enable automatic compacting/decompacting in SimpleDrawer's compacting drawers
 ## ✨ Features
 
 ### 🔍 Material Detection and Variant Discovery
-Automatically scans definitions for material blocks and identifies their variants: [`#L57-L90`](../../python_package/src/stewbeet/plugins/compatibilities/simpledrawer/__init__.py#L57-L90)
+Automatically scans definitions for material blocks and identifies their variants: [`#L57-L90`](../../python_package/stewbeet/plugins/compatibilities/simpledrawer/__init__.py#L57-L90)
 - 🧱 Detects blocks ending with `_block` suffix
 - 🏷️ Extracts material base from smithed.dict structure
 - 🔄 Handles both regular materials and raw material variants
@@ -52,7 +52,7 @@ Automatically scans definitions for material blocks and identifies their variant
 - ✨ Discovers nugget forms when available
 
 ### ⚙️ Conversion Ratio Calculation
-Intelligently calculates conversion ratios between material variants: [`#L15-L36`](../../python_package/src/stewbeet/plugins/compatibilities/simpledrawer/__init__.py#L15-L36)
+Intelligently calculates conversion ratios between material variants: [`#L15-L36`](../../python_package/stewbeet/plugins/compatibilities/simpledrawer/__init__.py#L15-L36)
 - 📊 Analyzes crafting recipes to determine conversion rates
 - 🔢 Supports both shaped and shapeless recipe patterns
 - 🧱 Calculates ingots per block ratio (default: 9)
@@ -60,14 +60,14 @@ Intelligently calculates conversion ratios between material variants: [`#L15-L36
 - 📋 Handles single-ingredient recipe detection
 
 ### 🔗 SimpleDrawer Integration
-Creates the necessary function tags and data structures for mod integration: [`#L95-L110`](../../python_package/src/stewbeet/plugins/compatibilities/simpledrawer/__init__.py#L95-L110)
+Creates the necessary function tags and data structures for mod integration: [`#L95-L110`](../../python_package/stewbeet/plugins/compatibilities/simpledrawer/__init__.py#L95-L110)
 - 🏷️ Links to SimpleDrawer's material function tag system
 - 📦 Creates material detection functions with NBT checking
 - 🎯 Sets up proper namespace and item identification
 - ⚡ Optimizes with success flags to prevent redundant processing
 
 ### 📊 Material Data Structure Generation
-Generates comprehensive material data for each detected material: [`#L126-L156`](../../python_package/src/stewbeet/plugins/compatibilities/simpledrawer/__init__.py#L126-L156)
+Generates comprehensive material data for each detected material: [`#L126-L156`](../../python_package/stewbeet/plugins/compatibilities/simpledrawer/__init__.py#L126-L156)
 - 🏷️ Creates material identification with proper naming
 - 🔢 Sets conversion ratios for ingots and nuggets
 - 📦 Links item data from project storage
@@ -75,7 +75,7 @@ Generates comprehensive material data for each detected material: [`#L126-L156`]
 - ✅ Sets success flags for proper mod interaction
 
 ### 🔄 Variant-Specific Function Generation
-Creates individual functions for each material variant: [`#L117-L125`](../../python_package/src/stewbeet/plugins/compatibilities/simpledrawer/__init__.py#L117-L125)
+Creates individual functions for each material variant: [`#L117-L125`](../../python_package/stewbeet/plugins/compatibilities/simpledrawer/__init__.py#L117-L125)
 - 📁 Organizes functions by material base name
 - 🎯 Creates variant-specific entry points (block, ingot, nugget)
 - 🔗 Links to main material processing function

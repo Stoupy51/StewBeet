@@ -1,7 +1,7 @@
 
 # 📖 stewbeet.plugins.ingame_manual
 
-📄 **Source Code**: [stewbeet/plugins/ingame_manual/__init__.py](../../python_package/src/stewbeet/plugins/ingame_manual/__init__.py) 🔗
+📄 **Source Code**: [stewbeet/plugins/ingame_manual/__init__.py](../../python_package/stewbeet/plugins/ingame_manual/__init__.py) 🔗
 
 ## 📋 Overview
 The `ingame_manual` plugin generates an interactive in-game manual/guide book for Minecraft datapacks.<br>
@@ -65,26 +65,26 @@ meta:
 ## ✨ Features
 
 ### 📖 Manual Generation
-- 📚 **Written Book Creation** - Generates complete written book with navigation [`__init__.py#L15-L20`](../../python_package/src/stewbeet/plugins/ingame_manual/__init__.py#L15-L20)
-- 🏷️ **Category Organization** - Groups items by category with dedicated pages [`main.py#L169-L188`](../../python_package/src/stewbeet/plugins/ingame_manual/main.py#L169-L188)
-- 🔄 **Page Management** - Handles page numbering and cross-references [`main.py#L202-L226`](../../python_package/src/stewbeet/plugins/ingame_manual/main.py#L202-L226)
-- 📝 **Content Optimization** - Optimizes book content for performance [`main.py#L588-L590`](../../python_package/src/stewbeet/plugins/ingame_manual/main.py#L588-L590)
+- 📚 **Written Book Creation** - Generates complete written book with navigation [`__init__.py#L15-L20`](../../python_package/stewbeet/plugins/ingame_manual/__init__.py#L15-L20)
+- 🏷️ **Category Organization** - Groups items by category with dedicated pages [`main.py#L169-L188`](../../python_package/stewbeet/plugins/ingame_manual/main.py#L169-L188)
+- 🔄 **Page Management** - Handles page numbering and cross-references [`main.py#L202-L226`](../../python_package/stewbeet/plugins/ingame_manual/main.py#L202-L226)
+- 📝 **Content Optimization** - Optimizes book content for performance [`main.py#L588-L590`](../../python_package/stewbeet/plugins/ingame_manual/main.py#L588-L590)
 
 ### 🎨 Visual Components
-- 🖼️ **High-Resolution Displays** - Advanced item rendering system [`main.py#L260-L275`](../../python_package/src/stewbeet/plugins/ingame_manual/main.py#L260-L275)
-- 🎯 **Custom Fonts** - Specialized font system for manual elements [`main.py#L603-L626`](../../python_package/src/stewbeet/plugins/ingame_manual/main.py#L603-L626)
-- 🖌️ **Image Processing** - Texture generation and manipulation [`iso_renders.py#L86-L117`](../../python_package/src/stewbeet/plugins/ingame_manual/iso_renders.py#L86-L117)
-- 🎨 **Asset Management** - Custom manual assets and overrides [`main.py#L83-L95`](../../python_package/src/stewbeet/plugins/ingame_manual/main.py#L83-L95)
+- 🖼️ **High-Resolution Displays** - Advanced item rendering system [`main.py#L260-L275`](../../python_package/stewbeet/plugins/ingame_manual/main.py#L260-L275)
+- 🎯 **Custom Fonts** - Specialized font system for manual elements [`main.py#L603-L626`](../../python_package/stewbeet/plugins/ingame_manual/main.py#L603-L626)
+- 🖌️ **Image Processing** - Texture generation and manipulation [`iso_renders.py#L86-L117`](../../python_package/stewbeet/plugins/ingame_manual/iso_renders.py#L86-L117)
+- 🎨 **Asset Management** - Custom manual assets and overrides [`main.py#L83-L95`](../../python_package/stewbeet/plugins/ingame_manual/main.py#L83-L95)
 
 ### 🍳 Recipe Integration
-- 📐 **Shaped Crafting** - Visual representation of shaped recipes [`other_utils.py#L25-L35`](../../python_package/src/stewbeet/plugins/ingame_manual/other_utils.py#L25-L35)
-- 🔲 **Shapeless Crafting** - Organized display of shapeless recipes [`other_utils.py#L37-L47`](../../python_package/src/stewbeet/plugins/ingame_manual/other_utils.py#L37-L47)
-- 🔥 **Furnace Recipes** - Smelting and cooking recipe displays [`shared_import.py#L43-L46`](../../python_package/src/stewbeet/plugins/ingame_manual/shared_import.py#L43-L46)
-- ⚡ **Special Recipes** - Support for custom recipe types [`other_utils.py#L49-L55`](../../python_package/src/stewbeet/plugins/ingame_manual/other_utils.py#L49-L55)
+- 📐 **Shaped Crafting** - Visual representation of shaped recipes [`other_utils.py#L25-L35`](../../python_package/stewbeet/plugins/ingame_manual/other_utils.py#L25-L35)
+- 🔲 **Shapeless Crafting** - Organized display of shapeless recipes [`other_utils.py#L37-L47`](../../python_package/stewbeet/plugins/ingame_manual/other_utils.py#L37-L47)
+- 🔥 **Furnace Recipes** - Smelting and cooking recipe displays [`shared_import.py#L43-L46`](../../python_package/stewbeet/plugins/ingame_manual/shared_import.py#L43-L46)
+- ⚡ **Special Recipes** - Support for custom recipe types [`other_utils.py#L49-L55`](../../python_package/stewbeet/plugins/ingame_manual/other_utils.py#L49-L55)
 
 ### 🔗 Interactive Features
-- 🖱️ **Clickable Navigation** - Page linking and category browsing [`book_components.py#L94-L107`](../../python_package/src/stewbeet/plugins/ingame_manual/book_components.py#L94-L107)
-- 💬 **Hover Effects** - Item information on hover [`text_components.py#L8-L16`](../../python_package/src/stewbeet/plugins/ingame_manual/text_components.py#L8-L16)
-- 📄 **Wiki Integration** - Item wiki components and descriptions [`main.py#L349-L366`](../../python_package/src/stewbeet/plugins/ingame_manual/main.py#L349-L366)
-- 🔍 **Smart Filtering** - Recipe type filtering and organization [`other_utils.py#L57-L70`](../../python_package/src/stewbeet/plugins/ingame_manual/other_utils.py#L57-L70) 
+- 🖱️ **Clickable Navigation** - Page linking and category browsing [`book_components.py#L94-L107`](../../python_package/stewbeet/plugins/ingame_manual/book_components.py#L94-L107)
+- 💬 **Hover Effects** - Item information on hover [`text_components.py#L8-L16`](../../python_package/stewbeet/plugins/ingame_manual/text_components.py#L8-L16)
+- 📄 **Wiki Integration** - Item wiki components and descriptions [`main.py#L349-L366`](../../python_package/stewbeet/plugins/ingame_manual/main.py#L349-L366)
+- 🔍 **Smart Filtering** - Recipe type filtering and organization [`other_utils.py#L57-L70`](../../python_package/stewbeet/plugins/ingame_manual/other_utils.py#L57-L70) 
 

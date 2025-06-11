@@ -1,7 +1,7 @@
 
 # 🚀 stewbeet.plugins.initialize
 
-📄 **Source Code**: [stewbeet/plugins/initialize.py](../../python_package/src/stewbeet/plugins/initialize/__init__.py) 🔗
+📄 **Source Code**: [stewbeet/plugins/initialize.py](../../python_package/stewbeet/plugins/initialize/__init__.py) 🔗
 
 ## 📋 Overview
 The `initialize` plugin is the foundation of the StewBeet framework.<br>
@@ -47,24 +47,24 @@ meta:
 ## ✨ Features
 
 ### 🚀 Framework Initialization
-- 🛠️ Sets up the StewBeet memory system (`Mem.ctx`) [`#L25`](../../python_package/src/stewbeet/plugins/initialize/__init__.py#L25)
-- 🔄 Converts the context meta to a Box object for easier access [`#L24`](../../python_package/src/stewbeet/plugins/initialize/__init__.py#L24)
+- 🛠️ Sets up the StewBeet memory system (`Mem.ctx`) [`#L25`](../../python_package/stewbeet/plugins/initialize/__init__.py#L25)
+- 🔄 Converts the context meta to a Box object for easier access [`#L24`](../../python_package/stewbeet/plugins/initialize/__init__.py#L24)
 - ⚙️ Initializes core project configurations
 
 ### 📦 Pack.mcmeta Generation
-Automatically generates pack.mcmeta files for both datapacks and resource packs with: [`#L49-L58`](../../python_package/src/stewbeet/plugins/initialize/__init__.py#L49-L58)
+Automatically generates pack.mcmeta files for both datapacks and resource packs with: [`#L49-L58`](../../python_package/stewbeet/plugins/initialize/__init__.py#L49-L58)
 - ✅ Correct pack format versions
 - 📝 Project description
 - 🆔 Project ID
 - 🔧 Proper JSON encoding
 
 ### 📊 Project Metadata Processing
-- **📝 Project Description**: Auto-generates if set to "auto" [`#L28-L31`](../../python_package/src/stewbeet/plugins/initialize/__init__.py#L28-L31)
-- **🏷️ Source Lore**: Creates item identification lore [`#L33-L36`](../../python_package/src/stewbeet/plugins/initialize/__init__.py#L33-L36)
-- **📖 Manual Name**: Sets default manual name if not specified [`#L39-L41`](../../python_package/src/stewbeet/plugins/initialize/__init__.py#L39-L41)
+- **📝 Project Description**: Auto-generates if set to "auto" [`#L28-L31`](../../python_package/stewbeet/plugins/initialize/__init__.py#L28-L31)
+- **🏷️ Source Lore**: Creates item identification lore [`#L33-L36`](../../python_package/stewbeet/plugins/initialize/__init__.py#L33-L36)
+- **📖 Manual Name**: Sets default manual name if not specified [`#L39-L41`](../../python_package/stewbeet/plugins/initialize/__init__.py#L39-L41)
 
 ### 🔄 Legacy Support
-Handles legacy texture naming conversions for better later compatibility/pattern matching: [`#L65-L93`](../../python_package/src/stewbeet/plugins/initialize/__init__.py#L65-L93)
+Handles legacy texture naming conversions for better later compatibility/pattern matching: [`#L65-L93`](../../python_package/stewbeet/plugins/initialize/__init__.py#L65-L93)
 - `_off` → (removed) ❌
 - `_down` → `_bottom` ⬇️
 - `_up` → `_top` ⬆️
@@ -74,5 +74,5 @@ Handles legacy texture naming conversions for better later compatibility/pattern
 - `_east` → `_right` ➡️
 
 ### 🎨 Source Lore Font
-Creates special fonts for the source lore system used in item identification. [`#L37`](../../python_package/src/stewbeet/plugins/initialize/__init__.py#L37) [`source_lore_font.py`](../../python_package/src/stewbeet/plugins/initialize/source_lore_font.py)
+Creates special fonts for the source lore system used in item identification. [`#L37`](../../python_package/stewbeet/plugins/initialize/__init__.py#L37) [`source_lore_font.py`](../../python_package/stewbeet/plugins/initialize/source_lore_font.py)
 

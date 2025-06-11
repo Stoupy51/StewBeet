@@ -1,7 +1,7 @@
 
 # ⚡ stewbeet.plugins.datapack.loading
 
-📄 **Source Code**: [stewbeet/plugins/datapack/loading/__init__.py](../../python_package/src/stewbeet/plugins/datapack/loading/__init__.py) 🔗
+📄 **Source Code**: [stewbeet/plugins/datapack/loading/__init__.py](../../python_package/stewbeet/plugins/datapack/loading/__init__.py) 🔗
 
 ## 📋 Overview
 The `datapack.loading` plugin sets up the versioned loading system for Minecraft datapacks.<br>
@@ -44,20 +44,20 @@ id: "your_namespace"  # Required: project namespace
 ## ✨ Features
 
 ### ⚡ Versioned Loading System
-- 🔢 **Version Parsing** - Splits semantic version into major.minor.patch components [`#L33-L35`](../../python_package/src/stewbeet/plugins/datapack/loading/__init__.py#L33-L35)
-- 📊 **Version Checking** - Creates enumerate function for version validation [`#L37-L47`](../../python_package/src/stewbeet/plugins/datapack/loading/__init__.py#L37-L47)
-- 🎯 **Load Resolution** - Generates resolve function for proper version loading [`#L49-L53`](../../python_package/src/stewbeet/plugins/datapack/loading/__init__.py#L49-L53)
-- 🏷️ **Function Tags** - Sets up enumerate and resolve function tags [`#L55-L56`](../../python_package/src/stewbeet/plugins/datapack/loading/__init__.py#L55-L56)
+- 🔢 **Version Parsing** - Splits semantic version into major.minor.patch components [`#L33-L35`](../../python_package/stewbeet/plugins/datapack/loading/__init__.py#L33-L35)
+- 📊 **Version Checking** - Creates enumerate function for version validation [`#L37-L47`](../../python_package/stewbeet/plugins/datapack/loading/__init__.py#L37-L47)
+- 🎯 **Load Resolution** - Generates resolve function for proper version loading [`#L49-L53`](../../python_package/stewbeet/plugins/datapack/loading/__init__.py#L49-L53)
+- 🏷️ **Function Tags** - Sets up enumerate and resolve function tags [`#L55-L56`](../../python_package/stewbeet/plugins/datapack/loading/__init__.py#L55-L56)
 
 ### 🔄 Load Management
-- 🚫 **Duplicate Prevention** - Prevents multiple executions of load functions [`#L58-L63`](../../python_package/src/stewbeet/plugins/datapack/loading/__init__.py#L58-L63)
-- 📋 **Status Tracking** - Uses scoreboards to track loading state [`#L102-L103`](../../python_package/src/stewbeet/plugins/datapack/loading/__init__.py#L102-L103)
-- 💬 **Load Confirmation** - Displays load messages to debug-tagged players [`#L101`](../../python_package/src/stewbeet/plugins/datapack/loading/__init__.py#L101)
-- ⚙️ **Secondary Function** - Manages actual load execution flow [`#L62`](../../python_package/src/stewbeet/plugins/datapack/loading/__init__.py#L62)
+- 🚫 **Duplicate Prevention** - Prevents multiple executions of load functions [`#L58-L63`](../../python_package/stewbeet/plugins/datapack/loading/__init__.py#L58-L63)
+- 📋 **Status Tracking** - Uses scoreboards to track loading state [`#L102-L103`](../../python_package/stewbeet/plugins/datapack/loading/__init__.py#L102-L103)
+- 💬 **Load Confirmation** - Displays load messages to debug-tagged players [`#L101`](../../python_package/stewbeet/plugins/datapack/loading/__init__.py#L101)
+- ⚙️ **Secondary Function** - Manages actual load execution flow [`#L62`](../../python_package/stewbeet/plugins/datapack/loading/__init__.py#L62)
 
 ### 📦 Item Storage System
-- 🗄️ **Storage Initialization** - Creates namespace:items storage system [`#L66-L67`](../../python_package/src/stewbeet/plugins/datapack/loading/__init__.py#L66-L67)
-- 🔧 **Component Processing** - Handles item components and minecraft: namespace prefixing [`#L76-L81`](../../python_package/src/stewbeet/plugins/datapack/loading/__init__.py#L76-L81)
-- 🎯 **Data Filtering** - Excludes non-component data from storage [`#L72-L75`](../../python_package/src/stewbeet/plugins/datapack/loading/__init__.py#L72-L75)
-- 📝 **JSON Serialization** - Converts definitions to storage commands [`#L90-L91`](../../python_package/src/stewbeet/plugins/datapack/loading/__init__.py#L90-L91) 
+- 🗄️ **Storage Initialization** - Creates namespace:items storage system [`#L66-L67`](../../python_package/stewbeet/plugins/datapack/loading/__init__.py#L66-L67)
+- 🔧 **Component Processing** - Handles item components and minecraft: namespace prefixing [`#L76-L81`](../../python_package/stewbeet/plugins/datapack/loading/__init__.py#L76-L81)
+- 🎯 **Data Filtering** - Excludes non-component data from storage [`#L72-L75`](../../python_package/stewbeet/plugins/datapack/loading/__init__.py#L72-L75)
+- 📝 **JSON Serialization** - Converts definitions to storage commands [`#L90-L91`](../../python_package/stewbeet/plugins/datapack/loading/__init__.py#L90-L91) 
 

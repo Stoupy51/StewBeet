@@ -16,9 +16,9 @@ import stouputils as stp
 ROOT: str = stp.get_root_path(__file__, go_up=1)
 GITHUB_REPO: str = "https://github.com/mcbookshelf/bookshelf/releases"
 API_URL: str = "https://api.github.com/repos/mcbookshelf/bookshelf/releases/latest"
-DESTINATION_FOLDER: str = f"{ROOT}/src/stewbeet/dependencies"
+DESTINATION_FOLDER: str = f"{ROOT}/stewbeet/dependencies"
 CONFIG_PATH: str = f"{DESTINATION_FOLDER}/bookshelf_config.json"
-DEPS_TO_UPDATE: str = "src/stewbeet/dependencies/bookshelf.py"
+DEPS_TO_UPDATE: str = "stewbeet/dependencies/bookshelf.py"
 MODULE_TEMPLATE: dict = {"version": [0, 0, 0], "name": "Title Name", "url": GITHUB_REPO, "is_used": False}
 
 

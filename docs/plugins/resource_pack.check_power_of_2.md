@@ -1,7 +1,7 @@
 
 # 🖼️ stewbeet.plugins.resource_pack.check_power_of_2
 
-📄 **Source Code**: [stewbeet/plugins/resource_pack/check_power_of_2/__init__.py](../../python_package/src/stewbeet/plugins/resource_pack/check_power_of_2/__init__.py) 🔗
+📄 **Source Code**: [stewbeet/plugins/resource_pack/check_power_of_2/__init__.py](../../python_package/stewbeet/plugins/resource_pack/check_power_of_2/__init__.py) 🔗
 
 ## 📋 Overview
 The `check_power_of_2` plugin validates that all textures in the resource pack have power-of-2 dimensions.<br>
@@ -38,21 +38,21 @@ pipeline:
 ## ✨ Features
 
 ### 🔍 Power-of-2 Validation
-- 📏 Checks texture dimensions using binary bit counting (`bin(dimension).count("1") == 1`) [`#L22`](../../python_package/src/stewbeet/plugins/resource_pack/check_power_of_2/__init__.py#L22)
-- ✅ Validates that width and height are powers of 2 (1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024...) [`#L21-L22`](../../python_package/src/stewbeet/plugins/resource_pack/check_power_of_2/__init__.py#L21-L22)
-- 🎯 Focuses on item and block textures using pattern matching (`*item/*`, `*block/*`) [`#L18`](../../python_package/src/stewbeet/plugins/resource_pack/check_power_of_2/__init__.py#L18)
+- 📏 Checks texture dimensions using binary bit counting (`bin(dimension).count("1") == 1`) [`#L22`](../../python_package/stewbeet/plugins/resource_pack/check_power_of_2/__init__.py#L22)
+- ✅ Validates that width and height are powers of 2 (1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024...) [`#L21-L22`](../../python_package/stewbeet/plugins/resource_pack/check_power_of_2/__init__.py#L21-L22)
+- 🎯 Focuses on item and block textures using pattern matching (`*item/*`, `*block/*`) [`#L18`](../../python_package/stewbeet/plugins/resource_pack/check_power_of_2/__init__.py#L18)
 
 ### 🎨 Smart Filtering
-- 📱 Excludes animation textures (where height is divisible by width and not square) [`#L23-L24`](../../python_package/src/stewbeet/plugins/resource_pack/check_power_of_2/__init__.py#L23-L24)
+- 📱 Excludes animation textures (where height is divisible by width and not square) [`#L23-L24`](../../python_package/stewbeet/plugins/resource_pack/check_power_of_2/__init__.py#L23-L24)
 - 🖼️ Skips GUI textures and valid rectangular sprites
-- 🔍 Only flags problematic square textures or invalid aspect ratios [`#L24`](../../python_package/src/stewbeet/plugins/resource_pack/check_power_of_2/__init__.py#L24)
+- 🔍 Only flags problematic square textures or invalid aspect ratios [`#L24`](../../python_package/stewbeet/plugins/resource_pack/check_power_of_2/__init__.py#L24)
 - ⚡ Reduces false positives for intentional non-square textures
 
 ### ⚠️ Warning System
-- 📋 Generates detailed warning messages for non-compliant textures [`#L27-L31`](../../python_package/src/stewbeet/plugins/resource_pack/check_power_of_2/__init__.py#L27-L31)
-- 📍 Shows exact file paths and dimensions for easy identification [`#L30`](../../python_package/src/stewbeet/plugins/resource_pack/check_power_of_2/__init__.py#L30)
-- 🔧 Provides clear resolution information for fixing issues [`#L28`](../../python_package/src/stewbeet/plugins/resource_pack/check_power_of_2/__init__.py#L28)
-- 📊 Lists all problematic textures in a single comprehensive report [`#L31`](../../python_package/src/stewbeet/plugins/resource_pack/check_power_of_2/__init__.py#L31)
+- 📋 Generates detailed warning messages for non-compliant textures [`#L27-L31`](../../python_package/stewbeet/plugins/resource_pack/check_power_of_2/__init__.py#L27-L31)
+- 📍 Shows exact file paths and dimensions for easy identification [`#L30`](../../python_package/stewbeet/plugins/resource_pack/check_power_of_2/__init__.py#L30)
+- 🔧 Provides clear resolution information for fixing issues [`#L28`](../../python_package/stewbeet/plugins/resource_pack/check_power_of_2/__init__.py#L28)
+- 📊 Lists all problematic textures in a single comprehensive report [`#L31`](../../python_package/stewbeet/plugins/resource_pack/check_power_of_2/__init__.py#L31)
 
 ### 🛡️ Performance Optimization
 - 🚀 Ensures textures work optimally with GPU memory allocation

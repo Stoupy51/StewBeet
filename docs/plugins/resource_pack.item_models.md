@@ -1,7 +1,7 @@
 
 # 🎨 stewbeet.plugins.resource_pack.item_models
 
-📄 **Source Code**: [stewbeet/plugins/resource_pack/item_models/__init__.py](../../python_package/src/stewbeet/plugins/resource_pack/item_models/__init__.py) 🔗
+📄 **Source Code**: [stewbeet/plugins/resource_pack/item_models/__init__.py](../../python_package/stewbeet/plugins/resource_pack/item_models/__init__.py) 🔗
 
 ## 📋 Overview
 The `item_models` plugin automatically generates item and block models for custom items defined in the StewBeet framework.<br>
@@ -44,53 +44,53 @@ meta:
 ### 🧊 Block Model Generation
 Automatically detects texture patterns and generates appropriate block models:
 
-**🍰 Cake Model** (requires: bottom, side, top, inner textures) [`#L157-L168`](../../python_package/src/stewbeet/plugins/resource_pack/item_models/object.py#L157-L168)
+**🍰 Cake Model** (requires: bottom, side, top, inner textures) [`#L157-L168`](../../python_package/stewbeet/plugins/resource_pack/item_models/object.py#L157-L168)
 - Creates main cake model with proper texture mapping
 - Generates 6 slice models for each cake state
 - Maps `inner` texture to `inside` in model
 
-**🔲 Cube Bottom Top** (requires: bottom, side, top textures) [`#L170-L174`](../../python_package/src/stewbeet/plugins/resource_pack/item_models/object.py#L170-L174)
+**🔲 Cube Bottom Top** (requires: bottom, side, top textures) [`#L170-L174`](../../python_package/stewbeet/plugins/resource_pack/item_models/object.py#L170-L174)
 - Uses `block/cube_bottom_top` parent
 - Perfect for blocks with different top/bottom faces
 
-**⬆️ Orientable Model** (requires: front, side, top textures) [`#L176-L180`](../../python_package/src/stewbeet/plugins/resource_pack/item_models/object.py#L176-L180)
+**⬆️ Orientable Model** (requires: front, side, top textures) [`#L176-L180`](../../python_package/stewbeet/plugins/resource_pack/item_models/object.py#L176-L180)
 - Uses `block/orientable` parent
 - Ideal for directional blocks like furnaces
 
-**📦 Cube Column** (requires: end, side textures) [`#L182-L186`](../../python_package/src/stewbeet/plugins/resource_pack/item_models/object.py#L182-L186)
+**📦 Cube Column** (requires: end, side textures) [`#L182-L186`](../../python_package/stewbeet/plugins/resource_pack/item_models/object.py#L182-L186)
 - Uses `block/cube_column` parent
 - Great for pillar-like blocks
 
 ### 🗡️ Item Model Generation
-- 📋 Uses appropriate parent models based on item type [`#L202-L206`](../../python_package/src/stewbeet/plugins/resource_pack/item_models/object.py#L202-L206)
-- 🛡️ Handles leather armor with layer1 overlays [`#L213-L214`](../../python_package/src/stewbeet/plugins/resource_pack/item_models/object.py#L213-L214)
-- 🏹 Creates bow pulling animations with range dispatch [`#L216-L245`](../../python_package/src/stewbeet/plugins/resource_pack/item_models/object.py#L216-L245)
+- 📋 Uses appropriate parent models based on item type [`#L202-L206`](../../python_package/stewbeet/plugins/resource_pack/item_models/object.py#L202-L206)
+- 🛡️ Handles leather armor with layer1 overlays [`#L213-L214`](../../python_package/stewbeet/plugins/resource_pack/item_models/object.py#L213-L214)
+- 🏹 Creates bow pulling animations with range dispatch [`#L216-L245`](../../python_package/stewbeet/plugins/resource_pack/item_models/object.py#L216-L245)
 - ⚡ Supports powered state variants
 
 ### ⚡ Powered State Support
-- 🔍 Automatically detects `_on` texture variants [`#L113-L118`](../../python_package/src/stewbeet/plugins/resource_pack/item_models/object.py#L113-L118)
-- 🔄 Generates separate models for powered/unpowered states [`#L125`](../../python_package/src/stewbeet/plugins/resource_pack/item_models/object.py#L125)
-- 🎯 Handles texture switching for powered blocks [`#L273-L276`](../../python_package/src/stewbeet/plugins/resource_pack/item_models/object.py#L273-L276)
+- 🔍 Automatically detects `_on` texture variants [`#L113-L118`](../../python_package/stewbeet/plugins/resource_pack/item_models/object.py#L113-L118)
+- 🔄 Generates separate models for powered/unpowered states [`#L125`](../../python_package/stewbeet/plugins/resource_pack/item_models/object.py#L125)
+- 🎯 Handles texture switching for powered blocks [`#L273-L276`](../../python_package/stewbeet/plugins/resource_pack/item_models/object.py#L273-L276)
 
 ### 🖼️ Texture Processing
-- 📁 Recursively scans textures folder for .png files [`#L30-L33`](../../python_package/src/stewbeet/plugins/resource_pack/item_models/__init__.py#L30-L33)
+- 📁 Recursively scans textures folder for .png files [`#L30-L33`](../../python_package/stewbeet/plugins/resource_pack/item_models/__init__.py#L30-L33)
 - 📋 Creates texture mappings for model generation
-- 🔄 Copies textures to resource pack assets [`#L293-L295`](../../python_package/src/stewbeet/plugins/resource_pack/item_models/object.py#L293-L295)
-- 📝 Supports .mcmeta animation files [`#L296-L297`](../../python_package/src/stewbeet/plugins/resource_pack/item_models/object.py#L296-L297)
-- 🚫 Handles missing texture validation [`#L299-L300`](../../python_package/src/stewbeet/plugins/resource_pack/item_models/object.py#L299-L300)
+- 🔄 Copies textures to resource pack assets [`#L293-L295`](../../python_package/stewbeet/plugins/resource_pack/item_models/object.py#L293-L295)
+- 📝 Supports .mcmeta animation files [`#L296-L297`](../../python_package/stewbeet/plugins/resource_pack/item_models/object.py#L296-L297)
+- 🚫 Handles missing texture validation [`#L299-L300`](../../python_package/stewbeet/plugins/resource_pack/item_models/object.py#L299-L300)
 
 ### 🏹 Specialized Model Types
-**Bow Models:** [`#L216-L245`](../../python_package/src/stewbeet/plugins/resource_pack/item_models/object.py#L216-L245)
+**Bow Models:** [`#L216-L245`](../../python_package/stewbeet/plugins/resource_pack/item_models/object.py#L216-L245)
 - 🎯 Detects pulling texture variants (`_pulling_0`, `_pulling_1`, etc.)
 - 📊 Creates range dispatch system for use duration
 - 🔄 Generates conditional models for bow states
 
-**Leather Armor:** [`#L213-L214`](../../python_package/src/stewbeet/plugins/resource_pack/item_models/object.py#L213-L214)
+**Leather Armor:** [`#L213-L214`](../../python_package/stewbeet/plugins/resource_pack/item_models/object.py#L213-L214)
 - 🎨 Automatically adds layer1 texture for color overlays
 - 🛡️ Maintains compatibility with vanilla dyeing system
 
 ### 📄 Item Component Files
-- 🆔 Generates items/{item_name}.json files [`#L313-L316`](../../python_package/src/stewbeet/plugins/resource_pack/item_models/object.py#L313-L316)
+- 🆔 Generates items/{item_name}.json files [`#L313-L316`](../../python_package/stewbeet/plugins/resource_pack/item_models/object.py#L313-L316)
 - 🎯 Creates model references for item components
-- 🔧 Uses custom JSON encoder for proper formatting [`#L315`](../../python_package/src/stewbeet/plugins/resource_pack/item_models/object.py#L315)
-- 🏹 Handles special cases like bow animations [`#L312`](../../python_package/src/stewbeet/plugins/resource_pack/item_models/object.py#L312)
+- 🔧 Uses custom JSON encoder for proper formatting [`#L315`](../../python_package/stewbeet/plugins/resource_pack/item_models/object.py#L315)
+- 🏹 Handles special cases like bow animations [`#L312`](../../python_package/stewbeet/plugins/resource_pack/item_models/object.py#L312)

@@ -1,7 +1,7 @@
 
 # ⚔️ stewbeet.plugins.compatibilities.neo_enchant
 
-📄 **Source Code**: [stewbeet/plugins/compatibilities/neo_enchant/__init__.py](../../python_package/src/stewbeet/plugins/compatibilities/neo_enchant/__init__.py) 🔗
+📄 **Source Code**: [stewbeet/plugins/compatibilities/neo_enchant/__init__.py](../../python_package/stewbeet/plugins/compatibilities/neo_enchant/__init__.py) 🔗
 
 ## 📋 Overview
 The `compatibilities.neo_enchant` plugin provides integration with the NeoEnchant datapack's<br>
@@ -45,28 +45,28 @@ to NeoEnchant's veinminer block tag for proper mining compatibility.
 ## ✨ Features
 
 ### 🔍 Automatic Ore Detection
-Scans item definitions to identify ore blocks using the optimized ore system: [`#L24-L25`](../../python_package/src/stewbeet/plugins/compatibilities/neo_enchant/__init__.py#L24-L25)
+Scans item definitions to identify ore blocks using the optimized ore system: [`#L24-L25`](../../python_package/stewbeet/plugins/compatibilities/neo_enchant/__init__.py#L24-L25)
 - 🎯 Detects items with `VANILLA_BLOCK_FOR_ORES` configuration
 - ⛏️ Identifies custom ore blocks automatically
 - 🧱 Focuses on polished deepslate-based ores
 - ⚡ Leverages the optimized ore system design
 
 ### 📋 Veinminer Tag Generation
-Creates the necessary block tag for NeoEnchant veinminer compatibility: [`#L27-L29`](../../python_package/src/stewbeet/plugins/compatibilities/neo_enchant/__init__.py#L27-L29)
+Creates the necessary block tag for NeoEnchant veinminer compatibility: [`#L27-L29`](../../python_package/stewbeet/plugins/compatibilities/neo_enchant/__init__.py#L27-L29)
 - 🏷️ Generates `enchantplus:veinminer` block tag
 - 🧱 Adds `minecraft:polished_deepslate` to veinminer blocks
 - 📦 Uses proper JSON encoding and formatting
 - 🔗 Integrates with NeoEnchant's tag system
 
 ### ⚡ Optimization Integration
-Works seamlessly with the StewBeet ore optimization system: [`#L13-L15`](../../python_package/src/stewbeet/plugins/compatibilities/neo_enchant/__init__.py#L13-L15)
+Works seamlessly with the StewBeet ore optimization system: [`#L13-L15`](../../python_package/stewbeet/plugins/compatibilities/neo_enchant/__init__.py#L13-L15)
 - 🎯 Leverages `VANILLA_BLOCK_FOR_ORES` constant
 - 🔧 Supports the polished deepslate optimization
 - ⛏️ Enables efficient veinmining of custom ores
 - 🛡️ Maintains compatibility with ore break detection
 
 ### 🔄 Conditional Activation
-Only activates when relevant ore configurations are detected: [`#L24`](../../python_package/src/stewbeet/plugins/compatibilities/neo_enchant/__init__.py#L24)
+Only activates when relevant ore configurations are detected: [`#L24`](../../python_package/stewbeet/plugins/compatibilities/neo_enchant/__init__.py#L24)
 - ✅ Checks for ore blocks in definitions before proceeding
 - ⚡ Minimal performance impact when no ores are present
 - 🎯 Smart detection based on vanilla block configuration
