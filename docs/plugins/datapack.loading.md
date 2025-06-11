@@ -29,17 +29,17 @@ The plugin ensures proper datapack initialization with dependency validation and
 ```yaml
 # No specific configuration required
 # Uses project metadata from context:
-project_version: "1.0.0"  # Required: semantic version (major.minor.patch)
-project_id: "your_namespace"  # Required: project namespace
+version: "1.0.0"  # Required: semantic version (major.minor.patch)
+id: "your_namespace"  # Required: project namespace
 ```
 
 ### 📋 Configuration Options
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `project_version` | string | **Required** | Semantic version in format "major.minor.patch" for version checking |
-| `project_id` | string | **Required** | Project namespace used for function and storage generation |
-| `project_name` | string | `project_id` | Display name used in load confirmation messages |
+| `version` | string | **Required** | Semantic version in format "major.minor.patch" for version checking |
+| `id` | string | **Required** | Project namespace used for function and storage generation |
+| `name` | string | **Required** | Display name used in load confirmation messages |
 
 ## ✨ Features
 

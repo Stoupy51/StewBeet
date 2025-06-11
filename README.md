@@ -80,7 +80,7 @@ There are a lot of features in the package, you could check the [extensive templ
 Alternatively, you could join the [Discord server](https://discord.gg/anxzu6rA9F) to ask questions and get help from the community!<br>
 Or, you could check the **highly detailed** [documentation folder](docs/)<br>
 Here a list of all the currently available guides:
-- 📖 [Getting started](docs/0_getting_started.md)
+- 📖 [Getting started](docs/0_getting_started/README.md)
 - 🌱 [Beet Plugins](docs/plugins/README.md)
 - 📁 [Project structure](docs/1_project_structure.md)
 - 🗄️ [Database setup](docs/2_definitions_setup.md)
@@ -95,7 +95,6 @@ Here a list of all the currently available guides:
 
 ## 🤝 Contribute
 Want to help improve StewBeet? 🔍<br>
-Make sure first you contribute on the right repository, such as the [package 📦 itself](https://github.com/Stoupy51/stewbeet).<br>
 Here's how you can contribute:
 - 🐛 **Report Bugs**: Found a bug? Open an issue on GitHub describing what happened and how to reproduce it.
 - ✨ **Suggest Features**: Have an idea for a new feature? Share it in the issues section!
@@ -103,15 +102,15 @@ Here's how you can contribute:
 - 📚 **Improve Documentation**: Help make our docs better by fixing errors or adding examples.
 - 💬 **Help Others**: Join our [Discord server](https://discord.gg/anxzu6rA9F) and help other users with their questions.
 
-All contributions are welcome! Please make sure to read our contribution guidelines before making a pull request.
+Every contribution matters, no matter how small! 🙌
 
 
 ## 📜 What projects use StewBeet?
-To search for projects that use the package, I search like [this.](https://github.com/search?q=%22from+stewbeet+import+build_process%22&type=code)<br>
-Here is a list of projects that use the package:<br>
+To search for projects that use the framework, I search like [this.](https://github.com/search?q=%22%5C%22stewbeet.plugins.%22&type=code)<br>
+Here is a list of projects that use it:<br>
 - Actual projects:
   - Your next project here!
-  - https://github.com/e-psi-lon/Armored-Elytra
+  - https://github.com/e-psi-lon/Armored-Elytra (Python Datapack: before Stewbeet was a thing)
   - https://github.com/Stoupy51/SimplEnergy
   - https://github.com/Stoupy51/ImagineYourCraftDatapack
   - https://github.com/Stoupy51/LifeSteal
@@ -128,11 +127,11 @@ Here is a list of projects that use the package:<br>
 
 ## ⭐ Star History
 
-<a href="https://star-history.com/#Stoupy51/StewBeetTemplate&Date">
+<a href="https://star-history.com/#Stoupy51/StewBeet&Date">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Stoupy51/StewBeetTemplate&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=Stoupy51/StewBeetTemplate&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Stoupy51/StewBeetTemplate&type=Date" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Stoupy51/StewBeet&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=Stoupy51/StewBeet&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Stoupy51/StewBeet&type=Date" />
  </picture>
 </a>
 

@@ -4,7 +4,7 @@
 
 # 🐍 StewBeet
 Here is a template to a GitHub repository using this Python package: 📝
-[https://github.com/Stoupy51/StewBeetTemplate](https://github.com/Stoupy51/StewBeetTemplate)
+[https://github.com/Stoupy51/StewBeet](https://github.com/Stoupy51/StewBeet)
 
 Here is an advanced example using this Python package: ⚡
 [https://github.com/Stoupy51/SimplEnergy](https://github.com/Stoupy51/SimplEnergy)

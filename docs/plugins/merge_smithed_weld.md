@@ -42,7 +42,7 @@ meta:
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `output_directory` | string | **Required** | Directory containing base archives and destination for merged archives |
-| `project_name` | string | **Required** | Project name used for archive naming |
+| `name` | string | **Required** | Project name used for archive naming |
 | `libs_folder` | string | `"libs"` | Folder containing custom library archives (datapack/*.zip, resource_pack/*.zip) |
 | Archive Naming | automatic | `{project}_with_libs.zip` | Naming pattern for merged archive outputs |
 
