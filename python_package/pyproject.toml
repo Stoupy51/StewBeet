@@ -5,9 +5,9 @@ build-backend = "hatchling.build"
 
 [project]
 name = "stewbeet"
-version = "2.0.1"
+version = "2.0.2"
 description = "Beet Framework made to help generating advanced Minecraft datapack contents"
-readme = "../README.md"
+readme = "README.md"
 license = "MIT"
 requires-python = ">=3.12"
 classifiers = [
