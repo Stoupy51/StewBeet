@@ -1,6 +1,6 @@
 
 # Imports
-from beet import Context, Function, Language, LootTable
+from beet import Advancement, Context, Function, ItemModifier, Language, LootTable
 from stouputils.decorators import measure_time
 from stouputils.io import super_json_dump
 from stouputils.parallel import multithreading
@@ -22,9 +22,11 @@ def beet_default(ctx: Context):
 	files_to_process: dict[str, Function | LootTable] = {}
 	files_to_process.update(ctx.data.functions)
 	files_to_process.update(ctx.data.loot_tables)
+	files_to_process.update(ctx.data.item_modifiers)
+	files_to_process.update(ctx.data.advancements)
 
 	# Process all files
-	args: list[tuple[Context, str, Function | LootTable]] = [
+	args: list[tuple[Context, str, Function | LootTable | ItemModifier, Advancement]] = [
 		(ctx, file, content) for (file, content) in files_to_process.items()
 		if True
 	]
