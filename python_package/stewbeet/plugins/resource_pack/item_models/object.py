@@ -5,7 +5,8 @@ from __future__ import annotations
 import os
 
 from beet import ItemModel, Model, Texture
-from stouputils.io import super_json_dump
+from beet.core.utils import JsonDict
+from stouputils.io import super_json_dump, super_json_load
 from stouputils.print import error
 
 from ....core.__memory__ import Mem
@@ -292,9 +293,10 @@ class AutoModel:
 					texture_name = texture.split(":")[-1].split("/")[-1]  # Get just the filename
 					texture_name += ".png"
 					if texture_name in self.source_textures:
-						Mem.ctx.assets[texture] = Texture(source_path=self.source_textures[texture_name])
+						mcmeta: JsonDict | None = None
 						if os.path.exists(self.source_textures[texture_name] + ".mcmeta"):
-							Mem.ctx.assets[f"{texture}.mcmeta"] = Texture(source_path=self.source_textures[texture_name] + ".mcmeta")
+							mcmeta = super_json_load(self.source_textures[texture_name] + ".mcmeta")
+						Mem.ctx.assets[texture] = Texture(source_path=self.source_textures[texture_name], mcmeta=mcmeta)
 					else:
 						if not self.ignore_textures:
 							error(f"Texture '{texture_name}' not found in source textures")
