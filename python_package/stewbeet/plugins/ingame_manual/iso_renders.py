@@ -78,7 +78,7 @@ def generate_all_iso_renders():
 		debug(f"Generating iso renders for {len(for_model_resolver)} items, this may take a while...")
 		render = Render(Mem.ctx)
 		for rp_path, dst_path in for_model_resolver.items():
-			render.add_model_task(rp_path, path_save=dst_path)
+			render.add_model_task(rp_path, path_save=dst_path, animation_mode="one_file")
 		render.run()
 		debug("Generated iso renders for all items")
 
