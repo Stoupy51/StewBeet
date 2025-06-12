@@ -2,9 +2,8 @@
 # Imports
 import re
 
-from beet import Context, Function, LootTable
+from beet import Advancement, Context, Function, ItemModifier, LootTable
 from stouputils.decorators import simple_cache
-from stouputils.print import breakpoint
 
 # Prepare lang dictionary and lang_format function
 lang: dict[str, str] = {}
@@ -56,7 +55,7 @@ def lang_format(ctx: Context, text: str) -> tuple[str, str]:
 	return key, re.sub(r"[._]", "", alpha_num)
 
 
-def handle_file(ctx: Context, file: str, content: Function | LootTable) -> None:
+def handle_file(ctx: Context, file: str, content: Function | LootTable | ItemModifier | Advancement) -> None:
 	""" Process a file to extract and replace text with lang keys.
 
 	Args:
@@ -67,10 +66,10 @@ def handle_file(ctx: Context, file: str, content: Function | LootTable) -> None:
 	Returns:
 		None: The function modifies the content in place.
 	"""
-	# Read content
-	if isinstance(content, Function):
-		string: str = content.text
-	elif isinstance(content, LootTable):
+	# Read content from supported beet types
+	#	Function, LootTable, ItemModifier or Advancement
+	if isinstance(content, Function) or isinstance(content, LootTable) \
+		or isinstance(content, ItemModifier) or isinstance(content, Advancement):
 		string: str = content.text
 	else:
 		raise ValueError(f"Unsupported content type: {type(content)}")
@@ -98,9 +97,13 @@ def handle_file(ctx: Context, file: str, content: Function | LootTable) -> None:
 		new_fragment: str = f'{quote}translate{quote}: {quote}{key_for_lang}{quote}'
 		string = string[:start] + new_fragment + string[end:]
 
-	# Write the new content to the file
+	# Write the new content back to the appropriate context data
 	if isinstance(content, Function):
 		ctx.data.functions[file] = Function(string)
-	else:
+	elif isinstance(content, LootTable):
 		ctx.data.loot_tables[file] = LootTable(string)
+	elif isinstance(content, ItemModifier):
+		ctx.data.item_modifiers[file] = ItemModifier(string)
+	elif isinstance(content, Advancement):
+		ctx.data.advancements[file] = Advancement(string)
 
