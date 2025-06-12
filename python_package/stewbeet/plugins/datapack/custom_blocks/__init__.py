@@ -2,7 +2,7 @@
 # Imports
 from typing import Any
 
-from beet import BlockTag, Context, Predicate
+from beet import Advancement, BlockTag, Context, Predicate
 from stouputils.decorators import measure_time
 from stouputils.io import super_json_dump
 from stouputils.print import debug, progress
@@ -46,8 +46,8 @@ def beet_default(ctx: Context):
 	# Predicates
 	FACING = ["north", "east", "south", "west"]
 	for face in FACING:
-		predicate = {"condition":"minecraft:location_check","predicate":{"block":{"state":{"facing":face}}}}
-		ctx.data[ns].predicates[f"facing/{face}"] = Predicate(super_json_dump(predicate))
+		adv = {"condition":"minecraft:location_check","predicate":{"block":{"state":{"facing":face}}}}
+		ctx.data[ns].predicates[f"facing/{face}"] = Predicate(super_json_dump(adv))
 
 	# Get rotation function
 	write_function(f"{ns}:custom_blocks/get_rotation",
@@ -328,8 +328,8 @@ execute store result entity @s Item.count byte 1 run scoreboard players get #ite
 	ctx.data[ns].block_tags[VANILLA_BLOCKS_TAG] = BlockTag(super_json_dump({"values": listed_blocks}))
 
 	# Create predicate
-	predicate = {"condition": "minecraft:location_check", "predicate": {"block": {"blocks": f"#{ns}:{VANILLA_BLOCKS_TAG}"}}}
-	ctx.data[ns].predicates["check_vanilla_blocks"] = Predicate(super_json_dump(predicate))
+	pred = {"condition": "minecraft:location_check", "predicate": {"block": {"blocks": f"#{ns}:{VANILLA_BLOCKS_TAG}"}}}
+	ctx.data[ns].predicates["check_vanilla_blocks"] = Predicate(super_json_dump(pred))
 
 	# Create advanced predicate
 	advanced_predicate = {"condition": "minecraft:any_of", "terms": []}
@@ -337,11 +337,11 @@ execute store result entity @s Item.count byte 1 run scoreboard players get #ite
 		block_underscore = block.replace(":","_")
 		if block == "minecraft:cauldron":
 			block = "#minecraft:cauldrons"
-		predicate = {
+		pred = {
 			"condition": "minecraft:entity_properties", "entity": "this",
 			"predicate": { "nbt": f"{{Tags:[\"{ns}.vanilla.{block_underscore}\"]}}", "location": { "block": { "blocks": block }}}
 		}
-		advanced_predicate["terms"].append(predicate)
+		advanced_predicate["terms"].append(pred)
 	ctx.data[ns].predicates["advanced_check_vanilla_blocks"] = Predicate(super_json_dump(advanced_predicate))
 
 	# Write a destroy check every 2 ticks, every second, and every 5 seconds
@@ -397,17 +397,17 @@ execute as @e[tag={ns}.custom_block,dx=0,dy=0,dz=0] at @s run function {ns}:cust
 		if data["id"] == CUSTOM_BLOCK_HEAD and data.get(VANILLA_BLOCK):
 
 			# Make advancement
-			predicate = {
+			adv = {
 				"criteria":{"requirement":{"trigger":"minecraft:placed_block","conditions":{"location": [{"condition": "minecraft:location_check","predicate": {"block": {}}}]}}},
 				"requirements":[["requirement"]],
 				"rewards":{}
 			}
-			predicate["criteria"]["requirement"]["conditions"]["location"][0]["predicate"]["block"]["nbt"] = super_json_dump(
+			adv["criteria"]["requirement"]["conditions"]["location"][0]["predicate"]["block"]["nbt"] = super_json_dump(
 				{"components":{"minecraft:custom_data":data.get("custom_data", {})}},
 				max_level = 0
 			)
-			predicate["rewards"]["function"] = f"{ns}:custom_blocks/_player_head/search_{item}"
-			ctx.data.advancements[f"{ns}:custom_block_head/{item}"].data = predicate
+			adv["rewards"]["function"] = f"{ns}:custom_blocks/_player_head/search_{item}"
+			ctx.data[ns].advancements[f"custom_block_head/{item}"] = Advancement(super_json_dump(adv))
 
 			# Make search function
 			content = "# Search where the head has been placed\n"
