@@ -31,6 +31,7 @@ The plugin ensures proper datapack initialization with dependency validation and
 # Uses project metadata from context:
 version: "1.0.0"  # Required: semantic version (major.minor.patch)
 id: "your_namespace"  # Required: project namespace
+name: "Your Project Name"  # Required: display name for load messages
 ```
 
 ### 📋 Configuration Options
