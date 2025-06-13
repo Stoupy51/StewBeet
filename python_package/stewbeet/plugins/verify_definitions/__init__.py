@@ -214,3 +214,18 @@ def beet_default(ctx: Context) -> None:
 	else:
 		info("No errors found in the definitions during verification")
 
+
+	for item, data in Mem.definitions.items():
+		# Add additional data to the custom blocks
+		if data.get("id") == CUSTOM_BLOCK_VANILLA:
+			data["container"] = [
+				{"slot":0,"item":{"id":"minecraft:stone","count":1,"components":{"minecraft:custom_data":{"smithed":{"block":{"id":f"{ctx.project_id}:{item}","from":ctx.project_id}}}}}}
+			]
+
+			# Hide the container tooltip
+			if not data.get("tooltip_display"):
+				data["tooltip_display"] = {"hidden_components": []}
+			elif not data["tooltip_display"].get("hidden_components"):
+				data["tooltip_display"]["hidden_components"] = []
+			data["tooltip_display"]["hidden_components"].append("minecraft:container")
+
