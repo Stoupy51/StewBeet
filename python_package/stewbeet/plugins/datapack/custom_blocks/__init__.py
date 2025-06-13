@@ -82,19 +82,6 @@ execute if score #rotation {ns}.data matches 0 if predicate {ns}:facing/west run
 		# Custom block
 		if data.get(VANILLA_BLOCK):
 
-			# Add additional data to the custom blocks
-			if data.get("id") == CUSTOM_BLOCK_VANILLA:
-				data["container"] = [
-					{"slot":0,"item":{"id":"minecraft:stone","count":1,"components":{"minecraft:custom_data":{"smithed":{"block":{"id":f"{ctx.project_id}:{item}","from":ctx.project_id}}}}}}
-				]
-
-				# Hide the container tooltip
-				if not data.get("tooltip_display"):
-					data["tooltip_display"] = {"hidden_components": []}
-				elif not data["tooltip_display"].get("hidden_components"):
-					data["tooltip_display"]["hidden_components"] = []
-				data["tooltip_display"]["hidden_components"].append("minecraft:container")
-
 			# Get the vanilla block data
 			block = data[VANILLA_BLOCK]
 			block_id = block["id"]
