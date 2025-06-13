@@ -2,7 +2,6 @@
 # ruff: noqa: E501
 # Imports
 from beet import Context
-from beet.core.utils import JsonDict
 from stouputils.decorators import measure_time
 from stouputils.io import super_json_dump
 from stouputils.print import progress
@@ -30,9 +29,6 @@ def beet_default(ctx: Context):
 	assert ctx.project_version, "Project version is not set. Please set it in the project configuration."
 	assert ctx.project_id, "Project ID is not set. Please set it in the project configuration."
 	assert ctx.project_version.count(".") == 2, "Project version must be in the format 'major.minor.patch'."
-
-	# Get configuration from context meta
-	stewbeet: JsonDict = ctx.meta.get("stewbeet", {})
 
 	# Get basic project information
 	major, minor, patch = ctx.project_version.split(".")
@@ -98,7 +94,7 @@ execute unless score #{ctx.project_id}.loaded load.status matches 1 run function
 			items_storage += f"data modify storage {ctx.project_id}:items all.{item} set value " + super_json_dump(mc_data, max_level = 0)
 
 	# Write the loading tellraw and score, along with the final dataset
-	project_name = stewbeet.get('project_name', ctx.project_id)
+	project_name = ctx.project_name or ctx.project_id
 	write_load_file(
 f"""
 # Confirm load
