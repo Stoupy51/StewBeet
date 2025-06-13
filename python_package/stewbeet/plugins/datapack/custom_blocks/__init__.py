@@ -46,8 +46,10 @@ def beet_default(ctx: Context):
 	# Predicates
 	FACING = ["north", "east", "south", "west"]
 	for face in FACING:
-		adv = {"condition":"minecraft:location_check","predicate":{"block":{"state":{"facing":face}}}}
-		ctx.data[ns].predicates[f"facing/{face}"] = Predicate(super_json_dump(adv))
+		pred = {"condition":"minecraft:location_check","predicate":{"block":{"state":{"facing":face}}}}
+		pred_obj = Predicate(pred)
+		pred_obj.encoder = super_json_dump
+		ctx.data[ns].predicates[f"facing/{face}"] = pred_obj
 
 	# Get rotation function
 	write_function(f"{ns}:custom_blocks/get_rotation",
@@ -329,7 +331,9 @@ execute store result entity @s Item.count byte 1 run scoreboard players get #ite
 
 	# Create predicate
 	pred = {"condition": "minecraft:location_check", "predicate": {"block": {"blocks": f"#{ns}:{VANILLA_BLOCKS_TAG}"}}}
-	ctx.data[ns].predicates["check_vanilla_blocks"] = Predicate(super_json_dump(pred))
+	pred_obj = Predicate(pred)
+	pred_obj.encoder = super_json_dump
+	ctx.data[ns].predicates["check_vanilla_blocks"] = pred_obj
 
 	# Create advanced predicate
 	advanced_predicate = {"condition": "minecraft:any_of", "terms": []}
@@ -342,7 +346,9 @@ execute store result entity @s Item.count byte 1 run scoreboard players get #ite
 			"predicate": { "nbt": f"{{Tags:[\"{ns}.vanilla.{block_underscore}\"]}}", "location": { "block": { "blocks": block }}}
 		}
 		advanced_predicate["terms"].append(pred)
-	ctx.data[ns].predicates["advanced_check_vanilla_blocks"] = Predicate(super_json_dump(advanced_predicate))
+	pred_obj = Predicate(advanced_predicate)
+	pred_obj.encoder = super_json_dump
+	ctx.data[ns].predicates["advanced_check_vanilla_blocks"] = pred_obj
 
 	# Write a destroy check every 2 ticks, every second, and every 5 seconds
 	ore_block = VANILLA_BLOCK_FOR_ORES["id"].replace(':', '_')
@@ -407,7 +413,9 @@ execute as @e[tag={ns}.custom_block,dx=0,dy=0,dz=0] at @s run function {ns}:cust
 				max_level = 0
 			)
 			adv["rewards"]["function"] = f"{ns}:custom_blocks/_player_head/search_{item}"
-			ctx.data[ns].advancements[f"custom_block_head/{item}"] = Advancement(super_json_dump(adv))
+			adv_obj = Advancement(adv)
+			adv_obj.encoder = super_json_dump
+			ctx.data[ns].advancements[f"custom_block_head/{item}"] = adv_obj
 
 			# Make search function
 			content = "# Search where the head has been placed\n"
