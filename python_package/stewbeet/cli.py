@@ -6,11 +6,12 @@ import shutil
 import subprocess
 import sys
 
-from beet import ProjectConfig, load_config, locate_config
+from beet import ProjectConfig
 from box import Box
 from stouputils.decorators import LogLevels, handle_error
-from stouputils.io import clean_path
-from stouputils.print import error, info
+from stouputils.print import info
+
+from .utils import get_project_config
 
 
 @handle_error(message="Error while running 'stewbeet'")
@@ -18,13 +19,7 @@ def main():
     second_arg: str = sys.argv[1] if len(sys.argv) == 2 else ""
 
     # Try to find and load the beet configuration file
-    cfg: ProjectConfig | None = None
-    if config_path := locate_config(os.getcwd(), parents=True):
-        cfg = load_config(filename=config_path)
-        if cfg:
-            os.chdir(config_path.parent)
-    if not cfg:
-        error(f"No beet config file found in the current directory '{clean_path(os.getcwd())}'")
+    cfg: ProjectConfig | None = get_project_config()
 
     # Check if the command is "clean" or "rebuild"
     if second_arg in ["clean", "rebuild"]:
