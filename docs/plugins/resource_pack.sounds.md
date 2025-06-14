@@ -8,6 +8,14 @@ The `sounds` plugin automatically processes sound files and generates the sounds
 It intelligently groups numbered sound variants and handles multithreading for optimal performance.<br>
 **(This plugin requires the `sounds_folder` configuration to be set in meta.stewbeet.)**
 
+### <u>Features Showcase</u>
+
+**Example of a sounds folder with .ogg files:**<br>
+<img src="img/resource_pack.sounds.folder_example.jpg" style="width: min(480px, 100%)">
+
+**Files are copied to resource pack and sounds.json is created:**<br>
+<img src="img/resource_pack.sounds.result.jpg" style="width: min(480px, 100%)">
+
 ## 🎯 Purpose
 - 🎵 Processes sound files from a designated sounds folder
 - 🔢 Groups numbered sound variants (e.g., sound_01.ogg, sound_02.ogg)
@@ -17,7 +25,7 @@ It intelligently groups numbered sound variants and handles multithreading for o
 
 ## 🔗 Dependencies
 - **✅ Required**: `sounds_folder` configuration in meta.stewbeet
-- **📍 Position**: Should run after initialization and before other resource pack plugins<br>
+- **📍 Position**: Should be able to run anywhere in the pipeline<br>
 (see [`extensive/beet.yml`](../../templates/extensive/beet.yml) for an example)
 - **📂 Assets**: Requires a sounds folder with audio files
 
@@ -25,6 +33,11 @@ It intelligently groups numbered sound variants and handles multithreading for o
 
 ### 🎯 Basic Configuration
 ```yaml
+pipeline:
+  - ...
+  - stewbeet.plugins.resource_pack.sounds
+  - ...
+
 meta:
   stewbeet:
     sounds_folder: "assets/sounds"  # Path to sounds directory
@@ -39,13 +52,13 @@ meta:
 ## ✨ Features
 
 ### 🎵 Sound File Processing
-- 📁 Recursively scans the sounds folder for audio files [`#L40-L41`](../../python_package/stewbeet/plugins/resource_pack/sounds/__init__.py#L40-L41)
-- ✅ Only supports `.ogg` file format [`#L42`](../../python_package/stewbeet/plugins/resource_pack/sounds/__init__.py#L42)
-- 🧹 Sanitizes filenames (removes spaces, converts to lowercase) [`#L59`](../../python_package/stewbeet/plugins/resource_pack/sounds/__init__.py#L59)
-- 📝 Creates Sound objects with proper source paths and subtitles [`#L81-L84`](../../python_package/stewbeet/plugins/resource_pack/sounds/__init__.py#L81-L84)
+- 📁 Recursively scans the sounds folder for audio files
+- ✅ Only supports `.ogg` file format
+- 🧹 Sanitizes filenames (removes spaces, converts to lowercase)
+- 📝 Creates Sound objects with proper source paths and subtitles
 
 ### 🔢 Numbered Variant Grouping
-Automatically groups sound variants with numbered suffixes: [`#L62-L68`](../../python_package/stewbeet/plugins/resource_pack/sounds/__init__.py#L62-L68)
+Automatically groups sound variants with numbered suffixes:
 - `dirt_bullet_impact_01.ogg` 🎯
 - `dirt_bullet_impact_02.ogg` 🎯  
 - `dirt_bullet_impact_03.ogg` 🎯
@@ -57,13 +70,13 @@ These become variants of the sound `dirt_bullet_impact` in sounds.json.
 - `name1`, `name2`, etc. (without underscore)
 
 ### 📄 Sounds.json Generation
-- 🔧 Automatically creates or updates sounds.json [`#L87`](../../python_package/stewbeet/plugins/resource_pack/sounds/__init__.py#L87) [`add_sound`](../../python_package/stewbeet/core/utils/sounds.py#L22-L25)
-- 🏷️ Generates subtitles based on sound names [`#L84`](../../python_package/stewbeet/plugins/resource_pack/sounds/__init__.py#L84)
-- 🎛️ Preserves sound properties (volume, pitch, weight, etc.) [`sounds.py#L34-L44`](../../python_package/stewbeet/core/utils/sounds.py#L34-L44)
-- 📍 Uses project namespace for sound references [`sounds.py#L15-L17`](../../python_package/stewbeet/core/utils/sounds.py#L15-L17)
+- 🔧 Automatically creates or updates sounds.json thanks to the `add_sound` function in [`stewbeet.core.utils.sounds`](../../python_package/stewbeet/core/utils/sounds.py)
+- 🏷️ Generates subtitles based on sound names
+- 🎛️ Preserves sound properties (volume, pitch, weight, etc.)
+- 📍 Uses project namespace for sound references
 
 ### ⚡ Multithreading Processing
-- 🚀 Processes multiple sound files simultaneously [`#L71`](../../python_package/stewbeet/plugins/resource_pack/sounds/__init__.py#L71)
-- 🔧 Automatically optimizes worker count based on file quantity (max 32) [`#L71`](../../python_package/stewbeet/plugins/resource_pack/sounds/__init__.py#L71)
-- ⏱️ Includes execution time measurement for performance monitoring [`#L16`](../../python_package/stewbeet/plugins/resource_pack/sounds/__init__.py#L16)
+- 🚀 Processes multiple sound files simultaneously
+- 🔧 Automatically optimizes worker count based on file quantity (max 32)
+- ⏱️ Includes execution time measurement for performance monitoring
 

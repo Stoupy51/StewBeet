@@ -8,14 +8,16 @@ The `initialize` plugin is the foundation of the StewBeet framework.<br>
 It sets up the core infrastructure, initializes project metadata, configures pack.mcmeta files,<br>
 and prepares the build environment for all subsequent plugins.
 
-| <u>Some Features Showcase</u> |
-|:---:|
-| Automatic Item Lore (If not configured) |
-| <img src="img/initialize.source_lore.jpg" width="100%"> |
-| Automatic pack.mcmeta + Automatic description (If not configured) |
-| <img src="img/initialize.pack_mcmeta.jpg" width="100%"> |
-| Legacy Texture Naming Conversion |
-| <img src="img/initialize.legacy_texture_naming.jpg" width="100%"> |
+### <u>Some Features Showcase</u>
+
+**Automatic Item Lore (If not configured) for item definitions**<br>
+<img src="img/initialize.source_lore.jpg" style="width: min(540px, 100%)">
+
+**Automatic pack.mcmeta + Automatic description (If not configured)**<br>
+<img src="img/initialize.pack_mcmeta.jpg" style="width: min(540px, 100%)">
+
+**Legacy Texture Naming Conversion**<br>
+<img src="img/initialize.legacy_texture_naming.jpg" style="width: min(540px, 100%)"> |
 
 
 ## 🎯 Purpose

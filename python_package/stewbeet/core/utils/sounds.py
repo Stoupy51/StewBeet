@@ -9,6 +9,19 @@ from stouputils.io import super_json_dump
 def add_sound(ctx: Context, sounds: Sound | dict[str, Sound], name: str, ns: str = ""):
 	""" Add a sound to the resource pack.
 
+	Example usage:
+
+	```python
+	from beet import Context, Sound
+	from stewbeet.core.utils.sounds import add_sound
+
+	def beet_default(ctx: Context):
+		sound = Sound("path/to/sound.ogg", volume=1.0, pitch=1.0)
+		add_sound(ctx, sound, "my_sound")
+		add_sound(ctx, {"my_sound_1": sound, "my_sound_2": sound}, "my_sounds")
+		add_sound(ctx, sound, "my_sound", ns="another_namespace")
+	```
+
 	Args:
 		ctx    (Context):                   The beet context.
 		sounds (Sound | dict[str, Sound]):  The sound object(s) to add. Can be a single Sound or a dict mapping local names to Sounds.
