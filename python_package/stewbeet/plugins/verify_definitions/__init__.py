@@ -111,18 +111,18 @@ def beet_default(ctx: Context) -> None:
 
 		# Force the use of "item_name" key for every item
 		if not data.get("item_name"):
-			errors.append(f"'item_name' key missing for '{item}', should be a dict or a list (SNBT), ex: {{\"text\":\"This is an Item Name\"}} or [\"This is an Item Name\"]")
+			errors.append(f"'item_name' key missing for '{item}', should be a Text Component, ex: {{\"text\":\"This is an Item Name\"}} or [\"This is an Item Name\"]")
 		elif not isinstance(data["item_name"], dict | list | str):
-			errors.append(f"'item_name' key should be a dict or a list (SNBT) for '{item}'")
+			errors.append(f"'item_name' key should be a Text Component for '{item}', got '{data['item_name']}'")
 
 		# Force the use of "lore" key to be in a correct format
 		if data.get("lore"):
 			if not isinstance(data["lore"], list):
-				errors.append(f"'lore' key should be a list for '{item}'")
+				errors.append(f"'lore' key should be a list for '{item}', got {data['lore']}")
 			else:
 				for i, line in enumerate(data["lore"]):
 					if not isinstance(line, dict | list | str):
-						errors.append(f"Line #{i} in 'lore' key should be a dict or a list (SNBT) for '{item}', ex: {{\"text\":\"This is a lore line\"}} or [\"This is a lore line\"]")
+						errors.append(f"Line #{i} in 'lore' key should be a Text Component for '{item}', ex: {{\"text\":\"This is a lore line\"}} or [\"This is a lore line\"]")
 					else:
 						# Verify format {"text":"..."} or "..."
 						line = str(line)
@@ -210,7 +210,7 @@ def beet_default(ctx: Context) -> None:
 
 	# Log errors if any
 	if errors:
-		error("Errors found in the definitions during verification:\n" + "\n".join(errors))
+		error("Errors found in the definitions during verification:\n- " + "\n- ".join(errors))
 	else:
 		info("No errors found in the definitions during verification")
 
