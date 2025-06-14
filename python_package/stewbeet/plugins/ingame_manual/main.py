@@ -84,8 +84,7 @@ from .shared_import import (
 def deepcopy(x):
 	return json.loads(json.dumps(x))
 
-@measure_time(info, "Added manual to the definitions")
-def main():
+def manual_main():
 	# Copy everything in the manual assets folder to the templates folder
 	os.makedirs(TEMPLATES_PATH, exist_ok = True)
 	shutil.copytree(MANUAL_ASSETS_PATH + "assets", TEMPLATES_PATH, dirs_exist_ok = True)

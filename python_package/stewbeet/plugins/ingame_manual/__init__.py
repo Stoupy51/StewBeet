@@ -6,7 +6,7 @@ from stouputils.decorators import measure_time
 from stouputils.print import progress, warning
 
 from ...core.__memory__ import Mem
-from .main import main as manual_main
+from .main import manual_main
 from .shared_import import SharedMemory
 
 
