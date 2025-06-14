@@ -70,10 +70,9 @@ def _copy_datapacks(output_path: str, project_name_simple: str, libs_folder: str
 
 	if os.path.exists(main_datapack):
 		for dest in destinations:
-			os.makedirs(dest, exist_ok=True)
 			dest_file = relative_path(f"{dest}/{os.path.basename(main_datapack)}")
-			_copy_with_retry(main_datapack, dest_file)
-			info(f"Copied normal datapack to: '{dest_file}'")
+			if _copy_with_retry(main_datapack, dest_file):
+				info(f"Copied normal datapack to: '{dest_file}'")
 
 	# Copy all library datapacks
 	if libs_folder:
@@ -83,10 +82,9 @@ def _copy_datapacks(output_path: str, project_name_simple: str, libs_folder: str
 				if lib_zip.endswith('.zip'):
 					lib_zip_path = relative_path(f"{libs_datapack_path}/{lib_zip}")
 					for dest in destinations:
-						os.makedirs(dest, exist_ok=True)
 						dest_file = relative_path(f"{dest}/{lib_zip}")
-						_copy_with_retry(lib_zip_path, dest_file)
-						info(f"Copied library datapack to: '{dest_file}'")
+						if _copy_with_retry(lib_zip_path, dest_file):
+							info(f"Copied library datapack to: '{dest_file}'")
 
 
 def _copy_resource_packs(output_path: str, project_name_simple: str, destinations: list[str]) -> None:
@@ -105,14 +103,13 @@ def _copy_resource_packs(output_path: str, project_name_simple: str, destination
 
 	if os.path.exists(resource_pack_to_copy):
 		for dest in destinations:
-			os.makedirs(dest, exist_ok=True)
 			# Use original name (without _with_libs suffix) for the destination
 			with_libs = "_with_libs" if resource_pack_to_copy == merged_resource_pack else ""
 			dest_name = f"{project_name_simple}_resource_pack{with_libs}.zip"
 			dest_file = relative_path(f"{dest}/{dest_name}")
-			_copy_with_retry(resource_pack_to_copy, dest_file)
-			pack_type = "merged" if resource_pack_to_copy == merged_resource_pack else "normal"
-			info(f"Copied {pack_type} resource pack to: '{dest_file}'")
+			if _copy_with_retry(resource_pack_to_copy, dest_file):
+				pack_type = "merged" if resource_pack_to_copy == merged_resource_pack else "normal"
+				info(f"Copied {pack_type} resource pack to: '{dest_file}'")
 
 
 def _copy_official_libs(datapack_destinations: list[str]) -> None:
@@ -136,13 +133,12 @@ def _copy_official_libs(datapack_destinations: list[str]) -> None:
 				lib_zip_path = relative_path(f"{official_datapack_path}/{lib_zip}")
 				if os.path.exists(lib_zip_path):
 					for dest in datapack_destinations:
-						os.makedirs(dest, exist_ok=True)
 						dest_file = relative_path(f"{dest}/{lib_zip}")
-						_copy_with_retry(lib_zip_path, dest_file)
-						info(f"Copied official library to: '{dest_file}'")
+						if _copy_with_retry(lib_zip_path, dest_file):
+							info(f"Copied official library to: '{dest_file}'")
 
 
-def _copy_with_retry(src: str, dst: str, max_retries: int = 10, delay: float = 1.0) -> None:
+def _copy_with_retry(src: str, dst: str, max_retries: int = 10, delay: float = 1.0) -> bool:
 	""" Copy a file with retry logic to handle permission errors.
 
 	Args:
@@ -150,6 +146,8 @@ def _copy_with_retry(src: str, dst: str, max_retries: int = 10, delay: float = 1
 		dst (str): Destination file path.
 		max_retries (int): Maximum number of retry attempts.
 		delay (float): Delay in seconds between retries.
+	Returns:
+		bool: True if the copy was successful, False if it failed after all retries.
 	"""
 	# Delete the destination file if it exists (optional)
 	if os.path.exists(dst):
@@ -159,16 +157,20 @@ def _copy_with_retry(src: str, dst: str, max_retries: int = 10, delay: float = 1
 			pass
 
 	# Ensure the destination directory exists
-	os.makedirs(os.path.dirname(dst), exist_ok=True)
+	dest_dir = os.path.dirname(dst)
+	if not os.path.exists(dest_dir):
+		warning(f"Destination directory '{dest_dir}' does not exist. Cannot copy file '{src}'.")
+		return False
 
 	# Attempt to copy the file with retries
 	for attempt in range(max_retries):
 		try:
 			shutil.copy(src, dst)
-			return
+			return True
 		except PermissionError as e:
 			if attempt == max_retries - 1:
 				raise e
 			warning(f"Failed to copy '{src}' the destinations ({e.__class__.__name__}). Retrying in {delay} seconds...")
 			time.sleep(delay)
+	return False  # If all retries failed, return False
 
