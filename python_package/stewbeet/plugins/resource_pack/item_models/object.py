@@ -114,11 +114,9 @@ class AutoModel:
 
 		# Get powered states (if any)
 		powered = [""]
-		on_textures = []
 		for texture_name in self.source_textures:
 			if texture_name.startswith(self.item_name) and texture_name.endswith("_on.png"):
 				powered = ["", "_on"]
-				on_textures.append(texture_name)
 
 		# Debug
 		if False:
@@ -127,7 +125,6 @@ class AutoModel:
 			print(f"Block or item: {self.block_or_item}")
 			print(f"Overrides: {overrides}")
 			print(f"Powered states: {powered}")
-			print(f"On textures: {on_textures}")
 
 		# Generate its model file(s)
 		for on_off in powered:
@@ -144,7 +141,6 @@ class AutoModel:
 				if self.block_or_item == "block":
 					# Get parent
 					content = {"parent": "block/cube_all", "textures": {}}
-
 					# Check in which variants state we are
 					variants_without_on = [x for x in variants if "_on" not in x]
 					if len(variants_without_on) == 1:
@@ -269,7 +265,7 @@ class AutoModel:
 
 			# Add overrides
 			for key, value in overrides.items():
-				content[key] = value
+				content[key] = value.copy() if isinstance(value, dict) else value
 
 			# If powered, check if the on state is in the variants and add it
 			if on_off == "_on":
