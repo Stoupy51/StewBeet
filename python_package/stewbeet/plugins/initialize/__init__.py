@@ -9,14 +9,14 @@ from box import Box
 from stouputils import relative_path
 from stouputils.decorators import measure_time
 from stouputils.io import super_json_dump
-from stouputils.print import progress, warning
+from stouputils.print import warning
 
 from ...core import Mem
 from .source_lore_font import make_source_lore_font
 
 
 # Main entry point
-@measure_time(progress, message="Execution time of 'stewbeet.plugins.initialize'")
+@measure_time(message="Total execution time")
 def beet_default(ctx: Context):
 
 	# Assertions
@@ -92,5 +92,6 @@ def beet_default(ctx: Context):
 					os.rename(old_path, new_path)
 					warning(f"Renamed texture {file} to {new_name}")
 
-	pass
+	# Yield message to indicate successful build
+	yield
 
