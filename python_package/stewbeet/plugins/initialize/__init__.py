@@ -16,7 +16,7 @@ from .source_lore_font import make_source_lore_font
 
 
 # Main entry point
-@measure_time(message="Total execution time")
+@measure_time(message="Total execution time", is_generator=True)
 def beet_default(ctx: Context):
 
 	# Assertions
