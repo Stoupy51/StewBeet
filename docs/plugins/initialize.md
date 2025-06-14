@@ -1,21 +1,21 @@
 
 # 🚀 stewbeet.plugins.initialize
 
-📄 **Source Code**: [stewbeet/plugins/initialize.py](../../python_package/stewbeet/plugins/initialize/__init__.py) 🔗
+📄 **Source Code**: [stewbeet/plugins/initialize/__init__.py](../../python_package/stewbeet/plugins/initialize/__init__.py) 🔗
 
 ## 📋 Overview
 The `initialize` plugin is the foundation of the StewBeet framework.<br>
 It sets up the core infrastructure, initializes project metadata, configures pack.mcmeta files,<br>
-and prepares the build environment for all subsequent plugins.<br>
+and prepares the build environment for all subsequent plugins.
 
-| Some Features Showcase |
+| <u>Some Features Showcase</u> |
 |:---:|
 | Automatic Item Lore (If not configured) |
-| <img src="img/initialize.source_lore.jpg" width="480"> |
+| <img src="img/initialize.source_lore.jpg" width="100%"> |
 | Automatic pack.mcmeta + Automatic description (If not configured) |
-| <img src="img/initialize.pack_mcmeta.jpg" width="480"> |
+| <img src="img/initialize.pack_mcmeta.jpg" width="100%"> |
 | Legacy Texture Naming Conversion |
-| <img src="img/initialize.legacy_texture_naming.jpg" width="480"> |
+| <img src="img/initialize.legacy_texture_naming.jpg" width="100%"> |
 
 
 ## 🎯 Purpose
@@ -63,31 +63,31 @@ meta:
 ## ✨ Features
 
 ### 🚀 Framework Initialization
-- 🛠️ Sets up the StewBeet memory system (`Mem.ctx`) [`#L28`](../../python_package/stewbeet/plugins/initialize/__init__.py#L28)
-- 🔄 Converts the context meta to a Box object for easier access [`#L26-L27`](../../python_package/stewbeet/plugins/initialize/__init__.py#L26-L27)
+- 🛠️ Sets up the StewBeet memory system (`Mem.ctx`)
+- 🔄 Converts the context meta to a Box object for easier access
 - ⚙️ Initializes core project configurations
 
 ### 📦 Pack.mcmeta Generation
-Automatically generates pack.mcmeta files for both datapacks and resource packs with: [`#L50-L64`](../../python_package/stewbeet/plugins/initialize/__init__.py#L50-L64)
+Automatically generates pack.mcmeta files for both datapacks and resource packs with:
 - ✅ Correct pack format versions
 - 📝 Project description
 - 🆔 Project ID
 - 🔧 Proper JSON encoding
 
 ### 📊 Project Metadata Processing
-- **📝 Project Description**: Auto-generates if set to "auto" [`#L30-L34`](../../python_package/stewbeet/plugins/initialize/__init__.py#L30-L34)
-- **🏷️ Source Lore**: Creates item identification lore [`#L36-L40`](../../python_package/stewbeet/plugins/initialize/__init__.py#L36-L40) + [`source_lore_font.py`](../../python_package/stewbeet/plugins/initialize/source_lore_font.py)
-- **📖 Manual Name**: Sets default manual name if not specified [`#L42-L45`](../../python_package/stewbeet/plugins/initialize/__init__.py#L42-L45)
+- **📝 Project Description**: Auto-generates if set to "auto"
+- **🏷️ Source Lore**: Creates item identification lore (source code: [`source_lore_font.py`](../../python_package/stewbeet/plugins/initialize/source_lore_font.py))
+- **📖 Manual Name**: Sets default manual name if not specified
 
 ### 🖼️ Pack Icon Management
-Automatically handles pack.png icon distribution: [`#L95-L98`](../../python_package/stewbeet/plugins/initialize/__init__.py#L95-L98)
+Automatically handles pack.png icon distribution:
 - 🔍 Searches for pack.png in common locations (`src/pack.png`, `assets/pack.png`, `*pack.png`)
 - 📦 Copies pack.png to both datapack and resource pack outputs
 - 🎨 Uses `PngFile` for proper beet integration
 - ✅ Ensures consistent branding across both pack types
 
 ### 🔄 Legacy Support
-Handles legacy texture naming conversions for better later compatibility/pattern matching: [`#L66-L93`](../../python_package/stewbeet/plugins/initialize/__init__.py#L66-L93)
+Handles legacy texture naming conversions for better later compatibility/pattern matching:
 - `_off` → (removed) ❌
 - `_down` → `_bottom` ⬇️
 - `_up` → `_top` ⬆️
