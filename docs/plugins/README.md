@@ -1,7 +1,7 @@
 
 ## 🍲 StewBeet plugins 🌱
 
-Last updated: 2025/06/10
+Last updated: 2025/06/14
 
 Here are all the available plugins for the StewBeet framework:
 
