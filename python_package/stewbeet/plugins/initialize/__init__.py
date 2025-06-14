@@ -3,7 +3,7 @@
 import os
 from pathlib import Path
 
-from beet import Context, Pack
+from beet import Context, Pack, PngFile
 from beet.core.utils import JsonDict, TextComponent
 from box import Box
 from stouputils import relative_path
@@ -12,7 +12,7 @@ from stouputils.io import super_json_dump
 from stouputils.print import warning
 
 from ...core import Mem
-from .source_lore_font import make_source_lore_font
+from .source_lore_font import find_pack_png, make_source_lore_font
 
 
 # Main entry point
@@ -90,7 +90,12 @@ def beet_default(ctx: Context):
 				new_path = Path(textures_folder) / new_name
 				if old_path.exists() and not new_path.exists():
 					os.rename(old_path, new_path)
-					warning(f"Renamed texture {file} to {new_name}")
+					warning(f"Renamed texture '{file}' to '{new_name}'")
+
+	# Add the pack icon to the output directory for datapack and resource pack
+	pack_icon = find_pack_png()
+	if pack_icon:
+		Mem.ctx.data.extra["pack.png"] = Mem.ctx.assets.extra["pack.png"] = PngFile(source_path=pack_icon)
 
 	# Yield message to indicate successful build
 	yield
