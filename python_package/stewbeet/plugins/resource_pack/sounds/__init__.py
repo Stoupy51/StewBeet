@@ -45,9 +45,8 @@ def beet_default(ctx: Context):
 	sounds_names: list[str] = [sound for sound in all_files if sound.endswith(".ogg")]
 	if not sounds_names:
 		return
-
 	# Dictionary to group sound variants
-	sound_groups: dict[str, list[str]] = defaultdict(list)
+	sound_groups: dict[str, list[tuple[str, str]]] = defaultdict(list)
 
 	def handle_sound(sound: str) -> None:
 		""" Process a single sound file.
@@ -78,14 +77,14 @@ def beet_default(ctx: Context):
 		sounds: dict[str, Sound] = {}
 
 		# Process each variant
-		for variant in sorted(variants):
+		for variant_rel_sound in sorted(variants):
 			# Get variant name without extension
-			variant_name: str = os.path.splitext(variant)[0]
+			variant_name: str = os.path.splitext(variant_rel_sound)[0]
 
 			# Create Sound object for this variant
-			sounds[variant_name] = Sound(
-				source_path=clean_path(f"{sounds_folder}/{variant}"),
-				subtitle=base_name.split("/")[-1]
+			sounds[variant_name.lower().replace(" ","_")] = Sound(
+				source_path=clean_path(f"{sounds_folder}/{variant_rel_sound}"),
+				subtitle=variant_name
 			)
 
 		# Add all variants to the sound system
