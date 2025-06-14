@@ -102,7 +102,7 @@ def main():
 
 def routine():
 	manual_config: JsonDict = Mem.ctx.meta.get("stewbeet",{}).get("manual", {})
-	manual_debug: str = manual_config.get("manual_debug", "")
+	json_dump_path: str = manual_config.get("json_dump_path", "")
 	manual_name: str = manual_config.get("name", "")
 	if not manual_name:
 		manual_name = f"{Mem.ctx.project_name} Manual"
@@ -162,8 +162,8 @@ def routine():
 
 	# If the manual cache is enabled and we have a cache file, load it
 	cache_pages: bool = manual_config.get("cache_pages", False)
-	if cache_pages and manual_debug and os.path.exists(manual_debug) and os.path.exists(f"{SharedMemory.cache_path}/font/manual.json"):
-		with super_open(manual_debug, "r") as f:
+	if cache_pages and json_dump_path and os.path.exists(json_dump_path) and os.path.exists(f"{SharedMemory.cache_path}/font/manual.json"):
+		with super_open(json_dump_path, "r") as f:
 			book_content = json.load(f)
 
 	# Else, generate all
@@ -630,11 +630,11 @@ def routine():
 			f.write(super_json_dump(fonts))
 
 		# Debug book_content
-		manual_debug: str = manual_config.get("json_dump_path", "")
-		if manual_debug:
-			with super_open(manual_debug, "w") as f:
+		json_dump_path: str = manual_config.get("json_dump_path", "")
+		if json_dump_path:
+			with super_open(json_dump_path, "w") as f:
 				f.write(super_json_dump(book_content))
-			debug(f"Debug book_content at '{relative_path(manual_debug)}'")
+			debug(f"Debug book_content at '{relative_path(json_dump_path)}'")
 
 
 	# Copy the font provider and the generated textures to the resource pack
