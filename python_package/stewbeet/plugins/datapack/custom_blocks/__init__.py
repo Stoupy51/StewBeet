@@ -407,10 +407,12 @@ execute as @e[tag={ns}.custom_block,dx=0,dy=0,dz=0] at @s run function {ns}:cust
 			# Make search function
 			content = "# Search where the head has been placed\n"
 			mid_x, mid_y, mid_z = [x // 2 for x in CUSTOM_BLOCK_HEAD_CUBE_RADIUS]
-			for x in range(-mid_x, mid_x + 1):
-				for y in range(-mid_y, mid_y + 1):
-					for z in range(-mid_z, mid_z + 1):
-						content += f"execute positioned ~{x} ~{y} ~{z} if data block ~ ~ ~ components.\"minecraft:custom_data\".{ns}.{item} run function {ns}:custom_blocks/{item}/place_main\n"
+			content += f"""
+for x in range({-mid_x}, {mid_x + 1}):
+	for y in range({-mid_y}, {mid_y + 1}):
+		for z in range({-mid_z}, {mid_z + 1}):
+			execute positioned ~x ~y ~z if data block ~ ~ ~ components.\"minecraft:custom_data\".{ns}.{item} run function {ns}:custom_blocks/{item}/place_main
+"""
 			content += f"\n# Advancement\nadvancement revoke @s only {ns}:custom_block_head/{item}\n\n"
 			write_function(f"{ns}:custom_blocks/_player_head/search_{item}", content)
 
