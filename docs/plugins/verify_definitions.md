@@ -1,18 +1,19 @@
 
 # ✅ stewbeet.plugins.verify_definitions
 
-📄 **Source Code**: [stewbeet/plugins/verify_definitions.py](../../python_package/stewbeet/plugins/verify_definitions/__init__.py) 🔗
+📄 **Source Code**: [stewbeet/plugins/verify_definitions/__init__.py](../../python_package/stewbeet/plugins/verify_definitions/__init__.py) 🔗
 
 ## 📋 Overview
 The `verify_definitions` plugin performs comprehensive validation of item definitions to ensure data integrity and consistency across the StewBeet framework.<br>
 It validates item configurations, recipe structures, and performs consistency checks before further processing.
 
-| <u>Some Features Showcase</u> |
-|:---:|
-| Export debug information for troubleshooting |
-| <img src="img/verify_definitions.json_dump.jpg" width="100%"> |
-| Detailled error messages |
-| <img src="img/verify_definitions.errors_example.jpg" width="100%"> |
+### <u>Some Features Showcase</u>
+
+**Export debug information for troubleshooting**<br>
+<img src="img/verify_definitions.json_dump.jpg" style="width: min(960px, 100%)">
+
+**Detailled error messages**<br>
+<img src="img/verify_definitions.errors_example.jpg" style="width: min(960px, 100%)">
 
 ## 🎯 Purpose
 - ✅ Validates all item definitions in `Mem.definitions`
