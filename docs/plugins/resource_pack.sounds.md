@@ -53,7 +53,7 @@ meta:
 
 ### 🎵 Sound File Processing
 - 📁 Recursively scans the sounds folder for audio files
-- ✅ Only supports `.ogg` file format
+- ✅ Only supports `.ogg` file format for now
 - 🧹 Sanitizes filenames (removes spaces, converts to lowercase)
 - 📝 Creates Sound objects with proper source paths and subtitles
 
