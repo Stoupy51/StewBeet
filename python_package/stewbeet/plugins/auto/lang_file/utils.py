@@ -2,7 +2,7 @@
 # Imports
 import re
 
-from beet import Advancement, Context, Function, ItemModifier, LootTable
+from beet import Context, TextFileBase
 from stouputils.decorators import simple_cache
 
 # Prepare lang dictionary and lang_format function
@@ -55,22 +55,20 @@ def lang_format(ctx: Context, text: str) -> tuple[str, str]:
 	return key, re.sub(r"[._]", "", alpha_num)
 
 
-def handle_file(ctx: Context, file: str, content: Function | LootTable | ItemModifier | Advancement) -> None:
+def handle_file(ctx: Context, content: TextFileBase) -> None:
 	""" Process a file to extract and replace text with lang keys.
 
 	Args:
-		ctx      (Context):              The context containing project information.
-		file     (str):                  The path to the file being processed.
-		content  (Function | LootTable): The content of the file to process.
+		ctx      (Context):      The context containing project information.
+		content  (TextFileBase): The content of the file to process.
 
 	Returns:
 		None: The function modifies the content in place.
 	"""
 	# Read content from supported beet types
 	#	Function, LootTable, ItemModifier or Advancement
-	if isinstance(content, Function) or isinstance(content, LootTable) \
-		or isinstance(content, ItemModifier) or isinstance(content, Advancement):
-		string: str = content.text
+	if isinstance(content, TextFileBase):
+		string: str = str(content.text)
 	else:
 		raise ValueError(f"Unsupported content type: {type(content)}")
 
@@ -97,13 +95,7 @@ def handle_file(ctx: Context, file: str, content: Function | LootTable | ItemMod
 		new_fragment: str = f'{quote}translate{quote}: {quote}{key_for_lang}{quote}'
 		string = string[:start] + new_fragment + string[end:]
 
-	# Write the new content back to the appropriate context data
-	if isinstance(content, Function):
-		ctx.data.functions[file] = Function(string)
-	elif isinstance(content, LootTable):
-		ctx.data.loot_tables[file] = LootTable(string)
-	elif isinstance(content, ItemModifier):
-		ctx.data.item_modifiers[file] = ItemModifier(string)
-	elif isinstance(content, Advancement):
-		ctx.data.advancements[file] = Advancement(string)
+	# Update the content
+	if string != str(content.text):
+		content.text = string
 
