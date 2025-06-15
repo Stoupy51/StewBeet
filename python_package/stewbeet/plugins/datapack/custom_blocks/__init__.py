@@ -404,15 +404,25 @@ execute as @e[tag={ns}.custom_block,dx=0,dy=0,dz=0] at @s run function {ns}:cust
 			adv_obj.encoder = super_json_dump
 			ctx.data[ns].advancements[f"custom_block_head/{item}"] = adv_obj
 
-			# Make search function
+			## Make search function
 			content = "# Search where the head has been placed\n"
 			mid_x, mid_y, mid_z = [x // 2 for x in CUSTOM_BLOCK_HEAD_CUBE_RADIUS]
-			content += f"""
-for x in range({-mid_x}, {mid_x + 1}):
-	for y in range({-mid_y}, {mid_y + 1}):
-		for z in range({-mid_z}, {mid_z + 1}):
-			execute positioned ~x ~y ~z if data block ~ ~ ~ components.\"minecraft:custom_data\".{ns}.{item} run function {ns}:custom_blocks/{item}/place_main
-"""
+
+			# Generate main search function that calls x-loop
+			for x in range(-mid_x, mid_x + 1):
+				content += f"execute positioned ~{x} ~ ~ run function {ns}:custom_blocks/_player_head/search_{item}_y\n"
 			content += f"\n# Advancement\nadvancement revoke @s only {ns}:custom_block_head/{item}\n\n"
 			write_function(f"{ns}:custom_blocks/_player_head/search_{item}", content)
+
+			# Generate y-loop function
+			content_y = "# Search y coordinates\n"
+			for y in range(-mid_y, mid_y + 1):
+				content_y += f"execute positioned ~ ~{y} ~ run function {ns}:custom_blocks/_player_head/search_{item}_z\n"
+			write_function(f"{ns}:custom_blocks/_player_head/search_{item}_y", content_y)
+
+			# Generate z-loop function
+			content_z = "# Search z coordinates\n"
+			for z in range(-mid_z, mid_z + 1):
+				content_z += f"execute positioned ~ ~ ~{z} if data block ~ ~ ~ components.\"minecraft:custom_data\".{ns}.{item} run function {ns}:custom_blocks/{item}/place_main\n"
+			write_function(f"{ns}:custom_blocks/_player_head/search_{item}_z", content_z)
 
