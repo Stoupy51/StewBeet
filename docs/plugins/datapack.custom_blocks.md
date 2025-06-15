@@ -3,11 +3,25 @@
 
 📄 **Source Code**: [stewbeet/plugins/datapack/custom_blocks/__init__.py](../../python_package/stewbeet/plugins/datapack/custom_blocks/__init__.py) 🔗
 
+## 🔗 Dependencies
+- **✅ Required**: `Your definition plugin` with `vanilla_block` configuration (see [`definitions_setup.md`](../definitions_setup.md) for details)
+- **🔧 Automatic**: Smithed Custom Block library (auto-detected and linked)
+- **🔧 Automatic**: Common Signals library (for efficient custom ore break detection)
+- **🔧 Automatic**: Furnace NBT Recipes library (for custom blocks that are custom furnace, e.g. Electric Furnace)
+
 ## 📋 Overview
 The `datapack.custom_blocks` plugin enables custom blocks functionality in your datapack.<br>
 It automatically generates placement, destruction, and management systems for custom blocks<br>
 using vanilla blocks as the base, with support for Smithed Custom Block library integration,<br>
-rotation mechanics, statistics tracking, and ore break detection.<br>
+rotation mechanics, statistics tracking, and ore break detection.
+
+### <u>Some Features Showcase</u>
+
+**Advanced stats function:**<br>
+<img src="img/datapack.custom_blocks.stats.jpg">
+
+**Complete file tree (ticking, placement, destroy, convention tags, etc.):**<br>
+<img src="img/datapack.custom_blocks.complete_file_tree.jpg" style="width: min(960px, 100%)">
 
 ## 🎯 Purpose
 - 🧱 Creates custom block placement and destruction systems
@@ -18,26 +32,14 @@ rotation mechanics, statistics tracking, and ore break detection.<br>
 - 🗿 Enables player head-based custom blocks
 - 📚 Integrates with Smithed Custom Block library
 
-## 🔗 Dependencies
-- **✅ Required**: Item definitions with `vanilla_block` configuration in memory
-- **🔧 Automatic**: Smithed Custom Block library (auto-detected and linked)
-- **🔧 Automatic**: Common Signals library (for ore break detection)
-- **🔧 Automatic**: Furnace NBT Recipes library (for furnace blocks)
-
 ## ⚙️ Configuration
 
 ### 🎯 Basic Example Configuration
 ```yaml
 # No specific configuration required - works with item definitions
-# Configuration is handled through item definitions in memory:
-# definitions:
-#   custom_block_name:
-#     vanilla_block:
-#       id: "minecraft:block_id"
-#       apply_facing: true/false
 ```
 
-### 📋 Configuration Options
+### 📋 Configuration Options in item definitions
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
@@ -52,61 +54,61 @@ Check extensive template [examples in `setup_definitions.py`](../../templates/ex
 ## ✨ Features
 
 ### 🏗️ Block Placement System
-Automatically generates placement functions for each custom block: [`#L104-L139`](../../python_package/stewbeet/plugins/datapack/custom_blocks/__init__.py#L104-L139)
+Automatically generates placement functions for each custom block:
 - ✅ Handles block replacement with vanilla blocks
 - 🔄 Applies rotation and facing mechanics when configured
 - 🎯 Summons item display entities for visual representation
 - 📊 Updates statistics and optimization scoreboards
 
 ### 🔄 Rotation and Facing Mechanics
-Implements smart rotation detection for directional blocks: [`#L51-L65`](../../python_package/stewbeet/plugins/datapack/custom_blocks/__init__.py#L51-L65)
+Implements smart rotation detection for directional blocks:
 - 🧭 Player rotation-based placement (north, east, south, west)
 - 🎯 Predicate-based facing detection for existing blocks
 - ⚙️ Automatic block state application with facing parameters
 
 ### 🎨 Item Display Configuration
-Sets up item display entities with proper visual settings: [`#L154-L183`](../../python_package/stewbeet/plugins/datapack/custom_blocks/__init__.py#L154-L183)
+Sets up item display entities with proper visual settings:
 - 🏷️ Applies convention tags (smithed.entity, smithed.block)
 - ✨ Sets custom names and model overrides
 - 💡 Configures brightness and scale for optimal display
 - 🔄 Applies rotation transformations for directional blocks
 
 ### 📚 Smithed Custom Block Integration
-Automatically integrates with Smithed Custom Block library when needed: [`#L190-L215`](../../python_package/stewbeet/plugins/datapack/custom_blocks/__init__.py#L190-L215)
+Automatically integrates with Smithed Custom Block library when needed:
 - 🔗 Links placement functions to library events
 - 📦 Handles block API data storage integration
 - ⚡ Optimizes placement detection and execution
 
 ### 💥 Block Destruction Detection
-Implements multi-layered destruction detection system: [`#L344-L364`](../../python_package/stewbeet/plugins/datapack/custom_blocks/__init__.py#L344-L364)
+Implements multi-layered destruction detection system:
 - ⚡ Every 2 ticks: Fast detection for most blocks
 - 🔍 Every 1 second: Advanced predicate-based detection
 - 🛡️ Every 5 seconds: Comprehensive cleanup including ores
 - 🎯 Block tag and predicate-based optimization
 
 ### ⛏️ Custom Ore Support
-Special handling for custom ore blocks with advanced drop mechanics: [`#L366-L387`](../../python_package/stewbeet/plugins/datapack/custom_blocks/__init__.py#L366-L387)
+Special handling for custom ore blocks with advanced drop mechanics:
 - 🔨 Silk touch detection and handling
 - 💎 Alternative drops when mined without silk touch
 - 📊 Item count preservation and transfer
 - 🔗 Integration with Common Signals library
 
-### 🗿 Player Head Custom Blocks
-Support for player head-based custom blocks with advancement triggers: [`#L396-L422`](../../python_package/stewbeet/plugins/datapack/custom_blocks/__init__.py#L396-L422)
+### 🗿 Player Head Custom Blocks (e.g. cables from SimplEnergy)
+Support for player head-based custom blocks with advancement triggers:
 - 🏆 Advancement-based placement detection
-- 🔍 Area search within configurable radius
+- 🔍 Area search within "configurable" radius
 - 📦 Custom NBT data preservation
 - ⚡ Automatic advancement revocation
 
 ### 📊 Statistics and Performance
-Comprehensive statistics tracking and performance optimization: [`#L140-L148`](../../python_package/stewbeet/plugins/datapack/custom_blocks/__init__.py#L140-L148)
+Comprehensive statistics tracking and performance optimization:
 - 📈 Total custom blocks count
 - 🧱 Per-block type statistics
 - 🎯 Vanilla block usage tracking
 - ⚡ Scoreboard-based performance optimization
 
 ### 🔧 Special Integrations
-- **🔥 Furnace NBT Recipes**: Auto-summons markers for furnace blocks [`#L177-L182`](../../python_package/stewbeet/plugins/datapack/custom_blocks/__init__.py#L177-L182)
-- **🏷️ Block Tags**: Creates optimized block tags for detection [`#L317-L325`](../../python_package/stewbeet/plugins/datapack/custom_blocks/__init__.py#L317-L325)
-- **🎯 Predicates**: Generates performance-optimized predicates [`#L327-L342`](../../python_package/stewbeet/plugins/datapack/custom_blocks/__init__.py#L327-L342) 
+- **🔥 Furnace NBT Recipes**: Auto-summons markers for furnace blocks
+- **🏷️ Block Tags**: Creates optimized block tags for detection
+- **🎯 Predicates**: Generates performance-optimized predicates
 
