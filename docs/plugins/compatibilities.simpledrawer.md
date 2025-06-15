@@ -39,7 +39,7 @@ to enable automatic compacting/decompacting in SimpleDrawer's compacting drawers
 | `material_block` | string | Auto-detected | Material blocks ending with `_block` (e.g., `steel_block`) |
 | `material_ingot` | string | Auto-detected | Material ingots (e.g., `steel_ingot`, `steel_fragment`) |
 | `material_nugget` | string | Auto-detected | Material nuggets (e.g., `steel_nugget`) |
-| `smithed.dict` | object | Required | Smithed convention structure in custom_data for material identification |
+| `smithed.dict` | object | **Required** | Smithed convention structure in custom_data for material identification |
 
 ## ✨ Features
 
