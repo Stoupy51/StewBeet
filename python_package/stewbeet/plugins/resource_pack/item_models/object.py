@@ -279,7 +279,9 @@ class AutoModel:
 				for texture in content["textures"].values():
 					if texture.startswith("minecraft:"):
 						continue
-					self.used_textures.add(texture)			# Copy used textures
+					self.used_textures.add(texture)
+
+			# Copy used textures
 			if content.get("textures"):
 				for texture in content["textures"].values():
 					# Ignore if minecraft namespace

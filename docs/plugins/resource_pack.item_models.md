@@ -1,7 +1,8 @@
 
 # 🎨 stewbeet.plugins.resource_pack.item_models
 
-📄 **Source Code**: [stewbeet/plugins/resource_pack/item_models/__init__.py](../../python_package/stewbeet/plugins/resource_pack/item_models/__init__.py) 🔗
+📄 **Source Code**: [stewbeet/plugins/resource_pack/item_models/__init__.py](../../python_package/stewbeet/plugins/resource_pack/item_models/__init__.py) 🔗<br>
+📄 **Source Code**: [stewbeet/plugins/resource_pack/item_models/object.py](../../python_package/stewbeet/plugins/resource_pack/item_models/object.py) 🔗<br>
 
 ## 📋 Overview
 The `item_models` plugin automatically generates item and block models for custom items defined in the StewBeet framework.<br>
@@ -27,7 +28,7 @@ and creates the necessary item model files for Minecraft resource packs.<br>
 - 🎯 Tracks rendered models to prevent duplicates
 
 ## 🔗 Dependencies
-- **✅ Required**: Item definitions in memory (from user setup code)
+- **✅ Required**: `Your definition plugin` (see [`definitions_setup.md`](../definitions_setup.md) for details)<br>
 - **✅ Required**: `textures_folder` configuration in meta.stewbeet
 - **📍 Position**: Should run after verification plugins and before finalization<br>
 (see [`extensive/beet.yml`](../../templates/extensive/beet.yml) for an example)

@@ -1,7 +1,8 @@
 
 # 🚀 stewbeet.plugins.initialize
 
-📄 **Source Code**: [stewbeet/plugins/initialize/__init__.py](../../python_package/stewbeet/plugins/initialize/__init__.py) 🔗
+📄 **Source Code**: [stewbeet/plugins/initialize/__init__.py](../../python_package/stewbeet/plugins/initialize/__init__.py) 🔗<br>
+📄 **Source Code**: [stewbeet/plugins/initialize/source_lore_font.py](../../python_package/stewbeet/plugins/initialize/source_lore_font.py) 🔗<br>
 
 ## 📋 Overview
 The `initialize` plugin is the foundation of the StewBeet framework.<br>
@@ -78,7 +79,7 @@ Automatically generates pack.mcmeta files for both datapacks and resource packs 
 
 ### 📊 Project Metadata Processing
 - **📝 Project Description**: Auto-generates if set to "auto"
-- **🏷️ Source Lore**: Creates item identification lore (source code: [`source_lore_font.py`](../../python_package/stewbeet/plugins/initialize/source_lore_font.py))
+- **🏷️ Source Lore**: Creates item identification lore
 - **📖 Manual Name**: Sets default manual name if not specified
 
 ### 🖼️ Pack Icon Management
