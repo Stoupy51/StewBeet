@@ -23,7 +23,7 @@ The plugin ensures proper datapack initialization with dependency validation and
 **All item definitions stored into a storage:**<br>
 <img src="img/datapack.loading.items_storage.jpg" style="width: min(960px, 100%)">
 
-**Confirm datapack load for people with `convention.debug` tag:**<br>
+**Confirm datapack load for players with `convention.debug` tag:**<br>
 <img src="img/datapack.loading.load_messages.jpg" style="width: min(960px, 100%)">
 
 ## 🎯 Purpose
