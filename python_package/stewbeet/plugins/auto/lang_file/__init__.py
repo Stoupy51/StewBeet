@@ -1,6 +1,6 @@
 
 # Imports
-from beet import Advancement, Context, Function, ItemModifier, Language, LootTable
+from beet import Context, Language, TextFileBase
 from stouputils.decorators import measure_time
 from stouputils.io import super_json_dump
 from stouputils.parallel import multithreading
@@ -19,16 +19,14 @@ def beet_default(ctx: Context):
 		ctx (Context): The beet context.
 	"""
 	# Get all functions and loot tables
-	files_to_process: dict[str, Function | LootTable] = {}
-	files_to_process.update(ctx.data.functions)
-	files_to_process.update(ctx.data.loot_tables)
-	files_to_process.update(ctx.data.item_modifiers)
-	files_to_process.update(ctx.data.advancements)
+	files_to_process: dict[str, TextFileBase] = {}
+	files_to_process.update(ctx.data.loot_tables)	# Idk why, but this is needed to ensure loot tables are processed
+	files_to_process.update(dict(ctx.data.all()))
 
 	# Process all files
-	args: list[tuple[Context, str, Function | LootTable | ItemModifier, Advancement]] = [
-		(ctx, file, content) for (file, content) in files_to_process.items()
-		if True
+	args: list[tuple[Context, str, TextFileBase]] = [
+		(ctx, content) for content in files_to_process.values()
+		if isinstance(content, TextFileBase)
 	]
 	multithreading(handle_file, args, use_starmap=True, desc="Generating lang file", max_workers=min(32, len(args)), color=BLUE)
 

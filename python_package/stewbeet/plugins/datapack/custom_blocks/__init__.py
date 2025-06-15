@@ -401,7 +401,7 @@ execute as @e[tag={ns}.custom_block,dx=0,dy=0,dz=0] at @s run function {ns}:cust
 			)
 			adv["rewards"]["function"] = f"{ns}:custom_blocks/_player_head/search_{item}"
 			adv_obj = Advancement(adv)
-			adv_obj.encoder = super_json_dump
+			adv_obj.encoder = lambda x: super_json_dump(x, max_level=-1)
 			ctx.data[ns].advancements[f"custom_block_head/{item}"] = adv_obj
 
 			## Make search function
