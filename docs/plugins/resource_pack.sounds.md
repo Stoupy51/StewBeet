@@ -1,7 +1,8 @@
 
 # 🔊 stewbeet.plugins.resource_pack.sounds
 
-📄 **Source Code**: [stewbeet/plugins/resource_pack/sounds/__init__.py](../../python_package/stewbeet/plugins/resource_pack/sounds/__init__.py) 🔗
+📄 **Source Code**: [stewbeet/plugins/resource_pack/sounds/__init__.py](../../python_package/stewbeet/plugins/resource_pack/sounds/__init__.py) 🔗<br>
+📄 **Source Code**: [stewbeet/core/utils/sounds.py](../../python_package/stewbeet/core/utils/sounds.py) 🔗<br>
 
 ## 📋 Overview
 The `sounds` plugin automatically processes sound files and generates the sounds.json configuration for Minecraft resource packs.<br>
