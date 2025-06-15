@@ -5,7 +5,6 @@
 
 ## 🔗 Dependencies
 - **✅ Required**: Project ID and version in context
-- **✅ Required**: Beet context for function detection
 - **🔧 Optional**: Versioned timing functions (tick_2, second, second_5, minute)
 - **📋 Related**: Works with versioned function system
 
