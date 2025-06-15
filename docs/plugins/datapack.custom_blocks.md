@@ -36,6 +36,12 @@ rotation mechanics, statistics tracking, and ore break detection.
 
 ### 🎯 Basic Example Configuration
 ```yaml
+pipeline:
+  - ...
+  - src.setup_definitions  # Load item definitions into memory
+  - ...
+  - stewbeet.plugins.datapack.custom_blocks # < This plugin
+  - ...
 # No specific configuration required - works with item definitions
 ```
 

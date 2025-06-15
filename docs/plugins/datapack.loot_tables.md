@@ -35,6 +35,13 @@ convenient give-all commands for testing purposes.
 ```yaml
 id: "your_namespace"
 
+pipeline:
+  - ...
+  - src.setup_definitions  # Load item definitions into memory
+  - ...
+  - stewbeet.plugins.datapack.loot_tables # < This plugin
+  - ...
+
 # Requires source_lore to be set in meta.stewbeet section
 meta:
   stewbeet:

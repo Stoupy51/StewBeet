@@ -41,6 +41,12 @@ The plugin ensures proper datapack initialization with dependency validation and
 version: "1.0.0"  # Required: semantic version (major.minor.patch)
 id: "your_namespace"  # Required: project namespace
 name: "Your Project Name"  # Required: display name for load messages
+
+pipeline:
+  - ...
+  - stewbeet.plugins.datapack.loading  # Place this plugin in the pipeline
+  - ...  # Other plugins follow
+  - stewbeet.plugins.finalyze.dependencies  # Required later for completion
 ```
 
 ### 📋 Configuration Options

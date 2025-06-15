@@ -31,6 +31,11 @@ to enable automatic compacting/decompacting in SimpleDrawer's compacting drawers
 
 ### 🎯 Basic Example Configuration
 ```yaml
+pipeline:
+  - ...
+  - stewbeet.plugins.compatibilities.simpledrawer
+  - ...
+
 # No specific configuration required - automatically detects materials
 # Works with existing material definitions that follow naming conventions
 # Materials must have proper smithed.dict structure in custom_data (automatic if you used definitions helper functions)

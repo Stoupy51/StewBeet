@@ -31,6 +31,11 @@ to NeoEnchant's veinminer block tag for proper mining compatibility.
 
 ### 🎯 Basic Example Configuration
 ```yaml
+pipeline:
+  - ...
+  - stewbeet.plugins.compatibilities.neo_enchant
+  - ...
+
 # No specific configuration required - automatically detects ore usage
 ```
 
