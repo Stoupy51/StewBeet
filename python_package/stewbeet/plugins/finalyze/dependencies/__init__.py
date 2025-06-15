@@ -102,7 +102,7 @@ def beet_default(ctx: Context) -> None:
 
 	# Get all dependencies (official and custom)
 	dependencies: list[tuple[str, dict]] = [(lib_ns, data) for lib_ns, data in OFFICIAL_LIBS.items() if data["is_used"]]
-	load_dependencies: JsonDict = ctx.meta.get("load_dependencies", {})
+	load_dependencies: JsonDict = ctx.meta.get("stewbeet", {}).get("load_dependencies", {})
 	if load_dependencies:
 		dependencies += list(load_dependencies.items())
 	# Setup Lantern Load
