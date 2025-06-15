@@ -26,7 +26,7 @@ a comprehensive `en_us.json` language file for internationalization support.
 
 ## ⚙️ Configuration
 
-### 🎯 Basic Configuration
+### 🎯 Basic Example Configuration
 ```yaml
 # No configuration required - plugin runs automatically
 # Processes all functions and loot tables by default

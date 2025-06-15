@@ -3,6 +3,11 @@
 
 📄 **Source Code**: [stewbeet/plugins/resource_pack/check_power_of_2/__init__.py](../../python_package/stewbeet/plugins/resource_pack/check_power_of_2/__init__.py) 🔗
 
+## 🔗 Dependencies
+- **✅ Required**: Resource pack textures (from previous plugins like `resource_pack.item_models`)
+- **📍 Position**: Can run at any position but after textures are added to the project<br>
+(see [`extensive/beet.yml`](../../templates/extensive/beet.yml) for an example)
+
 ## 📋 Overview
 The `check_power_of_2` plugin validates that all textures in the resource pack have power-of-2 dimensions.<br>
 This validation helps ensure optimal performance and compatibility with Minecraft's texture system.<br>
@@ -20,14 +25,9 @@ This validation helps ensure optimal performance and compatibility with Minecraf
 - 🎨 Excludes animation textures and GUI elements with valid aspect ratios
 - 🛡️ Helps maintain texture optimization standards
 
-## 🔗 Dependencies
-- **✅ Required**: Resource pack textures (from previous plugins like `resource_pack.item_models`)
-- **📍 Position**: Can run at any position but after textures are added to the project<br>
-(see [`extensive/beet.yml`](../../templates/extensive/beet.yml) for an example)
-
 ## ⚙️ Configuration
 
-### 🎯 Basic Configuration
+### 🎯 Basic Example Configuration
 ```yaml
 pipeline:
   - ...

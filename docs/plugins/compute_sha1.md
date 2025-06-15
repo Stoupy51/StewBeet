@@ -26,7 +26,7 @@ for distribution verification, security auditing, and change detection purposes.
 
 ## ⚙️ Configuration
 
-### 🎯 Basic Configuration
+### 🎯 Basic Example Configuration
 ```yaml
 # No direct configuration required - uses project settings
 # Requires output_directory to be configured in beet.yml:

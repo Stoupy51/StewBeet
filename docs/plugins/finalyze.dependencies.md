@@ -26,7 +26,7 @@ with user-friendly error messages and compatibility checks.
 
 ## ⚙️ Configuration
 
-### 🎯 Basic Configuration
+### 🎯 Basic Example Configuration
 ```yaml
 # Dependencies are automatically detected from function usage
 # Custom dependencies can be added via metadata:

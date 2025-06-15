@@ -25,7 +25,7 @@ to NeoEnchant's veinminer block tag for proper mining compatibility.
 
 ## ⚙️ Configuration
 
-### 🎯 Basic Configuration
+### 🎯 Basic Example Configuration
 ```yaml
 # No specific configuration required - automatically detects ore usage
 # Works when items use VANILLA_BLOCK_FOR_ORES constant

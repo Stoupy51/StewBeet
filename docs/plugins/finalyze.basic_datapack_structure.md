@@ -25,7 +25,7 @@ logic to call them at proper intervals with optimized load distribution.
 
 ## ⚙️ Configuration
 
-### 🎯 Basic Configuration
+### 🎯 Basic Example Configuration
 ```yaml
 # No specific configuration required - automatically detects timing functions
 # Creates timer infrastructure for any existing versioned functions:

@@ -26,7 +26,7 @@ to help optimize resource pack size and identify orphaned assets.
 
 ## ⚙️ Configuration
 
-### 🎯 Basic Configuration
+### 🎯 Basic Example Configuration
 ```yaml
 meta:
   stewbeet:
