@@ -31,6 +31,12 @@ entity tagging, scoreboard optimization, and proper integration with versioned f
 
 ### 🎯 Basic Example Configuration
 ```yaml
+pipeline:
+  - ...
+  - stewbeet.plugins.datapack.custom_blocks  # Optional if you are adding custom blocks functions yourself
+  - ...
+  - stewbeet.plugins.finalyze.custom_blocks_ticking
+  - ...
 # No specific configuration required - automatically detects ticking functions
 # Create tick/second functions in custom_blocks folder:
 # custom_blocks/{block_name}/tick.mcfunction
