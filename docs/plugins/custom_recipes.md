@@ -7,6 +7,12 @@
 📄 **Source Code**: [stewbeet/plugins/custom_recipes/furnace.py](../../python_package/stewbeet/plugins/custom_recipes/furnace.py) 🔗<br>
 📄 **Source Code**: [stewbeet/plugins/custom_recipes/pulverizer.py](../../python_package/stewbeet/plugins/custom_recipes/pulverizer.py) 🔗<br>
 
+## 🔗 Dependencies
+- **✅ Required**: StewBeet framework initialization
+- **✅ Required**: `Your definition plugin` (see [`definitions_setup.md`](../definitions_setup.md) for details)
+- **📍 Position**: Should run after item model generation and before datapack finalization<br>
+(see [`extensive/beet.yml`](../../templates/extensive/beet.yml) for an example)
+
 ## 📋 Overview
 The `custom_recipes` plugin generates custom recipes for datapacks based on item definitions.<br>
 It supports multiple recipe types including vanilla crafting, smelting, Smithed Crafter recipes,<br>
@@ -35,16 +41,17 @@ and specialized recipes for SimplEnergy's pulverizer and furnaces with component
 - 🎁 Creates recipe unlocking systems with advancement triggers
 - 📋 Manages ingredient detection and recipe discovery
 
-## 🔗 Dependencies
-- **✅ Required**: `Your definition plugin` (see [`definitions_setup.md`](../definitions_setup.md) for details)<br>
-- **✅ Required**: StewBeet framework initialization
-- **📍 Position**: Should run after item model generation and before datapack finalization<br>
-(see [`extensive/beet.yml`](../../templates/extensive/beet.yml) for an example)
-
 ## ⚙️ Configuration
 
-### 🎯 Basic Configuration
+### 🎯 Basic Example Configuration
 ```yaml
+pipeline:
+  - ...
+  - src.setup_definitions  # Load item definitions into memory
+  - ...
+  - stewbeet.plugins.custom_recipes  # Check your item definitions
+  - ...
+
 # No direct configuration required - recipes are defined in item definitions (see feature showcase)
 ```
 

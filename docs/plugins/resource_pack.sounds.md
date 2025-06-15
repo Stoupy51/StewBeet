@@ -4,6 +4,12 @@
 📄 **Source Code**: [stewbeet/plugins/resource_pack/sounds/__init__.py](../../python_package/stewbeet/plugins/resource_pack/sounds/__init__.py) 🔗<br>
 📄 **Source Code**: [stewbeet/core/utils/sounds.py](../../python_package/stewbeet/core/utils/sounds.py) 🔗<br>
 
+## 🔗 Dependencies
+- **✅ Required**: `sounds_folder` configuration in meta.stewbeet
+- **📍 Position**: Should be able to run anywhere in the pipeline<br>
+(see [`extensive/beet.yml`](../../templates/extensive/beet.yml) for an example)
+- **📂 Assets**: Requires a sounds folder with audio files
+
 ## 📋 Overview
 The `sounds` plugin automatically processes sound files and generates the sounds.json configuration for Minecraft resource packs.<br>
 It intelligently groups numbered sound variants and handles multithreading for optimal performance.<br>
@@ -24,15 +30,9 @@ It intelligently groups numbered sound variants and handles multithreading for o
 - ⚡ Utilizes multithreading for efficient file handling
 - 🏷️ Creates appropriate subtitles for sound identification
 
-## 🔗 Dependencies
-- **✅ Required**: `sounds_folder` configuration in meta.stewbeet
-- **📍 Position**: Should be able to run anywhere in the pipeline<br>
-(see [`extensive/beet.yml`](../../templates/extensive/beet.yml) for an example)
-- **📂 Assets**: Requires a sounds folder with audio files
-
 ## ⚙️ Configuration
 
-### 🎯 Basic Configuration
+### 🎯 Basic Example Configuration
 ```yaml
 pipeline:
   - ...

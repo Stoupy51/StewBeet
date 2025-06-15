@@ -26,7 +26,7 @@ consistent timestamps, and optimized compression for production deployment.
 
 ## ⚙️ Configuration
 
-### 🎯 Basic Configuration
+### 🎯 Basic Example Configuration
 ```yaml
 # Requires output_directory and project name configuration
 output_directory: "build"

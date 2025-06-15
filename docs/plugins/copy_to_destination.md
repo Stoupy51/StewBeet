@@ -27,7 +27,7 @@ handling, and proper directory structure management for development and testing 
 
 ## ⚙️ Configuration
 
-### 🎯 Basic Configuration
+### 🎯 Basic Example Configuration
 ```yaml
 meta:
   stewbeet:

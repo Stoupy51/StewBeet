@@ -26,7 +26,7 @@ preserving original pack directories and integrating seamlessly with beet's outp
 
 ## ⚙️ Configuration
 
-### 🎯 Basic Configuration
+### 🎯 Basic Example Configuration
 ```yaml
 # No direct configuration required - uses project settings
 # Requires output_directory to be configured in beet.yml:

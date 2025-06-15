@@ -25,7 +25,7 @@ The plugin ensures proper datapack initialization with dependency validation and
 
 ## ⚙️ Configuration
 
-### 🎯 Basic Configuration
+### 🎯 Basic Example Configuration
 ```yaml
 # No specific configuration required
 # Uses project metadata from context:

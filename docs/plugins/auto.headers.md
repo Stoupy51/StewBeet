@@ -25,7 +25,7 @@ call each function, providing clear dependency tracking and usage documentation.
 
 ## ⚙️ Configuration
 
-### 🎯 Basic Configuration
+### 🎯 Basic Example Configuration
 ```yaml
 # No configuration required - plugin runs automatically
 # Processes all functions, function tags, and advancements by default

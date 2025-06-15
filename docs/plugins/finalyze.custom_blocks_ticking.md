@@ -25,7 +25,7 @@ entity tagging, scoreboard optimization, and proper integration with versioned f
 
 ## ⚙️ Configuration
 
-### 🎯 Basic Configuration
+### 🎯 Basic Example Configuration
 ```yaml
 # No specific configuration required - automatically detects ticking functions
 # Create tick/second functions in custom_blocks folder:

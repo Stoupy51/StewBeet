@@ -26,7 +26,7 @@ rotation mechanics, statistics tracking, and ore break detection.<br>
 
 ## ⚙️ Configuration
 
-### 🎯 Basic Configuration
+### 🎯 Basic Example Configuration
 ```yaml
 # No specific configuration required - works with item definitions
 # Configuration is handled through item definitions in memory:

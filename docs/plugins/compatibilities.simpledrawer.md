@@ -25,7 +25,7 @@ to enable automatic compacting/decompacting in SimpleDrawer's compacting drawers
 
 ## ⚙️ Configuration
 
-### 🎯 Basic Configuration
+### 🎯 Basic Example Configuration
 ```yaml
 # No specific configuration required - automatically detects materials
 # Works with existing material definitions that follow naming conventions

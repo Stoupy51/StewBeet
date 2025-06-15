@@ -3,6 +3,13 @@
 
 📄 **Source Code**: [stewbeet/plugins/verify_definitions/__init__.py](../../python_package/stewbeet/plugins/verify_definitions/__init__.py) 🔗
 
+## 🔗 Dependencies
+- **✅ Required**: StewBeet framework initialization
+- **✅ Required**: `Your definition plugin` (see [`definitions_setup.md`](../definitions_setup.md) for details)
+- **📍 Position**: Should be run immediately after user definitions are loaded<br>
+(see [`extensive/beet.yml`](../../templates/extensive/beet.yml) for an example)
+- **🔄 Follows**: User definition scripts (e.g. `src.setup_definitions`)
+
 ## 📋 Overview
 The `verify_definitions` plugin performs comprehensive validation of item definitions to ensure data integrity and consistency across the StewBeet framework.<br>
 It validates item configurations, recipe structures, and performs consistency checks before further processing.
@@ -23,12 +30,6 @@ It validates item configurations, recipe structures, and performs consistency ch
 - 🔧 Ensures custom data integrity
 - 🧹 Cleans up empty recipe lists
 - 🐛 Exports debug information for troubleshooting
-
-## 🔗 Dependencies
-- **✅ Required**: `Your definition plugin` (see [`definitions_setup.md`](../definitions_setup.md) for details)<br>
-- **📍 Position**: Should be run immediately after user definitions are loaded<br>
-(see [`extensive/beet.yml`](../../templates/extensive/beet.yml) for an example)
-- **🔄 Follows**: User definition scripts (e.g., `src.setup_definitions`)
 
 ## ⚙️ Configuration
 

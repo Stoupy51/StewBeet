@@ -25,7 +25,7 @@ convenient give-all commands for testing purposes.
 
 ## ⚙️ Configuration
 
-### 🎯 Basic Configuration
+### 🎯 Basic Example Configuration
 ```yaml
 id: "your_namespace"
 

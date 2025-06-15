@@ -4,6 +4,11 @@
 📄 **Source Code**: [stewbeet/plugins/initialize/__init__.py](../../python_package/stewbeet/plugins/initialize/__init__.py) 🔗<br>
 📄 **Source Code**: [stewbeet/plugins/initialize/source_lore_font.py](../../python_package/stewbeet/plugins/initialize/source_lore_font.py) 🔗<br>
 
+## 🔗 Dependencies
+- **✅ Required**: None (this is the first plugin in the pipeline)
+- **📍 Position**: Must be the first plugin in the beet.yml pipeline<br>
+(see [`extensive/beet.yml`](../../templates/extensive/beet.yml) for an example)
+
 ## 📋 Overview
 The `initialize` plugin is the foundation of the StewBeet framework.<br>
 It sets up the core infrastructure, initializes project metadata, configures pack.mcmeta files,<br>
@@ -28,11 +33,6 @@ and prepares the build environment for all subsequent plugins.
 - 📝 Preprocesses project descriptions and few settings
 - 🔄 Handles legacy texture naming conversions
 - 🏷️ Creates source lore fonts for item identification
-
-## 🔗 Dependencies
-- **✅ Required**: None (this is the first plugin in the pipeline)
-- **📍 Position**: Must be the first plugin in the beet.yml pipeline<br>
-(see [`extensive/beet.yml`](../../templates/extensive/beet.yml) for an example)
 
 ## ⚙️ Configuration
 
