@@ -82,14 +82,6 @@ Or, you could check the **highly detailed** [documentation folder](docs/)<br>
 Here a list of all the currently available guides:
 - 📖 [Getting started](docs/0_getting_started/README.md)
 - 🌱 [Beet Plugins](docs/plugins/README.md)
-- 📁 [Project structure](docs/1_project_structure.md)
-- 🗄️ [Database setup](docs/2_definitions_setup.md)
-- ✍️ [Writing to files](docs/3_writing_to_files.md)
-- 🔗 [External dependencies](docs/4_external_dependencies.md)
-- 🔧 [Miscellaneous](docs/5_miscellaneous.md)
-- 🔄 [Migration guide](docs/6_migration_guide.md)
-- 🚀 [Continuous delivery](docs/7_continuous_delivery.md)
-- ⚔️ [Adding a sword](docs/specific_guides/adding_a_sword.md)
 - More soon!
 
 
