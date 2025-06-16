@@ -21,7 +21,7 @@ rotation mechanics, statistics tracking, and ore break detection.
 <img src="img/datapack.custom_blocks.stats.jpg">
 
 **Complete file tree (ticking, placement, destroy, convention tags, etc.):**<br>
-<img src="img/datapack.custom_blocks.complete_file_tree.jpg" style="width: min(960px, 100%)">
+<img src="img/datapack.custom_blocks.complete_file_tree.jpg">
 
 ## 🎯 Purpose
 - 🧱 Creates custom block placement and destruction systems

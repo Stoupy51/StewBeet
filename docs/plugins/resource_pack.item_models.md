@@ -19,10 +19,10 @@ and creates the necessary item model files for Minecraft resource packs.<br>
 ### <u>Some Features Showcase (example from [SimplEnergy](https://github.com/Stoupy51/SimplEnergy/tree/main/assets/textures/))</u>
 
 **Automatically detects texture patterns:**<br>
-<img src="img/resource_pack.item_models.pattern_detection.jpg" style="width: min(960px, 100%)">
+<img src="img/resource_pack.item_models.pattern_detection.jpg">
 
 **Both models are automatically created and ready to use (`models/item/*` and `items/*`):**<br>
-<img src="img/resource_pack.item_models.result.jpg" style="width: min(960px, 100%)">
+<img src="img/resource_pack.item_models.result.jpg">
 
 ## 🎯 Purpose
 - 🧊 Generates block models with automatic pattern detection (cube, cake, orientable, etc.)

@@ -17,7 +17,7 @@ entity tagging, scoreboard optimization, and proper integration with versioned f
 ### <u>Some Features Showcase</u>
 
 **Automatically links custom blocks tick and second functions efficiently:**<br>
-<img src="img/finalyze.custom_blocks_ticking.timers.jpg" style="width: min(960px, 100%)">
+<img src="img/finalyze.custom_blocks_ticking.timers.jpg">
 
 ## 🎯 Purpose
 - ⏰ Automatically detects custom block tick and second functions

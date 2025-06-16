@@ -20,10 +20,10 @@ a comprehensive `en_us.json` language file for internationalization support.
 ### <u>Feature Showcase</u>
 
 **Before and after lang plugin:**<br>
-<img src="img/auto.lang_file.conversion_example.jpg" style="width: min(960px, 100%)">
+<img src="img/auto.lang_file.conversion_example.jpg">
 
 **Generated `en_us.json` lang file:**<br>
-<img src="img/auto.lang_file.en_us_example.jpg" style="width: min(960px, 100%)">
+<img src="img/auto.lang_file.en_us_example.jpg">
 
 ## 🎯 Purpose
 - 🌐 Automatically generates language files from hardcoded text

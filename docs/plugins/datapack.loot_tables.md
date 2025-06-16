@@ -16,10 +16,10 @@ convenient give-all commands for testing purposes.
 ### <u>Some Features Showcase</u>
 
 **Complete file tree (i/\*, recipes/\*, external/\*):**<br>
-<img src="img/datapack.loot_tables.complete_file_tree.jpg" style="width: min(960px, 100%)">
+<img src="img/datapack.loot_tables.complete_file_tree.jpg">
 
 **Function to give all items (comfortably stored in named chests):**<br>
-<img src="img/datapack.loot_tables.give_all.jpg" style="width: min(960px, 100%)">
+<img src="img/datapack.loot_tables.give_all.jpg">
 
 ## 🎯 Purpose
 - 🎯 Generates individual loot tables for each custom item
