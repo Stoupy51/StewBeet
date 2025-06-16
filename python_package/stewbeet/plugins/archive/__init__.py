@@ -1,33 +1,3 @@
-"""
-StewBeet Archive Plugin
-
-This plugin replaces the legacy `make_archive.py` system with a beet-compatible implementation.
-Instead of using the old `FILES_TO_WRITE` global dictionary approach, this plugin leverages
-beet's native Context and pack management system.
-
-Key improvements over the legacy system:
-1. Uses beet's Context.packs to access generated data and resource packs
-2. Uses pack.dump() to create zip archives without interfering with existing pack directories
-3. Integrates with beet's output directory management
-4. Provides proper error handling for file operations
-5. Uses beet cache .gitignore file modification time for consistent, reproducible timestamps
-
-The plugin automatically:
-- Detects all generated packs (data pack and resource pack)
-- Creates zip archives with consistent timestamps based on beet cache .gitignore file
-- Applies deterministic compression settings for reproducible builds
-- Saves archives to the configured output directory
-- Preserves existing pack directory structure
-
-Timestamp Strategy:
-The plugin uses the modification time of the `.beet_cache/.gitignore` file to ensure
-all zip entries have consistent timestamps, making the archives reproducible and
-deterministic across builds. This approach is more reliable than searching for
-pack.mcmeta files in the output directory.
-
-This replaces the legacy make_archive() function calls and integrates seamlessly
-with beet's plugin architecture and build pipeline without deleting the original pack folders.
-"""
 
 # Imports
 import os
