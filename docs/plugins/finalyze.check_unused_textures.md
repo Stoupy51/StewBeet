@@ -18,7 +18,7 @@ to help optimize resource pack size and identify orphaned assets.
 ### <u>Feature Showcase</u>
 
 **Warning message in terminal:**<br>
-<img src="img/finalyze.check_unused_textures.warnings.jpg" style="width: min(960px, 100%)">
+<img src="img/finalyze.check_unused_textures.warnings.jpg">
 
 ## 🎯 Purpose
 - 🔍 Identifies unused texture files in the resource pack

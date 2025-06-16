@@ -17,7 +17,7 @@ to NeoEnchant's veinminer block tag for proper mining compatibility.
 ### <u>Some Features Showcase</u>
 
 **Automatic compatibility with Neo Enchant's veinminer enchant for custom ores:**<br>
-<img src="img/compatibilities.neo_enchant.veinminer.jpg" style="width: min(960px, 100%)">
+<img src="img/compatibilities.neo_enchant.veinminer.jpg">
 
 ## 🎯 Purpose
 - ⛏️ Enables veinminer functionality for custom ore blocks

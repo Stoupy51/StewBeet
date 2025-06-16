@@ -17,7 +17,7 @@ to enable automatic compacting/decompacting in SimpleDrawer's compacting drawers
 ### <u>Some Features Showcase</u>
 
 **Automatic compatibility with SimpleDrawer's compating drawer:**<br>
-<img src="img/compatibilities.simpledrawer.complete_file_tree.jpg" style="width: min(960px, 100%)">
+<img src="img/compatibilities.simpledrawer.complete_file_tree.jpg">
 
 ## 🎯 Purpose
 - 🔗 Integrates custom materials with SimpleDrawer's compacting drawer system

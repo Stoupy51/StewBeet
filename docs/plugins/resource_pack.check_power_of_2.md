@@ -16,7 +16,7 @@ This validation helps ensure optimal performance and compatibility with Minecraf
 ### <u>Features Showcase</u>
 
 **Warning messages:**<br>
-<img src="img/resource_pack.check_power_of_2.warning.jpg" style="width: min(960px, 100%)">
+<img src="img/resource_pack.check_power_of_2.warning.jpg">
 
 ## 🎯 Purpose
 - 🔍 Validates texture dimensions for power-of-2 compliance (2x2, 4x4, 8x8, 16x16, etc.)

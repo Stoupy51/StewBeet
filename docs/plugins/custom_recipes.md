@@ -22,16 +22,16 @@ and specialized recipes for SimplEnergy's pulverizer and furnaces with component
 ### <u>Some Features Showcase</u>
 
 **Item definition example ([source](../../templates/extensive/src/setup_definitions.py)):**<br>
-<img src="img/custom_recipes.item_definition.jpg" style="width: min(960px, 100%)">
+<img src="img/custom_recipes.item_definition.jpg">
 
 **Generated vanilla crafting recipe ([source](../../templates/extensive/build/datapack/data/_your_namespace/recipe/super_stone.json)):**<br>
 <img src="img/custom_recipes.vanilla_recipe.jpg" style="width: min(480px, 100%)">
 
 **Generated Smithed Crafter recipe ([source](../../templates/extensive/build/datapack/data/_your_namespace/function/calls/smithed_crafter/shapeless_recipes.mcfunction)):**<br>
-<img src="img/custom_recipes.smithed_recipe.jpg" style="width: min(960px, 100%)">
+<img src="img/custom_recipes.smithed_recipe.jpg">
 
 **Generated furnace recipe with NBT data ([source](../../templates/extensive/build/datapack/data/_your_namespace/function/calls/furnace_nbt_recipes/smelting_recipes.mcfunction)):**<br>
-<img src="img/custom_recipes.furnace_recipe.jpg" style="width: min(960px, 100%)">
+<img src="img/custom_recipes.furnace_recipe.jpg">
 
 ## 🎯 Purpose
 - 🛠️ Generates vanilla crafting recipes (shapeless, shaped, smelting, blasting, smoking)

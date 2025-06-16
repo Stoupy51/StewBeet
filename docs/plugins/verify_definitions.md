@@ -17,10 +17,10 @@ It validates item configurations, recipe structures, and performs consistency ch
 ### <u>Some Features Showcase</u>
 
 **Export debug information for troubleshooting**<br>
-<img src="img/verify_definitions.json_dump.jpg" style="width: min(960px, 100%)">
+<img src="img/verify_definitions.json_dump.jpg">
 
 **Detailled error messages**<br>
-<img src="img/verify_definitions.errors_example.jpg" style="width: min(960px, 100%)">
+<img src="img/verify_definitions.errors_example.jpg">
 
 ## 🎯 Purpose
 - ✅ Validates all item definitions in `Mem.definitions`

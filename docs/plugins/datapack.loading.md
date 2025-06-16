@@ -18,13 +18,13 @@ The plugin ensures proper datapack initialization with dependency validation and
 ### <u>Some Features Showcase</u>
 
 **Lantern Load Setup (#load, #enumerate, #resolve, etc.):**<br>
-<img src="img/datapack.loading.lantern_load.jpg" style="width: min(960px, 100%)">
+<img src="img/datapack.loading.lantern_load.jpg">
 
 **All item definitions stored into a storage:**<br>
-<img src="img/datapack.loading.items_storage.jpg" style="width: min(960px, 100%)">
+<img src="img/datapack.loading.items_storage.jpg">
 
 **Confirm datapack load for players with `convention.debug` tag:**<br>
-<img src="img/datapack.loading.load_messages.jpg" style="width: min(960px, 100%)">
+<img src="img/datapack.loading.load_messages.jpg">
 
 ## 🎯 Purpose
 - ⚡ Sets up versioned datapack loading system

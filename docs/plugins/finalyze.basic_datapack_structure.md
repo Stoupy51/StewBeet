@@ -17,7 +17,7 @@ logic to call them at proper intervals with **optimized** load distribution.
 ### <u>Feature Showcase</u>
 
 **Timer systems for different intervals (tick_2, second, second_5, minute):**<br>
-<img src="img/finalyze.basic_datapack_structure.timers.jpg" style="width: min(960px, 100%)">
+<img src="img/finalyze.basic_datapack_structure.timers.jpg">
 
 ## 🎯 Purpose
 - ⏰ Sets up basic timing infrastructure for datapacks

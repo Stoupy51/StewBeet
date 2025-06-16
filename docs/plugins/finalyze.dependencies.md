@@ -18,10 +18,10 @@ with user-friendly error messages and compatibility checks.
 ### <u>Some Features Showcase</u>
 
 **Creates a dependencies check function and later use it:**<br>
-<img src="img/finalyze.dependencies.check_function.jpg" style="width: min(960px, 100%)">
+<img src="img/finalyze.dependencies.check_function.jpg">
 
 **Errors in chat when loading if missing dependencies:**<br>
-<img src="img/finalyze.dependencies.ingame_errors.jpg" style="width: min(960px, 100%)">
+<img src="img/finalyze.dependencies.ingame_errors.jpg">
 
 ## 🎯 Purpose
 - 📦 Manages datapack dependencies and load sequence
