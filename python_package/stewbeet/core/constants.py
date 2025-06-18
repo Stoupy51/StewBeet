@@ -1,10 +1,11 @@
 
+# ruff: noqa: E501, RUF012
 # Imports
 from ..dependencies.bookshelf import BOOKSHELF_MODULES
 
 # Minecraft version constants
-MINECRAFT_VERSION: str = "1.21.6 Pre-Release1"	# Text used when loading the datapack to warn the user when the data version is not right
-DATA_VERSION: int = 4430			# Depending on MC version, given by /data get entity @p DataVersion to check if the datapack is not running in an older version of MC
+MINECRAFT_VERSION: str = "1.21.6"	# Text used when loading the datapack to warn the user when the data version is not right
+DATA_VERSION: int = 4435			# Depending on MC version, given by /data get entity @p DataVersion to check if the datapack is not running in an older version of MC
 
 
 # Databases
@@ -37,8 +38,8 @@ NOT_COMPONENTS: list[str] = [							# Keys that should not be considered as comp
 # Technical constants
 FACES: tuple = ("down", "up", "north", "south", "west", "east")						# Faces of a block, used for resource pack and blocks orientation
 SIDES: tuple = ("_bottom", "_top", "_front", "_back", "_left", "_right", "_side")	# Sides of a block, used for resource pack
-DOWNLOAD_VANILLA_ASSETS_RAW = "https://raw.githubusercontent.com/edayot/renders/89324614d1be45957936f454b5290910635b0944/resourcepack/assets/minecraft/textures/render"
-DOWNLOAD_VANILLA_ASSETS_SOURCE = "https://github.com/edayot/renders/tree/89324614d1be45957936f454b5290910635b0944/resourcepack/assets/minecraft/textures/render"
+DOWNLOAD_VANILLA_ASSETS_RAW = "https://raw.githubusercontent.com/edayot/renders/renders/resourcepack/assets/minecraft/textures/render"
+DOWNLOAD_VANILLA_ASSETS_SOURCE = "https://github.com/edayot/renders/tree/renders/resourcepack/assets/minecraft/textures/render"
 CUSTOM_BLOCK_HEAD_CUBE_RADIUS: tuple[int, int, int] = (16, 16, 16)	# Size of the region to check around the player when placing a CUSTOM_BLOCK_HEAD
 BLOCKS_WITH_INTERFACES: list[str] = [	# List of blocks that are containers and have an interface
 	"minecraft:barrel",
@@ -62,7 +63,7 @@ class Conventions:
 	""" List of tags that prevent entities from being killed. """
 	ENTITY_TAGS: list[str] = ["smithed.entity", "global.ignore"]
 	""" List of tags applicable to custom entities. """
-	BLOCK_TAGS: list[str] = ["smithed.block"] + ENTITY_TAGS
+	BLOCK_TAGS: list[str] = ["smithed.block", *ENTITY_TAGS]
 	""" List of tags applicable to custom blocks. """
 	ENTITY_TAGS_NO_KILL: list[str] = ENTITY_TAGS + NO_KILL_TAGS
 	""" Combined list of entity tags and no kill tags. """
