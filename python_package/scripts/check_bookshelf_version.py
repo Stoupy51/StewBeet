@@ -60,7 +60,7 @@ def main() -> None:
 	latest_version: str | None = get_latest_version()
 
 	# If versions are different, an update is available, return true
-	if current_version != latest_version:
+	if latest_version is not None and current_version != latest_version:
 		print("true")
 	else:
 		print("false")
