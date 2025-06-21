@@ -6,8 +6,8 @@ import os
 
 from beet import ItemModel, Model, Texture
 from beet.core.utils import JsonDict
+from stouputils.decorators import LogLevels, handle_error
 from stouputils.io import super_json_dump, super_json_load
-from stouputils.print import error
 
 from ....core.__memory__ import Mem
 from ....core.constants import CUSTOM_BLOCK_VANILLA, CUSTOM_ITEM_VANILLA, OVERRIDE_MODEL
@@ -65,6 +65,7 @@ class AutoModel:
 		"""
 		return cls(item_name, data, source_textures, ignore_textures)
 
+	@handle_error(exceptions=ValueError, error_log=LogLevels.ERROR_TRACEBACK)
 	def get_powered_texture(self, variants: list[str], side: str, on_off: str) -> str:
 		""" Get the powered texture for a given side.
 
@@ -84,7 +85,7 @@ class AutoModel:
 			if texture.endswith(side):
 				return texture
 		if not self.ignore_textures:
-			error(f"Couldn't find texture for side '{side}' in '{variants}', consider adding missing texture or override the model")
+			raise ValueError(f"Couldn't find texture for side '{side}' in '{variants}', consider adding missing texture or override the model")
 		return ""
 
 	def model_in_variants(self, models: list[str], variants: list[str]) -> bool:
@@ -99,10 +100,15 @@ class AutoModel:
 		"""
 		return all(any(model in x for x in variants) for model in models)
 
+	@handle_error(exceptions=ValueError, error_log=LogLevels.ERROR_TRACEBACK)
 	def process(self) -> None:
 		""" Process the item model. """
 		# If no item model, return
 		if not self.data.get("item_model"):
+			return
+
+		# If item_model is already processed, return
+		if self.data["item_model"] in Mem.ctx.meta["stewbeet"]["rendered_item_models"]:
 			return
 
 		# Initialize variables
@@ -188,7 +194,7 @@ class AutoModel:
 									"orientable": orientable,
 									"cube_column": cube_column
 								}, max_level=1)
-								error(
+								raise ValueError(
 									f"Block '{self.item_name}' has invalid variants: {variants},\n"
 									"consider overriding the model or adding missing textures to match up one of the following patterns:"
 									f"\n{patterns}"
@@ -297,7 +303,7 @@ class AutoModel:
 						Mem.ctx.assets[texture] = Texture(source_path=self.source_textures[texture_name], mcmeta=mcmeta)
 					else:
 						if not self.ignore_textures:
-							error(f"Texture '{texture_name}' not found in source textures")
+							raise ValueError(f"Texture '{texture_name}' not found in source textures")
 
 			# Add model to assets
 			if self.data.get(OVERRIDE_MODEL, None) != {}:
