@@ -52,7 +52,9 @@ class VanillaRecipeHandler:
                 "criteria": {"requirement": {"trigger": "minecraft:inventory_changed"}},
                 "rewards": {"function": f"{Mem.ctx.project_id}:advancements/unlock_recipes"}
             }
-            Mem.ctx.data[adv_path] = Advancement(super_json_dump(adv_json, max_level=-1))
+            adv = Advancement(adv_json)
+            adv.encoder = lambda x: super_json_dump(x, max_level=-1)
+            Mem.ctx.data[adv_path] = adv
 
             # Write the function that will unlock the recipes
             content = f"""
