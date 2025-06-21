@@ -97,6 +97,16 @@ def beet_default(ctx: Context):
 	if pack_icon:
 		Mem.ctx.data.extra["pack.png"] = Mem.ctx.assets.extra["pack.png"] = PngFile(source_path=pack_icon)
 
+	# Add missing pack format registries if not present
+	ctx.data.pack_format_registry.update({
+		(1, 21, 5): 71,
+		(1, 21, 6): 80,
+	})
+	ctx.assets.pack_format_registry.update({
+		(1, 21, 5): 55,
+		(1, 21, 6): 63,
+	})
+
 	# Yield message to indicate successful build
 	yield
 
