@@ -32,6 +32,6 @@ def beet_default(ctx: Context):
 
 	# Update the lang file
 	lang.update(ctx.assets.languages.get("minecraft:en_us", Language()).data)
-	ctx.assets.languages["minecraft:en_us"] = Language(super_json_dump(lang))
+	ctx.assets.languages["minecraft:en_us"] = Language(super_json_dump(dict(sorted(lang.items()))))
 	pass
 
