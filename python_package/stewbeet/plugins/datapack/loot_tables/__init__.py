@@ -28,6 +28,9 @@ def beet_default(ctx: Context):
 	assert ctx.project_id, "Project ID is not set. Please set it in the project configuration."
 	ns: str = ctx.project_id
 
+	# Creative loot table (sort of give all loot table)
+	creative_loot_table: JsonDict = {"pools": []}
+
 	# For each item in the definitions, create a loot table
 	for item, data in Mem.definitions.items():
 		loot_table: JsonDict = {
@@ -54,6 +57,9 @@ def beet_default(ctx: Context):
 
 		# Create loot table with beet
 		ctx.data[ns].loot_tables[f"i/{item}"] = LootTable(super_json_dump(loot_table, max_level = 10))
+
+		# Add the pool to the creative loot table
+		creative_loot_table["pools"].append({"rolls": 1, "entries":[{"type":"minecraft:loot_table","value":f"{ns}:i/{item}"}] })
 
 	# Same for external items
 	for item, data in Mem.external_definitions.items():
@@ -118,6 +124,10 @@ def beet_default(ctx: Context):
 			}]
 		}
 		ctx.data[ns].loot_tables[f"i/{ns}_manual"] = LootTable(super_json_dump(loot_table, max_level=10))
+
+	# Write the creative loot table
+	if creative_loot_table["pools"]:
+		ctx.data[ns].loot_tables["creative_loot_table"] = LootTable(super_json_dump(creative_loot_table, max_level=2))
 
 	# Make a give all command that gives chests with all the items
 	CHEST_SIZE: int = 27
