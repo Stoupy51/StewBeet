@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 import os
+from collections.abc import Iterable
 
 from beet import ItemModel, Model, Texture
 from beet.core.utils import JsonDict
-from stouputils.decorators import LogLevels, handle_error
+from stouputils.decorators import LogLevels, handle_error, simple_cache
 from stouputils.io import super_json_dump, super_json_load
 
 from ....core.__memory__ import Mem
@@ -100,6 +101,31 @@ class AutoModel:
 		"""
 		return all(any(model in x for x in variants) for model in models)
 
+	@simple_cache
+	def get_same_folder_variants(self, variants: Iterable[str]) -> list[str]:
+		""" Get variants that are in the same folder as the item.
+
+		Args:
+			variants  (Iterable[str]): Iterable of variant names.
+
+		Returns:
+			list[str]: List of variants in the same folder.
+		"""
+		target_folder_depth: int = self.item_name.count('/')
+		same_folder_variants: list[str] = []
+		for variant in variants:
+			variant_folder_depth: int = variant.count('/')
+			if variant_folder_depth == target_folder_depth:
+				# Check if all folder parts before the filename are the same
+				if target_folder_depth == 0:
+					same_folder_variants.append(variant)
+				else:
+					target_folder: str = '/'.join(self.item_name.split('/')[:-1])
+					variant_folder: str = '/'.join(variant.split('/')[:-1])
+					if target_folder == variant_folder:
+						same_folder_variants.append(variant)
+		return same_folder_variants
+
 	@handle_error(exceptions=ValueError, error_log=LogLevels.ERROR_TRACEBACK)
 	def process(self) -> None:
 		""" Process the item model. """
@@ -134,13 +160,13 @@ class AutoModel:
 
 		# Generate its model file(s)
 		for on_off in powered:
-			content: dict = {}
-
-			# Get all variants
-			variants: list[str] = [
+			content: dict = {}			# Get all variants
+			all_variants: list[str] = [
 				x.replace(".png", "") for x in self.source_textures
-				if "gui/" not in x and x.startswith(self.item_name)
+				if os.path.basename(x).startswith(self.item_name)
 			]
+			# Filter to only include variants in the same folder
+			variants: list[str] = self.get_same_folder_variants(all_variants)
 
 			if self.data.get(OVERRIDE_MODEL, None) != {}:
 				# If it's a block
