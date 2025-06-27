@@ -58,6 +58,33 @@ class Header:
             ['Some info']
             >>> header.content
             'say Hello'
+
+            >>> alt_launch_content = '''
+            ... #> alt_launch
+            ... #
+            ... # @executed			as the player & at current position
+            ... #
+            ... # @input macro		target : string - target selector for position and rotation source
+            ... # @input macro		time : int - time in ticks
+            ... # @input macro		with : compound - additional arguments (optional)
+            ... #						- yaw : float - yaw rotation (will override target rotation)
+            ... #						- pitch : float - pitch rotation (will override target rotation)
+            ... #						- go_side : float - how far to go side (0 = don't go side)
+            ... #						- add_y : float - additional y position (default: 20.0)
+            ... #						- particle : int - particle effect (0 = none, 1 = glow)
+            ... #						- interpolation : int - teleport duration (default: 1)
+            ... #						- delay : int - delay in ticks before starting (default: 0)
+            ... #
+            ... # @description		Launch a cinematic that moves the player to the position and rotation of a target entity
+            ... #
+            ... # @example			/execute as @s positioned 0 69 0 rotated -55 10 run function switch:cinematic/alt_launch
+            ... #					{target:"@s",time:60,with:{go_side:1,add_y:20.0,particle:1,interpolation:1,delay:20}}
+            ... #
+            ...
+            ... function content here'''
+            >>> alt_header = Header.from_content("alt_launch", alt_launch_content)
+            >>> len(alt_header.other) > 10  # Should capture all the @executed, @input, @description, @example lines
+            True
         """
         # Initialize empty lists
         within: list[str] = []
@@ -81,24 +108,26 @@ class Header:
                     within.append(func_name)
                 i += 1
 
-            # Skip empty lines
+            # Skip empty comment lines
             while i < len(lines) and lines[i].strip() == "#":
                 i += 1
 
-            # Parse other information
-            while i < len(lines) and lines[i].strip().startswith("# "):
+            # Parse other information (without # prefix)
+            while i < len(lines) and lines[i].strip().startswith("#"):
                 other_line: str = lines[i].strip()
-                if other_line != "#":
-                    # Remove the # prefix and add to other
-                    other.append(other_line[2:].strip())
+                other.append(other_line[2:])
                 i += 1
 
-            # Skip empty lines
+            # Skip any remaining empty comment lines
             while i < len(lines) and lines[i].strip() == "#":
                 i += 1
 
             # The remaining lines are the actual content
             actual_content = "\n".join(lines[i:]).strip()
+
+        if other and other[-1] == "":
+            # Remove the last empty line if it exists
+            other.pop()
 
         return cls(path, within, other, actual_content)
 
@@ -148,3 +177,30 @@ class Header:
             header += "#\n"
         return (header + "\n" + self.content.strip() + "\n\n").replace("\n\n\n", "\n\n")
 
+if __name__ == "__main__":
+    # Example usage
+    example_content = """
+#> alt_launch
+#
+# @executed			as the player & at current position
+#
+# @input macro		target : string - target selector for position and rotation source
+# @input macro		time : int - time in ticks
+# @input macro		with : compound - additional arguments (optional)
+#						- yaw : float - yaw rotation (will override target rotation)
+#						- pitch : float - pitch rotation (will override target rotation)
+#						- go_side : float - how far to go side (0 = don't go side)
+#						- add_y : float - additional y position (default: 20.0)
+#						- particle : int - particle effect (0 = none, 1 = glow)
+#						- interpolation : int - teleport duration (default: 1)
+#						- delay : int - delay in ticks before starting (default: 0)
+#
+# @description		Launch a cinematic that moves the player to the position and rotation of a target entity
+#
+# @example			/execute as @s positioned 0 69 0 rotated -55 10 run function switch:cinematic/alt_launch {target:"@s",time:60,with:{go_side:1,add_y:20.0,particle:1,interpolation:1,delay:20}}
+#
+
+# Fonction content here
+"""
+    header = Header.from_content("alt_launch", example_content)
+    print(header.to_str())
