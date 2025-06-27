@@ -53,7 +53,7 @@ def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
 		...
 		... **Full Changelog**: https://github.com/Stoupy51/LifeSteal/compare/v1.2.2...v1.2.3
 		... '''
-		>>> bbcode = convert_markdown_to_bbcode(markdown_text, verbose=True)
+		>>> bbcode = convert_markdown_to_bbcode(markdown_text, verbose=False)
 		>>> print(bbcode.strip())
 		[h2]Changelog[/h2][h4]Build System[/h4][list]
 		[*]🚀 Bump version to v1.2.3 ([url=https://github.com/Stoupy51/LifeSteal/commit/2111fd2f390b80a3aab77a4e7bcbb24b93845e5a]2111fd2[/url])[/*]
