@@ -4,7 +4,7 @@
 from ..dependencies.bookshelf import BOOKSHELF_MODULES
 
 # Minecraft version constants
-MINECRAFT_VERSION: str = "1.21.6"	# Text used when loading the datapack to warn the user when the data version is not right
+MINECRAFT_VERSION: str = "1.21.7"	# Text used when loading the datapack to warn the user when the data version is not right
 DATA_VERSION: int = 4435			# Depending on MC version, given by /data get entity @p DataVersion to check if the datapack is not running in an older version of MC
 
 
