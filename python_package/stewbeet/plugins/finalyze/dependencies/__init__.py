@@ -67,12 +67,15 @@ def beet_default(ctx: Context) -> None:
 	project_name: str = ctx.project_name
 	author: str = ctx.project_author
 
+	# Track newly found official libraries
+	newly_found_libs: list[str] = []
+
 	# Find if furnace_nbt_recipes is used
 	if ns != "furnace_nbt_recipes":
 		for function in ctx.data.functions.values():
 			if "furnace_nbt_recipes" in function.text:
 				if not official_lib_used("furnace_nbt_recipes"):
-					debug("Found the use of official supported library 'furnace_nbt_recipes', adding it to the datapack")
+					newly_found_libs.append("furnace_nbt_recipes")
 				break
 
 	# Find if common_signals is used
@@ -80,7 +83,7 @@ def beet_default(ctx: Context) -> None:
 		for function in ctx.data.functions.values():
 			if "common_signals" in function.text:
 				if not official_lib_used("common_signals"):
-					debug("Found the use of official supported library 'common_signals', adding it to the datapack")
+					newly_found_libs.append("common_signals")
 				break
 
 	# Find if itemio is used
@@ -88,7 +91,7 @@ def beet_default(ctx: Context) -> None:
 		for function in ctx.data.functions.values():
 			if "itemio" in function.text:
 				if not official_lib_used("itemio"):
-					debug("Found the use of official supported library 'itemio', adding it to the datapack")
+					newly_found_libs.append("itemio")
 				break
 
 	# Find for each bookshelf module if it is used
@@ -97,8 +100,12 @@ def beet_default(ctx: Context) -> None:
 			for function in ctx.data.functions.values():
 				if f"#{module_ns}:" in function.text:
 					if not official_lib_used(module_ns):
-						debug(f"Found the use of official supported library '{module_ns}', adding it to the datapack")
+						newly_found_libs.append(module_ns)
 					break
+
+	# Debug message for newly found libraries
+	if newly_found_libs:
+		debug(f"Found the use of official supported libraries: {', '.join(newly_found_libs)}, adding them to the datapack")
 
 	# Get all dependencies (official and custom)
 	dependencies: list[tuple[str, dict]] = [(lib_ns, data) for lib_ns, data in OFFICIAL_LIBS.items() if data["is_used"]]
