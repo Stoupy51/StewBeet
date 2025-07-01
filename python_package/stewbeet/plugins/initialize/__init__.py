@@ -12,7 +12,7 @@ from stouputils.io import super_json_dump
 from stouputils.print import warning
 
 from ...core import Mem
-from .source_lore_font import find_pack_png, make_source_lore_font
+from .source_lore_font import create_source_lore_font, find_pack_png, prepare_source_lore_font
 
 
 # Main entry point
@@ -37,7 +37,7 @@ def beet_default(ctx: Context):
 	source_lore: TextComponent = Mem.ctx.meta.stewbeet.source_lore
 	if not source_lore or source_lore == "auto":
 		Mem.ctx.meta.stewbeet.source_lore = [{"text":"ICON"},{"text":f" {ctx.project_name}","italic":True,"color":"blue"}]
-	make_source_lore_font(Mem.ctx.meta.stewbeet.source_lore)
+	src_lore: str = prepare_source_lore_font(Mem.ctx.meta.stewbeet.source_lore)
 
 	# Preprocess manual name
 	manual_name: TextComponent = Mem.ctx.meta.stewbeet.manual.name
@@ -92,11 +92,6 @@ def beet_default(ctx: Context):
 					os.rename(old_path, new_path)
 					warning(f"Renamed texture '{file}' to '{new_name}'")
 
-	# Add the pack icon to the output directory for datapack and resource pack
-	pack_icon = find_pack_png()
-	if pack_icon:
-		Mem.ctx.data.extra["pack.png"] = Mem.ctx.assets.extra["pack.png"] = PngFile(source_path=pack_icon)
-
 	# Add missing pack format registries if not present
 	ctx.data.pack_format_registry.update({
 		(1, 21, 5): 71,
@@ -111,4 +106,19 @@ def beet_default(ctx: Context):
 
 	# Yield message to indicate successful build
 	yield
+
+	# If source lore is present and there are item definitions using it, create the source lore font
+	if src_lore and Mem.ctx.meta.stewbeet.source_lore and any(
+		isinstance(item, dict) and item.get("lore") == Mem.ctx.meta.stewbeet.source_lore
+		for item in Mem.definitions.values()
+	):
+		create_source_lore_font(src_lore)
+
+	# Add the pack icon to the output directory for datapack and resource pack
+	pack_icon = find_pack_png()
+	if pack_icon:
+		Mem.ctx.data.extra["pack.png"] = PngFile(source_path=pack_icon)
+		all_assets = set(Mem.ctx.assets.all())
+		if len(all_assets) > 0:
+			Mem.ctx.assets.extra["pack.png"] = PngFile(source_path=pack_icon)
 
