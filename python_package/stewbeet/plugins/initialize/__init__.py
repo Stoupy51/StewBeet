@@ -109,8 +109,8 @@ def beet_default(ctx: Context):
 
 	# If source lore is present and there are item definitions using it, create the source lore font
 	if src_lore and Mem.ctx.meta.stewbeet.source_lore and any(
-		isinstance(item, dict) and item.get("lore") == Mem.ctx.meta.stewbeet.source_lore
-		for item in Mem.definitions.values()
+		Mem.ctx.meta.stewbeet.source_lore in data.get("lore", [])
+		for data in Mem.definitions.values()
 	):
 		create_source_lore_font(src_lore)
 
