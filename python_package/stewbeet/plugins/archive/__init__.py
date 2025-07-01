@@ -50,6 +50,10 @@ def beet_default(ctx: Context) -> None:
 	# Create archives for each pack
 	@handle_error
 	def handle_pack(pack: DataPack | ResourcePack) -> None:
+		all_items = set(pack.all())
+		if not len(all_items) > 0:
+			return  # Skip empty packs
+
 		# Get pack name and type
 		pack_name: str = ctx.project_name.replace(" ", "") or pack.name or "pack"
 
