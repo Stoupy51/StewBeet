@@ -10,6 +10,8 @@ from stouputils.decorators import handle_error, measure_time
 from stouputils.parallel import multithreading
 from stouputils.print import progress
 
+from ..initialize.source_lore_font import find_pack_png
+
 
 def get_consistent_timestamp(ctx: Context) -> tuple[int, ...]:
 	""" Get a consistent timestamp for archive files based on beet cache .gitignore file modification time. """
@@ -86,6 +88,15 @@ def beet_default(ctx: Context) -> None:
 				info.date_time = consistent_time
 				info.compress_type = zipfile.ZIP_DEFLATED
 				final_zip.writestr(info, content)
+
+			# Check if pack.png exists and add it to the final zip if it does
+			pack_png_path = find_pack_png()
+			if pack_png_path:
+				info = ZipInfo("pack.png")
+				info.compress_type = zipfile.ZIP_DEFLATED
+				info.date_time = consistent_time
+				with open(pack_png_path, "rb") as f:
+					final_zip.writestr(info, f.read())
 
 	# Process each pack in parallel
 	multithreading(handle_pack, ctx.packs, max_workers=len(ctx.packs))
