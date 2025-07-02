@@ -3,13 +3,14 @@
 import json
 import os
 import shutil
+from pathlib import Path
 from typing import Any
 
 from beet import Font, Texture
 from beet.core.utils import JsonDict, TextComponent
 from PIL import Image
 from stouputils.collections import unique_list
-from stouputils.io import relative_path, super_json_dump, super_open
+from stouputils.io import clean_path, relative_path, super_json_dump, super_open
 from stouputils.parallel import colored_for_loop
 from stouputils.print import debug, error, suggestion, warning
 
@@ -678,7 +679,12 @@ def routine():
 
 	# Add the model to the resource pack if it doesn't already exist
 	if not manual_already_exists:
-		AutoModel.from_definitions("manual", Mem.definitions["manual"], {})
+		textures_folder: str = relative_path(Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", ""))
+		textures: dict[str, str] = {
+			clean_path(str(p)).split("/")[-1]: relative_path(p)
+			for p in Path(textures_folder).rglob("*.png")
+		}
+		AutoModel.from_definitions("manual", Mem.definitions["manual"], textures).process()
 
 	# Remove the heavy workbench from the definitions
 	if OFFICIAL_LIBS["smithed.crafter"]["is_used"]:
