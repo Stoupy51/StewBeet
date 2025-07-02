@@ -63,3 +63,10 @@ def create_source_lore_font(pack_icon: str) -> None:
 		image = image.resize((256, 256))
 	Mem.ctx.assets[Mem.ctx.project_id].textures["font/original_icon"] = Texture(image)
 
+def delete_source_lore_font() -> None:
+	""" Delete the source lore font if it exists. """
+	if Mem.ctx.assets[Mem.ctx.project_id].fonts.get("icons"):
+		del Mem.ctx.assets[Mem.ctx.project_id].fonts["icons"]
+	if Mem.ctx.assets[Mem.ctx.project_id].textures.get("font/original_icon"):
+		del Mem.ctx.assets[Mem.ctx.project_id].textures["font/original_icon"]
+
