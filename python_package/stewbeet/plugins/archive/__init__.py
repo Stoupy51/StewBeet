@@ -81,6 +81,16 @@ def beet_default(ctx: Context) -> None:
 			for item in temp_zip.filelist:
 				temp_contents[item.filename] = temp_zip.read(item.filename)
 
+		# Check if pack.png exists and prepare it
+		pack_png_path = find_pack_png()
+		if pack_png_path:
+			# Remove pack.png from temp_contents if it exists to avoid duplicates
+			temp_contents.pop("pack.png", None)
+
+			# Read pack.png content
+			with open(pack_png_path, "rb") as f:
+				temp_contents["pack.png"] = f.read()
+
 		# Recreate the zip file with proper timestamps and compression
 		with zipfile.ZipFile(archive_path, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=6) as final_zip:
 			for filename, content in temp_contents.items():
@@ -88,15 +98,6 @@ def beet_default(ctx: Context) -> None:
 				info.date_time = consistent_time
 				info.compress_type = zipfile.ZIP_DEFLATED
 				final_zip.writestr(info, content)
-
-			# Check if pack.png exists and add it to the final zip if it does
-			pack_png_path = find_pack_png()
-			if pack_png_path:
-				info = ZipInfo("pack.png")
-				info.compress_type = zipfile.ZIP_DEFLATED
-				info.date_time = consistent_time
-				with open(pack_png_path, "rb") as f:
-					final_zip.writestr(info, f.read())
 
 	# Process each pack in parallel
 	multithreading(handle_pack, ctx.packs, max_workers=len(ctx.packs))
