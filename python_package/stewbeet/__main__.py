@@ -26,7 +26,7 @@ def main():
         info("Cleaning project and caches...")
 
         # Remove the beet cache directory
-        subprocess.run(["beet", "cache", "-c"], check=False, capture_output=True)
+        subprocess.run([sys.executable, "-m", "beet", "cache", "-c"], check=False, capture_output=True)
         if os.path.exists(".beet_cache"):
             shutil.rmtree(".beet_cache", ignore_errors=True)
 
