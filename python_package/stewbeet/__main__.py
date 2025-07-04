@@ -64,7 +64,7 @@ def main():
             handle_error(importlib.import_module, error_log=LogLevels.ERROR_TRACEBACK)(plugin)
 
         # Run beet with all remaining arguments
-        subprocess.run(["beet"] + [x for x in sys.argv[1:] if x != "rebuild"], check=False)
+        subprocess.run([sys.executable, "-m", "beet"] + [x for x in sys.argv[1:] if x != "rebuild"], check=False)
 
 
 if __name__ == "__main__":
