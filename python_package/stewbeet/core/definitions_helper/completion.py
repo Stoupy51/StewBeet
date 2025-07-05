@@ -50,7 +50,7 @@ def add_item_name_and_lore_if_missing(is_external: bool = False, black_list: lis
 				item_str: str = item.replace("_"," ").title()
 			else:
 				item_str: str = item.split(":")[-1].replace("_"," ").title()
-			data["item_name"] = {"text": item_str, "italic": False, "color":"white"}
+			data["item_name"] = item_str
 
 		# Apply namespaced lore if none
 		if not data.get("lore"):
