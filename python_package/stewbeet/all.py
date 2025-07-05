@@ -22,6 +22,7 @@ FINALYZE_PLUGINS = (
     "stewbeet.plugins.finalyze.dependencies",
     "stewbeet.plugins.finalyze.check_unused_textures",
     "stewbeet.plugins.finalyze.last_final",
+    "stewbeet.plugins.auto.lang_file",
     "stewbeet.plugins.auto.headers",
     "stewbeet.plugins.archive",
     "stewbeet.plugins.merge_smithed_weld",
