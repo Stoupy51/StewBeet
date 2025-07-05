@@ -77,7 +77,7 @@ execute if score #rotation {ns}.data matches 0 if predicate {ns}:facing/west run
 		item: str
 		data: dict[str, Any]
 		item_name: str = item.replace("_", " ").title()
-		custom_name: str = super_json_dump({"CustomName": data.get("item_name", item_name)}, max_level = 0)
+		custom_name: str = super_json_dump({"CustomName": data.get("item_name", item_name)}, max_level = 0)[:-1] # Remove the last new line
 
 		# Custom block
 		if data.get(VANILLA_BLOCK):
@@ -101,9 +101,9 @@ execute if score #rotation {ns}.data matches 0 if predicate {ns}:facing/west run
 					block_id = block_id.split('[')[0]
 				for i, face in enumerate(FACING):
 					if block_states:
-						content += f"execute if score #rotation {ns}.data matches {i+1} run setblock ~ ~ ~ {block_id}[facing={face}," + ",".join(block_states) + f"]{beautify_name}"
+						content += f"execute if score #rotation {ns}.data matches {i+1} run setblock ~ ~ ~ {block_id}[facing={face}," + ",".join(block_states) + f"]{beautify_name}\n"
 					else:
-						content += f"execute if score #rotation {ns}.data matches {i+1} run setblock ~ ~ ~ {block_id}[facing={face}]{beautify_name}"
+						content += f"execute if score #rotation {ns}.data matches {i+1} run setblock ~ ~ ~ {block_id}[facing={face}]{beautify_name}\n"
 			else:
 				# Simple setblock
 				content += "setblock ~ ~ ~ air\n"
