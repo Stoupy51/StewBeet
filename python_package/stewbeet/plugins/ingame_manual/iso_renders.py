@@ -107,13 +107,20 @@ def generate_all_iso_renders():
 	def download_item(item: str):
 		destination = f"{path}/minecraft/{item}.png"
 		if not (os.path.exists(destination) and cache_assets):	# If not downloaded yet or not using cache
-			response = requests.get(f"{DOWNLOAD_VANILLA_ASSETS_RAW}/item/{item}.png")
+			link: str = f"{DOWNLOAD_VANILLA_ASSETS_RAW}/item/{item}.png"
+			response = requests.get(link)
 			if response.status_code == 200:
 				with super_open(destination, "wb") as file:
 					file.write(response.content)
 			else:
-				warning(f"Failed to download texture for item '{item}', please add it manually to '{destination}'")
-				warning(f"Suggestion link: '{DOWNLOAD_VANILLA_ASSETS_SOURCE}'")
+				link = link.replace("item/", "block/")
+				response = requests.get(link)
+				if response.status_code == 200:
+					with super_open(destination, "wb") as file:
+						file.write(response.content)
+				else:
+					warning(f"Failed to download texture '{link}', please add it manually to '{destination}'")
+					warning(f"Suggestion link: '{DOWNLOAD_VANILLA_ASSETS_SOURCE}'")
 
 	# Multithread the download
 	multithreading(download_item, used_vanilla_items, max_workers=min(32, len(used_vanilla_items)))
