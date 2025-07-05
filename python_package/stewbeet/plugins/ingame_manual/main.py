@@ -113,7 +113,7 @@ def routine():
 		Mem.ctx.assets[Mem.ctx.project_id].textures["item/heavy_workbench"] = Texture(source_path=f"{TEMPLATES_PATH}/heavy_workbench.png")
 		Mem.definitions["heavy_workbench"] = {
 			"id": CUSTOM_BLOCK_VANILLA,
-			"item_name": "'Heavy Workbench'",
+			"item_name": "Heavy Workbench",
 			"item_model": f"{Mem.ctx.project_id}:heavy_workbench",
 			"category": HEAVY_WORKBENCH_CATEGORY,
 			OVERRIDE_MODEL: {
