@@ -101,9 +101,9 @@ execute if score #rotation {ns}.data matches 0 if predicate {ns}:facing/west run
 					block_id = block_id.split('[')[0]
 				for i, face in enumerate(FACING):
 					if block_states:
-						content += f"execute if score #rotation {ns}.data matches {i+1} run setblock ~ ~ ~ {block_id}[facing={face}," + ",".join(block_states) + f"]{beautify_name}\n"
+						content += f"execute if score #rotation {ns}.data matches {i+1} run setblock ~ ~ ~ {block_id}[facing={face}," + ",".join(block_states) + f"]{beautify_name}"
 					else:
-						content += f"execute if score #rotation {ns}.data matches {i+1} run setblock ~ ~ ~ {block_id}[facing={face}]{beautify_name}\n"
+						content += f"execute if score #rotation {ns}.data matches {i+1} run setblock ~ ~ ~ {block_id}[facing={face}]{beautify_name}"
 			else:
 				# Simple setblock
 				content += "setblock ~ ~ ~ air\n"
