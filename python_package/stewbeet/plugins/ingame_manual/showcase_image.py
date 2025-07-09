@@ -123,6 +123,7 @@ def create_showcase_image(items: list[str], filename: str, simple_case: Image.Im
 			showcase_image.paste(resized_item, (item_x, item_y))
 
 	# Save to output directory
+	os.makedirs(Mem.ctx.output_directory, exist_ok=True)
 	output_path = os.path.join(Mem.ctx.output_directory, filename)
 	showcase_image.save(output_path, "PNG")
 	debug(f"Generated showcase image: {relative_path(output_path)} ({rows}x{cols} grid, {len(items)} items)")
