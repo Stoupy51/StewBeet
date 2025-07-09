@@ -66,6 +66,7 @@ meta:
       max_items_per_row: 5
       max_rows_per_page: 5
       first_page_text: [{"text":"Modify in beet.yml the text that will be shown in this first manual page", "color":"#505050"}]
+      showcase_image: 3 # 1 = will generate an image showcasing all the items in the manual, 2 = all items even not in the manual, 3 = both
 ```
 
 ### 📋 Configuration Options
@@ -83,6 +84,8 @@ meta:
 | `max_items_per_row` | integer | `5` | Maximum number of items displayed per row in manual (max: 6) |
 | `max_rows_per_page` | integer | `5` | Maximum number of rows displayed per page in manual (max: 6) |
 | `first_page_text` | TextComponent | `[{"text":"Modify in beet.yml...","color":"#505050"}]` | Text component used for the manual's first page |
+| `showcase_image` | integer | `3` | Controls generation of showcase images: 0=disabled, 1=manual items only, 2=all project items, 3=both |
+
 
 ## ✨ Features
 

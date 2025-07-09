@@ -30,14 +30,14 @@ def load_simple_case_no_border(high_res: bool) -> Image.Image:
 	return result
 
 
-def careful_resize(image: Image.Image, max_result_size: int) -> Image.Image:
+def careful_resize(image: Image.Image, max_result_size: int, resampling: Image.Resampling = Image.Resampling.NEAREST) -> Image.Image:
 	"""Resize an image while keeping the aspect ratio"""
 	if image.size[0] >= image.size[1]:
 		factor = max_result_size / image.size[0]
-		return image.resize((max_result_size, int(image.size[1] * factor)), Image.Resampling.NEAREST)
+		return image.resize((max_result_size, int(image.size[1] * factor)), resampling)
 	else:
 		factor = max_result_size / image.size[1]
-		return image.resize((int(image.size[0] * factor), max_result_size), Image.Resampling.NEAREST)
+		return image.resize((int(image.size[0] * factor), max_result_size), resampling)
 
 def add_border(image: Image.Image, border_color: tuple[int, int, int, int], border_size: int, is_rectangle_shape: bool) -> Image.Image:
 	"""Add a border to every part of the image"""

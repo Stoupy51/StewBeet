@@ -78,6 +78,7 @@ from .shared_import import (
 	get_page_font,
 	get_page_number,
 )
+from .showcase_image import generate_showcase_images
 
 
 # Utility functions
@@ -634,6 +635,11 @@ def routine():
 			with super_open(json_dump_path, "w") as f:
 				f.write(super_json_dump(book_content))
 			debug(f"Debug book_content at '{relative_path(json_dump_path)}'")
+
+		# Generate showcase images if requested
+		showcase_image: int = manual_config.get("showcase_image", 3)
+		if showcase_image > 0:
+			generate_showcase_images(showcase_image, categories, simple_case)
 
 
 	# Copy the font provider and the generated textures to the resource pack

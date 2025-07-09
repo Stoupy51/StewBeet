@@ -76,7 +76,7 @@ def beet_default(ctx: Context) -> None:
 				with zipfile.ZipFile(archive_path, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=6) as zip_file:
 					pack.dump(zip_file)
 				break
-			except OSError:
+			except Exception:
 				if i == 9:
 					raise
 				time.sleep(0.5)
