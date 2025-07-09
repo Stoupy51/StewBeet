@@ -108,7 +108,6 @@ def create_showcase_image(items: list[str], filename: str, simple_case: Image.Im
 
 		# Resize item image to 89% of case size
 		target_size: int = int(case_size * (0.890625))
-		print(target_size)
 		resized_item: Image.Image = careful_resize(item_image, target_size)
 
 		# Center the resized item image within the case
