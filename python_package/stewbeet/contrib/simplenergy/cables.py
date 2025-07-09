@@ -42,7 +42,7 @@ def setup_cables_models(cables: list[str]) -> None:
 					# Create the new json
 					new_json: dict = {
 						"parent": f"{ns}:block/cable_base",
-						"textures": {"0": f"{ns}:block/{cable}"}
+						"textures": {"0": f"{ns}:block/{cable}", "particle": f"{ns}:block/{cable}"},
 					}
 					new_json.update(json_file)
 
