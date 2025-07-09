@@ -90,5 +90,5 @@ execute if score @s energy.storage > @s energy.max_storage run scoreboard player
 
 	# Add in the placement function the balancing tag
 	for device in can_balance:
-		write_function(f"{ns}:custom_blocks/{device}/place_secondary", f"\n# Add balancing tag\ntag @s add {can_balance_tag}")
+		write_function(f"{ns}:custom_blocks/{device}/place_secondary", f"\n# Add balancing tag\ntag @s add {can_balance_tag}\n")
 
