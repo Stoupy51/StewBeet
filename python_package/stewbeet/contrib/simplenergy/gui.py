@@ -62,7 +62,7 @@ def setup_gui_in_resource_packs(gui_translations: dict[str, GuiTranslation]) -> 
 	}
 	for gui, model in gui_models.items():
 		content: dict = json.loads(json.dumps(base))  # Deep copy the base model
-		content["textures"]["layer0"] = model.replace(":", ":item/")
+		content["textures"]["layer0"] = content["textures"]["particle"] = model.replace(":", ":item/")
 
 		# If any translation is provided, add it to the model
 		for item, translation in gui_translations.items():
