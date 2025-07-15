@@ -209,7 +209,7 @@ execute if score #{ns}.major load.status matches {major} if score #{ns}.minor lo
 			name: str = value["name"]
 			url: str = value["url"]
 			lib_version: str = ".".join(map(str, value["version"]))
-			decoder_command: str = f'tellraw @a {{"text":"- [{name} (v{lib_version}+)]","color":"gold","clickEvent":{{"action":"open_url","value":"{url}"}}}}'
+			decoder_command: str = f'tellraw @a {{"text":"- [{name} (v{lib_version}+)]","color":"gold","click_event":{{"action":"open_url","url":"{url}"}}}}'
 			decoder_checks += check_version(lib_ns, value, decoder_command)
 
 		# Write check_dependencies.mcfunction
