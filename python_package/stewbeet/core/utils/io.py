@@ -2,7 +2,7 @@
 # Imports
 from typing import Any
 
-from beet import Function, FunctionTag, JsonFile, NamespaceProxy, NamespaceContainer, TagFile
+from beet import Function, JsonFile, NamespaceContainer, NamespaceProxy, TagFile
 from beet.core.utils import JsonDict
 from stouputils.collections import unique_list
 from stouputils.io import super_json_dump
@@ -22,7 +22,7 @@ def write_tag(path: str, tag_type: NamespaceProxy[TagFile] | NamespaceContainer[
 	"""
 	if path.endswith(".json"):
 		path = path[:-len(".json")]
-	tag: FunctionTag = tag_type.setdefault(path)
+	tag: TagFile = tag_type.setdefault(path)
 	data: JsonDict = tag.data
 	if not data.get("values"):
 		data["values"] = values or []
