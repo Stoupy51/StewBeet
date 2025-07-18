@@ -97,11 +97,13 @@ def beet_default(ctx: Context):
 		(1, 21, 5): 71,
 		(1, 21, 6): 80,
 		(1, 21, 7): 81,
+		(1, 21, 8): 81,
 	})
 	ctx.assets.pack_format_registry.update({
 		(1, 21, 5): 55,
 		(1, 21, 6): 63,
 		(1, 21, 7): 64,
+		(1, 21, 8): 64,
 	})
 
 	# Yield message to indicate successful build
