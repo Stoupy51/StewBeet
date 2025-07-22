@@ -144,6 +144,9 @@ class AutoModel:
 
 		overrides: dict = self.data.get(OVERRIDE_MODEL, {})
 
+		# Check if textures should be excluded completely
+		exclude_textures: bool = "textures" in overrides and overrides.get("textures") is None
+
 		# Get powered states (if any)
 		powered = [""]
 		for texture_name in self.source_textures:
@@ -175,9 +178,9 @@ class AutoModel:
 					content = {"parent": "block/cube_all", "textures": {}}
 					# Check in which variants state we are
 					variants_without_on = [x for x in variants if "_on" not in x]
-					if len(variants_without_on) == 1:
+					if not exclude_textures and len(variants_without_on) == 1:
 						content["textures"]["all"] = f"{self.namespace}:item/" + self.get_powered_texture(variants, "", on_off)
-					else:
+					elif not exclude_textures:
 						# Prepare models to check
 						cake = ["bottom", "side", "top", "inner"]
 						cube_bottom_top = ["bottom", "side", "top"]
@@ -235,16 +238,19 @@ class AutoModel:
 						parent = data_id.replace(':', ":item/")
 
 					# Get textures
-					textures = {"layer0": f"{self.namespace}:item/{self.item_name}{on_off}"}
-					content = {"parent": parent, "textures": textures}
+					if exclude_textures:
+						content = {"parent": parent}
+					else:
+						textures = {"layer0": f"{self.namespace}:item/{self.item_name}{on_off}"}
+						content = {"parent": parent, "textures": textures}
 					data_id = data_id.replace("minecraft:", "")
 
 					# Check for leather armor textures
-					if data_id.startswith("leather_"):
-						textures["layer1"] = textures["layer0"]
+					if not exclude_textures and data_id.startswith("leather_"):
+						content["textures"]["layer1"] = content["textures"]["layer0"]
 
 					# Check for bow pulling textures
-					elif data_id.endswith("bow"):
+					elif not exclude_textures and data_id.endswith("bow"):
 						sorted_pull_variants: list[str] = sorted(
 							[v for v in variants if "_pulling_" in v],
 							key=lambda x: int(x.split("_")[-1])
@@ -297,10 +303,13 @@ class AutoModel:
 
 			# Add overrides
 			for key, value in overrides.items():
+				if key == "textures" and value is None:
+					# Skip adding textures key if it's explicitly set to None
+					continue
 				content[key] = value.copy() if isinstance(value, dict) else value
 
 			# If powered, check if the on state is in the variants and add it
-			if on_off == "_on":
+			if not exclude_textures and on_off == "_on":
 				for key, texture in content.get("textures", {}).items():
 					texture: str
 					if (texture.split("/")[-1] + on_off) in variants:
@@ -314,7 +323,7 @@ class AutoModel:
 					self.used_textures.add(texture)
 
 			# Copy used textures
-			if content.get("textures"):
+			if not exclude_textures and content.get("textures"):
 				for texture in content["textures"].values():
 					# Ignore if minecraft namespace
 					if texture.startswith("minecraft:"):
@@ -330,6 +339,10 @@ class AutoModel:
 					else:
 						if not self.ignore_textures:
 							raise ValueError(f"Texture '{texture_name}' not found in source textures")
+
+			# Remove empty textures
+			if exclude_textures or not content.get("textures"):
+				del content["textures"]
 
 			# Add model to assets
 			if self.data.get(OVERRIDE_MODEL, None) != {}:
