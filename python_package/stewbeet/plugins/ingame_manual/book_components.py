@@ -4,7 +4,7 @@ Handles generation of book components and content
 import os
 
 from PIL import Image
-from stouputils.print import error
+from stouputils.print import error, warning
 
 from ...core.__memory__ import Mem
 from ...core.ingredients import ingr_to_id
@@ -32,11 +32,18 @@ def high_res_font_from_ingredient(ingredient: str|dict, count: int = 1) -> str:
 	if ':' in ingr_str:
 		image_path = f"{SharedMemory.cache_path}/items/{ingr_str.replace(':', '/')}.png"
 		if not os.path.exists(image_path):
-			error(f"Missing item texture at '{image_path}'")
-		item_image = Image.open(image_path)
+			warning(f"Missing texture at '{image_path}', using placeholder texture")
+			item_image = Image.new("RGBA", (16, 16), (255, 255, 255, 0))  # Placeholder image
+		else:
+			item_image = Image.open(image_path)
 		ingr_str = ingr_str.split(":")[1]
 	else:
-		item_image = Image.open(f"{SharedMemory.cache_path}/items/{Mem.ctx.project_id}/{ingr_str}.png")
+		path: str = f"{SharedMemory.cache_path}/items/{Mem.ctx.project_id}/{ingr_str}.png"
+		if not os.path.exists(path):
+			warning(f"Missing texture at '{path}', using placeholder texture")
+			item_image = Image.new("RGBA", (16, 16), (255, 255, 255, 0))  # Placeholder image
+		else:
+			item_image = Image.open(path)
 
 	# Generate the high res font
 	return generate_high_res_font(ingr_str, item_image, count)

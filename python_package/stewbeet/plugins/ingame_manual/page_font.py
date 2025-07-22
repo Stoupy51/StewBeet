@@ -4,7 +4,7 @@
 import os
 
 from PIL import Image
-from stouputils.print import error, warning
+from stouputils.print import warning
 
 from ...core.__memory__ import Mem
 from ...core.ingredients import FURNACES_RECIPES_TYPES, ingr_to_id
@@ -29,15 +29,21 @@ def generate_page_font(name: str, page_font: str, craft: dict|None = None, outpu
 	# Get result texture (to place later)
 	image_path = f"{SharedMemory.cache_path}/items/{Mem.ctx.project_id}/{name}.png"
 	if not os.path.exists(image_path):
-		error(f"Missing item texture at '{image_path}'")
-	result_texture = Image.open(image_path)
+		warning(f"Missing texture at '{image_path}', using placeholder texture")
+		result_texture = Image.new("RGBA", (SQUARE_SIZE, SQUARE_SIZE), (255, 255, 255, 0))  # Placeholder image
+	else:
+		result_texture = Image.open(image_path)
 
 	# If recipe result is specified, take the right texture
 	if craft and craft.get("result"):
 		result_id = ingr_to_id(craft["result"])
 		result_id = result_id.replace(":", "/")
 		image_path = f"{SharedMemory.cache_path}/items/{result_id}.png"
-		result_texture = Image.open(image_path)
+		if not os.path.exists(image_path):
+			warning(f"Missing texture at '{image_path}', using placeholder texture")
+			result_texture = Image.new("RGBA", (SQUARE_SIZE, SQUARE_SIZE), (255, 255, 255, 0))
+		else:
+			result_texture = Image.open(image_path)
 
 	# Check if there is a craft
 	if craft:
@@ -72,8 +78,10 @@ def generate_page_font(name: str, page_font: str, craft: dict|None = None, outpu
 						item = item.replace(":", "/")
 						image_path = f"{SharedMemory.cache_path}/items/{item}.png"
 						if not os.path.exists(image_path):
-							error(f"Missing item texture at '{image_path}'")
-						item_texture = Image.open(image_path)
+							warning(f"Missing texture at '{image_path}', using placeholder texture")
+							item_texture = Image.new("RGBA", (SQUARE_SIZE, SQUARE_SIZE), (255, 255, 255, 0))  # Placeholder image
+						else:
+							item_texture = Image.open(image_path)
 						item_texture = careful_resize(item_texture, SQUARE_SIZE)
 						coords = (
 							j * (SQUARE_SIZE + CASE_OFFSETS[0]) + STARTING_PIXEL[0],
@@ -108,8 +116,10 @@ def generate_page_font(name: str, page_font: str, craft: dict|None = None, outpu
 			input_item = input_item.replace(":", "/")
 			image_path = f"{SharedMemory.cache_path}/items/{input_item}.png"
 			if not os.path.exists(image_path):
-				error(f"Missing item texture at '{image_path}'")
-			item_texture = Image.open(image_path)
+				warning(f"Missing texture at '{image_path}', using placeholder texture")
+				item_texture = Image.new("RGBA", (SQUARE_SIZE, SQUARE_SIZE), (255, 255, 255, 0))  # Placeholder image
+			else:
+				item_texture = Image.open(image_path)
 			item_texture = careful_resize(item_texture, SQUARE_SIZE)
 			mask = item_texture.convert("RGBA").split()[3]
 			template.paste(item_texture, (4, 4), mask)
