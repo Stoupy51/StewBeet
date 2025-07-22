@@ -8,11 +8,11 @@ from stouputils.io import get_root_path, super_json_load
 from ...core import CUSTOM_ITEM_VANILLA, JsonDict, Mem, set_json_encoder, write_function
 
 # Constants
-CABLE_MODELS_FOLDER: str = get_root_path(__file__) + "/cable_models"
+ENERGY_CABLE_MODELS_FOLDER: str = get_root_path(__file__) + "/energy_cable_models"
 
 # Setup machines work and visuals
-def setup_cables_models(cables: list[str]) -> None:
-	""" Setup cables models and functions for SimplEnergy.
+def energy_cables_models(cables: list[str]) -> None:
+	""" Setup energy cables models and functions for SimplEnergy.
 
 	Args:
 		cables (list[str]): List of cables to setup. (e.g. ["simple_cable", "advanced_cable", "elite_cable"])
@@ -31,7 +31,7 @@ def setup_cables_models(cables: list[str]) -> None:
 		content: dict = {"model": {"type": "minecraft:range_dispatch","property": "minecraft:custom_model_data","entries": []}}
 
 		# Create all the cables variants models
-		for root, _, files in os.walk(CABLE_MODELS_FOLDER):
+		for root, _, files in os.walk(ENERGY_CABLE_MODELS_FOLDER):
 			for file in files:
 				if file.endswith(".json"):
 					path: str = f"{root}/{file}"
