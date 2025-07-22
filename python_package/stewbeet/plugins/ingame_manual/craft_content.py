@@ -51,14 +51,25 @@ def generate_craft_content(craft: dict, name: str, page_font: str) -> list:
 
 	# If the craft is shaped
 	if craft_type == "crafting_shaped":
+		shape: list[str] = craft["shape"]
 
 		# Convert each ingredients to its text component
 		formatted_ingredients: dict[str, dict] = {}
 		for k, v in craft["ingredients"].items():
 			formatted_ingredients[k] = get_item_component(v)
 
+		# Adjust craft shape for special cases
+		# Special case: if it's 1 line with 3 columns, add empty lines to center it
+		if len(shape) == 1 and len(shape[0]) == 3:
+			shape = ["   ", shape[0], "   "]
+
+		# Special case: if it's 3 lines with 1 column each, center them horizontally
+		elif (len(shape) == 3 and
+			all(len(shape_line) == 1 for shape_line in shape)):
+			shape = [" " + line + " " for line in shape]
+
 		# Add each ingredient to the craft
-		for line in craft["shape"]:
+		for line in shape:
 			for i in range(2):	# We need two lines to make a square, otherwise it will be a rectangle
 				content.append(SMALL_NONE_FONT)
 				for k in line:
@@ -72,22 +83,22 @@ def generate_craft_content(craft: dict, name: str, page_font: str) -> list:
 							copy["text"] = INVISIBLE_ITEM_WIDTH
 							content.append(copy)
 				content.append("\n")
-		if len(craft["shape"]) == 1 and len(craft["shape"][0]) < 3:
+		if len(shape) == 1 and len(shape[0]) < 3:
 			content.append("\n")
 			pass
 
 		# Add the result to the craft
-		if len(craft["shape"]) <= 2 and len(craft["shape"][0]) <= 2:
+		if len(shape) <= 2 and len(shape[0]) <= 2:
 
 			# First layer of the square
-			len_1 = len(craft["shape"][0])
+			len_1 = len(shape[0])
 			offset_1 = 3 - len_1
 			break_line_pos = content.index("\n", content.index("\n") + 1)	# Find the second line break
 			content.insert(break_line_pos, (INVISIBLE_ITEM_WIDTH * offset_1))
 			content.insert(break_line_pos + 1, result_component)
 
 			# Second layer of the square
-			len_2 = len(craft["shape"][1]) if len(craft["shape"]) > 1 else 0
+			len_2 = len(shape[1]) if len(shape) > 1 else 0
 			offset_2 = 3 - len_2
 			if len_2 == 0:
 				content.insert(break_line_pos + 2, "\n" + SMALL_NONE_FONT)
@@ -98,7 +109,7 @@ def generate_craft_content(craft: dict, name: str, page_font: str) -> list:
 			content.insert(break_line_pos + 1, copy)
 		else:
 			# First layer of the square
-			len_line = len(craft["shape"][1]) if len(craft["shape"]) > 1 else 0
+			len_line = len(shape[1]) if len(shape) > 1 else 0
 			offset = 4 - len_line
 			break_line_pos = content.index("\n", content.index("\n") + 1)	# Find the second line break
 			try:
@@ -121,9 +132,9 @@ def generate_craft_content(craft: dict, name: str, page_font: str) -> list:
 			content.insert(break_line_pos + 1, copy)
 
 			# Add break lines for the third layer of a 3x3 craft
-			if len(craft["shape"]) < 3 and len(craft["shape"][0]) == 3:
+			if len(shape) < 3 and len(shape[0]) == 3:
 				content.append("\n\n")
-				if len(craft["shape"]) < 2:
+				if len(shape) < 2:
 					content.append("\n")
 
 

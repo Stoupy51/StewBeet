@@ -54,9 +54,20 @@ def generate_page_font(name: str, page_font: str, craft: dict|None = None, outpu
 
 		# Shaped craft
 		if craft["type"] in "crafting_shaped":
+			shape: list[str] = craft["shape"]
+
+			# Adjust craft shape for special cases
+			# Special case: if it's 1 line with 3 columns, add empty lines to center it
+			if len(shape) == 1 and len(shape[0]) == 3:
+				shape = ["   ", shape[0], "   "]
+
+			# Special case: if it's 3 lines with 1 column each, center them horizontally
+			elif (len(shape) == 3 and
+				all(len(shape_line) == 1 for shape_line in shape)):
+				shape = [" " + line + " " for line in shape]
 
 			# Get the image template and append the provider
-			shaped_size = max(2, max(len(craft["shape"]), len(craft["shape"][0])))
+			shaped_size = max(2, max(len(shape), len(shape[0])))
 			template = Image.open(f"{TEMPLATES_PATH}/shaped_{shaped_size}x{shaped_size}.png")
 			if not SharedMemory.high_resolution:
 				SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/page/{output_filename}.png", "ascent": 0 if not output_name else 6, "height": 60, "chars": [page_font]})
@@ -64,7 +75,7 @@ def generate_page_font(name: str, page_font: str, craft: dict|None = None, outpu
 			# Loop the shape matrix
 			STARTING_PIXEL = (4, 4)
 			CASE_OFFSETS = (4, 4)
-			for i, row in enumerate(craft["shape"]):
+			for i, row in enumerate(shape):
 				for j, symbol in enumerate(row):
 					if symbol != " ":
 						ingredient = craft["ingredients"][symbol]
