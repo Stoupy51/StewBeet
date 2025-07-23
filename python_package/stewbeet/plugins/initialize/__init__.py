@@ -106,6 +106,9 @@ def beet_default(ctx: Context):
 		(1, 21, 8): 64,
 	})
 
+	# Extend the datapack namespace with sorter files
+	ctx.require("stewbeet.plugins.datapack.sorters.extend_datapack")
+
 	# Yield message to indicate successful build
 	yield
 
