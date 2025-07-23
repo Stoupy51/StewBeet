@@ -3,6 +3,11 @@
 
 Last updated: 2025/06/16
 
+**Dependency Level Legend:**
+- 🔴 **Fully dependent**: Requires StewBeet framework definitions and core functionality to operate
+- 🟡 **Partly dependent**: Uses some StewBeet features but could be adapted for standalone use  
+- 🟢 **Independent**: Can work without StewBeet framework dependencies
+
 Here are all the available plugins for the StewBeet framework:
 
 | Category | Plugin | Description | Image | Dependency |
@@ -17,6 +22,7 @@ Here are all the available plugins for the StewBeet framework:
 | ⚡ **Datapack** | [**datapack.loading**](./datapack.loading.md) | Sets up datapack loading system with version checking and dependencies | ![Load messages](img/datapack.loading.load_messages.jpg) | 🟡 Partly dependent |
 | 🧱 **Datapack** | [**datapack.custom_blocks**](./datapack.custom_blocks.md) | Implements custom block placement, destruction and interaction systems | ![Custom blocks stats](img/datapack.custom_blocks.stats.jpg) | 🔴 Fully dependent |
 | 🎁 **Datapack** | [**datapack.loot_tables**](./datapack.loot_tables.md) | Generates loot tables for all items and creates give-all functionality | ![Give all function](img/datapack.loot_tables.give_all.jpg) | 🔴 Fully dependent |
+| 🔢 **Datapack** | [**datapack.sorters**](./datapack.sorters.md) | Generates sorting functions for NBT storage lists | ![Sorting Registry](img/datapack.sorters.registry.jpg) | 🟢 Independent |
 | 📦 **Compatibility** | [**compatibilities.simpledrawer**](./compatibilities.simpledrawer.md) | Adds SimpleDrawer material compatibility for compacted drawers | ![SimpleDrawer Integration](img/compatibilities.simpledrawer.complete_file_tree.jpg) | 🔴 Fully dependent |
 | ⚔️ **Compatibility** | [**compatibilities.neo_enchant**](./compatibilities.neo_enchant.md) | Provides NeoEnchant veinminer compatibility for custom ores | ![NeoEnchant Veinminer](img/compatibilities.neo_enchant.veinminer.jpg) | 🔴 Fully dependent |
 | ⏰ **Finalization** | [**finalyze.custom_blocks_ticking**](./finalyze.custom_blocks_ticking.md) | Sets up custom block ticking and update systems | ![Custom blocks timers](img/finalyze.custom_blocks_ticking.timers.jpg) | 🔴 Fully dependent |
@@ -29,9 +35,4 @@ Here are all the available plugins for the StewBeet framework:
 | 🔗 **Build** | [**merge_smithed_weld**](./merge_smithed_weld.md) | Merges datapacks and resource packs with libraries using Smithed Weld | ![Merged Output](img/merged_smithed_weld.output_directory.jpg) | 🟢 Independent |
 | 📂 **Build** | [**copy_to_destination**](./copy_to_destination.md) | Copies generated packs to configured destination folders | ![Copied datapacks](img/copy_to_destination.datapack_destination.jpg) | 🟢 Independent |
 | 🔐 **Build** | [**compute_sha1**](./compute_sha1.md) | Computes SHA1 hashes for all generated zip files | ![Generated sha1 hashes](img/compute_sha1.example.jpg) | 🟢 Independent |
-
-**Dependency Level Legend:**
-- 🔴 **Fully dependent**: Requires StewBeet framework definitions and core functionality to operate
-- 🟡 **Partly dependent**: Uses some StewBeet features but could be adapted for standalone use  
-- 🟢 **Independent**: Can work without StewBeet framework dependencies
 
