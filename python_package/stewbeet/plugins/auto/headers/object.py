@@ -12,6 +12,7 @@ class Header:
         within (list[str]): List of functions that call this function
         other (list[str]): List of other information about the function
         content (str): The content of the function
+        executed (str): The execution context (ex: "as the player & at current position")
 
     Examples:
         >>> header = Header("test:function", ["other:function"], ["Some info"], "say Hello")
@@ -24,11 +25,12 @@ class Header:
         >>> header.content
         'say Hello'
     """
-    def __init__(self, path: str, within: list[str] | None = None, other: list[str] | None = None, content: str = ""):
+    def __init__(self, path: str, within: list[str] | None = None, other: list[str] | None = None, content: str = "", executed: str | None = None):
         self.path = path
         self.within = within or []
         self.other = other or []
         self.content = content
+        self.executed = executed or ""
 
     @classmethod
     def from_content(cls, path: str, content: str) -> Header:
@@ -89,6 +91,7 @@ class Header:
         # Initialize empty lists
         within: list[str] = []
         other: list[str] = []
+        executed: str = ""
         actual_content: str = content.strip()
 
         # If the content has a header, parse it
@@ -98,6 +101,18 @@ class Header:
 
             # Skip the first line (#> path) and the second line (#)
             i: int = 2
+
+            # Parse executed section
+            if i < len(lines) and lines[i].strip().startswith("# @executed"):
+                executed_line: str = lines[i].strip()
+                if executed_line != "# @executed":
+                    # Extract the execution context after @executed
+                    executed = executed_line.split("@executed")[1].strip()
+                i += 1
+
+            # Skip empty comment lines
+            while i < len(lines) and lines[i].strip() == "#":
+                i += 1
 
             # Parse within section
             while i < len(lines) and lines[i].strip().startswith("# @within"):
@@ -129,7 +144,7 @@ class Header:
             # Remove the last empty line if it exists
             other.pop()
 
-        return cls(path, within, other, actual_content)
+        return cls(path, within, other, actual_content, executed)
 
     def to_str(self) -> str:
         """ Convert the Header object to a string.
@@ -161,6 +176,10 @@ class Header:
         """
         # Start with the path
         header = f"\n#> {self.path}\n#\n"
+
+        # Add the executed context (only if known)
+        if self.executed:
+            header += f"# @executed\t{self.executed}\n#\n"
 
         # Add the within list
         if self.within:
