@@ -7,8 +7,10 @@ advancements, and function calls to create the @within information.
 
 # Imports
 from beet import Context
-from .object import Header
+
 from .execution_parser import parse_execution_context_from_line
+from .object import Header
+
 
 # Class
 class FunctionAnalyzer:
@@ -16,14 +18,14 @@ class FunctionAnalyzer:
 
     def __init__(self, ctx: Context, mcfunctions: dict[str, Header]):
         """ Initialize the function analyzer.
-        
+
         Args:
             ctx (Context): The beet context
             mcfunctions (Dict[str, Header]): Dictionary mapping function paths to Header objects
         """
         self.ctx = ctx
         self.mcfunctions = mcfunctions
-    
+
     def analyze_function_tags(self) -> None:
         """ Analyze function tags and build relationships. """
         # For each function tag, get the functions that it calls
@@ -40,7 +42,7 @@ class FunctionAnalyzer:
                     function_path: str = function_path.get("id", "")
                     if function_path in self.mcfunctions:
                         self.mcfunctions[function_path].within.append(to_be_called)
-    
+
     def analyze_advancements(self) -> None:
         """ Analyze advancements and build relationships. """
         # For each advancement, get the functions that it calls
@@ -53,7 +55,7 @@ class FunctionAnalyzer:
                 function_path: str = adv.data["rewards"]["function"]
                 if function_path in self.mcfunctions:
                     self.mcfunctions[function_path].within.append(to_be_called)
-    
+
     def analyze_function_calls(self) -> None:
         """ Analyze function calls within mcfunction files. """
         # For each mcfunction file, look at each line
@@ -73,7 +75,7 @@ class FunctionAnalyzer:
 
                     # Parse execution context from the line
                     line_context = parse_execution_context_from_line(line)
-                    
+
                     # Create the caller string with context if available
                     caller_info = path + more
                     if line_context:
@@ -82,7 +84,7 @@ class FunctionAnalyzer:
                     # If the called function is registered, append the caller info
                     if calling in self.mcfunctions and caller_info not in self.mcfunctions[calling].within:
                         self.mcfunctions[calling].within.append(caller_info)
-    
+
     def analyze_all_relationships(self) -> None:
         """ Analyze all function relationships. """
         self.analyze_function_tags()
