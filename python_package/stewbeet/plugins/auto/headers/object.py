@@ -30,7 +30,7 @@ class Header:
         self.within = within or []
         self.other = other or []
         self.content = content
-        self.executed = executed or ""
+        self.executed = (executed or "").strip()
 
     @classmethod
     def from_content(cls, path: str, content: str) -> Header:
