@@ -1,0 +1,30 @@
+dispatch minecraft:resource[sorter] to struct Sorter {
+    /// Sorting algorithm to use: `"selection_sort"` (recommended) or `"quick_sort"`
+    algorithm?: SorterAlgorithm,
+    /// Namespaced function ID where sorting functions are generated
+    directory: #[id="function"] string,
+    /// Location of the list to sort
+    to_sort: SorterLocation,
+    /// The key to the number getting compared.
+    key: string,
+    /// Optional: Scaling factor for numeric values (`negative for descending order`)
+    scale?: int,
+    ...sorter:sorter[[algorithm]]
+}
+
+struct SorterLocation {
+    /// Storage namespace
+    storage: #[id="storage"] string,
+    /// NBT path to the list
+    target: #[nbt_path] string
+}
+
+dispatch sorter:sorter["selection_sort"] to struct {
+    /// Optional: Maximum elements to sort (selection_sort only)
+    limit?: int
+}
+
+enum(string) SorterAlgorithm {
+    Quicksort = "quicksort",
+    SelectionSort = "selection_sort"
+}
