@@ -87,6 +87,21 @@ pipeline:
 }
 ```
 
+## 👓 Spyglass implementation
+Combined with the [Spyglass](https://spyglassmc.com) extension for [Visual Studio Code](https://code.visualstudio.com), auto-completion and syntax checking can be obtained on sorter files.<br>
+**Here's how:**<br>
+- If you haven't already, open your project on Visual Studio Code and install the Spyglass extension.
+- Create a [Spyglass Config File](https://spyglassmc.com/user/config.html), and under the `env` field, add the following :
+```json
+"customResources": {
+	"sorter": {
+		"category": "sorter"
+	}
+}
+```
+- Anywhere in your workspace, create `sorter.mcdoc`: [stewbeet/plugins/datapack/sorters/mod.mcdoc](../../python_package/stewbeet/plugins/datapack/sorters/mod.mcdoc) 🔗<br>
+*Note: it will work no matter the name as long as it ends in `.mcdoc`*
+- Restart Visual Studio Code
 
 ## ✨ Features
 
@@ -101,7 +116,7 @@ Provides two optimized sorting algorithms:
 Enhanced namespace functionality for sorter configurations:
 - 🗄️ **Custom Resource Type** - Sorter objects defined at `data/<namespace>/sorter/path.json`
 - 📁 **Namespace Extension** - Automatic registration of sorter file types
-- 🔧 **File Processing** - JSON-based configuration with validation
+- 🔧 **Spyglass Support** - Real time syntax checking and auto-completion
 - ✅ **Multi-Datapack Support** - Independent configurations prevent conflicts
 
 ### 🔢 Advanced Scaling System
