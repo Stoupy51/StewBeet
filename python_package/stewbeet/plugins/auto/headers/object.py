@@ -30,7 +30,7 @@ class Header:
         self.within = within or []
         self.other = other or []
         self.content = content
-        self.executed = (executed or "").strip()
+        self.executed = executed or ""
 
     @classmethod
     def from_content(cls, path: str, content: str) -> Header:
@@ -179,7 +179,7 @@ class Header:
 
         # Add the executed context (only if known)
         if self.executed:
-            header += f"# @executed\t{self.executed}\n#\n"
+            header += f"# @executed\t{self.executed.strip()}\n#\n"
 
         # Add the within list
         if self.within:
