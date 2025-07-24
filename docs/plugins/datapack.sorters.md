@@ -54,7 +54,7 @@ keys, scaling factors, and performance optimizations tailored for Minecraft's ex
 | `to_sort.storage` | string | **Required** | Storage namespace (e.g., `"switch:stats"`) |
 | `to_sort.target` | string | **Required** | NBT path to the list (e.g., `"all.modes.sheepwars.played"`) |
 | `key` | string | **Required** | Key within each list element to compare for sorting |
-| `scale` | integer | `1` | Optional: Scaling factor for numeric values (`negative for descending order`) |
+| `scale` | float | `1.0` | Optional: Scaling factor for numeric values (`negative for descending order`) |
 | `limit` | integer | `null` | Optional: Maximum elements to sort (selection_sort only) |
 
 **⚡ Performance Note**: Selection sort significantly outperforms quick sort in Minecraft's storage environment due to quick sort's heavy reliance on macro expansions. Each recursive call in quick sort generates multiple macro invocations for parameter passing and storage manipulation, creating substantial overhead that negates the theoretical O(n log n) advantage. Selection sort's straightforward O(n²) approach with minimal macro usage proves more efficient for typical Minecraft datapack sorting operations.
@@ -87,64 +87,50 @@ pipeline:
 }
 ```
 
+## 👓 Spyglass implementation
+Combined with the [Spyglass](https://spyglassmc.com) extension for [Visual Studio Code](https://code.visualstudio.com), auto-completion and syntax checking can be obtained on sorter files.<br>
+**Here's how:**<br>
+- If you haven't already, open your project on Visual Studio Code and install the Spyglass extension.
+- Create a [Spyglass Config File](https://spyglassmc.com/user/config.html), and under the `env` field, add the following :
+```json
+"customResources": {
+	"sorter": {
+		"category": "sorter"
+	}
+}
+```
+- Anywhere in your workspace, create `sorter.mcdoc`: [stewbeet/plugins/datapack/sorters/mod.mcdoc](../../python_package/stewbeet/plugins/datapack/sorters/mod.mcdoc) 🔗<br>
+*Note: it will work no matter the name as long as it ends in `.mcdoc`*
+- Restart Visual Studio Code
 
 ## ✨ Features
 
 ### 🎛️ Algorithm Selection System
-Provides two optimized sorting algorithms:
-- 🥇 **Selection Sort** - Recommended algorithm with better performance in Minecraft
-- ⚡ **Quick Sort** - Alternative algorithm using recursive function calls and macros
-- � **Algorithm Routing** - Automatic selection based on configuration
-- 📊 **Performance Optimization** - Algorithms tailored for Minecraft's execution model
+- 🥇 **Selection Sort** - Recommended for better Minecraft performance
+- ⚡ **Quick Sort** - Alternative using recursive function calls
+- 📊 **Automatic Routing** - Algorithm selection based on configuration
 
 ### 📦 Extended Datapack Support
-Enhanced namespace functionality for sorter configurations:
-- 🗄️ **Custom Resource Type** - Sorter objects defined at `data/<namespace>/sorter/path.json`
-- 📁 **Namespace Extension** - Automatic registration of sorter file types
-- 🔧 **File Processing** - JSON-based configuration with validation
-- ✅ **Multi-Datapack Support** - Independent configurations prevent conflicts
+- 🗄️ **Custom Resource Type** - Sorter objects at `data/<namespace>/sorter/path.json`
+- 👓 **Spyglass Support** - Syntax checking and auto-completion
+- ✅ **Multi-Datapack Support** - Independent configurations
 
 ### 🔢 Advanced Scaling System
-Flexible numeric processing for different data types:
-- � **Precision Control** - Scale factor for decimal precision (e.g., `1000` for 3 decimal places)
+- 📊 **Precision Control** - Scale factor for decimal precision (e.g., `1000` for 3 decimals)
 - 🔄 **Reverse Sorting** - Negative scale values for descending order
-- 🎯 **Integer Optimization** - Direct comparison for whole numbers
-- 📊 **Float Support** - Scaled comparison for floating-point values
 
 ### ⚡ Selection Sort Implementation
-Optimized selection sort with advanced features:
-- 🔍 **Minimum Finding** - Efficient linear search for smallest elements
-- 📋 **Array Manipulation** - Proper NBT storage handling with temporary arrays
+- 🔍 **Minimum Finding** - Efficient linear search
 - 🚀 **Partial Sorting** - Optional limit parameter for top-N sorting
 - 💾 **Memory Efficient** - In-place sorting with minimal storage overhead
-- 🔄 **Element Movement** - Atomic operations for moving sorted elements
 
-### � Quick Sort Implementation
-Recursive quick sort with macro-based partitioning:
-- 📊 **Pivot Selection** - Last element as pivot for partitioning
-- � **Recursive Calls** - Function-based recursion with macro parameters
-- ⚖️ **Partitioning Logic** - Efficient element comparison and swapping
-- 📈 **Divide and Conquer** - Classic quick sort algorithm adaptation
+### 🚅 Quick Sort Implementation
+- 📊 **Pivot Selection** - Last element partitioning
+- 🔄 **Recursive Calls** - Function-based recursion with macros
 - ⚠️ **Performance Note** - Less efficient than selection sort due to macro overhead
 
-### 📝 Configuration Validation
-Comprehensive input validation and error handling:
-- ✅ **Type Checking** - Validates all configuration parameters
-- 🔍 **Required Fields** - Ensures all mandatory options are provided
-- 📋 **Format Validation** - Checks storage paths and function locations
-- 🛡️ **Error Prevention** - Prevents invalid configurations from processing
-
-### 🏗️ Function Generation System
-Dynamic mcfunction file creation:
-- 📄 **Multi-Function Output** - Generates complete sorting function sets
-- � **Macro Integration** - Uses storage macros for dynamic parameters
-- 📊 **Scoreboard Management** - Temporary objectives for sorting operations
-- 🗄️ **Storage Cleanup** - Automatic cleanup of temporary storage after sorting
-
-### 💾 Memory Management
-Efficient storage utilization during sorting:
-- 🔄 **Temporary Storage** - Uses `sorter:temp` namespace for operations
-- 📋 **Array Copying** - Safe duplication of original arrays
-- 🧹 **Cleanup Operations** - Removes temporary data after completion
-- ⚡ **Minimal Footprint** - Optimized storage usage patterns
+### 📝 Configuration & Generation
+- ✅ **Input Validation** - Type checking and required field validation
+- � **Function Generation** - Dynamic mcfunction file creation with macro integration
+- � **Memory Management** - Temporary storage with automatic cleanup
 
