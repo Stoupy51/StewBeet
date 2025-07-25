@@ -2,7 +2,7 @@ dispatch minecraft:resource[sorter] to struct Sorter {
     /// Sorting algorithm to use: `"selection_sort"` (recommended) or `"quick_sort"`
     algorithm?: SorterAlgorithm,
     /// Namespaced function ID where sorting functions are generated
-    directory: #[id="function"] string,
+    functions_location: #[id="function"] string,
     /// Location of the list to sort
     to_sort: SorterLocation,
     /// The key to the number getting compared.
