@@ -1,0 +1,6 @@
+{
+	"parent": "technicalutils:item/servo/base_item",
+	"textures": {
+		"0": "technicalutils:block/servo/insert_default"
+	}
+}
