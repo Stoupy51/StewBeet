@@ -1,0 +1,13 @@
+{
+	"parent": "technicalutils:item/servo/base_block",
+	"textures": {
+		"0": "technicalutils:block/servo/extract_default"
+	},
+	"display": {
+		"fixed": {
+			"rotation": [-90, 0, 0],
+			"translation": [0, 0, -15],
+			"scale": [2.001, 2.001, 2.001]
+		}
+	}
+}
