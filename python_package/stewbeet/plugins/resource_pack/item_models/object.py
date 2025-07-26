@@ -12,6 +12,7 @@ from stouputils.io import super_json_dump, super_json_load
 
 from ....core.__memory__ import Mem
 from ....core.constants import CUSTOM_BLOCK_VANILLA, CUSTOM_ITEM_VANILLA, OVERRIDE_MODEL
+from ....core.utils.io import set_json_encoder
 
 
 class AutoModel:
@@ -297,9 +298,7 @@ class AutoModel:
 									})
 
 							# Add the items/bow.json file
-							im: ItemModel = ItemModel(items_content)
-							im.encoder = lambda x: super_json_dump(x, max_level=4)  # Use custom encoder to avoid beet's default encoder
-							Mem.ctx.assets[f"{self.namespace}:{self.item_name}{on_off}"] = im
+							Mem.ctx.assets[f"{self.namespace}:{self.item_name}{on_off}"] = set_json_encoder(ItemModel(items_content), max_level=4)
 
 			# Add overrides
 			for key, value in overrides.items():
@@ -346,15 +345,11 @@ class AutoModel:
 
 			# Add model to assets
 			if self.data.get(OVERRIDE_MODEL, None) != {}:
-				m: Model = Model(content)
-				m.encoder = lambda x: super_json_dump(x, max_level=4)  # Use custom encoder to avoid beet's default encoder
-				Mem.ctx.assets[f"{self.namespace}:item/{self.item_name}{on_off}"] = m
+				Mem.ctx.assets[f"{self.namespace}:item/{self.item_name}{on_off}"] = set_json_encoder(Model(content), max_level=4)
 			Mem.ctx.meta["stewbeet"]["rendered_item_models"].add(self.data["item_model"])
 
 			# Generate the json file required in items/
 			if not self.data["id"].endswith("bow"):
 				items_model = {"model": {"type": "minecraft:model", "model": f"{self.namespace}:item/{self.item_name}{on_off}"}}
-				im: ItemModel = ItemModel(items_model)
-				im.encoder = lambda x: super_json_dump(x, max_level=4)  # Use custom encoder to avoid beet's default encoder
-				Mem.ctx.assets[f"{self.namespace}:{self.item_name}{on_off}"] = im
+				Mem.ctx.assets[f"{self.namespace}:{self.item_name}{on_off}"] = set_json_encoder(ItemModel(items_model), max_level=4)
 
