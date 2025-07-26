@@ -13,6 +13,7 @@ GENERATION_PLUGINS = (
     "stewbeet.plugins.datapack.loading",
     "stewbeet.plugins.datapack.custom_blocks",
     "stewbeet.plugins.datapack.loot_tables",
+    "stewbeet.plugins.datapack.sorters",
     "stewbeet.plugins.compatibilities.simpledrawer",
     "stewbeet.plugins.compatibilities.neo_enchant"
 )

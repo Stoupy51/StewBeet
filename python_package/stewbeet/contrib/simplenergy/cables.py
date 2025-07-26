@@ -10,7 +10,7 @@ from ...core import CUSTOM_ITEM_VANILLA, JsonDict, Mem, set_json_encoder, write_
 # Constants
 ENERGY_CABLE_MODELS_FOLDER: str = get_root_path(__file__) + "/energy_cable_models"
 
-# Setup machines work and visuals
+# Setup energy cables work and visuals
 def energy_cables_models(cables: list[str]) -> None:
 	""" Setup energy cables models and functions for SimplEnergy.
 
@@ -100,7 +100,7 @@ item modify entity @s contents {{"function": "minecraft:set_custom_model_data","
 
 
 
-# Setup machines work and visuals
+# Setup item cables work and visuals
 def item_cables_models(cables: dict[str, dict[str, str] | None]) -> None:
 	""" Setup item cables models and functions for SimplEnergy.
 
@@ -202,7 +202,7 @@ function #itemio:calls/cables/init
 function #itemio:calls/cables/destroy
 """)
 
-	# Update_cable_model function
+	# Update cable_model function
 	cables_str: str = "\n".join([
 		f"execute if entity @s[tag={ns}.{cable}] run item replace entity @s contents with {CUSTOM_ITEM_VANILLA}[item_model=\"{ns}:{cable}\"]"
 		for cable in cables
@@ -218,5 +218,112 @@ execute unless entity @s[tag={ns}.custom_block,tag=itemio.cable] run return fail
 item modify entity @s contents {{"function": "minecraft:set_custom_model_data","floats": {{"values": [{{"type": "minecraft:score","target": "this","score": "itemio.math"}}],"mode": "replace_all"}}}}
 """
 	write_function(f"{ns}:calls/itemio/cable_update", cable_update_content, tags=["itemio:event/cable_update"])
+	return
+
+
+# Setup servo-mechanisms work and visuals
+def servo_mechanisms_models(servos: dict[str, dict[str, str] | None]) -> None:
+	""" Setup servo mechanisms models and functions for SimplEnergy.
+
+	Args:
+		servos (dict[str, dict[str, str]]): Dictionary of servo mechanisms to setup.
+			Each key is the servo name, and the value is a dictionary mapping model textures to their paths (excluding the 'type' key)
+			The mapping dictionnary is optional, if not provided, it will use the default model paths.
+			(e.g. {"servo_extractor": {"type": "extract", "default": "servo/extract_default", "connected": "servo/extract_connected"}})
+	"""
+	ns: str = Mem.ctx.project_id
+	textures_folder: str = Mem.ctx.meta.stewbeet.textures_folder
+
+	# Path to the base servo models
+	models_path: str = get_root_path(__file__) + "/servo_mechanism_models"
+
+	# Register the base block models
+	for base in ("block", "item"):
+		model_data: dict = super_json_load(f"{models_path}/base_{base}.json")
+		if base == "item":
+			model_data["parent"] = f"{ns}:block/servo/base_block"
+		Mem.ctx.assets[ns].models[f"block/servo/base_{base}"] = set_json_encoder(Model(model_data), max_level=3)
+
+	# Handle parameters
+	for servo, textures in servos.items():
+		if textures is None:
+			textures = {}
+		typ: str = textures.get("type", "extract")  # Default to 'extract' if not specified
+		default_texture: str = textures.get("default", f"servo/{typ}_default")
+		connected_texture: str = textures.get("connected", f"servo/{typ}_connected")
+
+		# Register the block model
+		base_model: dict = super_json_load(f"{models_path}/{typ}_block.json")
+		base_model["parent"] = f"{ns}:block/servo/base_block"
+		base_model["textures"] = {"0": f"{ns}:block/{default_texture}", "particle": f"{ns}:block/{default_texture}"}
+		Mem.ctx.assets[ns].models[f"block/servo/{typ}_block"] = set_json_encoder(Model(base_model), max_level=3)
+
+		# Register the connected model
+		connected_model: dict = super_json_load(f"{models_path}/{typ}_connected.json")
+		connected_model["parent"] = f"{ns}:block/servo/base_block"
+		connected_model["textures"] = {"0": f"{ns}:block/{connected_texture}", "particle": f"{ns}:block/{connected_texture}"}
+		Mem.ctx.assets[ns].models[f"block/servo/{typ}_connected"] = set_json_encoder(Model(connected_model), max_level=3)
+
+		# Register the item model
+		item_model: dict = super_json_load(f"{models_path}/{typ}_item.json")
+		item_model["parent"] = f"{ns}:block/servo/base_item"
+		item_model["textures"] = {"0": f"{ns}:block/{default_texture}", "particle": f"{ns}:block/{default_texture}"}
+		Mem.ctx.assets[ns].models[f"block/servo/{typ}_item"] = set_json_encoder(Model(item_model), max_level=3)
+
+		# Register two items file (for default and connected)
+		for texture in ("block", "connected"):
+			model_data: dict = {
+				"model": {
+					"type": "minecraft:model",
+					"model": f"{ns}:block/servo/{typ}_{texture}"
+				}
+			}
+			Mem.ctx.assets[ns].item_models[f"servo/{typ}_{texture}"] = set_json_encoder(ItemModel(model_data), max_level=3)
+
+		# Copy textures to resource pack
+		for texture_key in ("default", "connected"):
+			texture_path: str = textures.get(texture_key, f"{typ}_{texture_key}")
+			src: str = f"{textures_folder}/{texture_path}.png"
+			dst: str = f"block/{texture_path}"
+
+			# Check if the source file exists and if the texture is not already registered
+			if os.path.exists(src) and (not Mem.ctx.assets[ns].textures.get(dst)):
+				mcmeta: JsonDict | None = None if not os.path.exists(src + ".mcmeta") else super_json_load(f"{src}.mcmeta")
+				Mem.ctx.assets[ns].textures[dst] = Texture(source_path=src, mcmeta=mcmeta)
+
+		## Working functions
+		# On placement, add necessary tag and call init function
+		ns_data: dict[str, int] = Mem.definitions[servo].get("custom_data", {}).get(ns, {})
+		stack_limit: int = ns_data.get("stack_limit", 1)
+		retry_limit: int = ns_data.get("retry_limit", 1)
+		write_function(f"{ns}:custom_blocks/{servo}/place_secondary", f"""
+# Servo mechanism setup (1 item by 1 item: stack_limit)
+tag @s add itemio.servo.{typ}
+tag @s add {ns}.servo
+scoreboard players set @s itemio.servo.stack_limit {stack_limit}
+scoreboard players set @s itemio.servo.retry_limit {retry_limit}
+function #itemio:calls/servos/init
+""")
+		# On destruction, call destroy function of itemio
+		write_function(f"{ns}:custom_blocks/{servo}/destroy", """
+# Servo mechanism destruction cleanup
+function #itemio:calls/servos/destroy
+""")
+
+	# Update servo_model function
+	servo_update_content: str = f"""
+# Stop if not {ns} servo
+execute unless entity @s[tag={ns}.custom_block,tag={ns}.servo] run return fail
+
+# Apply the model dynamically based on servo tags and itemio.math score
+"""
+	for servo, textures in servos.items():
+		typ: str = textures.get("type", "extract")
+		for number, texture in ((0, "block"), (1, "connected")):
+			servo_update_content += (
+				f'execute if score @s itemio.math matches {number} if entity @s[tag={ns}.{servo}] run '
+				f'data modify entity @s Item.components."minecraft:item_model" set value "{ns}:servo/{typ}_{texture}"\n'
+			)
+	write_function(f"{ns}:calls/itemio/network_update", servo_update_content, tags=["itemio:event/network_update"])
 	return
 
