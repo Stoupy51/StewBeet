@@ -2,7 +2,7 @@
 # Imports
 from typing import Any
 
-from beet import Advancement, BlockTag, Context, Predicate
+from beet import Advancement, BlockTag, Context, EntityTypeTag, Predicate
 from stouputils.decorators import measure_time
 from stouputils.io import super_json_dump
 from stouputils.print import debug, progress
@@ -10,6 +10,7 @@ from stouputils.print import debug, progress
 from ....core.__memory__ import Mem
 from ....core.constants import (
 	BLOCKS_WITH_INTERFACES,
+	CUSTOM_BLOCK_ALTERNATIVE,
 	CUSTOM_BLOCK_HEAD,
 	CUSTOM_BLOCK_HEAD_CUBE_RADIUS,
 	CUSTOM_BLOCK_VANILLA,
@@ -71,6 +72,7 @@ execute if score #rotation {ns}.data matches 0 if predicate {ns}:facing/west run
 
 	# For each custom block,
 	unique_blocks = set()
+	custom_block_entities = set()
 	for item, data in Mem.definitions.items():
 		item: str
 		data: dict[str, Any]
@@ -79,52 +81,8 @@ execute if score #rotation {ns}.data matches 0 if predicate {ns}:facing/west run
 
 		# Custom block
 		if data.get(VANILLA_BLOCK):
-
-			# Get the vanilla block data
-			block = data[VANILLA_BLOCK]
-			block_id = block["id"]
+			block: dict[str, Any] = data[VANILLA_BLOCK]
 			path = f"{ns}:custom_blocks/{item}"
-			beautify_name: str = ""
-			if block_id in BLOCKS_WITH_INTERFACES:
-				beautify_name = custom_name
-
-			## Place function
-			content = ""
-			if block["apply_facing"]:
-				content += f"function {ns}:custom_blocks/get_rotation\n"
-				content += "setblock ~ ~ ~ air\n"
-				block_states = []
-				if '[' in block_id:
-					block_states = block_id.split('[')[1][:-1].split(',')
-					block_id = block_id.split('[')[0]
-				for i, face in enumerate(FACING):
-					if block_states:
-						content += f"execute if score #rotation {ns}.data matches {i+1} run setblock ~ ~ ~ {block_id}[facing={face}," + ",".join(block_states) + f"]{beautify_name}\n"
-					else:
-						content += f"execute if score #rotation {ns}.data matches {i+1} run setblock ~ ~ ~ {block_id}[facing={face}]{beautify_name}\n"
-			else:
-				# Simple setblock
-				content += "setblock ~ ~ ~ air\n"
-				content += f"setblock ~ ~ ~ {block_id}{beautify_name}\n"
-
-			# Summon item display and call secondary function
-			content += f"execute align xyz positioned ~.5 ~.5 ~.5 summon item_display at @s run function {ns}:custom_blocks/{item}/place_secondary\n"
-
-			# Add temporary tags and call main function
-			content = f"tag @s add {ns}.placer\n" + content + f"tag @s remove {ns}.placer\n"
-
-			# Increment count scores for stats and optimization
-			block_id: str = block_id.split('[')[0].split('{')[0]
-			unique_blocks.add(block_id)
-			content += f"""
-# Increment count scores
-scoreboard players add #total_custom_blocks {ns}.data 1
-scoreboard players add #total_vanilla_{block_id.replace('minecraft:','')} {ns}.data 1
-scoreboard players add #total_{item} {ns}.data 1
-"""
-
-			# Write the file
-			write_function(f"{path}/place_main", content)
 
 			# Write the line in stats_custom_blocks
 			write_function(f"{ns}:_stats_custom_blocks",
@@ -135,12 +93,96 @@ scoreboard players add #total_{item} {ns}.data 1
 				prepend = True
 			)
 
-			## Secondary function
-			block_id = block_id.replace(":","_")
-			set_custom_model = ""
-			if data.get("item_model"):
-				set_custom_model = f"item replace entity @s container.0 with {CUSTOM_BLOCK_VANILLA}[item_model=\"{data['item_model']}\"]\n"
-			content = f"""
+			# If the block is an item frame custom block, make the search function for placement
+			if data.get("id") == CUSTOM_BLOCK_ALTERNATIVE:
+
+				# Make advancement to detect the item frame placement
+				adv: dict[str, Any] = {
+					"criteria": {
+						"requirement": {
+							"trigger": "minecraft:item_used_on_block",
+							"conditions": {
+								"location": [
+									{
+										"condition": "minecraft:match_tool",
+										"predicate": {
+											"items": ["minecraft:item_frame"],
+											"predicates": {"minecraft:custom_data": {ns: {item: True}}}
+										}
+									}
+								]
+							}
+						}
+					},
+					"requirements":[["requirement"]],
+					"rewards":{}
+				}
+				adv["rewards"]["function"] = f"{ns}:custom_blocks/{item}/search"
+				ctx.data[ns].advancements[f"custom_block_alternative/{item}"] = set_json_encoder(Advancement(adv), max_level=-1)
+
+				# Make search function
+				write_function(f"{ns}:custom_blocks/{item}/search", f"""
+# Advancement revoke
+advancement revoke @s only {ns}:custom_block_alternative/{item}
+
+# Execute the place function as and at the new placed item frame
+execute as @e[type=item_frame,tag={ns}.new,tag={ns}.{item}] at @s run function {ns}:custom_blocks/{item}/place_main
+""")
+
+			# If the block is a custom block with a block id,
+			if "id" in block:
+
+				# Get the vanilla block data
+				block_id = block["id"]
+				beautify_name: str = ""
+				if block_id in BLOCKS_WITH_INTERFACES:
+					beautify_name = custom_name
+
+				## Place function
+				content = ""
+				if block["apply_facing"]:
+					content += f"function {ns}:custom_blocks/get_rotation\n"
+					content += "setblock ~ ~ ~ air\n"
+					block_states = []
+					if '[' in block_id:
+						block_states = block_id.split('[')[1][:-1].split(',')
+						block_id = block_id.split('[')[0]
+					for i, face in enumerate(FACING):
+						if block_states:
+							content += f"execute if score #rotation {ns}.data matches {i+1} run setblock ~ ~ ~ {block_id}[facing={face}," + ",".join(block_states) + f"]{beautify_name}\n"
+						else:
+							content += f"execute if score #rotation {ns}.data matches {i+1} run setblock ~ ~ ~ {block_id}[facing={face}]{beautify_name}\n"
+				else:
+					# Simple setblock
+					content += "setblock ~ ~ ~ air\n"
+					content += f"setblock ~ ~ ~ {block_id}{beautify_name}\n"
+
+				# Summon item display and call secondary function
+				custom_block_entities.add("minecraft:item_display")  # Add item display entity for custom blocks
+				content += f"execute align xyz positioned ~.5 ~.5 ~.5 summon item_display at @s run function {ns}:custom_blocks/{item}/place_secondary\n"
+
+				# Add temporary tags and call main function
+				content = f"tag @s add {ns}.placer\n" + content + f"tag @s remove {ns}.placer\n"
+
+				# Increment count scores for stats and optimization
+				block_id: str = block_id.split('[')[0].split('{')[0]
+				unique_blocks.add(block_id)
+				content += f"""
+# Increment count scores
+scoreboard players add #total_custom_blocks {ns}.data 1
+scoreboard players add #total_vanilla_{block_id.replace('minecraft:','')} {ns}.data 1
+scoreboard players add #total_{item} {ns}.data 1
+"""
+
+				# Write the file
+				write_function(f"{path}/place_main", content)
+
+				## Secondary function
+				block_id = block_id.replace(":","_")
+				item_model = ""
+				if data.get("item_model"):
+					item_model = f"item replace entity @s contents with {CUSTOM_BLOCK_VANILLA}[item_model=\"{data['item_model']}\"]\n"
+				content = f"""
 # Add convention and utils tags, and the custom block tag
 tag @s add global.ignore
 tag @s add global.ignore.kill
@@ -154,11 +196,11 @@ tag @s add {ns}.vanilla.{block_id}
 data merge entity @s {custom_name}
 
 # Modify item display entity to match the custom block
-{set_custom_model}data modify entity @s transformation.scale set value [1.002f,1.002f,1.002f]
+{item_model}data modify entity @s transformation.scale set value [1.002f,1.002f,1.002f]
 data modify entity @s brightness set value {{block:15,sky:15}}
 """
-			if block["apply_facing"]:
-				content += f"""
+				if block["apply_facing"]:
+					content += f"""
 # Apply rotation
 execute if score #rotation {ns}.data matches 1 run data modify entity @s Rotation[0] set value 180.0f
 execute if score #rotation {ns}.data matches 2 run data modify entity @s Rotation[0] set value 270.0f
@@ -166,16 +208,72 @@ execute if score #rotation {ns}.data matches 3 run data modify entity @s Rotatio
 execute if score #rotation {ns}.data matches 4 run data modify entity @s Rotation[0] set value 90.0f
 """
 
-			# If Furnace NBT Recipes is enabled and the block is a furnace, summon the marker
-			if OFFICIAL_LIBS["furnace_nbt_recipes"]["is_used"] and block_id.endswith(("_furnace", "_smoker")):
-				content += '\n# Furnace NBT Recipes\n'
-				content += (
-					'execute align xyz positioned ~.5 ~ ~.5 unless entity @e[type=marker,dx=-1,dy=-1,dz=-1,tag=furnace_nbt_recipes.furnace] run '
-					'summon marker ~ ~ ~ {Tags:["furnace_nbt_recipes.furnace"]}\n'
-				)
+				# If Furnace NBT Recipes is enabled and the block is a furnace, summon the marker
+				if OFFICIAL_LIBS["furnace_nbt_recipes"]["is_used"] and block_id.endswith(("_furnace", "_smoker")):
+					content += '\n# Furnace NBT Recipes\n'
+					content += (
+						'execute align xyz positioned ~.5 ~ ~.5 unless entity @e[type=marker,dx=-1,dy=-1,dz=-1,tag=furnace_nbt_recipes.furnace] run '
+						'summon marker ~ ~ ~ {Tags:["furnace_nbt_recipes.furnace"]}\n'
+					)
 
-			# Write file
-			write_function(f"{path}/place_secondary", content)
+				# Write file
+				write_function(f"{path}/place_secondary", content)
+
+			# If the block is a custom block with "contents", it means it's an item frame not an item display
+			elif block.get("contents", False):
+
+				# Write the place main function
+				write_function(f"{ns}:custom_blocks/{item}/place_main", f"""
+# Get the facing direction of the item frame
+scoreboard players set #item_frame_facing {ns}.data 1
+execute if entity @s[type=item_frame] run function {ns}:custom_blocks/{item}/get_facing
+
+# Summon the new item frame (not execute summon because it would not be invisible for a tick)
+summon item_frame ~ ~ ~ {{Tags:["{ns}.new"],Invulnerable:false,Invisible:true,Fixed:false,Silent:true}}
+execute as @n[tag={ns}.new] at @s run function {ns}:custom_blocks/{item}/place_secondary
+
+# Increment count scores
+scoreboard players add #total_custom_blocks {ns}.data 1
+scoreboard players add #total_vanilla_item_frame {ns}.data 1
+scoreboard players add #total_{item} {ns}.data 1
+
+# Replace the placing sound
+playsound minecraft:block.stone.place block @a[distance=..5]
+""")
+				write_function(f"{ns}:custom_blocks/{item}/get_facing", f"""
+# Get the facing and delete the old entity
+execute store result score #item_frame_facing {ns}.data run data get entity @s Facing
+kill @s
+""")
+				# Add the item frame entity to both custom_block_entities and unique_blocks
+				custom_block_entities.add("minecraft:item_frame")
+				unique_blocks.add("minecraft:item_frame")
+
+				# Secondary function
+				item_model: str = data.get("item_model", "minecraft:air")
+				write_function(f"{ns}:custom_blocks/{item}/place_secondary", f"""
+# Add convention and utils tags, and the custom block tag
+tag @s remove {ns}.new
+tag @s add global.ignore
+tag @s add global.ignore.kill
+tag @s add smithed.entity
+tag @s add smithed.block
+tag @s add {ns}.custom_block
+tag @s add {ns}.{item}
+tag @s add {ns}.vanilla.minecraft_item_frame
+
+# Add a custom name
+data merge entity @s {custom_name}
+
+# Modify item frame entity to match the custom block
+item replace entity @s contents with {CUSTOM_BLOCK_VANILLA}[item_model="{item_model}",custom_data={{{ns}:{{item_frame_destroy:true,alt_destroy:"{ns}.{item}"}}}}]
+execute store result entity @s Facing byte 1 run scoreboard players get #item_frame_facing {ns}.data
+
+# Update position (fixes a Minecraft bug)
+execute at @s run tp @s ^ ^ ^0.1
+""")
+				pass
+			pass
 		pass
 
 	# Link the custom block library to the datapack
@@ -203,8 +301,8 @@ execute if score #rotation {ns}.data matches 4 run data modify entity @s Rotatio
 		content += f"tag @s remove {ns}.placer\n"
 		write_function(f"{ns}:custom_blocks/place", content)
 
-	# Sort unique blocks
-	unique_blocks = sorted(unique_blocks)
+	# Sort unique blocks (with custom block alternative last)
+	unique_blocks = sorted(unique_blocks, key=lambda x: (x == CUSTOM_BLOCK_ALTERNATIVE, x))
 
 	## Destroy functions
 	# For each unique block, if the vanilla block is missing, call the destroy function for the group
@@ -212,12 +310,22 @@ execute if score #rotation {ns}.data matches 4 run data modify entity @s Rotatio
 	for block_id in unique_blocks:
 		score_check: str = f"score #total_vanilla_{block_id.replace('minecraft:','')} {ns}.data matches 1.."
 		block_underscore = block_id.replace(":","_")
+
+		# Special case for the cauldron that can change block id
 		block_id = "#minecraft:cauldrons" if block_id == "minecraft:cauldron" else block_id
-		content += (
-			f"execute if {score_check} if entity @s[tag={ns}.vanilla.{block_underscore}] "
-			f"unless block ~ ~ ~ {block_id} run function {ns}:custom_blocks/_groups/{block_underscore}\n"
-		)
-	write_function(f"{ns}:custom_blocks/destroy", content + "\n")
+
+		# Add the line that checks if the block is missing
+		if block_id != CUSTOM_BLOCK_ALTERNATIVE:
+			content += (
+				f"execute if {score_check} if entity @s[tag={ns}.vanilla.{block_underscore}] "
+				f"unless block ~ ~ ~ {block_id} run function {ns}:custom_blocks/_groups/{block_underscore}\n"
+			)
+		else:
+			content += (
+				f"execute if {score_check} if entity @s[tag={ns}.vanilla.{block_underscore}] "
+				f"unless items entity @s contents *[minecraft:custom_data~{{{ns}:{{item_frame_destroy:true}}}}] run function {ns}:custom_blocks/_groups/{block_underscore}\n"
+			)
+	write_function(f"{ns}:custom_blocks/destroy", content)
 
 	# For each unique block, make the group function
 	for block_id in unique_blocks:
@@ -241,8 +349,12 @@ execute if score #rotation {ns}.data matches 4 run data modify entity @s Rotatio
 			if data.get(VANILLA_BLOCK):
 
 				# Get the vanilla block
-				this_block = data[VANILLA_BLOCK]["id"].split('[')[0].split('{')[0]
-				this_block = this_block.replace(":","_")
+				vanilla_block: dict[str, Any] = data[VANILLA_BLOCK]
+				if vanilla_block.get("id"):
+					this_block = data[VANILLA_BLOCK]["id"].split('[')[0].split('{')[0]
+					this_block = this_block.replace(":","_")
+				elif vanilla_block.get("contents", False):
+					this_block = CUSTOM_BLOCK_ALTERNATIVE.replace(":","_")
 
 				# Add the line if it's the same vanilla block
 				if this_block == block_underscore:
@@ -253,14 +365,20 @@ execute if score #rotation {ns}.data matches 4 run data modify entity @s Rotatio
 	# For each custom block, make it's destroy function
 	for item, data in Mem.definitions.items():
 		if data.get(VANILLA_BLOCK):
-			block = data[VANILLA_BLOCK]
+			vanilla_block: dict[str, Any] = data[VANILLA_BLOCK]
 			path = f"{ns}:custom_blocks/{item}"
-			block_id: str = block["id"].split('[')[0].split('{')[0]
+			if vanilla_block.get("id"):
+				block_id: str = vanilla_block["id"].split('[')[0].split('{')[0]
+			elif vanilla_block.get("contents", False):
+				block_id = CUSTOM_BLOCK_ALTERNATIVE
 
 			# Destroy function
+			item_nbt: str = f"""{{id:"{block_id}"}}"""
+			if block_id == CUSTOM_BLOCK_ALTERNATIVE:
+				item_nbt = f"""{{components:{{"minecraft:custom_data":{{"{ns}":{{"item_frame_destroy":true}}}}}}}}"""
 			content = f"""
 # Replace the item with the custom one
-execute as @n[type=item,nbt={{Item:{{id:"{block_id}"}}}},distance=..1] run function {ns}:custom_blocks/{item}/replace_item
+execute as @n[type=item,nbt={{Item:{item_nbt}}},distance=..1] run function {ns}:custom_blocks/{item}/replace_item
 """
 
 			# Decrease count scores for stats and optimization
@@ -272,10 +390,10 @@ scoreboard players remove #total_{item} {ns}.data 1
 """
 
 			# Add the destroy function
-			write_function(f"{path}/destroy", content + "\n# Kill the custom block entity\nkill @s\n\n")
+			write_function(f"{path}/destroy", content + "\n# Kill the custom block entity\nkill @s\n")
 
 			# Replace item function
-			if block != VANILLA_BLOCK_FOR_ORES:
+			if vanilla_block != VANILLA_BLOCK_FOR_ORES:
 				content = f"""
 data modify entity @s Item.components set from storage {ns}:items all.{item}.components
 data modify entity @s Item.id set from storage {ns}:items all.{item}.id
@@ -306,7 +424,7 @@ execute store result entity @s Item.count byte 1 run scoreboard players get #ite
 
 	# Write the used_vanilla_blocks tag, the predicate to check the blocks with the tag and an advanced one
 	VANILLA_BLOCKS_TAG = "used_vanilla_blocks"
-	listed_blocks = list(unique_blocks)
+	listed_blocks = sorted(x for x in unique_blocks if x != CUSTOM_BLOCK_ALTERNATIVE)
 	if "minecraft:cauldron" in listed_blocks:
 		listed_blocks.remove("minecraft:cauldron")
 		listed_blocks.append("#minecraft:cauldrons")
@@ -321,43 +439,58 @@ execute store result entity @s Item.count byte 1 run scoreboard players get #ite
 	# Create advanced predicate
 	advanced_predicate = {"condition": "minecraft:any_of", "terms": []}
 	for block in unique_blocks:
+		# Replace ":" with "_" for the block name
 		block_underscore = block.replace(":","_")
+
+		# Special case for cauldron
 		if block == "minecraft:cauldron":
 			block = "#minecraft:cauldrons"
-		pred = {
-			"condition": "minecraft:entity_properties", "entity": "this",
-			"predicate": { "nbt": f"{{Tags:[\"{ns}.vanilla.{block_underscore}\"]}}", "location": { "block": { "blocks": block }}}
-		}
+
+		# Create the predicate for the block
+		if block != CUSTOM_BLOCK_ALTERNATIVE:
+			pred = {
+				"condition": "minecraft:entity_properties", "entity": "this",
+				"predicate": {
+					"nbt": f"{{Tags:[\"{ns}.vanilla.{block_underscore}\"]}}",
+					"location": { "block": { "blocks": block }}
+				}
+			}
+		else:
+			pred = {
+				"condition": "minecraft:entity_properties", "entity": "this",
+				"predicate": {
+					"nbt": f"{{Tags:[\"{ns}.vanilla.{block_underscore}\"]}}",
+					"slots": {"contents":{"predicates":{"minecraft:custom_data": {ns: {"item_frame_destroy": True}}}}}
+				}
+			}
 		advanced_predicate["terms"].append(pred)
 	ctx.data[ns].predicates["advanced_check_vanilla_blocks"] = set_json_encoder(Predicate(advanced_predicate))
 
 	# Write a destroy check every 2 ticks, every second, and every 5 seconds
 	ore_block = VANILLA_BLOCK_FOR_ORES["id"].replace(':', '_')
 	score_check: str = f"score #total_custom_blocks {ns}.data matches 1.."
-	write_versioned_function("tick_2",
-f"""
-# 2 ticks destroy detection
+	write_versioned_function("tick_2", f"""
+# 2 ticks destroy detection (item_display only)
 execute if {score_check} as @e[type=item_display,tag={ns}.custom_block,tag=!{ns}.vanilla.{ore_block},predicate=!{ns}:check_vanilla_blocks] at @s run function {ns}:custom_blocks/destroy
 """)
-	write_versioned_function("second",
-f"""
-# 1 second break detection
-execute if {score_check} as @e[type=item_display,tag={ns}.custom_block,tag=!{ns}.vanilla.{ore_block},predicate=!{ns}:advanced_check_vanilla_blocks] at @s run function {ns}:custom_blocks/destroy
+	write_versioned_function("second", f"""
+# 1 second break detection (any custom block)
+execute if {score_check} as @e[type=#{ns}:custom_blocks,tag={ns}.custom_block,tag=!{ns}.vanilla.{ore_block},predicate=!{ns}:advanced_check_vanilla_blocks] at @s run function {ns}:custom_blocks/destroy
 """)
-	write_versioned_function("second_5",
-f"""
-# 5 seconds break detection
+	write_versioned_function("second_5", f"""
+# 5 seconds break detection (item display only)
 execute if {score_check} as @e[type=item_display,tag={ns}.custom_block,predicate=!{ns}:advanced_check_vanilla_blocks] at @s run function {ns}:custom_blocks/destroy
 """)
+	# Write the entity type tag for custom blocks
+	ctx.data[ns].entity_type_tags["custom_blocks"] = set_json_encoder(EntityTypeTag({"values": sorted(custom_block_entities)}))
 
 	## Custom ores break detection (if any custom ore)
 	if any(data.get(VANILLA_BLOCK) == VANILLA_BLOCK_FOR_ORES for data in Mem.definitions.values()):
-		write_function_tag("common_signals:signals/on_new_item", [f"{ns}:calls/common_signals/new_item"])
 		write_function(f"{ns}:calls/common_signals/new_item",
 f"""
 # If the item is from a custom ore, launch the on_ore_destroyed function
-execute if data entity @s Item.components.\"minecraft:custom_data\".common_signals.temp at @s align xyz run function {ns}:calls/common_signals/on_ore_destroyed
-""")
+execute if data entity @s Item.components."minecraft:custom_data".common_signals.temp at @s align xyz run function {ns}:calls/common_signals/on_ore_destroyed
+""", tags=["common_signals:signals/on_new_item"])
 		write_function(f"{ns}:calls/common_signals/on_ore_destroyed",
 f"""
 # Get in a score the item count and if it is a silk touch
@@ -370,6 +503,32 @@ execute store success score #is_silk_touch {ns}.data if data entity @s Item.comp
 execute as @e[tag={ns}.custom_block,dx=0,dy=0,dz=0] at @s run function {ns}:custom_blocks/destroy
 """)
 
+	## Detect alternative custom blocks destroy
+	if any(data.get(VANILLA_BLOCK, {}).get("contents") for data in Mem.definitions.values()):
+		write_function(f"{ns}:calls/common_signals/new_item",
+f"""
+# If the item is from a custom block alternative, launch the item_frame destroy function
+execute if data entity @s Item.components."minecraft:custom_data".{ns}.item_frame_destroy at @s align xyz run function {ns}:calls/common_signals/on_item_frame_destroy
+""", tags=["common_signals:signals/on_new_item"])
+		write_function(f"{ns}:calls/common_signals/on_item_frame_destroy",
+f"""
+# Try to destroy the block
+execute as @e[tag={ns}.custom_block,dx=0,dy=0,dz=0] at @s run function {ns}:custom_blocks/destroy
+
+# If still alive, it means that the item_frame has been destroyed too,
+execute at @s if entity @s[distance=..1] run function {ns}:calls/common_signals/item_frame_destroy_alt
+execute at @s if entity @s[distance=..1] as @n[type=item,nbt={{Item:{{id:"minecraft:item_frame"}}}},distance=..1] run function {ns}:calls/common_signals/item_frame_destroy_alt
+""")
+		write_function(f"{ns}:calls/common_signals/item_frame_destroy_alt", f"""
+# Give a new tag to the item frame
+data modify storage {ns}:temp Tags set value []
+data modify storage {ns}:temp Tags append from entity @s Item.components."minecraft:custom_data".{ns}.alt_destroy
+data modify entity @n[type=item,nbt={{Item:{{id:"minecraft:item_frame"}}}},distance=..1] Tags set from storage {ns}:temp Tags
+
+# Remove the custom block "properly"
+execute as @n[type=item,nbt={{Item:{{id:"minecraft:item_frame"}}}},distance=..1] run function {ns}:custom_blocks/_groups/{CUSTOM_BLOCK_ALTERNATIVE.replace(':','_')}
+""")
+
 	# Add line in the stats_custom_blocks file
 	write_function(f"{ns}:_stats_custom_blocks",
 		f'tellraw @s [{{"text":"- Total custom blocks: ","color":"dark_aqua"}},{{"score":{{"name":"#total_custom_blocks","objective":"{ns}.data"}},"color":"aqua"}}]'
@@ -379,20 +538,32 @@ execute as @e[tag={ns}.custom_block,dx=0,dy=0,dz=0] at @s run function {ns}:cust
 		prepend = True
 	)
 
+
+
 	## Custom blocks using player_head
 	for item, data in Mem.definitions.items():
 		if data["id"] == CUSTOM_BLOCK_HEAD and data.get(VANILLA_BLOCK):
 
 			# Make advancement
-			adv = {
-				"criteria":{"requirement":{"trigger":"minecraft:placed_block","conditions":{"location": [{"condition": "minecraft:location_check","predicate": {"block": {}}}]}}},
+			adv: dict[str, Any] = {
+				"criteria": {
+					"requirement": {
+						"trigger": "minecraft:placed_block",
+						"conditions": {
+							"location": [
+								{
+									"condition": "minecraft:location_check",
+									"predicate": {
+										"block": {"predicates": {"minecraft:custom_data": {ns: {item: True}}}}
+									}
+								}
+							]
+						}
+					}
+				},
 				"requirements":[["requirement"]],
 				"rewards":{}
 			}
-			adv["criteria"]["requirement"]["conditions"]["location"][0]["predicate"]["block"]["nbt"] = super_json_dump(
-				{"components":{"minecraft:custom_data":data.get("custom_data", {})}},
-				max_level = 0
-			)
 			adv["rewards"]["function"] = f"{ns}:custom_blocks/_player_head/search_{item}"
 			ctx.data[ns].advancements[f"custom_block_head/{item}"] = set_json_encoder(Advancement(adv), max_level=-1)
 

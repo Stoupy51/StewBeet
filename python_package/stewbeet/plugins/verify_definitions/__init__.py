@@ -82,9 +82,9 @@ def beet_default(ctx: Context) -> None:
 					errors.append(f"VANILLA_BLOCK key missing for '{item}', needed format: VANILLA_BLOCK: {{\"id\":\"minecraft:stone\", \"apply_facing\":False}}.")
 				elif not isinstance(data[VANILLA_BLOCK], dict):
 					errors.append(f"VANILLA_BLOCK key should be a dictionary for '{item}', found '{data[VANILLA_BLOCK]}', needed format: VANILLA_BLOCK: {{\"id\":\"minecraft:stone\", \"apply_facing\":False}}.")
-				elif data[VANILLA_BLOCK].get("id", None) is None:
+				elif (data[VANILLA_BLOCK].get("id", None) is None) and (data[VANILLA_BLOCK].get("contents", None) is not True):
 					errors.append(f"VANILLA_BLOCK key should have an 'id' key for '{item}', found '{data[VANILLA_BLOCK]}', needed format: VANILLA_BLOCK: {{\"id\":\"minecraft:stone\", \"apply_facing\":False}}.")
-				elif data[VANILLA_BLOCK].get("apply_facing", None) is None:
+				elif (data[VANILLA_BLOCK].get("apply_facing", None) is None) and (data[VANILLA_BLOCK].get("contents", None) is not True):
 					errors.append(f"VANILLA_BLOCK key should have a 'apply_facing' key to boolean for '{item}', found '{data[VANILLA_BLOCK]}', needed format: VANILLA_BLOCK: {{\"id\":\"minecraft:stone\", \"apply_facing\":False}}.")
 
 			# Prevent the use of "container" key for custom blocks
@@ -228,4 +228,8 @@ def beet_default(ctx: Context) -> None:
 			elif not data["tooltip_display"].get("hidden_components"):
 				data["tooltip_display"]["hidden_components"] = []
 			data["tooltip_display"]["hidden_components"].append("minecraft:container")
+
+		# Add additional data to the custom blocks alternative
+		elif data.get("id") == CUSTOM_BLOCK_ALTERNATIVE:
+			data["entity_data"] = {"id":"minecraft:item_frame","Tags":[f"{ctx.project_id}.new",f"{ctx.project_id}.{item}"],"Invisible":True,"Silent":True}
 
