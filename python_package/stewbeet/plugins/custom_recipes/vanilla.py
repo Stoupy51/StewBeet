@@ -5,11 +5,10 @@ from typing import Any
 from beet import Advancement, Recipe
 from beet.core.utils import JsonDict
 from stouputils.decorators import simple_cache
-from stouputils.io import super_json_dump
 
 from ...core.__memory__ import Mem
 from ...core.ingredients import get_ingredients_from_recipe, get_item_from_ingredient, get_vanilla_item_id_from_ingredient, ingr_repr, item_to_id_ingr_repr
-from ...core.utils.io import write_function
+from ...core.utils.io import set_json_encoder, write_function
 
 
 class VanillaRecipeHandler:
@@ -52,9 +51,7 @@ class VanillaRecipeHandler:
                 "criteria": {"requirement": {"trigger": "minecraft:inventory_changed"}},
                 "rewards": {"function": f"{Mem.ctx.project_id}:advancements/unlock_recipes"}
             }
-            adv = Advancement(adv_json)
-            adv.encoder = lambda x: super_json_dump(x, max_level=-1)
-            Mem.ctx.data[adv_path] = adv
+            Mem.ctx.data[adv_path] = set_json_encoder(Advancement(adv_json), max_level=-1)
 
             # Write the function that will unlock the recipes
             content = f"""
@@ -211,7 +208,5 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
             name (str): The name of the recipe.
             content (dict[str, Any]): The recipe content.
         """
-        r = Recipe(content)
-        r.encoder = lambda x: super_json_dump(x, max_level=-1)
-        Mem.ctx.data[Mem.ctx.project_id].recipes[name] = r
+        Mem.ctx.data[Mem.ctx.project_id].recipes[name] = set_json_encoder(Recipe(content), max_level=-1)
 

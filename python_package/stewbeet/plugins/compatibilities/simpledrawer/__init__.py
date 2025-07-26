@@ -3,13 +3,12 @@
 from beet import Context, FunctionTag
 from beet.core.utils import JsonDict
 from stouputils.decorators import measure_time
-from stouputils.io import super_json_dump
 from stouputils.print import debug, progress
 
 from ....core.__memory__ import Mem
 from ....core.constants import RESULT_OF_CRAFTING
 from ....core.ingredients import ingr_to_id
-from ....core.utils.io import write_function
+from ....core.utils.io import set_json_encoder, write_function
 
 
 # Get result count of an item
@@ -100,9 +99,7 @@ def beet_default(ctx: Context):
 
 		# Link function tag
 		json_file: JsonDict = {"values": [f"{ns}:calls/simpledrawer/material"]}
-		tag: FunctionTag = FunctionTag(json_file)
-		tag.encoder = super_json_dump
-		ctx.data["simpledrawer"].function_tags["material"] = tag
+		ctx.data["simpledrawer"].function_tags["material"] = set_json_encoder(FunctionTag(json_file))
 
 		# Write material function
 		content: str = ""

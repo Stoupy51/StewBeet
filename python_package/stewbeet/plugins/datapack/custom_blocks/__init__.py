@@ -19,7 +19,7 @@ from ....core.constants import (
 	VANILLA_BLOCK_FOR_ORES,
 	official_lib_used,
 )
-from ....core.utils.io import write_function, write_function_tag, write_versioned_function
+from ....core.utils.io import set_json_encoder, write_function, write_function_tag, write_versioned_function
 
 
 # Main entry point
@@ -47,9 +47,7 @@ def beet_default(ctx: Context):
 	FACING = ["north", "east", "south", "west"]
 	for face in FACING:
 		pred = {"condition":"minecraft:location_check","predicate":{"block":{"state":{"facing":face}}}}
-		pred_obj = Predicate(pred)
-		pred_obj.encoder = super_json_dump
-		ctx.data[ns].predicates[f"facing/{face}"] = pred_obj
+		ctx.data[ns].predicates[f"facing/{face}"] = set_json_encoder(Predicate(pred))
 
 	# Get rotation function
 	write_function(f"{ns}:custom_blocks/get_rotation",
@@ -314,13 +312,11 @@ execute store result entity @s Item.count byte 1 run scoreboard players get #ite
 		listed_blocks.append("#minecraft:cauldrons")
 
 	# Create block tag
-	ctx.data[ns].block_tags[VANILLA_BLOCKS_TAG] = BlockTag(super_json_dump({"values": listed_blocks}))
+	ctx.data[ns].block_tags[VANILLA_BLOCKS_TAG] = set_json_encoder(BlockTag({"values": listed_blocks}))
 
 	# Create predicate
 	pred = {"condition": "minecraft:location_check", "predicate": {"block": {"blocks": f"#{ns}:{VANILLA_BLOCKS_TAG}"}}}
-	pred_obj = Predicate(pred)
-	pred_obj.encoder = super_json_dump
-	ctx.data[ns].predicates["check_vanilla_blocks"] = pred_obj
+	ctx.data[ns].predicates["check_vanilla_blocks"] = set_json_encoder(Predicate(pred))
 
 	# Create advanced predicate
 	advanced_predicate = {"condition": "minecraft:any_of", "terms": []}
@@ -333,9 +329,7 @@ execute store result entity @s Item.count byte 1 run scoreboard players get #ite
 			"predicate": { "nbt": f"{{Tags:[\"{ns}.vanilla.{block_underscore}\"]}}", "location": { "block": { "blocks": block }}}
 		}
 		advanced_predicate["terms"].append(pred)
-	pred_obj = Predicate(advanced_predicate)
-	pred_obj.encoder = super_json_dump
-	ctx.data[ns].predicates["advanced_check_vanilla_blocks"] = pred_obj
+	ctx.data[ns].predicates["advanced_check_vanilla_blocks"] = set_json_encoder(Predicate(advanced_predicate))
 
 	# Write a destroy check every 2 ticks, every second, and every 5 seconds
 	ore_block = VANILLA_BLOCK_FOR_ORES["id"].replace(':', '_')
@@ -400,9 +394,7 @@ execute as @e[tag={ns}.custom_block,dx=0,dy=0,dz=0] at @s run function {ns}:cust
 				max_level = 0
 			)
 			adv["rewards"]["function"] = f"{ns}:custom_blocks/_player_head/search_{item}"
-			adv_obj = Advancement(adv)
-			adv_obj.encoder = lambda x: super_json_dump(x, max_level=-1)
-			ctx.data[ns].advancements[f"custom_block_head/{item}"] = adv_obj
+			ctx.data[ns].advancements[f"custom_block_head/{item}"] = set_json_encoder(Advancement(adv), max_level=-1)
 
 			## Make search function
 			content = "# Search where the head has been placed\n"
