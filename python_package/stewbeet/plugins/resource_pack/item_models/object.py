@@ -341,7 +341,8 @@ class AutoModel:
 
 			# Remove empty textures
 			if exclude_textures or not content.get("textures"):
-				del content["textures"]
+				if "textures" in content:
+					del content["textures"]
 
 			# Add model to assets
 			if self.data.get(OVERRIDE_MODEL, None) != {}:
