@@ -1,6 +1,8 @@
 
 # ruff: noqa: E501
 # Imports
+from typing import Any
+
 from stouputils.decorators import simple_cache
 from stouputils.print import error
 
@@ -30,45 +32,60 @@ def convert_shapeless_to_shaped(craft: dict) -> dict:
 	Returns:
 		dict: The craft converted
 	"""
-	new_craft = {"type": "crafting_shaped", "result_count": craft["result_count"], "ingredients": {}}
+	shapeless_ingredients: list[str] = craft["ingredients"]
+	total_items: int = len(shapeless_ingredients)
+	shaped_recipe: dict[str, Any] = {"type": "crafting_shaped", "result_count": craft["result_count"], "ingredients": {}}
 	if craft.get("result"):
-		new_craft["result"] = craft["result"]
+		shaped_recipe["result"] = craft["result"]
 
 	# Get all ingredients to the dictionary
-	next_key = "A"
-	for ingr in craft["ingredients"]:
-		key = next_key
-		for new_key, new_ingr in new_craft["ingredients"].items():
+	next_key: str = "A"
+	for ingr in shapeless_ingredients:
+		key: str = next_key
+
+		# Check if the ingredient is already in the shaped recipe, if so stop early
+		for new_key, new_ingr in shaped_recipe["ingredients"].items():
 			if str(ingr) == str(new_ingr):
-				key = new_key
+				key = new_key	# This will skip the next condition below
 				break
 
+		# If the key is still the next key, it means it's a new ingredient, add it to the dictionary and update the next key
 		if key == next_key:
-			new_craft["ingredients"][next_key] = ingr
+			shaped_recipe["ingredients"][next_key] = ingr
 			next_key = chr(ord(next_key) + 1)
 
 	# Make the shape of the craft, with an exception when 2 materials to put one alone in the center
-	if len(new_craft["ingredients"]) == 2 and len(craft["ingredients"]) == 9:
-		new_craft["shape"] = ["AAA","ABA","AAA"]
+	if len(shaped_recipe["ingredients"]) == 2 and total_items in (5, 9):
+
+		# Get the key for the item that is more frequent and the key for the other
+		len_same: int = len([x for x in shapeless_ingredients if str(x) == str(shaped_recipe["ingredients"]["A"])])
+		big: str = "A" if len_same > 1 else "B"
+		other: str = "B" if big == "A" else "A"
+		print(f"Big: {big}, Other: {other}, Total items: {total_items}, len_same: {len_same}")
+
+		if total_items == 9:
+			shaped_recipe["shape"] = [big*3, big+other+big, big*3]
+		elif total_items == 5:
+			shaped_recipe["shape"] = [f" {big} ", big+other+big, f" {big} "]
 	else:
 
 		# For each ingredient, add to the shape depending on the occurences
-		new_craft["shape"] = []
-		for key, ingr in new_craft["ingredients"].items():
+		shaped_recipe["shape"] = []
+		for key, ingr in shaped_recipe["ingredients"].items():
 			for ingr_craft in craft["ingredients"]:
 				if str(ingr_craft) == str(ingr):
-					new_craft["shape"].append(key)
+					shaped_recipe["shape"].append(key)
 
 		# Fix the shape (ex: ["A","A","A","B","B","B","C","C","C"] -> ["AAA","BBB","CCC"])
 		# ex 2: ["A","B","C","D"] -> ["AB","CD"]
 		col_size = 3
-		if len(new_craft["shape"]) <= 4:
+		if len(shaped_recipe["shape"]) <= 4:
 			col_size = 2
-		ranged = range(0, len(new_craft["shape"]), col_size)
-		new_craft["shape"] = ["".join(new_craft["shape"][i:i + col_size]) for i in ranged]
+		ranged = range(0, len(shaped_recipe["shape"]), col_size)
+		shaped_recipe["shape"] = ["".join(shaped_recipe["shape"][i:i + col_size]) for i in ranged]
 
 	# Return the shaped craft
-	return new_craft
+	return shaped_recipe
 
 
 # Util function
