@@ -61,7 +61,6 @@ def convert_shapeless_to_shaped(craft: dict) -> dict:
 		len_same: int = len([x for x in shapeless_ingredients if str(x) == str(shaped_recipe["ingredients"]["A"])])
 		big: str = "A" if len_same > 1 else "B"
 		other: str = "B" if big == "A" else "A"
-		print(f"Big: {big}, Other: {other}, Total items: {total_items}, len_same: {len_same}")
 
 		if total_items == 9:
 			shaped_recipe["shape"] = [big*3, big+other+big, big*3]
