@@ -8,6 +8,8 @@ from stouputils.decorators import measure_time
 from stouputils.io import super_json_dump, super_open
 from stouputils.print import progress
 
+from ...core.__memory__ import Mem
+
 
 # Main entry point
 @measure_time(progress, message="Execution time of 'stewbeet.plugins.compute_sha1'")
@@ -18,17 +20,20 @@ def beet_default(ctx: Context):
 	Args:
 		ctx (Context): The beet context.
 	"""
+	if Mem.ctx is None:
+		Mem.ctx = ctx
+
 	# Assertions
-	assert ctx.output_directory, "Output directory must be specified in the project configuration."
+	assert Mem.ctx.output_directory, "Output directory must be specified in the project configuration."
 
 	# Get SHA1 hash for each zip file in build folder
 	sha1_hashes: dict[str, str] = {}
-	for file in os.listdir(ctx.output_directory):
+	for file in os.listdir(Mem.ctx.output_directory):
 		if file.endswith(".zip"):
-			with open(f"{ctx.output_directory}/{file}", "rb") as f:
+			with open(f"{Mem.ctx.output_directory}/{file}", "rb") as f:
 				sha1_hashes[file] = hashlib.sha1(f.read()).hexdigest()
 
 	# Write SHA1 hashes to JSON file
-	with super_open(f"{ctx.output_directory}/sha1_hashes.json", "w") as f:
+	with super_open(f"{Mem.ctx.output_directory}/sha1_hashes.json", "w") as f:
 		f.write(super_json_dump(sha1_hashes))
 

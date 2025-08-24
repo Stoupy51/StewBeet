@@ -10,6 +10,7 @@ from stouputils.decorators import handle_error, measure_time
 from stouputils.parallel import multithreading
 from stouputils.print import progress
 
+from ...core.__memory__ import Mem
 from ..initialize.source_lore_font import find_pack_png
 
 
@@ -41,13 +42,17 @@ def beet_default(ctx: Context) -> None:
 	Args:
 		ctx (Context): The beet context.
 	"""
-	# Assertions
-	assert ctx.output_directory, "Output directory must be specified in the project configuration."
-	assert ctx.packs, "No packs found in the context. Ensure packs are generated before archiving."
-	# Ensure output directory exists
-	os.makedirs(ctx.output_directory, exist_ok=True)
+	if Mem.ctx is None:
+		Mem.ctx = ctx
 
-	consistent_time: tuple[int, ...] = get_consistent_timestamp(ctx)
+	# Assertions
+	assert Mem.ctx.output_directory, "Output directory must be specified in the project configuration."
+	assert Mem.ctx.packs, "No packs found in the context. Ensure packs are generated before archiving."
+
+	# Ensure output directory exists
+	os.makedirs(Mem.ctx.output_directory, exist_ok=True)
+
+	consistent_time: tuple[int, ...] = get_consistent_timestamp(Mem.ctx)
 
 	# Create archives for each pack
 	@handle_error
@@ -57,7 +62,7 @@ def beet_default(ctx: Context) -> None:
 			return  # Skip empty packs
 
 		# Get pack name and type
-		pack_name: str = ctx.project_name.replace(" ", "") or pack.name or "pack"
+		pack_name: str = Mem.ctx.project_name.replace(" ", "") or pack.name or "pack"
 
 		# Determine pack type based on pack attributes
 		pack_type: str = "pack"
@@ -65,7 +70,7 @@ def beet_default(ctx: Context) -> None:
 			pack_type = "datapack"
 		elif isinstance(pack, ResourcePack):
 			pack_type = "resource_pack"		# Create archive filename
-		archive_path = f"{ctx.output_directory}/{pack_name}_{pack_type}.zip"
+		archive_path = f"{Mem.ctx.output_directory}/{pack_name}_{pack_type}.zip"
 
 		# Create zip archive using pack.dump() to avoid interfering with existing directories
 		# This approach writes pack contents directly to a zip file without modifying the original pack structure
@@ -107,5 +112,5 @@ def beet_default(ctx: Context) -> None:
 				final_zip.writestr(info, content)
 
 	# Process each pack in parallel
-	multithreading(handle_pack, ctx.packs, max_workers=len(ctx.packs))
+	multithreading(handle_pack, Mem.ctx.packs, max_workers=len(Mem.ctx.packs))
 
