@@ -1,4 +1,5 @@
 
+# pyright: reportGeneralTypeIssues=false
 # ruff: noqa: RUF012
 # Imports
 import json
@@ -6,6 +7,7 @@ import os
 from enum import Enum
 
 from beet import ItemModel, Model, Texture
+from beet.core.utils import JsonDict
 from stouputils.io import super_json_dump, super_json_load
 
 from ...core import Mem
@@ -34,14 +36,14 @@ def setup_gui_in_resource_packs(gui_translations: dict[str, GuiTranslation]) -> 
 			(e.g. {'gui/electric_brewing_stand.png': 'namespace:gui/electric_brewing_stand'})
 	"""
 	namespace: str = Mem.ctx.project_id
-	textures_folder: str = Mem.ctx.meta.stewbeet.textures_folder
+	textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
 
 	# List gui asset filenames and map with 'gui/{filename}' keys
 	filenames: list[str] = os.listdir(f"{textures_folder}/gui")
 	gui_models: dict[str, str] = {f"gui/{x}": f"{namespace}:gui/{x.replace('.png', '')}" for x in filenames if x.endswith(".png")}
 
 	# Write custom models
-	base: dict = {
+	base: JsonDict = {
 		"textures" : {},
 		"elements": [
 			{
@@ -61,7 +63,7 @@ def setup_gui_in_resource_packs(gui_translations: dict[str, GuiTranslation]) -> 
 		"gui_light":"front"
 	}
 	for gui, model in gui_models.items():
-		content: dict = json.loads(json.dumps(base))  # Deep copy the base model
+		content: JsonDict = json.loads(json.dumps(base))  # Deep copy the base model
 		content["textures"]["layer0"] = content["textures"]["particle"] = model.replace(":", ":item/")
 
 		# If any translation is provided, add it to the model

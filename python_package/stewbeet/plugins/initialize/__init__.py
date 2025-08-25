@@ -2,6 +2,7 @@
 # Imports
 import os
 from pathlib import Path
+from typing import Any
 
 from beet import Context, Pack
 from beet.core.utils import JsonDict, TextComponent
@@ -28,33 +29,36 @@ def beet_default(ctx: Context):
 	Mem.ctx = ctx
 
 	# Preprocess project description
-	project_description: TextComponent = Mem.ctx.meta.stewbeet.project_description
+	project_description: TextComponent = Mem.ctx.meta.get("stewbeet", {}).get("project_description", "")
 	if not project_description or project_description == "auto":
 		# Use project name, version, and author to create a default description
-		Mem.ctx.meta.stewbeet.project_description = f"{ctx.project_name} [{ctx.project_version}] by {ctx.project_author}"
+		if not Mem.ctx.meta.get("stewbeet"):
+			Mem.ctx.meta["stewbeet"] = {}
+		if not Mem.ctx.meta.get("stewbeet", {}).get("project_description"):
+			Mem.ctx.meta["stewbeet"]["project_description"] = f"{ctx.project_name} [{ctx.project_version}] by {ctx.project_author}"
 
 	# Preprocess source lore
-	source_lore: TextComponent = Mem.ctx.meta.stewbeet.source_lore
+	source_lore: TextComponent = Mem.ctx.meta.get("stewbeet", {}).get("source_lore", "")
 	if not source_lore or source_lore == "auto":
-		Mem.ctx.meta.stewbeet.source_lore = [{"text":"ICON"},{"text":f" {ctx.project_name}","italic":True,"color":"blue"}]
-	Mem.ctx.meta.stewbeet["pack_icon_path"] = prepare_source_lore_font(Mem.ctx.meta.stewbeet.source_lore)
+		Mem.ctx.meta["stewbeet"]["source_lore"] = [{"text":"ICON"},{"text":f" {ctx.project_name}","italic":True,"color":"blue"}]
+	Mem.ctx.meta["stewbeet"]["pack_icon_path"] = prepare_source_lore_font(Mem.ctx.meta.get("stewbeet", {}).get("source_lore", []))
 
 	# Preprocess manual name
-	manual_name: TextComponent = Mem.ctx.meta.stewbeet.manual.name
+	manual_name: TextComponent = Mem.ctx.meta.get("stewbeet", {}).get("manual", {}).get("name", "")
 	if not manual_name:
-		Mem.ctx.meta.stewbeet.manual.name = f"{ctx.project_name} Manual"
+		Mem.ctx.meta["stewbeet"]["manual"]["name"] = f"{ctx.project_name} Manual"
 
 	# Convert paths to relative ones
-	object.__setattr__(ctx, "output_directory", relative_path(Mem.ctx.output_directory))
+	object.__setattr__(ctx, "output_directory", relative_path(str(Mem.ctx.output_directory)))
 
 	# Helper function to setup pack.mcmeta
-	def setup_pack_mcmeta(pack: Pack, pack_format: int):
+	def setup_pack_mcmeta(pack: Pack[Any], pack_format: int):
 		existing_mcmeta = pack.mcmeta.data or {}
 		pack_mcmeta: JsonDict = {"pack": {}}
 		pack_mcmeta.update(existing_mcmeta)
 		pack_mcmeta["pack"].update(existing_mcmeta.get("pack", {}))
 		pack_mcmeta["pack"]["pack_format"] = pack_format
-		pack_mcmeta["pack"]["description"] = Mem.ctx.meta.stewbeet.project_description
+		pack_mcmeta["pack"]["description"] = Mem.ctx.meta.get("stewbeet", {}).get("project_description", "")
 		pack_mcmeta["id"] = Mem.ctx.project_id
 		pack.mcmeta.data = pack_mcmeta
 		pack.mcmeta.encoder = super_json_dump
@@ -64,7 +68,7 @@ def beet_default(ctx: Context):
 	setup_pack_mcmeta(ctx.assets, ctx.assets.pack_format)
 
 	# Convert texture names if needed (from old legacy system)
-	textures_folder = Mem.ctx.meta.stewbeet.get("textures_folder")
+	textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
 	if textures_folder and Path(textures_folder).exists():
 		REPLACEMENTS = {
 			"_off": "",

@@ -1,8 +1,7 @@
 
 # Imports
-from typing import Any
-
 from beet import Advancement, BlockTag, Context, EntityTypeTag, Predicate
+from beet.core.utils import JsonDict
 from stouputils.decorators import measure_time
 from stouputils.io import super_json_dump
 from stouputils.print import debug, progress
@@ -33,7 +32,7 @@ def beet_default(ctx: Context):
 		ctx (Context): The beet context.
 	"""
 	# Set up memory context
-	if Mem.ctx is None:
+	if Mem.ctx is None: # pyright: ignore[reportUnnecessaryComparison]
 		Mem.ctx = ctx
 
 	# Assertions
@@ -47,7 +46,7 @@ def beet_default(ctx: Context):
 	# Predicates
 	FACING = ["north", "east", "south", "west"]
 	for face in FACING:
-		pred = {"condition":"minecraft:location_check","predicate":{"block":{"state":{"facing":face}}}}
+		pred: JsonDict = {"condition":"minecraft:location_check","predicate":{"block":{"state":{"facing":face}}}}
 		ctx.data[ns].predicates[f"facing/{face}"] = set_json_encoder(Predicate(pred))
 
 	# Get rotation function
@@ -71,17 +70,17 @@ execute if score #rotation {ns}.data matches 0 if predicate {ns}:facing/west run
 """)
 
 	# For each custom block,
-	unique_blocks = set()
-	custom_block_entities = set()
+	unique_blocks: set[str] = set()
+	custom_block_entities: set[str] = set()
 	for item, data in Mem.definitions.items():
 		item: str
-		data: dict[str, Any]
+		data: JsonDict
 		item_name: str = item.replace("_", " ").title()
 		custom_name: str = super_json_dump({"CustomName": data.get("item_name", item_name)}, max_level = 0)[:-1] # Remove the last new line
 
 		# Custom block
 		if data.get(VANILLA_BLOCK):
-			block: dict[str, Any] = data[VANILLA_BLOCK]
+			block: JsonDict = data[VANILLA_BLOCK]
 			path = f"{ns}:custom_blocks/{item}"
 
 			# Write the line in stats_custom_blocks
@@ -97,7 +96,7 @@ execute if score #rotation {ns}.data matches 0 if predicate {ns}:facing/west run
 			if data.get("id") == CUSTOM_BLOCK_ALTERNATIVE:
 
 				# Make advancement to detect the item frame placement
-				adv: dict[str, Any] = {
+				adv: JsonDict = {
 					"criteria": {
 						"requirement": {
 							"trigger": "minecraft:item_used_on_block",
@@ -302,12 +301,12 @@ execute at @s run tp @s ^ ^ ^0.1
 		write_function(f"{ns}:custom_blocks/place", content)
 
 	# Sort unique blocks (with custom block alternative last)
-	unique_blocks = sorted(unique_blocks, key=lambda x: (x == CUSTOM_BLOCK_ALTERNATIVE, x))
+	unique_blocks_sorted = sorted(unique_blocks, key=lambda x: (x == CUSTOM_BLOCK_ALTERNATIVE, x))
 
 	## Destroy functions
 	# For each unique block, if the vanilla block is missing, call the destroy function for the group
 	content = "\n"
-	for block_id in unique_blocks:
+	for block_id in unique_blocks_sorted:
 		score_check: str = f"score #total_vanilla_{block_id.replace('minecraft:','')} {ns}.data matches 1.."
 		block_underscore = block_id.replace(":","_")
 
@@ -328,7 +327,7 @@ execute at @s run tp @s ^ ^ ^0.1
 	write_function(f"{ns}:custom_blocks/destroy", content)
 
 	# For each unique block, make the group function
-	for block_id in unique_blocks:
+	for block_id in unique_blocks_sorted:
 
 		# Add a line in the stats_custom_blocks file
 		score_name: str = f"total_vanilla_{block_id.replace('minecraft:','')}"
@@ -349,12 +348,14 @@ execute at @s run tp @s ^ ^ ^0.1
 			if data.get(VANILLA_BLOCK):
 
 				# Get the vanilla block
-				vanilla_block: dict[str, Any] = data[VANILLA_BLOCK]
+				vanilla_block: JsonDict = data[VANILLA_BLOCK]
 				if vanilla_block.get("id"):
 					this_block = data[VANILLA_BLOCK]["id"].split('[')[0].split('{')[0]
 					this_block = this_block.replace(":","_")
 				elif vanilla_block.get("contents", False):
 					this_block = CUSTOM_BLOCK_ALTERNATIVE.replace(":","_")
+				else:
+					continue
 
 				# Add the line if it's the same vanilla block
 				if this_block == block_underscore:
@@ -365,12 +366,14 @@ execute at @s run tp @s ^ ^ ^0.1
 	# For each custom block, make it's destroy function
 	for item, data in Mem.definitions.items():
 		if data.get(VANILLA_BLOCK):
-			vanilla_block: dict[str, Any] = data[VANILLA_BLOCK]
+			vanilla_block: JsonDict = data[VANILLA_BLOCK]
 			path = f"{ns}:custom_blocks/{item}"
 			if vanilla_block.get("id"):
 				block_id: str = vanilla_block["id"].split('[')[0].split('{')[0]
 			elif vanilla_block.get("contents", False):
 				block_id = CUSTOM_BLOCK_ALTERNATIVE
+			else:
+				continue
 
 			# Destroy function
 			item_nbt: str = f"""{{id:"{block_id}"}}"""
@@ -424,7 +427,7 @@ execute store result entity @s Item.count byte 1 run scoreboard players get #ite
 
 	# Write the used_vanilla_blocks tag, the predicate to check the blocks with the tag and an advanced one
 	VANILLA_BLOCKS_TAG = "used_vanilla_blocks"
-	listed_blocks = sorted(x for x in unique_blocks if x != CUSTOM_BLOCK_ALTERNATIVE)
+	listed_blocks = sorted(x for x in unique_blocks_sorted if x != CUSTOM_BLOCK_ALTERNATIVE)
 	if "minecraft:cauldron" in listed_blocks:
 		listed_blocks.remove("minecraft:cauldron")
 		listed_blocks.append("#minecraft:cauldrons")
@@ -437,22 +440,22 @@ execute store result entity @s Item.count byte 1 run scoreboard players get #ite
 	ctx.data[ns].predicates["check_vanilla_blocks"] = set_json_encoder(Predicate(pred))
 
 	# Create advanced predicate
-	advanced_predicate = {"condition": "minecraft:any_of", "terms": []}
-	for block in unique_blocks:
+	advanced_predicate: JsonDict = {"condition": "minecraft:any_of", "terms": []}
+	for block_id in unique_blocks_sorted:
 		# Replace ":" with "_" for the block name
-		block_underscore = block.replace(":","_")
+		block_underscore = block_id.replace(":","_")
 
 		# Special case for cauldron
-		if block == "minecraft:cauldron":
-			block = "#minecraft:cauldrons"
+		if block_id == "minecraft:cauldron":
+			block_id = "#minecraft:cauldrons"
 
 		# Create the predicate for the block
-		if block != CUSTOM_BLOCK_ALTERNATIVE:
+		if block_id != CUSTOM_BLOCK_ALTERNATIVE:
 			pred = {
 				"condition": "minecraft:entity_properties", "entity": "this",
 				"predicate": {
 					"nbt": f"{{Tags:[\"{ns}.vanilla.{block_underscore}\"]}}",
-					"location": { "block": { "blocks": block }}
+					"location": { "block": { "blocks": block_id }}
 				}
 			}
 		else:
@@ -545,7 +548,7 @@ execute as @n[type=item,nbt={{Item:{{id:"minecraft:item_frame"}}}},distance=..1]
 		if data["id"] == CUSTOM_BLOCK_HEAD and data.get(VANILLA_BLOCK):
 
 			# Make advancement
-			adv: dict[str, Any] = {
+			adv: JsonDict = {
 				"criteria": {
 					"requirement": {
 						"trigger": "minecraft:placed_block",

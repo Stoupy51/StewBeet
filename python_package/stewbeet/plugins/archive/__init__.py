@@ -14,7 +14,7 @@ from ...core.__memory__ import Mem
 from ..initialize.source_lore_font import find_pack_png
 
 
-def get_consistent_timestamp(ctx: Context) -> tuple[int, ...]:
+def get_consistent_timestamp(ctx: Context) -> tuple[int, int, int, int, int, int]:
 	""" Get a consistent timestamp for archive files based on beet cache .gitignore file modification time. """
 	default_time = (2025, 1, 1, 0, 0, 0)  # Default time: 2025-01-01 00:00:00
 
@@ -42,17 +42,16 @@ def beet_default(ctx: Context) -> None:
 	Args:
 		ctx (Context): The beet context.
 	"""
-	if Mem.ctx is None:
+	if Mem.ctx is None: # pyright: ignore[reportUnnecessaryComparison]
 		Mem.ctx = ctx
 
 	# Assertions
 	assert Mem.ctx.output_directory, "Output directory must be specified in the project configuration."
-	assert Mem.ctx.packs, "No packs found in the context. Ensure packs are generated before archiving."
 
 	# Ensure output directory exists
 	os.makedirs(Mem.ctx.output_directory, exist_ok=True)
 
-	consistent_time: tuple[int, ...] = get_consistent_timestamp(Mem.ctx)
+	consistent_time: tuple[int, int, int, int, int, int] = get_consistent_timestamp(Mem.ctx)
 
 	# Create archives for each pack
 	@handle_error
@@ -68,8 +67,10 @@ def beet_default(ctx: Context) -> None:
 		pack_type: str = "pack"
 		if isinstance(pack, DataPack):
 			pack_type = "datapack"
-		elif isinstance(pack, ResourcePack):
-			pack_type = "resource_pack"		# Create archive filename
+		else:
+			pack_type = "resource_pack"
+
+		# Create archive filename
 		archive_path = f"{Mem.ctx.output_directory}/{pack_name}_{pack_type}.zip"
 
 		# Create zip archive using pack.dump() to avoid interfering with existing directories

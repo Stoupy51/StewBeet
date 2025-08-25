@@ -11,11 +11,13 @@ from ...initialize.source_lore_font import create_source_lore_font, find_pack_pn
 # Main entry point
 @measure_time(progress, message="Execution time of 'stewbeet.plugins.finalyze.last_final'")
 def beet_default(ctx: Context):
+	if Mem.ctx is None: # pyright: ignore[reportUnnecessaryComparison]
+		Mem.ctx = ctx
 
 	# If source lore is present and there are item definitions using it, create the source lore font
-	src_lore: str = Mem.ctx.meta.stewbeet.get("pack_icon_path", "")
-	if src_lore and Mem.ctx.meta.stewbeet.source_lore and any(
-		Mem.ctx.meta.stewbeet.source_lore in data.get("lore", [])
+	src_lore: str = Mem.ctx.meta.get("stewbeet", {}).get("pack_icon_path", "")
+	if src_lore and Mem.ctx.meta.get("stewbeet", {}).get("source_lore") and any(
+		Mem.ctx.meta.get("stewbeet", {}).get("source_lore") in data.get("lore", [])
 		for data in Mem.definitions.values()
 	):
 		create_source_lore_font(src_lore)

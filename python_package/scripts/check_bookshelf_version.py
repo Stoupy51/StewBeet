@@ -10,12 +10,13 @@ Returns:
 # Imports
 import json
 import os
-from typing import Any
 
 import requests
-from on_bookshelf_release import API_URL, CONFIG_PATH
+from beet.core.utils import JsonDict
 from stouputils.decorators import handle_error
 from stouputils.print import warning
+
+from .on_bookshelf_release import API_URL, CONFIG_PATH
 
 
 def load_current_version() -> str | None:
@@ -29,7 +30,7 @@ def load_current_version() -> str | None:
 
 	try:
 		with open(CONFIG_PATH) as f:
-			config: dict[str, Any] = json.load(f)
+			config: JsonDict = json.load(f)
 			return config.get("version")
 	except (json.JSONDecodeError, FileNotFoundError) as e:
 		warning(f"Failed to load current version: {e}")
@@ -45,7 +46,7 @@ def get_latest_version() -> str | None:
 	try:
 		response: requests.Response = requests.get(API_URL)
 		response.raise_for_status()
-		data: dict[str, Any] = response.json()
+		data: JsonDict = response.json()
 		# Assuming the version is in the tag_name field
 		return data.get("tag_name", "")
 	except (requests.RequestException, json.JSONDecodeError) as e:

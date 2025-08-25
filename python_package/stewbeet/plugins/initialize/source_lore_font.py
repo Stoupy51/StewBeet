@@ -20,17 +20,17 @@ def find_pack_png() -> str | None:
 			pack_icon = path
 			break
 	if not pack_icon:
-		pack_icon = next(Path(".").glob("*pack.png"), None)
+		pack_icon = next((str(p) for p in Path(".").glob("*pack.png")), "")
 	if not pack_icon:
 		return None  # If the pack.png does not exist, return None
 	return pack_icon
 
 
 # Main function to create the source lore font
-def prepare_source_lore_font(source_lore: TextComponent) -> str:
+def prepare_source_lore_font(source_lore: list[TextComponent]) -> str:
 
 	# If the source_lore has an ICON text component and pack_icon is present,
-	if source_lore and any(isinstance(component, dict) and "ICON" == component.get("text") for component in source_lore):
+	if source_lore and any(isinstance(component, dict) and component.get("text", "") == "ICON" for component in source_lore):
 
 		pack_icon = find_pack_png()
 		if not pack_icon:
@@ -44,7 +44,9 @@ def prepare_source_lore_font(source_lore: TextComponent) -> str:
 				component["italic"] = False
 				component["font"] = f"{Mem.ctx.project_id}:icons"
 		source_lore.insert(0, "")
-		Mem.ctx.meta.stewbeet.source_lore = source_lore
+		if not Mem.ctx.meta.get("stewbeet"):
+			Mem.ctx.meta["stewbeet"] = {}
+		Mem.ctx.meta["stewbeet"]["source_lore"] = source_lore
 		return pack_icon
 
 	return ""

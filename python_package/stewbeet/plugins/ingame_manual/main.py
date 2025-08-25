@@ -231,7 +231,7 @@ def routine():
 		book_content = []
 		os.makedirs(f"{SharedMemory.cache_path}/font/category", exist_ok=True)
 		simple_case = load_simple_case_no_border(SharedMemory.high_resolution)	# Load the simple case image for later use in categories pages
-		def encode_page(page: dict[str, Any]):
+		def encode_page(page: JsonDict):
 			content = []
 			number = page["number"]
 			raw_data: dict = page["raw_data"]

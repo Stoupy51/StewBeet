@@ -1,6 +1,6 @@
 
 # Imports
-from beet import Context  # noqa: F401
+from beet import Context  # pyright: ignore[reportUnusedImport] # noqa: F401
 
 from .balancing import *
 from .batteries import *

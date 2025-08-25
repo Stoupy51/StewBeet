@@ -9,7 +9,7 @@ from stouputils.decorators import simple_cache
 lang: dict[str, str] = {}
 
 # Regex pattern for text extraction
-TEXT_RE: re.Pattern = re.compile(
+TEXT_RE: re.Pattern[str] = re.compile(
 	r'''
 	(?P<prefix>["']?text["']?\s*:\s*)             # Match the "text": part
 	(?P<quote>["'])                               # Opening quote for value
@@ -55,7 +55,7 @@ def lang_format(ctx: Context, text: str) -> tuple[str, str]:
 	return key, re.sub(r"[._]", "", alpha_num)
 
 
-def handle_file(ctx: Context, content: TextFileBase) -> None:
+def handle_file(ctx: Context, content: TextFileBase[str] | None) -> None:
 	""" Process a file to extract and replace text with lang keys.
 
 	Args:

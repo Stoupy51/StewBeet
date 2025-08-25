@@ -1,6 +1,6 @@
 
 # Imports
-from typing import Any
+from typing import Any, TypeVar, cast
 
 from beet import Function, JsonFile, NamespaceContainer, NamespaceProxy, TagFile
 from beet.core.utils import JsonDict
@@ -9,9 +9,11 @@ from stouputils.io import super_json_dump
 
 from ..__memory__ import Mem
 
+# Constants
+JsonFileT = TypeVar('JsonFileT', bound=JsonFile)
 
 # Functions
-def write_tag(path: str, tag_type: NamespaceProxy[TagFile] | NamespaceContainer[TagFile], values: list[Any] | None = None, prepend: bool = False) -> None:
+def write_tag(path: str, tag_type: NamespaceProxy[Any] | NamespaceContainer[Any], values: list[Any] | None = None, prepend: bool = False) -> None:
 	""" Write a function tag at the given path.
 
 	Args:
@@ -28,7 +30,7 @@ def write_tag(path: str, tag_type: NamespaceProxy[TagFile] | NamespaceContainer[
 		data["values"] = values or []
 
 	if prepend:
-		data["values"] = values + data["values"]
+		data["values"] = (values or []) + data["values"]
 	else:
 		data["values"].extend(values or [])
 	data["values"] = unique_list(data["values"])
@@ -121,7 +123,7 @@ def write_versioned_function(path: str, content: str, overwrite: bool = False, p
 
 
 # Merge two dict recuirsively
-def super_merge_dict(dict1: dict, dict2: dict) -> dict:
+def super_merge_dict(dict1: JsonDict, dict2: JsonDict) -> JsonDict:
 	""" Merge the two dictionnaries recursively without modifying originals
 	Args:
 		dict1 (dict): The first dictionnary
@@ -130,7 +132,7 @@ def super_merge_dict(dict1: dict, dict2: dict) -> dict:
 		dict: The merged dictionnary
 	"""
 	# Copy first dictionnary
-	new_dict = {}
+	new_dict: JsonDict = {}
 	for key, value in dict1.items():
 		new_dict[key] = value
 
@@ -139,7 +141,7 @@ def super_merge_dict(dict1: dict, dict2: dict) -> dict:
 
 		# If key exists in dict1, and both values are also dict, merge recursively
 		if key in dict1 and isinstance(dict1[key], dict) and isinstance(value, dict):
-			new_dict[key] = super_merge_dict(dict1[key], value)
+			new_dict[key] = super_merge_dict(dict1[key], cast(JsonDict, value))
 
 		# Else if it's a list, merge it
 		elif key in dict1 and isinstance(dict1[key], list) and isinstance(value, list):
@@ -154,7 +156,9 @@ def super_merge_dict(dict1: dict, dict2: dict) -> dict:
 	# Return the new dict
 	return new_dict
 
-def set_json_encoder(obj: JsonFile, max_level: int | None = None, indent: str | int = '\t') -> JsonFile:
+
+# Set the JSON encoder to super_json_dump for a JsonFile object
+def set_json_encoder(obj: JsonFileT, max_level: int | None = None, indent: str | int = '\t') -> JsonFileT:
 	""" Set the encoder of the given object to super_json_dump
 
 	Args:

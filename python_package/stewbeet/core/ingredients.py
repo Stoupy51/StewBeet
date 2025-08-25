@@ -1,6 +1,9 @@
 
 # Imports
+from typing import Any, cast
+
 from beet import LootTable
+from beet.core.utils import JsonDict
 from stouputils.decorators import simple_cache
 from stouputils.io import super_json_dump
 from stouputils.print import error
@@ -15,7 +18,7 @@ SPECIAL_RECIPES_TYPES: tuple[str, ...] = (PULVERIZING, )
 
 # Function mainly used for definitions generation
 @simple_cache
-def ingr_repr(id: str, ns: str|None = None, count: int|None = None) -> dict:
+def ingr_repr(id: str, ns: str|None = None, count: int|None = None) -> JsonDict:
 	""" Get the identity of the ingredient from its id for custom crafts
 	Args:
 		id		(str):		The id of the ingredient, ex: adamantium_fragment
@@ -27,17 +30,17 @@ def ingr_repr(id: str, ns: str|None = None, count: int|None = None) -> dict:
 			ex: {"item": "minecraft:stick"}
 	"""
 	if ":" in id:
-		to_return: dict = {"item": id}
+		to_return: JsonDict = {"item": id}
 	else:
 		if ns is None:
 			error(f"Namespace must be specified for custom ingredient '{id}', or you may be missing 'minecraft:'")
-		to_return: dict = {"components":{"minecraft:custom_data":{ns:{id:True}}}}
+		to_return: JsonDict = {"components":{"minecraft:custom_data":{ns:{id:True}}}}
 	if count is not None:
 		to_return["count"] = count
 	return to_return
 
 @simple_cache
-def item_to_id_ingr_repr(ingr: dict) -> dict:
+def item_to_id_ingr_repr(ingr: JsonDict) -> JsonDict:
 	""" Replace the "item" key by "id" in an item ingredient representation
 	Args:
 		ingr (dict): The item ingredient, ex: {"item": "minecraft:stick"}
@@ -47,17 +50,17 @@ def item_to_id_ingr_repr(ingr: dict) -> dict:
 	if ingr.get("item") is None:
 		return ingr
 	if "Slot" in ingr:
-		r: dict = {"Slot": ingr["Slot"], "id": ingr["item"]}
+		r: JsonDict = {"Slot": ingr["Slot"], "id": ingr["item"]}
 	else:
-		r: dict = {"id": ingr["item"]}
-	copy: dict = ingr.copy()
+		r: JsonDict = {"id": ingr["item"]}
+	copy: JsonDict = ingr.copy()
 	copy.pop("item")
 	r.update(copy)
 	return r
 
 # Mainly used for manual
 @simple_cache
-def ingr_to_id(ingredient: dict, add_namespace: bool = True) -> str:
+def ingr_to_id(ingredient: JsonDict, add_namespace: bool = True) -> str:
 	""" Get the id from an ingredient dict
 	Args:
 		ingredient (dict): The ingredient dict
@@ -71,12 +74,13 @@ def ingr_to_id(ingredient: dict, add_namespace: bool = True) -> str:
 			return ingredient["item"].split(":")[1]
 		return ingredient["item"]
 	else:
-		custom_data: dict = ingredient["components"]["minecraft:custom_data"]
+		custom_data: JsonDict = ingredient["components"]["minecraft:custom_data"]
 		namespace: str = ""
 		id: str = ""
 		for cd_ns, cd_data in custom_data.items():
 			if isinstance(cd_data, dict):
-				values: list = list(cd_data.values())
+				cd_data = cast(JsonDict, cd_data)
+				values: list[Any] = list(cd_data.values())
 				if isinstance(values[0], bool):
 					namespace = cd_ns
 					id = next(iter(cd_data.keys()))
@@ -89,7 +93,7 @@ def ingr_to_id(ingredient: dict, add_namespace: bool = True) -> str:
 
 # Mainly used for recipes
 @simple_cache
-def get_vanilla_item_id_from_ingredient(ingredient: dict, add_namespace: bool = True) -> str:
+def get_vanilla_item_id_from_ingredient(ingredient: JsonDict, add_namespace: bool = True) -> str:
 	""" Get the id of the vanilla item from an ingredient dict
 	Args:
 		config (dict): The config dict
@@ -119,7 +123,7 @@ def get_vanilla_item_id_from_ingredient(ingredient: dict, add_namespace: bool = 
 
 # Used for recipes
 @simple_cache
-def get_item_from_ingredient(ingredient: dict) -> dict:
+def get_item_from_ingredient(ingredient: JsonDict) -> JsonDict:
 	""" Get the item dict from an ingredient dict
 	Args:
 		config (dict): The config dict
@@ -133,8 +137,8 @@ def get_item_from_ingredient(ingredient: dict) -> dict:
 
 	# Get from internal definitions
 	if ns == Mem.ctx.project_id:
-		item_data: dict = Mem.definitions[id].copy()
-		result: dict = {"id": item_data.pop("id"), "count": 1}
+		item_data: JsonDict = Mem.definitions[id].copy()
+		result: JsonDict = {"id": item_data.pop("id"), "count": 1}
 
 		# Add components
 		for k, v in item_data.items():
@@ -146,8 +150,8 @@ def get_item_from_ingredient(ingredient: dict) -> dict:
 
 	# External definitions
 	if Mem.external_definitions.get(ingr_id):
-		item_data: dict = Mem.external_definitions[ingr_id].copy()
-		result: dict = {"id": item_data.pop("id"), "count": 1}
+		item_data = Mem.external_definitions[ingr_id].copy()
+		result = {"id": item_data.pop("id"), "count": 1}
 
 		# Add components
 		for k, v in item_data.items():
@@ -166,7 +170,7 @@ def get_item_from_ingredient(ingredient: dict) -> dict:
 
 # Make a loot table
 @simple_cache
-def loot_table_from_ingredient(result_ingredient: dict, result_count: int) -> str:
+def loot_table_from_ingredient(result_ingredient: JsonDict, result_count: int) -> str:
 
 	# If item from this datapack
 	item: str = ingr_to_id(result_ingredient)
@@ -187,9 +191,9 @@ def loot_table_from_ingredient(result_ingredient: dict, result_count: int) -> st
 	if result_count > 1:
 		path += f"_x{result_count}"
 	if namespace != "minecraft":
-		file: dict = {"pools":[{"rolls":1,"entries":[{"type":"minecraft:loot_table","value": f"{Mem.ctx.project_id}:external/{namespace}/{item}"}] }] }
+		file: JsonDict = {"pools":[{"rolls":1,"entries":[{"type":"minecraft:loot_table","value": f"{Mem.ctx.project_id}:external/{namespace}/{item}"}] }] }
 	else:
-		file: dict = {"pools":[{"rolls":1,"entries":[{"type":"minecraft:item","name":f"{namespace}:{item}"}] }] }
+		file: JsonDict = {"pools":[{"rolls":1,"entries":[{"type":"minecraft:item","name":f"{namespace}:{item}"}] }] }
 	if result_count > 1:
 		file["pools"][0]["entries"][0]["functions"] = [{"function": "minecraft:set_count","count": result_count}]
 
@@ -197,7 +201,7 @@ def loot_table_from_ingredient(result_ingredient: dict, result_count: int) -> st
 	return loot_table
 
 @simple_cache
-def get_ingredients_from_recipe(recipe: dict) -> list[str]:
+def get_ingredients_from_recipe(recipe: JsonDict) -> list[str]:
 	""" Get the ingredients from a recipe dict
 	Args:
 		recipe (dict): The final recipe JSON dict, ex:

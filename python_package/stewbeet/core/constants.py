@@ -1,6 +1,8 @@
 
 # ruff: noqa: E501, RUF012
 # Imports
+from beet.core.utils import JsonDict
+
 from ..dependencies.bookshelf import BOOKSHELF_MODULES
 
 # Minecraft version constants
@@ -16,7 +18,7 @@ CUSTOM_BLOCK_HEAD: str = "minecraft:player_head"		# Same purpose as previous, bu
 CUSTOM_ITEM_VANILLA: str = "minecraft:command_block"	# Vanilla item used as base for custom items, must not have any survival vanilla behaviour
 VANILLA_BLOCK: str = "vanilla_block"					# Key to a vanilla block that will be placed for custom block interaction, value needs to be a dict like {"id":"minecraft:chest[type=single,waterlogged=false]", "apply_facing": True}
 NO_SILK_TOUCH_DROP: str = "no_silk_touch_drop"			# Key to an item ID that will drop when silk touch is not used. Must be used only when using the vanilla block for ores, ex: "adamantium_fragment" or "minecraft:raw_iron"
-VANILLA_BLOCK_FOR_ORES: dict = {"id":"minecraft:polished_deepslate", "apply_facing": False}	# Vanilla block that will be used for an optimization tip for ores, don't ask questions
+VANILLA_BLOCK_FOR_ORES: JsonDict = {"id":"minecraft:polished_deepslate", "apply_facing": False}	# Vanilla block that will be used for an optimization tip for ores, don't ask questions
 OVERRIDE_MODEL: str = "override_model"					# Key to a dictionnary that will be used to override the whole model
 PULVERIZING: str = "simplenergy_pulverizing"			# Value of a recipe type, used to generate dusts from ores (used by SimplEnergy)
 SMITHED_CRAFTER_COMMAND: str = "smithed_crafter_command"	# Key to a command that will be used in a recipe in the Smithed Crafter library. If not present, the command will be defaulted to a loot table. Ex: {"result":...,SMITHED_CRAFTER_COMMAND: "function your_namespace:calls/smithed_crafter/do_something_else"}
@@ -36,8 +38,8 @@ NOT_COMPONENTS: list[str] = [							# Keys that should not be considered as comp
 ]
 
 # Technical constants
-FACES: tuple = ("down", "up", "north", "south", "west", "east")						# Faces of a block, used for resource pack and blocks orientation
-SIDES: tuple = ("_bottom", "_top", "_front", "_back", "_left", "_right", "_side")	# Sides of a block, used for resource pack
+FACES: tuple[str, ...] = ("down", "up", "north", "south", "west", "east")						# Faces of a block, used for resource pack and blocks orientation
+SIDES: tuple[str, ...] = ("_bottom", "_top", "_front", "_back", "_left", "_right", "_side")	# Sides of a block, used for resource pack
 DOWNLOAD_VANILLA_ASSETS_RAW = "https://raw.githubusercontent.com/edayot/renders/renders/resourcepack/assets/minecraft/textures/render"
 DOWNLOAD_VANILLA_ASSETS_SOURCE = "https://github.com/edayot/renders/tree/renders/resourcepack/assets/minecraft/textures/render"
 CUSTOM_BLOCK_HEAD_CUBE_RADIUS: tuple[int, int, int] = (16, 16, 16)	# Size of the region to check around the player when placing a CUSTOM_BLOCK_HEAD
@@ -89,7 +91,7 @@ def official_lib_used(lib: str) -> bool:
 	OFFICIAL_LIBS[lib]["is_used"] = True
 	return is_used
 
-OFFICIAL_LIBS: dict[str, dict] = {
+OFFICIAL_LIBS: dict[str, JsonDict] = {
 	"common_signals":		{"version":[0, 1, 1], "name":"Common Signals",					"url":"https://github.com/Stoupy51/CommonSignals",			"is_used": False},
 	"smithed.custom_block":	{"version":[0, 7, 1], "name":"Smithed Custom Block",			"url":"https://wiki.smithed.dev/libraries/custom-block/",	"is_used": False},
 	"smithed.crafter":		{"version":[0, 7, 1], "name":"Smithed Crafter",					"url":"https://wiki.smithed.dev/libraries/crafter/",		"is_used": False},

@@ -5,13 +5,14 @@ import json
 
 import requests
 import stouputils as stp
+from beet.core.utils import JsonDict
 
-from .cd_utils import get_supported_versions, handle_response
+from .cd_utils import get_supported_versions
 
 # Constants
 SMITHED_API_URL: str = "https://api.smithed.dev/v2/packs"
 
-def validate_credentials(credentials: dict) -> tuple[str, str]:
+def validate_credentials(credentials: JsonDict) -> tuple[str, str]:
 	""" Get and validate Smithed credentials
 
 	Args:
@@ -69,7 +70,7 @@ def upload_version(project_id: str, project_name: str, version: str, api_key: st
 	"""
 	stp.progress(f"Creating version {version}")
 	post_url: str = f"{SMITHED_API_URL}/{project_id}/versions"
-	data: dict = {
+	data: JsonDict = {
 		"name": version,
 		"downloads": {},
 		"supports": get_supported_versions(),
@@ -95,17 +96,17 @@ def upload_version(project_id: str, project_name: str, version: str, api_key: st
 		params = {"token": api_key, "version": version},
 		data = json.dumps({"data": data})
 	)
-	handle_response(response, "Failed to create version on Smithed")
+	stp.handle_response(response, "Failed to create version on Smithed")
 
 
 @stp.measure_time(stp.progress, "Uploading to smithed took")
 @stp.handle_error(error_log=stp.LogLevels.WARNING_TRACEBACK)
-def upload_to_smithed(credentials: dict[str, str], smithed_config: dict, changelog: str = "") -> None:
+def upload_to_smithed(credentials: dict[str, str], smithed_config: dict[str, str], changelog: str = "") -> None:
 	""" Upload the project to Smithed using the credentials and the configuration
 
 	Args:
 		credentials		(dict[str, str]):	Credentials for the Smithed API
-		smithed_config	(dict):				Configuration for the Smithed project
+		smithed_config	(dict[str, str]):	Configuration for the Smithed project
 		changelog		(str):				Changelog text for the release
 	"""
 	api_key, author = validate_credentials(credentials)

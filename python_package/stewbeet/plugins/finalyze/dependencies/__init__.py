@@ -11,7 +11,7 @@ from ....core.utils.io import write_function, write_function_tag, write_versione
 
 
 # Utility functions
-def check_version(lib_ns: str, data: dict, run_command: str) -> str:
+def check_version(lib_ns: str, data: JsonDict, run_command: str) -> str:
 	""" Check version compatibility for a dependency.
 
 	Args:
@@ -53,7 +53,7 @@ def beet_default(ctx: Context) -> None:
 	Args:
 		ctx (Context): The beet context.
 	"""
-	if Mem.ctx is None:
+	if Mem.ctx is None: # pyright: ignore[reportUnnecessaryComparison]
 		Mem.ctx = ctx
 
 	# Get namespace and version
@@ -108,7 +108,7 @@ def beet_default(ctx: Context) -> None:
 		debug(f"Found the use of official supported libraries: {', '.join(newly_found_libs)}, adding them to the datapack")
 
 	# Get all dependencies (official and custom)
-	dependencies: list[tuple[str, dict]] = [(lib_ns, data) for lib_ns, data in OFFICIAL_LIBS.items() if data["is_used"]]
+	dependencies: list[tuple[str, JsonDict]] = [(lib_ns, data) for lib_ns, data in OFFICIAL_LIBS.items() if data["is_used"]]
 	load_dependencies: JsonDict = ctx.meta.get("stewbeet", {}).get("load_dependencies", {})
 	if load_dependencies:
 		dependencies += list(load_dependencies.items())
@@ -130,20 +130,20 @@ scoreboard players reset * load.status
 
 	# Setup load json files
 	write_function_tag("load:load", [f"#{ns}:load"])
-	values: list[str | dict] = [f"#{ns}:enumerate", f"#{ns}:resolve"]
+	values: list[str | JsonDict] = [f"#{ns}:enumerate", f"#{ns}:resolve"]
 	if dependencies:
 		write_function_tag(f"{ns}:enumerate", [f"#{ns}:dependencies"], prepend=True)
 
 	write_function_tag(f"{ns}:load", values)
 
 	if dependencies:
-		calls: list[dict] = [
+		calls: list[JsonDict] = [
 			{"id": f"#{dep_ns}:load" if not dep_ns.startswith("bs.") else "#bs.load:load", "required": False}
 			for dep_ns, _ in dependencies
 		]
 		# Remove duplicates while preserving order
-		seen = set()
-		unique_calls = []
+		seen: set[str] = set()
+		unique_calls: list[JsonDict] = []
 		for call in calls:
 			call_id = call["id"]
 			if call_id not in seen:

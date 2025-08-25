@@ -1,5 +1,7 @@
 
 # Imports
+from typing import Any, cast
+
 from beet import Context, Sound, SoundConfig
 from beet.core.utils import JsonDict
 from stouputils.io import super_json_dump
@@ -39,7 +41,7 @@ def add_sound(ctx: Context, sounds: Sound | dict[str, Sound], name: str, ns: str
 	# If sounds.json isn't created, create it
 	if not ctx.assets[ns].extra.get("sounds.json"):
 		ctx.assets[ns].sound_config = SoundConfig()
-	config: JsonDict = ctx.assets[ns].sound_config.data
+	config: JsonDict = ctx.assets[ns].sound_config.data # type: ignore
 
 	# Copy the sounds to the resource pack
 	for path, sound in sounds.items():
@@ -55,24 +57,24 @@ def add_sound(ctx: Context, sounds: Sound | dict[str, Sound], name: str, ns: str
 		"sounds": [
 			{
 				"name": f"{ns}:{path}",
-				**{k: v for k, v in {
+				**{k: v for k, v in cast(JsonDict, {
 					"volume": sound.volume,
 					"pitch": sound.pitch,
 					"weight": sound.weight,
 					"stream": sound.stream,
 					"attenuation_distance": sound.attenuation_distance,
 					"preload": sound.preload,
-				}.items() if v is not None}
+				}).items() if v is not None}
 			}
 			if
-				any(v is not None for v in [
+				any(v is not None for v in cast(list[Any], [
 					sound.volume,
 					sound.pitch,
 					sound.weight,
 					sound.stream,
 					sound.attenuation_distance,
 					sound.preload,
-				])
+				]))
 			else
 				f"{ns}:{path}"
 			for path, sound in sounds.items()]

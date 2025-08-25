@@ -1,6 +1,6 @@
 
 # Imports
-from typing import Any
+from typing import cast
 
 from beet import Advancement, Recipe
 from beet.core.utils import JsonDict
@@ -47,7 +47,7 @@ class VanillaRecipeHandler:
 
             # Write the advancement
             adv_path: str = f"{Mem.ctx.project_id}:unlock_recipes"
-            adv_json: dict[str, Any] = {
+            adv_json: JsonDict = {
                 "criteria": {"requirement": {"trigger": "minecraft:inventory_changed"}},
                 "rewards": {"function": f"{Mem.ctx.project_id}:advancements/unlock_recipes"}
             }
@@ -62,13 +62,13 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
 """
             # Add ingredients
             for ingr, recipes in ingredients.items():
-                recipes: list[str] = sorted(recipes)
+                recipes_list: list[str] = sorted(recipes)
                 content += (
                     f"# {ingr}\nscoreboard players set #success {Mem.ctx.project_id}.data 0\n"
                     f"execute store success score #success {Mem.ctx.project_id}.data if items entity @s container.* {ingr}\n"
                 )
-                for recipe in recipes:
-                    content += f"execute if score #success {Mem.ctx.project_id}.data matches 1 run recipe give @s {Mem.ctx.project_id}:{recipe}\n"
+                for recipe_path in recipes_list:
+                    content += f"execute if score #success {Mem.ctx.project_id}.data matches 1 run recipe give @s {Mem.ctx.project_id}:{recipe_path}\n"
                 content += "\n"
 
             # Add result items
@@ -79,7 +79,7 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
             write_function(f"{Mem.ctx.project_id}:advancements/unlock_recipes", content)
 
     @simple_cache()
-    def vanilla_shapeless_recipe(self, recipe: dict[str, Any], item: str) -> dict[str, Any]:
+    def vanilla_shapeless_recipe(self, recipe: JsonDict, item: str) -> JsonDict:
         """Generate a vanilla shapeless recipe.
 
         Args:
@@ -92,7 +92,7 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
         result_ingr = ingr_repr(item, Mem.ctx.project_id) if not recipe.get("result") else recipe["result"]
         ingredients: list[str] = [get_vanilla_item_id_from_ingredient(i) for i in recipe["ingredients"]]
 
-        to_return = {
+        to_return: JsonDict = {
             "type": "minecraft:" + recipe["type"],
             "category": recipe["category"],
             "group": recipe.get("group"),
@@ -107,7 +107,7 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
         return to_return
 
     @simple_cache()
-    def vanilla_shaped_recipe(self, recipe: dict[str, Any], item: str) -> dict[str, Any]:
+    def vanilla_shaped_recipe(self, recipe: JsonDict, item: str) -> JsonDict:
         """Generate a vanilla shaped recipe.
 
         Args:
@@ -123,7 +123,7 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
             for k, i in recipe["ingredients"].items()
         }
 
-        to_return = {
+        to_return: JsonDict = {
             "type": "minecraft:" + recipe["type"],
             "category": recipe["category"],
             "group": recipe.get("group"),
@@ -139,7 +139,7 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
         return to_return
 
     @simple_cache()
-    def vanilla_furnace_recipe(self, recipe: dict[str, Any], item: str) -> dict[str, Any]:
+    def vanilla_furnace_recipe(self, recipe: JsonDict, item: str) -> JsonDict:
         """ Generate a vanilla furnace recipe.
 
         Args:
@@ -152,7 +152,7 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
         result_ingr = ingr_repr(item, Mem.ctx.project_id) if not recipe.get("result") else recipe["result"]
         ingredient_vanilla: str = get_vanilla_item_id_from_ingredient(recipe["ingredient"])
 
-        to_return = {
+        to_return: JsonDict = {
             "type": "minecraft:" + recipe["type"],
             "category": recipe["category"],
             "group": recipe.get("group"),
@@ -169,7 +169,7 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
     def generate_recipes(self) -> None:
         """ Generate all vanilla recipes. """
         for item, data in Mem.definitions.items():
-            crafts: list[dict[str, Any]] = list(data.get("result_of_crafting", []))
+            crafts: list[JsonDict] = list(data.get("result_of_crafting", []))
             crafts += list(data.get("used_for_crafting", []))
 
             i = 1
@@ -181,32 +181,34 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
 
                 # Handle different recipe types
                 if recipe["type"] == "crafting_shapeless":
-                    if all(isinstance(i, dict) and i.get("item") for i in ingr):
+                    ingr_list = cast(list[JsonDict], ingr)
+                    if all(isinstance(i, dict) and i.get("item") for i in ingr_list): # type: ignore
                         r = self.vanilla_shapeless_recipe(recipe, item)
                         self.write_recipe_file(name, r)
                         i += 1
                         self.vanilla_generated_recipes.append((name, item))
 
                 elif recipe["type"] == "crafting_shaped":
-                    if all(isinstance(i, dict) and i.get("item") for i in ingr.values()):
+                    ingr_dict = cast(dict[str, JsonDict], ingr)
+                    if all(isinstance(i, dict) and i.get("item") for i in ingr_dict.values()): # type: ignore
                         r = self.vanilla_shaped_recipe(recipe, item)
                         self.write_recipe_file(name, r)
                         i += 1
                         self.vanilla_generated_recipes.append((name, item))
 
                 elif recipe["type"] in [*self.SMELTING, "campfire_cooking"]:
-                    if isinstance(ingr, dict) and ingr.get("item"):
+                    if isinstance(ingr, dict) and cast(JsonDict, ingr).get("item"):
                         r = self.vanilla_furnace_recipe(recipe, item)
                         self.write_recipe_file(name, r)
                         i += 1
                         self.vanilla_generated_recipes.append((name, item))
 
-    def write_recipe_file(self, name: str, content: dict[str, Any]) -> None:
+    def write_recipe_file(self, name: str, content: JsonDict) -> None:
         """ Write a recipe file.
 
         Args:
             name (str): The name of the recipe.
-            content (dict[str, Any]): The recipe content.
+            content (JsonDict): The recipe content.
         """
         Mem.ctx.data[Mem.ctx.project_id].recipes[name] = set_json_encoder(Recipe(content), max_level=-1)
 

@@ -20,7 +20,7 @@ def beet_default(ctx: Context):
 	Args:
 		ctx (Context): The beet context.
 	"""
-	if Mem.ctx is None:
+	if Mem.ctx is None: # pyright: ignore[reportUnnecessaryComparison]
 		Mem.ctx = ctx
 
 	# Get data from memory
@@ -88,9 +88,9 @@ def beet_default(ctx: Context):
 	# Loot tables for items with crafting recipes
 	for item, data in Mem.definitions.items():
 		if data.get(RESULT_OF_CRAFTING):
-			results = []
+			results: list[int] = []
 			for d in data[RESULT_OF_CRAFTING]:
-				d: dict
+				d: JsonDict
 				count = d.get("result_count", 1)
 				if count != 1:
 					results.append(count)
@@ -137,10 +137,10 @@ def beet_default(ctx: Context):
 	source_lore: JsonDict = ctx.meta["stewbeet"]["source_lore"]
 	lore = super_json_dump(source_lore, max_level=0).strip()
 
-	chests = []
+	chests: list[str] = []
 	definitions_copy = list(Mem.definitions.items())
 	for i in range(total_chests):
-		chest_contents = []
+		chest_contents: list[str] = []
 
 		# For each slot of the chest, append an item and remove it from the copy
 		for j in range(CHEST_SIZE):

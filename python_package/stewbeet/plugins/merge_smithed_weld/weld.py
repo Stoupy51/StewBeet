@@ -5,7 +5,7 @@ from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile, ZipInfo
 
 from beet import Context
-from smithed.weld.toolchain.cli import weld
+from smithed.weld.toolchain.cli import weld  # pyright: ignore[reportMissingTypeStubs]
 from stouputils.decorators import handle_error, silent
 
 from ...core.constants import OFFICIAL_LIBS
@@ -34,7 +34,7 @@ def weld_datapack(ctx: Context, dest_path: str) -> float:
 
 	# Get all paths to merge
 	datapacks_to_merge = [
-		str(Path(ctx.output_directory) / f"{project_name_simple}_datapack.zip")
+		str(Path(str(ctx.output_directory)) / f"{project_name_simple}_datapack.zip")
 	]
 	if libs_folder:
 		datapacks_to_merge.append(f"{libs_folder}/datapack/*.zip")
@@ -112,7 +112,7 @@ def weld_resource_pack(ctx: Context, dest_path: str) -> float:
 
 	# Get all paths to merge
 	resource_packs_to_merge = [
-		str(Path(ctx.output_directory) / f"{project_name_simple}_resource_pack.zip")
+		str(Path(str(ctx.output_directory)) / f"{project_name_simple}_resource_pack.zip")
 	]
 	if libs_folder:
 		resource_packs_to_merge.append(f"{libs_folder}/resource_pack/*.zip")

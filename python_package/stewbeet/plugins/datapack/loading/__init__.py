@@ -2,6 +2,7 @@
 # ruff: noqa: E501
 # Imports
 from beet import Context
+from beet.core.utils import JsonDict
 from stouputils.decorators import measure_time
 from stouputils.io import super_json_dump
 from stouputils.print import progress
@@ -22,7 +23,7 @@ def beet_default(ctx: Context):
 		ctx (Context): The beet context.
 	"""
 	# Set up memory context
-	if Mem.ctx is None:
+	if Mem.ctx is None: # pyright: ignore[reportUnnecessaryComparison]
 		Mem.ctx = ctx
 
 	# Assertions
@@ -71,7 +72,7 @@ execute unless score #{ctx.project_id}.loaded load.status matches 1 run function
 		for item, data in Mem.definitions.items():
 
 			# Prepare storage data with item_model component in first
-			mc_data = {"id":"","count":1, "components":{"minecraft:item_model":""}}
+			mc_data: JsonDict = {"id": "", "count": 1, "components": {"minecraft:item_model": ""}}
 			for k, v in data.items():
 				if k not in NOT_COMPONENTS:
 

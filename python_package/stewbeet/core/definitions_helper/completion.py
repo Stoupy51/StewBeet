@@ -3,9 +3,7 @@
 # Imports
 from __future__ import annotations
 
-from typing import Any
-
-from beet.core.utils import TextComponent
+from beet.core.utils import JsonDict, TextComponent
 from box import Box
 
 from ..__memory__ import Mem
@@ -37,7 +35,7 @@ def add_item_name_and_lore_if_missing(is_external: bool = False, black_list: lis
 	# Load the source lore
 	if black_list is None:
 		black_list = []
-	source_lore: TextComponent = Mem.ctx.meta.stewbeet.source_lore
+	source_lore: TextComponent = Mem.ctx.meta.get("stewbeet", {}).get("source_lore", {})
 
 	# For each item, add item name and lore if missing (if not in black_list)
 	for item, data in Mem.definitions.items():
@@ -69,7 +67,7 @@ def add_item_name_and_lore_if_missing(is_external: bool = False, black_list: lis
 			titled_namespace: str = item.split(":")[0].replace("_"," ").title()
 
 			# Create the new namespace lore with the titled namespace
-			new_source_lore: dict[str, Any] = {"text": titled_namespace, "italic": True, "color": "blue"}
+			new_source_lore: JsonDict = {"text": titled_namespace, "italic": True, "color": "blue"}
 
 			# Add the namespace lore ONLY if not already present
 			if new_source_lore not in data["lore"]:
@@ -86,10 +84,10 @@ def add_private_custom_data_for_namespace(is_external: bool = False) -> None:
 	for item, data in Mem.definitions.items():
 		if not data.get("custom_data"):
 			data["custom_data"] = {}
-		if not is_external:
-			ns, id = Mem.ctx.project_id, item
-		elif ":" in item:
+		if is_external and ":" in item:
 			ns, id = item.split(":")
+		else:
+			ns, id = Mem.ctx.project_id, item
 		if not data["custom_data"].get(ns):
 			data["custom_data"][ns] = {}
 		data["custom_data"][ns][id] = True

@@ -1,4 +1,5 @@
 
+# pyright: reportArgumentType=false
 # Imports
 import os
 
@@ -18,16 +19,16 @@ def energy_cables_models(cables: list[str]) -> None:
 		cables (list[str]): List of cables to setup. (e.g. ["simple_cable", "advanced_cable", "elite_cable"])
 	"""
 	ns: str = Mem.ctx.project_id
-	textures_folder: str = Mem.ctx.meta.stewbeet.textures_folder
+	textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
 
 	# Setup parent cable model
-	parent_model: dict = {"parent":"block/block","display":{"fixed":{"rotation":[180,0,0],"translation":[0,-4,0],"scale":[1.005,1.005,1.005]}}}
+	parent_model: JsonDict = {"parent":"block/block","display":{"fixed":{"rotation":[180,0,0],"translation":[0,-4,0],"scale":[1.005,1.005,1.005]}}}
 	Mem.ctx.assets[ns].models["block/cable_base"] = set_json_encoder(Model(parent_model))
 
 	# Setup cables models
 	for cable in cables:
 		# Setup vanilla model for this cable
-		content: dict = {"model": {"type": "minecraft:range_dispatch","property": "minecraft:custom_model_data","entries": []}}
+		content: JsonDict = {"model": {"type": "minecraft:range_dispatch","property": "minecraft:custom_model_data","entries": []}}
 
 		# Create all the cables variants models
 		for root, _, files in os.walk(ENERGY_CABLE_MODELS_FOLDER):
@@ -36,10 +37,10 @@ def energy_cables_models(cables: list[str]) -> None:
 					path: str = f"{root}/{file}"
 
 					# Load the json file
-					json_file: dict = super_json_load(path)
+					json_file: JsonDict = super_json_load(path)
 
 					# Create the new json
-					new_json: dict = {
+					new_json: JsonDict = {
 						"parent": f"{ns}:block/cable_base",
 						"textures": {"0": f"{ns}:block/{cable}", "particle": f"{ns}:block/{cable}"},
 					}
@@ -111,7 +112,7 @@ def item_cables_models(cables: dict[str, dict[str, str] | None]) -> None:
 			(e.g. {"item_cable":{"0":"item_cable/center","1":"item_cable/pillon","2":"item_cable/glass"}})
 	"""
 	ns: str = Mem.ctx.project_id
-	textures_folder: str = Mem.ctx.meta.stewbeet.textures_folder
+	textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
 
 	# Constants for cable generation (same as your code principle)
 	sides: list[str] = ["u", "d", "n", "s", "e", "w"]
@@ -134,7 +135,7 @@ def item_cables_models(cables: dict[str, dict[str, str] | None]) -> None:
 			textures["particle"] = f"{cable}/center"
 
 		# Setup vanilla model for this item cable
-		content: dict = {"model": {"type": "minecraft:range_dispatch","property": "minecraft:custom_model_data","entries": []}}
+		content: JsonDict = {"model": {"type": "minecraft:range_dispatch","property": "minecraft:custom_model_data","entries": []}}
 
 		# Generate all variants (64 possibilities like your code)
 		for i in range(64):
@@ -145,7 +146,7 @@ def item_cables_models(cables: dict[str, dict[str, str] | None]) -> None:
 					indicator += side
 
 			# Load the base cable model
-			base_data: dict = super_json_load(cable_base_path)
+			base_data: JsonDict = super_json_load(cable_base_path)
 
 			# Update textures to use the current cable's textures
 			base_data["textures"] = {
@@ -232,14 +233,14 @@ def servo_mechanisms_models(servos: dict[str, dict[str, str] | None]) -> None:
 			(e.g. {"servo_extractor": {"type": "extract", "default": "servo/extract_default", "connected": "servo/extract_connected"}})
 	"""
 	ns: str = Mem.ctx.project_id
-	textures_folder: str = Mem.ctx.meta.stewbeet.textures_folder
+	textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
 
 	# Path to the base servo models
 	models_path: str = get_root_path(__file__) + "/servo_mechanism_models"
 
 	# Register the base block models
 	for base in ("block", "item"):
-		model_data: dict = super_json_load(f"{models_path}/base_{base}.json")
+		model_data: JsonDict = super_json_load(f"{models_path}/base_{base}.json")
 		if base == "item":
 			model_data["parent"] = f"{ns}:block/servo/base_block"
 		Mem.ctx.assets[ns].models[f"block/servo/base_{base}"] = set_json_encoder(Model(model_data), max_level=3)
@@ -253,26 +254,26 @@ def servo_mechanisms_models(servos: dict[str, dict[str, str] | None]) -> None:
 		connected_texture: str = textures.get("connected", f"servo/{typ}_connected")
 
 		# Register the block model
-		base_model: dict = super_json_load(f"{models_path}/{typ}_block.json")
+		base_model: JsonDict = super_json_load(f"{models_path}/{typ}_block.json")
 		base_model["parent"] = f"{ns}:block/servo/base_block"
 		base_model["textures"] = {"0": f"{ns}:block/{default_texture}", "particle": f"{ns}:block/{default_texture}"}
 		Mem.ctx.assets[ns].models[f"block/servo/{typ}_block"] = set_json_encoder(Model(base_model), max_level=3)
 
 		# Register the connected model
-		connected_model: dict = super_json_load(f"{models_path}/{typ}_connected.json")
+		connected_model: JsonDict = super_json_load(f"{models_path}/{typ}_connected.json")
 		connected_model["parent"] = f"{ns}:block/servo/base_block"
 		connected_model["textures"] = {"0": f"{ns}:block/{connected_texture}", "particle": f"{ns}:block/{connected_texture}"}
 		Mem.ctx.assets[ns].models[f"block/servo/{typ}_connected"] = set_json_encoder(Model(connected_model), max_level=3)
 
 		# Register the item model
-		item_model: dict = super_json_load(f"{models_path}/{typ}_item.json")
+		item_model: JsonDict = super_json_load(f"{models_path}/{typ}_item.json")
 		item_model["parent"] = f"{ns}:block/servo/base_item"
 		item_model["textures"] = {"0": f"{ns}:block/{default_texture}", "particle": f"{ns}:block/{default_texture}"}
 		Mem.ctx.assets[ns].models[f"block/servo/{typ}_item"] = set_json_encoder(Model(item_model), max_level=3)
 
 		# Register two items file (for default and connected)
 		for texture in ("block", "connected"):
-			model_data: dict = {
+			model_data = {
 				"model": {
 					"type": "minecraft:model",
 					"model": f"{ns}:block/servo/{typ}_{texture}"
@@ -318,6 +319,8 @@ execute unless entity @s[tag={ns}.custom_block,tag={ns}.servo] run return fail
 # Apply the model dynamically based on servo tags and itemio.math score
 """
 	for servo, textures in servos.items():
+		if textures is None:
+			textures = {}
 		typ: str = textures.get("type", "extract")
 		for number, texture in ((0, "block"), (1, "connected")):
 			servo_update_content += (

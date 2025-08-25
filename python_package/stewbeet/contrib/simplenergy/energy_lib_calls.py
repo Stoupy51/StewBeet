@@ -8,7 +8,7 @@ def insert_lib_calls() -> None:
 	ns: str = Mem.ctx.project_id
 
 	for item, data in Mem.definitions.items():
-		energy: dict = data.get("custom_data", {}).get("energy", {})
+		energy: dict[str, int] = data.get("custom_data", {}).get("energy", {})
 		if len(energy) > 0:
 			placement: str = f"{ns}:custom_blocks/{item}/place_secondary"
 			destroy: str = f"{ns}:custom_blocks/{item}/destroy"

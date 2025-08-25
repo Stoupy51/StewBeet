@@ -5,8 +5,9 @@ import os
 
 import requests
 import stouputils as stp
+from beet.core.utils import JsonDict
 
-from .cd_utils import get_supported_versions, handle_response
+from .cd_utils import get_supported_versions
 
 # Constants
 MODRINTH_API_URL: str = "https://api.modrinth.com/v2"
@@ -67,7 +68,7 @@ def validate_config(modrinth_config: dict[str, str]) -> tuple[str, str, str, str
 		modrinth_config["build_folder"]
 	)
 
-def get_project(slug: str, headers: dict[str, str]) -> dict:
+def get_project(slug: str, headers: dict[str, str]) -> dict[str, str]:
 	""" Get project from Modrinth
 
 	Args:
@@ -78,7 +79,7 @@ def get_project(slug: str, headers: dict[str, str]) -> dict:
 	"""
 	stp.progress(f"Getting project {slug} from Modrinth")
 	search_response = requests.get(f"{PROJECT_ENDPOINT}/{slug}", headers=headers)
-	handle_response(search_response, f"Project not found on Modrinth, with namespace {slug}, please create it manually on https://modrinth.com/")
+	stp.handle_response(search_response, f"Project not found on Modrinth, with namespace {slug}, please create it manually on https://modrinth.com/")
 	return search_response.json()
 
 def update_project_description(slug: str, description: str, summary: str, headers: dict[str, str]) -> None:
@@ -96,7 +97,7 @@ def update_project_description(slug: str, description: str, summary: str, header
 		headers=headers,
 		json={"body": description.strip(), "description": summary.strip()}
 	)
-	handle_response(update_response, "Failed to update project description")
+	stp.handle_response(update_response, "Failed to update project description")
 
 def handle_existing_version(slug: str, version: str, headers: dict[str, str]) -> bool:
 	""" Check and handle existing version
@@ -115,7 +116,7 @@ def handle_existing_version(slug: str, version: str, headers: dict[str, str]) ->
 			return False
 		version_id: str = version_response.json()["id"]
 		delete_response = requests.delete(f"{VERSION_ENDPOINT}/{version_id}", headers=headers)
-		handle_response(delete_response, "Failed to delete the version")
+		stp.handle_response(delete_response, "Failed to delete the version")
 	elif version_response.status_code == 404:
 		stp.info(f"Version {version} not found on Modrinth, uploading...")
 	else:
@@ -155,7 +156,7 @@ def upload_version(
 	file_parts: list[str],
 	headers: dict[str, str],
 	dependencies: list[str] | None = None
-) -> dict:
+) -> JsonDict:
 	""" Upload new version
 
 	Args:
@@ -179,7 +180,7 @@ def upload_version(
 		with open(file_part, "rb") as file:
 			files[os.path.basename(file_part)] = file.read()
 
-	request_data: dict = {
+	request_data: JsonDict = {
 		"name": f"{project_name} [v{version}]",
 		"version_number": version,
 		"changelog": changelog,
@@ -202,8 +203,8 @@ def upload_version(
 		timeout=10,
 		stream=False
 	)
-	json_response: dict = upload_response.json()
-	handle_response(upload_response, "Failed to upload the version")
+	json_response: JsonDict = upload_response.json()
+	stp.handle_response(upload_response, "Failed to upload the version")
 	return json_response
 
 def set_resource_pack_required(version_id: str, resource_pack_hash: str, headers: dict[str, str]) -> None:
@@ -220,11 +221,11 @@ def set_resource_pack_required(version_id: str, resource_pack_hash: str, headers
 		headers=headers,
 		json={"file_types": [{"algorithm": "sha1", "hash": resource_pack_hash, "file_type": "required-resource-pack"}]}
 	)
-	handle_response(version_response, "Failed to put the resource pack as required")
+	stp.handle_response(version_response, "Failed to put the resource pack as required")
 
 @stp.measure_time(stp.progress, "Uploading to modrinth took")
 @stp.handle_error()
-def upload_to_modrinth(credentials: dict[str, str], modrinth_config: dict, changelog: str = "") -> None:
+def upload_to_modrinth(credentials: dict[str, str], modrinth_config: JsonDict, changelog: str = "") -> None:
 	""" Upload the project to Modrinth using the credentials and the configuration
 
 	Args:
@@ -232,7 +233,7 @@ def upload_to_modrinth(credentials: dict[str, str], modrinth_config: dict, chang
 		modrinth_config	(dict):				Configuration for the Modrinth project
 		changelog		(str):				Changelog text for the release
 	"""
-	api_key = validate_credentials(credentials)
+	api_key: str = validate_credentials(credentials)
 	headers: dict[str, str] = {"Authorization": api_key}
 
 	project_name, version, slug, summary, description_markdown, version_type, build_folder = validate_config(modrinth_config)
