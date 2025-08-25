@@ -5,6 +5,7 @@ This module handles building the relationships between functions, tags,
 advancements, and function calls to create the @within information.
 """
 
+# pyright: reportUnnecessaryIsInstance=false
 # Imports
 from beet import Context
 

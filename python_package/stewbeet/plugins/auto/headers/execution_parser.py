@@ -6,7 +6,7 @@ like 'as @e[...] & at @s' from command lines.
 """
 
 # Imports
-from typing import Any
+from beet.core.utils import JsonDict
 
 
 # Functions
@@ -26,7 +26,7 @@ def parse_execution_context_from_line(line: str) -> str | None:
         return None
 
     # Dictionary mapping execute keywords to number of arguments they take
-    execute_keywords: dict[str, Any] = {
+    execute_keywords: JsonDict = {
         "as": 1,
         "at": 1,
         "positioned": 3,
@@ -83,15 +83,15 @@ def parse_execution_context_from_line(line: str) -> str | None:
                     parts = [part.strip() for part in content.split(",")]
 
                     # Count occurrences of each attribute type
-                    attribute_counts = {}
+                    attribute_counts: dict[str, int] = {}
                     for part in parts:
                         if "=" in part:
                             attr_name = part.split("=")[0]
                             attribute_counts[attr_name] = attribute_counts.get(attr_name, 0) + 1
 
                     # Process parts and replace with ... only when there are duplicates
-                    processed_parts = []
-                    seen_attributes = set()
+                    processed_parts: list[str] = []
+                    seen_attributes: set[str] = set()
 
                     for part in parts:
                         if "=" in part:
@@ -138,8 +138,8 @@ def parse_execution_context_from_line(line: str) -> str | None:
         return arg, next_index
 
     # Parse execute command components
-    parts = line.split()
-    context_parts = []
+    parts: list[str] = line.split()
+    context_parts: list[str] = []
 
     i = 1  # Skip "execute"
     while i < len(parts):

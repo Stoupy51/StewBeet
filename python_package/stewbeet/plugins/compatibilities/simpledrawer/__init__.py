@@ -21,18 +21,18 @@ def get_result_count(item: str, ingr_to_seek: str) -> int:
 	if item and ingr_to_seek:
 
 		# Get recipes
-		definitions: dict[str, dict] = Mem.definitions
-		recipes: list[dict] = definitions[item].get(RESULT_OF_CRAFTING, [])
+		definitions: dict[str, JsonDict] = Mem.definitions
+		recipes: list[JsonDict] = definitions[item].get(RESULT_OF_CRAFTING, [])
 		for recipe in recipes:			# If crafting shaped and only one ingredient, return the result count if the ingredient is the ingot item
 			if recipe["type"] == "crafting_shaped" and len(recipe["ingredients"]) == 1:
-				ingredient: dict = next(iter(recipe["ingredients"].values()))
+				ingredient: JsonDict = next(iter(recipe["ingredients"].values())) # type: ignore
 				ingr_str: str = ingr_to_id(ingredient, add_namespace = False)
 				if ingr_str == ingr_to_seek:
 					return recipe["result_count"]
 
 			# If crafting shapeless and only one ingredient, return the result count if the ingredient is the ingot item
 			elif recipe["type"] == "crafting_shapeless" and len(recipe["ingredients"]) == 1:
-				ingredient: dict = recipe["ingredients"][0]
+				ingredient: JsonDict = recipe["ingredients"][0]
 				ingr_str: str = ingr_to_id(ingredient, add_namespace = False)
 				if ingr_str == ingr_to_seek:
 					return recipe["result_count"]
@@ -48,7 +48,7 @@ def beet_default(ctx: Context):
 	Args:
 		ctx (Context): The beet context.
 	"""
-	if Mem.ctx is None:
+	if Mem.ctx is None: # pyright: ignore[reportUnnecessaryComparison]
 		Mem.ctx = ctx
 
 	# Get namespace
@@ -62,10 +62,10 @@ def beet_default(ctx: Context):
 			variants: dict[str, str] = {"block": item}
 
 			# Get material base
-			smithed_dict: dict = data.get("custom_data", {}).get("smithed", {}).get("dict", {})
+			smithed_dict: JsonDict = data.get("custom_data", {}).get("smithed", {}).get("dict", {})
 			if not smithed_dict:
 				continue
-			material_base: str = next(iter(next(iter(smithed_dict.values())).keys()))
+			material_base: str = next(iter(next(iter(smithed_dict.values())).keys())) # type: ignore
 
 			# If raw material block, add the ingot raw item if available
 			if item.startswith("raw_"):
@@ -78,7 +78,7 @@ def beet_default(ctx: Context):
 				variants["material"] = material_base
 
 				# Get ingot item if any
-				ingot_types: list = [material_base, f"{material_base}_ingot", f"{material_base}_fragment"]
+				ingot_types: list[str] = [material_base, f"{material_base}_ingot", f"{material_base}_fragment"]
 				ingot_type: str | None = None
 				for ingot in ingot_types:
 					if ingot in Mem.definitions:

@@ -1,6 +1,6 @@
 
 # Imports
-from typing import Any, ClassVar, Literal, TypeAlias
+from typing import ClassVar, Literal
 
 from beet import FileDeserialize, JsonFileBase, NamespaceFileScope
 from pydantic.v1 import BaseModel
@@ -9,7 +9,7 @@ from pydantic.v1 import BaseModel
 MACRO: str = "storage sorter:temp args"
 
 # Type aliases
-SorterAlgorithm: TypeAlias = Literal[
+type SorterAlgorithm = Literal[
 	"quick_sort",
 	"selection_sort"
 ]
@@ -56,7 +56,7 @@ class SorterFile(JsonFileBase[Sorter]):
 	This class handles the serialization and deserialization of sorter
 	configuration files within the datapack namespace.
 	"""
-	model: type[Any] = Sorter
+	model = Sorter
 	scope: ClassVar[NamespaceFileScope] = ("sorter",)
 	extension: ClassVar[str] = ".json"
 	data: ClassVar[FileDeserialize[Sorter]] = FileDeserialize()

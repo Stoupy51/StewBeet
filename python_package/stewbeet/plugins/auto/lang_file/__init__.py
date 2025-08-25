@@ -19,12 +19,12 @@ def beet_default(ctx: Context):
 		ctx (Context): The beet context.
 	"""
 	# Get all functions and loot tables
-	files_to_process: dict[str, TextFileBase] = {}
-	files_to_process.update(ctx.data.loot_tables)	# Idk why, but this is needed to ensure loot tables are processed
-	files_to_process.update(dict(ctx.data.all()))
+	files_to_process: dict[str, TextFileBase[str] | None] = {}
+	files_to_process.update(ctx.data.loot_tables)	# type: ignore # Idk why, but this is needed to ensure loot tables are processed
+	files_to_process.update(dict(ctx.data.all()))	# type: ignore
 
 	# Process all files
-	args: list[tuple[Context, str, TextFileBase]] = [
+	args: list[tuple[Context, TextFileBase[str]]] = [
 		(ctx, content) for content in files_to_process.values()
 		if isinstance(content, TextFileBase)
 	]

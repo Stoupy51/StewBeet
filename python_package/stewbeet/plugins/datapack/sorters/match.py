@@ -1,13 +1,14 @@
 
 # Imports
 from beet import Context
+from beet.core.utils import JsonDict
 
 from .quick_sort import generate_quick_sort
 from .selection_sort import generate_selection_sort
 
 
 # Functions
-def generate_sorter(ctx: Context, sorter: dict):
+def generate_sorter(ctx: Context, sorter: JsonDict):
 	""" Generate sorting functions based on the specified algorithm.
 
 	Currently an abstraction layer in case more algorithms are added in the future.
@@ -25,9 +26,12 @@ def generate_sorter(ctx: Context, sorter: dict):
 	assert isinstance(sorter["to_sort"].get("target"), str), "'to_sort.target' must be a string, e.g. 'all.modes.sheepwars.played'."
 
 	# Switch case
-	match(sorter["algorithm"]):
+	algorithm: str = sorter["algorithm"]
+	match(algorithm):
 		case "selection_sort":
 			generate_selection_sort(ctx, sorter)
 		case "quick_sort":
 			generate_quick_sort(ctx, sorter)
+		case _:
+			raise ValueError(f"Unknown sorting algorithm: {algorithm}")
 

@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 
 from beet import Equipment, Texture
+from beet.core.utils import JsonDict
 from stouputils.decorators import handle_error
 from stouputils.io import clean_path, relative_path, super_json_dump
 from stouputils.print import error
@@ -37,9 +38,10 @@ def generate_everything_about_this_material(
 
 	# Prepare constants
 	textures: dict[str, str] = {
-		clean_path(str(p)).split("/")[-1]: relative_path(p)
+		clean_path(str(p)).split("/")[-1]: relative_path(str(p))
 		for p in Path(textures_folder).rglob("*.png")
 	}
+	durability_factor: float = 1.0
 	if equipments_config:
 		durability_factor = equipments_config.pickaxe_durability / VanillaEquipments.PICKAXE.value[equipments_config.equivalent_to]["durability"]
 
@@ -80,7 +82,7 @@ def generate_everything_about_this_material(
 
 	## Armor equipment entity (top layer and leggings)
 	# Define the resource pack namespace and initialize model data
-	model_data: dict = {"layers": {}}
+	model_data: JsonDict = {"layers": {}}
 
 	# Helper function to handle armor layer textures and model data
 	def handle_armor_layer(layer_num: int, gear_types: list[str], humanoid_type: str) -> bool:
@@ -126,32 +128,37 @@ def generate_everything_about_this_material(
 		if gear == "helmet":
 			if not ignore_recipes:
 				Mem.definitions[armor][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["XXX","X X"],"ingredients":{"X": main_ingredient}}]
-			gear_config = VanillaEquipments.HELMET.value[equipments_config.equivalent_to]
-			Mem.definitions[armor]["max_damage"] = int(gear_config["durability"] * durability_factor)
+			if equipments_config:
+				gear_config = VanillaEquipments.HELMET.value[equipments_config.equivalent_to]
+				Mem.definitions[armor]["max_damage"] = int(gear_config["durability"] * durability_factor)
 			if top_layer:
 				Mem.definitions[armor]["equippable"] = {"slot":"head", "asset_id":f"{Mem.ctx.project_id}:{material_base}"}
 		elif gear == "chestplate":
 			if not ignore_recipes:
 				Mem.definitions[armor][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["X X","XXX","XXX"],"ingredients":{"X": main_ingredient}}]
-			gear_config = VanillaEquipments.CHESTPLATE.value[equipments_config.equivalent_to]
-			Mem.definitions[armor]["max_damage"] = int(gear_config["durability"] * durability_factor)
+			if equipments_config:
+				gear_config = VanillaEquipments.CHESTPLATE.value[equipments_config.equivalent_to]
+				Mem.definitions[armor]["max_damage"] = int(gear_config["durability"] * durability_factor)
 			if top_layer:
 				Mem.definitions[armor]["equippable"] = {"slot":"chest", "asset_id":f"{Mem.ctx.project_id}:{material_base}"}
 		elif gear == "leggings":
 			if not ignore_recipes:
 				Mem.definitions[armor][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["XXX","X X","X X"],"ingredients":{"X": main_ingredient}}]
-			gear_config = VanillaEquipments.LEGGINGS.value[equipments_config.equivalent_to]
-			Mem.definitions[armor]["max_damage"] = int(gear_config["durability"] * durability_factor)
+			if equipments_config:
+				gear_config = VanillaEquipments.LEGGINGS.value[equipments_config.equivalent_to]
+				Mem.definitions[armor]["max_damage"] = int(gear_config["durability"] * durability_factor)
 			if bottom_layer:
 				Mem.definitions[armor]["equippable"] = {"slot":"legs", "asset_id":f"{Mem.ctx.project_id}:{material_base}"}
 		elif gear == "boots":
 			if not ignore_recipes:
 				Mem.definitions[armor][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["X X","X X"],"ingredients":{"X": main_ingredient}}]
-			gear_config = VanillaEquipments.BOOTS.value[equipments_config.equivalent_to]
-			Mem.definitions[armor]["max_damage"] = int(gear_config["durability"] * durability_factor)
+			if equipments_config:
+				gear_config = VanillaEquipments.BOOTS.value[equipments_config.equivalent_to]
+				Mem.definitions[armor]["max_damage"] = int(gear_config["durability"] * durability_factor)
 			if bottom_layer:
 				Mem.definitions[armor]["equippable"] = {"slot":"feet", "asset_id":f"{Mem.ctx.project_id}:{material_base}"}
-		Mem.definitions[armor]["attribute_modifiers"] = format_attributes(equipments_config.get_armor_attributes(), SLOTS[gear], gear_config)
+		if equipments_config:
+			Mem.definitions[armor]["attribute_modifiers"] = format_attributes(equipments_config.get_armor_attributes(), SLOTS[gear], gear_config)
 
 	# Tools (sword, pickaxe, axe, shovel, hoe)
 	for gear in ["sword", "pickaxe", "axe", "shovel", "hoe"]:
@@ -160,38 +167,45 @@ def generate_everything_about_this_material(
 			continue
 		if tool not in Mem.definitions:
 			Mem.definitions[tool] = {}
-		Mem.definitions[tool]["id"] = f"minecraft:{equipments_config.equivalent_to.value}_{gear}"		# Vanilla tool, ex: iron_sword, wooden_hoe
+		if equipments_config:
+			Mem.definitions[tool]["id"] = f"minecraft:{equipments_config.equivalent_to.value}_{gear}"		# Vanilla tool, ex: iron_sword, wooden_hoe
 		Mem.definitions[tool][CATEGORY] = "equipment"
 		Mem.definitions[tool]["custom_data"] = {"smithed":{}}
 		Mem.definitions[tool]["custom_data"]["smithed"]["dict"] = {"tools": {material_base: True, gear: True}}
 		tools_ingr = {"X": main_ingredient, "S": ingr_repr("minecraft:stick")}
 		gear_config = {}
 		if gear == "sword":
-			gear_config = VanillaEquipments.SWORD.value[equipments_config.equivalent_to]
-			Mem.definitions[tool]["max_damage"] = int(gear_config["durability"] * durability_factor)
+			if equipments_config:
+				gear_config = VanillaEquipments.SWORD.value[equipments_config.equivalent_to]
+				Mem.definitions[tool]["max_damage"] = int(gear_config["durability"] * durability_factor)
 			if not ignore_recipes:
 				Mem.definitions[tool][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["X","X","S"],"ingredients": tools_ingr}]
 		elif gear == "pickaxe":
-			gear_config = VanillaEquipments.PICKAXE.value[equipments_config.equivalent_to]
-			Mem.definitions[tool]["max_damage"] = int(gear_config["durability"] * durability_factor)
+			if equipments_config:
+				gear_config = VanillaEquipments.PICKAXE.value[equipments_config.equivalent_to]
+				Mem.definitions[tool]["max_damage"] = int(gear_config["durability"] * durability_factor)
 			if not ignore_recipes:
 				Mem.definitions[tool][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["XXX"," S "," S "],"ingredients": tools_ingr}]
 		elif gear == "axe":
-			gear_config = VanillaEquipments.AXE.value[equipments_config.equivalent_to]
-			Mem.definitions[tool]["max_damage"] = int(gear_config["durability"] * durability_factor)
+			if equipments_config:
+				gear_config = VanillaEquipments.AXE.value[equipments_config.equivalent_to]
+				Mem.definitions[tool]["max_damage"] = int(gear_config["durability"] * durability_factor)
 			if not ignore_recipes:
 				Mem.definitions[tool][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["XX","XS"," S"],"ingredients": tools_ingr}]
 		elif gear == "shovel":
-			gear_config = VanillaEquipments.SHOVEL.value[equipments_config.equivalent_to]
-			Mem.definitions[tool]["max_damage"] = int(gear_config["durability"] * durability_factor)
+			if equipments_config:
+				gear_config = VanillaEquipments.SHOVEL.value[equipments_config.equivalent_to]
+				Mem.definitions[tool]["max_damage"] = int(gear_config["durability"] * durability_factor)
 			if not ignore_recipes:
 				Mem.definitions[tool][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["X","S","S"],"ingredients": tools_ingr}]
 		elif gear == "hoe":
-			gear_config = VanillaEquipments.HOE.value[equipments_config.equivalent_to]
-			Mem.definitions[tool]["max_damage"] = int(gear_config["durability"] * durability_factor)
+			if equipments_config:
+				gear_config = VanillaEquipments.HOE.value[equipments_config.equivalent_to]
+				Mem.definitions[tool]["max_damage"] = int(gear_config["durability"] * durability_factor)
 			if not ignore_recipes:
 				Mem.definitions[tool][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["XX"," S"," S"],"ingredients": tools_ingr}]
-		Mem.definitions[tool]["attribute_modifiers"] = format_attributes(equipments_config.get_tools_attributes(), SLOTS[gear], gear_config)
+		if equipments_config:
+			Mem.definitions[tool]["attribute_modifiers"] = format_attributes(equipments_config.get_tools_attributes(), SLOTS[gear], gear_config)
 		if gear == "sword": # Remove the mining_efficiency attribute from swords
 			Mem.definitions[tool]["attribute_modifiers"] = [am for am in Mem.definitions[tool]["attribute_modifiers"] if am["type"] != "mining_efficiency"]
 	pass
@@ -260,7 +274,7 @@ def generate_everything_about_these_materials(ores: dict[str, EquipmentsConfig|N
 
 
 # Add recipes for dust
-def add_recipes_for_dust(material: str, pulverize: list[str|dict], smelt_to: dict) -> None:
+def add_recipes_for_dust(material: str, pulverize: list[str | JsonDict], smelt_to: JsonDict) -> None:
 	""" Add recipes for dust (pulverize and smelt). If dust isn't found in the definitions, it will be added automagically.
 
 	All items in the pulverize list will be pulverized to get 2 times the dust.
@@ -288,7 +302,7 @@ def add_recipes_for_dust(material: str, pulverize: list[str|dict], smelt_to: dic
 		Mem.definitions[dust] = {"id": CUSTOM_ITEM_VANILLA, CATEGORY: "material"}
 
 	# Add smelting and blasting recipes
-	ingredient: dict = ingr_repr(dust, Mem.ctx.project_id)
+	ingredient: JsonDict = ingr_repr(dust, Mem.ctx.project_id)
 	Mem.definitions[dust][USED_FOR_CRAFTING] = Mem.definitions[dust].get(USED_FOR_CRAFTING, [])
 	Mem.definitions[dust][USED_FOR_CRAFTING].append({"type":"smelting","result_count":1,"category":"misc","group":material,"experience":0.8,"cookingtime":200,"ingredient":ingredient, "result":smelt_to})
 	Mem.definitions[dust][USED_FOR_CRAFTING].append({"type":"blasting","result_count":1,"category":"misc","group":material,"experience":0.8,"cookingtime":100,"ingredient":ingredient, "result":smelt_to})
@@ -304,7 +318,7 @@ def add_recipes_for_dust(material: str, pulverize: list[str|dict], smelt_to: dic
 	return
 
 # Add recipes for all dusts
-def add_recipes_for_all_dusts(dusts_configs: dict[str, tuple[list[str|dict],dict]]) -> None:
+def add_recipes_for_all_dusts(dusts_configs: dict[str, tuple[list[str | JsonDict], JsonDict]]) -> None:
 	""" Add recipes for all dusts in the dusts_configs dictionary using the add_recipes_for_dust function.
 
 	Args:

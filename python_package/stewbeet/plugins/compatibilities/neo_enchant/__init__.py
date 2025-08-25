@@ -19,7 +19,7 @@ def beet_default(ctx: Context):
 	Args:
 		ctx (Context): The beet context.
 	"""
-	if Mem.ctx is None:
+	if Mem.ctx is None: # pyright: ignore[reportUnnecessaryComparison]
 		Mem.ctx = ctx
 
 	# If any block use the vanilla block for ores, add the compatibility

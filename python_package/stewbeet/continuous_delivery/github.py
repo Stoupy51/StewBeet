@@ -1,3 +1,3 @@
 
-from stouputils.continuous_delivery.github import *
+from stouputils.continuous_delivery.github import *  # type: ignore
 

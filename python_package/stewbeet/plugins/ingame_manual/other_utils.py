@@ -34,7 +34,7 @@ def convert_shapeless_to_shaped(craft: dict) -> dict:
 	"""
 	shapeless_ingredients: list[str] = craft["ingredients"]
 	total_items: int = len(shapeless_ingredients)
-	shaped_recipe: dict[str, Any] = {"type": "crafting_shaped", "result_count": craft["result_count"], "ingredients": {}}
+	shaped_recipe: JsonDict = {"type": "crafting_shaped", "result_count": craft["result_count"], "ingredients": {}}
 	if craft.get("result"):
 		shaped_recipe["result"] = craft["result"]
 

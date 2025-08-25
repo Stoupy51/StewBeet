@@ -5,10 +5,11 @@ import re
 
 import pyperclip
 import stouputils as stp
+from beet.core.utils import JsonDict
 
 
 # Configuration
-def validate_config(pmc_config: dict[str, str]) -> tuple[str, str]:
+def validate_config(pmc_config: dict[str, str]) -> str:
 	""" Validate PlanetMinecraft configuration
 
 	Args:
@@ -26,10 +27,7 @@ def validate_config(pmc_config: dict[str, str]) -> tuple[str, str]:
 		if key not in pmc_config:
 			raise ValueError(f"The pmc_config dictionary must contain a '{key}' key, which is the {error_messages[key]}")
 
-	return (
-		pmc_config["project_url"],
-		pmc_config["version"]
-	)
+	return pmc_config["project_url"]
 
 def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
 	""" Convert markdown to bbcode for PlanetMinecraft
@@ -70,8 +68,8 @@ def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
 	bbcode = re.sub(r"^### ([^\n]+)", r"[h4]\1[/h4]", bbcode, flags=re.MULTILINE)
 
 	# Step 2: Process lists (group list items by sections)
-	list_sections: list = []
-	current_list: list = []
+	list_sections: list[list[str]] = []
+	current_list: list[str] = []
 
 	for line in bbcode.split("\n"):
 		if line.strip().startswith("- "):
@@ -126,12 +124,11 @@ def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
 
 	return bbcode
 
-def upload_version(project_url: str, version: str, changelog: str) -> None:
+def upload_version(project_url: str, changelog: str) -> None:
 	""" Upload new version by opening the project url with the browser
 
 	Args:
 		project_url		(str):	Url of the project on PlanetMinecraft to open
-		version			(str):	Version number
 		changelog		(str):	Changelog text
 	"""
 	# Open the project url in the browser
@@ -141,14 +138,10 @@ def upload_version(project_url: str, version: str, changelog: str) -> None:
 	pyperclip.copy(convert_markdown_to_bbcode(changelog))
 	stp.info("Changelog text copied to the clipboard!")
 
-	# Wait for the user to know if the upload is successful
-	stp.progress("Press Enter if you have uploaded the new version")
-	input()
-
 
 @stp.measure_time(stp.progress, "Uploading to PlanetMinecraft took")
 @stp.handle_error()
-def upload_to_pmc(pmc_config: dict, changelog: str = "") -> None:
+def upload_to_pmc(pmc_config: JsonDict, changelog: str = "") -> None:
 	""" Upload the project to PlanetMinecraft using the configuration
 
 	Disclaimer:
@@ -157,8 +150,8 @@ def upload_to_pmc(pmc_config: dict, changelog: str = "") -> None:
 		pmc_config		(dict):		Configuration for the PlanetMinecraft project
 		changelog		(str):		Changelog text for the release
 	"""
-	project_url, version = validate_config(pmc_config)
-	upload_version(project_url, version, changelog)
+	project_url: str = validate_config(pmc_config)
+	upload_version(project_url, changelog)
 
 
 if __name__ == "__main__":

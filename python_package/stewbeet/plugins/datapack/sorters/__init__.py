@@ -1,8 +1,7 @@
 
 # Imports
-from typing import Any
-
 from beet import Context
+from beet.core.utils import JsonDict
 from stouputils.decorators import measure_time
 from stouputils.print import progress
 
@@ -23,7 +22,7 @@ def beet_default(ctx: Context):
 
 	# Iterate through all sorter configurations
 	for file_instance in ctx.data[SorterFile].values():
-		sorter: dict[str, Any] = file_instance.data.dict()
+		sorter: JsonDict = file_instance.data.dict()
 		generate_sorter(ctx, sorter)
 
 	# Clear the registry

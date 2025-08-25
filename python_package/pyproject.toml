@@ -37,10 +37,45 @@ Issues = "https://github.com/Stoupy51/stewbeet/issues"
 stewbeet = "stewbeet:main"
 
 [tool.pyright]
-typeCheckingMode = "basic"
+typeCheckingMode = "strict"
 
 [tool.setuptools]
 license-files = ["LICENSE"]
+
+[tool.ruff]
+exclude = [
+	".git",
+	".ruff_cache",
+	".venv",
+	".vscode",
+	".cursor",
+	"build",
+	"dist",
+]
+line-length = 200
+
+[tool.ruff.lint]
+select = [
+	"E",
+	"W",
+	"F",
+	"I",
+	"N",
+	"UP",
+	"B",
+	"C4",
+	"T20",
+	"RUF",
+]
+ignore = [
+	"T201",
+	"W191",
+	"N803",
+	"N806",
+	"F403",
+	"F405",
+]
+
 
 [tool.hatch.build]
 include = ["stewbeet"]

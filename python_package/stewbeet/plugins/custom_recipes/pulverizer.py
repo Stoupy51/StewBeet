@@ -1,8 +1,8 @@
 
 # Imports
 import json
-from typing import Any
 
+from beet.core.utils import JsonDict
 from stouputils.decorators import simple_cache
 
 from ...core.__memory__ import Mem
@@ -32,18 +32,18 @@ class PulverizerRecipeHandler:
         handler.generate_recipes()
 
     @simple_cache()
-    def simplenergy_pulverizer_recipe(self, recipe: dict[str, Any], item: str) -> str:
+    def simplenergy_pulverizer_recipe(self, recipe: JsonDict, item: str) -> str:
         """ Generate a pulverizer recipe.
 
         Args:
-            recipe (dict[str, Any]): The recipe data.
+            recipe (JsonDict): The recipe data.
             item (str): The item to generate the recipe for.
 
         Returns:
             str: The generated recipe command.
         """
-        ingredient: dict[str, Any] = item_to_id_ingr_repr(recipe["ingredient"])
-        result: dict[str, Any] = item_to_id_ingr_repr(get_item_from_ingredient(recipe["result"])) if recipe.get("result") else ingr_repr(item, Mem.ctx.project_id)
+        ingredient: JsonDict = item_to_id_ingr_repr(recipe["ingredient"])
+        result: JsonDict = item_to_id_ingr_repr(get_item_from_ingredient(recipe["result"])) if recipe.get("result") else ingr_repr(item, Mem.ctx.project_id)
 
         line: str = "execute if score #found simplenergy.data matches 0 store result score #found simplenergy.data if data storage simplenergy:main pulverizer.input"
         line += json.dumps(ingredient)
@@ -53,7 +53,7 @@ class PulverizerRecipeHandler:
     def generate_recipes(self) -> None:
         """ Generate all pulverizer recipes. """
         for item, data in Mem.definitions.items():
-            crafts: list[dict[str, Any]] = list(data.get("result_of_crafting", []))
+            crafts: list[JsonDict] = list(data.get("result_of_crafting", []))
             crafts += list(data.get("used_for_crafting", []))
 
             for recipe in crafts:
