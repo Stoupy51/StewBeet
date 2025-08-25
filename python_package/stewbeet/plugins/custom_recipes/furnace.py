@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 import json
-from typing import Any
 
 from beet import Recipe
+from beet.core.utils import JsonDict
 from stouputils.decorators import simple_cache
 from stouputils.io import super_json_dump
 
@@ -55,19 +55,19 @@ class FurnaceRecipeHandler:
                 )
 
     @simple_cache
-    def furnace_nbt_recipe(self, recipe: dict[str, Any], result_loot: str, result_ingr: dict[str, Any]) -> str:
+    def furnace_nbt_recipe(self, recipe: JsonDict, result_loot: str, result_ingr: JsonDict) -> str:
         """ Generate a furnace NBT recipe.
 
         Args:
-            recipe (dict[str, Any]): The recipe data.
+            recipe (JsonDict): The recipe data.
             result_loot (str): The loot table for the result.
-            result_ingr (dict[str, Any]): The result ingredient.
+            result_ingr (JsonDict): The result ingredient.
 
         Returns:
             str: The generated recipe command.
         """
-        ingredient: dict[str, Any] = recipe["ingredient"]
-        result: dict[str, Any] = item_to_id_ingr_repr(get_item_from_ingredient(result_ingr))
+        ingredient: JsonDict = recipe["ingredient"]
+        result: JsonDict = item_to_id_ingr_repr(get_item_from_ingredient(result_ingr))
 
         # Create a vanilla recipe for the furnace
         type: str = recipe["type"]
@@ -75,7 +75,7 @@ class FurnaceRecipeHandler:
         result_item: str = ingr_to_id(result_ingr).replace(':', '_')
         path: str = f"vanilla_items/{type}__{ingredient_vanilla.split(':')[1]}__{result_item}"
         type = f"minecraft:{type}" if ":" not in type else type
-        json_file: dict[str, Any] = {
+        json_file: JsonDict = {
             "type": type,
             "ingredient": ingredient_vanilla,
             "result": result,
@@ -91,11 +91,11 @@ class FurnaceRecipeHandler:
         return line
 
     @simple_cache()
-    def furnace_xp_reward(self, recipe: dict[str, Any], experience: float) -> str:
+    def furnace_xp_reward(self, recipe: JsonDict, experience: float) -> str:
         """ Generate a furnace XP reward.
 
         Args:
-            recipe (dict[str, Any]): The recipe data.
+            recipe (JsonDict): The recipe data.
             experience (float): The experience to reward.
 
         Returns:
@@ -113,7 +113,7 @@ scoreboard players reset #count furnace_nbt_recipes.data
         write_function(f"{self.FURNACE_NBT_PATH}/xp_reward/{experience}", file)
 
         # Create the recipe for the reward
-        json_file: dict[str, Any] = {
+        json_file: JsonDict = {
             "type": "minecraft:smelting",
             "ingredient": "minecraft:command_block",
             "result": {"id": "minecraft:command_block"},
@@ -124,7 +124,7 @@ scoreboard players reset #count furnace_nbt_recipes.data
 
         # Prepare line and return
         line: str = "execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input"
-        ingredient: dict[str, Any] = recipe["ingredient"]
+        ingredient: JsonDict = recipe["ingredient"]
         line += json.dumps(ingredient)
         line += f" run function {Mem.ctx.project_id}:calls/furnace_nbt_recipes/xp_reward/{experience}"
         return line
@@ -132,7 +132,7 @@ scoreboard players reset #count furnace_nbt_recipes.data
     def generate_recipes(self) -> None:
         """ Generate all furnace NBT recipes. """
         for item, data in Mem.definitions.items():
-            crafts: list[dict[str, Any]] = list(data.get("result_of_crafting", []))
+            crafts: list[JsonDict] = list(data.get("result_of_crafting", []))
             crafts += list(data.get("used_for_crafting", []))
 
             for recipe in crafts:

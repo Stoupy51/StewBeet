@@ -1,5 +1,7 @@
 
 # Imports
+from beet.core.utils import TextComponent
+
 from ..__memory__ import Mem
 
 
@@ -20,13 +22,13 @@ def format_energy_number(number: int) -> str:
 	else:
 		return f"{number/1000000000:.0f} T"
 
-def create_energy_lore(energy_data: dict) -> list[dict]:
+def create_energy_lore(energy_data: dict[str, int]) -> TextComponent:
 	""" Creates lore entries for energy-related blocks based on their energy data.
 
 	Args:
 		energy_data (dict): Dictionary containing energy configuration values
 	Returns:
-		list[dict]: List of lore entries
+		TextComponent: Formatted text component with energy lore
 	"""
 	# Determine if this is a battery (no usage/generation) or a cable (only transfer)
 	is_battery: bool = "max_storage" in energy_data and "usage" not in energy_data and "generation" not in energy_data
@@ -41,7 +43,7 @@ def create_energy_lore(energy_data: dict) -> list[dict]:
 	}
 
 	# Create the lore entries
-	lore: list[dict] = []
+	lore: TextComponent = []
 	for key, (label, unit) in lore_config.items():
 		if key in energy_data:
 			lore.append({

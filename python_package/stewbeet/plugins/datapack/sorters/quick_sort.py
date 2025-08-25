@@ -8,13 +8,14 @@ Author: Darukshock
 
 # Imports
 from beet import Context
+from beet.core.utils import JsonDict
 
 from ....core import Mem, write_function
 from .constants import MACRO
 
 
 # Functions
-def generate_quick_sort(ctx: Context, sorter: dict) -> None:
+def generate_quick_sort(ctx: Context, sorter: JsonDict) -> None:
 	""" Generate quick_sort algorithm functions for sorting storage lists.
 
 	This function creates a set of minecraft functions that implement the quick_sort

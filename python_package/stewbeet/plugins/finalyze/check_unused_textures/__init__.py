@@ -2,6 +2,7 @@
 # Imports
 import os
 from pathlib import Path
+from typing import Any, cast
 
 from beet import Context, Texture
 from beet.core.utils import JsonDict
@@ -27,19 +28,19 @@ def beet_default(ctx: Context) -> None:
 
 	# 1) Build a dict of all textures file paths relative to the textures folder:
 	# Ex: {'some_folder/dirt.png', 'stone.png', ...}
-	textures: set[str] = {relative_path(p, textures_folder) for p in Path(textures_folder).rglob("*.png")}
+	textures: set[str] = {relative_path(str(p), textures_folder) for p in Path(textures_folder).rglob("*.png")}
 
 	# 2) For each texture, check if any of the ctx.assets.textures endswith the texture path.
 	unused_paths: set[str] = set()
 	for path in textures:
 		no_extension_path: str = os.path.splitext(path)[0]
 		if not any(
-			texture.source_path.endswith(no_extension_path) if isinstance(texture, Texture)
+			str(texture.source_path).endswith(no_extension_path) if isinstance(texture, Texture)
 			else (
 				texture.endswith(no_extension_path) if isinstance(texture, str)
 				else False
 			)
-			for texture in ctx.assets.textures
+			for texture in cast(list[Any], ctx.assets.textures)
 		):
 			unused_paths.add(path)
 

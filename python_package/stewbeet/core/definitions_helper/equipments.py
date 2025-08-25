@@ -2,14 +2,16 @@
 # ruff: noqa: RUF012, E101
 # Imports
 from enum import Enum
+from typing import cast
 
+from beet.core.utils import JsonDict
 from stouputils.decorators import simple_cache
 from stouputils.print import warning
 
 from ..__memory__ import Mem
 
 # Constants
-SLOTS = {
+SLOTS: dict[str, str] = {
 	"helmet": "head",
 	"chestplate": "chest",
 	"leggings": "legs",
@@ -20,7 +22,7 @@ SLOTS = {
 	"shovel": "mainhand",
 	"hoe": "mainhand"
 }
-UNIQUE_SLOTS_VALUES = []
+UNIQUE_SLOTS_VALUES: list[str] = []	# No sorted(set()) since we want to preserve the current order
 for slot in SLOTS.values():
 	if slot not in UNIQUE_SLOTS_VALUES:
 		UNIQUE_SLOTS_VALUES.append(slot)
@@ -35,69 +37,78 @@ class DefaultOre(Enum):
 
 class VanillaEquipments(Enum):
 	""" Default vanilla equipments values (durability, armor, armor_toughness, knockback_resistance, attack_damage, attack_speed) """
-	HELMET			= {	DefaultOre.LEATHER:		{"durability": 55,		"armor": 1},
+	HELMET			= cast(dict[DefaultOre, dict[str, float]],
+					{	DefaultOre.LEATHER:		{"durability": 55,		"armor": 1},
 						DefaultOre.CHAINMAIL:	{"durability": 165,		"armor": 2},
 						DefaultOre.IRON:		{"durability": 165,		"armor": 2},
 						DefaultOre.GOLD:		{"durability": 77,		"armor": 2},
 						DefaultOre.DIAMOND:		{"durability": 363,		"armor": 3,	"armor_toughness": 2},
 			 			DefaultOre.NETHERITE:	{"durability": 407,		"armor": 3,	"armor_toughness": 3,	"knockback_resistance": 0.1}
-					}
-	CHESTPLATE		= {	DefaultOre.LEATHER:		{"durability": 80,		"armor": 3},
+					})
+	CHESTPLATE		= cast(dict[DefaultOre, dict[str, float]],
+					{	DefaultOre.LEATHER:		{"durability": 80,		"armor": 3},
 						DefaultOre.CHAINMAIL:	{"durability": 240,		"armor": 5},
 						DefaultOre.IRON:		{"durability": 240,		"armor": 6},
 						DefaultOre.GOLD:		{"durability": 112,		"armor": 5},
 						DefaultOre.DIAMOND: 	{"durability": 528,		"armor": 8,	"armor_toughness": 2},
 						DefaultOre.NETHERITE:	{"durability": 592,		"armor": 8,	"armor_toughness": 3,	"knockback_resistance": 0.1}
-					}
-	LEGGINGS		= {	DefaultOre.LEATHER:		{"durability": 75,		"armor": 2},
+					})
+	LEGGINGS		= cast(dict[DefaultOre, dict[str, float]],
+					{	DefaultOre.LEATHER:		{"durability": 75,		"armor": 2},
   						DefaultOre.CHAINMAIL:	{"durability": 225,		"armor": 4},
 						DefaultOre.IRON:		{"durability": 225,		"armor": 5},
 						DefaultOre.GOLD:		{"durability": 105,		"armor": 3},
 						DefaultOre.DIAMOND:		{"durability": 495,		"armor": 6,	"armor_toughness": 2},
 						DefaultOre.NETHERITE:	{"durability": 555,		"armor": 6,	"armor_toughness": 3,	"knockback_resistance": 0.1}
-					}
-	BOOTS			= {	DefaultOre.LEATHER:		{"durability": 65,		"armor": 1},
+					})
+	BOOTS			= cast(dict[DefaultOre, dict[str, float]],
+					{	DefaultOre.LEATHER:		{"durability": 65,		"armor": 1},
 						DefaultOre.CHAINMAIL:	{"durability": 195,		"armor": 1},
 						DefaultOre.IRON:		{"durability": 195,		"armor": 2},
 						DefaultOre.GOLD:		{"durability": 95,		"armor": 1},
 						DefaultOre.DIAMOND:		{"durability": 429,		"armor": 3,	"armor_toughness": 2},
 						DefaultOre.NETHERITE:	{"durability": 481,		"armor": 3,	"armor_toughness": 3,	"knockback_resistance": 0.1}
-					}
-	SWORD			= {	DefaultOre.LEATHER:		{"durability": 59,		"attack_damage": 4,		"attack_speed": -2.40},
+					})
+	SWORD			= cast(dict[DefaultOre, dict[str, float]],
+					{	DefaultOre.LEATHER:		{"durability": 59,		"attack_damage": 4,		"attack_speed": -2.40},
 						DefaultOre.CHAINMAIL:	{"durability": 131,		"attack_damage": 5,		"attack_speed": -2.40},
 						DefaultOre.IRON:		{"durability": 250,		"attack_damage": 6,		"attack_speed": -2.40},
 						DefaultOre.GOLD:		{"durability": 32,		"attack_damage": 4,		"attack_speed": -2.40},
 						DefaultOre.DIAMOND:		{"durability": 1561,	"attack_damage": 7,		"attack_speed": -2.40},
 						DefaultOre.NETHERITE:	{"durability": 2031,	"attack_damage": 8,		"attack_speed": -2.40}
-					}
-	PICKAXE			= {	DefaultOre.LEATHER:		{"durability": 59,		"attack_damage": 2,		"attack_speed": -2.8},
+					})
+	PICKAXE			= cast(dict[DefaultOre, dict[str, float]],
+					{	DefaultOre.LEATHER:		{"durability": 59,		"attack_damage": 2,		"attack_speed": -2.8},
 						DefaultOre.CHAINMAIL:	{"durability": 131,		"attack_damage": 3,		"attack_speed": -2.8},
 						DefaultOre.IRON:		{"durability": 250,		"attack_damage": 4,		"attack_speed": -2.8},
 						DefaultOre.GOLD:		{"durability": 32,		"attack_damage": 2,		"attack_speed": -2.8},
 						DefaultOre.DIAMOND:		{"durability": 1561,	"attack_damage": 5,		"attack_speed": -2.8},
 						DefaultOre.NETHERITE:	{"durability": 2031,	"attack_damage": 6,		"attack_speed": -2.8}
-					}
-	AXE				= {	DefaultOre.LEATHER:		{"durability": 59,		"attack_damage": 7,		"attack_speed": -3.20},
+					})
+	AXE				= cast(dict[DefaultOre, dict[str, float]],
+					{	DefaultOre.LEATHER:		{"durability": 59,		"attack_damage": 7,		"attack_speed": -3.20},
 						DefaultOre.CHAINMAIL:	{"durability": 131,		"attack_damage": 9,		"attack_speed": -3.20},
 						DefaultOre.IRON:		{"durability": 250,		"attack_damage": 9,		"attack_speed": -3.10},
 						DefaultOre.GOLD:		{"durability": 32,		"attack_damage": 7,		"attack_speed": -3.00},
 						DefaultOre.DIAMOND:		{"durability": 1561,	"attack_damage": 9,		"attack_speed": -3.00},
 						DefaultOre.NETHERITE:	{"durability": 2031,	"attack_damage": 10,	"attack_speed": -3.00}
-					}
-	SHOVEL			= {	DefaultOre.LEATHER:		{"durability": 59,		"attack_damage": 2.5,	"attack_speed": -3.00},
+					})
+	SHOVEL			= cast(dict[DefaultOre, dict[str, float]],
+					{	DefaultOre.LEATHER:		{"durability": 59,		"attack_damage": 2.5,	"attack_speed": -3.00},
 						DefaultOre.CHAINMAIL:	{"durability": 131,		"attack_damage": 3.5,	"attack_speed": -3.00},
 						DefaultOre.IRON:		{"durability": 250,		"attack_damage": 4.5,	"attack_speed": -3.00},
 						DefaultOre.GOLD:		{"durability": 32,		"attack_damage": 2.5,	"attack_speed": -3.00},
 						DefaultOre.DIAMOND:		{"durability": 1561,	"attack_damage": 5.5,	"attack_speed": -3.00},
 			 			DefaultOre.NETHERITE:	{"durability": 2031,	"attack_damage": 6.5,	"attack_speed": -3.00}
-					}
-	HOE				= {	DefaultOre.LEATHER:		{"durability": 59,		"attack_damage": 1,		"attack_speed": -3.00},
+					})
+	HOE				= cast(dict[DefaultOre, dict[str, float]],
+					{	DefaultOre.LEATHER:		{"durability": 59,		"attack_damage": 1,		"attack_speed": -3.00},
 						DefaultOre.CHAINMAIL:	{"durability": 131,		"attack_damage": 1,		"attack_speed": -2.00},
 						DefaultOre.IRON:		{"durability": 250,		"attack_damage": 1,		"attack_speed": -1.00},
 						DefaultOre.GOLD:		{"durability": 32,		"attack_damage": 1,		"attack_speed": -3.00},
 						DefaultOre.DIAMOND:		{"durability": 1561,	"attack_damage": 1,		"attack_speed": 0.00},
 						DefaultOre.NETHERITE:	{"durability": 2031,	"attack_damage": 1,		"attack_speed": 0.00}
-					}
+					})
 
 class EquipmentsConfig:
 	def __init__(self, equivalent_to: DefaultOre = DefaultOre.DIAMOND, pickaxe_durability: int = 1561, attributes: dict[str, float] | None = None):
@@ -115,9 +126,9 @@ class EquipmentsConfig:
 		"""
 		if attributes is None:
 			attributes = {}
-		self.equivalent_to = equivalent_to
-		self.pickaxe_durability = pickaxe_durability
-		self.attributes = attributes
+		self.equivalent_to: DefaultOre = equivalent_to
+		self.pickaxe_durability: int = pickaxe_durability
+		self.attributes: dict[str, float] = attributes
 		for key in attributes.keys():
 			if "player." in key:
 				warning("Since 1.21.3, the 'player.' prefix is no longer written in attributes!!!")
@@ -140,12 +151,12 @@ class EquipmentsConfig:
 		return {key: value for key, value in self.attributes.items() if key not in NOT_ON_ARMOR}
 
 # UUIDs utils
-def format_attributes(attributes: dict, slot: str, attr_config: dict | None = None) -> list[dict]:
+def format_attributes(attributes: dict[str, float], slot: str, attr_config: dict[str, float] | None = None) -> list[JsonDict]:
 	""" Returns generated attribute_modifiers key for an item (adds up attributes and config) """
 	# Get attributes from config
 	if attr_config is None:
 		attr_config = {}
-	attribute_modifiers = []
+	attribute_modifiers: list[JsonDict] = []
 	for attribute_name, value in attr_config.items():
 
 		# We already have a base_attack_damage

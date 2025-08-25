@@ -2,7 +2,7 @@
 # Imports
 import os
 
-from stouputils.continuous_delivery.cd_utils import handle_response, load_credentials  # noqa: F401
+from stouputils.continuous_delivery.cd_utils import load_credentials  # type: ignore # noqa: F401
 
 from ..core.constants import MINECRAFT_VERSION
 
@@ -23,5 +23,7 @@ def get_supported_versions(version: str = MINECRAFT_VERSION) -> list[str]:
 	supported_versions: list[str] = [version]
 	if version == "1.21.3":
 		supported_versions.append("1.21.2")
+	if version == "1.21.8":
+		supported_versions.extend(["1.21.7", "1.21.6"])
 	return supported_versions
 

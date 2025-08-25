@@ -41,8 +41,8 @@ def beet_default(ctx: Context) -> None:
 	if not datapack_destinations and not resource_pack_destinations:
 		return
 	project_name_simple = ctx.project_name.replace(" ", "")
-	output_path = ctx.output_directory
-	libs_folder = stewbeet_config.get("libs_folder", "libs")
+	output_path: str = str(ctx.output_directory)
+	libs_folder: str = str(stewbeet_config.get("libs_folder", "libs"))
 
 	# Copy datapacks
 	if datapack_destinations:

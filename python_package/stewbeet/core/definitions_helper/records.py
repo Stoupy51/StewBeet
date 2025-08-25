@@ -4,6 +4,7 @@ import os
 from string import ascii_lowercase, digits
 
 from beet import JukeboxSong, Sound
+from beet.core.utils import JsonDict
 from mutagen.oggvorbis import OggVorbis
 from stouputils.decorators import handle_error
 from stouputils.io import clean_path, super_json_dump
@@ -58,7 +59,7 @@ def generate_custom_records(records: dict[str, str] | str | None = "auto", categ
 	# For each record, add it to the definitions
 	for record, sound in records_to_check.items():
 		# Validate sound file format
-		if not isinstance(sound, str):
+		if not isinstance(sound, str): # type: ignore
 			error(f"Error during custom record generation: sound '{sound}' is not a string, got {type(sound).__name__}")
 		if not sound.endswith(".ogg"):
 			warning(f"Error during custom record generation: sound '{sound}' is not an ogg file")
@@ -87,7 +88,7 @@ def generate_custom_records(records: dict[str, str] | str | None = "auto", categ
 				duration: int = round(OggVorbis(file_path).info.length) # type: ignore
 
 				# Create and write jukebox song configuration
-				json_song: dict = {
+				json_song: JsonDict = {
 					"comparator_output": duration % 16,
 					"length_in_seconds": duration + 1,
 					"sound_event": {"sound_id":f"{Mem.ctx.project_id}:{record}"},

@@ -1,4 +1,5 @@
 
+# pyright: reportUnnecessaryIsInstance=false
 # Imports
 from __future__ import annotations
 
@@ -130,7 +131,10 @@ scoreboard players set #max_height smart_ore_generation.data {self.maximum_heigh
 		place_vein: str = f"execute if score #dimension smart_ore_generation.data matches 0.. run function {vein_path}\n"
 		content += int_veins_per_region * place_vein
 		if remaining_veins > 0:
-			content += f"execute if score #dimension smart_ore_generation.data matches 0.. if predicate {{condition:\"minecraft:random_chance\",chance:{remaining_veins:.5f}}} run function {vein_path}\n"
+			content += (
+				"execute if score #dimension smart_ore_generation.data matches 0.. if predicate "
+				f"{{condition:\"minecraft:random_chance\",chance:{remaining_veins:.5f}}} run function {vein_path}\n"
+			)
 
 		# Write file
 		write_function(f"{Mem.ctx.project_id}:calls/smart_ore_generation/generate_ores", content)

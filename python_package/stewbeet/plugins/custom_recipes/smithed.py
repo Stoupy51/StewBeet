@@ -1,8 +1,8 @@
 
 # Imports
 import json
-from typing import Any
 
+from beet.core.utils import JsonDict
 from stouputils.decorators import simple_cache
 from stouputils.print import debug
 
@@ -34,18 +34,18 @@ class SmithedRecipeHandler:
         handler.generate_recipes()
 
     @simple_cache
-    def smithed_shapeless_recipe(self, recipe: dict[str, Any], result_loot: str) -> str:
+    def smithed_shapeless_recipe(self, recipe: JsonDict, result_loot: str) -> str:
         """ Generate a Smithed Crafter shapeless recipe.
 
         Args:
-            recipe (dict[str, Any]): The recipe data.
+            recipe (JsonDict): The recipe data.
             result_loot (str): The loot table for the result.
 
         Returns:
             str: The generated recipe command.
         """
         # Get unique ingredients and their count
-        unique_ingredients: list[tuple[int, dict[str, Any]]] = []
+        unique_ingredients: list[tuple[int, JsonDict]] = []
         for ingr in recipe["ingredients"]:
             index: int = -1
             for i, (_, e) in enumerate(unique_ingredients):
@@ -62,9 +62,9 @@ class SmithedRecipeHandler:
             "execute if score @s smithed.data matches 0 store result score @s smithed.data "
             f"if score count smithed.data matches {len(unique_ingredients)} if data storage smithed.crafter:input "
         )
-        r: dict[str, list[dict[str, Any]]] = {"recipe": []}
+        r: dict[str, list[JsonDict]] = {"recipe": []}
         for count, ingr in unique_ingredients:
-            item: dict[str, Any] = {"count": count}
+            item: JsonDict = {"count": count}
             item.update(ingr)
             r["recipe"].append(item_to_id_ingr_repr(item))
         line += json.dumps(r)
@@ -76,7 +76,7 @@ class SmithedRecipeHandler:
         return line
 
     @simple_cache()
-    def smithed_shaped_recipe(self, recipe: dict[str, Any], result_loot: str) -> str:
+    def smithed_shaped_recipe(self, recipe: JsonDict, result_loot: str) -> str:
         """ Generate a Smithed Crafter shaped recipe.
 
         Args:
@@ -87,8 +87,8 @@ class SmithedRecipeHandler:
             str: The generated recipe command.
         """
         # Convert ingredients to aimed recipes
-        ingredients: dict[str, dict[str, Any]] = recipe["ingredients"]
-        recipes: dict[int, list[dict[str, Any]]] = {0: [], 1: [], 2: []}
+        ingredients: dict[str, JsonDict] = recipe["ingredients"]
+        recipes: dict[int, list[JsonDict]] = {0: [], 1: [], 2: []}
 
         for i, row in enumerate(recipe["shape"]):
             for slot, char in enumerate(row):
@@ -150,7 +150,7 @@ class SmithedRecipeHandler:
     def generate_recipes(self) -> None:
         """Generate all Smithed Crafter recipes."""
         for item, data in Mem.definitions.items():
-            crafts: list[dict[str, Any]] = list(data.get("result_of_crafting", []))
+            crafts: list[JsonDict] = list(data.get("result_of_crafting", []))
             crafts += list(data.get("used_for_crafting", []))
 
             for recipe in crafts:
@@ -165,7 +165,7 @@ class SmithedRecipeHandler:
 
                 # Transform ingr to a list of dicts
                 if isinstance(ingr, dict):
-                    ingr = list(ingr.values())
+                    ingr: list[JsonDict] = list(ingr.values()) # type: ignore
                 if not ingr:
                     ingr = [recipe.get("ingredient", {})]
 

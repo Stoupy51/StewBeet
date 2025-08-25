@@ -1,4 +1,5 @@
 
+# pyright: reportArgumentType=false
 # Imports
 from beet import FunctionTag
 

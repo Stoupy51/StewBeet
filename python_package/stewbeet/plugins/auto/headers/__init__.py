@@ -6,9 +6,9 @@ from stouputils.print import progress
 
 from ....core.__memory__ import Mem
 from ....core.utils.io import read_function, write_function
-from .object import Header
-from .function_analyzer import FunctionAnalyzer
 from .context_analyzer import ContextAnalyzer
+from .function_analyzer import FunctionAnalyzer
+from .object import Header
 
 
 # Main entry point
@@ -19,7 +19,7 @@ def beet_default(ctx: Context):
     Args:
         ctx (Context): The beet context.
     """
-    if Mem.ctx is None:
+    if Mem.ctx is None: # pyright: ignore[reportUnnecessaryComparison]
         Mem.ctx = ctx
 
     # Get all mcfunctions paths and create Header objects
