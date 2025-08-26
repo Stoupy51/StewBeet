@@ -1,4 +1,5 @@
 
+# type: ignore
 # ruff: noqa: F401
 # Imports
 from beet import *

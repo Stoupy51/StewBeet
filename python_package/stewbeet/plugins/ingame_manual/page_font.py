@@ -3,6 +3,7 @@
 # Imports
 import os
 
+from beet.core.utils import JsonDict
 from PIL import Image
 from stouputils.print import warning
 
@@ -13,7 +14,7 @@ from .shared_import import BORDER_COLOR, BORDER_SIZE, SQUARE_SIZE, TEMPLATES_PAT
 
 
 # Generate page font function (called in utils)
-def generate_page_font(name: str, page_font: str, craft: dict|None = None, output_name: str = "") -> None:
+def generate_page_font(name: str, page_font: str, craft: JsonDict|None = None, output_name: str = "") -> None:
 	""" Generate the page font image with the proper items
 	Args:
 		name			(str):			Name of the item
@@ -170,12 +171,12 @@ def generate_page_font(name: str, page_font: str, craft: dict|None = None, outpu
 
 
 # Generate small craft icon
-def generate_wiki_font_for_ingr(name: str, craft: dict) -> str:
+def generate_wiki_font_for_ingr(name: str, craft: JsonDict) -> str:
 	""" Generate the wiki icon font to display in the manual for wiki buttons showing the result of the craft
 	If no texture found for the resulting item, return the default wiki font
 	Args:
-		name	(str):	The name of the item, ex: "adamantium_fragment"
-		craft	(dict):	The associed craft, ex: {"type": "crafting_shaped","result_count": 1,"category": "equipment","shape": ["XXX","X X"],"ingredients": {"X": {"components": {"custom_data": {"iyc": {"adamantium_fragment": true}}}}},"result": {"components": {"custom_data": {"iyc": {"adamantium_helmet": true}}},"count": 1}}
+		name	(str):		The name of the item, ex: "adamantium_fragment"
+		craft	(JsonDict):	The associed craft, ex: {"type": "crafting_shaped","result_count": 1,"category": "equipment","shape": ["XXX","X X"],"ingredients": {"X": {"components": {"custom_data": {"iyc": {"adamantium_fragment": true}}}}},"result": {"components": {"custom_data": {"iyc": {"adamantium_helmet": true}}},"count": 1}}
 	Returns:
 		str: The craft icon
 	"""

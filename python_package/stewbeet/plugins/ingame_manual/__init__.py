@@ -20,7 +20,7 @@ def beet_default(ctx: Context):
 		ctx (Context): The beet context.
 	"""
 	# Set up memory context
-	if Mem.ctx is None:
+	if Mem.ctx is None: # pyright: ignore[reportUnnecessaryComparison]
 		Mem.ctx = ctx
 
 	# Only generate manual if we have definitions items

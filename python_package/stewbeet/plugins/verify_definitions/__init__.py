@@ -1,6 +1,9 @@
 
+# pyright: reportUnknownMemberType=false
 # ruff: noqa: E501
 # Imports
+from typing import Any, cast
+
 from beet import Context
 from beet.core.utils import JsonDict
 from stouputils.decorators import measure_time
@@ -30,7 +33,7 @@ def beet_default(ctx: Context) -> None:
 	Args:
 		ctx (Context): The beet context.
 	"""
-	if Mem.ctx is None:
+	if Mem.ctx is None: # pyright: ignore[reportUnnecessaryComparison]
 		Mem.ctx = ctx
 
 	# Get configuration data from context
@@ -45,7 +48,7 @@ def beet_default(ctx: Context) -> None:
 			data.pop(USED_FOR_CRAFTING)
 
 	# Create a copy of the definitions without OVERRIDE_MODEL key
-	definitions_copy: dict[str, dict] = {}
+	definitions_copy: dict[str, JsonDict] = {}
 	for item, data in Mem.definitions.items():
 		definitions_copy[item] = data.copy()
 		if "override_model" in definitions_copy[item]:
@@ -120,7 +123,8 @@ def beet_default(ctx: Context) -> None:
 			if not isinstance(data["lore"], list):
 				errors.append(f"'lore' key should be a list for '{item}', got {data['lore']}")
 			else:
-				for i, line in enumerate(data["lore"]):
+				lore = cast(list[JsonDict | None], data["lore"])
+				for i, line in enumerate(lore):
 					if not isinstance(line, dict | list | str):
 						errors.append(f"Line #{i} in 'lore' key should be a Text Component for '{item}', ex: {{\"text\":\"This is a lore line\"}} or [\"This is a lore line\"]")
 					else:
@@ -137,7 +141,7 @@ def beet_default(ctx: Context) -> None:
 		if data.get(RESULT_OF_CRAFTING) or data.get(USED_FOR_CRAFTING):
 
 			# Get a list of recipes
-			crafts_to_check: list[dict] = list(data.get(RESULT_OF_CRAFTING, []))
+			crafts_to_check: list[Any] = list(data.get(RESULT_OF_CRAFTING, []))
 			crafts_to_check += list(data.get(USED_FOR_CRAFTING,[]))
 
 			# Check each recipe
@@ -147,6 +151,7 @@ def beet_default(ctx: Context) -> None:
 				if not isinstance(recipe, dict):
 					errors.append(f"Recipe #{i} in RESULT_OF_CRAFTING should be a dictionary for '{item}'")
 				else:
+					recipe = cast(JsonDict, recipe)
 
 					# Verify "type" key
 					if not recipe.get("type") or not isinstance(recipe["type"], str):
@@ -157,24 +162,27 @@ def beet_default(ctx: Context) -> None:
 						if recipe["type"] == "crafting_shaped":
 							if not recipe.get("shape") or not isinstance(recipe["shape"], list):
 								errors.append(f"Recipe #{i} in RESULT_OF_CRAFTING should have a list[str] 'shape' key for '{item}'")
-							elif len(recipe["shape"]) > 3 or len(recipe["shape"][0]) > 3:
+							elif len(recipe["shape"]) > 3 or len(recipe["shape"][0]) > 3: # pyright: ignore[reportUnknownArgumentType]
 								errors.append(f"Recipe #{i} in RESULT_OF_CRAFTING should have a maximum of 3 rows and 3 columns for '{item}'")
 							else:
-								row_size = len(recipe["shape"][0])
-								if any(len(row) != row_size for row in recipe["shape"]):
+								shape = cast(list[str], recipe["shape"])
+								row_size = len(shape[0])
+								if any(len(row) != row_size for row in shape):
 									errors.append(f"Recipe #{i} in RESULT_OF_CRAFTING should have the same number of columns for each row for '{item}'")
 
 							if not recipe.get("ingredients") or not isinstance(recipe["ingredients"], dict):
 								errors.append(f"Recipe #{i} in RESULT_OF_CRAFTING should have a dict 'ingredients' key for '{item}'")
 							else:
-								for symbol, ingredient in recipe["ingredients"].items():
+								ingredients = cast(JsonDict, recipe["ingredients"])
+								for symbol, ingredient in ingredients.items():
 									if not isinstance(ingredient, dict):
 										errors.append(f"Recipe #{i} in RESULT_OF_CRAFTING should have a dict ingredient for symbol '{symbol}' for '{item}'")
 									elif not ingredient.get("item") and not ingredient.get("components"):
 										errors.append(f"Recipe #{i} in RESULT_OF_CRAFTING should have an 'item' or 'components' key for ingredient of symbol '{symbol}' for '{item}', please use 'ingr_repr' function")
 									elif ingredient.get("components") and not isinstance(ingredient["components"], dict):
 										errors.append(f"Recipe #{i} in RESULT_OF_CRAFTING should have a dict 'components' key for ingredient of symbol '{symbol}' for '{item}', please use 'ingr_repr' function")
-									if not any(symbol in line for line in recipe["shape"]):
+									shape = cast(list[str], recipe["shape"])
+									if not any(symbol in line for line in shape):
 										errors.append(f"Recipe #{i} in RESULT_OF_CRAFTING should have a symbol '{symbol}' in the shape for '{item}'")
 
 						# Check the crafting_shapeless type
@@ -182,7 +190,8 @@ def beet_default(ctx: Context) -> None:
 							if not recipe.get("ingredients") or not isinstance(recipe["ingredients"], list):
 								errors.append(f"Recipe #{i} in RESULT_OF_CRAFTING should have a list 'ingredients' key for '{item}'")
 							else:
-								for ingredient in recipe["ingredients"]:
+								ingredients = cast(list[Any], recipe["ingredients"])
+								for ingredient in ingredients:
 									if not isinstance(ingredient, dict):
 										errors.append(f"Recipe #{i} in RESULT_OF_CRAFTING should have a dict ingredient for '{item}'")
 									elif not ingredient.get("item") and not ingredient.get("components"):

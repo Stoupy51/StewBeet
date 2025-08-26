@@ -1,7 +1,8 @@
 
+# pyright: reportUnknownMemberType=false
 # Imports
 import os
-from typing import Any
+from typing import Any, cast
 
 from PIL import Image, ImageDraw, ImageFont
 
@@ -42,7 +43,7 @@ def careful_resize(image: Image.Image, max_result_size: int, resampling: Image.R
 def add_border(image: Image.Image, border_color: tuple[int, int, int, int], border_size: int, is_rectangle_shape: bool) -> Image.Image:
 	"""Add a border to every part of the image"""
 	image = image.convert("RGBA")
-	pixels: Any = image.load()
+	pixels = cast(Any, image.load()) # pyright: ignore[reportUnknownMemberType]
 
 	if not is_rectangle_shape:
 		pixels_to_change = [(x, y) for x in range(image.width) for y in range(image.height) if pixels[x, y][3] == 0]
