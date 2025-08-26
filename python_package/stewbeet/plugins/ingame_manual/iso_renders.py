@@ -1,10 +1,12 @@
 
 # Imports
 import os
+from typing import cast
 
 import requests
 from beet import Model
-from model_resolver import Render
+from beet.core.utils import JsonDict
+from model_resolver import Render  # pyright: ignore[reportMissingTypeStubs]
 from stouputils.io import super_copy, super_open
 from stouputils.parallel import multithreading
 from stouputils.print import debug, warning
@@ -23,7 +25,6 @@ from .shared_import import SharedMemory
 
 # Generate iso renders for every item in the definitions
 def generate_all_iso_renders():
-	definitions: dict[str, dict] = Mem.definitions
 	ns: str = Mem.ctx.project_id
 
 	# Create the items folder
@@ -34,7 +35,7 @@ def generate_all_iso_renders():
 	cache_assets: bool = Mem.ctx.meta.get("stewbeet",{}).get("manual", {}).get("cache_assets", True)
 	textures_folder: str = Mem.ctx.meta.get("stewbeet",{}).get("textures_folder", "assets/textures")
 	for_model_resolver: dict[str, str] = {}
-	for item, data in definitions.items():
+	for item, data in Mem.definitions.items():
 
 		# Skip items that don't have models
 		if not data.get("item_model"):
@@ -59,10 +60,10 @@ def generate_all_iso_renders():
 				continue
 
 			# Add to the model resolver queue (only if present in resource pack)
-			model: Model = Mem.ctx.assets[ns].models.get(f"item/{item}")
+			model: Model | None = Mem.ctx.assets[ns].models.get(f"item/{item}")
 			rp_path = f"{ns}:item/{item}"
 			dst_path = f"{path}/{ns}/{item}.png"
-			if model is not None and model.get_content().get("textures", None) is not None:
+			if model is not None and model.get_content().get("textures", None) is not None: # type: ignore
 				for_model_resolver[rp_path] = dst_path
 
 	# Launch model resolvers for remaining blocks
@@ -88,16 +89,16 @@ def generate_all_iso_renders():
 
 	## Copy every used vanilla items
 	# Get every used vanilla items
-	used_vanilla_items = set()
-	for data in definitions.values():
-		all_crafts: list[dict] = list(data.get(RESULT_OF_CRAFTING,[]))
+	used_vanilla_items: set[str] = set()
+	for data in Mem.definitions.values():
+		all_crafts: list[JsonDict] = list(data.get(RESULT_OF_CRAFTING,[]))
 		all_crafts += list(data.get(USED_FOR_CRAFTING,[]))
 		for recipe in all_crafts:
 			ingredients = []
 			if "ingredients" in recipe:
 				ingredients = recipe["ingredients"]
 				if isinstance(ingredients, dict):
-					ingredients = ingredients.values()
+					ingredients = cast(list[JsonDict], ingredients.values())
 			elif "ingredient" in recipe:
 				ingredients = [recipe["ingredient"]]
 			for ingredient in ingredients:

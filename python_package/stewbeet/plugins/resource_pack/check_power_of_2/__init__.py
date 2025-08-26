@@ -1,6 +1,10 @@
 
+# pyright: reportUnknownMemberType=false
 # Imports
+from typing import cast
+
 from beet import Context, Texture
+from PIL import Image
 from stouputils.decorators import measure_time
 from stouputils.print import progress, warning
 
@@ -20,7 +24,7 @@ def beet_default(ctx: Context) -> None:
 		texture: Texture = ctx.assets.textures[namespaced]
 
 		# Check if the texture is in power of 2 resolution
-		width, height = texture.image.size
+		width, height = cast(Image.Image, texture.image).size
 		if bin(width).count("1") != 1 or bin(height).count("1") != 1:  # At least one of them is not a power of 2
 			# If width can't divide height, add it to the wrongs list (else it's probably a GUI or animation texture)
 			if height % width != 0 or height == width:

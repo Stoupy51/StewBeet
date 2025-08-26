@@ -21,7 +21,7 @@ def beet_default(ctx: Context):
 	"""
 	## Assertions
 	# Stewbeet Initialized
-	if Mem.ctx is None:
+	if Mem.ctx is None: # pyright: ignore[reportUnnecessaryComparison]
 		Mem.ctx = ctx
 
 	# Textures folder
@@ -30,7 +30,7 @@ def beet_default(ctx: Context):
 
 	# Textures
 	textures: dict[str, str] = {
-		clean_path(str(p)).split("/")[-1]: relative_path(p)
+		clean_path(str(p)).split("/")[-1]: relative_path(str(p))
 		for p in Path(textures_folder).rglob("*.png")
 	}
 

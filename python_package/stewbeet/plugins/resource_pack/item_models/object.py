@@ -31,17 +31,17 @@ class AutoModel:
 	"""
 	# Class variables
 	DEFAULT_PARENT: str = "item/generated"
-	def __init__(self, item_name: str, data: dict, source_textures: dict[str, str], ignore_textures: bool = False):
+	def __init__(self, item_name: str, data: JsonDict, source_textures: dict[str, str], ignore_textures: bool = False):
 		""" Initialize the AutoModel.
 
 		Args:
 			item_name (str): The name of the item.
-			data (dict): The item data from the definitions.
+			data (JsonDict): The item data from the definitions.
 			source_textures (dict[str, str]): Dictionary of source textures.
 			ignore_textures (bool): Whether to ignore texture-related errors.
 		"""
 		self.item_name: str = item_name
-		self.data: dict = data
+		self.data: JsonDict = data
 		self.namespace: str = Mem.ctx.project_id
 		self.block_or_item: str = "item"
 		self.used_textures: set[str] = set()
@@ -53,12 +53,12 @@ class AutoModel:
 		self.textures = self.data.get("textures", {})
 
 	@classmethod
-	def from_definitions(cls, item_name: str, data: dict, source_textures: dict[str, str], ignore_textures: bool = False) -> AutoModel:
+	def from_definitions(cls, item_name: str, data: JsonDict, source_textures: dict[str, str], ignore_textures: bool = False) -> AutoModel:
 		""" Create an AutoModel from a definitions entry.
 
 		Args:
 			item_name (str): The name of the item.
-			data (dict): The item data from the definitions.
+			data (JsonDict): The item data from the definitions.
 			source_textures (dict[str, str]): Dictionary of source textures.
 			ignore_textures (bool): Whether to ignore textures in the model.
 
@@ -143,7 +143,7 @@ class AutoModel:
 			any((isinstance(x, str) and "block" in x) for x in self.data.get(OVERRIDE_MODEL, {}).values())):
 			self.block_or_item = "block"
 
-		overrides: dict = self.data.get(OVERRIDE_MODEL, {})
+		overrides: JsonDict = self.data.get(OVERRIDE_MODEL, {})
 
 		# Check if textures should be excluded completely
 		exclude_textures: bool = "textures" in overrides and overrides.get("textures") is None
@@ -164,7 +164,7 @@ class AutoModel:
 
 		# Generate its model file(s)
 		for on_off in powered:
-			content: dict = {}			# Get all variants
+			content: JsonDict = {}			# Get all variants
 			all_variants: list[str] = [
 				x.replace(".png", "") for x in self.source_textures
 				if os.path.basename(x).startswith(self.item_name)
@@ -197,7 +197,7 @@ class AutoModel:
 							# Generate 6 models for each cake slice
 							for i in range(1, 7):
 								name: str = f"{self.item_name}_slice{i}"
-								slice_content = {"parent": f"block/cake_slice{i}", "textures": content["textures"]}
+								slice_content: JsonDict = {"parent": f"block/cake_slice{i}", "textures": content["textures"]}
 								Mem.ctx.assets[f"{self.namespace}:item/{name}{on_off}"] = Model(super_json_dump(slice_content, max_level=4))						# Check cube_bottom_top model
 						elif self.model_in_variants(cube_bottom_top, variants):
 							content["parent"] = "block/cube_bottom_top"
@@ -256,7 +256,7 @@ class AutoModel:
 							[v for v in variants if "_pulling_" in v],
 							key=lambda x: int(x.split("_")[-1])
 						)
-						items_content: dict = {}
+						items_content: JsonDict = {}
 						if sorted_pull_variants:
 							items_content["model"] = {
 								"type": "minecraft:condition",
@@ -279,7 +279,7 @@ class AutoModel:
 
 							# Add override for each pulling state
 							for i, variant in enumerate(sorted_pull_variants):
-								pull_content: dict = {"parent": parent, "textures": {"layer0": f"{self.namespace}:item/{variant}"}}
+								pull_content: JsonDict = {"parent": parent, "textures": {"layer0": f"{self.namespace}:item/{variant}"}}
 								# Add texture to assets
 								if variant + ".png" in self.source_textures:
 									Mem.ctx.assets[f"{self.namespace}:item/{variant}"] = Texture(source_path=self.source_textures[variant + ".png"])
@@ -289,7 +289,7 @@ class AutoModel:
 								if i < (len(sorted_pull_variants) - 1):
 									pull: float = 0.65 + (0.25 * i)
 									model: str = f"{self.namespace}:item/{self.item_name}_pulling_{i + 1}"
-									items_content["model"]["on_true"]["entries"].append({
+									items_content["model"]["on_true"]["entries"].append({ # type: ignore
 										"model": {
 											"type": "minecraft:model",
 											"model": model

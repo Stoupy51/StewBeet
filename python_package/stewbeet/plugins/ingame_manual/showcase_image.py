@@ -39,7 +39,7 @@ def calculate_optimal_grid(item_count: int) -> tuple[int, int]:
 
 	return best_rows, best_cols
 
-def generate_showcase_images(showcase_mode: int, categories: dict[str, list], simple_case: Image.Image):
+def generate_showcase_images(showcase_mode: int, categories: dict[str, list[str]], simple_case: Image.Image):
 	""" Generate showcase images based on the showcase_mode parameter
 
     Args:
@@ -123,8 +123,9 @@ def create_showcase_image(items: list[str], filename: str, simple_case: Image.Im
 			showcase_image.paste(resized_item, (item_x, item_y))
 
 	# Save to output directory
-	os.makedirs(Mem.ctx.output_directory, exist_ok=True)
-	output_path = os.path.join(Mem.ctx.output_directory, filename)
+	output: str = str(Mem.ctx.output_directory)
+	os.makedirs(output, exist_ok=True)
+	output_path = os.path.join(output, filename)
 	showcase_image.save(output_path, "PNG")
 	debug(f"Generated showcase image: {relative_path(output_path)} ({rows}x{cols} grid, {len(items)} items)")
 

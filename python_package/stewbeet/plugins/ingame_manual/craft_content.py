@@ -1,5 +1,7 @@
 
 # Imports
+from beet.core.utils import JsonDict, TextComponent
+
 from ...core.__memory__ import Mem
 from ...core.constants import PULVERIZING
 from ...core.ingredients import FURNACES_RECIPES_TYPES
@@ -10,17 +12,17 @@ from .shared_import import FONT_FILE, INVISIBLE_ITEM_WIDTH, MICRO_NONE_FONT, SMA
 
 
 # Generate all craft types content
-def generate_craft_content(craft: dict, name: str, page_font: str) -> list:
+def generate_craft_content(craft: JsonDict, name: str, page_font: str) -> list[TextComponent]:
 	""" Generate the content for the craft type
 	Args:
-		craft		(dict):	The craft dictionary, ex: {"type": "crafting_shaped","result_count": 1,"category": "equipment","shape": ["XXX","X X"],"ingredients": {"X": {"components": {"custom_data": {"iyc": {"adamantium": true}}}}}}
+		craft		(JsonDict):	The craft dictionary, ex: {"type": "crafting_shaped","result_count": 1,"category": "equipment","shape": ["XXX","X X"],"ingredients": {"X": {"components": {"custom_data": {"iyc": {"adamantium": true}}}}}}
 		name		(str):	The name of the item, ex: "adamantium_pickaxe"
 		page_font	(str):	The font for the page, ex: "\u0002"
 	Returns:
-		list:	The content of the craft, ex: [{"text": ...}]
+		list[TextComponent]:	The content of the craft, ex: [{"text": ...}]
 	"""  # noqa: E501
 	craft_type = craft["type"]
-	content: list[dict|str] = [{"text": "", "font": Mem.ctx.project_id + ':' + FONT_FILE, "color": "white"}]	# Make default font for every next component
+	content: list[TextComponent] = [{"text": "", "font": Mem.ctx.project_id + ':' + FONT_FILE, "color": "white"}]	# Make default font for every next component
 
 	# Convert shapeless crafting to shaped crafting
 	if craft_type == "crafting_shapeless":
@@ -54,7 +56,7 @@ def generate_craft_content(craft: dict, name: str, page_font: str) -> list:
 		shape: list[str] = craft["shape"]
 
 		# Convert each ingredients to its text component
-		formatted_ingredients: dict[str, dict] = {}
+		formatted_ingredients: dict[str, JsonDict] = {}
 		for k, v in craft["ingredients"].items():
 			formatted_ingredients[k] = get_item_component(v)
 
@@ -142,7 +144,7 @@ def generate_craft_content(craft: dict, name: str, page_font: str) -> list:
 	elif craft_type in FURNACES_RECIPES_TYPES:
 
 		# Convert ingredient to its text component
-		formatted_ingredient: dict = get_item_component(craft["ingredient"])
+		formatted_ingredient: JsonDict = get_item_component(craft["ingredient"])
 
 		# Add the ingredient to the craft
 		for i in range(2):
@@ -171,7 +173,7 @@ def generate_craft_content(craft: dict, name: str, page_font: str) -> list:
 	elif craft_type == PULVERIZING:
 
 		# Convert ingredient to its text component
-		formatted_ingredient: dict = get_item_component(craft["ingredient"])
+		formatted_ingredient: JsonDict = get_item_component(craft["ingredient"])
 		content.append("\n\n")
 		for i in range(2):
 

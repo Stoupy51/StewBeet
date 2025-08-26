@@ -1,8 +1,9 @@
 
 # ruff: noqa: E501
 # Imports
-from typing import Any
+from typing import cast
 
+from beet.core.utils import JsonDict
 from stouputils.decorators import simple_cache
 from stouputils.print import error
 
@@ -25,12 +26,12 @@ from .shared_import import (
 
 # Convert craft function
 @simple_cache
-def convert_shapeless_to_shaped(craft: dict) -> dict:
+def convert_shapeless_to_shaped(craft: JsonDict) -> JsonDict:
 	""" Convert a shapeless craft to a shaped craft
 	Args:
-		craft (dict): The craft to convert
+		craft (JsonDict): The craft to convert
 	Returns:
-		dict: The craft converted
+		JsonDict: The craft converted
 	"""
 	shapeless_ingredients: list[str] = craft["ingredients"]
 	total_items: int = len(shapeless_ingredients)
@@ -69,7 +70,7 @@ def convert_shapeless_to_shaped(craft: dict) -> dict:
 	else:
 
 		# For each ingredient, add to the shape depending on the occurences
-		shaped_recipe["shape"] = []
+		shaped_recipe["shape"] = cast(list[str], [])
 		for key, ingr in shaped_recipe["ingredients"].items():
 			for ingr_craft in craft["ingredients"]:
 				if str(ingr_craft) == str(ingr):
@@ -89,7 +90,7 @@ def convert_shapeless_to_shaped(craft: dict) -> dict:
 
 # Util function
 @simple_cache
-def high_res_font_from_craft(craft: dict) -> str:
+def high_res_font_from_craft(craft: JsonDict) -> str:
 	if craft["type"] in FURNACES_RECIPES_TYPES:
 		return FURNACE_FONT
 	elif craft["type"] == "crafting_shaped":
@@ -103,40 +104,39 @@ def high_res_font_from_craft(craft: dict) -> str:
 		error(f"Unknown craft type '{craft['type']}'")
 		return ""
 
-def remove_unknown_crafts(crafts: list[dict]) -> list[dict]:
+def remove_unknown_crafts(crafts: list[JsonDict]) -> list[JsonDict]:
 	""" Remove crafts that are not recognized by the program
 	Args:
-		crafts (list[dict]): The list of crafts
+		crafts (list[JsonDict]): The list of crafts
 	Returns:
-		list[dict]: The list of crafts without unknown crafts
+		list[JsonDict]: The list of crafts without unknown crafts
 	"""
-	supported_crafts = []
+	supported_crafts: list[JsonDict] = []
 	for craft in crafts:
 		if craft["type"] in CRAFTING_RECIPES_TYPES or craft["type"] in FURNACES_RECIPES_TYPES or craft["type"] in SPECIAL_RECIPES_TYPES:
 			supported_crafts.append(craft)
 	return supported_crafts
 
 # Generate USED_FOR_CRAFTING key like
-def generate_otherside_crafts(item: str) -> list[dict]:
+def generate_otherside_crafts(item: str) -> list[JsonDict]:
 	""" Generate the USED_FOR_CRAFTING key like
 	Args:
 		item (str): The item to generate the key for
 	Returns:
-		list[dict]: ex: [{"type": "crafting_shaped","result_count": 1,"category": "equipment","shape": ["XXX","X X"],"ingredients": {"X": {"components": {"custom_data": {"iyc": {"chainmail": true}}}}},"result": {"item": "minecraft:chainmail_helmet","count": 1}}, ...]
+		list[JsonDict]: ex: [{"type": "crafting_shaped","result_count": 1,"category": "equipment","shape": ["XXX","X X"],"ingredients": {"X": {"components": {"custom_data": {"iyc": {"chainmail": true}}}}},"result": {"item": "minecraft:chainmail_helmet","count": 1}}, ...]
 	"""
 	# Get all crafts that use the item
-	crafts = []
+	crafts: list[JsonDict] = []
 	for key, value in Mem.definitions.items():
 		if key != item and value.get(RESULT_OF_CRAFTING):
 			for craft in value[RESULT_OF_CRAFTING]:
-				craft: dict = craft
 				if ("ingredient" in craft and item == ingr_to_id(craft["ingredient"], False)) or \
 					("ingredients" in craft and isinstance(craft["ingredients"], dict) and item in [ingr_to_id(x, False) for x in craft["ingredients"].values()]) or \
 					("ingredients" in craft and isinstance(craft["ingredients"], list) and item in [ingr_to_id(x, False) for x in craft["ingredients"]]):
 					# Convert craft, ex:
 					# before:	chainmail_helmet	{"type": "crafting_shaped","result_count": 1,"category": "equipment","shape": ["XXX","X X"],"ingredients": {"X": {"components": {"custom_data": {"iyc": {"chainmail": true}}}}}}}
 					# after:	chainmail			{"type": "crafting_shaped","result_count": 1,"category": "equipment","shape": ["XXX","X X"],"ingredients": {"X": {"components": {"custom_data": {"iyc": {"chainmail": true}}}}},"result": {"item": "minecraft:chainmail_helmet","count": 1}}
-					craft_copy = craft.copy()
+					craft_copy: JsonDict = craft.copy()
 					craft_copy["result"] = ingr_repr(key, ns = Mem.ctx.project_id, count = craft["result_count"])
 					crafts.append(craft_copy)
 	return crafts
