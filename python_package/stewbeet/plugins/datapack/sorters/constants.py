@@ -9,7 +9,7 @@ from pydantic.v1 import BaseModel
 MACRO: str = "storage sorter:temp args"
 
 # Type aliases
-type SorterAlgorithm = Literal[
+SorterAlgorithm = Literal[
 	"quick_sort",
 	"selection_sort"
 ]
