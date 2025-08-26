@@ -4,7 +4,7 @@ import json
 import os
 import shutil
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from beet import Font, Texture
 from beet.core.utils import JsonDict, TextComponent
@@ -82,7 +82,7 @@ from .showcase_image import generate_showcase_images
 
 
 # Utility functions
-def deepcopy(x):
+def deepcopy(x: Any) -> Any:
 	return json.loads(json.dumps(x))
 
 def manual_main():
@@ -164,13 +164,13 @@ def routine():
 	cache_pages: bool = manual_config.get("cache_pages", False)
 	if cache_pages and json_dump_path and os.path.exists(json_dump_path) and os.path.exists(f"{SharedMemory.cache_path}/font/manual.json"):
 		with super_open(json_dump_path, "r") as f:
-			book_content = json.load(f)
+			book_content: list[TextComponent] = json.load(f)
 
 	# Else, generate all
 	else:
 
 		# Generate categories list
-		categories: dict[str, list] = {}
+		categories: dict[str, list[str]] = {}
 		for item, data in Mem.definitions.items():
 
 			if CATEGORY not in data:
@@ -198,7 +198,7 @@ def routine():
 		debug(f"Found {nb_categories} categories in the definitions:{s}")
 
 		# Split up categories into pages
-		categories_pages = {}
+		categories_pages: dict[str, list[str]] = {}
 		for file, items in categories.items():
 			if file != HEAVY_WORKBENCH_CATEGORY:
 				i = 0
@@ -228,13 +228,13 @@ def routine():
 			SharedMemory.manual_pages.append({"number": i, "name": item, "raw_data": data, "type": "item"})
 
 		# Encode pages
-		book_content = []
+		book_content: list[TextComponent] = []
 		os.makedirs(f"{SharedMemory.cache_path}/font/category", exist_ok=True)
 		simple_case = load_simple_case_no_border(SharedMemory.high_resolution)	# Load the simple case image for later use in categories pages
 		def encode_page(page: JsonDict):
-			content = []
+			content: list[TextComponent] = []
 			number = page["number"]
-			raw_data: dict = page["raw_data"]
+			raw_data: JsonDict = page["raw_data"]
 			page_font = ""
 			if not SharedMemory.high_resolution:
 				page_font = get_page_font(number)
@@ -254,7 +254,7 @@ def routine():
 				# Prepare image and line list
 				page_image = Image.new("RGBA", (256, 256), (0, 0, 0, 0))
 				x, y = 2, 2	# Prevision for global border and implicit border
-				line = []
+				line: list[TextComponent] = []
 
 				# For each item in the category, get its page number and texture, then add it to the image
 				for item in raw_data:
@@ -268,6 +268,7 @@ def routine():
 						item_image = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
 					if not SharedMemory.high_resolution:
 						resized = careful_resize(item_image, 32)
+						high_res_font = None
 					else:
 						resized = Image.new("RGBA", (1, 1), (0, 0, 0, 0))	# Empty texture to use for category page
 						high_res_font = generate_high_res_font(item, item_image)
@@ -286,7 +287,9 @@ def routine():
 						line.insert(0, SMALL_NONE_FONT * LEFT_PADDING)
 						content += deepcopy(line)
 						for i in range(1, len(line)):
-							line[-i]["text"] = MEDIUM_NONE_FONT
+							selected = line[-i]
+							if isinstance(selected, dict):
+								selected["text"] = MEDIUM_NONE_FONT
 						content += ["\n", *line, "\n"]
 						line = []
 						x = 2
@@ -297,7 +300,9 @@ def routine():
 					line.insert(0, SMALL_NONE_FONT * LEFT_PADDING)
 					content += deepcopy(line)
 					for i in range(1, len(line)):
-						line[-i]["text"] = MEDIUM_NONE_FONT
+						selected = line[-i]
+						if isinstance(selected, dict):
+							selected["text"] = MEDIUM_NONE_FONT
 					content += ["\n", *line, "\n"]
 
 				# Add the 2 pixels border
@@ -310,7 +315,7 @@ def routine():
 			# Encode items
 			else:
 				# Get all crafts
-				crafts: list[dict] = list(raw_data.get(RESULT_OF_CRAFTING,[]))
+				crafts: list[JsonDict] = list(raw_data.get(RESULT_OF_CRAFTING,[]))
 				crafts += list(raw_data.get(USED_FOR_CRAFTING,[]))
 				crafts += generate_otherside_crafts(name)
 				crafts = [craft for craft in crafts if craft["type"] not in ["blasting", "smoking", "campfire_cooking"]]	# Remove smelting dupes
@@ -318,13 +323,13 @@ def routine():
 				crafts = unique_list(crafts)
 
 				# If there are blue crafts, generate the content for the first craft
-				blue_crafts: list[dict] = [craft for craft in crafts if not craft.get("result")]
+				blue_crafts: list[JsonDict] = [craft for craft in crafts if not craft.get("result")]
 				if blue_crafts:
 					# Sort crafts by result_count in reverse order
 					blue_crafts.sort(key=lambda craft: craft.get("result_count", 0), reverse=True)
 
 					# Get the first craft and generate the content
-					first_craft: dict = blue_crafts[0]
+					first_craft: JsonDict = blue_crafts[0]
 					content += generate_craft_content(first_craft, name, page_font)
 
 				# Else, generate the content for the single item in a big box
@@ -344,7 +349,7 @@ def routine():
 						content.append("\n")
 
 				## Add wiki information if any
-				info_buttons: list[dict] = []
+				info_buttons: list[JsonDict] = []
 				if name == "heavy_workbench":
 					content.append([
 						{"text":"\nEvery recipe that uses custom items ", "font":"minecraft:default", "color":"black"},
@@ -353,7 +358,7 @@ def routine():
 					])
 				else:
 					if raw_data.get(WIKI_COMPONENT):
-						wiki_component = raw_data[WIKI_COMPONENT]
+						wiki_component: TextComponent = raw_data[WIKI_COMPONENT]
 						if (isinstance(wiki_component, dict) and "'" in wiki_component["text"]) \
 							or (isinstance(wiki_component, list) and any("'" in text["text"] for text in wiki_component)) \
 							or (isinstance(wiki_component, str) and "'" in wiki_component):
@@ -379,10 +384,10 @@ def routine():
 						if not SharedMemory.high_resolution:
 							craft_font = get_next_font()	# Unique used font for the craft
 							generate_page_font(name, craft_font, craft, output_name = f"{name}_{i+1}")
-							hover_text: list[dict|list] = [{"text":""}]
+							hover_text: list[TextComponent] = [{"text":""}]
 							hover_text.append({"text": craft_font + "\n\n" * breaklines, "font": FONT, "color": "white"})
 						else:
-							craft_content: list[dict|str] = generate_craft_content(craft, name, "")
+							craft_content: list[TextComponent] = generate_craft_content(craft, name, "")
 							craft_content = [craft_content[0]] + craft_content[2:]	# Remove craft title
 							remove_events(craft_content)
 							for k, v in HOVER_EQUIVALENTS.items():
@@ -407,7 +412,7 @@ def routine():
 
 							# If it's shapeless
 							elif isinstance(craft["ingredients"], list):
-								ids = {}	# {id: count}
+								ids: dict[str, int] = {}	# {id: count}
 								for ingr in craft["ingredients"]:
 									id = ingr_to_id(ingr, False).replace("_", " ").title()
 									if id not in ids:
@@ -444,7 +449,7 @@ def routine():
 						first_index: int = 0 if not raw_data.get(WIKI_COMPONENT) else 1
 						last_index: int = -1
 						for i, button in enumerate(info_buttons):
-							if isinstance(button, dict) and not button.get("click_event") and i != first_index:
+							if not button.get("click_event") and i != first_index:
 								last_index = i
 
 						# If there are more than 1 blue button, remove them except the last one
@@ -460,12 +465,14 @@ def routine():
 						# Duplicate line and add breakline
 						if i % 5 == 0 and i != 0:
 							# Remove VERY_SMALL_NONE_FONT from last button to prevent automatic break line
-							content[-1]["text"] = content[-1]["text"].replace(VERY_SMALL_NONE_FONT, "")
+							last_content = cast(JsonDict, content[-1])
+							last_content["text"] = last_content["text"].replace(VERY_SMALL_NONE_FONT, "")
 
 							# Re-add last 5 buttons (for good hover_event) but we replace the wiki font by the small font
-							content += ["\n"] + [x.copy() for x in content[-5:]]
+							content += ["\n"] + [cast(JsonDict, x).copy() for x in content[-5:]]
 							for j in range(5):
-								content[-5 + j]["text"] = WIKI_NONE_FONT + VERY_SMALL_NONE_FONT * (2 if j != 4 else 0)
+								selected_content = cast(JsonDict, content[-5 + j])
+								selected_content["text"] = WIKI_NONE_FONT + VERY_SMALL_NONE_FONT * (2 if j != 4 else 0)
 							content.append("\n")
 						content.append(button)
 
@@ -474,11 +481,13 @@ def routine():
 						last_i = last_i % 5 + 1
 
 						# Remove VERY_SMALL_NONE_FONT from last button to prevent automatic break line
-						content[-1]["text"] = content[-1]["text"].replace(VERY_SMALL_NONE_FONT, "")
+						last_content = cast(JsonDict, content[-1])
+						last_content["text"] = last_content["text"].replace(VERY_SMALL_NONE_FONT, "")
 
-						content += ["\n"] + [x.copy() for x in content[-last_i:]]
+						content += ["\n"] + [cast(JsonDict, x).copy() for x in content[-last_i:]]
 						for j in range(last_i):
-							content[-last_i + j]["text"] = WIKI_NONE_FONT + VERY_SMALL_NONE_FONT * (2 if j != 4 else 0)
+							selected_content = cast(JsonDict, content[-last_i + j])
+							selected_content["text"] = WIKI_NONE_FONT + VERY_SMALL_NONE_FONT * (2 if j != 4 else 0)
 
 			# Add page to the book
 			book_content.append(content)
@@ -488,7 +497,7 @@ def routine():
 			encode_page(page)
 
 		## Add categories page
-		content = []
+		content: list[TextComponent] = []
 		file_name = "categories_page"
 		page_font = get_page_font(1)
 		SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/category/{file_name}.png", "ascent": 0, "height": 130, "chars": [page_font]})
@@ -500,7 +509,7 @@ def routine():
 		# Prepare image and line list
 		page_image = Image.new("RGBA", (256, 256), (0, 0, 0, 0))
 		x, y = 2, 2	# Prevision for global border and implicit border
-		line = []
+		line: list[TextComponent] = []
 
 		# For each item in the category, get its page number and texture, then add it to the image
 		for page in SharedMemory.manual_pages:
@@ -516,6 +525,7 @@ def routine():
 					item_image = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
 				if not SharedMemory.high_resolution:
 					resized = careful_resize(item_image, 32)
+					high_res_font = None
 				else:
 					resized = Image.new("RGBA", (1, 1), (0, 0, 0, 0))	# Empty texture to use for category page
 					high_res_font = generate_high_res_font(item, item_image)
@@ -539,7 +549,8 @@ def routine():
 					line.insert(0, SMALL_NONE_FONT * LEFT_PADDING)
 					content += [*deepcopy(line), "\n"]
 					for i in range(1, len(line)):
-						line[-i]["text"] = MEDIUM_NONE_FONT
+						selected = cast(JsonDict, line[-i])
+						selected["text"] = MEDIUM_NONE_FONT
 					content += [*line, "\n"]
 					line = []
 					x = 2
@@ -550,7 +561,8 @@ def routine():
 			line.insert(0, SMALL_NONE_FONT * LEFT_PADDING)
 			content += [*deepcopy(line), "\n"]
 			for i in range(1, len(line)):
-				line[-i]["text"] = MEDIUM_NONE_FONT
+				selected = cast(JsonDict, line[-i])
+				selected["text"] = MEDIUM_NONE_FONT
 			content += [*line, "\n"]
 
 		# Add the 2 pixels border
@@ -563,7 +575,7 @@ def routine():
 
 
 		## Append introduction page
-		intro_content: list[dict] = [{"text":""}]
+		intro_content: list[TextComponent] = [{"text":""}]
 		page_font = get_page_font(0)
 		SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/page/_logo.png", "ascent": 0, "height": 40, "chars": [page_font]})
 		intro_content.append({"text": manual_name + "\n", "underlined": True})
@@ -572,8 +584,7 @@ def routine():
 		# Create the image and load Minecraft font
 
 		icon_path = find_pack_png()
-		if not icon_path or not os.path.exists(icon_path):
-			error("Missing pack.png in your working tree (needed for the manual)")
+		assert icon_path and os.path.exists(icon_path), "Missing pack.png in your working tree (needed for the manual)"
 		logo = Image.open(icon_path)
 		logo = careful_resize(logo, 256)
 
@@ -590,8 +601,8 @@ def routine():
 		book_content.insert(0, intro_content)
 
 		## Optimize the book size
-		book_content_deepcopy: list[dict|list|str] = deepcopy(book_content)	# Deepcopy to avoid sharing same components (such as click_event)
-		book_content: list[dict|list|str] = list(optimize_element(book_content_deepcopy))
+		book_content_deepcopy: list[TextComponent] = deepcopy(book_content)	# Deepcopy to avoid sharing same components (such as click_event)
+		book_content = list(optimize_element(book_content_deepcopy))
 
 		## Insert at 2nd page the heavy workbench
 		if "heavy_workbench" in Mem.definitions:
@@ -601,9 +612,11 @@ def routine():
 			# Increase every change_page click event by 1
 			for page in book_content:
 				for component in page:
-					if isinstance(component, dict) and "click_event" in component and component["click_event"].get("action") == "change_page":
-						current_value: int = int(component["click_event"]["page"])
-						component["click_event"]["page"] = current_value + 1
+					if isinstance(component, dict):
+						component = cast(JsonDict, component)
+						if "click_event" in component and component["click_event"].get("action") == "change_page":
+							current_value: int = int(component["click_event"]["page"])
+							component["click_event"]["page"] = current_value + 1
 
 		# Add fonts
 		SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/none.png", "ascent": 8, "height": 20, "chars": [NONE_FONT]})
@@ -663,7 +676,7 @@ def routine():
 
 	# Finally, prepend the manual to the definitions
 	manual_already_exists: bool = "manual" in Mem.definitions
-	manual_definitions = {
+	manual_definitions: JsonDict = {
 		"manual": {
 			"id": "minecraft:written_book",
 			"written_book_content": {
@@ -687,7 +700,7 @@ def routine():
 	if not manual_already_exists:
 		textures_folder: str = relative_path(Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", ""))
 		textures: dict[str, str] = {
-			clean_path(str(p)).split("/")[-1]: relative_path(p)
+			clean_path(str(p)).split("/")[-1]: relative_path(str(p))
 			for p in Path(textures_folder).rglob("*.png")
 		}
 		AutoModel.from_definitions("manual", Mem.definitions["manual"], textures).process()

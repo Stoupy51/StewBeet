@@ -3,6 +3,7 @@
 # Imports
 import os
 
+from beet.core.utils import JsonDict
 from stouputils.io import clean_path
 from stouputils.print import error
 
@@ -61,8 +62,8 @@ HOVER_EQUIVALENTS: dict[str, str] = {
 # Global variables
 class SharedMemory:
 	next_craft_font: int = 0x8000
-	font_providers: list = []
-	manual_pages: list = []
+	font_providers: list[JsonDict] = []
+	manual_pages: list[JsonDict] = []
 	cache_path: str = "" # Filled later by ingame_manual/__init__.py
 	high_resolution: bool = True # Whether to generate high resolution images for items
 

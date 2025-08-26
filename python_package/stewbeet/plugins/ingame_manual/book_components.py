@@ -3,6 +3,7 @@ Handles generation of book components and content
 """
 import os
 
+from beet.core.utils import JsonDict, TextComponent
 from PIL import Image
 from stouputils.print import error, warning
 
@@ -13,7 +14,7 @@ from .shared_import import COMPONENTS_TO_INCLUDE, NONE_FONT, SharedMemory, get_p
 
 
 # Call the previous function
-def high_res_font_from_ingredient(ingredient: str|dict, count: int = 1) -> str:
+def high_res_font_from_ingredient(ingredient: str | JsonDict, count: int = 1) -> str:
 	""" Generate the high res font to display in the manual for the ingredient
 
 	Args:
@@ -50,7 +51,7 @@ def high_res_font_from_ingredient(ingredient: str|dict, count: int = 1) -> str:
 
 
 # Convert ingredient to formatted JSON for book
-def get_item_component(ingredient: dict|str, only_those_components: list[str] | None = None, count: int = 1) -> dict:
+def get_item_component(ingredient: str | JsonDict, only_those_components: list[str] | None = None, count: int = 1) -> JsonDict:
 	""" Generate item hover text for a craft ingredient
 	Args:
 		ingredient (dict|str): The ingredient
@@ -58,7 +59,7 @@ def get_item_component(ingredient: dict|str, only_those_components: list[str] | 
 			ex: {'item': 'minecraft:stick'}
 			ex: "adamantium_fragment"	# Only available for the datapack items
 	Returns:
-		dict: The text component
+		TextComponent:
 			ex: {"text":NONE_FONT,"color":"white","hover_event":{"action":"show_item","id":"minecraft:command_block", "components": {...}},"click_event":{"action":"change_page","value":"8"}}
 			ex: {"text":NONE_FONT,"color":"white","hover_event":{"action":"show_item","id":"minecraft:stick"}}
 	"""
@@ -66,7 +67,7 @@ def get_item_component(ingredient: dict|str, only_those_components: list[str] | 
 		only_those_components = []
 
 	# Get the item id
-	formatted: dict = {
+	formatted: TextComponent = {
 		"text": NONE_FONT,
 		"hover_event": {
 			"action": "show_item",
@@ -81,16 +82,17 @@ def get_item_component(ingredient: dict|str, only_those_components: list[str] | 
 		# Get the item in the definitions
 		if isinstance(ingredient, str):
 			id = ingredient
-			item = Mem.definitions[ingredient]
+			item: JsonDict = Mem.definitions[ingredient]
 		else:
-			custom_data: dict = ingredient["components"]["minecraft:custom_data"]
+			item: JsonDict = {}
+			custom_data: JsonDict = ingredient["components"]["minecraft:custom_data"]
 			id = ingr_to_id(ingredient, add_namespace = False)
 			if custom_data.get(Mem.ctx.project_id):
-				item = Mem.definitions.get(id)
+				item = Mem.definitions.get(id, {})
 			else:
 				ns = next(iter(custom_data.keys())) + ":"
 				for data in custom_data.values():
-					item = Mem.external_definitions.get(ns + next(iter(data.keys())))
+					item = Mem.external_definitions.get(ns + next(iter(data.keys())), {})
 					if item:
 						break
 		if not item:

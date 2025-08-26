@@ -46,7 +46,7 @@ def beet_default(ctx: Context):
 	if not sounds_names:
 		return
 	# Dictionary to group sound variants
-	sound_groups: dict[str, list[tuple[str, str]]] = defaultdict(list)
+	sound_groups: dict[str, list[str]] = defaultdict(list)
 
 	def handle_sound(sound: str) -> None:
 		""" Process a single sound file.

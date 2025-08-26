@@ -1,21 +1,27 @@
 
+# Imports
+from typing import cast
+
+from beet.core.utils import JsonDict, TextComponent
+
+
 # Page optimizer
-def optimize_element(content: list|dict|str) -> list|dict|str:
+def optimize_element(content: TextComponent) -> TextComponent:
 	""" Optimize the page content by merging compounds when possible
 	Args:
-		content (list|dict|str): The page content
+		content (TextComponent): The page content
 	Returns:
-		list|dict|str: The optimized page content
+		TextComponent: The optimized page content
 	"""
 	# If dict, optimize the values
 	if isinstance(content, dict):
 		if not any(x in content for x in ["text", "translate", "contents"]):	# If not a text, translate or contents, just return
 			return content
 		content = content.copy()
-		new_content = {}
+		new_component: TextComponent = {}
 		for key, value in content.items():
-			new_content[key] = optimize_element(value)
-		return new_content
+			new_component[key] = optimize_element(value)
+		return new_component
 
 	# If not a list, just return
 	if not isinstance(content, list):
@@ -26,21 +32,22 @@ def optimize_element(content: list|dict|str) -> list|dict|str:
 		return content[0]
 
 	# For each compound
-	new_content = []
+	new_content: list[TextComponent] = []
 	for i, compound in enumerate(content):
+		compound = cast(TextComponent, compound)
 		if isinstance(compound, list) or i == 0:
 			new_content.append(optimize_element(compound))
 		else:
 			# If the current is a dict with only "text" key, transform it to a string
 			if isinstance(compound, dict) and len(compound) == 1 and "text" in compound:
-				compound = compound["text"]
+				compound = cast(TextComponent, compound["text"])
 
 			# For checks
-			compound_without_text = compound.copy() if isinstance(compound, dict) else compound
-			previous_without_text = new_content[-1].copy() if isinstance(new_content[-1], dict) else new_content[-1]
+			compound_without_text = cast(JsonDict, compound.copy() if isinstance(compound, dict) else compound)
+			previous_without_text = cast(JsonDict, new_content[-1].copy() if isinstance(new_content[-1], dict) else new_content[-1])
 			if isinstance(compound, dict) and isinstance(new_content[-1], dict):
 				compound_without_text.pop("text", None)
-				previous_without_text.pop("text", None) # type: ignore
+				previous_without_text.pop("text", None)
 
 			# If the previous compound is the same as the current one, merge the text
 			if str(compound_without_text) == str(previous_without_text):
@@ -51,7 +58,7 @@ def optimize_element(content: list|dict|str) -> list|dict|str:
 
 				# If the previous compound is a dict, merge the dict
 				elif isinstance(new_content[-1], dict):
-					new_content[-1]["text"] += compound["text"]
+					new_content[-1]["text"] += cast(JsonDict, compound)["text"]
 
 			# Always add break lines to the previous part (if the text is a string containing only break lines)
 			elif isinstance(compound, str) and all(c == "\n" for c in compound):
@@ -73,7 +80,7 @@ def optimize_element(content: list|dict|str) -> list|dict|str:
 
 # Remove events recursively
 EVENTS: list[str] = ["hover_event", "click_event"]
-def remove_events(compound: dict|list):
+def remove_events(compound: TextComponent) -> None:
 	""" Remove events from a compound recursively
 	Args:
 		compound (dict): The compound
@@ -90,12 +97,12 @@ def remove_events(compound: dict|list):
 		remove_events(value)
 
 # Function
-def optimize_book(book_content: list|dict|str) -> list|dict|str:
+def optimize_book(book_content: TextComponent) -> TextComponent:
 	""" Optimize the book content by associating compounds when possible
 	Args:
-		book_content (list|dict|str): The book content
+		book_content (TextComponent): The book content
 	Returns:
-		list|dict|str: The optimized book content
+		TextComponent: The optimized book content
 	"""
 	if not isinstance(book_content, list):
 		book_content = [book_content]
@@ -104,11 +111,12 @@ def optimize_book(book_content: list|dict|str) -> list|dict|str:
 	for page in book_content:
 		for compound in page:
 			if isinstance(compound, list):
-				compound_list = compound
+				compound_list = cast(list[TextComponent], compound)
 			else:
 				compound_list = [compound]
 			for e in compound_list:
 				if isinstance(e, dict):
+					e = cast(JsonDict, e)
 					for event_type in EVENTS:
 						if e.get(event_type):
 							remove_events(e[event_type])  # Remove all events below the first event

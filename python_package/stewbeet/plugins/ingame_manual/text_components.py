@@ -3,10 +3,10 @@ Handles text component formatting and updates for the manual
 """
 from typing import Literal
 
-from beet.core.utils import TextComponent
+from beet.core.utils import JsonDict, TextComponent
 
 
-def create_hover_event(action: Literal["show_text", "show_item"], value: TextComponent) -> dict:
+def create_hover_event(action: Literal["show_text", "show_item"], value: TextComponent) -> JsonDict:
 	"""Creates a hover event with the new format"""
 	if action == "show_text":
 		return {
@@ -21,7 +21,7 @@ def create_hover_event(action: Literal["show_text", "show_item"], value: TextCom
 		}
 	return {}
 
-def create_click_event(action: Literal["change_page", "run_command", "suggest_command", "open_url"], value: str | int) -> dict:
+def create_click_event(action: Literal["change_page", "run_command", "suggest_command", "open_url"], value: str | int) -> JsonDict:
 	"""Creates a click event with the new format"""
 	if action == "change_page":
 		return {
