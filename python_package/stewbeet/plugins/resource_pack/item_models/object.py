@@ -250,6 +250,10 @@ class AutoModel:
 					if not exclude_textures and data_id.startswith("leather_"):
 						content["textures"]["layer1"] = content["textures"]["layer0"]
 
+					# If there is a "_overlay" texture, make it as layer1
+					if not exclude_textures and f"{self.item_name}_overlay" in variants:
+						content["textures"]["layer1"] = f"{self.namespace}:item/{self.item_name}_overlay"
+
 					# Check for bow pulling textures
 					elif not exclude_textures and data_id.endswith("bow"):
 						sorted_pull_variants: list[str] = sorted(
