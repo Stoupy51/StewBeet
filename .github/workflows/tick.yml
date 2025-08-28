@@ -27,7 +27,7 @@ jobs:
       
       - name: Install dependencies
         run: |
-          pip install stouputils
+          pip install stewbeet
       
       - name: Check for new version
         id: check-version
