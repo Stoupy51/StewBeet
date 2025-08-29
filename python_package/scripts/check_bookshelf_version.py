@@ -16,7 +16,7 @@ from beet.core.utils import JsonDict
 from stouputils.decorators import handle_error
 from stouputils.print import warning
 
-from .on_bookshelf_release import API_URL, CONFIG_PATH
+from on_bookshelf_release import API_URL, CONFIG_PATH
 
 
 def load_current_version() -> str | None:
