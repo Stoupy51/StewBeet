@@ -21,7 +21,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install stouputils
+          pip install stewbeet
 
       - name: Run the bookshelf release script
         run: python python_package/scripts/on_bookshelf_release.py
