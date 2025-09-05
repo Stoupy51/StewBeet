@@ -402,15 +402,31 @@ data modify entity @s Item.components set from storage {ns}:items all.{item}.com
 data modify entity @s Item.id set from storage {ns}:items all.{item}.id
 """
 			else:
-				no_silk_touch_drop = data[NO_SILK_TOUCH_DROP]
-				if ':' in no_silk_touch_drop:
-					silk_text = f'execute if score #is_silk_touch {ns}.data matches 0 run data modify entity @s Item.id set value "{no_silk_touch_drop}"'
+				no_silk_touch_drop: str | JsonDict = data[NO_SILK_TOUCH_DROP]
+				if isinstance(no_silk_touch_drop, dict):
+					item_to_drop: str = no_silk_touch_drop["id"]
+					item_count_min: int = no_silk_touch_drop["count"]["min"]
+					item_count_max: int = no_silk_touch_drop["count"]["max"]
 				else:
-					silk_text = f"execute if score #is_silk_touch {ns}.data matches 0 run data modify entity @s Item.id set from storage {ns}:items all.{no_silk_touch_drop}.id"
-					silk_text += (
+					item_to_drop: str = no_silk_touch_drop
+					item_count_min: int = 1
+					item_count_max: int = 1
+				if ':' in item_to_drop:
+					silk_text = f'execute if score #is_silk_touch {ns}.data matches 0 run data modify entity @s Item.id set value "{item_to_drop}"'
+				else:
+					silk_text = (
+						f"execute if score #is_silk_touch {ns}.data matches 0 run data modify entity @s Item.id set from storage {ns}:items all.{item_to_drop}.id"
 						f"\nexecute if score #is_silk_touch {ns}.data matches 0 run "
-						f"data modify entity @s Item.components set from storage {ns}:items all.{no_silk_touch_drop}.components"
+						f"data modify entity @s Item.components set from storage {ns}:items all.{item_to_drop}.components"
 					)
+				if item_count_min == item_count_max and item_count_min != 1:
+					silk_text += f"\nexecute if score #is_silk_touch {ns}.data matches 0 run scoreboard players set #multiplier {ns}.data {item_count_min}"
+					silk_text += f"\nexecute if score #is_silk_touch {ns}.data matches 0 run scoreboard players operation #item_count {ns}.data *= #multiplier {ns}.data"
+				elif item_count_min < item_count_max:
+					silk_text += f"\nexecute if score #is_silk_touch {ns}.data matches 0 run scoreboard players set #divider {ns}.data 100"
+					silk_text += f"\nexecute if score #is_silk_touch {ns}.data matches 0 store result score #multiplier {ns}.data run random value {item_count_min*100}..{item_count_max*100}"
+					silk_text += f"\nexecute if score #is_silk_touch {ns}.data matches 0 run scoreboard players operation #item_count {ns}.data *= #multiplier {ns}.data"
+					silk_text += f"\nexecute if score #is_silk_touch {ns}.data matches 0 run scoreboard players operation #item_count {ns}.data /= #divider {ns}.data"
 				content = f"""
 # If silk touch applied
 execute if score #is_silk_touch {ns}.data matches 1 run data modify entity @s Item.id set from storage {ns}:items all.{item}.id
