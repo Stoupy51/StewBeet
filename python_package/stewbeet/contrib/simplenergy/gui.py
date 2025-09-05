@@ -25,7 +25,7 @@ class GuiTranslation(Enum):
 	""" Assume you are placing GUI item model in the __27th__ slot of a barrel. """
 
 # Setup GUI in resource packs
-def setup_gui_in_resource_packs(gui_translations: dict[str, GuiTranslation]) -> dict[str, str]:
+def setup_gui_in_resource_packs(gui_translations: dict[str, list[int]]) -> dict[str, str]:
 	""" Setup GUI item models in resource packs by creating item models and textures for each GUI.
 
 	Args:
