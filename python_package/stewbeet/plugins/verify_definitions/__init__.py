@@ -109,8 +109,32 @@ def beet_default(ctx: Context) -> None:
 			errors.append(f"NO_SILK_TOUCH_DROP key missing for '{item}', should be the ID of the block that drops when mined without silk touch")
 		if data.get(VANILLA_BLOCK) != VANILLA_BLOCK_FOR_ORES and data.get(NO_SILK_TOUCH_DROP):
 			errors.append(f"NO_SILK_TOUCH_DROP key should not be used for '{item}' if it doesn't use VANILLA_BLOCK_FOR_ORES")
-		if data.get(NO_SILK_TOUCH_DROP) and not isinstance(data[NO_SILK_TOUCH_DROP], str):
-			errors.append(f"NO_SILK_TOUCH_DROP key should be a string for '{item}', ex: \"adamantium_fragment\" or \"minecraft:stone\"")
+		if data.get(NO_SILK_TOUCH_DROP):
+			no_silk_drop = data[NO_SILK_TOUCH_DROP]
+			if isinstance(no_silk_drop, str):
+				# Old format: just a string item ID (can be "item_name" or "minecraft:stone")
+				pass
+			elif isinstance(no_silk_drop, dict):
+				# New format: {"id": "item_id", "count": 5} or {"id": "item_id", "count": {"min": 1, "max": 4}}
+				no_silk_drop = cast(JsonDict, no_silk_drop)
+				if not no_silk_drop.get("id") or not isinstance(no_silk_drop["id"], str):
+					errors.append(f"NO_SILK_TOUCH_DROP key should have a string 'id' field for '{item}', ex: {{\"id\": \"stardust_fragment\", \"count\": {{\"min\": 1, \"max\": 4}}}} or {{\"id\": \"minecraft:stone\", \"count\": 1}}")
+				if no_silk_drop.get("count"):
+					count = no_silk_drop["count"]
+					if isinstance(count, int):
+						# Single integer count is valid
+						pass
+					elif isinstance(count, dict):
+						# Dictionary with min and max keys
+						count_dict = cast(JsonDict, count)
+						if not count_dict.get("min") or not isinstance(count_dict["min"], int):
+							errors.append(f"NO_SILK_TOUCH_DROP 'count' dict should have an integer 'min' field for '{item}', ex: {{\"min\": 1, \"max\": 4}}")
+						if not count_dict.get("max") or not isinstance(count_dict["max"], int):
+							errors.append(f"NO_SILK_TOUCH_DROP 'count' dict should have an integer 'max' field for '{item}', ex: {{\"min\": 1, \"max\": 4}}")
+					else:
+						errors.append(f"NO_SILK_TOUCH_DROP 'count' field should be an integer or dict with min/max keys for '{item}', ex: 1 or {{\"min\": 1, \"max\": 4}}")
+			else:
+				errors.append(f"NO_SILK_TOUCH_DROP key should be a string or dict for '{item}', ex: \"adamantium_fragment\", \"minecraft:stone\", or {{\"id\": \"stardust_fragment\", \"count\": {{\"min\": 1, \"max\": 4}}}}")
 
 		# Force the use of "item_name" key for every item
 		if not data.get("item_name"):

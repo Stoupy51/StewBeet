@@ -267,6 +267,8 @@ def generate_everything_about_these_materials(ores: dict[str, EquipmentsConfig|N
 	""" Uses function 'generate_everything_about_this_material' for each ore in the ores dictionary.
 	Args:
 		ores		(dict[str, EquipmentsConfig|None]):	The ores to apply.
+				The ore/material (key) to generate everything about (ex: "adamantium_fragment", "steel_ingot", "minecraft:emerald", "minecraft:copper_ingot", "awakened_stardust!")
+				When the material ends with "!", the material base will be the material without the "!", else we try to cut before the last "_".
 		ignore_recipes	(bool):						If True, no recipes will be added in the definitions.
 	"""
 	for material, ore_config in ores.items():
