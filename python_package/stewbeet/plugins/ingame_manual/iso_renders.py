@@ -7,16 +7,14 @@ import requests
 from beet import Model
 from beet.core.utils import JsonDict
 from model_resolver import Render  # pyright: ignore[reportMissingTypeStubs]
-from stouputils.io import super_copy, super_open
+from stouputils.io import super_open
 from stouputils.parallel import multithreading
 from stouputils.print import debug, warning
 
 from ...core.__memory__ import Mem
 from ...core.constants import (
-	CUSTOM_BLOCK_VANILLA,
 	DOWNLOAD_VANILLA_ASSETS_RAW,
 	DOWNLOAD_VANILLA_ASSETS_SOURCE,
-	OVERRIDE_MODEL,
 	RESULT_OF_CRAFTING,
 	USED_FOR_CRAFTING,
 )
@@ -33,7 +31,6 @@ def generate_all_iso_renders():
 
 	# For every item, get the model path and the destination path
 	cache_assets: bool = Mem.ctx.meta.get("stewbeet",{}).get("manual", {}).get("cache_assets", True)
-	textures_folder: str = Mem.ctx.meta.get("stewbeet",{}).get("textures_folder", "assets/textures")
 	for_model_resolver: dict[str, str] = {}
 	for item, data in Mem.definitions.items():
 
@@ -41,30 +38,16 @@ def generate_all_iso_renders():
 		if not data.get("item_model"):
 			continue
 
-		# If it's not a block, simply copy the texture
-		try:
-			if data["id"] == CUSTOM_BLOCK_VANILLA:
-				raise ValueError()
-			if not os.path.exists(f"{path}/{ns}/{item}.png") or not cache_assets:
-				if data.get(OVERRIDE_MODEL, None) != {}:
-					source: str = f"{textures_folder}/{item}.png"
-					if os.path.exists(source):
-						super_copy(source, f"{path}/{ns}/{item}.png")
-					else:
-						warning(f"Missing texture for item '{item}', please add it manually to '{path}/{ns}/{item}.png'")
+		# Skip if item is already generated (to prevent OpenGL launching for nothing)
+		if os.path.exists(f"{path}/{ns}/{item}.png") and cache_assets:
+			continue
 
-		# Else, add the block to the model resolver list
-		except ValueError:
-			# Skip if item is already generated (to prevent OpenGL launching for nothing)
-			if os.path.exists(f"{path}/{ns}/{item}.png") and cache_assets:
-				continue
-
-			# Add to the model resolver queue (only if present in resource pack)
-			model: Model | None = Mem.ctx.assets[ns].models.get(f"item/{item}")
-			rp_path = f"{ns}:item/{item}"
-			dst_path = f"{path}/{ns}/{item}.png"
-			if model is not None and model.get_content().get("textures", None) is not None: # type: ignore
-				for_model_resolver[rp_path] = dst_path
+		# Add to the model resolver queue (only if present in resource pack)
+		model: Model | None = Mem.ctx.assets[ns].models.get(f"item/{item}")
+		rp_path = f"{ns}:item/{item}"
+		dst_path = f"{path}/{ns}/{item}.png"
+		if model is not None and model.get_content().get("textures", None) is not None: # type: ignore
+			for_model_resolver[rp_path] = dst_path
 
 	# Launch model resolvers for remaining blocks
 	if len(for_model_resolver) > 0:
