@@ -500,7 +500,7 @@ def routine():
 		content: list[TextComponent] = []
 		file_name = "categories_page"
 		page_font = get_page_font(1)
-		SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/category/{file_name}.png", "ascent": 0, "height": 130, "chars": [page_font]})
+		SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/category/{file_name}.png", "ascent": 1, "height": 131, "chars": [page_font]})
 		content.append({"text": "", "font": FONT, "color": "white"})	# Make default font for every next component
 		content.append({"text": "➤ ", "font": "minecraft:default", "color": "black"})
 		content.append({"text": "Category browser\n", "font": "minecraft:default", "color": "black", "underlined": True})
