@@ -100,7 +100,22 @@ class AutoModel:
 		Returns:
 			bool: True if all models are in variants.
 		"""
-		return all(any(model in x for x in variants) for model in models)
+		def model_matches(model: str, variant: str) -> bool:
+			""" Check if model matches in variant with proper word boundary. """
+			pattern: str = f"_{model}"
+			idx: int = variant.find(pattern)
+			if idx == -1:
+				return False
+			# Check if there's a character after the pattern
+			after_idx: int = idx + len(pattern)
+			if after_idx < len(variant):
+				# Character after pattern should not be alphanumeric
+				return not variant[after_idx].isalnum()
+			else:
+				# Pattern is at the end of the string, which is valid
+				return True
+
+		return all(any(model_matches(model, x) for x in variants) for model in models)
 
 	@simple_cache
 	def get_same_folder_variants(self, variants: Iterable[str]) -> list[str]:
