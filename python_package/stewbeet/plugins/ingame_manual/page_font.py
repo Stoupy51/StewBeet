@@ -151,12 +151,13 @@ def generate_page_font(name: str, page_font: str, craft: JsonDict|None = None, o
 	else:
 		# Get the image template and append the provider
 		template = Image.open(f"{TEMPLATES_PATH}/simple_case_no_border.png")
-		factor = 1
+		factor: int = 1
 		if SharedMemory.high_resolution:
-			factor = 256 // template.size[0]
-			result_texture = careful_resize(result_texture, SQUARE_SIZE * factor)
+			factor_float: float = 256 / template.size[0]
+			result_texture = careful_resize(result_texture, round(SQUARE_SIZE * factor_float))
 			template = careful_resize(template, 256)
 			result_mask = result_texture.convert("RGBA").split()[3]
+			factor = int(factor_float)
 		else:
 			# Resize the texture and get the mask
 			result_texture = careful_resize(result_texture, SQUARE_SIZE)

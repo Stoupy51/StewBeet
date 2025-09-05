@@ -516,7 +516,7 @@ def routine():
 			if page["type"] == CATEGORY:
 				item = page["raw_data"][0]
 
-				# Get item texture TODO
+				# Get item texture
 				texture_path = f"{SharedMemory.cache_path}/items/{Mem.ctx.project_id}/{item}.png"
 				if os.path.exists(texture_path):
 					item_image = Image.open(texture_path)
