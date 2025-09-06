@@ -358,11 +358,6 @@ def routine():
 					])
 				else:
 					if raw_data.get(WIKI_COMPONENT):
-						wiki_component: TextComponent = raw_data[WIKI_COMPONENT]
-						if (isinstance(wiki_component, dict) and "'" in wiki_component["text"]) \
-							or (isinstance(wiki_component, list) and any("'" in text["text"] for text in wiki_component)) \
-							or (isinstance(wiki_component, str) and "'" in wiki_component):
-							error(f"Wiki component for '{name}' should not contain single quotes are they fuck up the json files:\n{wiki_component}")
 						info_buttons.append({
 							"text": WIKI_INFO_FONT + VERY_SMALL_NONE_FONT * 2,
 							"hover_event": {
