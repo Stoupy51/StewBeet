@@ -120,7 +120,12 @@ def generate_everything_about_this_material(
 			continue
 		if armor not in Mem.definitions:
 			Mem.definitions[armor] = {}
-		Mem.definitions[armor]["id"] = f"minecraft:leather_{gear}"		# Leather armor by default
+		equivalent_to: str = equipments_config.equivalent_to.value
+		if equivalent_to == "stone":
+			equivalent_to = "chainmail"
+		elif equivalent_to == "wooden":
+			equivalent_to = "leather"
+		Mem.definitions[armor]["id"] = f"minecraft:{equivalent_to}_{gear}"
 		Mem.definitions[armor][CATEGORY] = "equipment"					# Category
 		Mem.definitions[armor]["custom_data"] = {"smithed":{}}			# Smithed convention
 		Mem.definitions[armor]["custom_data"]["smithed"]["dict"] = {"armor": {material_base: True, gear: True}}
