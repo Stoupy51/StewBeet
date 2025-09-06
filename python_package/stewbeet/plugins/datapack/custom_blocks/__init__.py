@@ -139,7 +139,7 @@ execute as @e[type=item_frame,tag={ns}.new,tag={ns}.{item}] at @s run function {
 
 				## Place function
 				content = ""
-				if block["apply_facing"]:
+				if block.get("apply_facing") not in (False, "entity"):
 					content += f"function {ns}:custom_blocks/get_rotation\n"
 					content += "setblock ~ ~ ~ air\n"
 					block_states = []
@@ -152,6 +152,8 @@ execute as @e[type=item_frame,tag={ns}.new,tag={ns}.{item}] at @s run function {
 						else:
 							content += f"execute if score #rotation {ns}.data matches {i+1} run setblock ~ ~ ~ {block_id}[facing={face}]{beautify_name}\n"
 				else:
+					if block.get("apply_facing") == "entity":
+						content += f"function {ns}:custom_blocks/get_rotation\n"
 					# Simple setblock
 					content += "setblock ~ ~ ~ air\n"
 					content += f"setblock ~ ~ ~ {block_id}{beautify_name}\n"
