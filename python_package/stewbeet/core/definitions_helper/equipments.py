@@ -32,13 +32,15 @@ class DefaultOre(Enum):
 	DIAMOND = "diamond"
 	IRON = "iron"
 	GOLD = "golden"
-	CHAINMAIL = "stone"		# stone tools
-	LEATHER = "wooden"		# wood tools
+	CHAINMAIL = "stone"		# Stone tools
+	COPPER = "copper"		# Copper added in 1.21.9
+	LEATHER = "wooden"		# Wooden tools
 
 class VanillaEquipments(Enum):
 	""" Default vanilla equipments values (durability, armor, armor_toughness, knockback_resistance, attack_damage, attack_speed) """
 	HELMET			= cast(dict[DefaultOre, dict[str, float]],
 					{	DefaultOre.LEATHER:		{"durability": 55,		"armor": 1},
+						DefaultOre.COPPER:		{"durability": 121,		"armor": 2},
 						DefaultOre.CHAINMAIL:	{"durability": 165,		"armor": 2},
 						DefaultOre.IRON:		{"durability": 165,		"armor": 2},
 						DefaultOre.GOLD:		{"durability": 77,		"armor": 2},
@@ -47,6 +49,7 @@ class VanillaEquipments(Enum):
 					})
 	CHESTPLATE		= cast(dict[DefaultOre, dict[str, float]],
 					{	DefaultOre.LEATHER:		{"durability": 80,		"armor": 3},
+						DefaultOre.COPPER:		{"durability": 176,		"armor": 4},
 						DefaultOre.CHAINMAIL:	{"durability": 240,		"armor": 5},
 						DefaultOre.IRON:		{"durability": 240,		"armor": 6},
 						DefaultOre.GOLD:		{"durability": 112,		"armor": 5},
@@ -55,6 +58,7 @@ class VanillaEquipments(Enum):
 					})
 	LEGGINGS		= cast(dict[DefaultOre, dict[str, float]],
 					{	DefaultOre.LEATHER:		{"durability": 75,		"armor": 2},
+						DefaultOre.COPPER:		{"durability": 165,		"armor": 3},
   						DefaultOre.CHAINMAIL:	{"durability": 225,		"armor": 4},
 						DefaultOre.IRON:		{"durability": 225,		"armor": 5},
 						DefaultOre.GOLD:		{"durability": 105,		"armor": 3},
@@ -63,6 +67,7 @@ class VanillaEquipments(Enum):
 					})
 	BOOTS			= cast(dict[DefaultOre, dict[str, float]],
 					{	DefaultOre.LEATHER:		{"durability": 65,		"armor": 1},
+						DefaultOre.COPPER:		{"durability": 143,		"armor": 1},
 						DefaultOre.CHAINMAIL:	{"durability": 195,		"armor": 1},
 						DefaultOre.IRON:		{"durability": 195,		"armor": 2},
 						DefaultOre.GOLD:		{"durability": 95,		"armor": 1},
@@ -71,6 +76,7 @@ class VanillaEquipments(Enum):
 					})
 	SWORD			= cast(dict[DefaultOre, dict[str, float]],
 					{	DefaultOre.LEATHER:		{"durability": 59,		"attack_damage": 4,		"attack_speed": -2.40},
+						DefaultOre.COPPER:		{"durability": 190,		"attack_damage": 5,		"attack_speed": -2.40},
 						DefaultOre.CHAINMAIL:	{"durability": 131,		"attack_damage": 5,		"attack_speed": -2.40},
 						DefaultOre.IRON:		{"durability": 250,		"attack_damage": 6,		"attack_speed": -2.40},
 						DefaultOre.GOLD:		{"durability": 32,		"attack_damage": 4,		"attack_speed": -2.40},
@@ -79,6 +85,7 @@ class VanillaEquipments(Enum):
 					})
 	PICKAXE			= cast(dict[DefaultOre, dict[str, float]],
 					{	DefaultOre.LEATHER:		{"durability": 59,		"attack_damage": 2,		"attack_speed": -2.8},
+						DefaultOre.COPPER:		{"durability": 190,		"attack_damage": 3,		"attack_speed": -2.8},
 						DefaultOre.CHAINMAIL:	{"durability": 131,		"attack_damage": 3,		"attack_speed": -2.8},
 						DefaultOre.IRON:		{"durability": 250,		"attack_damage": 4,		"attack_speed": -2.8},
 						DefaultOre.GOLD:		{"durability": 32,		"attack_damage": 2,		"attack_speed": -2.8},
@@ -87,6 +94,7 @@ class VanillaEquipments(Enum):
 					})
 	AXE				= cast(dict[DefaultOre, dict[str, float]],
 					{	DefaultOre.LEATHER:		{"durability": 59,		"attack_damage": 7,		"attack_speed": -3.20},
+						DefaultOre.COPPER:		{"durability": 190,		"attack_damage": 9,		"attack_speed": -3.20},
 						DefaultOre.CHAINMAIL:	{"durability": 131,		"attack_damage": 9,		"attack_speed": -3.20},
 						DefaultOre.IRON:		{"durability": 250,		"attack_damage": 9,		"attack_speed": -3.10},
 						DefaultOre.GOLD:		{"durability": 32,		"attack_damage": 7,		"attack_speed": -3.00},
@@ -95,6 +103,7 @@ class VanillaEquipments(Enum):
 					})
 	SHOVEL			= cast(dict[DefaultOre, dict[str, float]],
 					{	DefaultOre.LEATHER:		{"durability": 59,		"attack_damage": 2.5,	"attack_speed": -3.00},
+						DefaultOre.COPPER:		{"durability": 190,		"attack_damage": 3.5,	"attack_speed": -3.00},
 						DefaultOre.CHAINMAIL:	{"durability": 131,		"attack_damage": 3.5,	"attack_speed": -3.00},
 						DefaultOre.IRON:		{"durability": 250,		"attack_damage": 4.5,	"attack_speed": -3.00},
 						DefaultOre.GOLD:		{"durability": 32,		"attack_damage": 2.5,	"attack_speed": -3.00},
@@ -103,6 +112,7 @@ class VanillaEquipments(Enum):
 					})
 	HOE				= cast(dict[DefaultOre, dict[str, float]],
 					{	DefaultOre.LEATHER:		{"durability": 59,		"attack_damage": 1,		"attack_speed": -3.00},
+						DefaultOre.COPPER:		{"durability": 190,		"attack_damage": 1,		"attack_speed": -2.00},
 						DefaultOre.CHAINMAIL:	{"durability": 131,		"attack_damage": 1,		"attack_speed": -2.00},
 						DefaultOre.IRON:		{"durability": 250,		"attack_damage": 1,		"attack_speed": -1.00},
 						DefaultOre.GOLD:		{"durability": 32,		"attack_damage": 1,		"attack_speed": -3.00},
