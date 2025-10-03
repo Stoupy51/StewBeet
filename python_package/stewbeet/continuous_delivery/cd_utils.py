@@ -20,10 +20,14 @@ def get_supported_versions(version: str = MINECRAFT_VERSION) -> list[str]:
 	Returns:
 		list[str]: List of supported versions, ex: ["1.21.3", "1.21.2"]
 	"""
-	supported_versions: list[str] = [version]
-	if version == "1.21.3":
-		supported_versions.append("1.21.2")
-	if version == "1.21.8":
-		supported_versions.extend(["1.21.7", "1.21.6"])
-	return supported_versions
+	sames: list[list[str]] = [
+		["1.21", "1.21", "1.21.1"],
+		["1.21.2", "1.21.3"],
+		["1.21.6", "1.21.7", "1.21.8"],
+		["1.21.9", "1.21.10"],
+	]
+	for s in sames:
+		if version in s:
+			return s
+	return [version]
 
