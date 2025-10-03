@@ -24,7 +24,7 @@ def beet_default(ctx: Context):
 	assert ctx.project_id, "Project ID must be set in the project configuration."
 
 	# Store the Box object in ctx for access throughout the codebase
-	meta_box: Box = Box(ctx.meta, default_box=True, default_box_attr={})
+	meta_box: Box = Box(ctx.meta, default_box=True, default_box_attr={}) # type: ignore
 	object.__setattr__(ctx, "meta", meta_box) # Bypass FrozenInstanceError
 	Mem.ctx = ctx
 
@@ -51,6 +51,24 @@ def beet_default(ctx: Context):
 	# Convert paths to relative ones
 	object.__setattr__(ctx, "output_directory", relative_path(str(Mem.ctx.output_directory)))
 
+	# Add missing pack format registries if not present
+	ctx.data.pack_format_registry.update({
+		(1, 21, 5): 71,
+		(1, 21, 6): 80,
+		(1, 21, 7): 81,
+		(1, 21, 8): 81,
+		(1, 21, 9): 88,
+		(1, 21, 10): 88,
+	})
+	ctx.assets.pack_format_registry.update({
+		(1, 21, 5): 55,
+		(1, 21, 6): 63,
+		(1, 21, 7): 64,
+		(1, 21, 8): 64,
+		(1, 21, 9): 69,
+		(1, 21, 10): 69,
+	})
+
 	# Helper function to setup pack.mcmeta
 	def setup_pack_mcmeta(pack: Pack[Any], pack_format: int):
 		existing_mcmeta = pack.mcmeta.data or {}
@@ -58,6 +76,9 @@ def beet_default(ctx: Context):
 		pack_mcmeta.update(existing_mcmeta)
 		pack_mcmeta["pack"].update(existing_mcmeta.get("pack", {}))
 		pack_mcmeta["pack"]["pack_format"] = pack_format
+		if (pack is ctx.data and pack_format >= 82) or (pack is ctx.assets and pack_format >= 65):
+			pack_mcmeta["pack"]["min_format"] = pack_format
+			pack_mcmeta["pack"]["max_format"] = 1000
 		pack_mcmeta["pack"]["description"] = Mem.ctx.meta.get("stewbeet", {}).get("project_description", "")
 		pack_mcmeta["id"] = Mem.ctx.project_id
 		pack.mcmeta.data = pack_mcmeta
@@ -95,20 +116,6 @@ def beet_default(ctx: Context):
 				if old_path.exists() and not new_path.exists():
 					os.rename(old_path, new_path)
 					warning(f"Renamed texture '{file}' to '{new_name}'")
-
-	# Add missing pack format registries if not present
-	ctx.data.pack_format_registry.update({
-		(1, 21, 5): 71,
-		(1, 21, 6): 80,
-		(1, 21, 7): 81,
-		(1, 21, 8): 81,
-	})
-	ctx.assets.pack_format_registry.update({
-		(1, 21, 5): 55,
-		(1, 21, 6): 63,
-		(1, 21, 7): 64,
-		(1, 21, 8): 64,
-	})
 
 	# Extend the datapack namespace with sorter files
 	ctx.require("stewbeet.plugins.datapack.sorters.extend_datapack")
