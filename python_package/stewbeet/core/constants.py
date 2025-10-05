@@ -5,10 +5,50 @@ from beet.core.utils import JsonDict
 
 from ..dependencies.bookshelf import BOOKSHELF_MODULES
 
-# Minecraft version constants
-MINECRAFT_VERSION: str = "1.21.8"	# Text used when loading the datapack to warn the user when the data version is not right
-DATA_VERSION: int = 4435			# Depending on MC version, given by /data get entity @p DataVersion to check if the datapack is not running in an older version of MC
-
+# Minecraft version specific constants
+MORE_DATA_PACK_FORMATS: dict[tuple[int, ...], int] = {
+	(1, 21): 48,
+	(1, 21, 0): 48,
+	(1, 21, 1): 48,
+	(1, 21, 2): 57,
+	(1, 21, 3): 57,
+	(1, 21, 4): 61,
+	(1, 21, 5): 71,
+	(1, 21, 6): 80,
+	(1, 21, 7): 81,
+	(1, 21, 8): 81,
+	(1, 21, 9): 88,
+	(1, 21, 10): 88,
+}
+MORE_ASSETS_PACK_FORMATS: dict[tuple[int, ...], int] = {
+	(1, 21): 34,
+	(1, 21, 0): 34,
+	(1, 21, 1): 34,
+	(1, 21, 2): 42,
+	(1, 21, 3): 42,
+	(1, 21, 4): 46,
+	(1, 21, 5): 55,
+	(1, 21, 6): 63,
+	(1, 21, 7): 64,
+	(1, 21, 8): 64,
+	(1, 21, 9): 69,
+	(1, 21, 10): 69,
+}
+MORE_DATA_VERSIONS: dict[tuple[int, ...], int] = {
+	(1, 21): 3953,
+	(1, 21, 0): 3953,
+	(1, 21, 1): 3955,
+	(1, 21, 2): 4080,
+	(1, 21, 3): 4082,
+	(1, 21, 4): 4189,
+	(1, 21, 5): 4325,
+	(1, 21, 6): 4435,
+	(1, 21, 7): 4438,
+	(1, 21, 8): 4440,
+	(1, 21, 9): 4554,
+	(1, 21, 10): 4556,
+}
+LATEST_MC_VERSION: str = ".".join(str(x) for x in list(MORE_DATA_VERSIONS.keys())[-1])
 
 # Databases
 CATEGORY: str = "category"								# Key for the category, used for recipes and the manual, ex: CATEGORY:"material" or CATEGORY:"equipment"

@@ -4,7 +4,7 @@ import os
 
 from stouputils.continuous_delivery.cd_utils import load_credentials  # type: ignore # noqa: F401
 
-from ..core.constants import MINECRAFT_VERSION
+from ..core.constants import LATEST_MC_VERSION
 from ..utils import ProjectConfig, get_project_config
 
 
@@ -25,9 +25,9 @@ def get_supported_versions(version: str | None = None) -> list[str]:
 	if version is None:
 		try:
 			config: ProjectConfig = get_project_config()
-			version = config.minecraft
+			version = config.minecraft or LATEST_MC_VERSION
 		except AssertionError:
-			version = MINECRAFT_VERSION
+			version = LATEST_MC_VERSION
 
 	# Some versions are considered the same for compatibility purposes
 	sames: list[list[str]] = [

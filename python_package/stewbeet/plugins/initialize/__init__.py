@@ -13,6 +13,7 @@ from stouputils.io import super_json_dump
 from stouputils.print import warning
 
 from ...core import Mem
+from ...core.constants import MORE_ASSETS_PACK_FORMATS, MORE_DATA_PACK_FORMATS, MORE_DATA_VERSIONS
 from .source_lore_font import prepare_source_lore_font
 
 
@@ -51,23 +52,10 @@ def beet_default(ctx: Context):
 	# Convert paths to relative ones
 	object.__setattr__(ctx, "output_directory", relative_path(str(Mem.ctx.output_directory)))
 
-	# Add missing pack format registries if not present
-	ctx.data.pack_format_registry.update({
-		(1, 21, 5): 71,
-		(1, 21, 6): 80,
-		(1, 21, 7): 81,
-		(1, 21, 8): 81,
-		(1, 21, 9): 88,
-		(1, 21, 10): 88,
-	})
-	ctx.assets.pack_format_registry.update({
-		(1, 21, 5): 55,
-		(1, 21, 6): 63,
-		(1, 21, 7): 64,
-		(1, 21, 8): 64,
-		(1, 21, 9): 69,
-		(1, 21, 10): 69,
-	})
+	# Add missing pack format registries if not present, and data version
+	ctx.data.pack_format_registry.update(MORE_DATA_PACK_FORMATS)
+	ctx.assets.pack_format_registry.update(MORE_ASSETS_PACK_FORMATS)
+	ctx.meta["data_version"] = MORE_DATA_VERSIONS
 
 	# Helper function to setup pack.mcmeta
 	def setup_pack_mcmeta(pack: Pack[Any], pack_format: int):
