@@ -14,7 +14,16 @@ from .constants import NOT_COMPONENTS, PULVERIZING
 # Recipes constants
 FURNACES_RECIPES_TYPES: tuple[str, ...] = ("smelting", "blasting", "smoking", "campfire_cooking")
 CRAFTING_RECIPES_TYPES: tuple[str, ...] = ("crafting_shaped", "crafting_shapeless")
+OTHER_RECIPES_TYPES: tuple[str, ...] = ("smithing_transform", "smithing_trim", "stonecutting")
+UNUSED_RECIPES_TYPES: tuple[str, ...] = (
+	"crafting_decorated_pot", "crafting_special_armordye", "crafting_special_bannerduplicate",
+	"crafting_special_bookcloning", "crafting_special_firework_rocket", "crafting_special_firework_star",
+	"crafting_special_firework_star_fade", "crafting_special_mapcloning", "crafting_special_mapextending",
+	"crafting_special_repairitem", "crafting_special_shielddecoration", "crafting_special_tippedarrow",
+	"crafting_transmute",
+)
 SPECIAL_RECIPES_TYPES: tuple[str, ...] = (PULVERIZING, )
+ALL_RECIPES_TYPES: tuple[str, ...] = (*FURNACES_RECIPES_TYPES, *CRAFTING_RECIPES_TYPES, *OTHER_RECIPES_TYPES, *UNUSED_RECIPES_TYPES, *SPECIAL_RECIPES_TYPES)
 
 # Function mainly used for definitions generation
 @simple_cache
@@ -69,6 +78,8 @@ def ingr_to_id(ingredient: JsonDict, add_namespace: bool = True) -> str:
 	Returns:
 		str: The id of the ingredient, ex: "minecraft:stick" or "iyc:adamantium_ingot"
 	"""
+	if isinstance(ingredient, str):
+		ingredient = {"item": ingredient}
 	if ingredient.get("item"):
 		if not add_namespace:
 			return ingredient["item"].split(":")[1]
@@ -103,6 +114,8 @@ def get_vanilla_item_id_from_ingredient(ingredient: JsonDict, add_namespace: boo
 	Returns:
 		str: The id of the vanilla item, ex: "minecraft:stick"
 	"""
+	if isinstance(ingredient, str):
+		ingredient = {"item": ingredient}
 	ns, ingr_id = ingr_to_id(ingredient).split(":")
 	if ns == Mem.ctx.project_id:
 		if add_namespace:
@@ -132,6 +145,8 @@ def get_item_from_ingredient(ingredient: JsonDict) -> JsonDict:
 	Returns:
 		dict: The item data dict, ex: {"id": "minecraft:stick", "count": 1}
 	"""
+	if isinstance(ingredient, str):
+		ingredient = {"item": ingredient}
 	ingr_id = ingr_to_id(ingredient)
 	ns, id = ingr_id.split(":")
 

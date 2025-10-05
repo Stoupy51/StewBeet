@@ -5,14 +5,12 @@ from typing import cast
 
 from beet.core.utils import JsonDict
 from stouputils.decorators import simple_cache
-from stouputils.print import error
 
 from ...core.__memory__ import Mem
 from ...core.constants import PULVERIZING, RESULT_OF_CRAFTING
 from ...core.ingredients import (
-	CRAFTING_RECIPES_TYPES,
+	ALL_RECIPES_TYPES,
 	FURNACES_RECIPES_TYPES,
-	SPECIAL_RECIPES_TYPES,
 	ingr_repr,
 	ingr_to_id,
 )
@@ -21,6 +19,7 @@ from .shared_import import (
 	PULVERIZING_FONT,
 	SHAPED_2X2_FONT,
 	SHAPED_3X3_FONT,
+	STONECUTTING_FONT,
 )
 
 
@@ -100,8 +99,9 @@ def high_res_font_from_craft(craft: JsonDict) -> str:
 			return SHAPED_2X2_FONT
 	elif craft["type"] == PULVERIZING:
 		return PULVERIZING_FONT
+	elif craft["type"] == "stonecutting":
+		return STONECUTTING_FONT
 	else:
-		error(f"Unknown craft type '{craft['type']}'")
 		return ""
 
 def remove_unknown_crafts(crafts: list[JsonDict]) -> list[JsonDict]:
@@ -113,7 +113,7 @@ def remove_unknown_crafts(crafts: list[JsonDict]) -> list[JsonDict]:
 	"""
 	supported_crafts: list[JsonDict] = []
 	for craft in crafts:
-		if craft["type"] in CRAFTING_RECIPES_TYPES or craft["type"] in FURNACES_RECIPES_TYPES or craft["type"] in SPECIAL_RECIPES_TYPES:
+		if any(craft["type"] in t for t in ALL_RECIPES_TYPES):
 			supported_crafts.append(craft)
 	return supported_crafts
 

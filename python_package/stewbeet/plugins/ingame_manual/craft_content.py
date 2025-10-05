@@ -169,8 +169,104 @@ def generate_craft_content(craft: JsonDict, name: str, page_font: str) -> list[T
 			content.append("\n")
 		content.append("\n\n")
 
-	# If the type is special Pulverizing,
-	elif craft_type == PULVERIZING:
+	# If the type is smithing transform,
+	elif craft_type == "smithing_transform":
+
+		# Convert ingredients to their text components
+		formatted_base: JsonDict = get_item_component(craft["base"])
+		formatted_addition: JsonDict = get_item_component(craft["addition"])
+		formatted_template: JsonDict = get_item_component(craft["template"])
+
+		content.append("\n")
+		for i in range(2):
+			# Add the base item
+			content.append(SMALL_NONE_FONT)
+			if i == 0:
+				content.append(formatted_base)
+			else:
+				copy = formatted_base.copy()
+				copy["text"] = INVISIBLE_ITEM_WIDTH
+				content.append(copy)
+
+			# Add the template item
+			content.append(INVISIBLE_ITEM_WIDTH)
+			if i == 0:
+				content.append(formatted_template)
+			else:
+				copy = formatted_template.copy()
+				copy["text"] = INVISIBLE_ITEM_WIDTH
+				content.append(copy)
+
+			# Add the addition item
+			content.append(INVISIBLE_ITEM_WIDTH)
+			if i == 0:
+				content.append(formatted_addition)
+			else:
+				copy = formatted_addition.copy()
+				copy["text"] = INVISIBLE_ITEM_WIDTH
+				content.append(copy)
+
+			# Add the result
+			content.append(SMALL_NONE_FONT + INVISIBLE_ITEM_WIDTH)
+			if i == 0:
+				content.append(result_component)
+			else:
+				copy = result_component.copy()
+				copy["text"] = INVISIBLE_ITEM_WIDTH
+				content.append(copy)
+			content.append("\n")
+		content.append("\n")
+
+	# If the type is smithing trim,
+	elif craft_type == "smithing_trim":
+
+		# Convert ingredients to their text components
+		formatted_base: JsonDict = get_item_component(craft["base"])
+		formatted_addition: JsonDict = get_item_component(craft["addition"])
+		formatted_template: JsonDict = get_item_component(craft["template"])
+		# Pattern is not an actual item, just use a blank placeholder
+		formatted_pattern: JsonDict = {
+			"text": INVISIBLE_ITEM_WIDTH,
+			"color": "white"
+		}
+
+		content.append("\n")
+		for i in range(2):
+			# Add the base item
+			content.append(SMALL_NONE_FONT)
+			if i == 0:
+				content.append(formatted_base)
+			else:
+				copy = formatted_base.copy()
+				copy["text"] = INVISIBLE_ITEM_WIDTH
+				content.append(copy)
+
+			# Add the template item
+			content.append(INVISIBLE_ITEM_WIDTH)
+			if i == 0:
+				content.append(formatted_template)
+			else:
+				copy = formatted_template.copy()
+				copy["text"] = INVISIBLE_ITEM_WIDTH
+				content.append(copy)
+
+			# Add the addition item
+			content.append(INVISIBLE_ITEM_WIDTH)
+			if i == 0:
+				content.append(formatted_addition)
+			else:
+				copy = formatted_addition.copy()
+				copy["text"] = INVISIBLE_ITEM_WIDTH
+				content.append(copy)
+
+			# Add the pattern placeholder (not an actual item)
+			content.append(INVISIBLE_ITEM_WIDTH)
+			content.append(formatted_pattern)
+			content.append("\n")
+		content.append("\n")
+
+	# If the type is special Pulverizing or Stonecutting,
+	elif craft_type in (PULVERIZING, "stonecutting"):
 
 		# Convert ingredient to its text component
 		formatted_ingredient: JsonDict = get_item_component(craft["ingredient"])

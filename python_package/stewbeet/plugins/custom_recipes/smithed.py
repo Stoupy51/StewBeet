@@ -154,6 +154,9 @@ class SmithedRecipeHandler:
             crafts += list(data.get("used_for_crafting", []))
 
             for recipe in crafts:
+                if recipe.get("type") not in ["crafting_shapeless", "crafting_shaped"]:
+                    continue
+
                 # Get ingredients
                 ingr = recipe.get("ingredients", {})
                 if not ingr:
@@ -170,7 +173,7 @@ class SmithedRecipeHandler:
                     ingr = [recipe.get("ingredient", {})]
 
                 # If there is a component in the ingredients of shaped/shapeless, use smithed crafter
-                if recipe.get("type") in ["crafting_shapeless", "crafting_shaped"] and any(i.get("components") for i in ingr):
+                if any(i.get("components") for i in ingr):
                     if not official_lib_used("smithed.crafter"):
                         debug("Found a crafting table recipe using custom item in ingredients, adding 'smithed.crafter' dependency")
 
