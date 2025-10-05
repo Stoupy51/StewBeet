@@ -6,7 +6,7 @@ from stouputils.decorators import measure_time
 from stouputils.print import debug, info, progress
 
 from ....core.__memory__ import Mem
-from ....core.constants import BOOKSHELF_MODULES, DATA_VERSION, MINECRAFT_VERSION, OFFICIAL_LIBS, official_lib_used
+from ....core.constants import BOOKSHELF_MODULES, LATEST_MC_VERSION, MORE_DATA_VERSIONS, OFFICIAL_LIBS, official_lib_used
 from ....core.utils.io import write_function, write_function_tag, write_versioned_function
 
 
@@ -217,8 +217,15 @@ execute if score #{ns}.major load.status matches {major} if score #{ns}.minor lo
 ## Check if {project_name} is loadable (dependencies)
 scoreboard players set #dependency_error {ns}.data 0
 {encoder_checks}
-""")		# Write valid_dependencies.mcfunction
-		mc_error_msg: str = f'"{project_name} Error: This version is made for Minecraft {MINECRAFT_VERSION}+."'
+""")
+
+		# Get Minecraft version (default to latest known if not set) and data version
+		mc_version: str = ctx.minecraft_version or LATEST_MC_VERSION
+		mc_version_tuple: tuple[int, ...] = tuple(int(x) for x in mc_version.split(".") if x.isdigit())
+		data_version: int = MORE_DATA_VERSIONS.get(mc_version_tuple, max(MORE_DATA_VERSIONS.values(), default=0))
+
+		# Write valid_dependencies.mcfunction
+		mc_error_msg: str = f'"{project_name} Error: This version is made for Minecraft {mc_version}+."'
 		dep_error_msg: str = f'"{project_name} Error: Libraries are missing\\nplease download the right {project_name} datapack\\nor download each of these libraries one by one:"'
 
 		write_versioned_function("load/valid_dependencies", f"""# Waiting for a player to get the game version, but stop function if no player found
@@ -228,7 +235,7 @@ execute store result score #game_version {ns}.data run data get entity @p DataVe
 
 # Check if the game version is supported
 scoreboard players set #mcload_error {ns}.data 0
-execute unless score #game_version {ns}.data matches {DATA_VERSION}.. run scoreboard players set #mcload_error {ns}.data 1
+execute unless score #game_version {ns}.data matches {data_version}.. run scoreboard players set #mcload_error {ns}.data 1
 
 # Decode errors
 execute if score #mcload_error {ns}.data matches 1 run tellraw @a {{"text":{mc_error_msg},"color":"red"}}
