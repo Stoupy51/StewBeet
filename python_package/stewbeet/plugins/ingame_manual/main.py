@@ -58,6 +58,7 @@ from .shared_import import (
 	HOVER_PULVERIZING_FONT,
 	HOVER_SHAPED_2X2_FONT,
 	HOVER_SHAPED_3X3_FONT,
+	HOVER_STONECUTTING_FONT,
 	INVISIBLE_ITEM_FONT,
 	MANUAL_ASSETS_PATH,
 	MEDIUM_NONE_FONT,
@@ -67,6 +68,7 @@ from .shared_import import (
 	SHAPED_2X2_FONT,
 	SHAPED_3X3_FONT,
 	SMALL_NONE_FONT,
+	STONECUTTING_FONT,
 	TEMPLATES_PATH,
 	VERY_SMALL_NONE_FONT,
 	WIKI_INFO_FONT,
@@ -158,6 +160,7 @@ def routine():
 		Mem.ctx.assets[Mem.ctx.project_id].textures["font/shaped_2x2"] = Texture(source_path=f"{TEMPLATES_PATH}/shaped_2x2.png")
 		Mem.ctx.assets[Mem.ctx.project_id].textures["font/shaped_3x3"] = Texture(source_path=f"{TEMPLATES_PATH}/shaped_3x3.png")
 		Mem.ctx.assets[Mem.ctx.project_id].textures["font/furnace"] = Texture(source_path=f"{TEMPLATES_PATH}/furnace.png")
+		Mem.ctx.assets[Mem.ctx.project_id].textures["font/stonecutting"] = Texture(source_path=f"{TEMPLATES_PATH}/stonecutting.png")
 		Mem.ctx.assets[Mem.ctx.project_id].textures["font/pulverizing"] = Texture(source_path=f"{TEMPLATES_PATH}/pulverizing.png")
 
 	# If the manual cache is enabled and we have a cache file, load it
@@ -390,6 +393,21 @@ def routine():
 									craft_content[1] = craft_content[1].replace(k, v)
 							hover_text = [{"text":""}, craft_content]
 
+						# Add recipe type title
+						recipe_type_names: dict[str, str] = {
+							"crafting_shaped": "Shaped Recipe",
+							"crafting_shapeless": "Shapeless Recipe",
+							"smelting": "Smelting",
+							"blasting": "Blasting",
+							"smoking": "Smoking",
+							"campfire_cooking": "Campfire Cooking",
+							"stonecutting": "Stonecutting",
+							"smithing_transform": "Smithing Transform",
+							"smithing_trim": "Smithing Trim"
+						}
+						recipe_title = recipe_type_names.get(craft["type"], craft["type"].replace("_", " ").title())
+						hover_text.insert(0, {"text": f"{recipe_title}\n", "color": "yellow"})
+
 						# Append ingredients
 						if craft.get("ingredient"):
 							id = ingr_to_id(craft["ingredient"], False).replace("_", " ").title()
@@ -416,6 +434,24 @@ def routine():
 								for id, count in ids.items():
 									hover_text.append({"text": f"\n- x{count} ", "color": "gray"})
 									hover_text.append({"text": id, "color": "gray"})
+						else:
+							# Smithing crafts
+							if craft.get("base"):
+								id = ingr_to_id(craft["base"], False).replace("_", " ").title()
+								hover_text.append({"text": "\n- Base: ", "color": "gray"})
+								hover_text.append({"text": id, "color": "gray"})
+							if craft.get("template"):
+								id = ingr_to_id(craft["template"], False).replace("_", " ").title()
+								hover_text.append({"text": "\n- Template: ", "color": "gray"})
+								hover_text.append({"text": id, "color": "gray"})
+							if craft.get("addition"):
+								id = ingr_to_id(craft["addition"], False).replace("_", " ").title()
+								hover_text.append({"text": "\n- Addition: ", "color": "gray"})
+								hover_text.append({"text": id, "color": "gray"})
+							if craft.get("pattern"):
+								pattern_name = craft["pattern"].replace("minecraft:", "").replace("_", " ").title()
+								hover_text.append({"text": "\n- Pattern: ", "color": "gray"})
+								hover_text.append({"text": pattern_name, "color": "gray"})
 
 						# Add the craft to the content
 						result_or_ingredient = WIKI_RESULT_OF_CRAFT_FONT if "result" not in craft else generate_wiki_font_for_ingr(name, craft)
@@ -628,10 +664,12 @@ def routine():
 			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/shaped_3x3.png", "ascent": 1, "height": 58, "chars": [SHAPED_3X3_FONT]})
 			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/shaped_2x2.png", "ascent": 1, "height": 58, "chars": [SHAPED_2X2_FONT]})
 			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/furnace.png", "ascent": 1, "height": 58, "chars": [FURNACE_FONT]})
+			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/stonecutting.png", "ascent": 4, "height": 58, "chars": [STONECUTTING_FONT]})
 			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/pulverizing.png", "ascent": 4, "height": 58, "chars": [PULVERIZING_FONT]})
 			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/shaped_3x3.png", "ascent": -4, "height": 58, "chars": [HOVER_SHAPED_3X3_FONT]})
 			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/shaped_2x2.png", "ascent": -2, "height": 58, "chars": [HOVER_SHAPED_2X2_FONT]})
 			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/furnace.png", "ascent": -3, "height": 58, "chars": [HOVER_FURNACE_FONT]})
+			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/stonecutting.png", "ascent": -3, "height": 58, "chars": [HOVER_STONECUTTING_FONT]})
 			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/pulverizing.png", "ascent": -3, "height": 58, "chars": [HOVER_PULVERIZING_FONT]})
 		fonts = {"providers": SharedMemory.font_providers}
 		with super_open(f"{SharedMemory.cache_path}/font/manual.json", "w") as f:

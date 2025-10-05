@@ -114,56 +114,57 @@ def generate_everything_about_this_material(
 
 
 	## Armor (helmet, chestplate, leggings, boots)
-	for gear in ["helmet", "chestplate", "leggings", "boots"]:
-		armor = material_base + "_" + gear
-		if armor + ".png" not in textures:
-			continue
-		if armor not in Mem.definitions:
-			Mem.definitions[armor] = {}
-		equivalent_to: str = equipments_config.equivalent_to.value
-		if equivalent_to == "stone":
-			equivalent_to = "chainmail"
-		elif equivalent_to == "wooden":
-			equivalent_to = "leather"
-		Mem.definitions[armor]["id"] = f"minecraft:{equivalent_to}_{gear}"
-		Mem.definitions[armor][CATEGORY] = "equipment"					# Category
-		Mem.definitions[armor]["custom_data"] = {"smithed":{}}			# Smithed convention
-		Mem.definitions[armor]["custom_data"]["smithed"]["dict"] = {"armor": {material_base: True, gear: True}}
-		gear_config = {}
-		if gear == "helmet":
-			if not ignore_recipes:
-				Mem.definitions[armor][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["XXX","X X"],"ingredients":{"X": main_ingredient}}]
+	if equipments_config is not None:
+		for gear in ["helmet", "chestplate", "leggings", "boots"]:
+			armor = material_base + "_" + gear
+			if armor + ".png" not in textures:
+				continue
+			if armor not in Mem.definitions:
+				Mem.definitions[armor] = {}
+			equivalent_to: str = equipments_config.equivalent_to.value
+			if equivalent_to == "stone":
+				equivalent_to = "chainmail"
+			elif equivalent_to == "wooden":
+				equivalent_to = "leather"
+			Mem.definitions[armor]["id"] = f"minecraft:{equivalent_to}_{gear}"
+			Mem.definitions[armor][CATEGORY] = "equipment"					# Category
+			Mem.definitions[armor]["custom_data"] = {"smithed":{}}			# Smithed convention
+			Mem.definitions[armor]["custom_data"]["smithed"]["dict"] = {"armor": {material_base: True, gear: True}}
+			gear_config = {}
+			if gear == "helmet":
+				if not ignore_recipes:
+					Mem.definitions[armor][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["XXX","X X"],"ingredients":{"X": main_ingredient}}]
+				if equipments_config:
+					gear_config = VanillaEquipments.HELMET.value[equipments_config.equivalent_to]
+					Mem.definitions[armor]["max_damage"] = int(gear_config["durability"] * durability_factor)
+				if top_layer:
+					Mem.definitions[armor]["equippable"] = {"slot":"head", "asset_id":f"{Mem.ctx.project_id}:{material_base}"}
+			elif gear == "chestplate":
+				if not ignore_recipes:
+					Mem.definitions[armor][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["X X","XXX","XXX"],"ingredients":{"X": main_ingredient}}]
+				if equipments_config:
+					gear_config = VanillaEquipments.CHESTPLATE.value[equipments_config.equivalent_to]
+					Mem.definitions[armor]["max_damage"] = int(gear_config["durability"] * durability_factor)
+				if top_layer:
+					Mem.definitions[armor]["equippable"] = {"slot":"chest", "asset_id":f"{Mem.ctx.project_id}:{material_base}"}
+			elif gear == "leggings":
+				if not ignore_recipes:
+					Mem.definitions[armor][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["XXX","X X","X X"],"ingredients":{"X": main_ingredient}}]
+				if equipments_config:
+					gear_config = VanillaEquipments.LEGGINGS.value[equipments_config.equivalent_to]
+					Mem.definitions[armor]["max_damage"] = int(gear_config["durability"] * durability_factor)
+				if bottom_layer:
+					Mem.definitions[armor]["equippable"] = {"slot":"legs", "asset_id":f"{Mem.ctx.project_id}:{material_base}"}
+			elif gear == "boots":
+				if not ignore_recipes:
+					Mem.definitions[armor][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["X X","X X"],"ingredients":{"X": main_ingredient}}]
+				if equipments_config:
+					gear_config = VanillaEquipments.BOOTS.value[equipments_config.equivalent_to]
+					Mem.definitions[armor]["max_damage"] = int(gear_config["durability"] * durability_factor)
+				if bottom_layer:
+					Mem.definitions[armor]["equippable"] = {"slot":"feet", "asset_id":f"{Mem.ctx.project_id}:{material_base}"}
 			if equipments_config:
-				gear_config = VanillaEquipments.HELMET.value[equipments_config.equivalent_to]
-				Mem.definitions[armor]["max_damage"] = int(gear_config["durability"] * durability_factor)
-			if top_layer:
-				Mem.definitions[armor]["equippable"] = {"slot":"head", "asset_id":f"{Mem.ctx.project_id}:{material_base}"}
-		elif gear == "chestplate":
-			if not ignore_recipes:
-				Mem.definitions[armor][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["X X","XXX","XXX"],"ingredients":{"X": main_ingredient}}]
-			if equipments_config:
-				gear_config = VanillaEquipments.CHESTPLATE.value[equipments_config.equivalent_to]
-				Mem.definitions[armor]["max_damage"] = int(gear_config["durability"] * durability_factor)
-			if top_layer:
-				Mem.definitions[armor]["equippable"] = {"slot":"chest", "asset_id":f"{Mem.ctx.project_id}:{material_base}"}
-		elif gear == "leggings":
-			if not ignore_recipes:
-				Mem.definitions[armor][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["XXX","X X","X X"],"ingredients":{"X": main_ingredient}}]
-			if equipments_config:
-				gear_config = VanillaEquipments.LEGGINGS.value[equipments_config.equivalent_to]
-				Mem.definitions[armor]["max_damage"] = int(gear_config["durability"] * durability_factor)
-			if bottom_layer:
-				Mem.definitions[armor]["equippable"] = {"slot":"legs", "asset_id":f"{Mem.ctx.project_id}:{material_base}"}
-		elif gear == "boots":
-			if not ignore_recipes:
-				Mem.definitions[armor][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["X X","X X"],"ingredients":{"X": main_ingredient}}]
-			if equipments_config:
-				gear_config = VanillaEquipments.BOOTS.value[equipments_config.equivalent_to]
-				Mem.definitions[armor]["max_damage"] = int(gear_config["durability"] * durability_factor)
-			if bottom_layer:
-				Mem.definitions[armor]["equippable"] = {"slot":"feet", "asset_id":f"{Mem.ctx.project_id}:{material_base}"}
-		if equipments_config:
-			Mem.definitions[armor]["attribute_modifiers"] = format_attributes(equipments_config.get_armor_attributes(), SLOTS[gear], gear_config)
+				Mem.definitions[armor]["attribute_modifiers"] = format_attributes(equipments_config.get_armor_attributes(), SLOTS[gear], gear_config)
 
 	# Tools (sword, pickaxe, axe, shovel, hoe)
 	for gear in ["sword", "pickaxe", "axe", "shovel", "hoe"]:
