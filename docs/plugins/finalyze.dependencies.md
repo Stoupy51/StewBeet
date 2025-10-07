@@ -1,7 +1,7 @@
 
 # 📋 stewbeet.plugins.finalyze.dependencies
 
-📄 **Source Code**: [stewbeet/plugins/finalyze/dependencies/__init__.py](../../python_package/stewbeet/plugins/finalyze/dependencies/__init__.py) 🔗
+📄 **Source Code**: [`stewbeet/plugins/finalyze/dependencies/__init__.py`](../../python_package/stewbeet/plugins/finalyze/dependencies/__init__.py) 🔗
 
 ## 🔗 Dependencies
 - **✅ Required**: Project ID, version, name, and author in context

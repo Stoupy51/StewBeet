@@ -1,11 +1,11 @@
 
 # 🍳 stewbeet.plugins.custom_recipes
 
-📄 **Source Code**: [stewbeet/plugins/custom_recipes/__init__.py](../../python_package/stewbeet/plugins/custom_recipes/__init__.py) 🔗<br>
-📄 **Source Code**: [stewbeet/plugins/custom_recipes/vanilla.py](../../python_package/stewbeet/plugins/custom_recipes/vanilla.py) 🔗<br>
-📄 **Source Code**: [stewbeet/plugins/custom_recipes/smithed.py](../../python_package/stewbeet/plugins/custom_recipes/smithed.py) 🔗<br>
-📄 **Source Code**: [stewbeet/plugins/custom_recipes/furnace.py](../../python_package/stewbeet/plugins/custom_recipes/furnace.py) 🔗<br>
-📄 **Source Code**: [stewbeet/plugins/custom_recipes/pulverizer.py](../../python_package/stewbeet/plugins/custom_recipes/pulverizer.py) 🔗<br>
+📄 **Source Code**: [`stewbeet/plugins/custom_recipes/__init__.py`](../../python_package/stewbeet/plugins/custom_recipes/__init__.py) 🔗<br>
+📄 **Source Code**: [`stewbeet/plugins/custom_recipes/vanilla.py`](../../python_package/stewbeet/plugins/custom_recipes/vanilla.py) 🔗<br>
+📄 **Source Code**: [`stewbeet/plugins/custom_recipes/smithed.py`](../../python_package/stewbeet/plugins/custom_recipes/smithed.py) 🔗<br>
+📄 **Source Code**: [`stewbeet/plugins/custom_recipes/furnace.py`](../../python_package/stewbeet/plugins/custom_recipes/furnace.py) 🔗<br>
+📄 **Source Code**: [`stewbeet/plugins/custom_recipes/pulverizer.py`](../../python_package/stewbeet/plugins/custom_recipes/pulverizer.py) 🔗<br>
 
 ## 🔗 Dependencies
 - **✅ Required**: StewBeet framework initialization

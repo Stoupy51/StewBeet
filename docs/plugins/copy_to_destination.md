@@ -1,7 +1,7 @@
 
 # 📂 stewbeet.plugins.copy_to_destination
 
-📄 **Source Code**: [stewbeet/plugins/copy_to_destination/__init__.py](../../python_package/stewbeet/plugins/copy_to_destination/__init__.py) 🔗
+📄 **Source Code**: [`stewbeet/plugins/copy_to_destination/__init__.py`](../../python_package/stewbeet/plugins/copy_to_destination/__init__.py) 🔗
 
 ## 🔗 Dependencies
 - **✅ Required**: Generated pack archives from archive plugin

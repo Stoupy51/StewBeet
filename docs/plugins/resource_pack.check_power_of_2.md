@@ -1,7 +1,7 @@
 
 # 🖼️ stewbeet.plugins.resource_pack.check_power_of_2
 
-📄 **Source Code**: [stewbeet/plugins/resource_pack/check_power_of_2/__init__.py](../../python_package/stewbeet/plugins/resource_pack/check_power_of_2/__init__.py) 🔗
+📄 **Source Code**: [`stewbeet/plugins/resource_pack/check_power_of_2/__init__.py`](../../python_package/stewbeet/plugins/resource_pack/check_power_of_2/__init__.py) 🔗
 
 ## 🔗 Dependencies
 - **✅ Required**: Resource pack textures (from previous plugins like `resource_pack.item_models`)

@@ -1,7 +1,7 @@
 
 # ✅ stewbeet.plugins.verify_definitions
 
-📄 **Source Code**: [stewbeet/plugins/verify_definitions/__init__.py](../../python_package/stewbeet/plugins/verify_definitions/__init__.py) 🔗
+📄 **Source Code**: [`stewbeet/plugins/verify_definitions/__init__.py`](../../python_package/stewbeet/plugins/verify_definitions/__init__.py) 🔗
 
 ## 🔗 Dependencies
 - **✅ Required**: StewBeet framework initialization

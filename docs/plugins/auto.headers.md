@@ -1,11 +1,11 @@
 
 # 📝 stewbeet.plugins.auto.headers
 
-📄 **Source Code**: [stewbeet/plugins/auto/headers/__init__.py](../../python_package/stewbeet/plugins/auto/headers/__init__.py) 🔗<br>
-📄 **Source Code**: [stewbeet/plugins/auto/headers/object.py](../../python_package/stewbeet/plugins/auto/headers/object.py) 🔗<br>
-📄 **Source Code**: [stewbeet/plugins/auto/headers/context_analyzer.py](../../python_package/stewbeet/plugins/auto/headers/context_analyzer.py) 🔗<br>
-📄 **Source Code**: [stewbeet/plugins/auto/headers/execution_parser.py](../../python_package/stewbeet/plugins/auto/headers/execution_parser.py) 🔗<br>
-📄 **Source Code**: [stewbeet/plugins/auto/headers/function_analyzer.py](../../python_package/stewbeet/plugins/auto/headers/function_analyzer.py) 🔗<br>
+📄 **Source Code**: [`stewbeet/plugins/auto/headers/__init__.py`](../../python_package/stewbeet/plugins/auto/headers/__init__.py) 🔗<br>
+📄 **Source Code**: [`stewbeet/plugins/auto/headers/object.py`](../../python_package/stewbeet/plugins/auto/headers/object.py) 🔗<br>
+📄 **Source Code**: [`stewbeet/plugins/auto/headers/context_analyzer.py`](../../python_package/stewbeet/plugins/auto/headers/context_analyzer.py) 🔗<br>
+📄 **Source Code**: [`stewbeet/plugins/auto/headers/execution_parser.py`](../../python_package/stewbeet/plugins/auto/headers/execution_parser.py) 🔗<br>
+📄 **Source Code**: [`stewbeet/plugins/auto/headers/function_analyzer.py`](../../python_package/stewbeet/plugins/auto/headers/function_analyzer.py) 🔗<br>
 
 ## 📋 Overview
 The `auto.headers` plugin automatically generates documentation headers for mcfunction files.<br>

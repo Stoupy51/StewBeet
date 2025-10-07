@@ -1,7 +1,7 @@
 
 # ⚔️ stewbeet.plugins.compatibilities.neo_enchant
 
-📄 **Source Code**: [stewbeet/plugins/compatibilities/neo_enchant/__init__.py](../../python_package/stewbeet/plugins/compatibilities/neo_enchant/__init__.py) 🔗
+📄 **Source Code**: [`stewbeet/plugins/compatibilities/neo_enchant/__init__.py`](../../python_package/stewbeet/plugins/compatibilities/neo_enchant/__init__.py) 🔗
 
 ## 🔗 Dependencies
 - **✅ Required**: `Your definition plugin` with `vanilla_block` configuration (see [`definitions_setup.md`](../definitions_setup.md) for details)
