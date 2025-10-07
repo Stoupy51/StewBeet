@@ -1,7 +1,7 @@
 
 # 📦 stewbeet.plugins.archive
 
-📄 **Source Code**: [stewbeet/plugins/archive/__init__.py](../../python_package/stewbeet/plugins/archive/__init__.py) 🔗
+📄 **Source Code**: [`stewbeet/plugins/archive/__init__.py`](../../python_package/stewbeet/plugins/archive/__init__.py) 🔗
 
 ## 🔗 Dependencies
 - **✅ Required**: Beet context with at least one type of pack (datapacks/resource packs)

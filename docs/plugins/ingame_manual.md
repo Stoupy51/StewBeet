@@ -1,16 +1,16 @@
 
 # 📖 stewbeet.plugins.ingame_manual
 
-📄 **Source Code**: [stewbeet/plugins/ingame_manual/__init__.py](../../python_package/stewbeet/plugins/ingame_manual/__init__.py) 🔗<br>
-📄 **Source Code**: [stewbeet/plugins/ingame_manual/shared_import.py](../../python_package/stewbeet/plugins/ingame_manual/shared_import.py) 🔗<br>
-📄 **Source Code**: [stewbeet/plugins/ingame_manual/main.py](../../python_package/stewbeet/plugins/ingame_manual/main.py) 🔗<br>
-📄 **Source Code**: [stewbeet/plugins/ingame_manual/book_components.py](../../python_package/stewbeet/plugins/ingame_manual/book_components.py) 🔗<br>
-📄 **Source Code**: [stewbeet/plugins/ingame_manual/book_optimizer.py](../../python_package/stewbeet/plugins/ingame_manual/book_optimizer.py) 🔗<br>
-📄 **Source Code**: [stewbeet/plugins/ingame_manual/craft_content.py](../../python_package/stewbeet/plugins/ingame_manual/craft_content.py) 🔗<br>
-📄 **Source Code**: [stewbeet/plugins/ingame_manual/image_utils.py](../../python_package/stewbeet/plugins/ingame_manual/image_utils.py) 🔗<br>
-📄 **Source Code**: [stewbeet/plugins/ingame_manual/iso_renders.py](../../python_package/stewbeet/plugins/ingame_manual/iso_renders.py) 🔗<br>
-📄 **Source Code**: [stewbeet/plugins/ingame_manual/other_utils.py](../../python_package/stewbeet/plugins/ingame_manual/other_utils.py) 🔗<br>
-📄 **Source Code**: [stewbeet/plugins/ingame_manual/page_font.py](../../python_package/stewbeet/plugins/ingame_manual/page_font.py) 🔗<br>
+📄 **Source Code**: [`stewbeet/plugins/ingame_manual/__init__.py`](../../python_package/stewbeet/plugins/ingame_manual/__init__.py) 🔗<br>
+📄 **Source Code**: [`stewbeet/plugins/ingame_manual/shared_import.py`](../../python_package/stewbeet/plugins/ingame_manual/shared_import.py) 🔗<br>
+📄 **Source Code**: [`stewbeet/plugins/ingame_manual/main.py`](../../python_package/stewbeet/plugins/ingame_manual/main.py) 🔗<br>
+📄 **Source Code**: [`stewbeet/plugins/ingame_manual/book_components.py`](../../python_package/stewbeet/plugins/ingame_manual/book_components.py) 🔗<br>
+📄 **Source Code**: [`stewbeet/plugins/ingame_manual/book_optimizer.py`](../../python_package/stewbeet/plugins/ingame_manual/book_optimizer.py) 🔗<br>
+📄 **Source Code**: [`stewbeet/plugins/ingame_manual/craft_content.py`](../../python_package/stewbeet/plugins/ingame_manual/craft_content.py) 🔗<br>
+📄 **Source Code**: [`stewbeet/plugins/ingame_manual/image_utils.py`](../../python_package/stewbeet/plugins/ingame_manual/image_utils.py) 🔗<br>
+📄 **Source Code**: [`stewbeet/plugins/ingame_manual/iso_renders.py`](../../python_package/stewbeet/plugins/ingame_manual/iso_renders.py) 🔗<br>
+📄 **Source Code**: [`stewbeet/plugins/ingame_manual/other_utils.py`](../../python_package/stewbeet/plugins/ingame_manual/other_utils.py) 🔗<br>
+📄 **Source Code**: [`stewbeet/plugins/ingame_manual/page_font.py`](../../python_package/stewbeet/plugins/ingame_manual/page_font.py) 🔗<br>
 
 ## 🔗 Dependencies
 - **✅ Required**: StewBeet framework initialization

@@ -1,7 +1,7 @@
 
 # ⏰ stewbeet.plugins.finalyze.custom_blocks_ticking
 
-📄 **Source Code**: [stewbeet/plugins/finalyze/custom_blocks_ticking/__init__.py](../../python_package/stewbeet/plugins/finalyze/custom_blocks_ticking/__init__.py) 🔗
+📄 **Source Code**: [`stewbeet/plugins/finalyze/custom_blocks_ticking/__init__.py`](../../python_package/stewbeet/plugins/finalyze/custom_blocks_ticking/__init__.py) 🔗
 
 ## 🔗 Dependencies
 - **✅ Required**: Custom block functions in the `custom_blocks/` folder

@@ -1,7 +1,7 @@
 
 # 🔐 stewbeet.plugins.compute_sha1
 
-📄 **Source Code**: [stewbeet/plugins/compute_sha1/__init__.py](../../python_package/stewbeet/plugins/compute_sha1/__init__.py) 🔗
+📄 **Source Code**: [`stewbeet/plugins/compute_sha1/__init__.py`](../../python_package/stewbeet/plugins/compute_sha1/__init__.py) 🔗
 
 ## 📋 Overview
 The `compute_sha1` plugin generates SHA1 hashes for all generated zip archives.<br>
