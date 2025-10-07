@@ -1,8 +1,8 @@
 
 # 🔗 stewbeet.plugins.merge_smithed_weld
 
-📄 **Source Code**: [stewbeet/plugins/merge_smithed_weld/__init__.py](../../python_package/stewbeet/plugins/merge_smithed_weld/__init__.py) 🔗<br>
-📄 **Source Code**: [stewbeet/plugins/merge_smithed_weld/weld.py](../../python_package/stewbeet/plugins/merge_smithed_weld/weld.py) 🔗<br>
+📄 **Source Code**: [`stewbeet/plugins/merge_smithed_weld/__init__.py`](../../python_package/stewbeet/plugins/merge_smithed_weld/__init__.py) 🔗<br>
+📄 **Source Code**: [`stewbeet/plugins/merge_smithed_weld/weld.py`](../../python_package/stewbeet/plugins/merge_smithed_weld/weld.py) 🔗<br>
 
 ## 🔗 Dependencies
 - **✅ Required**: Generated base archives from archive plugin

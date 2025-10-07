@@ -1,8 +1,8 @@
 
 # 🌐 stewbeet.plugins.auto.lang_file
 
-📄 **Source Code**: [stewbeet/plugins/auto/lang_file/__init__.py](../../python_package/stewbeet/plugins/auto/lang_file/__init__.py) 🔗<br>
-📄 **Source Code**: [stewbeet/plugins/auto/lang_file/utils.py](../../python_package/stewbeet/plugins/auto/lang_file/utils.py) 🔗<br>
+📄 **Source Code**: [`stewbeet/plugins/auto/lang_file/__init__.py`](../../python_package/stewbeet/plugins/auto/lang_file/__init__.py) 🔗<br>
+📄 **Source Code**: [`stewbeet/plugins/auto/lang_file/utils.py`](../../python_package/stewbeet/plugins/auto/lang_file/utils.py) 🔗<br>
 
 ## 🔗 Dependencies
 - **✅ Required**: Beet context with functions, loot tables, advancements, recipes, etc.

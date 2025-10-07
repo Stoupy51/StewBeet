@@ -1,8 +1,8 @@
 
 # 🚀 stewbeet.plugins.initialize
 
-📄 **Source Code**: [stewbeet/plugins/initialize/__init__.py](../../python_package/stewbeet/plugins/initialize/__init__.py) 🔗<br>
-📄 **Source Code**: [stewbeet/plugins/initialize/source_lore_font.py](../../python_package/stewbeet/plugins/initialize/source_lore_font.py) 🔗<br>
+📄 **Source Code**: [`stewbeet/plugins/initialize/__init__.py`](../../python_package/stewbeet/plugins/initialize/__init__.py) 🔗<br>
+📄 **Source Code**: [`stewbeet/plugins/initialize/source_lore_font.py`](../../python_package/stewbeet/plugins/initialize/source_lore_font.py) 🔗<br>
 
 ## 🔗 Dependencies
 - **✅ Required**: None (this is the first plugin in the pipeline)

@@ -1,7 +1,7 @@
 
 # 📦 stewbeet.plugins.compatibilities.simpledrawer
 
-📄 **Source Code**: [stewbeet/plugins/compatibilities/simpledrawer/__init__.py](../../python_package/stewbeet/plugins/compatibilities/simpledrawer/__init__.py) 🔗
+📄 **Source Code**: [`stewbeet/plugins/compatibilities/simpledrawer/__init__.py`](../../python_package/stewbeet/plugins/compatibilities/simpledrawer/__init__.py) 🔗
 
 ## 🔗 Dependencies
 - **✅ Required**: `Your definition plugin` (see [`definitions_setup.md`](../definitions_setup.md) for details)

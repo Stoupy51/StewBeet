@@ -1,7 +1,7 @@
 
 # 🔍 stewbeet.plugins.finalyze.check_unused_textures
 
-📄 **Source Code**: [stewbeet/plugins/finalyze/check_unused_textures/__init__.py](../../python_package/stewbeet/plugins/finalyze/check_unused_textures/__init__.py) 🔗
+📄 **Source Code**: [`stewbeet/plugins/finalyze/check_unused_textures/__init__.py`](../../python_package/stewbeet/plugins/finalyze/check_unused_textures/__init__.py) 🔗
 
 ## 🔗 Dependencies
 - **✅ Required**: `meta.stewbeet.textures_folder` configuration

@@ -1,7 +1,7 @@
 
 # 🔊 stewbeet.plugins.resource_pack.sounds
 
-📄 **Source Code**: [stewbeet/plugins/resource_pack/sounds/__init__.py](../../python_package/stewbeet/plugins/resource_pack/sounds/__init__.py) 🔗<br>
+📄 **Source Code**: [`stewbeet/plugins/resource_pack/sounds/__init__.py`](../../python_package/stewbeet/plugins/resource_pack/sounds/__init__.py) 🔗<br>
 📄 **Source Code**: [stewbeet/core/utils/sounds.py](../../python_package/stewbeet/core/utils/sounds.py) 🔗<br>
 
 ## 🔗 Dependencies

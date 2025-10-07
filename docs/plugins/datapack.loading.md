@@ -1,7 +1,7 @@
 
 # ⚡ stewbeet.plugins.datapack.loading
 
-📄 **Source Code**: [stewbeet/plugins/datapack/loading/__init__.py](../../python_package/stewbeet/plugins/datapack/loading/__init__.py) 🔗
+📄 **Source Code**: [`stewbeet/plugins/datapack/loading/__init__.py`](../../python_package/stewbeet/plugins/datapack/loading/__init__.py) 🔗
 
 ## 🔗 Dependencies
 - **✅ Required**: None (but works best with other StewBeet plugins)

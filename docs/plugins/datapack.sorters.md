@@ -1,12 +1,12 @@
 
 # 🔢 stewbeet.plugins.datapack.sorters
 
-📄 **Source Code**: [stewbeet/plugins/datapack/sorters/__init__.py](../../python_package/stewbeet/plugins/datapack/sorters/__init__.py) 🔗<br>
-📄 **Source Code**: [stewbeet/plugins/datapack/sorters/constants.py](../../python_package/stewbeet/plugins/datapack/sorters/constants.py) 🔗<br>
-📄 **Source Code**: [stewbeet/plugins/datapack/sorters/extend_datapack.py](../../python_package/stewbeet/plugins/datapack/sorters/extend_datapack.py) 🔗<br>
-📄 **Source Code**: [stewbeet/plugins/datapack/sorters/match.py](../../python_package/stewbeet/plugins/datapack/sorters/match.py) 🔗<br>
-📄 **Source Code**: [stewbeet/plugins/datapack/sorters/quick_sort.py](../../python_package/stewbeet/plugins/datapack/sorters/quick_sort.py) 🔗<br>
-📄 **Source Code**: [stewbeet/plugins/datapack/sorters/selection_sort.py](../../python_package/stewbeet/plugins/datapack/sorters/selection_sort.py) 🔗<br>
+📄 **Source Code**: [`stewbeet/plugins/datapack/sorters/__init__.py`](../../python_package/stewbeet/plugins/datapack/sorters/__init__.py) 🔗<br>
+📄 **Source Code**: [`stewbeet/plugins/datapack/sorters/constants.py`](../../python_package/stewbeet/plugins/datapack/sorters/constants.py) 🔗<br>
+📄 **Source Code**: [`stewbeet/plugins/datapack/sorters/extend_datapack.py`](../../python_package/stewbeet/plugins/datapack/sorters/extend_datapack.py) 🔗<br>
+📄 **Source Code**: [`stewbeet/plugins/datapack/sorters/match.py`](../../python_package/stewbeet/plugins/datapack/sorters/match.py) 🔗<br>
+📄 **Source Code**: [`stewbeet/plugins/datapack/sorters/quick_sort.py`](../../python_package/stewbeet/plugins/datapack/sorters/quick_sort.py) 🔗<br>
+📄 **Source Code**: [`stewbeet/plugins/datapack/sorters/selection_sort.py`](../../python_package/stewbeet/plugins/datapack/sorters/selection_sort.py) 🔗<br>
 
 ## 💻 Credits
 **Author**: [Darukshock](https://github.com/Darukshock) - Original implementation of the quick sort algorithm
