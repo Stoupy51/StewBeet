@@ -2,6 +2,7 @@
 # ruff: noqa: E501, RUF012
 # Imports
 from beet.core.utils import JsonDict
+from beet.library import base
 
 from ..dependencies.bookshelf import BOOKSHELF_MODULES
 
@@ -49,6 +50,7 @@ MORE_DATA_VERSIONS: dict[tuple[int, ...], int] = {
 	(1, 21, 10): 4556,
 }
 LATEST_MC_VERSION: str = ".".join(str(x) for x in list(MORE_DATA_VERSIONS.keys())[-1])
+base.LATEST_MINECRAFT_VERSION = LATEST_MC_VERSION
 
 # Databases
 CATEGORY: str = "category"								# Key for the category, used for recipes and the manual, ex: CATEGORY:"material" or CATEGORY:"equipment"
