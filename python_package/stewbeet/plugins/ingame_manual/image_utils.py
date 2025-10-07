@@ -81,16 +81,19 @@ def image_count(count: int | str) -> Image.Image:
 	img = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
 	draw = ImageDraw.Draw(img)
 
-	# Reduce font size if count is too long (16 for 1-2 chars, 12 for 3 chars, 10 for 4 chars, 8 for 5 chars)
-	sizes: dict[int, int] = {3:12, 4:10, 5:8}
-	font_size = sizes.get(len(count), 16)
+	# Reduce font size if count is too long
+	font_size: int = 16 if len(count) < 3 else 8
 	font = ImageFont.truetype(f"{TEMPLATES_PATH}/minecraft_font.ttf", size = font_size)
 
 	# Calculate text size and positions of the two texts
 	text_width = draw.textlength(count, font = font)
 	text_height = font_size + 4
-	pos_1 = (34-text_width), (32-text_height)
-	pos_2 = (32-text_width), (30-text_height)
+
+	# Adjust shadow offset for smaller fonts
+	shadow_offset: int = 0 if font_size == 16 else 1
+	height_offset: int = 0 if font_size == 16 else 3
+	pos_1 = (34-text_width-shadow_offset), (32-text_height-shadow_offset+height_offset)
+	pos_2 = (32-text_width), (30-text_height+height_offset)
 
 	# Draw the count
 	draw.text(pos_1, count, (50, 50, 50), font = font)
