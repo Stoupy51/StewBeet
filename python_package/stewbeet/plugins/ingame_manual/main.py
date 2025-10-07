@@ -20,12 +20,13 @@ from ...core.constants import (
 	CUSTOM_BLOCK_VANILLA,
 	OFFICIAL_LIBS,
 	OVERRIDE_MODEL,
+	PULVERIZING,
 	RESULT_OF_CRAFTING,
 	USED_FOR_CRAFTING,
 	WIKI_COMPONENT,
 )
 from ...core.definitions_helper import add_item_name_and_lore_if_missing
-from ...core.ingredients import ingr_repr, ingr_to_id
+from ...core.ingredients import CRAFTING_RECIPES_TYPES, ingr_repr, ingr_to_id
 from ...core.utils.io import super_merge_dict, write_load_file
 from ..initialize.source_lore_font import find_pack_png
 from ..resource_pack.item_models import (
@@ -55,6 +56,7 @@ from .shared_import import (
 	HEAVY_WORKBENCH_CATEGORY,
 	HOVER_EQUIVALENTS,
 	HOVER_FURNACE_FONT,
+	HOVER_MINING_FONT,
 	HOVER_PULVERIZING_FONT,
 	HOVER_SHAPED_2X2_FONT,
 	HOVER_SHAPED_3X3_FONT,
@@ -63,6 +65,7 @@ from .shared_import import (
 	MANUAL_ASSETS_PATH,
 	MEDIUM_NONE_FONT,
 	MICRO_NONE_FONT,
+	MINING_FONT,
 	NONE_FONT,
 	PULVERIZING_FONT,
 	SHAPED_2X2_FONT,
@@ -89,7 +92,8 @@ def deepcopy(x: Any) -> Any:
 
 def manual_main():
 	# Copy everything in the manual assets folder to the templates folder
-	os.makedirs(TEMPLATES_PATH, exist_ok = True)
+	with super_open(f"{TEMPLATES_PATH}/.gitignore", "w") as f:
+		f.write("*")
 	shutil.copytree(MANUAL_ASSETS_PATH + "assets", TEMPLATES_PATH, dirs_exist_ok = True)
 
 	# Copy the manual_overrides folder to the templates folder
@@ -162,6 +166,7 @@ def routine():
 		Mem.ctx.assets[Mem.ctx.project_id].textures["font/furnace"] = Texture(source_path=f"{TEMPLATES_PATH}/furnace.png")
 		Mem.ctx.assets[Mem.ctx.project_id].textures["font/stonecutting"] = Texture(source_path=f"{TEMPLATES_PATH}/stonecutting.png")
 		Mem.ctx.assets[Mem.ctx.project_id].textures["font/pulverizing"] = Texture(source_path=f"{TEMPLATES_PATH}/pulverizing.png")
+		Mem.ctx.assets[Mem.ctx.project_id].textures["font/mining"] = Texture(source_path=f"{TEMPLATES_PATH}/mining.png")
 
 	# If the manual cache is enabled and we have a cache file, load it
 	cache_pages: bool = manual_config.get("cache_pages", False)
@@ -325,31 +330,92 @@ def routine():
 				crafts = remove_unknown_crafts(crafts)
 				crafts = unique_list(crafts)
 
-				# If there are blue crafts, generate the content for the first craft
-				blue_crafts: list[JsonDict] = [craft for craft in crafts if not craft.get("result")]
-				if blue_crafts:
-					# Sort crafts by result_count in reverse order
-					blue_crafts.sort(key=lambda craft: craft.get("result_count", 0), reverse=True)
+				# Helper function to add count information to mining recipes
+				def add_count_to_mining_recipe(mining_recipe: JsonDict, no_silk_drop_data: JsonDict | str) -> None:
+					if isinstance(no_silk_drop_data, dict) and "count" in no_silk_drop_data:
+						count_data: JsonDict | int = no_silk_drop_data["count"]
+						if isinstance(count_data, dict):
+							# Range of items like {"min": 2, "max": 8}
+							if "min" in count_data and "max" in count_data:
+								mining_recipe["result_count"] = f"{count_data['min']}-{count_data['max']}"
+							elif "min" in count_data:
+								mining_recipe["result_count"] = str(count_data["min"])
+							elif "max" in count_data:
+								mining_recipe["result_count"] = str(count_data["max"])
+						else:
+							# Single count value
+							mining_recipe["result_count"] = str(count_data)
 
-					# Get the first craft and generate the content
-					first_craft: JsonDict = blue_crafts[0]
-					content += generate_craft_content(first_craft, name, page_font)
+				# If there is NO_SILK_TOUCH_DROP, add a mining recipe for it
+				no_silk_touch_drop: bool = bool(raw_data.get("no_silk_touch_drop", False))
+				is_drop_of: list[str] = [
+					i for i, d in Mem.definitions.items()
+					if d.get("no_silk_touch_drop") and (
+						(isinstance(d["no_silk_touch_drop"], str) and d["no_silk_touch_drop"] == name) or
+						(isinstance(d["no_silk_touch_drop"], dict) and cast(JsonDict, d["no_silk_touch_drop"]).get("id") == name)
+					)
+				]
 
-				# Else, generate the content for the single item in a big box
-				else:
-					if page_font == "":
-						page_font = get_page_font(number)
-					generate_page_font(name, page_font, craft = None)
-					component = get_item_component(name)
-					component["text"] = NONE_FONT
-					component["text"] *= 2
-					content.append({"text": "", "font": FONT, "color": "white"})	# Make default font for every next component
-					content.append({"text": titled, "font": "minecraft:default", "color": "black", "underlined": True})
-					content.append(MEDIUM_NONE_FONT * 2 + page_font + "\n")
-					for _ in range(4):
-						content.append(MEDIUM_NONE_FONT * 2)
-						content.append(component)
-						content.append("\n")
+				# Add mining recipes for items that are drops from other ores
+				content_added: bool = False
+				if is_drop_of:
+					for ore_name in is_drop_of:
+						mining_recipe: JsonDict = {
+							"type": "mining",
+							"ingredient": ingr_repr(ore_name, Mem.ctx.project_id),  # The ore being mined
+							"result": ingr_repr(name, Mem.ctx.project_id),  # This item is the result
+						}
+						add_count_to_mining_recipe(mining_recipe, Mem.definitions[ore_name]["no_silk_touch_drop"])
+						crafts.insert(0, mining_recipe)
+
+					# Generate the craft content
+					content += generate_craft_content(crafts[0], name, page_font)
+					content_added = True
+
+				# Add mining recipe if this item has no_silk_touch_drop (it's an ore)
+				if no_silk_touch_drop:
+					no_silk_drop_data: JsonDict | str = raw_data["no_silk_touch_drop"]
+					result_format: str = no_silk_drop_data if isinstance(no_silk_drop_data, str) else no_silk_drop_data["id"]
+					mining_recipe: JsonDict = {
+						"type": "mining",
+						"ingredient": ingr_repr(name, Mem.ctx.project_id),  # The ore being mined
+						"result": ingr_repr(result_format, Mem.ctx.project_id),  # Proper ingredient format
+					}
+					add_count_to_mining_recipe(mining_recipe, no_silk_drop_data)
+
+					# Insert at position 0 so it appears first and generate the craft content
+					crafts.insert(0, mining_recipe)
+					if not content_added:
+						content += generate_craft_content(crafts[0], name, page_font)
+						content_added = True
+
+				# Else, if there are blue crafts, generate the content for the first craft
+				elif not content_added:
+					blue_crafts: list[JsonDict] = [craft for craft in crafts if not craft.get("result")]
+					if blue_crafts:
+						# Sort crafts by result_count in reverse order
+						blue_crafts.sort(key=lambda craft: craft.get("result_count", 0), reverse=True)
+
+						# Get the first craft and generate the content
+						content += generate_craft_content(blue_crafts[0], name, page_font)
+						content_added = True
+
+					# Else, generate the content for the single item in a big box
+					else:
+						if page_font == "":
+							page_font = get_page_font(number)
+						generate_page_font(name, page_font, craft = None)
+						component = get_item_component(name)
+						component["text"] = NONE_FONT
+						component["text"] *= 2
+						content.append({"text": "", "font": FONT, "color": "white"})	# Make default font for every next component
+						content.append({"text": titled, "font": "minecraft:default", "color": "black", "underlined": True})
+						content.append(MEDIUM_NONE_FONT * 2 + page_font + "\n")
+						for _ in range(4):
+							content.append(MEDIUM_NONE_FONT * 2)
+							content.append(component)
+							content.append("\n")
+						content_added = True
 
 				## Add wiki information if any
 				info_buttons: list[JsonDict] = []
@@ -370,6 +436,7 @@ def routine():
 						})
 
 					# For each craft (except smelting dupes),
+					previous_result: Any = None
 					for i, craft in enumerate(crafts):
 						if craft["type"] == "crafting_shapeless":
 							craft = convert_shapeless_to_shaped(craft)
@@ -394,22 +461,34 @@ def routine():
 							hover_text = [{"text":""}, craft_content]
 
 						# Add recipe type title
-						recipe_type_names: dict[str, str] = {
-							"crafting_shaped": "Shaped Recipe",
-							"crafting_shapeless": "Shapeless Recipe",
-							"smelting": "Smelting",
-							"blasting": "Blasting",
-							"smoking": "Smoking",
-							"campfire_cooking": "Campfire Cooking",
-							"stonecutting": "Stonecutting",
-							"smithing_transform": "Smithing Transform",
-							"smithing_trim": "Smithing Trim"
-						}
-						recipe_title = recipe_type_names.get(craft["type"], craft["type"].replace("_", " ").title())
-						hover_text.insert(0, {"text": f"{recipe_title}\n", "color": "yellow"})
+						if craft["type"] not in CRAFTING_RECIPES_TYPES:
+							recipe_type_names: dict[str, str] = {
+								"mining": "Mining",
+								"crafting_shaped": "Shaped Recipe",
+								"crafting_shapeless": "Shapeless Recipe",
+								"smelting": "Smelting",
+								"blasting": "Blasting",
+								"smoking": "Smoking",
+								"campfire_cooking": "Campfire Cooking",
+								"stonecutting": "Stonecutting",
+								"smithing_transform": "Smithing Transform",
+								"smithing_trim": "Smithing Trim",
+								PULVERIZING: "SimplEnergy Pulverizing"
+							}
+							recipe_title = recipe_type_names.get(craft["type"], craft["type"].replace("_", " ").title())
+							hover_text.insert(0, {"text": f"{recipe_title}\n", "color": "yellow"})
 
 						# Append ingredients
-						if craft.get("ingredient"):
+						if craft["type"] == "mining":
+							# For mining recipes, show what is being mined and what it drops
+							ore_name = ingr_to_id(craft["ingredient"], False).replace("_", " ").title()
+							result_name = ingr_to_id(craft["result"], False).replace("_", " ").title()
+							hover_text.append({"text": "\n- Mine: ", "color": "gray"})
+							hover_text.append({"text": ore_name, "color": "gray"})
+							result_count = craft.get("result_count", "1")
+							hover_text.append({"text": f"\n- Drops: x{result_count} ", "color": "gray"})
+							hover_text.append({"text": result_name, "color": "gray"})
+						elif craft.get("ingredient"):
 							id = ingr_to_id(craft["ingredient"], False).replace("_", " ").title()
 							hover_text.append({"text": "\n- x1 ", "color": "gray"})
 							hover_text.append({"text": id, "color": "gray"})
@@ -453,6 +532,12 @@ def routine():
 								hover_text.append({"text": "\n- Pattern: ", "color": "gray"})
 								hover_text.append({"text": pattern_name, "color": "gray"})
 
+						# Skip if result is same as previous result
+						current_result: Any | None = craft.get("result")
+						if current_result and current_result == previous_result and craft["type"] != "mining":
+							continue
+						previous_result = current_result
+
 						# Add the craft to the content
 						result_or_ingredient = WIKI_RESULT_OF_CRAFT_FONT if "result" not in craft else generate_wiki_font_for_ingr(name, craft)
 						info_buttons.append({
@@ -460,32 +545,68 @@ def routine():
 							"hover_event": {
 								"action": "show_text",
 								"value": hover_text
-							}
+							},
+							"priority": craft.get("manual_priority", 1)
 						})
 
 						# If there is a result to the craft, try to add the click_event that change to that page
-						if "result" in craft:
-							result_item = ingr_to_id(craft["result"], False)
-							if result_item in Mem.definitions:
+						craft_result: str = "" if "result" not in craft else ingr_to_id(craft["result"], False)
+						if craft_result and craft_result != name:
+							if craft_result in Mem.definitions:
 								info_buttons[-1]["click_event"] = {
 									"action": "change_page",
-									"page": get_page_number(result_item)
+									"page": get_page_number(craft_result)
+								}
+
+						# Else, try to add the click_event that change to that page
+						else:
+							# If there is only one ingredient, link to it
+							craft_ingredient: str = ""
+							if craft.get("ingredient"):
+								craft_ingredient = ingr_to_id(craft["ingredient"], False)
+							elif craft.get("ingredients") and isinstance(craft["ingredients"], list) and len(craft["ingredients"]) == 1:
+								craft_ingredient = ingr_to_id(craft["ingredients"][0], False)
+							elif craft.get("ingredients") and isinstance(craft["ingredients"], dict) and len(craft["ingredients"]) == 1:
+								craft_ingredient = ingr_to_id(next(iter(craft["ingredients"].values())), False)
+							if craft_ingredient and craft_ingredient in Mem.definitions and craft_ingredient != name:
+								info_buttons[-1]["click_event"] = {
+									"action": "change_page",
+									"page": get_page_number(craft_ingredient),
+									"blue_craft": craft_result == "" # No result = blue craft
 								}
 
 				# Add wiki buttons 5 by 5
 				if info_buttons:
 
-					# If too many buttons, remove all the blue ones (no click_event) except the last one
-					if len(info_buttons) > 15:
+					# Retrieve buttons limit depending on number of lines in the content (more lines = less buttons)
+					buttons_limit: int = 20 if str(content).count("\\n") <= 6 else 15
+
+					# If too many buttons, remove all the blue ones (blue_craft) except the last one
+					if len(info_buttons) > buttons_limit:
 						first_index: int = 0 if not raw_data.get(WIKI_COMPONENT) else 1
 						last_index: int = -1
 						for i, button in enumerate(info_buttons):
-							if not button.get("click_event") and i != first_index:
+							if button.get("click_event", {}).get("blue_craft", False) and i != first_index:
 								last_index = i
 
 						# If there are more than 1 blue button, remove them except the last one
 						if (last_index - first_index) > 1:
 							info_buttons = info_buttons[:first_index] + info_buttons[last_index:]
+
+						# If there are more than buttons_limit buttons, remove lowest priority ones until there is buttons_limit left
+						while len(info_buttons) > buttons_limit:
+							lowest_priority: int = min(info_buttons[::-1], key=lambda x: x.get("priority", 1))
+							info_buttons.remove(lowest_priority)
+
+						# Keep only the last buttons_limit buttons (maximum that can be displayed with 5 per line and 4 lines)
+						info_buttons = info_buttons[:buttons_limit]
+
+					for button in info_buttons:
+						click_event: JsonDict = button.get("click_event", {})
+						if click_event.get("blue_craft", False):
+							del click_event["blue_craft"]
+						if button.get("priority"):
+							del button["priority"]
 
 					# Add a breakline only if there aren't too many breaklines already
 					content.append("\n")
@@ -666,11 +787,13 @@ def routine():
 			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/furnace.png", "ascent": 1, "height": 58, "chars": [FURNACE_FONT]})
 			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/stonecutting.png", "ascent": 4, "height": 58, "chars": [STONECUTTING_FONT]})
 			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/pulverizing.png", "ascent": 4, "height": 58, "chars": [PULVERIZING_FONT]})
+			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/mining.png", "ascent": 4, "height": 58, "chars": [MINING_FONT]})
 			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/shaped_3x3.png", "ascent": -4, "height": 58, "chars": [HOVER_SHAPED_3X3_FONT]})
 			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/shaped_2x2.png", "ascent": -2, "height": 58, "chars": [HOVER_SHAPED_2X2_FONT]})
 			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/furnace.png", "ascent": -3, "height": 58, "chars": [HOVER_FURNACE_FONT]})
 			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/stonecutting.png", "ascent": -3, "height": 58, "chars": [HOVER_STONECUTTING_FONT]})
 			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/pulverizing.png", "ascent": -3, "height": 58, "chars": [HOVER_PULVERIZING_FONT]})
+			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/mining.png", "ascent": -3, "height": 58, "chars": [HOVER_MINING_FONT]})
 		fonts = {"providers": SharedMemory.font_providers}
 		with super_open(f"{SharedMemory.cache_path}/font/manual.json", "w") as f:
 			f.write(super_json_dump(fonts))

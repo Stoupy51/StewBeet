@@ -37,21 +37,23 @@ MEDIUM_NONE_FONT: str =				get_font(0x0001)
 SMALL_NONE_FONT: str =				get_font(0x0002)
 VERY_SMALL_NONE_FONT: str =			get_font(0x0003)
 MICRO_NONE_FONT: str =				get_font(0x0004)
-WIKI_NONE_FONT: str =				get_font(0x0005)
-WIKI_INFO_FONT: str =				get_font(0x0006)
-WIKI_RESULT_OF_CRAFT_FONT: str =	get_font(0x0007)
-WIKI_INGR_OF_CRAFT_FONT: str =		get_font(0x0008)
-SHAPED_2X2_FONT: str =				get_font(0x0009)
-SHAPED_3X3_FONT: str =				get_font(0x000A)
-FURNACE_FONT: str =					get_font(0x000B)
-STONECUTTING_FONT: str =			get_font(0x000C)
-PULVERIZING_FONT: str =				get_font(0x000D)
-HOVER_SHAPED_2X2_FONT: str =		get_font(0x000E)
-HOVER_SHAPED_3X3_FONT: str =		get_font(0x000F)
-HOVER_FURNACE_FONT: str =			get_font(0x0010)
-HOVER_STONECUTTING_FONT: str =		get_font(0x0011)
-HOVER_PULVERIZING_FONT: str =		get_font(0x0012)
-INVISIBLE_ITEM_FONT: str =			get_font(0x0013)	# Invisible item to place
+WIKI_NONE_FONT: str =				get_font(0x0010)
+WIKI_INFO_FONT: str =				get_font(0x0011)
+WIKI_RESULT_OF_CRAFT_FONT: str =	get_font(0x0012)
+WIKI_INGR_OF_CRAFT_FONT: str =		get_font(0x0013)
+SHAPED_2X2_FONT: str =				get_font(0x0020)
+SHAPED_3X3_FONT: str =				get_font(0x0021)
+FURNACE_FONT: str =					get_font(0x0022)
+STONECUTTING_FONT: str =			get_font(0x0023)
+PULVERIZING_FONT: str =				get_font(0x0024)
+MINING_FONT: str =					get_font(0x0025)
+HOVER_SHAPED_2X2_FONT: str =		get_font(0x0030)
+HOVER_SHAPED_3X3_FONT: str =		get_font(0x0031)
+HOVER_FURNACE_FONT: str =			get_font(0x0032)
+HOVER_STONECUTTING_FONT: str =		get_font(0x0033)
+HOVER_PULVERIZING_FONT: str =		get_font(0x0034)
+HOVER_MINING_FONT: str =			get_font(0x0035)
+INVISIBLE_ITEM_FONT: str =			get_font(0x0040)	# Invisible item to place
 INVISIBLE_ITEM_WIDTH: str =			INVISIBLE_ITEM_FONT + MICRO_NONE_FONT
 
 HOVER_EQUIVALENTS: dict[str, str] = {
@@ -60,6 +62,7 @@ HOVER_EQUIVALENTS: dict[str, str] = {
 	FURNACE_FONT: HOVER_FURNACE_FONT,
 	STONECUTTING_FONT: HOVER_STONECUTTING_FONT,
 	PULVERIZING_FONT: HOVER_PULVERIZING_FONT,
+	MINING_FONT: HOVER_MINING_FONT,
 }
 
 # Global variables

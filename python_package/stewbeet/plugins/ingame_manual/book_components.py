@@ -51,7 +51,7 @@ def high_res_font_from_ingredient(ingredient: str | JsonDict, count: int = 1) ->
 
 
 # Convert ingredient to formatted JSON for book
-def get_item_component(ingredient: str | JsonDict, only_those_components: list[str] | None = None, count: int = 1) -> JsonDict:
+def get_item_component(ingredient: str | JsonDict, only_those_components: list[str] | None = None, count: int = 1, add_change_page: bool = True) -> JsonDict:
 	""" Generate item hover text for a craft ingredient
 	Args:
 		ingredient (dict|str): The ingredient
@@ -112,12 +112,13 @@ def get_item_component(ingredient: str | JsonDict, only_those_components: list[s
 		formatted["hover_event"]["components"] = components
 
 		# If item is from my datapack, get its page number
-		page_number = get_page_number(id)
-		if page_number != -1:
-			formatted["click_event"] = {
-				"action": "change_page",
-				"page": page_number
-			}
+		if add_change_page:
+			page_number = get_page_number(id)
+			if page_number != -1:
+				formatted["click_event"] = {
+					"action": "change_page",
+					"page": page_number
+				}
 
 	# High resolution
 	if SharedMemory.high_resolution:

@@ -4,7 +4,7 @@ from beet.core.utils import JsonDict, TextComponent
 
 from ...core.__memory__ import Mem
 from ...core.constants import PULVERIZING
-from ...core.ingredients import FURNACES_RECIPES_TYPES
+from ...core.ingredients import FURNACES_RECIPES_TYPES, ingr_to_id
 from .book_components import get_item_component
 from .other_utils import convert_shapeless_to_shaped, high_res_font_from_craft
 from .page_font import generate_page_font
@@ -43,12 +43,13 @@ def generate_craft_content(craft: JsonDict, name: str, page_font: str) -> list[T
 
 	# Get result component
 	result_count = craft.get("result_count", 1)
+	add_change_page_to_ingr: bool = False
 	if not craft.get("result"):
-		result_component = get_item_component(name, count = result_count)
+		result_component = get_item_component(name, count=result_count, add_change_page=False) # Avoid self-linking page
+		add_change_page_to_ingr = True
 	else:
-		result_component = get_item_component(craft["result"], count = result_count)
-	if result_component.get("click_event"):
-		del result_component["click_event"]	# Remove click_event for result item (as we already are on the page)
+		add_change_page_to_ingr = ingr_to_id(craft["result"], add_namespace=False) == name
+		result_component = get_item_component(craft["result"], count=result_count, add_change_page=not add_change_page_to_ingr)
 	result_component["text"] = MICRO_NONE_FONT + result_component["text"]	# Left adjustment
 
 	# If the craft is shaped
@@ -144,7 +145,7 @@ def generate_craft_content(craft: JsonDict, name: str, page_font: str) -> list[T
 	elif craft_type in FURNACES_RECIPES_TYPES:
 
 		# Convert ingredient to its text component
-		formatted_ingredient: JsonDict = get_item_component(craft["ingredient"])
+		formatted_ingredient: JsonDict = get_item_component(craft["ingredient"], add_change_page=add_change_page_to_ingr)
 
 		# Add the ingredient to the craft
 		for i in range(2):
@@ -265,11 +266,11 @@ def generate_craft_content(craft: JsonDict, name: str, page_font: str) -> list[T
 			content.append("\n")
 		content.append("\n")
 
-	# If the type is special Pulverizing or Stonecutting,
-	elif craft_type in (PULVERIZING, "stonecutting"):
+	# If the type is special Pulverizing, Stonecutting, or Mining,
+	elif craft_type in (PULVERIZING, "stonecutting", "mining"):
 
 		# Convert ingredient to its text component
-		formatted_ingredient: JsonDict = get_item_component(craft["ingredient"])
+		formatted_ingredient: JsonDict = get_item_component(craft["ingredient"], add_change_page=add_change_page_to_ingr)
 		content.append("\n\n")
 		for i in range(2):
 

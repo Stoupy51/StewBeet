@@ -202,9 +202,12 @@ def generate_wiki_font_for_ingr(name: str, craft: JsonDict) -> str:
 		item_texture = careful_resize(item_texture, item_res_adjusted)
 		item_texture = item_texture.convert("RGBA")
 
-		# Load the template and paste the texture on it
-		template = Image.open(f"{TEMPLATES_PATH}/wiki_ingredient_of_craft_template.png")
+		# Load the template
+		filename: str = "wiki_ingredient_of_craft_template.png" if craft["type"] != "mining" else "wiki_mining_template.png"
+		template = Image.open(f"{TEMPLATES_PATH}/{filename}")
 		template = careful_resize(template, item_res)
+
+		# Paste the texture on it
 		offset = (item_res - item_res_adjusted) // 2
 		template.paste(item_texture, (offset, offset), item_texture)
 
