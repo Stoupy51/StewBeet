@@ -133,7 +133,7 @@ def generate_everything_about_this_material(
 			gear_config = {}
 			if gear == "helmet":
 				if not ignore_recipes:
-					Mem.definitions[armor][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["XXX","X X"],"ingredients":{"X": main_ingredient}}]
+					Mem.definitions[armor][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["XXX","X X"],"ingredients":{"X": main_ingredient},"manual_priority":0}]
 				if equipments_config:
 					gear_config = VanillaEquipments.HELMET.value[equipments_config.equivalent_to]
 					Mem.definitions[armor]["max_damage"] = int(gear_config["durability"] * durability_factor)
@@ -141,7 +141,7 @@ def generate_everything_about_this_material(
 					Mem.definitions[armor]["equippable"] = {"slot":"head", "asset_id":f"{Mem.ctx.project_id}:{material_base}"}
 			elif gear == "chestplate":
 				if not ignore_recipes:
-					Mem.definitions[armor][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["X X","XXX","XXX"],"ingredients":{"X": main_ingredient}}]
+					Mem.definitions[armor][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["X X","XXX","XXX"],"ingredients":{"X": main_ingredient},"manual_priority":0}]
 				if equipments_config:
 					gear_config = VanillaEquipments.CHESTPLATE.value[equipments_config.equivalent_to]
 					Mem.definitions[armor]["max_damage"] = int(gear_config["durability"] * durability_factor)
@@ -149,7 +149,7 @@ def generate_everything_about_this_material(
 					Mem.definitions[armor]["equippable"] = {"slot":"chest", "asset_id":f"{Mem.ctx.project_id}:{material_base}"}
 			elif gear == "leggings":
 				if not ignore_recipes:
-					Mem.definitions[armor][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["XXX","X X","X X"],"ingredients":{"X": main_ingredient}}]
+					Mem.definitions[armor][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["XXX","X X","X X"],"ingredients":{"X": main_ingredient},"manual_priority":0}]
 				if equipments_config:
 					gear_config = VanillaEquipments.LEGGINGS.value[equipments_config.equivalent_to]
 					Mem.definitions[armor]["max_damage"] = int(gear_config["durability"] * durability_factor)
@@ -157,7 +157,7 @@ def generate_everything_about_this_material(
 					Mem.definitions[armor]["equippable"] = {"slot":"legs", "asset_id":f"{Mem.ctx.project_id}:{material_base}"}
 			elif gear == "boots":
 				if not ignore_recipes:
-					Mem.definitions[armor][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["X X","X X"],"ingredients":{"X": main_ingredient}}]
+					Mem.definitions[armor][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["X X","X X"],"ingredients":{"X": main_ingredient},"manual_priority":0}]
 				if equipments_config:
 					gear_config = VanillaEquipments.BOOTS.value[equipments_config.equivalent_to]
 					Mem.definitions[armor]["max_damage"] = int(gear_config["durability"] * durability_factor)
@@ -185,31 +185,31 @@ def generate_everything_about_this_material(
 				gear_config = VanillaEquipments.SWORD.value[equipments_config.equivalent_to]
 				Mem.definitions[tool]["max_damage"] = int(gear_config["durability"] * durability_factor)
 			if not ignore_recipes:
-				Mem.definitions[tool][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["X","X","S"],"ingredients": tools_ingr}]
+				Mem.definitions[tool][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["X","X","S"],"ingredients": tools_ingr,"manual_priority":0}]
 		elif gear == "pickaxe":
 			if equipments_config:
 				gear_config = VanillaEquipments.PICKAXE.value[equipments_config.equivalent_to]
 				Mem.definitions[tool]["max_damage"] = int(gear_config["durability"] * durability_factor)
 			if not ignore_recipes:
-				Mem.definitions[tool][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["XXX"," S "," S "],"ingredients": tools_ingr}]
+				Mem.definitions[tool][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["XXX"," S "," S "],"ingredients": tools_ingr,"manual_priority":0}]
 		elif gear == "axe":
 			if equipments_config:
 				gear_config = VanillaEquipments.AXE.value[equipments_config.equivalent_to]
 				Mem.definitions[tool]["max_damage"] = int(gear_config["durability"] * durability_factor)
 			if not ignore_recipes:
-				Mem.definitions[tool][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["XX","XS"," S"],"ingredients": tools_ingr}]
+				Mem.definitions[tool][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["XX","XS"," S"],"ingredients": tools_ingr,"manual_priority":0}]
 		elif gear == "shovel":
 			if equipments_config:
 				gear_config = VanillaEquipments.SHOVEL.value[equipments_config.equivalent_to]
 				Mem.definitions[tool]["max_damage"] = int(gear_config["durability"] * durability_factor)
 			if not ignore_recipes:
-				Mem.definitions[tool][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["X","S","S"],"ingredients": tools_ingr}]
+				Mem.definitions[tool][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["X","S","S"],"ingredients": tools_ingr,"manual_priority":0}]
 		elif gear == "hoe":
 			if equipments_config:
 				gear_config = VanillaEquipments.HOE.value[equipments_config.equivalent_to]
 				Mem.definitions[tool]["max_damage"] = int(gear_config["durability"] * durability_factor)
 			if not ignore_recipes:
-				Mem.definitions[tool][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["XX"," S"," S"],"ingredients": tools_ingr}]
+				Mem.definitions[tool][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["XX"," S"," S"],"ingredients": tools_ingr,"manual_priority":0}]
 		if equipments_config:
 			Mem.definitions[tool]["attribute_modifiers"] = format_attributes(equipments_config.get_tools_attributes(), SLOTS[gear], gear_config)
 		if gear == "sword": # Remove the mining_efficiency attribute from swords

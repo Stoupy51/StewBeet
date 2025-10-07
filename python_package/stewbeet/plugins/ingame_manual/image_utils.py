@@ -68,28 +68,33 @@ def add_border(image: Image.Image, border_color: tuple[int, int, int, int], bord
 	return image
 
 # Generate an image showing the result count
-def image_count(count: int) -> Image.Image:
+def image_count(count: int | str) -> Image.Image:
 	""" Generate an image showing the result count
 	Args:
-		count (int): The count to show
+		count (int | str): The count to show
 	Returns:
 		Image: The image with the count
 	"""
+	count = str(count)
+
 	# Create the image
 	img = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
 	draw = ImageDraw.Draw(img)
-	font_size = 16
+
+	# Reduce font size if count is too long (16 for 1-2 chars, 12 for 3 chars, 10 for 4 chars, 8 for 5 chars)
+	sizes: dict[int, int] = {3:12, 4:10, 5:8}
+	font_size = sizes.get(len(count), 16)
 	font = ImageFont.truetype(f"{TEMPLATES_PATH}/minecraft_font.ttf", size = font_size)
 
 	# Calculate text size and positions of the two texts
-	text_width = draw.textlength(str(count), font = font)
+	text_width = draw.textlength(count, font = font)
 	text_height = font_size + 4
 	pos_1 = (34-text_width), (32-text_height)
 	pos_2 = (32-text_width), (30-text_height)
 
 	# Draw the count
-	draw.text(pos_1, str(count), (50, 50, 50), font = font)
-	draw.text(pos_2, str(count), (255, 255, 255), font = font)
+	draw.text(pos_1, count, (50, 50, 50), font = font)
+	draw.text(pos_2, count, (255, 255, 255), font = font)
 	return img
 
 # Generate high res image for item
@@ -103,7 +108,7 @@ def generate_high_res_font(item: str, item_image: Image.Image, count: int = 1) -
 		str: The font to the generated texture
 	"""
 	font = get_next_font()
-	item = f"{item}_{count}" if count > 1 else item
+	item = f"{item}_{count}" if isinstance(count, str) or count > 1 else item
 
 	# Get output path
 	path = f"{SharedMemory.cache_path}/font/high_res/{item}.png"
@@ -121,7 +126,7 @@ def generate_high_res_font(item: str, item_image: Image.Image, count: int = 1) -
 	resized = resized.convert("RGBA")
 
 	# Add the item count
-	if count > 1:
+	if isinstance(count, str) or count > 1:
 		img_count = image_count(count)
 		img_count = careful_resize(img_count, high_res)
 		resized.paste(img_count, (0, 0), img_count)

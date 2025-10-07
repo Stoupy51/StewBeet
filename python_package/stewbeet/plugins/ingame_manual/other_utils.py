@@ -14,13 +14,7 @@ from ...core.ingredients import (
 	ingr_repr,
 	ingr_to_id,
 )
-from .shared_import import (
-	FURNACE_FONT,
-	PULVERIZING_FONT,
-	SHAPED_2X2_FONT,
-	SHAPED_3X3_FONT,
-	STONECUTTING_FONT,
-)
+from .shared_import import FURNACE_FONT, MINING_FONT, PULVERIZING_FONT, SHAPED_2X2_FONT, SHAPED_3X3_FONT, STONECUTTING_FONT
 
 
 # Convert craft function
@@ -101,6 +95,8 @@ def high_res_font_from_craft(craft: JsonDict) -> str:
 		return PULVERIZING_FONT
 	elif craft["type"] == "stonecutting":
 		return STONECUTTING_FONT
+	elif craft["type"] == "mining":
+		return MINING_FONT
 	else:
 		return ""
 
