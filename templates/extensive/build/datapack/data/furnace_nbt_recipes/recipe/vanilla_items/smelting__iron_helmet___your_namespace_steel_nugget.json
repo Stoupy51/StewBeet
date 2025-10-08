@@ -1,6 +1,6 @@
 {
 	"type": "minecraft:smelting",
-	"ingredient": "minecraft:leather_leggings",
+	"ingredient": "minecraft:iron_helmet",
 	"result": {
 		"id": "minecraft:command_block",
 		"count": 1,

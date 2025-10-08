@@ -1,7 +1,7 @@
 
 #> _your_namespace:custom_blocks/deepslate_steel_ore/destroy
 #
-# @executed	 as @e[type=item_display,tag=...,tag=!...,predicate=!...] & at @s 
+# @executed	as @e[type=item_display,tag=...,predicate=!_your_namespace:check_vanilla_blocks] & at @s
 #
 # @within	_your_namespace:custom_blocks/_groups/minecraft_polished_deepslate
 #

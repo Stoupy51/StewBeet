@@ -1,12 +1,12 @@
 
 #> _your_namespace:custom_blocks/destroy
 #
-# @executed	 as @e[type=item_display,tag=...,tag=!...,predicate=!...] & at @s 
+# @executed	as @e[type=item_display,tag=...,predicate=!_your_namespace:check_vanilla_blocks] & at @s
 #
-# @within	_your_namespace:v2.0.0/tick_2 [ as @e[type=item_display,tag=...,tag=!...,predicate=!...] & at @s ]
-#			_your_namespace:v2.0.0/second [ as @e[type=item_display,tag=...,tag=!...,predicate=!...] & at @s ]
-#			_your_namespace:v2.0.0/second_5 [ as @e[type=item_display,tag=...,predicate=!...] & at @s ]
-#			_your_namespace:calls/common_signals/on_ore_destroyed [ as @e[tag=...,dx=0,dy=0,dz=0] & at @s ]
+# @within	_your_namespace:v2.0.0/tick_2 [ as @e[type=item_display,tag=...,predicate=!_your_namespace:check_vanilla_blocks] & at @s ]
+#			_your_namespace:v2.0.0/second [ as @e[type=#_your_namespace:custom_blocks,tag=...,predicate=!_your_namespace:advanced_check_vanilla_blocks] & at @s ]
+#			_your_namespace:v2.0.0/second_5 [ as @e[type=item_display,tag=_your_namespace.custom_block,predicate=!_your_namespace:advanced_check_vanilla_blocks] & at @s ]
+#			_your_namespace:calls/common_signals/on_ore_destroyed [ as @e[tag=_your_namespace.custom_block,dx=0,dy=0,dz=0] & at @s ]
 #
 
 execute if score #total_vanilla_cobblestone _your_namespace.data matches 1.. if entity @s[tag=_your_namespace.vanilla.minecraft_cobblestone] unless block ~ ~ ~ minecraft:cobblestone run function _your_namespace:custom_blocks/_groups/minecraft_cobblestone

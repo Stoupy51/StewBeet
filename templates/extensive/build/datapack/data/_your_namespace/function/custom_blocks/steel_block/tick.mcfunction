@@ -1,7 +1,7 @@
 
 #> _your_namespace:custom_blocks/steel_block/tick
 #
-# @executed	 as @e[tag=...] & at @s 
+# @executed	as @e[tag=_your_namespace.tick] & at @s
 #
 # @within	_your_namespace:custom_blocks/tick
 #

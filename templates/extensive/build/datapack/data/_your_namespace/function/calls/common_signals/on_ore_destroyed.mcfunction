@@ -1,7 +1,7 @@
 
 #> _your_namespace:calls/common_signals/on_ore_destroyed
 #
-# @executed	 at @s & align xyz 
+# @executed	at @s & align xyz
 #
 # @within	_your_namespace:calls/common_signals/new_item [ at @s & align xyz ]
 #

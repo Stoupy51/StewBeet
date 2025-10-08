@@ -1,7 +1,6 @@
 {
-	"parent": "minecraft:item/leather_leggings",
+	"parent": "minecraft:item/iron_leggings",
 	"textures": {
-		"layer0": "_your_namespace:item/steel_leggings",
-		"layer1": "_your_namespace:item/steel_leggings"
+		"layer0": "_your_namespace:item/steel_leggings"
 	}
 }

@@ -5,7 +5,7 @@
 			"entries": [
 				{
 					"type": "minecraft:item",
-					"name": "minecraft:leather_chestplate",
+					"name": "minecraft:iron_chestplate",
 					"functions": [
 						{
 							"function": "minecraft:set_components",

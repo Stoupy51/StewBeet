@@ -1,9 +1,9 @@
 
 #> _your_namespace:custom_blocks/deepslate_steel_ore/place_secondary
 #
-# @executed	 align xyz & positioned ~0.5 ~0.5 ~0.5 & at @s 
+# @executed	at @s
 #
-# @within	_your_namespace:custom_blocks/deepslate_steel_ore/place_main [ align xyz & positioned ~0.5 ~0.5 ~0.5 & at @s ]
+# @within	_your_namespace:custom_blocks/deepslate_steel_ore/place_main [ at @s ]
 #
 
 # Add convention and utils tags, and the custom block tag
@@ -19,7 +19,7 @@ tag @s add _your_namespace.vanilla.minecraft_polished_deepslate
 data merge entity @s {CustomName: {"translate": "_your_namespace.deepslate_steel_ore"}}
 
 # Modify item display entity to match the custom block
-item replace entity @s container.0 with minecraft:furnace[item_model="_your_namespace:deepslate_steel_ore"]
+item replace entity @s contents with minecraft:furnace[item_model="_your_namespace:deepslate_steel_ore"]
 data modify entity @s transformation.scale set value [1.002f, 1.002f, 1.002f]
 data modify entity @s brightness set value {block: 15, sky: 15}
 

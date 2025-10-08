@@ -1,6 +1,6 @@
 {
 	"type": "minecraft:smelting",
-	"ingredient": "minecraft:leather_chestplate",
+	"ingredient": "minecraft:iron_chestplate",
 	"result": {
 		"id": "minecraft:command_block",
 		"count": 1,
