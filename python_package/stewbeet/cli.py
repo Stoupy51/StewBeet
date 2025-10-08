@@ -15,7 +15,7 @@ from .utils import get_project_config
 
 @handle_error(message="Error while running 'stewbeet'")
 def main():
-    second_arg: str = sys.argv[1] if len(sys.argv) == 2 else ""
+    second_arg: str = sys.argv[1] if len(sys.argv) == 2 else "build"
 
     # Try to find and load the beet configuration file
     cfg: ProjectConfig = get_project_config()
