@@ -9,6 +9,7 @@ GENERATION_PLUGINS = (
     "stewbeet.plugins.resource_pack.item_models",
     "stewbeet.plugins.resource_pack.check_power_of_2",
     "stewbeet.plugins.custom_recipes",
+    "stewbeet.plugins.custom_paintings",
     "stewbeet.plugins.ingame_manual",
     "stewbeet.plugins.datapack.loading",
     "stewbeet.plugins.datapack.custom_blocks",

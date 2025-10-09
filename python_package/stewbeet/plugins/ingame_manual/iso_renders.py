@@ -1,6 +1,7 @@
 
 # Imports
 import os
+import shutil
 from typing import cast
 
 import requests
@@ -92,8 +93,9 @@ def generate_all_iso_renders():
 		pass
 
 	# Download all the vanilla textures from the wiki
-	def download_item(item: str):
-		destination = f"{path}/minecraft/{item}.png"
+	def download_item(item: str, destination: str = ""):
+		if not destination:
+			destination = f"{path}/minecraft/{item}.png"
 		if not (os.path.exists(destination) and cache_assets):	# If not downloaded yet or not using cache
 			link: str = f"{DOWNLOAD_VANILLA_ASSETS_RAW}/item/{item}.png"
 			response = requests.get(link)
@@ -112,4 +114,15 @@ def generate_all_iso_renders():
 
 	# Multithread the download
 	multithreading(download_item, used_vanilla_items, max_workers=min(32, len(used_vanilla_items)))
+
+	# Download painting texture for custom paintings
+	last_painting_path: str = ""
+	for item, data in Mem.definitions.items():
+		if data["id"] == "minecraft:painting" and not data.get("item_model"):
+			if not last_painting_path:
+				last_painting_path = f"{path}/{ns}/{item}.png"
+				download_item("painting", last_painting_path)
+			else:
+				# Just copy the last painting downloaded
+				shutil.copy(last_painting_path, f"{path}/{ns}/{item}.png")
 

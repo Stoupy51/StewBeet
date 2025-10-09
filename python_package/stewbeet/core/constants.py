@@ -64,6 +64,7 @@ VANILLA_BLOCK_FOR_ORES: JsonDict = {"id":"minecraft:polished_deepslate", "apply_
 OVERRIDE_MODEL: str = "override_model"					# Key to a dictionnary that will be used to override the whole model
 PULVERIZING: str = "simplenergy_pulverizing"			# Value of a recipe type, used to generate dusts from ores (used by SimplEnergy)
 SMITHED_CRAFTER_COMMAND: str = "smithed_crafter_command"	# Key to a command that will be used in a recipe in the Smithed Crafter library. If not present, the command will be defaulted to a loot table. Ex: {"result":...,SMITHED_CRAFTER_COMMAND: "function your_namespace:calls/smithed_crafter/do_something_else"}
+PAINTING_DATA: str = "painting_data"					# Key to a dict that contains the painting data, like {"author":"","title":"","width":1,"height":1} where author and title defaults to beet config values if not given
 GROWING_SEED: str = "staged_seed"						# Key to a seed that has multiple growth stages, value needs to be a dict like {"texture_basename":"wheat","stages":8,"seconds":600,"planted_on":"stone","loots":[{"id":"minecraft:wheat_seeds","min_count":1,"max_count":3}]} where loots can be either this format or a loot table path "namespace:blocks/loot_table_name"
 WIKI_COMPONENT: str = "wiki_components"					# Key to a text component that will be used to generate the wiki button in the manual
 RESULT_OF_CRAFTING: str = "result_of_crafting"			# Key to a list of recipes to craft the item, ex: "adamantium": {RESULT_OF_CRAFTING: [...]}
@@ -78,6 +79,7 @@ NOT_COMPONENTS: list[str] = [							# Keys that should not be considered as comp
 	NO_SILK_TOUCH_DROP,
 	OVERRIDE_MODEL,
 	SMITHED_CRAFTER_COMMAND,
+	PAINTING_DATA,
 	GROWING_SEED,
 ]
 
