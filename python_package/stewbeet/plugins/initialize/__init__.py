@@ -56,6 +56,10 @@ def beet_default(ctx: Context):
 	ctx.data.pack_format_registry.update(MORE_DATA_PACK_FORMATS)
 	ctx.assets.pack_format_registry.update(MORE_ASSETS_PACK_FORMATS)
 	ctx.meta["data_version"] = MORE_DATA_VERSIONS
+	if ctx.minecraft_version:
+		tuple_version: tuple[int, ...] = tuple(int(x) for x in ctx.minecraft_version.split(".") if x.isdigit())
+		ctx.data.pack_format = ctx.data.pack_format_registry.get(tuple_version, ctx.data.pack_format)
+		ctx.assets.pack_format = ctx.assets.pack_format_registry.get(tuple_version, ctx.assets.pack_format)
 
 	# Helper function to setup pack.mcmeta
 	def setup_pack_mcmeta(pack: Pack[Any], pack_format: int):
