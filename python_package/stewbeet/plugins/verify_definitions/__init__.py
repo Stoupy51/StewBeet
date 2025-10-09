@@ -8,7 +8,7 @@ from beet import Context
 from beet.core.utils import JsonDict
 from stouputils.decorators import measure_time
 from stouputils.io import relative_path, super_json_dump, super_open
-from stouputils.print import debug, error, info, progress
+from stouputils.print import debug, error, info, progress, warning
 
 from ...core.__memory__ import Mem
 from ...core.constants import (
@@ -63,7 +63,17 @@ def beet_default(ctx: Context) -> None:
 
 	# Check every single thing in the definitions
 	errors: list[str] = []
+	warnings: list[str] = []
 	for item, data in Mem.definitions.items():
+
+		# Check if components doesn't start with "minecraft:", if so rename them
+		to_replace: bool = False
+		for k in data.keys():
+			if k.startswith("minecraft:"):
+				warnings.append(f"Remove the 'minecraft:' prefix from key '{k}' in item '{item}', as it's automatically added by stewbeet.")
+				to_replace = True
+		if to_replace:
+			Mem.definitions[item] = data = {k[10:] if k.startswith("minecraft:") else k: v for k, v in data.items()}
 
 		# Check if the item uses a reserved name
 		if item == "heavy_workbench":
@@ -266,6 +276,8 @@ def beet_default(ctx: Context) -> None:
 	# Log errors if any
 	if errors:
 		error("Errors found in the definitions during verification:\n- " + "\n- ".join(errors))
+	elif warnings:
+		warning("Warnings found in the definitions during verification:\n- " + "\n- ".join(warnings))
 	else:
 		info("No errors found in the definitions during verification")
 
