@@ -16,6 +16,7 @@ from ...core.constants import (
 	CUSTOM_BLOCK_ALTERNATIVE,
 	CUSTOM_BLOCK_VANILLA,
 	NO_SILK_TOUCH_DROP,
+	PAINTING_DATA,
 	RESULT_OF_CRAFTING,
 	USED_FOR_CRAFTING,
 	VANILLA_BLOCK,
@@ -240,6 +241,27 @@ def beet_default(ctx: Context) -> None:
 					# Check the result count
 					if (not recipe.get("result_count") or not isinstance(recipe["result_count"], int)) and (recipe.get("type") not in ("smithing_trim",)):
 						errors.append(f"Recipe #{i} in RESULT_OF_CRAFTING should have an int 'result_count' key for '{item}'")
+
+		# Check the PAINTING_DATA key
+		if data.get(PAINTING_DATA):
+			if data["id"] != "minecraft:painting":
+				errors.append(f"PAINTING_DATA key should only be used with 'id' equal to 'minecraft:painting' for '{item}', found '{data['id']}' instead")
+			elif not isinstance(data[PAINTING_DATA], dict):
+				errors.append(f"PAINTING_DATA key should be a dictionary for '{item}'")
+			else:
+				painting_data = cast(JsonDict, data[PAINTING_DATA])
+				if painting_data.get("author") and not isinstance(painting_data["author"], dict | list | str):
+					errors.append(f"PAINTING_DATA 'author' key should be a Text Component for '{item}', got '{painting_data['author']}'")
+				if painting_data.get("title") and not isinstance(painting_data["title"], dict | list | str):
+					errors.append(f"PAINTING_DATA 'title' key should be a Text Component for '{item}', got '{painting_data['title']}'")
+				if not painting_data.get("width") or not isinstance(painting_data["width"], int) or painting_data["width"] < 1 or painting_data["width"] > 16:
+					errors.append(f"PAINTING_DATA should have an integer 'width' key between 1 and 16 for '{item}'")
+				if not painting_data.get("height") or not isinstance(painting_data["height"], int) or painting_data["height"] < 1 or painting_data["height"] > 16:
+					errors.append(f"PAINTING_DATA should have an integer 'height' key between 1 and 16 for '{item}'")
+
+				# Add missing data if needed
+				if "painting/variant" not in data:
+					data["painting/variant"] = f"{ctx.project_id}:{item}"
 
 	# Log errors if any
 	if errors:
