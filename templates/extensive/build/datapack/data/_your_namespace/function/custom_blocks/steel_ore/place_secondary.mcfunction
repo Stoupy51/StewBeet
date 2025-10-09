@@ -16,10 +16,10 @@ tag @s add _your_namespace.steel_ore
 tag @s add _your_namespace.vanilla.minecraft_polished_deepslate
 
 # Add a custom name
-data merge entity @s {CustomName: {"translate": "_your_namespace.steel_ore"}}
+data merge entity @s {"CustomName": {"translate": "_your_namespace.steel_ore"}}
 
 # Modify item display entity to match the custom block
 item replace entity @s contents with minecraft:furnace[item_model="_your_namespace:steel_ore"]
-data modify entity @s transformation.scale set value [1.002f, 1.002f, 1.002f]
-data modify entity @s brightness set value {block: 15, sky: 15}
+data modify entity @s transformation.scale set value [1.002f,1.002f,1.002f]
+data modify entity @s brightness set value {block:15,sky:15}
 

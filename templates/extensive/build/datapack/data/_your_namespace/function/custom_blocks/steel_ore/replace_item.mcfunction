@@ -1,9 +1,9 @@
 
 #> _your_namespace:custom_blocks/steel_ore/replace_item
 #
-# @executed	as @n[type=item,nbt={Item: {id: "minecraft:polished_deepslate"}},distance=..1]
+# @executed	as @n[type=item,nbt={Item:{id:"minecraft:polished_deepslate"}},distance=..1]
 #
-# @within	_your_namespace:custom_blocks/steel_ore/destroy [ as @n[type=item,nbt={Item: {id: "minecraft:polished_deepslate"}},distance=..1] ]
+# @within	_your_namespace:custom_blocks/steel_ore/destroy [ as @n[type=item,nbt={Item:{id:"minecraft:polished_deepslate"}},distance=..1] ]
 #
 
 # If silk touch applied

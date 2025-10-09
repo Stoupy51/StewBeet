@@ -23,8 +23,8 @@ execute store success score #success _your_namespace.data if items entity @s con
 execute if score #success _your_namespace.data matches 1 run recipe give @s _your_namespace:super_stone_2
 
 ## Add result items
-execute if items entity @s container.* *[custom_data~{_your_namespace: {stone_stick: true}}] run recipe give @s _your_namespace:stone_stick
-execute if items entity @s container.* *[custom_data~{_your_namespace: {stone_rod: true}}] run recipe give @s _your_namespace:stone_rod
-execute if items entity @s container.* *[custom_data~{_your_namespace: {super_stone: true}}] run recipe give @s _your_namespace:super_stone
-execute if items entity @s container.* *[custom_data~{_your_namespace: {super_stone: true}}] run recipe give @s _your_namespace:super_stone_2
+execute if items entity @s container.* *[custom_data~{"_your_namespace": {"stone_stick":true} }] run recipe give @s _your_namespace:stone_stick
+execute if items entity @s container.* *[custom_data~{"_your_namespace": {"stone_rod":true} }] run recipe give @s _your_namespace:stone_rod
+execute if items entity @s container.* *[custom_data~{"_your_namespace": {"super_stone":true} }] run recipe give @s _your_namespace:super_stone
+execute if items entity @s container.* *[custom_data~{"_your_namespace": {"super_stone":true} }] run recipe give @s _your_namespace:super_stone_2
 

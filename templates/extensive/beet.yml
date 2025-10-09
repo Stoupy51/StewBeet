@@ -10,7 +10,7 @@ author: "Stoupy51"
 # Project version in semantic versioning format: major.minor.patch (e.g., 1.0.0 or 2.84.615).
 version: "2.0.0"
 # Minecraft version. Determines what resources beet loads (plugins like `mecha` determine what commands to use). Defaults: Latest
-minecraft: ""
+minecraft: "1.21.10"
 
 # Defines the directory that beet uses for the base path
 directory: "."
@@ -22,7 +22,6 @@ ignore: []
 # A list of importable plugin strings
 require:
     - "stewbeet"
-    - "bolt"
 
 # Takes a nested pack config, see PackConfig() documentation
 data_pack:
@@ -45,19 +44,12 @@ pipeline:
                         # Note: This may be harder to debug and you might not want all plugins,
                         #  prefer using specific plugins like done in the basic template beet.yml file
     - "src.link" # User code
-    - "mecha"
 
 # Generic dict which holds extra information usable by plugins
 meta:
     # Model resolver configuration for caching models
     model_resolver:
         use_cache: true
-
-    # Mecha configuration for multiline support and pattern matching
-    mecha:
-        multiline: true
-        match: ["_your_namespace:**"]
-        formatting: preserve
 
     # StewBeet specific configuration
     stewbeet:

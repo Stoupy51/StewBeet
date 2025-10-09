@@ -12,7 +12,7 @@ execute store result score #game_version _your_namespace.data run data get entit
 
 # Check if the game version is supported
 scoreboard players set #mcload_error _your_namespace.data 0
-execute unless score #game_version _your_namespace.data matches 3953.. run scoreboard players set #mcload_error _your_namespace.data 1
+execute unless score #game_version _your_namespace.data matches 4556.. run scoreboard players set #mcload_error _your_namespace.data 1
 
 # Decode errors
 execute if score #mcload_error _your_namespace.data matches 1 run tellraw @a {"translate": "_your_namespace.extensive_template_error_this_version_is_made_for_minecraft_1_21","color":"red"}
