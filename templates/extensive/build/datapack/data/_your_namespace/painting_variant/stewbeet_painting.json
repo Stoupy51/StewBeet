@@ -1,4 +1,5 @@
 {
+	"asset_id": "_your_namespace:stewbeet_painting",
 	"author": {
 		"translate": "_your_namespace.stoupy",
 		"color": "yellow"
@@ -8,6 +9,5 @@
 		"color": "gray"
 	},
 	"width": 2,
-	"height": 2,
-	"asset_id": "_your_namespace:stewbeet_painting"
+	"height": 2
 }
