@@ -16,7 +16,7 @@
 - **✅ Required**: StewBeet framework initialization
 - **✅ Required**: `Your definition plugin` (see [`definitions_setup.md`](../definitions_setup.md) for details)
 - **📍 Position**: Should be placed after definition setup and before finalization plugins<br>
-(see [`extensive/beet.yml`](../../templates/extensive/beet.yml) for an example)
+(see [`basic/beet.yml`](../../templates/basic/beet.yml) for an example)
 
 ## 📋 Overview
 The `ingame_manual` plugin generates an interactive in-game manual/guide book for Minecraft datapacks.<br>

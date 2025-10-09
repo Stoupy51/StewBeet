@@ -11,7 +11,7 @@
 - **✅ Required**: StewBeet framework initialization
 - **✅ Required**: `Your definition plugin` (see [`definitions_setup.md`](../definitions_setup.md) for details)
 - **📍 Position**: Should run after item model generation and before datapack finalization<br>
-(see [`extensive/beet.yml`](../../templates/extensive/beet.yml) for an example)
+(see [`basic/beet.yml`](../../templates/basic/beet.yml) for an example)
 
 ## 📋 Overview
 The `custom_recipes` plugin generates custom recipes for datapacks based on item definitions.<br>
