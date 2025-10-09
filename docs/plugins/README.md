@@ -1,7 +1,7 @@
 
 ## 🍲 StewBeet plugins 🌱
 
-Last updated: 2025/06/16
+Last updated: 2025/10/09
 
 **Dependency Level Legend:**
 - 🔴 **Fully dependent**: Requires StewBeet framework definitions and core functionality to operate
@@ -18,6 +18,7 @@ Here are all the available plugins for the StewBeet framework:
 | 🎨 **Resource Pack** | [**resource_pack.item_models**](./resource_pack.item_models.md) | Automatically generates item models from texture patterns | ![Pattern Detection](img/resource_pack.item_models.pattern_detection.jpg) | 🟡 Partly dependent |
 | 🖼️ **Resource Pack** | [**resource_pack.check_power_of_2**](./resource_pack.check_power_of_2.md) | Validates that textures use power-of-2 resolutions | ![Texture Warning](img/resource_pack.check_power_of_2.warning.jpg) | 🟢 Independent |
 | 🍳 **Recipes** | [**custom_recipes**](./custom_recipes.md) | Generates vanilla, smithed, furnace and pulverizer recipes for items | ![Smithed Recipe](img/custom_recipes.smithed_recipe.jpg) | 🔴 Fully dependent |
+| 🖼️ **Custom Content** | [**custom_paintings**](./custom_paintings.md) | Generates custom painting variants with texture management and placeable tags | ![Custom Painting](img/custom_paintings.placed_painting.jpg) | 🔴 Fully dependent |
 | 📖 **Documentation** | [**ingame_manual**](./ingame_manual.md) | Creates interactive in-game manual with item documentation and recipes | ![In-Game Manual](https://i.imgur.com/dtuAG99.gif) | 🔴 Fully dependent |
 | ⚡ **Datapack** | [**datapack.loading**](./datapack.loading.md) | Sets up datapack loading system with version checking and dependencies | ![Load messages](img/datapack.loading.load_messages.jpg) | 🟡 Partly dependent |
 | 🧱 **Datapack** | [**datapack.custom_blocks**](./datapack.custom_blocks.md) | Implements custom block placement, destruction and interaction systems | ![Custom blocks stats](img/datapack.custom_blocks.stats.jpg) | 🔴 Fully dependent |
