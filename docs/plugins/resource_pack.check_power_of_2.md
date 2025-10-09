@@ -6,7 +6,7 @@
 ## 🔗 Dependencies
 - **✅ Required**: Resource pack textures (from previous plugins like `resource_pack.item_models`)
 - **📍 Position**: Can run at any position but after textures are added to the project<br>
-(see [`extensive/beet.yml`](../../templates/extensive/beet.yml) for an example)
+(see [`basic/beet.yml`](../../templates/basic/beet.yml) for an example)
 
 ## 📋 Overview
 The `check_power_of_2` plugin validates that all textures in the resource pack have power-of-2 dimensions.<br>

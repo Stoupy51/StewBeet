@@ -7,7 +7,7 @@
 - **✅ Required**: None (but works best with other StewBeet plugins)
 - **🔗 Requires Later**: `stewbeet.plugins.finalyze.dependencies` (to complete setup)
 - **📍 Position**: Should be placed after item definitions and before finalization plugins<br>
-(see [`extensive/beet.yml`](../../templates/extensive/beet.yml) for an example)
+(see [`basic/beet.yml`](../../templates/basic/beet.yml) for an example)
 
 ## 📋 Overview
 The `datapack.loading` plugin sets up the versioned loading system for Minecraft datapacks.<br>
