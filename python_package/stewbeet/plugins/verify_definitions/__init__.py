@@ -73,7 +73,7 @@ def beet_default(ctx: Context) -> None:
 				warnings.append(f"Remove the 'minecraft:' prefix from key '{k}' in item '{item}', as it's automatically added by stewbeet.")
 				to_replace = True
 		if to_replace:
-			Mem.definitions[item] = data = {k[10:] if k.startswith("minecraft:") else k: v for k, v in data.items()}
+			Mem.definitions[item] = data = {k.replace("minecraft:", "", 1) if k.startswith("minecraft:") else k: v for k, v in data.items()}
 
 		# Check if the item uses a reserved name
 		if item == "heavy_workbench":
