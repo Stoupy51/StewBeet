@@ -303,8 +303,8 @@ core.generate_custom_records("auto")
 
 # Or specify custom records (pain imo) 😅
 core.generate_custom_records({
-    "my_disc": "My Custom Music",           # file: assets/records/my_disc.ogg
-    "battle_theme": "Epic Battle Music"     # file: assets/records/battle_theme.ogg
+    "my_disc": "My Custom Music.ogg",           # file: "assets/records/My Custom Music.ogg", item id: "my_disc"
+    "battle_theme": "Epic Battle Music.ogg"     # file: "assets/records/Epic Battle Music.ogg", item id: "battle_theme"
 })
 ```
 
