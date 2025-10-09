@@ -3,6 +3,8 @@
 # Imports
 from __future__ import annotations
 
+from typing import cast
+
 from beet.core.utils import JsonDict, TextComponent
 from box import Box
 
@@ -10,16 +12,19 @@ from ..__memory__ import Mem
 
 
 # Add item model component
-def add_item_model_component(black_list: list[str] | None = None) -> None:
+def add_item_model_component(black_list: list[str] | None = None, ignore_paintings: bool = True) -> None:
 	""" Add an item model component to all items in the definitions.
 
 	Args:
-		black_list	(list[str]):		The list of items to ignore.
+		black_list			(list[str]):	The list of items to ignore.
+		ignore_paintings	(bool):			Whether to ignore items that are paintings (have PAINTING_DATA).
 	"""
 	if black_list is None:
 		black_list = []
 	for item, data in Mem.definitions.items():
 		if item in black_list or data.get("item_model", None) is not None:
+			continue
+		if ignore_paintings and data.get("painting_data", None) is not None:
 			continue
 		data["item_model"] = f"{Mem.ctx.project_id}:{item}"
 	return
@@ -52,7 +57,7 @@ def add_item_name_and_lore_if_missing(is_external: bool = False, black_list: lis
 
 		# Apply namespaced lore if none
 		if not data.get("lore"):
-			data["lore"] = []
+			data["lore"] = cast(list[TextComponent], [])
 
 		# If item is not external,
 		if not is_external:
@@ -83,7 +88,7 @@ def add_private_custom_data_for_namespace(is_external: bool = False) -> None:
 	"""
 	for item, data in Mem.definitions.items():
 		if not data.get("custom_data"):
-			data["custom_data"] = {}
+			data["custom_data"] = cast(JsonDict, {})
 		if is_external and ":" in item:
 			ns, id = item.split(":")
 		else:
@@ -101,6 +106,6 @@ def add_smithed_ignore_vanilla_behaviours_convention() -> None:
 	"""
 	for data in Mem.definitions.values():
 		data["custom_data"] = Box(data.get("custom_data", {}), default_box=True, default_box_attr={}, default_box_create_on_get=True)
-		data["custom_data"].smithed.ignore.functionality = True
-		data["custom_data"].smithed.ignore.crafting = True
+		data["custom_data"].smithed.ignore.functionality = True # pyright: ignore[reportUnknownMemberType]
+		data["custom_data"].smithed.ignore.crafting = True # pyright: ignore[reportUnknownMemberType]
 

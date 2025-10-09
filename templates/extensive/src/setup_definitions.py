@@ -55,9 +55,19 @@ def beet_default(ctx: Context):
     Mem.definitions["steel_block"][core.VANILLA_BLOCK] = {"id": "minecraft:iron_block", "apply_facing": False}			# Placeholder for the base block
     Mem.definitions["raw_steel_block"][core.VANILLA_BLOCK] = {"id": "minecraft:raw_iron_block", "apply_facing": False}	# Placeholder for the base block
 
+    # Example of a custom painting
+    Mem.definitions["stewbeet_painting"] = {
+        "id": "minecraft:painting",
+        core.PAINTING_DATA: {
+            "author": {"text":"Stoupy","color":"yellow"},  # Author defaults to ctx.project_author if not given
+            "title": {"text":"Da' Icon","color":"gray"},   # Title defaults to item name if not given
+            "width": 2, "height": 2
+        }
+    }
+
     # Add a recipe for the future generated manual (the manual recipe will show up in itself)
     Mem.definitions["manual"] = {
-        "id": "minecraft:written_book", core.CATEGORY: "misc", "item_name": ctx.meta.stewbeet.manual.name,
+        "id": "minecraft:written_book", core.CATEGORY: "misc", "item_name": ctx.meta.get("stewbeet", {}).get("manual", {}).get("name") or "Manual",
         core.RESULT_OF_CRAFTING: [
             # Put a book and a steel ingot in the crafting grid to get the manual
             {"type":"crafting_shapeless","result_count":1,"group":"manual","category":"misc","ingredients": [core.ingr_repr("minecraft:book"), core.ingr_repr("steel_ingot", ns)]},

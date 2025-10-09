@@ -22,6 +22,7 @@
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/stone_rod"}]},
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/shazinho"}]},
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/super_stone"}]},
+		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/stewbeet_painting"}]},
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/manual"}]}
 	]
 }

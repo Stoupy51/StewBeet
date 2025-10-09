@@ -228,6 +228,14 @@
 		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]],
 		"custom_data": {"_your_namespace": {"super_stone": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}}
 	},
+	"stewbeet_painting": {
+		"id": "minecraft:painting",
+		"painting_data": {"author": {"text": "Stoupy","color": "yellow"},"title": {"text": "Da' Icon","color": "gray"},"width": 2,"height": 2},
+		"category": "misc",
+		"item_name": {"text": "Stewbeet Painting"},
+		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]],
+		"custom_data": {"_your_namespace": {"stewbeet_painting": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}}
+	},
 	"manual": {
 		"id": "minecraft:written_book",
 		"category": "misc",

@@ -1,0 +1,13 @@
+{
+	"author": {
+		"translate": "_your_namespace.stoupy",
+		"color": "yellow"
+	},
+	"title": {
+		"translate": "_your_namespace.da_icon",
+		"color": "gray"
+	},
+	"width": 2,
+	"height": 2,
+	"asset_id": "_your_namespace:stewbeet_painting"
+}
