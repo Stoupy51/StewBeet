@@ -7,7 +7,7 @@
 ## 🔗 Dependencies
 - **✅ Required**: `sounds_folder` configuration in meta.stewbeet
 - **📍 Position**: Should be able to run anywhere in the pipeline<br>
-(see [`extensive/beet.yml`](../../templates/extensive/beet.yml) for an example)
+(see [`basic/beet.yml`](../../templates/basic/beet.yml) for an example)
 - **📂 Assets**: Requires a sounds folder with audio files
 
 ## 📋 Overview

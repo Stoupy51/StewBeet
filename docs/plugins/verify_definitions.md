@@ -7,7 +7,7 @@
 - **✅ Required**: StewBeet framework initialization
 - **✅ Required**: `Your definition plugin` (see [`definitions_setup.md`](../definitions_setup.md) for details)
 - **📍 Position**: Should be run immediately after user definitions are loaded<br>
-(see [`extensive/beet.yml`](../../templates/extensive/beet.yml) for an example)
+(see [`basic/beet.yml`](../../templates/basic/beet.yml) for an example)
 - **🔄 Follows**: User definition scripts (e.g. `src.setup_definitions`)
 
 ## 📋 Overview

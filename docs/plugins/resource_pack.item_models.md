@@ -8,7 +8,7 @@
 - **✅ Required**: `Your definition plugin` (see [`definitions_setup.md`](../definitions_setup.md) for details)
 - **✅ Required**: `textures_folder` configuration in meta.stewbeet
 - **📍 Position**: Should run after verification plugins and before finalization<br>
-(see [`extensive/beet.yml`](../../templates/extensive/beet.yml) for an example)
+(see [`basic/beet.yml`](../../templates/basic/beet.yml) for an example)
 
 ## 📋 Overview
 The `item_models` plugin automatically generates item and block models for custom items defined in the StewBeet framework.<br>
