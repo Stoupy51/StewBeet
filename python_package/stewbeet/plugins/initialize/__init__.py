@@ -14,7 +14,7 @@ from stouputils.print import warning
 
 from ...core import Mem
 from ...core.constants import MORE_ASSETS_PACK_FORMATS, MORE_DATA_PACK_FORMATS, MORE_DATA_VERSIONS
-from .source_lore_font import prepare_source_lore_font
+from .source_lore_font import find_pack_png, prepare_source_lore_font
 
 
 # Main entry point
@@ -41,7 +41,10 @@ def beet_default(ctx: Context):
 	# Preprocess source lore
 	source_lore: TextComponent = Mem.ctx.meta.get("stewbeet", {}).get("source_lore", "")
 	if not source_lore or source_lore == "auto":
-		Mem.ctx.meta["stewbeet"]["source_lore"] = [{"text":"ICON"},{"text":f" {ctx.project_name}","italic":True,"color":"blue"}]
+		if not find_pack_png():
+			Mem.ctx.meta["stewbeet"]["source_lore"] = [{"text": ctx.project_name,"italic":True,"color":"blue"}]
+		else:
+			Mem.ctx.meta["stewbeet"]["source_lore"] = [{"text":"ICON"},{"text":f" {ctx.project_name}","italic":True,"color":"blue"}]
 	Mem.ctx.meta["stewbeet"]["pack_icon_path"] = prepare_source_lore_font(Mem.ctx.meta.get("stewbeet", {}).get("source_lore", []))
 
 	# Preprocess manual name
