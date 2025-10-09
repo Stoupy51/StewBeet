@@ -40,7 +40,7 @@ def beet_default(ctx: Context) -> None:
 
             ## Datapack
             # Add the item id to the list of painting variants values
-            if not painting_data.get("not_placeable"):
+            if not painting_data.get("not_placeable", False):
                 placeable_values.append(f"{ns}:{item}")
 
             # Set default author and title if not provided
@@ -49,9 +49,13 @@ def beet_default(ctx: Context) -> None:
             if "title" not in painting_data:
                 painting_data["title"] = data.get("item_name") or {"text": item.replace("_", " ").title()}
 
-            # Add asset id to painting data and create the painting definition
-            painting_data["asset_id"] = f"{ns}:{item}"
-            Mem.ctx.data[ns].painting_variants[item] = set_json_encoder(PaintingVariant(painting_data))
+            # Create ordered painting data with asset_id first
+            ordered_painting_data = {"asset_id": f"{ns}:{item}"}
+            ordered_painting_data.update(painting_data)
+            ordered_painting_data.pop("not_placeable", None)
+
+            # Create the painting definition
+            Mem.ctx.data[ns].painting_variants[item] = set_json_encoder(PaintingVariant(ordered_painting_data))
 
             ## Resource pack
             # Get the texture path
