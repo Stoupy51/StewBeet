@@ -356,7 +356,7 @@ function {ns}:custom_blocks/{item}/update_seed_model
 				else:
 					error(f"Growing seed '{item}' has a growing time < to the number of stages ({growing_time} seconds). Please increase the growing time or reduce the number of stages.")
 
-				# Make the loot table for the seed # "loots":[{"id":"minecraft:diamond","min_count":0,"max_count":2}]
+				# Make the loot table for the seed
 				loot_table: str | list[JsonDict] = growing_seed.get("loots", [])
 				if not isinstance(loot_table, str):
 					ctx.data[ns].loot_tables[f"seeds/{item}"] = set_json_encoder(LootTable({
@@ -557,13 +557,25 @@ scoreboard players remove #total_{item} {ns}.data 1
 			write_function(f"{ns}:custom_blocks/{item}/destroy", content + "\n# Kill the custom block entity\nkill @s\n")
 
 			# Replace item function
-			# TODO: if not VANILLA_BLOCK_FOR_ORES but has NO_SILK_TOUCH_DROP, check nearest player's mainhand
 			if not data.get(NO_SILK_TOUCH_DROP):
 				content = f"""
+# Replace the item with the custom one
 data modify entity @s Item.components set from storage {ns}:items all.{item}.components
 data modify entity @s Item.id set from storage {ns}:items all.{item}.id
 """
 			else:
+				# If no VANILLA_BLOCK_FOR_ORES, check if the player has silk touch in mainhand
+				if data.get(VANILLA_BLOCK) != VANILLA_BLOCK_FOR_ORES:
+					write_function(f"{ns}:custom_blocks/{item}/destroy", f"""
+# Check if the player has silk touch in mainhand
+scoreboard players set #is_silk_touch {ns}.data 0
+execute as @p[distance=..10,gamemode=!spectator] if data entity @s SelectedItem.components."minecraft:enchantments"."minecraft:silk_touch" run scoreboard players set #is_silk_touch {ns}.data 1
+
+# If no item found, summon it
+execute unless entity @n[type=item,nbt={{Item:{item_nbt}}},distance=..1] run loot spawn ~ ~ ~ loot {{pools:[{{entries:[{{type:"minecraft:item",name:"minecraft:glass"}}],rolls:1}}]}}
+""", prepend=True)
+
+				# Handle no silk touch drop
 				no_silk_touch_drop: str | JsonDict = data[NO_SILK_TOUCH_DROP]
 				if isinstance(no_silk_touch_drop, dict):
 					item_to_drop: str = no_silk_touch_drop["id"]
@@ -600,7 +612,9 @@ execute if score #is_silk_touch {ns}.data matches 1 run data modify entity @s It
 
 # Else, no silk touch
 {silk_text}
-
+"""
+				if data.get(VANILLA_BLOCK) == VANILLA_BLOCK_FOR_ORES:
+					content += f"""
 # Get item count in every case
 execute store result entity @s Item.count byte 1 run scoreboard players get #item_count {ns}.data
 """
