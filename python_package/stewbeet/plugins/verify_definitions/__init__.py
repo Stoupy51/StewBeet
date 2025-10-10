@@ -15,6 +15,7 @@ from ...core.constants import (
 	CATEGORY,
 	CUSTOM_BLOCK_ALTERNATIVE,
 	CUSTOM_BLOCK_VANILLA,
+	GROWING_SEED,
 	NO_SILK_TOUCH_DROP,
 	PAINTING_DATA,
 	RESULT_OF_CRAFTING,
@@ -118,8 +119,6 @@ def beet_default(ctx: Context) -> None:
 		# Check for wrong custom ores data
 		if data.get(VANILLA_BLOCK) == VANILLA_BLOCK_FOR_ORES and not data.get(NO_SILK_TOUCH_DROP):
 			errors.append(f"NO_SILK_TOUCH_DROP key missing for '{item}', should be the ID of the block that drops when mined without silk touch")
-		if data.get(VANILLA_BLOCK) != VANILLA_BLOCK_FOR_ORES and data.get(NO_SILK_TOUCH_DROP):
-			errors.append(f"NO_SILK_TOUCH_DROP key should not be used for '{item}' if it doesn't use VANILLA_BLOCK_FOR_ORES")
 		if data.get(NO_SILK_TOUCH_DROP):
 			no_silk_drop = data[NO_SILK_TOUCH_DROP]
 			if isinstance(no_silk_drop, str):
@@ -272,6 +271,62 @@ def beet_default(ctx: Context) -> None:
 				# Add missing data if needed
 				if "painting/variant" not in data:
 					data["painting/variant"] = f"{ctx.project_id}:{item}"
+
+		# Check the GROWING_SEED key
+		if data.get(GROWING_SEED):
+			if not isinstance(data[GROWING_SEED], dict):
+				errors.append(f"GROWING_SEED key should be a dictionary for '{item}'")
+			else:
+				growing_seed: JsonDict = data[GROWING_SEED]
+				if not growing_seed.get("seconds") or not isinstance(growing_seed["seconds"], int):
+					errors.append(f"GROWING_SEED should have an integer 'seconds' key for '{item}'")
+				if not growing_seed.get("loots") or not isinstance(growing_seed["loots"], list):
+					errors.append(f"GROWING_SEED should have a list 'loots' key for '{item}'")
+				else:
+					loots = cast(list[Any], growing_seed["loots"])
+					for i, loot in enumerate(loots):
+						if not isinstance(loot, dict):
+							errors.append(f"GROWING_SEED loot #{i} should be a dictionary for '{item}'")
+						else:
+							loot = cast(JsonDict, loot)
+							if not loot.get("id") or not isinstance(loot["id"], str):
+								errors.append(f"GROWING_SEED loot #{i} should have a string 'id' key for '{item}'")
+							if loot.get("rolls"):
+								rolls = loot["rolls"]
+								if isinstance(rolls, int):
+									pass # Integer is valid
+								elif isinstance(rolls, dict):
+									rolls_dict = cast(JsonDict, rolls)
+									if not rolls_dict.get("type") or not isinstance(rolls_dict["type"], str):
+										errors.append(f"GROWING_SEED loot #{i} 'rolls' dict should have a string 'type' key for '{item}', ex: {{\"type\":\"minecraft:uniform\",\"min\":1,\"max\":2}}")
+								else:
+									errors.append(f"GROWING_SEED loot #{i} 'rolls' should be an integer or dict for '{item}', ex: 1 or {{\"type\":\"minecraft:uniform\",\"min\":1,\"max\":2}}")
+							else:
+								loot["rolls"] = 1 # Default rolls to 1 if not present
+
+							# Check fortune key (optional)
+							if loot.get("fortune"):
+								fortune = loot["fortune"]
+								if not isinstance(fortune, dict):
+									errors.append(f"GROWING_SEED loot #{i} 'fortune' should be a dictionary for '{item}'")
+								else:
+									fortune_dict = cast(JsonDict, fortune)
+									if (not fortune_dict.get("extra") and fortune_dict.get("extra") != 0) or not isinstance(fortune_dict.get("extra"), int | float):
+										errors.append(f"GROWING_SEED loot #{i} 'fortune' dict should have a numeric 'extra' key for '{item}', ex: {{\"extra\":0,\"probability\":0.1}}")
+									if (not fortune_dict.get("probability") and fortune_dict.get("probability") != 0) or not isinstance(fortune_dict.get("probability"), float | int):
+										errors.append(f"GROWING_SEED loot #{i} 'fortune' dict should have a numeric 'probability' key for '{item}', ex: {{\"extra\":0,\"probability\":0.1}}")
+				if growing_seed.get("texture_basename") and not isinstance(growing_seed["texture_basename"], str):
+					errors.append(f"GROWING_SEED 'texture_basename' key should be a string for '{item}'")
+				elif not growing_seed.get("texture_basename"):
+					growing_seed["texture_basename"] = item
+				if growing_seed.get("planted_on"):
+					if not isinstance(growing_seed["planted_on"], str):
+						errors.append(f"GROWING_SEED 'planted_on' key should be a string for '{item}'")
+					elif "minecraft:" in growing_seed["planted_on"]:
+						warnings.append(f"Remove the 'minecraft:' prefix from 'planted_on' in GROWING_SEED for '{item}', as it's automatically added by stewbeet.")
+						data[GROWING_SEED]["planted_on"] = growing_seed["planted_on"].replace("minecraft:", "")
+				else:
+					growing_seed["planted_on"] = "dirt" # Default to dirt if not present
 
 	# Log errors if any
 	if errors:
