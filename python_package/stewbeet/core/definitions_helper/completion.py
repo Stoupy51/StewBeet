@@ -12,7 +12,7 @@ from ..__memory__ import Mem
 
 
 # Add item model component
-def add_item_model_component(black_list: list[str] | None = None, ignore_paintings: bool = True) -> None:
+def add_item_model_component(black_list: list[str] | None = None) -> None:
 	""" Add an item model component to all items in the definitions.
 
 	Args:
@@ -23,8 +23,6 @@ def add_item_model_component(black_list: list[str] | None = None, ignore_paintin
 		black_list = []
 	for item, data in Mem.definitions.items():
 		if item in black_list or data.get("item_model", None) is not None:
-			continue
-		if ignore_paintings and data.get("painting_data", None) is not None:
 			continue
 		data["item_model"] = f"{Mem.ctx.project_id}:{item}"
 	return

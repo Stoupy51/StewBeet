@@ -10,6 +10,7 @@
 						{
 							"function": "minecraft:set_components",
 							"components": {
+								"minecraft:item_model": "_your_namespace:stewbeet_painting",
 								"minecraft:item_name": {
 									"translate": "_your_namespace.stewbeet_painting"
 								},

@@ -59,6 +59,7 @@ def beet_default(ctx: Context):
     Mem.definitions["stewbeet_painting"] = {
         "id": "minecraft:painting",
         core.PAINTING_DATA: {
+            "texture": "stewbeet_painting_2x2",            # Default to item id if not given (this example links to "assets/textures/stewbeet_painting_2x2.png")
             "author": {"text":"Stoupy","color":"yellow"},  # Author defaults to ctx.project_author if not given
             "title": {"text":"Da' Icon","color":"gray"},   # Title defaults to item name if not given
             "width": 2, "height": 2

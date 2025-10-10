@@ -1,0 +1,6 @@
+{
+	"parent": "minecraft:item/painting",
+	"textures": {
+		"layer0": "_your_namespace:item/stewbeet_painting"
+	}
+}

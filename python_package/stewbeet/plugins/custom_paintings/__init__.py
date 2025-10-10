@@ -53,23 +53,28 @@ def beet_default(ctx: Context) -> None:
             ordered_painting_data = {"asset_id": f"{ns}:{item}"}
             ordered_painting_data.update(painting_data)
             ordered_painting_data.pop("not_placeable", None)
+            ordered_painting_data.pop("texture", None)
 
             # Create the painting definition
             Mem.ctx.data[ns].painting_variants[item] = set_json_encoder(PaintingVariant(ordered_painting_data))
 
             ## Resource pack
             # Get the texture path
-            matching_textures: list[str] = [
-                relative_path(f"{root}/{file}")
-                for root, _, files in os.walk(textures_folder)
-                for file in files if file == f"{item}.png"
-            ]
-            if not matching_textures:
-                error(f"No texture found for painting '{item}' in the textures folder '{textures_folder}'. Expected a file named '{item}.png'.")
-                continue
-            elif len(matching_textures) > 1:
-                warning(f"Multiple textures found for painting '{item}' in the textures folder '{textures_folder}'. Using the first one found: '{matching_textures[0]}'.")
-            src: str = matching_textures[0]
+            if "texture" in painting_data:
+                texture: str = painting_data["texture"]
+                src: str = relative_path(f"{textures_folder}/{texture}.png")
+            else:
+                matching_textures: list[str] = [
+                    relative_path(f"{root}/{file}")
+                    for root, _, files in os.walk(textures_folder)
+                    for file in files if file == f"{item}.png"
+                ]
+                if not matching_textures:
+                    error(f"No texture found for painting '{item}' in the textures folder '{textures_folder}'. Expected a file named '{item}.png'.")
+                    continue
+                elif len(matching_textures) > 1:
+                    warning(f"Multiple textures found for painting '{item}' in the textures folder '{textures_folder}'. Using the first one found: '{matching_textures[0]}'.")
+                src: str = matching_textures[0]
             dst: str = f"painting/{item}"
 
             # Check if the texture is not already registered
