@@ -111,7 +111,7 @@ def generate_high_res_font(item: str, item_image: Image.Image, count: int = 1) -
 		str: The font to the generated texture
 	"""
 	font = get_next_font()
-	item = f"{item}_{count}" if isinstance(count, str) or count > 1 else item
+	item = f"{item}_{str(count).replace('-', '_')}" if isinstance(count, str) or count > 1 else item
 
 	# Get output path
 	path = f"{SharedMemory.cache_path}/font/high_res/{item}.png"
