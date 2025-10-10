@@ -149,6 +149,8 @@ class AutoModel:
 		growing_seed_data: JsonDict = self.data[GROWING_SEED]
 		texture_basename: str = growing_seed_data.get("texture_basename", self.item_name)
 		planted_on: str = growing_seed_data["planted_on"]
+		if planted_on == "magma_block":
+			planted_on = "magma"
 
 		# Find all stage textures and order them by stage number
 		stage_textures: dict[str, str] = dict(sorted({
