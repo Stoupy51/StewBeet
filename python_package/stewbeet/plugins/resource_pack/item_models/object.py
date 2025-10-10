@@ -9,9 +9,10 @@ from beet import ItemModel, Model, Texture
 from beet.core.utils import JsonDict
 from stouputils.decorators import LogLevels, handle_error, simple_cache
 from stouputils.io import super_json_dump, super_json_load
+from stouputils.print import error
 
 from ....core.__memory__ import Mem
-from ....core.constants import CUSTOM_BLOCK_VANILLA, CUSTOM_ITEM_VANILLA, OVERRIDE_MODEL
+from ....core.constants import CUSTOM_BLOCK_VANILLA, CUSTOM_ITEM_VANILLA, GROWING_SEED, OVERRIDE_MODEL
 from ....core.utils.io import set_json_encoder
 
 
@@ -42,7 +43,7 @@ class AutoModel:
 		"""
 		self.item_name: str = item_name
 		self.data: JsonDict = data
-		self.namespace: str = Mem.ctx.project_id
+		self.ns: str = Mem.ctx.project_id
 		self.block_or_item: str = "item"
 		self.used_textures: set[str] = set()
 		self.source_textures: dict[str, str] = source_textures
@@ -142,9 +143,63 @@ class AutoModel:
 						same_folder_variants.append(variant)
 		return same_folder_variants
 
+	def handle_growing_seeds(self) -> None:
+		""" Handle growing seeds by adding growth stage models and textures. """
+		# Retrieve growing seed data
+		growing_seed_data: JsonDict = self.data[GROWING_SEED]
+		texture_basename: str = growing_seed_data.get("texture_basename", self.item_name)
+		planted_on: str = growing_seed_data["planted_on"]
+
+		# Find all stage textures and order them by stage number
+		stage_textures: dict[str, str] = dict(sorted({
+				k.replace(".png", ""): v for k, v in self.source_textures.items()
+				if os.path.basename(k).startswith(f"{texture_basename}_stage_")
+			}.items(),
+			key=lambda item: int(item[0].split("_")[-1])
+		))
+
+		# For each stage, create the model and add the texture
+		for i in range(len(stage_textures)):
+			stage_texture_name: str = f"{texture_basename}_stage_{i}"
+			if stage_texture_name not in stage_textures:
+				if not self.ignore_textures:
+					error(f"Missing texture for growing seed stage: '{stage_texture_name}.png'")
+				continue
+
+			# Create model for this stage
+			stage_model: JsonDict = {
+				"textures": {
+					"1": f"block/{planted_on}",
+					"2": f"{self.ns}:item/seeds/{stage_texture_name}",
+					"particle": f"block/{planted_on}"
+				},
+				"elements": [
+					{"name":"seed","from":[0,1,4],"to":[16,17,4],"faces":{"north":{"uv":[0,0,16,16],"texture":"#2"},"south":{"uv":[16,0,0,16],"texture":"#2"}}},
+					{"name":"seed","from":[12,1,0],"to":[12,17,16],"faces":{"east":{"uv":[0,0,16,16],"texture":"#2"},"west":{"uv":[16,0,0,16],"texture":"#2"}}},
+					{"name":"seed","from":[0,1,12],"to":[16,17,12],"faces":{"north":{"uv":[16,0,0,16],"texture":"#2"},"south":{"uv":[0,0,16,16],"texture":"#2"}}},
+					{"name":"seed","from":[4,1,0],"to":[4,17,16],"faces":{"east":{"uv":[16,0,0,16],"texture":"#2"},"west":{"uv":[0,0,16,16],"texture":"#2"}}},
+					{"name":"base","from":[0,0,0],"to":[16,1.05,16],"faces":{"north":{"uv":[0,0,16,1],"texture":"#1"},"east":{"uv":[0,0,16,1],"texture":"#1"},"south":{"uv":[0,0,16,1],"texture":"#1"},"west":{"uv":[0,0,16,1],"texture":"#1"},"up":{"uv":[0,0,16,16],"texture":"#1"},"down":{"uv":[0,0,16,16],"texture":"#1"}}}
+				]
+			}
+
+			# Add the model to assets and create item model
+			Mem.ctx.assets[self.ns].models[f"item/seeds/{stage_texture_name}"] = set_json_encoder(Model(stage_model), max_level=4)
+			items_model = {"model": {"type": "minecraft:model", "model": f"{self.ns}:item/seeds/{stage_texture_name}"}}
+			Mem.ctx.assets[self.ns].item_models[f"seeds/{stage_texture_name}"] = set_json_encoder(ItemModel(items_model), max_level=4)
+
+			# Add the texture to assets
+			mcmeta: JsonDict | None = None
+			if os.path.exists(stage_textures[stage_texture_name] + ".mcmeta"):
+				mcmeta = super_json_load(stage_textures[stage_texture_name] + ".mcmeta")
+			Mem.ctx.assets[self.ns].textures[f"item/seeds/{stage_texture_name}"] = Texture(source_path=stage_textures[stage_texture_name], mcmeta=mcmeta)
+
 	@handle_error(exceptions=ValueError, error_log=LogLevels.ERROR_TRACEBACK)
 	def process(self) -> None:
 		""" Process the item model. """
+		# If the item is a growing seed, handle it
+		if GROWING_SEED in self.data:
+			self.handle_growing_seeds()
+
 		# If no item model, return
 		if not self.data.get("item_model"):
 			return
@@ -164,7 +219,7 @@ class AutoModel:
 		exclude_textures: bool = "textures" in overrides and overrides.get("textures") is None
 
 		# Get powered states (if any)
-		powered = [""]
+		powered: list[str] = [""]
 		for texture_name in self.source_textures:
 			if texture_name.startswith(self.item_name) and texture_name.endswith("_on.png"):
 				powered = ["", "_on"]
@@ -195,7 +250,7 @@ class AutoModel:
 					# Check in which variants state we are
 					variants_without_on = [x for x in variants if "_on" not in x]
 					if not exclude_textures and len(variants_without_on) == 1:
-						content["textures"]["all"] = f"{self.namespace}:item/" + self.get_powered_texture(variants, "", on_off)
+						content["textures"]["all"] = f"{self.ns}:item/" + self.get_powered_texture(variants, "", on_off)
 					elif not exclude_textures:
 						# Prepare models to check
 						cake = ["bottom", "side", "top", "inner"]
@@ -206,28 +261,34 @@ class AutoModel:
 							content["parent"] = "block/cake"
 							for side in cake:
 								texture_key = side.replace("inner", "inside")
-								texture_path = f"{self.namespace}:item/" + self.get_powered_texture(variants, side, on_off)
+								texture_path = f"{self.ns}:item/" + self.get_powered_texture(variants, side, on_off)
 								content["textures"][texture_key] = texture_path
 
 							# Generate 6 models for each cake slice
 							for i in range(1, 7):
 								name: str = f"{self.item_name}_slice{i}"
 								slice_content: JsonDict = {"parent": f"block/cake_slice{i}", "textures": content["textures"]}
-								Mem.ctx.assets[f"{self.namespace}:item/{name}{on_off}"] = Model(super_json_dump(slice_content, max_level=4))						# Check cube_bottom_top model
+								Mem.ctx.assets[self.ns].models[f"item/{name}{on_off}"] = set_json_encoder(Model(slice_content), max_level=4)
+
+						# Check cube_bottom_top model
 						elif self.model_in_variants(cube_bottom_top, variants):
 							content["parent"] = "block/cube_bottom_top"
 							for side in cube_bottom_top:
-								texture_path = f"{self.namespace}:item/" + self.get_powered_texture(variants, side, on_off)
-								content["textures"][side] = texture_path						# Check orientable model
+								texture_path = f"{self.ns}:item/" + self.get_powered_texture(variants, side, on_off)
+								content["textures"][side] = texture_path
+
+						# Check orientable model
 						elif self.model_in_variants(orientable, variants):
 							content["parent"] = "block/orientable"
 							for side in orientable:
-								texture_path = f"{self.namespace}:item/" + self.get_powered_texture(variants, side, on_off)
-								content["textures"][side] = texture_path						# Check cube_column model
+								texture_path = f"{self.ns}:item/" + self.get_powered_texture(variants, side, on_off)
+								content["textures"][side] = texture_path
+
+						# Check cube_column model
 						elif self.model_in_variants(cube_column, variants):
 							content["parent"] = "block/cube_column"
 							for side in cube_column:
-								texture_path = f"{self.namespace}:item/" + self.get_powered_texture(variants, side, on_off)
+								texture_path = f"{self.ns}:item/" + self.get_powered_texture(variants, side, on_off)
 								content["textures"][side] = texture_path
 
 						# Else, if there are no textures override, show error
@@ -257,7 +318,7 @@ class AutoModel:
 					if exclude_textures:
 						content = {"parent": parent}
 					else:
-						textures = {"layer0": f"{self.namespace}:item/{self.item_name}{on_off}"}
+						textures = {"layer0": f"{self.ns}:item/{self.item_name}{on_off}"}
 						content = {"parent": parent, "textures": textures}
 					data_id = data_id.replace("minecraft:", "")
 
@@ -267,7 +328,7 @@ class AutoModel:
 
 					# If there is a "_overlay" texture, make it as layer1
 					if not exclude_textures and f"{self.item_name}_overlay" in variants:
-						content["textures"]["layer1"] = f"{self.namespace}:item/{self.item_name}_overlay"
+						content["textures"]["layer1"] = f"{self.ns}:item/{self.item_name}_overlay"
 
 					# Check for bow pulling textures
 					elif not exclude_textures and data_id.endswith("bow"):
@@ -281,14 +342,14 @@ class AutoModel:
 								"type": "minecraft:condition",
 								"on_false": {
 									"type": "minecraft:model",
-									"model": f"{self.namespace}:item/{self.item_name}"
+									"model": f"{self.ns}:item/{self.item_name}"
 								},
 								"on_true": {
 									"type": "minecraft:range_dispatch",
 									"entries": [],
 									"fallback": {
 										"type": "minecraft:model",
-										"model": f"{self.namespace}:item/{self.item_name}_pulling_0"
+										"model": f"{self.ns}:item/{self.item_name}_pulling_0"
 									},
 									"property": "minecraft:use_duration",
 									"scale": 0.05
@@ -298,16 +359,22 @@ class AutoModel:
 
 							# Add override for each pulling state
 							for i, variant in enumerate(sorted_pull_variants):
-								pull_content: JsonDict = {"parent": parent, "textures": {"layer0": f"{self.namespace}:item/{variant}"}}
+								pull_content: JsonDict = {"parent": parent, "textures": {"layer0": f"{self.ns}:item/{variant}"}}
+
 								# Add texture to assets
-								if variant + ".png" in self.source_textures:
-									Mem.ctx.assets[f"{self.namespace}:item/{variant}"] = Texture(source_path=self.source_textures[variant + ".png"])
+								variant_png: str = variant + ".png"
+								if variant_png in self.source_textures:
+									mcmeta: JsonDict | None = None
+									if os.path.exists(variant_png + ".mcmeta"):
+										mcmeta = super_json_load(variant_png + ".mcmeta")
+									Mem.ctx.assets[self.ns].textures[f"item/{variant}"] = Texture(source_path=self.source_textures[variant_png], mcmeta=mcmeta)
+
 								# Add model to assets
-								Mem.ctx.assets[f"{self.namespace}:item/{self.item_name}_pulling_{i}"] = Model(super_json_dump(pull_content, max_level=4))
+								Mem.ctx.assets[self.ns].models[f"item/{self.item_name}_pulling_{i}"] = set_json_encoder(Model(pull_content), max_level=4)
 
 								if i < (len(sorted_pull_variants) - 1):
 									pull: float = 0.65 + (0.25 * i)
-									model: str = f"{self.namespace}:item/{self.item_name}_pulling_{i + 1}"
+									model: str = f"{self.ns}:item/{self.item_name}_pulling_{i + 1}"
 									items_content["model"]["on_true"]["entries"].append({ # type: ignore
 										"model": {
 											"type": "minecraft:model",
@@ -317,7 +384,7 @@ class AutoModel:
 									})
 
 							# Add the items/bow.json file
-							Mem.ctx.assets[f"{self.namespace}:{self.item_name}{on_off}"] = set_json_encoder(ItemModel(items_content), max_level=4)
+							Mem.ctx.assets[self.ns].item_models[self.item_name + on_off] = set_json_encoder(ItemModel(items_content), max_level=4)
 
 			# Add overrides
 			for key, value in overrides.items():
@@ -365,11 +432,11 @@ class AutoModel:
 
 			# Add model to assets
 			if self.data.get(OVERRIDE_MODEL, None) != {}:
-				Mem.ctx.assets[f"{self.namespace}:item/{self.item_name}{on_off}"] = set_json_encoder(Model(content), max_level=4)
+				Mem.ctx.assets[self.ns].models[f"item/{self.item_name}{on_off}"] = set_json_encoder(Model(content), max_level=4)
 			Mem.ctx.meta["stewbeet"]["rendered_item_models"].add(self.data["item_model"])
 
 			# Generate the json file required in items/
 			if not self.data["id"].endswith("bow"):
-				items_model = {"model": {"type": "minecraft:model", "model": f"{self.namespace}:item/{self.item_name}{on_off}"}}
-				Mem.ctx.assets[f"{self.namespace}:{self.item_name}{on_off}"] = set_json_encoder(ItemModel(items_model), max_level=4)
+				items_model = {"model": {"type": "minecraft:model", "model": f"{self.ns}:item/{self.item_name}{on_off}"}}
+				Mem.ctx.assets[self.ns].item_models[self.item_name + on_off] = set_json_encoder(ItemModel(items_model), max_level=4)
 
