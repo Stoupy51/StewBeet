@@ -137,14 +137,16 @@ execute if score #rotation {ns}.data matches 0 if predicate {ns}:facing/west run
 # Advancement revoke
 advancement revoke @s only {ns}:custom_block_alternative/{item}
 
-# Execute the place function as and at the new placed item frame
-tag @s add {ns}.to_refund
+# Execute the place function as and at the new placed item frame""")
+				if "id" not in block:
+					write_function(f"{ns}:custom_blocks/{item}/search", f"execute as @e[type=item_frame,tag={ns}.new,tag={ns}.{item}] at @s run function {ns}:custom_blocks/{item}/place_main")
+				# Make place check function (only if "id" is in VANILLA_BLOCK)
+				else:
+					write_function(f"{ns}:custom_blocks/{item}/search", f"""tag @s add {ns}.to_refund
 execute as @e[type=item_frame,tag={ns}.new,tag={ns}.{item}] at @s run function {ns}:custom_blocks/{item}/place_check
 tag @s remove {ns}.to_refund
 """)
-
-				# Make place check function
-				write_function(f"{ns}:custom_blocks/{item}/place_check", f"""
+					write_function(f"{ns}:custom_blocks/{item}/place_check", f"""
 # Check if there is air block at the position
 execute if block ~ ~ ~ air run return run function {ns}:custom_blocks/{item}/place_main
 
