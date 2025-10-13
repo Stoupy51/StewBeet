@@ -1,8 +1,6 @@
 
 # ruff: noqa: E501
 # Imports
-from typing import cast
-
 from beet.core.utils import JsonDict
 from stouputils.decorators import simple_cache
 
@@ -32,21 +30,23 @@ def convert_shapeless_to_shaped(craft: JsonDict) -> JsonDict:
 	if craft.get("result"):
 		shaped_recipe["result"] = craft["result"]
 
-	# Get all ingredients to the dictionary
+	# Get all ingredients to the dictionary and map each ingredient to a key, preserving order
 	next_key: str = "A"
+	ingredient_to_key: dict[str, str] = {}
+	ordered_keys: list[str] = []
+
 	for ingr in shapeless_ingredients:
-		key: str = next_key
+		ingr_str = str(ingr)
 
-		# Check if the ingredient is already in the shaped recipe, if so stop early
-		for new_key, new_ingr in shaped_recipe["ingredients"].items():
-			if str(ingr) == str(new_ingr):
-				key = new_key	# This will skip the next condition below
-				break
-
-		# If the key is still the next key, it means it's a new ingredient, add it to the dictionary and update the next key
-		if key == next_key:
+		# Check if we've already seen this ingredient
+		if ingr_str not in ingredient_to_key:
+			# New ingredient, assign it the next key
+			ingredient_to_key[ingr_str] = next_key
 			shaped_recipe["ingredients"][next_key] = ingr
 			next_key = chr(ord(next_key) + 1)
+
+		# Record the key for this position (preserving order)
+		ordered_keys.append(ingredient_to_key[ingr_str])
 
 	# Make the shape of the craft, with an exception when 2 materials to put one alone in the center
 	if len(shaped_recipe["ingredients"]) == 2 and total_items in (5, 9):
@@ -61,21 +61,21 @@ def convert_shapeless_to_shaped(craft: JsonDict) -> JsonDict:
 		elif total_items == 5:
 			shaped_recipe["shape"] = [f" {big} ", big+other+big, f" {big} "]
 	else:
-
-		# For each ingredient, add to the shape depending on the occurences
-		shaped_recipe["shape"] = cast(list[str], [])
-		for key, ingr in shaped_recipe["ingredients"].items():
-			for ingr_craft in craft["ingredients"]:
-				if str(ingr_craft) == str(ingr):
-					shaped_recipe["shape"].append(key)
-
-		# Fix the shape (ex: ["A","A","A","B","B","B","C","C","C"] -> ["AAA","BBB","CCC"])
-		# ex 2: ["A","B","C","D"] -> ["AB","CD"]
-		col_size = 3
-		if len(shaped_recipe["shape"]) <= 4:
+		# Determine the grid size based on total items
+		# Perfect squares: 1, 4, 9 -> use sqrt as col_size
+		# Otherwise: use 3 for <=9 items, 2 for <=4 items
+		import math
+		sqrt_items = int(math.sqrt(total_items))
+		if sqrt_items * sqrt_items == total_items:
+			# Perfect square
+			col_size = sqrt_items
+		elif total_items <= 4:
 			col_size = 2
-		ranged = range(0, len(shaped_recipe["shape"]), col_size)
-		shaped_recipe["shape"] = ["".join(shaped_recipe["shape"][i:i + col_size]) for i in ranged]
+		else:
+			col_size = 3
+
+		# Build the shape preserving the original order
+		shaped_recipe["shape"] = ["".join(ordered_keys[i:i + col_size]) for i in range(0, len(ordered_keys), col_size)]
 
 	# Return the shaped craft
 	return shaped_recipe
