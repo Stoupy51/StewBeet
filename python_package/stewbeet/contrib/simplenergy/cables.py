@@ -3,10 +3,10 @@
 # Imports
 import os
 
-from beet import ItemModel, Model, Texture
+from beet import ItemModel, Model
 from stouputils.io import get_root_path, super_json_load
 
-from ...core import CUSTOM_ITEM_VANILLA, JsonDict, Mem, set_json_encoder, write_function
+from ...core import CUSTOM_ITEM_VANILLA, JsonDict, Mem, set_json_encoder, texture_mcmeta, write_function
 
 # Constants
 ENERGY_CABLE_MODELS_FOLDER: str = get_root_path(__file__) + "/energy_cable_models"
@@ -69,10 +69,8 @@ def energy_cables_models(cables: list[str]) -> None:
 		# Write the vanilla model for this cable
 		Mem.ctx.assets[ns].item_models[cable] = set_json_encoder(ItemModel(content), max_level=3)
 
-		# Copy texture
-		src: str = f"{textures_folder}/{cable}.png"
-		mcmeta: JsonDict | None = None if not os.path.exists(src + ".mcmeta") else super_json_load(f"{src}.mcmeta")
-		Mem.ctx.assets[ns].textures[f"block/{cable}"] = Texture(source_path=src, mcmeta=mcmeta)
+		# Copy texture to resource pack
+		Mem.ctx.assets[ns].textures[f"block/{cable}"] = texture_mcmeta(f"{textures_folder}/{cable}.png")
 
 		# On placement, rotate
 		write_function(f"{ns}:custom_blocks/{cable}/place_secondary", f"""
@@ -186,8 +184,7 @@ def item_cables_models(cables: dict[str, dict[str, str] | None]) -> None:
 
 			# Check if the source file exists and if the texture is not already registered
 			if os.path.exists(src) and (not Mem.ctx.assets[ns].textures.get(dst)):
-				mcmeta: JsonDict | None = None if not os.path.exists(src + ".mcmeta") else super_json_load(f"{src}.mcmeta")
-				Mem.ctx.assets[ns].textures[dst] = Texture(source_path=src, mcmeta=mcmeta)
+				Mem.ctx.assets[ns].textures[dst] = texture_mcmeta(src)
 
 		# On placement, add itemio.cable tag and call init function
 		write_function(f"{ns}:custom_blocks/{cable}/place_secondary", f"""
@@ -289,8 +286,7 @@ def servo_mechanisms_models(servos: dict[str, dict[str, str] | None]) -> None:
 
 			# Check if the source file exists and if the texture is not already registered
 			if os.path.exists(src) and (not Mem.ctx.assets[ns].textures.get(dst)):
-				mcmeta: JsonDict | None = None if not os.path.exists(src + ".mcmeta") else super_json_load(f"{src}.mcmeta")
-				Mem.ctx.assets[ns].textures[dst] = Texture(source_path=src, mcmeta=mcmeta)
+				Mem.ctx.assets[ns].textures[dst] = texture_mcmeta(src)
 
 		## Working functions
 		# On placement, add necessary tag and call init function
