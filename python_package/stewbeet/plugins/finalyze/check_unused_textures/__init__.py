@@ -30,14 +30,16 @@ def beet_default(ctx: Context) -> None:
 	# Ex: {'some_folder/dirt.png', 'stone.png', ...}
 	textures: set[str] = {relative_path(str(p), textures_folder) for p in Path(textures_folder).rglob("*.png")}
 
-	# 2) For each texture, check if any of the ctx.assets.textures endswith the texture path.
+	# 2) For each texture, check if any of the ctx.assets.textures matches the texture filename.
 	unused_paths: set[str] = set()
 	for path in textures:
+		# Get just the filename without extension for comparison
+		filename_no_ext: str = os.path.splitext(os.path.basename(path))[0]
 		no_extension_path: str = os.path.splitext(path)[0]
 		if not any(
-			str(texture.source_path).endswith(no_extension_path) if isinstance(texture, Texture)
+			(str(texture.source_path).endswith(no_extension_path) or filename_no_ext in str(texture.source_path)) if isinstance(texture, Texture)
 			else (
-				texture.endswith(no_extension_path) if isinstance(texture, str)
+				(texture.endswith(no_extension_path) or filename_no_ext in texture) if isinstance(texture, str)
 				else False
 			)
 			for texture in cast(list[Any], ctx.assets.textures)
