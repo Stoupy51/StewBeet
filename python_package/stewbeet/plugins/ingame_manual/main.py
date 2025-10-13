@@ -441,6 +441,12 @@ def routine():
 						if craft["type"] == "crafting_shapeless":
 							craft = convert_shapeless_to_shaped(craft)
 
+						# Skip if result is same as previous result
+						current_result: Any | None = craft.get("result")
+						if current_result and current_result == previous_result and craft["type"] != "mining":
+							continue
+						previous_result = current_result
+
 						# Get breaklines
 						breaklines = 3
 						if "shape" in craft:
@@ -476,7 +482,7 @@ def routine():
 								PULVERIZING: "SimplEnergy Pulverizing"
 							}
 							recipe_title = recipe_type_names.get(craft["type"], craft["type"].replace("_", " ").title())
-							hover_text.insert(0, {"text": f"{recipe_title}\n", "color": "yellow"})
+							hover_text.append({"text": f"\n{recipe_title}", "color": "yellow"})
 
 						# Append ingredients
 						if craft["type"] == "mining":
@@ -531,12 +537,6 @@ def routine():
 								pattern_name = craft["pattern"].replace("minecraft:", "").replace("_", " ").title()
 								hover_text.append({"text": "\n- Pattern: ", "color": "gray"})
 								hover_text.append({"text": pattern_name, "color": "gray"})
-
-						# Skip if result is same as previous result
-						current_result: Any | None = craft.get("result")
-						if current_result and current_result == previous_result and craft["type"] != "mining":
-							continue
-						previous_result = current_result
 
 						# Add the craft to the content
 						result_or_ingredient = WIKI_RESULT_OF_CRAFT_FONT if "result" not in craft else generate_wiki_font_for_ingr(name, craft)
@@ -595,7 +595,7 @@ def routine():
 
 						# If there are more than buttons_limit buttons, remove lowest priority ones until there is buttons_limit left
 						while len(info_buttons) > buttons_limit:
-							lowest_priority: int = min(info_buttons[::-1], key=lambda x: x.get("priority", 1))
+							lowest_priority: JsonDict = min(info_buttons[::-1], key=lambda x: x.get("priority", 1))
 							info_buttons.remove(lowest_priority)
 
 						# Keep only the last buttons_limit buttons (maximum that can be displayed with 5 per line and 4 lines)
