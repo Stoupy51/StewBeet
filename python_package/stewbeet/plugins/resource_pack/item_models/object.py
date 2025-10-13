@@ -5,15 +5,15 @@ from __future__ import annotations
 import os
 from collections.abc import Iterable
 
-from beet import ItemModel, Model, Texture
+from beet import ItemModel, Model
 from beet.core.utils import JsonDict
 from stouputils.decorators import LogLevels, handle_error, simple_cache
-from stouputils.io import super_json_dump, super_json_load
+from stouputils.io import super_json_dump
 from stouputils.print import error
 
 from ....core.__memory__ import Mem
 from ....core.constants import CUSTOM_BLOCK_VANILLA, CUSTOM_ITEM_VANILLA, GROWING_SEED, OVERRIDE_MODEL
-from ....core.utils.io import set_json_encoder
+from ....core.utils.io import set_json_encoder, texture_mcmeta
 
 
 class AutoModel:
@@ -190,10 +190,7 @@ class AutoModel:
 			Mem.ctx.assets[self.ns].item_models[f"seeds/{stage_texture_name}"] = set_json_encoder(ItemModel(items_model), max_level=4)
 
 			# Add the texture to assets
-			mcmeta: JsonDict | None = None
-			if os.path.exists(stage_textures[stage_texture_name] + ".mcmeta"):
-				mcmeta = super_json_load(stage_textures[stage_texture_name] + ".mcmeta")
-			Mem.ctx.assets[self.ns].textures[f"item/seeds/{stage_texture_name}"] = Texture(source_path=stage_textures[stage_texture_name], mcmeta=mcmeta)
+			Mem.ctx.assets[self.ns].textures[f"item/seeds/{stage_texture_name}"] = texture_mcmeta(stage_textures[stage_texture_name])
 
 	@handle_error(exceptions=ValueError, error_log=LogLevels.ERROR_TRACEBACK)
 	def process(self) -> None:
@@ -366,10 +363,7 @@ class AutoModel:
 								# Add texture to assets
 								variant_png: str = variant + ".png"
 								if variant_png in self.source_textures:
-									mcmeta: JsonDict | None = None
-									if os.path.exists(variant_png + ".mcmeta"):
-										mcmeta = super_json_load(variant_png + ".mcmeta")
-									Mem.ctx.assets[self.ns].textures[f"item/{variant}"] = Texture(source_path=self.source_textures[variant_png], mcmeta=mcmeta)
+									Mem.ctx.assets[self.ns].textures[f"item/{variant}"] = texture_mcmeta(self.source_textures[variant_png])
 
 								# Add model to assets
 								Mem.ctx.assets[self.ns].models[f"item/{self.item_name}_pulling_{i}"] = set_json_encoder(Model(pull_content), max_level=4)
@@ -419,10 +413,7 @@ class AutoModel:
 					texture_name = texture.split(":")[-1].split("/")[-1]  # Get just the filename
 					texture_name += ".png"
 					if texture_name in self.source_textures:
-						mcmeta: JsonDict | None = None
-						if os.path.exists(self.source_textures[texture_name] + ".mcmeta"):
-							mcmeta = super_json_load(self.source_textures[texture_name] + ".mcmeta")
-						Mem.ctx.assets[texture] = Texture(source_path=self.source_textures[texture_name], mcmeta=mcmeta)
+						Mem.ctx.assets[texture] = texture_mcmeta(self.source_textures[texture_name])
 					else:
 						if not self.ignore_textures:
 							raise ValueError(f"Texture '{texture_name}' not found in source textures")

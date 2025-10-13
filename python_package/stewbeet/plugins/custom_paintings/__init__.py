@@ -2,15 +2,15 @@
 # Imports
 import os
 
-from beet import Context, PaintingVariant, PaintingVariantTag, Texture
+from beet import Context, PaintingVariant, PaintingVariantTag
 from beet.core.utils import JsonDict
 from stouputils.decorators import measure_time
-from stouputils.io import relative_path, super_json_load
+from stouputils.io import relative_path
 from stouputils.print import error, progress, warning
 
 from ...core.__memory__ import Mem
 from ...core.constants import PAINTING_DATA
-from ...core.utils.io import set_json_encoder
+from ...core.utils.io import set_json_encoder, texture_mcmeta
 
 
 # Main entry point
@@ -79,8 +79,7 @@ def beet_default(ctx: Context) -> None:
 
             # Check if the texture is not already registered
             if not Mem.ctx.assets[ns].textures.get(dst):
-                mcmeta: JsonDict | None = None if not os.path.exists(src + ".mcmeta") else super_json_load(f"{src}.mcmeta")
-                Mem.ctx.assets[ns].textures[dst] = Texture(source_path=src, mcmeta=mcmeta)
+                Mem.ctx.assets[ns].textures[dst] = texture_mcmeta(src)
 
     # Add the painting variant tag to the context data
     if placeable_values:

@@ -1,11 +1,12 @@
 
 # Imports
+import os
 from typing import Any, TypeVar, cast
 
-from beet import Function, JsonFile, NamespaceContainer, NamespaceProxy, TagFile
+from beet import Function, JsonFile, NamespaceContainer, NamespaceProxy, TagFile, Texture
 from beet.core.utils import JsonDict
 from stouputils.collections import unique_list
-from stouputils.io import super_json_dump
+from stouputils.io import super_json_dump, super_json_load
 
 from ..__memory__ import Mem
 
@@ -173,4 +174,19 @@ def set_json_encoder(obj: JsonFileT, max_level: int | None = None, indent: str |
 	else:
 		obj.encoder = lambda x: super_json_dump(x, max_level=max_level, indent=indent)
 	return obj
+
+
+# Create a texture object with mcmeta if found
+def texture_mcmeta(source_path: str) -> Texture:
+	""" Create a Texture object with mcmeta if found
+
+	Args:
+		source_path (str): The path to the texture (ex: "assets/textures/texture_name.png")
+	Returns:
+		Texture: The texture object
+	"""
+	mcmeta_path: str = f"{source_path}.mcmeta"
+	if os.path.exists(mcmeta_path):
+		return Texture(source_path=source_path, mcmeta=super_json_load(mcmeta_path))
+	return Texture(source_path=source_path)
 
