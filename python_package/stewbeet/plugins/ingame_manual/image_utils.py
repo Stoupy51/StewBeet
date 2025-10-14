@@ -6,7 +6,7 @@ from typing import Any, cast
 
 from PIL import Image, ImageDraw, ImageFont
 
-from ...core.__memory__ import Mem
+from ...core.__memory__ import JsonDict, Mem
 from .shared_import import (
 	MICRO_NONE_FONT,
 	TEMPLATES_PATH,
@@ -101,7 +101,7 @@ def image_count(count: int | str) -> Image.Image:
 	return img
 
 # Generate high res image for item
-def generate_high_res_font(item: str, item_image: Image.Image, count: int = 1) -> str:
+def generate_high_res_font(item: str, item_image: Image.Image, count: int | str | JsonDict = 1) -> str:
 	""" Generate the high res font to display in the manual for the item
 	Args:
 		item		(str):		The name of the item, ex: "adamantium_fragment"
@@ -111,6 +111,8 @@ def generate_high_res_font(item: str, item_image: Image.Image, count: int = 1) -
 		str: The font to the generated texture
 	"""
 	font = get_next_font()
+	if isinstance(count, dict):
+		count = f"{count.get('min', 1)}-{count.get('max', 1)}"
 	item = f"{item}_{str(count).replace('-', '_')}" if isinstance(count, str) or count > 1 else item
 
 	# Get output path
