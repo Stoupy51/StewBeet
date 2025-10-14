@@ -20,6 +20,13 @@ def main():
     if second_arg == "" and len(sys.argv) == 1:
         sys.argv.append("build")
 
+    # Print the version of stewbeet, beet, bolt, mecha, and stouputils
+    if second_arg == "--version":
+        for pkg in ["stewbeet", "beet", "bolt", "mecha", "smithed", "model_resolver", "stouputils"]:
+            v: str = version(pkg).split("version: ")[-1]
+            print(f"{RED}{pkg} {GREEN}{v}{RESET}")
+        return
+
     # Try to find and load the beet configuration file
     cfg: ProjectConfig = get_project_config()
 
@@ -56,14 +63,8 @@ def main():
         if second_arg == "rebuild":
             sys.argv[1] = "build"
 
-    # Print the version of stewbeet, beet, bolt, mecha, and stouputils
-    if second_arg == "--version":
-        for pkg in ["stewbeet", "beet", "bolt", "mecha", "stouputils"]:
-            v: str = version(pkg).split("version: ")[-1]
-            print(f"{RED}{pkg} {GREEN}{v}{RESET}")
-
     # Handle all other commands except "clean"
-    elif second_arg != "clean":
+    if second_arg != "clean":
         # Add current directory to Python path
         current_dir: str = os.getcwd()
         if current_dir not in sys.path:
