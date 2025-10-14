@@ -80,27 +80,30 @@ def ingr_to_id(ingredient: JsonDict, add_namespace: bool = True) -> str:
 	"""
 	if isinstance(ingredient, str):
 		ingredient = {"item": ingredient}
-	if ingredient.get("item"):
-		if not add_namespace:
-			return ingredient["item"].split(":")[1]
-		return ingredient["item"]
-	else:
-		custom_data: JsonDict = ingredient["components"]["minecraft:custom_data"]
-		namespace: str = ""
-		id: str = ""
-		for cd_ns, cd_data in custom_data.items():
-			if isinstance(cd_data, dict):
-				cd_data = cast(JsonDict, cd_data)
-				values: list[Any] = list(cd_data.values())
-				if isinstance(values[0], bool):
-					namespace = cd_ns
-					id = next(iter(cd_data.keys()))
-					break
-		if not namespace:
-			error(f"No namespace found in custom data: {custom_data}, ingredient: {ingredient}")
-		if add_namespace:
-			return namespace + ":" + id
-		return id
+	for k in ("item", "id"):
+		if ingredient.get(k):
+			if not add_namespace and ":" in ingredient[k]:
+				return ingredient[k].split(":")[1]
+			elif add_namespace and ":" not in ingredient[k]:
+				return "minecraft:" + ingredient[k]
+			return ingredient[k]
+
+	custom_data: JsonDict = ingredient["components"]["minecraft:custom_data"]
+	namespace: str = ""
+	id: str = ""
+	for cd_ns, cd_data in custom_data.items():
+		if isinstance(cd_data, dict):
+			cd_data = cast(JsonDict, cd_data)
+			values: list[Any] = list(cd_data.values())
+			if isinstance(values[0], bool):
+				namespace = cd_ns
+				id = next(iter(cd_data.keys()))
+				break
+	if not namespace:
+		error(f"No namespace found in custom data: {custom_data}, ingredient: {ingredient}")
+	if add_namespace:
+		return namespace + ":" + id
+	return id
 
 # Mainly used for recipes
 @simple_cache
@@ -185,34 +188,51 @@ def get_item_from_ingredient(ingredient: JsonDict) -> JsonDict:
 
 # Make a loot table
 @simple_cache
-def loot_table_from_ingredient(result_ingredient: JsonDict, result_count: int) -> str:
+def loot_table_from_ingredient(result_ingredient: JsonDict, result_count: int | dict) -> str:
+	""" Get the loot table for an ingredient dict
+	Args:
+		result_ingredient (dict): The ingredient dict
+			ex: {"item": "minecraft:stick"}
+		result_count (int|dict): The count of the result item, can be an int or a dict for random counts
+			ex: 1
+			ex: {"type": "minecraft:uniform","min": 4,"max": 6}
+	Returns:
+		str: The loot table path, ex: "my_datapack:i/stick"
+	"""
 
 	# If item from this datapack
 	item: str = ingr_to_id(result_ingredient)
 	if item.startswith(Mem.ctx.project_id):
 		item = item.split(":")[1]
 		loot_table = f"{Mem.ctx.project_id}:i/{item}"
-		if result_count > 1:
+		if isinstance(result_count, int) and result_count > 1:
 			loot_table += f"_x{result_count}"
+		elif isinstance(result_count, dict):
+			minimum = result_count.get("min", 1)
+			maximum = result_count.get("max", 1)
+			if maximum > 1:
+				loot_table += f"_x{minimum}to{maximum}"
 		return loot_table
 
 	namespace, item = item.split(":")
 	loot_table = f"{Mem.ctx.project_id}:recipes/{namespace}/{item}"
-	if result_count > 1:
+	if isinstance(result_count, int) and result_count > 1:
 		loot_table += f"_x{result_count}"
+	elif isinstance(result_count, dict):
+		minimum = result_count.get("min", 1)
+		maximum = result_count.get("max", 1)
+		if maximum > 1:
+			loot_table += f"_x{minimum}to{maximum}"
 
 	# If item from another datapack, generate the loot table
-	path: str = f"{Mem.ctx.project_id}:recipes/{namespace}/{item}"
-	if result_count > 1:
-		path += f"_x{result_count}"
 	if namespace != "minecraft":
 		file: JsonDict = {"pools":[{"rolls":1,"entries":[{"type":"minecraft:loot_table","value": f"{Mem.ctx.project_id}:external/{namespace}/{item}"}] }] }
 	else:
 		file: JsonDict = {"pools":[{"rolls":1,"entries":[{"type":"minecraft:item","name":f"{namespace}:{item}"}] }] }
-	if result_count > 1:
+	if (isinstance(result_count, int) and result_count > 1) or isinstance(result_count, dict):
 		file["pools"][0]["entries"][0]["functions"] = [{"function": "minecraft:set_count","count": result_count}]
 
-	Mem.ctx.data[f"{Mem.ctx.project_id}:recipes/{namespace}/{item}"] = LootTable(super_json_dump(file, max_level=9))
+	Mem.ctx.data[loot_table] = LootTable(super_json_dump(file, max_level=9))
 	return loot_table
 
 @simple_cache
