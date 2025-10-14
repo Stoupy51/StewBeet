@@ -15,7 +15,9 @@ from .utils import get_project_config
 
 @handle_error(message="Error while running 'stewbeet'")
 def main():
-    second_arg: str = sys.argv[1] if len(sys.argv) == 2 else "build"
+    second_arg: str = sys.argv[1] if len(sys.argv) == 2 else ""
+    if second_arg == "" and len(sys.argv) == 1:
+        sys.argv.append("build")
 
     # Try to find and load the beet configuration file
     cfg: ProjectConfig = get_project_config()
@@ -48,6 +50,10 @@ def main():
         if definitions_debug and os.path.exists(definitions_debug):
             os.remove(definitions_debug)
         info("Cleaning done!")
+
+        # Replace "rebuild" by "build" to continue the process
+        if second_arg == "rebuild":
+            sys.argv[1] = "build"
 
     if second_arg != "clean":
         # Add current directory to Python path
