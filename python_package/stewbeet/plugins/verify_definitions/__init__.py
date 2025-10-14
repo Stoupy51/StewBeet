@@ -247,10 +247,6 @@ def beet_default(ctx: Context) -> None:
 							if not recipe.get("cookingtime") or not isinstance(recipe["cookingtime"], int):
 								errors.append(f"Recipe #{i} in RESULT_OF_CRAFTING should have an int 'cookingtime' key for '{item}'")
 
-					# Check the result count
-					if (not recipe.get("result_count") or not isinstance(recipe["result_count"], int)) and (recipe.get("type") not in ("smithing_trim",)):
-						errors.append(f"Recipe #{i} in RESULT_OF_CRAFTING should have an int 'result_count' key for '{item}'")
-
 		# Check the PAINTING_DATA key
 		if data.get(PAINTING_DATA):
 			if data["id"] != "minecraft:painting":
