@@ -10,7 +10,7 @@ from stouputils.print import error, warning
 from ...core.__memory__ import Mem
 from ...core.ingredients import ingr_to_id
 from .image_utils import generate_high_res_font
-from .shared_import import COMPONENTS_TO_INCLUDE, NONE_FONT, SharedMemory, get_page_number
+from .shared_import import NONE_FONT, SharedMemory, get_page_number
 
 
 # Call the previous function
@@ -107,7 +107,7 @@ def get_item_component(ingredient: str | JsonDict, only_those_components: list[s
 					components[key] = item[key]
 		else:
 			for key, value in item.items():
-				if key in COMPONENTS_TO_INCLUDE:
+				if key in SharedMemory.components_to_include:
 					components[key] = value
 		formatted["hover_event"]["components"] = components
 

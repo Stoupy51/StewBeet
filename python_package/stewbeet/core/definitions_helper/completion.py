@@ -107,3 +107,15 @@ def add_smithed_ignore_vanilla_behaviours_convention() -> None:
 		data["custom_data"].smithed.ignore.functionality = True # pyright: ignore[reportUnknownMemberType]
 		data["custom_data"].smithed.ignore.crafting = True # pyright: ignore[reportUnknownMemberType]
 
+# Set manual components
+def set_manual_components(white_list: list[str]) -> None:
+	""" Override the components to include in the manual when hovering items.
+
+	Args:
+		white_list	(list[str]):	The list of components to include.
+	"""
+	if not white_list:
+		return
+	from ...plugins.ingame_manual.shared_import import SharedMemory
+	SharedMemory.components_to_include = white_list
+
