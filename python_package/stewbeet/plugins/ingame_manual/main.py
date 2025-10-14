@@ -288,7 +288,7 @@ def routine():
 					x += simple_case.size[0]
 
 					# Add the click_event part to the line and add the 2 times the line if enough items
-					component = get_item_component(item, only_those_components=["item_name", "custom_name", "attribute_modifiers"])
+					component = get_item_component(item, only_those_components=[x for x in SharedMemory.components_to_include if x != "lore"])
 					component["text"] = MEDIUM_NONE_FONT if not SharedMemory.high_resolution else high_res_font
 					line.append(component)
 					if len(line) == MAX_ITEMS_PER_ROW:
