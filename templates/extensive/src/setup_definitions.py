@@ -84,8 +84,9 @@ def beet_default(ctx: Context):
             item[core.CATEGORY] = "misc"
 
     # Final adjustments, you definitively should keep them!
-    core.add_item_model_component(black_list = ["item_ids","you_don't_want","in_that","list"])
+    core.add_item_model_component(black_list=["item_ids","you_don't_want","in_that","list"])
     core.add_item_name_and_lore_if_missing()
     core.add_private_custom_data_for_namespace()		# Add a custom namespace for easy item detection
     core.add_smithed_ignore_vanilla_behaviours_convention()	# Smithed items convention
+    core.set_manual_components(white_list=["item_name", "lore", "custom_name", "damage", "max_damage"]) # Components to include in the manual when hovering items (here is the default list)
 

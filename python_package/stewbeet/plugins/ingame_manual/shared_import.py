@@ -23,7 +23,6 @@ def get_next_font() -> str:	# Returns an incrementing value for each craft
 
 
 # Constants
-COMPONENTS_TO_INCLUDE: list[str] = ["item_name", "lore", "custom_name", "damage", "max_damage"]
 SQUARE_SIZE: int = 32
 MANUAL_ASSETS_PATH: str = clean_path(os.path.dirname(os.path.realpath(__file__)) + "/")
 TEMPLATES_PATH: str = MANUAL_ASSETS_PATH + "templates"
@@ -67,6 +66,7 @@ HOVER_EQUIVALENTS: dict[str, str] = {
 
 # Global variables
 class SharedMemory:
+	components_to_include: list[str] = ["item_name", "lore", "custom_name", "damage", "max_damage"]
 	next_craft_font: int = 0x8000
 	font_providers: list[JsonDict] = []
 	manual_pages: list[JsonDict] = []
