@@ -427,13 +427,25 @@ def routine():
 					])
 				else:
 					if raw_data.get(WIKI_COMPONENT):
+						found_event: JsonDict | None = None
+						wiki_component: TextComponent = raw_data[WIKI_COMPONENT]
+						if isinstance(wiki_component, dict) and "click_event" in wiki_component:
+							found_event = wiki_component["click_event"]
+						elif isinstance(wiki_component, list):
+							for comp in wiki_component:
+								if isinstance(comp, dict) and "click_event" in comp:
+									found_event = cast(JsonDict, comp["click_event"])
+									break
+
 						info_buttons.append({
 							"text": WIKI_INFO_FONT + VERY_SMALL_NONE_FONT * 2,
 							"hover_event": {
 								"action": "show_text",
-								"value": raw_data[WIKI_COMPONENT]
+								"value": wiki_component
 							}
 						})
+						if found_event:
+							info_buttons[-1]["click_event"] = found_event
 
 					# For each craft (except smelting dupes),
 					previous_result: Any = None
