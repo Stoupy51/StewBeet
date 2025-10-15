@@ -24,7 +24,7 @@ def main():
     if second_arg == "--version":
         for pkg in ["stewbeet", "beet", "bolt", "mecha", "smithed", "model_resolver", "stouputils"]:
             v: str = version(pkg).split("version: ")[-1]
-            print(f"{RED}{pkg} {GREEN}{v}{RESET}")
+            print(f"{RED}{pkg} {GREEN}v{v}{RESET}")
         return
 
     # Try to find and load the beet configuration file
