@@ -28,10 +28,9 @@ from ...core.constants import (
 from ...core.definitions_helper import add_item_name_and_lore_if_missing
 from ...core.ingredients import CRAFTING_RECIPES_TYPES, ingr_repr, ingr_to_id
 from ...core.utils.io import super_merge_dict, write_load_file
+from ..custom_recipes.vanilla import VanillaRecipeHandler
 from ..initialize.source_lore_font import find_pack_png
-from ..resource_pack.item_models import (
-	AutoModel,  # Handle new items models (used for the manual and the heavy workbench)
-)
+from ..resource_pack.item_models import AutoModel  # Handle new items models (used for the manual and the heavy workbench)
 from .book_components import get_item_component
 from .book_optimizer import optimize_element, remove_events
 from .craft_content import generate_craft_content
@@ -872,6 +871,9 @@ def routine():
 			for p in Path(textures_folder).rglob("*.png")
 		}
 		AutoModel.from_definitions("manual", Mem.definitions["manual"], textures).process()
+
+	# Repair the recipes for the manual
+	VanillaRecipeHandler().generate_recipes(override="manual")
 
 	# Remove the heavy workbench from the definitions
 	if OFFICIAL_LIBS["smithed.crafter"]["is_used"]:

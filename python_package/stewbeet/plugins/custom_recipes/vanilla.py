@@ -252,9 +252,15 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
 
         return to_return
 
-    def generate_recipes(self) -> None:
-        """ Generate all vanilla recipes. """
+    def generate_recipes(self, override: str = "") -> None:
+        """ Generate all vanilla recipes.
+
+        Args:
+            override (str, optional): If set, only generate recipes for this item and with override only. Used to regenerate a specific item.
+        """
         for item, data in Mem.definitions.items():
+            if override and item != override:
+                continue
             crafts: list[JsonDict] = list(data.get("result_of_crafting", []))
             crafts += list(data.get("used_for_crafting", []))
 
