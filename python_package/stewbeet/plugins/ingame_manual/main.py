@@ -873,7 +873,7 @@ def routine():
 		AutoModel.from_definitions("manual", Mem.definitions["manual"], textures).process()
 
 	# Repair the recipes for the manual
-	VanillaRecipeHandler().generate_recipes(override="manual")
+	VanillaRecipeHandler().generate_recipes(override=["manual"])
 
 	# Remove the heavy workbench from the definitions
 	if OFFICIAL_LIBS["smithed.crafter"]["is_used"]:
