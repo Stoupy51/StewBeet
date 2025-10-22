@@ -1,0 +1,175 @@
+{
+	"type": "minecraft:multi_action",
+	"title": {
+		"text": "Heavy Workbench",
+		"underlined": true
+	},
+	"body": [
+		{
+			"type": "minecraft:plain_message",
+			"contents": {
+				"text": "V   ",
+				"font": "_your_namespace:manual",
+				"color": "white"
+			},
+			"width": 400
+		},
+		{
+			"type": "minecraft:plain_message",
+			"contents": [
+				{
+					"text": "",
+					"font": "_your_namespace:manual",
+					"color": "white",
+					"shadow_color": [
+						0,
+						0,
+						0,
+						0
+					]
+				},
+				"\"6\n\"",
+				{
+					"text": "$腓$腓$腓",
+					"hover_event": {
+						"action": "show_item",
+						"id": "minecraft:oak_log",
+						"components": {}
+					}
+				},
+				"  \n\"",
+				{
+					"translate": "_your_namespace.uuu",
+					"hover_event": {
+						"action": "show_item",
+						"id": "minecraft:oak_log",
+						"components": {}
+					}
+				},
+				"  \n\"",
+				{
+					"text": "$腓",
+					"hover_event": {
+						"action": "show_item",
+						"id": "minecraft:oak_log",
+						"components": {}
+					}
+				},
+				{
+					"text": "$腔",
+					"hover_event": {
+						"action": "show_item",
+						"id": "minecraft:crafting_table",
+						"components": {}
+					}
+				},
+				{
+					"text": "$腓",
+					"hover_event": {
+						"action": "show_item",
+						"id": "minecraft:oak_log",
+						"components": {}
+					}
+				},
+				"\"\"",
+				{
+					"text": "$$腒",
+					"hover_event": {
+						"action": "show_item",
+						"id": "furnace",
+						"components": {"item_name": "Heavy Workbench"}
+					}
+				},
+				"#$\n\"",
+				{
+					"text": "U$",
+					"hover_event": {
+						"action": "show_item",
+						"id": "minecraft:oak_log",
+						"components": {}
+					}
+				},
+				{
+					"text": "U$",
+					"hover_event": {
+						"action": "show_item",
+						"id": "minecraft:crafting_table",
+						"components": {}
+					}
+				},
+				{
+					"text": "U$",
+					"hover_event": {
+						"action": "show_item",
+						"id": "minecraft:oak_log",
+						"components": {}
+					}
+				},
+				"\"\"",
+				{
+					"text": "U$",
+					"hover_event": {
+						"action": "show_item",
+						"id": "furnace",
+						"components": {"item_name": "Heavy Workbench"}
+					}
+				},
+				"#$\n\"",
+				{
+					"text": "$腕$腕$腕",
+					"hover_event": {
+						"action": "show_item",
+						"id": "minecraft:smooth_stone",
+						"components": {}
+					}
+				},
+				"  \n\"",
+				{
+					"translate": "_your_namespace.uuu",
+					"hover_event": {
+						"action": "show_item",
+						"id": "minecraft:smooth_stone",
+						"components": {}
+					}
+				},
+				"  \n",
+				[
+					{
+						"translate": "_your_namespace.every_recipe_that_uses_custom_items",
+						"font": "minecraft:default",
+						"color": "black"
+					},
+					{
+						"translate": "_your_namespace.must",
+						"color": "red",
+						"underlined": true
+					},
+					" be crafted using the Heavy Workbench."
+				],
+				"\n\n\n\n\n\n\n\n\n\n\n\n"
+			],
+			"width": 150
+		}
+	],
+	"exit_action": {
+		"label": "Done"
+	},
+	"actions": [
+		{
+			"label": "<-",
+			"width": 25,
+			"action": {
+				"type": "minecraft:show_dialog",
+				"dialog": "_your_namespace:manual/page_1"
+			}
+		},
+		{
+			"label": "->",
+			"width": 25,
+			"action": {
+				"type": "minecraft:show_dialog",
+				"dialog": "_your_namespace:manual/page_3"
+			}
+		}
+	]
+}

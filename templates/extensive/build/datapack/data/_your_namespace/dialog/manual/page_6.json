@@ -1,0 +1,161 @@
+{
+	"type": "minecraft:multi_action",
+	"title": {
+		"text": "➤ ",
+		"underlined": true
+	},
+	"body": [
+		{
+			"type": "minecraft:plain_message",
+			"contents": {
+				"text": "V   ",
+				"font": "_your_namespace:manual",
+				"color": "white"
+			},
+			"width": 400
+		},
+		{
+			"type": "minecraft:plain_message",
+			"contents": [
+				{
+					"text": "",
+					"font": "_your_namespace:manual",
+					"color": "white",
+					"shadow_color": [
+						0,
+						0,
+						0,
+						0
+					]
+				},
+				{
+					"translate": "_your_namespace.misc",
+					"font": "minecraft:default",
+					"color": "black",
+					"underlined": true
+				},
+				"\"ဥ\n\"",
+				{
+					"text": "$聉",
+					"hover_event": {
+						"action": "show_item",
+						"id": "command_block",
+						"components": {"item_name": {"translate": "_your_namespace.music_disc","italic": false}}
+					},
+					"click_event": {
+						"action": "change_page",
+						"page": 27
+					}
+				},
+				{
+					"text": "$聋",
+					"hover_event": {
+						"action": "show_item",
+						"id": "furnace",
+						"components": {"item_name": {"translate": "_your_namespace.super_stone"}}
+					},
+					"click_event": {
+						"action": "change_page",
+						"page": 28
+					}
+				},
+				{
+					"text": "$聍",
+					"hover_event": {
+						"action": "show_item",
+						"id": "painting",
+						"components": {"item_name": {"translate": "_your_namespace.stewbeet_painting"}}
+					},
+					"click_event": {
+						"action": "change_page",
+						"page": 29
+					}
+				},
+				{
+					"text": "$聏\n",
+					"hover_event": {
+						"action": "show_item",
+						"id": "written_book",
+						"components": {"item_name": "Extensive Template Manual"}
+					},
+					"click_event": {
+						"action": "change_page",
+						"page": 30
+					}
+				},
+				"\"",
+				{
+					"text": "!",
+					"hover_event": {
+						"action": "show_item",
+						"id": "command_block",
+						"components": {"item_name": {"translate": "_your_namespace.music_disc","italic": false}}
+					},
+					"click_event": {
+						"action": "change_page",
+						"page": 27
+					}
+				},
+				{
+					"text": "!",
+					"hover_event": {
+						"action": "show_item",
+						"id": "furnace",
+						"components": {"item_name": {"translate": "_your_namespace.super_stone"}}
+					},
+					"click_event": {
+						"action": "change_page",
+						"page": 28
+					}
+				},
+				{
+					"text": "!",
+					"hover_event": {
+						"action": "show_item",
+						"id": "painting",
+						"components": {"item_name": {"translate": "_your_namespace.stewbeet_painting"}}
+					},
+					"click_event": {
+						"action": "change_page",
+						"page": 29
+					}
+				},
+				{
+					"text": "!\n",
+					"hover_event": {
+						"action": "show_item",
+						"id": "written_book",
+						"components": {"item_name": "Extensive Template Manual"}
+					},
+					"click_event": {
+						"action": "change_page",
+						"page": 30
+					}
+				},
+				"\n\n\n\n\n\n\n\n\n\n\n\n"
+			],
+			"width": 150
+		}
+	],
+	"exit_action": {
+		"label": "Done"
+	},
+	"actions": [
+		{
+			"label": "<-",
+			"width": 25,
+			"action": {
+				"type": "minecraft:show_dialog",
+				"dialog": "_your_namespace:manual/page_5"
+			}
+		},
+		{
+			"label": "->",
+			"width": 25,
+			"action": {
+				"type": "minecraft:show_dialog",
+				"dialog": "_your_namespace:manual/page_7"
+			}
+		}
+	]
+}

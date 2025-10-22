@@ -40,20 +40,21 @@ WIKI_NONE_FONT: str =				get_font(0x0010)
 WIKI_INFO_FONT: str =				get_font(0x0011)
 WIKI_RESULT_OF_CRAFT_FONT: str =	get_font(0x0012)
 WIKI_INGR_OF_CRAFT_FONT: str =		get_font(0x0013)
-SHAPED_2X2_FONT: str =				get_font(0x0020)
-SHAPED_3X3_FONT: str =				get_font(0x0021)
-FURNACE_FONT: str =					get_font(0x0022)
-STONECUTTING_FONT: str =			get_font(0x0023)
-PULVERIZING_FONT: str =				get_font(0x0024)
-MINING_FONT: str =					get_font(0x0025)
-HOVER_SHAPED_2X2_FONT: str =		get_font(0x0030)
-HOVER_SHAPED_3X3_FONT: str =		get_font(0x0031)
-HOVER_FURNACE_FONT: str =			get_font(0x0032)
-HOVER_STONECUTTING_FONT: str =		get_font(0x0033)
-HOVER_PULVERIZING_FONT: str =		get_font(0x0034)
-HOVER_MINING_FONT: str =			get_font(0x0035)
-INVISIBLE_ITEM_FONT: str =			get_font(0x0040)	# Invisible item to place
+SHAPED_2X2_FONT: str =				get_font(0x0015)
+SHAPED_3X3_FONT: str =				get_font(0x0016)
+FURNACE_FONT: str =					get_font(0x0017)
+STONECUTTING_FONT: str =			get_font(0x0018)
+PULVERIZING_FONT: str =				get_font(0x0019)
+MINING_FONT: str =					get_font(0x0020)
+HOVER_SHAPED_2X2_FONT: str =		get_font(0x0025)
+HOVER_SHAPED_3X3_FONT: str =		get_font(0x0026)
+HOVER_FURNACE_FONT: str =			get_font(0x0027)
+HOVER_STONECUTTING_FONT: str =		get_font(0x0028)
+HOVER_PULVERIZING_FONT: str =		get_font(0x0029)
+HOVER_MINING_FONT: str =			get_font(0x0030)
+INVISIBLE_ITEM_FONT: str =			get_font(0x0035)	# Invisible item to place
 INVISIBLE_ITEM_WIDTH: str =			INVISIBLE_ITEM_FONT + MICRO_NONE_FONT
+BOOK_FONT: str =					get_font(0x0036)
 
 HOVER_EQUIVALENTS: dict[str, str] = {
 	SHAPED_2X2_FONT: HOVER_SHAPED_2X2_FONT,
@@ -72,6 +73,7 @@ class SharedMemory:
 	manual_pages: list[JsonDict] = []
 	cache_path: str = "" # Filled later by ingame_manual/__init__.py
 	high_resolution: bool = True # Whether to generate high resolution images for items
+	use_dialog: int = 0 # Whether to use the dialog system instead of a book for the manual (0 = no, 1 = yes, 2 = yes and no book)
 
 # Get page number
 def get_page_number(item_id: str) -> int:

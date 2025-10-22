@@ -1,0 +1,334 @@
+{
+	"type": "minecraft:multi_action",
+	"title": {
+		"text": "➤ ",
+		"underlined": true
+	},
+	"body": [
+		{
+			"type": "minecraft:plain_message",
+			"contents": {
+				"text": "V   ",
+				"font": "_your_namespace:manual",
+				"color": "white"
+			},
+			"width": 400
+		},
+		{
+			"type": "minecraft:plain_message",
+			"contents": [
+				{
+					"text": "",
+					"font": "_your_namespace:manual",
+					"color": "white",
+					"shadow_color": [
+						0,
+						0,
+						0,
+						0
+					]
+				},
+				{
+					"translate": "_your_namespace.material",
+					"font": "minecraft:default",
+					"color": "black",
+					"underlined": true
+				},
+				"\"ဣ\n\"",
+				{
+					"text": "$耡",
+					"hover_event": {
+						"action": "show_item",
+						"id": "furnace",
+						"components": {"item_name": {"translate": "_your_namespace.steel_block"}}
+					},
+					"click_event": {
+						"action": "change_page",
+						"page": 7
+					}
+				},
+				{
+					"text": "$耣",
+					"hover_event": {
+						"action": "show_item",
+						"id": "furnace",
+						"components": {"item_name": {"translate": "_your_namespace.steel_ore"}}
+					},
+					"click_event": {
+						"action": "change_page",
+						"page": 8
+					}
+				},
+				{
+					"text": "$耥",
+					"hover_event": {
+						"action": "show_item",
+						"id": "furnace",
+						"components": {"item_name": {"translate": "_your_namespace.deepslate_steel_ore"}}
+					},
+					"click_event": {
+						"action": "change_page",
+						"page": 9
+					}
+				},
+				{
+					"text": "$耧",
+					"hover_event": {
+						"action": "show_item",
+						"id": "furnace",
+						"components": {"item_name": {"translate": "_your_namespace.raw_steel_block"}}
+					},
+					"click_event": {
+						"action": "change_page",
+						"page": 10
+					}
+				},
+				{
+					"text": "$耩\n",
+					"hover_event": {
+						"action": "show_item",
+						"id": "command_block",
+						"components": {"item_name": {"translate": "_your_namespace.steel_ingot"}}
+					},
+					"click_event": {
+						"action": "change_page",
+						"page": 11
+					}
+				},
+				"\"",
+				{
+					"text": "!",
+					"hover_event": {
+						"action": "show_item",
+						"id": "furnace",
+						"components": {"item_name": {"translate": "_your_namespace.steel_block"}}
+					},
+					"click_event": {
+						"action": "change_page",
+						"page": 7
+					}
+				},
+				{
+					"text": "!",
+					"hover_event": {
+						"action": "show_item",
+						"id": "furnace",
+						"components": {"item_name": {"translate": "_your_namespace.steel_ore"}}
+					},
+					"click_event": {
+						"action": "change_page",
+						"page": 8
+					}
+				},
+				{
+					"text": "!",
+					"hover_event": {
+						"action": "show_item",
+						"id": "furnace",
+						"components": {"item_name": {"translate": "_your_namespace.deepslate_steel_ore"}}
+					},
+					"click_event": {
+						"action": "change_page",
+						"page": 9
+					}
+				},
+				{
+					"text": "!",
+					"hover_event": {
+						"action": "show_item",
+						"id": "furnace",
+						"components": {"item_name": {"translate": "_your_namespace.raw_steel_block"}}
+					},
+					"click_event": {
+						"action": "change_page",
+						"page": 10
+					}
+				},
+				{
+					"text": "!\n",
+					"hover_event": {
+						"action": "show_item",
+						"id": "command_block",
+						"components": {"item_name": {"translate": "_your_namespace.steel_ingot"}}
+					},
+					"click_event": {
+						"action": "change_page",
+						"page": 11
+					}
+				},
+				"\"",
+				{
+					"text": "$耫",
+					"hover_event": {
+						"action": "show_item",
+						"id": "command_block",
+						"components": {"item_name": {"translate": "_your_namespace.steel_nugget"}}
+					},
+					"click_event": {
+						"action": "change_page",
+						"page": 12
+					}
+				},
+				{
+					"text": "$耭",
+					"hover_event": {
+						"action": "show_item",
+						"id": "command_block",
+						"components": {"item_name": {"translate": "_your_namespace.raw_steel"}}
+					},
+					"click_event": {
+						"action": "change_page",
+						"page": 13
+					}
+				},
+				{
+					"text": "$耯",
+					"hover_event": {
+						"action": "show_item",
+						"id": "command_block",
+						"components": {"item_name": {"translate": "_your_namespace.steel_dust"}}
+					},
+					"click_event": {
+						"action": "change_page",
+						"page": 14
+					}
+				},
+				{
+					"text": "$耱",
+					"hover_event": {
+						"action": "show_item",
+						"id": "command_block",
+						"components": {"item_name": {"translate": "_your_namespace.steel_stick"}}
+					},
+					"click_event": {
+						"action": "change_page",
+						"page": 15
+					}
+				},
+				{
+					"text": "$耳\n",
+					"hover_event": {
+						"action": "show_item",
+						"id": "command_block",
+						"components": {"item_name": {"translate": "_your_namespace.stone_stick"}}
+					},
+					"click_event": {
+						"action": "change_page",
+						"page": 16
+					}
+				},
+				"\"",
+				{
+					"text": "!",
+					"hover_event": {
+						"action": "show_item",
+						"id": "command_block",
+						"components": {"item_name": {"translate": "_your_namespace.steel_nugget"}}
+					},
+					"click_event": {
+						"action": "change_page",
+						"page": 12
+					}
+				},
+				{
+					"text": "!",
+					"hover_event": {
+						"action": "show_item",
+						"id": "command_block",
+						"components": {"item_name": {"translate": "_your_namespace.raw_steel"}}
+					},
+					"click_event": {
+						"action": "change_page",
+						"page": 13
+					}
+				},
+				{
+					"text": "!",
+					"hover_event": {
+						"action": "show_item",
+						"id": "command_block",
+						"components": {"item_name": {"translate": "_your_namespace.steel_dust"}}
+					},
+					"click_event": {
+						"action": "change_page",
+						"page": 14
+					}
+				},
+				{
+					"text": "!",
+					"hover_event": {
+						"action": "show_item",
+						"id": "command_block",
+						"components": {"item_name": {"translate": "_your_namespace.steel_stick"}}
+					},
+					"click_event": {
+						"action": "change_page",
+						"page": 15
+					}
+				},
+				{
+					"text": "!\n",
+					"hover_event": {
+						"action": "show_item",
+						"id": "command_block",
+						"components": {"item_name": {"translate": "_your_namespace.stone_stick"}}
+					},
+					"click_event": {
+						"action": "change_page",
+						"page": 16
+					}
+				},
+				"\"",
+				{
+					"text": "$耵",
+					"hover_event": {
+						"action": "show_item",
+						"id": "command_block",
+						"components": {"item_name": {"translate": "_your_namespace.stone_rod"}}
+					},
+					"click_event": {
+						"action": "change_page",
+						"page": 17
+					}
+				},
+				"!!!!\n\"",
+				{
+					"text": "!",
+					"hover_event": {
+						"action": "show_item",
+						"id": "command_block",
+						"components": {"item_name": {"translate": "_your_namespace.stone_rod"}}
+					},
+					"click_event": {
+						"action": "change_page",
+						"page": 17
+					}
+				},
+				"!!!!\n",
+				"\n\n\n\n\n\n\n\n\n\n\n\n"
+			],
+			"width": 150
+		}
+	],
+	"exit_action": {
+		"label": "Done"
+	},
+	"actions": [
+		{
+			"label": "<-",
+			"width": 25,
+			"action": {
+				"type": "minecraft:show_dialog",
+				"dialog": "_your_namespace:manual/page_3"
+			}
+		},
+		{
+			"label": "->",
+			"width": 25,
+			"action": {
+				"type": "minecraft:show_dialog",
+				"dialog": "_your_namespace:manual/page_5"
+			}
+		}
+	]
+}

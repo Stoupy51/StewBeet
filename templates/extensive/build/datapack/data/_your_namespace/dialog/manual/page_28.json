@@ -1,0 +1,172 @@
+{
+	"type": "minecraft:multi_action",
+	"title": {
+		"translate": "_your_namespace.super_stone",
+		"underlined": true
+	},
+	"body": [
+		{
+			"type": "minecraft:plain_message",
+			"contents": {
+				"text": "V   ",
+				"font": "_your_namespace:manual",
+				"color": "white"
+			},
+			"width": 400
+		},
+		{
+			"type": "minecraft:plain_message",
+			"contents": [
+				{
+					"text": "",
+					"font": "_your_namespace:manual",
+					"color": "white",
+					"shadow_color": [
+						0,
+						0,
+						0,
+						0
+					]
+				},
+				"\"6\n\"",
+				{
+					"text": "$胯$胯$胯",
+					"hover_event": {
+						"action": "show_item",
+						"id": "minecraft:stone",
+						"components": {}
+					}
+				},
+				"  \n\"",
+				{
+					"translate": "_your_namespace.uuu",
+					"hover_event": {
+						"action": "show_item",
+						"id": "minecraft:stone",
+						"components": {}
+					}
+				},
+				"  \n\"",
+				{
+					"text": "$胯$胯$胯",
+					"hover_event": {
+						"action": "show_item",
+						"id": "minecraft:stone",
+						"components": {}
+					}
+				},
+				"\"\"",
+				{
+					"text": "$$聋",
+					"hover_event": {
+						"action": "show_item",
+						"id": "furnace",
+						"components": {"item_name": {"translate": "_your_namespace.super_stone"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}
+					}
+				},
+				"#$\n\"",
+				{
+					"translate": "_your_namespace.uuu",
+					"hover_event": {
+						"action": "show_item",
+						"id": "minecraft:stone",
+						"components": {}
+					}
+				},
+				"\"\"",
+				{
+					"text": "U$",
+					"hover_event": {
+						"action": "show_item",
+						"id": "furnace",
+						"components": {"item_name": {"translate": "_your_namespace.super_stone"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}
+					}
+				},
+				"#$\n\"",
+				{
+					"text": "$胯$胯$胯",
+					"hover_event": {
+						"action": "show_item",
+						"id": "minecraft:stone",
+						"components": {}
+					}
+				},
+				"  \n\"",
+				{
+					"translate": "_your_namespace.uuu",
+					"hover_event": {
+						"action": "show_item",
+						"id": "minecraft:stone",
+						"components": {}
+					}
+				},
+				"  \n\n",
+				{
+					"text": "2##",
+					"hover_event": {
+						"action": "show_text",
+						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$胯"},{"text": "$胯"},{"text": "$胯"},"","  ","\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"","  ","\n","\"",{"text": "$胯"},{"text": "$胯"},{"text": "$胯"},"\"\"",{"text": "$$聋"},"#$","\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"#$","\n","\"",{"text": "$胯"},{"text": "$胯"},{"text": "$胯"},"","  ","\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"","  ","\n"],{"text": "\n- x9 ","color": "gray"},{"translate": "_your_namespace.stone","color": "gray"}]
+					}
+				},
+				{
+					"text": "2##",
+					"hover_event": {
+						"action": "show_text",
+						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$腅"},{"text": "$腅"},{"text": "$腅"},"","  ","\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"","  ","\n","\"",{"text": "$腅"},{"text": "$腅"},{"text": "$腅"},"\"\"",{"text": "$$聋"},"#$","\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"#$","\n","\"",{"text": "$腅"},{"text": "$腅"},{"text": "$腅"},"","  ","\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"","  ","\n"],{"text": "\n- x9 ","color": "gray"},{"translate": "_your_namespace.deepslate","color": "gray"}]
+					}
+				},
+				{
+					"text": "腈\n",
+					"hover_event": {
+						"action": "show_text",
+						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"G\n","\"",{"text": "$聋"},"\n","\"",{"text": "U$"},"\n","\"\"\"\"U$U$",{"text": "$$腆"},"\n","\"\"\"\"U$U$",{"text": "U$"},"\n","\n\n"],{"translate": "_your_namespace.smelting","color": "yellow"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.super_stone","color": "gray"}]
+					}
+				},
+				{
+					"text": "0##",
+					"hover_event": {
+						"action": "show_text",
+						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$胯"},{"text": "$胯"},{"text": "$胯"},"","  ","\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"","  ","\n","\"",{"text": "$胯"},{"text": "$胯"},{"text": "$胯"},"\"\"",{"text": "$$聋"},"#$","\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"#$","\n","\"",{"text": "$胯"},{"text": "$胯"},{"text": "$胯"},"","  ","\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"","  ","\n"],{"text": "\n- x9 ","color": "gray"},{"translate": "_your_namespace.stone","color": "gray"}]
+					}
+				},
+				{
+					"text": "0##",
+					"hover_event": {
+						"action": "show_text",
+						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$腅"},{"text": "$腅"},{"text": "$腅"},"","  ","\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"","  ","\n","\"",{"text": "$腅"},{"text": "$腅"},{"text": "$腅"},"\"\"",{"text": "$$聋"},"#$","\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"#$","\n","\"",{"text": "$腅"},{"text": "$腅"},{"text": "$腅"},"","  ","\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"","  ","\n"],{"text": "\n- x9 ","color": "gray"},{"translate": "_your_namespace.deepslate","color": "gray"}]
+					}
+				},
+				{
+					"text": "0##",
+					"hover_event": {
+						"action": "show_text",
+						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"G\n","\"",{"text": "$聋"},"\n","\"",{"text": "U$"},"\n","\"\"\"\"U$U$",{"text": "$$腆"},"\n","\"\"\"\"U$U$",{"text": "U$"},"\n","\n\n"],{"translate": "_your_namespace.smelting","color": "yellow"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.super_stone","color": "gray"}]
+					}
+				},
+				"\n\n\n\n\n\n\n\n\n\n\n\n"
+			],
+			"width": 150
+		}
+	],
+	"exit_action": {
+		"label": "Done"
+	},
+	"actions": [
+		{
+			"label": "<-",
+			"width": 25,
+			"action": {
+				"type": "minecraft:show_dialog",
+				"dialog": "_your_namespace:manual/page_27"
+			}
+		},
+		{
+			"label": "->",
+			"width": 25,
+			"action": {
+				"type": "minecraft:show_dialog",
+				"dialog": "_your_namespace:manual/page_29"
+			}
+		}
+	]
+}
