@@ -8,7 +8,7 @@ from ...core.ingredients import FURNACES_RECIPES_TYPES, ingr_to_id
 from .book_components import get_item_component
 from .other_utils import convert_shapeless_to_shaped, high_res_font_from_craft
 from .page_font import generate_page_font
-from .shared_import import FONT_FILE, INVISIBLE_ITEM_WIDTH, MICRO_NONE_FONT, SMALL_NONE_FONT, VERY_SMALL_NONE_FONT, SharedMemory
+from .shared_import import FONT_FILE, INVISIBLE_ITEM_WIDTH, MICRO_NONE_FONT, NONE_FONT, SMALL_NONE_FONT, VERY_SMALL_NONE_FONT, SharedMemory
 
 
 # Generate all craft types content
@@ -55,6 +55,7 @@ def generate_craft_content(craft: JsonDict, name: str, page_font: str) -> list[T
 	# If the craft is shaped
 	if craft_type == "crafting_shaped":
 		shape: list[str] = craft["shape"]
+		is_small_craft: bool = len(shape) <= 2 and all(len(x) <= 2 for x in shape)
 
 		# Convert each ingredients to its text component
 		formatted_ingredients: dict[str, JsonDict] = {}
@@ -72,7 +73,7 @@ def generate_craft_content(craft: JsonDict, name: str, page_font: str) -> list[T
 			shape = [" " + line + " " for line in shape]
 
 		# Add each ingredient to the craft
-		for line in shape:
+		for index, line in enumerate(shape):
 			for i in range(2):	# We need two lines to make a square, otherwise it will be a rectangle
 				content.append(SMALL_NONE_FONT)
 				for k in line:
@@ -85,13 +86,16 @@ def generate_craft_content(craft: JsonDict, name: str, page_font: str) -> list[T
 							copy = formatted_ingredients[k].copy()
 							copy["text"] = INVISIBLE_ITEM_WIDTH
 							content.append(copy)
+				if SharedMemory.use_dialog > 0 and index != 1 and (not is_small_craft or i != 1):
+					content.append(INVISIBLE_ITEM_WIDTH * max(0, (2 if is_small_craft else 3) - len(line)))
+					content.append(NONE_FONT * 2)
 				content.append("\n")
 		if len(shape) == 1 and len(shape[0]) < 3:
 			content.append("\n")
 			pass
 
 		# Add the result to the craft
-		if len(shape) <= 2 and len(shape[0]) <= 2:
+		if is_small_craft:
 
 			# First layer of the square
 			len_1 = len(shape[0])
@@ -99,6 +103,9 @@ def generate_craft_content(craft: JsonDict, name: str, page_font: str) -> list[T
 			break_line_pos = content.index("\n", content.index("\n") + 1)	# Find the second line break
 			content.insert(break_line_pos, (INVISIBLE_ITEM_WIDTH * offset_1))
 			content.insert(break_line_pos + 1, result_component)
+			if SharedMemory.use_dialog > 0:
+				content.insert(break_line_pos + 2, VERY_SMALL_NONE_FONT + MICRO_NONE_FONT)
+				break_line_pos += 1
 
 			# Second layer of the square
 			len_2 = len(shape[1]) if len(shape) > 1 else 0
@@ -110,6 +117,8 @@ def generate_craft_content(craft: JsonDict, name: str, page_font: str) -> list[T
 			copy = result_component.copy()
 			copy["text"] = INVISIBLE_ITEM_WIDTH
 			content.insert(break_line_pos + 1, copy)
+			if SharedMemory.use_dialog > 0:
+				content.insert(break_line_pos + 2, VERY_SMALL_NONE_FONT + MICRO_NONE_FONT)
 		else:
 			# First layer of the square
 			len_line = len(shape[1]) if len(shape) > 1 else 0
@@ -122,6 +131,9 @@ def generate_craft_content(craft: JsonDict, name: str, page_font: str) -> list[T
 				break_line_pos = len(content)
 			content.insert(break_line_pos, (INVISIBLE_ITEM_WIDTH * (offset - 1) + SMALL_NONE_FONT * 2))
 			content.insert(break_line_pos + 1, result_component)
+			if SharedMemory.use_dialog > 0:
+				content.insert(break_line_pos + 2, VERY_SMALL_NONE_FONT + MICRO_NONE_FONT)
+				break_line_pos += 1
 
 			# Second layer of the square
 			try:
@@ -133,6 +145,8 @@ def generate_craft_content(craft: JsonDict, name: str, page_font: str) -> list[T
 			copy = result_component.copy()
 			copy["text"] = INVISIBLE_ITEM_WIDTH
 			content.insert(break_line_pos + 1, copy)
+			if SharedMemory.use_dialog > 0:
+				content.insert(break_line_pos + 2, VERY_SMALL_NONE_FONT + MICRO_NONE_FONT)
 
 			# Add break lines for the third layer of a 3x3 craft
 			if len(shape) < 3 and len(shape[0]) == 3:

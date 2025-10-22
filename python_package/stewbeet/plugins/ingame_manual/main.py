@@ -34,6 +34,7 @@ from ..resource_pack.item_models import AutoModel  # Handle new items models (us
 from .book_components import get_item_component
 from .book_optimizer import optimize_element, remove_events
 from .craft_content import generate_craft_content
+from .dialog import generate_dialogs
 from .image_utils import (
 	add_border,
 	careful_resize,
@@ -48,6 +49,7 @@ from .other_utils import (
 )
 from .page_font import generate_page_font, generate_wiki_font_for_ingr
 from .shared_import import (
+	BOOK_FONT,
 	BORDER_COLOR,
 	BORDER_SIZE,
 	FONT_FILE,
@@ -166,12 +168,14 @@ def routine():
 		Mem.ctx.assets[Mem.ctx.project_id].textures["font/stonecutting"] = Texture(source_path=f"{TEMPLATES_PATH}/stonecutting.png")
 		Mem.ctx.assets[Mem.ctx.project_id].textures["font/pulverizing"] = Texture(source_path=f"{TEMPLATES_PATH}/pulverizing.png")
 		Mem.ctx.assets[Mem.ctx.project_id].textures["font/mining"] = Texture(source_path=f"{TEMPLATES_PATH}/mining.png")
+	if SharedMemory.use_dialog > 0:
+		Mem.ctx.assets[Mem.ctx.project_id].textures["font/book"] = Texture(source_path=f"{TEMPLATES_PATH}/book.png")
 
 	# If the manual cache is enabled and we have a cache file, load it
 	cache_pages: bool = manual_config.get("cache_pages", False)
 	if cache_pages and json_dump_path and os.path.exists(json_dump_path) and os.path.exists(f"{SharedMemory.cache_path}/font/manual.json"):
 		with super_open(json_dump_path, "r") as f:
-			book_content: list[TextComponent] = json.load(f)
+			book_content: list[list[TextComponent]] = json.load(f)
 
 	# Else, generate all
 	else:
@@ -235,7 +239,7 @@ def routine():
 			SharedMemory.manual_pages.append({"number": i, "name": item, "raw_data": data, "type": "item"})
 
 		# Encode pages
-		book_content: list[TextComponent] = []
+		book_content: list[list[TextComponent]] = []
 		os.makedirs(f"{SharedMemory.cache_path}/font/category", exist_ok=True)
 		simple_case = load_simple_case_no_border(SharedMemory.high_resolution)	# Load the simple case image for later use in categories pages
 		def encode_page(page: JsonDict):
@@ -264,6 +268,7 @@ def routine():
 				line: list[TextComponent] = []
 
 				# For each item in the category, get its page number and texture, then add it to the image
+				max_items_reached: bool = False
 				for item in raw_data:
 
 					# Get item texture
@@ -291,26 +296,29 @@ def routine():
 					component["text"] = MEDIUM_NONE_FONT if not SharedMemory.high_resolution else high_res_font
 					line.append(component)
 					if len(line) == MAX_ITEMS_PER_ROW:
+						max_items_reached = True
 						line.insert(0, SMALL_NONE_FONT * LEFT_PADDING)
-						content += deepcopy(line)
+						content.extend(deepcopy(line))
 						for i in range(1, len(line)):
 							selected = line[-i]
 							if isinstance(selected, dict):
 								selected["text"] = MEDIUM_NONE_FONT
-						content += ["\n", *line, "\n"]
+						content.extend(["\n", *line, "\n"])
 						line = []
 						x = 2
 						y += simple_case.size[1]
 
 				# If remaining items in the line, add them
 				if len(line) > 0:
+					if SharedMemory.use_dialog > 0 and max_items_reached:
+						line.append(MEDIUM_NONE_FONT * max(0, 5 - len(line)))
 					line.insert(0, SMALL_NONE_FONT * LEFT_PADDING)
-					content += deepcopy(line)
+					content.extend(deepcopy(line))
 					for i in range(1, len(line)):
 						selected = line[-i]
 						if isinstance(selected, dict):
 							selected["text"] = MEDIUM_NONE_FONT
-					content += ["\n", *line, "\n"]
+					content.extend(["\n", *line, "\n"])
 
 				# Add the 2 pixels border
 				is_rectangle_shape = len(raw_data) % MAX_ITEMS_PER_ROW == 0
@@ -591,6 +599,8 @@ def routine():
 
 					# Retrieve buttons limit depending on number of lines in the content (more lines = less buttons)
 					buttons_limit: int = 20 if str(content).count("\\n") <= 6 else 15
+					if SharedMemory.use_dialog > 0:
+						buttons_limit = 100	# Higher limit
 
 					# If too many buttons, remove all the blue ones (blue_craft) except the last one
 					if len(info_buttons) > buttons_limit:
@@ -675,6 +685,7 @@ def routine():
 		line: list[TextComponent] = []
 
 		# For each item in the category, get its page number and texture, then add it to the image
+		max_items_reached: bool = False
 		for page in SharedMemory.manual_pages:
 			if page["type"] == CATEGORY:
 				item = page["raw_data"][0]
@@ -709,6 +720,7 @@ def routine():
 					component["text"] = high_res_font
 				line.append(component)
 				if len(line) == MAX_ITEMS_PER_ROW:
+					max_items_reached = True
 					line.insert(0, SMALL_NONE_FONT * LEFT_PADDING)
 					content += [*deepcopy(line), "\n"]
 					for i in range(1, len(line)):
@@ -721,6 +733,8 @@ def routine():
 
 		# If remaining items in the line, add them
 		if len(line) > 0:
+			if SharedMemory.use_dialog > 0 and max_items_reached:
+				line.append(MEDIUM_NONE_FONT * max(0, 5 - len(line)))
 			line.insert(0, SMALL_NONE_FONT * LEFT_PADDING)
 			content += [*deepcopy(line), "\n"]
 			for i in range(1, len(line)):
@@ -742,7 +756,7 @@ def routine():
 		page_font = get_page_font(0)
 		SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/page/_logo.png", "ascent": 0, "height": 40, "chars": [page_font]})
 		intro_content.append({"text": manual_name + "\n", "underlined": True})
-		intro_content.append({"text": MEDIUM_NONE_FONT * 2 + page_font, "font": FONT, "color": "white"})
+		intro_content.append({"text": MEDIUM_NONE_FONT * (0 if SharedMemory.use_dialog > 0 else 2) + page_font, "font": FONT, "color": "white"})
 
 		# Create the image and load Minecraft font
 
@@ -754,10 +768,7 @@ def routine():
 		# Write the introduction text
 		intro_content.append({"text": "\n" * 6})
 		first_page_config: TextComponent = manual_config.get('first_page_text', "")
-		if isinstance(first_page_config, list):
-			intro_content.extend(first_page_config)
-		else:
-			intro_content.append(first_page_config)
+		intro_content.append([{"text": "", "font": "minecraft:default", "color": "black"}, first_page_config])
 
 		# Save image and insert in the manual pages
 		logo.save(f"{SharedMemory.cache_path}/font/page/_logo.png")
@@ -765,7 +776,7 @@ def routine():
 
 		## Optimize the book size
 		book_content_deepcopy: list[TextComponent] = deepcopy(book_content)	# Deepcopy to avoid sharing same components (such as click_event)
-		book_content = list(optimize_element(book_content_deepcopy))
+		book_content = cast(list[list[TextComponent]], list(optimize_element(book_content_deepcopy)))
 
 		## Insert at 2nd page the heavy workbench
 		if "heavy_workbench" in Mem.definitions:
@@ -776,7 +787,6 @@ def routine():
 			for page in book_content:
 				for component in page:
 					if isinstance(component, dict):
-						component = cast(JsonDict, component)
 						if "click_event" in component and component["click_event"].get("action") == "change_page":
 							current_value: int = int(component["click_event"]["page"])
 							component["click_event"]["page"] = current_value + 1
@@ -805,6 +815,8 @@ def routine():
 			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/stonecutting.png", "ascent": -3, "height": 58, "chars": [HOVER_STONECUTTING_FONT]})
 			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/pulverizing.png", "ascent": -3, "height": 58, "chars": [HOVER_PULVERIZING_FONT]})
 			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/mining.png", "ascent": -3, "height": 58, "chars": [HOVER_MINING_FONT]})
+		if SharedMemory.use_dialog > 0:
+			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/book.png", "ascent": 40, "height": 300, "chars": [BOOK_FONT]})
 		fonts = {"providers": SharedMemory.font_providers}
 		with super_open(f"{SharedMemory.cache_path}/font/manual.json", "w") as f:
 			f.write(super_json_dump(fonts))
@@ -840,6 +852,10 @@ def routine():
 				error(f"Missing font provider at '{path}' for {fp})")
 			if len(fp["chars"]) < 1 or (len(fp["chars"]) == 1 and not fp["chars"][0]):
 				error(f"Font provider '{path}' has no chars")
+
+	# Generate dialog files if needed
+	if SharedMemory.use_dialog > 0:
+		generate_dialogs(book_content)
 
 	# Finally, prepend the manual to the definitions
 	manual_already_exists: bool = "manual" in Mem.definitions
@@ -881,7 +897,6 @@ def routine():
 		del Mem.ctx.assets[Mem.ctx.project_id].textures["item/heavy_workbench"]
 		del Mem.ctx.assets[Mem.ctx.project_id].models["item/heavy_workbench"]
 		del Mem.ctx.assets[Mem.ctx.project_id].item_models["heavy_workbench"]
-
 
 	# Register of the manual in the universal manual
 	first_page: str = json.dumps(book_content[0], ensure_ascii=False)

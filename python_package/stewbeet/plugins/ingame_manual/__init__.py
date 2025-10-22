@@ -36,7 +36,7 @@ def beet_default(ctx: Context):
 	stewbeet: JsonDict = ctx.meta.get("stewbeet", {})
 	assert stewbeet, "stewbeet configuration is not set. Please set it in the project configuration."
 	assert stewbeet.get("textures_folder"), "Textures folder is not set. Please set it in the project configuration."
-	manual_config = stewbeet.get("manual", {})
+	manual_config: JsonDict = stewbeet.get("manual", {})
 	assert manual_config, "Manual configuration is not set. Please set it in the project configuration."
 
 	# Set up manual path
@@ -45,6 +45,9 @@ def beet_default(ctx: Context):
 
 	# Set up high resolution in the shared_import module
 	SharedMemory.high_resolution = manual_config.get("high_resolution", True)
+
+	# Set up use_dialog in the shared_import module
+	SharedMemory.use_dialog = manual_config.get("use_dialog", 0)
 
 	# Call the main manual generation function
 	manual_main()
