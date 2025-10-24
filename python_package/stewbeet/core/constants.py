@@ -3,11 +3,12 @@
 # Imports
 from beet.core.utils import JsonDict
 from beet.library import base
+from beet.toolchain.config import FormatSpecifier
 
 from ..dependencies.bookshelf import BOOKSHELF_MODULES
 
 # Minecraft version specific constants
-MORE_DATA_PACK_FORMATS: dict[tuple[int, ...], int] = {
+MORE_DATA_PACK_FORMATS: dict[tuple[int, ...], FormatSpecifier] = {
 	(1, 21): 48,
 	(1, 21, 0): 48,
 	(1, 21, 1): 48,
@@ -18,10 +19,10 @@ MORE_DATA_PACK_FORMATS: dict[tuple[int, ...], int] = {
 	(1, 21, 6): 80,
 	(1, 21, 7): 81,
 	(1, 21, 8): 81,
-	(1, 21, 9): 88,
-	(1, 21, 10): 88,
+	(1, 21, 9): (88, 0),
+	(1, 21, 10): (88, 0),
 }
-MORE_ASSETS_PACK_FORMATS: dict[tuple[int, ...], int] = {
+MORE_ASSETS_PACK_FORMATS: dict[tuple[int, ...], FormatSpecifier] = {
 	(1, 21): 34,
 	(1, 21, 0): 34,
 	(1, 21, 1): 34,
@@ -32,8 +33,8 @@ MORE_ASSETS_PACK_FORMATS: dict[tuple[int, ...], int] = {
 	(1, 21, 6): 63,
 	(1, 21, 7): 64,
 	(1, 21, 8): 64,
-	(1, 21, 9): 69,
-	(1, 21, 10): 69,
+	(1, 21, 9): (69, 0),
+	(1, 21, 10): (69, 0),
 }
 MORE_DATA_VERSIONS: dict[tuple[int, ...], int] = {
 	(1, 21): 3953,
