@@ -4,8 +4,8 @@ import os
 from pathlib import Path
 from typing import Any
 
-from beet import Context, Pack
-from beet.core.utils import JsonDict, TextComponent
+from beet import Context, FormatSpecifier, Pack
+from beet.core.utils import JsonDict, TextComponent, split_version
 from box import Box
 from stouputils import relative_path
 from stouputils.decorators import measure_time
@@ -13,7 +13,7 @@ from stouputils.io import super_json_dump
 from stouputils.print import warning
 
 from ...core import Mem
-from ...core.constants import MORE_ASSETS_PACK_FORMATS, MORE_DATA_PACK_FORMATS, MORE_DATA_VERSIONS
+from ...core.constants import LATEST_MC_VERSION, MORE_ASSETS_PACK_FORMATS, MORE_DATA_PACK_FORMATS, MORE_DATA_VERSIONS
 from .source_lore_font import find_pack_png, prepare_source_lore_font
 
 
@@ -61,27 +61,8 @@ def beet_default(ctx: Context):
 	ctx.meta["data_version"] = MORE_DATA_VERSIONS
 	if ctx.minecraft_version:
 		tuple_version: tuple[int, ...] = tuple(int(x) for x in ctx.minecraft_version.split(".") if x.isdigit())
-		ctx.data.pack_format = ctx.data.pack_format_registry.get(tuple_version, ctx.data.pack_format)
-		ctx.assets.pack_format = ctx.assets.pack_format_registry.get(tuple_version, ctx.assets.pack_format)
-
-	# Helper function to setup pack.mcmeta
-	def setup_pack_mcmeta(pack: Pack[Any], pack_format: int):
-		existing_mcmeta = pack.mcmeta.data or {}
-		pack_mcmeta: JsonDict = {"pack": {}}
-		pack_mcmeta.update(existing_mcmeta)
-		pack_mcmeta["pack"].update(existing_mcmeta.get("pack", {}))
-		pack_mcmeta["pack"]["pack_format"] = pack_format
-		if (pack is ctx.data and pack_format >= 82) or (pack is ctx.assets and pack_format >= 65):
-			pack_mcmeta["pack"]["min_format"] = pack_format
-			pack_mcmeta["pack"]["max_format"] = 1000
-		pack_mcmeta["pack"]["description"] = Mem.ctx.meta.get("stewbeet", {}).get("project_description", "")
-		pack_mcmeta["id"] = Mem.ctx.project_id
-		pack.mcmeta.data = pack_mcmeta
-		pack.mcmeta.encoder = super_json_dump
-
-	# Setup pack.mcmeta for both packs
-	setup_pack_mcmeta(ctx.data, ctx.data.pack_format)
-	setup_pack_mcmeta(ctx.assets, ctx.assets.pack_format)
+		ctx.data.pack_format = ctx.data.pack_format_registry.get(tuple_version, ctx.data.pack_format) # type: ignore
+		ctx.assets.pack_format = ctx.assets.pack_format_registry.get(tuple_version, ctx.assets.pack_format) # type: ignore
 
 	# Convert texture names if needed (from old legacy system)
 	textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
@@ -117,4 +98,47 @@ def beet_default(ctx: Context):
 
 	# Yield message to indicate successful build
 	yield
+
+	# Helper function to setup pack.mcmeta
+	def setup_pack_mcmeta(pack: Pack[Any], pack_format: FormatSpecifier | None) -> None:
+		# Default to latest if not given
+		if not pack_format:
+			pack_format =  pack.pack_format_registry[(split_version(LATEST_MC_VERSION))]
+
+		# Setup pack.mcmeta data
+		existing_mcmeta: JsonDict = pack.mcmeta.data or {}
+		pack_mcmeta: JsonDict = {"pack": {}}
+
+		# Determine int pack format
+		int_pack_format = pack_format if isinstance(pack_format, int) else pack_format[0]
+
+		# Update existing mcmeta data and set pack_format
+		pack_mcmeta.update(existing_mcmeta)
+		pack_mcmeta["pack"].update(existing_mcmeta.get("pack", {}))
+		pack_mcmeta["pack"]["pack_format"] = int_pack_format
+
+		# Set min and max pack formats (if applicable)
+		if (pack is ctx.data and (int_pack_format >= 82)) or (pack is ctx.assets and int_pack_format >= 65):
+			pack_mcmeta["pack"]["min_format"] = pack_format
+			pack_mcmeta["pack"]["max_format"] = 1000 if isinstance(pack_format, int) else (1000, 0)
+
+		# Set description and id
+		pack_mcmeta["pack"]["description"] = Mem.ctx.meta.get("stewbeet", {}).get("project_description", "")
+
+		# Reorder pack keys in ("pack_format","description","min_format","max_format", etc.)
+		ordered_pack: JsonDict = {}
+		for key in ["pack_format", "description", "min_format", "max_format"]:
+			if key in pack_mcmeta["pack"]:
+				ordered_pack[key] = pack_mcmeta["pack"][key]
+		ordered_pack.update({k: v for k, v in pack_mcmeta["pack"].items() if k not in ordered_pack})
+		pack_mcmeta["pack"] = ordered_pack
+
+		# Set pack ID, use new pack_mcmeta, and set json encoder
+		pack_mcmeta["id"] = Mem.ctx.project_id
+		pack.mcmeta.data = pack_mcmeta
+		pack.mcmeta.encoder = super_json_dump
+
+	# Setup pack.mcmeta for both packs
+	setup_pack_mcmeta(ctx.data, ctx.data.pack_format)
+	setup_pack_mcmeta(ctx.assets, ctx.assets.pack_format)
 
