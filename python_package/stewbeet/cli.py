@@ -5,27 +5,23 @@ import os
 import shutil
 import subprocess
 import sys
-from importlib.metadata import version
 
 from beet import ProjectConfig
 from stouputils.decorators import LogLevels, handle_error
-from stouputils.print import GREEN, RED, RESET, info
+from stouputils.print import GREEN, RED, info, show_version
 
 from .utils import get_project_config
 
 
 @handle_error(message="Error while running 'stewbeet'")
 def main():
-    second_arg: str = sys.argv[1] if len(sys.argv) == 2 else ""
+    second_arg: str = sys.argv[1].lower() if len(sys.argv) == 2 else ""
     if second_arg == "" and len(sys.argv) == 1:
         sys.argv.append("build")
 
     # Print the version of stewbeet, beet, bolt, mecha, and stouputils
-    if second_arg == "--version":
-        for pkg in ["stewbeet", "beet", "bolt", "mecha", "smithed", "model_resolver", "stouputils"]:
-            v: str = version(pkg).split("version: ")[-1]
-            print(f"{RED}{pkg} {GREEN}v{v}{RESET}")
-        return
+    if second_arg in ("--version", "-v", "version"):
+        return show_version("stewbeet", primary_color=RED, secondary_color=GREEN)
 
     # Try to find and load the beet configuration file
     cfg: ProjectConfig = get_project_config()
