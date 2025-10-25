@@ -11,8 +11,7 @@ from beet.core.utils import JsonDict, TextComponent
 from PIL import Image
 from stouputils.collections import unique_list
 from stouputils.io import clean_path, relative_path, super_json_dump, super_open
-from stouputils.parallel import colored_for_loop
-from stouputils.print import debug, error, suggestion, warning
+from stouputils.print import colored_for_loop, debug, error, suggestion, warning
 
 from ...core.__memory__ import Mem
 from ...core.constants import (
@@ -171,6 +170,9 @@ def routine():
 	if SharedMemory.use_dialog > 0:
 		Mem.ctx.assets[Mem.ctx.project_id].textures["font/book"] = Texture(source_path=f"{TEMPLATES_PATH}/book.png")
 
+	# Prepare category padding if dialog
+	category_padding: list[str] = [VERY_SMALL_NONE_FONT] if SharedMemory.use_dialog > 0 else []
+
 	# If the manual cache is enabled and we have a cache file, load it
 	cache_pages: bool = manual_config.get("cache_pages", False)
 	if cache_pages and json_dump_path and os.path.exists(json_dump_path) and os.path.exists(f"{SharedMemory.cache_path}/font/manual.json"):
@@ -299,11 +301,12 @@ def routine():
 						max_items_reached = True
 						line.insert(0, SMALL_NONE_FONT * LEFT_PADDING)
 						content.extend(deepcopy(line))
+						content.extend(category_padding)
 						for i in range(1, len(line)):
 							selected = line[-i]
 							if isinstance(selected, dict):
 								selected["text"] = MEDIUM_NONE_FONT
-						content.extend(["\n", *line, "\n"])
+						content.extend(["\n", *line, *category_padding, "\n"])
 						line = []
 						x = 2
 						y += simple_case.size[1]
@@ -314,11 +317,12 @@ def routine():
 						line.append(MEDIUM_NONE_FONT * max(0, 5 - len(line)))
 					line.insert(0, SMALL_NONE_FONT * LEFT_PADDING)
 					content.extend(deepcopy(line))
+					content.extend(category_padding)
 					for i in range(1, len(line)):
 						selected = line[-i]
 						if isinstance(selected, dict):
 							selected["text"] = MEDIUM_NONE_FONT
-					content.extend(["\n", *line, "\n"])
+					content.extend(["\n", *line, *category_padding, "\n"])
 
 				# Add the 2 pixels border
 				is_rectangle_shape = len(raw_data) % MAX_ITEMS_PER_ROW == 0
@@ -417,9 +421,14 @@ def routine():
 						component["text"] *= 2
 						content.append({"text": "", "font": FONT, "color": "white"})	# Make default font for every next component
 						content.append({"text": titled, "font": "minecraft:default", "color": "black", "underlined": True})
-						content.append(MEDIUM_NONE_FONT * 2 + page_font + "\n")
+						if not SharedMemory.use_dialog > 0:
+							content.append(MEDIUM_NONE_FONT * 2 + page_font + "\n")
+						else:
+							content.append(page_font + "\n")
+
 						for _ in range(4):
-							content.append(MEDIUM_NONE_FONT * 2)
+							if not SharedMemory.use_dialog > 0:
+								content.append(MEDIUM_NONE_FONT * 2)
 							content.append(component)
 							content.append("\n")
 						content_added = True
@@ -477,7 +486,7 @@ def routine():
 							hover_text: list[TextComponent] = [{"text":""}]
 							hover_text.append({"text": craft_font + "\n\n" * breaklines, "font": FONT, "color": "white"})
 						else:
-							craft_content: list[TextComponent] = generate_craft_content(craft, name, "")
+							craft_content: list[TextComponent] = generate_craft_content(craft, name, "", in_lore=True)
 							craft_content = [craft_content[0]] + craft_content[2:]	# Remove craft title
 							remove_events(craft_content)
 							for k, v in HOVER_EQUIVALENTS.items():
@@ -722,11 +731,11 @@ def routine():
 				if len(line) == MAX_ITEMS_PER_ROW:
 					max_items_reached = True
 					line.insert(0, SMALL_NONE_FONT * LEFT_PADDING)
-					content += [*deepcopy(line), "\n"]
+					content += [*deepcopy(line), *category_padding, "\n"]
 					for i in range(1, len(line)):
 						selected = cast(JsonDict, line[-i])
 						selected["text"] = MEDIUM_NONE_FONT
-					content += [*line, "\n"]
+					content += [*line, *category_padding, "\n"]
 					line = []
 					x = 2
 					y += simple_case.size[1]
@@ -736,11 +745,11 @@ def routine():
 			if SharedMemory.use_dialog > 0 and max_items_reached:
 				line.append(MEDIUM_NONE_FONT * max(0, 5 - len(line)))
 			line.insert(0, SMALL_NONE_FONT * LEFT_PADDING)
-			content += [*deepcopy(line), "\n"]
+			content += [*deepcopy(line), *category_padding, "\n"]
 			for i in range(1, len(line)):
 				selected = cast(JsonDict, line[-i])
 				selected["text"] = MEDIUM_NONE_FONT
-			content += [*line, "\n"]
+			content += [*line, *category_padding, "\n"]
 
 		# Add the 2 pixels border
 		is_rectangle_shape = len(categories_pages) % MAX_ITEMS_PER_ROW == 0

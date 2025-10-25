@@ -12,7 +12,7 @@ from .shared_import import FONT_FILE, INVISIBLE_ITEM_WIDTH, MICRO_NONE_FONT, NON
 
 
 # Generate all craft types content
-def generate_craft_content(craft: JsonDict, name: str, page_font: str) -> list[TextComponent]:
+def generate_craft_content(craft: JsonDict, name: str, page_font: str, in_lore: bool = False) -> list[TextComponent]:
 	""" Generate the content for the craft type
 	Args:
 		craft		(JsonDict):	The craft dictionary, ex: {"type": "crafting_shaped","result_count": 1,"category": "equipment","shape": ["XXX","X X"],"ingredients": {"X": {"components": {"custom_data": {"iyc": {"adamantium": true}}}}}}
@@ -32,11 +32,13 @@ def generate_craft_content(craft: JsonDict, name: str, page_font: str) -> list[T
 	# If high resolution, get proper page font
 	if SharedMemory.high_resolution:
 		page_font = high_res_font_from_craft(craft)
+	use_dialog: bool = SharedMemory.use_dialog > 0 and not in_lore	# In lore, we don't need to re-align the content
 
 	# Show up item title and page font
 	titled = name.replace("_", " ").title() + "\n"
 	content.append({"text": titled, "font": "minecraft:default", "color": "black", "underlined": True})
-	content.append(SMALL_NONE_FONT + page_font + "\n")
+	padding: str = MICRO_NONE_FONT if use_dialog else ""
+	content.append(SMALL_NONE_FONT + padding + page_font + "\n")
 
 	# Generate the image for the page
 	generate_page_font(name, page_font, craft)
@@ -86,7 +88,7 @@ def generate_craft_content(craft: JsonDict, name: str, page_font: str) -> list[T
 							copy = formatted_ingredients[k].copy()
 							copy["text"] = INVISIBLE_ITEM_WIDTH
 							content.append(copy)
-				if SharedMemory.use_dialog > 0 and index != 1 and (not is_small_craft or i != 1):
+				if use_dialog and index != 1 and (not is_small_craft or i != 1):
 					content.append(INVISIBLE_ITEM_WIDTH * max(0, (2 if is_small_craft else 3) - len(line)))
 					content.append(NONE_FONT * 2)
 				content.append("\n")
@@ -103,7 +105,7 @@ def generate_craft_content(craft: JsonDict, name: str, page_font: str) -> list[T
 			break_line_pos = content.index("\n", content.index("\n") + 1)	# Find the second line break
 			content.insert(break_line_pos, (INVISIBLE_ITEM_WIDTH * offset_1))
 			content.insert(break_line_pos + 1, result_component)
-			if SharedMemory.use_dialog > 0:
+			if use_dialog:
 				content.insert(break_line_pos + 2, VERY_SMALL_NONE_FONT + MICRO_NONE_FONT)
 				break_line_pos += 1
 
@@ -117,7 +119,7 @@ def generate_craft_content(craft: JsonDict, name: str, page_font: str) -> list[T
 			copy = result_component.copy()
 			copy["text"] = INVISIBLE_ITEM_WIDTH
 			content.insert(break_line_pos + 1, copy)
-			if SharedMemory.use_dialog > 0:
+			if use_dialog:
 				content.insert(break_line_pos + 2, VERY_SMALL_NONE_FONT + MICRO_NONE_FONT)
 		else:
 			# First layer of the square
@@ -131,7 +133,7 @@ def generate_craft_content(craft: JsonDict, name: str, page_font: str) -> list[T
 				break_line_pos = len(content)
 			content.insert(break_line_pos, (INVISIBLE_ITEM_WIDTH * (offset - 1) + SMALL_NONE_FONT * 2))
 			content.insert(break_line_pos + 1, result_component)
-			if SharedMemory.use_dialog > 0:
+			if use_dialog:
 				content.insert(break_line_pos + 2, VERY_SMALL_NONE_FONT + MICRO_NONE_FONT)
 				break_line_pos += 1
 
@@ -145,7 +147,7 @@ def generate_craft_content(craft: JsonDict, name: str, page_font: str) -> list[T
 			copy = result_component.copy()
 			copy["text"] = INVISIBLE_ITEM_WIDTH
 			content.insert(break_line_pos + 1, copy)
-			if SharedMemory.use_dialog > 0:
+			if use_dialog:
 				content.insert(break_line_pos + 2, VERY_SMALL_NONE_FONT + MICRO_NONE_FONT)
 
 			# Add break lines for the third layer of a 3x3 craft
@@ -181,6 +183,8 @@ def generate_craft_content(craft: JsonDict, name: str, page_font: str) -> list[T
 				copy = result_component.copy()
 				copy["text"] = INVISIBLE_ITEM_WIDTH
 				content.append(copy)
+			if use_dialog:
+				content.append(VERY_SMALL_NONE_FONT + MICRO_NONE_FONT)
 			content.append("\n")
 		content.append("\n\n")
 
@@ -305,6 +309,8 @@ def generate_craft_content(craft: JsonDict, name: str, page_font: str) -> list[T
 				copy = result_component.copy()
 				copy["text"] = INVISIBLE_ITEM_WIDTH
 				content.append(copy)
+			if use_dialog:
+				content.append(VERY_SMALL_NONE_FONT + MICRO_NONE_FONT)
 			content.append("\n")
 		content.append("\n")
 		pass
