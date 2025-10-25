@@ -28,7 +28,7 @@
 						0
 					]
 				},
-				"\"6\n\"",
+				"\"$6\n\"",
 				{
 					"text": "$胯$胯$胯",
 					"hover_event": {
@@ -105,14 +105,14 @@
 					"text": "2##",
 					"hover_event": {
 						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$胯"},{"text": "$胯"},{"text": "$胯"},"","  ","\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"","  ","\n","\"",{"text": "$胯"},{"text": "$胯"},{"text": "$胯"},"\"\"",{"text": "$$聋"},"#$","\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"#$","\n","\"",{"text": "$胯"},{"text": "$胯"},{"text": "$胯"},"","  ","\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"","  ","\n"],{"text": "\n- x9 ","color": "gray"},{"translate": "_your_namespace.stone","color": "gray"}]
+						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$胯"},{"text": "$胯"},{"text": "$胯"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$胯"},{"text": "$胯"},{"text": "$胯"},"\"\"",{"text": "$$聋"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$胯"},{"text": "$胯"},{"text": "$胯"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x9 ","color": "gray"},{"translate": "_your_namespace.stone","color": "gray"}]
 					}
 				},
 				{
 					"text": "2##",
 					"hover_event": {
 						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$腅"},{"text": "$腅"},{"text": "$腅"},"","  ","\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"","  ","\n","\"",{"text": "$腅"},{"text": "$腅"},{"text": "$腅"},"\"\"",{"text": "$$聋"},"#$","\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"#$","\n","\"",{"text": "$腅"},{"text": "$腅"},{"text": "$腅"},"","  ","\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"","  ","\n"],{"text": "\n- x9 ","color": "gray"},{"translate": "_your_namespace.deepslate","color": "gray"}]
+						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$腅"},{"text": "$腅"},{"text": "$腅"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$腅"},{"text": "$腅"},{"text": "$腅"},"\"\"",{"text": "$$聋"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$腅"},{"text": "$腅"},{"text": "$腅"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x9 ","color": "gray"},{"translate": "_your_namespace.deepslate","color": "gray"}]
 					}
 				},
 				{
@@ -126,14 +126,14 @@
 					"text": "0##",
 					"hover_event": {
 						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$胯"},{"text": "$胯"},{"text": "$胯"},"","  ","\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"","  ","\n","\"",{"text": "$胯"},{"text": "$胯"},{"text": "$胯"},"\"\"",{"text": "$$聋"},"#$","\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"#$","\n","\"",{"text": "$胯"},{"text": "$胯"},{"text": "$胯"},"","  ","\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"","  ","\n"],{"text": "\n- x9 ","color": "gray"},{"translate": "_your_namespace.stone","color": "gray"}]
+						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$胯"},{"text": "$胯"},{"text": "$胯"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$胯"},{"text": "$胯"},{"text": "$胯"},"\"\"",{"text": "$$聋"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$胯"},{"text": "$胯"},{"text": "$胯"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x9 ","color": "gray"},{"translate": "_your_namespace.stone","color": "gray"}]
 					}
 				},
 				{
 					"text": "0##",
 					"hover_event": {
 						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$腅"},{"text": "$腅"},{"text": "$腅"},"","  ","\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"","  ","\n","\"",{"text": "$腅"},{"text": "$腅"},{"text": "$腅"},"\"\"",{"text": "$$聋"},"#$","\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"#$","\n","\"",{"text": "$腅"},{"text": "$腅"},{"text": "$腅"},"","  ","\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"","  ","\n"],{"text": "\n- x9 ","color": "gray"},{"translate": "_your_namespace.deepslate","color": "gray"}]
+						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$腅"},{"text": "$腅"},{"text": "$腅"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$腅"},{"text": "$腅"},{"text": "$腅"},"\"\"",{"text": "$$聋"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$腅"},{"text": "$腅"},{"text": "$腅"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x9 ","color": "gray"},{"translate": "_your_namespace.deepslate","color": "gray"}]
 					}
 				},
 				{

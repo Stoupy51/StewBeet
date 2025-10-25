@@ -84,7 +84,7 @@
 					}
 				},
 				{
-					"text": "$耿\n",
+					"text": "$耿",
 					"hover_event": {
 						"action": "show_item",
 						"id": "iron_sword",
@@ -95,7 +95,7 @@
 						"page": 22
 					}
 				},
-				"\"",
+				"#\n\"",
 				{
 					"text": "!",
 					"hover_event": {
@@ -145,7 +145,7 @@
 					}
 				},
 				{
-					"text": "!\n",
+					"text": "!",
 					"hover_event": {
 						"action": "show_item",
 						"id": "iron_sword",
@@ -156,7 +156,7 @@
 						"page": 22
 					}
 				},
-				"\"",
+				"#\n\"",
 				{
 					"text": "$聁",
 					"hover_event": {
@@ -205,7 +205,7 @@
 						"page": 26
 					}
 				},
-				"!\n\"",
+				"!#\n\"",
 				{
 					"text": "!",
 					"hover_event": {
@@ -254,7 +254,7 @@
 						"page": 26
 					}
 				},
-				"!\n",
+				"!#\n",
 				"\n\n\n\n\n\n\n\n\n\n\n\n"
 			],
 			"width": 150

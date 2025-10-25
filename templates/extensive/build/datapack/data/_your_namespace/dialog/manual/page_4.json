@@ -84,7 +84,7 @@
 					}
 				},
 				{
-					"text": "$耩\n",
+					"text": "$耩",
 					"hover_event": {
 						"action": "show_item",
 						"id": "command_block",
@@ -95,7 +95,7 @@
 						"page": 11
 					}
 				},
-				"\"",
+				"#\n\"",
 				{
 					"text": "!",
 					"hover_event": {
@@ -145,7 +145,7 @@
 					}
 				},
 				{
-					"text": "!\n",
+					"text": "!",
 					"hover_event": {
 						"action": "show_item",
 						"id": "command_block",
@@ -156,7 +156,7 @@
 						"page": 11
 					}
 				},
-				"\"",
+				"#\n\"",
 				{
 					"text": "$耫",
 					"hover_event": {
@@ -206,7 +206,7 @@
 					}
 				},
 				{
-					"text": "$耳\n",
+					"text": "$耳",
 					"hover_event": {
 						"action": "show_item",
 						"id": "command_block",
@@ -217,7 +217,7 @@
 						"page": 16
 					}
 				},
-				"\"",
+				"#\n\"",
 				{
 					"text": "!",
 					"hover_event": {
@@ -267,7 +267,7 @@
 					}
 				},
 				{
-					"text": "!\n",
+					"text": "!",
 					"hover_event": {
 						"action": "show_item",
 						"id": "command_block",
@@ -278,7 +278,7 @@
 						"page": 16
 					}
 				},
-				"\"",
+				"#\n\"",
 				{
 					"text": "$耵",
 					"hover_event": {
@@ -291,7 +291,7 @@
 						"page": 17
 					}
 				},
-				"!!!!\n\"",
+				"!!!!#\n\"",
 				{
 					"text": "!",
 					"hover_event": {
@@ -304,7 +304,7 @@
 						"page": 17
 					}
 				},
-				"!!!!\n",
+				"!!!!#\n",
 				"\n\n\n\n\n\n\n\n\n\n\n\n"
 			],
 			"width": 150

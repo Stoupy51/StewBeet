@@ -60,7 +60,7 @@
 					}
 				},
 				{
-					"text": "$聉\n",
+					"text": "$聉",
 					"hover_event": {
 						"action": "show_item",
 						"id": "command_block",
@@ -71,7 +71,7 @@
 						"page": 6
 					}
 				},
-				"\"",
+				"#\n\"",
 				{
 					"text": "!",
 					"hover_event": {
@@ -97,7 +97,7 @@
 					}
 				},
 				{
-					"text": "!\n",
+					"text": "!",
 					"hover_event": {
 						"action": "show_item",
 						"id": "command_block",
@@ -108,6 +108,7 @@
 						"page": 6
 					}
 				},
+				"#\n",
 				"\n\n\n\n\n\n\n\n\n\n\n\n"
 			],
 			"width": 150

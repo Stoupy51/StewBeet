@@ -28,7 +28,7 @@
 						0
 					]
 				},
-				"\"6\n\"",
+				"\"$6\n\"",
 				{
 					"text": "$耩$耩$耩",
 					"hover_event": {
@@ -129,7 +129,7 @@
 					"text": "2##",
 					"hover_event": {
 						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"","  ","\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"","  ","\n","\"",{"text": "$耩"},"U$",{"text": "$耩"},"\"\"",{"text": "$$耷"},"#$","\n","\"",{"text": "U$"},"U$",{"text": "U$"},"\"\"",{"text": "U$"},"#$","\n","\n\n"],{"text": "\n- x5 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]
+						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$耩"},"U$",{"text": "$耩"},"\"\"",{"text": "$$耷"},"\n","\"",{"text": "U$"},"U$",{"text": "U$"},"\"\"",{"text": "U$"},"\n","\n\n"],{"text": "\n- x5 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]
 					},
 					"priority": 0,
 					"click_event": {
@@ -152,7 +152,7 @@
 					"text": "0##",
 					"hover_event": {
 						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"","  ","\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"","  ","\n","\"",{"text": "$耩"},"U$",{"text": "$耩"},"\"\"",{"text": "$$耷"},"#$","\n","\"",{"text": "U$"},"U$",{"text": "U$"},"\"\"",{"text": "U$"},"#$","\n","\n\n"],{"text": "\n- x5 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]
+						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$耩"},"U$",{"text": "$耩"},"\"\"",{"text": "$$耷"},"\n","\"",{"text": "U$"},"U$",{"text": "U$"},"\"\"",{"text": "U$"},"\n","\n\n"],{"text": "\n- x5 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]
 					},
 					"priority": 0,
 					"click_event": {

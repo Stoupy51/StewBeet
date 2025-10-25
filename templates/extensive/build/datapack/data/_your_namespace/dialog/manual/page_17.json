@@ -28,7 +28,7 @@
 						0
 					]
 				},
-				"\"6\n\"U$",
+				"\"$6\n\"U$",
 				{
 					"text": "$胯",
 					"hover_event": {
@@ -105,7 +105,7 @@
 					"text": "2\n0##",
 					"hover_event": {
 						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"","U$",{"text": "$胯"},"U$","","  ","\n","\"","U$",{"text": "U$"},"U$","","  ","\n","\"","U$",{"text": "$胯"},"U$","\"\"",{"text": "$$耵"},"#$","\n","\"","U$",{"text": "U$"},"U$","\"\"",{"text": "U$"},"#$","\n","\"","U$",{"text": "$胯"},"U$","","  ","\n","\"","U$",{"text": "U$"},"U$","","  ","\n"],{"text": "\n- x3 ","color": "gray"},{"translate": "_your_namespace.stone","color": "gray"}]
+						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"","U$",{"text": "$胯"},"U$","\n","\"","U$",{"text": "U$"},"U$","\n","\"","U$",{"text": "$胯"},"U$","\"\"",{"text": "$$耵"},"\n","\"","U$",{"text": "U$"},"U$","\"\"",{"text": "U$"},"\n","\"","U$",{"text": "$胯"},"U$","\n","\"","U$",{"text": "U$"},"U$","\n"],{"text": "\n- x3 ","color": "gray"},{"translate": "_your_namespace.stone","color": "gray"}]
 					}
 				},
 				"\n\n\n\n\n\n\n\n\n\n\n\n"

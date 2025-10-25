@@ -72,7 +72,7 @@
 					}
 				},
 				{
-					"text": "$聏\n",
+					"text": "$聏",
 					"hover_event": {
 						"action": "show_item",
 						"id": "written_book",
@@ -83,7 +83,7 @@
 						"page": 30
 					}
 				},
-				"\"",
+				"#\n\"",
 				{
 					"text": "!",
 					"hover_event": {
@@ -121,7 +121,7 @@
 					}
 				},
 				{
-					"text": "!\n",
+					"text": "!",
 					"hover_event": {
 						"action": "show_item",
 						"id": "written_book",
@@ -132,6 +132,7 @@
 						"page": 30
 					}
 				},
+				"#\n",
 				"\n\n\n\n\n\n\n\n\n\n\n\n"
 			],
 			"width": 150

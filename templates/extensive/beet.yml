@@ -47,6 +47,9 @@ pipeline:
 
 # Generic dict which holds extra information usable by plugins
 meta:
+    # List of supported Minecraft versions (used when uploading to Modrinth or Smithed)
+    mc_supports: ["1.21.9", "1.21.10"]
+
     # Model resolver configuration for caching models
     model_resolver:
         use_cache: true
@@ -84,7 +87,7 @@ meta:
         # Configuration for in-game manual
         manual:
             # Enables grid display in the manual for debugging
-            debug_mode: true
+            debug_mode: false
             # Path to directory containing custom manual assets that override defaults
             manual_overrides: "assets/manual_overrides"
             # Enables high-resolution crafting displays in the manual

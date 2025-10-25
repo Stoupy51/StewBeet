@@ -28,7 +28,7 @@
 						0
 					]
 				},
-				"\"9\n\n\n\"",
+				"\"$9\n\n\n\"",
 				{
 					"text": "$耭",
 					"hover_event": {
@@ -43,14 +43,14 @@
 				},
 				"\"\"\"\"#U$",
 				{
-					"text": "$$聠\n",
+					"text": "$$聠",
 					"hover_event": {
 						"action": "show_item",
 						"id": "command_block",
 						"components": {"item_name": {"translate": "_your_namespace.steel_dust"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}
 					}
 				},
-				"\"",
+				"#$\n\"",
 				{
 					"text": "U$",
 					"hover_event": {
@@ -65,13 +65,14 @@
 				},
 				"\"\"\"\"#U$",
 				{
-					"text": "U$\n\n\n",
+					"text": "U$",
 					"hover_event": {
 						"action": "show_item",
 						"id": "command_block",
 						"components": {"item_name": {"translate": "_your_namespace.steel_dust"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}
 					}
 				},
+				"#$\n\n\n",
 				{
 					"text": "2##",
 					"hover_event": {

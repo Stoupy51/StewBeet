@@ -28,7 +28,7 @@
 						0
 					]
 				},
-				"\"5\n\"",
+				"\"$5\n\"",
 				{
 					"text": "$耩",
 					"hover_event": {
@@ -77,7 +77,7 @@
 					"text": "2##",
 					"hover_event": {
 						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$耩"},"U$","  ","\n","\"",{"text": "U$"},"U$U$",{"text": "$$肣"},"#$","\n\"","U$U$U$",{"text": "U$"},"#$","\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]
+						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$耩"},"\n","\"",{"text": "U$"},"U$U$",{"text": "$$肣"},"\n\"","U$U$U$",{"text": "U$"},"\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]
 					},
 					"click_event": {
 						"action": "change_page",
@@ -132,7 +132,7 @@
 					"text": "0##",
 					"hover_event": {
 						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$耩"},"U$","  ","\n","\"",{"text": "U$"},"U$U$",{"text": "$$肣"},"#$","\n\"","U$U$U$",{"text": "U$"},"#$","\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]
+						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$耩"},"\n","\"",{"text": "U$"},"U$U$",{"text": "$$肣"},"\n\"","U$U$U$",{"text": "U$"},"\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]
 					},
 					"click_event": {
 						"action": "change_page",
@@ -297,7 +297,7 @@
 					"text": "胈##",
 					"hover_event": {
 						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耫"},{"text": "$耫"},{"text": "$耫"},"","  ","\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"","  ","\n","\"",{"text": "$耫"},{"text": "$耫"},{"text": "$耫"},"\"\"",{"text": "$$耩"},"#$","\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"#$","\n","\"",{"text": "$耫"},{"text": "$耫"},{"text": "$耫"},"","  ","\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"","  ","\n"],{"text": "\n- x9 ","color": "gray"},{"translate": "_your_namespace.steel_nugget","color": "gray"}]
+						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耫"},{"text": "$耫"},{"text": "$耫"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$耫"},{"text": "$耫"},{"text": "$耫"},"\"\"",{"text": "$$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$耫"},{"text": "$耫"},{"text": "$耫"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x9 ","color": "gray"},{"translate": "_your_namespace.steel_nugget","color": "gray"}]
 					},
 					"click_event": {
 						"action": "change_page",
