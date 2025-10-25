@@ -36,7 +36,7 @@ def generate_dialogs(book_content: list[list[TextComponent]]) -> None:
 		if len(page) > 2:
 			page = page[2:]	# Remove first two elements
 
-			# TODO: Trigger page change count
+			# TODO: Show dialog change count
 
 			# Add to new content
 			new_content.extend(page)

@@ -96,9 +96,6 @@ def beet_default(ctx: Context):
 	# Extend the datapack namespace with sorter files
 	ctx.require("stewbeet.plugins.datapack.sorters.extend_datapack")
 
-	# Yield message to indicate successful build
-	yield
-
 	# Helper function to setup pack.mcmeta
 	def setup_pack_mcmeta(pack: Pack[Any], pack_format: FormatSpecifier | None) -> None:
 		# Default to latest if not given
@@ -141,4 +138,7 @@ def beet_default(ctx: Context):
 	# Setup pack.mcmeta for both packs
 	setup_pack_mcmeta(ctx.data, ctx.data.pack_format)
 	setup_pack_mcmeta(ctx.assets, ctx.assets.pack_format)
+
+	# Yield message to indicate successful build
+	yield
 
