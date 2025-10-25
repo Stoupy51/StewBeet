@@ -106,6 +106,6 @@
 		{"type": "bitmap","file": "_your_namespace:font/stonecutting.png","ascent": -3,"height": 58,"chars": ["H"]},
 		{"type": "bitmap","file": "_your_namespace:font/pulverizing.png","ascent": -3,"height": 58,"chars": ["I"]},
 		{"type": "bitmap","file": "_your_namespace:font/mining.png","ascent": -3,"height": 58,"chars": ["P"]},
-		{"type": "bitmap","file": "_your_namespace:font/book.png","ascent": 40,"height": 300,"chars": ["V"]}
+		{"type": "bitmap","file": "_your_namespace:font/book.png","ascent": 25,"height": 300,"chars": ["V"]}
 	]
 }

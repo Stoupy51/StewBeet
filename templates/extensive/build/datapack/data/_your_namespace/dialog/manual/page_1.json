@@ -7,11 +7,15 @@
 	"body": [
 		{
 			"type": "minecraft:plain_message",
-			"contents": {
-				"text": "V   ",
-				"font": "_your_namespace:manual",
-				"color": "white"
-			},
+			"contents": [
+				{"text": "V   ","font": "_your_namespace:manual","color": "white"},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_1"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_previous_page_1"}}},
+				" ",
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_2"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_next_page_2"}}},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_1"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_previous_page_1"}}},
+				" ",
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_2"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_next_page_2"}}}
+			],
 			"width": 400
 		},
 		{
@@ -20,30 +24,12 @@
 				{"text": "","font": "_your_namespace:manual","color": "white","shadow_color": [0,0,0,0]},
 				{"text": "ဠ\n\n\n\n\n\n","font": "_your_namespace:manual","color": "white"},
 				[{"text": "","font": "minecraft:default","color": "black"},{"translate": "_your_namespace.modify_in_beet_yml_the_text_that_will_be_shown_in_this_first_man","color": "#505050"}],
-				"\n\n\n\n\n\n\n\n\n\n\n\n"
+				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 			],
 			"width": 150
 		}
 	],
 	"exit_action": {
 		"label": "Done"
-	},
-	"actions": [
-		{
-			"label": "<-",
-			"width": 25,
-			"action": {
-				"type": "minecraft:show_dialog",
-				"dialog": "_your_namespace:manual/page_1"
-			}
-		},
-		{
-			"label": "->",
-			"width": 25,
-			"action": {
-				"type": "minecraft:show_dialog",
-				"dialog": "_your_namespace:manual/page_2"
-			}
-		}
-	]
+	}
 }

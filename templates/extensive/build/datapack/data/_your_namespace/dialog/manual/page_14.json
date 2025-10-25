@@ -7,11 +7,15 @@
 	"body": [
 		{
 			"type": "minecraft:plain_message",
-			"contents": {
-				"text": "V   ",
-				"font": "_your_namespace:manual",
-				"color": "white"
-			},
+			"contents": [
+				{"text": "V   ","font": "_your_namespace:manual","color": "white"},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_13"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_previous_page_13"}}},
+				" ",
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_15"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_next_page_15"}}},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_13"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_previous_page_13"}}},
+				" ",
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_15"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_next_page_15"}}}
+			],
 			"width": 400
 		},
 		{
@@ -37,30 +41,12 @@
 				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"I\n","\n\n","\"",{"text": "$耣"},"\"\"\"\"#U$",{"text": "$$聠"},"\n","\"",{"text": "U$"},"\"\"\"\"#U$",{"text": "U$"},"\n","\n"],{"translate": "_your_namespace.simplenergy_pulverizing","color": "yellow"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_ore","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_8"}},
 				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"I\n","\n\n","\"",{"text": "$耥"},"\"\"\"\"#U$",{"text": "$$聠"},"\n","\"",{"text": "U$"},"\"\"\"\"#U$",{"text": "U$"},"\n","\n"],{"translate": "_your_namespace.simplenergy_pulverizing","color": "yellow"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.deepslate_steel_ore","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_9"}},
 				{"text": "0\n胩##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"G\n","\"",{"text": "$耯"},"\n","\"",{"text": "U$"},"\n","\"\"\"\"U$U$",{"text": "$$耩"},"\n","\"\"\"\"U$U$",{"text": "U$"},"\n","\n\n"],{"translate": "_your_namespace.smelting","color": "yellow"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_dust","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_11"}},
-				"\n\n\n\n\n\n\n\n\n\n\n\n"
+				"\n\n\n\n\n\n\n\n\n\n\n"
 			],
 			"width": 150
 		}
 	],
 	"exit_action": {
 		"label": "Done"
-	},
-	"actions": [
-		{
-			"label": "<-",
-			"width": 25,
-			"action": {
-				"type": "minecraft:show_dialog",
-				"dialog": "_your_namespace:manual/page_13"
-			}
-		},
-		{
-			"label": "->",
-			"width": 25,
-			"action": {
-				"type": "minecraft:show_dialog",
-				"dialog": "_your_namespace:manual/page_15"
-			}
-		}
-	]
+	}
 }

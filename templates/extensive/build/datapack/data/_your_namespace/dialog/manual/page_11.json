@@ -7,11 +7,15 @@
 	"body": [
 		{
 			"type": "minecraft:plain_message",
-			"contents": {
-				"text": "V   ",
-				"font": "_your_namespace:manual",
-				"color": "white"
-			},
+			"contents": [
+				{"text": "V   ","font": "_your_namespace:manual","color": "white"},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_10"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_previous_page_10"}}},
+				" ",
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_12"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_next_page_12"}}},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_10"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_previous_page_10"}}},
+				" ",
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_12"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_next_page_12"}}}
+			],
 			"width": 400
 		},
 		{
@@ -68,30 +72,12 @@
 				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"I\n","\n\n","\"",{"text": "$耩"},"\"\"\"\"#U$",{"text": "$$耯"},"\n","\"",{"text": "U$"},"\"\"\"\"#U$",{"text": "U$"},"\n","\n"],{"translate": "_your_namespace.simplenergy_pulverizing","color": "yellow"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_14"}},
 				{"text": "0\n","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$耩"},"\n","\"",{"text": "U$"},"U$U$",{"text": "$$肩"},"\n","\"",{"text": "$耩"},"U$U$",{"text": "U$"},"\n","\"",{"text": "U$"},"\n"],{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_15"}},
 				{"text": "肯##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$肭"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},"U$",{"text": "$$聏"},"\n\"","U$U$U$",{"text": "U$"},"\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.book","color": "gray"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_30"}},
-				"\n\n\n\n\n\n\n\n\n\n\n\n"
+				"\n\n\n\n\n\n"
 			],
 			"width": 150
 		}
 	],
 	"exit_action": {
 		"label": "Done"
-	},
-	"actions": [
-		{
-			"label": "<-",
-			"width": 25,
-			"action": {
-				"type": "minecraft:show_dialog",
-				"dialog": "_your_namespace:manual/page_10"
-			}
-		},
-		{
-			"label": "->",
-			"width": 25,
-			"action": {
-				"type": "minecraft:show_dialog",
-				"dialog": "_your_namespace:manual/page_12"
-			}
-		}
-	]
+	}
 }

@@ -7,11 +7,15 @@
 	"body": [
 		{
 			"type": "minecraft:plain_message",
-			"contents": {
-				"text": "V   ",
-				"font": "_your_namespace:manual",
-				"color": "white"
-			},
+			"contents": [
+				{"text": "V   ","font": "_your_namespace:manual","color": "white"},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_16"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_previous_page_16"}}},
+				" ",
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_18"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_next_page_18"}}},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_16"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_previous_page_16"}}},
+				" ",
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_18"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_next_page_18"}}}
+			],
 			"width": 400
 		},
 		{
@@ -36,30 +40,12 @@
 				{"text": "U$","hover_event": {"action": "show_item","id": "minecraft:stone","components": {}}},
 				"U$  \n\n",
 				{"text": "2\n0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"","U$",{"text": "$胯"},"U$","\n","\"","U$",{"text": "U$"},"U$","\n","\"","U$",{"text": "$胯"},"U$","\"\"",{"text": "$$耵"},"\n","\"","U$",{"text": "U$"},"U$","\"\"",{"text": "U$"},"\n","\"","U$",{"text": "$胯"},"U$","\n","\"","U$",{"text": "U$"},"U$","\n"],{"text": "\n- x3 ","color": "gray"},{"translate": "_your_namespace.stone","color": "gray"}]}},
-				"\n\n\n\n\n\n\n\n\n\n\n\n"
+				"\n\n\n\n\n\n\n\n\n\n\n"
 			],
 			"width": 150
 		}
 	],
 	"exit_action": {
 		"label": "Done"
-	},
-	"actions": [
-		{
-			"label": "<-",
-			"width": 25,
-			"action": {
-				"type": "minecraft:show_dialog",
-				"dialog": "_your_namespace:manual/page_16"
-			}
-		},
-		{
-			"label": "->",
-			"width": 25,
-			"action": {
-				"type": "minecraft:show_dialog",
-				"dialog": "_your_namespace:manual/page_18"
-			}
-		}
-	]
+	}
 }

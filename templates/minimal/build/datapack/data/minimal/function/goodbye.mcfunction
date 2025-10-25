@@ -5,4 +5,5 @@
 #
 
 say Goodbye, world!
+function minimal:farewell
 

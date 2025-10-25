@@ -7,11 +7,15 @@
 	"body": [
 		{
 			"type": "minecraft:plain_message",
-			"contents": {
-				"text": "V   ",
-				"font": "_your_namespace:manual",
-				"color": "white"
-			},
+			"contents": [
+				{"text": "V   ","font": "_your_namespace:manual","color": "white"},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_29"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_previous_page_29"}}},
+				" ",
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_30"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_next_page_30"}}},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_29"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_previous_page_29"}}},
+				" ",
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_30"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_next_page_30"}}}
+			],
 			"width": 400
 		},
 		{
@@ -33,30 +37,12 @@
 				{"text": "2\n","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$聏"},"\n","\"",{"text": "U$"},"U$U$",{"text": "$$聏"},"\n\"","U$U$U$",{"text": "U$"},"\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.manual","color": "gray"}]}},
 				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$肭"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},"U$",{"text": "$$聏"},"\n\"","U$U$U$",{"text": "U$"},"\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.book","color": "gray"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]}},
 				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$聏"},"\n","\"",{"text": "U$"},"U$U$",{"text": "$$聏"},"\n\"","U$U$U$",{"text": "U$"},"\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.manual","color": "gray"}]}},
-				"\n\n\n\n\n\n\n\n\n\n\n\n"
+				"\n\n\n\n\n\n\n\n\n\n\n\n\n"
 			],
 			"width": 150
 		}
 	],
 	"exit_action": {
 		"label": "Done"
-	},
-	"actions": [
-		{
-			"label": "<-",
-			"width": 25,
-			"action": {
-				"type": "minecraft:show_dialog",
-				"dialog": "_your_namespace:manual/page_29"
-			}
-		},
-		{
-			"label": "->",
-			"width": 25,
-			"action": {
-				"type": "minecraft:show_dialog",
-				"dialog": "_your_namespace:manual/page_30"
-			}
-		}
-	]
+	}
 }

@@ -28,17 +28,22 @@ def generate_dialogs(book_content: list[list[TextComponent]]) -> None:
 		dialog_ids.append(f"{ns}:{dialog_id}")
 
 		# Previous and next page indexes
-		previous_index: int = page_index - 1 if page_index > 0 else 0
+		prev_index: int = page_index - 1 if page_index > 0 else 0
 		next_index: int = page_index + 1 if page_index + 1 < len(book_content) else page_index
-		previous_dialog_id: str = f"{ns}:manual/page_{previous_index + 1}"
+		prev_dialog_id: str = f"{ns}:manual/page_{prev_index + 1}"
 		next_dialog_id: str = f"{ns}:manual/page_{next_index + 1}"
 
 		# Get title
 		title: TextComponent = page[1]
 		if isinstance(title, dict):
-			title = title.get("text", "").replace("\n", "")
+			title = str(title.get("text", "")).replace("\n", "")
 		else:
 			title = str(title).replace("\n", "")
+		if len(title.strip()) < 2:
+			title = page[2]
+			if isinstance(title, dict):
+				title = str(title.get("text", "")).replace("\n", "")
+			page = page[:1] + page[2:]  # Remove title from body if taken from body
 
 		# Generate the new body content
 		new_content: list[TextComponent] = [{"text":"","font": f"{ns}:manual", "color": "white", "shadow_color": [0]*4}]	# Initial font and color
@@ -50,7 +55,17 @@ def generate_dialogs(book_content: list[list[TextComponent]]) -> None:
 
 			# Add to new content
 			new_content.extend(page)
-		new_content.append("\n"*12)	# Padding at the end to avoid cutoff
+
+		# Add padding to avoid texture cutoff
+		def count_breaklines(element: TextComponent) -> int:
+			if isinstance(element, dict):
+				return count_breaklines(element.get("text", ""))
+			elif isinstance(element, list):
+				return sum(count_breaklines(sub_element) for sub_element in element)
+			return str(element).count("\n")
+		nb_breaklines_to_add: int = max(0, 20 - count_breaklines(new_content))
+		if nb_breaklines_to_add > 0:
+			new_content.append("\n"*nb_breaklines_to_add)
 
 		# Create dialog
 		dialog: JsonDict = {
@@ -59,7 +74,16 @@ def generate_dialogs(book_content: list[list[TextComponent]]) -> None:
 			"body": [
 				{
 					"type": "minecraft:plain_message",
-					"contents": {"text": BOOK_FONT + NONE_FONT*3, "font": f"{ns}:manual", "color": "white"},
+					"contents": [
+						{"text": BOOK_FONT + NONE_FONT*3, "font": f"{ns}:manual", "color": "white"},
+						*(2 * [
+							{"text": "\n" + NONE_FONT*3, "click_event": {"action": "show_dialog", "dialog": prev_dialog_id},
+								"hover_event": {"action": "show_text", "value": {"text": f"Go to previous page ({prev_index + 1})"}}},
+							NONE_FONT,
+							{"text": NONE_FONT*3, "click_event": {"action": "show_dialog", "dialog": next_dialog_id},
+								"hover_event": {"action": "show_text", "value": {"text": f"Go to next page ({next_index + 1})"}}}
+						])
+					],
 					"width": 400
 				},
 				{
@@ -69,10 +93,6 @@ def generate_dialogs(book_content: list[list[TextComponent]]) -> None:
 				}
 			],
 			"exit_action": {"label": "Done"},
-			"actions": [
-				{"label": "<-", "width": 25, "action": {"type": "minecraft:show_dialog","dialog": previous_dialog_id}},	# TODO: Trigger page change count
-				{"label": "->", "width": 25, "action": {"type": "minecraft:show_dialog","dialog": next_dialog_id}},
-			]
 		}
 		Mem.ctx.data[ns].dialogs[dialog_id] = set_json_encoder(Dialog(dialog), max_level=4)
 	pass

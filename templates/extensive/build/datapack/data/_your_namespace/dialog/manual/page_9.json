@@ -7,11 +7,15 @@
 	"body": [
 		{
 			"type": "minecraft:plain_message",
-			"contents": {
-				"text": "V   ",
-				"font": "_your_namespace:manual",
-				"color": "white"
-			},
+			"contents": [
+				{"text": "V   ","font": "_your_namespace:manual","color": "white"},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_8"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_previous_page_8"}}},
+				" ",
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_10"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_next_page_10"}}},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_8"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_previous_page_8"}}},
+				" ",
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_10"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_next_page_10"}}}
+			],
 			"width": 400
 		},
 		{
@@ -40,23 +44,5 @@
 	],
 	"exit_action": {
 		"label": "Done"
-	},
-	"actions": [
-		{
-			"label": "<-",
-			"width": 25,
-			"action": {
-				"type": "minecraft:show_dialog",
-				"dialog": "_your_namespace:manual/page_8"
-			}
-		},
-		{
-			"label": "->",
-			"width": 25,
-			"action": {
-				"type": "minecraft:show_dialog",
-				"dialog": "_your_namespace:manual/page_10"
-			}
-		}
-	]
+	}
 }

@@ -7,11 +7,15 @@
 	"body": [
 		{
 			"type": "minecraft:plain_message",
-			"contents": {
-				"text": "V   ",
-				"font": "_your_namespace:manual",
-				"color": "white"
-			},
+			"contents": [
+				{"text": "V   ","font": "_your_namespace:manual","color": "white"},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_25"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_previous_page_25"}}},
+				" ",
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_27"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_next_page_27"}}},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_25"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_previous_page_25"}}},
+				" ",
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_27"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_next_page_27"}}}
+			],
 			"width": 400
 		},
 		{
@@ -39,30 +43,12 @@
 				{"text": "脾\n","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"G\n","\"",{"text": "$聇"},"\n","\"",{"text": "U$"},"\n","\"\"\"\"U$U$",{"text": "$$耫"},"\n","\"\"\"\"U$U$",{"text": "U$"},"\n","\n\n"],{"translate": "_your_namespace.smelting","color": "yellow"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_hoe","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_12"}},
 				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},"\n","\"","U$",{"text": "$肑"},"U$\"\"",{"text": "$$聇"},"\n","\"","U$",{"text": "U$"},"U$\"\"",{"text": "U$"},"\n","\"","U$",{"text": "$肑"},"\n","\"","U$",{"text": "U$"},"\n"],{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"},{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.stick","color": "gray"}]},"priority": 0},
 				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"G\n","\"",{"text": "$聇"},"\n","\"",{"text": "U$"},"\n","\"\"\"\"U$U$",{"text": "$$耫"},"\n","\"\"\"\"U$U$",{"text": "U$"},"\n","\n\n"],{"translate": "_your_namespace.smelting","color": "yellow"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_hoe","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_12"}},
-				"\n\n\n\n\n\n\n\n\n\n\n\n"
+				"\n\n\n\n\n\n\n\n\n\n\n"
 			],
 			"width": 150
 		}
 	],
 	"exit_action": {
 		"label": "Done"
-	},
-	"actions": [
-		{
-			"label": "<-",
-			"width": 25,
-			"action": {
-				"type": "minecraft:show_dialog",
-				"dialog": "_your_namespace:manual/page_25"
-			}
-		},
-		{
-			"label": "->",
-			"width": 25,
-			"action": {
-				"type": "minecraft:show_dialog",
-				"dialog": "_your_namespace:manual/page_27"
-			}
-		}
-	]
+	}
 }

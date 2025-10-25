@@ -1,24 +1,27 @@
 {
 	"type": "minecraft:multi_action",
 	"title": {
-		"text": "➤ ",
+		"text": "Equipment",
 		"underlined": true
 	},
 	"body": [
 		{
 			"type": "minecraft:plain_message",
-			"contents": {
-				"text": "V   ",
-				"font": "_your_namespace:manual",
-				"color": "white"
-			},
+			"contents": [
+				{"text": "V   ","font": "_your_namespace:manual","color": "white"},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_4"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_previous_page_4"}}},
+				" ",
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_6"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_next_page_6"}}},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_4"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_previous_page_4"}}},
+				" ",
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_6"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_next_page_6"}}}
+			],
 			"width": 400
 		},
 		{
 			"type": "minecraft:plain_message",
 			"contents": [
 				{"text": "","font": "_your_namespace:manual","color": "white","shadow_color": [0,0,0,0]},
-				{"translate": "_your_namespace.equipment","font": "minecraft:default","color": "black","underlined": true},
 				"\"ဤ\n\"",
 				{"text": "$耷","hover_event": {"action": "show_item","id": "iron_helmet","components": {"item_name": {"translate": "_your_namespace.steel_helmet"},"max_damage": 495}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_18"}},
 				{"text": "$耹","hover_event": {"action": "show_item","id": "iron_chestplate","components": {"item_name": {"translate": "_your_namespace.steel_chestplate"},"max_damage": 720}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_19"}},
@@ -42,30 +45,12 @@
 				{"text": "!","hover_event": {"action": "show_item","id": "iron_shovel","components": {"item_name": {"translate": "_your_namespace.steel_shovel"},"max_damage": 750}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_25"}},
 				{"text": "!","hover_event": {"action": "show_item","id": "iron_hoe","components": {"item_name": {"translate": "_your_namespace.steel_hoe"},"max_damage": 750}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_26"}},
 				"!#\n",
-				"\n\n\n\n\n\n\n\n\n\n\n\n"
+				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 			],
 			"width": 150
 		}
 	],
 	"exit_action": {
 		"label": "Done"
-	},
-	"actions": [
-		{
-			"label": "<-",
-			"width": 25,
-			"action": {
-				"type": "minecraft:show_dialog",
-				"dialog": "_your_namespace:manual/page_4"
-			}
-		},
-		{
-			"label": "->",
-			"width": 25,
-			"action": {
-				"type": "minecraft:show_dialog",
-				"dialog": "_your_namespace:manual/page_6"
-			}
-		}
-	]
+	}
 }

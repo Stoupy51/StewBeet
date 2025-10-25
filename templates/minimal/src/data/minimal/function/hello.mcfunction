@@ -4,4 +4,6 @@ for i in range(1, 6):
 
 execute function ./goodbye:
     say Goodbye, world!
+    execute function ./farewell:
+        say Farewell, world!
 

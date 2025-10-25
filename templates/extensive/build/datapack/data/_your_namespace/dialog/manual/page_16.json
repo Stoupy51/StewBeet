@@ -7,11 +7,15 @@
 	"body": [
 		{
 			"type": "minecraft:plain_message",
-			"contents": {
-				"text": "V   ",
-				"font": "_your_namespace:manual",
-				"color": "white"
-			},
+			"contents": [
+				{"text": "V   ","font": "_your_namespace:manual","color": "white"},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_15"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_previous_page_15"}}},
+				" ",
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_17"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_next_page_17"}}},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_15"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_previous_page_15"}}},
+				" ",
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_17"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_next_page_17"}}}
+			],
 			"width": 400
 		},
 		{
@@ -31,30 +35,12 @@
 				"#$\n\"",
 				{"text": "U$\n\n","hover_event": {"action": "show_item","id": "minecraft:stone","components": {}}},
 				{"text": "2\n0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$胯"},"\n","\"",{"text": "U$"},"U$U$",{"text": "$$胮"},"\n","\"",{"text": "$胯"},"U$U$",{"text": "U$"},"\n","\"",{"text": "U$"},"\n"],{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.stone","color": "gray"}]}},
-				"\n\n\n\n\n\n\n\n\n\n\n\n"
+				"\n\n\n\n\n\n\n\n\n\n\n\n\n"
 			],
 			"width": 150
 		}
 	],
 	"exit_action": {
 		"label": "Done"
-	},
-	"actions": [
-		{
-			"label": "<-",
-			"width": 25,
-			"action": {
-				"type": "minecraft:show_dialog",
-				"dialog": "_your_namespace:manual/page_15"
-			}
-		},
-		{
-			"label": "->",
-			"width": 25,
-			"action": {
-				"type": "minecraft:show_dialog",
-				"dialog": "_your_namespace:manual/page_17"
-			}
-		}
-	]
+	}
 }
