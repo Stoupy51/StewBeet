@@ -17,30 +17,9 @@
 		{
 			"type": "minecraft:plain_message",
 			"contents": [
-				{
-					"text": "",
-					"font": "_your_namespace:manual",
-					"color": "white",
-					"shadow_color": [
-						0,
-						0,
-						0,
-						0
-					]
-				},
+				{"text": "","font": "_your_namespace:manual","color": "white","shadow_color": [0,0,0,0]},
 				"်\n",
-				{
-					"text": "  \n  \n  \n  \n",
-					"hover_event": {
-						"action": "show_item",
-						"id": "command_block",
-						"components": {"item_name": {"translate": "_your_namespace.music_disc","italic": false},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 27
-					}
-				},
+				{"text": "  \n  \n  \n  \n","hover_event": {"action": "show_item","id": "command_block","components": {"item_name": {"translate": "_your_namespace.music_disc","italic": false},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_27"}},
 				"\n\n\n\n\n\n\n\n\n\n\n\n"
 			],
 			"width": 150

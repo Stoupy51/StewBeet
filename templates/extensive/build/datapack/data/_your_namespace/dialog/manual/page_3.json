@@ -17,97 +17,16 @@
 		{
 			"type": "minecraft:plain_message",
 			"contents": [
-				{
-					"text": "",
-					"font": "_your_namespace:manual",
-					"color": "white",
-					"shadow_color": [
-						0,
-						0,
-						0,
-						0
-					]
-				},
-				{
-					"translate": "_your_namespace.category_browser",
-					"font": "minecraft:default",
-					"color": "black",
-					"underlined": true
-				},
+				{"text": "","font": "_your_namespace:manual","color": "white","shadow_color": [0,0,0,0]},
+				{"translate": "_your_namespace.category_browser","font": "minecraft:default","color": "black","underlined": true},
 				"\"အ\n\"",
-				{
-					"text": "$耡",
-					"hover_event": {
-						"action": "show_item",
-						"id": "furnace",
-						"components": {"item_name": {"text": "Material","color": "white"}}
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 4
-					}
-				},
-				{
-					"text": "$耷",
-					"hover_event": {
-						"action": "show_item",
-						"id": "iron_helmet",
-						"components": {"item_name": {"text": "Equipment","color": "white"}}
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 5
-					}
-				},
-				{
-					"text": "$聉",
-					"hover_event": {
-						"action": "show_item",
-						"id": "command_block",
-						"components": {"item_name": {"text": "Misc","color": "white"}}
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 6
-					}
-				},
+				{"text": "$耡","hover_event": {"action": "show_item","id": "furnace","components": {"item_name": {"text": "Material","color": "white"}}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_4"}},
+				{"text": "$耷","hover_event": {"action": "show_item","id": "iron_helmet","components": {"item_name": {"text": "Equipment","color": "white"}}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_5"}},
+				{"text": "$聉","hover_event": {"action": "show_item","id": "command_block","components": {"item_name": {"text": "Misc","color": "white"}}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_6"}},
 				"#\n\"",
-				{
-					"text": "!",
-					"hover_event": {
-						"action": "show_item",
-						"id": "furnace",
-						"components": {"item_name": {"text": "Material","color": "white"}}
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 4
-					}
-				},
-				{
-					"text": "!",
-					"hover_event": {
-						"action": "show_item",
-						"id": "iron_helmet",
-						"components": {"item_name": {"text": "Equipment","color": "white"}}
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 5
-					}
-				},
-				{
-					"text": "!",
-					"hover_event": {
-						"action": "show_item",
-						"id": "command_block",
-						"components": {"item_name": {"text": "Misc","color": "white"}}
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 6
-					}
-				},
+				{"text": "!","hover_event": {"action": "show_item","id": "furnace","components": {"item_name": {"text": "Material","color": "white"}}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_4"}},
+				{"text": "!","hover_event": {"action": "show_item","id": "iron_helmet","components": {"item_name": {"text": "Equipment","color": "white"}}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_5"}},
+				{"text": "!","hover_event": {"action": "show_item","id": "command_block","components": {"item_name": {"text": "Misc","color": "white"}}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_6"}},
 				"#\n",
 				"\n\n\n\n\n\n\n\n\n\n\n\n"
 			],

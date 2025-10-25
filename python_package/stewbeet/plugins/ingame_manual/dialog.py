@@ -8,6 +8,15 @@ from ...core import Mem, set_json_encoder
 from .shared_import import BOOK_FONT, NONE_FONT
 
 
+# Utility Function
+def change_page_to_show_dialog(element: TextComponent, ns: str) -> None:
+	if isinstance(element, dict) and "click_event" in element and element["click_event"]["action"] == "change_page":
+		change_page: int = element["click_event"]["page"]
+		element["click_event"] = {"action": "show_dialog", "dialog": f"{ns}:manual/page_{change_page}"}
+	elif isinstance(element, list):
+		for sub_element in element:
+			change_page_to_show_dialog(sub_element, ns)
+
 # Function
 def generate_dialogs(book_content: list[list[TextComponent]]) -> None:
 	ns: str = Mem.ctx.project_id
@@ -36,7 +45,8 @@ def generate_dialogs(book_content: list[list[TextComponent]]) -> None:
 		if len(page) > 2:
 			page = page[2:]	# Remove first two elements
 
-			# TODO: Show dialog change count
+			# Modify click events to show dialog instead of changing page
+			change_page_to_show_dialog(page, ns)
 
 			# Add to new content
 			new_content.extend(page)
@@ -64,11 +74,11 @@ def generate_dialogs(book_content: list[list[TextComponent]]) -> None:
 				{"label": "->", "width": 25, "action": {"type": "minecraft:show_dialog","dialog": next_dialog_id}},
 			]
 		}
-		Mem.ctx.data[ns].dialogs[dialog_id] = set_json_encoder(Dialog(dialog), max_level=6)
+		Mem.ctx.data[ns].dialogs[dialog_id] = set_json_encoder(Dialog(dialog), max_level=4)
 	pass
 
 	# Generate main dialog to open the manual
 	Mem.ctx.data["minecraft"].dialogs_tags["quick_actions"] = set_json_encoder(
-		DialogTag({"replace": False, "values": dialog_ids}), max_level=6
+		DialogTag({"replace": False, "values": dialog_ids}), max_level=-1
 	)
 

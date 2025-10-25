@@ -17,158 +17,28 @@
 		{
 			"type": "minecraft:plain_message",
 			"contents": [
-				{
-					"text": "",
-					"font": "_your_namespace:manual",
-					"color": "white",
-					"shadow_color": [
-						0,
-						0,
-						0,
-						0
-					]
-				},
+				{"text": "","font": "_your_namespace:manual","color": "white","shadow_color": [0,0,0,0]},
 				"\"$6\n\"",
-				{
-					"text": "$耩$耩$耩",
-					"hover_event": {
-						"action": "show_item",
-						"id": "command_block",
-						"components": {"item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 11
-					}
-				},
+				{"text": "$耩$耩$耩","hover_event": {"action": "show_item","id": "command_block","components": {"item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_11"}},
 				"  \n\"",
-				{
-					"translate": "_your_namespace.uuu",
-					"hover_event": {
-						"action": "show_item",
-						"id": "command_block",
-						"components": {"item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 11
-					}
-				},
+				{"translate": "_your_namespace.uuu","hover_event": {"action": "show_item","id": "command_block","components": {"item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_11"}},
 				"  \n\"",
-				{
-					"text": "$耩$耩$耩",
-					"hover_event": {
-						"action": "show_item",
-						"id": "command_block",
-						"components": {"item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 11
-					}
-				},
+				{"text": "$耩$耩$耩","hover_event": {"action": "show_item","id": "command_block","components": {"item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_11"}},
 				"\"\"",
-				{
-					"text": "$$耡",
-					"hover_event": {
-						"action": "show_item",
-						"id": "furnace",
-						"components": {"item_name": {"translate": "_your_namespace.steel_block"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}
-					}
-				},
+				{"text": "$$耡","hover_event": {"action": "show_item","id": "furnace","components": {"item_name": {"translate": "_your_namespace.steel_block"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}}},
 				"#$\n\"",
-				{
-					"translate": "_your_namespace.uuu",
-					"hover_event": {
-						"action": "show_item",
-						"id": "command_block",
-						"components": {"item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 11
-					}
-				},
+				{"translate": "_your_namespace.uuu","hover_event": {"action": "show_item","id": "command_block","components": {"item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_11"}},
 				"\"\"",
-				{
-					"text": "U$",
-					"hover_event": {
-						"action": "show_item",
-						"id": "furnace",
-						"components": {"item_name": {"translate": "_your_namespace.steel_block"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}
-					}
-				},
+				{"text": "U$","hover_event": {"action": "show_item","id": "furnace","components": {"item_name": {"translate": "_your_namespace.steel_block"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}}},
 				"#$\n\"",
-				{
-					"text": "$耩$耩$耩",
-					"hover_event": {
-						"action": "show_item",
-						"id": "command_block",
-						"components": {"item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 11
-					}
-				},
+				{"text": "$耩$耩$耩","hover_event": {"action": "show_item","id": "command_block","components": {"item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_11"}},
 				"  \n\"",
-				{
-					"translate": "_your_namespace.uuu",
-					"hover_event": {
-						"action": "show_item",
-						"id": "command_block",
-						"components": {"item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 11
-					}
-				},
+				{"translate": "_your_namespace.uuu","hover_event": {"action": "show_item","id": "command_block","components": {"item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_11"}},
 				"  \n\n",
-				{
-					"text": "2##",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\"\"",{"text": "$$耡"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x9 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 11
-					}
-				},
-				{
-					"text": "聗\n",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$耡"},"\n","\"",{"text": "U$"},"U$U$",{"text": "$$聕"},"\n\"","U$U$U$",{"text": "U$"},"\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_block","color": "gray"}]
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 11
-					}
-				},
-				{
-					"text": "0##",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\"\"",{"text": "$$耡"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x9 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 11
-					}
-				},
-				{
-					"text": "0##",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$耡"},"\n","\"",{"text": "U$"},"U$U$",{"text": "$$聕"},"\n\"","U$U$U$",{"text": "U$"},"\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_block","color": "gray"}]
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 11
-					}
-				},
+				{"text": "2##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\"\"",{"text": "$$耡"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x9 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_11"}},
+				{"text": "聗\n","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$耡"},"\n","\"",{"text": "U$"},"U$U$",{"text": "$$聕"},"\n\"","U$U$U$",{"text": "U$"},"\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_block","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_11"}},
+				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\"\"",{"text": "$$耡"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x9 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_11"}},
+				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$耡"},"\n","\"",{"text": "U$"},"U$U$",{"text": "$$聕"},"\n\"","U$U$U$",{"text": "U$"},"\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_block","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_11"}},
 				"\n\n\n\n\n\n\n\n\n\n\n\n"
 			],
 			"width": 150

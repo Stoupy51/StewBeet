@@ -17,523 +17,57 @@
 		{
 			"type": "minecraft:plain_message",
 			"contents": [
-				{
-					"text": "",
-					"font": "_your_namespace:manual",
-					"color": "white",
-					"shadow_color": [
-						0,
-						0,
-						0,
-						0
-					]
-				},
+				{"text": "","font": "_your_namespace:manual","color": "white","shadow_color": [0,0,0,0]},
 				"\"$5\n\"",
-				{
-					"text": "$耡",
-					"hover_event": {
-						"action": "show_item",
-						"id": "furnace",
-						"components": {"item_name": {"translate": "_your_namespace.steel_block"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 7
-					}
-				},
+				{"text": "$耡","hover_event": {"action": "show_item","id": "furnace","components": {"item_name": {"translate": "_your_namespace.steel_block"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_7"}},
 				"U$  \n\"",
-				{
-					"text": "U$",
-					"hover_event": {
-						"action": "show_item",
-						"id": "furnace",
-						"components": {"item_name": {"translate": "_your_namespace.steel_block"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 7
-					}
-				},
+				{"text": "U$","hover_event": {"action": "show_item","id": "furnace","components": {"item_name": {"translate": "_your_namespace.steel_block"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_7"}},
 				"U$U$",
-				{
-					"text": "$$聕",
-					"hover_event": {
-						"action": "show_item",
-						"id": "command_block",
-						"components": {"item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}
-					}
-				},
+				{"text": "$$聕","hover_event": {"action": "show_item","id": "command_block","components": {"item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}}},
 				"#$\n\"U$U$U$",
-				{
-					"text": "U$",
-					"hover_event": {
-						"action": "show_item",
-						"id": "command_block",
-						"components": {"item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}
-					}
-				},
+				{"text": "U$","hover_event": {"action": "show_item","id": "command_block","components": {"item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}}},
 				"#$\n\n\n",
-				{
-					"text": "1##",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"translate": "_your_namespace.here_is_an_example_of_a_wiki_component_this_text_component_will_"},{"translate": "_your_namespace.you_can_write_anything_you_want_here","color": "yellow"}]
-					}
-				},
-				{
-					"text": "2##",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$耡"},"\n","\"",{"text": "U$"},"U$U$",{"text": "$$聕"},"\n\"","U$U$U$",{"text": "U$"},"\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_block","color": "gray"}]
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 7
-					}
-				},
-				{
-					"text": "2##",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耫"},{"text": "$耫"},{"text": "$耫"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$耫"},{"text": "$耫"},{"text": "$耫"},"\"\"",{"text": "$$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$耫"},{"text": "$耫"},{"text": "$耫"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x9 ","color": "gray"},{"translate": "_your_namespace.steel_nugget","color": "gray"}]
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 12
-					}
-				},
-				{
-					"text": "2##",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"G\n","\"",{"text": "$耭"},"\n","\"",{"text": "U$"},"\n","\"\"\"\"U$U$",{"text": "$$耩"},"\n","\"\"\"\"U$U$",{"text": "U$"},"\n","\n\n"],{"translate": "_your_namespace.smelting","color": "yellow"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.raw_steel","color": "gray"}]
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 13
-					}
-				},
-				{
-					"text": "2\n",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"G\n","\"",{"text": "$耯"},"\n","\"",{"text": "U$"},"\n","\"\"\"\"U$U$",{"text": "$$耩"},"\n","\"\"\"\"U$U$",{"text": "U$"},"\n","\n\n"],{"translate": "_your_namespace.smelting","color": "yellow"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_dust","color": "gray"}]
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 14
-					}
-				},
-				{
-					"text": "0##",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"translate": "_your_namespace.here_is_an_example_of_a_wiki_component_this_text_component_will_"},{"translate": "_your_namespace.you_can_write_anything_you_want_here","color": "yellow"}]
-					}
-				},
-				{
-					"text": "0##",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$耡"},"\n","\"",{"text": "U$"},"U$U$",{"text": "$$聕"},"\n\"","U$U$U$",{"text": "U$"},"\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_block","color": "gray"}]
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 7
-					}
-				},
-				{
-					"text": "0##",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耫"},{"text": "$耫"},{"text": "$耫"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$耫"},{"text": "$耫"},{"text": "$耫"},"\"\"",{"text": "$$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$耫"},{"text": "$耫"},{"text": "$耫"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x9 ","color": "gray"},{"translate": "_your_namespace.steel_nugget","color": "gray"}]
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 12
-					}
-				},
-				{
-					"text": "0##",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"G\n","\"",{"text": "$耭"},"\n","\"",{"text": "U$"},"\n","\"\"\"\"U$U$",{"text": "$$耩"},"\n","\"\"\"\"U$U$",{"text": "U$"},"\n","\n\n"],{"translate": "_your_namespace.smelting","color": "yellow"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.raw_steel","color": "gray"}]
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 13
-					}
-				},
-				{
-					"text": "0\n",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"G\n","\"",{"text": "$耯"},"\n","\"",{"text": "U$"},"\n","\"\"\"\"U$U$",{"text": "$$耩"},"\n","\"\"\"\"U$U$",{"text": "U$"},"\n","\n\n"],{"translate": "_your_namespace.smelting","color": "yellow"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_dust","color": "gray"}]
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 14
-					}
-				},
-				{
-					"text": "2##",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"G\n","\"",{"text": "$耣"},"\n","\"",{"text": "U$"},"\n","\"\"\"\"U$U$",{"text": "$$耩"},"\n","\"\"\"\"U$U$",{"text": "U$"},"\n","\n\n"],{"translate": "_your_namespace.smelting","color": "yellow"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_ore","color": "gray"}]
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 8
-					}
-				},
-				{
-					"text": "2##",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"G\n","\"",{"text": "$耥"},"\n","\"",{"text": "U$"},"\n","\"\"\"\"U$U$",{"text": "$$耩"},"\n","\"\"\"\"U$U$",{"text": "U$"},"\n","\n\n"],{"translate": "_your_namespace.smelting","color": "yellow"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.deepslate_steel_ore","color": "gray"}]
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 9
-					}
-				},
-				{
-					"text": "肂##",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\"\"",{"text": "$$耡"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x9 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 7
-					}
-				},
-				{
-					"text": "肅##",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$耩"},"U$",{"text": "$耩"},"\"\"",{"text": "$$耷"},"\n","\"",{"text": "U$"},"U$",{"text": "U$"},"\"\"",{"text": "U$"},"\n","\n\n"],{"text": "\n- x5 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]
-					},
-					"priority": 0,
-					"click_event": {
-						"action": "change_page",
-						"page": 18
-					}
-				},
-				{
-					"text": "肈\n",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},"U$",{"text": "$耩"},"\n","\"",{"text": "U$"},"U$",{"text": "U$"},"\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\"\"",{"text": "$$耹"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x8 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]
-					},
-					"priority": 0,
-					"click_event": {
-						"action": "change_page",
-						"page": 19
-					}
-				},
-				{
-					"text": "0##",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"G\n","\"",{"text": "$耣"},"\n","\"",{"text": "U$"},"\n","\"\"\"\"U$U$",{"text": "$$耩"},"\n","\"\"\"\"U$U$",{"text": "U$"},"\n","\n\n"],{"translate": "_your_namespace.smelting","color": "yellow"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_ore","color": "gray"}]
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 8
-					}
-				},
-				{
-					"text": "0##",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"G\n","\"",{"text": "$耥"},"\n","\"",{"text": "U$"},"\n","\"\"\"\"U$U$",{"text": "$$耩"},"\n","\"\"\"\"U$U$",{"text": "U$"},"\n","\n\n"],{"translate": "_your_namespace.smelting","color": "yellow"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.deepslate_steel_ore","color": "gray"}]
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 9
-					}
-				},
-				{
-					"text": "0##",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\"\"",{"text": "$$耡"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x9 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 7
-					}
-				},
-				{
-					"text": "0##",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$耩"},"U$",{"text": "$耩"},"\"\"",{"text": "$$耷"},"\n","\"",{"text": "U$"},"U$",{"text": "U$"},"\"\"",{"text": "U$"},"\n","\n\n"],{"text": "\n- x5 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]
-					},
-					"priority": 0,
-					"click_event": {
-						"action": "change_page",
-						"page": 18
-					}
-				},
-				{
-					"text": "0\n",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},"U$",{"text": "$耩"},"\n","\"",{"text": "U$"},"U$",{"text": "U$"},"\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\"\"",{"text": "$$耹"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x8 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]
-					},
-					"priority": 0,
-					"click_event": {
-						"action": "change_page",
-						"page": 19
-					}
-				},
-				{
-					"text": "肋##",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$耩"},"U$",{"text": "$耩"},"\"\"",{"text": "$$耻"},"\n","\"",{"text": "U$"},"U$",{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$耩"},"U$",{"text": "$耩"},"\n","\"",{"text": "U$"},"U$",{"text": "U$"},"\n"],{"text": "\n- x7 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]
-					},
-					"priority": 0,
-					"click_event": {
-						"action": "change_page",
-						"page": 20
-					}
-				},
-				{
-					"text": "肎##",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},"U$",{"text": "$耩"},"\n","\"",{"text": "U$"},"U$",{"text": "U$"},"\n","\"",{"text": "$耩"},"U$",{"text": "$耩"},"\"\"",{"text": "$$耽"},"\n","\"",{"text": "U$"},"U$",{"text": "U$"},"\"\"",{"text": "U$"},"\n","\n\n"],{"text": "\n- x4 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]
-					},
-					"priority": 0,
-					"click_event": {
-						"action": "change_page",
-						"page": 21
-					}
-				},
-				{
-					"text": "肒##",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"","U$",{"text": "$耩"},"U$","\n","\"","U$",{"text": "U$"},"U$","\n","\"","U$",{"text": "$耩"},"U$","\"\"",{"text": "$$耿"},"\n","\"","U$",{"text": "U$"},"U$","\"\"",{"text": "U$"},"\n","\"","U$",{"text": "$肑"},"U$","\n","\"","U$",{"text": "U$"},"U$","\n"],{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.stick","color": "gray"}]
-					},
-					"priority": 0,
-					"click_event": {
-						"action": "change_page",
-						"page": 22
-					}
-				},
-				{
-					"text": "肖##",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"","U$",{"text": "$肑"},"U$","\"\"",{"text": "$$聁"},"\n","\"","U$",{"text": "U$"},"U$","\"\"",{"text": "U$"},"\n","\"","U$",{"text": "$肑"},"U$","\n","\"","U$",{"text": "U$"},"U$","\n"],{"text": "\n- x3 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"},{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.stick","color": "gray"}]
-					},
-					"priority": 0,
-					"click_event": {
-						"action": "change_page",
-						"page": 23
-					}
-				},
-				{
-					"text": "肚\n",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$耩"},{"text": "$肑"},"U$\"\"",{"text": "$$聃"},"\n","\"",{"text": "U$"},{"text": "U$"},"U$\"\"",{"text": "U$"},"\n","\"","U$",{"text": "$肑"},"\n","\"","U$",{"text": "U$"},"\n"],{"text": "\n- x3 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"},{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.stick","color": "gray"}]
-					},
-					"priority": 0,
-					"click_event": {
-						"action": "change_page",
-						"page": 24
-					}
-				},
-				{
-					"text": "0##",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$耩"},"U$",{"text": "$耩"},"\"\"",{"text": "$$耻"},"\n","\"",{"text": "U$"},"U$",{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$耩"},"U$",{"text": "$耩"},"\n","\"",{"text": "U$"},"U$",{"text": "U$"},"\n"],{"text": "\n- x7 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]
-					},
-					"priority": 0,
-					"click_event": {
-						"action": "change_page",
-						"page": 20
-					}
-				},
-				{
-					"text": "0##",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},"U$",{"text": "$耩"},"\n","\"",{"text": "U$"},"U$",{"text": "U$"},"\n","\"",{"text": "$耩"},"U$",{"text": "$耩"},"\"\"",{"text": "$$耽"},"\n","\"",{"text": "U$"},"U$",{"text": "U$"},"\"\"",{"text": "U$"},"\n","\n\n"],{"text": "\n- x4 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]
-					},
-					"priority": 0,
-					"click_event": {
-						"action": "change_page",
-						"page": 21
-					}
-				},
-				{
-					"text": "0##",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"","U$",{"text": "$耩"},"U$","\n","\"","U$",{"text": "U$"},"U$","\n","\"","U$",{"text": "$耩"},"U$","\"\"",{"text": "$$耿"},"\n","\"","U$",{"text": "U$"},"U$","\"\"",{"text": "U$"},"\n","\"","U$",{"text": "$肑"},"U$","\n","\"","U$",{"text": "U$"},"U$","\n"],{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.stick","color": "gray"}]
-					},
-					"priority": 0,
-					"click_event": {
-						"action": "change_page",
-						"page": 22
-					}
-				},
-				{
-					"text": "0##",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"","U$",{"text": "$肑"},"U$","\"\"",{"text": "$$聁"},"\n","\"","U$",{"text": "U$"},"U$","\"\"",{"text": "U$"},"\n","\"","U$",{"text": "$肑"},"U$","\n","\"","U$",{"text": "U$"},"U$","\n"],{"text": "\n- x3 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"},{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.stick","color": "gray"}]
-					},
-					"priority": 0,
-					"click_event": {
-						"action": "change_page",
-						"page": 23
-					}
-				},
-				{
-					"text": "0\n",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$耩"},{"text": "$肑"},"U$\"\"",{"text": "$$聃"},"\n","\"",{"text": "U$"},{"text": "U$"},"U$\"\"",{"text": "U$"},"\n","\"","U$",{"text": "$肑"},"\n","\"","U$",{"text": "U$"},"\n"],{"text": "\n- x3 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"},{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.stick","color": "gray"}]
-					},
-					"priority": 0,
-					"click_event": {
-						"action": "change_page",
-						"page": 24
-					}
-				},
-				{
-					"text": "肞##",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"","U$",{"text": "$耩"},"U$","\n","\"","U$",{"text": "U$"},"U$","\n","\"","U$",{"text": "$肑"},"U$","\"\"",{"text": "$$聅"},"\n","\"","U$",{"text": "U$"},"U$","\"\"",{"text": "U$"},"\n","\"","U$",{"text": "$肑"},"U$","\n","\"","U$",{"text": "U$"},"U$","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"},{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.stick","color": "gray"}]
-					},
-					"priority": 0,
-					"click_event": {
-						"action": "change_page",
-						"page": 25
-					}
-				},
-				{
-					"text": "肢##",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},"\n","\"","U$",{"text": "$肑"},"U$\"\"",{"text": "$$聇"},"\n","\"","U$",{"text": "U$"},"U$\"\"",{"text": "U$"},"\n","\"","U$",{"text": "$肑"},"\n","\"","U$",{"text": "U$"},"\n"],{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"},{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.stick","color": "gray"}]
-					},
-					"priority": 0,
-					"click_event": {
-						"action": "change_page",
-						"page": 26
-					}
-				},
-				{
-					"text": "肥##",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$耩"},"\n","\"",{"text": "U$"},"U$U$",{"text": "$$肣"},"\n\"","U$U$U$",{"text": "U$"},"\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 12
-					}
-				},
-				{
-					"text": "肨##",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"I\n","\n\n","\"",{"text": "$耩"},"\"\"\"\"#U$",{"text": "$$耯"},"\n","\"",{"text": "U$"},"\"\"\"\"#U$",{"text": "U$"},"\n","\n"],{"translate": "_your_namespace.simplenergy_pulverizing","color": "yellow"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 14
-					}
-				},
-				{
-					"text": "肫\n",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$耩"},"\n","\"",{"text": "U$"},"U$U$",{"text": "$$肩"},"\n","\"",{"text": "$耩"},"U$U$",{"text": "U$"},"\n","\"",{"text": "U$"},"\n"],{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 15
-					}
-				},
-				{
-					"text": "0##",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"","U$",{"text": "$耩"},"U$","\n","\"","U$",{"text": "U$"},"U$","\n","\"","U$",{"text": "$肑"},"U$","\"\"",{"text": "$$聅"},"\n","\"","U$",{"text": "U$"},"U$","\"\"",{"text": "U$"},"\n","\"","U$",{"text": "$肑"},"U$","\n","\"","U$",{"text": "U$"},"U$","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"},{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.stick","color": "gray"}]
-					},
-					"priority": 0,
-					"click_event": {
-						"action": "change_page",
-						"page": 25
-					}
-				},
-				{
-					"text": "0##",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},"\n","\"","U$",{"text": "$肑"},"U$\"\"",{"text": "$$聇"},"\n","\"","U$",{"text": "U$"},"U$\"\"",{"text": "U$"},"\n","\"","U$",{"text": "$肑"},"\n","\"","U$",{"text": "U$"},"\n"],{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"},{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.stick","color": "gray"}]
-					},
-					"priority": 0,
-					"click_event": {
-						"action": "change_page",
-						"page": 26
-					}
-				},
-				{
-					"text": "0##",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$耩"},"\n","\"",{"text": "U$"},"U$U$",{"text": "$$肣"},"\n\"","U$U$U$",{"text": "U$"},"\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 12
-					}
-				},
-				{
-					"text": "0##",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"I\n","\n\n","\"",{"text": "$耩"},"\"\"\"\"#U$",{"text": "$$耯"},"\n","\"",{"text": "U$"},"\"\"\"\"#U$",{"text": "U$"},"\n","\n"],{"translate": "_your_namespace.simplenergy_pulverizing","color": "yellow"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 14
-					}
-				},
-				{
-					"text": "0\n",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$耩"},"\n","\"",{"text": "U$"},"U$U$",{"text": "$$肩"},"\n","\"",{"text": "$耩"},"U$U$",{"text": "U$"},"\n","\"",{"text": "U$"},"\n"],{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 15
-					}
-				},
-				{
-					"text": "肯##",
-					"hover_event": {
-						"action": "show_text",
-						"value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$肭"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},"U$",{"text": "$$聏"},"\n\"","U$U$U$",{"text": "U$"},"\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.book","color": "gray"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]
-					},
-					"click_event": {
-						"action": "change_page",
-						"page": 30
-					}
-				},
+				{"text": "1##","hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.here_is_an_example_of_a_wiki_component_this_text_component_will_"},{"translate": "_your_namespace.you_can_write_anything_you_want_here","color": "yellow"}]}},
+				{"text": "2##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$耡"},"\n","\"",{"text": "U$"},"U$U$",{"text": "$$聕"},"\n\"","U$U$U$",{"text": "U$"},"\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_block","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_7"}},
+				{"text": "2##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耫"},{"text": "$耫"},{"text": "$耫"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$耫"},{"text": "$耫"},{"text": "$耫"},"\"\"",{"text": "$$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$耫"},{"text": "$耫"},{"text": "$耫"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x9 ","color": "gray"},{"translate": "_your_namespace.steel_nugget","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_12"}},
+				{"text": "2##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"G\n","\"",{"text": "$耭"},"\n","\"",{"text": "U$"},"\n","\"\"\"\"U$U$",{"text": "$$耩"},"\n","\"\"\"\"U$U$",{"text": "U$"},"\n","\n\n"],{"translate": "_your_namespace.smelting","color": "yellow"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.raw_steel","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_13"}},
+				{"text": "2\n","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"G\n","\"",{"text": "$耯"},"\n","\"",{"text": "U$"},"\n","\"\"\"\"U$U$",{"text": "$$耩"},"\n","\"\"\"\"U$U$",{"text": "U$"},"\n","\n\n"],{"translate": "_your_namespace.smelting","color": "yellow"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_dust","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_14"}},
+				{"text": "0##","hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.here_is_an_example_of_a_wiki_component_this_text_component_will_"},{"translate": "_your_namespace.you_can_write_anything_you_want_here","color": "yellow"}]}},
+				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$耡"},"\n","\"",{"text": "U$"},"U$U$",{"text": "$$聕"},"\n\"","U$U$U$",{"text": "U$"},"\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_block","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_7"}},
+				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耫"},{"text": "$耫"},{"text": "$耫"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$耫"},{"text": "$耫"},{"text": "$耫"},"\"\"",{"text": "$$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$耫"},{"text": "$耫"},{"text": "$耫"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x9 ","color": "gray"},{"translate": "_your_namespace.steel_nugget","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_12"}},
+				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"G\n","\"",{"text": "$耭"},"\n","\"",{"text": "U$"},"\n","\"\"\"\"U$U$",{"text": "$$耩"},"\n","\"\"\"\"U$U$",{"text": "U$"},"\n","\n\n"],{"translate": "_your_namespace.smelting","color": "yellow"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.raw_steel","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_13"}},
+				{"text": "0\n","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"G\n","\"",{"text": "$耯"},"\n","\"",{"text": "U$"},"\n","\"\"\"\"U$U$",{"text": "$$耩"},"\n","\"\"\"\"U$U$",{"text": "U$"},"\n","\n\n"],{"translate": "_your_namespace.smelting","color": "yellow"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_dust","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_14"}},
+				{"text": "2##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"G\n","\"",{"text": "$耣"},"\n","\"",{"text": "U$"},"\n","\"\"\"\"U$U$",{"text": "$$耩"},"\n","\"\"\"\"U$U$",{"text": "U$"},"\n","\n\n"],{"translate": "_your_namespace.smelting","color": "yellow"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_ore","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_8"}},
+				{"text": "2##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"G\n","\"",{"text": "$耥"},"\n","\"",{"text": "U$"},"\n","\"\"\"\"U$U$",{"text": "$$耩"},"\n","\"\"\"\"U$U$",{"text": "U$"},"\n","\n\n"],{"translate": "_your_namespace.smelting","color": "yellow"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.deepslate_steel_ore","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_9"}},
+				{"text": "肂##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\"\"",{"text": "$$耡"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x9 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_7"}},
+				{"text": "肅##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$耩"},"U$",{"text": "$耩"},"\"\"",{"text": "$$耷"},"\n","\"",{"text": "U$"},"U$",{"text": "U$"},"\"\"",{"text": "U$"},"\n","\n\n"],{"text": "\n- x5 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]},"priority": 0,"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_18"}},
+				{"text": "肈\n","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},"U$",{"text": "$耩"},"\n","\"",{"text": "U$"},"U$",{"text": "U$"},"\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\"\"",{"text": "$$耹"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x8 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]},"priority": 0,"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_19"}},
+				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"G\n","\"",{"text": "$耣"},"\n","\"",{"text": "U$"},"\n","\"\"\"\"U$U$",{"text": "$$耩"},"\n","\"\"\"\"U$U$",{"text": "U$"},"\n","\n\n"],{"translate": "_your_namespace.smelting","color": "yellow"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_ore","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_8"}},
+				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"G\n","\"",{"text": "$耥"},"\n","\"",{"text": "U$"},"\n","\"\"\"\"U$U$",{"text": "$$耩"},"\n","\"\"\"\"U$U$",{"text": "U$"},"\n","\n\n"],{"translate": "_your_namespace.smelting","color": "yellow"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.deepslate_steel_ore","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_9"}},
+				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\"\"",{"text": "$$耡"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x9 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_7"}},
+				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$耩"},"U$",{"text": "$耩"},"\"\"",{"text": "$$耷"},"\n","\"",{"text": "U$"},"U$",{"text": "U$"},"\"\"",{"text": "U$"},"\n","\n\n"],{"text": "\n- x5 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]},"priority": 0,"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_18"}},
+				{"text": "0\n","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},"U$",{"text": "$耩"},"\n","\"",{"text": "U$"},"U$",{"text": "U$"},"\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\"\"",{"text": "$$耹"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x8 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]},"priority": 0,"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_19"}},
+				{"text": "肋##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$耩"},"U$",{"text": "$耩"},"\"\"",{"text": "$$耻"},"\n","\"",{"text": "U$"},"U$",{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$耩"},"U$",{"text": "$耩"},"\n","\"",{"text": "U$"},"U$",{"text": "U$"},"\n"],{"text": "\n- x7 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]},"priority": 0,"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_20"}},
+				{"text": "肎##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},"U$",{"text": "$耩"},"\n","\"",{"text": "U$"},"U$",{"text": "U$"},"\n","\"",{"text": "$耩"},"U$",{"text": "$耩"},"\"\"",{"text": "$$耽"},"\n","\"",{"text": "U$"},"U$",{"text": "U$"},"\"\"",{"text": "U$"},"\n","\n\n"],{"text": "\n- x4 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]},"priority": 0,"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_21"}},
+				{"text": "肒##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"","U$",{"text": "$耩"},"U$","\n","\"","U$",{"text": "U$"},"U$","\n","\"","U$",{"text": "$耩"},"U$","\"\"",{"text": "$$耿"},"\n","\"","U$",{"text": "U$"},"U$","\"\"",{"text": "U$"},"\n","\"","U$",{"text": "$肑"},"U$","\n","\"","U$",{"text": "U$"},"U$","\n"],{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.stick","color": "gray"}]},"priority": 0,"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_22"}},
+				{"text": "肖##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"","U$",{"text": "$肑"},"U$","\"\"",{"text": "$$聁"},"\n","\"","U$",{"text": "U$"},"U$","\"\"",{"text": "U$"},"\n","\"","U$",{"text": "$肑"},"U$","\n","\"","U$",{"text": "U$"},"U$","\n"],{"text": "\n- x3 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"},{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.stick","color": "gray"}]},"priority": 0,"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_23"}},
+				{"text": "肚\n","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$耩"},{"text": "$肑"},"U$\"\"",{"text": "$$聃"},"\n","\"",{"text": "U$"},{"text": "U$"},"U$\"\"",{"text": "U$"},"\n","\"","U$",{"text": "$肑"},"\n","\"","U$",{"text": "U$"},"\n"],{"text": "\n- x3 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"},{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.stick","color": "gray"}]},"priority": 0,"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_24"}},
+				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$耩"},"U$",{"text": "$耩"},"\"\"",{"text": "$$耻"},"\n","\"",{"text": "U$"},"U$",{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$耩"},"U$",{"text": "$耩"},"\n","\"",{"text": "U$"},"U$",{"text": "U$"},"\n"],{"text": "\n- x7 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]},"priority": 0,"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_20"}},
+				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},"U$",{"text": "$耩"},"\n","\"",{"text": "U$"},"U$",{"text": "U$"},"\n","\"",{"text": "$耩"},"U$",{"text": "$耩"},"\"\"",{"text": "$$耽"},"\n","\"",{"text": "U$"},"U$",{"text": "U$"},"\"\"",{"text": "U$"},"\n","\n\n"],{"text": "\n- x4 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]},"priority": 0,"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_21"}},
+				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"","U$",{"text": "$耩"},"U$","\n","\"","U$",{"text": "U$"},"U$","\n","\"","U$",{"text": "$耩"},"U$","\"\"",{"text": "$$耿"},"\n","\"","U$",{"text": "U$"},"U$","\"\"",{"text": "U$"},"\n","\"","U$",{"text": "$肑"},"U$","\n","\"","U$",{"text": "U$"},"U$","\n"],{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.stick","color": "gray"}]},"priority": 0,"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_22"}},
+				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"","U$",{"text": "$肑"},"U$","\"\"",{"text": "$$聁"},"\n","\"","U$",{"text": "U$"},"U$","\"\"",{"text": "U$"},"\n","\"","U$",{"text": "$肑"},"U$","\n","\"","U$",{"text": "U$"},"U$","\n"],{"text": "\n- x3 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"},{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.stick","color": "gray"}]},"priority": 0,"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_23"}},
+				{"text": "0\n","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$耩"},{"text": "$肑"},"U$\"\"",{"text": "$$聃"},"\n","\"",{"text": "U$"},{"text": "U$"},"U$\"\"",{"text": "U$"},"\n","\"","U$",{"text": "$肑"},"\n","\"","U$",{"text": "U$"},"\n"],{"text": "\n- x3 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"},{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.stick","color": "gray"}]},"priority": 0,"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_24"}},
+				{"text": "肞##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"","U$",{"text": "$耩"},"U$","\n","\"","U$",{"text": "U$"},"U$","\n","\"","U$",{"text": "$肑"},"U$","\"\"",{"text": "$$聅"},"\n","\"","U$",{"text": "U$"},"U$","\"\"",{"text": "U$"},"\n","\"","U$",{"text": "$肑"},"U$","\n","\"","U$",{"text": "U$"},"U$","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"},{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.stick","color": "gray"}]},"priority": 0,"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_25"}},
+				{"text": "肢##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},"\n","\"","U$",{"text": "$肑"},"U$\"\"",{"text": "$$聇"},"\n","\"","U$",{"text": "U$"},"U$\"\"",{"text": "U$"},"\n","\"","U$",{"text": "$肑"},"\n","\"","U$",{"text": "U$"},"\n"],{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"},{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.stick","color": "gray"}]},"priority": 0,"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_26"}},
+				{"text": "肥##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$耩"},"\n","\"",{"text": "U$"},"U$U$",{"text": "$$肣"},"\n\"","U$U$U$",{"text": "U$"},"\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_12"}},
+				{"text": "肨##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"I\n","\n\n","\"",{"text": "$耩"},"\"\"\"\"#U$",{"text": "$$耯"},"\n","\"",{"text": "U$"},"\"\"\"\"#U$",{"text": "U$"},"\n","\n"],{"translate": "_your_namespace.simplenergy_pulverizing","color": "yellow"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_14"}},
+				{"text": "肫\n","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$耩"},"\n","\"",{"text": "U$"},"U$U$",{"text": "$$肩"},"\n","\"",{"text": "$耩"},"U$U$",{"text": "U$"},"\n","\"",{"text": "U$"},"\n"],{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_15"}},
+				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"","U$",{"text": "$耩"},"U$","\n","\"","U$",{"text": "U$"},"U$","\n","\"","U$",{"text": "$肑"},"U$","\"\"",{"text": "$$聅"},"\n","\"","U$",{"text": "U$"},"U$","\"\"",{"text": "U$"},"\n","\"","U$",{"text": "$肑"},"U$","\n","\"","U$",{"text": "U$"},"U$","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"},{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.stick","color": "gray"}]},"priority": 0,"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_25"}},
+				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耩"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},"\n","\"","U$",{"text": "$肑"},"U$\"\"",{"text": "$$聇"},"\n","\"","U$",{"text": "U$"},"U$\"\"",{"text": "U$"},"\n","\"","U$",{"text": "$肑"},"\n","\"","U$",{"text": "U$"},"\n"],{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"},{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.stick","color": "gray"}]},"priority": 0,"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_26"}},
+				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$耩"},"\n","\"",{"text": "U$"},"U$U$",{"text": "$$肣"},"\n\"","U$U$U$",{"text": "U$"},"\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_12"}},
+				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"I\n","\n\n","\"",{"text": "$耩"},"\"\"\"\"#U$",{"text": "$$耯"},"\n","\"",{"text": "U$"},"\"\"\"\"#U$",{"text": "U$"},"\n","\n"],{"translate": "_your_namespace.simplenergy_pulverizing","color": "yellow"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_14"}},
+				{"text": "0\n","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$耩"},"\n","\"",{"text": "U$"},"U$U$",{"text": "$$肩"},"\n","\"",{"text": "$耩"},"U$U$",{"text": "U$"},"\n","\"",{"text": "U$"},"\n"],{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_15"}},
+				{"text": "肯##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$肭"},{"text": "$耩"},"\n","\"",{"text": "U$"},{"text": "U$"},"U$",{"text": "$$聏"},"\n\"","U$U$U$",{"text": "U$"},"\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.book","color": "gray"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_30"}},
 				"\n\n\n\n\n\n\n\n\n\n\n\n"
 			],
 			"width": 150
