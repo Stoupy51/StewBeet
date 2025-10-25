@@ -825,7 +825,7 @@ def routine():
 			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/pulverizing.png", "ascent": -3, "height": 58, "chars": [HOVER_PULVERIZING_FONT]})
 			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/mining.png", "ascent": -3, "height": 58, "chars": [HOVER_MINING_FONT]})
 		if SharedMemory.use_dialog > 0:
-			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/book.png", "ascent": 40, "height": 300, "chars": [BOOK_FONT]})
+			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/book.png", "ascent": 25, "height": 300, "chars": [BOOK_FONT]})
 		fonts = {"providers": SharedMemory.font_providers}
 		with super_open(f"{SharedMemory.cache_path}/font/manual.json", "w") as f:
 			f.write(super_json_dump(fonts))
