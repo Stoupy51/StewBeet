@@ -611,7 +611,7 @@ def routine():
 					# Retrieve buttons limit depending on number of lines in the content (more lines = less buttons)
 					buttons_limit: int = 20 if str(content).count("\\n") <= 6 else 15
 					if SharedMemory.use_dialog > 0:
-						buttons_limit = 100	# Higher limit
+						buttons_limit = 42	# Higher limit
 
 					# If too many buttons, remove all the blue ones (blue_craft) except the last one
 					if len(info_buttons) > buttons_limit:
@@ -644,25 +644,26 @@ def routine():
 					content.append("\n")
 
 					last_i = 0
+					buttons_per_line = 5 if not SharedMemory.use_dialog > 0 else 6
 					for i, button in enumerate(info_buttons):
 						last_i = i
 						# Duplicate line and add breakline
-						if i % 5 == 0 and i != 0:
+						if i % buttons_per_line == 0 and i != 0:
 							# Remove VERY_SMALL_NONE_FONT from last button to prevent automatic break line
 							last_content = cast(JsonDict, content[-1])
 							last_content["text"] = last_content["text"].replace(VERY_SMALL_NONE_FONT, "")
 
-							# Re-add last 5 buttons (for good hover_event) but we replace the wiki font by the small font
-							content += ["\n"] + [cast(JsonDict, x).copy() for x in content[-5:]]
-							for j in range(5):
-								selected_content = cast(JsonDict, content[-5 + j])
-								selected_content["text"] = WIKI_NONE_FONT + VERY_SMALL_NONE_FONT * (2 if j != 4 else 0)
+							# Re-add last buttons (for good hover_event) but we replace the wiki font by the small font
+							content += ["\n"] + [cast(JsonDict, x).copy() for x in content[-buttons_per_line:]]
+							for j in range(buttons_per_line):
+								selected_content = cast(JsonDict, content[-buttons_per_line + j])
+								selected_content["text"] = WIKI_NONE_FONT + VERY_SMALL_NONE_FONT * (2 if j != (buttons_per_line - 1) else 0)
 							content.append("\n")
 						content.append(button)
 
 					# Duplicate the last line if not done yet
-					if last_i % 5 != 0 or last_i == 0:
-						last_i = last_i % 5 + 1
+					if last_i % buttons_per_line != 0 or last_i == 0:
+						last_i = last_i % buttons_per_line + 1
 
 						# Remove VERY_SMALL_NONE_FONT from last button to prevent automatic break line
 						last_content = cast(JsonDict, content[-1])
@@ -671,7 +672,7 @@ def routine():
 						content += ["\n"] + [cast(JsonDict, x).copy() for x in content[-last_i:]]
 						for j in range(last_i):
 							selected_content = cast(JsonDict, content[-last_i + j])
-							selected_content["text"] = WIKI_NONE_FONT + VERY_SMALL_NONE_FONT * (2 if j != 4 else 0)
+							selected_content["text"] = WIKI_NONE_FONT + VERY_SMALL_NONE_FONT * (2 if j != (last_i - 1) else 0)
 
 			# Add page to the book
 			book_content.append(content)
