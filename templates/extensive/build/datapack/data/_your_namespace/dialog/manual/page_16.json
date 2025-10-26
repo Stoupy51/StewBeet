@@ -1,5 +1,5 @@
 {
-	"type": "minecraft:multi_action",
+	"type": "minecraft:notice",
 	"title": {
 		"translate": "_your_namespace.stone_stick",
 		"underlined": true
@@ -9,12 +9,12 @@
 			"type": "minecraft:plain_message",
 			"contents": [
 				{"text": "V   ","font": "_your_namespace:manual","color": "white"},
-				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_15"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_previous_page_15"}}},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_15"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"},{"text": " (15)"}]}},
 				" ",
-				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_17"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_next_page_17"}}},
-				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_15"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_previous_page_15"}}},
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_17"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"},{"text": " (17)"}]}},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_15"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"},{"text": " (15)"}]}},
 				" ",
-				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_17"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_next_page_17"}}}
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_17"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"},{"text": " (17)"}]}}
 			],
 			"width": 400
 		},
@@ -39,8 +39,5 @@
 			],
 			"width": 150
 		}
-	],
-	"exit_action": {
-		"label": "Done"
-	}
+	]
 }

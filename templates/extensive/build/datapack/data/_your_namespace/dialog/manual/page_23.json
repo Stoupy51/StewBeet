@@ -1,5 +1,5 @@
 {
-	"type": "minecraft:multi_action",
+	"type": "minecraft:notice",
 	"title": {
 		"translate": "_your_namespace.steel_pickaxe",
 		"underlined": true
@@ -9,12 +9,12 @@
 			"type": "minecraft:plain_message",
 			"contents": [
 				{"text": "V   ","font": "_your_namespace:manual","color": "white"},
-				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_22"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_previous_page_22"}}},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_22"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"},{"text": " (22)"}]}},
 				" ",
-				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_24"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_next_page_24"}}},
-				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_22"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_previous_page_22"}}},
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_24"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"},{"text": " (24)"}]}},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_22"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"},{"text": " (22)"}]}},
 				" ",
-				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_24"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_next_page_24"}}}
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_24"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"},{"text": " (24)"}]}}
 			],
 			"width": 400
 		},
@@ -47,8 +47,5 @@
 			],
 			"width": 150
 		}
-	],
-	"exit_action": {
-		"label": "Done"
-	}
+	]
 }

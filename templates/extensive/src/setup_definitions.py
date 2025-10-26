@@ -29,8 +29,8 @@ def beet_default(ctx: Context):
     core.generate_everything_about_these_materials(ORES_CONFIGS)
 
     Mem.definitions["steel_ingot"][core.WIKI_COMPONENT] = [
-        {"text":"Here is an example of a wiki component, this text component will be displayed as a button in the manual.\n"},
-        {"text":"You can write anything you want here.","color":"yellow"},
+        {"text":"Here is an example of a wiki component,\nthis text component will be displayed as a button in the manual."},
+        {"text":"\nYou can write anything you want here.","color":"yellow"},
     ]
 
     # Generate custom disc records

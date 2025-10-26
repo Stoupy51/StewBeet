@@ -1,5 +1,5 @@
 {
-	"type": "minecraft:multi_action",
+	"type": "minecraft:notice",
 	"title": {
 		"translate": "_your_namespace.manual",
 		"underlined": true
@@ -9,12 +9,12 @@
 			"type": "minecraft:plain_message",
 			"contents": [
 				{"text": "V   ","font": "_your_namespace:manual","color": "white"},
-				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_29"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_previous_page_29"}}},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_29"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"},{"text": " (29)"}]}},
 				" ",
-				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_30"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_next_page_30"}}},
-				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_29"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_previous_page_29"}}},
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_30"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"},{"text": " (30)"}]}},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_29"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"},{"text": " (29)"}]}},
 				" ",
-				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_30"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_next_page_30"}}}
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_30"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"},{"text": " (30)"}]}}
 			],
 			"width": 400
 		},
@@ -41,8 +41,5 @@
 			],
 			"width": 150
 		}
-	],
-	"exit_action": {
-		"label": "Done"
-	}
+	]
 }

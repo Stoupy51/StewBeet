@@ -13,6 +13,8 @@ from stouputils.collections import unique_list
 from stouputils.io import clean_path, relative_path, super_json_dump, super_open
 from stouputils.print import colored_for_loop, debug, error, suggestion, warning
 
+from stewbeet.core.definitions_helper.completion import add_private_custom_data_for_namespace
+
 from ...core.__memory__ import Mem
 from ...core.constants import (
 	CATEGORY,
@@ -879,14 +881,18 @@ def routine():
 			"item_model": f"{Mem.ctx.project_id}:manual",
 			"item_name": manual_name,
 			"enchantment_glint_override": False,
-			"max_stack_size": 1
+			"max_stack_size": 16
 		}
 	}
+	if SharedMemory.use_dialog > 0:
+		del manual_definitions["manual"]["written_book_content"]
+		manual_definitions["manual"]["lore"] = [{"text": f"by {Mem.ctx.project_author}", "color": "gray", "italic": False}]
 	if not Mem.definitions.get("manual"):
 		Mem.definitions["manual"] = manual_definitions["manual"]
 	else:
 		Mem.definitions["manual"] = super_merge_dict(manual_definitions["manual"], Mem.definitions["manual"])
 	add_item_name_and_lore_if_missing(black_list=[item for item in Mem.definitions if item != "manual"])
+	add_private_custom_data_for_namespace(black_list=[item for item in Mem.definitions if item != "manual"])
 
 	# Add the model to the resource pack if it doesn't already exist
 	if not manual_already_exists:

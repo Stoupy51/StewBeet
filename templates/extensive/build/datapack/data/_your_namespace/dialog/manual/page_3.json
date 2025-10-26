@@ -1,7 +1,7 @@
 {
-	"type": "minecraft:multi_action",
+	"type": "minecraft:notice",
 	"title": {
-		"text": "Category browser",
+		"translate": "_your_namespace.category_browser",
 		"underlined": true
 	},
 	"body": [
@@ -9,12 +9,12 @@
 			"type": "minecraft:plain_message",
 			"contents": [
 				{"text": "V   ","font": "_your_namespace:manual","color": "white"},
-				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_2"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_previous_page_2"}}},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_2"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"},{"text": " (2)"}]}},
 				" ",
-				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_4"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_next_page_4"}}},
-				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_2"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_previous_page_2"}}},
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_4"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"},{"text": " (4)"}]}},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_2"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"},{"text": " (2)"}]}},
 				" ",
-				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_4"},"hover_event": {"action": "show_text","value": {"translate": "_your_namespace.go_to_next_page_4"}}}
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_4"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"},{"text": " (4)"}]}}
 			],
 			"width": 400
 		},
@@ -23,20 +23,17 @@
 			"contents": [
 				{"text": "","font": "_your_namespace:manual","color": "white","shadow_color": [0,0,0,0]},
 				"\"အ\n\"",
-				{"text": "$耡","hover_event": {"action": "show_item","id": "furnace","components": {"item_name": {"text": "Material","color": "white"}}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_4"}},
-				{"text": "$耷","hover_event": {"action": "show_item","id": "iron_helmet","components": {"item_name": {"text": "Equipment","color": "white"}}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_5"}},
-				{"text": "$聉","hover_event": {"action": "show_item","id": "command_block","components": {"item_name": {"text": "Misc","color": "white"}}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_6"}},
+				{"text": "$耡","hover_event": {"action": "show_item","id": "furnace","components": {"item_name": {"translate": "_your_namespace.material","color": "white"}}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_4"}},
+				{"text": "$耷","hover_event": {"action": "show_item","id": "iron_helmet","components": {"item_name": {"translate": "_your_namespace.equipment","color": "white"}}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_5"}},
+				{"text": "$聉","hover_event": {"action": "show_item","id": "command_block","components": {"item_name": {"translate": "_your_namespace.misc","color": "white"}}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_6"}},
 				"#\n\"",
-				{"text": "!","hover_event": {"action": "show_item","id": "furnace","components": {"item_name": {"text": "Material","color": "white"}}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_4"}},
-				{"text": "!","hover_event": {"action": "show_item","id": "iron_helmet","components": {"item_name": {"text": "Equipment","color": "white"}}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_5"}},
-				{"text": "!","hover_event": {"action": "show_item","id": "command_block","components": {"item_name": {"text": "Misc","color": "white"}}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_6"}},
+				{"text": "!","hover_event": {"action": "show_item","id": "furnace","components": {"item_name": {"translate": "_your_namespace.material","color": "white"}}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_4"}},
+				{"text": "!","hover_event": {"action": "show_item","id": "iron_helmet","components": {"item_name": {"translate": "_your_namespace.equipment","color": "white"}}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_5"}},
+				{"text": "!","hover_event": {"action": "show_item","id": "command_block","components": {"item_name": {"translate": "_your_namespace.misc","color": "white"}}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_6"}},
 				"#\n",
 				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 			],
 			"width": 150
 		}
-	],
-	"exit_action": {
-		"label": "Done"
-	}
+	]
 }
