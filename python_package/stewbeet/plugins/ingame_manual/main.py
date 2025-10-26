@@ -749,8 +749,9 @@ def routine():
 			line.insert(0, SMALL_NONE_FONT * LEFT_PADDING)
 			content += [*deepcopy(line), *category_padding, "\n"]
 			for i in range(1, len(line)):
-				selected = cast(JsonDict, line[-i])
-				selected["text"] = MEDIUM_NONE_FONT
+				selected = cast(JsonDict | str, line[-i])
+				if isinstance(selected, dict):
+					selected["text"] = MEDIUM_NONE_FONT
 			content += [*line, *category_padding, "\n"]
 
 		# Add the 2 pixels border
