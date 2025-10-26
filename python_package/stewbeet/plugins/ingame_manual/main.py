@@ -869,42 +869,43 @@ def routine():
 		generate_dialogs(book_content)
 
 	# Finally, prepend the manual to the definitions
-	manual_already_exists: bool = "manual" in Mem.definitions
-	manual_definitions: JsonDict = {
-		"manual": {
-			"id": "minecraft:written_book",
-			"written_book_content": {
-				"title": manual_name,
-				"author": Mem.ctx.project_author,
-				"pages": book_content,
-			},
-			"item_model": f"{Mem.ctx.project_id}:manual",
-			"item_name": manual_name,
-			"enchantment_glint_override": False,
-			"max_stack_size": 16
+	if SharedMemory.use_dialog != 2:
+		manual_already_exists: bool = "manual" in Mem.definitions
+		manual_definitions: JsonDict = {
+			"manual": {
+				"id": "minecraft:written_book",
+				"written_book_content": {
+					"title": manual_name,
+					"author": Mem.ctx.project_author,
+					"pages": book_content,
+				},
+				"item_model": f"{Mem.ctx.project_id}:manual",
+				"item_name": manual_name,
+				"enchantment_glint_override": False,
+				"max_stack_size": 16
+			}
 		}
-	}
-	if SharedMemory.use_dialog > 0:
-		del manual_definitions["manual"]["written_book_content"]
-		manual_definitions["manual"]["lore"] = [{"text": f"by {Mem.ctx.project_author}", "color": "gray", "italic": False}]
-	if not Mem.definitions.get("manual"):
-		Mem.definitions["manual"] = manual_definitions["manual"]
-	else:
-		Mem.definitions["manual"] = super_merge_dict(manual_definitions["manual"], Mem.definitions["manual"])
-	add_item_name_and_lore_if_missing(black_list=[item for item in Mem.definitions if item != "manual"])
-	add_private_custom_data_for_namespace(black_list=[item for item in Mem.definitions if item != "manual"])
+		if SharedMemory.use_dialog > 0:
+			del manual_definitions["manual"]["written_book_content"]
+			manual_definitions["manual"]["lore"] = [{"text": f"by {Mem.ctx.project_author}", "color": "gray", "italic": False}]
+		if not Mem.definitions.get("manual"):
+			Mem.definitions["manual"] = manual_definitions["manual"]
+		else:
+			Mem.definitions["manual"] = super_merge_dict(manual_definitions["manual"], Mem.definitions["manual"])
+		add_item_name_and_lore_if_missing(black_list=[item for item in Mem.definitions if item != "manual"])
+		add_private_custom_data_for_namespace(black_list=[item for item in Mem.definitions if item != "manual"])
 
-	# Add the model to the resource pack if it doesn't already exist
-	if not manual_already_exists:
-		textures_folder: str = relative_path(Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", ""))
-		textures: dict[str, str] = {
-			clean_path(str(p)).split("/")[-1]: relative_path(str(p))
-			for p in Path(textures_folder).rglob("*.png")
-		}
-		AutoModel.from_definitions("manual", Mem.definitions["manual"], textures).process()
+		# Add the model to the resource pack if it doesn't already exist
+		if not manual_already_exists:
+			textures_folder: str = relative_path(Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", ""))
+			textures: dict[str, str] = {
+				clean_path(str(p)).split("/")[-1]: relative_path(str(p))
+				for p in Path(textures_folder).rglob("*.png")
+			}
+			AutoModel.from_definitions("manual", Mem.definitions["manual"], textures).process()
 
-	# Repair the recipes for the manual
-	VanillaRecipeHandler().generate_recipes(override=["manual"])
+		# Repair the recipes for the manual
+		VanillaRecipeHandler().generate_recipes(override=["manual"])
 
 	# Remove the heavy workbench from the definitions
 	if OFFICIAL_LIBS["smithed.crafter"]["is_used"]:
