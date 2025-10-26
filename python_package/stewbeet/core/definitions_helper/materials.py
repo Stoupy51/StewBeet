@@ -54,7 +54,60 @@ def generate_everything_about_this_material(
 		material_base = material.split(":")[-1]										# Get the base material name (ex: "adamantium" from "adamantium_fragment")
 	main_ingredient = ingr_repr(material, Mem.ctx.project_id) 						# Get the main ingredient for recipes
 
-	# Placeables (ore, deepslate_ore, block, raw_block)
+
+	## Ingredients (ingot, nugget, raw, and other)
+	for item in [material_base, f"{material_base}_fragment", f"{material_base}_ingot", f"{material_base}_nugget", f"raw_{material_base}", f"{material_base}_dust", f"{material_base}_stick", f"{material_base}_rod"]:
+		if item + ".png" not in textures:
+			continue
+		if item not in Mem.definitions:
+			Mem.definitions[item] = {}
+		item_type = item.replace(f"{material_base}_", "").replace(f"_{material_base}", "")
+		Mem.definitions[item]["id"] = CUSTOM_ITEM_VANILLA		# Custom item
+		Mem.definitions[item][CATEGORY] = "material"			# Category
+		Mem.definitions[item]["custom_data"] = {"smithed":{}}	# Smithed convention
+		Mem.definitions[item]["custom_data"]["smithed"]["dict"] = {item_type: {material_base: True}}
+
+		# Recipes
+		if not ignore_recipes:
+			Mem.definitions[item][RESULT_OF_CRAFTING] = Mem.definitions[item].get(RESULT_OF_CRAFTING, [])
+			Mem.definitions[item][USED_FOR_CRAFTING] = Mem.definitions[item].get(USED_FOR_CRAFTING, [])
+			if item.endswith("ingot") or item.endswith("fragment") or item == material_base:
+				if f"{material_base}_block.png" in textures:
+					Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"crafting_shapeless","result_count":9,"category":"misc","group":material_base,"ingredients":[ingr_repr(f"{material_base}_block", Mem.ctx.project_id)]})
+				if f"{material_base}_nugget.png" in textures:
+					Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"crafting_shaped","result_count":1,"category":"misc","group":material_base,"shape":["XXX","XXX","XXX"],"ingredients":{"X":ingr_repr(f"{material_base}_nugget", Mem.ctx.project_id)}})
+				if f"raw_{material_base}.png" in textures:
+					Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"smelting","result_count":1,"category":"misc","group":material_base,"experience":0.8,"cookingtime":200,"ingredient":ingr_repr(f"raw_{material_base}", Mem.ctx.project_id)})
+					Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"blasting","result_count":1,"category":"misc","group":material_base,"experience":0.8,"cookingtime":100,"ingredient":ingr_repr(f"raw_{material_base}", Mem.ctx.project_id)})
+				if f"{material_base}_dust.png" in textures:
+					Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"smelting","result_count":1,"category":"misc","group":material_base,"experience":0.8,"cookingtime":200,"ingredient":ingr_repr(f"{material_base}_dust", Mem.ctx.project_id)})
+					Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"blasting","result_count":1,"category":"misc","group":material_base,"experience":0.8,"cookingtime":100,"ingredient":ingr_repr(f"{material_base}_dust", Mem.ctx.project_id)})
+				if f"{material_base}_ore.png" in textures:
+					Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"smelting","result_count":1,"category":"misc","group":material_base,"experience":0.8,"cookingtime":200,"ingredient":ingr_repr(f"{material_base}_ore", Mem.ctx.project_id)})
+					Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"blasting","result_count":1,"category":"misc","group":material_base,"experience":0.8,"cookingtime":100,"ingredient":ingr_repr(f"{material_base}_ore", Mem.ctx.project_id)})
+				if f"deepslate_{material_base}_ore.png" in textures:
+					Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"smelting","result_count":1,"category":"misc","group":material_base,"experience":0.8,"cookingtime":200,"ingredient":ingr_repr(f"deepslate_{material_base}_ore", Mem.ctx.project_id)})
+					Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"blasting","result_count":1,"category":"misc","group":material_base,"experience":0.8,"cookingtime":100,"ingredient":ingr_repr(f"deepslate_{material_base}_ore", Mem.ctx.project_id)})
+			if item.endswith("dust"):
+				Mem.definitions[item][USED_FOR_CRAFTING].append({"type":"smelting","result_count":1,"category":"misc","group":material_base,"experience":0.8,"cookingtime":200,"ingredient":ingr_repr(item, Mem.ctx.project_id),"result":main_ingredient})
+				Mem.definitions[item][USED_FOR_CRAFTING].append({"type":"blasting","result_count":1,"category":"misc","group":material_base,"experience":0.8,"cookingtime":100,"ingredient":ingr_repr(item, Mem.ctx.project_id),"result":main_ingredient})
+				Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":PULVERIZING,"result_count":1,"category":"misc","group":material_base,"ingredient":main_ingredient})
+				for pulv_ingr in [f"raw_{material_base}",f"{material_base}_ore",f"deepslate_{material_base}_ore"]:
+					if f"{pulv_ingr}.png" in textures:
+						Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":PULVERIZING,"result_count":2,"category":"misc","group":material_base,"ingredient":ingr_repr(pulv_ingr, Mem.ctx.project_id)})
+			if item.endswith("nugget"):
+				Mem.definitions[item][RESULT_OF_CRAFTING].insert(0, {"type":"crafting_shapeless","result_count":9,"category":"misc","group":material_base,"ingredients":[main_ingredient]})
+				for gear in SLOTS.keys():
+					if f"{material_base}_{gear}.png" in textures:
+						Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"smelting","result_count":1,"category":"equipment","experience":0.8,"cookingtime":200,"ingredient":ingr_repr(f"{material_base}_{gear}", Mem.ctx.project_id)})
+			if item.endswith("stick"):
+				Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"crafting_shaped","result_count":4,"category":"misc","shape":["X","X"],"ingredients":{"X":main_ingredient}})
+			if item.endswith("rod"):
+				Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"crafting_shaped","result_count":1,"category":"misc","shape":["X","X","X"],"ingredients":{"X":main_ingredient}})
+		pass
+
+
+	## Placeables (ore, deepslate_ore, block, raw_block)
 	for block in [f"{material_base}_block", f"{material_base}_ore", f"deepslate_{material_base}_ore", f"raw_{material_base}_block"]:
 		if block + ".png" not in textures:
 			continue
@@ -215,57 +268,6 @@ def generate_everything_about_this_material(
 		if gear == "sword": # Remove the mining_efficiency attribute from swords
 			Mem.definitions[tool]["attribute_modifiers"] = [am for am in Mem.definitions[tool]["attribute_modifiers"] if am["type"] != "mining_efficiency"]
 	pass
-
-	## Ingredients (ingot, nugget, raw, and other)
-	for item in [material_base, f"{material_base}_ingot", f"{material_base}_nugget", f"raw_{material_base}", f"{material_base}_fragment", f"{material_base}_dust", f"{material_base}_stick", f"{material_base}_rod"]:
-		if item + ".png" not in textures:
-			continue
-		if item not in Mem.definitions:
-			Mem.definitions[item] = {}
-		item_type = item.replace(f"{material_base}_", "").replace(f"_{material_base}", "")
-		Mem.definitions[item]["id"] = CUSTOM_ITEM_VANILLA		# Custom item
-		Mem.definitions[item][CATEGORY] = "material"			# Category
-		Mem.definitions[item]["custom_data"] = {"smithed":{}}	# Smithed convention
-		Mem.definitions[item]["custom_data"]["smithed"]["dict"] = {item_type: {material_base: True}}
-
-		# Recipes
-		if not ignore_recipes:
-			Mem.definitions[item][RESULT_OF_CRAFTING] = Mem.definitions[item].get(RESULT_OF_CRAFTING, [])
-			Mem.definitions[item][USED_FOR_CRAFTING] = Mem.definitions[item].get(USED_FOR_CRAFTING, [])
-			if item.endswith("ingot") or item.endswith("fragment") or item == material_base:
-				if f"{material_base}_block.png" in textures:
-					Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"crafting_shapeless","result_count":9,"category":"misc","group":material_base,"ingredients":[ingr_repr(f"{material_base}_block", Mem.ctx.project_id)]})
-				if f"{material_base}_nugget.png" in textures:
-					Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"crafting_shaped","result_count":1,"category":"misc","group":material_base,"shape":["XXX","XXX","XXX"],"ingredients":{"X":ingr_repr(f"{material_base}_nugget", Mem.ctx.project_id)}})
-				if f"raw_{material_base}.png" in textures:
-					Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"smelting","result_count":1,"category":"misc","group":material_base,"experience":0.8,"cookingtime":200,"ingredient":ingr_repr(f"raw_{material_base}", Mem.ctx.project_id)})
-					Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"blasting","result_count":1,"category":"misc","group":material_base,"experience":0.8,"cookingtime":100,"ingredient":ingr_repr(f"raw_{material_base}", Mem.ctx.project_id)})
-				if f"{material_base}_dust.png" in textures:
-					Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"smelting","result_count":1,"category":"misc","group":material_base,"experience":0.8,"cookingtime":200,"ingredient":ingr_repr(f"{material_base}_dust", Mem.ctx.project_id)})
-					Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"blasting","result_count":1,"category":"misc","group":material_base,"experience":0.8,"cookingtime":100,"ingredient":ingr_repr(f"{material_base}_dust", Mem.ctx.project_id)})
-				if f"{material_base}_ore.png" in textures:
-					Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"smelting","result_count":1,"category":"misc","group":material_base,"experience":0.8,"cookingtime":200,"ingredient":ingr_repr(f"{material_base}_ore", Mem.ctx.project_id)})
-					Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"blasting","result_count":1,"category":"misc","group":material_base,"experience":0.8,"cookingtime":100,"ingredient":ingr_repr(f"{material_base}_ore", Mem.ctx.project_id)})
-				if f"deepslate_{material_base}_ore.png" in textures:
-					Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"smelting","result_count":1,"category":"misc","group":material_base,"experience":0.8,"cookingtime":200,"ingredient":ingr_repr(f"deepslate_{material_base}_ore", Mem.ctx.project_id)})
-					Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"blasting","result_count":1,"category":"misc","group":material_base,"experience":0.8,"cookingtime":100,"ingredient":ingr_repr(f"deepslate_{material_base}_ore", Mem.ctx.project_id)})
-			if item.endswith("dust"):
-				Mem.definitions[item][USED_FOR_CRAFTING].append({"type":"smelting","result_count":1,"category":"misc","group":material_base,"experience":0.8,"cookingtime":200,"ingredient":ingr_repr(item, Mem.ctx.project_id),"result":main_ingredient})
-				Mem.definitions[item][USED_FOR_CRAFTING].append({"type":"blasting","result_count":1,"category":"misc","group":material_base,"experience":0.8,"cookingtime":100,"ingredient":ingr_repr(item, Mem.ctx.project_id),"result":main_ingredient})
-				Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":PULVERIZING,"result_count":1,"category":"misc","group":material_base,"ingredient":main_ingredient})
-				for pulv_ingr in [f"raw_{material_base}",f"{material_base}_ore",f"deepslate_{material_base}_ore"]:
-					if f"{pulv_ingr}.png" in textures:
-						Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":PULVERIZING,"result_count":2,"category":"misc","group":material_base,"ingredient":ingr_repr(pulv_ingr, Mem.ctx.project_id)})
-			if item.endswith("nugget"):
-				Mem.definitions[item][RESULT_OF_CRAFTING].insert(0, {"type":"crafting_shapeless","result_count":9,"category":"misc","group":material_base,"ingredients":[main_ingredient]})
-				for gear in SLOTS.keys():
-					if f"{material_base}_{gear}.png" in textures:
-						Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"smelting","result_count":1,"category":"equipment","experience":0.8,"cookingtime":200,"ingredient":ingr_repr(f"{material_base}_{gear}", Mem.ctx.project_id)})
-			if item.endswith("stick"):
-				Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"crafting_shaped","result_count":4,"category":"misc","shape":["X","X"],"ingredients":{"X":main_ingredient}})
-			if item.endswith("rod"):
-				Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"crafting_shaped","result_count":1,"category":"misc","shape":["X","X","X"],"ingredients":{"X":main_ingredient}})
-		pass
 
 
 # Generate everything about these ores
