@@ -84,7 +84,6 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
 
             write_function(f"{Mem.ctx.project_id}:advancements/unlock_recipes", content)
 
-    @simple_cache()
     def vanilla_shapeless_recipe(self, recipe: JsonDict, item: str) -> JsonDict:
         """Generate a vanilla shapeless recipe.
 
@@ -112,7 +111,6 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
         to_return["result"]["count"] = recipe["result_count"]
         return to_return
 
-    @simple_cache()
     def vanilla_shaped_recipe(self, recipe: JsonDict, item: str) -> JsonDict:
         """Generate a vanilla shaped recipe.
 
