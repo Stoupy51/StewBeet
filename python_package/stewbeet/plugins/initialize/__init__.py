@@ -126,13 +126,17 @@ def beet_default(ctx: Context):
 				max_version: tuple[int, ...] = split_version(mc_supports[-1]) if mc_supports[-1] != "infinite" else (2, 0, 0)
 				pack_mcmeta["pack"]["min_format"] = pack.pack_format_registry.get(min_version, int_pack_format)
 				pack_mcmeta["pack"]["max_format"] = pack.pack_format_registry.get(max_version, int_pack_format)
+				if isinstance(pack_mcmeta["pack"]["min_format"], int):
+					max_format: FormatSpecifier = pack_mcmeta["pack"]["max_format"]
+					int_max_format: int = max_format if isinstance(max_format, int) else max_format[0]
+					pack_mcmeta["pack"]["supported_formats"] = [pack_mcmeta["pack"]["min_format"], int_max_format]
 
 		# Set description and id
 		pack_mcmeta["pack"]["description"] = Mem.ctx.project_description
 
-		# Reorder pack keys in ("pack_format","description","min_format","max_format", etc.)
+		# Reorder pack keys
 		ordered_pack: JsonDict = {}
-		for key in ["pack_format", "description", "min_format", "max_format"]:
+		for key in ["pack_format", "description", "supported_formats", "min_format", "max_format"]:
 			if key in pack_mcmeta["pack"]:
 				ordered_pack[key] = pack_mcmeta["pack"][key]
 		ordered_pack.update({k: v for k, v in pack_mcmeta["pack"].items() if k not in ordered_pack})
