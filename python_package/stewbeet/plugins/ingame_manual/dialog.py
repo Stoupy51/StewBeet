@@ -1,11 +1,11 @@
 """
 Handles generation of dialogs based of book content
 """
-from beet import Dialog, DialogTag
+from beet import Advancement, Dialog, DialogTag
 from beet.core.utils import JsonDict, TextComponent
 
-from ...core import Mem, set_json_encoder
-from .shared_import import BOOK_FONT, NONE_FONT
+from ...core import Mem, set_json_encoder, write_function, write_load_file
+from .shared_import import BOOK_FONT, NONE_FONT, SharedMemory
 
 
 # Utility Function
@@ -69,7 +69,7 @@ def generate_dialogs(book_content: list[list[TextComponent]]) -> None:
 
 		# Create dialog
 		dialog: JsonDict = {
-			"type": "minecraft:multi_action",
+			"type": "minecraft:notice",
 			"title": {"text": title, "underlined": True},
 			"body": [
 				{
@@ -78,10 +78,10 @@ def generate_dialogs(book_content: list[list[TextComponent]]) -> None:
 						{"text": BOOK_FONT + NONE_FONT*3, "font": f"{ns}:manual", "color": "white"},
 						*(2 * [
 							{"text": "\n" + NONE_FONT*3, "click_event": {"action": "show_dialog", "dialog": prev_dialog_id},
-								"hover_event": {"action": "show_text", "value": {"text": f"Go to previous page ({prev_index + 1})"}}},
+								"hover_event": {"action": "show_text", "value": [{"text": "Go to previous page"}, {"text": f" ({prev_index + 1})"}]}},
 							NONE_FONT,
 							{"text": NONE_FONT*3, "click_event": {"action": "show_dialog", "dialog": next_dialog_id},
-								"hover_event": {"action": "show_text", "value": {"text": f"Go to next page ({next_index + 1})"}}}
+								"hover_event": {"action": "show_text", "value": [{"text": "Go to next page"}, {"text": f" ({next_index + 1})"}]}}
 						])
 					],
 					"width": 400
@@ -92,13 +92,49 @@ def generate_dialogs(book_content: list[list[TextComponent]]) -> None:
 					"width": 150
 				}
 			],
-			"exit_action": {"label": "Done"},
 		}
 		Mem.ctx.data[ns].dialogs[dialog_id] = set_json_encoder(Dialog(dialog), max_level=4)
 	pass
 
+	# Generate an advancement detecting when the manual is opened
+	if SharedMemory.use_dialog != 2:
+		write_load_file(f"# Opening manual detection\nscoreboard objectives add {ns}.open_manual minecraft.used:minecraft.written_book")
+		Mem.ctx.data[ns].advancements["open_manual"] = set_json_encoder(Advancement({
+			"criteria": {
+				"requirement": {
+					"trigger": "minecraft:tick",
+					"conditions": {
+						"player": [
+							{
+								"condition": "minecraft:entity_scores",
+								"entity": "this",
+								"scores": {f"{ns}.open_manual": {"min": 1}}
+							}
+						]
+					}
+				}
+			},
+			"rewards": {
+				"function": f"{ns}:advancements/open_manual"
+			}
+		}), max_level=-1)
+		write_function(f"{ns}:advancements/open_manual", f"""
+# Revoke advancement and reset score
+advancement revoke @s only {ns}:open_manual
+scoreboard players set @s {ns}.open_manual 0
+
+# Show manual dialog if holding the manual
+execute if items entity @s weapon.* *[custom_data~{{{ns}:{{manual:true}}}}] run dialog show @s {ns}:manual/page_1
+""")
+
 	# Generate main dialog to open the manual
 	Mem.ctx.data["minecraft"].dialogs_tags["quick_actions"] = set_json_encoder(
-		DialogTag({"replace": False, "values": dialog_ids}), max_level=-1
+		DialogTag({"replace": False, "values": [f"{ns}:all_manual"]})
 	)
+	Mem.ctx.data[ns].dialogs["all_manual"] = set_json_encoder(Dialog({
+		"type": "minecraft:dialog_list",
+		"title": {"text": f"{Mem.ctx.project_name} Manual"},
+		"dialogs": dialog_ids,
+		"exit_action": {"label": {"translate": "gui.back"}, "width": 200}
+	}))
 
