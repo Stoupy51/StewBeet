@@ -24,7 +24,7 @@
 				{"text": "","font": "_your_namespace:manual","color": "white","shadow_color": [0,0,0,0]},
 				"ြ\n",
 				{"text": "  \n  \n  \n  \n","hover_event": {"action": "show_item","id": "painting","components": {"item_model": "_your_namespace:stewbeet_painting","item_name": {"translate": "_your_namespace.stewbeet_painting"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]],"custom_data": {"_your_namespace": {"stewbeet_painting": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},"painting/variant": "_your_namespace:stewbeet_painting"}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_29"}},
-				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 			],
 			"width": 150
 		}

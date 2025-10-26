@@ -40,7 +40,7 @@
 				{"text": "U$","hover_event": {"action": "show_item","id": "minecraft:stone","components": {}}},
 				"U$  \n\n",
 				{"text": "2\n0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"","U$",{"text": "$胯"},"U$","\n","\"","U$",{"text": "U$"},"U$","\n","\"","U$",{"text": "$胯"},"U$","\"\"",{"text": "$$耵"},"\n","\"","U$",{"text": "U$"},"U$","\"\"",{"text": "U$"},"\n","\"","U$",{"text": "$胯"},"U$","\n","\"","U$",{"text": "U$"},"U$","\n"],{"text": "\n- x3 ","color": "gray"},{"translate": "_your_namespace.stone","color": "gray"}]}},
-				"\n\n\n\n\n\n\n\n\n\n\n"
+				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 			],
 			"width": 150
 		}

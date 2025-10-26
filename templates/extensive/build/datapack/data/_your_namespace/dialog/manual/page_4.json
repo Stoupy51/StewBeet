@@ -51,7 +51,7 @@
 				"!!!!#\n\"",
 				{"text": "!","hover_event": {"action": "show_item","id": "command_block","components": {"custom_data": {"smithed": {"dict": {"rod": {"stone": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"stone_rod": true}},"item_model": "_your_namespace:stone_rod","item_name": {"translate": "_your_namespace.stone_rod"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_17"}},
 				"!!!!#\n",
-				"\n\n\n\n\n\n\n\n\n\n\n\n\n"
+				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 			],
 			"width": 150
 		}
