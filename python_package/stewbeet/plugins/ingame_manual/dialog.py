@@ -89,7 +89,7 @@ def generate_dialogs(book_content: list[list[TextComponent]]) -> None:
 				{
 					"type": "minecraft:plain_message",
 					"contents": new_content,
-					"width": 150
+					"width": 140
 				}
 			],
 		}
