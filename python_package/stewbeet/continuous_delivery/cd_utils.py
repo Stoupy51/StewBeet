@@ -29,7 +29,7 @@ def get_supported_versions(version: str | list[str] | None = None) -> list[str]:
 		except AssertionError:
 			version = LATEST_MC_VERSION
 	if isinstance(version, list):
-		return version
+		return [x for x in version if x != "infinite"]
 	version = str(version)
 
 	# Some versions are considered the same for compatibility purposes

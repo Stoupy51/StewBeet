@@ -21,6 +21,7 @@ MORE_DATA_PACK_FORMATS: dict[tuple[int, ...], FormatSpecifier] = {
 	(1, 21, 8): 81,
 	(1, 21, 9): (88, 0),
 	(1, 21, 10): (88, 0),
+	(2, 0, 0): (1000, 0),
 }
 MORE_ASSETS_PACK_FORMATS: dict[tuple[int, ...], FormatSpecifier] = {
 	(1, 21): 34,
@@ -35,6 +36,7 @@ MORE_ASSETS_PACK_FORMATS: dict[tuple[int, ...], FormatSpecifier] = {
 	(1, 21, 8): 64,
 	(1, 21, 9): (69, 0),
 	(1, 21, 10): (69, 0),
+	(2, 0, 0): (1000, 0),
 }
 MORE_DATA_VERSIONS: dict[tuple[int, ...], int] = {
 	(1, 21): 3953,
