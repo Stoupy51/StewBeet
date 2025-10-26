@@ -146,8 +146,8 @@ def routine():
 
 	# Constants
 	FONT = Mem.ctx.project_id + ':' + FONT_FILE
-	MAX_ITEMS_PER_ROW: int = manual_config.get("max_items_per_row", 5)
-	MAX_ROWS_PER_PAGE: int = manual_config.get("max_rows_per_page", 5)
+	MAX_ITEMS_PER_ROW: int = min(6, manual_config.get("max_items_per_row", 5))
+	MAX_ROWS_PER_PAGE: int = min(7, manual_config.get("max_rows_per_page", 5))
 	MAX_ITEMS_PER_PAGE = MAX_ITEMS_PER_ROW * MAX_ROWS_PER_PAGE # (for showing up all items in the categories pages)
 
 	# Calculate left padding for categories pages depending on config['max_items_per_row']: higher the value, lower the padding
@@ -316,7 +316,7 @@ def routine():
 				# If remaining items in the line, add them
 				if len(line) > 0:
 					if SharedMemory.use_dialog > 0 and max_items_reached:
-						line.append(MEDIUM_NONE_FONT * max(0, 5 - len(line)))
+						line.append(MEDIUM_NONE_FONT * max(0, MAX_ITEMS_PER_ROW - len(line)))
 					line.insert(0, SMALL_NONE_FONT * LEFT_PADDING)
 					content.extend(deepcopy(line))
 					content.extend(category_padding)

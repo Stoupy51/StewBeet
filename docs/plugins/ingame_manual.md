@@ -82,7 +82,7 @@ meta:
 | `json_dump_path` | string | **Required** | Path for manual debug dump |
 | `name` | string | `""` | Manual title used in book and first page. Defaults to "{name} Manual" |
 | `max_items_per_row` | integer | `5` | Maximum number of items displayed per row in manual (max: 6) |
-| `max_rows_per_page` | integer | `5` | Maximum number of rows displayed per page in manual (max: 6) |
+| `max_rows_per_page` | integer | `5` | Maximum number of rows displayed per page in manual (max: 7) |
 | `first_page_text` | TextComponent | `[{"text":"Modify in beet.yml...","color":"#505050"}]` | Text component used for the manual's first page |
 | `showcase_image` | integer | `3` | Controls generation of showcase images: 0=disabled, 1=manual items only, 2=all project items, 3=both |
 
