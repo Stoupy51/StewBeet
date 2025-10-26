@@ -48,7 +48,6 @@ def ingr_repr(id: str, ns: str|None = None, count: int|None = None) -> JsonDict:
 		to_return["count"] = count
 	return to_return
 
-@simple_cache
 def item_to_id_ingr_repr(ingr: JsonDict) -> JsonDict:
 	""" Replace the "item" key by "id" in an item ingredient representation
 	Args:
@@ -138,7 +137,6 @@ def get_vanilla_item_id_from_ingredient(ingredient: JsonDict, add_namespace: boo
 	return ""
 
 # Used for recipes
-@simple_cache
 def get_item_from_ingredient(ingredient: JsonDict) -> JsonDict:
 	""" Get the item dict from an ingredient dict
 	Args:
