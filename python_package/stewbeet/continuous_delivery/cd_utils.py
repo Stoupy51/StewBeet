@@ -13,7 +13,7 @@ def replace_tilde(path: str) -> str:
 	return path.replace("~", os.path.expanduser("~"))
 
 # Supported versions
-def get_supported_versions(version: str | None = None) -> list[str]:
+def get_supported_versions(version: str | list[str] | None = None) -> list[str]:
 	""" Get the supported versions for a given version of Minecraft
 
 	Args:
@@ -25,9 +25,12 @@ def get_supported_versions(version: str | None = None) -> list[str]:
 	if version is None:
 		try:
 			config: ProjectConfig = get_project_config()
-			version = config.minecraft or LATEST_MC_VERSION
+			version = config.meta.get("mc_supports") or config.minecraft or LATEST_MC_VERSION
 		except AssertionError:
 			version = LATEST_MC_VERSION
+	if isinstance(version, list):
+		return version
+	version = str(version)
 
 	# Some versions are considered the same for compatibility purposes
 	sames: list[list[str]] = [
