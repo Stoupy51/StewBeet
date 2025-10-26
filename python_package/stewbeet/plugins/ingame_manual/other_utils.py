@@ -60,6 +60,16 @@ def convert_shapeless_to_shaped(craft: JsonDict) -> JsonDict:
 			shaped_recipe["shape"] = [big*3, big+other+big, big*3]
 		elif total_items == 5:
 			shaped_recipe["shape"] = [f" {big} ", big+other+big, f" {big} "]
+	elif len(shaped_recipe["ingredients"]) == 3 and total_items == 9:
+
+		# Get the key for the item that is less frequent
+		len_A: int = len([x for x in shapeless_ingredients if str(x) == str(shaped_recipe["ingredients"]["A"])])
+		len_B: int = len([x for x in shapeless_ingredients if str(x) == str(shaped_recipe["ingredients"]["B"])])
+		len_C: int = len([x for x in shapeless_ingredients if str(x) == str(shaped_recipe["ingredients"]["C"])])
+		small: str = "A" if len_A < len_B and len_A < len_C else "B" if len_B < len_C else "C"
+		other_1: str = "B" if small == "A" else "A" if small == "C" else "C"
+		other_2: str = "C" if small == "A" else "C" if small == "B" else "B"
+		shaped_recipe["shape"] = [other_1+other_2+other_1, other_2+small+other_2, other_1+other_2+other_1]
 	else:
 		# Determine the grid size based on total items
 		# Perfect squares: 1, 4, 9 -> use sqrt as col_size
