@@ -8,6 +8,7 @@ from PIL import Image
 from stouputils.print import error, warning
 
 from ...core.__memory__ import Mem
+from ...core.constants import NOT_COMPONENTS
 from ...core.ingredients import ingr_to_id
 from .image_utils import generate_high_res_font
 from .shared_import import NONE_FONT, SharedMemory, get_page_number
@@ -63,7 +64,7 @@ def get_item_component(ingredient: str | JsonDict, only_those_components: list[s
 			ex: {"text":NONE_FONT,"color":"white","hover_event":{"action":"show_item","id":"minecraft:command_block", "components": {...}},"click_event":{"action":"change_page","value":"8"}}
 			ex: {"text":NONE_FONT,"color":"white","hover_event":{"action":"show_item","id":"minecraft:stick"}}
 	"""
-	if only_those_components is None:
+	if only_those_components is None or SharedMemory.use_dialog > 0:
 		only_those_components = []
 
 	# Get the item id
@@ -105,9 +106,13 @@ def get_item_component(ingredient: str | JsonDict, only_those_components: list[s
 			for key in only_those_components:
 				if key in item:
 					components[key] = item[key]
-		else:
+		elif not SharedMemory.use_dialog > 0:
 			for key, value in item.items():
 				if key in SharedMemory.components_to_include:
+					components[key] = value
+		else:
+			for key, value in item.items():
+				if key not in NOT_COMPONENTS:
 					components[key] = value
 		formatted["hover_event"]["components"] = components
 
