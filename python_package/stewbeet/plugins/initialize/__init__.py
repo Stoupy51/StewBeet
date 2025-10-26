@@ -4,7 +4,7 @@
 # Imports
 import os
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from beet import Context, Dialog, DialogTag, FormatSpecifier, Pack
 from beet.core.utils import JsonDict, TextComponent, split_version
@@ -98,7 +98,7 @@ def beet_default(ctx: Context):
 	def setup_pack_mcmeta(pack: Pack[Any], pack_format: FormatSpecifier | None) -> None:
 		# Default to latest if not given
 		if not pack_format:
-			pack_format =  pack.pack_format_registry[(split_version(LATEST_MC_VERSION))]
+			pack_format =  pack.pack_format_registry[(split_version(ctx.minecraft_version or LATEST_MC_VERSION))]
 
 		# Setup pack.mcmeta data
 		existing_mcmeta: JsonDict = pack.mcmeta.data or {}
@@ -116,6 +116,16 @@ def beet_default(ctx: Context):
 		if (pack is ctx.data and (int_pack_format >= 82)) or (pack is ctx.assets and int_pack_format >= 65):
 			pack_mcmeta["pack"]["min_format"] = pack_format
 			pack_mcmeta["pack"]["max_format"] = 1000 if isinstance(pack_format, int) else (1000, 0)
+
+		# Set min and max data versions (if mc_supports given)
+		mc_supports = ctx.meta.get("mc_supports", [])
+		if isinstance(mc_supports, list):
+			mc_supports = cast(list[str], mc_supports)
+			if len(mc_supports) > 0:
+				min_version: tuple[int, ...] = split_version(mc_supports[0])
+				max_version: tuple[int, ...] = split_version(mc_supports[-1]) if mc_supports[-1] != "infinite" else (2, 0, 0)
+				pack_mcmeta["pack"]["min_format"] = pack.pack_format_registry.get(min_version, int_pack_format)
+				pack_mcmeta["pack"]["max_format"] = pack.pack_format_registry.get(max_version, int_pack_format)
 
 		# Set description and id
 		pack_mcmeta["pack"]["description"] = Mem.ctx.project_description
