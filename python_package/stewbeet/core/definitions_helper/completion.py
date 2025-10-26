@@ -78,13 +78,18 @@ def add_item_name_and_lore_if_missing(is_external: bool = False, black_list: lis
 	return
 
 # Add private custom data for namespace
-def add_private_custom_data_for_namespace(is_external: bool = False) -> None:
+def add_private_custom_data_for_namespace(is_external: bool = False, black_list: list[str] | None = None) -> None:
 	""" Add private custom data for namespace to all items in the definitions if they are missing.
 
 	Args:
 		is_external	(bool):				Whether the definitions is the external one or not (meaning the namespace is in the item name).
+		black_list	(list[str]):		The list of items to ignore.
 	"""
+	if black_list is None:
+		black_list = []
 	for item, data in Mem.definitions.items():
+		if item in black_list:
+			continue
 		if not data.get("custom_data"):
 			data["custom_data"] = cast(JsonDict, {})
 		if is_external and ":" in item:

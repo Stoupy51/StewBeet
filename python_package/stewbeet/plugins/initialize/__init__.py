@@ -1,10 +1,12 @@
 
+# pyright: reportUnusedImport=false
+# ruff: noqa: F401
 # Imports
 import os
 from pathlib import Path
 from typing import Any
 
-from beet import Context, FormatSpecifier, Pack
+from beet import Context, Dialog, DialogTag, FormatSpecifier, Pack
 from beet.core.utils import JsonDict, TextComponent, split_version
 from box import Box
 from stouputils import relative_path
@@ -12,8 +14,7 @@ from stouputils.decorators import measure_time
 from stouputils.io import super_json_dump
 from stouputils.print import warning
 
-from ...core import Mem
-from ...core.constants import LATEST_MC_VERSION, MORE_ASSETS_PACK_FORMATS, MORE_DATA_PACK_FORMATS, MORE_DATA_VERSIONS
+from ...core import LATEST_MC_VERSION, MORE_ASSETS_PACK_FORMATS, MORE_DATA_PACK_FORMATS, MORE_DATA_VERSIONS, Mem, set_json_encoder
 from .source_lore_font import find_pack_png, prepare_source_lore_font
 
 
@@ -30,13 +31,10 @@ def beet_default(ctx: Context):
 	Mem.ctx = ctx
 
 	# Preprocess project description
-	project_description: TextComponent = Mem.ctx.meta.get("stewbeet", {}).get("project_description", "")
+	project_description: TextComponent = Mem.ctx.project_description
 	if not project_description or project_description == "auto":
 		# Use project name, version, and author to create a default description
-		if not Mem.ctx.meta.get("stewbeet"):
-			Mem.ctx.meta["stewbeet"] = {}
-		if not Mem.ctx.meta.get("stewbeet", {}).get("project_description"):
-			Mem.ctx.meta["stewbeet"]["project_description"] = f"{ctx.project_name} [{ctx.project_version}] by {ctx.project_author}"
+		object.__setattr__(Mem.ctx, "project_description", f"{ctx.project_name} [{ctx.project_version}] by {ctx.project_author}")
 
 	# Preprocess source lore
 	source_lore: TextComponent = Mem.ctx.meta.get("stewbeet", {}).get("source_lore", "")
@@ -120,7 +118,7 @@ def beet_default(ctx: Context):
 			pack_mcmeta["pack"]["max_format"] = 1000 if isinstance(pack_format, int) else (1000, 0)
 
 		# Set description and id
-		pack_mcmeta["pack"]["description"] = Mem.ctx.meta.get("stewbeet", {}).get("project_description", "")
+		pack_mcmeta["pack"]["description"] = Mem.ctx.project_description
 
 		# Reorder pack keys in ("pack_format","description","min_format","max_format", etc.)
 		ordered_pack: JsonDict = {}
@@ -138,6 +136,25 @@ def beet_default(ctx: Context):
 	# Setup pack.mcmeta for both packs
 	setup_pack_mcmeta(ctx.data, ctx.data.pack_format)
 	setup_pack_mcmeta(ctx.assets, ctx.assets.pack_format)
+
+	# # Setup dialog convention for pause screen additions
+	# Mem.ctx.data["minecraft"].dialogs_tags["pause_screen_additions"] = set_json_encoder(DialogTag({"values":[{"id":"smithed:data_packs","required":False}]}))
+	# Mem.ctx.data["smithed"].dialogs_tags["data_packs"] = set_json_encoder(DialogTag({"values":[]}))
+	# Mem.ctx.data["smithed"].dialogs["data_packs"] = set_json_encoder(Dialog({
+	# 	"type": "minecraft:dialog_list",
+	# 	"external_title": {
+	# 		"translate": "menu.smithed.data_packs",
+	# 		"fallback": "%s...",
+	# 		"with": [{"translate": "selectWorld.dataPacks"}]
+	# 	},
+	# 	"title": {
+	# 		"translate": "menu.smithed.data_packs.title",
+	# 		"fallback": "%s",
+	# 		"with": [{"translate": "selectWorld.dataPacks"}]
+	# 	},
+	# 	"dialogs": "#smithed:data_packs",
+	# 	"exit_action": {"label": {"translate": "gui.back"}, "width": 200}
+	# }))
 
 	# Yield message to indicate successful build
 	yield
