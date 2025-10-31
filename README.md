@@ -98,7 +98,7 @@ Every contribution matters, no matter how small! 🙌
 
 
 ## 📜 What projects use StewBeet?
-To search for projects that use the framework, I search like [this.](https://github.com/search?q=%22%5C%22stewbeet.plugins.%22&type=code)<br>
+To search for projects that use the framework, I search like [this.](https://github.com/search?q=%22-+%5C%22stewbeet.plugins.%22+-path%3A%22docs%22+-path%3A%22templates%22&type=code)<br>
 Here is a list of projects that use it:<br>
 - Actual projects:
   - Your next project here!
