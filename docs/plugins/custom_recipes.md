@@ -6,6 +6,7 @@
 📄 **Source Code**: [`stewbeet/plugins/custom_recipes/smithed.py`](../../python_package/stewbeet/plugins/custom_recipes/smithed.py) 🔗<br>
 📄 **Source Code**: [`stewbeet/plugins/custom_recipes/furnace.py`](../../python_package/stewbeet/plugins/custom_recipes/furnace.py) 🔗<br>
 📄 **Source Code**: [`stewbeet/plugins/custom_recipes/pulverizer.py`](../../python_package/stewbeet/plugins/custom_recipes/pulverizer.py) 🔗<br>
+📄 **Source Code**: [`stewbeet/plugins/custom_recipes/awakened_forge.py`](../../python_package/stewbeet/plugins/custom_recipes/awakened_forge.py) 🔗<br>
 
 ## 🔗 Dependencies
 - **✅ Required**: StewBeet framework initialization
@@ -16,7 +17,7 @@
 ## 📋 Overview
 The `custom_recipes` plugin generates custom recipes for datapacks based on item definitions.<br>
 It supports multiple recipe types including vanilla crafting, smelting, Smithed Crafter recipes,<br>
-and specialized recipes for SimplEnergy's pulverizer and furnaces with components.<br>
+and specialized recipes for SimplEnergy's pulverizer and furnaces with components, as well as Stardust Fragment's awakened forge.<br>
 **(This plugin requires valid item definitions in memory to function properly.)**
 
 ### <u>Some Features Showcase</u>
@@ -94,6 +95,11 @@ pipeline:
 - 💎 **Ore Processing** - Dust and fragment generation
 - 🔧 **Custom Results** - Flexible output configuration
 - 📊 **Yield Control** - Configurable output quantities
+
+### ✨ Awakened Forge Recipes
+- 🌟 **Stardust Fragment Integration** - Automatic awakened forge recipe generation
+- 🔮 **Multi-block Structure Crafting** - High-tier item processing
+- 🎯 **Custom Results** - Flexible output configuration
 
 ### 🎁 Recipe Unlocking System
 - 🏆 **Advancement Triggers** - Automatic recipe discovery
