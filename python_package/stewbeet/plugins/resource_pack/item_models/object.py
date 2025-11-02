@@ -219,8 +219,11 @@ class AutoModel:
 
 		# Get powered states (if any)
 		powered: list[str] = [""]
+		count: int = self.item_name.count("_")
 		for texture_name in self.source_textures:
-			if texture_name.startswith(self.item_name) and texture_name.endswith("_on.png"):
+			texture_count: int = texture_name.count("_")
+			# Only consider textures with similar underscore count to avoid false positives
+			if texture_name.startswith(self.item_name) and texture_name.endswith("_on.png") and abs(texture_count - count) <= 2:
 				powered = ["", "_on"]
 
 		# Debug
@@ -237,6 +240,7 @@ class AutoModel:
 			all_variants: list[str] = [
 				x.replace(".png", "") for x in self.source_textures
 				if os.path.basename(x).startswith(self.item_name)
+				and abs(x.count("_") - self.item_name.count("_")) <= 2  # Allow for up to 2 extra underscores. Preventing "awakened_stardust.png" to match "awakened_stardust_furnace_generator_on.png"
 			]
 			# Filter to only include variants in the same folder
 			variants: list[str] = self.get_same_folder_variants(all_variants)
@@ -310,7 +314,7 @@ class AutoModel:
 					# Get parent
 					parent = "item/generated"
 					data_id: str = self.data["id"]
-					if data_id != CUSTOM_ITEM_VANILLA:
+					if data_id != CUSTOM_ITEM_VANILLA and "elements" not in self.data.get(OVERRIDE_MODEL, {}):
 						parent = data_id.replace(':', ":item/")
 
 					# Get textures

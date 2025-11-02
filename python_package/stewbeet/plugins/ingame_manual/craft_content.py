@@ -3,7 +3,7 @@
 from beet.core.utils import JsonDict, TextComponent
 
 from ...core.__memory__ import Mem
-from ...core.constants import PULVERIZING
+from ...core.constants import AWAKENED_FORGE, PULVERIZING
 from ...core.ingredients import FURNACES_RECIPES_TYPES, ingr_to_id
 from .book_components import get_item_component
 from .other_utils import convert_shapeless_to_shaped, high_res_font_from_craft
@@ -33,6 +33,11 @@ def generate_craft_content(craft: JsonDict, name: str, page_font: str, in_lore: 
 	if SharedMemory.high_resolution:
 		page_font = high_res_font_from_craft(craft)
 	use_dialog: bool = SharedMemory.use_dialog > 0 and not in_lore	# In lore, we don't need to re-align the content
+
+	# Convert AWAKENED_FORGE to shaped crafting
+	if craft_type == AWAKENED_FORGE:
+		craft = convert_shapeless_to_shaped(craft)
+		craft["type"] = AWAKENED_FORGE
 
 	# Show up item title and page font
 	titled = name.replace("_", " ").title() + "\n"
@@ -156,6 +161,123 @@ def generate_craft_content(craft: JsonDict, name: str, page_font: str, in_lore: 
 				if len(shape) < 2:
 					content.append("\n")
 
+	# If the craft is AWAKENED_FORGE type
+	elif craft_type == AWAKENED_FORGE:
+		shape: list[str] = craft["shape"]
+		is_small_craft: bool = len(shape) <= 3 and all(len(x) <= 3 for x in shape)
+		if use_dialog and not is_small_craft:
+			content[-1] = content[-1].replace(page_font, page_font + VERY_SMALL_NONE_FONT*2) # type: ignore
+
+		# Convert each ingredients to its text component
+		formatted_ingredients: dict[str, JsonDict] = {}
+		for k, v in craft["ingredients"].items():
+			formatted_ingredients[k] = get_item_component(v, count=v.get("count", 1))
+
+		# Adjust craft shape for special cases
+		# Special case: if it's 1 line with 3 columns, add empty lines to center it
+		if len(shape) == 1 and len(shape[0]) == 3:
+			shape = ["   ", shape[0], "   "]
+
+		# Special case: if it's 3 lines with 1 column each, center them horizontally
+		elif (len(shape) == 3 and
+			all(len(shape_line) == 1 for shape_line in shape)):
+			shape = [" " + line + " " for line in shape]
+
+		# Add each ingredient to the craft
+		for index, line in enumerate(shape):
+			for i in range(2):	# We need two lines to make a square, otherwise it will be a rectangle
+				content.append(SMALL_NONE_FONT)
+				for k in line:
+					if k == " ":
+						content.append(INVISIBLE_ITEM_WIDTH)
+					else:
+						if i == 0:
+							content.append(formatted_ingredients[k])
+						else:
+							copy = formatted_ingredients[k].copy()
+							copy["text"] = INVISIBLE_ITEM_WIDTH
+							content.append(copy)
+				if use_dialog and index != 1 and (not is_small_craft or i != 1):
+					content.append(INVISIBLE_ITEM_WIDTH * max(0, (3 if is_small_craft else 4) - len(line)))
+					if is_small_craft:
+						content.append(NONE_FONT * 2)
+					else:
+						content.append(NONE_FONT + SMALL_NONE_FONT)
+				content.append("\n")
+		if len(shape) == 1 and len(shape[0]) < 3:
+			content.append("\n")
+			pass
+
+		# Add the result to the craft
+		if is_small_craft:
+			# First layer of the square
+			len_line = len(shape[1]) if len(shape) > 1 else 0
+			offset = 4 - len_line
+			break_line_pos = content.index("\n", content.index("\n") + 1)	# Find the second line break
+			try:
+				break_line_pos = content.index("\n", break_line_pos + 1) # Find the third line break
+			except Exception:
+				content.append(SMALL_NONE_FONT)
+				break_line_pos = len(content)
+			content.insert(break_line_pos, (INVISIBLE_ITEM_WIDTH * (offset - 1) + SMALL_NONE_FONT * 2))
+			content.insert(break_line_pos + 1, result_component)
+			if use_dialog:
+				content.insert(break_line_pos + 2, VERY_SMALL_NONE_FONT + MICRO_NONE_FONT)
+				break_line_pos += 1
+
+			# Second layer of the square
+			try:
+				break_line_pos = content.index("\n", break_line_pos + 3)	# Find the fourth line break
+			except Exception:
+				content.append("\n" + SMALL_NONE_FONT)
+				break_line_pos = len(content)
+			content.insert(break_line_pos, (INVISIBLE_ITEM_WIDTH * (offset - 1) + SMALL_NONE_FONT * 2))
+			copy = result_component.copy()
+			copy["text"] = INVISIBLE_ITEM_WIDTH
+			content.insert(break_line_pos + 1, copy)
+			if use_dialog:
+				content.insert(break_line_pos + 2, VERY_SMALL_NONE_FONT + MICRO_NONE_FONT)
+
+			# Add break lines for the third layer of a 3x3 craft
+			if len(shape) < 3 and len(shape[0]) == 3:
+				content.append("\n\n")
+				if len(shape) < 2:
+					content.append("\n")
+		else:
+			# First layer of the square
+			len_line = len(shape[1]) if len(shape) > 1 else 0
+			offset = 4 - len_line
+			break_line_pos = content.index("\n", content.index("\n") + 1)	# Find the second line break
+			try:
+				break_line_pos = content.index("\n", break_line_pos + 1) # Find the third line break
+			except Exception:
+				content.append(SMALL_NONE_FONT)
+				break_line_pos = len(content)
+			content.insert(break_line_pos, (INVISIBLE_ITEM_WIDTH * (offset - 1)) + MICRO_NONE_FONT)
+			content.insert(break_line_pos + 1, result_component)
+			if use_dialog:
+				content.insert(break_line_pos + 2, VERY_SMALL_NONE_FONT + MICRO_NONE_FONT)
+				break_line_pos += 1
+
+			# Second layer of the square
+			try:
+				break_line_pos = content.index("\n", break_line_pos + 3)	# Find the fourth line break
+			except Exception:
+				content.append("\n" + SMALL_NONE_FONT)
+				break_line_pos = len(content)
+			content.insert(break_line_pos, (INVISIBLE_ITEM_WIDTH * (offset - 1)) + MICRO_NONE_FONT)
+			copy = result_component.copy()
+			copy["text"] = INVISIBLE_ITEM_WIDTH
+			content.insert(break_line_pos + 1, copy)
+			if use_dialog:
+				content.insert(break_line_pos + 2, VERY_SMALL_NONE_FONT + MICRO_NONE_FONT)
+
+			# Add break lines for the third layer of a 3x4 craft
+			if len(shape) < 3 and len(shape[0]) == 4:
+				content.append("\n\n")
+				if len(shape) < 2:
+					content.append("\n")
+		content.insert(3, "\n")
 
 	# If the type is furnace type,
 	elif craft_type in FURNACES_RECIPES_TYPES:
