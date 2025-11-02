@@ -5,6 +5,7 @@ from stouputils.decorators import measure_time
 from stouputils.print import progress
 
 from ...core.__memory__ import Mem
+from .awakened_forge import AwakenedForgeRecipeHandler
 from .furnace import FurnaceRecipeHandler
 from .pulverizer import PulverizerRecipeHandler
 from .smithed import SmithedRecipeHandler
@@ -28,6 +29,7 @@ def beet_default(ctx: Context) -> None:
     # Do all the things
     VanillaRecipeHandler.routine()
     SmithedRecipeHandler.routine()
-    PulverizerRecipeHandler.routine()
     FurnaceRecipeHandler.routine()
+    PulverizerRecipeHandler.routine()
+    AwakenedForgeRecipeHandler.routine()
 

@@ -5,14 +5,14 @@ from beet.core.utils import JsonDict
 from stouputils.decorators import simple_cache
 
 from ...core.__memory__ import Mem
-from ...core.constants import PULVERIZING, RESULT_OF_CRAFTING
+from ...core.constants import AWAKENED_FORGE, PULVERIZING, RESULT_OF_CRAFTING
 from ...core.ingredients import (
 	ALL_RECIPES_TYPES,
 	FURNACES_RECIPES_TYPES,
 	ingr_repr,
 	ingr_to_id,
 )
-from .shared_import import FURNACE_FONT, MINING_FONT, PULVERIZING_FONT, SHAPED_2X2_FONT, SHAPED_3X3_FONT, STONECUTTING_FONT
+from .shared_import import AWAKENED_3X3_FONT, AWAKENED_3X4_FONT, FURNACE_FONT, MINING_FONT, PULVERIZING_FONT, SHAPED_2X2_FONT, SHAPED_3X3_FONT, STONECUTTING_FONT
 
 
 # Convert craft function
@@ -81,8 +81,10 @@ def convert_shapeless_to_shaped(craft: JsonDict) -> JsonDict:
 			col_size = sqrt_items
 		elif total_items <= 4:
 			col_size = 2
-		else:
+		elif total_items <= 9:
 			col_size = 3
+		else:
+			col_size = 4
 
 		# Build the shape preserving the original order
 		shaped_recipe["shape"] = ["".join(ordered_keys[i:i + col_size]) for i in range(0, len(ordered_keys), col_size)]
@@ -107,6 +109,11 @@ def high_res_font_from_craft(craft: JsonDict) -> str:
 		return STONECUTTING_FONT
 	elif craft["type"] == "mining":
 		return MINING_FONT
+	elif craft["type"] == AWAKENED_FORGE:
+		if len(craft["ingredients"]) <= 9:
+			return AWAKENED_3X3_FONT
+		else:
+			return AWAKENED_3X4_FONT
 	else:
 		return ""
 

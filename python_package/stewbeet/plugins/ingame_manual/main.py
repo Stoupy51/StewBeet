@@ -17,6 +17,7 @@ from stewbeet.core.definitions_helper.completion import add_private_custom_data_
 
 from ...core.__memory__ import Mem
 from ...core.constants import (
+	AWAKENED_FORGE,
 	CATEGORY,
 	CUSTOM_BLOCK_VANILLA,
 	OFFICIAL_LIBS,
@@ -27,7 +28,7 @@ from ...core.constants import (
 	WIKI_COMPONENT,
 )
 from ...core.definitions_helper import add_item_name_and_lore_if_missing
-from ...core.ingredients import CRAFTING_RECIPES_TYPES, ingr_repr, ingr_to_id
+from ...core.ingredients import CRAFTING_RECIPES_TYPES, ingr_repr, ingr_to_id, ingr_to_name
 from ...core.utils.io import super_merge_dict, write_load_file
 from ..custom_recipes.vanilla import VanillaRecipeHandler
 from ..initialize.source_lore_font import find_pack_png
@@ -50,12 +51,17 @@ from .other_utils import (
 )
 from .page_font import generate_page_font, generate_wiki_font_for_ingr
 from .shared_import import (
+	AWAKENED_3X3_FONT,
+	AWAKENED_3X4_FONT,
+	AWAKENED_FORGE_STRUCT_FONT,
 	BOOK_FONT,
 	BORDER_COLOR,
 	BORDER_SIZE,
 	FONT_FILE,
 	FURNACE_FONT,
 	HEAVY_WORKBENCH_CATEGORY,
+	HOVER_AWAKENED_3X3_FONT,
+	HOVER_AWAKENED_3X4_FONT,
 	HOVER_EQUIVALENTS,
 	HOVER_FURNACE_FONT,
 	HOVER_MINING_FONT,
@@ -86,6 +92,7 @@ from .shared_import import (
 	get_page_number,
 )
 from .showcase_image import generate_showcase_images
+from .stardust_forge import get_stardust_forge_page
 
 
 # Utility functions
@@ -144,6 +151,10 @@ def routine():
 	os.makedirs(f"{SharedMemory.cache_path}/font/high_res", exist_ok = True)
 	generate_all_iso_renders()
 
+	# Check if there is any awakened forge recipe with 3x3 or 3x4 ingredients
+	has_forge_3x3: bool = any(recipe.get("type") == AWAKENED_FORGE and len(recipe["ingredients"]) <= 9 for data in Mem.definitions.values() for recipe in data.get(RESULT_OF_CRAFTING, []))
+	has_forge_3x4: bool = any(recipe.get("type") == AWAKENED_FORGE and len(recipe["ingredients"]) > 12 for data in Mem.definitions.values() for recipe in data.get(RESULT_OF_CRAFTING, []))
+
 	# Constants
 	FONT = Mem.ctx.project_id + ':' + FONT_FILE
 	MAX_ITEMS_PER_ROW: int = min(6, manual_config.get("max_items_per_row", 5))
@@ -169,6 +180,13 @@ def routine():
 		Mem.ctx.assets[Mem.ctx.project_id].textures["font/stonecutting"] = Texture(source_path=f"{TEMPLATES_PATH}/stonecutting.png")
 		Mem.ctx.assets[Mem.ctx.project_id].textures["font/pulverizing"] = Texture(source_path=f"{TEMPLATES_PATH}/pulverizing.png")
 		Mem.ctx.assets[Mem.ctx.project_id].textures["font/mining"] = Texture(source_path=f"{TEMPLATES_PATH}/mining.png")
+		if has_forge_3x3:
+			Mem.ctx.assets[Mem.ctx.project_id].textures["font/awakened_forge_3x3"] = Texture(source_path=f"{TEMPLATES_PATH}/awakened_forge_3x3.png")
+		if has_forge_3x4:
+			Mem.ctx.assets[Mem.ctx.project_id].textures["font/awakened_forge_3x4"] = Texture(source_path=f"{TEMPLATES_PATH}/awakened_forge_3x4.png")
+		if has_forge_3x3 or has_forge_3x4:
+			Mem.ctx.assets[Mem.ctx.project_id].textures["font/awakened_forge_1"] = Texture(source_path=f"{TEMPLATES_PATH}/awakened_forge_1.png")
+			Mem.ctx.assets[Mem.ctx.project_id].textures["font/awakened_forge_2"] = Texture(source_path=f"{TEMPLATES_PATH}/awakened_forge_2.png")
 	if SharedMemory.use_dialog > 0:
 		Mem.ctx.assets[Mem.ctx.project_id].textures["font/book"] = Texture(source_path=f"{TEMPLATES_PATH}/book.png")
 
@@ -509,7 +527,8 @@ def routine():
 								"stonecutting": "Stonecutting",
 								"smithing_transform": "Smithing Transform",
 								"smithing_trim": "Smithing Trim",
-								PULVERIZING: "SimplEnergy Pulverizing"
+								PULVERIZING: "(SimplEnergy) Pulverizing",
+								AWAKENED_FORGE: "(Stardust Fragment) Awakened Forge",
 							}
 							recipe_title = recipe_type_names.get(craft["type"], craft["type"].replace("_", " ").title())
 							hover_text.append({"text": f"\n{recipe_title}", "color": "yellow"})
@@ -517,15 +536,15 @@ def routine():
 						# Append ingredients
 						if craft["type"] == "mining":
 							# For mining recipes, show what is being mined and what it drops
-							ore_name = ingr_to_id(craft["ingredient"], False).replace("_", " ").title()
-							result_name = ingr_to_id(craft["result"], False).replace("_", " ").title()
+							ore_name = ingr_to_name(craft["ingredient"])
+							result_name = ingr_to_name(craft["result"])
 							hover_text.append({"text": "\n- Mine: ", "color": "gray"})
 							hover_text.append({"text": ore_name, "color": "gray"})
 							result_count = craft.get("result_count", "1")
 							hover_text.append({"text": f"\n- Drops: x{result_count} ", "color": "gray"})
 							hover_text.append({"text": result_name, "color": "gray"})
 						elif craft.get("ingredient"):
-							id = ingr_to_id(craft["ingredient"], False).replace("_", " ").title()
+							id = ingr_to_name(craft["ingredient"])
 							hover_text.append({"text": "\n- x1 ", "color": "gray"})
 							hover_text.append({"text": id, "color": "gray"})
 						elif craft.get("ingredients"):
@@ -533,7 +552,7 @@ def routine():
 							# If it's a shaped crafting
 							if isinstance(craft["ingredients"], dict):
 								for k, v in craft["ingredients"].items():
-									id = ingr_to_id(v, False).replace("_", " ").title()
+									id = ingr_to_name(v)
 									count = sum([line.count(k) for line in craft["shape"]])
 									hover_text.append({"text": f"\n- x{count} ", "color": "gray"})
 									hover_text.append({"text": id, "color": "gray"})
@@ -542,25 +561,25 @@ def routine():
 							elif isinstance(craft["ingredients"], list):
 								ids: dict[str, int] = {}	# {id: count}
 								for ingr in craft["ingredients"]:
-									id = ingr_to_id(ingr, False).replace("_", " ").title()
+									id = ingr_to_name(ingr)
 									if id not in ids:
 										ids[id] = 0
-									ids[id] += 1
+									ids[id] += ingr.get("count", 1)
 								for id, count in ids.items():
 									hover_text.append({"text": f"\n- x{count} ", "color": "gray"})
 									hover_text.append({"text": id, "color": "gray"})
 						else:
 							# Smithing crafts
 							if craft.get("base"):
-								id = ingr_to_id(craft["base"], False).replace("_", " ").title()
+								id = ingr_to_name(craft["base"])
 								hover_text.append({"text": "\n- Base: ", "color": "gray"})
 								hover_text.append({"text": id, "color": "gray"})
 							if craft.get("template"):
-								id = ingr_to_id(craft["template"], False).replace("_", " ").title()
+								id = ingr_to_name(craft["template"])
 								hover_text.append({"text": "\n- Template: ", "color": "gray"})
 								hover_text.append({"text": id, "color": "gray"})
 							if craft.get("addition"):
-								id = ingr_to_id(craft["addition"], False).replace("_", " ").title()
+								id = ingr_to_name(craft["addition"])
 								hover_text.append({"text": "\n- Addition: ", "color": "gray"})
 								hover_text.append({"text": id, "color": "gray"})
 							if craft.get("pattern"):
@@ -791,6 +810,18 @@ def routine():
 		book_content_deepcopy: list[TextComponent] = deepcopy(book_content)	# Deepcopy to avoid sharing same components (such as click_event)
 		book_content = cast(list[list[TextComponent]], list(optimize_element(book_content_deepcopy)))
 
+		## Insert at 2nd page the awakened forge
+		if has_forge_3x3 or has_forge_3x4:
+			book_content.insert(1, get_stardust_forge_page())
+
+			# Increase every change_page click event by 1
+			for page in book_content:
+				for component in page:
+					if isinstance(component, dict):
+						if "click_event" in component and component["click_event"].get("action") == "change_page":
+							current_value: int = int(component["click_event"]["page"])
+							component["click_event"]["page"] = current_value + 1
+
 		## Insert at 2nd page the heavy workbench
 		if "heavy_workbench" in Mem.definitions:
 			heavy_workbench_page = book_content.pop(-1)
@@ -828,6 +859,15 @@ def routine():
 			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/stonecutting.png", "ascent": -3, "height": 58, "chars": [HOVER_STONECUTTING_FONT]})
 			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/pulverizing.png", "ascent": -3, "height": 58, "chars": [HOVER_PULVERIZING_FONT]})
 			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/mining.png", "ascent": -3, "height": 58, "chars": [HOVER_MINING_FONT]})
+			if has_forge_3x3:
+				SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/awakened_forge_3x3.png", "ascent": 9, "height": 74, "chars": [AWAKENED_3X3_FONT]})
+				SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/awakened_forge_3x3.png", "ascent": 4, "height": 74, "chars": [HOVER_AWAKENED_3X3_FONT]})
+			if has_forge_3x4:
+				SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/awakened_forge_3x4.png", "ascent": 9, "height": 74, "chars": [AWAKENED_3X4_FONT]})
+				SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/awakened_forge_3x4.png", "ascent": 4, "height": 74, "chars": [HOVER_AWAKENED_3X4_FONT]})
+			if has_forge_3x3 or has_forge_3x4:
+				SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/awakened_forge_1.png", "ascent": 8, "height": 56, "chars": [AWAKENED_FORGE_STRUCT_FONT[0]]})
+				SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/awakened_forge_2.png", "ascent": 8, "height": 56, "chars": [AWAKENED_FORGE_STRUCT_FONT[1]]})
 		if SharedMemory.use_dialog > 0:
 			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/book.png", "ascent": 25, "height": 300, "chars": [BOOK_FONT]})
 		fonts = {"providers": SharedMemory.font_providers}

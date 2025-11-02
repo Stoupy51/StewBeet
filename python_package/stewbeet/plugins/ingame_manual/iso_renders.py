@@ -7,7 +7,7 @@ from typing import cast
 import requests
 from beet import Model
 from beet.core.utils import JsonDict
-from model_resolver import Render  # pyright: ignore[reportMissingTypeStubs]
+from model_resolver.render import Render
 from stouputils.io import super_open
 from stouputils.parallel import multithreading
 from stouputils.print import debug, warning
@@ -64,7 +64,7 @@ def generate_all_iso_renders():
 		# 	__special_filter__ = for_model_resolver	# type: ignore
 		# )
 
-		## Model Resolver v1.8.2
+		## Model Resolver >= v1.8.2
 		debug(f"Generating iso renders for {len(for_model_resolver)} items, this may take a while...")
 		render = Render(Mem.ctx)
 		for rp_path, dst_path in for_model_resolver.items():

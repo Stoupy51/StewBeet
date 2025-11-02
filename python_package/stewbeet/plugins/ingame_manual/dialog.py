@@ -37,9 +37,16 @@ def generate_dialogs(book_content: list[list[TextComponent]]) -> None:
 		title: TextComponent = page[1]
 		if isinstance(title, dict):
 			title = str(title.get("text", "")).replace("\n", "")
+			supposed_item: str = title.replace(" ", "_").lower()
+			if Mem.definitions.get(supposed_item, {}).get("item_model") is not None:
+				model = Mem.ctx.assets[ns].models.get(f"item/{supposed_item}")
+				if model is not None:
+					sprite: str = next(iter(model.data["textures"].values()))
+					if Mem.ctx.assets.textures.get(sprite) is not None and supposed_item != "heavy_workbench":
+						title = [{"sprite":sprite,"shadow_color": [0]*4}," ",{"text":title,"underlined": True}," ",{"sprite":sprite}]
 		else:
 			title = str(title).replace("\n", "")
-		if len(title.strip()) < 2:
+		if isinstance(title, str) and len(title.strip()) < 2:
 			title = page[2]
 			if isinstance(title, dict):
 				title = str(title.get("text", "")).replace("\n", "")
@@ -70,7 +77,7 @@ def generate_dialogs(book_content: list[list[TextComponent]]) -> None:
 		# Create dialog
 		dialog: JsonDict = {
 			"type": "minecraft:notice",
-			"title": {"text": title, "underlined": True},
+			"title": {"text": title, "underlined": True} if isinstance(title, str) else title,
 			"body": [
 				{
 					"type": "minecraft:plain_message",
@@ -78,10 +85,10 @@ def generate_dialogs(book_content: list[list[TextComponent]]) -> None:
 						{"text": BOOK_FONT + NONE_FONT*3, "font": f"{ns}:manual", "color": "white"},
 						*(2 * [
 							{"text": "\n" + NONE_FONT*3, "click_event": {"action": "show_dialog", "dialog": prev_dialog_id},
-								"hover_event": {"action": "show_text", "value": [{"text": "Go to previous page"}, {"text": f" ({prev_index + 1})"}]}},
+								"hover_event": {"action": "show_text", "value": [{"text": "Go to previous page"}, f" ({prev_index + 1})"]}},
 							NONE_FONT,
 							{"text": NONE_FONT*3, "click_event": {"action": "show_dialog", "dialog": next_dialog_id},
-								"hover_event": {"action": "show_text", "value": [{"text": "Go to next page"}, {"text": f" ({next_index + 1})"}]}}
+								"hover_event": {"action": "show_text", "value": [{"text": "Go to next page"}, f" ({next_index + 1})"]}}
 						])
 					],
 					"width": 400

@@ -22,6 +22,11 @@ def generate_page_font(name: str, page_font: str, craft: JsonDict|None = None, o
 		craft			(dict|None):	Crafting recipe dictionary (None if no craft)
 		output_name		(str|None):		The output name (None if default, used for wiki crafts)
 	"""
+	# Skip if high resolution and craft is defined
+	if SharedMemory.high_resolution and craft is not None:
+		return
+
+	# Determine output filename
 	if not output_name:
 		output_filename = name
 	else:
@@ -46,7 +51,7 @@ def generate_page_font(name: str, page_font: str, craft: JsonDict|None = None, o
 		else:
 			result_texture = Image.open(image_path)
 
-	# Check if there is a craft
+	# Check if there is a craft and not high resolution
 	if craft:
 
 		# Resize the texture and get the mask
@@ -70,8 +75,7 @@ def generate_page_font(name: str, page_font: str, craft: JsonDict|None = None, o
 			# Get the image template and append the provider
 			shaped_size = max(2, max(len(shape), len(shape[0])))
 			template = Image.open(f"{TEMPLATES_PATH}/shaped_{shaped_size}x{shaped_size}.png")
-			if not SharedMemory.high_resolution:
-				SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/page/{output_filename}.png", "ascent": 0 if not output_name else 6, "height": 60, "chars": [page_font]})
+			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/page/{output_filename}.png", "ascent": 0 if not output_name else 6, "height": 60, "chars": [page_font]})
 
 			# Loop the shape matrix
 			STARTING_PIXEL = (4, 4)
@@ -112,16 +116,14 @@ def generate_page_font(name: str, page_font: str, craft: JsonDict|None = None, o
 				template.paste(count_img, [x + 2 for x in coords], count_img)	# type: ignore
 
 			# Save the image
-			if not SharedMemory.high_resolution:
-				template.save(f"{SharedMemory.cache_path}/font/page/{output_filename}.png")
+			template.save(f"{SharedMemory.cache_path}/font/page/{output_filename}.png")
 
 		# Smelting craft
 		elif craft["type"] in FURNACES_RECIPES_TYPES:
 
 			# Get the image template and append the provider
 			template = Image.open(f"{TEMPLATES_PATH}/furnace.png")
-			if not SharedMemory.high_resolution:
-				SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/page/{output_filename}.png", "ascent": 0 if not output_name else 6, "height": 60, "chars": [page_font]})
+			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/page/{output_filename}.png", "ascent": 0 if not output_name else 6, "height": 60, "chars": [page_font]})
 
 			# Place input item
 			input_item = ingr_to_id(craft["ingredient"])
@@ -144,8 +146,7 @@ def generate_page_font(name: str, page_font: str, craft: JsonDict|None = None, o
 				template.paste(count_img, [x + 2 for x in coords], count_img)	# type: ignore
 
 			# Save the image
-			if not SharedMemory.high_resolution:
-				template.save(f"{SharedMemory.cache_path}/font/page/{output_filename}.png")
+			template.save(f"{SharedMemory.cache_path}/font/page/{output_filename}.png")
 
 	# Else, there is no craft, just put the item in a box
 	else:

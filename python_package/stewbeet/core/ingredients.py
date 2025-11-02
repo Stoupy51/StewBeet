@@ -3,13 +3,13 @@
 from typing import Any, cast
 
 from beet import LootTable
-from beet.core.utils import JsonDict
+from beet.core.utils import JsonDict, TextComponent
 from stouputils.decorators import simple_cache
 from stouputils.io import super_json_dump
 from stouputils.print import error
 
 from .__memory__ import Mem
-from .constants import NOT_COMPONENTS, PULVERIZING
+from .constants import AWAKENED_FORGE, NOT_COMPONENTS, PULVERIZING
 
 # Recipes constants
 FURNACES_RECIPES_TYPES: tuple[str, ...] = ("smelting", "blasting", "smoking", "campfire_cooking")
@@ -22,17 +22,17 @@ UNUSED_RECIPES_TYPES: tuple[str, ...] = (
 	"crafting_special_repairitem", "crafting_special_shielddecoration", "crafting_special_tippedarrow",
 	"crafting_transmute",
 )
-SPECIAL_RECIPES_TYPES: tuple[str, ...] = (PULVERIZING, )
+SPECIAL_RECIPES_TYPES: tuple[str, ...] = (PULVERIZING, AWAKENED_FORGE)
 ALL_RECIPES_TYPES: tuple[str, ...] = (*FURNACES_RECIPES_TYPES, *CRAFTING_RECIPES_TYPES, *OTHER_RECIPES_TYPES, *UNUSED_RECIPES_TYPES, *SPECIAL_RECIPES_TYPES)
 
 # Function mainly used for definitions generation
-@simple_cache
+@simple_cache()
 def ingr_repr(id: str, ns: str|None = None, count: int|None = None) -> JsonDict:
 	""" Get the identity of the ingredient from its id for custom crafts
 	Args:
 		id		(str):		The id of the ingredient, ex: adamantium_fragment
 		ns		(str|None):	The namespace of the ingredient (optional if 'id' argument is a vanilla item), ex: iyc
-		count	(int|None):	The count of the ingredient (optional, used only when this ingredient format is a result item)
+		count	(int|None):	The count of the ingredient (optional, used only when this ingredient format is a result item) (or use a special type of recipe that supports counts)
 	Returns:
 		str: The identity of the ingredient for custom crafts,
 			ex: {"components":{"minecraft:custom_data":{"iyc":{"adamantium_fragment":True}}}}
@@ -67,13 +67,14 @@ def item_to_id_ingr_repr(ingr: JsonDict) -> JsonDict:
 	return r
 
 # Mainly used for manual
-@simple_cache
+@simple_cache()
 def ingr_to_id(ingredient: JsonDict, add_namespace: bool = True) -> str:
 	""" Get the id from an ingredient dict
 	Args:
 		ingredient (dict): The ingredient dict
 			ex: {"components":{"minecraft:custom_data":{iyc:{adamantium_ingot:True}}}}
 			ex: {"item": "minecraft:stick"}
+		add_namespace (bool): Whether to add the namespace to the id
 	Returns:
 		str: The id of the ingredient, ex: "minecraft:stick" or "iyc:adamantium_ingot"
 	"""
@@ -104,8 +105,56 @@ def ingr_to_id(ingredient: JsonDict, add_namespace: bool = True) -> str:
 		return namespace + ":" + id
 	return id
 
+@simple_cache()
+def text_component_to_str(tc: TextComponent) -> str:
+	""" Convert a TextComponent to a string
+	Args:
+		tc (TextComponent): The TextComponent to convert
+	Returns:
+		str: The converted string
+	"""
+	if isinstance(tc, str):
+		return tc
+	elif isinstance(tc, list):
+		result: str = ""
+		for part in tc:
+			result += text_component_to_str(part)
+		return result
+	result: str = ""
+	if tc.get("text"):
+		result += tc["text"]
+	if tc.get("extra"):
+		for extra in tc["extra"]:
+			result += text_component_to_str(extra)
+	return result
+
+@simple_cache()
+def ingr_to_name(ingredient: JsonDict) -> str:
+	""" Get the name from an ingredient dict
+	Args:
+		ingredient (dict): The ingredient dict
+			ex: {"components":{"minecraft:custom_data":{iyc:{adamantium_ingot:True}}}}
+			ex: {"item": "minecraft:stick"}
+	Returns:
+		str: The name of the ingredient, ex: "Stick" or "Adamantium Ingot"
+	"""
+	# Internal definitions
+	id = ingr_to_id(ingredient, add_namespace=False)
+	for component in ("item_name", "custom_name"):
+		if Mem.definitions.get(id, {}).get(component):
+			return text_component_to_str(Mem.definitions[id][component])
+
+	# External definitions
+	external_id = ingr_to_id(ingredient, add_namespace=True)
+	for component in ("item_name", "custom_name"):
+		if Mem.external_definitions.get(external_id, {}).get(component):
+			return text_component_to_str(Mem.external_definitions[external_id][component])
+
+	# Default: prettify the id
+	return id.replace("_", " ").title()
+
 # Mainly used for recipes
-@simple_cache
+@simple_cache()
 def get_vanilla_item_id_from_ingredient(ingredient: JsonDict, add_namespace: bool = True) -> str:
 	""" Get the id of the vanilla item from an ingredient dict
 	Args:
@@ -185,7 +234,7 @@ def get_item_from_ingredient(ingredient: JsonDict) -> JsonDict:
 
 
 # Make a loot table
-@simple_cache
+@simple_cache()
 def loot_table_from_ingredient(result_ingredient: JsonDict, result_count: int | dict) -> str:
 	""" Get the loot table for an ingredient dict
 	Args:
@@ -233,7 +282,7 @@ def loot_table_from_ingredient(result_ingredient: JsonDict, result_count: int | 
 	Mem.ctx.data[loot_table] = LootTable(super_json_dump(file, max_level=9))
 	return loot_table
 
-@simple_cache
+@simple_cache()
 def get_ingredients_from_recipe(recipe: JsonDict) -> list[str]:
 	""" Get the ingredients from a recipe dict
 	Args:
