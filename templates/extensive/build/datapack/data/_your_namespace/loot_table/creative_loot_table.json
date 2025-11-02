@@ -1,5 +1,10 @@
 {
 	"pools": [
+		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/steel_ingot"}]},
+		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/steel_nugget"}]},
+		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/raw_steel"}]},
+		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/steel_dust"}]},
+		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/steel_stick"}]},
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/steel_block"}]},
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/steel_ore"}]},
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/deepslate_steel_ore"}]},
@@ -13,11 +18,6 @@
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/steel_axe"}]},
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/steel_shovel"}]},
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/steel_hoe"}]},
-		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/steel_ingot"}]},
-		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/steel_nugget"}]},
-		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/raw_steel"}]},
-		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/steel_dust"}]},
-		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/steel_stick"}]},
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/stone_stick"}]},
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/stone_rod"}]},
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/shazinho"}]},

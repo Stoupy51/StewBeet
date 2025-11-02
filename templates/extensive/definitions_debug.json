@@ -1,4 +1,50 @@
 {
+	"steel_ingot": {
+		"id": "minecraft:command_block",
+		"category": "material",
+		"custom_data": {"smithed": {"dict": {"ingot": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ingot": true}},
+		"result_of_crafting": [{"type": "crafting_shapeless","result_count": 9,"category": "misc","group": "steel","ingredients": [{"components": {"minecraft:custom_data": {"_your_namespace": {"steel_block": true}}}}]},{"type": "crafting_shaped","result_count": 1,"category": "misc","group": "steel","shape": ["XXX","XXX","XXX"],"ingredients": {"X": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_nugget": true}}}}}},{"type": "smelting","result_count": 1,"category": "misc","group": "steel","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"raw_steel": true}}}}},{"type": "blasting","result_count": 1,"category": "misc","group": "steel","experience": 0.8,"cookingtime": 100,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"raw_steel": true}}}}},{"type": "smelting","result_count": 1,"category": "misc","group": "steel","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_dust": true}}}}},{"type": "blasting","result_count": 1,"category": "misc","group": "steel","experience": 0.8,"cookingtime": 100,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_dust": true}}}}},{"type": "smelting","result_count": 1,"category": "misc","group": "steel","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_ore": true}}}}},{"type": "blasting","result_count": 1,"category": "misc","group": "steel","experience": 0.8,"cookingtime": 100,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_ore": true}}}}},{"type": "smelting","result_count": 1,"category": "misc","group": "steel","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"deepslate_steel_ore": true}}}}},{"type": "blasting","result_count": 1,"category": "misc","group": "steel","experience": 0.8,"cookingtime": 100,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"deepslate_steel_ore": true}}}}}],
+		"wiki_components": [{"text": "Here is an example of a wiki component,\nthis text component will be displayed as a button in the manual."},{"text": "\nYou can write anything you want here.","color": "yellow"}],
+		"item_model": "_your_namespace:steel_ingot",
+		"item_name": {"text": "Steel Ingot"},
+		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
+	},
+	"steel_nugget": {
+		"id": "minecraft:command_block",
+		"category": "material",
+		"custom_data": {"smithed": {"dict": {"nugget": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_nugget": true}},
+		"result_of_crafting": [{"type": "crafting_shapeless","result_count": 9,"category": "misc","group": "steel","ingredients": [{"components": {"minecraft:custom_data": {"_your_namespace": {"steel_ingot": true}}}}]},{"type": "smelting","result_count": 1,"category": "equipment","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_helmet": true}}}}},{"type": "smelting","result_count": 1,"category": "equipment","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_chestplate": true}}}}},{"type": "smelting","result_count": 1,"category": "equipment","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_leggings": true}}}}},{"type": "smelting","result_count": 1,"category": "equipment","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_boots": true}}}}},{"type": "smelting","result_count": 1,"category": "equipment","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_sword": true}}}}},{"type": "smelting","result_count": 1,"category": "equipment","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_pickaxe": true}}}}},{"type": "smelting","result_count": 1,"category": "equipment","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_axe": true}}}}},{"type": "smelting","result_count": 1,"category": "equipment","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_shovel": true}}}}},{"type": "smelting","result_count": 1,"category": "equipment","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_hoe": true}}}}}],
+		"item_model": "_your_namespace:steel_nugget",
+		"item_name": {"text": "Steel Nugget"},
+		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
+	},
+	"raw_steel": {
+		"id": "minecraft:command_block",
+		"category": "material",
+		"custom_data": {"smithed": {"dict": {"raw": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"raw_steel": true}},
+		"item_model": "_your_namespace:raw_steel",
+		"item_name": {"text": "Raw Steel"},
+		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
+	},
+	"steel_dust": {
+		"id": "minecraft:command_block",
+		"category": "material",
+		"custom_data": {"smithed": {"dict": {"dust": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_dust": true}},
+		"result_of_crafting": [{"type": "simplenergy_pulverizing","result_count": 1,"category": "misc","group": "steel","ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_ingot": true}}}}},{"type": "simplenergy_pulverizing","result_count": 2,"category": "misc","group": "steel","ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"raw_steel": true}}}}},{"type": "simplenergy_pulverizing","result_count": 2,"category": "misc","group": "steel","ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_ore": true}}}}},{"type": "simplenergy_pulverizing","result_count": 2,"category": "misc","group": "steel","ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"deepslate_steel_ore": true}}}}}],
+		"used_for_crafting": [{"type": "smelting","result_count": 1,"category": "misc","group": "steel","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_dust": true}}}},"result": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_ingot": true}}}}},{"type": "blasting","result_count": 1,"category": "misc","group": "steel","experience": 0.8,"cookingtime": 100,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_dust": true}}}},"result": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_ingot": true}}}}}],
+		"item_model": "_your_namespace:steel_dust",
+		"item_name": {"text": "Steel Dust"},
+		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
+	},
+	"steel_stick": {
+		"id": "minecraft:command_block",
+		"category": "material",
+		"custom_data": {"smithed": {"dict": {"stick": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_stick": true}},
+		"result_of_crafting": [{"type": "crafting_shaped","result_count": 4,"category": "misc","shape": ["X","X"],"ingredients": {"X": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_ingot": true}}}}}}],
+		"item_model": "_your_namespace:steel_stick",
+		"item_name": {"text": "Steel Stick"},
+		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
+	},
 	"steel_block": {
 		"id": "minecraft:furnace",
 		"category": "material",
@@ -140,52 +186,6 @@
 		"attribute_modifiers": [{"type": "attack_damage","amount": 1,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_damage"},{"type": "attack_speed","amount": -1.0,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_speed"},{"type": "mining_efficiency","amount": 0.2,"operation": "add_value","slot": "mainhand","id": "_your_namespace:mining_efficiency.mainhand"}],
 		"item_model": "_your_namespace:steel_hoe",
 		"item_name": {"text": "Steel Hoe"},
-		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
-	},
-	"steel_ingot": {
-		"id": "minecraft:command_block",
-		"category": "material",
-		"custom_data": {"smithed": {"dict": {"ingot": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ingot": true}},
-		"result_of_crafting": [{"type": "crafting_shapeless","result_count": 9,"category": "misc","group": "steel","ingredients": [{"components": {"minecraft:custom_data": {"_your_namespace": {"steel_block": true}}}}]},{"type": "crafting_shaped","result_count": 1,"category": "misc","group": "steel","shape": ["XXX","XXX","XXX"],"ingredients": {"X": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_nugget": true}}}}}},{"type": "smelting","result_count": 1,"category": "misc","group": "steel","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"raw_steel": true}}}}},{"type": "blasting","result_count": 1,"category": "misc","group": "steel","experience": 0.8,"cookingtime": 100,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"raw_steel": true}}}}},{"type": "smelting","result_count": 1,"category": "misc","group": "steel","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_dust": true}}}}},{"type": "blasting","result_count": 1,"category": "misc","group": "steel","experience": 0.8,"cookingtime": 100,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_dust": true}}}}},{"type": "smelting","result_count": 1,"category": "misc","group": "steel","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_ore": true}}}}},{"type": "blasting","result_count": 1,"category": "misc","group": "steel","experience": 0.8,"cookingtime": 100,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_ore": true}}}}},{"type": "smelting","result_count": 1,"category": "misc","group": "steel","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"deepslate_steel_ore": true}}}}},{"type": "blasting","result_count": 1,"category": "misc","group": "steel","experience": 0.8,"cookingtime": 100,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"deepslate_steel_ore": true}}}}}],
-		"wiki_components": [{"text": "Here is an example of a wiki component,\nthis text component will be displayed as a button in the manual."},{"text": "\nYou can write anything you want here.","color": "yellow"}],
-		"item_model": "_your_namespace:steel_ingot",
-		"item_name": {"text": "Steel Ingot"},
-		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
-	},
-	"steel_nugget": {
-		"id": "minecraft:command_block",
-		"category": "material",
-		"custom_data": {"smithed": {"dict": {"nugget": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_nugget": true}},
-		"result_of_crafting": [{"type": "crafting_shapeless","result_count": 9,"category": "misc","group": "steel","ingredients": [{"components": {"minecraft:custom_data": {"_your_namespace": {"steel_ingot": true}}}}]},{"type": "smelting","result_count": 1,"category": "equipment","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_helmet": true}}}}},{"type": "smelting","result_count": 1,"category": "equipment","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_chestplate": true}}}}},{"type": "smelting","result_count": 1,"category": "equipment","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_leggings": true}}}}},{"type": "smelting","result_count": 1,"category": "equipment","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_boots": true}}}}},{"type": "smelting","result_count": 1,"category": "equipment","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_sword": true}}}}},{"type": "smelting","result_count": 1,"category": "equipment","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_pickaxe": true}}}}},{"type": "smelting","result_count": 1,"category": "equipment","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_axe": true}}}}},{"type": "smelting","result_count": 1,"category": "equipment","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_shovel": true}}}}},{"type": "smelting","result_count": 1,"category": "equipment","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_hoe": true}}}}}],
-		"item_model": "_your_namespace:steel_nugget",
-		"item_name": {"text": "Steel Nugget"},
-		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
-	},
-	"raw_steel": {
-		"id": "minecraft:command_block",
-		"category": "material",
-		"custom_data": {"smithed": {"dict": {"raw": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"raw_steel": true}},
-		"item_model": "_your_namespace:raw_steel",
-		"item_name": {"text": "Raw Steel"},
-		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
-	},
-	"steel_dust": {
-		"id": "minecraft:command_block",
-		"category": "material",
-		"custom_data": {"smithed": {"dict": {"dust": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_dust": true}},
-		"result_of_crafting": [{"type": "simplenergy_pulverizing","result_count": 1,"category": "misc","group": "steel","ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_ingot": true}}}}},{"type": "simplenergy_pulverizing","result_count": 2,"category": "misc","group": "steel","ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"raw_steel": true}}}}},{"type": "simplenergy_pulverizing","result_count": 2,"category": "misc","group": "steel","ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_ore": true}}}}},{"type": "simplenergy_pulverizing","result_count": 2,"category": "misc","group": "steel","ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"deepslate_steel_ore": true}}}}}],
-		"used_for_crafting": [{"type": "smelting","result_count": 1,"category": "misc","group": "steel","experience": 0.8,"cookingtime": 200,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_dust": true}}}},"result": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_ingot": true}}}}},{"type": "blasting","result_count": 1,"category": "misc","group": "steel","experience": 0.8,"cookingtime": 100,"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_dust": true}}}},"result": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_ingot": true}}}}}],
-		"item_model": "_your_namespace:steel_dust",
-		"item_name": {"text": "Steel Dust"},
-		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
-	},
-	"steel_stick": {
-		"id": "minecraft:command_block",
-		"category": "material",
-		"custom_data": {"smithed": {"dict": {"stick": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_stick": true}},
-		"result_of_crafting": [{"type": "crafting_shaped","result_count": 4,"category": "misc","shape": ["X","X"],"ingredients": {"X": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_ingot": true}}}}}}],
-		"item_model": "_your_namespace:steel_stick",
-		"item_name": {"text": "Steel Stick"},
 		"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
 	},
 	"stone_stick": {
