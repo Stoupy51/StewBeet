@@ -1,0 +1,174 @@
+
+# Imports
+import json
+
+from beet import Predicate
+from beet.core.utils import JsonDict
+from stouputils.decorators import simple_cache
+
+from ...core.__memory__ import Mem
+from ...core.constants import AWAKENED_FORGE
+from ...core.ingredients import (
+    get_item_from_ingredient,
+    ingr_repr,
+    ingr_to_id,
+    item_to_id_ingr_repr,
+    loot_table_from_ingredient,
+)
+from ...core.utils.io import set_json_encoder, write_function, write_load_file, write_versioned_function
+
+
+class AwakenedForgeRecipeHandler:
+    """ Handler for awakened forge recipe generation.
+
+    This class handles the generation of awakened forge recipes.
+    """
+    def __init__(self) -> None:
+        """ Initialize the handler. """
+        self.STARDUST_AWAKENED_FORGE_PATH: str = f"{Mem.ctx.project_id}:calls/stardust/awakened_forge_recipes"
+
+    @classmethod
+    def routine(cls) -> None:
+        """ Main routine for awakened forge recipe generation. """
+        handler = cls()
+        handler.generate_recipes()
+
+    @simple_cache()
+    def stardust_awakened_forge_recipe(self, recipe: JsonDict, item: str) -> str:
+        """ Generate a awakened forge recipe.
+
+        Args:
+            recipe (JsonDict): The recipe data.
+            item (str): The item to generate the recipe for.
+
+        Returns:
+            str: The generated recipe command.
+        """
+        # Determine the result
+        result: JsonDict = item_to_id_ingr_repr(get_item_from_ingredient(recipe["result"])) if recipe.get("result") else ingr_repr(item, Mem.ctx.project_id)
+        result_function: str = ingr_to_id(result, add_namespace=True).replace(":", "/")
+
+        # Get ingredients
+        ingredients: list[JsonDict] = recipe["ingredients"]
+        first_ingredient: JsonDict = ingredients[0]
+        assert first_ingredient.get("count", 1) <= 64, f"First ingredient must have count <= 64, for {item} recipe {recipe}"
+        ingredients = ingredients[1:]
+
+        # Prepare the check line
+        line: str = "execute if data entity @s Item" + json.dumps(item_to_id_ingr_repr(first_ingredient))
+        for ingredient in ingredients:
+            count: int = ingredient.get("count", 1)
+            while True:
+                ingredient_copy = ingredient.copy()
+                ingredient_copy["count"] = count if count < 64 else 64
+                line += f" if entity @n[type=item,nbt={{Item:{json.dumps(item_to_id_ingr_repr(ingredient_copy))}}},distance=..1]"
+                count -= 64
+                if count <= 0:
+                    break
+        line += f" run return run function {Mem.ctx.project_id}:calls/stardust/forge_recipes/{result_function}/timer"
+
+        # Write the first result function
+        particle: str = recipe.get("particle", r"minecraft:dust{color:[0,0,1],scale:2}")
+        write_function(f"{Mem.ctx.project_id}:calls/stardust/forge_recipes/{result_function}/timer", f"""
+# Timer
+scoreboard players add @s stardust.forge_timer 4
+scoreboard players remove @s[scores={{stardust.forge_timer=1..}}] stardust.forge_timer 3
+scoreboard players reset @s[scores={{stardust.forge_timer=..0}}] stardust.forge_timer
+execute if score @s stardust.forge_timer matches 1 run playsound stardust:awakened_forge_crafting ambient @a[distance=..25]
+execute if score @s stardust.forge_timer matches 1.. run particle {particle} ~ ~ ~ 5 5 5 0.1 125
+
+# When timer reaches 4, craft the item
+execute if score @s stardust.forge_timer matches 4 run function {Mem.ctx.project_id}:calls/stardust/forge_recipes/{result_function}/craft
+""")
+        # Write the second result function
+        kill_ingredients: str = ""
+        for ingredient in ingredients:
+            count: int = ingredient.get("count", 1)
+            while True:
+                ingredient_copy = ingredient.copy()
+                ingredient_copy["count"] = count if count < 64 else 64
+                kill_ingredients += f"kill @n[type=item,nbt={{Item:{json.dumps(item_to_id_ingr_repr(ingredient_copy))}}},distance=..1]\n"
+                count -= 64
+                if count <= 0:
+                    break
+        write_function(f"{Mem.ctx.project_id}:calls/stardust/forge_recipes/{result_function}/craft", f"""
+# Visual and audio feedback
+advancement grant @a[distance=..25] only stardust:visible/adventure/use_awakened_forge
+playsound block.anvil.use block @a[distance=..25]
+particle smoke ~ ~ ~ 0.4 0.4 0.4 0.2 1000
+
+# Kill ingredients
+kill @s
+{kill_ingredients}
+
+# Spawn result item with Motion [0.0,1.0,0.0]
+tag @e[type=item] add stardust.temp
+execute align xyz run loot spawn ~.5 ~.5 ~.5 loot {loot_table_from_ingredient(result, recipe['result_count'])}
+execute as @e[type=item,tag=!stardust.temp] run data merge entity @s {{Motion:[0.0d,1.0d,0.0d],Glowing:true}}
+tag @e[type=item,tag=stardust.temp] remove stardust.temp
+""")
+
+        # Return check line
+        return line
+
+    def generate_recipes(self) -> None:
+        """ Generate all pulverizer recipes. """
+        for item, data in Mem.definitions.items():
+            crafts: list[JsonDict] = list(data.get("result_of_crafting", []))
+            crafts += list(data.get("used_for_crafting", []))
+
+            for recipe in crafts:
+                if recipe["type"] == AWAKENED_FORGE:
+                    write_function(
+                        self.STARDUST_AWAKENED_FORGE_PATH,
+                        self.stardust_awakened_forge_recipe(recipe, item),
+                        tags=["stardust:calls/awakened_forge_recipes"],
+                    )
+
+        # Second clock function
+        if Mem.ctx.project_id == "stardust" and Mem.ctx.data["stardust"].functions.get("calls/stardust/awakened_forge_recipes"):
+            write_load_file("# Awakened Forge timer\nscoreboard objectives add stardust.forge_timer dummy")
+            write_versioned_function("second", """
+# Awakened Forge recipes
+execute as @e[type=item,predicate=stardust:awakened_forge_input] at @s run function stardust:forge/second
+""")
+            Mem.ctx.data["stardust"].predicates["awakened_forge_input"] = set_json_encoder(Predicate({
+                    "condition": "minecraft:entity_properties",
+                    "entity": "this",
+                    "predicate": {
+                        "nbt": """{Item:{components:{"minecraft:custom_data":{}}}}""",
+                        "stepping_on": {
+                            "block": {
+                                "blocks": "minecraft:glass"
+                            }
+                        }
+                    }
+            }), max_level=-1)
+
+            # Second function, check the structure and call the recipes
+            write_function("stardust:forge/second", """
+# Check for Awakened Forge structure
+execute unless function stardust:forge/verify_structure run return fail
+
+# Call Awakened Forge recipes
+function #stardust:calls/awakened_forge_recipes
+""")
+
+            # Check structure function
+            write_function("stardust:forge/verify_structure", """
+## Verify Awakened Forge multiblock structure
+scoreboard players set #success stardust.data 0
+
+# Structure Orientation
+execute if block ~-2 ~-2 ~-2 #minecraft:diamond_ores if block ~-2 ~-1 ~-2 #minecraft:iron_ores if block ~2 ~-2 ~-2 #minecraft:emerald_ores if block ~2 ~-1 ~-2 #minecraft:coal_ores if block ~2 ~-2 ~2 nether_quartz_ore if block ~2 ~-1 ~2 #minecraft:redstone_ores if block ~-2 ~-2 ~2 #minecraft:gold_ores if block ~-2 ~-1 ~2 #minecraft:lapis_ores run scoreboard players set #success stardust.data 1
+execute if block ~2 ~-2 ~2 #minecraft:diamond_ores if block ~2 ~-1 ~2 #minecraft:iron_ores if block ~-2 ~-2 ~2 #minecraft:emerald_ores if block ~-2 ~-1 ~2 #minecraft:coal_ores if block ~-2 ~-2 ~-2 nether_quartz_ore if block ~-2 ~-1 ~-2 #minecraft:redstone_ores if block ~2 ~-2 ~-2 #minecraft:gold_ores if block ~2 ~-1 ~-2 #minecraft:lapis_ores run scoreboard players set #success stardust.data 1
+execute if block ~2 ~-2 ~-2 #minecraft:diamond_ores if block ~2 ~-1 ~-2 #minecraft:iron_ores if block ~2 ~-2 ~2 #minecraft:emerald_ores if block ~2 ~-1 ~2 #minecraft:coal_ores if block ~-2 ~-2 ~2 nether_quartz_ore if block ~-2 ~-1 ~2 #minecraft:redstone_ores if block ~-2 ~-2 ~-2 #minecraft:gold_ores if block ~-2 ~-1 ~-2 #minecraft:lapis_ores run scoreboard players set #success stardust.data 1
+execute if block ~-2 ~-2 ~2 #minecraft:diamond_ores if block ~-2 ~-1 ~2 #minecraft:iron_ores if block ~-2 ~-2 ~-2 #minecraft:emerald_ores if block ~-2 ~-1 ~-2 #minecraft:coal_ores if block ~2 ~-2 ~-2 nether_quartz_ore if block ~2 ~-1 ~-2 #minecraft:redstone_ores if block ~2 ~-2 ~2 #minecraft:gold_ores if block ~2 ~-1 ~2 #minecraft:lapis_ores run scoreboard players set #success stardust.data 1
+
+# Continuation of the structure
+execute if score #success stardust.data matches 1 if block ~ ~-1 ~ glass if block ~2 ~ ~2 glass if block ~-2 ~ ~-2 glass if block ~-2 ~ ~2 glass if block ~2 ~ ~-2 glass if block ~ ~-2 ~ diamond_block if block ~1 ~-1 ~1 dragon_egg if block ~-1 ~-1 ~-1 dragon_egg if block ~-1 ~-1 ~1 dragon_egg if block ~1 ~-1 ~-1 dragon_egg if block ~2 ~-2 ~ beacon if block ~ ~-2 ~2 beacon if block ~-2 ~-2 ~ beacon if block ~ ~-2 ~-2 beacon if block ~1 ~-2 ~ red_concrete if block ~-1 ~-2 ~ red_concrete if block ~ ~-2 ~1 red_concrete if block ~ ~-2 ~-1 red_concrete if block ~1 ~-2 ~1 red_concrete if block ~-1 ~-2 ~1 red_concrete if block ~-1 ~-2 ~-1 red_concrete if block ~1 ~-2 ~-1 red_concrete if block ~1 ~-2 ~2 black_concrete if block ~-1 ~-2 ~2 black_concrete if block ~1 ~-2 ~-2 black_concrete if block ~-1 ~-2 ~-2 black_concrete if block ~2 ~-2 ~1 black_concrete if block ~-2 ~-2 ~1 black_concrete if block ~2 ~-2 ~-1 black_concrete if block ~-2 ~-2 ~-1 black_concrete run return 1
+
+# Else, fail
+return fail
+""")  # noqa: E501
+
