@@ -41,7 +41,7 @@ Here is a list of features that the package provides (the template is using all 
 
 
 ## 📦 How to use (beginner friendly)
-In order to use `StewBeet`, you need to have at least [Python 3.12](https://www.python.org/downloads/) 🐍 or higher installed on your computer with pip!<br>
+In order to use `StewBeet`, you need to have at least [Python 3.12 or 3.13](https://www.python.org/downloads/) 🐍 installed on your computer with pip!<br>
 Then, you can open a terminal 💻 and run the following command to install the python package:
 
 ```bash
