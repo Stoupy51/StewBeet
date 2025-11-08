@@ -42,6 +42,8 @@ class PulverizerRecipeHandler:
         Returns:
             str: The generated recipe command.
         """
+        if not recipe.get("ingredient"):
+            recipe["ingredient"] = ingr_repr(item, Mem.ctx.project_id)
         ingredient: JsonDict = item_to_id_ingr_repr(recipe["ingredient"])
         result: JsonDict = item_to_id_ingr_repr(get_item_from_ingredient(recipe["result"])) if recipe.get("result") else ingr_repr(item, Mem.ctx.project_id)
 
