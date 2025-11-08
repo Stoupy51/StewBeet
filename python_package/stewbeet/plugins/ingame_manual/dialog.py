@@ -40,10 +40,12 @@ def generate_dialogs(book_content: list[list[TextComponent]]) -> None:
 			supposed_item: str = title.replace(" ", "_").lower()
 			if Mem.definitions.get(supposed_item, {}).get("item_model") is not None:
 				model = Mem.ctx.assets[ns].models.get(f"item/{supposed_item}")
-				if model is not None:
-					sprite: str = next(iter(model.data["textures"].values()))
-					if Mem.ctx.assets.textures.get(sprite) is not None and supposed_item != "heavy_workbench":
-						title = [{"sprite":sprite,"shadow_color": [0]*4}," ",{"text":title,"underlined": True}," ",{"sprite":sprite}]
+				if model is not None and supposed_item != "heavy_workbench":
+					all_textures: set[str] = set(model.data.get("textures", {}).values())
+					if len(all_textures) == 1:
+						sprite: str = all_textures.pop()
+						if Mem.ctx.assets.textures.get(sprite) is not None:
+							title = [{"sprite":sprite,"shadow_color": [0]*4}," ",{"text":title,"underlined": True}," ",{"sprite":sprite}]
 		else:
 			title = str(title).replace("\n", "")
 		if isinstance(title, str) and len(title.strip()) < 2:
