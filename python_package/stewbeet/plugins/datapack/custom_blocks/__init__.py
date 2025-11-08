@@ -352,6 +352,7 @@ function {ns}:custom_blocks/{item}/update_seed_model
 						write_function(f"{ns}:custom_blocks/{item}/{secs}", f"""
 # Increment growth time score by {speed} and update model
 scoreboard players add @s {ns}.growth_time {speed}
+execute if score #boost_growth_time {ns}.data matches 1.. run scoreboard players operation @s {ns}.growth_time += #boost_growth_time {ns}.data
 function {ns}:custom_blocks/{item}/update_seed_model
 """)
 						break
