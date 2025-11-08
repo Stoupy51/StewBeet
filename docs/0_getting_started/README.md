@@ -223,7 +223,7 @@ Open `src/setup_definitions.py` and add after the existing comments:
 
 ```python
 # Add items to the definitions
-Mem.database["ruby"] = {"id": core.CUSTOM_ITEM_VANILLA, "lore":["A precious red gemstone"]}
+Mem.definitions["ruby"] = {"id": core.CUSTOM_ITEM_VANILLA, "lore":[{"text":"A precious red gemstone","color":"gray","italic":False}]}
 ```
 
 ### 🔨 Build and Test
@@ -341,7 +341,7 @@ Congratulations! You now have a working StewBeet project. Here's what to explore
 
 (NOT UPDATED FOR NOW)
 - **🔧 [Project Structure](1_project_structure.md)** - Understand the folder organization
-- **🗄️ [Database Setup](2_database_setup.md)** - Advanced item and block definitions  
+- **🗄️ [Definitions Setup](2_definitions_setup.md)** - Advanced item and block definitions  
 - **✍️ [Writing to Files](3_writing_to_files.md)** - Custom functions and data
 - **🔗 [External Dependencies](4_external_dependencies.md)** - Using libraries
 - **⚔️ [Adding a Sword](specific_guides/adding_a_sword.md)** - Practical example
