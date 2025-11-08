@@ -292,7 +292,7 @@ kill @s
 
 				# Secondary function
 				item_model: str = data.get("item_model", "minecraft:air")
-				write_function(f"{ns}:custom_blocks/{item}/place_secondary", f"""
+				content: str = f"""
 # Add convention and utils tags, and the custom block tag
 tag @s remove {ns}.new
 tag @s add global.ignore
@@ -313,7 +313,13 @@ execute store result entity @s Facing byte 1 run scoreboard players get #item_fr
 
 # Update position (fixes a Minecraft bug)
 execute at @s run tp @s ^ ^ ^0.1
-""")
+"""
+				if block.get("force_ground"):
+					content += """
+# Force ground position
+data modify entity @s Facing set value 1b
+"""
+				write_function(f"{ns}:custom_blocks/{item}/place_secondary", content)
 				pass
 
 			# If the block is a growing seed, make the update_seed_model function and call it in the place_secondary function
