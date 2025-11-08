@@ -163,8 +163,9 @@ def beet_default(ctx: Context) -> None:
 						errors.append(f"Line #{i} in 'lore' key should be a Text Component for '{item}', ex: {{\"text\":\"This is a lore line\"}} or [\"This is a lore line\"]")
 					else:
 						# Verify format {"text":"..."} or "..."
+						isnt_str = not isinstance(line, str)
 						line = str(line)
-						if not (line.startswith('{') and line.endswith('}')) \
+						if isnt_str and not (line.startswith('{') and line.endswith('}')) \
 							and not (line.startswith('[') and line.endswith(']')) \
 							and not (line.startswith('"') and line.endswith('"')) \
 							and not (line.startswith("'") and line.endswith("'")) \
