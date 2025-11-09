@@ -161,16 +161,6 @@ def beet_default(ctx: Context) -> None:
 				for i, line in enumerate(lore):
 					if not isinstance(line, dict | list | str):
 						errors.append(f"Line #{i} in 'lore' key should be a Text Component for '{item}', ex: {{\"text\":\"This is a lore line\"}} or [\"This is a lore line\"]")
-					else:
-						# Verify format {"text":"..."} or "..."
-						isnt_str = not isinstance(line, str)
-						line = str(line)
-						if isnt_str and not (line.startswith('{') and line.endswith('}')) \
-							and not (line.startswith('[') and line.endswith(']')) \
-							and not (line.startswith('"') and line.endswith('"')) \
-							and not (line.startswith("'") and line.endswith("'")) \
-							and not line == "":
-							errors.append(f"Item '{item}' has a lore line that is not in a correct text component format: {line}\n We recommend using 'https://misode.github.io/text-component/' to generate the text component")
 
 		# Check all the recipes
 		if data.get(RESULT_OF_CRAFTING) or data.get(USED_FOR_CRAFTING):
