@@ -127,7 +127,7 @@ tag @e[type=item,tag=stardust.temp] remove stardust.temp
 
         # Second clock function
         if Mem.ctx.project_id == "stardust" and Mem.ctx.data["stardust"].functions.get("calls/stardust/awakened_forge_recipes"):
-            write_load_file("# Awakened Forge timer\nscoreboard objectives add stardust.forge_timer dummy")
+            write_load_file("\n# Awakened Forge timer\nscoreboard objectives add stardust.forge_timer dummy\n", prepend=True)
             write_versioned_function("second", """
 # Awakened Forge recipes
 execute as @e[type=item,predicate=stardust:awakened_forge_input] at @s run function stardust:forge/second
