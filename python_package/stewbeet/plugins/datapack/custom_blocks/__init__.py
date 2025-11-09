@@ -721,8 +721,15 @@ execute store result score #item_count {ns}.data run data get entity @s Item.cou
 execute store success score #is_silk_touch {ns}.data if data entity @s Item.components."minecraft:custom_data".common_signals.silk_touch
 
 # Try to destroy the block
-execute as @e[tag={ns}.custom_block,dx=0,dy=0,dz=0] at @s run function {ns}:custom_blocks/destroy
+function {ns}:calls/common_signals/custom_block_destroy
 """)
+
+	# Common signals destroy tag
+	write_function(
+		f"{ns}:calls/common_signals/custom_block_destroy",
+		f"execute as @e[tag={ns}.custom_block,dx=0,dy=0,dz=0] at @s run function {ns}:custom_blocks/destroy",
+		tags=["common_signals:signals/custom_block_destroy"]
+	)
 
 	## Detect alternative custom blocks destroy
 	if any(data.get(VANILLA_BLOCK, {}).get("contents") for data in Mem.definitions.values()):
@@ -734,7 +741,7 @@ execute if data entity @s Item.components."minecraft:custom_data".{ns}.item_fram
 		write_function(f"{ns}:calls/common_signals/on_item_frame_destroy",
 f"""
 # Try to destroy the block
-execute as @e[tag={ns}.custom_block,dx=0,dy=0,dz=0] at @s run function {ns}:custom_blocks/destroy
+function {ns}:calls/common_signals/custom_block_destroy
 
 # If still alive, it means that the item_frame has been destroyed too,
 execute at @s if entity @s[distance=..1] run function {ns}:calls/common_signals/item_frame_destroy_alt
