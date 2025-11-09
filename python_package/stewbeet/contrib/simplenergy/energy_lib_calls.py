@@ -1,12 +1,16 @@
 
 # Imports
-from ...core import Mem, write_function
+from ...core import Mem, write_function, write_load_file
 
 
 # Add commands to place and destroy functions for energy items
 def insert_lib_calls() -> None:
 	ns: str = Mem.ctx.project_id
 
+	# Create new energy_rate scoreboard objective
+	write_load_file(f"\n# Score for energy usage or generation\nscoreboard objectives add {ns}.energy_rate dummy\n", prepend = True)
+
+	# Loop through all items with energy data
 	for item, data in Mem.definitions.items():
 		energy: dict[str, int] = data.get("custom_data", {}).get("energy", {})
 		if len(energy) > 0:
@@ -30,6 +34,7 @@ function energy:v1/api/init_cable
 					write_function(f"{ns}:custom_blocks/{item}/place_secondary", f"""
 # Energy part
 tag @s add energy.{"send" if "generation" in energy else "receive"}
+scoreboard players set @s {ns}.energy_rate {energy.get("usage", energy.get("generation", 0))}
 scoreboard players set @s energy.max_storage {energy["max_storage"]}
 scoreboard players operation @s energy.transfer_rate = @s energy.max_storage
 scoreboard players add @s energy.storage 0
