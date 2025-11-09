@@ -107,7 +107,7 @@ def generate_dialogs(book_content: list[list[TextComponent]]) -> None:
 
 	# Generate an advancement detecting when the manual is opened
 	if SharedMemory.use_dialog != 2:
-		write_load_file(f"# Opening manual detection\nscoreboard objectives add {ns}.open_manual minecraft.used:minecraft.written_book")
+		write_load_file(f"\n# Opening manual detection\nscoreboard objectives add {ns}.open_manual minecraft.used:minecraft.written_book\n", prepend=True)
 		Mem.ctx.data[ns].advancements["open_manual"] = set_json_encoder(Advancement({
 			"criteria": {
 				"requirement": {

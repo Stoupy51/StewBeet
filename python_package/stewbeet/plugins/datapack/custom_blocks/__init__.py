@@ -422,7 +422,7 @@ $execute if entity @s[type=item_frame] run return run data modify entity @s Item
 # Create objectives for growing seeds
 scoreboard objectives add {ns}.growth_time dummy
 scoreboard objectives add {ns}.growth_stage dummy
-""")
+""", prepend=True)
 
 	# Link the custom block library to the datapack
 	smithed_custom_blocks = [1 for data in Mem.definitions.values() if data.get("id") == CUSTOM_BLOCK_VANILLA]
