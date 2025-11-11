@@ -2,13 +2,35 @@
 # Imports
 from pathlib import Path
 
-from beet import Context
+from beet import Atlas, Context
+from beet.core.utils import JsonDict
+from stouputils.collections import unique_list
 from stouputils.decorators import measure_time
-from stouputils.io import clean_path, relative_path
+from stouputils.io import clean_path, relative_path, super_json_dump
 from stouputils.print import progress
 
 from ....core.__memory__ import Mem
-from .object import AutoModel
+from .object import AutoModel, to_atlas
+
+
+# Utility function to add textures to atlas
+def add_to_atlas(atlas: str = "items", textures: set[str] | None = None) -> None:
+	""" Add textures to the specified atlas.
+
+	Args:
+		atlas		(str):		The atlas to add textures to. Defaults to "items".
+		textures	(set[str]):	The set of texture paths to add. Defaults to an empty set.
+	"""
+	if not textures:
+		return
+	atlas_object: Atlas = Mem.ctx.assets["minecraft"].atlases.setdefault(atlas)
+	data: JsonDict = atlas_object.data
+	sources: list[JsonDict] = data.get("sources", [])
+	for texture in textures:
+		sources.append({"type": "minecraft:single", "resource": texture, "sprite": to_atlas(texture)})
+	sources = unique_list(sorted(sources, key=lambda x: x["resource"]))
+	atlas_object.data["sources"] = sources
+	atlas_object.encoder = super_json_dump
 
 
 # Main entry point
@@ -54,6 +76,11 @@ def beet_default(ctx: Context):
 		item_models[item_name] = AutoModel.from_definitions(item_name, data, textures)
 
 	# Process each item model
+	used_minecraft_textures: set[str] = set()
 	for model in item_models.values():
-		model.process()
+		used_minecraft_textures.update(model.process())
+
+	# If any of the minecraft textures used are not in the items atlas, add them
+	not_in_atlas: set[str] = {texture for texture in used_minecraft_textures if not texture.startswith("minecraft:item/")}
+	add_to_atlas(textures=not_in_atlas)
 

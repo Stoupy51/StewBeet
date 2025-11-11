@@ -45,7 +45,11 @@ def generate_dialogs(book_content: list[list[TextComponent]]) -> None:
 					if len(all_textures) == 1:
 						sprite: str = all_textures.pop()
 						if Mem.ctx.assets.textures.get(sprite) is not None:
-							title = [{"sprite":sprite,"shadow_color": [0]*4}," ",{"text":title,"underlined": True}," ",{"sprite":sprite}]
+							title = [
+								{"sprite":sprite,"atlas":"minecraft:items","shadow_color": [0]*4},
+								" ",{"text":title,"underlined": True}," ",
+								{"sprite":sprite,"atlas":"minecraft:items","shadow_color": [0]*4}
+							]
 		else:
 			title = str(title).replace("\n", "")
 		if isinstance(title, str) and len(title.strip()) < 2:
