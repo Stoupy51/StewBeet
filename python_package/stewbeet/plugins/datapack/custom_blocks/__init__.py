@@ -174,7 +174,7 @@ kill @s
 				content = ""
 				if block.get("apply_facing") not in (False, "entity"):
 					content += f"function {ns}:custom_blocks/get_rotation\n"
-					content += "setblock ~ ~ ~ air\n"
+					content += "setblock ~ ~ ~ air strict\n"
 					block_states = []
 					if '[' in block_id:
 						block_states = block_id.split('[')[1][:-1].split(',')
@@ -188,7 +188,7 @@ kill @s
 					if block.get("apply_facing") == "entity":
 						content += f"function {ns}:custom_blocks/get_rotation\n"
 					# Simple setblock
-					content += "setblock ~ ~ ~ air\n"
+					content += "setblock ~ ~ ~ air strict\n"
 					content += f"setblock ~ ~ ~ {block_id}{beautify_name}\n"
 
 				# Summon item display and call secondary function
