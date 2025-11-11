@@ -16,6 +16,19 @@ from ....core.constants import CUSTOM_BLOCK_VANILLA, CUSTOM_ITEM_VANILLA, GROWIN
 from ....core.utils.io import set_json_encoder, texture_mcmeta
 
 
+# Utility function
+def to_atlas(texture: str) -> str:
+	""" Convert a texture path to its atlas sprite path.
+
+	Args:
+		texture (str): The original texture path.
+
+	Returns:
+		str: The converted atlas sprite path.
+	"""
+	return f"{Mem.ctx.project_id}:atlas/" + "/".join(texture.split("/")[1:])  # Remove 'minecraft:block/' prefix
+
+# Class
 class AutoModel:
 	""" Class to handle item model processing.
 
@@ -27,6 +40,7 @@ class AutoModel:
 		namespace       (str):            The namespace of the item model.
 		block_or_item   (str):            Whether this is a block or item model.
 		used_textures   (set[str]):       Set of used textures.
+		used_minecraft_textures (set[str]): Set of used Minecraft textures.
 		source_textures (dict[str, str]): Dictionary of source textures.
 		ignore_textures (bool):           Whether to ignore texture-related errors.
 	"""
@@ -46,6 +60,7 @@ class AutoModel:
 		self.ns: str = Mem.ctx.project_id
 		self.block_or_item: str = "item"
 		self.used_textures: set[str] = set()
+		self.used_minecraft_textures: set[str] = set()
 		self.source_textures: dict[str, str] = source_textures
 		self.ignore_textures: bool = ignore_textures
 
@@ -169,11 +184,12 @@ class AutoModel:
 				continue
 
 			# Create model for this stage
+			self.used_minecraft_textures.add(f"minecraft:block/{planted_on}")
 			stage_model: JsonDict = {
 				"textures": {
-					"1": f"block/{planted_on}",
+					"1": to_atlas(f"minecraft:block/{planted_on}"),
 					"2": f"{self.ns}:item/seeds/{stage_texture_name}",
-					"particle": f"block/{planted_on}"
+					"particle": to_atlas(f"minecraft:block/{planted_on}")
 				},
 				"elements": [
 					{"name":"seed","from":[0,1,4],"to":[16,17,4],"faces":{"north":{"uv":[0,0,16,16],"texture":"#2"},"south":{"uv":[16,0,0,16],"texture":"#2"}}},
@@ -193,19 +209,23 @@ class AutoModel:
 			Mem.ctx.assets[self.ns].textures[f"item/seeds/{stage_texture_name}"] = texture_mcmeta(stage_textures[stage_texture_name])
 
 	@handle_error(exceptions=ValueError, error_log=LogLevels.ERROR_TRACEBACK)
-	def process(self) -> None:
-		""" Process the item model. """
+	def process(self) -> set[str]:
+		""" Process the item model.
+
+		Returns:
+			set[str]: Set of blocks textures to be added to the items atlas.
+		"""
 		# If the item is a growing seed, handle it
 		if GROWING_SEED in self.data:
 			self.handle_growing_seeds()
 
 		# If no item model, return
 		if not self.data.get("item_model"):
-			return
+			return set()
 
 		# If item_model is already processed, return
 		if self.data["item_model"] in Mem.ctx.meta["stewbeet"]["rendered_item_models"]:
-			return
+			return set()
 
 		# Initialize variables
 		if (self.data.get("id") == CUSTOM_BLOCK_VANILLA or
@@ -400,12 +420,10 @@ class AutoModel:
 					if (texture.split("/")[-1] + on_off) in variants:
 						content["textures"][key] = texture + on_off
 
-			# Add used textures (ignore minecraft namespace)
-			if content.get("textures"):
-				for texture in content["textures"].values():
-					if texture.startswith("minecraft:"):
-						continue
-					self.used_textures.add(texture)
+			# Remove empty textures
+			if exclude_textures or not content.get("textures"):
+				if "textures" in content:
+					del content["textures"]
 
 			# Copy used textures
 			if not exclude_textures and content.get("textures"):
@@ -422,10 +440,14 @@ class AutoModel:
 						if not self.ignore_textures:
 							raise ValueError(f"Texture '{texture_name}' not found in source textures")
 
-			# Remove empty textures
-			if exclude_textures or not content.get("textures"):
-				if "textures" in content:
-					del content["textures"]
+			# Add used textures
+			if content.get("textures"):
+				for key, texture in content["textures"].items():
+					if texture.startswith("minecraft:"):
+						self.used_minecraft_textures.add(texture)
+						content["textures"][key] = to_atlas(texture)
+					else:
+						self.used_textures.add(texture)
 
 			# Add model to assets
 			if self.data.get(OVERRIDE_MODEL, None) != {}:
@@ -436,4 +458,7 @@ class AutoModel:
 			if not self.data["id"].endswith("bow"):
 				items_model = {"model": {"type": "minecraft:model", "model": f"{self.ns}:item/{self.item_name}{on_off}"}}
 				Mem.ctx.assets[self.ns].item_models[self.item_name + on_off] = set_json_encoder(ItemModel(items_model), max_level=4)
+
+		# Return
+		return self.used_minecraft_textures
 
