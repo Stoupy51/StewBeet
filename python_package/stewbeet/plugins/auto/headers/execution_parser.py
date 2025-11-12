@@ -50,8 +50,8 @@ def parse_execution_context_from_line(line: str) -> str | None:
         if start_index >= len(parts):
             return "", start_index
 
-        arg = parts[start_index]
-        next_index = start_index + 1
+        arg: str = parts[start_index]
+        next_index: int = start_index + 1
 
         # If not [, we assume it's a simple argument
         if "[" not in arg and arg.startswith("@"):
@@ -72,31 +72,31 @@ def parse_execution_context_from_line(line: str) -> str | None:
             # Process duplicates and simplify only when multiple occurrences exist
             if "," in arg:
                 # Extract the content between [ and ]
-                selector_start = arg.find("[")
-                selector_end = arg.rfind("]")
+                selector_start: int = arg.find("[")
+                selector_end: int = arg.rfind("]")
                 if selector_start != -1 and selector_end != -1:
-                    prefix = arg[:selector_start + 1]
-                    suffix = arg[selector_end:]
-                    content = arg[selector_start + 1:selector_end]
+                    prefix: str = arg[:selector_start + 1]
+                    suffix: str = arg[selector_end:]
+                    content: str = arg[selector_start + 1:selector_end]
 
                     # Split by comma and process each part
-                    parts = [part.strip() for part in content.split(",")]
+                    parts_list: list[str] = [part.strip() for part in content.split(",")]
 
                     # Count occurrences of each attribute type
                     attribute_counts: dict[str, int] = {}
-                    for part in parts:
+                    for part in parts_list:
                         if "=" in part:
-                            attr_name = part.split("=")[0]
+                            attr_name: str = part.split("=")[0]
                             attribute_counts[attr_name] = attribute_counts.get(attr_name, 0) + 1
 
                     # Process parts and replace with ... only when there are duplicates
                     processed_parts: list[str] = []
                     seen_attributes: set[str] = set()
 
-                    for part in parts:
+                    for part in parts_list:
                         if "=" in part:
-                            attr_name = part.split("=")[0]
-                            attr_value = part.split("=", 1)[1]  # Get the full value after the first =
+                            attr_name: str = part.split("=")[0]
+                            attr_value: str = part.split("=", 1)[1]  # Get the full value after the first =
 
                             # Special handling for NBT - only simplify if longer than 50 characters
                             if attr_name == "nbt":
@@ -149,7 +149,7 @@ def parse_execution_context_from_line(line: str) -> str | None:
             # We've reached the end of the execute subcommands
             break
         elif part in execute_keywords:
-            arg_count = execute_keywords[part]
+            arg_count: int | None = execute_keywords[part]
 
             if part == "facing":
                 # Special handling for facing command
@@ -180,6 +180,8 @@ def parse_execution_context_from_line(line: str) -> str | None:
             elif part == "at":
                 # Special handling for "at @s" - it resets position/rotation context
                 if i + 1 < len(parts):
+                    selector: str
+                    next_i: int
                     selector, next_i = parse_selector_or_argument(parts, i + 1)
                     # Remove any previous position/rotation modifiers when "at" is used
                     context_parts = [cp for cp in context_parts if not any(keyword in cp for keyword in ["positioned", "align", "rotated", "anchored", "in"])]
@@ -198,7 +200,7 @@ def parse_execution_context_from_line(line: str) -> str | None:
             else:
                 # Standard handling for keywords with fixed argument count
                 if i + arg_count < len(parts):
-                    args = " ".join(parts[i + 1:i + 1 + arg_count])
+                    args: str = " ".join(parts[i + 1:i + 1 + arg_count])
                     context_parts.append(f"{part} {args}")
                     i += 1 + arg_count
                 else:

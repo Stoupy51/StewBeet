@@ -8,6 +8,7 @@ from ....core.__memory__ import Mem
 from ....core.utils.io import read_function, write_function
 from .context_analyzer import ContextAnalyzer
 from .function_analyzer import FunctionAnalyzer
+from .macro_analyzer import MacroAnalyzer
 from .object import Header
 
 
@@ -36,6 +37,10 @@ def beet_default(ctx: Context):
     # Analyze execution contexts
     context_analyzer = ContextAnalyzer(mcfunctions)
     context_analyzer.analyze_all_contexts()
+
+    # Analyze macro arguments
+    macro_analyzer = MacroAnalyzer(mcfunctions)
+    macro_analyzer.analyze_all_macros()
 
     # Write updated headers to all mcfunction files
     for path, header in mcfunctions.items():
