@@ -145,7 +145,7 @@ def beet_default(ctx: Context):
 		# Set pack ID, use new pack_mcmeta, and set json encoder
 		pack_mcmeta["id"] = Mem.ctx.project_id
 		pack.mcmeta.data = pack_mcmeta
-		pack.mcmeta.encoder = super_json_dump
+		pack.mcmeta.encoder = lambda x: super_json_dump(x, max_level=3)
 
 	# Setup pack.mcmeta for both packs
 	setup_pack_mcmeta(ctx.data, ctx.data.pack_format)
