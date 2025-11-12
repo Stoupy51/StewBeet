@@ -1,6 +1,7 @@
 
 # Imports
 from pathlib import Path
+from typing import cast
 
 from beet import Atlas, Context
 from beet.core.utils import JsonDict
@@ -14,23 +15,65 @@ from .object import AutoModel, to_atlas
 
 
 # Utility function to add textures to atlas
-def add_to_atlas(atlas: str = "items", textures: set[str] | None = None) -> None:
+def add_to_atlas(textures: set[str] = set()) -> None:  # noqa: B006
 	""" Add textures to the specified atlas.
 
 	Args:
-		atlas		(str):		The atlas to add textures to. Defaults to "items".
 		textures	(set[str]):	The set of texture paths to add. Defaults to an empty set.
 	"""
 	if not textures:
 		return
-	atlas_object: Atlas = Mem.ctx.assets["minecraft"].atlases.setdefault(atlas)
-	data: JsonDict = atlas_object.data
-	sources: list[JsonDict] = data.get("sources", [])
-	for texture in textures:
-		sources.append({"type": "minecraft:single", "resource": texture, "sprite": to_atlas(texture)})
-	sources = unique_list(sorted(sources, key=lambda x: x["resource"]))
-	atlas_object.data["sources"] = sources
-	atlas_object.encoder = super_json_dump
+
+	# Get mcmeta and setup overlays if needed
+	mcmeta: JsonDict = Mem.ctx.assets.mcmeta.data
+	if "overlays" not in mcmeta:
+		mcmeta["overlays"] = {}
+	if "entries" not in mcmeta["overlays"]:
+		mcmeta["overlays"]["entries"] = []
+
+	# Define overlay configurations
+	overlay_configs: list[JsonDict] = [
+		{
+			"directory": "before_format_73",
+			"formats": [0, 72],
+			"min_format": 0,
+			"max_format": 72,
+			"atlas_name": "blocks"
+		},
+		{
+			"directory": "format_73_plus",
+			"formats": [73, 1000],
+			"min_format": 73,
+			"max_format": 1000,
+			"atlas_name": "items"
+		}
+	]
+
+	# Process each overlay configuration
+	for config in overlay_configs:
+		directory: str = config["directory"]
+
+		# Create overlay entry if not exists
+		overlay_entry: JsonDict = config.copy()
+		overlay_entry.pop("atlas_name")
+
+		# Check if this overlay already exists
+		entries = cast(list[JsonDict], mcmeta["overlays"]["entries"])
+		if not any(entry.get("directory") == directory for entry in entries):
+			entries.append(overlay_entry)
+
+		# Add textures to the appropriate atlas in the overlay
+		overlay = Mem.ctx.assets.overlays[directory]
+		atlas_object: Atlas = overlay["minecraft"].atlases.setdefault(config["atlas_name"])
+		data: JsonDict = atlas_object.data
+		sources: list[JsonDict] = data.get("sources", [])
+
+		for texture in textures:
+			sources.append({"type": "minecraft:single", "resource": texture, "sprite": to_atlas(texture)})
+
+		sources = unique_list(sorted(sources, key=lambda x: x["resource"]))
+		atlas_object.data["sources"] = sources
+		atlas_object.encoder = super_json_dump
 
 
 # Main entry point
