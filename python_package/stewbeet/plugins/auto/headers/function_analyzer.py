@@ -7,6 +7,8 @@ advancements, and function calls to create the @within information.
 
 # pyright: reportUnnecessaryIsInstance=false
 # Imports
+from typing import cast
+
 from beet import Context
 
 from .execution_parser import parse_execution_context_from_line
@@ -40,9 +42,9 @@ class FunctionAnalyzer:
                     if function_path in self.mcfunctions:
                         self.mcfunctions[function_path].within.append(to_be_called)
                 elif isinstance(function_path, dict):
-                    function_path: str = function_path.get("id", "")
-                    if function_path in self.mcfunctions:
-                        self.mcfunctions[function_path].within.append(to_be_called)
+                    function_path_str: str = cast(dict[str,str],function_path).get("id", "")
+                    if function_path_str in self.mcfunctions:
+                        self.mcfunctions[function_path_str].within.append(to_be_called)
 
     def analyze_advancements(self) -> None:
         """ Analyze advancements and build relationships. """
@@ -75,10 +77,10 @@ class FunctionAnalyzer:
                         more = " " + " ".join(splitted[1:])  # Add Macros or schedule time
 
                     # Parse execution context from the line
-                    line_context = parse_execution_context_from_line(line)
+                    line_context: str | None = parse_execution_context_from_line(line)
 
                     # Create the caller string with context if available
-                    caller_info = path + more
+                    caller_info: str = path + more
                     if line_context:
                         caller_info += f" [ {line_context} ]"
 
