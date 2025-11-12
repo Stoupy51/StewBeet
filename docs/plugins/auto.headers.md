@@ -38,6 +38,9 @@ with intelligent type inheritance from calling functions.
 **Example of a function being called by multiple functions with different contexts:**<br>
 <img src="img/auto.headers.context_example.jpg">
 
+**Example of a function being called by multiple macro arguments (with arguments types):**<br>
+<img src="img/auto.headers.macro_types_example.jpg">
+
 ## 🎯 Purpose
 - 📝 Automatically generates function documentation headers
 - 🔍 Tracks function call relationships and dependencies
