@@ -3,6 +3,7 @@
 	"title": [
 		{
 			"sprite": "_your_namespace:item/stone_rod",
+			"atlas": "minecraft:items",
 			"shadow_color": [
 				0,
 				0,
@@ -17,7 +18,14 @@
 		},
 		" ",
 		{
-			"sprite": "_your_namespace:item/stone_rod"
+			"sprite": "_your_namespace:item/stone_rod",
+			"atlas": "minecraft:items",
+			"shadow_color": [
+				0,
+				0,
+				0,
+				0
+			]
 		}
 	],
 	"body": [

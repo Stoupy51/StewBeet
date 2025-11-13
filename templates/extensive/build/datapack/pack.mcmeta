@@ -2,8 +2,14 @@
 	"pack": {
 		"pack_format": 88,
 		"description": "Extensive Template [2.0.0] by Stoupy51",
-		"min_format": [88,0],
-		"max_format": [88,0]
+		"min_format": [
+			88,
+			0
+		],
+		"max_format": [
+			88,
+			0
+		]
 	},
 	"id": "_your_namespace"
 }
