@@ -112,7 +112,7 @@ def generate_dialogs(book_content: list[list[TextComponent]]) -> None:
 	# Generate an advancement detecting when the manual is opened
 	if SharedMemory.use_dialog != 2:
 		write_load_file(f"\n# Opening manual detection\nscoreboard objectives add {ns}.open_manual minecraft.used:minecraft.written_book\n", prepend=True)
-		Mem.ctx.data[ns].advancements["open_manual"] = set_json_encoder(Advancement({
+		Mem.ctx.data[ns].advancements["technical/open_manual"] = set_json_encoder(Advancement({
 			"criteria": {
 				"requirement": {
 					"trigger": "minecraft:tick",
@@ -133,7 +133,7 @@ def generate_dialogs(book_content: list[list[TextComponent]]) -> None:
 		}), max_level=-1)
 		write_function(f"{ns}:advancements/open_manual", f"""
 # Revoke advancement and reset score
-advancement revoke @s only {ns}:open_manual
+advancement revoke @s only {ns}:technical/open_manual
 scoreboard players set @s {ns}.open_manual 0
 
 # Show manual dialog if holding the manual
