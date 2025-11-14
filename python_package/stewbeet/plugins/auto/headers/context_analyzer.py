@@ -55,6 +55,11 @@ class ContextAnalyzer:
 
         # Check for specific contexts
         for caller in within:
+
+            # Scheduled functions have no execution context - skip them
+            if " [ scheduled ]" in caller:
+                continue
+
             # Advancement functions are executed as the player at current position
             if caller.startswith("advancement "):
                 self.execution_contexts[func_path] = "as the player & at current position"

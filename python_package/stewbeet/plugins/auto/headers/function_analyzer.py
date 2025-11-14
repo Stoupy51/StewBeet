@@ -67,8 +67,13 @@ class FunctionAnalyzer:
 
                 # If the line calls a function
                 if "function " in line:
+                    # Split the line on "function " to get before and after parts
+                    split_on_function: list[str] = line.split("function ", 1)
+                    before_function: str = split_on_function[0]
+                    after_function: str = split_on_function[1].replace("\n", "")
+
                     # Get the called function
-                    splitted: list[str] = line.split("function ", 1)[1].replace("\n", "").split(" ")
+                    splitted: list[str] = after_function.split(" ")
                     calling: str = splitted[0].replace('"', '').replace("'", "")
 
                     # Get additional text like macros, ex: function iyc:function {id:"51"}
@@ -76,13 +81,21 @@ class FunctionAnalyzer:
                     if len(splitted) > 1:
                         more = " " + " ".join(splitted[1:])  # Add Macros or schedule time
 
-                    # Parse execution context from the line
-                    line_context: str | None = parse_execution_context_from_line(line)
+                    # Check if "schedule" appears right before "function" (loses execution context)
+                    is_scheduled: bool = before_function.rstrip().endswith("schedule")
+
+                    # Parse execution context from the line (only if not scheduled)
+                    line_context: str | None = None
+                    if not is_scheduled:
+                        line_context = parse_execution_context_from_line(line)
 
                     # Create the caller string with context if available
                     caller_info: str = path + more
                     if line_context:
                         caller_info += f" [ {line_context} ]"
+                    elif is_scheduled:
+                        # Mark scheduled calls with a special marker so context analyzer knows not to inherit context
+                        caller_info += " [ scheduled ]"
 
                     # If the called function is registered, append the caller info
                     if calling in self.mcfunctions and caller_info not in self.mcfunctions[calling].within:
