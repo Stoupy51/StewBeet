@@ -10,7 +10,7 @@ from beet import Context, Dialog, DialogTag, FormatSpecifier, Pack
 from beet.core.utils import JsonDict, TextComponent, split_version
 from box import Box
 from stouputils import relative_path
-from stouputils.decorators import measure_time
+from stouputils.decorators import measure_time, retry
 from stouputils.io import super_json_dump
 from stouputils.print import warning
 
@@ -150,6 +150,9 @@ def beet_default(ctx: Context):
 	# Setup pack.mcmeta for both packs
 	setup_pack_mcmeta(ctx.data, ctx.data.pack_format)
 	setup_pack_mcmeta(ctx.assets, ctx.assets.pack_format)
+
+	# Fix pack.save to retry when there is a PermissionError (for example, when vscode or another program locks a file temporarily)
+	Pack.save = retry(Pack.save, exceptions=PermissionError, max_attempts=5, delay=0.5)  # type: ignore
 
 	# # Setup dialog convention for pause screen additions
 	# Mem.ctx.data["minecraft"].dialogs_tags["pause_screen_additions"] = set_json_encoder(DialogTag({"values":[{"id":"smithed:data_packs","required":False}]}))
