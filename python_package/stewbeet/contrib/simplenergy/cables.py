@@ -296,6 +296,7 @@ def servo_mechanisms_models(servos: dict[str, dict[str, str] | None]) -> None:
 		write_function(f"{ns}:custom_blocks/{servo}/place_secondary", f"""
 # Servo mechanism setup (1 item by 1 item: stack_limit)
 tag @s add itemio.servo.{typ}
+tag @s add itemio.servo
 tag @s add {ns}.servo
 scoreboard players set @s itemio.servo.stack_limit {stack_limit}
 scoreboard players set @s itemio.servo.retry_limit {retry_limit}
