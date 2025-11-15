@@ -2,10 +2,9 @@
 # Imports
 import os
 import shutil
-import time
 
 from beet import Context
-from stouputils.decorators import handle_error, measure_time
+from stouputils.decorators import handle_error, measure_time, retry
 from stouputils.io import relative_path
 from stouputils.print import info, progress, warning
 
@@ -175,14 +174,6 @@ def _copy_with_retry(src: str, dst: str, max_retries: int = 10, delay: float = 1
 		return False
 
 	# Attempt to copy the file with retries
-	for attempt in range(max_retries):
-		try:
-			shutil.copy(src, dst)
-			return True
-		except PermissionError as e:
-			if attempt == max_retries - 1:
-				raise e
-			warning(f"Failed to copy '{src}' the destinations ({e.__class__.__name__}). Retrying in {delay} seconds...")
-			time.sleep(delay)
+	retry(shutil.copy, exceptions=PermissionError, max_attempts=max_retries, delay=delay)(src, dst)
 	return False  # If all retries failed, return False
 
