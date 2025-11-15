@@ -1,6 +1,8 @@
 """
 Handles generation of dialogs based of book content
 """
+from typing import cast
+
 from beet import Advancement, Dialog, DialogTag
 from beet.core.utils import JsonDict, TextComponent
 
@@ -46,10 +48,15 @@ def generate_dialogs(book_content: list[list[TextComponent]]) -> None:
 						sprite: str = all_textures.pop()
 						if Mem.ctx.assets.textures.get(sprite) is not None:
 							title = [
-								{"sprite":sprite,"atlas":"minecraft:items","shadow_color": [0]*4},
+								{"sprite":sprite,"shadow_color": [0]*4},
 								" ",{"text":title,"underlined": True}," ",
-								{"sprite":sprite,"atlas":"minecraft:items","shadow_color": [0]*4}
+								{"sprite":sprite,"shadow_color": [0]*4}
 							]
+							if Mem.ctx.data.pack_format is not None:
+								pack_format = cast(int | tuple[int, ...], Mem.ctx.data.pack_format)
+								pack_format = pack_format[0] if isinstance(pack_format, tuple) else pack_format
+								if pack_format >= 93:
+									title[0]["atlas"] = title[2]["atlas"] = "minecraft:items"
 		else:
 			title = str(title).replace("\n", "")
 		if isinstance(title, str) and len(title.strip()) < 2:
