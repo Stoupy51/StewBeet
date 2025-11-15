@@ -6,7 +6,7 @@ import zipfile
 from zipfile import ZipInfo
 
 from beet import Context, DataPack, ResourcePack
-from stouputils.decorators import handle_error, measure_time
+from stouputils.decorators import handle_error, measure_time, retry
 from stouputils.parallel import multithreading
 from stouputils.print import progress
 
@@ -77,15 +77,11 @@ def beet_default(ctx: Context) -> None:
 		# This approach writes pack contents directly to a zip file without modifying the original pack structure
 
 		# First pass: Create the zip file normally
-		for i in range(10):
-			try:
-				with zipfile.ZipFile(archive_path, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=6) as zip_file:
-					pack.dump(zip_file)
-				break
-			except Exception:
-				if i == 9:
-					raise
-				time.sleep(0.5)
+		@retry(exceptions=Exception, max_attempts=10, delay=0.5)
+		def dump_with_retry():
+			with zipfile.ZipFile(archive_path, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=6) as zip_file:
+				pack.dump(zip_file)
+		dump_with_retry()
 
 		# Second pass: Read all contents and recreate with consistent timestamps
 		# This is necessary because beet's dump() uses origin.open() which bypasses writestr() completely
