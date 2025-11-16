@@ -21,6 +21,7 @@ MORE_DATA_PACK_FORMATS: dict[tuple[int, ...], FormatSpecifier] = {
 	(1, 21, 8): 81,
 	(1, 21, 9): (88, 0),
 	(1, 21, 10): (88, 0),
+	(1, 21, 11): (93, 1),
 	(2, 0, 0): (1000, 0),
 }
 MORE_ASSETS_PACK_FORMATS: dict[tuple[int, ...], FormatSpecifier] = {
@@ -36,6 +37,7 @@ MORE_ASSETS_PACK_FORMATS: dict[tuple[int, ...], FormatSpecifier] = {
 	(1, 21, 8): 64,
 	(1, 21, 9): (69, 0),
 	(1, 21, 10): (69, 0),
+	(1, 21, 11): (74, 0),
 	(2, 0, 0): (1000, 0),
 }
 MORE_DATA_VERSIONS: dict[tuple[int, ...], int] = {
@@ -51,6 +53,7 @@ MORE_DATA_VERSIONS: dict[tuple[int, ...], int] = {
 	(1, 21, 8): 4440,
 	(1, 21, 9): 4554,
 	(1, 21, 10): 4556,
+	(1, 21, 11): 4662,
 }
 LATEST_MC_VERSION: str = ".".join(str(x) for x in list(MORE_DATA_VERSIONS.keys())[-1])
 base.LATEST_MINECRAFT_VERSION = LATEST_MC_VERSION
@@ -88,6 +91,8 @@ NOT_COMPONENTS: list[str] = [							# Keys that should not be considered as comp
 ]
 
 # Technical constants
+COMMON_SIGNAL: str = r'custom_data={"common_signals":{"temp":true}}'					# NBT to add to items to mark them as temporary for Common Signals library
+COMMON_SIGNAL_HIDDEN: str = r'tooltip_display={"hide_tooltip":true},' + COMMON_SIGNAL	# Same as previous but also hide the tooltip (Useful for GUIs)
 FACES: tuple[str, ...] = ("down", "up", "north", "south", "west", "east")						# Faces of a block, used for resource pack and blocks orientation
 SIDES: tuple[str, ...] = ("_bottom", "_top", "_front", "_back", "_left", "_right", "_side")	# Sides of a block, used for resource pack
 DOWNLOAD_VANILLA_ASSETS_RAW = "https://raw.githubusercontent.com/edayot/renders/renders/resourcepack/assets/minecraft/textures/render"
