@@ -56,7 +56,7 @@ def generate_dialogs(book_content: list[list[TextComponent]]) -> None:
 								pack_format = cast(int | tuple[int, ...], Mem.ctx.data.pack_format)
 								pack_format = pack_format[0] if isinstance(pack_format, tuple) else pack_format
 								if pack_format >= 93:
-									title[0]["atlas"] = title[2]["atlas"] = "minecraft:items"
+									title[0]["atlas"] = title[-1]["atlas"] = "minecraft:items"
 		else:
 			title = str(title).replace("\n", "")
 		if isinstance(title, str) and len(title.strip()) < 2:

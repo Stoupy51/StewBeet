@@ -64,13 +64,23 @@ def generate_all_iso_renders():
 		# 	__special_filter__ = for_model_resolver	# type: ignore
 		# )
 
-		## Model Resolver >= v1.8.2
+		# If atlas is used in overlay, copy it
+		any_atlas_used: bool = Mem.ctx.assets.overlays["before_format_73"]["minecraft"].atlases.get("blocks") is not None
+		if any_atlas_used:
+			print("Using temporary atlas for iso renders...")
+			Mem.ctx.assets["minecraft"].atlases["temporary_stewbeet"] = Mem.ctx.assets.overlays["before_format_73"]["minecraft"].atlases["blocks"]
+
+		## Model Resolver >= v1.12.0
 		debug(f"Generating iso renders for {len(for_model_resolver)} items, this may take a while...")
 		render = Render(Mem.ctx)
 		for rp_path, dst_path in for_model_resolver.items():
 			render.add_model_task(rp_path, path_save=dst_path, animation_mode="one_file")
 		render.run()
 		debug("Generated iso renders for all items")
+
+		# Remove temporary atlas
+		if any_atlas_used:
+			del Mem.ctx.assets["minecraft"].atlases["temporary_stewbeet"]
 
 	## Copy every used vanilla items
 	# Get every used vanilla items
