@@ -81,10 +81,13 @@ def beet_default(ctx: Context):
 			# Get variant name without extension
 			variant_name: str = os.path.splitext(variant_rel_sound)[0]
 
+			# For subtitle, strip trailing numbers and underscores to avoid "Wolf Howl 1", "Wolf Howl 2"
+			subtitle = re.sub(r'[_\s]*\d+$', '', variant_name).strip()
+
 			# Create Sound object for this variant
 			sounds[variant_name.lower().replace(" ","_")] = Sound(
 				source_path=clean_path(f"{sounds_folder}/{variant_rel_sound}"),
-				subtitle=variant_name
+				subtitle=subtitle
 			)
 
 		# Add all variants to the sound system
