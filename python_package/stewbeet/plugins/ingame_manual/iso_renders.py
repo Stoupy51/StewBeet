@@ -67,7 +67,6 @@ def generate_all_iso_renders():
 		# If atlas is used in overlay, copy it
 		any_atlas_used: bool = Mem.ctx.assets.overlays["before_format_73"]["minecraft"].atlases.get("blocks") is not None
 		if any_atlas_used:
-			print("Using temporary atlas for iso renders...")
 			Mem.ctx.assets["minecraft"].atlases["temporary_stewbeet"] = Mem.ctx.assets.overlays["before_format_73"]["minecraft"].atlases["blocks"]
 
 		## Model Resolver >= v1.12.0
