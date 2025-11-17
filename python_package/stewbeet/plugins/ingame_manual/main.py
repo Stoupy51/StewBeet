@@ -28,7 +28,7 @@ from ...core.constants import (
 	WIKI_COMPONENT,
 )
 from ...core.definitions_helper import add_item_name_and_lore_if_missing
-from ...core.ingredients import CRAFTING_RECIPES_TYPES, ingr_repr, ingr_to_id, ingr_to_name
+from ...core.ingredients import CRAFTING_RECIPES_TYPES, ingr_repr, ingr_to_id, ingr_to_name, item_id_to_name
 from ...core.utils.io import super_merge_dict, write_load_file
 from ..custom_recipes.vanilla import VanillaRecipeHandler
 from ..initialize.source_lore_font import find_pack_png
@@ -272,7 +272,7 @@ def routine():
 			if not SharedMemory.high_resolution:
 				page_font = get_page_font(number)
 			name = str(page["name"])
-			titled = name.replace("_", " ").title() + "\n"
+			titled = item_id_to_name(name) + "\n"
 
 			# Encode categories {'number': 2, 'name': 'Material #1', 'raw_data': ['adamantium_block', 'adamantium_fragment', ...]}
 			if page["type"] == CATEGORY:

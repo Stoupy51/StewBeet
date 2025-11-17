@@ -4,7 +4,7 @@ from beet.core.utils import JsonDict, TextComponent
 
 from ...core.__memory__ import Mem
 from ...core.constants import AWAKENED_FORGE, PULVERIZING
-from ...core.ingredients import FURNACES_RECIPES_TYPES, ingr_to_id
+from ...core.ingredients import FURNACES_RECIPES_TYPES, ingr_to_id, item_id_to_name
 from .book_components import get_item_component
 from .other_utils import convert_shapeless_to_shaped, high_res_font_from_craft
 from .page_font import generate_page_font
@@ -40,7 +40,7 @@ def generate_craft_content(craft: JsonDict, name: str, page_font: str, in_lore: 
 		craft["type"] = AWAKENED_FORGE
 
 	# Show up item title and page font
-	titled = name.replace("_", " ").title() + "\n"
+	titled = item_id_to_name(name) + "\n"
 	content.append({"text": titled, "font": "minecraft:default", "color": "black", "underlined": True})
 	padding: str = MICRO_NONE_FONT if use_dialog else ""
 	content.append(SMALL_NONE_FONT + padding + page_font + "\n")

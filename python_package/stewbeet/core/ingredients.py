@@ -129,6 +129,33 @@ def text_component_to_str(tc: TextComponent) -> str:
 	return result
 
 @simple_cache()
+def item_id_to_name(item_id: str) -> str:
+	""" Get the name from an item id
+	Args:
+		item_id (str): The item id, ex: "minecraft:stick" or "iyc:adamantium_ingot"
+	Returns:
+		str: The name of the item, ex: "Stick" or "Adamantium Ingot"
+	"""
+	if ":" not in item_id:
+		item_id = f"{Mem.ctx.project_id}:{item_id}"
+
+	# Internal definitions
+	ns, id = item_id.split(":")
+	if ns == Mem.ctx.project_id and id in Mem.definitions and "jukebox_playable" not in Mem.definitions[id]:
+		for component in ("item_name", "custom_name"):
+			if Mem.definitions[id].get(component):
+				return text_component_to_str(Mem.definitions[id][component])
+
+	# External definitions
+	if item_id in Mem.external_definitions and "jukebox_playable" not in Mem.external_definitions[item_id]:
+		for component in ("item_name", "custom_name"):
+			if Mem.external_definitions[item_id].get(component):
+				return text_component_to_str(Mem.external_definitions[item_id][component])
+
+	# Default: prettify the id
+	return id.replace("_", " ").title()
+
+@simple_cache()
 def ingr_to_name(ingredient: JsonDict) -> str:
 	""" Get the name from an ingredient dict
 	Args:
@@ -138,20 +165,8 @@ def ingr_to_name(ingredient: JsonDict) -> str:
 	Returns:
 		str: The name of the ingredient, ex: "Stick" or "Adamantium Ingot"
 	"""
-	# Internal definitions
-	id = ingr_to_id(ingredient, add_namespace=False)
-	for component in ("item_name", "custom_name"):
-		if Mem.definitions.get(id, {}).get(component):
-			return text_component_to_str(Mem.definitions[id][component])
-
-	# External definitions
-	external_id = ingr_to_id(ingredient, add_namespace=True)
-	for component in ("item_name", "custom_name"):
-		if Mem.external_definitions.get(external_id, {}).get(component):
-			return text_component_to_str(Mem.external_definitions[external_id][component])
-
-	# Default: prettify the id
-	return id.replace("_", " ").title()
+	item_id = ingr_to_id(ingredient, add_namespace=True)
+	return item_id_to_name(item_id)
 
 # Mainly used for recipes
 @simple_cache()
@@ -235,7 +250,7 @@ def get_item_from_ingredient(ingredient: JsonDict) -> JsonDict:
 
 # Make a loot table
 @simple_cache()
-def loot_table_from_ingredient(result_ingredient: JsonDict, result_count: int | dict) -> str:
+def loot_table_from_ingredient(result_ingredient: JsonDict, result_count: int | JsonDict) -> str:
 	""" Get the loot table for an ingredient dict
 	Args:
 		result_ingredient (dict): The ingredient dict
