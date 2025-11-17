@@ -50,7 +50,8 @@ def beet_default(ctx: Context) -> None:
                 painting_data["title"] = data.get("item_name") or {"text": item.replace("_", " ").title()}
 
             # Create ordered painting data with asset_id first
-            ordered_painting_data = {"asset_id": f"{ns}:{item}"}
+            texture_name: str = painting_data.get("texture", item)
+            ordered_painting_data = {"asset_id": f"{ns}:{texture_name}"}
             ordered_painting_data.update(painting_data)
             ordered_painting_data.pop("not_placeable", None)
             ordered_painting_data.pop("texture", None)
@@ -75,7 +76,7 @@ def beet_default(ctx: Context) -> None:
                 elif len(matching_textures) > 1:
                     warning(f"Multiple textures found for painting '{item}' in the textures folder '{textures_folder}'. Using the first one found: '{matching_textures[0]}'.")
                 src: str = matching_textures[0]
-            dst: str = f"painting/{item}"
+            dst: str = f"painting/{texture_name}"
 
             # Check if the texture is not already registered
             if not Mem.ctx.assets[ns].textures.get(dst):
