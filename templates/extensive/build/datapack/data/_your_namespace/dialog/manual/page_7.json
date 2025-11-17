@@ -3,7 +3,6 @@
 	"title": [
 		{
 			"sprite": "_your_namespace:item/steel_ingot",
-			"atlas": "minecraft:items",
 			"shadow_color": [
 				0,
 				0,
@@ -19,7 +18,6 @@
 		" ",
 		{
 			"sprite": "_your_namespace:item/steel_ingot",
-			"atlas": "minecraft:items",
 			"shadow_color": [
 				0,
 				0,

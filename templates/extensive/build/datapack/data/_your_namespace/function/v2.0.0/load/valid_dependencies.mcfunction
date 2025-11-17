@@ -2,7 +2,7 @@
 #> _your_namespace:v2.0.0/load/valid_dependencies
 #
 # @within	_your_namespace:v2.0.0/load/secondary
-#			_your_namespace:v2.0.0/load/valid_dependencies 1t replace
+#			_your_namespace:v2.0.0/load/valid_dependencies 1t replace [ scheduled ]
 #
 
 # Waiting for a player to get the game version, but stop function if no player found

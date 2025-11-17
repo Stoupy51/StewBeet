@@ -1,33 +1,9 @@
 {
 	"type": "minecraft:notice",
-	"title": [
-		{
-			"sprite": "_your_namespace:item/manual",
-			"atlas": "minecraft:items",
-			"shadow_color": [
-				0,
-				0,
-				0,
-				0
-			]
-		},
-		" ",
-		{
-			"translate": "_your_namespace.manual",
-			"underlined": true
-		},
-		" ",
-		{
-			"sprite": "_your_namespace:item/manual",
-			"atlas": "minecraft:items",
-			"shadow_color": [
-				0,
-				0,
-				0,
-				0
-			]
-		}
-	],
+	"title": {
+		"translate": "_your_namespace.extensive_template_manual",
+		"underlined": true
+	},
 	"body": [
 		{
 			"type": "minecraft:plain_message",

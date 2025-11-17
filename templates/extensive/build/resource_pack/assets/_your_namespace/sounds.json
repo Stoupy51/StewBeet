@@ -4,7 +4,7 @@
 		"sounds": [{"name": "_your_namespace:shazinho","stream": true}]
 	},
 	"dirt_bullet_impact": {
-		"subtitle": "dirt_bullet_impact_01",
+		"subtitle": "dirt_bullet_impact",
 		"sounds": ["_your_namespace:dirt_bullet_impact_01","_your_namespace:dirt_bullet_impact_02","_your_namespace:dirt_bullet_impact_03"]
 	},
 	"fireselect": {
