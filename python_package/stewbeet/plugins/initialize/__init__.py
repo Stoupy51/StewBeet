@@ -152,7 +152,7 @@ def beet_default(ctx: Context):
 	setup_pack_mcmeta(ctx.assets, ctx.assets.pack_format)
 
 	# Fix pack.save to retry when there is a PermissionError (for example, when vscode or another program locks a file temporarily)
-	Pack.save = retry(Pack.save, exceptions=PermissionError, max_attempts=5, delay=0.5)  # type: ignore
+	Pack.save = retry(Pack.save, exceptions=PermissionError, max_attempts=10, delay=1.0, backoff=1.2)  # type: ignore
 
 	# # Setup dialog convention for pause screen additions
 	# Mem.ctx.data["minecraft"].dialogs_tags["pause_screen_additions"] = set_json_encoder(DialogTag({"values":[{"id":"smithed:data_packs","required":False}]}))
