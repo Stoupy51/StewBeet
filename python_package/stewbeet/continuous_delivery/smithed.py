@@ -73,7 +73,7 @@ def upload_version(project_id: str, project_name: str, version: str, api_key: st
 	data: JsonDict = {
 		"name": version,
 		"downloads": {},
-		"supports": [x for x in get_supported_versions() if "w" not in x],	# Exclude snapshot versions
+		"supports": [x for x in get_supported_versions() if "w" not in x and "pre" not in x],	# Exclude snapshot versions
 		"dependencies": []
 	}
 
