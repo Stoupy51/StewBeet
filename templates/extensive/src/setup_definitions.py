@@ -47,7 +47,7 @@ def beet_default(ctx: Context):
         # Exemple of recipe with vanilla result (not custom item)
         core.USED_FOR_CRAFTING: [
             {"type":"smelting","result_count":1,"cookingtime":200,"experience":0.1,"group":"super_stone",
-             "category":"blocks","ingredient":core.ingr_repr("super_stone", ns),"result":core.ingr_repr("minecraft:diamond")},
+             "category":"blocks","ingredient":core.ingr_repr("super_stone"),"result":core.ingr_repr("minecraft:diamond")},
         ]
     }
 
@@ -71,10 +71,10 @@ def beet_default(ctx: Context):
         "id": "minecraft:written_book", core.CATEGORY: "misc", "item_name": ctx.meta.get("stewbeet", {}).get("manual", {}).get("name") or "Manual",
         core.RESULT_OF_CRAFTING: [
             # Put a book and a steel ingot in the crafting grid to get the manual
-            {"type":"crafting_shapeless","result_count":1,"group":"manual","category":"misc","ingredients": [core.ingr_repr("minecraft:book"), core.ingr_repr("steel_ingot", ns)]},
+            {"type":"crafting_shapeless","result_count":1,"group":"manual","category":"misc","ingredients": [core.ingr_repr("minecraft:book"), core.ingr_repr("steel_ingot")]},
 
             # Put the manual in the crafting grid to get the manual back (update the manual)
-            {"type":"crafting_shapeless","result_count":1,"group":"manual","category":"misc","ingredients": [core.ingr_repr("manual", ns)]},
+            {"type":"crafting_shapeless","result_count":1,"group":"manual","category":"misc","ingredients": [core.ingr_repr("manual")]},
         ],
     }
 
