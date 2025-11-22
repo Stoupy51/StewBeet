@@ -287,7 +287,7 @@ Mem.definitions["manual"] = {
             "result_count": 1,
             "ingredients": [
                 core.ingr_repr("minecraft:book"), 
-                core.ingr_repr("steel_ingot", ns)
+                core.ingr_repr("steel_ingot")
             ]
         }
     ]
@@ -315,7 +315,7 @@ core.generate_custom_records({
 #### **📝 Ingredient Representation**
 ```python
 # Local namespace item 🏠
-core.ingr_repr("steel_ingot", ns)
+core.ingr_repr("steel_ingot")
 # Result: {"custom_data": {"_your_namespace": {"steel_ingot": true}}}
 
 # Minecraft item ⛏️
