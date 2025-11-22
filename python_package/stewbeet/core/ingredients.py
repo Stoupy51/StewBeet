@@ -31,7 +31,7 @@ def ingr_repr(id: str, ns: str|None = None, count: int|None = None) -> JsonDict:
 	""" Get the identity of the ingredient from its id for custom crafts
 	Args:
 		id		(str):		The id of the ingredient, ex: adamantium_fragment
-		ns		(str|None):	The namespace of the ingredient (optional if 'id' argument is a vanilla item), ex: iyc
+		ns		(str|None):	The namespace of the ingredient (optional if 'id' argument is a vanilla item), ex: iyc (default: current project id)
 		count	(int|None):	The count of the ingredient (optional, used only when this ingredient format is a result item) (or use a special type of recipe that supports counts)
 	Returns:
 		str: The identity of the ingredient for custom crafts,
@@ -42,7 +42,7 @@ def ingr_repr(id: str, ns: str|None = None, count: int|None = None) -> JsonDict:
 		to_return: JsonDict = {"item": id}
 	else:
 		if ns is None:
-			error(f"Namespace must be specified for custom ingredient '{id}', or you may be missing 'minecraft:'")
+			ns = Mem.ctx.project_id
 		to_return: JsonDict = {"components":{"minecraft:custom_data":{ns:{id:True}}}}
 	if count is not None:
 		to_return["count"] = count

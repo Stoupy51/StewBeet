@@ -150,7 +150,7 @@ def generate_otherside_crafts(item: str) -> list[JsonDict]:
 					# before:	chainmail_helmet	{"type": "crafting_shaped","result_count": 1,"category": "equipment","shape": ["XXX","X X"],"ingredients": {"X": {"components": {"custom_data": {"iyc": {"chainmail": true}}}}}}}
 					# after:	chainmail			{"type": "crafting_shaped","result_count": 1,"category": "equipment","shape": ["XXX","X X"],"ingredients": {"X": {"components": {"custom_data": {"iyc": {"chainmail": true}}}}},"result": {"item": "minecraft:chainmail_helmet","count": 1}}
 					craft_copy: JsonDict = craft.copy()
-					craft_copy["result"] = ingr_repr(key, ns = Mem.ctx.project_id, count = craft["result_count"])
+					craft_copy["result"] = ingr_repr(key, count=craft["result_count"])
 					crafts.append(craft_copy)
 	return crafts
 
