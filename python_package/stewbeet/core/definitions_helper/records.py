@@ -71,7 +71,7 @@ def generate_custom_records(records: dict[str, str] | str | None = "auto", categ
 		# Create definitions entry for the record
 		Mem.definitions[record] = {
 			"id": CUSTOM_ITEM_VANILLA,
-			"custom_data": {Mem.ctx.project_id:{record: True}, "smithed":{"dict":{"record": {record: True}}}},
+			"custom_data": {Mem.ctx.project_id:{record: True}, "smithed":{"dict":{"record": {record: True, "item_name": item_name}}}},
 			"item_name": {"text":"Music Disc", "italic": False},
 			"jukebox_playable": f"{Mem.ctx.project_id}:{record}",
 			"max_stack_size": 1,
