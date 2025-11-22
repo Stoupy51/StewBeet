@@ -141,16 +141,34 @@ def item_id_to_name(item_id: str) -> str:
 
 	# Internal definitions
 	ns, id = item_id.split(":")
-	if ns == Mem.ctx.project_id and id in Mem.definitions and "jukebox_playable" not in Mem.definitions[id]:
+	if ns == Mem.ctx.project_id and id in Mem.definitions:
+		definition = Mem.definitions[id]
+
+		# If jukebox_playable is present, search for item_name in custom_data
+		if "jukebox_playable" in definition:
+			possible_item_name: str = definition.get("custom_data", {}).get("smithed", {}).get("dict", {}).get("record", {}).get("item_name", "")
+			if possible_item_name:
+				return text_component_to_str(possible_item_name)
+
+		# Regular components
 		for component in ("item_name", "custom_name"):
-			if Mem.definitions[id].get(component):
-				return text_component_to_str(Mem.definitions[id][component])
+			if definition.get(component):
+				return text_component_to_str(definition[component])
 
 	# External definitions
-	if item_id in Mem.external_definitions and "jukebox_playable" not in Mem.external_definitions[item_id]:
+	if item_id in Mem.external_definitions:
+		ext_definition = Mem.external_definitions[item_id]
+
+		# If jukebox_playable is present, search for item_name in custom_data
+		if "jukebox_playable" in ext_definition:
+			possible_item_name: str = ext_definition.get("custom_data", {}).get("smithed", {}).get("dict", {}).get("record", {}).get("item_name", "")
+			if possible_item_name:
+				return text_component_to_str(possible_item_name)
+
+		# Regular components
 		for component in ("item_name", "custom_name"):
-			if Mem.external_definitions[item_id].get(component):
-				return text_component_to_str(Mem.external_definitions[item_id][component])
+			if ext_definition.get(component):
+				return text_component_to_str(ext_definition[component])
 
 	# Default: prettify the id
 	return id.replace("_", " ").title()
