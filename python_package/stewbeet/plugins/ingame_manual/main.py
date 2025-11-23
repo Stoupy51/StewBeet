@@ -765,7 +765,7 @@ def routine():
 		# If remaining items in the line, add them
 		if len(line) > 0:
 			if SharedMemory.use_dialog > 0 and max_items_reached:
-				line.append(MEDIUM_NONE_FONT * max(0, 5 - len(line)))
+				line.append(MEDIUM_NONE_FONT * max(0, MAX_ITEMS_PER_ROW - len(line)))
 			line.insert(0, SMALL_NONE_FONT * LEFT_PADDING)
 			content += [*deepcopy(line), *category_padding, "\n"]
 			for i in range(1, len(line)):
