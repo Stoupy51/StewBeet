@@ -129,12 +129,14 @@ def text_component_to_str(tc: TextComponent) -> str:
 	return result
 
 @simple_cache()
-def item_id_to_name(item_id: str) -> str:
-	""" Get the name from an item id
+def item_id_to_text_component(item_id: str, use_default: bool = True) -> TextComponent:
+	""" Get the TextComponent from an item id
+
 	Args:
 		item_id (str): The item id, ex: "minecraft:stick" or "iyc:adamantium_ingot"
+		use_default (bool): Whether to use the default prettified string if no TextComponent is found
 	Returns:
-		str: The name of the item, ex: "Stick" or "Adamantium Ingot"
+		str: The TextComponent of the item, ex: "Stick" or {"text":"Adamantium Ingot"}
 	"""
 	if ":" not in item_id:
 		item_id = f"{Mem.ctx.project_id}:{item_id}"
@@ -146,14 +148,14 @@ def item_id_to_name(item_id: str) -> str:
 
 		# If jukebox_playable is present, search for item_name in custom_data
 		if "jukebox_playable" in definition:
-			possible_item_name: str = definition.get("custom_data", {}).get("smithed", {}).get("dict", {}).get("record", {}).get("item_name", "")
+			possible_item_name: TextComponent = definition.get("custom_data", {}).get("smithed", {}).get("dict", {}).get("record", {}).get("item_name", "")
 			if possible_item_name:
-				return text_component_to_str(possible_item_name)
+				return possible_item_name
 
 		# Regular components
 		for component in ("item_name", "custom_name"):
 			if definition.get(component):
-				return text_component_to_str(definition[component])
+				return definition[component]
 
 	# External definitions
 	if item_id in Mem.external_definitions:
@@ -161,17 +163,29 @@ def item_id_to_name(item_id: str) -> str:
 
 		# If jukebox_playable is present, search for item_name in custom_data
 		if "jukebox_playable" in ext_definition:
-			possible_item_name: str = ext_definition.get("custom_data", {}).get("smithed", {}).get("dict", {}).get("record", {}).get("item_name", "")
+			possible_item_name: TextComponent = ext_definition.get("custom_data", {}).get("smithed", {}).get("dict", {}).get("record", {}).get("item_name", "")
 			if possible_item_name:
-				return text_component_to_str(possible_item_name)
+				return possible_item_name
 
 		# Regular components
 		for component in ("item_name", "custom_name"):
 			if ext_definition.get(component):
-				return text_component_to_str(ext_definition[component])
+				return ext_definition[component]
 
 	# Default: prettify the id
-	return id.replace("_", " ").title()
+	if use_default:
+		return id.replace("_", " ").title()
+	return ""
+
+@simple_cache()
+def item_id_to_name(item_id: str) -> str:
+	""" Get the name from an item id
+	Args:
+		item_id (str): The item id, ex: "minecraft:stick" or "iyc:adamantium_ingot"
+	Returns:
+		str: The name of the item, ex: "Stick" or "Adamantium Ingot"
+	"""
+	return text_component_to_str(item_id_to_text_component(item_id))
 
 @simple_cache()
 def ingr_to_name(ingredient: JsonDict) -> str:
