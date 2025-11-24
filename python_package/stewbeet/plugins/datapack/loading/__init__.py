@@ -78,7 +78,10 @@ execute unless score #{ctx.project_id}.loaded load.status matches 1 run function
 
 					# Add 'minecraft:' if missing
 					if ":" not in k:
-						k = f"minecraft:{k}"
+						if k.startswith("!"):
+							k = f"!minecraft:{k[1:]}"
+						else:
+							k = f"minecraft:{k}"
 
 					# Copy component
 					mc_data["components"][k] = v
