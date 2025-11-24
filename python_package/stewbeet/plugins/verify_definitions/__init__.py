@@ -323,7 +323,7 @@ def beet_default(ctx: Context) -> None:
 	else:
 		info("No errors found in the definitions during verification")
 
-
+	# Final adjustments to the definitions
 	for item, data in Mem.definitions.items():
 		# Add additional data to the custom blocks
 		if data.get("id") == CUSTOM_BLOCK_VANILLA:
@@ -341,4 +341,10 @@ def beet_default(ctx: Context) -> None:
 		# Add additional data to the custom blocks alternative
 		elif data.get("id") == CUSTOM_BLOCK_ALTERNATIVE:
 			data["entity_data"] = {"id":"minecraft:item_frame","Tags":[f"{ctx.project_id}.new",f"{ctx.project_id}.{item}"],"Invisible":True,"Silent":True}
+			pass
+
+		# Fix !component values
+		for k, v in data.items():
+			if k.startswith("!") and v != {}:
+				data[k] = {}
 

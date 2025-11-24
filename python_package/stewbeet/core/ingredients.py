@@ -257,7 +257,10 @@ def get_item_from_ingredient(ingredient: JsonDict) -> JsonDict:
 			if k not in NOT_COMPONENTS:
 				if result.get("components") is None:
 					result["components"] = {}
-				result["components"][f"minecraft:{k}"] = v
+				if k.startswith("!"):
+					result["components"][f"!minecraft:{k[1:]}"] = {}
+				else:
+					result["components"][f"minecraft:{k}"] = v
 		return result
 
 	# External definitions
@@ -270,7 +273,10 @@ def get_item_from_ingredient(ingredient: JsonDict) -> JsonDict:
 			if k not in NOT_COMPONENTS:
 				if result.get("components") is None:
 					result["components"] = {}
-				result["components"][f"minecraft:{k}"] = v
+				if k.startswith("!"):
+					result["components"][f"!minecraft:{k[1:]}"] = {}
+				else:
+					result["components"][f"minecraft:{k}"] = v
 		return result
 
 	# Minecraft item

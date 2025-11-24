@@ -50,7 +50,10 @@ def beet_default(ctx: Context):
 		}
 		for k, v in data.items():
 			if k not in NOT_COMPONENTS:
-				set_components["components"][f"minecraft:{k}"] = v
+				if k.startswith("!"):
+					set_components["components"][f"!minecraft:{k[1:]}"] = {}
+				else:
+					set_components["components"][f"minecraft:{k}"] = v
 
 		# Add functions
 		loot_table["pools"][0]["entries"][0]["functions"] = [set_components]
@@ -79,7 +82,10 @@ def beet_default(ctx: Context):
 		}
 		for k, v in data.items():
 			if k not in NOT_COMPONENTS:
-				set_components["components"][f"minecraft:{k}"] = v
+				if k.startswith("!"):
+					set_components["components"][f"!minecraft:{k[1:]}"] = {}
+				else:
+					set_components["components"][f"minecraft:{k}"] = v
 		loot_table["pools"][0]["entries"][0]["functions"] = [set_components]
 
 		# Create external loot table with beet
