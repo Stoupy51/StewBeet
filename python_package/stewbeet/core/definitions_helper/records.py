@@ -17,19 +17,21 @@ from ..utils.sounds import add_sound
 
 # Cleaning function
 def clean_record_name(name: str) -> str:
-    """ Clean a record name by removing special characters and converting to lowercase.
+	""" Clean a record name by removing special characters and converting to lowercase.
 
-    Args:
-        name (str): The name to clean
+	Args:
+		name (str): The name to clean
 
-    Returns:
-        str: The cleaned name containing only lowercase letters, numbers and underscores
-    """
-    name = name.replace(".ogg", "").lower()
-    to_replace = [" ", "-", "___"]
-    for r in to_replace:
-        name = name.replace(r, "_")
-    return "".join([c for c in name if c in ascii_lowercase + digits + "_"])
+	Returns:
+		str: The cleaned name containing only lowercase letters, numbers and underscores
+	"""
+	name = name.replace(".ogg", "").lower()
+	to_replace = [" ", "-", "__"]
+	name = "".join([c for c in name if c in [*ascii_lowercase, *digits, *to_replace]])
+	for r in to_replace:
+		while r in name:
+			name = name.replace(r, "_")
+	return name
 
 
 # Custom records
