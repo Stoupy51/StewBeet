@@ -7,6 +7,7 @@ from zipfile import ZIP_DEFLATED, ZipFile, ZipInfo
 from beet import Context
 from smithed.weld.toolchain.cli import weld  # pyright: ignore[reportMissingTypeStubs]
 from stouputils.decorators import handle_error, silent
+from stouputils.print import warning
 
 from ...core.constants import OFFICIAL_LIBS
 from ...dependencies import OFFICIAL_LIBS_PATH
@@ -46,6 +47,11 @@ def weld_datapack(ctx: Context, dest_path: str) -> float:
 			path: str = f"{OFFICIAL_LIBS_PATH}/datapack/{name}.zip"
 			if os.path.exists(path):
 				datapacks_to_merge.append(path)
+
+	# Skip welding if there are less than 2 datapacks to merge
+	if len(datapacks_to_merge) < 2:
+		warning(f"No datapacks or libs to merge for {dest_path}. Skipping weld.")
+		return time.perf_counter() - start_time
 
 	# Weld all datapacks
 	output_dir = os.path.dirname(dest_path)
@@ -124,6 +130,11 @@ def weld_resource_pack(ctx: Context, dest_path: str) -> float:
 			path: str = f"{OFFICIAL_LIBS_PATH}/resource_pack/{name}.zip"
 			if os.path.exists(path):
 				resource_packs_to_merge.append(path)
+
+	# Skip welding if there are less than 2 resource packs to merge
+	if len(resource_packs_to_merge) < 2:
+		warning(f"No resource packs or libs to merge for {dest_path}. Skipping weld.")
+		return time.perf_counter() - start_time
 
 	# Weld all resource packs
 	output_dir = os.path.dirname(dest_path)
