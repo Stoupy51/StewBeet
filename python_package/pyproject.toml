@@ -16,7 +16,7 @@ classifiers = [
 	"Operating System :: OS Independent",
 ]
 dependencies = [
-	"stouputils>=1.5.2",
+	"stouputils>=1.6.1",
 	"model_resolver>=1.12.0",
 	"beet>=0.112.0",
 	"bolt>=0.49.2",
@@ -52,6 +52,7 @@ exclude = [
 	".cursor",
 	"build",
 	"dist",
+	"*.pyi",
 ]
 line-length = 200
 
@@ -79,4 +80,5 @@ ignore = [
 
 [tool.hatch.build]
 include = ["stewbeet"]
+ignore-vcs = true
 
