@@ -5,7 +5,7 @@ from stouputils.io import get_root_path
 
 # Constants
 ROOT: str = get_root_path(__file__, go_up=1)
-PACKAGE_NAME: str = "stouputils"
+PACKAGE_NAME: str = "stewbeet"
 CLEAN_BEFORE: bool = True
 
 if __name__ == "__main__":
@@ -15,4 +15,5 @@ if __name__ == "__main__":
 		output_directory=ROOT,	# Merge stubs into the package directory
 		clean_before=CLEAN_BEFORE,
 	)
+
 
