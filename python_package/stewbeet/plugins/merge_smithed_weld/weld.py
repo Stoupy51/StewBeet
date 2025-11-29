@@ -17,7 +17,6 @@ from ..initialize.source_lore_font import find_pack_png
 
 # Weld datapack
 @handle_error
-@silent
 def weld_datapack(ctx: Context, dest_path: str) -> float:
 	""" Merge the datapack and libs into one file using Weld
 	Args:
@@ -37,7 +36,7 @@ def weld_datapack(ctx: Context, dest_path: str) -> float:
 	datapacks_to_merge = [
 		str(Path(str(ctx.output_directory)) / f"{project_name_simple}_datapack.zip")
 	]
-	if libs_folder:
+	if libs_folder and os.path.exists(libs_folder):
 		datapacks_to_merge.append(f"{libs_folder}/datapack/*.zip")
 
 	# Add the used official libs
@@ -56,7 +55,7 @@ def weld_datapack(ctx: Context, dest_path: str) -> float:
 	# Weld all datapacks
 	output_dir = os.path.dirname(dest_path)
 	output = os.path.basename(dest_path.replace(".zip", "_temporary.zip"))
-	weld(datapacks_to_merge, Path(output_dir), Path(output), log = "error")
+	silent(weld)(datapacks_to_merge, Path(output_dir), Path(output), log = "error")
 
 	# Get the consistent timestamp
 	constant_time = get_consistent_timestamp(ctx)
@@ -100,7 +99,6 @@ def weld_datapack(ctx: Context, dest_path: str) -> float:
 
 # Weld resource pack
 @handle_error
-@silent
 def weld_resource_pack(ctx: Context, dest_path: str) -> float:
 	""" Merge the resource pack and libs into one file using Weld
 	Args:
@@ -120,7 +118,7 @@ def weld_resource_pack(ctx: Context, dest_path: str) -> float:
 	resource_packs_to_merge = [
 		str(Path(str(ctx.output_directory)) / f"{project_name_simple}_resource_pack.zip")
 	]
-	if libs_folder:
+	if libs_folder and os.path.exists(libs_folder):
 		resource_packs_to_merge.append(f"{libs_folder}/resource_pack/*.zip")
 
 	# Add the used official libs
@@ -139,7 +137,7 @@ def weld_resource_pack(ctx: Context, dest_path: str) -> float:
 	# Weld all resource packs
 	output_dir = os.path.dirname(dest_path)
 	output = os.path.basename(dest_path.replace(".zip", "_temporary.zip"))
-	weld(resource_packs_to_merge, Path(output_dir), Path(output), log = "error")
+	silent(weld)(resource_packs_to_merge, Path(output_dir), Path(output), log = "error")
 
 	# Get the consistent timestamp
 	constant_time = get_consistent_timestamp(ctx)
