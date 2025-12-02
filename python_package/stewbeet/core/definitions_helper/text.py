@@ -17,6 +17,11 @@ def create_gradient_text(text: str, start_hex: str = "c24a17", end_hex: str = "c
 	Returns:
 		list[JsonDict]: List of text components, each with a letter and its color.
 	"""
+	if start_hex.startswith("#"):
+		start_hex = start_hex[1:]
+	if end_hex.startswith("#"):
+		end_hex = end_hex[1:]
+
 	# Convert hex to RGB
 	start_r: int = int(start_hex[0:2], 16)
 	start_g: int = int(start_hex[2:4], 16)
