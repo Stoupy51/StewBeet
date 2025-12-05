@@ -5,7 +5,7 @@ import os
 
 from beet import Context
 from stouputils.decorators import measure_time
-from stouputils.io import super_json_dump, super_open
+from stouputils.io import json_dump, super_open
 from stouputils.print import progress
 
 from ...core.__memory__ import Mem
@@ -35,5 +35,5 @@ def beet_default(ctx: Context):
 
 	# Write SHA1 hashes to JSON file
 	with super_open(f"{Mem.ctx.output_directory}/sha1_hashes.json", "w") as f:
-		f.write(super_json_dump(sha1_hashes))
+		f.write(json_dump(sha1_hashes))
 

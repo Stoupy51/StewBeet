@@ -2,7 +2,7 @@
 # Imports
 from beet import Context, Language, TextFileBase
 from stouputils.decorators import measure_time
-from stouputils.io import super_json_dump
+from stouputils.io import json_dump
 from stouputils.parallel import multithreading
 from stouputils.print import BLUE, progress
 
@@ -32,6 +32,6 @@ def beet_default(ctx: Context):
 
 	# Update the lang file
 	lang.update(ctx.assets.languages.get("minecraft:en_us", Language()).data)
-	ctx.assets.languages["minecraft:en_us"] = Language(super_json_dump(dict(sorted(lang.items()))))
+	ctx.assets.languages["minecraft:en_us"] = Language(json_dump(dict(sorted(lang.items()))))
 	pass
 

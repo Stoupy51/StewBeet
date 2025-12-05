@@ -10,7 +10,7 @@ from beet import Font, Texture
 from beet.core.utils import JsonDict, TextComponent
 from PIL import Image
 from stouputils.collections import unique_list
-from stouputils.io import clean_path, relative_path, super_json_dump, super_open
+from stouputils.io import clean_path, relative_path, json_dump, super_open
 from stouputils.print import colored_for_loop, debug, error, suggestion, warning
 
 from stewbeet.core.definitions_helper.completion import add_private_custom_data_for_namespace
@@ -872,13 +872,13 @@ def routine():
 			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/book.png", "ascent": 25, "height": 300, "chars": [BOOK_FONT]})
 		fonts = {"providers": SharedMemory.font_providers}
 		with super_open(f"{SharedMemory.cache_path}/font/manual.json", "w") as f:
-			f.write(super_json_dump(fonts))
+			f.write(json_dump(fonts))
 
 		# Debug book_content
 		json_dump_path: str = manual_config.get("json_dump_path", "")
 		if json_dump_path:
 			with super_open(json_dump_path, "w") as f:
-				f.write(super_json_dump(book_content))
+				f.write(json_dump(book_content))
 			debug(f"Debug book_content at '{relative_path(json_dump_path)}'")
 
 		# Generate showcase images if requested

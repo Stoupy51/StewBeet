@@ -11,7 +11,7 @@ from beet.core.utils import JsonDict, TextComponent, split_version
 from box import Box
 from stouputils import relative_path
 from stouputils.decorators import measure_time, retry
-from stouputils.io import super_json_dump
+from stouputils.io import json_dump
 from stouputils.print import warning
 
 from ...core import LATEST_MC_VERSION, MORE_ASSETS_PACK_FORMATS, MORE_DATA_PACK_FORMATS, MORE_DATA_VERSIONS, Mem, set_json_encoder
@@ -145,7 +145,7 @@ def beet_default(ctx: Context):
 		# Set pack ID, use new pack_mcmeta, and set json encoder
 		pack_mcmeta["id"] = Mem.ctx.project_id
 		pack.mcmeta.data = pack_mcmeta
-		pack.mcmeta.encoder = lambda x: super_json_dump(x, max_level=3)
+		pack.mcmeta.encoder = lambda x: json_dump(x, max_level=3)
 
 	# Setup pack.mcmeta for both packs
 	setup_pack_mcmeta(ctx.data, ctx.data.pack_format)

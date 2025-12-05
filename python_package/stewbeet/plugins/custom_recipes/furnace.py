@@ -7,7 +7,7 @@ import json
 from beet import Recipe
 from beet.core.utils import JsonDict
 from stouputils.decorators import simple_cache
-from stouputils.io import super_json_dump
+from stouputils.io import json_dump
 
 from ...core.__memory__ import Mem
 from ...core.ingredients import (
@@ -82,7 +82,7 @@ class FurnaceRecipeHandler:
             "experience": recipe.get("experience", 0),
             "cookingtime": recipe.get("cookingtime", 200)
         }
-        Mem.ctx.data["furnace_nbt_recipes"].recipes[path] = Recipe(super_json_dump(json_file, max_level=-1))
+        Mem.ctx.data["furnace_nbt_recipes"].recipes[path] = Recipe(json_dump(json_file, max_level=-1))
 
         # Prepare line and return
         line: str = "execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input"
@@ -120,7 +120,7 @@ scoreboard players reset #count furnace_nbt_recipes.data
             "experience": experience,
             "cookingtime": 200
         }
-        Mem.ctx.data["furnace_nbt_recipes"].recipes[f"xp/{experience}"] = Recipe(super_json_dump(json_file, max_level=-1))
+        Mem.ctx.data["furnace_nbt_recipes"].recipes[f"xp/{experience}"] = Recipe(json_dump(json_file, max_level=-1))
 
         # Prepare line and return
         line: str = "execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input"

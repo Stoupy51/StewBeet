@@ -8,7 +8,7 @@ from collections.abc import Iterable
 from beet import ItemModel, Model
 from beet.core.utils import JsonDict
 from stouputils.decorators import LogLevels, handle_error, simple_cache
-from stouputils.io import super_json_dump
+from stouputils.io import json_dump
 from stouputils.print import error
 
 from ....core.__memory__ import Mem
@@ -317,7 +317,7 @@ class AutoModel:
 						# Else, if there are no textures override, show error
 						elif not self.data.get(OVERRIDE_MODEL, {}).get("textures"):
 							if not self.ignore_textures:
-								patterns = super_json_dump({
+								patterns = json_dump({
 									"cake": cake,
 									"cube_bottom_top": cube_bottom_top,
 									"orientable": orientable,

@@ -7,7 +7,7 @@ from pathlib import Path
 from beet import Equipment, Texture
 from beet.core.utils import JsonDict
 from stouputils.decorators import handle_error
-from stouputils.io import clean_path, relative_path, super_json_dump
+from stouputils.io import clean_path, relative_path, json_dump
 from stouputils.print import error
 
 from ..__memory__ import Mem
@@ -163,7 +163,7 @@ def generate_everything_about_this_material(
 
 	# Create equipment asset if any layers were processed
 	if top_layer or bottom_layer:
-		Mem.ctx.assets[f"{Mem.ctx.project_id}:{material_base}"] = Equipment(super_json_dump(model_data))
+		Mem.ctx.assets[f"{Mem.ctx.project_id}:{material_base}"] = Equipment(json_dump(model_data))
 
 
 	## Armor (helmet, chestplate, leggings, boots)

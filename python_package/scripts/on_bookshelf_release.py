@@ -103,7 +103,7 @@ def download_latest_release() -> None:
 	results: list[tuple[str, JsonDict]] = stp.multithreading(download_module, assets, max_workers=len(assets))
 	modules = dict(sorted(results, key=lambda x: x[0]))
 
-	dumped: str = stp.super_json_dump(modules, max_level=1).replace("false", "False").replace("true", "True")
+	dumped: str = stp.json_dump(modules, max_level=1).replace("false", "False").replace("true", "True")
 	file_content: str = f"""
 # Imports
 from beet.core.utils import JsonDict
@@ -118,8 +118,7 @@ BOOKSHELF_MODULES: dict[str, JsonDict] = {dumped}
 	stp.info(f"Updated '{DEPS_TO_UPDATE}' with new module information.")
 
 	# Update the config file
-	with open(CONFIG_PATH, "w") as f:
-		stp.super_json_dump({"version": tag_name}, f)
+	stp.json_dump({"version": tag_name}, CONFIG_PATH)
 	stp.info(f"Updated '{CONFIG_PATH}' with new version information.")
 
 # Main

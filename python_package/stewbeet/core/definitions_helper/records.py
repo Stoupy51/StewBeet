@@ -7,7 +7,7 @@ from beet import JukeboxSong, Sound
 from beet.core.utils import JsonDict
 from mutagen.oggvorbis import OggVorbis
 from stouputils.decorators import handle_error
-from stouputils.io import clean_path, super_json_dump
+from stouputils.io import clean_path, json_dump
 from stouputils.print import error, warning
 
 from ..__memory__ import Mem
@@ -96,7 +96,7 @@ def generate_custom_records(records: dict[str, str] | str | None = "auto", categ
 					"sound_event": {"sound_id":f"{Mem.ctx.project_id}:{record}"},
 					"description": {"text": item_name}
 				}
-				Mem.ctx.data[f"{Mem.ctx.project_id}:{record}"] = JukeboxSong(super_json_dump(json_song))
+				Mem.ctx.data[f"{Mem.ctx.project_id}:{record}"] = JukeboxSong(json_dump(json_song))
 
 				# Create and write sound
 				add_sound(Mem.ctx, sounds=Sound(source_path=file_path, stream=True), name=record)

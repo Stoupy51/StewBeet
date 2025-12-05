@@ -3,7 +3,7 @@
 from beet import Context, LootTable
 from beet.core.utils import JsonDict
 from stouputils.decorators import measure_time
-from stouputils.io import super_json_dump
+from stouputils.io import json_dump
 from stouputils.print import progress
 
 from ....core.__memory__ import Mem
@@ -59,7 +59,7 @@ def beet_default(ctx: Context):
 		loot_table["pools"][0]["entries"][0]["functions"] = [set_components]
 
 		# Create loot table with beet
-		ctx.data[ns].loot_tables[f"i/{item}"] = LootTable(super_json_dump(loot_table, max_level = 10))
+		ctx.data[ns].loot_tables[f"i/{item}"] = LootTable(json_dump(loot_table, max_level = 10))
 
 		# Add the pool to the creative loot table
 		creative_loot_table["pools"].append({"rolls": 1, "entries":[{"type":"minecraft:loot_table","value":f"{ns}:i/{item}"}] })
@@ -89,7 +89,7 @@ def beet_default(ctx: Context):
 		loot_table["pools"][0]["entries"][0]["functions"] = [set_components]
 
 		# Create external loot table with beet
-		ctx.data[ns].loot_tables[f"external/{ext_ns}/{item_name}"] = LootTable(super_json_dump(loot_table, max_level=10))
+		ctx.data[ns].loot_tables[f"external/{ext_ns}/{item_name}"] = LootTable(json_dump(loot_table, max_level=10))
 
 	# Loot tables for items with crafting recipes
 	for item, data in Mem.definitions.items():
@@ -116,7 +116,7 @@ def beet_default(ctx: Context):
 						}]
 					}]
 				}
-				ctx.data[ns].loot_tables[f"i/{item}_x{result_count}"] = LootTable(super_json_dump(loot_table, max_level=10))
+				ctx.data[ns].loot_tables[f"i/{item}_x{result_count}"] = LootTable(json_dump(loot_table, max_level=10))
 
 	# Second loot table for the manual (if present)
 	if "manual" in Mem.definitions:
@@ -129,11 +129,11 @@ def beet_default(ctx: Context):
 				}]
 			}]
 		}
-		ctx.data[ns].loot_tables[f"i/{ns}_manual"] = LootTable(super_json_dump(loot_table, max_level=10))
+		ctx.data[ns].loot_tables[f"i/{ns}_manual"] = LootTable(json_dump(loot_table, max_level=10))
 
 	# Write the creative loot table
 	if creative_loot_table["pools"]:
-		ctx.data[ns].loot_tables["creative_loot_table"] = LootTable(super_json_dump(creative_loot_table, max_level=2))
+		ctx.data[ns].loot_tables["creative_loot_table"] = LootTable(json_dump(creative_loot_table, max_level=2))
 
 	# Make a give all command that gives chests with all the items
 	CHEST_SIZE: int = 27
@@ -141,7 +141,7 @@ def beet_default(ctx: Context):
 
 	# Get source lore from context metadata
 	source_lore: JsonDict = ctx.meta["stewbeet"]["source_lore"]
-	lore = super_json_dump(source_lore, max_level=0).strip()
+	lore = json_dump(source_lore, max_level=0).strip()
 
 	chests: list[str] = []
 	definitions_copy = list(Mem.definitions.items())
@@ -158,7 +158,7 @@ def beet_default(ctx: Context):
 			for k in NOT_COMPONENTS:	# Remove non-component data
 				if data.get(k, None) is not None:
 					del data[k]
-			json_content = super_json_dump(data, max_level=0).strip()
+			json_content = json_dump(data, max_level=0).strip()
 			chest_contents.append(f'{{slot:{j},item:{{count:1,id:"{id}",components:{json_content}}}}}')
 
 		joined_content = ",".join(chest_contents)

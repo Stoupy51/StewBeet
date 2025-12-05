@@ -4,7 +4,7 @@
 from beet import Context
 from beet.core.utils import JsonDict
 from stouputils.decorators import measure_time
-from stouputils.io import super_json_dump
+from stouputils.io import json_dump
 from stouputils.print import progress
 
 from ....core.__memory__ import Mem
@@ -95,7 +95,7 @@ execute unless score #{ctx.project_id}.loaded load.status matches 1 run function
 				del mc_data["components"]["minecraft:item_model"]
 
 			# Append to the storage definitions, json_dump adds
-			items_storage += f"data modify storage {ctx.project_id}:items all.{item} set value " + super_json_dump(mc_data, max_level = 0)
+			items_storage += f"data modify storage {ctx.project_id}:items all.{item} set value " + json_dump(mc_data, max_level = 0)
 
 	# Write the loading tellraw and score, along with the final dataset
 	project_name = ctx.project_name or ctx.project_id

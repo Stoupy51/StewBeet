@@ -6,7 +6,7 @@ from pathlib import Path
 from beet import Font, Texture
 from beet.core.utils import TextComponent
 from PIL import Image
-from stouputils.io import super_json_dump
+from stouputils.io import json_dump
 
 from ...core import Mem
 
@@ -56,7 +56,7 @@ def create_source_lore_font(pack_icon: str) -> None:
 
 	# Create the font file
 	Mem.ctx.assets[Mem.ctx.project_id].fonts["icons"] = Font(
-		super_json_dump({"providers": [{"type": "bitmap","file": f"{Mem.ctx.project_id}:font/original_icon.png","ascent": 8,"height": 9,"chars": ["I"]}]})
+		json_dump({"providers": [{"type": "bitmap","file": f"{Mem.ctx.project_id}:font/original_icon.png","ascent": 8,"height": 9,"chars": ["I"]}]})
 	)
 
 	# Copy the pack.png to the resource pack

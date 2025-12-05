@@ -7,7 +7,7 @@ from beet import Atlas, Context
 from beet.core.utils import JsonDict
 from stouputils.collections import unique_list
 from stouputils.decorators import measure_time
-from stouputils.io import clean_path, relative_path, super_json_dump
+from stouputils.io import clean_path, relative_path, json_dump
 from stouputils.print import progress
 
 from ....core.__memory__ import Mem
@@ -73,7 +73,7 @@ def add_to_atlas(textures: set[str] = set()) -> None:  # noqa: B006
 
 		sources = unique_list(sorted(sources, key=lambda x: x["resource"]))
 		atlas_object.data["sources"] = sources
-		atlas_object.encoder = super_json_dump
+		atlas_object.encoder = json_dump
 
 
 # Main entry point

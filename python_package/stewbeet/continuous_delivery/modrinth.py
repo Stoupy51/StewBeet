@@ -154,7 +154,7 @@ def generate_fabric_metadata(mod_id: str, metadata: JsonDict) -> str:
 		fabric_mod_json["contact"]["sources"] = metadata["sources"]
 	if metadata.get("issues"):
 		fabric_mod_json["contact"]["issues"] = metadata["issues"]
-	return stp.super_json_dump(fabric_mod_json, max_level=-1)
+	return stp.json_dump(fabric_mod_json, max_level=-1)
 
 def generate_forge_metadata(mod_id: str, metadata: JsonDict, is_neoforge: bool = False) -> str:
 	""" Generate Forge/NeoForge mod metadata TOML
@@ -238,7 +238,7 @@ def generate_quilt_metadata(mod_id: str, metadata: JsonDict) -> str:
 			]
 		}
 	}
-	return stp.super_json_dump(quilt_mod_json, max_level=-1)
+	return stp.json_dump(quilt_mod_json, max_level=-1)
 
 def convert_datapack_to_mod(
 	datapack_path: str,
