@@ -4,6 +4,8 @@ venv
 .env
 .venv
 __pycache__
+.mypy_cache
+*.pyi
 extensive_template/continuous_delivery/
 upload.py
 perf.html
