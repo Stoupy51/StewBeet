@@ -4,7 +4,7 @@ from typing import Any, cast
 
 from beet import Context, Sound, SoundConfig
 from beet.core.utils import JsonDict
-from stouputils.io import super_json_dump
+from stouputils.io import json_dump
 
 
 # Functions
@@ -82,5 +82,5 @@ def add_sound(ctx: Context, sounds: Sound | dict[str, Sound], name: str, ns: str
 
 	# Update the sound config
 	config.update(new_config)
-	ctx.assets[ns].sound_config = SoundConfig(super_json_dump(config))
+	ctx.assets[ns].sound_config = SoundConfig(json_dump(config))
 

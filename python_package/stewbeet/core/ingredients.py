@@ -5,7 +5,7 @@ from typing import Any, cast
 from beet import LootTable
 from beet.core.utils import JsonDict, TextComponent
 from stouputils.decorators import simple_cache
-from stouputils.io import super_json_dump
+from stouputils.io import json_dump
 from stouputils.print import error
 
 from .__memory__ import Mem
@@ -332,7 +332,7 @@ def loot_table_from_ingredient(result_ingredient: JsonDict, result_count: int | 
 	if (isinstance(result_count, int) and result_count > 1) or isinstance(result_count, dict):
 		file["pools"][0]["entries"][0]["functions"] = [{"function": "minecraft:set_count","count": result_count}]
 
-	Mem.ctx.data[loot_table] = LootTable(super_json_dump(file, max_level=9))
+	Mem.ctx.data[loot_table] = LootTable(json_dump(file, max_level=9))
 	return loot_table
 
 @simple_cache()

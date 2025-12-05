@@ -8,7 +8,7 @@ from enum import Enum
 
 from beet import ItemModel, Model
 from beet.core.utils import JsonDict
-from stouputils.io import super_json_dump
+from stouputils.io import json_dump
 
 from ...core import Mem, texture_mcmeta
 
@@ -81,7 +81,7 @@ def setup_gui_in_resource_packs(gui_translations: dict[str, GuiTranslation]) -> 
 		# Write the model in models/item/
 		model_name = gui.replace('.png', '')
 		Mem.ctx.assets[namespace].models[f"item/{model_name}"] = Model(
-			super_json_dump(content, max_level=3)
+			json_dump(content, max_level=3)
 		)
 
 		# Copy the textures
@@ -89,7 +89,7 @@ def setup_gui_in_resource_packs(gui_translations: dict[str, GuiTranslation]) -> 
 
 		# Write the file in items/
 		Mem.ctx.assets[namespace].item_models[model_name] = ItemModel(
-			super_json_dump({
+			json_dump({
 				"model": {
 					"type": "minecraft:model",
 					"model": f"{namespace}:item/{model_name}"

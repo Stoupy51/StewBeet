@@ -3,7 +3,7 @@
 from beet import BlockTag, Context
 from beet.core.utils import JsonDict
 from stouputils.decorators import measure_time
-from stouputils.io import super_json_dump
+from stouputils.io import json_dump
 from stouputils.print import progress
 
 from ....core.__memory__ import Mem
@@ -27,5 +27,5 @@ def beet_default(ctx: Context):
 
 		# Add the block to veinminer tag
 		tag_content: JsonDict = {"values": [VANILLA_BLOCK_FOR_ORES["id"]]}
-		Mem.ctx.data["enchantplus"].block_tags["veinminer"] = BlockTag(super_json_dump(tag_content))
+		Mem.ctx.data["enchantplus"].block_tags["veinminer"] = BlockTag(json_dump(tag_content))
 

@@ -7,7 +7,7 @@ from typing import Any, cast
 from beet import Context
 from beet.core.utils import JsonDict
 from stouputils.decorators import measure_time
-from stouputils.io import relative_path, super_json_dump, super_open
+from stouputils.io import relative_path, json_dump, super_open
 from stouputils.print import debug, error, info, progress, warning
 
 from ...core.__memory__ import Mem
@@ -59,7 +59,7 @@ def beet_default(ctx: Context) -> None:
 	# Export definitions to JSON for debugging generation
 	if definitions_debug and definitions_copy:
 		with super_open(definitions_debug, "w") as f:
-			super_json_dump(definitions_copy, file = f)
+			json_dump(definitions_copy, file = f)
 		debug(f"Received definitions exported to './{relative_path(definitions_debug)}'")
 
 	# Check every single thing in the definitions

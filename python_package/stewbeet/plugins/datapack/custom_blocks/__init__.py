@@ -6,7 +6,7 @@ from pathlib import Path
 from beet import Advancement, BlockTag, Context, EntityTypeTag, LootTable, Predicate
 from beet.core.utils import JsonDict
 from stouputils.decorators import measure_time
-from stouputils.io import clean_path, relative_path, super_json_dump
+from stouputils.io import clean_path, relative_path, json_dump
 from stouputils.print import debug, error, progress
 
 from ....core.__memory__ import Mem
@@ -89,7 +89,7 @@ execute if score #rotation {ns}.data matches 0 if predicate {ns}:facing/west run
 		item: str
 		data: JsonDict
 		item_name: str = item.replace("_", " ").title()
-		custom_name: str = super_json_dump({"CustomName": data.get("item_name", item_name)}, max_level = 0)[:-1] # Remove the last new line
+		custom_name: str = json_dump({"CustomName": data.get("item_name", item_name)}, max_level = 0)[:-1] # Remove the last new line
 
 		# Custom block
 		if data.get(VANILLA_BLOCK):
