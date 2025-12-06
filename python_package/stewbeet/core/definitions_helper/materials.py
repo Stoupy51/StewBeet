@@ -7,7 +7,7 @@ from pathlib import Path
 from beet import Equipment, Texture
 from beet.core.utils import JsonDict
 from stouputils.decorators import handle_error
-from stouputils.io import clean_path, relative_path, json_dump
+from stouputils.io import clean_path, json_dump, relative_path
 from stouputils.print import error
 
 from ..__memory__ import Mem
@@ -183,7 +183,7 @@ def generate_everything_about_this_material(
 			Mem.definitions[armor][CATEGORY] = "equipment"					# Category
 			Mem.definitions[armor]["custom_data"] = {"smithed":{}}			# Smithed convention
 			Mem.definitions[armor]["custom_data"]["smithed"]["dict"] = {"armor": {material_base: True, gear: True}}
-			gear_config = {}
+			gear_config: JsonDict = {}
 			if gear == "helmet":
 				if not ignore_recipes:
 					Mem.definitions[armor][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["XXX","X X"],"ingredients":{"X": main_ingredient},"manual_priority":0}]
@@ -219,8 +219,8 @@ def generate_everything_about_this_material(
 			if equipments_config:
 				Mem.definitions[armor]["attribute_modifiers"] = format_attributes(equipments_config.get_armor_attributes(), SLOTS[gear], gear_config)
 
-	# Tools (sword, pickaxe, axe, shovel, hoe)
-	for gear in ["sword", "pickaxe", "axe", "shovel", "hoe"]:
+	# Tools (sword, pickaxe, axe, shovel, hoe, spear)
+	for gear in ["sword", "pickaxe", "axe", "shovel", "hoe", "spear"]:
 		tool = material_base + "_" + gear
 		if tool + ".png" not in textures:
 			continue
@@ -263,9 +263,15 @@ def generate_everything_about_this_material(
 				Mem.definitions[tool]["max_damage"] = int(gear_config["durability"] * durability_factor)
 			if not ignore_recipes:
 				Mem.definitions[tool][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["XX"," S"," S"],"ingredients": tools_ingr,"manual_priority":0}]
+		elif gear == "spear":
+			if equipments_config:
+				gear_config = VanillaEquipments.SPEAR.value[equipments_config.equivalent_to]
+				Mem.definitions[tool]["max_damage"] = int(gear_config["durability"] * durability_factor)
+			if not ignore_recipes:
+				Mem.definitions[tool][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["  X"," X ","S  "],"ingredients": tools_ingr,"manual_priority":0}]
 		if equipments_config:
 			Mem.definitions[tool]["attribute_modifiers"] = format_attributes(equipments_config.get_tools_attributes(), SLOTS[gear], gear_config)
-		if gear == "sword": # Remove the mining_efficiency attribute from swords
+		if gear in ("sword", "spear"): # Remove the mining_efficiency attribute from swords and spears
 			Mem.definitions[tool]["attribute_modifiers"] = [am for am in Mem.definitions[tool]["attribute_modifiers"] if am["type"] != "mining_efficiency"]
 	pass
 

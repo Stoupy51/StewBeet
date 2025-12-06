@@ -119,6 +119,15 @@ class VanillaEquipments(Enum):
 						DefaultOre.DIAMOND:		{"durability": 1561,	"attack_damage": 1,		"attack_speed": 0.00},
 						DefaultOre.NETHERITE:	{"durability": 2031,	"attack_damage": 1,		"attack_speed": 0.00}
 					})
+	SPEAR			= cast(dict[DefaultOre, dict[str, float]],
+					{	DefaultOre.LEATHER:		{"durability": 59,		"attack_damage": 1,		"attack_speed": -2.462},
+						DefaultOre.COPPER:		{"durability": 190,		"attack_damage": 2,		"attack_speed": -2.824},
+						DefaultOre.CHAINMAIL:	{"durability": 131,		"attack_damage": 2,		"attack_speed": -2.666},
+						DefaultOre.IRON:		{"durability": 250,		"attack_damage": 3,		"attack_speed": -2.947},
+						DefaultOre.GOLD:		{"durability": 32,		"attack_damage": 1,		"attack_speed": -2.947},
+						DefaultOre.DIAMOND:		{"durability": 1561,	"attack_damage": 4,		"attack_speed": -3.048},
+						DefaultOre.NETHERITE:	{"durability": 2031,	"attack_damage": 5,		"attack_speed": -3.130}
+					})
 
 class EquipmentsConfig:
 	def __init__(self, equivalent_to: DefaultOre = DefaultOre.DIAMOND, pickaxe_durability: float | int = 1561, attributes: dict[str, float] | None = None):
