@@ -20,7 +20,8 @@ SLOTS: dict[str, str] = {
 	"pickaxe": "mainhand",
 	"axe": "mainhand",
 	"shovel": "mainhand",
-	"hoe": "mainhand"
+	"hoe": "mainhand",
+	"spear": "mainhand",
 }
 UNIQUE_SLOTS_VALUES: list[str] = []	# No sorted(set()) since we want to preserve the current order
 for slot in SLOTS.values():

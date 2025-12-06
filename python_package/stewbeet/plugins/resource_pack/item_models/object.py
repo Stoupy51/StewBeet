@@ -456,7 +456,40 @@ class AutoModel:
 
 			# Generate the json file required in items/
 			if not self.data["id"].endswith("bow"):
-				items_model = {"model": {"type": "minecraft:model", "model": f"{self.ns}:item/{self.item_name}{on_off}"}}
+				# Check if this is a spear with an in_hand variant
+				if self.item_name.endswith("_spear") and f"{self.item_name}_in_hand.png" in self.source_textures:
+					# Create the special spear model with display context switching
+					items_model: JsonDict = {
+						"model": {
+							"type": "minecraft:select",
+							"cases": [
+								{
+									"model": {"type": "minecraft:model","model": f"{self.ns}:item/{self.item_name}{on_off}"},
+									"when": ["gui","ground","fixed","on_shelf"]
+								}
+							],
+							"fallback": {"type": "minecraft:model","model": f"{self.ns}:item/{self.item_name}_in_hand{on_off}"},
+							"property": "minecraft:display_context"
+						},
+						"swap_animation_scale": 1.95
+					}
+
+					# Create the in_hand model
+					in_hand_content: JsonDict = {"parent": "item/spear_in_hand","textures": {"layer0": f"{self.ns}:item/{self.item_name}_in_hand{on_off}"}}
+
+					# Add the in_hand model to assets
+					Mem.ctx.assets[self.ns].models[f"item/{self.item_name}_in_hand{on_off}"] = set_json_encoder(Model(in_hand_content), max_level=4)
+
+					# Add the in_hand texture to assets
+					in_hand_texture = f"{self.item_name}_in_hand{on_off}.png"
+					if in_hand_texture in self.source_textures:
+						Mem.ctx.assets[self.ns].textures[f"item/{self.item_name}_in_hand{on_off}"] = texture_mcmeta(self.source_textures[in_hand_texture])
+					elif f"{self.item_name}_in_hand.png" in self.source_textures and not on_off:
+						Mem.ctx.assets[self.ns].textures[f"item/{self.item_name}_in_hand"] = texture_mcmeta(self.source_textures[f"{self.item_name}_in_hand.png"])
+				else:
+					# Standard item model
+					items_model = {"model": {"type": "minecraft:model", "model": f"{self.ns}:item/{self.item_name}{on_off}"}}
+
 				Mem.ctx.assets[self.ns].item_models[self.item_name + on_off] = set_json_encoder(ItemModel(items_model), max_level=4)
 
 		# Return
