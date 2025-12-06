@@ -68,7 +68,7 @@ Generates secure SHA1 checksums for each archive:
 ### 📋 Hash Manifest Creation
 Creates comprehensive JSON file with all computed hashes:
 - 📝 Stores filename-to-hash mappings in JSON format
-- 🎨 Uses super_json_dump for properly formatted output
+- 🎨 Uses json_dump for properly formatted output
 - 💾 Creates sha1_hashes.json file in the output directory
 - 📊 Provides machine-readable format for automated verification
 
