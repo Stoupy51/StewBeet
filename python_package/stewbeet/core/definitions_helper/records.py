@@ -97,6 +97,7 @@ def generate_custom_records(records: dict[str, str] | str | None = "auto", categ
 					"description": {"text": item_name}
 				}
 				Mem.ctx.data[f"{Mem.ctx.project_id}:{record}"] = JukeboxSong(json_dump(json_song))
+				Mem.definitions[record]["custom_data"]["smithed"]["dict"]["jukebox_song"] = json_song
 
 				# Create and write sound
 				add_sound(Mem.ctx, sounds=Sound(source_path=file_path, stream=True), name=record)
