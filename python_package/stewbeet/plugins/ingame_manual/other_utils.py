@@ -33,6 +33,7 @@ def convert_shapeless_to_shaped(craft: JsonDict) -> JsonDict:
 	# Get all ingredients to the dictionary and map each ingredient to a key, preserving order
 	next_key: str = "A"
 	ingredient_to_key: dict[str, str] = {}
+	ingredient_counts: dict[str, int] = {}
 	ordered_keys: list[str] = []
 
 	for ingr in shapeless_ingredients:
@@ -44,6 +45,9 @@ def convert_shapeless_to_shaped(craft: JsonDict) -> JsonDict:
 			ingredient_to_key[ingr_str] = next_key
 			shaped_recipe["ingredients"][next_key] = ingr
 			next_key = chr(ord(next_key) + 1)
+
+		# Count occurrences
+		ingredient_counts[ingr_str] = ingredient_counts.get(ingr_str, 0) + 1
 
 		# Record the key for this position (preserving order)
 		ordered_keys.append(ingredient_to_key[ingr_str])
@@ -60,7 +64,7 @@ def convert_shapeless_to_shaped(craft: JsonDict) -> JsonDict:
 			shaped_recipe["shape"] = [big*3, big+other+big, big*3]
 		elif total_items == 5:
 			shaped_recipe["shape"] = [f" {big} ", big+other+big, f" {big} "]
-	elif len(shaped_recipe["ingredients"]) == 3 and total_items == 9:
+	elif len(shaped_recipe["ingredients"]) == 3 and total_items == 9 and all(count in (1, 4) for count in ingredient_counts.values()):
 
 		# Get the key for the item that is less frequent
 		len_A: int = len([x for x in shapeless_ingredients if str(x) == str(shaped_recipe["ingredients"]["A"])])
