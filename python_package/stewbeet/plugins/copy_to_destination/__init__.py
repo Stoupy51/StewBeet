@@ -6,14 +6,14 @@ import shutil
 from beet import Context
 from stouputils.decorators import handle_error, measure_time, retry
 from stouputils.io import relative_path
-from stouputils.print import info, progress, warning
+from stouputils.print import info, warning
 
 from ...core.constants import OFFICIAL_LIBS
 from ...dependencies import OFFICIAL_LIBS_PATH
 
 
 # Main entry point
-@measure_time(progress, message="Execution time of 'stewbeet.plugins.copy_to_destination'")
+@measure_time(message="Execution time of 'stewbeet.plugins.copy_to_destination'")
 @handle_error(message="Error during 'stewbeet.plugins.copy_to_destination'")
 def beet_default(ctx: Context) -> None:
 	""" Copy destination plugin for StewBeet.

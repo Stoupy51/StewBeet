@@ -8,7 +8,6 @@ from beet.core.utils import JsonDict
 from stouputils.collections import unique_list
 from stouputils.decorators import measure_time
 from stouputils.io import clean_path, json_dump, relative_path
-from stouputils.print import progress
 
 from ....core.__memory__ import Mem
 from .object import AutoModel, to_atlas
@@ -77,7 +76,7 @@ def add_to_atlas(textures: set[str] = set()) -> None:  # noqa: B006
 
 
 # Main entry point
-@measure_time(progress, message="Execution time of 'stewbeet.plugins.resource_pack.item_models'")
+@measure_time(message="Execution time of 'stewbeet.plugins.resource_pack.item_models'")
 def beet_default(ctx: Context):
 	""" Main entry point for the item models plugin.
 

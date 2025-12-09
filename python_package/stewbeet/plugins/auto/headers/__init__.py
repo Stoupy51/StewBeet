@@ -2,7 +2,6 @@
 # Imports
 from beet import Context
 from stouputils.decorators import measure_time
-from stouputils.print import progress
 
 from ....core.__memory__ import Mem
 from ....core.utils.io import read_function, write_function
@@ -13,7 +12,7 @@ from .object import Header
 
 
 # Main entry point
-@measure_time(progress, message="Execution time of 'stewbeet.plugins.auto.headers'")
+@measure_time(message="Execution time of 'stewbeet.plugins.auto.headers'")
 def beet_default(ctx: Context):
     """ Main entry point for the headers plugin.
 

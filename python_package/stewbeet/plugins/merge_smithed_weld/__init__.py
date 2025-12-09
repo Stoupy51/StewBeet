@@ -5,13 +5,12 @@ from pathlib import Path
 
 from beet import Context
 from stouputils.decorators import measure_time
-from stouputils.print import progress
 
 from .weld import weld_datapack, weld_resource_pack
 
 
 # Main entry point
-@measure_time(progress, message="Execution time of 'stewbeet.plugins.merge_smithed_weld'")
+@measure_time(message="Execution time of 'stewbeet.plugins.merge_smithed_weld'")
 def beet_default(ctx: Context) -> None:
 	""" Merge Smithed Weld plugin for StewBeet.
 	Merges the generated datapack and resource pack with libraries using Smithed Weld.

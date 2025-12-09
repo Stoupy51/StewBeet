@@ -8,7 +8,6 @@ from zipfile import ZipInfo
 from beet import Context, DataPack, ResourcePack
 from stouputils.decorators import handle_error, measure_time, retry
 from stouputils.parallel import multithreading
-from stouputils.print import progress
 
 from ...core.__memory__ import Mem
 from ..initialize.source_lore_font import find_pack_png
@@ -33,7 +32,7 @@ def get_consistent_timestamp(ctx: Context) -> tuple[int, int, int, int, int, int
 
 
 # Main entry point
-@measure_time(progress, message="Execution time of 'stewbeet.plugins.archive'")
+@measure_time(message="Execution time of 'stewbeet.plugins.archive'")
 def beet_default(ctx: Context) -> None:
 	""" Archive plugin for StewBeet.
 	Creates zip archives of the generated data pack and resource pack using pack.dump() to avoid

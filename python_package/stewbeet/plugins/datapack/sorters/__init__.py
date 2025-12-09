@@ -3,14 +3,13 @@
 from beet import Context
 from beet.core.utils import JsonDict
 from stouputils.decorators import measure_time
-from stouputils.print import progress
 
 from .constants import SorterFile
 from .match import generate_sorter
 
 
 # Main entry point
-@measure_time(progress, message="Execution time of 'stewbeet.plugins.datapack.sorters'")
+@measure_time(message="Execution time of 'stewbeet.plugins.datapack.sorters'")
 def beet_default(ctx: Context):
 	""" Main entry point for the sorters plugin.
 	This plugin generates functions that sort lists in storage.

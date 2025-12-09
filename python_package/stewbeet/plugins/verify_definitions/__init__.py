@@ -7,8 +7,8 @@ from typing import Any, cast
 from beet import Context
 from beet.core.utils import JsonDict
 from stouputils.decorators import measure_time
-from stouputils.io import relative_path, json_dump, super_open
-from stouputils.print import debug, error, info, progress, warning
+from stouputils.io import json_dump, relative_path, super_open
+from stouputils.print import debug, error, info, warning
 
 from ...core.__memory__ import Mem
 from ...core.constants import (
@@ -27,7 +27,7 @@ from ...core.ingredients import FURNACES_RECIPES_TYPES
 
 
 # Main entry point
-@measure_time(progress, message="Execution time of 'stewbeet.plugins.verify_definitions'")
+@measure_time(message="Execution time of 'stewbeet.plugins.verify_definitions'")
 def beet_default(ctx: Context) -> None:
 	""" Database verification plugin for StewBeet.
 	Verifies the definitions structure, validates item configurations, and performs consistency checks.

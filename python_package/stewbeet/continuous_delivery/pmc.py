@@ -139,8 +139,8 @@ def upload_version(project_url: str, changelog: str) -> None:
 	stp.info("Changelog text copied to the clipboard!")
 
 
-@stp.measure_time(stp.progress, "Uploading to PlanetMinecraft took")
-@stp.handle_error()
+@stp.measure_time(message="Uploading to PlanetMinecraft took")
+@stp.handle_error
 def upload_to_pmc(pmc_config: JsonDict, changelog: str = "") -> None:
 	""" Upload the project to PlanetMinecraft using the configuration
 

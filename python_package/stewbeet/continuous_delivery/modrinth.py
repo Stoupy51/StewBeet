@@ -471,8 +471,8 @@ def set_resource_pack_required(version_id: str, resource_pack_hash: str, headers
 	)
 	stp.handle_response(version_response, "Failed to put the resource pack as required")
 
-@stp.measure_time(stp.progress, "Uploading to modrinth took")
-@stp.handle_error()
+@stp.measure_time(message="Uploading to modrinth took")
+@stp.handle_error
 def upload_to_modrinth(credentials: dict[str, str], modrinth_config: JsonDict, changelog: str = "") -> None:
 	""" Upload the project to Modrinth using the credentials and the configuration
 

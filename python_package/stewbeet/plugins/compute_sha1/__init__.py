@@ -6,13 +6,12 @@ import os
 from beet import Context
 from stouputils.decorators import measure_time
 from stouputils.io import json_dump, super_open
-from stouputils.print import progress
 
 from ...core.__memory__ import Mem
 
 
 # Main entry point
-@measure_time(progress, message="Execution time of 'stewbeet.plugins.compute_sha1'")
+@measure_time(message="Execution time of 'stewbeet.plugins.compute_sha1'")
 def beet_default(ctx: Context):
 	""" Main entry point for the compute SHA1 plugin.
 	This plugin computes SHA1 hashes for each zip file in the build folder.

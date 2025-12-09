@@ -2,14 +2,13 @@
 # Imports
 from beet import Context, PngFile
 from stouputils.decorators import measure_time
-from stouputils.print import progress
 
 from ....core import Mem
 from ...initialize.source_lore_font import create_source_lore_font, find_pack_png
 
 
 # Main entry point
-@measure_time(progress, message="Execution time of 'stewbeet.plugins.finalyze.last_final'")
+@measure_time(message="Execution time of 'stewbeet.plugins.finalyze.last_final'")
 def beet_default(ctx: Context):
 	if Mem.ctx is None: # pyright: ignore[reportUnnecessaryComparison]
 		Mem.ctx = ctx

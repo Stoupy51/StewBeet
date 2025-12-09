@@ -3,7 +3,7 @@
 from beet import Context, FunctionTag
 from beet.core.utils import JsonDict
 from stouputils.decorators import measure_time
-from stouputils.print import debug, progress
+from stouputils.print import debug
 
 from ....core.__memory__ import Mem
 from ....core.constants import RESULT_OF_CRAFTING
@@ -40,7 +40,7 @@ def get_result_count(item: str, ingr_to_seek: str) -> int:
 
 
 # Main entry point
-@measure_time(progress, message="Execution time of 'stewbeet.plugins.compatibilities.simpledrawer'")
+@measure_time(message="Execution time of 'stewbeet.plugins.compatibilities.simpledrawer'")
 def beet_default(ctx: Context):
 	""" Main entry point for the simpledrawer compatibility plugin.
 	This plugin sets up SimpleDrawer compatibility for compacting drawers.

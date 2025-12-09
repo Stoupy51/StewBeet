@@ -39,8 +39,8 @@ def format_module_name(module: str) -> str:
 def pascal_to_snake(name: str) -> str:
 	return re.sub(r'(?<!^)(?=[A-Z])', '_', name).lower()
 
-@stp.handle_error()
-@stp.measure_time(stp.progress)
+@stp.handle_error
+@stp.measure_time
 def download_latest_release() -> None:
 	"""
 	Download the wanted files from the latest release on GitHub.

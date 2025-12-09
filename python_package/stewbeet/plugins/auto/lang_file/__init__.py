@@ -4,13 +4,13 @@ from beet import Context, Language, TextFileBase
 from stouputils.decorators import measure_time
 from stouputils.io import json_dump
 from stouputils.parallel import multithreading
-from stouputils.print import BLUE, progress
+from stouputils.print import BLUE
 
 from .utils import handle_file, lang
 
 
 # Main entry point
-@measure_time(progress, message="Execution time of 'stewbeet.plugins.auto.lang_file'")
+@measure_time(message="Execution time of 'stewbeet.plugins.auto.lang_file'")
 def beet_default(ctx: Context):
 	""" Main entry point for the lang file plugin.
 	This plugin handles language file generation for the datapack.
