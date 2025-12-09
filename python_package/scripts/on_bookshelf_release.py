@@ -16,7 +16,7 @@ from beet.core.utils import JsonDict
 # Constants
 ROOT: str = stp.get_root_path(__file__, go_up=1)
 GITHUB_REPO: str = "https://github.com/mcbookshelf/bookshelf/releases"
-API_URL: str = "https://api.github.com/repos/mcbookshelf/bookshelf/releases/latest"
+API_URL: str = "https://api.github.com/repos/mcbookshelf/bookshelf/releases"
 DESTINATION_FOLDER: str = f"{ROOT}/stewbeet/dependencies"
 CONFIG_PATH: str = f"{DESTINATION_FOLDER}/bookshelf_config.json"
 DEPS_TO_UPDATE: str = "stewbeet/dependencies/bookshelf.py"
@@ -58,8 +58,12 @@ def download_latest_release() -> None:
 	if response.status_code != 200:
 		stp.info(f"Error fetching release info: {response.status_code}")
 		return
-	release_info: JsonDict = response.json()
+	releases: list[JsonDict] = response.json()
+	if not releases:
+		stp.info("No releases found")
+		return
 
+	release_info: JsonDict = releases[0]
 	tag_name: str = release_info.get("tag_name", "v0.0.0")
 	stp.info(f"Latest release tag: {tag_name}")
 
@@ -118,7 +122,8 @@ BOOKSHELF_MODULES: dict[str, JsonDict] = {dumped}
 	stp.info(f"Updated '{DEPS_TO_UPDATE}' with new module information.")
 
 	# Update the config file
-	stp.json_dump({"version": tag_name}, CONFIG_PATH)
+	if tag_name != "nightly":
+		stp.json_dump({"version": tag_name}, CONFIG_PATH)
 	stp.info(f"Updated '{CONFIG_PATH}' with new version information.")
 
 # Main
