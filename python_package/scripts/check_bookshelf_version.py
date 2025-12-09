@@ -44,7 +44,7 @@ def get_latest_version() -> str | None:
 		str | None: The latest version or None if request failed
 	"""
 	try:
-		response: requests.Response = requests.get(API_URL)
+		response: requests.Response = requests.get(API_URL + "/latest")
 		response.raise_for_status()
 		data: JsonDict = response.json()
 		# Assuming the version is in the tag_name field
