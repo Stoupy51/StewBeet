@@ -6,11 +6,11 @@ from typing import cast
 from beet import Context, Texture
 from PIL import Image
 from stouputils.decorators import measure_time
-from stouputils.print import progress, warning
+from stouputils.print import warning
 
 
 # Main entry point
-@measure_time(progress, message="Execution time of 'stewbeet.plugins.resource_pack.check_power_of_2'")
+@measure_time(message="Execution time of 'stewbeet.plugins.resource_pack.check_power_of_2'")
 def beet_default(ctx: Context) -> None:
 	""" Check if all textures in the resource pack are in power of 2 resolution.
 

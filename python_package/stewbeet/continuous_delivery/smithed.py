@@ -103,7 +103,7 @@ def upload_version(project_id: str, project_name: str, version: str, api_key: st
 	stp.handle_response(response, "Failed to create version on Smithed")
 
 
-@stp.measure_time(stp.progress, "Uploading to smithed took")
+@stp.measure_time(message="Uploading to smithed took")
 @stp.handle_error(error_log=stp.LogLevels.WARNING_TRACEBACK)
 def upload_to_smithed(credentials: dict[str, str], smithed_config: dict[str, str], changelog: str = "") -> None:
 	""" Upload the project to Smithed using the credentials and the configuration

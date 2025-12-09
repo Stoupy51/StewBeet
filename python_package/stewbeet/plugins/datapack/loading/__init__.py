@@ -5,7 +5,6 @@ from beet import Context
 from beet.core.utils import JsonDict
 from stouputils.decorators import measure_time
 from stouputils.io import json_dump
-from stouputils.print import progress
 
 from ....core.__memory__ import Mem
 from ....core.constants import NOT_COMPONENTS
@@ -13,7 +12,7 @@ from ....core.utils.io import write_function_tag, write_load_file, write_version
 
 
 # Main entry point
-@measure_time(progress, message="Execution time of 'stewbeet.plugins.datapack.loading'")
+@measure_time(message="Execution time of 'stewbeet.plugins.datapack.loading'")
 def beet_default(ctx: Context):
 	""" Main entry point for the datapack loading plugin.
 

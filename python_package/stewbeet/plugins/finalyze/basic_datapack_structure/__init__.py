@@ -2,14 +2,13 @@
 # Imports
 from beet import Context
 from stouputils.decorators import measure_time
-from stouputils.print import progress
 
 from ....core.__memory__ import Mem
 from ....core.utils.io import write_tick_file, write_versioned_function
 
 
 # Main entry point
-@measure_time(progress, message="Execution time of 'stewbeet.plugins.finalyze.basic_datapack_structure'")
+@measure_time(message="Execution time of 'stewbeet.plugins.finalyze.basic_datapack_structure'")
 def beet_default(ctx: Context) -> None:
 	""" Main entry point for the basic datapack structure plugin.
 	This plugin sets up basic timing structures for a Minecraft datapack with tick functions

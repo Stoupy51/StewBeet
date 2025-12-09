@@ -8,13 +8,12 @@ from beet import Context, Sound
 from stouputils.decorators import measure_time
 from stouputils.io import clean_path, relative_path
 from stouputils.parallel import multithreading
-from stouputils.print import progress
 
 from ....core.utils.sounds import add_sound
 
 
 # Main entry point
-@measure_time(progress, message="Execution time of 'stewbeet.plugins.resource_pack.sounds'")
+@measure_time(message="Execution time of 'stewbeet.plugins.resource_pack.sounds'")
 def beet_default(ctx: Context):
 	""" Main entry point for the sounds plugin.
 	This plugin handles sound file processing and generation of sounds.json based of the sounds folder.

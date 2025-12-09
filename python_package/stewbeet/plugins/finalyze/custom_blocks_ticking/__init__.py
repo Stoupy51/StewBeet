@@ -2,14 +2,13 @@
 # Imports
 from beet import Context
 from stouputils.decorators import measure_time
-from stouputils.print import progress
 
 from ....core.__memory__ import Mem
 from ....core.utils.io import write_function, write_versioned_function
 
 
 # Main entry point
-@measure_time(progress, message="Execution time of 'stewbeet.plugins.finalyze.custom_blocks_ticking'")
+@measure_time(message="Execution time of 'stewbeet.plugins.finalyze.custom_blocks_ticking'")
 def beet_default(ctx: Context):
 	""" Main entry point for the custom blocks ticking plugin.
 	This plugin sets up custom blocks ticks and second functions calls.

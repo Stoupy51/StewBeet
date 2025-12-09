@@ -3,7 +3,7 @@
 from beet import Context
 from beet.core.utils import JsonDict
 from stouputils.decorators import measure_time
-from stouputils.print import progress, warning
+from stouputils.print import warning
 
 from ...core.__memory__ import Mem
 from .main import manual_main
@@ -11,7 +11,7 @@ from .shared_import import SharedMemory
 
 
 # Main entry point
-@measure_time(progress, message="Execution time of 'stewbeet.plugins.ingame_manual'")
+@measure_time(message="Execution time of 'stewbeet.plugins.ingame_manual'")
 def beet_default(ctx: Context):
 	""" Main entry point for the ingame manual plugin.
 	This plugin generates an in-game manual/guide book with item information and crafting recipes.

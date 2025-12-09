@@ -4,14 +4,13 @@ from beet import BlockTag, Context
 from beet.core.utils import JsonDict
 from stouputils.decorators import measure_time
 from stouputils.io import json_dump
-from stouputils.print import progress
 
 from ....core.__memory__ import Mem
 from ....core.constants import VANILLA_BLOCK, VANILLA_BLOCK_FOR_ORES
 
 
 # Main entry point
-@measure_time(progress, message="Execution time of 'stewbeet.plugins.compatibilities.neo_enchant'")
+@measure_time(message="Execution time of 'stewbeet.plugins.compatibilities.neo_enchant'")
 def beet_default(ctx: Context):
 	""" Main entry point for the NeoEnchant compatibility plugin.
 	This plugin sets up NeoEnchant's Veinminer compatibility.

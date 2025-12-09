@@ -6,7 +6,7 @@ from beet import Context, PaintingVariant, PaintingVariantTag
 from beet.core.utils import JsonDict
 from stouputils.decorators import measure_time
 from stouputils.io import relative_path
-from stouputils.print import error, progress, warning
+from stouputils.print import error, warning
 
 from ...core.__memory__ import Mem
 from ...core.constants import PAINTING_DATA
@@ -14,7 +14,7 @@ from ...core.utils.io import set_json_encoder, texture_mcmeta
 
 
 # Main entry point
-@measure_time(progress, message="Execution time of 'stewbeet.plugins.custom_paintings'")
+@measure_time(message="Execution time of 'stewbeet.plugins.custom_paintings'")
 def beet_default(ctx: Context) -> None:
     """ Main entry point for the custom paintings plugin.
     This plugin handles the generation of custom paintings for the datapack and resource pack.

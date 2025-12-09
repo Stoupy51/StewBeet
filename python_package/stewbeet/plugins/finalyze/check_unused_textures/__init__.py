@@ -8,11 +8,11 @@ from beet import Context, Texture
 from beet.core.utils import JsonDict
 from stouputils.decorators import measure_time
 from stouputils.io import clean_path, relative_path
-from stouputils.print import progress, warning
+from stouputils.print import warning
 
 
 # Main entry point
-@measure_time(progress, message="Execution time of 'stewbeet.plugins.finalyze.check_unused_textures'")
+@measure_time(message="Execution time of 'stewbeet.plugins.finalyze.check_unused_textures'")
 def beet_default(ctx: Context) -> None:
 	""" Main entry point for the check unused textures plugin.
 	This plugin checks for unused textures in the resource pack by analyzing all JSON files

@@ -6,8 +6,8 @@ from pathlib import Path
 from beet import Advancement, BlockTag, Context, EntityTypeTag, LootTable, Predicate
 from beet.core.utils import JsonDict
 from stouputils.decorators import measure_time
-from stouputils.io import clean_path, relative_path, json_dump
-from stouputils.print import debug, error, progress
+from stouputils.io import clean_path, json_dump, relative_path
+from stouputils.print import debug, error
 
 from ....core.__memory__ import Mem
 from ....core.constants import (
@@ -27,7 +27,7 @@ from ....core.utils.io import set_json_encoder, write_function, write_function_t
 
 
 # Main entry point
-@measure_time(progress, message="Execution time of 'stewbeet.plugins.datapack.custom_blocks'")
+@measure_time(message="Execution time of 'stewbeet.plugins.datapack.custom_blocks'")
 def beet_default(ctx: Context):
 	""" Main entry point for the custom blocks plugin.
 	This plugin sets up custom blocks in the datapack based of the given definitions configuration.

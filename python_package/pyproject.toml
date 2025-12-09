@@ -16,7 +16,7 @@ classifiers = [
 	"Operating System :: OS Independent",
 ]
 dependencies = [
-	"stouputils>=1.8.0",
+	"stouputils>=1.9.1",
 	"model_resolver>=1.12.0",
 	"beet>=0.112.0",
 	"bolt>=0.49.2",

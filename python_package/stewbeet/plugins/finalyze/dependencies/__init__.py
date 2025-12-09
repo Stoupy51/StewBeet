@@ -3,7 +3,7 @@
 from beet import Context
 from beet.core.utils import JsonDict
 from stouputils.decorators import measure_time
-from stouputils.print import debug, info, progress
+from stouputils.print import debug, info
 
 from ....core.__memory__ import Mem
 from ....core.constants import BOOKSHELF_MODULES, LATEST_MC_VERSION, MORE_DATA_VERSIONS, OFFICIAL_LIBS, official_lib_used
@@ -45,7 +45,7 @@ def check_version(lib_ns: str, data: JsonDict, run_command: str) -> str:
 
 
 # Main entry point
-@measure_time(progress, message="Execution time of 'stewbeet.plugins.finalyze.dependencies'")
+@measure_time(message="Execution time of 'stewbeet.plugins.finalyze.dependencies'")
 def beet_default(ctx: Context) -> None:
 	"""Main entry point for the dependencies plugin.
 	This plugin handles dependency management, version checking, and load sequence setup.

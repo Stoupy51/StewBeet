@@ -4,7 +4,6 @@ from beet import Context, LootTable
 from beet.core.utils import JsonDict
 from stouputils.decorators import measure_time
 from stouputils.io import json_dump
-from stouputils.print import progress
 
 from ....core.__memory__ import Mem
 from ....core.constants import NOT_COMPONENTS, RESULT_OF_CRAFTING
@@ -12,7 +11,7 @@ from ....core.utils.io import write_function
 
 
 # Main entry point
-@measure_time(progress, message="Execution time of 'stewbeet.plugins.datapack.loot_tables'")
+@measure_time(message="Execution time of 'stewbeet.plugins.datapack.loot_tables'")
 def beet_default(ctx: Context):
 	""" Main entry point for the loot tables plugin.
 	This plugin sets up loot tables for items in the definitions and external items.
