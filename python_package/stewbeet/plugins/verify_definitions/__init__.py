@@ -163,20 +163,19 @@ def beet_default(ctx: Context) -> None:
 						errors.append(f"Line #{i} in 'lore' key should be a Text Component for '{item}', ex: {{\"text\":\"This is a lore line\"}} or [\"This is a lore line\"]")
 
 		# Check all the recipes
-		if data.get(RESULT_OF_CRAFTING) or data.get(USED_FOR_CRAFTING):
+		if RESULT_OF_CRAFTING in data or USED_FOR_CRAFTING in data:
 
 			# Get a list of recipes
-			crafts_to_check: list[Any] = list(data.get(RESULT_OF_CRAFTING, []))
-			crafts_to_check += list(data.get(USED_FOR_CRAFTING,[]))
+			crafts_to_check: list[Any] = [*data.get(RESULT_OF_CRAFTING, []), *data.get(USED_FOR_CRAFTING, [])]
 
 			# Check each recipe
-			for i, recipe in enumerate(crafts_to_check):
+			for i, r in enumerate(crafts_to_check):
 
 				# A recipe is always a dictionnary
-				if not isinstance(recipe, dict):
+				if not isinstance(r, dict):
 					errors.append(f"Recipe #{i} in RESULT_OF_CRAFTING should be a dictionary for '{item}'")
 				else:
-					recipe = cast(JsonDict, recipe)
+					recipe = cast(JsonDict, r)
 
 					# Verify "type" key
 					if not recipe.get("type") or not isinstance(recipe["type"], str):
@@ -325,6 +324,11 @@ def beet_default(ctx: Context) -> None:
 
 	# Final adjustments to the definitions
 	for item, data in Mem.definitions.items():
+
+		# Add default group to every recipe
+		for recipe in [*data.get(RESULT_OF_CRAFTING, []), *data.get(USED_FOR_CRAFTING, [])]:
+			recipe.setdefault("group", item)
+
 		# Add additional data to the custom blocks
 		if data.get("id") == CUSTOM_BLOCK_VANILLA:
 			data["container"] = [
