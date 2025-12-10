@@ -123,7 +123,7 @@ def beet_default(ctx: Context):
 			mc_supports = cast(list[str], mc_supports)
 			if len(mc_supports) > 0:
 				min_version: tuple[int, ...] = split_version(mc_supports[0])
-				max_version: tuple[int, ...] = split_version(mc_supports[-1]) if mc_supports[-1] != "infinite" else (2, 0, 0)
+				max_version: tuple[int, ...] = split_version(mc_supports[-1]) if mc_supports[-1] != "infinite" else max(MORE_DATA_PACK_FORMATS.keys())
 				pack_mcmeta["pack"]["min_format"] = pack.pack_format_registry.get(min_version, int_pack_format)
 				pack_mcmeta["pack"]["max_format"] = pack.pack_format_registry.get(max_version, int_pack_format)
 				if isinstance(pack_mcmeta["pack"]["min_format"], int):
