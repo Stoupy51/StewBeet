@@ -9,7 +9,7 @@ from typing import Any, cast
 from beet import Context, Dialog, DialogTag, FormatSpecifier, Pack
 from beet.core.utils import JsonDict, TextComponent, split_version
 from box import Box
-from stouputils import info, relative_path
+from stouputils import debug, relative_path
 from stouputils.decorators import measure_time, retry
 from stouputils.io import json_dump
 from stouputils.print import warning
@@ -19,7 +19,7 @@ from .source_lore_font import find_pack_png, prepare_source_lore_font
 
 
 # Main entry point
-@measure_time(printer=info, message="Total execution time", is_generator=True)
+@measure_time(printer=debug, message="Total execution time", is_generator=True)
 def beet_default(ctx: Context):
 
 	# Assertions
