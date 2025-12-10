@@ -10,4 +10,5 @@ extensive_template/continuous_delivery/
 upload.py
 perf.html
 .beet_cache
+.vscode
 
