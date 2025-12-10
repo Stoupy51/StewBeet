@@ -268,7 +268,7 @@ def generate_everything_about_this_material(
 				gear_config = VanillaEquipments.SPEAR.value[equipments_config.equivalent_to]
 				Mem.definitions[tool]["max_damage"] = int(gear_config["durability"] * durability_factor)
 			if not ignore_recipes:
-				Mem.definitions[tool][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["  X"," X ","S  "],"ingredients": tools_ingr,"manual_priority":0}]
+				Mem.definitions[tool][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["  X"," S ","S  "],"ingredients": tools_ingr,"manual_priority":0}]
 		if equipments_config:
 			Mem.definitions[tool]["attribute_modifiers"] = format_attributes(equipments_config.get_tools_attributes(), SLOTS[gear], gear_config)
 		if gear in ("sword", "spear"): # Remove the mining_efficiency attribute from swords and spears
