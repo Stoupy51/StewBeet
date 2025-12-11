@@ -10,7 +10,7 @@ from beet import Font, Texture
 from beet.core.utils import JsonDict, TextComponent
 from PIL import Image
 from stouputils.collections import unique_list
-from stouputils.io import clean_path, relative_path, json_dump, super_open
+from stouputils.io import clean_path, json_dump, relative_path, super_open
 from stouputils.print import colored_for_loop, debug, error, suggestion, warning
 
 from stewbeet.core.definitions_helper.completion import add_private_custom_data_for_namespace
@@ -697,8 +697,8 @@ def routine():
 			book_content.append(content)
 			pass
 
-		for page in colored_for_loop(SharedMemory.manual_pages, desc="Creating manual pages"):
-			encode_page(page)
+		for page_content in colored_for_loop(SharedMemory.manual_pages, desc="Creating manual pages"):
+			encode_page(page_content)
 
 		## Add categories page
 		content: list[TextComponent] = []
@@ -717,9 +717,9 @@ def routine():
 
 		# For each item in the category, get its page number and texture, then add it to the image
 		max_items_reached: bool = False
-		for page in SharedMemory.manual_pages:
-			if page["type"] == CATEGORY:
-				item = page["raw_data"][0]
+		for page_content in SharedMemory.manual_pages:
+			if page_content["type"] == CATEGORY:
+				item = page_content["raw_data"][0]
 
 				# Get item texture
 				texture_path = f"{SharedMemory.cache_path}/items/{Mem.ctx.project_id}/{item}.png"
@@ -743,8 +743,8 @@ def routine():
 
 				# Add the click_event part to the line and add the 2 times the line if enough items
 				component = get_item_component(item, ["item_name"])
-				component["hover_event"]["components"]["item_name"] = {"text": page["name"], "color": "white"}
-				component["click_event"]["page"] = page["number"]
+				component["hover_event"]["components"]["item_name"] = {"text": page_content["name"], "color": "white"}
+				component["click_event"]["page"] = page_content["number"]
 				if not SharedMemory.high_resolution:
 					component["text"] = MEDIUM_NONE_FONT
 				else:
@@ -815,12 +815,17 @@ def routine():
 			book_content.insert(1, get_stardust_forge_page())
 
 			# Increase every change_page click event by 1
-			for page in book_content:
-				for component in page:
+			for page_content in book_content:
+				for component in page_content:
 					if isinstance(component, dict):
 						if "click_event" in component and component["click_event"].get("action") == "change_page":
 							current_value: int = int(component["click_event"]["page"])
 							component["click_event"]["page"] = current_value + 1
+			for p in SharedMemory.manual_pages:
+				p["number"] += 1
+
+			# Insert heavy workbench page number in the manual pages
+			SharedMemory.manual_pages.insert(2, {"number": 2, "name": "awakened_forge", "raw_data": {}, "type": "item"})
 
 		## Insert at 2nd page the heavy workbench
 		if "heavy_workbench" in Mem.definitions:
@@ -828,12 +833,17 @@ def routine():
 			book_content.insert(1, heavy_workbench_page)
 
 			# Increase every change_page click event by 1
-			for page in book_content:
-				for component in page:
+			for page_content in book_content:
+				for component in page_content:
 					if isinstance(component, dict):
 						if "click_event" in component and component["click_event"].get("action") == "change_page":
 							current_value: int = int(component["click_event"]["page"])
 							component["click_event"]["page"] = current_value + 1
+			for p in SharedMemory.manual_pages:
+				p["number"] += 1
+
+			# Insert heavy workbench page number in the manual pages
+			SharedMemory.manual_pages.insert(2, {"number": 2, "name": "heavy_workbench", "raw_data": {}, "type": "item"})
 
 		# Add fonts
 		SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/none.png", "ascent": 8, "height": 20, "chars": [NONE_FONT]})

@@ -107,8 +107,7 @@ def generate_dialogs(book_content: list[list[TextComponent]]) -> None:
 
 		# Get title
 		title: TextComponent = page[1]
-		supposed_item: str = get_item_from_page(page_index)
-		print(supposed_item, page_index, title)
+		supposed_item: str = get_item_from_page(page_index + 1)
 		if supposed_item != "":
 			title = get_atlas_title(supposed_item, title)
 		else:
