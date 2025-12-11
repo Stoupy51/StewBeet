@@ -1,12 +1,15 @@
 """
 Handles generation of dialogs based of book content
 """
+import os
 from typing import cast
 
-from beet import Advancement, Dialog, DialogTag
+from beet import Advancement, Dialog, DialogTag, Texture
 from beet.core.utils import JsonDict, TextComponent
+from PIL import Image
 
 from ...core import Mem, set_json_encoder, write_function, write_load_file
+from ..initialize.source_lore_font import find_pack_png
 from .shared_import import BOOK_FONT, NONE_FONT, SharedMemory
 
 
@@ -18,6 +21,64 @@ def change_page_to_show_dialog(element: TextComponent, ns: str) -> None:
 	elif isinstance(element, list):
 		for sub_element in element:
 			change_page_to_show_dialog(sub_element, ns)
+
+def add_sprite(title: TextComponent, sprite: str) -> TextComponent:
+	""" Add a sprite to a title with consideration for pack format
+
+	Args:
+		title (TextComponent): The title text
+		sprite (str): The sprite to add
+	Returns:
+		TextComponent: The title with sprite
+	"""
+	title = [
+		"",
+		{"sprite":sprite,"shadow_color": [0]*4},
+		" ",{"text":title,"underlined": True} if isinstance(title, str) else title," ",
+		{"sprite":sprite,"shadow_color": [0]*4}
+	]
+	if Mem.ctx.data.pack_format is not None:
+		pack_format = cast(int | tuple[int, ...], Mem.ctx.data.pack_format)
+		pack_format = pack_format[0] if isinstance(pack_format, tuple) else pack_format
+		if pack_format >= 93:
+			title[1]["atlas"] = title[-1]["atlas"] = "minecraft:items"
+	return title
+
+def get_atlas_title(item: str, title: TextComponent, model_data: JsonDict) -> TextComponent:
+	""" Get a title with an atlas sprite if possible
+
+	Args:
+		item (str): The item id
+		title (TextComponent): The title text
+		model_textures (set[str]): The set of model textures to choose from
+	Returns:
+		TextComponent: The title with atlas sprite (or original title if no sprite found)
+	"""
+	# If one texture, and animated, and no elements mapping, use that animated texture
+	textures_values: list[str] = list(model_data.get("textures", {}).values())
+	if len(textures_values) == 1 and "elements" not in model_data:
+		# Check for animated texture
+		sprite: str = textures_values[0]
+		ns, path = sprite.split(":")
+		texture_object: Texture | None = Mem.ctx.assets[ns].textures.get(path)
+		if texture_object and texture_object.mcmeta:
+			return add_sprite(title, sprite)
+
+	# Else, if the item is in the manual_cache textures, use that texture
+	ns: str = Mem.ctx.project_id
+	supposed_path: str = f"{SharedMemory.cache_path}/items/{ns}/{item}.png"
+	if os.path.exists(supposed_path):
+		# Load the image and downscale it to 16x16 if needed
+		image: Image.Image = Image.open(supposed_path)
+		if image.width > 16 or image.height > 16:
+			image = image.resize((16, 16), Image.Resampling.LANCZOS)
+		sprite_path: str = f"{ns}:item/dialog_sprite/{item}"
+		Mem.ctx.assets.textures[sprite_path] = Texture(image)
+		return add_sprite(title, sprite_path)
+
+	# Else, return original title
+	return title
+
 
 # Function
 def generate_dialogs(book_content: list[list[TextComponent]]) -> None:
@@ -40,23 +101,11 @@ def generate_dialogs(book_content: list[list[TextComponent]]) -> None:
 		if isinstance(title, dict):
 			title = str(title.get("text", "")).replace("\n", "")
 			supposed_item: str = title.replace(" ", "_").lower()
-			if Mem.definitions.get(supposed_item, {}).get("item_model") is not None:
+			if supposed_item != "heavy_workbench" and Mem.definitions.get(supposed_item, {}).get("item_model") is not None:
 				model = Mem.ctx.assets[ns].models.get(f"item/{supposed_item}")
-				if model is not None and supposed_item != "heavy_workbench":
-					all_textures: set[str] = set(model.data.get("textures", {}).values())
-					if len(all_textures) == 1:
-						sprite: str = all_textures.pop()
-						if Mem.ctx.assets.textures.get(sprite) is not None:
-							title = [
-								{"sprite":sprite,"shadow_color": [0]*4},
-								" ",{"text":title,"underlined": True}," ",
-								{"sprite":sprite,"shadow_color": [0]*4}
-							]
-							if Mem.ctx.data.pack_format is not None:
-								pack_format = cast(int | tuple[int, ...], Mem.ctx.data.pack_format)
-								pack_format = pack_format[0] if isinstance(pack_format, tuple) else pack_format
-								if pack_format >= 93:
-									title[0]["atlas"] = title[-1]["atlas"] = "minecraft:items"
+				if model is not None:
+					title = get_atlas_title(supposed_item, title, model.data)
+
 		else:
 			title = str(title).replace("\n", "")
 		if isinstance(title, str) and len(title.strip()) < 2:
@@ -147,13 +196,23 @@ scoreboard players set @s {ns}.open_manual 0
 execute if items entity @s weapon.* *[custom_data~{{{ns}:{{manual:true}}}}] run dialog show @s {ns}:manual/page_1
 """)
 
-	# Generate main dialog to open the manual
+	## Generate main dialog to open the manual
+	# Add to quick actions tag
 	Mem.ctx.data["minecraft"].dialogs_tags["quick_actions"] = set_json_encoder(
 		DialogTag({"replace": False, "values": [f"{ns}:all_manual"]})
 	)
+
+	# Generate a sprite with the pack icon
+	title: TextComponent = {"text": f"{Mem.ctx.project_name} Manual"}
+	pack_png: str | None = find_pack_png()
+	if pack_png is not None:
+		Mem.ctx.assets[ns].textures["item/dialog_sprite/pack_icon"] = Texture(source_path=pack_png)
+		title = add_sprite(title, f"{ns}:item/dialog_sprite/pack_icon")
+
+	# Create main manual dialog
 	Mem.ctx.data[ns].dialogs["all_manual"] = set_json_encoder(Dialog({
 		"type": "minecraft:dialog_list",
-		"title": {"text": f"{Mem.ctx.project_name} Manual"},
+		"title": title,
 		"dialogs": dialog_ids,
 		"exit_action": {"label": {"translate": "gui.back"}, "width": 200}
 	}))
