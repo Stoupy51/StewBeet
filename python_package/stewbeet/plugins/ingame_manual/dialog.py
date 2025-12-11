@@ -4,13 +4,15 @@ Handles generation of dialogs based of book content
 import os
 from typing import cast
 
-from beet import Advancement, Dialog, DialogTag, Texture
+from beet import Advancement, Dialog, DialogTag, Model, Texture
 from beet.core.utils import JsonDict, TextComponent
 from PIL import Image
 
-from ...core import Mem, set_json_encoder, write_function, write_load_file
+from stewbeet.core.ingredients import item_id_to_text_component
+
+from ...core import Mem, set_json_encoder, text_component_to_str, write_function, write_load_file
 from ..initialize.source_lore_font import find_pack_png
-from .shared_import import BOOK_FONT, NONE_FONT, SharedMemory
+from .shared_import import BOOK_FONT, NONE_FONT, SharedMemory, get_item_from_page
 
 
 # Utility Function
@@ -34,7 +36,9 @@ def add_sprite(title: TextComponent, sprite: str) -> TextComponent:
 	title = [
 		"",
 		{"sprite":sprite,"shadow_color": [0]*4},
-		" ",{"text":title,"underlined": True} if isinstance(title, str) else title," ",
+		" ",
+		{"text":text_component_to_str(title),"underlined": True},
+		" ",
 		{"sprite":sprite,"shadow_color": [0]*4}
 	]
 	if Mem.ctx.data.pack_format is not None:
@@ -44,16 +48,22 @@ def add_sprite(title: TextComponent, sprite: str) -> TextComponent:
 			title[1]["atlas"] = title[-1]["atlas"] = "minecraft:items"
 	return title
 
-def get_atlas_title(item: str, title: TextComponent, model_data: JsonDict) -> TextComponent:
+def get_atlas_title(item: str, title: TextComponent) -> TextComponent:
 	""" Get a title with an atlas sprite if possible
 
 	Args:
 		item (str): The item id
 		title (TextComponent): The title text
-		model_textures (set[str]): The set of model textures to choose from
 	Returns:
 		TextComponent: The title with atlas sprite (or original title if no sprite found)
 	"""
+	ns: str = Mem.ctx.project_id
+
+	# Get model data & item name
+	model: Model | None = Mem.ctx.assets[ns].models.get(f"item/{item}")
+	model_data: JsonDict = model.data if model else {}
+	item_name: TextComponent = item_id_to_text_component(item)
+
 	# If one texture, and animated, and no elements mapping, use that animated texture
 	textures_values: list[str] = list(model_data.get("textures", {}).values())
 	if len(textures_values) == 1 and "elements" not in model_data:
@@ -62,10 +72,9 @@ def get_atlas_title(item: str, title: TextComponent, model_data: JsonDict) -> Te
 		ns, path = sprite.split(":")
 		texture_object: Texture | None = Mem.ctx.assets[ns].textures.get(path)
 		if texture_object and texture_object.mcmeta:
-			return add_sprite(title, sprite)
+			return add_sprite(item_name, sprite)
 
 	# Else, if the item is in the manual_cache textures, use that texture
-	ns: str = Mem.ctx.project_id
 	supposed_path: str = f"{SharedMemory.cache_path}/items/{ns}/{item}.png"
 	if os.path.exists(supposed_path):
 		# Load the image and downscale it to 16x16 if needed
@@ -74,10 +83,10 @@ def get_atlas_title(item: str, title: TextComponent, model_data: JsonDict) -> Te
 			image = image.resize((16, 16), Image.Resampling.LANCZOS)
 		sprite_path: str = f"{ns}:item/dialog_sprite/{item}"
 		Mem.ctx.assets.textures[sprite_path] = Texture(image)
-		return add_sprite(title, sprite_path)
+		return add_sprite(item_name, sprite_path)
 
 	# Else, return original title
-	return title
+	return text_component_to_str(title)
 
 
 # Function
@@ -98,16 +107,12 @@ def generate_dialogs(book_content: list[list[TextComponent]]) -> None:
 
 		# Get title
 		title: TextComponent = page[1]
-		if isinstance(title, dict):
-			title = str(title.get("text", "")).replace("\n", "")
-			supposed_item: str = title.replace(" ", "_").lower()
-			if supposed_item != "heavy_workbench" and Mem.definitions.get(supposed_item, {}).get("item_model") is not None:
-				model = Mem.ctx.assets[ns].models.get(f"item/{supposed_item}")
-				if model is not None:
-					title = get_atlas_title(supposed_item, title, model.data)
-
+		supposed_item: str = get_item_from_page(page_index)
+		print(supposed_item, page_index, title)
+		if supposed_item != "":
+			title = get_atlas_title(supposed_item, title)
 		else:
-			title = str(title).replace("\n", "")
+			title = text_component_to_str(title).replace("\n", "")
 		if isinstance(title, str) and len(title.strip()) < 2:
 			title = page[2]
 			if isinstance(title, dict):

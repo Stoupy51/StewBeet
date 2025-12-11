@@ -89,3 +89,9 @@ def get_page_number(item_id: str) -> int:
 			return p["number"]
 	return -1
 
+def get_item_from_page(page_number: int) -> str:
+	for p in SharedMemory.manual_pages:
+		if p["number"] == page_number:
+			return p["name"]
+	return ""
+
