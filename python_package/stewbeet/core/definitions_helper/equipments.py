@@ -131,7 +131,7 @@ class VanillaEquipments(Enum):
 					})
 
 class EquipmentsConfig:
-	def __init__(self, equivalent_to: DefaultOre = DefaultOre.DIAMOND, pickaxe_durability: float | int = 0, attributes: dict[str, float] | None = None):
+	def __init__(self, equivalent_to: DefaultOre = DefaultOre.DIAMOND, pickaxe_durability: float | int = 0, attributes: dict[str, float] | None = None, ignore_recipes: bool = False) -> None:
 		""" Creates a configuration for equipments (based on the pickaxe)
 
 		Args:
@@ -141,11 +141,13 @@ class EquipmentsConfig:
 				{"attack_damage": 1.0, "armor": 1.0, "mining_efficiency": 0.1}
 				attack_damage and mining_efficiency are always on tools
 				armor and armor_toughness is always on armor
+			ignore_recipes (bool):			Whether to ignore recipes generation for this material or not
 
 		If you need a specific attribute for a generated item, you should append it afterward.
 		"""
 		if attributes is None:
 			attributes = {}
+		self.ignore_recipes: bool = ignore_recipes
 		self.equivalent_to: DefaultOre = equivalent_to
 		self.pickaxe_durability: int = int(pickaxe_durability if pickaxe_durability >= 0 else VanillaEquipments.PICKAXE.value[equivalent_to]["durability"])
 		self.attributes: dict[str, float] = attributes
