@@ -36,6 +36,10 @@ def generate_everything_about_this_material(
 	textures_folder: str = relative_path(Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", ""))
 	assert textures_folder != "", "Textures folder path not found in 'ctx.meta.stewbeet.textures_folder'. Please set a directory path in project configuration."
 
+	# Override ignore_recipes?
+	if equipments_config is not None and equipments_config.ignore_recipes:
+		ignore_recipes = True
+
 	# Prepare constants
 	textures: dict[str, str] = {
 		clean_path(str(p)).split("/")[-1]: relative_path(str(p))
