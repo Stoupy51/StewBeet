@@ -131,7 +131,7 @@ class VanillaEquipments(Enum):
 					})
 
 class EquipmentsConfig:
-	def __init__(self, equivalent_to: DefaultOre = DefaultOre.DIAMOND, pickaxe_durability: float | int = 1561, attributes: dict[str, float] | None = None):
+	def __init__(self, equivalent_to: DefaultOre = DefaultOre.DIAMOND, pickaxe_durability: float | int = 0, attributes: dict[str, float] | None = None):
 		""" Creates a configuration for equipments (based on the pickaxe)
 
 		Args:
@@ -147,7 +147,7 @@ class EquipmentsConfig:
 		if attributes is None:
 			attributes = {}
 		self.equivalent_to: DefaultOre = equivalent_to
-		self.pickaxe_durability: int = int(pickaxe_durability)
+		self.pickaxe_durability: int = int(pickaxe_durability if pickaxe_durability >= 0 else VanillaEquipments.PICKAXE.value[equivalent_to]["durability"])
 		self.attributes: dict[str, float] = attributes
 		for key in attributes.keys():
 			if "player." in key:
