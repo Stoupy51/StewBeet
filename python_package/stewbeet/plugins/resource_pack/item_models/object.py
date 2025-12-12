@@ -277,6 +277,7 @@ class AutoModel:
 					elif not exclude_textures:
 						# Prepare models to check
 						cake = ["bottom", "side", "top", "inner"]
+						cube_front_bottom_top = ["front", "bottom", "side", "top"]
 						cube_bottom_top = ["bottom", "side", "top"]
 						orientable = ["front", "side", "top"]
 						cube_column = ["end", "side"]						# Check cake model
@@ -292,6 +293,13 @@ class AutoModel:
 								name: str = f"{self.item_name}_slice{i}"
 								slice_content: JsonDict = {"parent": f"block/cake_slice{i}", "textures": content["textures"]}
 								Mem.ctx.assets[self.ns].models[f"item/{name}{on_off}"] = set_json_encoder(Model(slice_content), max_level=4)
+
+						# Check cube_front_bottom_top model
+						elif self.model_in_variants(cube_front_bottom_top, variants):
+							content["parent"] = "block/cube_front_bottom_top"
+							for side in cube_front_bottom_top:
+								texture_path = f"{self.ns}:item/" + self.get_powered_texture(variants, side, on_off)
+								content["textures"][side] = texture_path
 
 						# Check cube_bottom_top model
 						elif self.model_in_variants(cube_bottom_top, variants):
