@@ -149,7 +149,7 @@ class EquipmentsConfig:
 			attributes = {}
 		self.ignore_recipes: bool = ignore_recipes
 		self.equivalent_to: DefaultOre = equivalent_to
-		self.pickaxe_durability: int = int(pickaxe_durability if pickaxe_durability >= 0 else VanillaEquipments.PICKAXE.value[equivalent_to]["durability"])
+		self.pickaxe_durability: int = int(pickaxe_durability if pickaxe_durability > 0 else VanillaEquipments.PICKAXE.value[equivalent_to]["durability"])
 		self.attributes: dict[str, float] = attributes
 		for key in attributes.keys():
 			if "player." in key:
