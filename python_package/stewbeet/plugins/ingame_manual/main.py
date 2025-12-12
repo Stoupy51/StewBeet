@@ -20,6 +20,7 @@ from ...core.constants import (
 	AWAKENED_FORGE,
 	CATEGORY,
 	CUSTOM_BLOCK_VANILLA,
+	NO_SILK_TOUCH_DROP,
 	OFFICIAL_LIBS,
 	OVERRIDE_MODEL,
 	PULVERIZING,
@@ -378,12 +379,12 @@ def routine():
 							mining_recipe["result_count"] = str(count_data)
 
 				# If there is NO_SILK_TOUCH_DROP, add a mining recipe for it
-				no_silk_touch_drop: bool = bool(raw_data.get("no_silk_touch_drop", False))
+				no_silk_touch_drop: bool = bool(raw_data.get(NO_SILK_TOUCH_DROP, False))
 				is_drop_of: list[str] = [
 					i for i, d in Mem.definitions.items()
-					if d.get("no_silk_touch_drop") and (
-						(isinstance(d["no_silk_touch_drop"], str) and d["no_silk_touch_drop"] == name) or
-						(isinstance(d["no_silk_touch_drop"], dict) and cast(JsonDict, d["no_silk_touch_drop"]).get("id") == name)
+					if d.get(NO_SILK_TOUCH_DROP) and (
+						(isinstance(d[NO_SILK_TOUCH_DROP], str) and d[NO_SILK_TOUCH_DROP] == name) or
+						(isinstance(d[NO_SILK_TOUCH_DROP], dict) and cast(JsonDict, d[NO_SILK_TOUCH_DROP]).get("id") == name)
 					)
 				]
 
@@ -396,7 +397,7 @@ def routine():
 							"ingredient": ingr_repr(ore_name, Mem.ctx.project_id),  # The ore being mined
 							"result": ingr_repr(name, Mem.ctx.project_id),  # This item is the result
 						}
-						add_count_to_mining_recipe(mining_recipe, Mem.definitions[ore_name]["no_silk_touch_drop"])
+						add_count_to_mining_recipe(mining_recipe, Mem.definitions[ore_name][NO_SILK_TOUCH_DROP])
 						crafts.insert(0, mining_recipe)
 
 					# Generate the craft content
@@ -405,7 +406,7 @@ def routine():
 
 				# Add mining recipe if this item has no_silk_touch_drop (it's an ore)
 				if no_silk_touch_drop:
-					no_silk_drop_data: JsonDict | str = raw_data["no_silk_touch_drop"]
+					no_silk_drop_data: JsonDict | str = raw_data[NO_SILK_TOUCH_DROP]
 					result_format: str = no_silk_drop_data if isinstance(no_silk_drop_data, str) else no_silk_drop_data["id"]
 					mining_recipe: JsonDict = {
 						"type": "mining",
@@ -602,10 +603,12 @@ def routine():
 						craft_result: str = "" if "result" not in craft else ingr_to_id(craft["result"], False)
 						if craft_result and craft_result != name:
 							if craft_result in Mem.definitions:
-								info_buttons[-1]["click_event"] = {
-									"action": "change_page",
-									"page": get_page_number(craft_result)
-								}
+								page_number: int = get_page_number(craft_result)
+								if page_number != -1:
+									info_buttons[-1]["click_event"] = {
+										"action": "change_page",
+										"page": page_number,
+									}
 
 						# Else, try to add the click_event that change to that page
 						else:
@@ -618,11 +621,13 @@ def routine():
 							elif craft.get("ingredients") and isinstance(craft["ingredients"], dict) and len(craft["ingredients"]) == 1:
 								craft_ingredient = ingr_to_id(next(iter(craft["ingredients"].values())), False)
 							if craft_ingredient and craft_ingredient in Mem.definitions and craft_ingredient != name:
-								info_buttons[-1]["click_event"] = {
-									"action": "change_page",
-									"page": get_page_number(craft_ingredient),
-									"blue_craft": craft_result == "" # No result = blue craft
-								}
+								page_number: int = get_page_number(craft_ingredient)
+								if page_number != -1:
+									info_buttons[-1]["click_event"] = {
+										"action": "change_page",
+										"page": page_number,
+										"blue_craft": craft_result == "" # No result = blue craft
+									}
 
 				# Add wiki buttons 5 by 5
 				if info_buttons:
