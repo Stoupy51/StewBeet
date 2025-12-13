@@ -26,6 +26,7 @@ class SmithedRecipeHandler:
         """ Initialize the handler. """
         self.SMITHED_SHAPELESS_PATH: str = f"{Mem.ctx.project_id}:calls/smithed_crafter/shapeless_recipes"
         self.SMITHED_SHAPED_PATH: str = f"{Mem.ctx.project_id}:calls/smithed_crafter/shaped_recipes"
+        self.SMITHED_APPLY_PATH: str = f"{Mem.ctx.project_id}:calls/smithed_crafter/apply_recipe"
 
     @classmethod
     def routine(cls) -> None:
@@ -70,9 +71,9 @@ class SmithedRecipeHandler:
         line += json.dumps(r)
 
         if recipe.get("smithed_crafter_command"):
-            line += f" run {recipe['smithed_crafter_command']}"
+            line += f""" run function {self.SMITHED_APPLY_PATH} {{"command":"{recipe['smithed_crafter_command']}"}}"""
         else:
-            line += f" run loot replace block ~ ~ ~ container.16 loot {result_loot}"
+            line += f""" run function {self.SMITHED_APPLY_PATH} {{"command":"loot replace block ~ ~ ~ container.16 loot {result_loot}"}}"""
         return line
 
     @simple_cache()
@@ -187,4 +188,14 @@ class SmithedRecipeHandler:
                 elif recipe["type"] == "crafting_shaped":
                     line = self.smithed_shaped_recipe(recipe, result_loot_table)
                     write_function(self.SMITHED_SHAPED_PATH, line, tags=["smithed.crafter:event/recipes"])
+
+        # Apply recipe
+        if official_lib_used("smithed.crafter"):
+            write_function(self.SMITHED_APPLY_PATH, """
+# Set the consume_tools flag
+data modify storage smithed.crafter:input flags set value ["consume_tools"]
+
+# Perform the loot command
+$return run $(command)
+""")
 
