@@ -143,9 +143,9 @@ class SmithedRecipeHandler:
         # Return the line
         line = f"execute if score @s smithed.data matches 0 store result score @s smithed.data if data storage smithed.crafter:input recipe{dump}"
         if recipe.get("smithed_crafter_command"):
-            line += f" run {recipe['smithed_crafter_command']}"
+            line += f""" run function {self.SMITHED_APPLY_PATH} {{"command":"{recipe['smithed_crafter_command']}"}}"""
         else:
-            line += f" run loot replace block ~ ~ ~ container.16 loot {result_loot}"
+            line += f""" run function {self.SMITHED_APPLY_PATH} {{"command":"loot replace block ~ ~ ~ container.16 loot {result_loot}"}}"""
         return line
 
     def generate_recipes(self) -> None:
