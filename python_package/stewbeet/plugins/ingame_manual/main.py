@@ -194,57 +194,76 @@ def routine():
 	# Prepare category padding if dialog
 	category_padding: list[str] = [VERY_SMALL_NONE_FONT] if SharedMemory.use_dialog > 0 else []
 
+	# Generate categories list
+	categories: dict[str, list[str]] = {}
+	for item, data in Mem.definitions.items():
+
+		if CATEGORY not in data:
+			suggestion(f"Item '{item}' has no category key. Skipping.")
+			continue
+
+		file = data[CATEGORY]
+		if file not in categories:
+			categories[file] = []
+		categories[file].append(item)
+
+	# Error message if there is too many categories
+	if len(categories) > MAX_ITEMS_PER_PAGE:
+		error(f"Too many categories ({len(categories)}). Maximum is {MAX_ITEMS_PER_PAGE}. Please reduce the number of item categories.")
+
+	# Debug categories and sizes
+	s = ""
+	for file, items in categories.items():
+		if file == HEAVY_WORKBENCH_CATEGORY:
+			continue
+		s += f"\n- {file}: {len(items)} items"
+		if len(items) > MAX_ITEMS_PER_PAGE:
+			s += f" (splitted into {len(items) // MAX_ITEMS_PER_PAGE + 1} pages)"
+	nb_categories: int = len(categories) - (1 if HEAVY_WORKBENCH_CATEGORY in categories else 0)
+	debug(f"Found {nb_categories} categories in the definitions:{s}")
+
+	# Split up categories into pages
+	categories_pages: dict[str, list[str]] = {}
+	for file, items in categories.items():
+		if file != HEAVY_WORKBENCH_CATEGORY:
+			i = 0
+			while i < len(items):
+				page_name = file.title()
+				if len(items) > MAX_ITEMS_PER_PAGE:
+					number = i // MAX_ITEMS_PER_PAGE + 1
+					page_name += f" #{number}"
+				new_items = items[i:i + MAX_ITEMS_PER_PAGE]
+				categories_pages[page_name] = new_items
+				i += MAX_ITEMS_PER_PAGE
+
+	# Sort items depending on their category order
+	items_with_category = [(item, data) for item, data in Mem.definitions.items() if CATEGORY in data]
+	category_list = list(categories.keys())
+	sorted_definitions_on_category = sorted(items_with_category, key = lambda x: category_list.index(x[1][CATEGORY]))
+
 	# If the manual cache is enabled and we have a cache file, load it
 	cache_pages: bool = manual_config.get("cache_pages", False)
 	if cache_pages and json_dump_path and os.path.exists(json_dump_path) and os.path.exists(f"{SharedMemory.cache_path}/font/manual.json"):
 		with super_open(json_dump_path, "r") as f:
 			book_content: list[list[TextComponent]] = json.load(f)
 
+		# Make the page dictionary for later use (dialog)
+		i: int = 2
+		if OFFICIAL_LIBS["smithed.crafter"]["is_used"]:
+			SharedMemory.manual_pages.append({"number": i, "name": "heavy_workbench"})
+			i += 1
+		if has_forge_3x3 or has_forge_3x4:
+			SharedMemory.manual_pages.append({"number": i, "name": "stardust_forge"})
+			i += 1
+		i += 1 # Skip page linking to each category
+		for page_name in categories_pages.keys():
+			SharedMemory.manual_pages.append({"number": i, "name": page_name})
+			i += 1
+		for item, _ in sorted_definitions_on_category:
+			SharedMemory.manual_pages.append({"number": i, "name": item})
+			i += 1
 	# Else, generate all
 	else:
-
-		# Generate categories list
-		categories: dict[str, list[str]] = {}
-		for item, data in Mem.definitions.items():
-
-			if CATEGORY not in data:
-				suggestion(f"Item '{item}' has no category key. Skipping.")
-				continue
-
-			file = data[CATEGORY]
-			if file not in categories:
-				categories[file] = []
-			categories[file].append(item)
-
-		# Error message if there is too many categories
-		if len(categories) > MAX_ITEMS_PER_PAGE:
-			error(f"Too many categories ({len(categories)}). Maximum is {MAX_ITEMS_PER_PAGE}. Please reduce the number of item categories.")
-
-		# Debug categories and sizes
-		s = ""
-		for file, items in categories.items():
-			if file == HEAVY_WORKBENCH_CATEGORY:
-				continue
-			s += f"\n- {file}: {len(items)} items"
-			if len(items) > MAX_ITEMS_PER_PAGE:
-				s += f" (splitted into {len(items) // MAX_ITEMS_PER_PAGE + 1} pages)"
-		nb_categories: int = len(categories) - (1 if HEAVY_WORKBENCH_CATEGORY in categories else 0)
-		debug(f"Found {nb_categories} categories in the definitions:{s}")
-
-		# Split up categories into pages
-		categories_pages: dict[str, list[str]] = {}
-		for file, items in categories.items():
-			if file != HEAVY_WORKBENCH_CATEGORY:
-				i = 0
-				while i < len(items):
-					page_name = file.title()
-					if len(items) > MAX_ITEMS_PER_PAGE:
-						number = i // MAX_ITEMS_PER_PAGE + 1
-						page_name += f" #{number}"
-					new_items = items[i:i + MAX_ITEMS_PER_PAGE]
-					categories_pages[page_name] = new_items
-					i += MAX_ITEMS_PER_PAGE
-
 		## Prepare pages (append categories first, then items depending on categories order)
 		i = 2 # Skip first two pages (introduction + categories)
 
@@ -254,9 +273,6 @@ def routine():
 			SharedMemory.manual_pages.append({"number": i, "name": page_name, "raw_data": items, "type": CATEGORY})
 
 		# Append items (sorted by category)
-		items_with_category = [(item, data) for item, data in Mem.definitions.items() if CATEGORY in data]
-		category_list = list(categories.keys())
-		sorted_definitions_on_category = sorted(items_with_category, key = lambda x: category_list.index(x[1][CATEGORY]))
 		for item, data in sorted_definitions_on_category:
 			i += 1
 			SharedMemory.manual_pages.append({"number": i, "name": item, "raw_data": data, "type": "item"})

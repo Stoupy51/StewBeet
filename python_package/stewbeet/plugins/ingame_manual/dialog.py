@@ -108,6 +108,8 @@ def generate_dialogs(book_content: list[list[TextComponent]]) -> None:
 		# Get title
 		title: TextComponent = page[1]
 		supposed_item: str = get_item_from_page(page_index + 1)
+		print(supposed_item, title)
+		# FIXME: When caching is enabled, this do not find the item textures
 		if supposed_item != "":
 			title = get_atlas_title(supposed_item, title)
 		else:
