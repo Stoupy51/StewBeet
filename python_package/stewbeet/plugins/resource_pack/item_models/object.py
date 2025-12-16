@@ -450,10 +450,17 @@ class AutoModel:
 
 			# Add used textures
 			if content.get("textures"):
+				# Check if there are textures from different atlases
+				textures_values: list[str] = list(content["textures"].values())
+				has_minecraft: bool = any(t.startswith("minecraft:") for t in textures_values)
+				has_custom: bool = any(not t.startswith("minecraft:") for t in textures_values)
+				needs_atlas_conversion: bool = has_minecraft and has_custom
+
 				for key, texture in content["textures"].items():
 					if texture.startswith("minecraft:"):
 						self.used_minecraft_textures.add(texture)
-						content["textures"][key] = to_atlas(texture)
+						if needs_atlas_conversion:
+							content["textures"][key] = to_atlas(texture)
 					else:
 						self.used_textures.add(texture)
 
