@@ -7,7 +7,7 @@ from stouputils.decorators import simple_cache
 from stouputils.print import debug
 
 from ...core.__memory__ import Mem
-from ...core.constants import official_lib_used
+from ...core.constants import OFFICIAL_LIBS, official_lib_used
 from ...core.ingredients import (
     ingr_repr,
     item_to_id_ingr_repr,
@@ -190,7 +190,7 @@ class SmithedRecipeHandler:
                     write_function(self.SMITHED_SHAPED_PATH, line, tags=["smithed.crafter:event/recipes"])
 
         # Apply recipe
-        if official_lib_used("smithed.crafter"):
+        if OFFICIAL_LIBS["smithed.crafter"]["is_used"]:
             write_function(self.SMITHED_APPLY_PATH, """
 # Set the consume_tools flag
 data modify storage smithed.crafter:input flags set value ["consume_tools"]
