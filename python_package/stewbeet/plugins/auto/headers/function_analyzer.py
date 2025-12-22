@@ -92,6 +92,10 @@ class FunctionAnalyzer:
                     # Create the caller string with context if available
                     caller_info: str = path + more
                     if line_context:
+                        line_context = "".join(
+                            x for i, x in enumerate(line_context)
+                            if x != " " or (i > 0 and line_context[i - 1] not in ":,")
+                        )
                         caller_info += f" [ {line_context} ]"
                     elif is_scheduled:
                         # Mark scheduled calls with a special marker so context analyzer knows not to inherit context

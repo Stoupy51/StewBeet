@@ -3,7 +3,7 @@
 from typing import ClassVar, Literal
 
 from beet import FileDeserialize, JsonFileBase, NamespaceFileScope
-from pydantic.v1 import BaseModel
+from pydantic import BaseModel
 
 # Constants
 MACRO: str = "storage sorter:temp args"

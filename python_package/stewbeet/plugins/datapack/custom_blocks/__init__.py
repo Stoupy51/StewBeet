@@ -193,7 +193,7 @@ kill @s
 
 				# Summon item display and call secondary function
 				custom_block_entities.add("minecraft:item_display")  # Add item display entity for custom blocks
-				content += f"execute align xyz positioned ~.5 ~.5 ~.5 summon item_display at @s run function {ns}:custom_blocks/{item}/place_secondary\n"
+				content += f"execute align xyz positioned ~0.5 ~0.5 ~0.5 summon item_display at @s run function {ns}:custom_blocks/{item}/place_secondary\n"
 
 				# Add temporary tags and call main function
 				content = f"tag @s add {ns}.placer\n" + content + f"tag @s remove {ns}.placer\n"
@@ -252,7 +252,7 @@ execute if score #rotation {ns}.data matches 4 run data modify entity @s Rotatio
 				if OFFICIAL_LIBS["furnace_nbt_recipes"]["is_used"] and block_id.endswith(("_furnace", "_smoker")):
 					content += '\n# Furnace NBT Recipes\n'
 					content += (
-						'execute align xyz positioned ~.5 ~ ~.5 unless entity @e[type=marker,dx=-1,dy=-1,dz=-1,tag=furnace_nbt_recipes.furnace] run '
+						'execute align xyz positioned ~0.5 ~ ~0.5 unless entity @e[type=marker,dx=-1,dy=-1,dz=-1,tag=furnace_nbt_recipes.furnace] run '
 						'summon marker ~ ~ ~ {Tags:["furnace_nbt_recipes.furnace"]}\n'
 					)
 

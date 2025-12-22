@@ -2,8 +2,7 @@
 # Imports
 from beet import Context
 from beet.core.utils import JsonDict
-from stouputils.decorators import measure_time
-from stouputils.print import debug, info
+from stouputils import debug, info, measure_time, version_to_float
 
 from ....core.__memory__ import Mem
 from ....core.constants import BOOKSHELF_MODULES, LATEST_MC_VERSION, MORE_DATA_VERSIONS, OFFICIAL_LIBS, official_lib_used
@@ -221,6 +220,13 @@ scoreboard players set #dependency_error {ns}.data 0
 
 		# Get Minecraft version (default to latest known if not set) and data version
 		mc_version: str = ctx.minecraft_version or LATEST_MC_VERSION
+		if ctx.meta.get("mc_supports"):
+			mc_supports: list[str] = ctx.meta["mc_supports"]
+			# Only keep valid versions (excluding 'w', 'b', 'pre' versions)
+			mc_supports = [x for x in mc_supports if version_to_float(x, error=False) is not None]
+			minimum = min(mc_supports, key=version_to_float)
+			if version_to_float(minimum) < version_to_float(mc_version):
+				mc_version = minimum
 		mc_version_tuple: tuple[int, ...] = tuple(int(x) for x in mc_version.split(".") if x.isdigit())
 		data_version: int = MORE_DATA_VERSIONS.get(mc_version_tuple, max(MORE_DATA_VERSIONS.values(), default=0))
 
