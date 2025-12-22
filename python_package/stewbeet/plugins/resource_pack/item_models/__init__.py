@@ -1,9 +1,8 @@
 
 # Imports
 from pathlib import Path
-from typing import cast
 
-from beet import Atlas, Context
+from beet import Atlas, Context, ResourcePack
 from beet.core.utils import JsonDict
 from stouputils.collections import unique_list
 from stouputils.decorators import measure_time
@@ -24,11 +23,7 @@ def add_to_atlas(textures: set[str] = set()) -> None:  # noqa: B006
 		return
 
 	# Get mcmeta and setup overlays if needed
-	mcmeta: JsonDict = Mem.ctx.assets.mcmeta.data
-	if "overlays" not in mcmeta:
-		mcmeta["overlays"] = {}
-	if "entries" not in mcmeta["overlays"]:
-		mcmeta["overlays"]["entries"] = []
+	rp: ResourcePack = Mem.ctx.assets
 
 	# Define overlay configurations
 	overlay_configs: list[JsonDict] = [
@@ -52,14 +47,13 @@ def add_to_atlas(textures: set[str] = set()) -> None:  # noqa: B006
 	for config in overlay_configs:
 		directory: str = config["directory"]
 
-		# Create overlay entry if not exists
-		overlay_entry: JsonDict = config.copy()
-		overlay_entry.pop("atlas_name")
-
 		# Check if this overlay already exists
-		entries = cast(list[JsonDict], mcmeta["overlays"]["entries"])
-		if not any(entry.get("directory") == directory for entry in entries):
-			entries.append(overlay_entry)
+		rp.overlays[directory] = ResourcePack(
+			name=directory,
+			supported_formats=config["formats"],
+			min_format=config["min_format"],
+			max_format=config["max_format"]
+		)
 
 		# Add textures to the appropriate atlas in the overlay
 		overlay = Mem.ctx.assets.overlays[directory]
