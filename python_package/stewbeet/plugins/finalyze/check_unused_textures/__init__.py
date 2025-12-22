@@ -49,7 +49,7 @@ def beet_default(ctx: Context) -> None:
 	# 3) If anything is unused, warn about it:
 	if unused_paths:
 		warning_lines: list[str] = [
-			f"'{textures_folder}/{path}' not used in the resource pack"
+			f"- '{textures_folder}/{path}'"
 			for path in sorted(unused_paths)
 		]
 		warning_msg: str = (
