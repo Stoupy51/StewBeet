@@ -5,7 +5,6 @@ from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile, ZipInfo
 
 from beet import Context
-from smithed.weld.toolchain.cli import weld  # pyright: ignore[reportMissingTypeStubs]
 from stouputils.decorators import handle_error, silent
 from stouputils.print import warning
 
@@ -55,6 +54,7 @@ def weld_datapack(ctx: Context, dest_path: str) -> float:
 	# Weld all datapacks
 	output_dir = os.path.dirname(dest_path)
 	output = os.path.basename(dest_path.replace(".zip", "_temporary.zip"))
+	from smithed.weld.toolchain.cli import weld  # pyright: ignore[reportMissingTypeStubs]
 	silent(weld)(datapacks_to_merge, Path(output_dir), Path(output), log = "error")
 
 	# Get the consistent timestamp
@@ -137,6 +137,7 @@ def weld_resource_pack(ctx: Context, dest_path: str) -> float:
 	# Weld all resource packs
 	output_dir = os.path.dirname(dest_path)
 	output = os.path.basename(dest_path.replace(".zip", "_temporary.zip"))
+	from smithed.weld.toolchain.cli import weld  # pyright: ignore[reportMissingTypeStubs]
 	silent(weld)(resource_packs_to_merge, Path(output_dir), Path(output), log = "error")
 
 	# Get the consistent timestamp

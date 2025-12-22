@@ -103,7 +103,7 @@ kill @s
 
 # Spawn result item with Motion [0.0,1.0,0.0]
 tag @e[type=item] add stardust.temp
-execute align xyz run loot spawn ~.5 ~.5 ~.5 loot {loot_table_from_ingredient(result, recipe['result_count'])}
+execute align xyz run loot spawn ~0.5 ~0.5 ~0.5 loot {loot_table_from_ingredient(result, recipe['result_count'])}
 execute as @e[type=item,tag=!stardust.temp] run data merge entity @s {{Motion:[0.0d,1.0d,0.0d],Glowing:true}}
 tag @e[type=item,tag=stardust.temp] remove stardust.temp
 """)

@@ -285,7 +285,12 @@ class Header:
 
         # Add the executed context (only if known)
         if self.executed:
-            header += f"# @executed\t{self.executed.strip()}\n#\n"
+            executed: str = self.executed.strip()
+            executed: str = "".join(
+                x for i, x in enumerate(executed)
+                if x != " " or (i > 0 and executed[i - 1] not in ":,")
+            )
+            header += f"# @executed\t{executed}\n#\n"
 
         # Add the within list
         if self.within:
