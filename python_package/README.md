@@ -41,7 +41,7 @@ Here is a list of features that the package provides (the template is using all 
 
 
 ## 📦 How to use (beginner friendly)
-In order to use `StewBeet`, you need to have at least [Python 3.12](https://www.python.org/downloads/) 🐍 or higher installed on your computer with pip!<br>
+In order to use `StewBeet`, you need to have at least [Python 3.14](https://www.python.org/downloads/) 🐍 installed on your computer with pip!<br>
 Then, you can open a terminal 💻 and run the following command to install the python package:
 
 ```bash
@@ -82,14 +82,6 @@ Or, you could check the **highly detailed** [documentation folder](docs/)<br>
 Here a list of all the currently available guides:
 - 📖 [Getting started](docs/0_getting_started/README.md)
 - 🌱 [Beet Plugins](docs/plugins/README.md)
-- 📁 [Project structure](docs/1_project_structure.md)
-- 🗄️ [Database setup](docs/2_definitions_setup.md)
-- ✍️ [Writing to files](docs/3_writing_to_files.md)
-- 🔗 [External dependencies](docs/4_external_dependencies.md)
-- 🔧 [Miscellaneous](docs/5_miscellaneous.md)
-- 🔄 [Migration guide](docs/6_migration_guide.md)
-- 🚀 [Continuous delivery](docs/7_continuous_delivery.md)
-- ⚔️ [Adding a sword](docs/specific_guides/adding_a_sword.md)
 - More soon!
 
 
@@ -106,7 +98,7 @@ Every contribution matters, no matter how small! 🙌
 
 
 ## 📜 What projects use StewBeet?
-To search for projects that use the framework, I search like [this.](https://github.com/search?q=%22%5C%22stewbeet.plugins.%22&type=code)<br>
+To search for projects that use the framework, I search like [this.](https://github.com/search?q=%22-+%5C%22stewbeet.plugins.%22+-path%3A%22docs%22+-path%3A%22templates%22&type=code)<br>
 Here is a list of projects that use it:<br>
 - Actual projects:
   - Your next project here!
