@@ -1,22 +1,6 @@
 
-# Imports
+# Stubs, build, and publish (uv)
 import os
-import sys
 
-import stouputils as stp
-
-# Constants
-ROOT: str = stp.get_root_path(__file__)
-
-# Main
-if __name__ == "__main__":
-
-	# Generate stubs full routine
-	os.system(f"{sys.executable} {ROOT}/scripts/generate_stubs.py")
-
-	# Increment version in pyproject.toml
-	stp.increment_version_from_pyproject(f"{ROOT}/pyproject.toml")
-
-	# PyPI full routine
-	os.system(f"{sys.executable} {ROOT}/scripts/pypi_full_routine.py")
+os.system("stouputils build")
 
