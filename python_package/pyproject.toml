@@ -1,7 +1,10 @@
 
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["uv_build"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-root = ""
 
 [project]
 name = "stewbeet"
@@ -17,7 +20,7 @@ classifiers = [
 	"Operating System :: OS Independent",
 ]
 dependencies = [
-	"stouputils>=1.12.0",
+	"stouputils>=1.13.0",
 	"model_resolver>=1.13.0",
 	"beet>=0.113.0b10",
 	"bolt>=0.50.0b5",
@@ -27,8 +30,8 @@ dependencies = [
 	"smithed",
 ]
 
-[tool.poetry.dependencies]
-smithed = { git = "https://github.com/Stoupy51/smithed-python.git", branch = "main" }
+[tool.uv.sources]
+smithed = { git = "https://github.com/Stoupy51/smithed-python" }
 
 [[project.authors]]
 name = "Stoupy51"
