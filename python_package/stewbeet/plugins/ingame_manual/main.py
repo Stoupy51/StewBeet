@@ -52,7 +52,7 @@ from .page_font import generate_page_font, generate_wiki_font_for_ingr
 from .shared_import import (
 	AWAKENED_3X3_FONT,
 	AWAKENED_3X4_FONT,
-	stardust_awakened_forge_STRUCT_FONT,
+	AWAKENED_FORGE_STRUCT_FONT,
 	BOOK_FONT,
 	BORDER_COLOR,
 	BORDER_SIZE,
@@ -64,7 +64,7 @@ from .shared_import import (
 	HOVER_EQUIVALENTS,
 	HOVER_FURNACE_FONT,
 	HOVER_MINING_FONT,
-	HOVER_simplenergy_pulverizing_FONT,
+	HOVER_PULVERIZING_FONT,
 	HOVER_SHAPED_2X2_FONT,
 	HOVER_SHAPED_3X3_FONT,
 	HOVER_STONECUTTING_FONT,
@@ -74,7 +74,7 @@ from .shared_import import (
 	MICRO_NONE_FONT,
 	MINING_FONT,
 	NONE_FONT,
-	simplenergy_pulverizing_FONT,
+	PULVERIZING_FONT,
 	SHAPED_2X2_FONT,
 	SHAPED_3X3_FONT,
 	SMALL_NONE_FONT,
@@ -522,7 +522,7 @@ def routine():
 							hover_text.append({"text": craft_font + "\n\n" * breaklines, "font": FONT, "color": "white"})
 						else:
 							craft_content: list[TextComponent] = generate_craft_content(craft, name, "", in_lore=True)
-							craft_content = [craft_content[0]] + craft_content[2:]	# Remove craft title
+							craft_content = [craft_content[0], *craft_content[2:]]	# Remove craft title
 							remove_events(craft_content)
 							for k, v in HOVER_EQUIVALENTS.items():
 								if isinstance(craft_content[1], str):
@@ -542,8 +542,8 @@ def routine():
 								"stonecutting": "Stonecutting",
 								"smithing_transform": "Smithing Transform",
 								"smithing_trim": "Smithing Trim",
-								simplenergy_pulverizing: "(SimplEnergy) Pulverizing",
-								stardust_awakened_forge: "(Stardust Fragment) Awakened Forge",
+								"simplenergy_pulverizing": "(SimplEnergy) Pulverizing",
+								"stardust_awakened_forge": "(Stardust Fragment) Awakened Forge",
 							}
 							recipe_title = recipe_type_names.get(craft["type"], craft["type"].replace("_", " ").title())
 							hover_text.append({"text": f"\n{recipe_title}", "color": "yellow"})
@@ -880,13 +880,13 @@ def routine():
 			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/shaped_2x2.png", "ascent": 1, "height": 58, "chars": [SHAPED_2X2_FONT]})
 			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/furnace.png", "ascent": 1, "height": 58, "chars": [FURNACE_FONT]})
 			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/stonecutting.png", "ascent": 4, "height": 58, "chars": [STONECUTTING_FONT]})
-			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/pulverizing.png", "ascent": 4, "height": 58, "chars": [simplenergy_pulverizing_FONT]})
+			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/pulverizing.png", "ascent": 4, "height": 58, "chars": [PULVERIZING_FONT]})
 			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/mining.png", "ascent": 4, "height": 58, "chars": [MINING_FONT]})
 			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/shaped_3x3.png", "ascent": -4, "height": 58, "chars": [HOVER_SHAPED_3X3_FONT]})
 			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/shaped_2x2.png", "ascent": -2, "height": 58, "chars": [HOVER_SHAPED_2X2_FONT]})
 			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/furnace.png", "ascent": -3, "height": 58, "chars": [HOVER_FURNACE_FONT]})
 			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/stonecutting.png", "ascent": -3, "height": 58, "chars": [HOVER_STONECUTTING_FONT]})
-			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/pulverizing.png", "ascent": -3, "height": 58, "chars": [HOVER_simplenergy_pulverizing_FONT]})
+			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/pulverizing.png", "ascent": -3, "height": 58, "chars": [HOVER_PULVERIZING_FONT]})
 			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/mining.png", "ascent": -3, "height": 58, "chars": [HOVER_MINING_FONT]})
 			if has_forge_3x3:
 				SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/awakened_forge_3x3.png", "ascent": 9, "height": 74, "chars": [AWAKENED_3X3_FONT]})
@@ -895,8 +895,8 @@ def routine():
 				SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/awakened_forge_3x4.png", "ascent": 9, "height": 74, "chars": [AWAKENED_3X4_FONT]})
 				SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/awakened_forge_3x4.png", "ascent": 4, "height": 74, "chars": [HOVER_AWAKENED_3X4_FONT]})
 			if has_forge_3x3 or has_forge_3x4:
-				SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/awakened_forge_1.png", "ascent": 8, "height": 56, "chars": [stardust_awakened_forge_STRUCT_FONT[0]]})
-				SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/awakened_forge_2.png", "ascent": 8, "height": 56, "chars": [stardust_awakened_forge_STRUCT_FONT[1]]})
+				SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/awakened_forge_1.png", "ascent": 8, "height": 56, "chars": [AWAKENED_FORGE_STRUCT_FONT[0]]})
+				SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/awakened_forge_2.png", "ascent": 8, "height": 56, "chars": [AWAKENED_FORGE_STRUCT_FONT[1]]})
 		if SharedMemory.use_dialog > 0:
 			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/book.png", "ascent": 25, "height": 300, "chars": [BOOK_FONT]})
 		fonts = {"providers": SharedMemory.font_providers}

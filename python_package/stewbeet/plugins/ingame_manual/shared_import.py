@@ -44,7 +44,7 @@ SHAPED_2X2_FONT: str =				get_font(0x0015)
 SHAPED_3X3_FONT: str =				get_font(0x0016)
 FURNACE_FONT: str =					get_font(0x0017)
 STONECUTTING_FONT: str =			get_font(0x0018)
-simplenergy_pulverizing_FONT: str =				get_font(0x0019)
+PULVERIZING_FONT: str =				get_font(0x0019)
 MINING_FONT: str =					get_font(0x0020)
 AWAKENED_3X3_FONT: str =			get_font(0x0021)
 AWAKENED_3X4_FONT: str =			get_font(0x0022)
@@ -52,21 +52,21 @@ HOVER_SHAPED_2X2_FONT: str =		get_font(0x0025)
 HOVER_SHAPED_3X3_FONT: str =		get_font(0x0026)
 HOVER_FURNACE_FONT: str =			get_font(0x0027)
 HOVER_STONECUTTING_FONT: str =		get_font(0x0028)
-HOVER_simplenergy_pulverizing_FONT: str =		get_font(0x0029)
+HOVER_PULVERIZING_FONT: str =		get_font(0x0029)
 HOVER_MINING_FONT: str =			get_font(0x0030)
 HOVER_AWAKENED_3X3_FONT: str =		get_font(0x0031)
 HOVER_AWAKENED_3X4_FONT: str =		get_font(0x0032)
 INVISIBLE_ITEM_FONT: str =			get_font(0x0035)	# Invisible item to place
 INVISIBLE_ITEM_WIDTH: str =			INVISIBLE_ITEM_FONT + MICRO_NONE_FONT
 BOOK_FONT: str =					get_font(0x0036)
-stardust_awakened_forge_STRUCT_FONT: tuple[str,str] = (get_font(0x0037), get_font(0x0038))
+AWAKENED_FORGE_STRUCT_FONT: tuple[str,str] = (get_font(0x0037), get_font(0x0038))
 
 HOVER_EQUIVALENTS: dict[str, str] = {
 	SHAPED_2X2_FONT: HOVER_SHAPED_2X2_FONT,
 	SHAPED_3X3_FONT: HOVER_SHAPED_3X3_FONT,
 	FURNACE_FONT: HOVER_FURNACE_FONT,
 	STONECUTTING_FONT: HOVER_STONECUTTING_FONT,
-	simplenergy_pulverizing_FONT: HOVER_simplenergy_pulverizing_FONT,
+	PULVERIZING_FONT: HOVER_PULVERIZING_FONT,
 	MINING_FONT: HOVER_MINING_FONT,
 	AWAKENED_3X3_FONT: HOVER_AWAKENED_3X3_FONT,
 	AWAKENED_3X4_FONT: HOVER_AWAKENED_3X4_FONT,

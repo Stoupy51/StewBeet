@@ -7,7 +7,6 @@ from beet.core.utils import JsonDict
 from stouputils.decorators import simple_cache
 
 from ...core.__memory__ import Mem
-from ...core.constants import stardust_awakened_forge
 from ...core.ingredients import (
     get_item_from_ingredient,
     ingr_repr,
@@ -118,7 +117,7 @@ tag @e[type=item,tag=stardust.temp] remove stardust.temp
             crafts += list(data.get("used_for_crafting", []))
 
             for recipe in crafts:
-                if recipe["type"] == stardust_awakened_forge:
+                if recipe["type"] == "stardust_awakened_forge":
                     write_function(
                         self.STARDUST_stardust_awakened_forge_PATH,
                         self.stardust_awakened_forge_recipe(recipe, item),

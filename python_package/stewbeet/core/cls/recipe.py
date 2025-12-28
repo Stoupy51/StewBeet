@@ -7,8 +7,6 @@ from typing import Any, Literal
 
 from beet.core.utils import JsonDict
 
-from ..ingredients import ALL_RECIPES_TYPES
-
 
 # Base Class
 @dataclass(kw_only=True)
@@ -24,6 +22,7 @@ class RecipeBase(Mapping[str, Any]):
     """ The type of the recipe, e.g. 'crafting_shaped', 'smelting', etc. """
 
     def __post_init__(self) -> None:
+        from ..ingredients import ALL_RECIPES_TYPES
         if self.type not in ALL_RECIPES_TYPES:
             raise ValueError(f"Invalid recipe type: {self.type}")
 

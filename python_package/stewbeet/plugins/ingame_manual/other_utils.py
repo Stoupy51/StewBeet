@@ -5,14 +5,23 @@ from beet.core.utils import JsonDict
 from stouputils.decorators import simple_cache
 
 from ...core.__memory__ import Mem
-from ...core.constants import stardust_awakened_forge, simplenergy_pulverizing, RESULT_OF_CRAFTING
+from ...core.constants import RESULT_OF_CRAFTING
 from ...core.ingredients import (
 	ALL_RECIPES_TYPES,
 	FURNACES_RECIPES_TYPES,
 	ingr_repr,
 	ingr_to_id,
 )
-from .shared_import import AWAKENED_3X3_FONT, AWAKENED_3X4_FONT, FURNACE_FONT, MINING_FONT, simplenergy_pulverizing_FONT, SHAPED_2X2_FONT, SHAPED_3X3_FONT, STONECUTTING_FONT
+from .shared_import import (
+	AWAKENED_3X3_FONT,
+	AWAKENED_3X4_FONT,
+	FURNACE_FONT,
+	MINING_FONT,
+	PULVERIZING_FONT,
+	SHAPED_2X2_FONT,
+	SHAPED_3X3_FONT,
+	STONECUTTING_FONT,
+)
 
 
 # Convert craft function
@@ -107,13 +116,13 @@ def high_res_font_from_craft(craft: JsonDict) -> str:
 			return SHAPED_3X3_FONT
 		else:
 			return SHAPED_2X2_FONT
-	elif craft["type"] == simplenergy_pulverizing:
-		return simplenergy_pulverizing_FONT
+	elif craft["type"] == "simplenergy_pulverizing":
+		return PULVERIZING_FONT
 	elif craft["type"] == "stonecutting":
 		return STONECUTTING_FONT
 	elif craft["type"] == "mining":
 		return MINING_FONT
-	elif craft["type"] == stardust_awakened_forge:
+	elif craft["type"] == "stardust_awakened_forge":
 		if len(craft["ingredients"]) <= 9:
 			return AWAKENED_3X3_FONT
 		else:

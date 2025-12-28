@@ -3,7 +3,6 @@
 from beet.core.utils import JsonDict, TextComponent
 
 from ...core.__memory__ import Mem
-from ...core.constants import stardust_awakened_forge, simplenergy_pulverizing
 from ...core.ingredients import FURNACES_RECIPES_TYPES, ingr_to_id, item_id_to_name
 from .book_components import get_item_component
 from .other_utils import convert_shapeless_to_shaped, high_res_font_from_craft
@@ -35,9 +34,9 @@ def generate_craft_content(craft: JsonDict, name: str, page_font: str, in_lore: 
 	use_dialog: bool = SharedMemory.use_dialog > 0 and not in_lore	# In lore, we don't need to re-align the content
 
 	# Convert stardust_awakened_forge to shaped crafting
-	if craft_type == stardust_awakened_forge:
+	if craft_type == "stardust_awakened_forge":
 		craft = convert_shapeless_to_shaped(craft)
-		craft["type"] = stardust_awakened_forge
+		craft["type"] = "stardust_awakened_forge"
 
 	# Show up item title and page font
 	titled = item_id_to_name(name) + "\n"
@@ -162,7 +161,7 @@ def generate_craft_content(craft: JsonDict, name: str, page_font: str, in_lore: 
 					content.append("\n")
 
 	# If the craft is stardust_awakened_forge type
-	elif craft_type == stardust_awakened_forge:
+	elif craft_type == "stardust_awakened_forge":
 		shape: list[str] = craft["shape"]
 		is_small_craft: bool = len(shape) <= 3 and all(len(x) <= 3 for x in shape)
 		if use_dialog and not is_small_craft:
@@ -407,7 +406,7 @@ def generate_craft_content(craft: JsonDict, name: str, page_font: str, in_lore: 
 		content.append("\n")
 
 	# If the type is special Pulverizing, Stonecutting, or Mining,
-	elif craft_type in (simplenergy_pulverizing, "stonecutting", "mining"):
+	elif craft_type in ("simplenergy_pulverizing", "stonecutting", "mining"):
 
 		# Convert ingredient to its text component
 		formatted_ingredient: JsonDict = get_item_component(craft["ingredient"], add_change_page=add_change_page_to_ingr)

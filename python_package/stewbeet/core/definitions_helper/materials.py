@@ -1,5 +1,5 @@
 
-# ruff: noqa: B008, E501
+# ruff: noqa: E501
 # Imports
 import os
 from pathlib import Path
@@ -11,7 +11,7 @@ from stouputils.io import clean_path, json_dump, relative_path
 from stouputils.print import error
 
 from ..__memory__ import Mem
-from ..constants import CATEGORY, CUSTOM_BLOCK_VANILLA, CUSTOM_ITEM_VANILLA, NO_SILK_TOUCH_DROP, simplenergy_pulverizing, RESULT_OF_CRAFTING, USED_FOR_CRAFTING, VANILLA_BLOCK, VANILLA_BLOCK_FOR_ORES
+from ..constants import CATEGORY, CUSTOM_BLOCK_VANILLA, CUSTOM_ITEM_VANILLA, NO_SILK_TOUCH_DROP, RESULT_OF_CRAFTING, USED_FOR_CRAFTING, VANILLA_BLOCK, VANILLA_BLOCK_FOR_ORES
 from ..ingredients import ingr_repr
 from .equipments import SLOTS, EquipmentsConfig, VanillaEquipments, format_attributes
 
@@ -95,10 +95,10 @@ def generate_everything_about_this_material(
 			if item.endswith("dust"):
 				Mem.definitions[item][USED_FOR_CRAFTING].append({"type":"smelting","result_count":1,"category":"misc","group":material_base,"experience":0.8,"cookingtime":200,"ingredient":ingr_repr(item, Mem.ctx.project_id),"result":main_ingredient})
 				Mem.definitions[item][USED_FOR_CRAFTING].append({"type":"blasting","result_count":1,"category":"misc","group":material_base,"experience":0.8,"cookingtime":100,"ingredient":ingr_repr(item, Mem.ctx.project_id),"result":main_ingredient})
-				Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":simplenergy_pulverizing,"result_count":1,"category":"misc","group":material_base,"ingredient":main_ingredient})
+				Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"simplenergy_pulverizing","result_count":1,"category":"misc","group":material_base,"ingredient":main_ingredient})
 				for pulv_ingr in [f"raw_{material_base}",f"{material_base}_ore",f"deepslate_{material_base}_ore"]:
 					if f"{pulv_ingr}.png" in textures:
-						Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":simplenergy_pulverizing,"result_count":2,"category":"misc","group":material_base,"ingredient":ingr_repr(pulv_ingr, Mem.ctx.project_id)})
+						Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"simplenergy_pulverizing","result_count":2,"category":"misc","group":material_base,"ingredient":ingr_repr(pulv_ingr, Mem.ctx.project_id)})
 			if item.endswith("nugget"):
 				Mem.definitions[item][RESULT_OF_CRAFTING].insert(0, {"type":"crafting_shapeless","result_count":9,"category":"misc","group":material_base,"ingredients":[main_ingredient]})
 				for gear in SLOTS.keys():
@@ -329,12 +329,12 @@ def add_recipes_for_dust(material: str, pulverize: list[str | JsonDict], smelt_t
 
 	# Add reverse recipe
 	Mem.definitions[dust][RESULT_OF_CRAFTING] = Mem.definitions[dust].get(RESULT_OF_CRAFTING, [])
-	Mem.definitions[dust][RESULT_OF_CRAFTING].append({"type":simplenergy_pulverizing,"result_count":1,"category":"misc","group":material,"ingredient":smelt_to})
+	Mem.definitions[dust][RESULT_OF_CRAFTING].append({"type":"simplenergy_pulverizing","result_count":1,"category":"misc","group":material,"ingredient":smelt_to})
 
 	# Add pulverizing recipes
 	for item in pulverize:
 		pulv_ingr = item if isinstance(item, dict) else ingr_repr(f"minecraft:{item}")
-		Mem.definitions[dust][RESULT_OF_CRAFTING].append({"type":simplenergy_pulverizing,"result_count":2,"category":"misc","group":material,"ingredient":pulv_ingr})
+		Mem.definitions[dust][RESULT_OF_CRAFTING].append({"type":"simplenergy_pulverizing","result_count":2,"category":"misc","group":material,"ingredient":pulv_ingr})
 	return
 
 # Add recipes for all dusts
