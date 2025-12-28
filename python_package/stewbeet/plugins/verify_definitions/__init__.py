@@ -11,6 +11,7 @@ from stouputils.io import json_dump, relative_path, super_open
 from stouputils.print import debug, error, info, warning
 
 from ...core.__memory__ import Mem
+from ...core.cls._utils import StMapping
 from ...core.constants import (
 	CATEGORY,
 	CUSTOM_BLOCK_ALTERNATIVE,
@@ -50,9 +51,21 @@ def beet_default(ctx: Context) -> None:
 			data.pop(USED_FOR_CRAFTING)
 
 	# Create a copy of the definitions without OVERRIDE_MODEL key
+	def convert_to_serializable(obj: Any) -> Any:
+		"""Recursively convert objects to JSON-serializable forms."""
+		if hasattr(obj, 'to_dict'):
+			return obj.to_dict()
+		elif isinstance(obj, dict):
+			return {k: convert_to_serializable(v) for k, v in obj.items()} # type: ignore
+		elif isinstance(obj, list):
+			return [convert_to_serializable(item) for item in obj] # type: ignore
+		else:
+			return obj
+
 	definitions_copy: dict[str, JsonDict] = {}
 	for item, data in Mem.definitions.items():
-		definitions_copy[item] = data.copy()
+		# Convert Item objects or dicts with nested Recipe objects to fully serializable dicts
+		definitions_copy[item] = convert_to_serializable(data)
 		if "override_model" in definitions_copy[item]:
 			del definitions_copy[item]["override_model"]
 

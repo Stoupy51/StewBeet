@@ -77,7 +77,9 @@ def generate_everything_about_this_material(
 			Mem.definitions[item][USED_FOR_CRAFTING] = Mem.definitions[item].get(USED_FOR_CRAFTING, [])
 			if item.endswith("ingot") or item.endswith("fragment") or item == material_base:
 				if f"{material_base}_block.png" in textures:
-					Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"crafting_shapeless","result_count":9,"category":"misc","group":material_base,"ingredients":[ingr_repr(f"{material_base}_block", Mem.ctx.project_id)]})
+					from ..cls.recipe import CraftingShapelessRecipe
+					Mem.definitions[item][RESULT_OF_CRAFTING].append(CraftingShapelessRecipe(result_count=9, category="misc", group=material_base, ingredients=[ingr_repr(f"{material_base}_block")]))
+					#Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"crafting_shapeless","result_count":9,"category":"misc","group":material_base,"ingredients":[ingr_repr(f"{material_base}_block", Mem.ctx.project_id)]})
 				if f"{material_base}_nugget.png" in textures:
 					Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"crafting_shaped","result_count":1,"category":"misc","group":material_base,"shape":["XXX","XXX","XXX"],"ingredients":{"X":ingr_repr(f"{material_base}_nugget", Mem.ctx.project_id)}})
 				if f"raw_{material_base}.png" in textures:

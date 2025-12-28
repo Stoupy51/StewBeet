@@ -1,25 +1,27 @@
 
 # pyright: reportUnnecessaryIsInstance=false
 # Imports
-from collections.abc import Iterator, Mapping
+from collections.abc import Iterator
 from dataclasses import asdict, dataclass
 from typing import Any, Literal
 
 from beet.core.utils import JsonDict
 
+from ._utils import StMapping
+
 
 # Base Class
 @dataclass(kw_only=True)
-class RecipeBase(Mapping[str, Any]):
+class RecipeBase(StMapping):
     """ Base class for all recipe types. """
+    type: str = ""
+    """ The type of the recipe, e.g. 'crafting_shaped', 'smelting', etc. """
     result_count: int = 1
     """ (Optional) The number of items produced by the recipe. Default is 1. """
     category: str | None = None
     """ (Optional) The category of the recipe for organizing in the crafting book. """
     group: str | None = None
     """ (Optional) The group of the recipe for recipe book grouping. """
-    type: str = ""
-    """ The type of the recipe, e.g. 'crafting_shaped', 'smelting', etc. """
 
     def __post_init__(self) -> None:
         from ..ingredients import ALL_RECIPES_TYPES
