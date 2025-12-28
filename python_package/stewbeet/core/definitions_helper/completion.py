@@ -1,5 +1,4 @@
 
-# ruff: noqa: RUF012
 # Imports
 from __future__ import annotations
 
@@ -9,6 +8,7 @@ from beet.core.utils import JsonDict, TextComponent
 from box import Box
 
 from ..__memory__ import Mem
+from ..cls.item import Item
 
 
 # Add item model component
@@ -22,6 +22,8 @@ def add_item_model_component(black_list: list[str] | None = None) -> None:
 	if black_list is None:
 		black_list = []
 	for item, data in Mem.definitions.items():
+		if isinstance(data, Item):
+			data = data.components
 		if item in black_list or data.get("item_model", None) is not None:
 			continue
 		data["item_model"] = f"{Mem.ctx.project_id}:{item}"
@@ -44,6 +46,8 @@ def add_item_name_and_lore_if_missing(is_external: bool = False, black_list: lis
 	for item, data in Mem.definitions.items():
 		if item in black_list:
 			continue
+		if isinstance(data, Item):
+			data = data.components
 
 		# Add item name if none
 		if not data.get("item_name"):
@@ -90,6 +94,8 @@ def add_private_custom_data_for_namespace(is_external: bool = False, black_list:
 	for item, data in Mem.definitions.items():
 		if item in black_list:
 			continue
+		if isinstance(data, Item):
+			data = data.components
 		if not data.get("custom_data"):
 			data["custom_data"] = cast(JsonDict, {})
 		if is_external and ":" in item:
@@ -108,6 +114,8 @@ def add_smithed_ignore_vanilla_behaviours_convention() -> None:
 	Refer to https://wiki.smithed.dev/conventions/tag-specification/#custom-items for more information.
 	"""
 	for data in Mem.definitions.values():
+		if isinstance(data, Item):
+			data = data.components
 		data["custom_data"] = Box(data.get("custom_data", {}), default_box=True, default_box_attr={}, default_box_create_on_get=True)
 		data["custom_data"].smithed.ignore.functionality = True # pyright: ignore[reportUnknownMemberType]
 		data["custom_data"].smithed.ignore.crafting = True # pyright: ignore[reportUnknownMemberType]

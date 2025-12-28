@@ -18,6 +18,46 @@ class StMapping(Mapping[str, Any]):
     def __setitem__(self, key: str, value: Any) -> None:
         return setattr(self, key, value)
 
+    def get(self, key: str, default: Any = None) -> Any:
+        try:
+            return self[key]
+        except KeyError:
+            return default
+
+    def setdefault(self, key: str, default: Any = None) -> Any:
+        """ Set a default value if key doesn't exist, like dict.setdefault(). """
+        try:
+            return self[key]
+        except KeyError:
+            self[key] = default
+            return default
+
+    def to_dict(self) -> JsonDict:
+        """ Convert the object to a dictionary for JSON serialization """
+        from dataclasses import asdict, is_dataclass
+
+        def _convert_value(value: Any) -> Any:
+            """ Recursively convert a value to a JSON-serializable form """
+            if value is None:
+                return None
+            elif hasattr(value, 'to_dict'):
+                return value.to_dict()
+            elif is_dataclass(value) and not isinstance(value, type):
+                return asdict(value)
+            elif isinstance(value, list):
+                return [_convert_value(item) for item in value]
+            elif isinstance(value, dict):
+                return {k: _convert_value(v) for k, v in value.items()}
+            else:
+                return value
+
+        result = {}
+        for field_info in fields(self):
+            value = getattr(self, field_info.name)
+            if value is not None:
+                result[field_info.name] = _convert_value(value)
+        return result
+
     @classmethod
     def from_dict(cls, data: JsonDict | "StMapping", item_id: str) -> Self:
         """ Create an object based on items """
@@ -84,4 +124,8 @@ class StMapping(Mapping[str, Any]):
             return cls.from_dict(Mem.definitions[item_id], item_id)
         else:
             return cls.from_dict(Mem.external_definitions[item_id], item_id)
+
+    def copy(self) -> JsonDict:
+        """ Return a shallow copy as a dictionary. """
+        return self.to_dict()
 
