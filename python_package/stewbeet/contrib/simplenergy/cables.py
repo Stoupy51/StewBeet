@@ -3,13 +3,13 @@
 # Imports
 import os
 
+import stouputils as stp
 from beet import ItemModel, Model
-from stouputils.io import get_root_path, json_load
 
-from ...core import CUSTOM_ITEM_VANILLA, JsonDict, Mem, set_json_encoder, texture_mcmeta, write_function
+from ...core import CUSTOM_ITEM_VANILLA, Item, JsonDict, Mem, set_json_encoder, texture_mcmeta, write_function
 
 # Constants
-ENERGY_CABLE_MODELS_FOLDER: str = get_root_path(__file__) + "/energy_cable_models"
+ENERGY_CABLE_MODELS_FOLDER: str = stp.get_root_path(__file__) + "/energy_cable_models"
 
 # Setup energy cables work and visuals
 def energy_cables_models(cables: list[str]) -> None:
@@ -37,7 +37,7 @@ def energy_cables_models(cables: list[str]) -> None:
 					path: str = f"{root}/{file}"
 
 					# Load the json file
-					json_file: JsonDict = json_load(path)
+					json_file: JsonDict = stp.json_load(path)
 
 					# Create the new json
 					new_json: JsonDict = {
@@ -117,7 +117,7 @@ def item_cables_models(cables: dict[str, dict[str, str] | None]) -> None:
 	cube_names: list[str] = ["top", "bottom", "north", "south", "east", "west"]
 
 	# Path to the base cable model
-	cable_base_path: str = get_root_path(__file__) + "/item_cable_models/cable_base.json"
+	cable_base_path: str = stp.get_root_path(__file__) + "/item_cable_models/cable_base.json"
 
 	# Handle parameters
 	for cable, textures in cables.items():
@@ -144,7 +144,7 @@ def item_cables_models(cables: dict[str, dict[str, str] | None]) -> None:
 					indicator += side
 
 			# Load the base cable model
-			base_data: JsonDict = json_load(cable_base_path)
+			base_data: JsonDict = stp.json_load(cable_base_path)
 
 			# Update textures to use the current cable's textures
 			base_data["textures"] = {
@@ -233,11 +233,11 @@ def servo_mechanisms_models(servos: dict[str, dict[str, str] | None]) -> None:
 	textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
 
 	# Path to the base servo models
-	models_path: str = get_root_path(__file__) + "/servo_mechanism_models"
+	models_path: str = stp.get_root_path(__file__) + "/servo_mechanism_models"
 
 	# Register the base block models
 	for base in ("block", "item"):
-		model_data: JsonDict = json_load(f"{models_path}/base_{base}.json")
+		model_data: JsonDict = stp.json_load(f"{models_path}/base_{base}.json")
 		if base == "item":
 			model_data["parent"] = f"{ns}:block/servo/base_block"
 		Mem.ctx.assets[ns].models[f"block/servo/base_{base}"] = set_json_encoder(Model(model_data), max_level=3)
@@ -251,19 +251,19 @@ def servo_mechanisms_models(servos: dict[str, dict[str, str] | None]) -> None:
 		connected_texture: str = textures.get("connected", f"servo/{typ}_connected")
 
 		# Register the block model
-		base_model: JsonDict = json_load(f"{models_path}/{typ}_block.json")
+		base_model: JsonDict = stp.json_load(f"{models_path}/{typ}_block.json")
 		base_model["parent"] = f"{ns}:block/servo/base_block"
 		base_model["textures"] = {"0": f"{ns}:block/{default_texture}", "particle": f"{ns}:block/{default_texture}"}
 		Mem.ctx.assets[ns].models[f"block/servo/{typ}_block"] = set_json_encoder(Model(base_model), max_level=3)
 
 		# Register the connected model
-		connected_model: JsonDict = json_load(f"{models_path}/{typ}_connected.json")
+		connected_model: JsonDict = stp.json_load(f"{models_path}/{typ}_connected.json")
 		connected_model["parent"] = f"{ns}:block/servo/base_block"
 		connected_model["textures"] = {"0": f"{ns}:block/{connected_texture}", "particle": f"{ns}:block/{connected_texture}"}
 		Mem.ctx.assets[ns].models[f"block/servo/{typ}_connected"] = set_json_encoder(Model(connected_model), max_level=3)
 
 		# Register the item model
-		item_model: JsonDict = json_load(f"{models_path}/{typ}_item.json")
+		item_model: JsonDict = stp.json_load(f"{models_path}/{typ}_item.json")
 		item_model["parent"] = f"{ns}:block/servo/base_item"
 		item_model["textures"] = {"0": f"{ns}:block/{default_texture}", "particle": f"{ns}:block/{default_texture}"}
 		Mem.ctx.assets[ns].models[f"block/servo/{typ}_item"] = set_json_encoder(Model(item_model), max_level=3)
@@ -290,7 +290,8 @@ def servo_mechanisms_models(servos: dict[str, dict[str, str] | None]) -> None:
 
 		## Working functions
 		# On placement, add necessary tag and call init function
-		ns_data: dict[str, int] = Mem.definitions[servo].get("custom_data", {}).get(ns, {})
+		item = Item.from_id(servo)
+		ns_data: dict[str, int] = item.components.get("custom_data", {}).get(ns, {})
 		stack_limit: int = ns_data.get("stack_limit", 1)
 		retry_limit: int = ns_data.get("retry_limit", 1)
 		write_function(f"{ns}:custom_blocks/{servo}/place_secondary", f"""

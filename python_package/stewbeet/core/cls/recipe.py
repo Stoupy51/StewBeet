@@ -32,6 +32,9 @@ class RecipeBase(Mapping[str, Any]):
         # Filter out None values to match dict behavior
         return {k: v for k, v in data.items() if v is not None}[key]
 
+    def __setitem__(self, key: str, value: Any) -> None:
+        return setattr(self, key, value)
+
     def __iter__(self) -> Iterator[str]:
         """Iterate over recipe keys."""
         data = asdict(self)

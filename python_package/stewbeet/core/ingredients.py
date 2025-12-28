@@ -9,7 +9,7 @@ from stouputils.io import json_dump
 from stouputils.print import error
 
 from .__memory__ import Mem
-from .constants import NOT_COMPONENTS
+from .cls.item import Item
 
 # Recipes constants
 FURNACES_RECIPES_TYPES: tuple[str, ...] = ("smelting", "blasting", "smoking", "campfire_cooking")
@@ -144,33 +144,35 @@ def item_id_to_text_component(item_id: str, use_default: bool = True) -> TextCom
 	# Internal definitions
 	ns, id = item_id.split(":")
 	if ns == Mem.ctx.project_id and id in Mem.definitions:
-		definition = Mem.definitions[id]
+		definition = Item.from_id(id)
+		components: JsonDict = definition.components
 
 		# If jukebox_playable is present, search for item_name in custom_data
-		if "jukebox_playable" in definition:
-			possible_item_name: TextComponent = definition.get("custom_data", {}).get("smithed", {}).get("dict", {}).get("record", {}).get("item_name", "")
+		if "jukebox_playable" in components:
+			possible_item_name: TextComponent = components.get("custom_data", {}).get("smithed", {}).get("dict", {}).get("record", {}).get("item_name", "")
 			if possible_item_name:
 				return possible_item_name
 
 		# Regular components
 		for component in ("item_name", "custom_name"):
-			if definition.get(component):
-				return definition[component]
+			if components.get(component):
+				return components[component]
 
 	# External definitions
 	if item_id in Mem.external_definitions:
-		ext_definition = Mem.external_definitions[item_id]
+		ext_definition = Item.from_id(item_id)
+		components: JsonDict = ext_definition.components
 
 		# If jukebox_playable is present, search for item_name in custom_data
-		if "jukebox_playable" in ext_definition:
-			possible_item_name: TextComponent = ext_definition.get("custom_data", {}).get("smithed", {}).get("dict", {}).get("record", {}).get("item_name", "")
+		if "jukebox_playable" in components:
+			possible_item_name: TextComponent = components.get("custom_data", {}).get("smithed", {}).get("dict", {}).get("record", {}).get("item_name", "")
 			if possible_item_name:
 				return possible_item_name
 
 		# Regular components
 		for component in ("item_name", "custom_name"):
-			if ext_definition.get(component):
-				return ext_definition[component]
+			if components.get(component):
+				return components[component]
 
 	# Default: prettify the id
 	if use_default:
@@ -217,19 +219,20 @@ def get_vanilla_item_id_from_ingredient(ingredient: JsonDict, add_namespace: boo
 	ns, ingr_id = ingr_to_id(ingredient).split(":")
 	if ns == Mem.ctx.project_id:
 		if add_namespace:
-			return Mem.definitions[ingr_id]["id"]
-		return Mem.definitions[ingr_id]["id"].split(":")[1]
+			return Item.from_id(ingr_id).base_item
+		return Item.from_id(ingr_id).base_item.split(":")[1]
 	elif ns == "minecraft":
 		if add_namespace:
 			return f"{ns}:{ingr_id}"
 		return ingr_id
 	else:
-		if Mem.external_definitions.get(f"{ns}:{ingr_id}"):
+		item: str = f"{ns}:{ingr_id}"
+		if Mem.external_definitions.get(item):
 			if add_namespace:
-				return Mem.external_definitions[f"{ns}:{ingr_id}"]["id"]
-			return Mem.external_definitions[f"{ns}:{ingr_id}"]["id"].split(":")[1]
+				return Item.from_id(item).base_item
+			return Item.from_id(item).base_item.split(":")[1]
 		else:
-			error(f"External item '{ns}:{ingr_id}' not found in the external definitions")
+			error(f"External item '{item}' not found in the external definitions")
 	return ""
 
 # Used for recipes
@@ -244,39 +247,37 @@ def get_item_from_ingredient(ingredient: JsonDict) -> JsonDict:
 	"""
 	if isinstance(ingredient, str):
 		ingredient = {"item": ingredient}
-	ingr_id = ingr_to_id(ingredient)
+	ingr_id: str = ingr_to_id(ingredient)
 	ns, id = ingr_id.split(":")
 
 	# Get from internal definitions
 	if ns == Mem.ctx.project_id:
-		item_data: JsonDict = Mem.definitions[id].copy()
-		result: JsonDict = {"id": item_data.pop("id"), "count": 1}
+		item_data = Item.from_id(id)
+		result: JsonDict = {"id": item_data.base_item, "count": 1}
 
 		# Add components
-		for k, v in item_data.items():
-			if k not in NOT_COMPONENTS:
-				if result.get("components") is None:
-					result["components"] = {}
-				if k.startswith("!"):
-					result["components"][f"!minecraft:{k[1:]}"] = {}
-				else:
-					result["components"][f"minecraft:{k}"] = v
+		for k, v in item_data.components.items():
+			if result.get("components") is None:
+				result["components"] = {}
+			if k.startswith("!"):
+				result["components"][f"!minecraft:{k[1:]}"] = {}
+			else:
+				result["components"][f"minecraft:{k}"] = v
 		return result
 
 	# External definitions
 	if Mem.external_definitions.get(ingr_id):
-		item_data = Mem.external_definitions[ingr_id].copy()
-		result = {"id": item_data.pop("id"), "count": 1}
+		item_data = Item.from_id(ingr_id)
+		result = {"id": item_data.base_item, "count": 1}
 
 		# Add components
-		for k, v in item_data.items():
-			if k not in NOT_COMPONENTS:
-				if result.get("components") is None:
-					result["components"] = {}
-				if k.startswith("!"):
-					result["components"][f"!minecraft:{k[1:]}"] = {}
-				else:
-					result["components"][f"minecraft:{k}"] = v
+		for k, v in item_data.components.items():
+			if result.get("components") is None:
+				result["components"] = {}
+			if k.startswith("!"):
+				result["components"][f"!minecraft:{k[1:]}"] = {}
+			else:
+				result["components"][f"minecraft:{k}"] = v
 		return result
 
 	# Minecraft item

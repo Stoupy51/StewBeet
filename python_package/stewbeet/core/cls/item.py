@@ -44,16 +44,19 @@ class Item(StMapping):
         ## Fix some fields
         # Add default group to every recipe
         for recipe in self.recipes:
-            recipe.group = self.id
+            if not recipe.get("group"):
+                recipe["group"] = self.id
 
         # Fix !component values
+        self.components = {k.replace("minecraft:", ""): v for k, v in self.components.items()}
         for k, v in self.components.items():
             if k.startswith("!") and v != {}:
                 self.components[k] = {}
 
-        # Register the item in the global definitions
+        # Register the item in the global definitions (if not external)
         from ..__memory__ import Mem
-        Mem.definitions[self.id] = self
+        if self.id and ":" not in self.id and self.id not in Mem.definitions:
+            Mem.definitions[self.id] = self
 
     # Mapping methods (__getitem__, __len__, and __iter__)
     def _get_mapping(self) -> JsonDict:
