@@ -6,7 +6,7 @@ from beet.core.utils import JsonDict
 from stouputils.decorators import simple_cache
 
 from ...core.__memory__ import Mem
-from ...core.constants import PULVERIZING
+from ...core.constants import simplenergy_pulverizing
 from ...core.ingredients import (
     get_item_from_ingredient,
     ingr_repr,
@@ -59,7 +59,7 @@ class PulverizerRecipeHandler:
             crafts += list(data.get("used_for_crafting", []))
 
             for recipe in crafts:
-                if recipe["type"] == PULVERIZING:
+                if recipe["type"] == simplenergy_pulverizing:
                     write_function(
                         self.SIMPLENERGY_PULVERIZER_PATH,
                         self.simplenergy_pulverizer_recipe(recipe, item),

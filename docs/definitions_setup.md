@@ -377,7 +377,7 @@ core.add_smithed_ignore_vanilla_behaviours_convention()
 | `core.VANILLA_BLOCK` | Define base block for custom blocks |
 | `core.NO_SILK_TOUCH_DROP` | Item that drops when silk touch is not used |
 | `core.OVERRIDE_MODEL` | Override the entire model with custom data |
-| `core.PULVERIZING` | Recipe type for SimplEnergy pulverizer (`"simplenergy_pulverizing"`) |
+| `core.simplenergy_pulverizing` | Recipe type for SimplEnergy pulverizer (`"simplenergy_pulverizing"`) |
 | `core.SMITHED_CRAFTER_COMMAND` | Custom command for Smithed Crafter recipes |
 | `core.WIKI_COMPONENT` | Manual/wiki documentation text components |
 | `core.RESULT_OF_CRAFTING` | Recipes that create this item |
