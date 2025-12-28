@@ -5,7 +5,7 @@ from beet.core.utils import TextComponent
 
 from ...core.__memory__ import Mem
 from .shared_import import (
-	AWAKENED_FORGE_STRUCT_FONT,
+	stardust_awakened_forge_STRUCT_FONT,
 	VERY_SMALL_NONE_FONT,
 )
 
@@ -26,7 +26,7 @@ def get_stardust_forge_page() -> list[TextComponent]:
 			{"text":"end-game","font":"minecraft:default","color":"red","underlined":True},
 			{"text":" items in Stardust Fragment.","font":"minecraft:default","color":"black"},
 			"\n\n",
-			{"text": AWAKENED_FORGE_STRUCT_FONT[0] + VERY_SMALL_NONE_FONT + AWAKENED_FORGE_STRUCT_FONT[1], "font": f"{ns}:manual"},
+			{"text": stardust_awakened_forge_STRUCT_FONT[0] + VERY_SMALL_NONE_FONT + stardust_awakened_forge_STRUCT_FONT[1], "font": f"{ns}:manual"},
 		]
 	]
 

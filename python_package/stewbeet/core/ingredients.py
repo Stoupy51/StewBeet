@@ -9,7 +9,7 @@ from stouputils.io import json_dump
 from stouputils.print import error
 
 from .__memory__ import Mem
-from .constants import AWAKENED_FORGE, NOT_COMPONENTS, PULVERIZING
+from .constants import NOT_COMPONENTS
 
 # Recipes constants
 FURNACES_RECIPES_TYPES: tuple[str, ...] = ("smelting", "blasting", "smoking", "campfire_cooking")
@@ -22,7 +22,7 @@ UNUSED_RECIPES_TYPES: tuple[str, ...] = (
 	"crafting_special_repairitem", "crafting_special_shielddecoration", "crafting_special_tippedarrow",
 	"crafting_transmute",
 )
-SPECIAL_RECIPES_TYPES: tuple[str, ...] = (PULVERIZING, AWAKENED_FORGE)
+SPECIAL_RECIPES_TYPES: tuple[str, ...] = ("simplenergy_pulverizing", "stardust_awakened_forge")
 ALL_RECIPES_TYPES: tuple[str, ...] = (*FURNACES_RECIPES_TYPES, *CRAFTING_RECIPES_TYPES, *OTHER_RECIPES_TYPES, *UNUSED_RECIPES_TYPES, *SPECIAL_RECIPES_TYPES)
 
 # Function mainly used for definitions generation

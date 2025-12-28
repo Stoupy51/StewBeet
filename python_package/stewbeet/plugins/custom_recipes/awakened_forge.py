@@ -7,7 +7,7 @@ from beet.core.utils import JsonDict
 from stouputils.decorators import simple_cache
 
 from ...core.__memory__ import Mem
-from ...core.constants import AWAKENED_FORGE
+from ...core.constants import stardust_awakened_forge
 from ...core.ingredients import (
     get_item_from_ingredient,
     ingr_repr,
@@ -25,7 +25,7 @@ class AwakenedForgeRecipeHandler:
     """
     def __init__(self) -> None:
         """ Initialize the handler. """
-        self.STARDUST_AWAKENED_FORGE_PATH: str = f"{Mem.ctx.project_id}:calls/stardust/awakened_forge_recipes"
+        self.STARDUST_stardust_awakened_forge_PATH: str = f"{Mem.ctx.project_id}:calls/stardust/awakened_forge_recipes"
 
     @classmethod
     def routine(cls) -> None:
@@ -118,9 +118,9 @@ tag @e[type=item,tag=stardust.temp] remove stardust.temp
             crafts += list(data.get("used_for_crafting", []))
 
             for recipe in crafts:
-                if recipe["type"] == AWAKENED_FORGE:
+                if recipe["type"] == stardust_awakened_forge:
                     write_function(
-                        self.STARDUST_AWAKENED_FORGE_PATH,
+                        self.STARDUST_stardust_awakened_forge_PATH,
                         self.stardust_awakened_forge_recipe(recipe, item),
                         tags=["stardust:calls/awakened_forge_recipes"],
                     )
