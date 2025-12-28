@@ -9,11 +9,12 @@ import sys
 from beet import ProjectConfig
 from stouputils import GREEN, RED, LogLevels, handle_error, info, show_version
 
+from .core.template import template_command
 from .utils import get_project_config
 
 
 @handle_error(message="Error while running 'stewbeet'")
-def main():
+def main() -> None:
     second_arg: str = sys.argv[1].lower() if len(sys.argv) >= 2 else ""
     if second_arg == "" and len(sys.argv) == 1:
         sys.argv.append("build")
@@ -21,6 +22,10 @@ def main():
     # Print the version of stewbeet, beet, bolt, mecha, and stouputils
     if second_arg in ("--version", "-v", "version"):
         return show_version("stewbeet", primary_color=RED, secondary_color=GREEN, max_depth=int(sys.argv[-1]) if len(sys.argv) == 3 else 2)
+
+    # Handle "init/template" command
+    if second_arg in ("init", "template"):
+        return template_command()
 
     # Try to find and load the beet configuration file
     cfg: ProjectConfig = get_project_config()
