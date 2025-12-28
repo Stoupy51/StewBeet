@@ -1,6 +1,6 @@
 
 # Imports
-from ...core import Mem, write_function, write_load_file
+from ...core import Item, Mem, write_function, write_load_file
 
 
 # Add commands to place and destroy functions for energy items
@@ -12,7 +12,8 @@ def insert_lib_calls() -> None:
 
 	# Loop through all items with energy data
 	for item, data in Mem.definitions.items():
-		energy: dict[str, int] = data.get("custom_data", {}).get("energy", {})
+		obj = Item.from_dict(data, item)
+		energy: dict[str, int] = obj.components.get("custom_data", {}).get("energy", {})
 		if len(energy) > 0:
 			placement: str = f"{ns}:custom_blocks/{item}/place_secondary"
 			destroy: str = f"{ns}:custom_blocks/{item}/destroy"

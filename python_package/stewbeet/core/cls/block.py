@@ -77,7 +77,7 @@ class Block(Item):
     """ Can either be CUSTOM_BLOCK_VANILLA, CUSTOM_BLOCK_ALTERNATIVE, CUSTOM_BLOCK_HEAD, or a vanilla block like 'minecraft:stone'. """
 
     # Specific to Block class
-    vanilla_block: VanillaBlock | JsonDict
+    vanilla_block: VanillaBlock
     """ If the block is based on a vanilla block, this defines which one and whether to apply facing. """
     no_silk_touch_drop: NoSilkTouchDrop | str | None = None
     """ (Optional) Defines the item dropped when the block is broken without silk touch, e.g. NoSilkTouchDrop(id="raw_simplunium") or just "raw_simplunium". """
