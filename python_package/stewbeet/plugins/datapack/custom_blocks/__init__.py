@@ -10,6 +10,8 @@ from stouputils.io import clean_path, json_dump, relative_path
 from stouputils.print import debug, error
 
 from ....core.__memory__ import Mem
+from ....core.cls.block import VANILLA_BLOCK_FOR_ORES, GrowingSeed, GrowingSeedLoot
+from ....core.cls.item import Item
 from ....core.constants import (
 	BLOCKS_WITH_INTERFACES,
 	CUSTOM_BLOCK_ALTERNATIVE,
@@ -20,7 +22,6 @@ from ....core.constants import (
 	NO_SILK_TOUCH_DROP,
 	OFFICIAL_LIBS,
 	VANILLA_BLOCK,
-	VANILLA_BLOCK_FOR_ORES,
 	official_lib_used,
 )
 from ....core.utils.io import set_json_encoder, write_function, write_function_tag, write_load_file, write_versioned_function
@@ -85,15 +86,14 @@ execute if score #rotation {ns}.data matches 0 if predicate {ns}:facing/west run
 	unique_blocks: set[str] = set()
 	custom_block_entities: set[str] = set()
 	has_growing_seed: bool = False
-	for item, data in Mem.definitions.items():
-		item: str
-		data: JsonDict
+	for item in Mem.definitions.keys():
+		obj = Item.from_id(item)
 		item_name: str = item.replace("_", " ").title()
-		custom_name: str = json_dump({"CustomName": data.get("item_name", item_name)}, max_level = 0)[:-1] # Remove the last new line
+		custom_name: str = json_dump({"CustomName": obj.components.get("item_name", item_name)}, max_level = 0)[:-1] # Remove the last new line
 
 		# Custom block
-		if data.get(VANILLA_BLOCK):
-			block: JsonDict = data[VANILLA_BLOCK]
+		if obj.get(VANILLA_BLOCK):
+			block: JsonDict = obj[VANILLA_BLOCK]
 			path = f"{ns}:custom_blocks/{item}"
 
 			# Write the line in stats_custom_blocks
@@ -106,7 +106,7 @@ execute if score #rotation {ns}.data matches 0 if predicate {ns}:facing/west run
 			)
 
 			# If the block is an item frame custom block, make the search function for placement
-			if data.get("id") == CUSTOM_BLOCK_ALTERNATIVE:
+			if obj.base_item == CUSTOM_BLOCK_ALTERNATIVE:
 
 				# Make advancement to detect the item frame placement
 				adv: JsonDict = {
@@ -206,11 +206,11 @@ kill @s
 scoreboard players add #total_custom_blocks {ns}.data 1
 scoreboard players add #total_vanilla_{block_id.replace('minecraft:','')} {ns}.data 1
 scoreboard players add #total_{item} {ns}.data 1
-{f"scoreboard players add #total_growing_seeds {ns}.data 1" if GROWING_SEED in data else ""}
+{f"scoreboard players add #total_growing_seeds {ns}.data 1" if GROWING_SEED in obj else ""}
 """
 
 				# If CUSTOM_BLOCK_ALTERNATIVE, we need to kill the old item frame
-				if data.get("id") == CUSTOM_BLOCK_ALTERNATIVE:
+				if obj.base_item == CUSTOM_BLOCK_ALTERNATIVE:
 					content += "kill @s[type=item_frame]\n"
 
 				# Write the file
@@ -219,8 +219,8 @@ scoreboard players add #total_{item} {ns}.data 1
 				## Secondary function
 				block_id = block_id.replace(":","_")
 				item_model = ""
-				if data.get("item_model"):
-					item_model = f"item replace entity @s contents with {CUSTOM_BLOCK_VANILLA}[item_model=\"{data['item_model']}\"]\n"
+				if obj.components.get("item_model"):
+					item_model = f"item replace entity @s contents with {CUSTOM_BLOCK_VANILLA}[item_model=\"{obj.components['item_model']}\"]\n"
 				content = f"""
 # Add convention and utils tags, and the custom block tag
 tag @s add global.ignore
@@ -230,7 +230,7 @@ tag @s add smithed.block
 tag @s add {ns}.custom_block
 tag @s add {ns}.{item}
 tag @s add {ns}.vanilla.{block_id}
-{f"tag @s add {ns}.growing_seed" if GROWING_SEED in data else ""}
+{f"tag @s add {ns}.growing_seed" if GROWING_SEED in obj else ""}
 
 # Add a custom name
 data merge entity @s {custom_name}
@@ -276,7 +276,7 @@ execute as @n[tag={ns}.new] at @s run function {ns}:custom_blocks/{item}/place_s
 scoreboard players add #total_custom_blocks {ns}.data 1
 scoreboard players add #total_vanilla_item_frame {ns}.data 1
 scoreboard players add #total_{item} {ns}.data 1
-{f"scoreboard players add #total_growing_seeds {ns}.data 1" if GROWING_SEED in data else ""}
+{f"scoreboard players add #total_growing_seeds {ns}.data 1" if GROWING_SEED in obj else ""}
 
 # Replace the placing sound
 playsound minecraft:block.stone.place block @a[distance=..5]
@@ -291,7 +291,7 @@ kill @s
 				unique_blocks.add("minecraft:item_frame")
 
 				# Secondary function
-				item_model: str = data.get("item_model", "minecraft:air")
+				item_model: str = obj.components.get("item_model", "minecraft:air")
 				content: str = f"""
 # Add convention and utils tags, and the custom block tag
 tag @s remove {ns}.new
@@ -302,7 +302,7 @@ tag @s add smithed.block
 tag @s add {ns}.custom_block
 tag @s add {ns}.{item}
 tag @s add {ns}.vanilla.minecraft_item_frame
-{f"tag @s add {ns}.growing_seed" if GROWING_SEED in data else ""}
+{f"tag @s add {ns}.growing_seed" if GROWING_SEED in obj else ""}
 
 # Add a custom name
 data merge entity @s {custom_name}
@@ -323,8 +323,8 @@ data modify entity @s Facing set value 1b
 				pass
 
 			# If the block is a growing seed, make the update_seed_model function and call it in the place_secondary function
-			growing_seed: JsonDict = data.get(GROWING_SEED, {})
-			if growing_seed:
+			if obj.get(GROWING_SEED):
+				growing_seed: GrowingSeed = obj[GROWING_SEED]
 				has_growing_seed = True
 				write_function(f"{ns}:custom_blocks/{item}/place_secondary", f"""
 # Update seed model
@@ -332,11 +332,11 @@ scoreboard players add @s {ns}.growth_time 0
 function {ns}:custom_blocks/{item}/update_seed_model
 """)
 				# Get the number of growth stages
-				texture_basename: str = growing_seed.get("texture_basename", item)
+				texture_basename: str = growing_seed.texture_basename or item
 				starts: str = f"{texture_basename}_stage_"
 				num_stages: int = len({texture for texture in source_textures if os.path.basename(texture).startswith(starts)})
 				progress_stages: int = num_stages - 1 # Last stage is the full grown plant
-				growing_time: int = growing_seed["seconds"]
+				growing_time: int = growing_seed.seconds
 
 				# Make the update function
 				content: str = ""
@@ -366,28 +366,28 @@ function {ns}:custom_blocks/{item}/update_seed_model
 					error(f"Growing seed '{item}' has a growing time < to the number of stages ({growing_time} seconds). Please increase the growing time or reduce the number of stages.")
 
 				# Make the loot table for the seed
-				loot_table: str | list[JsonDict] = growing_seed.get("loots", [])
+				loot_table: str | list[GrowingSeedLoot] = growing_seed.loots
 				if not isinstance(loot_table, str):
 					ctx.data[ns].loot_tables[f"seeds/{item}"] = set_json_encoder(LootTable({
 						"type": "minecraft:block",
 						"pools": [
 							{
-								"rolls": pool.get("rolls", 1),
+								"rolls": pool.rolls,
 								"bonus_rolls": 0,
 								"entries": [
 									{
 										# Vanilla item if "minecraft:" in id,
 										# Custom item if plain string
 										# Another loot table if ':' in id
-										"type": "minecraft:item" if "minecraft:" in pool["id"] else "minecraft:loot_table",
-										"name" if "minecraft:" in pool["id"] else "value": (f"{ns}:i/{pool["id"]}" if ":" not in pool["id"] else pool["id"]),
-										**({} if not pool.get("fortune") else {
+										"type": "minecraft:item" if "minecraft:" in pool.id else "minecraft:loot_table",
+										"name" if "minecraft:" in pool.id else "value": (f"{ns}:i/{pool.id}" if ":" not in pool.id else pool.id),
+										**({} if not pool.fortune else {
 											"functions": [
 												{
 													"function": "minecraft:apply_bonus",
 													"enchantment": "minecraft:fortune",
 													"formula": "minecraft:binomial_with_bonus_count",
-													"parameters": pool["fortune"],
+													"parameters": pool.fortune,
 												},
 											]
 										})
@@ -425,8 +425,7 @@ scoreboard objectives add {ns}.growth_stage dummy
 """, prepend=True)
 
 	# Link the custom block library to the datapack
-	smithed_custom_blocks = [1 for data in Mem.definitions.values() if data.get("id") == CUSTOM_BLOCK_VANILLA]
-	if smithed_custom_blocks:
+	if any(Item.from_id(item).base_item == CUSTOM_BLOCK_VANILLA for item in Mem.definitions.keys()):
 
 		# Change is_used state
 		if not official_lib_used("smithed.custom_block"):
@@ -443,9 +442,10 @@ scoreboard objectives add {ns}.growth_stage dummy
 
 		# Write the function that will place the custom blocks
 		content = f"tag @s add {ns}.placer\n"
-		for item, data in Mem.definitions.items():
-			if data.get("id") == CUSTOM_BLOCK_VANILLA:
-				content += f"execute if data storage smithed.custom_block:main blockApi{{id:\"{ns}:{item}\"}} run function {ns}:custom_blocks/{item}/place_main\n"
+		for item in Mem.definitions.keys():
+			obj = Item.from_id(item)
+			if obj.base_item == CUSTOM_BLOCK_VANILLA:
+				content += f"""execute if data storage smithed.custom_block:main blockApi{{id:"{ns}:{item}"}} run function {ns}:custom_blocks/{item}/place_main\n"""
 		content += f"tag @s remove {ns}.placer\n"
 		write_function(f"{ns}:custom_blocks/place", content)
 
@@ -478,10 +478,11 @@ scoreboard objectives add {ns}.growth_stage dummy
 	# If there are growing seeds, we need to check the block below to see if it's still valid
 	if has_growing_seed:
 		content = ""
-		for item, data in Mem.definitions.items():
-			growing_seed: JsonDict = data.get(GROWING_SEED, {})
-			if growing_seed:
-				planted_on: str = growing_seed.get("planted_on", "dirt")
+		for item in Mem.definitions.keys():
+			obj = Item.from_id(item)
+			if GROWING_SEED in obj:
+				growing_seed: GrowingSeed = obj[GROWING_SEED]
+				planted_on: str = growing_seed.planted_on
 				content += (
 					f"execute if score #total_{item} {ns}.data matches 1.. if entity @s[tag={ns}.{item}] "
 					f"""unless block ~ ~-1 ~ {planted_on} run return run function {ns}:custom_blocks/no_block_below {{item:"{item}"}}\n"""
@@ -512,13 +513,14 @@ $function {ns}:custom_blocks/$(item)/destroy
 		content = "\n"
 
 		# For every custom block, add a tag check for destroy if it's the right vanilla block
-		for item, data in Mem.definitions.items():
-			if data.get(VANILLA_BLOCK):
+		for item in Mem.definitions.keys():
+			obj = Item.from_id(item)
+			if obj.get(VANILLA_BLOCK):
 
 				# Get the vanilla block
-				vanilla_block: JsonDict = data[VANILLA_BLOCK]
+				vanilla_block: JsonDict = obj[VANILLA_BLOCK]
 				if vanilla_block.get("id"):
-					this_block = data[VANILLA_BLOCK]["id"].split('[')[0].split('{')[0]
+					this_block = obj[VANILLA_BLOCK]["id"].split('[')[0].split('{')[0]
 					this_block = this_block.replace(":","_")
 				elif vanilla_block.get("contents", False):
 					this_block = CUSTOM_BLOCK_ALTERNATIVE.replace(":","_")
@@ -532,9 +534,10 @@ $function {ns}:custom_blocks/$(item)/destroy
 		write_function(f"{ns}:custom_blocks/_groups/{block_underscore}", content + "\n")
 
 	# For each custom block, make it's destroy function
-	for item, data in Mem.definitions.items():
-		if data.get(VANILLA_BLOCK):
-			vanilla_block: JsonDict = data[VANILLA_BLOCK]
+	for item in Mem.definitions.keys():
+		obj = Item.from_id(item)
+		if obj.get(VANILLA_BLOCK):
+			vanilla_block: JsonDict = obj[VANILLA_BLOCK]
 			if vanilla_block.get("id"):
 				block_id: str = vanilla_block["id"].split('[')[0].split('{')[0]
 			elif vanilla_block.get("contents", False):
@@ -551,7 +554,7 @@ $function {ns}:custom_blocks/$(item)/destroy
 execute as @n[type=item,nbt={{Item:{item_nbt}}},distance=..1] run function {ns}:custom_blocks/{item}/replace_item
 """
 			# If growing seed, get the growth_time score
-			if GROWING_SEED in data:
+			if GROWING_SEED in obj:
 				content = content.replace("custom one", f"custom one\nscoreboard players operation #growth_time {ns}.data = @s {ns}.growth_time", 1)
 
 			# Decrease count scores for stats and optimization
@@ -566,7 +569,7 @@ scoreboard players remove #total_{item} {ns}.data 1
 			write_function(f"{ns}:custom_blocks/{item}/destroy", content + "\n# Kill the custom block entity\nkill @s\n")
 
 			# Replace item function
-			if not data.get(NO_SILK_TOUCH_DROP):
+			if not obj.get(NO_SILK_TOUCH_DROP):
 				content = f"""
 # Replace the item with the custom one
 data modify entity @s Item.components set from storage {ns}:items all.{item}.components
@@ -574,7 +577,7 @@ data modify entity @s Item.id set from storage {ns}:items all.{item}.id
 """
 			else:
 				# If no VANILLA_BLOCK_FOR_ORES, check if the player has silk touch in mainhand
-				if data.get(VANILLA_BLOCK) != VANILLA_BLOCK_FOR_ORES:
+				if obj.get(VANILLA_BLOCK) != VANILLA_BLOCK_FOR_ORES:
 					write_function(f"{ns}:custom_blocks/{item}/destroy", f"""
 # Check if the player has silk touch in mainhand
 scoreboard players set #is_silk_touch {ns}.data 0
@@ -585,7 +588,7 @@ execute unless entity @n[type=item,nbt={{Item:{item_nbt}}},distance=..1] run loo
 """, prepend=True)
 
 				# Handle no silk touch drop
-				no_silk_touch_drop: str | JsonDict = data[NO_SILK_TOUCH_DROP]
+				no_silk_touch_drop: str | JsonDict = obj[NO_SILK_TOUCH_DROP]
 				if isinstance(no_silk_touch_drop, dict):
 					item_to_drop: str = no_silk_touch_drop["id"]
 					if isinstance(no_silk_touch_drop.get("count"), int):
@@ -622,13 +625,13 @@ execute if score #is_silk_touch {ns}.data matches 1 run data modify entity @s It
 # Else, no silk touch
 {silk_text}
 """
-				if data.get(VANILLA_BLOCK) == VANILLA_BLOCK_FOR_ORES:
+				if obj.get(VANILLA_BLOCK) == VANILLA_BLOCK_FOR_ORES:
 					content += f"""
 # Get item count in every case
 execute store result entity @s Item.count byte 1 run scoreboard players get #item_count {ns}.data
 """
 			# If growing seed, call the loot table function
-			if GROWING_SEED in data:
+			if GROWING_SEED in obj:
 				content += f"""
 # Check if the seed is fully grown
 function {ns}:custom_blocks/{item}/is_fully_grown
@@ -777,8 +780,9 @@ execute as @n[type=item,nbt={{Item:{{id:"minecraft:item_frame"}}}},distance=..1]
 
 
 	## Custom blocks using player_head
-	for item, data in Mem.definitions.items():
-		if data["id"] == CUSTOM_BLOCK_HEAD and data.get(VANILLA_BLOCK):
+	for item in Mem.definitions.keys():
+		obj = Item.from_id(item)
+		if obj.base_item == CUSTOM_BLOCK_HEAD and obj.get(VANILLA_BLOCK):
 
 			# Make advancement
 			adv: JsonDict = {

@@ -16,14 +16,13 @@ from stouputils.print import colored_for_loop, debug, error, suggestion, warning
 from stewbeet.core.definitions_helper.completion import add_private_custom_data_for_namespace
 
 from ...core.__memory__ import Mem
+from ...core.cls.block import Block, VanillaBlock
+from ...core.cls.item import Item
+from ...core.cls.recipe import AwakenedForgeRecipe, CraftingShapedRecipe, PulverizingRecipe
 from ...core.constants import (
 	CATEGORY,
-	CUSTOM_BLOCK_VANILLA,
 	NO_SILK_TOUCH_DROP,
 	OFFICIAL_LIBS,
-	OVERRIDE_MODEL,
-	RESULT_OF_CRAFTING,
-	USED_FOR_CRAFTING,
 	WIKI_COMPONENT,
 )
 from ...core.definitions_helper import add_item_name_and_lore_if_missing
@@ -46,6 +45,7 @@ from .iso_renders import generate_all_iso_renders
 from .other_utils import (
 	convert_shapeless_to_shaped,
 	generate_otherside_crafts,
+	remove_duplicate_furnace_crafts,
 	remove_unknown_crafts,
 )
 from .page_font import generate_page_font, generate_wiki_font_for_ingr
@@ -126,23 +126,26 @@ def routine():
 	# If smithed crafter is used, add it to the manual (last page that we will move to the second page)
 	if OFFICIAL_LIBS["smithed.crafter"]["is_used"]:
 		Mem.ctx.assets[Mem.ctx.project_id].textures["item/heavy_workbench"] = Texture(source_path=f"{TEMPLATES_PATH}/heavy_workbench.png")
-		Mem.definitions["heavy_workbench"] = {
-			"id": CUSTOM_BLOCK_VANILLA,
-			"item_name": "Heavy Workbench",
-			"item_model": f"{Mem.ctx.project_id}:heavy_workbench",
-			"category": HEAVY_WORKBENCH_CATEGORY,
-			OVERRIDE_MODEL: {
+		obj = Block(
+			id="heavy_workbench",
+			vanilla_block=VanillaBlock(id=""),
+			manual_category=HEAVY_WORKBENCH_CATEGORY,
+			override_model={
 				"parent":"minecraft:block/cube",
 				"texture_size":[64,32],
 				"textures":{"0":f"{Mem.ctx.project_id}:item/heavy_workbench"},
 				"elements":[{"from":[0,0,0],"to":[16,16,16],"faces":{"north":{"uv":[4,8,8,16],"texture":"#0"},"east":{"uv":[0,8,4,16],"texture":"#0"},"south":{"uv":[12,8,16,16],"texture":"#0"},"west":{"uv":[8,8,12,16],"texture":"#0"},"up":{"uv":[4,0,8,8],"texture":"#0"},"down":{"uv":[8,0,12,8],"texture":"#0"}}}],
 				"display":{"thirdperson_righthand":{"rotation":[75,45,0],"translation":[0,2.5,0],"scale":[0.375,0.375,0.375]},"thirdperson_lefthand":{"rotation":[75,45,0],"translation":[0,2.5,0],"scale":[0.375,0.375,0.375]},"firstperson_righthand":{"rotation":[0,45,0],"scale":[0.4,0.4,0.4]},"firstperson_lefthand":{"rotation":[0,225,0],"scale":[0.4,0.4,0.4]},"ground":{"translation":[0,3,0],"scale":[0.25,0.25,0.25]},"gui":{"rotation":[30,225,0],"scale":[0.625,0.625,0.625]},"head":{"translation":[0,-30.43,0],"scale":[1.601,1.601,1.601]},"fixed":{"scale":[0.5,0.5,0.5]}}
 			},
-			RESULT_OF_CRAFTING: [
-				{"type":"crafting_shaped","shape":["###","#C#","SSS"],"ingredients":{"#":ingr_repr("minecraft:oak_log"),"C":ingr_repr("minecraft:crafting_table"),"S":ingr_repr("minecraft:smooth_stone")}}
-			]
-		}
-		AutoModel.from_definitions("heavy_workbench", Mem.definitions["heavy_workbench"], {}, ignore_textures = True).process()
+			recipes=[
+				CraftingShapedRecipe(shape=["###","#C#","SSS"],ingredients={"#":ingr_repr("minecraft:oak_log"),"C":ingr_repr("minecraft:crafting_table"),"S":ingr_repr("minecraft:smooth_stone")})
+			],
+			components={
+				"item_name": "Heavy Workbench",
+				"item_model": f"{Mem.ctx.project_id}:heavy_workbench",
+			},
+		)
+		AutoModel.from_definitions(obj, {}, ignore_textures = True).process()
 
 	# Prework
 	os.makedirs(f"{SharedMemory.cache_path}/font/page", exist_ok=True)
@@ -151,8 +154,18 @@ def routine():
 	generate_all_iso_renders()
 
 	# Check if there is any awakened forge recipe with 3x3 or 3x4 ingredients
-	has_forge_3x3: bool = any(recipe.get("type") == "stardust_awakened_forge" and len(recipe["ingredients"]) <= 9 for data in Mem.definitions.values() for recipe in data.get(RESULT_OF_CRAFTING, []))
-	has_forge_3x4: bool = any(recipe.get("type") == "stardust_awakened_forge" and len(recipe["ingredients"]) > 12 for data in Mem.definitions.values() for recipe in data.get(RESULT_OF_CRAFTING, []))
+	has_forge_3x3: bool = False
+	has_forge_3x4: bool = False
+	for item in Mem.definitions.keys():
+		obj = Item.from_id(item)
+		for recipe in obj.recipes:
+			if recipe.get("type") == AwakenedForgeRecipe.type:
+				if len(recipe["ingredients"]) <= 9:
+					has_forge_3x3 = True
+				else:
+					has_forge_3x4 = True
+		if has_forge_3x3 and has_forge_3x4:
+			break
 
 	# Constants
 	FONT = Mem.ctx.project_id + ':' + FONT_FILE
@@ -194,16 +207,16 @@ def routine():
 
 	# Generate categories list
 	categories: dict[str, list[str]] = {}
-	for item, data in Mem.definitions.items():
+	for item in Mem.definitions.keys():
+		obj = Item.from_id(item)
 
-		if CATEGORY not in data:
+		if not obj.manual_category:
 			suggestion(f"Item '{item}' has no category key. Skipping.")
 			continue
 
-		file = data[CATEGORY]
-		if file not in categories:
-			categories[file] = []
-		categories[file].append(item)
+		if obj.manual_category not in categories:
+			categories[obj.manual_category] = []
+		categories[obj.manual_category].append(item)
 
 	# Error message if there is too many categories
 	if len(categories) > MAX_ITEMS_PER_PAGE:
@@ -235,9 +248,9 @@ def routine():
 				i += MAX_ITEMS_PER_PAGE
 
 	# Sort items depending on their category order
-	items_with_category = [(item, data) for item, data in Mem.definitions.items() if CATEGORY in data]
+	items_with_category = [x for x in [(item, Item.from_id(item)) for item in Mem.definitions.keys()] if x[1].manual_category]
 	category_list = list(categories.keys())
-	sorted_definitions_on_category = sorted(items_with_category, key = lambda x: category_list.index(x[1][CATEGORY]))
+	sorted_definitions_on_category = sorted(items_with_category, key = lambda x: category_list.index(x[1].manual_category or ""))
 
 	# If the manual cache is enabled and we have a cache file, load it
 	cache_pages: bool = manual_config.get("cache_pages", False)
@@ -282,7 +295,7 @@ def routine():
 		def encode_page(page: JsonDict):
 			content: list[TextComponent] = []
 			number = page["number"]
-			raw_data: JsonDict = page["raw_data"]
+			raw_data: Item | list[str] = page["raw_data"]
 			page_font = ""
 			if not SharedMemory.high_resolution:
 				page_font = get_page_font(number)
@@ -290,7 +303,7 @@ def routine():
 			titled = item_id_to_name(name) + "\n"
 
 			# Encode categories {'number': 2, 'name': 'Material #1', 'raw_data': ['adamantium_block', 'adamantium_fragment', ...]}
-			if page["type"] == CATEGORY:
+			if page["type"] == CATEGORY and isinstance(raw_data, list):
 				file_name = name.replace(" ", "_").replace("#", "").lower()
 				page_font = get_page_font(number)
 				SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/category/{file_name}.png", "ascent": 1, "height": 131, "chars": [page_font]})
@@ -367,12 +380,11 @@ def routine():
 				page_image.save(f"{SharedMemory.cache_path}/font/category/{file_name}.png")
 
 			# Encode items
-			else:
+			elif isinstance(raw_data, Item):
 				# Get all crafts
-				crafts: list[JsonDict] = list(raw_data.get(RESULT_OF_CRAFTING,[]))
-				crafts += list(raw_data.get(USED_FOR_CRAFTING,[]))
+				crafts: list[JsonDict] = (raw_data.to_dict()["recipes"]).copy()
 				crafts += generate_otherside_crafts(name)
-				crafts = [craft for craft in crafts if craft["type"] not in ["blasting", "smoking", "campfire_cooking"]]	# Remove smelting dupes
+				crafts = remove_duplicate_furnace_crafts(crafts)
 				crafts = remove_unknown_crafts(crafts)
 				crafts = unique_list(crafts)
 
@@ -542,8 +554,8 @@ def routine():
 								"stonecutting": "Stonecutting",
 								"smithing_transform": "Smithing Transform",
 								"smithing_trim": "Smithing Trim",
-								"simplenergy_pulverizing": "(SimplEnergy) Pulverizing",
-								"stardust_awakened_forge": "(Stardust Fragment) Awakened Forge",
+								PulverizingRecipe.type: "(SimplEnergy) Pulverizing",
+								AwakenedForgeRecipe.type: "(Stardust Fragment) Awakened Forge",
 							}
 							recipe_title = recipe_type_names.get(craft["type"], craft["type"].replace("_", " ").title())
 							hover_text.append({"text": f"\n{recipe_title}", "color": "yellow"})
@@ -942,9 +954,10 @@ def routine():
 	# Finally, prepend the manual to the definitions
 	if SharedMemory.use_dialog != 2:
 		manual_already_exists: bool = "manual" in Mem.definitions
-		manual_definitions: JsonDict = {
-			"manual": {
-				"id": "minecraft:written_book",
+		manual_obj = Item(
+			id="manual",
+			base_item="minecraft:written_book",
+			components={
 				"written_book_content": {
 					"title": manual_name,
 					"author": Mem.ctx.project_author,
@@ -955,14 +968,16 @@ def routine():
 				"enchantment_glint_override": False,
 				"max_stack_size": 16
 			}
-		}
+		)
 		if SharedMemory.use_dialog > 0:
-			del manual_definitions["manual"]["written_book_content"]
-			manual_definitions["manual"]["lore"] = [{"text": f"by {Mem.ctx.project_author}", "color": "gray", "italic": False}]
-		if not Mem.definitions.get("manual"):
-			Mem.definitions["manual"] = manual_definitions["manual"]
-		else:
-			Mem.definitions["manual"] = super_merge_dict(manual_definitions["manual"], Mem.definitions["manual"])
+			del manual_obj.components["written_book_content"]
+			manual_obj.components["lore"] = [{"text": f"by {Mem.ctx.project_author}", "color": "gray", "italic": False}]
+		if manual_already_exists:
+			current_def: JsonDict | Item = Mem.definitions["manual"]
+			if isinstance(current_def, dict):
+				Mem.definitions["manual"] = Item.from_dict(super_merge_dict(manual_obj.to_dict(), current_def), item_id="manual")
+			else:
+				Mem.definitions["manual"] = Item.from_dict(super_merge_dict(manual_obj.to_dict(), current_def.to_dict()), item_id="manual")
 		add_item_name_and_lore_if_missing(black_list=[item for item in Mem.definitions if item != "manual"])
 		add_private_custom_data_for_namespace(black_list=[item for item in Mem.definitions if item != "manual"])
 
@@ -973,7 +988,7 @@ def routine():
 				clean_path(str(p)).split("/")[-1]: relative_path(str(p))
 				for p in Path(textures_folder).rglob("*.png")
 			}
-			AutoModel.from_definitions("manual", Mem.definitions["manual"], textures).process()
+			AutoModel.from_definitions(manual_obj, textures).process()
 
 		# Repair the recipes for the manual
 		VanillaRecipeHandler().generate_recipes(override=["manual"])

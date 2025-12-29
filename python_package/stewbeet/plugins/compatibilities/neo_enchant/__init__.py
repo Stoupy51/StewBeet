@@ -6,7 +6,8 @@ from stouputils.decorators import measure_time
 from stouputils.io import json_dump
 
 from ....core.__memory__ import Mem
-from ....core.constants import VANILLA_BLOCK, VANILLA_BLOCK_FOR_ORES
+from ....core.cls.block import VANILLA_BLOCK_FOR_ORES
+from ....core.constants import VANILLA_BLOCK
 
 
 # Main entry point

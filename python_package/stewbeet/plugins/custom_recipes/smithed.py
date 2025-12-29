@@ -7,6 +7,8 @@ from stouputils.decorators import simple_cache
 from stouputils.print import debug
 
 from ...core.__memory__ import Mem
+from ...core.cls.item import Item
+from ...core.cls.recipe import CraftingShapedRecipe, CraftingShapelessRecipe
 from ...core.constants import OFFICIAL_LIBS, official_lib_used
 from ...core.ingredients import (
     ingr_repr,
@@ -35,11 +37,11 @@ class SmithedRecipeHandler:
         handler.generate_recipes()
 
     @simple_cache
-    def smithed_shapeless_recipe(self, recipe: JsonDict, result_loot: str) -> str:
+    def smithed_shapeless_recipe(self, recipe: CraftingShapelessRecipe, result_loot: str) -> str:
         """ Generate a Smithed Crafter shapeless recipe.
 
         Args:
-            recipe (JsonDict): The recipe data.
+            recipe (CraftingShapelessRecipe): The recipe data.
             result_loot (str): The loot table for the result.
 
         Returns:
@@ -47,7 +49,7 @@ class SmithedRecipeHandler:
         """
         # Get unique ingredients and their count
         unique_ingredients: list[tuple[int, JsonDict]] = []
-        for ingr in recipe["ingredients"]:
+        for ingr in recipe.ingredients:
             index: int = -1
             for i, (_, e) in enumerate(unique_ingredients):
                 if str(ingr) == str(e):
@@ -70,28 +72,28 @@ class SmithedRecipeHandler:
             r["recipe"].append(item_to_id_ingr_repr(item))
         line += json.dumps(r)
 
-        if recipe.get("smithed_crafter_command"):
-            line += f""" run function {self.SMITHED_APPLY_PATH} {{"command":"{recipe['smithed_crafter_command']}"}}"""
+        if recipe.smithed_crafter_command:
+            line += f""" run function {self.SMITHED_APPLY_PATH} {{"command":"{recipe.smithed_crafter_command}"}}"""
         else:
             line += f""" run function {self.SMITHED_APPLY_PATH} {{"command":"loot replace block ~ ~ ~ container.16 loot {result_loot}"}}"""
         return line
 
-    @simple_cache()
-    def smithed_shaped_recipe(self, recipe: JsonDict, result_loot: str) -> str:
+    @simple_cache
+    def smithed_shaped_recipe(self, recipe: CraftingShapedRecipe, result_loot: str) -> str:
         """ Generate a Smithed Crafter shaped recipe.
 
         Args:
-            recipe (Dict[str, Any]): The recipe data.
+            recipe (CraftingShapedRecipe): The recipe data.
             result_loot (str): The loot table for the result.
 
         Returns:
             str: The generated recipe command.
         """
         # Convert ingredients to aimed recipes
-        ingredients: dict[str, JsonDict] = recipe["ingredients"]
+        ingredients: dict[str, JsonDict] = recipe.ingredients
         recipes: dict[int, list[JsonDict]] = {0: [], 1: [], 2: []}
 
-        for i, row in enumerate(recipe["shape"]):
+        for i, row in enumerate(recipe.shape):
             for slot, char in enumerate(row):
                 ingredient = ingredients.get(char)
                 if ingredient:
@@ -142,36 +144,30 @@ class SmithedRecipeHandler:
 
         # Return the line
         line = f"execute if score @s smithed.data matches 0 store result score @s smithed.data if data storage smithed.crafter:input recipe{dump}"
-        if recipe.get("smithed_crafter_command"):
-            line += f""" run function {self.SMITHED_APPLY_PATH} {{"command":"{recipe['smithed_crafter_command']}"}}"""
+        if recipe.smithed_crafter_command:
+            line += f""" run function {self.SMITHED_APPLY_PATH} {{"command":"{recipe.smithed_crafter_command}"}}"""
         else:
             line += f""" run function {self.SMITHED_APPLY_PATH} {{"command":"loot replace block ~ ~ ~ container.16 loot {result_loot}"}}"""
         return line
 
     def generate_recipes(self) -> None:
-        """Generate all Smithed Crafter recipes."""
-        for item, data in Mem.definitions.items():
-            crafts: list[JsonDict] = list(data.get("result_of_crafting", []))
-            crafts += list(data.get("used_for_crafting", []))
+        """ Generate all Smithed Crafter recipes. """
+        for item in Mem.definitions.keys():
+            obj = Item.from_id(item)
 
-            for recipe in crafts:
-                if recipe.get("type") not in ["crafting_shapeless", "crafting_shaped"]:
+            for recipe in obj.recipes:
+                if recipe["type"] not in (CraftingShapelessRecipe.type, CraftingShapedRecipe.type):
                     continue
+                recipe = CraftingShapedRecipe.from_dict(recipe) \
+                    if recipe["type"] == CraftingShapedRecipe.type \
+                    else CraftingShapelessRecipe.from_dict(recipe)
 
                 # Get ingredients
-                ingr = recipe.get("ingredients", {})
-                if not ingr:
-                    ingr = recipe.get("ingredient", {})                # Get possible result item
-                if not recipe.get("result"):
-                    result_loot_table = loot_table_from_ingredient(ingr_repr(item, Mem.ctx.project_id), recipe["result_count"])
+                ingr: list[JsonDict] = list(recipe.ingredients.values()) if isinstance(recipe, CraftingShapedRecipe) else recipe.ingredients
+                if not recipe.result:
+                    result_loot_table = loot_table_from_ingredient(ingr_repr(item, Mem.ctx.project_id), recipe.result_count)
                 else:
-                    result_loot_table = loot_table_from_ingredient(recipe["result"], recipe["result_count"])
-
-                # Transform ingr to a list of dicts
-                if isinstance(ingr, dict):
-                    ingr: list[JsonDict] = list(ingr.values()) # type: ignore
-                if not ingr:
-                    ingr = [recipe.get("ingredient", {})]
+                    result_loot_table = loot_table_from_ingredient(recipe.result, recipe.result_count)
 
                 # If there is a component in the ingredients of shaped/shapeless, use smithed crafter
                 if any(i.get("components") for i in ingr):
@@ -182,10 +178,10 @@ class SmithedRecipeHandler:
                         write_function(f"{Mem.ctx.project_id}:_give_all", "loot give @s loot smithed.crafter:blocks/table\n", prepend=True)
 
                 # Generate recipe based on type
-                if recipe["type"] == "crafting_shapeless":
+                if isinstance(recipe, CraftingShapelessRecipe):
                     line = self.smithed_shapeless_recipe(recipe, result_loot_table)
                     write_function(self.SMITHED_SHAPELESS_PATH, line, tags=["smithed.crafter:event/shapeless_recipes"])
-                elif recipe["type"] == "crafting_shaped":
+                else:
                     line = self.smithed_shaped_recipe(recipe, result_loot_table)
                     write_function(self.SMITHED_SHAPED_PATH, line, tags=["smithed.crafter:event/recipes"])
 

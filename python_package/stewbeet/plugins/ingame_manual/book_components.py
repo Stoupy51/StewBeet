@@ -8,7 +8,7 @@ from PIL import Image
 from stouputils.print import error, warning
 
 from ...core.__memory__ import Mem
-from ...core.constants import NOT_COMPONENTS
+from ...core.cls.item import Item
 from ...core.ingredients import ingr_to_id
 from .image_utils import generate_high_res_font
 from .shared_import import NONE_FONT, SharedMemory, get_page_number
@@ -81,39 +81,42 @@ def get_item_component(ingredient: str | JsonDict, only_those_components: list[s
 		formatted["hover_event"]["id"] = ingredient["item"]
 	else:
 		# Get the item in the definitions
+		obj: Item | None = None
 		if isinstance(ingredient, str):
 			id = ingredient
-			item: JsonDict = Mem.definitions[ingredient]
+			obj = Item.from_id(ingredient)
 		else:
-			item: JsonDict = {}
 			custom_data: JsonDict = ingredient["components"]["minecraft:custom_data"]
-			id = ingr_to_id(ingredient, add_namespace = False)
+			id = ingr_to_id(ingredient, add_namespace=False)
 			if custom_data.get(Mem.ctx.project_id):
-				item = Mem.definitions.get(id, {})
+				if id in Mem.definitions:
+					obj = Item.from_id(id)
 			else:
 				ns = next(iter(custom_data.keys())) + ":"
 				for data in custom_data.values():
-					item = Mem.external_definitions.get(ns + next(iter(data.keys())), {})
-					if item:
-						break
-		if not item:
+					item_id = ns + next(iter(data.keys()))
+					if item_id not in Mem.external_definitions:
+						continue
+					obj = Item.from_id(item_id)
+					break
+		if not obj:
 			error("Item not found in definitions or external definitions: " + str(ingredient))
+			return formatted
 
 		# Copy id and components
-		formatted["hover_event"]["id"] = item["id"].replace("minecraft:", "")
-		components = {}
+		formatted["hover_event"]["id"] = obj.base_item.replace("minecraft:", "")
+		components: JsonDict = {}
 		if only_those_components:
 			for key in only_those_components:
-				if key in item:
-					components[key] = item[key]
+				if key in obj.components:
+					components[key] = obj.components[key]
 		elif not SharedMemory.use_dialog > 0:
-			for key, value in item.items():
+			for key, value in obj.components.items():
 				if key in SharedMemory.components_to_include:
 					components[key] = value
 		else:
-			for key, value in item.items():
-				if key not in NOT_COMPONENTS:
-					components[key] = value
+			for key, value in obj.components.items():
+				components[key] = value
 		formatted["hover_event"]["components"] = components
 
 		# If item is from my datapack, get its page number

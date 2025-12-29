@@ -7,6 +7,8 @@ from beet.core.utils import JsonDict
 from stouputils.decorators import simple_cache
 
 from ...core.__memory__ import Mem
+from ...core.cls.item import Item
+from ...core.cls.recipe import AwakenedForgeRecipe
 from ...core.ingredients import (
     get_item_from_ingredient,
     ingr_repr,
@@ -24,7 +26,7 @@ class AwakenedForgeRecipeHandler:
     """
     def __init__(self) -> None:
         """ Initialize the handler. """
-        self.STARDUST_stardust_awakened_forge_PATH: str = f"{Mem.ctx.project_id}:calls/stardust/awakened_forge_recipes"
+        self.STARDUST_AWAKENED_FORGE_PATH: str = f"{Mem.ctx.project_id}:calls/stardust/awakened_forge_recipes"
 
     @classmethod
     def routine(cls) -> None:
@@ -112,14 +114,14 @@ tag @e[type=item,tag=stardust.temp] remove stardust.temp
 
     def generate_recipes(self) -> None:
         """ Generate all pulverizer recipes. """
-        for item, data in Mem.definitions.items():
-            crafts: list[JsonDict] = list(data.get("result_of_crafting", []))
-            crafts += list(data.get("used_for_crafting", []))
+        for item in Mem.definitions.keys():
+            obj = Item.from_id(item)
 
-            for recipe in crafts:
-                if recipe["type"] == "stardust_awakened_forge":
+            for recipe in obj.recipes:
+                if recipe["type"] == AwakenedForgeRecipe.type:
+                    recipe = AwakenedForgeRecipe.from_dict(recipe)
                     write_function(
-                        self.STARDUST_stardust_awakened_forge_PATH,
+                        self.STARDUST_AWAKENED_FORGE_PATH,
                         self.stardust_awakened_forge_recipe(recipe, item),
                         tags=["stardust:calls/awakened_forge_recipes"],
                     )

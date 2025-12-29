@@ -5,10 +5,19 @@ from beet.core.utils import JsonDict
 from stouputils.decorators import simple_cache
 
 from ...core.__memory__ import Mem
-from ...core.constants import RESULT_OF_CRAFTING
+from ...core.cls.item import Item
+from ...core.cls.recipe import (
+	AwakenedForgeRecipe,
+	BlastingRecipe,
+	CampfireCookingRecipe,
+	CraftingShapedRecipe,
+	PulverizingRecipe,
+	SmeltingRecipe,
+	SmokingRecipe,
+	StonecuttingRecipe,
+)
 from ...core.ingredients import (
 	ALL_RECIPES_TYPES,
-	FURNACES_RECIPES_TYPES,
 	ingr_repr,
 	ingr_to_id,
 )
@@ -109,26 +118,48 @@ def convert_shapeless_to_shaped(craft: JsonDict) -> JsonDict:
 # Util function
 @simple_cache
 def high_res_font_from_craft(craft: JsonDict) -> str:
-	if craft["type"] in FURNACES_RECIPES_TYPES:
+	if craft["type"] in (SmeltingRecipe.type, BlastingRecipe.type, CampfireCookingRecipe.type, SmokingRecipe.type):
 		return FURNACE_FONT
-	elif craft["type"] == "crafting_shaped":
+	elif craft["type"] == CraftingShapedRecipe.type:
 		if len(craft["shape"]) == 3 or len(craft["shape"][0]) == 3:
 			return SHAPED_3X3_FONT
 		else:
 			return SHAPED_2X2_FONT
-	elif craft["type"] == "simplenergy_pulverizing":
+	elif craft["type"] == PulverizingRecipe.type:
 		return PULVERIZING_FONT
-	elif craft["type"] == "stonecutting":
+	elif craft["type"] == StonecuttingRecipe.type:
 		return STONECUTTING_FONT
 	elif craft["type"] == "mining":
 		return MINING_FONT
-	elif craft["type"] == "stardust_awakened_forge":
+	elif craft["type"] == AwakenedForgeRecipe.type:
 		if len(craft["ingredients"]) <= 9:
 			return AWAKENED_3X3_FONT
 		else:
 			return AWAKENED_3X4_FONT
 	else:
 		return ""
+
+def remove_duplicate_furnace_crafts(crafts: list[JsonDict]) -> list[JsonDict]:
+	""" Remove duplicate furnace crafts, keeping only one per ingredient->result pair
+	Args:
+		crafts (list[JsonDict]): The list of crafts
+	Returns:
+		list[JsonDict]: The list of crafts without duplicate furnace crafts
+	"""
+	seen_pairs: set[tuple[str, str]] = set()
+	unique_crafts: list[JsonDict] = []
+	for craft in crafts:
+		if craft["type"] in (SmeltingRecipe.type, BlastingRecipe.type, CampfireCookingRecipe.type, SmokingRecipe.type):
+			ingredient_id = ingr_to_id(craft["ingredient"], add_namespace=True)
+			result_id = ingr_to_id(craft["result"]["item"], add_namespace=True)
+			pair = (ingredient_id, result_id)
+			if pair not in seen_pairs:
+				seen_pairs.add(pair)
+				unique_crafts.append(craft)
+		else:
+			unique_crafts.append(craft)
+	return unique_crafts
+
 
 def remove_unknown_crafts(crafts: list[JsonDict]) -> list[JsonDict]:
 	""" Remove crafts that are not recognized by the program
@@ -145,7 +176,8 @@ def remove_unknown_crafts(crafts: list[JsonDict]) -> list[JsonDict]:
 
 # Generate USED_FOR_CRAFTING key like
 def generate_otherside_crafts(item: str) -> list[JsonDict]:
-	""" Generate the USED_FOR_CRAFTING key like
+	""" Generate the USED_FOR_CRAFTING key for an item
+
 	Args:
 		item (str): The item to generate the key for
 	Returns:
@@ -153,9 +185,10 @@ def generate_otherside_crafts(item: str) -> list[JsonDict]:
 	"""
 	# Get all crafts that use the item
 	crafts: list[JsonDict] = []
-	for key, value in Mem.definitions.items():
-		if key != item and value.get(RESULT_OF_CRAFTING):
-			for craft in value[RESULT_OF_CRAFTING]:
+	for other in Mem.definitions.keys():
+		if other != item:
+			obj = Item.from_id(other)
+			for craft in obj.recipes:
 				if ("ingredient" in craft and item == ingr_to_id(craft["ingredient"], False)) or \
 					("ingredients" in craft and isinstance(craft["ingredients"], dict) and item in [ingr_to_id(x, False) for x in craft["ingredients"].values()]) or \
 					("ingredients" in craft and isinstance(craft["ingredients"], list) and item in [ingr_to_id(x, False) for x in craft["ingredients"]]):
@@ -163,7 +196,7 @@ def generate_otherside_crafts(item: str) -> list[JsonDict]:
 					# before:	chainmail_helmet	{"type": "crafting_shaped","result_count": 1,"category": "equipment","shape": ["XXX","X X"],"ingredients": {"X": {"components": {"custom_data": {"iyc": {"chainmail": true}}}}}}}
 					# after:	chainmail			{"type": "crafting_shaped","result_count": 1,"category": "equipment","shape": ["XXX","X X"],"ingredients": {"X": {"components": {"custom_data": {"iyc": {"chainmail": true}}}}},"result": {"item": "minecraft:chainmail_helmet","count": 1}}
 					craft_copy: JsonDict = craft.copy()
-					craft_copy["result"] = ingr_repr(key, count=craft["result_count"])
+					craft_copy["result"] = ingr_repr(other, count=craft["result_count"]) if "result" not in craft else craft["result"]
 					crafts.append(craft_copy)
 	return crafts
 

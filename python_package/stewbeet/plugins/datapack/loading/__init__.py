@@ -7,7 +7,7 @@ from stouputils.decorators import measure_time
 from stouputils.io import json_dump
 
 from ....core.__memory__ import Mem
-from ....core.constants import NOT_COMPONENTS
+from ....core.cls.item import Item
 from ....core.utils.io import write_function_tag, write_load_file, write_versioned_function
 
 
@@ -68,26 +68,22 @@ execute unless score #{ctx.project_id}.loaded load.status matches 1 run function
 	items_storage = ""	# Storage representation of every item in the definitions
 	if Mem.definitions:
 		items_storage += f"\n# Items storage\ndata modify storage {ctx.project_id}:items all set value {{}}\n"
-		for item, data in Mem.definitions.items():
+		for item in Mem.definitions.keys():
+			obj = Item.from_id(item)
 
 			# Prepare storage data with item_model component in first
-			mc_data: JsonDict = {"id": "", "count": 1, "components": {"minecraft:item_model": ""}}
-			for k, v in data.items():
-				if k not in NOT_COMPONENTS:
+			mc_data: JsonDict = {"id": obj.base_item, "count": 1, "components": {"minecraft:item_model": ""}}
+			for k, v in obj.components.items():
 
-					# Add 'minecraft:' if missing
-					if ":" not in k:
-						if k.startswith("!"):
-							k = f"!minecraft:{k[1:]}"
-						else:
-							k = f"minecraft:{k}"
+				# Add 'minecraft:' if missing
+				if ":" not in k:
+					if k.startswith("!"):
+						k = f"!minecraft:{k[1:]}"
+					else:
+						k = f"minecraft:{k}"
 
-					# Copy component
-					mc_data["components"][k] = v
-
-				# Copy the id
-				elif k == "id":
-					mc_data[k] = v
+				# Copy component
+				mc_data["components"][k] = v
 
 			# If no item_model, remove it
 			if mc_data["components"]["minecraft:item_model"] == "":

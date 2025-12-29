@@ -9,6 +9,7 @@ from stouputils.decorators import measure_time
 from stouputils.io import clean_path, json_dump, relative_path
 
 from ....core.__memory__ import Mem
+from ....core.cls.item import Item
 from .object import AutoModel, to_atlas
 
 
@@ -97,10 +98,11 @@ def beet_default(ctx: Context):
 
 	# Get all item models from definitions
 	item_models: dict[str, AutoModel] = {}
-	for item_name, data in Mem.definitions.items():
+	for item_name in Mem.definitions.keys():
+		obj = Item.from_id(item_name)
 
 		# Skip items without models or already rendered
-		item_model: str = data.get("item_model", "")
+		item_model: str = obj.components.get("item_model", "")
 		if not item_model or item_model in Mem.ctx.meta["stewbeet"]["rendered_item_models"]:
 			continue
 
@@ -109,7 +111,7 @@ def beet_default(ctx: Context):
 			continue
 
 		# Create an MyItemModel object from the definitions entry
-		item_models[item_name] = AutoModel.from_definitions(item_name, data, textures)
+		item_models[item_name] = AutoModel.from_definitions(obj, textures)
 
 	# Process each item model
 	used_minecraft_textures: set[str] = set()

@@ -3,7 +3,7 @@
 # Imports
 from collections.abc import Iterator
 from dataclasses import asdict, dataclass
-from typing import Any, Literal
+from typing import Any, Literal, Self
 
 from beet.core.utils import JsonDict
 
@@ -22,9 +22,19 @@ class RecipeBase(StMapping):
     """ (Optional) The category of the recipe for organizing in the crafting book. """
     group: str | None = None
     """ (Optional) The group of the recipe for recipe book grouping. """
+    result: JsonDict | None = None
+    """ (Optional) The result item of the recipe. If None, defaults to the item being defined. """
+
+    # Others
+    manual_priority: int | None = None
+    """ (Optional) Manual priority for recipe button sorting in the ingame-manual. Used to remove buttons when too many are present. """
+    smithed_crafter_command: str | None = None
+    """ (Optional) Custom command to be used with Smithed Crafter recipes. If None, defaults to giving the loot table. """
 
     def __post_init__(self) -> None:
         from ..ingredients import ALL_RECIPES_TYPES
+        if "minecraft:" in self.type:
+            self.type = self.type.replace("minecraft:", "", 1)
         if self.type not in ALL_RECIPES_TYPES:
             raise ValueError(f"Invalid recipe type: {self.type}")
 
@@ -46,6 +56,13 @@ class RecipeBase(StMapping):
         """Return the number of non-None fields."""
         data = asdict(self)
         return sum(1 for v in data.values() if v is not None)
+
+    @classmethod
+    def from_dict(cls, data: JsonDict | "StMapping", item_id: str = "") -> Self:
+        """ Create an object based on a dictionary. """
+        if isinstance(data, cls):
+            return data
+        return cls(**data)
 
     @staticmethod
     def _validate_ingredient(ingredient: JsonDict, name: str = "Ingredient") -> None:
@@ -124,9 +141,9 @@ class SmeltingRecipe(RecipeBase):
     """Recipe for smelting in a furnace."""
     ingredient: JsonDict
     """ The ingredient to be smelted. """
-    experience: float
+    experience: float = 0.0
     """ Experience points awarded when the recipe is used. """
-    cookingtime: int
+    cookingtime: int = 200
     """ Cooking time in ticks (200 ticks = 10 seconds by default). """
 
     def __post_init__(self) -> None:
@@ -141,9 +158,9 @@ class BlastingRecipe(RecipeBase):
     """Recipe for blasting in a blast furnace."""
     ingredient: JsonDict
     """ The ingredient to be blasted. """
-    experience: float
+    experience: float = 0.0
     """ Experience points awarded when the recipe is used. """
-    cookingtime: int
+    cookingtime: int = 100
     """ Cooking time in ticks (100 ticks = 5 seconds by default). """
 
     def __post_init__(self) -> None:
@@ -158,9 +175,9 @@ class SmokingRecipe(RecipeBase):
     """Recipe for smoking in a smoker."""
     ingredient: JsonDict
     """ The ingredient to be smoked. """
-    experience: float
+    experience: float = 0.0
     """ Experience points awarded when the recipe is used. """
-    cookingtime: int
+    cookingtime: int = 100
     """ Cooking time in ticks (100 ticks = 5 seconds by default). """
 
     def __post_init__(self) -> None:
@@ -214,11 +231,13 @@ class SmithingTrimRecipe(RecipeBase):
     """ The armor piece. """
     addition: JsonDict
     """ The material for the trim. """
+    pattern: JsonDict
+    """ The trim pattern. """
 
     def __post_init__(self) -> None:
         self.type = "smithing_trim"
         super().__post_init__()
-        for name, ingredient in [("template", self.template), ("base", self.base), ("addition", self.addition)]:
+        for name, ingredient in [("template", self.template), ("base", self.base), ("addition", self.addition), ("pattern", self.pattern)]:
             self._validate_ingredient(ingredient, name.capitalize())
 
 
@@ -237,7 +256,7 @@ class StonecuttingRecipe(RecipeBase):
 
 # Custom/Special Recipes
 @dataclass
-class SimplenergyPulverizingRecipe(RecipeBase):
+class PulverizingRecipe(RecipeBase):
     """Custom recipe for SimplEnergy pulverizing."""
     ingredient: JsonDict
     """ The ingredient to be pulverized. """
@@ -249,7 +268,7 @@ class SimplenergyPulverizingRecipe(RecipeBase):
 
 
 @dataclass
-class StardustAwakenedForgeRecipe(RecipeBase):
+class AwakenedForgeRecipe(RecipeBase):
     """Custom recipe for Stardust awakened forge."""
     ingredients: list[JsonDict]
     """ List of ingredients for the awakened forge. """
@@ -279,7 +298,7 @@ Recipe = (
     SmeltingRecipe | BlastingRecipe | SmokingRecipe | CampfireCookingRecipe |
     SmithingTransformRecipe | SmithingTrimRecipe |
     StonecuttingRecipe |
-    SimplenergyPulverizingRecipe | StardustAwakenedForgeRecipe |
+    PulverizingRecipe | AwakenedForgeRecipe |
     HardcodedRecipe
 )
 

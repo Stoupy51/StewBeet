@@ -10,6 +10,8 @@ from stouputils.decorators import simple_cache
 from stouputils.io import json_dump
 
 from ...core.__memory__ import Mem
+from ...core.cls.item import Item
+from ...core.cls.recipe import BlastingRecipe, SmeltingRecipe, SmokingRecipe
 from ...core.ingredients import (
     get_item_from_ingredient,
     get_vanilla_item_id_from_ingredient,
@@ -29,7 +31,6 @@ class FurnaceRecipeHandler:
 
     def __init__(self) -> None:
         """ Initialize the handler. """
-        self.SMELTING: list[str] = ["smelting", "blasting", "smoking"]
         self.FURNACE_NBT_PATH: str = f"{Mem.ctx.project_id}:calls/furnace_nbt_recipes"
         self.furnace_nbt_vanilla_items: set[str] = set()
 
@@ -55,47 +56,45 @@ class FurnaceRecipeHandler:
                 )
 
     @simple_cache
-    def furnace_nbt_recipe(self, recipe: JsonDict, result_loot: str, result_ingr: JsonDict) -> str:
+    def furnace_nbt_recipe(self, recipe: SmeltingRecipe | BlastingRecipe | SmokingRecipe, result_loot: str, result_ingr: JsonDict) -> str:
         """ Generate a furnace NBT recipe.
 
         Args:
-            recipe (JsonDict): The recipe data.
+            recipe (SmeltingRecipe | BlastingRecipe | SmokingRecipe): The recipe data.
             result_loot (str): The loot table for the result.
             result_ingr (JsonDict): The result ingredient.
 
         Returns:
             str: The generated recipe command.
         """
-        ingredient: JsonDict = recipe["ingredient"]
         result: JsonDict = item_to_id_ingr_repr(get_item_from_ingredient(result_ingr))
 
         # Create a vanilla recipe for the furnace
-        type: str = recipe["type"]
-        ingredient_vanilla: str = get_vanilla_item_id_from_ingredient(ingredient)
+        ingredient_vanilla: str = get_vanilla_item_id_from_ingredient(recipe.ingredient)
         result_item: str = ingr_to_id(result_ingr).replace(':', '_')
-        path: str = f"vanilla_items/{type}__{ingredient_vanilla.split(':')[1]}__{result_item}"
-        type = f"minecraft:{type}" if ":" not in type else type
+        path: str = f"vanilla_items/{recipe.type}__{ingredient_vanilla.split(':')[1]}__{result_item}"
+        type = f"minecraft:{recipe.type}"
         json_file: JsonDict = {
             "type": type,
             "ingredient": ingredient_vanilla,
             "result": result,
-            "experience": recipe.get("experience", 0),
-            "cookingtime": recipe.get("cookingtime", 200)
+            "experience": recipe.experience,
+            "cookingtime": recipe.cookingtime
         }
         Mem.ctx.data["furnace_nbt_recipes"].recipes[path] = Recipe(json_dump(json_file, max_level=-1))
 
         # Prepare line and return
         line: str = "execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input"
-        line += json.dumps(ingredient)
+        line += json.dumps(recipe.ingredient)
         line += f" run loot replace block ~ ~ ~ container.3 loot {result_loot}"
         return line
 
-    @simple_cache()
-    def furnace_xp_reward(self, recipe: JsonDict, experience: float) -> str:
+    @simple_cache
+    def furnace_xp_reward(self, recipe: SmeltingRecipe | BlastingRecipe | SmokingRecipe, experience: float) -> str:
         """ Generate a furnace XP reward.
 
         Args:
-            recipe (JsonDict): The recipe data.
+            recipe (SmeltingRecipe | BlastingRecipe | SmokingRecipe): The recipe data.
             experience (float): The experience to reward.
 
         Returns:
@@ -124,43 +123,40 @@ scoreboard players reset #count furnace_nbt_recipes.data
 
         # Prepare line and return
         line: str = "execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input"
-        ingredient: JsonDict = recipe["ingredient"]
-        line += json.dumps(ingredient)
+        line += json.dumps(recipe.ingredient)
         line += f" run function {Mem.ctx.project_id}:calls/furnace_nbt_recipes/xp_reward/{experience}"
         return line
 
     def generate_recipes(self) -> None:
         """ Generate all furnace NBT recipes. """
-        for item, data in Mem.definitions.items():
-            crafts: list[JsonDict] = list(data.get("result_of_crafting", []))
-            crafts += list(data.get("used_for_crafting", []))
+        for item in Mem.definitions.keys():
+            obj = Item.from_id(item)
 
-            for recipe in crafts:
-                if recipe["type"] in self.SMELTING:
-                    # Get ingredients
-                    ingr = recipe.get("ingredients", {})
-                    if not ingr:
-                        ingr = recipe.get("ingredient", {})
+            for recipe in obj.recipes:
+                if recipe["type"] in (SmeltingRecipe.type, BlastingRecipe.type, SmokingRecipe.type):
+                    recipe = SmeltingRecipe.from_dict(recipe) if recipe["type"] == SmeltingRecipe.type else \
+                             BlastingRecipe.from_dict(recipe) if recipe["type"] == BlastingRecipe.type else \
+                             SmokingRecipe.from_dict(recipe)
 
                     # Get possible result item
-                    if not recipe.get("result"):
-                        result_loot_table = loot_table_from_ingredient(ingr_repr(item, Mem.ctx.project_id), recipe["result_count"])
+                    if not recipe.result:
+                        result_loot_table = loot_table_from_ingredient(ingr_repr(item, Mem.ctx.project_id), recipe.result_count)
                     else:
-                        result_loot_table = loot_table_from_ingredient(recipe["result"], recipe["result_count"])
+                        result_loot_table = loot_table_from_ingredient(recipe.result, recipe.result_count)
 
                     # Generate recipe
-                    if recipe.get("result"):
-                        line: str = self.furnace_nbt_recipe(recipe, result_loot_table, recipe["result"])
+                    if recipe.result:
+                        line: str = self.furnace_nbt_recipe(recipe, result_loot_table, recipe.result)
                     else:
                         line: str = self.furnace_nbt_recipe(recipe, result_loot_table, ingr_repr(item, Mem.ctx.project_id))
 
-                    type: str = recipe["type"]
+                    type: str = recipe.type
                     path: str = f"{self.FURNACE_NBT_PATH}/{type}_recipes"
                     write_function(path, line, tags=[f"furnace_nbt_recipes:v1/{type}_recipes"])
 
                     # Add vanilla item unless it's a custom item
-                    if not ingr.get("item"):
-                        self.furnace_nbt_vanilla_items.add(get_vanilla_item_id_from_ingredient(ingr))
+                    if not recipe.ingredient.get("item"):
+                        self.furnace_nbt_vanilla_items.add(get_vanilla_item_id_from_ingredient(recipe.ingredient))
 
                     # Add xp reward
                     experience: float = recipe.get("experience", 0)
