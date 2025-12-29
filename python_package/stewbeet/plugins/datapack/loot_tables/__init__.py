@@ -6,6 +6,7 @@ from stouputils.decorators import measure_time
 from stouputils.io import json_dump
 
 from ....core.__memory__ import Mem
+from ....core.cls.item import Item
 from ....core.constants import NOT_COMPONENTS, RESULT_OF_CRAFTING
 from ....core.utils.io import write_function
 
@@ -31,13 +32,14 @@ def beet_default(ctx: Context):
 	creative_loot_table: JsonDict = {"pools": []}
 
 	# For each item in the definitions, create a loot table
-	for item, data in Mem.definitions.items():
+	for item in Mem.definitions.keys():
+		obj = Item.from_id(item)
 		loot_table: JsonDict = {
 			"pools": [{
 				"rolls": 1,
 				"entries": [{
 					"type": "minecraft:item",
-					"name": data.get("id")
+					"name": obj.base_item
 				}]
 			}]
 		}
@@ -47,12 +49,11 @@ def beet_default(ctx: Context):
 			"function": "minecraft:set_components",
 			"components": {}
 		}
-		for k, v in data.items():
-			if k not in NOT_COMPONENTS:
-				if k.startswith("!"):
-					set_components["components"][f"!minecraft:{k[1:]}"] = {}
-				else:
-					set_components["components"][f"minecraft:{k}"] = v
+		for k, v in obj.components.items():
+			if k.startswith("!"):
+				set_components["components"][f"!minecraft:{k[1:]}"] = {}
+			else:
+				set_components["components"][f"minecraft:{k}"] = v
 
 		# Add functions
 		loot_table["pools"][0]["entries"][0]["functions"] = [set_components]

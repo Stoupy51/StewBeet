@@ -11,7 +11,7 @@ from stouputils.io import json_dump, relative_path, super_open
 from stouputils.print import debug, error, info, warning
 
 from ...core.__memory__ import Mem
-from ...core.cls._utils import StMapping
+from ...core.cls import VANILLA_BLOCK_FOR_ORES, Item
 from ...core.constants import (
 	CATEGORY,
 	CUSTOM_BLOCK_ALTERNATIVE,
@@ -22,7 +22,6 @@ from ...core.constants import (
 	RESULT_OF_CRAFTING,
 	USED_FOR_CRAFTING,
 	VANILLA_BLOCK,
-	VANILLA_BLOCK_FOR_ORES,
 )
 from ...core.ingredients import FURNACES_RECIPES_TYPES
 
@@ -42,13 +41,6 @@ def beet_default(ctx: Context) -> None:
 	# Get configuration data from context
 	stewbeet_config: JsonDict = ctx.meta.get("stewbeet", {})
 	definitions_debug: str = stewbeet_config.get("definitions_debug", "")
-
-	# Remove empty lists of recipes
-	for data in Mem.definitions.values():
-		if data.get(RESULT_OF_CRAFTING) == []:
-			data.pop(RESULT_OF_CRAFTING)
-		if data.get(USED_FOR_CRAFTING) == []:
-			data.pop(USED_FOR_CRAFTING)
 
 	# Create a copy of the definitions without OVERRIDE_MODEL key
 	def convert_to_serializable(obj: Any) -> Any:
@@ -79,6 +71,8 @@ def beet_default(ctx: Context) -> None:
 	errors: list[str] = []
 	warnings: list[str] = []
 	for item, data in Mem.definitions.items():
+		if isinstance(data, Item):
+			continue	# Already checked
 
 		# Check if components doesn't start with "minecraft:", if so rename them
 		to_replace: bool = False
@@ -337,6 +331,8 @@ def beet_default(ctx: Context) -> None:
 
 	# Final adjustments to the definitions
 	for item, data in Mem.definitions.items():
+		if isinstance(data, Item):
+			continue	# Already done
 
 		# Add default group to every recipe
 		for recipe in [*data.get(RESULT_OF_CRAFTING, []), *data.get(USED_FOR_CRAFTING, [])]:

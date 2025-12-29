@@ -14,7 +14,7 @@ from ..constants import (
     WIKI_COMPONENT,
 )
 from ._utils import StMapping
-from .recipe import Recipe
+from .recipe import RecipeBase
 from .wiki_button import WikiButton
 
 
@@ -27,7 +27,7 @@ class Item(StMapping):
     """ Represents an item with a unique identifier, e.g 'minecraft:command_block'. """
     manual_category: str | None = None
     """ (Optional) manual category for organizing items in the ingame-manual. """
-    recipes: list[Recipe] = field(default_factory=list[Recipe])
+    recipes: list[RecipeBase] = field(default_factory=list[RecipeBase])
     """ (Optional) List of recipes associated with this item. """
     override_model: JsonDict | None = None
     """ (Optional) Merge with/Override auto-generated item model (based on the textures folder). """
@@ -40,6 +40,9 @@ class Item(StMapping):
 
     # Register item in memory
     def __post_init__(self) -> None:
+        # Add minecraft: to base item if needed
+        if self.base_item and ":" not in self.base_item:
+            self.base_item = "minecraft:" + self.base_item
 
         ## Fix some fields
         # Add default group to every recipe

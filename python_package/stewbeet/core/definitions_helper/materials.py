@@ -11,7 +11,10 @@ from stouputils.io import clean_path, json_dump, relative_path
 from stouputils.print import error
 
 from ..__memory__ import Mem
-from ..constants import CATEGORY, CUSTOM_BLOCK_VANILLA, CUSTOM_ITEM_VANILLA, NO_SILK_TOUCH_DROP, RESULT_OF_CRAFTING, USED_FOR_CRAFTING, VANILLA_BLOCK, VANILLA_BLOCK_FOR_ORES
+from ..cls.block import VANILLA_BLOCK_FOR_ORES, Block
+from ..cls.item import Item
+from ..cls.recipe import BlastingRecipe, CraftingShapedRecipe, CraftingShapelessRecipe, PulverizingRecipe, SmeltingRecipe
+from ..constants import CUSTOM_BLOCK_VANILLA, CUSTOM_ITEM_VANILLA
 from ..ingredients import ingr_repr
 from .equipments import SLOTS, EquipmentsConfig, VanillaEquipments, format_attributes
 
@@ -51,65 +54,60 @@ def generate_everything_about_this_material(
 
 	# Main ingredient constant
 	if '_' in material and not material.endswith("!"):
-		material_base = "_".join(material.split(":")[-1].split("_")[:-1])			# Get the base material name (ex: "adamantium" from "adamantium_fragment")
+		material_base = "_".join(material.split(":")[-1].split("_")[:-1])	# Get the base material name (ex: "adamantium" from "adamantium_fragment")
 	else:
 		if material.endswith("!"):	# Remove the "!" if present
 			material = material[:-1]
-		material_base = material.split(":")[-1]										# Get the base material name (ex: "adamantium" from "adamantium_fragment")
-	main_ingredient = ingr_repr(material, Mem.ctx.project_id) 						# Get the main ingredient for recipes
+		material_base = material.split(":")[-1]		# Get the base material name (ex: "adamantium" from "adamantium_fragment")
+	main_ingredient = ingr_repr(material) 			# Get the main ingredient for recipes
 
 
 	## Ingredients (ingot, nugget, raw, and other)
 	for item in [material_base, f"{material_base}_fragment", f"{material_base}_ingot", f"{material_base}_nugget", f"raw_{material_base}", f"{material_base}_dust", f"{material_base}_stick", f"{material_base}_rod"]:
 		if item + ".png" not in textures:
 			continue
-		if item not in Mem.definitions:
-			Mem.definitions[item] = {}
+		obj = Item.from_id(item, strict=False)  # Ensure the item is created in the definitions
 		item_type = item.replace(f"{material_base}_", "").replace(f"_{material_base}", "")
-		Mem.definitions[item]["id"] = CUSTOM_ITEM_VANILLA		# Custom item
-		Mem.definitions[item][CATEGORY] = "material"			# Category
-		Mem.definitions[item]["custom_data"] = {"smithed":{}}	# Smithed convention
-		Mem.definitions[item]["custom_data"]["smithed"]["dict"] = {item_type: {material_base: True}}
+		obj.base_item = CUSTOM_ITEM_VANILLA				# Custom item
+		obj.manual_category = "material"				# Category
+		obj.components["custom_data"] = {"smithed":{}}	# Smithed convention
+		obj.components["custom_data"]["smithed"]["dict"] = {item_type: {material_base: True}}
 
 		# Recipes
 		if not ignore_recipes:
-			Mem.definitions[item][RESULT_OF_CRAFTING] = Mem.definitions[item].get(RESULT_OF_CRAFTING, [])
-			Mem.definitions[item][USED_FOR_CRAFTING] = Mem.definitions[item].get(USED_FOR_CRAFTING, [])
 			if item.endswith("ingot") or item.endswith("fragment") or item == material_base:
 				if f"{material_base}_block.png" in textures:
-					from ..cls.recipe import CraftingShapelessRecipe
-					Mem.definitions[item][RESULT_OF_CRAFTING].append(CraftingShapelessRecipe(result_count=9, category="misc", group=material_base, ingredients=[ingr_repr(f"{material_base}_block")]))
-					#Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"crafting_shapeless","result_count":9,"category":"misc","group":material_base,"ingredients":[ingr_repr(f"{material_base}_block", Mem.ctx.project_id)]})
+					obj.recipes.append(CraftingShapelessRecipe(result_count=9, category="misc", group=material_base, ingredients=[ingr_repr(f"{material_base}_block")]))
 				if f"{material_base}_nugget.png" in textures:
-					Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"crafting_shaped","result_count":1,"category":"misc","group":material_base,"shape":["XXX","XXX","XXX"],"ingredients":{"X":ingr_repr(f"{material_base}_nugget", Mem.ctx.project_id)}})
+					obj.recipes.append(CraftingShapedRecipe(result_count=1, category="misc", group=material_base, shape=["XXX","XXX","XXX"], ingredients={"X":ingr_repr(f"{material_base}_nugget")}))
 				if f"raw_{material_base}.png" in textures:
-					Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"smelting","result_count":1,"category":"misc","group":material_base,"experience":0.8,"cookingtime":200,"ingredient":ingr_repr(f"raw_{material_base}", Mem.ctx.project_id)})
-					Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"blasting","result_count":1,"category":"misc","group":material_base,"experience":0.8,"cookingtime":100,"ingredient":ingr_repr(f"raw_{material_base}", Mem.ctx.project_id)})
+					obj.recipes.append(SmeltingRecipe(result_count=1, category="misc", group=material_base, experience=0.8, cookingtime=200, ingredient=ingr_repr(f"raw_{material_base}")))
+					obj.recipes.append(BlastingRecipe(result_count=1, category="misc", group=material_base, experience=0.8, cookingtime=100, ingredient=ingr_repr(f"raw_{material_base}")))
 				if f"{material_base}_dust.png" in textures:
-					Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"smelting","result_count":1,"category":"misc","group":material_base,"experience":0.8,"cookingtime":200,"ingredient":ingr_repr(f"{material_base}_dust", Mem.ctx.project_id)})
-					Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"blasting","result_count":1,"category":"misc","group":material_base,"experience":0.8,"cookingtime":100,"ingredient":ingr_repr(f"{material_base}_dust", Mem.ctx.project_id)})
+					obj.recipes.append(SmeltingRecipe(result_count=1, category="misc", group=material_base, experience=0.8, cookingtime=200, ingredient=ingr_repr(f"{material_base}_dust")))
+					obj.recipes.append(BlastingRecipe(result_count=1, category="misc", group=material_base, experience=0.8, cookingtime=100, ingredient=ingr_repr(f"{material_base}_dust")))
 				if f"{material_base}_ore.png" in textures:
-					Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"smelting","result_count":1,"category":"misc","group":material_base,"experience":0.8,"cookingtime":200,"ingredient":ingr_repr(f"{material_base}_ore", Mem.ctx.project_id)})
-					Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"blasting","result_count":1,"category":"misc","group":material_base,"experience":0.8,"cookingtime":100,"ingredient":ingr_repr(f"{material_base}_ore", Mem.ctx.project_id)})
+					obj.recipes.append(SmeltingRecipe(result_count=1, category="misc", group=material_base, experience=0.8, cookingtime=200, ingredient=ingr_repr(f"{material_base}_ore")))
+					obj.recipes.append(BlastingRecipe(result_count=1, category="misc", group=material_base, experience=0.8, cookingtime=100, ingredient=ingr_repr(f"{material_base}_ore")))
 				if f"deepslate_{material_base}_ore.png" in textures:
-					Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"smelting","result_count":1,"category":"misc","group":material_base,"experience":0.8,"cookingtime":200,"ingredient":ingr_repr(f"deepslate_{material_base}_ore", Mem.ctx.project_id)})
-					Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"blasting","result_count":1,"category":"misc","group":material_base,"experience":0.8,"cookingtime":100,"ingredient":ingr_repr(f"deepslate_{material_base}_ore", Mem.ctx.project_id)})
+					obj.recipes.append(SmeltingRecipe(result_count=1, category="misc", group=material_base, experience=0.8, cookingtime=200, ingredient=ingr_repr(f"deepslate_{material_base}_ore")))
+					obj.recipes.append(BlastingRecipe(result_count=1, category="misc", group=material_base, experience=0.8, cookingtime=100, ingredient=ingr_repr(f"deepslate_{material_base}_ore")))
 			if item.endswith("dust"):
-				Mem.definitions[item][USED_FOR_CRAFTING].append({"type":"smelting","result_count":1,"category":"misc","group":material_base,"experience":0.8,"cookingtime":200,"ingredient":ingr_repr(item, Mem.ctx.project_id),"result":main_ingredient})
-				Mem.definitions[item][USED_FOR_CRAFTING].append({"type":"blasting","result_count":1,"category":"misc","group":material_base,"experience":0.8,"cookingtime":100,"ingredient":ingr_repr(item, Mem.ctx.project_id),"result":main_ingredient})
-				Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"simplenergy_pulverizing","result_count":1,"category":"misc","group":material_base,"ingredient":main_ingredient})
+				obj.recipes.append(SmeltingRecipe(result_count=1, category="misc", group=material_base, experience=0.8, cookingtime=200, ingredient=ingr_repr(item), result=main_ingredient))
+				obj.recipes.append(BlastingRecipe(result_count=1, category="misc", group=material_base, experience=0.8, cookingtime=100, ingredient=ingr_repr(item), result=main_ingredient))
+				obj.recipes.append(PulverizingRecipe(result_count=1, category="misc", group=material_base, ingredient=main_ingredient))
 				for pulv_ingr in [f"raw_{material_base}",f"{material_base}_ore",f"deepslate_{material_base}_ore"]:
 					if f"{pulv_ingr}.png" in textures:
-						Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"simplenergy_pulverizing","result_count":2,"category":"misc","group":material_base,"ingredient":ingr_repr(pulv_ingr, Mem.ctx.project_id)})
+						obj.recipes.append(PulverizingRecipe(result_count=2, category="misc", group=material_base, ingredient=ingr_repr(pulv_ingr)))
 			if item.endswith("nugget"):
-				Mem.definitions[item][RESULT_OF_CRAFTING].insert(0, {"type":"crafting_shapeless","result_count":9,"category":"misc","group":material_base,"ingredients":[main_ingredient]})
+				obj.recipes.insert(0, CraftingShapelessRecipe(result_count=9, category="misc", group=material_base, ingredients=[main_ingredient]))
 				for gear in SLOTS.keys():
 					if f"{material_base}_{gear}.png" in textures:
-						Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"smelting","result_count":1,"category":"equipment","experience":0.8,"cookingtime":200,"ingredient":ingr_repr(f"{material_base}_{gear}", Mem.ctx.project_id)})
+						obj.recipes.append(SmeltingRecipe(result_count=1, category="equipment", experience=0.8, cookingtime=200, ingredient=ingr_repr(f"{material_base}_{gear}")))
 			if item.endswith("stick"):
-				Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"crafting_shaped","result_count":4,"category":"misc","shape":["X","X"],"ingredients":{"X":main_ingredient}})
+				obj.recipes.append(CraftingShapedRecipe(result_count=4, category="misc", shape=["X","X"], ingredients={"X":main_ingredient}))
 			if item.endswith("rod"):
-				Mem.definitions[item][RESULT_OF_CRAFTING].append({"type":"crafting_shaped","result_count":1,"category":"misc","shape":["X","X","X"],"ingredients":{"X":main_ingredient}})
+				obj.recipes.append(CraftingShapedRecipe(result_count=1, category="misc", shape=["X","X","X"], ingredients={"X":main_ingredient}))
 		pass
 
 
@@ -117,25 +115,24 @@ def generate_everything_about_this_material(
 	for block in [f"{material_base}_block", f"{material_base}_ore", f"deepslate_{material_base}_ore", f"raw_{material_base}_block"]:
 		if block + ".png" not in textures:
 			continue
-		if block not in Mem.definitions:
-			Mem.definitions[block] = {}
-		Mem.definitions[block]["id"] = CUSTOM_BLOCK_VANILLA		# Item for placing custom block
-		Mem.definitions[block][CATEGORY] = "material"				# Category
-		Mem.definitions[block]["custom_data"] = {"smithed":{}}		# Smithed convention
-		Mem.definitions[block]["custom_data"]["smithed"]["dict"] = {"block": {material_base: True}}
+		obj = Block.from_id(block, strict=False)  # Ensure the block is created in the definitions
+		obj.base_item = CUSTOM_BLOCK_VANILLA				# Item for placing custom block
+		obj.manual_category = "material"					# Category
+		obj.components["custom_data"] = {"smithed":{}}		# Smithed convention
+		obj.components["custom_data"]["smithed"]["dict"] = {"block": {material_base: True}}
 		is_there_raw_material = f"raw_{material_base}.png" in textures
 		if block.endswith("ore"):
-			Mem.definitions[block][VANILLA_BLOCK] = VANILLA_BLOCK_FOR_ORES	# Placeholder for the base block (required for custom ores)
-			Mem.definitions[block]["custom_data"]["smithed"]["dict"]["ore"] = {material_base: True}
+			obj.vanilla_block = VANILLA_BLOCK_FOR_ORES	# Placeholder for the base block (required for custom ores)
+			obj.components["custom_data"]["smithed"]["dict"]["ore"] = {material_base: True}
 			if is_there_raw_material:
-				Mem.definitions[block][NO_SILK_TOUCH_DROP] = f"raw_{material_base}"			# Drop without silk touch (raw_steel is an item in the definitions)
+				obj.no_silk_touch_drop = f"raw_{material_base}"			# Drop without silk touch (raw_steel is an item in the definitions)
 			else:
-				Mem.definitions[block][NO_SILK_TOUCH_DROP] = material
+				obj.no_silk_touch_drop = material
 		if block.endswith("block") and not ignore_recipes:
 			if block.startswith("raw") and is_there_raw_material:
-				Mem.definitions[block][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"group":material_base,"category":"misc","shape":["XXX","XXX","XXX"],"ingredients":{"X":ingr_repr(f"raw_{material_base}", Mem.ctx.project_id)}}]
+				obj.recipes.append(CraftingShapedRecipe(result_count=1, group=material_base, category="misc", shape=["XXX","XXX","XXX"], ingredients={"X":ingr_repr(f"raw_{material_base}")}))
 			else:
-				Mem.definitions[block][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"group":material_base,"category":"misc","shape":["XXX","XXX","XXX"],"ingredients":{"X":main_ingredient}}]
+				obj.recipes.append(CraftingShapedRecipe(result_count=1, group=material_base, category="misc", shape=["XXX","XXX","XXX"], ingredients={"X":main_ingredient}))
 		pass
 
 
@@ -178,107 +175,105 @@ def generate_everything_about_this_material(
 			armor = material_base + "_" + gear
 			if armor + ".png" not in textures:
 				continue
-			if armor not in Mem.definitions:
-				Mem.definitions[armor] = {}
+			obj = Item.from_id(armor, strict=False)  # Ensure the item is created in the definitions
 			equivalent_to: str = equipments_config.equivalent_to.value
 			if equivalent_to == "stone":
 				equivalent_to = "chainmail"
 			elif equivalent_to == "wooden":
 				equivalent_to = "leather"
-			Mem.definitions[armor]["id"] = f"minecraft:{equivalent_to}_{gear}"
-			Mem.definitions[armor][CATEGORY] = "equipment"					# Category
-			Mem.definitions[armor]["custom_data"] = {"smithed":{}}			# Smithed convention
-			Mem.definitions[armor]["custom_data"]["smithed"]["dict"] = {"armor": {material_base: True, gear: True}}
+			obj.base_item = f"minecraft:{equivalent_to}_{gear}"
+			obj.manual_category = "equipment"					# Category
+			obj.components["custom_data"] = {"smithed":{}}			# Smithed convention
+			obj.components["custom_data"]["smithed"]["dict"] = {"armor": {material_base: True, gear: True}}
 			gear_config: JsonDict = {}
 			if gear == "helmet":
 				if not ignore_recipes:
-					Mem.definitions[armor][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["XXX","X X"],"ingredients":{"X": main_ingredient},"manual_priority":0}]
+					obj.recipes.append(CraftingShapedRecipe(result_count=1,category="equipment",shape=["XXX","X X"],ingredients={"X": main_ingredient},manual_priority=0))
 				if equipments_config:
 					gear_config = VanillaEquipments.HELMET.value[equipments_config.equivalent_to]
-					Mem.definitions[armor]["max_damage"] = int(gear_config["durability"] * durability_factor)
+					obj.components["max_damage"] = int(gear_config["durability"] * durability_factor)
 				if top_layer:
-					Mem.definitions[armor]["equippable"] = {"slot":"head", "asset_id":f"{Mem.ctx.project_id}:{material_base}"}
+					obj.components["equippable"] = {"slot":"head", "asset_id":f"{Mem.ctx.project_id}:{material_base}"}
 			elif gear == "chestplate":
 				if not ignore_recipes:
-					Mem.definitions[armor][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["X X","XXX","XXX"],"ingredients":{"X": main_ingredient},"manual_priority":0}]
+					obj.recipes.append(CraftingShapedRecipe(result_count=1,category="equipment",shape=["X X","XXX","XXX"],ingredients={"X": main_ingredient},manual_priority=0))
 				if equipments_config:
 					gear_config = VanillaEquipments.CHESTPLATE.value[equipments_config.equivalent_to]
-					Mem.definitions[armor]["max_damage"] = int(gear_config["durability"] * durability_factor)
+					obj.components["max_damage"] = int(gear_config["durability"] * durability_factor)
 				if top_layer:
-					Mem.definitions[armor]["equippable"] = {"slot":"chest", "asset_id":f"{Mem.ctx.project_id}:{material_base}"}
+					obj.components["equippable"] = {"slot":"chest", "asset_id":f"{Mem.ctx.project_id}:{material_base}"}
 			elif gear == "leggings":
 				if not ignore_recipes:
-					Mem.definitions[armor][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["XXX","X X","X X"],"ingredients":{"X": main_ingredient},"manual_priority":0}]
+					obj.recipes.append(CraftingShapedRecipe(result_count=1,category="equipment",shape=["XXX","X X","X X"],ingredients={"X": main_ingredient},manual_priority=0))
 				if equipments_config:
 					gear_config = VanillaEquipments.LEGGINGS.value[equipments_config.equivalent_to]
-					Mem.definitions[armor]["max_damage"] = int(gear_config["durability"] * durability_factor)
+					obj.components["max_damage"] = int(gear_config["durability"] * durability_factor)
 				if bottom_layer:
-					Mem.definitions[armor]["equippable"] = {"slot":"legs", "asset_id":f"{Mem.ctx.project_id}:{material_base}"}
+					obj.components["equippable"] = {"slot":"legs", "asset_id":f"{Mem.ctx.project_id}:{material_base}"}
 			elif gear == "boots":
 				if not ignore_recipes:
-					Mem.definitions[armor][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["X X","X X"],"ingredients":{"X": main_ingredient},"manual_priority":0}]
+					obj.recipes.append(CraftingShapedRecipe(result_count=1,category="equipment",shape=["X X","X X"],ingredients={"X": main_ingredient},manual_priority=0))
 				if equipments_config:
 					gear_config = VanillaEquipments.BOOTS.value[equipments_config.equivalent_to]
-					Mem.definitions[armor]["max_damage"] = int(gear_config["durability"] * durability_factor)
+					obj.components["max_damage"] = int(gear_config["durability"] * durability_factor)
 				if bottom_layer:
-					Mem.definitions[armor]["equippable"] = {"slot":"feet", "asset_id":f"{Mem.ctx.project_id}:{material_base}"}
+					obj.components["equippable"] = {"slot":"feet", "asset_id":f"{Mem.ctx.project_id}:{material_base}"}
 			if equipments_config:
-				Mem.definitions[armor]["attribute_modifiers"] = format_attributes(equipments_config.get_armor_attributes(), SLOTS[gear], gear_config)
+				obj.components["attribute_modifiers"] = format_attributes(equipments_config.get_armor_attributes(), SLOTS[gear], gear_config)
 
 	# Tools (sword, pickaxe, axe, shovel, hoe, spear)
 	for gear in ["sword", "pickaxe", "axe", "shovel", "hoe", "spear"]:
 		tool = material_base + "_" + gear
 		if tool + ".png" not in textures:
 			continue
-		if tool not in Mem.definitions:
-			Mem.definitions[tool] = {}
+		obj = Item.from_id(tool, strict=False)  # Ensure the item is created in the definitions
 		if equipments_config:
-			Mem.definitions[tool]["id"] = f"minecraft:{equipments_config.equivalent_to.value}_{gear}"		# Vanilla tool, ex: iron_sword, wooden_hoe
-		Mem.definitions[tool][CATEGORY] = "equipment"
-		Mem.definitions[tool]["custom_data"] = {"smithed":{}}
-		Mem.definitions[tool]["custom_data"]["smithed"]["dict"] = {"tools": {material_base: True, gear: True}}
+			obj.base_item = f"minecraft:{equipments_config.equivalent_to.value}_{gear}"		# Vanilla tool, ex: iron_sword, wooden_hoe
+		obj.manual_category = "equipment"
+		obj.components["custom_data"] = {"smithed":{}}
+		obj.components["custom_data"]["smithed"]["dict"] = {"tools": {material_base: True, gear: True}}
 		tools_ingr = {"X": main_ingredient, "S": ingr_repr("minecraft:stick")}
-		gear_config = {}
+		gear_config: JsonDict = {}
 		if gear == "sword":
 			if equipments_config:
 				gear_config = VanillaEquipments.SWORD.value[equipments_config.equivalent_to]
-				Mem.definitions[tool]["max_damage"] = int(gear_config["durability"] * durability_factor)
+				obj.components["max_damage"] = int(gear_config["durability"] * durability_factor)
 			if not ignore_recipes:
-				Mem.definitions[tool][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["X","X","S"],"ingredients": tools_ingr,"manual_priority":0}]
+				obj.recipes.append(CraftingShapedRecipe(result_count=1,category="equipment",shape=["X","X","S"],ingredients=tools_ingr,manual_priority=0))
 		elif gear == "pickaxe":
 			if equipments_config:
 				gear_config = VanillaEquipments.PICKAXE.value[equipments_config.equivalent_to]
-				Mem.definitions[tool]["max_damage"] = int(gear_config["durability"] * durability_factor)
+				obj.components["max_damage"] = int(gear_config["durability"] * durability_factor)
 			if not ignore_recipes:
-				Mem.definitions[tool][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["XXX"," S "," S "],"ingredients": tools_ingr,"manual_priority":0}]
+				obj.recipes.append(CraftingShapedRecipe(result_count=1,category="equipment",shape=["XXX"," S "," S "],ingredients=tools_ingr,manual_priority=0))
 		elif gear == "axe":
 			if equipments_config:
 				gear_config = VanillaEquipments.AXE.value[equipments_config.equivalent_to]
-				Mem.definitions[tool]["max_damage"] = int(gear_config["durability"] * durability_factor)
+				obj.components["max_damage"] = int(gear_config["durability"] * durability_factor)
 			if not ignore_recipes:
-				Mem.definitions[tool][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["XX","XS"," S"],"ingredients": tools_ingr,"manual_priority":0}]
+				obj.recipes.append(CraftingShapedRecipe(result_count=1,category="equipment",shape=["XX","XS"," S"],ingredients=tools_ingr,manual_priority=0))
 		elif gear == "shovel":
 			if equipments_config:
 				gear_config = VanillaEquipments.SHOVEL.value[equipments_config.equivalent_to]
-				Mem.definitions[tool]["max_damage"] = int(gear_config["durability"] * durability_factor)
+				obj.components["max_damage"] = int(gear_config["durability"] * durability_factor)
 			if not ignore_recipes:
-				Mem.definitions[tool][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["X","S","S"],"ingredients": tools_ingr,"manual_priority":0}]
+				obj.recipes.append(CraftingShapedRecipe(result_count=1,category="equipment",shape=["X","S","S"],ingredients=tools_ingr,manual_priority=0))
 		elif gear == "hoe":
 			if equipments_config:
 				gear_config = VanillaEquipments.HOE.value[equipments_config.equivalent_to]
-				Mem.definitions[tool]["max_damage"] = int(gear_config["durability"] * durability_factor)
+				obj.components["max_damage"] = int(gear_config["durability"] * durability_factor)
 			if not ignore_recipes:
-				Mem.definitions[tool][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["XX"," S"," S"],"ingredients": tools_ingr,"manual_priority":0}]
+				obj.recipes.append(CraftingShapedRecipe(result_count=1,category="equipment",shape=["XX"," S"," S"],ingredients=tools_ingr,manual_priority=0))
 		elif gear == "spear":
 			if equipments_config:
 				gear_config = VanillaEquipments.SPEAR.value[equipments_config.equivalent_to]
-				Mem.definitions[tool]["max_damage"] = int(gear_config["durability"] * durability_factor)
+				obj.components["max_damage"] = int(gear_config["durability"] * durability_factor)
 			if not ignore_recipes:
-				Mem.definitions[tool][RESULT_OF_CRAFTING] = [{"type":"crafting_shaped","result_count":1,"category":"equipment","shape":["  X"," S ","S  "],"ingredients": tools_ingr,"manual_priority":0}]
+				obj.recipes.append(CraftingShapedRecipe(result_count=1,category="equipment",shape=["  X"," S ","S  "],ingredients=tools_ingr,manual_priority=0))
 		if equipments_config:
-			Mem.definitions[tool]["attribute_modifiers"] = format_attributes(equipments_config.get_tools_attributes(), SLOTS[gear], gear_config)
+			obj.components["attribute_modifiers"] = format_attributes(equipments_config.get_tools_attributes(), SLOTS[gear], gear_config)
 		if gear in ("sword", "spear"): # Remove the mining_efficiency attribute from swords and spears
-			Mem.definitions[tool]["attribute_modifiers"] = [am for am in Mem.definitions[tool]["attribute_modifiers"] if am["type"] != "mining_efficiency"]
+			obj.components["attribute_modifiers"] = [am for am in obj.components["attribute_modifiers"] if am["type"] != "mining_efficiency"]
 	pass
 
 
@@ -320,23 +315,24 @@ def add_recipes_for_dust(material: str, pulverize: list[str | JsonDict], smelt_t
 		return
 
 	# Add dust to the definitions if not found
-	if dust not in Mem.definitions:
-		Mem.definitions[dust] = {"id": CUSTOM_ITEM_VANILLA, CATEGORY: "material"}
+	obj = Item.from_id(dust, strict=False)  # Ensure the item is created in the definitions
+	obj.base_item = CUSTOM_ITEM_VANILLA
+	obj.manual_category = "material"
+	obj.components["custom_data"] = {"smithed":{}}
+	obj.components["custom_data"]["smithed"]["dict"] = {"dust": {material: True}}
 
 	# Add smelting and blasting recipes
-	ingredient: JsonDict = ingr_repr(dust, Mem.ctx.project_id)
-	Mem.definitions[dust][USED_FOR_CRAFTING] = Mem.definitions[dust].get(USED_FOR_CRAFTING, [])
-	Mem.definitions[dust][USED_FOR_CRAFTING].append({"type":"smelting","result_count":1,"category":"misc","group":material,"experience":0.8,"cookingtime":200,"ingredient":ingredient, "result":smelt_to})
-	Mem.definitions[dust][USED_FOR_CRAFTING].append({"type":"blasting","result_count":1,"category":"misc","group":material,"experience":0.8,"cookingtime":100,"ingredient":ingredient, "result":smelt_to})
+	ingredient: JsonDict = ingr_repr(dust)
+	obj.recipes.append(SmeltingRecipe(result_count=1,category="misc",group=material,experience=0.8,cookingtime=200,ingredient=ingredient, result=smelt_to))
+	obj.recipes.append(BlastingRecipe(result_count=1,category="misc",group=material,experience=0.8,cookingtime=100,ingredient=ingredient, result=smelt_to))
 
 	# Add reverse recipe
-	Mem.definitions[dust][RESULT_OF_CRAFTING] = Mem.definitions[dust].get(RESULT_OF_CRAFTING, [])
-	Mem.definitions[dust][RESULT_OF_CRAFTING].append({"type":"simplenergy_pulverizing","result_count":1,"category":"misc","group":material,"ingredient":smelt_to})
+	obj.recipes.append(PulverizingRecipe(result_count=1,category="misc",group=material,ingredient=smelt_to))
 
 	# Add pulverizing recipes
 	for item in pulverize:
 		pulv_ingr = item if isinstance(item, dict) else ingr_repr(f"minecraft:{item}")
-		Mem.definitions[dust][RESULT_OF_CRAFTING].append({"type":"simplenergy_pulverizing","result_count":2,"category":"misc","group":material,"ingredient":pulv_ingr})
+		obj.recipes.append(PulverizingRecipe(result_count=2,category="misc",group=material,ingredient=pulv_ingr))
 	return
 
 # Add recipes for all dusts

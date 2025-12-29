@@ -1,14 +1,23 @@
 
 # Imports
-from typing import cast
-
 from beet import Advancement, Recipe
 from beet.core.utils import JsonDict
 from stouputils.decorators import simple_cache
 
 from ...core.__memory__ import Mem
+from ...core.cls.item import Item
+from ...core.cls.recipe import (
+    BlastingRecipe,
+    CampfireCookingRecipe,
+    CraftingShapedRecipe,
+    CraftingShapelessRecipe,
+    SmeltingRecipe,
+    SmithingTransformRecipe,
+    SmithingTrimRecipe,
+    SmokingRecipe,
+    StonecuttingRecipe,
+)
 from ...core.ingredients import (
-    FURNACES_RECIPES_TYPES,
     get_ingredients_from_recipe,
     get_item_from_ingredient,
     get_vanilla_item_id_from_ingredient,
@@ -84,23 +93,23 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
 
             write_function(f"{Mem.ctx.project_id}:advancements/unlock_recipes", content)
 
-    def vanilla_shapeless_recipe(self, recipe: JsonDict, item: str) -> JsonDict:
+    def vanilla_shapeless_recipe(self, recipe: CraftingShapelessRecipe, item: str) -> JsonDict:
         """Generate a vanilla shapeless recipe.
 
         Args:
-            recipe (Dict[str, Any]): The recipe data.
+            recipe (CraftingShapelessRecipe): The recipe data.
             item (str): The item to generate the recipe for.
 
         Returns:
-            Dict[str, Any]: The generated recipe.
+            JsonDict: The generated recipe.
         """
-        result_ingr = ingr_repr(item, Mem.ctx.project_id) if not recipe.get("result") else recipe["result"]
-        ingredients: list[str] = [get_vanilla_item_id_from_ingredient(i) for i in recipe["ingredients"]]
+        result_ingr = recipe.result or ingr_repr(item, Mem.ctx.project_id)
+        ingredients: list[str] = [get_vanilla_item_id_from_ingredient(i) for i in recipe.ingredients]
 
         to_return: JsonDict = {
-            "type": "minecraft:" + recipe["type"],
-            "category": recipe["category"],
-            "group": recipe.get("group"),
+            "type": "minecraft:" + recipe.type,
+            "category": recipe.category,
+            "group": recipe.group,
             "ingredients": ingredients,
             "result": item_to_id_ingr_repr(get_item_from_ingredient(result_ingr)),
         }
@@ -111,27 +120,27 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
         to_return["result"]["count"] = recipe["result_count"]
         return to_return
 
-    def vanilla_shaped_recipe(self, recipe: JsonDict, item: str) -> JsonDict:
+    def vanilla_shaped_recipe(self, recipe: CraftingShapedRecipe, item: str) -> JsonDict:
         """Generate a vanilla shaped recipe.
 
         Args:
-            recipe (Dict[str, Any]): The recipe data.
+            recipe (CraftingShapedRecipe): The recipe data.
             item (str): The item to generate the recipe for.
 
         Returns:
-            Dict[str, Any]: The generated recipe.
+            JsonDict: The generated recipe.
         """
-        result_ingr = ingr_repr(item, Mem.ctx.project_id) if not recipe.get("result") else recipe["result"]
+        result_ingr = recipe.result or ingr_repr(item, Mem.ctx.project_id)
         ingredients: dict[str, str] = {
             k: get_vanilla_item_id_from_ingredient(i)
-            for k, i in recipe["ingredients"].items()
+            for k, i in recipe.ingredients.items()
         }
 
         to_return: JsonDict = {
-            "type": "minecraft:" + recipe["type"],
-            "category": recipe["category"],
-            "group": recipe.get("group"),
-            "pattern": recipe["shape"],
+            "type": "minecraft:" + recipe.type,
+            "category": recipe.category,
+            "group": recipe.group,
+            "pattern": recipe.shape,
             "key": ingredients,
             "result": item_to_id_ingr_repr(get_item_from_ingredient(result_ingr)),
         }
@@ -139,27 +148,27 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
         if not to_return["group"]:
             del to_return["group"]
 
-        to_return["result"]["count"] = recipe["result_count"]
+        to_return["result"]["count"] = recipe.result_count
         return to_return
 
     @simple_cache()
-    def vanilla_furnace_recipe(self, recipe: JsonDict, item: str) -> JsonDict:
+    def vanilla_furnace_recipe(self, recipe: SmeltingRecipe | BlastingRecipe | SmokingRecipe | CampfireCookingRecipe, item: str) -> JsonDict:
         """ Generate a vanilla furnace recipe.
 
         Args:
-            recipe (Dict[str, Any]): The recipe data.
+            recipe (SmeltingRecipe | BlastingRecipe | SmokingRecipe | CampfireCookingRecipe): The recipe data.
             item (str): The item to generate the recipe for.
 
         Returns:
-            Dict[str, Any]: The generated recipe.
+            JsonDict: The generated recipe.
         """
-        result_ingr = ingr_repr(item, Mem.ctx.project_id) if not recipe.get("result") else recipe["result"]
-        ingredient_vanilla: str = get_vanilla_item_id_from_ingredient(recipe["ingredient"])
+        result_ingr = recipe.result or ingr_repr(item, Mem.ctx.project_id)
+        ingredient_vanilla: str = get_vanilla_item_id_from_ingredient(recipe.ingredient)
 
         to_return: JsonDict = {
-            "type": "minecraft:" + recipe["type"],
-            "category": recipe["category"],
-            "group": recipe.get("group"),
+            "type": "minecraft:" + recipe.type,
+            "category": recipe.category,
+            "group": recipe.group,
             "ingredient": ingredient_vanilla,
             "result": item_to_id_ingr_repr(get_item_from_ingredient(result_ingr)),
         }
@@ -167,26 +176,26 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
         if not to_return["group"]:
             del to_return["group"]
 
-        to_return["result"]["count"] = recipe["result_count"]
+        to_return["result"]["count"] = recipe.result_count
         return to_return
 
     @simple_cache()
-    def vanilla_stonecutting_recipe(self, recipe: JsonDict, item: str) -> JsonDict:
+    def vanilla_stonecutting_recipe(self, recipe: StonecuttingRecipe, item: str) -> JsonDict:
         """ Generate a vanilla stonecutting recipe.
 
         Args:
-            recipe (Dict[str, Any]): The recipe data.
+            recipe (StonecuttingRecipe): The recipe data.
             item (str): The item to generate the recipe for.
 
         Returns:
-            Dict[str, Any]: The generated recipe.
+            JsonDict: The generated recipe.
         """
-        result_ingr = ingr_repr(item, Mem.ctx.project_id) if not recipe.get("result") else recipe["result"]
-        ingredient_vanilla: str = get_vanilla_item_id_from_ingredient(recipe["ingredient"])
+        result_ingr = recipe.result or ingr_repr(item, Mem.ctx.project_id)
+        ingredient_vanilla: str = get_vanilla_item_id_from_ingredient(recipe.ingredient)
 
         to_return: JsonDict = {
-            "type": "minecraft:" + recipe["type"],
-            "group": recipe.get("group"),
+            "type": "minecraft:" + recipe.type,
+            "group": recipe.group,
             "ingredient": ingredient_vanilla,
             "result": item_to_id_ingr_repr(get_item_from_ingredient(result_ingr)),
         }
@@ -194,54 +203,54 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
         if not to_return["group"]:
             del to_return["group"]
 
-        to_return["result"]["count"] = recipe["result_count"]
+        to_return["result"]["count"] = recipe.result_count
         return to_return
 
     @simple_cache()
-    def vanilla_smithing_transform_recipe(self, recipe: JsonDict, item: str) -> JsonDict:
+    def vanilla_smithing_transform_recipe(self, recipe: SmithingTransformRecipe, item: str) -> JsonDict:
         """ Generate a vanilla smithing transform recipe.
 
         Args:
-            recipe (Dict[str, Any]): The recipe data.
+            recipe (SmithingTransformRecipe): The recipe data.
             item (str): The item to generate the recipe for.
 
         Returns:
-            Dict[str, Any]: The generated recipe.
+            JsonDict: The generated recipe.
         """
-        result_ingr = ingr_repr(item, Mem.ctx.project_id) if not recipe.get("result") else recipe["result"]
-        base_vanilla: str = get_vanilla_item_id_from_ingredient(recipe["base"])
-        addition_vanilla: str = get_vanilla_item_id_from_ingredient(recipe["addition"])
-        template_vanilla: str = get_vanilla_item_id_from_ingredient(recipe["template"])
+        result_ingr = recipe.result or ingr_repr(item, Mem.ctx.project_id)
+        base_vanilla: str = get_vanilla_item_id_from_ingredient(recipe.base)
+        addition_vanilla: str = get_vanilla_item_id_from_ingredient(recipe.addition)
+        template_vanilla: str = get_vanilla_item_id_from_ingredient(recipe.template)
 
         to_return: JsonDict = {
-            "type": "minecraft:" + recipe["type"],
+            "type": "minecraft:" + recipe.type,
             "base": base_vanilla,
             "addition": addition_vanilla,
             "template": template_vanilla,
             "result": item_to_id_ingr_repr(get_item_from_ingredient(result_ingr)),
         }
 
-        to_return["result"]["count"] = recipe["result_count"]
+        to_return["result"]["count"] = recipe.result_count
         return to_return
 
     @simple_cache()
-    def vanilla_smithing_trim_recipe(self, recipe: JsonDict, item: str) -> JsonDict:
+    def vanilla_smithing_trim_recipe(self, recipe: SmithingTrimRecipe, item: str) -> JsonDict:
         """ Generate a vanilla smithing trim recipe.
 
         Args:
-            recipe (Dict[str, Any]): The recipe data.
+            recipe (SmithingTrimRecipe): The recipe data.
             item (str): The item to generate the recipe for.
 
         Returns:
-            Dict[str, Any]: The generated recipe.
+            JsonDict: The generated recipe.
         """
-        base_vanilla: str = get_vanilla_item_id_from_ingredient(recipe["base"])
-        addition_vanilla: str = get_vanilla_item_id_from_ingredient(recipe["addition"])
-        template_vanilla: str = get_vanilla_item_id_from_ingredient(recipe["template"])
-        pattern_vanilla: str = get_vanilla_item_id_from_ingredient(recipe["pattern"])
+        base_vanilla: str = get_vanilla_item_id_from_ingredient(recipe.base)
+        addition_vanilla: str = get_vanilla_item_id_from_ingredient(recipe.addition)
+        template_vanilla: str = get_vanilla_item_id_from_ingredient(recipe.template)
+        pattern_vanilla: str = get_vanilla_item_id_from_ingredient(recipe.pattern)
 
         to_return: JsonDict = {
-            "type": "minecraft:" + recipe["type"],
+            "type": "minecraft:" + recipe.type,
             "base": base_vanilla,
             "addition": addition_vanilla,
             "template": template_vanilla,
@@ -256,75 +265,58 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
         Args:
             override (list[str]): If set, only generate recipes for this item and with override only. Used to regenerate a specific item.
         """
-        for item, data in Mem.definitions.items():
+        for item in Mem.definitions.keys():
             if override and item not in override:
                 continue
-            crafts: list[JsonDict] = list(data.get("result_of_crafting", []))
-            crafts += list(data.get("used_for_crafting", []))
+            obj = Item.from_id(item)
 
             i = 1
-            for recipe in crafts:
+            for recipe in obj.recipes:
                 name = f"{item}" if i == 1 else f"{item}_{i}"
-                ingr = recipe.get("ingredients", {})
-                if not ingr:
-                    ingr = recipe.get("ingredient", {})
 
                 # Handle different recipe types
-                if recipe["type"] == "crafting_shapeless":
-                    ingr_list = cast(list[JsonDict], ingr)
-                    if all(isinstance(i, dict) and i.get("item") for i in ingr_list): # type: ignore
-                        r = self.vanilla_shapeless_recipe(recipe, item)
-                        self.write_recipe_file(name, r)
+                if recipe["type"] == CraftingShapelessRecipe.type:
+                    recipe = CraftingShapelessRecipe.from_dict(recipe)
+                    if all(i.get("item") for i in recipe.ingredients):
+                        self.write_recipe_file(name, self.vanilla_shapeless_recipe(recipe, item))
                         i += 1
                         self.vanilla_generated_recipes.append((name, item))
 
-                elif recipe["type"] == "crafting_shaped":
-                    ingr_dict = cast(dict[str, JsonDict], ingr)
-                    if all(isinstance(i, dict) and i.get("item") for i in ingr_dict.values()): # type: ignore
-                        r = self.vanilla_shaped_recipe(recipe, item)
-                        self.write_recipe_file(name, r)
+                elif recipe["type"] == CraftingShapedRecipe.type:
+                    recipe = CraftingShapedRecipe.from_dict(recipe)
+                    if all(i.get("item") for i in recipe.ingredients.values()):
+                        self.write_recipe_file(name, self.vanilla_shaped_recipe(recipe, item))
                         i += 1
                         self.vanilla_generated_recipes.append((name, item))
 
-                elif recipe["type"] in FURNACES_RECIPES_TYPES:
-                    if isinstance(ingr, dict) and cast(JsonDict, ingr).get("item"):
-                        r = self.vanilla_furnace_recipe(recipe, item)
-                        self.write_recipe_file(name, r)
+                elif recipe["type"] in (SmeltingRecipe.type, BlastingRecipe.type, SmokingRecipe.type, CampfireCookingRecipe.type):
+                    recipe = SmeltingRecipe.from_dict(recipe) if recipe["type"] == SmeltingRecipe.type else \
+                             BlastingRecipe.from_dict(recipe) if recipe["type"] == BlastingRecipe.type else \
+                             SmokingRecipe.from_dict(recipe) if recipe["type"] == SmokingRecipe.type else \
+                             CampfireCookingRecipe.from_dict(recipe)
+                    if recipe.ingredient.get("item"):
+                        self.write_recipe_file(name, self.vanilla_furnace_recipe(recipe, item))
                         i += 1
                         self.vanilla_generated_recipes.append((name, item))
 
-                elif recipe["type"] == "stonecutting":
-                    if isinstance(ingr, dict) and cast(JsonDict, ingr).get("item"):
-                        r = self.vanilla_stonecutting_recipe(recipe, item)
-                        self.write_recipe_file(name, r)
+                elif recipe["type"] == StonecuttingRecipe.type:
+                    recipe = StonecuttingRecipe.from_dict(recipe)
+                    if recipe.ingredient.get("item"):
+                        self.write_recipe_file(name, self.vanilla_stonecutting_recipe(recipe, item))
                         i += 1
                         self.vanilla_generated_recipes.append((name, item))
 
-                elif recipe["type"] == "smithing_transform":
-                    # Check if all required ingredients are present
-                    base = recipe.get("base", {})
-                    addition = recipe.get("addition", {})
-                    template = recipe.get("template", {})
-                    if (isinstance(base, dict) and cast(JsonDict, base).get("item") and
-                        isinstance(addition, dict) and cast(JsonDict, addition).get("item") and
-                        isinstance(template, dict) and cast(JsonDict, template).get("item")):
-                        r = self.vanilla_smithing_transform_recipe(recipe, item)
-                        self.write_recipe_file(name, r)
+                elif recipe["type"] == SmithingTransformRecipe.type:
+                    recipe = SmithingTransformRecipe.from_dict(recipe)
+                    if (recipe.base.get("item") and recipe.addition.get("item") and recipe.template.get("item")):
+                        self.write_recipe_file(name, self.vanilla_smithing_transform_recipe(recipe, item))
                         i += 1
                         self.vanilla_generated_recipes.append((name, item))
 
-                elif recipe["type"] == "smithing_trim":
-                    # Check if all required ingredients are present
-                    base = recipe.get("base", {})
-                    addition = recipe.get("addition", {})
-                    template = recipe.get("template", {})
-                    pattern = recipe.get("pattern", {})
-                    if (isinstance(base, dict) and cast(JsonDict, base).get("item") and
-                        isinstance(addition, dict) and cast(JsonDict, addition).get("item") and
-                        isinstance(template, dict) and cast(JsonDict, template).get("item") and
-                        isinstance(pattern, dict) and cast(JsonDict, pattern).get("item")):
-                        r = self.vanilla_smithing_trim_recipe(recipe, item)
-                        self.write_recipe_file(name, r)
+                elif recipe["type"] == SmithingTrimRecipe.type:
+                    recipe = SmithingTrimRecipe.from_dict(recipe)
+                    if (recipe.base.get("item") and recipe.addition.get("item") and recipe.template.get("item") and recipe.pattern.get("item")):
+                        self.write_recipe_file(name, self.vanilla_smithing_trim_recipe(recipe, item))
                         i += 1
                         self.vanilla_generated_recipes.append((name, item))
 

@@ -13,12 +13,11 @@ from stouputils.parallel import multithreading
 from stouputils.print import debug, warning
 
 from ...core.__memory__ import Mem
+from ...core.cls.item import Item
 from ...core.constants import (
 	DOWNLOAD_VANILLA_ASSETS_RAW,
 	DOWNLOAD_VANILLA_ASSETS_SOURCE,
 	DOWNLOAD_VANILLA_ASSETS_SPECIAL_RAW,
-	RESULT_OF_CRAFTING,
-	USED_FOR_CRAFTING,
 )
 from .shared_import import SharedMemory
 
@@ -34,10 +33,11 @@ def generate_all_iso_renders():
 	# For every item, get the model path and the destination path
 	cache_assets: bool = Mem.ctx.meta.get("stewbeet",{}).get("manual", {}).get("cache_assets", True)
 	for_model_resolver: dict[str, str] = {}
-	for item, data in Mem.definitions.items():
+	for item in Mem.definitions.keys():
+		obj = Item.from_id(item)
 
 		# Skip items that don't have models
-		if not data.get("item_model"):
+		if not obj.components.get("item_model"):
 			continue
 
 		# Skip if item is already generated (to prevent OpenGL launching for nothing)
@@ -84,10 +84,9 @@ def generate_all_iso_renders():
 	## Copy every used vanilla items
 	# Get every used vanilla items
 	used_vanilla_items: set[str] = set()
-	for data in Mem.definitions.values():
-		all_crafts: list[JsonDict] = list(data.get(RESULT_OF_CRAFTING,[]))
-		all_crafts += list(data.get(USED_FOR_CRAFTING,[]))
-		for recipe in all_crafts:
+	for item in Mem.definitions.keys():
+		obj = Item.from_id(item)
+		for recipe in obj.recipes:
 			ingredients = []
 			if "ingredients" in recipe:
 				ingredients = recipe["ingredients"]

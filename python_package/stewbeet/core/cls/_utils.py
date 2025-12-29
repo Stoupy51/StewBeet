@@ -21,7 +21,7 @@ class StMapping(Mapping[str, Any]):
     def get(self, key: str, default: Any = None) -> Any:
         try:
             return self[key]
-        except KeyError:
+        except (KeyError, AttributeError):
             return default
 
     def setdefault(self, key: str, default: Any = None) -> Any:
@@ -45,13 +45,13 @@ class StMapping(Mapping[str, Any]):
             elif is_dataclass(value) and not isinstance(value, type):
                 return asdict(value)
             elif isinstance(value, list):
-                return [_convert_value(item) for item in value]
+                return [_convert_value(item) for item in value] # pyright: ignore[reportUnknownVariableType]
             elif isinstance(value, dict):
-                return {k: _convert_value(v) for k, v in value.items()}
+                return {k: _convert_value(v) for k, v in value.items()} # pyright: ignore[reportUnknownVariableType]
             else:
                 return value
 
-        result = {}
+        result: JsonDict = {}
         for field_info in fields(self):
             value = getattr(self, field_info.name)
             if value is not None:
@@ -78,11 +78,13 @@ class StMapping(Mapping[str, Any]):
             if old in data_dict and new not in data_dict:
                 data_dict[new] = data_dict.pop(old)
             elif old in data_dict and new in data_dict:
-                if isinstance(data_dict[new], list) and isinstance(data_dict[old], list):
-                    stp.unique_list([data_dict[new], *data_dict.pop(old)])
+                if data_dict[new] == data_dict[old]:
+                    data_dict.pop(old)
+                elif isinstance(data_dict[new], list) and isinstance(data_dict[old], list):
+                    data_dict[new] = stp.unique_list([*data_dict[new], *data_dict.pop(old)])
                 else:
                     # TODO: Remove this
-                    raise TypeError(f"Cannot merge fields '{old}' and '{new}' as they are not both lists.")
+                    raise TypeError(f"Cannot merge fields '{old}' and '{new}' as they are not both lists. Value of '{new}': {data_dict[new]}, value of '{old}': {data_dict[old]}")
         data_dict["id"] = item_id
 
         # Get valid field names for this class
@@ -114,18 +116,41 @@ class StMapping(Mapping[str, Any]):
             if "components" in known_kwargs and key in known_kwargs["components"]:
                 del known_kwargs["components"][key]
 
+        # Add empty vanilla_block if needed
+        if "vanilla_block" in valid_fields:
+            if "vanilla_block" not in known_kwargs:
+                known_kwargs["vanilla_block"] = ""
+
+        # Create the instance
         return cls(**known_kwargs)
 
     @classmethod
-    def from_id(cls, item_id: str) -> Self:
-        """ Create an object based of definitions. If ':' is in item_id, it's in external_definitions """
+    def from_id(cls, item_id: str, strict: bool = True) -> Self:
+        """ Create an object based of definitions. If ':' is in item_id, it's in external_definitions
+
+        Args:
+            item_id	(str):		The item ID to create the object from.
+            strict	(bool):		Whether to raise an error if the item is not found.
+        """
         from ..__memory__ import Mem
-        if ":" not in item_id:
-            return cls.from_dict(Mem.definitions[item_id], item_id)
+        if strict:
+            if ":" not in item_id:
+                return cls.from_dict(Mem.definitions[item_id], item_id)
+            else:
+                return cls.from_dict(Mem.external_definitions[item_id], item_id)
         else:
-            return cls.from_dict(Mem.external_definitions[item_id], item_id)
+            if ":" not in item_id:
+                return cls.from_dict(Mem.definitions.get(item_id, {}), item_id)
+            else:
+                return cls.from_dict(Mem.external_definitions.get(item_id, {}), item_id)
 
     def copy(self) -> JsonDict:
         """ Return a shallow copy as a dictionary. """
         return self.to_dict()
+
+    # Mapping methods (__len__ and __iter__)
+    def __len__(self) -> int:
+        return len(self.to_dict())
+    def __iter__(self):
+        return iter(self.to_dict())
 

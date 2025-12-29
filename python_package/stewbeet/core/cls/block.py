@@ -62,8 +62,8 @@ class GrowingSeed(StMapping):
     """ The time in seconds it takes for the seed to grow, e.g. 480. """
     planted_on: str
     """ The block ID on which the seed can be planted, e.g. 'diamond_block'. """
-    loots: list[GrowingSeedLoot]
-    """ The list of loot definitions for the seed when it is harvested. """
+    loots: list[GrowingSeedLoot] | str
+    """ The list of loot definitions for the seed when it is harvested, or a loot path path. """
 
     def __post_init__(self) -> None:
         if self.planted_on.startswith("minecraft:"):
@@ -81,6 +81,10 @@ class Block(Item):
     """ If the block is based on a vanilla block, this defines which one and whether to apply facing. """
     no_silk_touch_drop: NoSilkTouchDrop | str | None = None
     """ (Optional) Defines the item dropped when the block is broken without silk touch, e.g. NoSilkTouchDrop(id="raw_simplunium") or just "raw_simplunium". """
+
+    # Others
+    growing_seed: GrowingSeed | None = None
+    """ (Optional) Defines a seed that grows over time (Stardust Seed from Stardust Fragment). """
 
     def __post_init__(self) -> None:
         from ..__memory__ import Mem
@@ -120,4 +124,7 @@ class BlockAlternative(Block):
 @dataclass(kw_only=True)
 class BlockHead(Block):
     base_item = CUSTOM_BLOCK_HEAD
+
+# Constants
+VANILLA_BLOCK_FOR_ORES = VanillaBlock(id="minecraft:polished_deepslate", apply_facing=False)
 

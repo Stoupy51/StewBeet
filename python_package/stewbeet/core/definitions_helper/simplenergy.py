@@ -3,6 +3,7 @@
 from beet.core.utils import TextComponent
 
 from ..__memory__ import Mem
+from ..cls.item import Item
 
 
 def format_energy_number(number: int) -> str:
@@ -56,7 +57,8 @@ def create_energy_lore(energy_data: dict[str, int]) -> TextComponent:
 
 def add_energy_lore_to_definitions():
 	""" Adds energy-related lore to definitions based on their custom data. """
-	for item_data in Mem.definitions.values():
-		if "energy" in item_data.get("custom_data", {}):
-			item_data["lore"] = item_data.get("lore", []) + create_energy_lore(item_data["custom_data"]["energy"])
+	for item in Mem.definitions.keys():
+		obj = Item.from_id(item)
+		if "energy" in obj.components.get("custom_data", {}):
+			obj.components["lore"] = obj.components.get("lore", []) + create_energy_lore(obj.components["custom_data"]["energy"])
 
