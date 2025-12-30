@@ -1,17 +1,17 @@
 
 # Imports
+import stouputils as stp
 from beet import Context, LootTable
 from beet.core.utils import JsonDict
-from stouputils.decorators import measure_time
-from stouputils.io import json_dump
 
 from ....core.__memory__ import Mem
 from ....core.cls.item import Item
+from ....core.ingredients import ingr_to_id, result_count_to_suffix
 from ....core.utils.io import write_function
 
 
 # Main entry point
-@measure_time(message="Execution time of 'stewbeet.plugins.datapack.loot_tables'")
+@stp.measure_time(message="Execution time of 'stewbeet.plugins.datapack.loot_tables'")
 def beet_default(ctx: Context):
 	""" Main entry point for the loot tables plugin.
 	This plugin sets up loot tables for items in the definitions and external items.
@@ -58,7 +58,7 @@ def beet_default(ctx: Context):
 		loot_table["pools"][0]["entries"][0]["functions"] = [set_components]
 
 		# Create loot table with beet
-		ctx.data[ns].loot_tables[f"i/{item}"] = LootTable(json_dump(loot_table, max_level = 10))
+		ctx.data[ns].loot_tables[f"i/{item}"] = LootTable(stp.json_dump(loot_table, max_level = 10))
 
 		# Add the pool to the creative loot table
 		creative_loot_table["pools"].append({"rolls": 1, "entries":[{"type":"minecraft:loot_table","value":f"{ns}:i/{item}"}] })
@@ -88,15 +88,22 @@ def beet_default(ctx: Context):
 		loot_table["pools"][0]["entries"][0]["functions"] = [set_components]
 
 		# Create external loot table with beet
-		ctx.data[ns].loot_tables[f"external/{ext_ns}/{item_name}"] = LootTable(json_dump(loot_table, max_level=10))
+		ctx.data[ns].loot_tables[f"external/{ext_ns}/{item_name}"] = LootTable(stp.json_dump(loot_table, max_level=10))
 
 	# Loot tables for items with crafting recipes
 	for item in Mem.definitions.keys():
 		obj = Item.from_id(item)
 		if obj.recipes:
-			results: list[int] = []
+			results: list[int | JsonDict] = []
 			for recipe in obj.recipes:
-				count = recipe.get("result_count", 1)
+				# Verify the result is for this item
+				if recipe.get("result"):
+					result_id = ingr_to_id(recipe["result"], add_namespace=False)
+					if result_id != item:
+						continue
+
+				# Verify count different than 1
+				count: int | JsonDict = recipe.get("result_count", 1)
 				if count != 1:
 					results.append(count)
 
@@ -115,7 +122,8 @@ def beet_default(ctx: Context):
 						}]
 					}]
 				}
-				ctx.data[ns].loot_tables[f"i/{item}_x{result_count}"] = LootTable(json_dump(loot_table, max_level=10))
+				loot_table_path = f"i/{item}{result_count_to_suffix(result_count)}"
+				ctx.data[ns].loot_tables[loot_table_path] = LootTable(stp.json_dump(loot_table, max_level=10))
 
 	# Second loot table for the manual (if present)
 	if "manual" in Mem.definitions:
@@ -128,11 +136,11 @@ def beet_default(ctx: Context):
 				}]
 			}]
 		}
-		ctx.data[ns].loot_tables[f"i/{ns}_manual"] = LootTable(json_dump(loot_table, max_level=10))
+		ctx.data[ns].loot_tables[f"i/{ns}_manual"] = LootTable(stp.json_dump(loot_table, max_level=10))
 
 	# Write the creative loot table
 	if creative_loot_table["pools"]:
-		ctx.data[ns].loot_tables["creative_loot_table"] = LootTable(json_dump(creative_loot_table, max_level=2))
+		ctx.data[ns].loot_tables["creative_loot_table"] = LootTable(stp.json_dump(creative_loot_table, max_level=2))
 
 	# Make a give all command that gives chests with all the items
 	CHEST_SIZE: int = 27
@@ -140,7 +148,7 @@ def beet_default(ctx: Context):
 
 	# Get source lore from context metadata
 	source_lore: JsonDict = ctx.meta["stewbeet"]["source_lore"]
-	lore = json_dump(source_lore, max_level=0).strip()
+	lore = stp.json_dump(source_lore, max_level=0).strip()
 
 	chests: list[str] = []
 	definitions_copy: list[tuple[str, Item]] = [(item, Item.from_id(item)) for item in Mem.definitions.keys()]
@@ -152,7 +160,7 @@ def beet_default(ctx: Context):
 			if not definitions_copy:
 				break
 			item, obj = definitions_copy.pop(0)
-			json_content = json_dump(obj.components, max_level=0).strip()
+			json_content = stp.json_dump(obj.components, max_level=0).strip()
 			chest_contents.append(f'{{slot:{j},item:{{count:1,id:"{obj.base_item}",components:{json_content}}}}}')
 
 		joined_content = ",".join(chest_contents)

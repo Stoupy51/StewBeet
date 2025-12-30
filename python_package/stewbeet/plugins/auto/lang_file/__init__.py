@@ -1,16 +1,13 @@
 
 # Imports
+import stouputils as stp
 from beet import Context, Language, TextFileBase
-from stouputils.decorators import measure_time
-from stouputils.io import json_dump
-from stouputils.parallel import multithreading
-from stouputils.print import BLUE
 
 from .utils import handle_file, lang
 
 
 # Main entry point
-@measure_time(message="Execution time of 'stewbeet.plugins.auto.lang_file'")
+@stp.measure_time(message="Execution time of 'stewbeet.plugins.auto.lang_file'")
 def beet_default(ctx: Context):
 	""" Main entry point for the lang file plugin.
 	This plugin handles language file generation for the datapack.
@@ -28,10 +25,10 @@ def beet_default(ctx: Context):
 		(ctx, content) for content in files_to_process.values()
 		if isinstance(content, TextFileBase)
 	]
-	multithreading(handle_file, args, use_starmap=True, desc="Generating lang file", max_workers=min(32, len(args)), color=BLUE)
+	stp.multithreading(handle_file, args, use_starmap=True, desc="Generating lang file", max_workers=min(32, len(args)), color=stp.BLUE)
 
 	# Update the lang file
 	lang.update(ctx.assets.languages.get("minecraft:en_us", Language()).data)
-	ctx.assets.languages["minecraft:en_us"] = Language(json_dump(dict(sorted(lang.items()))))
+	ctx.assets.languages["minecraft:en_us"] = Language(stp.json_dump(dict(sorted(lang.items()))))
 	pass
 

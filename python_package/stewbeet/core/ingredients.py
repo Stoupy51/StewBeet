@@ -2,11 +2,9 @@
 # Imports
 from typing import Any, cast
 
+import stouputils as stp
 from beet import LootTable
 from beet.core.utils import JsonDict, TextComponent
-from stouputils.decorators import simple_cache
-from stouputils.io import json_dump
-from stouputils.print import error
 
 from .__memory__ import Mem
 from .cls.item import Item
@@ -26,7 +24,7 @@ SPECIAL_RECIPES_TYPES: tuple[str, ...] = ("simplenergy_pulverizing", "stardust_a
 ALL_RECIPES_TYPES: tuple[str, ...] = (*FURNACES_RECIPES_TYPES, *CRAFTING_RECIPES_TYPES, *OTHER_RECIPES_TYPES, *UNUSED_RECIPES_TYPES, *SPECIAL_RECIPES_TYPES)
 
 # Function mainly used for definitions generation
-@simple_cache
+@stp.simple_cache
 def ingr_repr(id: str, ns: str|None = None, count: int|None = None) -> JsonDict:
 	""" Get the identity of the ingredient from its id for custom crafts
 	Args:
@@ -67,7 +65,7 @@ def item_to_id_ingr_repr(ingr: JsonDict) -> JsonDict:
 	return r
 
 # Mainly used for manual
-@simple_cache
+@stp.simple_cache
 def ingr_to_id(ingredient: JsonDict, add_namespace: bool = True) -> str:
 	""" Get the id from an ingredient dict
 	Args:
@@ -100,12 +98,12 @@ def ingr_to_id(ingredient: JsonDict, add_namespace: bool = True) -> str:
 				id = next(iter(cd_data.keys()))
 				break
 	if not namespace:
-		error(f"No namespace found in custom data: {custom_data}, ingredient: {ingredient}")
+		stp.error(f"No namespace found in custom data: {custom_data}, ingredient: {ingredient}")
 	if add_namespace:
 		return namespace + ":" + id
 	return id
 
-@simple_cache
+@stp.simple_cache
 def text_component_to_str(tc: TextComponent) -> str:
 	""" Convert a TextComponent to a string
 	Args:
@@ -128,7 +126,7 @@ def text_component_to_str(tc: TextComponent) -> str:
 			result += text_component_to_str(extra)
 	return result
 
-@simple_cache
+@stp.simple_cache
 def item_id_to_text_component(item_id: str, use_default: bool = True) -> TextComponent:
 	""" Get the TextComponent from an item id
 
@@ -179,7 +177,7 @@ def item_id_to_text_component(item_id: str, use_default: bool = True) -> TextCom
 		return id.replace("_", " ").title()
 	return ""
 
-@simple_cache
+@stp.simple_cache
 def item_id_to_name(item_id: str) -> str:
 	""" Get the name from an item id
 	Args:
@@ -189,7 +187,7 @@ def item_id_to_name(item_id: str) -> str:
 	"""
 	return text_component_to_str(item_id_to_text_component(item_id))
 
-@simple_cache
+@stp.simple_cache
 def ingr_to_name(ingredient: JsonDict) -> str:
 	""" Get the name from an ingredient dict
 	Args:
@@ -203,7 +201,7 @@ def ingr_to_name(ingredient: JsonDict) -> str:
 	return item_id_to_name(item_id)
 
 # Mainly used for recipes
-@simple_cache
+@stp.simple_cache
 def get_vanilla_item_id_from_ingredient(ingredient: JsonDict, add_namespace: bool = True) -> str:
 	""" Get the id of the vanilla item from an ingredient dict
 	Args:
@@ -232,7 +230,7 @@ def get_vanilla_item_id_from_ingredient(ingredient: JsonDict, add_namespace: boo
 				return Item.from_id(item).base_item
 			return Item.from_id(item).base_item.split(":")[1]
 		else:
-			error(f"External item '{item}' not found in the external definitions")
+			stp.error(f"External item '{item}' not found in the external definitions")
 	return ""
 
 # Used for recipes
@@ -283,12 +281,36 @@ def get_item_from_ingredient(ingredient: JsonDict) -> JsonDict:
 	# Minecraft item
 	if ns == "minecraft":
 		return {"id": id, "count": 1}
-	error(f"External item '{ingr_id}' not found in the external definitions")
+	stp.error(f"External item '{ingr_id}' not found in the external definitions")
 	return {}
 
 
+# Utility function to convert result_count to string suffix
+@stp.simple_cache
+def result_count_to_suffix(result_count: int | JsonDict) -> str:
+	""" Convert a result count to a string suffix for loot table paths
+	Args:
+		result_count (int|dict): The count of the result item, can be an int or a dict for random counts
+			ex: 1
+			ex: {"type": "minecraft:uniform","min": 4,"max": 6}
+	Returns:
+		str: The suffix string, ex: "" or "_x5" or "_x4to6"
+	"""
+	if isinstance(result_count, int):
+		if result_count > 1:
+			return f"_x{result_count}"
+		return ""
+	elif hasattr(result_count, "get"):
+		minimum = result_count.get("min", 1)
+		maximum = result_count.get("max", 1)
+		if maximum > 1:
+			return f"_x{minimum}to{maximum}"
+		elif minimum > 1:
+			return f"_x{minimum}"
+	return ""
+
 # Make a loot table
-@simple_cache
+@stp.simple_cache
 def loot_table_from_ingredient(result_ingredient: JsonDict, result_count: int | JsonDict) -> str:
 	""" Get the loot table for an ingredient dict
 	Args:
@@ -304,38 +326,24 @@ def loot_table_from_ingredient(result_ingredient: JsonDict, result_count: int | 
 	item: str = ingr_to_id(result_ingredient)
 	if item.startswith(Mem.ctx.project_id):
 		item = item.split(":")[1]
-		loot_table = f"{Mem.ctx.project_id}:i/{item}"
-		if isinstance(result_count, int) and result_count > 1:
-			loot_table += f"_x{result_count}"
-		elif isinstance(result_count, dict):
-			minimum = result_count.get("min", 1)
-			maximum = result_count.get("max", 1)
-			if maximum > 1:
-				loot_table += f"_x{minimum}to{maximum}"
+		loot_table = f"{Mem.ctx.project_id}:i/{item}{result_count_to_suffix(result_count)}"
 		return loot_table
 
 	namespace, item = item.split(":")
-	loot_table = f"{Mem.ctx.project_id}:recipes/{namespace}/{item}"
-	if isinstance(result_count, int) and result_count > 1:
-		loot_table += f"_x{result_count}"
-	elif isinstance(result_count, dict):
-		minimum = result_count.get("min", 1)
-		maximum = result_count.get("max", 1)
-		if maximum > 1:
-			loot_table += f"_x{minimum}to{maximum}"
+	loot_table = f"{Mem.ctx.project_id}:recipes/{namespace}/{item}{result_count_to_suffix(result_count)}"
 
 	# If item from another datapack, generate the loot table
 	if namespace != "minecraft":
 		file: JsonDict = {"pools":[{"rolls":1,"entries":[{"type":"minecraft:loot_table","value": f"{Mem.ctx.project_id}:external/{namespace}/{item}"}] }] }
 	else:
 		file: JsonDict = {"pools":[{"rolls":1,"entries":[{"type":"minecraft:item","name":f"{namespace}:{item}"}] }] }
-	if (isinstance(result_count, int) and result_count > 1) or isinstance(result_count, dict):
+	if (isinstance(result_count, int) and result_count > 1) or hasattr(result_count, "get"):
 		file["pools"][0]["entries"][0]["functions"] = [{"function": "minecraft:set_count","count": result_count}]
 
-	Mem.ctx.data[loot_table] = LootTable(json_dump(file, max_level=9))
+	Mem.ctx.data[loot_table] = LootTable(stp.json_dump(file, max_level=9))
 	return loot_table
 
-@simple_cache
+@stp.simple_cache
 def get_ingredients_from_recipe(recipe: JsonDict) -> list[str]:
 	""" Get the ingredients from a recipe dict
 	Args:

@@ -2,8 +2,8 @@
 # Imports
 import sys
 
+import stouputils as stp
 import stouputils.applications.automatic_docs as app
-from stouputils.io import get_root_path
 
 # Update documentation
 if __name__ == "__main__":
@@ -18,7 +18,7 @@ if __name__ == "__main__":
 
 	# Update documentation
 	app.update_documentation(
-		root_path=get_root_path(__file__, go_up=2),
+		root_path=stp.get_root_path(__file__, go_up=2),
 		project="StewBeet",
 		project_dir="stewbeet",
 		author="Stoupy",

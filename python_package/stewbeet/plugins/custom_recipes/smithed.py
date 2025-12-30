@@ -2,9 +2,8 @@
 # Imports
 import json
 
+import stouputils as stp
 from beet.core.utils import JsonDict
-from stouputils.decorators import simple_cache
-from stouputils.print import debug
 
 from ...core.__memory__ import Mem
 from ...core.cls.item import Item
@@ -36,7 +35,7 @@ class SmithedRecipeHandler:
         handler = cls()
         handler.generate_recipes()
 
-    @simple_cache
+    @stp.simple_cache
     def smithed_shapeless_recipe(self, recipe: CraftingShapelessRecipe, result_loot: str) -> str:
         """ Generate a Smithed Crafter shapeless recipe.
 
@@ -78,7 +77,7 @@ class SmithedRecipeHandler:
             line += f""" run function {self.SMITHED_APPLY_PATH} {{"command":"loot replace block ~ ~ ~ container.16 loot {result_loot}"}}"""
         return line
 
-    @simple_cache
+    @stp.simple_cache
     def smithed_shaped_recipe(self, recipe: CraftingShapedRecipe, result_loot: str) -> str:
         """ Generate a Smithed Crafter shaped recipe.
 
@@ -172,7 +171,7 @@ class SmithedRecipeHandler:
                 # If there is a component in the ingredients of shaped/shapeless, use smithed crafter
                 if any(i.get("components") for i in ingr):
                     if not official_lib_used("smithed.crafter"):
-                        debug("Found a crafting table recipe using custom item in ingredients, adding 'smithed.crafter' dependency")
+                        stp.debug("Found a crafting table recipe using custom item in ingredients, adding 'smithed.crafter' dependency")
 
                         # Add to the give_all function the heavy workbench give command
                         write_function(f"{Mem.ctx.project_id}:_give_all", "loot give @s loot smithed.crafter:blocks/table\n", prepend=True)

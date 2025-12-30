@@ -1,8 +1,8 @@
 
 # ruff: noqa: E501
 # Imports
+import stouputils as stp
 from beet.core.utils import JsonDict
-from stouputils.decorators import simple_cache
 
 from ...core.__memory__ import Mem
 from ...core.cls.item import Item
@@ -34,7 +34,7 @@ from .shared_import import (
 
 
 # Convert craft function
-@simple_cache
+@stp.simple_cache
 def convert_shapeless_to_shaped(craft: JsonDict) -> JsonDict:
 	""" Convert a shapeless craft to a shaped craft
 	Args:
@@ -116,7 +116,7 @@ def convert_shapeless_to_shaped(craft: JsonDict) -> JsonDict:
 
 
 # Util function
-@simple_cache
+@stp.simple_cache
 def high_res_font_from_craft(craft: JsonDict) -> str:
 	if craft["type"] in (SmeltingRecipe.type, BlastingRecipe.type, CampfireCookingRecipe.type, SmokingRecipe.type):
 		return FURNACE_FONT
@@ -146,13 +146,13 @@ def remove_duplicate_furnace_crafts(crafts: list[JsonDict], item: str) -> list[J
 	Returns:
 		list[JsonDict]: The list of crafts without duplicate furnace crafts
 	"""
-	seen_pairs: set[tuple[str, str]] = set()
+	seen_pairs: set[tuple[str, str, int]] = set()
 	unique_crafts: list[JsonDict] = []
 	for craft in crafts:
 		if craft["type"] in (SmeltingRecipe.type, BlastingRecipe.type, CampfireCookingRecipe.type, SmokingRecipe.type):
 			ingredient_id = ingr_to_id(craft["ingredient"], add_namespace=True)
 			result_id = ingr_to_id(craft["result"], add_namespace=True) if "result" in craft else item
-			pair = (ingredient_id, result_id)
+			pair = (ingredient_id, result_id, craft.get("result_count", 1))
 			if pair not in seen_pairs:
 				seen_pairs.add(pair)
 				unique_crafts.append(craft)

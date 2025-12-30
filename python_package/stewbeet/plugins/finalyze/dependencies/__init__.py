@@ -1,8 +1,8 @@
 
 # Imports
+import stouputils as stp
 from beet import Context
 from beet.core.utils import JsonDict
-from stouputils import debug, info, measure_time, version_to_float
 
 from ....core.__memory__ import Mem
 from ....core.constants import BOOKSHELF_MODULES, LATEST_MC_VERSION, MORE_DATA_VERSIONS, OFFICIAL_LIBS, official_lib_used
@@ -44,7 +44,7 @@ def check_version(lib_ns: str, data: JsonDict, run_command: str) -> str:
 
 
 # Main entry point
-@measure_time(message="Execution time of 'stewbeet.plugins.finalyze.dependencies'")
+@stp.measure_time(message="Execution time of 'stewbeet.plugins.finalyze.dependencies'")
 def beet_default(ctx: Context) -> None:
 	"""Main entry point for the dependencies plugin.
 	This plugin handles dependency management, version checking, and load sequence setup.
@@ -104,7 +104,7 @@ def beet_default(ctx: Context) -> None:
 
 	# Debug message for newly found libraries
 	if newly_found_libs:
-		debug(f"Found the use of official supported libraries: {', '.join(newly_found_libs)}, adding them to the datapack")
+		stp.debug(f"Found the use of official supported libraries: {', '.join(newly_found_libs)}, adding them to the datapack")
 
 	# Get all dependencies (official and custom)
 	dependencies: list[tuple[str, JsonDict]] = [(lib_ns, data) for lib_ns, data in OFFICIAL_LIBS.items() if data["is_used"]]
@@ -192,7 +192,7 @@ execute if score #{ns}.major load.status matches {major} if score #{ns}.minor lo
 	# For each used library, show message
 	used_libs: list[str] = [data["name"] for data in OFFICIAL_LIBS.values() if data["is_used"]]
 	if used_libs:
-		info(f"Summary of the official supported libraries used in the datapack: {', '.join(used_libs)}")
+		stp.info(f"Summary of the official supported libraries used in the datapack: {', '.join(used_libs)}")
 
 	# Write check_dependencies and valid_dependencies functions now that we have all the dependencies
 	if dependencies:
@@ -223,9 +223,9 @@ scoreboard players set #dependency_error {ns}.data 0
 		if ctx.meta.get("mc_supports"):
 			mc_supports: list[str] = ctx.meta["mc_supports"]
 			# Only keep valid versions (excluding 'w', 'b', 'pre' versions)
-			mc_supports = [x for x in mc_supports if version_to_float(x, error=False) is not None]
-			minimum = min(mc_supports, key=version_to_float)
-			if version_to_float(minimum) < version_to_float(mc_version):
+			mc_supports = [x for x in mc_supports if stp.version_to_float(x, error=False) is not None]
+			minimum = min(mc_supports, key=stp.version_to_float)
+			if stp.version_to_float(minimum) < stp.version_to_float(mc_version):
 				mc_version = minimum
 		mc_version_tuple: tuple[int, ...] = tuple(int(x) for x in mc_version.split(".") if x.isdigit())
 		data_version: int = MORE_DATA_VERSIONS.get(mc_version_tuple, max(MORE_DATA_VERSIONS.values(), default=0))

@@ -4,14 +4,13 @@
 # Imports
 from typing import Any, cast
 
+import stouputils as stp
 from beet import Context
 from beet.core.utils import JsonDict
-from stouputils.decorators import measure_time
-from stouputils.io import json_dump, relative_path, super_open
-from stouputils.print import debug, error, info, warning
 
 from ...core.__memory__ import Mem
 from ...core.cls import VANILLA_BLOCK_FOR_ORES, Item
+from ...core.cls.block import VanillaBlock
 from ...core.constants import (
 	CATEGORY,
 	CUSTOM_BLOCK_ALTERNATIVE,
@@ -28,7 +27,7 @@ from ...core.utils.io import convert_to_serializable
 
 
 # Main entry point
-@measure_time(message="Execution time of 'stewbeet.plugins.verify_definitions'")
+@stp.measure_time(message="Execution time of 'stewbeet.plugins.verify_definitions'")
 def beet_default(ctx: Context) -> None:
 	""" Database verification plugin for StewBeet.
 	Verifies the definitions structure, validates item configurations, and performs consistency checks.
@@ -53,9 +52,9 @@ def beet_default(ctx: Context) -> None:
 
 	# Export definitions to JSON for debugging generation
 	if definitions_debug and definitions_copy:
-		with super_open(definitions_debug, "w") as f:
-			json_dump(definitions_copy, file = f)
-		debug(f"Received definitions exported to './{relative_path(definitions_debug)}'")
+		with stp.super_open(definitions_debug, "w") as f:
+			stp.json_dump(definitions_copy, file = f)
+		stp.debug(f"Received definitions exported to './{stp.relative_path(definitions_debug)}'")
 
 	# Check every single thing in the definitions
 	errors: list[str] = []
@@ -92,6 +91,8 @@ def beet_default(ctx: Context) -> None:
 			elif data["id"] in [CUSTOM_BLOCK_VANILLA, CUSTOM_BLOCK_ALTERNATIVE]:
 				if not data.get(VANILLA_BLOCK):
 					errors.append(f"VANILLA_BLOCK key missing for '{item}', needed format: VANILLA_BLOCK: {{\"id\":\"minecraft:stone\", \"apply_facing\":False}}.")
+				elif isinstance(data[VANILLA_BLOCK], VanillaBlock):
+					pass
 				elif not isinstance(data[VANILLA_BLOCK], dict):
 					errors.append(f"VANILLA_BLOCK key should be a dictionary for '{item}', found '{data[VANILLA_BLOCK]}', needed format: VANILLA_BLOCK: {{\"id\":\"minecraft:stone\", \"apply_facing\":False}}.")
 				elif (data[VANILLA_BLOCK].get("id", None) is None) and (data[VANILLA_BLOCK].get("contents", None) is not True):
@@ -313,11 +314,11 @@ def beet_default(ctx: Context) -> None:
 
 	# Log errors if any
 	if errors:
-		error("Errors found in the definitions during verification:\n- " + "\n- ".join(errors))
+		stp.error("Errors found in the definitions during verification:\n- " + "\n- ".join(errors))
 	elif warnings:
-		warning("Warnings found in the definitions during verification:\n- " + "\n- ".join(warnings))
+		stp.warning("Warnings found in the definitions during verification:\n- " + "\n- ".join(warnings))
 	else:
-		info("No errors found in the definitions during verification")
+		stp.info("No errors found in the definitions during verification")
 
 	# Final adjustments to the definitions
 	for item, data in Mem.definitions.items():
@@ -339,7 +340,9 @@ def beet_default(ctx: Context) -> None:
 				data["tooltip_display"] = {"hidden_components": []}
 			elif not data["tooltip_display"].get("hidden_components"):
 				data["tooltip_display"]["hidden_components"] = []
-			data["tooltip_display"]["hidden_components"].append("minecraft:container")
+			hidden_components: list[str] = data["tooltip_display"]["hidden_components"] # type: ignore
+			hidden_components.append("minecraft:container")
+			data["tooltip_display"]["hidden_components"] = stp.unique_list(hidden_components)
 
 		# Add additional data to the custom blocks alternative
 		elif data.get("id") == CUSTOM_BLOCK_ALTERNATIVE:

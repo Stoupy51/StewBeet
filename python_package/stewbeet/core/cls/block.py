@@ -1,8 +1,9 @@
 
 # Imports
 from dataclasses import dataclass
-from typing import Literal, cast
+from typing import Literal
 
+import stouputils as stp
 from beet.core.utils import JsonDict
 
 from ..constants import (
@@ -100,8 +101,9 @@ class Block(Item):
                 self.components["tooltip_display"] = {"hidden_components": []}
             elif not self.components["tooltip_display"].get("hidden_components"):
                 self.components["tooltip_display"]["hidden_components"] = []
-            hidden_components = cast(list[str], self.components["tooltip_display"]["hidden_components"])
+            hidden_components: list[str] = self.components["tooltip_display"]["hidden_components"]
             hidden_components.append("minecraft:container")
+            self.components["tooltip_display"]["hidden_components"] = stp.unique_list(hidden_components)
 
         # Add additional data to the custom blocks alternative
         elif self.base_item == CUSTOM_BLOCK_ALTERNATIVE:
@@ -120,10 +122,16 @@ class Block(Item):
 @dataclass(kw_only=True)
 class BlockAlternative(Block):
     base_item = CUSTOM_BLOCK_ALTERNATIVE
+    def __post_init__(self) -> None:
+        self.base_item = CUSTOM_BLOCK_ALTERNATIVE
+        super().__post_init__()
 
 @dataclass(kw_only=True)
 class BlockHead(Block):
     base_item = CUSTOM_BLOCK_HEAD
+    def __post_init__(self) -> None:
+        self.base_item = CUSTOM_BLOCK_HEAD
+        super().__post_init__()
 
 # Constants
 VANILLA_BLOCK_FOR_ORES = VanillaBlock(id="minecraft:polished_deepslate", apply_facing=False)

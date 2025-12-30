@@ -2,8 +2,8 @@
 # Imports
 import json
 
+import stouputils as stp
 from beet.core.utils import JsonDict
-from stouputils.decorators import simple_cache
 
 from ...core.__memory__ import Mem
 from ...core.cls.item import Item
@@ -32,7 +32,7 @@ class PulverizerRecipeHandler:
         handler = cls()
         handler.generate_recipes()
 
-    @simple_cache
+    @stp.simple_cache
     def simplenergy_pulverizer_recipe(self, recipe: PulverizingRecipe, item: str) -> str:
         """ Generate a pulverizer recipe.
 
@@ -60,6 +60,8 @@ class PulverizerRecipeHandler:
 
             for recipe in obj.recipes:
                 if recipe["type"] == PulverizingRecipe.type:
+                    if not recipe.get("ingredient"):
+                        recipe["ingredient"] = ingr_repr(item)
                     recipe = PulverizingRecipe.from_dict(recipe)
                     write_function(
                         self.SIMPLENERGY_PULVERIZER_PATH,

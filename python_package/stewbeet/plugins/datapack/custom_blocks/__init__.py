@@ -3,11 +3,9 @@
 import os
 from pathlib import Path
 
+import stouputils as stp
 from beet import Advancement, BlockTag, Context, EntityTypeTag, LootTable, Predicate
 from beet.core.utils import JsonDict
-from stouputils.decorators import measure_time
-from stouputils.io import clean_path, json_dump, relative_path
-from stouputils.print import debug, error
 
 from ....core.__memory__ import Mem
 from ....core.cls.block import VANILLA_BLOCK_FOR_ORES, GrowingSeed, GrowingSeedLoot
@@ -28,7 +26,7 @@ from ....core.utils.io import set_json_encoder, write_function, write_function_t
 
 
 # Main entry point
-@measure_time(message="Execution time of 'stewbeet.plugins.datapack.custom_blocks'")
+@stp.measure_time(message="Execution time of 'stewbeet.plugins.datapack.custom_blocks'")
 def beet_default(ctx: Context):
 	""" Main entry point for the custom blocks plugin.
 	This plugin sets up custom blocks in the datapack based of the given definitions configuration.
@@ -40,7 +38,7 @@ def beet_default(ctx: Context):
 	if Mem.ctx is None: # pyright: ignore[reportUnnecessaryComparison]
 		Mem.ctx = ctx
 	ns: str = ctx.project_id
-	textures_folder: str = relative_path(ctx.meta.get("stewbeet", {}).get("textures_folder", ""))
+	textures_folder: str = stp.relative_path(ctx.meta.get("stewbeet", {}).get("textures_folder", ""))
 
 	# Assertions
 	assert ctx.project_id, "Project ID is not set. Please set it in the project configuration."
@@ -48,7 +46,7 @@ def beet_default(ctx: Context):
 
 	# Textures
 	source_textures: dict[str, str] = {
-		clean_path(str(p)).split("/")[-1]: relative_path(str(p))
+		stp.clean_path(str(p)).split("/")[-1]: stp.relative_path(str(p))
 		for p in Path(textures_folder).rglob("*.png")
 	}
 
@@ -89,7 +87,7 @@ execute if score #rotation {ns}.data matches 0 if predicate {ns}:facing/west run
 	for item, data in Mem.definitions.items():
 		obj = Item.from_id(item)
 		item_name: str = item.replace("_", " ").title()
-		custom_name: str = json_dump({"CustomName": obj.components.get("item_name", item_name)}, max_level=0)[:-1] # Remove the last new line
+		custom_name: str = stp.json_dump({"CustomName": obj.components.get("item_name", item_name)}, max_level=0)[:-1] # Remove the last new line
 
 		# Custom block
 		if data.get(VANILLA_BLOCK):
@@ -363,7 +361,7 @@ function {ns}:custom_blocks/{item}/update_seed_model
 """)
 						break
 				else:
-					error(f"Growing seed '{item}' has a growing time < to the number of stages ({growing_time} seconds). Please increase the growing time or reduce the number of stages.")
+					stp.error(f"Growing seed '{item}' has a growing time < to the number of stages ({growing_time} seconds). Please increase the growing time or reduce the number of stages.")
 
 				# Make the loot table for the seed
 				loot_table: str | list[GrowingSeedLoot] = growing_seed.loots
@@ -429,7 +427,7 @@ scoreboard objectives add {ns}.growth_stage dummy
 
 		# Change is_used state
 		if not official_lib_used("smithed.custom_block"):
-			debug("Found custom blocks using CUSTOM_BLOCK_VANILLA in the definitions, adding 'smithed.custom_block' to the dependencies")
+			stp.debug("Found custom blocks using CUSTOM_BLOCK_VANILLA in the definitions, adding 'smithed.custom_block' to the dependencies")
 
 		# Write function tag to link with the library
 		write_function_tag("smithed.custom_block:event/on_place", [f"{ns}:custom_blocks/on_place"])

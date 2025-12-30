@@ -4,11 +4,9 @@
 import os
 from pathlib import Path
 
+import stouputils as stp
 from beet import Equipment, Texture
 from beet.core.utils import JsonDict
-from stouputils.decorators import handle_error
-from stouputils.io import clean_path, json_dump, relative_path
-from stouputils.print import error
 
 from ..__memory__ import Mem
 from ..cls.block import VANILLA_BLOCK_FOR_ORES, Block
@@ -20,7 +18,7 @@ from .equipments import SLOTS, EquipmentsConfig, VanillaEquipments, format_attri
 
 
 # Generate everything related to the ore
-@handle_error
+@stp.handle_error
 def generate_everything_about_this_material(
 	material: str = "adamantium_fragment",
 	equipments_config: EquipmentsConfig|None = None,
@@ -36,7 +34,7 @@ def generate_everything_about_this_material(
 		ignore_recipes	(bool):						If True, no recipes will be added in the definitions.
 	"""
 	# Assertions
-	textures_folder: str = relative_path(Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", ""))
+	textures_folder: str = stp.relative_path(Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", ""))
 	assert textures_folder != "", "Textures folder path not found in 'ctx.meta.stewbeet.textures_folder'. Please set a directory path in project configuration."
 
 	# Override ignore_recipes?
@@ -45,7 +43,7 @@ def generate_everything_about_this_material(
 
 	# Prepare constants
 	textures: dict[str, str] = {
-		clean_path(str(p)).split("/")[-1]: relative_path(str(p))
+		stp.clean_path(str(p)).split("/")[-1]: stp.relative_path(str(p))
 		for p in Path(textures_folder).rglob("*.png")
 	}
 	durability_factor: float = 1.0
@@ -60,7 +58,6 @@ def generate_everything_about_this_material(
 			material = material[:-1]
 		material_base = material.split(":")[-1]		# Get the base material name (ex: "adamantium" from "adamantium_fragment")
 	main_ingredient = ingr_repr(material) 			# Get the main ingredient for recipes
-
 
 	## Ingredients (ingot, nugget, raw, and other)
 	for item in [material_base, f"{material_base}_fragment", f"{material_base}_ingot", f"{material_base}_nugget", f"raw_{material_base}", f"{material_base}_dust", f"{material_base}_stick", f"{material_base}_rod"]:
@@ -152,7 +149,7 @@ def generate_everything_about_this_material(
 		if any(f"{material_base}_{gear}.png" in textures for gear in gear_types) and layer_file in textures:
 
 			# Define source and destination paths for texture copying
-			source: str = relative_path(os.path.splitext(textures[layer_file])[0], textures_folder)
+			source: str = stp.relative_path(os.path.splitext(textures[layer_file])[0], textures_folder)
 			destination: str = f"entity/equipment/{humanoid_type}/{source}"
 
 			# Copy the texture file
@@ -169,7 +166,7 @@ def generate_everything_about_this_material(
 
 	# Create equipment asset if any layers were processed
 	if top_layer or bottom_layer:
-		Mem.ctx.assets[f"{Mem.ctx.project_id}:{material_base}"] = Equipment(json_dump(model_data))
+		Mem.ctx.assets[f"{Mem.ctx.project_id}:{material_base}"] = Equipment(stp.json_dump(model_data))
 
 
 	## Armor (helmet, chestplate, leggings, boots)
@@ -307,14 +304,14 @@ def add_recipes_for_dust(material: str, pulverize: list[str | JsonDict], smelt_t
 		smelt_to	(dict):				The ingredient representation of the result of smelting the dust, ex: ingr_repr("minecraft:copper_ingot")}
 	"""
 	# Assertions
-	textures_folder: str = relative_path(Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", ""))
+	textures_folder: str = stp.relative_path(Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", ""))
 	assert textures_folder != "", "Textures folder path not found in 'ctx.meta.stewbeet.textures_folder'. Please set a directory path in project configuration."
 
 	# Prepare constants
-	textures_set: set[str] = {clean_path(str(p)).split("/")[-1] for p in Path(textures_folder).rglob("*.png")}
+	textures_set: set[str] = {stp.clean_path(str(p)).split("/")[-1] for p in Path(textures_folder).rglob("*.png")}
 	dust: str = material + "_dust"
 	if f"{dust}.png" not in textures_set:
-		error(f"Error during dust recipe generation: texture '{dust}.png' not found (required for '{material}' dust)")
+		stp.error(f"Error during dust recipe generation: texture '{dust}.png' not found (required for '{material}' dust)")
 		return
 
 	# Add dust to the definitions if not found

@@ -2,7 +2,7 @@
 # Imports
 import os
 
-from stouputils.continuous_delivery.cd_utils import load_credentials  # type: ignore # noqa: F401
+from stouputils import load_credentials  # type: ignore # noqa: F401
 
 from ..core.constants import LATEST_MC_VERSION
 from ..utils import ProjectConfig, get_project_config

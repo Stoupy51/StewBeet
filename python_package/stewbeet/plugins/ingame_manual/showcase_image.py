@@ -2,9 +2,8 @@
 # Imports
 import os
 
+import stouputils as stp
 from PIL import Image
-from stouputils.io import relative_path
-from stouputils.print import debug, warning
 
 from ...core.__memory__ import Mem
 from .image_utils import careful_resize
@@ -103,7 +102,7 @@ def create_showcase_image(items: list[str], filename: str, simple_case: Image.Im
 		if os.path.exists(texture_path):
 			item_image: Image.Image = Image.open(texture_path)
 		else:
-			warning(f"Missing texture at '{texture_path}', using empty texture for showcase")
+			stp.warning(f"Missing texture at '{texture_path}', using empty texture for showcase")
 			item_image: Image.Image = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
 
 		# Resize item image to 89% of case size
@@ -127,5 +126,5 @@ def create_showcase_image(items: list[str], filename: str, simple_case: Image.Im
 	os.makedirs(output, exist_ok=True)
 	output_path = os.path.join(output, filename)
 	showcase_image.save(output_path, "PNG")
-	debug(f"Generated showcase image: {relative_path(output_path)} ({rows}x{cols} grid, {len(items)} items)")
+	stp.debug(f"Generated showcase image: {stp.relative_path(output_path)} ({rows}x{cols} grid, {len(items)} items)")
 

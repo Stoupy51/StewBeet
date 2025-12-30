@@ -1,11 +1,8 @@
 
 # ruff: noqa: RUF012
 # Imports
-import os
-
+import stouputils as stp
 from beet.core.utils import JsonDict
-from stouputils.io import clean_path
-from stouputils.print import error
 
 
 # Utils functions for fonts (item start at 0x0000, pages at 0xa000)
@@ -13,7 +10,7 @@ from stouputils.print import error
 def get_font(i: int) -> str:
 	i += 0x0020	# Minecraft only allow starting this value
 	if i > 0xffff:
-		error(f"Font index {i} is too big. Maximum is 0xffff.")
+		stp.error(f"Font index {i} is too big. Maximum is 0xffff.")
 	return chr(i)
 def get_page_font(i: int) -> str:
 	return get_font(i + 0x1000)
@@ -24,8 +21,8 @@ def get_next_font() -> str:	# Returns an incrementing value for each craft
 
 # Constants
 SQUARE_SIZE: int = 32
-MANUAL_ASSETS_PATH: str = clean_path(os.path.dirname(os.path.realpath(__file__)) + "/")
-TEMPLATES_PATH: str = MANUAL_ASSETS_PATH + "templates"
+MANUAL_ASSETS_PATH: str = stp.get_root_path(__file__)
+TEMPLATES_PATH: str = MANUAL_ASSETS_PATH + "/templates"
 FONT_FILE: str = "manual"
 BORDER_COLOR_HEX: int = 0xB64E2F
 BORDER_COLOR: tuple[int, int, int, int] = (BORDER_COLOR_HEX >> 16) & 0xFF, (BORDER_COLOR_HEX >> 8) & 0xFF, BORDER_COLOR_HEX & 0xFF, 255

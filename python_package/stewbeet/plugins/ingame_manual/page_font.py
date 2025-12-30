@@ -3,9 +3,9 @@
 # Imports
 import os
 
+import stouputils as stp
 from beet.core.utils import JsonDict
 from PIL import Image
-from stouputils.print import warning
 
 from ...core.__memory__ import Mem
 from ...core.ingredients import FURNACES_RECIPES_TYPES, ingr_to_id
@@ -35,7 +35,7 @@ def generate_page_font(name: str, page_font: str, craft: JsonDict|None = None, o
 	# Get result texture (to place later)
 	image_path = f"{SharedMemory.cache_path}/items/{Mem.ctx.project_id}/{name}.png"
 	if not os.path.exists(image_path):
-		warning(f"Missing texture at '{image_path}', using placeholder texture")
+		stp.warning(f"Missing texture at '{image_path}', using placeholder texture")
 		result_texture = Image.new("RGBA", (SQUARE_SIZE, SQUARE_SIZE), (255, 255, 255, 0))  # Placeholder image
 	else:
 		result_texture = Image.open(image_path)
@@ -46,7 +46,7 @@ def generate_page_font(name: str, page_font: str, craft: JsonDict|None = None, o
 		result_id = result_id.replace(":", "/")
 		image_path = f"{SharedMemory.cache_path}/items/{result_id}.png"
 		if not os.path.exists(image_path):
-			warning(f"Missing texture at '{image_path}', using placeholder texture")
+			stp.warning(f"Missing texture at '{image_path}', using placeholder texture")
 			result_texture = Image.new("RGBA", (SQUARE_SIZE, SQUARE_SIZE), (255, 255, 255, 0))
 		else:
 			result_texture = Image.open(image_path)
@@ -94,7 +94,7 @@ def generate_page_font(name: str, page_font: str, craft: JsonDict|None = None, o
 						item = item.replace(":", "/")
 						image_path = f"{SharedMemory.cache_path}/items/{item}.png"
 						if not os.path.exists(image_path):
-							warning(f"Missing texture at '{image_path}', using placeholder texture")
+							stp.warning(f"Missing texture at '{image_path}', using placeholder texture")
 							item_texture = Image.new("RGBA", (SQUARE_SIZE, SQUARE_SIZE), (255, 255, 255, 0))  # Placeholder image
 						else:
 							item_texture = Image.open(image_path)
@@ -130,7 +130,7 @@ def generate_page_font(name: str, page_font: str, craft: JsonDict|None = None, o
 			input_item = input_item.replace(":", "/")
 			image_path = f"{SharedMemory.cache_path}/items/{input_item}.png"
 			if not os.path.exists(image_path):
-				warning(f"Missing texture at '{image_path}', using placeholder texture")
+				stp.warning(f"Missing texture at '{image_path}', using placeholder texture")
 				item_texture = Image.new("RGBA", (SQUARE_SIZE, SQUARE_SIZE), (255, 255, 255, 0))  # Placeholder image
 			else:
 				item_texture = Image.open(image_path)
@@ -191,10 +191,11 @@ def generate_wiki_font_for_ingr(name: str, craft: JsonDict) -> str:
 
 	# Get result item texture and paste it on the wiki_ingredient_of_craft_template
 	try:
+		craft_type = craft["type"]
 		result_item = ingr_to_id(craft["result"]).replace(":", "/")
 		texture_path = f"{SharedMemory.cache_path}/items/{result_item}.png"
 		result_item = result_item.replace("/", "_")
-		dest_path = f"{SharedMemory.cache_path}/font/wiki_icons/{result_item}.png"
+		dest_path = f"{SharedMemory.cache_path}/font/wiki_icons/{result_item}_{craft_type}.png"
 
 		# Load texture and resize it
 		item_texture = Image.open(texture_path)
@@ -204,7 +205,7 @@ def generate_wiki_font_for_ingr(name: str, craft: JsonDict) -> str:
 		item_texture = item_texture.convert("RGBA")
 
 		# Load the template
-		filename: str = "wiki_ingredient_of_craft_template.png" if craft["type"] != "mining" else "wiki_mining_template.png"
+		filename: str = "wiki_ingredient_of_craft_template.png" if craft_type != "mining" else "wiki_mining_template.png"
 		template = Image.open(f"{TEMPLATES_PATH}/{filename}")
 		template = careful_resize(template, item_res)
 
@@ -217,10 +218,11 @@ def generate_wiki_font_for_ingr(name: str, craft: JsonDict) -> str:
 
 		# Prepare provider
 		font = get_next_font()
-		SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/wiki_icons/{result_item}.png", "ascent": 8, "height": 16, "chars": [font]})
+		rel_path: str = dest_path.replace(f"{SharedMemory.cache_path}/", f"{Mem.ctx.project_id}:")
+		SharedMemory.font_providers.append({"type":"bitmap","file":rel_path, "ascent": 8, "height": 16, "chars": [font]})
 
 	except Exception as e:
-		warning(f"Failed to generate craft icon for {name}: {e}\nreturning default font...")
+		stp.warning(f"Failed to generate craft icon for {name}: {e}\nreturning default font...")
 		pass
 
 	# Return the font

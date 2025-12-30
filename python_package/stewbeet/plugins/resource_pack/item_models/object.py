@@ -5,11 +5,9 @@ from __future__ import annotations
 import os
 from collections.abc import Iterable
 
+import stouputils as stp
 from beet import ItemModel, Model
 from beet.core.utils import JsonDict
-from stouputils.decorators import LogLevels, handle_error, simple_cache
-from stouputils.io import json_dump
-from stouputils.print import error
 
 from ....core.__memory__ import Mem
 from ....core.cls.block import Block, GrowingSeed
@@ -82,7 +80,7 @@ class AutoModel:
 		"""
 		return cls(data, source_textures, ignore_textures)
 
-	@handle_error(exceptions=ValueError, error_log=LogLevels.ERROR_TRACEBACK)
+	@stp.handle_error(exceptions=ValueError, error_log=stp.LogLevels.ERROR_TRACEBACK)
 	def get_powered_texture(self, variants: list[str], side: str, on_off: str) -> str:
 		""" Get the powered texture for a given side.
 
@@ -132,7 +130,7 @@ class AutoModel:
 
 		return all(any(model_matches(model, x) for x in variants) for model in models)
 
-	@simple_cache
+	@stp.simple_cache
 	def get_same_folder_variants(self, variants: Iterable[str]) -> list[str]:
 		""" Get variants that are in the same folder as the item.
 
@@ -181,7 +179,7 @@ class AutoModel:
 			stage_texture_name: str = f"{texture_basename}_stage_{i}"
 			if stage_texture_name not in stage_textures:
 				if not self.ignore_textures:
-					error(f"Missing texture for growing seed stage: '{stage_texture_name}.png'")
+					stp.error(f"Missing texture for growing seed stage: '{stage_texture_name}.png'")
 				continue
 
 			# Create model for this stage
@@ -209,7 +207,7 @@ class AutoModel:
 			# Add the texture to assets
 			Mem.ctx.assets[self.ns].textures[f"item/seeds/{stage_texture_name}"] = texture_mcmeta(stage_textures[stage_texture_name])
 
-	@handle_error(exceptions=ValueError, error_log=LogLevels.ERROR_TRACEBACK)
+	@stp.handle_error(exceptions=ValueError, error_log=stp.LogLevels.ERROR_TRACEBACK)
 	def process(self) -> set[str]:
 		""" Process the item model.
 
@@ -325,7 +323,7 @@ class AutoModel:
 						# Else, if there are no textures override, show error
 						elif not overrides.get("textures"):
 							if not self.ignore_textures:
-								patterns = json_dump({
+								patterns = stp.json_dump({
 									"cake": cake,
 									"cube_bottom_top": cube_bottom_top,
 									"orientable": orientable,

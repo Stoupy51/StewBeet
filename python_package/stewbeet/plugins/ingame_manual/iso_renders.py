@@ -5,12 +5,10 @@ import shutil
 from typing import cast
 
 import requests
+import stouputils as stp
 from beet import Model
 from beet.core.utils import JsonDict
 from model_resolver.render import Render
-from stouputils.io import super_open
-from stouputils.parallel import multithreading
-from stouputils.print import debug, warning
 
 from ...core.__memory__ import Mem
 from ...core.cls.item import Item
@@ -70,12 +68,12 @@ def generate_all_iso_renders():
 			Mem.ctx.assets["minecraft"].atlases["temporary_stewbeet"] = Mem.ctx.assets.overlays["before_format_73"]["minecraft"].atlases["blocks"]
 
 		## Model Resolver >= v1.12.0
-		debug(f"Generating iso renders for {len(for_model_resolver)} items, this may take a while...")
+		stp.debug(f"Generating iso renders for {len(for_model_resolver)} items, this may take a while...")
 		render = Render(Mem.ctx)
 		for rp_path, dst_path in for_model_resolver.items():
 			render.add_model_task(rp_path, path_save=dst_path, animation_mode="one_file")
 		render.run()
-		debug("Generated iso renders for all items")
+		stp.debug("Generated iso renders for all items")
 
 		# Remove temporary atlas
 		if any_atlas_used:
@@ -111,14 +109,14 @@ def generate_all_iso_renders():
 					link: str = f"{base_link}/{folder}/{item}.png"
 					response = requests.get(link)
 					if response.status_code == 200:
-						with super_open(destination, "wb") as file:
+						with stp.super_open(destination, "wb") as file:
 							return file.write(response.content)
 			# If all attempts failed
-			warning(f"Failed to download texture for '{item}', please add it manually to '{destination}'")
-			warning(f"Suggestion link: '{DOWNLOAD_VANILLA_ASSETS_SOURCE}'")
+			stp.warning(f"Failed to download texture for '{item}', please add it manually to '{destination}'")
+			stp.warning(f"Suggestion link: '{DOWNLOAD_VANILLA_ASSETS_SOURCE}'")
 
 	# Multithread the download
-	multithreading(download_item, used_vanilla_items, max_workers=min(32, len(used_vanilla_items)))
+	stp.multithreading(download_item, used_vanilla_items, max_workers=min(32, len(used_vanilla_items)))
 
 	# Download painting texture for custom paintings
 	last_painting_path: str = ""

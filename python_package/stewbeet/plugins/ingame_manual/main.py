@@ -6,19 +6,30 @@ import shutil
 from pathlib import Path
 from typing import Any, cast
 
+import stouputils as stp
 from beet import Font, Texture
 from beet.core.utils import JsonDict, TextComponent
 from PIL import Image
-from stouputils.collections import unique_list
-from stouputils.io import clean_path, json_dump, relative_path, super_open
-from stouputils.print import colored_for_loop, debug, error, suggestion, warning
 
 from stewbeet.core.definitions_helper.completion import add_private_custom_data_for_namespace
 
 from ...core.__memory__ import Mem
 from ...core.cls.block import Block, VanillaBlock
 from ...core.cls.item import Item
-from ...core.cls.recipe import AwakenedForgeRecipe, CraftingShapedRecipe, PulverizingRecipe
+from ...core.cls.recipe import (
+	AwakenedForgeRecipe,
+	BlastingRecipe,
+	CampfireCookingRecipe,
+	CraftingShapedRecipe,
+	CraftingShapelessRecipe,
+	PulverizingRecipe,
+	SmeltingRecipe,
+	SmithingTransformRecipe,
+	SmithingTrimRecipe,
+	SmokingRecipe,
+	StonecuttingRecipe,
+)
+from ...core.cls.wiki_button import WikiButton
 from ...core.constants import (
 	CATEGORY,
 	NO_SILK_TOUCH_DROP,
@@ -101,15 +112,15 @@ def deepcopy(x: Any) -> Any:
 
 def manual_main():
 	# Copy everything in the manual assets folder to the templates folder
-	with super_open(f"{TEMPLATES_PATH}/.gitignore", "w") as f:
+	with stp.super_open(f"{TEMPLATES_PATH}/.gitignore", "w") as f:
 		f.write("*")
-	shutil.copytree(MANUAL_ASSETS_PATH + "assets", TEMPLATES_PATH, dirs_exist_ok = True)
+	shutil.copytree(MANUAL_ASSETS_PATH + "/assets", TEMPLATES_PATH, dirs_exist_ok = True)
 
 	# Copy the manual_overrides folder to the templates folder
 	manual_overrides: str = Mem.ctx.meta.get("stewbeet",{}).get("manual", {}).get("manual_overrides", "")
 	if manual_overrides and os.path.exists(manual_overrides):
 		shutil.copytree(manual_overrides, TEMPLATES_PATH, dirs_exist_ok = True)
-		with super_open(f"{TEMPLATES_PATH}/.gitignore", "w") as f:
+		with stp.super_open(f"{TEMPLATES_PATH}/.gitignore", "w") as f:
 			f.write("*") # Ensure the .gitignore file is present to avoid committing manual overrides
 
 	# Launch the routine
@@ -122,7 +133,7 @@ def routine():
 	if not manual_name:
 		manual_name = f"{Mem.ctx.project_name} Manual"
 	if len(manual_name) >= 32:
-		error(f"Manual name '{manual_name}' is too long (max 32 characters), Minecraft does not support it. Please change it in the stewbeet config.")
+		stp.error(f"Manual name '{manual_name}' is too long (max 32 characters), Minecraft does not support it. Please change it in the stewbeet config.")
 
 	# If smithed crafter is used, add it to the manual (last page that we will move to the second page)
 	if OFFICIAL_LIBS["smithed.crafter"]["is_used"]:
@@ -212,7 +223,7 @@ def routine():
 		obj = Item.from_id(item)
 
 		if not obj.manual_category:
-			suggestion(f"Item '{item}' has no category key. Skipping.")
+			stp.suggestion(f"Item '{item}' has no category key. Skipping.")
 			continue
 
 		if obj.manual_category not in categories:
@@ -221,7 +232,7 @@ def routine():
 
 	# Error message if there is too many categories
 	if len(categories) > MAX_ITEMS_PER_PAGE:
-		error(f"Too many categories ({len(categories)}). Maximum is {MAX_ITEMS_PER_PAGE}. Please reduce the number of item categories.")
+		stp.error(f"Too many categories ({len(categories)}). Maximum is {MAX_ITEMS_PER_PAGE}. Please reduce the number of item categories.")
 
 	# Debug categories and sizes
 	s = ""
@@ -232,7 +243,7 @@ def routine():
 		if len(items) > MAX_ITEMS_PER_PAGE:
 			s += f" (splitted into {len(items) // MAX_ITEMS_PER_PAGE + 1} pages)"
 	nb_categories: int = len(categories) - (1 if HEAVY_WORKBENCH_CATEGORY in categories else 0)
-	debug(f"Found {nb_categories} categories in the definitions:{s}")
+	stp.debug(f"Found {nb_categories} categories in the definitions:{s}")
 
 	# Split up categories into pages
 	categories_pages: dict[str, list[str]] = {}
@@ -256,7 +267,7 @@ def routine():
 	# If the manual cache is enabled and we have a cache file, load it
 	cache_pages: bool = manual_config.get("cache_pages", False)
 	if cache_pages and json_dump_path and os.path.exists(json_dump_path) and os.path.exists(f"{SharedMemory.cache_path}/font/manual.json"):
-		with super_open(json_dump_path, "r") as f:
+		with stp.super_open(json_dump_path, "r") as f:
 			book_content: list[list[TextComponent]] = json.load(f)
 
 		# Make the page dictionary for later use (dialog)
@@ -327,7 +338,7 @@ def routine():
 					if os.path.exists(texture_path):
 						item_image = Image.open(texture_path)
 					else:
-						warning(f"Missing texture at '{texture_path}', using empty texture")
+						stp.warning(f"Missing texture at '{texture_path}', using empty texture")
 						item_image = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
 					if not SharedMemory.high_resolution:
 						resized = careful_resize(item_image, 32)
@@ -387,7 +398,7 @@ def routine():
 				crafts += generate_otherside_crafts(name)
 				crafts = remove_duplicate_furnace_crafts(crafts, name)
 				crafts = remove_unknown_crafts(crafts)
-				crafts = unique_list(crafts)
+				crafts = stp.unique_list(crafts)
 
 				# Helper function to add count information to mining recipes
 				def add_count_to_mining_recipe(mining_recipe: JsonDict, no_silk_drop_data: JsonDict | str) -> None:
@@ -492,29 +503,32 @@ def routine():
 				else:
 					if raw_data.get(WIKI_COMPONENT):
 						found_event: JsonDict | None = None
-						wiki_component: TextComponent = raw_data[WIKI_COMPONENT]
-						if isinstance(wiki_component, dict) and "click_event" in wiki_component:
-							found_event = wiki_component["click_event"]
-						elif isinstance(wiki_component, list):
-							for comp in wiki_component:
-								if isinstance(comp, dict) and "click_event" in comp:
-									found_event = cast(JsonDict, comp["click_event"])
-									break
+						wiki_component: TextComponent | list[WikiButton] = raw_data[WIKI_COMPONENT]
+						is_list_of_wiki_button: bool = isinstance(wiki_component, list) and any(isinstance(comp, WikiButton) for comp in wiki_component)
+						wiki_buttons: list[TextComponent] = wiki_component if is_list_of_wiki_button else [wiki_component] # type: ignore
+						for button in wiki_buttons:
+							if isinstance(button, dict) and "click_event" in button:
+								found_event = button["click_event"]
+							elif isinstance(button, list):
+								for comp in button:
+									if isinstance(comp, dict) and "click_event" in comp:
+										found_event = cast(JsonDict, comp["click_event"])
+										break
 
-						info_buttons.append({
-							"text": WIKI_INFO_FONT + VERY_SMALL_NONE_FONT * 2,
-							"hover_event": {
-								"action": "show_text",
-								"value": wiki_component
-							}
-						})
-						if found_event:
-							info_buttons[-1]["click_event"] = found_event
+							info_buttons.append({
+								"text": WIKI_INFO_FONT + VERY_SMALL_NONE_FONT * 2,
+								"hover_event": {
+									"action": "show_text",
+									"value": button
+								}
+							})
+							if found_event:
+								info_buttons[-1]["click_event"] = found_event
 
 					# For each craft (except smelting dupes),
 					previous_result: Any = None
 					for i, craft in enumerate(crafts):
-						if craft["type"] == "crafting_shapeless":
+						if craft["type"] == CraftingShapelessRecipe.type:
 							craft = convert_shapeless_to_shaped(craft)
 
 						# Skip if result is same as previous result
@@ -546,15 +560,15 @@ def routine():
 						if craft["type"] not in CRAFTING_RECIPES_TYPES:
 							recipe_type_names: dict[str, str] = {
 								"mining": "Mining",
-								"crafting_shaped": "Shaped Recipe",
-								"crafting_shapeless": "Shapeless Recipe",
-								"smelting": "Smelting",
-								"blasting": "Blasting",
-								"smoking": "Smoking",
-								"campfire_cooking": "Campfire Cooking",
-								"stonecutting": "Stonecutting",
-								"smithing_transform": "Smithing Transform",
-								"smithing_trim": "Smithing Trim",
+								CraftingShapedRecipe.type: "Shaped Recipe",
+								CraftingShapelessRecipe.type: "Shapeless Recipe",
+								SmeltingRecipe.type: "Smelting",
+								BlastingRecipe.type: "Blasting",
+								SmokingRecipe.type: "Smoking",
+								CampfireCookingRecipe.type: "Campfire Cooking",
+								StonecuttingRecipe.type: "Stonecutting",
+								SmithingTransformRecipe.type: "Smithing Transform",
+								SmithingTrimRecipe.type: "Smithing Trim",
 								PulverizingRecipe.type: "(SimplEnergy) Pulverizing",
 								AwakenedForgeRecipe.type: "(Stardust Fragment) Awakened Forge",
 							}
@@ -729,7 +743,7 @@ def routine():
 			book_content.append(content)
 			pass
 
-		for page_content in colored_for_loop(SharedMemory.manual_pages, desc="Creating manual pages"):
+		for page_content in stp.colored_for_loop(SharedMemory.manual_pages, desc="Creating manual pages"):
 			encode_page(page_content)
 
 		## Add categories page
@@ -758,7 +772,7 @@ def routine():
 				if os.path.exists(texture_path):
 					item_image = Image.open(texture_path)
 				else:
-					warning(f"Missing texture at '{texture_path}', using empty texture")
+					stp.warning(f"Missing texture at '{texture_path}', using empty texture")
 					item_image = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
 				if not SharedMemory.high_resolution:
 					resized = careful_resize(item_image, 32)
@@ -913,15 +927,15 @@ def routine():
 		if SharedMemory.use_dialog > 0:
 			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/book.png", "ascent": 25, "height": 300, "chars": [BOOK_FONT]})
 		fonts = {"providers": SharedMemory.font_providers}
-		with super_open(f"{SharedMemory.cache_path}/font/manual.json", "w") as f:
-			f.write(json_dump(fonts))
+		with stp.super_open(f"{SharedMemory.cache_path}/font/manual.json", "w") as f:
+			f.write(stp.json_dump(fonts))
 
 		# Debug book_content
 		json_dump_path: str = manual_config.get("json_dump_path", "")
 		if json_dump_path:
-			with super_open(json_dump_path, "w") as f:
-				f.write(json_dump(book_content))
-			debug(f"Debug book_content at '{relative_path(json_dump_path)}'")
+			with stp.super_open(json_dump_path, "w") as f:
+				f.write(stp.json_dump(book_content))
+			stp.debug(f"Debug book_content at '{stp.relative_path(json_dump_path)}'")
 
 		# Generate showcase images if requested
 		showcase_image: int = manual_config.get("showcase_image", 3)
@@ -944,9 +958,9 @@ def routine():
 			path: str = fp["file"]
 			path = os.path.splitext(path.split(":", 1)[-1])[0]  # Remove namespace and extension
 			if not Mem.ctx.assets[Mem.ctx.project_id].textures.get(path):
-				error(f"Missing font provider at '{path}' for {fp})")
+				stp.error(f"Missing font provider at '{path}' for {fp})")
 			if len(fp["chars"]) < 1 or (len(fp["chars"]) == 1 and not fp["chars"][0]):
-				error(f"Font provider '{path}' has no chars")
+				stp.error(f"Font provider '{path}' has no chars")
 
 	# Generate dialog files if needed
 	if SharedMemory.use_dialog > 0:
@@ -974,19 +988,16 @@ def routine():
 			del manual_obj.components["written_book_content"]
 			manual_obj.components["lore"] = [{"text": f"by {Mem.ctx.project_author}", "color": "gray", "italic": False}]
 		if manual_already_exists:
-			current_def: JsonDict | Item = Mem.definitions["manual"]
-			if isinstance(current_def, dict):
-				Mem.definitions["manual"] = Item.from_dict(super_merge_dict(manual_obj.to_dict(), current_def), item_id="manual")
-			else:
-				Mem.definitions["manual"] = Item.from_dict(super_merge_dict(manual_obj.to_dict(), current_def.to_dict()), item_id="manual")
+			current_def: Item = Item.from_id("manual")
+			Mem.definitions["manual"] = Item.from_dict(super_merge_dict(manual_obj.to_dict(), current_def.to_dict()), item_id="manual")
 		add_item_name_and_lore_if_missing(black_list=[item for item in Mem.definitions if item != "manual"])
 		add_private_custom_data_for_namespace(black_list=[item for item in Mem.definitions if item != "manual"])
 
 		# Add the model to the resource pack if it doesn't already exist
 		if not manual_already_exists:
-			textures_folder: str = relative_path(Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", ""))
+			textures_folder: str = stp.relative_path(Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", ""))
 			textures: dict[str, str] = {
-				clean_path(str(p)).split("/")[-1]: relative_path(str(p))
+				stp.clean_path(str(p)).split("/")[-1]: stp.relative_path(str(p))
 				for p in Path(textures_folder).rglob("*.png")
 			}
 			AutoModel.from_definitions(manual_obj, textures).process()

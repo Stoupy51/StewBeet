@@ -3,10 +3,9 @@
 import os
 from typing import Any, TypeVar, cast
 
+import stouputils as stp
 from beet import Advancement, Function, JsonFile, NamespaceContainer, NamespaceProxy, TagFile, Texture
 from beet.core.utils import JsonDict
-from stouputils.collections import unique_list
-from stouputils.io import json_dump, json_load
 
 from ..__memory__ import Mem
 
@@ -62,11 +61,11 @@ def write_tag(path: str, tag_type: NamespaceProxy[Any] | NamespaceContainer[Any]
 		data["values"] = (values or []) + data["values"]
 	else:
 		data["values"].extend(values or [])
-	data["values"] = unique_list(data["values"])
+	data["values"] = stp.unique_list(data["values"])
 	if max_level is None:
-		tag.encoder = json_dump
+		tag.encoder = stp.json_dump
 	else:
-		tag.encoder = lambda x: json_dump(x, max_level=max_level)
+		tag.encoder = lambda x: stp.json_dump(x, max_level=max_level)
 
 def write_function_tag(path: str, functions: list[Any] | None = None, prepend: bool = False, max_level: int | None = None) -> None:
 	""" Write a function tag at the given path.
@@ -180,7 +179,7 @@ def super_merge_dict(dict1: JsonDict, dict2: JsonDict) -> JsonDict:
 		elif key in dict1 and isinstance(dict1[key], list) and isinstance(value, list):
 			new_dict[key] = dict1[key] + value
 			if not any(isinstance(x, dict) for x in new_dict[key]):
-				new_dict[key] = unique_list(new_dict[key])
+				new_dict[key] = stp.unique_list(new_dict[key])
 
 		# Else, just overwrite or add value
 		else:
@@ -204,9 +203,9 @@ def set_json_encoder[JsonFileT: JsonFile](
 		JsonFile: The object with the encoder set
 	"""
 	if max_level is None:
-		obj.encoder = lambda x: json_dump(x, indent=indent)
+		obj.encoder = lambda x: stp.json_dump(x, indent=indent)
 	else:
-		obj.encoder = lambda x: json_dump(x, max_level=max_level, indent=indent)
+		obj.encoder = lambda x: stp.json_dump(x, max_level=max_level, indent=indent)
 	return obj
 
 
@@ -243,6 +242,6 @@ def texture_mcmeta(source_path: str) -> Texture:
 	"""
 	mcmeta_path: str = f"{source_path}.mcmeta"
 	if os.path.exists(mcmeta_path):
-		return Texture(source_path=source_path, mcmeta=json_load(mcmeta_path))
+		return Texture(source_path=source_path, mcmeta=stp.json_load(mcmeta_path))
 	return Texture(source_path=source_path)
 

@@ -1,7 +1,7 @@
 
 # Imports
+import stouputils as stp
 from beet import Context
-from stouputils.decorators import measure_time
 
 from ...core.__memory__ import Mem
 from .awakened_forge import AwakenedForgeRecipeHandler
@@ -12,7 +12,7 @@ from .vanilla import VanillaRecipeHandler
 
 
 # Main entry point
-@measure_time(message="Execution time of 'stewbeet.plugins.custom_recipes'")
+@stp.measure_time(message="Execution time of 'stewbeet.plugins.custom_recipes'")
 def beet_default(ctx: Context) -> None:
     """ Main entry point for the custom recipes plugin.
     This plugin handles the generation of custom recipes for the datapack.

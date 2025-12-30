@@ -1,12 +1,11 @@
 
-# ruff: noqa: RUF012, E101
+# ruff: noqa: E101
 # Imports
 from enum import Enum
 from typing import cast
 
+import stouputils as stp
 from beet.core.utils import JsonDict
-from stouputils.decorators import simple_cache
-from stouputils.print import warning
 
 from ..__memory__ import Mem
 
@@ -153,24 +152,30 @@ class EquipmentsConfig:
 		self.attributes: dict[str, float] = attributes
 		for key in attributes.keys():
 			if "player." in key:
-				warning("Since 1.21.3, the 'player.' prefix is no longer written in attributes!!!")
+				stp.warning("Since 1.21.3, the 'player.' prefix is no longer written in attributes!!!")
 			elif "generic." in key:
-				warning("Since 1.21.3, the 'generic.' prefix is no longer written in attributes!!!")
+				stp.warning("Since 1.21.3, the 'generic.' prefix is no longer written in attributes!!!")
 			if "knockback_resistance" in key and attributes[key] >= 1:
-				warning(f"You are setting the Knockback Resistance of an equipment to {attributes[key]}. Be aware that Minecraft automatically multiplies it by 10 when applied to an equipment.")
+				stp.warning(f"You are setting the Knockback Resistance of an equipment to {attributes[key]}. Be aware that Minecraft automatically multiplies it by 10 when applied to an equipment.")
 
 	def getter(self) -> tuple[DefaultOre, int, dict[str, float]]:
 		return self.equivalent_to, self.pickaxe_durability, self.attributes
 
-	@simple_cache
+	@stp.simple_cache
 	def get_tools_attributes(self) -> dict[str, float]:
 		NOT_ON_TOOLS = ["armor", "armor_toughness", "knockback_resistance"]
 		return {key: value for key, value in self.attributes.items() if key not in NOT_ON_TOOLS}
 
-	@simple_cache
+	@stp.simple_cache
 	def get_armor_attributes(self) -> dict[str, float]:
 		NOT_ON_ARMOR = ["attack_damage", "mining_efficiency"]
 		return {key: value for key, value in self.attributes.items() if key not in NOT_ON_ARMOR}
+
+	def __str__(self) -> str:
+		return f"EquipmentsConfig(equivalent_to={self.equivalent_to}, pickaxe_durability={self.pickaxe_durability}, attributes={self.attributes}, ignore_recipes={self.ignore_recipes})"
+
+	def __repr__(self) -> str:
+		return self.__str__()
 
 # UUIDs utils
 def format_attributes(attributes: dict[str, float], slot: str, attr_config: dict[str, float] | None = None) -> list[JsonDict]:

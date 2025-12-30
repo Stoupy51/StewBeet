@@ -6,20 +6,17 @@ import os
 from pathlib import Path
 from typing import Any, cast
 
+import stouputils as stp
 from beet import Context, Dialog, DialogTag, FormatSpecifier, Pack
 from beet.core.utils import JsonDict, TextComponent, split_version
 from box import Box
-from stouputils import debug, relative_path
-from stouputils.decorators import measure_time, retry
-from stouputils.io import json_dump
-from stouputils.print import warning
 
 from ...core import LATEST_MC_VERSION, MORE_ASSETS_PACK_FORMATS, MORE_DATA_PACK_FORMATS, MORE_DATA_VERSIONS, Mem, set_json_encoder
 from .source_lore_font import find_pack_png, prepare_source_lore_font
 
 
 # Main entry point
-@measure_time(printer=debug, message="Total execution time", is_generator=True)
+@stp.measure_time(printer=stp.debug, message="Total execution time", is_generator=True)
 def beet_default(ctx: Context):
 
 	# Assertions
@@ -51,11 +48,11 @@ def beet_default(ctx: Context):
 		Mem.ctx.meta["stewbeet"]["manual"]["name"] = f"{ctx.project_name} Manual"
 
 	# Convert paths to relative ones
-	object.__setattr__(ctx, "output_directory", relative_path(str(Mem.ctx.output_directory)))
+	object.__setattr__(ctx, "output_directory", stp.relative_path(str(Mem.ctx.output_directory)))
 
 	# Add missing pack format registries if not present, and data version
-	ctx.data.pack_format_registry.update(MORE_DATA_PACK_FORMATS)
-	ctx.assets.pack_format_registry.update(MORE_ASSETS_PACK_FORMATS)
+	ctx.data.pack_format_registry.update(MORE_DATA_PACK_FORMATS) # type: ignore
+	ctx.assets.pack_format_registry.update(MORE_ASSETS_PACK_FORMATS) # type: ignore
 	ctx.meta["data_version"] = MORE_DATA_VERSIONS
 	if ctx.minecraft_version:
 		tuple_version: tuple[int, ...] = tuple(int(x) for x in ctx.minecraft_version.split(".") if x.isdigit())
@@ -89,7 +86,7 @@ def beet_default(ctx: Context):
 				new_path = Path(textures_folder) / new_name
 				if old_path.exists() and not new_path.exists():
 					os.rename(old_path, new_path)
-					warning(f"Renamed texture '{file}' to '{new_name}'")
+					stp.warning(f"Renamed texture '{file}' to '{new_name}'")
 
 	# Extend the datapack namespace with sorter files
 	ctx.require("stewbeet.plugins.datapack.sorters.extend_datapack")
@@ -145,14 +142,14 @@ def beet_default(ctx: Context):
 		# Set pack ID, use new pack_mcmeta, and set json encoder
 		pack_mcmeta["id"] = Mem.ctx.project_id
 		pack.mcmeta.data = pack_mcmeta
-		pack.mcmeta.encoder = lambda x: json_dump(x, max_level=3)
+		pack.mcmeta.encoder = lambda x: stp.json_dump(x, max_level=3)
 
 	# Setup pack.mcmeta for both packs
 	setup_pack_mcmeta(ctx.data, ctx.data.pack_format)
 	setup_pack_mcmeta(ctx.assets, ctx.assets.pack_format)
 
 	# Fix pack.save to retry when there is a PermissionError (for example, when vscode or another program locks a file temporarily)
-	Pack.save = retry(Pack.save, exceptions=PermissionError, max_attempts=10, delay=1.0, backoff=1.2)  # type: ignore
+	Pack.save = stp.retry(Pack.save, exceptions=PermissionError, max_attempts=10, delay=1.0, backoff=1.2)  # type: ignore
 
 	# # Setup dialog convention for pause screen additions
 	# Mem.ctx.data["minecraft"].dialogs_tags["pause_screen_additions"] = set_json_encoder(DialogTag({"values":[{"id":"smithed:data_packs","required":False}]}))
