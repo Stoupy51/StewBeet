@@ -1,6 +1,6 @@
 
 # Stubs, build, and publish (uv)
-import os
+import stouputils as stp
 
-os.system("stouputils build")
+stp.pypi_full_routine_using_uv()
 

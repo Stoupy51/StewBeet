@@ -8,7 +8,7 @@ module-root = ""
 
 [project]
 name = "stewbeet"
-version = "2.4.0"
+version = "3.0.0b1"
 description = "Beet Framework made to help generating advanced Minecraft datapack contents"
 readme = "README.md"
 license = "MIT"
