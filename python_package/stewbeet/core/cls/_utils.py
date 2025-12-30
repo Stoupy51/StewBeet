@@ -1,5 +1,7 @@
 
 # Imports
+from __future__ import annotations
+
 from collections.abc import Mapping
 from dataclasses import dataclass, fields
 from typing import Any, Self
@@ -59,7 +61,7 @@ class StMapping(Mapping[str, Any]):
         return result
 
     @classmethod
-    def from_dict(cls, data: JsonDict | "StMapping", item_id: str) -> Self:
+    def from_dict(cls, data: JsonDict | StMapping, item_id: str) -> Self:
         """ Create an object based on items """
         if isinstance(data, cls):
             return data

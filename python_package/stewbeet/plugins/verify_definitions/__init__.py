@@ -24,6 +24,7 @@ from ...core.constants import (
 	VANILLA_BLOCK,
 )
 from ...core.ingredients import FURNACES_RECIPES_TYPES
+from ...core.utils.io import convert_to_serializable
 
 
 # Main entry point
@@ -43,17 +44,6 @@ def beet_default(ctx: Context) -> None:
 	definitions_debug: str = stewbeet_config.get("definitions_debug", "")
 
 	# Create a copy of the definitions without OVERRIDE_MODEL key
-	def convert_to_serializable(obj: Any) -> Any:
-		"""Recursively convert objects to JSON-serializable forms."""
-		if hasattr(obj, 'to_dict'):
-			return obj.to_dict()
-		elif isinstance(obj, dict):
-			return {k: convert_to_serializable(v) for k, v in obj.items()} # type: ignore
-		elif isinstance(obj, list):
-			return [convert_to_serializable(item) for item in obj] # type: ignore
-		else:
-			return obj
-
 	definitions_copy: dict[str, JsonDict] = {}
 	for item, data in Mem.definitions.items():
 		# Convert Item objects or dicts with nested Recipe objects to fully serializable dicts

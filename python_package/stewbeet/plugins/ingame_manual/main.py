@@ -27,7 +27,7 @@ from ...core.constants import (
 )
 from ...core.definitions_helper import add_item_name_and_lore_if_missing
 from ...core.ingredients import CRAFTING_RECIPES_TYPES, ingr_repr, ingr_to_id, ingr_to_name, item_id_to_name
-from ...core.utils.io import super_merge_dict, write_load_file
+from ...core.utils.io import convert_to_serializable, super_merge_dict, write_load_file
 from ..custom_recipes.vanilla import VanillaRecipeHandler
 from ..initialize.source_lore_font import find_pack_png
 from ..resource_pack.item_models import AutoModel  # Handle new items models (used for the manual and the heavy workbench)
@@ -96,7 +96,8 @@ from .stardust_forge import get_stardust_forge_page
 
 # Utility functions
 def deepcopy(x: Any) -> Any:
-	return json.loads(json.dumps(x))
+	"""Deep copy using JSON serialization, converting WikiButton objects."""
+	return json.loads(json.dumps(convert_to_serializable(x)))
 
 def manual_main():
 	# Copy everything in the manual assets folder to the templates folder
@@ -384,7 +385,7 @@ def routine():
 				# Get all crafts
 				crafts: list[JsonDict] = (raw_data.to_dict()["recipes"]).copy()
 				crafts += generate_otherside_crafts(name)
-				crafts = remove_duplicate_furnace_crafts(crafts)
+				crafts = remove_duplicate_furnace_crafts(crafts, name)
 				crafts = remove_unknown_crafts(crafts)
 				crafts = unique_list(crafts)
 

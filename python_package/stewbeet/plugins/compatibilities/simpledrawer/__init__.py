@@ -6,7 +6,8 @@ from stouputils.decorators import measure_time
 from stouputils.print import debug
 
 from ....core.__memory__ import Mem
-from ....core.constants import RESULT_OF_CRAFTING
+from ....core.cls.item import Item
+from ....core.cls.recipe import CraftingShapedRecipe, CraftingShapelessRecipe
 from ....core.ingredients import ingr_to_id
 from ....core.utils.io import set_json_encoder, write_function
 
@@ -19,19 +20,22 @@ def get_result_count(item: str, ingr_to_seek: str) -> int:
 		ingr_to_seek	(str):	Ingredient to seek in the recipe
 	"""
 	if item and ingr_to_seek:
+		obj = Item.from_id(item)
 
-		# Get recipes
-		definitions: dict[str, JsonDict] = Mem.definitions
-		recipes: list[JsonDict] = definitions[item].get(RESULT_OF_CRAFTING, [])
-		for recipe in recipes:			# If crafting shaped and only one ingredient, return the result count if the ingredient is the ingot item
-			if recipe["type"] == "crafting_shaped" and len(recipe["ingredients"]) == 1:
+		# Get recipes with only one ingredient
+		for recipe in obj.recipes:
+			if len(recipe.get("ingredients", [])) != 1:
+				continue
+
+			# If crafting shaped, return the result count if the ingredient is the ingot item
+			if recipe["type"] == CraftingShapedRecipe.type:
 				ingredient: JsonDict = next(iter(recipe["ingredients"].values())) # type: ignore
 				ingr_str: str = ingr_to_id(ingredient, add_namespace = False)
 				if ingr_str == ingr_to_seek:
 					return recipe["result_count"]
 
-			# If crafting shapeless and only one ingredient, return the result count if the ingredient is the ingot item
-			elif recipe["type"] == "crafting_shapeless" and len(recipe["ingredients"]) == 1:
+			# If crafting shapeless, return the result count if the ingredient is the ingot item
+			elif recipe["type"] == CraftingShapelessRecipe.type:
 				ingredient: JsonDict = recipe["ingredients"][0]
 				ingr_str: str = ingr_to_id(ingredient, add_namespace = False)
 				if ingr_str == ingr_to_seek:
@@ -57,12 +61,13 @@ def beet_default(ctx: Context):
 
 	# For each material block, collect materials and their variants
 	simpledrawer_materials: list[dict[str, str]] = []
-	for item, data in Mem.definitions.items():
+	for item in Mem.definitions.keys():
 		if item.endswith("_block"):
 			variants: dict[str, str] = {"block": item}
 
 			# Get material base
-			smithed_dict: JsonDict = data.get("custom_data", {}).get("smithed", {}).get("dict", {})
+			obj = Item.from_id(item)
+			smithed_dict: JsonDict = obj.components.get("custom_data", {}).get("smithed", {}).get("dict", {})
 			if not smithed_dict:
 				continue
 			material_base: str = next(iter(next(iter(smithed_dict.values())).keys())) # type: ignore

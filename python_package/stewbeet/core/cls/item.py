@@ -33,7 +33,7 @@ class Item(StMapping):
     """ (Optional) Merge with/Override auto-generated item model (based on the textures folder). """
     hand_model: JsonDict | None = None
     """ (Optional) If None, hand_model will be the same model as override_model. """
-    wiki_buttons: list[WikiButton] | TextComponent = field(default_factory=list[WikiButton])
+    wiki_buttons: list[WikiButton] | TextComponent | None = None
     """ (Optional) Additional informations to be displayed in the ingame manual. """
     components: JsonDict = field(default_factory=dict[str, Any])
     """ (Optional) Additional custom components for this item, e.g. "item_name": {...}, etc. """

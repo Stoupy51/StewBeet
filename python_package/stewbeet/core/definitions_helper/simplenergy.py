@@ -57,8 +57,9 @@ def create_energy_lore(energy_data: dict[str, int]) -> TextComponent:
 
 def add_energy_lore_to_definitions():
 	""" Adds energy-related lore to definitions based on their custom data. """
-	for item in Mem.definitions.keys():
-		obj = Item.from_id(item)
-		if "energy" in obj.components.get("custom_data", {}):
-			obj.components["lore"] = obj.components.get("lore", []) + create_energy_lore(obj.components["custom_data"]["energy"])
+	for data in Mem.definitions.values():
+		if isinstance(data, Item):
+			data = data.components
+		if "energy" in data.get("custom_data", {}):
+			data["lore"] = data.get("lore", []) + create_energy_lore(data["custom_data"]["energy"])
 

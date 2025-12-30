@@ -139,7 +139,7 @@ def high_res_font_from_craft(craft: JsonDict) -> str:
 	else:
 		return ""
 
-def remove_duplicate_furnace_crafts(crafts: list[JsonDict]) -> list[JsonDict]:
+def remove_duplicate_furnace_crafts(crafts: list[JsonDict], item: str) -> list[JsonDict]:
 	""" Remove duplicate furnace crafts, keeping only one per ingredient->result pair
 	Args:
 		crafts (list[JsonDict]): The list of crafts
@@ -151,7 +151,7 @@ def remove_duplicate_furnace_crafts(crafts: list[JsonDict]) -> list[JsonDict]:
 	for craft in crafts:
 		if craft["type"] in (SmeltingRecipe.type, BlastingRecipe.type, CampfireCookingRecipe.type, SmokingRecipe.type):
 			ingredient_id = ingr_to_id(craft["ingredient"], add_namespace=True)
-			result_id = ingr_to_id(craft["result"]["item"], add_namespace=True)
+			result_id = ingr_to_id(craft["result"], add_namespace=True) if "result" in craft else item
 			pair = (ingredient_id, result_id)
 			if pair not in seen_pairs:
 				seen_pairs.add(pair)

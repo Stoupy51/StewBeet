@@ -191,7 +191,9 @@ def super_merge_dict(dict1: JsonDict, dict2: JsonDict) -> JsonDict:
 
 
 # Set the JSON encoder to json_dump for a JsonFile object
-def set_json_encoder(obj: JsonFileT, max_level: int | None = None, indent: str | int = '\t') -> JsonFileT:
+def set_json_encoder[JsonFileT: JsonFile](
+	obj: JsonFileT, max_level: int | None = None, indent: str | int = '\t'
+) -> JsonFileT:
 	""" Set the encoder of the given object to json_dump
 
 	Args:
@@ -206,6 +208,28 @@ def set_json_encoder(obj: JsonFileT, max_level: int | None = None, indent: str |
 	else:
 		obj.encoder = lambda x: json_dump(x, max_level=max_level, indent=indent)
 	return obj
+
+
+# Convert objects with to_dict() to JSON-serializable forms
+def convert_to_serializable(obj: Any) -> Any:
+	""" Recursively convert objects to JSON-serializable forms.
+
+	Objects with a `to_dict()` method are converted to their dictionary representation.
+	Dictionaries and lists are recursively processed.
+
+	Args:
+		obj (Any): The object to convert
+	Returns:
+		Any: The JSON-serializable version of the object
+	"""
+	if hasattr(obj, 'to_dict'):
+		return obj.to_dict()
+	elif isinstance(obj, dict):
+		return {k: convert_to_serializable(v) for k, v in obj.items()}
+	elif isinstance(obj, list):
+		return [convert_to_serializable(item) for item in obj]
+	else:
+		return obj
 
 
 # Create a texture object with mcmeta if found
