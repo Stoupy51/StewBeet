@@ -21,6 +21,49 @@ from .wiki_button import WikiButton
 # Class
 @dataclass(kw_only=True)
 class Item(StMapping):
+    """ Represents an item with a unique identifier.
+
+    ## Simple example
+    >>> from stewbeet import Mem
+    >>> item = Item(id="multimeter", base_item="minecraft:warped_fungus_on_a_stick")
+    >>> item.id
+    'multimeter'
+    >>> item.base_item
+    'minecraft:warped_fungus_on_a_stick'
+    >>> item.id in Mem.definitions
+    True
+    >>> item is Item.from_id("multimeter")
+    True
+
+    ## Instance without registration in Mem.definitions
+    >>> nonreg_item = Item(id="")   # Item with empty ID won't be registered
+    >>> nonreg_item.id = "temporary_item"
+    >>> "temporary_item" in Mem.definitions
+    False
+    >>> nonreg_item is Item.from_id("temporary_item", strict=False)
+    False
+
+    ## Big example with all fields
+    >>> from stewbeet import CraftingShapedRecipe, WikiButton, ingr_repr
+    >>> obj = Item(
+    ...     id="stardust_ingot",
+    ...     base_item="minecraft:raw_iron",
+    ...     manual_category="materials",
+    ...     recipes=[
+    ...         CraftingShapedRecipe(shape=["###","#F#","###"], ingredients={"#":ingr_repr("stardust_fragment"),"F":ingr_repr("minecraft:iron_ingot")})
+    ...     ],
+    ...     override_model={"parent":"item/generated","textures":{"layer0":"stardust:item/stardust_ingot"}},
+    ...     wiki_buttons=[WikiButton({"text":"This is a stardust ingot.","color":"aqua"})],
+    ...     components={
+    ...         "item_name": {"text":"Stardust Ingot","color":"aqua"},
+    ...         "max_stack_size": 99,
+    ...     }
+    ... )
+    >>> also_obj = Item.from_id("stardust_ingot")
+    >>> obj is also_obj
+    True
+    """
+
     id: str
     """ Unique identifier for the item, e.g. 'multimeter', 'simplunium_block'. """
     base_item: str = CUSTOM_ITEM_VANILLA

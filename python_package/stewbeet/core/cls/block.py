@@ -20,7 +20,14 @@ from .item import Item
 # Subclasses
 @dataclass(kw_only=True)
 class VanillaBlock(StMapping):
-    """ Represents a vanilla block with optional facing and contents. """
+    """ Represents a vanilla block with optional facing and contents.
+
+    >>> vb = VanillaBlock(id="minecraft:stone")
+    >>> vb.id
+    'minecraft:stone'
+    >>> vb.apply_facing
+    False
+    """
     id: str = ""
     """ The vanilla block ID, e.g. 'minecraft:stone', "minecraft:conduit[waterlogged=false]". """
     apply_facing: Literal[False, True, "entity"] = False
@@ -34,7 +41,14 @@ class VanillaBlock(StMapping):
 
 @dataclass(kw_only=True)
 class NoSilkTouchDrop(StMapping):
-    """ Defines the item dropped when the block is broken without silk touch. """
+    """ Defines the item dropped when the block is broken without silk touch.
+
+    >>> nsd = NoSilkTouchDrop(id="raw_iron")
+    >>> nsd.id
+    'raw_iron'
+    >>> nsd.count
+    1
+    """
     id: str
     """ The item ID to drop when the block is broken without silk touch, e.g. 'raw_simplunium'. """
     count: dict[str, int] | int = 1
@@ -46,7 +60,14 @@ class NoSilkTouchDrop(StMapping):
 
 @dataclass(kw_only=True)
 class GrowingSeedLoot(StMapping):
-    """ Defines a single loot entry for a growing seed. """
+    """ Defines a single loot entry for a growing seed.
+
+    >>> gsl = GrowingSeedLoot(id="stardust_fragment", rolls=3)
+    >>> gsl.id
+    'stardust_fragment'
+    >>> gsl.rolls
+    3
+    """
     id: str
     """ The item ID to drop, e.g. "stardust_fragment", "minecraft:stone". """
     rolls: JsonDict | int = 1
@@ -56,7 +77,14 @@ class GrowingSeedLoot(StMapping):
 
 @dataclass(kw_only=True)
 class GrowingSeed(StMapping):
-    """ Defines a seed that grows over time (Stardust Seed from Stardust Fragment). """
+    """ Defines a seed that grows over time (Stardust Seed from Stardust Fragment).
+
+    >>> gs = GrowingSeed(texture_basename="stardust", seconds=480, planted_on="diamond_block", loots=[GrowingSeedLoot(id="stardust_fragment")])
+    >>> gs.texture_basename
+    'stardust'
+    >>> gs.seconds
+    480
+    """
     texture_basename: str
     """ The base name of the texture for the growing seed, e.g. 'stardust'. """
     seconds: int
@@ -74,6 +102,47 @@ class GrowingSeed(StMapping):
 # Class
 @dataclass(kw_only=True)
 class Block(Item):
+    """ Represents a block item with vanilla block properties.
+
+    ## Simple example
+    >>> from stewbeet import Mem
+    >>> block = Block(id="machine_block", vanilla_block=VanillaBlock(id="minecraft:stone"))
+    >>> block.id
+    'machine_block'
+    >>> block.vanilla_block.id
+    'minecraft:stone'
+    >>> block.id in Mem.definitions
+    True
+    >>> block is Block.from_id("machine_block")
+    True
+
+    ## Big example with all fields
+    >>> from stewbeet import CraftingShapelessRecipe, WikiButton, NoSilkTouchDrop, GrowingSeed, GrowingSeedLoot, ingr_repr
+    >>> obj = BlockAlternative(
+    ...     id="stardust_seed",
+    ...     manual_category="miscellaneous",
+    ...     recipes=[
+    ...         CraftingShapelessRecipe(ingredients=8*[ingr_repr("stardust_fragment")] + [ingr_repr("minecraft:wheat_seeds")])
+    ...     ],
+    ...     override_model={"parent":"item/generated","textures":{"layer0":"stardust:item/stardust_seed"}},
+    ...     wiki_buttons=[WikiButton({"text":"A magical seed that grows stardust.","color":"aqua"})],
+    ...     components={
+    ...         "item_name": {"text":"Stardust Seed","color":"aqua"},
+    ...         "max_stack_size": 64,
+    ...     },
+    ...     vanilla_block=VanillaBlock(id="minecraft:wheat", apply_facing=False),
+    ...     no_silk_touch_drop=NoSilkTouchDrop(id="stardust_fragment", count=1),
+    ...     growing_seed=GrowingSeed(
+    ...         texture_basename="stardust",
+    ...         seconds=480,
+    ...         planted_on="diamond_block",
+    ...         loots=[GrowingSeedLoot(id="stardust_fragment", rolls=3)]
+    ...     )
+    ... )
+    >>> also_obj = Block.from_id("stardust_seed")
+    >>> obj is also_obj
+    True
+    """
     base_item: str = CUSTOM_BLOCK_VANILLA
     """ Can either be CUSTOM_BLOCK_VANILLA, CUSTOM_BLOCK_ALTERNATIVE, CUSTOM_BLOCK_HEAD, or a vanilla block like 'minecraft:stone'. """
 
@@ -89,11 +158,12 @@ class Block(Item):
 
     def __post_init__(self) -> None:
         from ..__memory__ import Mem
+        ns: str = Mem.ctx.project_id if Mem.ctx else "your_namespace"
 
         # Add additional data to the custom blocks
         if self.base_item == CUSTOM_BLOCK_VANILLA:
             self.components["container"] = [
-                {"slot":0,"item":{"id":"minecraft:stone","count":1,"components":{"minecraft:custom_data":{"smithed":{"block":{"id":f"{Mem.ctx.project_id}:{self.id}","from":Mem.ctx.project_id}}}}}}
+                {"slot":0,"item":{"id":"minecraft:stone","count":1,"components":{"minecraft:custom_data":{"smithed":{"block":{"id":f"{ns}:{self.id}","from":ns}}}}}}
             ]
 
             # Hide the container tooltip
@@ -107,7 +177,7 @@ class Block(Item):
 
         # Add additional data to the custom blocks alternative
         elif self.base_item == CUSTOM_BLOCK_ALTERNATIVE:
-            self.components["entity_data"] = {"id":"minecraft:item_frame","Tags":[f"{Mem.ctx.project_id}.new",f"{Mem.ctx.project_id}.{self.id}"],"Invisible":True,"Silent":True}
+            self.components["entity_data"] = {"id":"minecraft:item_frame","Tags":[f"{ns}.new",f"{ns}.{self.id}"],"Invisible":True,"Silent":True}
         super().__post_init__()
 
     # Mapping methods
@@ -121,6 +191,12 @@ class Block(Item):
 
 @dataclass(kw_only=True)
 class BlockAlternative(Block):
+    """ Represents a block that uses an item frame for placement (e.g., servo inserter/extractor).
+
+    >>> ba = BlockAlternative(id="servo_inserter", vanilla_block=VanillaBlock(contents=True))
+    >>> ba.base_item
+    'minecraft:item_frame'
+    """
     base_item = CUSTOM_BLOCK_ALTERNATIVE
     def __post_init__(self) -> None:
         self.base_item = CUSTOM_BLOCK_ALTERNATIVE
@@ -128,6 +204,12 @@ class BlockAlternative(Block):
 
 @dataclass(kw_only=True)
 class BlockHead(Block):
+    """ Represents a block that uses a player head for placement.
+
+    >>> bh = BlockHead(id="custom_head", vanilla_block=VanillaBlock(id="minecraft:player_head"))
+    >>> bh.base_item
+    'minecraft:player_head'
+    """
     base_item = CUSTOM_BLOCK_HEAD
     def __post_init__(self) -> None:
         self.base_item = CUSTOM_BLOCK_HEAD

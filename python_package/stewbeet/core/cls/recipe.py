@@ -94,7 +94,20 @@ class RecipeBase(StMapping):
 # Crafting Recipes
 @dataclass
 class CraftingShapedRecipe(RecipeBase):
-    """ Recipe for shaped crafting. """
+    """ Recipe for shaped crafting.
+
+    >>> from stewbeet import *
+    >>> recipe = CraftingShapedRecipe(
+    ...     shape=["II", "CC", "CC"],
+    ...     ingredients={"I":ingr_repr("minecraft:iron_ingot"), "C": ingr_repr("simplunium_ingot")}
+    ... )
+    >>> recipe.shape
+    ['II', 'CC', 'CC']
+    >>> recipe.ingredients['I']
+    {'item': 'minecraft:iron_ingot'}
+    >>> recipe.ingredients['C']
+    {'components': {'minecraft:custom_data': {'detected_namespace': {'simplunium_ingot': True}}}}
+    """
     shape: list[str]
     """ The shape pattern for the crafting recipe. """
     ingredients: dict[str, JsonDict]
@@ -127,7 +140,15 @@ class CraftingShapedRecipe(RecipeBase):
 
 @dataclass
 class CraftingShapelessRecipe(RecipeBase):
-    """ Recipe for shapeless crafting. """
+    """ Recipe for shapeless crafting.
+
+    >>> from stewbeet import *
+    >>> recipe = CraftingShapelessRecipe(ingredients=[ingr_repr("minecraft:iron_ingot"), ingr_repr("minecraft:copper_ingot")])
+    >>> len(recipe.ingredients)
+    2
+    >>> recipe.type
+    'crafting_shapeless'
+    """
     ingredients: list[JsonDict]
     """ List of ingredient specifications for shapeless crafting. """
 
@@ -142,7 +163,15 @@ class CraftingShapelessRecipe(RecipeBase):
 # Furnace Recipes
 @dataclass
 class SmeltingRecipe(RecipeBase):
-    """Recipe for smelting in a furnace."""
+    """ Recipe for smelting in a furnace.
+
+    >>> from stewbeet import *
+    >>> recipe = SmeltingRecipe(ingredient=ingr_repr("minecraft:iron_ore"), experience=0.7, cookingtime=200)
+    >>> recipe.experience
+    0.7
+    >>> recipe.cookingtime
+    200
+    """
     ingredient: JsonDict
     """ The ingredient to be smelted. """
     experience: float = 0.0
@@ -161,7 +190,15 @@ class SmeltingRecipe(RecipeBase):
 
 @dataclass
 class BlastingRecipe(RecipeBase):
-    """Recipe for blasting in a blast furnace."""
+    """ Recipe for blasting in a blast furnace.
+
+    >>> from stewbeet import *
+    >>> recipe = BlastingRecipe(ingredient=ingr_repr("minecraft:iron_ore"), experience=0.7, cookingtime=100)
+    >>> recipe.experience
+    0.7
+    >>> recipe.cookingtime
+    100
+    """
     ingredient: JsonDict
     """ The ingredient to be blasted. """
     experience: float = 0.0
@@ -180,7 +217,15 @@ class BlastingRecipe(RecipeBase):
 
 @dataclass
 class SmokingRecipe(RecipeBase):
-    """Recipe for smoking in a smoker."""
+    """ Recipe for smoking in a smoker.
+
+    >>> from stewbeet import *
+    >>> recipe = SmokingRecipe(ingredient=ingr_repr("minecraft:chicken"), experience=0.35, cookingtime=100)
+    >>> recipe.experience
+    0.35
+    >>> recipe.cookingtime
+    100
+    """
     ingredient: JsonDict
     """ The ingredient to be smoked. """
     experience: float = 0.0
@@ -199,7 +244,15 @@ class SmokingRecipe(RecipeBase):
 
 @dataclass
 class CampfireCookingRecipe(RecipeBase):
-    """Recipe for cooking on a campfire."""
+    """ Recipe for cooking on a campfire.
+
+    >>> from stewbeet import *
+    >>> recipe = CampfireCookingRecipe(ingredient=ingr_repr("minecraft:chicken"), experience=0.35, cookingtime=600)
+    >>> recipe.experience
+    0.35
+    >>> recipe.cookingtime
+    600
+    """
     ingredient: JsonDict
     """ The ingredient to be cooked. """
     experience: float
@@ -219,7 +272,17 @@ class CampfireCookingRecipe(RecipeBase):
 # Smithing Recipes
 @dataclass
 class SmithingTransformRecipe(RecipeBase):
-    """Recipe for smithing table transformation."""
+    """ Recipe for smithing table transformation.
+
+    >>> from stewbeet import *
+    >>> recipe = SmithingTransformRecipe(
+    ...     template=ingr_repr("minecraft:netherite_upgrade_smithing_template"),
+    ...     base=ingr_repr("minecraft:diamond_sword"),
+    ...     addition=ingr_repr("minecraft:netherite_ingot")
+    ... )
+    >>> recipe.template['item']
+    'minecraft:netherite_upgrade_smithing_template'
+    """
     template: JsonDict
     """ The template item (e.g., upgrade template). """
     base: JsonDict
@@ -238,7 +301,18 @@ class SmithingTransformRecipe(RecipeBase):
 
 @dataclass
 class SmithingTrimRecipe(RecipeBase):
-    """Recipe for applying armor trims."""
+    """ Recipe for applying armor trims.
+
+    >>> from stewbeet import *
+    >>> recipe = SmithingTrimRecipe(
+    ...     template=ingr_repr("minecraft:spire_armor_trim_smithing_template"),
+    ...     base=ingr_repr("minecraft:netherite_chestplate"),
+    ...     addition=ingr_repr("minecraft:diamond"),
+    ...     pattern=ingr_repr("minecraft:spire_armor_trim_smithing_template")
+    ... )
+    >>> recipe.addition['item']
+    'minecraft:diamond'
+    """
     template: JsonDict
     """ The trim template. """
     base: JsonDict
@@ -260,7 +334,13 @@ class SmithingTrimRecipe(RecipeBase):
 # Other Recipes
 @dataclass
 class StonecuttingRecipe(RecipeBase):
-    """Recipe for stonecutting."""
+    """ Recipe for stonecutting.
+
+    >>> from stewbeet import *
+    >>> recipe = StonecuttingRecipe(ingredient=ingr_repr("minecraft:stone"))
+    >>> recipe.ingredient['item']
+    'minecraft:stone'
+    """
     ingredient: JsonDict
     """ The ingredient to be cut. """
 
@@ -275,7 +355,13 @@ class StonecuttingRecipe(RecipeBase):
 # Custom/Special Recipes
 @dataclass
 class PulverizingRecipe(RecipeBase):
-    """Custom recipe for SimplEnergy pulverizing."""
+    """ Custom recipe for SimplEnergy pulverizing.
+
+    >>> from stewbeet import *
+    >>> recipe = PulverizingRecipe(ingredient=ingr_repr("minecraft:iron_ore"))
+    >>> recipe.ingredient['item']
+    'minecraft:iron_ore'
+    """
     ingredient: JsonDict
     """ The ingredient to be pulverized. """
 
@@ -289,7 +375,13 @@ class PulverizingRecipe(RecipeBase):
 
 @dataclass
 class AwakenedForgeRecipe(RecipeBase):
-    """Custom recipe for Stardust awakened forge."""
+    """ Custom recipe for Stardust awakened forge.
+
+    >>> from stewbeet import *
+    >>> recipe = AwakenedForgeRecipe(ingredients=[ingr_repr("stardust_fragment"), ingr_repr("minecraft:iron_ingot")])
+    >>> len(recipe.ingredients)
+    2
+    """
     ingredients: list[JsonDict]
     """ List of ingredients for the awakened forge. """
     particle: str | None = None
@@ -306,7 +398,12 @@ class AwakenedForgeRecipe(RecipeBase):
 # Hardcoded Recipes (minimal implementation)
 @dataclass
 class HardcodedRecipe(RecipeBase):
-    """Recipe for special/hardcoded crafting types."""
+    """Recipe for special/hardcoded crafting types.
+
+    >>> recipe = HardcodedRecipe(type="crafting_special_armordye")
+    >>> recipe.type
+    'crafting_special_armordye'
+    """
     type: Literal[ # type: ignore
         "crafting_decorated_pot", "crafting_special_armordye", "crafting_special_bannerduplicate",
         "crafting_special_bookcloning", "crafting_special_firework_rocket", "crafting_special_firework_star",
@@ -325,4 +422,5 @@ Recipe = (
     PulverizingRecipe | AwakenedForgeRecipe |
     HardcodedRecipe
 )
+""" Type alias for all recipe types (CraftingShapedRecipe | CraftingShapelessRecipe | ...) """
 

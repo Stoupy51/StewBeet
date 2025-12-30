@@ -108,7 +108,7 @@ scoreboard players add #count furnace_nbt_recipes.data 1
 execute store result block ~ ~ ~ RecipesUsed."furnace_nbt_recipes:xp/{experience}" int 1 run scoreboard players get #count furnace_nbt_recipes.data
 scoreboard players reset #count furnace_nbt_recipes.data
 """
-        write_function(f"{self.FURNACE_NBT_PATH}/xp_reward/{experience}", file)
+        write_function(f"{self.FURNACE_NBT_PATH}/xp_reward/{experience}", file, overwrite=True)
 
         # Create the recipe for the reward
         json_file: JsonDict = {

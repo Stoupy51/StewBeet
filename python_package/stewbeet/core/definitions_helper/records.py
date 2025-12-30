@@ -9,7 +9,7 @@ from beet.core.utils import JsonDict
 from mutagen.oggvorbis import OggVorbis
 
 from ..__memory__ import Mem
-from ..constants import CATEGORY, CUSTOM_ITEM_VANILLA
+from ..cls.item import Item
 from ..utils.sounds import add_sound
 
 
@@ -69,16 +69,17 @@ def generate_custom_records(records: dict[str, str] | str | None = "auto", categ
 		item_name: str = os.path.splitext(sound)[0]	# Remove the file extension
 
 		# Create definitions entry for the record
-		Mem.definitions[record] = {
-			"id": CUSTOM_ITEM_VANILLA,
-			"custom_data": {Mem.ctx.project_id:{record: True}, "smithed":{"dict":{"record": {record: True, "item_name": item_name}}}},
-			"item_name": {"text":"Music Disc", "italic": False},
-			"jukebox_playable": f"{Mem.ctx.project_id}:{record}",
-			"max_stack_size": 1,
-			"rarity": "rare",
-		}
-		if category:
-			Mem.definitions[record][CATEGORY] = category
+		obj = Item(
+			id=record,
+			manual_category=category,
+			components={
+				"custom_data": {Mem.ctx.project_id:{record: True}, "smithed":{"dict":{"record": {record: True, "item_name": item_name}}}},
+				"item_name": {"text":"Music Disc", "italic": False},
+				"jukebox_playable": f"{Mem.ctx.project_id}:{record}",
+				"max_stack_size": 1,
+				"rarity": "rare",
+			}
+		)
 
 		# Process sound file
 		file_path: str = f"{records_folder}/{sound}"
@@ -95,7 +96,7 @@ def generate_custom_records(records: dict[str, str] | str | None = "auto", categ
 					"description": {"text": item_name}
 				}
 				Mem.ctx.data[f"{Mem.ctx.project_id}:{record}"] = JukeboxSong(stp.json_dump(json_song))
-				Mem.definitions[record]["custom_data"]["smithed"]["dict"]["jukebox_song"] = json_song
+				obj.components["custom_data"]["smithed"]["dict"]["jukebox_song"] = json_song
 
 				# Create and write sound
 				add_sound(Mem.ctx, sounds=Sound(source_path=file_path, stream=True), name=record)
