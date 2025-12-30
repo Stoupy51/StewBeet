@@ -1,12 +1,11 @@
 
 # Imports
-import stouputils.continuous_delivery as cd
+import stouputils as stp
 from beet.core.utils import JsonDict
-from stouputils.io import get_root_path
 
 # Constants
-ROOT: str = get_root_path(__file__, go_up=1)
-CURRENT_VERSION: str = cd.get_version_from_pyproject(f"{ROOT}/pyproject.toml")
+ROOT: str = stp.get_root_path(__file__, go_up=1)
+CURRENT_VERSION: str = stp.get_version_from_pyproject(f"{ROOT}/pyproject.toml")
 CREDENTIALS_PATH: str = "~/stewbeet/credentials.yml"
 GITHUB_CONFIG: JsonDict = {
 	"project_name": "stewbeet",
@@ -22,8 +21,8 @@ GITHUB_CONFIG: JsonDict = {
 if __name__ == "__main__":
 
 	# Get credentials
-	credentials: JsonDict = cd.load_credentials(CREDENTIALS_PATH)
+	credentials: JsonDict = stp.load_credentials(CREDENTIALS_PATH)
 
 	# Upload to GitHub
-	changelog: str = cd.upload_to_github(credentials, GITHUB_CONFIG)
+	changelog: str = stp.upload_to_github(credentials, GITHUB_CONFIG)
 

@@ -1,12 +1,12 @@
+
 # Imports
 import os
 import time
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile, ZipInfo
 
+import stouputils as stp
 from beet import Context
-from stouputils.decorators import handle_error, silent
-from stouputils.print import warning
 
 from ...core.constants import OFFICIAL_LIBS
 from ...dependencies import OFFICIAL_LIBS_PATH
@@ -15,7 +15,7 @@ from ..initialize.source_lore_font import find_pack_png
 
 
 # Weld datapack
-@handle_error
+@stp.handle_error
 def weld_datapack(ctx: Context, dest_path: str) -> float:
 	""" Merge the datapack and libs into one file using Weld
 	Args:
@@ -48,14 +48,14 @@ def weld_datapack(ctx: Context, dest_path: str) -> float:
 
 	# Skip welding if there are less than 2 datapacks to merge
 	if len(datapacks_to_merge) < 2:
-		warning(f"No datapacks or libs to merge for {dest_path}. Skipping weld.")
+		stp.warning(f"No datapacks or libs to merge for {dest_path}. Skipping weld.")
 		return time.perf_counter() - start_time
 
 	# Weld all datapacks
 	output_dir = os.path.dirname(dest_path)
 	output = os.path.basename(dest_path.replace(".zip", "_temporary.zip"))
 	from smithed.weld.toolchain.cli import weld  # pyright: ignore[reportMissingTypeStubs]
-	silent(weld)(datapacks_to_merge, Path(output_dir), Path(output), log = "error")
+	stp.silent(weld)(datapacks_to_merge, Path(output_dir), Path(output), log = "error")
 
 	# Get the consistent timestamp
 	constant_time = get_consistent_timestamp(ctx)
@@ -98,7 +98,7 @@ def weld_datapack(ctx: Context, dest_path: str) -> float:
 
 
 # Weld resource pack
-@handle_error
+@stp.handle_error
 def weld_resource_pack(ctx: Context, dest_path: str) -> float:
 	""" Merge the resource pack and libs into one file using Weld
 	Args:
@@ -131,14 +131,14 @@ def weld_resource_pack(ctx: Context, dest_path: str) -> float:
 
 	# Skip welding if there are less than 2 resource packs to merge
 	if len(resource_packs_to_merge) < 2:
-		warning(f"No resource packs or libs to merge for {dest_path}. Skipping weld.")
+		stp.warning(f"No resource packs or libs to merge for {dest_path}. Skipping weld.")
 		return time.perf_counter() - start_time
 
 	# Weld all resource packs
 	output_dir = os.path.dirname(dest_path)
 	output = os.path.basename(dest_path.replace(".zip", "_temporary.zip"))
 	from smithed.weld.toolchain.cli import weld  # pyright: ignore[reportMissingTypeStubs]
-	silent(weld)(resource_packs_to_merge, Path(output_dir), Path(output), log = "error")
+	stp.silent(weld)(resource_packs_to_merge, Path(output_dir), Path(output), log = "error")
 
 	# Get the consistent timestamp
 	constant_time = get_consistent_timestamp(ctx)

@@ -4,16 +4,14 @@ import os
 import re
 from collections import defaultdict
 
+import stouputils as stp
 from beet import Context, Sound
-from stouputils.decorators import measure_time
-from stouputils.io import clean_path, relative_path
-from stouputils.parallel import multithreading
 
 from ....core.utils.sounds import add_sound
 
 
 # Main entry point
-@measure_time(message="Execution time of 'stewbeet.plugins.resource_pack.sounds'")
+@stp.measure_time(message="Execution time of 'stewbeet.plugins.resource_pack.sounds'")
 def beet_default(ctx: Context):
 	""" Main entry point for the sounds plugin.
 	This plugin handles sound file processing and generation of sounds.json based of the sounds folder.
@@ -36,7 +34,7 @@ def beet_default(ctx: Context):
 		ctx (Context): The beet context.
 	"""
 	# Get sounds folder from meta
-	sounds_folder: str = relative_path(ctx.meta.get("stewbeet", {}).get("sounds_folder", ""))
+	sounds_folder: str = stp.relative_path(ctx.meta.get("stewbeet", {}).get("sounds_folder", ""))
 	assert sounds_folder != "", "Sounds folder path not found in 'ctx.meta.stewbeet.sounds_folder'. Please set a directory path in project configuration."
 
 	# Get all sound files
@@ -54,7 +52,7 @@ def beet_default(ctx: Context):
 			sound (str): Path to the sound file.
 		"""
 		# Get relative path from sounds folder, simplified name, and without extension
-		rel_sound: str = relative_path(sound, sounds_folder)
+		rel_sound: str = stp.relative_path(sound, sounds_folder)
 		sound_file: str = "".join(char for char in rel_sound.replace(" ", "_").lower() if char.isalnum() or char in "._/")
 		sound_file_no_ext: str = os.path.splitext(sound_file)[0]
 
@@ -68,7 +66,7 @@ def beet_default(ctx: Context):
 			sound_groups[sound_file_no_ext] = [rel_sound]
 
 	# Process sounds in parallel
-	multithreading(handle_sound, sounds_names, max_workers=min(32, len(sounds_names)))
+	stp.multithreading(handle_sound, sounds_names, max_workers=min(32, len(sounds_names)))
 
 	# Create sounds using add_sound function
 	for base_name, variants in sorted(sound_groups.items()):
@@ -85,7 +83,7 @@ def beet_default(ctx: Context):
 
 			# Create Sound object for this variant
 			sounds[variant_name.lower().replace(" ","_")] = Sound(
-				source_path=clean_path(f"{sounds_folder}/{variant_rel_sound}"),
+				source_path=stp.clean_path(f"{sounds_folder}/{variant_rel_sound}"),
 				subtitle=subtitle
 			)
 

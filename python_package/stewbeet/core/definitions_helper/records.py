@@ -3,12 +3,10 @@
 import os
 from string import ascii_lowercase, digits
 
+import stouputils as stp
 from beet import JukeboxSong, Sound
 from beet.core.utils import JsonDict
 from mutagen.oggvorbis import OggVorbis
-from stouputils.decorators import handle_error
-from stouputils.io import clean_path, json_dump
-from stouputils.print import error, warning
 
 from ..__memory__ import Mem
 from ..constants import CATEGORY, CUSTOM_ITEM_VANILLA
@@ -35,7 +33,7 @@ def clean_record_name(name: str) -> str:
 
 
 # Custom records
-@handle_error
+@stp.handle_error
 def generate_custom_records(records: dict[str, str] | str | None = "auto", category: str | None = None) -> None:
 	""" Generate custom records by searching in assets/records/ for the files and copying them to the definitions and resource pack folder.
 
@@ -48,7 +46,7 @@ def generate_custom_records(records: dict[str, str] | str | None = "auto", categ
 	assert records is None or isinstance(records, dict) or records in ["auto", "all"], (
         f"Error during custom record generation: records must be a dictionary, 'auto', or 'all' (got {type(records).__name__})"
 	)
-	records_folder: str = clean_path(Mem.ctx.meta.get("stewbeet", {}).get("records_folder", ""))
+	records_folder: str = stp.clean_path(Mem.ctx.meta.get("stewbeet", {}).get("records_folder", ""))
 	assert records_folder != "", "Records folder path not found in 'ctx.meta.stewbeet.records_folder'. Please set a directory path in project configuration."
 
 	# If no records specified, search in the records folder
@@ -62,9 +60,9 @@ def generate_custom_records(records: dict[str, str] | str | None = "auto", categ
 	for record, sound in records_to_check.items():
 		# Validate sound file format
 		if not isinstance(sound, str): # type: ignore
-			error(f"Error during custom record generation: sound '{sound}' is not a string, got {type(sound).__name__}")
+			stp.error(f"Error during custom record generation: sound '{sound}' is not a string, got {type(sound).__name__}")
 		if not sound.endswith(".ogg"):
-			warning(f"Error during custom record generation: sound '{sound}' is not an ogg file")
+			stp.warning(f"Error during custom record generation: sound '{sound}' is not an ogg file")
 			continue
 
 		# Extract item name from sound file
@@ -96,14 +94,13 @@ def generate_custom_records(records: dict[str, str] | str | None = "auto", categ
 					"sound_event": {"sound_id":f"{Mem.ctx.project_id}:{record}"},
 					"description": {"text": item_name}
 				}
-				Mem.ctx.data[f"{Mem.ctx.project_id}:{record}"] = JukeboxSong(json_dump(json_song))
+				Mem.ctx.data[f"{Mem.ctx.project_id}:{record}"] = JukeboxSong(stp.json_dump(json_song))
 				Mem.definitions[record]["custom_data"]["smithed"]["dict"]["jukebox_song"] = json_song
 
 				# Create and write sound
 				add_sound(Mem.ctx, sounds=Sound(source_path=file_path, stream=True), name=record)
 
 			except Exception as e:
-				error(f"Error during custom record generation of '{file_path}', make sure it is using proper Ogg format: {e}")
+				stp.error(f"Error during custom record generation of '{file_path}', make sure it is using proper Ogg format: {e}")
 		else:
-			warning(f"Error during custom record generation: path '{file_path}' does not exist")
-
+			stp.warning(f"Error during custom record generation: path '{file_path}' does not exist")

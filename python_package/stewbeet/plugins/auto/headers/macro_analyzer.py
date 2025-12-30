@@ -6,7 +6,7 @@ populate the @args section in function headers.
 """
 
 # Imports
-from stouputils.print import warning
+import stouputils as stp
 
 from .macro_parser import is_macro_function
 from .object import Header
@@ -117,7 +117,7 @@ class MacroAnalyzer:
 
         # Warn if there were missing parameters
         if missing_params:
-            warning(f"Function '{func_path}' had incomplete @args: missing {', '.join(missing_params)}")
+            stp.warning(f"Function '{func_path}' had incomplete @args: missing {', '.join(missing_params)}")
 
         self.analyzing.remove(func_path)
 

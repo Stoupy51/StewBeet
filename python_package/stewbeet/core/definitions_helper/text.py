@@ -1,7 +1,7 @@
 
 # Imports
+import stouputils as stp
 from beet.core.utils import JsonDict
-from stouputils.print import warning
 
 
 # Functions
@@ -124,5 +124,5 @@ def gradient_text_to_string(gradient_text: list[JsonDict], color_pos: int = 0) -
 		return {"text": text, "color": gradient_text[color_pos]["color"]}
 
 	# If position is invalid, warn and use first color
-	warning(f"Color position {color_pos} is out of range for gradient text of length {len(gradient_text)}. Using first color instead.")
+	stp.warning(f"Color position {color_pos} is out of range for gradient text of length {len(gradient_text)}. Using first color instead.")
 	return {"text": text, "color": gradient_text[0]["color"]}

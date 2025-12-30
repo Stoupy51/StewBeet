@@ -63,7 +63,7 @@ class StMapping(Mapping[str, Any]):
     @classmethod
     def from_dict(cls, data: JsonDict | StMapping, item_id: str) -> Self:
         """ Create an object based on items """
-        if isinstance(data, cls):
+        if isinstance(data, StMapping):
             return data
 
         # Make a copy to avoid modifying the original
@@ -85,8 +85,7 @@ class StMapping(Mapping[str, Any]):
                 elif isinstance(data_dict[new], list) and isinstance(data_dict[old], list):
                     data_dict[new] = stp.unique_list([*data_dict[new], *data_dict.pop(old)])
                 else:
-                    # TODO: Remove this
-                    raise TypeError(f"Cannot merge fields '{old}' and '{new}' as they are not both lists. Value of '{new}': {data_dict[new]}, value of '{old}': {data_dict[old]}")
+                    pass
         data_dict["id"] = item_id
 
         # Get valid field names for this class

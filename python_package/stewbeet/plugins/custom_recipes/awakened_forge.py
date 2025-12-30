@@ -2,9 +2,9 @@
 # Imports
 import json
 
+import stouputils as stp
 from beet import Predicate
 from beet.core.utils import JsonDict
-from stouputils.decorators import simple_cache
 
 from ...core.__memory__ import Mem
 from ...core.cls.item import Item
@@ -34,7 +34,7 @@ class AwakenedForgeRecipeHandler:
         handler = cls()
         handler.generate_recipes()
 
-    @simple_cache
+    @stp.simple_cache
     def stardust_awakened_forge_recipe(self, recipe: JsonDict, item: str) -> str:
         """ Generate a awakened forge recipe.
 

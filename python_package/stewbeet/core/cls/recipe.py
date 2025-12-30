@@ -292,6 +292,8 @@ class AwakenedForgeRecipe(RecipeBase):
     """Custom recipe for Stardust awakened forge."""
     ingredients: list[JsonDict]
     """ List of ingredients for the awakened forge. """
+    particle: str | None = None
+    """ (Optional) Particle effect for the recipe. """
 
     type = "stardust_awakened_forge"
 

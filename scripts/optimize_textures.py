@@ -3,8 +3,8 @@
 import os
 import time
 
+import stouputils as stp
 from PIL import Image
-from stouputils.print import info
 
 START_TIME = time.perf_counter()
 os.system("color")
@@ -31,9 +31,9 @@ for root, _, files in os.walk("./"):
 
 		# Save image
 		image.save(filepath)
-		info(f"Optimized '{file}'")
+		stp.info(f"Optimized '{file}'")
 
 # Total time
 total_time = time.perf_counter() - START_TIME
-info(f"Textures optimized in {total_time:.3f} seconds")
+stp.info(f"Textures optimized in {total_time:.3f} seconds")
 

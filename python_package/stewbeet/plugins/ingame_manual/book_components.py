@@ -3,9 +3,9 @@ Handles generation of book components and content
 """
 import os
 
+import stouputils as stp
 from beet.core.utils import JsonDict, TextComponent
 from PIL import Image
-from stouputils.print import error, warning
 
 from ...core.__memory__ import Mem
 from ...core.cls.item import Item
@@ -34,7 +34,7 @@ def high_res_font_from_ingredient(ingredient: str | JsonDict, count: int = 1) ->
 	if ':' in ingr_str:
 		image_path = f"{SharedMemory.cache_path}/items/{ingr_str.replace(':', '/')}.png"
 		if not os.path.exists(image_path):
-			warning(f"Missing texture at '{image_path}', using placeholder texture")
+			stp.warning(f"Missing texture at '{image_path}', using placeholder texture")
 			item_image = Image.new("RGBA", (16, 16), (255, 255, 255, 0))  # Placeholder image
 		else:
 			item_image = Image.open(image_path)
@@ -42,7 +42,7 @@ def high_res_font_from_ingredient(ingredient: str | JsonDict, count: int = 1) ->
 	else:
 		path: str = f"{SharedMemory.cache_path}/items/{Mem.ctx.project_id}/{ingr_str}.png"
 		if not os.path.exists(path):
-			warning(f"Missing texture at '{path}', using placeholder texture")
+			stp.warning(f"Missing texture at '{path}', using placeholder texture")
 			item_image = Image.new("RGBA", (16, 16), (255, 255, 255, 0))  # Placeholder image
 		else:
 			item_image = Image.open(path)
@@ -100,7 +100,7 @@ def get_item_component(ingredient: str | JsonDict, only_those_components: list[s
 					obj = Item.from_id(item_id)
 					break
 		if not obj:
-			error("Item not found in definitions or external definitions: " + str(ingredient))
+			stp.error("Item not found in definitions or external definitions: " + str(ingredient))
 			return formatted
 
 		# Copy id and components

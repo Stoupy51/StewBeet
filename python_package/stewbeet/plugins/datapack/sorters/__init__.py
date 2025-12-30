@@ -1,15 +1,15 @@
 
 # Imports
+import stouputils as stp
 from beet import Context
 from beet.core.utils import JsonDict
-from stouputils.decorators import measure_time
 
 from .constants import SorterFile
 from .match import generate_sorter
 
 
 # Main entry point
-@measure_time(message="Execution time of 'stewbeet.plugins.datapack.sorters'")
+@stp.measure_time(message="Execution time of 'stewbeet.plugins.datapack.sorters'")
 def beet_default(ctx: Context):
 	""" Main entry point for the sorters plugin.
 	This plugin generates functions that sort lists in storage.
@@ -21,7 +21,7 @@ def beet_default(ctx: Context):
 
 	# Iterate through all sorter configurations
 	for file_instance in ctx.data[SorterFile].values():
-		sorter: JsonDict = file_instance.data.dict()
+		sorter: JsonDict = file_instance.data.model_dump()
 		generate_sorter(ctx, sorter)
 
 	# Clear the registry

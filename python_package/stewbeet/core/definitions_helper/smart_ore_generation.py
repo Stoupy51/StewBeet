@@ -3,9 +3,9 @@
 # Imports
 from __future__ import annotations
 
+import stouputils as stp
 from beet import BlockTag
 from beet.core.utils import JsonDict
-from stouputils.print import debug, error
 
 from ..__memory__ import Mem
 from ..constants import official_lib_used
@@ -42,29 +42,29 @@ class CustomOreGeneration:
 		self.provider: str|list[str] = provider
 		self.placer_command: str = placer_command
 		if not official_lib_used("smart_ore_generation"):
-			debug("Found custom ore generation, adding 'smart_ore_generation' dependency")
+			stp.debug("Found custom ore generation, adding 'smart_ore_generation' dependency")
 		self.check_validity()
 
 	def check_validity(self) -> None:
 		""" Check if the custom ore generation configuration is valid """
 		if not isinstance(self.dimensions, list) or not all(isinstance(dimension, str) for dimension in self.dimensions):
-			error("Custom ore generation 'dimensions' must be a list of strings")
+			stp.error("Custom ore generation 'dimensions' must be a list of strings")
 		if not isinstance(self.maximum_height, int):
-			error("Custom ore generation 'maximum_height' must be an integer")
+			stp.error("Custom ore generation 'maximum_height' must be an integer")
 		if self.minimum_height is not None and not isinstance(self.minimum_height, int):
-			error("Custom ore generation 'minimum_height' must be an integer or None")
+			stp.error("Custom ore generation 'minimum_height' must be an integer or None")
 		elif self.minimum_height is not None and self.minimum_height > self.maximum_height:
-			error("Custom ore generation 'minimum_height' must be less or equal to 'maximum_height'")
+			stp.error("Custom ore generation 'minimum_height' must be less or equal to 'maximum_height'")
 		if not isinstance(self.veins_per_region, float | int):
-			error("Custom ore generation 'veins_per_region' must be a float")
+			stp.error("Custom ore generation 'veins_per_region' must be a float")
 		if not isinstance(self.vein_size_logic, float) or self.vein_size_logic < 0:
-			error("Custom ore generation 'vein_size_logic' must be a float >= 0")
+			stp.error("Custom ore generation 'vein_size_logic' must be a float >= 0")
 		if not isinstance(self.provider, str) and not isinstance(self.provider, list):
-			error("Custom ore generation 'provider' must be a string or a list of strings")
+			stp.error("Custom ore generation 'provider' must be a string or a list of strings")
 		if isinstance(self.provider, list) and not all(isinstance(provider, str) for provider in self.provider):
-			error("Custom ore generation 'provider' must be a list of strings")
+			stp.error("Custom ore generation 'provider' must be a list of strings")
 		if not isinstance(self.placer_command, str):
-			error("Custom ore generation 'placer_command' must be a string")
+			stp.error("Custom ore generation 'placer_command' must be a string")
 
 	def generate_files(self, custom_ore: str, number: int | None = None) -> None:
 		""" Generate the files for the custom ore generation.

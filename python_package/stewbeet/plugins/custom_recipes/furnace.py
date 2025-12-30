@@ -4,10 +4,9 @@ from __future__ import annotations
 
 import json
 
+import stouputils as stp
 from beet import Recipe
 from beet.core.utils import JsonDict
-from stouputils.decorators import simple_cache
-from stouputils.io import json_dump
 
 from ...core.__memory__ import Mem
 from ...core.cls.item import Item
@@ -55,7 +54,7 @@ class FurnaceRecipeHandler:
                     tags=["furnace_nbt_recipes:v1/disable_cooking"]
                 )
 
-    @simple_cache
+    @stp.simple_cache
     def furnace_nbt_recipe(self, recipe: SmeltingRecipe | BlastingRecipe | SmokingRecipe, result_loot: str, result_ingr: JsonDict) -> str:
         """ Generate a furnace NBT recipe.
 
@@ -81,7 +80,7 @@ class FurnaceRecipeHandler:
             "experience": recipe.experience,
             "cookingtime": recipe.cookingtime
         }
-        Mem.ctx.data["furnace_nbt_recipes"].recipes[path] = Recipe(json_dump(json_file, max_level=-1))
+        Mem.ctx.data["furnace_nbt_recipes"].recipes[path] = Recipe(stp.json_dump(json_file, max_level=-1))
 
         # Prepare line and return
         line: str = "execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input"
@@ -89,7 +88,7 @@ class FurnaceRecipeHandler:
         line += f" run loot replace block ~ ~ ~ container.3 loot {result_loot}"
         return line
 
-    @simple_cache
+    @stp.simple_cache
     def furnace_xp_reward(self, recipe: SmeltingRecipe | BlastingRecipe | SmokingRecipe, experience: float) -> str:
         """ Generate a furnace XP reward.
 
@@ -119,7 +118,7 @@ scoreboard players reset #count furnace_nbt_recipes.data
             "experience": experience,
             "cookingtime": 200
         }
-        Mem.ctx.data["furnace_nbt_recipes"].recipes[f"xp/{experience}"] = Recipe(json_dump(json_file, max_level=-1))
+        Mem.ctx.data["furnace_nbt_recipes"].recipes[f"xp/{experience}"] = Recipe(stp.json_dump(json_file, max_level=-1))
 
         # Prepare line and return
         line: str = "execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input"

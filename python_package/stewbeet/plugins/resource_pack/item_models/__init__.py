@@ -2,11 +2,9 @@
 # Imports
 from pathlib import Path
 
+import stouputils as stp
 from beet import Atlas, Context, ResourcePack
 from beet.core.utils import JsonDict
-from stouputils.collections import unique_list
-from stouputils.decorators import measure_time
-from stouputils.io import clean_path, json_dump, relative_path
 
 from ....core.__memory__ import Mem
 from ....core.cls.item import Item
@@ -65,13 +63,13 @@ def add_to_atlas(textures: set[str] = set()) -> None:  # noqa: B006
 		for texture in textures:
 			sources.append({"type": "minecraft:single", "resource": texture, "sprite": to_atlas(texture)})
 
-		sources = unique_list(sorted(sources, key=lambda x: x["resource"]))
+		sources = stp.unique_list(sorted(sources, key=lambda x: x["resource"]))
 		atlas_object.data["sources"] = sources
-		atlas_object.encoder = json_dump
+		atlas_object.encoder = stp.json_dump
 
 
 # Main entry point
-@measure_time(message="Execution time of 'stewbeet.plugins.resource_pack.item_models'")
+@stp.measure_time(message="Execution time of 'stewbeet.plugins.resource_pack.item_models'")
 def beet_default(ctx: Context):
 	""" Main entry point for the item models plugin.
 
@@ -84,12 +82,12 @@ def beet_default(ctx: Context):
 		Mem.ctx = ctx
 
 	# Textures folder
-	textures_folder: str = relative_path(Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", ""))
+	textures_folder: str = stp.relative_path(Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", ""))
 	assert textures_folder != "", "Textures folder path not found in 'ctx.meta.stewbeet.textures_folder'. Please set a directory path in project configuration."
 
 	# Textures
 	textures: dict[str, str] = {
-		clean_path(str(p)).split("/")[-1]: relative_path(str(p))
+		stp.clean_path(str(p)).split("/")[-1]: stp.relative_path(str(p))
 		for p in Path(textures_folder).rglob("*.png")
 	}
 

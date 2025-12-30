@@ -1,9 +1,8 @@
 
 # Imports
+import stouputils as stp
 from beet import Context
 from beet.core.utils import JsonDict
-from stouputils.decorators import measure_time
-from stouputils.print import warning
 
 from ...core.__memory__ import Mem
 from .main import manual_main
@@ -11,7 +10,7 @@ from .shared_import import SharedMemory
 
 
 # Main entry point
-@measure_time(message="Execution time of 'stewbeet.plugins.ingame_manual'")
+@stp.measure_time(message="Execution time of 'stewbeet.plugins.ingame_manual'")
 def beet_default(ctx: Context):
 	""" Main entry point for the ingame manual plugin.
 	This plugin generates an in-game manual/guide book with item information and crafting recipes.
@@ -25,7 +24,7 @@ def beet_default(ctx: Context):
 
 	# Only generate manual if we have definitions items
 	if not Mem.definitions:
-		warning("Database is empty, skipping manual generation.")
+		stp.warning("Database is empty, skipping manual generation.")
 		return
 
 	# Assertions

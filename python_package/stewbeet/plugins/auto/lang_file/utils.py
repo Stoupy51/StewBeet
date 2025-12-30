@@ -2,8 +2,8 @@
 # Imports
 import re
 
+import stouputils as stp
 from beet import Context, TextFileBase
-from stouputils.decorators import simple_cache
 
 # Prepare lang dictionary and lang_format function
 lang: dict[str, str] = {}
@@ -38,7 +38,7 @@ def extract_texts(content: str) -> list[tuple[str, int, int, str]]:
 	return matches
 
 
-@simple_cache
+@stp.simple_cache
 def lang_format(ctx: Context, text: str) -> tuple[str, str]:
 	""" Format text into a valid lang key.
 

@@ -16,7 +16,7 @@ def setup_wrench(blocks: list[str] | str, tag_ns: str = "simplenergy") -> None:
 	"""
 	ns: str = Mem.ctx.project_id
 	if isinstance(blocks, str):
-		blocks = [x for x in Mem.definitions.keys() if Block.from_id(x).vanilla_block.apply_facing is True]
+		blocks = [x for x, y in Mem.definitions.items() if y.get("vanilla_block") and Block.from_id(x).vanilla_block["apply_facing"] is True]
 
 	# Add tags for rotatables
 	for rotatable in blocks:

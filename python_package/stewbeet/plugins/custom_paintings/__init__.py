@@ -2,11 +2,9 @@
 # Imports
 import os
 
+import stouputils as stp
 from beet import Context, PaintingVariant, PaintingVariantTag
 from beet.core.utils import JsonDict
-from stouputils.decorators import measure_time
-from stouputils.io import relative_path
-from stouputils.print import error, warning
 
 from ...core.__memory__ import Mem
 from ...core.constants import PAINTING_DATA
@@ -14,7 +12,7 @@ from ...core.utils.io import set_json_encoder, texture_mcmeta
 
 
 # Main entry point
-@measure_time(message="Execution time of 'stewbeet.plugins.custom_paintings'")
+@stp.measure_time(message="Execution time of 'stewbeet.plugins.custom_paintings'")
 def beet_default(ctx: Context) -> None:
     """ Main entry point for the custom paintings plugin.
     This plugin handles the generation of custom paintings for the datapack and resource pack.
@@ -63,18 +61,18 @@ def beet_default(ctx: Context) -> None:
             # Get the texture path
             if "texture" in painting_data:
                 texture: str = painting_data["texture"]
-                src: str = relative_path(f"{textures_folder}/{texture}.png")
+                src: str = stp.relative_path(f"{textures_folder}/{texture}.png")
             else:
                 matching_textures: list[str] = [
-                    relative_path(f"{root}/{file}")
+                    stp.relative_path(f"{root}/{file}")
                     for root, _, files in os.walk(textures_folder)
                     for file in files if file == f"{item}.png"
                 ]
                 if not matching_textures:
-                    error(f"No texture found for painting '{item}' in the textures folder '{textures_folder}'. Expected a file named '{item}.png'.")
+                    stp.error(f"No texture found for painting '{item}' in the textures folder '{textures_folder}'. Expected a file named '{item}.png'.")
                     continue
                 elif len(matching_textures) > 1:
-                    warning(f"Multiple textures found for painting '{item}' in the textures folder '{textures_folder}'. Using the first one found: '{matching_textures[0]}'.")
+                    stp.warning(f"Multiple textures found for painting '{item}' in the textures folder '{textures_folder}'. Using the first one found: '{matching_textures[0]}'.")
                 src: str = matching_textures[0]
             dst: str = f"painting/{texture_name}"
 
