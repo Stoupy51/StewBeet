@@ -107,7 +107,7 @@ from .stardust_forge import get_stardust_forge_page
 
 # Utility functions
 def deepcopy(x: Any) -> Any:
-	"""Deep copy using JSON serialization, converting WikiButton objects."""
+	""" Deep copy using JSON serialization, converting WikiButton objects. """
 	return json.loads(json.dumps(convert_to_serializable(x)))
 
 def manual_main():
@@ -506,7 +506,14 @@ def routine():
 						wiki_component: TextComponent | list[WikiButton] = raw_data[WIKI_COMPONENT]
 						is_list_of_wiki_button: bool = isinstance(wiki_component, list) and any(isinstance(comp, WikiButton) for comp in wiki_component)
 						wiki_buttons: list[TextComponent] = wiki_component if is_list_of_wiki_button else [wiki_component] # type: ignore
+
+						# For each wiki button, add it to the info_buttons list
 						for button in wiki_buttons:
+							# Convert WikiButton to dict if needed
+							if isinstance(button, WikiButton):
+								button = button.to_dict()
+
+							# Get click_event if any
 							if isinstance(button, dict) and "click_event" in button:
 								found_event = button["click_event"]
 							elif isinstance(button, list):

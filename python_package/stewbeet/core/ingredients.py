@@ -27,20 +27,32 @@ ALL_RECIPES_TYPES: tuple[str, ...] = (*FURNACES_RECIPES_TYPES, *CRAFTING_RECIPES
 @stp.simple_cache
 def ingr_repr(id: str, ns: str|None = None, count: int|None = None) -> JsonDict:
 	""" Get the identity of the ingredient from its id for custom crafts
+
 	Args:
 		id		(str):		The id of the ingredient, ex: adamantium_fragment
 		ns		(str|None):	The namespace of the ingredient (optional if 'id' argument is a vanilla item), ex: iyc (default: current project id)
 		count	(int|None):	The count of the ingredient (optional, used only when this ingredient format is a result item) (or use a special type of recipe that supports counts)
+
 	Returns:
 		str: The identity of the ingredient for custom crafts,
 			ex: {"components":{"minecraft:custom_data":{"iyc":{"adamantium_fragment":True}}}}
 			ex: {"item": "minecraft:stick"}
+
+	Examples:
+		>>> ingr_repr("minecraft:stick")
+		{'item': 'minecraft:stick'}
+		>>> ingr_repr("adamantium_fragment", ns="iyc")
+		{'components': {'minecraft:custom_data': {'iyc': {'adamantium_fragment': True}}}}
+		>>> ingr_repr("adamantium_fragment", ns="iyc", count=3)
+		{'components': {'minecraft:custom_data': {'iyc': {'adamantium_fragment': True}}}, 'count': 3}
+		>>> ingr_repr("diamond")
+		{'components': {'minecraft:custom_data': {'detected_namespace': {'diamond': True}}}}
 	"""
 	if ":" in id:
 		to_return: JsonDict = {"item": id}
 	else:
 		if ns is None:
-			ns = Mem.ctx.project_id
+			ns = Mem.ctx.project_id if Mem.ctx else "detected_namespace"
 		to_return: JsonDict = {"components":{"minecraft:custom_data":{ns:{id:True}}}}
 	if count is not None:
 		to_return["count"] = count

@@ -11,12 +11,14 @@ from .item import Item
 @dataclass(kw_only=True)
 class PaintingData(StMapping):
     """ Data class for painting-specific data.
-    {
-        "texture": "stewbeet_painting_2x2",            # Default to item id if not given (this example links to "assets/textures/stewbeet_painting_2x2.png")
-        "author": {"text":"Stoupy","color":"yellow"},  # Author defaults to ctx.project_author if not given
-        "title": {"text":"Da' Icon","color":"gray"},   # Title defaults to item name if not given
-        "width": 2, "height": 2
-    }
+
+    >>> pd = PaintingData(
+    ...     texture="stewbeet_painting_2x2",            # Default to item id if not given (this example links to "assets/textures/stewbeet_painting_2x2.png")
+    ...     author={"text":"Stoupy","color":"yellow"},  # Author defaults to ctx.project_author if not given
+    ...     title={"text":"Da' Icon","color":"gray"},   # Title defaults to item name if not given
+    ...     width=4,
+    ...     height=3
+    ... )
     """
     texture: str | None = None
     """ Texture identifier for the painting. Defaults to item id if not provided. """
@@ -32,6 +34,24 @@ class PaintingData(StMapping):
 # Class
 @dataclass(kw_only=True)
 class Painting(Item):
+    """ Represents a custom painting item.
+
+    ### Texture will default to "stewbeet_painting_2x2", author and title will default accordingly
+    >>> my_painting = Painting(
+    ...     id="stewbeet_painting_2x2",
+    ...     painting_data=PaintingData(
+    ...         author={"text":"An Artist I would say","color":"yellow"},
+    ...         width=2,
+    ...         height=2
+    ...     ),
+    ...     recipes=[],
+    ...     components={
+    ...         "max_stack_size": 16
+    ...     }
+    ... )
+    >>> my_painting
+    Painting(id='stewbeet_painting_2x2', base_item='minecraft:painting', manual_category=None, recipes=[], override_model=None, hand_model=None, wiki_buttons=None, components={'max_stack_size': 16, 'painting/variant': 'your_namespace:stewbeet_painting_2x2'}, painting_data=PaintingData(texture='stewbeet_painting_2x2', author={'text': 'An Artist I would say', 'color': 'yellow'}, title={'text': 'Stewbeet Painting 2X2'}, width=2, height=2))
+    """  # noqa: E501
     base_item: str = "minecraft:painting"
     painting_data: PaintingData
 
@@ -46,7 +66,8 @@ class Painting(Item):
 
         # Ensure the painting variant is set in components
         if "painting/variant" not in self.components:
-            self.components["painting/variant"] = f"{Mem.ctx.project_id}:{self.id}"
+            ns = Mem.ctx.project_id if Mem.ctx else "your_namespace"
+            self.components["painting/variant"] = f"{ns}:{self.id}"
 
         # Call the parent post-init to register the item
         super().__post_init__()
