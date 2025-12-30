@@ -92,6 +92,9 @@ def generate_everything_about_this_material(
 				if f"deepslate_{material_base}_ore.png" in textures:
 					obj.recipes.append(SmeltingRecipe(result_count=1, category="misc", group=material_base, experience=0.8, cookingtime=200, ingredient=ingr_repr(f"deepslate_{material_base}_ore")))
 					obj.recipes.append(BlastingRecipe(result_count=1, category="misc", group=material_base, experience=0.8, cookingtime=100, ingredient=ingr_repr(f"deepslate_{material_base}_ore")))
+			if item.startswith("raw_"):
+				if f"raw_{material_base}_block.png" in textures:
+					obj.recipes.append(CraftingShapelessRecipe(result_count=9, category="misc", group=material_base, ingredients=[ingr_repr(f"raw_{material_base}_block")]))
 			if item.endswith("dust"):
 				obj.recipes.append(SmeltingRecipe(result_count=1, category="misc", group=material_base, experience=0.8, cookingtime=200, ingredient=ingr_repr(item), result=main_ingredient))
 				obj.recipes.append(BlastingRecipe(result_count=1, category="misc", group=material_base, experience=0.8, cookingtime=100, ingredient=ingr_repr(item), result=main_ingredient))

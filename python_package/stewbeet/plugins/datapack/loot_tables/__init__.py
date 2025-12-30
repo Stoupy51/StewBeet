@@ -7,7 +7,6 @@ from stouputils.io import json_dump
 
 from ....core.__memory__ import Mem
 from ....core.cls.item import Item
-from ....core.constants import NOT_COMPONENTS, RESULT_OF_CRAFTING
 from ....core.utils.io import write_function
 
 
@@ -65,14 +64,15 @@ def beet_default(ctx: Context):
 		creative_loot_table["pools"].append({"rolls": 1, "entries":[{"type":"minecraft:loot_table","value":f"{ns}:i/{item}"}] })
 
 	# Same for external items
-	for item, data in Mem.external_definitions.items():
+	for item in Mem.external_definitions.keys():
+		obj = Item.from_id(item)
 		ext_ns, item_name = item.split(":")
 		loot_table: JsonDict = {
 			"pools": [{
 				"rolls": 1,
 				"entries": [{
 					"type": "minecraft:item",
-					"name": data.get("id")
+					"name": obj.base_item
 				}]
 			}]
 		}
@@ -80,24 +80,23 @@ def beet_default(ctx: Context):
 			"function": "minecraft:set_components",
 			"components": {}
 		}
-		for k, v in data.items():
-			if k not in NOT_COMPONENTS:
-				if k.startswith("!"):
-					set_components["components"][f"!minecraft:{k[1:]}"] = {}
-				else:
-					set_components["components"][f"minecraft:{k}"] = v
+		for k, v in obj.components.items():
+			if k.startswith("!"):
+				set_components["components"][f"!minecraft:{k[1:]}"] = {}
+			else:
+				set_components["components"][f"minecraft:{k}"] = v
 		loot_table["pools"][0]["entries"][0]["functions"] = [set_components]
 
 		# Create external loot table with beet
 		ctx.data[ns].loot_tables[f"external/{ext_ns}/{item_name}"] = LootTable(json_dump(loot_table, max_level=10))
 
 	# Loot tables for items with crafting recipes
-	for item, data in Mem.definitions.items():
-		if data.get(RESULT_OF_CRAFTING):
+	for item in Mem.definitions.keys():
+		obj = Item.from_id(item)
+		if obj.recipes:
 			results: list[int] = []
-			for d in data[RESULT_OF_CRAFTING]:
-				d: JsonDict
-				count = d.get("result_count", 1)
+			for recipe in obj.recipes:
+				count = recipe.get("result_count", 1)
 				if count != 1:
 					results.append(count)
 
@@ -144,7 +143,7 @@ def beet_default(ctx: Context):
 	lore = json_dump(source_lore, max_level=0).strip()
 
 	chests: list[str] = []
-	definitions_copy = list(Mem.definitions.items())
+	definitions_copy: list[tuple[str, Item]] = [(item, Item.from_id(item)) for item in Mem.definitions.keys()]
 	for i in range(total_chests):
 		chest_contents: list[str] = []
 
@@ -152,14 +151,9 @@ def beet_default(ctx: Context):
 		for j in range(CHEST_SIZE):
 			if not definitions_copy:
 				break
-			item, data = definitions_copy.pop(0)
-			data = data.copy()
-			id = data.get("id")
-			for k in NOT_COMPONENTS:	# Remove non-component data
-				if data.get(k, None) is not None:
-					del data[k]
-			json_content = json_dump(data, max_level=0).strip()
-			chest_contents.append(f'{{slot:{j},item:{{count:1,id:"{id}",components:{json_content}}}}}')
+			item, obj = definitions_copy.pop(0)
+			json_content = json_dump(obj.components, max_level=0).strip()
+			chest_contents.append(f'{{slot:{j},item:{{count:1,id:"{obj.base_item}",components:{json_content}}}}}')
 
 		joined_content = ",".join(chest_contents)
 		chests.append(f'give @s chest[container=[{joined_content}],custom_name={{"text":"Chest [{i+1}/{total_chests}]","color":"yellow"}},lore=[{lore}]]')

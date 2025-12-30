@@ -90,7 +90,7 @@ class Block(Item):
         from ..__memory__ import Mem
 
         # Add additional data to the custom blocks
-        if self.id == CUSTOM_BLOCK_VANILLA:
+        if self.base_item == CUSTOM_BLOCK_VANILLA:
             self.components["container"] = [
                 {"slot":0,"item":{"id":"minecraft:stone","count":1,"components":{"minecraft:custom_data":{"smithed":{"block":{"id":f"{Mem.ctx.project_id}:{self.id}","from":Mem.ctx.project_id}}}}}}
             ]
@@ -104,7 +104,7 @@ class Block(Item):
             hidden_components.append("minecraft:container")
 
         # Add additional data to the custom blocks alternative
-        elif self.id == CUSTOM_BLOCK_ALTERNATIVE:
+        elif self.base_item == CUSTOM_BLOCK_ALTERNATIVE:
             self.components["entity_data"] = {"id":"minecraft:item_frame","Tags":[f"{Mem.ctx.project_id}.new",f"{Mem.ctx.project_id}.{self.id}"],"Invisible":True,"Silent":True}
         super().__post_init__()
 

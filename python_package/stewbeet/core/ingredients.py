@@ -26,7 +26,7 @@ SPECIAL_RECIPES_TYPES: tuple[str, ...] = ("simplenergy_pulverizing", "stardust_a
 ALL_RECIPES_TYPES: tuple[str, ...] = (*FURNACES_RECIPES_TYPES, *CRAFTING_RECIPES_TYPES, *OTHER_RECIPES_TYPES, *UNUSED_RECIPES_TYPES, *SPECIAL_RECIPES_TYPES)
 
 # Function mainly used for definitions generation
-@simple_cache()
+@simple_cache
 def ingr_repr(id: str, ns: str|None = None, count: int|None = None) -> JsonDict:
 	""" Get the identity of the ingredient from its id for custom crafts
 	Args:
@@ -67,7 +67,7 @@ def item_to_id_ingr_repr(ingr: JsonDict) -> JsonDict:
 	return r
 
 # Mainly used for manual
-@simple_cache()
+@simple_cache
 def ingr_to_id(ingredient: JsonDict, add_namespace: bool = True) -> str:
 	""" Get the id from an ingredient dict
 	Args:
@@ -105,7 +105,7 @@ def ingr_to_id(ingredient: JsonDict, add_namespace: bool = True) -> str:
 		return namespace + ":" + id
 	return id
 
-@simple_cache()
+@simple_cache
 def text_component_to_str(tc: TextComponent) -> str:
 	""" Convert a TextComponent to a string
 	Args:
@@ -128,7 +128,7 @@ def text_component_to_str(tc: TextComponent) -> str:
 			result += text_component_to_str(extra)
 	return result
 
-@simple_cache()
+@simple_cache
 def item_id_to_text_component(item_id: str, use_default: bool = True) -> TextComponent:
 	""" Get the TextComponent from an item id
 
@@ -179,7 +179,7 @@ def item_id_to_text_component(item_id: str, use_default: bool = True) -> TextCom
 		return id.replace("_", " ").title()
 	return ""
 
-@simple_cache()
+@simple_cache
 def item_id_to_name(item_id: str) -> str:
 	""" Get the name from an item id
 	Args:
@@ -189,7 +189,7 @@ def item_id_to_name(item_id: str) -> str:
 	"""
 	return text_component_to_str(item_id_to_text_component(item_id))
 
-@simple_cache()
+@simple_cache
 def ingr_to_name(ingredient: JsonDict) -> str:
 	""" Get the name from an ingredient dict
 	Args:
@@ -203,7 +203,7 @@ def ingr_to_name(ingredient: JsonDict) -> str:
 	return item_id_to_name(item_id)
 
 # Mainly used for recipes
-@simple_cache()
+@simple_cache
 def get_vanilla_item_id_from_ingredient(ingredient: JsonDict, add_namespace: bool = True) -> str:
 	""" Get the id of the vanilla item from an ingredient dict
 	Args:
@@ -288,7 +288,7 @@ def get_item_from_ingredient(ingredient: JsonDict) -> JsonDict:
 
 
 # Make a loot table
-@simple_cache()
+@simple_cache
 def loot_table_from_ingredient(result_ingredient: JsonDict, result_count: int | JsonDict) -> str:
 	""" Get the loot table for an ingredient dict
 	Args:
@@ -300,7 +300,6 @@ def loot_table_from_ingredient(result_ingredient: JsonDict, result_count: int | 
 	Returns:
 		str: The loot table path, ex: "my_datapack:i/stick"
 	"""
-
 	# If item from this datapack
 	item: str = ingr_to_id(result_ingredient)
 	if item.startswith(Mem.ctx.project_id):
@@ -336,7 +335,7 @@ def loot_table_from_ingredient(result_ingredient: JsonDict, result_count: int | 
 	Mem.ctx.data[loot_table] = LootTable(json_dump(file, max_level=9))
 	return loot_table
 
-@simple_cache()
+@simple_cache
 def get_ingredients_from_recipe(recipe: JsonDict) -> list[str]:
 	""" Get the ingredients from a recipe dict
 	Args:

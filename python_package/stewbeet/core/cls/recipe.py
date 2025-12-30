@@ -100,6 +100,8 @@ class CraftingShapedRecipe(RecipeBase):
     ingredients: dict[str, JsonDict]
     """ Dictionary mapping shape symbols to ingredient specifications. """
 
+    type = "crafting_shaped"
+
     def __post_init__(self) -> None:
         self.type = "crafting_shaped"
         super().__post_init__()
@@ -129,6 +131,8 @@ class CraftingShapelessRecipe(RecipeBase):
     ingredients: list[JsonDict]
     """ List of ingredient specifications for shapeless crafting. """
 
+    type = "crafting_shapeless"
+
     def __post_init__(self) -> None:
         self.type = "crafting_shapeless"
         super().__post_init__()
@@ -145,6 +149,8 @@ class SmeltingRecipe(RecipeBase):
     """ Experience points awarded when the recipe is used. """
     cookingtime: int = 200
     """ Cooking time in ticks (200 ticks = 10 seconds by default). """
+
+    type = "smelting"
 
     def __post_init__(self) -> None:
         self.type = "smelting"
@@ -163,6 +169,8 @@ class BlastingRecipe(RecipeBase):
     cookingtime: int = 100
     """ Cooking time in ticks (100 ticks = 5 seconds by default). """
 
+    type = "blasting"
+
     def __post_init__(self) -> None:
         self.type = "blasting"
         super().__post_init__()
@@ -179,6 +187,8 @@ class SmokingRecipe(RecipeBase):
     """ Experience points awarded when the recipe is used. """
     cookingtime: int = 100
     """ Cooking time in ticks (100 ticks = 5 seconds by default). """
+
+    type = "smoking"
 
     def __post_init__(self) -> None:
         self.type = "smoking"
@@ -197,6 +207,8 @@ class CampfireCookingRecipe(RecipeBase):
     cookingtime: int
     """ Cooking time in ticks (600 ticks = 30 seconds by default). """
 
+    type = "campfire_cooking"
+
     def __post_init__(self) -> None:
         self.type = "campfire_cooking"
         super().__post_init__()
@@ -214,6 +226,8 @@ class SmithingTransformRecipe(RecipeBase):
     """ The base item to be transformed. """
     addition: JsonDict
     """ The addition item (e.g., material). """
+
+    type = "smithing_transform"
 
     def __post_init__(self) -> None:
         self.type = "smithing_transform"
@@ -234,6 +248,8 @@ class SmithingTrimRecipe(RecipeBase):
     pattern: JsonDict
     """ The trim pattern. """
 
+    type = "smithing_trim"
+
     def __post_init__(self) -> None:
         self.type = "smithing_trim"
         super().__post_init__()
@@ -248,6 +264,8 @@ class StonecuttingRecipe(RecipeBase):
     ingredient: JsonDict
     """ The ingredient to be cut. """
 
+    type = "stonecutting"
+
     def __post_init__(self) -> None:
         self.type = "stonecutting"
         super().__post_init__()
@@ -261,6 +279,8 @@ class PulverizingRecipe(RecipeBase):
     ingredient: JsonDict
     """ The ingredient to be pulverized. """
 
+    type = "simplenergy_pulverizing"
+
     def __post_init__(self) -> None:
         self.type = "simplenergy_pulverizing"
         super().__post_init__()
@@ -272,6 +292,8 @@ class AwakenedForgeRecipe(RecipeBase):
     """Custom recipe for Stardust awakened forge."""
     ingredients: list[JsonDict]
     """ List of ingredients for the awakened forge. """
+
+    type = "stardust_awakened_forge"
 
     def __post_init__(self) -> None:
         self.type = "stardust_awakened_forge"
