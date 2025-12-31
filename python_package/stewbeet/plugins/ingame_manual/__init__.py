@@ -6,7 +6,7 @@ from beet.core.utils import JsonDict
 
 from ...core.__memory__ import Mem
 from .main import manual_main
-from .shared_import import SharedMemory
+from .shared_import import DEFAULT_NEXT_CRAFT_FONT, SharedMemory
 
 
 # Main entry point
@@ -37,6 +37,11 @@ def beet_default(ctx: Context):
 	assert stewbeet.get("textures_folder"), "Textures folder is not set. Please set it in the project configuration."
 	manual_config: JsonDict = stewbeet.get("manual", {})
 	assert manual_config, "Manual configuration is not set. Please set it in the project configuration."
+
+	# Reset shared memory (in case of `beet watch`)
+	SharedMemory.next_craft_font = DEFAULT_NEXT_CRAFT_FONT
+	SharedMemory.font_providers = []
+	SharedMemory.manual_pages = []
 
 	# Set up manual path
 	SharedMemory.cache_path = manual_config.get("cache_path", "")

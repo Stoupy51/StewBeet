@@ -26,6 +26,8 @@ def beet_default(ctx: Context):
 	meta_box: Box = Box(ctx.meta, default_box=True, default_box_attr={}) # type: ignore
 	object.__setattr__(ctx, "meta", meta_box) # Bypass FrozenInstanceError
 	Mem.ctx = ctx
+	Mem.definitions = {}
+	Mem.external_definitions = {}
 
 	# Preprocess project description
 	project_description: TextComponent = Mem.ctx.project_description
