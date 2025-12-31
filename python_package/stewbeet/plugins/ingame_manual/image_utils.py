@@ -2,9 +2,8 @@
 # pyright: reportUnknownMemberType=false
 # Imports
 import os
-from typing import Any, cast
 
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageFont
 
 from ...core.__memory__ import JsonDict, Mem
 from .shared_import import (
@@ -40,32 +39,69 @@ def careful_resize(image: Image.Image, max_result_size: int, resampling: Image.R
 		factor = max_result_size / image.size[1]
 		return image.resize((int(image.size[0] * factor), max_result_size), resampling)
 
-def add_border(image: Image.Image, border_color: tuple[int, int, int, int], border_size: int, is_rectangle_shape: bool) -> Image.Image:
-	"""Add a border to every part of the image"""
+def ensure_rgba_color(c: tuple[int, ...]) -> tuple[int, int, int, int]:
+	""" Ensure the color is in RGBA format """
+	if len(c) == 3:
+		return (c[0], c[1], c[2], 255)
+	if len(c) == 4:
+		return c
+	raise ValueError("border_color must be (R,G,B) or (R,G,B,A)")
+
+def add_border(
+	image: Image.Image,
+	border_color: tuple[int, int, int, int],
+	border_size: int,
+	is_rectangle_shape: bool
+) -> Image.Image:
+	"""
+	Fast border addition using Pillow image filters and compositing.
+	- For non-rectangular shapes: dilate the alpha channel and paste border where added.
+	- For rectangular shapes: compute bounding box, draw filled rect, dilate, subtract to get border.
+	"""
+	if border_size <= 0:
+		return image
+
 	image = image.convert("RGBA")
-	pixels = cast(Any, image.load()) # pyright: ignore[reportUnknownMemberType]
+	border_color = ensure_rgba_color(border_color)
+
+	# Filter size must be odd; use (2*border_size + 1)
+	filt_size = border_size * 2 + 1
+
+	# Work with alpha channel
+	alpha = image.split()[3]  # 'L' mode
 
 	if not is_rectangle_shape:
-		pixels_to_change = [(x, y) for x in range(image.width) for y in range(image.height) if pixels[x, y][3] == 0]
-		r = range(-border_size, border_size + 1)
-		for x, y in pixels_to_change:
-			try:
-				if any(pixels[x + dx, y + dy][3] != 0 and pixels[x + dx, y + dy] != border_color for dx in r for dy in r):
-					pixels[x, y] = border_color
-			except Exception:
-				pass
+		# Dilate alpha: pixels near opaque become non-zero
+		dilated = alpha.filter(ImageFilter.MaxFilter(filt_size))
+		# border_mask is where dilated is non-zero but original is zero
+		border_mask = ImageChops.difference(dilated, alpha)
 	else:
-		height, width = 8, 8
-		while height < image.height and pixels[8, height][3]!= 0:
-			height += 1
-		while width < image.width and pixels[width, 8][3]!= 0:
-			width += 1
+		# Compute bounding box of non-transparent pixels
+		bbox = alpha.getbbox()
+		if bbox is None:
+			# image fully transparent — nothing to border
+			return image
 
-		border = Image.new("RGBA", (width + 2, height + 2), border_color)
-		border.paste(image, (0, 0), image)
-		image.paste(border, (0, 0), border)
+		# Create mask with filled rectangle at bbox
+		mask = Image.new("L", image.size, 0)
+		draw = ImageDraw.Draw(mask)
+		draw.rectangle(bbox, fill=255)
 
-	return image
+		# Dilate the rectangle mask to produce outer rectangle
+		dilated = mask.filter(ImageFilter.MaxFilter(filt_size))
+		border_mask = ImageChops.difference(dilated, mask)
+
+	# If there's no border (small or fully opaque), return original
+	if not border_mask.getbbox():
+		return image
+
+	# Create a solid image filled with border_color
+	border_layer = Image.new("RGBA", image.size, border_color)
+
+	# Paste the border_layer only where border_mask is non-zero
+	out = image.copy()
+	out.paste(border_layer, (0, 0), border_mask)
+	return out
 
 # Generate an image showing the result count
 def image_count(count: int | str) -> Image.Image:
