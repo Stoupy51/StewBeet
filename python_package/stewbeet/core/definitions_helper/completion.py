@@ -4,11 +4,13 @@ from __future__ import annotations
 
 from typing import cast
 
+import stouputils as stp
 from beet.core.utils import JsonDict, TextComponent
 from box import Box
 
 from ..__memory__ import Mem
 from ..cls.item import Item
+from ..utils.io import convert_to_serializable
 
 
 # Add item model component
@@ -131,4 +133,26 @@ def set_manual_components(white_list: list[str]) -> None:
 		return
 	from ...plugins.ingame_manual.shared_import import SharedMemory
 	SharedMemory.components_to_include = white_list
+
+# Export all definitions to JSON
+def export_all_definitions_to_json(file_name: str, verbose: bool = True) -> None:
+	""" Export all definitions to a single json file for debugging purposes.
+
+	Args:
+		file_name	(str):	The name of the file to export to.
+		verbose		(bool):	Whether to print a debug message or not.
+	"""
+	# Convert everything to fully serializable dicts
+	definitions_copy: dict[str, JsonDict] = {}
+	for item, data in Mem.definitions.items():
+		definitions_copy[item] = convert_to_serializable(data)
+
+		# Create a copy of the definitions without OVERRIDE_MODEL key
+		if "override_model" in definitions_copy[item]:
+			del definitions_copy[item]["override_model"]
+
+	# Export definitions to JSON for debugging generation
+	stp.json_dump(definitions_copy, file_name, max_level=3)
+	if verbose:
+		stp.debug(f"Mem.definitions exported to '{stp.relative_path(file_name)}'")
 

@@ -52,8 +52,7 @@ def beet_default(ctx: Context) -> None:
 
 	# Export definitions to JSON for debugging generation
 	if definitions_debug and definitions_copy:
-		with stp.super_open(definitions_debug, "w") as f:
-			stp.json_dump(definitions_copy, file = f)
+		stp.json_dump(definitions_copy, definitions_debug, max_level=3)
 		stp.debug(f"Received definitions exported to './{stp.relative_path(definitions_debug)}'")
 
 	# Check every single thing in the definitions

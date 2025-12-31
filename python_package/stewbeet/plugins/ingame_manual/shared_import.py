@@ -69,10 +69,12 @@ HOVER_EQUIVALENTS: dict[str, str] = {
 	AWAKENED_3X4_FONT: HOVER_AWAKENED_3X4_FONT,
 }
 
+DEFAULT_NEXT_CRAFT_FONT: int = 0x8000
+
 # Global variables
 class SharedMemory:
 	components_to_include: list[str] = ["item_name", "lore", "custom_name", "damage", "max_damage"]
-	next_craft_font: int = 0x8000
+	next_craft_font: int = DEFAULT_NEXT_CRAFT_FONT
 	font_providers: list[JsonDict] = []
 	manual_pages: list[JsonDict] = []
 	cache_path: str = "" # Filled later by ingame_manual/__init__.py
