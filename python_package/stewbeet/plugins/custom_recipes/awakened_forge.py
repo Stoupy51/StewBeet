@@ -10,8 +10,8 @@ from ...core.__memory__ import Mem
 from ...core.cls.item import Item
 from ...core.cls.recipe import AwakenedForgeRecipe
 from ...core.ingredients import (
+    Ingr,
     get_item_from_ingredient,
-    ingr_repr,
     ingr_to_id,
     item_to_id_ingr_repr,
     loot_table_from_ingredient,
@@ -46,7 +46,7 @@ class AwakenedForgeRecipeHandler:
             str: The generated recipe command.
         """
         # Determine the result
-        result: JsonDict = item_to_id_ingr_repr(get_item_from_ingredient(recipe["result"])) if recipe.get("result") else ingr_repr(item, Mem.ctx.project_id)
+        result: JsonDict = item_to_id_ingr_repr(get_item_from_ingredient(recipe["result"])) if recipe.get("result") else Ingr(item, Mem.ctx.project_id)
         result_function: str = ingr_to_id(result, add_namespace=True).replace(":", "/")
 
         # Get ingredients

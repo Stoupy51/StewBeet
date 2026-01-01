@@ -10,7 +10,7 @@ from ...core.cls.item import Item
 from ...core.cls.recipe import CraftingShapedRecipe, CraftingShapelessRecipe
 from ...core.constants import OFFICIAL_LIBS, official_lib_used
 from ...core.ingredients import (
-    ingr_repr,
+    Ingr,
     item_to_id_ingr_repr,
     loot_table_from_ingredient,
 )
@@ -164,7 +164,7 @@ class SmithedRecipeHandler:
                 # Get ingredients
                 ingr: list[JsonDict] = list(recipe.ingredients.values()) if isinstance(recipe, CraftingShapedRecipe) else recipe.ingredients
                 if not recipe.result:
-                    result_loot_table = loot_table_from_ingredient(ingr_repr(item, Mem.ctx.project_id), recipe.result_count)
+                    result_loot_table = loot_table_from_ingredient(Ingr(item, Mem.ctx.project_id), recipe.result_count)
                 else:
                     result_loot_table = loot_table_from_ingredient(recipe.result, recipe.result_count)
 

@@ -51,12 +51,16 @@ def add_border(
 	image: Image.Image,
 	border_color: tuple[int, int, int, int],
 	border_size: int,
-	is_rectangle_shape: bool
 ) -> Image.Image:
 	"""
 	Fast border addition using Pillow image filters and compositing.
 	- For non-rectangular shapes: dilate the alpha channel and paste border where added.
 	- For rectangular shapes: compute bounding box, draw filled rect, dilate, subtract to get border.
+
+	Args:
+		image (Image): The input image with transparency.
+		border_color (tuple): The RGBA color of the border.
+		border_size (int): The thickness of the border in pixels.
 	"""
 	if border_size <= 0:
 		return image
@@ -70,26 +74,10 @@ def add_border(
 	# Work with alpha channel
 	alpha = image.split()[3]  # 'L' mode
 
-	if not is_rectangle_shape:
-		# Dilate alpha: pixels near opaque become non-zero
-		dilated = alpha.filter(ImageFilter.MaxFilter(filt_size))
-		# border_mask is where dilated is non-zero but original is zero
-		border_mask = ImageChops.difference(dilated, alpha)
-	else:
-		# Compute bounding box of non-transparent pixels
-		bbox = alpha.getbbox()
-		if bbox is None:
-			# image fully transparent — nothing to border
-			return image
-
-		# Create mask with filled rectangle at bbox
-		mask = Image.new("L", image.size, 0)
-		draw = ImageDraw.Draw(mask)
-		draw.rectangle(bbox, fill=255)
-
-		# Dilate the rectangle mask to produce outer rectangle
-		dilated = mask.filter(ImageFilter.MaxFilter(filt_size))
-		border_mask = ImageChops.difference(dilated, mask)
+	# Dilate alpha: pixels near opaque become non-zero
+	dilated = alpha.filter(ImageFilter.MaxFilter(filt_size))
+	# border_mask is where dilated is non-zero but original is zero
+	border_mask = ImageChops.difference(dilated, alpha)
 
 	# If there's no border (small or fully opaque), return original
 	if not border_mask.getbbox():

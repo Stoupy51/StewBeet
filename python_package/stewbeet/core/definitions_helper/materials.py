@@ -13,7 +13,7 @@ from ..cls.block import VANILLA_BLOCK_FOR_ORES, Block
 from ..cls.item import Item
 from ..cls.recipe import BlastingRecipe, CraftingShapedRecipe, CraftingShapelessRecipe, PulverizingRecipe, SmeltingRecipe
 from ..constants import CUSTOM_BLOCK_VANILLA, CUSTOM_ITEM_VANILLA
-from ..ingredients import ingr_repr
+from ..ingredients import Ingr
 from .equipments import SLOTS, EquipmentsConfig, VanillaEquipments, format_attributes
 
 
@@ -57,7 +57,7 @@ def generate_everything_about_this_material(
 		if material.endswith("!"):	# Remove the "!" if present
 			material = material[:-1]
 		material_base = material.split(":")[-1]		# Get the base material name (ex: "adamantium" from "adamantium_fragment")
-	main_ingredient = ingr_repr(material) 			# Get the main ingredient for recipes
+	main_ingredient = Ingr(material) 			# Get the main ingredient for recipes
 
 	## Ingredients (ingot, nugget, raw, and other)
 	for item in [material_base, f"{material_base}_fragment", f"{material_base}_ingot", f"{material_base}_nugget", f"raw_{material_base}", f"{material_base}_dust", f"{material_base}_stick", f"{material_base}_rod"]:
@@ -74,36 +74,36 @@ def generate_everything_about_this_material(
 		if not ignore_recipes:
 			if item.endswith("ingot") or item.endswith("fragment") or item == material_base:
 				if f"{material_base}_block.png" in textures:
-					obj.recipes.append(CraftingShapelessRecipe(result_count=9, category="misc", group=material_base, ingredients=[ingr_repr(f"{material_base}_block")]))
+					obj.recipes.append(CraftingShapelessRecipe(result_count=9, category="misc", group=material_base, ingredients=[Ingr(f"{material_base}_block")]))
 				if f"{material_base}_nugget.png" in textures:
-					obj.recipes.append(CraftingShapedRecipe(result_count=1, category="misc", group=material_base, shape=["XXX","XXX","XXX"], ingredients={"X":ingr_repr(f"{material_base}_nugget")}))
+					obj.recipes.append(CraftingShapedRecipe(result_count=1, category="misc", group=material_base, shape=["XXX","XXX","XXX"], ingredients={"X":Ingr(f"{material_base}_nugget")}))
 				if f"raw_{material_base}.png" in textures:
-					obj.recipes.append(SmeltingRecipe(result_count=1, category="misc", group=material_base, experience=0.8, cookingtime=200, ingredient=ingr_repr(f"raw_{material_base}")))
-					obj.recipes.append(BlastingRecipe(result_count=1, category="misc", group=material_base, experience=0.8, cookingtime=100, ingredient=ingr_repr(f"raw_{material_base}")))
+					obj.recipes.append(SmeltingRecipe(result_count=1, category="misc", group=material_base, experience=0.8, cookingtime=200, ingredient=Ingr(f"raw_{material_base}")))
+					obj.recipes.append(BlastingRecipe(result_count=1, category="misc", group=material_base, experience=0.8, cookingtime=100, ingredient=Ingr(f"raw_{material_base}")))
 				if f"{material_base}_dust.png" in textures:
-					obj.recipes.append(SmeltingRecipe(result_count=1, category="misc", group=material_base, experience=0.8, cookingtime=200, ingredient=ingr_repr(f"{material_base}_dust")))
-					obj.recipes.append(BlastingRecipe(result_count=1, category="misc", group=material_base, experience=0.8, cookingtime=100, ingredient=ingr_repr(f"{material_base}_dust")))
+					obj.recipes.append(SmeltingRecipe(result_count=1, category="misc", group=material_base, experience=0.8, cookingtime=200, ingredient=Ingr(f"{material_base}_dust")))
+					obj.recipes.append(BlastingRecipe(result_count=1, category="misc", group=material_base, experience=0.8, cookingtime=100, ingredient=Ingr(f"{material_base}_dust")))
 				if f"{material_base}_ore.png" in textures:
-					obj.recipes.append(SmeltingRecipe(result_count=1, category="misc", group=material_base, experience=0.8, cookingtime=200, ingredient=ingr_repr(f"{material_base}_ore")))
-					obj.recipes.append(BlastingRecipe(result_count=1, category="misc", group=material_base, experience=0.8, cookingtime=100, ingredient=ingr_repr(f"{material_base}_ore")))
+					obj.recipes.append(SmeltingRecipe(result_count=1, category="misc", group=material_base, experience=0.8, cookingtime=200, ingredient=Ingr(f"{material_base}_ore")))
+					obj.recipes.append(BlastingRecipe(result_count=1, category="misc", group=material_base, experience=0.8, cookingtime=100, ingredient=Ingr(f"{material_base}_ore")))
 				if f"deepslate_{material_base}_ore.png" in textures:
-					obj.recipes.append(SmeltingRecipe(result_count=1, category="misc", group=material_base, experience=0.8, cookingtime=200, ingredient=ingr_repr(f"deepslate_{material_base}_ore")))
-					obj.recipes.append(BlastingRecipe(result_count=1, category="misc", group=material_base, experience=0.8, cookingtime=100, ingredient=ingr_repr(f"deepslate_{material_base}_ore")))
+					obj.recipes.append(SmeltingRecipe(result_count=1, category="misc", group=material_base, experience=0.8, cookingtime=200, ingredient=Ingr(f"deepslate_{material_base}_ore")))
+					obj.recipes.append(BlastingRecipe(result_count=1, category="misc", group=material_base, experience=0.8, cookingtime=100, ingredient=Ingr(f"deepslate_{material_base}_ore")))
 			if item.startswith("raw_"):
 				if f"raw_{material_base}_block.png" in textures:
-					obj.recipes.append(CraftingShapelessRecipe(result_count=9, category="misc", group=material_base, ingredients=[ingr_repr(f"raw_{material_base}_block")]))
+					obj.recipes.append(CraftingShapelessRecipe(result_count=9, category="misc", group=material_base, ingredients=[Ingr(f"raw_{material_base}_block")]))
 			if item.endswith("dust"):
-				obj.recipes.append(SmeltingRecipe(result_count=1, category="misc", group=material_base, experience=0.8, cookingtime=200, ingredient=ingr_repr(item), result=main_ingredient))
-				obj.recipes.append(BlastingRecipe(result_count=1, category="misc", group=material_base, experience=0.8, cookingtime=100, ingredient=ingr_repr(item), result=main_ingredient))
+				obj.recipes.append(SmeltingRecipe(result_count=1, category="misc", group=material_base, experience=0.8, cookingtime=200, ingredient=Ingr(item), result=main_ingredient))
+				obj.recipes.append(BlastingRecipe(result_count=1, category="misc", group=material_base, experience=0.8, cookingtime=100, ingredient=Ingr(item), result=main_ingredient))
 				obj.recipes.append(PulverizingRecipe(result_count=1, category="misc", group=material_base, ingredient=main_ingredient))
 				for pulv_ingr in [f"raw_{material_base}",f"{material_base}_ore",f"deepslate_{material_base}_ore"]:
 					if f"{pulv_ingr}.png" in textures:
-						obj.recipes.append(PulverizingRecipe(result_count=2, category="misc", group=material_base, ingredient=ingr_repr(pulv_ingr)))
+						obj.recipes.append(PulverizingRecipe(result_count=2, category="misc", group=material_base, ingredient=Ingr(pulv_ingr)))
 			if item.endswith("nugget"):
 				obj.recipes.insert(0, CraftingShapelessRecipe(result_count=9, category="misc", group=material_base, ingredients=[main_ingredient]))
 				for gear in SLOTS.keys():
 					if f"{material_base}_{gear}.png" in textures:
-						obj.recipes.append(SmeltingRecipe(result_count=1, category="equipment", experience=0.8, cookingtime=200, ingredient=ingr_repr(f"{material_base}_{gear}")))
+						obj.recipes.append(SmeltingRecipe(result_count=1, category="equipment", experience=0.8, cookingtime=200, ingredient=Ingr(f"{material_base}_{gear}")))
 			if item.endswith("stick"):
 				obj.recipes.append(CraftingShapedRecipe(result_count=4, category="misc", shape=["X","X"], ingredients={"X":main_ingredient}))
 			if item.endswith("rod"):
@@ -130,7 +130,7 @@ def generate_everything_about_this_material(
 				obj.no_silk_touch_drop = material
 		if block.endswith("block") and not ignore_recipes:
 			if block.startswith("raw") and is_there_raw_material:
-				obj.recipes.append(CraftingShapedRecipe(result_count=1, group=material_base, category="misc", shape=["XXX","XXX","XXX"], ingredients={"X":ingr_repr(f"raw_{material_base}")}))
+				obj.recipes.append(CraftingShapedRecipe(result_count=1, group=material_base, category="misc", shape=["XXX","XXX","XXX"], ingredients={"X":Ingr(f"raw_{material_base}")}))
 			else:
 				obj.recipes.append(CraftingShapedRecipe(result_count=1, group=material_base, category="misc", shape=["XXX","XXX","XXX"], ingredients={"X":main_ingredient}))
 		pass
@@ -232,7 +232,7 @@ def generate_everything_about_this_material(
 		obj.manual_category = "equipment"
 		obj.components["custom_data"] = {"smithed":{}}
 		obj.components["custom_data"]["smithed"]["dict"] = {"tools": {material_base: True, gear: True}}
-		tools_ingr = {"X": main_ingredient, "S": ingr_repr("minecraft:stick")}
+		tools_ingr = {"X": main_ingredient, "S": Ingr("minecraft:stick")}
 		gear_config: JsonDict = {}
 		if gear == "sword":
 			if equipments_config:
@@ -296,12 +296,12 @@ def add_recipes_for_dust(material: str, pulverize: list[str | JsonDict], smelt_t
 
 	All items in the pulverize list will be pulverized to get 2 times the dust.
 
-	If the item is a string, their ingr_repr will be used as "minecraft:{item}"
+	If the item is a string, their Ingr will be used as "minecraft:{item}"
 
 	Args:
 		material	(str):				The material to add dust recipes for, ex: "copper" will add recipes for "copper_dust".
-		pulverize	(list[str|dict]):	The list of items to pulverize to get 2 times the dust, ex: ["raw_copper", "copper_ore", "deepslate_copper_ore", ingr_repr("custom_copper", "some_namespace")]
-		smelt_to	(dict):				The ingredient representation of the result of smelting the dust, ex: ingr_repr("minecraft:copper_ingot")}
+		pulverize	(list[str|dict]):	The list of items to pulverize to get 2 times the dust, ex: ["raw_copper", "copper_ore", "deepslate_copper_ore", Ingr("custom_copper", "some_namespace")]
+		smelt_to	(dict):				The ingredient representation of the result of smelting the dust, ex: Ingr("minecraft:copper_ingot")}
 	"""
 	# Assertions
 	textures_folder: str = stp.relative_path(Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", ""))
@@ -322,7 +322,7 @@ def add_recipes_for_dust(material: str, pulverize: list[str | JsonDict], smelt_t
 	obj.components["custom_data"]["smithed"]["dict"] = {"dust": {material: True}}
 
 	# Add smelting and blasting recipes
-	ingredient: JsonDict = ingr_repr(dust)
+	ingredient: JsonDict = Ingr(dust)
 	obj.recipes.append(SmeltingRecipe(result_count=1,category="misc",group=material,experience=0.8,cookingtime=200,ingredient=ingredient, result=smelt_to))
 	obj.recipes.append(BlastingRecipe(result_count=1,category="misc",group=material,experience=0.8,cookingtime=100,ingredient=ingredient, result=smelt_to))
 
@@ -331,7 +331,7 @@ def add_recipes_for_dust(material: str, pulverize: list[str | JsonDict], smelt_t
 
 	# Add pulverizing recipes
 	for item in pulverize:
-		pulv_ingr = item if isinstance(item, dict) else ingr_repr(f"minecraft:{item}")
+		pulv_ingr = item if isinstance(item, dict) else Ingr(f"minecraft:{item}")
 		obj.recipes.append(PulverizingRecipe(result_count=2,category="misc",group=material,ingredient=pulv_ingr))
 	return
 
@@ -345,8 +345,8 @@ def add_recipes_for_all_dusts(dusts_configs: dict[str, tuple[list[str | JsonDict
 	```py
 	{
 		"copper": (
-			["raw_copper", "copper_ore", "deepslate_copper_ore", ingr_repr("custom_copper", "some_namespace")],
-			ingr_repr("minecraft:copper_ingot")
+			["raw_copper", "copper_ore", "deepslate_copper_ore", Ingr("custom_copper", "some_namespace")],
+			Ingr("minecraft:copper_ingot")
 		)
 	}
 	```

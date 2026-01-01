@@ -13,7 +13,7 @@ from ...core import Mem
 
 # Utility functions
 def find_pack_png() -> str | None:
-	"""Find pack.png file in common locations."""
+	""" Find pack.png file in common locations. """
 	pack_icon: str = ""
 	for path in ("src/pack.png", "assets/pack.png"):
 		if os.path.exists(path):

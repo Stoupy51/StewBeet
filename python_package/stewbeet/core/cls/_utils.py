@@ -19,6 +19,8 @@ class StMapping(Mapping[str, Any]):
         return getattr(self, key)
     def __setitem__(self, key: str, value: Any) -> None:
         return setattr(self, key, value)
+    def __contains__(self, key: object) -> bool:
+        return self.get(key) is not None
 
     def get(self, key: str, default: Any = None) -> Any:
         try:
@@ -144,6 +146,11 @@ class StMapping(Mapping[str, Any]):
                 return cls.from_dict(Mem.definitions.get(item_id, {}), item_id)
             else:
                 return cls.from_dict(Mem.external_definitions.get(item_id, {}), item_id)
+
+    @classmethod
+    def clone(cls, other: Self) -> Self:
+        """ Create a clone of another instance """
+        return cls(**other.to_dict())
 
     def copy(self) -> JsonDict:
         """ Return a shallow copy as a dictionary. """

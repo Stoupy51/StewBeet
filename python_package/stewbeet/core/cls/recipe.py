@@ -1,8 +1,7 @@
 
 # pyright: reportUnnecessaryIsInstance=false
 # Imports
-from collections.abc import Iterator
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from typing import Any, Literal, Self
 
 from beet.core.utils import JsonDict
@@ -37,25 +36,6 @@ class RecipeBase(StMapping):
             self.type = self.type.replace("minecraft:", "", 1)
         if self.type not in ALL_RECIPES_TYPES:
             raise ValueError(f"Invalid recipe type: {self.type}")
-
-    def __getitem__(self, key: str) -> Any:
-        """Get item from recipe data as if it were a dictionary."""
-        data = asdict(self)
-        # Filter out None values to match dict behavior
-        return {k: v for k, v in data.items() if v is not None}[key]
-
-    def __setitem__(self, key: str, value: Any) -> None:
-        return setattr(self, key, value)
-
-    def __iter__(self) -> Iterator[str]:
-        """Iterate over recipe keys."""
-        data = asdict(self)
-        return iter(k for k, v in data.items() if v is not None)
-
-    def __len__(self) -> int:
-        """Return the number of non-None fields."""
-        data = asdict(self)
-        return sum(1 for v in data.values() if v is not None)
 
     @classmethod
     def from_dict(cls, data: JsonDict | "StMapping", item_id: str = "") -> Self:
@@ -99,7 +79,7 @@ class CraftingShapedRecipe(RecipeBase):
     >>> from stewbeet import *
     >>> recipe = CraftingShapedRecipe(
     ...     shape=["II", "CC", "CC"],
-    ...     ingredients={"I":ingr_repr("minecraft:iron_ingot"), "C": ingr_repr("simplunium_ingot")}
+    ...     ingredients={"I":Ingr("minecraft:iron_ingot"), "C": Ingr("simplunium_ingot")}
     ... )
     >>> recipe.shape
     ['II', 'CC', 'CC']
@@ -143,7 +123,7 @@ class CraftingShapelessRecipe(RecipeBase):
     """ Recipe for shapeless crafting.
 
     >>> from stewbeet import *
-    >>> recipe = CraftingShapelessRecipe(ingredients=[ingr_repr("minecraft:iron_ingot"), ingr_repr("minecraft:copper_ingot")])
+    >>> recipe = CraftingShapelessRecipe(ingredients=[Ingr("minecraft:iron_ingot"), Ingr("minecraft:copper_ingot")])
     >>> len(recipe.ingredients)
     2
     >>> recipe.type
@@ -166,7 +146,7 @@ class SmeltingRecipe(RecipeBase):
     """ Recipe for smelting in a furnace.
 
     >>> from stewbeet import *
-    >>> recipe = SmeltingRecipe(ingredient=ingr_repr("minecraft:iron_ore"), experience=0.7, cookingtime=200)
+    >>> recipe = SmeltingRecipe(ingredient=Ingr("minecraft:iron_ore"), experience=0.7, cookingtime=200)
     >>> recipe.experience
     0.7
     >>> recipe.cookingtime
@@ -193,7 +173,7 @@ class BlastingRecipe(RecipeBase):
     """ Recipe for blasting in a blast furnace.
 
     >>> from stewbeet import *
-    >>> recipe = BlastingRecipe(ingredient=ingr_repr("minecraft:iron_ore"), experience=0.7, cookingtime=100)
+    >>> recipe = BlastingRecipe(ingredient=Ingr("minecraft:iron_ore"), experience=0.7, cookingtime=100)
     >>> recipe.experience
     0.7
     >>> recipe.cookingtime
@@ -220,7 +200,7 @@ class SmokingRecipe(RecipeBase):
     """ Recipe for smoking in a smoker.
 
     >>> from stewbeet import *
-    >>> recipe = SmokingRecipe(ingredient=ingr_repr("minecraft:chicken"), experience=0.35, cookingtime=100)
+    >>> recipe = SmokingRecipe(ingredient=Ingr("minecraft:chicken"), experience=0.35, cookingtime=100)
     >>> recipe.experience
     0.35
     >>> recipe.cookingtime
@@ -247,7 +227,7 @@ class CampfireCookingRecipe(RecipeBase):
     """ Recipe for cooking on a campfire.
 
     >>> from stewbeet import *
-    >>> recipe = CampfireCookingRecipe(ingredient=ingr_repr("minecraft:chicken"), experience=0.35, cookingtime=600)
+    >>> recipe = CampfireCookingRecipe(ingredient=Ingr("minecraft:chicken"), experience=0.35, cookingtime=600)
     >>> recipe.experience
     0.35
     >>> recipe.cookingtime
@@ -276,9 +256,9 @@ class SmithingTransformRecipe(RecipeBase):
 
     >>> from stewbeet import *
     >>> recipe = SmithingTransformRecipe(
-    ...     template=ingr_repr("minecraft:netherite_upgrade_smithing_template"),
-    ...     base=ingr_repr("minecraft:diamond_sword"),
-    ...     addition=ingr_repr("minecraft:netherite_ingot")
+    ...     template=Ingr("minecraft:netherite_upgrade_smithing_template"),
+    ...     base=Ingr("minecraft:diamond_sword"),
+    ...     addition=Ingr("minecraft:netherite_ingot")
     ... )
     >>> recipe.template['item']
     'minecraft:netherite_upgrade_smithing_template'
@@ -305,10 +285,10 @@ class SmithingTrimRecipe(RecipeBase):
 
     >>> from stewbeet import *
     >>> recipe = SmithingTrimRecipe(
-    ...     template=ingr_repr("minecraft:spire_armor_trim_smithing_template"),
-    ...     base=ingr_repr("minecraft:netherite_chestplate"),
-    ...     addition=ingr_repr("minecraft:diamond"),
-    ...     pattern=ingr_repr("minecraft:spire_armor_trim_smithing_template")
+    ...     template=Ingr("minecraft:spire_armor_trim_smithing_template"),
+    ...     base=Ingr("minecraft:netherite_chestplate"),
+    ...     addition=Ingr("minecraft:diamond"),
+    ...     pattern=Ingr("minecraft:spire_armor_trim_smithing_template")
     ... )
     >>> recipe.addition['item']
     'minecraft:diamond'
@@ -337,7 +317,7 @@ class StonecuttingRecipe(RecipeBase):
     """ Recipe for stonecutting.
 
     >>> from stewbeet import *
-    >>> recipe = StonecuttingRecipe(ingredient=ingr_repr("minecraft:stone"))
+    >>> recipe = StonecuttingRecipe(ingredient=Ingr("minecraft:stone"))
     >>> recipe.ingredient['item']
     'minecraft:stone'
     """
@@ -358,7 +338,7 @@ class PulverizingRecipe(RecipeBase):
     """ Custom recipe for SimplEnergy pulverizing.
 
     >>> from stewbeet import *
-    >>> recipe = PulverizingRecipe(ingredient=ingr_repr("minecraft:iron_ore"))
+    >>> recipe = PulverizingRecipe(ingredient=Ingr("minecraft:iron_ore"))
     >>> recipe.ingredient['item']
     'minecraft:iron_ore'
     """
@@ -378,7 +358,7 @@ class AwakenedForgeRecipe(RecipeBase):
     """ Custom recipe for Stardust awakened forge.
 
     >>> from stewbeet import *
-    >>> recipe = AwakenedForgeRecipe(ingredients=[ingr_repr("stardust_fragment"), ingr_repr("minecraft:iron_ingot")])
+    >>> recipe = AwakenedForgeRecipe(ingredients=[Ingr("stardust_fragment"), Ingr("minecraft:iron_ingot")])
     >>> len(recipe.ingredients)
     2
     """
