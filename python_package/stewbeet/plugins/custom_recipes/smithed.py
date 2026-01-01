@@ -6,14 +6,10 @@ import stouputils as stp
 from beet.core.utils import JsonDict
 
 from ...core.__memory__ import Mem
+from ...core.cls.ingredients import Ingr
 from ...core.cls.item import Item
 from ...core.cls.recipe import CraftingShapedRecipe, CraftingShapelessRecipe
 from ...core.constants import OFFICIAL_LIBS, official_lib_used
-from ...core.ingredients import (
-    Ingr,
-    item_to_id_ingr_repr,
-    loot_table_from_ingredient,
-)
 from ...core.utils.io import write_function
 
 
@@ -68,7 +64,7 @@ class SmithedRecipeHandler:
         for count, ingr in unique_ingredients:
             item: JsonDict = {"count": count}
             item.update(ingr)
-            r["recipe"].append(item_to_id_ingr_repr(item))
+            r["recipe"].append(Ingr(item).item_to_id())
         line += json.dumps(r)
 
         if recipe.smithed_crafter_command:
@@ -89,7 +85,7 @@ class SmithedRecipeHandler:
             str: The generated recipe command.
         """
         # Convert ingredients to aimed recipes
-        ingredients: dict[str, JsonDict] = recipe.ingredients
+        ingredients: dict[str, Ingr] = recipe.ingredients
         recipes: dict[int, list[JsonDict]] = {0: [], 1: [], 2: []}
 
         for i, row in enumerate(recipe.shape):
@@ -98,7 +94,7 @@ class SmithedRecipeHandler:
                 if ingredient:
                     ingr = {"Slot": slot}
                     ingr.update(ingredient)
-                    recipes[i].append(item_to_id_ingr_repr(ingr))
+                    recipes[i].append(Ingr(ingr).item_to_id())
                 else:
                     recipes[i].append({"Slot": slot, "id": "minecraft:air"})
 
@@ -162,11 +158,11 @@ class SmithedRecipeHandler:
                     else CraftingShapelessRecipe.from_dict(recipe)
 
                 # Get ingredients
-                ingr: list[JsonDict] = list(recipe.ingredients.values()) if isinstance(recipe, CraftingShapedRecipe) else recipe.ingredients
+                ingr: list[Ingr] = list(recipe.ingredients.values()) if isinstance(recipe, CraftingShapedRecipe) else recipe.ingredients
                 if not recipe.result:
-                    result_loot_table = loot_table_from_ingredient(Ingr(item, Mem.ctx.project_id), recipe.result_count)
+                    result_loot_table = Ingr(item).register_loot_table(recipe.result_count)
                 else:
-                    result_loot_table = loot_table_from_ingredient(recipe.result, recipe.result_count)
+                    result_loot_table = recipe.result.register_loot_table(recipe.result_count)
 
                 # If there is a component in the ingredients of shaped/shapeless, use smithed crafter
                 if any(i.get("components") for i in ingr):

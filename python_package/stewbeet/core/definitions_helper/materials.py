@@ -10,10 +10,10 @@ from beet.core.utils import JsonDict
 
 from ..__memory__ import Mem
 from ..cls.block import VANILLA_BLOCK_FOR_ORES, Block
+from ..cls.ingredients import Ingr
 from ..cls.item import Item
 from ..cls.recipe import BlastingRecipe, CraftingShapedRecipe, CraftingShapelessRecipe, PulverizingRecipe, SmeltingRecipe
 from ..constants import CUSTOM_BLOCK_VANILLA, CUSTOM_ITEM_VANILLA
-from ..ingredients import Ingr
 from .equipments import SLOTS, EquipmentsConfig, VanillaEquipments, format_attributes
 
 

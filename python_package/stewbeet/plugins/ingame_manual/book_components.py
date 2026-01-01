@@ -8,14 +8,14 @@ from beet.core.utils import JsonDict, TextComponent
 from PIL import Image
 
 from ...core.__memory__ import Mem
+from ...core.cls.ingredients import Ingr
 from ...core.cls.item import Item
-from ...core.ingredients import ingr_to_id
 from .image_utils import generate_high_res_font
 from .shared_import import NONE_FONT, SharedMemory, get_page_number
 
 
 # Call the previous function
-def high_res_font_from_ingredient(ingredient: str | JsonDict, count: int = 1) -> str:
+def high_res_font_from_ingredient(ingredient: str | Ingr, count: int = 1) -> str:
 	""" Generate the high res font to display in the manual for the ingredient
 
 	Args:
@@ -26,7 +26,7 @@ def high_res_font_from_ingredient(ingredient: str | JsonDict, count: int = 1) ->
 	"""
 	# Decode the ingredient
 	if isinstance(ingredient, dict):
-		ingr_str: str = ingr_to_id(ingredient, add_namespace = True)
+		ingr_str: str = Ingr(ingredient).to_id(add_namespace=True)
 	else:
 		ingr_str = ingredient
 
@@ -52,7 +52,7 @@ def high_res_font_from_ingredient(ingredient: str | JsonDict, count: int = 1) ->
 
 
 # Convert ingredient to formatted JSON for book
-def get_item_component(ingredient: str | JsonDict, only_those_components: list[str] | None = None, count: int = 1, add_change_page: bool = True) -> JsonDict:
+def get_item_component(ingredient: str | Ingr, only_those_components: list[str] | None = None, count: int = 1, add_change_page: bool = True) -> JsonDict:
 	""" Generate item hover text for a craft ingredient
 	Args:
 		ingredient (dict|str): The ingredient
@@ -86,8 +86,9 @@ def get_item_component(ingredient: str | JsonDict, only_those_components: list[s
 			id = ingredient
 			obj = Item.from_id(ingredient)
 		else:
+			ingredient = Ingr(ingredient)
 			custom_data: JsonDict = ingredient["components"]["minecraft:custom_data"]
-			id = ingr_to_id(ingredient, add_namespace=False)
+			id = ingredient.to_id(add_namespace=False)
 			if custom_data.get(Mem.ctx.project_id):
 				if id in Mem.definitions:
 					obj = Item.from_id(id)

@@ -8,7 +8,7 @@ from beet import Advancement, Dialog, DialogTag, Model, Texture
 from beet.core.utils import JsonDict, TextComponent
 from PIL import Image
 
-from stewbeet.core.ingredients import item_id_to_text_component
+from stewbeet.core.utils.text_component import item_id_to_text_component
 
 from ...core import Mem, set_json_encoder, text_component_to_str, write_function, write_load_file
 from ..initialize.source_lore_font import find_pack_png

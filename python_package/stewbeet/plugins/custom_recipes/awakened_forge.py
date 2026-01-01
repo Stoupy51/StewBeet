@@ -7,15 +7,9 @@ from beet import Predicate
 from beet.core.utils import JsonDict
 
 from ...core.__memory__ import Mem
+from ...core.cls.ingredients import Ingr
 from ...core.cls.item import Item
 from ...core.cls.recipe import AwakenedForgeRecipe
-from ...core.ingredients import (
-    Ingr,
-    get_item_from_ingredient,
-    ingr_to_id,
-    item_to_id_ingr_repr,
-    loot_table_from_ingredient,
-)
 from ...core.utils.io import set_json_encoder, write_function, write_load_file, write_versioned_function
 
 
@@ -46,23 +40,23 @@ class AwakenedForgeRecipeHandler:
             str: The generated recipe command.
         """
         # Determine the result
-        result: JsonDict = item_to_id_ingr_repr(get_item_from_ingredient(recipe["result"])) if recipe.get("result") else Ingr(item, Mem.ctx.project_id)
-        result_function: str = ingr_to_id(result, add_namespace=True).replace(":", "/")
+        result: Ingr = Ingr(recipe["result"]).to_item().item_to_id() if recipe.get("result") else Ingr(item)
+        result_function: str = result.to_id(add_namespace=True).replace(":", "/")
 
         # Get ingredients
-        ingredients: list[JsonDict] = recipe["ingredients"]
-        first_ingredient: JsonDict = ingredients[0]
+        ingredients: list[Ingr] = recipe["ingredients"]
+        first_ingredient: Ingr = ingredients[0]
         assert first_ingredient.get("count", 1) <= 64, f"First ingredient must have count <= 64, for {item} recipe {recipe}"
         ingredients = ingredients[1:]
 
         # Prepare the check line
-        line: str = "execute if data entity @s Item" + json.dumps(item_to_id_ingr_repr(first_ingredient))
+        line: str = "execute if data entity @s Item" + json.dumps(first_ingredient.item_to_id())
         for ingredient in ingredients:
             count: int = ingredient.get("count", 1)
             while True:
-                ingredient_copy = ingredient.copy()
+                ingredient_copy: Ingr = ingredient.copy()
                 ingredient_copy["count"] = count if count < 64 else 64
-                line += f" if entity @n[type=item,nbt={{Item:{json.dumps(item_to_id_ingr_repr(ingredient_copy))}}},distance=..1]"
+                line += f" if entity @n[type=item,nbt={{Item:{json.dumps(ingredient_copy.item_to_id())}}},distance=..1]"
                 count -= 64
                 if count <= 0:
                     break
@@ -86,9 +80,9 @@ execute if score @s stardust.forge_timer matches 4 run function {Mem.ctx.project
         for ingredient in ingredients:
             count: int = ingredient.get("count", 1)
             while True:
-                ingredient_copy = ingredient.copy()
+                ingredient_copy: Ingr = ingredient.copy()
                 ingredient_copy["count"] = count if count < 64 else 64
-                kill_ingredients += f"kill @n[type=item,nbt={{Item:{json.dumps(item_to_id_ingr_repr(ingredient_copy))}}},distance=..1]\n"
+                kill_ingredients += f"kill @n[type=item,nbt={{Item:{json.dumps(ingredient_copy.item_to_id())}}},distance=..1]\n"
                 count -= 64
                 if count <= 0:
                     break
@@ -104,7 +98,7 @@ kill @s
 
 # Spawn result item with Motion [0.0,1.0,0.0]
 tag @e[type=item] add stardust.temp
-execute align xyz run loot spawn ~0.5 ~0.5 ~0.5 loot {loot_table_from_ingredient(result, recipe['result_count'])}
+execute align xyz run loot spawn ~0.5 ~0.5 ~0.5 loot {result.register_loot_table(recipe['result_count'])}
 execute as @e[type=item,tag=!stardust.temp] run data merge entity @s {{Motion:[0.0d,1.0d,0.0d],Glowing:true}}
 tag @e[type=item,tag=stardust.temp] remove stardust.temp
 """)

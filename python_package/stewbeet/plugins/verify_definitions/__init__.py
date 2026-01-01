@@ -22,7 +22,7 @@ from ...core.constants import (
 	USED_FOR_CRAFTING,
 	VANILLA_BLOCK,
 )
-from ...core.ingredients import FURNACES_RECIPES_TYPES
+from ...core.utils.text_component import FURNACES_RECIPES_TYPES
 from ...core.utils.io import convert_to_serializable
 
 

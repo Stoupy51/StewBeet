@@ -15,6 +15,7 @@ from stewbeet.core.definitions_helper.completion import add_private_custom_data_
 
 from ...core.__memory__ import Mem
 from ...core.cls.block import Block, VanillaBlock
+from ...core.cls.ingredients import CRAFTING_RECIPES_TYPES, Ingr
 from ...core.cls.item import Item
 from ...core.cls.recipe import (
 	AwakenedForgeRecipe,
@@ -37,7 +38,7 @@ from ...core.constants import (
 	WIKI_COMPONENT,
 )
 from ...core.definitions_helper import add_item_name_and_lore_if_missing
-from ...core.ingredients import CRAFTING_RECIPES_TYPES, Ingr, ingr_to_id, ingr_to_name, item_id_to_name
+from ...core.utils.text_component import item_id_to_name
 from ...core.utils.io import convert_to_serializable, super_merge_dict, write_load_file
 from ..custom_recipes.vanilla import VanillaRecipeHandler
 from ..initialize.source_lore_font import find_pack_png
@@ -587,15 +588,15 @@ def routine():
 						# Append ingredients
 						if craft["type"] == "mining":
 							# For mining recipes, show what is being mined and what it drops
-							ore_name = ingr_to_name(craft["ingredient"])
-							result_name = ingr_to_name(craft["result"])
+							ore_name = Ingr(craft["ingredient"]).to_name()
+							result_name = Ingr(craft["result"]).to_name()
 							hover_text.append({"text": "\n- Mine: ", "color": "gray"})
 							hover_text.append({"text": ore_name, "color": "gray"})
 							result_count = craft.get("result_count", "1")
 							hover_text.append({"text": f"\n- Drops: x{result_count} ", "color": "gray"})
 							hover_text.append({"text": result_name, "color": "gray"})
 						elif craft.get("ingredient"):
-							id = ingr_to_name(craft["ingredient"])
+							id = Ingr(craft["ingredient"]).to_name()
 							hover_text.append({"text": "\n- x1 ", "color": "gray"})
 							hover_text.append({"text": id, "color": "gray"})
 						elif craft.get("ingredients"):
@@ -603,7 +604,7 @@ def routine():
 							# If it's a shaped crafting
 							if isinstance(craft["ingredients"], dict):
 								for k, v in craft["ingredients"].items():
-									id = ingr_to_name(v)
+									id = Ingr(v).to_name()
 									count = sum([line.count(k) for line in craft["shape"]])
 									hover_text.append({"text": f"\n- x{count} ", "color": "gray"})
 									hover_text.append({"text": id, "color": "gray"})
@@ -612,7 +613,7 @@ def routine():
 							elif isinstance(craft["ingredients"], list):
 								ids: dict[str, int] = {}	# {id: count}
 								for ingr in craft["ingredients"]:
-									id = ingr_to_name(ingr)
+									id = Ingr(ingr).to_name()
 									if id not in ids:
 										ids[id] = 0
 									ids[id] += ingr.get("count", 1)
@@ -622,19 +623,19 @@ def routine():
 						else:
 							# Smithing crafts
 							if craft.get("base"):
-								id = ingr_to_name(craft["base"])
+								id = Ingr(craft["base"]).to_name()
 								hover_text.append({"text": "\n- Base: ", "color": "gray"})
 								hover_text.append({"text": id, "color": "gray"})
 							if craft.get("template"):
-								id = ingr_to_name(craft["template"])
+								id = Ingr(craft["template"]).to_name()
 								hover_text.append({"text": "\n- Template: ", "color": "gray"})
 								hover_text.append({"text": id, "color": "gray"})
 							if craft.get("addition"):
-								id = ingr_to_name(craft["addition"])
+								id = Ingr(craft["addition"]).to_name()
 								hover_text.append({"text": "\n- Addition: ", "color": "gray"})
 								hover_text.append({"text": id, "color": "gray"})
 							if craft.get("pattern"):
-								pattern_name = craft["pattern"].replace("minecraft:", "").replace("_", " ").title()
+								pattern_name = str(craft["pattern"]).replace("minecraft:", "").replace("_", " ").title()
 								hover_text.append({"text": "\n- Pattern: ", "color": "gray"})
 								hover_text.append({"text": pattern_name, "color": "gray"})
 
@@ -650,7 +651,7 @@ def routine():
 						})
 
 						# If there is a result to the craft, try to add the click_event that change to that page
-						craft_result: str = "" if "result" not in craft else ingr_to_id(craft["result"], False)
+						craft_result: str = "" if "result" not in craft else Ingr(craft["result"]).to_id(add_namespace=False)
 						if craft_result and craft_result != name:
 							if craft_result in Mem.definitions:
 								page_number: int = get_page_number(craft_result)
@@ -665,11 +666,11 @@ def routine():
 							# If there is only one ingredient, link to it
 							craft_ingredient: str = ""
 							if craft.get("ingredient"):
-								craft_ingredient = ingr_to_id(craft["ingredient"], False)
+								craft_ingredient = Ingr(craft["ingredient"]).to_id(add_namespace=False)
 							elif craft.get("ingredients") and isinstance(craft["ingredients"], list) and len(craft["ingredients"]) == 1:
-								craft_ingredient = ingr_to_id(craft["ingredients"][0], False)
+								craft_ingredient = Ingr(craft["ingredients"][0]).to_id(add_namespace=False)
 							elif craft.get("ingredients") and isinstance(craft["ingredients"], dict) and len(craft["ingredients"]) == 1:
-								craft_ingredient = ingr_to_id(next(iter(craft["ingredients"].values())), False)
+								craft_ingredient = Ingr(next(iter(craft["ingredients"].values()))).to_id(add_namespace=False)
 							if craft_ingredient and craft_ingredient in Mem.definitions and craft_ingredient != name:
 								page_number: int = get_page_number(craft_ingredient)
 								if page_number != -1:

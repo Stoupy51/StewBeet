@@ -4,6 +4,7 @@
 import stouputils as stp
 from beet.core.utils import JsonDict
 
+from ...core.cls.ingredients import ALL_RECIPES_TYPES, Ingr
 from ...core.cls.item import Item
 from ...core.cls.recipe import (
 	AwakenedForgeRecipe,
@@ -11,14 +12,10 @@ from ...core.cls.recipe import (
 	CampfireCookingRecipe,
 	CraftingShapedRecipe,
 	PulverizingRecipe,
+	RecipeBase,
 	SmeltingRecipe,
 	SmokingRecipe,
 	StonecuttingRecipe,
-)
-from ...core.ingredients import (
-	ALL_RECIPES_TYPES,
-	Ingr,
-	ingr_to_id,
 )
 from .shared_import import (
 	AWAKENED_3X3_FONT,
@@ -149,8 +146,8 @@ def remove_duplicate_furnace_crafts(crafts: list[JsonDict], item: str) -> list[J
 	unique_crafts: list[JsonDict] = []
 	for craft in crafts:
 		if craft["type"] in (SmeltingRecipe.type, BlastingRecipe.type, CampfireCookingRecipe.type, SmokingRecipe.type):
-			ingredient_id = ingr_to_id(craft["ingredient"], add_namespace=True)
-			result_id = ingr_to_id(craft["result"], add_namespace=True) if "result" in craft else item
+			ingredient_id = Ingr(craft["ingredient"]).to_id(add_namespace=True)
+			result_id = Ingr(craft["result"]).to_id(add_namespace=True) if "result" in craft else item
 			pair = (ingredient_id, result_id, craft.get("result_count", 1))
 			if pair not in seen_pairs:
 				seen_pairs.add(pair)
@@ -173,6 +170,22 @@ def remove_unknown_crafts(crafts: list[JsonDict]) -> list[JsonDict]:
 			supported_crafts.append(craft)
 	return supported_crafts
 
+@stp.simple_cache
+def item_in_ingredients(item: str, craft: RecipeBase) -> bool:
+	""" Check if an item is in the ingredients of a craft
+
+	Args:
+		item (str): The item to check
+		craft (RecipeBase): The craft to check
+	Returns:
+		bool: True if the item is in the ingredients, False otherwise
+	"""
+	return (
+		craft.get("ingredient") and item == Ingr(craft["ingredient"]).to_id(add_namespace=False)) or \
+		(craft.get("ingredients") and isinstance(craft["ingredients"], dict) and item in [Ingr(x).to_id(add_namespace=False) for x in craft["ingredients"].values()]) or \
+		(craft.get("ingredients") and isinstance(craft["ingredients"], list) and item in [Ingr(x).to_id(add_namespace=False) for x in craft["ingredients"]]
+	)
+
 # Generate USED_FOR_CRAFTING key like
 def generate_otherside_crafts(item: str, definitions: dict[str, Item]) -> list[JsonDict]:
 	""" Generate the USED_FOR_CRAFTING key for an item
@@ -187,9 +200,7 @@ def generate_otherside_crafts(item: str, definitions: dict[str, Item]) -> list[J
 	for other, obj in definitions.items():
 		if other != item:
 			for craft in obj.recipes:
-				if (craft.get("ingredient") and item == ingr_to_id(craft["ingredient"], False)) or \
-					(craft.get("ingredients") and isinstance(craft["ingredients"], dict) and item in [ingr_to_id(x, False) for x in craft["ingredients"].values()]) or \
-					(craft.get("ingredients") and isinstance(craft["ingredients"], list) and item in [ingr_to_id(x, False) for x in craft["ingredients"]]):
+				if item_in_ingredients(item, craft):
 					# Convert craft, ex:
 					# before:	chainmail_helmet	{"type": "crafting_shaped","result_count": 1,"category": "equipment","shape": ["XXX","X X"],"ingredients": {"X": {"components": {"custom_data": {"iyc": {"chainmail": true}}}}}}}
 					# after:	chainmail			{"type": "crafting_shaped","result_count": 1,"category": "equipment","shape": ["XXX","X X"],"ingredients": {"X": {"components": {"custom_data": {"iyc": {"chainmail": true}}}}},"result": {"item": "minecraft:chainmail_helmet","count": 1}}
