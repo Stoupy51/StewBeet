@@ -4,7 +4,6 @@
 import stouputils as stp
 from beet.core.utils import JsonDict
 
-from ...core.__memory__ import Mem
 from ...core.cls.item import Item
 from ...core.cls.recipe import (
 	AwakenedForgeRecipe,
@@ -18,7 +17,7 @@ from ...core.cls.recipe import (
 )
 from ...core.ingredients import (
 	ALL_RECIPES_TYPES,
-	ingr_repr,
+	Ingr,
 	ingr_to_id,
 )
 from .shared_import import (
@@ -175,7 +174,7 @@ def remove_unknown_crafts(crafts: list[JsonDict]) -> list[JsonDict]:
 	return supported_crafts
 
 # Generate USED_FOR_CRAFTING key like
-def generate_otherside_crafts(item: str) -> list[JsonDict]:
+def generate_otherside_crafts(item: str, definitions: dict[str, Item]) -> list[JsonDict]:
 	""" Generate the USED_FOR_CRAFTING key for an item
 
 	Args:
@@ -185,18 +184,17 @@ def generate_otherside_crafts(item: str) -> list[JsonDict]:
 	"""
 	# Get all crafts that use the item
 	crafts: list[JsonDict] = []
-	for other in Mem.definitions.keys():
+	for other, obj in definitions.items():
 		if other != item:
-			obj = Item.from_id(other)
 			for craft in obj.recipes:
-				if ("ingredient" in craft and item == ingr_to_id(craft["ingredient"], False)) or \
-					("ingredients" in craft and isinstance(craft["ingredients"], dict) and item in [ingr_to_id(x, False) for x in craft["ingredients"].values()]) or \
-					("ingredients" in craft and isinstance(craft["ingredients"], list) and item in [ingr_to_id(x, False) for x in craft["ingredients"]]):
+				if (craft.get("ingredient") and item == ingr_to_id(craft["ingredient"], False)) or \
+					(craft.get("ingredients") and isinstance(craft["ingredients"], dict) and item in [ingr_to_id(x, False) for x in craft["ingredients"].values()]) or \
+					(craft.get("ingredients") and isinstance(craft["ingredients"], list) and item in [ingr_to_id(x, False) for x in craft["ingredients"]]):
 					# Convert craft, ex:
 					# before:	chainmail_helmet	{"type": "crafting_shaped","result_count": 1,"category": "equipment","shape": ["XXX","X X"],"ingredients": {"X": {"components": {"custom_data": {"iyc": {"chainmail": true}}}}}}}
 					# after:	chainmail			{"type": "crafting_shaped","result_count": 1,"category": "equipment","shape": ["XXX","X X"],"ingredients": {"X": {"components": {"custom_data": {"iyc": {"chainmail": true}}}}},"result": {"item": "minecraft:chainmail_helmet","count": 1}}
 					craft_copy: JsonDict = craft.copy()
-					craft_copy["result"] = ingr_repr(other, count=craft["result_count"]) if "result" not in craft else craft["result"]
+					craft_copy["result"] = Ingr(other, count=craft["result_count"]) if "result" not in craft else craft["result"]
 					crafts.append(craft_copy)
 	return crafts
 

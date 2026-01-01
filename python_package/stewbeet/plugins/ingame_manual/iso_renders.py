@@ -86,16 +86,16 @@ def generate_all_iso_renders():
 		obj = Item.from_id(item)
 		for recipe in obj.recipes:
 			ingredients = []
-			if "ingredients" in recipe:
+			if recipe.get("ingredients"):
 				ingredients = recipe["ingredients"]
 				if isinstance(ingredients, dict):
 					ingredients = cast(list[JsonDict], ingredients.values())
-			elif "ingredient" in recipe:
+			elif recipe.get("ingredient"):
 				ingredients = [recipe["ingredient"]]
 			for ingredient in ingredients:
 				if "item" in ingredient:
 					used_vanilla_items.add(ingredient["item"].split(":")[1])
-			if "result" in recipe and "item" in recipe["result"]:
+			if recipe.get("result") and recipe["result"].get("item"):
 				used_vanilla_items.add(recipe["result"]["item"].split(":")[1])
 		pass
 

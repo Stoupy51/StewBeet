@@ -3,7 +3,7 @@
 import stouputils as stp
 from beet import Context, PngFile
 
-from ....core import Mem
+from ....core import Item, Mem
 from ...initialize.source_lore_font import create_source_lore_font, find_pack_png
 
 
@@ -14,12 +14,14 @@ def beet_default(ctx: Context):
 		Mem.ctx = ctx
 
 	# If source lore is present and there are item definitions using it, create the source lore font
-	src_lore: str = Mem.ctx.meta.get("stewbeet", {}).get("pack_icon_path", "")
-	if src_lore and Mem.ctx.meta.get("stewbeet", {}).get("source_lore") and any(
-		Mem.ctx.meta.get("stewbeet", {}).get("source_lore") in data.get("lore", [])
-		for data in Mem.definitions.values()
-	):
-		create_source_lore_font(src_lore)
+	pack_icon_path: str = Mem.ctx.meta.get("stewbeet", {}).get("pack_icon_path", "")
+	source_lore: str = Mem.ctx.meta.get("stewbeet", {}).get("source_lore", "")
+	if pack_icon_path and source_lore:
+		for item in Mem.definitions.keys():
+			obj = Item.from_id(item)
+			if source_lore in obj.components.get("lore", []):
+				create_source_lore_font(pack_icon_path)
+				break
 
 	# Add the pack icon to the output directory for datapack and resource pack
 	pack_icon = find_pack_png()

@@ -117,12 +117,12 @@ class Block(Item):
     True
 
     ## Big example with all fields
-    >>> from stewbeet import CraftingShapelessRecipe, WikiButton, NoSilkTouchDrop, GrowingSeed, GrowingSeedLoot, ingr_repr
+    >>> from stewbeet import CraftingShapelessRecipe, WikiButton, NoSilkTouchDrop, GrowingSeed, GrowingSeedLoot, Ingr
     >>> obj = BlockAlternative(
     ...     id="stardust_seed",
     ...     manual_category="miscellaneous",
     ...     recipes=[
-    ...         CraftingShapelessRecipe(ingredients=8*[ingr_repr("stardust_fragment")] + [ingr_repr("minecraft:wheat_seeds")])
+    ...         CraftingShapelessRecipe(ingredients=8*[Ingr("stardust_fragment")] + [Ingr("minecraft:wheat_seeds")])
     ...     ],
     ...     override_model={"parent":"item/generated","textures":{"layer0":"stardust:item/stardust_seed"}},
     ...     wiki_buttons=[WikiButton({"text":"A magical seed that grows stardust.","color":"aqua"})],

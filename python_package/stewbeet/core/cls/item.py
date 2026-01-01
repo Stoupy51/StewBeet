@@ -44,13 +44,13 @@ class Item(StMapping):
     False
 
     ## Big example with all fields
-    >>> from stewbeet import CraftingShapedRecipe, WikiButton, ingr_repr
+    >>> from stewbeet import CraftingShapedRecipe, WikiButton, Ingr
     >>> obj = Item(
     ...     id="stardust_ingot",
     ...     base_item="minecraft:raw_iron",
     ...     manual_category="materials",
     ...     recipes=[
-    ...         CraftingShapedRecipe(shape=["###","#F#","###"], ingredients={"#":ingr_repr("stardust_fragment"),"F":ingr_repr("minecraft:iron_ingot")})
+    ...         CraftingShapedRecipe(shape=["###","#F#","###"], ingredients={"#":Ingr("stardust_fragment"),"F":Ingr("minecraft:iron_ingot")})
     ...     ],
     ...     override_model={"parent":"item/generated","textures":{"layer0":"stardust:item/stardust_ingot"}},
     ...     wiki_buttons=[WikiButton({"text":"This is a stardust ingot.","color":"aqua"})],

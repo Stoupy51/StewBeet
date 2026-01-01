@@ -1,5 +1,7 @@
 
 # Imports
+from __future__ import annotations
+
 from typing import Any, cast
 
 import stouputils as stp
@@ -23,98 +25,253 @@ UNUSED_RECIPES_TYPES: tuple[str, ...] = (
 SPECIAL_RECIPES_TYPES: tuple[str, ...] = ("simplenergy_pulverizing", "stardust_awakened_forge")
 ALL_RECIPES_TYPES: tuple[str, ...] = (*FURNACES_RECIPES_TYPES, *CRAFTING_RECIPES_TYPES, *OTHER_RECIPES_TYPES, *UNUSED_RECIPES_TYPES, *SPECIAL_RECIPES_TYPES)
 
-# Function mainly used for definitions generation
-@stp.simple_cache
-def ingr_repr(id: str, ns: str|None = None, count: int|None = None) -> JsonDict:
-	""" Get the identity of the ingredient from its id for custom crafts
+# Ingr class
+class Ingr(JsonDict):
 
-	Args:
-		id		(str):		The id of the ingredient, ex: adamantium_fragment
-		ns		(str|None):	The namespace of the ingredient (optional if 'id' argument is a vanilla item), ex: iyc (default: current project id)
-		count	(int|None):	The count of the ingredient (optional, used only when this ingredient format is a result item) (or use a special type of recipe that supports counts)
+	def __init__(self, id: str | JsonDict, ns: str | None = None, count: int | None = None, **kwargs: Any) -> None:
+		""" Get the identity of the ingredient from its id for custom crafts
 
-	Returns:
-		str: The identity of the ingredient for custom crafts,
-			ex: {"components":{"minecraft:custom_data":{"iyc":{"adamantium_fragment":True}}}}
-			ex: {"item": "minecraft:stick"}
+		Aliases: Ingredient(), IngrRepr()
 
-	Examples:
-		>>> ingr_repr("minecraft:stick")
-		{'item': 'minecraft:stick'}
-		>>> ingr_repr("adamantium_fragment", ns="iyc")
-		{'components': {'minecraft:custom_data': {'iyc': {'adamantium_fragment': True}}}}
-		>>> ingr_repr("adamantium_fragment", ns="iyc", count=3)
-		{'components': {'minecraft:custom_data': {'iyc': {'adamantium_fragment': True}}}, 'count': 3}
-		>>> ingr_repr("diamond")
-		{'components': {'minecraft:custom_data': {'detected_namespace': {'diamond': True}}}}
-	"""
-	if ":" in id:
-		to_return: JsonDict = {"item": id}
-	else:
-		if ns is None:
-			ns = Mem.ctx.project_id if Mem.ctx else "detected_namespace"
-		to_return: JsonDict = {"components":{"minecraft:custom_data":{ns:{id:True}}}}
-	if count is not None:
-		to_return["count"] = count
-	return to_return
+		Args:
+			id		(str):		The id of the ingredient, ex: adamantium_fragment
+			ns		(str|None):	The namespace of the ingredient (optional if 'id' argument is a vanilla item), ex: iyc (default: current project id)
+			count	(int|None):	The count of the ingredient (optional, used only when this ingredient format is a result item) (or use a special type of recipe that supports counts)
+		Returns:
+			str: The identity of the ingredient for custom crafts,
+				ex: {"components":{"minecraft:custom_data":{"iyc":{"adamantium_fragment":True}}}}
+				ex: {"item": "minecraft:stick"}
+		Examples:
+			>>> Ingr("minecraft:stick")
+			{'item': 'minecraft:stick'}
+			>>> Ingr("adamantium_fragment", ns="iyc")
+			{'components': {'minecraft:custom_data': {'iyc': {'adamantium_fragment': True}}}}
+			>>> Ingr("adamantium_fragment", ns="iyc", count=3)
+			{'components': {'minecraft:custom_data': {'iyc': {'adamantium_fragment': True}}}, 'count': 3}
+			>>> Ingr("diamond")
+			{'components': {'minecraft:custom_data': {'detected_namespace': {'diamond': True}}}}
+			>>> print(Ingr("diamond"))
+			{'components': {'minecraft:custom_data': {'detected_namespace': {'diamond': True}}}}
+		"""
+		# Copy from another dict
+		if isinstance(id, dict):
+			self.update(id)
+			return
 
-def item_to_id_ingr_repr(ingr: JsonDict) -> JsonDict:
-	""" Replace the "item" key by "id" in an item ingredient representation
-	Args:
-		ingr (dict): The item ingredient, ex: {"item": "minecraft:stick"}
-	Returns:
-		dict: The item ingredient representation, ex: {"id": "minecraft:stick"}
-	"""
-	if ingr.get("item") is None:
-		return ingr
-	if "Slot" in ingr:
-		r: JsonDict = {"Slot": ingr["Slot"], "id": ingr["item"]}
-	else:
-		r: JsonDict = {"id": ingr["item"]}
-	copy: JsonDict = ingr.copy()
-	copy.pop("item")
-	r.update(copy)
-	return r
+		# Create from id, ns, count
+		if ":" in id:
+			self["item"] = id
+		else:
+			if ns is None:
+				ns = Mem.ctx.project_id if Mem.ctx else "detected_namespace"
+			self["components"] = {"minecraft:custom_data":{ns:{id:True}}}
+		if count is not None:
+			self["count"] = count
+		self.update(kwargs)
 
-# Mainly used for manual
-@stp.simple_cache
-def ingr_to_id(ingredient: JsonDict, add_namespace: bool = True) -> str:
-	""" Get the id from an ingredient dict
-	Args:
-		ingredient (dict): The ingredient dict
-			ex: {"components":{"minecraft:custom_data":{iyc:{adamantium_ingot:True}}}}
-			ex: {"item": "minecraft:stick"}
-		add_namespace (bool): Whether to add the namespace to the id
-	Returns:
-		str: The id of the ingredient, ex: "minecraft:stick" or "iyc:adamantium_ingot"
-	"""
-	if isinstance(ingredient, str):
-		ingredient = {"item": ingredient}
-	for k in ("item", "id"):
-		if ingredient.get(k):
-			if not add_namespace and ":" in ingredient[k]:
-				return ingredient[k].split(":")[1]
-			elif add_namespace and ":" not in ingredient[k]:
-				return "minecraft:" + ingredient[k]
-			return ingredient[k]
+	@stp.simple_cache
+	def item_to_id(self) -> JsonDict:
+		""" Replace the "item" key by "id" in an item ingredient representation
 
-	custom_data: JsonDict = ingredient["components"]["minecraft:custom_data"]
-	namespace: str = ""
-	id: str = ""
-	for cd_ns, cd_data in custom_data.items():
-		if isinstance(cd_data, dict):
-			cd_data = cast(JsonDict, cd_data)
-			values: list[Any] = list(cd_data.values())
-			if isinstance(values[0], bool):
-				namespace = cd_ns
-				id = next(iter(cd_data.keys()))
-				break
-	if not namespace:
-		stp.error(f"No namespace found in custom data: {custom_data}, ingredient: {ingredient}")
-	if add_namespace:
-		return namespace + ":" + id
-	return id
+		Args:
+			ingr (dict): The item ingredient, ex: {"item": "minecraft:stick"}
+		Returns:
+			JsonDict: The item ingredient representation, ex: {"id": "minecraft:stick"}
 
+		>>> i = Ingr("minecraft:stick")
+		>>> (i, i.item_to_id())
+		({'item': 'minecraft:stick'}, {'id': 'minecraft:stick'})
+
+		>>> i["Slot"] = 0
+
+		>>> j = Ingr("adamantium_fragment", ns="iyc")
+		>>> j == j.item_to_id()
+		True
+		"""
+		if self.get("item") is None:
+			return self
+		if "Slot" in self:
+			r: JsonDict = {"Slot": self["Slot"], "id": self["item"]}
+		else:
+			r: JsonDict = {"id": self["item"]}
+		r.update(self)
+		r.pop("item")
+		return r
+
+	@stp.simple_cache
+	def to_id(self, add_namespace: bool = True) -> str:
+		""" Get the id from an ingredient dict
+
+		Args:
+			add_namespace (bool): Whether to add the namespace to the id
+		Returns:
+			str: The id of the ingredient, ex: "minecraft:stick" or "iyc:adamantium_ingot"
+		"""
+		for k in ("item", "id"):
+			if self.get(k):
+				if not add_namespace and ":" in self[k]:
+					return self[k].split(":")[1]
+				elif add_namespace and ":" not in self[k]:
+					return "minecraft:" + self[k]
+				return self[k]
+
+		custom_data: JsonDict = self["components"]["minecraft:custom_data"]
+		namespace: str = ""
+		id: str = ""
+		for cd_ns, cd_data in custom_data.items():
+			if isinstance(cd_data, dict) and cd_data:
+				cd_data = cast(JsonDict, cd_data)
+				first_value = next(iter(cd_data.values()))
+				if isinstance(first_value, bool):
+					namespace = cd_ns
+					id = next(iter(cd_data.keys()))
+					break
+		if not namespace:
+			stp.error(f"No namespace found in custom data: {custom_data}, ingredient: {self}")
+		if add_namespace:
+			return namespace + ":" + id
+		return id
+
+	@stp.simple_cache
+	def to_name(self) -> str:
+		""" Get the name of the ingredient, ex: "Stick" or "Adamantium Ingot" """
+		return item_id_to_name(self.to_id(add_namespace=True))
+
+	@stp.simple_cache
+	def to_vanilla_item_id(self, add_namespace: bool = True) -> str:
+		""" Get the id of the vanilla item from an ingredient dict
+
+		Args:
+			add_namespace (bool): Whether to add the namespace to the id
+		Returns:
+			str: The id of the vanilla item, ex: "minecraft:stick"
+		"""
+		ns, ingr_id = self.to_id().split(":")
+		if ns == Mem.ctx.project_id:
+			if add_namespace:
+				return Item.from_id(ingr_id).base_item
+			return Item.from_id(ingr_id).base_item.split(":")[1]
+		elif ns == "minecraft":
+			if add_namespace:
+				return f"{ns}:{ingr_id}"
+			return ingr_id
+		else:
+			item: str = f"{ns}:{ingr_id}"
+			if Mem.external_definitions.get(item):
+				if add_namespace:
+					return Item.from_id(item).base_item
+				return Item.from_id(item).base_item.split(":")[1]
+			else:
+				stp.error(f"External item '{item}' not found in the external definitions")
+		return ""
+
+	@stp.simple_cache
+	def to_item(self) -> JsonDict:
+		""" Get the item data dict, ex: {"id": "minecraft:stick", "count": 1} """
+		ingr_id: str = self.to_id()
+		ns, id = ingr_id.split(":")
+
+		# Get from internal definitions
+		if ns == Mem.ctx.project_id:
+			item_data = Item.from_id(id)
+			result: JsonDict = {"id": item_data.base_item, "count": 1}
+
+			# Add components
+			for k, v in item_data.components.items():
+				if result.get("components") is None:
+					result["components"] = {}
+				if k.startswith("!"):
+					result["components"][f"!minecraft:{k[1:]}"] = {}
+				else:
+					result["components"][f"minecraft:{k}"] = v
+			return result
+
+		# External definitions
+		if Mem.external_definitions.get(ingr_id):
+			item_data = Item.from_id(ingr_id)
+			result = {"id": item_data.base_item, "count": 1}
+
+			# Add components
+			for k, v in item_data.components.items():
+				if result.get("components") is None:
+					result["components"] = {}
+				if k.startswith("!"):
+					result["components"][f"!minecraft:{k[1:]}"] = {}
+				else:
+					result["components"][f"minecraft:{k}"] = v
+			return result
+
+		# Minecraft item
+		if ns == "minecraft":
+			return {"id": id, "count": 1}
+		stp.error(f"External item '{ingr_id}' not found in the external definitions")
+		return {}
+
+	@stp.simple_cache
+	def register_loot_table(self, result_count: int | JsonDict) -> str:
+		""" Get the loot table for an ingredient dict
+
+		Args:
+			result_count (int|dict): The count of the result item, can be an int or a dict for random counts
+				ex: 1
+				ex: {"type": "minecraft:uniform","min": 4,"max": 6}
+		Returns:
+			str: The loot table path, ex: "my_datapack:i/stick"
+		"""
+		# If item from this datapack
+		item: str = self.to_id()
+		if item.startswith(Mem.ctx.project_id):
+			item = item.split(":")[1]
+			loot_table = f"{Mem.ctx.project_id}:i/{item}{result_count_to_suffix(result_count)}"
+			return loot_table
+
+		namespace, item = item.split(":")
+		loot_table = f"{Mem.ctx.project_id}:recipes/{namespace}/{item}{result_count_to_suffix(result_count)}"
+
+		# If item from another datapack, generate the loot table
+		if namespace != "minecraft":
+			file: JsonDict = {"pools":[{"rolls":1,"entries":[{"type":"minecraft:loot_table","value": f"{Mem.ctx.project_id}:external/{namespace}/{item}"}] }] }
+		else:
+			file: JsonDict = {"pools":[{"rolls":1,"entries":[{"type":"minecraft:item","name":f"{namespace}:{item}"}] }] }
+		if (isinstance(result_count, int) and result_count > 1) or hasattr(result_count, "get"):
+			file["pools"][0]["entries"][0]["functions"] = [{"function": "minecraft:set_count","count": result_count}]
+
+		Mem.ctx.data[loot_table] = LootTable(stp.json_dump(file, max_level=9))
+		return loot_table
+
+	@staticmethod
+	@stp.simple_cache
+	def get_ingredients_from_recipe(recipe: JsonDict) -> list[str]:
+		""" Get the ingredients from a recipe dict
+
+		Args:
+			recipe (dict): The final recipe JSON dict, ex:
+
+			{
+				"type": "minecraft:crafting_shaped",
+				"pattern": [...],
+				"key": {...},
+				"result": {...}
+			}
+		Returns:
+			list[str]: The ingredients ids
+		"""
+		if recipe.get("key"):
+			return list(recipe["key"].values())
+		elif recipe.get("ingredients"):
+			return recipe["ingredients"]
+		elif recipe.get("ingredient"):
+			return [recipe["ingredient"]]
+		elif recipe.get("template"):
+			return [recipe["template"]]
+		else:
+			return []
+
+# Type aliases
+IngrRepr = Ingredient = Ingr
+
+
+# Utility functions
 @stp.simple_cache
 def text_component_to_str(tc: TextComponent) -> str:
 	""" Convert a TextComponent to a string
@@ -192,109 +349,13 @@ def item_id_to_text_component(item_id: str, use_default: bool = True) -> TextCom
 @stp.simple_cache
 def item_id_to_name(item_id: str) -> str:
 	""" Get the name from an item id
+
 	Args:
 		item_id (str): The item id, ex: "minecraft:stick" or "iyc:adamantium_ingot"
 	Returns:
 		str: The name of the item, ex: "Stick" or "Adamantium Ingot"
 	"""
 	return text_component_to_str(item_id_to_text_component(item_id))
-
-@stp.simple_cache
-def ingr_to_name(ingredient: JsonDict) -> str:
-	""" Get the name from an ingredient dict
-	Args:
-		ingredient (dict): The ingredient dict
-			ex: {"components":{"minecraft:custom_data":{iyc:{adamantium_ingot:True}}}}
-			ex: {"item": "minecraft:stick"}
-	Returns:
-		str: The name of the ingredient, ex: "Stick" or "Adamantium Ingot"
-	"""
-	item_id = ingr_to_id(ingredient, add_namespace=True)
-	return item_id_to_name(item_id)
-
-# Mainly used for recipes
-@stp.simple_cache
-def get_vanilla_item_id_from_ingredient(ingredient: JsonDict, add_namespace: bool = True) -> str:
-	""" Get the id of the vanilla item from an ingredient dict
-	Args:
-		config (dict): The config dict
-		ingredient (dict): The ingredient dict
-			ex: {"item": "minecraft:stick"}
-		add_namespace (bool): Whether to add the namespace to the id
-	Returns:
-		str: The id of the vanilla item, ex: "minecraft:stick"
-	"""
-	if isinstance(ingredient, str):
-		ingredient = {"item": ingredient}
-	ns, ingr_id = ingr_to_id(ingredient).split(":")
-	if ns == Mem.ctx.project_id:
-		if add_namespace:
-			return Item.from_id(ingr_id).base_item
-		return Item.from_id(ingr_id).base_item.split(":")[1]
-	elif ns == "minecraft":
-		if add_namespace:
-			return f"{ns}:{ingr_id}"
-		return ingr_id
-	else:
-		item: str = f"{ns}:{ingr_id}"
-		if Mem.external_definitions.get(item):
-			if add_namespace:
-				return Item.from_id(item).base_item
-			return Item.from_id(item).base_item.split(":")[1]
-		else:
-			stp.error(f"External item '{item}' not found in the external definitions")
-	return ""
-
-# Used for recipes
-def get_item_from_ingredient(ingredient: JsonDict) -> JsonDict:
-	""" Get the item dict from an ingredient dict
-	Args:
-		config (dict): The config dict
-		ingredient (dict): The ingredient dict
-			ex: {"item": "minecraft:stick"}
-	Returns:
-		dict: The item data dict, ex: {"id": "minecraft:stick", "count": 1}
-	"""
-	if isinstance(ingredient, str):
-		ingredient = {"item": ingredient}
-	ingr_id: str = ingr_to_id(ingredient)
-	ns, id = ingr_id.split(":")
-
-	# Get from internal definitions
-	if ns == Mem.ctx.project_id:
-		item_data = Item.from_id(id)
-		result: JsonDict = {"id": item_data.base_item, "count": 1}
-
-		# Add components
-		for k, v in item_data.components.items():
-			if result.get("components") is None:
-				result["components"] = {}
-			if k.startswith("!"):
-				result["components"][f"!minecraft:{k[1:]}"] = {}
-			else:
-				result["components"][f"minecraft:{k}"] = v
-		return result
-
-	# External definitions
-	if Mem.external_definitions.get(ingr_id):
-		item_data = Item.from_id(ingr_id)
-		result = {"id": item_data.base_item, "count": 1}
-
-		# Add components
-		for k, v in item_data.components.items():
-			if result.get("components") is None:
-				result["components"] = {}
-			if k.startswith("!"):
-				result["components"][f"!minecraft:{k[1:]}"] = {}
-			else:
-				result["components"][f"minecraft:{k}"] = v
-		return result
-
-	# Minecraft item
-	if ns == "minecraft":
-		return {"id": id, "count": 1}
-	stp.error(f"External item '{ingr_id}' not found in the external definitions")
-	return {}
 
 
 # Utility function to convert result_count to string suffix
@@ -321,65 +382,52 @@ def result_count_to_suffix(result_count: int | JsonDict) -> str:
 			return f"_x{minimum}"
 	return ""
 
-# Make a loot table
+
+
+##########################################
+########## DEPRECATED FUNCTIONS ##########
+##########################################
+
+
+
+# Function mainly used for definitions generation
 @stp.simple_cache
+@stp.deprecated(message="Use Ingr() class instead", version="3.0.0")
+def ingr_repr(id: str, ns: str | None = None, count: int | None = None) -> Ingr:
+	return Ingr(id, ns, count)
+
+@stp.simple_cache
+@stp.deprecated(message="Use Ingr().item_to_id method instead", version="3.0.0")
+def item_to_id_ingr_repr(ingr: JsonDict) -> JsonDict:
+	return Ingr(ingr).item_to_id()
+
+@stp.simple_cache
+@stp.deprecated(message="Use ingr_to_id function instead", version="3.0.0")
+def ingr_to_id(ingredient: JsonDict, add_namespace: bool = True) -> str:
+	return Ingr(ingredient).to_id(add_namespace)
+
+@stp.simple_cache
+@stp.deprecated(message="Use Ingr().to_name method instead", version="3.0.0")
+def ingr_to_name(ingredient: JsonDict) -> str:
+	return Ingr(ingredient).to_name()
+
+@stp.simple_cache
+@stp.deprecated(message="Use Ingr().get_vanilla_item_id method instead", version="3.0.0")
+def get_vanilla_item_id_from_ingredient(ingredient: JsonDict, add_namespace: bool = True) -> str:
+	return Ingr(ingredient).to_vanilla_item_id(add_namespace)
+
+@stp.simple_cache
+@stp.deprecated(message="Use Ingr().to_item method instead", version="3.0.0")
+def get_item_from_ingredient(ingredient: JsonDict) -> JsonDict:
+	return Ingr(ingredient).to_item()
+
+@stp.simple_cache
+@stp.deprecated(message="Use Ingr().register_loot_table method instead", version="3.0.0")
 def loot_table_from_ingredient(result_ingredient: JsonDict, result_count: int | JsonDict) -> str:
-	""" Get the loot table for an ingredient dict
-	Args:
-		result_ingredient (dict): The ingredient dict
-			ex: {"item": "minecraft:stick"}
-		result_count (int|dict): The count of the result item, can be an int or a dict for random counts
-			ex: 1
-			ex: {"type": "minecraft:uniform","min": 4,"max": 6}
-	Returns:
-		str: The loot table path, ex: "my_datapack:i/stick"
-	"""
-	# If item from this datapack
-	item: str = ingr_to_id(result_ingredient)
-	if item.startswith(Mem.ctx.project_id):
-		item = item.split(":")[1]
-		loot_table = f"{Mem.ctx.project_id}:i/{item}{result_count_to_suffix(result_count)}"
-		return loot_table
-
-	namespace, item = item.split(":")
-	loot_table = f"{Mem.ctx.project_id}:recipes/{namespace}/{item}{result_count_to_suffix(result_count)}"
-
-	# If item from another datapack, generate the loot table
-	if namespace != "minecraft":
-		file: JsonDict = {"pools":[{"rolls":1,"entries":[{"type":"minecraft:loot_table","value": f"{Mem.ctx.project_id}:external/{namespace}/{item}"}] }] }
-	else:
-		file: JsonDict = {"pools":[{"rolls":1,"entries":[{"type":"minecraft:item","name":f"{namespace}:{item}"}] }] }
-	if (isinstance(result_count, int) and result_count > 1) or hasattr(result_count, "get"):
-		file["pools"][0]["entries"][0]["functions"] = [{"function": "minecraft:set_count","count": result_count}]
-
-	Mem.ctx.data[loot_table] = LootTable(stp.json_dump(file, max_level=9))
-	return loot_table
+	return Ingr(result_ingredient).register_loot_table(result_count)
 
 @stp.simple_cache
+@stp.deprecated(message="Use Ingr.get_ingredients_from_recipe static method instead", version="3.0.0")
 def get_ingredients_from_recipe(recipe: JsonDict) -> list[str]:
-	""" Get the ingredients from a recipe dict
-	Args:
-		recipe (dict): The final recipe JSON dict, ex:
-
-		{
-			"type": "minecraft:crafting_shaped",
-			"pattern": [...],
-			"key": {...},
-			"result": {...}
-		}
-	Returns:
-		list[str]: The ingredients ids
-	"""
-	ingredients: list[str] = []
-	if recipe.get("key"):
-		for value in recipe["key"].values():
-			ingredients.append(value)
-	elif recipe.get("ingredients"):
-		for ingr in recipe["ingredients"]:
-			ingredients.append(ingr)
-	elif recipe.get("ingredient"):
-		ingredients.append(recipe["ingredient"])
-	elif recipe.get("template"):
-		ingredients.append(recipe["template"])
-	return ingredients
+	return Ingr.get_ingredients_from_recipe(recipe)
 

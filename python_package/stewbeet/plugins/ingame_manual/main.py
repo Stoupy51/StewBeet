@@ -37,7 +37,7 @@ from ...core.constants import (
 	WIKI_COMPONENT,
 )
 from ...core.definitions_helper import add_item_name_and_lore_if_missing
-from ...core.ingredients import CRAFTING_RECIPES_TYPES, ingr_repr, ingr_to_id, ingr_to_name, item_id_to_name
+from ...core.ingredients import CRAFTING_RECIPES_TYPES, Ingr, ingr_to_id, ingr_to_name, item_id_to_name
 from ...core.utils.io import convert_to_serializable, super_merge_dict, write_load_file
 from ..custom_recipes.vanilla import VanillaRecipeHandler
 from ..initialize.source_lore_font import find_pack_png
@@ -150,7 +150,7 @@ def routine():
 				"display":{"thirdperson_righthand":{"rotation":[75,45,0],"translation":[0,2.5,0],"scale":[0.375,0.375,0.375]},"thirdperson_lefthand":{"rotation":[75,45,0],"translation":[0,2.5,0],"scale":[0.375,0.375,0.375]},"firstperson_righthand":{"rotation":[0,45,0],"scale":[0.4,0.4,0.4]},"firstperson_lefthand":{"rotation":[0,225,0],"scale":[0.4,0.4,0.4]},"ground":{"translation":[0,3,0],"scale":[0.25,0.25,0.25]},"gui":{"rotation":[30,225,0],"scale":[0.625,0.625,0.625]},"head":{"translation":[0,-30.43,0],"scale":[1.601,1.601,1.601]},"fixed":{"scale":[0.5,0.5,0.5]}}
 			},
 			recipes=[
-				CraftingShapedRecipe(shape=["###","#C#","SSS"],ingredients={"#":ingr_repr("minecraft:oak_log"),"C":ingr_repr("minecraft:crafting_table"),"S":ingr_repr("minecraft:smooth_stone")})
+				CraftingShapedRecipe(shape=["###","#C#","SSS"],ingredients={"#":Ingr("minecraft:oak_log"),"C":Ingr("minecraft:crafting_table"),"S":Ingr("minecraft:smooth_stone")})
 			],
 			components={
 				"item_name": "Heavy Workbench",
@@ -300,6 +300,9 @@ def routine():
 			i += 1
 			SharedMemory.manual_pages.append({"number": i, "name": item, "raw_data": data, "type": "item"})
 
+		# Prepare definitions as Item objects
+		definitions_as_objects: dict[str, Item] = {item: Item.from_id(item) for item in Mem.definitions.keys()}
+
 		# Encode pages
 		book_content: list[list[TextComponent]] = []
 		os.makedirs(f"{SharedMemory.cache_path}/font/category", exist_ok=True)
@@ -385,8 +388,7 @@ def routine():
 					content.extend(["\n", *line, *category_padding, "\n"])
 
 				# Add the 2 pixels border
-				is_rectangle_shape = len(raw_data) % MAX_ITEMS_PER_ROW == 0
-				page_image = add_border(page_image, BORDER_COLOR, BORDER_SIZE, is_rectangle_shape)
+				page_image = add_border(page_image, BORDER_COLOR, BORDER_SIZE)
 
 				# Save the image
 				page_image.save(f"{SharedMemory.cache_path}/font/category/{file_name}.png")
@@ -395,7 +397,7 @@ def routine():
 			elif isinstance(raw_data, Item):
 				# Get all crafts
 				crafts: list[JsonDict] = (raw_data.to_dict()["recipes"]).copy()
-				crafts += generate_otherside_crafts(name)
+				crafts += generate_otherside_crafts(name, definitions_as_objects)
 				crafts = remove_duplicate_furnace_crafts(crafts, name)
 				crafts = remove_unknown_crafts(crafts)
 				crafts = stp.unique_list(crafts)
@@ -432,8 +434,8 @@ def routine():
 					for ore_name in is_drop_of:
 						mining_recipe: JsonDict = {
 							"type": "mining",
-							"ingredient": ingr_repr(ore_name, Mem.ctx.project_id),  # The ore being mined
-							"result": ingr_repr(name, Mem.ctx.project_id),  # This item is the result
+							"ingredient": Ingr(ore_name, Mem.ctx.project_id),  # The ore being mined
+							"result": Ingr(name, Mem.ctx.project_id),  # This item is the result
 						}
 						add_count_to_mining_recipe(mining_recipe, Mem.definitions[ore_name][NO_SILK_TOUCH_DROP])
 						crafts.insert(0, mining_recipe)
@@ -448,8 +450,8 @@ def routine():
 					result_format: str = no_silk_drop_data if isinstance(no_silk_drop_data, str) else no_silk_drop_data["id"]
 					mining_recipe: JsonDict = {
 						"type": "mining",
-						"ingredient": ingr_repr(name, Mem.ctx.project_id),  # The ore being mined
-						"result": ingr_repr(result_format, Mem.ctx.project_id),  # Proper ingredient format
+						"ingredient": Ingr(name, Mem.ctx.project_id),  # The ore being mined
+						"result": Ingr(result_format, Mem.ctx.project_id),  # Proper ingredient format
 					}
 					add_count_to_mining_recipe(mining_recipe, no_silk_drop_data)
 
@@ -750,8 +752,10 @@ def routine():
 			book_content.append(content)
 			pass
 
-		for page_content in stp.colored_for_loop(SharedMemory.manual_pages, desc="Creating manual pages"):
-			encode_page(page_content)
+		# TODO: Make it compatible with multithreading (ordering problem only I think)
+		#stp.multithreading(encode_page, SharedMemory.manual_pages, desc="Creating manual pages", max_workers=-1.0)
+		for page in stp.colored_for_loop(SharedMemory.manual_pages, desc="Creating manual pages"):
+			encode_page(page)
 
 		## Add categories page
 		content: list[TextComponent] = []
@@ -828,8 +832,7 @@ def routine():
 			content += [*line, *category_padding, "\n"]
 
 		# Add the 2 pixels border
-		is_rectangle_shape = len(categories_pages) % MAX_ITEMS_PER_ROW == 0
-		page_image = add_border(page_image, BORDER_COLOR, BORDER_SIZE, is_rectangle_shape)
+		page_image = add_border(page_image, BORDER_COLOR, BORDER_SIZE)
 
 		# Save the image and add the page to the book
 		page_image.save(f"{SharedMemory.cache_path}/font/category/{file_name}.png")
@@ -996,7 +999,9 @@ def routine():
 			manual_obj.components["lore"] = [{"text": f"by {Mem.ctx.project_author}", "color": "gray", "italic": False}]
 		if manual_already_exists:
 			current_def: Item = Item.from_id("manual")
-			Mem.definitions["manual"] = Item.from_dict(super_merge_dict(manual_obj.to_dict(), current_def.to_dict()), item_id="manual")
+			current_def.components = super_merge_dict(manual_obj.components, current_def.components)
+			current_def.base_item = manual_obj.base_item
+			Mem.definitions["manual"] = current_def
 		add_item_name_and_lore_if_missing(black_list=[item for item in Mem.definitions if item != "manual"])
 		add_private_custom_data_for_namespace(black_list=[item for item in Mem.definitions if item != "manual"])
 

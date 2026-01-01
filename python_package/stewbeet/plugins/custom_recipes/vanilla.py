@@ -18,10 +18,10 @@ from ...core.cls.recipe import (
     StonecuttingRecipe,
 )
 from ...core.ingredients import (
+    Ingr,
     get_ingredients_from_recipe,
     get_item_from_ingredient,
     get_vanilla_item_id_from_ingredient,
-    ingr_repr,
     item_to_id_ingr_repr,
 )
 from ...core.utils.io import set_json_encoder, write_function
@@ -103,7 +103,7 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
         Returns:
             JsonDict: The generated recipe.
         """
-        result_ingr = recipe.result or ingr_repr(item, Mem.ctx.project_id)
+        result_ingr = recipe.result or Ingr(item, Mem.ctx.project_id)
         ingredients: list[str] = [get_vanilla_item_id_from_ingredient(i) for i in recipe.ingredients]
 
         to_return: JsonDict = {
@@ -130,7 +130,7 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
         Returns:
             JsonDict: The generated recipe.
         """
-        result_ingr = recipe.result or ingr_repr(item, Mem.ctx.project_id)
+        result_ingr = recipe.result or Ingr(item, Mem.ctx.project_id)
         ingredients: dict[str, str] = {
             k: get_vanilla_item_id_from_ingredient(i)
             for k, i in recipe.ingredients.items()
@@ -162,7 +162,7 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
         Returns:
             JsonDict: The generated recipe.
         """
-        result_ingr = recipe.result or ingr_repr(item, Mem.ctx.project_id)
+        result_ingr = recipe.result or Ingr(item, Mem.ctx.project_id)
         ingredient_vanilla: str = get_vanilla_item_id_from_ingredient(recipe.ingredient)
 
         to_return: JsonDict = {
@@ -190,7 +190,7 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
         Returns:
             JsonDict: The generated recipe.
         """
-        result_ingr = recipe.result or ingr_repr(item, Mem.ctx.project_id)
+        result_ingr = recipe.result or Ingr(item, Mem.ctx.project_id)
         ingredient_vanilla: str = get_vanilla_item_id_from_ingredient(recipe.ingredient)
 
         to_return: JsonDict = {
@@ -217,7 +217,7 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
         Returns:
             JsonDict: The generated recipe.
         """
-        result_ingr = recipe.result or ingr_repr(item, Mem.ctx.project_id)
+        result_ingr = recipe.result or Ingr(item, Mem.ctx.project_id)
         base_vanilla: str = get_vanilla_item_id_from_ingredient(recipe.base)
         addition_vanilla: str = get_vanilla_item_id_from_ingredient(recipe.addition)
         template_vanilla: str = get_vanilla_item_id_from_ingredient(recipe.template)

@@ -9,8 +9,8 @@ from ...core.__memory__ import Mem
 from ...core.cls.item import Item
 from ...core.cls.recipe import PulverizingRecipe
 from ...core.ingredients import (
+    Ingr,
     get_item_from_ingredient,
-    ingr_repr,
     item_to_id_ingr_repr,
     loot_table_from_ingredient,
 )
@@ -44,9 +44,9 @@ class PulverizerRecipeHandler:
             str: The generated recipe command.
         """
         if not recipe.ingredient:
-            recipe.ingredient = ingr_repr(item, Mem.ctx.project_id)
+            recipe.ingredient = Ingr(item, Mem.ctx.project_id)
         ingredient: JsonDict = item_to_id_ingr_repr(recipe.ingredient)
-        result: JsonDict = item_to_id_ingr_repr(get_item_from_ingredient(recipe.result)) if recipe.result else ingr_repr(item, Mem.ctx.project_id)
+        result: JsonDict = item_to_id_ingr_repr(get_item_from_ingredient(recipe.result)) if recipe.result else Ingr(item, Mem.ctx.project_id)
 
         line: str = "execute if score #found simplenergy.data matches 0 store result score #found simplenergy.data if data storage simplenergy:main pulverizer.input"
         line += json.dumps(ingredient)
@@ -61,7 +61,7 @@ class PulverizerRecipeHandler:
             for recipe in obj.recipes:
                 if recipe["type"] == PulverizingRecipe.type:
                     if not recipe.get("ingredient"):
-                        recipe["ingredient"] = ingr_repr(item)
+                        recipe["ingredient"] = Ingr(item)
                     recipe = PulverizingRecipe.from_dict(recipe)
                     write_function(
                         self.SIMPLENERGY_PULVERIZER_PATH,

@@ -167,7 +167,7 @@ def generate_page_font(name: str, page_font: str, craft: JsonDict|None = None, o
 
 		# Place the result item
 		template.paste(result_texture, (2 * factor, 2 * factor), result_mask)
-		template = add_border(template, BORDER_COLOR, BORDER_SIZE, is_rectangle_shape = True)
+		template = add_border(template, BORDER_COLOR, BORDER_SIZE)
 		template.save(f"{SharedMemory.cache_path}/font/page/{output_filename}.png")
 	return
 
