@@ -9,8 +9,9 @@ from beet import Context
 from beet.core.utils import JsonDict
 
 from ...core.__memory__ import Mem
-from ...core.cls import VANILLA_BLOCK_FOR_ORES, Item
-from ...core.cls.block import VanillaBlock
+from ...core.cls.block import VANILLA_BLOCK_FOR_ORES, VanillaBlock
+from ...core.cls.ingredients import FURNACES_RECIPES_TYPES
+from ...core.cls.item import Item
 from ...core.constants import (
 	CATEGORY,
 	CUSTOM_BLOCK_ALTERNATIVE,
@@ -22,7 +23,6 @@ from ...core.constants import (
 	USED_FOR_CRAFTING,
 	VANILLA_BLOCK,
 )
-from ...core.utils.text_component import FURNACES_RECIPES_TYPES
 from ...core.utils.io import convert_to_serializable
 
 
