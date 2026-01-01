@@ -6,10 +6,12 @@ from typing import Any, cast
 
 import stouputils as stp
 from beet import LootTable
-from beet.core.utils import JsonDict, TextComponent
+from beet.core.utils import JsonDict
 
-from .__memory__ import Mem
-from .cls.item import Item
+from ..__memory__ import Mem
+from ..utils.io import set_json_encoder
+from ..utils.loot_table import result_count_to_suffix
+from ..utils.text_component import item_id_to_name
 
 # Recipes constants
 FURNACES_RECIPES_TYPES: tuple[str, ...] = ("smelting", "blasting", "smoking", "campfire_cooking")
@@ -69,14 +71,17 @@ class Ingr(JsonDict):
 			self["count"] = count
 		self.update(kwargs)
 
+	def copy(self) -> Ingr:
+		return Ingr(dict(self))
+
 	@stp.simple_cache
-	def item_to_id(self) -> JsonDict:
+	def item_to_id(self) -> Ingr:
 		""" Replace the "item" key by "id" in an item ingredient representation
 
 		Args:
 			ingr (dict): The item ingredient, ex: {"item": "minecraft:stick"}
 		Returns:
-			JsonDict: The item ingredient representation, ex: {"id": "minecraft:stick"}
+			Ingr: The item ingredient representation, ex: {"id": "minecraft:stick"}
 
 		>>> i = Ingr("minecraft:stick")
 		>>> (i, i.item_to_id())
@@ -96,7 +101,7 @@ class Ingr(JsonDict):
 			r: JsonDict = {"id": self["item"]}
 		r.update(self)
 		r.pop("item")
-		return r
+		return Ingr(r)
 
 	@stp.simple_cache
 	def to_id(self, add_namespace: bool = True) -> str:
@@ -147,6 +152,7 @@ class Ingr(JsonDict):
 			str: The id of the vanilla item, ex: "minecraft:stick"
 		"""
 		ns, ingr_id = self.to_id().split(":")
+		from .item import Item
 		if ns == Mem.ctx.project_id:
 			if add_namespace:
 				return Item.from_id(ingr_id).base_item
@@ -166,15 +172,26 @@ class Ingr(JsonDict):
 		return ""
 
 	@stp.simple_cache
-	def to_item(self) -> JsonDict:
-		""" Get the item data dict, ex: {"id": "minecraft:stick", "count": 1} """
+	def to_item(self, id_key: str = "id") -> Ingr:
+		""" Get the item data dict from an ingredient
+
+		Args:
+			id_key (str): The key to use for the item id, either "id" or "item" (default: "id")
+		Returns:
+			Ingr: The item data dict, ex: {"id": "minecraft:stick", "count": 1}
+		"""
 		ingr_id: str = self.to_id()
 		ns, id = ingr_id.split(":")
 
+		# Minecraft item
+		if ns == "minecraft":
+			return Ingr({id_key: id, "count": 1})
+
 		# Get from internal definitions
+		from .item import Item
 		if ns == Mem.ctx.project_id:
 			item_data = Item.from_id(id)
-			result: JsonDict = {"id": item_data.base_item, "count": 1}
+			result = Ingr({id_key: item_data.base_item, "count": 1})
 
 			# Add components
 			for k, v in item_data.components.items():
@@ -189,7 +206,7 @@ class Ingr(JsonDict):
 		# External definitions
 		if Mem.external_definitions.get(ingr_id):
 			item_data = Item.from_id(ingr_id)
-			result = {"id": item_data.base_item, "count": 1}
+			result = Ingr({id_key: item_data.base_item, "count": 1})
 
 			# Add components
 			for k, v in item_data.components.items():
@@ -201,11 +218,8 @@ class Ingr(JsonDict):
 					result["components"][f"minecraft:{k}"] = v
 			return result
 
-		# Minecraft item
-		if ns == "minecraft":
-			return {"id": id, "count": 1}
 		stp.error(f"External item '{ingr_id}' not found in the external definitions")
-		return {}
+		return Ingr({})
 
 	@stp.simple_cache
 	def register_loot_table(self, result_count: int | JsonDict) -> str:
@@ -236,13 +250,13 @@ class Ingr(JsonDict):
 		if (isinstance(result_count, int) and result_count > 1) or hasattr(result_count, "get"):
 			file["pools"][0]["entries"][0]["functions"] = [{"function": "minecraft:set_count","count": result_count}]
 
-		Mem.ctx.data[loot_table] = LootTable(stp.json_dump(file, max_level=9))
+		Mem.ctx.data[loot_table] = set_json_encoder(LootTable(file), max_level=9)
 		return loot_table
 
 	@staticmethod
 	@stp.simple_cache
-	def get_ingredients_from_recipe(recipe: JsonDict) -> list[str]:
-		""" Get the ingredients from a recipe dict
+	def get_ingredients_from_vanilla_recipe(recipe: JsonDict) -> list[str]:
+		""" Get the ingredients from a vanilla recipe dict
 
 		Args:
 			recipe (dict): The final recipe JSON dict, ex:
@@ -269,165 +283,4 @@ class Ingr(JsonDict):
 
 # Type aliases
 IngrRepr = Ingredient = Ingr
-
-
-# Utility functions
-@stp.simple_cache
-def text_component_to_str(tc: TextComponent) -> str:
-	""" Convert a TextComponent to a string
-	Args:
-		tc (TextComponent): The TextComponent to convert
-	Returns:
-		str: The converted string
-	"""
-	if isinstance(tc, str):
-		return tc
-	elif isinstance(tc, list):
-		result: str = ""
-		for part in tc:
-			result += text_component_to_str(part)
-		return result
-	result: str = ""
-	if tc.get("text"):
-		result += tc["text"]
-	if tc.get("extra"):
-		for extra in tc["extra"]:
-			result += text_component_to_str(extra)
-	return result
-
-@stp.simple_cache
-def item_id_to_text_component(item_id: str, use_default: bool = True) -> TextComponent:
-	""" Get the TextComponent from an item id
-
-	Args:
-		item_id (str): The item id, ex: "minecraft:stick" or "iyc:adamantium_ingot"
-		use_default (bool): Whether to use the default prettified string if no TextComponent is found
-	Returns:
-		str: The TextComponent of the item, ex: "Stick" or {"text":"Adamantium Ingot"}
-	"""
-	if ":" not in item_id:
-		item_id = f"{Mem.ctx.project_id}:{item_id}"
-
-	# Internal definitions
-	ns, id = item_id.split(":")
-	if ns == Mem.ctx.project_id and id in Mem.definitions:
-		definition = Item.from_id(id)
-		components: JsonDict = definition.components
-
-		# If jukebox_playable is present, search for item_name in custom_data
-		if "jukebox_playable" in components:
-			possible_item_name: TextComponent = components.get("custom_data", {}).get("smithed", {}).get("dict", {}).get("record", {}).get("item_name", "")
-			if possible_item_name:
-				return possible_item_name
-
-		# Regular components
-		for component in ("item_name", "custom_name"):
-			if components.get(component):
-				return components[component]
-
-	# External definitions
-	if item_id in Mem.external_definitions:
-		ext_definition = Item.from_id(item_id)
-		components: JsonDict = ext_definition.components
-
-		# If jukebox_playable is present, search for item_name in custom_data
-		if "jukebox_playable" in components:
-			possible_item_name: TextComponent = components.get("custom_data", {}).get("smithed", {}).get("dict", {}).get("record", {}).get("item_name", "")
-			if possible_item_name:
-				return possible_item_name
-
-		# Regular components
-		for component in ("item_name", "custom_name"):
-			if components.get(component):
-				return components[component]
-
-	# Default: prettify the id
-	if use_default:
-		return id.replace("_", " ").title()
-	return ""
-
-@stp.simple_cache
-def item_id_to_name(item_id: str) -> str:
-	""" Get the name from an item id
-
-	Args:
-		item_id (str): The item id, ex: "minecraft:stick" or "iyc:adamantium_ingot"
-	Returns:
-		str: The name of the item, ex: "Stick" or "Adamantium Ingot"
-	"""
-	return text_component_to_str(item_id_to_text_component(item_id))
-
-
-# Utility function to convert result_count to string suffix
-@stp.simple_cache
-def result_count_to_suffix(result_count: int | JsonDict) -> str:
-	""" Convert a result count to a string suffix for loot table paths
-	Args:
-		result_count (int|dict): The count of the result item, can be an int or a dict for random counts
-			ex: 1
-			ex: {"type": "minecraft:uniform","min": 4,"max": 6}
-	Returns:
-		str: The suffix string, ex: "" or "_x5" or "_x4to6"
-	"""
-	if isinstance(result_count, int):
-		if result_count > 1:
-			return f"_x{result_count}"
-		return ""
-	elif hasattr(result_count, "get"):
-		minimum = result_count.get("min", 1)
-		maximum = result_count.get("max", 1)
-		if maximum > 1:
-			return f"_x{minimum}to{maximum}"
-		elif minimum > 1:
-			return f"_x{minimum}"
-	return ""
-
-
-
-##########################################
-########## DEPRECATED FUNCTIONS ##########
-##########################################
-
-
-
-# Function mainly used for definitions generation
-@stp.simple_cache
-@stp.deprecated(message="Use Ingr() class instead", version="3.0.0")
-def ingr_repr(id: str, ns: str | None = None, count: int | None = None) -> Ingr:
-	return Ingr(id, ns, count)
-
-@stp.simple_cache
-@stp.deprecated(message="Use Ingr().item_to_id method instead", version="3.0.0")
-def item_to_id_ingr_repr(ingr: JsonDict) -> JsonDict:
-	return Ingr(ingr).item_to_id()
-
-@stp.simple_cache
-@stp.deprecated(message="Use ingr_to_id function instead", version="3.0.0")
-def ingr_to_id(ingredient: JsonDict, add_namespace: bool = True) -> str:
-	return Ingr(ingredient).to_id(add_namespace)
-
-@stp.simple_cache
-@stp.deprecated(message="Use Ingr().to_name method instead", version="3.0.0")
-def ingr_to_name(ingredient: JsonDict) -> str:
-	return Ingr(ingredient).to_name()
-
-@stp.simple_cache
-@stp.deprecated(message="Use Ingr().get_vanilla_item_id method instead", version="3.0.0")
-def get_vanilla_item_id_from_ingredient(ingredient: JsonDict, add_namespace: bool = True) -> str:
-	return Ingr(ingredient).to_vanilla_item_id(add_namespace)
-
-@stp.simple_cache
-@stp.deprecated(message="Use Ingr().to_item method instead", version="3.0.0")
-def get_item_from_ingredient(ingredient: JsonDict) -> JsonDict:
-	return Ingr(ingredient).to_item()
-
-@stp.simple_cache
-@stp.deprecated(message="Use Ingr().register_loot_table method instead", version="3.0.0")
-def loot_table_from_ingredient(result_ingredient: JsonDict, result_count: int | JsonDict) -> str:
-	return Ingr(result_ingredient).register_loot_table(result_count)
-
-@stp.simple_cache
-@stp.deprecated(message="Use Ingr.get_ingredients_from_recipe static method instead", version="3.0.0")
-def get_ingredients_from_recipe(recipe: JsonDict) -> list[str]:
-	return Ingr.get_ingredients_from_recipe(recipe)
 

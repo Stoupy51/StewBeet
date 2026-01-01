@@ -3,17 +3,11 @@
 import json
 
 import stouputils as stp
-from beet.core.utils import JsonDict
 
 from ...core.__memory__ import Mem
+from ...core.cls.ingredients import Ingr
 from ...core.cls.item import Item
 from ...core.cls.recipe import PulverizingRecipe
-from ...core.ingredients import (
-    Ingr,
-    get_item_from_ingredient,
-    item_to_id_ingr_repr,
-    loot_table_from_ingredient,
-)
 from ...core.utils.io import write_function
 
 
@@ -44,13 +38,13 @@ class PulverizerRecipeHandler:
             str: The generated recipe command.
         """
         if not recipe.ingredient:
-            recipe.ingredient = Ingr(item, Mem.ctx.project_id)
-        ingredient: JsonDict = item_to_id_ingr_repr(recipe.ingredient)
-        result: JsonDict = item_to_id_ingr_repr(get_item_from_ingredient(recipe.result)) if recipe.result else Ingr(item, Mem.ctx.project_id)
+            recipe.ingredient = Ingr(item)
+        ingredient = recipe.ingredient.item_to_id()
+        result = recipe.result.to_item().item_to_id() if recipe.result else Ingr(item)
 
         line: str = "execute if score #found simplenergy.data matches 0 store result score #found simplenergy.data if data storage simplenergy:main pulverizer.input"
         line += json.dumps(ingredient)
-        line += f" run loot replace entity @s contents loot {loot_table_from_ingredient(result, recipe.result_count)}"
+        line += f" run loot replace entity @s contents loot {result.register_loot_table(recipe.result_count)}"
         return line
 
     def generate_recipes(self) -> None:

@@ -5,9 +5,10 @@ from beet import Context, LootTable
 from beet.core.utils import JsonDict
 
 from ....core.__memory__ import Mem
+from ....core.cls.ingredients import Ingr
 from ....core.cls.item import Item
-from ....core.ingredients import ingr_to_id, result_count_to_suffix
 from ....core.utils.io import write_function
+from ....core.utils.loot_table import result_count_to_suffix
 
 
 # Main entry point
@@ -98,7 +99,7 @@ def beet_default(ctx: Context):
 			for recipe in obj.recipes:
 				# Verify the result is for this item
 				if recipe.get("result"):
-					result_id = ingr_to_id(recipe["result"], add_namespace=False)
+					result_id = Ingr(recipe["result"]).to_id(add_namespace=False)
 					if result_id != item:
 						continue
 

@@ -2,10 +2,13 @@
 # ruff: noqa: RUF012
 # pyright: reportAssignmentType=false
 # Imports
+from typing import TYPE_CHECKING
+
 from beet import Context
 from beet.core.utils import JsonDict
 
-from .cls.item import Item
+if TYPE_CHECKING:
+    from .cls.item import Item
 
 
 # Shared variables among plugins

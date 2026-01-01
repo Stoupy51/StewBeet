@@ -33,7 +33,7 @@ def clean_record_name(name: str) -> str:
 
 
 # Custom records
-@stp.handle_error
+@stp.handle_error(error_log=stp.LogLevels.WARNING)
 def generate_custom_records(records: dict[str, str] | str | None = "auto", category: str | None = None) -> None:
 	""" Generate custom records by searching in assets/records/ for the files and copying them to the definitions and resource pack folder.
 

@@ -3,7 +3,8 @@
 from beet.core.utils import JsonDict, TextComponent
 
 from ...core.__memory__ import Mem
-from ...core.ingredients import FURNACES_RECIPES_TYPES, ingr_to_id, item_id_to_name
+from ...core.cls.ingredients import FURNACES_RECIPES_TYPES, Ingr
+from ...core.utils.text_component import item_id_to_name
 from .book_components import get_item_component
 from .other_utils import convert_shapeless_to_shaped, high_res_font_from_craft
 from .page_font import generate_page_font
@@ -54,7 +55,7 @@ def generate_craft_content(craft: JsonDict, name: str, page_font: str, in_lore: 
 		result_component = get_item_component(name, count=result_count, add_change_page=False) # Avoid self-linking page
 		add_change_page_to_ingr = True
 	else:
-		add_change_page_to_ingr = ingr_to_id(craft["result"], add_namespace=False) == name
+		add_change_page_to_ingr = Ingr(craft["result"]).to_id(add_namespace=False) == name
 		result_component = get_item_component(craft["result"], count=result_count, add_change_page=not add_change_page_to_ingr)
 	result_component["text"] = MICRO_NONE_FONT + result_component["text"]	# Left adjustment
 

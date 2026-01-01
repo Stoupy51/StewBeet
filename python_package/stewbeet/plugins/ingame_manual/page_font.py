@@ -8,7 +8,7 @@ from beet.core.utils import JsonDict
 from PIL import Image
 
 from ...core.__memory__ import Mem
-from ...core.ingredients import FURNACES_RECIPES_TYPES, ingr_to_id
+from ...core.cls.ingredients import FURNACES_RECIPES_TYPES, Ingr
 from .image_utils import add_border, careful_resize, image_count
 from .shared_import import BORDER_COLOR, BORDER_SIZE, SQUARE_SIZE, TEMPLATES_PATH, WIKI_INGR_OF_CRAFT_FONT, SharedMemory, get_next_font
 
@@ -42,7 +42,7 @@ def generate_page_font(name: str, page_font: str, craft: JsonDict|None = None, o
 
 	# If recipe result is specified, take the right texture
 	if craft and craft.get("result"):
-		result_id = ingr_to_id(craft["result"])
+		result_id = Ingr(craft["result"]).to_id()
 		result_id = result_id.replace(":", "/")
 		image_path = f"{SharedMemory.cache_path}/items/{result_id}.png"
 		if not os.path.exists(image_path):
@@ -83,10 +83,10 @@ def generate_page_font(name: str, page_font: str, craft: JsonDict|None = None, o
 			for i, row in enumerate(shape):
 				for j, symbol in enumerate(row):
 					if symbol != " ":
-						ingredient = craft["ingredients"][symbol]
+						ingredient = Ingr(craft["ingredients"][symbol])
 						if ingredient.get("components"):
 							# get "iyc:steel_ingot" in {'components': {'custom_data': {'iyc': {'steel_ingot': True}}}}
-							item = ingr_to_id(ingredient)
+							item = ingredient.to_id()
 						else:
 							item = ingredient["item"]	# Vanilla item, ex: "minecraft:glowstone"
 
@@ -126,7 +126,7 @@ def generate_page_font(name: str, page_font: str, craft: JsonDict|None = None, o
 			SharedMemory.font_providers.append({"type":"bitmap","file":f"{Mem.ctx.project_id}:font/page/{output_filename}.png", "ascent": 0 if not output_name else 6, "height": 60, "chars": [page_font]})
 
 			# Place input item
-			input_item = ingr_to_id(craft["ingredient"])
+			input_item: str = Ingr(craft["ingredient"]).to_id()
 			input_item = input_item.replace(":", "/")
 			image_path = f"{SharedMemory.cache_path}/items/{input_item}.png"
 			if not os.path.exists(image_path):
@@ -192,7 +192,7 @@ def generate_wiki_font_for_ingr(name: str, craft: JsonDict) -> str:
 	# Get result item texture and paste it on the wiki_ingredient_of_craft_template
 	try:
 		craft_type = craft["type"]
-		result_item = ingr_to_id(craft["result"]).replace(":", "/")
+		result_item: str = Ingr(craft["result"]).to_id().replace(":", "/")
 		texture_path = f"{SharedMemory.cache_path}/items/{result_item}.png"
 		result_item = result_item.replace("/", "_")
 		dest_path = f"{SharedMemory.cache_path}/font/wiki_icons/{result_item}_{craft_type}.png"

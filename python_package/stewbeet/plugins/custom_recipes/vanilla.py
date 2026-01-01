@@ -5,6 +5,7 @@ from beet import Advancement, Recipe
 from beet.core.utils import JsonDict
 
 from ...core.__memory__ import Mem
+from ...core.cls.ingredients import Ingr
 from ...core.cls.item import Item
 from ...core.cls.recipe import (
     BlastingRecipe,
@@ -16,13 +17,6 @@ from ...core.cls.recipe import (
     SmithingTrimRecipe,
     SmokingRecipe,
     StonecuttingRecipe,
-)
-from ...core.ingredients import (
-    Ingr,
-    get_ingredients_from_recipe,
-    get_item_from_ingredient,
-    get_vanilla_item_id_from_ingredient,
-    item_to_id_ingr_repr,
 )
 from ...core.utils.io import set_json_encoder, write_function
 
@@ -55,7 +49,7 @@ class VanillaRecipeHandler:
             ingredients: dict[str, set[str]] = {}
             for recipe_name, _ in handler.vanilla_generated_recipes:
                 recipe: JsonDict = Mem.ctx.data[Mem.ctx.project_id].recipes[recipe_name].data
-                for ingr_str in get_ingredients_from_recipe(recipe):
+                for ingr_str in Ingr.get_ingredients_from_vanilla_recipe(recipe):
                     if ingr_str not in ingredients:
                         ingredients[ingr_str] = set()
                     ingredients[ingr_str].add(recipe_name)
@@ -104,14 +98,14 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
             JsonDict: The generated recipe.
         """
         result_ingr = recipe.result or Ingr(item, Mem.ctx.project_id)
-        ingredients: list[str] = [get_vanilla_item_id_from_ingredient(i) for i in recipe.ingredients]
+        ingredients: list[str] = [i.to_vanilla_item_id() for i in recipe.ingredients]
 
         to_return: JsonDict = {
             "type": "minecraft:" + recipe.type,
             "category": recipe.category,
             "group": recipe.group,
             "ingredients": ingredients,
-            "result": item_to_id_ingr_repr(get_item_from_ingredient(result_ingr)),
+            "result": result_ingr.to_item().item_to_id(),
         }
 
         if not to_return["group"]:
@@ -132,7 +126,7 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
         """
         result_ingr = recipe.result or Ingr(item, Mem.ctx.project_id)
         ingredients: dict[str, str] = {
-            k: get_vanilla_item_id_from_ingredient(i)
+            k: i.to_vanilla_item_id()
             for k, i in recipe.ingredients.items()
         }
 
@@ -142,7 +136,7 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
             "group": recipe.group,
             "pattern": recipe.shape,
             "key": ingredients,
-            "result": item_to_id_ingr_repr(get_item_from_ingredient(result_ingr)),
+            "result": result_ingr.to_item().item_to_id(),
         }
 
         if not to_return["group"]:
@@ -163,14 +157,14 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
             JsonDict: The generated recipe.
         """
         result_ingr = recipe.result or Ingr(item, Mem.ctx.project_id)
-        ingredient_vanilla: str = get_vanilla_item_id_from_ingredient(recipe.ingredient)
+        ingredient_vanilla: str = recipe.ingredient.to_vanilla_item_id()
 
         to_return: JsonDict = {
             "type": "minecraft:" + recipe.type,
             "category": recipe.category,
             "group": recipe.group,
             "ingredient": ingredient_vanilla,
-            "result": item_to_id_ingr_repr(get_item_from_ingredient(result_ingr)),
+            "result": result_ingr.to_item().item_to_id(),
         }
 
         if not to_return["group"]:
@@ -191,13 +185,13 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
             JsonDict: The generated recipe.
         """
         result_ingr = recipe.result or Ingr(item, Mem.ctx.project_id)
-        ingredient_vanilla: str = get_vanilla_item_id_from_ingredient(recipe.ingredient)
+        ingredient_vanilla: str = recipe.ingredient.to_vanilla_item_id()
 
         to_return: JsonDict = {
             "type": "minecraft:" + recipe.type,
             "group": recipe.group,
             "ingredient": ingredient_vanilla,
-            "result": item_to_id_ingr_repr(get_item_from_ingredient(result_ingr)),
+            "result": result_ingr.to_item().item_to_id(),
         }
 
         if not to_return["group"]:
@@ -217,19 +211,14 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
         Returns:
             JsonDict: The generated recipe.
         """
-        result_ingr = recipe.result or Ingr(item, Mem.ctx.project_id)
-        base_vanilla: str = get_vanilla_item_id_from_ingredient(recipe.base)
-        addition_vanilla: str = get_vanilla_item_id_from_ingredient(recipe.addition)
-        template_vanilla: str = get_vanilla_item_id_from_ingredient(recipe.template)
-
+        result_ingr = recipe.result or Ingr(item)
         to_return: JsonDict = {
             "type": "minecraft:" + recipe.type,
-            "base": base_vanilla,
-            "addition": addition_vanilla,
-            "template": template_vanilla,
-            "result": item_to_id_ingr_repr(get_item_from_ingredient(result_ingr)),
+            "base": recipe.base.to_vanilla_item_id(),
+            "addition": recipe.addition.to_vanilla_item_id(),
+            "template": recipe.template.to_vanilla_item_id(),
+            "result": result_ingr.to_item().item_to_id(),
         }
-
         to_return["result"]["count"] = recipe.result_count
         return to_return
 
@@ -244,20 +233,13 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
         Returns:
             JsonDict: The generated recipe.
         """
-        base_vanilla: str = get_vanilla_item_id_from_ingredient(recipe.base)
-        addition_vanilla: str = get_vanilla_item_id_from_ingredient(recipe.addition)
-        template_vanilla: str = get_vanilla_item_id_from_ingredient(recipe.template)
-        pattern_vanilla: str = get_vanilla_item_id_from_ingredient(recipe.pattern)
-
-        to_return: JsonDict = {
+        return {
             "type": "minecraft:" + recipe.type,
-            "base": base_vanilla,
-            "addition": addition_vanilla,
-            "template": template_vanilla,
-            "pattern": pattern_vanilla,
+            "base": recipe.base.to_vanilla_item_id(),
+            "addition": recipe.addition.to_vanilla_item_id(),
+            "template": recipe.template.to_vanilla_item_id(),
+            "pattern": recipe.pattern,
         }
-
-        return to_return
 
     def generate_recipes(self, override: list[str] | None = None) -> None:
         """ Generate all vanilla recipes.
@@ -315,7 +297,7 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
 
                 elif recipe["type"] == SmithingTrimRecipe.type:
                     recipe = SmithingTrimRecipe.from_dict(recipe)
-                    if (recipe.base.get("item") and recipe.addition.get("item") and recipe.template.get("item") and recipe.pattern.get("item")):
+                    if (recipe.base.get("item") and recipe.addition.get("item") and recipe.template.get("item") and recipe.pattern):
                         self.write_recipe_file(name, self.vanilla_smithing_trim_recipe(recipe, item))
                         i += 1
                         self.vanilla_generated_recipes.append((name, item))

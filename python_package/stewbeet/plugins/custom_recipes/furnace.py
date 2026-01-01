@@ -9,17 +9,10 @@ from beet import Recipe
 from beet.core.utils import JsonDict
 
 from ...core.__memory__ import Mem
+from ...core.cls.ingredients import Ingr
 from ...core.cls.item import Item
 from ...core.cls.recipe import BlastingRecipe, SmeltingRecipe, SmokingRecipe
-from ...core.ingredients import (
-    Ingr,
-    get_item_from_ingredient,
-    get_vanilla_item_id_from_ingredient,
-    ingr_to_id,
-    item_to_id_ingr_repr,
-    loot_table_from_ingredient,
-)
-from ...core.utils.io import write_function
+from ...core.utils.io import set_json_encoder, write_function
 
 
 class FurnaceRecipeHandler:
@@ -66,11 +59,12 @@ class FurnaceRecipeHandler:
         Returns:
             str: The generated recipe command.
         """
-        result: JsonDict = item_to_id_ingr_repr(get_item_from_ingredient(result_ingr))
+        result_ingr = Ingr(result_ingr)
+        result = result_ingr.to_item().item_to_id()
 
         # Create a vanilla recipe for the furnace
-        ingredient_vanilla: str = get_vanilla_item_id_from_ingredient(recipe.ingredient)
-        result_item: str = ingr_to_id(result_ingr).replace(':', '_')
+        ingredient_vanilla: str = recipe.ingredient.to_vanilla_item_id()
+        result_item: str = result_ingr.to_id().replace(':', '_')
         path: str = f"vanilla_items/{recipe.type}__{ingredient_vanilla.split(':')[1]}__{result_item}"
         type = f"minecraft:{recipe.type}"
         json_file: JsonDict = {
@@ -80,7 +74,7 @@ class FurnaceRecipeHandler:
             "experience": recipe.experience,
             "cookingtime": recipe.cookingtime
         }
-        Mem.ctx.data["furnace_nbt_recipes"].recipes[path] = Recipe(stp.json_dump(json_file, max_level=-1))
+        Mem.ctx.data["furnace_nbt_recipes"].recipes[path] = set_json_encoder(Recipe(json_file), max_level=-1)
 
         # Prepare line and return
         line: str = "execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input"
@@ -139,15 +133,15 @@ scoreboard players reset #count furnace_nbt_recipes.data
 
                     # Get possible result item
                     if not recipe.result:
-                        result_loot_table = loot_table_from_ingredient(Ingr(item, Mem.ctx.project_id), recipe.result_count)
+                        result_loot_table = Ingr(item).register_loot_table(recipe.result_count)
                     else:
-                        result_loot_table = loot_table_from_ingredient(recipe.result, recipe.result_count)
+                        result_loot_table = recipe.result.register_loot_table(recipe.result_count)
 
                     # Generate recipe
                     if recipe.result:
                         line: str = self.furnace_nbt_recipe(recipe, result_loot_table, recipe.result)
                     else:
-                        line: str = self.furnace_nbt_recipe(recipe, result_loot_table, Ingr(item, Mem.ctx.project_id))
+                        line: str = self.furnace_nbt_recipe(recipe, result_loot_table, Ingr(item))
 
                     type: str = recipe.type
                     path: str = f"{self.FURNACE_NBT_PATH}/{type}_recipes"
@@ -155,7 +149,7 @@ scoreboard players reset #count furnace_nbt_recipes.data
 
                     # Add vanilla item unless it's a custom item
                     if not recipe.ingredient.get("item"):
-                        self.furnace_nbt_vanilla_items.add(get_vanilla_item_id_from_ingredient(recipe.ingredient))
+                        self.furnace_nbt_vanilla_items.add(Ingr(recipe.ingredient).to_vanilla_item_id())
 
                     # Add xp reward
                     experience: float = recipe.get("experience", 0)

@@ -7,6 +7,7 @@ from typing import Any, Literal, Self
 from beet.core.utils import JsonDict
 
 from ._utils import StMapping
+from .ingredients import ALL_RECIPES_TYPES, Ingr
 
 
 # Base Class
@@ -21,7 +22,7 @@ class RecipeBase(StMapping):
     """ (Optional) The category of the recipe for organizing in the crafting book. """
     group: str | None = None
     """ (Optional) The group of the recipe for recipe book grouping. """
-    result: JsonDict | None = None
+    result: Ingr | None = None
     """ (Optional) The result item of the recipe. If None, defaults to the item being defined. """
 
     # Others
@@ -31,7 +32,6 @@ class RecipeBase(StMapping):
     """ (Optional) Custom command to be used with Smithed Crafter recipes. If None, defaults to giving the loot table. """
 
     def __post_init__(self) -> None:
-        from ..ingredients import ALL_RECIPES_TYPES
         if "minecraft:" in self.type:
             self.type = self.type.replace("minecraft:", "", 1)
         if self.type not in ALL_RECIPES_TYPES:
@@ -45,8 +45,8 @@ class RecipeBase(StMapping):
         return cls(**data)
 
     @staticmethod
-    def _validate_ingredient(ingredient: JsonDict, name: str = "Ingredient") -> None:
-        """Validate a single ingredient dictionary."""
+    def _validate_ingredient(ingredient: Ingr, name: str = "Ingredient") -> None:
+        """ Validate a single ingredient dictionary. """
         if not isinstance(ingredient, dict):
             raise ValueError(f"{name} must be a dictionary")
         if not ingredient.get("item") and not ingredient.get("components"):
@@ -55,8 +55,8 @@ class RecipeBase(StMapping):
             raise ValueError(f"{name} must have a dict 'components' key")
 
     @staticmethod
-    def _validate_ingredients_list(ingredients: list[JsonDict]) -> None:
-        """Validate a list of ingredients."""
+    def _validate_ingredients_list(ingredients: list[Ingr]) -> None:
+        """ Validate a list of ingredients. """
         if not isinstance(ingredients, list):
             raise ValueError("Ingredients must be a list")
         for ingredient in ingredients:
@@ -64,11 +64,17 @@ class RecipeBase(StMapping):
 
     @staticmethod
     def _validate_numeric_fields(experience: Any, cookingtime: Any) -> None:
-        """Validate experience and cookingtime fields for furnace recipes."""
+        """ Validate experience and cookingtime fields for furnace recipes. """
         if not isinstance(experience, (float, int)):
             raise ValueError("Experience must be a float or int")
         if not isinstance(cookingtime, int):
             raise ValueError("Cookingtime must be an int")
+
+    @staticmethod
+    def _validate_string_field(value: Any, field_name: str) -> None:
+        """ Validate that a field is a string. """
+        if not isinstance(value, str):
+            raise ValueError(f"{field_name} must be a string")
 
 
 # Crafting Recipes
@@ -90,7 +96,7 @@ class CraftingShapedRecipe(RecipeBase):
     """
     shape: list[str]
     """ The shape pattern for the crafting recipe. """
-    ingredients: dict[str, JsonDict]
+    ingredients: dict[str, Ingr]
     """ Dictionary mapping shape symbols to ingredient specifications. """
 
     type = "crafting_shaped"
@@ -129,7 +135,7 @@ class CraftingShapelessRecipe(RecipeBase):
     >>> recipe.type
     'crafting_shapeless'
     """
-    ingredients: list[JsonDict]
+    ingredients: list[Ingr]
     """ List of ingredient specifications for shapeless crafting. """
 
     type = "crafting_shapeless"
@@ -152,7 +158,7 @@ class SmeltingRecipe(RecipeBase):
     >>> recipe.cookingtime
     200
     """
-    ingredient: JsonDict
+    ingredient: Ingr
     """ The ingredient to be smelted. """
     experience: float = 0.0
     """ Experience points awarded when the recipe is used. """
@@ -179,7 +185,7 @@ class BlastingRecipe(RecipeBase):
     >>> recipe.cookingtime
     100
     """
-    ingredient: JsonDict
+    ingredient: Ingr
     """ The ingredient to be blasted. """
     experience: float = 0.0
     """ Experience points awarded when the recipe is used. """
@@ -206,7 +212,7 @@ class SmokingRecipe(RecipeBase):
     >>> recipe.cookingtime
     100
     """
-    ingredient: JsonDict
+    ingredient: Ingr
     """ The ingredient to be smoked. """
     experience: float = 0.0
     """ Experience points awarded when the recipe is used. """
@@ -233,7 +239,7 @@ class CampfireCookingRecipe(RecipeBase):
     >>> recipe.cookingtime
     600
     """
-    ingredient: JsonDict
+    ingredient: Ingr
     """ The ingredient to be cooked. """
     experience: float
     """ Experience points awarded when the recipe is used. """
@@ -263,11 +269,11 @@ class SmithingTransformRecipe(RecipeBase):
     >>> recipe.template['item']
     'minecraft:netherite_upgrade_smithing_template'
     """
-    template: JsonDict
+    template: Ingr
     """ The template item (e.g., upgrade template). """
-    base: JsonDict
+    base: Ingr
     """ The base item to be transformed. """
-    addition: JsonDict
+    addition: Ingr
     """ The addition item (e.g., material). """
 
     type = "smithing_transform"
@@ -293,13 +299,13 @@ class SmithingTrimRecipe(RecipeBase):
     >>> recipe.addition['item']
     'minecraft:diamond'
     """
-    template: JsonDict
+    template: Ingr
     """ The trim template. """
-    base: JsonDict
+    base: Ingr
     """ The armor piece. """
-    addition: JsonDict
+    addition: Ingr
     """ The material for the trim. """
-    pattern: JsonDict
+    pattern: str
     """ The trim pattern. """
 
     type = "smithing_trim"
@@ -307,8 +313,9 @@ class SmithingTrimRecipe(RecipeBase):
     def __post_init__(self) -> None:
         self.type = "smithing_trim"
         super().__post_init__()
-        for name, ingredient in [("template", self.template), ("base", self.base), ("addition", self.addition), ("pattern", self.pattern)]:
+        for name, ingredient in [("template", self.template), ("base", self.base), ("addition", self.addition)]:
             self._validate_ingredient(ingredient, name.capitalize())
+        self._validate_string_field(self.pattern, "Pattern")
 
 
 # Other Recipes
@@ -321,7 +328,7 @@ class StonecuttingRecipe(RecipeBase):
     >>> recipe.ingredient['item']
     'minecraft:stone'
     """
-    ingredient: JsonDict
+    ingredient: Ingr
     """ The ingredient to be cut. """
 
     type = "stonecutting"
@@ -342,7 +349,7 @@ class PulverizingRecipe(RecipeBase):
     >>> recipe.ingredient['item']
     'minecraft:iron_ore'
     """
-    ingredient: JsonDict
+    ingredient: Ingr
     """ The ingredient to be pulverized. """
 
     type = "simplenergy_pulverizing"
@@ -362,7 +369,7 @@ class AwakenedForgeRecipe(RecipeBase):
     >>> len(recipe.ingredients)
     2
     """
-    ingredients: list[JsonDict]
+    ingredients: list[Ingr]
     """ List of ingredients for the awakened forge. """
     particle: str | None = None
     """ (Optional) Particle effect for the recipe. """

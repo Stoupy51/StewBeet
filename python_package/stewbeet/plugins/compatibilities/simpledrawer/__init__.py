@@ -5,9 +5,9 @@ from beet import Context, FunctionTag
 from beet.core.utils import JsonDict
 
 from ....core.__memory__ import Mem
+from ....core.cls.ingredients import Ingr
 from ....core.cls.item import Item
 from ....core.cls.recipe import CraftingShapedRecipe, CraftingShapelessRecipe
-from ....core.ingredients import ingr_to_id
 from ....core.utils.io import set_json_encoder, write_function
 
 
@@ -28,15 +28,15 @@ def get_result_count(item: str, ingr_to_seek: str) -> int:
 
 			# If crafting shaped, return the result count if the ingredient is the ingot item
 			if recipe["type"] == CraftingShapedRecipe.type:
-				ingredient: JsonDict = next(iter(recipe["ingredients"].values())) # type: ignore
-				ingr_str: str = ingr_to_id(ingredient, add_namespace = False)
+				ingredient: Ingr = next(iter(recipe["ingredients"].values())) # type: ignore
+				ingr_str: str = ingredient.to_id(add_namespace=False)
 				if ingr_str == ingr_to_seek:
 					return recipe["result_count"]
 
 			# If crafting shapeless, return the result count if the ingredient is the ingot item
 			elif recipe["type"] == CraftingShapelessRecipe.type:
-				ingredient: JsonDict = recipe["ingredients"][0]
-				ingr_str: str = ingr_to_id(ingredient, add_namespace = False)
+				ingredient: Ingr = recipe["ingredients"][0]
+				ingr_str: str = ingredient.to_id(add_namespace=False)
 				if ingr_str == ingr_to_seek:
 					return recipe["result_count"]
 	return 9

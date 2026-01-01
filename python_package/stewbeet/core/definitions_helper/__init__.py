@@ -1,7 +1,7 @@
 
 # Imports
 from ..constants import *
-from ..ingredients import *
+from ..utils.text_component import *
 from .completion import *
 from .equipments import *
 from .materials import *

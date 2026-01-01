@@ -63,7 +63,7 @@ def generate_all_iso_renders():
 		# )
 
 		# If atlas is used in overlay, copy it
-		any_atlas_used: bool = Mem.ctx.assets.overlays["before_format_73"]["minecraft"].atlases.get("blocks") is not None
+		any_atlas_used: bool = "before_format_73" in Mem.ctx.assets.overlays._wrapped.keys() # type: ignore
 		if any_atlas_used:
 			Mem.ctx.assets["minecraft"].atlases["temporary_stewbeet"] = Mem.ctx.assets.overlays["before_format_73"]["minecraft"].atlases["blocks"]
 
