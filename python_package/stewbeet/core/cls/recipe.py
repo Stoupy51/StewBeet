@@ -294,7 +294,7 @@ class SmithingTrimRecipe(RecipeBase):
     ...     template=Ingr("minecraft:spire_armor_trim_smithing_template"),
     ...     base=Ingr("minecraft:netherite_chestplate"),
     ...     addition=Ingr("minecraft:diamond"),
-    ...     pattern=Ingr("minecraft:spire_armor_trim_smithing_template")
+    ...     pattern="minecraft:spire_armor_trim_smithing_template"
     ... )
     >>> recipe.addition['item']
     'minecraft:diamond'

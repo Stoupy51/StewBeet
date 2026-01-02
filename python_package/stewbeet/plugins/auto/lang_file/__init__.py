@@ -3,6 +3,7 @@
 import stouputils as stp
 from beet import Context, Language, TextFileBase
 
+from ....core.utils.io import set_json_encoder
 from .utils import handle_file, lang
 
 
@@ -29,6 +30,6 @@ def beet_default(ctx: Context):
 
 	# Update the lang file
 	lang.update(ctx.assets.languages.get("minecraft:en_us", Language()).data)
-	ctx.assets.languages["minecraft:en_us"] = Language(stp.json_dump(dict(sorted(lang.items()))))
+	ctx.assets.languages["minecraft:en_us"] = set_json_encoder(Language(dict(sorted(lang.items()))))
 	pass
 
