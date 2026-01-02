@@ -171,7 +171,6 @@ class Ingr(JsonDict):
 				stp.error(f"External item '{item}' not found in the external definitions")
 		return ""
 
-	@stp.simple_cache
 	def to_item(self, id_key: str = "id") -> Ingr:
 		""" Get the item data dict from an ingredient
 

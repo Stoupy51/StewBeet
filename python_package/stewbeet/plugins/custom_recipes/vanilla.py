@@ -97,7 +97,7 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
         Returns:
             JsonDict: The generated recipe.
         """
-        result_ingr = recipe.result or Ingr(item, Mem.ctx.project_id)
+        result_ingr = recipe.result or Ingr(item)
         ingredients: list[str] = [i.to_vanilla_item_id() for i in recipe.ingredients]
 
         to_return: JsonDict = {
@@ -156,7 +156,7 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
         Returns:
             JsonDict: The generated recipe.
         """
-        result_ingr = recipe.result or Ingr(item, Mem.ctx.project_id)
+        result_ingr = recipe.result or Ingr(item)
         ingredient_vanilla: str = recipe.ingredient.to_vanilla_item_id()
 
         to_return: JsonDict = {
