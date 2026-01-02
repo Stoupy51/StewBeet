@@ -25,7 +25,17 @@ Writing to files is essential for generating datapacks and resource packs. StewB
 
 ## 🎨 Three Approaches to Writing Files
 
-### 🗂️ Approach 1: Static File Loading (beet.yml)
+### 📖 Quick Comparison
+
+| Approach | Use Case | Complexity | Flexibility |
+|----------|----------|------------|-------------|
+| **Static Files (beet.yml)** | Pre-written files | ⭐ Simple | ⭐ Low |
+| **Native Beet API** | Full control | ⭐⭐⭐ Complex | ⭐⭐⭐ High |
+| **StewBeet Helpers** | Dynamic generation | ⭐⭐ Medium | ⭐⭐ Medium-High |
+
+---
+
+### 📁 Approach 1: Static File Loading (beet.yml)
 
 The simplest approach - load pre-written files from directories **before any plugins run**.
 
@@ -49,21 +59,30 @@ resource_pack:
 **Example structure:**
 ```
 src/
-├── data/
+├── 📦 data/
 │   └── my_namespace/
-│       ├── function/
+│       ├── ⚙️ function/
 │       │   ├── load.mcfunction
 │       │   └── tick.mcfunction
-│       ├── advancement/
+│       ├── 🏆 advancement/
 │       │   └── my_advancement.json
-│       └── recipe/
+│       └── 🍳 recipe/
 │           └── my_recipe.json
-└── assets/
+└── 🎨 assets/
     └── my_namespace/
         └── textures/
             └── item/
                 └── my_item.png
 ```
+
+**What goes where:**
+- 📦 **data/** - All datapack content (functions, advancements, recipes, tags, etc.)
+- ⚙️ **function/** - Minecraft commands (.mcfunction files)
+- 🏆 **advancement/** - Player achievements and technical triggers (.json)
+- 🍳 **recipe/** - Crafting, smelting, and other recipes (.json)
+- 🎨 **assets/** - All resource pack content (textures, models, sounds)
+- 🖼️ **textures/** - PNG image files for items, blocks, etc.
+- ...
 
 **✅ Use when:**
 - You have static files that don't need dynamic generation
@@ -145,20 +164,20 @@ say Hello World!
 scoreboard players add @a points 1
 """)
     
-    # Append to load file (runs when datapack loads)
+    # Append to load file (runs when datapack loads: "your_namespace:v{version}/load/confirm_load")
     write_load_file("""
 # Initialize scoreboards
 scoreboard objectives add points dummy
 scoreboard objectives add data dummy
 """)
     
-    # Append to tick file (runs every game tick)
+    # Append to tick file (runs every game tick: "your_namespace:v{version}/tick")
     write_tick_file("""
 # Check for players with high scores
 execute as @a[scores={points=100..}] run function my_namespace:rewards/high_score
 """)
     
-    # Write versioned functions (automatic clock)
+    # Write versioned functions (automatic clock: "your_namespace:v{version}/second", etc.)
     write_versioned_function("second", """
 # Runs every second (20 ticks)
 execute as @a run title @s actionbar {"score":{"name":"@s","objective":"points"}}
@@ -204,8 +223,9 @@ def write_function(
 write_function(f"{ns}:utils/teleport_spawn", """
 # Teleport player to spawn
 tp @s 0 64 0
-""")
+""", tags=[f"{ns}:tp_spawn"])
 ```
+Function will be written to `data/your_namespace/functions/utils/teleport_spawn.mcfunction`, and added to the `your_namespace:tp_spawn` function tag.
 
 ---
 
@@ -302,7 +322,7 @@ def write_versioned_function(
 
 **Path:** `namespace:v{version}/{path}`
 
-**Common clock functions:**
+**Common clock functions:** (other names will not be automatically called by default)
 | Path | Frequency | Ticks | Description |
 |------|-----------|-------|-------------|
 | `tick` | Every tick | 1 | Runs with main tick file |
@@ -344,7 +364,7 @@ def write_advancement(
     path: str,                              # Advancement path (e.g., "namespace:folder/name")
     advancement: Advancement | JsonDict,    # Advancement data or object
     overwrite: bool = False,                # Overwrite instead of merging
-    max_level: int = -1                     # JSON nesting depth (-1 = unlimited)
+    max_level: int = -1                     # JSON indentation depth (-1 = unlimited)
 ) -> None:
 ```
 
@@ -365,7 +385,7 @@ write_advancement(f"{ns}:technical/inventory_changed", {
 # Visible advancement
 write_advancement(f"{ns}:story/craft_ruby_sword", {
     "display": {
-        "icon": {"id": "minecraft:diamond_sword", "components": {"custom_data": {ns: {"ruby_sword": True}}}},
+        "icon": {"id": "minecraft:diamond_sword", "components": {"item_model": f"{ns}:ruby_sword"}},
         "title": {"text": "Legendary Blade", "color": "red"},
         "description": {"text": "Craft a Ruby Sword"},
         "frame": "challenge",
@@ -397,7 +417,7 @@ def write_tag(
     tag_type: NamespaceProxy | NamespaceContainer,  # Tag type (e.g., ctx.data.function_tags)
     values: list[Any] | None = None,           # Values to add to the tag
     prepend: bool = False,                      # Prepend instead of appending
-    max_level: int | None = None                # JSON nesting depth
+    max_level: int | None = None                # JSON indentation depth
 ) -> None:
 ```
 
@@ -418,8 +438,8 @@ write_tag(f"{ns}:hostile_mobs", Mem.ctx.data.entity_type_tags, [
 
 # Block tags
 write_tag(f"{ns}:mineable/pickaxe", Mem.ctx.data.block_tags, [
-    f"{ns}:ruby_ore",
-    f"{ns}:ruby_block"
+    "stone",
+    "emerald_block"
 ])
 ```
 
@@ -433,7 +453,7 @@ def write_function_tag(
     path: str,                      # Tag path (e.g., "namespace:my_tag")
     functions: list[Any] | None = None,  # Function paths to add
     prepend: bool = False,          # Prepend instead of appending
-    max_level: int | None = None    # JSON nesting depth
+    max_level: int | None = None    # JSON indentation depth
 ) -> None:
 ```
 
@@ -494,7 +514,7 @@ Set custom JSON encoder for pretty printing.
 ```python
 def set_json_encoder(
     obj: JsonFileT,              # JsonFile object (Advancement, FunctionTag, etc.)
-    max_level: int | None = None,  # Max nesting depth (None = unlimited)
+    max_level: int | None = None,  # Max indentation depth (None = unlimited)
     indent: str | int = '\t'      # Indentation character or spaces
 ) -> JsonFileT:
 ```
@@ -514,7 +534,7 @@ Mem.ctx.data.advancements["my_advancement"] = set_json_encoder(advancement)
 # Use 2 spaces
 Mem.ctx.data.advancements["my_advancement"] = set_json_encoder(advancement, indent=2)
 
-# Limit nesting depth
+# Limit indentation depth
 Mem.ctx.data.advancements["my_advancement"] = set_json_encoder(advancement, max_level=3)
 ```
 
@@ -553,7 +573,7 @@ def texture_mcmeta(
 ```python
 from stewbeet import texture_mcmeta
 
-# Automatically loads my_texture.png.mcmeta if it exists
+# Automatically loads animated_block.png.mcmeta if it exists
 texture = texture_mcmeta("assets/textures/animated_block.png")
 Mem.ctx.assets["my_namespace"].textures["block/animated_block"] = texture
 ```
@@ -897,7 +917,7 @@ def setup_tags(ctx: Context):
     
     # Add to minecraft:tick
     write_function_tag("minecraft:tick", [
-        f"{ns}:v{ctx.project_version}/tick"
+        f"{ns}:v{ctx.project_version}/load/tick_verification"
     ])
     
     # Custom function tags for organization
@@ -926,12 +946,6 @@ def setup_tags(ctx: Context):
     ])
     
     # Block tags
-    write_tag(f"minecraft:mineable/pickaxe", Mem.ctx.data.block_tags, [
-        f"{ns}:ruby_ore",
-        f"{ns}:ruby_block",
-        f"{ns}:steel_block"
-    ])
-    
     write_tag(f"{ns}:machines", Mem.ctx.data.block_tags, [
         "minecraft:furnace",
         "minecraft:barrel",
@@ -948,21 +962,13 @@ def setup_tags(ctx: Context):
 **File Organization:**
 - Use meaningful folder structures (e.g., `machines/`, `items/`, `utils/`)
 - Group related functions together
-- Use versioned paths for datapack updates
 - Separate logic into small, reusable functions
-
-**Naming Conventions:**
-- Technical advancements: `namespace:technical/trigger_name`
-- Visible advancements: `namespace:story/achievement_name`
-- Custom blocks: `namespace:custom_blocks/block_name/action`
-- Utilities: `namespace:utils/category/function_name`
-- Private functions: `namespace:private/function_name`
 
 **Code Quality:**
 - Use f-strings for dynamic paths: `f"{ns}:folder/{item}"`
 - Use multi-line strings (triple quotes) for command content
 - Add descriptive comments in generated functions
-- Use `prepend=True` for initialization code in load files
+- Use `prepend=True` for initialization code in files that must run first
 
 **Performance:**
 - Use versioned functions (second, second_5, minute) instead of tick when possible
@@ -999,202 +1005,481 @@ def setup_tags(ctx: Context):
 **Organization:**
 - Don't mix different concerns in same function
 - Don't use generic names like `temp`, `test`, `function`
-- Don't nest folders too deeply (3-4 levels max)
+- Don't nest folders too deeply
 - Don't create files that are never called
 
 ---
 
 ## 🎯 Complete Example
 
-Here's a complete example combining all approaches:
+Here's a complete example combining all approaches (example from [Stardust Fragment](https://github.com/Stoupy51/StardustFragment/blob/main/src/utils/remaining.py)):
 
 ```python
-# src/link.py
-from beet import Context
-from stewbeet import (
-    write_function,
-    write_load_file,
-    write_tick_file,
-    write_versioned_function,
-    write_advancement,
-    write_function_tag,
-    write_tag,
-    Mem,
-    Item,
-)
+# Imports
+import json
 
-def beet_default(ctx: Context):
-    ns = ctx.project_id
-    
-    # === LOAD SYSTEM ===
-    
-    # Early initialization (runs first)
-    write_load_file("""
-# Core scoreboards
-scoreboard objectives add data dummy
-scoreboard objectives add private dummy
-""", prepend=True)
-    
-    # Main initialization
-    write_load_file(f"""
-# Game scoreboards
-scoreboard objectives add {ns}.energy dummy
-scoreboard objectives add {ns}.right_click minecraft.used:minecraft.warped_fungus_on_a_stick
+from stewbeet import *  # type: ignore
+from stouputils import get_root_path
 
 # Constants
-scoreboard players set #20 data 20
-scoreboard players set #100 data 100
+ROOT: str = get_root_path(__file__)
 
-# Teams
-team add {ns}.green
-team modify {ns}.green color green
+# Setup remaining utilities
+def setup_remaining() -> None:
+	ns: str = Mem.ctx.project_id
 
-# Storage
-data modify storage {ns}:main config set value {{}}
-""")
-    
-    # === TICK SYSTEM ===
-    
-    # Main tick
-    write_tick_file(f"""
-# Right-click detection
-execute as @a[scores={{{ns}.right_click=1..}}] run function {ns}:items/right_click_handler
+	# Get player head loot table
+	json_content: JsonDict = {"pools":[{"rolls":1,"entries":[{"type":"minecraft:item","name":"minecraft:player_head","functions":[{"function":"minecraft:fill_player_head","entity":"this"}]}]}]}
+	Mem.ctx.data[ns].loot_tables["player_head"] = set_json_encoder(LootTable(json_content), max_level=-1)
 
-# Custom block updates
-execute as @e[type=item_display,tag={ns}.custom_block] at @s run function {ns}:custom_blocks/tick
-""")
-    
-    # === VERSIONED FUNCTIONS (CLOCK) ===
-    
-    # Every second
-    write_versioned_function("second", f"""
-# Energy generation
-execute as @e[type=item_display,tag={ns}.generator] at @s run function {ns}:machines/generator/generate
+	# Boss Music
+	write_load_file(f"\n# Boss music timers\nscoreboard objectives add {ns}.boss_music dummy", prepend=True)
 
-# Update displays
-execute as @a run title @s actionbar {{"score":{{"name":"@s","objective":"{ns}.energy"}}}}
-""")
-    
-    # Every 5 seconds
-    write_versioned_function("second_5", f"""
-# Crop growth
-execute as @e[type=item_display,tag={ns}.growing] at @s run function {ns}:crops/grow_check
-
-# Cleanup old markers
-kill @e[type=marker,tag={ns}.temp,nbt={{Age:100s}}]
-""")
-    
-    # Every minute
-    write_versioned_function("minute", """
-# Cleanup old items
-kill @e[type=item,nbt={Age:5400s}]
-
-# Save statistics
-function simplenergy:utils/save_stats
-""")
-    
-    # === CUSTOM FUNCTIONS ===
-    
-    # Right-click handler
-    write_function(f"{ns}:items/right_click_handler", f"""
-# Reset score
-scoreboard players set @s {ns}.right_click 0
-
-# Check item type
-execute if items entity @s weapon.mainhand *[custom_data~{{{ns}:{{wrench:true}}}}] run function {ns}:items/wrench/use
-execute if items entity @s weapon.mainhand *[custom_data~{{{ns}:{{battery:true}}}}] run function {ns}:items/battery/use
-""")
-    
-    # Wrench usage
-    write_function(f"{ns}:items/wrench/use", f"""
-# Rotate block
-execute anchored eyes positioned ^ ^ ^3 align xyz positioned ~0.5 ~ ~0.5 as @e[type=item_display,tag={ns}.custom_block,distance=..1,limit=1] run function {ns}:items/wrench/rotate
-
-# Play sound
-playsound minecraft:block.metal.hit player @s ~ ~ ~ 1 1.5
-""")
-    
-    # Generator logic
-    write_function(f"{ns}:machines/generator/generate", f"""
-# Check fuel
-execute unless score @s {ns}.fuel matches 1.. run return 0
-
-# Consume fuel
-scoreboard players remove @s {ns}.fuel 1
-
-# Generate energy
-scoreboard players add @s {ns}.energy 10
-
-# Cap at max
-execute if score @s {ns}.energy > @s {ns}.energy_max run scoreboard players operation @s {ns}.energy = @s {ns}.energy_max
-
-# Particles
-particle flame ~ ~0.5 ~ 0.2 0.3 0.2 0.01 5
-""")
-    
-    # === ADVANCEMENTS ===
-    
-    # Inventory change trigger
-    write_advancement(f"{ns}:technical/inventory_changed", {
-        "criteria": {
-            "requirement": {
-                "trigger": "minecraft:inventory_changed"
-            }
-        },
-        "rewards": {
-            "function": f"{ns}:advancements/check_inventory"
-        }
-    })
-    
-    write_function(f"{ns}:advancements/check_inventory", f"""
+	# Inventory Changed
+	write_advancement(f"{ns}:technical/inventory_changed", {
+		"criteria": {"requirement": {"trigger": "minecraft:inventory_changed"}},
+		"rewards": {"function": f"{ns}:advancements/inventory_changed"}
+	})
+	write_function(f"{ns}:advancements/inventory_changed", f"""
+# Revoke advancement
 advancement revoke @s only {ns}:technical/inventory_changed
-execute if items entity @s container.* *[custom_data~{{{ns}:{{}}}}] run function {ns}:items/detect_custom
+""", prepend=True)
+
+
+	# Right click detection
+	write_load_file(f"\n# Right click detection\nscoreboard objectives add {ns}.right_click minecraft.used:minecraft.warped_fungus_on_a_stick\nscoreboard objectives add {ns}.cooldown dummy\n", prepend=True)
+	write_advancement(f"{ns}:technical/right_click", {
+		"criteria": {
+			"requirement": {
+				"trigger": "minecraft:tick",
+				"conditions": {
+					"player": [
+						{
+							"condition": "minecraft:entity_scores",
+							"entity": "this",
+							"scores": {f"{ns}.right_click": {"min": 1}}
+						}
+					]
+				}
+			}
+		},
+		"rewards": {
+			"function": f"{ns}:advancements/right_click"
+		}
+	})
+	write_function(f"{ns}:advancements/right_click", f"""
+# Revoke advancement and reset score
+advancement revoke @s only {ns}:technical/right_click
+scoreboard players set @s {ns}.right_click 0
+""", prepend=True)
+
+	# Global counter
+	write_tick_file(f"\n# Global counter for various features\nscoreboard players add #global_tick {ns}.data 1\n", prepend=True)
+	write_versioned_function("second", f"\n# Global counter for various features\nscoreboard players add #global_second {ns}.data 1\n", prepend=True)
+
+	# Compute motion towards
+	write_function(f"{ns}:utils/compute_motion_towards", """
+# Compute motion towards
+scoreboard players set @s bs.vel.x 0
+scoreboard players set @s bs.vel.y 0
+$scoreboard players set @s bs.vel.z $(towards)
+function #bs.move:local_to_canonical
+
+# Apply motion
+$function #bs.move:set_motion {scale:$(scale)}
 """)
-    
-    # Visible achievement
-    ruby_sword = Item.from_id("ruby_sword")
-    write_advancement(f"{ns}:story/craft_ruby_sword", {
-        "display": {
-            "icon": ruby_sword.vanilla_item_components(),
-            "title": {"text": "Legendary Blade", "color": "red"},
-            "description": {"text": "Craft a Ruby Sword"},
-            "frame": "challenge"
-        },
-        "criteria": {
-            "requirement": {
-                "trigger": "minecraft:recipe_crafted",
-                "conditions": {
-                    "recipe_id": f"{ns}:ruby_sword"
-                }
-            }
-        }
-    })
-    
-    # === FUNCTION TAGS ===
-    
-    # Add to minecraft:load
-    write_function_tag("minecraft:load", [
-        f"{ns}:v{ctx.project_version}/load/main"
-    ])
-    
-    # Custom function tags
-    write_function_tag(f"{ns}:machines/tick", [
-        f"{ns}:machines/generator/tick",
-        f"{ns}:machines/battery/tick",
-        f"{ns}:machines/crusher/tick"
-    ])
-    
-    # === ENTITY/BLOCK TAGS ===
-    
-    write_tag("machines", Mem.ctx.data.entity_type_tags, [
-        "minecraft:item_display",
-        "minecraft:interaction"
-    ])
-    
-    write_tag(f"minecraft:mineable/pickaxe", Mem.ctx.data.block_tags, [
-        f"{ns}:ruby_ore",
-        f"{ns}:steel_block"
-    ])
+
+	# Use durability
+	write_function(f"{ns}:utils/use_durability/main", f"""
+# Compute durability usage (6 digits precision)
+scoreboard players set #1000000 {ns}.data 1000000
+$scoreboard players set #temp_durability {ns}.data -$(amount)
+scoreboard players operation #temp_durability {ns}.data *= #1000000 {ns}.data
+$scoreboard players set #temp_divider {ns}.data $(max_damage)
+scoreboard players operation #temp_durability {ns}.data /= #temp_divider {ns}.data
+execute store result storage {ns}:temp use_durability double 0.000001 run scoreboard players get #temp_durability {ns}.data
+$data modify storage {ns}:temp slot set value "$(slot)"
+function {ns}:utils/use_durability/item_modifier with storage {ns}:temp
+
+# If item broke, destroy it
+execute store result score #current_damage {ns}.data run data get entity @s SelectedItem.components."minecraft:damage"
+$execute if score #current_damage {ns}.data matches $(max_damage).. anchored eyes run particle item{{item:{{id:"minecraft:stone",components:{{"minecraft:item_model":"$(item_model)"}}}}}} ^ ^ ^0.5 0 0 0 0.1 10
+$execute if score #current_damage {ns}.data matches $(max_damage).. run playsound minecraft:item.shield.break ambient @a[distance=..16]
+$execute if score #current_damage {ns}.data matches $(max_damage).. run item replace entity @s $(slot) with minecraft:air
+""")
+	write_function(f"{ns}:utils/use_durability/item_modifier", r"""
+$item modify entity @s $(slot) {"function": "minecraft:set_damage","damage": $(use_durability),"add": true}
+""")
+
+	## Life Crystal consuming
+	# Add life crystal instrument
+	Mem.ctx.data[ns].instruments["life_crystal"] = set_json_encoder(Instrument({
+		"description": item_id_to_text_component("life_crystal"),
+		"range": 16.0,
+		"sound_event": {"sound_id": f"{ns}:life_crystal"},
+		"use_duration": 1.0
+	}))
+	# Detect using life crystal
+	write_load_file(f"\n# Life Crystal tracker\nscoreboard objectives add {ns}.life_crystal dummy\n", prepend=True)
+	write_advancement(f"{ns}:technical/use_life_crystal", {
+		"criteria": {
+			"requirements": {
+				"trigger": "minecraft:using_item",
+				"conditions": {"item": {"predicates": {"minecraft:custom_data": {ns: {"life_crystal": True}}}}}
+			}
+		},
+		"rewards": {"function": f"{ns}:advancements/use_life_crystal"}
+	})
+	write_function(f"{ns}:advancements/use_life_crystal", f"""
+# Revoke advancement
+advancement revoke @s only {ns}:technical/use_life_crystal
+
+# Stop if runned a tick ago (to prevent double consuming)
+scoreboard players operation #cooldown {ns}.data = @s {ns}.cooldown
+execute if score #cooldown {ns}.data > #global_tick {ns}.data run return fail
+scoreboard players operation @s {ns}.cooldown = #global_tick {ns}.data
+scoreboard players add @s {ns}.cooldown 20
+
+# Stop if already at max life crystals
+execute if score @s {ns}.life_crystal matches 20 run return run tellraw @s {{"text":"[Stardust Fragment] You have already reached the maximum number of Life Crystals!","color":"red"}}
+
+# Update life crystal count & attribute
+scoreboard players add @s {ns}.life_crystal 1
+particle minecraft:heart ~ ~1 ~ .5 .5 .5 1 10 normal
+attribute @s minecraft:max_health modifier remove {ns}:life_crystal
+{'\n'.join([f'execute if score @s {ns}.life_crystal matches {i+1} run attribute @s minecraft:max_health modifier add {ns}:life_crystal {i+1} add_value' for i in range(20)])}
+
+# Clear one life crystal
+clear @s *[custom_data~{{{ns}:{{"life_crystal":true}}}}] 1
+
+# Grant life crystal advancement(s)
+advancement grant @s only {ns}:visible/stuff/life_crystal
+execute if score @s {ns}.life_crystal matches 20 run advancement grant @s only {ns}:visible/stuff/life_crystal_max
+""")
+
+	# Dog excrement production
+	Mem.ctx.data[ns].predicates["random/0.05"] = set_json_encoder(Predicate({"condition":"minecraft:random_chance","chance": 0.05}))
+	write_versioned_function("minute", f"""
+# Dog Excrement production (about 1 every 20 minutes per wolf)
+execute at @e[type=minecraft:wolf,{Conventions.AVOID_ENTITY_TAGS},predicate={ns}:random/0.05] run loot spawn ~ ~ ~ loot {ns}:i/dog_excrement
+""")
+
+	# Travel Staff
+	max_damage: int = Mem.definitions["home_travel_staff"]["max_damage"]
+	write_load_file(f"""
+# Travel Staff Logic
+scoreboard objectives add {ns}.travel_staff_cooldown dummy
+scoreboard objectives add {ns}.travel_x dummy
+scoreboard objectives add {ns}.travel_y dummy
+scoreboard objectives add {ns}.travel_z dummy
+""", prepend=True)
+	write_function(f"{ns}:advancements/right_click", f"""
+# If holding a home travel staff, handle it
+execute if items entity @s weapon.* *[custom_data~{{{ns}:{{home_travel_staff:true}}}}] run function {ns}:utils/home_travel_staff/right_click
+""")
+	write_function(f"{ns}:utils/home_travel_staff/right_click", f"""
+# Stop if already clicked recently
+execute if score @s {ns}.travel_staff_cooldown > #global_tick {ns}.data run return fail
+
+# Mainhand or offhand?
+data modify storage {ns}:temp slot set value "weapon.mainhand"
+execute unless items entity @s weapon.mainhand *[custom_data~{{{ns}:{{home_travel_staff:true}}}}] run data modify storage {ns}:temp slot set value "weapon.offhand"
+
+# Time to teleport (100 ticks)
+scoreboard players operation @s {ns}.travel_staff_cooldown = #global_tick {ns}.data
+scoreboard players add @s {ns}.travel_staff_cooldown 100
+schedule function {ns}:utils/home_travel_staff/schedule_teleport 100t append
+schedule function {ns}:utils/home_travel_staff/schedule_particles 50t append
+
+# Copy current position (to detect if moved)
+execute store result score @s {ns}.travel_x run data get entity @s Pos[0] 100
+execute store result score @s {ns}.travel_y run data get entity @s Pos[1] 100
+execute store result score @s {ns}.travel_z run data get entity @s Pos[2] 100
+
+# Use 1 durability
+data modify storage {ns}:temp amount set value 1
+data modify storage {ns}:temp max_damage set value {max_damage}
+data modify storage {ns}:temp item_model set value "{ns}:home_travel_staff"
+function {ns}:utils/use_durability/main with storage {ns}:temp
+
+# Feedback
+playsound minecraft:block.portal.trigger ambient @s ~ ~ ~ 0.5
+effect give @s minecraft:nausea 8 255 true
+""")
+	write_function(f"{ns}:utils/home_travel_staff/schedule_teleport", f"execute as @a if score @s {ns}.travel_staff_cooldown = #global_tick {ns}.data at @s run function {ns}:utils/home_travel_staff/check")
+	write_function(f"{ns}:utils/home_travel_staff/schedule_particles", f"""
+# Particle effect when 50 ticks left
+scoreboard players operation #plus_50 {ns}.data = #global_tick {ns}.data
+scoreboard players add #plus_50 {ns}.data 50
+execute as @a if score @s {ns}.travel_staff_cooldown = #plus_50 {ns}.data at @s run particle minecraft:portal ~ ~1 ~ 1 1 1 3 2500
+""")
+	write_function(f"{ns}:utils/home_travel_staff/check", f"""
+# Check if player has moved
+scoreboard players reset @s {ns}.travel_staff_cooldown
+execute store result score #new_x {ns}.data run data get entity @s Pos[0] 100
+execute store result score #new_y {ns}.data run data get entity @s Pos[1] 100
+execute store result score #new_z {ns}.data run data get entity @s Pos[2] 100
+execute unless score @s {ns}.travel_x = #new_x {ns}.data run return run function {ns}:utils/home_travel_staff/fail
+execute unless score @s {ns}.travel_y = #new_y {ns}.data run return run function {ns}:utils/home_travel_staff/fail
+execute unless score @s {ns}.travel_z = #new_z {ns}.data run return run function {ns}:utils/home_travel_staff/fail
+
+# Teleport
+advancement grant @s only {ns}:visible/stuff/home_travel_staff
+function {ns}:dimensions/teleport_home
+""")
+	write_function(f"{ns}:utils/home_travel_staff/fail", """tellraw @s {"text":"[Stardust Fragment] Teleportation cancelled because you moved!","color":"red"}\nplaysound entity.villager.no ambient @s""")
+
+	# Wormhole Potion
+	title: str = json.dumps(item_id_to_text_component("wormhole_potion"))
+	write_function(f"{ns}:advancements/right_click", f"""
+# If holding a wormhole potion, handle it
+execute if items entity @s weapon.* *[custom_data~{{{ns}:{{wormhole_potion:true}}}}] run function {ns}:utils/wormhole_potion/right_click
+""")
+	write_function(f"{ns}:utils/wormhole_potion/right_click", f"""
+# Prepare dialog for which player to teleport to
+tag @s add {ns}.temp
+data modify storage {ns}:temp dialog set value {{"actions":[],"title":{title}}}
+execute as @a[tag=!{ns}.temp] run function {ns}:utils/wormhole_potion/add_to_actions
+tag @s remove {ns}.temp
+
+# Message if no other players connected
+execute unless data storage {ns}:temp dialog.actions[1] run playsound minecraft:entity.villager.no ambient @s
+execute unless data storage {ns}:temp dialog.actions[1] run return run tellraw @s {{"text":"[Stardust Fragment] No other players are currently connected to teleport to.","color":"red"}}
+
+# Show dialog
+function {ns}:utils/wormhole_potion/show_dialog with storage {ns}:temp dialog
+""")
+	write_function(f"{ns}:utils/wormhole_potion/add_to_actions", f"""
+# Get player username for macro
+tag @e[type=item] add {ns}.temp
+execute at @s run loot spawn ~ ~ ~ loot {ns}:player_head
+data modify storage {ns}:temp player_name set from entity @e[type=item,tag=!{ns}.temp,limit=1] Item.components."minecraft:profile".name
+kill @e[type=item,tag=!{ns}.temp]
+tag @e[type=item,tag={ns}.temp] remove {ns}.temp
+
+# Prepare action
+data modify storage {ns}:temp element set value {{"label":[],"action":{{}}}}
+data modify storage {ns}:temp element.label append value {{"player":{{"name":""}},"hat":true}}
+data modify storage {ns}:temp element.label[-1].player.name set from storage {ns}:temp player_name
+data modify storage {ns}:temp element.label append value " "
+data modify storage {ns}:temp element.label append from storage {ns}:temp player_name
+data modify storage {ns}:temp element.label append value " "
+data modify storage {ns}:temp element.label append from storage {ns}:temp element.label[0]
+data modify storage {ns}:temp element.action set value {{"type":"minecraft:run_command","command":""}}
+function {ns}:utils/wormhole_potion/set_teleport_command with storage {ns}:temp
+
+# Add action to dialog
+data modify storage {ns}:temp dialog.actions append from storage {ns}:temp element
+""")
+	write_function(f"{ns}:utils/wormhole_potion/set_teleport_command", f"""
+$data modify storage {ns}:temp element.action.command set value 'function {ns}:utils/wormhole_potion/teleport_to {{"name":"$(player_name)"}}'
+""")
+	write_function(f"{ns}:utils/wormhole_potion/show_dialog", r"""
+$dialog show @s {"type":"minecraft:multi_action","columns":3,"exit_action":{"label":{"translate":"gui.back"},"width":200},"title":$(title),"actions":$(actions)}
+""")
+	write_function(f"{ns}:utils/wormhole_potion/teleport_to", f"""
+# Slow falling effect to avoid fall damage
+effect give @s minecraft:slow_falling 3 255 true
+
+# Teleport to selected player
+$tp @s $(name)
+
+# Feedback
+execute at @s run particle minecraft:portal ~ ~1 ~ 1 1 1 0 2500
+execute at @s run playsound {ns}:wormhole_potion ambient @a[distance=..16]
+
+# Consume one wormhole potion
+clear @s *[custom_data~{{{ns}:{{"wormhole_potion":true}}}}] 1
+""")
+
+	## Dragon & Ender Dragon pearls
+	write_load_file(f"\n# Ender Pearl detection\nscoreboard objectives add {ns}.ender_pearl minecraft.used:minecraft.ender_pearl\n", prepend=True)
+	write_advancement(f"{ns}:technical/ender_pearl", {
+		"criteria": {
+			"requirement": {
+				"trigger": "minecraft:tick",
+				"conditions": {
+					"player": [
+						{
+							"condition": "minecraft:entity_scores",
+							"entity": "this",
+							"scores": {f"{ns}.ender_pearl": {"min": 1}}
+						}
+					]
+				}
+			}
+		},
+		"rewards": {
+			"function": f"{ns}:advancements/ender_pearl"
+		}
+	})
+	dragon_data: str = f"""{{{ns}:{{"dragon_pearl":true}}}}"""
+	ender_dragon_data: str = f"""{{{ns}:{{"ender_dragon_pearl":true}}}}"""
+	def line_pearl(data: str, scale: int) -> str:
+		return f"""execute if items entity @s weapon.mainhand *[custom_data~{data}] as @n[type=ender_pearl,tag=!{ns}.motion_applied,nbt={{Item:{{components:{{"minecraft:custom_data":{data}}}}}}}] run function {ns}:utils/multiply_motion {{scale:{scale}}}"""
+	write_function(f"{ns}:advancements/ender_pearl", f"""
+# Revoke advancement and reset score
+advancement revoke @s only {ns}:technical/ender_pearl
+scoreboard players set @s {ns}.ender_pearl 0
+
+# If Dragon Pearl (Motion x1.5), if Ender Dragon pearl (Motion x2)
+{line_pearl(dragon_data, 1500)}
+{line_pearl(ender_dragon_data, 2000)}
+""", prepend=True)
+	write_function(f"{ns}:utils/multiply_motion", f"""
+# Can't directly multiply motion (Minecraft bug), so store in scoreboards first
+$execute store result score #motion_x {ns}.data run data get entity @s Motion[0] $(scale)
+$execute store result score #motion_y {ns}.data run data get entity @s Motion[1] $(scale)
+$execute store result score #motion_z {ns}.data run data get entity @s Motion[2] $(scale)
+execute store result entity @s Motion[0] double 0.001 run scoreboard players get #motion_x {ns}.data
+execute store result entity @s Motion[1] double 0.001 run scoreboard players get #motion_y {ns}.data
+execute store result entity @s Motion[2] double 0.001 run scoreboard players get #motion_z {ns}.data
+tag @s add {ns}.motion_applied
+""")
+
+	# Bows damage multiplier
+	write_load_file(f"\n# Bow shooting detection\nscoreboard objectives add {ns}.bow_shoot minecraft.used:minecraft.bow\n", prepend=True)
+	write_advancement(f"{ns}:technical/bow_shoot", {
+		"criteria": {
+			"requirement": {
+				"trigger": "minecraft:tick",
+				"conditions": {
+					"player": [
+						{
+							"condition": "minecraft:entity_scores",
+							"entity": "this",
+							"scores": {f"{ns}.bow_shoot": {"min": 1}}
+						}
+					]
+				}
+			}
+		},
+		"rewards": {
+			"function": f"{ns}:advancements/bow_shoot"
+		}
+	})
+
+	# Create predicate for sneaking
+	Mem.ctx.data[ns].predicates["player/sneaking"] = set_json_encoder(Predicate({"condition":"minecraft:entity_properties","entity":"this","predicate":{"flags":{"is_sneaking":True}}}))
+
+	sb_data: str = f"""{{{ns}:{{"stardust_bow":true}}}}"""
+	asb_data: str = f"""{{{ns}:{{"awakened_stardust_bow":true}}}}"""
+	ub_data: str = f"""{{{ns}:{{"ultimate_bow":true}}}}"""
+	def line_bow(data: str, scale: float) -> str:
+		return f"""execute if items entity @s weapon.mainhand *[custom_data~{data}] as @n[type=arrow,tag=!{ns}.damage_multiplied,nbt={{weapon:{{components:{{"minecraft:custom_data":{data}}}}}}}] run function {ns}:utils/modify_arrow {{scale:{scale}}}"""
+	write_function(f"{ns}:advancements/bow_shoot", f"""
+# Revoke advancement and reset score
+advancement revoke @s only {ns}:technical/bow_shoot
+scoreboard players set @s {ns}.bow_shoot 0
+
+# Set sneaking flag if player is sneaking
+scoreboard players set #is_sneaking {ns}.data 0
+execute if predicate {ns}:player/sneaking run scoreboard players set #is_sneaking {ns}.data 1
+
+# If Stardust Bow (x2.0), if Awakened Stardust Bow (x3.0), if Ultimate Bow (x4.0)
+{line_bow(sb_data, 2.0)}
+{line_bow(asb_data, 3.0)}
+{line_bow(ub_data, 4.0)}
+""", prepend=True)
+	write_function(f"{ns}:utils/modify_arrow", f"""
+# Multiply arrow damage
+$execute store result entity @s damage double $(scale) run data get entity @s damage 1.0
+
+# Set NoGravity if sneaking
+execute if score #is_sneaking {ns}.data matches 1 run data modify entity @s NoGravity set value 1b
+
+# Mark as modified
+tag @s add {ns}.damage_multiplied
+""")
+
+	# Always dragon egg on death
+	write_versioned_function("second_5", f"""
+# Always drop dragon egg on death
+execute unless score #dragon_in_end {ns}.data matches 1.. in minecraft:the_end if entity @e[type=minecraft:ender_dragon,x=0,y=0,z=0,distance=..320,nbt={{Brain:{{}}}}] run function {ns}:utils/dragon_egg_on_death/has_dragon
+""")
+	write_function(f"{ns}:utils/dragon_egg_on_death/has_dragon", f"""
+# We know there is a dragon, set the flag
+scoreboard players set #dragon_in_end {ns}.data 1
+
+# Start monitoring dragon's death
+schedule function {ns}:utils/dragon_egg_on_death/monitor 1s append
+""")
+	write_function(f"{ns}:utils/dragon_egg_on_death/monitor", f"""
+# Check if dragon is dead
+execute in minecraft:the_end unless entity @e[type=minecraft:ender_dragon,x=0,y=0,z=0,distance=..320,nbt={{Brain:{{}}}}] run function {ns}:utils/dragon_egg_on_death/schedule_place_egg
+
+# Reschedule check
+execute if score #dragon_in_end {ns}.data matches 1.. run schedule function {ns}:utils/dragon_egg_on_death/monitor 1s replace
+""")
+	write_function(f"{ns}:utils/dragon_egg_on_death/schedule_place_egg", f"""
+# Schedule dragon egg drop after 10 seconds (to ensure dragon death sequence is over)
+schedule function {ns}:utils/dragon_egg_on_death/place_egg_start 10s append
+scoreboard players reset #dragon_in_end {ns}.data
+""")
+	write_function(f"{ns}:utils/dragon_egg_on_death/place_egg_start", f"""
+# Drop dragon egg at center of the end
+execute in minecraft:the_end positioned 0 100 0 run function {ns}:utils/dragon_egg_on_death/place_egg_loop
+""")
+	write_function(f"{ns}:utils/dragon_egg_on_death/place_egg_loop", f"""
+# If current block is bedrock, stop and place egg
+execute unless loaded ~ ~ ~ run return fail
+execute if block ~ ~ ~ bedrock run return run setblock ~ ~1 ~ minecraft:dragon_egg
+
+# Else, move down and repeat until bedrock found or bottom reached
+execute positioned ~ ~-1 ~ run function {ns}:utils/dragon_egg_on_death/place_egg_loop
+""")
+
+	# Magnet functionality
+	write_function(f"{ns}:advancements/inventory_changed", f"""
+# If has item magnet, add tag and score
+execute if entity @s[tag={ns}.has_item_magnet] unless items entity @s weapon.offhand *[custom_data~{{{ns}:{{"item_magnet":true}}}}] run function {ns}:utils/magnet/removed
+execute if entity @s[tag=!{ns}.has_item_magnet] if items entity @s weapon.offhand *[custom_data~{{{ns}:{{"item_magnet":true}}}}] run function {ns}:utils/magnet/added
+""", prepend=True)
+	write_function(f"{ns}:utils/magnet/added", f"""
+# Add tag and score
+tag @s add {ns}.has_item_magnet
+scoreboard players add #has_item_magnet {ns}.data 1
+""")
+	write_function(f"{ns}:utils/magnet/removed", f"""
+# Remove tag and score
+tag @s remove {ns}.has_item_magnet
+scoreboard players remove #has_item_magnet {ns}.data 1
+""")
+	write_versioned_function("tick_2", f"""
+# Item Magnet functionality
+execute if score #has_item_magnet {ns}.data matches 1.. at @a[tag={ns}.has_item_magnet] run tp @e[type=item,distance=..4] ~ ~ ~
+""")
+
+	# Lucky Artifact Bag
+	write_function(f"{ns}:advancements/right_click", f"""
+# If holding a lucky artifact bag, handle it
+execute if items entity @s weapon.* *[custom_data~{{{ns}:{{"lucky_artifact_bag":true}}}}] run function {ns}:utils/lucky_artifact_bag
+""")
+	write_function(f"{ns}:utils/lucky_artifact_bag", f"""
+# Give random artifact
+loot give @s loot {ns}:random_artifact
+
+# Playsound and particles
+particle minecraft:happy_villager ~ ~1 ~ 0.5 0.5 0.5 0 20
+playsound minecraft:entity.player.levelup ambient @s ~ ~ ~ 0.5
+
+# Consume one lucky artifact bag
+clear @s *[custom_data~{{{ns}:{{lucky_artifact_bag:true}}}}] 1
+""")
+	Mem.ctx.data[ns].loot_tables["random_artifact"] = set_json_encoder(LootTable({
+		"pools": [{
+			"rolls": 1,
+			"bonus_rolls": 0,
+			"entries": [
+				{"type": "minecraft:loot_table", "weight": 5, "value": "stardust:i/health_artifact_lv1"},
+				{"type": "minecraft:loot_table", "weight": 5, "value": "stardust:i/damage_artifact_lv1"},
+				{"type": "minecraft:loot_table", "weight": 5, "value": "stardust:i/speed_artifact_lv1"},
+				{"type": "minecraft:loot_table", "value": "stardust:i/health_artifact_lv2"},
+				{"type": "minecraft:loot_table", "value": "stardust:i/damage_artifact_lv2"},
+				{"type": "minecraft:loot_table", "value": "stardust:i/speed_artifact_lv2"},
+			]
+		}]
+	}), max_level=4)
 ```
 
 ---
