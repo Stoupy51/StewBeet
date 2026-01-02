@@ -23,6 +23,11 @@ export const DocumentationPage: React.FC = () => {
             description: 'Learn how to define custom items, blocks, and equipment configurations',
             path: '1_definitions_setup/README.md',
         },
+        {
+            title: '📝 Writing to Files',
+            description: 'Master file writing with static loading, native beet API, and StewBeet helper functions',
+            path: '2_writing_to_files/README.md',
+        },
     ];
 
     return (
