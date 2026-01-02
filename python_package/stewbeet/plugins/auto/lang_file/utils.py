@@ -11,7 +11,8 @@ lang: dict[str, str] = {}
 # Regex pattern for text extraction
 TEXT_RE: re.Pattern[str] = re.compile(
 	r'''
-	(?P<prefix>["']?text["']?\s*:\s*)             # Match the "text": part
+	(?P<key_quote>["'])?text(?(key_quote)(?P=key_quote))  # Match "text", 'text', or text
+	\s*:\s*                                       # Match the colon and spaces
 	(?P<quote>["'])                               # Opening quote for value
 	(?P<value>(?:\\.|[^\\])*?)                    # The value, handling escapes
 	(?P=quote)                                    # Closing quote
@@ -20,21 +21,45 @@ TEXT_RE: re.Pattern[str] = re.compile(
 
 
 # Functions
-def extract_texts(content: str) -> list[tuple[str, int, int, str]]:
+def extract_texts(content: str) -> list[tuple[str, int, int, str, str | None]]:
 	""" Extract all text values from content using regex patterns.
 
 	Args:
 		content (str): The content to extract text from.
 
 	Returns:
-		list[tuple[str, int, int, str]]: List of tuples containing (text, start_pos, end_pos, quote_char)
+		list[tuple[str, int, int, str, str | None]]: List of tuples containing (text, start_pos, end_pos, value_quote_char, key_quote_char)
+
+	Examples:
+		>>> matches = extract_texts('{"text":"Hello World"}')
+		>>> len(matches)
+		1
+		>>> matches[0][0]  # Extract the text value
+		'Hello World'
+		>>> matches[0][3]  # Extract the value quote character
+		'"'
+		>>> matches[0][4]  # Extract the key quote character
+		'"'
+
+		>>> matches = extract_texts('{text:"Hey dude!!!!"}')
+		>>> matches[0][0]
+		'Hey dude!!!!'
+		>>> matches[0][4] is None  # No quotes around 'text' key
+		True
+
+		>>> matches = extract_texts("{'text':'Single quotes'}")
+		>>> matches[0][0]
+		'Single quotes'
+		>>> matches[0][3]
+		"'"
 	"""
-	matches: list[tuple[str, int, int, str]] = []
+	matches: list[tuple[str, int, int, str, str | None]] = []
 	for match in TEXT_RE.finditer(content):
 		start, end = match.span()
 		value: str = match.group("value")
 		quote: str = match.group("quote")
-		matches.append((value, start, end, quote))
+		key_quote: str | None = match.group("key_quote")
+		matches.append((value, start, end, quote, key_quote))
 	return matches
 
 
@@ -47,6 +72,28 @@ def lang_format(ctx: Context, text: str) -> tuple[str, str]:
 
 	Returns:
 		tuple[str, str]: The formatted key and a simplified version of it.
+
+	Examples:
+		>>> from typing import NamedTuple
+		>>> FakeContext = NamedTuple('FakeContext', [('project_id', str)])
+		>>> ctx = FakeContext(project_id='my_project')
+		>>> key, simplified = lang_format(ctx, 'Hello World')
+		>>> key
+		'my_project.hello_world'
+		>>> simplified
+		'helloworld'
+
+		>>> key, simplified = lang_format(ctx, 'Test/Path:Name')
+		>>> key
+		'my_project.test_path_name'
+
+		>>> key, simplified = lang_format(ctx, 'Special!@#$%Characters')
+		>>> key
+		'my_project.specialcharacters'
+
+		>>> key, simplified = lang_format(ctx, 'a' * 100)  # Test truncation
+		>>> len(simplified) <= 64
+		True
 	"""
 	text = re.sub(r"[./:]", "_", text)   # Clean up all unwanted chars
 	text = re.sub(r"[^a-zA-Z0-9 _-]", "", text).lower()
@@ -72,11 +119,11 @@ def handle_file(ctx: Context, content: TextFileBase[str] | None) -> None:
 	else:
 		raise ValueError(f"Unsupported content type: {type(content)}")
 
-	# Extract all text matches
-	matches: list[tuple[str, int, int, str]] = extract_texts(string)
+	# Extract all text matches, str | None]] = extract_texts(string)
+	matches: list[tuple[str, int, int, str, str | None]] = extract_texts(string)
 
 	# Process matches in reverse to avoid position shifting
-	for text, start, end, quote in reversed(matches):
+	for text, start, end, quote, key_quote in reversed(matches):
 		# Clean text and skip if not useful
 		clean_text: str = text.replace("\\n", "\n").replace("\\", "")
 		if not any(c.isalnum() for c in clean_text):
@@ -91,8 +138,9 @@ def handle_file(ctx: Context, content: TextFileBase[str] | None) -> None:
 		elif lang[key_for_lang] != clean_text:
 			continue
 
-		# Replace whole "text": "value" with "translate": "key"
-		new_fragment: str = f'{quote}translate{quote}: {quote}{key_for_lang}{quote}'
+		# Replace whole "text": "value" with "translate": "key" (preserving quote style)
+		translate_key = f'{key_quote}translate{key_quote}' if key_quote else 'translate'
+		new_fragment: str = f'{translate_key}: {quote}{key_for_lang}{quote}'
 		string = string[:start] + new_fragment + string[end:]
 
 	# Update the content
