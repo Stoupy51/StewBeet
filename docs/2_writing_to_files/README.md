@@ -15,6 +15,8 @@ Writing to files is essential for generating datapacks and resource packs. StewB
 
 **File writing typically happens in user plugins after definitions are set up but before finalization.**
 
+> **📝 Note on Bolt**: [Bolt](https://github.com/mcbeet/beet/tree/beta/packages/bolt) is another powerful way to write datapack functions using Python-like syntax. While it exists and is a great tool, it's not covered in this guide. Check out the [Bolt repository](https://github.com/mcbeet/beet/tree/beta/packages/bolt) to learn more about it.
+
 ## 🎯 Purpose
 - 📁 Load static files from directories (pre-plugin via `beet.yml`)
 - ✍️ Generate dynamic functions, advancements, and tags programmatically
