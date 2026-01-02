@@ -12,6 +12,8 @@ from beet import ProjectConfig
 from .core.template import template_command
 from .utils import get_project_config
 
+# TODO: "stewbeet dump" command to zip all (without cache) and ask to send automatically to Stoupy using stewbeet.paralya.fr/api/dump
+# TODO: "stewbeet migrate <template_name>" command to migrate a simple datapack that is not using stewbeet yet to stewbeet structure
 
 @stp.handle_error(message="Error while running 'stewbeet'")
 def main() -> None:

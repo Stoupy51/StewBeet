@@ -40,55 +40,16 @@ Here is a list of features that the package provides (the template is using all 
 - 📂 Automatic copy of generated zip files to configured folders.
 
 
-## 📦 How to use (beginner friendly)
-In order to use `StewBeet`, you need to have at least [Python 3.14](https://www.python.org/downloads/) 🐍 installed on your computer with pip!<br>
-Then, you can open a terminal 💻 and run the following command to install the python package:
+## 📦 Getting Started & Documentation
 
-```bash
-# This will install the latest version of the framework
-# (including beet, bolt, mecha, and other dependencies)
-pip install stewbeet
-```
+For complete installation instructions, tutorials, and comprehensive documentation, visit the official website:
 
-Next, there are a few templates available in the [`./templates`](./templates/) folder 📁,<br>
-There are 3 templates available, feel free to choose the one you prefer (but I highly recommend the basic template):
-- 🔹 [`minimal template`](./templates/minimal_template.zip): A very minimal template using only one `stewbeet` plugin.
-- ⭐ [`basic template`](./templates/basic_template.zip): A template with complete configuration but no coded features.
-- 🌟 [`extensive template`](./templates/extensive_template.zip): A template with all the features of the framework, including all the plugins.
+### 🌐 **[stewbeet.paralya.fr](https://stewbeet.paralya.fr)**
 
-The clickable links are zip files 📦, but you can check the content of the templates in the [`./templates`](./templates/) folder.<br>
-
-Once you have a template, you can modify the `beet.yml` configuration file ⚙️ to suit your needs.<br>
-Finally, you can run the following command to build the project 🔨:
-
-```bash
-# You can also run 'beet' instead of 'stewbeet' but with less functionality
-# (Make sure you are in the project folder)
-stewbeet
-```
-The command will generate a datapack and a resource pack in your `build` folder 🏗️.<br>
-And that's it! 🎉 That is this easy use the package.<br>
-Since this template is using all the features of the package, you can remove the parts you don't need! 🧹
-
-## 🌱 How to use (Beet users)
-If you are already familiar with the [Beet](https://github.com/mcbeet/beet) development kit, `StewBeet` is developped as a bunch of plugins for it.<br>
-Install `StewBeet` with `pip install stewbeet` and check the [StewBeet plugins documentation](./docs/plugins/README.md) to learn about them.
-
-
-## 📚 Documentation
-There are a lot of features in the package, you could check the [extensive template](./templates/extensive/) to see how to use them.<br>
-Alternatively, you could join the [Discord server](https://discord.gg/anxzu6rA9F) to ask questions and get help from the community!<br>
-Or, you could check the **highly detailed** [documentation folder](docs/)<br>
-Here a list of all the currently available guides:
-- 📖 [Getting started](docs/0_getting_started/README.md)
-(NOT UPDATED FOR NOW)
-- **🔧 [Project Structure](1_project_structure.md)** - Understand the folder organization
-- **🗄️ [Definitions Setup](2_definitions_setup.md)** - Advanced item and block definitions  
-- **✍️ [Writing to Files](3_writing_to_files.md)** - Custom functions and data
-- **🔗 [External Dependencies](4_external_dependencies.md)** - Using libraries
-- **⚔️ [Adding a Sword](specific_guides/adding_a_sword.md)** - Practical example
-- 🌱 [Beet Plugins](docs/plugins/README.md)
-- More soon!
+Quick links:
+- 🚀 [Getting Started Guide](https://stewbeet.paralya.fr/documentation)
+- 📖 [Full Documentation](https://stewbeet.paralya.fr/documentation)
+- 💬 [Discord Community](https://discord.gg/anxzu6rA9F)
 
 
 ## 🤝 Contribute
