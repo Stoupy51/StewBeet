@@ -116,7 +116,6 @@ export const Hero: React.FC = () => {
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const containerRef = useRef<HTMLDivElement>(null);
     const { scrollY } = useScroll();
-    const y1 = useTransform(scrollY, [0, 500], [0, 200]);
     const y2 = useTransform(scrollY, [0, 500], [0, -150]);
 
     useEffect(() => {
@@ -166,7 +165,6 @@ export const Hero: React.FC = () => {
             <div className="relative z-10 w-full max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                 {/* Left Column: Content */}
                 <motion.div
-                    style={{ y: y1 }}
                     className="text-left"
                 >
                     <motion.div

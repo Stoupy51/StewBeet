@@ -23,7 +23,7 @@ and prepares the build environment for all subsequent plugins.
 <img src="img/initialize.pack_mcmeta.jpg" style="width: min(540px, 100%)">
 
 **Legacy Texture Naming Conversion**<br>
-<img src="img/initialize.legacy_texture_naming.jpg" style="width: min(540px, 100%)"> |
+<img src="img/initialize.legacy_texture_naming.jpg" style="width: min(540px, 100%)">
 
 
 ## 🎯 Purpose

@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
 
-interface PyPIResponse {
-    info: {
-        version: string;
-    };
+interface GitHubTag {
+    name: string;
 }
 
 export const useStewBeetVersion = () => {
@@ -13,9 +11,13 @@ export const useStewBeetVersion = () => {
     useEffect(() => {
         const fetchVersion = async () => {
             try {
-                const response = await fetch('https://pypi.org/pypi/stewbeet/json');
-                const data: PyPIResponse = await response.json();
-                setVersion(data.info.version);
+                const response = await fetch('https://api.github.com/repos/Stoupy51/StewBeet/tags');
+                const data: GitHubTag[] = await response.json();
+                if (data && data.length > 0) {
+                    // Remove 'v' prefix if present
+                    const tagName = data[0].name;
+                    setVersion(tagName.startsWith('v') ? tagName.slice(1) : tagName);
+                }
             } catch (error) {
                 console.error('Failed to fetch StewBeet version:', error);
                 // Keep fallback version
