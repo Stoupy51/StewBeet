@@ -38,8 +38,8 @@ from ...core.constants import (
 	WIKI_COMPONENT,
 )
 from ...core.definitions_helper import add_item_name_and_lore_if_missing
-from ...core.utils.text_component import item_id_to_name
 from ...core.utils.io import convert_to_serializable, super_merge_dict, write_load_file
+from ...core.utils.text_component import item_id_to_name
 from ..custom_recipes.vanilla import VanillaRecipeHandler
 from ..initialize.source_lore_font import find_pack_png
 from ..resource_pack.item_models import AutoModel  # Handle new items models (used for the manual and the heavy workbench)
