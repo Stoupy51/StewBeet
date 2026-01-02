@@ -18,7 +18,7 @@ Item definitions are the heart of the StewBeet framework. They define custom ite
 ### <u>Some Features Showcase</u>
 
 **Item definitions from the Extensive Template:**<br>
-<img src="img/definitions_setup.extensive_template.jpg">
+<img src="./additions.jpg">
 
 ## 🎯 Purpose
 - 🛠️ Define custom items, blocks, and equipment using Python classes
@@ -92,13 +92,13 @@ from stewbeet import Item, Ingr, CraftingShapedRecipe, WikiButton
 
 item = Item(
     id="magic_sword",                           # Required: unique identifier
-    base_item="minecraft:iron_sword",            # Base Minecraft item (default: CUSTOM_ITEM_VANILLA)
-    manual_category="combat",                    # Category for the manual
+    base_item="minecraft:iron_sword",           # Base Minecraft item (default: CUSTOM_ITEM_VANILLA)
+    manual_category="equipment",                # Category for the manual
     recipes=[                                   # List of Recipe objects
         CraftingShapedRecipe(
             category="equipment",
             shape=["X", "X", "Y"],
-            ingredients={"X": Ingr("diamond"), "Y": Ingr("stick")}
+            ingredients={"X": Ingr("minecraft:amethyst_shard"), "Y": Ingr("minecraft:stick")}
         )
     ],
     override_model=None,                        # Override auto-generated model
@@ -110,7 +110,7 @@ item = Item(
         "item_name": {"text": "Magic Sword", "color": "gold"},
         "lore": [{"text": "Deals extra damage", "color": "gray"}],
         "max_damage": 500,
-        "enchantments": {"levels": {"minecraft:sharpness": 5}},
+        "enchantments": {"minecraft:sharpness": 5},
         "attribute_modifiers": [
             {
                 "type": "minecraft:attack_damage",
@@ -142,7 +142,7 @@ item = Item(
 Custom blocks extend the `Item` class with block-specific properties:
 
 ```python
-from stewbeet import Block, VanillaBlock, CraftingShapedRecipe, Ingr
+from stewbeet import Block, VanillaBlock, CraftingShapedRecipe, SmeltingRecipe, Ingr
 
 block = Block(
     id="super_stone",
@@ -152,6 +152,7 @@ block = Block(
     ),
     manual_category="blocks",
     recipes=[
+        # Could have been shapeless, but just for example:
         CraftingShapedRecipe(
             category="blocks",
             shape=["XXX", "XXX", "XXX"],
@@ -167,7 +168,7 @@ block = Block(
         )
     ],
     components={
-        "item_name": {"text": "Super Stone", "color": "aqua"}
+        # Item name, lore, and container will be auto-generated if missing
     }
 )
 ```
@@ -177,8 +178,96 @@ block = Block(
 ```python
 @dataclass
 class VanillaBlock:
-    id: str                     # Base vanilla block (e.g., "minecraft:cobblestone")
-    apply_facing: bool = False  # Enable directional variants (north, east, south, west)
+    id: str                                          # Base vanilla block (e.g., "minecraft:cobblestone")
+    apply_facing: Literal[False, True, "entity"] = False  # Enable directional variants
+    contents: bool = False                           # For blocks using item frames without vanilla block
+```
+
+#### **NoSilkTouchDrop Configuration**
+
+Defines custom drops when the block is broken without silk touch:
+
+```python
+@dataclass
+class NoSilkTouchDrop:
+    id: str                     # Item ID to drop (e.g., "raw_simplunium")
+    count: dict | int = 1       # Drop count: int or {"min": 1, "max": 3}
+```
+```python
+# Example usage
+block = Block(
+    id="simplunium_ore",
+    vanilla_block=VanillaBlockForOres,
+    no_silk_touch_drop=NoSilkTouchDrop(id="raw_simplunium", count={"min": 2, "max": 4})
+)
+
+# Or shorthand
+block = Block(
+    id="simplunium_ore",
+    vanilla_block=VanillaBlockForOres,
+    no_silk_touch_drop="raw_simplunium"  # Defaults to count=1
+)
+```
+
+#### **GrowingSeed Configuration**
+
+For seeds that grow over time (like Stardust Seed from [Stardust Fragment](https://github.com/Stoupy51/StardustFragment)):
+
+```python
+@dataclass
+class GrowingSeedLoot:
+    id: str                     # Item ID to drop
+    rolls: JsonDict | int = 1   # Roll definition or count
+    fortune: JsonDict | None = None  # Fortune modifier
+
+@dataclass
+class GrowingSeed:
+    texture_basename: str       # Base texture name (e.g., "stardust")
+    seconds: int                # Growth time in seconds
+    planted_on: str             # Block to plant on (e.g., "diamond_block")
+    loots: list[GrowingSeedLoot] | str  # Loot list or loot table path
+```
+```python
+# Example usage
+seed = Block(
+    id="stardust_seed",
+    vanilla_block=VanillaBlock(id="minecraft:wheat"),
+    no_silk_touch_drop=NoSilkTouchDrop(id="stardust_fragment", count=1),
+    growing_seed=GrowingSeed(
+        texture_basename="stardust",
+        seconds=480,  # 8 minutes
+        planted_on="diamond_block",
+        loots=[
+            GrowingSeedLoot(
+                id="stardust_fragment",
+                rolls={"type": "minecraft:uniform", "min": 3, "max": 9},
+                fortune={"extra": 0, "probability": 0.5}
+            )
+        ]
+    )
+)
+```
+
+#### **BlockAlternative and BlockHead**
+
+Alternative block types for special placement methods:
+
+```python
+from stewbeet import BlockAlternative, BlockHead
+
+# Using item frames (e.g., for machinery with no vanilla block)
+servo = BlockAlternative(
+    id="servo_inserter",
+    vanilla_block=VanillaBlock(contents=True),  # No vanilla block, just item frame
+    manual_category="machines"
+)
+
+# Using player heads (for custom heads)
+custom_head = BlockHead(
+    id="stoupy_head",
+    vanilla_block=VanillaBlock(id="minecraft:player_head[profile={name:\"Stoupy51\"}]"),
+    manual_category="decorations"
+)
 ```
 
 ### 🎨 Painting Class
@@ -195,8 +284,8 @@ painting = Painting(
         texture="stewbeet_painting_2x2",                # Texture file name (without .png)
         author={"text": "Stoupy", "color": "yellow"},   # Defaults to ctx.project_author
         title={"text": "Da' Icon", "color": "gray"},    # Defaults to item name
-        width=2,                                         # Width in blocks
-        height=2                                         # Height in blocks
+        width=2,                                        # Width in blocks
+        height=2                                        # Height in blocks
     )
 )
 ```
@@ -212,13 +301,13 @@ StewBeet provides typed recipe classes for all Minecraft recipe types:
 from stewbeet import CraftingShapedRecipe, Ingr
 
 recipe = CraftingShapedRecipe(
-    result_count=1,                             # Number of items produced
-    group="tools",                              # Recipe book grouping
-    category="equipment",                       # Recipe book category
+    result_count=1,                            # Number of items produced
+    group="tools",                             # Recipe book grouping
+    category="equipment",                      # Recipe book category
     shape=["X X", " Y ", "X X"],               # 3x3 pattern
     ingredients={
         "X": Ingr("minecraft:iron_ingot"),
-        "Y": Ingr("stick")
+        "Y": Ingr("minecraft:stick")
     }
 )
 ```
@@ -228,8 +317,9 @@ recipe = CraftingShapedRecipe(
 recipe = CraftingShapelessRecipe(
     result_count=4,
     category="building_blocks",
-    ingredients=[Ingr("minecraft:oak_log")]
-    # Can also use: ingredients=4*[Ingr("something")]
+    ingredients=[Ingr("minecraft:oak_wood"), Ingr("minecraft:oak_log"),
+                 Ingr("minecraft:oak_log"), Ingr("minecraft:oak_wood")]
+    # Can also use: ingredients=(2*[Ingr("minecraft:oak_wood")] + 2*[Ingr("minecraft:oak_log"])
 )
 ```
 
@@ -240,14 +330,14 @@ recipe = SmeltingRecipe(
     cookingtime=200,        # Ticks (200 = 10 seconds)
     experience=0.7,
     category="misc",
-    ingredient=Ingr("minecraft:iron_ore"),
-    result=Ingr("minecraft:iron_ingot")
+    ingredient=Ingr("ruby_ore"),
+    result=Ingr("ruby")
 )
 ```
 
 #### **⚡ Other Recipe Types**
 ```python
-# Blasting (faster smelting)
+# Blasting Furnace (faster smelting)
 BlastingRecipe(cookingtime=100, experience=0.7, ...)
 
 # Smoking (for food)
@@ -282,7 +372,7 @@ Ingr("minecraft:iron_ingot")
 # Result: {"id": "minecraft:iron_ingot"}
 
 # External datapack item
-Ingr("tin_ingot", namespace="mechanization")
+Ingr("tin_ingot", ns="mechanization")
 # Result: {"custom_data": {"mechanization": {"tin_ingot": True}}}
 
 # Use in recipes
@@ -313,10 +403,10 @@ def main():
             attributes={
                 "attack_damage": 1,                  # +1 damage for weapons
                 "armor": 0.5,                        # +0.5 armor for armor pieces  
-                "mining_efficiency": 0.2             # +20% mining speed for tools
+                "mining_efficiency": 2               # +20% mining speed for tools
             }
         ),
-        "minecraft:stone": None,    # Auto-detect from textures
+        "minecraft:stone": None,    # Auto-detect from textures (e.g., stone_stick, stone_rod, etc.)
     }
     
     # Generates: steel_ingot, steel_pickaxe, steel_axe, steel_shovel, 
@@ -325,6 +415,7 @@ def main():
     generate_everything_about_these_materials(ORES_CONFIGS)
     
     # Configure custom blocks after generation
+    # ⚠️ We use Block.from_id() to access existing definitions and modify them
     Block.from_id("steel_block").vanilla_block = VanillaBlock(
         id="minecraft:iron_block",
         apply_facing=False
@@ -338,12 +429,19 @@ def main():
 ### 🧪 Equipment Configuration
 
 ```python
-@dataclass
 class EquipmentsConfig:
-    equivalent_to: DefaultOre               # Base material (WOOD, STONE, GOLD, IRON, DIAMOND, NETHERITE)
-    pickaxe_durability: int | None = None  # Custom durability (affects all tools/armor)
-    attributes: dict[str, float] = {}       # Stat modifiers
+    equivalent_to: DefaultOre                   # Base material (WOOD, STONE, GOLD, IRON, DIAMOND, NETHERITE, COPPER, CHAINMAIL, LEATHER)
+    pickaxe_durability: float | int = 0         # Custom durability (0 = use vanilla equivalent)
+    attributes: dict[str, float] | None = None  # Stat modifiers to ADD (not override)
+    ignore_recipes: bool = False                # Skip automatic recipe generation
 ```
+
+**Common attribute modifiers:**
+- `"attack_damage": 1.0` → +1 attack damage for weapons (e.g., diamond pickaxe: 5 → 6)
+- `"armor": 0.5` → +0.5 armor for each armor piece
+- `"armor_toughness": 1.0` → +1 armor toughness for armor pieces
+- `"mining_efficiency": 2` → +20% mining speed for tools
+- `"knockback_resistance": 0.1` → +0.1 knockback resistance (applied to armor only)
 
 ## 📖 Documentation Integration
 
@@ -431,7 +529,7 @@ export_all_definitions_to_json(f"{Mem.ctx.directory}/definitions_debug.json")
 
 ## 🏷️ Item Categories
 
-Common categories for manual organization:
+Common categories for manual organization (but it's always up to you!):
 
 | Category | Description |
 |----------|-------------|
@@ -441,17 +539,6 @@ Common categories for manual organization:
 | `"miscellaneous"` | Other items, special items |
 | `"food"` | Consumable items |
 | `"decorations"` | Paintings, decorative items |
-
-## ⚙️ Special Constants
-
-📄 **Source Code**: [stewbeet/core/constants.py](../../python_package/stewbeet/core/constants.py) 🔗
-
-| Constant | Usage |
-|----------|-------|
-| `CUSTOM_ITEM_VANILLA` | Default base item for custom items (`"minecraft:command_block"`) |
-| `CUSTOM_BLOCK_VANILLA` | Base for custom blocks (`"minecraft:furnace"`) |
-| `CUSTOM_BLOCK_ALTERNATIVE` | Alternative custom block (`"minecraft:item_frame"`) |
-| `CUSTOM_BLOCK_HEAD` | Custom block using player heads (`"minecraft:player_head"`) |
 
 ## ✨ Advanced Features
 
@@ -476,6 +563,105 @@ item.recipes.append(CraftingShapelessRecipe(
     category="misc",
     ingredients=[Ingr("something")]
 ))
+```
+
+### 🎨 Complex Model Examples
+
+#### **Recognized Texture Patterns**
+
+StewBeet automatically recognizes texture patterns and generates appropriate models:
+
+**Block Patterns:**
+- **`cube_all`**: Single texture (e.g., `my_block.png`)
+- **`cake`**: bottom, side, top, inner (e.g., `my_cake_bottom.png`, `my_cake_side.png`, `my_cake_top.png`, `my_cake_inner.png`)
+- **`orientable_with_bottom`**: front, bottom, side, top (e.g., `furnace_front.png`, `furnace_bottom.png`, `furnace_side.png`, `furnace_top.png`)
+- **`cube_bottom_top`**: bottom, side, top (e.g., `barrel_bottom.png`, `barrel_side.png`, `barrel_top.png`)
+- **`orientable`**: front, side, top (e.g., `dropper_front.png`, `dropper_side.png`, `dropper_top.png`)
+- **`cube_column`**: end, side (e.g., `pillar_end.png`, `pillar_side.png`)
+
+**Item Patterns:**
+- **`leather_armor`**: Items starting with `leather_` automatically use layer1 for overlay coloring
+- **`overlay`**: Items with `_overlay` texture (e.g., `my_item.png` + `my_item_overlay.png` → layer0 + layer1)
+- **`bow_pulling`**: Bow items with `_pulling_0`, `_pulling_1`, `_pulling_2`, etc. (sorted numerically)
+- **`spear_in_hand`**: Spears ending with `_spear` + `_in_hand` texture variant (uses display context switching)
+
+**Powered States:**
+- Any block/item can have `_on` variants (e.g., `furnace_front.png` + `furnace_front_on.png`)
+- StewBeet automatically generates both states if `_on` textures are detected
+
+#### **Multiple States (On/Off, Facing)**
+
+Example from SimplEnergy's Electric Furnace with on/off states and directional facing:
+
+```python
+from stewbeet import Block, VanillaBlock, CraftingShapedRecipe, Ingr
+
+# Create the electric furnace block
+electric_furnace = Block(
+    id="electric_furnace",
+    vanilla_block=VanillaBlock(
+        id="minecraft:furnace",
+        apply_facing=True  # Enables directional variants (north, east, south, west)
+    ),
+    manual_category="energy",
+    recipes=[
+        CraftingShapedRecipe(
+            category="misc",
+            shape=["LLL", "LML", "III"],
+            ingredients={
+                "L": Ingr("minecraft:lapis_lazuli"),
+                "M": Ingr("machine_block"),
+                "I": Ingr("minecraft:iron_block")
+            }
+        )
+    ],
+    components={
+        "item_name": {"text": "Electric Furnace", "color": "aqua"},
+        "custom_data": {"energy": {"usage": 20, "max_storage": 1600}}
+    }
+)
+
+# StewBeet automatically detects block model patterns from texture names:
+# Required textures: electric_furnace_front.png, electric_furnace_side.png, electric_furnace_top.png, electric_furnace_bottom.png
+# Optional for on state: electric_furnace_front_on.png (other sides can also have _on variants)
+# Pattern recognized: "orientable_with_bottom" (front, side, top, bottom)
+# Other supported patterns: "orientable" (front, side, top), "cube_bottom_top" (bottom, side, top), "cube_column" (end, side)
+```
+
+#### **Animated Item Models (Bow Pulling)**
+
+Example with bow pulling animations:
+
+```python
+from stewbeet import Item, Ingr, CraftingShapedRecipe
+
+custom_bow = Item(
+    id="super_bow",
+    base_item="minecraft:bow",
+    manual_category="equipment",
+    recipes=[
+        CraftingShapedRecipe(
+            category="equipment",
+            shape=[" XY", "X Y", " XY"],
+            ingredients={"X": Ingr("minecraft:stick"), "Y": Ingr("minecraft:string")}
+        )
+    ],
+    components={
+        "item_name": {"text": "Super Bow", "color": "gold"},
+        "max_damage": 500
+    }
+)
+
+# StewBeet auto-generates pulling animation models and item_model JSON files:
+# Required textures in assets/textures/item/:
+# - super_bow.png (base bow texture)
+# - super_bow_pulling_0.png (slightly pulled)
+# - super_bow_pulling_1.png (half pulled)  
+# - super_bow_pulling_2.png (fully pulled)
+# 
+# Generated files:
+# - assets/models/item/super_bow_pulling_0.json, super_bow_pulling_1.json, super_bow_pulling_2.json
+# - assets/items/super_bow.json (with condition and range_dispatch for pull states)
 ```
 
 ## 🚨 Best Practices
