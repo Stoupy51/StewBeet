@@ -1,7 +1,7 @@
 
 # 🔧 StewBeet Item Definitions Setup
 
-📄 **Example File**: [extensive/src/setup_definitions.py](../templates/extensive/src/setup_definitions.py) 🔗<br>
+📄 **Example File**: [extensive/src/setup_definitions.py](../../templates/extensive/src/setup_definitions.py) 🔗<br>
 📄 **Real-world Example**: [SimplEnergy/src/definitions/setup_main.py](https://github.com/Stoupy51/SimplEnergy/blob/main/src/definitions/setup_main.py) 🔗<br>
 
 ## 🔗 Dependencies

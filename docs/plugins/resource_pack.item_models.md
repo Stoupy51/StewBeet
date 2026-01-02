@@ -5,7 +5,7 @@
 📄 **Source Code**: [`stewbeet/plugins/resource_pack/item_models/object.py`](../../python_package/stewbeet/plugins/resource_pack/item_models/object.py) 🔗<br>
 
 ## 🔗 Dependencies
-- **✅ Required**: `Your definition plugin` (see [`definitions_setup.md`](../definitions_setup.md) for details)
+- **✅ Required**: `Your definition plugin` (see [`definitions_setup.md`](../1_definitions_setup/README.md) for details)
 - **✅ Required**: `textures_folder` configuration in meta.stewbeet
 - **📍 Position**: Should run after verification plugins and before finalization<br>
 (see [`basic/beet.yml`](../../templates/basic/beet.yml) for an example)

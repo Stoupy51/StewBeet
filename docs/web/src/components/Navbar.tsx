@@ -35,7 +35,6 @@ export const Navbar: React.FC = () => {
         { label: 'Installation', id: 'installation' },
         { label: 'Templates', id: 'templates' },
         { label: 'Plugins', id: 'plugins' },
-        { label: 'Examples', id: 'examples' },
     ];
 
     return (
@@ -50,14 +49,21 @@ export const Navbar: React.FC = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
                     {/* Logo */}
-                    <motion.button
-                        onClick={() => scrollToSection('hero')}
+                    <motion.a
+                        href="/"
+                        onClick={(e) => {
+                            if (e.button === 0 && !e.ctrlKey && !e.metaKey) {
+                                e.preventDefault();
+                                scrollToSection('hero');
+                            }
+                        }}
                         className="flex items-center gap-2 text-xl font-bold bg-gradient-to-r from-indigo-200 to-purple-200 bg-clip-text text-transparent hover:from-indigo-300 hover:to-purple-300 transition-all"
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                     >
-                        🍲 StewBeet
-                    </motion.button>
+                        <img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png" alt="StewBeet" className="w-8 h-8" />
+                        StewBeet
+                    </motion.a>
 
                     {/* Desktop Navigation */}
                     <div className="hidden md:flex items-center gap-8">

@@ -325,11 +325,18 @@ export const MarkdownPage: React.FC = () => {
                                         }
                                     }
                                     
+                                    // Check if this is a badge/shield image
+                                    const isBadge = src?.includes('shields.io') || src?.includes('img.shields.io') || 
+                                                   src?.includes('badge') || src?.includes('github.com/workflows');
+                                    
                                     return (
                                         <img
                                             src={imageSrc}
                                             alt={alt}
-                                            className="max-w-full h-auto hover:scale-[1.02] transition-transform duration-300"
+                                            className={isBadge 
+                                                ? "inline-block h-6 mr-2 my-1" 
+                                                : "max-w-full h-auto hover:scale-[1.02] transition-transform duration-300"
+                                            }
                                         />
                                     );
                                 },

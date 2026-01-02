@@ -81,6 +81,12 @@ Alternatively, you could join the [Discord server](https://discord.gg/anxzu6rA9F
 Or, you could check the **highly detailed** [documentation folder](docs/)<br>
 Here a list of all the currently available guides:
 - 📖 [Getting started](docs/0_getting_started/README.md)
+(NOT UPDATED FOR NOW)
+- **🔧 [Project Structure](1_project_structure.md)** - Understand the folder organization
+- **🗄️ [Definitions Setup](2_definitions_setup.md)** - Advanced item and block definitions  
+- **✍️ [Writing to Files](3_writing_to_files.md)** - Custom functions and data
+- **🔗 [External Dependencies](4_external_dependencies.md)** - Using libraries
+- **⚔️ [Adding a Sword](specific_guides/adding_a_sword.md)** - Practical example
 - 🌱 [Beet Plugins](docs/plugins/README.md)
 - More soon!
 

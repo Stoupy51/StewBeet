@@ -14,7 +14,7 @@
 
 ## 🔗 Dependencies
 - **✅ Required**: StewBeet framework initialization
-- **✅ Required**: `Your definition plugin` (see [`definitions_setup.md`](../definitions_setup.md) for details)
+- **✅ Required**: `Your definition plugin` (see [`definitions_setup.md`](../1_definitions_setup/README.md) for details)
 - **📍 Position**: Should be placed after definition setup and before finalization plugins<br>
 (see [`basic/beet.yml`](../../templates/basic/beet.yml) for an example)
 
