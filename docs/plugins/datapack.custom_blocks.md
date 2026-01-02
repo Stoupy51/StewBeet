@@ -4,7 +4,7 @@
 📄 **Source Code**: [`stewbeet/plugins/datapack/custom_blocks/__init__.py`](../../python_package/stewbeet/plugins/datapack/custom_blocks/__init__.py) 🔗
 
 ## 🔗 Dependencies
-- **✅ Required**: `Your definition plugin` with `vanilla_block` configuration (see [`definitions_setup.md`](../definitions_setup.md) for details)
+- **✅ Required**: `Your definition plugin` with `vanilla_block` configuration (see [`definitions_setup.md`](../1_definitions_setup/README.md) for details)
 - **🔧 Automatic**: Smithed Custom Block library (auto-detected and linked)
 - **🔧 Automatic**: Common Signals library (for efficient custom ore break detection)
 - **🔧 Automatic**: Furnace NBT Recipes library (for custom blocks that are custom furnace, e.g. Electric Furnace)

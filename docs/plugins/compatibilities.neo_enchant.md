@@ -4,7 +4,7 @@
 📄 **Source Code**: [`stewbeet/plugins/compatibilities/neo_enchant/__init__.py`](../../python_package/stewbeet/plugins/compatibilities/neo_enchant/__init__.py) 🔗
 
 ## 🔗 Dependencies
-- **✅ Required**: `Your definition plugin` with `vanilla_block` configuration (see [`definitions_setup.md`](../definitions_setup.md) for details)
+- **✅ Required**: `Your definition plugin` with `vanilla_block` configuration (see [`definitions_setup.md`](../1_definitions_setup/README.md) for details)
 - **🔧 Optional**: NeoEnchant datapack (external dependency)
 - **📋 Related**: Works with `datapack.custom_blocks` plugin ore functionality
 

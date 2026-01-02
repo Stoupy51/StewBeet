@@ -209,9 +209,7 @@ export const Hero: React.FC = () => {
                         <CopyButton text="pip install stewbeet" />
 
                         <a
-                            href="https://github.com/Stoupy51/StewBeet"
-                            target="_blank"
-                            rel="noopener noreferrer"
+                            href="/documentation"
                             className="flex items-center justify-center gap-2 px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-lg text-slate-300 transition-all duration-200 font-medium"
                         >
                             <HiDocumentText className="text-lg" />

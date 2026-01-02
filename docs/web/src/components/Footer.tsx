@@ -27,7 +27,8 @@ export const Footer: React.FC = () => {
                     {/* Logo & Description */}
                     <div className="md:col-span-2">
                         <div className="flex items-center gap-2 text-2xl font-bold bg-gradient-to-r from-indigo-200 to-purple-200 bg-clip-text text-transparent mb-4">
-                            🍲 StewBeet
+                            <img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png" alt="StewBeet" className="w-8 h-8" />
+                            StewBeet
                         </div>
                         <p className="text-slate-400 text-sm leading-relaxed">
                             Powerful automation framework to create Minecraft datapacks effortlessly.
