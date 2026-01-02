@@ -137,7 +137,7 @@ class EquipmentsConfig:
 			equivalent_to (DEFAULT_ORE):	The equivalent ore to compare to (ex: DEFAULT_ORE.DIAMOND)
 			pickaxe_durability (int):		The pickaxe durability that will be used to calculate the durability of other equipments
 			attributes (dict[str, float]):	(optional) Attributes with type "add_value" to add (not override) to the equipment (ex: "attack_damage": 1.0, means 6 attack damage for diamond pickaxe)
-				{"attack_damage": 1.0, "armor": 1.0, "mining_efficiency": 0.1}
+				{"attack_damage": 1.0, "armor": 1.0, "mining_efficiency": 1}
 				attack_damage and mining_efficiency are always on tools
 				armor and armor_toughness is always on armor
 			ignore_recipes (bool):			Whether to ignore recipes generation for this material or not
