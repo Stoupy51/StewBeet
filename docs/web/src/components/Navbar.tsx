@@ -37,6 +37,15 @@ export const Navbar: React.FC = () => {
         { label: 'Plugins', id: 'plugins' },
     ];
 
+    const handleDocumentationClick = (e: React.MouseEvent) => {
+        if (e.ctrlKey || e.metaKey || e.shiftKey) {
+            return;
+        }
+        e.preventDefault();
+        navigate('/documentation');
+        setIsMobileMenuOpen(false);
+    };
+
     return (
         <motion.nav
             initial={{ y: -100 }}
@@ -52,9 +61,15 @@ export const Navbar: React.FC = () => {
                     <motion.a
                         href="/"
                         onClick={(e) => {
-                            if (e.button === 0 && !e.ctrlKey && !e.metaKey) {
-                                e.preventDefault();
+                            // Allow ctrl/cmd+click and middle click to open in new tab
+                            if (e.ctrlKey || e.metaKey || e.shiftKey) {
+                                return;
+                            }
+                            e.preventDefault();
+                            if (location.pathname === '/') {
                                 scrollToSection('hero');
+                            } else {
+                                navigate('/');
                             }
                         }}
                         className="flex items-center gap-2 text-xl font-bold bg-gradient-to-r from-indigo-200 to-purple-200 bg-clip-text text-transparent hover:from-indigo-300 hover:to-purple-300 transition-all"
@@ -76,6 +91,16 @@ export const Navbar: React.FC = () => {
                                 {item.label}
                             </button>
                         ))}
+                        
+                        <motion.a
+                            href="/documentation"
+                            onClick={handleDocumentationClick}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 rounded-lg text-white text-sm font-semibold transition-all shadow-lg shadow-purple-500/30"
+                        >
+                            Documentation
+                        </motion.a>
 
                         <motion.a
                             href="https://github.com/Stoupy51/StewBeet"
@@ -118,6 +143,13 @@ export const Navbar: React.FC = () => {
                                     {item.label}
                                 </button>
                             ))}
+                            <a
+                                href="/documentation"
+                                onClick={handleDocumentationClick}
+                                className="block w-full text-center px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg text-white font-semibold"
+                            >
+                                Documentation
+                            </a>
                             <a
                                 href="https://github.com/Stoupy51/StewBeet"
                                 target="_blank"

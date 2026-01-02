@@ -1,8 +1,9 @@
 import { useEffect, useState, useMemo } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
+import rehypeSanitize from 'rehype-sanitize';
 import { motion, AnimatePresence } from 'framer-motion';
 import { HiArrowLeft, HiExternalLink, HiMenu, HiX } from 'react-icons/hi';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -18,11 +19,22 @@ interface Heading {
 
 export const MarkdownPage: React.FC = () => {
     const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
     const src = searchParams.get('src');
     const [content, setContent] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [tocOpen, setTocOpen] = useState<boolean>(false);
+    
+    const handleBack = () => {
+        // Check if there's history to go back to
+        if (window.history.length > 1) {
+            navigate(-1);
+        } else {
+            // No history, go to plugins section
+            navigate('/#plugins');
+        }
+    };
     
     // Determine if src is a full URL or a relative path
     const isFullUrl = src?.startsWith('http');
@@ -155,13 +167,13 @@ export const MarkdownPage: React.FC = () => {
             {/* Header with back button */}
             <div className="sticky top-16 z-30 border-b border-white/10 bg-slate-950/80 backdrop-blur-md">
                 <div className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between">
-                    <Link
-                        to="/#plugins"
+                    <button
+                        onClick={handleBack}
                         className="flex items-center gap-2 text-indigo-400 hover:text-indigo-300 transition-colors group"
                     >
                         <HiArrowLeft className="text-xl group-hover:-translate-x-1 transition-transform" />
-                        <span className="font-medium">Back to Plugins</span>
-                    </Link>
+                        <span className="font-medium">Back</span>
+                    </button>
                     
                     <div className="flex items-center gap-4">
                         {headings.length > 0 && (
@@ -267,7 +279,7 @@ export const MarkdownPage: React.FC = () => {
                         >
                         <ReactMarkdown
                             remarkPlugins={[remarkGfm]}
-                            rehypePlugins={[rehypeRaw]}
+                            rehypePlugins={[rehypeRaw, rehypeSanitize]}
                             components={{
                                 code({ node, inline, className, children, ...props }: any) {
                                     const match = /language-(\w+)/.exec(className || '');
