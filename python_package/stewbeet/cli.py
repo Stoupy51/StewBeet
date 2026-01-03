@@ -21,6 +21,42 @@ def main() -> None:
     if second_arg == "" and len(sys.argv) == 1:
         sys.argv.append("build")
 
+    # Print help with nice formatting
+    if second_arg in ("--help", "-h", "help"):
+        from importlib.metadata import version
+        separator: str = "─" * 60
+        print(f"""
+{stp.CYAN}{separator}{stp.RESET}
+{stp.CYAN}StewBeet {stp.GREEN}CLI {stp.CYAN}v{version('stewbeet')}{stp.RESET}
+{stp.CYAN}{separator}{stp.RESET}
+{stp.CYAN}Usage:{stp.RESET} stewbeet <command> [options]
+
+{stp.CYAN}StewBeet commands:{stp.RESET}
+  {stp.GREEN}--version, -v{stp.RESET} [depth]         Show version information for stewbeet and dependencies
+  {stp.GREEN}--help, -h{stp.RESET}                    Show this help message
+  {stp.GREEN}init, template{stp.RESET}                Initialize a new StewBeet project from template
+  {stp.GREEN}migrate{stp.RESET}                       Migrate existing datapack/resource pack to StewBeet structure
+  {stp.GREEN}dump{stp.RESET}                          Create a zip archive of the project (excludes build artifacts)
+  {stp.GREEN}clean{stp.RESET}                         Clean all caches and output directories
+  {stp.GREEN}rebuild{stp.RESET}                       Clean and rebuild the project
+
+{stp.CYAN}Beet commands:{stp.RESET}
+  {stp.GREEN}build{stp.RESET}                         Build the current project
+  {stp.GREEN}watch{stp.RESET}                         Watch the project directory and build on file changes
+  {stp.GREEN}link{stp.RESET}                          Link the generated resource pack and data pack to Minecraft
+  {stp.GREEN}cache{stp.RESET}                         Inspect or clear the cache
+  {stp.GREEN}ast{stp.RESET}                           Inspect cached mecha ast
+  {stp.GREEN}codegen{stp.RESET}                       Inspect cached bolt codegen
+  {stp.GREEN}memo{stp.RESET}                          Inspect and manage bolt memo storage
+
+{stp.CYAN}Beet options:{stp.RESET}
+  {stp.GREEN}-p, --project PATH{stp.RESET}            Select project
+  {stp.GREEN}-s, --set OPTION{stp.RESET}              Set config option
+  {stp.GREEN}-l, --log LEVEL{stp.RESET}               Configure output verbosity
+{stp.CYAN}{separator}{stp.RESET}
+""".strip())
+        return
+
     # Print the version of stewbeet, beet, bolt, mecha, and stouputils
     if second_arg in ("--version", "-v", "version"):
         return stp.show_version("stewbeet", primary_color=stp.RED, secondary_color=stp.GREEN, max_depth=int(sys.argv[-1]) if len(sys.argv) == 3 else 2)
