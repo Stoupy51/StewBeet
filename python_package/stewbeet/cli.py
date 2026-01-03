@@ -10,10 +10,10 @@ import stouputils as stp
 from beet import ProjectConfig
 
 from .core.dump import dump_command
+from .core.migrate import migrate_command
 from .core.template import template_command
 from .utils import get_project_config
 
-# TODO: "stewbeet migrate <template_name>" command to migrate a simple datapack that is not using stewbeet yet to stewbeet structure
 
 @stp.handle_error(message="Error while running 'stewbeet'")
 def main() -> None:
@@ -28,6 +28,10 @@ def main() -> None:
     # Handle "init/template" command
     if second_arg in ("init", "template"):
         return template_command()
+
+    # Handle "migrate" command
+    if second_arg == "migrate":
+        return migrate_command()
 
     # Handle "dump" command
     if second_arg == "dump":
