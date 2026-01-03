@@ -18,14 +18,14 @@ export const Navbar: React.FC = () => {
     }, []);
 
     const scrollToSection = (id: string) => {
-        // Check if we're on the home page
-        if (location.pathname === '/') {
-            // We're on home page, just scroll
-            const element = document.getElementById(id);
-            element?.scrollIntoView({ behavior: 'smooth' });
+        // First, check if the element exists on the current page
+        const element = document.getElementById(id);
+        if (element) {
+            // Element exists on current page, just scroll to it
+            element.scrollIntoView({ behavior: 'smooth' });
         } else {
-            // We're on a different page, navigate to home with hash
-            navigate(`/#${id}`);
+            // Element doesn't exist, navigate to home page with hash
+            window.location.href = `/#${id}`;
         }
         setIsMobileMenuOpen(false);
     };
