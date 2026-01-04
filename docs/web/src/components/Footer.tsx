@@ -1,16 +1,18 @@
 import { HiExternalLink } from 'react-icons/hi';
+import { useTranslation } from '../i18n/useTranslation';
 
 export const Footer: React.FC = () => {
+    const { t } = useTranslation();
     const links = {
-        Community: [
-            { label: 'GitHub', url: 'https://github.com/Stoupy51/StewBeet' },
-            { label: 'Discord', url: 'https://discord.gg/anxzu6rA9F' },
-            { label: 'YouTube', url: 'https://www.youtube.com/watch?v=zkcQn23DRaw' },
+        [t('footer.community')]: [
+            { label: t('footer.github'), url: 'https://github.com/Stoupy51/StewBeet' },
+            { label: t('footer.discord'), url: 'https://discord.gg/anxzu6rA9F' },
+            { label: t('footer.youtube'), url: 'https://www.youtube.com/watch?v=zkcQn23DRaw' },
         ],
-        Resources: [
-            { label: 'PyPI Package', url: 'https://pypi.org/project/stewbeet/' },
-            { label: 'PlanetMinecraft', url: 'https://www.planetminecraft.com/data-pack/python-datapack/' },
-            { label: 'Report Bug', url: 'https://github.com/Stoupy51/StewBeet/issues' },
+        [t('footer.resources')]: [
+            { label: t('footer.pypiPackage'), url: 'https://pypi.org/project/stewbeet/' },
+            { label: t('footer.planetMinecraft'), url: 'https://www.planetminecraft.com/data-pack/python-datapack/' },
+            { label: t('footer.reportBug'), url: 'https://github.com/Stoupy51/StewBeet/issues' },
         ]
     };
 
@@ -31,7 +33,7 @@ export const Footer: React.FC = () => {
                             StewBeet
                         </div>
                         <p className="text-slate-400 text-sm leading-relaxed">
-                            Powerful automation framework to create Minecraft datapacks effortlessly.
+                            {t('footer.tagline')}
                         </p>
                         <div className="flex gap-3 mt-6">
                             <a href="https://github.com/Stoupy51/StewBeet" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-colors">
@@ -69,7 +71,7 @@ export const Footer: React.FC = () => {
                 {/* Bottom Bar */}
                 <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
                     <div className="text-slate-500 text-sm">
-                        © {new Date().getFullYear()} StewBeet by <a href="https://github.com/Stoupy51" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:text-indigo-300 transition-colors">Stoupy51</a>
+                        © {new Date().getFullYear()} {t('footer.copyright')} <a href="https://github.com/Stoupy51" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:text-indigo-300 transition-colors">Stoupy51</a>
                     </div>
                     <div className="flex flex-wrap gap-4 justify-center">
                         <img src="https://img.shields.io/github/v/release/Stoupy51/stewbeet?logo=github&label=GitHub" alt="GitHub" className="h-5" />

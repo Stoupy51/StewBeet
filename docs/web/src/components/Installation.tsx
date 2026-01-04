@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { HiDownload, HiTerminal, HiFolder, HiPlay, HiChevronRight } from 'react-icons/hi';
 import { useStewBeetVersion } from '../hooks/useStewBeetVersion';
+import { useTranslation } from '../i18n/useTranslation';
 
 interface Step {
     id: number;
@@ -14,20 +15,21 @@ interface Step {
 
 export const Installation: React.FC = () => {
     const { version } = useStewBeetVersion();
+    const { t } = useTranslation();
     
     const steps: Step[] = [
         {
             id: 1,
-            title: 'Install Python',
-            description: 'Ensure Python 3.14+ is installed',
+            title: t('installation.step1'),
+            description: t('installation.step1Desc'),
             command: 'python --version',
             output: [{ text: 'Python 3.14.2' }],
             icon: HiDownload
         },
         {
             id: 2,
-            title: 'Install StewBeet',
-            description: 'Get the package via pip',
+            title: t('installation.step2'),
+            description: t('installation.step2Desc'),
             command: 'pip install stewbeet',
             output: [
                 { text: 'Collecting stewbeet' },
@@ -39,8 +41,8 @@ export const Installation: React.FC = () => {
         },
         {
             id: 3,
-            title: 'Initialize Project',
-            description: 'Choose a template to start',
+            title: t('installation.step3'),
+            description: t('installation.step3Desc'),
             command: 'stewbeet init',
             output: [
                 { text: '[INFO] Available templates:', color: 'text-green-400' },
@@ -55,8 +57,8 @@ export const Installation: React.FC = () => {
         },
         {
             id: 4,
-            title: 'Build',
-            description: 'Generate your datapack',
+            title: t('installation.step4'),
+            description: t('installation.step4Desc'),
             command: 'stewbeet',
             output: [
                 { text: 'Building project...', color: 'text-red-400' },
@@ -110,7 +112,7 @@ export const Installation: React.FC = () => {
             <div className="max-w-5xl mx-auto relative z-10">
                 <div className="text-center mb-16">
                     <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
-                        Get Started in <span className="text-indigo-400">Seconds</span>
+                        {t('installation.title')} <span className="text-indigo-400">{t('installation.titleHighlight')}</span>
                     </h2>
                 </div>
 

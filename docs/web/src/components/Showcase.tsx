@@ -1,9 +1,11 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
 import { PluginsTable } from './PluginsTable';
+import { useTranslation } from '../i18n/useTranslation';
 
 export const Showcase: React.FC = () => {
     const containerRef = useRef<HTMLDivElement>(null);
+    const { t } = useTranslation();
     const { scrollYProgress } = useScroll({
         target: containerRef,
         offset: ["start end", "end start"]
@@ -36,11 +38,11 @@ export const Showcase: React.FC = () => {
                     className="text-center mb-16"
                 >
                     <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-indigo-200 to-purple-200">
-                        StewBeet Individual Plugins
+                        {t('showcase.title')}
                     </h2>
                     <p className="text-slate-400 text-lg max-w-3xl mx-auto mb-8">
-                        Over 20 plugins to automate every aspect of your datapack.<br />
-                        <span className="text-sm">Legend: <span className="text-red-400">🔴 Fully dependent</span> <span className="text-yellow-400 ml-2">🟡 Partly dependent</span> <span className="text-green-400 ml-2">🟢 Independent</span></span>
+                        {t('showcase.subtitle')}<br />
+                        <span className="text-sm">{t('showcase.legend')} <span className="text-red-400">🔴 {t('showcase.fullyDependent')}</span> <span className="text-yellow-400 ml-2">🟡 {t('showcase.partlyDependent')}</span> <span className="text-green-400 ml-2">🟢 {t('showcase.independent')}</span></span>
                     </p>
                 </motion.div>
 
