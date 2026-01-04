@@ -19,7 +19,7 @@ class StMapping(Mapping[str, Any]):
         return getattr(self, key)
     def __setitem__(self, key: str, value: Any) -> None:
         return setattr(self, key, value)
-    def __contains__(self, key: object) -> bool:
+    def __contains__(self, key: Any) -> bool:
         return self.get(key) is not None
 
     def get(self, key: str, default: Any = None) -> Any:
@@ -66,7 +66,7 @@ class StMapping(Mapping[str, Any]):
     def from_dict(cls, data: JsonDict | StMapping, item_id: str) -> Self:
         """ Create an object based on items """
         if isinstance(data, StMapping):
-            return data
+            return data # type: ignore
 
         # Make a copy to avoid modifying the original
         # Rename some fields from StewBeet v2.x to v3.x
