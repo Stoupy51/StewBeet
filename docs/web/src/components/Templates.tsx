@@ -1,9 +1,11 @@
 import { motion } from 'framer-motion';
 import { HiStar, HiSparkles, HiLightningBolt, HiDownload, HiClipboard, HiCheck } from 'react-icons/hi';
 import { useState } from 'react';
+import { useTranslation } from '../i18n/useTranslation';
 
 export const Templates: React.FC = () => {
     const [copiedTemplate, setCopiedTemplate] = useState<string | null>(null);
+    const { t } = useTranslation();
 
     const handleCopy = (command: string, templateName: string) => {
         navigator.clipboard.writeText(command);
@@ -64,10 +66,10 @@ export const Templates: React.FC = () => {
                     className="text-center mb-16"
                 >
                     <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-indigo-200 to-purple-200">
-                        Available Templates
+                        {t('templates.title')}
                     </h2>
                     <p className="text-slate-400 text-lg max-w-3xl mx-auto">
-                        Choose the template that best fits your needs. The <span className="text-indigo-300 font-semibold">Basic</span> template is recommended for most users.
+                        {t('templates.subtitle')} <span className="text-indigo-300 font-semibold">{t('templates.subtitleHighlight')}</span> {t('templates.subtitleEnd')}
                     </p>
                 </motion.div>
 

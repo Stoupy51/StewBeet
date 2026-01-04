@@ -13,6 +13,7 @@ import {
 } from 'react-icons/hi';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { useTranslation } from '../i18n/useTranslation';
 
 interface Feature {
     id: string;
@@ -24,14 +25,14 @@ interface Feature {
     previewLang?: string;
 }
 
-const features: Feature[] = [
+const getFeatures = (t: (key: string) => string): Feature[] => [
     {
         id: 'item_models',
         icon: HiTemplate,
-        title: 'Auto Item Models',
-        description: 'Automatically generates item and block models from texture patterns. Detects cube, cake, orientable patterns and more. Recognizes _on suffix to create powered/unpowered state models.',
-        previewType: 'code',
-        previewLang: 'json',
+        title: t('features.itemModelsTitle'),
+        description: t('features.itemModelsDesc'),
+            previewType: 'code',
+            previewLang: 'json',
         previewContent: `{
   "parent": "block/orientable",
   "textures": {
@@ -44,8 +45,8 @@ const features: Feature[] = [
     {
         id: 'loading',
         icon: HiClock,
-        title: 'Datapack Loading',
-        description: 'Sets up timing infrastructure with tick, second, minute functions. Includes version checking and LanternLoad compatibility.',
+        title: t('features.loadingTitle'),
+        description: t('features.loadingDesc'),
         previewType: 'code',
         previewLang: 'hs',
         previewContent: `#> stardust:v4.0.0/tick
@@ -66,8 +67,8 @@ execute if score #minute stardust.data matches 1200.. run function stardust:v4.0
     {
         id: 'loot_tables',
         icon: HiCube,
-        title: 'Loot Tables & Give',
-        description: 'Auto-generated loot tables for every defined item along with a convenient _give_all function for testing.',
+        title: t('features.lootTablesTitle'),
+        description: t('features.lootTablesDesc'),
         previewType: 'code',
         previewLang: 'json',
         previewContent: `{
@@ -103,16 +104,16 @@ execute if score #minute stardust.data matches 1200.. run function stardust:v4.0
     {
         id: 'manual',
         icon: HiBookOpen,
-        title: 'In-Game Manual',
-        description: 'Automatically generated interactive manual with item documentation, crafting recipes, and clickable navigation.',
+        title: t('features.manualTitle'),
+        description: t('features.manualDesc'),
         previewType: 'image',
         previewContent: 'https://i.imgur.com/dtuAG99.gif'
     },
     {
         id: 'lang',
         icon: HiGlobe,
-        title: 'Auto Lang Files',
-        description: 'Automatically extracts text components from your code and generates en_us.json translation files.',
+        title: t('features.langTitle'),
+        description: t('features.langDesc'),
         previewType: 'code',
         previewLang: 'json',
         previewContent: `{
@@ -137,8 +138,8 @@ execute if score #minute stardust.data matches 1200.. run function stardust:v4.0
     {
         id: 'custom_blocks',
         icon: HiBeaker,
-        title: 'Custom Blocks',
-        description: 'Full custom block system with placement, destruction, ore drops (fortune/silk touch), and Smithed integration.',
+        title: t('features.customBlocksTitle'),
+        description: t('features.customBlocksDesc'),
         previewType: 'code',
         previewLang: 'python',
         previewContent: `Block(
@@ -205,6 +206,8 @@ const CodeBlock = ({ code, lang }: { code: string; lang?: string }) => {
 };
 
 export const Features: React.FC = () => {
+    const { t } = useTranslation();
+    const features = getFeatures(t);
     const [activeFeature, setActiveFeature] = useState<Feature>(features[0]);
 
     return (
@@ -212,10 +215,10 @@ export const Features: React.FC = () => {
             <div className="max-w-7xl mx-auto relative z-10">
                 <div className="text-center mb-16">
                     <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
-                        Powerful <span className="text-indigo-400">Automation</span>
+                        {t('features.title')} <span className="text-indigo-400">{t('features.titleHighlight')}</span>
                     </h2>
                     <p className="text-slate-400 text-lg max-w-2xl mx-auto">
-                        StewBeet handles the repetitive parts of datapack creation so you can focus on the mechanics.
+                        {t('features.subtitle')}
                     </p>
                 </div>
 
@@ -303,7 +306,7 @@ export const Features: React.FC = () => {
 
                         {/* Integration Badges */}
                         <div className="mt-8">
-                            <p className="text-sm text-slate-500 mb-4 font-mono uppercase tracking-wider">Integrations</p>
+                            <p className="text-sm text-slate-500 mb-4 font-mono uppercase tracking-wider">{t('features.integrations')}</p>
                             <div className="flex flex-wrap gap-3">
                                 {[
                                     { name: 'Smithed Custom Blocks', url: 'https://wiki.smithed.dev/libraries/custom-block/' },

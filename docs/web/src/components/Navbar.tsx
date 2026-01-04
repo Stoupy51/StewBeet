@@ -1,11 +1,17 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { HiMenu, HiX } from 'react-icons/hi';
+import { HiMenu, HiX, HiGlobeAlt } from 'react-icons/hi';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLanguage } from '../context/LanguageContext';
+import type { Language } from '../context/LanguageContext';
+import { useTranslation } from '../i18n/useTranslation';
 
 export const Navbar: React.FC = () => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
+    const { language, setLanguage } = useLanguage();
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -31,10 +37,10 @@ export const Navbar: React.FC = () => {
     };
 
     const navItems = [
-        { label: 'Features', id: 'features' },
-        { label: 'Installation', id: 'installation' },
-        { label: 'Templates', id: 'templates' },
-        { label: 'Plugins', id: 'plugins' },
+        { label: t('nav.features'), id: 'features' },
+        { label: t('nav.installation'), id: 'installation' },
+        { label: t('nav.templates'), id: 'templates' },
+        { label: t('nav.plugins'), id: 'plugins' },
     ];
 
     const handleDocumentationClick = (e: React.MouseEvent) => {
@@ -44,6 +50,16 @@ export const Navbar: React.FC = () => {
         e.preventDefault();
         navigate('/documentation');
         setIsMobileMenuOpen(false);
+    };
+
+    const handleLanguageChange = (lang: Language) => {
+        setLanguage(lang);
+        setIsLanguageMenuOpen(false);
+    };
+
+    const languageOptions = {
+        en: { label: 'English', flag: '🇬🇧' },
+        fr: { label: 'Français', flag: '🇫🇷' }
     };
 
     return (
@@ -99,7 +115,7 @@ export const Navbar: React.FC = () => {
                             whileTap={{ scale: 0.95 }}
                             className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 rounded-lg text-white text-sm font-semibold transition-all shadow-lg shadow-purple-500/30"
                         >
-                            Documentation
+                            {t('nav.documentation')}
                         </motion.a>
 
                         <motion.a
@@ -112,6 +128,53 @@ export const Navbar: React.FC = () => {
                         >
                             GitHub ↗
                         </motion.a>
+
+                        {/* Language Selector - Desktop */}
+                        <div className="relative">
+                            <motion.button
+                                onClick={() => setIsLanguageMenuOpen(!isLanguageMenuOpen)}
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                className="flex items-center gap-2 px-4 py-2 bg-slate-800/50 hover:bg-slate-700/50 rounded-lg text-slate-300 hover:text-white text-sm font-medium transition-all border border-white/10"
+                            >
+                                <HiGlobeAlt className="text-lg" />
+                                <span>{languageOptions[language].flag}</span>
+                                <span>{languageOptions[language].label}</span>
+                            </motion.button>
+
+                            <AnimatePresence>
+                                {isLanguageMenuOpen && (
+                                    <>
+                                        <div
+                                            className="fixed inset-0 z-40"
+                                            onClick={() => setIsLanguageMenuOpen(false)}
+                                        />
+                                        <motion.div
+                                            initial={{ opacity: 0, y: -10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, y: -10 }}
+                                            transition={{ duration: 0.2 }}
+                                            className="absolute right-0 mt-2 w-48 bg-slate-800/95 backdrop-blur-md border border-white/10 rounded-lg shadow-xl overflow-hidden z-50"
+                                        >
+                                            {(Object.entries(languageOptions) as [Language, typeof languageOptions.en][]).map(([lang, option]) => (
+                                                <button
+                                                    key={lang}
+                                                    onClick={() => handleLanguageChange(lang)}
+                                                    className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors ${
+                                                        language === lang
+                                                            ? 'bg-indigo-500/20 text-indigo-300'
+                                                            : 'text-slate-300 hover:bg-white/5 hover:text-white'
+                                                    }`}
+                                                >
+                                                    <span className="text-xl">{option.flag}</span>
+                                                    <span className="text-sm font-medium">{option.label}</span>
+                                                </button>
+                                            ))}
+                                        </motion.div>
+                                    </>
+                                )}
+                            </AnimatePresence>
+                        </div>
                     </div>
 
                     {/* Mobile Menu Button */}
@@ -148,7 +211,7 @@ export const Navbar: React.FC = () => {
                                 onClick={handleDocumentationClick}
                                 className="block w-full text-center px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg text-white font-semibold"
                             >
-                                Documentation
+                                {t('nav.documentation')}
                             </a>
                             <a
                                 href="https://github.com/Stoupy51/StewBeet"
@@ -158,6 +221,27 @@ export const Navbar: React.FC = () => {
                             >
                                 GitHub ↗
                             </a>
+
+                            {/* Language Selector - Mobile */}
+                            <div className="pt-2 border-t border-white/10">
+                                <div className="text-xs text-slate-400 mb-2 px-4 font-medium">{t('nav.language')}</div>
+                                <div className="space-y-1">
+                                    {(Object.entries(languageOptions) as [Language, typeof languageOptions.en][]).map(([lang, option]) => (
+                                        <button
+                                            key={lang}
+                                            onClick={() => handleLanguageChange(lang)}
+                                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all ${
+                                                language === lang
+                                                    ? 'bg-indigo-500/20 text-indigo-300'
+                                                    : 'text-slate-300 hover:bg-white/5 hover:text-white'
+                                            }`}
+                                        >
+                                            <span className="text-xl">{option.flag}</span>
+                                            <span className="text-sm font-medium">{option.label}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
                         </div>
                     </motion.div>
                 )}

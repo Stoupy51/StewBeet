@@ -4,31 +4,37 @@ import { HiDocumentText, HiArrowRight } from 'react-icons/hi';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 import { PluginsTable } from './PluginsTable';
+import { useTranslation } from '../i18n/useTranslation';
 
 interface DocItem {
     title: string;
     description: string;
-    path: string;
+    pathEn: string;
+    pathFr: string;
     icon?: string;
 }
 
 export const DocumentationPage: React.FC = () => {
+    const { t, language } = useTranslation();
 
     const docs: DocItem[] = [
         {
-            title: '🚀 Getting Started',
-            description: 'Complete guide for beginners - installation, setup, and creating your first datapack',
-            path: '0_getting_started/README.md',
+            title: `🚀 ${t('documentation.gettingStarted')}`,
+            description: t('documentation.gettingStartedDesc'),
+            pathEn: '0_getting_started/en.md',
+            pathFr: '0_getting_started/fr.md',
         },
         {
-            title: '📚 Definitions Setup',
-            description: 'Learn how to define custom items, blocks, and equipment configurations',
-            path: '1_definitions_setup/README.md',
+            title: `📚 ${t('documentation.definitionsSetup')}`,
+            description: t('documentation.definitionsSetupDesc'),
+            pathEn: '1_definitions_setup/en.md',
+            pathFr: '1_definitions_setup/fr.md',
         },
         {
-            title: '📝 Writing to Files',
-            description: 'Master file writing with static loading, native beet API, and StewBeet helper functions',
-            path: '2_writing_to_files/README.md',
+            title: `📝 ${t('documentation.writingToFiles')}`,
+            description: t('documentation.writingToFilesDesc'),
+            pathEn: '2_writing_to_files/en.md',
+            pathFr: '2_writing_to_files/fr.md',
         },
     ];
 
@@ -50,7 +56,7 @@ export const DocumentationPage: React.FC = () => {
                         animate={{ opacity: 1, y: 0 }}
                         className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-indigo-200 via-purple-200 to-pink-200 bg-clip-text text-transparent"
                     >
-                        📖 Documentation
+                        📖 {t('documentation.title')}
                     </motion.h1>
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}
@@ -58,7 +64,7 @@ export const DocumentationPage: React.FC = () => {
                         transition={{ delay: 0.1 }}
                         className="text-xl text-slate-300 max-w-3xl mx-auto"
                     >
-                        Comprehensive guides and references for StewBeet framework
+                        {t('documentation.subtitle')}
                     </motion.p>
                 </div>
             </div>
@@ -74,7 +80,7 @@ export const DocumentationPage: React.FC = () => {
                             transition={{ delay: 0.2 }}
                         >
                             <Link
-                                to={`/markdown?src=${encodeURIComponent(docs[0].path)}`}
+                                to={`/markdown?src=${encodeURIComponent(language === 'fr' ? docs[0].pathFr : docs[0].pathEn)}`}
                                 className="block group"
                             >
                                 <div className="bg-slate-900/30 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-indigo-500/50 transition-all hover:bg-slate-900/50 hover:shadow-lg hover:shadow-indigo-500/10">
@@ -100,13 +106,13 @@ export const DocumentationPage: React.FC = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {docs.slice(1).map((doc, index) => (
                                 <motion.div
-                                    key={doc.path}
+                                    key={language === 'fr' ? doc.pathFr : doc.pathEn}
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: 0.3 + index * 0.1 }}
                                 >
                                     <Link
-                                        to={`/markdown?src=${encodeURIComponent(doc.path)}`}
+                                        to={`/markdown?src=${encodeURIComponent(language === 'fr' ? doc.pathFr : doc.pathEn)}`}
                                         className="block group h-full"
                                     >
                                         <div className="bg-slate-900/30 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-indigo-500/50 transition-all hover:bg-slate-900/50 hover:shadow-lg hover:shadow-indigo-500/10 h-full">
@@ -156,10 +162,10 @@ export const DocumentationPage: React.FC = () => {
                         className="text-center mb-16"
                     >
                         <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-indigo-200 to-purple-200">
-                            StewBeet Individual Plugins
+                            {t('documentation.plugins')}
                         </h2>
                         <p className="text-slate-400 text-lg max-w-3xl mx-auto mb-8">
-                            Over 20 plugins to automate every aspect of your datapack.<br />
+                            {t('documentation.pluginsSubtitle')}<br />
                             <span className="text-sm">Legend: <span className="text-red-400">🔴 Fully dependent</span> <span className="text-yellow-400 ml-2">🟡 Partly dependent</span> <span className="text-green-400 ml-2">🟢 Independent</span></span>
                         </p>
                     </motion.div>

@@ -10,6 +10,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
+import { useLanguage } from '../context/LanguageContext';
 
 interface Heading {
     id: string;
@@ -18,13 +19,27 @@ interface Heading {
 }
 
 export const MarkdownPage: React.FC = () => {
-    const [searchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
+    const { language } = useLanguage();
     const src = searchParams.get('src');
     const [content, setContent] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [tocOpen, setTocOpen] = useState<boolean>(false);
+    
+    // Handle language change - update URL if it ends with /en.md or /fr.md
+    useEffect(() => {
+        if (!src) return;
+        
+        const currentLang = src.endsWith('/en.md') ? 'en' : src.endsWith('/fr.md') ? 'fr' : null;
+        
+        if (currentLang && currentLang !== language) {
+            // Replace the language in the URL
+            const newSrc = src.replace(new RegExp(`/${currentLang}\\.md$`), `/${language}.md`);
+            setSearchParams({ src: newSrc });
+        }
+    }, [language, src, setSearchParams]);
     
     const handleBack = () => {
         // Check if there's history to go back to

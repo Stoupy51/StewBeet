@@ -2,25 +2,28 @@ import { motion } from 'framer-motion';
 import { HiCode, HiLightningBolt, HiCube } from 'react-icons/hi';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { useTranslation } from '../i18n/useTranslation';
 
 export const WhatIsStewBeet: React.FC = () => {
+    const { t } = useTranslation();
+    
     const features = [
         {
             icon: HiCode,
-            title: 'The Problem',
-            description: 'Creating a datapack requires manually writing hundreds of JSON files, models, textures, functions...',
+            title: t('whatIs.problem'),
+            description: t('whatIs.problemDesc'),
             color: 'from-red-500 to-orange-500'
         },
         {
             icon: HiLightningBolt,
-            title: 'The Solution',
-            description: 'StewBeet automates EVERYTHING: resource pack generation, models, custom blocks, recipes, and much more!',
+            title: t('whatIs.solution'),
+            description: t('whatIs.solutionDesc'),
             color: 'from-indigo-500 to-purple-500'
         },
         {
             icon: HiCube,
-            title: 'The Result',
-            description: 'Focus on creation, not files. Define your items and let StewBeet generate the rest.',
+            title: t('whatIs.result'),
+            description: t('whatIs.resultDesc'),
             color: 'from-emerald-500 to-teal-500'
         }
     ];
@@ -42,11 +45,10 @@ export const WhatIsStewBeet: React.FC = () => {
                     className="text-center mb-16"
                 >
                     <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-indigo-200 to-purple-200">
-                        What is StewBeet?
+                        {t('whatIs.title')}
                     </h2>
                     <p className="text-slate-400 text-lg max-w-3xl mx-auto">
-                        A <span className="text-indigo-300 font-semibold">Beet</span> framework that revolutionizes Minecraft datapack creation
-                        by automating everything repetitive and time-consuming.
+                        {t('whatIs.description')}
                     </p>
                 </motion.div>
 
