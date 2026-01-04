@@ -4,7 +4,7 @@
 📄 **Source Code**: [`stewbeet/plugins/compatibilities/simpledrawer/__init__.py`](../../python_package/stewbeet/plugins/compatibilities/simpledrawer/__init__.py) 🔗
 
 ## 🔗 Dependencies
-- **✅ Required**: `Your definition plugin` (see [`definitions_setup.md`](../1_definitions_setup/README.md) for details)
+- **✅ Required**: `Your definition plugin` (see [`definitions_setup.md`](../1_definitions_setup/en.md) for details)
 - **🔧 Optional**: SimpleDrawer datapack (external dependency)
 - **📋 Material Structure**: Items must follow naming conventions (material_block, material_ingot, material_nugget)
 

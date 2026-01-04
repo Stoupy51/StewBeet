@@ -4,7 +4,7 @@
 📄 **Source Code**: [`stewbeet/plugins/datapack/loot_tables/__init__.py`](../../python_package/stewbeet/plugins/datapack/loot_tables/__init__.py) 🔗
 
 ## 🔗 Dependencies
-- **✅ Required**: `Your definition plugin` (see [`definitions_setup.md`](../1_definitions_setup/README.md) for details)
+- **✅ Required**: `Your definition plugin` (see [`definitions_setup.md`](../1_definitions_setup/en.md) for details)
 - **🔧 Optional**: External item definitions (`Mem.external_definitions`)
 
 ## 📋 Overview

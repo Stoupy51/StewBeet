@@ -5,7 +5,7 @@
 
 ## 🔗 Dependencies
 - **✅ Required**: StewBeet framework initialization
-- **✅ Required**: `Your definition plugin` (see [`definitions_setup.md`](../1_definitions_setup/README.md) for details)
+- **✅ Required**: `Your definition plugin` (see [`definitions_setup.md`](../1_definitions_setup/en.md) for details)
 - **✅ Required**: Texture file in the configured textures folder
 - **📍 Position**: Should run anywhere between verify_definitions and ingame_manual<br>
 (see [`basic/beet.yml`](../../templates/basic/beet.yml) for an example)
