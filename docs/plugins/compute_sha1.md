@@ -32,8 +32,8 @@ for distribution verification, security auditing, and change detection purposes.
 ### 🎯 Basic Example Configuration
 ```yaml
 # No direct configuration required - uses project settings
-# Requires output_directory to be configured in beet.yml:
-output_directory: "build"
+# Requires output to be configured in beet.yml:
+output: "build"
 
 pipeline:
   - ...
@@ -44,7 +44,7 @@ pipeline:
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `output_directory` | string | **Required** | Directory containing zip files to hash |
+| `output` | string | **Required** | Directory containing zip files to hash |
 | Hash Algorithm | constant | SHA1 | Uses SHA1 algorithm for checksum generation |
 | Output File | constant | `sha1_hashes.json` | Filename for the generated hash manifest |
 | File Filter | automatic | `*.zip` | Only processes files with .zip extension |

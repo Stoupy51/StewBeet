@@ -37,8 +37,8 @@ preserving original pack directories and integrating seamlessly with beet's outp
 ### 🎯 Basic Example Configuration
 ```yaml
 # No direct configuration required - uses project settings
-# Requires output_directory to be configured in beet.yml:
-output_directory: "build"
+# Requires output to be configured in beet.yml:
+output: "build"
 
 pipeline:
   - ...
@@ -50,7 +50,7 @@ pipeline:
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `output_directory` | string | **Required** | Directory where zip archives will be saved |
+| `output` | string | **Required** | Directory where zip archives will be saved |
 | Archive Naming | automatic | `{project_name}_{pack_type}.zip` | Naming convention for generated archives |
 | Compression Level | constant | `6` | ZIP_DEFLATED compression level for optimal size/speed balance |
 | Timestamp Source | automatic | Beet cache | Uses beet cache modification time for consistency |
