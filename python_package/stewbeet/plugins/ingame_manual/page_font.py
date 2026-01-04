@@ -10,7 +10,7 @@ from PIL import Image
 from ...core.__memory__ import Mem
 from ...core.cls.ingredients import FURNACES_RECIPES_TYPES, Ingr
 from .image_utils import add_border, careful_resize, image_count
-from .shared_import import BORDER_COLOR, BORDER_SIZE, SQUARE_SIZE, TEMPLATES_PATH, WIKI_INGR_OF_CRAFT_FONT, SharedMemory, get_next_font
+from .shared_import import BORDER_SIZE, SQUARE_SIZE, TEMPLATES_PATH, WIKI_INGR_OF_CRAFT_FONT, SharedMemory, get_border_color, get_next_font
 
 
 # Generate page font function (called in utils)
@@ -167,7 +167,7 @@ def generate_page_font(name: str, page_font: str, craft: JsonDict|None = None, o
 
 		# Place the result item
 		template.paste(result_texture, (2 * factor, 2 * factor), result_mask)
-		template = add_border(template, BORDER_COLOR, BORDER_SIZE)
+		template = add_border(template, get_border_color(), BORDER_SIZE)
 		template.save(f"{SharedMemory.cache_path}/font/page/{output_filename}.png")
 	return
 

@@ -24,8 +24,6 @@ SQUARE_SIZE: int = 32
 MANUAL_ASSETS_PATH: str = stp.get_root_path(__file__)
 TEMPLATES_PATH: str = MANUAL_ASSETS_PATH + "/templates"
 FONT_FILE: str = "manual"
-BORDER_COLOR_HEX: int = 0xB64E2F
-BORDER_COLOR: tuple[int, int, int, int] = (BORDER_COLOR_HEX >> 16) & 0xFF, (BORDER_COLOR_HEX >> 8) & 0xFF, BORDER_COLOR_HEX & 0xFF, 255
 BORDER_SIZE: int = 2
 HEAVY_WORKBENCH_CATEGORY: str = "__private_heavy_workbench"
 NONE_FONT: str =					get_font(0x0000)
@@ -93,4 +91,54 @@ def get_item_from_page(page_number: int) -> str:
 		if p["number"] == page_number:
 			return p["name"]
 	return ""
+
+def lighten_color(color_hex: int, factor: float = 1.42) -> tuple[int, int, int, int]:
+	"""
+	Lighten a color by multiplying each RGB channel by a factor.
+
+	Args:
+		color_hex: The input color as a hexadecimal integer (e.g., 0x803721)
+		factor: The lightening factor (default: 1.42)
+
+	Returns:
+		A tuple (R, G, B, A) representing the lightened color
+
+	>>> target_color = 0xB64E2F
+	>>> target_color = (target_color >> 16 & 0xFF, target_color >> 8 & 0xFF, target_color & 0xFF, 255)
+	>>> target_color
+	(182, 78, 47, 255)
+	>>> lighten_color(0x803721)
+	(182, 78, 47, 255)
+	>>> lighten_color(0x803721) == target_color
+	True
+	"""
+	r = (color_hex >> 16) & 0xFF
+	g = (color_hex >> 8) & 0xFF
+	b = color_hex & 0xFF
+
+	# Apply lightening factor and clamp to 255
+	r = min(255, round(r * factor))
+	g = min(255, round(g * factor))
+	b = min(255, round(b * factor))
+
+	return (r, g, b, 255)
+
+@stp.simple_cache
+def get_border_color() -> tuple[int, int, int, int]:
+	""" Get the border color by loading the template image and lightening the top-right corner pixel. """
+	from PIL import Image
+	img = Image.open(TEMPLATES_PATH + "/simple_case_no_border.png")
+
+	# Get pixel from top-right corner
+	width = img.size[0]
+	pixel = img.getpixel((width - 1, 0))
+
+	# Convert RGBA tuple to hex (assuming pixel is RGBA)
+	if isinstance(pixel, tuple) and len(pixel) >= 3:
+		color_hex = (pixel[0] << 16) | (pixel[1] << 8) | pixel[2]
+	else:
+		# Fallback to old method if pixel format is unexpected
+		color_hex = 0x803721
+
+	return lighten_color(color_hex)
 

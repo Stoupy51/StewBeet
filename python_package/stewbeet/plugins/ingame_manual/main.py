@@ -66,7 +66,6 @@ from .shared_import import (
 	AWAKENED_3X4_FONT,
 	AWAKENED_FORGE_STRUCT_FONT,
 	BOOK_FONT,
-	BORDER_COLOR,
 	BORDER_SIZE,
 	FONT_FILE,
 	FURNACE_FONT,
@@ -98,6 +97,7 @@ from .shared_import import (
 	WIKI_NONE_FONT,
 	WIKI_RESULT_OF_CRAFT_FONT,
 	SharedMemory,
+	get_border_color,
 	get_next_font,
 	get_page_font,
 	get_page_number,
@@ -389,7 +389,7 @@ def routine():
 					content.extend(["\n", *line, *category_padding, "\n"])
 
 				# Add the 2 pixels border
-				page_image = add_border(page_image, BORDER_COLOR, BORDER_SIZE)
+				page_image = add_border(page_image, get_border_color(), BORDER_SIZE)
 
 				# Save the image
 				page_image.save(f"{SharedMemory.cache_path}/font/category/{file_name}.png")
@@ -833,7 +833,7 @@ def routine():
 			content += [*line, *category_padding, "\n"]
 
 		# Add the 2 pixels border
-		page_image = add_border(page_image, BORDER_COLOR, BORDER_SIZE)
+		page_image = add_border(page_image, get_border_color(), BORDER_SIZE)
 
 		# Save the image and add the page to the book
 		page_image.save(f"{SharedMemory.cache_path}/font/category/{file_name}.png")
