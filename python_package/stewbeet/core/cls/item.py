@@ -13,6 +13,7 @@ from ..constants import (
     USED_FOR_CRAFTING,
     WIKI_COMPONENT,
 )
+from ._recipe_list import RecipeList
 from ._utils import StMapping
 from .recipe import RecipeBase
 from .wiki_button import WikiButton
@@ -88,10 +89,8 @@ class Item(StMapping):
             self.base_item = "minecraft:" + self.base_item
 
         ## Fix some fields
-        # Add default group to every recipe
-        for recipe in self.recipes:
-            if not recipe.get("group"):
-                recipe["group"] = self.id
+        # Convert recipes to RecipeList for automatic normalization
+        self.recipes = RecipeList(self.id, self.recipes)
 
         # Fix !component values
         self.components = {k.replace("minecraft:", ""): v for k, v in self.components.items()}
