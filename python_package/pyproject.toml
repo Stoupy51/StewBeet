@@ -8,7 +8,7 @@ module-root = ""
 
 [project]
 name = "stewbeet"
-version = "3.0.0b5"
+version = "3.0.0b6"
 description = "Beet Framework made to help generating advanced Minecraft datapack contents"
 readme = "README.md"
 license = "MIT"
@@ -84,8 +84,4 @@ ignore = [
 	"F403",
 	"F405",
 ]
-
-[tool.hatch.build]
-include = ["stewbeet"]
-ignore-vcs = true
 
