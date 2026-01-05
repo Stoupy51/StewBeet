@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>stewbeet.plugins.datapack.custom_blocks &#8212; StewBeet</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8e8a900e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/treeview.css?v=f8e9195c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/breeze.css?v=93f23127" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=1637c05a" />
+  <noscript>
+    <style>
+      .bz-js-only { display: none !important; }
+    </style>
+  </noscript>
+  
+    <script defer src="../../../../_static/documentation_options.js?v=6d4b8ac6"></script>
+    <script defer src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script defer src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script defer src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script defer src="../../../../_static/copybutton.js?v=18a8d5f5"></script>
+    <script defer src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer src="../../../../_static/treeview.js?v=265ad9b8"></script>
+    <script defer src="../../../../_static/scripts/breeze.js?v=8ef74970"></script>
+  <script data-cfasync="false">
+    const mode = localStorage.getItem("breeze-mode") || "auto";
+    document.documentElement.dataset.mode = mode;
+    if (mode === "auto") {
+      const prefers = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+      document.documentElement.dataset.theme = prefers;
+    } else {
+      document.documentElement.dataset.theme = mode;
+    }
+  </script>
+    <link rel="icon" href="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /><meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head><body>
+  
+  <div class="bz-skip-to-content">
+    <a href="#bz-main-content">Skip to main content</a>
+  </div><header class="bz-header-main">
+  <div class="bz-header-start"><a class="bz-header-brand" href="../../../../index.html"><img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png" alt="Site Logo" /><span>StewBeet</span>
+</a></div>
+  <div class="bz-header-end"><div class="bz-search-button">
+  <a
+    href="../../../../search.html#q"
+    aria-label="Search the docs"
+    data-tooltip="Search the docs"
+  >
+    <svg
+      class="sized"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 -1 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+      />
+    </svg>
+    <span>Search</span>
+    <kbd>Ctrl+K</kbd>
+  </a>
+</div><div class="bz-theme-switcher">
+  <button aria-label="Switch theme" data-tooltip="Switch theme">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="only-light" fill="currentColor">
+      <path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm5.657-8.157a.75.75 0 0 1 0 1.061l-1.061 1.06a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l1.06-1.06a.75.75 0 0 1 1.06 0Zm-9.193 9.193a.75.75 0 0 1 0 1.06l-1.06 1.061a.75.75 0 1 1-1.061-1.06l1.06-1.061a.75.75 0 0 1 1.061 0ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0ZM3 8a.75.75 0 0 1-.75.75H.75a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 3 8Zm13 0a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 16 8Zm-8 5a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13Zm3.536-1.464a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 0 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061ZM2.343 2.343a.75.75 0 0 1 1.061 0l1.06 1.061a.751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018l-1.06-1.06a.75.75 0 0 1 0-1.06Z"></path>
+    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="only-dark" fill="currentColor">
+      <path d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"></path>
+    </svg>
+  </button>
+</div><div class="bz-external-links">
+  <a
+    href="https://github.com/Stoupy51/stewbeet"
+    aria-label="GitHub"
+    data-tooltip="GitHub"
+    target="_blank"
+  >
+    <svg
+      stroke="currentColor"
+      fill="currentColor"
+      stroke-width="0"
+      viewBox="0 0 16 16"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+      ></path>
+    </svg>
+  </a></div></div>
+</header><nav class="bz-header-tabs" aria-label="Primary Navigation">
+  <label
+    class="bz-sidebar-primary-toggle"
+    for="bz-sidebar-primary"
+    role="button"
+    tabindex="0"
+  >
+    <svg class="sized muted" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path
+        fill="none"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M3.75 6.75h16.5M3.75 12H12m-8.25 5.25h12.5"
+      />
+    </svg>
+  </label><ul><li class="toctree-l1"><a class="reference internal" href="../../../../modules/stewbeet.html">stewbeet package</a></li></ul><div class="bz-dropdown">
+    <button aria-haspopup="true" aria-expanded="false">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <g
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+        >
+          <circle cx="12" cy="12" r="1" />
+          <circle cx="19" cy="12" r="1" />
+          <circle cx="5" cy="12" r="1" />
+        </g>
+      </svg>
+    </button>
+    <ul role="menu" aria-hidden="true"></ul>
+  </div>
+</nav><div class="bz-content"><main id="bz-main-content"><header class="bz-article-header">
+  
+  
+    <nav class="bz-breadcrumbs" aria-label="Breadcrumb">
+  <ol>
+    <li class="bz-breadcrumbs-home">
+      <a href="../../../../index.html">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </a>
+    </li><li class="bz-breadcrumbs-parent">
+      <a href="../../../index.html">Module code</a>
+    </li><li class="bz-breadcrumbs-parent">
+      <a href="../../../stewbeet.html">stewbeet</a>
+    </li><li class="bz-breadcrumbs-current">
+      <span>stewbeet.plugins.datapack.custom_blocks</span>
+    </li>
+  </ol>
+</nav>
+  
+
+  <label
+    class="bz-sidebar-secondary-toggle"
+    for="bz-sidebar-secondary"
+    role="button"
+    tabindex="0"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="sized muted">
+      <path
+        fill="none"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M3.75 6.75H20.25 M11.25 12H20.25 M7.75 17.25H20.25"
+      />
+    </svg>
+  </label>
+</header><article class="bz-article-main" role="main">
+  <h1>Source code for stewbeet.plugins.datapack.custom_blocks</h1><div class="highlight"><pre>
+<span></span>
+<span class="c1"># Imports</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">stouputils</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">stp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">beet</span><span class="w"> </span><span class="kn">import</span> <span class="n">Advancement</span><span class="p">,</span> <span class="n">BlockTag</span><span class="p">,</span> <span class="n">Context</span><span class="p">,</span> <span class="n">EntityTypeTag</span><span class="p">,</span> <span class="n">LootTable</span><span class="p">,</span> <span class="n">Predicate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">beet.core.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">JsonDict</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">....core.__memory__</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">....core.cls.block</span><span class="w"> </span><span class="kn">import</span> <span class="n">VANILLA_BLOCK_FOR_ORES</span><span class="p">,</span> <span class="n">GrowingSeed</span><span class="p">,</span> <span class="n">GrowingSeedLoot</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">....core.cls.item</span><span class="w"> </span><span class="kn">import</span> <span class="n">Item</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">....core.constants</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+	<span class="n">BLOCKS_WITH_INTERFACES</span><span class="p">,</span>
+	<span class="n">CUSTOM_BLOCK_ALTERNATIVE</span><span class="p">,</span>
+	<span class="n">CUSTOM_BLOCK_HEAD</span><span class="p">,</span>
+	<span class="n">CUSTOM_BLOCK_HEAD_CUBE_RADIUS</span><span class="p">,</span>
+	<span class="n">CUSTOM_BLOCK_VANILLA</span><span class="p">,</span>
+	<span class="n">GROWING_SEED</span><span class="p">,</span>
+	<span class="n">NO_SILK_TOUCH_DROP</span><span class="p">,</span>
+	<span class="n">OFFICIAL_LIBS</span><span class="p">,</span>
+	<span class="n">VANILLA_BLOCK</span><span class="p">,</span>
+	<span class="n">official_lib_used</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">....core.utils.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_json_encoder</span><span class="p">,</span> <span class="n">write_function</span><span class="p">,</span> <span class="n">write_function_tag</span><span class="p">,</span> <span class="n">write_load_file</span><span class="p">,</span> <span class="n">write_versioned_function</span>
+
+
+<span class="c1"># Main entry point</span>
+<div class="viewcode-block" id="beet_default">
+<a class="viewcode-back" href="../../../../modules/stewbeet.plugins.datapack.custom_blocks.html#stewbeet.plugins.datapack.custom_blocks.beet_default">[docs]</a>
+<span class="nd">@stp</span><span class="o">.</span><span class="n">measure_time</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s2">&quot;Execution time of &#39;stewbeet.plugins.datapack.custom_blocks&#39;&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">beet_default</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Main entry point for the custom blocks plugin.</span>
+<span class="sd">	This plugin sets up custom blocks in the datapack based of the given definitions configuration.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		ctx (Context): The beet context.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1"># Set up memory context</span>
+	<span class="k">if</span> <span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="c1"># pyright: ignore[reportUnnecessaryComparison]</span>
+		<span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span> <span class="o">=</span> <span class="n">ctx</span>
+	<span class="n">ns</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">project_id</span>
+	<span class="n">textures_folder</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">stp</span><span class="o">.</span><span class="n">relative_path</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stewbeet&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;textures_folder&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+
+	<span class="c1"># Assertions</span>
+	<span class="k">assert</span> <span class="n">ctx</span><span class="o">.</span><span class="n">project_id</span><span class="p">,</span> <span class="s2">&quot;Project ID is not set. Please set it in the project configuration.&quot;</span>
+	<span class="k">assert</span> <span class="n">textures_folder</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;Textures folder path not found in &#39;ctx.meta.stewbeet.textures_folder&#39;. Please set a directory path in project configuration.&quot;</span>
+
+	<span class="c1"># Textures</span>
+	<span class="n">source_textures</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+		<span class="n">stp</span><span class="o">.</span><span class="n">clean_path</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">))</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span> <span class="n">stp</span><span class="o">.</span><span class="n">relative_path</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+		<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">Path</span><span class="p">(</span><span class="n">textures_folder</span><span class="p">)</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="s2">&quot;*.png&quot;</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="c1"># Stop if not custom block</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">VANILLA_BLOCK</span><span class="p">)</span> <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">Mem</span><span class="o">.</span><span class="n">definitions</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+		<span class="k">return</span>
+
+	<span class="c1"># Predicates</span>
+	<span class="n">FACING</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;north&quot;</span><span class="p">,</span> <span class="s2">&quot;east&quot;</span><span class="p">,</span> <span class="s2">&quot;south&quot;</span><span class="p">,</span> <span class="s2">&quot;west&quot;</span><span class="p">]</span>
+	<span class="k">for</span> <span class="n">face</span> <span class="ow">in</span> <span class="n">FACING</span><span class="p">:</span>
+		<span class="n">pred</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;condition&quot;</span><span class="p">:</span><span class="s2">&quot;minecraft:location_check&quot;</span><span class="p">,</span><span class="s2">&quot;predicate&quot;</span><span class="p">:{</span><span class="s2">&quot;block&quot;</span><span class="p">:{</span><span class="s2">&quot;state&quot;</span><span class="p">:{</span><span class="s2">&quot;facing&quot;</span><span class="p">:</span><span class="n">face</span><span class="p">}}}}</span>
+		<span class="n">ctx</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">ns</span><span class="p">]</span><span class="o">.</span><span class="n">predicates</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;facing/</span><span class="si">{</span><span class="n">face</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_json_encoder</span><span class="p">(</span><span class="n">Predicate</span><span class="p">(</span><span class="n">pred</span><span class="p">))</span>
+
+	<span class="c1"># Get rotation function</span>
+	<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/get_rotation&quot;</span><span class="p">,</span>
+<span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2"># Set up score</span>
+<span class="s2">scoreboard players set #rotation </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data 0</span>
+
+<span class="s2"># Player case</span>
+<span class="s2">execute if score #rotation </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data matches 0 if entity @s[y_rotation=-46..45] run scoreboard players set #rotation </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data 1</span>
+<span class="s2">execute if score #rotation </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data matches 0 if entity @s[y_rotation=45..135] run scoreboard players set #rotation </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data 2</span>
+<span class="s2">execute if score #rotation </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data matches 0 if entity @s[y_rotation=135..225] run scoreboard players set #rotation </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data 3</span>
+<span class="s2">execute if score #rotation </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data matches 0 if entity @s[y_rotation=225..315] run scoreboard players set #rotation </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data 4</span>
+
+<span class="s2"># Predicate case</span>
+<span class="s2">execute if score #rotation </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data matches 0 if predicate </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:facing/north run scoreboard players set #rotation </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data 1</span>
+<span class="s2">execute if score #rotation </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data matches 0 if predicate </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:facing/east run scoreboard players set #rotation </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data 2</span>
+<span class="s2">execute if score #rotation </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data matches 0 if predicate </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:facing/south run scoreboard players set #rotation </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data 3</span>
+<span class="s2">execute if score #rotation </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data matches 0 if predicate </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:facing/west run scoreboard players set #rotation </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data 4</span>
+<span class="s2"># No more cases for now</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+
+	<span class="c1"># For each custom block,</span>
+	<span class="n">unique_blocks</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+	<span class="n">custom_block_entities</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+	<span class="n">has_growing_seed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+	<span class="k">for</span> <span class="n">item</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">Mem</span><span class="o">.</span><span class="n">definitions</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+		<span class="n">obj</span> <span class="o">=</span> <span class="n">Item</span><span class="o">.</span><span class="n">from_id</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+		<span class="n">item_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">title</span><span class="p">()</span>
+		<span class="n">custom_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">stp</span><span class="o">.</span><span class="n">json_dump</span><span class="p">({</span><span class="s2">&quot;CustomName&quot;</span><span class="p">:</span> <span class="n">obj</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;item_name&quot;</span><span class="p">,</span> <span class="n">item_name</span><span class="p">)},</span> <span class="n">max_level</span><span class="o">=</span><span class="mi">0</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># Remove the last new line</span>
+
+		<span class="c1"># Custom block</span>
+		<span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">VANILLA_BLOCK</span><span class="p">):</span>
+			<span class="n">block</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">VANILLA_BLOCK</span><span class="p">]</span>
+			<span class="n">path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">&quot;</span>
+
+			<span class="c1"># Write the line in stats_custom_blocks</span>
+			<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:_stats_custom_blocks&quot;</span><span class="p">,</span>
+				<span class="sa">f</span><span class="s1">&#39;tellraw @s [</span><span class="se">{{</span><span class="s1">&quot;text&quot;:&quot;- Total </span><span class="se">\&#39;</span><span class="si">{</span><span class="n">item_name</span><span class="si">}</span><span class="se">\&#39;</span><span class="s1">: &quot;,&quot;color&quot;:&quot;gold&quot;</span><span class="se">}}</span><span class="s1">,</span><span class="se">{{</span><span class="s1">&quot;score&quot;:</span><span class="se">{{</span><span class="s1">&quot;name&quot;:&quot;#total_</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s1">&quot;,&quot;objective&quot;:&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s1">.data&quot;</span><span class="se">}}</span><span class="s1">,&quot;color&quot;:&quot;yellow&quot;</span><span class="se">}}</span><span class="s1">]&#39;</span>
+			<span class="p">)</span>
+			<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:_stats_custom_blocks&quot;</span><span class="p">,</span>
+				<span class="sa">f</span><span class="s1">&#39;scoreboard players add #total_</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s1">.data 0&#39;</span><span class="p">,</span>
+				<span class="n">prepend</span> <span class="o">=</span> <span class="kc">True</span>
+			<span class="p">)</span>
+
+			<span class="c1"># If the block is an item frame custom block, make the search function for placement</span>
+			<span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">base_item</span> <span class="o">==</span> <span class="n">CUSTOM_BLOCK_ALTERNATIVE</span><span class="p">:</span>
+
+				<span class="c1"># Make advancement to detect the item frame placement</span>
+				<span class="n">adv</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">=</span> <span class="p">{</span>
+					<span class="s2">&quot;criteria&quot;</span><span class="p">:</span> <span class="p">{</span>
+						<span class="s2">&quot;requirement&quot;</span><span class="p">:</span> <span class="p">{</span>
+							<span class="s2">&quot;trigger&quot;</span><span class="p">:</span> <span class="s2">&quot;minecraft:item_used_on_block&quot;</span><span class="p">,</span>
+							<span class="s2">&quot;conditions&quot;</span><span class="p">:</span> <span class="p">{</span>
+								<span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="p">[</span>
+									<span class="p">{</span>
+										<span class="s2">&quot;condition&quot;</span><span class="p">:</span> <span class="s2">&quot;minecraft:match_tool&quot;</span><span class="p">,</span>
+										<span class="s2">&quot;predicate&quot;</span><span class="p">:</span> <span class="p">{</span>
+											<span class="s2">&quot;items&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;minecraft:item_frame&quot;</span><span class="p">],</span>
+											<span class="s2">&quot;predicates&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;minecraft:custom_data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="n">ns</span><span class="p">:</span> <span class="p">{</span><span class="n">item</span><span class="p">:</span> <span class="kc">True</span><span class="p">}}}</span>
+										<span class="p">}</span>
+									<span class="p">}</span>
+								<span class="p">]</span>
+							<span class="p">}</span>
+						<span class="p">}</span>
+					<span class="p">},</span>
+					<span class="s2">&quot;requirements&quot;</span><span class="p">:[[</span><span class="s2">&quot;requirement&quot;</span><span class="p">]],</span>
+					<span class="s2">&quot;rewards&quot;</span><span class="p">:{}</span>
+				<span class="p">}</span>
+				<span class="n">adv</span><span class="p">[</span><span class="s2">&quot;rewards&quot;</span><span class="p">][</span><span class="s2">&quot;function&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">/search&quot;</span>
+				<span class="n">ctx</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">ns</span><span class="p">]</span><span class="o">.</span><span class="n">advancements</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;custom_block_alternative/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_json_encoder</span><span class="p">(</span><span class="n">Advancement</span><span class="p">(</span><span class="n">adv</span><span class="p">),</span> <span class="n">max_level</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+				<span class="c1"># Make search function</span>
+				<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">/search&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2"># Advancement revoke</span>
+<span class="s2">advancement revoke @s only </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_block_alternative/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span>
+
+<span class="s2"># Execute the place function as and at the new placed item frame&quot;&quot;&quot;</span><span class="p">)</span>
+				<span class="k">if</span> <span class="s2">&quot;id&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">block</span><span class="p">:</span>
+					<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">/search&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;execute as @e[type=item_frame,tag=</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.new,tag=</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">] at @s run function </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">/place_main&quot;</span><span class="p">)</span>
+				<span class="c1"># Make place check function (only if &quot;id&quot; is in VANILLA_BLOCK)</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">/search&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;tag @s add </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.to_refund</span>
+<span class="s2">execute as @e[type=item_frame,tag=</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.new,tag=</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">] at @s run function </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">/place_check</span>
+<span class="s2">tag @s remove </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.to_refund</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+					<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">/place_check&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2"># Check if there is air block at the position</span>
+<span class="s2">execute if block ~ ~ ~ air run return run function </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">/place_main</span>
+
+<span class="s2"># If not air, give back the item to the player</span>
+<span class="s2">tag @e[type=item] add </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.temp</span>
+<span class="s2">execute as @p[tag=</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.to_refund] at @s run loot spawn ~ ~ ~ loot </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:i/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span>
+<span class="s2">data merge entity @n[type=item,tag=!</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.temp] </span><span class="se">{{</span><span class="s2">PickupDelay:0s,Motion:[0.0d,0.0d,0.0d]</span><span class="se">}}</span>
+<span class="s2">data modify entity @n[type=item,tag=!</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.temp] Owner set from entity @p[tag=</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.to_refund] UUID</span>
+<span class="s2">tag @n[type=item] remove </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.temp</span>
+
+<span class="s2"># And kill the item frame</span>
+<span class="s2">kill @s</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+
+			<span class="c1"># If the block is a custom block with a block id,</span>
+			<span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">):</span>
+
+				<span class="c1"># Get the vanilla block data</span>
+				<span class="n">block_id</span> <span class="o">=</span> <span class="n">block</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+				<span class="n">beautify_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+				<span class="k">if</span> <span class="n">block_id</span> <span class="ow">in</span> <span class="n">BLOCKS_WITH_INTERFACES</span><span class="p">:</span>
+					<span class="n">beautify_name</span> <span class="o">=</span> <span class="n">custom_name</span>
+
+				<span class="c1">## Place function</span>
+				<span class="n">content</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+				<span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;apply_facing&quot;</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;entity&quot;</span><span class="p">):</span>
+					<span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;function </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/get_rotation</span><span class="se">\n</span><span class="s2">&quot;</span>
+					<span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;setblock ~ ~ ~ air strict</span><span class="se">\n</span><span class="s2">&quot;</span>
+					<span class="n">block_states</span> <span class="o">=</span> <span class="p">[]</span>
+					<span class="k">if</span> <span class="s1">&#39;[&#39;</span> <span class="ow">in</span> <span class="n">block_id</span><span class="p">:</span>
+						<span class="n">block_states</span> <span class="o">=</span> <span class="n">block_id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+						<span class="n">block_id</span> <span class="o">=</span> <span class="n">block_id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+					<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">face</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">FACING</span><span class="p">):</span>
+						<span class="k">if</span> <span class="n">block_states</span><span class="p">:</span>
+							<span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;execute if score #rotation </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data matches </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2"> run setblock ~ ~ ~ </span><span class="si">{</span><span class="n">block_id</span><span class="si">}</span><span class="s2">[facing=</span><span class="si">{</span><span class="n">face</span><span class="si">}</span><span class="s2">,&quot;</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">block_states</span><span class="p">)</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;]</span><span class="si">{</span><span class="n">beautify_name</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+						<span class="k">else</span><span class="p">:</span>
+							<span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;execute if score #rotation </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data matches </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2"> run setblock ~ ~ ~ </span><span class="si">{</span><span class="n">block_id</span><span class="si">}</span><span class="s2">[facing=</span><span class="si">{</span><span class="n">face</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">beautify_name</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;apply_facing&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;entity&quot;</span><span class="p">:</span>
+						<span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;function </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/get_rotation</span><span class="se">\n</span><span class="s2">&quot;</span>
+					<span class="c1"># Simple setblock</span>
+					<span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;setblock ~ ~ ~ air strict</span><span class="se">\n</span><span class="s2">&quot;</span>
+					<span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;setblock ~ ~ ~ </span><span class="si">{</span><span class="n">block_id</span><span class="si">}{</span><span class="n">beautify_name</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+				<span class="c1"># Summon item display and call secondary function</span>
+				<span class="n">custom_block_entities</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;minecraft:item_display&quot;</span><span class="p">)</span>  <span class="c1"># Add item display entity for custom blocks</span>
+				<span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;execute align xyz positioned ~0.5 ~0.5 ~0.5 summon item_display at @s run function </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">/place_secondary</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+				<span class="c1"># Add temporary tags and call main function</span>
+				<span class="n">content</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;tag @s add </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.placer</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">content</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;tag @s remove </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.placer</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+				<span class="c1"># Increment count scores for stats and optimization</span>
+				<span class="n">block_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">block_id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;{&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+				<span class="n">unique_blocks</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">block_id</span><span class="p">)</span>
+				<span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2"># Increment count scores</span>
+<span class="s2">scoreboard players add #total_custom_blocks </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data 1</span>
+<span class="s2">scoreboard players add #total_vanilla_</span><span class="si">{</span><span class="n">block_id</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;minecraft:&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data 1</span>
+<span class="s2">scoreboard players add #total_</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data 1</span>
+<span class="si">{</span><span class="sa">f</span><span class="s2">&quot;scoreboard players add #total_growing_seeds </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data 1&quot;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">GROWING_SEED</span><span class="p">)</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="si">}</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+				<span class="c1"># If CUSTOM_BLOCK_ALTERNATIVE, we need to kill the old item frame</span>
+				<span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">base_item</span> <span class="o">==</span> <span class="n">CUSTOM_BLOCK_ALTERNATIVE</span><span class="p">:</span>
+					<span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;kill @s[type=item_frame]</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+				<span class="c1"># Write the file</span>
+				<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">/place_main&quot;</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+
+				<span class="c1">## Secondary function</span>
+				<span class="n">block_id</span> <span class="o">=</span> <span class="n">block_id</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+				<span class="n">item_model</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+				<span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;item_model&quot;</span><span class="p">):</span>
+					<span class="n">item_model</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;item replace entity @s contents with </span><span class="si">{</span><span class="n">CUSTOM_BLOCK_VANILLA</span><span class="si">}</span><span class="s2">[item_model=</span><span class="se">\&quot;</span><span class="si">{</span><span class="n">obj</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s1">&#39;item_model&#39;</span><span class="p">]</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">]</span><span class="se">\n</span><span class="s2">&quot;</span>
+				<span class="n">content</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2"># Add convention and utils tags, and the custom block tag</span>
+<span class="s2">tag @s add global.ignore</span>
+<span class="s2">tag @s add global.ignore.kill</span>
+<span class="s2">tag @s add smithed.entity</span>
+<span class="s2">tag @s add smithed.block</span>
+<span class="s2">tag @s add </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.custom_block</span>
+<span class="s2">tag @s add </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">item</span><span class="si">}</span>
+<span class="s2">tag @s add </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.vanilla.</span><span class="si">{</span><span class="n">block_id</span><span class="si">}</span>
+<span class="si">{</span><span class="sa">f</span><span class="s2">&quot;tag @s add </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.growing_seed&quot;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">GROWING_SEED</span><span class="p">)</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="si">}</span>
+
+<span class="s2"># Add a custom name</span>
+<span class="s2">data merge entity @s </span><span class="si">{</span><span class="n">custom_name</span><span class="si">}</span>
+
+<span class="s2"># Modify item display entity to match the custom block</span>
+<span class="si">{</span><span class="n">item_model</span><span class="si">}</span><span class="s2">data modify entity @s transformation.scale set value [1.002f,1.002f,1.002f]</span>
+<span class="s2">data modify entity @s brightness set value </span><span class="se">{{</span><span class="s2">block:15,sky:15</span><span class="se">}}</span>
+<span class="s2">&quot;&quot;&quot;</span>
+				<span class="k">if</span> <span class="n">block</span><span class="p">[</span><span class="s2">&quot;apply_facing&quot;</span><span class="p">]:</span>
+					<span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2"># Apply rotation</span>
+<span class="s2">execute if score #rotation </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data matches 1 run data modify entity @s Rotation[0] set value 180.0f</span>
+<span class="s2">execute if score #rotation </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data matches 2 run data modify entity @s Rotation[0] set value 270.0f</span>
+<span class="s2">execute if score #rotation </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data matches 3 run data modify entity @s Rotation[0] set value 0.0f</span>
+<span class="s2">execute if score #rotation </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data matches 4 run data modify entity @s Rotation[0] set value 90.0f</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+				<span class="c1"># If Furnace NBT Recipes is enabled and the block is a furnace, summon the marker</span>
+				<span class="k">if</span> <span class="n">OFFICIAL_LIBS</span><span class="p">[</span><span class="s2">&quot;furnace_nbt_recipes&quot;</span><span class="p">][</span><span class="s2">&quot;is_used&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">block_id</span><span class="o">.</span><span class="n">endswith</span><span class="p">((</span><span class="s2">&quot;_furnace&quot;</span><span class="p">,</span> <span class="s2">&quot;_smoker&quot;</span><span class="p">)):</span>
+					<span class="n">content</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1"># Furnace NBT Recipes</span><span class="se">\n</span><span class="s1">&#39;</span>
+					<span class="n">content</span> <span class="o">+=</span> <span class="p">(</span>
+						<span class="s1">&#39;execute align xyz positioned ~0.5 ~ ~0.5 unless entity @e[type=marker,dx=-1,dy=-1,dz=-1,tag=furnace_nbt_recipes.furnace] run &#39;</span>
+						<span class="s1">&#39;summon marker ~ ~ ~ {Tags:[&quot;furnace_nbt_recipes.furnace&quot;]}</span><span class="se">\n</span><span class="s1">&#39;</span>
+					<span class="p">)</span>
+
+				<span class="c1"># Write file</span>
+				<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">/place_secondary&quot;</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+
+			<span class="c1"># If the block is a custom block with &quot;contents&quot;, it means it&#39;s an item frame not an item display</span>
+			<span class="k">elif</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;contents&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+
+				<span class="c1"># Write the place main function</span>
+				<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">/place_main&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2"># Get the facing direction of the item frame</span>
+<span class="s2">scoreboard players set #item_frame_facing </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data 1</span>
+<span class="s2">execute if entity @s[type=item_frame] run function </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">/get_facing</span>
+
+<span class="s2"># Summon the new item frame (not execute summon because it would not be invisible for a tick)</span>
+<span class="s2">summon item_frame ~ ~ ~ </span><span class="se">{{</span><span class="s2">Tags:[&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.new&quot;],Invulnerable:false,Invisible:true,Fixed:false,Silent:true</span><span class="se">}}</span>
+<span class="s2">execute as @n[tag=</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.new] at @s run function </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">/place_secondary</span>
+
+<span class="s2"># Increment count scores</span>
+<span class="s2">scoreboard players add #total_custom_blocks </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data 1</span>
+<span class="s2">scoreboard players add #total_vanilla_item_frame </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data 1</span>
+<span class="s2">scoreboard players add #total_</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data 1</span>
+<span class="si">{</span><span class="sa">f</span><span class="s2">&quot;scoreboard players add #total_growing_seeds </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data 1&quot;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">GROWING_SEED</span><span class="p">)</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="si">}</span>
+
+<span class="s2"># Replace the placing sound</span>
+<span class="s2">playsound minecraft:block.stone.place block @a[distance=..5]</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+				<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">/get_facing&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2"># Get the facing and delete the old entity</span>
+<span class="s2">execute store result score #item_frame_facing </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data run data get entity @s Facing</span>
+<span class="s2">kill @s</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+				<span class="c1"># Add the item frame entity to both custom_block_entities and unique_blocks</span>
+				<span class="n">custom_block_entities</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;minecraft:item_frame&quot;</span><span class="p">)</span>
+				<span class="n">unique_blocks</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;minecraft:item_frame&quot;</span><span class="p">)</span>
+
+				<span class="c1"># Secondary function</span>
+				<span class="n">item_model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;item_model&quot;</span><span class="p">,</span> <span class="s2">&quot;minecraft:air&quot;</span><span class="p">)</span>
+				<span class="n">content</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2"># Add convention and utils tags, and the custom block tag</span>
+<span class="s2">tag @s remove </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.new</span>
+<span class="s2">tag @s add global.ignore</span>
+<span class="s2">tag @s add global.ignore.kill</span>
+<span class="s2">tag @s add smithed.entity</span>
+<span class="s2">tag @s add smithed.block</span>
+<span class="s2">tag @s add </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.custom_block</span>
+<span class="s2">tag @s add </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">item</span><span class="si">}</span>
+<span class="s2">tag @s add </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.vanilla.minecraft_item_frame</span>
+<span class="si">{</span><span class="sa">f</span><span class="s2">&quot;tag @s add </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.growing_seed&quot;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">GROWING_SEED</span><span class="p">)</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="si">}</span>
+
+<span class="s2"># Add a custom name</span>
+<span class="s2">data merge entity @s </span><span class="si">{</span><span class="n">custom_name</span><span class="si">}</span>
+
+<span class="s2"># Modify item frame entity to match the custom block</span>
+<span class="s2">item replace entity @s contents with </span><span class="si">{</span><span class="n">CUSTOM_BLOCK_VANILLA</span><span class="si">}</span><span class="s2">[item_model=&quot;</span><span class="si">{</span><span class="n">item_model</span><span class="si">}</span><span class="s2">&quot;,custom_data=</span><span class="se">{{</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:</span><span class="se">{{</span><span class="s2">item_frame_destroy:true,alt_destroy:&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">&quot;</span><span class="se">}}}}</span><span class="s2">]</span>
+<span class="s2">execute store result entity @s Facing byte 1 run scoreboard players get #item_frame_facing </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data</span>
+
+<span class="s2"># Update position (fixes a Minecraft bug)</span>
+<span class="s2">execute at @s run tp @s ^ ^ ^0.1</span>
+<span class="s2">&quot;&quot;&quot;</span>
+				<span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;force_ground&quot;</span><span class="p">):</span>
+					<span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2"># Force ground position</span>
+<span class="s2">data modify entity @s Facing set value 1b</span>
+<span class="s2">&quot;&quot;&quot;</span>
+				<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">/place_secondary&quot;</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+				<span class="k">pass</span>
+
+			<span class="c1"># If the block is a growing seed, make the update_seed_model function and call it in the place_secondary function</span>
+			<span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">GROWING_SEED</span><span class="p">):</span>
+				<span class="n">growing_seed</span><span class="p">:</span> <span class="n">GrowingSeed</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">GROWING_SEED</span><span class="p">]</span>
+				<span class="n">has_growing_seed</span> <span class="o">=</span> <span class="kc">True</span>
+				<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">/place_secondary&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2"># Update seed model</span>
+<span class="s2">scoreboard players add @s </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.growth_time 0</span>
+<span class="s2">function </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">/update_seed_model</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+				<span class="c1"># Get the number of growth stages</span>
+				<span class="n">texture_basename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">growing_seed</span><span class="o">.</span><span class="n">texture_basename</span> <span class="ow">or</span> <span class="n">item</span>
+				<span class="n">starts</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">texture_basename</span><span class="si">}</span><span class="s2">_stage_&quot;</span>
+				<span class="n">num_stages</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">({</span><span class="n">texture</span> <span class="k">for</span> <span class="n">texture</span> <span class="ow">in</span> <span class="n">source_textures</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">texture</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">starts</span><span class="p">)})</span>
+				<span class="n">progress_stages</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">num_stages</span> <span class="o">-</span> <span class="mi">1</span> <span class="c1"># Last stage is the full grown plant</span>
+				<span class="n">growing_time</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">growing_seed</span><span class="o">.</span><span class="n">seconds</span>
+
+				<span class="c1"># Make the update function</span>
+				<span class="n">content</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+				<span class="k">for</span> <span class="n">stage</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_stages</span><span class="p">):</span>
+					<span class="n">time_from</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">stage</span> <span class="o">*</span> <span class="n">growing_time</span> <span class="o">/</span> <span class="n">progress_stages</span><span class="p">)</span>
+					<span class="n">time_to</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">stage</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">growing_time</span> <span class="o">/</span> <span class="n">progress_stages</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+					<span class="n">time_to_str</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">time_to</span><span class="p">)</span> <span class="k">if</span> <span class="n">stage</span> <span class="o">&lt;</span> <span class="n">progress_stages</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+					<span class="n">content</span> <span class="o">+=</span> <span class="p">(</span>
+						<span class="sa">f</span><span class="s2">&quot;execute if score @s </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.growth_time matches </span><span class="si">{</span><span class="n">time_from</span><span class="si">}</span><span class="s2">..</span><span class="si">{</span><span class="n">time_to_str</span><span class="si">}</span><span class="s2"> unless score @s </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.growth_stage matches </span><span class="si">{</span><span class="n">stage</span><span class="si">}</span><span class="s2"> run &quot;</span>
+						<span class="sa">f</span><span class="s2">&quot;&quot;&quot;function </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/change_seed_stage </span><span class="se">{{</span><span class="s2">stage:</span><span class="si">{</span><span class="n">stage</span><span class="si">}</span><span class="s2">, model:&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:seeds/</span><span class="si">{</span><span class="n">starts</span><span class="si">}{</span><span class="n">stage</span><span class="si">}</span><span class="s2">&quot;</span><span class="se">}}\n</span><span class="s2">&quot;&quot;&quot;</span>
+					<span class="p">)</span>
+				<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">/update_seed_model&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2"># Update growth stage based on growth_time</span>
+<span class="si">{</span><span class="n">content</span><span class="si">}</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+				<span class="c1"># Optimisation: If total growing time is higher than 60*stages second, we will increment the growth_time score every minute</span>
+				<span class="k">for</span> <span class="p">(</span><span class="n">speed</span><span class="p">,</span> <span class="n">secs</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[(</span><span class="mi">60</span><span class="p">,</span> <span class="s2">&quot;minute&quot;</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s2">&quot;second_5&quot;</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;second&quot;</span><span class="p">)]:</span>
+					<span class="k">if</span> <span class="n">growing_time</span> <span class="o">&gt;</span> <span class="n">speed</span> <span class="o">*</span> <span class="n">progress_stages</span><span class="p">:</span>
+						<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">secs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2"># Increment growth time score by </span><span class="si">{</span><span class="n">speed</span><span class="si">}</span><span class="s2"> and update model</span>
+<span class="s2">scoreboard players add @s </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.growth_time </span><span class="si">{</span><span class="n">speed</span><span class="si">}</span>
+<span class="s2">execute if score #boost_growth_time </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data matches 1.. run scoreboard players operation @s </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.growth_time += #boost_growth_time </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data</span>
+<span class="s2">function </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">/update_seed_model</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+						<span class="k">break</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">stp</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Growing seed &#39;</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">&#39; has a growing time &lt; to the number of stages (</span><span class="si">{</span><span class="n">growing_time</span><span class="si">}</span><span class="s2"> seconds). Please increase the growing time or reduce the number of stages.&quot;</span><span class="p">)</span>
+
+				<span class="c1"># Make the loot table for the seed</span>
+				<span class="n">loot_table</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">GrowingSeedLoot</span><span class="p">]</span> <span class="o">=</span> <span class="n">growing_seed</span><span class="o">.</span><span class="n">loots</span>
+				<span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">loot_table</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+					<span class="n">ctx</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">ns</span><span class="p">]</span><span class="o">.</span><span class="n">loot_tables</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;seeds/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_json_encoder</span><span class="p">(</span><span class="n">LootTable</span><span class="p">({</span>
+						<span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;minecraft:block&quot;</span><span class="p">,</span>
+						<span class="s2">&quot;pools&quot;</span><span class="p">:</span> <span class="p">[</span>
+							<span class="p">{</span>
+								<span class="s2">&quot;rolls&quot;</span><span class="p">:</span> <span class="n">pool</span><span class="o">.</span><span class="n">rolls</span><span class="p">,</span>
+								<span class="s2">&quot;bonus_rolls&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+								<span class="s2">&quot;entries&quot;</span><span class="p">:</span> <span class="p">[</span>
+									<span class="p">{</span>
+										<span class="c1"># Vanilla item if &quot;minecraft:&quot; in id,</span>
+										<span class="c1"># Custom item if plain string</span>
+										<span class="c1"># Another loot table if &#39;:&#39; in id</span>
+										<span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;minecraft:item&quot;</span> <span class="k">if</span> <span class="s2">&quot;minecraft:&quot;</span> <span class="ow">in</span> <span class="n">pool</span><span class="o">.</span><span class="n">id</span> <span class="k">else</span> <span class="s2">&quot;minecraft:loot_table&quot;</span><span class="p">,</span>
+										<span class="s2">&quot;name&quot;</span> <span class="k">if</span> <span class="s2">&quot;minecraft:&quot;</span> <span class="ow">in</span> <span class="n">pool</span><span class="o">.</span><span class="n">id</span> <span class="k">else</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:i/</span><span class="si">{</span><span class="n">pool</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="s2">&quot;:&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pool</span><span class="o">.</span><span class="n">id</span> <span class="k">else</span> <span class="n">pool</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
+										<span class="o">**</span><span class="p">({}</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">pool</span><span class="o">.</span><span class="n">fortune</span> <span class="k">else</span> <span class="p">{</span>
+											<span class="s2">&quot;functions&quot;</span><span class="p">:</span> <span class="p">[</span>
+												<span class="p">{</span>
+													<span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="s2">&quot;minecraft:apply_bonus&quot;</span><span class="p">,</span>
+													<span class="s2">&quot;enchantment&quot;</span><span class="p">:</span> <span class="s2">&quot;minecraft:fortune&quot;</span><span class="p">,</span>
+													<span class="s2">&quot;formula&quot;</span><span class="p">:</span> <span class="s2">&quot;minecraft:binomial_with_bonus_count&quot;</span><span class="p">,</span>
+													<span class="s2">&quot;parameters&quot;</span><span class="p">:</span> <span class="n">pool</span><span class="o">.</span><span class="n">fortune</span><span class="p">,</span>
+												<span class="p">},</span>
+											<span class="p">]</span>
+										<span class="p">})</span>
+									<span class="p">}</span>
+								<span class="p">]</span>
+							<span class="p">}</span>
+							<span class="k">for</span> <span class="n">pool</span> <span class="ow">in</span> <span class="n">loot_table</span>
+						<span class="p">]</span>
+					<span class="p">}),</span> <span class="n">max_level</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+					<span class="n">loot_table</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:seeds/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">&quot;</span>
+
+				<span class="c1"># Make the is_fully_grown function that will be called on destroy</span>
+				<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">/is_fully_grown&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2"># If fully grown, drop the loot table and kill the current entity (item)</span>
+<span class="s2">execute if score #growth_time </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data matches </span><span class="si">{</span><span class="n">growing_time</span><span class="si">}</span><span class="s2">.. as @p[gamemode=!spectator] run loot spawn ~ ~ ~ fish </span><span class="si">{</span><span class="n">loot_table</span><span class="si">}</span><span class="s2"> ~ ~ ~ mainhand</span>
+<span class="s2">execute if score #growth_time </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data matches </span><span class="si">{</span><span class="n">growing_time</span><span class="si">}</span><span class="s2">.. run kill @s</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+			<span class="k">pass</span>
+		<span class="k">pass</span>
+
+	<span class="c1"># Make the change_stage function for growing seeds and create scoreboard objectives</span>
+	<span class="k">if</span> <span class="n">has_growing_seed</span><span class="p">:</span>
+		<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/change_seed_stage&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2"># Update the growth stage score</span>
+<span class="s2">$scoreboard players set @s </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.growth_stage $(stage)</span>
+
+<span class="s2"># Change the item model to the right stage</span>
+<span class="s2">$execute if entity @s[type=item_display] run return run data modify entity @s item.components.&quot;minecraft:item_model&quot; set value &quot;$(model)&quot;</span>
+<span class="s2">$execute if entity @s[type=item_frame] run return run data modify entity @s Item.components.&quot;minecraft:item_model&quot; set value &quot;$(model)&quot;</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+		<span class="n">write_load_file</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2"># Create objectives for growing seeds</span>
+<span class="s2">scoreboard objectives add </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.growth_time dummy</span>
+<span class="s2">scoreboard objectives add </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.growth_stage dummy</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">,</span> <span class="n">prepend</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+	<span class="c1"># Link the custom block library to the datapack</span>
+	<span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">Item</span><span class="o">.</span><span class="n">from_id</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">base_item</span> <span class="o">==</span> <span class="n">CUSTOM_BLOCK_VANILLA</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">Mem</span><span class="o">.</span><span class="n">definitions</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+
+		<span class="c1"># Change is_used state</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">official_lib_used</span><span class="p">(</span><span class="s2">&quot;smithed.custom_block&quot;</span><span class="p">):</span>
+			<span class="n">stp</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Found custom blocks using CUSTOM_BLOCK_VANILLA in the definitions, adding &#39;smithed.custom_block&#39; to the dependencies&quot;</span><span class="p">)</span>
+
+		<span class="c1"># Write function tag to link with the library</span>
+		<span class="n">write_function_tag</span><span class="p">(</span><span class="s2">&quot;smithed.custom_block:event/on_place&quot;</span><span class="p">,</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/on_place&quot;</span><span class="p">])</span>
+
+		<span class="c1"># Write the slot function</span>
+		<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/on_place&quot;</span><span class="p">,</span> <span class="p">(</span>
+			<span class="s2">&quot;execute if data storage smithed.custom_block:main blockApi.__data.Items[0].components.</span><span class="se">\&quot;</span><span class="s2">minecraft:custom_data</span><span class="se">\&quot;</span><span class="s2">.smithed.&quot;</span>
+			<span class="sa">f</span><span class="s2">&quot;block</span><span class="se">{{</span><span class="s2">from:</span><span class="se">\&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="se">\&quot;}}</span><span class="s2"> run function </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/place</span><span class="se">\n</span><span class="s2">&quot;</span>
+		<span class="p">))</span>
+
+		<span class="c1"># Write the function that will place the custom blocks</span>
+		<span class="n">content</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;tag @s add </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.placer</span><span class="se">\n</span><span class="s2">&quot;</span>
+		<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">Mem</span><span class="o">.</span><span class="n">definitions</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+			<span class="n">obj</span> <span class="o">=</span> <span class="n">Item</span><span class="o">.</span><span class="n">from_id</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">base_item</span> <span class="o">==</span> <span class="n">CUSTOM_BLOCK_VANILLA</span><span class="p">:</span>
+				<span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;execute if data storage smithed.custom_block:main blockApi</span><span class="se">{{</span><span class="s2">id:&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">&quot;</span><span class="se">}}</span><span class="s2"> run function </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">/place_main</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+		<span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;tag @s remove </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.placer</span><span class="se">\n</span><span class="s2">&quot;</span>
+		<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/place&quot;</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+
+	<span class="c1"># Sort unique blocks (with custom block alternative last)</span>
+	<span class="n">unique_blocks_sorted</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">unique_blocks</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="n">CUSTOM_BLOCK_ALTERNATIVE</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span>
+
+	<span class="c1">## Destroy functions</span>
+	<span class="c1"># For each unique block, if the vanilla block is missing, call the destroy function for the group</span>
+	<span class="n">content</span> <span class="o">=</span> <span class="s2">&quot;# Check for missing vanilla blocks</span><span class="se">\n</span><span class="s2">&quot;</span>
+	<span class="k">for</span> <span class="n">block_id</span> <span class="ow">in</span> <span class="n">unique_blocks_sorted</span><span class="p">:</span>
+		<span class="n">score_check</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;score #total_vanilla_</span><span class="si">{</span><span class="n">block_id</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;minecraft:&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data matches 1..&quot;</span>
+		<span class="n">block_underscore</span> <span class="o">=</span> <span class="n">block_id</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+
+		<span class="c1"># Special case for the cauldron that can change block id</span>
+		<span class="n">block_id</span> <span class="o">=</span> <span class="s2">&quot;#minecraft:cauldrons&quot;</span> <span class="k">if</span> <span class="n">block_id</span> <span class="o">==</span> <span class="s2">&quot;minecraft:cauldron&quot;</span> <span class="k">else</span> <span class="n">block_id</span>
+
+		<span class="c1"># Add the line that checks if the block is missing</span>
+		<span class="k">if</span> <span class="n">block_id</span> <span class="o">!=</span> <span class="n">CUSTOM_BLOCK_ALTERNATIVE</span><span class="p">:</span>
+			<span class="n">content</span> <span class="o">+=</span> <span class="p">(</span>
+				<span class="sa">f</span><span class="s2">&quot;execute if </span><span class="si">{</span><span class="n">score_check</span><span class="si">}</span><span class="s2"> if entity @s[tag=</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.vanilla.</span><span class="si">{</span><span class="n">block_underscore</span><span class="si">}</span><span class="s2">] &quot;</span>
+				<span class="sa">f</span><span class="s2">&quot;unless block ~ ~ ~ </span><span class="si">{</span><span class="n">block_id</span><span class="si">}</span><span class="s2"> run return run function </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/_groups/</span><span class="si">{</span><span class="n">block_underscore</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+			<span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">content</span> <span class="o">+=</span> <span class="p">(</span>
+				<span class="sa">f</span><span class="s2">&quot;execute if </span><span class="si">{</span><span class="n">score_check</span><span class="si">}</span><span class="s2"> if entity @s[tag=</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.vanilla.</span><span class="si">{</span><span class="n">block_underscore</span><span class="si">}</span><span class="s2">] &quot;</span>
+				<span class="sa">f</span><span class="s2">&quot;unless items entity @s contents *[minecraft:custom_data~</span><span class="se">{{</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:</span><span class="se">{{</span><span class="s2">item_frame_destroy:true</span><span class="se">}}}}</span><span class="s2">] run return run function </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/_groups/</span><span class="si">{</span><span class="n">block_underscore</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+			<span class="p">)</span>
+	<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/destroy&quot;</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+
+	<span class="c1"># If there are growing seeds, we need to check the block below to see if it&#39;s still valid</span>
+	<span class="k">if</span> <span class="n">has_growing_seed</span><span class="p">:</span>
+		<span class="n">content</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+		<span class="k">for</span> <span class="n">item</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">Mem</span><span class="o">.</span><span class="n">definitions</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+			<span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">GROWING_SEED</span><span class="p">):</span>
+				<span class="n">growing_seed</span><span class="p">:</span> <span class="n">GrowingSeed</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">GROWING_SEED</span><span class="p">]</span>
+				<span class="n">planted_on</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">growing_seed</span><span class="o">.</span><span class="n">planted_on</span>
+				<span class="n">content</span> <span class="o">+=</span> <span class="p">(</span>
+					<span class="sa">f</span><span class="s2">&quot;execute if score #total_</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data matches 1.. if entity @s[tag=</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">] &quot;</span>
+					<span class="sa">f</span><span class="s2">&quot;&quot;&quot;unless block ~ ~-1 ~ </span><span class="si">{</span><span class="n">planted_on</span><span class="si">}</span><span class="s2"> run return run function </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/no_block_below </span><span class="se">{{</span><span class="s2">item:&quot;</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">&quot;</span><span class="se">}}\n</span><span class="s2">&quot;&quot;&quot;</span>
+				<span class="p">)</span>
+		<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/destroy_growing_seeds&quot;</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+		<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/no_block_below&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2"># Break the block we&#39;re at and call the destroy function</span>
+<span class="s2">execute if entity @s[type=item_frame] run summon item ~ ~ ~ </span><span class="se">{{</span><span class="s2">Item:</span><span class="se">{{</span><span class="s2">id:&quot;minecraft:item_frame&quot;,count:1,components:</span><span class="se">{{</span><span class="s2">&quot;minecraft:custom_data&quot;:</span><span class="se">{{</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">&quot;:</span><span class="se">{{</span><span class="s2">&quot;item_frame_destroy&quot;:true</span><span class="se">}}}}}}}}}}</span>
+<span class="s2">execute if entity @s[type=item_display] run setblock ~ ~ ~ air destroy</span>
+<span class="s2">$function </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/$(item)/destroy</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+
+	<span class="c1"># For each unique block, make the group function</span>
+	<span class="k">for</span> <span class="n">block_id</span> <span class="ow">in</span> <span class="n">unique_blocks_sorted</span><span class="p">:</span>
+
+		<span class="c1"># Add a line in the stats_custom_blocks file</span>
+		<span class="n">score_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;total_vanilla_</span><span class="si">{</span><span class="n">block_id</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;minecraft:&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+		<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:_stats_custom_blocks&quot;</span><span class="p">,</span>
+			<span class="sa">f</span><span class="s1">&#39;tellraw @s [</span><span class="se">{{</span><span class="s1">&quot;text&quot;:&quot;- Vanilla </span><span class="se">\&#39;</span><span class="si">{</span><span class="n">block_id</span><span class="si">}</span><span class="se">\&#39;</span><span class="s1">: &quot;,&quot;color&quot;:&quot;gray&quot;</span><span class="se">}}</span><span class="s1">,</span><span class="se">{{</span><span class="s1">&quot;score&quot;:</span><span class="se">{{</span><span class="s1">&quot;name&quot;:&quot;#</span><span class="si">{</span><span class="n">score_name</span><span class="si">}</span><span class="s1">&quot;,&quot;objective&quot;:&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s1">.data&quot;</span><span class="se">}}</span><span class="s1">,&quot;color&quot;:&quot;white&quot;</span><span class="se">}}</span><span class="s1">]&#39;</span>
+		<span class="p">)</span>
+		<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:_stats_custom_blocks&quot;</span><span class="p">,</span>
+			<span class="sa">f</span><span class="s1">&#39;scoreboard players add #</span><span class="si">{</span><span class="n">score_name</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s1">.data 0&#39;</span><span class="p">,</span>
+			<span class="n">prepend</span> <span class="o">=</span> <span class="kc">True</span>
+		<span class="p">)</span>
+
+		<span class="c1"># Prepare the group function</span>
+		<span class="n">block_underscore</span> <span class="o">=</span> <span class="n">block_id</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+		<span class="n">content</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+		<span class="c1"># For every custom block, add a tag check for destroy if it&#39;s the right vanilla block</span>
+		<span class="k">for</span> <span class="n">item</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">Mem</span><span class="o">.</span><span class="n">definitions</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+			<span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">VANILLA_BLOCK</span><span class="p">):</span>
+
+				<span class="c1"># Get the vanilla block</span>
+				<span class="n">vanilla_block</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">VANILLA_BLOCK</span><span class="p">]</span>
+				<span class="k">if</span> <span class="n">vanilla_block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">):</span>
+					<span class="n">this_block</span> <span class="o">=</span> <span class="n">vanilla_block</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;{&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+					<span class="n">this_block</span> <span class="o">=</span> <span class="n">this_block</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+				<span class="k">elif</span> <span class="n">vanilla_block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;contents&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+					<span class="n">this_block</span> <span class="o">=</span> <span class="n">CUSTOM_BLOCK_ALTERNATIVE</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="k">continue</span>
+
+				<span class="c1"># Add the line if it&#39;s the same vanilla block</span>
+				<span class="k">if</span> <span class="n">this_block</span> <span class="o">==</span> <span class="n">block_underscore</span><span class="p">:</span>
+					<span class="n">score_check</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;score #total_</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data matches 1..&quot;</span>
+					<span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;execute if </span><span class="si">{</span><span class="n">score_check</span><span class="si">}</span><span class="s2"> if entity @s[tag=</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">] run function </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">/destroy</span><span class="se">\n</span><span class="s2">&quot;</span>
+		<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/_groups/</span><span class="si">{</span><span class="n">block_underscore</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">content</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+	<span class="c1"># For each custom block, make it&#39;s destroy function</span>
+	<span class="k">for</span> <span class="n">item</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">Mem</span><span class="o">.</span><span class="n">definitions</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+		<span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">VANILLA_BLOCK</span><span class="p">):</span>
+			<span class="n">vanilla_block</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">VANILLA_BLOCK</span><span class="p">]</span>
+			<span class="k">if</span> <span class="n">vanilla_block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">):</span>
+				<span class="n">block_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">vanilla_block</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;{&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+			<span class="k">elif</span> <span class="n">vanilla_block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;contents&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+				<span class="n">block_id</span> <span class="o">=</span> <span class="n">CUSTOM_BLOCK_ALTERNATIVE</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">continue</span>
+
+			<span class="c1"># Destroy function</span>
+			<span class="n">item_nbt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="se">{{</span><span class="s2">id:&quot;</span><span class="si">{</span><span class="n">block_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="se">}}</span><span class="s2">&quot;&quot;&quot;</span>
+			<span class="k">if</span> <span class="n">block_id</span> <span class="o">==</span> <span class="n">CUSTOM_BLOCK_ALTERNATIVE</span><span class="p">:</span>
+				<span class="n">item_nbt</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="se">{{</span><span class="s2">components:</span><span class="se">{{</span><span class="s2">&quot;minecraft:custom_data&quot;:</span><span class="se">{{</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">&quot;:</span><span class="se">{{</span><span class="s2">&quot;item_frame_destroy&quot;:true</span><span class="se">}}}}}}}}</span><span class="s2">&quot;&quot;&quot;</span>
+			<span class="n">content</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2"># Replace the item with the custom one</span>
+<span class="s2">execute as @n[type=item,nbt=</span><span class="se">{{</span><span class="s2">Item:</span><span class="si">{</span><span class="n">item_nbt</span><span class="si">}</span><span class="se">}}</span><span class="s2">,distance=..1] run function </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">/replace_item</span>
+<span class="s2">&quot;&quot;&quot;</span>
+			<span class="c1"># If growing seed, get the growth_time score</span>
+			<span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">GROWING_SEED</span><span class="p">):</span>
+				<span class="n">content</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;custom one&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;custom one</span><span class="se">\n</span><span class="s2">scoreboard players operation #growth_time </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data = @s </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.growth_time&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+			<span class="c1"># Decrease count scores for stats and optimization</span>
+			<span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2"># Decrease count scores</span>
+<span class="s2">scoreboard players remove #total_custom_blocks </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data 1</span>
+<span class="s2">scoreboard players remove #total_vanilla_</span><span class="si">{</span><span class="n">block_id</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;minecraft:&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data 1</span>
+<span class="s2">scoreboard players remove #total_</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data 1</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+			<span class="c1"># Add the destroy function</span>
+			<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">/destroy&quot;</span><span class="p">,</span> <span class="n">content</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2"># Kill the custom block entity</span><span class="se">\n</span><span class="s2">kill @s</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+			<span class="c1"># Replace item function</span>
+			<span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">NO_SILK_TOUCH_DROP</span><span class="p">):</span>
+				<span class="n">content</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2"># Replace the item with the custom one</span>
+<span class="s2">data modify entity @s Item.components set from storage </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:items all.</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">.components</span>
+<span class="s2">data modify entity @s Item.id set from storage </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:items all.</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">.id</span>
+<span class="s2">&quot;&quot;&quot;</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="c1"># If no VANILLA_BLOCK_FOR_ORES, check if the player has silk touch in mainhand</span>
+				<span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">VANILLA_BLOCK</span><span class="p">)</span> <span class="o">!=</span> <span class="n">VANILLA_BLOCK_FOR_ORES</span><span class="p">:</span>
+					<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">/destroy&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2"># Check if the player has silk touch in mainhand</span>
+<span class="s2">scoreboard players set #is_silk_touch </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data 0</span>
+<span class="s2">execute as @p[distance=..10,gamemode=!spectator] if data entity @s SelectedItem.components.&quot;minecraft:enchantments&quot;.&quot;minecraft:silk_touch&quot; run scoreboard players set #is_silk_touch </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data 1</span>
+
+<span class="s2"># If no item found, summon it</span>
+<span class="s2">execute unless entity @n[type=item,nbt=</span><span class="se">{{</span><span class="s2">Item:</span><span class="si">{</span><span class="n">item_nbt</span><span class="si">}</span><span class="se">}}</span><span class="s2">,distance=..1] run loot spawn ~ ~ ~ loot </span><span class="se">{{</span><span class="s2">pools:[</span><span class="se">{{</span><span class="s2">entries:[</span><span class="se">{{</span><span class="s2">type:&quot;minecraft:item&quot;,name:&quot;minecraft:glass&quot;</span><span class="se">}}</span><span class="s2">],rolls:1</span><span class="se">}}</span><span class="s2">]</span><span class="se">}}</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">,</span> <span class="n">prepend</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+				<span class="c1"># Handle no silk touch drop</span>
+				<span class="n">no_silk_touch_drop</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">JsonDict</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">NO_SILK_TOUCH_DROP</span><span class="p">]</span>
+				<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">no_silk_touch_drop</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+					<span class="n">item_to_drop</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">no_silk_touch_drop</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+					<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">no_silk_touch_drop</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;count&quot;</span><span class="p">),</span> <span class="nb">int</span><span class="p">):</span>
+						<span class="n">item_count_min</span> <span class="o">=</span> <span class="n">no_silk_touch_drop</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span>
+						<span class="n">item_count_max</span> <span class="o">=</span> <span class="n">no_silk_touch_drop</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span>
+					<span class="k">else</span><span class="p">:</span>
+						<span class="n">item_count_min</span> <span class="o">=</span> <span class="n">no_silk_touch_drop</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">][</span><span class="s2">&quot;min&quot;</span><span class="p">]</span>
+						<span class="n">item_count_max</span> <span class="o">=</span> <span class="n">no_silk_touch_drop</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">][</span><span class="s2">&quot;max&quot;</span><span class="p">]</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">item_to_drop</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">no_silk_touch_drop</span>
+					<span class="n">item_count_min</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+					<span class="n">item_count_max</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+				<span class="k">if</span> <span class="s1">&#39;:&#39;</span> <span class="ow">in</span> <span class="n">item_to_drop</span><span class="p">:</span>
+					<span class="n">silk_text</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;execute if score #is_silk_touch </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s1">.data matches 0 run data modify entity @s Item.id set value &quot;</span><span class="si">{</span><span class="n">item_to_drop</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">silk_text</span> <span class="o">=</span> <span class="p">(</span>
+						<span class="sa">f</span><span class="s2">&quot;execute if score #is_silk_touch </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data matches 0 run data modify entity @s Item.id set from storage </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:items all.</span><span class="si">{</span><span class="n">item_to_drop</span><span class="si">}</span><span class="s2">.id&quot;</span>
+						<span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">execute if score #is_silk_touch </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data matches 0 run &quot;</span>
+						<span class="sa">f</span><span class="s2">&quot;data modify entity @s Item.components set from storage </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:items all.</span><span class="si">{</span><span class="n">item_to_drop</span><span class="si">}</span><span class="s2">.components&quot;</span>
+					<span class="p">)</span>
+				<span class="k">if</span> <span class="n">item_count_min</span> <span class="o">==</span> <span class="n">item_count_max</span> <span class="ow">and</span> <span class="n">item_count_min</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+					<span class="n">silk_text</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">execute if score #is_silk_touch </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data matches 0 run scoreboard players set #multiplier </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data </span><span class="si">{</span><span class="n">item_count_min</span><span class="si">}</span><span class="s2">&quot;</span>
+					<span class="n">silk_text</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">execute if score #is_silk_touch </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data matches 0 run scoreboard players operation #item_count </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data *= #multiplier </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data&quot;</span>
+				<span class="k">elif</span> <span class="n">item_count_min</span> <span class="o">&lt;</span> <span class="n">item_count_max</span><span class="p">:</span>
+					<span class="n">silk_text</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">execute if score #is_silk_touch </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data matches 0 run scoreboard players set #divider </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data 100&quot;</span>
+					<span class="n">silk_text</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">execute if score #is_silk_touch </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data matches 0 store result score #multiplier </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data run random value </span><span class="si">{</span><span class="n">item_count_min</span><span class="o">*</span><span class="mi">100</span><span class="si">}</span><span class="s2">..</span><span class="si">{</span><span class="n">item_count_max</span><span class="o">*</span><span class="mi">100</span><span class="si">}</span><span class="s2">&quot;</span>
+					<span class="n">silk_text</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">execute if score #is_silk_touch </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data matches 0 run scoreboard players operation #item_count </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data *= #multiplier </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data&quot;</span>
+					<span class="n">silk_text</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">execute if score #is_silk_touch </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data matches 0 run scoreboard players operation #item_count </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data /= #divider </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data&quot;</span>
+				<span class="n">content</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2"># If silk touch applied</span>
+<span class="s2">execute if score #is_silk_touch </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data matches 1 run data modify entity @s Item.id set from storage </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:items all.</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">.id</span>
+<span class="s2">execute if score #is_silk_touch </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data matches 1 run data modify entity @s Item.components set from storage </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:items all.</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">.components</span>
+
+<span class="s2"># Else, no silk touch</span>
+<span class="si">{</span><span class="n">silk_text</span><span class="si">}</span>
+<span class="s2">&quot;&quot;&quot;</span>
+				<span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">VANILLA_BLOCK</span><span class="p">)</span> <span class="o">==</span> <span class="n">VANILLA_BLOCK_FOR_ORES</span><span class="p">:</span>
+					<span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2"># Get item count in every case</span>
+<span class="s2">execute store result entity @s Item.count byte 1 run scoreboard players get #item_count </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data</span>
+<span class="s2">&quot;&quot;&quot;</span>
+			<span class="c1"># If growing seed, call the loot table function</span>
+			<span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">GROWING_SEED</span><span class="p">):</span>
+				<span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2"># Check if the seed is fully grown</span>
+<span class="s2">function </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">/is_fully_grown</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+			<span class="c1"># Write the function</span>
+			<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">/replace_item&quot;</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+
+
+	<span class="c1"># Write the used_vanilla_blocks tag, the predicate to check the blocks with the tag and an advanced one</span>
+	<span class="n">VANILLA_BLOCKS_TAG</span> <span class="o">=</span> <span class="s2">&quot;used_vanilla_blocks&quot;</span>
+	<span class="n">listed_blocks</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">unique_blocks_sorted</span> <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="n">CUSTOM_BLOCK_ALTERNATIVE</span><span class="p">)</span>
+	<span class="k">if</span> <span class="s2">&quot;minecraft:cauldron&quot;</span> <span class="ow">in</span> <span class="n">listed_blocks</span><span class="p">:</span>
+		<span class="n">listed_blocks</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">&quot;minecraft:cauldron&quot;</span><span class="p">)</span>
+		<span class="n">listed_blocks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;#minecraft:cauldrons&quot;</span><span class="p">)</span>
+
+	<span class="c1"># Create block tag</span>
+	<span class="n">ctx</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">ns</span><span class="p">]</span><span class="o">.</span><span class="n">block_tags</span><span class="p">[</span><span class="n">VANILLA_BLOCKS_TAG</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_json_encoder</span><span class="p">(</span><span class="n">BlockTag</span><span class="p">({</span><span class="s2">&quot;values&quot;</span><span class="p">:</span> <span class="n">listed_blocks</span><span class="p">}))</span>
+
+	<span class="c1"># Create predicate</span>
+	<span class="n">pred</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;condition&quot;</span><span class="p">:</span> <span class="s2">&quot;minecraft:location_check&quot;</span><span class="p">,</span> <span class="s2">&quot;predicate&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;block&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;blocks&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;#</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">VANILLA_BLOCKS_TAG</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}}}</span>
+	<span class="n">ctx</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">ns</span><span class="p">]</span><span class="o">.</span><span class="n">predicates</span><span class="p">[</span><span class="s2">&quot;check_vanilla_blocks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_json_encoder</span><span class="p">(</span><span class="n">Predicate</span><span class="p">(</span><span class="n">pred</span><span class="p">))</span>
+
+	<span class="c1"># Create advanced predicate</span>
+	<span class="n">advanced_predicate</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;condition&quot;</span><span class="p">:</span> <span class="s2">&quot;minecraft:any_of&quot;</span><span class="p">,</span> <span class="s2">&quot;terms&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+	<span class="k">for</span> <span class="n">block_id</span> <span class="ow">in</span> <span class="n">unique_blocks_sorted</span><span class="p">:</span>
+		<span class="c1"># Replace &quot;:&quot; with &quot;_&quot; for the block name</span>
+		<span class="n">block_underscore</span> <span class="o">=</span> <span class="n">block_id</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+
+		<span class="c1"># Special case for cauldron</span>
+		<span class="k">if</span> <span class="n">block_id</span> <span class="o">==</span> <span class="s2">&quot;minecraft:cauldron&quot;</span><span class="p">:</span>
+			<span class="n">block_id</span> <span class="o">=</span> <span class="s2">&quot;#minecraft:cauldrons&quot;</span>
+
+		<span class="c1"># Create the predicate for the block</span>
+		<span class="k">if</span> <span class="n">block_id</span> <span class="o">!=</span> <span class="n">CUSTOM_BLOCK_ALTERNATIVE</span><span class="p">:</span>
+			<span class="n">pred</span> <span class="o">=</span> <span class="p">{</span>
+				<span class="s2">&quot;condition&quot;</span><span class="p">:</span> <span class="s2">&quot;minecraft:entity_properties&quot;</span><span class="p">,</span> <span class="s2">&quot;entity&quot;</span><span class="p">:</span> <span class="s2">&quot;this&quot;</span><span class="p">,</span>
+				<span class="s2">&quot;predicate&quot;</span><span class="p">:</span> <span class="p">{</span>
+					<span class="s2">&quot;nbt&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">{{</span><span class="s2">Tags:[</span><span class="se">\&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.vanilla.</span><span class="si">{</span><span class="n">block_underscore</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">]</span><span class="se">}}</span><span class="s2">&quot;</span><span class="p">,</span>
+					<span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="s2">&quot;block&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="s2">&quot;blocks&quot;</span><span class="p">:</span> <span class="n">block_id</span> <span class="p">}}</span>
+				<span class="p">}</span>
+			<span class="p">}</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">pred</span> <span class="o">=</span> <span class="p">{</span>
+				<span class="s2">&quot;condition&quot;</span><span class="p">:</span> <span class="s2">&quot;minecraft:entity_properties&quot;</span><span class="p">,</span> <span class="s2">&quot;entity&quot;</span><span class="p">:</span> <span class="s2">&quot;this&quot;</span><span class="p">,</span>
+				<span class="s2">&quot;predicate&quot;</span><span class="p">:</span> <span class="p">{</span>
+					<span class="s2">&quot;nbt&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">{{</span><span class="s2">Tags:[</span><span class="se">\&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.vanilla.</span><span class="si">{</span><span class="n">block_underscore</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">]</span><span class="se">}}</span><span class="s2">&quot;</span><span class="p">,</span>
+					<span class="s2">&quot;slots&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;contents&quot;</span><span class="p">:{</span><span class="s2">&quot;predicates&quot;</span><span class="p">:{</span><span class="s2">&quot;minecraft:custom_data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="n">ns</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;item_frame_destroy&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}}}}}</span>
+				<span class="p">}</span>
+			<span class="p">}</span>
+		<span class="n">advanced_predicate</span><span class="p">[</span><span class="s2">&quot;terms&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pred</span><span class="p">)</span>
+	<span class="n">ctx</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">ns</span><span class="p">]</span><span class="o">.</span><span class="n">predicates</span><span class="p">[</span><span class="s2">&quot;advanced_check_vanilla_blocks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_json_encoder</span><span class="p">(</span><span class="n">Predicate</span><span class="p">(</span><span class="n">advanced_predicate</span><span class="p">))</span>
+
+	<span class="c1"># Write a destroy check every 2 ticks, every second, and every 5 seconds</span>
+	<span class="n">ore_block</span> <span class="o">=</span> <span class="n">VANILLA_BLOCK_FOR_ORES</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span>
+	<span class="n">score_check</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;score #total_custom_blocks </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data matches 1..&quot;</span>
+	<span class="n">write_versioned_function</span><span class="p">(</span><span class="s2">&quot;tick_2&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2"># 2 ticks destroy detection (item_display only)</span>
+<span class="s2">execute if </span><span class="si">{</span><span class="n">score_check</span><span class="si">}</span><span class="s2"> as @e[type=item_display,tag=</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.custom_block,tag=!</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.vanilla.</span><span class="si">{</span><span class="n">ore_block</span><span class="si">}</span><span class="s2">,predicate=!</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:check_vanilla_blocks] at @s run function </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/destroy</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+	<span class="n">write_versioned_function</span><span class="p">(</span><span class="s2">&quot;second&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2"># 1 second break detection (any custom block)</span>
+<span class="s2">execute if </span><span class="si">{</span><span class="n">score_check</span><span class="si">}</span><span class="s2"> as @e[type=#</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks,tag=</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.custom_block,tag=!</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.vanilla.</span><span class="si">{</span><span class="n">ore_block</span><span class="si">}</span><span class="s2">,predicate=!</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:advanced_check_vanilla_blocks] at @s run function </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/destroy</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+	<span class="n">write_versioned_function</span><span class="p">(</span><span class="s2">&quot;second_5&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2"># 5 seconds break detection (item display only)</span>
+<span class="s2">execute if </span><span class="si">{</span><span class="n">score_check</span><span class="si">}</span><span class="s2"> as @e[type=item_display,tag=</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.custom_block,predicate=!</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:advanced_check_vanilla_blocks] at @s run function </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/destroy</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">has_growing_seed</span><span class="p">:</span>
+		<span class="n">write_versioned_function</span><span class="p">(</span><span class="s2">&quot;second_5&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2"># 5 seconds growing seed break detection (below block check)</span>
+<span class="s2">execute if score #total_growing_seeds </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data matches 1.. as @e[type=#</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks,tag=</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.growing_seed] at @s run function </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/destroy_growing_seeds</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+	<span class="c1"># Write the entity type tag for custom blocks</span>
+	<span class="n">ctx</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">ns</span><span class="p">]</span><span class="o">.</span><span class="n">entity_type_tags</span><span class="p">[</span><span class="s2">&quot;custom_blocks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_json_encoder</span><span class="p">(</span><span class="n">EntityTypeTag</span><span class="p">({</span><span class="s2">&quot;values&quot;</span><span class="p">:</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">custom_block_entities</span><span class="p">)}))</span>
+
+	<span class="c1">## Custom ores break detection (if any custom ore)</span>
+	<span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">VANILLA_BLOCK</span><span class="p">)</span> <span class="o">==</span> <span class="n">VANILLA_BLOCK_FOR_ORES</span> <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">Mem</span><span class="o">.</span><span class="n">definitions</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+		<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:calls/common_signals/new_item&quot;</span><span class="p">,</span>
+<span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2"># If the item is from a custom ore, launch the on_ore_destroyed function</span>
+<span class="s2">execute if data entity @s Item.components.&quot;minecraft:custom_data&quot;.common_signals.temp at @s align xyz run function </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:calls/common_signals/on_ore_destroyed</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;common_signals:signals/on_new_item&quot;</span><span class="p">])</span>
+		<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:calls/common_signals/on_ore_destroyed&quot;</span><span class="p">,</span>
+<span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2"># Get in a score the item count and if it is a silk touch</span>
+<span class="s2">scoreboard players set #item_count </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data 0</span>
+<span class="s2">scoreboard players set #is_silk_touch </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data 0</span>
+<span class="s2">execute store result score #item_count </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data run data get entity @s Item.count</span>
+<span class="s2">execute store success score #is_silk_touch </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.data if data entity @s Item.components.&quot;minecraft:custom_data&quot;.common_signals.silk_touch</span>
+
+<span class="s2"># Try to destroy the block</span>
+<span class="s2">function </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:calls/common_signals/custom_block_destroy</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+
+	<span class="c1"># Common signals destroy tag</span>
+	<span class="n">write_function</span><span class="p">(</span>
+		<span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:calls/common_signals/custom_block_destroy&quot;</span><span class="p">,</span>
+		<span class="sa">f</span><span class="s2">&quot;execute as @e[tag=</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.custom_block,dx=0,dy=0,dz=0] at @s run function </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/destroy&quot;</span><span class="p">,</span>
+		<span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;common_signals:signals/custom_block_destroy&quot;</span><span class="p">]</span>
+	<span class="p">)</span>
+
+	<span class="c1">## Detect alternative custom blocks destroy</span>
+	<span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">VANILLA_BLOCK</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;contents&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">Mem</span><span class="o">.</span><span class="n">definitions</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+		<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:calls/common_signals/new_item&quot;</span><span class="p">,</span>
+<span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2"># If the item is from a custom block alternative, launch the item_frame destroy function</span>
+<span class="s2">execute if data entity @s Item.components.&quot;minecraft:custom_data&quot;.</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.item_frame_destroy at @s align xyz run function </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:calls/common_signals/on_item_frame_destroy</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;common_signals:signals/on_new_item&quot;</span><span class="p">])</span>
+		<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:calls/common_signals/on_item_frame_destroy&quot;</span><span class="p">,</span>
+<span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2"># Try to destroy the block</span>
+<span class="s2">function </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:calls/common_signals/custom_block_destroy</span>
+
+<span class="s2"># If still alive, it means that the item_frame has been destroyed too,</span>
+<span class="s2">execute at @s if entity @s[distance=..1] run function </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:calls/common_signals/item_frame_destroy_alt</span>
+<span class="s2">execute at @s if entity @s[distance=..1] as @n[type=item,nbt=</span><span class="se">{{</span><span class="s2">Item:</span><span class="se">{{</span><span class="s2">id:&quot;minecraft:item_frame&quot;</span><span class="se">}}}}</span><span class="s2">,distance=..1] run function </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:calls/common_signals/item_frame_destroy_alt</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+		<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:calls/common_signals/item_frame_destroy_alt&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2"># Give a new tag to the item frame</span>
+<span class="s2">data modify storage </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:temp Tags set value []</span>
+<span class="s2">data modify storage </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:temp Tags append from entity @s Item.components.&quot;minecraft:custom_data&quot;.</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.alt_destroy</span>
+<span class="s2">data modify entity @n[type=item,nbt=</span><span class="se">{{</span><span class="s2">Item:</span><span class="se">{{</span><span class="s2">id:&quot;minecraft:item_frame&quot;</span><span class="se">}}}}</span><span class="s2">,distance=..1] Tags set from storage </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:temp Tags</span>
+
+<span class="s2"># Remove the custom block &quot;properly&quot;</span>
+<span class="s2">execute as @n[type=item,nbt=</span><span class="se">{{</span><span class="s2">Item:</span><span class="se">{{</span><span class="s2">id:&quot;minecraft:item_frame&quot;</span><span class="se">}}}}</span><span class="s2">,distance=..1] run function </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/_groups/</span><span class="si">{</span><span class="n">CUSTOM_BLOCK_ALTERNATIVE</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">,</span><span class="s1">&#39;_&#39;</span><span class="p">)</span><span class="si">}</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+
+	<span class="c1"># Add line in the stats_custom_blocks file</span>
+	<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:_stats_custom_blocks&quot;</span><span class="p">,</span>
+		<span class="sa">f</span><span class="s1">&#39;tellraw @s [</span><span class="se">{{</span><span class="s1">&quot;text&quot;:&quot;- Total custom blocks: &quot;,&quot;color&quot;:&quot;dark_aqua&quot;</span><span class="se">}}</span><span class="s1">,</span><span class="se">{{</span><span class="s1">&quot;score&quot;:</span><span class="se">{{</span><span class="s1">&quot;name&quot;:&quot;#total_custom_blocks&quot;,&quot;objective&quot;:&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s1">.data&quot;</span><span class="se">}}</span><span class="s1">,&quot;color&quot;:&quot;aqua&quot;</span><span class="se">}}</span><span class="s1">]&#39;</span>
+	<span class="p">)</span>
+	<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:_stats_custom_blocks&quot;</span><span class="p">,</span>
+		<span class="sa">f</span><span class="s1">&#39;scoreboard players add #total_custom_blocks </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s1">.data 0&#39;</span><span class="p">,</span>
+		<span class="n">prepend</span> <span class="o">=</span> <span class="kc">True</span>
+	<span class="p">)</span>
+	<span class="k">if</span> <span class="n">has_growing_seed</span><span class="p">:</span>
+		<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:_stats_custom_blocks&quot;</span><span class="p">,</span>
+			<span class="sa">f</span><span class="s1">&#39;tellraw @s [</span><span class="se">{{</span><span class="s1">&quot;text&quot;:&quot;- Total growing seeds: &quot;,&quot;color&quot;:&quot;dark_aqua&quot;</span><span class="se">}}</span><span class="s1">,</span><span class="se">{{</span><span class="s1">&quot;score&quot;:</span><span class="se">{{</span><span class="s1">&quot;name&quot;:&quot;#total_growing_seeds&quot;,&quot;objective&quot;:&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s1">.data&quot;</span><span class="se">}}</span><span class="s1">,&quot;color&quot;:&quot;aqua&quot;</span><span class="se">}}</span><span class="s1">]&#39;</span>
+		<span class="p">)</span>
+		<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:_stats_custom_blocks&quot;</span><span class="p">,</span>
+			<span class="sa">f</span><span class="s1">&#39;scoreboard players add #total_growing_seeds </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s1">.data 0&#39;</span><span class="p">,</span>
+			<span class="n">prepend</span> <span class="o">=</span> <span class="kc">True</span>
+		<span class="p">)</span>
+
+
+
+	<span class="c1">## Custom blocks using player_head</span>
+	<span class="k">for</span> <span class="n">item</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">Mem</span><span class="o">.</span><span class="n">definitions</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+		<span class="n">obj</span> <span class="o">=</span> <span class="n">Item</span><span class="o">.</span><span class="n">from_id</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">base_item</span> <span class="o">==</span> <span class="n">CUSTOM_BLOCK_HEAD</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">VANILLA_BLOCK</span><span class="p">):</span>
+
+			<span class="c1"># Make advancement</span>
+			<span class="n">adv</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">=</span> <span class="p">{</span>
+				<span class="s2">&quot;criteria&quot;</span><span class="p">:</span> <span class="p">{</span>
+					<span class="s2">&quot;requirement&quot;</span><span class="p">:</span> <span class="p">{</span>
+						<span class="s2">&quot;trigger&quot;</span><span class="p">:</span> <span class="s2">&quot;minecraft:placed_block&quot;</span><span class="p">,</span>
+						<span class="s2">&quot;conditions&quot;</span><span class="p">:</span> <span class="p">{</span>
+							<span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="p">[</span>
+								<span class="p">{</span>
+									<span class="s2">&quot;condition&quot;</span><span class="p">:</span> <span class="s2">&quot;minecraft:location_check&quot;</span><span class="p">,</span>
+									<span class="s2">&quot;predicate&quot;</span><span class="p">:</span> <span class="p">{</span>
+										<span class="s2">&quot;block&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;predicates&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;minecraft:custom_data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="n">ns</span><span class="p">:</span> <span class="p">{</span><span class="n">item</span><span class="p">:</span> <span class="kc">True</span><span class="p">}}}}</span>
+									<span class="p">}</span>
+								<span class="p">}</span>
+							<span class="p">]</span>
+						<span class="p">}</span>
+					<span class="p">}</span>
+				<span class="p">},</span>
+				<span class="s2">&quot;requirements&quot;</span><span class="p">:[[</span><span class="s2">&quot;requirement&quot;</span><span class="p">]],</span>
+				<span class="s2">&quot;rewards&quot;</span><span class="p">:{}</span>
+			<span class="p">}</span>
+			<span class="n">adv</span><span class="p">[</span><span class="s2">&quot;rewards&quot;</span><span class="p">][</span><span class="s2">&quot;function&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/_player_head/search_</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">&quot;</span>
+			<span class="n">ctx</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">ns</span><span class="p">]</span><span class="o">.</span><span class="n">advancements</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;custom_block_head/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_json_encoder</span><span class="p">(</span><span class="n">Advancement</span><span class="p">(</span><span class="n">adv</span><span class="p">),</span> <span class="n">max_level</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+			<span class="c1">## Make search function</span>
+			<span class="n">content</span> <span class="o">=</span> <span class="s2">&quot;# Search where the head has been placed</span><span class="se">\n</span><span class="s2">&quot;</span>
+			<span class="n">mid_x</span><span class="p">,</span> <span class="n">mid_y</span><span class="p">,</span> <span class="n">mid_z</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">//</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">CUSTOM_BLOCK_HEAD_CUBE_RADIUS</span><span class="p">]</span>
+
+			<span class="c1"># Generate main search function that calls x-loop</span>
+			<span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="n">mid_x</span><span class="p">,</span> <span class="n">mid_x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+				<span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;execute positioned ~</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2"> ~ ~ run function </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/_player_head/search_</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">_y</span><span class="se">\n</span><span class="s2">&quot;</span>
+			<span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"># Advancement</span><span class="se">\n</span><span class="s2">advancement revoke @s only </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_block_head/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+			<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/_player_head/search_</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+
+			<span class="c1"># Generate y-loop function</span>
+			<span class="n">content_y</span> <span class="o">=</span> <span class="s2">&quot;# Search y coordinates</span><span class="se">\n</span><span class="s2">&quot;</span>
+			<span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="n">mid_y</span><span class="p">,</span> <span class="n">mid_y</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+				<span class="n">content_y</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;execute positioned ~ ~</span><span class="si">{</span><span class="n">y</span><span class="si">}</span><span class="s2"> ~ run function </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/_player_head/search_</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">_z</span><span class="se">\n</span><span class="s2">&quot;</span>
+			<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/_player_head/search_</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">_y&quot;</span><span class="p">,</span> <span class="n">content_y</span><span class="p">)</span>
+
+			<span class="c1"># Generate z-loop function</span>
+			<span class="n">content_z</span> <span class="o">=</span> <span class="s2">&quot;# Search z coordinates</span><span class="se">\n</span><span class="s2">&quot;</span>
+			<span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="n">mid_z</span><span class="p">,</span> <span class="n">mid_z</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+				<span class="n">content_z</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;execute positioned ~ ~ ~</span><span class="si">{</span><span class="n">z</span><span class="si">}</span><span class="s2"> if data block ~ ~ ~ components.</span><span class="se">\&quot;</span><span class="s2">minecraft:custom_data</span><span class="se">\&quot;</span><span class="s2">.</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2"> run function </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">/place_main</span><span class="se">\n</span><span class="s2">&quot;</span>
+			<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:custom_blocks/_player_head/search_</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">_z&quot;</span><span class="p">,</span> <span class="n">content_z</span><span class="p">)</span></div>
+
+
+</pre></div>
+</article><footer class="bz-article-footer">
+  
+  
+    <nav class="bz-related-pages" aria-label="Related pages navigation"></nav>
+  
+
+</footer></main>
+  </div><footer class="bz-footer">
+  <div class="bz-footer-copyright"><p class="bz-copyright">© Copyright 2025, Stoupy</p><p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://github.com/aksiome/breeze">Breeze theme</a>.
+  </p>
+</div><div class="bz-external-links">
+  <a
+    href="https://github.com/Stoupy51/stewbeet"
+    aria-label="GitHub"
+    data-tooltip="GitHub"
+    target="_blank"
+  >
+    <svg
+      stroke="currentColor"
+      fill="currentColor"
+      stroke-width="0"
+      viewBox="0 0 16 16"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+      ></path>
+    </svg>
+  </a></div>
+</footer><a href="#" class="bz-back-to-top">
+    <svg class="sized" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m5 12 7-7 7 7"/><path d="M12 19V5"/>
+    </svg>
+    <span>Back to top</span>
+  </a>
+  <label class="bz-overlay bz-overlay-primary" for="bz-sidebar-primary"></label>
+  <label class="bz-overlay bz-overlay-secondary" for="bz-sidebar-secondary"></label>
+  <input type="checkbox" name="bz-sidebar-primary" id="bz-sidebar-primary" aria-label="Toggle site navigation sidebar">
+  <input type="checkbox" name="bz-sidebar-secondary" id="bz-sidebar-secondary" aria-label="Toggle table of contents sidebar">
+  </body>
+</html>

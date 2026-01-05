@@ -1,0 +1,8 @@
+stewbeet.plugins.compatibilities.neo\_enchant package
+=====================================================
+
+.. automodule:: stewbeet.plugins.compatibilities.neo_enchant
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

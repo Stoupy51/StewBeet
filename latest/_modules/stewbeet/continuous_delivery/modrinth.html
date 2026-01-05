@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>stewbeet.continuous_delivery.modrinth &#8212; StewBeet</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8e8a900e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/treeview.css?v=f8e9195c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/breeze.css?v=93f23127" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=1637c05a" />
+  <noscript>
+    <style>
+      .bz-js-only { display: none !important; }
+    </style>
+  </noscript>
+  
+    <script defer src="../../../_static/documentation_options.js?v=6d4b8ac6"></script>
+    <script defer src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script defer src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script defer src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script defer src="../../../_static/copybutton.js?v=18a8d5f5"></script>
+    <script defer src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer src="../../../_static/treeview.js?v=265ad9b8"></script>
+    <script defer src="../../../_static/scripts/breeze.js?v=8ef74970"></script>
+  <script data-cfasync="false">
+    const mode = localStorage.getItem("breeze-mode") || "auto";
+    document.documentElement.dataset.mode = mode;
+    if (mode === "auto") {
+      const prefers = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+      document.documentElement.dataset.theme = prefers;
+    } else {
+      document.documentElement.dataset.theme = mode;
+    }
+  </script>
+    <link rel="icon" href="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /><meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head><body>
+  
+  <div class="bz-skip-to-content">
+    <a href="#bz-main-content">Skip to main content</a>
+  </div><header class="bz-header-main">
+  <div class="bz-header-start"><a class="bz-header-brand" href="../../../index.html"><img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png" alt="Site Logo" /><span>StewBeet</span>
+</a></div>
+  <div class="bz-header-end"><div class="bz-search-button">
+  <a
+    href="../../../search.html#q"
+    aria-label="Search the docs"
+    data-tooltip="Search the docs"
+  >
+    <svg
+      class="sized"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 -1 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+      />
+    </svg>
+    <span>Search</span>
+    <kbd>Ctrl+K</kbd>
+  </a>
+</div><div class="bz-theme-switcher">
+  <button aria-label="Switch theme" data-tooltip="Switch theme">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="only-light" fill="currentColor">
+      <path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm5.657-8.157a.75.75 0 0 1 0 1.061l-1.061 1.06a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l1.06-1.06a.75.75 0 0 1 1.06 0Zm-9.193 9.193a.75.75 0 0 1 0 1.06l-1.06 1.061a.75.75 0 1 1-1.061-1.06l1.06-1.061a.75.75 0 0 1 1.061 0ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0ZM3 8a.75.75 0 0 1-.75.75H.75a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 3 8Zm13 0a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 16 8Zm-8 5a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13Zm3.536-1.464a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 0 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061ZM2.343 2.343a.75.75 0 0 1 1.061 0l1.06 1.061a.751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018l-1.06-1.06a.75.75 0 0 1 0-1.06Z"></path>
+    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="only-dark" fill="currentColor">
+      <path d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"></path>
+    </svg>
+  </button>
+</div><div class="bz-external-links">
+  <a
+    href="https://github.com/Stoupy51/stewbeet"
+    aria-label="GitHub"
+    data-tooltip="GitHub"
+    target="_blank"
+  >
+    <svg
+      stroke="currentColor"
+      fill="currentColor"
+      stroke-width="0"
+      viewBox="0 0 16 16"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+      ></path>
+    </svg>
+  </a></div></div>
+</header><nav class="bz-header-tabs" aria-label="Primary Navigation">
+  <label
+    class="bz-sidebar-primary-toggle"
+    for="bz-sidebar-primary"
+    role="button"
+    tabindex="0"
+  >
+    <svg class="sized muted" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path
+        fill="none"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M3.75 6.75h16.5M3.75 12H12m-8.25 5.25h12.5"
+      />
+    </svg>
+  </label><ul><li class="toctree-l1"><a class="reference internal" href="../../../modules/stewbeet.html">stewbeet package</a></li></ul><div class="bz-dropdown">
+    <button aria-haspopup="true" aria-expanded="false">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <g
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+        >
+          <circle cx="12" cy="12" r="1" />
+          <circle cx="19" cy="12" r="1" />
+          <circle cx="5" cy="12" r="1" />
+        </g>
+      </svg>
+    </button>
+    <ul role="menu" aria-hidden="true"></ul>
+  </div>
+</nav><div class="bz-content"><main id="bz-main-content"><header class="bz-article-header">
+  
+  
+    <nav class="bz-breadcrumbs" aria-label="Breadcrumb">
+  <ol>
+    <li class="bz-breadcrumbs-home">
+      <a href="../../../index.html">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </a>
+    </li><li class="bz-breadcrumbs-parent">
+      <a href="../../index.html">Module code</a>
+    </li><li class="bz-breadcrumbs-parent">
+      <a href="../../stewbeet.html">stewbeet</a>
+    </li><li class="bz-breadcrumbs-current">
+      <span>stewbeet.continuous_delivery.modrinth</span>
+    </li>
+  </ol>
+</nav>
+  
+
+  <label
+    class="bz-sidebar-secondary-toggle"
+    for="bz-sidebar-secondary"
+    role="button"
+    tabindex="0"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="sized muted">
+      <path
+        fill="none"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M3.75 6.75H20.25 M11.25 12H20.25 M7.75 17.25H20.25"
+      />
+    </svg>
+  </label>
+</header><article class="bz-article-main" role="main">
+  <h1>Source code for stewbeet.continuous_delivery.modrinth</h1><div class="highlight"><pre>
+<span></span>
+<span class="c1"># Imports</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">zipfile</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">stouputils</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">stp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">beet.core.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">JsonDict</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.cd_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_supported_versions</span>
+
+<span class="c1"># Constants</span>
+<span class="n">MODRINTH_API_URL</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;https://api.modrinth.com/v2&quot;</span>
+<span class="n">PROJECT_ENDPOINT</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">MODRINTH_API_URL</span><span class="si">}</span><span class="s2">/project&quot;</span>
+<span class="n">VERSION_ENDPOINT</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">MODRINTH_API_URL</span><span class="si">}</span><span class="s2">/version&quot;</span>
+
+<div class="viewcode-block" id="validate_credentials">
+<a class="viewcode-back" href="../../../modules/stewbeet.continuous_delivery.modrinth.html#stewbeet.continuous_delivery.modrinth.validate_credentials">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_credentials</span><span class="p">(</span><span class="n">credentials</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Get and validate Modrinth credentials</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		credentials (dict[str, str]): Credentials for the Modrinth API</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		str: API key for Modrinth</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">if</span> <span class="s2">&quot;modrinth_api_key&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">credentials</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The credentials file must contain a &#39;modrinth_api_key&#39; key, which is a PAT (Personal Access Token) for the Modrinth API: https://modrinth.com/settings/pats&quot;</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">credentials</span><span class="p">[</span><span class="s2">&quot;modrinth_api_key&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="validate_config">
+<a class="viewcode-back" href="../../../modules/stewbeet.continuous_delivery.modrinth.html#stewbeet.continuous_delivery.modrinth.validate_config">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_config</span><span class="p">(</span><span class="n">modrinth_config</span><span class="p">:</span> <span class="n">JsonDict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Validate Modrinth configuration</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		modrinth_config (JsonDict): Configuration for the Modrinth project</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		str: Project name on Modrinth</span>
+<span class="sd">		str: Version of the project</span>
+<span class="sd">		str: Slug (namespace) of the project</span>
+<span class="sd">		str: Summary of the project</span>
+<span class="sd">		str: Description in Markdown format</span>
+<span class="sd">		str: Version type (release, beta, alpha)</span>
+<span class="sd">		str: Build folder path</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">required_keys</span> <span class="o">=</span> <span class="p">[</span>
+		<span class="s2">&quot;project_name&quot;</span><span class="p">,</span> <span class="s2">&quot;version&quot;</span><span class="p">,</span> <span class="s2">&quot;slug&quot;</span><span class="p">,</span> <span class="s2">&quot;summary&quot;</span><span class="p">,</span>
+		<span class="s2">&quot;description_markdown&quot;</span><span class="p">,</span> <span class="s2">&quot;version_type&quot;</span><span class="p">,</span> <span class="s2">&quot;build_folder&quot;</span>
+	<span class="p">]</span>
+	<span class="n">error_messages</span> <span class="o">=</span> <span class="p">{</span>
+		<span class="s2">&quot;project_name&quot;</span><span class="p">:</span> <span class="s2">&quot;name of the project on Modrinth&quot;</span><span class="p">,</span>
+		<span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;version of the project&quot;</span><span class="p">,</span>
+		<span class="s2">&quot;slug&quot;</span><span class="p">:</span> <span class="s2">&quot;namespace of the project&quot;</span><span class="p">,</span>
+		<span class="s2">&quot;summary&quot;</span><span class="p">:</span> <span class="s2">&quot;summary of the project&quot;</span><span class="p">,</span>
+		<span class="s2">&quot;description_markdown&quot;</span><span class="p">:</span> <span class="s2">&quot;description of the project in Markdown format&quot;</span><span class="p">,</span>
+		<span class="s2">&quot;version_type&quot;</span><span class="p">:</span> <span class="s2">&quot;version type of the project (release, beta, alpha)&quot;</span><span class="p">,</span>
+		<span class="s2">&quot;build_folder&quot;</span><span class="p">:</span> <span class="s2">&quot;folder containing the build of the project (datapack and resourcepack zip files)&quot;</span>
+	<span class="p">}</span>
+
+	<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">required_keys</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">modrinth_config</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The modrinth_config dictionary must contain a &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; key, which is the </span><span class="si">{</span><span class="n">error_messages</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">modrinth_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;authors&quot;</span><span class="p">),</span> <span class="nb">str</span><span class="p">):</span>
+		<span class="n">modrinth_config</span><span class="p">[</span><span class="s2">&quot;authors&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">modrinth_config</span><span class="p">[</span><span class="s2">&quot;authors&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)]</span>
+
+	<span class="k">return</span> <span class="p">(</span>
+		<span class="n">modrinth_config</span><span class="p">[</span><span class="s2">&quot;project_name&quot;</span><span class="p">],</span>
+		<span class="n">modrinth_config</span><span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">],</span>
+		<span class="n">modrinth_config</span><span class="p">[</span><span class="s2">&quot;slug&quot;</span><span class="p">],</span>
+		<span class="n">modrinth_config</span><span class="p">[</span><span class="s2">&quot;summary&quot;</span><span class="p">],</span>
+		<span class="n">modrinth_config</span><span class="p">[</span><span class="s2">&quot;description_markdown&quot;</span><span class="p">],</span>
+		<span class="n">modrinth_config</span><span class="p">[</span><span class="s2">&quot;version_type&quot;</span><span class="p">],</span>
+		<span class="n">modrinth_config</span><span class="p">[</span><span class="s2">&quot;build_folder&quot;</span><span class="p">]</span>
+	<span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_project">
+<a class="viewcode-back" href="../../../modules/stewbeet.continuous_delivery.modrinth.html#stewbeet.continuous_delivery.modrinth.get_project">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_project</span><span class="p">(</span><span class="n">slug</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">headers</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Get project from Modrinth</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		slug (str): Project slug/namespace</span>
+<span class="sd">		headers (dict[str, str]): Headers for Modrinth API requests</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		dict: Project data</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">stp</span><span class="o">.</span><span class="n">progress</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Getting project </span><span class="si">{</span><span class="n">slug</span><span class="si">}</span><span class="s2"> from Modrinth&quot;</span><span class="p">)</span>
+	<span class="n">search_response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">PROJECT_ENDPOINT</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">slug</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+	<span class="n">stp</span><span class="o">.</span><span class="n">handle_response</span><span class="p">(</span><span class="n">search_response</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Project not found on Modrinth, with namespace </span><span class="si">{</span><span class="n">slug</span><span class="si">}</span><span class="s2">, please create it manually on https://modrinth.com/&quot;</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">search_response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="update_project_description">
+<a class="viewcode-back" href="../../../modules/stewbeet.continuous_delivery.modrinth.html#stewbeet.continuous_delivery.modrinth.update_project_description">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">update_project_description</span><span class="p">(</span><span class="n">slug</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">description</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">summary</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">headers</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Update project description and summary</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		slug (str): Project slug/namespace</span>
+<span class="sd">		description (str): Project description in Markdown</span>
+<span class="sd">		summary (str): Project summary</span>
+<span class="sd">		headers (dict[str, str]): Headers for Modrinth API requests</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">stp</span><span class="o">.</span><span class="n">progress</span><span class="p">(</span><span class="s2">&quot;Updating project description&quot;</span><span class="p">)</span>
+	<span class="n">update_response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span>
+		<span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">PROJECT_ENDPOINT</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">slug</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+		<span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
+		<span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;body&quot;</span><span class="p">:</span> <span class="n">description</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">summary</span><span class="o">.</span><span class="n">strip</span><span class="p">()}</span>
+	<span class="p">)</span>
+	<span class="n">stp</span><span class="o">.</span><span class="n">handle_response</span><span class="p">(</span><span class="n">update_response</span><span class="p">,</span> <span class="s2">&quot;Failed to update project description&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="handle_existing_version">
+<a class="viewcode-back" href="../../../modules/stewbeet.continuous_delivery.modrinth.html#stewbeet.continuous_delivery.modrinth.handle_existing_version">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">handle_existing_version</span><span class="p">(</span><span class="n">slug</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">headers</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Check and handle existing version</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		slug (str): Project slug/namespace</span>
+<span class="sd">		version (str): Version to check</span>
+<span class="sd">		headers (dict[str, str]): Headers for Modrinth API requests</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		bool: True if we should continue, False otherwise</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">version_response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">PROJECT_ENDPOINT</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">slug</span><span class="si">}</span><span class="s2">/version/</span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">version_response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+		<span class="n">stp</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Version </span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2"> already exists on Modrinth, do you want to delete it? (y/N)&quot;</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nb">input</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">False</span>
+		<span class="n">version_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">version_response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+		<span class="n">delete_response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">VERSION_ENDPOINT</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">version_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+		<span class="n">stp</span><span class="o">.</span><span class="n">handle_response</span><span class="p">(</span><span class="n">delete_response</span><span class="p">,</span> <span class="s2">&quot;Failed to delete the version&quot;</span><span class="p">)</span>
+	<span class="k">elif</span> <span class="n">version_response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span><span class="p">:</span>
+		<span class="n">stp</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Version </span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2"> not found on Modrinth, uploading...&quot;</span><span class="p">)</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">stp</span><span class="o">.</span><span class="n">handle_response</span><span class="p">(</span><span class="n">version_response</span><span class="p">,</span> <span class="s2">&quot;Failed to check if the version already exists&quot;</span><span class="p">)</span>
+	<span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="generate_fabric_metadata">
+<a class="viewcode-back" href="../../../modules/stewbeet.continuous_delivery.modrinth.html#stewbeet.continuous_delivery.modrinth.generate_fabric_metadata">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_fabric_metadata</span><span class="p">(</span><span class="n">mod_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="n">JsonDict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Generate Fabric mod metadata JSON</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		mod_id (str): Mod ID</span>
+<span class="sd">		metadata (dict): Mod metadata</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		str: Fabric mod.json content</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">fabric_mod_json</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">=</span> <span class="p">{</span>
+		<span class="s2">&quot;schemaVersion&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+		<span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;stewbeet_</span><span class="si">{</span><span class="n">mod_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+		<span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">],</span>
+		<span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span>
+		<span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;description&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+		<span class="s2">&quot;authors&quot;</span><span class="p">:</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;authors&quot;</span><span class="p">,</span> <span class="p">[]),</span>
+		<span class="s2">&quot;contact&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;homepage&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;https://modrinth.com/datapack/</span><span class="si">{</span><span class="n">mod_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">},</span>
+		<span class="s2">&quot;license&quot;</span><span class="p">:</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;license&quot;</span><span class="p">,</span> <span class="s2">&quot;All Rights Reserved&quot;</span><span class="p">),</span>
+		<span class="s2">&quot;icon&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">mod_id</span><span class="si">}</span><span class="s2">_pack.png&quot;</span><span class="p">,</span>
+		<span class="s2">&quot;environment&quot;</span><span class="p">:</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span>
+		<span class="s2">&quot;depends&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;fabric-resource-loader-v0&quot;</span><span class="p">:</span> <span class="s2">&quot;*&quot;</span><span class="p">}</span>
+	<span class="p">}</span>
+
+	<span class="c1"># Add optional contact fields</span>
+	<span class="k">if</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sources&quot;</span><span class="p">):</span>
+		<span class="n">fabric_mod_json</span><span class="p">[</span><span class="s2">&quot;contact&quot;</span><span class="p">][</span><span class="s2">&quot;sources&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;sources&quot;</span><span class="p">]</span>
+	<span class="k">if</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;issues&quot;</span><span class="p">):</span>
+		<span class="n">fabric_mod_json</span><span class="p">[</span><span class="s2">&quot;contact&quot;</span><span class="p">][</span><span class="s2">&quot;issues&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;issues&quot;</span><span class="p">]</span>
+	<span class="k">return</span> <span class="n">stp</span><span class="o">.</span><span class="n">json_dump</span><span class="p">(</span><span class="n">fabric_mod_json</span><span class="p">,</span> <span class="n">max_level</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="generate_forge_metadata">
+<a class="viewcode-back" href="../../../modules/stewbeet.continuous_delivery.modrinth.html#stewbeet.continuous_delivery.modrinth.generate_forge_metadata">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_forge_metadata</span><span class="p">(</span><span class="n">mod_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="n">JsonDict</span><span class="p">,</span> <span class="n">is_neoforge</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Generate Forge/NeoForge mod metadata TOML</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		mod_id (str): Mod ID</span>
+<span class="sd">		metadata (dict): Mod metadata</span>
+<span class="sd">		is_neoforge (bool): Whether this is for NeoForge (uses javafml) or Forge (uses lowcodefml)</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		str: mods.toml content</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;description&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="nb">chr</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">n&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
+	<span class="n">authors</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;authors&quot;</span><span class="p">,</span> <span class="p">[]))</span>
+	<span class="n">homepage</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://modrinth.com/datapack/</span><span class="si">{</span><span class="n">mod_id</span><span class="si">}</span><span class="s2">&quot;</span>
+	<span class="n">mod_loader</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&#39;javafml&#39;&quot;</span> <span class="k">if</span> <span class="n">is_neoforge</span> <span class="k">else</span> <span class="s2">&quot;&#39;lowcodefml&#39;&quot;</span>
+	<span class="n">loader_version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&#39;[1,)&#39;&quot;</span> <span class="k">if</span> <span class="n">is_neoforge</span> <span class="k">else</span> <span class="s2">&quot;&#39;[40,)&#39;&quot;</span>
+
+	<span class="n">toml_content</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">modLoader = </span><span class="si">{</span><span class="n">mod_loader</span><span class="si">}</span>
+<span class="s2">loaderVersion = </span><span class="si">{</span><span class="n">loader_version</span><span class="si">}</span>
+<span class="s2">license = &#39;</span><span class="si">{</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;license&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;All Rights Reserved&quot;</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;</span>
+<span class="s2">showAsResourcePack = false</span>
+<span class="s2">mods = [</span>
+<span class="s2">	</span><span class="se">{{</span><span class="s2"> modId = &#39;stewbeet_</span><span class="si">{</span><span class="n">mod_id</span><span class="si">}</span><span class="s2">&#39;, version = &#39;</span><span class="si">{</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;, displayName = &#39;</span><span class="si">{</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;, description = &quot;</span><span class="si">{</span><span class="n">description</span><span class="si">}</span><span class="s2">&quot;, logoFile = &#39;</span><span class="si">{</span><span class="n">mod_id</span><span class="si">}</span><span class="s2">_pack.png&#39;&quot;&quot;&quot;</span>
+
+	<span class="c1"># Add optional fields</span>
+	<span class="k">if</span> <span class="n">homepage</span><span class="p">:</span>
+		<span class="n">update_url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://api.modrinth.com/updates/</span><span class="si">{</span><span class="n">mod_id</span><span class="si">}</span><span class="s2">/forge_updates.json&quot;</span>
+		<span class="k">if</span> <span class="n">is_neoforge</span><span class="p">:</span>
+			<span class="n">update_url</span> <span class="o">+=</span> <span class="s2">&quot;?neoforge=only&quot;</span>
+		<span class="n">toml_content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;, updateJSONURL = &#39;</span><span class="si">{</span><span class="n">update_url</span><span class="si">}</span><span class="s2">&#39;&quot;&quot;&quot;</span>
+	<span class="n">toml_content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;, credits = &#39;Generated by StewBeet&#39;, authors = &#39;</span><span class="si">{</span><span class="n">authors</span><span class="si">}</span><span class="s2">&#39;, displayURL = &#39;</span><span class="si">{</span><span class="n">homepage</span><span class="si">}</span><span class="s2">&#39; </span><span class="se">}}</span><span class="s2">,</span>
+<span class="s2">]</span>
+<span class="s2">&quot;&quot;&quot;</span>
+	<span class="c1"># Add issue tracker if available</span>
+	<span class="k">if</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;issues&quot;</span><span class="p">):</span>
+		<span class="n">toml_content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;issueTrackerURL = &#39;</span><span class="si">{</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;issues&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;</span><span class="se">\n</span><span class="s2">&quot;</span>
+	<span class="k">return</span> <span class="n">toml_content</span></div>
+
+
+<div class="viewcode-block" id="generate_quilt_metadata">
+<a class="viewcode-back" href="../../../modules/stewbeet.continuous_delivery.modrinth.html#stewbeet.continuous_delivery.modrinth.generate_quilt_metadata">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_quilt_metadata</span><span class="p">(</span><span class="n">mod_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="n">JsonDict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Generate Quilt mod metadata JSON</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		mod_id (str): Mod ID</span>
+<span class="sd">		metadata (dict): Mod metadata</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		str: quilt.mod.json content</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1"># Build contributors dictionary</span>
+	<span class="n">contributors</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">=</span> <span class="p">{}</span>
+	<span class="k">for</span> <span class="n">author</span> <span class="ow">in</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;authors&quot;</span><span class="p">,</span> <span class="p">[]):</span>
+		<span class="n">contributors</span><span class="p">[</span><span class="n">author</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Member&quot;</span>
+
+	<span class="c1"># Build contact dictionary</span>
+	<span class="n">contact</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;homepage&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;https://modrinth.com/datapack/</span><span class="si">{</span><span class="n">mod_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span>
+	<span class="k">if</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sources&quot;</span><span class="p">):</span>
+		<span class="n">contact</span><span class="p">[</span><span class="s2">&quot;sources&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;sources&quot;</span><span class="p">]</span>
+	<span class="k">if</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;issues&quot;</span><span class="p">):</span>
+		<span class="n">contact</span><span class="p">[</span><span class="s2">&quot;issues&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;issues&quot;</span><span class="p">]</span>
+
+	<span class="n">quilt_mod_json</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">=</span> <span class="p">{</span>
+		<span class="s2">&quot;schema_version&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+		<span class="s2">&quot;quilt_loader&quot;</span><span class="p">:</span> <span class="p">{</span>
+			<span class="s2">&quot;group&quot;</span><span class="p">:</span> <span class="s2">&quot;com.stewbeet&quot;</span><span class="p">,</span>
+			<span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;stewbeet_</span><span class="si">{</span><span class="n">mod_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+			<span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">],</span>
+			<span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
+				<span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span>
+				<span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;description&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+				<span class="s2">&quot;contributors&quot;</span><span class="p">:</span> <span class="n">contributors</span><span class="p">,</span>
+				<span class="s2">&quot;contact&quot;</span><span class="p">:</span> <span class="n">contact</span><span class="p">,</span>
+				<span class="s2">&quot;icon&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">mod_id</span><span class="si">}</span><span class="s2">_pack.png&quot;</span>
+			<span class="p">},</span>
+			<span class="s2">&quot;intermediate_mappings&quot;</span><span class="p">:</span> <span class="s2">&quot;net.fabricmc:intermediary&quot;</span><span class="p">,</span>
+			<span class="s2">&quot;depends&quot;</span><span class="p">:</span> <span class="p">[</span>
+				<span class="p">{</span>
+					<span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;quilt_resource_loader&quot;</span><span class="p">,</span>
+					<span class="s2">&quot;versions&quot;</span><span class="p">:</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span>
+					<span class="s2">&quot;unless&quot;</span><span class="p">:</span> <span class="s2">&quot;fabric-resource-loader-v0&quot;</span>
+				<span class="p">}</span>
+			<span class="p">]</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="n">stp</span><span class="o">.</span><span class="n">json_dump</span><span class="p">(</span><span class="n">quilt_mod_json</span><span class="p">,</span> <span class="n">max_level</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="convert_datapack_to_mod">
+<a class="viewcode-back" href="../../../modules/stewbeet.continuous_delivery.modrinth.html#stewbeet.continuous_delivery.modrinth.convert_datapack_to_mod">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_datapack_to_mod</span><span class="p">(</span>
+	<span class="n">datapack_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+	<span class="n">output_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+	<span class="n">metadata</span><span class="p">:</span> <span class="n">JsonDict</span><span class="p">,</span>
+	<span class="n">platforms</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+	<span class="n">resource_pack_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Convert a datapack ZIP to a mod JAR with proper metadata files</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		datapack_path (str): Path to the datapack ZIP file</span>
+<span class="sd">		output_path (str): Path where to save the mod JAR file</span>
+<span class="sd">		metadata (dict): Mod metadata (id, name, version, description, authors, etc.)</span>
+<span class="sd">		platforms (list[str]): List of platforms (fabric, forge, neoforge, quilt)</span>
+<span class="sd">		resource_pack_path (str): Optional path to the resource pack ZIP file</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1"># Create a new ZIP/JAR file with datapack + resource pack content + mod metadata</span>
+	<span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZIP_DEFLATED</span><span class="p">)</span> <span class="k">as</span> <span class="n">mod_zip</span><span class="p">:</span>
+
+		<span class="c1"># Determine mod ID</span>
+		<span class="n">mod_id</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;slug&quot;</span><span class="p">,</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]))</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
+
+		<span class="c1"># Copy all files from datapack</span>
+		<span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">datapack_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">datapack_zip</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">datapack_zip</span><span class="o">.</span><span class="n">infolist</span><span class="p">():</span>
+				<span class="n">data</span> <span class="o">=</span> <span class="n">datapack_zip</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+				<span class="n">mod_zip</span><span class="o">.</span><span class="n">writestr</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">filename</span> <span class="o">==</span> <span class="s2">&quot;pack.png&quot;</span><span class="p">:</span>
+					<span class="n">mod_zip</span><span class="o">.</span><span class="n">writestr</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">mod_id</span><span class="si">}</span><span class="s2">_pack.png&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+
+		<span class="c1"># Copy assets folder from resource pack if provided</span>
+		<span class="k">if</span> <span class="n">resource_pack_path</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">resource_pack_path</span><span class="p">):</span>
+			<span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">resource_pack_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">resource_pack_zip</span><span class="p">:</span>
+				<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">resource_pack_zip</span><span class="o">.</span><span class="n">infolist</span><span class="p">():</span>
+					<span class="c1"># Only copy files from the assets folder (exclude pack.png and pack.mcmeta)</span>
+					<span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">filename</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;assets/&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">item</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
+						<span class="n">data</span> <span class="o">=</span> <span class="n">resource_pack_zip</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+						<span class="n">mod_zip</span><span class="o">.</span><span class="n">writestr</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+
+		<span class="c1"># Generate platform-specific metadata files</span>
+		<span class="k">if</span> <span class="s2">&quot;fabric&quot;</span> <span class="ow">in</span> <span class="n">platforms</span><span class="p">:</span>
+			<span class="n">mod_zip</span><span class="o">.</span><span class="n">writestr</span><span class="p">(</span><span class="s2">&quot;fabric.mod.json&quot;</span><span class="p">,</span> <span class="n">generate_fabric_metadata</span><span class="p">(</span><span class="n">mod_id</span><span class="p">,</span> <span class="n">metadata</span><span class="p">))</span>
+
+		<span class="k">if</span> <span class="s2">&quot;forge&quot;</span> <span class="ow">in</span> <span class="n">platforms</span><span class="p">:</span>
+			<span class="n">mod_zip</span><span class="o">.</span><span class="n">writestr</span><span class="p">(</span><span class="s2">&quot;META-INF/mods.toml&quot;</span><span class="p">,</span> <span class="n">generate_forge_metadata</span><span class="p">(</span><span class="n">mod_id</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">is_neoforge</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+
+		<span class="k">if</span> <span class="s2">&quot;neoforge&quot;</span> <span class="ow">in</span> <span class="n">platforms</span><span class="p">:</span>
+			<span class="n">mod_zip</span><span class="o">.</span><span class="n">writestr</span><span class="p">(</span><span class="s2">&quot;META-INF/neoforge.mods.toml&quot;</span><span class="p">,</span> <span class="n">generate_forge_metadata</span><span class="p">(</span><span class="n">mod_id</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">is_neoforge</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+		<span class="k">if</span> <span class="s2">&quot;quilt&quot;</span> <span class="ow">in</span> <span class="n">platforms</span><span class="p">:</span>
+			<span class="n">mod_zip</span><span class="o">.</span><span class="n">writestr</span><span class="p">(</span><span class="s2">&quot;quilt.mod.json&quot;</span><span class="p">,</span> <span class="n">generate_quilt_metadata</span><span class="p">(</span><span class="n">mod_id</span><span class="p">,</span> <span class="n">metadata</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="get_file_parts">
+<a class="viewcode-back" href="../../../modules/stewbeet.continuous_delivery.modrinth.html#stewbeet.continuous_delivery.modrinth.get_file_parts">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_file_parts</span><span class="p">(</span><span class="n">project_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">build_folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">modrinth_config</span><span class="p">:</span> <span class="n">JsonDict</span><span class="p">,</span> <span class="n">project_data</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Get file parts to upload</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		project_name (str): Name of the project</span>
+<span class="sd">		build_folder (str): Path to build folder</span>
+<span class="sd">		modrinth_config (dict): Modrinth configuration</span>
+<span class="sd">		project_data (dict): Optional project data from Modrinth API</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		list[str]: List of file paths to upload</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">file_parts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+		<span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">build_folder</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">project_name</span><span class="si">}</span><span class="s2">_datapack_with_libs.zip&quot;</span><span class="p">,</span>
+		<span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">build_folder</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">project_name</span><span class="si">}</span><span class="s2">_resource_pack_with_libs.zip&quot;</span>
+	<span class="p">]</span>
+	<span class="n">file_parts</span> <span class="o">=</span> <span class="p">[</span><span class="n">file_part</span> <span class="k">for</span> <span class="n">file_part</span> <span class="ow">in</span> <span class="n">file_parts</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">file_part</span><span class="p">)]</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">file_parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+		<span class="n">file_parts</span> <span class="o">=</span> <span class="p">[</span>
+			<span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">build_folder</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">project_name</span><span class="si">}</span><span class="s2">_datapack.zip&quot;</span><span class="p">,</span>
+			<span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">build_folder</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">project_name</span><span class="si">}</span><span class="s2">_resource_pack.zip&quot;</span>
+		<span class="p">]</span>
+		<span class="n">file_parts</span> <span class="o">=</span> <span class="p">[</span><span class="n">file_part</span> <span class="k">for</span> <span class="n">file_part</span> <span class="ow">in</span> <span class="n">file_parts</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">file_part</span><span class="p">)]</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">file_parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No file parts (datapack and resourcepack zip files) found in </span><span class="si">{</span><span class="n">build_folder</span><span class="si">}</span><span class="s2">, please check the build_folder path in the modrinth_config file&quot;</span><span class="p">)</span>
+
+	<span class="c1"># Convert datapack to mod if requested</span>
+	<span class="n">package_as_mod</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">modrinth_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;package_as_mod&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">package_as_mod</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="s2">&quot;separate&quot;</span><span class="p">]:</span>
+
+		<span class="c1"># Find the datapack file and resourcepack file</span>
+		<span class="n">datapack_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+		<span class="n">resource_pack_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+		<span class="k">for</span> <span class="n">file_part</span> <span class="ow">in</span> <span class="n">file_parts</span><span class="p">:</span>
+			<span class="k">if</span> <span class="s2">&quot;datapack&quot;</span> <span class="ow">in</span> <span class="n">file_part</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+				<span class="n">datapack_file</span> <span class="o">=</span> <span class="n">file_part</span>
+			<span class="k">elif</span> <span class="s2">&quot;resource_pack&quot;</span> <span class="ow">in</span> <span class="n">file_part</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+				<span class="n">resource_pack_file</span> <span class="o">=</span> <span class="n">file_part</span>
+
+		<span class="k">if</span> <span class="n">datapack_file</span><span class="p">:</span>
+
+			<span class="c1"># Get mod platforms (default to all platforms)</span>
+			<span class="n">platforms</span> <span class="o">=</span> <span class="n">modrinth_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;mod_platforms&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;fabric&quot;</span><span class="p">,</span> <span class="s2">&quot;forge&quot;</span><span class="p">,</span> <span class="s2">&quot;neoforge&quot;</span><span class="p">,</span> <span class="s2">&quot;quilt&quot;</span><span class="p">])</span>
+			<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">platforms</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+				<span class="n">platforms</span> <span class="o">=</span> <span class="p">[</span><span class="n">platforms</span><span class="p">]</span>
+
+			<span class="c1"># Prepare base metadata</span>
+			<span class="n">base_metadata</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">=</span> <span class="p">{</span>
+				<span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">modrinth_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;slug&quot;</span><span class="p">,</span> <span class="n">project_name</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">),</span>
+				<span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">project_name</span><span class="p">,</span>
+				<span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="n">modrinth_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;version&quot;</span><span class="p">,</span> <span class="s2">&quot;1.0.0&quot;</span><span class="p">),</span>
+				<span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">modrinth_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;summary&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+				<span class="s2">&quot;authors&quot;</span><span class="p">:</span> <span class="n">modrinth_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;authors&quot;</span><span class="p">,</span> <span class="p">[]),</span>
+				<span class="s2">&quot;license&quot;</span><span class="p">:</span> <span class="n">modrinth_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;license&quot;</span><span class="p">,</span> <span class="s2">&quot;All Rights Reserved&quot;</span><span class="p">),</span>
+				<span class="s2">&quot;homepage&quot;</span><span class="p">:</span> <span class="n">modrinth_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;homepage&quot;</span><span class="p">),</span>
+				<span class="s2">&quot;sources&quot;</span><span class="p">:</span> <span class="n">modrinth_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sources&quot;</span><span class="p">),</span>
+				<span class="s2">&quot;issues&quot;</span><span class="p">:</span> <span class="n">modrinth_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;issues&quot;</span><span class="p">),</span>
+				<span class="s2">&quot;icon&quot;</span><span class="p">:</span> <span class="n">modrinth_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;icon&quot;</span><span class="p">)</span>
+			<span class="p">}</span>
+
+			<span class="c1"># Complete metadata from Modrinth project if available</span>
+			<span class="k">if</span> <span class="n">project_data</span><span class="p">:</span>
+				<span class="c1"># Use existing project data to fill missing metadata</span>
+				<span class="k">if</span> <span class="ow">not</span> <span class="n">base_metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;description&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">project_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;description&quot;</span><span class="p">):</span>
+					<span class="n">base_metadata</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">project_data</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">]</span>
+				<span class="k">if</span> <span class="ow">not</span> <span class="n">base_metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;license&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">base_metadata</span><span class="p">[</span><span class="s2">&quot;license&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;All Rights Reserved&quot;</span><span class="p">:</span>
+					<span class="k">if</span> <span class="n">project_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;license&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">project_data</span><span class="p">[</span><span class="s2">&quot;license&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">):</span>
+						<span class="n">base_metadata</span><span class="p">[</span><span class="s2">&quot;license&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">project_data</span><span class="p">[</span><span class="s2">&quot;license&quot;</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+				<span class="k">if</span> <span class="ow">not</span> <span class="n">base_metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;homepage&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">project_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;project_url&quot;</span><span class="p">):</span>
+					<span class="n">base_metadata</span><span class="p">[</span><span class="s2">&quot;homepage&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">project_data</span><span class="p">[</span><span class="s2">&quot;project_url&quot;</span><span class="p">]</span>
+				<span class="k">if</span> <span class="ow">not</span> <span class="n">base_metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sources&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">project_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;source_url&quot;</span><span class="p">):</span>
+					<span class="n">base_metadata</span><span class="p">[</span><span class="s2">&quot;sources&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">project_data</span><span class="p">[</span><span class="s2">&quot;source_url&quot;</span><span class="p">]</span>
+				<span class="k">if</span> <span class="ow">not</span> <span class="n">base_metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;issues&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">project_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;issues_url&quot;</span><span class="p">):</span>
+					<span class="n">base_metadata</span><span class="p">[</span><span class="s2">&quot;issues&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">project_data</span><span class="p">[</span><span class="s2">&quot;issues_url&quot;</span><span class="p">]</span>
+				<span class="k">if</span> <span class="n">project_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;title&quot;</span><span class="p">):</span>
+					<span class="n">base_metadata</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">project_data</span><span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">]</span>
+
+			<span class="c1"># Create one mod with all platforms</span>
+			<span class="k">if</span> <span class="n">package_as_mod</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+				<span class="n">mod_output_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">build_folder</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">project_name</span><span class="si">}</span><span class="s2">_mod.jar&quot;</span>
+				<span class="k">with</span> <span class="n">stp</span><span class="o">.</span><span class="n">MeasureTime</span><span class="p">(</span><span class="n">stp</span><span class="o">.</span><span class="n">progress</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Converted datapack to mod for platforms: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">platforms</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">):</span>
+					<span class="n">convert_datapack_to_mod</span><span class="p">(</span><span class="n">datapack_file</span><span class="p">,</span> <span class="n">mod_output_path</span><span class="p">,</span> <span class="n">base_metadata</span><span class="p">,</span> <span class="n">platforms</span><span class="p">,</span> <span class="n">resource_pack_file</span><span class="p">)</span>
+
+				<span class="c1"># Add mod file to file_parts (keep datapack too)</span>
+				<span class="n">file_parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mod_output_path</span><span class="p">)</span>
+
+			<span class="c1"># Create separate mod for each platform</span>
+			<span class="k">elif</span> <span class="n">package_as_mod</span> <span class="o">==</span> <span class="s2">&quot;separate&quot;</span><span class="p">:</span>
+				<span class="k">for</span> <span class="n">platform</span> <span class="ow">in</span> <span class="n">platforms</span><span class="p">:</span>
+					<span class="n">platform_metadata</span> <span class="o">=</span> <span class="n">base_metadata</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+					<span class="n">platform_metadata</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">project_name</span>
+					<span class="n">mod_output_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">build_folder</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">project_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">platform</span><span class="si">}</span><span class="s2">_mod.jar&quot;</span>
+					<span class="k">with</span> <span class="n">stp</span><span class="o">.</span><span class="n">MeasureTime</span><span class="p">(</span><span class="n">stp</span><span class="o">.</span><span class="n">progress</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Converted datapack to mod for platform: </span><span class="si">{</span><span class="n">platform</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">):</span>
+						<span class="n">convert_datapack_to_mod</span><span class="p">(</span><span class="n">datapack_file</span><span class="p">,</span> <span class="n">mod_output_path</span><span class="p">,</span> <span class="n">platform_metadata</span><span class="p">,</span> <span class="p">[</span><span class="n">platform</span><span class="p">],</span> <span class="n">resource_pack_file</span><span class="p">)</span>
+
+					<span class="c1"># Add platform-specific mod to file_parts</span>
+					<span class="n">file_parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mod_output_path</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="n">file_parts</span></div>
+
+
+<div class="viewcode-block" id="upload_version">
+<a class="viewcode-back" href="../../../modules/stewbeet.continuous_delivery.modrinth.html#stewbeet.continuous_delivery.modrinth.upload_version">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">upload_version</span><span class="p">(</span>
+	<span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+	<span class="n">project_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+	<span class="n">version</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+	<span class="n">version_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+	<span class="n">changelog</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+	<span class="n">file_parts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+	<span class="n">headers</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+	<span class="n">dependencies</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+	<span class="n">loaders</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonDict</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Upload new version</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		project_id		(str):				Modrinth project ID</span>
+<span class="sd">		project_name	(str):				Name of the project</span>
+<span class="sd">		version			(str):				Version number</span>
+<span class="sd">		version_type	(str):				Type of version (release, beta, alpha)</span>
+<span class="sd">		changelog		(str):				Changelog text</span>
+<span class="sd">		file_parts		(list[str]):		List of files to upload</span>
+<span class="sd">		headers			(dict[str, str]):	Headers for Modrinth API requests</span>
+<span class="sd">		dependencies	(list[str]):		List of dependencies</span>
+<span class="sd">		loaders			(list[str]):		List of loaders (datapack, fabric, forge, etc.)</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		dict: Upload response data</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">if</span> <span class="n">dependencies</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="n">dependencies</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">if</span> <span class="n">loaders</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="n">loaders</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;datapack&quot;</span><span class="p">]</span>
+	<span class="n">stp</span><span class="o">.</span><span class="n">progress</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Creating version </span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+	<span class="n">files</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+	<span class="k">for</span> <span class="n">file_part</span> <span class="ow">in</span> <span class="n">file_parts</span><span class="p">:</span>
+		<span class="n">stp</span><span class="o">.</span><span class="n">progress</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Reading file </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">file_part</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_part</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+			<span class="n">files</span><span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">file_part</span><span class="p">)]</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+	<span class="n">request_data</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">=</span> <span class="p">{</span>
+		<span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">project_name</span><span class="si">}</span><span class="s2"> [v</span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span>
+		<span class="s2">&quot;version_number&quot;</span><span class="p">:</span> <span class="n">version</span><span class="p">,</span>
+		<span class="s2">&quot;changelog&quot;</span><span class="p">:</span> <span class="n">changelog</span><span class="p">,</span>
+		<span class="s2">&quot;dependencies&quot;</span><span class="p">:</span> <span class="n">dependencies</span><span class="p">,</span>
+		<span class="s2">&quot;game_versions&quot;</span><span class="p">:</span> <span class="n">get_supported_versions</span><span class="p">(),</span>
+		<span class="s2">&quot;version_type&quot;</span><span class="p">:</span> <span class="n">version_type</span><span class="p">,</span>
+		<span class="s2">&quot;loaders&quot;</span><span class="p">:</span> <span class="n">loaders</span><span class="p">,</span>
+		<span class="s2">&quot;featured&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+		<span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;listed&quot;</span><span class="p">,</span>
+		<span class="s2">&quot;project_id&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span>
+		<span class="s2">&quot;file_parts&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">file_part</span><span class="p">)</span> <span class="k">for</span> <span class="n">file_part</span> <span class="ow">in</span> <span class="n">file_parts</span><span class="p">],</span>
+		<span class="s2">&quot;primary_file&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">file_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+	<span class="p">}</span>
+
+	<span class="n">upload_response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+		<span class="n">VERSION_ENDPOINT</span><span class="p">,</span>
+		<span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
+		<span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">request_data</span><span class="p">)},</span>
+		<span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">,</span>
+		<span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+		<span class="n">stream</span><span class="o">=</span><span class="kc">False</span>
+	<span class="p">)</span>
+	<span class="n">json_response</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">=</span> <span class="n">upload_response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+	<span class="n">stp</span><span class="o">.</span><span class="n">handle_response</span><span class="p">(</span><span class="n">upload_response</span><span class="p">,</span> <span class="s2">&quot;Failed to upload the version&quot;</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">json_response</span></div>
+
+
+<div class="viewcode-block" id="set_resource_pack_required">
+<a class="viewcode-back" href="../../../modules/stewbeet.continuous_delivery.modrinth.html#stewbeet.continuous_delivery.modrinth.set_resource_pack_required">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_resource_pack_required</span><span class="p">(</span><span class="n">version_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">resource_pack_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">headers</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Set resource pack as required</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		version_id (str): ID of the version</span>
+<span class="sd">		resource_pack_hash (str): SHA1 hash of resource pack</span>
+<span class="sd">		headers (dict[str, str]): Headers for Modrinth API requests</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">stp</span><span class="o">.</span><span class="n">progress</span><span class="p">(</span><span class="s2">&quot;Setting resource pack as required&quot;</span><span class="p">)</span>
+	<span class="n">version_response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span>
+		<span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">VERSION_ENDPOINT</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">version_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+		<span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
+		<span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;file_types&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;algorithm&quot;</span><span class="p">:</span> <span class="s2">&quot;sha1&quot;</span><span class="p">,</span> <span class="s2">&quot;hash&quot;</span><span class="p">:</span> <span class="n">resource_pack_hash</span><span class="p">,</span> <span class="s2">&quot;file_type&quot;</span><span class="p">:</span> <span class="s2">&quot;required-resource-pack&quot;</span><span class="p">}]}</span>
+	<span class="p">)</span>
+	<span class="n">stp</span><span class="o">.</span><span class="n">handle_response</span><span class="p">(</span><span class="n">version_response</span><span class="p">,</span> <span class="s2">&quot;Failed to put the resource pack as required&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="upload_to_modrinth">
+<a class="viewcode-back" href="../../../modules/stewbeet.continuous_delivery.modrinth.html#stewbeet.continuous_delivery.modrinth.upload_to_modrinth">[docs]</a>
+<span class="nd">@stp</span><span class="o">.</span><span class="n">measure_time</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s2">&quot;Uploading to modrinth took&quot;</span><span class="p">)</span>
+<span class="nd">@stp</span><span class="o">.</span><span class="n">handle_error</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">upload_to_modrinth</span><span class="p">(</span><span class="n">credentials</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">modrinth_config</span><span class="p">:</span> <span class="n">JsonDict</span><span class="p">,</span> <span class="n">changelog</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Upload the project to Modrinth using the credentials and the configuration</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		credentials		(dict[str, str]):	Credentials for the Modrinth API</span>
+<span class="sd">		modrinth_config	(dict):				Configuration for the Modrinth project</span>
+<span class="sd">		changelog		(str):				Changelog text for the release</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">validate_credentials</span><span class="p">(</span><span class="n">credentials</span><span class="p">)</span>
+	<span class="n">headers</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="n">api_key</span><span class="p">}</span>
+
+	<span class="n">project_name</span><span class="p">,</span> <span class="n">version</span><span class="p">,</span> <span class="n">slug</span><span class="p">,</span> <span class="n">summary</span><span class="p">,</span> <span class="n">description_markdown</span><span class="p">,</span> <span class="n">version_type</span><span class="p">,</span> <span class="n">build_folder</span> <span class="o">=</span> <span class="n">validate_config</span><span class="p">(</span><span class="n">modrinth_config</span><span class="p">)</span>
+
+	<span class="n">project</span> <span class="o">=</span> <span class="n">get_project</span><span class="p">(</span><span class="n">slug</span><span class="p">,</span> <span class="n">headers</span><span class="p">)</span>
+	<span class="n">update_project_description</span><span class="p">(</span><span class="n">slug</span><span class="p">,</span> <span class="n">description_markdown</span><span class="p">,</span> <span class="n">summary</span><span class="p">,</span> <span class="n">headers</span><span class="p">)</span>
+	<span class="n">can_continue</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">handle_existing_version</span><span class="p">(</span><span class="n">slug</span><span class="p">,</span> <span class="n">version</span><span class="p">,</span> <span class="n">headers</span><span class="p">)</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">can_continue</span><span class="p">:</span>
+		<span class="k">return</span>
+
+	<span class="n">file_parts</span> <span class="o">=</span> <span class="n">get_file_parts</span><span class="p">(</span><span class="n">project_name</span><span class="p">,</span> <span class="n">build_folder</span><span class="p">,</span> <span class="n">modrinth_config</span><span class="p">,</span> <span class="n">project</span><span class="p">)</span>
+
+	<span class="n">package_as_mod</span> <span class="o">=</span> <span class="n">modrinth_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;package_as_mod&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+	<span class="n">mod_platforms</span> <span class="o">=</span> <span class="n">modrinth_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;mod_platforms&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;fabric&quot;</span><span class="p">,</span> <span class="s2">&quot;forge&quot;</span><span class="p">,</span> <span class="s2">&quot;neoforge&quot;</span><span class="p">,</span> <span class="s2">&quot;quilt&quot;</span><span class="p">])</span>
+	<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mod_platforms</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+		<span class="n">mod_platforms</span> <span class="o">=</span> <span class="p">[</span><span class="n">mod_platforms</span><span class="p">]</span>
+
+	<span class="c1"># Handle different packaging modes</span>
+	<span class="k">if</span> <span class="n">package_as_mod</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+		<span class="c1"># Upload datapack version first</span>
+		<span class="n">datapack_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">file_parts</span> <span class="k">if</span> <span class="s2">&quot;_datapack&quot;</span> <span class="ow">in</span> <span class="n">f</span> <span class="ow">or</span> <span class="s2">&quot;_resource_pack&quot;</span> <span class="ow">in</span> <span class="n">f</span><span class="p">]</span>
+		<span class="k">if</span> <span class="n">datapack_files</span><span class="p">:</span>
+			<span class="n">stp</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Uploading datapack version...&quot;</span><span class="p">)</span>
+			<span class="n">json_response</span> <span class="o">=</span> <span class="n">upload_version</span><span class="p">(</span>
+				<span class="n">project</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">project_name</span><span class="p">,</span> <span class="n">version</span><span class="p">,</span> <span class="n">version_type</span><span class="p">,</span>
+				<span class="n">changelog</span><span class="p">,</span> <span class="n">datapack_files</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">modrinth_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dependencies&quot;</span><span class="p">,</span> <span class="p">[]),</span>
+				<span class="p">[</span><span class="s2">&quot;datapack&quot;</span><span class="p">]</span>
+			<span class="p">)</span>
+			<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">datapack_files</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+				<span class="n">resource_pack_hash</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">json_response</span><span class="p">[</span><span class="s2">&quot;files&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;hashes&quot;</span><span class="p">][</span><span class="s2">&quot;sha1&quot;</span><span class="p">]</span>
+				<span class="n">set_resource_pack_required</span><span class="p">(</span><span class="n">json_response</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">resource_pack_hash</span><span class="p">,</span> <span class="n">headers</span><span class="p">)</span>
+
+		<span class="c1"># Upload mod version (with all platforms)</span>
+		<span class="n">mod_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">file_parts</span> <span class="k">if</span> <span class="s2">&quot;_mod&quot;</span> <span class="ow">in</span> <span class="n">f</span> <span class="ow">and</span> <span class="s2">&quot;_datapack&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">f</span><span class="p">]</span>
+		<span class="k">if</span> <span class="n">mod_files</span><span class="p">:</span>
+			<span class="c1"># Check if mod version already exists</span>
+			<span class="n">mod_version_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2">+mod&quot;</span>
+			<span class="n">can_continue_mod</span> <span class="o">=</span> <span class="n">handle_existing_version</span><span class="p">(</span><span class="n">slug</span><span class="p">,</span> <span class="n">mod_version_name</span><span class="p">,</span> <span class="n">headers</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">can_continue_mod</span><span class="p">:</span>
+				<span class="n">stp</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Uploading mod version (all platforms: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mod_platforms</span><span class="p">)</span><span class="si">}</span><span class="s2">)...&quot;</span><span class="p">)</span>
+				<span class="n">upload_version</span><span class="p">(</span>
+					<span class="n">project</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">project_name</span><span class="p">,</span> <span class="n">mod_version_name</span><span class="p">,</span> <span class="n">version_type</span><span class="p">,</span>
+					<span class="n">changelog</span><span class="p">,</span> <span class="n">mod_files</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">modrinth_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dependencies&quot;</span><span class="p">,</span> <span class="p">[]),</span>
+					<span class="n">mod_platforms</span>
+				<span class="p">)</span>
+
+	<span class="k">elif</span> <span class="n">package_as_mod</span> <span class="o">==</span> <span class="s2">&quot;separate&quot;</span><span class="p">:</span>
+		<span class="c1"># Upload datapack version first</span>
+		<span class="n">datapack_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">file_parts</span> <span class="k">if</span> <span class="s2">&quot;_datapack&quot;</span> <span class="ow">in</span> <span class="n">f</span> <span class="ow">or</span> <span class="s2">&quot;_resource_pack&quot;</span> <span class="ow">in</span> <span class="n">f</span><span class="p">]</span>
+		<span class="k">if</span> <span class="n">datapack_files</span><span class="p">:</span>
+			<span class="n">stp</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Uploading datapack version...&quot;</span><span class="p">)</span>
+			<span class="n">json_response</span> <span class="o">=</span> <span class="n">upload_version</span><span class="p">(</span>
+				<span class="n">project</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">project_name</span><span class="p">,</span> <span class="n">version</span><span class="p">,</span> <span class="n">version_type</span><span class="p">,</span>
+				<span class="n">changelog</span><span class="p">,</span> <span class="n">datapack_files</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">modrinth_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dependencies&quot;</span><span class="p">,</span> <span class="p">[]),</span>
+				<span class="p">[</span><span class="s2">&quot;datapack&quot;</span><span class="p">]</span>
+			<span class="p">)</span>
+			<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">datapack_files</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+				<span class="n">resource_pack_hash</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">json_response</span><span class="p">[</span><span class="s2">&quot;files&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;hashes&quot;</span><span class="p">][</span><span class="s2">&quot;sha1&quot;</span><span class="p">]</span>
+				<span class="n">set_resource_pack_required</span><span class="p">(</span><span class="n">json_response</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">resource_pack_hash</span><span class="p">,</span> <span class="n">headers</span><span class="p">)</span>
+
+		<span class="c1"># Upload separate version for each platform</span>
+		<span class="k">for</span> <span class="n">platform</span> <span class="ow">in</span> <span class="n">mod_platforms</span><span class="p">:</span>
+			<span class="n">platform_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">file_parts</span> <span class="k">if</span> <span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">platform</span><span class="si">}</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">f</span><span class="p">]</span>
+			<span class="k">if</span> <span class="n">platform_files</span><span class="p">:</span>
+				<span class="n">platform_version_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="n">platform</span><span class="si">}</span><span class="s2">&quot;</span>
+				<span class="n">can_continue_platform</span> <span class="o">=</span> <span class="n">handle_existing_version</span><span class="p">(</span><span class="n">slug</span><span class="p">,</span> <span class="n">platform_version_name</span><span class="p">,</span> <span class="n">headers</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">can_continue_platform</span><span class="p">:</span>
+					<span class="n">stp</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Uploading </span><span class="si">{</span><span class="n">platform</span><span class="si">}</span><span class="s2"> version...&quot;</span><span class="p">)</span>
+					<span class="n">upload_version</span><span class="p">(</span>
+						<span class="n">project</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">project_name</span><span class="p">,</span> <span class="n">platform_version_name</span><span class="p">,</span> <span class="n">version_type</span><span class="p">,</span>
+						<span class="n">changelog</span><span class="p">,</span> <span class="n">platform_files</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">modrinth_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dependencies&quot;</span><span class="p">,</span> <span class="p">[]),</span>
+						<span class="p">[</span><span class="n">platform</span><span class="p">]</span>
+					<span class="p">)</span>
+
+	<span class="k">else</span><span class="p">:</span>
+		<span class="c1"># Default: upload as datapack only</span>
+		<span class="n">json_response</span> <span class="o">=</span> <span class="n">upload_version</span><span class="p">(</span>
+			<span class="n">project</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">project_name</span><span class="p">,</span> <span class="n">version</span><span class="p">,</span> <span class="n">version_type</span><span class="p">,</span>
+			<span class="n">changelog</span><span class="p">,</span> <span class="n">file_parts</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">modrinth_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dependencies&quot;</span><span class="p">,</span> <span class="p">[]),</span>
+			<span class="p">[</span><span class="s2">&quot;datapack&quot;</span><span class="p">]</span>
+		<span class="p">)</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">file_parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="n">resource_pack_hash</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">json_response</span><span class="p">[</span><span class="s2">&quot;files&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;hashes&quot;</span><span class="p">][</span><span class="s2">&quot;sha1&quot;</span><span class="p">]</span>
+			<span class="n">set_resource_pack_required</span><span class="p">(</span><span class="n">json_response</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">resource_pack_hash</span><span class="p">,</span> <span class="n">headers</span><span class="p">)</span>
+
+	<span class="n">stp</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Project </span><span class="si">{</span><span class="n">project_name</span><span class="si">}</span><span class="s2"> updated on Modrinth!&quot;</span><span class="p">)</span></div>
+
+
+
+</pre></div>
+</article><footer class="bz-article-footer">
+  
+  
+    <nav class="bz-related-pages" aria-label="Related pages navigation"></nav>
+  
+
+</footer></main>
+  </div><footer class="bz-footer">
+  <div class="bz-footer-copyright"><p class="bz-copyright">© Copyright 2025, Stoupy</p><p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://github.com/aksiome/breeze">Breeze theme</a>.
+  </p>
+</div><div class="bz-external-links">
+  <a
+    href="https://github.com/Stoupy51/stewbeet"
+    aria-label="GitHub"
+    data-tooltip="GitHub"
+    target="_blank"
+  >
+    <svg
+      stroke="currentColor"
+      fill="currentColor"
+      stroke-width="0"
+      viewBox="0 0 16 16"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+      ></path>
+    </svg>
+  </a></div>
+</footer><a href="#" class="bz-back-to-top">
+    <svg class="sized" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m5 12 7-7 7 7"/><path d="M12 19V5"/>
+    </svg>
+    <span>Back to top</span>
+  </a>
+  <label class="bz-overlay bz-overlay-primary" for="bz-sidebar-primary"></label>
+  <label class="bz-overlay bz-overlay-secondary" for="bz-sidebar-secondary"></label>
+  <input type="checkbox" name="bz-sidebar-primary" id="bz-sidebar-primary" aria-label="Toggle site navigation sidebar">
+  <input type="checkbox" name="bz-sidebar-secondary" id="bz-sidebar-secondary" aria-label="Toggle table of contents sidebar">
+  </body>
+</html>

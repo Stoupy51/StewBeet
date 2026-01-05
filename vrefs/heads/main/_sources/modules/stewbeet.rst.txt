@@ -1,0 +1,29 @@
+stewbeet package
+================
+
+.. automodule:: stewbeet
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.continuous_delivery
+   stewbeet.core
+   stewbeet.dependencies
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.__main__
+   stewbeet.all
+   stewbeet.cli
+   stewbeet.utils

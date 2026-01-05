@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="stewbeet.core.cls.recipe module" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="modules/stewbeet.core.cls.recipe.html" />
+<meta property="og:site_name" content="StewBeet" />
+
+    <title>stewbeet.core.cls.recipe module &#8212; StewBeet</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8e8a900e" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/treeview.css?v=f8e9195c" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/breeze.css?v=93f23127" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=1637c05a" />
+  <noscript>
+    <style>
+      .bz-js-only { display: none !important; }
+    </style>
+  </noscript>
+  
+    <script defer src="../_static/documentation_options.js?v=6d4b8ac6"></script>
+    <script defer src="../_static/doctools.js?v=9bcbadda"></script>
+    <script defer src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script defer src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script defer src="../_static/copybutton.js?v=18a8d5f5"></script>
+    <script defer src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer src="../_static/treeview.js?v=265ad9b8"></script>
+    <script defer src="../_static/scripts/breeze.js?v=8ef74970"></script>
+  <script data-cfasync="false">
+    const mode = localStorage.getItem("breeze-mode") || "auto";
+    document.documentElement.dataset.mode = mode;
+    if (mode === "auto") {
+      const prefers = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+      document.documentElement.dataset.theme = prefers;
+    } else {
+      document.documentElement.dataset.theme = mode;
+    }
+  </script>
+    <link rel="icon" href="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="stewbeet.core.cls.wiki_button module" href="stewbeet.core.cls.wiki_button.html" />
+    <link rel="prev" title="stewbeet.core.cls.painting module" href="stewbeet.core.cls.painting.html" /><meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head><body>
+  
+  <div class="bz-skip-to-content">
+    <a href="#bz-main-content">Skip to main content</a>
+  </div><header class="bz-header-main">
+  <div class="bz-header-start"><a class="bz-header-brand" href="../index.html"><img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png" alt="Site Logo" /><span>StewBeet</span>
+</a></div>
+  <div class="bz-header-end"><div class="bz-search-button">
+  <a
+    href="../search.html#q"
+    aria-label="Search the docs"
+    data-tooltip="Search the docs"
+  >
+    <svg
+      class="sized"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 -1 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+      />
+    </svg>
+    <span>Search</span>
+    <kbd>Ctrl+K</kbd>
+  </a>
+</div><div class="bz-theme-switcher">
+  <button aria-label="Switch theme" data-tooltip="Switch theme">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="only-light" fill="currentColor">
+      <path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm5.657-8.157a.75.75 0 0 1 0 1.061l-1.061 1.06a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l1.06-1.06a.75.75 0 0 1 1.06 0Zm-9.193 9.193a.75.75 0 0 1 0 1.06l-1.06 1.061a.75.75 0 1 1-1.061-1.06l1.06-1.061a.75.75 0 0 1 1.061 0ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0ZM3 8a.75.75 0 0 1-.75.75H.75a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 3 8Zm13 0a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 16 8Zm-8 5a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13Zm3.536-1.464a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 0 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061ZM2.343 2.343a.75.75 0 0 1 1.061 0l1.06 1.061a.751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018l-1.06-1.06a.75.75 0 0 1 0-1.06Z"></path>
+    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="only-dark" fill="currentColor">
+      <path d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"></path>
+    </svg>
+  </button>
+</div><div class="bz-external-links">
+  <a
+    href="https://github.com/Stoupy51/stewbeet"
+    aria-label="GitHub"
+    data-tooltip="GitHub"
+    target="_blank"
+  >
+    <svg
+      stroke="currentColor"
+      fill="currentColor"
+      stroke-width="0"
+      viewBox="0 0 16 16"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+      ></path>
+    </svg>
+  </a></div></div>
+</header><nav class="bz-header-tabs" aria-label="Primary Navigation">
+  <label
+    class="bz-sidebar-primary-toggle"
+    for="bz-sidebar-primary"
+    role="button"
+    tabindex="0"
+  >
+    <svg class="sized muted" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path
+        fill="none"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M3.75 6.75h16.5M3.75 12H12m-8.25 5.25h12.5"
+      />
+    </svg>
+  </label><ul><li class="toctree-l1 current"><a class="reference internal" href="stewbeet.html">stewbeet package</a></li></ul><div class="bz-dropdown">
+    <button aria-haspopup="true" aria-expanded="false">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <g
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+        >
+          <circle cx="12" cy="12" r="1" />
+          <circle cx="19" cy="12" r="1" />
+          <circle cx="5" cy="12" r="1" />
+        </g>
+      </svg>
+    </button>
+    <ul role="menu" aria-hidden="true"></ul>
+  </div>
+</nav><div class="bz-content"><aside class="bz-sidebar-primary" data-drawer="bz-sidebar-primary">
+  
+  
+    <nav class="bz-sidebar-nav" aria-label="Section Navigation"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="stewbeet.continuous_delivery.html">stewbeet.continuous_delivery package</a>
+<details><summary></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.continuous_delivery.cd_utils.html">stewbeet.continuous_delivery.cd_utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.continuous_delivery.github.html">stewbeet.continuous_delivery.github module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.continuous_delivery.modrinth.html">stewbeet.continuous_delivery.modrinth module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.continuous_delivery.pmc.html">stewbeet.continuous_delivery.pmc module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.continuous_delivery.smithed.html">stewbeet.continuous_delivery.smithed module</a></li>
+</ul></details></li>
+<li class="toctree-l1 current"><a class="reference internal" href="stewbeet.core.html">stewbeet.core package</a>
+<details open=""><summary></summary><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="stewbeet.core.cls.html">stewbeet.core.cls namespace</a>
+<details open=""><summary></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.cls._recipe_list.html">stewbeet.core.cls._recipe_list module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.cls._utils.html">stewbeet.core.cls._utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.cls.block.html">stewbeet.core.cls.block module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.cls.ingredients.html">stewbeet.core.cls.ingredients module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.cls.item.html">stewbeet.core.cls.item module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.cls.painting.html">stewbeet.core.cls.painting module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">stewbeet.core.cls.recipe module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.cls.wiki_button.html">stewbeet.core.cls.wiki_button module</a></li>
+</ul></details></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.core.definitions_helper.html">stewbeet.core.definitions_helper package</a>
+<details><summary></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.definitions_helper.completion.html">stewbeet.core.definitions_helper.completion module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.definitions_helper.equipments.html">stewbeet.core.definitions_helper.equipments module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.definitions_helper.materials.html">stewbeet.core.definitions_helper.materials module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.definitions_helper.records.html">stewbeet.core.definitions_helper.records module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.definitions_helper.simplenergy.html">stewbeet.core.definitions_helper.simplenergy module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.definitions_helper.smart_ore_generation.html">stewbeet.core.definitions_helper.smart_ore_generation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.definitions_helper.text.html">stewbeet.core.definitions_helper.text module</a></li>
+</ul></details></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.core.utils.html">stewbeet.core.utils namespace</a>
+<details><summary></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.utils.io.html">stewbeet.core.utils.io module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.utils.loot_table.html">stewbeet.core.utils.loot_table module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.utils.sounds.html">stewbeet.core.utils.sounds module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.utils.text_component.html">stewbeet.core.utils.text_component module</a></li>
+</ul></details></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.core.__memory__.html">stewbeet.core.__memory__ module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.core.constants.html">stewbeet.core.constants module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.core.dump.html">stewbeet.core.dump module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.core.migrate.html">stewbeet.core.migrate module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.core.template.html">stewbeet.core.template module</a></li>
+</ul></details></li>
+<li class="toctree-l1"><a class="reference internal" href="stewbeet.dependencies.html">stewbeet.dependencies package</a>
+<details><summary></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.dependencies.bookshelf.html">stewbeet.dependencies.bookshelf module</a></li>
+</ul></details></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="stewbeet.__main__.html">stewbeet.__main__ module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stewbeet.all.html">stewbeet.all module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stewbeet.cli.html">stewbeet.cli module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stewbeet.utils.html">stewbeet.utils module</a></li>
+</ul>
+</nav>
+  
+
+</aside><main id="bz-main-content"><header class="bz-article-header">
+  
+  
+    <nav class="bz-breadcrumbs" aria-label="Breadcrumb">
+  <ol>
+    <li class="bz-breadcrumbs-home">
+      <a href="../index.html">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </a>
+    </li><li class="bz-breadcrumbs-parent">
+      <a href="stewbeet.html">stewbeet package</a>
+    </li><li class="bz-breadcrumbs-parent">
+      <a href="stewbeet.core.html">stewbeet.core package</a>
+    </li><li class="bz-breadcrumbs-parent">
+      <a href="stewbeet.core.cls.html">stewbeet.core.cls namespace</a>
+    </li><li class="bz-breadcrumbs-current">
+      <span>stewbeet.core.cls.recipe module</span>
+    </li>
+  </ol>
+</nav>
+  
+
+  <label
+    class="bz-sidebar-secondary-toggle"
+    for="bz-sidebar-secondary"
+    role="button"
+    tabindex="0"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="sized muted">
+      <path
+        fill="none"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M3.75 6.75H20.25 M11.25 12H20.25 M7.75 17.25H20.25"
+      />
+    </svg>
+  </label>
+</header><article class="bz-article-main" role="main">
+  <section id="module-stewbeet.core.cls.recipe">
+<span id="stewbeet-core-cls-recipe-module"></span><h1>stewbeet.core.cls.recipe module<a class="headerlink" href="#module-stewbeet.core.cls.recipe" title="Link to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.RecipeBase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RecipeBase</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">result_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ingr</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">manual_priority</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">smithed_crafter_command</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/stewbeet/core/cls/recipe.html#RecipeBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="stewbeet.core.cls._utils.html#stewbeet.core.cls._utils.StMapping" title="stewbeet.core.cls._utils.StMapping"><code class="xref py py-class docutils literal notranslate"><span class="pre">StMapping</span></code></a></p>
+<p>Base class for all recipe types.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.RecipeBase.type">
+<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase.type" title="Link to this definition">#</a></dt>
+<dd><p>The type of the recipe, e.g. ‘crafting_shaped’, ‘smelting’, etc.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.RecipeBase.result_count">
+<span class="sig-name descname"><span class="pre">result_count</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase.result_count" title="Link to this definition">#</a></dt>
+<dd><p>(Optional) The number of items produced by the recipe. Default is 1.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.RecipeBase.category">
+<span class="sig-name descname"><span class="pre">category</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase.category" title="Link to this definition">#</a></dt>
+<dd><p>(Optional) The category of the recipe for organizing in the crafting book.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.RecipeBase.group">
+<span class="sig-name descname"><span class="pre">group</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase.group" title="Link to this definition">#</a></dt>
+<dd><p>(Optional) The group of the recipe for recipe book grouping.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.RecipeBase.result">
+<span class="sig-name descname"><span class="pre">result</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase.result" title="Link to this definition">#</a></dt>
+<dd><p>(Optional) The result item of the recipe. If None, defaults to the item being defined.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.RecipeBase.manual_priority">
+<span class="sig-name descname"><span class="pre">manual_priority</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase.manual_priority" title="Link to this definition">#</a></dt>
+<dd><p>(Optional) Manual priority for recipe button sorting in the ingame-manual. Used to remove buttons when too many are present.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.RecipeBase.smithed_crafter_command">
+<span class="sig-name descname"><span class="pre">smithed_crafter_command</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase.smithed_crafter_command" title="Link to this definition">#</a></dt>
+<dd><p>(Optional) Custom command to be used with Smithed Crafter recipes. If None, defaults to giving the loot table.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.RecipeBase.from_dict">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="stewbeet.core.cls._utils.html#stewbeet.core.cls._utils.StMapping" title="stewbeet.core.cls._utils.StMapping"><span class="pre">StMapping</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">item_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../_modules/stewbeet/core/cls/recipe.html#RecipeBase.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase.from_dict" title="Link to this definition">#</a></dt>
+<dd><p>Create an object based on a dictionary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.RecipeBase._validate_ingredient">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_validate_ingredient</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">ingredient</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ingr</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Ingredient'</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/stewbeet/core/cls/recipe.html#RecipeBase._validate_ingredient"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase._validate_ingredient" title="Link to this definition">#</a></dt>
+<dd><p>Validate a single ingredient dictionary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.RecipeBase._validate_ingredients_list">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_validate_ingredients_list</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">ingredients</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Ingr</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/stewbeet/core/cls/recipe.html#RecipeBase._validate_ingredients_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase._validate_ingredients_list" title="Link to this definition">#</a></dt>
+<dd><p>Validate a list of ingredients.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.RecipeBase._validate_numeric_fields">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_validate_numeric_fields</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">experience</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">cookingtime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/stewbeet/core/cls/recipe.html#RecipeBase._validate_numeric_fields"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase._validate_numeric_fields" title="Link to this definition">#</a></dt>
+<dd><p>Validate experience and cookingtime fields for furnace recipes.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.RecipeBase._validate_string_field">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_validate_string_field</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/stewbeet/core/cls/recipe.html#RecipeBase._validate_string_field"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase._validate_string_field" title="Link to this definition">#</a></dt>
+<dd><p>Validate that a field is a string.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.RecipeBase._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase._abc_impl" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.CraftingShapedRecipe">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CraftingShapedRecipe</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">ingredients</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Ingr</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+<dd><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">result_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ingr</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">manual_priority</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">smithed_crafter_command</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/stewbeet/core/cls/recipe.html#CraftingShapedRecipe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.CraftingShapedRecipe" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase" title="stewbeet.core.cls.recipe.RecipeBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecipeBase</span></code></a></p>
+<p>Recipe for shaped crafting.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">stewbeet</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recipe</span> <span class="o">=</span> <span class="n">CraftingShapedRecipe</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;II&quot;</span><span class="p">,</span> <span class="s2">&quot;CC&quot;</span><span class="p">,</span> <span class="s2">&quot;CC&quot;</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="n">ingredients</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;I&quot;</span><span class="p">:</span><span class="n">Ingr</span><span class="p">(</span><span class="s2">&quot;minecraft:iron_ingot&quot;</span><span class="p">),</span> <span class="s2">&quot;C&quot;</span><span class="p">:</span> <span class="n">Ingr</span><span class="p">(</span><span class="s2">&quot;simplunium_ingot&quot;</span><span class="p">)}</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recipe</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">[&#39;II&#39;, &#39;CC&#39;, &#39;CC&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recipe</span><span class="o">.</span><span class="n">ingredients</span><span class="p">[</span><span class="s1">&#39;I&#39;</span><span class="p">]</span>
+<span class="go">{&#39;item&#39;: &#39;minecraft:iron_ingot&#39;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recipe</span><span class="o">.</span><span class="n">ingredients</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">]</span>
+<span class="go">{&#39;components&#39;: {&#39;minecraft:custom_data&#39;: {&#39;detected_namespace&#39;: {&#39;simplunium_ingot&#39;: True}}}}</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.CraftingShapedRecipe.shape">
+<span class="sig-name descname"><span class="pre">shape</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.CraftingShapedRecipe.shape" title="Link to this definition">#</a></dt>
+<dd><p>The shape pattern for the crafting recipe.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.CraftingShapedRecipe.ingredients">
+<span class="sig-name descname"><span class="pre">ingredients</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Ingr</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.CraftingShapedRecipe.ingredients" title="Link to this definition">#</a></dt>
+<dd><p>Dictionary mapping shape symbols to ingredient specifications.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.CraftingShapedRecipe.type">
+<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'crafting_shaped'</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.CraftingShapedRecipe.type" title="Link to this definition">#</a></dt>
+<dd><p>The type of the recipe, e.g. ‘crafting_shaped’, ‘smelting’, etc.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.CraftingShapedRecipe._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.CraftingShapedRecipe._abc_impl" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.CraftingShapelessRecipe">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CraftingShapelessRecipe</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">ingredients</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Ingr</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+<dd><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">result_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ingr</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">manual_priority</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">smithed_crafter_command</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/stewbeet/core/cls/recipe.html#CraftingShapelessRecipe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.CraftingShapelessRecipe" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase" title="stewbeet.core.cls.recipe.RecipeBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecipeBase</span></code></a></p>
+<p>Recipe for shapeless crafting.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">stewbeet</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recipe</span> <span class="o">=</span> <span class="n">CraftingShapelessRecipe</span><span class="p">(</span><span class="n">ingredients</span><span class="o">=</span><span class="p">[</span><span class="n">Ingr</span><span class="p">(</span><span class="s2">&quot;minecraft:iron_ingot&quot;</span><span class="p">),</span> <span class="n">Ingr</span><span class="p">(</span><span class="s2">&quot;minecraft:copper_ingot&quot;</span><span class="p">)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">recipe</span><span class="o">.</span><span class="n">ingredients</span><span class="p">)</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recipe</span><span class="o">.</span><span class="n">type</span>
+<span class="go">&#39;crafting_shapeless&#39;</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.CraftingShapelessRecipe.ingredients">
+<span class="sig-name descname"><span class="pre">ingredients</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Ingr</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.CraftingShapelessRecipe.ingredients" title="Link to this definition">#</a></dt>
+<dd><p>List of ingredient specifications for shapeless crafting.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.CraftingShapelessRecipe.type">
+<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'crafting_shapeless'</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.CraftingShapelessRecipe.type" title="Link to this definition">#</a></dt>
+<dd><p>The type of the recipe, e.g. ‘crafting_shaped’, ‘smelting’, etc.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.CraftingShapelessRecipe._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.CraftingShapelessRecipe._abc_impl" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmeltingRecipe">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SmeltingRecipe</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">ingredient</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ingr</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">experience</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">cookingtime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">200</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">result_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ingr</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">manual_priority</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">smithed_crafter_command</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/stewbeet/core/cls/recipe.html#SmeltingRecipe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.SmeltingRecipe" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase" title="stewbeet.core.cls.recipe.RecipeBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecipeBase</span></code></a></p>
+<p>Recipe for smelting in a furnace.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">stewbeet</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recipe</span> <span class="o">=</span> <span class="n">SmeltingRecipe</span><span class="p">(</span><span class="n">ingredient</span><span class="o">=</span><span class="n">Ingr</span><span class="p">(</span><span class="s2">&quot;minecraft:iron_ore&quot;</span><span class="p">),</span> <span class="n">experience</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">cookingtime</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recipe</span><span class="o">.</span><span class="n">experience</span>
+<span class="go">0.7</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recipe</span><span class="o">.</span><span class="n">cookingtime</span>
+<span class="go">200</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmeltingRecipe.ingredient">
+<span class="sig-name descname"><span class="pre">ingredient</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmeltingRecipe.ingredient" title="Link to this definition">#</a></dt>
+<dd><p>The ingredient to be smelted.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmeltingRecipe.experience">
+<span class="sig-name descname"><span class="pre">experience</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmeltingRecipe.experience" title="Link to this definition">#</a></dt>
+<dd><p>Experience points awarded when the recipe is used.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmeltingRecipe.cookingtime">
+<span class="sig-name descname"><span class="pre">cookingtime</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">200</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmeltingRecipe.cookingtime" title="Link to this definition">#</a></dt>
+<dd><p>Cooking time in ticks (200 ticks = 10 seconds by default).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmeltingRecipe.type">
+<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'smelting'</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmeltingRecipe.type" title="Link to this definition">#</a></dt>
+<dd><p>The type of the recipe, e.g. ‘crafting_shaped’, ‘smelting’, etc.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmeltingRecipe._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmeltingRecipe._abc_impl" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.BlastingRecipe">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">BlastingRecipe</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">ingredient</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ingr</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">experience</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">cookingtime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">result_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ingr</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">manual_priority</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">smithed_crafter_command</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/stewbeet/core/cls/recipe.html#BlastingRecipe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.BlastingRecipe" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase" title="stewbeet.core.cls.recipe.RecipeBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecipeBase</span></code></a></p>
+<p>Recipe for blasting in a blast furnace.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">stewbeet</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recipe</span> <span class="o">=</span> <span class="n">BlastingRecipe</span><span class="p">(</span><span class="n">ingredient</span><span class="o">=</span><span class="n">Ingr</span><span class="p">(</span><span class="s2">&quot;minecraft:iron_ore&quot;</span><span class="p">),</span> <span class="n">experience</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">cookingtime</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recipe</span><span class="o">.</span><span class="n">experience</span>
+<span class="go">0.7</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recipe</span><span class="o">.</span><span class="n">cookingtime</span>
+<span class="go">100</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.BlastingRecipe.ingredient">
+<span class="sig-name descname"><span class="pre">ingredient</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.BlastingRecipe.ingredient" title="Link to this definition">#</a></dt>
+<dd><p>The ingredient to be blasted.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.BlastingRecipe.experience">
+<span class="sig-name descname"><span class="pre">experience</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.BlastingRecipe.experience" title="Link to this definition">#</a></dt>
+<dd><p>Experience points awarded when the recipe is used.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.BlastingRecipe.cookingtime">
+<span class="sig-name descname"><span class="pre">cookingtime</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">100</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.BlastingRecipe.cookingtime" title="Link to this definition">#</a></dt>
+<dd><p>Cooking time in ticks (100 ticks = 5 seconds by default).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.BlastingRecipe.type">
+<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'blasting'</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.BlastingRecipe.type" title="Link to this definition">#</a></dt>
+<dd><p>The type of the recipe, e.g. ‘crafting_shaped’, ‘smelting’, etc.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.BlastingRecipe._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.BlastingRecipe._abc_impl" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmokingRecipe">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SmokingRecipe</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">ingredient</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ingr</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">experience</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">cookingtime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">result_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ingr</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">manual_priority</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">smithed_crafter_command</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/stewbeet/core/cls/recipe.html#SmokingRecipe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.SmokingRecipe" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase" title="stewbeet.core.cls.recipe.RecipeBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecipeBase</span></code></a></p>
+<p>Recipe for smoking in a smoker.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">stewbeet</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recipe</span> <span class="o">=</span> <span class="n">SmokingRecipe</span><span class="p">(</span><span class="n">ingredient</span><span class="o">=</span><span class="n">Ingr</span><span class="p">(</span><span class="s2">&quot;minecraft:chicken&quot;</span><span class="p">),</span> <span class="n">experience</span><span class="o">=</span><span class="mf">0.35</span><span class="p">,</span> <span class="n">cookingtime</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recipe</span><span class="o">.</span><span class="n">experience</span>
+<span class="go">0.35</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recipe</span><span class="o">.</span><span class="n">cookingtime</span>
+<span class="go">100</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmokingRecipe.ingredient">
+<span class="sig-name descname"><span class="pre">ingredient</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmokingRecipe.ingredient" title="Link to this definition">#</a></dt>
+<dd><p>The ingredient to be smoked.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmokingRecipe.experience">
+<span class="sig-name descname"><span class="pre">experience</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmokingRecipe.experience" title="Link to this definition">#</a></dt>
+<dd><p>Experience points awarded when the recipe is used.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmokingRecipe.cookingtime">
+<span class="sig-name descname"><span class="pre">cookingtime</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">100</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmokingRecipe.cookingtime" title="Link to this definition">#</a></dt>
+<dd><p>Cooking time in ticks (100 ticks = 5 seconds by default).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmokingRecipe.type">
+<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'smoking'</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmokingRecipe.type" title="Link to this definition">#</a></dt>
+<dd><p>The type of the recipe, e.g. ‘crafting_shaped’, ‘smelting’, etc.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmokingRecipe._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmokingRecipe._abc_impl" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.CampfireCookingRecipe">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CampfireCookingRecipe</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">ingredient</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ingr</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">experience</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">cookingtime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">result_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ingr</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">manual_priority</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">smithed_crafter_command</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/stewbeet/core/cls/recipe.html#CampfireCookingRecipe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.CampfireCookingRecipe" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase" title="stewbeet.core.cls.recipe.RecipeBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecipeBase</span></code></a></p>
+<p>Recipe for cooking on a campfire.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">stewbeet</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recipe</span> <span class="o">=</span> <span class="n">CampfireCookingRecipe</span><span class="p">(</span><span class="n">ingredient</span><span class="o">=</span><span class="n">Ingr</span><span class="p">(</span><span class="s2">&quot;minecraft:chicken&quot;</span><span class="p">),</span> <span class="n">experience</span><span class="o">=</span><span class="mf">0.35</span><span class="p">,</span> <span class="n">cookingtime</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recipe</span><span class="o">.</span><span class="n">experience</span>
+<span class="go">0.35</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recipe</span><span class="o">.</span><span class="n">cookingtime</span>
+<span class="go">600</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.CampfireCookingRecipe.ingredient">
+<span class="sig-name descname"><span class="pre">ingredient</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.CampfireCookingRecipe.ingredient" title="Link to this definition">#</a></dt>
+<dd><p>The ingredient to be cooked.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.CampfireCookingRecipe.experience">
+<span class="sig-name descname"><span class="pre">experience</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.CampfireCookingRecipe.experience" title="Link to this definition">#</a></dt>
+<dd><p>Experience points awarded when the recipe is used.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.CampfireCookingRecipe.cookingtime">
+<span class="sig-name descname"><span class="pre">cookingtime</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.CampfireCookingRecipe.cookingtime" title="Link to this definition">#</a></dt>
+<dd><p>Cooking time in ticks (600 ticks = 30 seconds by default).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.CampfireCookingRecipe.type">
+<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'campfire_cooking'</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.CampfireCookingRecipe.type" title="Link to this definition">#</a></dt>
+<dd><p>The type of the recipe, e.g. ‘crafting_shaped’, ‘smelting’, etc.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.CampfireCookingRecipe._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.CampfireCookingRecipe._abc_impl" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmithingTransformRecipe">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SmithingTransformRecipe</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ingr</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ingr</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">addition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ingr</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">result_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ingr</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">manual_priority</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">smithed_crafter_command</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/stewbeet/core/cls/recipe.html#SmithingTransformRecipe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTransformRecipe" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase" title="stewbeet.core.cls.recipe.RecipeBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecipeBase</span></code></a></p>
+<p>Recipe for smithing table transformation.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">stewbeet</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recipe</span> <span class="o">=</span> <span class="n">SmithingTransformRecipe</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">template</span><span class="o">=</span><span class="n">Ingr</span><span class="p">(</span><span class="s2">&quot;minecraft:netherite_upgrade_smithing_template&quot;</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">base</span><span class="o">=</span><span class="n">Ingr</span><span class="p">(</span><span class="s2">&quot;minecraft:diamond_sword&quot;</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">addition</span><span class="o">=</span><span class="n">Ingr</span><span class="p">(</span><span class="s2">&quot;minecraft:netherite_ingot&quot;</span><span class="p">)</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recipe</span><span class="o">.</span><span class="n">template</span><span class="p">[</span><span class="s1">&#39;item&#39;</span><span class="p">]</span>
+<span class="go">&#39;minecraft:netherite_upgrade_smithing_template&#39;</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmithingTransformRecipe.template">
+<span class="sig-name descname"><span class="pre">template</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTransformRecipe.template" title="Link to this definition">#</a></dt>
+<dd><p>The template item (e.g., upgrade template).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmithingTransformRecipe.base">
+<span class="sig-name descname"><span class="pre">base</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTransformRecipe.base" title="Link to this definition">#</a></dt>
+<dd><p>The base item to be transformed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmithingTransformRecipe.addition">
+<span class="sig-name descname"><span class="pre">addition</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTransformRecipe.addition" title="Link to this definition">#</a></dt>
+<dd><p>The addition item (e.g., material).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmithingTransformRecipe._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTransformRecipe._abc_impl" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmithingTransformRecipe.type">
+<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'smithing_transform'</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTransformRecipe.type" title="Link to this definition">#</a></dt>
+<dd><p>The type of the recipe, e.g. ‘crafting_shaped’, ‘smelting’, etc.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmithingTrimRecipe">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SmithingTrimRecipe</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ingr</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ingr</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">addition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ingr</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">result_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ingr</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">manual_priority</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">smithed_crafter_command</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/stewbeet/core/cls/recipe.html#SmithingTrimRecipe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTrimRecipe" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase" title="stewbeet.core.cls.recipe.RecipeBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecipeBase</span></code></a></p>
+<p>Recipe for applying armor trims.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">stewbeet</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recipe</span> <span class="o">=</span> <span class="n">SmithingTrimRecipe</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">template</span><span class="o">=</span><span class="n">Ingr</span><span class="p">(</span><span class="s2">&quot;minecraft:spire_armor_trim_smithing_template&quot;</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">base</span><span class="o">=</span><span class="n">Ingr</span><span class="p">(</span><span class="s2">&quot;minecraft:netherite_chestplate&quot;</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">addition</span><span class="o">=</span><span class="n">Ingr</span><span class="p">(</span><span class="s2">&quot;minecraft:diamond&quot;</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">pattern</span><span class="o">=</span><span class="s2">&quot;minecraft:spire_armor_trim_smithing_template&quot;</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recipe</span><span class="o">.</span><span class="n">addition</span><span class="p">[</span><span class="s1">&#39;item&#39;</span><span class="p">]</span>
+<span class="go">&#39;minecraft:diamond&#39;</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmithingTrimRecipe._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTrimRecipe._abc_impl" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmithingTrimRecipe.template">
+<span class="sig-name descname"><span class="pre">template</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTrimRecipe.template" title="Link to this definition">#</a></dt>
+<dd><p>The trim template.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmithingTrimRecipe.base">
+<span class="sig-name descname"><span class="pre">base</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTrimRecipe.base" title="Link to this definition">#</a></dt>
+<dd><p>The armor piece.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmithingTrimRecipe.addition">
+<span class="sig-name descname"><span class="pre">addition</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTrimRecipe.addition" title="Link to this definition">#</a></dt>
+<dd><p>The material for the trim.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmithingTrimRecipe.pattern">
+<span class="sig-name descname"><span class="pre">pattern</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTrimRecipe.pattern" title="Link to this definition">#</a></dt>
+<dd><p>The trim pattern.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmithingTrimRecipe.type">
+<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'smithing_trim'</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTrimRecipe.type" title="Link to this definition">#</a></dt>
+<dd><p>The type of the recipe, e.g. ‘crafting_shaped’, ‘smelting’, etc.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.StonecuttingRecipe">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">StonecuttingRecipe</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">ingredient</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ingr</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">result_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ingr</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">manual_priority</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">smithed_crafter_command</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/stewbeet/core/cls/recipe.html#StonecuttingRecipe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.StonecuttingRecipe" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase" title="stewbeet.core.cls.recipe.RecipeBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecipeBase</span></code></a></p>
+<p>Recipe for stonecutting.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">stewbeet</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recipe</span> <span class="o">=</span> <span class="n">StonecuttingRecipe</span><span class="p">(</span><span class="n">ingredient</span><span class="o">=</span><span class="n">Ingr</span><span class="p">(</span><span class="s2">&quot;minecraft:stone&quot;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recipe</span><span class="o">.</span><span class="n">ingredient</span><span class="p">[</span><span class="s1">&#39;item&#39;</span><span class="p">]</span>
+<span class="go">&#39;minecraft:stone&#39;</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.StonecuttingRecipe._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.StonecuttingRecipe._abc_impl" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.StonecuttingRecipe.ingredient">
+<span class="sig-name descname"><span class="pre">ingredient</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.StonecuttingRecipe.ingredient" title="Link to this definition">#</a></dt>
+<dd><p>The ingredient to be cut.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.StonecuttingRecipe.type">
+<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'stonecutting'</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.StonecuttingRecipe.type" title="Link to this definition">#</a></dt>
+<dd><p>The type of the recipe, e.g. ‘crafting_shaped’, ‘smelting’, etc.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.PulverizingRecipe">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PulverizingRecipe</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">ingredient</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ingr</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">result_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ingr</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">manual_priority</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">smithed_crafter_command</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/stewbeet/core/cls/recipe.html#PulverizingRecipe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.PulverizingRecipe" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase" title="stewbeet.core.cls.recipe.RecipeBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecipeBase</span></code></a></p>
+<p>Custom recipe for SimplEnergy pulverizing.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">stewbeet</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recipe</span> <span class="o">=</span> <span class="n">PulverizingRecipe</span><span class="p">(</span><span class="n">ingredient</span><span class="o">=</span><span class="n">Ingr</span><span class="p">(</span><span class="s2">&quot;minecraft:iron_ore&quot;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recipe</span><span class="o">.</span><span class="n">ingredient</span><span class="p">[</span><span class="s1">&#39;item&#39;</span><span class="p">]</span>
+<span class="go">&#39;minecraft:iron_ore&#39;</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.PulverizingRecipe._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.PulverizingRecipe._abc_impl" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.PulverizingRecipe.ingredient">
+<span class="sig-name descname"><span class="pre">ingredient</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.PulverizingRecipe.ingredient" title="Link to this definition">#</a></dt>
+<dd><p>The ingredient to be pulverized.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.PulverizingRecipe.type">
+<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'simplenergy_pulverizing'</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.PulverizingRecipe.type" title="Link to this definition">#</a></dt>
+<dd><p>The type of the recipe, e.g. ‘crafting_shaped’, ‘smelting’, etc.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.AwakenedForgeRecipe">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">AwakenedForgeRecipe</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">ingredients</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Ingr</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">particle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">result_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ingr</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">manual_priority</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">smithed_crafter_command</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/stewbeet/core/cls/recipe.html#AwakenedForgeRecipe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.AwakenedForgeRecipe" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase" title="stewbeet.core.cls.recipe.RecipeBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecipeBase</span></code></a></p>
+<p>Custom recipe for Stardust awakened forge.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">stewbeet</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recipe</span> <span class="o">=</span> <span class="n">AwakenedForgeRecipe</span><span class="p">(</span><span class="n">ingredients</span><span class="o">=</span><span class="p">[</span><span class="n">Ingr</span><span class="p">(</span><span class="s2">&quot;stardust_fragment&quot;</span><span class="p">),</span> <span class="n">Ingr</span><span class="p">(</span><span class="s2">&quot;minecraft:iron_ingot&quot;</span><span class="p">)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">recipe</span><span class="o">.</span><span class="n">ingredients</span><span class="p">)</span>
+<span class="go">2</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.AwakenedForgeRecipe._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.AwakenedForgeRecipe._abc_impl" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.AwakenedForgeRecipe.ingredients">
+<span class="sig-name descname"><span class="pre">ingredients</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Ingr</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.AwakenedForgeRecipe.ingredients" title="Link to this definition">#</a></dt>
+<dd><p>List of ingredients for the awakened forge.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.AwakenedForgeRecipe.particle">
+<span class="sig-name descname"><span class="pre">particle</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.AwakenedForgeRecipe.particle" title="Link to this definition">#</a></dt>
+<dd><p>(Optional) Particle effect for the recipe.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.AwakenedForgeRecipe.type">
+<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'stardust_awakened_forge'</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.AwakenedForgeRecipe.type" title="Link to this definition">#</a></dt>
+<dd><p>The type of the recipe, e.g. ‘crafting_shaped’, ‘smelting’, etc.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.HardcodedRecipe">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">HardcodedRecipe</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'crafting_decorated_pot'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'crafting_special_armordye'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'crafting_special_bannerduplicate'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'crafting_special_bookcloning'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'crafting_special_firework_rocket'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'crafting_special_firework_star'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'crafting_special_firework_star_fade'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'crafting_special_mapcloning'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'crafting_special_mapextending'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'crafting_special_repairitem'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'crafting_special_shielddecoration'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'crafting_special_tippedarrow'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'crafting_transmute'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">result_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ingr</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">manual_priority</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">smithed_crafter_command</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/stewbeet/core/cls/recipe.html#HardcodedRecipe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.HardcodedRecipe" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase" title="stewbeet.core.cls.recipe.RecipeBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecipeBase</span></code></a></p>
+<p>Recipe for special/hardcoded crafting types.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">recipe</span> <span class="o">=</span> <span class="n">HardcodedRecipe</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">&quot;crafting_special_armordye&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recipe</span><span class="o">.</span><span class="n">type</span>
+<span class="go">&#39;crafting_special_armordye&#39;</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.HardcodedRecipe._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.HardcodedRecipe._abc_impl" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.Recipe">
+<span class="sig-name descname"><span class="pre">Recipe</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">stewbeet.core.cls.recipe.CraftingShapedRecipe</span> <span class="pre">|</span> <span class="pre">stewbeet.core.cls.recipe.CraftingShapelessRecipe</span> <span class="pre">|</span> <span class="pre">stewbeet.core.cls.recipe.SmeltingRecipe</span> <span class="pre">|</span> <span class="pre">stewbeet.core.cls.recipe.BlastingRecipe</span> <span class="pre">|</span> <span class="pre">stewbeet.core.cls.recipe.SmokingRecipe</span> <span class="pre">|</span> <span class="pre">stewbeet.core.cls.recipe.CampfireCookingRecipe</span> <span class="pre">|</span> <span class="pre">stewbeet.core.cls.recipe.SmithingTransformRecipe</span> <span class="pre">|</span> <span class="pre">stewbeet.core.cls.recipe.SmithingTrimRecipe</span> <span class="pre">|</span> <span class="pre">stewbeet.core.cls.recipe.StonecuttingRecipe</span> <span class="pre">|</span> <span class="pre">stewbeet.core.cls.recipe.PulverizingRecipe</span> <span class="pre">|</span> <span class="pre">stewbeet.core.cls.recipe.AwakenedForgeRecipe</span> <span class="pre">|</span> <span class="pre">stewbeet.core.cls.recipe.HardcodedRecipe</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.Recipe" title="Link to this definition">#</a></dt>
+<dd><p>Type alias for all recipe types (CraftingShapedRecipe | CraftingShapelessRecipe | …)</p>
+</dd></dl>
+
+</section>
+
+</article><footer class="bz-article-footer">
+  
+  
+    <nav class="bz-related-pages" aria-label="Related pages navigation"><a class="bz-related-pages-previous" href="stewbeet.core.cls.painting.html" rel="prev">
+    <span>Previous</span><span class="bz-related-pages-title">stewbeet.core.cls.painting module</span></a><a class="bz-related-pages-next" href="stewbeet.core.cls.wiki_button.html" rel="next">
+    <span>Next</span>
+    <span class="bz-related-pages-title">stewbeet.core.cls.wiki_button module</span>
+  </a></nav>
+  
+
+</footer><aside class="bz-sidebar-secondary" data-drawer="bz-sidebar-secondary">
+  
+  
+    <nav class="bz-sidebar-toc" aria-label="Table of contents">
+  <p>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path d="M16 12H3" />
+      <path d="M16 18H3" />
+      <path d="M16 6H3" />
+      <path d="M21 12h.01" />
+      <path d="M21 18h.01" />
+      <path d="M21 6h.01" />
+    </svg>
+    On this page
+  </p><ul>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase"><code class="docutils literal notranslate"><span class="pre">RecipeBase</span></code></a><ul>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase.type"><code class="docutils literal notranslate"><span class="pre">RecipeBase​.type</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase.result_count"><code class="docutils literal notranslate"><span class="pre">RecipeBase​.result_​count</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase.category"><code class="docutils literal notranslate"><span class="pre">RecipeBase​.category</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase.group"><code class="docutils literal notranslate"><span class="pre">RecipeBase​.group</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase.result"><code class="docutils literal notranslate"><span class="pre">RecipeBase​.result</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase.manual_priority"><code class="docutils literal notranslate"><span class="pre">RecipeBase​.manual_​priority</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase.smithed_crafter_command"><code class="docutils literal notranslate"><span class="pre">RecipeBase​.smithed_​crafter_​command</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase.from_dict"><code class="docutils literal notranslate"><span class="pre">RecipeBase​.from_​dict()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase._validate_ingredient"><code class="docutils literal notranslate"><span class="pre">RecipeBase​._​validate_​ingredient()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase._validate_ingredients_list"><code class="docutils literal notranslate"><span class="pre">RecipeBase​._​validate_​ingredients_​list()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase._validate_numeric_fields"><code class="docutils literal notranslate"><span class="pre">RecipeBase​._​validate_​numeric_​fields()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase._validate_string_field"><code class="docutils literal notranslate"><span class="pre">RecipeBase​._​validate_​string_​field()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase._abc_impl"><code class="docutils literal notranslate"><span class="pre">RecipeBase​._​abc_​impl</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.CraftingShapedRecipe"><code class="docutils literal notranslate"><span class="pre">CraftingShapedRecipe</span></code></a><ul>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.CraftingShapedRecipe.shape"><code class="docutils literal notranslate"><span class="pre">CraftingShapedRecipe​.shape</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.CraftingShapedRecipe.ingredients"><code class="docutils literal notranslate"><span class="pre">CraftingShapedRecipe​.ingredients</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.CraftingShapedRecipe.type"><code class="docutils literal notranslate"><span class="pre">CraftingShapedRecipe​.type</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.CraftingShapedRecipe._abc_impl"><code class="docutils literal notranslate"><span class="pre">CraftingShapedRecipe​._​abc_​impl</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.CraftingShapelessRecipe"><code class="docutils literal notranslate"><span class="pre">CraftingShapelessRecipe</span></code></a><ul>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.CraftingShapelessRecipe.ingredients"><code class="docutils literal notranslate"><span class="pre">CraftingShapelessRecipe​.ingredients</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.CraftingShapelessRecipe.type"><code class="docutils literal notranslate"><span class="pre">CraftingShapelessRecipe​.type</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.CraftingShapelessRecipe._abc_impl"><code class="docutils literal notranslate"><span class="pre">CraftingShapelessRecipe​._​abc_​impl</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.SmeltingRecipe"><code class="docutils literal notranslate"><span class="pre">SmeltingRecipe</span></code></a><ul>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.SmeltingRecipe.ingredient"><code class="docutils literal notranslate"><span class="pre">SmeltingRecipe​.ingredient</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.SmeltingRecipe.experience"><code class="docutils literal notranslate"><span class="pre">SmeltingRecipe​.experience</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.SmeltingRecipe.cookingtime"><code class="docutils literal notranslate"><span class="pre">SmeltingRecipe​.cookingtime</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.SmeltingRecipe.type"><code class="docutils literal notranslate"><span class="pre">SmeltingRecipe​.type</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.SmeltingRecipe._abc_impl"><code class="docutils literal notranslate"><span class="pre">SmeltingRecipe​._​abc_​impl</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.BlastingRecipe"><code class="docutils literal notranslate"><span class="pre">BlastingRecipe</span></code></a><ul>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.BlastingRecipe.ingredient"><code class="docutils literal notranslate"><span class="pre">BlastingRecipe​.ingredient</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.BlastingRecipe.experience"><code class="docutils literal notranslate"><span class="pre">BlastingRecipe​.experience</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.BlastingRecipe.cookingtime"><code class="docutils literal notranslate"><span class="pre">BlastingRecipe​.cookingtime</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.BlastingRecipe.type"><code class="docutils literal notranslate"><span class="pre">BlastingRecipe​.type</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.BlastingRecipe._abc_impl"><code class="docutils literal notranslate"><span class="pre">BlastingRecipe​._​abc_​impl</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.SmokingRecipe"><code class="docutils literal notranslate"><span class="pre">SmokingRecipe</span></code></a><ul>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.SmokingRecipe.ingredient"><code class="docutils literal notranslate"><span class="pre">SmokingRecipe​.ingredient</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.SmokingRecipe.experience"><code class="docutils literal notranslate"><span class="pre">SmokingRecipe​.experience</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.SmokingRecipe.cookingtime"><code class="docutils literal notranslate"><span class="pre">SmokingRecipe​.cookingtime</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.SmokingRecipe.type"><code class="docutils literal notranslate"><span class="pre">SmokingRecipe​.type</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.SmokingRecipe._abc_impl"><code class="docutils literal notranslate"><span class="pre">SmokingRecipe​._​abc_​impl</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.CampfireCookingRecipe"><code class="docutils literal notranslate"><span class="pre">CampfireCookingRecipe</span></code></a><ul>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.CampfireCookingRecipe.ingredient"><code class="docutils literal notranslate"><span class="pre">CampfireCookingRecipe​.ingredient</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.CampfireCookingRecipe.experience"><code class="docutils literal notranslate"><span class="pre">CampfireCookingRecipe​.experience</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.CampfireCookingRecipe.cookingtime"><code class="docutils literal notranslate"><span class="pre">CampfireCookingRecipe​.cookingtime</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.CampfireCookingRecipe.type"><code class="docutils literal notranslate"><span class="pre">CampfireCookingRecipe​.type</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.CampfireCookingRecipe._abc_impl"><code class="docutils literal notranslate"><span class="pre">CampfireCookingRecipe​._​abc_​impl</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.SmithingTransformRecipe"><code class="docutils literal notranslate"><span class="pre">SmithingTransformRecipe</span></code></a><ul>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.SmithingTransformRecipe.template"><code class="docutils literal notranslate"><span class="pre">SmithingTransformRecipe​.template</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.SmithingTransformRecipe.base"><code class="docutils literal notranslate"><span class="pre">SmithingTransformRecipe​.base</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.SmithingTransformRecipe.addition"><code class="docutils literal notranslate"><span class="pre">SmithingTransformRecipe​.addition</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.SmithingTransformRecipe._abc_impl"><code class="docutils literal notranslate"><span class="pre">SmithingTransformRecipe​._​abc_​impl</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.SmithingTransformRecipe.type"><code class="docutils literal notranslate"><span class="pre">SmithingTransformRecipe​.type</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.SmithingTrimRecipe"><code class="docutils literal notranslate"><span class="pre">SmithingTrimRecipe</span></code></a><ul>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.SmithingTrimRecipe._abc_impl"><code class="docutils literal notranslate"><span class="pre">SmithingTrimRecipe​._​abc_​impl</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.SmithingTrimRecipe.template"><code class="docutils literal notranslate"><span class="pre">SmithingTrimRecipe​.template</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.SmithingTrimRecipe.base"><code class="docutils literal notranslate"><span class="pre">SmithingTrimRecipe​.base</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.SmithingTrimRecipe.addition"><code class="docutils literal notranslate"><span class="pre">SmithingTrimRecipe​.addition</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.SmithingTrimRecipe.pattern"><code class="docutils literal notranslate"><span class="pre">SmithingTrimRecipe​.pattern</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.SmithingTrimRecipe.type"><code class="docutils literal notranslate"><span class="pre">SmithingTrimRecipe​.type</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.StonecuttingRecipe"><code class="docutils literal notranslate"><span class="pre">StonecuttingRecipe</span></code></a><ul>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.StonecuttingRecipe._abc_impl"><code class="docutils literal notranslate"><span class="pre">StonecuttingRecipe​._​abc_​impl</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.StonecuttingRecipe.ingredient"><code class="docutils literal notranslate"><span class="pre">StonecuttingRecipe​.ingredient</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.StonecuttingRecipe.type"><code class="docutils literal notranslate"><span class="pre">StonecuttingRecipe​.type</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.PulverizingRecipe"><code class="docutils literal notranslate"><span class="pre">PulverizingRecipe</span></code></a><ul>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.PulverizingRecipe._abc_impl"><code class="docutils literal notranslate"><span class="pre">PulverizingRecipe​._​abc_​impl</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.PulverizingRecipe.ingredient"><code class="docutils literal notranslate"><span class="pre">PulverizingRecipe​.ingredient</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.PulverizingRecipe.type"><code class="docutils literal notranslate"><span class="pre">PulverizingRecipe​.type</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.AwakenedForgeRecipe"><code class="docutils literal notranslate"><span class="pre">AwakenedForgeRecipe</span></code></a><ul>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.AwakenedForgeRecipe._abc_impl"><code class="docutils literal notranslate"><span class="pre">AwakenedForgeRecipe​._​abc_​impl</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.AwakenedForgeRecipe.ingredients"><code class="docutils literal notranslate"><span class="pre">AwakenedForgeRecipe​.ingredients</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.AwakenedForgeRecipe.particle"><code class="docutils literal notranslate"><span class="pre">AwakenedForgeRecipe​.particle</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.AwakenedForgeRecipe.type"><code class="docutils literal notranslate"><span class="pre">AwakenedForgeRecipe​.type</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.HardcodedRecipe"><code class="docutils literal notranslate"><span class="pre">HardcodedRecipe</span></code></a><ul>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.HardcodedRecipe._abc_impl"><code class="docutils literal notranslate"><span class="pre">HardcodedRecipe​._​abc_​impl</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.Recipe"><code class="docutils literal notranslate"><span class="pre">Recipe</span></code></a></li>
+</ul></nav>
+  
+    <div class="bz-edit-this-page">
+  <a href="https://github.com/Stoupy51/stewbeet/edit/main/modules/stewbeet.core.cls.recipe.rst">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="sized" fill="currentColor"">
+      <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"></path>
+    </svg>
+    Edit this page
+  </a>
+</div>
+  
+    
+  
+
+</aside></main>
+  </div><footer class="bz-footer">
+  <div class="bz-footer-copyright"><p class="bz-copyright">© Copyright 2025, Stoupy</p><p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://github.com/aksiome/breeze">Breeze theme</a>.
+  </p>
+</div><div class="bz-external-links">
+  <a
+    href="https://github.com/Stoupy51/stewbeet"
+    aria-label="GitHub"
+    data-tooltip="GitHub"
+    target="_blank"
+  >
+    <svg
+      stroke="currentColor"
+      fill="currentColor"
+      stroke-width="0"
+      viewBox="0 0 16 16"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+      ></path>
+    </svg>
+  </a></div>
+</footer><a href="#" class="bz-back-to-top">
+    <svg class="sized" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m5 12 7-7 7 7"/><path d="M12 19V5"/>
+    </svg>
+    <span>Back to top</span>
+  </a>
+  <label class="bz-overlay bz-overlay-primary" for="bz-sidebar-primary"></label>
+  <label class="bz-overlay bz-overlay-secondary" for="bz-sidebar-secondary"></label>
+  <input type="checkbox" name="bz-sidebar-primary" id="bz-sidebar-primary" aria-label="Toggle site navigation sidebar">
+  <input type="checkbox" name="bz-sidebar-secondary" id="bz-sidebar-secondary" aria-label="Toggle table of contents sidebar">
+  </body>
+</html>

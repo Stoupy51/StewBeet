@@ -1,0 +1,20 @@
+stewbeet.plugins.datapack.sorters package
+=========================================
+
+.. automodule:: stewbeet.plugins.datapack.sorters
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.plugins.datapack.sorters.constants
+   stewbeet.plugins.datapack.sorters.extend_datapack
+   stewbeet.plugins.datapack.sorters.match
+   stewbeet.plugins.datapack.sorters.quick_sort
+   stewbeet.plugins.datapack.sorters.selection_sort

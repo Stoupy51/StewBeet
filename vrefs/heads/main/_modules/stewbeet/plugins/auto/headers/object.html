@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>stewbeet.plugins.auto.headers.object &#8212; StewBeet</title>
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8e8a900e" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/treeview.css?v=f8e9195c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/breeze.css?v=93f23127" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=1637c05a" />
+  <noscript>
+    <style>
+      .bz-js-only { display: none !important; }
+    </style>
+  </noscript>
+  
+    <script defer src="../../../../../_static/documentation_options.js?v=6d4b8ac6"></script>
+    <script defer src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script defer src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script defer src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script defer src="../../../../../_static/copybutton.js?v=18a8d5f5"></script>
+    <script defer src="../../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer src="../../../../../_static/treeview.js?v=265ad9b8"></script>
+    <script defer src="../../../../../_static/scripts/breeze.js?v=8ef74970"></script>
+  <script data-cfasync="false">
+    const mode = localStorage.getItem("breeze-mode") || "auto";
+    document.documentElement.dataset.mode = mode;
+    if (mode === "auto") {
+      const prefers = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+      document.documentElement.dataset.theme = prefers;
+    } else {
+      document.documentElement.dataset.theme = mode;
+    }
+  </script>
+    <link rel="icon" href="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png"/>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /><meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head><body>
+  
+  <div class="bz-skip-to-content">
+    <a href="#bz-main-content">Skip to main content</a>
+  </div><header class="bz-header-main">
+  <div class="bz-header-start"><a class="bz-header-brand" href="../../../../../index.html"><img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png" alt="Site Logo" /><span>StewBeet</span>
+</a></div>
+  <div class="bz-header-end"><div class="bz-search-button">
+  <a
+    href="../../../../../search.html#q"
+    aria-label="Search the docs"
+    data-tooltip="Search the docs"
+  >
+    <svg
+      class="sized"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 -1 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+      />
+    </svg>
+    <span>Search</span>
+    <kbd>Ctrl+K</kbd>
+  </a>
+</div><div class="bz-theme-switcher">
+  <button aria-label="Switch theme" data-tooltip="Switch theme">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="only-light" fill="currentColor">
+      <path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm5.657-8.157a.75.75 0 0 1 0 1.061l-1.061 1.06a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l1.06-1.06a.75.75 0 0 1 1.06 0Zm-9.193 9.193a.75.75 0 0 1 0 1.06l-1.06 1.061a.75.75 0 1 1-1.061-1.06l1.06-1.061a.75.75 0 0 1 1.061 0ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0ZM3 8a.75.75 0 0 1-.75.75H.75a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 3 8Zm13 0a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 16 8Zm-8 5a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13Zm3.536-1.464a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 0 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061ZM2.343 2.343a.75.75 0 0 1 1.061 0l1.06 1.061a.751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018l-1.06-1.06a.75.75 0 0 1 0-1.06Z"></path>
+    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="only-dark" fill="currentColor">
+      <path d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"></path>
+    </svg>
+  </button>
+</div><div class="bz-external-links">
+  <a
+    href="https://github.com/Stoupy51/stewbeet"
+    aria-label="GitHub"
+    data-tooltip="GitHub"
+    target="_blank"
+  >
+    <svg
+      stroke="currentColor"
+      fill="currentColor"
+      stroke-width="0"
+      viewBox="0 0 16 16"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+      ></path>
+    </svg>
+  </a></div></div>
+</header><nav class="bz-header-tabs" aria-label="Primary Navigation">
+  <label
+    class="bz-sidebar-primary-toggle"
+    for="bz-sidebar-primary"
+    role="button"
+    tabindex="0"
+  >
+    <svg class="sized muted" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path
+        fill="none"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M3.75 6.75h16.5M3.75 12H12m-8.25 5.25h12.5"
+      />
+    </svg>
+  </label><ul><li class="toctree-l1"><a class="reference internal" href="../../../../../modules/stewbeet.html">stewbeet package</a></li></ul><div class="bz-dropdown">
+    <button aria-haspopup="true" aria-expanded="false">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <g
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+        >
+          <circle cx="12" cy="12" r="1" />
+          <circle cx="19" cy="12" r="1" />
+          <circle cx="5" cy="12" r="1" />
+        </g>
+      </svg>
+    </button>
+    <ul role="menu" aria-hidden="true"></ul>
+  </div>
+</nav><div class="bz-content"><main id="bz-main-content"><header class="bz-article-header">
+  
+  
+    <nav class="bz-breadcrumbs" aria-label="Breadcrumb">
+  <ol>
+    <li class="bz-breadcrumbs-home">
+      <a href="../../../../../index.html">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </a>
+    </li><li class="bz-breadcrumbs-parent">
+      <a href="../../../../index.html">Module code</a>
+    </li><li class="bz-breadcrumbs-parent">
+      <a href="../../../../stewbeet.html">stewbeet</a>
+    </li><li class="bz-breadcrumbs-parent">
+      <a href="../headers.html">stewbeet.plugins.auto.headers</a>
+    </li><li class="bz-breadcrumbs-current">
+      <span>stewbeet.plugins.auto.headers.object</span>
+    </li>
+  </ol>
+</nav>
+  
+
+  <label
+    class="bz-sidebar-secondary-toggle"
+    for="bz-sidebar-secondary"
+    role="button"
+    tabindex="0"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="sized muted">
+      <path
+        fill="none"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M3.75 6.75H20.25 M11.25 12H20.25 M7.75 17.25H20.25"
+      />
+    </svg>
+  </label>
+</header><article class="bz-article-main" role="main">
+  <h1>Source code for stewbeet.plugins.auto.headers.object</h1><div class="highlight"><pre>
+<span></span>
+<span class="c1"># Imports</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+
+<span class="c1"># Header class</span>
+<div class="viewcode-block" id="Header">
+<a class="viewcode-back" href="../../../../../modules/stewbeet.plugins.auto.headers.object.html#stewbeet.plugins.auto.headers.object.Header">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Header</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; A class representing a function header.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        path (str): The path to the function (ex: &quot;namespace:folder/function_name&quot;)</span>
+<span class="sd">        within (list[str]): List of functions that call this function</span>
+<span class="sd">        other (list[str]): List of other information about the function</span>
+<span class="sd">        content (str): The content of the function</span>
+<span class="sd">        executed (str): The execution context (ex: &quot;as the player &amp; at current position&quot;)</span>
+<span class="sd">        args (dict[str, tuple[str, list[str]]]): Dictionary mapping macro argument names to (type, description_lines)</span>
+<span class="sd">            where description_lines is a list of strings (empty list if no description)</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; header = Header(&quot;test:function&quot;, [&quot;other:function&quot;], [&quot;Some info&quot;], &quot;say Hello&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; header.path</span>
+<span class="sd">        &#39;test:function&#39;</span>
+<span class="sd">        &gt;&gt;&gt; header.within</span>
+<span class="sd">        [&#39;other:function&#39;]</span>
+<span class="sd">        &gt;&gt;&gt; header.other</span>
+<span class="sd">        [&#39;Some info&#39;]</span>
+<span class="sd">        &gt;&gt;&gt; header.content</span>
+<span class="sd">        &#39;say Hello&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">within</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">other</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">content</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">executed</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">within</span> <span class="o">=</span> <span class="n">within</span> <span class="ow">or</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">other</span> <span class="o">=</span> <span class="n">other</span> <span class="ow">or</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="n">content</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">executed</span> <span class="o">=</span> <span class="n">executed</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span> <span class="ow">or</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="Header.from_content">
+<a class="viewcode-back" href="../../../../../modules/stewbeet.plugins.auto.headers.object.html#stewbeet.plugins.auto.headers.object.Header.from_content">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_content</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Header</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Create a Header object from a function&#39;s content.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            path (str): The path to the function</span>
+<span class="sd">            content (str): The content of the function</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Header: A new Header object</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            Basic function without args:</span>
+<span class="sd">            &gt;&gt;&gt; content = &#39;&#39;&#39;</span>
+<span class="sd">            ... #&gt; test:function</span>
+<span class="sd">            ... #</span>
+<span class="sd">            ... # @within    other:function</span>
+<span class="sd">            ... # Some info</span>
+<span class="sd">            ... #</span>
+<span class="sd">            ... say Hello&#39;&#39;&#39;</span>
+<span class="sd">            &gt;&gt;&gt; header = Header.from_content(&quot;test:function&quot;, content)</span>
+<span class="sd">            &gt;&gt;&gt; header.path</span>
+<span class="sd">            &#39;test:function&#39;</span>
+<span class="sd">            &gt;&gt;&gt; header.within</span>
+<span class="sd">            [&#39;other:function&#39;]</span>
+<span class="sd">            &gt;&gt;&gt; header.other</span>
+<span class="sd">            [&#39;Some info&#39;]</span>
+<span class="sd">            &gt;&gt;&gt; header.content</span>
+<span class="sd">            &#39;say Hello&#39;</span>
+
+<span class="sd">            Macro function with args (like StardustFragment teleport_to):</span>
+<span class="sd">            &gt;&gt;&gt; tp_header = Header(&quot;stardust:dimensions/teleport_to&quot;,</span>
+<span class="sd">            ...                    [&quot;stardust:dimensions/teleport_home with storage stardust:main world_spawn&quot;],</span>
+<span class="sd">            ...                    [],</span>
+<span class="sd">            ...                    &quot;$execute in $(dimension) run tp @s $(x) $(y) $(z)&quot;,</span>
+<span class="sd">            ...                    &quot;in stardust:cavern&quot;,</span>
+<span class="sd">            ...                    {&#39;dimension&#39;: (&#39;string&#39;, []), &#39;x&#39;: (&#39;int&#39;, []), &#39;y&#39;: (&#39;int&#39;, []), &#39;z&#39;: (&#39;int&#39;, [])})</span>
+<span class="sd">            &gt;&gt;&gt; tp_header.executed</span>
+<span class="sd">            &#39;in stardust:cavern&#39;</span>
+<span class="sd">            &gt;&gt;&gt; tp_header.args[&#39;dimension&#39;]</span>
+<span class="sd">            (&#39;string&#39;, [])</span>
+<span class="sd">            &gt;&gt;&gt; tp_header.args[&#39;x&#39;]</span>
+<span class="sd">            (&#39;int&#39;, [])</span>
+<span class="sd">            &gt;&gt;&gt; len(tp_header.args)</span>
+<span class="sd">            4</span>
+
+<span class="sd">            Macro function with args and descriptions (like SimplEnergy update_energy_lore):</span>
+<span class="sd">            &gt;&gt;&gt; lore_header = Header(&quot;simplenergy:calls/update_energy_lore/macro&quot;,</span>
+<span class="sd">            ...                      [&quot;simplenergy:calls/update_energy_lore/main with storage simplenergy:temp macro&quot;],</span>
+<span class="sd">            ...                      [],</span>
+<span class="sd">            ...                      &quot;$data modify storage energy:temp list[0] set value $(part_1)&quot;,</span>
+<span class="sd">            ...                      &quot;&quot;,</span>
+<span class="sd">            ...                      {&#39;part_1&#39;: (&#39;int&#39;, [&#39;first part of energy value&#39;]),</span>
+<span class="sd">            ...                       &#39;part_2&#39;: (&#39;int&#39;, [&#39;second part of energy value&#39;]),</span>
+<span class="sd">            ...                       &#39;scale&#39;: (&#39;string&#39;, [&#39;energy scale suffix&#39;])})</span>
+<span class="sd">            &gt;&gt;&gt; lore_header.args[&#39;part_1&#39;]</span>
+<span class="sd">            (&#39;int&#39;, [&#39;first part of energy value&#39;])</span>
+<span class="sd">            &gt;&gt;&gt; lore_header.args[&#39;part_2&#39;]</span>
+<span class="sd">            (&#39;int&#39;, [&#39;second part of energy value&#39;])</span>
+<span class="sd">            &gt;&gt;&gt; lore_header.args[&#39;scale&#39;]</span>
+<span class="sd">            (&#39;string&#39;, [&#39;energy scale suffix&#39;])</span>
+
+<span class="sd">            Function with compound type and multi-line description:</span>
+<span class="sd">            &gt;&gt;&gt; comp_header = Header(&quot;test:compound_func&quot;,</span>
+<span class="sd">            ...                      [],</span>
+<span class="sd">            ...                      [],</span>
+<span class="sd">            ...                      &quot;function content&quot;,</span>
+<span class="sd">            ...                      &quot;&quot;,</span>
+<span class="sd">            ...                      {&#39;config&#39;: (&#39;compound&#39;, [&#39;configuration object&#39;,</span>
+<span class="sd">            ...                                                &#39;- duration : int - how long in ticks&#39;,</span>
+<span class="sd">            ...                                                &#39;- power : float - effect strength&#39;])})</span>
+<span class="sd">            &gt;&gt;&gt; comp_header.args[&#39;config&#39;]</span>
+<span class="sd">            (&#39;compound&#39;, [&#39;configuration object&#39;, &#39;- duration : int - how long in ticks&#39;, &#39;- power : float - effect strength&#39;])</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Initialize empty lists</span>
+        <span class="n">within</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">other</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">executed</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">actual_content</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+        <span class="c1"># If the content has a header, parse it</span>
+        <span class="k">if</span> <span class="n">content</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#&gt; &quot;</span><span class="p">):</span>
+            <span class="c1"># Split the content into lines</span>
+            <span class="n">lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Skip the first line (#&gt; path) and the second line (#)</span>
+            <span class="n">i</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span>
+
+            <span class="c1"># Parse executed section</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="ow">and</span> <span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;# @executed&quot;</span><span class="p">):</span>
+                <span class="n">executed_line</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">executed_line</span> <span class="o">!=</span> <span class="s2">&quot;# @executed&quot;</span><span class="p">:</span>
+                    <span class="c1"># Extract the execution context after @executed</span>
+                    <span class="n">executed</span> <span class="o">=</span> <span class="n">executed_line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;@executed&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="c1"># Skip empty comment lines</span>
+            <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="ow">and</span> <span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;#&quot;</span><span class="p">:</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="c1"># Parse args section</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="ow">and</span> <span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;# @args&quot;</span><span class="p">):</span>
+                <span class="n">args_line</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">current_arg</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">current_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="n">current_description</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+                <span class="c1"># Check if there&#39;s an argument on the same line as @args</span>
+                <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+                <span class="c1"># Remove &quot;# @args&quot; and any tabs/spaces after it</span>
+                <span class="n">args_content</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^#\s*@args\s+&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">args_line</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">args_content</span><span class="p">:</span>
+                    <span class="c1"># There&#39;s an argument on the same line</span>
+                    <span class="c1"># Try to match with description</span>
+                    <span class="n">match</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">Match</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(\w+)\s*\((\w+)\)\s*:\s*(.+)&#39;</span><span class="p">,</span> <span class="n">args_content</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+                        <span class="n">current_arg</span><span class="p">,</span> <span class="n">current_type</span><span class="p">,</span> <span class="n">desc</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+                        <span class="n">current_description</span> <span class="o">=</span> <span class="p">[</span><span class="n">desc</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># Try to match without description</span>
+                        <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(\w+)\s*\((\w+)\)&#39;</span><span class="p">,</span> <span class="n">args_content</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+                            <span class="n">current_arg</span><span class="p">,</span> <span class="n">current_type</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+                            <span class="n">current_description</span> <span class="o">=</span> <span class="p">[]</span>
+
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>  <span class="c1"># Move to next line</span>
+                <span class="c1"># Parse argument lines until we hit a non-indented comment or empty line</span>
+
+                <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="ow">and</span> <span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">):</span>
+                    <span class="n">arg_line</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+                    <span class="c1"># Check if it&#39;s an indented argument line (starts with # followed by whitespace)</span>
+                    <span class="k">if</span> <span class="n">arg_line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">arg_line</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">arg_line</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isspace</span><span class="p">():</span>
+                        <span class="n">arg_content</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">arg_line</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+                        <span class="c1"># Check if it&#39;s a sub-description line (starts with -)</span>
+                        <span class="k">if</span> <span class="n">arg_content</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">):</span>
+                            <span class="c1"># This is a description line for compound type</span>
+                            <span class="k">if</span> <span class="n">current_arg</span><span class="p">:</span>
+                                <span class="n">current_description</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg_content</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="c1"># Save previous argument if exists</span>
+                            <span class="k">if</span> <span class="n">current_arg</span><span class="p">:</span>
+                                <span class="n">args</span><span class="p">[</span><span class="n">current_arg</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">current_type</span><span class="p">,</span> <span class="n">current_description</span><span class="p">[:])</span>
+
+                            <span class="c1"># Parse new argument (format: &quot;arg_name (type): description&quot; or &quot;arg_name (type)&quot;)</span>
+                            <span class="c1"># Try to match with description</span>
+                            <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(\w+)\s*\((\w+)\)\s*:\s*(.+)&#39;</span><span class="p">,</span> <span class="n">arg_content</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+                                <span class="n">current_arg</span><span class="p">,</span> <span class="n">current_type</span><span class="p">,</span> <span class="n">desc</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+                                <span class="n">current_description</span> <span class="o">=</span> <span class="p">[</span><span class="n">desc</span><span class="p">]</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="c1"># Try to match without description</span>
+                                <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(\w+)\s*\((\w+)\)&#39;</span><span class="p">,</span> <span class="n">arg_content</span><span class="p">)</span>
+                                <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+                                    <span class="n">current_arg</span><span class="p">,</span> <span class="n">current_type</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+                                    <span class="n">current_description</span> <span class="o">=</span> <span class="p">[]</span>
+                                <span class="k">else</span><span class="p">:</span>
+                                    <span class="n">current_arg</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="k">elif</span> <span class="n">arg_line</span> <span class="o">==</span> <span class="s2">&quot;#&quot;</span><span class="p">:</span>
+                        <span class="c1"># Empty comment line might end args section or be part of description</span>
+                        <span class="c1"># We&#39;ll treat it as end of args section</span>
+                        <span class="k">break</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># Non-indented line ends args section</span>
+                        <span class="k">break</span>
+                    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                <span class="c1"># Save the last argument if exists</span>
+                <span class="k">if</span> <span class="n">current_arg</span><span class="p">:</span>
+                    <span class="n">args</span><span class="p">[</span><span class="n">current_arg</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">current_type</span><span class="p">,</span> <span class="n">current_description</span><span class="p">[:])</span>
+
+            <span class="c1"># Skip empty comment lines</span>
+            <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="ow">and</span> <span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;#&quot;</span><span class="p">:</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="c1"># Parse within section</span>
+            <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="ow">and</span> <span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;# @within&quot;</span><span class="p">):</span>
+                <span class="n">within_line</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">within_line</span> <span class="o">!=</span> <span class="s2">&quot;# @within&quot;</span><span class="p">:</span>
+                    <span class="c1"># Extract the function name after @within</span>
+                    <span class="n">func_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">within_line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;@within&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="n">within</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="c1"># Skip empty comment lines</span>
+            <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="ow">and</span> <span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;#&quot;</span><span class="p">:</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="c1"># Parse other information (without # prefix)</span>
+            <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="ow">and</span> <span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">):</span>
+                <span class="n">other_line</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">other</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">other_line</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="c1"># Skip any remaining empty comment lines</span>
+            <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="ow">and</span> <span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;#&quot;</span><span class="p">:</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="c1"># The remaining lines are the actual content</span>
+            <span class="n">actual_content</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">:])</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">other</span> <span class="ow">and</span> <span class="n">other</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="c1"># Remove the last empty line if it exists</span>
+            <span class="n">other</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">within</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">actual_content</span><span class="p">,</span> <span class="n">executed</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Header.to_str">
+<a class="viewcode-back" href="../../../../../modules/stewbeet.plugins.auto.headers.object.html#stewbeet.plugins.auto.headers.object.Header.to_str">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Convert the Header object to a string.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: The function content with the header</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; content = &#39;&#39;&#39;</span>
+<span class="sd">            ... #&gt; test:function</span>
+<span class="sd">            ... #</span>
+<span class="sd">            ... # @within\\tother:function</span>
+<span class="sd">            ... #</span>
+<span class="sd">            ... # Some info</span>
+<span class="sd">            ... #</span>
+<span class="sd">            ...</span>
+<span class="sd">            ... say Hello\\n\\n&#39;&#39;&#39;</span>
+<span class="sd">            &gt;&gt;&gt; header = Header(&quot;test:function&quot;, [&quot;other:function&quot;], [&quot;Some info&quot;], &quot;say Hello&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; content.strip() == header.to_str().strip()</span>
+<span class="sd">            True</span>
+<span class="sd">            &gt;&gt;&gt; content_lines = content.splitlines()</span>
+<span class="sd">            &gt;&gt;&gt; header_lines = header.to_str().splitlines()</span>
+<span class="sd">            &gt;&gt;&gt; for i, (c, h) in enumerate(zip(content_lines, header_lines)):</span>
+<span class="sd">            ...     if c != h:</span>
+<span class="sd">            ...         print(f&quot;Difference at line {i}:&quot;)</span>
+<span class="sd">            ...         print(f&quot;Content:  {c}&quot;)</span>
+<span class="sd">            ...         print(f&quot;Header:   {h}&quot;)</span>
+<span class="sd">            ...         break</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Start with the path</span>
+        <span class="n">header</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">#&gt; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="se">\n</span><span class="s2">#</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="c1"># Add the executed context (only if known)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">executed</span><span class="p">:</span>
+            <span class="n">executed</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">executed</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">executed</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="n">x</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">executed</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="s2">&quot; &quot;</span> <span class="ow">or</span> <span class="p">(</span><span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">executed</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="s2">&quot;:,&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">header</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;# @executed</span><span class="se">\t</span><span class="si">{</span><span class="n">executed</span><span class="si">}</span><span class="se">\n</span><span class="s2">#</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="c1"># Add the within list</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">within</span><span class="p">:</span>
+            <span class="n">header</span> <span class="o">+=</span> <span class="s2">&quot;# @within</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">#</span><span class="se">\t\t\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">within</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">#</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">header</span> <span class="o">+=</span> <span class="s2">&quot;# @within</span><span class="se">\t</span><span class="s2">???</span><span class="se">\n</span><span class="s2">#</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="c1"># Add the args section (only if there are arguments)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">:</span>
+            <span class="n">header</span> <span class="o">+=</span> <span class="s2">&quot;# @args</span><span class="se">\t\t</span><span class="s2">&quot;</span>
+            <span class="c1"># Preserve insertion order of args (first-introduced order).</span>
+            <span class="n">arg_lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">arg_name</span><span class="p">,</span> <span class="p">(</span><span class="n">arg_type</span><span class="p">,</span> <span class="n">description_lines</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="c1"># First line: arg_name (type): description (or just arg_name (type) if no description)</span>
+                <span class="k">if</span> <span class="n">description_lines</span><span class="p">:</span>
+                    <span class="c1"># First description line goes on same line as arg</span>
+                    <span class="n">first_line</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">arg_name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">arg_type</span><span class="si">}</span><span class="s2">): </span><span class="si">{</span><span class="n">description_lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="n">arg_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">first_line</span><span class="p">)</span>
+                    <span class="c1"># Additional description lines (for compound types)</span>
+                    <span class="k">for</span> <span class="n">desc_line</span> <span class="ow">in</span> <span class="n">description_lines</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+                        <span class="n">arg_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t\t\t\t</span><span class="si">{</span><span class="n">desc_line</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># No description</span>
+                    <span class="n">arg_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">arg_name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">arg_type</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+
+            <span class="n">header</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">#</span><span class="se">\t\t\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">arg_lines</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">#</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="c1"># Add other information</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">other</span><span class="p">:</span>
+            <span class="n">header</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;# </span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="c1"># Add final empty line and content</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">header</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;#</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
+            <span class="n">header</span> <span class="o">+=</span> <span class="s2">&quot;#</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">header</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+</div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># Example usage</span>
+    <span class="n">example_content</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">#&gt; alt_launch</span>
+<span class="s2">#</span>
+<span class="s2"># @executed			as the player &amp; at current position</span>
+<span class="s2">#</span>
+<span class="s2"># @args				target (string): target selector for position and rotation source</span>
+<span class="s2">#					time (int): time in ticks</span>
+<span class="s2">#					with (compound): additional arguments (optional)</span>
+<span class="s2">#						- yaw : float - yaw rotation (will override target rotation)</span>
+<span class="s2">#						- pitch : float - pitch rotation (will override target rotation)</span>
+<span class="s2">#						- go_side : float - how far to go side (0 = don&#39;t go side)</span>
+<span class="s2">#						- add_y : float - additional y position (default: 20.0)</span>
+<span class="s2">#						- particle : int - particle effect (0 = none, 1 = glow)</span>
+<span class="s2">#						- interpolation : int - teleport duration (default: 1)</span>
+<span class="s2">#						- delay : int - delay in ticks before starting (default: 0)</span>
+<span class="s2">#</span>
+<span class="s2"># @description		Launch a cinematic that moves the player to the position and rotation of a target entity</span>
+<span class="s2">#</span>
+<span class="s2"># @example			/execute as @s positioned 0 69 0 rotated -55 10 run function switch:cinematic/alt_launch {target:&quot;@s&quot;,time:60,with:{go_side:1,add_y:20.0,particle:1,interpolation:1,delay:20}}</span>
+<span class="s2">#</span>
+
+<span class="s2"># Fonction content here</span>
+<span class="s2">&quot;&quot;&quot;</span>
+    <span class="n">header</span> <span class="o">=</span> <span class="n">Header</span><span class="o">.</span><span class="n">from_content</span><span class="p">(</span><span class="s2">&quot;alt_launch&quot;</span><span class="p">,</span> <span class="n">example_content</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">header</span><span class="o">.</span><span class="n">to_str</span><span class="p">())</span>
+</pre></div>
+</article><footer class="bz-article-footer">
+  
+  
+    <nav class="bz-related-pages" aria-label="Related pages navigation"></nav>
+  
+
+</footer></main>
+  </div><footer class="bz-footer">
+  <div class="bz-footer-copyright"><p class="bz-copyright">© Copyright 2025, Stoupy</p><p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://github.com/aksiome/breeze">Breeze theme</a>.
+  </p>
+</div><div class="bz-external-links">
+  <a
+    href="https://github.com/Stoupy51/stewbeet"
+    aria-label="GitHub"
+    data-tooltip="GitHub"
+    target="_blank"
+  >
+    <svg
+      stroke="currentColor"
+      fill="currentColor"
+      stroke-width="0"
+      viewBox="0 0 16 16"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+      ></path>
+    </svg>
+  </a></div>
+</footer><a href="#" class="bz-back-to-top">
+    <svg class="sized" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m5 12 7-7 7 7"/><path d="M12 19V5"/>
+    </svg>
+    <span>Back to top</span>
+  </a>
+  <label class="bz-overlay bz-overlay-primary" for="bz-sidebar-primary"></label>
+  <label class="bz-overlay bz-overlay-secondary" for="bz-sidebar-secondary"></label>
+  <input type="checkbox" name="bz-sidebar-primary" id="bz-sidebar-primary" aria-label="Toggle site navigation sidebar">
+  <input type="checkbox" name="bz-sidebar-secondary" id="bz-sidebar-secondary" aria-label="Toggle table of contents sidebar">
+  </body>
+</html>

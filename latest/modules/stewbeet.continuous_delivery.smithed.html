@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="stewbeet.continuous_delivery.smithed module" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="modules/stewbeet.continuous_delivery.smithed.html" />
+<meta property="og:site_name" content="StewBeet" />
+
+    <title>stewbeet.continuous_delivery.smithed module &#8212; StewBeet</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8e8a900e" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/treeview.css?v=f8e9195c" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/breeze.css?v=93f23127" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=1637c05a" />
+  <noscript>
+    <style>
+      .bz-js-only { display: none !important; }
+    </style>
+  </noscript>
+  
+    <script defer src="../_static/documentation_options.js?v=6d4b8ac6"></script>
+    <script defer src="../_static/doctools.js?v=9bcbadda"></script>
+    <script defer src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script defer src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script defer src="../_static/copybutton.js?v=18a8d5f5"></script>
+    <script defer src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer src="../_static/treeview.js?v=265ad9b8"></script>
+    <script defer src="../_static/scripts/breeze.js?v=8ef74970"></script>
+  <script data-cfasync="false">
+    const mode = localStorage.getItem("breeze-mode") || "auto";
+    document.documentElement.dataset.mode = mode;
+    if (mode === "auto") {
+      const prefers = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+      document.documentElement.dataset.theme = prefers;
+    } else {
+      document.documentElement.dataset.theme = mode;
+    }
+  </script>
+    <link rel="icon" href="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="stewbeet.core package" href="stewbeet.core.html" />
+    <link rel="prev" title="stewbeet.continuous_delivery.pmc module" href="stewbeet.continuous_delivery.pmc.html" /><meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head><body>
+  
+  <div class="bz-skip-to-content">
+    <a href="#bz-main-content">Skip to main content</a>
+  </div><header class="bz-header-main">
+  <div class="bz-header-start"><a class="bz-header-brand" href="../index.html"><img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png" alt="Site Logo" /><span>StewBeet</span>
+</a></div>
+  <div class="bz-header-end"><div class="bz-search-button">
+  <a
+    href="../search.html#q"
+    aria-label="Search the docs"
+    data-tooltip="Search the docs"
+  >
+    <svg
+      class="sized"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 -1 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+      />
+    </svg>
+    <span>Search</span>
+    <kbd>Ctrl+K</kbd>
+  </a>
+</div><div class="bz-theme-switcher">
+  <button aria-label="Switch theme" data-tooltip="Switch theme">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="only-light" fill="currentColor">
+      <path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm5.657-8.157a.75.75 0 0 1 0 1.061l-1.061 1.06a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l1.06-1.06a.75.75 0 0 1 1.06 0Zm-9.193 9.193a.75.75 0 0 1 0 1.06l-1.06 1.061a.75.75 0 1 1-1.061-1.06l1.06-1.061a.75.75 0 0 1 1.061 0ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0ZM3 8a.75.75 0 0 1-.75.75H.75a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 3 8Zm13 0a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 16 8Zm-8 5a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13Zm3.536-1.464a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 0 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061ZM2.343 2.343a.75.75 0 0 1 1.061 0l1.06 1.061a.751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018l-1.06-1.06a.75.75 0 0 1 0-1.06Z"></path>
+    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="only-dark" fill="currentColor">
+      <path d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"></path>
+    </svg>
+  </button>
+</div><div class="bz-external-links">
+  <a
+    href="https://github.com/Stoupy51/stewbeet"
+    aria-label="GitHub"
+    data-tooltip="GitHub"
+    target="_blank"
+  >
+    <svg
+      stroke="currentColor"
+      fill="currentColor"
+      stroke-width="0"
+      viewBox="0 0 16 16"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+      ></path>
+    </svg>
+  </a></div></div>
+</header><nav class="bz-header-tabs" aria-label="Primary Navigation">
+  <label
+    class="bz-sidebar-primary-toggle"
+    for="bz-sidebar-primary"
+    role="button"
+    tabindex="0"
+  >
+    <svg class="sized muted" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path
+        fill="none"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M3.75 6.75h16.5M3.75 12H12m-8.25 5.25h12.5"
+      />
+    </svg>
+  </label><ul><li class="toctree-l1 current"><a class="reference internal" href="stewbeet.html">stewbeet package</a></li></ul><div class="bz-dropdown">
+    <button aria-haspopup="true" aria-expanded="false">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <g
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+        >
+          <circle cx="12" cy="12" r="1" />
+          <circle cx="19" cy="12" r="1" />
+          <circle cx="5" cy="12" r="1" />
+        </g>
+      </svg>
+    </button>
+    <ul role="menu" aria-hidden="true"></ul>
+  </div>
+</nav><div class="bz-content"><aside class="bz-sidebar-primary" data-drawer="bz-sidebar-primary">
+  
+  
+    <nav class="bz-sidebar-nav" aria-label="Section Navigation"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="stewbeet.continuous_delivery.html">stewbeet.continuous_delivery package</a>
+<details open=""><summary></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.continuous_delivery.cd_utils.html">stewbeet.continuous_delivery.cd_utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.continuous_delivery.github.html">stewbeet.continuous_delivery.github module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.continuous_delivery.modrinth.html">stewbeet.continuous_delivery.modrinth module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.continuous_delivery.pmc.html">stewbeet.continuous_delivery.pmc module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">stewbeet.continuous_delivery.smithed module</a></li>
+</ul></details></li>
+<li class="toctree-l1"><a class="reference internal" href="stewbeet.core.html">stewbeet.core package</a>
+<details><summary></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.core.cls.html">stewbeet.core.cls namespace</a>
+<details><summary></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.cls._recipe_list.html">stewbeet.core.cls._recipe_list module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.cls._utils.html">stewbeet.core.cls._utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.cls.block.html">stewbeet.core.cls.block module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.cls.ingredients.html">stewbeet.core.cls.ingredients module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.cls.item.html">stewbeet.core.cls.item module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.cls.painting.html">stewbeet.core.cls.painting module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.cls.recipe.html">stewbeet.core.cls.recipe module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.cls.wiki_button.html">stewbeet.core.cls.wiki_button module</a></li>
+</ul></details></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.core.definitions_helper.html">stewbeet.core.definitions_helper package</a>
+<details><summary></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.definitions_helper.completion.html">stewbeet.core.definitions_helper.completion module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.definitions_helper.equipments.html">stewbeet.core.definitions_helper.equipments module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.definitions_helper.materials.html">stewbeet.core.definitions_helper.materials module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.definitions_helper.records.html">stewbeet.core.definitions_helper.records module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.definitions_helper.simplenergy.html">stewbeet.core.definitions_helper.simplenergy module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.definitions_helper.smart_ore_generation.html">stewbeet.core.definitions_helper.smart_ore_generation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.definitions_helper.text.html">stewbeet.core.definitions_helper.text module</a></li>
+</ul></details></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.core.utils.html">stewbeet.core.utils namespace</a>
+<details><summary></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.utils.io.html">stewbeet.core.utils.io module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.utils.loot_table.html">stewbeet.core.utils.loot_table module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.utils.sounds.html">stewbeet.core.utils.sounds module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.utils.text_component.html">stewbeet.core.utils.text_component module</a></li>
+</ul></details></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.core.__memory__.html">stewbeet.core.__memory__ module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.core.constants.html">stewbeet.core.constants module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.core.dump.html">stewbeet.core.dump module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.core.migrate.html">stewbeet.core.migrate module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.core.template.html">stewbeet.core.template module</a></li>
+</ul></details></li>
+<li class="toctree-l1"><a class="reference internal" href="stewbeet.dependencies.html">stewbeet.dependencies package</a>
+<details><summary></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.dependencies.bookshelf.html">stewbeet.dependencies.bookshelf module</a></li>
+</ul></details></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="stewbeet.__main__.html">stewbeet.__main__ module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stewbeet.all.html">stewbeet.all module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stewbeet.cli.html">stewbeet.cli module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stewbeet.utils.html">stewbeet.utils module</a></li>
+</ul>
+</nav>
+  
+
+</aside><main id="bz-main-content"><header class="bz-article-header">
+  
+  
+    <nav class="bz-breadcrumbs" aria-label="Breadcrumb">
+  <ol>
+    <li class="bz-breadcrumbs-home">
+      <a href="../index.html">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </a>
+    </li><li class="bz-breadcrumbs-parent">
+      <a href="stewbeet.html">stewbeet package</a>
+    </li><li class="bz-breadcrumbs-parent">
+      <a href="stewbeet.continuous_delivery.html">stewbeet.continuous_delivery package</a>
+    </li><li class="bz-breadcrumbs-current">
+      <span>stewbeet.continuous_delivery.smithed module</span>
+    </li>
+  </ol>
+</nav>
+  
+
+  <label
+    class="bz-sidebar-secondary-toggle"
+    for="bz-sidebar-secondary"
+    role="button"
+    tabindex="0"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="sized muted">
+      <path
+        fill="none"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M3.75 6.75H20.25 M11.25 12H20.25 M7.75 17.25H20.25"
+      />
+    </svg>
+  </label>
+</header><article class="bz-article-main" role="main">
+  <section id="module-stewbeet.continuous_delivery.smithed">
+<span id="stewbeet-continuous-delivery-smithed-module"></span><h1>stewbeet.continuous_delivery.smithed module<a class="headerlink" href="#module-stewbeet.continuous_delivery.smithed" title="Link to this heading">#</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.continuous_delivery.smithed.validate_credentials">
+<span class="sig-name descname"><span class="pre">validate_credentials</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">credentials</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/stewbeet/continuous_delivery/smithed.html#validate_credentials"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.continuous_delivery.smithed.validate_credentials" title="Link to this definition">#</a></dt>
+<dd><p>Get and validate Smithed credentials</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>credentials</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em>) – Credentials for the Smithed API</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>API key for Smithed
+str: GitHub author</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.continuous_delivery.smithed.validate_config">
+<span class="sig-name descname"><span class="pre">validate_config</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">smithed_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/stewbeet/continuous_delivery/smithed.html#validate_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.continuous_delivery.smithed.validate_config" title="Link to this definition">#</a></dt>
+<dd><p>Validate Smithed configuration</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>smithed_config</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em>) – Configuration for the Smithed project</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Project name on Smithed
+str: Version of the project
+str: Slug (namespace) of the project</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.continuous_delivery.smithed.upload_version">
+<span class="sig-name descname"><span class="pre">upload_version</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">project_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">project_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">author</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/stewbeet/continuous_delivery/smithed.html#upload_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.continuous_delivery.smithed.upload_version" title="Link to this definition">#</a></dt>
+<dd><p>Upload new version</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project_id</strong> (<em>str</em>) – Smithed project ID</p></li>
+<li><p><strong>project_name</strong> (<em>str</em>) – Name of the project</p></li>
+<li><p><strong>version</strong> (<em>str</em>) – Version number</p></li>
+<li><p><strong>api_key</strong> (<em>str</em>) – API key for Smithed</p></li>
+<li><p><strong>author</strong> (<em>str</em>) – Author (for the github link)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.continuous_delivery.smithed.upload_to_smithed">
+<span class="sig-name descname"><span class="pre">upload_to_smithed</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">credentials</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">smithed_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">changelog</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/stewbeet/continuous_delivery/smithed.html#upload_to_smithed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.continuous_delivery.smithed.upload_to_smithed" title="Link to this definition">#</a></dt>
+<dd><p>Upload the project to Smithed using the credentials and the configuration</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>credentials</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em>) – Credentials for the Smithed API</p></li>
+<li><p><strong>smithed_config</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em>) – Configuration for the Smithed project</p></li>
+<li><p><strong>changelog</strong> (<em>str</em>) – Changelog text for the release</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+</article><footer class="bz-article-footer">
+  
+  
+    <nav class="bz-related-pages" aria-label="Related pages navigation"><a class="bz-related-pages-previous" href="stewbeet.continuous_delivery.pmc.html" rel="prev">
+    <span>Previous</span><span class="bz-related-pages-title">stewbeet.continuous_delivery.pmc module</span></a><a class="bz-related-pages-next" href="stewbeet.core.html" rel="next">
+    <span>Next</span>
+    <span class="bz-related-pages-title">stewbeet.core package</span>
+  </a></nav>
+  
+
+</footer><aside class="bz-sidebar-secondary" data-drawer="bz-sidebar-secondary">
+  
+  
+    <nav class="bz-sidebar-toc" aria-label="Table of contents">
+  <p>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path d="M16 12H3" />
+      <path d="M16 18H3" />
+      <path d="M16 6H3" />
+      <path d="M21 12h.01" />
+      <path d="M21 18h.01" />
+      <path d="M21 6h.01" />
+    </svg>
+    On this page
+  </p><ul>
+<li><a class="reference internal" href="#stewbeet.continuous_delivery.smithed.validate_credentials"><code class="docutils literal notranslate"><span class="pre">validate_​credentials()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.continuous_delivery.smithed.validate_config"><code class="docutils literal notranslate"><span class="pre">validate_​config()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.continuous_delivery.smithed.upload_version"><code class="docutils literal notranslate"><span class="pre">upload_​version()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.continuous_delivery.smithed.upload_to_smithed"><code class="docutils literal notranslate"><span class="pre">upload_​to_​smithed()</span></code></a></li>
+</ul></nav>
+  
+    <div class="bz-edit-this-page">
+  <a href="https://github.com/Stoupy51/stewbeet/edit/main/modules/stewbeet.continuous_delivery.smithed.rst">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="sized" fill="currentColor"">
+      <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"></path>
+    </svg>
+    Edit this page
+  </a>
+</div>
+  
+    
+  
+
+</aside></main>
+  </div><footer class="bz-footer">
+  <div class="bz-footer-copyright"><p class="bz-copyright">© Copyright 2025, Stoupy</p><p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://github.com/aksiome/breeze">Breeze theme</a>.
+  </p>
+</div><div class="bz-external-links">
+  <a
+    href="https://github.com/Stoupy51/stewbeet"
+    aria-label="GitHub"
+    data-tooltip="GitHub"
+    target="_blank"
+  >
+    <svg
+      stroke="currentColor"
+      fill="currentColor"
+      stroke-width="0"
+      viewBox="0 0 16 16"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+      ></path>
+    </svg>
+  </a></div>
+</footer><a href="#" class="bz-back-to-top">
+    <svg class="sized" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m5 12 7-7 7 7"/><path d="M12 19V5"/>
+    </svg>
+    <span>Back to top</span>
+  </a>
+  <label class="bz-overlay bz-overlay-primary" for="bz-sidebar-primary"></label>
+  <label class="bz-overlay bz-overlay-secondary" for="bz-sidebar-secondary"></label>
+  <input type="checkbox" name="bz-sidebar-primary" id="bz-sidebar-primary" aria-label="Toggle site navigation sidebar">
+  <input type="checkbox" name="bz-sidebar-secondary" id="bz-sidebar-secondary" aria-label="Toggle table of contents sidebar">
+  </body>
+</html>

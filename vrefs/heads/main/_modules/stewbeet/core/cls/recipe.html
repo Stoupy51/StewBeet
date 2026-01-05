@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>stewbeet.core.cls.recipe &#8212; StewBeet</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8e8a900e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/treeview.css?v=f8e9195c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/breeze.css?v=93f23127" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=1637c05a" />
+  <noscript>
+    <style>
+      .bz-js-only { display: none !important; }
+    </style>
+  </noscript>
+  
+    <script defer src="../../../../_static/documentation_options.js?v=6d4b8ac6"></script>
+    <script defer src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script defer src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script defer src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script defer src="../../../../_static/copybutton.js?v=18a8d5f5"></script>
+    <script defer src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer src="../../../../_static/treeview.js?v=265ad9b8"></script>
+    <script defer src="../../../../_static/scripts/breeze.js?v=8ef74970"></script>
+  <script data-cfasync="false">
+    const mode = localStorage.getItem("breeze-mode") || "auto";
+    document.documentElement.dataset.mode = mode;
+    if (mode === "auto") {
+      const prefers = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+      document.documentElement.dataset.theme = prefers;
+    } else {
+      document.documentElement.dataset.theme = mode;
+    }
+  </script>
+    <link rel="icon" href="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /><meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head><body>
+  
+  <div class="bz-skip-to-content">
+    <a href="#bz-main-content">Skip to main content</a>
+  </div><header class="bz-header-main">
+  <div class="bz-header-start"><a class="bz-header-brand" href="../../../../index.html"><img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png" alt="Site Logo" /><span>StewBeet</span>
+</a></div>
+  <div class="bz-header-end"><div class="bz-search-button">
+  <a
+    href="../../../../search.html#q"
+    aria-label="Search the docs"
+    data-tooltip="Search the docs"
+  >
+    <svg
+      class="sized"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 -1 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+      />
+    </svg>
+    <span>Search</span>
+    <kbd>Ctrl+K</kbd>
+  </a>
+</div><div class="bz-theme-switcher">
+  <button aria-label="Switch theme" data-tooltip="Switch theme">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="only-light" fill="currentColor">
+      <path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm5.657-8.157a.75.75 0 0 1 0 1.061l-1.061 1.06a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l1.06-1.06a.75.75 0 0 1 1.06 0Zm-9.193 9.193a.75.75 0 0 1 0 1.06l-1.06 1.061a.75.75 0 1 1-1.061-1.06l1.06-1.061a.75.75 0 0 1 1.061 0ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0ZM3 8a.75.75 0 0 1-.75.75H.75a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 3 8Zm13 0a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 16 8Zm-8 5a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13Zm3.536-1.464a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 0 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061ZM2.343 2.343a.75.75 0 0 1 1.061 0l1.06 1.061a.751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018l-1.06-1.06a.75.75 0 0 1 0-1.06Z"></path>
+    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="only-dark" fill="currentColor">
+      <path d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"></path>
+    </svg>
+  </button>
+</div><div class="bz-external-links">
+  <a
+    href="https://github.com/Stoupy51/stewbeet"
+    aria-label="GitHub"
+    data-tooltip="GitHub"
+    target="_blank"
+  >
+    <svg
+      stroke="currentColor"
+      fill="currentColor"
+      stroke-width="0"
+      viewBox="0 0 16 16"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+      ></path>
+    </svg>
+  </a></div></div>
+</header><nav class="bz-header-tabs" aria-label="Primary Navigation">
+  <label
+    class="bz-sidebar-primary-toggle"
+    for="bz-sidebar-primary"
+    role="button"
+    tabindex="0"
+  >
+    <svg class="sized muted" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path
+        fill="none"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M3.75 6.75h16.5M3.75 12H12m-8.25 5.25h12.5"
+      />
+    </svg>
+  </label><ul><li class="toctree-l1"><a class="reference internal" href="../../../../modules/stewbeet.html">stewbeet package</a></li></ul><div class="bz-dropdown">
+    <button aria-haspopup="true" aria-expanded="false">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <g
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+        >
+          <circle cx="12" cy="12" r="1" />
+          <circle cx="19" cy="12" r="1" />
+          <circle cx="5" cy="12" r="1" />
+        </g>
+      </svg>
+    </button>
+    <ul role="menu" aria-hidden="true"></ul>
+  </div>
+</nav><div class="bz-content"><main id="bz-main-content"><header class="bz-article-header">
+  
+  
+    <nav class="bz-breadcrumbs" aria-label="Breadcrumb">
+  <ol>
+    <li class="bz-breadcrumbs-home">
+      <a href="../../../../index.html">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </a>
+    </li><li class="bz-breadcrumbs-parent">
+      <a href="../../../index.html">Module code</a>
+    </li><li class="bz-breadcrumbs-parent">
+      <a href="../../../stewbeet.html">stewbeet</a>
+    </li><li class="bz-breadcrumbs-current">
+      <span>stewbeet.core.cls.recipe</span>
+    </li>
+  </ol>
+</nav>
+  
+
+  <label
+    class="bz-sidebar-secondary-toggle"
+    for="bz-sidebar-secondary"
+    role="button"
+    tabindex="0"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="sized muted">
+      <path
+        fill="none"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M3.75 6.75H20.25 M11.25 12H20.25 M7.75 17.25H20.25"
+      />
+    </svg>
+  </label>
+</header><article class="bz-article-main" role="main">
+  <h1>Source code for stewbeet.core.cls.recipe</h1><div class="highlight"><pre>
+<span></span>
+<span class="c1"># pyright: reportUnnecessaryIsInstance=false</span>
+<span class="c1"># Imports</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Self</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">beet.core.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">JsonDict</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">._utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">StMapping</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.ingredients</span><span class="w"> </span><span class="kn">import</span> <span class="n">ALL_RECIPES_TYPES</span><span class="p">,</span> <span class="n">Ingr</span>
+
+
+<span class="c1"># Base Class</span>
+<div class="viewcode-block" id="RecipeBase">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.cls.recipe.html#stewbeet.core.cls.recipe.RecipeBase">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RecipeBase</span><span class="p">(</span><span class="n">StMapping</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Base class for all recipe types. &quot;&quot;&quot;</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; The type of the recipe, e.g. &#39;crafting_shaped&#39;, &#39;smelting&#39;, etc. &quot;&quot;&quot;</span>
+    <span class="n">result_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; (Optional) The number of items produced by the recipe. Default is 1. &quot;&quot;&quot;</span>
+    <span class="n">category</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; (Optional) The category of the recipe for organizing in the crafting book. &quot;&quot;&quot;</span>
+    <span class="n">group</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; (Optional) The group of the recipe for recipe book grouping. &quot;&quot;&quot;</span>
+    <span class="n">result</span><span class="p">:</span> <span class="n">Ingr</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; (Optional) The result item of the recipe. If None, defaults to the item being defined. &quot;&quot;&quot;</span>
+
+    <span class="c1"># Others</span>
+    <span class="n">manual_priority</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; (Optional) Manual priority for recipe button sorting in the ingame-manual. Used to remove buttons when too many are present. &quot;&quot;&quot;</span>
+    <span class="n">smithed_crafter_command</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; (Optional) Custom command to be used with Smithed Crafter recipes. If None, defaults to giving the loot table. &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;minecraft:&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;minecraft:&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ALL_RECIPES_TYPES</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid recipe type: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RecipeBase.from_dict">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.cls.recipe.html#stewbeet.core.cls.recipe.RecipeBase.from_dict">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">|</span> <span class="s2">&quot;StMapping&quot;</span><span class="p">,</span> <span class="n">item_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Create an object based on a dictionary. &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">data</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RecipeBase._validate_ingredient">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.cls.recipe.html#stewbeet.core.cls.recipe.RecipeBase._validate_ingredient">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_ingredient</span><span class="p">(</span><span class="n">ingredient</span><span class="p">:</span> <span class="n">Ingr</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Ingredient&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Validate a single ingredient dictionary. &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ingredient</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be a dictionary&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">ingredient</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;item&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">ingredient</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;components&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must have an &#39;item&#39; or &#39;components&#39; key&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ingredient</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;components&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ingredient</span><span class="p">[</span><span class="s2">&quot;components&quot;</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must have a dict &#39;components&#39; key&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RecipeBase._validate_ingredients_list">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.cls.recipe.html#stewbeet.core.cls.recipe.RecipeBase._validate_ingredients_list">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_ingredients_list</span><span class="p">(</span><span class="n">ingredients</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Ingr</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Validate a list of ingredients. &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ingredients</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Ingredients must be a list&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ingredient</span> <span class="ow">in</span> <span class="n">ingredients</span><span class="p">:</span>
+            <span class="n">RecipeBase</span><span class="o">.</span><span class="n">_validate_ingredient</span><span class="p">(</span><span class="n">ingredient</span><span class="p">,</span> <span class="s2">&quot;Each ingredient&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RecipeBase._validate_numeric_fields">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.cls.recipe.html#stewbeet.core.cls.recipe.RecipeBase._validate_numeric_fields">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_numeric_fields</span><span class="p">(</span><span class="n">experience</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">cookingtime</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Validate experience and cookingtime fields for furnace recipes. &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">experience</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Experience must be a float or int&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cookingtime</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cookingtime must be an int&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RecipeBase._validate_string_field">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.cls.recipe.html#stewbeet.core.cls.recipe.RecipeBase._validate_string_field">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_string_field</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Validate that a field is a string. &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s2"> must be a string&quot;</span><span class="p">)</span></div>
+</div>
+
+
+
+<span class="c1"># Crafting Recipes</span>
+<div class="viewcode-block" id="CraftingShapedRecipe">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.cls.recipe.html#stewbeet.core.cls.recipe.CraftingShapedRecipe">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CraftingShapedRecipe</span><span class="p">(</span><span class="n">RecipeBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Recipe for shaped crafting.</span>
+
+<span class="sd">    &gt;&gt;&gt; from stewbeet import *</span>
+<span class="sd">    &gt;&gt;&gt; recipe = CraftingShapedRecipe(</span>
+<span class="sd">    ...     shape=[&quot;II&quot;, &quot;CC&quot;, &quot;CC&quot;],</span>
+<span class="sd">    ...     ingredients={&quot;I&quot;:Ingr(&quot;minecraft:iron_ingot&quot;), &quot;C&quot;: Ingr(&quot;simplunium_ingot&quot;)}</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; recipe.shape</span>
+<span class="sd">    [&#39;II&#39;, &#39;CC&#39;, &#39;CC&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; recipe.ingredients[&#39;I&#39;]</span>
+<span class="sd">    {&#39;item&#39;: &#39;minecraft:iron_ingot&#39;}</span>
+<span class="sd">    &gt;&gt;&gt; recipe.ingredients[&#39;C&#39;]</span>
+<span class="sd">    {&#39;components&#39;: {&#39;minecraft:custom_data&#39;: {&#39;detected_namespace&#39;: {&#39;simplunium_ingot&#39;: True}}}}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">shape</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; The shape pattern for the crafting recipe. &quot;&quot;&quot;</span>
+    <span class="n">ingredients</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Ingr</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Dictionary mapping shape symbols to ingredient specifications. &quot;&quot;&quot;</span>
+
+    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;crafting_shaped&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s2">&quot;crafting_shaped&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span>
+
+        <span class="c1"># Validate shape</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Shape must be a non-empty list&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Shape must have a maximum of 3 rows and 3 columns&quot;</span><span class="p">)</span>
+        <span class="n">row_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="o">!=</span> <span class="n">row_size</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;All rows in shape must have the same number of columns&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Validate ingredients</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ingredients</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Ingredients must be a dictionary&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">ingredient</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ingredients</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_validate_ingredient</span><span class="p">(</span><span class="n">ingredient</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Ingredient for symbol &#39;</span><span class="si">{</span><span class="n">symbol</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">symbol</span> <span class="ow">in</span> <span class="n">line</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Symbol &#39;</span><span class="si">{</span><span class="n">symbol</span><span class="si">}</span><span class="s2">&#39; must appear in the shape&quot;</span><span class="p">)</span></div>
+
+
+
+
+<div class="viewcode-block" id="CraftingShapelessRecipe">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.cls.recipe.html#stewbeet.core.cls.recipe.CraftingShapelessRecipe">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CraftingShapelessRecipe</span><span class="p">(</span><span class="n">RecipeBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Recipe for shapeless crafting.</span>
+
+<span class="sd">    &gt;&gt;&gt; from stewbeet import *</span>
+<span class="sd">    &gt;&gt;&gt; recipe = CraftingShapelessRecipe(ingredients=[Ingr(&quot;minecraft:iron_ingot&quot;), Ingr(&quot;minecraft:copper_ingot&quot;)])</span>
+<span class="sd">    &gt;&gt;&gt; len(recipe.ingredients)</span>
+<span class="sd">    2</span>
+<span class="sd">    &gt;&gt;&gt; recipe.type</span>
+<span class="sd">    &#39;crafting_shapeless&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ingredients</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Ingr</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; List of ingredient specifications for shapeless crafting. &quot;&quot;&quot;</span>
+
+    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;crafting_shapeless&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s2">&quot;crafting_shapeless&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_ingredients_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ingredients</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># Furnace Recipes</span>
+<div class="viewcode-block" id="SmeltingRecipe">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.cls.recipe.html#stewbeet.core.cls.recipe.SmeltingRecipe">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SmeltingRecipe</span><span class="p">(</span><span class="n">RecipeBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Recipe for smelting in a furnace.</span>
+
+<span class="sd">    &gt;&gt;&gt; from stewbeet import *</span>
+<span class="sd">    &gt;&gt;&gt; recipe = SmeltingRecipe(ingredient=Ingr(&quot;minecraft:iron_ore&quot;), experience=0.7, cookingtime=200)</span>
+<span class="sd">    &gt;&gt;&gt; recipe.experience</span>
+<span class="sd">    0.7</span>
+<span class="sd">    &gt;&gt;&gt; recipe.cookingtime</span>
+<span class="sd">    200</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ingredient</span><span class="p">:</span> <span class="n">Ingr</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; The ingredient to be smelted. &quot;&quot;&quot;</span>
+    <span class="n">experience</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Experience points awarded when the recipe is used. &quot;&quot;&quot;</span>
+    <span class="n">cookingtime</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">200</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Cooking time in ticks (200 ticks = 10 seconds by default). &quot;&quot;&quot;</span>
+
+    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;smelting&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s2">&quot;smelting&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_ingredient</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ingredient</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_numeric_fields</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">experience</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cookingtime</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="BlastingRecipe">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.cls.recipe.html#stewbeet.core.cls.recipe.BlastingRecipe">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BlastingRecipe</span><span class="p">(</span><span class="n">RecipeBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Recipe for blasting in a blast furnace.</span>
+
+<span class="sd">    &gt;&gt;&gt; from stewbeet import *</span>
+<span class="sd">    &gt;&gt;&gt; recipe = BlastingRecipe(ingredient=Ingr(&quot;minecraft:iron_ore&quot;), experience=0.7, cookingtime=100)</span>
+<span class="sd">    &gt;&gt;&gt; recipe.experience</span>
+<span class="sd">    0.7</span>
+<span class="sd">    &gt;&gt;&gt; recipe.cookingtime</span>
+<span class="sd">    100</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ingredient</span><span class="p">:</span> <span class="n">Ingr</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; The ingredient to be blasted. &quot;&quot;&quot;</span>
+    <span class="n">experience</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Experience points awarded when the recipe is used. &quot;&quot;&quot;</span>
+    <span class="n">cookingtime</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Cooking time in ticks (100 ticks = 5 seconds by default). &quot;&quot;&quot;</span>
+
+    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;blasting&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s2">&quot;blasting&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_ingredient</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ingredient</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_numeric_fields</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">experience</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cookingtime</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="SmokingRecipe">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.cls.recipe.html#stewbeet.core.cls.recipe.SmokingRecipe">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SmokingRecipe</span><span class="p">(</span><span class="n">RecipeBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Recipe for smoking in a smoker.</span>
+
+<span class="sd">    &gt;&gt;&gt; from stewbeet import *</span>
+<span class="sd">    &gt;&gt;&gt; recipe = SmokingRecipe(ingredient=Ingr(&quot;minecraft:chicken&quot;), experience=0.35, cookingtime=100)</span>
+<span class="sd">    &gt;&gt;&gt; recipe.experience</span>
+<span class="sd">    0.35</span>
+<span class="sd">    &gt;&gt;&gt; recipe.cookingtime</span>
+<span class="sd">    100</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ingredient</span><span class="p">:</span> <span class="n">Ingr</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; The ingredient to be smoked. &quot;&quot;&quot;</span>
+    <span class="n">experience</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Experience points awarded when the recipe is used. &quot;&quot;&quot;</span>
+    <span class="n">cookingtime</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Cooking time in ticks (100 ticks = 5 seconds by default). &quot;&quot;&quot;</span>
+
+    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;smoking&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s2">&quot;smoking&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_ingredient</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ingredient</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_numeric_fields</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">experience</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cookingtime</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="CampfireCookingRecipe">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.cls.recipe.html#stewbeet.core.cls.recipe.CampfireCookingRecipe">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CampfireCookingRecipe</span><span class="p">(</span><span class="n">RecipeBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Recipe for cooking on a campfire.</span>
+
+<span class="sd">    &gt;&gt;&gt; from stewbeet import *</span>
+<span class="sd">    &gt;&gt;&gt; recipe = CampfireCookingRecipe(ingredient=Ingr(&quot;minecraft:chicken&quot;), experience=0.35, cookingtime=600)</span>
+<span class="sd">    &gt;&gt;&gt; recipe.experience</span>
+<span class="sd">    0.35</span>
+<span class="sd">    &gt;&gt;&gt; recipe.cookingtime</span>
+<span class="sd">    600</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ingredient</span><span class="p">:</span> <span class="n">Ingr</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; The ingredient to be cooked. &quot;&quot;&quot;</span>
+    <span class="n">experience</span><span class="p">:</span> <span class="nb">float</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Experience points awarded when the recipe is used. &quot;&quot;&quot;</span>
+    <span class="n">cookingtime</span><span class="p">:</span> <span class="nb">int</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Cooking time in ticks (600 ticks = 30 seconds by default). &quot;&quot;&quot;</span>
+
+    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;campfire_cooking&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s2">&quot;campfire_cooking&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_ingredient</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ingredient</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_numeric_fields</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">experience</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cookingtime</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># Smithing Recipes</span>
+<div class="viewcode-block" id="SmithingTransformRecipe">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.cls.recipe.html#stewbeet.core.cls.recipe.SmithingTransformRecipe">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SmithingTransformRecipe</span><span class="p">(</span><span class="n">RecipeBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Recipe for smithing table transformation.</span>
+
+<span class="sd">    &gt;&gt;&gt; from stewbeet import *</span>
+<span class="sd">    &gt;&gt;&gt; recipe = SmithingTransformRecipe(</span>
+<span class="sd">    ...     template=Ingr(&quot;minecraft:netherite_upgrade_smithing_template&quot;),</span>
+<span class="sd">    ...     base=Ingr(&quot;minecraft:diamond_sword&quot;),</span>
+<span class="sd">    ...     addition=Ingr(&quot;minecraft:netherite_ingot&quot;)</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; recipe.template[&#39;item&#39;]</span>
+<span class="sd">    &#39;minecraft:netherite_upgrade_smithing_template&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">template</span><span class="p">:</span> <span class="n">Ingr</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; The template item (e.g., upgrade template). &quot;&quot;&quot;</span>
+    <span class="n">base</span><span class="p">:</span> <span class="n">Ingr</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; The base item to be transformed. &quot;&quot;&quot;</span>
+    <span class="n">addition</span><span class="p">:</span> <span class="n">Ingr</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; The addition item (e.g., material). &quot;&quot;&quot;</span>
+
+    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;smithing_transform&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s2">&quot;smithing_transform&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">ingredient</span> <span class="ow">in</span> <span class="p">[(</span><span class="s2">&quot;template&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;base&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;addition&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">addition</span><span class="p">)]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_validate_ingredient</span><span class="p">(</span><span class="n">ingredient</span><span class="p">,</span> <span class="n">name</span><span class="o">.</span><span class="n">capitalize</span><span class="p">())</span></div>
+
+
+
+<div class="viewcode-block" id="SmithingTrimRecipe">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.cls.recipe.html#stewbeet.core.cls.recipe.SmithingTrimRecipe">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SmithingTrimRecipe</span><span class="p">(</span><span class="n">RecipeBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Recipe for applying armor trims.</span>
+
+<span class="sd">    &gt;&gt;&gt; from stewbeet import *</span>
+<span class="sd">    &gt;&gt;&gt; recipe = SmithingTrimRecipe(</span>
+<span class="sd">    ...     template=Ingr(&quot;minecraft:spire_armor_trim_smithing_template&quot;),</span>
+<span class="sd">    ...     base=Ingr(&quot;minecraft:netherite_chestplate&quot;),</span>
+<span class="sd">    ...     addition=Ingr(&quot;minecraft:diamond&quot;),</span>
+<span class="sd">    ...     pattern=&quot;minecraft:spire_armor_trim_smithing_template&quot;</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; recipe.addition[&#39;item&#39;]</span>
+<span class="sd">    &#39;minecraft:diamond&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">template</span><span class="p">:</span> <span class="n">Ingr</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; The trim template. &quot;&quot;&quot;</span>
+    <span class="n">base</span><span class="p">:</span> <span class="n">Ingr</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; The armor piece. &quot;&quot;&quot;</span>
+    <span class="n">addition</span><span class="p">:</span> <span class="n">Ingr</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; The material for the trim. &quot;&quot;&quot;</span>
+    <span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; The trim pattern. &quot;&quot;&quot;</span>
+
+    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;smithing_trim&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s2">&quot;smithing_trim&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">ingredient</span> <span class="ow">in</span> <span class="p">[(</span><span class="s2">&quot;template&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;base&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;addition&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">addition</span><span class="p">)]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_validate_ingredient</span><span class="p">(</span><span class="n">ingredient</span><span class="p">,</span> <span class="n">name</span><span class="o">.</span><span class="n">capitalize</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_string_field</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pattern</span><span class="p">,</span> <span class="s2">&quot;Pattern&quot;</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># Other Recipes</span>
+<div class="viewcode-block" id="StonecuttingRecipe">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.cls.recipe.html#stewbeet.core.cls.recipe.StonecuttingRecipe">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">StonecuttingRecipe</span><span class="p">(</span><span class="n">RecipeBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Recipe for stonecutting.</span>
+
+<span class="sd">    &gt;&gt;&gt; from stewbeet import *</span>
+<span class="sd">    &gt;&gt;&gt; recipe = StonecuttingRecipe(ingredient=Ingr(&quot;minecraft:stone&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; recipe.ingredient[&#39;item&#39;]</span>
+<span class="sd">    &#39;minecraft:stone&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ingredient</span><span class="p">:</span> <span class="n">Ingr</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; The ingredient to be cut. &quot;&quot;&quot;</span>
+
+    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;stonecutting&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s2">&quot;stonecutting&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_ingredient</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ingredient</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># Custom/Special Recipes</span>
+<div class="viewcode-block" id="PulverizingRecipe">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.cls.recipe.html#stewbeet.core.cls.recipe.PulverizingRecipe">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PulverizingRecipe</span><span class="p">(</span><span class="n">RecipeBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Custom recipe for SimplEnergy pulverizing.</span>
+
+<span class="sd">    &gt;&gt;&gt; from stewbeet import *</span>
+<span class="sd">    &gt;&gt;&gt; recipe = PulverizingRecipe(ingredient=Ingr(&quot;minecraft:iron_ore&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; recipe.ingredient[&#39;item&#39;]</span>
+<span class="sd">    &#39;minecraft:iron_ore&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ingredient</span><span class="p">:</span> <span class="n">Ingr</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; The ingredient to be pulverized. &quot;&quot;&quot;</span>
+
+    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;simplenergy_pulverizing&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s2">&quot;simplenergy_pulverizing&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_ingredient</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ingredient</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="AwakenedForgeRecipe">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.cls.recipe.html#stewbeet.core.cls.recipe.AwakenedForgeRecipe">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AwakenedForgeRecipe</span><span class="p">(</span><span class="n">RecipeBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Custom recipe for Stardust awakened forge.</span>
+
+<span class="sd">    &gt;&gt;&gt; from stewbeet import *</span>
+<span class="sd">    &gt;&gt;&gt; recipe = AwakenedForgeRecipe(ingredients=[Ingr(&quot;stardust_fragment&quot;), Ingr(&quot;minecraft:iron_ingot&quot;)])</span>
+<span class="sd">    &gt;&gt;&gt; len(recipe.ingredients)</span>
+<span class="sd">    2</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ingredients</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Ingr</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; List of ingredients for the awakened forge. &quot;&quot;&quot;</span>
+    <span class="n">particle</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; (Optional) Particle effect for the recipe. &quot;&quot;&quot;</span>
+
+    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;stardust_awakened_forge&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s2">&quot;stardust_awakened_forge&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_ingredients_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ingredients</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># Hardcoded Recipes (minimal implementation)</span>
+<div class="viewcode-block" id="HardcodedRecipe">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.cls.recipe.html#stewbeet.core.cls.recipe.HardcodedRecipe">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">HardcodedRecipe</span><span class="p">(</span><span class="n">RecipeBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Recipe for special/hardcoded crafting types.</span>
+
+<span class="sd">    &gt;&gt;&gt; recipe = HardcodedRecipe(type=&quot;crafting_special_armordye&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; recipe.type</span>
+<span class="sd">    &#39;crafting_special_armordye&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span> <span class="c1"># type: ignore</span>
+        <span class="s2">&quot;crafting_decorated_pot&quot;</span><span class="p">,</span> <span class="s2">&quot;crafting_special_armordye&quot;</span><span class="p">,</span> <span class="s2">&quot;crafting_special_bannerduplicate&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;crafting_special_bookcloning&quot;</span><span class="p">,</span> <span class="s2">&quot;crafting_special_firework_rocket&quot;</span><span class="p">,</span> <span class="s2">&quot;crafting_special_firework_star&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;crafting_special_firework_star_fade&quot;</span><span class="p">,</span> <span class="s2">&quot;crafting_special_mapcloning&quot;</span><span class="p">,</span> <span class="s2">&quot;crafting_special_mapextending&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;crafting_special_repairitem&quot;</span><span class="p">,</span> <span class="s2">&quot;crafting_special_shielddecoration&quot;</span><span class="p">,</span> <span class="s2">&quot;crafting_special_tippedarrow&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;crafting_transmute&quot;</span><span class="p">,</span>
+    <span class="p">]</span></div>
+
+
+
+<span class="c1"># Type alias for all recipe types</span>
+<span class="n">Recipe</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">CraftingShapedRecipe</span> <span class="o">|</span> <span class="n">CraftingShapelessRecipe</span> <span class="o">|</span>
+    <span class="n">SmeltingRecipe</span> <span class="o">|</span> <span class="n">BlastingRecipe</span> <span class="o">|</span> <span class="n">SmokingRecipe</span> <span class="o">|</span> <span class="n">CampfireCookingRecipe</span> <span class="o">|</span>
+    <span class="n">SmithingTransformRecipe</span> <span class="o">|</span> <span class="n">SmithingTrimRecipe</span> <span class="o">|</span>
+    <span class="n">StonecuttingRecipe</span> <span class="o">|</span>
+    <span class="n">PulverizingRecipe</span> <span class="o">|</span> <span class="n">AwakenedForgeRecipe</span> <span class="o">|</span>
+    <span class="n">HardcodedRecipe</span>
+<span class="p">)</span>
+<span class="sd">&quot;&quot;&quot; Type alias for all recipe types (CraftingShapedRecipe | CraftingShapelessRecipe | ...) &quot;&quot;&quot;</span>
+
+</pre></div>
+</article><footer class="bz-article-footer">
+  
+  
+    <nav class="bz-related-pages" aria-label="Related pages navigation"></nav>
+  
+
+</footer></main>
+  </div><footer class="bz-footer">
+  <div class="bz-footer-copyright"><p class="bz-copyright">© Copyright 2025, Stoupy</p><p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://github.com/aksiome/breeze">Breeze theme</a>.
+  </p>
+</div><div class="bz-external-links">
+  <a
+    href="https://github.com/Stoupy51/stewbeet"
+    aria-label="GitHub"
+    data-tooltip="GitHub"
+    target="_blank"
+  >
+    <svg
+      stroke="currentColor"
+      fill="currentColor"
+      stroke-width="0"
+      viewBox="0 0 16 16"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+      ></path>
+    </svg>
+  </a></div>
+</footer><a href="#" class="bz-back-to-top">
+    <svg class="sized" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m5 12 7-7 7 7"/><path d="M12 19V5"/>
+    </svg>
+    <span>Back to top</span>
+  </a>
+  <label class="bz-overlay bz-overlay-primary" for="bz-sidebar-primary"></label>
+  <label class="bz-overlay bz-overlay-secondary" for="bz-sidebar-secondary"></label>
+  <input type="checkbox" name="bz-sidebar-primary" id="bz-sidebar-primary" aria-label="Toggle site navigation sidebar">
+  <input type="checkbox" name="bz-sidebar-secondary" id="bz-sidebar-secondary" aria-label="Toggle table of contents sidebar">
+  </body>
+</html>

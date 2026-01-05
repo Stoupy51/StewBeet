@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>stewbeet.core.cls.block &#8212; StewBeet</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8e8a900e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/treeview.css?v=f8e9195c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/breeze.css?v=93f23127" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=1637c05a" />
+  <noscript>
+    <style>
+      .bz-js-only { display: none !important; }
+    </style>
+  </noscript>
+  
+    <script defer src="../../../../_static/documentation_options.js?v=6d4b8ac6"></script>
+    <script defer src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script defer src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script defer src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script defer src="../../../../_static/copybutton.js?v=18a8d5f5"></script>
+    <script defer src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer src="../../../../_static/treeview.js?v=265ad9b8"></script>
+    <script defer src="../../../../_static/scripts/breeze.js?v=8ef74970"></script>
+  <script data-cfasync="false">
+    const mode = localStorage.getItem("breeze-mode") || "auto";
+    document.documentElement.dataset.mode = mode;
+    if (mode === "auto") {
+      const prefers = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+      document.documentElement.dataset.theme = prefers;
+    } else {
+      document.documentElement.dataset.theme = mode;
+    }
+  </script>
+    <link rel="icon" href="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /><meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head><body>
+  
+  <div class="bz-skip-to-content">
+    <a href="#bz-main-content">Skip to main content</a>
+  </div><header class="bz-header-main">
+  <div class="bz-header-start"><a class="bz-header-brand" href="../../../../index.html"><img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png" alt="Site Logo" /><span>StewBeet</span>
+</a></div>
+  <div class="bz-header-end"><div class="bz-search-button">
+  <a
+    href="../../../../search.html#q"
+    aria-label="Search the docs"
+    data-tooltip="Search the docs"
+  >
+    <svg
+      class="sized"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 -1 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+      />
+    </svg>
+    <span>Search</span>
+    <kbd>Ctrl+K</kbd>
+  </a>
+</div><div class="bz-theme-switcher">
+  <button aria-label="Switch theme" data-tooltip="Switch theme">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="only-light" fill="currentColor">
+      <path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm5.657-8.157a.75.75 0 0 1 0 1.061l-1.061 1.06a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l1.06-1.06a.75.75 0 0 1 1.06 0Zm-9.193 9.193a.75.75 0 0 1 0 1.06l-1.06 1.061a.75.75 0 1 1-1.061-1.06l1.06-1.061a.75.75 0 0 1 1.061 0ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0ZM3 8a.75.75 0 0 1-.75.75H.75a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 3 8Zm13 0a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 16 8Zm-8 5a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13Zm3.536-1.464a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 0 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061ZM2.343 2.343a.75.75 0 0 1 1.061 0l1.06 1.061a.751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018l-1.06-1.06a.75.75 0 0 1 0-1.06Z"></path>
+    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="only-dark" fill="currentColor">
+      <path d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"></path>
+    </svg>
+  </button>
+</div><div class="bz-external-links">
+  <a
+    href="https://github.com/Stoupy51/stewbeet"
+    aria-label="GitHub"
+    data-tooltip="GitHub"
+    target="_blank"
+  >
+    <svg
+      stroke="currentColor"
+      fill="currentColor"
+      stroke-width="0"
+      viewBox="0 0 16 16"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+      ></path>
+    </svg>
+  </a></div></div>
+</header><nav class="bz-header-tabs" aria-label="Primary Navigation">
+  <label
+    class="bz-sidebar-primary-toggle"
+    for="bz-sidebar-primary"
+    role="button"
+    tabindex="0"
+  >
+    <svg class="sized muted" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path
+        fill="none"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M3.75 6.75h16.5M3.75 12H12m-8.25 5.25h12.5"
+      />
+    </svg>
+  </label><ul><li class="toctree-l1"><a class="reference internal" href="../../../../modules/stewbeet.html">stewbeet package</a></li></ul><div class="bz-dropdown">
+    <button aria-haspopup="true" aria-expanded="false">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <g
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+        >
+          <circle cx="12" cy="12" r="1" />
+          <circle cx="19" cy="12" r="1" />
+          <circle cx="5" cy="12" r="1" />
+        </g>
+      </svg>
+    </button>
+    <ul role="menu" aria-hidden="true"></ul>
+  </div>
+</nav><div class="bz-content"><main id="bz-main-content"><header class="bz-article-header">
+  
+  
+    <nav class="bz-breadcrumbs" aria-label="Breadcrumb">
+  <ol>
+    <li class="bz-breadcrumbs-home">
+      <a href="../../../../index.html">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </a>
+    </li><li class="bz-breadcrumbs-parent">
+      <a href="../../../index.html">Module code</a>
+    </li><li class="bz-breadcrumbs-parent">
+      <a href="../../../stewbeet.html">stewbeet</a>
+    </li><li class="bz-breadcrumbs-current">
+      <span>stewbeet.core.cls.block</span>
+    </li>
+  </ol>
+</nav>
+  
+
+  <label
+    class="bz-sidebar-secondary-toggle"
+    for="bz-sidebar-secondary"
+    role="button"
+    tabindex="0"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="sized muted">
+      <path
+        fill="none"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M3.75 6.75H20.25 M11.25 12H20.25 M7.75 17.25H20.25"
+      />
+    </svg>
+  </label>
+</header><article class="bz-article-main" role="main">
+  <h1>Source code for stewbeet.core.cls.block</h1><div class="highlight"><pre>
+<span></span>
+<span class="c1"># Imports</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Literal</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">stouputils</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">stp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">beet.core.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">JsonDict</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..constants</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">CUSTOM_BLOCK_ALTERNATIVE</span><span class="p">,</span>
+    <span class="n">CUSTOM_BLOCK_HEAD</span><span class="p">,</span>
+    <span class="n">CUSTOM_BLOCK_VANILLA</span><span class="p">,</span>
+    <span class="n">NO_SILK_TOUCH_DROP</span><span class="p">,</span>
+    <span class="n">VANILLA_BLOCK</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">._utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">StMapping</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.item</span><span class="w"> </span><span class="kn">import</span> <span class="n">Item</span>
+
+
+<span class="c1"># Subclasses</span>
+<div class="viewcode-block" id="VanillaBlock">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.cls.block.html#stewbeet.core.cls.block.VanillaBlock">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VanillaBlock</span><span class="p">(</span><span class="n">StMapping</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Represents a vanilla block with optional facing and contents.</span>
+
+<span class="sd">    &gt;&gt;&gt; vb = VanillaBlock(id=&quot;minecraft:stone&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; vb.id</span>
+<span class="sd">    &#39;minecraft:stone&#39;</span>
+<span class="sd">    &gt;&gt;&gt; vb.apply_facing</span>
+<span class="sd">    False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; The vanilla block ID, e.g. &#39;minecraft:stone&#39;, &quot;minecraft:conduit[waterlogged=false]&quot;. &quot;&quot;&quot;</span>
+    <span class="n">apply_facing</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;entity&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Whether the block should apply facing when placed. &quot;&quot;&quot;</span>
+    <span class="n">contents</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; For blocks using item frames and no vanilla block, e.g. servo inserter/extractor from SimplEnergy. &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;:&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="s2">&quot;minecraft:&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span></div>
+
+
+<div class="viewcode-block" id="NoSilkTouchDrop">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.cls.block.html#stewbeet.core.cls.block.NoSilkTouchDrop">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NoSilkTouchDrop</span><span class="p">(</span><span class="n">StMapping</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Defines the item dropped when the block is broken without silk touch.</span>
+
+<span class="sd">    &gt;&gt;&gt; nsd = NoSilkTouchDrop(id=&quot;raw_iron&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; nsd.id</span>
+<span class="sd">    &#39;raw_iron&#39;</span>
+<span class="sd">    &gt;&gt;&gt; nsd.count</span>
+<span class="sd">    1</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; The item ID to drop when the block is broken without silk touch, e.g. &#39;raw_simplunium&#39;. &quot;&quot;&quot;</span>
+    <span class="n">count</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; (Optional) The count of items to drop. Can be an integer or a dict with &#39;min&#39; and &#39;max&#39; keys. Default is 1. &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="s2">&quot;min&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="ow">and</span> <span class="s2">&quot;max&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">,</span> <span class="s2">&quot;If count is a dict, it must contain &#39;min&#39; and &#39;max&#39; keys.&quot;</span></div>
+
+
+<div class="viewcode-block" id="GrowingSeedLoot">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.cls.block.html#stewbeet.core.cls.block.GrowingSeedLoot">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GrowingSeedLoot</span><span class="p">(</span><span class="n">StMapping</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Defines a single loot entry for a growing seed.</span>
+
+<span class="sd">    &gt;&gt;&gt; gsl = GrowingSeedLoot(id=&quot;stardust_fragment&quot;, rolls=3)</span>
+<span class="sd">    &gt;&gt;&gt; gsl.id</span>
+<span class="sd">    &#39;stardust_fragment&#39;</span>
+<span class="sd">    &gt;&gt;&gt; gsl.rolls</span>
+<span class="sd">    3</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; The item ID to drop, e.g. &quot;stardust_fragment&quot;, &quot;minecraft:stone&quot;. &quot;&quot;&quot;</span>
+    <span class="n">rolls</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; (Optional) The roll definition for the loot, e.g. {&quot;type&quot;:&quot;minecraft:uniform&quot;,&quot;min&quot;:3,&quot;max&quot;:9}. &quot;&quot;&quot;</span>
+    <span class="n">fortune</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; (Optional) The fortune modifier for the loot, e.g. {&quot;extra&quot;:0,&quot;probability&quot;:0.5}. &quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="GrowingSeed">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.cls.block.html#stewbeet.core.cls.block.GrowingSeed">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GrowingSeed</span><span class="p">(</span><span class="n">StMapping</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Defines a seed that grows over time (Stardust Seed from Stardust Fragment).</span>
+
+<span class="sd">    &gt;&gt;&gt; gs = GrowingSeed(texture_basename=&quot;stardust&quot;, seconds=480, planted_on=&quot;diamond_block&quot;, loots=[GrowingSeedLoot(id=&quot;stardust_fragment&quot;)])</span>
+<span class="sd">    &gt;&gt;&gt; gs.texture_basename</span>
+<span class="sd">    &#39;stardust&#39;</span>
+<span class="sd">    &gt;&gt;&gt; gs.seconds</span>
+<span class="sd">    480</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">texture_basename</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; The base name of the texture for the growing seed, e.g. &#39;stardust&#39;. &quot;&quot;&quot;</span>
+    <span class="n">seconds</span><span class="p">:</span> <span class="nb">int</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; The time in seconds it takes for the seed to grow, e.g. 480. &quot;&quot;&quot;</span>
+    <span class="n">planted_on</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; The block ID on which the seed can be planted, e.g. &#39;diamond_block&#39;. &quot;&quot;&quot;</span>
+    <span class="n">loots</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">GrowingSeedLoot</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; The list of loot definitions for the seed when it is harvested, or a loot path path. &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">planted_on</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;minecraft:&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">planted_on</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">planted_on</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;minecraft:&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># Class</span>
+<div class="viewcode-block" id="Block">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.cls.block.html#stewbeet.core.cls.block.Block">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Block</span><span class="p">(</span><span class="n">Item</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Represents a block item with vanilla block properties.</span>
+
+<span class="sd">    ## Simple example</span>
+<span class="sd">    &gt;&gt;&gt; from stewbeet import Mem</span>
+<span class="sd">    &gt;&gt;&gt; block = Block(id=&quot;machine_block&quot;, vanilla_block=VanillaBlock(id=&quot;minecraft:stone&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; block.id</span>
+<span class="sd">    &#39;machine_block&#39;</span>
+<span class="sd">    &gt;&gt;&gt; block.vanilla_block.id</span>
+<span class="sd">    &#39;minecraft:stone&#39;</span>
+<span class="sd">    &gt;&gt;&gt; block.id in Mem.definitions</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; block is Block.from_id(&quot;machine_block&quot;)</span>
+<span class="sd">    True</span>
+
+<span class="sd">    ## Big example with all fields</span>
+<span class="sd">    &gt;&gt;&gt; from stewbeet import CraftingShapelessRecipe, WikiButton, NoSilkTouchDrop, GrowingSeed, GrowingSeedLoot, Ingr</span>
+<span class="sd">    &gt;&gt;&gt; obj = BlockAlternative(</span>
+<span class="sd">    ...     id=&quot;stardust_seed&quot;,</span>
+<span class="sd">    ...     manual_category=&quot;miscellaneous&quot;,</span>
+<span class="sd">    ...     recipes=[</span>
+<span class="sd">    ...         CraftingShapelessRecipe(ingredients=8*[Ingr(&quot;stardust_fragment&quot;)] + [Ingr(&quot;minecraft:wheat_seeds&quot;)])</span>
+<span class="sd">    ...     ],</span>
+<span class="sd">    ...     override_model={&quot;parent&quot;:&quot;item/generated&quot;,&quot;textures&quot;:{&quot;layer0&quot;:&quot;stardust:item/stardust_seed&quot;}},</span>
+<span class="sd">    ...     wiki_buttons=[WikiButton({&quot;text&quot;:&quot;A magical seed that grows stardust.&quot;,&quot;color&quot;:&quot;aqua&quot;})],</span>
+<span class="sd">    ...     components={</span>
+<span class="sd">    ...         &quot;item_name&quot;: {&quot;text&quot;:&quot;Stardust Seed&quot;,&quot;color&quot;:&quot;aqua&quot;},</span>
+<span class="sd">    ...         &quot;max_stack_size&quot;: 64,</span>
+<span class="sd">    ...     },</span>
+<span class="sd">    ...     vanilla_block=VanillaBlock(id=&quot;minecraft:wheat&quot;, apply_facing=False),</span>
+<span class="sd">    ...     no_silk_touch_drop=NoSilkTouchDrop(id=&quot;stardust_fragment&quot;, count=1),</span>
+<span class="sd">    ...     growing_seed=GrowingSeed(</span>
+<span class="sd">    ...         texture_basename=&quot;stardust&quot;,</span>
+<span class="sd">    ...         seconds=480,</span>
+<span class="sd">    ...         planted_on=&quot;diamond_block&quot;,</span>
+<span class="sd">    ...         loots=[GrowingSeedLoot(id=&quot;stardust_fragment&quot;, rolls=3)]</span>
+<span class="sd">    ...     )</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; also_obj = Block.from_id(&quot;stardust_seed&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; obj is also_obj</span>
+<span class="sd">    True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">base_item</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">CUSTOM_BLOCK_VANILLA</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Can either be CUSTOM_BLOCK_VANILLA, CUSTOM_BLOCK_ALTERNATIVE, CUSTOM_BLOCK_HEAD, or a vanilla block like &#39;minecraft:stone&#39;. &quot;&quot;&quot;</span>
+
+    <span class="c1"># Specific to Block class</span>
+    <span class="n">vanilla_block</span><span class="p">:</span> <span class="n">VanillaBlock</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; If the block is based on a vanilla block, this defines which one and whether to apply facing. &quot;&quot;&quot;</span>
+    <span class="n">no_silk_touch_drop</span><span class="p">:</span> <span class="n">NoSilkTouchDrop</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; (Optional) Defines the item dropped when the block is broken without silk touch, e.g. NoSilkTouchDrop(id=&quot;raw_simplunium&quot;) or just &quot;raw_simplunium&quot;. &quot;&quot;&quot;</span>
+
+    <span class="c1"># Others</span>
+    <span class="n">growing_seed</span><span class="p">:</span> <span class="n">GrowingSeed</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; (Optional) Defines a seed that grows over time (Stardust Seed from Stardust Fragment). &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">..__memory__</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mem</span>
+        <span class="n">ns</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">project_id</span> <span class="k">if</span> <span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span> <span class="k">else</span> <span class="s2">&quot;your_namespace&quot;</span>
+
+        <span class="c1"># Add additional data to the custom blocks</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_item</span> <span class="o">==</span> <span class="n">CUSTOM_BLOCK_VANILLA</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s2">&quot;container&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">{</span><span class="s2">&quot;slot&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s2">&quot;item&quot;</span><span class="p">:{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="s2">&quot;minecraft:stone&quot;</span><span class="p">,</span><span class="s2">&quot;count&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s2">&quot;components&quot;</span><span class="p">:{</span><span class="s2">&quot;minecraft:custom_data&quot;</span><span class="p">:{</span><span class="s2">&quot;smithed&quot;</span><span class="p">:{</span><span class="s2">&quot;block&quot;</span><span class="p">:{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span><span class="s2">&quot;from&quot;</span><span class="p">:</span><span class="n">ns</span><span class="p">}}}}}}</span>
+            <span class="p">]</span>
+
+            <span class="c1"># Hide the container tooltip</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tooltip_display&quot;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s2">&quot;tooltip_display&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;hidden_components&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s2">&quot;tooltip_display&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;hidden_components&quot;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s2">&quot;tooltip_display&quot;</span><span class="p">][</span><span class="s2">&quot;hidden_components&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">hidden_components</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s2">&quot;tooltip_display&quot;</span><span class="p">][</span><span class="s2">&quot;hidden_components&quot;</span><span class="p">]</span>
+            <span class="n">hidden_components</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;minecraft:container&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s2">&quot;tooltip_display&quot;</span><span class="p">][</span><span class="s2">&quot;hidden_components&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stp</span><span class="o">.</span><span class="n">unique_list</span><span class="p">(</span><span class="n">hidden_components</span><span class="p">)</span>
+
+        <span class="c1"># Add additional data to the custom blocks alternative</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_item</span> <span class="o">==</span> <span class="n">CUSTOM_BLOCK_ALTERNATIVE</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s2">&quot;entity_data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="s2">&quot;minecraft:item_frame&quot;</span><span class="p">,</span><span class="s2">&quot;Tags&quot;</span><span class="p">:[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.new&quot;</span><span class="p">,</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">],</span><span class="s2">&quot;Invisible&quot;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span><span class="s2">&quot;Silent&quot;</span><span class="p">:</span><span class="kc">True</span><span class="p">}</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span>
+
+    <span class="c1"># Mapping methods</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonDict</span><span class="p">:</span>
+        <span class="n">mapping</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_get_mapping</span><span class="p">()</span>
+        <span class="n">mapping</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+            <span class="n">VANILLA_BLOCK</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">vanilla_block</span><span class="p">,</span>
+            <span class="n">NO_SILK_TOUCH_DROP</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_silk_touch_drop</span><span class="p">,</span>
+        <span class="p">})</span>
+        <span class="k">return</span> <span class="n">mapping</span></div>
+
+
+<div class="viewcode-block" id="BlockAlternative">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.cls.block.html#stewbeet.core.cls.block.BlockAlternative">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BlockAlternative</span><span class="p">(</span><span class="n">Block</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Represents a block that uses an item frame for placement (e.g., servo inserter/extractor).</span>
+
+<span class="sd">    &gt;&gt;&gt; ba = BlockAlternative(id=&quot;servo_inserter&quot;, vanilla_block=VanillaBlock(contents=True))</span>
+<span class="sd">    &gt;&gt;&gt; ba.base_item</span>
+<span class="sd">    &#39;minecraft:item_frame&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">base_item</span> <span class="o">=</span> <span class="n">CUSTOM_BLOCK_ALTERNATIVE</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_item</span> <span class="o">=</span> <span class="n">CUSTOM_BLOCK_ALTERNATIVE</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="BlockHead">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.cls.block.html#stewbeet.core.cls.block.BlockHead">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BlockHead</span><span class="p">(</span><span class="n">Block</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Represents a block that uses a player head for placement.</span>
+
+<span class="sd">    &gt;&gt;&gt; bh = BlockHead(id=&quot;custom_head&quot;, vanilla_block=VanillaBlock(id=&quot;minecraft:player_head&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; bh.base_item</span>
+<span class="sd">    &#39;minecraft:player_head&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">base_item</span> <span class="o">=</span> <span class="n">CUSTOM_BLOCK_HEAD</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_item</span> <span class="o">=</span> <span class="n">CUSTOM_BLOCK_HEAD</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span></div>
+
+
+<span class="c1"># Constants</span>
+<span class="n">VANILLA_BLOCK_FOR_ORES</span> <span class="o">=</span> <span class="n">VanillaBlock</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;minecraft:polished_deepslate&quot;</span><span class="p">,</span> <span class="n">apply_facing</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+</pre></div>
+</article><footer class="bz-article-footer">
+  
+  
+    <nav class="bz-related-pages" aria-label="Related pages navigation"></nav>
+  
+
+</footer></main>
+  </div><footer class="bz-footer">
+  <div class="bz-footer-copyright"><p class="bz-copyright">© Copyright 2025, Stoupy</p><p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://github.com/aksiome/breeze">Breeze theme</a>.
+  </p>
+</div><div class="bz-external-links">
+  <a
+    href="https://github.com/Stoupy51/stewbeet"
+    aria-label="GitHub"
+    data-tooltip="GitHub"
+    target="_blank"
+  >
+    <svg
+      stroke="currentColor"
+      fill="currentColor"
+      stroke-width="0"
+      viewBox="0 0 16 16"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+      ></path>
+    </svg>
+  </a></div>
+</footer><a href="#" class="bz-back-to-top">
+    <svg class="sized" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m5 12 7-7 7 7"/><path d="M12 19V5"/>
+    </svg>
+    <span>Back to top</span>
+  </a>
+  <label class="bz-overlay bz-overlay-primary" for="bz-sidebar-primary"></label>
+  <label class="bz-overlay bz-overlay-secondary" for="bz-sidebar-secondary"></label>
+  <input type="checkbox" name="bz-sidebar-primary" id="bz-sidebar-primary" aria-label="Toggle site navigation sidebar">
+  <input type="checkbox" name="bz-sidebar-secondary" id="bz-sidebar-secondary" aria-label="Toggle table of contents sidebar">
+  </body>
+</html>

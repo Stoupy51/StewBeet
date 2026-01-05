@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>stewbeet.plugins.auto.headers.type_inference &#8212; StewBeet</title>
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8e8a900e" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/treeview.css?v=f8e9195c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/breeze.css?v=93f23127" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=1637c05a" />
+  <noscript>
+    <style>
+      .bz-js-only { display: none !important; }
+    </style>
+  </noscript>
+  
+    <script defer src="../../../../../_static/documentation_options.js?v=6d4b8ac6"></script>
+    <script defer src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script defer src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script defer src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script defer src="../../../../../_static/copybutton.js?v=18a8d5f5"></script>
+    <script defer src="../../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer src="../../../../../_static/treeview.js?v=265ad9b8"></script>
+    <script defer src="../../../../../_static/scripts/breeze.js?v=8ef74970"></script>
+  <script data-cfasync="false">
+    const mode = localStorage.getItem("breeze-mode") || "auto";
+    document.documentElement.dataset.mode = mode;
+    if (mode === "auto") {
+      const prefers = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+      document.documentElement.dataset.theme = prefers;
+    } else {
+      document.documentElement.dataset.theme = mode;
+    }
+  </script>
+    <link rel="icon" href="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png"/>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /><meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head><body>
+  
+  <div class="bz-skip-to-content">
+    <a href="#bz-main-content">Skip to main content</a>
+  </div><header class="bz-header-main">
+  <div class="bz-header-start"><a class="bz-header-brand" href="../../../../../index.html"><img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png" alt="Site Logo" /><span>StewBeet</span>
+</a></div>
+  <div class="bz-header-end"><div class="bz-search-button">
+  <a
+    href="../../../../../search.html#q"
+    aria-label="Search the docs"
+    data-tooltip="Search the docs"
+  >
+    <svg
+      class="sized"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 -1 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+      />
+    </svg>
+    <span>Search</span>
+    <kbd>Ctrl+K</kbd>
+  </a>
+</div><div class="bz-theme-switcher">
+  <button aria-label="Switch theme" data-tooltip="Switch theme">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="only-light" fill="currentColor">
+      <path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm5.657-8.157a.75.75 0 0 1 0 1.061l-1.061 1.06a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l1.06-1.06a.75.75 0 0 1 1.06 0Zm-9.193 9.193a.75.75 0 0 1 0 1.06l-1.06 1.061a.75.75 0 1 1-1.061-1.06l1.06-1.061a.75.75 0 0 1 1.061 0ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0ZM3 8a.75.75 0 0 1-.75.75H.75a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 3 8Zm13 0a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 16 8Zm-8 5a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13Zm3.536-1.464a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 0 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061ZM2.343 2.343a.75.75 0 0 1 1.061 0l1.06 1.061a.751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018l-1.06-1.06a.75.75 0 0 1 0-1.06Z"></path>
+    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="only-dark" fill="currentColor">
+      <path d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"></path>
+    </svg>
+  </button>
+</div><div class="bz-external-links">
+  <a
+    href="https://github.com/Stoupy51/stewbeet"
+    aria-label="GitHub"
+    data-tooltip="GitHub"
+    target="_blank"
+  >
+    <svg
+      stroke="currentColor"
+      fill="currentColor"
+      stroke-width="0"
+      viewBox="0 0 16 16"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+      ></path>
+    </svg>
+  </a></div></div>
+</header><nav class="bz-header-tabs" aria-label="Primary Navigation">
+  <label
+    class="bz-sidebar-primary-toggle"
+    for="bz-sidebar-primary"
+    role="button"
+    tabindex="0"
+  >
+    <svg class="sized muted" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path
+        fill="none"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M3.75 6.75h16.5M3.75 12H12m-8.25 5.25h12.5"
+      />
+    </svg>
+  </label><ul><li class="toctree-l1"><a class="reference internal" href="../../../../../modules/stewbeet.html">stewbeet package</a></li></ul><div class="bz-dropdown">
+    <button aria-haspopup="true" aria-expanded="false">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <g
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+        >
+          <circle cx="12" cy="12" r="1" />
+          <circle cx="19" cy="12" r="1" />
+          <circle cx="5" cy="12" r="1" />
+        </g>
+      </svg>
+    </button>
+    <ul role="menu" aria-hidden="true"></ul>
+  </div>
+</nav><div class="bz-content"><main id="bz-main-content"><header class="bz-article-header">
+  
+  
+    <nav class="bz-breadcrumbs" aria-label="Breadcrumb">
+  <ol>
+    <li class="bz-breadcrumbs-home">
+      <a href="../../../../../index.html">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </a>
+    </li><li class="bz-breadcrumbs-parent">
+      <a href="../../../../index.html">Module code</a>
+    </li><li class="bz-breadcrumbs-parent">
+      <a href="../../../../stewbeet.html">stewbeet</a>
+    </li><li class="bz-breadcrumbs-parent">
+      <a href="../headers.html">stewbeet.plugins.auto.headers</a>
+    </li><li class="bz-breadcrumbs-current">
+      <span>stewbeet.plugins.auto.headers.type_inference</span>
+    </li>
+  </ol>
+</nav>
+  
+
+  <label
+    class="bz-sidebar-secondary-toggle"
+    for="bz-sidebar-secondary"
+    role="button"
+    tabindex="0"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="sized muted">
+      <path
+        fill="none"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M3.75 6.75H20.25 M11.25 12H20.25 M7.75 17.25H20.25"
+      />
+    </svg>
+  </label>
+</header><article class="bz-article-main" role="main">
+  <h1>Source code for stewbeet.plugins.auto.headers.type_inference</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Type inference utilities for macro function arguments.</span>
+
+<span class="sd">This module handles inferring the types of macro arguments by analyzing</span>
+<span class="sd">how functions are called in the @within list.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># Imports</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.object</span><span class="w"> </span><span class="kn">import</span> <span class="n">Header</span>
+
+<span class="c1"># Type mapping for NBT suffixes</span>
+<span class="n">NBT_TYPE_MAP</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="s2">&quot;byte&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;s&quot;</span><span class="p">:</span> <span class="s2">&quot;short&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span>  <span class="c1"># No suffix means int</span>
+    <span class="s2">&quot;l&quot;</span><span class="p">:</span> <span class="s2">&quot;long&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;f&quot;</span><span class="p">:</span> <span class="s2">&quot;float&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;d&quot;</span><span class="p">:</span> <span class="s2">&quot;double&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="parse_nbt_compound">
+<a class="viewcode-back" href="../../../../../modules/stewbeet.plugins.auto.headers.type_inference.html#stewbeet.plugins.auto.headers.type_inference.parse_nbt_compound">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_nbt_compound</span><span class="p">(</span><span class="n">nbt_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Parse an NBT compound string to extract variable names and their types.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        nbt_string (str): The NBT compound string (e.g., &#39;{&quot;id&quot;:&quot;hello&quot;,Slot:1b,count:1}&#39;)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict[str, tuple[str, str]]: Dictionary mapping variable names to (value, type) tuples</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        Basic types:</span>
+<span class="sd">        &gt;&gt;&gt; parse_nbt_compound(&#39;{&quot;id&quot;:&quot;hello&quot;,Slot:1b,count:1,price:10.0f}&#39;)</span>
+<span class="sd">        {&#39;id&#39;: (&#39;hello&#39;, &#39;string&#39;), &#39;Slot&#39;: (&#39;1&#39;, &#39;byte&#39;), &#39;count&#39;: (&#39;1&#39;, &#39;int&#39;), &#39;price&#39;: (&#39;10.0&#39;, &#39;float&#39;)}</span>
+
+<span class="sd">        From StardustFragment teleport_to storage call:</span>
+<span class="sd">        &gt;&gt;&gt; parse_nbt_compound(&#39;{x:0,y:0,z:0,yaw:0.0f,pitch:0.0f,dimension:&quot;minecraft:overworld&quot;}&#39;)</span>
+<span class="sd">        {&#39;x&#39;: (&#39;0&#39;, &#39;int&#39;), &#39;y&#39;: (&#39;0&#39;, &#39;int&#39;), &#39;z&#39;: (&#39;0&#39;, &#39;int&#39;), &#39;yaw&#39;: (&#39;0.0&#39;, &#39;float&#39;), &#39;pitch&#39;: (&#39;0.0&#39;, &#39;float&#39;), &#39;dimension&#39;: (&#39;minecraft:overworld&#39;, &#39;string&#39;)}</span>
+
+<span class="sd">        From SimplEnergy with mixed types:</span>
+<span class="sd">        &gt;&gt;&gt; parse_nbt_compound(&#39;{part_1:100,part_2:50,scale:&quot;kJ&quot;}&#39;)</span>
+<span class="sd">        {&#39;part_1&#39;: (&#39;100&#39;, &#39;int&#39;), &#39;part_2&#39;: (&#39;50&#39;, &#39;int&#39;), &#39;scale&#39;: (&#39;kJ&#39;, &#39;string&#39;)}</span>
+
+<span class="sd">        Compound and list types:</span>
+<span class="sd">        &gt;&gt;&gt; result = parse_nbt_compound(&#39;{config:{duration:20,power:1.5f},items:[1,2,3]}&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; result[&#39;config&#39;][1]</span>
+<span class="sd">        &#39;compound&#39;</span>
+<span class="sd">        &gt;&gt;&gt; result[&#39;items&#39;][1]</span>
+<span class="sd">        &#39;list&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># Remove outer braces and split by commas (but not commas inside nested structures)</span>
+    <span class="n">nbt_string</span> <span class="o">=</span> <span class="n">nbt_string</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">nbt_string</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">nbt_string</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">):</span>
+        <span class="n">nbt_string</span> <span class="o">=</span> <span class="n">nbt_string</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># Simple parser for key:value pairs</span>
+    <span class="c1"># This is a simplified version that handles basic cases</span>
+    <span class="c1"># Pattern to match key:value pairs - handles spaces after colons and commas</span>
+    <span class="c1"># Split by commas first, but be careful about nested structures</span>
+    <span class="n">pairs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">current_pair</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">in_quotes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">quote_char</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">nbt_string</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">char</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="s2">&quot;&#39;&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">in_quotes</span><span class="p">:</span>
+                <span class="n">in_quotes</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">quote_char</span> <span class="o">=</span> <span class="n">char</span>
+            <span class="k">elif</span> <span class="n">char</span> <span class="o">==</span> <span class="n">quote_char</span><span class="p">:</span>
+                <span class="n">in_quotes</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">quote_char</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">elif</span> <span class="n">char</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;{&#39;</span><span class="p">,</span> <span class="s1">&#39;[&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">in_quotes</span><span class="p">:</span>
+            <span class="n">depth</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">char</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;}&#39;</span><span class="p">,</span> <span class="s1">&#39;]&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">in_quotes</span><span class="p">:</span>
+            <span class="n">depth</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">char</span> <span class="o">==</span> <span class="s1">&#39;,&#39;</span> <span class="ow">and</span> <span class="n">depth</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">in_quotes</span><span class="p">:</span>
+            <span class="n">pairs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_pair</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+            <span class="n">current_pair</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="k">continue</span>
+
+        <span class="n">current_pair</span> <span class="o">+=</span> <span class="n">char</span>
+
+    <span class="k">if</span> <span class="n">current_pair</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+        <span class="n">pairs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_pair</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+
+    <span class="c1"># Now parse each pair</span>
+    <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">:</span>
+        <span class="c1"># Match key:value with optional spaces and optional quotes around keys</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[&quot;</span><span class="se">\&#39;</span><span class="s1">]?(\w+)[&quot;</span><span class="se">\&#39;</span><span class="s1">]?\s*:\s*(.+)&#39;</span><span class="p">,</span> <span class="n">pair</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="n">key</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="n">value</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+        <span class="c1"># String values (quoted)</span>
+        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">value</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">):</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;&quot;</span><span class="se">\&#39;</span><span class="s1">&#39;</span><span class="p">),</span> <span class="s2">&quot;string&quot;</span><span class="p">)</span>
+        <span class="c1"># Compound values (nested {})</span>
+        <span class="k">elif</span> <span class="n">value</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">):</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s2">&quot;compound&quot;</span><span class="p">)</span>
+        <span class="c1"># List values ([])</span>
+        <span class="k">elif</span> <span class="n">value</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">):</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s2">&quot;list&quot;</span><span class="p">)</span>
+        <span class="c1"># Numeric values</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Check for numeric suffix</span>
+            <span class="n">numeric_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;([-+]?\d+\.?\d*)([bslfd]?)&#39;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">numeric_match</span><span class="p">:</span>
+                <span class="n">num_value</span><span class="p">:</span> <span class="nb">str</span>
+                <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span>
+                <span class="n">num_value</span><span class="p">,</span> <span class="n">suffix</span> <span class="o">=</span> <span class="n">numeric_match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+                <span class="n">suffix</span> <span class="o">=</span> <span class="n">suffix</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                <span class="n">num_type</span><span class="p">:</span> <span class="nb">str</span>
+
+                <span class="c1"># If no suffix, infer from the value</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">suffix</span><span class="p">:</span>
+                    <span class="c1"># Check if it has a decimal point</span>
+                    <span class="k">if</span> <span class="s1">&#39;.&#39;</span> <span class="ow">in</span> <span class="n">num_value</span><span class="p">:</span>
+                        <span class="c1"># Default to double for decimal numbers without suffix</span>
+                        <span class="n">num_type</span> <span class="o">=</span> <span class="s2">&quot;double&quot;</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># Default to int for whole numbers without suffix</span>
+                        <span class="n">num_type</span> <span class="o">=</span> <span class="s2">&quot;int&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">num_type</span> <span class="o">=</span> <span class="n">NBT_TYPE_MAP</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">suffix</span><span class="p">,</span> <span class="s2">&quot;int&quot;</span><span class="p">)</span>
+
+                <span class="n">result</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">num_value</span><span class="p">,</span> <span class="n">num_type</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Unknown type</span>
+                <span class="n">result</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s2">&quot;unknown&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<div class="viewcode-block" id="infer_types_from_direct_call">
+<a class="viewcode-back" href="../../../../../modules/stewbeet.plugins.auto.headers.type_inference.html#stewbeet.plugins.auto.headers.type_inference.infer_types_from_direct_call">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">infer_types_from_direct_call</span><span class="p">(</span><span class="n">call_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">macro_vars</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">all_functions</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Header</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Infer macro argument types from a direct function call with parameters.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        call_string (str): The function call string (e.g., &#39;function my_func {&quot;id&quot;:&quot;hello&quot;,Slot:1b}&#39;)</span>
+<span class="sd">        macro_vars (list[str]): List of macro variable names to look for</span>
+<span class="sd">        all_functions (dict[str, Header]): Dictionary of all functions for lookup</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict[str, str]: Dictionary mapping variable names to their inferred types</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        Basic direct call:</span>
+<span class="sd">        &gt;&gt;&gt; infer_types_from_direct_call(&#39;function test {&quot;id&quot;:&quot;hello&quot;,Slot:1b,count:1}&#39;, [&#39;id&#39;, &#39;Slot&#39;, &#39;count&#39;], {})</span>
+<span class="sd">        {&#39;id&#39;: &#39;string&#39;, &#39;Slot&#39;: &#39;byte&#39;, &#39;count&#39;: &#39;int&#39;}</span>
+
+<span class="sd">        From SimplEnergy pulverizer call:</span>
+<span class="sd">        &gt;&gt;&gt; infer_types_from_direct_call(&#39;simplenergy:custom_blocks/pulverizer/gui_active_slot {&quot;result&quot;:15}&#39;, [&#39;result&#39;], {})</span>
+<span class="sd">        {&#39;result&#39;: &#39;int&#39;}</span>
+
+<span class="sd">        With float values (like StardustFragment):</span>
+<span class="sd">        &gt;&gt;&gt; infer_types_from_direct_call(&#39;function test {x:100,y:64,z:-200,yaw:45.0f,pitch:-10.5f}&#39;, [&#39;x&#39;, &#39;y&#39;, &#39;z&#39;, &#39;yaw&#39;, &#39;pitch&#39;], {})</span>
+<span class="sd">        {&#39;x&#39;: &#39;int&#39;, &#39;y&#39;: &#39;int&#39;, &#39;z&#39;: &#39;int&#39;, &#39;yaw&#39;: &#39;float&#39;, &#39;pitch&#39;: &#39;float&#39;}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">types</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># Find the NBT compound in the call string</span>
+    <span class="c1"># It should be after &quot;function &lt;path&gt; &quot; or just after the function path</span>
+    <span class="c1"># Handle both direct calls and @within entries</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(?:function\s+\S+\s+)?({.+})&#39;</span><span class="p">,</span> <span class="n">call_string</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+        <span class="n">nbt_string</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">parsed</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">parse_nbt_compound</span><span class="p">(</span><span class="n">nbt_string</span><span class="p">)</span>
+
+        <span class="c1"># Map the parsed types to our macro variables</span>
+        <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">macro_vars</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">parsed</span><span class="p">:</span>
+                <span class="n">value</span><span class="p">:</span> <span class="nb">str</span>
+                <span class="n">var_type</span><span class="p">:</span> <span class="nb">str</span>
+                <span class="n">value</span><span class="p">,</span> <span class="n">var_type</span> <span class="o">=</span> <span class="n">parsed</span><span class="p">[</span><span class="n">var</span><span class="p">]</span>
+
+                <span class="c1"># Check if the value is a macro variable reference (e.g., $(other_var))</span>
+                <span class="n">macro_ref_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\$\((\w+)\)&#39;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">macro_ref_match</span><span class="p">:</span>
+                    <span class="c1"># This is a reference to another macro variable</span>
+                    <span class="c1"># Try to find the type from the calling function</span>
+                    <span class="n">caller_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;([^\s]+)&#39;</span><span class="p">,</span> <span class="n">call_string</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">caller_match</span><span class="p">:</span>
+                        <span class="n">caller_func</span> <span class="o">=</span> <span class="n">caller_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">caller_func</span> <span class="ow">in</span> <span class="n">all_functions</span><span class="p">:</span>
+                            <span class="n">caller_args</span> <span class="o">=</span> <span class="n">all_functions</span><span class="p">[</span><span class="n">caller_func</span><span class="p">]</span><span class="o">.</span><span class="n">args</span>
+                            <span class="n">ref_var</span> <span class="o">=</span> <span class="n">macro_ref_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">ref_var</span> <span class="ow">in</span> <span class="n">caller_args</span><span class="p">:</span>
+                                <span class="c1"># caller_args[ref_var] is a tuple (type, description_lines)</span>
+                                <span class="c1"># We only need the type (first element)</span>
+                                <span class="n">types</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">caller_args</span><span class="p">[</span><span class="n">ref_var</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">types</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">var_type</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">types</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">var_type</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">types</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">var_type</span>
+
+    <span class="k">return</span> <span class="n">types</span></div>
+
+
+
+<div class="viewcode-block" id="infer_types_from_storage_call">
+<a class="viewcode-back" href="../../../../../modules/stewbeet.plugins.auto.headers.type_inference.html#stewbeet.plugins.auto.headers.type_inference.infer_types_from_storage_call">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">infer_types_from_storage_call</span><span class="p">(</span><span class="n">within_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">macro_vars</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">all_functions</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Header</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Infer macro argument types by looking at &#39;with storage&#39; calls and the caller&#39;s content.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        within_list (list[str]): List of functions/contexts that call this function</span>
+<span class="sd">        macro_vars (list[str]): List of macro variable names to infer types for</span>
+<span class="sd">        all_functions (dict[str, Header]): Dictionary of all functions for lookup</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict[str, str]: Dictionary mapping variable names to their inferred types</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; # This would need actual function content to work properly</span>
+<span class="sd">        &gt;&gt;&gt; infer_types_from_storage_call([&#39;test:caller with storage temp macro&#39;], [&#39;id&#39;, &#39;count&#39;], {})</span>
+<span class="sd">        {}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">types</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">caller</span> <span class="ow">in</span> <span class="n">within_list</span><span class="p">:</span>
+        <span class="c1"># Check if this is a storage call</span>
+        <span class="k">if</span> <span class="s2">&quot;with storage&quot;</span> <span class="ow">in</span> <span class="n">caller</span> <span class="ow">or</span> <span class="s2">&quot;with entity&quot;</span> <span class="ow">in</span> <span class="n">caller</span><span class="p">:</span>
+            <span class="c1"># Extract the caller function name</span>
+            <span class="n">caller_func</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">caller</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="c1"># Look up the caller function</span>
+            <span class="k">if</span> <span class="n">caller_func</span> <span class="ow">in</span> <span class="n">all_functions</span><span class="p">:</span>
+                <span class="n">caller_content</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">all_functions</span><span class="p">[</span><span class="n">caller_func</span><span class="p">]</span><span class="o">.</span><span class="n">content</span>
+
+                <span class="c1"># Look for data modify commands that set up the storage</span>
+                <span class="c1"># Pattern: data modify storage &lt;storage_path&gt; [&lt;path...&gt;] set value {&lt;nbt&gt;}</span>
+                <span class="c1"># Some usages include additional path components between the storage id and &#39;set&#39;,</span>
+                <span class="c1"># for example: `data modify storage stardust:temp macro set value {...}`</span>
+                <span class="c1"># so we allow optional tokens between the storage path and the &#39;set&#39; keyword.</span>
+                <span class="n">storage_pattern</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;data\s+modify\s+storage\s+\S+(?:\s+\S+)*\s+set\s+value\s+({.+?})&#39;</span>
+                <span class="n">matches</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">storage_pattern</span><span class="p">,</span> <span class="n">caller_content</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">nbt_string</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">:</span>
+                    <span class="n">parsed</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">parse_nbt_compound</span><span class="p">(</span><span class="n">nbt_string</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">macro_vars</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">parsed</span> <span class="ow">and</span> <span class="n">var</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">types</span><span class="p">:</span>
+                            <span class="n">types</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">parsed</span><span class="p">[</span><span class="n">var</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">types</span></div>
+
+
+
+<div class="viewcode-block" id="infer_macro_types">
+<a class="viewcode-back" href="../../../../../modules/stewbeet.plugins.auto.headers.type_inference.html#stewbeet.plugins.auto.headers.type_inference.infer_macro_types">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">infer_macro_types</span><span class="p">(</span><span class="n">header</span><span class="p">:</span> <span class="n">Header</span><span class="p">,</span> <span class="n">all_functions</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Header</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Infer types for all macro variables in a function.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        header (Header): The function header containing content and @within info</span>
+<span class="sd">        all_functions (dict[str, Header]): Dictionary of all functions for lookup</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict[str, str]: Dictionary mapping variable names to their inferred types</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        Direct call with NBT (SimplEnergy style):</span>
+<span class="sd">        &gt;&gt;&gt; header = Header(&quot;test:func&quot;, [&quot;test:caller {id:&#39;hello&#39;,count:1}&quot;], [], &quot;$give @p $(id) $(count)&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; infer_macro_types(header, {})</span>
+<span class="sd">        {&#39;id&#39;: &#39;string&#39;, &#39;count&#39;: &#39;int&#39;}</span>
+
+<span class="sd">        Storage call (StardustFragment style):</span>
+<span class="sd">        &gt;&gt;&gt; caller_content = &#39;data modify storage test:temp macro set value {x:0,y:64,z:0}\\nfunction test:target with storage test:temp macro&#39;</span>
+<span class="sd">        &gt;&gt;&gt; caller = Header(&quot;test:caller&quot;, [], [], caller_content)</span>
+<span class="sd">        &gt;&gt;&gt; target = Header(&quot;test:target&quot;, [&quot;test:caller with storage test:temp macro&quot;], [], &quot;$tp @s $(x) $(y) $(z)&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; infer_macro_types(target, {&quot;test:caller&quot;: caller})</span>
+<span class="sd">        {&#39;x&#39;: &#39;int&#39;, &#39;y&#39;: &#39;int&#39;, &#39;z&#39;: &#39;int&#39;}</span>
+
+<span class="sd">        Multiple types (like SimplEnergy energy lore):</span>
+<span class="sd">        &gt;&gt;&gt; header = Header(&quot;test:lore&quot;, [&quot;test:main {part_1:100,part_2:50,scale:&#39;kJ&#39;}&quot;], [], &quot;$say $(part_1).$(part_2)$(scale)&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; infer_macro_types(header, {})</span>
+<span class="sd">        {&#39;part_1&#39;: &#39;int&#39;, &#39;part_2&#39;: &#39;int&#39;, &#39;scale&#39;: &#39;string&#39;}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.macro_parser</span><span class="w"> </span><span class="kn">import</span> <span class="n">extract_macro_variables</span>
+
+    <span class="c1"># Extract macro variables</span>
+    <span class="n">macro_vars</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">extract_macro_variables</span><span class="p">(</span><span class="n">header</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">macro_vars</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{}</span>
+
+    <span class="n">types</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># First pass: Check for direct calls with parameters</span>
+    <span class="k">for</span> <span class="n">caller</span> <span class="ow">in</span> <span class="n">header</span><span class="o">.</span><span class="n">within</span><span class="p">:</span>
+        <span class="n">direct_types</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">infer_types_from_direct_call</span><span class="p">(</span><span class="n">caller</span><span class="p">,</span> <span class="n">macro_vars</span><span class="p">,</span> <span class="n">all_functions</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">var_type</span> <span class="ow">in</span> <span class="n">direct_types</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">var</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">types</span><span class="p">:</span>
+                <span class="n">types</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">var_type</span>
+
+    <span class="c1"># Second pass: Check for storage-based calls</span>
+    <span class="n">storage_types</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">infer_types_from_storage_call</span><span class="p">(</span><span class="n">header</span><span class="o">.</span><span class="n">within</span><span class="p">,</span> <span class="n">macro_vars</span><span class="p">,</span> <span class="n">all_functions</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">var_type</span> <span class="ow">in</span> <span class="n">storage_types</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">var</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">types</span><span class="p">:</span>
+            <span class="n">types</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">var_type</span>
+
+    <span class="c1"># Fill in unknowns for variables we couldn&#39;t infer</span>
+    <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">macro_vars</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">var</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">types</span><span class="p">:</span>
+            <span class="n">types</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;unknown&quot;</span>
+
+    <span class="k">return</span> <span class="n">types</span></div>
+
+</pre></div>
+</article><footer class="bz-article-footer">
+  
+  
+    <nav class="bz-related-pages" aria-label="Related pages navigation"></nav>
+  
+
+</footer></main>
+  </div><footer class="bz-footer">
+  <div class="bz-footer-copyright"><p class="bz-copyright">© Copyright 2025, Stoupy</p><p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://github.com/aksiome/breeze">Breeze theme</a>.
+  </p>
+</div><div class="bz-external-links">
+  <a
+    href="https://github.com/Stoupy51/stewbeet"
+    aria-label="GitHub"
+    data-tooltip="GitHub"
+    target="_blank"
+  >
+    <svg
+      stroke="currentColor"
+      fill="currentColor"
+      stroke-width="0"
+      viewBox="0 0 16 16"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+      ></path>
+    </svg>
+  </a></div>
+</footer><a href="#" class="bz-back-to-top">
+    <svg class="sized" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m5 12 7-7 7 7"/><path d="M12 19V5"/>
+    </svg>
+    <span>Back to top</span>
+  </a>
+  <label class="bz-overlay bz-overlay-primary" for="bz-sidebar-primary"></label>
+  <label class="bz-overlay bz-overlay-secondary" for="bz-sidebar-secondary"></label>
+  <input type="checkbox" name="bz-sidebar-primary" id="bz-sidebar-primary" aria-label="Toggle site navigation sidebar">
+  <input type="checkbox" name="bz-sidebar-secondary" id="bz-sidebar-secondary" aria-label="Toggle table of contents sidebar">
+  </body>
+</html>

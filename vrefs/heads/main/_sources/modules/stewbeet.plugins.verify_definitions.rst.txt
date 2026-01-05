@@ -1,0 +1,8 @@
+stewbeet.plugins.verify\_definitions package
+============================================
+
+.. automodule:: stewbeet.plugins.verify_definitions
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

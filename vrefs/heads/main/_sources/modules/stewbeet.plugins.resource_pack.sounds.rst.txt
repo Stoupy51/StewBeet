@@ -1,0 +1,8 @@
+stewbeet.plugins.resource\_pack.sounds package
+==============================================
+
+.. automodule:: stewbeet.plugins.resource_pack.sounds
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

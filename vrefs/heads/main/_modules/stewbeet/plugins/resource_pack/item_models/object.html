@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>stewbeet.plugins.resource_pack.item_models.object &#8212; StewBeet</title>
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8e8a900e" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/treeview.css?v=f8e9195c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/breeze.css?v=93f23127" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=1637c05a" />
+  <noscript>
+    <style>
+      .bz-js-only { display: none !important; }
+    </style>
+  </noscript>
+  
+    <script defer src="../../../../../_static/documentation_options.js?v=6d4b8ac6"></script>
+    <script defer src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script defer src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script defer src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script defer src="../../../../../_static/copybutton.js?v=18a8d5f5"></script>
+    <script defer src="../../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer src="../../../../../_static/treeview.js?v=265ad9b8"></script>
+    <script defer src="../../../../../_static/scripts/breeze.js?v=8ef74970"></script>
+  <script data-cfasync="false">
+    const mode = localStorage.getItem("breeze-mode") || "auto";
+    document.documentElement.dataset.mode = mode;
+    if (mode === "auto") {
+      const prefers = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+      document.documentElement.dataset.theme = prefers;
+    } else {
+      document.documentElement.dataset.theme = mode;
+    }
+  </script>
+    <link rel="icon" href="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png"/>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /><meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head><body>
+  
+  <div class="bz-skip-to-content">
+    <a href="#bz-main-content">Skip to main content</a>
+  </div><header class="bz-header-main">
+  <div class="bz-header-start"><a class="bz-header-brand" href="../../../../../index.html"><img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png" alt="Site Logo" /><span>StewBeet</span>
+</a></div>
+  <div class="bz-header-end"><div class="bz-search-button">
+  <a
+    href="../../../../../search.html#q"
+    aria-label="Search the docs"
+    data-tooltip="Search the docs"
+  >
+    <svg
+      class="sized"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 -1 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+      />
+    </svg>
+    <span>Search</span>
+    <kbd>Ctrl+K</kbd>
+  </a>
+</div><div class="bz-theme-switcher">
+  <button aria-label="Switch theme" data-tooltip="Switch theme">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="only-light" fill="currentColor">
+      <path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm5.657-8.157a.75.75 0 0 1 0 1.061l-1.061 1.06a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l1.06-1.06a.75.75 0 0 1 1.06 0Zm-9.193 9.193a.75.75 0 0 1 0 1.06l-1.06 1.061a.75.75 0 1 1-1.061-1.06l1.06-1.061a.75.75 0 0 1 1.061 0ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0ZM3 8a.75.75 0 0 1-.75.75H.75a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 3 8Zm13 0a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 16 8Zm-8 5a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13Zm3.536-1.464a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 0 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061ZM2.343 2.343a.75.75 0 0 1 1.061 0l1.06 1.061a.751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018l-1.06-1.06a.75.75 0 0 1 0-1.06Z"></path>
+    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="only-dark" fill="currentColor">
+      <path d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"></path>
+    </svg>
+  </button>
+</div><div class="bz-external-links">
+  <a
+    href="https://github.com/Stoupy51/stewbeet"
+    aria-label="GitHub"
+    data-tooltip="GitHub"
+    target="_blank"
+  >
+    <svg
+      stroke="currentColor"
+      fill="currentColor"
+      stroke-width="0"
+      viewBox="0 0 16 16"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+      ></path>
+    </svg>
+  </a></div></div>
+</header><nav class="bz-header-tabs" aria-label="Primary Navigation">
+  <label
+    class="bz-sidebar-primary-toggle"
+    for="bz-sidebar-primary"
+    role="button"
+    tabindex="0"
+  >
+    <svg class="sized muted" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path
+        fill="none"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M3.75 6.75h16.5M3.75 12H12m-8.25 5.25h12.5"
+      />
+    </svg>
+  </label><ul><li class="toctree-l1"><a class="reference internal" href="../../../../../modules/stewbeet.html">stewbeet package</a></li></ul><div class="bz-dropdown">
+    <button aria-haspopup="true" aria-expanded="false">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <g
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+        >
+          <circle cx="12" cy="12" r="1" />
+          <circle cx="19" cy="12" r="1" />
+          <circle cx="5" cy="12" r="1" />
+        </g>
+      </svg>
+    </button>
+    <ul role="menu" aria-hidden="true"></ul>
+  </div>
+</nav><div class="bz-content"><main id="bz-main-content"><header class="bz-article-header">
+  
+  
+    <nav class="bz-breadcrumbs" aria-label="Breadcrumb">
+  <ol>
+    <li class="bz-breadcrumbs-home">
+      <a href="../../../../../index.html">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </a>
+    </li><li class="bz-breadcrumbs-parent">
+      <a href="../../../../index.html">Module code</a>
+    </li><li class="bz-breadcrumbs-parent">
+      <a href="../../../../stewbeet.html">stewbeet</a>
+    </li><li class="bz-breadcrumbs-parent">
+      <a href="../item_models.html">stewbeet.plugins.resource_pack.item_models</a>
+    </li><li class="bz-breadcrumbs-current">
+      <span>stewbeet.plugins.resource_pack.item_models.object</span>
+    </li>
+  </ol>
+</nav>
+  
+
+  <label
+    class="bz-sidebar-secondary-toggle"
+    for="bz-sidebar-secondary"
+    role="button"
+    tabindex="0"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="sized muted">
+      <path
+        fill="none"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M3.75 6.75H20.25 M11.25 12H20.25 M7.75 17.25H20.25"
+      />
+    </svg>
+  </label>
+</header><article class="bz-article-main" role="main">
+  <h1>Source code for stewbeet.plugins.resource_pack.item_models.object</h1><div class="highlight"><pre>
+<span></span>
+<span class="c1"># Imports</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">stouputils</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">stp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">beet</span><span class="w"> </span><span class="kn">import</span> <span class="n">ItemModel</span><span class="p">,</span> <span class="n">Model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">beet.core.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">JsonDict</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">....core.__memory__</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">....core.cls.block</span><span class="w"> </span><span class="kn">import</span> <span class="n">Block</span><span class="p">,</span> <span class="n">GrowingSeed</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">....core.cls.item</span><span class="w"> </span><span class="kn">import</span> <span class="n">Item</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">....core.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">CUSTOM_BLOCK_VANILLA</span><span class="p">,</span> <span class="n">CUSTOM_ITEM_VANILLA</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">....core.utils.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_json_encoder</span><span class="p">,</span> <span class="n">texture_mcmeta</span>
+
+
+<span class="c1"># Utility function</span>
+<div class="viewcode-block" id="to_atlas">
+<a class="viewcode-back" href="../../../../../modules/stewbeet.plugins.resource_pack.item_models.object.html#stewbeet.plugins.resource_pack.item_models.object.to_atlas">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">to_atlas</span><span class="p">(</span><span class="n">texture</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Convert a texture path to its atlas sprite path.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		texture (str): The original texture path.</span>
+
+<span class="sd">	Returns:</span>
+<span class="sd">		str: The converted atlas sprite path.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">project_id</span><span class="si">}</span><span class="s2">:atlas/&quot;</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">texture</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:])</span>  <span class="c1"># Remove &#39;minecraft:block/&#39; prefix</span></div>
+
+
+<span class="c1"># Class</span>
+<div class="viewcode-block" id="AutoModel">
+<a class="viewcode-back" href="../../../../../modules/stewbeet.plugins.resource_pack.item_models.object.html#stewbeet.plugins.resource_pack.item_models.object.AutoModel">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AutoModel</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Class to handle item model processing.</span>
+
+<span class="sd">	Attributes:</span>
+<span class="sd">		item_name       (str):            The name of the item.</span>
+<span class="sd">		data            (dict):           The parsed JSON data of the item model.</span>
+<span class="sd">		parent          (str | None):     The parent model of this item model.</span>
+<span class="sd">		textures        (dict):           The textures used by this item model.</span>
+<span class="sd">		namespace       (str):            The namespace of the item model.</span>
+<span class="sd">		block_or_item   (str):            Whether this is a block or item model.</span>
+<span class="sd">		used_textures   (set[str]):       Set of used textures.</span>
+<span class="sd">		used_minecraft_textures (set[str]): Set of used Minecraft textures.</span>
+<span class="sd">		source_textures (dict[str, str]): Dictionary of source textures.</span>
+<span class="sd">		ignore_textures (bool):           Whether to ignore texture-related errors.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1"># Class variables</span>
+	<span class="n">DEFAULT_PARENT</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;item/generated&quot;</span>
+	<span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Item</span><span class="p">,</span> <span class="n">source_textures</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">ignore_textures</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot; Initialize the AutoModel.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			data (Item): The item data from the definitions.</span>
+<span class="sd">			source_textures (dict[str, str]): Dictionary of source textures.</span>
+<span class="sd">			ignore_textures (bool): Whether to ignore texture-related errors.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="p">:</span> <span class="n">Item</span> <span class="o">=</span> <span class="n">data</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">project_id</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">block_or_item</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;item&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">used_textures</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">used_minecraft_textures</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">source_textures</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">source_textures</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">ignore_textures</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">ignore_textures</span>
+
+		<span class="c1"># Initialize model data</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DEFAULT_PARENT</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">textures</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="AutoModel.from_definitions">
+<a class="viewcode-back" href="../../../../../modules/stewbeet.plugins.resource_pack.item_models.object.html#stewbeet.plugins.resource_pack.item_models.object.AutoModel.from_definitions">[docs]</a>
+	<span class="nd">@classmethod</span>
+	<span class="k">def</span><span class="w"> </span><span class="nf">from_definitions</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Item</span><span class="p">,</span> <span class="n">source_textures</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">ignore_textures</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AutoModel</span><span class="p">:</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot; Create an AutoModel from a definitions entry.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			data (Item): The item data from the definitions.</span>
+<span class="sd">			source_textures (dict[str, str]): Dictionary of source textures.</span>
+<span class="sd">			ignore_textures (bool): Whether to ignore textures in the model.</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			AutoModel: The created AutoModel instance.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">source_textures</span><span class="p">,</span> <span class="n">ignore_textures</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AutoModel.get_powered_texture">
+<a class="viewcode-back" href="../../../../../modules/stewbeet.plugins.resource_pack.item_models.object.html#stewbeet.plugins.resource_pack.item_models.object.AutoModel.get_powered_texture">[docs]</a>
+	<span class="nd">@stp</span><span class="o">.</span><span class="n">handle_error</span><span class="p">(</span><span class="n">exceptions</span><span class="o">=</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">error_log</span><span class="o">=</span><span class="n">stp</span><span class="o">.</span><span class="n">LogLevels</span><span class="o">.</span><span class="n">ERROR_TRACEBACK</span><span class="p">)</span>
+	<span class="k">def</span><span class="w"> </span><span class="nf">get_powered_texture</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variants</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">side</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">on_off</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot; Get the powered texture for a given side.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			variants (list[str]): List of texture variants.</span>
+<span class="sd">			side (str): The side to get the texture for.</span>
+<span class="sd">			on_off (str): The power state suffix.</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			str: The texture path.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="n">on_off</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">texture</span> <span class="ow">in</span> <span class="n">variants</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">texture</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">side</span> <span class="o">+</span> <span class="n">on_off</span><span class="p">):</span>
+					<span class="k">return</span> <span class="n">texture</span>
+		<span class="k">for</span> <span class="n">texture</span> <span class="ow">in</span> <span class="n">variants</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">texture</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">side</span><span class="p">):</span>
+				<span class="k">return</span> <span class="n">texture</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">ignore_textures</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Couldn&#39;t find texture for side &#39;</span><span class="si">{</span><span class="n">side</span><span class="si">}</span><span class="s2">&#39; in &#39;</span><span class="si">{</span><span class="n">variants</span><span class="si">}</span><span class="s2">&#39;, consider adding missing texture or override the model&quot;</span><span class="p">)</span>
+		<span class="k">return</span> <span class="s2">&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="AutoModel.model_in_variants">
+<a class="viewcode-back" href="../../../../../modules/stewbeet.plugins.resource_pack.item_models.object.html#stewbeet.plugins.resource_pack.item_models.object.AutoModel.model_in_variants">[docs]</a>
+	<span class="k">def</span><span class="w"> </span><span class="nf">model_in_variants</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">models</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">variants</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot; Check if all models are in a string of any variant.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			models (list[str]): List of models to check.</span>
+<span class="sd">			variants (list[str]): List of variants to check against.</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			bool: True if all models are in variants.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">def</span><span class="w"> </span><span class="nf">model_matches</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">variant</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">			</span><span class="sd">&quot;&quot;&quot; Check if model matches in variant with proper word boundary. &quot;&quot;&quot;</span>
+			<span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">&quot;</span>
+			<span class="n">idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">variant</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+				<span class="k">return</span> <span class="kc">False</span>
+			<span class="c1"># Check if there&#39;s a character after the pattern</span>
+			<span class="n">after_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">idx</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">after_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">variant</span><span class="p">):</span>
+				<span class="c1"># Character after pattern should not be alphanumeric</span>
+				<span class="k">return</span> <span class="ow">not</span> <span class="n">variant</span><span class="p">[</span><span class="n">after_idx</span><span class="p">]</span><span class="o">.</span><span class="n">isalnum</span><span class="p">()</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="c1"># Pattern is at the end of the string, which is valid</span>
+				<span class="k">return</span> <span class="kc">True</span>
+
+		<span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="nb">any</span><span class="p">(</span><span class="n">model_matches</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">variants</span><span class="p">)</span> <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AutoModel.get_same_folder_variants">
+<a class="viewcode-back" href="../../../../../modules/stewbeet.plugins.resource_pack.item_models.object.html#stewbeet.plugins.resource_pack.item_models.object.AutoModel.get_same_folder_variants">[docs]</a>
+	<span class="nd">@stp</span><span class="o">.</span><span class="n">simple_cache</span>
+	<span class="k">def</span><span class="w"> </span><span class="nf">get_same_folder_variants</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variants</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot; Get variants that are in the same folder as the item.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			variants  (Iterable[str]): Iterable of variant names.</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			list[str]: List of variants in the same folder.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">target_folder_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+		<span class="n">same_folder_variants</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">variant</span> <span class="ow">in</span> <span class="n">variants</span><span class="p">:</span>
+			<span class="n">variant_folder_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">variant</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">variant_folder_depth</span> <span class="o">==</span> <span class="n">target_folder_depth</span><span class="p">:</span>
+				<span class="c1"># Check if all folder parts before the filename are the same</span>
+				<span class="k">if</span> <span class="n">target_folder_depth</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+					<span class="n">same_folder_variants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">variant</span><span class="p">)</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">target_folder</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+					<span class="n">variant_folder</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">variant</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+					<span class="k">if</span> <span class="n">target_folder</span> <span class="o">==</span> <span class="n">variant_folder</span><span class="p">:</span>
+						<span class="n">same_folder_variants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">variant</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">same_folder_variants</span></div>
+
+
+<div class="viewcode-block" id="AutoModel.handle_growing_seeds">
+<a class="viewcode-back" href="../../../../../modules/stewbeet.plugins.resource_pack.item_models.object.html#stewbeet.plugins.resource_pack.item_models.object.AutoModel.handle_growing_seeds">[docs]</a>
+	<span class="k">def</span><span class="w"> </span><span class="nf">handle_growing_seeds</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot; Handle growing seeds by adding growth stage models and textures. &quot;&quot;&quot;</span>
+		<span class="c1"># Retrieve growing seed data</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="p">,</span> <span class="n">Block</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">growing_seed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">return</span>
+		<span class="n">growing_seed_data</span><span class="p">:</span> <span class="n">GrowingSeed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">growing_seed</span>
+		<span class="n">texture_basename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">growing_seed_data</span><span class="o">.</span><span class="n">texture_basename</span>
+		<span class="n">planted_on</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">growing_seed_data</span><span class="o">.</span><span class="n">planted_on</span>
+		<span class="k">if</span> <span class="n">planted_on</span> <span class="o">==</span> <span class="s2">&quot;magma_block&quot;</span><span class="p">:</span>
+			<span class="n">planted_on</span> <span class="o">=</span> <span class="s2">&quot;magma&quot;</span>
+
+		<span class="c1"># Find all stage textures and order them by stage number</span>
+		<span class="n">stage_textures</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">sorted</span><span class="p">({</span>
+				<span class="n">k</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.png&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">):</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_textures</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+				<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">texture_basename</span><span class="si">}</span><span class="s2">_stage_&quot;</span><span class="p">)</span>
+			<span class="p">}</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span>
+			<span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+		<span class="p">))</span>
+
+		<span class="c1"># For each stage, create the model and add the texture</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">stage_textures</span><span class="p">)):</span>
+			<span class="n">stage_texture_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">texture_basename</span><span class="si">}</span><span class="s2">_stage_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span>
+			<span class="k">if</span> <span class="n">stage_texture_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stage_textures</span><span class="p">:</span>
+				<span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">ignore_textures</span><span class="p">:</span>
+					<span class="n">stp</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Missing texture for growing seed stage: &#39;</span><span class="si">{</span><span class="n">stage_texture_name</span><span class="si">}</span><span class="s2">.png&#39;&quot;</span><span class="p">)</span>
+				<span class="k">continue</span>
+
+			<span class="c1"># Create model for this stage</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">used_minecraft_textures</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;minecraft:block/</span><span class="si">{</span><span class="n">planted_on</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+			<span class="n">stage_model</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">=</span> <span class="p">{</span>
+				<span class="s2">&quot;textures&quot;</span><span class="p">:</span> <span class="p">{</span>
+					<span class="s2">&quot;1&quot;</span><span class="p">:</span> <span class="n">to_atlas</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;minecraft:block/</span><span class="si">{</span><span class="n">planted_on</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+					<span class="s2">&quot;2&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="si">}</span><span class="s2">:item/seeds/</span><span class="si">{</span><span class="n">stage_texture_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+					<span class="s2">&quot;particle&quot;</span><span class="p">:</span> <span class="n">to_atlas</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;minecraft:block/</span><span class="si">{</span><span class="n">planted_on</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+				<span class="p">},</span>
+				<span class="s2">&quot;elements&quot;</span><span class="p">:</span> <span class="p">[</span>
+					<span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;seed&quot;</span><span class="p">,</span><span class="s2">&quot;from&quot;</span><span class="p">:[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span><span class="s2">&quot;to&quot;</span><span class="p">:[</span><span class="mi">16</span><span class="p">,</span><span class="mi">17</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span><span class="s2">&quot;faces&quot;</span><span class="p">:{</span><span class="s2">&quot;north&quot;</span><span class="p">:{</span><span class="s2">&quot;uv&quot;</span><span class="p">:[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">16</span><span class="p">],</span><span class="s2">&quot;texture&quot;</span><span class="p">:</span><span class="s2">&quot;#2&quot;</span><span class="p">},</span><span class="s2">&quot;south&quot;</span><span class="p">:{</span><span class="s2">&quot;uv&quot;</span><span class="p">:[</span><span class="mi">16</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">16</span><span class="p">],</span><span class="s2">&quot;texture&quot;</span><span class="p">:</span><span class="s2">&quot;#2&quot;</span><span class="p">}}},</span>
+					<span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;seed&quot;</span><span class="p">,</span><span class="s2">&quot;from&quot;</span><span class="p">:[</span><span class="mi">12</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="s2">&quot;to&quot;</span><span class="p">:[</span><span class="mi">12</span><span class="p">,</span><span class="mi">17</span><span class="p">,</span><span class="mi">16</span><span class="p">],</span><span class="s2">&quot;faces&quot;</span><span class="p">:{</span><span class="s2">&quot;east&quot;</span><span class="p">:{</span><span class="s2">&quot;uv&quot;</span><span class="p">:[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">16</span><span class="p">],</span><span class="s2">&quot;texture&quot;</span><span class="p">:</span><span class="s2">&quot;#2&quot;</span><span class="p">},</span><span class="s2">&quot;west&quot;</span><span class="p">:{</span><span class="s2">&quot;uv&quot;</span><span class="p">:[</span><span class="mi">16</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">16</span><span class="p">],</span><span class="s2">&quot;texture&quot;</span><span class="p">:</span><span class="s2">&quot;#2&quot;</span><span class="p">}}},</span>
+					<span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;seed&quot;</span><span class="p">,</span><span class="s2">&quot;from&quot;</span><span class="p">:[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">12</span><span class="p">],</span><span class="s2">&quot;to&quot;</span><span class="p">:[</span><span class="mi">16</span><span class="p">,</span><span class="mi">17</span><span class="p">,</span><span class="mi">12</span><span class="p">],</span><span class="s2">&quot;faces&quot;</span><span class="p">:{</span><span class="s2">&quot;north&quot;</span><span class="p">:{</span><span class="s2">&quot;uv&quot;</span><span class="p">:[</span><span class="mi">16</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">16</span><span class="p">],</span><span class="s2">&quot;texture&quot;</span><span class="p">:</span><span class="s2">&quot;#2&quot;</span><span class="p">},</span><span class="s2">&quot;south&quot;</span><span class="p">:{</span><span class="s2">&quot;uv&quot;</span><span class="p">:[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">16</span><span class="p">],</span><span class="s2">&quot;texture&quot;</span><span class="p">:</span><span class="s2">&quot;#2&quot;</span><span class="p">}}},</span>
+					<span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;seed&quot;</span><span class="p">,</span><span class="s2">&quot;from&quot;</span><span class="p">:[</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="s2">&quot;to&quot;</span><span class="p">:[</span><span class="mi">4</span><span class="p">,</span><span class="mi">17</span><span class="p">,</span><span class="mi">16</span><span class="p">],</span><span class="s2">&quot;faces&quot;</span><span class="p">:{</span><span class="s2">&quot;east&quot;</span><span class="p">:{</span><span class="s2">&quot;uv&quot;</span><span class="p">:[</span><span class="mi">16</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">16</span><span class="p">],</span><span class="s2">&quot;texture&quot;</span><span class="p">:</span><span class="s2">&quot;#2&quot;</span><span class="p">},</span><span class="s2">&quot;west&quot;</span><span class="p">:{</span><span class="s2">&quot;uv&quot;</span><span class="p">:[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">16</span><span class="p">],</span><span class="s2">&quot;texture&quot;</span><span class="p">:</span><span class="s2">&quot;#2&quot;</span><span class="p">}}},</span>
+					<span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;base&quot;</span><span class="p">,</span><span class="s2">&quot;from&quot;</span><span class="p">:[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="s2">&quot;to&quot;</span><span class="p">:[</span><span class="mi">16</span><span class="p">,</span><span class="mf">1.05</span><span class="p">,</span><span class="mi">16</span><span class="p">],</span><span class="s2">&quot;faces&quot;</span><span class="p">:{</span><span class="s2">&quot;north&quot;</span><span class="p">:{</span><span class="s2">&quot;uv&quot;</span><span class="p">:[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="s2">&quot;texture&quot;</span><span class="p">:</span><span class="s2">&quot;#1&quot;</span><span class="p">},</span><span class="s2">&quot;east&quot;</span><span class="p">:{</span><span class="s2">&quot;uv&quot;</span><span class="p">:[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="s2">&quot;texture&quot;</span><span class="p">:</span><span class="s2">&quot;#1&quot;</span><span class="p">},</span><span class="s2">&quot;south&quot;</span><span class="p">:{</span><span class="s2">&quot;uv&quot;</span><span class="p">:[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="s2">&quot;texture&quot;</span><span class="p">:</span><span class="s2">&quot;#1&quot;</span><span class="p">},</span><span class="s2">&quot;west&quot;</span><span class="p">:{</span><span class="s2">&quot;uv&quot;</span><span class="p">:[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="s2">&quot;texture&quot;</span><span class="p">:</span><span class="s2">&quot;#1&quot;</span><span class="p">},</span><span class="s2">&quot;up&quot;</span><span class="p">:{</span><span class="s2">&quot;uv&quot;</span><span class="p">:[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">16</span><span class="p">],</span><span class="s2">&quot;texture&quot;</span><span class="p">:</span><span class="s2">&quot;#1&quot;</span><span class="p">},</span><span class="s2">&quot;down&quot;</span><span class="p">:{</span><span class="s2">&quot;uv&quot;</span><span class="p">:[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">16</span><span class="p">],</span><span class="s2">&quot;texture&quot;</span><span class="p">:</span><span class="s2">&quot;#1&quot;</span><span class="p">}}}</span>
+				<span class="p">]</span>
+			<span class="p">}</span>
+
+			<span class="c1"># Add the model to assets and create item model</span>
+			<span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">assets</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="p">]</span><span class="o">.</span><span class="n">models</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;item/seeds/</span><span class="si">{</span><span class="n">stage_texture_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_json_encoder</span><span class="p">(</span><span class="n">Model</span><span class="p">(</span><span class="n">stage_model</span><span class="p">),</span> <span class="n">max_level</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+			<span class="n">items_model</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;minecraft:model&quot;</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="si">}</span><span class="s2">:item/seeds/</span><span class="si">{</span><span class="n">stage_texture_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}}</span>
+			<span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">assets</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="p">]</span><span class="o">.</span><span class="n">item_models</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;seeds/</span><span class="si">{</span><span class="n">stage_texture_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_json_encoder</span><span class="p">(</span><span class="n">ItemModel</span><span class="p">(</span><span class="n">items_model</span><span class="p">),</span> <span class="n">max_level</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+			<span class="c1"># Add the texture to assets</span>
+			<span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">assets</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="p">]</span><span class="o">.</span><span class="n">textures</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;item/seeds/</span><span class="si">{</span><span class="n">stage_texture_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">texture_mcmeta</span><span class="p">(</span><span class="n">stage_textures</span><span class="p">[</span><span class="n">stage_texture_name</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="AutoModel.process">
+<a class="viewcode-back" href="../../../../../modules/stewbeet.plugins.resource_pack.item_models.object.html#stewbeet.plugins.resource_pack.item_models.object.AutoModel.process">[docs]</a>
+	<span class="nd">@stp</span><span class="o">.</span><span class="n">handle_error</span><span class="p">(</span><span class="n">exceptions</span><span class="o">=</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">error_log</span><span class="o">=</span><span class="n">stp</span><span class="o">.</span><span class="n">LogLevels</span><span class="o">.</span><span class="n">ERROR_TRACEBACK</span><span class="p">)</span>
+	<span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot; Process the item model.</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			set[str]: Set of blocks textures to be added to the items atlas.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="c1"># If the item is a growing seed, handle it</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">handle_growing_seeds</span><span class="p">()</span>
+
+		<span class="c1"># If no item model, return</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;item_model&quot;</span><span class="p">):</span>
+			<span class="k">return</span> <span class="nb">set</span><span class="p">()</span>
+
+		<span class="c1"># If item_model is already processed, return</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s2">&quot;item_model&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s2">&quot;stewbeet&quot;</span><span class="p">][</span><span class="s2">&quot;rendered_item_models&quot;</span><span class="p">]:</span>
+			<span class="k">return</span> <span class="nb">set</span><span class="p">()</span>
+
+		<span class="c1"># Initialize variables</span>
+		<span class="n">overrides</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">override_model</span> <span class="ow">or</span> <span class="p">{}</span>
+		<span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">base_item</span> <span class="o">==</span> <span class="n">CUSTOM_BLOCK_VANILLA</span> <span class="ow">or</span>
+			<span class="nb">any</span><span class="p">((</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;block&quot;</span> <span class="ow">in</span> <span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">overrides</span><span class="o">.</span><span class="n">values</span><span class="p">())):</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">block_or_item</span> <span class="o">=</span> <span class="s2">&quot;block&quot;</span>
+
+
+		<span class="c1"># Check if textures should be excluded completely</span>
+		<span class="n">exclude_textures</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="s2">&quot;textures&quot;</span> <span class="ow">in</span> <span class="n">overrides</span> <span class="ow">and</span> <span class="n">overrides</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;textures&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
+
+		<span class="c1"># Get powered states (if any)</span>
+		<span class="n">powered</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span>
+		<span class="n">count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">texture_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_textures</span><span class="p">:</span>
+			<span class="n">texture_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">texture_name</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+			<span class="c1"># Only consider textures with similar underscore count to avoid false positives</span>
+			<span class="k">if</span> <span class="n">texture_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="ow">and</span> <span class="n">texture_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;_on.png&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">texture_count</span> <span class="o">-</span> <span class="n">count</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">:</span>
+				<span class="n">powered</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;_on&quot;</span><span class="p">]</span>
+
+		<span class="c1"># Debug</span>
+		<span class="k">if</span> <span class="kc">False</span><span class="p">:</span>
+			<span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source_textures</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processing item model: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">item_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Block or item: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">block_or_item</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Overrides: </span><span class="si">{</span><span class="n">overrides</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Powered states: </span><span class="si">{</span><span class="n">powered</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+		<span class="c1"># Generate its model file(s)</span>
+		<span class="k">for</span> <span class="n">on_off</span> <span class="ow">in</span> <span class="n">powered</span><span class="p">:</span>
+			<span class="n">content</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">=</span> <span class="p">{}</span>			<span class="c1"># Get all variants</span>
+			<span class="n">all_variants</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+				<span class="n">x</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.png&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_textures</span>
+				<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+				<span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">))</span> <span class="o">&lt;=</span> <span class="mi">2</span>  <span class="c1"># Allow for up to 2 extra underscores. Preventing &quot;awakened_stardust.png&quot; to match &quot;awakened_stardust_furnace_generator_on.png&quot;</span>
+			<span class="p">]</span>
+			<span class="c1"># Filter to only include variants in the same folder</span>
+			<span class="n">variants</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_same_folder_variants</span><span class="p">(</span><span class="n">all_variants</span><span class="p">)</span>
+
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">override_model</span> <span class="o">!=</span> <span class="p">{}:</span>
+				<span class="c1"># If it&#39;s a block</span>
+				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">block_or_item</span> <span class="o">==</span> <span class="s2">&quot;block&quot;</span><span class="p">:</span>
+					<span class="c1"># Get parent</span>
+					<span class="n">content</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;parent&quot;</span><span class="p">:</span> <span class="s2">&quot;block/cube_all&quot;</span><span class="p">,</span> <span class="s2">&quot;textures&quot;</span><span class="p">:</span> <span class="p">{}}</span>
+					<span class="c1"># Check in which variants state we are</span>
+					<span class="n">variants_without_on</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">variants</span> <span class="k">if</span> <span class="s2">&quot;_on&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]</span>
+					<span class="k">if</span> <span class="ow">not</span> <span class="n">exclude_textures</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">variants_without_on</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+						<span class="n">content</span><span class="p">[</span><span class="s2">&quot;textures&quot;</span><span class="p">][</span><span class="s2">&quot;all&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="si">}</span><span class="s2">:item/&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_powered_texture</span><span class="p">(</span><span class="n">variants</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">on_off</span><span class="p">)</span>
+					<span class="k">elif</span> <span class="ow">not</span> <span class="n">exclude_textures</span><span class="p">:</span>
+						<span class="c1"># Prepare models to check</span>
+						<span class="n">cake</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;bottom&quot;</span><span class="p">,</span> <span class="s2">&quot;side&quot;</span><span class="p">,</span> <span class="s2">&quot;top&quot;</span><span class="p">,</span> <span class="s2">&quot;inner&quot;</span><span class="p">]</span>
+						<span class="n">orientable_with_bottom</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;front&quot;</span><span class="p">,</span> <span class="s2">&quot;bottom&quot;</span><span class="p">,</span> <span class="s2">&quot;side&quot;</span><span class="p">,</span> <span class="s2">&quot;top&quot;</span><span class="p">]</span>
+						<span class="n">cube_bottom_top</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;bottom&quot;</span><span class="p">,</span> <span class="s2">&quot;side&quot;</span><span class="p">,</span> <span class="s2">&quot;top&quot;</span><span class="p">]</span>
+						<span class="n">orientable</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;front&quot;</span><span class="p">,</span> <span class="s2">&quot;side&quot;</span><span class="p">,</span> <span class="s2">&quot;top&quot;</span><span class="p">]</span>
+						<span class="n">cube_column</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;end&quot;</span><span class="p">,</span> <span class="s2">&quot;side&quot;</span><span class="p">]</span>						<span class="c1"># Check cake model</span>
+						<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_in_variants</span><span class="p">(</span><span class="n">cake</span><span class="p">,</span> <span class="n">variants</span><span class="p">):</span>
+							<span class="n">content</span><span class="p">[</span><span class="s2">&quot;parent&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;block/cake&quot;</span>
+							<span class="k">for</span> <span class="n">side</span> <span class="ow">in</span> <span class="n">cake</span><span class="p">:</span>
+								<span class="n">texture_key</span> <span class="o">=</span> <span class="n">side</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;inner&quot;</span><span class="p">,</span> <span class="s2">&quot;inside&quot;</span><span class="p">)</span>
+								<span class="n">texture_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="si">}</span><span class="s2">:item/&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_powered_texture</span><span class="p">(</span><span class="n">variants</span><span class="p">,</span> <span class="n">side</span><span class="p">,</span> <span class="n">on_off</span><span class="p">)</span>
+								<span class="n">content</span><span class="p">[</span><span class="s2">&quot;textures&quot;</span><span class="p">][</span><span class="n">texture_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">texture_path</span>
+
+							<span class="c1"># Generate 6 models for each cake slice</span>
+							<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">):</span>
+								<span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">_slice</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span>
+								<span class="n">slice_content</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;parent&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;block/cake_slice</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;textures&quot;</span><span class="p">:</span> <span class="n">content</span><span class="p">[</span><span class="s2">&quot;textures&quot;</span><span class="p">]}</span>
+								<span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">assets</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="p">]</span><span class="o">.</span><span class="n">models</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;item/</span><span class="si">{</span><span class="n">name</span><span class="si">}{</span><span class="n">on_off</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_json_encoder</span><span class="p">(</span><span class="n">Model</span><span class="p">(</span><span class="n">slice_content</span><span class="p">),</span> <span class="n">max_level</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+						<span class="c1"># Check orientable_with_bottom model</span>
+						<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_in_variants</span><span class="p">(</span><span class="n">orientable_with_bottom</span><span class="p">,</span> <span class="n">variants</span><span class="p">):</span>
+							<span class="n">content</span><span class="p">[</span><span class="s2">&quot;parent&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;block/orientable_with_bottom&quot;</span>
+							<span class="k">for</span> <span class="n">side</span> <span class="ow">in</span> <span class="n">orientable_with_bottom</span><span class="p">:</span>
+								<span class="n">texture_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="si">}</span><span class="s2">:item/&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_powered_texture</span><span class="p">(</span><span class="n">variants</span><span class="p">,</span> <span class="n">side</span><span class="p">,</span> <span class="n">on_off</span><span class="p">)</span>
+								<span class="n">content</span><span class="p">[</span><span class="s2">&quot;textures&quot;</span><span class="p">][</span><span class="n">side</span><span class="p">]</span> <span class="o">=</span> <span class="n">texture_path</span>
+
+						<span class="c1"># Check cube_bottom_top model</span>
+						<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_in_variants</span><span class="p">(</span><span class="n">cube_bottom_top</span><span class="p">,</span> <span class="n">variants</span><span class="p">):</span>
+							<span class="n">content</span><span class="p">[</span><span class="s2">&quot;parent&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;block/cube_bottom_top&quot;</span>
+							<span class="k">for</span> <span class="n">side</span> <span class="ow">in</span> <span class="n">cube_bottom_top</span><span class="p">:</span>
+								<span class="n">texture_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="si">}</span><span class="s2">:item/&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_powered_texture</span><span class="p">(</span><span class="n">variants</span><span class="p">,</span> <span class="n">side</span><span class="p">,</span> <span class="n">on_off</span><span class="p">)</span>
+								<span class="n">content</span><span class="p">[</span><span class="s2">&quot;textures&quot;</span><span class="p">][</span><span class="n">side</span><span class="p">]</span> <span class="o">=</span> <span class="n">texture_path</span>
+
+						<span class="c1"># Check orientable model</span>
+						<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_in_variants</span><span class="p">(</span><span class="n">orientable</span><span class="p">,</span> <span class="n">variants</span><span class="p">):</span>
+							<span class="n">content</span><span class="p">[</span><span class="s2">&quot;parent&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;block/orientable&quot;</span>
+							<span class="k">for</span> <span class="n">side</span> <span class="ow">in</span> <span class="n">orientable</span><span class="p">:</span>
+								<span class="n">texture_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="si">}</span><span class="s2">:item/&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_powered_texture</span><span class="p">(</span><span class="n">variants</span><span class="p">,</span> <span class="n">side</span><span class="p">,</span> <span class="n">on_off</span><span class="p">)</span>
+								<span class="n">content</span><span class="p">[</span><span class="s2">&quot;textures&quot;</span><span class="p">][</span><span class="n">side</span><span class="p">]</span> <span class="o">=</span> <span class="n">texture_path</span>
+
+						<span class="c1"># Check cube_column model</span>
+						<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_in_variants</span><span class="p">(</span><span class="n">cube_column</span><span class="p">,</span> <span class="n">variants</span><span class="p">):</span>
+							<span class="n">content</span><span class="p">[</span><span class="s2">&quot;parent&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;block/cube_column&quot;</span>
+							<span class="k">for</span> <span class="n">side</span> <span class="ow">in</span> <span class="n">cube_column</span><span class="p">:</span>
+								<span class="n">texture_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="si">}</span><span class="s2">:item/&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_powered_texture</span><span class="p">(</span><span class="n">variants</span><span class="p">,</span> <span class="n">side</span><span class="p">,</span> <span class="n">on_off</span><span class="p">)</span>
+								<span class="n">content</span><span class="p">[</span><span class="s2">&quot;textures&quot;</span><span class="p">][</span><span class="n">side</span><span class="p">]</span> <span class="o">=</span> <span class="n">texture_path</span>
+
+						<span class="c1"># Else, if there are no textures override, show error</span>
+						<span class="k">elif</span> <span class="ow">not</span> <span class="n">overrides</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;textures&quot;</span><span class="p">):</span>
+							<span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">ignore_textures</span><span class="p">:</span>
+								<span class="n">patterns</span> <span class="o">=</span> <span class="n">stp</span><span class="o">.</span><span class="n">json_dump</span><span class="p">({</span>
+									<span class="s2">&quot;cake&quot;</span><span class="p">:</span> <span class="n">cake</span><span class="p">,</span>
+									<span class="s2">&quot;cube_bottom_top&quot;</span><span class="p">:</span> <span class="n">cube_bottom_top</span><span class="p">,</span>
+									<span class="s2">&quot;orientable&quot;</span><span class="p">:</span> <span class="n">orientable</span><span class="p">,</span>
+									<span class="s2">&quot;cube_column&quot;</span><span class="p">:</span> <span class="n">cube_column</span>
+								<span class="p">},</span> <span class="n">max_level</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+								<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+									<span class="sa">f</span><span class="s2">&quot;Block &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&#39; has invalid variants: </span><span class="si">{</span><span class="n">variants</span><span class="si">}</span><span class="s2">,</span><span class="se">\n</span><span class="s2">&quot;</span>
+									<span class="s2">&quot;consider overriding the model or adding missing textures to match up one of the following patterns:&quot;</span>
+									<span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">patterns</span><span class="si">}</span><span class="s2">&quot;</span>
+								<span class="p">)</span>
+
+				<span class="c1"># Else, it&#39;s an item</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="c1"># Get parent</span>
+					<span class="n">parent</span> <span class="o">=</span> <span class="s2">&quot;item/generated&quot;</span>
+					<span class="n">data_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">base_item</span>
+					<span class="k">if</span> <span class="n">data_id</span> <span class="o">!=</span> <span class="n">CUSTOM_ITEM_VANILLA</span> <span class="ow">and</span> <span class="s2">&quot;elements&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">overrides</span><span class="p">:</span>
+						<span class="n">parent</span> <span class="o">=</span> <span class="n">data_id</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="s2">&quot;:item/&quot;</span><span class="p">)</span>
+
+					<span class="c1"># Get textures</span>
+					<span class="k">if</span> <span class="n">exclude_textures</span><span class="p">:</span>
+						<span class="n">content</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;parent&quot;</span><span class="p">:</span> <span class="n">parent</span><span class="p">}</span>
+					<span class="k">else</span><span class="p">:</span>
+						<span class="n">textures</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;layer0&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="si">}</span><span class="s2">:item/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">id</span><span class="si">}{</span><span class="n">on_off</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span>
+						<span class="n">content</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;parent&quot;</span><span class="p">:</span> <span class="n">parent</span><span class="p">,</span> <span class="s2">&quot;textures&quot;</span><span class="p">:</span> <span class="n">textures</span><span class="p">}</span>
+					<span class="n">data_id</span> <span class="o">=</span> <span class="n">data_id</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;minecraft:&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+					<span class="c1"># Check for leather armor textures</span>
+					<span class="k">if</span> <span class="ow">not</span> <span class="n">exclude_textures</span> <span class="ow">and</span> <span class="n">data_id</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;leather_&quot;</span><span class="p">):</span>
+						<span class="n">content</span><span class="p">[</span><span class="s2">&quot;textures&quot;</span><span class="p">][</span><span class="s2">&quot;layer1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">content</span><span class="p">[</span><span class="s2">&quot;textures&quot;</span><span class="p">][</span><span class="s2">&quot;layer0&quot;</span><span class="p">]</span>
+
+					<span class="c1"># If there is a &quot;_overlay&quot; texture, make it as layer1</span>
+					<span class="k">if</span> <span class="ow">not</span> <span class="n">exclude_textures</span> <span class="ow">and</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">_overlay&quot;</span> <span class="ow">in</span> <span class="n">variants</span><span class="p">:</span>
+						<span class="n">content</span><span class="p">[</span><span class="s2">&quot;textures&quot;</span><span class="p">][</span><span class="s2">&quot;layer1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="si">}</span><span class="s2">:item/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">_overlay&quot;</span>
+
+					<span class="c1"># Check for bow pulling textures</span>
+					<span class="k">elif</span> <span class="ow">not</span> <span class="n">exclude_textures</span> <span class="ow">and</span> <span class="n">data_id</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;bow&quot;</span><span class="p">):</span>
+						<span class="n">sorted_pull_variants</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+							<span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">variants</span> <span class="k">if</span> <span class="s2">&quot;_pulling_&quot;</span> <span class="ow">in</span> <span class="n">v</span><span class="p">],</span>
+							<span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+						<span class="p">)</span>
+						<span class="n">items_content</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">=</span> <span class="p">{}</span>
+						<span class="k">if</span> <span class="n">sorted_pull_variants</span><span class="p">:</span>
+							<span class="n">items_content</span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+								<span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;minecraft:condition&quot;</span><span class="p">,</span>
+								<span class="s2">&quot;on_false&quot;</span><span class="p">:</span> <span class="p">{</span>
+									<span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;minecraft:model&quot;</span><span class="p">,</span>
+									<span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="si">}</span><span class="s2">:item/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span>
+								<span class="p">},</span>
+								<span class="s2">&quot;on_true&quot;</span><span class="p">:</span> <span class="p">{</span>
+									<span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;minecraft:range_dispatch&quot;</span><span class="p">,</span>
+									<span class="s2">&quot;entries&quot;</span><span class="p">:</span> <span class="p">[],</span>
+									<span class="s2">&quot;fallback&quot;</span><span class="p">:</span> <span class="p">{</span>
+										<span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;minecraft:model&quot;</span><span class="p">,</span>
+										<span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="si">}</span><span class="s2">:item/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">_pulling_0&quot;</span>
+									<span class="p">},</span>
+									<span class="s2">&quot;property&quot;</span><span class="p">:</span> <span class="s2">&quot;minecraft:use_duration&quot;</span><span class="p">,</span>
+									<span class="s2">&quot;scale&quot;</span><span class="p">:</span> <span class="mf">0.05</span>
+								<span class="p">},</span>
+								<span class="s2">&quot;property&quot;</span><span class="p">:</span> <span class="s2">&quot;minecraft:using_item&quot;</span>
+							<span class="p">}</span>
+
+							<span class="c1"># Add override for each pulling state</span>
+							<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">variant</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sorted_pull_variants</span><span class="p">):</span>
+								<span class="n">pull_content</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;parent&quot;</span><span class="p">:</span> <span class="n">parent</span><span class="p">,</span> <span class="s2">&quot;textures&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;layer0&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="si">}</span><span class="s2">:item/</span><span class="si">{</span><span class="n">variant</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}}</span>
+
+								<span class="c1"># Add texture to assets</span>
+								<span class="n">variant_png</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">variant</span> <span class="o">+</span> <span class="s2">&quot;.png&quot;</span>
+								<span class="k">if</span> <span class="n">variant_png</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_textures</span><span class="p">:</span>
+									<span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">assets</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="p">]</span><span class="o">.</span><span class="n">textures</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;item/</span><span class="si">{</span><span class="n">variant</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">texture_mcmeta</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source_textures</span><span class="p">[</span><span class="n">variant_png</span><span class="p">])</span>
+
+								<span class="c1"># Add model to assets</span>
+								<span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">assets</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="p">]</span><span class="o">.</span><span class="n">models</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;item/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">_pulling_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_json_encoder</span><span class="p">(</span><span class="n">Model</span><span class="p">(</span><span class="n">pull_content</span><span class="p">),</span> <span class="n">max_level</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+								<span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sorted_pull_variants</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+									<span class="n">pull</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.65</span> <span class="o">+</span> <span class="p">(</span><span class="mf">0.25</span> <span class="o">*</span> <span class="n">i</span><span class="p">)</span>
+									<span class="n">model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="si">}</span><span class="s2">:item/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">_pulling_</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
+									<span class="n">items_content</span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">][</span><span class="s2">&quot;on_true&quot;</span><span class="p">][</span><span class="s2">&quot;entries&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span> <span class="c1"># type: ignore</span>
+										<span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="p">{</span>
+											<span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;minecraft:model&quot;</span><span class="p">,</span>
+											<span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="n">model</span>
+										<span class="p">},</span>
+										<span class="s2">&quot;threshold&quot;</span><span class="p">:</span> <span class="n">pull</span>
+									<span class="p">})</span>
+
+							<span class="c1"># Add the items/bow.json file</span>
+							<span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">assets</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="p">]</span><span class="o">.</span><span class="n">item_models</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="n">on_off</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_json_encoder</span><span class="p">(</span><span class="n">ItemModel</span><span class="p">(</span><span class="n">items_content</span><span class="p">),</span> <span class="n">max_level</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+			<span class="c1"># Add overrides</span>
+			<span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">overrides</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+				<span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;textures&quot;</span> <span class="ow">and</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+					<span class="c1"># Skip adding textures key if it&#39;s explicitly set to None</span>
+					<span class="k">continue</span>
+				<span class="n">content</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="n">value</span>
+
+			<span class="c1"># If powered, check if the on state is in the variants and add it</span>
+			<span class="k">if</span> <span class="ow">not</span> <span class="n">exclude_textures</span> <span class="ow">and</span> <span class="n">on_off</span> <span class="o">==</span> <span class="s2">&quot;_on&quot;</span><span class="p">:</span>
+				<span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">texture</span> <span class="ow">in</span> <span class="n">content</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;textures&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+					<span class="n">texture</span><span class="p">:</span> <span class="nb">str</span>
+					<span class="k">if</span> <span class="p">(</span><span class="n">texture</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">on_off</span><span class="p">)</span> <span class="ow">in</span> <span class="n">variants</span><span class="p">:</span>
+						<span class="n">content</span><span class="p">[</span><span class="s2">&quot;textures&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">texture</span> <span class="o">+</span> <span class="n">on_off</span>
+
+			<span class="c1"># Remove empty textures</span>
+			<span class="k">if</span> <span class="n">exclude_textures</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">content</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;textures&quot;</span><span class="p">):</span>
+				<span class="k">if</span> <span class="s2">&quot;textures&quot;</span> <span class="ow">in</span> <span class="n">content</span><span class="p">:</span>
+					<span class="k">del</span> <span class="n">content</span><span class="p">[</span><span class="s2">&quot;textures&quot;</span><span class="p">]</span>
+
+			<span class="c1"># Copy used textures</span>
+			<span class="k">if</span> <span class="ow">not</span> <span class="n">exclude_textures</span> <span class="ow">and</span> <span class="n">content</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;textures&quot;</span><span class="p">):</span>
+				<span class="k">for</span> <span class="n">texture</span> <span class="ow">in</span> <span class="n">content</span><span class="p">[</span><span class="s2">&quot;textures&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+					<span class="c1"># Ignore if minecraft namespace</span>
+					<span class="k">if</span> <span class="n">texture</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;minecraft:&quot;</span><span class="p">):</span>
+						<span class="k">continue</span>
+
+					<span class="n">texture_name</span> <span class="o">=</span> <span class="n">texture</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># Get just the filename</span>
+					<span class="n">texture_name</span> <span class="o">+=</span> <span class="s2">&quot;.png&quot;</span>
+					<span class="k">if</span> <span class="n">texture_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_textures</span><span class="p">:</span>
+						<span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">assets</span><span class="p">[</span><span class="n">texture</span><span class="p">]</span> <span class="o">=</span> <span class="n">texture_mcmeta</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source_textures</span><span class="p">[</span><span class="n">texture_name</span><span class="p">])</span>
+					<span class="k">else</span><span class="p">:</span>
+						<span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">ignore_textures</span><span class="p">:</span>
+							<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Texture &#39;</span><span class="si">{</span><span class="n">texture_name</span><span class="si">}</span><span class="s2">&#39; not found in source textures&quot;</span><span class="p">)</span>
+
+			<span class="c1"># Add used textures</span>
+			<span class="k">if</span> <span class="n">content</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;textures&quot;</span><span class="p">):</span>
+				<span class="c1"># Check if there are textures from different atlases</span>
+				<span class="n">textures_values</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s2">&quot;textures&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+				<span class="n">has_minecraft</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;minecraft:&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">textures_values</span><span class="p">)</span>
+				<span class="n">has_custom</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span><span class="ow">not</span> <span class="n">t</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;minecraft:&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">textures_values</span><span class="p">)</span>
+				<span class="n">needs_atlas_conversion</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">has_minecraft</span> <span class="ow">and</span> <span class="n">has_custom</span>
+
+				<span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">texture</span> <span class="ow">in</span> <span class="n">content</span><span class="p">[</span><span class="s2">&quot;textures&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+					<span class="k">if</span> <span class="n">texture</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;minecraft:&quot;</span><span class="p">):</span>
+						<span class="bp">self</span><span class="o">.</span><span class="n">used_minecraft_textures</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">texture</span><span class="p">)</span>
+						<span class="k">if</span> <span class="n">needs_atlas_conversion</span><span class="p">:</span>
+							<span class="n">content</span><span class="p">[</span><span class="s2">&quot;textures&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_atlas</span><span class="p">(</span><span class="n">texture</span><span class="p">)</span>
+					<span class="k">else</span><span class="p">:</span>
+						<span class="bp">self</span><span class="o">.</span><span class="n">used_textures</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">texture</span><span class="p">)</span>
+
+			<span class="c1"># Add model to assets</span>
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">override_model</span> <span class="o">!=</span> <span class="p">{}:</span>
+				<span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">assets</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="p">]</span><span class="o">.</span><span class="n">models</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;item/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">id</span><span class="si">}{</span><span class="n">on_off</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_json_encoder</span><span class="p">(</span><span class="n">Model</span><span class="p">(</span><span class="n">content</span><span class="p">),</span> <span class="n">max_level</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+			<span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s2">&quot;stewbeet&quot;</span><span class="p">][</span><span class="s2">&quot;rendered_item_models&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s2">&quot;item_model&quot;</span><span class="p">])</span>
+
+			<span class="c1"># Generate the json file required in items/</span>
+			<span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">base_item</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;bow&quot;</span><span class="p">):</span>
+				<span class="c1"># Check if this is a spear with an in_hand variant</span>
+				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;_spear&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">_in_hand.png&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_textures</span><span class="p">:</span>
+					<span class="c1"># Create the special spear model with display context switching</span>
+					<span class="n">items_model</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">=</span> <span class="p">{</span>
+						<span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="p">{</span>
+							<span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;minecraft:select&quot;</span><span class="p">,</span>
+							<span class="s2">&quot;cases&quot;</span><span class="p">:</span> <span class="p">[</span>
+								<span class="p">{</span>
+									<span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;minecraft:model&quot;</span><span class="p">,</span><span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="si">}</span><span class="s2">:item/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">id</span><span class="si">}{</span><span class="n">on_off</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">},</span>
+									<span class="s2">&quot;when&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;gui&quot;</span><span class="p">,</span><span class="s2">&quot;ground&quot;</span><span class="p">,</span><span class="s2">&quot;fixed&quot;</span><span class="p">,</span><span class="s2">&quot;on_shelf&quot;</span><span class="p">]</span>
+								<span class="p">}</span>
+							<span class="p">],</span>
+							<span class="s2">&quot;fallback&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;minecraft:model&quot;</span><span class="p">,</span><span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="si">}</span><span class="s2">:item/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">_in_hand</span><span class="si">{</span><span class="n">on_off</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">},</span>
+							<span class="s2">&quot;property&quot;</span><span class="p">:</span> <span class="s2">&quot;minecraft:display_context&quot;</span>
+						<span class="p">},</span>
+						<span class="s2">&quot;swap_animation_scale&quot;</span><span class="p">:</span> <span class="mf">1.95</span>
+					<span class="p">}</span>
+
+					<span class="c1"># Create the in_hand model</span>
+					<span class="n">in_hand_content</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;parent&quot;</span><span class="p">:</span> <span class="s2">&quot;item/spear_in_hand&quot;</span><span class="p">,</span><span class="s2">&quot;textures&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;layer0&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="si">}</span><span class="s2">:item/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">_in_hand</span><span class="si">{</span><span class="n">on_off</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}}</span>
+
+					<span class="c1"># Add the in_hand model to assets</span>
+					<span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">assets</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="p">]</span><span class="o">.</span><span class="n">models</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;item/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">_in_hand</span><span class="si">{</span><span class="n">on_off</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_json_encoder</span><span class="p">(</span><span class="n">Model</span><span class="p">(</span><span class="n">in_hand_content</span><span class="p">),</span> <span class="n">max_level</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+					<span class="c1"># Add the in_hand texture to assets</span>
+					<span class="n">in_hand_texture</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">_in_hand</span><span class="si">{</span><span class="n">on_off</span><span class="si">}</span><span class="s2">.png&quot;</span>
+					<span class="k">if</span> <span class="n">in_hand_texture</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_textures</span><span class="p">:</span>
+						<span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">assets</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="p">]</span><span class="o">.</span><span class="n">textures</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;item/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">_in_hand</span><span class="si">{</span><span class="n">on_off</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">texture_mcmeta</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source_textures</span><span class="p">[</span><span class="n">in_hand_texture</span><span class="p">])</span>
+					<span class="k">elif</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">_in_hand.png&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_textures</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">on_off</span><span class="p">:</span>
+						<span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">assets</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="p">]</span><span class="o">.</span><span class="n">textures</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;item/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">_in_hand&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">texture_mcmeta</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source_textures</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">_in_hand.png&quot;</span><span class="p">])</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="c1"># Standard item model</span>
+					<span class="n">items_model</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;minecraft:model&quot;</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="si">}</span><span class="s2">:item/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">id</span><span class="si">}{</span><span class="n">on_off</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}}</span>
+
+				<span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">assets</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="p">]</span><span class="o">.</span><span class="n">item_models</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="n">on_off</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_json_encoder</span><span class="p">(</span><span class="n">ItemModel</span><span class="p">(</span><span class="n">items_model</span><span class="p">),</span> <span class="n">max_level</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+		<span class="c1"># Return</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">used_minecraft_textures</span></div>
+</div>
+
+
+</pre></div>
+</article><footer class="bz-article-footer">
+  
+  
+    <nav class="bz-related-pages" aria-label="Related pages navigation"></nav>
+  
+
+</footer></main>
+  </div><footer class="bz-footer">
+  <div class="bz-footer-copyright"><p class="bz-copyright">© Copyright 2025, Stoupy</p><p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://github.com/aksiome/breeze">Breeze theme</a>.
+  </p>
+</div><div class="bz-external-links">
+  <a
+    href="https://github.com/Stoupy51/stewbeet"
+    aria-label="GitHub"
+    data-tooltip="GitHub"
+    target="_blank"
+  >
+    <svg
+      stroke="currentColor"
+      fill="currentColor"
+      stroke-width="0"
+      viewBox="0 0 16 16"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+      ></path>
+    </svg>
+  </a></div>
+</footer><a href="#" class="bz-back-to-top">
+    <svg class="sized" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m5 12 7-7 7 7"/><path d="M12 19V5"/>
+    </svg>
+    <span>Back to top</span>
+  </a>
+  <label class="bz-overlay bz-overlay-primary" for="bz-sidebar-primary"></label>
+  <label class="bz-overlay bz-overlay-secondary" for="bz-sidebar-secondary"></label>
+  <input type="checkbox" name="bz-sidebar-primary" id="bz-sidebar-primary" aria-label="Toggle site navigation sidebar">
+  <input type="checkbox" name="bz-sidebar-secondary" id="bz-sidebar-secondary" aria-label="Toggle table of contents sidebar">
+  </body>
+</html>

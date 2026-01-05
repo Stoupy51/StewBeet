@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>stewbeet.core.definitions_helper.materials &#8212; StewBeet</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8e8a900e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/treeview.css?v=f8e9195c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/breeze.css?v=93f23127" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=1637c05a" />
+  <noscript>
+    <style>
+      .bz-js-only { display: none !important; }
+    </style>
+  </noscript>
+  
+    <script defer src="../../../../_static/documentation_options.js?v=6d4b8ac6"></script>
+    <script defer src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script defer src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script defer src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script defer src="../../../../_static/copybutton.js?v=18a8d5f5"></script>
+    <script defer src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer src="../../../../_static/treeview.js?v=265ad9b8"></script>
+    <script defer src="../../../../_static/scripts/breeze.js?v=8ef74970"></script>
+  <script data-cfasync="false">
+    const mode = localStorage.getItem("breeze-mode") || "auto";
+    document.documentElement.dataset.mode = mode;
+    if (mode === "auto") {
+      const prefers = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+      document.documentElement.dataset.theme = prefers;
+    } else {
+      document.documentElement.dataset.theme = mode;
+    }
+  </script>
+    <link rel="icon" href="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /><meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head><body>
+  
+  <div class="bz-skip-to-content">
+    <a href="#bz-main-content">Skip to main content</a>
+  </div><header class="bz-header-main">
+  <div class="bz-header-start"><a class="bz-header-brand" href="../../../../index.html"><img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png" alt="Site Logo" /><span>StewBeet</span>
+</a></div>
+  <div class="bz-header-end"><div class="bz-search-button">
+  <a
+    href="../../../../search.html#q"
+    aria-label="Search the docs"
+    data-tooltip="Search the docs"
+  >
+    <svg
+      class="sized"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 -1 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+      />
+    </svg>
+    <span>Search</span>
+    <kbd>Ctrl+K</kbd>
+  </a>
+</div><div class="bz-theme-switcher">
+  <button aria-label="Switch theme" data-tooltip="Switch theme">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="only-light" fill="currentColor">
+      <path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm5.657-8.157a.75.75 0 0 1 0 1.061l-1.061 1.06a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l1.06-1.06a.75.75 0 0 1 1.06 0Zm-9.193 9.193a.75.75 0 0 1 0 1.06l-1.06 1.061a.75.75 0 1 1-1.061-1.06l1.06-1.061a.75.75 0 0 1 1.061 0ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0ZM3 8a.75.75 0 0 1-.75.75H.75a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 3 8Zm13 0a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 16 8Zm-8 5a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13Zm3.536-1.464a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 0 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061ZM2.343 2.343a.75.75 0 0 1 1.061 0l1.06 1.061a.751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018l-1.06-1.06a.75.75 0 0 1 0-1.06Z"></path>
+    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="only-dark" fill="currentColor">
+      <path d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"></path>
+    </svg>
+  </button>
+</div><div class="bz-external-links">
+  <a
+    href="https://github.com/Stoupy51/stewbeet"
+    aria-label="GitHub"
+    data-tooltip="GitHub"
+    target="_blank"
+  >
+    <svg
+      stroke="currentColor"
+      fill="currentColor"
+      stroke-width="0"
+      viewBox="0 0 16 16"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+      ></path>
+    </svg>
+  </a></div></div>
+</header><nav class="bz-header-tabs" aria-label="Primary Navigation">
+  <label
+    class="bz-sidebar-primary-toggle"
+    for="bz-sidebar-primary"
+    role="button"
+    tabindex="0"
+  >
+    <svg class="sized muted" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path
+        fill="none"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M3.75 6.75h16.5M3.75 12H12m-8.25 5.25h12.5"
+      />
+    </svg>
+  </label><ul><li class="toctree-l1"><a class="reference internal" href="../../../../modules/stewbeet.html">stewbeet package</a></li></ul><div class="bz-dropdown">
+    <button aria-haspopup="true" aria-expanded="false">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <g
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+        >
+          <circle cx="12" cy="12" r="1" />
+          <circle cx="19" cy="12" r="1" />
+          <circle cx="5" cy="12" r="1" />
+        </g>
+      </svg>
+    </button>
+    <ul role="menu" aria-hidden="true"></ul>
+  </div>
+</nav><div class="bz-content"><main id="bz-main-content"><header class="bz-article-header">
+  
+  
+    <nav class="bz-breadcrumbs" aria-label="Breadcrumb">
+  <ol>
+    <li class="bz-breadcrumbs-home">
+      <a href="../../../../index.html">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </a>
+    </li><li class="bz-breadcrumbs-parent">
+      <a href="../../../index.html">Module code</a>
+    </li><li class="bz-breadcrumbs-parent">
+      <a href="../../../stewbeet.html">stewbeet</a>
+    </li><li class="bz-breadcrumbs-current">
+      <span>stewbeet.core.definitions_helper.materials</span>
+    </li>
+  </ol>
+</nav>
+  
+
+  <label
+    class="bz-sidebar-secondary-toggle"
+    for="bz-sidebar-secondary"
+    role="button"
+    tabindex="0"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="sized muted">
+      <path
+        fill="none"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M3.75 6.75H20.25 M11.25 12H20.25 M7.75 17.25H20.25"
+      />
+    </svg>
+  </label>
+</header><article class="bz-article-main" role="main">
+  <h1>Source code for stewbeet.core.definitions_helper.materials</h1><div class="highlight"><pre>
+<span></span>
+<span class="c1"># ruff: noqa: E501</span>
+<span class="c1"># Imports</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">stouputils</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">stp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">beet</span><span class="w"> </span><span class="kn">import</span> <span class="n">Equipment</span><span class="p">,</span> <span class="n">Texture</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">beet.core.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">JsonDict</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..__memory__</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..cls.block</span><span class="w"> </span><span class="kn">import</span> <span class="n">VANILLA_BLOCK_FOR_ORES</span><span class="p">,</span> <span class="n">Block</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..cls.ingredients</span><span class="w"> </span><span class="kn">import</span> <span class="n">Ingr</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..cls.item</span><span class="w"> </span><span class="kn">import</span> <span class="n">Item</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..cls.recipe</span><span class="w"> </span><span class="kn">import</span> <span class="n">BlastingRecipe</span><span class="p">,</span> <span class="n">CraftingShapedRecipe</span><span class="p">,</span> <span class="n">CraftingShapelessRecipe</span><span class="p">,</span> <span class="n">PulverizingRecipe</span><span class="p">,</span> <span class="n">SmeltingRecipe</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">CUSTOM_BLOCK_VANILLA</span><span class="p">,</span> <span class="n">CUSTOM_ITEM_VANILLA</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.equipments</span><span class="w"> </span><span class="kn">import</span> <span class="n">SLOTS</span><span class="p">,</span> <span class="n">EquipmentsConfig</span><span class="p">,</span> <span class="n">VanillaEquipments</span><span class="p">,</span> <span class="n">format_attributes</span>
+
+
+<span class="c1"># Generate everything related to the ore</span>
+<div class="viewcode-block" id="generate_everything_about_this_material">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.definitions_helper.materials.html#stewbeet.core.definitions_helper.materials.generate_everything_about_this_material">[docs]</a>
+<span class="nd">@stp</span><span class="o">.</span><span class="n">handle_error</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_everything_about_this_material</span><span class="p">(</span>
+	<span class="n">material</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;adamantium_fragment&quot;</span><span class="p">,</span>
+	<span class="n">equipments_config</span><span class="p">:</span> <span class="n">EquipmentsConfig</span><span class="o">|</span><span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+	<span class="n">ignore_recipes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Generate everything related to the ore (armor, tools, weapons, ore, and ingredients (raw, nuggets, blocks)).</span>
+<span class="sd">		The function will try to find textures in the assets folder to each item</span>
+<span class="sd">		And return a list of generated items if you want to do something with it.</span>
+<span class="sd">	Args:</span>
+<span class="sd">		material			(str):					The ore/material to generate everything about (ex: &quot;adamantium_fragment&quot;, &quot;steel_ingot&quot;, &quot;minecraft:emerald&quot;, &quot;minecraft:copper_ingot&quot;, &quot;awakened_stardust!&quot;)</span>
+<span class="sd">													When the material ends with &quot;!&quot;, the material base will be the material without the &quot;!&quot;</span>
+<span class="sd">		equipments_config	(EquipmentsConfig):	The base multiplier to apply</span>
+<span class="sd">		ignore_recipes	(bool):						If True, no recipes will be added in the definitions.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1"># Assertions</span>
+	<span class="n">textures_folder</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">stp</span><span class="o">.</span><span class="n">relative_path</span><span class="p">(</span><span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stewbeet&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;textures_folder&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+	<span class="k">assert</span> <span class="n">textures_folder</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;Textures folder path not found in &#39;ctx.meta.stewbeet.textures_folder&#39;. Please set a directory path in project configuration.&quot;</span>
+
+	<span class="c1"># Override ignore_recipes?</span>
+	<span class="k">if</span> <span class="n">equipments_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">equipments_config</span><span class="o">.</span><span class="n">ignore_recipes</span><span class="p">:</span>
+		<span class="n">ignore_recipes</span> <span class="o">=</span> <span class="kc">True</span>
+
+	<span class="c1"># Prepare constants</span>
+	<span class="n">textures</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+		<span class="n">stp</span><span class="o">.</span><span class="n">clean_path</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">))</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span> <span class="n">stp</span><span class="o">.</span><span class="n">relative_path</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+		<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">Path</span><span class="p">(</span><span class="n">textures_folder</span><span class="p">)</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="s2">&quot;*.png&quot;</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="n">durability_factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
+	<span class="k">if</span> <span class="n">equipments_config</span><span class="p">:</span>
+		<span class="n">durability_factor</span> <span class="o">=</span> <span class="n">equipments_config</span><span class="o">.</span><span class="n">pickaxe_durability</span> <span class="o">/</span> <span class="n">VanillaEquipments</span><span class="o">.</span><span class="n">PICKAXE</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="n">equipments_config</span><span class="o">.</span><span class="n">equivalent_to</span><span class="p">][</span><span class="s2">&quot;durability&quot;</span><span class="p">]</span>
+
+	<span class="c1"># Main ingredient constant</span>
+	<span class="k">if</span> <span class="s1">&#39;_&#39;</span> <span class="ow">in</span> <span class="n">material</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">material</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;!&quot;</span><span class="p">):</span>
+		<span class="n">material_base</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">material</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>	<span class="c1"># Get the base material name (ex: &quot;adamantium&quot; from &quot;adamantium_fragment&quot;)</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">material</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;!&quot;</span><span class="p">):</span>	<span class="c1"># Remove the &quot;!&quot; if present</span>
+			<span class="n">material</span> <span class="o">=</span> <span class="n">material</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+		<span class="n">material_base</span> <span class="o">=</span> <span class="n">material</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>		<span class="c1"># Get the base material name (ex: &quot;adamantium&quot; from &quot;adamantium_fragment&quot;)</span>
+	<span class="n">main_ingredient</span> <span class="o">=</span> <span class="n">Ingr</span><span class="p">(</span><span class="n">material</span><span class="p">)</span> 			<span class="c1"># Get the main ingredient for recipes</span>
+
+	<span class="c1">## Ingredients (ingot, nugget, raw, and other)</span>
+	<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="p">[</span><span class="n">material_base</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">_fragment&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">_ingot&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">_nugget&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;raw_</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">_dust&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">_stick&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">_rod&quot;</span><span class="p">]:</span>
+		<span class="k">if</span> <span class="n">item</span> <span class="o">+</span> <span class="s2">&quot;.png&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">textures</span><span class="p">:</span>
+			<span class="k">continue</span>
+		<span class="n">obj</span> <span class="o">=</span> <span class="n">Item</span><span class="o">.</span><span class="n">from_id</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># Ensure the item is created in the definitions</span>
+		<span class="n">item_type</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">_&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+		<span class="n">obj</span><span class="o">.</span><span class="n">base_item</span> <span class="o">=</span> <span class="n">CUSTOM_ITEM_VANILLA</span>				<span class="c1"># Custom item</span>
+		<span class="n">obj</span><span class="o">.</span><span class="n">manual_category</span> <span class="o">=</span> <span class="s2">&quot;material&quot;</span>				<span class="c1"># Category</span>
+		<span class="n">obj</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s2">&quot;custom_data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;smithed&quot;</span><span class="p">:{}}</span>	<span class="c1"># Smithed convention</span>
+		<span class="n">obj</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s2">&quot;custom_data&quot;</span><span class="p">][</span><span class="s2">&quot;smithed&quot;</span><span class="p">][</span><span class="s2">&quot;dict&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">item_type</span><span class="p">:</span> <span class="p">{</span><span class="n">material_base</span><span class="p">:</span> <span class="kc">True</span><span class="p">}}</span>
+
+		<span class="c1"># Recipes</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">ignore_recipes</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;ingot&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">item</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;fragment&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">item</span> <span class="o">==</span> <span class="n">material_base</span><span class="p">:</span>
+				<span class="k">if</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">_block.png&quot;</span> <span class="ow">in</span> <span class="n">textures</span><span class="p">:</span>
+					<span class="n">obj</span><span class="o">.</span><span class="n">recipes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CraftingShapelessRecipe</span><span class="p">(</span><span class="n">result_count</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s2">&quot;misc&quot;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">material_base</span><span class="p">,</span> <span class="n">ingredients</span><span class="o">=</span><span class="p">[</span><span class="n">Ingr</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">_block&quot;</span><span class="p">)]))</span>
+				<span class="k">if</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">_nugget.png&quot;</span> <span class="ow">in</span> <span class="n">textures</span><span class="p">:</span>
+					<span class="n">obj</span><span class="o">.</span><span class="n">recipes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CraftingShapedRecipe</span><span class="p">(</span><span class="n">result_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s2">&quot;misc&quot;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">material_base</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;XXX&quot;</span><span class="p">,</span><span class="s2">&quot;XXX&quot;</span><span class="p">,</span><span class="s2">&quot;XXX&quot;</span><span class="p">],</span> <span class="n">ingredients</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;X&quot;</span><span class="p">:</span><span class="n">Ingr</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">_nugget&quot;</span><span class="p">)}))</span>
+				<span class="k">if</span> <span class="sa">f</span><span class="s2">&quot;raw_</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">.png&quot;</span> <span class="ow">in</span> <span class="n">textures</span><span class="p">:</span>
+					<span class="n">obj</span><span class="o">.</span><span class="n">recipes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SmeltingRecipe</span><span class="p">(</span><span class="n">result_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s2">&quot;misc&quot;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">material_base</span><span class="p">,</span> <span class="n">experience</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">cookingtime</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">ingredient</span><span class="o">=</span><span class="n">Ingr</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;raw_</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)))</span>
+					<span class="n">obj</span><span class="o">.</span><span class="n">recipes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">BlastingRecipe</span><span class="p">(</span><span class="n">result_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s2">&quot;misc&quot;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">material_base</span><span class="p">,</span> <span class="n">experience</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">cookingtime</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">ingredient</span><span class="o">=</span><span class="n">Ingr</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;raw_</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)))</span>
+				<span class="k">if</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">_dust.png&quot;</span> <span class="ow">in</span> <span class="n">textures</span><span class="p">:</span>
+					<span class="n">obj</span><span class="o">.</span><span class="n">recipes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SmeltingRecipe</span><span class="p">(</span><span class="n">result_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s2">&quot;misc&quot;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">material_base</span><span class="p">,</span> <span class="n">experience</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">cookingtime</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">ingredient</span><span class="o">=</span><span class="n">Ingr</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">_dust&quot;</span><span class="p">)))</span>
+					<span class="n">obj</span><span class="o">.</span><span class="n">recipes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">BlastingRecipe</span><span class="p">(</span><span class="n">result_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s2">&quot;misc&quot;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">material_base</span><span class="p">,</span> <span class="n">experience</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">cookingtime</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">ingredient</span><span class="o">=</span><span class="n">Ingr</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">_dust&quot;</span><span class="p">)))</span>
+				<span class="k">if</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">_ore.png&quot;</span> <span class="ow">in</span> <span class="n">textures</span><span class="p">:</span>
+					<span class="n">obj</span><span class="o">.</span><span class="n">recipes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SmeltingRecipe</span><span class="p">(</span><span class="n">result_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s2">&quot;misc&quot;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">material_base</span><span class="p">,</span> <span class="n">experience</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">cookingtime</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">ingredient</span><span class="o">=</span><span class="n">Ingr</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">_ore&quot;</span><span class="p">)))</span>
+					<span class="n">obj</span><span class="o">.</span><span class="n">recipes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">BlastingRecipe</span><span class="p">(</span><span class="n">result_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s2">&quot;misc&quot;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">material_base</span><span class="p">,</span> <span class="n">experience</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">cookingtime</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">ingredient</span><span class="o">=</span><span class="n">Ingr</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">_ore&quot;</span><span class="p">)))</span>
+				<span class="k">if</span> <span class="sa">f</span><span class="s2">&quot;deepslate_</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">_ore.png&quot;</span> <span class="ow">in</span> <span class="n">textures</span><span class="p">:</span>
+					<span class="n">obj</span><span class="o">.</span><span class="n">recipes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SmeltingRecipe</span><span class="p">(</span><span class="n">result_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s2">&quot;misc&quot;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">material_base</span><span class="p">,</span> <span class="n">experience</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">cookingtime</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">ingredient</span><span class="o">=</span><span class="n">Ingr</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;deepslate_</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">_ore&quot;</span><span class="p">)))</span>
+					<span class="n">obj</span><span class="o">.</span><span class="n">recipes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">BlastingRecipe</span><span class="p">(</span><span class="n">result_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s2">&quot;misc&quot;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">material_base</span><span class="p">,</span> <span class="n">experience</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">cookingtime</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">ingredient</span><span class="o">=</span><span class="n">Ingr</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;deepslate_</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">_ore&quot;</span><span class="p">)))</span>
+			<span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;raw_&quot;</span><span class="p">):</span>
+				<span class="k">if</span> <span class="sa">f</span><span class="s2">&quot;raw_</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">_block.png&quot;</span> <span class="ow">in</span> <span class="n">textures</span><span class="p">:</span>
+					<span class="n">obj</span><span class="o">.</span><span class="n">recipes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CraftingShapelessRecipe</span><span class="p">(</span><span class="n">result_count</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s2">&quot;misc&quot;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">material_base</span><span class="p">,</span> <span class="n">ingredients</span><span class="o">=</span><span class="p">[</span><span class="n">Ingr</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;raw_</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">_block&quot;</span><span class="p">)]))</span>
+			<span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;dust&quot;</span><span class="p">):</span>
+				<span class="n">obj</span><span class="o">.</span><span class="n">recipes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SmeltingRecipe</span><span class="p">(</span><span class="n">result_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s2">&quot;misc&quot;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">material_base</span><span class="p">,</span> <span class="n">experience</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">cookingtime</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">ingredient</span><span class="o">=</span><span class="n">Ingr</span><span class="p">(</span><span class="n">item</span><span class="p">),</span> <span class="n">result</span><span class="o">=</span><span class="n">main_ingredient</span><span class="p">))</span>
+				<span class="n">obj</span><span class="o">.</span><span class="n">recipes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">BlastingRecipe</span><span class="p">(</span><span class="n">result_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s2">&quot;misc&quot;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">material_base</span><span class="p">,</span> <span class="n">experience</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">cookingtime</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">ingredient</span><span class="o">=</span><span class="n">Ingr</span><span class="p">(</span><span class="n">item</span><span class="p">),</span> <span class="n">result</span><span class="o">=</span><span class="n">main_ingredient</span><span class="p">))</span>
+				<span class="n">obj</span><span class="o">.</span><span class="n">recipes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PulverizingRecipe</span><span class="p">(</span><span class="n">result_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s2">&quot;misc&quot;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">material_base</span><span class="p">,</span> <span class="n">ingredient</span><span class="o">=</span><span class="n">main_ingredient</span><span class="p">))</span>
+				<span class="k">for</span> <span class="n">pulv_ingr</span> <span class="ow">in</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;raw_</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">_ore&quot;</span><span class="p">,</span><span class="sa">f</span><span class="s2">&quot;deepslate_</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">_ore&quot;</span><span class="p">]:</span>
+					<span class="k">if</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pulv_ingr</span><span class="si">}</span><span class="s2">.png&quot;</span> <span class="ow">in</span> <span class="n">textures</span><span class="p">:</span>
+						<span class="n">obj</span><span class="o">.</span><span class="n">recipes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PulverizingRecipe</span><span class="p">(</span><span class="n">result_count</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s2">&quot;misc&quot;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">material_base</span><span class="p">,</span> <span class="n">ingredient</span><span class="o">=</span><span class="n">Ingr</span><span class="p">(</span><span class="n">pulv_ingr</span><span class="p">)))</span>
+			<span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;nugget&quot;</span><span class="p">):</span>
+				<span class="n">obj</span><span class="o">.</span><span class="n">recipes</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">CraftingShapelessRecipe</span><span class="p">(</span><span class="n">result_count</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s2">&quot;misc&quot;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">material_base</span><span class="p">,</span> <span class="n">ingredients</span><span class="o">=</span><span class="p">[</span><span class="n">main_ingredient</span><span class="p">]))</span>
+				<span class="k">for</span> <span class="n">gear</span> <span class="ow">in</span> <span class="n">SLOTS</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+					<span class="k">if</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">gear</span><span class="si">}</span><span class="s2">.png&quot;</span> <span class="ow">in</span> <span class="n">textures</span><span class="p">:</span>
+						<span class="n">obj</span><span class="o">.</span><span class="n">recipes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SmeltingRecipe</span><span class="p">(</span><span class="n">result_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s2">&quot;equipment&quot;</span><span class="p">,</span> <span class="n">experience</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">cookingtime</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">ingredient</span><span class="o">=</span><span class="n">Ingr</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">gear</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)))</span>
+			<span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;stick&quot;</span><span class="p">):</span>
+				<span class="n">obj</span><span class="o">.</span><span class="n">recipes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CraftingShapedRecipe</span><span class="p">(</span><span class="n">result_count</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s2">&quot;misc&quot;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;X&quot;</span><span class="p">,</span><span class="s2">&quot;X&quot;</span><span class="p">],</span> <span class="n">ingredients</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;X&quot;</span><span class="p">:</span><span class="n">main_ingredient</span><span class="p">}))</span>
+			<span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;rod&quot;</span><span class="p">):</span>
+				<span class="n">obj</span><span class="o">.</span><span class="n">recipes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CraftingShapedRecipe</span><span class="p">(</span><span class="n">result_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s2">&quot;misc&quot;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;X&quot;</span><span class="p">,</span><span class="s2">&quot;X&quot;</span><span class="p">,</span><span class="s2">&quot;X&quot;</span><span class="p">],</span> <span class="n">ingredients</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;X&quot;</span><span class="p">:</span><span class="n">main_ingredient</span><span class="p">}))</span>
+		<span class="k">pass</span>
+
+
+	<span class="c1">## Placeables (ore, deepslate_ore, block, raw_block)</span>
+	<span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">_block&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">_ore&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;deepslate_</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">_ore&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;raw_</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">_block&quot;</span><span class="p">]:</span>
+		<span class="k">if</span> <span class="n">block</span> <span class="o">+</span> <span class="s2">&quot;.png&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">textures</span><span class="p">:</span>
+			<span class="k">continue</span>
+		<span class="n">obj</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">from_id</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># Ensure the block is created in the definitions</span>
+		<span class="n">obj</span><span class="o">.</span><span class="n">base_item</span> <span class="o">=</span> <span class="n">CUSTOM_BLOCK_VANILLA</span>				<span class="c1"># Item for placing custom block</span>
+		<span class="n">obj</span><span class="o">.</span><span class="n">manual_category</span> <span class="o">=</span> <span class="s2">&quot;material&quot;</span>					<span class="c1"># Category</span>
+		<span class="n">obj</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s2">&quot;custom_data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;smithed&quot;</span><span class="p">:{}}</span>		<span class="c1"># Smithed convention</span>
+		<span class="n">obj</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s2">&quot;custom_data&quot;</span><span class="p">][</span><span class="s2">&quot;smithed&quot;</span><span class="p">][</span><span class="s2">&quot;dict&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;block&quot;</span><span class="p">:</span> <span class="p">{</span><span class="n">material_base</span><span class="p">:</span> <span class="kc">True</span><span class="p">}}</span>
+		<span class="n">is_there_raw_material</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;raw_</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">.png&quot;</span> <span class="ow">in</span> <span class="n">textures</span>
+		<span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;ore&quot;</span><span class="p">):</span>
+			<span class="n">obj</span><span class="o">.</span><span class="n">vanilla_block</span> <span class="o">=</span> <span class="n">VANILLA_BLOCK_FOR_ORES</span>	<span class="c1"># Placeholder for the base block (required for custom ores)</span>
+			<span class="n">obj</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s2">&quot;custom_data&quot;</span><span class="p">][</span><span class="s2">&quot;smithed&quot;</span><span class="p">][</span><span class="s2">&quot;dict&quot;</span><span class="p">][</span><span class="s2">&quot;ore&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">material_base</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+			<span class="k">if</span> <span class="n">is_there_raw_material</span><span class="p">:</span>
+				<span class="n">obj</span><span class="o">.</span><span class="n">no_silk_touch_drop</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;raw_</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">&quot;</span>			<span class="c1"># Drop without silk touch (raw_steel is an item in the definitions)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">obj</span><span class="o">.</span><span class="n">no_silk_touch_drop</span> <span class="o">=</span> <span class="n">material</span>
+		<span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;block&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">ignore_recipes</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;raw&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">is_there_raw_material</span><span class="p">:</span>
+				<span class="n">obj</span><span class="o">.</span><span class="n">recipes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CraftingShapedRecipe</span><span class="p">(</span><span class="n">result_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">material_base</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s2">&quot;misc&quot;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;XXX&quot;</span><span class="p">,</span><span class="s2">&quot;XXX&quot;</span><span class="p">,</span><span class="s2">&quot;XXX&quot;</span><span class="p">],</span> <span class="n">ingredients</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;X&quot;</span><span class="p">:</span><span class="n">Ingr</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;raw_</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)}))</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">obj</span><span class="o">.</span><span class="n">recipes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CraftingShapedRecipe</span><span class="p">(</span><span class="n">result_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">material_base</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s2">&quot;misc&quot;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;XXX&quot;</span><span class="p">,</span><span class="s2">&quot;XXX&quot;</span><span class="p">,</span><span class="s2">&quot;XXX&quot;</span><span class="p">],</span> <span class="n">ingredients</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;X&quot;</span><span class="p">:</span><span class="n">main_ingredient</span><span class="p">}))</span>
+		<span class="k">pass</span>
+
+
+	<span class="c1">## Armor equipment entity (top layer and leggings)</span>
+	<span class="c1"># Define the resource pack namespace and initialize model data</span>
+	<span class="n">model_data</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;layers&quot;</span><span class="p">:</span> <span class="p">{}}</span>
+
+	<span class="c1"># Helper function to handle armor layer textures and model data</span>
+	<span class="k">def</span><span class="w"> </span><span class="nf">handle_armor_layer</span><span class="p">(</span><span class="n">layer_num</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">gear_types</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">humanoid_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+		<span class="c1"># Get the layer texture file name</span>
+		<span class="n">layer_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">_layer_</span><span class="si">{</span><span class="n">layer_num</span><span class="si">}</span><span class="s2">.png&quot;</span>
+
+		<span class="c1"># Check if we have both the layer texture and at least one gear texture</span>
+		<span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">gear</span><span class="si">}</span><span class="s2">.png&quot;</span> <span class="ow">in</span> <span class="n">textures</span> <span class="k">for</span> <span class="n">gear</span> <span class="ow">in</span> <span class="n">gear_types</span><span class="p">)</span> <span class="ow">and</span> <span class="n">layer_file</span> <span class="ow">in</span> <span class="n">textures</span><span class="p">:</span>
+
+			<span class="c1"># Define source and destination paths for texture copying</span>
+			<span class="n">source</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">stp</span><span class="o">.</span><span class="n">relative_path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">textures</span><span class="p">[</span><span class="n">layer_file</span><span class="p">])[</span><span class="mi">0</span><span class="p">],</span> <span class="n">textures_folder</span><span class="p">)</span>
+			<span class="n">destination</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;entity/equipment/</span><span class="si">{</span><span class="n">humanoid_type</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2">&quot;</span>
+
+			<span class="c1"># Copy the texture file</span>
+			<span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">assets</span><span class="p">[</span><span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">project_id</span><span class="p">]</span><span class="o">.</span><span class="n">textures</span><span class="p">[</span><span class="n">destination</span><span class="p">]</span> <span class="o">=</span> <span class="n">Texture</span><span class="p">(</span><span class="n">source_path</span><span class="o">=</span><span class="n">textures</span><span class="p">[</span><span class="n">layer_file</span><span class="p">])</span>
+
+			<span class="c1"># Add the layer to the model data</span>
+			<span class="n">model_data</span><span class="p">[</span><span class="s2">&quot;layers&quot;</span><span class="p">][</span><span class="n">humanoid_type</span><span class="p">]</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;texture&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">project_id</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}]</span>
+			<span class="k">return</span> <span class="kc">True</span>
+		<span class="k">return</span> <span class="kc">False</span>
+
+	<span class="c1"># Process top and bottom armor layers</span>
+	<span class="n">top_layer</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">handle_armor_layer</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;helmet&quot;</span><span class="p">,</span> <span class="s2">&quot;chestplate&quot;</span><span class="p">],</span> <span class="s2">&quot;humanoid&quot;</span><span class="p">)</span>
+	<span class="n">bottom_layer</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">handle_armor_layer</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;leggings&quot;</span><span class="p">,</span> <span class="s2">&quot;boots&quot;</span><span class="p">],</span> <span class="s2">&quot;humanoid_leggings&quot;</span><span class="p">)</span>
+
+	<span class="c1"># Create equipment asset if any layers were processed</span>
+	<span class="k">if</span> <span class="n">top_layer</span> <span class="ow">or</span> <span class="n">bottom_layer</span><span class="p">:</span>
+		<span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">assets</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">project_id</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Equipment</span><span class="p">(</span><span class="n">stp</span><span class="o">.</span><span class="n">json_dump</span><span class="p">(</span><span class="n">model_data</span><span class="p">))</span>
+
+
+	<span class="c1">## Armor (helmet, chestplate, leggings, boots)</span>
+	<span class="k">if</span> <span class="n">equipments_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">gear</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;helmet&quot;</span><span class="p">,</span> <span class="s2">&quot;chestplate&quot;</span><span class="p">,</span> <span class="s2">&quot;leggings&quot;</span><span class="p">,</span> <span class="s2">&quot;boots&quot;</span><span class="p">]:</span>
+			<span class="n">armor</span> <span class="o">=</span> <span class="n">material_base</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">gear</span>
+			<span class="k">if</span> <span class="n">armor</span> <span class="o">+</span> <span class="s2">&quot;.png&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">textures</span><span class="p">:</span>
+				<span class="k">continue</span>
+			<span class="n">obj</span> <span class="o">=</span> <span class="n">Item</span><span class="o">.</span><span class="n">from_id</span><span class="p">(</span><span class="n">armor</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># Ensure the item is created in the definitions</span>
+			<span class="n">equivalent_to</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">equipments_config</span><span class="o">.</span><span class="n">equivalent_to</span><span class="o">.</span><span class="n">value</span>
+			<span class="k">if</span> <span class="n">equivalent_to</span> <span class="o">==</span> <span class="s2">&quot;stone&quot;</span><span class="p">:</span>
+				<span class="n">equivalent_to</span> <span class="o">=</span> <span class="s2">&quot;chainmail&quot;</span>
+			<span class="k">elif</span> <span class="n">equivalent_to</span> <span class="o">==</span> <span class="s2">&quot;wooden&quot;</span><span class="p">:</span>
+				<span class="n">equivalent_to</span> <span class="o">=</span> <span class="s2">&quot;leather&quot;</span>
+			<span class="n">obj</span><span class="o">.</span><span class="n">base_item</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;minecraft:</span><span class="si">{</span><span class="n">equivalent_to</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">gear</span><span class="si">}</span><span class="s2">&quot;</span>
+			<span class="n">obj</span><span class="o">.</span><span class="n">manual_category</span> <span class="o">=</span> <span class="s2">&quot;equipment&quot;</span>					<span class="c1"># Category</span>
+			<span class="n">obj</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s2">&quot;custom_data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;smithed&quot;</span><span class="p">:{}}</span>			<span class="c1"># Smithed convention</span>
+			<span class="n">obj</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s2">&quot;custom_data&quot;</span><span class="p">][</span><span class="s2">&quot;smithed&quot;</span><span class="p">][</span><span class="s2">&quot;dict&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;armor&quot;</span><span class="p">:</span> <span class="p">{</span><span class="n">material_base</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="n">gear</span><span class="p">:</span> <span class="kc">True</span><span class="p">}}</span>
+			<span class="n">gear_config</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">=</span> <span class="p">{}</span>
+			<span class="k">if</span> <span class="n">gear</span> <span class="o">==</span> <span class="s2">&quot;helmet&quot;</span><span class="p">:</span>
+				<span class="k">if</span> <span class="ow">not</span> <span class="n">ignore_recipes</span><span class="p">:</span>
+					<span class="n">obj</span><span class="o">.</span><span class="n">recipes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CraftingShapedRecipe</span><span class="p">(</span><span class="n">result_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">category</span><span class="o">=</span><span class="s2">&quot;equipment&quot;</span><span class="p">,</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;XXX&quot;</span><span class="p">,</span><span class="s2">&quot;X X&quot;</span><span class="p">],</span><span class="n">ingredients</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;X&quot;</span><span class="p">:</span> <span class="n">main_ingredient</span><span class="p">},</span><span class="n">manual_priority</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+				<span class="k">if</span> <span class="n">equipments_config</span><span class="p">:</span>
+					<span class="n">gear_config</span> <span class="o">=</span> <span class="n">VanillaEquipments</span><span class="o">.</span><span class="n">HELMET</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="n">equipments_config</span><span class="o">.</span><span class="n">equivalent_to</span><span class="p">]</span>
+					<span class="n">obj</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s2">&quot;max_damage&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">gear_config</span><span class="p">[</span><span class="s2">&quot;durability&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">durability_factor</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">top_layer</span><span class="p">:</span>
+					<span class="n">obj</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s2">&quot;equippable&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;slot&quot;</span><span class="p">:</span><span class="s2">&quot;head&quot;</span><span class="p">,</span> <span class="s2">&quot;asset_id&quot;</span><span class="p">:</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">project_id</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span>
+			<span class="k">elif</span> <span class="n">gear</span> <span class="o">==</span> <span class="s2">&quot;chestplate&quot;</span><span class="p">:</span>
+				<span class="k">if</span> <span class="ow">not</span> <span class="n">ignore_recipes</span><span class="p">:</span>
+					<span class="n">obj</span><span class="o">.</span><span class="n">recipes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CraftingShapedRecipe</span><span class="p">(</span><span class="n">result_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">category</span><span class="o">=</span><span class="s2">&quot;equipment&quot;</span><span class="p">,</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;X X&quot;</span><span class="p">,</span><span class="s2">&quot;XXX&quot;</span><span class="p">,</span><span class="s2">&quot;XXX&quot;</span><span class="p">],</span><span class="n">ingredients</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;X&quot;</span><span class="p">:</span> <span class="n">main_ingredient</span><span class="p">},</span><span class="n">manual_priority</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+				<span class="k">if</span> <span class="n">equipments_config</span><span class="p">:</span>
+					<span class="n">gear_config</span> <span class="o">=</span> <span class="n">VanillaEquipments</span><span class="o">.</span><span class="n">CHESTPLATE</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="n">equipments_config</span><span class="o">.</span><span class="n">equivalent_to</span><span class="p">]</span>
+					<span class="n">obj</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s2">&quot;max_damage&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">gear_config</span><span class="p">[</span><span class="s2">&quot;durability&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">durability_factor</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">top_layer</span><span class="p">:</span>
+					<span class="n">obj</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s2">&quot;equippable&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;slot&quot;</span><span class="p">:</span><span class="s2">&quot;chest&quot;</span><span class="p">,</span> <span class="s2">&quot;asset_id&quot;</span><span class="p">:</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">project_id</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span>
+			<span class="k">elif</span> <span class="n">gear</span> <span class="o">==</span> <span class="s2">&quot;leggings&quot;</span><span class="p">:</span>
+				<span class="k">if</span> <span class="ow">not</span> <span class="n">ignore_recipes</span><span class="p">:</span>
+					<span class="n">obj</span><span class="o">.</span><span class="n">recipes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CraftingShapedRecipe</span><span class="p">(</span><span class="n">result_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">category</span><span class="o">=</span><span class="s2">&quot;equipment&quot;</span><span class="p">,</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;XXX&quot;</span><span class="p">,</span><span class="s2">&quot;X X&quot;</span><span class="p">,</span><span class="s2">&quot;X X&quot;</span><span class="p">],</span><span class="n">ingredients</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;X&quot;</span><span class="p">:</span> <span class="n">main_ingredient</span><span class="p">},</span><span class="n">manual_priority</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+				<span class="k">if</span> <span class="n">equipments_config</span><span class="p">:</span>
+					<span class="n">gear_config</span> <span class="o">=</span> <span class="n">VanillaEquipments</span><span class="o">.</span><span class="n">LEGGINGS</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="n">equipments_config</span><span class="o">.</span><span class="n">equivalent_to</span><span class="p">]</span>
+					<span class="n">obj</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s2">&quot;max_damage&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">gear_config</span><span class="p">[</span><span class="s2">&quot;durability&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">durability_factor</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">bottom_layer</span><span class="p">:</span>
+					<span class="n">obj</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s2">&quot;equippable&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;slot&quot;</span><span class="p">:</span><span class="s2">&quot;legs&quot;</span><span class="p">,</span> <span class="s2">&quot;asset_id&quot;</span><span class="p">:</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">project_id</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span>
+			<span class="k">elif</span> <span class="n">gear</span> <span class="o">==</span> <span class="s2">&quot;boots&quot;</span><span class="p">:</span>
+				<span class="k">if</span> <span class="ow">not</span> <span class="n">ignore_recipes</span><span class="p">:</span>
+					<span class="n">obj</span><span class="o">.</span><span class="n">recipes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CraftingShapedRecipe</span><span class="p">(</span><span class="n">result_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">category</span><span class="o">=</span><span class="s2">&quot;equipment&quot;</span><span class="p">,</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;X X&quot;</span><span class="p">,</span><span class="s2">&quot;X X&quot;</span><span class="p">],</span><span class="n">ingredients</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;X&quot;</span><span class="p">:</span> <span class="n">main_ingredient</span><span class="p">},</span><span class="n">manual_priority</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+				<span class="k">if</span> <span class="n">equipments_config</span><span class="p">:</span>
+					<span class="n">gear_config</span> <span class="o">=</span> <span class="n">VanillaEquipments</span><span class="o">.</span><span class="n">BOOTS</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="n">equipments_config</span><span class="o">.</span><span class="n">equivalent_to</span><span class="p">]</span>
+					<span class="n">obj</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s2">&quot;max_damage&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">gear_config</span><span class="p">[</span><span class="s2">&quot;durability&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">durability_factor</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">bottom_layer</span><span class="p">:</span>
+					<span class="n">obj</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s2">&quot;equippable&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;slot&quot;</span><span class="p">:</span><span class="s2">&quot;feet&quot;</span><span class="p">,</span> <span class="s2">&quot;asset_id&quot;</span><span class="p">:</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">project_id</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">material_base</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span>
+			<span class="k">if</span> <span class="n">equipments_config</span><span class="p">:</span>
+				<span class="n">obj</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s2">&quot;attribute_modifiers&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">format_attributes</span><span class="p">(</span><span class="n">equipments_config</span><span class="o">.</span><span class="n">get_armor_attributes</span><span class="p">(),</span> <span class="n">SLOTS</span><span class="p">[</span><span class="n">gear</span><span class="p">],</span> <span class="n">gear_config</span><span class="p">)</span>
+
+	<span class="c1"># Tools (sword, pickaxe, axe, shovel, hoe, spear)</span>
+	<span class="k">for</span> <span class="n">gear</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;sword&quot;</span><span class="p">,</span> <span class="s2">&quot;pickaxe&quot;</span><span class="p">,</span> <span class="s2">&quot;axe&quot;</span><span class="p">,</span> <span class="s2">&quot;shovel&quot;</span><span class="p">,</span> <span class="s2">&quot;hoe&quot;</span><span class="p">,</span> <span class="s2">&quot;spear&quot;</span><span class="p">]:</span>
+		<span class="n">tool</span> <span class="o">=</span> <span class="n">material_base</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">gear</span>
+		<span class="k">if</span> <span class="n">tool</span> <span class="o">+</span> <span class="s2">&quot;.png&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">textures</span><span class="p">:</span>
+			<span class="k">continue</span>
+		<span class="n">obj</span> <span class="o">=</span> <span class="n">Item</span><span class="o">.</span><span class="n">from_id</span><span class="p">(</span><span class="n">tool</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># Ensure the item is created in the definitions</span>
+		<span class="k">if</span> <span class="n">equipments_config</span><span class="p">:</span>
+			<span class="n">obj</span><span class="o">.</span><span class="n">base_item</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;minecraft:</span><span class="si">{</span><span class="n">equipments_config</span><span class="o">.</span><span class="n">equivalent_to</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">gear</span><span class="si">}</span><span class="s2">&quot;</span>		<span class="c1"># Vanilla tool, ex: iron_sword, wooden_hoe</span>
+		<span class="n">obj</span><span class="o">.</span><span class="n">manual_category</span> <span class="o">=</span> <span class="s2">&quot;equipment&quot;</span>
+		<span class="n">obj</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s2">&quot;custom_data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;smithed&quot;</span><span class="p">:{}}</span>
+		<span class="n">obj</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s2">&quot;custom_data&quot;</span><span class="p">][</span><span class="s2">&quot;smithed&quot;</span><span class="p">][</span><span class="s2">&quot;dict&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;tools&quot;</span><span class="p">:</span> <span class="p">{</span><span class="n">material_base</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="n">gear</span><span class="p">:</span> <span class="kc">True</span><span class="p">}}</span>
+		<span class="n">tools_ingr</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;X&quot;</span><span class="p">:</span> <span class="n">main_ingredient</span><span class="p">,</span> <span class="s2">&quot;S&quot;</span><span class="p">:</span> <span class="n">Ingr</span><span class="p">(</span><span class="s2">&quot;minecraft:stick&quot;</span><span class="p">)}</span>
+		<span class="n">gear_config</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">=</span> <span class="p">{}</span>
+		<span class="k">if</span> <span class="n">gear</span> <span class="o">==</span> <span class="s2">&quot;sword&quot;</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">equipments_config</span><span class="p">:</span>
+				<span class="n">gear_config</span> <span class="o">=</span> <span class="n">VanillaEquipments</span><span class="o">.</span><span class="n">SWORD</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="n">equipments_config</span><span class="o">.</span><span class="n">equivalent_to</span><span class="p">]</span>
+				<span class="n">obj</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s2">&quot;max_damage&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">gear_config</span><span class="p">[</span><span class="s2">&quot;durability&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">durability_factor</span><span class="p">)</span>
+			<span class="k">if</span> <span class="ow">not</span> <span class="n">ignore_recipes</span><span class="p">:</span>
+				<span class="n">obj</span><span class="o">.</span><span class="n">recipes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CraftingShapedRecipe</span><span class="p">(</span><span class="n">result_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">category</span><span class="o">=</span><span class="s2">&quot;equipment&quot;</span><span class="p">,</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;X&quot;</span><span class="p">,</span><span class="s2">&quot;X&quot;</span><span class="p">,</span><span class="s2">&quot;S&quot;</span><span class="p">],</span><span class="n">ingredients</span><span class="o">=</span><span class="n">tools_ingr</span><span class="p">,</span><span class="n">manual_priority</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+		<span class="k">elif</span> <span class="n">gear</span> <span class="o">==</span> <span class="s2">&quot;pickaxe&quot;</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">equipments_config</span><span class="p">:</span>
+				<span class="n">gear_config</span> <span class="o">=</span> <span class="n">VanillaEquipments</span><span class="o">.</span><span class="n">PICKAXE</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="n">equipments_config</span><span class="o">.</span><span class="n">equivalent_to</span><span class="p">]</span>
+				<span class="n">obj</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s2">&quot;max_damage&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">gear_config</span><span class="p">[</span><span class="s2">&quot;durability&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">durability_factor</span><span class="p">)</span>
+			<span class="k">if</span> <span class="ow">not</span> <span class="n">ignore_recipes</span><span class="p">:</span>
+				<span class="n">obj</span><span class="o">.</span><span class="n">recipes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CraftingShapedRecipe</span><span class="p">(</span><span class="n">result_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">category</span><span class="o">=</span><span class="s2">&quot;equipment&quot;</span><span class="p">,</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;XXX&quot;</span><span class="p">,</span><span class="s2">&quot; S &quot;</span><span class="p">,</span><span class="s2">&quot; S &quot;</span><span class="p">],</span><span class="n">ingredients</span><span class="o">=</span><span class="n">tools_ingr</span><span class="p">,</span><span class="n">manual_priority</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+		<span class="k">elif</span> <span class="n">gear</span> <span class="o">==</span> <span class="s2">&quot;axe&quot;</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">equipments_config</span><span class="p">:</span>
+				<span class="n">gear_config</span> <span class="o">=</span> <span class="n">VanillaEquipments</span><span class="o">.</span><span class="n">AXE</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="n">equipments_config</span><span class="o">.</span><span class="n">equivalent_to</span><span class="p">]</span>
+				<span class="n">obj</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s2">&quot;max_damage&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">gear_config</span><span class="p">[</span><span class="s2">&quot;durability&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">durability_factor</span><span class="p">)</span>
+			<span class="k">if</span> <span class="ow">not</span> <span class="n">ignore_recipes</span><span class="p">:</span>
+				<span class="n">obj</span><span class="o">.</span><span class="n">recipes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CraftingShapedRecipe</span><span class="p">(</span><span class="n">result_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">category</span><span class="o">=</span><span class="s2">&quot;equipment&quot;</span><span class="p">,</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;XX&quot;</span><span class="p">,</span><span class="s2">&quot;XS&quot;</span><span class="p">,</span><span class="s2">&quot; S&quot;</span><span class="p">],</span><span class="n">ingredients</span><span class="o">=</span><span class="n">tools_ingr</span><span class="p">,</span><span class="n">manual_priority</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+		<span class="k">elif</span> <span class="n">gear</span> <span class="o">==</span> <span class="s2">&quot;shovel&quot;</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">equipments_config</span><span class="p">:</span>
+				<span class="n">gear_config</span> <span class="o">=</span> <span class="n">VanillaEquipments</span><span class="o">.</span><span class="n">SHOVEL</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="n">equipments_config</span><span class="o">.</span><span class="n">equivalent_to</span><span class="p">]</span>
+				<span class="n">obj</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s2">&quot;max_damage&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">gear_config</span><span class="p">[</span><span class="s2">&quot;durability&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">durability_factor</span><span class="p">)</span>
+			<span class="k">if</span> <span class="ow">not</span> <span class="n">ignore_recipes</span><span class="p">:</span>
+				<span class="n">obj</span><span class="o">.</span><span class="n">recipes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CraftingShapedRecipe</span><span class="p">(</span><span class="n">result_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">category</span><span class="o">=</span><span class="s2">&quot;equipment&quot;</span><span class="p">,</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;X&quot;</span><span class="p">,</span><span class="s2">&quot;S&quot;</span><span class="p">,</span><span class="s2">&quot;S&quot;</span><span class="p">],</span><span class="n">ingredients</span><span class="o">=</span><span class="n">tools_ingr</span><span class="p">,</span><span class="n">manual_priority</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+		<span class="k">elif</span> <span class="n">gear</span> <span class="o">==</span> <span class="s2">&quot;hoe&quot;</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">equipments_config</span><span class="p">:</span>
+				<span class="n">gear_config</span> <span class="o">=</span> <span class="n">VanillaEquipments</span><span class="o">.</span><span class="n">HOE</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="n">equipments_config</span><span class="o">.</span><span class="n">equivalent_to</span><span class="p">]</span>
+				<span class="n">obj</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s2">&quot;max_damage&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">gear_config</span><span class="p">[</span><span class="s2">&quot;durability&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">durability_factor</span><span class="p">)</span>
+			<span class="k">if</span> <span class="ow">not</span> <span class="n">ignore_recipes</span><span class="p">:</span>
+				<span class="n">obj</span><span class="o">.</span><span class="n">recipes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CraftingShapedRecipe</span><span class="p">(</span><span class="n">result_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">category</span><span class="o">=</span><span class="s2">&quot;equipment&quot;</span><span class="p">,</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;XX&quot;</span><span class="p">,</span><span class="s2">&quot; S&quot;</span><span class="p">,</span><span class="s2">&quot; S&quot;</span><span class="p">],</span><span class="n">ingredients</span><span class="o">=</span><span class="n">tools_ingr</span><span class="p">,</span><span class="n">manual_priority</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+		<span class="k">elif</span> <span class="n">gear</span> <span class="o">==</span> <span class="s2">&quot;spear&quot;</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">equipments_config</span><span class="p">:</span>
+				<span class="n">gear_config</span> <span class="o">=</span> <span class="n">VanillaEquipments</span><span class="o">.</span><span class="n">SPEAR</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="n">equipments_config</span><span class="o">.</span><span class="n">equivalent_to</span><span class="p">]</span>
+				<span class="n">obj</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s2">&quot;max_damage&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">gear_config</span><span class="p">[</span><span class="s2">&quot;durability&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">durability_factor</span><span class="p">)</span>
+			<span class="k">if</span> <span class="ow">not</span> <span class="n">ignore_recipes</span><span class="p">:</span>
+				<span class="n">obj</span><span class="o">.</span><span class="n">recipes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CraftingShapedRecipe</span><span class="p">(</span><span class="n">result_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">category</span><span class="o">=</span><span class="s2">&quot;equipment&quot;</span><span class="p">,</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;  X&quot;</span><span class="p">,</span><span class="s2">&quot; S &quot;</span><span class="p">,</span><span class="s2">&quot;S  &quot;</span><span class="p">],</span><span class="n">ingredients</span><span class="o">=</span><span class="n">tools_ingr</span><span class="p">,</span><span class="n">manual_priority</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+		<span class="k">if</span> <span class="n">equipments_config</span><span class="p">:</span>
+			<span class="n">obj</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s2">&quot;attribute_modifiers&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">format_attributes</span><span class="p">(</span><span class="n">equipments_config</span><span class="o">.</span><span class="n">get_tools_attributes</span><span class="p">(),</span> <span class="n">SLOTS</span><span class="p">[</span><span class="n">gear</span><span class="p">],</span> <span class="n">gear_config</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">gear</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;sword&quot;</span><span class="p">,</span> <span class="s2">&quot;spear&quot;</span><span class="p">):</span> <span class="c1"># Remove the mining_efficiency attribute from swords and spears</span>
+			<span class="n">obj</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s2">&quot;attribute_modifiers&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">am</span> <span class="k">for</span> <span class="n">am</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s2">&quot;attribute_modifiers&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">am</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;mining_efficiency&quot;</span><span class="p">]</span>
+	<span class="k">pass</span></div>
+
+
+
+<span class="c1"># Generate everything about these ores</span>
+<div class="viewcode-block" id="generate_everything_about_these_materials">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.definitions_helper.materials.html#stewbeet.core.definitions_helper.materials.generate_everything_about_these_materials">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_everything_about_these_materials</span><span class="p">(</span><span class="n">ores</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">EquipmentsConfig</span><span class="o">|</span><span class="kc">None</span><span class="p">],</span> <span class="n">ignore_recipes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Uses function &#39;generate_everything_about_this_material&#39; for each ore in the ores dictionary.</span>
+<span class="sd">	Args:</span>
+<span class="sd">		ores		(dict[str, EquipmentsConfig|None]):	The ores to apply.</span>
+<span class="sd">				The ore/material (key) to generate everything about (ex: &quot;adamantium_fragment&quot;, &quot;steel_ingot&quot;, &quot;minecraft:emerald&quot;, &quot;minecraft:copper_ingot&quot;, &quot;awakened_stardust!&quot;)</span>
+<span class="sd">				When the material ends with &quot;!&quot;, the material base will be the material without the &quot;!&quot;, else we try to cut before the last &quot;_&quot;.</span>
+<span class="sd">		ignore_recipes	(bool):						If True, no recipes will be added in the definitions.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">for</span> <span class="n">material</span><span class="p">,</span> <span class="n">ore_config</span> <span class="ow">in</span> <span class="n">ores</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+		<span class="n">generate_everything_about_this_material</span><span class="p">(</span><span class="n">material</span><span class="p">,</span> <span class="n">ore_config</span><span class="p">,</span> <span class="n">ignore_recipes</span><span class="o">=</span><span class="n">ignore_recipes</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># Add recipes for dust</span>
+<div class="viewcode-block" id="add_recipes_for_dust">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.definitions_helper.materials.html#stewbeet.core.definitions_helper.materials.add_recipes_for_dust">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_recipes_for_dust</span><span class="p">(</span><span class="n">material</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pulverize</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">JsonDict</span><span class="p">],</span> <span class="n">smelt_to</span><span class="p">:</span> <span class="n">JsonDict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Add recipes for dust (pulverize and smelt). If dust isn&#39;t found in the definitions, it will be added automagically.</span>
+
+<span class="sd">	All items in the pulverize list will be pulverized to get 2 times the dust.</span>
+
+<span class="sd">	If the item is a string, their Ingr will be used as &quot;minecraft:{item}&quot;</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		material	(str):				The material to add dust recipes for, ex: &quot;copper&quot; will add recipes for &quot;copper_dust&quot;.</span>
+<span class="sd">		pulverize	(list[str|dict]):	The list of items to pulverize to get 2 times the dust, ex: [&quot;raw_copper&quot;, &quot;copper_ore&quot;, &quot;deepslate_copper_ore&quot;, Ingr(&quot;custom_copper&quot;, &quot;some_namespace&quot;)]</span>
+<span class="sd">		smelt_to	(dict):				The ingredient representation of the result of smelting the dust, ex: Ingr(&quot;minecraft:copper_ingot&quot;)}</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1"># Assertions</span>
+	<span class="n">textures_folder</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">stp</span><span class="o">.</span><span class="n">relative_path</span><span class="p">(</span><span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stewbeet&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;textures_folder&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+	<span class="k">assert</span> <span class="n">textures_folder</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;Textures folder path not found in &#39;ctx.meta.stewbeet.textures_folder&#39;. Please set a directory path in project configuration.&quot;</span>
+
+	<span class="c1"># Prepare constants</span>
+	<span class="n">textures_set</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">stp</span><span class="o">.</span><span class="n">clean_path</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">))</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">Path</span><span class="p">(</span><span class="n">textures_folder</span><span class="p">)</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="s2">&quot;*.png&quot;</span><span class="p">)}</span>
+	<span class="n">dust</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">material</span> <span class="o">+</span> <span class="s2">&quot;_dust&quot;</span>
+	<span class="k">if</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dust</span><span class="si">}</span><span class="s2">.png&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">textures_set</span><span class="p">:</span>
+		<span class="n">stp</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error during dust recipe generation: texture &#39;</span><span class="si">{</span><span class="n">dust</span><span class="si">}</span><span class="s2">.png&#39; not found (required for &#39;</span><span class="si">{</span><span class="n">material</span><span class="si">}</span><span class="s2">&#39; dust)&quot;</span><span class="p">)</span>
+		<span class="k">return</span>
+
+	<span class="c1"># Add dust to the definitions if not found</span>
+	<span class="n">obj</span> <span class="o">=</span> <span class="n">Item</span><span class="o">.</span><span class="n">from_id</span><span class="p">(</span><span class="n">dust</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># Ensure the item is created in the definitions</span>
+	<span class="n">obj</span><span class="o">.</span><span class="n">base_item</span> <span class="o">=</span> <span class="n">CUSTOM_ITEM_VANILLA</span>
+	<span class="n">obj</span><span class="o">.</span><span class="n">manual_category</span> <span class="o">=</span> <span class="s2">&quot;material&quot;</span>
+	<span class="n">obj</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s2">&quot;custom_data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;smithed&quot;</span><span class="p">:{}}</span>
+	<span class="n">obj</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="s2">&quot;custom_data&quot;</span><span class="p">][</span><span class="s2">&quot;smithed&quot;</span><span class="p">][</span><span class="s2">&quot;dict&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;dust&quot;</span><span class="p">:</span> <span class="p">{</span><span class="n">material</span><span class="p">:</span> <span class="kc">True</span><span class="p">}}</span>
+
+	<span class="c1"># Add smelting and blasting recipes</span>
+	<span class="n">ingredient</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">=</span> <span class="n">Ingr</span><span class="p">(</span><span class="n">dust</span><span class="p">)</span>
+	<span class="n">obj</span><span class="o">.</span><span class="n">recipes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SmeltingRecipe</span><span class="p">(</span><span class="n">result_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">category</span><span class="o">=</span><span class="s2">&quot;misc&quot;</span><span class="p">,</span><span class="n">group</span><span class="o">=</span><span class="n">material</span><span class="p">,</span><span class="n">experience</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span><span class="n">cookingtime</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span><span class="n">ingredient</span><span class="o">=</span><span class="n">ingredient</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="n">smelt_to</span><span class="p">))</span>
+	<span class="n">obj</span><span class="o">.</span><span class="n">recipes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">BlastingRecipe</span><span class="p">(</span><span class="n">result_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">category</span><span class="o">=</span><span class="s2">&quot;misc&quot;</span><span class="p">,</span><span class="n">group</span><span class="o">=</span><span class="n">material</span><span class="p">,</span><span class="n">experience</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span><span class="n">cookingtime</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">ingredient</span><span class="o">=</span><span class="n">ingredient</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="n">smelt_to</span><span class="p">))</span>
+
+	<span class="c1"># Add reverse recipe</span>
+	<span class="n">obj</span><span class="o">.</span><span class="n">recipes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PulverizingRecipe</span><span class="p">(</span><span class="n">result_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">category</span><span class="o">=</span><span class="s2">&quot;misc&quot;</span><span class="p">,</span><span class="n">group</span><span class="o">=</span><span class="n">material</span><span class="p">,</span><span class="n">ingredient</span><span class="o">=</span><span class="n">smelt_to</span><span class="p">))</span>
+
+	<span class="c1"># Add pulverizing recipes</span>
+	<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">pulverize</span><span class="p">:</span>
+		<span class="n">pulv_ingr</span> <span class="o">=</span> <span class="n">item</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="n">Ingr</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;minecraft:</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="n">obj</span><span class="o">.</span><span class="n">recipes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PulverizingRecipe</span><span class="p">(</span><span class="n">result_count</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">category</span><span class="o">=</span><span class="s2">&quot;misc&quot;</span><span class="p">,</span><span class="n">group</span><span class="o">=</span><span class="n">material</span><span class="p">,</span><span class="n">ingredient</span><span class="o">=</span><span class="n">pulv_ingr</span><span class="p">))</span>
+	<span class="k">return</span></div>
+
+
+<span class="c1"># Add recipes for all dusts</span>
+<div class="viewcode-block" id="add_recipes_for_all_dusts">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.definitions_helper.materials.html#stewbeet.core.definitions_helper.materials.add_recipes_for_all_dusts">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_recipes_for_all_dusts</span><span class="p">(</span><span class="n">dusts_configs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">JsonDict</span><span class="p">],</span> <span class="n">JsonDict</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Add recipes for all dusts in the dusts_configs dictionary using the add_recipes_for_dust function.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		dusts_configs	(dict[str, tuple[list[str|dict],dict]]):	The dusts to add recipes for, ex:</span>
+
+<span class="sd">	```py</span>
+<span class="sd">	{</span>
+<span class="sd">		&quot;copper&quot;: (</span>
+<span class="sd">			[&quot;raw_copper&quot;, &quot;copper_ore&quot;, &quot;deepslate_copper_ore&quot;, Ingr(&quot;custom_copper&quot;, &quot;some_namespace&quot;)],</span>
+<span class="sd">			Ingr(&quot;minecraft:copper_ingot&quot;)</span>
+<span class="sd">		)</span>
+<span class="sd">	}</span>
+<span class="sd">	```</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">for</span> <span class="n">dust</span><span class="p">,</span> <span class="p">(</span><span class="n">pulverize</span><span class="p">,</span> <span class="n">smelt_to</span><span class="p">)</span> <span class="ow">in</span> <span class="n">dusts_configs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+		<span class="n">add_recipes_for_dust</span><span class="p">(</span><span class="n">dust</span><span class="p">,</span> <span class="n">pulverize</span><span class="p">,</span> <span class="n">smelt_to</span><span class="p">)</span></div>
+
+
+</pre></div>
+</article><footer class="bz-article-footer">
+  
+  
+    <nav class="bz-related-pages" aria-label="Related pages navigation"></nav>
+  
+
+</footer></main>
+  </div><footer class="bz-footer">
+  <div class="bz-footer-copyright"><p class="bz-copyright">© Copyright 2025, Stoupy</p><p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://github.com/aksiome/breeze">Breeze theme</a>.
+  </p>
+</div><div class="bz-external-links">
+  <a
+    href="https://github.com/Stoupy51/stewbeet"
+    aria-label="GitHub"
+    data-tooltip="GitHub"
+    target="_blank"
+  >
+    <svg
+      stroke="currentColor"
+      fill="currentColor"
+      stroke-width="0"
+      viewBox="0 0 16 16"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+      ></path>
+    </svg>
+  </a></div>
+</footer><a href="#" class="bz-back-to-top">
+    <svg class="sized" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m5 12 7-7 7 7"/><path d="M12 19V5"/>
+    </svg>
+    <span>Back to top</span>
+  </a>
+  <label class="bz-overlay bz-overlay-primary" for="bz-sidebar-primary"></label>
+  <label class="bz-overlay bz-overlay-secondary" for="bz-sidebar-secondary"></label>
+  <input type="checkbox" name="bz-sidebar-primary" id="bz-sidebar-primary" aria-label="Toggle site navigation sidebar">
+  <input type="checkbox" name="bz-sidebar-secondary" id="bz-sidebar-secondary" aria-label="Toggle table of contents sidebar">
+  </body>
+</html>

@@ -1,0 +1,8 @@
+stewbeet.plugins.datapack.custom\_blocks package
+================================================
+
+.. automodule:: stewbeet.plugins.datapack.custom_blocks
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>stewbeet.core.utils.io &#8212; StewBeet</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8e8a900e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/treeview.css?v=f8e9195c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/breeze.css?v=93f23127" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=1637c05a" />
+  <noscript>
+    <style>
+      .bz-js-only { display: none !important; }
+    </style>
+  </noscript>
+  
+    <script defer src="../../../../_static/documentation_options.js?v=6d4b8ac6"></script>
+    <script defer src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script defer src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script defer src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script defer src="../../../../_static/copybutton.js?v=18a8d5f5"></script>
+    <script defer src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer src="../../../../_static/treeview.js?v=265ad9b8"></script>
+    <script defer src="../../../../_static/scripts/breeze.js?v=8ef74970"></script>
+  <script data-cfasync="false">
+    const mode = localStorage.getItem("breeze-mode") || "auto";
+    document.documentElement.dataset.mode = mode;
+    if (mode === "auto") {
+      const prefers = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+      document.documentElement.dataset.theme = prefers;
+    } else {
+      document.documentElement.dataset.theme = mode;
+    }
+  </script>
+    <link rel="icon" href="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /><meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head><body>
+  
+  <div class="bz-skip-to-content">
+    <a href="#bz-main-content">Skip to main content</a>
+  </div><header class="bz-header-main">
+  <div class="bz-header-start"><a class="bz-header-brand" href="../../../../index.html"><img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png" alt="Site Logo" /><span>StewBeet</span>
+</a></div>
+  <div class="bz-header-end"><div class="bz-search-button">
+  <a
+    href="../../../../search.html#q"
+    aria-label="Search the docs"
+    data-tooltip="Search the docs"
+  >
+    <svg
+      class="sized"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 -1 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+      />
+    </svg>
+    <span>Search</span>
+    <kbd>Ctrl+K</kbd>
+  </a>
+</div><div class="bz-theme-switcher">
+  <button aria-label="Switch theme" data-tooltip="Switch theme">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="only-light" fill="currentColor">
+      <path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm5.657-8.157a.75.75 0 0 1 0 1.061l-1.061 1.06a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l1.06-1.06a.75.75 0 0 1 1.06 0Zm-9.193 9.193a.75.75 0 0 1 0 1.06l-1.06 1.061a.75.75 0 1 1-1.061-1.06l1.06-1.061a.75.75 0 0 1 1.061 0ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0ZM3 8a.75.75 0 0 1-.75.75H.75a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 3 8Zm13 0a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 16 8Zm-8 5a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13Zm3.536-1.464a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 0 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061ZM2.343 2.343a.75.75 0 0 1 1.061 0l1.06 1.061a.751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018l-1.06-1.06a.75.75 0 0 1 0-1.06Z"></path>
+    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="only-dark" fill="currentColor">
+      <path d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"></path>
+    </svg>
+  </button>
+</div><div class="bz-external-links">
+  <a
+    href="https://github.com/Stoupy51/stewbeet"
+    aria-label="GitHub"
+    data-tooltip="GitHub"
+    target="_blank"
+  >
+    <svg
+      stroke="currentColor"
+      fill="currentColor"
+      stroke-width="0"
+      viewBox="0 0 16 16"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+      ></path>
+    </svg>
+  </a></div></div>
+</header><nav class="bz-header-tabs" aria-label="Primary Navigation">
+  <label
+    class="bz-sidebar-primary-toggle"
+    for="bz-sidebar-primary"
+    role="button"
+    tabindex="0"
+  >
+    <svg class="sized muted" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path
+        fill="none"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M3.75 6.75h16.5M3.75 12H12m-8.25 5.25h12.5"
+      />
+    </svg>
+  </label><ul><li class="toctree-l1"><a class="reference internal" href="../../../../modules/stewbeet.html">stewbeet package</a></li></ul><div class="bz-dropdown">
+    <button aria-haspopup="true" aria-expanded="false">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <g
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+        >
+          <circle cx="12" cy="12" r="1" />
+          <circle cx="19" cy="12" r="1" />
+          <circle cx="5" cy="12" r="1" />
+        </g>
+      </svg>
+    </button>
+    <ul role="menu" aria-hidden="true"></ul>
+  </div>
+</nav><div class="bz-content"><main id="bz-main-content"><header class="bz-article-header">
+  
+  
+    <nav class="bz-breadcrumbs" aria-label="Breadcrumb">
+  <ol>
+    <li class="bz-breadcrumbs-home">
+      <a href="../../../../index.html">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </a>
+    </li><li class="bz-breadcrumbs-parent">
+      <a href="../../../index.html">Module code</a>
+    </li><li class="bz-breadcrumbs-parent">
+      <a href="../../../stewbeet.html">stewbeet</a>
+    </li><li class="bz-breadcrumbs-current">
+      <span>stewbeet.core.utils.io</span>
+    </li>
+  </ol>
+</nav>
+  
+
+  <label
+    class="bz-sidebar-secondary-toggle"
+    for="bz-sidebar-secondary"
+    role="button"
+    tabindex="0"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="sized muted">
+      <path
+        fill="none"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M3.75 6.75H20.25 M11.25 12H20.25 M7.75 17.25H20.25"
+      />
+    </svg>
+  </label>
+</header><article class="bz-article-main" role="main">
+  <h1>Source code for stewbeet.core.utils.io</h1><div class="highlight"><pre>
+<span></span>
+<span class="c1"># Imports</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">cast</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">stouputils</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">stp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">beet</span><span class="w"> </span><span class="kn">import</span> <span class="n">Advancement</span><span class="p">,</span> <span class="n">Function</span><span class="p">,</span> <span class="n">JsonFile</span><span class="p">,</span> <span class="n">NamespaceContainer</span><span class="p">,</span> <span class="n">NamespaceProxy</span><span class="p">,</span> <span class="n">TagFile</span><span class="p">,</span> <span class="n">Texture</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">beet.core.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">JsonDict</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..__memory__</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mem</span>
+
+<span class="c1"># Constants</span>
+<span class="n">JsonFileT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;JsonFileT&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">JsonFile</span><span class="p">)</span>
+
+<span class="c1"># Advancements</span>
+<div class="viewcode-block" id="write_advancement">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.utils.io.html#stewbeet.core.utils.io.write_advancement">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">write_advancement</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">advancement</span><span class="p">:</span> <span class="n">Advancement</span> <span class="o">|</span> <span class="n">JsonDict</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">max_level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Write an advancement at the given path.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		path        (str):  The path to the advancement (ex: &quot;namespace:folder/advancement_name&quot;)</span>
+<span class="sd">		advancement (Advancement | JsonDict): The advancement to write</span>
+<span class="sd">		overwrite   (bool): If the file should be overwritten (default: Merge with existing content using super_merge_dict)</span>
+<span class="sd">		max_level   (int):  The maximum level of the JSON dump, -1 for default behavior (default: -1)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">):</span>
+		<span class="n">path</span> <span class="o">=</span> <span class="n">path</span><span class="p">[:</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">)]</span>
+
+	<span class="c1"># Convert to dict if it&#39;s an Advancement object</span>
+	<span class="n">new_data</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">=</span> <span class="n">advancement</span><span class="o">.</span><span class="n">data</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">advancement</span><span class="p">,</span> <span class="n">Advancement</span><span class="p">)</span> <span class="k">else</span> <span class="n">advancement</span>
+
+	<span class="k">if</span> <span class="n">overwrite</span><span class="p">:</span>
+		<span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">advancements</span><span class="p">[</span><span class="n">path</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_json_encoder</span><span class="p">(</span><span class="n">Advancement</span><span class="p">(</span><span class="n">new_data</span><span class="p">),</span> <span class="n">max_level</span><span class="o">=</span><span class="n">max_level</span><span class="p">)</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="c1"># Get existing advancement or create empty one</span>
+		<span class="n">existing</span><span class="p">:</span> <span class="n">Advancement</span> <span class="o">=</span> <span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">advancements</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+		<span class="n">existing_data</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">=</span> <span class="n">existing</span><span class="o">.</span><span class="n">data</span>
+
+		<span class="c1"># Merge the new data with existing data</span>
+		<span class="n">merged_data</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">=</span> <span class="n">super_merge_dict</span><span class="p">(</span><span class="n">existing_data</span><span class="p">,</span> <span class="n">new_data</span><span class="p">)</span>
+		<span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">advancements</span><span class="p">[</span><span class="n">path</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_json_encoder</span><span class="p">(</span><span class="n">Advancement</span><span class="p">(</span><span class="n">merged_data</span><span class="p">),</span> <span class="n">max_level</span><span class="o">=</span><span class="n">max_level</span><span class="p">)</span></div>
+
+
+<span class="c1"># Functions</span>
+<div class="viewcode-block" id="write_tag">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.utils.io.html#stewbeet.core.utils.io.write_tag">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">write_tag</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tag_type</span><span class="p">:</span> <span class="n">NamespaceProxy</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="n">NamespaceContainer</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">values</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">prepend</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">max_level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Write a function tag at the given path.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		path        (str):  The path to the function tag (ex: &quot;namespace:something&quot; for &#39;data/namespace/tags/function/something.json&#39;)</span>
+<span class="sd">		tag_type    (NamespaceProxy[TagFile]): The tag type to write to (ex: ctx.data.function_tags)</span>
+<span class="sd">		values      (list[Any] | None): The values to add to the tag</span>
+<span class="sd">		prepend     (bool): If the values should be prepended instead of appended</span>
+<span class="sd">		max_level   (int | None):  The maximum level of the JSON dump, None for default behavior (default: None)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">):</span>
+		<span class="n">path</span> <span class="o">=</span> <span class="n">path</span><span class="p">[:</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">)]</span>
+	<span class="n">tag</span><span class="p">:</span> <span class="n">TagFile</span> <span class="o">=</span> <span class="n">tag_type</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+	<span class="n">data</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">=</span> <span class="n">tag</span><span class="o">.</span><span class="n">data</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;values&quot;</span><span class="p">):</span>
+		<span class="n">data</span><span class="p">[</span><span class="s2">&quot;values&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span> <span class="ow">or</span> <span class="p">[]</span>
+
+	<span class="k">if</span> <span class="n">prepend</span><span class="p">:</span>
+		<span class="n">data</span><span class="p">[</span><span class="s2">&quot;values&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">values</span> <span class="ow">or</span> <span class="p">[])</span> <span class="o">+</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;values&quot;</span><span class="p">]</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">data</span><span class="p">[</span><span class="s2">&quot;values&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">values</span> <span class="ow">or</span> <span class="p">[])</span>
+	<span class="n">data</span><span class="p">[</span><span class="s2">&quot;values&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stp</span><span class="o">.</span><span class="n">unique_list</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;values&quot;</span><span class="p">])</span>
+	<span class="k">if</span> <span class="n">max_level</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="n">tag</span><span class="o">.</span><span class="n">encoder</span> <span class="o">=</span> <span class="n">stp</span><span class="o">.</span><span class="n">json_dump</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">tag</span><span class="o">.</span><span class="n">encoder</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">stp</span><span class="o">.</span><span class="n">json_dump</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">max_level</span><span class="o">=</span><span class="n">max_level</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="write_function_tag">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.utils.io.html#stewbeet.core.utils.io.write_function_tag">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">write_function_tag</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">functions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">prepend</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">max_level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Write a function tag at the given path.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		path        (str):  The path to the function tag (ex: &quot;namespace:something&quot; for &#39;data/namespace/tags/function/something.json&#39;)</span>
+<span class="sd">		functions   (list[Any] | None): The functions to add to the tag</span>
+<span class="sd">		prepend     (bool): If the functions should be prepended instead of appended</span>
+<span class="sd">		max_level   (int | None):  The maximum level of the JSON dump, None for default behavior (default: None)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">write_tag</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">function_tags</span><span class="p">,</span> <span class="n">functions</span><span class="p">,</span> <span class="n">prepend</span><span class="p">,</span> <span class="n">max_level</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="read_function">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.utils.io.html#stewbeet.core.utils.io.read_function">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_function</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Read the content of a function at the given path.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		path (str): The path to the function (ex: &quot;namespace:folder/function_name&quot;)</span>
+
+<span class="sd">	Returns:</span>
+<span class="sd">		str: The content of the function</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.mcfunction&quot;</span><span class="p">):</span>
+		<span class="n">path</span> <span class="o">=</span> <span class="n">path</span><span class="p">[:</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="s2">&quot;.mcfunction&quot;</span><span class="p">)]</span>
+	<span class="k">return</span> <span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">functions</span><span class="p">[</span><span class="n">path</span><span class="p">]</span><span class="o">.</span><span class="n">text</span></div>
+
+
+
+<div class="viewcode-block" id="write_function">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.utils.io.html#stewbeet.core.utils.io.write_function">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">write_function</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">prepend</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">tags</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Write the content to the function at the given path.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		path            (str):  The path to the function (ex: &quot;namespace:folder/function_name&quot;)</span>
+<span class="sd">		content         (str):  The content to write</span>
+<span class="sd">		overwrite       (bool): If the file should be overwritten (default: Append the content)</span>
+<span class="sd">		prepend         (bool): If the content should be prepended instead of appended (not used if overwrite is True)</span>
+<span class="sd">		tags            (list[str] | None): The function tags to add to the function (ex: [&quot;namespace:something&quot;] for &#39;data/namespace/tags/function/something.json&#39;)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.mcfunction&quot;</span><span class="p">):</span>
+		<span class="n">path</span> <span class="o">=</span> <span class="n">path</span><span class="p">[:</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="s2">&quot;.mcfunction&quot;</span><span class="p">)]</span>
+	<span class="k">if</span> <span class="n">overwrite</span><span class="p">:</span>
+		<span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">functions</span><span class="p">[</span><span class="n">path</span><span class="p">]</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">prepend</span><span class="p">:</span>
+			<span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">functions</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">prepend</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">functions</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">tags</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">tags</span><span class="p">:</span>
+			<span class="n">write_function_tag</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="p">[</span><span class="n">path</span><span class="p">],</span> <span class="n">prepend</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="write_load_file">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.utils.io.html#stewbeet.core.utils.io.write_load_file">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">write_load_file</span><span class="p">(</span><span class="n">content</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">prepend</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">tags</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Write the content to the load file</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		content     (str):  The content to write</span>
+<span class="sd">		overwrite   (bool): If the file should be overwritten (default: Append the content)</span>
+<span class="sd">		prepend     (bool): If the content should be prepended instead of appended (not used if overwrite is True)</span>
+<span class="sd">		tags        (list[str] | None): The function tags to add to the function (ex: [&quot;namespace:something&quot;] for &#39;data/namespace/tags/function/something.json&#39;)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">project_id</span><span class="si">}</span><span class="s2">:v</span><span class="si">{</span><span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">project_version</span><span class="si">}</span><span class="s2">/load/confirm_load&quot;</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">,</span> <span class="n">prepend</span><span class="p">,</span> <span class="n">tags</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="write_tick_file">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.utils.io.html#stewbeet.core.utils.io.write_tick_file">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">write_tick_file</span><span class="p">(</span><span class="n">content</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">prepend</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">tags</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Write the content to the tick file</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		content     (str):  The content to write</span>
+<span class="sd">		overwrite   (bool): If the file should be overwritten (default: Append the content)</span>
+<span class="sd">		prepend     (bool): If the content should be prepended instead of appended (not used if overwrite is True)</span>
+<span class="sd">		tags        (list[str] | None): The function tags to add to the function (ex: [&quot;namespace:something&quot;] for &#39;data/namespace/tags/function/something.json&#39;)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">project_id</span><span class="si">}</span><span class="s2">:v</span><span class="si">{</span><span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">project_version</span><span class="si">}</span><span class="s2">/tick&quot;</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">,</span> <span class="n">prepend</span><span class="p">,</span> <span class="n">tags</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="write_versioned_function">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.utils.io.html#stewbeet.core.utils.io.write_versioned_function">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">write_versioned_function</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">prepend</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">tags</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Write the content to a versioned function at the given path.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		path            (str):  The path to the function (ex: &quot;folder/function_name&quot;)</span>
+<span class="sd">		content         (str):  The content to write</span>
+<span class="sd">		overwrite       (bool): If the file should be overwritten (default: Append the content)</span>
+<span class="sd">		prepend         (bool): If the content should be prepended instead of appended (not used if overwrite is True)</span>
+<span class="sd">		tags            (list[str] | None): The function tags to add to the function (ex: [&quot;namespace:something&quot;] for &#39;data/namespace/tags/function/something.json&#39;)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">write_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">project_id</span><span class="si">}</span><span class="s2">:v</span><span class="si">{</span><span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">project_version</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">,</span> <span class="n">prepend</span><span class="p">,</span> <span class="n">tags</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># Merge two dict recuirsively</span>
+<div class="viewcode-block" id="super_merge_dict">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.utils.io.html#stewbeet.core.utils.io.super_merge_dict">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">super_merge_dict</span><span class="p">(</span><span class="n">dict1</span><span class="p">:</span> <span class="n">JsonDict</span><span class="p">,</span> <span class="n">dict2</span><span class="p">:</span> <span class="n">JsonDict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonDict</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Merge the two dictionnaries recursively without modifying originals</span>
+<span class="sd">	Args:</span>
+<span class="sd">		dict1 (dict): The first dictionnary</span>
+<span class="sd">		dict2 (dict): The second dictionnary</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		dict: The merged dictionnary</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1"># Copy first dictionnary</span>
+	<span class="n">new_dict</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">=</span> <span class="p">{}</span>
+	<span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">dict1</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+		<span class="n">new_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+	<span class="c1"># For each key of the second dictionnary,</span>
+	<span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">dict2</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+		<span class="c1"># If key exists in dict1, and both values are also dict, merge recursively</span>
+		<span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">dict1</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dict1</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+			<span class="n">new_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">super_merge_dict</span><span class="p">(</span><span class="n">dict1</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">cast</span><span class="p">(</span><span class="n">JsonDict</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+
+		<span class="c1"># Else if it&#39;s a list, merge it</span>
+		<span class="k">elif</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">dict1</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dict1</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+			<span class="n">new_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">dict1</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">+</span> <span class="n">value</span>
+			<span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">new_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]):</span>
+				<span class="n">new_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">stp</span><span class="o">.</span><span class="n">unique_list</span><span class="p">(</span><span class="n">new_dict</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+
+		<span class="c1"># Else, just overwrite or add value</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">new_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+	<span class="c1"># Return the new dict</span>
+	<span class="k">return</span> <span class="n">new_dict</span></div>
+
+
+
+<span class="c1"># Set the JSON encoder to json_dump for a JsonFile object</span>
+<div class="viewcode-block" id="set_json_encoder">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.utils.io.html#stewbeet.core.utils.io.set_json_encoder">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_json_encoder</span><span class="p">[</span><span class="n">JsonFileT</span><span class="p">:</span> <span class="n">JsonFile</span><span class="p">](</span>
+	<span class="n">obj</span><span class="p">:</span> <span class="n">JsonFileT</span><span class="p">,</span> <span class="n">max_level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">indent</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonFileT</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Set the encoder of the given object to json_dump</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		obj			(JsonFile):		The object to set the encoder for</span>
+<span class="sd">		max_level	(int | None):	The maximum level of the JSON dump, or None for default behavior</span>
+<span class="sd">		indent		(str | int):	The indentation character (default: &#39;\t&#39;)</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		JsonFile: The object with the encoder set</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">if</span> <span class="n">max_level</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="n">obj</span><span class="o">.</span><span class="n">encoder</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">stp</span><span class="o">.</span><span class="n">json_dump</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="n">indent</span><span class="p">)</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">obj</span><span class="o">.</span><span class="n">encoder</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">stp</span><span class="o">.</span><span class="n">json_dump</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">max_level</span><span class="o">=</span><span class="n">max_level</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="n">indent</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">obj</span></div>
+
+
+
+<span class="c1"># Convert objects with to_dict() to JSON-serializable forms</span>
+<div class="viewcode-block" id="convert_to_serializable">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.utils.io.html#stewbeet.core.utils.io.convert_to_serializable">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_to_serializable</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Recursively convert objects to JSON-serializable forms.</span>
+
+<span class="sd">	Objects with a `to_dict()` method are converted to their dictionary representation.</span>
+<span class="sd">	Dictionaries and lists are recursively processed.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		obj (Any): The object to convert</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		Any: The JSON-serializable version of the object</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;to_dict&#39;</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+	<span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+		<span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">convert_to_serializable</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+	<span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+		<span class="k">return</span> <span class="p">[</span><span class="n">convert_to_serializable</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">]</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">obj</span></div>
+
+
+
+<span class="c1"># Create a texture object with mcmeta if found</span>
+<div class="viewcode-block" id="texture_mcmeta">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.utils.io.html#stewbeet.core.utils.io.texture_mcmeta">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">texture_mcmeta</span><span class="p">(</span><span class="n">source_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Texture</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Create a Texture object with mcmeta if found</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		source_path (str): The path to the texture (ex: &quot;assets/textures/texture_name.png&quot;)</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		Texture: The texture object</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">mcmeta_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">source_path</span><span class="si">}</span><span class="s2">.mcmeta&quot;</span>
+	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">mcmeta_path</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">Texture</span><span class="p">(</span><span class="n">source_path</span><span class="o">=</span><span class="n">source_path</span><span class="p">,</span> <span class="n">mcmeta</span><span class="o">=</span><span class="n">stp</span><span class="o">.</span><span class="n">json_load</span><span class="p">(</span><span class="n">mcmeta_path</span><span class="p">))</span>
+	<span class="k">return</span> <span class="n">Texture</span><span class="p">(</span><span class="n">source_path</span><span class="o">=</span><span class="n">source_path</span><span class="p">)</span></div>
+
+
+</pre></div>
+</article><footer class="bz-article-footer">
+  
+  
+    <nav class="bz-related-pages" aria-label="Related pages navigation"></nav>
+  
+
+</footer></main>
+  </div><footer class="bz-footer">
+  <div class="bz-footer-copyright"><p class="bz-copyright">© Copyright 2025, Stoupy</p><p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://github.com/aksiome/breeze">Breeze theme</a>.
+  </p>
+</div><div class="bz-external-links">
+  <a
+    href="https://github.com/Stoupy51/stewbeet"
+    aria-label="GitHub"
+    data-tooltip="GitHub"
+    target="_blank"
+  >
+    <svg
+      stroke="currentColor"
+      fill="currentColor"
+      stroke-width="0"
+      viewBox="0 0 16 16"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+      ></path>
+    </svg>
+  </a></div>
+</footer><a href="#" class="bz-back-to-top">
+    <svg class="sized" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m5 12 7-7 7 7"/><path d="M12 19V5"/>
+    </svg>
+    <span>Back to top</span>
+  </a>
+  <label class="bz-overlay bz-overlay-primary" for="bz-sidebar-primary"></label>
+  <label class="bz-overlay bz-overlay-secondary" for="bz-sidebar-secondary"></label>
+  <input type="checkbox" name="bz-sidebar-primary" id="bz-sidebar-primary" aria-label="Toggle site navigation sidebar">
+  <input type="checkbox" name="bz-sidebar-secondary" id="bz-sidebar-secondary" aria-label="Toggle table of contents sidebar">
+  </body>
+</html>

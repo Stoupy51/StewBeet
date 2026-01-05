@@ -1,0 +1,8 @@
+stewbeet.plugins.finalyze.dependencies package
+==============================================
+
+.. automodule:: stewbeet.plugins.finalyze.dependencies
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

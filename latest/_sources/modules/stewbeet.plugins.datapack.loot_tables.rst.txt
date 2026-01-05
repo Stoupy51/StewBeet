@@ -1,0 +1,8 @@
+stewbeet.plugins.datapack.loot\_tables package
+==============================================
+
+.. automodule:: stewbeet.plugins.datapack.loot_tables
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

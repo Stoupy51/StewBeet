@@ -1,0 +1,8 @@
+stewbeet.plugins.resource\_pack.check\_power\_of\_2 package
+===========================================================
+
+.. automodule:: stewbeet.plugins.resource_pack.check_power_of_2
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
