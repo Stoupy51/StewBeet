@@ -8,7 +8,7 @@ from beet import Advancement, BlockTag, Context, EntityTypeTag, LootTable, Predi
 from beet.core.utils import JsonDict
 
 from ....core.__memory__ import Mem
-from ....core.cls.block import VANILLA_BLOCK_FOR_ORES, GrowingSeed, GrowingSeedLoot
+from ....core.cls.block import VANILLA_BLOCK_FOR_ORES, GrowingSeed, GrowingSeedLoot, NoSilkTouchDrop
 from ....core.cls.item import Item
 from ....core.constants import (
 	BLOCKS_WITH_INTERFACES,
@@ -584,7 +584,7 @@ execute unless entity @n[type=item,nbt={{Item:{item_nbt}}},distance=..1] run loo
 
 				# Handle no silk touch drop
 				no_silk_touch_drop: str | JsonDict = data[NO_SILK_TOUCH_DROP]
-				if isinstance(no_silk_touch_drop, dict):
+				if isinstance(no_silk_touch_drop, dict | NoSilkTouchDrop):
 					item_to_drop: str = no_silk_touch_drop["id"]
 					if isinstance(no_silk_touch_drop.get("count"), int):
 						item_count_min = no_silk_touch_drop["count"]
