@@ -1,0 +1,44 @@
+{
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "minecraft:item",
+					"name": "minecraft:written_book",
+					"functions": [
+						{
+							"function": "minecraft:set_components",
+							"components": {
+								"minecraft:item_model": "_your_namespace:manual",
+								"minecraft:item_name": "Extensive Template Manual",
+								"minecraft:enchantment_glint_override": false,
+								"minecraft:max_stack_size": 16,
+								"minecraft:lore": [
+									{
+										"translate": "_your_namespace.by_stoupy51",
+										"color": "gray",
+										"italic": false
+									},
+									[
+										"",
+										{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},
+										{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}
+									]
+								],
+								"minecraft:custom_data": {
+									"_your_namespace": {
+										"manual": true
+									},
+									"smithed": {
+										"ignore": {"functionality": true,"crafting": true}
+									}
+								}
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}

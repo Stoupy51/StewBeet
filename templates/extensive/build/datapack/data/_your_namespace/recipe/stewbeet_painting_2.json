@@ -1,0 +1,52 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"category": "decorations",
+	"group": "stewbeet_painting",
+	"pattern": [
+		"###",
+		"#F#",
+		"###"
+	],
+	"key": {
+		"#": "minecraft:blue_egg",
+		"F": "minecraft:beetroot"
+	},
+	"result": {
+		"id": "minecraft:painting",
+		"count": 1,
+		"components": {
+			"minecraft:painting/variant": "_your_namespace:stewbeet_painting",
+			"minecraft:item_model": "_your_namespace:stewbeet_painting",
+			"minecraft:item_name": {
+				"translate": "_your_namespace.stewbeet_painting"
+			},
+			"minecraft:lore": [
+				[
+					"",
+					{
+						"text": "I",
+						"color": "white",
+						"italic": false,
+						"font": "_your_namespace:icons"
+					},
+					{
+						"translate": "_your_namespace.extensive_template",
+						"italic": true,
+						"color": "blue"
+					}
+				]
+			],
+			"minecraft:custom_data": {
+				"_your_namespace": {
+					"stewbeet_painting": true
+				},
+				"smithed": {
+					"ignore": {
+						"functionality": true,
+						"crafting": true
+					}
+				}
+			}
+		}
+	}
+}

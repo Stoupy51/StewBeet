@@ -1,0 +1,44 @@
+{
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "minecraft:item",
+					"name": "minecraft:command_block",
+					"functions": [
+						{
+							"function": "minecraft:set_components",
+							"components": {
+								"minecraft:custom_data": {
+									"_your_namespace": {
+										"shazinho": true
+									},
+									"smithed": {
+										"dict": {"record": {"shazinho": true,"item_name": "Shazinho"},"jukebox_song": {"comparator_output": 15,"length_in_seconds": 128,"sound_event": {"sound_id": "_your_namespace:shazinho"},"description": {"translate": "_your_namespace.shazinho"}}},
+										"ignore": {"functionality": true,"crafting": true}
+									}
+								},
+								"minecraft:item_name": {
+									"translate": "_your_namespace.music_disc",
+									"italic": false
+								},
+								"minecraft:jukebox_playable": "_your_namespace:shazinho",
+								"minecraft:max_stack_size": 1,
+								"minecraft:rarity": "rare",
+								"minecraft:item_model": "_your_namespace:shazinho",
+								"minecraft:lore": [
+									[
+										"",
+										{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},
+										{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}
+									]
+								]
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}

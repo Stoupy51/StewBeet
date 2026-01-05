@@ -1,0 +1,82 @@
+{
+	"type": "minecraft:notice",
+	"title": [
+		"",
+		{
+			"sprite": "_your_namespace:item/dialog_sprite/stewbeet_painting",
+			"shadow_color": [
+				0,
+				0,
+				0,
+				0
+			],
+			"atlas": "minecraft:items"
+		},
+		" ",
+		{
+			"translate": "_your_namespace.stewbeet_painting",
+			"underlined": true
+		},
+		" ",
+		{
+			"sprite": "_your_namespace:item/dialog_sprite/stewbeet_painting",
+			"shadow_color": [
+				0,
+				0,
+				0,
+				0
+			],
+			"atlas": "minecraft:items"
+		}
+	],
+	"body": [
+		{
+			"type": "minecraft:plain_message",
+			"contents": [
+				{"text": "V   ","font": "_your_namespace:manual","color": "white"},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_28"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"}," (28)"]}},
+				" ",
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_30"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"}," (30)"]}},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_28"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"}," (28)"]}},
+				" ",
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_30"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"}," (30)"]}}
+			],
+			"width": 400
+		},
+		{
+			"type": "minecraft:plain_message",
+			"contents": [
+				{"text": "","font": "_your_namespace:manual","color": "white","shadow_color": [0,0,0,0]},
+				"\"$6\n\"",
+				{"text": "$腌$腌$腌","hover_event": {"action": "show_item","id": "minecraft:egg","components": {}}},
+				"  \n\"",
+				{"translate": "_your_namespace.uuu","hover_event": {"action": "show_item","id": "minecraft:egg","components": {}}},
+				"  \n\"",
+				{"text": "$腌","hover_event": {"action": "show_item","id": "minecraft:egg","components": {}}},
+				{"text": "$腍","hover_event": {"action": "show_item","id": "minecraft:beetroot","components": {}}},
+				{"text": "$腌","hover_event": {"action": "show_item","id": "minecraft:egg","components": {}}},
+				"\"\"",
+				{"text": "$$聍","hover_event": {"action": "show_item","id": "painting","components": {"painting/variant": "_your_namespace:stewbeet_painting","item_model": "_your_namespace:stewbeet_painting","item_name": {"translate": "_your_namespace.stewbeet_painting"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]],"custom_data": {"_your_namespace": {"stewbeet_painting": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}}}}},
+				"#$\n\"",
+				{"text": "U$","hover_event": {"action": "show_item","id": "minecraft:egg","components": {}}},
+				{"text": "U$","hover_event": {"action": "show_item","id": "minecraft:beetroot","components": {}}},
+				{"text": "U$","hover_event": {"action": "show_item","id": "minecraft:egg","components": {}}},
+				"\"\"",
+				{"text": "U$","hover_event": {"action": "show_item","id": "painting","components": {"painting/variant": "_your_namespace:stewbeet_painting","item_model": "_your_namespace:stewbeet_painting","item_name": {"translate": "_your_namespace.stewbeet_painting"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]],"custom_data": {"_your_namespace": {"stewbeet_painting": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}}}}},
+				"#$\n\"",
+				{"text": "$腌$腌$腌","hover_event": {"action": "show_item","id": "minecraft:egg","components": {}}},
+				"  \n\"",
+				{"translate": "_your_namespace.uuu","hover_event": {"action": "show_item","id": "minecraft:egg","components": {}}},
+				"  \n\n",
+				{"text": "2##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$腌"},{"text": "$腌"},{"text": "$腌"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$腌"},{"text": "$腍"},{"text": "$腌"},"\"\"",{"text": "$$聍"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$腌"},{"text": "$腌"},{"text": "$腌"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x8 ","color": "gray"},{"translate": "_your_namespace.egg","color": "gray"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.beetroot","color": "gray"}]}},
+				{"text": "2##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$腒"},{"text": "$腒"},{"text": "$腒"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$腒"},{"text": "$腍"},{"text": "$腒"},"\"\"",{"text": "$$聍"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$腒"},{"text": "$腒"},{"text": "$腒"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x8 ","color": "gray"},{"translate": "_your_namespace.blue_egg","color": "gray"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.beetroot","color": "gray"}]}},
+				{"text": "2\n","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$腕"},{"text": "$腕"},{"text": "$腕"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$腕"},{"text": "$腍"},{"text": "$腕"},"\"\"",{"text": "$$聍"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$腕"},{"text": "$腕"},{"text": "$腕"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x8 ","color": "gray"},{"translate": "_your_namespace.brown_egg","color": "gray"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.beetroot","color": "gray"}]}},
+				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$腌"},{"text": "$腌"},{"text": "$腌"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$腌"},{"text": "$腍"},{"text": "$腌"},"\"\"",{"text": "$$聍"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$腌"},{"text": "$腌"},{"text": "$腌"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x8 ","color": "gray"},{"translate": "_your_namespace.egg","color": "gray"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.beetroot","color": "gray"}]}},
+				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$腒"},{"text": "$腒"},{"text": "$腒"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$腒"},{"text": "$腍"},{"text": "$腒"},"\"\"",{"text": "$$聍"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$腒"},{"text": "$腒"},{"text": "$腒"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x8 ","color": "gray"},{"translate": "_your_namespace.blue_egg","color": "gray"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.beetroot","color": "gray"}]}},
+				{"text": "0","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$腕"},{"text": "$腕"},{"text": "$腕"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$腕"},{"text": "$腍"},{"text": "$腕"},"\"\"",{"text": "$$聍"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$腕"},{"text": "$腕"},{"text": "$腕"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x8 ","color": "gray"},{"translate": "_your_namespace.brown_egg","color": "gray"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.beetroot","color": "gray"}]}},
+				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+			],
+			"width": 140
+		}
+	]
+}

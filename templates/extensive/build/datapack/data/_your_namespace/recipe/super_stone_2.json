@@ -1,0 +1,77 @@
+{
+	"type": "minecraft:crafting_shapeless",
+	"category": "blocks",
+	"group": "super_stone",
+	"ingredients": [
+		"minecraft:deepslate",
+		"minecraft:deepslate",
+		"minecraft:deepslate",
+		"minecraft:deepslate",
+		"minecraft:deepslate",
+		"minecraft:deepslate",
+		"minecraft:deepslate",
+		"minecraft:deepslate",
+		"minecraft:deepslate"
+	],
+	"result": {
+		"id": "minecraft:furnace",
+		"count": 1,
+		"components": {
+			"minecraft:container": [
+				{
+					"slot": 0,
+					"item": {
+						"id": "minecraft:stone",
+						"count": 1,
+						"components": {
+							"minecraft:custom_data": {
+								"smithed": {
+									"block": {
+										"id": "_your_namespace:super_stone",
+										"from": "_your_namespace"
+									}
+								}
+							}
+						}
+					}
+				}
+			],
+			"minecraft:tooltip_display": {
+				"hidden_components": [
+					"minecraft:container"
+				]
+			},
+			"minecraft:item_model": "_your_namespace:super_stone",
+			"minecraft:item_name": {
+				"translate": "_your_namespace.super_stone"
+			},
+			"minecraft:lore": [
+				[
+					"",
+					{
+						"text": "I",
+						"color": "white",
+						"italic": false,
+						"font": "_your_namespace:icons"
+					},
+					{
+						"translate": "_your_namespace.extensive_template",
+						"italic": true,
+						"color": "blue"
+					}
+				]
+			],
+			"minecraft:custom_data": {
+				"_your_namespace": {
+					"super_stone": true
+				},
+				"smithed": {
+					"ignore": {
+						"functionality": true,
+						"crafting": true
+					}
+				}
+			}
+		}
+	}
+}

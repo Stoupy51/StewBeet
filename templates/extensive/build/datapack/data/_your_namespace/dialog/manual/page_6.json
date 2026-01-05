@@ -1,0 +1,41 @@
+{
+	"type": "minecraft:notice",
+	"title": {
+		"translate": "_your_namespace.miscellaneous",
+		"underlined": true
+	},
+	"body": [
+		{
+			"type": "minecraft:plain_message",
+			"contents": [
+				{"text": "V   ","font": "_your_namespace:manual","color": "white"},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_5"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"}," (5)"]}},
+				" ",
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_7"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"}," (7)"]}},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_5"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"}," (5)"]}},
+				" ",
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_7"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"}," (7)"]}}
+			],
+			"width": 400
+		},
+		{
+			"type": "minecraft:plain_message",
+			"contents": [
+				{"text": "","font": "_your_namespace:manual","color": "white","shadow_color": [0,0,0,0]},
+				"\"ဥ\n\"",
+				{"text": "$聉","hover_event": {"action": "show_item","id": "command_block","components": {"custom_data": {"_your_namespace": {"shazinho": true},"smithed": {"dict": {"record": {"shazinho": true,"item_name": "Shazinho"},"jukebox_song": {"comparator_output": 15,"length_in_seconds": 128,"sound_event": {"sound_id": "_your_namespace:shazinho"},"description": {"translate": "_your_namespace.shazinho"}}},"ignore": {"functionality": true,"crafting": true}}},"item_name": {"translate": "_your_namespace.music_disc","italic": false},"jukebox_playable": "_your_namespace:shazinho","max_stack_size": 1,"rarity": "rare","item_model": "_your_namespace:shazinho","lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_27"}},
+				{"text": "$聋","hover_event": {"action": "show_item","id": "furnace","components": {"container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:super_stone","from": "_your_namespace"}}}}}}],"tooltip_display": {"hidden_components": ["minecraft:container"]},"item_model": "_your_namespace:super_stone","item_name": {"translate": "_your_namespace.super_stone"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]],"custom_data": {"_your_namespace": {"super_stone": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}}}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_28"}},
+				{"text": "$聍","hover_event": {"action": "show_item","id": "painting","components": {"painting/variant": "_your_namespace:stewbeet_painting","item_model": "_your_namespace:stewbeet_painting","item_name": {"translate": "_your_namespace.stewbeet_painting"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]],"custom_data": {"_your_namespace": {"stewbeet_painting": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}}}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_29"}},
+				{"text": "$聏","hover_event": {"action": "show_item","id": "command_block","components": {"item_name": "Extensive Template Manual","item_model": "_your_namespace:manual","lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]],"custom_data": {"_your_namespace": {"manual": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}}}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_30"}},
+				"#\n\"",
+				{"text": "!","hover_event": {"action": "show_item","id": "command_block","components": {"custom_data": {"_your_namespace": {"shazinho": true},"smithed": {"dict": {"record": {"shazinho": true,"item_name": "Shazinho"},"jukebox_song": {"comparator_output": 15,"length_in_seconds": 128,"sound_event": {"sound_id": "_your_namespace:shazinho"},"description": {"translate": "_your_namespace.shazinho"}}},"ignore": {"functionality": true,"crafting": true}}},"item_name": {"translate": "_your_namespace.music_disc","italic": false},"jukebox_playable": "_your_namespace:shazinho","max_stack_size": 1,"rarity": "rare","item_model": "_your_namespace:shazinho","lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_27"}},
+				{"text": "!","hover_event": {"action": "show_item","id": "furnace","components": {"container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:super_stone","from": "_your_namespace"}}}}}}],"tooltip_display": {"hidden_components": ["minecraft:container"]},"item_model": "_your_namespace:super_stone","item_name": {"translate": "_your_namespace.super_stone"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]],"custom_data": {"_your_namespace": {"super_stone": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}}}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_28"}},
+				{"text": "!","hover_event": {"action": "show_item","id": "painting","components": {"painting/variant": "_your_namespace:stewbeet_painting","item_model": "_your_namespace:stewbeet_painting","item_name": {"translate": "_your_namespace.stewbeet_painting"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]],"custom_data": {"_your_namespace": {"stewbeet_painting": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}}}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_29"}},
+				{"text": "!","hover_event": {"action": "show_item","id": "command_block","components": {"item_name": "Extensive Template Manual","item_model": "_your_namespace:manual","lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]],"custom_data": {"_your_namespace": {"manual": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}}}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_30"}},
+				"#\n",
+				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+			],
+			"width": 140
+		}
+	]
+}

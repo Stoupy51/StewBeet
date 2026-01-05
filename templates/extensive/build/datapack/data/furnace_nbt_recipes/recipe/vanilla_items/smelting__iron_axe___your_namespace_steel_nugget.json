@@ -1,0 +1,48 @@
+{
+	"type": "minecraft:smelting",
+	"ingredient": "minecraft:iron_axe",
+	"result": {
+		"id": "minecraft:command_block",
+		"count": 1,
+		"components": {
+			"minecraft:custom_data": {
+				"smithed": {
+					"dict": {
+						"nugget": {
+							"steel": true
+						}
+					},
+					"ignore": {
+						"functionality": true,
+						"crafting": true
+					}
+				},
+				"_your_namespace": {
+					"steel_nugget": true
+				}
+			},
+			"minecraft:item_model": "_your_namespace:steel_nugget",
+			"minecraft:item_name": {
+				"translate": "_your_namespace.steel_nugget"
+			},
+			"minecraft:lore": [
+				[
+					"",
+					{
+						"text": "I",
+						"color": "white",
+						"italic": false,
+						"font": "_your_namespace:icons"
+					},
+					{
+						"translate": "_your_namespace.extensive_template",
+						"italic": true,
+						"color": "blue"
+					}
+				]
+			]
+		}
+	},
+	"experience": 0.8,
+	"cookingtime": 200
+}

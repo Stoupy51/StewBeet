@@ -1,0 +1,5 @@
+{
+	"providers": [
+		{"type": "bitmap","file": "_your_namespace:font/original_icon.png","ascent": 8,"height": 9,"chars": ["I"]}
+	]
+}

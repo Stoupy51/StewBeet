@@ -1,0 +1,20 @@
+
+## Beet configuration file for a minimal template project using stewbeet, bolt, and mecha.
+# (You guessed it but, this is not the most minimal template)
+
+# Path to a folder for beet to output. If not defined, no files will visibly output
+output: "build"
+
+# A list of importable plugin strings
+require:
+    - "bolt"
+
+# Takes a nested pack config, see PackConfig() documentation
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+pipeline:
+    - "mecha"
+    - "stewbeet.plugins.auto.headers"
+
