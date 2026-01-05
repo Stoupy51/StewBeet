@@ -1,0 +1,6 @@
+{
+	"parent": "minecraft:item/iron_sword",
+	"textures": {
+		"layer0": "_your_namespace:item/steel_sword"
+	}
+}

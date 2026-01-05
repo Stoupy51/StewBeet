@@ -1,0 +1,77 @@
+{
+	"type": "minecraft:notice",
+	"title": [
+		"",
+		{
+			"sprite": "_your_namespace:item/dialog_sprite/heavy_workbench",
+			"shadow_color": [
+				0,
+				0,
+				0,
+				0
+			],
+			"atlas": "minecraft:items"
+		},
+		" ",
+		{
+			"translate": "_your_namespace.heavy_workbench",
+			"underlined": true
+		},
+		" ",
+		{
+			"sprite": "_your_namespace:item/dialog_sprite/heavy_workbench",
+			"shadow_color": [
+				0,
+				0,
+				0,
+				0
+			],
+			"atlas": "minecraft:items"
+		}
+	],
+	"body": [
+		{
+			"type": "minecraft:plain_message",
+			"contents": [
+				{"text": "V   ","font": "_your_namespace:manual","color": "white"},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_1"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"}," (1)"]}},
+				" ",
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_3"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"}," (3)"]}},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_1"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"}," (1)"]}},
+				" ",
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_3"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"}," (3)"]}}
+			],
+			"width": 400
+		},
+		{
+			"type": "minecraft:plain_message",
+			"contents": [
+				{"text": "","font": "_your_namespace:manual","color": "white","shadow_color": [0,0,0,0]},
+				"\"$6\n\"",
+				{"text": "$腠$腠$腠","hover_event": {"action": "show_item","id": "minecraft:oak_log","components": {}}},
+				"  \n\"",
+				{"translate": "_your_namespace.uuu","hover_event": {"action": "show_item","id": "minecraft:oak_log","components": {}}},
+				"  \n\"",
+				{"text": "$腠","hover_event": {"action": "show_item","id": "minecraft:oak_log","components": {}}},
+				{"text": "$腡","hover_event": {"action": "show_item","id": "minecraft:crafting_table","components": {}}},
+				{"text": "$腠","hover_event": {"action": "show_item","id": "minecraft:oak_log","components": {}}},
+				"\"\"",
+				{"text": "$$腟","hover_event": {"action": "show_item","id": "furnace","components": {"item_name": "Heavy Workbench","item_model": "_your_namespace:heavy_workbench","container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:heavy_workbench","from": "_your_namespace"}}}}}}],"tooltip_display": {"hidden_components": ["minecraft:container"]}}}},
+				"#$\n\"",
+				{"text": "U$","hover_event": {"action": "show_item","id": "minecraft:oak_log","components": {}}},
+				{"text": "U$","hover_event": {"action": "show_item","id": "minecraft:crafting_table","components": {}}},
+				{"text": "U$","hover_event": {"action": "show_item","id": "minecraft:oak_log","components": {}}},
+				"\"\"",
+				{"text": "U$","hover_event": {"action": "show_item","id": "furnace","components": {"item_name": "Heavy Workbench","item_model": "_your_namespace:heavy_workbench","container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:heavy_workbench","from": "_your_namespace"}}}}}}],"tooltip_display": {"hidden_components": ["minecraft:container"]}}}},
+				"#$\n\"",
+				{"text": "$腢$腢$腢","hover_event": {"action": "show_item","id": "minecraft:smooth_stone","components": {}}},
+				"  \n\"",
+				{"translate": "_your_namespace.uuu","hover_event": {"action": "show_item","id": "minecraft:smooth_stone","components": {}}},
+				"  \n",
+				[{"translate": "_your_namespace.every_recipe_that_uses_custom_items","font": "minecraft:default","color": "black"},{"translate": "_your_namespace.must","color": "red","underlined": true}," be crafted using the Heavy Workbench."],
+				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+			],
+			"width": 140
+		}
+	]
+}

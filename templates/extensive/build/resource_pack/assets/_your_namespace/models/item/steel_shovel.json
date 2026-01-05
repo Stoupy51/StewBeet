@@ -1,0 +1,6 @@
+{
+	"parent": "minecraft:item/iron_shovel",
+	"textures": {
+		"layer0": "_your_namespace:item/steel_shovel"
+	}
+}

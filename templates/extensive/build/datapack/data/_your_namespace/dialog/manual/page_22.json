@@ -1,0 +1,76 @@
+{
+	"type": "minecraft:notice",
+	"title": [
+		"",
+		{
+			"sprite": "_your_namespace:item/dialog_sprite/steel_sword",
+			"shadow_color": [
+				0,
+				0,
+				0,
+				0
+			],
+			"atlas": "minecraft:items"
+		},
+		" ",
+		{
+			"translate": "_your_namespace.steel_sword",
+			"underlined": true
+		},
+		" ",
+		{
+			"sprite": "_your_namespace:item/dialog_sprite/steel_sword",
+			"shadow_color": [
+				0,
+				0,
+				0,
+				0
+			],
+			"atlas": "minecraft:items"
+		}
+	],
+	"body": [
+		{
+			"type": "minecraft:plain_message",
+			"contents": [
+				{"text": "V   ","font": "_your_namespace:manual","color": "white"},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_21"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"}," (21)"]}},
+				" ",
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_23"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"}," (23)"]}},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_21"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"}," (21)"]}},
+				" ",
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_23"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"}," (23)"]}}
+			],
+			"width": 400
+		},
+		{
+			"type": "minecraft:plain_message",
+			"contents": [
+				{"text": "","font": "_your_namespace:manual","color": "white","shadow_color": [0,0,0,0]},
+				"\"$6\n\"U$",
+				{"text": "$耡","hover_event": {"action": "show_item","id": "command_block","components": {"custom_data": {"smithed": {"dict": {"ingot": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ingot": true}},"item_model": "_your_namespace:steel_ingot","item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_7"}},
+				"U$  \n\"U$",
+				{"text": "U$","hover_event": {"action": "show_item","id": "command_block","components": {"custom_data": {"smithed": {"dict": {"ingot": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ingot": true}},"item_model": "_your_namespace:steel_ingot","item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_7"}},
+				"U$  \n\"U$",
+				{"text": "$耡","hover_event": {"action": "show_item","id": "command_block","components": {"custom_data": {"smithed": {"dict": {"ingot": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ingot": true}},"item_model": "_your_namespace:steel_ingot","item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_7"}},
+				"U$\"\"",
+				{"text": "$$耿","hover_event": {"action": "show_item","id": "iron_sword","components": {"custom_data": {"smithed": {"dict": {"tools": {"steel": true,"sword": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_sword": true}},"max_damage": 750,"attribute_modifiers": [{"type": "attack_damage","amount": 6,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_damage"},{"type": "attack_speed","amount": -2.4,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_speed"}],"item_model": "_your_namespace:steel_sword","item_name": {"translate": "_your_namespace.steel_sword"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}}},
+				"#$\n\"U$",
+				{"text": "U$","hover_event": {"action": "show_item","id": "command_block","components": {"custom_data": {"smithed": {"dict": {"ingot": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ingot": true}},"item_model": "_your_namespace:steel_ingot","item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_7"}},
+				"U$\"\"",
+				{"text": "U$","hover_event": {"action": "show_item","id": "iron_sword","components": {"custom_data": {"smithed": {"dict": {"tools": {"steel": true,"sword": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_sword": true}},"max_damage": 750,"attribute_modifiers": [{"type": "attack_damage","amount": 6,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_damage"},{"type": "attack_speed","amount": -2.4,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_speed"}],"item_model": "_your_namespace:steel_sword","item_name": {"translate": "_your_namespace.steel_sword"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}}},
+				"#$\n\"U$",
+				{"text": "$聹","hover_event": {"action": "show_item","id": "minecraft:stick","components": {}}},
+				"U$  \n\"U$",
+				{"text": "U$","hover_event": {"action": "show_item","id": "minecraft:stick","components": {}}},
+				"U$  \n\n",
+				{"text": "2##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"","U$",{"text": "$耡"},"U$","\n","\"","U$",{"text": "U$"},"U$","\n","\"","U$",{"text": "$耡"},"U$","\"\"",{"text": "$$耿"},"\n","\"","U$",{"text": "U$"},"U$","\"\"",{"text": "U$"},"\n","\"","U$",{"text": "$聹"},"U$","\n","\"","U$",{"text": "U$"},"U$","\n"],{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.stick","color": "gray"}]},"priority": 0},
+				{"text": "脜\n","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"G\n","\"",{"text": "$耿"},"\n","\"",{"text": "U$"},"\n","\"\"\"\"U$U$",{"text": "$$耣"},"\n","\"\"\"\"U$U$",{"text": "U$"},"\n","\n\n"],{"translate": "_your_namespace.smelting","color": "yellow"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_sword","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_8"}},
+				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"","U$",{"text": "$耡"},"U$","\n","\"","U$",{"text": "U$"},"U$","\n","\"","U$",{"text": "$耡"},"U$","\"\"",{"text": "$$耿"},"\n","\"","U$",{"text": "U$"},"U$","\"\"",{"text": "U$"},"\n","\"","U$",{"text": "$聹"},"U$","\n","\"","U$",{"text": "U$"},"U$","\n"],{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.stick","color": "gray"}]},"priority": 0},
+				{"text": "0","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"G\n","\"",{"text": "$耿"},"\n","\"",{"text": "U$"},"\n","\"\"\"\"U$U$",{"text": "$$耣"},"\n","\"\"\"\"U$U$",{"text": "U$"},"\n","\n\n"],{"translate": "_your_namespace.smelting","color": "yellow"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_sword","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_8"}},
+				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+			],
+			"width": 140
+		}
+	]
+}

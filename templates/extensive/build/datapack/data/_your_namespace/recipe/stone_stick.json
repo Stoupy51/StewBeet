@@ -1,0 +1,54 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"category": "misc",
+	"group": "stone_stick",
+	"pattern": [
+		"X",
+		"X"
+	],
+	"key": {
+		"X": "minecraft:stone"
+	},
+	"result": {
+		"id": "minecraft:command_block",
+		"count": 4,
+		"components": {
+			"minecraft:custom_data": {
+				"smithed": {
+					"dict": {
+						"stick": {
+							"stone": true
+						}
+					},
+					"ignore": {
+						"functionality": true,
+						"crafting": true
+					}
+				},
+				"_your_namespace": {
+					"stone_stick": true
+				}
+			},
+			"minecraft:item_model": "_your_namespace:stone_stick",
+			"minecraft:item_name": {
+				"translate": "_your_namespace.stone_stick"
+			},
+			"minecraft:lore": [
+				[
+					"",
+					{
+						"text": "I",
+						"color": "white",
+						"italic": false,
+						"font": "_your_namespace:icons"
+					},
+					{
+						"translate": "_your_namespace.extensive_template",
+						"italic": true,
+						"color": "blue"
+					}
+				]
+			]
+		}
+	}
+}

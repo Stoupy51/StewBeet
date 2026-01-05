@@ -1,0 +1,80 @@
+{
+	"type": "minecraft:notice",
+	"title": [
+		"",
+		{
+			"sprite": "_your_namespace:item/dialog_sprite/steel_boots",
+			"shadow_color": [
+				0,
+				0,
+				0,
+				0
+			],
+			"atlas": "minecraft:items"
+		},
+		" ",
+		{
+			"translate": "_your_namespace.steel_boots",
+			"underlined": true
+		},
+		" ",
+		{
+			"sprite": "_your_namespace:item/dialog_sprite/steel_boots",
+			"shadow_color": [
+				0,
+				0,
+				0,
+				0
+			],
+			"atlas": "minecraft:items"
+		}
+	],
+	"body": [
+		{
+			"type": "minecraft:plain_message",
+			"contents": [
+				{"text": "V   ","font": "_your_namespace:manual","color": "white"},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_20"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"}," (20)"]}},
+				" ",
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_22"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"}," (22)"]}},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_20"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"}," (20)"]}},
+				" ",
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_22"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"}," (22)"]}}
+			],
+			"width": 400
+		},
+		{
+			"type": "minecraft:plain_message",
+			"contents": [
+				{"text": "","font": "_your_namespace:manual","color": "white","shadow_color": [0,0,0,0]},
+				"\"$6\n\"",
+				{"text": "$耡","hover_event": {"action": "show_item","id": "command_block","components": {"custom_data": {"smithed": {"dict": {"ingot": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ingot": true}},"item_model": "_your_namespace:steel_ingot","item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_7"}},
+				"U$",
+				{"text": "$耡","hover_event": {"action": "show_item","id": "command_block","components": {"custom_data": {"smithed": {"dict": {"ingot": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ingot": true}},"item_model": "_your_namespace:steel_ingot","item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_7"}},
+				"  \n\"",
+				{"text": "U$","hover_event": {"action": "show_item","id": "command_block","components": {"custom_data": {"smithed": {"dict": {"ingot": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ingot": true}},"item_model": "_your_namespace:steel_ingot","item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_7"}},
+				"U$",
+				{"text": "U$","hover_event": {"action": "show_item","id": "command_block","components": {"custom_data": {"smithed": {"dict": {"ingot": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ingot": true}},"item_model": "_your_namespace:steel_ingot","item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_7"}},
+				"  \n\"",
+				{"text": "$耡","hover_event": {"action": "show_item","id": "command_block","components": {"custom_data": {"smithed": {"dict": {"ingot": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ingot": true}},"item_model": "_your_namespace:steel_ingot","item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_7"}},
+				"U$",
+				{"text": "$耡","hover_event": {"action": "show_item","id": "command_block","components": {"custom_data": {"smithed": {"dict": {"ingot": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ingot": true}},"item_model": "_your_namespace:steel_ingot","item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_7"}},
+				"\"\"",
+				{"text": "$$耽","hover_event": {"action": "show_item","id": "iron_boots","components": {"custom_data": {"smithed": {"dict": {"armor": {"steel": true,"boots": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_boots": true}},"max_damage": 585,"equippable": {"slot": "feet","asset_id": "_your_namespace:steel"},"attribute_modifiers": [{"type": "armor","amount": 2.5,"operation": "add_value","slot": "feet","id": "_your_namespace:armor.feet"}],"item_model": "_your_namespace:steel_boots","item_name": {"translate": "_your_namespace.steel_boots"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}}},
+				"#$\n\"",
+				{"text": "U$","hover_event": {"action": "show_item","id": "command_block","components": {"custom_data": {"smithed": {"dict": {"ingot": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ingot": true}},"item_model": "_your_namespace:steel_ingot","item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_7"}},
+				"U$",
+				{"text": "U$","hover_event": {"action": "show_item","id": "command_block","components": {"custom_data": {"smithed": {"dict": {"ingot": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ingot": true}},"item_model": "_your_namespace:steel_ingot","item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_7"}},
+				"\"\"",
+				{"text": "U$","hover_event": {"action": "show_item","id": "iron_boots","components": {"custom_data": {"smithed": {"dict": {"armor": {"steel": true,"boots": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_boots": true}},"max_damage": 585,"equippable": {"slot": "feet","asset_id": "_your_namespace:steel"},"attribute_modifiers": [{"type": "armor","amount": 2.5,"operation": "add_value","slot": "feet","id": "_your_namespace:armor.feet"}],"item_model": "_your_namespace:steel_boots","item_name": {"translate": "_your_namespace.steel_boots"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}]]}}},
+				"#$\n\n\n\n",
+				{"text": "2##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耡"},"U$",{"text": "$耡"},"\n","\"",{"text": "U$"},"U$",{"text": "U$"},"\n","\"",{"text": "$耡"},"U$",{"text": "$耡"},"\"\"",{"text": "$$耽"},"\n","\"",{"text": "U$"},"U$",{"text": "U$"},"\"\"",{"text": "U$"},"\n","\n\n"],{"text": "\n- x4 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]},"priority": 0,"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_7"}},
+				{"text": "脓\n","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"G\n","\"",{"text": "$耽"},"\n","\"",{"text": "U$"},"\n","\"\"\"\"U$U$",{"text": "$$耣"},"\n","\"\"\"\"U$U$",{"text": "U$"},"\n","\n\n"],{"translate": "_your_namespace.smelting","color": "yellow"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_boots","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_8"}},
+				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耡"},"U$",{"text": "$耡"},"\n","\"",{"text": "U$"},"U$",{"text": "U$"},"\n","\"",{"text": "$耡"},"U$",{"text": "$耡"},"\"\"",{"text": "$$耽"},"\n","\"",{"text": "U$"},"U$",{"text": "U$"},"\"\"",{"text": "U$"},"\n","\n\n"],{"text": "\n- x4 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]},"priority": 0,"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_7"}},
+				{"text": "0","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"G\n","\"",{"text": "$耽"},"\n","\"",{"text": "U$"},"\n","\"\"\"\"U$U$",{"text": "$$耣"},"\n","\"\"\"\"U$U$",{"text": "U$"},"\n","\n\n"],{"translate": "_your_namespace.smelting","color": "yellow"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_boots","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_8"}},
+				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+			],
+			"width": 140
+		}
+	]
+}
