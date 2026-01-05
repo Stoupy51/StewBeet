@@ -1,0 +1,8 @@
+stewbeet.plugins.finalyze.custom\_blocks\_ticking package
+=========================================================
+
+.. automodule:: stewbeet.plugins.finalyze.custom_blocks_ticking
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

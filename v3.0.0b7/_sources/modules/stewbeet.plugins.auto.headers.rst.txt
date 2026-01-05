@@ -1,0 +1,22 @@
+stewbeet.plugins.auto.headers package
+=====================================
+
+.. automodule:: stewbeet.plugins.auto.headers
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.plugins.auto.headers.context_analyzer
+   stewbeet.plugins.auto.headers.execution_parser
+   stewbeet.plugins.auto.headers.function_analyzer
+   stewbeet.plugins.auto.headers.macro_analyzer
+   stewbeet.plugins.auto.headers.macro_parser
+   stewbeet.plugins.auto.headers.object
+   stewbeet.plugins.auto.headers.type_inference

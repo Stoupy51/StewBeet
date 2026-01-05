@@ -1,0 +1,16 @@
+stewbeet.plugins.initialize package
+===================================
+
+.. automodule:: stewbeet.plugins.initialize
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.plugins.initialize.source_lore_font
