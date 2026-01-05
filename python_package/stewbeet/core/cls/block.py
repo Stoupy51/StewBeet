@@ -38,6 +38,8 @@ class VanillaBlock(StMapping):
     def __post_init__(self) -> None:
         if ":" not in self.id and self.id != "":
             self.id = "minecraft:" + self.id
+        if self.contents:
+            self.id = self.apply_facing = None
 
 @dataclass(kw_only=True)
 class NoSilkTouchDrop(StMapping):
