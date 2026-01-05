@@ -14,14 +14,21 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.14'
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v7
       - name: Install dependencies
+        working-directory: python_package
         run: |
-          pip install stewbeet m2r2 myst_parser pydata_sphinx_theme
+          uv venv
+          uv pip install stouputils[docs], stewbeet
       - name: Build version docs
+        working-directory: python_package
         run: |
-          cd python_package && python scripts/create_docs.py ${GITHUB_REF#refs/tags/v}
+          uv run scripts/create_docs.py ${GITHUB_REF#refs/tags/v}
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
@@ -30,4 +37,3 @@ jobs:
           publish_dir: docs/build/html
           keep_files: true
           force_orphan: false
-
