@@ -14,7 +14,7 @@ from PIL import Image
 from stewbeet.core.definitions_helper.completion import add_private_custom_data_for_namespace
 
 from ...core.__memory__ import Mem
-from ...core.cls.block import Block, VanillaBlock
+from ...core.cls.block import Block, NoSilkTouchDrop, VanillaBlock
 from ...core.cls.ingredients import CRAFTING_RECIPES_TYPES, Ingr
 from ...core.cls.item import Item
 from ...core.cls.recipe import (
@@ -405,7 +405,7 @@ def routine():
 
 				# Helper function to add count information to mining recipes
 				def add_count_to_mining_recipe(mining_recipe: JsonDict, no_silk_drop_data: JsonDict | str) -> None:
-					if isinstance(no_silk_drop_data, dict) and "count" in no_silk_drop_data:
+					if isinstance(no_silk_drop_data, dict | NoSilkTouchDrop) and "count" in no_silk_drop_data:
 						count_data: JsonDict | int = no_silk_drop_data["count"]
 						if isinstance(count_data, dict):
 							# Range of items like {"min": 2, "max": 8}
