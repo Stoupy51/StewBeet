@@ -24,7 +24,7 @@ jobs:
         working-directory: python_package
         run: |
           uv venv
-          uv pip install stouputils[docs], stewbeet
+          uv pip install stouputils[docs] stewbeet
       - name: Build version docs
         working-directory: python_package
         run: |
