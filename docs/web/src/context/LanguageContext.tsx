@@ -23,11 +23,25 @@ interface LanguageProviderProps {
 }
 
 export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
-    // Get initial language from localStorage or default to 'en'
+    // Get initial language from localStorage or auto-detect for first visit
     const [language, setLanguageState] = useState<Language>(() => {
         try {
             const saved = localStorage.getItem('language');
-            return (saved === 'en' || saved === 'fr') ? saved : 'en';
+            
+            // If language is already saved, use it
+            if (saved === 'en' || saved === 'fr') {
+                return saved;
+            }
+            
+            // First visit: auto-detect language based on browser locale
+            // Check if the browser language is French
+            const browserLang = navigator.language || (navigator as any).userLanguage;
+            if (browserLang && browserLang.toLowerCase().startsWith('fr')) {
+                return 'fr';
+            }
+            
+            // Default to English for other locales
+            return 'en';
         } catch {
             return 'en';
         }
