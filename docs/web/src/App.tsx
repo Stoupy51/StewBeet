@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './components/HomePage';
 import { MarkdownPage } from './components/MarkdownPage';
 import { DocumentationPage } from './components/DocumentationPage';
+import { MarkdownToBBCodePage } from './components/MarkdownToBBCodePage';
 import { LanguageProvider } from './context/LanguageContext';
 
 function App() {
@@ -12,6 +13,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/documentation" element={<DocumentationPage />} />
           <Route path="/markdown" element={<MarkdownPage />} />
+          <Route path="/markdown_to_pmc_bbcode" element={<MarkdownToBBCodePage />} />
         </Routes>
       </LanguageProvider>
     </Router>
