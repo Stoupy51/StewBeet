@@ -48,8 +48,12 @@ def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
 		... ### Build System
 		... - 🚀 Bump version to v1.2.3 ([2111fd2](https://github.com/Stoupy51/LifeSteal/commit/2111fd2f390b80a3aab77a4e7bcbb24b93845e5a))
 		...
+		...
+		...
 		... ### Features
 		... - ✨ Added new configuration for dropping heart (non pvp) ([cde8749](https://github.com/Stoupy51/LifeSteal/commit/cde8749aa9e447302481f50b9887a0b3a846c7fe))
+		...
+		... - 🔧 Another feature with multiple newlines before
 		...
 		... **Full Changelog**: https://github.com/Stoupy51/LifeSteal/compare/v1.2.2...v1.2.3
 		... '''
@@ -61,6 +65,7 @@ def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
 		[*]🚀 Bump version to v1.2.3 ([url=https://github.com/Stoupy51/LifeSteal/commit/2111fd2f390b80a3aab77a4e7bcbb24b93845e5a]2111fd2[/url])[/*]
 		[/list][h4]Features[/h4][list]
 		[*]✨ Added new configuration for dropping heart (non pvp) ([url=https://github.com/Stoupy51/LifeSteal/commit/cde8749aa9e447302481f50b9887a0b3a846c7fe]cde8749[/url])[/*]
+		[*]🔧 Another feature with multiple newlines before[/*]
 		[/list]
 		[b]Full Changelog[/b]: [url]https://github.com/Stoupy51/LifeSteal/compare/v1.2.2...v1.2.3[/url]
 	"""
@@ -80,8 +85,11 @@ def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
 			# Remove the "- " prefix and add to current list
 			list_item = line.strip()[2:]
 			current_list.append(list_item)
+		elif line.strip() == "" and current_list:
+			# Empty line within a list, continue (don't break the list)
+			continue
 		elif current_list:
-			# If we have list items and found a non-list line,
+			# If we have list items and found a non-list, non-empty line,
 			# add the current list to our sections and reset
 			list_sections.append(current_list)
 			current_list = []
@@ -92,9 +100,10 @@ def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
 
 	# Step 3: Convert each list section to BBCode format
 	for items in list_sections:
-		list_md = "\n".join([f"- {item}" for item in items])
+		# Build the markdown pattern with flexible whitespace (including newlines)
+		list_md_pattern = "\n+".join([re.escape(f"- {item}") for item in items])
 		list_bb = "[list]\n" + "\n".join([f"[*]{item.strip()}[/*]" for item in items]) + "\n[/list]"
-		bbcode = bbcode.replace(list_md, list_bb)
+		bbcode = re.sub(list_md_pattern, list_bb, bbcode)
 
 	# Step 4: Convert clickable images (must be done before regular links and images)
 	# Format: [![alt](img_url)](link_url) -> [url=link_url][img]img_url[/img][/url]
