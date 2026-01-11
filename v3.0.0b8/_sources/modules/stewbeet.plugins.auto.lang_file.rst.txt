@@ -1,0 +1,16 @@
+stewbeet.plugins.auto.lang\_file package
+========================================
+
+.. automodule:: stewbeet.plugins.auto.lang_file
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.plugins.auto.lang_file.utils

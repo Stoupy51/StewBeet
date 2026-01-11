@@ -1,0 +1,8 @@
+stewbeet.plugins.auto.headers.function\_analyzer module
+=======================================================
+
+.. automodule:: stewbeet.plugins.auto.headers.function_analyzer
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

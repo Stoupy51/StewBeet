@@ -1,0 +1,28 @@
+stewbeet.plugins.ingame\_manual package
+=======================================
+
+.. automodule:: stewbeet.plugins.ingame_manual
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.plugins.ingame_manual.book_components
+   stewbeet.plugins.ingame_manual.book_optimizer
+   stewbeet.plugins.ingame_manual.craft_content
+   stewbeet.plugins.ingame_manual.dialog
+   stewbeet.plugins.ingame_manual.image_utils
+   stewbeet.plugins.ingame_manual.iso_renders
+   stewbeet.plugins.ingame_manual.main
+   stewbeet.plugins.ingame_manual.other_utils
+   stewbeet.plugins.ingame_manual.page_font
+   stewbeet.plugins.ingame_manual.shared_import
+   stewbeet.plugins.ingame_manual.showcase_image
+   stewbeet.plugins.ingame_manual.stardust_forge
+   stewbeet.plugins.ingame_manual.text_components
