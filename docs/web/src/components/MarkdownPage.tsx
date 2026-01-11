@@ -368,11 +368,12 @@ export const MarkdownPage: React.FC = () => {
                                     );
                                 },
                                 a({ href, children }: any) {
-                                    // Convert relative links to absolute URLs
+                                    // Keep anchor links as-is
+                                    const isAnchor = href?.startsWith('#');
                                     const isExternal = href?.startsWith('http');
                                     let linkHref = href;
                                     
-                                    if (!isExternal && href && basePath) {
+                                    if (!isAnchor && !isExternal && href && basePath) {
                                         // Convert basePath from raw.githubusercontent to github.com/blob format
                                         const viewBasePath = basePath.replace(
                                             'https://raw.githubusercontent.com/',
