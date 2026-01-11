@@ -27,16 +27,16 @@ The configuration file is the heart of your StewBeet project. It defines everyth
 
 ## 📚 Table of Contents
 
-- [Basic Project Configuration](#basic-project-configuration)
-- [Directory Settings](#directory-settings)
-- [Dependencies](#dependencies)
-- [Pack Configuration](#pack-configuration)
-- [Pipeline](#pipeline)
-- [Meta Configuration](#meta-configuration)
-  - [Minecraft Support](#minecraft-support)
-  - [Model Resolver](#model-resolver)
-  - [Mecha](#mecha)
-  - [StewBeet Settings](#stewbeet-settings)
+- [🎨 Basic Project Configuration](#-basic-project-configuration)
+- [📂 Directory Settings](#-directory-settings)
+- [🔌 Dependencies](#-dependencies)
+- [📦 Pack Configuration](#-pack-configuration)
+- [⚡ Pipeline](#-pipeline)
+- [🎛️ Meta Configuration](#-meta-configuration)
+  - [🎮 Minecraft Support](#-minecraft-support)
+  - [🗄️ Model Resolver](#-model-resolver)
+  - [🔧 Mecha](#-mecha)
+  - [⚙️ StewBeet Settings](#-stewbeet-settings)
 
 ---
 
