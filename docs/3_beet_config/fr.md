@@ -27,17 +27,16 @@ Le fichier de configuration est le cœur de votre projet StewBeet. Il définit t
 
 ## 📚 Table des Matières
 
-- [Configuration de Base du Projet](#configuration-de-base-du-projet)
-- [Paramètres des Répertoires](#paramètres-des-répertoires)
-- [Dépendances](#dépendances)
-- [Configuration des Packs](#configuration-des-packs)
-- [Pipeline](#pipeline)
-- [Méta Configuration](#méta-configuration)
-  - [Support Minecraft](#support-minecraft)
-  - [Model Resolver](#model-resolver)
-  - [Mecha](#mecha)
-  - [Paramètres StewBeet](#paramètres-stewbeet)
-
+- [🎨 Configuration de Base du Projet](#-configuration-de-base-du-projet)
+- [📂 Paramètres des Répertoires](#-paramètres-des-répertoires)
+- [🔌 Dépendances](#-dépendances)
+- [📦 Configuration des Packs](#-configuration-des-packs)
+- [⚡ Pipeline](#-pipeline)
+- [🎛️ Méta Configuration](#-méta-configuration)
+  - [🎮 Support Minecraft](#-support-minecraft)
+  - [🗄️ Model Resolver](#-model-resolver)
+  - [🔧 Mecha](#-mecha)
+  - [⚙️ Paramètres StewBeet](#-paramètres-stewbeet)
 ---
 
 ## 🎨 Configuration de Base du Projet
