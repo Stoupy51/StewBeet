@@ -41,6 +41,8 @@ def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
 
 	Examples:
 		>>> markdown_text = '''
+		... [![Discord](https://img.shields.io/discord/1216400498488377467?label=Discord&logo=discord)](https://discord.gg/anxzu6rA9F)
+		... ![Discord](https://img.shields.io/discord/1216400498488377467?label=Discord&logo=discord)
 		... ## Changelog
 		...
 		... ### Build System
@@ -53,6 +55,8 @@ def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
 		... '''
 		>>> bbcode = convert_markdown_to_bbcode(markdown_text, verbose=False)
 		>>> print(bbcode.strip())
+		[url=https://discord.gg/anxzu6rA9F][img]https://img.shields.io/discord/1216400498488377467?label=Discord&logo=discord[/img][/url]
+		[img]https://img.shields.io/discord/1216400498488377467?label=Discord&logo=discord[/img]
 		[h2]Changelog[/h2][h4]Build System[/h4][list]
 		[*]🚀 Bump version to v1.2.3 ([url=https://github.com/Stoupy51/LifeSteal/commit/2111fd2f390b80a3aab77a4e7bcbb24b93845e5a]2111fd2[/url])[/*]
 		[/list][h4]Features[/h4][list]
@@ -92,20 +96,28 @@ def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
 		list_bb = "[list]\n" + "\n".join([f"[*]{item.strip()}[/*]" for item in items]) + "\n[/list]"
 		bbcode = bbcode.replace(list_md, list_bb)
 
-	# Step 4: Convert markdown links to BBCode links
+	# Step 4: Convert clickable images (must be done before regular links and images)
+	# Format: [![alt](img_url)](link_url) -> [url=link_url][img]img_url[/img][/url]
+	bbcode = re.sub(r"\[!\[([^\]]*)\]\(([^)]+)\)\]\(([^)]+)\)", r"[url=\3][img]\2[/img][/url]", bbcode)
+
+	# Step 5: Convert regular images
+	# Format: ![alt](img_url) -> [img]img_url[/img]
+	bbcode = re.sub(r"!\[([^\]]*)\]\(([^)]+)\)", r"[img]\2[/img]", bbcode)
+
+	# Step 6: Convert markdown links to BBCode links
 	# Format: [text](url) -> [url=url]text[/url]
 	bbcode = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", r"[url=\2]\1[/url]", bbcode)
 
-	# Step 5: Convert bold text
+	# Step 7: Convert bold text
 	# Format: **text** -> [b]text[/b]
 	bbcode = re.sub(r"\*\*([^*]+)\*\*", r"[b]\1[/b]", bbcode)
 
-	# Step 6: Convert plain URLs (not already in BBCode)
-	# Look for URLs not already inside [url] tags
-	url_pattern = r"(?<!\[url=|\[url\])(https?://[^\s\]]+)(?!\[/url\])"
+	# Step 8: Convert plain URLs (not already in BBCode)
+	# Look for URLs not already inside [url] or [img] tags
+	url_pattern = r"(?<!\[url=|\[url\]|\[img\])(https?://[^\s\]]+)(?!\[/url\]|\[/img\])"
 	bbcode = re.sub(url_pattern, r"[url]\1[/url]", bbcode)
 
-	# Step 7: Remove blank lines between sections to create compact format
+	# Step 9: Remove blank lines between sections to create compact format
 	bbcode = re.sub(r"\[/h2]\n+\[h4]", r"[/h2][h4]", bbcode)
 	bbcode = re.sub(r"\[/h4]\n+\[list]", r"[/h4][list]", bbcode)
 	bbcode = re.sub(r"\[/list]\n+\[h4]", r"[/list][h4]", bbcode)
