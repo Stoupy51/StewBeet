@@ -55,8 +55,10 @@ def create_source_lore_font(pack_icon: str) -> None:
 	""" Create the source lore font using the provided pack icon. """
 
 	# Create the font file
-	Mem.ctx.assets[Mem.ctx.project_id].fonts["icons"] = Font(
-		stp.json_dump({"providers": [{"type": "bitmap","file": f"{Mem.ctx.project_id}:font/original_icon.png","ascent": 8,"height": 9,"chars": ["I"]}]})
+	font: Font = Mem.ctx.assets[Mem.ctx.project_id].fonts.setdefault("icons", Font({"providers": []}))
+	font.encoder = stp.json_dump
+	font.data["providers"].append(
+		{"type": "bitmap","file": f"{Mem.ctx.project_id}:font/original_icon.png","ascent": 8,"height": 9,"chars": ["I"]}
 	)
 
 	# Copy the pack.png to the resource pack
