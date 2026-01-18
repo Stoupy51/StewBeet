@@ -15,7 +15,7 @@ from .core.template import template_command
 from .utils import get_project_config
 
 
-@stp.handle_error(message="Error while running 'stewbeet'")
+@stp.handle_error(message="Error while running 'stewbeet'", error_log=stp.LogLevels.WARNING_TRACEBACK)
 def main() -> None:
     second_arg: str = sys.argv[1].lower() if len(sys.argv) >= 2 else ""
     if second_arg == "" and len(sys.argv) == 1:
@@ -118,7 +118,7 @@ def main() -> None:
 
         # Try to import all pipeline
         for plugin in cfg.pipeline:
-            stp.handle_error(importlib.import_module, error_log=stp.LogLevels.ERROR_TRACEBACK)(plugin)
+            stp.handle_error(importlib.import_module, error_log=stp.LogLevels.WARNING_TRACEBACK)(plugin)
 
         # Run beet with all remaining arguments
         subprocess.run([sys.executable, "-m", "beet"] + [x for x in sys.argv[1:] if x != "rebuild"], check=False)
