@@ -220,6 +220,26 @@ class Ingr(JsonDict):
 		stp.error(f"External item '{ingr_id}' not found in the external definitions")
 		return Ingr({})
 
+	def to_predicate(self, **kwargs: Any) -> Ingr:
+		""" Get the predicate representation of the ingredient (for functions)
+
+		Args:
+			kwargs: Key-value arguments to add to the ingredient representation (e.g. count=2, Slot=0, etc.)
+		Returns:
+			Ingr: The predicate representation of the ingredient, ex:
+				{"count": 2, "components": {"minecraft:custom_data": {"iyc": {"adamantium_fragment": True}}}}
+		"""
+		item: JsonDict = dict(kwargs)
+		ns_id: str = self.to_id()
+		if ns_id in Mem.external_definitions:
+			from .external_item import ExternalItem
+			item.update({"components": {"minecraft:custom_data": ExternalItem.from_id(ns_id).custom_data_predicate}})
+			if self.get("count"):
+				item["count"] = self["count"]
+		else:
+			item.update(self)
+		return Ingr(item).item_to_id()
+
 	@stp.simple_cache
 	def register_loot_table(self, result_count: int | JsonDict) -> str:
 		""" Get the loot table for an ingredient dict
@@ -238,14 +258,20 @@ class Ingr(JsonDict):
 			loot_table = f"{Mem.ctx.project_id}:i/{item}{result_count_to_suffix(result_count)}"
 			return loot_table
 
+		# Else, external item (minecraft or another datapack)
 		namespace, item = item.split(":")
 		loot_table = f"{Mem.ctx.project_id}:recipes/{namespace}/{item}{result_count_to_suffix(result_count)}"
 
 		# If item from another datapack, generate the loot table
 		if namespace != "minecraft":
-			file: JsonDict = {"pools":[{"rolls":1,"entries":[{"type":"minecraft:loot_table","value": f"{Mem.ctx.project_id}:external/{namespace}/{item}"}] }] }
+			from .external_item import ExternalItem
+			obj = ExternalItem.from_id(f"{namespace}:{item}")
+			assert obj.loot_table is not None, f"External item '{namespace}:{item}' has no loot table defined, please define one to use it in recipes."
+			file: JsonDict = {"pools":[{"rolls":1,"entries":[{"type":"minecraft:loot_table","value": obj.loot_table}] }] }
 		else:
 			file: JsonDict = {"pools":[{"rolls":1,"entries":[{"type":"minecraft:item","name":f"{namespace}:{item}"}] }] }
+
+		# Add set_count function if needed
 		if (isinstance(result_count, int) and result_count > 1) or hasattr(result_count, "get"):
 			file["pools"][0]["entries"][0]["functions"] = [{"function": "minecraft:set_count","count": result_count}]
 

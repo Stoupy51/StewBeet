@@ -9,6 +9,7 @@ from beet.core.utils import JsonDict, TextComponent
 from box import Box
 
 from ..__memory__ import Mem
+from ..cls.external_item import ExternalItem
 from ..cls.item import Item
 from ..utils.io import convert_to_serializable
 
@@ -45,10 +46,11 @@ def add_item_name_and_lore_if_missing(is_external: bool = False, black_list: lis
 	source_lore: TextComponent = Mem.ctx.meta.get("stewbeet", {}).get("source_lore", {})
 
 	# For each item, add item name and lore if missing (if not in black_list)
-	for item, data in Mem.definitions.items():
+	defs = Mem.external_definitions if is_external else Mem.definitions
+	for item, data in defs.items():
 		if item in black_list:
 			continue
-		if isinstance(data, Item):
+		if isinstance(data, Item | ExternalItem):
 			data = data.components
 
 		# Add item name if none
@@ -93,10 +95,11 @@ def add_private_custom_data_for_namespace(is_external: bool = False, black_list:
 	"""
 	if black_list is None:
 		black_list = []
-	for item, data in Mem.definitions.items():
+	defs = Mem.external_definitions if is_external else Mem.definitions
+	for item, data in defs.items():
 		if item in black_list:
 			continue
-		if isinstance(data, Item):
+		if isinstance(data, Item | ExternalItem):
 			data = data.components
 		if not data.get("custom_data"):
 			data["custom_data"] = cast(JsonDict, {})
@@ -135,16 +138,18 @@ def set_manual_components(white_list: list[str]) -> None:
 	SharedMemory.components_to_include = white_list
 
 # Export all definitions to JSON
-def export_all_definitions_to_json(file_name: str, verbose: bool = True) -> None:
+def export_all_definitions_to_json(file_name: str, is_external: bool = False, verbose: bool = True) -> None:
 	""" Export all definitions to a single json file for debugging purposes.
 
 	Args:
 		file_name	(str):	The name of the file to export to.
+		is_external	(bool):	Whether to export external definitions or not.
 		verbose		(bool):	Whether to print a debug message or not.
 	"""
 	# Convert everything to fully serializable dicts
 	definitions_copy: dict[str, JsonDict] = {}
-	for item, data in Mem.definitions.items():
+	defs = Mem.external_definitions if is_external else Mem.definitions
+	for item, data in defs.items():
 		definitions_copy[item] = convert_to_serializable(data)
 
 		# Create a copy of the definitions without OVERRIDE_MODEL key

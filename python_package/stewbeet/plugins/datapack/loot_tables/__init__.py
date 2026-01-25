@@ -64,33 +64,6 @@ def beet_default(ctx: Context):
 		# Add the pool to the creative loot table
 		creative_loot_table["pools"].append({"rolls": 1, "entries":[{"type":"minecraft:loot_table","value":f"{ns}:i/{item}"}] })
 
-	# Same for external items
-	for item in Mem.external_definitions.keys():
-		obj = Item.from_id(item)
-		ext_ns, item_name = item.split(":")
-		loot_table: JsonDict = {
-			"pools": [{
-				"rolls": 1,
-				"entries": [{
-					"type": "minecraft:item",
-					"name": obj.base_item
-				}]
-			}]
-		}
-		set_components: JsonDict = {
-			"function": "minecraft:set_components",
-			"components": {}
-		}
-		for k, v in obj.components.items():
-			if k.startswith("!"):
-				set_components["components"][f"!minecraft:{k[1:]}"] = {}
-			else:
-				set_components["components"][f"minecraft:{k}"] = v
-		loot_table["pools"][0]["entries"][0]["functions"] = [set_components]
-
-		# Create external loot table with beet
-		ctx.data[ns].loot_tables[f"external/{ext_ns}/{item_name}"] = LootTable(stp.json_dump(loot_table, max_level=10))
-
 	# Loot tables for items with crafting recipes
 	for item in Mem.definitions.keys():
 		obj = Item.from_id(item)

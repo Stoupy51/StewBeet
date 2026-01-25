@@ -21,9 +21,7 @@ class SmithedRecipeHandler:
 
     def __init__(self) -> None:
         """ Initialize the handler. """
-        self.SMITHED_SHAPELESS_PATH: str = f"{Mem.ctx.project_id}:calls/smithed_crafter/shapeless_recipes"
-        self.SMITHED_SHAPED_PATH: str = f"{Mem.ctx.project_id}:calls/smithed_crafter/shaped_recipes"
-        self.SMITHED_APPLY_PATH: str = f"{Mem.ctx.project_id}:calls/smithed_crafter/apply_recipe"
+        self.apply_path: str = f"{Mem.ctx.project_id}:calls/smithed_crafter/apply_recipe"
 
     @classmethod
     def routine(cls) -> None:
@@ -62,15 +60,14 @@ class SmithedRecipeHandler:
         )
         r: dict[str, list[JsonDict]] = {"recipe": []}
         for count, ingr in unique_ingredients:
-            item: JsonDict = {"count": count}
-            item.update(ingr)
-            r["recipe"].append(Ingr(item).item_to_id())
+            predicate = Ingr(ingr).to_predicate(count=count)
+            r["recipe"].append(predicate)
         line += json.dumps(r)
 
         if recipe.smithed_crafter_command:
-            line += f""" run function {self.SMITHED_APPLY_PATH} {{"command":"{recipe.smithed_crafter_command}"}}"""
+            line += f""" run function {self.apply_path} {{"command":"{recipe.smithed_crafter_command}"}}"""
         else:
-            line += f""" run function {self.SMITHED_APPLY_PATH} {{"command":"loot replace block ~ ~ ~ container.16 loot {result_loot}"}}"""
+            line += f""" run function {self.apply_path} {{"command":"loot replace block ~ ~ ~ container.16 loot {result_loot}"}}"""
         return line
 
     @stp.simple_cache
@@ -92,9 +89,8 @@ class SmithedRecipeHandler:
             for slot, char in enumerate(row):
                 ingredient = ingredients.get(char)
                 if ingredient:
-                    ingr = {"Slot": slot}
-                    ingr.update(ingredient)
-                    recipes[i].append(Ingr(ingr).item_to_id())
+                    predicate = ingredient.to_predicate(Slot=slot)
+                    recipes[i].append(predicate)
                 else:
                     recipes[i].append({"Slot": slot, "id": "minecraft:air"})
 
@@ -140,9 +136,9 @@ class SmithedRecipeHandler:
         # Return the line
         line = f"execute if score @s smithed.data matches 0 store result score @s smithed.data if data storage smithed.crafter:input recipe{dump}"
         if recipe.smithed_crafter_command:
-            line += f""" run function {self.SMITHED_APPLY_PATH} {{"command":"{recipe.smithed_crafter_command}"}}"""
+            line += f""" run function {self.apply_path} {{"command":"{recipe.smithed_crafter_command}"}}"""
         else:
-            line += f""" run function {self.SMITHED_APPLY_PATH} {{"command":"loot replace block ~ ~ ~ container.16 loot {result_loot}"}}"""
+            line += f""" run function {self.apply_path} {{"command":"loot replace block ~ ~ ~ container.16 loot {result_loot}"}}"""
         return line
 
     def generate_recipes(self) -> None:
@@ -175,14 +171,14 @@ class SmithedRecipeHandler:
                 # Generate recipe based on type
                 if isinstance(recipe, CraftingShapelessRecipe):
                     line = self.smithed_shapeless_recipe(recipe, result_loot_table)
-                    write_function(self.SMITHED_SHAPELESS_PATH, line, tags=["smithed.crafter:event/shapeless_recipes"])
+                    write_function(f"{Mem.ctx.project_id}:calls/smithed_crafter/shapeless_recipes", line, tags=["smithed.crafter:event/shapeless_recipes"])
                 else:
                     line = self.smithed_shaped_recipe(recipe, result_loot_table)
-                    write_function(self.SMITHED_SHAPED_PATH, line, tags=["smithed.crafter:event/recipes"])
+                    write_function(f"{Mem.ctx.project_id}:calls/smithed_crafter/shaped_recipes", line, tags=["smithed.crafter:event/recipes"])
 
         # Apply recipe
         if OFFICIAL_LIBS["smithed.crafter"]["is_used"]:
-            write_function(self.SMITHED_APPLY_PATH, """
+            write_function(self.apply_path, """
 # Set the consume_tools flag
 data modify storage smithed.crafter:input flags set value ["consume_tools"]
 

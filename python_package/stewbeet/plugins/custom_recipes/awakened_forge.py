@@ -18,10 +18,6 @@ class AwakenedForgeRecipeHandler:
 
     This class handles the generation of awakened forge recipes.
     """
-    def __init__(self) -> None:
-        """ Initialize the handler. """
-        self.STARDUST_AWAKENED_FORGE_PATH: str = f"{Mem.ctx.project_id}:calls/stardust/awakened_forge_recipes"
-
     @classmethod
     def routine(cls) -> None:
         """ Main routine for awakened forge recipe generation. """
@@ -46,17 +42,17 @@ class AwakenedForgeRecipeHandler:
         # Get ingredients
         ingredients: list[Ingr] = recipe["ingredients"]
         first_ingredient: Ingr = ingredients[0]
-        assert first_ingredient.get("count", 1) <= 64, f"First ingredient must have count <= 64, for {item} recipe {recipe}"
+        first_count: int = first_ingredient.get("count", 1)
+        assert first_count <= 64, f"First ingredient must have count <= 64, for {item} recipe {recipe}"
         ingredients = ingredients[1:]
 
         # Prepare the check line
-        line: str = "execute if data entity @s Item" + json.dumps(first_ingredient.item_to_id())
+        line: str = "execute if data entity @s Item" + json.dumps(first_ingredient.to_predicate(count=first_count))
         for ingredient in ingredients:
             count: int = ingredient.get("count", 1)
             while True:
-                ingredient_copy: Ingr = ingredient.copy()
-                ingredient_copy["count"] = count if count < 64 else 64
-                line += f" if entity @n[type=item,nbt={{Item:{json.dumps(ingredient_copy.item_to_id())}}},distance=..1]"
+                this_count = count if count < 64 else 64
+                line += f" if entity @n[type=item,nbt={{Item:{json.dumps(ingredient.to_predicate(count=this_count))}}},distance=..1]"
                 count -= 64
                 if count <= 0:
                     break
@@ -80,9 +76,8 @@ execute if score @s stardust.forge_timer matches 4 run function {Mem.ctx.project
         for ingredient in ingredients:
             count: int = ingredient.get("count", 1)
             while True:
-                ingredient_copy: Ingr = ingredient.copy()
-                ingredient_copy["count"] = count if count < 64 else 64
-                kill_ingredients += f"kill @n[type=item,nbt={{Item:{json.dumps(ingredient_copy.item_to_id())}}},distance=..1]\n"
+                this_count = count if count < 64 else 64
+                kill_ingredients += f"kill @n[type=item,nbt={{Item:{json.dumps(ingredient.to_predicate(count=this_count))}}},distance=..1]\n"
                 count -= 64
                 if count <= 0:
                     break
@@ -115,7 +110,7 @@ tag @e[type=item,tag=stardust.temp] remove stardust.temp
                 if recipe["type"] == AwakenedForgeRecipe.type:
                     recipe = AwakenedForgeRecipe.from_dict(recipe)
                     write_function(
-                        self.STARDUST_AWAKENED_FORGE_PATH,
+                        f"{Mem.ctx.project_id}:calls/stardust/awakened_forge_recipes",
                         self.stardust_awakened_forge_recipe(recipe, item),
                         tags=["stardust:calls/awakened_forge_recipes"],
                     )
