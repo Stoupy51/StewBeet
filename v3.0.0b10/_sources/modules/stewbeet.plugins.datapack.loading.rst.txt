@@ -1,0 +1,8 @@
+stewbeet.plugins.datapack.loading package
+=========================================
+
+.. automodule:: stewbeet.plugins.datapack.loading
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

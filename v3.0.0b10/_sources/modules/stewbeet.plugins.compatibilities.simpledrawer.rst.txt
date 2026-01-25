@@ -1,0 +1,8 @@
+stewbeet.plugins.compatibilities.simpledrawer package
+=====================================================
+
+.. automodule:: stewbeet.plugins.compatibilities.simpledrawer
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

@@ -1,0 +1,8 @@
+stewbeet.plugins.finalyze.basic\_datapack\_structure package
+============================================================
+
+.. automodule:: stewbeet.plugins.finalyze.basic_datapack_structure
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

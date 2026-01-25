@@ -1,0 +1,8 @@
+stewbeet.plugins.copy\_to\_destination package
+==============================================
+
+.. automodule:: stewbeet.plugins.copy_to_destination
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

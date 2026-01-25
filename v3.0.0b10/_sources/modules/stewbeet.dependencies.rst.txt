@@ -1,0 +1,16 @@
+stewbeet.dependencies package
+=============================
+
+.. automodule:: stewbeet.dependencies
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.dependencies.bookshelf
