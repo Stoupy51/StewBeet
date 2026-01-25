@@ -16,10 +16,6 @@ class PulverizerRecipeHandler:
 
     This class handles the generation of pulverizer recipes.
     """
-    def __init__(self) -> None:
-        """ Initialize the handler. """
-        self.SIMPLENERGY_PULVERIZER_PATH: str = f"{Mem.ctx.project_id}:calls/simplenergy/pulverizer_recipes"
-
     @classmethod
     def routine(cls) -> None:
         """ Main routine for pulverizer recipe generation. """
@@ -39,7 +35,7 @@ class PulverizerRecipeHandler:
         """
         if not recipe.ingredient:
             recipe.ingredient = Ingr(item)
-        ingredient = recipe.ingredient.item_to_id()
+        ingredient = recipe.ingredient.to_predicate()
         result = recipe.result.to_item().item_to_id() if recipe.result else Ingr(item)
 
         line: str = "execute if score #found simplenergy.data matches 0 store result score #found simplenergy.data if data storage simplenergy:main pulverizer.input"
@@ -58,7 +54,7 @@ class PulverizerRecipeHandler:
                         recipe["ingredient"] = Ingr(item)
                     recipe = PulverizingRecipe.from_dict(recipe)
                     write_function(
-                        self.SIMPLENERGY_PULVERIZER_PATH,
+                        f"{Mem.ctx.project_id}:calls/simplenergy/pulverizer_recipes",
                         self.simplenergy_pulverizer_recipe(recipe, item),
                         tags=["simplenergy:calls/pulverizer_recipes"],
                     )

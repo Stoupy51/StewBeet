@@ -331,7 +331,7 @@ def add_recipes_for_dust(material: str, pulverize: list[str | JsonDict], smelt_t
 
 	# Add pulverizing recipes
 	for item in pulverize:
-		pulv_ingr = item if isinstance(item, dict) else Ingr(f"minecraft:{item}")
+		pulv_ingr = Ingr(item) if isinstance(item, dict) else Ingr(f"minecraft:{item}")
 		obj.recipes.append(PulverizingRecipe(result_count=2,category="misc",group=material,ingredient=pulv_ingr))
 	return
 

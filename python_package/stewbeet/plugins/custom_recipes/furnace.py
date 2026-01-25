@@ -78,7 +78,7 @@ class FurnaceRecipeHandler:
 
         # Prepare line and return
         line: str = "execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input"
-        line += json.dumps(recipe.ingredient)
+        line += json.dumps(recipe.ingredient.to_predicate())
         line += f" run loot replace block ~ ~ ~ container.3 loot {result_loot}"
         return line
 
@@ -116,7 +116,7 @@ scoreboard players reset #count furnace_nbt_recipes.data
 
         # Prepare line and return
         line: str = "execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input"
-        line += json.dumps(recipe.ingredient)
+        line += json.dumps(recipe.ingredient.to_predicate())
         line += f" run function {Mem.ctx.project_id}:calls/furnace_nbt_recipes/xp_reward/{experience}"
         return line
 
