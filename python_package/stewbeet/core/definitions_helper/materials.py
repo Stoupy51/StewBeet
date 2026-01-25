@@ -291,7 +291,7 @@ def generate_everything_about_these_materials(ores: dict[str, EquipmentsConfig|N
 
 
 # Add recipes for dust
-def add_recipes_for_dust(material: str, pulverize: list[str | JsonDict], smelt_to: JsonDict) -> None:
+def add_recipes_for_dust(material: str, pulverize: list[str | JsonDict], smelt_to: Ingr) -> None:
 	""" Add recipes for dust (pulverize and smelt). If dust isn't found in the definitions, it will be added automagically.
 
 	All items in the pulverize list will be pulverized to get 2 times the dust.
@@ -301,7 +301,7 @@ def add_recipes_for_dust(material: str, pulverize: list[str | JsonDict], smelt_t
 	Args:
 		material	(str):				The material to add dust recipes for, ex: "copper" will add recipes for "copper_dust".
 		pulverize	(list[str|dict]):	The list of items to pulverize to get 2 times the dust, ex: ["raw_copper", "copper_ore", "deepslate_copper_ore", Ingr("custom_copper", "some_namespace")]
-		smelt_to	(dict):				The ingredient representation of the result of smelting the dust, ex: Ingr("minecraft:copper_ingot")}
+		smelt_to	(Ingr):				The ingredient representation of the result of smelting the dust, ex: Ingr("minecraft:copper_ingot")}
 	"""
 	# Assertions
 	textures_folder: str = stp.relative_path(Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", ""))
@@ -336,7 +336,7 @@ def add_recipes_for_dust(material: str, pulverize: list[str | JsonDict], smelt_t
 	return
 
 # Add recipes for all dusts
-def add_recipes_for_all_dusts(dusts_configs: dict[str, tuple[list[str | JsonDict], JsonDict]]) -> None:
+def add_recipes_for_all_dusts(dusts_configs: dict[str, tuple[list[str | JsonDict], Ingr]]) -> None:
 	""" Add recipes for all dusts in the dusts_configs dictionary using the add_recipes_for_dust function.
 
 	Args:
