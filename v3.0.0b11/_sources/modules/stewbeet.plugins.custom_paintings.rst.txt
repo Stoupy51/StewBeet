@@ -1,0 +1,8 @@
+stewbeet.plugins.custom\_paintings package
+==========================================
+
+.. automodule:: stewbeet.plugins.custom_paintings
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

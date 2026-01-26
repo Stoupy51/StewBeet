@@ -1,0 +1,8 @@
+stewbeet.dependencies.bookshelf module
+======================================
+
+.. automodule:: stewbeet.dependencies.bookshelf
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
