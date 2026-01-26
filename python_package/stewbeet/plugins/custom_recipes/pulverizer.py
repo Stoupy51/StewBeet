@@ -1,10 +1,9 @@
 
 # Imports
-import json
-
 import stouputils as stp
 
 from ...core.__memory__ import Mem
+from ...core.cls.external_item import ExternalItem
 from ...core.cls.ingredients import Ingr
 from ...core.cls.item import Item
 from ...core.cls.recipe import PulverizingRecipe
@@ -39,7 +38,7 @@ class PulverizerRecipeHandler:
         result = recipe.result.to_item().item_to_id() if recipe.result else Ingr(item)
 
         line: str = "execute if score #found simplenergy.data matches 0 store result score #found simplenergy.data if data storage simplenergy:main pulverizer.input"
-        line += json.dumps(ingredient)
+        line += ExternalItem.json_dump(ingredient)
         line += f" run loot replace entity @s contents loot {result.register_loot_table(recipe.result_count)}"
         return line
 

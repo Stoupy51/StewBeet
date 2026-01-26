@@ -2,13 +2,12 @@
 # Imports
 from __future__ import annotations
 
-import json
-
 import stouputils as stp
 from beet import Recipe
 from beet.core.utils import JsonDict
 
 from ...core.__memory__ import Mem
+from ...core.cls.external_item import ExternalItem
 from ...core.cls.ingredients import Ingr
 from ...core.cls.item import Item
 from ...core.cls.recipe import BlastingRecipe, SmeltingRecipe, SmokingRecipe
@@ -78,7 +77,7 @@ class FurnaceRecipeHandler:
 
         # Prepare line and return
         line: str = "execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input"
-        line += json.dumps(recipe.ingredient.to_predicate())
+        line += ExternalItem.json_dump(recipe.ingredient.to_predicate())
         line += f" run loot replace block ~ ~ ~ container.3 loot {result_loot}"
         return line
 
@@ -116,7 +115,7 @@ scoreboard players reset #count furnace_nbt_recipes.data
 
         # Prepare line and return
         line: str = "execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input"
-        line += json.dumps(recipe.ingredient.to_predicate())
+        line += ExternalItem.json_dump(recipe.ingredient.to_predicate())
         line += f" run function {Mem.ctx.project_id}:calls/furnace_nbt_recipes/xp_reward/{experience}"
         return line
 

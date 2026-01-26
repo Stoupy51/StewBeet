@@ -1,12 +1,11 @@
 
 # Imports
-import json
-
 import stouputils as stp
 from beet import Predicate
 from beet.core.utils import JsonDict
 
 from ...core.__memory__ import Mem
+from ...core.cls.external_item import ExternalItem
 from ...core.cls.ingredients import Ingr
 from ...core.cls.item import Item
 from ...core.cls.recipe import AwakenedForgeRecipe
@@ -47,12 +46,12 @@ class AwakenedForgeRecipeHandler:
         ingredients = ingredients[1:]
 
         # Prepare the check line
-        line: str = "execute if data entity @s Item" + json.dumps(first_ingredient.to_predicate(count=first_count))
+        line: str = "execute if data entity @s Item" + ExternalItem.json_dump(first_ingredient.to_predicate(count=first_count))
         for ingredient in ingredients:
             count: int = ingredient.get("count", 1)
             while True:
                 this_count = count if count < 64 else 64
-                line += f" if entity @n[type=item,nbt={{Item:{json.dumps(ingredient.to_predicate(count=this_count))}}},distance=..1]"
+                line += f" if entity @n[type=item,nbt={{Item:{ExternalItem.json_dump(ingredient.to_predicate(count=this_count))}}},distance=..1]"
                 count -= 64
                 if count <= 0:
                     break
@@ -77,7 +76,7 @@ execute if score @s stardust.forge_timer matches 4 run function {Mem.ctx.project
             count: int = ingredient.get("count", 1)
             while True:
                 this_count = count if count < 64 else 64
-                kill_ingredients += f"kill @n[type=item,nbt={{Item:{json.dumps(ingredient.to_predicate(count=this_count))}}},distance=..1]\n"
+                kill_ingredients += f"kill @n[type=item,nbt={{Item:{ExternalItem.json_dump(ingredient.to_predicate(count=this_count))}}},distance=..1]\n"
                 count -= 64
                 if count <= 0:
                     break
