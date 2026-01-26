@@ -1,11 +1,10 @@
 
 # Imports
-import json
-
 import stouputils as stp
 from beet.core.utils import JsonDict
 
 from ...core.__memory__ import Mem
+from ...core.cls.external_item import ExternalItem
 from ...core.cls.ingredients import Ingr
 from ...core.cls.item import Item
 from ...core.cls.recipe import CraftingShapedRecipe, CraftingShapelessRecipe
@@ -62,7 +61,7 @@ class SmithedRecipeHandler:
         for count, ingr in unique_ingredients:
             predicate = Ingr(ingr).to_predicate(count=count)
             r["recipe"].append(predicate)
-        line += json.dumps(r)
+        line += ExternalItem.json_dump(r)
 
         if recipe.smithed_crafter_command:
             line += f""" run function {self.apply_path} {{"command":"{recipe.smithed_crafter_command}"}}"""
@@ -118,7 +117,7 @@ class SmithedRecipeHandler:
             for ingr in ingrs:
                 ingr = ingr.copy()  # Create a copy to modify
                 slot: int = ingr.pop("Slot")  # Extract the slot number
-                ingr = json.dumps(ingr)[1:-1]  # Convert to JSON string without brackets
+                ingr = ExternalItem.json_dump(ingr)[1:-1]  # Convert to JSON string without brackets
                 dump += f'{{"Slot":{slot}b, {ingr}}},'  # Add the ingredient to the dump with its slot
 
             # Remove the trailing comma if present
