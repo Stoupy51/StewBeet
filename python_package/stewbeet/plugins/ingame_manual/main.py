@@ -977,8 +977,10 @@ def routine():
 	if SharedMemory.use_dialog > 0:
 		generate_dialogs(book_content)
 
-	# Finally, prepend the manual to the definitions
-	if SharedMemory.use_dialog != 2:
+	# Finally, prepend the manual to the definitions if no book, or player still uses it.
+	if SharedMemory.use_dialog != 2 or "manual" in Mem.definitions:
+		if SharedMemory.use_dialog == 2:
+			stp.warning("You beet config says 'use_dialog=2', but a manual item already exists. Please change 'use_dialog' to 1 in stewbeet config.")
 		manual_already_exists: bool = "manual" in Mem.definitions
 		manual_obj = Item(
 			id="manual",

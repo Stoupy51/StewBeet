@@ -8,9 +8,8 @@ from beet import Advancement, Dialog, DialogTag, Model, Texture
 from beet.core.utils import JsonDict, TextComponent
 from PIL import Image
 
-from stewbeet.core.utils.text_component import item_id_to_text_component
-
 from ...core import Mem, set_json_encoder, text_component_to_str, write_function, write_load_file
+from ...core.utils.text_component import item_id_to_text_component
 from ..initialize.source_lore_font import find_pack_png
 from .shared_import import BOOK_FONT, NONE_FONT, SharedMemory, get_item_from_page
 
@@ -170,7 +169,7 @@ def generate_dialogs(book_content: list[list[TextComponent]]) -> None:
 	pass
 
 	# Generate an advancement detecting when the manual is opened
-	if SharedMemory.use_dialog != 2:
+	if SharedMemory.use_dialog != 2 or "manual" in Mem.definitions:
 		write_load_file(f"\n# Opening manual detection\nscoreboard objectives add {ns}.open_manual minecraft.used:minecraft.written_book\n", prepend=True)
 		Mem.ctx.data[ns].advancements["technical/open_manual"] = set_json_encoder(Advancement({
 			"criteria": {
