@@ -1,0 +1,8 @@
+stewbeet.plugins.archive package
+================================
+
+.. automodule:: stewbeet.plugins.archive
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

@@ -1,0 +1,20 @@
+stewbeet.plugins namespace
+==========================
+
+.. py:module:: stewbeet.plugins
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.plugins.archive
+   stewbeet.plugins.compute_sha1
+   stewbeet.plugins.copy_to_destination
+   stewbeet.plugins.custom_paintings
+   stewbeet.plugins.custom_recipes
+   stewbeet.plugins.ingame_manual
+   stewbeet.plugins.initialize
+   stewbeet.plugins.merge_smithed_weld
+   stewbeet.plugins.verify_definitions

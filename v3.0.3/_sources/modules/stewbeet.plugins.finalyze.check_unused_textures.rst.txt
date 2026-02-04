@@ -1,0 +1,8 @@
+stewbeet.plugins.finalyze.check\_unused\_textures package
+=========================================================
+
+.. automodule:: stewbeet.plugins.finalyze.check_unused_textures
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

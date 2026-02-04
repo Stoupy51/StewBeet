@@ -1,0 +1,16 @@
+stewbeet.plugins.merge\_smithed\_weld package
+=============================================
+
+.. automodule:: stewbeet.plugins.merge_smithed_weld
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.plugins.merge_smithed_weld.weld
