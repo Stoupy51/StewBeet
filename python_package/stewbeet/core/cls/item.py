@@ -3,6 +3,7 @@
 from dataclasses import dataclass, field
 from typing import Any
 
+import stouputils as stp
 from beet.core.utils import JsonDict, TextComponent
 
 from ..constants import (
@@ -87,6 +88,12 @@ class Item(StMapping):
         # Add minecraft: to base item if needed
         if self.base_item and ":" not in self.base_item:
             self.base_item = "minecraft:" + self.base_item
+
+        # Warnings
+        if self.wiki_buttons and not self.manual_category:
+            stp.warning(f"Item '{self.id}' has wiki_buttons but no manual_category. It won't be displayed in the ingame manual.")
+        if self.hand_model:
+            stp.warning(f"Item '{self.id}' has a hand_model defined, but Stoupy is lazy and didn't implement it yet. Please mention him 10 times on discord!")
 
         ## Fix some fields
         # Convert recipes to RecipeList for automatic normalization
