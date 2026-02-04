@@ -20,11 +20,11 @@ classifiers = [
 	"Operating System :: OS Independent",
 ]
 dependencies = [
-	"stouputils>=1.14.2",
+	"stouputils>=1.20.1",
 	"model_resolver>=1.13.0",
-	"beet>=0.113.0b10",
-	"bolt>=0.50.0b5",
-	"mecha>=0.102.0b2",
+	"beet>=0.113.0",
+	"bolt>=0.50.1",
+	"mecha>=0.102.2",
 	"mutagen>=1.47.0",
 	"pyperclip>=1.8.0",
 	"smithed",
