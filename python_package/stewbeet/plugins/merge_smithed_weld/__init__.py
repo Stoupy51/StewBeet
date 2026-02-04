@@ -35,9 +35,12 @@ def beet_default(ctx: Context) -> None:
 	datapack_source = str(Path(ctx.output_directory) / f"{project_name_simple}_datapack.zip")
 	resource_pack_source = str(Path(ctx.output_directory) / f"{project_name_simple}_resource_pack.zip")
 
-	if os.path.exists(datapack_source):
-		weld_datapack(ctx, datapack_dest)
+	try:
+		if os.path.exists(datapack_source):
+			weld_datapack(ctx, datapack_dest)
 
-	if os.path.exists(resource_pack_source):
-		weld_resource_pack(ctx, resource_pack_dest)
+		if os.path.exists(resource_pack_source):
+			weld_resource_pack(ctx, resource_pack_dest)
+	except Exception as e:
+		stp.error(f"Smithed Weld merging failed: {e}\nThe 'smithed' package is not yet up to date with Python 3.14, consider installing from this fork:\npip install git+https://github.com/Stoupy51/smithed-python.git")
 
