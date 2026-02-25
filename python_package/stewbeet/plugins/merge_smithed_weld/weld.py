@@ -1,6 +1,7 @@
 
 # Imports
 import os
+import sys
 import time
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile, ZipInfo
@@ -48,7 +49,7 @@ def weld_datapack(ctx: Context, dest_path: str) -> float:
 
 	# Skip welding if there are less than 2 datapacks to merge
 	if len(datapacks_to_merge) < 2:
-		stp.warning(f"No datapacks or libs to merge for {dest_path}. Skipping weld.")
+		stp.warning(f"No datapacks or libs to merge for {dest_path}. Skipping weld.", file=sys.stdout)
 		return time.perf_counter() - start_time
 
 	# Weld all datapacks
@@ -135,7 +136,7 @@ def weld_resource_pack(ctx: Context, dest_path: str) -> float:
 
 	# Skip welding if there are less than 2 resource packs to merge
 	if len(resource_packs_to_merge) < 2:
-		stp.warning(f"No resource packs or libs to merge for {dest_path}. Skipping weld.")
+		stp.warning(f"No resource packs or libs to merge for {dest_path}. Skipping weld.", file=sys.stdout)
 		return time.perf_counter() - start_time
 
 	# Weld all resource packs

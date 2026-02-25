@@ -44,7 +44,7 @@ resource_pack:
 #     - Each sub-pipeline creates a temp context inheriting the parent context
 pipeline:
     - "src.setup_definitions" # User code
-    - "stewbeet.plugins.resource_pack.sounds"
+    - "stewbeet.plugins.resource_pack.sounds"   # TIP: You can add ".silent" to any stewbeet plugin if you dislike its output.
     - "stewbeet.plugins.resource_pack.item_models"
     - "stewbeet.plugins.resource_pack.check_power_of_2"
     - "stewbeet.plugins.custom_recipes"

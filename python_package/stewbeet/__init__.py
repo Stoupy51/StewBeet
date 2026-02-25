@@ -11,7 +11,8 @@ from .plugins.resource_pack.item_models.object import AutoModel
 from .plugins.resource_pack.sounds import add_sound
 
 
-def beet_default(ctx: Context):
-    """ Initializes the StewBeet package. """
-    ctx.require("stewbeet.plugins.initialize")
+def beet_default(ctx: Context) -> Generator[None, None, None]:
+	""" Initializes the StewBeet package. """
+	from .plugins.initialize.__init__ import beet_default
+	return beet_default(ctx)
 

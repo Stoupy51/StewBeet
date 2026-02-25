@@ -9,7 +9,7 @@ from .utils import handle_file, lang
 
 # Main entry point
 @stp.measure_time(message="Execution time of 'stewbeet.plugins.auto.lang_file'")
-def beet_default(ctx: Context):
+def beet_default(ctx: Context, desc: str = "Generating lang file") -> None:
 	""" Main entry point for the lang file plugin.
 	This plugin handles language file generation for the datapack.
 
@@ -26,7 +26,7 @@ def beet_default(ctx: Context):
 		(ctx, content) for content in files_to_process.values()
 		if isinstance(content, TextFileBase)
 	]
-	stp.multithreading(handle_file, args, use_starmap=True, desc="Generating lang file", max_workers=min(32, len(args)), color=stp.BLUE)
+	stp.multithreading(handle_file, args, use_starmap=True, desc=desc, max_workers=min(32, len(args)), color=stp.BLUE)
 
 	# Update the lang file
 	lang.update(ctx.assets.languages.get("minecraft:en_us", Language()).data)

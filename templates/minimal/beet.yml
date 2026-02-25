@@ -16,5 +16,5 @@ data_pack:
 
 pipeline:
     - "mecha"
-    - "stewbeet.plugins.auto.headers"
+    - "stewbeet.plugins.auto.headers.silent"  # TIP: You can add ".silent" to any stewbeet plugin if you dislike its output.
 
