@@ -21,10 +21,10 @@ classifiers = [
 ]
 dependencies = [
 	"stouputils>=1.23.2",
-	"model_resolver>=1.13.0",
-	"beet>=0.113.0",
+	"model_resolver>=1.14.2",
+	"beet>=0.114.1",
 	"bolt>=0.50.1",
-	"mecha>=0.102.2",
+	"mecha>=0.102.3",
 	"mutagen>=1.47.0",
 	"pyperclip>=1.8.0",
 	"smithed",

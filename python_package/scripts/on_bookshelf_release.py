@@ -104,7 +104,10 @@ def download_latest_release() -> None:
 		return module_key_snake, module_info
 
 	# Multithreading
-	results: list[tuple[str, JsonDict]] = stp.multithreading(download_module, assets, max_workers=len(assets))
+	results: list[tuple[str, JsonDict]] = [
+		x for x in stp.multithreading(download_module, assets, max_workers=len(assets))
+		if x is not None
+	]
 	modules = dict(sorted(results, key=lambda x: x[0]))
 
 	dumped: str = stp.json_dump(modules, max_level=1).replace("false", "False").replace("true", "True")
