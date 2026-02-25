@@ -1,5 +1,7 @@
 
 # Imports
+import sys
+
 import stouputils as stp
 from beet import Context
 from beet.core.utils import JsonDict
@@ -24,7 +26,7 @@ def beet_default(ctx: Context):
 
 	# Only generate manual if we have definitions items
 	if not Mem.definitions:
-		stp.warning("Database is empty, skipping manual generation.")
+		stp.warning("Database is empty, skipping manual generation.", file=sys.stdout)
 		return
 
 	# Assertions

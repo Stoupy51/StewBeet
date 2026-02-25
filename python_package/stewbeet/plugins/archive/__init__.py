@@ -12,6 +12,10 @@ from ...core.__memory__ import Mem
 from ..initialize.source_lore_font import find_pack_png
 
 
+# Silent mode entry point
+def silent(ctx: Context) -> None:
+	return stp.silent(beet_default)(ctx)
+
 def get_consistent_timestamp(ctx: Context) -> tuple[int, int, int, int, int, int]:
 	""" Get a consistent timestamp for archive files based on beet cache .gitignore file modification time. """
 	default_time = (2025, 1, 1, 0, 0, 0)  # Default time: 2025-01-01 00:00:00
