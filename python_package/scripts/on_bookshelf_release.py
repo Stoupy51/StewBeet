@@ -30,10 +30,10 @@ def parse_version(tag: str) -> list[int]:
 
 # Convert PascalCase or dash-style module names to title format
 def format_module_name(module: str) -> str:
-    # Remove version suffix
-    module = re.sub(r"[-_]?\d+(\.\d+)*(-v\d+(\.\d+)*)?$", "", module)
-    # Replace dash/underscore with space, capitalize each word
-    return "Bookshelf " + " ".join(word.capitalize() for word in re.split(r"[-_.]", module) if word != "bs")
+	# Remove version suffix and minecraft version (e.g., "26.1", "1.21.5")
+	module = module.split('-', 1)[0]  # Remove any remaining suffix after the first dash
+	# Replace dash/underscore with space, capitalize each word
+	return "Bookshelf " + " ".join(word.capitalize() for word in re.split(r"[-_.]", module) if word != "bs")
 
 # Convert PascalCase to snake_case
 def pascal_to_snake(name: str) -> str:
