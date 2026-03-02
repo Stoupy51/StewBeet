@@ -1,0 +1,8 @@
+stewbeet.plugins.ingame\_manual.craft\_content module
+=====================================================
+
+.. automodule:: stewbeet.plugins.ingame_manual.craft_content
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

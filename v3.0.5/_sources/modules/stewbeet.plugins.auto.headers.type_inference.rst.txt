@@ -1,0 +1,8 @@
+stewbeet.plugins.auto.headers.type\_inference module
+====================================================
+
+.. automodule:: stewbeet.plugins.auto.headers.type_inference
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
