@@ -69,29 +69,14 @@ def beet_default(ctx: Context) -> None:
 	# Track newly found official libraries
 	newly_found_libs: list[str] = []
 
-	# Find if furnace_nbt_recipes is used
-	if ns != "furnace_nbt_recipes":
-		for function in ctx.data.functions.values():
-			if "furnace_nbt_recipes" in function.text:
-				if not official_lib_used("furnace_nbt_recipes"):
-					newly_found_libs.append("furnace_nbt_recipes")
-				break
-
-	# Find if common_signals is used
-	if ns != "common_signals":
-		for function in ctx.data.functions.values():
-			if "common_signals" in function.text:
-				if not official_lib_used("common_signals"):
-					newly_found_libs.append("common_signals")
-				break
-
-	# Find if itemio is used
-	if ns != "itemio":
-		for function in ctx.data.functions.values():
-			if "itemio" in function.text:
-				if not official_lib_used("itemio"):
-					newly_found_libs.append("itemio")
-				break
+	# Find if furnace_nbt_recipes, common_signals, realistic_explosion, itemio are used
+	for lib in ["furnace_nbt_recipes", "common_signals", "realistic_explosion", "itemio"]:
+		if ns != lib:
+			for function in ctx.data.functions.values():
+				if lib in function.text:
+					if not official_lib_used(lib):
+						newly_found_libs.append(lib)
+					break
 
 	# Find for each bookshelf module if it is used
 	if ns != "bookshelf":
