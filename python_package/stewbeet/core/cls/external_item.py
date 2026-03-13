@@ -32,9 +32,6 @@ class ExternalItem(StMapping):
         >>> obj = ExternalItem("simplenergy:machine_block", custom_data_predicate={"simplenergy": {"machine_block": True}})
         >>> obj.id
         'simplenergy:machine_block'
-
-        >>> obj = ExternalItem(
-        ...     id="custom_namespace:custom_item",
     """
     id: str
     """ Unique identifier for the item, e.g. 'mechanization:raw_tin', 'simplenergy:machine_block'. """
