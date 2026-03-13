@@ -3,6 +3,7 @@
 import stouputils as stp
 from beet import Context, Language, TextFileBase
 
+from ....core.__memory__ import Mem
 from ....core.utils.io import set_json_encoder
 from .utils import handle_file, lang
 
@@ -16,6 +17,9 @@ def beet_default(ctx: Context, desc: str = "Generating lang file") -> None:
 	Args:
 		ctx (Context): The beet context.
 	"""
+	if Mem.ctx is None: # pyright: ignore[reportUnnecessaryComparison]
+		Mem.ctx = ctx
+
 	# Get all functions and loot tables
 	files_to_process: dict[str, TextFileBase[str] | None] = {}
 	files_to_process.update(ctx.data.loot_tables)	# type: ignore # Idk why, but this is needed to ensure loot tables are processed
@@ -27,7 +31,7 @@ def beet_default(ctx: Context, desc: str = "Generating lang file") -> None:
 		if isinstance(content, TextFileBase)
 	]
 	for content in stp.colored_for_loop(args, desc=desc, color=stp.BLUE):
-		handle_file(ctx, content)
+		handle_file(content)
 
 	# Update the lang file
 	lang.update(ctx.assets.languages.get("minecraft:en_us", Language()).data)
