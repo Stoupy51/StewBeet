@@ -22,11 +22,12 @@ def beet_default(ctx: Context, desc: str = "Generating lang file") -> None:
 	files_to_process.update(dict(ctx.data.all()))	# type: ignore
 
 	# Process all files
-	args: list[tuple[Context, TextFileBase[str]]] = [
-		(ctx, content) for content in files_to_process.values()
+	args: list[TextFileBase[str]] = [
+		content for content in files_to_process.values()
 		if isinstance(content, TextFileBase)
 	]
-	stp.multithreading(handle_file, args, use_starmap=True, desc=desc, max_workers=min(32, len(args)), color=stp.BLUE)
+	for content in stp.colored_for_loop(args, desc=desc, color=stp.BLUE):
+		handle_file(ctx, content)
 
 	# Update the lang file
 	lang.update(ctx.assets.languages.get("minecraft:en_us", Language()).data)
