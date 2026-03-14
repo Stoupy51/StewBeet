@@ -70,7 +70,7 @@ def beet_default(ctx: Context) -> None:
 	newly_found_libs: list[str] = []
 
 	# Find if furnace_nbt_recipes, common_signals, realistic_explosion, itemio are used
-	for lib in ["furnace_nbt_recipes", "common_signals", "realistic_explosion", "itemio"]:
+	for lib in ["furnace_nbt_recipes", "common_signals", "realistic_explosion", "itemio", "smithed.actionbar"]:
 		if ns != lib:
 			for function in ctx.data.functions.values():
 				if lib in function.text:
