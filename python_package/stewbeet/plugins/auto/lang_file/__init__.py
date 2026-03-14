@@ -27,7 +27,7 @@ def beet_default(ctx: Context, desc: str = "Generating lang file") -> None:
 
 	# Process all files
 	args: list[TextFileBase[str]] = [
-		content for content in files_to_process.values()
+		content for _, content in sorted(files_to_process.items())
 		if isinstance(content, TextFileBase)
 	]
 	for content in stp.colored_for_loop(args, desc=desc, color=stp.BLUE):
