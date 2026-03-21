@@ -185,6 +185,12 @@ def infer_types_from_direct_call(call_string: str, macro_vars: list[str], all_fu
                 # Check if the value is a macro variable reference (e.g., $(other_var))
                 macro_ref_match = re.match(r'\$\((\w+)\)', value)
                 if macro_ref_match:
+                    # Quoted macro references are explicit strings (e.g. "$(weapon_id)").
+                    # Keep them as string instead of inheriting a potentially unknown parent type.
+                    if var_type == "string":
+                        types[var] = "string"
+                        continue
+
                     # This is a reference to another macro variable
                     # Try to find the type from the calling function
                     caller_match = re.match(r'([^\s]+)', call_string)
