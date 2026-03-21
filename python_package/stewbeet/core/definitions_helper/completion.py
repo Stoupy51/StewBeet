@@ -138,17 +138,18 @@ def set_manual_components(white_list: list[str]) -> None:
 	SharedMemory.components_to_include = white_list
 
 # Export all definitions to JSON
-def export_all_definitions_to_json(file_name: str, is_external: bool = False, verbose: bool = True) -> None:
+def export_all_definitions_to_json(file_name: str, is_external: bool | JsonDict = False, verbose: bool = True) -> None:
 	""" Export all definitions to a single json file for debugging purposes.
 
 	Args:
 		file_name	(str):	The name of the file to export to.
-		is_external	(bool):	Whether to export external definitions or not.
+		is_external	(bool | JsonDict):	Whether to export external definitions or not.
+					If a JsonDict is provided, it will be used as the source of definitions instead of Mem.definitions or Mem.external_definitions.
 		verbose		(bool):	Whether to print a debug message or not.
 	"""
 	# Convert everything to fully serializable dicts
 	definitions_copy: dict[str, JsonDict] = {}
-	defs = Mem.external_definitions if is_external else Mem.definitions
+	defs = is_external if isinstance(is_external, dict) else (Mem.external_definitions if is_external else Mem.definitions)
 	for item, data in defs.items():
 		definitions_copy[item] = convert_to_serializable(data)
 

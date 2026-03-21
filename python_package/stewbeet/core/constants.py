@@ -1,5 +1,5 @@
 
-# ruff: noqa: E501, RUF012
+# ruff: noqa: E501
 # Imports
 from beet.core.utils import JsonDict
 from beet.library import base
@@ -140,29 +140,45 @@ BLOCKS_WITH_INTERFACES: list[str] = [	# List of blocks that are containers and h
 ]
 
 # Conventions constants
+class ConventionTags(list[str]):
+	def __init__(self, *args: str):
+		if len(args) == 0:
+			self.clear()
+		elif len(args) == 1 and isinstance(args[0], list):
+			self.extend(args[0])
+		else:
+			self.extend(args)
+
+	@property
+	def avoid(self) -> str:
+		""" Utility function to generate a string of tags to avoid in an execute command. Example of use: execute as @e[{Conventions.ENTITY_TAGS.avoid}] run function your_namespace:kill_entity """
+		return ",".join(f"tag=!{tag}" for tag in self)
+
 class Conventions:
 	""" Defines conventions for tags used in datapacks. """
-	NO_KILL_TAGS: list[str] = ["smithed.strict", "global.ignore.kill"]
+	GLOBAL_KILL = ConventionTags("global.ignore.kill", "global.ignore")
+	""" List of tags that prevent entities from being damaged/killed. """
+	NO_KILL_TAGS = ConventionTags("smithed.strict", "global.ignore.kill")
 	""" List of tags that prevent entities from being killed. """
-	ENTITY_TAGS: list[str] = ["smithed.entity", "global.ignore"]
+	ENTITY_TAGS = ConventionTags("smithed.entity", "global.ignore")
 	""" List of tags applicable to custom entities. """
-	BLOCK_TAGS: list[str] = ["smithed.block", *ENTITY_TAGS]
+	BLOCK_TAGS = ConventionTags("smithed.block", *ENTITY_TAGS)
 	""" List of tags applicable to custom blocks. """
-	ENTITY_TAGS_NO_KILL: list[str] = ENTITY_TAGS + NO_KILL_TAGS
+	ENTITY_TAGS_NO_KILL = ConventionTags(*ENTITY_TAGS, *NO_KILL_TAGS)
 	""" Combined list of entity tags and no kill tags. """
-	BLOCK_TAGS_NO_KILL: list[str] = BLOCK_TAGS + NO_KILL_TAGS
+	BLOCK_TAGS_NO_KILL = ConventionTags(*BLOCK_TAGS, *NO_KILL_TAGS)
 	""" Combined list of block tags and no kill tags. """
 
-	AVOID_NO_KILL: str = ",".join(f"tag=!{tag}" for tag in NO_KILL_TAGS)
-	""" String of tags to avoid when killing entities. Example of use: execute as @e[{Conventions.AVOID_NO_KILL}] run function your_namespace:kill_entity """
-	AVOID_ENTITY_TAGS: str = ",".join(f"tag=!{tag}" for tag in ENTITY_TAGS)
-	""" String of tags to avoid when executing an entity command. Example of use: execute as @e[{Conventions.AVOID_ENTITY_TAGS}] run function your_namespace:kill_entity """
-	AVOID_BLOCK_TAGS: str = ",".join(f"tag=!{tag}" for tag in BLOCK_TAGS)
-	""" String of tags to avoid when executing a block command. Example of use: execute as @e[{Conventions.AVOID_BLOCK_TAGS}] run function your_namespace:kill_entity """
-	AVOID_ENTITY_TAGS_NO_KILL: str = ",".join(f"tag=!{tag}" for tag in ENTITY_TAGS_NO_KILL)
-	""" String of tags to avoid when executing an entity command. Example of use: execute as @e[{Conventions.AVOID_ENTITY_TAGS_NO_KILL}] run function your_namespace:kill_entity """
-	AVOID_BLOCK_TAGS_NO_KILL: str = ",".join(f"tag=!{tag}" for tag in BLOCK_TAGS_NO_KILL)
-	""" String of tags to avoid when executing a block command. Example of use: execute as @e[{Conventions.AVOID_BLOCK_TAGS_NO_KILL}] run function your_namespace:kill_entity """
+	AVOID_NO_KILL: str = NO_KILL_TAGS.avoid
+	""" Deprecated (use Conventions.NO_KILL_TAGS.avoid instead): String of tags to avoid when killing entities. Example of use: execute as @e[{Conventions.AVOID_NO_KILL}] run function your_namespace:kill_entity """
+	AVOID_ENTITY_TAGS: str = ENTITY_TAGS.avoid
+	""" Deprecated (use Conventions.ENTITY_TAGS.avoid instead): String of tags to avoid when executing an entity command. Example of use: execute as @e[{Conventions.AVOID_ENTITY_TAGS}] run function your_namespace:kill_entity """
+	AVOID_BLOCK_TAGS: str = BLOCK_TAGS.avoid
+	""" Deprecated (use Conventions.BLOCK_TAGS.avoid instead): String of tags to avoid when executing a block command. Example of use: execute as @e[{Conventions.AVOID_BLOCK_TAGS}] run function your_namespace:kill_entity """
+	AVOID_ENTITY_TAGS_NO_KILL: str = ENTITY_TAGS_NO_KILL.avoid
+	""" Deprecated (use Conventions.ENTITY_TAGS_NO_KILL.avoid instead): String of tags to avoid when executing an entity command. Example of use: execute as @e[{Conventions.AVOID_ENTITY_TAGS_NO_KILL}] run function your_namespace:kill_entity """
+	AVOID_BLOCK_TAGS_NO_KILL: str = BLOCK_TAGS_NO_KILL.avoid
+	""" Deprecated (use Conventions.BLOCK_TAGS_NO_KILL.avoid instead): String of tags to avoid when executing a block command. Example of use: execute as @e[{Conventions.AVOID_BLOCK_TAGS_NO_KILL}] run function your_namespace:kill_entity """
 
 
 
