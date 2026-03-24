@@ -36,6 +36,9 @@ MORE_DATA_PACK_FORMATS: dict[tuple[int, ...], FormatSpecifier] = {
 	(25, 4): (94, 1),		# 1.21.11
 	(25, 4, 0): (94, 1),	# 1.21.11
 
+	(26, 1): (101, 1),
+	(26, 1, 0): (101, 1),
+
 	(9999, 0, 0): (9999, 0),
 }
 MORE_ASSETS_PACK_FORMATS: dict[tuple[int, ...], FormatSpecifier] = {
@@ -66,6 +69,9 @@ MORE_ASSETS_PACK_FORMATS: dict[tuple[int, ...], FormatSpecifier] = {
 	(25, 4): (75, 0),		# 1.21.11
 	(25, 4, 0): (75, 0),	# 1.21.11
 
+	(26, 1): (84, 0),
+	(26, 1, 0): (84, 0),
+
 	(9999, 0, 0): (9999, 0),
 }
 MORE_DATA_VERSIONS: dict[tuple[int, ...], int] = {
@@ -82,6 +88,9 @@ MORE_DATA_VERSIONS: dict[tuple[int, ...], int] = {
 	(1, 21, 9): 4554,
 	(1, 21, 10): 4556,
 	(1, 21, 11): 4669,
+
+	(26, 1): 4786,
+	(26, 1, 0): 4786,
 }
 LATEST_MC_VERSION: str = ".".join(str(x) for x in list(MORE_DATA_VERSIONS.keys())[-1])
 base.LATEST_MINECRAFT_VERSION = LATEST_MC_VERSION
