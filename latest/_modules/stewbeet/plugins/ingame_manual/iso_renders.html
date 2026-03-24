@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8"><title>stewbeet.plugins.ingame_manual.iso_renders - StewBeet</title><link rel="icon" href="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png"><link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html"><script data-cfasync="false">(function(){
+    const m = localStorage.getItem("breeze-mode") || "auto";
+    const d = document.documentElement.dataset;
+    d.mode = m;
+    d.theme = m === "auto"
+      ? (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+      : m;
+  })();
+  </script><link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8e8a900e" /><link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" /><link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" /><link rel="stylesheet" type="text/css" href="../../../../_static/treeview.css?v=f579613a" /><link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=aad67955" /><link rel="stylesheet" type="text/css" href="../../../../_static/styles/breeze.css?v=7c62c100" /><script defer="defer" src="../../../../_static/scripts/breeze.js?v=dac9f8c6"></script></head>
+<body>
+  
+  
+  <div class="bz-skip-to-content"><a href="#bz-main-content">Skip to main content</a></div><header class="bz-header-main">
+  <div class="bz-header-start"><a class="bz-header-brand" href="../../../../index.html">
+  <img class="only-light" src="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png" alt="StewBeet" />
+  <img class="only-dark" src="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png" alt="StewBeet" />
+  <span>StewBeet</span>
+</a>
+  </div>
+  <div class="bz-header-end"><div id="docsearch" class="bz-search-button">
+  <a
+    href="../../../../search.html#q"
+    aria-label="Search the docs"
+    data-tooltip="Search the docs"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 -1 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+      />
+    </svg>
+    <span>Search</span>
+    <kbd>Ctrl+K</kbd>
+  </a>
+</div><div class="bz-theme-switcher">
+  <button aria-label="Switch theme" data-tooltip="Switch theme">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="only-light" fill="currentColor">
+      <path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm5.657-8.157a.75.75 0 0 1 0 1.061l-1.061 1.06a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l1.06-1.06a.75.75 0 0 1 1.06 0Zm-9.193 9.193a.75.75 0 0 1 0 1.06l-1.06 1.061a.75.75 0 1 1-1.061-1.06l1.06-1.061a.75.75 0 0 1 1.061 0ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0ZM3 8a.75.75 0 0 1-.75.75H.75a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 3 8Zm13 0a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 16 8Zm-8 5a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13Zm3.536-1.464a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 0 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061ZM2.343 2.343a.75.75 0 0 1 1.061 0l1.06 1.061a.751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018l-1.06-1.06a.75.75 0 0 1 0-1.06Z"></path>
+    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="only-dark" fill="currentColor">
+      <path d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"></path>
+    </svg>
+  </button>
+</div>
+  </div>
+</header><nav class="bz-header-tabs" aria-label="Primary Navigation"><label
+  class="bz-sidebar-primary-toggle"
+  for="bz-sidebar-primary"
+  role="button"
+  tabindex="0"
+  aria-label="Toggle site navigation"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path
+      fill="none"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M3.75 6.75h16.5M3.75 12H12m-8.25 5.25h12.5"
+    />
+  </svg>
+</label><ul><li class="toctree-l1"><a class="reference internal" href="../../../../modules/stewbeet.html">stewbeet package</a></li></ul><div class="bz-dropdown">
+    <button aria-haspopup="true" aria-expanded="false">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <g
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+        >
+          <circle cx="12" cy="12" r="1" />
+          <circle cx="19" cy="12" r="1" />
+          <circle cx="5" cy="12" r="1" />
+        </g>
+      </svg>
+    </button>
+    <ul role="menu" aria-hidden="true"></ul>
+  </div>
+</nav><hr class="bz-header-hr">
+  <div class="bz-content"><main id="bz-main-content"><header class="bz-article-header">
+  
+  
+    <nav class="bz-breadcrumbs" aria-label="Breadcrumb">
+  <ol>
+    <li class="bz-breadcrumbs-home">
+      <a href="../../../../index.html" aria-label="Home">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M8.543 2.232a.75.75 0 0 0-1.085 0l-5.25 5.5A.75.75 0 0 0 2.75 9H4v4a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1a1 1 0 1 1 2 0v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V9h1.25a.75.75 0 0 0 .543-1.268l-5.25-5.5Z" />
+        </svg>
+      </a>
+    </li><li class="bz-breadcrumbs-parent">
+      <a href="../../../index.html">Module code</a>
+    </li><li class="bz-breadcrumbs-parent">
+      <a href="../../../stewbeet.html">stewbeet</a>
+    </li><li class="bz-breadcrumbs-parent">
+      <a href="../ingame_manual.html">stewbeet.plugins.ingame_manual</a>
+    </li><li class="bz-breadcrumbs-current">
+      <span>stewbeet.plugins.ingame_manual.iso_renders</span>
+    </li>
+  </ol>
+</nav>
+  
+<label
+  class="bz-sidebar-secondary-toggle"
+  for="bz-sidebar-secondary"
+  role="button"
+  tabindex="0"
+  aria-label="Toggle table of contents"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path
+      fill="none"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M3.75 6.75H20.25 M11.25 12H20.25 M7.75 17.25H20.25"
+    />
+  </svg>
+</label></header><article class="bz-article-main" role="main"><h1>Source code for stewbeet.plugins.ingame_manual.iso_renders</h1><div class="highlight"><pre>
+<span></span>
+<span class="c1"># Imports</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">cast</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">stouputils</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">stp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">beet</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">beet.core.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">JsonDict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">model_resolver.render</span><span class="w"> </span><span class="kn">import</span> <span class="n">Render</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">...core.__memory__</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...core.cls.item</span><span class="w"> </span><span class="kn">import</span> <span class="n">Item</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...core.constants</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+	<span class="n">DOWNLOAD_VANILLA_ASSETS_RAW</span><span class="p">,</span>
+	<span class="n">DOWNLOAD_VANILLA_ASSETS_SOURCE</span><span class="p">,</span>
+	<span class="n">DOWNLOAD_VANILLA_ASSETS_SPECIAL_RAW</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.shared_import</span><span class="w"> </span><span class="kn">import</span> <span class="n">SharedMemory</span>
+
+
+<div class="viewcode-block" id="download_item">
+<a class="viewcode-back" href="../../../../modules/stewbeet.plugins.ingame_manual.iso_renders.html#stewbeet.plugins.ingame_manual.iso_renders.download_item">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">download_item</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cache_assets</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">destination</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Download a single vanilla item texture from the wiki. &quot;&quot;&quot;</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">destination</span><span class="p">:</span>
+		<span class="n">destination</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">/minecraft/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">.png&quot;</span>
+	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">destination</span><span class="p">)</span> <span class="ow">and</span> <span class="n">cache_assets</span><span class="p">:</span>
+		<span class="k">return</span>
+	<span class="k">for</span> <span class="n">base_link</span> <span class="ow">in</span> <span class="p">(</span><span class="n">DOWNLOAD_VANILLA_ASSETS_SPECIAL_RAW</span><span class="p">,</span> <span class="n">DOWNLOAD_VANILLA_ASSETS_RAW</span><span class="p">):</span>
+		<span class="k">for</span> <span class="n">folder</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;item&quot;</span><span class="p">,</span> <span class="s2">&quot;block&quot;</span><span class="p">,</span> <span class="s2">&quot;items&quot;</span><span class="p">]:</span>
+			<span class="n">link</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_link</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">folder</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">.png&quot;</span>
+			<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">link</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+				<span class="k">with</span> <span class="n">stp</span><span class="o">.</span><span class="n">super_open</span><span class="p">(</span><span class="n">destination</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+					<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+				<span class="k">return</span>
+	<span class="n">stp</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to download texture for &#39;</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">&#39;, please add it manually to &#39;</span><span class="si">{</span><span class="n">destination</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+	<span class="n">stp</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Suggestion link: &#39;</span><span class="si">{</span><span class="n">DOWNLOAD_VANILLA_ASSETS_SOURCE</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="build_model_resolver_queue">
+<a class="viewcode-back" href="../../../../modules/stewbeet.plugins.ingame_manual.iso_renders.html#stewbeet.plugins.ingame_manual.iso_renders.build_model_resolver_queue">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_model_resolver_queue</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ns</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cache_assets</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Build the queue of items that need iso renders generated. &quot;&quot;&quot;</span>
+	<span class="n">for_model_resolver</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+	<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">Mem</span><span class="o">.</span><span class="n">definitions</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+		<span class="n">obj</span> <span class="o">=</span> <span class="n">Item</span><span class="o">.</span><span class="n">from_id</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">obj</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;item_model&quot;</span><span class="p">):</span>
+			<span class="k">continue</span>
+		<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">.png&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">cache_assets</span><span class="p">:</span>
+			<span class="k">continue</span>
+		<span class="n">model</span><span class="p">:</span> <span class="n">Model</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">assets</span><span class="p">[</span><span class="n">ns</span><span class="p">]</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;item/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="n">rp_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">:item/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">&quot;</span>
+		<span class="n">dst_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">.png&quot;</span>
+		<span class="k">if</span> <span class="n">model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">model</span><span class="o">.</span><span class="n">get_content</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;textures&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+			<span class="n">for_model_resolver</span><span class="p">[</span><span class="n">rp_path</span><span class="p">]</span> <span class="o">=</span> <span class="n">dst_path</span>
+	<span class="k">return</span> <span class="n">for_model_resolver</span></div>
+
+
+
+<div class="viewcode-block" id="run_model_resolver">
+<a class="viewcode-back" href="../../../../modules/stewbeet.plugins.ingame_manual.iso_renders.html#stewbeet.plugins.ingame_manual.iso_renders.run_model_resolver">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_model_resolver</span><span class="p">(</span><span class="n">for_model_resolver</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Run the model resolver to generate iso renders for the given items. &quot;&quot;&quot;</span>
+	<span class="n">any_atlas_used</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="s2">&quot;before_format_73&quot;</span> <span class="ow">in</span> <span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">assets</span><span class="o">.</span><span class="n">overlays</span><span class="o">.</span><span class="n">_wrapped</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+	<span class="k">if</span> <span class="n">any_atlas_used</span><span class="p">:</span>
+		<span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">assets</span><span class="p">[</span><span class="s2">&quot;minecraft&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">atlases</span><span class="p">[</span><span class="s2">&quot;temporary_stewbeet&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">assets</span><span class="o">.</span><span class="n">overlays</span><span class="p">[</span><span class="s2">&quot;before_format_73&quot;</span><span class="p">][</span><span class="s2">&quot;minecraft&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">atlases</span><span class="p">[</span><span class="s2">&quot;blocks&quot;</span><span class="p">]</span>
+
+	<span class="n">stp</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Generating iso renders for </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">for_model_resolver</span><span class="p">)</span><span class="si">}</span><span class="s2"> items, this may take a while...&quot;</span><span class="p">)</span>
+	<span class="n">render</span> <span class="o">=</span> <span class="n">Render</span><span class="p">(</span><span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="p">)</span>
+	<span class="k">for</span> <span class="n">rp_path</span><span class="p">,</span> <span class="n">dst_path</span> <span class="ow">in</span> <span class="n">for_model_resolver</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+		<span class="n">render</span><span class="o">.</span><span class="n">add_model_task</span><span class="p">(</span><span class="n">rp_path</span><span class="p">,</span> <span class="n">path_save</span><span class="o">=</span><span class="n">dst_path</span><span class="p">,</span> <span class="n">animation_mode</span><span class="o">=</span><span class="s2">&quot;one_file&quot;</span><span class="p">)</span>
+	<span class="n">render</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+	<span class="n">stp</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Generated iso renders for all items&quot;</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="n">any_atlas_used</span><span class="p">:</span>
+		<span class="k">del</span> <span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">assets</span><span class="p">[</span><span class="s2">&quot;minecraft&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">atlases</span><span class="p">[</span><span class="s2">&quot;temporary_stewbeet&quot;</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="collect_used_vanilla_items">
+<a class="viewcode-back" href="../../../../modules/stewbeet.plugins.ingame_manual.iso_renders.html#stewbeet.plugins.ingame_manual.iso_renders.collect_used_vanilla_items">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">collect_used_vanilla_items</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Collect all vanilla items referenced in recipes across all definitions. &quot;&quot;&quot;</span>
+	<span class="n">used_vanilla_items</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+	<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">Mem</span><span class="o">.</span><span class="n">definitions</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+		<span class="n">obj</span> <span class="o">=</span> <span class="n">Item</span><span class="o">.</span><span class="n">from_id</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">recipe</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">recipes</span><span class="p">:</span>
+			<span class="n">ingredients</span> <span class="o">=</span> <span class="p">[]</span>
+			<span class="k">if</span> <span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ingredients&quot;</span><span class="p">):</span>
+				<span class="n">ingredients</span> <span class="o">=</span> <span class="n">recipe</span><span class="p">[</span><span class="s2">&quot;ingredients&quot;</span><span class="p">]</span>
+				<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ingredients</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+					<span class="n">ingredients</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="nb">list</span><span class="p">[</span><span class="n">JsonDict</span><span class="p">],</span> <span class="n">ingredients</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+			<span class="k">elif</span> <span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ingredient&quot;</span><span class="p">):</span>
+				<span class="n">ingredients</span> <span class="o">=</span> <span class="p">[</span><span class="n">recipe</span><span class="p">[</span><span class="s2">&quot;ingredient&quot;</span><span class="p">]]</span>
+			<span class="k">for</span> <span class="n">ingredient</span> <span class="ow">in</span> <span class="n">ingredients</span><span class="p">:</span>
+				<span class="k">if</span> <span class="s2">&quot;item&quot;</span> <span class="ow">in</span> <span class="n">ingredient</span><span class="p">:</span>
+					<span class="n">used_vanilla_items</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ingredient</span><span class="p">[</span><span class="s2">&quot;item&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+			<span class="k">if</span> <span class="n">recipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;result&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">recipe</span><span class="p">[</span><span class="s2">&quot;result&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;item&quot;</span><span class="p">):</span>
+				<span class="n">used_vanilla_items</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">recipe</span><span class="p">[</span><span class="s2">&quot;result&quot;</span><span class="p">][</span><span class="s2">&quot;item&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+	<span class="k">return</span> <span class="n">used_vanilla_items</span></div>
+
+
+
+<div class="viewcode-block" id="download_vanilla_textures">
+<a class="viewcode-back" href="../../../../modules/stewbeet.plugins.ingame_manual.iso_renders.html#stewbeet.plugins.ingame_manual.iso_renders.download_vanilla_textures">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">download_vanilla_textures</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">used_vanilla_items</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">cache_assets</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Download vanilla item textures from the wiki using multithreading. &quot;&quot;&quot;</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">used_vanilla_items</span><span class="p">:</span>
+		<span class="k">return</span>
+	<span class="n">args</span> <span class="o">=</span> <span class="p">[(</span><span class="n">path</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">cache_assets</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">used_vanilla_items</span><span class="p">]</span>
+	<span class="n">stp</span><span class="o">.</span><span class="n">multithreading</span><span class="p">(</span>
+		<span class="n">download_item</span><span class="p">,</span>
+		<span class="n">args</span><span class="p">,</span>
+		<span class="n">use_starmap</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+		<span class="n">max_workers</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">used_vanilla_items</span><span class="p">))</span>
+	<span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="copy_painting_textures">
+<a class="viewcode-back" href="../../../../modules/stewbeet.plugins.ingame_manual.iso_renders.html#stewbeet.plugins.ingame_manual.iso_renders.copy_painting_textures">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">copy_painting_textures</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ns</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cache_assets</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Download and copy painting textures for custom painting items. &quot;&quot;&quot;</span>
+	<span class="n">last_painting_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+	<span class="k">for</span> <span class="n">item</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">Mem</span><span class="o">.</span><span class="n">definitions</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+		<span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;minecraft:painting&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;item_model&quot;</span><span class="p">):</span>
+			<span class="k">if</span> <span class="ow">not</span> <span class="n">last_painting_path</span><span class="p">:</span>
+				<span class="n">last_painting_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">.png&quot;</span>
+				<span class="n">download_item</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;painting&quot;</span><span class="p">,</span> <span class="n">cache_assets</span><span class="p">,</span> <span class="n">last_painting_path</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">last_painting_path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">.png&quot;</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># Generate iso renders for every item in the definitions</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_all_iso_renders</span><span class="p">(</span><span class="n">override_cache_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ignore_vanilla</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">ignore_painting</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+	<span class="n">ns</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">project_id</span>
+
+	<span class="c1"># Create the items folder</span>
+	<span class="n">path</span> <span class="o">=</span> <span class="n">override_cache_path</span> <span class="ow">or</span> <span class="p">(</span><span class="n">SharedMemory</span><span class="o">.</span><span class="n">cache_path</span> <span class="o">+</span> <span class="s2">&quot;/items&quot;</span><span class="p">)</span>
+	<span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+	<span class="n">cache_assets</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stewbeet&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;manual&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cache_assets&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+	<span class="c1"># Build queue and run model resolver</span>
+	<span class="n">for_model_resolver</span> <span class="o">=</span> <span class="n">build_model_resolver_queue</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">ns</span><span class="p">,</span> <span class="n">cache_assets</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">for_model_resolver</span><span class="p">:</span>
+		<span class="n">run_model_resolver</span><span class="p">(</span><span class="n">for_model_resolver</span><span class="p">)</span>
+
+	<span class="c1"># Download vanilla textures used in recipes</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">ignore_vanilla</span><span class="p">:</span>
+		<span class="n">used_vanilla_items</span> <span class="o">=</span> <span class="n">collect_used_vanilla_items</span><span class="p">()</span>
+		<span class="n">download_vanilla_textures</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">used_vanilla_items</span><span class="p">,</span> <span class="n">cache_assets</span><span class="p">)</span>
+
+	<span class="c1"># Handle custom painting textures</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">ignore_painting</span><span class="p">:</span>
+		<span class="n">copy_painting_textures</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">ns</span><span class="p">,</span> <span class="n">cache_assets</span><span class="p">)</span>
+
+</pre></div>
+</article><footer class="bz-article-footer">
+  
+  
+    <nav class="bz-related-pages" aria-label="Related pages navigation"></nav>
+  
+
+</footer><aside class="bz-sidebar-secondary" data-drawer="bz-sidebar-secondary">
+  
+  
+    
+  
+    
+  
+  
+  
+  
+
+
+
+<div class="bz-repo-stats">
+  <a
+    data-provider="github"
+    data-user="Stoupy51"
+    data-repo="stewbeet"
+    href="https://github.com/Stoupy51/stewbeet"
+    aria-label="Stoupy51/stewbeet repository"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M10.303 16.652c-2.837-.344-4.835-2.385-4.835-5.028 0-1.074.387-2.235 1.031-3.008-.279-.709-.236-2.214.086-2.837.86-.107 2.02.344 2.708.967.816-.258 1.676-.386 2.728-.386 1.053 0 1.913.128 2.686.365.666-.602 1.848-1.053 2.708-.946.3.581.344 2.085.064 2.815.688.817 1.053 1.913 1.053 3.03 0 2.643-1.998 4.641-4.877 5.006.73.473 1.224 1.504 1.224 2.686v2.235c0 .644.537 1.01 1.182.752 3.889-1.483 6.94-5.372 6.94-10.185 0-6.081-4.942-11.044-11.022-11.044-6.081 0-10.98 4.963-10.98 11.044a10.84 10.84 0 0 0 7.112 10.206c.58.215 1.139-.172 1.139-.752v-1.719a2.768 2.768 0 0 1-1.032.215c-1.418 0-2.256-.773-2.857-2.213-.237-.58-.495-.924-.989-.988-.258-.022-.344-.129-.344-.258 0-.258.43-.451.86-.451.623 0 1.16.386 1.719 1.181.43.623.881.903 1.418.903.537 0 .881-.194 1.375-.688.365-.365.645-.687.903-.902Z"></path></svg>
+    <span
+      style="--bz-repo-stats-name-length: 17"
+      title="Stoupy51/stewbeet"
+    >
+      Stoupy51/stewbeet
+    </span>
+    <div class="bz-repo-stats-row">
+      <span class="bz-repo-stats-item" aria-label="Repository stars">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.751 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Zm0 2.445L6.615 5.5a.75.75 0 0 1-.564.41l-3.097.45 2.24 2.184a.75.75 0 0 1 .216.664l-.528 3.084 2.769-1.456a.75.75 0 0 1 .698 0l2.77 1.456-.53-3.084a.75.75 0 0 1 .216-.664l2.24-2.183-3.096-.45a.75.75 0 0 1-.564-.41L8 2.694Z"></path></svg>
+        <span data-stat="stars">-</span>
+      </span>
+      <span class="bz-repo-stats-item" aria-label="Repository forks">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M5 5.372v.878c0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75v-.878a2.25 2.25 0 1 1 1.5 0v.878a2.25 2.25 0 0 1-2.25 2.25h-1.5v2.128a2.251 2.251 0 1 1-1.5 0V8.5h-1.5A2.25 2.25 0 0 1 3.5 6.25v-.878a2.25 2.25 0 1 1 1.5 0ZM5 3.25a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Zm6.75.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm-3 8.75a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Z"></path></svg>
+        <span data-stat="forks">-</span>
+      </span>
+    </div>
+  </a>
+</div>
+
+  
+    
+  
+    
+  
+
+</aside></main>
+  </div>
+<footer class="bz-footer">
+  <div class="bz-footer-copyright"><p class="bz-copyright">© Copyright 2025 - 2026, Stoupy</p><p>
+    
+    
+    
+      Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a href="https://github.com/aksiome/breeze">Breeze theme</a>.
+    
+  </p>
+</div>
+</footer><a href="#" class="bz-back-to-top">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m5 12 7-7 7 7"/><path d="M12 19V5"/>
+    </svg>
+    <span>Back to top</span>
+  </a>
+  <label class="bz-overlay bz-overlay-primary" for="bz-sidebar-primary"></label>
+  <label class="bz-overlay bz-overlay-secondary" for="bz-sidebar-secondary"></label>
+  <input type="checkbox" name="bz-sidebar-primary" id="bz-sidebar-primary" aria-label="Toggle section navigation">
+  <input type="checkbox" name="bz-sidebar-secondary" id="bz-sidebar-secondary" aria-label="Toggle table of contents"><script src="../../../../_static/documentation_options.js?v=0ffc2956"></script><script src="../../../../_static/doctools.js?v=fd6eb6e6"></script><script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script><script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script><script src="../../../../_static/copybutton.js?v=18a8d5f5"></script><script src="../../../../_static/design-tabs.js?v=f930bc37"></script><script src="../../../../_static/treeview.js?v=265ad9b8"></script></body>
+</html>
