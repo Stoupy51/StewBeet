@@ -14,4 +14,5 @@ from .definitions_helper import *
 from .utils.io import *
 from .utils.sounds import *
 from .utils.text_component import *
+from .utils.equation import Equation
 

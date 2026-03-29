@@ -161,3 +161,8 @@ class StorageEquation(ScoreboardEquation):
 		self.text.append(f"execute store result storage {self.storage} {self.path} double {format(self.scale, 'f')} run scoreboard players get #temp_result {Mem.ctx.project_id}.data")
 		return super().__str__()
 
+# Public API
+class Equation:
+	scoreboard = ScoreboardEquation
+	storage = StorageEquation
+
