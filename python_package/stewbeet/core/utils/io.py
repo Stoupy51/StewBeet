@@ -190,12 +190,12 @@ def write_scheduled_function(
 
 	# Overwrite mode always refreshes both scheduled function and load registration.
 	if overwrite:
-		body: str = f"# Wait for {schedule_delay}\n{schedule_command} replace"
+		body: str = f"# Wait for {schedule_delay}\n{schedule_command}"
 		if content_stripped:
 			body = f"{body}\n\n{content_stripped}"
 		write_function(path=resolved_path, content=body, overwrite=True, prepend=prepend)
 		write_load_file(
-			f"# Schedule function for {schedule_delay}\n{schedule_command}",
+			f"# Schedule function for {schedule_delay}\n{schedule_command} replace",
 			overwrite=True,
 			prepend=prepend,
 		)
@@ -203,7 +203,7 @@ def write_scheduled_function(
 
 	# Append/prepend mode: avoid duplicating schedule lines and duplicate content blocks.
 	if schedule_command not in existing_scheduled_content:
-		body = f"# Wait for {schedule_delay}\n{schedule_command} replace"
+		body = f"# Wait for {schedule_delay}\n{schedule_command}"
 		if content_stripped:
 			body = f"{body}\n\n{content_stripped}"
 		write_function(path=resolved_path, content=body, overwrite=False, prepend=prepend)
@@ -212,7 +212,7 @@ def write_scheduled_function(
 
 	if schedule_command not in existing_load_content:
 		write_load_file(
-			f"# Schedule function for {schedule_delay}\n{schedule_command}",
+			f"# Schedule function for {schedule_delay}\n{schedule_command} replace",
 			overwrite=False,
 			prepend=prepend,
 		)
