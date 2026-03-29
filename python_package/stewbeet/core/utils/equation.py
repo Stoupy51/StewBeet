@@ -143,4 +143,21 @@ class ScoreboardEquation:
 			return self._operation(player, scoreboard, "=")
 		return self
 
+class StorageEquation(ScoreboardEquation):
+	def __init__(self, storage: str, path: str, scale: float = 1.0):
+		"""
+		Create an equation that stores its result in a storage
+
+		Args:
+			storage	(str):	The storage to store the result in, in the format "namespace:path".
+			path	(str):	The path in the storage to store the result in.
+			scale	(float):	The scale to apply to the result when storing it. Defaults to 1.0.
+		"""
+		super().__init__("#temp_result")
+		self.storage = storage
+		self.path = path
+		self.scale = scale
+	def __str__(self) -> str:
+		self.text.append(f"execute store result storage {self.storage} {self.path} double {format(self.scale, 'f')} run scoreboard players get #temp_result {Mem.ctx.project_id}.data")
+		return super().__str__()
 
