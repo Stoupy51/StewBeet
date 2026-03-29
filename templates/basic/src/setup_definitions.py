@@ -1,7 +1,7 @@
 
 # Imports
 from beet import Context
-from stewbeet import *
+from stewbeet import *  # type: ignore
 
 # Additional imports (specific to this project)
 from .definitions.additions import main as main_additions

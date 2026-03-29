@@ -2,7 +2,7 @@
 # Imports
 from beet import Context
 from beet.core.utils import JsonDict
-from stewbeet import *
+from stewbeet import *  # type: ignore
 
 
 # Main entry point (ran just before making finalyzing the build process (zip, headers, lang, ...))
