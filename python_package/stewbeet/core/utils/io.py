@@ -154,6 +154,70 @@ def write_versioned_function(path: str, content: str, overwrite: bool = False, p
 	write_function(f"{Mem.ctx.project_id}:v{Mem.ctx.project_version}/{path}", content, overwrite, prepend, tags)
 
 
+def write_scheduled_function(
+	duration: int | str,
+	content: str,
+	unit: str = "t",
+	path: str | None = None,
+	overwrite: bool = False,
+	prepend: bool = False,
+) -> None:
+	""" Write a self-rescheduling function and schedule it on load.
+
+	Args:
+		duration	(int | str):	Delay before re-execution. If it's a digit-only string, it is converted to int.
+		content		(str):			Function content to execute.
+		unit		(str):			Time unit used only when duration is int (default: "t").
+		path		(str | None):	Target function path. Defaults to "{project_id}:scheduled/{duration}".
+		overwrite	(bool):			If True, overwrite target files instead of appending.
+		prepend		(bool):			If True, prepend content instead of appending (ignored when overwrite is True).
+	"""
+	# Normalize duration: keep custom string delays (e.g. "5s"), coerce numeric strings to int.
+	parsed_duration: int | str = duration.strip() if isinstance(duration, str) else duration
+	if isinstance(parsed_duration, str) and parsed_duration.isdigit():
+		parsed_duration = int(parsed_duration)
+
+	# Build schedule command and target paths.
+	schedule_delay: str = f"{parsed_duration}{unit}" if isinstance(parsed_duration, int) else parsed_duration
+	resolved_path: str = path or f"{Mem.ctx.project_id}:scheduled/{schedule_delay}"
+	schedule_command: str = f"schedule function {resolved_path} {schedule_delay}"
+	content_stripped: str = content.strip("\n")
+
+	# Read existing contents for idempotent writes.
+	existing_scheduled_content: str = read_function(resolved_path) if resolved_path in Mem.ctx.data.functions else ""
+	load_path: str = f"{Mem.ctx.project_id}:v{Mem.ctx.project_version}/load/confirm_load"
+	existing_load_content: str = read_function(load_path) if load_path in Mem.ctx.data.functions else ""
+
+	# Overwrite mode always refreshes both scheduled function and load registration.
+	if overwrite:
+		body: str = f"# Wait for {schedule_delay}\n{schedule_command} replace"
+		if content_stripped:
+			body = f"{body}\n\n{content_stripped}"
+		write_function(path=resolved_path, content=body, overwrite=True, prepend=prepend)
+		write_load_file(
+			f"# Schedule function for {schedule_delay}\n{schedule_command}",
+			overwrite=True,
+			prepend=prepend,
+		)
+		return
+
+	# Append/prepend mode: avoid duplicating schedule lines and duplicate content blocks.
+	if schedule_command not in existing_scheduled_content:
+		body = f"# Wait for {schedule_delay}\n{schedule_command} replace"
+		if content_stripped:
+			body = f"{body}\n\n{content_stripped}"
+		write_function(path=resolved_path, content=body, overwrite=False, prepend=prepend)
+	elif content_stripped and content_stripped not in existing_scheduled_content:
+		write_function(path=resolved_path, content=content_stripped, overwrite=False, prepend=prepend)
+
+	if schedule_command not in existing_load_content:
+		write_load_file(
+			f"# Schedule function for {schedule_delay}\n{schedule_command}",
+			overwrite=False,
+			prepend=prepend,
+		)
+
+
 # Merge two dict recuirsively
 def super_merge_dict(dict1: JsonDict, dict2: JsonDict) -> JsonDict:
 	""" Merge the two dictionnaries recursively without modifying originals
@@ -224,9 +288,9 @@ def convert_to_serializable(obj: Any) -> Any:
 	if hasattr(obj, 'to_dict'):
 		return obj.to_dict()
 	elif isinstance(obj, dict):
-		return {k: convert_to_serializable(v) for k, v in obj.items()}
+		return {k: convert_to_serializable(v) for k, v in obj.items()} # type: ignore
 	elif isinstance(obj, list):
-		return [convert_to_serializable(item) for item in obj]
+		return [convert_to_serializable(item) for item in obj] # type: ignore
 	else:
 		return obj
 
