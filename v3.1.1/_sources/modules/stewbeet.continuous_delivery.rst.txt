@@ -1,0 +1,20 @@
+stewbeet.continuous\_delivery package
+=====================================
+
+.. automodule:: stewbeet.continuous_delivery
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.continuous_delivery.cd_utils
+   stewbeet.continuous_delivery.github
+   stewbeet.continuous_delivery.modrinth
+   stewbeet.continuous_delivery.pmc
+   stewbeet.continuous_delivery.smithed
