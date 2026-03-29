@@ -1,6 +1,12 @@
 
 # ⚙️ Beet & StewBeet Configuration Guide
 
+## 📖 Definitions
+- **Beet configuration file**: Main project config (`beet.yml`, `beet.yaml`, `beet.json`, or `pyproject.toml`) loaded at build start.
+- **Pipeline**: Ordered list of plugins executed to transform and package your project.
+- **Meta section**: Structured plugin settings container (`meta`) used by StewBeet and related tools.
+
+## 🧪 Examples
 📄 **Example File**: [extensive/beet.yml](../../templates/extensive/beet.yml) 🔗<br>
 📄 **Real-world Example**: [SimplEnergy/beet.yml](https://github.com/Stoupy51/SimplEnergy/blob/main/beet.yml) 🔗<br>
 📄 **Real-world Example**: [LifeSteal/beet.yml](https://github.com/Stoupy51/LifeSteal/blob/main/beet.yml) 🔗<br>
@@ -43,18 +49,24 @@ The configuration file is the heart of your StewBeet project. It defines everyth
 ## 🎨 Basic Project Configuration
 
 ### 🆔 Project Identifier
+Defines the namespace root used across generated functions, tags, and storage keys.
+
 ```yaml
 id: "_your_namespace"
 ```
 Used for namespacing functions, tags, and storage. Must be lowercase with underscores only.
 
 ### 📛 Project Name
+Defines the human-readable project label shown in generated metadata and UI-facing text.
+
 ```yaml
 name: "Extensive Template"
 ```
 Displayed in pack.mcmeta, item lore, and in-game messages.
 
 ### 👤 Author
+Defines one or more creators for attribution and author-related conventions.
+
 ```yaml
 author: "Stoupy51"
 author: "Player1, Player2, Player3"  # Multiple authors
@@ -63,12 +75,16 @@ Displayed in pack.mcmeta. Supports multiple names separated by `", "`.<br>
 **🎁 Special feature:** Players with matching in-game names automatically receive the `convention.debug` tag for development tools.
 
 ### 🔢 Version
+Defines the release version used for compatibility checks and versioned outputs.
+
 ```yaml
 version: "3.0.0"
 ```
 Semantic versioning (`major.minor.patch`) used for dependency validation and versioned function paths.
 
 ### 🎮 Minecraft Version
+Defines the primary target game version for command/data format compatibility.
+
 ```yaml
 minecraft: "1.21.11"
 ```
@@ -79,6 +95,8 @@ Determines available commands and resources. Omit to use latest version.
 ## 📂 Directory Settings
 
 ### 📁 Base Directory & Output
+Defines where relative paths are resolved and where generated packs are written.
+
 ```yaml
 directory: "."
 output: "build"
@@ -86,6 +104,8 @@ output: "build"
 Base directory for relative paths. Output defines where generated packs are saved.
 
 ### 🚫 Ignore Patterns
+Defines files and folders ignored by watchers to avoid rebuild loops and noise.
+
 ```yaml
 ignore: ["build", "manual_cache", "definitions_debug.json"]
 ```
@@ -113,6 +133,8 @@ Common dependencies:
 ## 📦 Pack Configuration
 
 ### 📊 Data Pack
+Defines source loading rules for datapack content under `src/data/...`.
+
 ```yaml
 data_pack:
     name: "datapack"
@@ -121,6 +143,8 @@ data_pack:
 Loads `.mcfunction` files and JSON from `src/data/your_namespace/` into the datapack.
 
 ### 🎨 Resource Pack
+Defines source loading rules for client assets under `src/assets/...`.
+
 ```yaml
 resource_pack:
     name: "resource_pack"
@@ -231,6 +255,8 @@ pipeline:
 ## 🎛️ Meta Configuration
 
 ### 🎮 Minecraft Support
+Declares supported versions for distribution metadata and compatibility signaling.
+
 ```yaml
 mc_supports: ["1.21.11", "26.1-snapshot-1", "infinite"]
 ```
@@ -238,6 +264,8 @@ Declares version compatibility for platform uploads (Modrinth, Smithed). Use `"i
 (Influences supported formats in `pack.mcmeta`)
 
 ### 🗄️ Model Resolver
+Configures model cache behavior to speed up rebuilds.
+
 ```yaml
 model_resolver:
     use_cache: true
@@ -245,6 +273,8 @@ model_resolver:
 Caches resolved item models (80-90% faster builds). Stored in `.beet_cache/model_resolver/`.
 
 ### 🔧 Mecha
+Configures command parsing and formatting behavior during compilation.
+
 ```yaml
 mecha:
     multiline: true
@@ -265,6 +295,8 @@ execute
 ### ⚙️ StewBeet Settings
 
 #### 📁 Directory Paths
+Defines StewBeet's source folders for textures, sounds, records, and libraries.
+
 ```yaml
 stewbeet:
     textures_folder: "assets/textures"
@@ -274,6 +306,8 @@ stewbeet:
 ```
 
 #### 🚀 Build Copy Destinations
+Defines optional post-build sync targets for datapack and resource pack outputs.
+
 ```yaml
 build_copy_destinations:
     datapack: ["D:/latest_snapshot/world/datapacks"]
@@ -282,12 +316,16 @@ build_copy_destinations:
 Automatically copies packs after building. Perfect with `beet watch` for live testing.
 
 #### 🏷️ Custom Item Lore
+Defines default lore branding for generated custom items.
+
 ```yaml
 source_lore: "auto" # TextComponents format
 ```
 Appended to custom items lore, `"auto"` defaults to project icon + name.
 
 #### 📦 Load Dependencies
+Defines runtime dependency checks shown when required datapacks are missing or outdated.
+
 ```yaml
 load_dependencies:
     "energy":
@@ -302,6 +340,8 @@ load_dependencies:
 ---
 
 #### 📚 In-Game Manual Configuration
+Defines rendering, caching, layout, and interaction behavior for the generated manual.
+
 
 ```yaml
 manual:

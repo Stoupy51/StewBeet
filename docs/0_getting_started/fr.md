@@ -122,6 +122,8 @@ Ouvrez `beet.yml` dans votre éditeur de texte. C'est votre fichier de configura
 
 ### 🎯 Paramètres de base du projet
 
+Ce sont les champs de métadonnées minimum qui identifient votre pack et sont réutilisés dans les fichiers générés, l'archivage et l'affichage en jeu.
+
 ```yaml
 # Identifiant du projet - DOIT correspondre à votre namespace dans src/data/
 id: "awesome_ores"
@@ -352,6 +354,8 @@ D'abord, assurez-vous de redémarrer votre monde car le manuel en jeu nécessite
 Explorons quelques options de configuration clés dans `beet.yml` :
 
 ### 📁 Dossiers importants
+
+Ces chemins définissent où StewBeet lit les sources et où il copie les sorties générées pour les tests.
 
 ```yaml
 meta:

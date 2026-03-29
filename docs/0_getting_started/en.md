@@ -122,6 +122,8 @@ Open `beet.yml` in your text editor. This is your main configuration file. Let's
 
 ### 🎯 Basic Project Settings
 
+These are the minimum metadata fields that identify your pack and are reused by generated files, packaging, and in-game presentation.
+
 ```yaml
 # Project identifier - MUST match your namespace in src/data/
 id: "awesome_ores"
@@ -352,6 +354,8 @@ First, make sure to restart your world since ingame-manual require a server rest
 Let's explore some key configuration options in `beet.yml`:
 
 ### 📁 Important Folders
+
+These paths define where StewBeet reads source assets and where it copies generated outputs for testing.
 
 ```yaml
 meta:
