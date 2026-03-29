@@ -7,12 +7,15 @@ advancements, and function calls to create the @within information.
 
 # pyright: reportUnnecessaryIsInstance=false
 # Imports
+import re
 from typing import cast
 
 from beet import Context
 
 from .execution_parser import parse_execution_context_from_line
 from .object import Header
+
+FUNCTION_CALL_RE = re.compile(r"function\s+([#]?[\w./-]+:[\w./-]+)")
 
 
 # Class
@@ -60,7 +63,28 @@ class FunctionAnalyzer:
                     self.mcfunctions[function_path].within.append(to_be_called)
 
     def analyze_function_calls(self) -> None:
-        """ Analyze function calls within mcfunction files. """
+        """ Analyze function calls within mcfunction files.
+
+        Examples:
+            Detecting nested function references inside macro payloads:
+            >>> caller = Header(
+            ...     "test:caller",
+            ...     [],
+            ...     [],
+            ...     'function #bs.raycast:run {with: {on_exit_point: "function test:earth/on_exit"}}',
+            ... )
+            >>> raycast = Header("#bs.raycast:run", [], [], "")
+            >>> exit_fn = Header("test:earth/on_exit", [], [], "")
+            >>> mcfunctions = {
+            ...     "test:caller": caller,
+            ...     "#bs.raycast:run": raycast,
+            ...     "test:earth/on_exit": exit_fn,
+            ... }
+            >>> analyzer = FunctionAnalyzer(None, mcfunctions)  # type: ignore[arg-type]
+            >>> analyzer.analyze_function_calls()
+            >>> any(item.startswith("test:caller") for item in mcfunctions["test:earth/on_exit"].within)
+            True
+        """
         # For each mcfunction file, look at each line
         for path, header in self.mcfunctions.items():
             for line in header.content.split("\n"):
@@ -75,6 +99,14 @@ class FunctionAnalyzer:
                     # Get the called function
                     splitted: list[str] = after_function.split(" ")
                     calling: str = splitted[0].replace('"', '').replace("'", "")
+                    called_functions: list[str] = [calling]
+
+                    # Also detect nested function references in arguments, e.g.
+                    # function #tag:run {with: {on_exit_point: "function namespace:path"}}
+                    for match in FUNCTION_CALL_RE.finditer(line):
+                        candidate = match.group(1)
+                        if candidate not in called_functions:
+                            called_functions.append(candidate)
 
                     # Get additional text like macros, ex: function iyc:function {id:"51"}
                     more: str = ""
@@ -101,9 +133,10 @@ class FunctionAnalyzer:
                         # Mark scheduled calls with a special marker so context analyzer knows not to inherit context
                         caller_info += " [ scheduled ]"
 
-                    # If the called function is registered, append the caller info
-                    if calling in self.mcfunctions and caller_info not in self.mcfunctions[calling].within:
-                        self.mcfunctions[calling].within.append(caller_info)
+                    # If a called function is registered, append the caller info
+                    for called in called_functions:
+                        if called in self.mcfunctions and caller_info not in self.mcfunctions[called].within:
+                            self.mcfunctions[called].within.append(caller_info)
 
     def analyze_all_relationships(self) -> None:
         """ Analyze all function relationships. """
