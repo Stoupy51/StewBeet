@@ -1,6 +1,6 @@
 
 # Imports
-from stewbeet import *
+from stewbeet import *  # type: ignore
 
 
 # Main entry point
