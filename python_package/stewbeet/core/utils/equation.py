@@ -1,6 +1,28 @@
 
 # Imports
 from ..__memory__ import Mem
+from .io import read_function, write_load_file
+
+def __get_scoreboard_set(player: str, scoreboard: str, value: str|int) -> str:
+	return f"scoreboard players set {player} {scoreboard} {value}"
+def __get_scoreboard_operation(player: str, scoreboard: str, operator: str, value: str, value_scoreboard: str) -> str:
+	return f"scoreboard players operation {player} {scoreboard} {operator} {value} {value_scoreboard}"
+def __write_constant_to_load(value: int) -> None:
+	"""
+	Writes a constant definition to the load file if it doesn't already exist.
+
+	Args:
+		value (int): The constant value to write.
+
+	Example:
+		>>> write_constant_to_load(42)
+		# This will set the scoreboard #42 {project_id}:data = 42 if it isn't already defined in the load file.
+	"""
+	load_path: str = f"{Mem.ctx.project_id}:v{Mem.ctx.project_version}/load/confirm_load"
+	existing_load_content: str = read_function(load_path) if load_path in Mem.ctx.data.functions else ""
+	constant_definition: str = __get_scoreboard_set(f"#{value}", f"{Mem.ctx.project_id}.data", value)
+	if constant_definition not in existing_load_content.splitlines():
+		write_load_file(constant_definition)
 
 class ScoreboardEquation:
 	def __init__(self, player: str, scoreboard: str|None = None):
@@ -24,81 +46,90 @@ class ScoreboardEquation:
 		"""
 		return "\n".join(self.text)
 
-	def _operation(self, player: str, scoreboard: str|None, operator: str) -> "ScoreboardEquation":
+	def _operation(self, player: str|int, scoreboard: str|None, operator: str, temp_name: str = "temp") -> "ScoreboardEquation":
 		"""
 		Manipulates the scoreboard value
 
 		Args:
-			player		(str):			The player whose scoreboard value will be used in the operation. Can be a selector, a player name, or a fake player.
-			scoreboard	(str | None):	The scoreboard objective to use. Defaults to "{project_id}:data".
+			player		(str | int):	The player whose scoreboard value will be used in the operation. Can be a selector, a player name, a fake player, or an integer constant.
+			scoreboard	(str | None):	The scoreboard objective to use. Defaults to "{project_id}:data", ignored if player is an integer constant.
 			operator	(str):			The operator to use in the operation. Must be one of "*=", "/=", "+=", "-=".
 
 		Returns:
 			ScoreboardEquation: The current equation instance, allowing for method chaining.
 		"""
 		if scoreboard is None: scoreboard = f"{Mem.ctx.project_id}.data"
-		self.text.append(f"scoreboard players operation {self.player} {self.scoreboard} {operator} {player} {scoreboard}")
+		if isinstance(player, int):
+			__write_constant_to_load(player)
+			self.text.append(__get_scoreboard_operation(self.player, self.scoreboard, operator, f"#{player}", f"{Mem.ctx.project_id}.data"))
+		else:
+			self.text.append(__get_scoreboard_operation(self.player, self.scoreboard, operator, player, scoreboard))
 		return self
 
-	def multiply(self, player: str, scoreboard: str|None = None) -> "ScoreboardEquation":
+	def multiply(self, player: str|int, scoreboard: str|None = None) -> "ScoreboardEquation":
 		"""
 		Multiplies the current scoreboard value
 
 		Args:
-			player		(str):			The player whose scoreboard value will be used in the multiplication. Can be a selector, a player name, or a fake player.
-			scoreboard	(str | None):	The scoreboard objective to use. Defaults to "{project_id}:data".
+			player		(str | int):	The player whose scoreboard value will be used in the multiplication. Can be a selector, a player name, a fake player, or an integer constant.
+			scoreboard	(str | None):	The scoreboard objective to use. Defaults to "{project_id}:data", ignored if player is an integer constant.
 
 		Returns:
 			ScoreboardEquation: The current equation instance, allowing for method chaining.
 		"""
 		return self._operation(player, scoreboard, "*=")
-	def divide(self, player: str, scoreboard: str|None = None) -> "ScoreboardEquation":
+	def divide(self, player: str|int, scoreboard: str|None = None) -> "ScoreboardEquation":
 		"""
 		Divides the current scoreboard value
 
 		Args:
-			player		(str):			The player whose scoreboard value will be used in the division. Can be a selector, a player name, or a fake player.
-			scoreboard	(str | None):	The scoreboard objective to use. Defaults to "{project_id}:data".
+			player		(str | int):	The player whose scoreboard value will be used in the division. Can be a selector, a player name, a fake player, or an integer constant.
+			scoreboard	(str | None):	The scoreboard objective to use. Defaults to "{project_id}:data", ignored if player is an integer constant.
 
 		Returns:
 			ScoreboardEquation: The current equation instance, allowing for method chaining.
 		"""
 		return self._operation(player, scoreboard, "/=")
-	def add(self, player: str, scoreboard: str|None = None) -> "ScoreboardEquation":
+	def add(self, player: str|int, scoreboard: str|None = None) -> "ScoreboardEquation":
 		"""
 		Adds to the current scoreboard value
 
 		Args:
-			player		(str):			The player whose scoreboard value will be used in the addition. Can be a selector, a player name, or a fake player.
-			scoreboard	(str | None):	The scoreboard objective to use. Defaults to "{project_id}:data".
+			player		(str | int):	The player whose scoreboard value will be used in the addition. Can be a selector, a player name, a fake player, or an integer constant.
+			scoreboard	(str | None):	The scoreboard objective to use. Defaults to "{project_id}:data", ignored if player is an integer constant.
 
 		Returns:
 			ScoreboardEquation: The current equation instance, allowing for method chaining.
 		"""
 		return self._operation(player, scoreboard, "+=")
-	def subtract(self, player: str, scoreboard: str|None = None) -> "ScoreboardEquation":
+	def subtract(self, player: str|int, scoreboard: str|None = None) -> "ScoreboardEquation":
 		"""
 		Subtracts from the current scoreboard value
 
 		Args:
-			player		(str):			The player whose scoreboard value will be used in the subtraction. Can be a selector, a player name, or a fake player.
-			scoreboard	(str | None):	The scoreboard objective to use. Defaults to "{project_id}:data".
+			player		(str | int):	The player whose scoreboard value will be used in the subtraction. Can be a selector, a player name, a fake player, or an integer constant.
+			scoreboard	(str | None):	The scoreboard objective to use. Defaults to "{project_id}:data", ignored if player is an integer constant.
 
 		Returns:
 			ScoreboardEquation: The current equation instance, allowing for method chaining.
 		"""
 		return self._operation(player, scoreboard, "-=")
-	def set(self, player: str, scoreboard: str|None = None) -> "ScoreboardEquation":
+	def set(self, player: str|int, scoreboard: str|None = None) -> "ScoreboardEquation":
 		"""
 		Sets the current scoreboard value
 
 		Args:
-			player		(str):			The player whose scoreboard value will be used in the set operation. Can be a selector, a player name, or a fake player.
-			scoreboard	(str | None):	The scoreboard objective to use. Defaults to "{project_id}:data".
+			player		(str | int):	The player whose scoreboard value will be used in the setting. Can be a selector, a player name, a fake player, or an integer constant.
+			scoreboard	(str | None):	The scoreboard objective to use. Defaults to "{project_id}:data", ignored if player is an integer constant.
 
 		Returns:
 			ScoreboardEquation: The current equation instance, allowing for method chaining.
 		"""
-		return self._operation(player, scoreboard, "=")
+		if isinstance(player, int):
+			# it's useless constant value in this case
+			self.text.append(__get_scoreboard_set(self.player, self.scoreboard, player))
+		else:
+			return self._operation(player, scoreboard, "=")
+		return self
 
 
