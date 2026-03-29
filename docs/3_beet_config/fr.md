@@ -1,6 +1,12 @@
 
 # ⚙️ Guide de Configuration Beet & StewBeet
 
+## 📖 Définitions
+- **Fichier de configuration Beet** : Fichier principal du projet (`beet.yml`, `beet.yaml`, `beet.json` ou `pyproject.toml`) lu au démarrage du build.
+- **Pipeline** : Liste ordonnée de plugins exécutés par beet pour transformer et générer le contenu du projet.
+- **Section meta** : Conteneur de paramètres personnalisés (`meta`) utilisé par StewBeet et les autres outils.
+
+## 🧪 Exemples
 📄 **Fichier d'exemple**: [extensive/beet.yml](../../templates/extensive/beet.yml) 🔗<br>
 📄 **Exemple réel**: [SimplEnergy/beet.yml](https://github.com/Stoupy51/SimplEnergy/blob/main/beet.yml) 🔗<br>
 📄 **Exemple réel**: [LifeSteal/beet.yml](https://github.com/Stoupy51/LifeSteal/blob/main/beet.yml) 🔗<br>
@@ -42,18 +48,24 @@ Le fichier de configuration est le cœur de votre projet StewBeet. Il définit t
 ## 🎨 Configuration de Base du Projet
 
 ### 🆔 Identifiant du Projet
+Définit la racine de namespace utilisée dans les fonctions, tags et clés de stockage générés.
+
 ```yaml
 id: "_votre_namespace"
 ```
 Utilisé pour les espaces de noms des fonctions, tags et stockage. Doit être en minuscules avec uniquement des underscores.
 
 ### 📛 Nom du Projet
+Définit le nom lisible par les joueurs, affiché dans les métadonnées et les textes générés.
+
 ```yaml
 name: "Extensive Template"
 ```
 Affiché dans pack.mcmeta, lore des items et messages en jeu.
 
 ### 👤 Auteur
+Définit un ou plusieurs auteurs pour l'attribution et les conventions liées au projet.
+
 ```yaml
 author: "Stoupy51"
 author: "Joueur1, Joueur2, Joueur3"  # Plusieurs auteurs
@@ -62,12 +74,16 @@ Affiché dans pack.mcmeta. Supporte plusieurs noms séparés par `", "`.<br>
 **🎁 Fonctionnalité spéciale**: Les joueurs avec des noms en jeu correspondants reçoivent automatiquement le tag `convention.debug` pour les outils de développement.
 
 ### 🔢 Version
+Définit la version de release utilisée pour le suivi et les vérifications de compatibilité.
+
 ```yaml
 version: "3.0.0"
 ```
 Versionnement sémantique (`majeur.mineur.correctif`) utilisé pour la validation des dépendances et les chemins de fonctions versionnés.
 
 ### 🎮 Version Minecraft
+Définit la version principale ciblée pour la compatibilité des commandes et formats de données.
+
 ```yaml
 minecraft: "1.21.11"
 ```
@@ -78,6 +94,8 @@ Détermine les commandes et ressources disponibles. Omettre pour utiliser la der
 ## 📂 Paramètres des Répertoires
 
 ### 📁 Répertoire de Base & Sortie
+Définit la résolution des chemins relatifs et l'emplacement d'écriture des packs générés.
+
 ```yaml
 directory: "."
 output: "build"
@@ -85,6 +103,8 @@ output: "build"
 Répertoire de base pour les chemins relatifs. Output définit où les packs générés sont sauvegardés.
 
 ### 🚫 Patterns Ignorés
+Définit les fichiers/dossiers ignorés par la surveillance pour éviter les boucles de rebuild.
+
 ```yaml
 ignore: ["build", "manual_cache", "definitions_debug.json"]
 ```
@@ -112,6 +132,8 @@ Dépendances courantes:
 ## 📦 Configuration des Packs
 
 ### 📊 Data Pack
+Définit les règles de chargement des sources de datapack sous `src/data/...`.
+
 ```yaml
 data_pack:
     name: "datapack"
@@ -120,6 +142,8 @@ data_pack:
 Charge les fichiers `.mcfunction` et JSON depuis `src/data/votre_namespace/` dans le datapack.
 
 ### 🎨 Resource Pack
+Définit les règles de chargement des assets client sous `src/assets/...`.
+
 ```yaml
 resource_pack:
     name: "resource_pack"
@@ -230,6 +254,8 @@ pipeline:
 ## 🎛️ Méta Configuration
 
 ### 🎮 Support Minecraft
+Déclare les versions supportées pour les métadonnées de distribution et le signalement de compatibilité.
+
 ```yaml
 mc_supports: ["1.21.11", "26.1-snapshot-1", "infinite"]
 ```
@@ -237,6 +263,8 @@ Déclare la compatibilité de version pour les uploads de plateformes (Modrinth,
 (Influence les formats supportés dans `pack.mcmeta`)
 
 ### 🗄️ Model Resolver
+Configure le cache des modèles afin d'accélérer les rebuilds.
+
 ```yaml
 model_resolver:
     use_cache: true
@@ -244,6 +272,8 @@ model_resolver:
 Met en cache les modèles d'items résolus (80-90% plus rapide). Stocké dans `.beet_cache/model_resolver/`.
 
 ### 🔧 Mecha
+Configure l'analyse et le formatage des commandes pendant la compilation.
+
 ```yaml
 mecha:
     multiline: true
@@ -264,6 +294,8 @@ execute
 ### ⚙️ Paramètres StewBeet
 
 #### 📁 Chemins des Répertoires
+Définit les dossiers sources StewBeet pour les textures, sons, disques et bibliothèques.
+
 ```yaml
 stewbeet:
     textures_folder: "assets/textures"
@@ -273,6 +305,8 @@ stewbeet:
 ```
 
 #### 🚀 Destinations de Copie du Build
+Définit les cibles de synchronisation post-build pour les sorties datapack et resource pack.
+
 ```yaml
 build_copy_destinations:
     datapack: ["D:/latest_snapshot/world/datapacks"]
@@ -281,12 +315,16 @@ build_copy_destinations:
 Copie automatiquement les packs après le build. Parfait avec `beet watch` pour les tests en direct.
 
 #### 🏷️ Lore d'Item Personnalisé
+Définit le marquage de lore par défaut appliqué aux items personnalisés générés.
+
 ```yaml
 source_lore: "auto" # Format TextComponents
 ```
 Ajouté au lore des items personnalisés, `"auto"` utilise par défaut l'icône du projet + le nom.
 
 #### 📦 Dépendances de Chargement
+Définit les contrôles de dépendances à l'exécution pour signaler les datapacks manquants ou obsolètes.
+
 ```yaml
 load_dependencies:
     "energy":
@@ -301,6 +339,8 @@ load_dependencies:
 ---
 
 #### 📚 Configuration du Manuel en Jeu
+
+Définit le rendu, le cache, la mise en page et le mode d'interaction du manuel généré.
 
 ```yaml
 manual:

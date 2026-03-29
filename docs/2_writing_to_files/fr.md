@@ -1,6 +1,12 @@
 
 # 📝 Guide d'écriture dans les fichiers StewBeet
 
+## 📖 Définitions
+- **Chargement de fichiers statiques** : Chargement pré-plugin des fichiers déclarés dans `beet.yml` (`data_pack.load` et `resource_pack.load`).
+- **Écriture via API native Beet** : Création de fichiers via les objets `ctx.data`/`ctx.assets` dans le code plugin.
+- **Écriture via helpers StewBeet** : Fonctions utilitaires comme `write_function`, `write_tag` et helpers associés pour générer plus vite.
+
+## 🧪 Exemples
 📄 **Fichier d'exemple** : [extensive/src/link.py](../../templates/extensive/src/link.py) 🔗<br>
 📄 **Exemple réel** : [SimplEnergy/src/utils/machines.py](https://github.com/Stoupy51/SimplEnergy/blob/main/src/utils/machines.py) 🔗<br>
 📄 **Exemple réel** : [StardustFragment/src/utils/remaining.py](https://github.com/Stoupy51/StardustFragment/blob/main/src/utils/remaining.py) 🔗<br>

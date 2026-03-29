@@ -1,6 +1,12 @@
 
 # 📝 StewBeet Writing to Files Guide
 
+## 📖 Definitions
+- **Static file loading**: Pre-plugin loading of files declared in `beet.yml` (`data_pack.load` and `resource_pack.load`).
+- **Native Beet API writing**: Creating files through `ctx.data`/`ctx.assets` objects in plugin code.
+- **StewBeet helper writing**: Utility functions like `write_function`, `write_tag`, and related helpers for faster generation.
+
+## 🧪 Examples
 📄 **Example File**: [extensive/src/link.py](../../templates/extensive/src/link.py) 🔗<br>
 📄 **Real-world Example**: [SimplEnergy/src/utils/machines.py](https://github.com/Stoupy51/SimplEnergy/blob/main/src/utils/machines.py) 🔗<br>
 📄 **Real-world Example**: [StardustFragment/src/utils/remaining.py](https://github.com/Stoupy51/StardustFragment/blob/main/src/utils/remaining.py) 🔗<br>

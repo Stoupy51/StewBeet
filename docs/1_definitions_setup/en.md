@@ -1,6 +1,12 @@
 
 # 🔧 StewBeet Definitions Setup Guide
 
+## 📖 Definitions
+- **Definitions Setup**: The user plugin responsible for creating and enriching `Mem.definitions`.
+- **Definition**: A typed object entry (`Item`, `Block`, `Painting`, etc.) used by downstream StewBeet plugins.
+- **Mem.definitions**: Global registry where all definitions are stored and shared through the pipeline.
+
+## 🧪 Examples
 📄 **Example File**: [extensive/src/setup_definitions.py](../../templates/extensive/src/setup_definitions.py) 🔗<br>
 📄 **Real-world Example**: [SimplEnergy/src/definitions/setup_main.py](https://github.com/Stoupy51/SimplEnergy/blob/main/src/definitions/setup_main.py) 🔗<br>
 
@@ -31,6 +37,8 @@ Item definitions are the heart of the StewBeet framework. They define custom ite
 ## ⚙️ Configuration
 
 ### 🎯 Basic Setup Structure
+This structure defines the lifecycle of your definitions plugin: generate content, normalize metadata, run required post-processing, and optionally export debug data.
+
 ```python
 from beet import Context
 from stewbeet import *
@@ -85,7 +93,22 @@ assert "my_item" in Mem.definitions
 
 ### 🏗️ Item Class
 
-The modern way to define items using the `Item` class:
+Definition of the `Item` class properties:
+
+#### **Item Properties**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `id` | `str` | **Required**: Unique identifier (e.g., `"magic_sword"`) |
+| `base_item` | `str` | Base Minecraft item (default: `CUSTOM_ITEM_VANILLA`) |
+| `manual_category` | `str \| None` | Category for in-game manual organization |
+| `recipes` | `list[RecipeBase]` | List of recipe objects that create this item |
+| `override_model` | `JsonDict \| None` | Override auto-generated item model |
+| `hand_model` | `JsonDict \| None` | Special model when held in hand |
+| `wiki_buttons` | `list[WikiButton] \| TextComponent \| None` | Manual documentation |
+| `components` | `JsonDict` | Minecraft item components (without `minecraft:` prefix) |
+
+Example using the `Item` class:
 
 ```python
 from stewbeet import Item, Ingr, CraftingShapedRecipe, WikiButton
@@ -124,19 +147,6 @@ item = Item(
 )
 ```
 
-#### **Item Properties**
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `id` | `str` | **Required**: Unique identifier (e.g., `"magic_sword"`) |
-| `base_item` | `str` | Base Minecraft item (default: `CUSTOM_ITEM_VANILLA`) |
-| `manual_category` | `str \| None` | Category for in-game manual organization |
-| `recipes` | `list[RecipeBase]` | List of recipe objects that create this item |
-| `override_model` | `JsonDict \| None` | Override auto-generated item model |
-| `hand_model` | `JsonDict \| None` | Special model when held in hand |
-| `wiki_buttons` | `list[WikiButton] \| TextComponent \| None` | Manual documentation |
-| `components` | `JsonDict` | Minecraft item components (without `minecraft:` prefix) |
-
 ### 🧱 Block Class
 
 Custom blocks extend the `Item` class with block-specific properties:
@@ -174,6 +184,8 @@ block = Block(
 ```
 
 #### **VanillaBlock Configuration**
+
+`VanillaBlock` defines the vanilla block state StewBeet uses as the runtime anchor for your custom block behavior.
 
 ```python
 @dataclass
@@ -297,6 +309,8 @@ painting = Painting(
 StewBeet provides typed recipe classes for all Minecraft recipe types:
 
 #### **⚔️ Crafting Shaped Recipe**
+Use a shaped recipe when slot position matters; the `shape` maps symbols to ingredients and controls exact crafting layout.
+
 ```python
 from stewbeet import CraftingShapedRecipe, Ingr
 
@@ -313,6 +327,8 @@ recipe = CraftingShapedRecipe(
 ```
 
 #### **🎯 Crafting Shapeless Recipe**
+Use a shapeless recipe when only ingredient presence matters, regardless of placement order in the crafting grid.
+
 ```python
 recipe = CraftingShapelessRecipe(
     result_count=4,
@@ -324,6 +340,8 @@ recipe = CraftingShapelessRecipe(
 ```
 
 #### **🔥 Smelting Recipe**
+Smelting recipes model furnace-like transformations with controlled time, XP reward, and one input-to-output conversion.
+
 ```python
 recipe = SmeltingRecipe(
     result_count=1,
@@ -336,6 +354,8 @@ recipe = SmeltingRecipe(
 ```
 
 #### **⚡ Other Recipe Types**
+StewBeet exposes typed wrappers for specialized vanilla recipe systems so each mechanic can be configured explicitly.
+
 ```python
 # Blasting Furnace (faster smelting)
 BlastingRecipe(cookingtime=100, experience=0.7, ...)
@@ -428,6 +448,8 @@ def main():
 
 ### 🧪 Equipment Configuration
 
+`EquipmentsConfig` controls how generated material families inherit base stats and how custom modifiers are applied across tools and armor.
+
 ```python
 class EquipmentsConfig:
     equivalent_to: DefaultOre                   # Base material (WOOD, STONE, GOLD, IRON, DIAMOND, NETHERITE, COPPER, CHAINMAIL, LEATHER)
@@ -492,6 +514,8 @@ Item(
 
 ### 🎶 Custom Music Discs
 
+Music disc generation maps `.ogg` assets to definitions so sounds, items, and references stay synchronized automatically.
+
 ```python
 # Auto-generate from assets/records/*.ogg files
 generate_custom_records("auto")
@@ -506,6 +530,8 @@ generate_custom_records({
 ## 🔧 Utility Functions
 
 ### 🧰 Essential Helper Functions
+
+These helpers finalize definitions so generated output remains consistent, namespaced correctly, and ready for downstream plugins.
 
 ```python
 # Generate item models for all defined items
@@ -549,6 +575,8 @@ Items automatically detect textures by name from `assets/textures/`:
 - `steel_block.png` → `steel_block` custom block
 
 ### 🔗 Accessing Existing Items
+
+`Item.from_id` lets you fetch and mutate previously declared definitions, enabling staged configuration without re-creating objects.
 
 ```python
 # Get an existing item

@@ -1,6 +1,12 @@
 
 # 🔧 Guide de configuration des définitions StewBeet
 
+## 📖 Définitions
+- **Configuration des définitions** : Plugin utilisateur qui crée et enrichit `Mem.definitions`.
+- **Définition** : Entrée d'objet typée (`Item`, `Block`, `Painting`, etc.) utilisée par les plugins StewBeet suivants.
+- **Mem.definitions** : Registre global où toutes les définitions sont stockées et partagées dans le pipeline.
+
+## 🧪 Exemples
 📄 **Fichier d'exemple** : [extensive/src/setup_definitions.py](../../templates/extensive/src/setup_definitions.py) 🔗<br>
 📄 **Exemple réel** : [SimplEnergy/src/definitions/setup_main.py](https://github.com/Stoupy51/SimplEnergy/blob/main/src/definitions/setup_main.py) 🔗<br>
 
@@ -31,6 +37,8 @@ Les définitions d'objets sont au cœur du framework StewBeet. Elles définissen
 ## ⚙️ Configuration
 
 ### 🎯 Structure de base
+Cette structure définit le cycle de vie de votre plugin de définitions : génération, normalisation des métadonnées, post-traitements requis et export de debug optionnel.
+
 ```python
 from beet import Context
 from stewbeet import *
@@ -85,7 +93,22 @@ assert "my_item" in Mem.definitions
 
 ### 🏗️ Classe Item
 
-La méthode moderne pour définir des objets en utilisant la classe `Item` :
+Définition des propriétés de la classe `Item` :
+
+#### **Propriétés Item**
+
+| Propriété | Type | Description |
+|----------|------|-------------|
+| `id` | `str` | **Requis** : Identifiant unique (ex., `"magic_sword"`) |
+| `base_item` | `str` | Objet Minecraft de base (défaut : `CUSTOM_ITEM_VANILLA`) |
+| `manual_category` | `str \| None` | Catégorie pour l'organisation du manuel en jeu |
+| `recipes` | `list[RecipeBase]` | Liste d'objets recette qui créent cet objet |
+| `override_model` | `JsonDict \| None` | Override du modèle d'objet auto-généré |
+| `hand_model` | `JsonDict \| None` | Modèle spécial quand tenu en main |
+| `wiki_buttons` | `list[WikiButton] \| TextComponent \| None` | Documentation du manuel |
+| `components` | `JsonDict` | Composants d'objets Minecraft (sans préfixe `minecraft:`) |
+
+Exemple d'utilisation de la classe `Item` :
 
 ```python
 from stewbeet import Item, Ingr, CraftingShapedRecipe, WikiButton
@@ -124,19 +147,6 @@ item = Item(
 )
 ```
 
-#### **Propriétés Item**
-
-| Propriété | Type | Description |
-|----------|------|-------------|
-| `id` | `str` | **Requis** : Identifiant unique (ex., `"magic_sword"`) |
-| `base_item` | `str` | Objet Minecraft de base (défaut : `CUSTOM_ITEM_VANILLA`) |
-| `manual_category` | `str \| None` | Catégorie pour l'organisation du manuel en jeu |
-| `recipes` | `list[RecipeBase]` | Liste d'objets recette qui créent cet objet |
-| `override_model` | `JsonDict \| None` | Override du modèle d'objet auto-généré |
-| `hand_model` | `JsonDict \| None` | Modèle spécial quand tenu en main |
-| `wiki_buttons` | `list[WikiButton] \| TextComponent \| None` | Documentation du manuel |
-| `components` | `JsonDict` | Composants d'objets Minecraft (sans préfixe `minecraft:`) |
-
 ### 🧱 Classe Block
 
 Les blocs personnalisés étendent la classe `Item` avec des propriétés spécifiques aux blocs :
@@ -174,6 +184,8 @@ block = Block(
 ```
 
 #### **Configuration VanillaBlock**
+
+`VanillaBlock` définit l'état de bloc vanilla utilisé par StewBeet comme point d'ancrage d'exécution pour le comportement de votre bloc personnalisé.
 
 ```python
 @dataclass
@@ -297,6 +309,8 @@ painting = Painting(
 StewBeet fournit des classes de recettes typées pour tous les types de recettes Minecraft :
 
 #### **⚔️ Crafting Shaped Recipe**
+Utilisez une recette shaped quand la position des ingrédients est importante ; la `shape` associe des symboles aux ingrédients et impose la disposition.
+
 ```python
 from stewbeet import CraftingShapedRecipe, Ingr
 
@@ -313,6 +327,8 @@ recipe = CraftingShapedRecipe(
 ```
 
 #### **🎯 Crafting Shapeless Recipe**
+Utilisez une recette shapeless quand seule la présence des ingrédients compte, sans tenir compte de leur position dans la grille.
+
 ```python
 recipe = CraftingShapelessRecipe(
     result_count=4,
@@ -324,6 +340,8 @@ recipe = CraftingShapelessRecipe(
 ```
 
 #### **🔥 Smelting Recipe**
+Les recettes de smelting modélisent les transformations de type four avec un temps de cuisson, une récompense XP et une conversion entrée-sortie.
+
 ```python
 recipe = SmeltingRecipe(
     result_count=1,
@@ -336,6 +354,8 @@ recipe = SmeltingRecipe(
 ```
 
 #### **⚡ Autres types de recettes**
+StewBeet fournit des wrappers typés pour les mécaniques de recette vanilla spécialisées afin de configurer chaque comportement explicitement.
+
 ```python
 # Haut fourneau (cuisson plus rapide)
 BlastingRecipe(cookingtime=100, experience=0.7, ...)
@@ -428,6 +448,8 @@ def main():
 
 ### 🧪 Configuration d'équipement
 
+`EquipmentsConfig` contrôle l'héritage des statistiques de base des familles de matériaux générées et l'application des modificateurs personnalisés sur les outils et armures.
+
 ```python
 class EquipmentsConfig:
     equivalent_to: DefaultOre                   # Matériau de base (WOOD, STONE, GOLD, IRON, DIAMOND, NETHERITE, COPPER, CHAINMAIL, LEATHER)
@@ -492,6 +514,8 @@ Item(
 
 ### 🎶 Disques de musique personnalisés
 
+La génération de disques mappe les assets `.ogg` vers les définitions afin de garder sons, objets et références synchronisés automatiquement.
+
 ```python
 # Auto-génération depuis les fichiers assets/records/*.ogg
 generate_custom_records("auto")
@@ -506,6 +530,8 @@ generate_custom_records({
 ## 🔧 Fonctions utilitaires
 
 ### 🧰 Fonctions helper essentielles
+
+Ces helpers finalisent les définitions pour garantir une sortie cohérente, correctement namespacée, et prête pour les plugins suivants.
 
 ```python
 # Générer les modèles d'objets pour tous les objets définis
@@ -549,6 +575,8 @@ Les objets détectent automatiquement les textures par nom depuis `assets/textur
 - `steel_block.png` → bloc personnalisé `steel_block`
 
 ### 🔗 Accéder aux objets existants
+
+`Item.from_id` permet de récupérer et modifier des définitions déjà déclarées, ce qui facilite une configuration par étapes sans recréer les objets.
 
 ```python
 # Récupérer un objet existant
