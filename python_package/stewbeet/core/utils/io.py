@@ -117,30 +117,6 @@ def write_function(path: str, content: str, overwrite: bool = False, prepend: bo
 			write_function_tag(tag, [path], prepend)
 
 
-def write_load_file(content: str, overwrite: bool = False, prepend: bool = False, tags: list[str] | None = None) -> None:
-	""" Write the content to the load file
-
-	Args:
-		content     (str):  The content to write
-		overwrite   (bool): If the file should be overwritten (default: Append the content)
-		prepend     (bool): If the content should be prepended instead of appended (not used if overwrite is True)
-		tags        (list[str] | None): The function tags to add to the function (ex: ["namespace:something"] for 'data/namespace/tags/function/something.json')
-	"""
-	write_function(f"{Mem.ctx.project_id}:v{Mem.ctx.project_version}/load/confirm_load", content, overwrite, prepend, tags)
-
-
-def write_tick_file(content: str, overwrite: bool = False, prepend: bool = False, tags: list[str] | None = None) -> None:
-	""" Write the content to the tick file
-
-	Args:
-		content     (str):  The content to write
-		overwrite   (bool): If the file should be overwritten (default: Append the content)
-		prepend     (bool): If the content should be prepended instead of appended (not used if overwrite is True)
-		tags        (list[str] | None): The function tags to add to the function (ex: ["namespace:something"] for 'data/namespace/tags/function/something.json')
-	"""
-	write_function(f"{Mem.ctx.project_id}:v{Mem.ctx.project_version}/tick", content, overwrite, prepend, tags)
-
-
 def write_versioned_function(path: str, content: str, overwrite: bool = False, prepend: bool = False, tags: list[str] | None = None) -> None:
 	""" Write the content to a versioned function at the given path.
 
@@ -152,6 +128,30 @@ def write_versioned_function(path: str, content: str, overwrite: bool = False, p
 		tags            (list[str] | None): The function tags to add to the function (ex: ["namespace:something"] for 'data/namespace/tags/function/something.json')
 	"""
 	write_function(f"{Mem.ctx.project_id}:v{Mem.ctx.project_version}/{path}", content, overwrite, prepend, tags)
+
+
+def write_load_file(content: str, overwrite: bool = False, prepend: bool = False, tags: list[str] | None = None) -> None:
+	""" Write the content to the load file
+
+	Args:
+		content     (str):  The content to write
+		overwrite   (bool): If the file should be overwritten (default: Append the content)
+		prepend     (bool): If the content should be prepended instead of appended (not used if overwrite is True)
+		tags        (list[str] | None): The function tags to add to the function (ex: ["namespace:something"] for 'data/namespace/tags/function/something.json')
+	"""
+	write_versioned_function("load/confirm_load", content, overwrite, prepend, tags)
+
+
+def write_tick_file(content: str, overwrite: bool = False, prepend: bool = False, tags: list[str] | None = None) -> None:
+	""" Write the content to the tick file
+
+	Args:
+		content     (str):  The content to write
+		overwrite   (bool): If the file should be overwritten (default: Append the content)
+		prepend     (bool): If the content should be prepended instead of appended (not used if overwrite is True)
+		tags        (list[str] | None): The function tags to add to the function (ex: ["namespace:something"] for 'data/namespace/tags/function/something.json')
+	"""
+	write_versioned_function("tick", content, overwrite, prepend, tags)
 
 
 def write_scheduled_function(
