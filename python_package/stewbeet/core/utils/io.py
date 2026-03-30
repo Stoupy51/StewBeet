@@ -99,7 +99,7 @@ def write_function(
 	overwrite: bool = False,
 	prepend: bool = False,
 	tags: list[str] | None = None,
-	condition: Callable[[str], bool] = lambda existing_content: True,
+	condition: Callable[[str], bool] | None = None,
 ) -> None:
 	""" Write the content to the function at the given path.
 
@@ -115,8 +115,9 @@ def write_function(
 		path = path[:-len(".mcfunction")]
 
 	# Check condition with existing content
-	existing_content: str = Mem.ctx.data.functions[path].text if path in Mem.ctx.data.functions else ""
-	if not condition(existing_content): return
+	if condition is not None:
+		existing_content: str = read_function(path)
+		if not condition(existing_content): return
 
 	if overwrite:
 		Mem.ctx.data.functions[path] = Function(content)
@@ -136,7 +137,7 @@ def write_versioned_function(
 	overwrite: bool = False,
 	prepend: bool = False,
 	tags: list[str] | None = None,
-	condition: Callable[[str], bool] = lambda existing_content: True,
+	condition: Callable[[str], bool] | None = None,
 ) -> None:
 	""" Write the content to a versioned function at the given path.
 
@@ -163,7 +164,7 @@ def write_load_file(
 	overwrite: bool = False,
 	prepend: bool = False,
 	tags: list[str] | None = None,
-	condition: Callable[[str], bool] = lambda existing_content: True,
+	condition: Callable[[str], bool] | None = None,
 ) -> None:
 	""" Write the content to the load file
 
@@ -189,7 +190,7 @@ def write_tick_file(
 	overwrite: bool = False,
 	prepend: bool = False,
 	tags: list[str] | None = None,
-	condition: Callable[[str], bool] = lambda existing_content: True,
+	condition: Callable[[str], bool] | None = None,
 ) -> None:
 	""" Write the content to the tick file
 
