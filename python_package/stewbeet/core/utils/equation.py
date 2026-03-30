@@ -32,6 +32,16 @@ class ScoreboardEquation:
 		Args:
 			player		(str):			The player whose scoreboard will store the result. Can be a selector, a player name, or a fake player.
 			scoreboard	(str | None):	The scoreboard objective to use. Defaults to "{project_id}:data".
+
+		Examples:
+		>>> from unittest.mock import MagicMock
+		>>> from stewbeet.core.__memory__ import Mem
+		>>> Mem.ctx = MagicMock()
+		>>> Mem.ctx.project_id = "test"
+		>>> Mem.ctx.project_version = "1.0.0"
+
+		>>> str(ScoreboardEquation("#temp_durability", "some_score").set("-$(amount)").multiply(1000000).divide("$(max_damage)").subtract("#toto"))
+		'$scoreboard players set #temp_durability some_score -$(amount)\\nscoreboard players operation #temp_durability some_score *= #1000000 test.data\\n$scoreboard players set #temp_divide test.data $(max_damage)\\nscoreboard players operation #temp_durability some_score /= #temp_divide test.data\\nscoreboard players operation #temp_durability some_score -= #toto test.data'
 		"""
 		if scoreboard is None: scoreboard = f"{Mem.ctx.project_id}.data"
 		self.player = player
@@ -177,6 +187,16 @@ class StorageEquation(ScoreboardEquation):
 			storage	(str):	The storage to store the result in, in the format "namespace:path".
 			path	(str):	The path in the storage to store the result in.
 			scale	(float):	The scale to apply to the result when storing it. Defaults to 1.0.
+
+		Examples:
+		>>> from unittest.mock import MagicMock
+		>>> from stewbeet.core.__memory__ import Mem
+		>>> Mem.ctx = MagicMock()
+		>>> Mem.ctx.project_id = "test"
+		>>> Mem.ctx.project_version = "1.0.0"
+
+		>>> str(StorageEquation("some_namespace:some_path", "result_path", 0.000005).set("-$(amount)").multiply(1000000).divide("$(max_damage)").subtract("#toto"))
+		'$scoreboard players set #temp_result test.data -$(amount)\\nscoreboard players operation #temp_result test.data *= #1000000 test.data\\n$scoreboard players set #temp_divide test.data $(max_damage)\\nscoreboard players operation #temp_result test.data /= #temp_divide test.data\\nscoreboard players operation #temp_result test.data -= #toto test.data\\nexecute store result storage some_namespace:some_path result_path double 0.000005 run scoreboard players get #temp_result test.data'
 		"""
 		super().__init__("#temp_result")
 		self.storage = storage
