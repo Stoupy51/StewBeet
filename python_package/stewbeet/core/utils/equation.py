@@ -147,6 +147,13 @@ class ScoreboardEquation:
 
 		Returns:
 			ScoreboardEquation: The current equation instance, allowing for method chaining.
+
+		Examples:
+			>>> str(ScoreboardEquation("@s").set(42))
+			'scoreboard players set @s test.data 42'
+
+			>>> str(ScoreboardEquation("@s").set("$(macro_value)"))
+			'$scoreboard players set @s test.data $(macro_value)'
 		"""
 		if isinstance(player, int):
 			# it's useless constant value in this case
