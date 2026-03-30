@@ -13,7 +13,13 @@ from ..__memory__ import Mem
 JsonFileT = TypeVar("JsonFileT", bound=JsonFile)
 
 # Advancements
-def write_advancement(path: str, advancement: Advancement | JsonDict, overwrite: bool = False, max_level: int = -1) -> None:
+def write_advancement(
+	path: str,
+	advancement: Advancement | JsonDict,
+	overwrite: bool = False,
+	max_level: int = -1,
+	condition: Callable[[JsonDict], bool] = lambda existing_data: True,
+) -> None:
 	""" Write an advancement at the given path.
 
 	Args:
@@ -21,9 +27,16 @@ def write_advancement(path: str, advancement: Advancement | JsonDict, overwrite:
 		advancement (Advancement | JsonDict): The advancement to write
 		overwrite   (bool): If the file should be overwritten (default: Merge with existing content using super_merge_dict)
 		max_level   (int):  The maximum level of the JSON dump, -1 for default behavior (default: -1)
+		condition   (Callable[[JsonDict], bool]): A function that takes the existing advancement data and returns whether the new advancement should be written (default: always write)
 	"""
 	if path.endswith(".json"):
 		path = path[:-len(".json")]
+
+	# Get existing advancement or create empty one
+	existing: Advancement = Mem.ctx.data.advancements.setdefault(path)
+	existing_data: JsonDict = existing.data
+	# Check condition with existing data
+	if not condition(existing_data): return
 
 	# Convert to dict if it's an Advancement object
 	new_data: JsonDict = advancement.data if isinstance(advancement, Advancement) else advancement
@@ -31,10 +44,6 @@ def write_advancement(path: str, advancement: Advancement | JsonDict, overwrite:
 	if overwrite:
 		Mem.ctx.data.advancements[path] = set_json_encoder(Advancement(new_data), max_level=max_level)
 	else:
-		# Get existing advancement or create empty one
-		existing: Advancement = Mem.ctx.data.advancements.setdefault(path)
-		existing_data: JsonDict = existing.data
-
 		# Merge the new data with existing data
 		merged_data: JsonDict = super_merge_dict(existing_data, new_data)
 		Mem.ctx.data.advancements[path] = set_json_encoder(Advancement(merged_data), max_level=max_level)
