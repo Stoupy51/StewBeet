@@ -1,7 +1,7 @@
 
 # Imports
 import os
-from typing import Any, TypeVar, cast
+from typing import Any, TypeVar, cast, Callable
 
 import stouputils as stp
 from beet import Advancement, Function, JsonFile, NamespaceContainer, NamespaceProxy, TagFile, Texture
@@ -93,7 +93,14 @@ def read_function(path: str) -> str:
 	return Mem.ctx.data.functions[path].text
 
 
-def write_function(path: str, content: str, overwrite: bool = False, prepend: bool = False, tags: list[str] | None = None) -> None:
+def write_function(
+	path: str,
+	content: str,
+	overwrite: bool = False,
+	prepend: bool = False,
+	tags: list[str] | None = None,
+	condition: Callable[[str], bool] = lambda existing_content: True,
+) -> None:
 	""" Write the content to the function at the given path.
 
 	Args:
@@ -102,9 +109,15 @@ def write_function(path: str, content: str, overwrite: bool = False, prepend: bo
 		overwrite       (bool): If the file should be overwritten (default: Append the content)
 		prepend         (bool): If the content should be prepended instead of appended (not used if overwrite is True)
 		tags            (list[str] | None): The function tags to add to the function (ex: ["namespace:something"] for 'data/namespace/tags/function/something.json')
+		condition       (Callable[[str], bool]): A function that takes the existing content and returns whether the new content should be written (default: always write)
 	"""
 	if path.endswith(".mcfunction"):
 		path = path[:-len(".mcfunction")]
+
+	# Check condition with existing content
+	existing_content: str = Mem.ctx.data.functions[path].text if path in Mem.ctx.data.functions else ""
+	if not condition(existing_content): return
+
 	if overwrite:
 		Mem.ctx.data.functions[path] = Function(content)
 	else:
@@ -117,7 +130,14 @@ def write_function(path: str, content: str, overwrite: bool = False, prepend: bo
 			write_function_tag(tag, [path], prepend)
 
 
-def write_versioned_function(path: str, content: str, overwrite: bool = False, prepend: bool = False, tags: list[str] | None = None) -> None:
+def write_versioned_function(
+	path: str,
+	content: str,
+	overwrite: bool = False,
+	prepend: bool = False,
+	tags: list[str] | None = None,
+	condition: Callable[[str], bool] = lambda existing_content: True,
+) -> None:
 	""" Write the content to a versioned function at the given path.
 
 	Args:
@@ -126,11 +146,25 @@ def write_versioned_function(path: str, content: str, overwrite: bool = False, p
 		overwrite       (bool): If the file should be overwritten (default: Append the content)
 		prepend         (bool): If the content should be prepended instead of appended (not used if overwrite is True)
 		tags            (list[str] | None): The function tags to add to the function (ex: ["namespace:something"] for 'data/namespace/tags/function/something.json')
+		condition       (Callable[[str], bool]): A function that takes the existing content and returns whether the new content should be written (default: always write)
 	"""
-	write_function(f"{Mem.ctx.project_id}:v{Mem.ctx.project_version}/{path}", content, overwrite, prepend, tags)
+	write_function(
+		f"{Mem.ctx.project_id}:v{Mem.ctx.project_version}/{path}",
+		content,
+		overwrite,
+		prepend,
+		tags,
+		condition,
+	)
 
 
-def write_load_file(content: str, overwrite: bool = False, prepend: bool = False, tags: list[str] | None = None) -> None:
+def write_load_file(
+	content: str,
+	overwrite: bool = False,
+	prepend: bool = False,
+	tags: list[str] | None = None,
+	condition: Callable[[str], bool] = lambda existing_content: True,
+) -> None:
 	""" Write the content to the load file
 
 	Args:
@@ -138,11 +172,25 @@ def write_load_file(content: str, overwrite: bool = False, prepend: bool = False
 		overwrite   (bool): If the file should be overwritten (default: Append the content)
 		prepend     (bool): If the content should be prepended instead of appended (not used if overwrite is True)
 		tags        (list[str] | None): The function tags to add to the function (ex: ["namespace:something"] for 'data/namespace/tags/function/something.json')
+		condition   (Callable[[str], bool]): A function that takes the existing content and returns whether the new content should be written (default: always write)
 	"""
-	write_versioned_function("load/confirm_load", content, overwrite, prepend, tags)
+	write_versioned_function(
+		"/load/confirm_load",
+		content,
+		overwrite,
+		prepend,
+		tags,
+		condition,
+	)
 
 
-def write_tick_file(content: str, overwrite: bool = False, prepend: bool = False, tags: list[str] | None = None) -> None:
+def write_tick_file(
+	content: str,
+	overwrite: bool = False,
+	prepend: bool = False,
+	tags: list[str] | None = None,
+	condition: Callable[[str], bool] = lambda existing_content: True,
+) -> None:
 	""" Write the content to the tick file
 
 	Args:
@@ -150,8 +198,16 @@ def write_tick_file(content: str, overwrite: bool = False, prepend: bool = False
 		overwrite   (bool): If the file should be overwritten (default: Append the content)
 		prepend     (bool): If the content should be prepended instead of appended (not used if overwrite is True)
 		tags        (list[str] | None): The function tags to add to the function (ex: ["namespace:something"] for 'data/namespace/tags/function/something.json')
+		condition   (Callable[[str], bool]): A function that takes the existing content and returns whether the new content should be written (default: always write)
 	"""
-	write_versioned_function("tick", content, overwrite, prepend, tags)
+	write_versioned_function(
+		"tick",
+		content,
+		overwrite,
+		prepend,
+		tags,
+		condition,
+	)
 
 
 def write_scheduled_function(
@@ -161,6 +217,7 @@ def write_scheduled_function(
 	path: str | None = None,
 	overwrite: bool = False,
 	prepend: bool = False,
+	condition: Callable[[str], bool] = lambda existing_content: True,
 ) -> None:
 	""" Write a self-rescheduling function and schedule it on load.
 
@@ -171,6 +228,7 @@ def write_scheduled_function(
 		path		(str | None):	Target function path. Defaults to "{project_id}:scheduled/{duration}".
 		overwrite	(bool):			If True, overwrite target files instead of appending.
 		prepend		(bool):			If True, prepend content instead of appending (ignored when overwrite is True).
+		condition	(Callable[[str], bool]): A function that takes the existing content and returns whether the new content should be written (default: always write)
 	"""
 	# Normalize duration: keep custom string delays (e.g. "5s"), coerce numeric strings to int.
 	parsed_duration: int | str = duration.strip() if isinstance(duration, str) else duration
@@ -183,10 +241,9 @@ def write_scheduled_function(
 	schedule_command: str = f"schedule function {resolved_path} {schedule_delay}"
 	content_stripped: str = content.strip("\n")
 
-	# Read existing contents for idempotent writes.
+	# Read existing contents for condition check and idempotent writes
 	existing_scheduled_content: str = read_function(resolved_path) if resolved_path in Mem.ctx.data.functions else ""
-	load_path: str = f"{Mem.ctx.project_id}:v{Mem.ctx.project_version}/load/confirm_load"
-	existing_load_content: str = read_function(load_path) if load_path in Mem.ctx.data.functions else ""
+	if not condition(existing_scheduled_content): return
 
 	# Overwrite mode always refreshes both scheduled function and load registration.
 	if overwrite:
@@ -210,12 +267,12 @@ def write_scheduled_function(
 	elif content_stripped and content_stripped not in existing_scheduled_content:
 		write_function(path=resolved_path, content=content_stripped, overwrite=False, prepend=prepend)
 
-	if schedule_command not in existing_load_content:
-		write_load_file(
-			f"# Schedule function for {schedule_delay}\n{schedule_command} replace",
-			overwrite=False,
-			prepend=prepend,
-		)
+	write_load_file(
+		f"# Schedule function for {schedule_delay}\n{schedule_command} replace",
+		overwrite=False,
+		prepend=prepend,
+		condition=lambda existing: schedule_command not in existing,
+	)
 
 
 # Merge two dict recuirsively
