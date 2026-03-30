@@ -4,15 +4,6 @@ from ..__memory__ import Mem
 from .io import read_function, write_load_file
 from re import compile
 
-"""
-Setup the mocks for the tests
->>> from unittest.mock import MagicMock
->>> from stewbeet.core.__memory__ import Mem
->>> Mem.ctx = MagicMock()
->>> Mem.ctx.project_id = "test"
->>> Mem.ctx.project_version = "1.0.0"
-"""
-
 macro_pattern = compile(r"\$\(\w+\)")
 def _is_macro_argument(value: str):
 	return macro_pattern.search(value) is not None
@@ -68,6 +59,12 @@ class ScoreboardEquation:
 			ScoreboardEquation: The current equation instance, allowing for method chaining.
 
 		Examples:
+			>>> from unittest.mock import MagicMock
+			>>> from stewbeet.core.__memory__ import Mem
+			>>> Mem.ctx = MagicMock()
+			>>> Mem.ctx.project_id = "test"
+			>>> Mem.ctx.project_version = "1.0.0"
+
 			>>> str(ScoreboardEquation("@s")._ScoreboardEquation__operation("other_player", "other_scoreboard", "/="))
 			'scoreboard players operation @s test.data /= other_player other_scoreboard'
 
@@ -149,6 +146,12 @@ class ScoreboardEquation:
 			ScoreboardEquation: The current equation instance, allowing for method chaining.
 
 		Examples:
+			>>> from unittest.mock import MagicMock
+			>>> from stewbeet.core.__memory__ import Mem
+			>>> Mem.ctx = MagicMock()
+			>>> Mem.ctx.project_id = "test"
+			>>> Mem.ctx.project_version = "1.0.0"
+
 			>>> str(ScoreboardEquation("@s").set(42))
 			'scoreboard players set @s test.data 42'
 
