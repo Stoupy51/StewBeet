@@ -4,6 +4,15 @@ from ..__memory__ import Mem
 from .io import read_function, write_load_file
 from re import compile
 
+"""
+Setup the mocks for the tests
+>>> from unittest.mock import MagicMock
+>>> from stewbeet.core.__memory__ import Mem
+>>> Mem.ctx = MagicMock()
+>>> Mem.ctx.project_id = "test"
+>>> Mem.ctx.project_version = "1.0.0"
+"""
+
 macro_pattern = compile(r"\$\(\w+\)")
 def _is_macro_argument(value: str):
 	return macro_pattern.search(value) is not None
@@ -17,10 +26,6 @@ def _write_constant_to_load(value: int) -> None:
 
 	Args:
 		value (int): The constant value to write.
-
-	Example:
-		>>> write_constant_to_load(42)
-		# This will set the scoreboard #42 {project_id}:data = 42 if it isn't already defined in the load file.
 	"""
 	load_path: str = f"{Mem.ctx.project_id}:v{Mem.ctx.project_version}/load/confirm_load"
 	existing_load_content: str = read_function(load_path) if load_path in Mem.ctx.data.functions else ""
