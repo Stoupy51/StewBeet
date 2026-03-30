@@ -111,6 +111,7 @@ def deepcopy(x: Any) -> Any:
 	""" Deep copy using JSON serialization, converting WikiButton objects. """
 	return json.loads(json.dumps(convert_to_serializable(x)))
 
+@stp.handle_error(message="An error occurred while generating the in-game manual", error_log=stp.LogLevels.ERROR_TRACEBACK)
 def manual_main():
 	# Copy everything in the manual assets folder to the templates folder
 	with stp.super_open(f"{TEMPLATES_PATH}/.gitignore", "w") as f:
