@@ -2,11 +2,8 @@
 # Imports
 from __future__ import annotations
 
-from typing import cast
-
 import stouputils as stp
 from beet.core.utils import JsonDict, TextComponent
-from box import Box
 
 from ..__memory__ import Mem
 from ..cls.external_item import ExternalItem
@@ -62,15 +59,14 @@ def add_item_name_and_lore_if_missing(is_external: bool = False, black_list: lis
 			data["item_name"] = {"text": item_str}	# Use a TextComponent to allow auto.lang_file to work properly
 
 		# Apply namespaced lore if none
-		if not data.get("lore"):
-			data["lore"] = cast(list[TextComponent], [])
+		lore: list[TextComponent] = data.setdefault("lore", [])
 
 		# If item is not external,
 		if not is_external:
 
 			# Add the source lore ONLY if not already present
-			if source_lore not in data["lore"]:
-				data["lore"].append(source_lore)
+			if source_lore not in lore:
+				lore.append(source_lore)
 
 		# If item is external, add the source lore to the item lore (without ICON)
 		else:
@@ -81,8 +77,8 @@ def add_item_name_and_lore_if_missing(is_external: bool = False, black_list: lis
 			new_source_lore: JsonDict = {"text": titled_namespace, "italic": True, "color": "blue"}
 
 			# Add the namespace lore ONLY if not already present
-			if new_source_lore not in data["lore"]:
-				data["lore"].append(new_source_lore)
+			if new_source_lore not in lore:
+				lore.append(new_source_lore)
 	return
 
 # Add private custom data for namespace
@@ -101,15 +97,18 @@ def add_private_custom_data_for_namespace(is_external: bool = False, black_list:
 			continue
 		if isinstance(data, Item | ExternalItem):
 			data = data.components
-		if not data.get("custom_data"):
-			data["custom_data"] = cast(JsonDict, {})
+		custom_data: JsonDict = data.setdefault("custom_data", {})
 		if is_external and ":" in item:
 			ns, id = item.split(":")
 		else:
 			ns, id = Mem.ctx.project_id, item
-		if not data["custom_data"].get(ns):
-			data["custom_data"][ns] = {}
-		data["custom_data"][ns][id] = True
+		custom_data.setdefault(ns, {})
+		custom_data[ns][id] = True
+
+		# Smithed item convention (smithed:{id:"ns:id",origin:"ns"})
+		smithed: JsonDict = custom_data.setdefault("smithed", {})
+		smithed.setdefault("id", f"{ns}:{id}")
+		smithed.setdefault("origin", ns)
 	return
 
 # Smithed ignore convention
@@ -121,9 +120,9 @@ def add_smithed_ignore_vanilla_behaviours_convention() -> None:
 	for data in Mem.definitions.values():
 		if isinstance(data, Item):
 			data = data.components
-		data["custom_data"] = Box(data.get("custom_data", {}), default_box=True, default_box_attr={}, default_box_create_on_get=True)
-		data["custom_data"].smithed.ignore.functionality = True # pyright: ignore[reportUnknownMemberType]
-		data["custom_data"].smithed.ignore.crafting = True # pyright: ignore[reportUnknownMemberType]
+		smithed_ignore: JsonDict = data.setdefault("custom_data", {}).setdefault("smithed", {}).setdefault("ignore", {})
+		smithed_ignore.setdefault("functionality", True)
+		smithed_ignore.setdefault("crafting", True)
 
 # Set manual components
 def set_manual_components(white_list: list[str]) -> None:
