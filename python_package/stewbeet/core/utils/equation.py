@@ -66,6 +66,16 @@ class ScoreboardEquation:
 
 		Returns:
 			ScoreboardEquation: The current equation instance, allowing for method chaining.
+
+		Examples:
+			>>> str(ScoreboardEquation("@s")._ScoreboardEquation__operation("other_player", "other_scoreboard", "/="))
+			'scoreboard players operation @s test.data /= other_player other_scoreboard'
+
+			>>> str(ScoreboardEquation("@s")._ScoreboardEquation__operation("$(macro_arg)", None, "-=", "temp_macro"))
+			'$scoreboard players set #temp_macro test.data $(macro_arg)\\nscoreboard players operation @s test.data -= #temp_macro test.data'
+
+			>>> str(ScoreboardEquation("@s")._ScoreboardEquation__operation(42, None, "+="))
+			'scoreboard players operation @s test.data += #42 test.data'
 		"""
 		if scoreboard is None: scoreboard = f"{Mem.ctx.project_id}.data"
 		if isinstance(player, int):
