@@ -105,7 +105,7 @@ def write_function_tag(
 		max_level   (int | None):  The maximum level of the JSON dump, None for default behavior (default: None)
 		condition   (Callable[[list[Any]], bool]): A function that takes the existing functions and returns whether the new functions should be written (default: always write)
 	"""
-	write_tag(
+	return write_tag(
 		path,
 		Mem.ctx.data.function_tags,
 		functions,
@@ -185,7 +185,7 @@ def write_versioned_function(
 		tags            (list[str] | None): The function tags to add to the function (ex: ["namespace:something"] for 'data/namespace/tags/function/something.json')
 		condition       (Callable[[str], bool]): A function that takes the existing content and returns whether the new content should be written (default: always write)
 	"""
-	write_function(
+	return write_function(
 		f"{Mem.ctx.project_id}:v{Mem.ctx.project_version}/{path}",
 		content,
 		overwrite,
@@ -211,7 +211,7 @@ def write_load_file(
 		tags        (list[str] | None): The function tags to add to the function (ex: ["namespace:something"] for 'data/namespace/tags/function/something.json')
 		condition   (Callable[[str], bool]): A function that takes the existing content and returns whether the new content should be written (default: always write)
 	"""
-	write_versioned_function(
+	return write_versioned_function(
 		"/load/confirm_load",
 		content,
 		overwrite,
@@ -237,7 +237,7 @@ def write_tick_file(
 		tags        (list[str] | None): The function tags to add to the function (ex: ["namespace:something"] for 'data/namespace/tags/function/something.json')
 		condition   (Callable[[str], bool]): A function that takes the existing content and returns whether the new content should be written (default: always write)
 	"""
-	write_versioned_function(
+	return write_versioned_function(
 		"tick",
 		content,
 		overwrite,
@@ -287,22 +287,12 @@ def write_scheduled_function(
 		body: str = f"# Wait for {schedule_delay}\n{schedule_command}"
 		if content_stripped:
 			body = f"{body}\n\n{content_stripped}"
-		write_function(path=resolved_path, content=body, overwrite=True, prepend=prepend)
 		write_load_file(
 			f"# Schedule function for {schedule_delay}\n{schedule_command} replace",
 			overwrite=True,
 			prepend=prepend,
 		)
-		return
-
-	# Append/prepend mode: avoid duplicating schedule lines and duplicate content blocks.
-	if schedule_command not in existing_scheduled_content:
-		body = f"# Wait for {schedule_delay}\n{schedule_command}"
-		if content_stripped:
-			body = f"{body}\n\n{content_stripped}"
-		write_function(path=resolved_path, content=body, overwrite=False, prepend=prepend)
-	elif content_stripped and content_stripped not in existing_scheduled_content:
-		write_function(path=resolved_path, content=content_stripped, overwrite=False, prepend=prepend)
+		return write_function(path=resolved_path, content=body, overwrite=True, prepend=prepend)
 
 	write_load_file(
 		f"# Schedule function for {schedule_delay}\n{schedule_command} replace",
@@ -310,6 +300,15 @@ def write_scheduled_function(
 		prepend=prepend,
 		condition=lambda existing: schedule_command not in existing,
 	)
+
+	# Append/prepend mode: avoid duplicating schedule lines and duplicate content blocks.
+	if schedule_command not in existing_scheduled_content:
+		body = f"# Wait for {schedule_delay}\n{schedule_command}"
+		if content_stripped:
+			body = f"{body}\n\n{content_stripped}"
+		return write_function(path=resolved_path, content=body, overwrite=False, prepend=prepend)
+	elif content_stripped and content_stripped not in existing_scheduled_content:
+		return write_function(path=resolved_path, content=content_stripped, overwrite=False, prepend=prepend)
 
 
 # Merge two dict recuirsively
