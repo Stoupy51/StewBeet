@@ -86,11 +86,11 @@ def read_function(path: str) -> str:
 		path (str): The path to the function (ex: "namespace:folder/function_name")
 
 	Returns:
-		str: The content of the function
+		str: The content of the function, or an empty string if the function does not exist
 	"""
 	if path.endswith(".mcfunction"):
 		path = path[:-len(".mcfunction")]
-	return Mem.ctx.data.functions[path].text
+	return Mem.ctx.data.functions[path].text if path in Mem.ctx.data.functions else ""
 
 
 def write_function(
