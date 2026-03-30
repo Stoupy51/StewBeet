@@ -5,13 +5,13 @@ from .io import read_function, write_load_file
 from re import compile
 
 macro_pattern = compile(r"\$\(\w+\)")
-def __is_macro_argument(value: str):
+def _is_macro_argument(value: str):
 	return macro_pattern.search(value) is not None
-def __get_scoreboard_set(player: str, scoreboard: str, value: str|int) -> str:
+def _get_scoreboard_set(player: str, scoreboard: str, value: str|int) -> str:
 	return f"scoreboard players set {player} {scoreboard} {value}"
-def __get_scoreboard_operation(player: str, scoreboard: str, operator: str, value: str, value_scoreboard: str) -> str:
+def _get_scoreboard_operation(player: str, scoreboard: str, operator: str, value: str, value_scoreboard: str) -> str:
 	return f"scoreboard players operation {player} {scoreboard} {operator} {value} {value_scoreboard}"
-def __write_constant_to_load(value: int) -> None:
+def _write_constant_to_load(value: int) -> None:
 	"""
 	Writes a constant definition to the load file if it doesn't already exist.
 
@@ -24,7 +24,7 @@ def __write_constant_to_load(value: int) -> None:
 	"""
 	load_path: str = f"{Mem.ctx.project_id}:v{Mem.ctx.project_version}/load/confirm_load"
 	existing_load_content: str = read_function(load_path) if load_path in Mem.ctx.data.functions else ""
-	constant_definition: str = __get_scoreboard_set(f"#{value}", f"{Mem.ctx.project_id}.data", value)
+	constant_definition: str = _get_scoreboard_set(f"#{value}", f"{Mem.ctx.project_id}.data", value)
 	if constant_definition not in existing_load_content.splitlines():
 		write_load_file(constant_definition)
 
@@ -50,7 +50,7 @@ class ScoreboardEquation:
 		"""
 		return "\n".join(self.text)
 
-	def _operation(self, player: str|int, scoreboard: str|None, operator: str, temp_name: str = "temp") -> "ScoreboardEquation":
+	def __operation(self, player: str|int, scoreboard: str|None, operator: str, temp_name: str = "temp") -> "ScoreboardEquation":
 		"""
 		Manipulates the scoreboard value
 
@@ -64,14 +64,14 @@ class ScoreboardEquation:
 		"""
 		if scoreboard is None: scoreboard = f"{Mem.ctx.project_id}.data"
 		if isinstance(player, int):
-			__write_constant_to_load(player)
-			self.text.append(__get_scoreboard_operation(self.player, self.scoreboard, operator, f"#{player}", f"{Mem.ctx.project_id}.data"))
-		elif __is_macro_argument(player):
+			_write_constant_to_load(player)
+			self.text.append(_get_scoreboard_operation(self.player, self.scoreboard, operator, f"#{player}", f"{Mem.ctx.project_id}.data"))
+		elif _is_macro_argument(player):
 			# store in temp variable
-			self.text.append(f"${__get_scoreboard_set(f'#{temp_name}', f'{Mem.ctx.project_id}.data', player)}")
-			self.text.append(__get_scoreboard_operation(self.player, self.scoreboard, operator, f"#{temp_name}", f"{Mem.ctx.project_id}.data"))
+			self.text.append(f"${_get_scoreboard_set(f'#{temp_name}', f'{Mem.ctx.project_id}.data', player)}")
+			self.text.append(_get_scoreboard_operation(self.player, self.scoreboard, operator, f"#{temp_name}", f"{Mem.ctx.project_id}.data"))
 		else:
-			self.text.append(__get_scoreboard_operation(self.player, self.scoreboard, operator, player, scoreboard))
+			self.text.append(_get_scoreboard_operation(self.player, self.scoreboard, operator, player, scoreboard))
 		return self
 
 	def multiply(self, player: str|int, scoreboard: str|None = None) -> "ScoreboardEquation":
@@ -85,7 +85,7 @@ class ScoreboardEquation:
 		Returns:
 			ScoreboardEquation: The current equation instance, allowing for method chaining.
 		"""
-		return self._operation(player, scoreboard, "*=", temp_name="temp_multiply")
+		return self.__operation(player, scoreboard, "*=", temp_name="temp_multiply")
 	def divide(self, player: str|int, scoreboard: str|None = None) -> "ScoreboardEquation":
 		"""
 		Divides the current scoreboard value
@@ -97,7 +97,7 @@ class ScoreboardEquation:
 		Returns:
 			ScoreboardEquation: The current equation instance, allowing for method chaining.
 		"""
-		return self._operation(player, scoreboard, "/=", temp_name="temp_divide")
+		return self.__operation(player, scoreboard, "/=", temp_name="temp_divide")
 	def add(self, player: str|int, scoreboard: str|None = None) -> "ScoreboardEquation":
 		"""
 		Adds to the current scoreboard value
@@ -109,7 +109,7 @@ class ScoreboardEquation:
 		Returns:
 			ScoreboardEquation: The current equation instance, allowing for method chaining.
 		"""
-		return self._operation(player, scoreboard, "+=", temp_name="temp_add")
+		return self.__operation(player, scoreboard, "+=", temp_name="temp_add")
 	def subtract(self, player: str|int, scoreboard: str|None = None) -> "ScoreboardEquation":
 		"""
 		Subtracts from the current scoreboard value
@@ -121,7 +121,7 @@ class ScoreboardEquation:
 		Returns:
 			ScoreboardEquation: The current equation instance, allowing for method chaining.
 		"""
-		return self._operation(player, scoreboard, "-=", temp_name="temp_subtract")
+		return self.__operation(player, scoreboard, "-=", temp_name="temp_subtract")
 	def set(self, player: str|int, scoreboard: str|None = None) -> "ScoreboardEquation":
 		"""
 		Sets the current scoreboard value
@@ -135,12 +135,12 @@ class ScoreboardEquation:
 		"""
 		if isinstance(player, int):
 			# it's useless constant value in this case
-			self.text.append(__get_scoreboard_set(self.player, self.scoreboard, player))
-		elif __is_macro_argument(player):
+			self.text.append(_get_scoreboard_set(self.player, self.scoreboard, player))
+		elif _is_macro_argument(player):
 			# it's useless to use temporary variable in this case
-			self.text.append(f"${__get_scoreboard_set(self.player, self.scoreboard, player)}")
+			self.text.append(f"${_get_scoreboard_set(self.player, self.scoreboard, player)}")
 		else:
-			return self._operation(player, scoreboard, "=")
+			return self.__operation(player, scoreboard, "=")
 		return self
 
 class StorageEquation(ScoreboardEquation):
