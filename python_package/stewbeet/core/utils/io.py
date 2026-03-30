@@ -40,7 +40,14 @@ def write_advancement(path: str, advancement: Advancement | JsonDict, overwrite:
 		Mem.ctx.data.advancements[path] = set_json_encoder(Advancement(merged_data), max_level=max_level)
 
 # Functions
-def write_tag(path: str, tag_type: NamespaceProxy[Any] | NamespaceContainer[Any], values: list[Any] | None = None, prepend: bool = False, max_level: int | None = None) -> None:
+def write_tag(
+	path: str,
+	tag_type: NamespaceProxy[Any] | NamespaceContainer[Any],
+	values: list[Any] | None = None,
+	prepend: bool = False,
+	max_level: int | None = None,
+	condition: Callable[[list[Any]], bool] = lambda existing_values: True,
+) -> None:
 	""" Write a function tag at the given path.
 
 	Args:
@@ -49,12 +56,18 @@ def write_tag(path: str, tag_type: NamespaceProxy[Any] | NamespaceContainer[Any]
 		values      (list[Any] | None): The values to add to the tag
 		prepend     (bool): If the values should be prepended instead of appended
 		max_level   (int | None):  The maximum level of the JSON dump, None for default behavior (default: None)
+		condition   (Callable[[list[Any]], bool]): A function that takes the existing values and returns whether the new values should be written (default: always write)
 	"""
 	if path.endswith(".json"):
 		path = path[:-len(".json")]
 	tag: TagFile = tag_type.setdefault(path)
 	data: JsonDict = tag.data
-	if not data.get("values"):
+
+	# Check condition with existing values
+	existing_values: list[Any] = data.get("values")
+	if not condition([] if existing_values is None else existing_values): return
+
+	if not existing_values:
 		data["values"] = values or []
 
 	if prepend:
@@ -67,7 +80,13 @@ def write_tag(path: str, tag_type: NamespaceProxy[Any] | NamespaceContainer[Any]
 	else:
 		tag.encoder = lambda x: stp.json_dump(x, max_level=max_level)
 
-def write_function_tag(path: str, functions: list[Any] | None = None, prepend: bool = False, max_level: int | None = None) -> None:
+def write_function_tag(
+	path: str,
+	functions: list[Any] | None = None,
+	prepend: bool = False,
+	max_level: int | None = None,
+	condition: Callable[[list[Any]], bool] = lambda existing_values: True,
+) -> None:
 	""" Write a function tag at the given path.
 
 	Args:
@@ -75,8 +94,16 @@ def write_function_tag(path: str, functions: list[Any] | None = None, prepend: b
 		functions   (list[Any] | None): The functions to add to the tag
 		prepend     (bool): If the functions should be prepended instead of appended
 		max_level   (int | None):  The maximum level of the JSON dump, None for default behavior (default: None)
+		condition   (Callable[[list[Any]], bool]): A function that takes the existing functions and returns whether the new functions should be written (default: always write)
 	"""
-	write_tag(path, Mem.ctx.data.function_tags, functions, prepend, max_level)
+	write_tag(
+		path,
+		Mem.ctx.data.function_tags,
+		functions,
+		prepend,
+		max_level,
+		condition
+	)
 
 
 def read_function(path: str) -> str:
