@@ -1,0 +1,16 @@
+stewbeet.plugins.datapack.loading package
+=========================================
+
+.. automodule:: stewbeet.plugins.datapack.loading
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.plugins.datapack.loading.silent

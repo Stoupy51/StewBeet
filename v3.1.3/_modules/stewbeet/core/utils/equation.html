@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8"><title>stewbeet.core.utils.equation - StewBeet</title><link rel="icon" href="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png"><link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html"><script data-cfasync="false">(function(){
+    const m = localStorage.getItem("breeze-mode") || "auto";
+    const d = document.documentElement.dataset;
+    d.mode = m;
+    d.theme = m === "auto"
+      ? (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+      : m;
+  })();
+  </script><link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8e8a900e" /><link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" /><link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" /><link rel="stylesheet" type="text/css" href="../../../../_static/treeview.css?v=f8e9195c" /><link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=aad67955" /><link rel="stylesheet" type="text/css" href="../../../../_static/styles/breeze.css?v=7c62c100" /><script defer="defer" src="../../../../_static/scripts/breeze.js?v=dac9f8c6"></script></head>
+<body>
+  
+  
+  <div class="bz-skip-to-content"><a href="#bz-main-content">Skip to main content</a></div><header class="bz-header-main">
+  <div class="bz-header-start"><a class="bz-header-brand" href="../../../../index.html">
+  <img class="only-light" src="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png" alt="StewBeet" />
+  <img class="only-dark" src="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png" alt="StewBeet" />
+  <span>StewBeet</span>
+</a>
+  </div>
+  <div class="bz-header-end"><div id="docsearch" class="bz-search-button">
+  <a
+    href="../../../../search.html#q"
+    aria-label="Search the docs"
+    data-tooltip="Search the docs"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 -1 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+      />
+    </svg>
+    <span>Search</span>
+    <kbd>Ctrl+K</kbd>
+  </a>
+</div><div class="bz-theme-switcher">
+  <button aria-label="Switch theme" data-tooltip="Switch theme">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="only-light" fill="currentColor">
+      <path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm5.657-8.157a.75.75 0 0 1 0 1.061l-1.061 1.06a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l1.06-1.06a.75.75 0 0 1 1.06 0Zm-9.193 9.193a.75.75 0 0 1 0 1.06l-1.06 1.061a.75.75 0 1 1-1.061-1.06l1.06-1.061a.75.75 0 0 1 1.061 0ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0ZM3 8a.75.75 0 0 1-.75.75H.75a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 3 8Zm13 0a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 16 8Zm-8 5a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13Zm3.536-1.464a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 0 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061ZM2.343 2.343a.75.75 0 0 1 1.061 0l1.06 1.061a.751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018l-1.06-1.06a.75.75 0 0 1 0-1.06Z"></path>
+    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="only-dark" fill="currentColor">
+      <path d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"></path>
+    </svg>
+  </button>
+</div>
+  </div>
+</header><nav class="bz-header-tabs" aria-label="Primary Navigation"><label
+  class="bz-sidebar-primary-toggle"
+  for="bz-sidebar-primary"
+  role="button"
+  tabindex="0"
+  aria-label="Toggle site navigation"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path
+      fill="none"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M3.75 6.75h16.5M3.75 12H12m-8.25 5.25h12.5"
+    />
+  </svg>
+</label><ul><li class="toctree-l1"><a class="reference internal" href="../../../../modules/stewbeet.html">stewbeet package</a></li></ul><div class="bz-dropdown">
+    <button aria-haspopup="true" aria-expanded="false">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <g
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+        >
+          <circle cx="12" cy="12" r="1" />
+          <circle cx="19" cy="12" r="1" />
+          <circle cx="5" cy="12" r="1" />
+        </g>
+      </svg>
+    </button>
+    <ul role="menu" aria-hidden="true"></ul>
+  </div>
+</nav><hr class="bz-header-hr">
+  <div class="bz-content"><main id="bz-main-content"><header class="bz-article-header">
+  
+  
+    <nav class="bz-breadcrumbs" aria-label="Breadcrumb">
+  <ol>
+    <li class="bz-breadcrumbs-home">
+      <a href="../../../../index.html" aria-label="Home">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M8.543 2.232a.75.75 0 0 0-1.085 0l-5.25 5.5A.75.75 0 0 0 2.75 9H4v4a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1a1 1 0 1 1 2 0v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V9h1.25a.75.75 0 0 0 .543-1.268l-5.25-5.5Z" />
+        </svg>
+      </a>
+    </li><li class="bz-breadcrumbs-parent">
+      <a href="../../../index.html">Module code</a>
+    </li><li class="bz-breadcrumbs-parent">
+      <a href="../../../stewbeet.html">stewbeet</a>
+    </li><li class="bz-breadcrumbs-current">
+      <span>stewbeet.core.utils.equation</span>
+    </li>
+  </ol>
+</nav>
+  
+<label
+  class="bz-sidebar-secondary-toggle"
+  for="bz-sidebar-secondary"
+  role="button"
+  tabindex="0"
+  aria-label="Toggle table of contents"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path
+      fill="none"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M3.75 6.75H20.25 M11.25 12H20.25 M7.75 17.25H20.25"
+    />
+  </svg>
+</label></header><article class="bz-article-main" role="main"><h1>Source code for stewbeet.core.utils.equation</h1><div class="highlight"><pre>
+<span></span>
+<span class="c1"># Imports</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Literal</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">stouputils</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">stp</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..__memory__</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mem</span>
+
+<span class="c1"># Constants</span>
+<span class="n">MACRO_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\$\(\w+\)&quot;</span><span class="p">)</span>
+<span class="n">AnyOperator</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;%&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
+
+<span class="c1"># Helpers</span>
+<div class="viewcode-block" id="is_macro_argument">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.utils.equation.html#stewbeet.core.utils.equation.is_macro_argument">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_macro_argument</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Returns True if the value contains a macro argument pattern like ``$(foo)``.</span>
+
+<span class="sd">	&gt;&gt;&gt; is_macro_argument(&quot;$(amount)&quot;)</span>
+<span class="sd">	True</span>
+<span class="sd">	&gt;&gt;&gt; is_macro_argument(&quot;#toto&quot;)</span>
+<span class="sd">	False</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">MACRO_RE</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">value</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="get_scoreboard_set">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.utils.equation.html#stewbeet.core.utils.equation.get_scoreboard_set">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_scoreboard_set</span><span class="p">(</span><span class="n">player</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">scoreboard</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Returns a ``scoreboard players set`` command string.</span>
+
+<span class="sd">	&gt;&gt;&gt; get_scoreboard_set(&quot;#42&quot;, &quot;test.data&quot;, 42)</span>
+<span class="sd">	&#39;scoreboard players set #42 test.data 42&#39;</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;scoreboard players set </span><span class="si">{</span><span class="n">player</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">scoreboard</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+<div class="viewcode-block" id="get_scoreboard_operation">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.utils.equation.html#stewbeet.core.utils.equation.get_scoreboard_operation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_scoreboard_operation</span><span class="p">(</span><span class="n">player</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">scoreboard</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">operator</span><span class="p">:</span> <span class="n">AnyOperator</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">source_scoreboard</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Returns a ``scoreboard players operation`` command string.</span>
+
+<span class="sd">	&gt;&gt;&gt; get_scoreboard_operation(&quot;@s&quot;, &quot;test.data&quot;, &quot;*&quot;, &quot;#1000000&quot;, &quot;test.data&quot;)</span>
+<span class="sd">	&#39;scoreboard players operation @s test.data *= #1000000 test.data&#39;</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;scoreboard players operation </span><span class="si">{</span><span class="n">player</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">scoreboard</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">operator</span><span class="si">}</span><span class="s2">= </span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">source_scoreboard</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+<div class="viewcode-block" id="get_comment_token">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.utils.equation.html#stewbeet.core.utils.equation.get_comment_token">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_comment_token</span><span class="p">(</span><span class="n">operator</span><span class="p">:</span> <span class="n">AnyOperator</span><span class="p">,</span> <span class="n">player</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span> <span class="n">scoreboard</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Builds one token for the equation head comment.</span>
+
+<span class="sd">	&gt;&gt;&gt; get_comment_token(&quot;*&quot;, &quot;@s&quot;, &quot;some_score&quot;)</span>
+<span class="sd">	&#39;* @s some_score&#39;</span>
+<span class="sd">	&gt;&gt;&gt; get_comment_token(&quot;+&quot;, &quot;$(macro_arg)&quot;, None)</span>
+<span class="sd">	&#39;+ $(macro_arg)&#39;</span>
+<span class="sd">	&gt;&gt;&gt; get_comment_token(&quot;&quot;, &quot;#source&quot;, None)</span>
+<span class="sd">	&#39;#source&#39;</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">parts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">if</span> <span class="n">operator</span><span class="p">:</span>
+		<span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">operator</span><span class="p">)</span>
+	<span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">player</span><span class="p">))</span>
+	<span class="k">if</span> <span class="n">scoreboard</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scoreboard</span><span class="p">)</span>
+	<span class="k">return</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># Classes</span>
+
+<div class="viewcode-block" id="BaseEquation">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.utils.equation.html#stewbeet.core.utils.equation.BaseEquation">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BaseEquation</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Abstract base for chainable scoreboard equation builders.</span>
+
+<span class="sd">	Subclasses implement ``render_header`` and may override ``__str__``.</span>
+<span class="sd">	All methods return ``self`` to allow method chaining.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_player</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">target_scoreboard</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">player</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">target_player</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">scoreboard</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">target_scoreboard</span> <span class="ow">or</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">project_id</span><span class="si">}</span><span class="s2">.data&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">ops</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">comment_parts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">target_player</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">scoreboard</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+
+	<span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+		<span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;# </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">render_header</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">ops</span><span class="p">]</span>
+		<span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BaseEquation.render_header">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.utils.equation.html#stewbeet.core.utils.equation.BaseEquation.render_header">[docs]</a>
+	<span class="nd">@stp</span><span class="o">.</span><span class="n">abstract</span>
+	<span class="k">def</span><span class="w"> </span><span class="nf">render_header</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot; Returns the human-readable equation comment (without the leading ``# ``). &quot;&quot;&quot;</span>
+		<span class="o">...</span></div>
+
+
+	<span class="c1"># Operation builder</span>
+<div class="viewcode-block" id="BaseEquation.apply_operation">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.utils.equation.html#stewbeet.core.utils.equation.BaseEquation.apply_operation">[docs]</a>
+	<span class="k">def</span><span class="w"> </span><span class="nf">apply_operation</span><span class="p">(</span>
+		<span class="bp">self</span><span class="p">,</span>
+		<span class="n">player</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">BaseEquation</span><span class="p">,</span>
+		<span class="n">scoreboard</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+		<span class="n">operator</span><span class="p">:</span> <span class="n">AnyOperator</span><span class="p">,</span>
+		<span class="n">temp</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;temp&quot;</span><span class="p">,</span>
+	<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseEquation</span><span class="p">:</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot; Appends the scoreboard commands for one arithmetic operation.</span>
+
+<span class="sd">		Handles three cases:</span>
+<span class="sd">		- integer constant  -&gt; registers it in load, uses ``#&lt;value&gt;`` fake player</span>
+<span class="sd">		- macro argument    -&gt; stores macro value in a temp variable first</span>
+<span class="sd">		- player/selector   -&gt; direct scoreboard operation</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			player      (str | int | BaseEquation):   Source value (selector, fake player, int constant, macro arg, or another equation).</span>
+<span class="sd">			scoreboard  (str | None):  Source scoreboard. Ignored for int/macro; defaults to ``self.scoreboard``.</span>
+<span class="sd">			operator    (AnyOperator): One of ``*``, ``/``, ``+``, ``-``, or ``&quot;&quot;`` (for assignment via operation).</span>
+<span class="sd">			temp        (str):         Name of the temporary fake player used for macro args.</span>
+
+<span class="sd">		Examples:</span>
+<span class="sd">			&gt;&gt;&gt; from unittest.mock import MagicMock</span>
+<span class="sd">			&gt;&gt;&gt; from stewbeet.core.__memory__ import Mem</span>
+<span class="sd">			&gt;&gt;&gt; Mem.ctx = MagicMock()</span>
+<span class="sd">			&gt;&gt;&gt; Mem.ctx.project_id = &quot;test&quot;</span>
+<span class="sd">			&gt;&gt;&gt; Mem.ctx.project_version = &quot;1.0.0&quot;</span>
+
+<span class="sd">			&gt;&gt;&gt; # The following examples do not precise the scoreboard argument, so it defaults to {ctx.project_id}.data</span>
+<span class="sd">			&gt;&gt;&gt; eq = BaseEquation(&quot;@s&quot;)</span>
+<span class="sd">			&gt;&gt;&gt; eq.apply_operation(&quot;other_player&quot;, &quot;other_scoreboard&quot;, &quot;/&quot;).ops</span>
+<span class="sd">			[&#39;scoreboard players operation @s test.data /= other_player other_scoreboard&#39;]</span>
+
+<span class="sd">			&gt;&gt;&gt; eq2 = BaseEquation(&quot;@s&quot;)</span>
+<span class="sd">			&gt;&gt;&gt; eq2.apply_operation(&quot;$(macro_arg)&quot;, None, &quot;-&quot;, temp=&quot;temp_macro&quot;).ops</span>
+<span class="sd">			[&#39;$scoreboard players set #temp_macro test.data $(macro_arg)&#39;, &#39;scoreboard players operation @s test.data -= #temp_macro test.data&#39;]</span>
+
+<span class="sd">			&gt;&gt;&gt; eq3 = BaseEquation(&quot;@s&quot;)</span>
+<span class="sd">			&gt;&gt;&gt; eq3.apply_operation(42, None, &quot;+&quot;).ops</span>
+<span class="sd">			[&#39;scoreboard players operation @s test.data += #42 test.data&#39;]</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="c1"># Special case with another equation as source:</span>
+		<span class="c1"># we need to render it first to generate the intermediate scoreboard operations,</span>
+		<span class="c1"># then we can use its final value as source for the next operation</span>
+		<span class="n">cancel_next_comment</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+		<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">player</span><span class="p">,</span> <span class="n">BaseEquation</span><span class="p">):</span>
+			<span class="c1"># Render the other equation to generate its commands in self.ops</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">player</span><span class="o">.</span><span class="n">ops</span><span class="p">)</span>
+			<span class="n">source_comment</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">player</span><span class="p">)</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">comment_parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">operator</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">source_comment</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">:]</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>	<span class="c1"># Add the other equation header (without the leading &quot;# &quot;)</span>
+			<span class="n">cancel_next_comment</span> <span class="o">=</span> <span class="kc">True</span>	<span class="c1"># Prevent the source to add up</span>
+
+			<span class="c1"># The final value of the source equation is always stored in self.player and self.scoreboard of the source equation</span>
+			<span class="n">scoreboard</span> <span class="o">=</span> <span class="n">player</span><span class="o">.</span><span class="n">scoreboard</span>
+			<span class="n">player</span> <span class="o">=</span> <span class="n">player</span><span class="o">.</span><span class="n">player</span>
+
+		<span class="c1"># Update the equation comment</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">cancel_next_comment</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">comment_parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_comment_token</span><span class="p">(</span><span class="n">operator</span><span class="p">,</span> <span class="n">player</span><span class="p">,</span> <span class="n">scoreboard</span><span class="p">))</span>
+		<span class="n">add_op</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">append</span>
+
+		<span class="c1"># Handle different source types</span>
+		<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">player</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+			<span class="c1"># e.g. &quot;scoreboard players operation @s test.data += #42 test.data&quot;</span>
+			<span class="n">add_op</span><span class="p">(</span><span class="n">get_scoreboard_operation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">player</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scoreboard</span><span class="p">,</span> <span class="n">operator</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;#</span><span class="si">{</span><span class="n">player</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">project_id</span><span class="si">}</span><span class="s2">.data&quot;</span><span class="p">))</span>
+		<span class="k">elif</span> <span class="n">is_macro_argument</span><span class="p">(</span><span class="n">player</span><span class="p">):</span>
+			<span class="c1"># e.g. &quot;$scoreboard players set #temp test.data $(macro_arg)&quot;&quot;</span>
+			<span class="n">add_op</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;$</span><span class="si">{</span><span class="n">get_scoreboard_set</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;#</span><span class="si">{</span><span class="n">temp</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span><span class="w"> </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">project_id</span><span class="si">}</span><span class="s2">.data&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">player</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+			<span class="c1"># e.g. &quot;scoreboard players operation @s test.data -= #temp test.data&quot;</span>
+			<span class="n">add_op</span><span class="p">(</span><span class="n">get_scoreboard_operation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">player</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scoreboard</span><span class="p">,</span> <span class="n">operator</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;#</span><span class="si">{</span><span class="n">temp</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">project_id</span><span class="si">}</span><span class="s2">.data&quot;</span><span class="p">))</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="c1"># e.g. &quot;scoreboard players operation @s test.data /= other_player other_scoreboard&quot;</span>
+			<span class="n">resolved</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">scoreboard</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">scoreboard</span>
+			<span class="n">add_op</span><span class="p">(</span><span class="n">get_scoreboard_operation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">player</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scoreboard</span><span class="p">,</span> <span class="n">operator</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">player</span><span class="p">),</span> <span class="n">resolved</span><span class="p">))</span>
+
+		<span class="k">return</span> <span class="bp">self</span></div>
+
+
+	<span class="c1"># Public methods for operations</span>
+<div class="viewcode-block" id="BaseEquation.set">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.utils.equation.html#stewbeet.core.utils.equation.BaseEquation.set">[docs]</a>
+	<span class="k">def</span><span class="w"> </span><span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">player</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span> <span class="n">scoreboard</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseEquation</span><span class="p">:</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot; Sets the scoreboard value (assignment, not operation), should be used for the first operation in the chain.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			player      (str | int):   The value to assign. Can be an int, a macro arg, or a player/selector.</span>
+<span class="sd">			scoreboard  (str | None):  Source scoreboard (ignored for int/macro).</span>
+
+<span class="sd">		Examples:</span>
+<span class="sd">			&gt;&gt;&gt; from unittest.mock import MagicMock</span>
+<span class="sd">			&gt;&gt;&gt; from stewbeet.core.__memory__ import Mem</span>
+<span class="sd">			&gt;&gt;&gt; Mem.ctx = MagicMock()</span>
+<span class="sd">			&gt;&gt;&gt; Mem.ctx.project_id = &quot;test&quot;</span>
+<span class="sd">			&gt;&gt;&gt; Mem.ctx.project_version = &quot;1.0.0&quot;</span>
+
+<span class="sd">			&gt;&gt;&gt; # Setting @s in test.data to 42 and checking the generated commands with .ops</span>
+<span class="sd">			&gt;&gt;&gt; BaseEquation(&quot;@s&quot;).set(42).ops</span>
+<span class="sd">			[&#39;scoreboard players set @s test.data 42&#39;]</span>
+
+<span class="sd">			&gt;&gt;&gt; # Setting @s in test.data to a macro argument and checking the generated commands with .ops</span>
+<span class="sd">			&gt;&gt;&gt; BaseEquation(&quot;@s&quot;).set(&quot;$(macro_value)&quot;).ops</span>
+<span class="sd">			[&#39;$scoreboard players set @s test.data $(macro_value)&#39;]</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="c1"># Handle different source types for the initial set operation</span>
+		<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">player</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_scoreboard_set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">player</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scoreboard</span><span class="p">,</span> <span class="n">player</span><span class="p">))</span>
+		<span class="k">elif</span> <span class="n">is_macro_argument</span><span class="p">(</span><span class="n">player</span><span class="p">):</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;$</span><span class="si">{</span><span class="n">get_scoreboard_set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">player</span><span class="p">,</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">scoreboard</span><span class="p">,</span><span class="w"> </span><span class="n">player</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">apply_operation</span><span class="p">(</span><span class="n">player</span><span class="p">,</span> <span class="n">scoreboard</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">scoreboard</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+		<span class="c1"># Reset the comment parts to only include the initial value</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">comment_parts</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">player</span><span class="p">)</span> <span class="k">if</span> <span class="n">scoreboard</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">player</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">scoreboard</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+		<span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="BaseEquation.multiply">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.utils.equation.html#stewbeet.core.utils.equation.BaseEquation.multiply">[docs]</a>
+	<span class="k">def</span><span class="w"> </span><span class="nf">multiply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">player</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">BaseEquation</span><span class="p">,</span> <span class="n">scoreboard</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseEquation</span><span class="p">:</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot; Multiplies the current scoreboard value. See ``apply_operation`` for details. &quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_operation</span><span class="p">(</span><span class="n">player</span><span class="p">,</span> <span class="n">scoreboard</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">temp</span><span class="o">=</span><span class="s2">&quot;temp_multiply&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BaseEquation.divide">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.utils.equation.html#stewbeet.core.utils.equation.BaseEquation.divide">[docs]</a>
+	<span class="k">def</span><span class="w"> </span><span class="nf">divide</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">player</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">BaseEquation</span><span class="p">,</span> <span class="n">scoreboard</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseEquation</span><span class="p">:</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot; Divides the current scoreboard value. See ``apply_operation`` for details .&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_operation</span><span class="p">(</span><span class="n">player</span><span class="p">,</span> <span class="n">scoreboard</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">temp</span><span class="o">=</span><span class="s2">&quot;temp_divide&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BaseEquation.add">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.utils.equation.html#stewbeet.core.utils.equation.BaseEquation.add">[docs]</a>
+	<span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">player</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">BaseEquation</span><span class="p">,</span> <span class="n">scoreboard</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseEquation</span><span class="p">:</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot; Adds to the current scoreboard value. See ``apply_operation`` for details. &quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_operation</span><span class="p">(</span><span class="n">player</span><span class="p">,</span> <span class="n">scoreboard</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">temp</span><span class="o">=</span><span class="s2">&quot;temp_add&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BaseEquation.subtract">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.utils.equation.html#stewbeet.core.utils.equation.BaseEquation.subtract">[docs]</a>
+	<span class="k">def</span><span class="w"> </span><span class="nf">subtract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">player</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">BaseEquation</span><span class="p">,</span> <span class="n">scoreboard</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseEquation</span><span class="p">:</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot; Subtracts from the current scoreboard value. See ``apply_operation`` for details. &quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_operation</span><span class="p">(</span><span class="n">player</span><span class="p">,</span> <span class="n">scoreboard</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">temp</span><span class="o">=</span><span class="s2">&quot;temp_subtract&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BaseEquation.modulo">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.utils.equation.html#stewbeet.core.utils.equation.BaseEquation.modulo">[docs]</a>
+	<span class="k">def</span><span class="w"> </span><span class="nf">modulo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">player</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">BaseEquation</span><span class="p">,</span> <span class="n">scoreboard</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseEquation</span><span class="p">:</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot; Applies modulo to the current scoreboard value. See ``apply_operation`` for details. &quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_operation</span><span class="p">(</span><span class="n">player</span><span class="p">,</span> <span class="n">scoreboard</span><span class="p">,</span> <span class="s2">&quot;%&quot;</span><span class="p">,</span> <span class="n">temp</span><span class="o">=</span><span class="s2">&quot;temp_modulo&quot;</span><span class="p">)</span></div>
+
+
+	<span class="c1"># Normal Python operations</span>
+	<span class="k">def</span><span class="w"> </span><span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">BaseEquation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseEquation</span><span class="p">:</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+	<span class="k">def</span><span class="w"> </span><span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">BaseEquation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseEquation</span><span class="p">:</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+	<span class="k">def</span><span class="w"> </span><span class="fm">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">BaseEquation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseEquation</span><span class="p">:</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+	<span class="k">def</span><span class="w"> </span><span class="fm">__truediv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">BaseEquation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseEquation</span><span class="p">:</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+	<span class="k">def</span><span class="w"> </span><span class="fm">__floordiv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">BaseEquation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseEquation</span><span class="p">:</span> <span class="c1"># Same as true div since Minecraft scoreboard operations are all integer-based</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+	<span class="k">def</span><span class="w"> </span><span class="fm">__mod__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">BaseEquation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseEquation</span><span class="p">:</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">modulo</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+	<span class="k">def</span><span class="w"> </span><span class="fm">__neg__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseEquation</span><span class="p">:</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># Public classes (the ones that should be used in user code)</span>
+<div class="viewcode-block" id="ScoreboardEquation">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.utils.equation.html#stewbeet.core.utils.equation.ScoreboardEquation">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ScoreboardEquation</span><span class="p">(</span><span class="n">BaseEquation</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Equation whose result is stored directly in a scoreboard objective.</span>
+
+<span class="sd">	Examples:</span>
+<span class="sd">		&gt;&gt;&gt; from unittest.mock import MagicMock</span>
+<span class="sd">		&gt;&gt;&gt; from stewbeet.core.__memory__ import Mem</span>
+<span class="sd">		&gt;&gt;&gt; Mem.ctx = MagicMock()</span>
+<span class="sd">		&gt;&gt;&gt; Mem.ctx.project_id = &quot;test&quot;</span>
+<span class="sd">		&gt;&gt;&gt; Mem.ctx.project_version = &quot;1.0.0&quot;</span>
+
+<span class="sd">		&gt;&gt;&gt; # Simple equation</span>
+<span class="sd">		&gt;&gt;&gt; str((ScoreboardEquation(&quot;@s&quot;).set(10) + 5) * (-2) / 3 % 4 - &quot;#toto&quot;).splitlines()[0]</span>
+<span class="sd">		&#39;# scoreboard @s test.data = 10 + 5 * -2 / 3 % 4 - #toto&#39;</span>
+
+<span class="sd">		&gt;&gt;&gt; # Building a complex equation with method chaining and checking the generated commands with .ops</span>
+<span class="sd">		&gt;&gt;&gt; result = str(ScoreboardEquation(&quot;#temp_durability&quot;, &quot;some_score&quot;).set(&quot;-$(amount)&quot;).multiply(1000000).divide(&quot;$(max_damage)&quot;).subtract(&quot;#toto&quot;))</span>
+<span class="sd">		&gt;&gt;&gt; shorter = str(ScoreboardEquation(&quot;#temp_durability&quot;, &quot;some_score&quot;).set(&quot;-$(amount)&quot;) * 1000000 / &quot;$(max_damage)&quot; - &quot;#toto&quot;)</span>
+<span class="sd">		&gt;&gt;&gt; expected = (</span>
+<span class="sd">		...     &quot;# scoreboard #temp_durability some_score = -$(amount) * 1000000 / $(max_damage) - #toto\\n&quot;</span>
+<span class="sd">		...     &quot;$scoreboard players set #temp_durability some_score -$(amount)\\n&quot;</span>
+<span class="sd">		...     &quot;scoreboard players operation #temp_durability some_score *= #1000000 test.data\\n&quot;</span>
+<span class="sd">		...     &quot;$scoreboard players set #temp_divide test.data $(max_damage)\\n&quot;</span>
+<span class="sd">		...     &quot;scoreboard players operation #temp_durability some_score /= #temp_divide test.data\\n&quot;</span>
+<span class="sd">		...     &quot;scoreboard players operation #temp_durability some_score -= #toto some_score&quot;	# &lt;== Note that #toto inherits the scoreboard from the equation (&quot;some_score&quot;)</span>
+<span class="sd">		... )</span>
+<span class="sd">		&gt;&gt;&gt; result == expected and shorter == expected</span>
+<span class="sd">		True</span>
+
+<span class="sd">		&gt;&gt;&gt; # Combining two Equation instances</span>
+<span class="sd">		&gt;&gt;&gt; eq4 = ScoreboardEquation(&quot;@s&quot;).set(10) * 5</span>
+<span class="sd">		&gt;&gt;&gt; eq5 = ScoreboardEquation(&quot;#toto&quot;, &quot;some_score&quot;).set(20) * 2</span>
+<span class="sd">		&gt;&gt;&gt; result = str(eq4 * eq5)</span>
+<span class="sd">		&gt;&gt;&gt; expected = (</span>
+<span class="sd">		...     &quot;# scoreboard @s test.data = 10 * 5 * (scoreboard #toto some_score = 20 * 2)\\n&quot;</span>
+<span class="sd">		...     &quot;scoreboard players set @s test.data 10\\n&quot;</span>
+<span class="sd">		...     &quot;scoreboard players operation @s test.data *= #5 test.data\\n&quot;</span>
+<span class="sd">		...     &quot;scoreboard players set #toto some_score 20\\n&quot;</span>
+<span class="sd">		...     &quot;scoreboard players operation #toto some_score *= #2 test.data\\n&quot;</span>
+<span class="sd">		...     &quot;scoreboard players operation @s test.data *= #toto some_score&quot;</span>
+<span class="sd">		... )</span>
+<span class="sd">		&gt;&gt;&gt; result == expected</span>
+<span class="sd">		True</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">player</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">scoreboard</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">player</span><span class="p">,</span> <span class="n">scoreboard</span><span class="p">)</span>
+
+	<span class="k">def</span><span class="w"> </span><span class="nf">render_header</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+		<span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;scoreboard </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">player</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">scoreboard</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comment_parts</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="StorageEquation">
+<a class="viewcode-back" href="../../../../modules/stewbeet.core.utils.equation.html#stewbeet.core.utils.equation.StorageEquation">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">StorageEquation</span><span class="p">(</span><span class="n">BaseEquation</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Equation that computes via a temp scoreboard, then stores the result in a storage path.</span>
+
+<span class="sd">	The ``scale`` factor is applied when flushing the temp scoreboard value to storage.</span>
+
+<span class="sd">	Examples:</span>
+<span class="sd">		&gt;&gt;&gt; from unittest.mock import MagicMock</span>
+<span class="sd">		&gt;&gt;&gt; from stewbeet.core.__memory__ import Mem</span>
+<span class="sd">		&gt;&gt;&gt; Mem.ctx = MagicMock()</span>
+<span class="sd">		&gt;&gt;&gt; Mem.ctx.project_id = &quot;test&quot;</span>
+<span class="sd">		&gt;&gt;&gt; Mem.ctx.project_version = &quot;1.0.0&quot;</span>
+
+<span class="sd">		&gt;&gt;&gt; start = lambda: StorageEquation(&quot;some_namespace:some_path&quot;, &quot;result_path&quot;, 0.000005, &quot;double&quot;).set(&quot;-$(amount)&quot;)</span>
+<span class="sd">		&gt;&gt;&gt; result = str(start().multiply(1000000).divide(&quot;$(max_damage)&quot;).subtract(&quot;#toto&quot;))</span>
+<span class="sd">		&gt;&gt;&gt; shorter = str(start() * 1000000 / &quot;$(max_damage)&quot; - &quot;#toto&quot;)</span>
+<span class="sd">		&gt;&gt;&gt; expected = (</span>
+<span class="sd">		...     &quot;# storage some_namespace:some_path result_path = -$(amount) * 1000000 / $(max_damage) - #toto * 0.000005\\n&quot;</span>
+<span class="sd">		...     &quot;$scoreboard players set #temp_result test.data -$(amount)\\n&quot;</span>
+<span class="sd">		...     &quot;scoreboard players operation #temp_result test.data *= #1000000 test.data\\n&quot;</span>
+<span class="sd">		...     &quot;$scoreboard players set #temp_divide test.data $(max_damage)\\n&quot;</span>
+<span class="sd">		...     &quot;scoreboard players operation #temp_result test.data /= #temp_divide test.data\\n&quot;</span>
+<span class="sd">		...     &quot;scoreboard players operation #temp_result test.data -= #toto test.data\\n&quot;</span>
+<span class="sd">		...     &quot;execute store result storage some_namespace:some_path result_path double 0.000005 run scoreboard players get #temp_result test.data&quot;</span>
+<span class="sd">		... )</span>
+<span class="sd">		&gt;&gt;&gt; result == expected and shorter == expected</span>
+<span class="sd">		True</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">storage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">storage_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;double&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;#temp_result&quot;</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">storage</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">path</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">scale</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">storage_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">storage_type</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">comment_parts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">storage</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+
+	<span class="k">def</span><span class="w"> </span><span class="nf">render_header</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+		<span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;storage </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comment_parts</span><span class="p">)</span><span class="si">}</span><span class="s2"> * </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="si">:</span><span class="s2">f</span><span class="si">}</span><span class="s2">&quot;</span>
+
+	<span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+		<span class="c1"># Add the final command to store the result in storage after all operations</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+			<span class="sa">f</span><span class="s2">&quot;execute store result storage </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">storage_type</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="si">:</span><span class="s2">f</span><span class="si">}</span><span class="s2">&quot;</span>
+			<span class="sa">f</span><span class="s2">&quot; run scoreboard players get #temp_result </span><span class="si">{</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">Mem</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">project_id</span><span class="si">}</span><span class="s2">.data&quot;</span><span class="si">}</span><span class="s2">&quot;</span>
+		<span class="p">)</span>
+		<span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span></div>
+
+
+</pre></div>
+</article><footer class="bz-article-footer">
+  
+  
+    <nav class="bz-related-pages" aria-label="Related pages navigation"></nav>
+  
+
+</footer><aside class="bz-sidebar-secondary" data-drawer="bz-sidebar-secondary">
+  
+  
+    
+  
+    
+  
+  
+  
+  
+
+
+
+<div class="bz-repo-stats">
+  <a
+    data-provider="github"
+    data-user="Stoupy51"
+    data-repo="stewbeet"
+    href="https://github.com/Stoupy51/stewbeet"
+    aria-label="Stoupy51/stewbeet repository"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M10.303 16.652c-2.837-.344-4.835-2.385-4.835-5.028 0-1.074.387-2.235 1.031-3.008-.279-.709-.236-2.214.086-2.837.86-.107 2.02.344 2.708.967.816-.258 1.676-.386 2.728-.386 1.053 0 1.913.128 2.686.365.666-.602 1.848-1.053 2.708-.946.3.581.344 2.085.064 2.815.688.817 1.053 1.913 1.053 3.03 0 2.643-1.998 4.641-4.877 5.006.73.473 1.224 1.504 1.224 2.686v2.235c0 .644.537 1.01 1.182.752 3.889-1.483 6.94-5.372 6.94-10.185 0-6.081-4.942-11.044-11.022-11.044-6.081 0-10.98 4.963-10.98 11.044a10.84 10.84 0 0 0 7.112 10.206c.58.215 1.139-.172 1.139-.752v-1.719a2.768 2.768 0 0 1-1.032.215c-1.418 0-2.256-.773-2.857-2.213-.237-.58-.495-.924-.989-.988-.258-.022-.344-.129-.344-.258 0-.258.43-.451.86-.451.623 0 1.16.386 1.719 1.181.43.623.881.903 1.418.903.537 0 .881-.194 1.375-.688.365-.365.645-.687.903-.902Z"></path></svg>
+    <span
+      style="--bz-repo-stats-name-length: 17"
+      title="Stoupy51/stewbeet"
+    >
+      Stoupy51/stewbeet
+    </span>
+    <div class="bz-repo-stats-row">
+      <span class="bz-repo-stats-item" aria-label="Repository stars">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.751 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Zm0 2.445L6.615 5.5a.75.75 0 0 1-.564.41l-3.097.45 2.24 2.184a.75.75 0 0 1 .216.664l-.528 3.084 2.769-1.456a.75.75 0 0 1 .698 0l2.77 1.456-.53-3.084a.75.75 0 0 1 .216-.664l2.24-2.183-3.096-.45a.75.75 0 0 1-.564-.41L8 2.694Z"></path></svg>
+        <span data-stat="stars">-</span>
+      </span>
+      <span class="bz-repo-stats-item" aria-label="Repository forks">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M5 5.372v.878c0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75v-.878a2.25 2.25 0 1 1 1.5 0v.878a2.25 2.25 0 0 1-2.25 2.25h-1.5v2.128a2.251 2.251 0 1 1-1.5 0V8.5h-1.5A2.25 2.25 0 0 1 3.5 6.25v-.878a2.25 2.25 0 1 1 1.5 0ZM5 3.25a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Zm6.75.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm-3 8.75a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Z"></path></svg>
+        <span data-stat="forks">-</span>
+      </span>
+    </div>
+  </a>
+</div>
+
+  
+    
+  
+    
+  
+
+</aside></main>
+  </div>
+<footer class="bz-footer">
+  <div class="bz-footer-copyright"><p class="bz-copyright">© Copyright 2025 - 2026, Stoupy</p><p>
+    
+    
+    
+      Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a href="https://github.com/aksiome/breeze">Breeze theme</a>.
+    
+  </p>
+</div>
+</footer><a href="#" class="bz-back-to-top">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m5 12 7-7 7 7"/><path d="M12 19V5"/>
+    </svg>
+    <span>Back to top</span>
+  </a>
+  <label class="bz-overlay bz-overlay-primary" for="bz-sidebar-primary"></label>
+  <label class="bz-overlay bz-overlay-secondary" for="bz-sidebar-secondary"></label>
+  <input type="checkbox" name="bz-sidebar-primary" id="bz-sidebar-primary" aria-label="Toggle section navigation">
+  <input type="checkbox" name="bz-sidebar-secondary" id="bz-sidebar-secondary" aria-label="Toggle table of contents"><script src="../../../../_static/documentation_options.js?v=2f4db3bd"></script><script src="../../../../_static/doctools.js?v=fd6eb6e6"></script><script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script><script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script><script src="../../../../_static/copybutton.js?v=18a8d5f5"></script><script src="../../../../_static/design-tabs.js?v=f930bc37"></script><script src="../../../../_static/treeview.js?v=265ad9b8"></script></body>
+</html>
