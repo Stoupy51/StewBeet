@@ -67,7 +67,7 @@ class ScoreboardEquation:
 			>>> Mem.ctx.project_version = "1.0.0"
 
 			>>> str(ScoreboardEquation("#temp_durability", "some_score").set("-$(amount)").multiply(1000000).divide("$(max_damage)").subtract("#toto"))
-			'# scoreboard #temp_durability some_score = -$(amount) * 1000000 / $(max_damage) - #toto\\n$scoreboard players set #temp_durability some_score -$(amount)\\nscoreboard players operation #temp_durability some_score *= #1000000 test.data\\n$scoreboard players set #temp_divide test.data $(max_damage)\\nscoreboard players operation #temp_durability some_score /= #temp_divide test.data\\nscoreboard players operation #temp_durability some_score -= #toto test.data'
+			'# scoreboard #temp_durability some_score = -$(amount) * 1000000 / $(max_damage) - #toto\\n$scoreboard players set #temp_durability some_score -$(amount)\\nscoreboard players operation #temp_durability some_score *= #1000000 test.data\\n$scoreboard players set #temp_divide test.data $(max_damage)\\nscoreboard players operation #temp_durability some_score /= #temp_divide test.data\\nscoreboard players operation #temp_durability some_score -= #toto some_score'
 		"""
 		if scoreboard is None: scoreboard = f"{Mem.ctx.project_id}.data"
 		self.player = player
@@ -125,7 +125,7 @@ class ScoreboardEquation:
 			self.operations.append(f"${_get_scoreboard_set(f'#{temp_name}', f'{Mem.ctx.project_id}.data', player)}")
 			self.operations.append(_get_scoreboard_operation(self.player, self.scoreboard, operator, f"#{temp_name}", f"{Mem.ctx.project_id}.data"))
 		else:
-			if scoreboard is None: scoreboard = f"{Mem.ctx.project_id}.data"
+			if scoreboard is None: scoreboard = self.scoreboard
 			self.operations.append(_get_scoreboard_operation(self.player, self.scoreboard, operator, player, scoreboard))
 		return self
 
@@ -208,7 +208,7 @@ class ScoreboardEquation:
 			# it's useless to use temporary variable in this case
 			self.operations.append(f"${_get_scoreboard_set(self.player, self.scoreboard, player)}")
 		else:
-			scoreboard = f"{Mem.ctx.project_id}.data" if scoreboard is None else scoreboard
+			if scoreboard is None: scoreboard = self.scoreboard
 			self.__operation(player, scoreboard, "")
 		self.actions = [str(player) if scoreboard is None else f"{player} {scoreboard}"]
 		return self
