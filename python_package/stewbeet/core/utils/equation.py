@@ -94,7 +94,8 @@ class ScoreboardEquation:
 		Args:
 			player		(str | int):	The player whose scoreboard value will be used in the operation. Can be a selector, a player name, a fake player, an integer constant, or a macro argument.
 			scoreboard	(str | None):	The scoreboard objective to use. Defaults to "{project_id}:data", ignored if player is an integer constant or a macro argument.
-			operator	(str):			The operator to use in the operation. Must be one of "*=", "/=", "+=", "-=".
+			operator	(str):			The operator to use in the operation, like "*", "/", "+", or "-".
+			temp_name	(str):			The name of the temporary variable to use if needed. Defaults to "temp".
 
 		Returns:
 			ScoreboardEquation: The current equation instance, allowing for method chaining.
