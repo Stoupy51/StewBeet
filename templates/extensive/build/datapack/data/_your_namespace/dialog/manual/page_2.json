@@ -50,7 +50,7 @@
 				"\"$6\n\"",
 				{"text": "$腠$腠$腠","hover_event": {"action": "show_item","id": "minecraft:oak_log","components": {}}},
 				"  \n\"",
-				{"translate": "_your_namespace.uuu","hover_event": {"action": "show_item","id": "minecraft:oak_log","components": {}}},
+				[{"translate":"_your_namespace.uuu","hover_event": {"action": "show_item","id": "minecraft:oak_log","components": {}}}, "$"],
 				"  \n\"",
 				{"text": "$腠","hover_event": {"action": "show_item","id": "minecraft:oak_log","components": {}}},
 				{"text": "$腡","hover_event": {"action": "show_item","id": "minecraft:crafting_table","components": {}}},
@@ -66,7 +66,7 @@
 				"#$\n\"",
 				{"text": "$腢$腢$腢","hover_event": {"action": "show_item","id": "minecraft:smooth_stone","components": {}}},
 				"  \n\"",
-				{"translate": "_your_namespace.uuu","hover_event": {"action": "show_item","id": "minecraft:smooth_stone","components": {}}},
+				[{"translate":"_your_namespace.uuu","hover_event": {"action": "show_item","id": "minecraft:smooth_stone","components": {}}}, "$"],
 				"  \n",
 				[{"translate": "_your_namespace.every_recipe_that_uses_custom_items","font": "minecraft:default","color": "black"},{"translate": "_your_namespace.must","color": "red","underlined": true}," be crafted using the Heavy Workbench."],
 				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"

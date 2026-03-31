@@ -20,7 +20,7 @@
 			{"text": "This is another button with a simple text component.","color": "aqua"}
 		],
 		"components": {
-			"custom_data": {"smithed": {"dict": {"ingot": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ingot": true}},
+			"custom_data": {"smithed": {"dict": {"ingot": {"steel": true}},"id": "_your_namespace:steel_ingot","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ingot": true}},
 			"item_model": "_your_namespace:steel_ingot",
 			"item_name": {"text": "Steel Ingot"},
 			"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
@@ -43,7 +43,7 @@
 			{"type": "smelting","result_count": 1,"category": "equipment","group": "steel_nugget","ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_hoe": true}}}},"experience": 0.8,"cookingtime": 200}
 		],
 		"components": {
-			"custom_data": {"smithed": {"dict": {"nugget": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_nugget": true}},
+			"custom_data": {"smithed": {"dict": {"nugget": {"steel": true}},"id": "_your_namespace:steel_nugget","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_nugget": true}},
 			"item_model": "_your_namespace:steel_nugget",
 			"item_name": {"text": "Steel Nugget"},
 			"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
@@ -57,7 +57,7 @@
 			{"type": "crafting_shapeless","result_count": 9,"category": "misc","group": "steel","ingredients": [{"components": {"minecraft:custom_data": {"_your_namespace": {"raw_steel_block": true}}}}]}
 		],
 		"components": {
-			"custom_data": {"smithed": {"dict": {"raw": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"raw_steel": true}},
+			"custom_data": {"smithed": {"dict": {"raw": {"steel": true}},"id": "_your_namespace:raw_steel","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"raw_steel": true}},
 			"item_model": "_your_namespace:raw_steel",
 			"item_name": {"text": "Raw Steel"},
 			"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
@@ -76,7 +76,7 @@
 			{"type": "simplenergy_pulverizing","result_count": 2,"category": "misc","group": "steel","ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"deepslate_steel_ore": true}}}}}
 		],
 		"components": {
-			"custom_data": {"smithed": {"dict": {"dust": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_dust": true}},
+			"custom_data": {"smithed": {"dict": {"dust": {"steel": true}},"id": "_your_namespace:steel_dust","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_dust": true}},
 			"item_model": "_your_namespace:steel_dust",
 			"item_name": {"text": "Steel Dust"},
 			"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
@@ -90,7 +90,7 @@
 			{"type": "crafting_shaped","result_count": 4,"category": "misc","group": "steel_stick","shape": ["X","X"],"ingredients": {"X": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_ingot": true}}}}}}
 		],
 		"components": {
-			"custom_data": {"smithed": {"dict": {"stick": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_stick": true}},
+			"custom_data": {"smithed": {"dict": {"stick": {"steel": true}},"id": "_your_namespace:steel_stick","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_stick": true}},
 			"item_model": "_your_namespace:steel_stick",
 			"item_name": {"text": "Steel Stick"},
 			"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
@@ -106,7 +106,7 @@
 		"components": {
 			"container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:steel_block","from": "_your_namespace"}}}}}}],
 			"tooltip_display": {"hidden_components": ["minecraft:container"]},
-			"custom_data": {"smithed": {"dict": {"block": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_block": true}},
+			"custom_data": {"smithed": {"dict": {"block": {"steel": true}},"id": "_your_namespace:steel_block","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_block": true}},
 			"item_model": "_your_namespace:steel_block",
 			"item_name": {"text": "Steel Block"},
 			"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
@@ -125,7 +125,7 @@
 		"components": {
 			"container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:steel_ore","from": "_your_namespace"}}}}}}],
 			"tooltip_display": {"hidden_components": ["minecraft:container"]},
-			"custom_data": {"smithed": {"dict": {"block": {"steel": true},"ore": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ore": true}},
+			"custom_data": {"smithed": {"dict": {"block": {"steel": true},"ore": {"steel": true}},"id": "_your_namespace:steel_ore","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ore": true}},
 			"item_model": "_your_namespace:steel_ore",
 			"item_name": {"text": "Steel Ore"},
 			"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
@@ -145,7 +145,7 @@
 		"components": {
 			"container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:deepslate_steel_ore","from": "_your_namespace"}}}}}}],
 			"tooltip_display": {"hidden_components": ["minecraft:container"]},
-			"custom_data": {"smithed": {"dict": {"block": {"steel": true},"ore": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"deepslate_steel_ore": true}},
+			"custom_data": {"smithed": {"dict": {"block": {"steel": true},"ore": {"steel": true}},"id": "_your_namespace:deepslate_steel_ore","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"deepslate_steel_ore": true}},
 			"item_model": "_your_namespace:deepslate_steel_ore",
 			"item_name": {"text": "Deepslate Steel Ore"},
 			"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
@@ -167,7 +167,7 @@
 		"components": {
 			"container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:raw_steel_block","from": "_your_namespace"}}}}}}],
 			"tooltip_display": {"hidden_components": ["minecraft:container"]},
-			"custom_data": {"smithed": {"dict": {"block": {"steel": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"raw_steel_block": true}},
+			"custom_data": {"smithed": {"dict": {"block": {"steel": true}},"id": "_your_namespace:raw_steel_block","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"raw_steel_block": true}},
 			"item_model": "_your_namespace:raw_steel_block",
 			"item_name": {"text": "Raw Steel Block"},
 			"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
@@ -186,7 +186,7 @@
 			{"type": "crafting_shaped","result_count": 1,"category": "equipment","group": "steel_helmet","manual_priority": 0,"shape": ["XXX","X X"],"ingredients": {"X": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_ingot": true}}}}}}
 		],
 		"components": {
-			"custom_data": {"smithed": {"dict": {"armor": {"steel": true,"helmet": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_helmet": true}},
+			"custom_data": {"smithed": {"dict": {"armor": {"steel": true,"helmet": true}},"id": "_your_namespace:steel_helmet","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_helmet": true}},
 			"max_damage": 495,
 			"equippable": {"slot": "head","asset_id": "_your_namespace:steel"},
 			"attribute_modifiers": [{"type": "armor","amount": 2.5,"operation": "add_value","slot": "head","id": "_your_namespace:armor.head"}],
@@ -203,7 +203,7 @@
 			{"type": "crafting_shaped","result_count": 1,"category": "equipment","group": "steel_chestplate","manual_priority": 0,"shape": ["X X","XXX","XXX"],"ingredients": {"X": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_ingot": true}}}}}}
 		],
 		"components": {
-			"custom_data": {"smithed": {"dict": {"armor": {"steel": true,"chestplate": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_chestplate": true}},
+			"custom_data": {"smithed": {"dict": {"armor": {"steel": true,"chestplate": true}},"id": "_your_namespace:steel_chestplate","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_chestplate": true}},
 			"max_damage": 720,
 			"equippable": {"slot": "chest","asset_id": "_your_namespace:steel"},
 			"attribute_modifiers": [{"type": "armor","amount": 6.5,"operation": "add_value","slot": "chest","id": "_your_namespace:armor.chest"}],
@@ -220,7 +220,7 @@
 			{"type": "crafting_shaped","result_count": 1,"category": "equipment","group": "steel_leggings","manual_priority": 0,"shape": ["XXX","X X","X X"],"ingredients": {"X": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_ingot": true}}}}}}
 		],
 		"components": {
-			"custom_data": {"smithed": {"dict": {"armor": {"steel": true,"leggings": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_leggings": true}},
+			"custom_data": {"smithed": {"dict": {"armor": {"steel": true,"leggings": true}},"id": "_your_namespace:steel_leggings","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_leggings": true}},
 			"max_damage": 675,
 			"equippable": {"slot": "legs","asset_id": "_your_namespace:steel"},
 			"attribute_modifiers": [{"type": "armor","amount": 5.5,"operation": "add_value","slot": "legs","id": "_your_namespace:armor.legs"}],
@@ -237,7 +237,7 @@
 			{"type": "crafting_shaped","result_count": 1,"category": "equipment","group": "steel_boots","manual_priority": 0,"shape": ["X X","X X"],"ingredients": {"X": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_ingot": true}}}}}}
 		],
 		"components": {
-			"custom_data": {"smithed": {"dict": {"armor": {"steel": true,"boots": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_boots": true}},
+			"custom_data": {"smithed": {"dict": {"armor": {"steel": true,"boots": true}},"id": "_your_namespace:steel_boots","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_boots": true}},
 			"max_damage": 585,
 			"equippable": {"slot": "feet","asset_id": "_your_namespace:steel"},
 			"attribute_modifiers": [{"type": "armor","amount": 2.5,"operation": "add_value","slot": "feet","id": "_your_namespace:armor.feet"}],
@@ -254,7 +254,7 @@
 			{"type": "crafting_shaped","result_count": 1,"category": "equipment","group": "steel_sword","manual_priority": 0,"shape": ["X","X","S"],"ingredients": {"X": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_ingot": true}}}},"S": {"item": "minecraft:stick"}}}
 		],
 		"components": {
-			"custom_data": {"smithed": {"dict": {"tools": {"steel": true,"sword": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_sword": true}},
+			"custom_data": {"smithed": {"dict": {"tools": {"steel": true,"sword": true}},"id": "_your_namespace:steel_sword","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_sword": true}},
 			"max_damage": 750,
 			"attribute_modifiers": [{"type": "attack_damage","amount": 6,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_damage"},{"type": "attack_speed","amount": -2.4,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_speed"}],
 			"item_model": "_your_namespace:steel_sword",
@@ -270,7 +270,7 @@
 			{"type": "crafting_shaped","result_count": 1,"category": "equipment","group": "steel_pickaxe","manual_priority": 0,"shape": ["XXX"," S "," S "],"ingredients": {"X": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_ingot": true}}}},"S": {"item": "minecraft:stick"}}}
 		],
 		"components": {
-			"custom_data": {"smithed": {"dict": {"tools": {"steel": true,"pickaxe": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_pickaxe": true}},
+			"custom_data": {"smithed": {"dict": {"tools": {"steel": true,"pickaxe": true}},"id": "_your_namespace:steel_pickaxe","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_pickaxe": true}},
 			"max_damage": 750,
 			"attribute_modifiers": [{"type": "attack_damage","amount": 4,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_damage"},{"type": "attack_speed","amount": -2.8,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_speed"},{"type": "mining_efficiency","amount": 2,"operation": "add_value","slot": "mainhand","id": "_your_namespace:mining_efficiency.mainhand"}],
 			"item_model": "_your_namespace:steel_pickaxe",
@@ -286,7 +286,7 @@
 			{"type": "crafting_shaped","result_count": 1,"category": "equipment","group": "steel_axe","manual_priority": 0,"shape": ["XX","XS"," S"],"ingredients": {"X": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_ingot": true}}}},"S": {"item": "minecraft:stick"}}}
 		],
 		"components": {
-			"custom_data": {"smithed": {"dict": {"tools": {"steel": true,"axe": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_axe": true}},
+			"custom_data": {"smithed": {"dict": {"tools": {"steel": true,"axe": true}},"id": "_your_namespace:steel_axe","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_axe": true}},
 			"max_damage": 750,
 			"attribute_modifiers": [{"type": "attack_damage","amount": 9,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_damage"},{"type": "attack_speed","amount": -3.1,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_speed"},{"type": "mining_efficiency","amount": 2,"operation": "add_value","slot": "mainhand","id": "_your_namespace:mining_efficiency.mainhand"}],
 			"item_model": "_your_namespace:steel_axe",
@@ -302,7 +302,7 @@
 			{"type": "crafting_shaped","result_count": 1,"category": "equipment","group": "steel_shovel","manual_priority": 0,"shape": ["X","S","S"],"ingredients": {"X": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_ingot": true}}}},"S": {"item": "minecraft:stick"}}}
 		],
 		"components": {
-			"custom_data": {"smithed": {"dict": {"tools": {"steel": true,"shovel": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_shovel": true}},
+			"custom_data": {"smithed": {"dict": {"tools": {"steel": true,"shovel": true}},"id": "_your_namespace:steel_shovel","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_shovel": true}},
 			"max_damage": 750,
 			"attribute_modifiers": [{"type": "attack_damage","amount": 4.5,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_damage"},{"type": "attack_speed","amount": -3.0,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_speed"},{"type": "mining_efficiency","amount": 2,"operation": "add_value","slot": "mainhand","id": "_your_namespace:mining_efficiency.mainhand"}],
 			"item_model": "_your_namespace:steel_shovel",
@@ -318,7 +318,7 @@
 			{"type": "crafting_shaped","result_count": 1,"category": "equipment","group": "steel_hoe","manual_priority": 0,"shape": ["XX"," S"," S"],"ingredients": {"X": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_ingot": true}}}},"S": {"item": "minecraft:stick"}}}
 		],
 		"components": {
-			"custom_data": {"smithed": {"dict": {"tools": {"steel": true,"hoe": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_hoe": true}},
+			"custom_data": {"smithed": {"dict": {"tools": {"steel": true,"hoe": true}},"id": "_your_namespace:steel_hoe","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_hoe": true}},
 			"max_damage": 750,
 			"attribute_modifiers": [{"type": "attack_damage","amount": 1,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_damage"},{"type": "attack_speed","amount": -1.0,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_speed"},{"type": "mining_efficiency","amount": 2,"operation": "add_value","slot": "mainhand","id": "_your_namespace:mining_efficiency.mainhand"}],
 			"item_model": "_your_namespace:steel_hoe",
@@ -334,7 +334,7 @@
 			{"type": "crafting_shaped","result_count": 4,"category": "misc","group": "stone_stick","shape": ["X","X"],"ingredients": {"X": {"item": "minecraft:stone"}}}
 		],
 		"components": {
-			"custom_data": {"smithed": {"dict": {"stick": {"stone": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"stone_stick": true}},
+			"custom_data": {"smithed": {"dict": {"stick": {"stone": true}},"id": "_your_namespace:stone_stick","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"stone_stick": true}},
 			"item_model": "_your_namespace:stone_stick",
 			"item_name": {"text": "Stone Stick"},
 			"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
@@ -348,7 +348,7 @@
 			{"type": "crafting_shaped","result_count": 1,"category": "misc","group": "stone_rod","shape": ["X","X","X"],"ingredients": {"X": {"item": "minecraft:stone"}}}
 		],
 		"components": {
-			"custom_data": {"smithed": {"dict": {"rod": {"stone": true}},"ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"stone_rod": true}},
+			"custom_data": {"smithed": {"dict": {"rod": {"stone": true}},"id": "_your_namespace:stone_rod","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"stone_rod": true}},
 			"item_model": "_your_namespace:stone_rod",
 			"item_name": {"text": "Stone Rod"},
 			"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]]
@@ -360,7 +360,7 @@
 		"manual_category": "miscellaneous",
 		"recipes": [],
 		"components": {
-			"custom_data": {"_your_namespace": {"shazinho": true},"smithed": {"dict": {"record": {"shazinho": true,"item_name": "Shazinho"},"jukebox_song": {"comparator_output": 15,"length_in_seconds": 128,"sound_event": {"sound_id": "_your_namespace:shazinho"},"description": {"text": "Shazinho"}}},"ignore": {"functionality": true,"crafting": true}}},
+			"custom_data": {"_your_namespace": {"shazinho": true},"smithed": {"dict": {"record": {"shazinho": true,"item_name": "Shazinho"},"jukebox_song": {"comparator_output": 15,"length_in_seconds": 128,"sound_event": {"sound_id": "_your_namespace:shazinho"},"description": {"text": "Shazinho"}}},"id": "_your_namespace:shazinho","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}},
 			"item_name": {"text": "Music Disc","italic": false},
 			"jukebox_playable": "_your_namespace:shazinho",
 			"max_stack_size": 1,
@@ -385,7 +385,7 @@
 			"item_model": "_your_namespace:super_stone",
 			"item_name": {"text": "Super Stone"},
 			"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]],
-			"custom_data": {"_your_namespace": {"super_stone": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}}
+			"custom_data": {"_your_namespace": {"super_stone": true},"smithed": {"id": "_your_namespace:super_stone","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}
 		},
 		"vanilla_block": {
 			"id": "minecraft:cobblestone",
@@ -407,7 +407,7 @@
 			"item_model": "_your_namespace:stewbeet_painting",
 			"item_name": {"text": "Stewbeet Painting"},
 			"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]],
-			"custom_data": {"_your_namespace": {"stewbeet_painting": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}}
+			"custom_data": {"_your_namespace": {"stewbeet_painting": true},"smithed": {"id": "_your_namespace:stewbeet_painting","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}
 		},
 		"painting_data": {
 			"texture": "stewbeet_painting_2x2",
@@ -429,7 +429,7 @@
 			"item_name": "Extensive Template Manual",
 			"item_model": "_your_namespace:manual",
 			"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},{"text": " Extensive Template","italic": true,"color": "blue"}]],
-			"custom_data": {"_your_namespace": {"manual": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}}
+			"custom_data": {"_your_namespace": {"manual": true},"smithed": {"id": "_your_namespace:manual","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}
 		}
 	}
 }
