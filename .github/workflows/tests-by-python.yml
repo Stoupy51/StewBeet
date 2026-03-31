@@ -1,0 +1,33 @@
+
+name: tests-by-python
+
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        description: Python version to run tests
+        required: true
+        type: string
+
+jobs:
+  tests:
+    name: py${{ inputs.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: ${{ inputs.python-version }}
+      - name: Install system dependencies (in case subpackages that do not have wheels require them)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake zlib1g-dev libjpeg-dev libpng-dev libtiff-dev libwebp-dev libffi-dev
+      - name: Install project with python ${{ inputs.python-version }}
+        run: |
+          uv venv
+          uv pip install -e .
+      - name: Run tests with python ${{ inputs.python-version }}
+        run: uv run stouputils all_doctests ./python_package/stewbeet
+

@@ -1,0 +1,16 @@
+
+name: "Tests 3.15"
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  tests_3_15:
+    uses: ./.github/workflows/tests-by-python.yml
+    with:
+      python-version: "3.15"
+
