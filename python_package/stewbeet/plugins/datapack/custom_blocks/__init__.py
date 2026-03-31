@@ -22,7 +22,7 @@ from ....core.constants import (
 	VANILLA_BLOCK,
 	official_lib_used,
 )
-from ....core.utils.io import set_json_encoder, write_function, write_function_tag, write_load_file, write_versioned_function
+from ....core.utils.io import set_json_encoder, write_function, write_load_file, write_tag, write_versioned_function
 
 
 # Main entry point
@@ -430,7 +430,7 @@ scoreboard objectives add {ns}.growth_stage dummy
 			stp.debug("Found custom blocks using CUSTOM_BLOCK_VANILLA in the definitions, adding 'smithed.custom_block' to the dependencies")
 
 		# Write function tag to link with the library
-		write_function_tag("smithed.custom_block:event/on_place", [f"{ns}:custom_blocks/on_place"])
+		write_tag("smithed.custom_block:event/on_place", ctx.data.function_tags, [f"{ns}:custom_blocks/on_place"])
 
 		# Write the slot function
 		write_function(f"{ns}:custom_blocks/on_place", (
