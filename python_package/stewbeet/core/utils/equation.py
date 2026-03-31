@@ -10,7 +10,7 @@ def _is_macro_argument(value: str):
 def _get_scoreboard_set(player: str, scoreboard: str, value: str|int) -> str:
 	return f"scoreboard players set {player} {scoreboard} {value}"
 def _get_scoreboard_operation(player: str, scoreboard: str, operator: str, value: str, value_scoreboard: str) -> str:
-	return f"scoreboard players operation {player} {scoreboard} {operator} {value} {value_scoreboard}"
+	return f"scoreboard players operation {player} {scoreboard} {operator}= {value} {value_scoreboard}"
 def _write_constant_to_load(value: int) -> None:
 	"""
 	Writes a constant definition to the load file if it doesn't already exist.
@@ -23,6 +23,32 @@ def _write_constant_to_load(value: int) -> None:
 	constant_definition: str = _get_scoreboard_set(f"#{value}", f"{Mem.ctx.project_id}.data", value)
 	if constant_definition not in existing_load_content.splitlines():
 		write_load_file(constant_definition)
+def _get_comment_operation(operator: str, player: str|int, scoreboard: str|None) -> str:
+	"""
+	Generates a part of the comment for the current operation.
+
+	Args:
+		operator	(str):	The operator involved in the operation, like "*", "/", "+", or "-"
+		player		(str | int):	The player involved in the operation. Can be a selector, a player name, a fake player, an integer constant, or a macro argument.
+		scoreboard	(str | None):	The scoreboard objective involved in the operation
+
+	Returns:
+		str: A part of the comment describing the operation.
+
+	Examples:
+		>>> _get_comment_operation("*", "@s", "some_scoreboard")
+		'* @s some_scoreboard'
+
+		>>> _get_comment_operation("+", "$(macro_arg)", None)
+		'+ $(macro_arg)'
+	"""
+	comment = []
+	if operator is not None:
+		comment.append(operator)
+	comment.append(str(player))
+	if scoreboard is not None:
+		comment.append(scoreboard)
+	return " ".join(comment)
 
 class ScoreboardEquation:
 	def __init__(self, player: str, scoreboard: str|None = None):
@@ -41,12 +67,13 @@ class ScoreboardEquation:
 			>>> Mem.ctx.project_version = "1.0.0"
 
 			>>> str(ScoreboardEquation("#temp_durability", "some_score").set("-$(amount)").multiply(1000000).divide("$(max_damage)").subtract("#toto"))
-			'$scoreboard players set #temp_durability some_score -$(amount)\\nscoreboard players operation #temp_durability some_score *= #1000000 test.data\\n$scoreboard players set #temp_divide test.data $(max_damage)\\nscoreboard players operation #temp_durability some_score /= #temp_divide test.data\\nscoreboard players operation #temp_durability some_score -= #toto test.data'
+			'# scoreboard #temp_durability some_score = -$(amount) * 1000000 / $(max_damage) - #toto\\n$scoreboard players set #temp_durability some_score -$(amount)\\nscoreboard players operation #temp_durability some_score *= #1000000 test.data\\n$scoreboard players set #temp_divide test.data $(max_damage)\\nscoreboard players operation #temp_durability some_score /= #temp_divide test.data\\nscoreboard players operation #temp_durability some_score -= #toto test.data'
 		"""
 		if scoreboard is None: scoreboard = f"{Mem.ctx.project_id}.data"
 		self.player = player
 		self.scoreboard = scoreboard
 		self.operations: list[str] = []
+		self.actions: list[str] = [f"{player} {scoreboard}"]
 	def __str__(self) -> str:
 		"""
 		Returns the equation as mcfunction scoreboard operations.
@@ -54,7 +81,11 @@ class ScoreboardEquation:
 		Returns:
 			str: The equation as mcfunction scoreboard operations.
 		"""
-		return "\n".join(self.operations)
+		comment = self._get_head_comment()
+		operations = "\n".join(self.operations)
+		return f"# {comment}\n{operations}"
+	def _get_head_comment(self) -> str:
+		return f"scoreboard {self.player} {self.scoreboard} = {' '.join(self.actions)}"
 
 	def __operation(self, player: str|int, scoreboard: str|None, operator: str, temp_name: str = "temp") -> "ScoreboardEquation":
 		"""
@@ -75,16 +106,16 @@ class ScoreboardEquation:
 			>>> Mem.ctx.project_id = "test"
 			>>> Mem.ctx.project_version = "1.0.0"
 
-			>>> ScoreboardEquation("@s")._ScoreboardEquation__operation("other_player", "other_scoreboard", "/=").operations
+			>>> ScoreboardEquation("@s")._ScoreboardEquation__operation("other_player", "other_scoreboard", "/").operations
 			['scoreboard players operation @s test.data /= other_player other_scoreboard']
 
-			>>> ScoreboardEquation("@s")._ScoreboardEquation__operation("$(macro_arg)", None, "-=", "temp_macro").operations
+			>>> ScoreboardEquation("@s")._ScoreboardEquation__operation("$(macro_arg)", None, "-", "temp_macro").operations
 			['$scoreboard players set #temp_macro test.data $(macro_arg)', 'scoreboard players operation @s test.data -= #temp_macro test.data']
 
-			>>> ScoreboardEquation("@s")._ScoreboardEquation__operation(42, None, "+=").operations
+			>>> ScoreboardEquation("@s")._ScoreboardEquation__operation(42, None, "+").operations
 			['scoreboard players operation @s test.data += #42 test.data']
 		"""
-		if scoreboard is None: scoreboard = f"{Mem.ctx.project_id}.data"
+		self.actions.append(_get_comment_operation(operator, player, scoreboard))
 		if isinstance(player, int):
 			_write_constant_to_load(player)
 			self.operations.append(_get_scoreboard_operation(self.player, self.scoreboard, operator, f"#{player}", f"{Mem.ctx.project_id}.data"))
@@ -93,6 +124,7 @@ class ScoreboardEquation:
 			self.operations.append(f"${_get_scoreboard_set(f'#{temp_name}', f'{Mem.ctx.project_id}.data', player)}")
 			self.operations.append(_get_scoreboard_operation(self.player, self.scoreboard, operator, f"#{temp_name}", f"{Mem.ctx.project_id}.data"))
 		else:
+			if scoreboard is None: scoreboard = f"{Mem.ctx.project_id}.data"
 			self.operations.append(_get_scoreboard_operation(self.player, self.scoreboard, operator, player, scoreboard))
 		return self
 
@@ -107,7 +139,7 @@ class ScoreboardEquation:
 		Returns:
 			ScoreboardEquation: The current equation instance, allowing for method chaining.
 		"""
-		return self.__operation(player, scoreboard, "*=", temp_name="temp_multiply")
+		return self.__operation(player, scoreboard, "*", temp_name="temp_multiply")
 	def divide(self, player: str|int, scoreboard: str|None = None) -> "ScoreboardEquation":
 		"""
 		Divides the current scoreboard value
@@ -119,7 +151,7 @@ class ScoreboardEquation:
 		Returns:
 			ScoreboardEquation: The current equation instance, allowing for method chaining.
 		"""
-		return self.__operation(player, scoreboard, "/=", temp_name="temp_divide")
+		return self.__operation(player, scoreboard, "/", temp_name="temp_divide")
 	def add(self, player: str|int, scoreboard: str|None = None) -> "ScoreboardEquation":
 		"""
 		Adds to the current scoreboard value
@@ -131,7 +163,7 @@ class ScoreboardEquation:
 		Returns:
 			ScoreboardEquation: The current equation instance, allowing for method chaining.
 		"""
-		return self.__operation(player, scoreboard, "+=", temp_name="temp_add")
+		return self.__operation(player, scoreboard, "+", temp_name="temp_add")
 	def subtract(self, player: str|int, scoreboard: str|None = None) -> "ScoreboardEquation":
 		"""
 		Subtracts from the current scoreboard value
@@ -143,7 +175,7 @@ class ScoreboardEquation:
 		Returns:
 			ScoreboardEquation: The current equation instance, allowing for method chaining.
 		"""
-		return self.__operation(player, scoreboard, "-=", temp_name="temp_subtract")
+		return self.__operation(player, scoreboard, "-", temp_name="temp_subtract")
 	def set(self, player: str|int, scoreboard: str|None = None) -> "ScoreboardEquation":
 		"""
 		Sets the current scoreboard value
@@ -175,7 +207,8 @@ class ScoreboardEquation:
 			# it's useless to use temporary variable in this case
 			self.operations.append(f"${_get_scoreboard_set(self.player, self.scoreboard, player)}")
 		else:
-			return self.__operation(player, scoreboard, "=")
+			return self.__operation(player, scoreboard, "")
+		self.actions = [str(player)]
 		return self
 
 class StorageEquation(ScoreboardEquation):
@@ -196,15 +229,18 @@ class StorageEquation(ScoreboardEquation):
 			>>> Mem.ctx.project_version = "1.0.0"
 
 			>>> str(StorageEquation("some_namespace:some_path", "result_path", 0.000005).set("-$(amount)").multiply(1000000).divide("$(max_damage)").subtract("#toto"))
-			'$scoreboard players set #temp_result test.data -$(amount)\\nscoreboard players operation #temp_result test.data *= #1000000 test.data\\n$scoreboard players set #temp_divide test.data $(max_damage)\\nscoreboard players operation #temp_result test.data /= #temp_divide test.data\\nscoreboard players operation #temp_result test.data -= #toto test.data\\nexecute store result storage some_namespace:some_path result_path double 0.000005 run scoreboard players get #temp_result test.data'
+			'# storage some_namespace:some_path result_path = -$(amount) * 1000000 / $(max_damage) - #toto * 0.000005\\n$scoreboard players set #temp_result test.data -$(amount)\\nscoreboard players operation #temp_result test.data *= #1000000 test.data\\n$scoreboard players set #temp_divide test.data $(max_damage)\\nscoreboard players operation #temp_result test.data /= #temp_divide test.data\\nscoreboard players operation #temp_result test.data -= #toto test.data\\nexecute store result storage some_namespace:some_path result_path double 0.000005 run scoreboard players get #temp_result test.data'
 		"""
 		super().__init__("#temp_result")
 		self.storage = storage
 		self.path = path
 		self.scale = scale
+		self.actions: list[str] = [f"{storage} {path}"]
 	def __str__(self) -> str:
 		self.operations.append(f"execute store result storage {self.storage} {self.path} double {format(self.scale, 'f')} run scoreboard players get #temp_result {Mem.ctx.project_id}.data")
 		return super().__str__()
+	def _get_head_comment(self) -> str:
+		return f"storage {self.storage} {self.path} = {" ".join(self.actions)} * {format(self.scale, 'f')}"
 
 # Public API
 class Equation:
