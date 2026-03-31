@@ -6,6 +6,10 @@
 [![Discord](https://img.shields.io/discord/1216400498488377467?label=Discord&logo=discord)](https://discord.gg/anxzu6rA9F)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/stewbeet?logo=python&label=PyPI%20downloads)](https://pypi.org/project/stewbeet/)
 
+[![Tests 3.14](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FStoupy51%2FStewBeet%2Fbadges%2Fbadges%2Ftests_3_14.json&logo=python)](https://github.com/Stoupy51/StewBeet/actions/workflows/tests_3_14.yml)
+[![Tests 3.14t](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FStoupy51%2FStewBeet%2Fbadges%2Fbadges%2Ftests_3_14t.json&logo=python)](https://github.com/Stoupy51/StewBeet/actions/workflows/tests_3_14t.yml)
+[![Tests 3.15](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FStoupy51%2FStewBeet%2Fbadges%2Fbadges%2Ftests_3_15.json&logo=python)](https://github.com/Stoupy51/StewBeet/actions/workflows/tests_3_15.yml)<br>
+[![Tests 3.15t](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FStoupy51%2FStewBeet%2Fbadges%2Fbadges%2Ftests_3_15t.json&logo=python)](https://github.com/Stoupy51/StewBeet/actions/workflows/tests_3_15t.yml)
 
 ## ❓ What is `StewBeet`
 `StewBeet` is a [Beet](https://github.com/mcbeet/beet) framework and library 📦 aiming to provide huge automation for creating Minecraft datapacks.<br>
