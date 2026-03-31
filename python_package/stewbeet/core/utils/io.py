@@ -19,7 +19,7 @@ def write_advancement(
 	overwrite: bool = False,
 	max_level: int = -1,
 	condition: Callable[[JsonDict], bool] = lambda existing_data: True,
-) -> None:
+) -> Advancement | None:
 	""" Write an advancement at the given path.
 
 	Args:
@@ -48,6 +48,8 @@ def write_advancement(
 		merged_data: JsonDict = super_merge_dict(existing_data, new_data)
 		Mem.ctx.data.advancements[path] = set_json_encoder(Advancement(merged_data), max_level=max_level)
 
+	return Mem.ctx.data.advancements[path]
+
 # Functions
 def write_tag(
 	path: str,
@@ -56,7 +58,7 @@ def write_tag(
 	prepend: bool = False,
 	max_level: int | None = None,
 	condition: Callable[[list[Any]], bool] = lambda existing_values: True,
-) -> None:
+) -> TagFile | None:
 	""" Write a function tag at the given path.
 
 	Args:
@@ -88,6 +90,7 @@ def write_tag(
 		tag.encoder = stp.json_dump
 	else:
 		tag.encoder = lambda x: stp.json_dump(x, max_level=max_level)
+	return tag
 
 def write_function_tag(
 	path: str,
@@ -95,7 +98,7 @@ def write_function_tag(
 	prepend: bool = False,
 	max_level: int | None = None,
 	condition: Callable[[list[Any]], bool] = lambda existing_values: True,
-) -> None:
+) -> TagFile | None:
 	""" Write a function tag at the given path.
 
 	Args:
@@ -129,7 +132,7 @@ def write_function(
 	prepend: bool = False,
 	tags: list[str] | None = None,
 	condition: Callable[[str], bool] | None = None,
-) -> None:
+) -> Function | None:
 	""" Write the content to the function at the given path.
 
 	Args:
@@ -158,6 +161,7 @@ def write_function(
 	if tags:
 		for tag in tags:
 			write_function_tag(tag, [path], prepend)
+	return Mem.ctx.data.functions[path]
 
 
 def write_versioned_function(
@@ -167,7 +171,7 @@ def write_versioned_function(
 	prepend: bool = False,
 	tags: list[str] | None = None,
 	condition: Callable[[str], bool] | None = None,
-) -> None:
+) -> Function | None:
 	""" Write the content to a versioned function at the given path.
 
 	Args:
@@ -187,7 +191,7 @@ def write_load_file(
 	prepend: bool = False,
 	tags: list[str] | None = None,
 	condition: Callable[[str], bool] | None = None,
-) -> None:
+) -> Function | None:
 	""" Write the content to the load file
 
 	Args:
@@ -206,7 +210,7 @@ def write_tick_file(
 	prepend: bool = False,
 	tags: list[str] | None = None,
 	condition: Callable[[str], bool] | None = None,
-) -> None:
+) -> Function | None:
 	""" Write the content to the tick file
 
 	Args:
@@ -227,7 +231,7 @@ def write_scheduled_function(
 	overwrite: bool = False,
 	prepend: bool = False,
 	condition: Callable[[str], bool] = lambda existing_content: True,
-) -> None:
+) -> Function | None:
 	""" Write a self-rescheduling function and schedule it on load.
 
 	Args:
@@ -265,13 +269,13 @@ def write_scheduled_function(
 	write_load_file(f"# Schedule function for {schedule_delay}\n{schedule_command} replace", overwrite=False, prepend=prepend, condition=lambda existing: schedule_command not in existing)
 
 	# Append/prepend mode: avoid duplicating schedule lines and duplicate content blocks.
-	if schedule_command not in existing_scheduled_content:
-		body = f"# Wait for {schedule_delay}\n{schedule_command}"
-		if content_stripped:
-			body = f"{body}\n\n{content_stripped}"
-		return write_function(path=resolved_path, content=body, overwrite=False, prepend=prepend)
-	elif content_stripped and content_stripped not in existing_scheduled_content:
-		return write_function(path=resolved_path, content=content_stripped, overwrite=False, prepend=prepend)
+	body = f"# Wait for {schedule_delay}\n{schedule_command}"
+	if content_stripped:
+		body = f"{body}\n\n{content_stripped}"
+	schedule = write_function(path=resolved_path, content=body, overwrite=False, prepend=prepend, condition=lambda existing: schedule_command not in existing)
+	if schedule is None and content_stripped:
+		return write_function(path=resolved_path, content=content_stripped, overwrite=False, prepend=prepend, condition=lambda existing: content_stripped not in existing)
+	return schedule
 
 
 # Merge two dict recuirsively
