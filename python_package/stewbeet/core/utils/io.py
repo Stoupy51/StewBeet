@@ -33,8 +33,7 @@ def write_advancement(
 		path = path[:-len(".json")]
 
 	# Get existing advancement or create empty one
-	existing: Advancement = Mem.ctx.data.advancements.setdefault(path)
-	existing_data: JsonDict = existing.data
+	existing_data: JsonDict = Mem.ctx.data.advancements.get(path, {"data":{}}).data
 	# Check condition with existing data
 	if not condition(existing_data): return
 
@@ -44,6 +43,9 @@ def write_advancement(
 	if overwrite:
 		Mem.ctx.data.advancements[path] = set_json_encoder(Advancement(new_data), max_level=max_level)
 	else:
+		# Get existing advancement or create empty one
+		existing: Advancement = Mem.ctx.data.advancements.setdefault(path)
+		existing_data: JsonDict = existing.data
 		# Merge the new data with existing data
 		merged_data: JsonDict = super_merge_dict(existing_data, new_data)
 		Mem.ctx.data.advancements[path] = set_json_encoder(Advancement(merged_data), max_level=max_level)
