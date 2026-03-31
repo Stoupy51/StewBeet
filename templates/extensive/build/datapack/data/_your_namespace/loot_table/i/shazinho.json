@@ -16,6 +16,8 @@
 									},
 									"smithed": {
 										"dict": {"record": {"shazinho": true,"item_name": "Shazinho"},"jukebox_song": {"comparator_output": 15,"length_in_seconds": 128,"sound_event": {"sound_id": "_your_namespace:shazinho"},"description": {"translate": "_your_namespace.shazinho"}}},
+										"id": "_your_namespace:shazinho",
+										"origin": "_your_namespace",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},
@@ -31,7 +33,7 @@
 									[
 										"",
 										{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},
-										{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}
+										[{"text":" ","italic": true,"color": "blue"}, {"translate": "_your_namespace.extensive_template"}]
 									]
 								]
 							}

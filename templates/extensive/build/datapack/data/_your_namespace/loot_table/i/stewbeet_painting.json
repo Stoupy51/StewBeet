@@ -19,7 +19,7 @@
 									[
 										"",
 										{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},
-										{"translate": "_your_namespace.extensive_template","italic": true,"color": "blue"}
+										[{"text":" ","italic": true,"color": "blue"}, {"translate": "_your_namespace.extensive_template"}]
 									]
 								],
 								"minecraft:custom_data": {
@@ -27,6 +27,8 @@
 										"stewbeet_painting": true
 									},
 									"smithed": {
+										"id": "_your_namespace:stewbeet_painting",
+										"origin": "_your_namespace",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								}
