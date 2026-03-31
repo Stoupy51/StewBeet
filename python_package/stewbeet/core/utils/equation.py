@@ -208,8 +208,9 @@ class ScoreboardEquation:
 			# it's useless to use temporary variable in this case
 			self.operations.append(f"${_get_scoreboard_set(self.player, self.scoreboard, player)}")
 		else:
-			return self.__operation(player, scoreboard, "")
-		self.actions = [str(player)]
+			scoreboard = f"{Mem.ctx.project_id}.data" if scoreboard is None else scoreboard
+			self.__operation(player, scoreboard, "")
+		self.actions = [str(player) if scoreboard is None else f"{player} {scoreboard}"]
 		return self
 
 class StorageEquation(ScoreboardEquation):
