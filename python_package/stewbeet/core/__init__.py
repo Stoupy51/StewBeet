@@ -11,8 +11,8 @@ from .cls.recipe import *
 from .cls.wiki_button import *
 from .constants import *
 from .definitions_helper import *
+from .utils.equation import *
 from .utils.io import *
 from .utils.sounds import *
 from .utils.text_component import *
-from .utils.equation import Equation
 
