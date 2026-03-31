@@ -212,7 +212,7 @@ def write_load_file(
 		condition   (Callable[[str], bool]): A function that takes the existing content and returns whether the new content should be written (default: always write)
 	"""
 	return write_versioned_function(
-		"/load/confirm_load",
+		"load/confirm_load",
 		content,
 		overwrite,
 		prepend,
