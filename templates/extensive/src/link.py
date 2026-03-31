@@ -8,7 +8,7 @@ from stewbeet import *  # type: ignore
 # Main entry point (ran just before making finalyzing the build process (zip, headers, lang, ...))
 def beet_default(ctx: Context):
     ns: str = ctx.project_id
-    definitions: JsonDict = Mem.definitions
+    definitions: JsonDict = Mem.definitions # type: ignore
 
     # Generate ores in the world
     CustomOreGeneration.all_with_config(ore_configs = {
@@ -76,6 +76,11 @@ particle heart ~ ~1 ~ 0.5 0.5 0.5 0.01 1
 # This function is called every second for the custom block "steel_block"
 particle angry_villager ~ ~1 ~ 0.2 0.2 0.2 0.01 10
 """)
+
+    # Equation example
+    equation = ScoreboardEquation("#value", f"{ns}.data").set(10).add(5).multiply(2).divide(3).modulo(100)
+    equation2 = (ScoreboardEquation("#value2", f"{ns}.data").set(20) - 6 + 7) * 8 // 4 % 5
+    write_function(f"{ns}:equation/test", str(equation) + "\n" + str(equation2))
 
     pass
 
