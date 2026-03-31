@@ -8,7 +8,6 @@ from beet.core.utils import JsonDict, TextComponent
 from ..__memory__ import Mem
 from ..cls.external_item import ExternalItem
 from ..cls.item import Item
-from ..utils.io import convert_to_serializable
 
 
 # Add item model component
@@ -150,7 +149,7 @@ def export_all_definitions_to_json(file_name: str, is_external: bool | JsonDict 
 	definitions_copy: dict[str, JsonDict] = {}
 	defs = is_external if isinstance(is_external, dict) else (Mem.external_definitions if is_external else Mem.definitions)
 	for item, data in defs.items():
-		definitions_copy[item] = convert_to_serializable(data)
+		definitions_copy[item] = stp.convert_to_serializable(data)
 
 		# Create a copy of the definitions without OVERRIDE_MODEL key
 		if "override_model" in definitions_copy[item]:

@@ -6,7 +6,7 @@ from beet.core.utils import JsonDict
 
 from ....core.__memory__ import Mem
 from ....core.constants import BOOKSHELF_MODULES, LATEST_MC_VERSION, MORE_DATA_VERSIONS, OFFICIAL_LIBS, official_lib_used
-from ....core.utils.io import write_function, write_function_tag, write_versioned_function
+from ....core.utils.io import write_function, write_tag, write_versioned_function
 
 
 # Utility functions
@@ -97,9 +97,9 @@ def beet_default(ctx: Context) -> None:
 	if load_dependencies:
 		dependencies += list(load_dependencies.items())
 	# Setup Lantern Load
-	write_function_tag("minecraft:load", ["#load:_private/load"])
-	write_function_tag("load:_private/init", ["load:_private/init"])
-	write_function_tag("load:_private/load", [
+	write_tag("minecraft:load", ctx.data.function_tags, ["#load:_private/load"])
+	write_tag("load:_private/init", ctx.data.function_tags, ["load:_private/init"])
+	write_tag("load:_private/load", ctx.data.function_tags, [
 		"#load:_private/init",
 		{"id": "#load:pre_load", "required": False},
 		{"id": "#load:load", "required": False},
@@ -113,12 +113,12 @@ scoreboard players reset * load.status
 """, overwrite=True)
 
 	# Setup load json files
-	write_function_tag("load:load", [f"#{ns}:load"])
+	write_tag("load:load", ctx.data.function_tags, [f"#{ns}:load"])
 	values: list[str | JsonDict] = [f"#{ns}:enumerate", f"#{ns}:resolve"]
 	if dependencies:
-		write_function_tag(f"{ns}:enumerate", [f"#{ns}:dependencies"], prepend=True)
+		write_tag(f"{ns}:enumerate", ctx.data.function_tags, [f"#{ns}:dependencies"], prepend=True)
 
-	write_function_tag(f"{ns}:load", values)
+	write_tag(f"{ns}:load", ctx.data.function_tags, values)
 
 	if dependencies:
 		calls: list[JsonDict] = [
@@ -134,7 +134,7 @@ scoreboard players reset * load.status
 				seen.add(call_id)
 				unique_calls.append(call)
 
-		write_function_tag(f"{ns}:dependencies", unique_calls)
+		write_tag(f"{ns}:dependencies", ctx.data.function_tags, unique_calls)
 
 	# Write secondary function
 	authors: list[str] = author.replace(",", " ").replace("  ", " ").split(" ")
@@ -162,7 +162,7 @@ function {ns}:v{version}/load/confirm_load
 	# Tick verification
 	tick_path: str = f"{ns}:v{version}/tick"
 	if tick_path in ctx.data.functions:
-		write_function_tag("minecraft:tick", [f"{ns}:v{version}/load/tick_verification"])
+		write_tag("minecraft:tick", ctx.data.function_tags, ["#load/tick_verification"])
 		write_versioned_function("load/tick_verification", f"""
 execute if score #{ns}.major load.status matches {major} if score #{ns}.minor load.status matches {minor} if score #{ns}.patch load.status matches {patch} run function {ns}:v{version}/tick
 """)
@@ -172,7 +172,7 @@ execute if score #{ns}.major load.status matches {major} if score #{ns}.minor lo
 		for function_tag in ["denied_dimensions", "generate_ores", "post_generation"]:
 			function_path: str = f"{ns}:calls/smart_ore_generation/{function_tag}"
 			if function_path in ctx.data.functions:
-				write_function_tag(f"smart_ore_generation:v1/signals/{function_tag}", [function_path])
+				write_tag(f"smart_ore_generation:v1/signals/{function_tag}", ctx.data.function_tags, [function_path])
 
 	# For each used library, show message
 	used_libs: list[str] = [data["name"] for data in OFFICIAL_LIBS.values() if data["is_used"]]

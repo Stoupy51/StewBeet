@@ -38,7 +38,7 @@ from ...core.constants import (
 	WIKI_COMPONENT,
 )
 from ...core.definitions_helper import add_item_name_and_lore_if_missing
-from ...core.utils.io import convert_to_serializable, super_merge_dict, write_load_file
+from ...core.utils.io import super_merge_dict, write_load_file
 from ...core.utils.text_component import item_id_to_name
 from ..custom_recipes.vanilla import VanillaRecipeHandler
 from ..initialize.source_lore_font import find_pack_png
@@ -109,7 +109,7 @@ from .stardust_forge import get_stardust_forge_page
 # Utility functions
 def deepcopy(x: Any) -> Any:
 	""" Deep copy using JSON serialization, converting WikiButton objects. """
-	return json.loads(json.dumps(convert_to_serializable(x)))
+	return json.loads(json.dumps(stp.convert_to_serializable(x)))
 
 @stp.handle_error(message="An error occurred while generating the in-game manual", error_log=stp.LogLevels.ERROR_TRACEBACK)
 def manual_main():
