@@ -105,14 +105,7 @@ def write_function_tag(
 		max_level   (int | None):  The maximum level of the JSON dump, None for default behavior (default: None)
 		condition   (Callable[[list[Any]], bool]): A function that takes the existing functions and returns whether the new functions should be written (default: always write)
 	"""
-	return write_tag(
-		path,
-		Mem.ctx.data.function_tags,
-		functions,
-		prepend,
-		max_level,
-		condition
-	)
+	return write_tag(path, Mem.ctx.data.function_tags, functions, prepend, max_level, condition)
 
 
 def read_function(path: str) -> str:
@@ -185,14 +178,7 @@ def write_versioned_function(
 		tags            (list[str] | None): The function tags to add to the function (ex: ["namespace:something"] for 'data/namespace/tags/function/something.json')
 		condition       (Callable[[str], bool]): A function that takes the existing content and returns whether the new content should be written (default: always write)
 	"""
-	return write_function(
-		f"{Mem.ctx.project_id}:v{Mem.ctx.project_version}/{path}",
-		content,
-		overwrite,
-		prepend,
-		tags,
-		condition,
-	)
+	return write_function(f"{Mem.ctx.project_id}:v{Mem.ctx.project_version}/{path}", content, overwrite, prepend, tags, condition)
 
 
 def write_load_file(
@@ -211,14 +197,7 @@ def write_load_file(
 		tags        (list[str] | None): The function tags to add to the function (ex: ["namespace:something"] for 'data/namespace/tags/function/something.json')
 		condition   (Callable[[str], bool]): A function that takes the existing content and returns whether the new content should be written (default: always write)
 	"""
-	return write_versioned_function(
-		"load/confirm_load",
-		content,
-		overwrite,
-		prepend,
-		tags,
-		condition,
-	)
+	return write_versioned_function("load/confirm_load", content, overwrite, prepend, tags, condition)
 
 
 def write_tick_file(
@@ -237,14 +216,7 @@ def write_tick_file(
 		tags        (list[str] | None): The function tags to add to the function (ex: ["namespace:something"] for 'data/namespace/tags/function/something.json')
 		condition   (Callable[[str], bool]): A function that takes the existing content and returns whether the new content should be written (default: always write)
 	"""
-	return write_versioned_function(
-		"tick",
-		content,
-		overwrite,
-		prepend,
-		tags,
-		condition,
-	)
+	return write_versioned_function("tick", content, overwrite, prepend, tags, condition)
 
 
 def write_scheduled_function(
@@ -287,19 +259,10 @@ def write_scheduled_function(
 		body: str = f"# Wait for {schedule_delay}\n{schedule_command}"
 		if content_stripped:
 			body = f"{body}\n\n{content_stripped}"
-		write_load_file(
-			f"# Schedule function for {schedule_delay}\n{schedule_command} replace",
-			overwrite=True,
-			prepend=prepend,
-		)
+		write_load_file(f"# Schedule function for {schedule_delay}\n{schedule_command} replace", overwrite=True, prepend=prepend)
 		return write_function(path=resolved_path, content=body, overwrite=True, prepend=prepend)
 
-	write_load_file(
-		f"# Schedule function for {schedule_delay}\n{schedule_command} replace",
-		overwrite=False,
-		prepend=prepend,
-		condition=lambda existing: schedule_command not in existing,
-	)
+	write_load_file(f"# Schedule function for {schedule_delay}\n{schedule_command} replace", overwrite=False, prepend=prepend, condition=lambda existing: schedule_command not in existing)
 
 	# Append/prepend mode: avoid duplicating schedule lines and duplicate content blocks.
 	if schedule_command not in existing_scheduled_content:
