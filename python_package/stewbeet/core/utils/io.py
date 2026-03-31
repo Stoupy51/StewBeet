@@ -109,18 +109,6 @@ def write_tag(
 	return tag
 
 
-@stp.deprecated(message="write_function_tag is deprecated, prefer using write_tag or `tags` argument of write_function instead", version="v3.1.3")
-def write_function_tag(
-	path: str,
-	functions: list[Any] | None = None,
-	prepend: bool = False,
-	max_level: int | None = None,
-	condition: Callable[[list[Any]], bool] = lambda existing_values: True, # pyright: ignore[reportUnknownLambdaType]
-) -> TagFile | None:
-	""" write_function_tag is deprecated, prefer using write_tag or `tags` argument of write_function instead """
-	return write_tag(path, Mem.ctx.data.function_tags, functions, prepend, max_level, condition)
-
-
 def read_function(path: str) -> str:
 	""" Read the content of a function at the given path.
 
@@ -176,7 +164,7 @@ def write_function(
 	# Add the function to the specified tags
 	if tags:
 		for tag in tags:
-			write_function_tag(tag, [path], prepend)
+			write_tag(tag, Mem.ctx.data.function_tags, [path], prepend)
 
 	# Return the written function
 	return func
@@ -359,29 +347,6 @@ def set_json_encoder[JsonFileT: JsonFile](
 		obj.encoder = lambda x: stp.json_dump(x, max_level=max_level, indent=indent)
 	return obj
 
-
-# Convert objects with to_dict() to JSON-serializable forms
-def convert_to_serializable(obj: Any) -> Any:
-	""" Recursively convert objects to JSON-serializable forms.
-
-	Objects with a `to_dict()` method are converted to their dictionary representation.
-	Dictionaries and lists are recursively processed.
-
-	Args:
-		obj (Any): The object to convert
-	Returns:
-		Any: The JSON-serializable version of the object
-	"""
-	if hasattr(obj, 'to_dict'):
-		return obj.to_dict()
-	elif isinstance(obj, dict):
-		return {k: convert_to_serializable(v) for k, v in obj.items()} # type: ignore
-	elif isinstance(obj, list):
-		return [convert_to_serializable(item) for item in obj] # type: ignore
-	else:
-		return obj
-
-
 # Create a texture object with mcmeta if found
 def texture_mcmeta(source_path: str) -> Texture:
 	""" Create a Texture object with mcmeta if found
@@ -395,4 +360,23 @@ def texture_mcmeta(source_path: str) -> Texture:
 	if os.path.exists(mcmeta_path):
 		return Texture(source_path=source_path, mcmeta=stp.json_load(mcmeta_path))
 	return Texture(source_path=source_path)
+
+
+
+# Deprecated functions
+@stp.deprecated(message="convert_to_serializable is deprecated, prefer using stp.convert_to_serializable from stouputils", version="v3.1.3")
+def convert_to_serializable(obj: Any) -> Any:
+	return stp.convert_to_serializable(obj)
+
+
+@stp.deprecated(message="write_function_tag is deprecated, prefer using write_tag or `tags` argument of write_function instead", version="v3.1.3")
+def write_function_tag(
+	path: str,
+	functions: list[Any] | None = None,
+	prepend: bool = False,
+	max_level: int | None = None,
+	condition: Callable[[list[Any]], bool] = lambda existing_values: True, # pyright: ignore[reportUnknownLambdaType]
+) -> TagFile | None:
+	""" write_function_tag is deprecated, prefer using write_tag or `tags` argument of write_function instead """
+	return write_tag(path, Mem.ctx.data.function_tags, functions, prepend, max_level, condition)
 

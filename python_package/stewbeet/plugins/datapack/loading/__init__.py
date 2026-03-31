@@ -7,7 +7,7 @@ from beet.core.utils import JsonDict
 
 from ....core.__memory__ import Mem
 from ....core.cls.item import Item
-from ....core.utils.io import write_function_tag, write_load_file, write_versioned_function
+from ....core.utils.io import write_load_file, write_tag, write_versioned_function
 
 
 # Main entry point
@@ -52,8 +52,8 @@ execute if score #{ctx.project_id}.major load.status matches {major} if score #{
 """)
 
 	# Setup enumerate and resolve function tags
-	write_function_tag(f"{ctx.project_id}:enumerate", [f"{ctx.project_id}:v{ctx.project_version}/load/enumerate"])
-	write_function_tag(f"{ctx.project_id}:resolve", [f"{ctx.project_id}:v{ctx.project_version}/load/resolve"])
+	write_tag(f"{ctx.project_id}:enumerate", ctx.data.function_tags, [f"{ctx.project_id}:v{ctx.project_version}/load/enumerate"])
+	write_tag(f"{ctx.project_id}:resolve", ctx.data.function_tags, [f"{ctx.project_id}:v{ctx.project_version}/load/resolve"])
 
 	# Setup load main function
 	write_versioned_function("load/main",

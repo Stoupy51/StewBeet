@@ -23,7 +23,6 @@ from ...core.constants import (
 	USED_FOR_CRAFTING,
 	VANILLA_BLOCK,
 )
-from ...core.utils.io import convert_to_serializable
 
 
 # Main entry point
@@ -46,7 +45,7 @@ def beet_default(ctx: Context) -> None:
 	definitions_copy: dict[str, JsonDict] = {}
 	for item, data in Mem.definitions.items():
 		# Convert Item objects or dicts with nested Recipe objects to fully serializable dicts
-		definitions_copy[item] = convert_to_serializable(data)
+		definitions_copy[item] = stp.convert_to_serializable(data)
 		if "override_model" in definitions_copy[item]:
 			del definitions_copy[item]["override_model"]
 
