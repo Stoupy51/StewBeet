@@ -46,7 +46,7 @@ class ScoreboardEquation:
 		if scoreboard is None: scoreboard = f"{Mem.ctx.project_id}.data"
 		self.player = player
 		self.scoreboard = scoreboard
-		self.text: list[str] = []
+		self.operations: list[str] = []
 	def __str__(self) -> str:
 		"""
 		Returns the equation as mcfunction scoreboard operations.
@@ -54,7 +54,7 @@ class ScoreboardEquation:
 		Returns:
 			str: The equation as mcfunction scoreboard operations.
 		"""
-		return "\n".join(self.text)
+		return "\n".join(self.operations)
 
 	def __operation(self, player: str|int, scoreboard: str|None, operator: str, temp_name: str = "temp") -> "ScoreboardEquation":
 		"""
@@ -75,25 +75,25 @@ class ScoreboardEquation:
 			>>> Mem.ctx.project_id = "test"
 			>>> Mem.ctx.project_version = "1.0.0"
 
-			>>> str(ScoreboardEquation("@s")._ScoreboardEquation__operation("other_player", "other_scoreboard", "/="))
-			'scoreboard players operation @s test.data /= other_player other_scoreboard'
+			>>> ScoreboardEquation("@s")._ScoreboardEquation__operation("other_player", "other_scoreboard", "/=").operations
+			['scoreboard players operation @s test.data /= other_player other_scoreboard']
 
-			>>> str(ScoreboardEquation("@s")._ScoreboardEquation__operation("$(macro_arg)", None, "-=", "temp_macro"))
-			'$scoreboard players set #temp_macro test.data $(macro_arg)\\nscoreboard players operation @s test.data -= #temp_macro test.data'
+			>>> ScoreboardEquation("@s")._ScoreboardEquation__operation("$(macro_arg)", None, "-=", "temp_macro").operations
+			['$scoreboard players set #temp_macro test.data $(macro_arg)', 'scoreboard players operation @s test.data -= #temp_macro test.data']
 
-			>>> str(ScoreboardEquation("@s")._ScoreboardEquation__operation(42, None, "+="))
-			'scoreboard players operation @s test.data += #42 test.data'
+			>>> ScoreboardEquation("@s")._ScoreboardEquation__operation(42, None, "+=").operations
+			['scoreboard players operation @s test.data += #42 test.data']
 		"""
 		if scoreboard is None: scoreboard = f"{Mem.ctx.project_id}.data"
 		if isinstance(player, int):
 			_write_constant_to_load(player)
-			self.text.append(_get_scoreboard_operation(self.player, self.scoreboard, operator, f"#{player}", f"{Mem.ctx.project_id}.data"))
+			self.operations.append(_get_scoreboard_operation(self.player, self.scoreboard, operator, f"#{player}", f"{Mem.ctx.project_id}.data"))
 		elif _is_macro_argument(player):
 			# store in temp variable
-			self.text.append(f"${_get_scoreboard_set(f'#{temp_name}', f'{Mem.ctx.project_id}.data', player)}")
-			self.text.append(_get_scoreboard_operation(self.player, self.scoreboard, operator, f"#{temp_name}", f"{Mem.ctx.project_id}.data"))
+			self.operations.append(f"${_get_scoreboard_set(f'#{temp_name}', f'{Mem.ctx.project_id}.data', player)}")
+			self.operations.append(_get_scoreboard_operation(self.player, self.scoreboard, operator, f"#{temp_name}", f"{Mem.ctx.project_id}.data"))
 		else:
-			self.text.append(_get_scoreboard_operation(self.player, self.scoreboard, operator, player, scoreboard))
+			self.operations.append(_get_scoreboard_operation(self.player, self.scoreboard, operator, player, scoreboard))
 		return self
 
 	def multiply(self, player: str|int, scoreboard: str|None = None) -> "ScoreboardEquation":
@@ -162,18 +162,18 @@ class ScoreboardEquation:
 			>>> Mem.ctx.project_id = "test"
 			>>> Mem.ctx.project_version = "1.0.0"
 
-			>>> str(ScoreboardEquation("@s").set(42))
-			'scoreboard players set @s test.data 42'
+			>>> ScoreboardEquation("@s").set(42).operations
+			['scoreboard players set @s test.data 42']
 
-			>>> str(ScoreboardEquation("@s").set("$(macro_value)"))
-			'$scoreboard players set @s test.data $(macro_value)'
+			>>> ScoreboardEquation("@s").set("$(macro_value)").operations
+			['$scoreboard players set @s test.data $(macro_value)']
 		"""
 		if isinstance(player, int):
 			# it's useless constant value in this case
-			self.text.append(_get_scoreboard_set(self.player, self.scoreboard, player))
+			self.operations.append(_get_scoreboard_set(self.player, self.scoreboard, player))
 		elif _is_macro_argument(player):
 			# it's useless to use temporary variable in this case
-			self.text.append(f"${_get_scoreboard_set(self.player, self.scoreboard, player)}")
+			self.operations.append(f"${_get_scoreboard_set(self.player, self.scoreboard, player)}")
 		else:
 			return self.__operation(player, scoreboard, "=")
 		return self
@@ -203,7 +203,7 @@ class StorageEquation(ScoreboardEquation):
 		self.path = path
 		self.scale = scale
 	def __str__(self) -> str:
-		self.text.append(f"execute store result storage {self.storage} {self.path} double {format(self.scale, 'f')} run scoreboard players get #temp_result {Mem.ctx.project_id}.data")
+		self.operations.append(f"execute store result storage {self.storage} {self.path} double {format(self.scale, 'f')} run scoreboard players get #temp_result {Mem.ctx.project_id}.data")
 		return super().__str__()
 
 # Public API
