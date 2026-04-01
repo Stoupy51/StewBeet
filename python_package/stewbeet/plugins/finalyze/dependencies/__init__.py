@@ -162,7 +162,7 @@ function {ns}:v{version}/load/confirm_load
 	# Tick verification
 	tick_path: str = f"{ns}:v{version}/tick"
 	if tick_path in ctx.data.functions:
-		write_tag("minecraft:tick", ctx.data.function_tags, ["#load/tick_verification"])
+		write_tag("minecraft:tick", ctx.data.function_tags, [f"{ns}:v{version}/load/tick_verification"])
 		write_versioned_function("load/tick_verification", f"""
 execute if score #{ns}.major load.status matches {major} if score #{ns}.minor load.status matches {minor} if score #{ns}.patch load.status matches {patch} run function {ns}:v{version}/tick
 """)
