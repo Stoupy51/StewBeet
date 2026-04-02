@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any, cast
 
 import stouputils as stp
-from beet import Font, Texture
+from beet import Font, LootTable, Texture
 from beet.core.utils import JsonDict, TextComponent
 from PIL import Image
 
@@ -405,7 +405,10 @@ def routine():
 				crafts = stp.unique_list(crafts)
 
 				# Helper function to add count information to mining recipes
-				def add_count_to_mining_recipe(mining_recipe: JsonDict, no_silk_drop_data: JsonDict | str) -> None:
+				def add_count_to_mining_recipe(mining_recipe: JsonDict, no_silk_drop_data: JsonDict | NoSilkTouchDrop | str | LootTable) -> None:
+					if isinstance(no_silk_drop_data, LootTable):
+						mining_recipe["dynamic_drop"] = True
+						return
 					if isinstance(no_silk_drop_data, dict | NoSilkTouchDrop) and "count" in no_silk_drop_data:
 						count_data: JsonDict | int = no_silk_drop_data["count"]
 						if isinstance(count_data, dict):
@@ -426,7 +429,7 @@ def routine():
 					i for i, d in Mem.definitions.items()
 					if d.get(NO_SILK_TOUCH_DROP) and (
 						(isinstance(d[NO_SILK_TOUCH_DROP], str) and d[NO_SILK_TOUCH_DROP] == name) or
-						(isinstance(d[NO_SILK_TOUCH_DROP], dict) and cast(JsonDict, d[NO_SILK_TOUCH_DROP]).get("id") == name)
+						(isinstance(d[NO_SILK_TOUCH_DROP], dict | NoSilkTouchDrop) and cast(JsonDict | NoSilkTouchDrop, d[NO_SILK_TOUCH_DROP])["id"] == name)
 					)
 				]
 
@@ -448,13 +451,20 @@ def routine():
 
 				# Add mining recipe if this item has no_silk_touch_drop (it's an ore)
 				if no_silk_touch_drop:
-					no_silk_drop_data: JsonDict | str = raw_data[NO_SILK_TOUCH_DROP]
-					result_format: str = no_silk_drop_data if isinstance(no_silk_drop_data, str) else no_silk_drop_data["id"]
-					mining_recipe: JsonDict = {
-						"type": "mining",
-						"ingredient": Ingr(name, Mem.ctx.project_id),  # The ore being mined
-						"result": Ingr(result_format, Mem.ctx.project_id),  # Proper ingredient format
-					}
+					no_silk_drop_data: JsonDict | NoSilkTouchDrop | str | LootTable = raw_data[NO_SILK_TOUCH_DROP]
+					if isinstance(no_silk_drop_data, LootTable):
+						mining_recipe = {
+							"type": "mining",
+							"ingredient": Ingr(name, Mem.ctx.project_id),  # The ore being mined
+							"dynamic_drop": True,
+						}
+					else:
+						result_format: str = no_silk_drop_data if isinstance(no_silk_drop_data, str) else no_silk_drop_data["id"]
+						mining_recipe = {
+							"type": "mining",
+							"ingredient": Ingr(name, Mem.ctx.project_id),  # The ore being mined
+							"result": Ingr(result_format, Mem.ctx.project_id),  # Proper ingredient format
+						}
 					add_count_to_mining_recipe(mining_recipe, no_silk_drop_data)
 
 					# Insert at position 0 so it appears first and generate the craft content
@@ -590,12 +600,16 @@ def routine():
 						if craft["type"] == "mining":
 							# For mining recipes, show what is being mined and what it drops
 							ore_name = Ingr(craft["ingredient"]).to_name()
-							result_name = Ingr(craft["result"]).to_name()
 							hover_text.append({"text": "\n- Mine: ", "color": "gray"})
 							hover_text.append({"text": ore_name, "color": "gray"})
-							result_count = craft.get("result_count", "1")
-							hover_text.append({"text": f"\n- Drops: x{result_count} ", "color": "gray"})
-							hover_text.append({"text": result_name, "color": "gray"})
+							if craft.get("dynamic_drop", False):
+								hover_text.append({"text": "\n- Drops: variable (loot table)", "color": "gray"})
+								hover_text.append({"text": f"\n- Silk touch drop: {ore_name}", "color": "gray"})
+							else:
+								result_name = Ingr(craft["result"]).to_name()
+								result_count = craft.get("result_count", "1")
+								hover_text.append({"text": f"\n- Drops: x{result_count} ", "color": "gray"})
+								hover_text.append({"text": result_name, "color": "gray"})
 						elif craft.get("ingredient"):
 							id = Ingr(craft["ingredient"]).to_name()
 							hover_text.append({"text": "\n- x1 ", "color": "gray"})
@@ -603,7 +617,7 @@ def routine():
 						elif craft.get("ingredients"):
 
 							# If it's a shaped crafting
-							if isinstance(craft["ingredients"], dict):
+							if stp.is_generic_instance(craft["ingredients"], stp.JsonDict):
 								for k, v in craft["ingredients"].items():
 									id = Ingr(v).to_name()
 									count = sum([line.count(k) for line in craft["shape"]])
@@ -611,7 +625,7 @@ def routine():
 									hover_text.append({"text": id, "color": "gray"})
 
 							# If it's shapeless
-							elif isinstance(craft["ingredients"], list):
+							elif stp.is_generic_instance(craft["ingredients"], list[stp.JsonDict]):
 								ids: dict[str, int] = {}	# {id: count}
 								for ingr in craft["ingredients"]:
 									id = Ingr(ingr).to_name()
@@ -668,9 +682,9 @@ def routine():
 							craft_ingredient: str = ""
 							if craft.get("ingredient"):
 								craft_ingredient = Ingr(craft["ingredient"]).to_id(add_namespace=False)
-							elif craft.get("ingredients") and isinstance(craft["ingredients"], list) and len(craft["ingredients"]) == 1:
+							elif craft.get("ingredients") and stp.is_generic_instance(craft["ingredients"], list[stp.JsonDict]) and len(craft["ingredients"]) == 1:
 								craft_ingredient = Ingr(craft["ingredients"][0]).to_id(add_namespace=False)
-							elif craft.get("ingredients") and isinstance(craft["ingredients"], dict) and len(craft["ingredients"]) == 1:
+							elif craft.get("ingredients") and stp.is_generic_instance(craft["ingredients"], stp.JsonDict) and len(craft["ingredients"]) == 1:
 								craft_ingredient = Ingr(next(iter(craft["ingredients"].values()))).to_id(add_namespace=False)
 							if craft_ingredient and craft_ingredient in Mem.definitions and craft_ingredient != name:
 								page_number: int = get_page_number(craft_ingredient)

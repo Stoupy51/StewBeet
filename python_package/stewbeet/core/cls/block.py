@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from typing import Literal
 
 import stouputils as stp
+from beet import LootTable
 from beet.core.utils import JsonDict
 
 from ..constants import (
@@ -43,7 +44,7 @@ class VanillaBlock(StMapping):
 
 @dataclass(kw_only=True)
 class NoSilkTouchDrop(StMapping):
-    """ Defines the item dropped when the block is broken without silk touch.
+    """ Defines deterministic drops when the block is broken without silk touch.
 
     >>> nsd = NoSilkTouchDrop(id="raw_iron")
     >>> nsd.id
@@ -151,8 +152,8 @@ class Block(Item):
     # Specific to Block class
     vanilla_block: VanillaBlock
     """ If the block is based on a vanilla block, this defines which one and whether to apply facing. """
-    no_silk_touch_drop: NoSilkTouchDrop | str | None = None
-    """ (Optional) Defines the item dropped when the block is broken without silk touch, e.g. NoSilkTouchDrop(id="raw_simplunium") or just "raw_simplunium". """
+    no_silk_touch_drop: NoSilkTouchDrop | LootTable | str | None = None
+    """ (Optional) No-silk drop mode: deterministic (e.g. `NoSilkTouchDrop(id="raw_simplunium")` or string item id "raw_simplunium") or dynamic (`LootTable` object from beet). """
 
     # Others
     growing_seed: GrowingSeed | None = None
@@ -169,11 +170,7 @@ class Block(Item):
             ]
 
             # Hide the container tooltip
-            if not self.components.get("tooltip_display"):
-                self.components["tooltip_display"] = {"hidden_components": []}
-            elif not self.components["tooltip_display"].get("hidden_components"):
-                self.components["tooltip_display"]["hidden_components"] = []
-            hidden_components: list[str] = self.components["tooltip_display"]["hidden_components"]
+            hidden_components: list[str] = self.components.setdefault("tooltip_display", {}).setdefault("hidden_components", [])
             hidden_components.append("minecraft:container")
             self.components["tooltip_display"]["hidden_components"] = stp.unique_list(hidden_components)
 

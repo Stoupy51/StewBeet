@@ -69,7 +69,7 @@ The plugin performs extensive validation on every item definition:
 - **VANILLA_BLOCK Requirements**: Validates vanilla block configuration for custom blocks
 - **Apply Facing Configuration**: Ensures proper `apply_facing` boolean settings
 - **Container Restrictions**: Prevents invalid container usage with custom blocks
-- **Ore Drop Validation**: Validates `NO_SILK_TOUCH_DROP` configuration for ore blocks
+- **Ore Drop Validation**: Validates `NO_SILK_TOUCH_DROP` configuration for ore blocks (`string`, deterministic dict, or beet `LootTable`)
 
 #### 🔒 Custom Data Validation
 - **Project Namespace**: Ensures custom data follows project namespace structure
