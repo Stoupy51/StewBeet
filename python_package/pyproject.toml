@@ -1,6 +1,6 @@
 
 [build-system]
-requires = ["uv_build"]
+requires = ["uv_build>=0.10.9,<0.11.0"]
 build-backend = "uv_build"
 
 [tool.uv.build-backend]
@@ -12,6 +12,7 @@ version = "3.1.4"
 description = "Beet Framework made to help generating advanced Minecraft datapack contents"
 readme = "README.md"
 license = "MIT"
+license-files = ["LICENSE"]
 requires-python = ">=3.14"
 classifiers = [
 	"Programming Language :: Python :: 3",
@@ -19,12 +20,15 @@ classifiers = [
 	"License :: OSI Approved :: MIT License",
 	"Operating System :: OS Independent",
 ]
+authors = [
+    { name = "Stoupy51", email = "stoupy51@gmail.com" },
+]
 dependencies = [
-	"stouputils>=1.24.5",
+	"stouputils>=1.24.8",
 	"model_resolver>=1.15.2",
-	"beet>=0.114.1",
+	"beet>=0.115.0",
 	"bolt>=0.50.1",
-	"mecha>=0.102.3",
+	"mecha>=0.103.0",
 	"mutagen>=1.47.0",
 	"pyperclip>=1.8.0",
 	"smithed",
@@ -32,10 +36,6 @@ dependencies = [
 
 [tool.uv.sources]
 smithed = { git = "https://github.com/Stoupy51/smithed-python" }
-
-[[project.authors]]
-name = "Stoupy51"
-email = "stoupy51@gmail.com"
 
 [project.urls]
 Homepage = "https://github.com/Stoupy51/stewbeet"
@@ -46,9 +46,6 @@ stewbeet = "stewbeet:main"
 
 [tool.pyright]
 typeCheckingMode = "strict"
-
-[tool.setuptools]
-license-files = ["LICENSE"]
 
 [tool.ruff]
 exclude = [

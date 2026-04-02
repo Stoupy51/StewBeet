@@ -40,7 +40,7 @@ class VanillaBlock(StMapping):
         if ":" not in self.id and self.id != "":
             self.id = "minecraft:" + self.id
         if self.contents:
-            self.id = self.apply_facing = None
+            self.id = self.apply_facing = None # type: ignore
 
 @dataclass(kw_only=True)
 class NoSilkTouchDrop(StMapping):
