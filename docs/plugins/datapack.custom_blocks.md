@@ -52,7 +52,7 @@ pipeline:
 | `vanilla_block.id` | string | **Required** | The vanilla block ID to use as the base block |
 | `vanilla_block.apply_facing` | boolean | `false` | Whether to apply directional facing to the block |
 | `item_model` | string | Optional | Custom item model for the block display entity |
-| `no_silk_touch_drop` | string | Optional | Alternative drop when mined without silk touch (for ores) |
+| `no_silk_touch_drop` | string \| dict \| LootTable | Optional | Alternative drop when mined without silk touch (for ores), including dynamic drops via beet `LootTable` |
 | `custom_data` | object | Optional | Custom NBT data for player head blocks |
 
 Check extensive template [examples in `setup_definitions.py`](../../templates/extensive/src/setup_definitions.py)!

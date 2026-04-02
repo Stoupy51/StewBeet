@@ -5,7 +5,7 @@
 from typing import Any, cast
 
 import stouputils as stp
-from beet import Context
+from beet import Context, LootTable
 from beet.core.utils import JsonDict
 
 from ...core.__memory__ import Mem
@@ -120,6 +120,9 @@ def beet_default(ctx: Context) -> None:
 			if isinstance(no_silk_drop, str):
 				# Old format: just a string item ID (can be "item_name" or "minecraft:stone")
 				pass
+			elif isinstance(no_silk_drop, LootTable):
+				# Dynamic format: direct beet LootTable
+				pass
 			elif isinstance(no_silk_drop, dict):
 				# New format: {"id": "item_id", "count": 5} or {"id": "item_id", "count": {"min": 1, "max": 4}}
 				no_silk_drop = cast(JsonDict, no_silk_drop)
@@ -140,7 +143,7 @@ def beet_default(ctx: Context) -> None:
 					else:
 						errors.append(f"NO_SILK_TOUCH_DROP 'count' field should be an integer or dict with min/max keys for '{item}', ex: 1 or {{\"min\": 1, \"max\": 4}}")
 			else:
-				errors.append(f"NO_SILK_TOUCH_DROP key should be a string or dict for '{item}', ex: \"adamantium_fragment\", \"minecraft:stone\", or {{\"id\": \"stardust_fragment\", \"count\": {{\"min\": 1, \"max\": 4}}}}")
+				errors.append(f"NO_SILK_TOUCH_DROP key should be a string, beet LootTable, or dict for '{item}', ex: \"adamantium_fragment\", LootTable(...), or {{\"id\": \"stardust_fragment\", \"count\": {{\"min\": 1, \"max\": 4}}}}")
 
 		# Force the use of "item_name" key for every item
 		if not data.get("item_name"):

@@ -219,6 +219,21 @@ block = Block(
     vanilla_block=VanillaBlockForOres,
     no_silk_touch_drop="raw_simplunium"  # Defaults to count=1
 )
+
+# Or dynamic drops with a direct beet LootTable
+block = Block(
+    id="simplunium_ore",
+    vanilla_block=VanillaBlockForOres,
+    no_silk_touch_drop=LootTable({
+        "pools": [{
+            "rolls": 1,
+            "entries": [
+                {"type": "minecraft:item", "name": "minecraft:raw_iron", "weight": 3},
+                {"type": "minecraft:item", "name": "minecraft:iron_nugget", "weight": 7}
+            ]
+        }]
+    })
+)
 ```
 
 #### **GrowingSeed Configuration**
