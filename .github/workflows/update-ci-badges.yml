@@ -104,9 +104,9 @@ jobs:
                   color = "lightgrey"
               elif success == total:
                   color = "brightgreen"
-              elif success >= total - 1:
+              elif success >= total - 1 and total != 1:
                   color = "yellow"
-              elif success >= 1:
+              elif success >= 1 and total != 1:
                   color = "orange"
               else:
                   color = "red"
