@@ -1,0 +1,123 @@
+
+# ✨ Welcome to Stewbeet Documentation ✨
+
+
+
+**Versions**: <a href="../latest/">latest</a>
+
+
+[![YouTube](https://img.shields.io/youtube/views/zkcQn23DRaw?style=flat&logo=youtube&logoColor=red&label=YouTube)](https://www.youtube.com/watch?v=zkcQn23DRaw)
+[![GitHub](https://img.shields.io/github/v/release/Stoupy51/stewbeet?logo=github&label=GitHub)](https://github.com/Stoupy51/stewbeet/releases/latest)
+[![Powered by StewBeet](https://img.shields.io/badge/Powered%20by-StewBeet-5865F2?colorA=%23E00000&colorB=%2300A000&logo=data:image/png;base64,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)](https://stewbeet.paralya.fr/)
+[![PMC](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fwww.planetminecraft.com%2Fdata-pack%2Fpython-datapack%2Fstatsv2&query=%24.downloads&logo=data%3Aimage%2Fvnd.microsoft.icon%3Bbase64%2CAAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAAAABMLAAATCwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJdNAUBLJgD%2FSyYA%2FxkoD%2F8vKAn%2Fl00BgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA%2FwAAAP8AAAD%2FmVgI%2F0tcHf8CXjP%2FL10l%2FwAAAP8AAAD%2FAAAA%2FwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA%2F5VOAf%2BVTQH%2FfVkP%2FyZ%2BOv8BgET%2FAYBE%2FwGARP9LZyP%2FlU0B%2F5ZNAf8AAAD%2FAAAAAAAAAAAAAAAAAAAAAJVOAf%2FYeRL%2F64wl%2F7eZOP8Bo1f%2FAaNW%2FwGjVv88nkv%2F2oEb%2F9N0Df%2FTdA3%2FlU0B%2F5dNAUAAAAAAAAAAAAAAAACkVQH%2F3pAq%2F6CcOv92pUf%2FLLli%2F12zW%2F%2FBqEv%2Fy59B%2F%2B2OJ%2F%2Figxz%2F03QN%2F5VNAf%2BEUARAAAAAAAAAAAAAAAD%2FjoMq%2Fzi2XP96r1T%2F3ahG%2F%2BCvUP%2F9qkr%2F%2F6hL%2F%2F2kRP%2F2mTT%2F7Y4n%2F%2BCBGv93aRf%2FAAAA%2FwAAAAAAAAAAp1gB%2FxHEb%2F%2BlslX%2F36xL%2F9StTP%2F%2Fp0f%2F%2F6VE%2F%2F%2BqTv%2F%2Fqk7%2F%2FaVH%2F%2FecOf%2Ftjif%2FMIQ3%2FwNhMP8AAAAAAAAAAI9bA%2F8SxXD%2FHr5o%2Fzm8ZP%2Fvo0D%2F%2F6I9%2F%2F%2BiPf%2F%2Fq1D%2F%2F6tQ%2F%2F%2BrUP%2F7pEb%2F7Y4n%2FwGCQf8BYDD%2FAAAAAAAAAAB8Wgz%2FFMdy%2FxDDbv8Qw27%2Fh7Zd%2F%2F%2BnSP%2F%2Foj3%2F%2F6xS%2F%2F%2BsUv%2F%2Fp0j%2F%2B504%2F%2B2OJ%2F%2BUfyH%2FAWIw%2FwAAAAAAAAAAelsL%2Fwa2Y%2F8TxnH%2FieK4%2F9fu2P%2F%2F2rH%2F%2F6pN%2F%2F%2BlQv%2F%2FpUL%2F%2F6NA%2F%2F2fOv%2F1li%2F%2FlH8h%2FwJhMP8AAAAAqVcBQIFaCkABczz%2FFMdy%2F7Hs0P%2F%2F%2F%2F%2F%2F6O7W%2F9SyV%2F%2F%2Foj3%2F%2F6RC%2F%2FidOv%2Fxkyz%2FxJEw%2F01fGf8hWR1wAVQqQAAAAAAAAAAAAV4y%2Fw2%2Fa%2F%2Bs16b%2F1OfK%2F7%2Fdr%2F%2F%2BrFH%2F%2F6RB%2F%2F%2BmRv%2F2mzn%2F2Y4p%2F2qOOP8BVCr%2FJDorQAAAAAAAAAAAAAAAAAFeMv8BsF7%2FLbpl%2F0DAaP%2Bmtlz%2Fo7Vc%2F%2F%2BoS%2F%2F%2FqEv%2F9ps6%2FyeOQf8BjUb%2FAlQq%2FwFUKkAAAAAAAAAAAAAAAAAAAAAAAl0z%2FxheKf8PdTL%2FeqxN%2FyvDaf%2F8rVL%2Fz6dF%2F7R6H%2F8BXS7%2FAlQq%2FwdRKwIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABGUCICeF4GQGNfDP9sXwj%2FqFgB%2F4hbB%2F9DWiKAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKpXAUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA%2FB8AAOAHAADAAwAAwAMAAMADAACAAQAAgAEAAIABAACAAQAAgAEAAMADAADAAwAAwAMAAOAHAAD8H%2F%2F%2F%2F%2F%2F%2F%2Fw%3D%3D&label=PMC&color=6ec310)](https://www.planetminecraft.com/data-pack/python-datapack/)
+[![Discord](https://img.shields.io/discord/1216400498488377467?label=Discord&logo=discord)](https://discord.gg/anxzu6rA9F)
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/stewbeet?logo=python&label=PyPI%20downloads)](https://pypi.org/project/stewbeet/)
+
+[![Tests 3.14](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FStoupy51%2FStewBeet%2Fbadges%2Fbadges%2Ftests_3_14.json&logo=python)](https://github.com/Stoupy51/StewBeet/actions/workflows/tests_3_14.yml)
+[![Tests 3.14t](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FStoupy51%2FStewBeet%2Fbadges%2Fbadges%2Ftests_3_14t.json&logo=python)](https://github.com/Stoupy51/StewBeet/actions/workflows/tests_3_14t.yml)
+[![Tests 3.15](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FStoupy51%2FStewBeet%2Fbadges%2Fbadges%2Ftests_3_15.json&logo=python)](https://github.com/Stoupy51/StewBeet/actions/workflows/tests_3_15.yml)
+[![Tests 3.15t](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FStoupy51%2FStewBeet%2Fbadges%2Fbadges%2Ftests_3_15t.json&logo=python)](https://github.com/Stoupy51/StewBeet/actions/workflows/tests_3_15t.yml)
+
+## ❓ What is `StewBeet`
+`StewBeet` is a [Beet](https://github.com/mcbeet/beet) framework and library 📦 aiming to provide huge automation for creating Minecraft datapacks.<br>
+It is designed to be very simple to use and very convenient for developers.
+
+`Example of the in-game manual generated by StewBeet:`<br>
+![In-game Manual Example](https://i.imgur.com/dtuAG99.gif)
+
+
+Here is a list of features that the package provides (the template is using all of them with clear comments):
+
+- 🔄 Automatic resource pack files generation (models, textures, sounds, music discs) with the ability to override them with help of the `assets` folder.
+- ⏳ Versioned load, and clock functions such as `tick`, `second`, `minute`.
+- 🗃️ Loot tables for every item in the `definitions` along with a proper `_give_all` function that gives named chests.
+- 📖 Automatic generation of a really [advanced and interactive items `manual`](./assets/in_game_manual_example.png).
+- 📝 Automatic generation of a `en-us.json` lang file in the resource pack if configuration is set.
+- 🖼️ Automatic headers for every function in `function` folders.
+- 📦 Minecraft like vanilla recipes unlocking.
+- 📚 Official libraries integrations:
+  - 🧪 Automatic support for NBT Recipes with [`Smithed Crafter`](https://wiki.smithed.dev/libraries/crafter/) and [`Furnace NBT Recipes`](https://github.com/Stoupy51/FurnaceNbtRecipes/)
+  - 🛠️ Placement and destruction for every custom block in the `definitions` with support for blockstates, ore drops (fortune, silk touch), with [`Smithed Custom Blocks`](https://wiki.smithed.dev/libraries/custom-block/).
+  - 📚 Each module from [`Bookshelf`](https://github.com/mcbookshelf/bookshelf) is automatically added if you are using it, ex: `function #bs.math:...` will add the `bs.math` module to the datapack.
+  - ⛏️ Custom ore generation with [`Smart Ore Generation`](https://github.com/Stoupy51/SmartOreGeneration).
+  - 📦 Item transportation / container declaration with [`ItemIO`](https://github.com/edayot/ItemIO) when making custom containers.
+  - 🔔 Events such as new items detection with [`Common Signals`](https://github.com/Stoupy51/CommonSignals).
+- 🌐 External datapack libraries support, see configuration for more information.
+- 🔗 Merging datapacks and resource packs with libraries using [Smithed Weld](https://weld.smithed.dev/).
+- 🧩 Automatic recognition of custom blocks patterns depending on the texture names in the `assets/textures` folder. For instance, if you have a top, side, and bottom texture, the block will be automatically recognized as a cube with the top, side, and bottom textures.
+- 📏 Follow the datapack conventions such as [LanternLoad](https://github.com/LanternMC/load), [CustomModelData prefix](https://mcdatapack.vercel.app/), [tag specification](https://wiki.smithed.dev/conventions/tag-specification/), and [namespacing](https://wiki.smithed.dev/conventions/namespacing/).
+- 🧰 Ability to merge a model with the autogenerated one or override it.
+- 🔀 `merge` folder providing a way to merge custom files with the autogenerated ones or add custom files to the datapack.
+- ⚙️ Automatic special compatibilities with datapacks such as [`SimpleDrawer's compacted drawer`](https://edayot.github.io/SimpleDrawer/material.html), [`SimplEnergy's pulverizer`](./build/datapack/data/your_namespace/function/calls/simplenergy/pulverizer_recipes.mcfunction).
+- 📂 Automatic copy of generated zip files to configured folders.
+
+
+## 📦 Getting Started & Documentation
+
+For complete installation instructions, tutorials, and comprehensive documentation, visit the official website:
+
+### 🌐 **[stewbeet.paralya.fr](https://stewbeet.paralya.fr)**
+
+Quick links:
+- 🚀 [Getting Started Guide](https://stewbeet.paralya.fr/documentation)
+- 📖 [Full Documentation](https://stewbeet.paralya.fr/documentation)
+- 💬 [Discord Community](https://discord.gg/anxzu6rA9F)
+
+
+## 🤝 Contribute
+Want to help improve StewBeet? 🔍<br>
+Here's how you can contribute:
+- 🐛 **Report Bugs**: Found a bug? Open an issue on GitHub describing what happened and how to reproduce it.
+- ✨ **Suggest Features**: Have an idea for a new feature? Share it in the issues section!
+- 🔧 **Submit Pull Requests**: Feel free to fix bugs or add new features by submitting pull requests.
+- 📚 **Improve Documentation**: Help make our docs better by fixing errors or adding examples.
+- 💬 **Help Others**: Join our [Discord server](https://discord.gg/anxzu6rA9F) and help other users with their questions.
+
+Every contribution matters, no matter how small! 🙌
+
+
+## 📜 What projects use StewBeet?
+To search for projects that use the framework, I search like [this.](https://github.com/search?q=%22-+%5C%22stewbeet.plugins.%22+-path%3A%22docs%22+-path%3A%22templates%22&type=code)<br>
+Here is a list of projects that use it:<br>
+- Actual projects:
+  - Your next project here!
+  - https://github.com/e-psi-lon/Armored-Elytra (Python Datapack: before Stewbeet was a thing)
+  - https://github.com/Stoupy51/SimplEnergy
+  - https://github.com/Stoupy51/ImagineYourCraftDatapack
+  - https://github.com/Stoupy51/LifeSteal
+  - https://github.com/Stoupy51/Survisland
+  - https://github.com/Stoupy51/SmithedSummit
+  - https://github.com/Stoupy51/SheepWars
+  - https://github.com/Stoupy51/MoreApples
+  - https://github.com/Stoupy51/CauldronConcretePowder
+
+- Libraries or tools:
+  - https://github.com/Stoupy51/SmartOreGeneration
+  - https://github.com/Stoupy51/CommonSignals
+
+
+## ⭐ Star History
+
+<html>
+  <a href="https://star-history.com/#Stoupy51/StewBeet&Date">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Stoupy51/StewBeet&type=Date&theme=dark" />
+      <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=Stoupy51/StewBeet&type=Date" />
+      <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Stoupy51/StewBeet&type=Date" />
+    </picture>
+  </a>
+</html>
+
+
+
+---
+
+## Module Documentation
+
+
+```{toctree}
+:maxdepth: 10
+
+modules/stewbeet
+```
+
