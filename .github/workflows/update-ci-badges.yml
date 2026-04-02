@@ -14,7 +14,7 @@ on:
 
 concurrency:
   group: update-ci-badges
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 permissions:
   contents: write
@@ -30,13 +30,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Generate badge JSON
+      - name: Generate badge JSONs
         env:
           GH_TOKEN: ${{ github.token }}
           OWNER: ${{ github.repository_owner }}
           REPO: ${{ github.event.repository.name }}
-          RUN_ID: ${{ github.event.workflow_run.id }}
-          WORKFLOW_NAME: ${{ github.event.workflow_run.name }}
         run: |
           python - <<'PY'
           import json
@@ -47,58 +45,87 @@ jobs:
 
           owner = os.environ["OWNER"]
           repo = os.environ["REPO"]
-          run_id = os.environ["RUN_ID"]
-          workflow_name = os.environ["WORKFLOW_NAME"]
           token = os.environ["GH_TOKEN"]
 
-          api = f"https://api.github.com/repos/{owner}/{repo}/actions/runs/{run_id}/jobs?per_page=100&filter=latest"
-          req = urllib.request.Request(
-              api,
-              headers={
-                  "Authorization": f"Bearer {token}",
-                  "Accept": "application/vnd.github+json",
-                  "X-GitHub-Api-Version": "2022-11-28",
-                  "User-Agent": "ci-badge-updater",
-              },
-          )
+          TRACKED_WORKFLOWS = [
+              "Tests 3.14",
+              "Tests 3.14t",
+              "Tests 3.15",
+              "Tests 3.15t",
+          ]
 
-          with urllib.request.urlopen(req) as response:
-              payload = json.load(response)
+          def gh_get(url):
+              req = urllib.request.Request(
+                  url,
+                  headers={
+                      "Authorization": f"Bearer {token}",
+                      "Accept": "application/vnd.github+json",
+                      "X-GitHub-Api-Version": "2022-11-28",
+                      "User-Agent": "ci-badge-updater",
+                  },
+              )
+              with urllib.request.urlopen(req) as response:
+                  return json.load(response)
 
-          jobs = payload.get("jobs", [])
-          total = len(jobs)
-          success = sum(1 for job in jobs if job.get("conclusion") == "success")
+          # Fetch the latest run for each tracked workflow
+          for workflow_name in TRACKED_WORKFLOWS:
+              slug = re.sub(r"[^a-z0-9]+", "_", workflow_name.lower()).strip("_")
+              badge_path = Path("badge_output") / f"{slug}.json"
+              badge_path.parent.mkdir(parents=True, exist_ok=True)
 
-          if total == 0:
-              color = "lightgrey"
-          elif success == total:
-              color = "brightgreen"
-          elif success >= total - 1:
-              color = "yellow"
-          elif success >= 1:
-              color = "orange"
-          else:
-              color = "red"
+              # Get latest run for this workflow on the default branch
+              runs_url = (
+                  f"https://api.github.com/repos/{owner}/{repo}/actions/workflows"
+                  f"/{slug}.yml/runs?per_page=1&status=completed"
+              )
+              try:
+                  runs_payload = gh_get(runs_url)
+              except Exception as e:
+                  print(f"Warning: could not fetch runs for {workflow_name}: {e}")
+                  continue
 
-          slug = re.sub(r"[^a-z0-9]+", "_", workflow_name.lower()).strip("_")
-          badge_path = Path("badge_output") / f"{slug}.json"
-          badge_path.parent.mkdir(parents=True, exist_ok=True)
+              runs = runs_payload.get("workflow_runs", [])
+              if not runs:
+                  print(f"No completed runs found for {workflow_name}, skipping")
+                  continue
 
-          badge = {
-              "schemaVersion": 1,
-              "label": workflow_name.split(maxsplit=1)[-1],
-              "message": f"{success}/{total} OK",
-              "color": color,
-          }
+              run_id = runs[0]["id"]
 
-          badge_path.write_text(
-              json.dumps(badge, ensure_ascii=False, separators=(",", ":")) + "\n",
-              encoding="utf-8",
-          )
-          print(f"Wrote {badge_path}")
+              jobs_url = (
+                  f"https://api.github.com/repos/{owner}/{repo}/actions/runs"
+                  f"/{run_id}/jobs?per_page=100&filter=latest"
+              )
+              jobs_payload = gh_get(jobs_url)
+              jobs = jobs_payload.get("jobs", [])
+              total = len(jobs)
+              success = sum(1 for job in jobs if job.get("conclusion") == "success")
+
+              if total == 0:
+                  color = "lightgrey"
+              elif success == total:
+                  color = "brightgreen"
+              elif success >= total - 1:
+                  color = "yellow"
+              elif success >= 1:
+                  color = "orange"
+              else:
+                  color = "red"
+
+              badge = {
+                  "schemaVersion": 1,
+                  "label": workflow_name.split(maxsplit=1)[-1],
+                  "message": f"{success}/{total} OK",
+                  "color": color,
+              }
+
+              badge_path.write_text(
+                  json.dumps(badge, ensure_ascii=False, separators=(",", ":")) + "\n",
+                  encoding="utf-8",
+              )
+              print(f"Wrote {badge_path}")
           PY
 
-      - name: Publish badge on badges branch
+      - name: Publish badges on badges branch
         run: |
           BADGE_FILE="badge_output/*.json"
           if ! ls $BADGE_FILE >/dev/null 2>&1; then
@@ -143,4 +170,4 @@ jobs:
 
           echo "Failed to push badges branch after 5 attempts"
           exit 1
-
+      
