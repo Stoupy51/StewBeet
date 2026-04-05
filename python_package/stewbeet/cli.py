@@ -122,6 +122,7 @@ def main() -> None:
 
         # Run beet with all remaining arguments
         subprocess.run([sys.executable, "-m", "beet"] + [x for x in sys.argv[1:] if x != "rebuild"], check=False)
+    sys.exit(0)
 
 
 if __name__ == "__main__":
