@@ -30,9 +30,10 @@ def beet_default(ctx: Context):
 
 	# Creative loot table (sort of give all loot table)
 	creative_loot_table: JsonDict = {"pools": []}
+	not_skipped_items: list[str] = [item for item in Mem.definitions.keys() if not Item.from_id(item).skip_gives]
 
 	# For each item in the definitions, create a loot table
-	for item in Mem.definitions.keys():
+	for item in not_skipped_items:
 		obj = Item.from_id(item)
 		loot_table: JsonDict = {
 			"pools": [{
@@ -65,7 +66,7 @@ def beet_default(ctx: Context):
 		creative_loot_table["pools"].append({"rolls": 1, "entries":[{"type":"minecraft:loot_table","value":f"{ns}:i/{item}"}] })
 
 	# Loot tables for items with crafting recipes
-	for item in Mem.definitions.keys():
+	for item in not_skipped_items:
 		obj = Item.from_id(item)
 		if obj.recipes:
 			results: list[int | JsonDict] = []
@@ -100,7 +101,7 @@ def beet_default(ctx: Context):
 				ctx.data[ns].loot_tables[loot_table_path] = LootTable(stp.json_dump(loot_table, max_level=10))
 
 	# Second loot table for the manual (if present)
-	if "manual" in Mem.definitions:
+	if "manual" in not_skipped_items:
 		loot_table: JsonDict = {
 			"pools": [{
 				"rolls": 1,
@@ -118,14 +119,14 @@ def beet_default(ctx: Context):
 
 	# Make a give all command that gives chests with all the items
 	CHEST_SIZE: int = 27
-	total_chests: int = (len(Mem.definitions) + CHEST_SIZE - 1) // CHEST_SIZE
+	total_chests: int = (len(not_skipped_items) + CHEST_SIZE - 1) // CHEST_SIZE
 
 	# Get source lore from context metadata
 	source_lore: JsonDict = ctx.meta["stewbeet"]["source_lore"]
 	lore = stp.json_dump(source_lore, max_level=0).strip()
 
 	chests: list[str] = []
-	definitions_copy: list[tuple[str, Item]] = [(item, Item.from_id(item)) for item in Mem.definitions.keys()]
+	definitions_copy: list[tuple[str, Item]] = [(item, Item.from_id(item)) for item in not_skipped_items]
 	for i in range(total_chests):
 		chest_contents: list[str] = []
 

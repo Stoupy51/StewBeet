@@ -82,6 +82,8 @@ class Item(StMapping):
     """ (Optional) Additional informations to be displayed in the ingame manual. """
     components: JsonDict = field(default_factory=dict[str, Any])
     """ (Optional) Additional custom components for this item, e.g. "item_name": {...}, etc. """
+    skip_gives: bool = False
+    """ (Optional) If True, loot tables and give_all chests won't give this item. Useful for items that are never meant to be obtained by players. """
 
     # Register item in memory
     def __post_init__(self) -> None:
