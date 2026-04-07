@@ -11,6 +11,12 @@ from ....core.__memory__ import Mem
 # Prepare lang dictionary and lang_format function
 lang: dict[str, str] = {}
 
+# Pre-compiled regex patterns
+ALNUM_RE: re.Pattern[str] = re.compile(r'[a-zA-Z0-9]')
+LETTER_RE: re.Pattern[str] = re.compile(r'[a-zA-Z].*[a-zA-Z]|[a-zA-Z]', re.DOTALL)
+SENTENCE_PUNCT_RE: re.Pattern[str] = re.compile(r'^[\s:.,!?]*$')
+CLOSERS: dict[str, str] = {'(': ')', '[': ']', '{': '}'}
+
 # Regex pattern for text extraction
 TEXT_RE: re.Pattern[str] = re.compile(
 	r'''
@@ -95,9 +101,7 @@ def split_text_content(text: str, max_words: int = 5) -> tuple[str, str, str]:
 		>>> split_text_content("💣 Yes Five words exactly here!", max_words=5)
 		('💣 ', 'Yes Five words exactly here!', '')
 	"""
-	CLOSERS: dict[str, str] = {'(': ')', '[': ']', '{': '}'}
-
-	match = re.search(r'[a-zA-Z].*[a-zA-Z]|[a-zA-Z]', text, re.DOTALL)
+	match = LETTER_RE.search(text)
 	if not match or len(match.group().split()) > max_words:
 		return ('', text, '')
 
@@ -136,8 +140,7 @@ def split_text_content(text: str, max_words: int = 5) -> tuple[str, str, str]:
 
 	# Absorb back suffix that is purely sentence-ending punctuation (: . , ! ?)
 	# These are semantically bound to the text and shouldn't become lone siblings
-	SENTENCE_PUNCT = re.compile(r'^[\s:.,!?]*$')
-	if SENTENCE_PUNCT.match(suffix):
+	if SENTENCE_PUNCT_RE.match(suffix):
 		core += suffix
 		suffix = ''
 
@@ -558,9 +561,13 @@ def handle_file(content: TextFileBase[str] | None, ctx: Context | None = None) -
 
 	matches: list[tuple[str, int, int, str, str | None]] = extract_texts(string)
 
+	# Collect (replace_start, replace_end, new_fragment) in reverse-position order,
+	# then apply them all in a single join pass instead of rebuilding the string O(n) times.
+	replacements: list[tuple[int, int, str]] = []
+
 	for text, start, end, quote, key_quote in reversed(matches):
 		clean_text: str = text.replace("\\n", "\n").replace("\\", "")
-		if not any(c.isalnum() for c in clean_text):
+		if not ALNUM_RE.search(clean_text):
 			continue
 
 		prefix, core, suffix = split_text_content(clean_text)
@@ -576,8 +583,18 @@ def handle_file(content: TextFileBase[str] | None, ctx: Context | None = None) -
 			string, text, clean_text, start, end, quote, key_quote,
 			key_for_lang, prefix, suffix,
 		)
-		string = string[:replace_start] + new_fragment + string[replace_end:]
+		replacements.append((replace_start, replace_end, new_fragment))
 
-	if string != str(content.text):
-		content.text = string
+	if replacements:
+		# Replacements are already in high→low position order; build new string in one pass
+		parts: list[str] = []
+		pos: int = len(string)
+		for replace_start, replace_end, new_fragment in replacements:
+			parts.append(string[replace_end:pos])
+			parts.append(new_fragment)
+			pos = replace_start
+		parts.append(string[:pos])
+		new_string: str = "".join(reversed(parts))
+		if new_string != str(content.text):
+			content.text = new_string
 
