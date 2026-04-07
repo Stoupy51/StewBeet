@@ -50,7 +50,7 @@ class Painting(Item):
     ...     }
     ... )
     >>> my_painting
-    Painting(id='stewbeet_painting_2x2', base_item='minecraft:painting', manual_category=None, recipes=[], override_model=None, hand_model=None, wiki_buttons=None, components={'max_stack_size': 16, 'painting/variant': 'your_namespace:stewbeet_painting_2x2'}, painting_data=PaintingData(texture='stewbeet_painting_2x2', author={'text': 'An Artist I would say', 'color': 'yellow'}, title={'text': 'Stewbeet Painting 2X2'}, width=2, height=2))
+    Painting(id='stewbeet_painting_2x2', base_item='minecraft:painting', manual_category=None, recipes=[], override_model=None, hand_model=None, wiki_buttons=None, components={'max_stack_size': 16, 'painting/variant': 'your_namespace:stewbeet_painting_2x2'}, skip_gives=False, painting_data=PaintingData(texture='stewbeet_painting_2x2', author={'text': 'An Artist I would say', 'color': 'yellow'}, title={'text': 'Stewbeet Painting 2X2'}, width=2, height=2))
     """  # noqa: E501
     base_item: str = "minecraft:painting"
     painting_data: PaintingData
