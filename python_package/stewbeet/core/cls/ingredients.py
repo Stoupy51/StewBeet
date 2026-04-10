@@ -225,19 +225,19 @@ class Ingr(JsonDict):
 
 		Args:
 			kwargs: Key-value arguments to add to the ingredient representation (e.g. count=2, Slot=0, etc.)
+				kwargs values take precedence over the ingredient's own fields.
 		Returns:
 			Ingr: The predicate representation of the ingredient, ex:
 				{"count": 2, "components": {"minecraft:custom_data": {"iyc": {"adamantium_fragment": True}}}}
 		"""
-		item: JsonDict = dict(kwargs)
+		item: JsonDict = {}
 		ns_id: str = self.to_id()
 		if ns_id in Mem.external_definitions:
 			from .external_item import ExternalItem
 			item.update({"components": {"minecraft:custom_data": ExternalItem.from_id(ns_id).custom_data_predicate}})
-			if self.get("count"):
-				item["count"] = self["count"]
 		else:
 			item.update(self)
+		item.update(kwargs)
 		return Ingr(item).item_to_id()
 
 	@stp.simple_cache
