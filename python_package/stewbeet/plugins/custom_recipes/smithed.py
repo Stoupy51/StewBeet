@@ -73,6 +73,10 @@ class SmithedRecipeHandler:
     def smithed_shaped_recipe(self, recipe: CraftingShapedRecipe, result_loot: str) -> str:
         """ Generate a Smithed Crafter shaped recipe.
 
+        Note: Shaped recipe predicates must NOT include 'count' because smithed.crafter's
+        input storage omits count for individual slots. Shapeless predicates DO include
+        count (the number of unique ingredient occurrences), which is handled separately.
+
         Args:
             recipe (CraftingShapedRecipe): The recipe data.
             result_loot (str): The loot table for the result.
