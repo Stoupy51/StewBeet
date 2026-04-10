@@ -223,21 +223,24 @@ class Ingr(JsonDict):
 	def to_predicate(self, **kwargs: Any) -> Ingr:
 		""" Get the predicate representation of the ingredient (for functions)
 
+		The 'count' field of the ingredient is intentionally excluded from the predicate,
+		since it represents a result item count (not a recipe matching count).
+		Use the 'count' kwarg to specify the recipe matching count explicitly.
+
 		Args:
 			kwargs: Key-value arguments to add to the ingredient representation (e.g. count=2, Slot=0, etc.)
 		Returns:
 			Ingr: The predicate representation of the ingredient, ex:
 				{"count": 2, "components": {"minecraft:custom_data": {"iyc": {"adamantium_fragment": True}}}}
 		"""
-		item: JsonDict = dict(kwargs)
+		item: JsonDict = {}
 		ns_id: str = self.to_id()
 		if ns_id in Mem.external_definitions:
 			from .external_item import ExternalItem
 			item.update({"components": {"minecraft:custom_data": ExternalItem.from_id(ns_id).custom_data_predicate}})
-			if self.get("count"):
-				item["count"] = self["count"]
 		else:
-			item.update(self)
+			item.update({k: v for k, v in self.items() if k != "count"})
+		item.update(kwargs)
 		return Ingr(item).item_to_id()
 
 	@stp.simple_cache
