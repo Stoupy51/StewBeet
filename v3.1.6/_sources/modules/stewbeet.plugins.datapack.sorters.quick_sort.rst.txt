@@ -1,0 +1,8 @@
+stewbeet.plugins.datapack.sorters.quick\_sort module
+====================================================
+
+.. automodule:: stewbeet.plugins.datapack.sorters.quick_sort
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
