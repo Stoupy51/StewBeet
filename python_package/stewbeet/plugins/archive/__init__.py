@@ -111,5 +111,7 @@ def beet_default(ctx: Context) -> None:
 				final_zip.writestr(info, content)
 
 	# Process each pack in parallel
-	stp.multithreading(handle_pack, Mem.ctx.packs, max_workers=len(Mem.ctx.packs))
+	#stp.multithreading(handle_pack, Mem.ctx.packs, max_workers=len(Mem.ctx.packs))
+	for pack in Mem.ctx.packs:
+		handle_pack(pack)
 
