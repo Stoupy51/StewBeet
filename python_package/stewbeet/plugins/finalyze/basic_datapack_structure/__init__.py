@@ -25,6 +25,9 @@ def beet_default(ctx: Context) -> None:
 	ns: str = ctx.project_id
 	version: str = ctx.project_version
 
+	create_timer_structure(ctx, ns, version)
+
+def create_timer_structure(ctx: Context, ns: str, version: str) -> None:
 	# Define function paths
 	tick_2_path: str = f"{ns}:v{version}/tick_2"
 	second_path: str = f"{ns}:v{version}/second"
