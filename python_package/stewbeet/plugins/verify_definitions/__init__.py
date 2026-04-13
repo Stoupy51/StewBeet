@@ -27,6 +27,7 @@ from ...core.constants import (
 
 # Main entry point
 @stp.measure_time(message="Execution time of 'stewbeet.plugins.verify_definitions'")
+@stp.deprecated(message="The 'verify_definitions' plugin is now integrated into the main pipeline and runs when you make definitions, no need to require it manually.", version="3.0.0")
 def beet_default(ctx: Context) -> None:
 	""" Database verification plugin for StewBeet.
 	Verifies the definitions structure, validates item configurations, and performs consistency checks.
