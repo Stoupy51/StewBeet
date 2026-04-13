@@ -62,3 +62,67 @@ def main():
         }
     )
 
+    # ── VanillaBlock use-case test blocks ─────────────────────────────────────
+
+    # Case 1 - No facing at all: block and item_display use default orientation.
+    Block(
+        id="vb_no_facing",
+        manual_category="miscellaneous",
+        vanilla_block=VanillaBlock(id="minecraft:cobblestone"),
+        recipes=[CraftingShapelessRecipe(category="blocks", ingredients=[Ingr("minecraft:cobblestone")])],
+    )
+
+    # Case 2 - Visual-only rotation: item_display rotates with the player (4 horizontal dirs),
+    #          but the underlying vanilla block is placed without a facing blockstate.
+    Block(
+        id="vb_visual_facing",
+        manual_category="miscellaneous",
+        vanilla_block=VanillaBlock(id="minecraft:glass", visual_facing_source="player"),
+        recipes=[CraftingShapelessRecipe(category="blocks", ingredients=[Ingr("minecraft:glass")])],
+    )
+
+    # Case 3 - Block + visual rotation: the vanilla block gets a facing= blockstate AND
+    #          the item_display rotates (implicit visual_facing_source="player").
+    Block(
+        id="vb_block_facing",
+        manual_category="miscellaneous",
+        vanilla_block=VanillaBlock(id="minecraft:furnace", block_facing="player"),
+        recipes=[CraftingShapelessRecipe(category="blocks", ingredients=[Ingr("minecraft:furnace")])],
+    )
+
+    # Case 4 - Block + visual rotation WITH extra blockstates: the plugin must preserve
+    #          the "lit=false" state while still appending "facing=<dir>".
+    Block(
+        id="vb_block_states",
+        manual_category="miscellaneous",
+        vanilla_block=VanillaBlock(id="minecraft:furnace[lit=false]", block_facing="player"),
+        recipes=[CraftingShapelessRecipe(category="blocks", ingredients=[Ingr("minecraft:furnace"), Ingr("minecraft:coal")])],
+    )
+
+    # Case 5 - Contents with native item_frame facing (6 directions from the frame's Facing NBT).
+    BlockAlternative(
+        id="vb_contents",
+        manual_category="miscellaneous",
+        vanilla_block=VanillaBlock(contents=True),
+        recipes=[CraftingShapelessRecipe(category="blocks", ingredients=[Ingr("minecraft:item_frame")])],
+    )
+
+    # Case 6 - Contents with player-overridden facing: get_rotation is called while
+    #          @s=player in the search function, then ItemRotation is applied (4 dirs).
+    BlockAlternative(
+        id="vb_contents_player",
+        manual_category="miscellaneous",
+        vanilla_block=VanillaBlock(contents=True, visual_facing_source="player"),
+        recipes=[CraftingShapelessRecipe(category="blocks", ingredients=[Ingr("minecraft:item_frame"), Ingr("minecraft:compass")])],
+    )
+
+    # Case 7 - Contents with explicit item_frame facing (6 directions, same underlying
+    #          behaviour as Case 5 but uses the "item_frame" value explicitly).
+    BlockAlternative(
+        id="vb_contents_frame",
+        manual_category="miscellaneous",
+        vanilla_block=VanillaBlock(contents=True, visual_facing_source="item_frame"),
+        recipes=[CraftingShapelessRecipe(category="blocks", ingredients=[Ingr("minecraft:item_frame"), Ingr("minecraft:string")])],
+    )
+
+

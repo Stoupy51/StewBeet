@@ -38,7 +38,14 @@
 		"_your_namespace:manual/page_27",
 		"_your_namespace:manual/page_28",
 		"_your_namespace:manual/page_29",
-		"_your_namespace:manual/page_30"
+		"_your_namespace:manual/page_30",
+		"_your_namespace:manual/page_31",
+		"_your_namespace:manual/page_32",
+		"_your_namespace:manual/page_33",
+		"_your_namespace:manual/page_34",
+		"_your_namespace:manual/page_35",
+		"_your_namespace:manual/page_36",
+		"_your_namespace:manual/page_37"
 	],
 	"exit_action": {
 		"label": {"translate": "gui.back"},

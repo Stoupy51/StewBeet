@@ -1,7 +1,10 @@
 
 #> _your_namespace:custom_blocks/get_rotation
 #
-# @within	???
+# @within	_your_namespace:custom_blocks/vb_visual_facing/place_main
+#			_your_namespace:custom_blocks/vb_block_facing/place_main
+#			_your_namespace:custom_blocks/vb_block_states/place_main
+#			_your_namespace:custom_blocks/vb_contents_player/search
 #
 
 # Set up score

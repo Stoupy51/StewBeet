@@ -10,5 +10,9 @@ execute if data storage smithed.custom_block:main blockApi{id: "_your_namespace:
 execute if data storage smithed.custom_block:main blockApi{id: "_your_namespace:deepslate_steel_ore"} run function _your_namespace:custom_blocks/deepslate_steel_ore/place_main
 execute if data storage smithed.custom_block:main blockApi{id: "_your_namespace:raw_steel_block"} run function _your_namespace:custom_blocks/raw_steel_block/place_main
 execute if data storage smithed.custom_block:main blockApi{id: "_your_namespace:super_stone"} run function _your_namespace:custom_blocks/super_stone/place_main
+execute if data storage smithed.custom_block:main blockApi{id: "_your_namespace:vb_no_facing"} run function _your_namespace:custom_blocks/vb_no_facing/place_main
+execute if data storage smithed.custom_block:main blockApi{id: "_your_namespace:vb_visual_facing"} run function _your_namespace:custom_blocks/vb_visual_facing/place_main
+execute if data storage smithed.custom_block:main blockApi{id: "_your_namespace:vb_block_facing"} run function _your_namespace:custom_blocks/vb_block_facing/place_main
+execute if data storage smithed.custom_block:main blockApi{id: "_your_namespace:vb_block_states"} run function _your_namespace:custom_blocks/vb_block_states/place_main
 tag @s remove _your_namespace.placer
 

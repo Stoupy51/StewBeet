@@ -11,7 +11,10 @@
 
 # Check for missing vanilla blocks
 execute if score #total_vanilla_cobblestone _your_namespace.data matches 1.. if entity @s[tag=_your_namespace.vanilla.minecraft_cobblestone] unless block ~ ~ ~ minecraft:cobblestone run return run function _your_namespace:custom_blocks/_groups/minecraft_cobblestone
+execute if score #total_vanilla_furnace _your_namespace.data matches 1.. if entity @s[tag=_your_namespace.vanilla.minecraft_furnace] unless block ~ ~ ~ minecraft:furnace run return run function _your_namespace:custom_blocks/_groups/minecraft_furnace
+execute if score #total_vanilla_glass _your_namespace.data matches 1.. if entity @s[tag=_your_namespace.vanilla.minecraft_glass] unless block ~ ~ ~ minecraft:glass run return run function _your_namespace:custom_blocks/_groups/minecraft_glass
 execute if score #total_vanilla_iron_block _your_namespace.data matches 1.. if entity @s[tag=_your_namespace.vanilla.minecraft_iron_block] unless block ~ ~ ~ minecraft:iron_block run return run function _your_namespace:custom_blocks/_groups/minecraft_iron_block
 execute if score #total_vanilla_polished_deepslate _your_namespace.data matches 1.. if entity @s[tag=_your_namespace.vanilla.minecraft_polished_deepslate] unless block ~ ~ ~ minecraft:polished_deepslate run return run function _your_namespace:custom_blocks/_groups/minecraft_polished_deepslate
 execute if score #total_vanilla_raw_iron_block _your_namespace.data matches 1.. if entity @s[tag=_your_namespace.vanilla.minecraft_raw_iron_block] unless block ~ ~ ~ minecraft:raw_iron_block run return run function _your_namespace:custom_blocks/_groups/minecraft_raw_iron_block
+execute if score #total_vanilla_item_frame _your_namespace.data matches 1.. if entity @s[tag=_your_namespace.vanilla.minecraft_item_frame] unless items entity @s contents *[minecraft:custom_data~{_your_namespace: {item_frame_destroy: true}}] run return run function _your_namespace:custom_blocks/_groups/minecraft_item_frame
 

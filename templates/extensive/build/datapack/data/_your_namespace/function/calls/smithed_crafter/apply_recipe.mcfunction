@@ -6,6 +6,13 @@
 #			_your_namespace:calls/smithed_crafter/shapeless_recipes {command: "loot replace block ~ ~ ~ container.16 loot _your_namespace:i/raw_steel_x9"}
 #			_your_namespace:calls/smithed_crafter/shapeless_recipes {command: "loot replace block ~ ~ ~ container.16 loot _your_namespace:i/super_stone"}
 #			_your_namespace:calls/smithed_crafter/shapeless_recipes {command: "loot replace block ~ ~ ~ container.16 loot _your_namespace:i/manual"}
+#			_your_namespace:calls/smithed_crafter/shapeless_recipes {command: "loot replace block ~ ~ ~ container.16 loot _your_namespace:i/vb_no_facing"}
+#			_your_namespace:calls/smithed_crafter/shapeless_recipes {command: "loot replace block ~ ~ ~ container.16 loot _your_namespace:i/vb_visual_facing"}
+#			_your_namespace:calls/smithed_crafter/shapeless_recipes {command: "loot replace block ~ ~ ~ container.16 loot _your_namespace:i/vb_block_facing"}
+#			_your_namespace:calls/smithed_crafter/shapeless_recipes {command: "loot replace block ~ ~ ~ container.16 loot _your_namespace:i/vb_block_states"}
+#			_your_namespace:calls/smithed_crafter/shapeless_recipes {command: "loot replace block ~ ~ ~ container.16 loot _your_namespace:i/vb_contents"}
+#			_your_namespace:calls/smithed_crafter/shapeless_recipes {command: "loot replace block ~ ~ ~ container.16 loot _your_namespace:i/vb_contents_player"}
+#			_your_namespace:calls/smithed_crafter/shapeless_recipes {command: "loot replace block ~ ~ ~ container.16 loot _your_namespace:i/vb_contents_frame"}
 #			_your_namespace:calls/smithed_crafter/shaped_recipes {command: "loot replace block ~ ~ ~ container.16 loot _your_namespace:i/steel_ingot"}
 #			_your_namespace:calls/smithed_crafter/shaped_recipes {command: "loot replace block ~ ~ ~ container.16 loot _your_namespace:i/steel_stick_x4"}
 #			_your_namespace:calls/smithed_crafter/shaped_recipes {command: "loot replace block ~ ~ ~ container.16 loot _your_namespace:i/steel_block"}
