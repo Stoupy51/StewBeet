@@ -26,6 +26,7 @@ def beet_default(ctx: Context) -> None:
 	version: str = ctx.project_version
 
 	create_timer_structure(ctx, ns, version)
+	UnloadFunction(ctx, ns, version)
 
 def create_timer_structure(ctx: Context, ns: str, version: str) -> None:
 	# Define function paths
@@ -93,3 +94,29 @@ scoreboard players set #minute {ns}.data 1
 		if content:
 			write_tick_file(content, prepend=True)
 
+class UnloadFunction:
+	""" Class to generate the unload functions for the datapack """
+
+	def __init__(self, ctx: Context, ns: str, version: str) -> None:
+		self.ctx = ctx
+		self.ns = ns
+		self.version = version
+
+		self.removal_commands: dict[str, tuple[str,set[str]]] = {
+			"items": (
+				"# Clear custom items",
+				{
+					'clear @a *[custom_data~{"%s":{}}]' % self.ns,
+				}
+			),
+		}
+
+		self.write_unload_function()
+
+	def write_unload_function(self) -> None:
+		content = "\n\n".join(
+			f"{header}\n{'\n'.join(commands)}"
+			for _, (header, commands) in self.removal_commands.items()
+			if len(commands) > 0
+		)
+		write_versioned_function("unload", content)
