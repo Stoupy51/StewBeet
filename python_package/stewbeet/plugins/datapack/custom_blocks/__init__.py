@@ -315,13 +315,11 @@ execute store result entity @s Facing byte 1 run scoreboard players get #item_fr
 # Update position (fixes a Minecraft bug)
 execute at @s run tp @s ^ ^ ^0.1
 """
-				if block.get("force_ground"):
-					content += """
-# Force ground position
-data modify entity @s Facing set value 1b
-"""
 				if block.get("visual_facing_source") == "player":
 					content += f"""
+# Force ground position
+data modify entity @s Facing set value 1b
+
 # Apply rotation based on player direction
 execute if score #rotation {ns}.data matches 1 run data modify entity @s ItemRotation set value 4b
 execute if score #rotation {ns}.data matches 2 run data modify entity @s ItemRotation set value 6b
