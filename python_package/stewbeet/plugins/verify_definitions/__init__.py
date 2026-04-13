@@ -88,15 +88,13 @@ def beet_default(ctx: Context) -> None:
 			# Force VANILLA_BLOCK key for custom blocks
 			elif data["id"] in [CUSTOM_BLOCK_VANILLA, CUSTOM_BLOCK_ALTERNATIVE]:
 				if not data.get(VANILLA_BLOCK):
-					errors.append(f"VANILLA_BLOCK key missing for '{item}', needed format: VANILLA_BLOCK: {{\"id\":\"minecraft:stone\", \"apply_facing\":False}}.")
+					errors.append(f"VANILLA_BLOCK key missing for '{item}', needed format: VANILLA_BLOCK: {{\"id\":\"minecraft:stone\"}}.")
 				elif isinstance(data[VANILLA_BLOCK], VanillaBlock):
 					pass
 				elif not isinstance(data[VANILLA_BLOCK], dict):
-					errors.append(f"VANILLA_BLOCK key should be a dictionary for '{item}', found '{data[VANILLA_BLOCK]}', needed format: VANILLA_BLOCK: {{\"id\":\"minecraft:stone\", \"apply_facing\":False}}.")
+					errors.append(f"VANILLA_BLOCK key should be a dictionary for '{item}', found '{data[VANILLA_BLOCK]}', needed format: VANILLA_BLOCK: {{\"id\":\"minecraft:stone\"}}.")
 				elif (data[VANILLA_BLOCK].get("id", None) is None) and (data[VANILLA_BLOCK].get("contents", None) is not True):
-					errors.append(f"VANILLA_BLOCK key should have an 'id' key for '{item}', found '{data[VANILLA_BLOCK]}', needed format: VANILLA_BLOCK: {{\"id\":\"minecraft:stone\", \"apply_facing\":False}}.")
-				elif (data[VANILLA_BLOCK].get("apply_facing", None) is None) and (data[VANILLA_BLOCK].get("contents", None) is not True):
-					errors.append(f"VANILLA_BLOCK key should have a 'apply_facing' key to boolean for '{item}', found '{data[VANILLA_BLOCK]}', needed format: VANILLA_BLOCK: {{\"id\":\"minecraft:stone\", \"apply_facing\":False}}.")
+					errors.append(f"VANILLA_BLOCK key should have an 'id' key for '{item}', found '{data[VANILLA_BLOCK]}', needed format: VANILLA_BLOCK: {{\"id\":\"minecraft:stone\"}}.")
 
 			# Prevent the use of "container" key for custom blocks
 			elif data["id"] == CUSTOM_BLOCK_VANILLA and data.get("container"):

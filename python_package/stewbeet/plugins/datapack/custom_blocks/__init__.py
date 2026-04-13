@@ -136,6 +136,9 @@ execute if score #rotation {ns}.data matches 0 if predicate {ns}:facing/west run
 advancement revoke @s only {ns}:custom_block_alternative/{item}
 
 # Execute the place function as and at the new placed item frame""")
+				# Get player rotation if visual_facing_source is "player" (while @s is still the player)
+				if block.get("visual_facing_source") == "player":
+					write_function(f"{ns}:custom_blocks/{item}/search", f"function {ns}:custom_blocks/get_rotation")
 				if "id" not in block:
 					write_function(f"{ns}:custom_blocks/{item}/search", f"execute as @e[type=item_frame,tag={ns}.new,tag={ns}.{item}] at @s run function {ns}:custom_blocks/{item}/place_main")
 				# Make place check function (only if "id" is in VANILLA_BLOCK)
@@ -170,7 +173,7 @@ kill @s
 
 				## Place function
 				content = ""
-				if block.get("apply_facing") not in (False, "entity"):
+				if block.get("block_facing") == "player":
 					content += f"function {ns}:custom_blocks/get_rotation\n"
 					content += "setblock ~ ~ ~ air strict\n"
 					block_states = []
@@ -183,7 +186,7 @@ kill @s
 						else:
 							content += f"execute if score #rotation {ns}.data matches {i+1} run setblock ~ ~ ~ {block_id}[facing={face}]{beautify_name}\n"
 				else:
-					if block.get("apply_facing") == "entity":
+					if block.get("visual_facing_source") == "player":
 						content += f"function {ns}:custom_blocks/get_rotation\n"
 					# Simple setblock
 					content += "setblock ~ ~ ~ air strict\n"
@@ -237,7 +240,7 @@ data merge entity @s {custom_name}
 {item_model}data modify entity @s transformation.scale set value [1.002f,1.002f,1.002f]
 data modify entity @s brightness set value {{block:15,sky:15}}
 """
-				if block["apply_facing"]:
+				if block.get("visual_facing_source") == "player":
 					content += f"""
 # Apply rotation
 execute if score #rotation {ns}.data matches 1 run data modify entity @s Rotation[0] set value 180.0f
@@ -316,6 +319,14 @@ execute at @s run tp @s ^ ^ ^0.1
 					content += """
 # Force ground position
 data modify entity @s Facing set value 1b
+"""
+				if block.get("visual_facing_source") == "player":
+					content += f"""
+# Apply rotation based on player direction
+execute if score #rotation {ns}.data matches 1 run data modify entity @s ItemRotation set value 4b
+execute if score #rotation {ns}.data matches 2 run data modify entity @s ItemRotation set value 6b
+execute if score #rotation {ns}.data matches 3 run data modify entity @s ItemRotation set value 0b
+execute if score #rotation {ns}.data matches 4 run data modify entity @s ItemRotation set value 2b
 """
 				write_function(f"{ns}:custom_blocks/{item}/place_secondary", content)
 				pass

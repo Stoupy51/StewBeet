@@ -107,7 +107,7 @@ CUSTOM_BLOCK_VANILLA: str = "minecraft:furnace"			# Vanilla block used as base f
 CUSTOM_BLOCK_ALTERNATIVE: str = "minecraft:item_frame"	# Same purpose as previous, but useful for blocks that can be placed on walls or on player's position (ex: flowers)
 CUSTOM_BLOCK_HEAD: str = "minecraft:player_head"		# Same purpose as previous, but useful for blocks does not have a custom model data
 CUSTOM_ITEM_VANILLA: str = "minecraft:command_block"	# Vanilla item used as base for custom items, must not have any survival vanilla behaviour
-VANILLA_BLOCK: str = "vanilla_block"					# Key to a vanilla block that will be placed for custom block interaction, value needs to be a dict like {"id":"minecraft:chest[type=single,waterlogged=false]", "apply_facing": True}
+VANILLA_BLOCK: str = "vanilla_block"					# Key to a vanilla block that will be placed for custom block interaction, value needs to be a dict like {"id":"minecraft:chest[type=single,waterlogged=false]", "block_facing": "player"} or a VanillaBlock instance
 NO_SILK_TOUCH_DROP: str = "no_silk_touch_drop"			# Key to no-silk drop data for ores: item id string, deterministic dict-like data (`NoSilkTouchDrop`), or a beet `LootTable`
 OVERRIDE_MODEL: str = "override_model"					# Key to a dictionnary that will be used to override the whole model
 SMITHED_CRAFTER_COMMAND: str = "smithed_crafter_command"	# Key to a command that will be used in a recipe in the Smithed Crafter library. If not present, the command will be defaulted to a loot table. Ex: {"result":...,SMITHED_CRAFTER_COMMAND: "function your_namespace:calls/smithed_crafter/do_something_else"}
