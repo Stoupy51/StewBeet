@@ -1,5 +1,8 @@
 
 # Imports
+from typing import Callable
+from re import Match, Pattern, compile
+
 import stouputils as stp
 from beet import Context
 
@@ -109,9 +112,37 @@ class UnloadFunction:
 					'clear @a *[custom_data~{"%s":{}}]' % self.ns,
 				}
 			),
+			"scoreboard_objectives": (
+				"# Remove scoreboard objectives",
+				set()
+			),
+			"storages": (
+				"# Clear storages",
+				set()
+			),
 		}
 
+		self.scan_datapack(ns)
 		self.write_unload_function()
+
+	def scan_datapack(self, ns: str) -> None:
+		regexes: dict[str, tuple[Pattern[str], Callable[[Match[str]], str]]] = {
+			"scoreboard_objectives": (
+				compile(rf"scoreboard objectives add ([^ ]+)"),
+				lambda match: f"scoreboard objectives remove {match.group(1)}"
+			),
+			"storages": (
+				compile(rf"data modify storage ({ns}:\w+) (\w+)"),
+				lambda match: f"data remove storage {match.group(1)} {match.group(2)}"
+			),
+		}
+
+		for func in self.ctx.data.functions.values():
+			for line in func.text.splitlines():
+				for key, (regex, callback) in regexes.items():
+					match = regex.search(line)
+					if match:
+						self.removal_commands[key][1].add(callback(match))
 
 	def write_unload_function(self) -> None:
 		content = "\n\n".join(
