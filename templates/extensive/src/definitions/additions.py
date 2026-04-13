@@ -77,12 +77,12 @@ def main():
     Block(
         id="vb_visual_facing",
         manual_category="miscellaneous",
-        vanilla_block=VanillaBlock(id="minecraft:glass", visual_facing_source="player"),
+        vanilla_block=VanillaBlock(id="minecraft:glass", visual_facing="player"),
         recipes=[CraftingShapelessRecipe(category="blocks", ingredients=[Ingr("minecraft:glass")])],
     )
 
     # Case 3 - Block + visual rotation: the vanilla block gets a facing= blockstate AND
-    #          the item_display rotates (implicit visual_facing_source="player").
+    #          the item_display rotates (implicit visual_facing="player").
     Block(
         id="vb_block_facing",
         manual_category="miscellaneous",
@@ -112,7 +112,7 @@ def main():
     BlockAlternative(
         id="vb_contents_player",
         manual_category="miscellaneous",
-        vanilla_block=VanillaBlock(contents=True, visual_facing_source="player"),
+        vanilla_block=VanillaBlock(contents=True, visual_facing="player"),
         recipes=[CraftingShapelessRecipe(category="blocks", ingredients=[Ingr("minecraft:item_frame"), Ingr("minecraft:compass")])],
     )
 
@@ -121,7 +121,7 @@ def main():
     BlockAlternative(
         id="vb_contents_frame",
         manual_category="miscellaneous",
-        vanilla_block=VanillaBlock(contents=True, visual_facing_source="item_frame"),
+        vanilla_block=VanillaBlock(contents=True, visual_facing="item_frame"),
         recipes=[CraftingShapelessRecipe(category="blocks", ingredients=[Ingr("minecraft:item_frame"), Ingr("minecraft:string")])],
     )
 

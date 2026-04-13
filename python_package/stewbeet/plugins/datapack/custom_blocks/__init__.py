@@ -136,8 +136,8 @@ execute if score #rotation {ns}.data matches 0 if predicate {ns}:facing/west run
 advancement revoke @s only {ns}:custom_block_alternative/{item}
 
 # Execute the place function as and at the new placed item frame""")
-				# Get player rotation if visual_facing_source is "player" (while @s is still the player)
-				if block.get("visual_facing_source") == "player":
+				# Get player rotation if visual_facing is "player" (while @s is still the player)
+				if block.get("visual_facing") == "player":
 					write_function(f"{ns}:custom_blocks/{item}/search", f"function {ns}:custom_blocks/get_rotation")
 				if "id" not in block:
 					write_function(f"{ns}:custom_blocks/{item}/search", f"execute as @e[type=item_frame,tag={ns}.new,tag={ns}.{item}] at @s run function {ns}:custom_blocks/{item}/place_main")
@@ -186,7 +186,7 @@ kill @s
 						else:
 							content += f"execute if score #rotation {ns}.data matches {i+1} run setblock ~ ~ ~ {block_id}[facing={face}]{beautify_name}\n"
 				else:
-					if block.get("visual_facing_source") == "player":
+					if block.get("visual_facing") == "player":
 						content += f"function {ns}:custom_blocks/get_rotation\n"
 					# Simple setblock
 					content += "setblock ~ ~ ~ air strict\n"
@@ -240,7 +240,7 @@ data merge entity @s {custom_name}
 {item_model}data modify entity @s transformation.scale set value [1.002f,1.002f,1.002f]
 data modify entity @s brightness set value {{block:15,sky:15}}
 """
-				if block.get("visual_facing_source") == "player":
+				if block.get("visual_facing") == "player":
 					content += f"""
 # Apply rotation
 execute if score #rotation {ns}.data matches 1 run data modify entity @s Rotation[0] set value 180.0f
@@ -315,7 +315,7 @@ execute store result entity @s Facing byte 1 run scoreboard players get #item_fr
 # Update position (fixes a Minecraft bug)
 execute at @s run tp @s ^ ^ ^0.1
 """
-				if block.get("visual_facing_source") == "player":
+				if block.get("visual_facing") == "player":
 					content += f"""
 # Force ground position
 data modify entity @s Facing set value 1b
