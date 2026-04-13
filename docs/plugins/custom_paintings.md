@@ -7,7 +7,7 @@
 - **✅ Required**: StewBeet framework initialization
 - **✅ Required**: `Your definition plugin` (see [`definitions_setup.md`](../1_definitions_setup/en.md) for details)
 - **✅ Required**: Texture file in the configured textures folder
-- **📍 Position**: Should run anywhere between verify_definitions and ingame_manual<br>
+- **📍 Position**: Should run anywhere between definitions_setup and ingame_manual<br>
 (see [`basic/beet.yml`](../../templates/basic/beet.yml) for an example)
 
 ## 📋 Overview
@@ -43,7 +43,6 @@ It automatically creates painting variants, handles texture registration, and ma
 pipeline:
   - ...
   - src.setup_definitions  # Load item definitions into memory
-  - stewbeet.plugins.verify_definitions
   - ...
   - stewbeet.plugins.custom_paintings  # Generate custom paintings
   - ...

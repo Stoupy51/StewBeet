@@ -13,7 +13,6 @@ Here are all the available plugins for the StewBeet framework:
 | Category | Plugin | Description | Image | Dependency |
 |----------|--------|-------------|-------|------------|
 | 🚀 **Core** | [**initialize**](./initialize.md) | Initializes StewBeet framework, sets up project metadata and pack configurations | ![Auto Item Lore](img/initialize.source_lore.jpg) | 🔴 Fully dependent |
-| ✅ **Core** | [**verify_definitions**](./verify_definitions.md) | Validates item definitions structure and performs consistency checks | ![Debug Export](img/verify_definitions.json_dump.jpg) | 🔴 Fully dependent |
 | 🔊 **Resource Pack** | [**resource_pack.sounds**](./resource_pack.sounds.md) | Processes sound files and generates sounds.json from sounds folder | ![Sound Result](img/resource_pack.sounds.result.jpg) | 🟡 Partly dependent |
 | 🎨 **Resource Pack** | [**resource_pack.item_models**](./resource_pack.item_models.md) | Automatically generates item models from texture patterns | ![Pattern Detection](img/resource_pack.item_models.pattern_detection.jpg) | 🟡 Partly dependent |
 | 🖼️ **Resource Pack** | [**resource_pack.check_power_of_2**](./resource_pack.check_power_of_2.md) | Validates that textures use power-of-2 resolutions | ![Texture Warning](img/resource_pack.check_power_of_2.warning.jpg) | 🟢 Independent |

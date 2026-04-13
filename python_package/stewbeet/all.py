@@ -4,7 +4,6 @@ from beet import Context
 
 # Constants
 GENERATION_PLUGINS = (
-    "stewbeet.plugins.verify_definitions",
     "stewbeet.plugins.resource_pack.sounds",
     "stewbeet.plugins.resource_pack.item_models",
     "stewbeet.plugins.resource_pack.check_power_of_2",
