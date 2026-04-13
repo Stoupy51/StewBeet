@@ -156,10 +156,7 @@ from stewbeet import Block, VanillaBlock, CraftingShapedRecipe, SmeltingRecipe, 
 
 block = Block(
     id="super_stone",
-    vanilla_block=VanillaBlock(
-        id="minecraft:cobblestone",
-        apply_facing=False              # Si le bloc a des états directionnels
-    ),
+    vanilla_block=VanillaBlock(id="minecraft:cobblestone"),
     manual_category="blocks",
     recipes=[
         # Aurait pu être shapeless, mais juste pour l'exemple :
@@ -191,8 +188,9 @@ block = Block(
 @dataclass
 class VanillaBlock:
     id: str                                          # Bloc vanilla de base (ex., "minecraft:cobblestone")
-    apply_facing: Literal[False, True, "entity"] = False  # Activer les variantes directionnelles
     contents: bool = False                           # Pour les blocs utilisant des item frames sans bloc vanilla
+    block_facing: Literal[False, "player"] = False   # Rotation du bloc placé selon le joueur
+    visual_facing_source: Literal["none", "player", "item_frame"] = "none"  # Source d'orientation visuelle
 ```
 
 #### **Configuration NoSilkTouchDrop**
@@ -451,14 +449,8 @@ def main():
     
     # Configurer les blocs personnalisés après génération
     # ⚠️ Nous utilisons Block.from_id() pour accéder aux définitions existantes et les modifier
-    Block.from_id("steel_block").vanilla_block = VanillaBlock(
-        id="minecraft:iron_block",
-        apply_facing=False
-    )
-    Block.from_id("raw_steel_block").vanilla_block = VanillaBlock(
-        id="minecraft:raw_iron_block",
-        apply_facing=False
-    )
+    Block.from_id("steel_block").vanilla_block = VanillaBlock(id="minecraft:iron_block")
+    Block.from_id("raw_steel_block").vanilla_block = VanillaBlock(id="minecraft:raw_iron_block")
 ```
 
 ### 🧪 Configuration d'équipement
@@ -644,7 +636,7 @@ electric_furnace = Block(
     id="electric_furnace",
     vanilla_block=VanillaBlock(
         id="minecraft:furnace",
-        apply_facing=True  # Active les variantes directionnelles (nord, est, sud, ouest)
+        block_facing="player"  # Active les variantes directionnelles (nord, est, sud, ouest)
     ),
     manual_category="energy",
     recipes=[
