@@ -97,7 +97,7 @@ scoreboard players set #minute {ns}.data 1
 		if content:
 			write_tick_file(content, prepend=True)
 
-type UnloadFunctionKeys = Literal["items", "scoreboard_objectives", "storages"]
+type UnloadFunctionKeys = Literal["items", "scoreboard_objectives", "storages", "blocks"]
 
 class UnloadFunction:
 	""" Class to generate the unload functions for the datapack """
@@ -121,6 +121,12 @@ class UnloadFunction:
 			"storages": (
 				"# Clear storages",
 				set()
+			),
+			"blocks": (
+				"# Destroy custom blocks",
+				{
+					'execute as @e[type=minecraft:item_display,tag=%s.custom_block] at @s run function %s:v%s/unload/destroy_block' % (self.ns, self.ns, self.version),
+				}
 			),
 		}
 
@@ -153,3 +159,8 @@ class UnloadFunction:
 			if len(commands) > 0
 		)
 		write_unload_file(content)
+		write_versioned_function("unload/destroy_block",
+f"""# This function is called by the main unload function to destroy custom blocks
+setblock ~ ~ ~ air
+kill @s
+""")
