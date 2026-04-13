@@ -1,6 +1,6 @@
 
 # Imports
-from typing import Callable
+from typing import Callable, Literal
 from re import Match, Pattern, compile
 
 import stouputils as stp
@@ -97,6 +97,8 @@ scoreboard players set #minute {ns}.data 1
 		if content:
 			write_tick_file(content, prepend=True)
 
+type UnloadFunctionKeys = Literal["items", "scoreboard_objectives", "storages"]
+
 class UnloadFunction:
 	""" Class to generate the unload functions for the datapack """
 
@@ -105,7 +107,7 @@ class UnloadFunction:
 		self.ns = ns
 		self.version = version
 
-		self.removal_commands: dict[str, tuple[str,set[str]]] = {
+		self.removal_commands: dict[UnloadFunctionKeys, tuple[str,set[str]]] = {
 			"items": (
 				"# Clear custom items",
 				{
@@ -126,7 +128,7 @@ class UnloadFunction:
 		self.write_unload_function()
 
 	def scan_datapack(self, ns: str) -> None:
-		regexes: dict[str, tuple[Pattern[str], Callable[[Match[str]], str]]] = {
+		regexes: dict[UnloadFunctionKeys, tuple[Pattern[str], Callable[[Match[str]], str]]] = {
 			"scoreboard_objectives": (
 				compile(rf"scoreboard objectives add ([^ ]+)"),
 				lambda match: f"scoreboard objectives remove {match.group(1)}"
