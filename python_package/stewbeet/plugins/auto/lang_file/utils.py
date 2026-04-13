@@ -15,7 +15,7 @@ lang: dict[str, str] = {}
 ALNUM_RE: re.Pattern[str] = re.compile(r'[a-zA-Z0-9]')
 LETTER_RE: re.Pattern[str] = re.compile(r'[a-zA-Z].*[a-zA-Z]|[a-zA-Z]', re.DOTALL)
 SENTENCE_PUNCT_RE: re.Pattern[str] = re.compile(r'^[\s:.,!?]*$')
-CLOSERS: dict[str, str] = {'(': ')', '[': ']', '{': '}'}
+CLOSERS: dict[str, str] = {'(': ')', '[': ']', '{': '}', '"': '"', "'": "'"}
 
 # Regex pattern for text extraction
 TEXT_RE: re.Pattern[str] = re.compile(
@@ -58,6 +58,8 @@ def split_text_content(text: str, max_words: int = 5) -> tuple[str, str, str]:
 		('', 'attacks!', '')
 		>>> split_text_content("Hello World")
 		('', 'Hello World', '')
+		>>> split_text_content("\\n- Total 'Vb Contents Frame': \\n")
+		('\\n- ', "Total 'Vb Contents Frame'", ': \\n')
 		>>> split_text_content("💣 BOMB PLANTED!")
 		('💣 ', 'BOMB PLANTED!', '')
 		>>> split_text_content("  !pure!  ")
@@ -108,9 +110,11 @@ def split_text_content(text: str, max_words: int = 5) -> tuple[str, str, str]:
 	prefix, core, suffix = text[:match.start()], match.group(), text[match.end():]
 
 	# If the prefix has unmatched openers whose closers are already in the core,
-	# fold those openers from the prefix into the core
+	# fold those openers from the prefix into the core.
+	# For symmetric delimiters ('"' and "'") use parity instead of count difference
+	# because opener == closer makes subtraction always 0.
 	for opener, closer in CLOSERS.items():
-		unmatched_in_prefix = prefix.count(opener) - prefix.count(closer)
+		unmatched_in_prefix = prefix.count(opener) % 2 if opener == closer else prefix.count(opener) - prefix.count(closer)
 		while unmatched_in_prefix > 0:
 			if closer in core:
 				# Closer already absorbed into core — just pull the opener in too
@@ -129,18 +133,29 @@ def split_text_content(text: str, max_words: int = 5) -> tuple[str, str, str]:
 				break
 			unmatched_in_prefix -= 1
 
-	# If the core has unmatched openers, consume matching closers from the suffix
+	# If the core has unmatched openers, consume matching closers from the suffix.
+	# Same parity rule for symmetric delimiters.
+	# Track whether this pass consumed anything so the final punctuation sweep can
+	# decide how aggressively to absorb the remaining suffix.
+	suffix_was_consumed: bool = False
 	for opener, closer in CLOSERS.items():
-		unmatched = core.count(opener) - core.count(closer)
+		unmatched = core.count(opener) % 2 if opener == closer else core.count(opener) - core.count(closer)
 		while unmatched > 0 and closer in suffix:
 			idx = suffix.index(closer)
 			core += suffix[:idx + 1]
 			suffix = suffix[idx + 1:]
 			unmatched -= 1
+			suffix_was_consumed = True
 
-	# Absorb back suffix that is purely sentence-ending punctuation (: . , ! ?)
-	# These are semantically bound to the text and shouldn't become lone siblings
-	if SENTENCE_PUNCT_RE.match(suffix):
+	# Absorb back suffix that is purely sentence-ending punctuation (: . , ! ?).
+	# After bracket consumption from suffix we only absorb strong terminators
+	# (!, ?, .) so that spacers like ": " that follow a closing bracket are kept
+	# as a separate suffix component rather than being pulled into the core.
+	if suffix_was_consumed:
+		if re.match(r'^[!?.]+$', suffix):
+			core += suffix
+			suffix = ''
+	elif SENTENCE_PUNCT_RE.match(suffix):
 		core += suffix
 		suffix = ''
 
@@ -572,8 +587,17 @@ def handle_file(content: TextFileBase[str] | None, ctx: Context | None = None) -
 
 		prefix, core, suffix = split_text_content(clean_text)
 
+		# Redistribute leading/trailing \n from core into prefix/suffix so they are
+		# not stored in the translation value and don't inflate the lang key.
+		while core.startswith('\n'):
+			prefix += '\n'
+			core = core[1:]
+		while core.endswith('\n'):
+			suffix = '\n' + suffix
+			core = core[:-1]
+
 		key_for_lang, verif = lang_format(core, None if Mem.ctx == ctx else ctx)
-		if len(verif) < 3 or not verif.isalnum() or "\\u" in text or "$(" in text:
+		if len(verif) < 3 or not verif.isalnum() or "\\u" in text or "$" in clean_text:
 			continue
 
 		key_for_lang = resolve_lang_key(key_for_lang, core)
@@ -583,6 +607,12 @@ def handle_file(content: TextFileBase[str] | None, ctx: Context | None = None) -
 			string, text, clean_text, start, end, quote, key_quote,
 			key_for_lang, prefix, suffix,
 		)
+		# Drop any nested replacements fully contained in this broader enclosing-object
+		# replacement to prevent overlapping ranges that corrupt the output JSON.
+		replacements = [
+			(rs, re, frag) for rs, re, frag in replacements
+			if not (replace_start <= rs and re <= replace_end)
+		]
 		replacements.append((replace_start, replace_end, new_fragment))
 
 	if replacements:
