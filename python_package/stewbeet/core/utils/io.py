@@ -210,6 +210,27 @@ def write_load_file(
 	return write_versioned_function("load/confirm_load", content, overwrite, prepend, tags, condition)
 
 
+def write_unload_file(
+	content: str,
+	overwrite: bool = False,
+	prepend: bool = False,
+	tags: list[str] | None = None,
+	condition: Callable[[str], bool] | None = lambda existing_content: True, # pyright: ignore[reportUnknownLambdaType]
+) -> Function | None:
+	""" Write the content to the unload file
+
+	Args:
+		content     (str):                    The content to write
+		overwrite   (bool):                   If the file should be overwritten (default: Append the content)
+		prepend     (bool):                   If the content should be prepended instead of appended (not used if overwrite is True)
+		tags        (list[str] | None):       The function tags to add to the function (ex: ["namespace:something"] for 'data/namespace/tags/function/something.json')
+		condition   (Callable[[str], bool]):  A function that takes the existing content and returns whether the new content should be written (default: always write)
+	"""
+	unload_tag = f"{Mem.ctx.project_id}:unload"
+	tags = (tags or []) + [unload_tag]
+	return write_versioned_function("unload", content, overwrite, prepend, tags, condition)
+
+
 def write_tick_file(
 	content: str,
 	overwrite: bool = False,

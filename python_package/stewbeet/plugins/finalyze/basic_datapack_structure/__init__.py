@@ -4,7 +4,7 @@ import stouputils as stp
 from beet import Context
 
 from ....core.__memory__ import Mem
-from ....core.utils.io import write_tick_file, write_versioned_function
+from ....core.utils.io import write_tick_file, write_versioned_function, write_unload_file
 
 
 # Main entry point
@@ -119,4 +119,4 @@ class UnloadFunction:
 			for _, (header, commands) in self.removal_commands.items()
 			if len(commands) > 0
 		)
-		write_versioned_function("unload", content)
+		write_unload_file(content)
