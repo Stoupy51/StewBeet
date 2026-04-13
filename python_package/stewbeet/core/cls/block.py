@@ -25,11 +25,11 @@ class VanillaBlock(StMapping):
 
     This class separates block orientation into two independent axes:
     - ``block_facing``: controls the orientation of the placed vanilla block itself
-    - ``visual_facing_source``: controls the orientation of the visual entity/display
+    - ``visual_facing``: controls the orientation of the visual entity/display
 
     Legacy ``apply_facing`` field is still accepted for backward compatibility:
-    - ``apply_facing=True`` → ``block_facing="player"``, ``visual_facing_source="player"``
-    - ``apply_facing="entity"`` → ``visual_facing_source="player"``
+    - ``apply_facing=True`` → ``block_facing="player"``, ``visual_facing="player"``
+    - ``apply_facing="entity"`` → ``visual_facing="player"``
     - ``apply_facing=False`` → no change (defaults)
 
     Default behavior (no facing):
@@ -39,7 +39,7 @@ class VanillaBlock(StMapping):
     'minecraft:stone'
     >>> vb.block_facing
     False
-    >>> vb.visual_facing_source
+    >>> vb.visual_facing
     'none'
 
     Legacy ``apply_facing=True`` (block + visual rotation):
@@ -47,7 +47,7 @@ class VanillaBlock(StMapping):
     >>> vb = VanillaBlock(id="minecraft:furnace", apply_facing=True)
     >>> vb.block_facing
     'player'
-    >>> vb.visual_facing_source
+    >>> vb.visual_facing
     'player'
 
     Legacy ``apply_facing="entity"`` (visual only):
@@ -55,7 +55,7 @@ class VanillaBlock(StMapping):
     >>> vb = VanillaBlock(id="minecraft:stone", apply_facing="entity")
     >>> vb.block_facing
     False
-    >>> vb.visual_facing_source
+    >>> vb.visual_facing
     'player'
 
     Item frame custom block (no rotation):
@@ -65,19 +65,19 @@ class VanillaBlock(StMapping):
     True
     >>> vb.id is None
     True
-    >>> vb.visual_facing_source
+    >>> vb.visual_facing
     'none'
 
     Item frame rotated like player (4 horizontal directions):
 
-    >>> vb = VanillaBlock(contents=True, visual_facing_source="player")
-    >>> vb.visual_facing_source
+    >>> vb = VanillaBlock(contents=True, visual_facing="player")
+    >>> vb.visual_facing
     'player'
 
     Item frame using its own facing (6 directions):
 
-    >>> vb = VanillaBlock(contents=True, visual_facing_source="item_frame")
-    >>> vb.visual_facing_source
+    >>> vb = VanillaBlock(contents=True, visual_facing="item_frame")
+    >>> vb.visual_facing
     'item_frame'
 
     Invalid: ``block_facing`` with ``contents=True``:
@@ -85,14 +85,14 @@ class VanillaBlock(StMapping):
     >>> VanillaBlock(contents=True, block_facing="player")
     Traceback (most recent call last):
     ...
-    ValueError: contents=True cannot use block_facing="player"; use visual_facing_source instead.
+    ValueError: contents=True cannot use block_facing="player"; use visual_facing instead.
 
     New fields directly:
 
     >>> vb = VanillaBlock(id="minecraft:barrel", block_facing="player")
     >>> vb.block_facing
     'player'
-    >>> vb.visual_facing_source
+    >>> vb.visual_facing
     'player'
     """
     id: str | None = ""
@@ -101,10 +101,10 @@ class VanillaBlock(StMapping):
     """ For blocks using item frames and no vanilla block, e.g. servo inserter/extractor from SimplEnergy. """
     block_facing: Literal[False, "player"] = False
     """ Whether to rotate the placed vanilla block based on player orientation ([facing=...] blockstate). """
-    visual_facing_source: Literal["none", "player", "item_frame"] = "none"
+    visual_facing: Literal["none", "player", "item_frame"] = "none"
     """ Source of the visual orientation: "none" (no rotation), "player" (4 horizontal directions), "item_frame" (6 directions from item frame Facing). """
     apply_facing: Literal[False, True, "entity", None] = None
-    """ Legacy field for backward compatibility. Prefer ``block_facing`` and ``visual_facing_source``. """
+    """ Legacy field for backward compatibility. Prefer ``block_facing`` and ``visual_facing``. """
 
     def __post_init__(self) -> None:
         # Normalize ID
@@ -118,17 +118,17 @@ class VanillaBlock(StMapping):
         # Legacy compatibility: apply_facing -> new fields
         if self.apply_facing is True:
             self.block_facing = "player"
-            self.visual_facing_source = "player"
+            self.visual_facing = "player"
         elif self.apply_facing == "entity":
-            self.visual_facing_source = "player"
+            self.visual_facing = "player"
 
-        # Implicit: block_facing="player" implies visual_facing_source="player" unless explicitly set
-        if self.block_facing == "player" and self.visual_facing_source == "none" and self.apply_facing is None:
-            self.visual_facing_source = "player"
+        # Implicit: block_facing="player" implies visual_facing="player" unless explicitly set
+        if self.block_facing == "player" and self.visual_facing == "none" and self.apply_facing is None:
+            self.visual_facing = "player"
 
         # Validation
         if self.contents and self.block_facing:
-            raise ValueError("contents=True cannot use block_facing=\"player\"; use visual_facing_source instead.")
+            raise ValueError("contents=True cannot use block_facing=\"player\"; use visual_facing instead.")
 
 @dataclass(kw_only=True)
 class NoSilkTouchDrop(StMapping):

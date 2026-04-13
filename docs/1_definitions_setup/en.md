@@ -190,7 +190,7 @@ class VanillaBlock:
     id: str                                          # Base vanilla block (e.g., "minecraft:cobblestone")
     contents: bool = False                           # For blocks using item frames without vanilla block
     block_facing: Literal[False, "player"] = False   # Rotate placed block based on player facing
-    visual_facing_source: Literal["none", "player", "item_frame"] = "none"  # Visual entity orientation source
+    visual_facing: Literal["none", "player", "item_frame"] = "none"  # Visual entity orientation source
 ```
 
 #### **NoSilkTouchDrop Configuration**

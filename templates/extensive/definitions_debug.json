@@ -121,7 +121,7 @@
 			"id": "minecraft:iron_block",
 			"contents": false,
 			"block_facing": false,
-			"visual_facing_source": "none"
+			"visual_facing": "none"
 		}
 	},
 	"steel_ore": {
@@ -142,7 +142,7 @@
 			"id": "minecraft:polished_deepslate",
 			"contents": false,
 			"block_facing": false,
-			"visual_facing_source": "none"
+			"visual_facing": "none"
 		},
 		"no_silk_touch_drop": "raw_steel"
 	},
@@ -164,7 +164,7 @@
 			"id": "minecraft:polished_deepslate",
 			"contents": false,
 			"block_facing": false,
-			"visual_facing_source": "none"
+			"visual_facing": "none"
 		},
 		"no_silk_touch_drop": "raw_steel"
 	},
@@ -188,7 +188,7 @@
 			"id": "minecraft:raw_iron_block",
 			"contents": false,
 			"block_facing": false,
-			"visual_facing_source": "none"
+			"visual_facing": "none"
 		},
 		"no_silk_touch_drop": {
 			"type": "minecraft:fishing",
@@ -421,7 +421,7 @@
 			"id": "minecraft:cobblestone",
 			"contents": false,
 			"block_facing": false,
-			"visual_facing_source": "none"
+			"visual_facing": "none"
 		}
 	},
 	"stewbeet_painting": {
@@ -485,7 +485,7 @@
 			"id": "minecraft:cobblestone",
 			"contents": false,
 			"block_facing": false,
-			"visual_facing_source": "none"
+			"visual_facing": "none"
 		}
 	},
 	"vb_visual_facing": {
@@ -508,7 +508,7 @@
 			"id": "minecraft:glass",
 			"contents": false,
 			"block_facing": false,
-			"visual_facing_source": "player"
+			"visual_facing": "player"
 		}
 	},
 	"vb_block_facing": {
@@ -531,7 +531,7 @@
 			"id": "minecraft:furnace",
 			"contents": false,
 			"block_facing": "player",
-			"visual_facing_source": "player"
+			"visual_facing": "player"
 		}
 	},
 	"vb_block_states": {
@@ -554,7 +554,7 @@
 			"id": "minecraft:furnace[lit=false]",
 			"contents": false,
 			"block_facing": "player",
-			"visual_facing_source": "player"
+			"visual_facing": "player"
 		}
 	},
 	"vb_contents": {
@@ -575,7 +575,7 @@
 		"vanilla_block": {
 			"contents": true,
 			"block_facing": false,
-			"visual_facing_source": "none"
+			"visual_facing": "none"
 		}
 	},
 	"vb_contents_player": {
@@ -596,7 +596,7 @@
 		"vanilla_block": {
 			"contents": true,
 			"block_facing": false,
-			"visual_facing_source": "player"
+			"visual_facing": "player"
 		}
 	},
 	"vb_contents_frame": {
@@ -617,7 +617,7 @@
 		"vanilla_block": {
 			"contents": true,
 			"block_facing": false,
-			"visual_facing_source": "item_frame"
+			"visual_facing": "item_frame"
 		}
 	}
 }
