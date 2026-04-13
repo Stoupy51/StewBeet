@@ -23,6 +23,13 @@
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/shazinho"}]},
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/super_stone"}]},
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/stewbeet_painting"}]},
-		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/manual"}]}
+		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/manual"}]},
+		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/vb_no_facing"}]},
+		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/vb_visual_facing"}]},
+		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/vb_block_facing"}]},
+		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/vb_block_states"}]},
+		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/vb_contents"}]},
+		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/vb_contents_player"}]},
+		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/vb_contents_frame"}]}
 	]
 }

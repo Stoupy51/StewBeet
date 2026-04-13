@@ -1,0 +1,65 @@
+{
+	"type": "minecraft:notice",
+	"title": [
+		"",
+		{
+			"sprite": "_your_namespace:item/dialog_sprite/vb_block_facing",
+			"shadow_color": [
+				0,
+				0,
+				0,
+				0
+			],
+			"atlas": "minecraft:items"
+		},
+		" ",
+		{
+			"translate": "_your_namespace.vb_block_facing",
+			"underlined": true
+		},
+		" ",
+		{
+			"sprite": "_your_namespace:item/dialog_sprite/vb_block_facing",
+			"shadow_color": [
+				0,
+				0,
+				0,
+				0
+			],
+			"atlas": "minecraft:items"
+		}
+	],
+	"body": [
+		{
+			"type": "minecraft:plain_message",
+			"contents": [
+				{"text": "V   ","font": "_your_namespace:manual","color": "white"},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_32"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"}," (32)"]}},
+				" ",
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_34"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"}," (34)"]}},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_32"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"}," (32)"]}},
+				" ",
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_34"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"}," (34)"]}}
+			],
+			"width": 400
+		},
+		{
+			"type": "minecraft:plain_message",
+			"contents": [
+				{"text": "","font": "_your_namespace:manual","color": "white","shadow_color": [0,0,0,0]},
+				"\"$5\n\"",
+				{"text": "$腸","hover_event": {"action": "show_item","id": "minecraft:furnace","components": {}}},
+				"U$  \n\"",
+				{"text": "U$","hover_event": {"action": "show_item","id": "minecraft:furnace","components": {}}},
+				"U$U$",
+				{"text": "$$聕","hover_event": {"action": "show_item","id": "furnace","components": {"container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:vb_block_facing","from": "_your_namespace"}}}}}}],"tooltip_display": {"hidden_components": ["minecraft:container"]},"item_model": "_your_namespace:vb_block_facing","item_name": {"translate": "_your_namespace.vb_block_facing"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},[{"text":" ","italic": true,"color": "blue"}, {"translate": "_your_namespace.extensive_template"}]]],"custom_data": {"_your_namespace": {"vb_block_facing": true},"smithed": {"id": "_your_namespace:vb_block_facing","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}}}},
+				"#$\n\"U$U$U$",
+				{"text": "U$","hover_event": {"action": "show_item","id": "furnace","components": {"container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:vb_block_facing","from": "_your_namespace"}}}}}}],"tooltip_display": {"hidden_components": ["minecraft:container"]},"item_model": "_your_namespace:vb_block_facing","item_name": {"translate": "_your_namespace.vb_block_facing"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},[{"text":" ","italic": true,"color": "blue"}, {"translate": "_your_namespace.extensive_template"}]]],"custom_data": {"_your_namespace": {"vb_block_facing": true},"smithed": {"id": "_your_namespace:vb_block_facing","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}}}},
+				"#$\n\n\n",
+				{"text": "2\n0","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$腸"},"\n","\"",{"text": "U$"},"U$U$",{"text": "$$聕"},"\n\"","U$U$U$",{"text": "U$"},"\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.furnace","color": "gray"}]}},
+				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+			],
+			"width": 140
+		}
+	]
+}
