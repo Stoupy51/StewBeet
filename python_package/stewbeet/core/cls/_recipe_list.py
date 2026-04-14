@@ -8,7 +8,7 @@ from typing import Any, Self, SupportsIndex, cast
 
 import stouputils as stp
 from beet.contrib.vanilla import Vanilla
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 
 
 @stp.simple_cache

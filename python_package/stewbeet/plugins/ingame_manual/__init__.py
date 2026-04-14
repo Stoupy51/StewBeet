@@ -4,7 +4,7 @@ import sys
 
 import stouputils as stp
 from beet import Context
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 
 from ...core.__memory__ import Mem
 from .main import manual_main

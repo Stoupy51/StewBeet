@@ -1,7 +1,7 @@
 
 # ruff: noqa: E501
 # Imports
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 from beet.library import base
 from beet.toolchain.config import FormatSpecifier
 

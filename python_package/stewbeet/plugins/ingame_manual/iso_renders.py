@@ -7,7 +7,7 @@ from typing import cast
 import requests
 import stouputils as stp
 from beet import Model
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 from model_resolver.render import Render
 
 from ...core.__memory__ import Mem

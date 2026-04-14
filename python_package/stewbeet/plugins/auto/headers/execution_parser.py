@@ -6,7 +6,7 @@ like 'as @e[...] & at @s' from command lines.
 """
 
 # Imports
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 
 
 # Functions

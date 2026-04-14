@@ -110,7 +110,7 @@ Use beet's native object-oriented API to write files programmatically in plugins
 
 ```python
 from beet import Context, Function, Advancement, FunctionTag
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 
 def beet_default(ctx: Context):
     # Writing a function

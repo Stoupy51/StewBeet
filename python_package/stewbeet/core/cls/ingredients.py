@@ -6,7 +6,7 @@ from typing import Any, cast
 
 import stouputils as stp
 from beet import LootTable
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 
 from ..__memory__ import Mem
 from ..utils.io import set_json_encoder
@@ -28,7 +28,7 @@ SPECIAL_RECIPES_TYPES: tuple[str, ...] = ("simplenergy_pulverizing", "stardust_a
 ALL_RECIPES_TYPES: tuple[str, ...] = (*FURNACES_RECIPES_TYPES, *CRAFTING_RECIPES_TYPES, *OTHER_RECIPES_TYPES, *UNUSED_RECIPES_TYPES, *SPECIAL_RECIPES_TYPES)
 
 # Ingr class
-class Ingr(JsonDict):
+class Ingr(dict[str, Any]):
 
 	def __init__(self, id: str | JsonDict, ns: str | None = None, count: int | None = None, **kwargs: Any) -> None:
 		""" Get the identity of the ingredient from its id for custom crafts

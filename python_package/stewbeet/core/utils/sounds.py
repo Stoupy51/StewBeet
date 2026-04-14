@@ -4,7 +4,7 @@ from typing import Any, cast
 
 import stouputils as stp
 from beet import Context, Sound, SoundConfig
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 
 
 # Functions

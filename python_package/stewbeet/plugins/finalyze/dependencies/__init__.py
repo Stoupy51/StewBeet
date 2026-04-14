@@ -2,7 +2,7 @@
 # Imports
 import stouputils as stp
 from beet import Context
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 
 from ....core.__memory__ import Mem
 from ....core.constants import BOOKSHELF_MODULES, LATEST_MC_VERSION, MORE_DATA_VERSIONS, OFFICIAL_LIBS, official_lib_used

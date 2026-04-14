@@ -5,7 +5,7 @@ from enum import Enum
 from typing import cast
 
 import stouputils as stp
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 
 from ..__memory__ import Mem
 

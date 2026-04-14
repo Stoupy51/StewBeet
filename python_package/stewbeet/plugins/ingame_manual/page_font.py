@@ -4,7 +4,7 @@
 import os
 
 import stouputils as stp
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 from PIL import Image
 
 from ...core.__memory__ import Mem

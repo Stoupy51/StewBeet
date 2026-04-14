@@ -2,7 +2,7 @@
 # Imports
 import stouputils as stp
 from beet import Context
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 
 from .constants import SorterFile
 from .match import generate_sorter

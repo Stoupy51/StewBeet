@@ -6,7 +6,7 @@ from pathlib import Path
 
 import stouputils as stp
 from beet import Equipment, Texture
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 
 from ..__memory__ import Mem
 from ..cls.block import VANILLA_BLOCK_FOR_ORES, Block

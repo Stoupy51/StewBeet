@@ -5,7 +5,7 @@ from pathlib import Path
 
 import stouputils as stp
 from beet import Advancement, BlockTag, Context, EntityTypeTag, LootTable, Predicate
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 
 from ....core.__memory__ import Mem
 from ....core.cls.block import VANILLA_BLOCK_FOR_ORES, GrowingSeed, GrowingSeedLoot, NoSilkTouchDrop

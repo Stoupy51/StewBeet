@@ -110,7 +110,7 @@ Utilisez l'API native orientée objet de beet pour écrire des fichiers par prog
 
 ```python
 from beet import Context, Function, Advancement, FunctionTag
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 
 def beet_default(ctx: Context):
     # Écrire une fonction
