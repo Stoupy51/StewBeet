@@ -22,7 +22,6 @@ def beet_default(ctx: Context):
 		Mem.ctx = ctx
 
 	# Get data from memory
-	assert ctx.meta["stewbeet"].get("source_lore", None) is not None, "Source lore is not set in the context metadata."
 	assert ctx.project_id, "Project ID is not set. Please set it in the project configuration."
 	ns: str = ctx.project_id
 
