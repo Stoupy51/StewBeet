@@ -44,6 +44,12 @@ Issues = "https://github.com/Stoupy51/stewbeet/issues"
 [project.scripts]
 stewbeet = "stewbeet:main"
 
+[dependency-groups]
+dev = [
+    "pyright>=1.1.408",
+    "ruff>=0.15.10",
+]
+
 [tool.pyright]
 typeCheckingMode = "strict"
 

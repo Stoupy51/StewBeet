@@ -18,7 +18,7 @@ from .source_lore_font import find_pack_png, prepare_source_lore_font
 
 
 # Main entry point
-def beet_default(ctx: Context, silent: bool = False) -> Generator[None, None, None]:
+def beet_default(ctx: Context, silent: bool = False) -> Generator[None]:
 	with stp.MeasureTime(print_func=stp.debug, message="Total execution time") if not silent else stp.NullContextManager():
 
 		# Assertions

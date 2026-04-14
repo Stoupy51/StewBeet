@@ -5,8 +5,8 @@ from string import ascii_lowercase, digits
 
 import stouputils as stp
 from beet import JukeboxSong, Sound
-from stouputils.typing import JsonDict
 from mutagen.oggvorbis import OggVorbis
+from stouputils.typing import JsonDict
 
 from ..__memory__ import Mem
 from ..cls.item import Item
