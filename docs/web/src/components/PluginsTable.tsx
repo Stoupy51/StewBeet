@@ -22,6 +22,7 @@ import {
     HiLink,
     HiFolderOpen,
     HiShieldCheck,
+    HiHashtag,
     HiX
 } from 'react-icons/hi';
 import { useTranslation } from '../i18n/useTranslation';
@@ -70,6 +71,7 @@ const getPlugins = (t: (key: string) => string): Plugin[] => [
     // Automation
     { id: 16, name: 'auto.lang_file', category: t('pluginsTable.categoryAutomation'), descriptionKey: 'pluginsTable.langFileDesc', color: 'from-emerald-500 to-teal-500', icon: HiGlobe, dependency: '🟢', delay: 0.8, link: 'https://github.com/Stoupy51/StewBeet/blob/main/docs/plugins/auto.lang_file.md', image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/auto.lang_file.en_us_example.jpg' },
     { id: 17, name: 'auto.headers', category: t('pluginsTable.categoryAutomation'), descriptionKey: 'pluginsTable.headersDesc', color: 'from-purple-500 to-indigo-500', icon: HiCode, dependency: '🟢', delay: 0.85, link: 'https://github.com/Stoupy51/StewBeet/blob/main/docs/plugins/auto.headers.md', image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/auto.headers.macro_example.jpg' },
+    { id: 22, name: 'auto.scoreboard_constants', category: t('pluginsTable.categoryAutomation'), descriptionKey: 'pluginsTable.scoreboardConstantsDesc', color: 'from-orange-500 to-amber-500', icon: HiHashtag, dependency: '🟢', delay: 0.875, link: 'https://github.com/Stoupy51/StewBeet/blob/main/docs/plugins/auto.scoreboard_constants.md', image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/auto.scoreboard_constants.example.jpg' },
 
     // Build
     { id: 18, name: 'archive', category: t('pluginsTable.categoryBuild'), descriptionKey: 'pluginsTable.archiveDesc', color: 'from-gray-500 to-slate-500', icon: HiArchive, dependency: '🟢', delay: 0.9, link: 'https://github.com/Stoupy51/StewBeet/blob/main/docs/plugins/archive.md', image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/archive.output_directory.jpg' },
