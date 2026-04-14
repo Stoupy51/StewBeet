@@ -8,8 +8,9 @@ from typing import Any, cast
 
 import stouputils as stp
 from beet import Font, LootTable, Texture
-from beet.core.utils import JsonDict, TextComponent
+from beet.core.utils import TextComponent
 from PIL import Image
+from stouputils.typing import JsonDict
 
 from stewbeet.core.definitions_helper.completion import add_private_custom_data_for_namespace
 

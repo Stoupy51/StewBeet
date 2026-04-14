@@ -5,7 +5,7 @@ import re
 
 import pyperclip
 import stouputils as stp
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 
 
 # Configuration

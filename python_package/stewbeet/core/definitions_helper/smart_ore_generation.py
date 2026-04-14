@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import stouputils as stp
 from beet import BlockTag
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 
 from ..__memory__ import Mem
 from ..constants import official_lib_used

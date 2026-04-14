@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 import stouputils as stp
-from beet.core.utils import JsonDict, TextComponent
+from beet.core.utils import TextComponent
+from stouputils.typing import JsonDict
 
 from ..__memory__ import Mem
 from ..cls.external_item import ExternalItem

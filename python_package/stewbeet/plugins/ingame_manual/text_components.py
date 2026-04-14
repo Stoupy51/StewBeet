@@ -3,7 +3,8 @@ Handles text component formatting and updates for the manual
 """
 from typing import Literal
 
-from beet.core.utils import JsonDict, TextComponent
+from beet.core.utils import TextComponent
+from stouputils.typing import JsonDict
 
 
 def create_hover_event(action: Literal["show_text", "show_item"], value: TextComponent) -> JsonDict:

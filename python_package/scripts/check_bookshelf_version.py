@@ -13,7 +13,7 @@ import os
 
 import requests
 import stouputils as stp
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 from on_bookshelf_release import API_URL, CONFIG_PATH
 
 

@@ -4,7 +4,8 @@ from dataclasses import dataclass, field
 from typing import Any
 
 import stouputils as stp
-from beet.core.utils import JsonDict, TextComponent
+from beet.core.utils import TextComponent
+from stouputils.typing import JsonDict
 
 from ..constants import (
     CATEGORY,

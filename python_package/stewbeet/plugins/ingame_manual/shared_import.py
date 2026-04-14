@@ -2,7 +2,7 @@
 # ruff: noqa: RUF012
 # Imports
 import stouputils as stp
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 
 
 # Utils functions for fonts (item start at 0x0000, pages at 0xa000)

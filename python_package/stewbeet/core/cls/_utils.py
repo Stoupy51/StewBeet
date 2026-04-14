@@ -8,7 +8,7 @@ from typing import Any, Self
 
 import stouputils as stp
 from beet import LootTable
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 
 from ..constants import NOT_COMPONENTS
 

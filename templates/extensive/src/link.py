@@ -1,7 +1,7 @@
 
 # Imports
 from beet import Context
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 from stewbeet import *  # type: ignore
 
 

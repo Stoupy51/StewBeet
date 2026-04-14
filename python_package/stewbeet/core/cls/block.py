@@ -5,7 +5,7 @@ from typing import Literal
 
 import stouputils as stp
 from beet import LootTable
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 
 from ..constants import (
     CUSTOM_BLOCK_ALTERNATIVE,
