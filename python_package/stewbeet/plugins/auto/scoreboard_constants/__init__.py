@@ -8,7 +8,7 @@ from ....core.utils.io import write_load_file
 
 
 # Main entry point
-@stp.measure_time(message="Execution time of 'stewbeet.plugins.finalyze.scoreboard_constants'")
+@stp.measure_time(message="Execution time of 'stewbeet.plugins.auto.scoreboard_constants'")
 def beet_default(ctx: Context):
 	""" Main entry point for the scoreboard constants plugin.
 	This plugin looks for all usage of scoreboard constants in the project and generates their set commands in the load function.

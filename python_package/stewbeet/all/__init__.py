@@ -1,5 +1,7 @@
 
 # Imports
+from collections.abc import Generator
+
 from beet import Context
 
 # Constants
@@ -23,6 +25,7 @@ FINALYZE_PLUGINS = (
     "stewbeet.plugins.finalyze.dependencies",
     "stewbeet.plugins.finalyze.check_unused_textures",
     "stewbeet.plugins.finalyze.last_final",
+    "stewbeet.plugins.auto.scoreboard_constants",
     "stewbeet.plugins.auto.lang_file",
     "stewbeet.plugins.auto.headers",
     "stewbeet.plugins.archive",
@@ -31,7 +34,7 @@ FINALYZE_PLUGINS = (
     "stewbeet.plugins.compute_sha1"
 )
 
-def beet_default(ctx: Context):
+def beet_default(ctx: Context, silent: bool = False) -> Generator[None]:
     """ Run all plugins that should run after definitions are loaded.
     This function will yield before finalizing the project (so users can run their own plugins in the middle of the pipeline).
 
@@ -41,12 +44,12 @@ def beet_default(ctx: Context):
     """
     # Assertions
     for x in GENERATION_PLUGINS:
-        ctx.require(x)
+        ctx.require(x) if not silent else ctx.require(f"{x}.silent")
 
     # Yield to allow user code to run
     yield
 
     # After user code, run the final plugins
     for x in FINALYZE_PLUGINS:
-        ctx.require(x)
+        ctx.require(x) if not silent else ctx.require(f"{x}.silent")
 
