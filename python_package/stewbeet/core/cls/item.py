@@ -91,6 +91,12 @@ class Item(StMapping):
         # Add minecraft: to base item if needed
         if self.base_item and ":" not in self.base_item:
             self.base_item = "minecraft:" + self.base_item
+        if ":" in self.id:
+            stp.warning(
+                f"Item ID '{self.id}' cannot contain ':', these characters are reserved for external item definitions. "
+                "Please remove the namespace from the ID or use ExternalItem if that's what you meant."
+            )
+            self.id = self.id.split(":")[-1]
 
         # Warnings
         if self.wiki_buttons and not self.manual_category:
