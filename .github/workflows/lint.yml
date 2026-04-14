@@ -24,7 +24,7 @@ jobs:
           uv venv
           uv pip install -e .
       - name: Ruff lint with python 3.14
-        run: uv run ruff check ./stewbeet
+        run: cd ./python_package && uv run ruff check ./stewbeet
       - name: Pyright type check with python 3.14
-        run: uv run pyright ./stewbeet
+        run: cd ./python_package && uv run pyright ./stewbeet
 
