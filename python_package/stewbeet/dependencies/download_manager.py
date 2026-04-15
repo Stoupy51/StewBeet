@@ -90,14 +90,24 @@ def parse_version(s: str) -> tuple[int, ...]:
 	return tuple(int(x) for x in s.split(".") if x.isdigit())
 
 
+def mc_compatible(versions: list[JsonDict], mc_tup: tuple[int, ...]) -> list[JsonDict]:
+	"""Return versions whose supports list includes mc_tup (exact), falling back to max(supports) <= mc_tup."""
+	def sup_tuples(v: JsonDict) -> list[tuple[int, ...]]:
+		return [parse_version(s) for s in v.get("supports", [])]
+	exact = [v for v in versions if mc_tup in sup_tuples(v)]
+	if exact:
+		return exact
+	return [v for v in versions if sup_tuples(v) and max(sup_tuples(v)) <= mc_tup]
+
+
 # ---------------------------------------------------------------------------
 # Providers
 # ---------------------------------------------------------------------------
 
-def resolve_smithed_lib(ctx: Context, lib_ns: str) -> DownloadedLib | None:
+def resolve_smithed_lib(ctx: Context, lib_ns: str, mc_tup: tuple[int, ...]) -> DownloadedLib | None:
 	lib_data = OFFICIAL_LIBS[lib_ns]
 	smithed_id = lib_data.get("smithed_id") or ("bookshelf-" + lib_ns[3:])
-	target = version_str(lib_data["version"])
+	target: str | None = version_str(lib_data["version"]) if "version" in lib_data else None
 
 	data = cached_json(ctx, f"{SMITHED_API_BASE}/{smithed_id}")
 	if not data or "versions" not in data:
@@ -105,13 +115,22 @@ def resolve_smithed_lib(ctx: Context, lib_ns: str) -> DownloadedLib | None:
 		return None
 
 	versions: list[JsonDict] = data["versions"]
-	match = next((v for v in versions if v.get("name") == target), None)
-	if match is None:
-		match = max(versions, key=lambda v: parse_version(v.get("name", "0.0.0")), default=None)
+	if target:
+		# Pinned version: find exact match, fall back to latest compatible
+		match = next((v for v in versions if v.get("name") == target), None)
 		if match is None:
-			stp.warning(f"Smithed '{smithed_id}' v{target} not found. Skipping.")
-			return None
-		stp.warning(f"Smithed '{smithed_id}' v{target} not found; using v{match['name']} instead.")
+			compat = mc_compatible(versions, mc_tup)
+			match = max(compat or versions, key=lambda v: parse_version(v.get("name", "0.0.0")), default=None)
+			if match:
+				stp.warning(f"Smithed '{smithed_id}' v{target} not found; using v{match['name']} instead.")
+	else:
+		# No pinned version: pick latest compatible with user's MC
+		compat = mc_compatible(versions, mc_tup)
+		match = max(compat or versions, key=lambda v: parse_version(v.get("name", "0.0.0")), default=None)
+
+	if match is None:
+		stp.warning(f"Smithed '{smithed_id}': no versions available. Skipping.")
+		return None
 
 	downloads: JsonDict = match.get("downloads", {})
 	dp = cached_zip(ctx, downloads.get("datapack", ""))
@@ -200,7 +219,7 @@ def get_lib_paths(ctx: Context) -> list[DownloadedLib]:
 			continue
 		source = lib_data.get("source", "")
 		if source == "smithed":
-			r = resolve_smithed_lib(ctx, lib_ns)
+			r = resolve_smithed_lib(ctx, lib_ns, mc_t)
 		elif source == "modrinth":
 			r = resolve_modrinth_lib(ctx, lib_ns, mc_v)
 		elif source == "static":
