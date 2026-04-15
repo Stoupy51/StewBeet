@@ -18,11 +18,10 @@ from ....core.constants import (
 	CUSTOM_BLOCK_VANILLA,
 	GROWING_SEED,
 	NO_SILK_TOUCH_DROP,
-	OFFICIAL_LIBS,
 	VANILLA_BLOCK,
-	official_lib_used,
 )
 from ....core.utils.io import set_json_encoder, write_function, write_load_file, write_tag, write_versioned_function
+from ....dependencies.official_libs import OFFICIAL_LIBS, official_lib_used
 
 
 # Main entry point

@@ -5,8 +5,11 @@ from beet import Context
 from stouputils.typing import JsonDict
 
 from ....core.__memory__ import Mem
-from ....core.constants import BOOKSHELF_MODULES, LATEST_MC_VERSION, MORE_DATA_VERSIONS, OFFICIAL_LIBS, official_lib_used
+from ....core.constants import LATEST_MC_VERSION, MORE_DATA_VERSIONS
 from ....core.utils.io import write_function, write_tag, write_versioned_function
+from ....dependencies.bookshelf import BOOKSHELF_MODULES
+from ....dependencies.download_manager import get_lib_paths
+from ....dependencies.official_libs import OFFICIAL_LIBS, official_lib_used
 
 
 # Utility functions
@@ -90,6 +93,9 @@ def beet_default(ctx: Context) -> None:
 	# Debug message for newly found libraries
 	if newly_found_libs:
 		stp.debug(f"Found the use of official supported libraries: {', '.join(newly_found_libs)}, adding them to the datapack")
+
+	# Download newly-found libs now that is_used flags are set
+	get_lib_paths(ctx)
 
 	# Get all dependencies (official and custom)
 	dependencies: list[tuple[str, JsonDict]] = [(lib_ns, data) for lib_ns, data in OFFICIAL_LIBS.items() if data["is_used"]]

@@ -7,8 +7,8 @@ import stouputils as stp
 from beet import BlockTag
 from stouputils.typing import JsonDict
 
+from ...dependencies import official_lib_used
 from ..__memory__ import Mem
-from ..constants import official_lib_used
 from ..utils.io import set_json_encoder, write_function
 
 

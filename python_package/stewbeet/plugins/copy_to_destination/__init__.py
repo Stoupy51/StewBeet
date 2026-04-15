@@ -6,8 +6,7 @@ import shutil
 import stouputils as stp
 from beet import Context
 
-from ...core.constants import OFFICIAL_LIBS
-from ...dependencies import OFFICIAL_LIBS_PATH
+from ...dependencies.download_manager import get_lib_paths
 
 
 # Main entry point
@@ -51,7 +50,7 @@ def beet_default(ctx: Context) -> None:
 
 	# Copy official libs
 	if datapack_destinations:
-		_copy_official_libs(datapack_destinations)
+		_copy_official_libs(ctx, datapack_destinations)
 
 
 def _copy_datapacks(output_path: str, project_name_simple: str, libs_folder: str, destinations: list[str]) -> None:
@@ -118,33 +117,23 @@ def _copy_resource_packs(output_path: str, project_name_simple: str, destination
 		stp.info(f"Copied {pack_type} resource pack to destinations: {', '.join(destinations)}")
 
 
-def _copy_official_libs(datapack_destinations: list[str]) -> None:
+def _copy_official_libs(ctx: Context, datapack_destinations: list[str]) -> None:
 	""" Copy official libraries to specified destinations using file copying.
 
 	Args:
+		ctx (Context): The beet context (used to resolve download paths).
 		datapack_destinations (list[str]): List of destination paths for datapacks.
 	"""
-	if not os.path.exists(OFFICIAL_LIBS_PATH):
-		return
-
-	# Copy official datapack libs
-	if datapack_destinations:
-		official_datapack_path = stp.relative_path(f"{OFFICIAL_LIBS_PATH}/datapack")
-		if os.path.exists(official_datapack_path):
-			any_copied: bool = False
-			for lib in OFFICIAL_LIBS.values():
-				if not lib.get("is_used", False):
-					continue
-				lib_name = lib["name"]
-				lib_zip = f"{lib_name}.zip"
-				lib_zip_path = stp.relative_path(f"{official_datapack_path}/{lib_zip}")
-				if os.path.exists(lib_zip_path):
-					for dest in datapack_destinations:
-						dest_file = stp.relative_path(f"{dest}/{lib_zip}")
-						if _copy_with_retry(lib_zip_path, dest_file):
-							any_copied = True
-			if any_copied:
-				stp.info(f"Copied official libraries to datapack destinations: {', '.join(datapack_destinations)}")
+	any_copied: bool = False
+	for dl in get_lib_paths(ctx):
+		if not dl.datapack_path or not os.path.exists(dl.datapack_path):
+			continue
+		for dest in datapack_destinations:
+			dest_file = stp.relative_path(f"{dest}/{dl.name}.zip")
+			if _copy_with_retry(dl.datapack_path, dest_file):
+				any_copied = True
+	if any_copied:
+		stp.info(f"Copied official libraries to datapack destinations: {', '.join(datapack_destinations)}")
 
 def _copy_with_retry(src: str, dst: str, max_retries: int = 10, delay: float = 1.0) -> bool:
 	""" Copy a file with retry logic to handle permission errors.

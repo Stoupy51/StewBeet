@@ -3,9 +3,6 @@
 # Imports
 from beet.library import base
 from beet.toolchain.config import FormatSpecifier
-from stouputils.typing import JsonDict
-
-from ..dependencies.bookshelf import BOOKSHELF_MODULES
 
 # Minecraft version specific constants
 MORE_DATA_PACK_FORMATS: dict[tuple[int, ...], FormatSpecifier] = {
@@ -194,24 +191,4 @@ class Conventions:
 	""" Deprecated (use Conventions.ENTITY_TAGS_NO_KILL.avoid instead): String of tags to avoid when executing an entity command. Example of use: execute as @e[{Conventions.AVOID_ENTITY_TAGS_NO_KILL}] run function your_namespace:kill_entity """
 	AVOID_BLOCK_TAGS_NO_KILL: str = BLOCK_TAGS_NO_KILL.avoid
 	""" Deprecated (use Conventions.BLOCK_TAGS_NO_KILL.avoid instead): String of tags to avoid when executing a block command. Example of use: execute as @e[{Conventions.AVOID_BLOCK_TAGS_NO_KILL}] run function your_namespace:kill_entity """
-
-
-
-# Automatically handled dependencies for supported libs with additional key "is_used" that is True when the lib is found to be used.
-def official_lib_used(lib: str) -> bool:
-	is_used: bool = OFFICIAL_LIBS[lib]["is_used"]
-	OFFICIAL_LIBS[lib]["is_used"] = True
-	return is_used
-
-OFFICIAL_LIBS: dict[str, JsonDict] = {
-	"common_signals":		{"version":[0, 2, 0],	"name":"Common Signals",					"url":"https://github.com/Stoupy51/CommonSignals",			"is_used": False},
-	"smithed.custom_block":	{"version":[0, 7, 1],	"name":"Smithed Custom Block",				"url":"https://wiki.smithed.dev/libraries/custom-block/",	"is_used": False},
-	"smithed.crafter":		{"version":[0, 7, 1],	"name":"Smithed Crafter",					"url":"https://wiki.smithed.dev/libraries/crafter/",		"is_used": False},
-	"smithed.actionbar":	{"version":[0, 6, 6],	"name":"Smithed Actionbar",					"url":"https://wiki.smithed.dev/libraries/actionbar/",		"is_used": False},
-	"furnace_nbt_recipes":	{"version":[1, 10, 1],	"name":"Furnace NBT Recipes",				"url":"https://github.com/Stoupy51/FurnaceNbtRecipes",		"is_used": False},
-	"smart_ore_generation":	{"version":[1, 7, 2],	"name":"SmartOreGeneration",				"url":"https://github.com/Stoupy51/SmartOreGeneration",		"is_used": False},
-	"realistic_explosion":	{"version":[1, 2, 0],	"name":"RealisticExplosion",				"url":"https://github.com/Stoupy51/RealisticExplosionLibrary",	"is_used": False},
-	"itemio":				{"version":[1, 4, 1],	"name":"ItemIO",							"url":"https://github.com/edayot/ItemIO",					"is_used": False},
-	**BOOKSHELF_MODULES,
-}
 
