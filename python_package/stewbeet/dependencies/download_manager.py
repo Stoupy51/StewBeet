@@ -87,7 +87,7 @@ def version_str(ver: list[int] | tuple[int, ...]) -> str:
 
 
 def parse_version(s: str) -> tuple[int, ...]:
-	return tuple(int(x) for x in s.split(".") if x.isdigit())
+	return tuple(int(x) for x in s.strip("v").split(".") if x.isdigit())
 
 
 def mc_compatible(versions: list[JsonDict], mc_tup: tuple[int, ...]) -> list[JsonDict]:
@@ -104,8 +104,7 @@ def mc_compatible(versions: list[JsonDict], mc_tup: tuple[int, ...]) -> list[Jso
 # Providers
 # ---------------------------------------------------------------------------
 
-def resolve_smithed_lib(ctx: Context, lib_ns: str, mc_tup: tuple[int, ...]) -> DownloadedLib | None:
-	lib_data = OFFICIAL_LIBS[lib_ns]
+def resolve_smithed_lib(ctx: Context, lib_ns: str, lib_data: JsonDict, mc_tup: tuple[int, ...]) -> DownloadedLib | None:
 	smithed_id = lib_data.get("smithed_id") or ("bookshelf-" + lib_ns[3:])
 	target: str | None = version_str(lib_data["version"]) if "version" in lib_data else None
 
@@ -140,12 +139,11 @@ def resolve_smithed_lib(ctx: Context, lib_ns: str, mc_tup: tuple[int, ...]) -> D
 		return None
 
 	ver = parse_version(match["name"])
-	OFFICIAL_LIBS[lib_ns]["version"] = list(ver)
+	lib_data["version"] = list(ver)
 	return DownloadedLib(lib_ns, lib_data["name"], ver, str(dp), str(rp) if rp else None)
 
 
-def resolve_modrinth_lib(ctx: Context, lib_ns: str, mc_ver: str) -> DownloadedLib | None:
-	lib_data = OFFICIAL_LIBS[lib_ns]
+def resolve_modrinth_lib(ctx: Context, lib_ns: str, lib_data: JsonDict, mc_ver: str) -> DownloadedLib | None:
 	slug = lib_data["modrinth_slug"]
 	base = f"{MODRINTH_API_BASE}/project/{slug}/version"
 
@@ -166,18 +164,17 @@ def resolve_modrinth_lib(ctx: Context, lib_ns: str, mc_ver: str) -> DownloadedLi
 		stp.warning(f"No download file for Modrinth '{slug}'.")
 		return None
 
-	OFFICIAL_LIBS[lib_ns]["version"] = list(ver)
+	lib_data["version"] = list(ver)
 	dp = cached_zip(ctx, primary["url"])
 	if dp is None:
 		return None
 	non_primary = [f for f in files if not f.get("primary")]
 	rp = cached_zip(ctx, non_primary[0]["url"]) if non_primary else None
 
-	return DownloadedLib(lib_ns, OFFICIAL_LIBS[lib_ns]["name"], ver, str(dp), str(rp) if rp else None)
+	return DownloadedLib(lib_ns, lib_data["name"], ver, str(dp), str(rp) if rp else None)
 
 
-def resolve_static_lib(ctx: Context, lib_ns: str, mc_tup: tuple[int, ...], mc_ver: str) -> DownloadedLib | None:
-	lib_data = OFFICIAL_LIBS[lib_ns]
+def resolve_static_lib(ctx: Context, lib_ns: str, lib_data: JsonDict, mc_tup: tuple[int, ...], mc_ver: str) -> DownloadedLib | None:
 	entry = lookup_static(lib_data, mc_tup)
 	if entry is None:
 		stp.warning(f"No static URL for '{lib_ns}' (MC {mc_ver}). Skipping.")
@@ -187,11 +184,11 @@ def resolve_static_lib(ctx: Context, lib_ns: str, mc_tup: tuple[int, ...], mc_ve
 		stp.warning(f"Download URL for '{lib_ns}' (MC {mc_ver}) not yet configured. Skipping.")
 		return None
 
-	OFFICIAL_LIBS[lib_ns]["version"] = list(dep_ver)
+	lib_data["version"] = list(dep_ver)
 	dp = cached_zip(ctx, url)
 	if dp is None:
 		return None
-	return DownloadedLib(lib_ns, OFFICIAL_LIBS[lib_ns]["name"], dep_ver, str(dp), None)
+	return DownloadedLib(lib_ns, lib_data["name"], dep_ver, str(dp), None)
 
 
 # ---------------------------------------------------------------------------
@@ -219,12 +216,30 @@ def get_lib_paths(ctx: Context) -> list[DownloadedLib]:
 			continue
 		source = lib_data.get("source", "")
 		if source == "smithed":
-			r = resolve_smithed_lib(ctx, lib_ns, mc_t)
+			r = resolve_smithed_lib(ctx, lib_ns, lib_data, mc_t)
 		elif source == "modrinth":
-			r = resolve_modrinth_lib(ctx, lib_ns, mc_v)
+			r = resolve_modrinth_lib(ctx, lib_ns, lib_data, mc_v)
 		elif source == "static":
-			r = resolve_static_lib(ctx, lib_ns, mc_t, mc_v)
+			r = resolve_static_lib(ctx, lib_ns, lib_data, mc_t, mc_v)
 		else:
+			continue
+		if r:
+			results.append(r)
+
+	# Also process custom load_dependencies entries that specify a source
+	load_deps: JsonDict = ctx.meta.get("stewbeet", {}).get("load_dependencies", {})
+	for lib_ns, lib_data in load_deps.items():
+		source = lib_data.get("source", "")
+		if not source:
+			continue  # old-format entry with explicit version — nothing to download
+		if source == "smithed":
+			r = resolve_smithed_lib(ctx, lib_ns, lib_data, mc_t)
+		elif source == "modrinth":
+			r = resolve_modrinth_lib(ctx, lib_ns, lib_data, mc_v)
+		elif source == "static":
+			r = resolve_static_lib(ctx, lib_ns, lib_data, mc_t, mc_v)
+		else:
+			stp.warning(f"Unknown source '{source}' for load_dependency '{lib_ns}'. Skipping download.")
 			continue
 		if r:
 			results.append(r)

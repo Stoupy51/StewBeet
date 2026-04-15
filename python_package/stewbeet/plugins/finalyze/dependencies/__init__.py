@@ -191,6 +191,10 @@ execute if score #{ns}.major load.status matches {major} if score #{ns}.minor lo
 		decoder_checks: str = ""
 
 		for lib_ns, value in dependencies:
+			if "version" not in value:
+				stp.warning(f"Skipping version check for '{lib_ns}': version not resolved (download may have failed).")
+				continue
+
 			# Encoder check
 			encoder_command: str = f"scoreboard players set #dependency_error {ns}.data 1"
 			encoder_checks += check_version(lib_ns, value, encoder_command)
