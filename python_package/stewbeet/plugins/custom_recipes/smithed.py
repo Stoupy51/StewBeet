@@ -8,8 +8,8 @@ from ...core.cls.external_item import ExternalItem
 from ...core.cls.ingredients import Ingr
 from ...core.cls.item import Item
 from ...core.cls.recipe import CraftingShapedRecipe, CraftingShapelessRecipe
-from ...core.constants import OFFICIAL_LIBS, official_lib_used
 from ...core.utils.io import write_function
+from ...dependencies.official_libs import OFFICIAL_LIBS, official_lib_used
 
 
 class SmithedRecipeHandler:

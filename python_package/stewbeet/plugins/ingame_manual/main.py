@@ -35,12 +35,12 @@ from ...core.cls.wiki_button import WikiButton
 from ...core.constants import (
 	CATEGORY,
 	NO_SILK_TOUCH_DROP,
-	OFFICIAL_LIBS,
 	WIKI_COMPONENT,
 )
 from ...core.definitions_helper import add_item_name_and_lore_if_missing
 from ...core.utils.io import super_merge_dict, write_load_file
 from ...core.utils.text_component import item_id_to_name
+from ...dependencies.official_libs import OFFICIAL_LIBS
 from ..custom_recipes.vanilla import VanillaRecipeHandler
 from ..initialize.source_lore_font import find_pack_png
 from ..resource_pack.item_models import AutoModel  # Handle new items models (used for the manual and the heavy workbench)

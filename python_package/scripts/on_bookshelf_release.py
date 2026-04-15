@@ -1,8 +1,9 @@
 """
 This script is called when a Bookshelf release is triggered on GitHub.
 
-It will download all "bs.*.zip" files from the release and extract them to the "datapack" folder.
-It will then update the "bookshelf.py" file with the new version information.
+It updates the "bookshelf.py" file with the new version information so that
+the dynamic download manager can fetch the correct per-module zips from the
+Smithed API at build time.  Zip files are no longer stored in this repo.
 """
 # Imports
 import os
@@ -69,29 +70,16 @@ def download_latest_release() -> None:
 
 	modules: dict[str, JsonDict] = {}
 	assets: list[JsonDict] = release_info.get("assets", [])
-	os.makedirs(f"{DESTINATION_FOLDER}/datapack", exist_ok=True)
 
-	# Filter assets
+	# Filter assets to only Bookshelf module zips
 	assets = [asset for asset in assets if re.match(r"^bs\..*\.zip$", asset.get("name", ""))]
 
-	def download_module(asset: JsonDict) -> tuple[str, JsonDict] | None:
+	def extract_module_info(asset: JsonDict) -> tuple[str, JsonDict] | None:
 		file_name: str = asset.get("name", "")
 		no_extension: str = os.path.splitext(file_name)[0]
 		module_name: str = format_module_name(no_extension)
-		download_url: str = asset.get("browser_download_url", "")
-		if not download_url:
-			stp.warning(f"No download URL for {file_name}, skipping.")
-			return
-
-		asset_response: requests.Response = requests.get(download_url)
-		if asset_response.status_code != 200:
-			stp.warning(f"Failed to download {file_name}: HTTP {asset_response.status_code}")
-			return
-
-		local_zip_path: str = f"{DESTINATION_FOLDER}/datapack/{module_name}.zip"
-		with open(local_zip_path, "wb") as f:
-			f.write(asset_response.content)
-		stp.debug(f"Downloaded '{file_name}' to '...{local_zip_path[-40:]}'")
+		if not module_name:
+			return None
 
 		# Extract module version from name (e.g. "bs.health-1.21.5-v3.0.0.zip" -> [3, 0, 0])
 		version: list[int] = parse_version(no_extension.split('-')[-1])
@@ -103,9 +91,9 @@ def download_latest_release() -> None:
 		module_info["name"] = module_name
 		return module_key_snake, module_info
 
-	# Multithreading
+	# Build module dict (no multithreading needed - no downloads)
 	results: list[tuple[str, JsonDict]] = [
-		x for x in stp.multithreading(download_module, assets, max_workers=len(assets))
+		x for x in [extract_module_info(a) for a in assets]
 		if x is not None
 	]
 	modules = dict(sorted(results, key=lambda x: x[0]))
