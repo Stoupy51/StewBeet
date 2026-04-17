@@ -6,7 +6,7 @@ from typing import Any, TypeVar, cast
 
 import stouputils as stp
 from beet import Advancement, Function, JsonFile, NamespaceContainer, NamespaceProxy, TagFile, Texture
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 
 from ..__memory__ import Mem
 

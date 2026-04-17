@@ -4,7 +4,7 @@
 from dataclasses import dataclass
 from typing import Any, Literal, Self
 
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 
 from ._utils import StMapping
 from .ingredients import ALL_RECIPES_TYPES, Ingr
@@ -38,7 +38,7 @@ class RecipeBase(StMapping):
             raise ValueError(f"Invalid recipe type: {self.type}")
 
     @classmethod
-    def from_dict(cls, data: JsonDict | "StMapping", item_id: str = "") -> Self:
+    def from_dict(cls, data: JsonDict | StMapping, item_id: str = "") -> Self:
         """ Create an object based on a dictionary. """
         if isinstance(data, cls):
             return data

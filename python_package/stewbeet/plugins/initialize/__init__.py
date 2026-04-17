@@ -9,15 +9,16 @@ from typing import Any, cast
 
 import stouputils as stp
 from beet import Context, Dialog, DialogTag, FormatSpecifier, Pack
-from beet.core.utils import JsonDict, TextComponent, split_version
+from beet.core.utils import TextComponent, split_version
 from box import Box
+from stouputils.typing import JsonDict
 
 from ...core import LATEST_MC_VERSION, MORE_ASSETS_PACK_FORMATS, MORE_DATA_PACK_FORMATS, MORE_DATA_VERSIONS, Mem, set_json_encoder
 from .source_lore_font import find_pack_png, prepare_source_lore_font
 
 
 # Main entry point
-def beet_default(ctx: Context, silent: bool = False) -> Generator[None, None, None]:
+def beet_default(ctx: Context, silent: bool = False) -> Generator[None]:
 	with stp.MeasureTime(print_func=stp.debug, message="Total execution time") if not silent else stp.NullContextManager():
 
 		# Assertions

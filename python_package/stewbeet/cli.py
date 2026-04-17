@@ -121,7 +121,9 @@ def main() -> None:
             stp.handle_error(importlib.import_module, error_log=stp.LogLevels.WARNING_TRACEBACK)(plugin)
 
         # Run beet with all remaining arguments
-        subprocess.run([sys.executable, "-m", "beet"] + [x for x in sys.argv[1:] if x != "rebuild"], check=False)
+        from beet.toolchain.cli import main as beet_main
+        beet_main()
+    sys.exit(0)
 
 
 if __name__ == "__main__":

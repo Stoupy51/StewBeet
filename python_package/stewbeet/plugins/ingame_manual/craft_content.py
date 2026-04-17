@@ -1,6 +1,7 @@
 
 # Imports
-from beet.core.utils import JsonDict, TextComponent
+from beet.core.utils import TextComponent
+from stouputils.typing import JsonDict
 
 from ...core.__memory__ import Mem
 from ...core.cls.ingredients import FURNACES_RECIPES_TYPES, Ingr

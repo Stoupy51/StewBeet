@@ -5,8 +5,8 @@
 from typing import Any, cast
 
 import stouputils as stp
-from beet import Context
-from beet.core.utils import JsonDict
+from beet import Context, LootTable
+from stouputils.typing import JsonDict
 
 from ...core.__memory__ import Mem
 from ...core.cls.block import VANILLA_BLOCK_FOR_ORES, VanillaBlock
@@ -27,6 +27,7 @@ from ...core.constants import (
 
 # Main entry point
 @stp.measure_time(message="Execution time of 'stewbeet.plugins.verify_definitions'")
+@stp.deprecated(message="The 'verify_definitions' plugin is now integrated into the main pipeline and runs when you make definitions, no need to require it manually.", version="3.0.0")
 def beet_default(ctx: Context) -> None:
 	""" Database verification plugin for StewBeet.
 	Verifies the definitions structure, validates item configurations, and performs consistency checks.
@@ -88,15 +89,13 @@ def beet_default(ctx: Context) -> None:
 			# Force VANILLA_BLOCK key for custom blocks
 			elif data["id"] in [CUSTOM_BLOCK_VANILLA, CUSTOM_BLOCK_ALTERNATIVE]:
 				if not data.get(VANILLA_BLOCK):
-					errors.append(f"VANILLA_BLOCK key missing for '{item}', needed format: VANILLA_BLOCK: {{\"id\":\"minecraft:stone\", \"apply_facing\":False}}.")
+					errors.append(f"VANILLA_BLOCK key missing for '{item}', needed format: VANILLA_BLOCK: {{\"id\":\"minecraft:stone\"}}.")
 				elif isinstance(data[VANILLA_BLOCK], VanillaBlock):
 					pass
 				elif not isinstance(data[VANILLA_BLOCK], dict):
-					errors.append(f"VANILLA_BLOCK key should be a dictionary for '{item}', found '{data[VANILLA_BLOCK]}', needed format: VANILLA_BLOCK: {{\"id\":\"minecraft:stone\", \"apply_facing\":False}}.")
+					errors.append(f"VANILLA_BLOCK key should be a dictionary for '{item}', found '{data[VANILLA_BLOCK]}', needed format: VANILLA_BLOCK: {{\"id\":\"minecraft:stone\"}}.")
 				elif (data[VANILLA_BLOCK].get("id", None) is None) and (data[VANILLA_BLOCK].get("contents", None) is not True):
-					errors.append(f"VANILLA_BLOCK key should have an 'id' key for '{item}', found '{data[VANILLA_BLOCK]}', needed format: VANILLA_BLOCK: {{\"id\":\"minecraft:stone\", \"apply_facing\":False}}.")
-				elif (data[VANILLA_BLOCK].get("apply_facing", None) is None) and (data[VANILLA_BLOCK].get("contents", None) is not True):
-					errors.append(f"VANILLA_BLOCK key should have a 'apply_facing' key to boolean for '{item}', found '{data[VANILLA_BLOCK]}', needed format: VANILLA_BLOCK: {{\"id\":\"minecraft:stone\", \"apply_facing\":False}}.")
+					errors.append(f"VANILLA_BLOCK key should have an 'id' key for '{item}', found '{data[VANILLA_BLOCK]}', needed format: VANILLA_BLOCK: {{\"id\":\"minecraft:stone\"}}.")
 
 			# Prevent the use of "container" key for custom blocks
 			elif data["id"] == CUSTOM_BLOCK_VANILLA and data.get("container"):
@@ -120,6 +119,9 @@ def beet_default(ctx: Context) -> None:
 			if isinstance(no_silk_drop, str):
 				# Old format: just a string item ID (can be "item_name" or "minecraft:stone")
 				pass
+			elif isinstance(no_silk_drop, LootTable):
+				# Dynamic format: direct beet LootTable
+				pass
 			elif isinstance(no_silk_drop, dict):
 				# New format: {"id": "item_id", "count": 5} or {"id": "item_id", "count": {"min": 1, "max": 4}}
 				no_silk_drop = cast(JsonDict, no_silk_drop)
@@ -140,7 +142,7 @@ def beet_default(ctx: Context) -> None:
 					else:
 						errors.append(f"NO_SILK_TOUCH_DROP 'count' field should be an integer or dict with min/max keys for '{item}', ex: 1 or {{\"min\": 1, \"max\": 4}}")
 			else:
-				errors.append(f"NO_SILK_TOUCH_DROP key should be a string or dict for '{item}', ex: \"adamantium_fragment\", \"minecraft:stone\", or {{\"id\": \"stardust_fragment\", \"count\": {{\"min\": 1, \"max\": 4}}}}")
+				errors.append(f"NO_SILK_TOUCH_DROP key should be a string, beet LootTable, or dict for '{item}', ex: \"adamantium_fragment\", LootTable(...), or {{\"id\": \"stardust_fragment\", \"count\": {{\"min\": 1, \"max\": 4}}}}")
 
 		# Force the use of "item_name" key for every item
 		if not data.get("item_name"):

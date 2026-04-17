@@ -1,0 +1,72 @@
+{
+	"type": "minecraft:crafting_shapeless",
+	"category": "blocks",
+	"group": "vb_block_states",
+	"ingredients": [
+		"minecraft:furnace",
+		"minecraft:coal"
+	],
+	"result": {
+		"id": "minecraft:furnace",
+		"count": 1,
+		"components": {
+			"minecraft:container": [
+				{
+					"slot": 0,
+					"item": {
+						"id": "minecraft:stone",
+						"count": 1,
+						"components": {
+							"minecraft:custom_data": {
+								"smithed": {
+									"block": {
+										"id": "_your_namespace:vb_block_states",
+										"from": "_your_namespace"
+									}
+								}
+							}
+						}
+					}
+				}
+			],
+			"minecraft:tooltip_display": {
+				"hidden_components": [
+					"minecraft:container"
+				]
+			},
+			"minecraft:item_model": "_your_namespace:vb_block_states",
+			"minecraft:item_name": {
+				"translate": "_your_namespace.vb_block_states"
+			},
+			"minecraft:lore": [
+				[
+					"",
+					{
+						"text": "I",
+						"color": "white",
+						"italic": false,
+						"font": "_your_namespace:icons"
+					},
+					[{
+						"text":" ",
+						"italic": true,
+						"color": "blue"
+					}, {"translate": "_your_namespace.extensive_template"}]
+				]
+			],
+			"minecraft:custom_data": {
+				"_your_namespace": {
+					"vb_block_states": true
+				},
+				"smithed": {
+					"id": "_your_namespace:vb_block_states",
+					"origin": "_your_namespace",
+					"ignore": {
+						"functionality": true,
+						"crafting": true
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,52 @@
+{
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "minecraft:item",
+					"name": "minecraft:furnace",
+					"functions": [
+						{
+							"function": "minecraft:set_components",
+							"components": {
+								"minecraft:container": [
+									{
+										"slot": 0,
+										"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:vb_visual_facing","from": "_your_namespace"}}}}}
+									}
+								],
+								"minecraft:tooltip_display": {
+									"hidden_components": [
+										"minecraft:container"
+									]
+								},
+								"minecraft:item_model": "_your_namespace:vb_visual_facing",
+								"minecraft:item_name": {
+									"translate": "_your_namespace.vb_visual_facing"
+								},
+								"minecraft:lore": [
+									[
+										"",
+										{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},
+										[{"text":" ","italic": true,"color": "blue"}, {"translate": "_your_namespace.extensive_template"}]
+									]
+								],
+								"minecraft:custom_data": {
+									"_your_namespace": {
+										"vb_visual_facing": true
+									},
+									"smithed": {
+										"id": "_your_namespace:vb_visual_facing",
+										"origin": "_your_namespace",
+										"ignore": {"functionality": true,"crafting": true}
+									}
+								}
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}

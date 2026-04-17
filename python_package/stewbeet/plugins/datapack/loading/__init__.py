@@ -3,7 +3,7 @@
 # Imports
 import stouputils as stp
 from beet import Context
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 
 from ....core.__memory__ import Mem
 from ....core.cls.item import Item
@@ -98,5 +98,9 @@ f"""
 # Confirm load
 tellraw @a[tag=convention.debug] {{"text":"[Loaded {project_name} v{ctx.project_version}]","color":"green"}}
 scoreboard players set #{ctx.project_id}.loaded load.status 1
-""" + items_storage)
+function {ctx.project_id}:v{ctx.project_version}/load/set_items_storage
+""")
+
+	# Write the items storage function separately to avoid having a huge load function
+	write_versioned_function("load/set_items_storage", items_storage)
 

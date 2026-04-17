@@ -1,0 +1,34 @@
+{
+	"criteria": {
+		"requirement": {
+			"trigger": "minecraft:item_used_on_block",
+			"conditions": {
+				"location": [
+					{
+						"condition": "minecraft:match_tool",
+						"predicate": {
+							"items": [
+								"minecraft:item_frame"
+							],
+							"predicates": {
+								"minecraft:custom_data": {
+									"_your_namespace": {
+										"vb_contents": true
+									}
+								}
+							}
+						}
+					}
+				]
+			}
+		}
+	},
+	"requirements": [
+		[
+			"requirement"
+		]
+	],
+	"rewards": {
+		"function": "_your_namespace:custom_blocks/vb_contents/search"
+	}
+}

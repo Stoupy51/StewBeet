@@ -2,7 +2,7 @@
 # ruff: noqa: E501
 # Imports
 import stouputils as stp
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 
 from ...core.cls.ingredients import ALL_RECIPES_TYPES, Ingr
 from ...core.cls.item import Item

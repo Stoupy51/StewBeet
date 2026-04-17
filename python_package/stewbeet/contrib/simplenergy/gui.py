@@ -8,7 +8,7 @@ from enum import Enum
 
 import stouputils as stp
 from beet import ItemModel, Model
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 
 from ...core import Mem, texture_mcmeta
 

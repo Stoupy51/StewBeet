@@ -36,10 +36,10 @@
 				{"text": "V   ","font": "_your_namespace:manual","color": "white"},
 				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_29"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"}," (29)"]}},
 				" ",
-				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_30"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"}," (30)"]}},
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_31"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"}," (31)"]}},
 				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_29"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"}," (29)"]}},
 				" ",
-				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_30"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"}," (30)"]}}
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_31"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"}," (31)"]}}
 			],
 			"width": 400
 		},
@@ -48,7 +48,7 @@
 			"contents": [
 				{"text": "","font": "_your_namespace:manual","color": "white","shadow_color": [0,0,0,0]},
 				"\"$5\n\"",
-				{"text": "$肌","hover_event": {"action": "show_item","id": "minecraft:book","components": {}}},
+				{"text": "$肚","hover_event": {"action": "show_item","id": "minecraft:book","components": {}}},
 				{"text": "$耡","hover_event": {"action": "show_item","id": "command_block","components": {"custom_data": {"smithed": {"dict": {"ingot": {"steel": true}},"id": "_your_namespace:steel_ingot","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ingot": true}},"item_model": "_your_namespace:steel_ingot","item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},[{"text":" ","italic": true,"color": "blue"}, {"translate": "_your_namespace.extensive_template"}]]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_7"}},
 				"  \n\"",
 				{"text": "U$","hover_event": {"action": "show_item","id": "minecraft:book","components": {}}},
@@ -58,9 +58,9 @@
 				"#$\n\"U$U$U$",
 				{"text": "U$","hover_event": {"action": "show_item","id": "command_block","components": {"item_name": "Extensive Template Manual","item_model": "_your_namespace:manual","lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},[{"text":" ","italic": true,"color": "blue"}, {"translate": "_your_namespace.extensive_template"}]]],"custom_data": {"_your_namespace": {"manual": true},"smithed": {"id": "_your_namespace:manual","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}}}},
 				"#$\n\n\n",
-				{"text": "2##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$肌"},{"text": "$耡"},"\n","\"",{"text": "U$"},{"text": "U$"},"U$",{"text": "$$聏"},"\n\"","U$U$U$",{"text": "U$"},"\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.book","color": "gray"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]}},
+				{"text": "2##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$肚"},{"text": "$耡"},"\n","\"",{"text": "U$"},{"text": "U$"},"U$",{"text": "$$聏"},"\n\"","U$U$U$",{"text": "U$"},"\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.book","color": "gray"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]}},
 				{"text": "2\n","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$聏"},"\n","\"",{"text": "U$"},"U$U$",{"text": "$$聏"},"\n\"","U$U$U$",{"text": "U$"},"\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.extensive_template_manual","color": "gray"}]}},
-				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$肌"},{"text": "$耡"},"\n","\"",{"text": "U$"},{"text": "U$"},"U$",{"text": "$$聏"},"\n\"","U$U$U$",{"text": "U$"},"\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.book","color": "gray"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]}},
+				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$肚"},{"text": "$耡"},"\n","\"",{"text": "U$"},{"text": "U$"},"U$",{"text": "$$聏"},"\n\"","U$U$U$",{"text": "U$"},"\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.book","color": "gray"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]}},
 				{"text": "0","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$聏"},"\n","\"",{"text": "U$"},"U$U$",{"text": "$$聏"},"\n\"","U$U$U$",{"text": "U$"},"\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.extensive_template_manual","color": "gray"}]}},
 				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 			],

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import stouputils as stp
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 
 
 # Utility function to convert result_count to string suffix

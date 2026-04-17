@@ -4,8 +4,8 @@
 import os
 
 import stouputils as stp
-from beet.core.utils import JsonDict
 from PIL import Image
+from stouputils.typing import JsonDict
 
 from ...core.__memory__ import Mem
 from ...core.cls.ingredients import FURNACES_RECIPES_TYPES, Ingr

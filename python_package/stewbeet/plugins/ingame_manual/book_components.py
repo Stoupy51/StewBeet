@@ -4,8 +4,9 @@ Handles generation of book components and content
 import os
 
 import stouputils as stp
-from beet.core.utils import JsonDict, TextComponent
+from beet.core.utils import TextComponent
 from PIL import Image
+from stouputils.typing import JsonDict
 
 from ...core.__memory__ import Mem
 from ...core.cls.ingredients import Ingr

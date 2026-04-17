@@ -7,7 +7,7 @@ from collections.abc import Iterable
 
 import stouputils as stp
 from beet import ItemModel, Model
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 
 from ....core.__memory__ import Mem
 from ....core.cls.block import Block, GrowingSeed

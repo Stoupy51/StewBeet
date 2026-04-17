@@ -6,7 +6,7 @@ from typing import Any, cast
 
 import stouputils as stp
 from beet import LootTable
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 
 from ..__memory__ import Mem
 from ..utils.io import set_json_encoder
@@ -28,7 +28,7 @@ SPECIAL_RECIPES_TYPES: tuple[str, ...] = ("simplenergy_pulverizing", "stardust_a
 ALL_RECIPES_TYPES: tuple[str, ...] = (*FURNACES_RECIPES_TYPES, *CRAFTING_RECIPES_TYPES, *OTHER_RECIPES_TYPES, *UNUSED_RECIPES_TYPES, *SPECIAL_RECIPES_TYPES)
 
 # Ingr class
-class Ingr(JsonDict):
+class Ingr(dict[str, Any]):
 
 	def __init__(self, id: str | JsonDict, ns: str | None = None, count: int | None = None, **kwargs: Any) -> None:
 		""" Get the identity of the ingredient from its id for custom crafts
@@ -225,19 +225,19 @@ class Ingr(JsonDict):
 
 		Args:
 			kwargs: Key-value arguments to add to the ingredient representation (e.g. count=2, Slot=0, etc.)
+				kwargs values take precedence over the ingredient's own fields.
 		Returns:
 			Ingr: The predicate representation of the ingredient, ex:
 				{"count": 2, "components": {"minecraft:custom_data": {"iyc": {"adamantium_fragment": True}}}}
 		"""
-		item: JsonDict = dict(kwargs)
+		item: JsonDict = {}
 		ns_id: str = self.to_id()
 		if ns_id in Mem.external_definitions:
 			from .external_item import ExternalItem
 			item.update({"components": {"minecraft:custom_data": ExternalItem.from_id(ns_id).custom_data_predicate}})
-			if self.get("count"):
-				item["count"] = self["count"]
 		else:
 			item.update(self)
+		item.update(kwargs)
 		return Ingr(item).item_to_id()
 
 	@stp.simple_cache

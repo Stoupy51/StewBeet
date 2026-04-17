@@ -1,0 +1,6 @@
+{
+	"parent": "minecraft:item/item_frame",
+	"textures": {
+		"layer0": "_your_namespace:item/vb_contents_frame"
+	}
+}

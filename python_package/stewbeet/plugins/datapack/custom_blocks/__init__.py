@@ -5,7 +5,7 @@ from pathlib import Path
 
 import stouputils as stp
 from beet import Advancement, BlockTag, Context, EntityTypeTag, LootTable, Predicate
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 
 from ....core.__memory__ import Mem
 from ....core.cls.block import VANILLA_BLOCK_FOR_ORES, GrowingSeed, GrowingSeedLoot, NoSilkTouchDrop
@@ -18,11 +18,10 @@ from ....core.constants import (
 	CUSTOM_BLOCK_VANILLA,
 	GROWING_SEED,
 	NO_SILK_TOUCH_DROP,
-	OFFICIAL_LIBS,
 	VANILLA_BLOCK,
-	official_lib_used,
 )
 from ....core.utils.io import set_json_encoder, write_function, write_load_file, write_tag, write_versioned_function
+from ....dependencies.official_libs import OFFICIAL_LIBS, official_lib_used
 
 
 # Main entry point
@@ -136,6 +135,9 @@ execute if score #rotation {ns}.data matches 0 if predicate {ns}:facing/west run
 advancement revoke @s only {ns}:custom_block_alternative/{item}
 
 # Execute the place function as and at the new placed item frame""")
+				# Get player rotation if visual_facing is "player" (while @s is still the player)
+				if block.get("visual_facing") == "player":
+					write_function(f"{ns}:custom_blocks/{item}/search", f"function {ns}:custom_blocks/get_rotation")
 				if "id" not in block:
 					write_function(f"{ns}:custom_blocks/{item}/search", f"execute as @e[type=item_frame,tag={ns}.new,tag={ns}.{item}] at @s run function {ns}:custom_blocks/{item}/place_main")
 				# Make place check function (only if "id" is in VANILLA_BLOCK)
@@ -170,7 +172,7 @@ kill @s
 
 				## Place function
 				content = ""
-				if block.get("apply_facing") not in (False, "entity"):
+				if block.get("block_facing") == "player":
 					content += f"function {ns}:custom_blocks/get_rotation\n"
 					content += "setblock ~ ~ ~ air strict\n"
 					block_states = []
@@ -183,7 +185,7 @@ kill @s
 						else:
 							content += f"execute if score #rotation {ns}.data matches {i+1} run setblock ~ ~ ~ {block_id}[facing={face}]{beautify_name}\n"
 				else:
-					if block.get("apply_facing") == "entity":
+					if block.get("visual_facing") == "player":
 						content += f"function {ns}:custom_blocks/get_rotation\n"
 					# Simple setblock
 					content += "setblock ~ ~ ~ air strict\n"
@@ -237,7 +239,7 @@ data merge entity @s {custom_name}
 {item_model}data modify entity @s transformation.scale set value [1.002f,1.002f,1.002f]
 data modify entity @s brightness set value {{block:15,sky:15}}
 """
-				if block["apply_facing"]:
+				if block.get("visual_facing") == "player":
 					content += f"""
 # Apply rotation
 execute if score #rotation {ns}.data matches 1 run data modify entity @s Rotation[0] set value 180.0f
@@ -312,10 +314,16 @@ execute store result entity @s Facing byte 1 run scoreboard players get #item_fr
 # Update position (fixes a Minecraft bug)
 execute at @s run tp @s ^ ^ ^0.1
 """
-				if block.get("force_ground"):
-					content += """
+				if block.get("visual_facing") == "player":
+					content += f"""
 # Force ground position
 data modify entity @s Facing set value 1b
+
+# Apply rotation based on player direction
+execute if score #rotation {ns}.data matches 1 run data modify entity @s ItemRotation set value 4b
+execute if score #rotation {ns}.data matches 2 run data modify entity @s ItemRotation set value 6b
+execute if score #rotation {ns}.data matches 3 run data modify entity @s ItemRotation set value 0b
+execute if score #rotation {ns}.data matches 4 run data modify entity @s ItemRotation set value 2b
 """
 				write_function(f"{ns}:custom_blocks/{item}/place_secondary", content)
 				pass
@@ -583,36 +591,55 @@ execute unless entity @n[type=item,nbt={{Item:{item_nbt}}},distance=..1] run loo
 """, prepend=True)
 
 				# Handle no silk touch drop
-				no_silk_touch_drop: str | JsonDict = data[NO_SILK_TOUCH_DROP]
-				if isinstance(no_silk_touch_drop, dict | NoSilkTouchDrop):
-					item_to_drop: str = no_silk_touch_drop["id"]
-					if isinstance(no_silk_touch_drop.get("count"), int):
-						item_count_min = no_silk_touch_drop["count"]
-						item_count_max = no_silk_touch_drop["count"]
+				no_silk_touch_drop: str | JsonDict | NoSilkTouchDrop | LootTable = data[NO_SILK_TOUCH_DROP]
+				if isinstance(no_silk_touch_drop, LootTable):
+					loot_table_path = f"custom_blocks/no_silk_touch_drop/{item}"
+					ctx.data[ns].loot_tables[loot_table_path] = set_json_encoder(no_silk_touch_drop, max_level=-1)
+					content = f"""
+# If silk touch applied
+execute if score #is_silk_touch {ns}.data matches 1 run data modify entity @s Item.id set from storage {ns}:items all.{item}.id
+execute if score #is_silk_touch {ns}.data matches 1 run data modify entity @s Item.components set from storage {ns}:items all.{item}.components
+
+# Else, no silk touch
+execute if score #is_silk_touch {ns}.data matches 0 positioned ~ ~ ~ as @p[distance=..10,gamemode=!spectator] run loot spawn ~ ~ ~ fish {ns}:{loot_table_path} ~ ~ ~ mainhand
+execute if score #is_silk_touch {ns}.data matches 0 unless entity @p[distance=..10,gamemode=!spectator] run loot spawn ~ ~ ~ loot {ns}:{loot_table_path}
+execute if score #is_silk_touch {ns}.data matches 0 run kill @s
+"""
+					if data.get(VANILLA_BLOCK) == VANILLA_BLOCK_FOR_ORES:
+						content += f"""
+# Keep item count when silk touch is applied
+execute if score #is_silk_touch {ns}.data matches 1 store result entity @s Item.count byte 1 run scoreboard players get #item_count {ns}.data
+"""
+				else:
+					if isinstance(no_silk_touch_drop, dict | NoSilkTouchDrop):
+						item_to_drop: str = no_silk_touch_drop["id"]
+						if isinstance(no_silk_touch_drop.get("count"), int):
+							item_count_min = no_silk_touch_drop["count"]
+							item_count_max = no_silk_touch_drop["count"]
+						else:
+							item_count_min = no_silk_touch_drop["count"]["min"]
+							item_count_max = no_silk_touch_drop["count"]["max"]
 					else:
-						item_count_min = no_silk_touch_drop["count"]["min"]
-						item_count_max = no_silk_touch_drop["count"]["max"]
-				else:
-					item_to_drop: str = no_silk_touch_drop
-					item_count_min: int = 1
-					item_count_max: int = 1
-				if ':' in item_to_drop:
-					silk_text = f'execute if score #is_silk_touch {ns}.data matches 0 run data modify entity @s Item.id set value "{item_to_drop}"'
-				else:
-					silk_text = (
-						f"execute if score #is_silk_touch {ns}.data matches 0 run data modify entity @s Item.id set from storage {ns}:items all.{item_to_drop}.id"
-						f"\nexecute if score #is_silk_touch {ns}.data matches 0 run "
-						f"data modify entity @s Item.components set from storage {ns}:items all.{item_to_drop}.components"
-					)
-				if item_count_min == item_count_max and item_count_min != 1:
-					silk_text += f"\nexecute if score #is_silk_touch {ns}.data matches 0 run scoreboard players set #multiplier {ns}.data {item_count_min}"
-					silk_text += f"\nexecute if score #is_silk_touch {ns}.data matches 0 run scoreboard players operation #item_count {ns}.data *= #multiplier {ns}.data"
-				elif item_count_min < item_count_max:
-					silk_text += f"\nexecute if score #is_silk_touch {ns}.data matches 0 run scoreboard players set #divider {ns}.data 100"
-					silk_text += f"\nexecute if score #is_silk_touch {ns}.data matches 0 store result score #multiplier {ns}.data run random value {item_count_min*100}..{item_count_max*100}"
-					silk_text += f"\nexecute if score #is_silk_touch {ns}.data matches 0 run scoreboard players operation #item_count {ns}.data *= #multiplier {ns}.data"
-					silk_text += f"\nexecute if score #is_silk_touch {ns}.data matches 0 run scoreboard players operation #item_count {ns}.data /= #divider {ns}.data"
-				content = f"""
+						item_to_drop: str = no_silk_touch_drop
+						item_count_min: int = 1
+						item_count_max: int = 1
+					if ':' in item_to_drop:
+						silk_text = f'execute if score #is_silk_touch {ns}.data matches 0 run data modify entity @s Item.id set value "{item_to_drop}"'
+					else:
+						silk_text = (
+							f"execute if score #is_silk_touch {ns}.data matches 0 run data modify entity @s Item.id set from storage {ns}:items all.{item_to_drop}.id"
+							f"\nexecute if score #is_silk_touch {ns}.data matches 0 run "
+							f"data modify entity @s Item.components set from storage {ns}:items all.{item_to_drop}.components"
+						)
+					if item_count_min == item_count_max and item_count_min != 1:
+						silk_text += f"\nexecute if score #is_silk_touch {ns}.data matches 0 run scoreboard players set #multiplier {ns}.data {item_count_min}"
+						silk_text += f"\nexecute if score #is_silk_touch {ns}.data matches 0 run scoreboard players operation #item_count {ns}.data *= #multiplier {ns}.data"
+					elif item_count_min < item_count_max:
+						silk_text += f"\nexecute if score #is_silk_touch {ns}.data matches 0 run scoreboard players set #divider {ns}.data 100"
+						silk_text += f"\nexecute if score #is_silk_touch {ns}.data matches 0 store result score #multiplier {ns}.data run random value {item_count_min*100}..{item_count_max*100}"
+						silk_text += f"\nexecute if score #is_silk_touch {ns}.data matches 0 run scoreboard players operation #item_count {ns}.data *= #multiplier {ns}.data"
+						silk_text += f"\nexecute if score #is_silk_touch {ns}.data matches 0 run scoreboard players operation #item_count {ns}.data /= #divider {ns}.data"
+					content = f"""
 # If silk touch applied
 execute if score #is_silk_touch {ns}.data matches 1 run data modify entity @s Item.id set from storage {ns}:items all.{item}.id
 execute if score #is_silk_touch {ns}.data matches 1 run data modify entity @s Item.components set from storage {ns}:items all.{item}.components
@@ -620,8 +647,8 @@ execute if score #is_silk_touch {ns}.data matches 1 run data modify entity @s It
 # Else, no silk touch
 {silk_text}
 """
-				if data.get(VANILLA_BLOCK) == VANILLA_BLOCK_FOR_ORES:
-					content += f"""
+					if data.get(VANILLA_BLOCK) == VANILLA_BLOCK_FOR_ORES:
+						content += f"""
 # Get item count in every case
 execute store result entity @s Item.count byte 1 run scoreboard players get #item_count {ns}.data
 """

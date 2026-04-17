@@ -5,6 +5,7 @@ from stewbeet import *  # type: ignore
 
 # Main entry point
 def main():
+    ns: str = Mem.ctx.project_id
 
     # Configuration to generate everything about the material based on "steel_ingot"
     ORES_CONFIGS: dict[str, EquipmentsConfig|None] = {
@@ -32,8 +33,25 @@ def main():
 
     # Don't forget to set the vanilla blocks for the custom blocks
     # (not automatic even though they was recognized by generate_everything_about_these_materials(), because it's your choice of base block)
-    Block.from_id("steel_block").vanilla_block = VanillaBlock(id="minecraft:iron_block", apply_facing=False)
-    Block.from_id("raw_steel_block").vanilla_block = VanillaBlock(id="minecraft:raw_iron_block", apply_facing=False)
+    Block.from_id("steel_block").vanilla_block = VanillaBlock(id="minecraft:iron_block")
+    Block.from_id("raw_steel_block").vanilla_block = VanillaBlock(id="minecraft:raw_iron_block")
+
+    # Keep steel_ore default no_silk_touch_drop from generate_everything_about_these_materials().
+    # Example: direct beet LootTable support for no_silk_touch_drop on another block.
+    Block.from_id("raw_steel_block").no_silk_touch_drop = LootTable({
+        "type": "minecraft:fishing",
+        "pools": [{
+            "rolls": 1,
+            "entries": [{
+                "type": "minecraft:loot_table",
+                "value": f"{ns}:i/raw_steel",
+                "functions": [{
+                    "function": "minecraft:set_count",
+                    "count": {"type": "minecraft:uniform", "min": 4, "max": 9}
+                }]
+            }]
+        }]
+    })
 
     return
 

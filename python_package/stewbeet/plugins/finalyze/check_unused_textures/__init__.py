@@ -6,7 +6,7 @@ from typing import Any, cast
 
 import stouputils as stp
 from beet import Context, Texture
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 
 
 # Main entry point
