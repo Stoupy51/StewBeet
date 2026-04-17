@@ -195,6 +195,20 @@ function {ns}:v{version}/unload
 			"unload",
 			"uninstall",
 		}
+		libs_unload_functions: set[str] = {
+			name_variants % filename
+			for filename in valid_filenames
+			for name_variants in {
+				link.join(name_parts )
+				for link in {'-', '_', ''}
+				for name_parts  in [
+					["%s","with","libraries"],
+					["%s","with","libs"],
+					["%s","libraries"],
+					["%s","libs"],
+				]
+			}
+		}
 		search_path: dict[str, str] = {
 			f"function/v{version}/%s.mcfunction": f"function {lib.lib_ns}:v{version}/%s",
 			"function/%s.mcfunction": f"function {lib.lib_ns}/%s",
@@ -203,7 +217,7 @@ function {ns}:v{version}/unload
 		valid_files: list[tuple[str, str]] = [
 			(path % filename, function_call % filename)
 			for path, function_call in search_path.items()
-			for filename in valid_filenames
+			for filename in list(libs_unload_functions) + list(valid_filenames)
 		]
 
 		with ZipFile(lib.datapack_path) as zip_file:
