@@ -156,10 +156,7 @@ from stewbeet import Block, VanillaBlock, CraftingShapedRecipe, SmeltingRecipe, 
 
 block = Block(
     id="super_stone",
-    vanilla_block=VanillaBlock(
-        id="minecraft:cobblestone",
-        apply_facing=False              # Whether block has directional states
-    ),
+    vanilla_block=VanillaBlock(id="minecraft:cobblestone"),
     manual_category="blocks",
     recipes=[
         # Could have been shapeless, but just for example:
@@ -191,8 +188,9 @@ block = Block(
 @dataclass
 class VanillaBlock:
     id: str                                          # Base vanilla block (e.g., "minecraft:cobblestone")
-    apply_facing: Literal[False, True, "entity"] = False  # Enable directional variants
     contents: bool = False                           # For blocks using item frames without vanilla block
+    block_facing: Literal[False, "player"] = False   # Rotate placed block based on player facing
+    visual_facing: Literal["none", "player", "item_frame"] = "none"  # Visual entity orientation source
 ```
 
 #### **NoSilkTouchDrop Configuration**
@@ -218,6 +216,21 @@ block = Block(
     id="simplunium_ore",
     vanilla_block=VanillaBlockForOres,
     no_silk_touch_drop="raw_simplunium"  # Defaults to count=1
+)
+
+# Or dynamic drops with a direct beet LootTable
+block = Block(
+    id="simplunium_ore",
+    vanilla_block=VanillaBlockForOres,
+    no_silk_touch_drop=LootTable({
+        "pools": [{
+            "rolls": 1,
+            "entries": [
+                {"type": "minecraft:item", "name": "minecraft:raw_iron", "weight": 3},
+                {"type": "minecraft:item", "name": "minecraft:iron_nugget", "weight": 7}
+            ]
+        }]
+    })
 )
 ```
 
@@ -436,14 +449,8 @@ def main():
     
     # Configure custom blocks after generation
     # ⚠️ We use Block.from_id() to access existing definitions and modify them
-    Block.from_id("steel_block").vanilla_block = VanillaBlock(
-        id="minecraft:iron_block",
-        apply_facing=False
-    )
-    Block.from_id("raw_steel_block").vanilla_block = VanillaBlock(
-        id="minecraft:raw_iron_block",
-        apply_facing=False
-    )
+    Block.from_id("steel_block").vanilla_block = VanillaBlock(id="minecraft:iron_block")
+    Block.from_id("raw_steel_block").vanilla_block = VanillaBlock(id="minecraft:raw_iron_block")
 ```
 
 ### 🧪 Equipment Configuration
@@ -629,7 +636,7 @@ electric_furnace = Block(
     id="electric_furnace",
     vanilla_block=VanillaBlock(
         id="minecraft:furnace",
-        apply_facing=True  # Enables directional variants (north, east, south, west)
+        block_facing="player"  # Enables directional variants (north, east, south, west)
     ),
     manual_category="energy",
     recipes=[

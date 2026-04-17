@@ -4,7 +4,8 @@ from dataclasses import dataclass, field
 from typing import Any
 
 import stouputils as stp
-from beet.core.utils import JsonDict, TextComponent
+from beet.core.utils import TextComponent
+from stouputils.typing import JsonDict
 
 from ..constants import (
     CATEGORY,
@@ -82,12 +83,20 @@ class Item(StMapping):
     """ (Optional) Additional informations to be displayed in the ingame manual. """
     components: JsonDict = field(default_factory=dict[str, Any])
     """ (Optional) Additional custom components for this item, e.g. "item_name": {...}, etc. """
+    skip_gives: bool = False
+    """ (Optional) If True, loot tables and give_all chests won't give this item. Useful for items that are never meant to be obtained by players. """
 
     # Register item in memory
     def __post_init__(self) -> None:
         # Add minecraft: to base item if needed
         if self.base_item and ":" not in self.base_item:
             self.base_item = "minecraft:" + self.base_item
+        if ":" in self.id:
+            stp.warning(
+                f"Item ID '{self.id}' cannot contain ':', these characters are reserved for external item definitions. "
+                "Please remove the namespace from the ID or use ExternalItem if that's what you meant."
+            )
+            self.id = self.id.split(":")[-1]
 
         # Warnings
         if self.wiki_buttons and not self.manual_category:

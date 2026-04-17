@@ -1,7 +1,7 @@
 
 # Imports
 import stouputils as stp
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 
 # Constants
 ROOT: str = stp.get_root_path(__file__, go_up=1)

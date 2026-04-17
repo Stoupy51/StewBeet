@@ -5,8 +5,9 @@ import os
 from typing import cast
 
 from beet import Advancement, Dialog, DialogTag, Model, Texture
-from beet.core.utils import JsonDict, TextComponent
+from beet.core.utils import TextComponent
 from PIL import Image
+from stouputils.typing import JsonDict
 
 from ...core import Mem, set_json_encoder, text_component_to_str, write_function, write_load_file
 from ...core.utils.text_component import item_id_to_text_component

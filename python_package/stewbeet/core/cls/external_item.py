@@ -4,7 +4,7 @@ import json
 from dataclasses import dataclass, field
 from typing import Any
 
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 
 from ._utils import StMapping
 from .item import Item

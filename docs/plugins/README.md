@@ -13,7 +13,6 @@ Here are all the available plugins for the StewBeet framework:
 | Category | Plugin | Description | Image | Dependency |
 |----------|--------|-------------|-------|------------|
 | 🚀 **Core** | [**initialize**](./initialize.md) | Initializes StewBeet framework, sets up project metadata and pack configurations | ![Auto Item Lore](img/initialize.source_lore.jpg) | 🔴 Fully dependent |
-| ✅ **Core** | [**verify_definitions**](./verify_definitions.md) | Validates item definitions structure and performs consistency checks | ![Debug Export](img/verify_definitions.json_dump.jpg) | 🔴 Fully dependent |
 | 🔊 **Resource Pack** | [**resource_pack.sounds**](./resource_pack.sounds.md) | Processes sound files and generates sounds.json from sounds folder | ![Sound Result](img/resource_pack.sounds.result.jpg) | 🟡 Partly dependent |
 | 🎨 **Resource Pack** | [**resource_pack.item_models**](./resource_pack.item_models.md) | Automatically generates item models from texture patterns | ![Pattern Detection](img/resource_pack.item_models.pattern_detection.jpg) | 🟡 Partly dependent |
 | 🖼️ **Resource Pack** | [**resource_pack.check_power_of_2**](./resource_pack.check_power_of_2.md) | Validates that textures use power-of-2 resolutions | ![Texture Warning](img/resource_pack.check_power_of_2.warning.jpg) | 🟢 Independent |
@@ -32,6 +31,7 @@ Here are all the available plugins for the StewBeet framework:
 | 🔍 **Finalization** | [**finalyze.check_unused_textures**](./finalyze.check_unused_textures.md) | Identifies unused texture files in the resource pack | ![Unused textures warning](img/finalyze.check_unused_textures.warnings.jpg) | 🟢 Independent |
 | 🌐 **Automation** | [**auto.lang_file**](./auto.lang_file.md) | Automatically generates language files from text components | ![Automatic Lang File](img/auto.lang_file.en_us_example.jpg) | 🟢 Independent |
 | 📝 **Automation** | [**auto.headers**](./auto.headers.md) | Adds automatic headers to mcfunction files showing usage context | ![Macro Example](img/auto.headers.macro_example.jpg) | 🟢 Independent |
+| 🏗️ **Automation** | [**auto.scoreboard_constants**](./auto.scoreboard_constants.md) | Detects scoreboard constant usages and auto-generates their initialization commands | ![Scoreboard Constants](img/auto.scoreboard_constants.example.jpg) | 🟢 Independent |
 | 📦 **Build** | [**archive**](./archive.md) | Creates zip archives of generated datapacks and resource packs | ![Output Directory](img/archive.output_directory.jpg) | 🟢 Independent |
 | 🔗 **Build** | [**merge_smithed_weld**](./merge_smithed_weld.md) | Merges datapacks and resource packs with libraries using Smithed Weld | ![Merged Output](img/merged_smithed_weld.output_directory.jpg) | 🟢 Independent |
 | 📂 **Build** | [**copy_to_destination**](./copy_to_destination.md) | Copies generated packs to configured destination folders | ![Copied datapacks](img/copy_to_destination.datapack_destination.jpg) | 🟢 Independent |

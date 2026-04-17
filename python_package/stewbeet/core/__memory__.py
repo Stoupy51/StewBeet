@@ -5,7 +5,7 @@
 from typing import TYPE_CHECKING
 
 from beet import Context
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 
 if TYPE_CHECKING:
     from .cls.external_item import ExternalItem

@@ -1,15 +1,15 @@
 
 # Imports
 import stouputils as stp
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 
 from ...core.__memory__ import Mem
 from ...core.cls.external_item import ExternalItem
 from ...core.cls.ingredients import Ingr
 from ...core.cls.item import Item
 from ...core.cls.recipe import CraftingShapedRecipe, CraftingShapelessRecipe
-from ...core.constants import OFFICIAL_LIBS, official_lib_used
 from ...core.utils.io import write_function
+from ...dependencies.official_libs import OFFICIAL_LIBS, official_lib_used
 
 
 class SmithedRecipeHandler:
@@ -73,6 +73,10 @@ class SmithedRecipeHandler:
     def smithed_shaped_recipe(self, recipe: CraftingShapedRecipe, result_loot: str) -> str:
         """ Generate a Smithed Crafter shaped recipe.
 
+        Note: Shaped recipe predicates must NOT include 'count' because smithed.crafter's
+        input storage omits count for individual slots. Shapeless predicates DO include
+        count (the number of unique ingredient occurrences), which is handled separately.
+
         Args:
             recipe (CraftingShapedRecipe): The recipe data.
             result_loot (str): The loot table for the result.
@@ -89,6 +93,7 @@ class SmithedRecipeHandler:
                 ingredient = ingredients.get(char)
                 if ingredient:
                     predicate = ingredient.to_predicate(Slot=slot)
+                    predicate.pop("count", None)  # Shaped predicates must not include count (smithed.crafter storage omits it)
                     recipes[i].append(predicate)
                 else:
                     recipes[i].append({"Slot": slot, "id": "minecraft:air"})

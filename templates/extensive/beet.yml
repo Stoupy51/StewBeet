@@ -55,12 +55,12 @@ pipeline:
     - "stewbeet.plugins.compatibilities.neo_enchant"
     - "src.link" # User code
     - "mecha"
-    - "stewbeet.plugins.finalyze.scoreboard_constants"
     - "stewbeet.plugins.finalyze.custom_blocks_ticking"
     - "stewbeet.plugins.finalyze.basic_datapack_structure"
     - "stewbeet.plugins.finalyze.dependencies"
     - "stewbeet.plugins.finalyze.check_unused_textures"
     - "stewbeet.plugins.finalyze.last_final"
+    - "stewbeet.plugins.auto.scoreboard_constants"
     - "stewbeet.plugins.auto.lang_file"
     - "stewbeet.plugins.auto.headers"
     - "stewbeet.plugins.archive"
@@ -100,14 +100,32 @@ meta:
             resource_pack: ["D:/minecraft/snapshot/resourcepacks"]
         # Custom item lore configuration. If set to "auto" or unset, uses project icon followed by PROJECT_NAME
         source_lore: "auto"
-        # Automagically checks for dependencies and their minimum required versions at runtime.
-        # The url is used when the dependency is not found to suggest where to get it.
-        # The version dict key contains the minimum required version of the dependency in [major, minor, patch] format.
-        # The main key is the dependency namespace to check for.
-        # The name can be whatever you want, it's just used in messages
+        # Custom dependencies to check at runtime alongside the official ones.
+        # Each entry key is the dependency namespace; the value is a dict with:
+        #   name    : display name used in error messages
+        #   url     : link shown when dependency is missing
+        #   source  : "static" | "modrinth" | "smithed"
+        # Source-specific fields:
+        #   static  → static_urls: {((mc_ver_tuple), (dep_ver_tuple)): "url"}
+        #   modrinth → modrinth_slug: "slug"  (latest MC-compatible release auto-fetched)
+        #   smithed  → smithed_id: "id", has_resource_pack: bool  (latest MC-compatible version auto-fetched)
         load_dependencies: {
-            # Example for DatapackEnergy >= 1.8.0
-            # "energy": {"version":[1, 8, 0], "name":"DatapackEnergy", "url":"https://github.com/ICY105/DatapackEnergy"},
+            # --- Modrinth example (latest release for the current MC version is auto-fetched) ---
+            # "itemio": {"name":"ItemIO", "url":"https://github.com/edayot/ItemIO",
+            #     "source":"modrinth", "modrinth_slug":"itemio"
+            # },
+
+            # --- Smithed API example (latest MC-compatible version is auto-fetched) ---
+            # "smithed.crafter": {"name":"Smithed Crafter", "url":"https://wiki.smithed.dev/libraries/crafter/",
+            #     "source":"smithed", "smithed_id":"crafter", "has_resource_pack":true
+            # },
+
+            # --- Static URL example (version pinned, zip downloaded from given URL per MC version) ---
+            # "common_signals": {"version":[0, 2, 0], "name":"Common Signals", "url":"https://github.com/Stoupy51/CommonSignals",
+            #     "source":"static", "static_urls":{
+            #         "((1, 21, 7), (0, 2, 0))": "https://github.com/Stoupy51/CommonSignals/releases/download/v0.2.0/CommonSignals_datapack.zip"
+            #     }
+            # },
         }
 
         # Configuration for in-game manual

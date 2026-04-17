@@ -9,8 +9,7 @@ from zipfile import ZIP_DEFLATED, ZipFile, ZipInfo
 import stouputils as stp
 from beet import Context
 
-from ...core.constants import OFFICIAL_LIBS
-from ...dependencies import OFFICIAL_LIBS_PATH
+from ...dependencies.download_manager import get_lib_paths
 from ..archive import get_consistent_timestamp
 from ..initialize.source_lore_font import find_pack_png
 
@@ -39,13 +38,10 @@ def weld_datapack(ctx: Context, dest_path: str) -> float:
 	if libs_folder and os.path.exists(libs_folder):
 		datapacks_to_merge.append(f"{libs_folder}/datapack/*.zip")
 
-	# Add the used official libs
-	for lib in OFFICIAL_LIBS.values():
-		if lib["is_used"]:
-			name: str = lib["name"]
-			path: str = f"{OFFICIAL_LIBS_PATH}/datapack/{name}.zip"
-			if os.path.exists(path):
-				datapacks_to_merge.append(path)
+	# Add the used official libs (downloaded dynamically)
+	for dl in get_lib_paths(ctx):
+		if dl.datapack_path:
+			datapacks_to_merge.append(dl.datapack_path)
 
 	# Skip welding if there are less than 2 datapacks to merge
 	if len(datapacks_to_merge) < 2:
@@ -126,13 +122,10 @@ def weld_resource_pack(ctx: Context, dest_path: str) -> float:
 	if libs_folder and os.path.exists(libs_folder):
 		resource_packs_to_merge.append(f"{libs_folder}/resource_pack/*.zip")
 
-	# Add the used official libs
-	for lib in OFFICIAL_LIBS.values():
-		if lib["is_used"]:
-			name: str = lib["name"]
-			path: str = f"{OFFICIAL_LIBS_PATH}/resource_pack/{name}.zip"
-			if os.path.exists(path):
-				resource_packs_to_merge.append(path)
+	# Add the used official libs (downloaded dynamically)
+	for dl in get_lib_paths(ctx):
+		if dl.resource_pack_path:
+			resource_packs_to_merge.append(dl.resource_pack_path)
 
 	# Skip welding if there are less than 2 resource packs to merge
 	if len(resource_packs_to_merge) < 2:

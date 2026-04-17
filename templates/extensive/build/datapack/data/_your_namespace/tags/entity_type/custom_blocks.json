@@ -1,5 +1,6 @@
 {
 	"values": [
-		"minecraft:item_display"
+		"minecraft:item_display",
+		"minecraft:item_frame"
 	]
 }

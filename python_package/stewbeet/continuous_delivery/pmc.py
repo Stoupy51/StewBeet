@@ -1,11 +1,10 @@
 
 # Imports
-import os
 import re
 
 import pyperclip
 import stouputils as stp
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 
 
 # Configuration
@@ -153,7 +152,8 @@ def upload_version(project_url: str, changelog: str) -> None:
 		changelog		(str):	Changelog text
 	"""
 	# Open the project url in the browser
-	os.system(f"start {project_url}")
+	import subprocess
+	subprocess.run(["start", project_url], shell=True)
 
 	# Copy the changelog text to the clipboard
 	pyperclip.copy(convert_markdown_to_bbcode(changelog))

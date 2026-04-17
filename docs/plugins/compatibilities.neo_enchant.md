@@ -43,7 +43,7 @@ pipeline:
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `VANILLA_BLOCK_FOR_ORES` | constant | `{"id": "minecraft:polished_deepslate", "apply_facing": false}` | The vanilla block used for ore optimization |
+| `VANILLA_BLOCK_FOR_ORES` | constant | `VanillaBlock(id="minecraft:polished_deepslate")` | The vanilla block used for ore optimization |
 | Ore Detection | automatic | N/A | Automatically scans definitions for ore blocks |
 
 ## ✨ Features

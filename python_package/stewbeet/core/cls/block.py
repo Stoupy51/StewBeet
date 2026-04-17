@@ -4,7 +4,8 @@ from dataclasses import dataclass
 from typing import Literal
 
 import stouputils as stp
-from beet.core.utils import JsonDict
+from beet import LootTable
+from stouputils.typing import JsonDict
 
 from ..constants import (
     CUSTOM_BLOCK_ALTERNATIVE,
@@ -20,30 +21,118 @@ from .item import Item
 # Subclasses
 @dataclass(kw_only=True)
 class VanillaBlock(StMapping):
-    """ Represents a vanilla block with optional facing and contents.
+    """ Represents a vanilla block with explicit facing semantics.
+
+    This class separates block orientation into two independent axes:
+    - ``block_facing``: controls the orientation of the placed vanilla block itself
+    - ``visual_facing``: controls the orientation of the visual entity/display
+
+    Legacy ``apply_facing`` field is still accepted for backward compatibility:
+    - ``apply_facing=True`` → ``block_facing="player"``, ``visual_facing="player"``
+    - ``apply_facing="entity"`` → ``visual_facing="player"``
+    - ``apply_facing=False`` → no change (defaults)
+
+    Default behavior (no facing):
 
     >>> vb = VanillaBlock(id="minecraft:stone")
     >>> vb.id
     'minecraft:stone'
-    >>> vb.apply_facing
+    >>> vb.block_facing
     False
+    >>> vb.visual_facing
+    'none'
+
+    Legacy ``apply_facing=True`` (block + visual rotation):
+
+    >>> vb = VanillaBlock(id="minecraft:furnace", apply_facing=True)
+    >>> vb.block_facing
+    'player'
+    >>> vb.visual_facing
+    'player'
+
+    Legacy ``apply_facing="entity"`` (visual only):
+
+    >>> vb = VanillaBlock(id="minecraft:stone", apply_facing="entity")
+    >>> vb.block_facing
+    False
+    >>> vb.visual_facing
+    'player'
+
+    Item frame custom block (no rotation):
+
+    >>> vb = VanillaBlock(contents=True)
+    >>> vb.contents
+    True
+    >>> vb.id is None
+    True
+    >>> vb.visual_facing
+    'none'
+
+    Item frame rotated like player (4 horizontal directions):
+
+    >>> vb = VanillaBlock(contents=True, visual_facing="player")
+    >>> vb.visual_facing
+    'player'
+
+    Item frame using its own facing (6 directions):
+
+    >>> vb = VanillaBlock(contents=True, visual_facing="item_frame")
+    >>> vb.visual_facing
+    'item_frame'
+
+    Invalid: ``block_facing`` with ``contents=True``:
+
+    >>> VanillaBlock(contents=True, block_facing="player")
+    Traceback (most recent call last):
+    ...
+    ValueError: contents=True cannot use block_facing="player"; use visual_facing instead.
+
+    New fields directly:
+
+    >>> vb = VanillaBlock(id="minecraft:barrel", block_facing="player")
+    >>> vb.block_facing
+    'player'
+    >>> vb.visual_facing
+    'player'
     """
-    id: str = ""
+    id: str | None = ""
     """ The vanilla block ID, e.g. 'minecraft:stone', "minecraft:conduit[waterlogged=false]". """
-    apply_facing: Literal[False, True, "entity"] = False
-    """ Whether the block should apply facing when placed. """
     contents: bool = False
     """ For blocks using item frames and no vanilla block, e.g. servo inserter/extractor from SimplEnergy. """
+    block_facing: Literal[False, "player"] = False
+    """ Whether to rotate the placed vanilla block based on player orientation ([facing=...] blockstate). """
+    visual_facing: Literal["none", "player", "item_frame"] = "none"
+    """ Source of the visual orientation: "none" (no rotation), "player" (4 horizontal directions), "item_frame" (6 directions from item frame Facing). """
+    apply_facing: Literal[False, True, "entity", None] = None
+    """ Legacy field for backward compatibility. Prefer ``block_facing`` and ``visual_facing``. """
 
     def __post_init__(self) -> None:
-        if ":" not in self.id and self.id != "":
+        # Normalize ID
+        if self.id and ":" not in self.id:
             self.id = "minecraft:" + self.id
+
+        # Handle contents mode (item_frame backend)
         if self.contents:
-            self.id = self.apply_facing = None
+            self.id = None
+
+        # Legacy compatibility: apply_facing -> new fields
+        if self.apply_facing is True:
+            self.block_facing = "player"
+            self.visual_facing = "player"
+        elif self.apply_facing == "entity":
+            self.visual_facing = "player"
+
+        # Implicit: block_facing="player" implies visual_facing="player" unless explicitly set
+        if self.block_facing == "player" and self.visual_facing == "none" and self.apply_facing is None:
+            self.visual_facing = "player"
+
+        # Validation
+        if self.contents and self.block_facing:
+            raise ValueError("contents=True cannot use block_facing=\"player\"; use visual_facing instead.")
 
 @dataclass(kw_only=True)
 class NoSilkTouchDrop(StMapping):
-    """ Defines the item dropped when the block is broken without silk touch.
+    """ Defines deterministic drops when the block is broken without silk touch.
 
     >>> nsd = NoSilkTouchDrop(id="raw_iron")
     >>> nsd.id
@@ -132,7 +221,7 @@ class Block(Item):
     ...         "item_name": {"text":"Stardust Seed","color":"aqua"},
     ...         "max_stack_size": 64,
     ...     },
-    ...     vanilla_block=VanillaBlock(id="minecraft:wheat", apply_facing=False),
+    ...     vanilla_block=VanillaBlock(id="minecraft:wheat"),
     ...     no_silk_touch_drop=NoSilkTouchDrop(id="stardust_fragment", count=1),
     ...     growing_seed=GrowingSeed(
     ...         texture_basename="stardust",
@@ -151,8 +240,8 @@ class Block(Item):
     # Specific to Block class
     vanilla_block: VanillaBlock
     """ If the block is based on a vanilla block, this defines which one and whether to apply facing. """
-    no_silk_touch_drop: NoSilkTouchDrop | str | None = None
-    """ (Optional) Defines the item dropped when the block is broken without silk touch, e.g. NoSilkTouchDrop(id="raw_simplunium") or just "raw_simplunium". """
+    no_silk_touch_drop: NoSilkTouchDrop | LootTable | str | None = None
+    """ (Optional) No-silk drop mode: deterministic (e.g. `NoSilkTouchDrop(id="raw_simplunium")` or string item id "raw_simplunium") or dynamic (`LootTable` object from beet). """
 
     # Others
     growing_seed: GrowingSeed | None = None
@@ -169,11 +258,7 @@ class Block(Item):
             ]
 
             # Hide the container tooltip
-            if not self.components.get("tooltip_display"):
-                self.components["tooltip_display"] = {"hidden_components": []}
-            elif not self.components["tooltip_display"].get("hidden_components"):
-                self.components["tooltip_display"]["hidden_components"] = []
-            hidden_components: list[str] = self.components["tooltip_display"]["hidden_components"]
+            hidden_components: list[str] = self.components.setdefault("tooltip_display", {}).setdefault("hidden_components", [])
             hidden_components.append("minecraft:container")
             self.components["tooltip_display"]["hidden_components"] = stp.unique_list(hidden_components)
 
@@ -218,5 +303,5 @@ class BlockHead(Block):
         super().__post_init__()
 
 # Constants
-VANILLA_BLOCK_FOR_ORES = VanillaBlock(id="minecraft:polished_deepslate", apply_facing=False)
+VANILLA_BLOCK_FOR_ORES = VanillaBlock(id="minecraft:polished_deepslate")
 

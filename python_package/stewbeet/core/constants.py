@@ -1,11 +1,8 @@
 
 # ruff: noqa: E501
 # Imports
-from beet.core.utils import JsonDict
 from beet.library import base
 from beet.toolchain.config import FormatSpecifier
-
-from ..dependencies.bookshelf import BOOKSHELF_MODULES
 
 # Minecraft version specific constants
 MORE_DATA_PACK_FORMATS: dict[tuple[int, ...], FormatSpecifier] = {
@@ -38,6 +35,8 @@ MORE_DATA_PACK_FORMATS: dict[tuple[int, ...], FormatSpecifier] = {
 
 	(26, 1): (101, 1),
 	(26, 1, 0): (101, 1),
+	(26, 1, 1): (101, 1),
+	(26, 1, 2): (101, 1),
 
 	(9999, 0, 0): (9999, 0),
 }
@@ -71,6 +70,8 @@ MORE_ASSETS_PACK_FORMATS: dict[tuple[int, ...], FormatSpecifier] = {
 
 	(26, 1): (84, 0),
 	(26, 1, 0): (84, 0),
+	(26, 1, 1): (84, 0),
+	(26, 1, 2): (84, 0),
 
 	(9999, 0, 0): (9999, 0),
 }
@@ -91,6 +92,8 @@ MORE_DATA_VERSIONS: dict[tuple[int, ...], int] = {
 
 	(26, 1): 4786,
 	(26, 1, 0): 4786,
+	(26, 1, 1): 4788,
+	(26, 1, 2): 4790,
 }
 LATEST_MC_VERSION: str = ".".join(str(x) for x in list(MORE_DATA_VERSIONS.keys())[-1])
 base.LATEST_MINECRAFT_VERSION = LATEST_MC_VERSION
@@ -101,8 +104,8 @@ CUSTOM_BLOCK_VANILLA: str = "minecraft:furnace"			# Vanilla block used as base f
 CUSTOM_BLOCK_ALTERNATIVE: str = "minecraft:item_frame"	# Same purpose as previous, but useful for blocks that can be placed on walls or on player's position (ex: flowers)
 CUSTOM_BLOCK_HEAD: str = "minecraft:player_head"		# Same purpose as previous, but useful for blocks does not have a custom model data
 CUSTOM_ITEM_VANILLA: str = "minecraft:command_block"	# Vanilla item used as base for custom items, must not have any survival vanilla behaviour
-VANILLA_BLOCK: str = "vanilla_block"					# Key to a vanilla block that will be placed for custom block interaction, value needs to be a dict like {"id":"minecraft:chest[type=single,waterlogged=false]", "apply_facing": True}
-NO_SILK_TOUCH_DROP: str = "no_silk_touch_drop"			# Key to an item ID that will drop when silk touch is not used. Must be used only when using the vanilla block for ores, ex: "adamantium_fragment" or "minecraft:raw_iron"
+VANILLA_BLOCK: str = "vanilla_block"					# Key to a vanilla block that will be placed for custom block interaction, value needs to be a dict like {"id":"minecraft:chest[type=single,waterlogged=false]", "block_facing": "player"} or a VanillaBlock instance
+NO_SILK_TOUCH_DROP: str = "no_silk_touch_drop"			# Key to no-silk drop data for ores: item id string, deterministic dict-like data (`NoSilkTouchDrop`), or a beet `LootTable`
 OVERRIDE_MODEL: str = "override_model"					# Key to a dictionnary that will be used to override the whole model
 SMITHED_CRAFTER_COMMAND: str = "smithed_crafter_command"	# Key to a command that will be used in a recipe in the Smithed Crafter library. If not present, the command will be defaulted to a loot table. Ex: {"result":...,SMITHED_CRAFTER_COMMAND: "function your_namespace:calls/smithed_crafter/do_something_else"}
 PAINTING_DATA: str = "painting_data"					# Key to a dict that contains the painting data, like {"author":"","title":"","width":1,"height":1} where author and title defaults to beet config values if not given
@@ -188,24 +191,4 @@ class Conventions:
 	""" Deprecated (use Conventions.ENTITY_TAGS_NO_KILL.avoid instead): String of tags to avoid when executing an entity command. Example of use: execute as @e[{Conventions.AVOID_ENTITY_TAGS_NO_KILL}] run function your_namespace:kill_entity """
 	AVOID_BLOCK_TAGS_NO_KILL: str = BLOCK_TAGS_NO_KILL.avoid
 	""" Deprecated (use Conventions.BLOCK_TAGS_NO_KILL.avoid instead): String of tags to avoid when executing a block command. Example of use: execute as @e[{Conventions.AVOID_BLOCK_TAGS_NO_KILL}] run function your_namespace:kill_entity """
-
-
-
-# Automatically handled dependencies for supported libs with additional key "is_used" that is True when the lib is found to be used.
-def official_lib_used(lib: str) -> bool:
-	is_used: bool = OFFICIAL_LIBS[lib]["is_used"]
-	OFFICIAL_LIBS[lib]["is_used"] = True
-	return is_used
-
-OFFICIAL_LIBS: dict[str, JsonDict] = {
-	"common_signals":		{"version":[0, 2, 0],	"name":"Common Signals",					"url":"https://github.com/Stoupy51/CommonSignals",			"is_used": False},
-	"smithed.custom_block":	{"version":[0, 7, 1],	"name":"Smithed Custom Block",				"url":"https://wiki.smithed.dev/libraries/custom-block/",	"is_used": False},
-	"smithed.crafter":		{"version":[0, 7, 1],	"name":"Smithed Crafter",					"url":"https://wiki.smithed.dev/libraries/crafter/",		"is_used": False},
-	"smithed.actionbar":	{"version":[0, 6, 6],	"name":"Smithed Actionbar",					"url":"https://wiki.smithed.dev/libraries/actionbar/",		"is_used": False},
-	"furnace_nbt_recipes":	{"version":[1, 10, 1],	"name":"Furnace NBT Recipes",				"url":"https://github.com/Stoupy51/FurnaceNbtRecipes",		"is_used": False},
-	"smart_ore_generation":	{"version":[1, 7, 2],	"name":"SmartOreGeneration",				"url":"https://github.com/Stoupy51/SmartOreGeneration",		"is_used": False},
-	"realistic_explosion":	{"version":[1, 2, 0],	"name":"RealisticExplosion",				"url":"https://github.com/Stoupy51/RealisticExplosionLibrary",	"is_used": False},
-	"itemio":				{"version":[1, 4, 1],	"name":"ItemIO",							"url":"https://github.com/edayot/ItemIO",					"is_used": False},
-	**BOOKSHELF_MODULES,
-}
 

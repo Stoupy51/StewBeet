@@ -7,7 +7,8 @@ from dataclasses import dataclass, fields
 from typing import Any, Self
 
 import stouputils as stp
-from beet.core.utils import JsonDict
+from beet import LootTable
+from stouputils.typing import JsonDict
 
 from ..constants import NOT_COMPONENTS
 
@@ -44,6 +45,8 @@ class StMapping(Mapping[str, Any]):
             """ Recursively convert a value to a JSON-serializable form """
             if value is None:
                 return None
+            elif isinstance(value, LootTable):
+                return _convert_value(value.data)
             elif hasattr(value, 'to_dict'):
                 return value.to_dict()
             elif is_dataclass(value) and not isinstance(value, type):

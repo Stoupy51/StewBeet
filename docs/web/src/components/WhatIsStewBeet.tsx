@@ -114,7 +114,7 @@ export const WhatIsStewBeet: React.FC = () => {
 `# Simply define your items...
 Block(
     id="super_stone",
-    vanilla_block=VanillaBlock(id="minecraft:cobblestone", apply_facing=False),
+    vanilla_block=VanillaBlock(id="minecraft:cobblestone"),
     recipes=[
         # Examples of crafting recipes (shaped and shapeless), no need to specify result -> will default to the Item id
         CraftingShapedRecipe(category="blocks", shape=["XXX","XXX","XXX"], ingredients={"X": Ingr("minecraft:stone")}),

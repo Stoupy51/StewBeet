@@ -2,7 +2,7 @@
 # Imports
 import stouputils as stp
 from beet import Predicate
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 
 from ...core.__memory__ import Mem
 from ...core.cls.external_item import ExternalItem

@@ -1,7 +1,7 @@
 
 # Imports
 from beet import Context
-from beet.core.utils import JsonDict
+from stouputils.typing import JsonDict
 
 from .quick_sort import generate_quick_sort
 from .selection_sort import generate_selection_sort
