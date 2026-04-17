@@ -232,6 +232,8 @@ function {ns}:v{version}/unload
 					return
 
 	def write_unload_function(self) -> None:
+		if all(len(commands) == 0 for _, commands, _ in self.removal_commands.values()):
+			return
 		content = "\n\n".join(
 			f"{header}\n{'\n'.join(commands)}"
 			for (header, commands, _) in self.removal_commands.values()
