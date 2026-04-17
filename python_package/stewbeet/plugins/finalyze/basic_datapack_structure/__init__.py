@@ -1,10 +1,10 @@
 
 # Imports
-from typing import Callable, Literal
+from typing import Any, Callable, Literal
 from re import Match, Pattern, compile
 
 import stouputils as stp
-from beet import Context
+from beet import Context, NamespaceContainer
 
 from ....core.__memory__ import Mem
 from ....core.utils.io import write_tick_file, write_versioned_function, write_unload_file
@@ -97,7 +97,7 @@ scoreboard players set #minute {ns}.data 1
 		if content:
 			write_tick_file(content, prepend=True)
 
-type UnloadFunctionKeys = Literal["items", "scoreboard_objectives", "storages", "blocks"]
+type UnloadFunctionKeys = Literal["items", "scoreboard_objectives", "storages", "blocks", "libraries"]
 
 class UnloadFunction:
 	""" Class to generate the unload functions for the datapack """
@@ -128,9 +128,14 @@ class UnloadFunction:
 					'execute as @e[type=minecraft:item_display,tag=%s.custom_block] at @s run function %s:v%s/unload/destroy_block' % (self.ns, self.ns, self.version),
 				}
 			),
+			"libraries": (
+				"# Unload libraries",
+				set()
+			),
 		}
 
 		self.scan_datapack(ns)
+		self.unload_libraries()
 		self.write_unload_function()
 
 	def scan_datapack(self, ns: str) -> None:
@@ -151,6 +156,58 @@ class UnloadFunction:
 					match = regex.search(line)
 					if match:
 						self.removal_commands[key][1].add(callback(match))
+
+	def unload_library(self, ns: str) -> None:
+		"""
+		Scan the data pack for the most precise unload function for the given namespace and add it to the unload commands.
+		precision order:
+		1. v{version}/{filename}.mcfunction
+		2. {filename}.mcfunction
+		3. #{filename}.json
+		valid filenames:
+		- unload
+		- uninstall
+		"""
+		filenames: list[str] = [
+			"unload",
+			"uninstall",
+		]
+		search: list[tuple[NamespaceContainer[Any], Callable[[str], str], list[str]]] = [
+			(self.ctx.data[ns].functions,
+			lambda filename: f"function {ns}:{filename}",
+			[
+				r"v[\d.]+/%s",
+				r"%s",
+			]),
+			(self.ctx.data[ns].function_tags,
+			lambda filename: f"function #{ns}:{filename}",
+			[
+				r"%s",
+			]),
+		]
+		search_regexes: list[tuple[NamespaceContainer[Any], Callable[[str], str], list[Pattern[str]]]] = [
+			(
+				ns_container,
+				format,
+				[
+					compile(pattern % filename)
+					for pattern in patterns
+					for filename in filenames
+				]
+			)
+			for ns_container, format, patterns in search
+		]
+		for ns_container, format, regexes in search_regexes:
+			for name in sorted(ns_container, reverse=True):
+				if any(regex.match(name) for regex in regexes):
+					self.removal_commands["libraries"][1].add(format(name))
+					return
+
+	def unload_libraries(self) -> None:
+		for ns in self.ctx.data:
+			if ns in [self.ns, "minecraft"]:
+				continue
+			self.unload_library(ns)
 
 	def write_unload_function(self) -> None:
 		content = "\n\n".join(
