@@ -1,6 +1,6 @@
 
 # Imports
-from typing import Callable, Literal
+from typing import Any, Callable, Literal
 from re import Match, Pattern, compile
 from zipfile import ZipFile
 
@@ -109,30 +109,44 @@ class UnloadFunction:
 		self.ns = ns
 		self.version = version
 
-		self.removal_commands: dict[UnloadFunctionKeys, tuple[str,set[str]]] = {
+		self.removal_commands: dict[UnloadFunctionKeys, tuple[str, set[str], Callable[[set[str]], Any] | None]] = {
 			"items": (
 				"# Clear custom items",
 				{
 					'clear @a *[custom_data~{"%s":{}}]' % self.ns,
-				}
+				},
+				None,
 			),
 			"scoreboard_objectives": (
 				"# Remove scoreboard objectives",
-				set()
+				set(),
+				None,
 			),
 			"storages": (
 				"# Clear storages",
-				set()
+				set(),
+				None,
 			),
 			"blocks": (
 				"# Destroy custom blocks",
 				{
 					'execute as @e[type=minecraft:item_display,tag=%s.custom_block] at @s run function %s:v%s/unload/destroy_block' % (self.ns, self.ns, self.version),
-				}
+				},
+				None,
 			),
 			"libraries": (
-				"# Unload libraries",
-				set()
+				"",
+				set(),
+				lambda commands: write_versioned_function("unload_with_libraries",
+f"""# This function is called by the user if they want to unload the pack and all it's libraries
+# Be careful this can lead to issues if a library is used by another pack and had some data stored
+
+# Unload the pack itself
+function {ns}:v{version}/unload
+
+# Unload libraries
+{'\n'.join(commands)}
+""", tags=["unload_with_libraries"])
 			),
 		}
 
@@ -202,9 +216,12 @@ class UnloadFunction:
 	def write_unload_function(self) -> None:
 		content = "\n\n".join(
 			f"{header}\n{'\n'.join(commands)}"
-			for _, (header, commands) in self.removal_commands.items()
-			if len(commands) > 0
+			for (header, commands, _) in self.removal_commands.values()
+			if len(commands) > 0 and len(header) > 0
 		)
+		for (_, commands, callback) in self.removal_commands.values():
+			if len(commands) > 0 and callback is not None:
+				callback(commands)
 		write_unload_file(content)
 		write_versioned_function("unload/destroy_block",
 f"""# This function is called by the main unload function to destroy custom blocks
