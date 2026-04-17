@@ -1,10 +1,12 @@
 
 # Imports
-from typing import Any, Callable, Literal
+from typing import Callable, Literal
 from re import Match, Pattern, compile
+from zipfile import ZipFile
 
 import stouputils as stp
-from beet import Context, NamespaceContainer
+from beet import Context
+from ....dependencies.download_manager import DownloadedLib, get_lib_paths as get_libs
 
 from ....core.__memory__ import Mem
 from ....core.utils.io import write_tick_file, write_versioned_function, write_unload_file
@@ -135,7 +137,8 @@ class UnloadFunction:
 		}
 
 		self.scan_datapack(ns)
-		self.unload_libraries()
+		for lib in get_libs(self.ctx):
+			self.unload_library(lib)
 		self.write_unload_function()
 
 	def scan_datapack(self, ns: str) -> None:
@@ -157,7 +160,7 @@ class UnloadFunction:
 					if match:
 						self.removal_commands[key][1].add(callback(match))
 
-	def unload_library(self, ns: str) -> None:
+	def unload_library(self, lib: DownloadedLib) -> None:
 		"""
 		Scan the data pack for the most precise unload function for the given namespace and add it to the unload commands.
 		precision order:
@@ -168,46 +171,33 @@ class UnloadFunction:
 		- unload
 		- uninstall
 		"""
-		filenames: list[str] = [
+		if lib.datapack_path is None:
+			stp.warning(f"Library '{lib.lib_ns}' does not have a datapack path, skipping unload function scan.")
+			return
+		version = '.'.join(str(x) for x in lib.version)
+		data_folder = f"data/{lib.lib_ns}/"
+
+		valid_filenames: set[str] = {
 			"unload",
 			"uninstall",
+		}
+		search_path: dict[str, str] = {
+			f"function/v{version}/%s.mcfunction": f"function {lib.lib_ns}:v{version}/%s",
+			"function/%s.mcfunction": f"function {lib.lib_ns}/%s",
+			"tags/function/%s.json": f"function #{lib.lib_ns}/%s",
+		}
+		valid_files: list[tuple[str, str]] = [
+			(path % filename, function_call % filename)
+			for path, function_call in search_path.items()
+			for filename in valid_filenames
 		]
-		search: list[tuple[NamespaceContainer[Any], Callable[[str], str], list[str]]] = [
-			(self.ctx.data[ns].functions,
-			lambda filename: f"function {ns}:{filename}",
-			[
-				r"v[\d.]+/%s",
-				r"%s",
-			]),
-			(self.ctx.data[ns].function_tags,
-			lambda filename: f"function #{ns}:{filename}",
-			[
-				r"%s",
-			]),
-		]
-		search_regexes: list[tuple[NamespaceContainer[Any], Callable[[str], str], list[Pattern[str]]]] = [
-			(
-				ns_container,
-				format,
-				[
-					compile(pattern % filename)
-					for pattern in patterns
-					for filename in filenames
-				]
-			)
-			for ns_container, format, patterns in search
-		]
-		for ns_container, format, regexes in search_regexes:
-			for name in sorted(ns_container, reverse=True):
-				if any(regex.match(name) for regex in regexes):
-					self.removal_commands["libraries"][1].add(format(name))
-					return
 
-	def unload_libraries(self) -> None:
-		for ns in self.ctx.data:
-			if ns in [self.ns, "minecraft"]:
-				continue
-			self.unload_library(ns)
+		with ZipFile(lib.datapack_path) as zip_file:
+			files_in_lib: set[str] = set(map(lambda x: x[len(data_folder):], filter(lambda x: x.startswith(data_folder), zip_file.namelist())))
+			for path, function_call in valid_files:
+				if path in files_in_lib:
+					self.removal_commands["libraries"][1].add(function_call)
+					return
 
 	def write_unload_function(self) -> None:
 		content = "\n\n".join(
