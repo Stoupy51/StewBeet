@@ -117,6 +117,17 @@ class UnloadFunction:
 				} if Mem.definitions else set(),
 				None,
 			),
+			"blocks": (
+				"# Destroy custom blocks",
+				{
+					'execute as @e[type=minecraft:item_display,tag=%s.custom_block] at @s run function %s:v%s/unload/destroy_block' % (self.ns, self.ns, self.version),
+				} if self.ctx.data.function_tags.get('smithed.custom_block:event/on_place') else set(),
+				lambda _: write_versioned_function("unload/destroy_block", "\n".join([
+					"# This function is called by the main unload function to destroy custom blocks",
+					"setblock ~ ~ ~ air",
+					"kill @s",
+				]))
+			),
 			"scoreboard_objectives": (
 				"# Remove scoreboard objectives",
 				set(),
@@ -127,30 +138,19 @@ class UnloadFunction:
 				set(),
 				None,
 			),
-			"blocks": (
-				"# Destroy custom blocks",
-				{
-					'execute as @e[type=minecraft:item_display,tag=%s.custom_block] at @s run function %s:v%s/unload/destroy_block' % (self.ns, self.ns, self.version),
-				} if self.ctx.data.function_tags.get('smithed.custom_block:event/on_place') else set(),
-				lambda _: write_versioned_function("unload/destroy_block",
-f"""# This function is called by the main unload function to destroy custom blocks
-setblock ~ ~ ~ air
-kill @s
-""")
-			),
 			"libraries": (
 				"",
 				set(),
-				lambda commands: write_versioned_function("unload_with_libraries",
-f"""# This function is called by the user if they want to unload the pack and all it's libraries
-# Be careful this can lead to issues if a library is used by another pack and had some data stored
-
-# Unload the pack itself
-function {ns}:v{version}/unload
-
-# Unload libraries
-{'\n'.join(commands)}
-""", tags=["unload_with_libraries"])
+				lambda commands: write_versioned_function("unload_with_libraries", "\n".join([
+					"# This function is called by the user if they want to unload the pack and all it's libraries",
+					"# Be careful this can lead to issues if a library is used by another pack and had some data stored",
+					"",
+					"# Unload the pack itself",
+					f"function {ns}:v{version}/unload",
+					"",
+					"# Unload libraries",
+					f"{'\n'.join(commands)}",
+				]), tags=["unload_with_libraries"])
 			),
 		}
 
