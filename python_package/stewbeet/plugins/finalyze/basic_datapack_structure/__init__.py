@@ -131,8 +131,12 @@ class UnloadFunction:
 				"# Destroy custom blocks",
 				{
 					'execute as @e[type=minecraft:item_display,tag=%s.custom_block] at @s run function %s:v%s/unload/destroy_block' % (self.ns, self.ns, self.version),
-				},
-				None,
+				} if self.ctx.data.function_tags.get('smithed.custom_block:event/on_place') else set(),
+				lambda _: write_versioned_function("unload/destroy_block",
+f"""# This function is called by the main unload function to destroy custom blocks
+setblock ~ ~ ~ air
+kill @s
+""")
 			),
 			"libraries": (
 				"",
@@ -237,8 +241,3 @@ function {ns}:v{version}/unload
 			if len(commands) > 0 and callback is not None:
 				callback(commands)
 		write_unload_file(content)
-		write_versioned_function("unload/destroy_block",
-f"""# This function is called by the main unload function to destroy custom blocks
-setblock ~ ~ ~ air
-kill @s
-""")
