@@ -114,7 +114,7 @@ class UnloadFunction:
 				"# Clear custom items",
 				{
 					'clear @a *[custom_data~{"%s":{}}]' % self.ns,
-				},
+				} if Mem.definitions else set(),
 				None,
 			),
 			"scoreboard_objectives": (
