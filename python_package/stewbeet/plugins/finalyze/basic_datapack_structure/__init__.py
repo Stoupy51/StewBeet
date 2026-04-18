@@ -109,6 +109,12 @@ class UnloadFunction:
 		self.ns = ns
 		self.version = version
 
+		safe_kill: Callable[[set[str]], Any] = lambda _: write_versioned_function("unload/safe_kill", "\n".join([
+			"# This function is used to safely kill entities by teleporting them to the void before killing them to preventitem drops",
+			"tp @s ~ -10000 ~",
+			"kill @s",
+		]))
+
 		self.removal_commands: dict[UnloadFunctionKeys, tuple[str, set[str], Callable[[set[str]], Any] | None]] = {
 			"items": (
 				"# Clear custom items",
@@ -131,12 +137,12 @@ class UnloadFunction:
 			"entities_uuids": (
 				"# Kill entities spawned with a custom UUID",
 				set(),
-				None,
+				safe_kill,
 			),
 			"entities_tags": (
 				"# Kill entities with custom tags",
 				set(),
-				None,
+				safe_kill,
 			),
 			"scoreboard_objectives": (
 				"# Remove scoreboard objectives",
@@ -181,12 +187,12 @@ class UnloadFunction:
 			),
 			"entities_uuids": (
 				compile(r"summon [^ ]+\s+(?:[\d~.-]+\s+){3}\{.*UUID:\s*(\[\s*I\s*;(?:\s*[\d.-]+\s*,){3}\s*[\d.-]+\s*\])"),
-				lambda match: {f"kill {uuid2inline(match.group(1))}"}
+				lambda match: {f"execute as {uuid2inline(match.group(1))} at @s run function {ns}:v{self.version}/unload/safe_kill"}
 			),
 			"entities_tags": (
 				compile(r"summon [^ ]+\s+(?:[\d~.-]+\s+){3}\{.*Tags:\s*(\[(?:\s*[\"'][0-9A-Za-z_.+-]+[\"']\s*,?)+\s*\])"),
 				lambda match: {
-					f"kill @e[tag={tag}]"
+					f"execute as @e[tag={tag}] at @s run function {ns}:v{self.version}/unload/safe_kill"
 					for tag in map(lambda x: x.strip(' "\''),match.group(1)[1:-1].split(","))
 					if tag.startswith(ns)
 				}
