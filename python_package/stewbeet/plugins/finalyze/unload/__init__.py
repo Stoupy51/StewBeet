@@ -216,9 +216,9 @@ function {self.ns}:v{self.version}/unload
 		data_folder: str = f"data/{lib.lib_ns}/"
 
 		search_path: dict[str, str] = {
-			f"function/v{version}/%s.mcfunction": f"function {lib.lib_ns}:v{version}/%s",
-			"function/%s.mcfunction": f"function {lib.lib_ns}:%s",
 			"tags/function/%s.json": f"function #{lib.lib_ns}:%s",
+			"function/%s.mcfunction": f"function {lib.lib_ns}:%s",
+			f"function/v{version}/%s.mcfunction": f"function {lib.lib_ns}:v{version}/%s",
 		}
 		valid_files: list[tuple[str, str]] = [
 			(path % filename, call % filename)
