@@ -22,7 +22,7 @@ OFFICIAL_LIBS: dict[str, JsonDict] = {
     "realistic_explosion":	{"name":"RealisticExplosion",	"url":"https://github.com/Stoupy51/RealisticExplosion",		"is_used": False, "source":"smithed", "smithed_id":"realistic_explosion"},
 
     # Modrinth API libs
-    "itemio":				{"name":"ItemIO",	"url":"https://github.com/edayot/ItemIO",	"is_used": False, "source":"modrinth", "modrinth_slug":"itemio"},
+    "itemio":				{"name":"ItemIO",	            "url":"https://github.com/edayot/ItemIO",	                "is_used": False, "source":"modrinth", "modrinth_slug":"itemio"},
     "common_signals":		{"name":"Common Signals",		"url":"https://github.com/Stoupy51/CommonSignals",			"is_used": False, "source":"modrinth", "modrinth_slug":"common_signals"},
     "furnace_nbt_recipes":	{"name":"Furnace NBT Recipes",	"url":"https://github.com/Stoupy51/FurnaceNbtRecipes",		"is_used": False, "source":"modrinth", "modrinth_slug":"furnace_nbt_recipes"},
     "smart_ore_generation":	{"name":"Smart Ore Generation",	"url":"https://github.com/Stoupy51/SmartOreGeneration",		"is_used": False, "source":"modrinth", "modrinth_slug":"smart_ore_generation"},
