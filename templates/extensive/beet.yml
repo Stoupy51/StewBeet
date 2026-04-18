@@ -10,7 +10,7 @@ author: "Stoupy51"
 # Project version in semantic versioning format: major.minor.patch (e.g., 1.0.0 or 2.84.615).
 version: "3.0.0"
 # Minecraft version. Determines what resources beet loads (plugins like `mecha` determine what commands to use). Defaults: Latest
-minecraft: "1.21.11"
+minecraft: "26.1"
 
 # Defines the directory that beet uses for the base path
 directory: "."
