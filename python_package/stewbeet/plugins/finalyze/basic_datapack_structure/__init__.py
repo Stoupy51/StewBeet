@@ -99,7 +99,7 @@ scoreboard players set #minute {ns}.data 1
 		if content:
 			write_tick_file(content, prepend=True)
 
-type UnloadFunctionKeys = Literal["items", "scoreboard_objectives", "storages", "blocks", "libraries"]
+type UnloadFunctionKeys = Literal["items", "scoreboard_objectives", "storages", "blocks", "libraries", "entities_uuids"]
 
 class UnloadFunction:
 	""" Class to generate the unload functions for the datapack """
@@ -127,6 +127,11 @@ class UnloadFunction:
 					"setblock ~ ~ ~ air",
 					"kill @s",
 				]))
+			),
+			"entities_uuids": (
+				"# Kill entities spawned with a custom UUID",
+				set(),
+				None,
 			),
 			"scoreboard_objectives": (
 				"# Remove scoreboard objectives",
@@ -162,12 +167,16 @@ class UnloadFunction:
 	def scan_datapack(self, ns: str) -> None:
 		regexes: dict[UnloadFunctionKeys, tuple[Pattern[str], Callable[[Match[str]], str]]] = {
 			"scoreboard_objectives": (
-				compile(rf"scoreboard objectives add ([^ ]+)"),
+				compile(r"scoreboard objectives add ([^ ]+)"),
 				lambda match: f"scoreboard objectives remove {match.group(1)}"
 			),
 			"storages": (
 				compile(rf"data modify storage ({ns}:\w+) (\w+)"),
 				lambda match: f"data remove storage {match.group(1)} {match.group(2)}"
+			),
+			"entities_uuids": (
+				compile(r"summon [^ ]+\s+(?:[\d~.-]+\s+){3}\{.*UUID:\s*(\[\s*I\s*;(?:\s*[\d.-]+\s*,){3}\s*[\d.-]+\s*\])"),
+				lambda match: f"kill {uuid2inline(match.group(1))}"
 			),
 		}
 
@@ -243,3 +252,8 @@ class UnloadFunction:
 			if len(commands) > 0 and callback is not None:
 				callback(commands)
 		write_unload_file(content)
+
+def uuid2inline(uuid: str) -> str:
+	parts = [int(x.strip()) for x in uuid[uuid.find(";")+1:-1].split(",")]
+	hex_string = "".join(f"{(value + (1 << 32)) % (1 << 32):08x}" for value in parts)
+	return f"{hex_string[0:8]}-{hex_string[8:12]}-{hex_string[12:16]}-{hex_string[16:20]}-{hex_string[20:32]}"
