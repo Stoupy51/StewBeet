@@ -197,7 +197,7 @@ def resolve_static_lib(ctx: Context, lib_ns: str, lib_data: JsonDict, mc_tup: tu
 
 @stp.handle_error
 def get_lib_paths(ctx: Context) -> list[DownloadedLib]:
-	"""Download all ``is_used`` official libs and return their cached paths.
+	""" Download all ``is_used`` official libs and return their cached paths.
 
 	Results are memoised per build so weld.py and copy_to_destination can
 	both call this without redundant work.
