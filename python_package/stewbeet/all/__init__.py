@@ -23,6 +23,7 @@ FINALYZE_PLUGINS = (
     "stewbeet.plugins.finalyze.custom_blocks_ticking",
     "stewbeet.plugins.finalyze.basic_datapack_structure",
     "stewbeet.plugins.finalyze.dependencies",
+    "stewbeet.plugins.finalyze.unload",
     "stewbeet.plugins.finalyze.check_unused_textures",
     "stewbeet.plugins.finalyze.last_final",
     "stewbeet.plugins.auto.scoreboard_constants",
