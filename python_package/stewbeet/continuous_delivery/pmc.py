@@ -71,7 +71,8 @@ def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
 	# Make a copy of the original markdown text
 	bbcode: str = markdown
 
-	# Step 1: Convert headers (## -> [h2], ### -> [h4])
+	# Step 1: Convert headers (# -> [h1], (## -> [h2], ### -> [h4])
+	bbcode = re.sub(r"^# ([^\n]+)", r"[h1]\1[/h1]", bbcode, flags=re.MULTILINE)
 	bbcode = re.sub(r"^## ([^\n]+)", r"[h2]\1[/h2]", bbcode, flags=re.MULTILINE)
 	bbcode = re.sub(r"^### ([^\n]+)", r"[h4]\1[/h4]", bbcode, flags=re.MULTILINE)
 
