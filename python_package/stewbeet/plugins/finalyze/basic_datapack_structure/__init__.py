@@ -99,7 +99,7 @@ scoreboard players set #minute {ns}.data 1
 		if content:
 			write_tick_file(content, prepend=True)
 
-type UnloadFunctionKeys = Literal["items", "scoreboard_objectives", "storages", "blocks", "libraries", "entities_uuids"]
+type UnloadFunctionKeys = Literal["items", "scoreboard_objectives", "storages", "blocks", "libraries", "entities_uuids", "entities_tags"]
 
 class UnloadFunction:
 	""" Class to generate the unload functions for the datapack """
@@ -130,6 +130,11 @@ class UnloadFunction:
 			),
 			"entities_uuids": (
 				"# Kill entities spawned with a custom UUID",
+				set(),
+				None,
+			),
+			"entities_tags": (
+				"# Kill entities with custom tags",
 				set(),
 				None,
 			),
@@ -165,19 +170,27 @@ class UnloadFunction:
 		self.write_unload_function()
 
 	def scan_datapack(self, ns: str) -> None:
-		regexes: dict[UnloadFunctionKeys, tuple[Pattern[str], Callable[[Match[str]], str]]] = {
+		regexes: dict[UnloadFunctionKeys, tuple[Pattern[str], Callable[[Match[str]], set[str]]]] = {
 			"scoreboard_objectives": (
 				compile(r"scoreboard objectives add ([^ ]+)"),
-				lambda match: f"scoreboard objectives remove {match.group(1)}"
+				lambda match: {f"scoreboard objectives remove {match.group(1)}"}
 			),
 			"storages": (
 				compile(rf"data modify storage ({ns}:\w+) (\w+)"),
-				lambda match: f"data remove storage {match.group(1)} {match.group(2)}"
+				lambda match: {f"data remove storage {match.group(1)} {match.group(2)}"}
 			),
 			"entities_uuids": (
 				compile(r"summon [^ ]+\s+(?:[\d~.-]+\s+){3}\{.*UUID:\s*(\[\s*I\s*;(?:\s*[\d.-]+\s*,){3}\s*[\d.-]+\s*\])"),
-				lambda match: f"kill {uuid2inline(match.group(1))}"
+				lambda match: {f"kill {uuid2inline(match.group(1))}"}
 			),
+			"entities_tags": (
+				compile(r"summon [^ ]+\s+(?:[\d~.-]+\s+){3}\{.*Tags:\s*(\[(?:\s*[\"'][0-9A-Za-z_.+-]+[\"']\s*,?)+\s*\])"),
+				lambda match: {
+					f"kill @e[tag={tag}]"
+					for tag in map(lambda x: x.strip(' "\''),match.group(1)[1:-1].split(","))
+					if tag.startswith(ns)
+				}
+			),	
 		}
 
 		for func in self.ctx.data.functions.values():
@@ -185,7 +198,7 @@ class UnloadFunction:
 				for key, (regex, callback) in regexes.items():
 					match = regex.search(line)
 					if match:
-						self.removal_commands[key][1].add(callback(match))
+						self.removal_commands[key][1].update(callback(match))
 
 	def unload_library(self, lib: DownloadedLib) -> None:
 		"""
