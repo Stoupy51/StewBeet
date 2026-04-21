@@ -82,7 +82,7 @@ def beet_default(ctx: Context):
 				variants["material"] = material_base
 
 				# Get ingot item if any
-				ingot_types: list[str] = [material_base, f"{material_base}_ingot", f"{material_base}_fragment"]
+				ingot_types: list[str] = [f"{material_base}_ingot", material_base, f"{material_base}_fragment"]
 				ingot_type: str | None = None
 				for ingot in ingot_types:
 					if ingot in Mem.definitions:
@@ -129,7 +129,7 @@ def beet_default(ctx: Context):
 			# For each variant, make a file
 			for variant in material.keys():
 				if variant != "material":
-					content: str = f"scoreboard players set #type simpledrawer.io {types_for_variants[variant]}\nfunction {ns}:calls/simpledrawer/{material_base}/main"
+					content: str = f"\nscoreboard players set #type simpledrawer.io {types_for_variants[variant]}\nfunction {ns}:calls/simpledrawer/{material_base}/main\n"
 					write_function(f"{ns}:calls/simpledrawer/{material_base}/{variant}", content)
 
 			# Get ingot and nugget conversions if any
