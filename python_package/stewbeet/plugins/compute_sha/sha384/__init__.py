@@ -6,8 +6,6 @@ import stouputils as stp
 from beet import Context
 from ..__init__ import compute_hashes
 
-from ....core.__memory__ import Mem
-
 # Main entry point
 @stp.measure_time(message="Execution time of 'stewbeet.plugins.compute_sha.sha384")
 def beet_default(ctx: Context) -> None:
