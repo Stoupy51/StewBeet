@@ -70,7 +70,7 @@ pipeline:
     - "stewbeet.plugins.archive"
     - "stewbeet.plugins.merge_smithed_weld"
     - "stewbeet.plugins.copy_to_destination"
-    - "stewbeet.plugins.compute_sha1"
+    - "stewbeet.plugins.compute_sha"
 
 # Generic dict which holds extra information usable by plugins
 meta:
