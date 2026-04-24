@@ -1,19 +1,22 @@
 
 # 📋 stewbeet.plugins.finalyze.dependencies
 
-📄 **Source Code**: [`stewbeet/plugins/finalyze/dependencies/__init__.py`](../../python_package/stewbeet/plugins/finalyze/dependencies/__init__.py) 🔗
+📄 **Source Code**: [`stewbeet/plugins/finalyze/dependencies/__init__.py`](../../python_package/stewbeet/plugins/finalyze/dependencies/__init__.py) 🔗<br>
+📄 **Full Guide**: [docs/5_dependencies/](../5_dependencies/en.md) 🔗
 
 ## 🔗 Dependencies
 - **✅ Required**: Project ID, version, name, and author in context
+- **✅ Required**: `stewbeet.plugins.datapack.loading` must run before
 - **🔧 Optional**: Official libraries (auto-detected from function usage)
-- **🔧 Optional**: Custom load dependencies in metadata
+- **🔧 Optional**: Custom `load_dependencies` in metadata (see configuration below)
+- **📍 Position**: Must run **after** all user functions have been written (scans them for library usage)
 - **📋 Related**: Integrates with Lantern Load system
 
 ## 📋 Overview
 The `finalyze.dependencies` plugin manages datapack dependencies and load sequence.<br>
-It automatically detects library usage, sets up version checking, integrates with Lantern Load<br>
-for proper loading order, and creates comprehensive dependency validation systems<br>
-with user-friendly error messages and compatibility checks.
+It automatically detects official library usage by scanning all functions, downloads libraries<br>
+via beet's content-addressed cache, sets up Lantern Load integration, and generates<br>
+runtime version-checking mcfunctions with user-friendly clickable error messages.
 
 ### <u>Some Features Showcase</u>
 
@@ -24,12 +27,13 @@ with user-friendly error messages and compatibility checks.
 <img src="img/finalyze.dependencies.ingame_errors.jpg">
 
 ## 🎯 Purpose
-- 📦 Manages datapack dependencies and load sequence
-- 🔍 Automatically detects official library usage in functions
-- ✅ Implements comprehensive version checking and validation
-- 🔗 Integrates with Lantern Load for proper loading order
-- 🎮 Checks Minecraft version compatibility
-- 📢 Provides user-friendly error messages and dependency links
+- 📦 Auto-detect and download official libraries used in functions — no manual config required (only optional)
+- 🔍 Detect Bookshelf modules via `#bs.X:` tag patterns and modrinth/smithed libs via namespace
+- ✅ Generate runtime scoreboard version checks for all dependencies
+- 🔗 Integrate with Lantern Load for correct dependency loading order
+- 🎮 Validate Minecraft version compatibility using `DataVersion` from `mc_supports`
+- 📢 Provide clickable in-game error messages linking to each missing library
+- ⚡ Wire `smart_ore_generation` signal function tags automatically
 
 ## ⚙️ Configuration
 
@@ -37,79 +41,88 @@ with user-friendly error messages and compatibility checks.
 ```yaml
 pipeline:
   - ...
-  - stewbeet.plugins.finalyze.dependencies  # Should be run after all functions are defined
+  - stewbeet.plugins.finalyze.dependencies  # Must run after all functions are written
   - ...
 
-# Dependencies are automatically detected from function usage
-# Custom dependencies can be added via metadata:
+# Official libraries are auto-detected — no manual config required (only optional).
+# Declare custom dependencies to auto-download and version-check at runtime:
 meta:
   stewbeet:
+    mc_supports: ["1.21.4", "1.21.5"]  # Optional: minimum is used for DataVersion check
     load_dependencies:
-      custom_lib_namespace:
-        name: "Custom Library Name"           # Name you want to display when error occurs
-        version: [1, 0, 0]                    # Version of the dependency to check for
-        url: "https://example.com/library"    # URL to download the library if missing
-    libs_folder: "libs" # Optional folder for custom libraries (datapack and resource pack)
+
+      # Smithed API — latest MC-compatible version auto-fetched
+      "smithed.crafter":
+        name: "Smithed Crafter"
+        url: "https://wiki.smithed.dev/libraries/crafter/"
+        source: "smithed"
+        smithed_id: "crafter"
+        has_resource_pack: true  # optional, default false
+
+      # Modrinth API — latest release for the current MC version auto-fetched
+      "itemio":
+        name: "ItemIO"
+        url: "https://github.com/edayot/ItemIO"
+        source: "modrinth"
+        modrinth_slug: "itemio"
+
+      # Static URL — version pinned, zip downloaded per MC version
+      "common_signals":
+        version: [0, 2, 0]
+        name: "Common Signals"
+        url: "https://github.com/Stoupy51/CommonSignals"
+        source: "static"
+        static_urls:
+          "((1, 21, 7), (0, 2, 0))": "https://github.com/Stoupy51/CommonSignals/releases/download/v0.2.0/CommonSignals_datapack.zip"
 ```
 
 ### 📋 Configuration Options
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `load_dependencies` | object | `{}` | Custom dependencies to add to the load system |
-| Official Library Detection | automatic | Enabled | Scans functions for official library usage |
-| Version Checking | automatic | Enabled | Validates dependency versions on load |
-| Minecraft Version | constant | `DATA_VERSION` | Required Minecraft version for compatibility |
+| `load_dependencies` | object | `{}` | Custom dependencies to download and version-check at runtime |
+| `mc_supports` | list | `[]` | Supported MC versions; minimum determines the `DataVersion` compatibility check |
+| Official library detection | automatic | Enabled | Scans all functions for known library namespaces and `#bs.X:` Bookshelf tags |
+| Version checking | automatic | Enabled | Generates `check_dependencies` and `valid_dependencies` mcfunctions |
+
+### 📋 `load_dependencies` Entry Fields
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `name` | ✅ | Display name shown in runtime error messages |
+| `url` | ✅ | Clickable link shown when the dependency is missing |
+| `source` | ✅ | Download method: `"smithed"`, `"modrinth"`, or `"static"` |
+| `smithed_id` | Smithed only | Smithed pack ID used to query the API |
+| `has_resource_pack` | Smithed only | Also download the resource pack (default: `false`) |
+| `modrinth_slug` | Modrinth only | Modrinth project slug used to query the API |
+| `static_urls` | Static only | Maps `"((mc_ver), (dep_ver))"` keys to download URLs |
+| `version` | Static only | Resolved automatically from `static_urls` at build time |
 
 ## ✨ Features
 
 ### 🔍 Automatic Library Detection
-Scans all functions to detect official library usage:
-- 🔥 Detects Furnace NBT Recipes usage in function text
-- 📡 Identifies Common Signals library references
-- 📦 Finds ItemIO library usage
-- 📚 Scans for all Bookshelf module usage with `#{module}:` patterns
-- 🏷️ Automatically marks detected libraries as used
+Scans all datapack functions during build:
+- 📚 Detects Bookshelf module usage via `#bs.X:` tag call patterns
+- 📦 Identifies `furnace_nbt_recipes`, `common_signals`, `itemio`, `smithed.actionbar`, `realistic_explosion` by namespace
+- 🏷️ Marks detected libraries as `is_used = True` and triggers download via `get_lib_paths()`
+- 📢 Logs a debug summary of all newly found libraries
 
 ### 🔗 Lantern Load Integration
-Sets up proper loading infrastructure with Lantern Load:
-- 🏷️ Creates minecraft:load function tag linking to Lantern Load
-- 📋 Sets up load phases (init, pre_load, load, post_load)
-- 🔄 Initializes scoreboard objectives for load status tracking
-- ⚙️ Provides proper loading sequence management
+Sets up proper loading infrastructure:
+- 🏷️ Wires `minecraft:load` → `#load:_private/load` → init / pre_load / load / post_load phases
+- 📋 Resets `load.status` scoreboard in `load:_private/init`
+- ⚙️ Creates `#ns:load` → `[#ns:enumerate, #ns:resolve]` chain
+- 🔗 Prepends `#ns:dependencies` tag listing `#dep:load` for every dependency (deduped)
 
-### 📦 Dependency Chain Management
-Creates proper dependency loading order:
-- 🔗 Links dependencies with `#{namespace}:load` function tags
-- 📚 Handles Bookshelf special case with `#bs.load:load`
-- 🎯 Removes duplicate dependencies while preserving order
-- ⚡ Uses optional function tags for graceful missing dependency handling
-
-### ✅ Version Validation System
-Implements comprehensive version checking:
-- 🔢 Checks major, minor, and patch version compatibility
-- 📚 Handles Bookshelf special scoring syntax (`$bs` vs `#`)
-- 🎯 Supports both encoder (error flags) and decoder (user messages) modes
-- ⚡ Provides granular version requirement validation
-
-### 🎮 Minecraft Compatibility Checking
-Validates Minecraft version compatibility:
-- 🎮 Reads player DataVersion for current Minecraft version
-- ✅ Compares against required DATA_VERSION constant
-- 📢 Shows user-friendly error messages for version mismatches
-- 🔄 Schedules retry if no players are online during load
-
-### 📢 User-Friendly Error System
-Provides comprehensive error reporting and resolution:
-- 🔗 Generates clickable links to dependency download pages
-- 📝 Shows clear library names and required versions
-- 🎨 Uses color-coded messages (red for errors, gold for links)
-- 📋 Lists all missing dependencies with download instructions
+### ✅ Runtime Version Validation
+Generates two mcfunctions that run at world load:
+- 🔢 `check_dependencies` — sets `#dependency_error ns.data` flag by checking `#dep.major/minor/patch load.status` scores; uses `$bs` prefix for Bookshelf modules
+- 🎮 `valid_dependencies` — waits for a player entity, reads `DataVersion` to detect Minecraft version, compares against minimum from `mc_supports`
+- 📢 On failure: `tellraw @a` gold clickable links to each missing library (name, version, URL)
+- ✅ `confirm_load` is only called when both `#mcload_error` and `#dependency_error` are 0
 
 ### ⚡ Smart Ore Generation Integration
-Special integration for Smart Ore Generation library:
-- 🔗 Links custom ore generation functions to library signals
-- 📦 Supports denied_dimensions, generate_ores, and post_generation
-- 🎯 Only activates when Smart Ore Generation is detected as used
-- ⚙️ Provides seamless integration with ore generation systems 
+Special automatic wiring for `smart_ore_generation`:
+- 🔗 Connects `calls/smart_ore_generation/generate_ores`, `denied_dimensions`, and `post_generation` functions to the corresponding `smart_ore_generation:v1/signals/` function tags
+- 🎯 Only activates when `smart_ore_generation` is detected as used 
 

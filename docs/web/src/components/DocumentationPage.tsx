@@ -48,6 +48,12 @@ export const DocumentationPage: React.FC = () => {
             pathEn: '4_equations/en.md',
             pathFr: '4_equations/fr.md',
         },
+        {
+            title: `📦 ${t('documentation.dependencies')}`,
+            description: t('documentation.dependenciesDesc'),
+            pathEn: '5_dependencies/en.md',
+            pathFr: '5_dependencies/fr.md',
+        },
     ];
 
     return (
