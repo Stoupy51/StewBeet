@@ -4,29 +4,41 @@ interface GitHubTag {
     name: string;
 }
 
+// Module-level cache so only one fetch is made regardless of how many components call the hook
+let cachedVersion: string | null = null;
+let pendingFetch: Promise<string> | null = null;
+
+const fetchOnce = (): Promise<string> => {
+    if (cachedVersion !== null) return Promise.resolve(cachedVersion);
+    if (pendingFetch) return pendingFetch;
+    pendingFetch = fetch('https://api.github.com/repos/Stoupy51/StewBeet/tags')
+        .then(r => r.json() as Promise<GitHubTag[]>)
+        .then(data => {
+            if (data && data.length > 0) {
+                const tagName = data[0].name;
+                cachedVersion = tagName.startsWith('v') ? tagName.slice(1) : tagName;
+            } else {
+                cachedVersion = '3.0.0';
+            }
+            return cachedVersion;
+        })
+        .catch(() => {
+            cachedVersion = '3.0.0';
+            return cachedVersion;
+        });
+    return pendingFetch;
+};
+
 export const useStewBeetVersion = () => {
-    const [version, setVersion] = useState<string>('3.0.0'); // Fallback version
-    const [loading, setLoading] = useState<boolean>(true);
+    const [version, setVersion] = useState<string>(cachedVersion ?? '3.0.0');
+    const [loading, setLoading] = useState<boolean>(cachedVersion === null);
 
     useEffect(() => {
-        const fetchVersion = async () => {
-            try {
-                const response = await fetch('https://api.github.com/repos/Stoupy51/StewBeet/tags');
-                const data: GitHubTag[] = await response.json();
-                if (data && data.length > 0) {
-                    // Remove 'v' prefix if present
-                    const tagName = data[0].name;
-                    setVersion(tagName.startsWith('v') ? tagName.slice(1) : tagName);
-                }
-            } catch (error) {
-                console.error('Failed to fetch StewBeet version:', error);
-                // Keep fallback version
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchVersion();
+        if (cachedVersion !== null) return;
+        fetchOnce().then(v => {
+            setVersion(v);
+            setLoading(false);
+        });
     }, []);
 
     return { version, loading };

@@ -2,6 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .animate-float-up {
+    animation: floatUp 4s ease-in-out infinite;
+  }
+  .animate-float-down {
+    animation: floatDown 5s ease-in-out infinite;
+    animation-delay: 1s;
+  }
+}
+
+@keyframes floatUp {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes floatDown {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(10px); }
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
