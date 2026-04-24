@@ -107,7 +107,7 @@ execute if score #minute stardust.data matches 1200.. run function stardust:v4.0
         title: t('features.manualTitle'),
         description: t('features.manualDesc'),
         previewType: 'image',
-        previewContent: 'https://i.imgur.com/dtuAG99.gif'
+        previewContent: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/plugins/img/ingame_manual.gif'
     },
     {
         id: 'lang',
