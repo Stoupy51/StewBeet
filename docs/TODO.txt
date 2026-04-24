@@ -1,6 +1,3 @@
 
 Doc: Everything you don't need to think about
-Doc: Continuous Delivery (uploading to GitHub, Modrinth, Smithed, PMC)
 
-Update In-game Manual Example gif and move it to the docs/plugins/img folder
-Update copy_to_destination.md to include new sftp path and credentials structure
