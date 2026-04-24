@@ -15,6 +15,10 @@ const routes = ['/', '/documentation', '/markdown', '/markdown_to_pmc_bbcode'];
 const distDir = join(import.meta.dir, '..', 'dist');
 const template = readFileSync(join(distDir, 'index.html'), 'utf-8');
 
+// Save the original Vite-built index.html as a template for the SSR server (server.tsx).
+// Must be done before the '/' route overwrites dist/index.html with pre-rendered content.
+writeFileSync(join(distDir, '_template.html'), template);
+
 for (const route of routes) {
     const html = renderToString(
         <StaticRouter location={route}>

@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useState } from 'react';
 import {
     HiCube,
@@ -272,35 +272,39 @@ export const Features: React.FC = () => {
                                 <div className="w-16" /> {/* Spacer for centering */}
                             </div>
 
-                            {/* Content */}
+                            {/* Content — all tabs rendered in HTML for crawlers, active one shown via CSS */}
                             <div className="flex-1 overflow-hidden relative bg-[#1e1e1e]">
-                                <AnimatePresence mode="wait">
-                                    <motion.div
-                                        key={activeFeature.id}
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, y: -10 }}
-                                        transition={{ duration: 0.2 }}
-                                        className="h-full w-full"
-                                    >
-                                        {activeFeature.previewType === 'code' ? (
-                                            <div className="h-full overflow-auto custom-scrollbar">
-                                                <CodeBlock
-                                                    code={activeFeature.previewContent}
-                                                    lang={activeFeature.previewLang}
-                                                />
-                                            </div>
-                                        ) : (
-                                            <div className="h-full w-full flex items-center justify-center bg-black/20">
-                                                <img
-                                                    src={activeFeature.previewContent}
-                                                    alt={activeFeature.title}
-                                                    className="max-w-full max-h-full object-contain"
-                                                />
-                                            </div>
-                                        )}
-                                    </motion.div>
-                                </AnimatePresence>
+                                {features.map((feature) => {
+                                    const isActive = activeFeature.id === feature.id;
+                                    return (
+                                        <motion.div
+                                            key={feature.id}
+                                            initial={false}
+                                            animate={{ opacity: isActive ? 1 : 0, y: isActive ? 0 : 10 }}
+                                            transition={{ duration: 0.2 }}
+                                            className="h-full w-full"
+                                            style={{ display: isActive ? 'block' : 'none' }}
+                                            aria-hidden={!isActive}
+                                        >
+                                            {feature.previewType === 'code' ? (
+                                                <div className="h-full overflow-auto custom-scrollbar">
+                                                    <CodeBlock
+                                                        code={feature.previewContent}
+                                                        lang={feature.previewLang}
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <div className="h-full w-full flex items-center justify-center bg-black/20">
+                                                    <img
+                                                        src={feature.previewContent}
+                                                        alt={feature.title}
+                                                        className="max-w-full max-h-full object-contain"
+                                                    />
+                                                </div>
+                                            )}
+                                        </motion.div>
+                                    );
+                                })}
                             </div>
                         </div>
 
