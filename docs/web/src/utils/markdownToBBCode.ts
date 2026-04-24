@@ -1,4 +1,39 @@
 /**
+ * Convert a block of markdown list lines (with possible nesting) to BBCode
+ */
+function convertListBlock(blockLines: string[]): string {
+  const result: string[] = [];
+  const levelStack: number[] = [];
+
+  for (const line of blockLines) {
+    const stripped = line.replace(/^[ \t]+/, '');
+    const indent = line.length - stripped.length;
+    const itemText = stripped.substring(2).trim(); // Remove "- "
+
+    if (levelStack.length === 0) {
+      levelStack.push(indent);
+      result.push('[list]');
+    } else if (indent > levelStack[levelStack.length - 1]) {
+      levelStack.push(indent);
+      result.push('[list]');
+    } else if (indent < levelStack[levelStack.length - 1]) {
+      while (levelStack.length > 1 && levelStack[levelStack.length - 1] > indent) {
+        levelStack.pop();
+        result.push('[/list]');
+      }
+    }
+    result.push(`[*]${itemText}[/*]`);
+  }
+
+  while (levelStack.length > 0) {
+    levelStack.pop();
+    result.push('[/list]');
+  }
+
+  return result.join('\n');
+}
+
+/**
  * Convert markdown to BBCode for PlanetMinecraft
  * 
  * @param markdown - Markdown text to convert
@@ -34,41 +69,41 @@ export function convertMarkdownToBBCode(markdown: string): string {
     },
   );
 
-  // Step 2: Process lists (group list items by sections)
-  const listSections: string[][] = [];
-  let currentList: string[] = [];
-
-  const lines = bbcode.split('\n');
-  for (const line of lines) {
-    if (line.trim().startsWith('- ')) {
-      // Remove the "- " prefix and add to current list
-      const listItem = line.trim().substring(2);
-      currentList.push(listItem);
-    } else if (line.trim() === '' && currentList.length > 0) {
-      // Empty line within a list, continue (don't break the list)
-      continue;
-    } else if (currentList.length > 0) {
-      // If we have list items and found a non-list, non-empty line,
-      // add the current list to our sections and reset
-      listSections.push(currentList);
-      currentList = [];
+  // Step 2-3: Process lists with nested support using line-by-line traversal
+  const textLines = bbcode.split('\n');
+  const resultLines: string[] = [];
+  let i = 0;
+  while (i < textLines.length) {
+    const line = textLines[i];
+    if (line.trimStart().startsWith('- ')) {
+      // Collect all lines of this list block (empty lines between items are skipped)
+      const blockLines: string[] = [];
+      let j = i;
+      outer: while (j < textLines.length) {
+        if (textLines[j].trimStart().startsWith('- ')) {
+          blockLines.push(textLines[j]);
+          j++;
+        } else if (textLines[j].trim() === '') {
+          // Look ahead for another list item (skip empty lines within a block)
+          let k = j + 1;
+          while (k < textLines.length && textLines[k].trim() === '') k++;
+          if (k < textLines.length && textLines[k].trimStart().startsWith('- ')) {
+            j = k;
+          } else {
+            break outer;
+          }
+        } else {
+          break outer;
+        }
+      }
+      resultLines.push(convertListBlock(blockLines));
+      i = j;
+    } else {
+      resultLines.push(line);
+      i++;
     }
   }
-
-  // Add any remaining list items
-  if (currentList.length > 0) {
-    listSections.push(currentList);
-  }
-
-  // Step 3: Convert each list section to BBCode format
-  for (const items of listSections) {
-    const listBb = '[list]\n' + items.map(item => `[*]${item.trim()}[/*]`).join('\n') + '\n[/list]';
-    
-    // Create regex pattern that allows for multiple newlines between items
-    const escapeRegex = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const pattern = items.map(item => escapeRegex(`- ${item}`)).join('\\n+');
-    bbcode = bbcode.replace(new RegExp(pattern), listBb);
-  }
+  bbcode = resultLines.join('\n');
 
   // Step 3b: Convert spoiler/details blocks
   // Format: <details><summary>X</summary>content</details> -> [spoiler=X]content[/spoiler]
@@ -80,10 +115,6 @@ export function convertMarkdownToBBCode(markdown: string): string {
   // Step 3c: Convert fenced code blocks
   // Format: ```\ncode\n``` -> [code]code[/code]
   bbcode = bbcode.replace(/```[^\n]*\n([\s\S]*?)```/g, (_, code) => `[code]${code.trimEnd()}[/code]`);
-
-  // Step 3d: Convert inline code
-  // Format: `code` -> [color=#ffaa00]code[/color]
-  bbcode = bbcode.replace(/`([^`\n]+)`/g, '[color=#ffaa00]$1[/color]');
 
   // Step 3e: Convert blockquotes (group consecutive > lines)
   // Format: > text -> [quote]text[/quote]
@@ -116,6 +147,10 @@ export function convertMarkdownToBBCode(markdown: string): string {
     bbcode = bbcode.replace(imgBbPattern, '$1 $2');
     imgBbPattern.lastIndex = 0;
   } while (prevBbcode !== bbcode);
+
+  // Step 6c: Convert inline code (after links so backtick-wrapped link text is handled correctly)
+  // Format: `code` -> [color=#34495e]code[/color]
+  bbcode = bbcode.replace(/`([^`\n]+)`/g, '[color=#34495e]$1[/color]');
 
   // Step 7: Convert bold text
   // Format: **text** -> [b]text[/b]
