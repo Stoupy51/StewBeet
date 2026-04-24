@@ -8,10 +8,34 @@ export function convertMarkdownToBBCode(markdown: string): string {
   // Make a copy of the original markdown text
   let bbcode: string = markdown;
 
+  // Step 0: Convert <br> tags to newlines
+  bbcode = bbcode.replace(/<br\s*\/>/g, '\n');
+  bbcode = bbcode.replace(/<br>/g, '\n');
+
   // Step 1: Convert headers (# -> [h1], ## -> [h2], ### -> [h4])
   bbcode = bbcode.replace(/^# ([^\n]+)/gm, '[h1]$1[/h1]');
   bbcode = bbcode.replace(/^## ([^\n]+)/gm, '[h2]$1[/h2]');
   bbcode = bbcode.replace(/^### ([^\n]+)/gm, '[h4]$1[/h4]');
+
+  // Step 1b: Convert markdown tables to BBCode tables
+  bbcode = bbcode.replace(
+    /^[ \t]*\|[^\n]*(?:\n[ \t]*\|[^\n]*)*/gm,
+    (match) => {
+      const rows = match.split('\n').filter(r => r.trim());
+      let result = '[table][tbody]';
+      let isHeader = true;
+      for (const row of rows) {
+        const cells = row.trim().replace(/^\||\|$/g, '').split('|').map(c => c.trim());
+        // Skip separator row (cells like ---, :---, ---:)
+        if (cells.filter(c => c.trim()).every(c => /^[-:]+$/.test(c))) continue;
+        const tag = isHeader ? 'th' : 'td';
+        result += '[tr]' + cells.map(c => `[${tag}]${c}[/${tag}]`).join('') + '[/tr]';
+        isHeader = false;
+      }
+      result += '[/tbody][/table]';
+      return result;
+    },
+  );
 
   // Step 2: Process lists (group list items by sections)
   const listSections: string[][] = [];
@@ -48,6 +72,13 @@ export function convertMarkdownToBBCode(markdown: string): string {
     const pattern = items.map(item => escapeRegex(`- ${item}`)).join('\\n+');
     bbcode = bbcode.replace(new RegExp(pattern), listBb);
   }
+
+  // Step 3b: Convert spoiler/details blocks
+  // Format: <details><summary>X</summary>content</details> -> [spoiler=X]content[/spoiler]
+  bbcode = bbcode.replace(
+    /<details>\s*<summary>([^<]+)<\/summary>([\s\S]*?)<\/details>/g,
+    (_, title, content) => `[spoiler=${title.trim()}]${content.trim()}[/spoiler]`,
+  );
 
   // Step 4: Convert clickable images (must be done before regular links and images)
   // Format: [![alt](img_url)](link_url) -> [url=link_url][img]img_url[/img][/url]

@@ -28,6 +28,31 @@ def validate_config(pmc_config: dict[str, str]) -> str:
 
 	return pmc_config["project_url"]
 
+def table_to_bbcode(match: re.Match[str]) -> str:
+	""" Convert a markdown table match to BBCode format
+
+	Args:
+		match (re.Match[str]): Regex match object containing a markdown table block
+
+	Returns:
+		str: BBCode table string
+	"""
+	rows: list[str] = match.group(0).split("\n")
+	result: str = "[table][tbody]"
+	is_header = True
+	for row in rows:
+		if not row.strip():
+			continue
+		cells = [c.strip() for c in row.strip().strip("|").split("|")]
+		# Skip separator row (cells like ---, :---, ---:)
+		if cells and all(re.match(r"^[-:]+$", c) for c in cells if c.strip()):
+			continue
+		tag = "th" if is_header else "td"
+		result += "[tr]" + "".join(f"[{tag}]{c}[/{tag}]" for c in cells) + "[/tr]"
+		is_header = False
+	result += "[/tbody][/table]"
+	return result
+
 def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
 	""" Convert markdown to bbcode for PlanetMinecraft
 
@@ -67,14 +92,33 @@ def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
 		[*]🔧 Another feature with multiple newlines before[/*]
 		[/list]
 		[b]Full Changelog[/b]: [url]https://github.com/Stoupy51/LifeSteal/compare/v1.2.2...v1.2.3[/url]
+		>>> spoiler_md = '<details>\\n<summary>Preview</summary>\\n![screenshot](https://example.com/img.png)\\n</details>'
+		>>> print(convert_markdown_to_bbcode(spoiler_md, verbose=False))
+		[spoiler=Preview][img]https://example.com/img.png[/img][/spoiler]
+		>>> print(convert_markdown_to_bbcode('Line 1<br>Line 2<br/>Line 3<br />Line 4', verbose=False))
+		Line 1
+		Line 2
+		Line 3
+		Line 4
+		>>> table_md = '| A | B |\\n|---|---|\\n| 1 | 2 |\\n| 3 | 4 |'
+		>>> print(convert_markdown_to_bbcode(table_md, verbose=False))
+		[table][tbody][tr][th]A[/th][th]B[/th][/tr][tr][td]1[/td][td]2[/td][/tr][tr][td]3[/td][td]4[/td][/tr][/tbody][/table]
 	"""
 	# Make a copy of the original markdown text
 	bbcode: str = markdown
+
+	# Step 0: Convert <br> tags to newlines
+	bbcode = re.sub(r"<br\s*/>", "\n", bbcode)
+	bbcode = bbcode.replace("<br>", "\n")
 
 	# Step 1: Convert headers (# -> [h1], (## -> [h2], ### -> [h4])
 	bbcode = re.sub(r"^# ([^\n]+)", r"[h1]\1[/h1]", bbcode, flags=re.MULTILINE)
 	bbcode = re.sub(r"^## ([^\n]+)", r"[h2]\1[/h2]", bbcode, flags=re.MULTILINE)
 	bbcode = re.sub(r"^### ([^\n]+)", r"[h4]\1[/h4]", bbcode, flags=re.MULTILINE)
+	bbcode = re.sub(r"^#### ([^\n]+)", r"[h5]\1[/h5]", bbcode, flags=re.MULTILINE)
+
+	# Step 1b: Convert markdown tables to BBCode tables
+	bbcode = re.sub(r"^[ \t]*\|[^\n]*(?:\n[ \t]*\|[^\n]*)*", table_to_bbcode, bbcode, flags=re.MULTILINE)
 
 	# Step 2: Process lists (group list items by sections)
 	list_sections: list[list[str]] = []
@@ -104,6 +148,15 @@ def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
 		list_md_pattern = "\n+".join([re.escape(f"- {item}") for item in items])
 		list_bb = "[list]\n" + "\n".join([f"[*]{item.strip()}[/*]" for item in items]) + "\n[/list]"
 		bbcode = re.sub(list_md_pattern, list_bb, bbcode)
+
+	# Step 3b: Convert spoiler/details blocks
+	# Format: <details><summary>X</summary>content</details> -> [spoiler=X]content[/spoiler]
+	bbcode = re.sub(
+		r"<details>\s*<summary>([^<]+)</summary>(.*?)</details>",
+		lambda m: f"[spoiler={m.group(1).strip()}]{m.group(2).strip()}[/spoiler]",
+		bbcode,
+		flags=re.DOTALL
+	)
 
 	# Step 4: Convert clickable images (must be done before regular links and images)
 	# Format: [![alt](img_url)](link_url) -> [url=link_url][img]img_url[/img][/url]
