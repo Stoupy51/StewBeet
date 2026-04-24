@@ -80,8 +80,7 @@ def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
 		... '''
 		>>> bbcode = convert_markdown_to_bbcode(markdown_text, verbose=False)
 		>>> print(bbcode.strip())
-		[url=https://discord.gg/anxzu6rA9F][img]https://img.shields.io/discord/1216400498488377467?label=Discord&logo=discord[/img][/url]
-		[img]https://img.shields.io/discord/1216400498488377467?label=Discord&logo=discord[/img]
+		[url=https://discord.gg/anxzu6rA9F][img]https://img.shields.io/discord/1216400498488377467?label=Discord&logo=discord[/img][/url] [img]https://img.shields.io/discord/1216400498488377467?label=Discord&logo=discord[/img]
 		[h2]Changelog[/h2][h4]Build System[/h4][list]
 		[*]🚀 Bump version to v1.2.3 ([url=https://github.com/Stoupy51/LifeSteal/commit/2111fd2f390b80a3aab77a4e7bcbb24b93845e5a]2111fd2[/url])[/*]
 		[/list][h4]Features[/h4][list]
@@ -103,7 +102,10 @@ def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
 		>>> print(convert_markdown_to_bbcode('```\\ncode block\\n```', verbose=False))
 		[code]code block[/code]
 		>>> print(convert_markdown_to_bbcode('`inline code`', verbose=False))
-		[inlinecode]inline code[/inlinecode]
+		[color=#ffaa00]inline code[/color]
+		>>> badges_md = '[![YouTube](https://img.shields.io/youtube/views/zkcQn23DRaw?style=flat&logo=youtube&logoColor=red&label=YouTube)](https://www.youtube.com/watch?v=zkcQn23DRaw)\\n[![GitHub](https://img.shields.io/github/v/release/Stoupy51/stewbeet?logo=github&label=GitHub)](https://github.com/Stoupy51/stewbeet/releases/latest)'
+		>>> print(convert_markdown_to_bbcode(badges_md, verbose=False))
+		[url=https://www.youtube.com/watch?v=zkcQn23DRaw][img]https://img.shields.io/youtube/views/zkcQn23DRaw?style=flat&logo=youtube&logoColor=red&label=YouTube[/img][/url] [url=https://github.com/Stoupy51/stewbeet/releases/latest][img]https://img.shields.io/github/v/release/Stoupy51/stewbeet?logo=github&label=GitHub[/img][/url]
 		>>> print(convert_markdown_to_bbcode('~~strikethrough~~', verbose=False))
 		[s]strikethrough[/s]
 		>>> print(convert_markdown_to_bbcode('*italic* and _also italic_', verbose=False))
@@ -172,8 +174,8 @@ def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
 	bbcode = re.sub(r"```[^\n]*\n(.*?)```", lambda m: f"[code]{m.group(1).rstrip()}[/code]", bbcode, flags=re.DOTALL)
 
 	# Step 3d: Convert inline code
-	# Format: `code` -> [inlinecode]code[/inlinecode]
-	bbcode = re.sub(r"`([^`\n]+)`", r"[inlinecode]\1[/inlinecode]", bbcode)
+	# Format: `code` -> [color=#ffaa00]code[/color]
+	bbcode = re.sub(r"`([^`\n]+)`", r"[color=#ffaa00]\1[/color]", bbcode)
 
 	# Step 3e: Convert blockquotes (group consecutive > lines)
 	# Format: > text -> [quote]text[/quote]
@@ -199,6 +201,11 @@ def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
 	# Step 6: Convert markdown links to BBCode links
 	# Format: [text](url) -> [url=url]text[/url]
 	bbcode = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", r"[url=\2]\1[/url]", bbcode)
+
+	# Step 6b: Join consecutive images on the same line (separated by only a single newline)
+	img_bb_pattern = r'((?:\[url=[^\]]+\])?\[img\][^\n]+\[/img\](?:\[/url\])?)\n((?:\[url=[^\]]+\])?\[img\])'
+	while re.search(img_bb_pattern, bbcode):
+		bbcode = re.sub(img_bb_pattern, r'\1 \2', bbcode)
 
 	# Step 7: Convert bold text
 	# Format: **text** -> [b]text[/b]

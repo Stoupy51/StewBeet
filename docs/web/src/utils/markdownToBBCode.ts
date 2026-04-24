@@ -82,8 +82,8 @@ export function convertMarkdownToBBCode(markdown: string): string {
   bbcode = bbcode.replace(/```[^\n]*\n([\s\S]*?)```/g, (_, code) => `[code]${code.trimEnd()}[/code]`);
 
   // Step 3d: Convert inline code
-  // Format: `code` -> [inlinecode]code[/inlinecode]
-  bbcode = bbcode.replace(/`([^`\n]+)`/g, '[inlinecode]$1[/inlinecode]');
+  // Format: `code` -> [color=#ffaa00]code[/color]
+  bbcode = bbcode.replace(/`([^`\n]+)`/g, '[color=#ffaa00]$1[/color]');
 
   // Step 3e: Convert blockquotes (group consecutive > lines)
   // Format: > text -> [quote]text[/quote]
@@ -107,6 +107,15 @@ export function convertMarkdownToBBCode(markdown: string): string {
   // Step 6: Convert markdown links to BBCode links
   // Format: [text](url) -> [url=url]text[/url]
   bbcode = bbcode.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '[url=$2]$1[/url]');
+
+  // Step 6b: Join consecutive images on the same line (separated by only a single newline)
+  const imgBbPattern = /((?:\[url=[^\]]+\])?\[img\][^\n]+\[\/img\](?:\[\/url\])?)\n((?:\[url=[^\]]+\])?\[img\])/g;
+  let prevBbcode: string;
+  do {
+    prevBbcode = bbcode;
+    bbcode = bbcode.replace(imgBbPattern, '$1 $2');
+    imgBbPattern.lastIndex = 0;
+  } while (prevBbcode !== bbcode);
 
   // Step 7: Convert bold text
   // Format: **text** -> [b]text[/b]
