@@ -50,6 +50,42 @@ def table_to_bbcode(match: re.Match[str]) -> str:
 	result += "[/tbody][/table]"
 	return result
 
+def convert_list_block(block_lines: list[str]) -> str:
+	""" Convert a block of markdown list lines (with possible nesting) to BBCode
+
+	Args:
+		block_lines (list[str]): Lines of the list block (each starting with optional indent + '- ')
+
+	Returns:
+		str: BBCode list string
+	"""
+	result: list[str] = []
+	level_stack: list[int] = []
+
+	for line in block_lines:
+		stripped = line.lstrip()
+		indent = len(line) - len(stripped)
+		item_text = stripped[2:].strip()  # Remove "- "
+
+		if not level_stack:
+			level_stack.append(indent)
+			result.append("[list]")
+		elif indent > level_stack[-1]:
+			level_stack.append(indent)
+			result.append("[list]")
+		elif indent < level_stack[-1]:
+			while len(level_stack) > 1 and level_stack[-1] > indent:
+				level_stack.pop()
+				result.append("[/list]")
+
+		result.append(f"[*]{item_text}[/*]")
+
+	while level_stack:
+		level_stack.pop()
+		result.append("[/list]")
+
+	return "\n".join(result)
+
 def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
 	""" Convert markdown to bbcode for PlanetMinecraft
 
@@ -102,7 +138,9 @@ def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
 		>>> print(convert_markdown_to_bbcode('```\\ncode block\\n```', verbose=False))
 		[code]code block[/code]
 		>>> print(convert_markdown_to_bbcode('`inline code`', verbose=False))
-		[color=#ffaa00]inline code[/color]
+		[color=#34495e]inline code[/color]
+		>>> print(convert_markdown_to_bbcode('[`Smithed Crafter`](https://wiki.smithed.dev/libraries/crafter/)', verbose=False))
+		[url=https://wiki.smithed.dev/libraries/crafter/][color=#34495e]Smithed Crafter[/color][/url]
 		>>> badges_md = '[![YouTube](https://img.shields.io/youtube/views/zkcQn23DRaw?style=flat&logo=youtube&logoColor=red&label=YouTube)](https://www.youtube.com/watch?v=zkcQn23DRaw)\\n[![GitHub](https://img.shields.io/github/v/release/Stoupy51/stewbeet?logo=github&label=GitHub)](https://github.com/Stoupy51/stewbeet/releases/latest)'
 		>>> print(convert_markdown_to_bbcode(badges_md, verbose=False))
 		[url=https://www.youtube.com/watch?v=zkcQn23DRaw][img]https://img.shields.io/youtube/views/zkcQn23DRaw?style=flat&logo=youtube&logoColor=red&label=YouTube[/img][/url] [url=https://github.com/Stoupy51/stewbeet/releases/latest][img]https://img.shields.io/github/v/release/Stoupy51/stewbeet?logo=github&label=GitHub[/img][/url]
@@ -112,6 +150,16 @@ def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
 		[i]italic[/i] and [i]also italic[/i]
 		>>> print(convert_markdown_to_bbcode('> blockquote', verbose=False))
 		[quote]blockquote[/quote]
+		>>> nested_list_md = '- item 1\\n  - sub item 1\\n  - sub item 2\\n- item 2'
+		>>> print(convert_markdown_to_bbcode(nested_list_md, verbose=False))
+		[list]
+		[*]item 1[/*]
+		[list]
+		[*]sub item 1[/*]
+		[*]sub item 2[/*]
+		[/list]
+		[*]item 2[/*]
+		[/list]
 		>>> print(convert_markdown_to_bbcode('---', verbose=False))
 		[hr]
 	"""
@@ -131,34 +179,37 @@ def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
 	# Step 1b: Convert markdown tables to BBCode tables
 	bbcode = re.sub(r"^[ \t]*\|[^\n]*(?:\n[ \t]*\|[^\n]*)*", table_to_bbcode, bbcode, flags=re.MULTILINE)
 
-	# Step 2: Process lists (group list items by sections)
-	list_sections: list[list[str]] = []
-	current_list: list[str] = []
-
-	for line in bbcode.split("\n"):
-		if line.strip().startswith("- "):
-			# Remove the "- " prefix and add to current list
-			list_item = line.strip()[2:]
-			current_list.append(list_item)
-		elif line.strip() == "" and current_list:
-			# Empty line within a list, continue (don't break the list)
-			continue
-		elif current_list:
-			# If we have list items and found a non-list, non-empty line,
-			# add the current list to our sections and reset
-			list_sections.append(current_list)
-			current_list = []
-
-	# Add any remaining list items
-	if current_list:
-		list_sections.append(current_list)
-
-	# Step 3: Convert each list section to BBCode format
-	for items in list_sections:
-		# Build the markdown pattern with flexible whitespace (including newlines)
-		list_md_pattern = "\n+".join([re.escape(f"- {item}") for item in items])
-		list_bb = "[list]\n" + "\n".join([f"[*]{item.strip()}[/*]" for item in items]) + "\n[/list]"
-		bbcode = re.sub(list_md_pattern, list_bb, bbcode)
+	# Step 2-3: Process lists with nested support using line-by-line traversal
+	text_lines: list[str] = bbcode.split("\n")
+	result_lines: list[str] = []
+	i: int = 0
+	while i < len(text_lines):
+		line = text_lines[i]
+		if line.lstrip().startswith("- "):
+			# Collect all lines of this list block (empty lines between items are skipped)
+			block_lines: list[str] = []
+			j: int = i
+			while j < len(text_lines):
+				if text_lines[j].lstrip().startswith("- "):
+					block_lines.append(text_lines[j])
+					j += 1
+				elif text_lines[j].strip() == "":
+					# Look ahead for another list item (skip empty lines within a block)
+					k: int = j + 1
+					while k < len(text_lines) and text_lines[k].strip() == "":
+						k += 1
+					if k < len(text_lines) and text_lines[k].lstrip().startswith("- "):
+						j = k  # Skip to next list item, discarding empty lines
+					else:
+						break  # End of list block
+				else:
+					break  # Non-empty, non-list line: end of block
+			result_lines.append(convert_list_block(block_lines))
+			i = j
+		else:
+			result_lines.append(line)
+			i += 1
+	bbcode = "\n".join(result_lines)
 
 	# Step 3b: Convert spoiler/details blocks
 	# Format: <details><summary>X</summary>content</details> -> [spoiler=X]content[/spoiler]
@@ -172,10 +223,6 @@ def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
 	# Step 3c: Convert fenced code blocks
 	# Format: ```\ncode\n``` -> [code]code[/code]
 	bbcode = re.sub(r"```[^\n]*\n(.*?)```", lambda m: f"[code]{m.group(1).rstrip()}[/code]", bbcode, flags=re.DOTALL)
-
-	# Step 3d: Convert inline code
-	# Format: `code` -> [color=#ffaa00]code[/color]
-	bbcode = re.sub(r"`([^`\n]+)`", r"[color=#ffaa00]\1[/color]", bbcode)
 
 	# Step 3e: Convert blockquotes (group consecutive > lines)
 	# Format: > text -> [quote]text[/quote]
@@ -206,6 +253,10 @@ def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
 	img_bb_pattern = r'((?:\[url=[^\]]+\])?\[img\][^\n]+\[/img\](?:\[/url\])?)\n((?:\[url=[^\]]+\])?\[img\])'
 	while re.search(img_bb_pattern, bbcode):
 		bbcode = re.sub(img_bb_pattern, r'\1 \2', bbcode)
+
+	# Step 6c: Convert inline code (after links so backtick-wrapped link text is handled correctly)
+	# Format: `code` -> [color=#34495e]code[/color]
+	bbcode = re.sub(r"`([^`\n]+)`", r"[color=#34495e]\1[/color]", bbcode)
 
 	# Step 7: Convert bold text
 	# Format: **text** -> [b]text[/b]
