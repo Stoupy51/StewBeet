@@ -27,7 +27,8 @@ handling, and proper directory structure management for development and testing 
 - 🔗 Handles both individual datapacks and merged resource packs
 - 📚 Automatically copies library dependencies and official libraries
 - 🔄 Provides retry logic for handling permission errors
-- 🎯 Supports multiple destinations for different environments
+- 🎯 Supports multiple destinations for different environments (local and remote)
+- 🌐 Supports SFTP remote destinations with optional credentials file
 - 🛠️ Facilitates development workflows with automatic deployment
 
 ## ⚙️ Configuration
@@ -44,9 +45,11 @@ meta:
       datapack:
         - "path/to/minecraft/saves/world/datapacks"
         - "path/to/development/datapacks"
+        - "sftp://user@host/remote/path/datapacks"
       resource_pack:
         - "path/to/minecraft/resourcepacks"
         - "path/to/server/resourcepacks"
+        - "sftp://user@host/remote/path/resourcepacks"
     libs_folder: "libs"  # Optional: custom libraries folder
 ```
 
@@ -55,10 +58,26 @@ meta:
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `build_copy_destinations` | object | `{}` | Configuration for copy destinations |
-| `build_copy_destinations.datapack` | array | `[]` | List of datapack destination folders |
-| `build_copy_destinations.resource_pack` | array | `[]` | List of resource pack destination folders |
+| `build_copy_destinations.datapack` | array | `[]` | List of datapack destination paths (local or `sftp://`) |
+| `build_copy_destinations.resource_pack` | array | `[]` | List of resource pack destination paths (local or `sftp://`) |
 | `libs_folder` | string | `"libs"` | Folder containing custom library archives |
-| Retry Logic | automatic | 10 attempts | Maximum retry attempts for permission errors |
+| Retry Logic | automatic | 10 attempts | Maximum retry attempts for permission errors (local only) |
+
+### 🔐 SFTP Credentials
+
+SFTP destinations use the URL format `sftp://user@host/remote/path`.
+The password is resolved in this order:
+1. **Inline in the URL** — `sftp://user:password@host/remote/path` *(not recommended for version-controlled files)*
+2. **Credentials file** — `~/stewbeet/credentials.yml` (recommended)
+
+#### `~/stewbeet/credentials.yml` structure
+```yaml
+sftp:
+  user@host:       # must match the user@host part of the SFTP URL exactly
+    password: "your_password"
+```
+
+> ⚠️ If the remote directory does not exist, the copy is skipped with a warning. The plugin will **not** create remote directories.
 
 ## ✨ Features
 
@@ -89,6 +108,13 @@ Implements robust file copying with error handling:
 - ⏰ Uses configurable delay between retry attempts
 - 🧹 Attempts to remove existing files before copying
 - ⚠️ Provides warnings during retry attempts with clear messaging
+
+### 🌐 SFTP Remote Destinations
+Copies files to remote servers over SFTP:
+- 🔗 Accepts `sftp://user@host/path` URLs alongside local paths
+- 🔐 Resolves passwords from inline URL or `~/stewbeet/credentials.yml`
+- ⚠️ Skips copy with a warning if the remote directory does not exist
+- 🚫 No retry logic for SFTP (handled by the underlying `fsspec` library)
 
 ### 📊 Smart Copy Detection
 Intelligently determines which files to copy based on availability:
