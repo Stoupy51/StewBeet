@@ -264,11 +264,7 @@ export const Hero: React.FC = () => {
                     <TerminalWindow />
 
                     {/* Floating Elements around terminal */}
-                    <motion.div
-                        animate={{ y: [0, -10, 0] }}
-                        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                        className="absolute -top-8 -right-8 bg-[#1e1e1e] p-4 rounded-lg border border-white/10 shadow-xl"
-                    >
+                    <div className="animate-float-up absolute -top-8 -right-8 bg-[#1e1e1e] p-4 rounded-lg border border-white/10 shadow-xl">
                         <div className="flex items-center gap-3 mb-2">
                             <div className="w-8 h-8 rounded bg-indigo-500/20 flex items-center justify-center text-indigo-400">
                                 <HiTerminal />
@@ -278,13 +274,9 @@ export const Hero: React.FC = () => {
                                 <div className="text-sm font-bold text-white">{t('hero.fast')}</div>
                             </div>
                         </div>
-                    </motion.div>
+                    </div>
 
-                    <motion.div
-                        animate={{ y: [0, 10, 0] }}
-                        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                        className="absolute -bottom-8 -left-8 bg-[#1e1e1e] p-4 rounded-lg border border-white/10 shadow-xl"
-                    >
+                    <div className="animate-float-down absolute -bottom-8 -left-8 bg-[#1e1e1e] p-4 rounded-lg border border-white/10 shadow-xl">
                         <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded bg-green-500/20 flex items-center justify-center text-green-400">
                                 <HiCheck />
@@ -294,7 +286,7 @@ export const Hero: React.FC = () => {
                                 <div className="text-sm font-bold text-white">2,026+</div>
                             </div>
                         </div>
-                    </motion.div>
+                    </div>
                 </motion.div>
             </div>
         </section>
