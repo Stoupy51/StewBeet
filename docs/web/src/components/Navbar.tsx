@@ -52,6 +52,15 @@ export const Navbar: React.FC = () => {
         setIsMobileMenuOpen(false);
     };
 
+    const handleToolsClick = (e: React.MouseEvent) => {
+        if (e.ctrlKey || e.metaKey || e.shiftKey) {
+            return;
+        }
+        e.preventDefault();
+        navigate('/tools');
+        setIsMobileMenuOpen(false);
+    };
+
     const handleLanguageChange = (lang: Language) => {
         setLanguage(lang);
         setIsLanguageMenuOpen(false);
@@ -116,6 +125,16 @@ export const Navbar: React.FC = () => {
                             className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 rounded-lg text-white text-sm font-semibold transition-all shadow-lg shadow-purple-500/30"
                         >
                             {t('nav.documentation')}
+                        </motion.a>
+
+                        <motion.a
+                            href="/tools"
+                            onClick={handleToolsClick}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 rounded-lg text-white text-sm font-semibold transition-all shadow-lg shadow-blue-500/30"
+                        >
+                            {t('nav.tools')}
                         </motion.a>
 
                         <motion.a
@@ -212,6 +231,13 @@ export const Navbar: React.FC = () => {
                                 className="block w-full text-center px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg text-white font-semibold"
                             >
                                 {t('nav.documentation')}
+                            </a>
+                            <a
+                                href="/tools"
+                                onClick={handleToolsClick}
+                                className="block w-full text-center px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-lg text-white font-semibold"
+                            >
+                                {t('nav.tools')}
                             </a>
                             <a
                                 href="https://github.com/Stoupy51/StewBeet"
