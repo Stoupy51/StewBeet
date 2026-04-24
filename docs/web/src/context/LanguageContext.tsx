@@ -10,6 +10,7 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useLanguage = () => {
     const context = useContext(LanguageContext);
     if (!context) {
@@ -35,7 +36,7 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
             
             // First visit: auto-detect language based on browser locale
             // Check if the browser language is French
-            const browserLang = navigator.language || (navigator as any).userLanguage;
+            const browserLang = navigator.language || (navigator as Navigator & { userLanguage?: string }).userLanguage;
             if (browserLang && browserLang.toLowerCase().startsWith('fr')) {
                 return 'fr';
             }

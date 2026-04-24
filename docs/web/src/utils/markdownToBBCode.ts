@@ -119,8 +119,8 @@ export function convertMarkdownToBBCode(markdown: string): string {
   // Step 7c: Convert italic text (single * or _)
   // Format: *text* or _text_ -> [i]text[/i]
   // Exclude [*] and [/*] list tags by checking for [ and / before *
-  bbcode = bbcode.replace(/(?<![\[/])\*(?![*\]])([^*\n]+)(?<![\[/])\*(?![*\]])/g, '[i]$1[/i]');
-  bbcode = bbcode.replace(/(?<![_\w\[])_([^_\n]+)_(?![_\w\]])/g, '[i]$1[/i]');
+  bbcode = bbcode.replace(/(?<![[/])\*(?![*\]])([^*\n]+)(?<![[/])\*(?![*\]])/g, '[i]$1[/i]');
+  bbcode = bbcode.replace(/(?<![_\w[])_([^_\n]+)_(?![_\w\]])/g, '[i]$1[/i]');
 
   // Step 8: Convert plain URLs (not already in BBCode)
   // Look for URLs not already inside [url] or [img] tags

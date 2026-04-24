@@ -299,7 +299,7 @@ export const MarkdownPage: React.FC = () => {
                             remarkPlugins={[remarkGfm]}
                             rehypePlugins={[rehypeRaw, rehypeSanitize]}
                             components={{
-                                code({ node, inline, className, children, ...props }: any) {
+                                code({ inline, className, children, style: _style, ...props }: React.HTMLAttributes<HTMLElement> & { inline?: boolean }) {
                                     const match = /language-(\w+)/.exec(className || '');
                                     const language = match ? match[1] : '';
                                     
@@ -318,28 +318,28 @@ export const MarkdownPage: React.FC = () => {
                                         </code>
                                     );
                                 },
-                                h1: ({ node, children, ...props }: any) => {
+                                h1: ({ children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => {
                                     const id = String(children)
                                         .toLowerCase()
                                         .replace(/[^\w\s-]/g, '')
                                         .replace(/\s+/g, '-');
                                     return <h1 id={id} {...props}>{children}</h1>;
                                 },
-                                h2: ({ node, children, ...props }: any) => {
+                                h2: ({ children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => {
                                     const id = String(children)
                                         .toLowerCase()
                                         .replace(/[^\w\s-]/g, '')
                                         .replace(/\s+/g, '-');
                                     return <h2 id={id} {...props}>{children}</h2>;
                                 },
-                                h3: ({ node, children, ...props }: any) => {
+                                h3: ({ children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => {
                                     const id = String(children)
                                         .toLowerCase()
                                         .replace(/[^\w\s-]/g, '')
                                         .replace(/\s+/g, '-');
                                     return <h3 id={id} {...props}>{children}</h3>;
                                 },
-                                img({ src, alt }: any) {
+                                img({ src, alt }: React.ImgHTMLAttributes<HTMLImageElement>) {
                                     // Convert relative GitHub image paths to absolute URLs
                                     let imageSrc = src;
                                     
@@ -370,7 +370,7 @@ export const MarkdownPage: React.FC = () => {
                                         />
                                     );
                                 },
-                                a({ href, children }: any) {
+                                a({ href, children }: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
                                     // Keep anchor links as-is
                                     const isAnchor = href?.startsWith('#');
                                     const isExternal = href?.startsWith('http');
