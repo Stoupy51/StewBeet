@@ -27,7 +27,7 @@ The manual features clickable pages, hover effects, and high-resolution item dis
 ### <u>Some Features Showcase</u>
 
 **In-game Manual Example:**<br>
-<img src="https://i.imgur.com/dtuAG99.gif" style="width: min(480px, 100%)">
+<img src="img/ingame_manual.gif" style="width: min(480px, 100%)">
 
 ## 🎯 Purpose
 - 📖 Creates interactive in-game manual with item documentation
