@@ -54,6 +54,12 @@ export const DocumentationPage: React.FC = () => {
             pathEn: '5_dependencies/en.md',
             pathFr: '5_dependencies/fr.md',
         },
+        {
+            title: `🚀 ${t('documentation.continuousDelivery')}`,
+            description: t('documentation.continuousDeliveryDesc'),
+            pathEn: '6_continuous_delivery/en.md',
+            pathFr: '6_continuous_delivery/fr.md',
+        },
     ];
 
     return (
@@ -163,7 +169,7 @@ export const DocumentationPage: React.FC = () => {
                         className="mt-12 text-center"
                     >
                         <p className="text-slate-500 text-sm">
-                            More documentation pages coming soon...
+                            More documentation coming soon...
                         </p>
                     </motion.div>
                 </div>
