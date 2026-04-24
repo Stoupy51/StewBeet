@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build && bun scripts/prerender.tsx",
     "lint": "eslint .",
-    "server": "bun server.tsx",
+    "my_server": "bun server.tsx",
     "preview": "vite preview"
   },
   "dependencies": {

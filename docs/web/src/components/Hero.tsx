@@ -1,6 +1,6 @@
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, useMotionValue, MotionValue } from 'framer-motion';
 import { HiTerminal, HiDocumentText, HiClipboard, HiCheck } from 'react-icons/hi';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useStewBeetVersion } from '../hooks/useStewBeetVersion';
 import { useTranslation } from '../i18n/useTranslation';
 
@@ -119,27 +119,56 @@ const floatingNodePositions = Array.from({ length: 8 }, () => ({
     top: Math.random() * 100,
 }));
 
+// Separate component so useTransform hooks are called at component level, not inside map
+const FloatingNode = ({ index, mouseX, mouseY }: {
+    index: number;
+    mouseX: MotionValue<number>;
+    mouseY: MotionValue<number>;
+}) => {
+    const multiplier = 20 + index * 10;
+    const x = useTransform(mouseX, v => v * multiplier);
+    const y = useTransform(mouseY, v => v * multiplier);
+    return (
+        <motion.div
+            className="absolute w-64 h-64 border border-indigo-500/10 rounded-full"
+            style={{
+                left: `${floatingNodePositions[index].left}%`,
+                top: `${floatingNodePositions[index].top}%`,
+                x,
+                y,
+            }}
+            animate={{
+                scale: [1, 1.1, 1],
+                opacity: [0.1, 0.2, 0.1],
+            }}
+            transition={{
+                duration: 5 + index,
+                repeat: Infinity,
+                ease: "easeInOut"
+            }}
+        />
+    );
+};
+
 export const Hero: React.FC = () => {
     const { version } = useStewBeetVersion();
     const { t } = useTranslation();
-    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-    const containerRef = useRef<HTMLDivElement>(null);
+    const mouseX = useMotionValue(0);
+    const mouseY = useMotionValue(0);
     const { scrollY } = useScroll();
     const y2 = useTransform(scrollY, [0, 500], [0, -150]);
 
     useEffect(() => {
         const handleMouseMove = (e: MouseEvent) => {
-            setMousePosition({
-                x: (e.clientX / window.innerWidth),
-                y: (e.clientY / window.innerHeight),
-            });
+            mouseX.set(e.clientX / window.innerWidth);
+            mouseY.set(e.clientY / window.innerHeight);
         };
         window.addEventListener('mousemove', handleMouseMove);
         return () => window.removeEventListener('mousemove', handleMouseMove);
-    }, []);
+    }, [mouseX, mouseY]);
 
     return (
-        <section ref={containerRef} id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 bg-[#0a0a0a]">
+        <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 bg-[#0a0a0a]">
             {/* Technical Grid Background */}
             <div className="absolute inset-0 z-0 opacity-20">
                 <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
@@ -149,25 +178,7 @@ export const Hero: React.FC = () => {
             {/* Floating Nodes */}
             <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
                 {[...Array(8)].map((_, i) => (
-                    <motion.div
-                        key={i}
-                        className="absolute w-64 h-64 border border-indigo-500/10 rounded-full"
-                        style={{
-                            left: `${floatingNodePositions[i].left}%`,
-                            top: `${floatingNodePositions[i].top}%`,
-                            x: mousePosition.x * (20 + i * 10),
-                            y: mousePosition.y * (20 + i * 10),
-                        }}
-                        animate={{
-                            scale: [1, 1.1, 1],
-                            opacity: [0.1, 0.2, 0.1],
-                        }}
-                        transition={{
-                            duration: 5 + i,
-                            repeat: Infinity,
-                            ease: "easeInOut"
-                        }}
-                    />
+                    <FloatingNode key={i} index={i} mouseX={mouseX} mouseY={mouseY} />
                 ))}
             </div>
 
