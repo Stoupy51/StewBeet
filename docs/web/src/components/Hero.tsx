@@ -7,20 +7,21 @@ import { useTranslation } from '../i18n/useTranslation';
 const TerminalWindow = () => {
     const { version } = useStewBeetVersion();
     const [lines, setLines] = useState<Array<{ text: string; color?: string }>>([]);
-    const fullLines: Array<{ text: string; color?: string }> = [
-        { text: "> pip install stewbeet", color: "text-slate-300" },
-        { text: "Installing stewbeet...", color: "text-slate-400" },
-        { text: `Successfully installed stewbeet-${version}`, color: "text-green-400" },
-        { text: "> stewbeet init basic", color: "text-slate-300" },
-        { text: "[INFO] Template initialized successfully!", color: "text-green-400" },
-        { text: "> stewbeet", color: "text-slate-300" },
-        { text: "Building project...", color: "text-slate-400" },
-        { text: "...", color: "text-slate-500" },
-        { text: "[DEBUG] Total execution time: 0.79140s", color: "text-blue-400" },
-        { text: "Done!", color: "text-green-400" },
-    ];
 
     useEffect(() => {
+        const fullLines: Array<{ text: string; color?: string }> = [
+            { text: "> pip install stewbeet", color: "text-slate-300" },
+            { text: "Installing stewbeet...", color: "text-slate-400" },
+            { text: `Successfully installed stewbeet-${version}`, color: "text-green-400" },
+            { text: "> stewbeet init basic", color: "text-slate-300" },
+            { text: "[INFO] Template initialized successfully!", color: "text-green-400" },
+            { text: "> stewbeet", color: "text-slate-300" },
+            { text: "Building project...", color: "text-slate-400" },
+            { text: "...", color: "text-slate-500" },
+            { text: "[DEBUG] Total execution time: 0.79140s", color: "text-blue-400" },
+            { text: "Done!", color: "text-green-400" },
+        ];
+
         let currentLine = 0;
         let currentChar = 0;
         let timeout: ReturnType<typeof setTimeout>;
@@ -112,6 +113,12 @@ const CopyButton = ({ text }: { text: string }) => {
     );
 };
 
+// Stable random positions computed once at module load for the floating background nodes
+const floatingNodePositions = Array.from({ length: 8 }, () => ({
+    left: Math.random() * 100,
+    top: Math.random() * 100,
+}));
+
 export const Hero: React.FC = () => {
     const { version } = useStewBeetVersion();
     const { t } = useTranslation();
@@ -146,8 +153,8 @@ export const Hero: React.FC = () => {
                         key={i}
                         className="absolute w-64 h-64 border border-indigo-500/10 rounded-full"
                         style={{
-                            left: `${Math.random() * 100}%`,
-                            top: `${Math.random() * 100}%`,
+                            left: `${floatingNodePositions[i].left}%`,
+                            top: `${floatingNodePositions[i].top}%`,
                             x: mousePosition.x * (20 + i * 10),
                             y: mousePosition.y * (20 + i * 10),
                         }}

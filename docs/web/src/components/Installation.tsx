@@ -23,7 +23,7 @@ export const Installation: React.FC = () => {
             title: t('installation.step1'),
             description: t('installation.step1Desc'),
             command: 'python --version',
-            output: [{ text: 'Python 3.14.2' }],
+            output: [{ text: 'Python 3.14.3' }],
             icon: HiDownload
         },
         {

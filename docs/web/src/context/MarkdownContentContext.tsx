@@ -8,6 +8,7 @@ import type { ReactNode } from 'react';
  */
 const MarkdownContentContext = createContext<string | null>(null);
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useMarkdownContent = () => useContext(MarkdownContentContext);
 
 export const MarkdownContentProvider: React.FC<{ content: string; children: ReactNode }> = ({ content, children }) => (
