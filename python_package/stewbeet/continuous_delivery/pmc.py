@@ -72,17 +72,21 @@ def convert_list_block(block_lines: list[str]) -> str:
 			result.append("[list]")
 		elif indent > level_stack[-1]:
 			level_stack.append(indent)
-			result.append("[list]")
+			# Append [list] to the last item instead of a separate line
+			if result and result[-1].endswith("[/*]"):
+				result[-1] = result[-1][:-4] + "[list]"
+			else:
+				result.append("[list]")
 		elif indent < level_stack[-1]:
 			while len(level_stack) > 1 and level_stack[-1] > indent:
 				level_stack.pop()
-				result.append("[/list]")
+				result.append("[/list][/*]")
 
 		result.append(f"[*]{item_text}[/*]")
 
 	while level_stack:
 		level_stack.pop()
-		result.append("[/list]")
+		result.append("[/list][/*]" if level_stack else "[/list]")
 
 	return "\n".join(result)
 
@@ -153,12 +157,19 @@ def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
 		>>> nested_list_md = '- item 1\\n  - sub item 1\\n  - sub item 2\\n- item 2'
 		>>> print(convert_markdown_to_bbcode(nested_list_md, verbose=False))
 		[list]
-		[*]item 1[/*]
-		[list]
+		[*]item 1[list]
 		[*]sub item 1[/*]
 		[*]sub item 2[/*]
-		[/list]
+		[/list][/*]
 		[*]item 2[/*]
+		[/list]
+		>>> nested_list_urls = '- Actual projects:\\n  - https://github.com/Paralya/Switch\\n  - https://github.com/Stoupy51/LifeSteal'
+		>>> print(convert_markdown_to_bbcode(nested_list_urls, verbose=False))
+		[list]
+		[*]Actual projects:[list]
+		[*][url]https://github.com/Paralya/Switch[/url][/*]
+		[*][url]https://github.com/Stoupy51/LifeSteal[/url][/*]
+		[/list][/*]
 		[/list]
 		>>> print(convert_markdown_to_bbcode('---', verbose=False))
 		[hr]
@@ -274,14 +285,17 @@ def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
 
 	# Step 8: Convert plain URLs (not already in BBCode)
 	# Look for URLs not already inside [url] or [img] tags
-	url_pattern = r"(?<!\[url=|\[url\]|\[img\])(https?://[^\s\]]+)(?!\[/url\]|\[/img\])"
+	# Note: [^\s\[\]]+ excludes '[' to avoid consuming BBCode list tags like [/*]
+	url_pattern = r"(?<!\[url=|\[url\]|\[img\])(https?://[^\s\[\]]+)(?!\[/url\]|\[/img\])"
 	bbcode = re.sub(url_pattern, r"[url]\1[/url]", bbcode)
 
 	# Step 9: Remove blank lines between sections to create compact format
+	bbcode = re.sub(r"\n{3,}", "\n\n", bbcode)  # Collapse 3+ newlines to 2 (i.e. one blank line max)
 	bbcode = re.sub(r"\[/h2]\n+\[h4]", r"[/h2][h4]", bbcode)
 	bbcode = re.sub(r"\[/h4]\n+\[list]", r"[/h4][list]", bbcode)
 	bbcode = re.sub(r"\[/list]\n+\[h4]", r"[/list][h4]", bbcode)
 	bbcode = re.sub(r"\[/list]\n+\[b]", r"[/list]\n[b]", bbcode)
+	bbcode = re.sub(r":\n\n\[list]", r":\n[list]", bbcode)  # Remove blank line between colon and list
 
 	# Print the conversion comparison if verbose is True
 	if verbose:
