@@ -299,7 +299,7 @@ class StorageEquation(BaseEquation):
 		>>> result = str(start().multiply(1000000).divide("$(max_damage)").subtract("#toto"))
 		>>> shorter = str(start() * 1000000 / "$(max_damage)" - "#toto")
 		>>> expected = (
-		...     "# storage some_namespace:some_path result_path = -$(amount) * 1000000 / $(max_damage) - #toto * 0.000005\\n"
+		...     "# storage some_namespace:some_path result_path = (-$(amount) * 1000000 / $(max_damage) - #toto) * 0.000005\\n"
 		...     "$scoreboard players set #temp_result test.data -$(amount)\\n"
 		...     "scoreboard players operation #temp_result test.data *= #1000000 test.data\\n"
 		...     "$scoreboard players set #temp_divide test.data $(max_damage)\\n"
@@ -319,7 +319,7 @@ class StorageEquation(BaseEquation):
 		self.comment_parts: list[str] = [f"{storage} {path}"]
 
 	def render_header(self) -> str:
-		return f"storage {self.storage} {self.path} = {' '.join(self.comment_parts)} * {self.scale:f}"
+		return f"storage {self.storage} {self.path} = ({' '.join(self.comment_parts)}) * {self.scale:f}"
 
 	def __str__(self) -> str:
 		# Add the final command to store the result in storage after all operations

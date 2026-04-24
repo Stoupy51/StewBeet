@@ -42,6 +42,12 @@ export const DocumentationPage: React.FC = () => {
             pathEn: '3_beet_config/en.md',
             pathFr: '3_beet_config/fr.md',
         },
+        {
+            title: `⚡ ${t('documentation.equations')}`,
+            description: t('documentation.equationsDesc'),
+            pathEn: '4_equations/en.md',
+            pathFr: '4_equations/fr.md',
+        },
     ];
 
     return (
