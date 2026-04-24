@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform, useMotionValue, MotionValue } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { HiTerminal, HiDocumentText, HiClipboard, HiCheck } from 'react-icons/hi';
 import { useEffect, useState } from 'react';
 import { useStewBeetVersion } from '../hooks/useStewBeetVersion';
@@ -113,59 +113,9 @@ const CopyButton = ({ text }: { text: string }) => {
     );
 };
 
-// Stable random positions computed once at module load for the floating background nodes
-const floatingNodePositions = Array.from({ length: 8 }, () => ({
-    left: Math.random() * 100,
-    top: Math.random() * 100,
-}));
-
-// Separate component so useTransform hooks are called at component level, not inside map
-const FloatingNode = ({ index, mouseX, mouseY }: {
-    index: number;
-    mouseX: MotionValue<number>;
-    mouseY: MotionValue<number>;
-}) => {
-    const multiplier = 20 + index * 10;
-    const x = useTransform(mouseX, v => v * multiplier);
-    const y = useTransform(mouseY, v => v * multiplier);
-    return (
-        <motion.div
-            className="absolute w-64 h-64 border border-indigo-500/10 rounded-full"
-            style={{
-                left: `${floatingNodePositions[index].left}%`,
-                top: `${floatingNodePositions[index].top}%`,
-                x,
-                y,
-            }}
-            animate={{
-                scale: [1, 1.1, 1],
-                opacity: [0.1, 0.2, 0.1],
-            }}
-            transition={{
-                duration: 5 + index,
-                repeat: Infinity,
-                ease: "easeInOut"
-            }}
-        />
-    );
-};
-
 export const Hero: React.FC = () => {
     const { version } = useStewBeetVersion();
     const { t } = useTranslation();
-    const mouseX = useMotionValue(0);
-    const mouseY = useMotionValue(0);
-    const { scrollY } = useScroll();
-    const y2 = useTransform(scrollY, [0, 500], [0, -150]);
-
-    useEffect(() => {
-        const handleMouseMove = (e: MouseEvent) => {
-            mouseX.set(e.clientX / window.innerWidth);
-            mouseY.set(e.clientY / window.innerHeight);
-        };
-        window.addEventListener('mousemove', handleMouseMove);
-        return () => window.removeEventListener('mousemove', handleMouseMove);
-    }, [mouseX, mouseY]);
 
     return (
         <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 bg-[#0a0a0a]">
@@ -173,13 +123,6 @@ export const Hero: React.FC = () => {
             <div className="absolute inset-0 z-0 opacity-20">
                 <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
                 <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-indigo-500 opacity-20 blur-[100px]" />
-            </div>
-
-            {/* Floating Nodes */}
-            <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-                {[...Array(8)].map((_, i) => (
-                    <FloatingNode key={i} index={i} mouseX={mouseX} mouseY={mouseY} />
-                ))}
             </div>
 
             <div className="relative z-10 w-full max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -254,7 +197,6 @@ export const Hero: React.FC = () => {
 
                 {/* Right Column: Terminal */}
                 <motion.div
-                    style={{ y: y2 }}
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.8, delay: 0.2 }}
