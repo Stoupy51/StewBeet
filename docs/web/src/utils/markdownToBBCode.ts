@@ -8,7 +8,8 @@ export function convertMarkdownToBBCode(markdown: string): string {
   // Make a copy of the original markdown text
   let bbcode: string = markdown;
 
-  // Step 1: Convert headers (## -> [h2], ### -> [h4])
+  // Step 1: Convert headers (# -> [h1], ## -> [h2], ### -> [h4])
+  bbcode = bbcode.replace(/^# ([^\n]+)/gm, '[h1]$1[/h1]');
   bbcode = bbcode.replace(/^## ([^\n]+)/gm, '[h2]$1[/h2]');
   bbcode = bbcode.replace(/^### ([^\n]+)/gm, '[h4]$1[/h4]');
 

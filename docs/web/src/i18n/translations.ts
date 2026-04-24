@@ -127,6 +127,7 @@ export const translations = {
             categoryFinalization: 'Finalization',
             categoryAutomation: 'Automation',
             categoryBuild: 'Build',
+            categoryCompatibility: 'Compatibility',
             // Plugins
             initializeDesc: 'Initializes the framework and sets up project metadata',
             verifyDefinitionsDesc: 'Validates the structure of definitions and checks consistency',
@@ -140,6 +141,8 @@ export const translations = {
             customBlocksDesc: 'Implements placement, destruction, and interaction for custom blocks',
             lootTablesDesc: 'Generates loot tables and give-all functionality',
             sortersDesc: 'Generates sorting functions for NBT lists',
+            simpledrawerDesc: 'Adds SimpleDrawer material compatibility for compacted drawers',
+            neoEnchantDesc: 'Provides NeoEnchant veinminer compatibility for custom ores',
             customBlocksTickingDesc: 'Configures the ticking system for custom blocks',
             basicDatapackStructureDesc: 'Creates the timing structure (tick, second, minute)',
             dependenciesDesc: 'Manages external library dependencies',
@@ -325,6 +328,7 @@ export const translations = {
             categoryFinalization: 'Finalisation',
             categoryAutomation: 'Automatisation',
             categoryBuild: 'Construction',
+            categoryCompatibility: 'Compatibilité',
             // Plugins
             initializeDesc: 'Initialise le framework et configure les métadonnées du projet',
             verifyDefinitionsDesc: 'Valide la structure des définitions et vérifie la cohérence',
@@ -338,6 +342,8 @@ export const translations = {
             customBlocksDesc: 'Implémente le placement, la destruction et l\'interaction pour les blocs personnalisés',
             lootTablesDesc: 'Génère les tables de butin et la fonctionnalité give-all',
             sortersDesc: 'Génère des fonctions de tri pour les listes NBT',
+            simpledrawerDesc: 'Ajoute la compatibilité matériaux SimpleDrawer pour les tiroirs compactés',
+            neoEnchantDesc: 'Fournit la compatibilité veinminer NeoEnchant pour les minerais personnalisés',
             customBlocksTickingDesc: 'Configure le système de ticking pour les blocs personnalisés',
             basicDatapackStructureDesc: 'Crée la structure temporelle (tick, seconde, minute)',
             dependenciesDesc: 'Gère les dépendances de bibliothèques externes',
