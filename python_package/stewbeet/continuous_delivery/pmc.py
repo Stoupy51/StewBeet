@@ -39,7 +39,6 @@ def table_to_bbcode(match: re.Match[str]) -> str:
 	"""
 	rows: list[str] = match.group(0).split("\n")
 	result: str = "[table][tbody]"
-	is_header = True
 	for row in rows:
 		if not row.strip():
 			continue
@@ -47,9 +46,7 @@ def table_to_bbcode(match: re.Match[str]) -> str:
 		# Skip separator row (cells like ---, :---, ---:)
 		if cells and all(re.match(r"^[-:]+$", c) for c in cells if c.strip()):
 			continue
-		tag = "th" if is_header else "td"
-		result += "[tr]" + "".join(f"[{tag}]{c}[/{tag}]" for c in cells) + "[/tr]"
-		is_header = False
+		result += "[tr]" + "".join(f"[td]{c}[/td]" for c in cells) + "[/tr]"
 	result += "[/tbody][/table]"
 	return result
 
@@ -102,7 +99,19 @@ def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
 		Line 4
 		>>> table_md = '| A | B |\\n|---|---|\\n| 1 | 2 |\\n| 3 | 4 |'
 		>>> print(convert_markdown_to_bbcode(table_md, verbose=False))
-		[table][tbody][tr][th]A[/th][th]B[/th][/tr][tr][td]1[/td][td]2[/td][/tr][tr][td]3[/td][td]4[/td][/tr][/tbody][/table]
+		[table][tbody][tr][td]A[/td][td]B[/td][/tr][tr][td]1[/td][td]2[/td][/tr][tr][td]3[/td][td]4[/td][/tr][/tbody][/table]
+		>>> print(convert_markdown_to_bbcode('```\\ncode block\\n```', verbose=False))
+		[code]code block[/code]
+		>>> print(convert_markdown_to_bbcode('`inline code`', verbose=False))
+		[inlinecode]inline code[/inlinecode]
+		>>> print(convert_markdown_to_bbcode('~~strikethrough~~', verbose=False))
+		[s]strikethrough[/s]
+		>>> print(convert_markdown_to_bbcode('*italic* and _also italic_', verbose=False))
+		[i]italic[/i] and [i]also italic[/i]
+		>>> print(convert_markdown_to_bbcode('> blockquote', verbose=False))
+		[quote]blockquote[/quote]
+		>>> print(convert_markdown_to_bbcode('---', verbose=False))
+		[hr]
 	"""
 	# Make a copy of the original markdown text
 	bbcode: str = markdown
@@ -158,6 +167,27 @@ def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
 		flags=re.DOTALL
 	)
 
+	# Step 3c: Convert fenced code blocks
+	# Format: ```\ncode\n``` -> [code]code[/code]
+	bbcode = re.sub(r"```[^\n]*\n(.*?)```", lambda m: f"[code]{m.group(1).rstrip()}[/code]", bbcode, flags=re.DOTALL)
+
+	# Step 3d: Convert inline code
+	# Format: `code` -> [inlinecode]code[/inlinecode]
+	bbcode = re.sub(r"`([^`\n]+)`", r"[inlinecode]\1[/inlinecode]", bbcode)
+
+	# Step 3e: Convert blockquotes (group consecutive > lines)
+	# Format: > text -> [quote]text[/quote]
+	bbcode = re.sub(
+		r"(?:^> ?[^\n]*(?:\n> ?[^\n]*)*)",
+		lambda m: "[quote]" + re.sub(r"^> ?", "", m.group(0), flags=re.MULTILINE) + "[/quote]",
+		bbcode,
+		flags=re.MULTILINE
+	)
+
+	# Step 3f: Convert horizontal rules
+	# Format: --- or *** (alone on a line) -> [hr]
+	bbcode = re.sub(r"^[-*]{3,}$", "[hr]", bbcode, flags=re.MULTILINE)
+
 	# Step 4: Convert clickable images (must be done before regular links and images)
 	# Format: [![alt](img_url)](link_url) -> [url=link_url][img]img_url[/img][/url]
 	bbcode = re.sub(r"\[!\[([^\]]*)\]\(([^)]+)\)\]\(([^)]+)\)", r"[url=\3][img]\2[/img][/url]", bbcode)
@@ -173,6 +203,16 @@ def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
 	# Step 7: Convert bold text
 	# Format: **text** -> [b]text[/b]
 	bbcode = re.sub(r"\*\*([^*]+)\*\*", r"[b]\1[/b]", bbcode)
+
+	# Step 7b: Convert strikethrough text
+	# Format: ~~text~~ -> [s]text[/s]
+	bbcode = re.sub(r"~~([^~]+)~~", r"[s]\1[/s]", bbcode)
+
+	# Step 7c: Convert italic text (single * or _)
+	# Format: *text* or _text_ -> [i]text[/i]
+	# Exclude [*] and [/*] list tags by checking for [ and / before *
+	bbcode = re.sub(r"(?<![\[/])\*(?![*\]])([^*\n]+)(?<![\[/])\*(?![*\]])", r"[i]\1[/i]", bbcode)
+	bbcode = re.sub(r"(?<![_\w\[])_([^_\n]+)_(?![_\w\]])", r"[i]\1[/i]", bbcode)
 
 	# Step 8: Convert plain URLs (not already in BBCode)
 	# Look for URLs not already inside [url] or [img] tags

@@ -23,14 +23,11 @@ export function convertMarkdownToBBCode(markdown: string): string {
     (match) => {
       const rows = match.split('\n').filter(r => r.trim());
       let result = '[table][tbody]';
-      let isHeader = true;
       for (const row of rows) {
         const cells = row.trim().replace(/^\||\|$/g, '').split('|').map(c => c.trim());
         // Skip separator row (cells like ---, :---, ---:)
         if (cells.filter(c => c.trim()).every(c => /^[-:]+$/.test(c))) continue;
-        const tag = isHeader ? 'th' : 'td';
-        result += '[tr]' + cells.map(c => `[${tag}]${c}[/${tag}]`).join('') + '[/tr]';
-        isHeader = false;
+        result += '[tr]' + cells.map(c => `[td]${c}[/td]`).join('') + '[/tr]';
       }
       result += '[/tbody][/table]';
       return result;
@@ -80,6 +77,25 @@ export function convertMarkdownToBBCode(markdown: string): string {
     (_, title, content) => `[spoiler=${title.trim()}]${content.trim()}[/spoiler]`,
   );
 
+  // Step 3c: Convert fenced code blocks
+  // Format: ```\ncode\n``` -> [code]code[/code]
+  bbcode = bbcode.replace(/```[^\n]*\n([\s\S]*?)```/g, (_, code) => `[code]${code.trimEnd()}[/code]`);
+
+  // Step 3d: Convert inline code
+  // Format: `code` -> [inlinecode]code[/inlinecode]
+  bbcode = bbcode.replace(/`([^`\n]+)`/g, '[inlinecode]$1[/inlinecode]');
+
+  // Step 3e: Convert blockquotes (group consecutive > lines)
+  // Format: > text -> [quote]text[/quote]
+  bbcode = bbcode.replace(
+    /(?:^> ?[^\n]*(?:\n> ?[^\n]*)*)/gm,
+    (match) => '[quote]' + match.replace(/^> ?/gm, '') + '[/quote]',
+  );
+
+  // Step 3f: Convert horizontal rules
+  // Format: --- or *** (alone on a line) -> [hr]
+  bbcode = bbcode.replace(/^[-*]{3,}$/gm, '[hr]');
+
   // Step 4: Convert clickable images (must be done before regular links and images)
   // Format: [![alt](img_url)](link_url) -> [url=link_url][img]img_url[/img][/url]
   bbcode = bbcode.replace(/\[!\[([^\]]*)\]\(([^)]+)\)\]\(([^)]+)\)/g, '[url=$3][img]$2[/img][/url]');
@@ -95,6 +111,16 @@ export function convertMarkdownToBBCode(markdown: string): string {
   // Step 7: Convert bold text
   // Format: **text** -> [b]text[/b]
   bbcode = bbcode.replace(/\*\*([^*]+)\*\*/g, '[b]$1[/b]');
+
+  // Step 7b: Convert strikethrough text
+  // Format: ~~text~~ -> [s]text[/s]
+  bbcode = bbcode.replace(/~~([^~]+)~~/g, '[s]$1[/s]');
+
+  // Step 7c: Convert italic text (single * or _)
+  // Format: *text* or _text_ -> [i]text[/i]
+  // Exclude [*] and [/*] list tags by checking for [ and / before *
+  bbcode = bbcode.replace(/(?<![\[/])\*(?![*\]])([^*\n]+)(?<![\[/])\*(?![*\]])/g, '[i]$1[/i]');
+  bbcode = bbcode.replace(/(?<![_\w\[])_([^_\n]+)_(?![_\w\]])/g, '[i]$1[/i]');
 
   // Step 8: Convert plain URLs (not already in BBCode)
   // Look for URLs not already inside [url] or [img] tags
