@@ -15,11 +15,16 @@ function convertListBlock(blockLines: string[]): string {
       result.push('[list]');
     } else if (indent > levelStack[levelStack.length - 1]) {
       levelStack.push(indent);
-      result.push('[list]');
+      // Append [list] to the last item instead of a separate line
+      if (result.length > 0 && result[result.length - 1].endsWith('[/*]')) {
+        result[result.length - 1] = result[result.length - 1].slice(0, -4) + '[list]';
+      } else {
+        result.push('[list]');
+      }
     } else if (indent < levelStack[levelStack.length - 1]) {
       while (levelStack.length > 1 && levelStack[levelStack.length - 1] > indent) {
         levelStack.pop();
-        result.push('[/list]');
+        result.push('[/list][/*]');
       }
     }
     result.push(`[*]${itemText}[/*]`);
@@ -27,7 +32,7 @@ function convertListBlock(blockLines: string[]): string {
 
   while (levelStack.length > 0) {
     levelStack.pop();
-    result.push('[/list]');
+    result.push(levelStack.length > 0 ? '[/list][/*]' : '[/list]');
   }
 
   return result.join('\n');
@@ -168,14 +173,17 @@ export function convertMarkdownToBBCode(markdown: string): string {
 
   // Step 8: Convert plain URLs (not already in BBCode)
   // Look for URLs not already inside [url] or [img] tags
-  const urlPattern = /(?<!\[url=|\[url\]|\[img\])(https?:\/\/[^\s\]]+)(?!\[\/url\]|\[\/img\])/g;
+  // Note: [^\s\[\]]+ excludes '[' to avoid consuming BBCode list tags like [/*]
+  const urlPattern = /(?<!\[url=|\[url\]|\[img\])(https?:\/\/[^\s\[\]]+)(?!\[\/url\]|\[\/img\])/g;
   bbcode = bbcode.replace(urlPattern, '[url]$1[/url]');
 
   // Step 9: Remove blank lines between sections to create compact format
+  bbcode = bbcode.replace(/\n{3,}/g, '\n\n'); // Collapse 3+ newlines to 2 (i.e. one blank line max)
   bbcode = bbcode.replace(/\[\/h2\]\n+\[h4\]/g, '[/h2][h4]');
   bbcode = bbcode.replace(/\[\/h4\]\n+\[list\]/g, '[/h4][list]');
   bbcode = bbcode.replace(/\[\/list\]\n+\[h4\]/g, '[/list][h4]');
   bbcode = bbcode.replace(/\[\/list\]\n+\[b\]/g, '[/list]\n[b]');
+  bbcode = bbcode.replace(/:\n\n\[list\]/g, ':\n[list]'); // Remove blank line between colon and list
 
   return bbcode;
 }
