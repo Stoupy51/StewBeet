@@ -11,6 +11,7 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 import { useLanguage } from '../context/LanguageContext';
+import { useMarkdownContent } from '../context/MarkdownContentContext';
 
 interface Heading {
     id: string;
@@ -23,8 +24,10 @@ export const MarkdownPage: React.FC = () => {
     const navigate = useNavigate();
     const { language } = useLanguage();
     const src = searchParams.get('src');
-    const [content, setContent] = useState<string>('');
-    const [loading, setLoading] = useState<boolean>(true);
+    // ssrContent is non-null when pre-rendered by the SSR server (server.tsx)
+    const ssrContent = useMarkdownContent();
+    const [content, setContent] = useState<string>(ssrContent ?? '');
+    const [loading, setLoading] = useState<boolean>(ssrContent === null);
     const [error, setError] = useState<string | null>(null);
     const [tocOpen, setTocOpen] = useState<boolean>(false);
     
