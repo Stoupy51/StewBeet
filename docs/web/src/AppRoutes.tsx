@@ -3,6 +3,7 @@ import HomePage from './components/HomePage';
 import { MarkdownPage } from './components/MarkdownPage';
 import { DocumentationPage } from './components/DocumentationPage';
 import { MarkdownToBBCodePage } from './components/MarkdownToBBCodePage';
+import { ToolsPage } from './components/ToolsPage';
 
 export function AppRoutes() {
     return (
@@ -11,6 +12,7 @@ export function AppRoutes() {
             <Route path="/documentation" element={<DocumentationPage />} />
             <Route path="/markdown" element={<MarkdownPage />} />
             <Route path="/markdown_to_pmc_bbcode" element={<MarkdownToBBCodePage />} />
+            <Route path="/tools" element={<ToolsPage />} />
         </Routes>
     );
 }

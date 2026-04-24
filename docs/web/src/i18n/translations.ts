@@ -9,6 +9,7 @@ export const translations = {
             templates: 'Templates',
             plugins: 'Plugins',
             documentation: 'Documentation',
+            tools: 'Tools',
             github: 'GitHub',
             language: 'Language',
         },
@@ -194,6 +195,14 @@ export const translations = {
             noPlugin: 'No plugin specified. Please provide a "src" parameter.',
         },
         
+        // Tools Page
+        tools: {
+            title: 'Tools',
+            subtitle: 'Useful tools for StewBeet and Minecraft datapack development',
+            markdownToBBCode: 'Markdown to BBCode Converter',
+            markdownToBBCodeDesc: 'Convert Markdown text to BBCode format for publishing on PlanetMinecraft. Supports badges, lists, tables, code blocks, spoilers, and more.',
+        },
+        
         // Footer
         footer: {
             tagline: 'Powerful automation framework to create Minecraft datapacks effortlessly.',
@@ -217,6 +226,7 @@ export const translations = {
             templates: 'Modèles',
             plugins: 'Plugins',
             documentation: 'Documentation',
+            tools: 'Outils',
             github: 'GitHub',
             language: 'Langue',
         },
@@ -396,6 +406,14 @@ export const translations = {
             error: 'Erreur',
             loading: 'Chargement...',
             noPlugin: 'Aucun plugin spécifié. Veuillez fournir un paramètre "src".',
+        },
+        
+        // Tools Page
+        tools: {
+            title: 'Outils',
+            subtitle: 'Outils utiles pour StewBeet et le développement de datapacks Minecraft',
+            markdownToBBCode: 'Convertisseur Markdown vers BBCode',
+            markdownToBBCodeDesc: 'Convertissez du texte Markdown en format BBCode pour publier sur PlanetMinecraft. Supporte les badges, listes, tableaux, blocs de code, spoilers et plus.',
         },
         
         // Footer

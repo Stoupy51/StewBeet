@@ -141,9 +141,9 @@ def parse_execution_context_from_line(line: str) -> str | None:
     parts: list[str] = line.split()
     context_parts: list[str] = []
 
-    i = 1  # Skip "execute"
-    while i < len(parts):
-        part = parts[i]
+    index: int = 1  # Skip "execute"
+    while index < len(parts):
+        part = parts[index]
 
         if part == "run":
             # We've reached the end of the execute subcommands
@@ -153,61 +153,61 @@ def parse_execution_context_from_line(line: str) -> str | None:
 
             if part == "facing":
                 # Special handling for facing command
-                if i + 1 < len(parts) and parts[i + 1] == "entity":
-                    if i + 3 < len(parts):
-                        context_parts.append(f"facing entity {parts[i + 2]} {parts[i + 3]}")
-                        i += 4
+                if index + 1 < len(parts) and parts[index + 1] == "entity":
+                    if index + 3 < len(parts):
+                        context_parts.append(f"facing entity {parts[index + 2]} {parts[index + 3]}")
+                        index += 4
                     else:
-                        i += 1
+                        index += 1
                 else:
                     # facing coordinates
-                    if i + 3 < len(parts):
-                        context_parts.append(f"facing {parts[i + 1]} {parts[i + 2]} {parts[i + 3]}")
-                        i += 4
+                    if index + 3 < len(parts):
+                        context_parts.append(f"facing {parts[index + 1]} {parts[index + 2]} {parts[index + 3]}")
+                        index += 4
                     else:
-                        i += 1
+                        index += 1
             elif part == "positioned":
                 # Special handling for positioned (can have 1 or 3 args)
-                if i + 3 < len(parts):
-                    context_parts.append(f"positioned {parts[i + 1]} {parts[i + 2]} {parts[i + 3]}")
-                    i += 4
-                elif i + 1 < len(parts):
+                if index + 3 < len(parts):
+                    context_parts.append(f"positioned {parts[index + 1]} {parts[index + 2]} {parts[index + 3]}")
+                    index += 4
+                elif index + 1 < len(parts):
                     # Handle "positioned ~" or selector cases
-                    context_parts.append(f"positioned {parts[i + 1]}")
-                    i += 2
+                    context_parts.append(f"positioned {parts[index + 1]}")
+                    index += 2
                 else:
-                    i += 1
+                    index += 1
             elif part == "at":
                 # Special handling for "at @s" - it resets position/rotation context
-                if i + 1 < len(parts):
+                if index + 1 < len(parts):
                     selector: str
                     next_i: int
-                    selector, next_i = parse_selector_or_argument(parts, i + 1)
+                    selector, next_i = parse_selector_or_argument(parts, index + 1)
                     # Remove any previous position/rotation modifiers when "at" is used
                     context_parts = [cp for cp in context_parts if not any(keyword in cp for keyword in ["positioned", "align", "rotated", "anchored", "in"])]
                     context_parts.append(f"{part} {selector}")
-                    i = next_i
+                    index = next_i
                 else:
-                    i += 1
+                    index += 1
             elif part == "as":
                 # Special handling for selectors that might contain square brackets
-                if i + 1 < len(parts):
-                    selector, next_i = parse_selector_or_argument(parts, i + 1)
+                if index + 1 < len(parts):
+                    selector, next_i = parse_selector_or_argument(parts, index + 1)
                     context_parts.append(f"{part} {selector}")
-                    i = next_i
+                    index = next_i
                 else:
-                    i += 1
+                    index += 1
             else:
                 # Standard handling for keywords with fixed argument count
-                if i + arg_count < len(parts):
-                    args: str = " ".join(parts[i + 1:i + 1 + arg_count])
+                if arg_count is not None and index + arg_count < len(parts):
+                    args: str = " ".join(parts[index + 1:index + 1 + arg_count])
                     context_parts.append(f"{part} {args}")
-                    i += 1 + arg_count
+                    index += 1 + arg_count
                 else:
-                    i += 1
+                    index += 1
         else:
             # Unknown keyword, skip it
-            i += 1
+            index += 1
 
     if context_parts:
         return " & ".join(context_parts)
