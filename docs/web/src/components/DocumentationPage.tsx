@@ -120,77 +120,14 @@ export const DocumentationPage: React.FC = () => {
                             </Link>
                         </motion.div>
 
-                        {/* Definitions Setup and Writing to Files - Side by Side */}
+                        {/* Remaining docs - 2-column grid */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {docs.slice(1, 3).map((doc, index) => (
+                            {docs.slice(1).map((doc, index) => (
                                 <motion.div
                                     key={language === 'fr' ? doc.pathFr : doc.pathEn}
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: 0.3 + index * 0.1 }}
-                                >
-                                    <Link
-                                        to={`/markdown?src=${encodeURIComponent(language === 'fr' ? doc.pathFr : doc.pathEn)}`}
-                                        className="block group h-full"
-                                    >
-                                        <div className="bg-slate-900/30 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-indigo-500/50 transition-all hover:bg-slate-900/50 hover:shadow-lg hover:shadow-indigo-500/10 h-full">
-                                            <div className="flex items-start justify-between gap-4 h-full">
-                                                <div className="flex-1">
-                                                    <div className="flex items-center gap-3 mb-2">
-                                                        <HiDocumentText className="text-2xl text-indigo-400" />
-                                                        <h2 className="text-2xl font-bold text-slate-100 group-hover:text-indigo-300 transition-colors">
-                                                            {doc.title}
-                                                        </h2>
-                                                    </div>
-                                                    <p className="text-slate-400 leading-relaxed">
-                                                        {doc.description}
-                                                    </p>
-                                                </div>
-                                                <HiArrowRight className="text-2xl text-slate-500 group-hover:text-indigo-400 group-hover:translate-x-1 transition-all flex-shrink-0 mt-1" />
-                                            </div>
-                                        </div>
-                                    </Link>
-                                </motion.div>
-                            ))}
-                        </div>
-
-                        {/* Beet Configuration - Full Width */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.5 }}
-                        >
-                            <Link
-                                to={`/markdown?src=${encodeURIComponent(language === 'fr' ? docs[3].pathFr : docs[3].pathEn)}`}
-                                className="block group"
-                            >
-                                <div className="bg-slate-900/30 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-indigo-500/50 transition-all hover:bg-slate-900/50 hover:shadow-lg hover:shadow-indigo-500/10">
-                                    <div className="flex items-start justify-between gap-4">
-                                        <div className="flex-1">
-                                            <div className="flex items-center gap-3 mb-2">
-                                                <HiDocumentText className="text-2xl text-indigo-400" />
-                                                <h2 className="text-2xl font-bold text-slate-100 group-hover:text-indigo-300 transition-colors">
-                                                    {docs[3].title}
-                                                </h2>
-                                            </div>
-                                            <p className="text-slate-400 leading-relaxed">
-                                                {docs[3].description}
-                                            </p>
-                                        </div>
-                                        <HiArrowRight className="text-2xl text-slate-500 group-hover:text-indigo-400 group-hover:translate-x-1 transition-all flex-shrink-0 mt-1" />
-                                    </div>
-                                </div>
-                            </Link>
-                        </motion.div>
-
-                        {/* Equations and Dependencies - Side by Side */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {docs.slice(4, 6).map((doc, index) => (
-                                <motion.div
-                                    key={language === 'fr' ? doc.pathFr : doc.pathEn}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 0.6 + index * 0.1 }}
                                 >
                                     <Link
                                         to={`/markdown?src=${encodeURIComponent(language === 'fr' ? doc.pathFr : doc.pathEn)}`}
