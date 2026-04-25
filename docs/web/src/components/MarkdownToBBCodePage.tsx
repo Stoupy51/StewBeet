@@ -32,13 +32,13 @@ function computeDiff(oldText: string, newText: string): DiffLine[] {
   return result;
 }
 
-function DiffView({ diff }: { diff: DiffLine[] }) {
+function DiffView({ diff, wrapClass }: { diff: DiffLine[]; wrapClass: string }) {
   return (
-    <pre className="w-full h-96 p-4 bg-slate-950 border border-white/10 rounded-lg font-mono text-sm overflow-auto">
+    <pre className={`w-full h-96 p-4 bg-slate-950 border border-white/10 rounded-lg font-mono text-sm overflow-auto ${wrapClass}`}>
       {diff.map((line, idx) => (
         <div
           key={idx}
-          className={`px-1 whitespace-pre ${
+          className={`px-1 ${
             line.type === 'added'
               ? 'bg-green-900/40 text-green-300'
               : line.type === 'removed'
@@ -61,6 +61,7 @@ export function MarkdownToBBCodePage() {
   const [bbcodeOutput, setBbcodeOutput] = useState('');
   const [autoUpdate, setAutoUpdate] = useState(true);
   const [showDiff, setShowDiff] = useState(false);
+  const [noWrap, setNoWrap] = useState(true);
   const { language } = useTranslation();
 
   useEffect(() => {
@@ -70,6 +71,7 @@ export function MarkdownToBBCodePage() {
   }, [markdownInput, autoUpdate]);
 
   const diff = useMemo(() => computeDiff(markdownInput, bbcodeOutput), [markdownInput, bbcodeOutput]);
+  const wrapClass = noWrap ? 'whitespace-pre overflow-x-auto' : 'whitespace-pre-wrap';
 
   const handleConvert = () => {
     const converted = convertMarkdownToBBCode(markdownInput);
@@ -139,7 +141,7 @@ export function MarkdownToBBCodePage() {
                 value={markdownInput}
                 onChange={(e) => setMarkdownInput(e.target.value)}
                 placeholder={language === 'fr' ? 'Collez votre texte Markdown ici...' : 'Paste your Markdown text here...'}
-                className="w-full h-96 p-4 bg-slate-950 border border-white/10 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent font-mono text-sm text-slate-200 placeholder-slate-600 resize-none"
+                className={`w-full h-96 p-4 bg-slate-950 border border-white/10 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent font-mono text-sm text-slate-200 placeholder-slate-600 resize-none ${wrapClass}`}
               />
             </div>
 
@@ -151,17 +153,6 @@ export function MarkdownToBBCodePage() {
                 </h2>
                 <div className="flex items-center gap-2">
                   <button
-                    onClick={() => setShowDiff(v => !v)}
-                    className={`px-3 py-1.5 text-sm rounded-lg transition-colors border flex items-center gap-1.5 ${
-                      showDiff
-                        ? 'bg-violet-600/20 border-violet-500/50 text-violet-300 hover:bg-violet-600/30'
-                        : 'bg-slate-800 border-white/10 text-slate-400 hover:bg-slate-700'
-                    }`}
-                  >
-                    <span className={`w-1.5 h-1.5 rounded-full ${showDiff ? 'bg-violet-400' : 'bg-slate-500'}`} />
-                    {language === 'fr' ? 'Diff' : 'Diff'}
-                  </button>
-                  <button
                     onClick={handleCopyOutput}
                     disabled={!bbcodeOutput}
                     className="px-3 py-1.5 text-sm bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors disabled:bg-slate-800 disabled:text-slate-600 disabled:cursor-not-allowed flex items-center gap-2"
@@ -172,13 +163,13 @@ export function MarkdownToBBCodePage() {
                 </div>
               </div>
               {showDiff
-                ? <DiffView diff={diff} />
+                ? <DiffView diff={diff} wrapClass={wrapClass} />
                 : (
                   <textarea
                     value={bbcodeOutput}
                     readOnly
                     placeholder={language === 'fr' ? 'Le BBCode apparaîtra ici...' : 'BBCode will appear here...'}
-                    className="w-full h-96 p-4 bg-slate-950 border border-white/10 rounded-lg font-mono text-sm text-slate-200 placeholder-slate-600 resize-none"
+                    className={`w-full h-96 p-4 bg-slate-950 border border-white/10 rounded-lg font-mono text-sm text-slate-200 placeholder-slate-600 resize-none ${wrapClass}`}
                   />
                 )}
             </div>
@@ -200,6 +191,32 @@ export function MarkdownToBBCodePage() {
                 {language === 'fr' ? 'Convertir' : 'Convert'} →
               </button>
             )}
+            <button
+              onClick={() => setNoWrap(v => !v)}
+              className={`px-6 py-3 font-semibold rounded-lg border transition-colors flex items-center gap-2 ${
+                noWrap
+                  ? 'bg-amber-600/20 border-amber-500/50 text-amber-300 hover:bg-amber-600/30'
+                  : 'bg-slate-800 border-white/10 text-slate-400 hover:bg-slate-700'
+              }`}
+            >
+              <span className={`w-2 h-2 rounded-full ${noWrap ? 'bg-amber-400' : 'bg-slate-500'}`} />
+              {noWrap
+                ? (language === 'fr' ? 'Retour ligne : OFF' : 'Wrap: OFF')
+                : (language === 'fr' ? 'Retour ligne : ON' : 'Wrap: ON')}
+            </button>
+            <button
+              onClick={() => setShowDiff(v => !v)}
+              className={`px-6 py-3 font-semibold rounded-lg border transition-colors flex items-center gap-2 ${
+                showDiff
+                  ? 'bg-violet-600/20 border-violet-500/50 text-violet-300 hover:bg-violet-600/30'
+                  : 'bg-slate-800 border-white/10 text-slate-400 hover:bg-slate-700'
+              }`}
+            >
+              <span className={`w-2 h-2 rounded-full ${showDiff ? 'bg-violet-400' : 'bg-slate-500'}`} />
+              {showDiff
+                ? (language === 'fr' ? 'Diff : ON' : 'Diff: ON')
+                : (language === 'fr' ? 'Diff : OFF' : 'Diff: OFF')}
+            </button>
             <button
               onClick={() => setAutoUpdate(v => !v)}
               className={`px-6 py-3 font-semibold rounded-lg border transition-colors flex items-center gap-2 ${
