@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { HiClipboardCopy, HiRefresh } from 'react-icons/hi';
 import { convertMarkdownToBBCode } from '../utils/markdownToBBCode';
@@ -6,10 +6,61 @@ import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 import { useTranslation } from '../i18n/useTranslation';
 
+type DiffLine = { type: 'unchanged' | 'removed' | 'added'; text: string };
+
+function computeDiff(oldText: string, newText: string): DiffLine[] {
+  const a = oldText.split('\n');
+  const b = newText.split('\n');
+  const m = a.length, n = b.length;
+  // LCS table
+  const dp: number[][] = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+  for (let i = m - 1; i >= 0; i--)
+    for (let j = n - 1; j >= 0; j--)
+      dp[i][j] = a[i] === b[j] ? dp[i + 1][j + 1] + 1 : Math.max(dp[i + 1][j], dp[i][j + 1]);
+  const result: DiffLine[] = [];
+  let i = 0, j = 0;
+  while (i < m || j < n) {
+    if (i < m && j < n && a[i] === b[j]) {
+      result.push({ type: 'unchanged', text: a[i++] });
+      j++;
+    } else if (j < n && (i >= m || dp[i + 1][j] <= dp[i][j + 1])) {
+      result.push({ type: 'added', text: b[j++] });
+    } else {
+      result.push({ type: 'removed', text: a[i++] });
+    }
+  }
+  return result;
+}
+
+function DiffView({ diff }: { diff: DiffLine[] }) {
+  return (
+    <pre className="w-full h-96 p-4 bg-slate-950 border border-white/10 rounded-lg font-mono text-sm overflow-auto">
+      {diff.map((line, idx) => (
+        <div
+          key={idx}
+          className={`px-1 whitespace-pre ${
+            line.type === 'added'
+              ? 'bg-green-900/40 text-green-300'
+              : line.type === 'removed'
+              ? 'bg-red-900/40 text-red-300 line-through'
+              : 'text-slate-300'
+          }`}
+        >
+          <span className="select-none mr-2 opacity-50">
+            {line.type === 'added' ? '+' : line.type === 'removed' ? '-' : ' '}
+          </span>
+          {line.text || '\u200b'}
+        </div>
+      ))}
+    </pre>
+  );
+}
+
 export function MarkdownToBBCodePage() {
   const [markdownInput, setMarkdownInput] = useState('');
   const [bbcodeOutput, setBbcodeOutput] = useState('');
   const [autoUpdate, setAutoUpdate] = useState(true);
+  const [showDiff, setShowDiff] = useState(false);
   const { language } = useTranslation();
 
   useEffect(() => {
@@ -17,6 +68,8 @@ export function MarkdownToBBCodePage() {
       setBbcodeOutput(convertMarkdownToBBCode(markdownInput));
     }
   }, [markdownInput, autoUpdate]);
+
+  const diff = useMemo(() => computeDiff(markdownInput, bbcodeOutput), [markdownInput, bbcodeOutput]);
 
   const handleConvert = () => {
     const converted = convertMarkdownToBBCode(markdownInput);
@@ -96,21 +149,38 @@ export function MarkdownToBBCodePage() {
                 <h2 className="text-xl font-semibold text-slate-200">
                   {language === 'fr' ? 'BBCode (Sortie)' : 'BBCode (Output)'}
                 </h2>
-                <button
-                  onClick={handleCopyOutput}
-                  disabled={!bbcodeOutput}
-                  className="px-3 py-1.5 text-sm bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors disabled:bg-slate-800 disabled:text-slate-600 disabled:cursor-not-allowed flex items-center gap-2"
-                >
-                  <HiClipboardCopy className="w-4 h-4" />
-                  {language === 'fr' ? 'Copier' : 'Copy'}
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setShowDiff(v => !v)}
+                    className={`px-3 py-1.5 text-sm rounded-lg transition-colors border flex items-center gap-1.5 ${
+                      showDiff
+                        ? 'bg-violet-600/20 border-violet-500/50 text-violet-300 hover:bg-violet-600/30'
+                        : 'bg-slate-800 border-white/10 text-slate-400 hover:bg-slate-700'
+                    }`}
+                  >
+                    <span className={`w-1.5 h-1.5 rounded-full ${showDiff ? 'bg-violet-400' : 'bg-slate-500'}`} />
+                    {language === 'fr' ? 'Diff' : 'Diff'}
+                  </button>
+                  <button
+                    onClick={handleCopyOutput}
+                    disabled={!bbcodeOutput}
+                    className="px-3 py-1.5 text-sm bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors disabled:bg-slate-800 disabled:text-slate-600 disabled:cursor-not-allowed flex items-center gap-2"
+                  >
+                    <HiClipboardCopy className="w-4 h-4" />
+                    {language === 'fr' ? 'Copier' : 'Copy'}
+                  </button>
+                </div>
               </div>
-              <textarea
-                value={bbcodeOutput}
-                readOnly
-                placeholder={language === 'fr' ? 'Le BBCode apparaîtra ici...' : 'BBCode will appear here...'}
-                className="w-full h-96 p-4 bg-slate-950 border border-white/10 rounded-lg font-mono text-sm text-slate-200 placeholder-slate-600 resize-none"
-              />
+              {showDiff
+                ? <DiffView diff={diff} />
+                : (
+                  <textarea
+                    value={bbcodeOutput}
+                    readOnly
+                    placeholder={language === 'fr' ? 'Le BBCode apparaîtra ici...' : 'BBCode will appear here...'}
+                    className="w-full h-96 p-4 bg-slate-950 border border-white/10 rounded-lg font-mono text-sm text-slate-200 placeholder-slate-600 resize-none"
+                  />
+                )}
             </div>
           </motion.div>
 
