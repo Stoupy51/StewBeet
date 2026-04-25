@@ -204,10 +204,10 @@ export function convertMarkdownToBBCode(markdown: string): string {
   // Step 9: Remove blank lines between sections to create compact format
   bbcode = bbcode.replace(/\n{3,}/g, '\n\n'); // Collapse 3+ newlines to 2 (i.e. one blank line max)
   bbcode = bbcode.replace(/\[\/h2\]\n+\[h4\]/g, '[/h2][h4]');
-  bbcode = bbcode.replace(/\[\/h4\]\n+\[list\]/g, '[/h4][list]');
-  bbcode = bbcode.replace(/\[\/list\]\n+\[h4\]/g, '[/list][h4]');
-  bbcode = bbcode.replace(/\[\/list\]\n+\[b\]/g, '[/list]\n[b]');
-  bbcode = bbcode.replace(/:\n\n\[list\]/g, ':\n[list]'); // Remove blank line between colon and list
+  bbcode = bbcode.replace(/(\[\/h4\])\n+(\[list(?:=[^\]]+)?\])/g, '$1$2');
+  bbcode = bbcode.replace(/(\[\/list\])\n+(\[h4\])/g, '$1$2');
+  bbcode = bbcode.replace(/(\[\/list\])\n+(\[b\])/g, '$1\n$2');
+  bbcode = bbcode.replace(/:\n\n(\[list(?:=[^\]]+)?\])/g, ':\n$1'); // Remove blank line between colon and list
 
   return bbcode;
 }

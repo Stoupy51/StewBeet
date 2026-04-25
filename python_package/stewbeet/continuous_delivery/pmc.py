@@ -328,10 +328,10 @@ def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
 	# Step 9: Remove blank lines between sections to create compact format
 	bbcode = re.sub(r"\n{3,}", "\n\n", bbcode)  # Collapse 3+ newlines to 2 (i.e. one blank line max)
 	bbcode = re.sub(r"\[/h2]\n+\[h4]", r"[/h2][h4]", bbcode)
-	bbcode = re.sub(r"\[/h4]\n+\[list]", r"[/h4][list]", bbcode)
-	bbcode = re.sub(r"\[/list]\n+\[h4]", r"[/list][h4]", bbcode)
-	bbcode = re.sub(r"\[/list]\n+\[b]", r"[/list]\n[b]", bbcode)
-	bbcode = re.sub(r":\n\n\[list]", r":\n[list]", bbcode)  # Remove blank line between colon and list
+	bbcode = re.sub(r"(\[/h4])\n+(\[list(?:=[^\]]+)?])", r"\1\2", bbcode)
+	bbcode = re.sub(r"(\[/list])\n+(\[h4])", r"\1\2", bbcode)
+	bbcode = re.sub(r"(\[/list])\n+(\[b])", r"\1\n\2", bbcode)
+	bbcode = re.sub(r":\n\n(\[list(?:=[^\]]+)?])", r":\n\1", bbcode)  # Remove blank line between colon and list
 
 	# Print the conversion comparison if verbose is True
 	if verbose:
