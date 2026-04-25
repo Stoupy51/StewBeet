@@ -1,25 +1,63 @@
+function isUnordered(line: string): boolean {
+  const s = line.trimStart();
+  return s.startsWith('- ') || s.startsWith('* ');
+}
+
+function orderedType(line: string): string | null {
+  const s = line.trimStart();
+  if (/^\d+\.\s/.test(s)) return '1';
+  if (/^[a-z]\.\s/.test(s)) return 'a';
+  return null;
+}
+
+function isOrdered(line: string): boolean {
+  return orderedType(line) !== null;
+}
+
+function collectBlock(textLines: string[], start: number, predicate: (ln: string) => boolean): [string[], number] {
+  const block: string[] = [];
+  let j = start;
+  while (j < textLines.length) {
+    if (predicate(textLines[j])) {
+      block.push(textLines[j]);
+      j++;
+    } else if (textLines[j].trim() === '') {
+      let k = j + 1;
+      while (k < textLines.length && textLines[k].trim() === '') k++;
+      if (k < textLines.length && predicate(textLines[k])) {
+        j = k;
+      } else {
+        break;
+      }
+    } else {
+      break;
+    }
+  }
+  return [block, j];
+}
+
 /**
  * Convert a block of markdown list lines (with possible nesting) to BBCode
  */
-function convertListBlock(blockLines: string[]): string {
+function convertListBlock(blockLines: string[], listType: string = ''): string {
+  const openTag = listType ? `[list=${listType}]` : '[list]';
   const result: string[] = [];
   const levelStack: number[] = [];
 
   for (const line of blockLines) {
     const stripped = line.replace(/^[ \t]+/, '');
     const indent = line.length - stripped.length;
-    const itemText = stripped.substring(2).trim(); // Remove "- "
+    const itemText = stripped.replace(/^(?:[a-zA-Z0-9]+\.|-|\*)\s+/, '').trim();
 
     if (levelStack.length === 0) {
       levelStack.push(indent);
-      result.push('[list]');
+      result.push(openTag);
     } else if (indent > levelStack[levelStack.length - 1]) {
       levelStack.push(indent);
-      // Append [list] to the last item instead of a separate line
       if (result.length > 0 && result[result.length - 1].endsWith('[/*]')) {
-        result[result.length - 1] = result[result.length - 1].slice(0, -4) + '[list]';
+        result[result.length - 1] = result[result.length - 1].slice(0, -4) + openTag;
       } else {
-        result.push('[list]');
+        result.push(openTag);
       }
     } else if (indent < levelStack[levelStack.length - 1]) {
       while (levelStack.length > 1 && levelStack[levelStack.length - 1] > indent) {
@@ -80,29 +118,15 @@ export function convertMarkdownToBBCode(markdown: string): string {
   let i = 0;
   while (i < textLines.length) {
     const line = textLines[i];
-    if (line.trimStart().startsWith('- ')) {
-      // Collect all lines of this list block (empty lines between items are skipped)
-      const blockLines: string[] = [];
-      let j = i;
-      outer: while (j < textLines.length) {
-        if (textLines[j].trimStart().startsWith('- ')) {
-          blockLines.push(textLines[j]);
-          j++;
-        } else if (textLines[j].trim() === '') {
-          // Look ahead for another list item (skip empty lines within a block)
-          let k = j + 1;
-          while (k < textLines.length && textLines[k].trim() === '') k++;
-          if (k < textLines.length && textLines[k].trimStart().startsWith('- ')) {
-            j = k;
-          } else {
-            break outer;
-          }
-        } else {
-          break outer;
-        }
-      }
+    if (isUnordered(line)) {
+      const [blockLines, next] = collectBlock(textLines, i, isUnordered);
       resultLines.push(convertListBlock(blockLines));
-      i = j;
+      i = next;
+    } else if (isOrdered(line)) {
+      const oType = orderedType(line)!;
+      const [blockLines, next] = collectBlock(textLines, i, isOrdered);
+      resultLines.push(convertListBlock(blockLines, oType));
+      i = next;
     } else {
       resultLines.push(line);
       i++;

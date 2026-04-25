@@ -4,7 +4,7 @@ import re
 
 import pyperclip
 import stouputils as stp
-from stouputils.typing import JsonDict
+from stouputils.typing import CallableAny, JsonDict
 
 
 # Configuration
@@ -50,33 +50,69 @@ def table_to_bbcode(match: re.Match[str]) -> str:
 	result += "[/tbody][/table]"
 	return result
 
-def convert_list_block(block_lines: list[str]) -> str:
+def _is_unordered(line: str) -> bool:
+	s = line.lstrip()
+	return s.startswith("- ") or s.startswith("* ")
+
+def _ordered_type(line: str) -> str | None:
+	s = line.lstrip()
+	if re.match(r'^\d+\.\s', s):
+		return "1"
+	if re.match(r'^[a-z]\.\s', s):
+		return "a"
+	return None
+
+def _is_ordered(line: str) -> bool:
+	return _ordered_type(line) is not None
+
+def _collect_block(text_lines: list[str], start: int, predicate: CallableAny) -> tuple[list[str], int]:
+	""" Collect consecutive matching lines from text_lines, skipping blank lines within a block"""
+	block: list[str] = []
+	j: int = start
+	while j < len(text_lines):
+		if predicate(text_lines[j]):
+			block.append(text_lines[j])
+			j += 1
+		elif text_lines[j].strip() == "":
+			k: int = j + 1
+			while k < len(text_lines) and text_lines[k].strip() == "":
+				k += 1
+			if k < len(text_lines) and predicate(text_lines[k]):
+				j = k
+			else:
+				break
+		else:
+			break
+	return block, j
+
+def convert_list_block(block_lines: list[str], list_type: str = "") -> str:
 	""" Convert a block of markdown list lines (with possible nesting) to BBCode
 
 	Args:
-		block_lines (list[str]): Lines of the list block (each starting with optional indent + '- ')
+		block_lines (list[str]): Lines of the list block
+		list_type   (str):       BBCode list type: '' for unordered, '1' for numbered, 'a' for alphabetical
 
 	Returns:
 		str: BBCode list string
 	"""
+	open_tag: str = f"[list={list_type}]" if list_type else "[list]"
 	result: list[str] = []
 	level_stack: list[int] = []
 
 	for line in block_lines:
 		stripped = line.lstrip()
 		indent = len(line) - len(stripped)
-		item_text = stripped[2:].strip()  # Remove "- "
+		item_text = re.sub(r'^(?:[a-zA-Z0-9]+\.|-|\*)\s+', '', stripped).strip()
 
 		if not level_stack:
 			level_stack.append(indent)
-			result.append("[list]")
+			result.append(open_tag)
 		elif indent > level_stack[-1]:
 			level_stack.append(indent)
-			# Append [list] to the last item instead of a separate line
 			if result and result[-1].endswith("[/*]"):
-				result[-1] = result[-1][:-4] + "[list]"
+				result[-1] = result[-1][:-4] + open_tag
 			else:
-				result.append("[list]")
+				result.append(open_tag)
 		elif indent < level_stack[-1]:
 			while len(level_stack) > 1 and level_stack[-1] > indent:
 				level_stack.pop()
@@ -173,6 +209,21 @@ def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
 		[/list]
 		>>> print(convert_markdown_to_bbcode('---', verbose=False))
 		[hr]
+		>>> print(convert_markdown_to_bbcode('* item 1\\n* item 2', verbose=False))
+		[list]
+		[*]item 1[/*]
+		[*]item 2[/*]
+		[/list]
+		>>> print(convert_markdown_to_bbcode('1. item 1\\n2. item 2', verbose=False))
+		[list=1]
+		[*]item 1[/*]
+		[*]item 2[/*]
+		[/list]
+		>>> print(convert_markdown_to_bbcode('a. item 1\\nb. item 2', verbose=False))
+		[list=a]
+		[*]item 1[/*]
+		[*]item 2[/*]
+		[/list]
 	"""
 	# Make a copy of the original markdown text
 	bbcode: str = markdown
@@ -196,27 +247,12 @@ def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
 	i: int = 0
 	while i < len(text_lines):
 		line = text_lines[i]
-		if line.lstrip().startswith("- "):
-			# Collect all lines of this list block (empty lines between items are skipped)
-			block_lines: list[str] = []
-			j: int = i
-			while j < len(text_lines):
-				if text_lines[j].lstrip().startswith("- "):
-					block_lines.append(text_lines[j])
-					j += 1
-				elif text_lines[j].strip() == "":
-					# Look ahead for another list item (skip empty lines within a block)
-					k: int = j + 1
-					while k < len(text_lines) and text_lines[k].strip() == "":
-						k += 1
-					if k < len(text_lines) and text_lines[k].lstrip().startswith("- "):
-						j = k  # Skip to next list item, discarding empty lines
-					else:
-						break  # End of list block
-				else:
-					break  # Non-empty, non-list line: end of block
+		if _is_unordered(line):
+			block_lines, i = _collect_block(text_lines, i, _is_unordered)
 			result_lines.append(convert_list_block(block_lines))
-			i = j
+		elif (otype := _ordered_type(line)) is not None:
+			block_lines, i = _collect_block(text_lines, i, _is_ordered)
+			result_lines.append(convert_list_block(block_lines, otype))
 		else:
 			result_lines.append(line)
 			i += 1
