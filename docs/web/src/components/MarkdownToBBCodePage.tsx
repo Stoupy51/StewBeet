@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { HiClipboardCopy, HiRefresh } from 'react-icons/hi';
 import { convertMarkdownToBBCode } from '../utils/markdownToBBCode';
@@ -9,7 +9,14 @@ import { useTranslation } from '../i18n/useTranslation';
 export function MarkdownToBBCodePage() {
   const [markdownInput, setMarkdownInput] = useState('');
   const [bbcodeOutput, setBbcodeOutput] = useState('');
+  const [autoUpdate, setAutoUpdate] = useState(true);
   const { language } = useTranslation();
+
+  useEffect(() => {
+    if (autoUpdate) {
+      setBbcodeOutput(convertMarkdownToBBCode(markdownInput));
+    }
+  }, [markdownInput, autoUpdate]);
 
   const handleConvert = () => {
     const converted = convertMarkdownToBBCode(markdownInput);
@@ -114,12 +121,27 @@ export function MarkdownToBBCodePage() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="flex justify-center gap-4 mb-12"
           >
+            {!autoUpdate && (
+              <button
+                onClick={handleConvert}
+                disabled={!markdownInput}
+                className="px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold rounded-lg shadow-lg shadow-indigo-500/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none flex items-center gap-2"
+              >
+                {language === 'fr' ? 'Convertir' : 'Convert'} →
+              </button>
+            )}
             <button
-              onClick={handleConvert}
-              disabled={!markdownInput}
-              className="px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold rounded-lg shadow-lg shadow-indigo-500/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none flex items-center gap-2"
+              onClick={() => setAutoUpdate(v => !v)}
+              className={`px-6 py-3 font-semibold rounded-lg border transition-colors flex items-center gap-2 ${
+                autoUpdate
+                  ? 'bg-indigo-600/20 border-indigo-500/50 text-indigo-300 hover:bg-indigo-600/30'
+                  : 'bg-slate-800 border-white/10 text-slate-400 hover:bg-slate-700'
+              }`}
             >
-              {language === 'fr' ? 'Convertir' : 'Convert'} →
+              <span className={`w-2 h-2 rounded-full ${autoUpdate ? 'bg-indigo-400' : 'bg-slate-500'}`} />
+              {autoUpdate
+                ? (language === 'fr' ? 'Mise à jour auto : ON' : 'Auto-update: ON')
+                : (language === 'fr' ? 'Mise à jour auto : OFF' : 'Auto-update: OFF')}
             </button>
             <button
               onClick={handleClearAll}
