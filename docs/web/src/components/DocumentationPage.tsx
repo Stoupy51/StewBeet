@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { HiDocumentText, HiArrowRight } from 'react-icons/hi';
+import { HiArrowRight } from 'react-icons/hi';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 import { PluginsTable } from './PluginsTable';
@@ -12,6 +12,7 @@ interface DocItem {
     pathEn: string;
     pathFr: string;
     icon?: string;
+    iconImg?: string;
 }
 
 export const DocumentationPage: React.FC = () => {
@@ -37,8 +38,9 @@ export const DocumentationPage: React.FC = () => {
             pathFr: '2_writing_to_files/fr.md',
         },
         {
-            title: `⚙️ ${t('documentation.beetConfig')}`,
+            title: t('documentation.beetConfig'),
             description: t('documentation.beetConfigDesc'),
+            iconImg: 'https://raw.githubusercontent.com/mcbeet/beet/refs/heads/main/logo.png',
             pathEn: '3_beet_config/en.md',
             pathFr: '3_beet_config/fr.md',
         },
@@ -111,7 +113,6 @@ export const DocumentationPage: React.FC = () => {
                                     <div className="flex items-start justify-between gap-4">
                                         <div className="flex-1">
                                             <div className="flex items-center gap-3 mb-2">
-                                                <HiDocumentText className="text-2xl text-indigo-400" />
                                                 <h2 className="text-2xl font-bold text-slate-100 group-hover:text-indigo-300 transition-colors">
                                                     {docs[0].title}
                                                 </h2>
@@ -143,7 +144,9 @@ export const DocumentationPage: React.FC = () => {
                                             <div className="flex items-start justify-between gap-4 h-full">
                                                 <div className="flex-1">
                                                     <div className="flex items-center gap-3 mb-2">
-                                                        <HiDocumentText className="text-2xl text-indigo-400" />
+                                                        {doc.iconImg
+                                                            ? <img src={doc.iconImg} alt="" className="w-7 h-7 object-contain flex-shrink-0" />
+                                                            : ""}
                                                         <h2 className="text-2xl font-bold text-slate-100 group-hover:text-indigo-300 transition-colors">
                                                             {doc.title}
                                                         </h2>
