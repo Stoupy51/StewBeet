@@ -208,9 +208,9 @@ export const Features: React.FC = () => {
     const [activeFeature, setActiveFeature] = useState<Feature>(features[0]);
 
     return (
-        <section id="features" className="py-24 px-4 bg-[#0a0a0a] relative overflow-hidden">
+        <section id="features" className="py-12 px-4 bg-[#0a0a0a] relative overflow-hidden">
             <div className="max-w-7xl mx-auto relative z-10">
-                <div className="text-center mb-16">
+                <div className="text-center mb-12">
                     <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
                         {t('features.title')} <span className={TEXT_ACCENT}>{t('features.titleHighlight')}</span>
                     </h2>
@@ -254,7 +254,7 @@ export const Features: React.FC = () => {
 
                     {/* Preview Window */}
                     <div className="lg:col-span-7 sticky top-24">
-                        <div className="bg-[#1e1e1e] rounded-xl border border-white/10 shadow-2xl overflow-hidden min-h-[500px] flex flex-col">
+                        <div className="bg-[#1e1e1e] rounded-xl border border-white/10 shadow-2xl overflow-hidden min-h-[350px] flex flex-col">
                             {/* Window Header */}
                             <div className="bg-[#2d2d2d] px-4 py-3 flex items-center justify-between border-b border-white/5">
                                 <div className="flex items-center gap-2">
@@ -284,7 +284,7 @@ export const Features: React.FC = () => {
                                             aria-hidden={!isActive}
                                         >
                                             {feature.previewType === 'code' ? (
-                                                <div className="h-full overflow-auto custom-scrollbar">
+                                                <div className="overflow-auto custom-scrollbar" style={{ maxHeight: '500px' }}>
                                                     <CodeBlock
                                                         code={feature.previewContent}
                                                         lang={feature.previewLang}
@@ -295,7 +295,8 @@ export const Features: React.FC = () => {
                                                     <img
                                                         src={feature.previewContent}
                                                         alt={feature.title}
-                                                        className="max-w-full max-h-full object-contain"
+                                                        className="max-w-full object-contain"
+                                                        style={{ maxHeight: '500px' }}
                                                     />
                                                 </div>
                                             )}
@@ -316,7 +317,8 @@ export const Features: React.FC = () => {
                                     { name: 'Smart Ore Generation', url: 'https://github.com/Stoupy51/SmartOreGeneration' },
                                     { name: 'Bookshelf', url: 'https://github.com/mcbookshelf/bookshelf' },
                                     { name: 'ItemIO', url: 'https://github.com/edayot/ItemIO' },
-                                    { name: 'Common Signals', url: 'https://github.com/Stoupy51/CommonSignals' }
+                                    { name: 'Common Signals', url: 'https://github.com/Stoupy51/CommonSignals' },
+                                    { name: '...', url: '' }
                                 ].map((lib, idx) => (
                                     <a
                                         key={idx}

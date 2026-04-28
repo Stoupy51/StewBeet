@@ -51,7 +51,7 @@ export const Templates: React.FC = () => {
     ];
 
     return (
-        <section id="templates" className="py-24 px-4 bg-slate-950/50 relative overflow-hidden">
+        <section id="templates" className="py-12 px-4 bg-slate-950/50 relative overflow-hidden">
             {/* Background decoration */}
             <div className="absolute inset-0 overflow-hidden">
                 <div className={`absolute -top-40 right-1/4 w-80 h-80 ${GLOW_SECONDARY} rounded-full blur-[100px]`} />
@@ -64,7 +64,7 @@ export const Templates: React.FC = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6 }}
-                    className="text-center mb-16"
+                    className="text-center mb-8"
                 >
                     <h2 className={`text-4xl md:text-5xl font-bold mb-4 ${GRADIENT_TEXT}`}>
                         {t('templates.title')}

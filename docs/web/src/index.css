@@ -25,10 +25,15 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    @apply bg-slate-950;
   }
 
   body {
-    @apply bg-slate-950 text-slate-100 antialiased;
+    @apply m-0 bg-slate-950 text-slate-100 antialiased;
+  }
+
+  #root {
+    @apply min-h-screen bg-slate-950;
   }
 
   /* Custom scrollbar */

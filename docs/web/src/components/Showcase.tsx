@@ -19,7 +19,7 @@ export const Showcase: React.FC = () => {
         <section
             id="plugins"
             ref={containerRef}
-            className="py-24 px-4 bg-gradient-to-b from-slate-950 to-slate-900 relative overflow-hidden"
+            className="py-12 px-4 bg-gradient-to-b from-slate-950 to-slate-900 relative overflow-hidden"
         >
             {/* Background decoration */}
             <div className="absolute inset-0 overflow-hidden">
