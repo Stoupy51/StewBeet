@@ -5,6 +5,7 @@ import { convertMarkdownToBBCode } from '../utils/markdownToBBCode';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 import { useTranslation } from '../i18n/useTranslation';
+import { BTN_SOLID, DOT_ACTIVE, GLOW_PRIMARY, GLOW_SECONDARY, GRADIENT_TEXT_BRIGHT, INPUT_FOCUS, TEXT_ACCENT, TEXT_ACCENT_SOFT, TOGGLE_ACTIVE } from '../theme';
 
 type DiffLine = { type: 'unchanged' | 'removed' | 'added'; text: string };
 
@@ -99,8 +100,8 @@ export function MarkdownToBBCodePage() {
 
       {/* Background decoration */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 right-0 w-96 h-96 bg-purple-500/10 rounded-full blur-[120px]" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-[120px]" />
+        <div className={`absolute top-20 right-0 w-96 h-96 ${GLOW_SECONDARY} rounded-full blur-[120px]`} />
+        <div className={`absolute bottom-0 left-0 w-96 h-96 ${GLOW_PRIMARY} rounded-full blur-[120px]`} />
       </div>
 
       <main className="relative pt-24 pb-16 px-4 sm:px-6 lg:px-8">
@@ -110,7 +111,7 @@ export function MarkdownToBBCodePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h1 className="text-4xl sm:text-5xl font-bold text-center mb-4 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+            <h1 className={`text-4xl sm:text-5xl font-bold text-center mb-4 ${GRADIENT_TEXT_BRIGHT}`}>
               {language === 'fr' ? 'Convertisseur Markdown vers BBCode' : 'Markdown to BBCode Converter'}
             </h1>
             <p className="text-center text-slate-400 mb-12">
@@ -141,7 +142,7 @@ export function MarkdownToBBCodePage() {
                 value={markdownInput}
                 onChange={(e) => setMarkdownInput(e.target.value)}
                 placeholder={language === 'fr' ? 'Collez votre texte Markdown ici...' : 'Paste your Markdown text here...'}
-                className={`w-full h-96 p-4 bg-slate-950 border border-white/10 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent font-mono text-sm text-slate-200 placeholder-slate-600 resize-none ${wrapClass}`}
+                className={`w-full h-96 p-4 bg-slate-950 border border-white/10 rounded-lg focus:ring-2 ${INPUT_FOCUS} font-mono text-sm text-slate-200 placeholder-slate-600 resize-none ${wrapClass}`}
               />
             </div>
 
@@ -155,7 +156,7 @@ export function MarkdownToBBCodePage() {
                   <button
                     onClick={handleCopyOutput}
                     disabled={!bbcodeOutput}
-                    className="px-3 py-1.5 text-sm bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors disabled:bg-slate-800 disabled:text-slate-600 disabled:cursor-not-allowed flex items-center gap-2"
+                    className={`px-3 py-1.5 text-sm ${BTN_SOLID} text-white rounded-lg transition-colors disabled:bg-slate-800 disabled:text-slate-600 disabled:cursor-not-allowed flex items-center gap-2`}
                   >
                     <HiClipboardCopy className="w-4 h-4" />
                     {language === 'fr' ? 'Copier' : 'Copy'}
@@ -186,7 +187,7 @@ export function MarkdownToBBCodePage() {
               <button
                 onClick={handleConvert}
                 disabled={!markdownInput}
-                className="px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold rounded-lg shadow-lg shadow-indigo-500/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none flex items-center gap-2"
+                className={`px-8 py-3 ${BTN_SOLID} text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2`}
               >
                 {language === 'fr' ? 'Convertir' : 'Convert'} →
               </button>
@@ -195,11 +196,11 @@ export function MarkdownToBBCodePage() {
               onClick={() => setNoWrap(v => !v)}
               className={`px-6 py-3 font-semibold rounded-lg border transition-colors flex items-center gap-2 ${
                 noWrap
-                  ? 'bg-amber-600/20 border-amber-500/50 text-amber-300 hover:bg-amber-600/30'
+                  ? TOGGLE_ACTIVE
                   : 'bg-slate-800 border-white/10 text-slate-400 hover:bg-slate-700'
               }`}
             >
-              <span className={`w-2 h-2 rounded-full ${noWrap ? 'bg-amber-400' : 'bg-slate-500'}`} />
+              <span className={`w-2 h-2 rounded-full ${noWrap ? DOT_ACTIVE : 'bg-slate-500'}`} />
               {noWrap
                 ? (language === 'fr' ? 'Retour ligne : OFF' : 'Wrap: OFF')
                 : (language === 'fr' ? 'Retour ligne : ON' : 'Wrap: ON')}
@@ -208,11 +209,11 @@ export function MarkdownToBBCodePage() {
               onClick={() => setShowDiff(v => !v)}
               className={`px-6 py-3 font-semibold rounded-lg border transition-colors flex items-center gap-2 ${
                 showDiff
-                  ? 'bg-violet-600/20 border-violet-500/50 text-violet-300 hover:bg-violet-600/30'
+                  ? TOGGLE_ACTIVE
                   : 'bg-slate-800 border-white/10 text-slate-400 hover:bg-slate-700'
               }`}
             >
-              <span className={`w-2 h-2 rounded-full ${showDiff ? 'bg-violet-400' : 'bg-slate-500'}`} />
+              <span className={`w-2 h-2 rounded-full ${showDiff ? DOT_ACTIVE : 'bg-slate-500'}`} />
               {showDiff
                 ? (language === 'fr' ? 'Diff : ON' : 'Diff: ON')
                 : (language === 'fr' ? 'Diff : OFF' : 'Diff: OFF')}
@@ -221,11 +222,11 @@ export function MarkdownToBBCodePage() {
               onClick={() => setAutoUpdate(v => !v)}
               className={`px-6 py-3 font-semibold rounded-lg border transition-colors flex items-center gap-2 ${
                 autoUpdate
-                  ? 'bg-indigo-600/20 border-indigo-500/50 text-indigo-300 hover:bg-indigo-600/30'
+                  ? TOGGLE_ACTIVE
                   : 'bg-slate-800 border-white/10 text-slate-400 hover:bg-slate-700'
               }`}
             >
-              <span className={`w-2 h-2 rounded-full ${autoUpdate ? 'bg-indigo-400' : 'bg-slate-500'}`} />
+              <span className={`w-2 h-2 rounded-full ${autoUpdate ? DOT_ACTIVE : 'bg-slate-500'}`} />
               {autoUpdate
                 ? (language === 'fr' ? 'Mise à jour auto : ON' : 'Auto-update: ON')
                 : (language === 'fr' ? 'Mise à jour auto : OFF' : 'Auto-update: OFF')}
@@ -251,7 +252,7 @@ export function MarkdownToBBCodePage() {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <h4 className="font-medium text-indigo-400 mb-3">Markdown:</h4>
+                <h4 className={`font-medium ${TEXT_ACCENT} mb-3`}>Markdown:</h4>
                 <pre className="bg-slate-950 p-4 rounded-lg text-xs overflow-x-auto text-slate-300 border border-white/10">
 {`## Changelog
 
@@ -265,7 +266,7 @@ export function MarkdownToBBCodePage() {
                 </pre>
               </div>
               <div>
-                <h4 className="font-medium text-purple-400 mb-3">BBCode:</h4>
+                <h4 className={`font-medium ${TEXT_ACCENT_SOFT} mb-3`}>BBCode:</h4>
                 <pre className="bg-slate-950 p-4 rounded-lg text-xs overflow-x-auto text-slate-300 border border-white/10">
 {`[h2]Changelog[/h2][h4]Build System[/h4][list]
 [*]🚀 Bump version to v1.2.3[/*]

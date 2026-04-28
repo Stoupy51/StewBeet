@@ -8,6 +8,7 @@ import { Installation } from './Installation';
 import { Templates } from './Templates';
 import { Showcase } from './Showcase';
 import { Footer } from './Footer';
+import { SELECTION_BRAND } from '../theme';
 
 function HomePage() {
   const location = useLocation();
@@ -26,7 +27,7 @@ function HomePage() {
   }, [location]);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 selection:bg-indigo-500/30">
+    <div className={`min-h-screen bg-slate-950 text-slate-100 ${SELECTION_BRAND}`}>
       <Navbar />
 
       <main>

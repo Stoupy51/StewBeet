@@ -2,6 +2,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
 import { PluginsTable } from './PluginsTable';
 import { useTranslation } from '../i18n/useTranslation';
+import { GRADIENT_TEXT, GLOW_PRIMARY, GLOW_SECONDARY } from '../theme';
 
 export const Showcase: React.FC = () => {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -22,8 +23,8 @@ export const Showcase: React.FC = () => {
         >
             {/* Background decoration */}
             <div className="absolute inset-0 overflow-hidden">
-                <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500/10 rounded-full blur-[100px]" />
-                <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-indigo-500/10 rounded-full blur-[100px]" />
+                <div className={`absolute -top-40 -right-40 w-80 h-80 ${GLOW_SECONDARY} rounded-full blur-[100px]`} />
+                <div className={`absolute -bottom-40 -left-40 w-80 h-80 ${GLOW_PRIMARY} rounded-full blur-[100px]`} />
             </div>
 
             <motion.div
@@ -37,7 +38,7 @@ export const Showcase: React.FC = () => {
                     transition={{ duration: 0.6 }}
                     className="text-center mb-16"
                 >
-                    <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-indigo-200 to-purple-200">
+                    <h2 className={`text-4xl md:text-5xl font-bold mb-4 ${GRADIENT_TEXT}`}>
                         {t('showcase.title')}
                     </h2>
                     <p className="text-slate-400 text-lg max-w-3xl mx-auto mb-8">

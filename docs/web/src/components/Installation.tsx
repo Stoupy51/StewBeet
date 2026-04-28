@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { HiDownload, HiTerminal, HiFolder, HiPlay, HiChevronRight } from 'react-icons/hi';
 import { useStewBeetVersion } from '../hooks/useStewBeetVersion';
 import { useTranslation } from '../i18n/useTranslation';
+import { TEXT_ACCENT, STEP_ACTIVE, ICON_ACTIVE } from '../theme';
 
 interface Step {
     id: number;
@@ -112,7 +113,7 @@ export const Installation: React.FC = () => {
             <div className="max-w-5xl mx-auto relative z-10">
                 <div className="text-center mb-16">
                     <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
-                        {t('installation.title')} <span className="text-indigo-400">{t('installation.titleHighlight')}</span>
+                        {t('installation.title')} <span className={TEXT_ACCENT}>{t('installation.titleHighlight')}</span>
                     </h2>
                 </div>
 
@@ -127,18 +128,18 @@ export const Installation: React.FC = () => {
                                     key={step.id}
                                     onClick={() => setActiveStep(step)}
                                     className={`w-full flex items-center gap-4 p-4 rounded-xl transition-all duration-200 border text-left group ${isActive
-                                            ? 'bg-indigo-500/10 border-indigo-500/50 text-white'
+                                            ? STEP_ACTIVE
                                             : 'bg-transparent border-transparent hover:bg-white/5 text-slate-400 hover:text-slate-200'
                                         }`}
                                 >
-                                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${isActive ? 'bg-indigo-500 text-white' : 'bg-slate-800 text-slate-500 group-hover:text-slate-300'}`}>
+                                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${isActive ? ICON_ACTIVE : 'bg-slate-800 text-slate-500 group-hover:text-slate-300'}`}>
                                         <Icon />
                                     </div>
                                     <div>
                                         <div className="font-bold text-sm">{step.title}</div>
                                         <div className="text-xs opacity-60">{step.description}</div>
                                     </div>
-                                    {isActive && <HiChevronRight className="ml-auto text-indigo-400" />}
+                                    {isActive && <HiChevronRight className={`ml-auto ${TEXT_ACCENT}`} />}
                                 </button>
                             );
                         })}

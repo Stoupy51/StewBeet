@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { HiStar, HiSparkles, HiLightningBolt, HiDownload, HiClipboard, HiCheck } from 'react-icons/hi';
 import { useState } from 'react';
 import { useTranslation } from '../i18n/useTranslation';
+import { ACCENT_BORDER_HOVER, CARD_HIGHLIGHT, GLOW_PRIMARY, GLOW_SECONDARY, GRADIENT_TEXT, PANEL_ACCENT, TEXT_ACCENT, TEXT_ACCENT_SOFT } from '../theme';
 
 export const Templates: React.FC = () => {
     const [copiedTemplate, setCopiedTemplate] = useState<string | null>(null);
@@ -53,8 +54,8 @@ export const Templates: React.FC = () => {
         <section id="templates" className="py-24 px-4 bg-slate-950/50 relative overflow-hidden">
             {/* Background decoration */}
             <div className="absolute inset-0 overflow-hidden">
-                <div className="absolute -top-40 right-1/4 w-80 h-80 bg-purple-500/10 rounded-full blur-[100px]" />
-                <div className="absolute -bottom-40 left-1/4 w-80 h-80 bg-indigo-500/10 rounded-full blur-[100px]" />
+                <div className={`absolute -top-40 right-1/4 w-80 h-80 ${GLOW_SECONDARY} rounded-full blur-[100px]`} />
+                <div className={`absolute -bottom-40 left-1/4 w-80 h-80 ${GLOW_PRIMARY} rounded-full blur-[100px]`} />
             </div>
 
             <div className="max-w-7xl mx-auto relative z-10">
@@ -65,11 +66,11 @@ export const Templates: React.FC = () => {
                     transition={{ duration: 0.6 }}
                     className="text-center mb-16"
                 >
-                    <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-indigo-200 to-purple-200">
+                    <h2 className={`text-4xl md:text-5xl font-bold mb-4 ${GRADIENT_TEXT}`}>
                         {t('templates.title')}
                     </h2>
                     <p className="text-slate-400 text-lg max-w-3xl mx-auto">
-                        {t('templates.subtitle')} <span className="text-indigo-300 font-semibold">{t('templates.subtitleHighlight')}</span> {t('templates.subtitleEnd')}
+                        {t('templates.subtitle')} <span className={`${TEXT_ACCENT_SOFT} font-semibold`}>{t('templates.subtitleHighlight')}</span> {t('templates.subtitleEnd')}
                     </p>
                 </motion.div>
 
@@ -85,8 +86,8 @@ export const Templates: React.FC = () => {
                                 transition={{ duration: 0.4, delay: index * 0.1 }}
                                 className="group relative"
                             >
-                                <div className={`h-full bg-slate-900/80 backdrop-blur-sm rounded-lg p-6 border ${template.recommended ? 'border-indigo-500/50 shadow-lg shadow-indigo-500/10' : 'border-white/5'
-                                    } hover:border-indigo-500/30 transition-all duration-300 flex flex-col`}>
+                                <div className={`h-full bg-slate-900/80 backdrop-blur-sm rounded-lg p-6 border ${template.recommended ? CARD_HIGHLIGHT : 'border-white/5'
+                                    } ${ACCENT_BORDER_HOVER} transition-all duration-300 flex flex-col`}>
 
                                     <a
                                         href={`https://github.com/Stoupy51/StewBeet/blob/main/templates/${template.name}/src/`}
@@ -104,7 +105,7 @@ export const Templates: React.FC = () => {
                                                         {template.displayName}
                                                     </h3>
                                                     {template.recommended && (
-                                                        <span className="text-xs text-indigo-400 font-medium">
+                                                        <span className={`text-xs ${TEXT_ACCENT} font-medium`}>
                                                             Recommended
                                                         </span>
                                                     )}
@@ -166,7 +167,7 @@ export const Templates: React.FC = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, delay: 0.4 }}
-                    className="mt-12 bg-indigo-500/10 backdrop-blur-sm rounded-2xl p-6 border border-indigo-500/20"
+                    className={`mt-12 backdrop-blur-sm rounded-2xl p-6 ${PANEL_ACCENT}`}
                 >
                     <div className="flex items-start gap-4">
                         <div className="w-10 h-10 bg-indigo-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -177,7 +178,7 @@ export const Templates: React.FC = () => {
                                 Getting Started Tip
                             </h4>
                             <p className="text-slate-300 leading-relaxed">
-                                I strongly recommend the <span className="text-indigo-300 font-semibold">Basic Template</span> as it includes all plugins with clear and commented configuration,
+                                I strongly recommend the <span className={`${TEXT_ACCENT_SOFT} font-semibold`}>Basic Template</span> as it includes all plugins with clear and commented configuration,
                                 without overwhelming you with code examples. You can start from a clean base and add only what you need!
                             </p>
                         </div>
