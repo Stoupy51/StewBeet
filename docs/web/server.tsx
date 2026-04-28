@@ -18,17 +18,20 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 
 const distDir = join(import.meta.dir, 'dist');
+const FETCH_TIMEOUT_MS = 7000;
+const MAX_MARKDOWN_CHARS = 500_000;
+const DOC_SRC_PATTERN = /^(?:[A-Za-z0-9._-]+\/)*[A-Za-z0-9._-]+\.md$/;
 // _template.html is the original Vite-built index.html before prerender modifies it.
 // It contains the empty <div id="root"></div> used as the injection target.
 const template = readFileSync(join(distDir, '_template.html'), 'utf-8');
 
 /** Convert a `src` param to the raw GitHub URL (same logic as MarkdownPage.tsx). */
+function isValidDocSrc(src: string): boolean {
+    return DOC_SRC_PATTERN.test(src) && !src.includes('..');
+}
+
 function srcToRawUrl(src: string): string {
-    const isFullUrl = src.startsWith('http');
-    const fullUrl = isFullUrl
-        ? src
-        : `https://github.com/Stoupy51/StewBeet/blob/main/docs/${src}`;
-    return fullUrl
+    return `https://github.com/Stoupy51/StewBeet/blob/main/docs/${src}`
         .replace('github.com/', 'raw.githubusercontent.com/')
         .replace('/blob/', '/')
         .replace('/raw/refs/heads/', '/');
@@ -47,15 +50,22 @@ Bun.serve({
             const src = url.searchParams.get('src');
             let markdownContent = '';
 
-            if (src) {
+            if (src && isValidDocSrc(src)) {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
                 try {
                     const rawUrl = srcToRawUrl(src);
-                    const res = await fetch(rawUrl);
+                    const res = await fetch(rawUrl, { signal: controller.signal });
                     if (res.ok) {
-                        markdownContent = await res.text();
+                        const text = await res.text();
+                        if (text.length <= MAX_MARKDOWN_CHARS) {
+                            markdownContent = text;
+                        }
                     }
                 } catch {
                     // content stays empty; page will render error state on client
+                } finally {
+                    clearTimeout(timeoutId);
                 }
             }
 

@@ -1,8 +1,9 @@
+import { memo } from 'react';
 import { HiExternalLink } from 'react-icons/hi';
 import { useTranslation } from '../i18n/useTranslation';
 import { GRADIENT_TEXT, GLOW_PRIMARY, GLOW_SECONDARY, TEXT_ACCENT_HOVER } from '../theme';
 
-export const Footer: React.FC = () => {
+export const Footer = memo(() => {
     const { t } = useTranslation();
     const links = {
         [t('footer.community')]: [
@@ -83,4 +84,5 @@ export const Footer: React.FC = () => {
             </div>
         </footer>
     );
-};
+});
+Footer.displayName = 'Footer';

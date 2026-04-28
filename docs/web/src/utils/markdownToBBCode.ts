@@ -193,12 +193,12 @@ export function convertMarkdownToBBCode(markdown: string): string {
   // Format: *text* or _text_ -> [i]text[/i]
   // Exclude [*] and [/*] list tags by checking for [ and / before *
   bbcode = bbcode.replace(/(?<![[/])\*(?![*\]])([^*\n]+)(?<![[/])\*(?![*\]])/g, '[i]$1[/i]');
-  bbcode = bbcode.replace(/(?<![_\w[])_([^_\n]+)_(?![_\w\]])/g, '[i]$1[/i]');
+  bbcode = bbcode.replace(/(^|[^_\w[])_([^_\n]+)_($|[^_\w\]])/gm, '$1[i]$2[/i]$3');
 
   // Step 8: Convert plain URLs (not already in BBCode)
   // Look for URLs not already inside [url] or [img] tags
-  // Note: [^\s\[\]]+ excludes '[' to avoid consuming BBCode list tags like [/*]
-  const urlPattern = /(?<!\[url=|\[url\]|\[img\])(https?:\/\/[^\s\[\]]+)(?!\[\/url\]|\[\/img\])/g;
+  // Note: [^\s[\]]+ excludes '[' to avoid consuming BBCode list tags like [/*]
+  const urlPattern = /(?<!\[url=|\[url\]|\[img\])(https?:\/\/[^\s[\]]+)(?!\[\/url\]|\[\/img\])/g;
   bbcode = bbcode.replace(urlPattern, '[url]$1[/url]');
 
   // Step 9: Remove blank lines between sections to create compact format

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { HiMenu, HiX } from 'react-icons/hi';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -7,7 +7,7 @@ import type { Language } from '../context/LanguageContext';
 import { useTranslation } from '../i18n/useTranslation';
 import { GRADIENT_TEXT_LOGO, BTN_PRIMARY, NAV_SHADOW, LIST_SELECTED } from '../theme';
 
-export const Navbar: React.FC = () => {
+export const Navbar = memo(() => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
@@ -274,4 +274,5 @@ export const Navbar: React.FC = () => {
             </AnimatePresence>
         </motion.nav>
     );
-};
+});
+Navbar.displayName = 'Navbar';

@@ -53,16 +53,16 @@ export function useShiki(code: string, language: string | LanguageRegistration, 
         let isActive = true;
         const resolvedLanguage = resolveLanguage(language);
         const isCustomLang = typeof resolvedLanguage !== 'string';
-        const langName = isCustomLang
+        const langName = (isCustomLang
             ? (resolvedLanguage as LanguageRegistration).name
-            : resolvedLanguage;
+            : resolvedLanguage) ?? 'text';
 
         getSingletonHighlighter({
             themes: [theme],
-            langs: [resolvedLanguage as any],
+            langs: [resolvedLanguage],
         })
             .then((highlighter) => highlighter.codeToHtml(code, {
-                lang: langName as any,
+                lang: langName,
                 theme,
             }))
             .then((result) => {
