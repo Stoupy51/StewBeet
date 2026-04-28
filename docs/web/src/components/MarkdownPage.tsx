@@ -6,12 +6,11 @@ import rehypeRaw from 'rehype-raw';
 import rehypeSanitize from 'rehype-sanitize';
 import { motion, AnimatePresence } from 'framer-motion';
 import { HiArrowLeft, HiExternalLink, HiMenu, HiX } from 'react-icons/hi';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 import { useLanguage } from '../context/LanguageContext';
 import { useMarkdownContent } from '../context/MarkdownContentContext';
+import { useShiki } from '../hooks/useShiki';
 import { ALERT_ACCENT, GLOW_PRIMARY, GLOW_SECONDARY, LOADER_ACCENT, PROSE_BRAND, SELECTION_BRAND, TEXT_ACCENT, TEXT_ACCENT_HOVER, TOOLBAR_ACCENT } from '../theme';
 
 interface Heading {
@@ -19,6 +18,25 @@ interface Heading {
     text: string;
     level: number;
 }
+
+const ShikiCodeBlock: React.FC<{ code: string; language: string }> = ({ code, language }) => {
+    const highlighted = useShiki(code, language, 'dark-plus');
+
+    if (!highlighted) {
+        return (
+            <pre>
+                <code>{code}</code>
+            </pre>
+        );
+    }
+
+    return (
+        <div
+            dangerouslySetInnerHTML={{ __html: highlighted }}
+            className="[&>pre]:!bg-transparent [&>pre]:!m-0 [&>pre]:!p-4"
+        />
+    );
+};
 
 export const MarkdownPage: React.FC = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -301,18 +319,12 @@ export const MarkdownPage: React.FC = () => {
                             rehypePlugins={[rehypeRaw, rehypeSanitize]}
                             components={{
                                 code({ inline, className, children, style: _style, ...props }: React.HTMLAttributes<HTMLElement> & { inline?: boolean }) {
-                                    const match = /language-(\w+)/.exec(className || '');
+                                    const match = /language-([A-Za-z0-9_-]+)/.exec(className || '');
                                     const language = match ? match[1] : '';
+                                    const code = String(children).replace(/\n$/, '');
                                     
                                     return !inline && language ? (
-                                        <SyntaxHighlighter
-                                            style={vscDarkPlus}
-                                            language={language}
-                                            PreTag="div"
-                                            {...props}
-                                        >
-                                            {String(children).replace(/\n$/, '')}
-                                        </SyntaxHighlighter>
+                                        <ShikiCodeBlock code={code} language={language} />
                                     ) : (
                                         <code className={className} {...props}>
                                             {children}

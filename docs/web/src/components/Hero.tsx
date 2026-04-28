@@ -29,12 +29,6 @@ const TerminalWindow = () => {
 
         const typeLine = () => {
             if (currentLine >= fullLines.length) {
-                setTimeout(() => {
-                    setLines([]);
-                    currentLine = 0;
-                    currentChar = 0;
-                    typeLine();
-                }, 3000);
                 return;
             }
 
@@ -50,11 +44,11 @@ const TerminalWindow = () => {
                     return newLines;
                 });
                 currentChar++;
-                timeout = setTimeout(typeLine, 30 + Math.random() * 30);
+                timeout = setTimeout(typeLine, 20 + Math.random() * 20);
             } else {
                 currentLine++;
                 currentChar = 0;
-                timeout = setTimeout(typeLine, 500);
+                timeout = setTimeout(typeLine, 300);
             }
         };
 
@@ -63,7 +57,7 @@ const TerminalWindow = () => {
     }, [version]);
 
     return (
-        <div className="w-full max-w-lg mx-auto bg-[#1e1e1e] rounded-lg shadow-2xl overflow-hidden border border-white/10 font-mono text-sm">
+        <div className="w-full bg-[#1e1e1e] rounded-lg shadow-2xl overflow-hidden border border-white/10 font-mono text-sm">
             <div className="bg-[#2d2d2d] px-4 py-2 flex items-center gap-2 border-b border-white/5">
                 <div className="w-3 h-3 rounded-full bg-[#ff5f56]" />
                 <div className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
@@ -203,8 +197,10 @@ export const Hero: React.FC = () => {
                     transition={{ duration: 0.8, delay: 0.2 }}
                     className="relative hidden lg:block"
                 >
-                    <div className={`absolute -inset-1 ${TERMINAL_GLOW} rounded-xl blur opacity-20`} />
-                    <TerminalWindow />
+                    <div className="relative w-full max-w-lg mx-auto">
+                        <div className={`absolute -inset-1 ${TERMINAL_GLOW} rounded-xl blur-[24px] opacity-20`} />
+                        <TerminalWindow />
+                    </div>
 
                     {/* Floating Elements around terminal */}
                     <div className="animate-float-up absolute -top-8 -right-8 bg-[#1e1e1e] p-4 rounded-lg border border-white/10 shadow-xl">
