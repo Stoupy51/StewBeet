@@ -11,9 +11,8 @@ import {
     HiCheck,
     HiCode
 } from 'react-icons/hi';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { useTranslation } from '../i18n/useTranslation';
+import { useShiki } from '../hooks/useShiki';
 import { ACCENT_BORDER_HOVER, ICON_ACCENT, TEXT_ACCENT, STEP_ACTIVE, ICON_ACTIVE, TEXT_ACTIVE_SUBTLE } from '../theme';
 
 interface Feature {
@@ -49,7 +48,7 @@ const getFeatures = (t: (key: string) => string): Feature[] => [
         title: t('features.loadingTitle'),
         description: t('features.loadingDesc'),
         previewType: 'code',
-        previewLang: 'hs',
+        previewLang: 'shell',
         previewContent: `#> stardust:v4.0.0/tick
 #
 # @within	stardust:v4.0.0/load/tick_verification
@@ -168,6 +167,7 @@ execute if score #minute stardust.data matches 1200.. run function stardust:v4.0
 
 const CodeBlock = ({ code, lang }: { code: string; lang?: string }) => {
     const [copied, setCopied] = useState(false);
+    const highlighted = useShiki(code, lang || 'text', 'dark-plus');
 
     const handleCopy = () => {
         navigator.clipboard.writeText(code);
@@ -184,24 +184,20 @@ const CodeBlock = ({ code, lang }: { code: string; lang?: string }) => {
             >
                 {copied ? <HiCheck className="text-green-400" /> : <HiClipboard />}
             </button>
-            <SyntaxHighlighter
-                language={lang || 'text'}
-                style={vscDarkPlus}
-                customStyle={{
-                    margin: 0,
-                    padding: '1rem',
-                    background: 'transparent',
-                    fontSize: '0.875rem',
-                    lineHeight: '1.625'
-                }}
-                codeTagProps={{
-                    style: {
-                        fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace'
-                    }
-                }}
-            >
-                {code}
-            </SyntaxHighlighter>
+            {highlighted ? (
+                <div
+                    dangerouslySetInnerHTML={{ __html: highlighted }}
+                    style={{
+                        fontSize: '0.875rem',
+                        lineHeight: '1.625',
+                    }}
+                    className="[&>pre]:!bg-transparent [&>pre]:!m-0 [&>pre]:!p-4 [&>pre]:!font-mono"
+                />
+            ) : (
+                <pre className="m-0 p-4 bg-transparent text-slate-300 text-sm leading-relaxed font-mono overflow-auto">
+                    <code>{code}</code>
+                </pre>
+            )}
         </div>
     );
 };

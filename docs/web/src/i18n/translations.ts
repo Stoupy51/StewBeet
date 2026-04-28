@@ -43,7 +43,7 @@ export const translations = {
             solution: 'The Solution',
             solutionDesc: 'StewBeet automates EVERYTHING: resource pack generation, models, custom blocks, recipes, and much more!',
             result: 'The Result',
-            resultDesc: 'Focus on creation, not files. Define your items and let StewBeet generate the rest.',
+            resultDesc: 'Focus on YOUR creation, not files. Define your items and let StewBeet generate the rest.',
         },
         
         // Features
@@ -260,7 +260,7 @@ export const translations = {
             solution: 'La Solution',
             solutionDesc: 'StewBeet automatise TOUT : génération de resource pack, modèles, blocs personnalisés, recettes, et bien plus !',
             result: 'Le Résultat',
-            resultDesc: 'Concentrez-vous sur la création, pas sur les fichiers. Définissez vos objets et laissez StewBeet générer le reste.',
+            resultDesc: 'Concentrez-vous sur VOTRE création, pas sur les fichiers. Définissez vos objets et laissez StewBeet générer le reste.',
         },
         
         // Features

@@ -1,12 +1,36 @@
 import { motion } from 'framer-motion';
 import { HiCode, HiLightningBolt, HiCube } from 'react-icons/hi';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { useTranslation } from '../i18n/useTranslation';
 import { GRADIENT_TEXT, GLOW_PRIMARY, GLOW_SECONDARY } from '../theme';
+import { useShiki } from '../hooks/useShiki';
+
+const CODE_EXAMPLE = `# Simply define your items...
+Block(
+    id="super_stone",
+    vanilla_block=VanillaBlock(id="minecraft:cobblestone"),
+    recipes=[
+        # Examples of crafting recipes (shaped and shapeless), no need to specify result -> will default to the Item id
+        CraftingShapedRecipe(category="blocks", shape=["XXX","XXX","XXX"], ingredients={"X": Ingr("minecraft:stone")}),
+        CraftingShapelessRecipe(category="blocks", ingredients=9*[Ingr("minecraft:deepslate")]),
+
+        # Example of recipe with vanilla result (not custom item)
+        SmeltingRecipe(experience=0.1, cookingtime=200, category="blocks", ingredient=Ingr("super_stone"), result=Ingr("minecraft:diamond")),
+        BlastingRecipe(experience=0.1, cookingtime=100, category="blocks", ingredient=Ingr("super_stone"), result=Ingr("minecraft:diamond")),
+    ],
+)
+
+# StewBeet automatically generates:
+# ✅ Models JSON
+# ✅ Textures management
+# ✅ Loot tables
+# ✅ Custom item data
+# ✅ In-game manual entries
+# ✅ Lang files
+# ...and much more!`;
 
 export const WhatIsStewBeet: React.FC = () => {
     const { t } = useTranslation();
+    const highlighted = useShiki(CODE_EXAMPLE, 'python', 'dark-plus');
     
     const features = [
         {
@@ -30,7 +54,7 @@ export const WhatIsStewBeet: React.FC = () => {
     ];
 
     return (
-        <section id="what-is" className="py-24 px-4 bg-slate-900/50 relative overflow-hidden">
+        <section id="what-is" className="py-12 px-4 bg-slate-900/50 relative overflow-hidden">
             {/* Background decoration */}
             <div className="absolute inset-0 overflow-hidden">
                 <div className={`absolute top-1/2 -left-40 w-80 h-80 ${GLOW_PRIMARY} rounded-full blur-[100px]`} />
@@ -43,7 +67,7 @@ export const WhatIsStewBeet: React.FC = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6 }}
-                    className="text-center mb-16"
+                    className="text-center mb-4"
                 >
                     <h2 className={`text-4xl md:text-5xl font-bold mb-4 ${GRADIENT_TEXT}`}>
                         {t('whatIs.title')}
@@ -92,7 +116,7 @@ export const WhatIsStewBeet: React.FC = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, delay: 0.4 }}
-                    className="mt-16 bg-slate-950/80 backdrop-blur-sm rounded-2xl p-8 border border-indigo-500/20"
+                    className="mt-4 bg-slate-950/80 backdrop-blur-sm rounded-2xl p-8 border border-indigo-500/20"
                 >
                     <div className="flex items-center gap-2 mb-4">
                         <div className="flex gap-2">
@@ -102,40 +126,14 @@ export const WhatIsStewBeet: React.FC = () => {
                         </div>
                         <span className="text-slate-400 text-sm ml-2">setup_definitions.py</span>
                     </div>
-                    <SyntaxHighlighter 
-                        language="python" 
-                        style={vscDarkPlus}
-                        customStyle={{
+                    <div
+                        dangerouslySetInnerHTML={{ __html: highlighted }}
+                        style={{
                             background: 'transparent',
-                            padding: 0,
-                            margin: 0,
                             fontSize: '0.875rem'
                         }}
-                    >{
-`# Simply define your items...
-Block(
-    id="super_stone",
-    vanilla_block=VanillaBlock(id="minecraft:cobblestone"),
-    recipes=[
-        # Examples of crafting recipes (shaped and shapeless), no need to specify result -> will default to the Item id
-        CraftingShapedRecipe(category="blocks", shape=["XXX","XXX","XXX"], ingredients={"X": Ingr("minecraft:stone")}),
-        CraftingShapelessRecipe(category="blocks", ingredients=9*[Ingr("minecraft:deepslate")]),
-
-        # Example of recipe with vanilla result (not custom item)
-        SmeltingRecipe(experience=0.1, cookingtime=200, category="blocks", ingredient=Ingr("super_stone"), result=Ingr("minecraft:diamond")),
-        BlastingRecipe(experience=0.1, cookingtime=100, category="blocks", ingredient=Ingr("super_stone"), result=Ingr("minecraft:diamond")),
-    ],
-)
-
-# StewBeet automatically generates:
-# ✅ Models JSON
-# ✅ Textures management
-# ✅ Loot tables
-# ✅ Custom item data
-# ✅ In-game manual entries
-# ✅ Lang files
-# ...and much more!`
-}</SyntaxHighlighter>
+                        className="[&>pre]:!bg-transparent [&>pre]:!p-0 [&>pre]:!m-0"
+                    />
                 </motion.div>
             </div>
         </section>
