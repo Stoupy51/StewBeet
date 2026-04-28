@@ -26,6 +26,7 @@ import {
     HiX
 } from 'react-icons/hi';
 import { useTranslation } from '../i18n/useTranslation';
+import { TEXT_ACCENT_HOVER } from '../theme';
 
 interface Plugin {
     id: number;
@@ -130,7 +131,7 @@ export const PluginsTable: React.FC = () => {
                                     <td className="p-4">
                                         <Link
                                             to={`/markdown?src=plugins/${plugin.name}.md`}
-                                            className="text-indigo-400 hover:text-indigo-300 font-semibold hover:underline underline-offset-4"
+                                            className={`${TEXT_ACCENT_HOVER} font-semibold hover:underline underline-offset-4`}
                                         >
                                             {plugin.name}
                                         </Link>

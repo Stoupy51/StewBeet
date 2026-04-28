@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { HiMenu, HiX, HiGlobeAlt } from 'react-icons/hi';
+import { HiMenu, HiX } from 'react-icons/hi';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
 import type { Language } from '../context/LanguageContext';
 import { useTranslation } from '../i18n/useTranslation';
+import { GRADIENT_TEXT_LOGO, BTN_PRIMARY, NAV_SHADOW, LIST_SELECTED } from '../theme';
 
 export const Navbar: React.FC = () => {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -76,7 +77,7 @@ export const Navbar: React.FC = () => {
             initial={{ y: -100 }}
             animate={{ y: 0 }}
             className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-                ? 'bg-slate-950/95 backdrop-blur-md shadow-lg shadow-indigo-500/10 border-b border-white/5'
+                ? `bg-slate-950/95 backdrop-blur-md shadow-lg ${NAV_SHADOW} border-b border-white/5`
                 : 'bg-transparent'
                 }`}
         >
@@ -97,7 +98,7 @@ export const Navbar: React.FC = () => {
                                 navigate('/');
                             }
                         }}
-                        className="flex items-center gap-2 text-xl font-bold bg-gradient-to-r from-indigo-200 to-purple-200 bg-clip-text text-transparent hover:from-indigo-300 hover:to-purple-300 transition-all"
+                        className={`flex items-center gap-2 text-xl font-bold ${GRADIENT_TEXT_LOGO} transition-all`}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                     >
@@ -106,7 +107,7 @@ export const Navbar: React.FC = () => {
                     </motion.a>
 
                     {/* Desktop Navigation */}
-                    <div className="hidden md:flex items-center gap-8">
+                    <div className="hidden md:flex items-center gap-4">
                         {navItems.map((item) => (
                             <button
                                 key={item.id}
@@ -156,7 +157,6 @@ export const Navbar: React.FC = () => {
                                 whileTap={{ scale: 0.95 }}
                                 className="flex items-center gap-2 px-4 py-2 bg-slate-800/50 hover:bg-slate-700/50 rounded-lg text-slate-300 hover:text-white text-sm font-medium transition-all border border-white/10"
                             >
-                                <HiGlobeAlt className="text-lg" />
                                 <span>{languageOptions[language].flag}</span>
                                 <span>{languageOptions[language].label}</span>
                             </motion.button>
@@ -181,7 +181,7 @@ export const Navbar: React.FC = () => {
                                                     onClick={() => handleLanguageChange(lang)}
                                                     className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors ${
                                                         language === lang
-                                                            ? 'bg-indigo-500/20 text-indigo-300'
+                                                            ? LIST_SELECTED
                                                             : 'text-slate-300 hover:bg-white/5 hover:text-white'
                                                     }`}
                                                 >
@@ -228,14 +228,14 @@ export const Navbar: React.FC = () => {
                             <a
                                 href="/documentation"
                                 onClick={handleDocumentationClick}
-                                className="block w-full text-center px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg text-white font-semibold"
+                                className={`block w-full text-center px-4 py-2 ${BTN_PRIMARY} rounded-lg text-white font-semibold`}
                             >
                                 {t('nav.documentation')}
                             </a>
                             <a
                                 href="/tools"
                                 onClick={handleToolsClick}
-                                className="block w-full text-center px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-lg text-white font-semibold"
+                                className={`block w-full text-center px-4 py-2 ${BTN_PRIMARY} rounded-lg text-white font-semibold`}
                             >
                                 {t('nav.tools')}
                             </a>
@@ -243,7 +243,7 @@ export const Navbar: React.FC = () => {
                                 href="https://github.com/Stoupy51/StewBeet"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="block w-full text-center px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg text-white font-semibold"
+                                className={`block w-full text-center px-4 py-2 ${BTN_PRIMARY} rounded-lg text-white font-semibold`}
                             >
                                 GitHub ↗
                             </a>
@@ -258,7 +258,7 @@ export const Navbar: React.FC = () => {
                                             onClick={() => handleLanguageChange(lang)}
                                             className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all ${
                                                 language === lang
-                                                    ? 'bg-indigo-500/20 text-indigo-300'
+                                                    ? LIST_SELECTED
                                                     : 'text-slate-300 hover:bg-white/5 hover:text-white'
                                             }`}
                                         >

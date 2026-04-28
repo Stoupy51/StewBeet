@@ -14,6 +14,7 @@ import {
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { useTranslation } from '../i18n/useTranslation';
+import { ACCENT_BORDER_HOVER, ICON_ACCENT, TEXT_ACCENT, STEP_ACTIVE, ICON_ACTIVE, TEXT_ACTIVE_SUBTLE } from '../theme';
 
 interface Feature {
     id: string;
@@ -215,7 +216,7 @@ export const Features: React.FC = () => {
             <div className="max-w-7xl mx-auto relative z-10">
                 <div className="text-center mb-16">
                     <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
-                        {t('features.title')} <span className="text-indigo-400">{t('features.titleHighlight')}</span>
+                        {t('features.title')} <span className={TEXT_ACCENT}>{t('features.titleHighlight')}</span>
                     </h2>
                     <p className="text-slate-400 text-lg max-w-2xl mx-auto">
                         {t('features.subtitle')}
@@ -233,19 +234,19 @@ export const Features: React.FC = () => {
                                     key={feature.id}
                                     onClick={() => setActiveFeature(feature)}
                                     className={`w-full text-left p-4 rounded-xl transition-all duration-200 border ${isActive
-                                        ? 'bg-indigo-500/10 border-indigo-500/50 shadow-lg shadow-indigo-500/10'
+                                        ? STEP_ACTIVE
                                         : 'bg-transparent border-transparent hover:bg-white/5'
                                         }`}
                                 >
                                     <div className="flex items-center gap-4">
-                                        <div className={`p-2 rounded-lg ${isActive ? 'bg-indigo-500 text-white' : 'bg-slate-800 text-slate-400'}`}>
+                                        <div className={`p-2 rounded-lg ${isActive ? ICON_ACTIVE : 'bg-slate-800 text-slate-400'}`}>
                                             <Icon className="text-xl" />
                                         </div>
                                         <div>
                                             <h3 className={`font-bold ${isActive ? 'text-white' : 'text-slate-300'}`}>
                                                 {feature.title}
                                             </h3>
-                                            <p className={`text-sm mt-1 ${isActive ? 'text-indigo-200' : 'text-slate-500'}`}>
+                                            <p className={`text-sm mt-1 ${isActive ? TEXT_ACTIVE_SUBTLE : 'text-slate-500'}`}>
                                                 {feature.description}
                                             </p>
                                         </div>
@@ -266,7 +267,7 @@ export const Features: React.FC = () => {
                                     <div className="w-3 h-3 rounded-full bg-[#27c93f]" />
                                 </div>
                                 <div className="text-xs text-slate-400 font-mono flex items-center gap-2">
-                                    {activeFeature.previewType === 'code' && <HiCode className="text-indigo-400" />}
+                                    {activeFeature.previewType === 'code' && <HiCode className={ICON_ACCENT} />}
                                     {activeFeature.previewLang ? `preview.${activeFeature.previewLang}` : 'preview'}
                                 </div>
                                 <div className="w-16" /> {/* Spacer for centering */}
@@ -326,7 +327,7 @@ export const Features: React.FC = () => {
                                         href={lib.url}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="px-3 py-1.5 bg-slate-900 border border-white/10 rounded-md text-xs text-slate-400 font-mono hover:border-indigo-500/50 hover:text-indigo-400 transition-colors cursor-pointer"
+                                        className={`px-3 py-1.5 bg-slate-900 border border-white/10 rounded-md text-xs text-slate-400 font-mono ${ACCENT_BORDER_HOVER} hover:text-indigo-400 transition-colors cursor-pointer`}
                                     >
                                         {lib.name}
                                     </a>

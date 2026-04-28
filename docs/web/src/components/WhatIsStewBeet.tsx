@@ -3,6 +3,7 @@ import { HiCode, HiLightningBolt, HiCube } from 'react-icons/hi';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { useTranslation } from '../i18n/useTranslation';
+import { GRADIENT_TEXT, GLOW_PRIMARY, GLOW_SECONDARY } from '../theme';
 
 export const WhatIsStewBeet: React.FC = () => {
     const { t } = useTranslation();
@@ -32,8 +33,8 @@ export const WhatIsStewBeet: React.FC = () => {
         <section id="what-is" className="py-24 px-4 bg-slate-900/50 relative overflow-hidden">
             {/* Background decoration */}
             <div className="absolute inset-0 overflow-hidden">
-                <div className="absolute top-1/2 -left-40 w-80 h-80 bg-indigo-500/10 rounded-full blur-[100px]" />
-                <div className="absolute top-1/2 -right-40 w-80 h-80 bg-purple-500/10 rounded-full blur-[100px]" />
+                <div className={`absolute top-1/2 -left-40 w-80 h-80 ${GLOW_PRIMARY} rounded-full blur-[100px]`} />
+                <div className={`absolute top-1/2 -right-40 w-80 h-80 ${GLOW_SECONDARY} rounded-full blur-[100px]`} />
             </div>
 
             <div className="max-w-6xl mx-auto relative z-10">
@@ -44,7 +45,7 @@ export const WhatIsStewBeet: React.FC = () => {
                     transition={{ duration: 0.6 }}
                     className="text-center mb-16"
                 >
-                    <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-indigo-200 to-purple-200">
+                    <h2 className={`text-4xl md:text-5xl font-bold mb-4 ${GRADIENT_TEXT}`}>
                         {t('whatIs.title')}
                     </h2>
                     <p className="text-slate-400 text-lg max-w-3xl mx-auto">

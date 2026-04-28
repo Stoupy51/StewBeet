@@ -5,6 +5,7 @@ import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 import { PluginsTable } from './PluginsTable';
 import { useTranslation } from '../i18n/useTranslation';
+import { GRADIENT_TEXT, GLOW_PRIMARY, GLOW_SECONDARY, HOVER_CARD, CARD_HOVER_TEXT, CARD_HOVER_ARROW } from '../theme';
 
 interface DocItem {
     title: string;
@@ -70,8 +71,8 @@ export const DocumentationPage: React.FC = () => {
 
             {/* Background decoration */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-20 right-0 w-96 h-96 bg-purple-500/10 rounded-full blur-[120px]" />
-                <div className="absolute bottom-0 left-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-[120px]" />
+                <div className={`absolute top-20 right-0 w-96 h-96 ${GLOW_SECONDARY} rounded-full blur-[120px]`} />
+                <div className={`absolute bottom-0 left-0 w-96 h-96 ${GLOW_PRIMARY} rounded-full blur-[120px]`} />
             </div>
 
             {/* Hero Section */}
@@ -82,7 +83,7 @@ export const DocumentationPage: React.FC = () => {
                         animate={{ opacity: 1, y: 0 }}
                         className="text-5xl md:text-6xl font-bold mb-6"
                     >
-                        📖 <span className="bg-gradient-to-r from-indigo-200 via-purple-200 to-pink-200 bg-clip-text text-transparent">{t('documentation.title')}</span>
+                        📖 <span className={GRADIENT_TEXT}>{t('documentation.title')}</span>
                     </motion.h1>
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}
@@ -109,11 +110,11 @@ export const DocumentationPage: React.FC = () => {
                                 to={`/markdown?src=${encodeURIComponent(language === 'fr' ? docs[0].pathFr : docs[0].pathEn)}`}
                                 className="block group"
                             >
-                                <div className="bg-slate-900/30 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-indigo-500/50 transition-all hover:bg-slate-900/50 hover:shadow-lg hover:shadow-indigo-500/10">
+                                <div className={`bg-slate-900/30 backdrop-blur-sm border border-white/10 rounded-2xl p-6 ${HOVER_CARD} transition-all hover:bg-slate-900/50`}>
                                     <div className="flex items-start justify-between gap-4">
                                         <div className="flex-1">
                                             <div className="flex items-center gap-3 mb-2">
-                                                <h2 className="text-2xl font-bold text-slate-100 group-hover:text-indigo-300 transition-colors">
+                                                <h2 className={`text-2xl font-bold text-slate-100 ${CARD_HOVER_TEXT}`}>
                                                     {docs[0].title}
                                                 </h2>
                                             </div>
@@ -121,7 +122,7 @@ export const DocumentationPage: React.FC = () => {
                                                 {docs[0].description}
                                             </p>
                                         </div>
-                                        <HiArrowRight className="text-2xl text-slate-500 group-hover:text-indigo-400 group-hover:translate-x-1 transition-all flex-shrink-0 mt-1" />
+                                        <HiArrowRight className={CARD_HOVER_ARROW} />
                                     </div>
                                 </div>
                             </Link>
@@ -140,14 +141,14 @@ export const DocumentationPage: React.FC = () => {
                                         to={`/markdown?src=${encodeURIComponent(language === 'fr' ? doc.pathFr : doc.pathEn)}`}
                                         className="block group h-full"
                                     >
-                                        <div className="bg-slate-900/30 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-indigo-500/50 transition-all hover:bg-slate-900/50 hover:shadow-lg hover:shadow-indigo-500/10 h-full">
+                                        <div className={`bg-slate-900/30 backdrop-blur-sm border border-white/10 rounded-2xl p-6 ${HOVER_CARD} transition-all hover:bg-slate-900/50 h-full`}>
                                             <div className="flex items-start justify-between gap-4 h-full">
                                                 <div className="flex-1">
                                                     <div className="flex items-center gap-3 mb-2">
                                                         {doc.iconImg
                                                             ? <img src={doc.iconImg} alt="" className="w-7 h-7 object-contain flex-shrink-0" />
                                                             : ""}
-                                                        <h2 className="text-2xl font-bold text-slate-100 group-hover:text-indigo-300 transition-colors">
+                                                        <h2 className={`text-2xl font-bold text-slate-100 ${CARD_HOVER_TEXT}`}>
                                                             {doc.title}
                                                         </h2>
                                                     </div>
@@ -155,7 +156,7 @@ export const DocumentationPage: React.FC = () => {
                                                         {doc.description}
                                                     </p>
                                                 </div>
-                                                <HiArrowRight className="text-2xl text-slate-500 group-hover:text-indigo-400 group-hover:translate-x-1 transition-all flex-shrink-0 mt-1" />
+                                                <HiArrowRight className={CARD_HOVER_ARROW} />
                                             </div>
                                         </div>
                                     </Link>
@@ -188,7 +189,7 @@ export const DocumentationPage: React.FC = () => {
                         transition={{ duration: 0.6 }}
                         className="text-center mb-16"
                     >
-                        <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-indigo-200 to-purple-200">
+                        <h2 className={`text-4xl md:text-5xl font-bold mb-4 ${GRADIENT_TEXT}`}>
                             {t('documentation.plugins')}
                         </h2>
                         <p className="text-slate-400 text-lg max-w-3xl mx-auto mb-8">
