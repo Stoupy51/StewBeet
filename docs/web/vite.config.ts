@@ -9,5 +9,8 @@ export default defineConfig({
   },
   preview: {
     allowedHosts: ['stewbeet.paralya.fr'],
-  }
+  },
+  build: {
+    minify: false,
+  },
 })
