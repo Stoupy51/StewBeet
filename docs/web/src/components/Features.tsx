@@ -206,6 +206,18 @@ export const Features: React.FC = () => {
     const { t } = useTranslation();
     const features = getFeatures(t);
     const [activeFeature, setActiveFeature] = useState<Feature>(features[0]);
+    // Track which tabs have been activated so CodeBlocks only mount when first visited
+    const [rendered, setRendered] = useState<Set<string>>(() => new Set([features[0].id]));
+
+    const handleFeatureSelect = (feature: Feature) => {
+        setActiveFeature(feature);
+        setRendered(prev => {
+            if (prev.has(feature.id)) return prev;
+            const next = new Set(prev);
+            next.add(feature.id);
+            return next;
+        });
+    };
 
     return (
         <section id="features" className="py-12 px-4 bg-[#0a0a0a] relative overflow-hidden">
@@ -228,7 +240,7 @@ export const Features: React.FC = () => {
                             return (
                                 <motion.button
                                     key={feature.id}
-                                    onClick={() => setActiveFeature(feature)}
+                                    onClick={() => handleFeatureSelect(feature)}
                                     className={`w-full text-left p-4 rounded-xl transition-all duration-200 border ${isActive
                                         ? STEP_ACTIVE
                                         : 'bg-transparent border-transparent hover:bg-white/5'
@@ -283,7 +295,7 @@ export const Features: React.FC = () => {
                                             style={{ display: isActive ? 'block' : 'none' }}
                                             aria-hidden={!isActive}
                                         >
-                                            {feature.previewType === 'code' ? (
+                                            {rendered.has(feature.id) && (feature.previewType === 'code' ? (
                                                 <div className="overflow-auto custom-scrollbar" style={{ maxHeight: '500px' }}>
                                                     <CodeBlock
                                                         code={feature.previewContent}
@@ -299,7 +311,7 @@ export const Features: React.FC = () => {
                                                         style={{ maxHeight: '500px' }}
                                                     />
                                                 </div>
-                                            )}
+                                            ))}
                                         </motion.div>
                                     );
                                 })}

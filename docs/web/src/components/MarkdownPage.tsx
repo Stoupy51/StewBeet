@@ -19,6 +19,25 @@ interface Heading {
     level: number;
 }
 
+const DOC_SRC_PATTERN = /^(?:[A-Za-z0-9._-]+\/)*[A-Za-z0-9._-]+\.md$/;
+const FETCH_TIMEOUT_MS = 7000;
+const MAX_MARKDOWN_CHARS = 500_000;
+
+function isValidDocSrc(src: string): boolean {
+    return DOC_SRC_PATTERN.test(src) && !src.includes('..');
+}
+
+function srcToGithubUrl(src: string): string {
+    return `https://github.com/Stoupy51/StewBeet/blob/main/docs/${src}`;
+}
+
+function githubToRawUrl(githubUrl: string): string {
+    return githubUrl
+        .replace('github.com/', 'raw.githubusercontent.com/')
+        .replace('/blob/', '/')
+        .replace('/raw/refs/heads/', '/');
+}
+
 const ShikiCodeBlock: React.FC<{ code: string; language: string }> = ({ code, language }) => {
     const highlighted = useShiki(code, language, 'dark-plus');
 
@@ -73,21 +92,13 @@ export const MarkdownPage: React.FC = () => {
         }
     };
     
-    // Determine if src is a full URL or a relative path
-    const isFullUrl = src?.startsWith('http');
+    const hasValidSrc = src ? isValidDocSrc(src) : false;
     
     // Construct the full URL
-    const fullUrl = isFullUrl 
-        ? src 
-        : src ? `https://github.com/Stoupy51/StewBeet/blob/main/docs/${src}` : null;
+    const fullUrl = src && hasValidSrc ? srcToGithubUrl(src) : null;
     
     // Convert to raw URL for fetching
-    const rawUrl = fullUrl
-        ? fullUrl
-            .replace('github.com/', 'raw.githubusercontent.com/')
-            .replace('/blob/', '/')
-            .replace('/raw/refs/heads/', '/')
-        : null;
+    const rawUrl = fullUrl ? githubToRawUrl(fullUrl) : null;
     
     // Extract the base path for relative links (directory containing the markdown file)
     const basePath = rawUrl
@@ -145,23 +156,33 @@ export const MarkdownPage: React.FC = () => {
         const fetchMarkdown = async () => {
             setLoading(true);
             setError(null);
-            
+
+            const controller = new AbortController();
+            const timeoutId = window.setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
             try {
                 if (!rawUrl) {
                     throw new Error('Invalid source URL');
                 }
-                    
-                const response = await fetch(rawUrl);
-                
+
+                const response = await fetch(rawUrl, { signal: controller.signal });
+
                 if (!response.ok) {
                     throw new Error(`Failed to fetch plugin documentation (${response.status})`);
                 }
-                
+
                 const text = await response.text();
+                if (text.length > MAX_MARKDOWN_CHARS) {
+                    throw new Error('Documentation is too large to display safely.');
+                }
                 setContent(text);
             } catch (err) {
+                if (err instanceof Error && err.name === 'AbortError') {
+                    setError('Request timed out while loading plugin documentation.');
+                    return;
+                }
                 setError(err instanceof Error ? err.message : 'Failed to load plugin documentation');
             } finally {
+                window.clearTimeout(timeoutId);
                 setLoading(false);
             }
         };
@@ -174,11 +195,7 @@ export const MarkdownPage: React.FC = () => {
         let pluginName = 'Plugin';
         
         if (src) {
-            if (isFullUrl) {
-                // Extract filename from URL
-                const filename = src.split('/').pop() || 'Plugin';
-                pluginName = filename.replace('.md', '');
-            } else {
+            if (hasValidSrc) {
                 pluginName = src.replace('.md', '');
             }
         }
@@ -189,7 +206,7 @@ export const MarkdownPage: React.FC = () => {
         return () => {
             document.title = 'StewBeet';
         };
-    }, [src, isFullUrl]);
+    }, [src, hasValidSrc]);
 
     return (
         <div className={`min-h-screen bg-slate-950 text-slate-100 ${SELECTION_BRAND}`}>
@@ -301,6 +318,7 @@ export const MarkdownPage: React.FC = () => {
                             prose-p:text-slate-300 prose-p:leading-relaxed prose-p:my-4
                             prose-a:no-underline hover:prose-a:underline prose-a:underline-offset-4 prose-a:transition-colors
                             prose-code:bg-slate-800/50 prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:text-sm prose-code:font-medium prose-code:before:content-none prose-code:after:content-none
+                            [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:rounded-none
                             prose-pre:bg-slate-900/90 prose-pre:border prose-pre:border-white/10 prose-pre:rounded-xl prose-pre:shadow-xl prose-pre:my-6
                             prose-strong:text-slate-100 prose-strong:font-bold
                             prose-em:text-slate-300 prose-em:italic
@@ -318,7 +336,7 @@ export const MarkdownPage: React.FC = () => {
                             remarkPlugins={[remarkGfm]}
                             rehypePlugins={[rehypeRaw, rehypeSanitize]}
                             components={{
-                                code({ inline, className, children, style: _style, ...props }: React.HTMLAttributes<HTMLElement> & { inline?: boolean }) {
+                                code({ inline, className, children, ...props }: React.HTMLAttributes<HTMLElement> & { inline?: boolean }) {
                                     const match = /language-([A-Za-z0-9_-]+)/.exec(className || '');
                                     const language = match ? match[1] : '';
                                     const code = String(children).replace(/\n$/, '');

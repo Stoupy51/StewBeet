@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { HiClipboardCopy, HiRefresh } from 'react-icons/hi';
 import { convertMarkdownToBBCode } from '../utils/markdownToBBCode';
@@ -59,24 +59,28 @@ function DiffView({ diff, wrapClass }: { diff: DiffLine[]; wrapClass: string }) 
 
 export function MarkdownToBBCodePage() {
   const [markdownInput, setMarkdownInput] = useState('');
-  const [bbcodeOutput, setBbcodeOutput] = useState('');
+  const [manualBbcodeOutput, setManualBbcodeOutput] = useState('');
   const [autoUpdate, setAutoUpdate] = useState(true);
   const [showDiff, setShowDiff] = useState(false);
   const [noWrap, setNoWrap] = useState(true);
   const { language } = useTranslation();
 
-  useEffect(() => {
-    if (autoUpdate) {
-      setBbcodeOutput(convertMarkdownToBBCode(markdownInput));
-    }
-  }, [markdownInput, autoUpdate]);
+  const bbcodeOutput = useMemo(
+    () => (autoUpdate ? convertMarkdownToBBCode(markdownInput) : manualBbcodeOutput),
+    [autoUpdate, markdownInput, manualBbcodeOutput],
+  );
 
-  const diff = useMemo(() => computeDiff(markdownInput, bbcodeOutput), [markdownInput, bbcodeOutput]);
+  const diff = useMemo(() => {
+    const aLines = markdownInput.split('\n').length;
+    const bLines = bbcodeOutput.split('\n').length;
+    if (aLines > 500 || bLines > 500) return [] as DiffLine[];
+    return computeDiff(markdownInput, bbcodeOutput);
+  }, [markdownInput, bbcodeOutput]);
   const wrapClass = noWrap ? 'whitespace-pre overflow-x-auto' : 'whitespace-pre-wrap';
 
   const handleConvert = () => {
     const converted = convertMarkdownToBBCode(markdownInput);
-    setBbcodeOutput(converted);
+    setManualBbcodeOutput(converted);
   };
 
   const handleCopyOutput = async () => {
@@ -91,7 +95,7 @@ export function MarkdownToBBCodePage() {
 
   const handleClearAll = () => {
     setMarkdownInput('');
-    setBbcodeOutput('');
+    setManualBbcodeOutput('');
   };
 
   return (
