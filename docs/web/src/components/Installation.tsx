@@ -109,9 +109,9 @@ export const Installation: React.FC = () => {
     }, [activeStep]);
 
     return (
-        <section id="installation" className="py-24 px-4 bg-[#0a0a0a] relative overflow-hidden">
+        <section id="installation" className="py-8 px-4 bg-[#0a0a0a] relative overflow-hidden">
             <div className="max-w-5xl mx-auto relative z-10">
-                <div className="text-center mb-16">
+                <div className="text-center mb-8">
                     <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
                         {t('installation.title')} <span className={TEXT_ACCENT}>{t('installation.titleHighlight')}</span>
                     </h2>
@@ -147,7 +147,7 @@ export const Installation: React.FC = () => {
 
                     {/* Terminal Window */}
                     <div className="md:w-2/3">
-                        <div className="bg-[#1e1e1e] rounded-xl border border-white/10 shadow-2xl overflow-hidden h-[400px] flex flex-col font-mono text-sm">
+                        <div className="bg-[#1e1e1e] rounded-xl border border-white/10 shadow-2xl overflow-hidden h-[350px] flex flex-col font-mono text-sm">
                             {/* Terminal Header */}
                             <div className="bg-[#2d2d2d] px-4 py-3 flex items-center gap-2 border-b border-white/5">
                                 <div className="w-3 h-3 rounded-full bg-[#ff5f56]" />
