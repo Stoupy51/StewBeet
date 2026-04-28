@@ -48,7 +48,7 @@ const getFeatures = (t: (key: string) => string): Feature[] => [
         title: t('features.loadingTitle'),
         description: t('features.loadingDesc'),
         previewType: 'code',
-        previewLang: 'shell',
+        previewLang: 'mcfunction',
         previewContent: `#> stardust:v4.0.0/tick
 #
 # @within	stardust:v4.0.0/load/tick_verification
