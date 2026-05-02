@@ -1,0 +1,8 @@
+stewbeet.core.utils.text\_component module
+==========================================
+
+.. automodule:: stewbeet.core.utils.text_component
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
