@@ -54,10 +54,15 @@ def beet_default(ctx: Context):
 		return
 
 	# Predicates
-	FACING = ["north", "east", "south", "west"]
+	FACING: list[str] = ["north", "east", "south", "west"]
 	for face in FACING:
 		pred: JsonDict = {"condition":"minecraft:location_check","predicate":{"block":{"state":{"facing":face}}}}
 		ctx.data[ns].predicates[f"facing/{face}"] = set_json_encoder(Predicate(pred))
+
+	# Light level predicates (for dynamic brightness computation)
+	for level in range(1, 16):
+		light_pred: JsonDict = {"condition": "minecraft:location_check", "predicate": {"light": {"light": level}}}
+		ctx.data[ns].predicates[f"light/{level}"] = set_json_encoder(Predicate(light_pred), max_level=-1)
 
 	# Get rotation function
 	write_function(f"{ns}:custom_blocks/get_rotation",
@@ -78,7 +83,32 @@ execute if score #rotation {ns}.data matches 0 if predicate {ns}:facing/south ru
 execute if score #rotation {ns}.data matches 0 if predicate {ns}:facing/west run scoreboard players set #rotation {ns}.data 4
 # No more cases for now
 """)
+	# Check light level at current position and update #light score if higher
+	check_light_lines: str = "".join(
+		f"execute if score #light {ns}.data matches ..{level - 1} if predicate {ns}:light/{level} run return run scoreboard players set #light {ns}.data {level}\n"
+		for level in range(1, 16)
+	)
+	write_function(f"{ns}:custom_blocks/check_light", f"""
+# Check light level at current position and update #light if higher
+{check_light_lines}""")
 
+	# Compute the brightness of a custom block by sampling all 6 neighboring positions
+	FACES: list[str] = ["~ ~1 ~", "~ ~-1 ~", "~1 ~ ~", "~-1 ~ ~", "~ ~ ~1", "~ ~ ~-1"]
+	compute_brightness_lines: str = "".join(
+		f"execute if score #light {ns}.data matches ..14 positioned {face} run function {ns}:custom_blocks/check_light\n"
+		for face in FACES
+	)
+	write_function(f"{ns}:custom_blocks/compute_brightness", f"""
+# Reset light score
+scoreboard players set #light {ns}.data 0
+
+# Check all 6 neighboring positions
+{compute_brightness_lines}
+# Apply computed brightness to the entity
+data merge entity @s {{brightness:{{block:0,sky:0}}}}
+execute store result entity @s brightness.block int 1 run scoreboard players get #light {ns}.data
+execute store result entity @s brightness.sky int 1 run scoreboard players get #light {ns}.data
+""")
 	# For each custom block,
 	unique_blocks: set[str] = set()
 	custom_block_entities: set[str] = set()
@@ -237,7 +267,7 @@ data merge entity @s {custom_name}
 
 # Modify item display entity to match the custom block
 {item_model}data modify entity @s transformation.scale set value [1.002f,1.002f,1.002f]
-data modify entity @s brightness set value {{block:15,sky:15}}
+function {ns}:custom_blocks/compute_brightness
 """
 				if block.get("visual_facing") == "player":
 					content += f"""
@@ -726,6 +756,10 @@ execute if {score_check} as @e[type=item_display,tag={ns}.custom_block,predicate
 		write_versioned_function("second_5", f"""
 # 5 seconds growing seed break detection (below block check)
 execute if score #total_growing_seeds {ns}.data matches 1.. as @e[type=#{ns}:custom_blocks,tag={ns}.growing_seed] at @s run function {ns}:custom_blocks/destroy_growing_seeds
+""")
+	write_versioned_function("second_5", f"""
+# 5 seconds dynamic brightness update (random sample of item_display custom blocks)
+execute if {score_check} as @e[type=item_display,tag={ns}.custom_block,sort=random,limit=50] at @s run function {ns}:custom_blocks/compute_brightness
 """)
 	# Write the entity type tag for custom blocks
 	ctx.data[ns].entity_type_tags["custom_blocks"] = set_json_encoder(EntityTypeTag({"values": sorted(custom_block_entities)}))
