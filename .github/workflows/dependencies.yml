@@ -22,7 +22,7 @@ jobs:
         id: update
         run: |
           uv run python - <<'EOF'
-          import json, urllib.request, re, tomllib, sys
+          import json, urllib.request, re, tomllib, sys, os
 
           with open("python_package/pyproject.toml", "rb") as f:
               data = tomllib.load(f)
