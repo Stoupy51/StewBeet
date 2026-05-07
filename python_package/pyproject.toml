@@ -24,14 +24,14 @@ authors = [
     { name = "Stoupy51", email = "stoupy51@gmail.com" },
 ]
 dependencies = [
-	"stouputils>=1.24.11",
+	"stouputils>=1.26.2",
 	"model_resolver>=1.15.2",
 	"beet>=0.115.0",
 	"bolt>=0.50.1",
 	"mecha>=0.103.0",
 	"mutagen>=1.47.0",
-	"pyperclip>=1.8.0",
-	"fsspec>=2026.3.0",
+	"pyperclip>=1.11.0",
+	"fsspec>=2026.4.0",
 	"paramiko>=4.0.0",
 	"smithed",
 ]
