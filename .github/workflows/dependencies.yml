@@ -61,7 +61,7 @@ jobs:
               with open(github_env, "a") as env:
                   env.write("DEPS_UPDATED=true\n")
                   env.write("UPDATED_LIST<<EOF\n")
-                  env.write("\n- [X] ".join(updated) + "\n")
+                  env.write("".join(f"\n- [X] {x}" for x in updated) + "\n")
                   env.write("EOF\n")
           else:
               print("All dependencies are up to date.")
