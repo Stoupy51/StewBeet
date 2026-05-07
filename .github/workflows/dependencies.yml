@@ -1,0 +1,84 @@
+name: CI - Check dependency updates
+
+on:
+  schedule:
+    - cron: "0 6 * * *"  # daily at 6am
+  workflow_dispatch:
+
+jobs:
+  check-dependencies:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v5
+      
+      - name: Install uv
+        uses: astral-sh/setup-uv@v8.0.0
+
+      - name: Check for newer versions and update pyproject.toml
+        id: update
+        run: |
+          uv run python - <<'EOF'
+          import json, urllib.request, re, tomllib, sys
+
+          with open("python_package/pyproject.toml", "rb") as f:
+              data = tomllib.load(f)
+
+          with open("python_package/pyproject.toml") as f:
+              content = f.read()
+
+          deps = data.get("project", {}).get("dependencies", [])
+          updated = []
+
+          for dep in deps:
+              # Extract package name and current minimum version from e.g. "stouputils>=1.24.11"
+              match = re.match(r'^([A-Za-z0-9_\-]+)>=([^\s,;"\']+)', dep.strip())
+              if not match:
+                  continue
+              name, current = match.group(1), match.group(2)
+
+              url = f"https://pypi.org/pypi/{name}/json"
+              try:
+                  with urllib.request.urlopen(url) as r:
+                      latest = json.load(r)["info"]["version"]
+              except Exception as e:
+                  print(f"Could not fetch {name}: {e}")
+                  continue
+
+              if current != latest:
+                  content = content.replace(f'"{name}>={current}"', f'"{name}>={latest}"')
+                  updated.append(f"{name}: {current} → {latest}")
+                  print(f"Updated {name}: {current} → {latest}")
+
+          with open("python_package/pyproject.toml", "w") as f:
+              f.write(content)
+
+          if updated:
+              with open("$GITHUB_ENV", "a") as env:
+                  env.write("DEPS_UPDATED=true\n")
+                  env.write(f"UPDATED_LIST={'\\n'.join(updated)}\n")
+          else:
+              print("All dependencies are up to date.")
+          EOF
+
+      - name: Run tests
+        if: env.DEPS_UPDATED == 'true'
+        run: |
+          cd ./python_package && uv run stouputils all_doctests ./stewbeet
+
+      - name: Open PR
+        if: env.DEPS_UPDATED == 'true'
+        uses: peter-evans/create-pull-request@v8.1.1
+        with:
+          commit-message: "chore(deps): 🔧 Update dependencies to latest versions"
+          title: "chore(deps): 🔧 Update dependencies"
+          body: |
+            Automated dependency update — tests passed ✅
+
+            **Updated packages:**
+            ${{ env.UPDATED_LIST }}
+          branch: auto/dep-updates
+          delete-branch: true
