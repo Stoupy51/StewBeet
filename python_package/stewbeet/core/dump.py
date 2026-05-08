@@ -70,7 +70,7 @@ def dump_command() -> None:
     files_added = 0
 
     try:
-        with zipfile.ZipFile(output_name, "w", zipfile.ZIP_DEFLATED) as zip_file:
+        with zipfile.ZipFile(output_name, "w", zipfile.ZIP_DEFLATED, strict_timestamps=False) as zip_file:
             # Walk through all files in the current directory
             for root, dirs, files in os.walk("."):
                 # Get relative path
