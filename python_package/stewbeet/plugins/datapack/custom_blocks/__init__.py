@@ -8,7 +8,7 @@ from beet import Advancement, BlockTag, Context, EntityTypeTag, LootTable, Predi
 from stouputils.typing import JsonDict
 
 from ....core.__memory__ import Mem
-from ....core.cls.block import VANILLA_BLOCK_FOR_ORES, GrowingSeed, GrowingSeedLoot, NoSilkTouchDrop
+from ....core.cls.block import VANILLA_BLOCK_FOR_ORES, Block, GrowingSeed, GrowingSeedLoot, NoSilkTouchDrop
 from ....core.cls.item import Item
 from ....core.constants import (
 	BLOCKS_WITH_INTERFACES,
@@ -120,6 +120,7 @@ execute store result entity @s brightness.sky int 1 run scoreboard players get #
 
 		# Custom block
 		if data.get(VANILLA_BLOCK):
+			obj_block = Block.from_id(item)
 			block: JsonDict = data[VANILLA_BLOCK]
 			path = f"{ns}:custom_blocks/{item}"
 
@@ -133,7 +134,7 @@ execute store result entity @s brightness.sky int 1 run scoreboard players get #
 			)
 
 			# If the block is an item frame custom block, make the search function for placement
-			if obj.base_item == CUSTOM_BLOCK_ALTERNATIVE:
+			if obj_block.base_item == CUSTOM_BLOCK_ALTERNATIVE:
 
 				# Make advancement to detect the item frame placement
 				adv: JsonDict = {
@@ -240,7 +241,7 @@ scoreboard players add #total_{item} {ns}.data 1
 """
 
 				# If CUSTOM_BLOCK_ALTERNATIVE, we need to kill the old item frame
-				if obj.base_item == CUSTOM_BLOCK_ALTERNATIVE:
+				if obj_block.base_item == CUSTOM_BLOCK_ALTERNATIVE:
 					content += "kill @s[type=item_frame]\n"
 
 				# Write the file
@@ -249,8 +250,8 @@ scoreboard players add #total_{item} {ns}.data 1
 				## Secondary function
 				block_id = block_id.replace(":","_")
 				item_model = ""
-				if obj.components.get("item_model"):
-					item_model = f"item replace entity @s contents with {CUSTOM_BLOCK_VANILLA}[item_model=\"{obj.components['item_model']}\"]\n"
+				if obj_block.components.get("item_model"):
+					item_model = f"item replace entity @s contents with {CUSTOM_BLOCK_VANILLA}[item_model=\"{obj_block.components['item_model']}\"]\n"
 				content = f"""
 # Add convention and utils tags, and the custom block tag
 tag @s add global.ignore
@@ -285,6 +286,10 @@ execute if score #rotation {ns}.data matches 4 run data modify entity @s Rotatio
 						'execute align xyz positioned ~0.5 ~ ~0.5 unless entity @e[type=marker,dx=-1,dy=-1,dz=-1,tag=furnace_nbt_recipes.furnace] run '
 						'summon marker ~ ~ ~ {Tags:["furnace_nbt_recipes.furnace"]}\n'
 					)
+
+				# Append custom on_place commands if defined
+				if obj_block.on_place:
+					content += f"\n# Custom on_place commands\n{obj_block.on_place}\n"
 
 				# Write file
 				write_function(f"{path}/place_secondary", content)
@@ -321,7 +326,7 @@ kill @s
 				unique_blocks.add("minecraft:item_frame")
 
 				# Secondary function
-				item_model: str = obj.components.get("item_model", "minecraft:air")
+				item_model: str = obj_block.components.get("item_model", "minecraft:air")
 				content: str = f"""
 # Add convention and utils tags, and the custom block tag
 tag @s remove {ns}.new
@@ -355,12 +360,17 @@ execute if score #rotation {ns}.data matches 2 run data modify entity @s ItemRot
 execute if score #rotation {ns}.data matches 3 run data modify entity @s ItemRotation set value 0b
 execute if score #rotation {ns}.data matches 4 run data modify entity @s ItemRotation set value 2b
 """
+
+				# Append custom on_place commands if defined
+				if obj_block.on_place:
+					content += f"\n# Custom on_place commands\n{obj_block.on_place}\n"
+
 				write_function(f"{ns}:custom_blocks/{item}/place_secondary", content)
 				pass
 
 			# If the block is a growing seed, make the update_seed_model function and call it in the place_secondary function
-			if data.get(GROWING_SEED):
-				growing_seed: GrowingSeed = data[GROWING_SEED]
+			if obj_block.growing_seed:
+				growing_seed: GrowingSeed = obj_block.growing_seed
 				has_growing_seed = True
 				write_function(f"{ns}:custom_blocks/{item}/place_secondary", f"""
 # Update seed model
