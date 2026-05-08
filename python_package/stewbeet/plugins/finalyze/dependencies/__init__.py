@@ -230,8 +230,7 @@ scoreboard players set #dependency_error {ns}.data 0
 		dep_error_msg: str = f'"{project_name} Error: Libraries are missing\\nplease download the right {project_name} datapack\\nor download each of these libraries one by one:"'
 
 		write_versioned_function("load/valid_dependencies", f"""# Waiting for a player to get the game version, but stop function if no player found
-execute unless entity @p run schedule function {ns}:v{version}/load/valid_dependencies 1t replace
-execute unless entity @p run return 0
+execute unless entity @p run return run schedule function {ns}:v{version}/load/valid_dependencies 1t replace
 execute store result score #game_version {ns}.data run data get entity @p DataVersion
 
 # Check if the game version is supported
