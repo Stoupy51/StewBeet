@@ -273,6 +273,30 @@ seed = Block(
 )
 ```
 
+#### **`on_place` — Commandes de placement personnalisées**
+
+Chaîne optionnelle de commandes Minecraft ajoutées à `{ns}:custom_blocks/{id}/place_secondary`, exécutées **en tant qu'entité item display (ou item frame)** juste après la mise en place complète du bloc :
+
+```python
+block = Block(
+    id="my_machine",
+    vanilla_block=VanillaBlock(id="minecraft:furnace"),
+    on_place="tag @s add my_ns.active\nscoreboard players set @s my_ns.energy 0"
+)
+
+# Les chaînes multi-lignes fonctionnent aussi
+block = Block(
+    id="stardust_seed",
+    vanilla_block=VanillaBlock(id="minecraft:wheat"),
+    on_place=(
+        "tag @s add my_ns.seed\n"
+        "scoreboard players add @s my_ns.growth_time 0"
+    )
+)
+```
+
+> **Note** : Les commandes s'exécutent en tant qu'item_display, pas en tant que joueur. Utilisez `execute as @p[tag={ns}.placer]` si vous devez cibler le joueur qui place le bloc.
+
 #### **BlockAlternative et BlockHead**
 
 Types de blocs alternatifs pour des méthodes de placement spéciales :

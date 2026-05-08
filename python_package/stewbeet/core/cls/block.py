@@ -228,7 +228,8 @@ class Block(Item):
     ...         seconds=480,
     ...         planted_on="diamond_block",
     ...         loots=[GrowingSeedLoot(id="stardust_fragment", rolls=3)]
-    ...     )
+    ...     ),
+    ...     on_place="tag @s add seed"
     ... )
     >>> also_obj = Block.from_id("stardust_seed")
     >>> obj is also_obj
@@ -242,6 +243,8 @@ class Block(Item):
     """ If the block is based on a vanilla block, this defines which one and whether to apply facing. """
     no_silk_touch_drop: NoSilkTouchDrop | LootTable | str | None = None
     """ (Optional) No-silk drop mode: deterministic (e.g. `NoSilkTouchDrop(id="raw_simplunium")` or string item id "raw_simplunium") or dynamic (`LootTable` object from beet). """
+    on_place: str | None = None
+    """ (Optional) Text to append to the function ``{ns}:custom_blocks/{id}/place_secondary`` that is executed on block placement as the item display """
 
     # Others
     growing_seed: GrowingSeed | None = None
