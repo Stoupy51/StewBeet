@@ -1,0 +1,8 @@
+stewbeet.plugins.auto.headers.execution\_parser module
+======================================================
+
+.. automodule:: stewbeet.plugins.auto.headers.execution_parser
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
