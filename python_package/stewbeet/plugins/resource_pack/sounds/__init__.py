@@ -6,6 +6,7 @@ from collections import defaultdict
 
 import stouputils as stp
 from beet import Context, Sound
+from mutagen.oggvorbis import OggVorbis
 
 from ....core.utils.sounds import add_sound
 
@@ -81,11 +82,26 @@ def beet_default(ctx: Context):
 			# For subtitle, strip trailing numbers and underscores to avoid "Wolf Howl 1", "Wolf Howl 2"
 			subtitle = re.sub(r'[_\s]*\d+$', '', variant_name).strip()
 
+			# Get stream boolean if longer than 10 seconds
+			source_path: str = stp.clean_path(f"{sounds_folder}/{variant_rel_sound}")
+			try:
+				audio = OggVorbis(source_path)
+				stream = audio.info and audio.info.length > 10.0
+			except Exception:
+				stream = False
+
 			# Create Sound object for this variant
-			sounds[variant_name.lower().replace(" ","_")] = Sound(
-				source_path=stp.clean_path(f"{sounds_folder}/{variant_rel_sound}"),
-				subtitle=subtitle
-			)
+			if stream:
+				sounds[variant_name.lower().replace(" ","_")] = Sound(
+					source_path=source_path,
+					subtitle=subtitle,
+					stream=True
+				)
+			else:
+				sounds[variant_name.lower().replace(" ","_")] = Sound(
+					source_path=source_path,
+					subtitle=subtitle,
+				)
 
 		# Add all variants to the sound system
 		add_sound(ctx, sounds, base_name)
