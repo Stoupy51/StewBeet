@@ -322,6 +322,36 @@ def super_merge_dict(dict1: JsonDict, dict2: JsonDict) -> JsonDict:
 		dict2 (dict): The second dictionnary
 	Returns:
 		dict: The merged dictionnary
+
+	Examples:
+		New key from dict2 is added:
+		>>> super_merge_dict({"a": 1}, {"b": 2})
+		{'a': 1, 'b': 2}
+
+		Scalar value from dict2 overwrites dict1:
+		>>> super_merge_dict({"a": 1}, {"a": 99})
+		{'a': 99}
+
+		Nested dicts are merged recursively:
+		>>> super_merge_dict({"nested": {"x": 1, "y": 2}}, {"nested": {"y": 99, "z": 3}})
+		{'nested': {'x': 1, 'y': 99, 'z': 3}}
+
+		Lists of non-dicts are concatenated and deduplicated:
+		>>> super_merge_dict({"tags": ["a", "b"]}, {"tags": ["b", "c"]})
+		{'tags': ['a', 'b', 'c']}
+
+		Lists containing dicts are concatenated without deduplication:
+		>>> result = super_merge_dict({"items": [{"id": 1}]}, {"items": [{"id": 2}]})
+		>>> result["items"]
+		[{'id': 1}, {'id': 2}]
+
+		Original dicts are not modified:
+		>>> d1, d2 = {"a": 1}, {"a": 2, "b": 3}
+		>>> _ = super_merge_dict(d1, d2)
+		>>> d1
+		{'a': 1}
+		>>> d2
+		{'a': 2, 'b': 3}
 	"""
 	# Copy first dictionnary
 	new_dict: JsonDict = {}

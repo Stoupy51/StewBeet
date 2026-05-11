@@ -18,6 +18,43 @@ def parse_execution_context_from_line(line: str) -> str | None:
 
     Returns:
         str | None: The execution context, or None if default
+
+    Examples:
+        Non-execute command returns None:
+        >>> parse_execution_context_from_line("say hello") is None
+        True
+
+        Simple 'as' selector:
+        >>> parse_execution_context_from_line("execute as @s run function test:func")
+        'as @s'
+
+        'as' with entity selector filter:
+        >>> parse_execution_context_from_line("execute as @e[type=zombie] run function test:func")
+        'as @e[type=zombie]'
+
+        Combined 'as' and 'at':
+        >>> parse_execution_context_from_line("execute as @e[type=zombie] at @s run function test:func")
+        'as @e[type=zombie] & at @s'
+
+        Dimension context with 'in':
+        >>> parse_execution_context_from_line("execute in minecraft:overworld run function test:func")
+        'in minecraft:overworld'
+
+        Positioned context with coordinates:
+        >>> parse_execution_context_from_line("execute positioned 0 64 0 run function test:func")
+        'positioned 0 64 0'
+
+        Rotated context:
+        >>> parse_execution_context_from_line("execute rotated 90 0 run function test:func")
+        'rotated 90 0'
+
+        Facing entity:
+        >>> parse_execution_context_from_line("execute facing entity @s feet run function test:func")
+        'facing entity @s feet'
+
+        No execute keywords (only unknown parts) returns None:
+        >>> parse_execution_context_from_line("execute if score @s data matches 1 run function test:func") is None
+        True
     """
     line = line.strip()
 

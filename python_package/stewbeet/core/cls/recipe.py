@@ -93,6 +93,27 @@ class CraftingShapedRecipe(RecipeBase):
     {'item': 'minecraft:iron_ingot'}
     >>> recipe.ingredients['C']
     {'components': {'minecraft:custom_data': {'detected_namespace': {'simplunium_ingot': True}}}}
+
+    Shape exceeding 3 rows raises ValueError:
+    >>> try:
+    ...     CraftingShapedRecipe(shape=["I", "I", "I", "I"], ingredients={"I": Ingr("minecraft:iron_ingot")})
+    ... except ValueError as e:
+    ...     "3 rows" in str(e)
+    True
+
+    Symbol defined in ingredients but absent from shape raises ValueError:
+    >>> try:
+    ...     CraftingShapedRecipe(shape=["II"], ingredients={"I": Ingr("minecraft:iron_ingot"), "X": Ingr("minecraft:gold_ingot")})
+    ... except ValueError as e:
+    ...     "must appear in the shape" in str(e)
+    True
+
+    Rows with inconsistent lengths raise ValueError:
+    >>> try:
+    ...     CraftingShapedRecipe(shape=["II", "I"], ingredients={"I": Ingr("minecraft:iron_ingot")})
+    ... except ValueError as e:
+    ...     "same number of columns" in str(e)
+    True
     """
     shape: list[str]
     """ The shape pattern for the crafting recipe. """
@@ -134,6 +155,13 @@ class CraftingShapelessRecipe(RecipeBase):
     2
     >>> recipe.type
     'crafting_shapeless'
+
+    Non-list ingredients raises ValueError:
+    >>> try:
+    ...     CraftingShapelessRecipe(ingredients=Ingr("minecraft:iron_ingot"))  # type: ignore[arg-type]
+    ... except ValueError as e:
+    ...     "must be a list" in str(e)
+    True
     """
     ingredients: list[Ingr]
     """ List of ingredient specifications for shapeless crafting. """
@@ -157,6 +185,20 @@ class SmeltingRecipe(RecipeBase):
     0.7
     >>> recipe.cookingtime
     200
+
+    Non-numeric experience raises ValueError:
+    >>> try:
+    ...     SmeltingRecipe(ingredient=Ingr("minecraft:iron_ore"), experience="high", cookingtime=200)  # type: ignore[arg-type]
+    ... except ValueError as e:
+    ...     "Experience must be a float or int" in str(e)
+    True
+
+    Non-integer cookingtime raises ValueError:
+    >>> try:
+    ...     SmeltingRecipe(ingredient=Ingr("minecraft:iron_ore"), experience=0.7, cookingtime=1.5)  # type: ignore[arg-type]
+    ... except ValueError as e:
+    ...     "Cookingtime must be an int" in str(e)
+    True
     """
     ingredient: Ingr
     """ The ingredient to be smelted. """

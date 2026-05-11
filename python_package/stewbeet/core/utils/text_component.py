@@ -17,6 +17,31 @@ def text_component_to_str(tc: TextComponent) -> str:
 		tc (TextComponent): The TextComponent to convert
 	Returns:
 		str: The converted string
+
+	Examples:
+		Plain string passes through unchanged:
+		>>> text_component_to_str("hello")
+		'hello'
+
+		List of strings is concatenated:
+		>>> text_component_to_str(["hello", " ", "world"])
+		'hello world'
+
+		Dict with 'text' key returns the text value:
+		>>> text_component_to_str({"text": "Hello"})
+		'Hello'
+
+		Dict with 'text' and 'extra' recurses into extra:
+		>>> text_component_to_str({"text": "Hello", "extra": [{"text": " World"}]})
+		'Hello World'
+
+		Dict without 'text' key returns empty string:
+		>>> text_component_to_str({"color": "red"})
+		''
+
+		Nested list inside extra is recursed:
+		>>> text_component_to_str({"text": "A", "extra": ["B", {"text": "C"}]})
+		'ABC'
 	"""
 	if isinstance(tc, str):
 		return tc
