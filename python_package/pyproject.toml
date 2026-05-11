@@ -32,7 +32,7 @@ dependencies = [
 	"mutagen>=1.47.0",
 	"pyperclip>=1.11.0",
 	"fsspec>=2026.4.0",
-	"paramiko>=4.0.0",
+	"paramiko>=5.0.0",
 	"smithed",
 ]
 
