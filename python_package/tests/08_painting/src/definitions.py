@@ -1,6 +1,7 @@
 
 # Imports
 from beet import Context
+
 from stewbeet import *  # type: ignore
 
 
@@ -29,6 +30,7 @@ def beet_default(ctx: Context):
     Painting(
         id="test_painting_defaults",
         painting_data=PaintingData(
+            # texture defaults to "test_painting_defaults" (same as item id)
             width=1, height=1
         ),
         recipes=[

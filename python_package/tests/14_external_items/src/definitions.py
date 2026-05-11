@@ -1,12 +1,12 @@
 
 # Imports
 from beet import Context
+
 from stewbeet import *  # type: ignore
 
 
 # Main entry point
 def beet_default(ctx: Context):
-    ns: str = ctx.project_id
 
     # Define an ExternalItem from another datapack with predicate-based matching
     ExternalItem(
@@ -60,3 +60,4 @@ def beet_default(ctx: Context):
     add_item_name_and_lore_if_missing()
     add_item_name_and_lore_if_missing(is_external=True)
     add_private_custom_data_for_namespace()
+

@@ -1,6 +1,7 @@
 
 # Imports
 from beet import Context
+
 from stewbeet import *  # type: ignore
 
 # Additional imports (specific to this project)

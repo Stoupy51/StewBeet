@@ -38,3 +38,8 @@ meta:
     mecha:
         multiline: true
         formatting: preserve
+
+    stewbeet:
+        # Reference the extensive template's assets (relative to this test folder)
+        textures_folder: "../../../templates/extensive/assets/textures"
+

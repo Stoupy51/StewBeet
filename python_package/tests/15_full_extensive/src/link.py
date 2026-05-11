@@ -1,14 +1,13 @@
 
 # Imports
 from beet import Context
-from stouputils.typing import JsonDict
+
 from stewbeet import *  # type: ignore
 
 
 # Main entry point (ran just before making finalyzing the build process (zip, headers, lang, ...))
 def beet_default(ctx: Context):
     ns: str = ctx.project_id
-    definitions: JsonDict = Mem.definitions # type: ignore
 
     # Generate ores in the world
     CustomOreGeneration.all_with_config(ore_configs = {

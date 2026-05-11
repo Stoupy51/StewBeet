@@ -32,5 +32,5 @@ jobs:
       - name: Run doctests with python ${{ inputs.python-version }}
         run: cd ./python_package && uv run stouputils all_doctests ./stewbeet
       - name: Run integration tests with python ${{ inputs.python-version }}
-        run: cd ./python_package && uv run python scripts/run_integration_tests.py
+        run: cd ./python_package && uv run scripts/run_integration_tests.py
 

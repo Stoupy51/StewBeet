@@ -1,17 +1,20 @@
 
 # Imports
-import os
 import subprocess
 import sys
 from pathlib import Path
 
 import stouputils as stp
 
+# Constants
+ROOT: str = stp.get_root_path(__file__, go_up=1)
+TESTS_FOLDER: str = f"{ROOT}/tests"
+
 
 # Main
 @stp.measure_time(printer=stp.info, message="All integration tests finished")
 def main() -> None:
-    tests_dir: Path = Path(__file__).parent.parent / "tests"
+    tests_dir: Path = Path(TESTS_FOLDER)
     test_folders: list[Path] = sorted(p.parent for p in tests_dir.glob("*/beet.yml"))
 
     if not test_folders:
@@ -25,9 +28,9 @@ def main() -> None:
         test_name: str = test_dir.name
         stp.info(f"Running: {test_name}")
 
-        # Run beet build in the test folder using the same Python interpreter
+        # Run stewbeet in the test folder using the same Python interpreter
         result: subprocess.CompletedProcess[str] = subprocess.run(
-            [sys.executable, "-m", "beet", "build", "-q"],
+            [sys.executable, "-m", "stewbeet"],
             cwd=test_dir,
             capture_output=True,
             text=True,
