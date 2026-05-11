@@ -11,4 +11,5 @@ upload.py
 perf.html
 .beet_cache
 .vscode
+uv.lock
 
