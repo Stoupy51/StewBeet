@@ -315,13 +315,13 @@ def write_scheduled_function(
 
 # Merge two dict recuirsively
 def super_merge_dict(dict1: JsonDict, dict2: JsonDict) -> JsonDict:
-	""" Merge the two dictionnaries recursively without modifying originals
+	""" Merge the two dictionaries recursively without modifying originals
 
 	Args:
-		dict1 (dict): The first dictionnary
-		dict2 (dict): The second dictionnary
+		dict1 (dict): The first dictionary
+		dict2 (dict): The second dictionary
 	Returns:
-		dict: The merged dictionnary
+		dict: The merged dictionary
 
 	Examples:
 		New key from dict2 is added:
@@ -353,7 +353,7 @@ def super_merge_dict(dict1: JsonDict, dict2: JsonDict) -> JsonDict:
 		>>> d2
 		{'a': 2, 'b': 3}
 	"""
-	# Copy first dictionnary
+	# Copy first dictionary
 	new_dict: JsonDict = {}
 	for key, value in dict1.items():
 		new_dict[key] = value

@@ -31,7 +31,7 @@ def result_count_to_suffix(result_count: int | JsonDict) -> str:
 		>>> result_count_to_suffix({"min": 4, "max": 6})
 		'_x4to6'
 
-		Range where only min > 1 (max == 1):
+		Range where min > max (degenerate range: only _xMIN suffix emitted since max <= 1):
 		>>> result_count_to_suffix({"min": 3, "max": 1})
 		'_x3'
 
