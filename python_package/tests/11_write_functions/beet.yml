@@ -1,0 +1,41 @@
+
+# Test 11 - Write Functions
+# Tests: write_function, write_load_file, write_versioned_function, write_tick_file
+id: "test_ns"
+name: "Test Write Functions"
+author: "Tester"
+version: "1.0.0"
+minecraft: "26.1"
+directory: "."
+output: "build"
+
+require:
+    - "stewbeet"
+    - "bolt"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+pipeline:
+    - "src.definitions"
+    - "stewbeet.plugins.custom_recipes"
+    - "stewbeet.plugins.datapack.loading"
+    - "stewbeet.plugins.datapack.custom_blocks"
+    - "stewbeet.plugins.datapack.loot_tables"
+    - "stewbeet.plugins.datapack.sorters"
+    - "src.link"
+    - "mecha"
+    - "stewbeet.plugins.finalyze.custom_blocks_ticking"
+    - "stewbeet.plugins.finalyze.basic_datapack_structure"
+    - "stewbeet.plugins.finalyze.dependencies"
+    - "stewbeet.plugins.finalyze.unload"
+    - "stewbeet.plugins.finalyze.last_final"
+    - "stewbeet.plugins.auto.scoreboard_constants"
+    - "stewbeet.plugins.auto.lang_file"
+    - "stewbeet.plugins.auto.headers"
+
+meta:
+    mecha:
+        multiline: true
+        formatting: preserve
