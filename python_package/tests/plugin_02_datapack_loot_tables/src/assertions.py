@@ -36,6 +36,9 @@ def beet_default(ctx: Context):
     assert f"{ns}:_give_all" in ctx.data.functions, \
         "_give_all function must be generated"
     give_all_text: str = ctx.data.functions[f"{ns}:_give_all"].text
+    # The function packs all non-hidden items into chests via 'give @s chest[...]'
+    assert "give @s chest" in give_all_text, \
+        "_give_all must use 'give @s chest' to distribute items"
     assert "obtainable" in give_all_text, \
         "_give_all must include obtainable"
     assert "bulk_item" in give_all_text, \

@@ -10,9 +10,9 @@ def beet_default(ctx: Context):
     ns: str = ctx.project_id
 
     # ── datapack: painting_variant JSON files ─────────────────────────────────
-    assert f"{ns}:test_painting" in ctx.data[ns].painting_variants, \
+    assert "test_painting" in ctx.data[ns].painting_variants, \
         "test_painting must have a painting_variant in the datapack"
-    assert f"{ns}:stewbeet_painting" in ctx.data[ns].painting_variants, \
+    assert "stewbeet_painting" in ctx.data[ns].painting_variants, \
         "stewbeet_painting must have a painting_variant in the datapack"
 
     # Explicit painting: author and title must be set
@@ -34,14 +34,13 @@ def beet_default(ctx: Context):
         "stewbeet_painting variant must contain the project_author as default"
 
     # ── resource pack: painting textures ──────────────────────────────────────
-    assert f"{ns}:painting/stewbeet_painting_2x2" in ctx.assets[ns].textures, \
+    assert "painting/stewbeet_painting_2x2" in ctx.assets[ns].textures, \
         "2x2 painting texture must be added to the resource pack"
-    assert f"{ns}:painting/stewbeet_painting" in ctx.assets[ns].textures, \
+    assert "painting/stewbeet_painting" in ctx.assets[ns].textures, \
         "stewbeet_painting texture must be added to the resource pack"
 
     # ── datapack: placeable painting tag ─────────────────────────────────────
-    placeable_tag: str = "minecraft:placeable"
-    assert placeable_tag in ctx.data["minecraft"].painting_variant_tags, \
+    assert "placeable" in ctx.data["minecraft"].painting_variant_tags, \
         "minecraft:placeable painting_variant_tag must be created"
     placeable_text: str = ctx.data["minecraft"].painting_variant_tags["placeable"].text
     assert f"{ns}:test_painting" in placeable_text, \

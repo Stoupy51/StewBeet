@@ -57,10 +57,10 @@ def beet_default(ctx: Context):
     assert "facing=" in place_main_content, \
         "block_with_facing/place_main must set a facing blockstate"
 
-    # block_visual_facing must call get_rotation in place_main (for the display rotation)
-    visual_main_content: str = ctx.data.functions[f"{ns}:custom_blocks/block_visual_facing/place_main"].text
-    assert f"function {ns}:custom_blocks/get_rotation" in visual_main_content, \
-        "block_visual_facing/place_main must call get_rotation"
+    # block_visual_facing must call get_rotation in search (before entity spawn)
+    search_visual_content: str = ctx.data.functions[f"{ns}:custom_blocks/block_visual_facing/search"].text
+    assert f"function {ns}:custom_blocks/get_rotation" in search_visual_content, \
+        "block_visual_facing/search must call get_rotation"
 
     # ── per-block functions — BlockAlternative (contents / item_frame) ────────
     assert f"{ns}:custom_blocks/block_contents/place_main" in ctx.data.functions, \

@@ -10,7 +10,7 @@ def beet_default(ctx: Context):
     ns: str = ctx.project_id
 
     # ── simpledrawer:material function tag ────────────────────────────────────
-    assert "simpledrawer:material" in ctx.data["simpledrawer"].function_tags, \
+    assert "material" in ctx.data["simpledrawer"].function_tags, \
         "simpledrawer:material function tag must be created"
     tag_text: str = ctx.data["simpledrawer"].function_tags["material"].text
     assert f"{ns}:calls/simpledrawer/material" in tag_text, \
