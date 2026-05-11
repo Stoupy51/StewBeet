@@ -1,0 +1,34 @@
+
+# Test: stewbeet.plugins.datapack.custom_blocks
+# Verifies facing predicates, light predicates, get_rotation,
+# and per-block place/secondary functions for every VanillaBlock variant.
+
+id: "tns"
+name: "Test Datapack Custom Blocks"
+version: "1.0.0"
+author: "test"
+minecraft: "26.1"
+
+directory: "."
+output: "build"
+
+require:
+    - "stewbeet"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+resource_pack:
+    name: "resource_pack"
+    load: ["src"]
+
+pipeline:
+    - "src.definitions"
+    - "stewbeet.plugins.datapack.custom_blocks"
+    - "src.assertions"
+
+meta:
+    stewbeet:
+        source_lore: "auto"
+        textures_folder: "../../../../templates/extensive/assets/textures"

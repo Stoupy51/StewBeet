@@ -1,0 +1,40 @@
+
+# Test: stewbeet.plugins.finalyze.custom_blocks_ticking
+# Verifies that custom blocks whose tick/second functions exist get:
+#   - place_secondary updated with tag-add + counter-increment commands
+#   - destroy updated with counter-decrement command
+#   - versioned tick/second functions updated with dispatch logic
+
+id: "tns"
+name: "Test Finalyze Custom Blocks Ticking"
+version: "1.0.0"
+author: "test"
+minecraft: "26.1"
+
+directory: "."
+output: "build"
+
+require:
+    - "stewbeet"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+resource_pack:
+    name: "resource_pack"
+    load: ["src"]
+
+pipeline:
+    - "src.definitions"
+    - "stewbeet.plugins.datapack.loading"
+    - "stewbeet.plugins.datapack.custom_blocks"
+    - "stewbeet.plugins.finalyze.dependencies"
+    - "src.link"
+    - "stewbeet.plugins.finalyze.custom_blocks_ticking"
+    - "src.assertions"
+
+meta:
+    stewbeet:
+        source_lore: "auto"
+        textures_folder: "../../../../templates/extensive/assets/textures"

@@ -1,0 +1,33 @@
+
+# Test: stewbeet.plugins.custom_recipes (furnace NBT part)
+# Verifies smelting and blasting recipes generate furnace_nbt_recipes vanilla
+# recipe files and the corresponding mcfunction dispatch files.
+
+id: "tns"
+name: "Test Custom Recipes Furnace"
+version: "1.0.0"
+author: "test"
+minecraft: "26.1"
+
+directory: "."
+output: "build"
+
+require:
+    - "stewbeet"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+resource_pack:
+    name: "resource_pack"
+    load: ["src"]
+
+pipeline:
+    - "src.definitions"
+    - "stewbeet.plugins.custom_recipes"
+    - "src.assertions"
+
+meta:
+    stewbeet:
+        source_lore: "auto"

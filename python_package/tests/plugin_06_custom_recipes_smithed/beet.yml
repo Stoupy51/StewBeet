@@ -1,0 +1,33 @@
+
+# Test: stewbeet.plugins.custom_recipes (smithed crafter part)
+# Verifies that shaped and shapeless Smithed Crafter recipe functions are generated
+# with correct predicate content.
+
+id: "tns"
+name: "Test Custom Recipes Smithed"
+version: "1.0.0"
+author: "test"
+minecraft: "26.1"
+
+directory: "."
+output: "build"
+
+require:
+    - "stewbeet"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+resource_pack:
+    name: "resource_pack"
+    load: ["src"]
+
+pipeline:
+    - "src.definitions"
+    - "stewbeet.plugins.custom_recipes"
+    - "src.assertions"
+
+meta:
+    stewbeet:
+        source_lore: "auto"
