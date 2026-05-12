@@ -7,8 +7,8 @@ from beet import Context
 
 # Main entry point
 def beet_default(ctx: Context):
-    # ── enchantplus:veinminer block tag must be created ───────────────────────
-    assert "enchantplus:veinminer" in ctx.data["enchantplus"].block_tags, \
+    # ── enchantplus block tag must be created ─────────────────────────────────
+    assert "veinminer" in ctx.data["enchantplus"].block_tags, \
         "enchantplus:veinminer block tag must be generated"
 
     veinminer_text: str = ctx.data["enchantplus"].block_tags["veinminer"].text

@@ -41,7 +41,7 @@ def beet_default(ctx: Context):
     stonecutting_data: dict = ctx.data[ns].recipes["stone_slab"].data
     assert stonecutting_data.get("type") == "minecraft:stonecutting", \
         "stone_slab recipe must be of type stonecutting"
-    assert stonecutting_data.get("count") == 2, \
+    assert stonecutting_data["result"].get("count") == 2, \
         "stonecutting result_count must be 2"
 
     # ── smithing transform recipe ─────────────────────────────────────────────
