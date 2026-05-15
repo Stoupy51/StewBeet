@@ -1,0 +1,20 @@
+
+name: Duplicate code check
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  jscpd:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install jscpd
+        run: npm install -g jscpd
+      - name: Run duplicate detection
+        run: jscpd ./python_package/stewbeet -r consoleFull
+
