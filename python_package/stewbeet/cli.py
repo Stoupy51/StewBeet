@@ -116,9 +116,13 @@ def main() -> None:
         if current_dir not in sys.path:
             sys.path.insert(0, current_dir)
 
+        # Stop callback when an error occurs during plugin import
+        def stop_callback(exception: BaseException) -> None:
+            sys.exit(1)
+
         # Try to import all pipeline
         for plugin in cfg.pipeline:
-            stp.handle_error(importlib.import_module, error_log=stp.LogLevels.WARNING_TRACEBACK)(plugin)
+            stp.handle_error(importlib.import_module, error_log=stp.LogLevels.WARNING_TRACEBACK, callback=stop_callback)(plugin)
 
         # Run beet with all remaining arguments
         from beet.toolchain.cli import main as beet_main
