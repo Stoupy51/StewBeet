@@ -1,0 +1,36 @@
+
+# Test: stewbeet.plugins.finalyze.basic_datapack_structure
+# Verifies that timer functions (tick_2, second) receive reset commands prepended,
+# and the main tick function gets timer increment + conditional call logic.
+
+id: "tns"
+name: "Test Finalyze Basic Structure"
+version: "1.0.0"
+author: "test"
+minecraft: "26.1"
+
+directory: "."
+output: "build"
+
+require:
+    - "stewbeet"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+resource_pack:
+    name: "resource_pack"
+    load: ["src"]
+
+pipeline:
+    - "src.definitions"
+    - "stewbeet.plugins.datapack.loading"
+    - "stewbeet.plugins.finalyze.dependencies"
+    - "src.link"
+    - "stewbeet.plugins.finalyze.basic_datapack_structure"
+    - "src.assertions"
+
+meta:
+    stewbeet:
+        source_lore: "auto"

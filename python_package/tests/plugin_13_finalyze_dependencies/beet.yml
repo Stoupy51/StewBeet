@@ -1,0 +1,34 @@
+
+# Test: stewbeet.plugins.finalyze.dependencies
+# Verifies the full Lantern Load setup: minecraft:load tag, load:_private/init function,
+# load:load tag referencing this pack, and the {ns}:load tag.
+
+id: "tns"
+name: "Test Finalyze Dependencies"
+version: "1.0.0"
+author: "test"
+minecraft: "26.1"
+
+directory: "."
+output: "build"
+
+require:
+    - "stewbeet"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+resource_pack:
+    name: "resource_pack"
+    load: ["src"]
+
+pipeline:
+    - "src.definitions"
+    - "stewbeet.plugins.datapack.loading"
+    - "stewbeet.plugins.finalyze.dependencies"
+    - "src.assertions"
+
+meta:
+    stewbeet:
+        source_lore: "auto"

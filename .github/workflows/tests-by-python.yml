@@ -29,6 +29,8 @@ jobs:
           cd ./python_package
           uv venv
           uv pip install -e .
-      - name: Run tests with python ${{ inputs.python-version }}
+      - name: Run doctests with python ${{ inputs.python-version }}
         run: cd ./python_package && uv run stouputils all_doctests ./stewbeet
+      - name: Run integration tests with python ${{ inputs.python-version }}
+        run: cd ./python_package && uv run scripts/run_integration_tests.py
 

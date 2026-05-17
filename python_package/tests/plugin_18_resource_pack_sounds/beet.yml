@@ -1,0 +1,34 @@
+
+# Test: stewbeet.plugins.resource_pack.sounds
+# Verifies that OGG files are grouped by common base name (numbered variants),
+# individual sounds are kept as-is, and sounds.json is correctly generated.
+
+id: "tns"
+name: "Test Resource Pack Sounds"
+version: "1.0.0"
+author: "test"
+minecraft: "26.1"
+
+directory: "."
+output: "build"
+
+require:
+    - "stewbeet"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+resource_pack:
+    name: "resource_pack"
+    load: ["src"]
+
+pipeline:
+    - "src.definitions"
+    - "stewbeet.plugins.resource_pack.sounds"
+    - "src.assertions"
+
+meta:
+    stewbeet:
+        source_lore: "auto"
+        sounds_folder: "../../../templates/extensive/assets/sounds"

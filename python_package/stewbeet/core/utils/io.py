@@ -315,15 +315,28 @@ def write_scheduled_function(
 
 # Merge two dict recuirsively
 def super_merge_dict(dict1: JsonDict, dict2: JsonDict) -> JsonDict:
-	""" Merge the two dictionnaries recursively without modifying originals
+	""" Merge the two dictionaries recursively without modifying originals
 
 	Args:
-		dict1 (dict): The first dictionnary
-		dict2 (dict): The second dictionnary
+		dict1 (dict): The first dictionary
+		dict2 (dict): The second dictionary
 	Returns:
-		dict: The merged dictionnary
+		dict: The merged dictionary
+
+	Examples:
+		>>> super_merge_dict({"a": 1}, {"b": 2})
+		{'a': 1, 'b': 2}
+		>>> super_merge_dict({"a": 1}, {"a": 99})
+		{'a': 99}
+		>>> super_merge_dict({"nested": {"x": 1, "y": 2}}, {"nested": {"y": 99, "z": 3}})
+		{'nested': {'x': 1, 'y': 99, 'z': 3}}
+		>>> super_merge_dict({"tags": ["a", "b"]}, {"tags": ["b", "c"]})
+		{'tags': ['a', 'b', 'c']}
+		>>> result = super_merge_dict({"items": [{"id": 1}]}, {"items": [{"id": 2}]})
+		>>> result["items"]
+		[{'id': 1}, {'id': 2}]
 	"""
-	# Copy first dictionnary
+	# Copy first dictionary
 	new_dict: JsonDict = {}
 	for key, value in dict1.items():
 		new_dict[key] = value

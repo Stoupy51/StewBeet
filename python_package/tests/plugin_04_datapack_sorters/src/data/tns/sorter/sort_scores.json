@@ -1,0 +1,11 @@
+{
+    "algorithm": "selection_sort",
+    "functions_location": "tns:utils/sort_scores",
+    "to_sort": {
+        "storage": "tns:data",
+        "target": "all.players"
+    },
+    "key": "score",
+    "scale": 100,
+    "limit": 10
+}

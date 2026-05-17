@@ -1,0 +1,34 @@
+
+# Test: stewbeet.plugins.auto.headers
+# Verifies that every function in the data pack receives a "#>" header line
+# and that caller/callee relationships are captured in @within comments.
+
+id: "tns"
+name: "Test Auto Headers"
+version: "1.0.0"
+author: "test"
+minecraft: "26.1"
+
+directory: "."
+output: "build"
+
+require:
+    - "stewbeet"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+resource_pack:
+    name: "resource_pack"
+    load: ["src"]
+
+pipeline:
+    - "src.definitions"
+    - "src.link"
+    - "stewbeet.plugins.auto.headers"
+    - "src.assertions"
+
+meta:
+    stewbeet:
+        source_lore: "auto"

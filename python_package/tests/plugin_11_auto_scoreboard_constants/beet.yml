@@ -1,0 +1,36 @@
+
+# Test: stewbeet.plugins.auto.scoreboard_constants
+# Verifies that #{integer} ns.data patterns in functions are detected and
+# the corresponding "scoreboard players set" commands are added to the load file.
+
+id: "tns"
+name: "Test Auto Scoreboard Constants"
+version: "1.0.0"
+author: "test"
+minecraft: "26.1"
+
+directory: "."
+output: "build"
+
+require:
+    - "stewbeet"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+resource_pack:
+    name: "resource_pack"
+    load: ["src"]
+
+pipeline:
+    - "src.definitions"
+    - "stewbeet.plugins.datapack.loading"
+    - "stewbeet.plugins.finalyze.dependencies"
+    - "src.link"
+    - "stewbeet.plugins.auto.scoreboard_constants"
+    - "src.assertions"
+
+meta:
+    stewbeet:
+        source_lore: "auto"

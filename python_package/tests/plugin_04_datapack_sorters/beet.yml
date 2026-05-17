@@ -1,0 +1,33 @@
+
+# Test: stewbeet.plugins.datapack.sorters
+# Verifies that a programmatically defined sorter produces the expected
+# sorting functions (compare, swap, main sort loop).
+
+id: "tns"
+name: "Test Datapack Sorters"
+version: "1.0.0"
+author: "test"
+minecraft: "26.1"
+
+directory: "."
+output: "build"
+
+require:
+    - "stewbeet"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+resource_pack:
+    name: "resource_pack"
+    load: ["src"]
+
+pipeline:
+    - "src.definitions"
+    - "stewbeet.plugins.datapack.sorters"
+    - "src.assertions"
+
+meta:
+    stewbeet:
+        source_lore: "auto"
