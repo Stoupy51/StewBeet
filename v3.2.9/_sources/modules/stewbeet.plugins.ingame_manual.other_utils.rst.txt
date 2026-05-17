@@ -1,0 +1,8 @@
+stewbeet.plugins.ingame\_manual.other\_utils module
+===================================================
+
+.. automodule:: stewbeet.plugins.ingame_manual.other_utils
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

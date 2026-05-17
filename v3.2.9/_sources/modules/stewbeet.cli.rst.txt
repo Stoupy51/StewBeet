@@ -1,0 +1,8 @@
+stewbeet.cli module
+===================
+
+.. automodule:: stewbeet.cli
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
