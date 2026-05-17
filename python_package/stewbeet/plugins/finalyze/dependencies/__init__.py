@@ -73,7 +73,7 @@ def beet_default(ctx: Context) -> None:
 	newly_found_libs: list[str] = []
 
 	# Find if furnace_nbt_recipes, common_signals, realistic_explosion, itemio are used
-	for lib in ["furnace_nbt_recipes", "common_signals", "realistic_explosion", "itemio", "smithed.actionbar"]:
+	for lib in ["furnace_nbt_recipes", "common_signals", "realistic_explosion", "itemio", "smithed.actionbar", "player_motion"]:
 		if ns != lib:
 			for function in ctx.data.functions.values():
 				if lib in function.text:
@@ -98,10 +98,10 @@ def beet_default(ctx: Context) -> None:
 	get_lib_paths(ctx)
 
 	# Get all dependencies (official and custom)
-	dependencies: list[tuple[str, JsonDict]] = [(lib_ns, data) for lib_ns, data in OFFICIAL_LIBS.items() if data["is_used"]]
-	load_dependencies: JsonDict = ctx.meta.get("stewbeet", {}).get("load_dependencies", {})
+	dependencies: list[tuple[str, JsonDict]] = [(lib_ns, data) for lib_ns, data in OFFICIAL_LIBS.items() if data["is_used"] and not data.get("no_lantern_load", False)]
+	load_dependencies: list[tuple[str, JsonDict]] = list(ctx.meta.get("stewbeet", {}).get("load_dependencies", {}).items())
 	if load_dependencies:
-		dependencies += list(load_dependencies.items())
+		dependencies += [(k, v) for k, v in load_dependencies if not v.get("no_lantern_load", False)]
 	# Setup Lantern Load
 	write_tag("minecraft:load", ctx.data.function_tags, ["#load:_private/load"])
 	write_tag("load:_private/init", ctx.data.function_tags, ["load:_private/init"])

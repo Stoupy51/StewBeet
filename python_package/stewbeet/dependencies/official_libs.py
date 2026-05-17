@@ -13,7 +13,6 @@ def official_lib_used(lib: str) -> bool:
 # Modrinth entries can have: modrinth_slug
 # Static entries have: static_urls {(mc_ver_tuple, dep_ver_tuple): url}
 # Bookshelf modules are merged with source="smithed" (smithed_id derived from bs.X → bookshelf-X)
-# TODO: Add support for "no_lantern_load" for libs that don't implement LanternLoad
 OFFICIAL_LIBS: dict[str, JsonDict] = {
 
     # Smithed API libs
