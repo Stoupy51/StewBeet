@@ -2,7 +2,7 @@
 # Assertions for: stewbeet.plugins.custom_recipes (furnace NBT handler)
 
 # Imports
-from beet import Context
+from stewbeet import Context, JsonDict
 
 
 # Main entry point
@@ -15,7 +15,7 @@ def beet_default(ctx: Context):
     smelting_recipe: str = "vanilla_items/smelting__raw_iron__tns_smelted_bar"
     assert smelting_recipe in ctx.data["furnace_nbt_recipes"].recipes, \
         f"Expected smelting vanilla recipe: {smelting_recipe}"
-    smelting_data: dict = ctx.data["furnace_nbt_recipes"].recipes[smelting_recipe].data
+    smelting_data: JsonDict = ctx.data["furnace_nbt_recipes"].recipes[smelting_recipe].data
     assert smelting_data.get("type") == "minecraft:smelting", \
         "smelting recipe must have type minecraft:smelting"
     assert smelting_data.get("cookingtime") == 200, \
@@ -25,7 +25,7 @@ def beet_default(ctx: Context):
     blasting_recipe: str = "vanilla_items/blasting__raw_iron__tns_smelted_bar"
     assert blasting_recipe in ctx.data["furnace_nbt_recipes"].recipes, \
         f"Expected blasting vanilla recipe: {blasting_recipe}"
-    blasting_data: dict = ctx.data["furnace_nbt_recipes"].recipes[blasting_recipe].data
+    blasting_data: JsonDict = ctx.data["furnace_nbt_recipes"].recipes[blasting_recipe].data
     assert blasting_data.get("type") == "minecraft:blasting", \
         "blasting recipe must have type minecraft:blasting"
     assert blasting_data.get("cookingtime") == 100, \
@@ -35,7 +35,7 @@ def beet_default(ctx: Context):
     smoking_recipe: str = "vanilla_items/smoking__beef__tns_smoked_food"
     assert smoking_recipe in ctx.data["furnace_nbt_recipes"].recipes, \
         f"Expected smoking vanilla recipe: {smoking_recipe}"
-    smoking_data: dict = ctx.data["furnace_nbt_recipes"].recipes[smoking_recipe].data
+    smoking_data: JsonDict = ctx.data["furnace_nbt_recipes"].recipes[smoking_recipe].data
     assert smoking_data.get("type") == "minecraft:smoking", \
         "smoking recipe must have type minecraft:smoking"
 
@@ -56,3 +56,4 @@ def beet_default(ctx: Context):
         "furnace_nbt_recipes:v1/smelting_recipes tag must be created"
     assert "furnace_nbt_recipes:v1/blasting_recipes" in ctx.data.function_tags, \
         "furnace_nbt_recipes:v1/blasting_recipes tag must be created"
+

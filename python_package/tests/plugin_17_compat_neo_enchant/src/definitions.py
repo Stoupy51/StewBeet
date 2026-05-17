@@ -1,6 +1,7 @@
 
 # Imports
 from beet import Context
+
 from stewbeet import *  # type: ignore
 from stewbeet.core.cls.block import VANILLA_BLOCK_FOR_ORES
 

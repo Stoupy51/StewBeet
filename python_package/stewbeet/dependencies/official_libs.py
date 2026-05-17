@@ -13,6 +13,7 @@ def official_lib_used(lib: str) -> bool:
 # Modrinth entries can have: modrinth_slug
 # Static entries have: static_urls {(mc_ver_tuple, dep_ver_tuple): url}
 # Bookshelf modules are merged with source="smithed" (smithed_id derived from bs.X → bookshelf-X)
+# TODO: Add support for "no_lantern_load" for libs that don't implement LanternLoad
 OFFICIAL_LIBS: dict[str, JsonDict] = {
 
     # Smithed API libs
@@ -20,6 +21,7 @@ OFFICIAL_LIBS: dict[str, JsonDict] = {
     "smithed.crafter":		{"name":"Smithed Crafter",		"url":"https://wiki.smithed.dev/libraries/crafter/",		"is_used": False, "source":"smithed", "smithed_id":"crafter", "has_resource_pack": True},
     "smithed.actionbar":	{"name":"Smithed Actionbar",	"url":"https://wiki.smithed.dev/libraries/actionbar/",		"is_used": False, "source":"smithed", "smithed_id":"actionbar"},
     "realistic_explosion":	{"name":"RealisticExplosion",	"url":"https://github.com/Stoupy51/RealisticExplosion",		"is_used": False, "source":"smithed", "smithed_id":"realistic_explosion"},
+    "player_motion":		{"name":"Player Motion API",	"url":"https://github.com/MulverineX/player_motion",        "is_used": False, "source":"smithed", "smithed_id":"player_motion", "no_lantern_load": True},
 
     # Modrinth API libs
     "itemio":				{"name":"ItemIO",	            "url":"https://github.com/edayot/ItemIO",	                "is_used": False, "source":"modrinth", "modrinth_slug":"itemio"},

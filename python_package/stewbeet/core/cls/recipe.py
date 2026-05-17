@@ -45,7 +45,7 @@ class RecipeBase(StMapping):
         return cls(**data)
 
     @staticmethod
-    def _validate_ingredient(ingredient: Ingr, name: str = "Ingredient") -> None:
+    def validate_ingredient(ingredient: Ingr, name: str = "Ingredient") -> None:
         """ Validate a single ingredient dictionary. """
         if not isinstance(ingredient, dict):
             raise ValueError(f"{name} must be a dictionary")
@@ -55,15 +55,15 @@ class RecipeBase(StMapping):
             raise ValueError(f"{name} must have a dict 'components' key")
 
     @staticmethod
-    def _validate_ingredients_list(ingredients: list[Ingr]) -> None:
+    def validate_ingredients_list(ingredients: list[Ingr]) -> None:
         """ Validate a list of ingredients. """
         if not isinstance(ingredients, list):
             raise ValueError("Ingredients must be a list")
         for ingredient in ingredients:
-            RecipeBase._validate_ingredient(ingredient, "Each ingredient")
+            RecipeBase.validate_ingredient(ingredient, "Each ingredient")
 
     @staticmethod
-    def _validate_numeric_fields(experience: Any, cookingtime: Any) -> None:
+    def validate_numeric_fields(experience: Any, cookingtime: Any) -> None:
         """ Validate experience and cookingtime fields for furnace recipes. """
         if not isinstance(experience, (float, int)):
             raise ValueError("Experience must be a float or int")
@@ -71,7 +71,7 @@ class RecipeBase(StMapping):
             raise ValueError("Cookingtime must be an int")
 
     @staticmethod
-    def _validate_string_field(value: Any, field_name: str) -> None:
+    def validate_string_field(value: Any, field_name: str) -> None:
         """ Validate that a field is a string. """
         if not isinstance(value, str):
             raise ValueError(f"{field_name} must be a string")
@@ -139,7 +139,7 @@ class CraftingShapedRecipe(RecipeBase):
         if not isinstance(self.ingredients, dict):
             raise ValueError("Ingredients must be a dictionary")
         for symbol, ingredient in self.ingredients.items():
-            self._validate_ingredient(ingredient, f"Ingredient for symbol '{symbol}'")
+            self.validate_ingredient(ingredient, f"Ingredient for symbol '{symbol}'")
             if not any(symbol in line for line in self.shape):
                 raise ValueError(f"Symbol '{symbol}' must appear in the shape")
 
@@ -171,7 +171,7 @@ class CraftingShapelessRecipe(RecipeBase):
     def __post_init__(self) -> None:
         self.type = "crafting_shapeless"
         super().__post_init__()
-        self._validate_ingredients_list(self.ingredients)
+        self.validate_ingredients_list(self.ingredients)
 
 
 # Furnace Recipes
@@ -212,8 +212,8 @@ class SmeltingRecipe(RecipeBase):
     def __post_init__(self) -> None:
         self.type = "smelting"
         super().__post_init__()
-        self._validate_ingredient(self.ingredient)
-        self._validate_numeric_fields(self.experience, self.cookingtime)
+        self.validate_ingredient(self.ingredient)
+        self.validate_numeric_fields(self.experience, self.cookingtime)
 
 
 @dataclass
@@ -239,8 +239,8 @@ class BlastingRecipe(RecipeBase):
     def __post_init__(self) -> None:
         self.type = "blasting"
         super().__post_init__()
-        self._validate_ingredient(self.ingredient)
-        self._validate_numeric_fields(self.experience, self.cookingtime)
+        self.validate_ingredient(self.ingredient)
+        self.validate_numeric_fields(self.experience, self.cookingtime)
 
 
 @dataclass
@@ -266,8 +266,8 @@ class SmokingRecipe(RecipeBase):
     def __post_init__(self) -> None:
         self.type = "smoking"
         super().__post_init__()
-        self._validate_ingredient(self.ingredient)
-        self._validate_numeric_fields(self.experience, self.cookingtime)
+        self.validate_ingredient(self.ingredient)
+        self.validate_numeric_fields(self.experience, self.cookingtime)
 
 
 @dataclass
@@ -293,8 +293,8 @@ class CampfireCookingRecipe(RecipeBase):
     def __post_init__(self) -> None:
         self.type = "campfire_cooking"
         super().__post_init__()
-        self._validate_ingredient(self.ingredient)
-        self._validate_numeric_fields(self.experience, self.cookingtime)
+        self.validate_ingredient(self.ingredient)
+        self.validate_numeric_fields(self.experience, self.cookingtime)
 
 
 # Smithing Recipes
@@ -324,7 +324,7 @@ class SmithingTransformRecipe(RecipeBase):
         self.type = "smithing_transform"
         super().__post_init__()
         for name, ingredient in [("template", self.template), ("base", self.base), ("addition", self.addition)]:
-            self._validate_ingredient(ingredient, name.capitalize())
+            self.validate_ingredient(ingredient, name.capitalize())
 
 
 @dataclass
@@ -356,8 +356,8 @@ class SmithingTrimRecipe(RecipeBase):
         self.type = "smithing_trim"
         super().__post_init__()
         for name, ingredient in [("template", self.template), ("base", self.base), ("addition", self.addition)]:
-            self._validate_ingredient(ingredient, name.capitalize())
-        self._validate_string_field(self.pattern, "Pattern")
+            self.validate_ingredient(ingredient, name.capitalize())
+        self.validate_string_field(self.pattern, "Pattern")
 
 
 # Other Recipes
@@ -378,7 +378,7 @@ class StonecuttingRecipe(RecipeBase):
     def __post_init__(self) -> None:
         self.type = "stonecutting"
         super().__post_init__()
-        self._validate_ingredient(self.ingredient)
+        self.validate_ingredient(self.ingredient)
 
 
 # Custom/Special Recipes
@@ -399,7 +399,7 @@ class PulverizingRecipe(RecipeBase):
     def __post_init__(self) -> None:
         self.type = "simplenergy_pulverizing"
         super().__post_init__()
-        self._validate_ingredient(self.ingredient)
+        self.validate_ingredient(self.ingredient)
 
 
 @dataclass
@@ -421,7 +421,7 @@ class AwakenedForgeRecipe(RecipeBase):
     def __post_init__(self) -> None:
         self.type = "stardust_awakened_forge"
         super().__post_init__()
-        self._validate_ingredients_list(self.ingredients)
+        self.validate_ingredients_list(self.ingredients)
 
 
 # Hardcoded Recipes (minimal implementation)

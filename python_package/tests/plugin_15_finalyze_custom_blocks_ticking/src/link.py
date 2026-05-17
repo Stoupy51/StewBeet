@@ -1,13 +1,13 @@
 
 # Imports
 from beet import Context
+
 from stewbeet import *  # type: ignore
 
 
 # Main entry point
 def beet_default(ctx: Context):
     ns: str = ctx.project_id
-    ver: str = ctx.project_version
 
     # Write tick and second ticking functions for the custom block
     # custom_blocks_ticking detects these and enhances place_secondary + destroy

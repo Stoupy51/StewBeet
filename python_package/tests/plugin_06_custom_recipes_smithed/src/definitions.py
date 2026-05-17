@@ -1,12 +1,13 @@
 
 # Imports
 from beet import Context
+
 from stewbeet import *  # type: ignore
 
 
 # Main entry point
 def beet_default(ctx: Context):
-    # Item with a 3×3 shaped recipe (requires Smithed Crafter)
+    # Item with a 3x3 shaped recipe (requires Smithed Crafter)
     Item(
         id="shaped_custom",
         base_item="minecraft:stick",

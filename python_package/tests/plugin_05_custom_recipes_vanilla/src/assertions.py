@@ -2,9 +2,7 @@
 # Assertions for: stewbeet.plugins.custom_recipes (vanilla handler)
 
 # Imports
-import json
-
-from beet import Context
+from stewbeet import Context, JsonDict
 
 
 # Main entry point
@@ -15,21 +13,21 @@ def beet_default(ctx: Context):
     # The recipe file is stored under the namespace with the short key (no namespace prefix)
     assert "shaped_item" in ctx.data[ns].recipes, \
         "shaped_item must have a vanilla recipe file"
-    shaped_data: dict = ctx.data[ns].recipes["shaped_item"].data
+    shaped_data: JsonDict = ctx.data[ns].recipes["shaped_item"].data
     assert shaped_data.get("type") == "minecraft:crafting_shaped", \
         "shaped_item recipe must be of type crafting_shaped"
     assert "pattern" in shaped_data, \
         "shaped recipe must contain a pattern"
     assert "key" in shaped_data, \
         "shaped recipe must contain ingredient keys"
-    # 2×2 pattern: two rows of "XX"
+    # 2x2 pattern: two rows of "XX"
     assert shaped_data["pattern"] == ["XX", "XX"], \
         "shaped_item pattern must be [['XX', 'XX']]"
 
     # ── shapeless recipe ──────────────────────────────────────────────────────
     assert "shapeless_item" in ctx.data[ns].recipes, \
         "shapeless_item must have a vanilla recipe file"
-    shapeless_data: dict = ctx.data[ns].recipes["shapeless_item"].data
+    shapeless_data: JsonDict = ctx.data[ns].recipes["shapeless_item"].data
     assert shapeless_data.get("type") == "minecraft:crafting_shapeless", \
         "shapeless_item recipe must be of type crafting_shapeless"
     assert "ingredients" in shapeless_data, \
@@ -38,7 +36,7 @@ def beet_default(ctx: Context):
     # ── stonecutting recipe ───────────────────────────────────────────────────
     assert "stone_slab" in ctx.data[ns].recipes, \
         "stone_slab must have a vanilla recipe file"
-    stonecutting_data: dict = ctx.data[ns].recipes["stone_slab"].data
+    stonecutting_data: JsonDict = ctx.data[ns].recipes["stone_slab"].data
     assert stonecutting_data.get("type") == "minecraft:stonecutting", \
         "stone_slab recipe must be of type stonecutting"
     assert stonecutting_data["result"].get("count") == 2, \
@@ -47,7 +45,7 @@ def beet_default(ctx: Context):
     # ── smithing transform recipe ─────────────────────────────────────────────
     assert "smithed_item" in ctx.data[ns].recipes, \
         "smithed_item must have a vanilla recipe file"
-    smithing_data: dict = ctx.data[ns].recipes["smithed_item"].data
+    smithing_data: JsonDict = ctx.data[ns].recipes["smithed_item"].data
     assert smithing_data.get("type") == "minecraft:smithing_transform", \
         "smithed_item recipe must be of type smithing_transform"
     assert "base" in smithing_data, \

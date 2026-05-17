@@ -8,7 +8,6 @@ from beet import Context
 # Main entry point
 def beet_default(ctx: Context):
     ns: str = ctx.project_id
-    ver: str = ctx.project_version
 
     # ── Lantern Load: minecraft:load tag ──────────────────────────────────────
     assert "minecraft:load" in ctx.data.function_tags, \

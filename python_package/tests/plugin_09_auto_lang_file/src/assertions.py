@@ -2,7 +2,7 @@
 # Assertions for: stewbeet.plugins.auto.lang_file
 
 # Imports
-from beet import Context
+from stewbeet import Context, JsonDict
 
 
 # Main entry point
@@ -11,7 +11,7 @@ def beet_default(ctx: Context):
     assert "minecraft:en_us" in ctx.assets.languages, \
         "minecraft:en_us language file must be generated"
 
-    lang_data: dict = ctx.assets.languages["minecraft:en_us"].data
+    lang_data: JsonDict = ctx.assets.languages["minecraft:en_us"].data
     assert len(lang_data) > 0, \
         "en_us language file must contain at least one translation entry"
 
