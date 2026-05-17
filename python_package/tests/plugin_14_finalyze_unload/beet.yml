@@ -1,0 +1,37 @@
+
+# Test: stewbeet.plugins.finalyze.unload
+# Verifies that the unload plugin scans functions for scoreboard objectives and
+# storage references, then generates an unload function that removes them all.
+
+id: "tns"
+name: "Test Finalyze Unload"
+version: "1.0.0"
+author: "test"
+minecraft: "26.1"
+
+directory: "."
+output: "build"
+
+require:
+    - "stewbeet"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+resource_pack:
+    name: "resource_pack"
+    load: ["src"]
+
+pipeline:
+    - "src.definitions"
+    - "stewbeet.plugins.datapack.loading"
+    - "stewbeet.plugins.datapack.loot_tables"
+    - "stewbeet.plugins.finalyze.dependencies"
+    - "src.link"
+    - "stewbeet.plugins.finalyze.unload"
+    - "src.assertions"
+
+meta:
+    stewbeet:
+        source_lore: "auto"

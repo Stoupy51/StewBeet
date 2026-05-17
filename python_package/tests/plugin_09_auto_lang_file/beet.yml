@@ -1,0 +1,34 @@
+
+# Test: stewbeet.plugins.auto.lang_file
+# Verifies that the plugin scans loot tables and functions, extracts text components,
+# and populates minecraft:en_us with stable translate keys.
+
+id: "tns"
+name: "Test Auto Lang File"
+version: "1.0.0"
+author: "test"
+minecraft: "26.1"
+
+directory: "."
+output: "build"
+
+require:
+    - "stewbeet"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+resource_pack:
+    name: "resource_pack"
+    load: ["src"]
+
+pipeline:
+    - "src.definitions"
+    - "stewbeet.plugins.datapack.loot_tables"
+    - "stewbeet.plugins.auto.lang_file"
+    - "src.assertions"
+
+meta:
+    stewbeet:
+        source_lore: "auto"

@@ -1,0 +1,6 @@
+build/
+definitions_debug.json
+manual_cache/
+__pycache__/
+*.pyc
+.beet_cache/

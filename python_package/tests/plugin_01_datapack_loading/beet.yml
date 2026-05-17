@@ -1,0 +1,36 @@
+
+# Test: stewbeet.plugins.datapack.loading
+# Verifies that the loading plugin generates all expected functions and function tags.
+
+id: "tns"
+name: "Test Datapack Loading"
+version: "1.2.3"
+author: "test"
+minecraft: "26.1"
+
+directory: "."
+output: "build"
+
+require:
+    - "stewbeet"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+resource_pack:
+    name: "resource_pack"
+    load: ["src"]
+
+pipeline:
+    - "src.definitions"
+    - "stewbeet.plugins.datapack.loading"
+    - "stewbeet.plugins.finalyze.dependencies"
+    - "src.assertions"
+
+meta:
+    mecha:
+        multiline: true
+        formatting: preserve
+    stewbeet:
+        source_lore: "auto"

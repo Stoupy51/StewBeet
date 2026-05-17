@@ -1,0 +1,34 @@
+
+# Test: stewbeet.plugins.custom_paintings
+# Verifies that a Painting item produces a painting_variant JSON in the datapack,
+# a texture in the resource pack, and the placeable painting tag.
+
+id: "tns"
+name: "Test Custom Paintings"
+version: "1.0.0"
+author: "test"
+minecraft: "26.1"
+
+directory: "."
+output: "build"
+
+require:
+    - "stewbeet"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+resource_pack:
+    name: "resource_pack"
+    load: ["src"]
+
+pipeline:
+    - "src.definitions"
+    - "stewbeet.plugins.custom_paintings"
+    - "src.assertions"
+
+meta:
+    stewbeet:
+        source_lore: "auto"
+        textures_folder: "../../../templates/extensive/assets/textures"

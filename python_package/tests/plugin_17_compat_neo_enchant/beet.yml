@@ -1,0 +1,33 @@
+
+# Test: stewbeet.plugins.compatibilities.neo_enchant
+# Verifies that blocks using VANILLA_BLOCK_FOR_ORES trigger the creation of
+# the enchantplus:veinminer block tag containing the ore block id.
+
+id: "tns"
+name: "Test Compat NeoEnchant"
+version: "1.0.0"
+author: "test"
+minecraft: "26.1"
+
+directory: "."
+output: "build"
+
+require:
+    - "stewbeet"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+resource_pack:
+    name: "resource_pack"
+    load: ["src"]
+
+pipeline:
+    - "src.definitions"
+    - "stewbeet.plugins.compatibilities.neo_enchant"
+    - "src.assertions"
+
+meta:
+    stewbeet:
+        source_lore: "auto"

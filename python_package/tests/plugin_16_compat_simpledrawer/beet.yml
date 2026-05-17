@@ -1,0 +1,34 @@
+
+# Test: stewbeet.plugins.compatibilities.simpledrawer
+# Verifies that items with smithed.dict (block + ingot + nugget) generate
+# the SimpleDrawer material function, the simpledrawer:material tag, and
+# per-variant dispatch functions.
+
+id: "tns"
+name: "Test Compat SimpleDrawer"
+version: "1.0.0"
+author: "test"
+minecraft: "26.1"
+
+directory: "."
+output: "build"
+
+require:
+    - "stewbeet"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+resource_pack:
+    name: "resource_pack"
+    load: ["src"]
+
+pipeline:
+    - "src.definitions"
+    - "stewbeet.plugins.compatibilities.simpledrawer"
+    - "src.assertions"
+
+meta:
+    stewbeet:
+        source_lore: "auto"

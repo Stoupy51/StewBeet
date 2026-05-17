@@ -17,6 +17,20 @@ def text_component_to_str(tc: TextComponent) -> str:
 		tc (TextComponent): The TextComponent to convert
 	Returns:
 		str: The converted string
+
+	Examples:
+		>>> text_component_to_str("hello")
+		'hello'
+		>>> text_component_to_str(["hello", " ", "world"])
+		'hello world'
+		>>> text_component_to_str({"text": "Hello"})
+		'Hello'
+		>>> text_component_to_str({"text": "Hello", "extra": [{"text": " World"}]})
+		'Hello World'
+		>>> text_component_to_str({"text": "A", "extra": ["B", {"text": "C"}]})
+		'ABC'
+		>>> text_component_to_str({"color": "red"})
+		''
 	"""
 	if isinstance(tc, str):
 		return tc

@@ -31,6 +31,36 @@ class ContextAnalyzer:
 
         Returns:
             str | None: The execution context, or None if unknown
+
+        Examples:
+            Function called by an advancement returns player context:
+            >>> h = Header("test:func", ["advancement test:my_advancement"], [], "say hi")
+            >>> ctx_analyzer = ContextAnalyzer({"test:func": h})
+            >>> ctx_analyzer.determine_execution_context("test:func")
+            'as the player & at current position'
+
+            Function called by tick tag returns None:
+            >>> h2 = Header("test:tick", ["#minecraft:tick"], [], "say tick")
+            >>> ctx_analyzer2 = ContextAnalyzer({"test:tick": h2})
+            >>> ctx_analyzer2.determine_execution_context("test:tick") is None
+            True
+
+            Function called only by scheduled callers has no context:
+            >>> h3 = Header("test:sched", ["test:load [ scheduled ]"], [], "say hi")
+            >>> ctx_analyzer3 = ContextAnalyzer({"test:sched": h3})
+            >>> ctx_analyzer3.determine_execution_context("test:sched") is None
+            True
+
+            Function with explicit execution context in caller brackets:
+            >>> h4 = Header("test:child", ["test:parent [ as @e at @s ]"], [], "say hi")
+            >>> ctx_analyzer4 = ContextAnalyzer({"test:child": h4})
+            >>> ctx_analyzer4.determine_execution_context("test:child").strip()
+            'as @e at @s'
+
+            Unknown function path returns None:
+            >>> ctx_analyzer5 = ContextAnalyzer({})
+            >>> ctx_analyzer5.determine_execution_context("nonexistent:func") is None
+            True
         """
         if visited is None:
             visited = set()

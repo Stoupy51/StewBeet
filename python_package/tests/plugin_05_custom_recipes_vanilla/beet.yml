@@ -1,0 +1,33 @@
+
+# Test: stewbeet.plugins.custom_recipes (vanilla part)
+# Verifies shaped, shapeless, stonecutting, and smithing recipe JSON output
+# plus the unlock_recipes advancement and helper function.
+
+id: "tns"
+name: "Test Custom Recipes Vanilla"
+version: "1.0.0"
+author: "test"
+minecraft: "26.1"
+
+directory: "."
+output: "build"
+
+require:
+    - "stewbeet"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+resource_pack:
+    name: "resource_pack"
+    load: ["src"]
+
+pipeline:
+    - "src.definitions"
+    - "stewbeet.plugins.custom_recipes"
+    - "src.assertions"
+
+meta:
+    stewbeet:
+        source_lore: "auto"
