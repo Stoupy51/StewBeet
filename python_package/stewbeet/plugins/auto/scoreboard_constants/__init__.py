@@ -27,7 +27,7 @@ def beet_default(ctx: Context):
 
 	# Prepare regex pattern for scoreboard constants
 	import re
-	pattern = re.compile(rf"#(\d+) {re.escape(ns)}\.data")
+	pattern = re.compile(rf"#(-?\d+) {re.escape(ns)}\.data")
 
 	# Loop through all functions and list all used scoreboard constants
 	constants: set[int] = set()
