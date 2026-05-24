@@ -1,0 +1,8 @@
+stewbeet.plugins.ingame\_manual.silent module
+=============================================
+
+.. automodule:: stewbeet.plugins.ingame_manual.silent
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
