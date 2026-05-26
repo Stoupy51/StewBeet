@@ -91,11 +91,12 @@ export const MarkdownPage: React.FC = () => {
             navigate('/#plugins');
         }
     };
-    
-    const hasValidSrc = src ? isValidDocSrc(src) : false;
+
+    const isExternalUrl = (s: string) => s.startsWith('https://') || s.startsWith('http://');
+    const hasValidSrc = src ? (isExternalUrl(src) || isValidDocSrc(src))  : false;
     
     // Construct the full URL
-    const fullUrl = src && hasValidSrc ? srcToGithubUrl(src) : null;
+    const fullUrl = src && hasValidSrc ? (isExternalUrl(src) ? src : srcToGithubUrl(src)) : null;
     
     // Convert to raw URL for fetching
     const rawUrl = fullUrl ? githubToRawUrl(fullUrl) : null;
