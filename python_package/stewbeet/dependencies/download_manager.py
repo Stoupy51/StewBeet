@@ -1,4 +1,4 @@
-"""Dynamic dependency download manager for StewBeet.
+""" Dynamic dependency download manager for StewBeet.
 
 Downloads official libraries on first use via beet's content-addressed cache
 (``ctx.cache["stewbeet"]``).  Three providers are supported:
