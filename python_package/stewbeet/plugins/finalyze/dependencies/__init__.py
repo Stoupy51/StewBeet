@@ -7,7 +7,6 @@ from stouputils.typing import JsonDict
 from ....core.__memory__ import Mem
 from ....core.constants import LATEST_MC_VERSION, MORE_DATA_VERSIONS
 from ....core.utils.io import write_function, write_tag, write_versioned_function
-from ....dependencies.bookshelf import BOOKSHELF_MODULES
 from ....dependencies.download_manager import get_lib_paths
 from ....dependencies.official_libs import OFFICIAL_LIBS, official_lib_used
 
@@ -83,12 +82,13 @@ def beet_default(ctx: Context) -> None:
 
 	# Find for each bookshelf module if it is used
 	if ns != "bookshelf":
-		for module_ns in BOOKSHELF_MODULES.keys():
-			for function in ctx.data.functions.values():
-				if f"#{module_ns}:" in function.text:
-					if not official_lib_used(module_ns):
-						newly_found_libs.append(module_ns)
-					break
+		for module_ns in OFFICIAL_LIBS.keys():
+			if module_ns.startswith("bs."):
+				for function in ctx.data.functions.values():
+					if f"#{module_ns}:" in function.text:
+						if not official_lib_used(module_ns):
+							newly_found_libs.append(module_ns)
+						break
 
 	# Debug message for newly found libraries
 	if newly_found_libs:
