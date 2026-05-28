@@ -1,0 +1,72 @@
+{
+  "name": "stewbeet-mcfunction-syntax",
+  "displayName": "StewBeet mcfunction Syntax",
+  "description": "Syntax highlighting for mcfunction strings inside StewBeet write_* calls in Python files, with configurable block decorations.",
+  "version": "2.0.0",
+  "publisher": "stewbeet",
+  "license": "MIT",
+  "icon": "icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Stoupy51/StewBeet"
+  },
+  "engines": { "vscode": "^1.74.0" },
+  "categories": ["Programming Languages"],
+  "keywords": ["mcfunction", "stewbeet", "beet", "minecraft", "datapack", "syntax", "highlighting"],
+  "activationEvents": ["onLanguage:python"],
+  "main": "./src/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "mcfunction",
+        "aliases": ["MCFunction", "mcfunction"],
+        "extensions": [".mcfunction"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "mcfunction",
+        "scopeName": "source.mcfunction",
+        "path": "./syntaxes/mcfunction.tmLanguage.json"
+      },
+      {
+        "scopeName": "source.mcfunction.embedded",
+        "path": "./syntaxes/mcfunction-embedded.tmLanguage.json"
+      },
+      {
+        "scopeName": "stewbeet.mcfunction-injection",
+        "path": "./syntaxes/mcfunction-injection.tmLanguage.json",
+        "injectTo": ["source.python"],
+        "embeddedLanguages": {
+          "source.mcfunction.embedded": "mcfunction"
+        }
+      }
+    ],
+    "configuration": {
+      "title": "StewBeet mcfunction Syntax",
+      "properties": {
+        "StewBeetMCfunction.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable/disable block decorations on mcfunction strings."
+        },
+        "StewBeetMCfunction.backgroundColor": {
+          "type": "string",
+          "default": "rgba(80,40,0,0.15)",
+          "markdownDescription": "Background color of the mcfunction block decoration. Accepts any CSS color (`rgba(...)`, `#rrggbbaa`, ...)."
+        },
+        "StewBeetMCfunction.borderColor": {
+          "type": "string",
+          "default": "rgba(200,120,30,0.30)",
+          "markdownDescription": "Border color of the mcfunction block decoration. Accepts any CSS color."
+        },
+        "StewBeetMCfunction.borderWidth": {
+          "type": "string",
+          "default": "2px",
+          "markdownDescription": "Border width of the mcfunction block decoration (e.g. `\"1px\"`, `\"2px\"`)."
+        }
+      }
+    }
+  }
+}
