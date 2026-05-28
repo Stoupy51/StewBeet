@@ -850,7 +850,7 @@ execute if items entity @s weapon.mainhand *[custom_data~{{{ns}:{{scanner:true}}
     # Individual item handlers
     write_function(f"{ns}:items/wrench/use", """
 # Rotate the block player is looking at
-execute anchored eyes positioned ^ ^ ^1 align xyz positioned ~0.5 ~ ~0.5 as @e[type=item_display,tag=custom_block,distance=..1,limit=1,sort=nearest] run function simplenergy:items/wrench/rotate_block
+execute anchored eyes positioned ^ ^ ^1 align xyz positioned ~0.5 ~ ~0.5 as @n[type=item_display,tag=custom_block,distance=..1] run function simplenergy:items/wrench/rotate_block
 """)
 ```
 
@@ -1261,7 +1261,7 @@ function {ns}:utils/wormhole_potion/show_dialog with storage {ns}:temp dialog
 # Get player username for macro
 tag @e[type=item] add {ns}.temp
 execute at @s run loot spawn ~ ~ ~ loot {ns}:player_head
-data modify storage {ns}:temp player_name set from entity @e[type=item,tag=!{ns}.temp,limit=1] Item.components."minecraft:profile".name
+data modify storage {ns}:temp player_name set from entity @n[type=item,tag=!{ns}.temp] Item.components."minecraft:profile".name
 kill @e[type=item,tag=!{ns}.temp]
 tag @e[type=item,tag={ns}.temp] remove {ns}.temp
 
