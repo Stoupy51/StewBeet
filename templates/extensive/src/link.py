@@ -1,4 +1,5 @@
 
+# ruff: noqa
 # Imports
 from beet import Context
 from stouputils.typing import JsonDict

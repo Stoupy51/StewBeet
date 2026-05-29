@@ -422,7 +422,8 @@
 			"contents": false,
 			"block_facing": false,
 			"visual_facing": "none"
-		}
+		},
+		"on_place": "\nsay Omg, @p[tag=_your_namespace.placer] placed the super stone block!\nparticle minecraft:explosion ~ ~ ~\n"
 	},
 	"stewbeet_painting": {
 		"id": "stewbeet_painting",

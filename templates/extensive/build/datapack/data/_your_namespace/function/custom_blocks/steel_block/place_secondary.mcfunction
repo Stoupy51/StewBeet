@@ -21,7 +21,7 @@ data merge entity @s {CustomName: {translate: "_your_namespace.steel_block"}}
 # Modify item display entity to match the custom block
 item replace entity @s contents with minecraft:furnace[item_model="_your_namespace:steel_block"]
 data modify entity @s transformation.scale set value [1.002f, 1.002f, 1.002f]
-data modify entity @s brightness set value {block: 15, sky: 15}
+function _your_namespace:custom_blocks/compute_brightness
 
 # Add tag for loop every tick
 tag @s add _your_namespace.tick

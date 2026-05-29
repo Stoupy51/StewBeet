@@ -21,7 +21,7 @@ data merge entity @s {CustomName: {translate: "_your_namespace.vb_block_facing"}
 # Modify item display entity to match the custom block
 item replace entity @s contents with minecraft:furnace[item_model="_your_namespace:vb_block_facing"]
 data modify entity @s transformation.scale set value [1.002f, 1.002f, 1.002f]
-data modify entity @s brightness set value {block: 15, sky: 15}
+function _your_namespace:custom_blocks/compute_brightness
 
 # Apply rotation
 execute if score #rotation _your_namespace.data matches 1 run data modify entity @s Rotation[0] set value 180.0f
