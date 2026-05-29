@@ -14,7 +14,7 @@ const FUNCS_2ND_ARG = new Set([
   "write_scheduled_function",
 ]);
 
-const CFG_KEY = "StewBeetMCfunction";
+const CFG_KEY = "StewBeet";
 
 // ─── Decoration types (recreated on config change) ───────────────────────────
 
@@ -25,8 +25,16 @@ let decos = null;
  * Create the four decoration roles needed to draw a unified block rectangle.
  * Multi-line blocks use first/block/last (isWholeLine) so the bg spans edge-to-edge.
  * Single-line blocks use a precise range so the box wraps only the string.
+ * 
+ * @param {string} bg  Background color for the block.
+ * @param {string} border  Border color for the block.
+ * @param {string} borderWidth  Border width for the block (e.g. "2px").
  */
 function createDecos(bg, border, borderWidth) {
+  /**
+   * @param {string} style Border style for the block (e.g. "solid none solid none").
+   * @param {string} radius Border radius for the block (e.g. "4px 4px 0 0").
+   */
   const multi = (style, radius) => vscode.window.createTextEditorDecorationType({
     backgroundColor: bg,
     isWholeLine: true,
@@ -60,7 +68,7 @@ function disposeDecos() {
 function refreshDecos() {
   disposeDecos();
   const cfg = vscode.workspace.getConfiguration(CFG_KEY);
-  if (!cfg.get("enabled", true)) return;
+  if (!cfg.get("enableBlockDecorations", true)) return;
   decos = createDecos(
     cfg.get("backgroundColor", "rgba(80,40,0,0.15)"),
     cfg.get("borderColor",     "rgba(200,120,30,0.30)"),
