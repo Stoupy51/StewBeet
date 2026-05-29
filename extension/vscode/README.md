@@ -30,8 +30,6 @@ Example customization:
 
 ![Comparison gif](https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/extension/vscode/images/comparison.gif)
 
-<br>
-
 ## Features
 
 ### Syntax highlighting
@@ -52,13 +50,9 @@ Python interpolations (`{variable}`) inside f-strings are parsed correctly and n
 ### Block decorations
 Multi-line strings are wrapped in a unified colored rectangle. Single-line strings get an inline border that starts exactly at the quote character.
 
-<br>
-
 ## Grammar
 
 mcfunction grammar from [MinecraftCommands/syntax-mcfunction](https://github.com/MinecraftCommands/syntax-mcfunction), bundled via [StewBeet](https://github.com/Stoupy51/StewBeet/blob/main/extension/vscode/syntaxes/mcfunction.tmLanguage.json).
-
-<br>
 
 ## Installation
 
