@@ -771,7 +771,7 @@ def routine():
 
 		# TODO: Make it compatible with multithreading (ordering problem only I think)
 		#stp.multithreading(encode_page, SharedMemory.manual_pages, desc="Creating manual pages", max_workers=-1.0)
-		for page in stp.colored_for_loop(SharedMemory.manual_pages, desc="Creating manual pages"):
+		for page in stp.progress_bar(SharedMemory.manual_pages, desc="Creating manual pages"):
 			encode_page(page)
 
 		## Add categories page

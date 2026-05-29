@@ -1,11 +1,13 @@
 
 # Imports
+import fnmatch
 import os
 import re
 from collections import defaultdict
 
 import stouputils as stp
 from beet import Context, Sound
+from beet.core.utils import JsonDict
 from mutagen.oggvorbis import OggVorbis
 
 from ....core.utils.sounds import add_sound
@@ -34,24 +36,47 @@ def beet_default(ctx: Context):
 	Args:
 		ctx (Context): The beet context.
 	"""
-	# Get sounds folder from meta
-	sounds_folder: str = stp.relative_path(ctx.meta.get("stewbeet", {}).get("sounds_folder", ""))
-	assert sounds_folder != "", "Sounds folder path not found in 'ctx.meta.stewbeet.sounds_folder'. Please set a directory path in project configuration."
+	# Get sounds config from meta
+	stewbeet_meta: JsonDict = ctx.meta.get("stewbeet", {})
+	sounds_config: JsonDict | None = stewbeet_meta.get("sounds", None)
+
+	if isinstance(sounds_config, dict) and sounds_config.get("folder"):
+		# New structure: meta.stewbeet.sounds.folder
+		sounds_folder: str = stp.relative_path(sounds_config["folder"])
+		exclude_patterns: list[str] = sounds_config.get("exclude_patterns", [])
+	else:
+		# Backward compatibility: meta.stewbeet.sounds_folder
+		old_sounds_folder: str = stewbeet_meta.get("sounds_folder", "")
+		assert old_sounds_folder != "", (
+			"Sounds folder path not found. Please set 'meta.stewbeet.sounds.folder' in project configuration."
+		)
+		stp.warning(
+			"'meta.stewbeet.sounds_folder' is deprecated. "
+			"Please migrate to 'meta.stewbeet.sounds.folder' instead. "
+			"(See https://stewbeet.paralya.fr/markdown?src=plugins/resource_pack.sounds.md)"
+		)
+		sounds_folder = stp.relative_path(old_sounds_folder)
+		exclude_patterns = []
 
 	# Get all sound files
 	all_files: list[str] = [os.path.join(root, file) for root, _, files in os.walk(sounds_folder) for file in files]
 	sounds_names: list[str] = [sound for sound in all_files if sound.endswith(".ogg")]
 	if not sounds_names:
 		return
+
+	# Filter out excluded patterns (matched against relative paths from sounds_folder)
+	if exclude_patterns:
+		sounds_names = [
+			s for s in sounds_names
+			if not any(
+				fnmatch.fnmatch(stp.relative_path(s, sounds_folder), pattern)
+				for pattern in exclude_patterns
+			)
+		]
+
 	# Dictionary to group sound variants
 	sound_groups: dict[str, list[str]] = defaultdict(list)
-
-	def handle_sound(sound: str) -> None:
-		""" Process a single sound file.
-
-		Args:
-			sound (str): Path to the sound file.
-		"""
+	for sound in sounds_names:
 		# Get relative path from sounds folder, simplified name, and without extension
 		rel_sound: str = stp.relative_path(sound, sounds_folder)
 		sound_file: str = "".join(char for char in rel_sound.replace(" ", "_").lower() if char.isalnum() or char in "._/")
@@ -65,9 +90,6 @@ def beet_default(ctx: Context):
 		else:
 			# Not a numbered variant, add as individual sound
 			sound_groups[sound_file_no_ext] = [rel_sound]
-
-	# Process sounds in parallel
-	stp.multithreading(handle_sound, sounds_names, max_workers=min(32, len(sounds_names)))
 
 	# Create sounds using add_sound function
 	for base_name, variants in sorted(sound_groups.items()):
