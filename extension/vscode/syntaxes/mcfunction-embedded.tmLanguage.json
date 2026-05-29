@@ -75,7 +75,7 @@
               "name": "comment.line.mcfunction"
             }
           },
-          "match": "^\\s*#(?!\\{).*$",
+          "match": "^\\s*#(?!\\{)(?:[^\\\\\n\"]|\\\\[^n])*",
           "name": "meta.comments"
         }
       ]
@@ -88,7 +88,7 @@
               "name": "comment.line.mcfunction"
             }
           },
-          "match": "#(?!\\{).*$",
+          "match": "#(?!\\{)(?:[^\\\\\n\"]|\\\\[^n])*",
           "name": "meta.comments"
         }
       ]

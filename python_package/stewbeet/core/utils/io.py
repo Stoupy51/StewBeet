@@ -12,6 +12,7 @@ from ..__memory__ import Mem
 
 # Constants
 JsonFileT = TypeVar("JsonFileT", bound=JsonFile)
+type McFunction = str
 
 # Advancements
 def write_advancement(
@@ -313,7 +314,7 @@ def write_scheduled_function(
 	return func
 
 
-# Merge two dict recuirsively
+# Merge two dict recursively
 def super_merge_dict(dict1: JsonDict, dict2: JsonDict) -> JsonDict:
 	""" Merge the two dictionaries recursively without modifying originals
 
