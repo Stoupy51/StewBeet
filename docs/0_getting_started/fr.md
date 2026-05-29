@@ -31,7 +31,7 @@ Avant de commencer, assurez-vous d'avoir :
 
 ### ✅ Logiciels requis
 - **Python 3.14** 🐍 - [Télécharger depuis python.org](https://www.python.org/downloads/)
-- **Éditeur de texte ou IDE** 📝 - Nous recommandons [VS Code](https://code.visualstudio.com/) avec le pack d'extensions Python
+- **Éditeur de texte ou IDE** 📝 - Nous recommandons [VS Code](https://code.visualstudio.com/) avec le pack d'extensions Python et l'extension [StewBeet](https://marketplace.visualstudio.com/items?itemName=stoupy.stewbeet)
 - **Minecraft Java Edition** 🎮 - Pour tester vos datapacks
 
 ### 🔍 Vérifiez votre installation Python

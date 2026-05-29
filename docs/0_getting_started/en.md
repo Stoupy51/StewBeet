@@ -31,7 +31,7 @@ Before we start, make sure you have:
 
 ### ✅ Required Software
 - **Python 3.14** 🐍 - [Download from python.org](https://www.python.org/downloads/)
-- **Text Editor or IDE** 📝 - We recommend [VS Code](https://code.visualstudio.com/) with Python extension pack
+- **Text Editor or IDE** 📝 - We recommend [VS Code](https://code.visualstudio.com/) with Python extension pack and the [StewBeet extension](https://marketplace.visualstudio.com/items?itemName=stoupy.stewbeet)
 - **Minecraft Java Edition** 🎮 - For testing your datapacks
 
 ### 🔍 Check Your Python Installation
