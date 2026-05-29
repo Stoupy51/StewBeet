@@ -30,7 +30,7 @@ def beet_default(ctx: Context, desc: str = "Generating lang file") -> None:
 		content for _, content in sorted(files_to_process.items())
 		if isinstance(content, TextFileBase)
 	]
-	for content in stp.colored_for_loop(args, desc=desc, color=stp.BLUE):
+	for content in stp.progress_bar(args, desc=desc, color=stp.BLUE):
 		handle_file(content)
 
 	# Update the lang file
