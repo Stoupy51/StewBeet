@@ -2,6 +2,7 @@
 #> _your_namespace:v3.0.0/unload
 #
 # @within	#_your_namespace:unload
+#			_your_namespace:v3.0.0/unload_with_libraries
 #
 
 # Clear custom items
