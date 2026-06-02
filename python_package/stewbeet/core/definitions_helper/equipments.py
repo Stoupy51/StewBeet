@@ -22,6 +22,7 @@ SLOTS: dict[str, str] = {
 	"hoe": "mainhand",
 	"spear": "mainhand",
 }
+INVERSE_SLOTS: dict[str, str] = {v: k for k, v in SLOTS.items()}
 UNIQUE_SLOTS_VALUES: list[str] = []	# No sorted(set()) since we want to preserve the current order
 for slot in SLOTS.values():
 	if slot not in UNIQUE_SLOTS_VALUES:
