@@ -6,16 +6,16 @@
  * All reusable brand UI should import from this file.
  */
 
-/** Section heading gradient text (subtle): indigo-200 → purple-200 */
+/** Section heading gradient text (subtle): indigo-200 -> purple-200 */
 export const GRADIENT_TEXT = 'bg-gradient-to-r from-indigo-200 to-purple-200 bg-clip-text text-transparent';
 
 /** Interactive logo gradient text (includes hover state) */
 export const GRADIENT_TEXT_LOGO = 'bg-gradient-to-r from-indigo-200 to-purple-200 bg-clip-text text-transparent hover:from-indigo-300 hover:to-purple-300';
 
-/** Page / hero title gradient (bright): indigo-400 → purple-400 → pink-400 */
+/** Page / hero title gradient (bright): indigo-400 -> purple-400 -> pink-400 */
 export const GRADIENT_TEXT_BRIGHT = 'bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent';
 
-/** Primary action button: indigo-600 → purple-600 gradient + shadow */
+/** Primary action button: indigo-600 -> purple-600 gradient + shadow */
 export const BTN_PRIMARY = 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 shadow-lg shadow-indigo-500/30';
 
 /** Solid accent button for smaller actions */

@@ -21,7 +21,7 @@ def beet_default(ctx: Context):
         ],
     )
 
-    # Item with a shapeless recipe (vanilla result → item produced by vanilla engine)
+    # Item with a shapeless recipe (vanilla result -> item produced by vanilla engine)
     Item(
         id="shapeless_item",
         base_item="minecraft:paper",

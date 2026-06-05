@@ -490,11 +490,11 @@ class EquipmentsConfig:
 ```
 
 **Modificateurs d'attributs courants :**
-- `"attack_damage": 1.0` → +1 dégât d'attaque pour les armes (ex., pioche diamant : 5 → 6)
-- `"armor": 0.5` → +0.5 armure pour chaque pièce d'armure
-- `"armor_toughness": 1.0` → +1 robustesse d'armure pour les pièces d'armure
-- `"mining_efficiency": 2` → +20% vitesse de minage pour les outils
-- `"knockback_resistance": 0.1` → +0.1 résistance au recul (appliqué à l'armure uniquement)
+- `"attack_damage": 1.0` -> +1 dégât d'attaque pour les armes (ex., pioche diamant : 5 -> 6)
+- `"armor": 0.5` -> +0.5 armure pour chaque pièce d'armure
+- `"armor_toughness": 1.0` -> +1 robustesse d'armure pour les pièces d'armure
+- `"mining_efficiency": 2` -> +20% vitesse de minage pour les outils
+- `"knockback_resistance": 0.1` -> +0.1 résistance au recul (appliqué à l'armure uniquement)
 
 ## 📖 Intégration de la documentation
 
@@ -601,9 +601,9 @@ Catégories courantes pour l'organisation du manuel (mais c'est toujours à vous
 
 ### 🎨 Intégration de textures
 Les objets détectent automatiquement les textures par nom depuis `assets/textures/` :
-- `steel_ingot.png` → objet `steel_ingot`
-- `steel_pickaxe.png` → outil `steel_pickaxe`
-- `steel_block.png` → bloc personnalisé `steel_block`
+- `steel_ingot.png` -> objet `steel_ingot`
+- `steel_pickaxe.png` -> outil `steel_pickaxe`
+- `steel_block.png` -> bloc personnalisé `steel_block`
 
 ### 🔗 Accéder aux objets existants
 
@@ -640,7 +640,7 @@ StewBeet reconnaît automatiquement les motifs de textures et génère les modè
 
 **Motifs d'objets :**
 - **`leather_armor`** : Les objets commençant par `leather_` utilisent automatiquement layer1 pour la coloration en overlay
-- **`overlay`** : Objets avec texture `_overlay` (ex., `my_item.png` + `my_item_overlay.png` → layer0 + layer1)
+- **`overlay`** : Objets avec texture `_overlay` (ex., `my_item.png` + `my_item_overlay.png` -> layer0 + layer1)
 - **`bow_pulling`** : Objets d'arc avec `_pulling_0`, `_pulling_1`, `_pulling_2`, etc. (triés numériquement)
 - **`spear_in_hand`** : Lances se terminant par `_spear` + variante de texture `_in_hand` (utilise le changement de contexte d'affichage)
 

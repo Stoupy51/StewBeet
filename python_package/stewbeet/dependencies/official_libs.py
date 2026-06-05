@@ -12,7 +12,7 @@ def official_lib_used(lib: str) -> bool:
 # Smithed entries can have: version, smithed_id, has_resource_pack
 # Modrinth entries can have: modrinth_slug
 # Static entries have: static_urls {(mc_ver_tuple, dep_ver_tuple): url}
-# Bookshelf modules are merged with source="smithed" (smithed_id derived from bs.X → bookshelf-X)
+# Bookshelf modules are merged with source="smithed" (smithed_id derived from bs.X -> bookshelf-X)
 OFFICIAL_LIBS: dict[str, JsonDict] = {
 
     # Smithed API libs

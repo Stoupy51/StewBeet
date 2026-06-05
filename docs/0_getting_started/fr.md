@@ -84,10 +84,10 @@ Le **Template Basic** est parfait car il :
 
 1. **Créez** un nouveau dossier pour votre projet (par ex., `C:/MyDatapacks/AwesomeOres/`)
 2. **Ouvrez le dossier dans VS Code** :
-   - Clic droit sur le dossier → "Ouvrir avec Code"
-   - Ou lancez VS Code et utilisez Fichier → Ouvrir un dossier
+   - Clic droit sur le dossier -> "Ouvrir avec Code"
+   - Ou lancez VS Code et utilisez Fichier -> Ouvrir un dossier
 3. **Ouvrez un terminal dans VS Code** :
-   - Utilisez Terminal → Nouveau terminal depuis le menu
+   - Utilisez Terminal -> Nouveau terminal depuis le menu
    - Le terminal s'ouvrira automatiquement dans votre dossier de projet
 4. **Exécutez la commande init** :
    ```bash
@@ -233,7 +233,7 @@ Remplacez les chemins par vos vrais dossiers Minecraft. Maintenant quand vous ex
 ### 🔧 Activer dans le jeu
 
 1. **Dans Minecraft**, tapez `/reload` dans le chat
-2. Allez dans **Options** → **Resource Packs** et activez votre resource pack
+2. Allez dans **Options** -> **Resource Packs** et activez votre resource pack
 3. Testez la fonctionnalité de base avec `/function awesome_ores:chemin/vers/une/fonction/au/hasard` (si vous n'avez pas supprimé la fonction d'exemple dans `src/data/awesome_ores/function/`)
 
 ## 📝 Étape 7 : Ajouter votre premier objet personnalisé

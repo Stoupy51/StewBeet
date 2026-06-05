@@ -109,9 +109,9 @@ Scans all datapack functions during build:
 
 ### 🔗 Lantern Load Integration
 Sets up proper loading infrastructure:
-- 🏷️ Wires `minecraft:load` → `#load:_private/load` → init / pre_load / load / post_load phases
+- 🏷️ Wires `minecraft:load` -> `#load:_private/load` -> init / pre_load / load / post_load phases
 - 📋 Resets `load.status` scoreboard in `load:_private/init`
-- ⚙️ Creates `#ns:load` → `[#ns:enumerate, #ns:resolve]` chain
+- ⚙️ Creates `#ns:load` -> `[#ns:enumerate, #ns:resolve]` chain
 - 🔗 Prepends `#ns:dependencies` tag listing `#dep:load` for every dependency (deduped)
 
 ### ✅ Runtime Version Validation

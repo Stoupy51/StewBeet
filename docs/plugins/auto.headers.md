@@ -95,12 +95,12 @@ Automatically detects and types macro function arguments:
 ```mcfunction
 # Direct NBT call
 function namespace:target {x:10,y:20.5f,name:"Player"}
-# → Infers: x (int), y (float), name (string)
+# -> Infers: x (int), y (float), name (string)
 
 # Storage-based call
 data modify storage temp:data macro set value {dimension:"minecraft:overworld",x:0,y:64,z:0}
 function namespace:teleport with storage temp:data macro
-# → Infers: dimension (string), x (int), y (int), z (int)
+# -> Infers: dimension (string), x (int), y (int), z (int)
 
 # Type inheritance
 function caller {result:$(value)}

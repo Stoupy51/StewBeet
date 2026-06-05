@@ -490,11 +490,11 @@ class EquipmentsConfig:
 ```
 
 **Common attribute modifiers:**
-- `"attack_damage": 1.0` → +1 attack damage for weapons (e.g., diamond pickaxe: 5 → 6)
-- `"armor": 0.5` → +0.5 armor for each armor piece
-- `"armor_toughness": 1.0` → +1 armor toughness for armor pieces
-- `"mining_efficiency": 2` → +20% mining speed for tools
-- `"knockback_resistance": 0.1` → +0.1 knockback resistance (applied to armor only)
+- `"attack_damage": 1.0` -> +1 attack damage for weapons (e.g., diamond pickaxe: 5 -> 6)
+- `"armor": 0.5` -> +0.5 armor for each armor piece
+- `"armor_toughness": 1.0` -> +1 armor toughness for armor pieces
+- `"mining_efficiency": 2` -> +20% mining speed for tools
+- `"knockback_resistance": 0.1` -> +0.1 knockback resistance (applied to armor only)
 
 ## 📖 Documentation Integration
 
@@ -601,9 +601,9 @@ Common categories for manual organization (but it's always up to you!):
 
 ### 🎨 Texture Integration
 Items automatically detect textures by name from `assets/textures/`:
-- `steel_ingot.png` → `steel_ingot` item
-- `steel_pickaxe.png` → `steel_pickaxe` tool
-- `steel_block.png` → `steel_block` custom block
+- `steel_ingot.png` -> `steel_ingot` item
+- `steel_pickaxe.png` -> `steel_pickaxe` tool
+- `steel_block.png` -> `steel_block` custom block
 
 ### 🔗 Accessing Existing Items
 
@@ -640,7 +640,7 @@ StewBeet automatically recognizes texture patterns and generates appropriate mod
 
 **Item Patterns:**
 - **`leather_armor`**: Items starting with `leather_` automatically use layer1 for overlay coloring
-- **`overlay`**: Items with `_overlay` texture (e.g., `my_item.png` + `my_item_overlay.png` → layer0 + layer1)
+- **`overlay`**: Items with `_overlay` texture (e.g., `my_item.png` + `my_item_overlay.png` -> layer0 + layer1)
 - **`bow_pulling`**: Bow items with `_pulling_0`, `_pulling_1`, `_pulling_2`, etc. (sorted numerically)
 - **`spear_in_hand`**: Spears ending with `_spear` + `_in_hand` texture variant (uses display context switching)
 

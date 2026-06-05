@@ -21,12 +21,12 @@ def beet_default(ctx: Context):
             f"Lang entry '{key}' must be a non-empty string, got: {value!r}"
 
     # ── loot-table text components must produce translate entries ─────────────
-    # "Gold Ring" from the explicit item_name → must appear as a value somewhere
+    # "Gold Ring" from the explicit item_name -> must appear as a value somewhere
     all_values: set[str] = set(lang_data.values())
     assert any("Gold Ring" in v for v in all_values), \
         "en_us must contain 'Gold Ring' as a translated value"
 
-    # "Copper Wire" is auto-generated from id → must also appear
+    # "Copper Wire" is auto-generated from id -> must also appear
     assert any("Copper Wire" in v for v in all_values), \
         "en_us must contain 'Copper Wire' (auto-generated from id)"
 

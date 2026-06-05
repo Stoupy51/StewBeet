@@ -50,8 +50,8 @@ jobs:
 
               if current != latest:
                   content = content.replace(f'"{name}>={current}"', f'"{name}>={latest}"')
-                  updated.append(f"{name}: {current} → {latest}")
-                  print(f"Updated {name}: {current} → {latest}")
+                  updated.append(f"{name}: {current} -> {latest}")
+                  print(f"Updated {name}: {current} -> {latest}")
 
           with open("python_package/pyproject.toml", "w") as f:
               f.write(content)

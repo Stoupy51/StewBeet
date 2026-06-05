@@ -7,21 +7,21 @@ from stewbeet import *  # type: ignore
 
 # Main entry point
 def beet_default(ctx: Context):
-    # Block with id but NO facing → simple setblock, no rotation
+    # Block with id but NO facing -> simple setblock, no rotation
     Block(
         id="block_no_facing",
         manual_category="misc",
         vanilla_block=VanillaBlock(id="minecraft:cobblestone"),
     )
 
-    # Block with visual_facing="player" → item_display rotates, no block facing state
+    # Block with visual_facing="player" -> item_display rotates, no block facing state
     Block(
         id="block_visual_facing",
         manual_category="misc",
         vanilla_block=VanillaBlock(id="minecraft:glass", visual_facing="player"),
     )
 
-    # Block with block_facing="player" → vanilla block gets facing= blockstate AND display rotates
+    # Block with block_facing="player" -> vanilla block gets facing= blockstate AND display rotates
     Block(
         id="block_with_facing",
         manual_category="misc",

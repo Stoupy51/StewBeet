@@ -193,7 +193,7 @@ export function MarkdownToBBCodePage() {
                 disabled={!markdownInput}
                 className={`px-8 py-3 ${BTN_SOLID} text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2`}
               >
-                {language === 'fr' ? 'Convertir' : 'Convert'} →
+                {language === 'fr' ? 'Convertir' : 'Convert'} ->
               </button>
             )}
             <button

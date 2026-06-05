@@ -84,10 +84,10 @@ The **Basic Template** is perfect because it:
 
 1. **Create** a new folder for your project (e.g., `C:/MyDatapacks/AwesomeOres/`)
 2. **Open the folder in VS Code**:
-   - Right-click the folder → "Open with Code"
-   - Or launch VS Code and use File → Open Folder
+   - Right-click the folder -> "Open with Code"
+   - Or launch VS Code and use File -> Open Folder
 3. **Open a terminal in VS Code**:
-   - Use Terminal → New Terminal from the menu
+   - Use Terminal -> New Terminal from the menu
    - The terminal will automatically open in your project folder
 4. **Run the init command**:
    ```bash
@@ -233,7 +233,7 @@ Replace the paths with your actual Minecraft folders. Now when you run `stewbeet
 ### 🔧 Enable in Game
 
 1. **In Minecraft**, type `/reload` in chat
-2. Go to **Options** → **Resource Packs** and enable your resource pack
+2. Go to **Options** -> **Resource Packs** and enable your resource pack
 3. Test the basic functionality with `/function awesome_ores:path/to/a/random/function/i/guess` (if you didn't remove the example function in `src/data/awesome_ores/function/`)
 
 ## 📝 Step 7: Add Your First Custom Item
