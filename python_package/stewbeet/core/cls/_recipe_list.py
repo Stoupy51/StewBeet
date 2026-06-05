@@ -7,14 +7,28 @@ from copy import deepcopy
 from typing import Any, Self, SupportsIndex, cast
 
 import stouputils as stp
+from beet import ItemTag, NamespaceProxy
 from beet.contrib.vanilla import Vanilla
 from stouputils.typing import JsonDict
 
 
 @stp.simple_cache
-def get_vanilla() -> Vanilla:
+def get_vanilla_item_tags() -> dict[str, ItemTag]:
     from ..__memory__ import Mem
-    return Vanilla(ctx=Mem.ctx)
+
+    # Derive a stable, version-scoped key — same pattern as download_manager's URL keys
+    cache = Mem.ctx.cache["stewbeet"]
+    cache_key = f"vanilla_item_tags-{Mem.ctx.minecraft_version}"
+
+    cached_path = cache.get_path(cache_key)
+    if cached_path.exists():
+        raw: JsonDict = stp.json_load(cached_path)
+        return {k: ItemTag(v) for k, v in raw.items()}
+
+    # Cache miss - pay the full cost once to generate the file
+    tags: NamespaceProxy[ItemTag] = Vanilla(ctx=Mem.ctx).data.item_tags
+    stp.json_dump({k: t.data for k, t in tags.items()}, file=cached_path)
+    return dict(tags)
 
 # Custom list class for recipes
 class RecipeList(list[Any]):
@@ -63,7 +77,7 @@ class RecipeList(list[Any]):
         # Make sure vanilla data is loaded
         tag_data = Mem.ctx.data.item_tags.get(clean_tag)
         if not tag_data:
-            tag_data = get_vanilla().data.item_tags.get(clean_tag)
+            tag_data = get_vanilla_item_tags().get(clean_tag)
         if not tag_data:
             return [tag_path]  # Tag not found, return as-is
 
