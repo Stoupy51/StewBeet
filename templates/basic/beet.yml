@@ -113,9 +113,9 @@ meta:
         #   url     : link shown when dependency is missing
         #   source  : "static" | "modrinth" | "smithed"
         # Source-specific fields:
-        #   static  → static_urls: {((mc_ver_tuple), (dep_ver_tuple)): "url"}
-        #   modrinth → modrinth_slug: "slug"  (latest MC-compatible release auto-fetched)
-        #   smithed  → smithed_id: "id", has_resource_pack: bool  (latest MC-compatible version auto-fetched)
+        #   static  -> static_urls: {((mc_ver_tuple), (dep_ver_tuple)): "url"}
+        #   modrinth -> modrinth_slug: "slug"  (latest MC-compatible release auto-fetched)
+        #   smithed  -> smithed_id: "id", has_resource_pack: bool  (latest MC-compatible version auto-fetched)
         load_dependencies: {
             # --- Modrinth example (latest release for the current MC version is auto-fetched) ---
             # "itemio": {"name":"ItemIO", "url":"https://github.com/edayot/ItemIO",

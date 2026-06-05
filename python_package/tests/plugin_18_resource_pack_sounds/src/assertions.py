@@ -21,7 +21,7 @@ def beet_default(ctx: Context):
         "sounds.json must contain at least one sound event"
 
     # ── numbered variants are grouped ─────────────────────────────────────────
-    # dirt_bullet_impact_01/02/03 → grouped under one key "dirt_bullet_impact"
+    # dirt_bullet_impact_01/02/03 -> grouped under one key "dirt_bullet_impact"
     # Keys in sounds.json are NOT namespace-prefixed (the ns prefix appears in the sound paths)
     assert "dirt_bullet_impact" in sounds_data, \
         "Numbered variants (dirt_bullet_impact_01/02/03) must be grouped under 'dirt_bullet_impact'"

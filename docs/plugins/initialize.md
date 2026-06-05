@@ -91,11 +91,11 @@ Automatically handles pack.png icon distribution:
 
 ### 🔄 Legacy Support
 Handles legacy texture naming conversions for better later compatibility/pattern matching:
-- `_off` → (removed) ❌
-- `_down` → `_bottom` ⬇️
-- `_up` → `_top` ⬆️
-- `_north` → `_front` ⬆️
-- `_south` → `_back` ⬇️
-- `_west` → `_left` ⬅️
-- `_east` → `_right` ➡️
+- `_off` -> (removed) ❌
+- `_down` -> `_bottom` ⬇️
+- `_up` -> `_top` ⬆️
+- `_north` -> `_front` ⬆️
+- `_south` -> `_back` ⬇️
+- `_west` -> `_left` ⬅️
+- `_east` -> `_right` ➡️
 

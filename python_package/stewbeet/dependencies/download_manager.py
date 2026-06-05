@@ -25,7 +25,7 @@ from .official_libs import OFFICIAL_LIBS
 SMITHED_API_BASE: str = "https://api.smithed.dev/v2/packs"
 MODRINTH_API_BASE: str = "https://api.modrinth.com/v2"
 HEADERS: dict[str, str] = {"User-Agent": "StewBeet"}
-BUILD_CACHE: dict[str, list[DownloadedLib]] = {}  # cache-dir → results
+BUILD_CACHE: dict[str, list[DownloadedLib]] = {}  # cache-dir -> results
 
 
 @dataclass

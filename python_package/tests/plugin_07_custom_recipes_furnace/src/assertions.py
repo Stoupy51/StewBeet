@@ -11,7 +11,7 @@ def beet_default(ctx: Context):
     fnbt: str = f"{ns}:calls/furnace_nbt_recipes"
 
     # ── vanilla recipe files in furnace_nbt_recipes namespace ─────────────────
-    # Smelting: raw_iron → smelted_bar
+    # Smelting: raw_iron -> smelted_bar
     smelting_recipe: str = "vanilla_items/smelting__raw_iron__tns_smelted_bar"
     assert smelting_recipe in ctx.data["furnace_nbt_recipes"].recipes, \
         f"Expected smelting vanilla recipe: {smelting_recipe}"
@@ -21,7 +21,7 @@ def beet_default(ctx: Context):
     assert smelting_data.get("cookingtime") == 200, \
         "smelting cookingtime must be 200"
 
-    # Blasting: raw_iron → smelted_bar
+    # Blasting: raw_iron -> smelted_bar
     blasting_recipe: str = "vanilla_items/blasting__raw_iron__tns_smelted_bar"
     assert blasting_recipe in ctx.data["furnace_nbt_recipes"].recipes, \
         f"Expected blasting vanilla recipe: {blasting_recipe}"
@@ -31,7 +31,7 @@ def beet_default(ctx: Context):
     assert blasting_data.get("cookingtime") == 100, \
         "blasting cookingtime must be 100"
 
-    # Smoking: beef → smoked_food
+    # Smoking: beef -> smoked_food
     smoking_recipe: str = "vanilla_items/smoking__beef__tns_smoked_food"
     assert smoking_recipe in ctx.data["furnace_nbt_recipes"].recipes, \
         f"Expected smoking vanilla recipe: {smoking_recipe}"

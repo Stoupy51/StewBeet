@@ -75,7 +75,7 @@ def uuid2inline(uuid: str) -> str:
 	content: str = uuid[uuid.index(";") + 1 : uuid.rindex("]")]
 	ints: list[int] = [int(part.strip()) for part in content.split(",")]
 
-	# Convert each signed int to 8 hex digits (two's complement → unsigned 32-bit)
+	# Convert each signed int to 8 hex digits (two's complement -> unsigned 32-bit)
 	hex_str: str = "".join(f"{(n + (1 << 32)) % (1 << 32):08x}" for n in ints)
 
 	# Format as the standard UUID layout: 8-4-4-4-12
@@ -163,22 +163,22 @@ function {self.ns}:v{self.version}/unload
 		ns = self.ns
 		# Each entry: (pattern, callback) where callback returns the unload commands for a match
 		regexes: dict[UnloadFunctionKeys, tuple[Pattern[str], Callable[[Match[str]], set[str]]]] = {
-			# scoreboard objectives add <name>  →  scoreboard objectives remove <name>
+			# scoreboard objectives add <name>  ->  scoreboard objectives remove <name>
 			"scoreboard_objectives": (
 				SCOREBOARD_OBJECTIVE_RE,
 				lambda match: {f"scoreboard objectives remove {match.group(1)}"},
 			),
-			# data modify storage <ns:key> <field>  →  data remove storage <ns:key> <field>
+			# data modify storage <ns:key> <field>  ->  data remove storage <ns:key> <field>
 			"storages": (
 				compile(rf"data modify storage ({ns}:\w+) (\w+)"),
 				lambda match: {f"data remove storage {match.group(1)} {match.group(2)}"},
 			),
-			# summon ... {UUID:[I; a, b, c, d]}  →  execute as <inline-uuid> ... run function .../unload/safe_kill
+			# summon ... {UUID:[I; a, b, c, d]}  ->  execute as <inline-uuid> ... run function .../unload/safe_kill
 			"entities_uuids": (
 				ENTITY_UUID_RE,
 				lambda match: {f"execute as {uuid2inline(match.group(1))} at @s run function {ns}:v{self.version}/unload/safe_kill"},
 			),
-			# summon ... {Tags:["tag1", "tag2"]}  →  execute as @e[tag=<ns_tag>] ... run function .../unload/safe_kill
+			# summon ... {Tags:["tag1", "tag2"]}  ->  execute as @e[tag=<ns_tag>] ... run function .../unload/safe_kill
 			"entities_tags": (
 				ENTITY_TAGS_RE,
 				lambda match: {

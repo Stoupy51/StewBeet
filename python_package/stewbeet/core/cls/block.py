@@ -28,9 +28,9 @@ class VanillaBlock(StMapping):
     - ``visual_facing``: controls the orientation of the visual entity/display
 
     Legacy ``apply_facing`` field is still accepted for backward compatibility:
-    - ``apply_facing=True`` → ``block_facing="player"``, ``visual_facing="player"``
-    - ``apply_facing="entity"`` → ``visual_facing="player"``
-    - ``apply_facing=False`` → no change (defaults)
+    - ``apply_facing=True`` -> ``block_facing="player"``, ``visual_facing="player"``
+    - ``apply_facing="entity"`` -> ``visual_facing="player"``
+    - ``apply_facing=False`` -> no change (defaults)
 
     Default behavior (no facing):
 

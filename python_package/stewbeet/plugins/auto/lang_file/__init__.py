@@ -10,7 +10,7 @@ from .utils import handle_file, lang
 
 # Main entry point
 @stp.measure_time(message="Execution time of 'stewbeet.plugins.auto.lang_file'")
-def beet_default(ctx: Context, desc: str = "Generating lang file") -> None:
+def beet_default(ctx: Context) -> None:
 	""" Main entry point for the lang file plugin.
 	This plugin handles language file generation for the datapack.
 
@@ -30,7 +30,7 @@ def beet_default(ctx: Context, desc: str = "Generating lang file") -> None:
 		content for _, content in sorted(files_to_process.items())
 		if isinstance(content, TextFileBase)
 	]
-	for content in stp.progress_bar(args, desc=desc, color=stp.BLUE):
+	for content in args:
 		handle_file(content)
 
 	# Update the lang file

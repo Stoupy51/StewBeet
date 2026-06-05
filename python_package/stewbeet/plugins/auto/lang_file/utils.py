@@ -384,7 +384,7 @@ def build_replacement(
 	Args:
 		string      (str):      Full file content being processed.
 		text        (str):      Raw matched value (as it appears in source, with escapes).
-		clean_text  (str):      Decoded version of text (\\n → newline, etc.).
+		clean_text  (str):      Decoded version of text (\\n -> newline, etc.).
 		start       (int):      Start position of the matched key:value fragment.
 		end         (int):      End position of the matched key:value fragment.
 		quote       (str):      Quote character used around the value ('"' or "'").
@@ -616,7 +616,7 @@ def handle_file(content: TextFileBase[str] | None, ctx: Context | None = None) -
 		replacements.append((replace_start, replace_end, new_fragment))
 
 	if replacements:
-		# Replacements are already in high→low position order; build new string in one pass
+		# Replacements are already in high->low position order; build new string in one pass
 		parts: list[str] = []
 		pos: int = len(string)
 		for replace_start, replace_end, new_fragment in replacements:
