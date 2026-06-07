@@ -3,6 +3,7 @@
 import os
 import sys
 import time
+from glob import glob
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile, ZipInfo
 
@@ -42,6 +43,8 @@ def weld_datapack(ctx: Context, dest_path: str) -> float:
 	for dl in get_lib_paths(ctx):
 		if dl.datapack_path:
 			datapacks_to_merge.append(dl.datapack_path)
+	datapacks_to_merge = [x for pack in datapacks_to_merge for x in glob(pack)]
+	datapacks_to_merge.reverse()	# Reverse so the main pack is last (overwrites pack format)
 
 	# Skip welding if there are less than 2 datapacks to merge
 	if len(datapacks_to_merge) < 2:
@@ -126,6 +129,8 @@ def weld_resource_pack(ctx: Context, dest_path: str) -> float:
 	for dl in get_lib_paths(ctx):
 		if dl.resource_pack_path:
 			resource_packs_to_merge.append(dl.resource_pack_path)
+	resource_packs_to_merge = [x for pack in resource_packs_to_merge for x in glob(pack)]
+	resource_packs_to_merge.reverse()	# Reverse so the main pack is last (overwrites pack format)
 
 	# Skip welding if there are less than 2 resource packs to merge
 	if len(resource_packs_to_merge) < 2:
