@@ -1,0 +1,8 @@
+stewbeet.continuous\_delivery.github module
+===========================================
+
+.. automodule:: stewbeet.continuous_delivery.github
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

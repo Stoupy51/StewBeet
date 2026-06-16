@@ -1,0 +1,8 @@
+stewbeet.plugins.ingame\_manual.book\_optimizer module
+======================================================
+
+.. automodule:: stewbeet.plugins.ingame_manual.book_optimizer
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

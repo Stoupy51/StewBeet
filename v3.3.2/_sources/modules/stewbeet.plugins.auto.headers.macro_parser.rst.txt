@@ -1,0 +1,8 @@
+stewbeet.plugins.auto.headers.macro\_parser module
+==================================================
+
+.. automodule:: stewbeet.plugins.auto.headers.macro_parser
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
