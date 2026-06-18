@@ -22,7 +22,7 @@ def get_next_font() -> str:	# Returns an incrementing value for each craft
 # Constants
 SQUARE_SIZE: int = 32
 MANUAL_ASSETS_PATH: str = stp.get_root_path(__file__)
-TEMPLATES_PATH: str = MANUAL_ASSETS_PATH + "/templates"
+TEMPLATES_PATH: str = MANUAL_ASSETS_PATH + "/templates"	# TODO: #FIXME: Should be a temporary folder instead
 FONT_FILE: str = "manual"
 BORDER_SIZE: int = 2
 HEAVY_WORKBENCH_CATEGORY: str = "__private_heavy_workbench"
