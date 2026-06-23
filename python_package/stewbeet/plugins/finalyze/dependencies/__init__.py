@@ -218,7 +218,7 @@ scoreboard players set #dependency_error {ns}.data 0
 		if ctx.meta.get("mc_supports"):
 			mc_supports: list[str] = ctx.meta["mc_supports"]
 			# Only keep valid versions (excluding 'w', 'b', 'pre' versions)
-			mc_supports = [x for x in mc_supports if stp.version_to_float(x, error=False) is not None]
+			mc_supports = [x for x in mc_supports if x != "infinite" and stp.version_to_float(x, error=False) is not None]
 			minimum = min(mc_supports, key=stp.version_to_float)
 			if stp.version_to_float(minimum) < stp.version_to_float(mc_version):
 				mc_version = minimum
