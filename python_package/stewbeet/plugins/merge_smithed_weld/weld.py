@@ -1,5 +1,6 @@
 
 # Imports
+import logging
 import os
 import sys
 import time
@@ -59,7 +60,11 @@ def weld_datapack(ctx: Context, dest_path: str) -> float:
 	except Exception as e:
 		stp.error(f"Smithed Weld merging failed: {e}\nThe 'smithed' package is not yet up to date with Python 3.14, consider installing from this fork:\npip install git+https://github.com/Stoupy51/smithed-python.git")
 		return time.perf_counter() - start_time
-	stp.silent(weld)(datapacks_to_merge, Path(output_dir), Path(output), log = "error")
+	# Weld logs failures through the "weld" logger instead of raising, so capture its (noisy)
+	# output and only replay it when an error actually happens
+	stp.silent(weld, mute_stderr=True, replay_on_error=True, error_log_level=logging.ERROR, watch_loggers=["weld"])(
+		datapacks_to_merge, Path(output_dir), Path(output), log="error"
+	)
 
 	# Get the consistent timestamp
 	constant_time = get_consistent_timestamp(ctx)
@@ -145,7 +150,11 @@ def weld_resource_pack(ctx: Context, dest_path: str) -> float:
 	except Exception as e:
 		stp.error(f"Smithed Weld merging failed: {e}\nThe 'smithed' package is not yet up to date with Python 3.14, consider installing from this fork:\npip install git+https://github.com/Stoupy51/smithed-python.git")
 		return time.perf_counter() - start_time
-	stp.silent(weld)(resource_packs_to_merge, Path(output_dir), Path(output), log = "error")
+	# Weld logs failures through the "weld" logger instead of raising, so capture its (noisy)
+	# output and only replay it when an error actually happens
+	stp.silent(weld, mute_stderr=True, replay_on_error=True, error_log_level=logging.ERROR, watch_loggers=["weld"])(
+		resource_packs_to_merge, Path(output_dir), Path(output), log="error"
+	)
 
 	# Get the consistent timestamp
 	constant_time = get_consistent_timestamp(ctx)
