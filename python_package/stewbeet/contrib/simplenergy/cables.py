@@ -4,9 +4,10 @@
 import os
 
 import stouputils as stp
-from beet import ItemModel, Model
+from beet import ItemModel, Model, Texture
+from PIL import Image
 
-from ...core import CUSTOM_ITEM_VANILLA, Item, JsonDict, Mem, set_json_encoder, texture_mcmeta, write_function
+from ...core import Item, JsonDict, Mem, set_json_encoder, texture_mcmeta, write_advancement, write_function, write_load_file
 
 # Constants
 ENERGY_CABLE_MODELS_FOLDER: str = stp.get_root_path(__file__) + "/energy_cable_models"
@@ -81,7 +82,7 @@ tag @s add {ns}.cable
 
 	# Update_cable_model function
 	cables_str: str = "\n".join([
-		f"execute if entity @s[tag={ns}.{cable}] run item replace entity @s contents with {CUSTOM_ITEM_VANILLA}[item_model=\"{ns}:{cable}\"]"
+		f"execute if entity @s[tag={ns}.{cable}] run item replace entity @s contents with {Item.base_item}[item_model=\"{ns}:{cable}\"]"
 		for cable in cables
 	])
 	cable_update_content: str = f"""
@@ -202,7 +203,7 @@ function #itemio:calls/cables/destroy
 
 	# Update cable_model function
 	cables_str: str = "\n".join([
-		f"execute if entity @s[tag={ns}.{cable}] run item replace entity @s contents with {CUSTOM_ITEM_VANILLA}[item_model=\"{ns}:{cable}\"]"
+		f"execute if entity @s[tag={ns}.{cable}] run item replace entity @s contents with {Item.base_item}[item_model=\"{ns}:{cable}\"]"
 		for cable in cables
 	])
 	cable_update_content: str = f"""
@@ -262,14 +263,21 @@ def servo_mechanisms_models(servos: dict[str, dict[str, str] | None]) -> None:
 		connected_model["textures"] = {"0": f"{ns}:block/{connected_texture}", "particle": f"{ns}:block/{connected_texture}"}
 		Mem.ctx.assets[ns].models[f"block/servo/{typ}_connected"] = set_json_encoder(Model(connected_model), max_level=3)
 
+		# Register the off model (grayed out version of the default texture, shown when the servo is disabled)
+		off_texture: str = f"servo/{typ}_off"
+		off_model: JsonDict = stp.json_load(f"{models_path}/{typ}_block.json")
+		off_model["parent"] = f"{ns}:block/servo/base_block"
+		off_model["textures"] = {"0": f"{ns}:block/{off_texture}", "particle": f"{ns}:block/{off_texture}"}
+		Mem.ctx.assets[ns].models[f"block/servo/{typ}_off"] = set_json_encoder(Model(off_model), max_level=3)
+
 		# Register the item model
 		item_model: JsonDict = stp.json_load(f"{models_path}/{typ}_item.json")
 		item_model["parent"] = f"{ns}:block/servo/base_item"
 		item_model["textures"] = {"0": f"{ns}:block/{default_texture}", "particle": f"{ns}:block/{default_texture}"}
 		Mem.ctx.assets[ns].models[f"block/servo/{typ}_item"] = set_json_encoder(Model(item_model), max_level=3)
 
-		# Register two items file (for default and connected)
-		for texture in ("block", "connected"):
+		# Register items files (for default, connected and off)
+		for texture in ("block", "connected", "off"):
 			model_data = {
 				"model": {
 					"type": "minecraft:model",
@@ -288,6 +296,17 @@ def servo_mechanisms_models(servos: dict[str, dict[str, str] | None]) -> None:
 			if os.path.exists(src) and (not Mem.ctx.assets[ns].textures.get(dst)):
 				Mem.ctx.assets[ns].textures[dst] = texture_mcmeta(src)
 
+		# Generate the grayed out "off" texture from the default texture (desaturated and darkened)
+		off_dst: str = f"block/{off_texture}"
+		default_src: str = f"{textures_folder}/{textures.get('default', f'{typ}_default')}.png"
+		if os.path.exists(default_src) and (not Mem.ctx.assets[ns].textures.get(off_dst)):
+			with Image.open(default_src) as base_image:
+				rgba: Image.Image = base_image.convert("RGBA")
+			r, g, b, a = rgba.split()
+			gray = Image.merge("RGB", (r, g, b)).convert("L").point(lambda p: int(p * 0.5))
+			off_image: Image.Image = Image.merge("RGBA", (gray, gray, gray, a))
+			Mem.ctx.assets[ns].textures[off_dst] = Texture(off_image)
+
 		## Working functions
 		# On placement, add necessary tag and call init function
 		item = Item.from_id(servo)
@@ -301,6 +320,7 @@ tag @s add itemio.servo
 tag @s add {ns}.servo
 scoreboard players set @s itemio.servo.stack_limit {stack_limit}
 scoreboard players set @s itemio.servo.retry_limit {retry_limit}
+scoreboard players set @s {ns}.servo_off 0
 function #itemio:calls/servos/init
 """)
 		# On destruction, call destroy function of itemio
@@ -309,22 +329,117 @@ function #itemio:calls/servos/init
 function #itemio:calls/servos/destroy
 """)
 
-	# Update servo_model function
-	servo_update_content: str = f"""
+	# Update the servo model on itemio network changes (delegates to the shared model logic)
+	write_function(f"{ns}:calls/itemio/network_update", f"""
 # Stop if not {ns} servo
 execute unless entity @s[tag={ns}.custom_block,tag={ns}.servo] run return fail
 
-# Apply the model dynamically based on servo tags and itemio.math score
-"""
-	for servo, textures in servos.items():
-		if textures is None:
-			textures = {}
-		typ: str = textures.get("type", "extract")
+# Apply the model depending on the on/off state and the network connection
+function {ns}:utils/servo/update_model
+""", tags=["itemio:event/network_update"])
+
+	# Setup the "rotate to toggle on/off" feature
+	servo_toggle(servos)
+	return
+
+
+# Setup the ability to turn servos off and on by rotating (right-clicking) them
+def servo_toggle(servos: dict[str, dict[str, str] | None]) -> None:
+	""" Setup the functions allowing players to turn servo mechanisms off and on by rotating them.
+
+	Rotating (right-clicking) a servo item frame changes its 'ItemRotation'. A vanilla advancement listening to
+	the 'minecraft:player_interacted_with_entity' trigger detects the interaction (so nothing runs every tick),
+	then the nearby servos are checked: an odd rotation disables the rotated one (grayed out texture, item
+	transfers stopped by removing the 'itemio.servo.extract' / 'itemio.servo.insert' tag), an even rotation
+	enables it back to normal. As the check only acts when the parity differs, only the rotated servo toggles.
+
+	Args:
+		servos (dict[str, dict[str, str]]): Same servos dictionary as the one passed to 'servo_mechanisms_models'.
+	"""
+	ns: str = Mem.ctx.project_id
+	servo_types: dict[str, str] = {servo: (textures or {}).get("type", "extract") for servo, textures in servos.items()}
+
+	# Score holding the on/off state of each servo (created at load time)
+	write_load_file(f"\n# Score for the on/off state of servo mechanisms\nscoreboard objectives add {ns}.servo_off dummy\n")
+
+	# Advancement detecting the interaction with a servo item frame, then revoked and handled by a function
+	write_advancement(f"{ns}:technical/servo_toggle", {
+		"criteria": {
+			"requirement": {
+				"trigger": "minecraft:player_interacted_with_entity",
+				"conditions": {
+					"entity": {
+						"minecraft:entity_tags": {"any_of": [f"{ns}.servo"]},
+					},
+				},
+			},
+		},
+		"requirements": [["requirement"]],
+		"rewards": {"function": f"{ns}:utils/servo/on_interact"},
+	})
+
+	# Reward function: revoke the advancement, then check the servos around the player (only the rotated one toggles)
+	write_function(f"{ns}:utils/servo/on_interact", f"""
+# Revoke the advancement so it can trigger again
+advancement revoke @s only {ns}:technical/servo_toggle
+
+# Check the servos within reach (the change detection makes it a no-op for the ones that did not rotate)
+execute as @e[tag={ns}.servo,distance=..24] run function {ns}:utils/servo/check
+""")
+
+	# Check the rotation parity and apply the on/off state only when it changed
+	write_function(f"{ns}:utils/servo/check", f"""
+# Compute the rotation parity (0 = on, 1 = off)
+scoreboard players set #two {ns}.data 2
+execute store result score #parity {ns}.data run data get entity @s ItemRotation
+scoreboard players operation #parity {ns}.data %= #two {ns}.data
+
+# Keep the servo visually aligned while on (any even rotation is normalized to 0)
+execute if score #parity {ns}.data matches 0 unless data entity @s {{ItemRotation:0b}} run data modify entity @s ItemRotation set value 0b
+
+# Apply the state only when the parity differs from the current state
+execute if score #parity {ns}.data matches 0 unless score @s {ns}.servo_off matches 0 run function {ns}:utils/servo/enable
+execute if score #parity {ns}.data matches 1 unless score @s {ns}.servo_off matches 1 run function {ns}:utils/servo/disable
+""")
+
+	# Enable: allow item transfers again by adding back the servo tag, then restore the normal model
+	enable_tags: str = "\n".join(
+		f"execute if entity @s[tag={ns}.{servo}] run tag @s add itemio.servo.{typ}"
+		for servo, typ in servo_types.items()
+	)
+	write_function(f"{ns}:utils/servo/enable", f"""
+# Mark the servo as on and allow item transfers again
+scoreboard players set @s {ns}.servo_off 0
+{enable_tags}
+
+# Restore the normal model and play feedback
+function {ns}:utils/servo/update_model
+playsound minecraft:block.lever.click block @a[distance=..16] ~ ~ ~ 0.6 1.2
+""")
+
+	# Disable: stop item transfers by removing the servo tag, then apply the grayed out model
+	write_function(f"{ns}:utils/servo/disable", f"""
+# Mark the servo as off and stop item transfers
+scoreboard players set @s {ns}.servo_off 1
+tag @s remove itemio.servo.extract
+tag @s remove itemio.servo.insert
+
+# Apply the grayed out model and play feedback
+function {ns}:utils/servo/update_model
+playsound minecraft:block.lever.click block @a[distance=..16] ~ ~ ~ 0.6 0.7
+""")
+
+	# Shared model logic: grayed out when off, normal (depending on the network connection) when on
+	model_lines: list[str] = [
+		f'execute if score @s {ns}.servo_off matches 1 if entity @s[tag={ns}.{servo}] run data modify entity @s Item.components."minecraft:item_model" set value "{ns}:servo/{typ}_off"'
+		for servo, typ in servo_types.items()
+	]
+	for servo, typ in servo_types.items():
 		for number, texture in ((0, "block"), (1, "connected")):
-			servo_update_content += (
-				f'execute if score @s itemio.math matches {number} if entity @s[tag={ns}.{servo}] run '
-				f'data modify entity @s Item.components."minecraft:item_model" set value "{ns}:servo/{typ}_{texture}"\n'
+			model_lines.append(
+				f'execute if score @s {ns}.servo_off matches 0 if score @s itemio.math matches {number} if entity @s[tag={ns}.{servo}] run '
+				f'data modify entity @s Item.components."minecraft:item_model" set value "{ns}:servo/{typ}_{texture}"'
 			)
-	write_function(f"{ns}:calls/itemio/network_update", servo_update_content, tags=["itemio:event/network_update"])
+	write_function(f"{ns}:utils/servo/update_model", "\n".join(model_lines) + "\n")
 	return
 
