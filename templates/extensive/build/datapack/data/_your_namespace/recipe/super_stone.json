@@ -1,6 +1,6 @@
 {
 	"type": "minecraft:crafting_shaped",
-	"category": "blocks",
+	"category": "building",
 	"group": "super_stone",
 	"pattern": [
 		"XXX",

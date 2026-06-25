@@ -11,10 +11,10 @@ execute store result score #game_version _your_namespace.data run data get entit
 
 # Check if the game version is supported
 scoreboard players set #mcload_error _your_namespace.data 0
-execute unless score #game_version _your_namespace.data matches 4669.. run scoreboard players set #mcload_error _your_namespace.data 1
+execute unless score #game_version _your_namespace.data matches 4786.. run scoreboard players set #mcload_error _your_namespace.data 1
 
 # Decode errors
-execute if score #mcload_error _your_namespace.data matches 1 run tellraw @a {"translate":"_your_namespace.extensive_template_error_this_version_is_made_for_minecraft_1_21","color":"red"}
+execute if score #mcload_error _your_namespace.data matches 1 run tellraw @a {"translate":"_your_namespace.extensive_template_error_this_version_is_made_for_minecraft_26_1","color":"red"}
 execute if score #dependency_error _your_namespace.data matches 1 run tellraw @a {"translate":"_your_namespace.extensive_template_error_libraries_are_missingplease_download_th","color":"red"}
 execute if score #dependency_error _your_namespace.data matches 1 unless score #smithed.custom_block.major load.status matches 0.. run tellraw @a [{"text":"- ","color":"gold","click_event":{"action":"open_url","url":"https://wiki.smithed.dev/libraries/custom-block/"}}, {"translate":"_your_namespace.smithed_custom_block_v0_10_0"}]
 execute if score #dependency_error _your_namespace.data matches 1 if score #smithed.custom_block.major load.status matches 0 unless score #smithed.custom_block.minor load.status matches 10.. run tellraw @a [{"text":"- ","color":"gold","click_event":{"action":"open_url","url":"https://wiki.smithed.dev/libraries/custom-block/"}}, {"translate":"_your_namespace.smithed_custom_block_v0_10_0"}]

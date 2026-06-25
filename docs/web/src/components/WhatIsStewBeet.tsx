@@ -10,12 +10,12 @@ Block(
     vanilla_block=VanillaBlock(id="minecraft:cobblestone"),
     recipes=[
         # Examples of crafting recipes (shaped and shapeless), no need to specify result -> will default to the Item id
-        CraftingShapedRecipe(category="blocks", shape=["XXX","XXX","XXX"], ingredients={"X": Ingr("minecraft:stone")}),
-        CraftingShapelessRecipe(category="blocks", ingredients=9*[Ingr("minecraft:deepslate")]),
+        CraftingShapedRecipe(category="building", shape=["XXX","XXX","XXX"], ingredients={"X": Ingr("minecraft:stone")}),
+        CraftingShapelessRecipe(category="building", ingredients=9*[Ingr("minecraft:deepslate")]),
 
         # Example of recipe with vanilla result (not custom item)
-        SmeltingRecipe(experience=0.1, cookingtime=200, category="blocks", ingredient=Ingr("super_stone"), result=Ingr("minecraft:diamond")),
-        BlastingRecipe(experience=0.1, cookingtime=100, category="blocks", ingredient=Ingr("super_stone"), result=Ingr("minecraft:diamond")),
+        SmeltingRecipe(experience=0.1, cookingtime=200, category="building", ingredient=Ingr("super_stone"), result=Ingr("minecraft:diamond")),
+        BlastingRecipe(experience=0.1, cookingtime=100, category="building", ingredient=Ingr("super_stone"), result=Ingr("minecraft:diamond")),
     ],
 )
 

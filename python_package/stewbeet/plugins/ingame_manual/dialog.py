@@ -35,11 +35,11 @@ def add_sprite(title: TextComponent, sprite: str) -> TextComponent:
 	"""
 	title = [
 		"",
-		{"sprite":sprite,"shadow_color": [0]*4},
+		{"sprite":sprite,"shadow_color": [0,0,0,0]},
 		" ",
 		{"text":text_component_to_str(title),"underlined": True},
 		" ",
-		{"sprite":sprite,"shadow_color": [0]*4}
+		{"sprite":sprite,"shadow_color": [0,0,0,0]}
 	]
 	if Mem.ctx.data.pack_format is not None:
 		pack_format = cast(int | tuple[int, ...], Mem.ctx.data.pack_format)
