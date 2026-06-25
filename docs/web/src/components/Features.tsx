@@ -153,11 +153,11 @@ execute if score #minute stardust.data matches 1200.. run function stardust:v4.0
     # Smelting and blasting recipes for ore to 4x fragments
     recipes=[
         SmeltingRecipe(
-            result_count=4, experience=0.1, cookingtime=200, category="blocks",
+            result_count=4, experience=0.1, cookingtime=200, category="building",
             ingredient=Ingr("stardust_ore"), result=Ingr("stardust_fragment")
         ),
         BlastingRecipe(
-            result_count=4, experience=0.1, cookingtime=100, category="blocks",
+            result_count=4, experience=0.1, cookingtime=100, category="building",
             ingredient=Ingr("stardust_ore"), result=Ingr("stardust_fragment")
         ),
     ],

@@ -133,8 +133,18 @@ def set_manual_components(white_list: list[str]) -> None:
 	"""
 	if not white_list:
 		return
+
+	# v1 plugin (ingame_manual): class-level global
 	from ...plugins.ingame_manual.shared_import import SharedMemory
 	SharedMemory.components_to_include = white_list
+
+	# v2 plugin (ingame_manual_v2): record an override picked up by ManualConfig.from_meta,
+	# and update any Manual already created during setup.
+	from ...plugins.ingame_manual_v2 import config as v2_config
+	v2_config.COMPONENTS_OVERRIDE = list(white_list)
+	from ...core.__memory__ import Mem
+	if Mem.manual is not None:
+		Mem.manual.config.components_to_include = list(white_list)
 
 # Export all definitions to JSON
 def export_all_definitions_to_json(file_name: str, is_external: bool | JsonDict = False, verbose: bool = True) -> None:

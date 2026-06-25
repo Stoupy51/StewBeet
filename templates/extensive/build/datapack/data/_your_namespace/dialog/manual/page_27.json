@@ -3,7 +3,7 @@
 	"title": [
 		"",
 		{
-			"sprite": "_your_namespace:item/dialog_sprite/shazinho",
+			"sprite": "_your_namespace:item/dialog_sprite/steel_shovel",
 			"shadow_color": [
 				0,
 				0,
@@ -14,12 +14,12 @@
 		},
 		" ",
 		{
-			"translate": "_your_namespace.shazinho",
+			"translate": "_your_namespace.steel_shovel",
 			"underlined": true
 		},
 		" ",
 		{
-			"sprite": "_your_namespace:item/dialog_sprite/shazinho",
+			"sprite": "_your_namespace:item/dialog_sprite/steel_shovel",
 			"shadow_color": [
 				0,
 				0,
@@ -35,10 +35,10 @@
 			"contents": [
 				{"text": "V   ","font": "_your_namespace:manual","color": "white"},
 				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_26"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"}," (26)"]}},
-				" ",
+				{"text": "4","font": "_your_namespace:manual","color": "white","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_1"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_first_page"}]}},
 				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_28"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"}," (28)"]}},
 				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_26"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"}," (26)"]}},
-				" ",
+				{"text": " ","font": "_your_namespace:manual","color": "white","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_1"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_first_page"}]}},
 				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_28"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"}," (28)"]}}
 			],
 			"width": 400
@@ -47,9 +47,28 @@
 			"type": "minecraft:plain_message",
 			"contents": [
 				{"text": "","font": "_your_namespace:manual","color": "white","shadow_color": [0,0,0,0]},
-				"်\n",
-				{"text": "  \n  \n  \n  \n","hover_event": {"action": "show_item","id": "command_block","components": {"custom_data": {"_your_namespace": {"shazinho": true},"smithed": {"dict": {"record": {"shazinho": true,"item_name": "Shazinho"},"jukebox_song": {"comparator_output": 15,"length_in_seconds": 128,"sound_event": {"sound_id": "_your_namespace:shazinho"},"description": {"translate": "_your_namespace.shazinho"}}},"id": "_your_namespace:shazinho","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}},"item_name": {"translate": "_your_namespace.music_disc","italic": false},"jukebox_playable": "_your_namespace:shazinho","max_stack_size": 1,"rarity": "rare","item_model": "_your_namespace:shazinho","lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},[{"text":" ","italic": true,"color": "blue"}, {"translate": "_your_namespace.extensive_template"}]]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_27"}},
-				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+				"\"$6\n\"U$",
+				{"text": "$耨","hover_event": {"action": "show_item","id": "command_block","components": {"custom_data": {"smithed": {"dict": {"ingot": {"steel": true}},"id": "_your_namespace:steel_ingot","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ingot": true}},"item_model": "_your_namespace:steel_ingot","item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},[{"text":" ","italic": true,"color": "blue"}, {"translate": "_your_namespace.extensive_template"}]]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_9"}},
+				"U$  \n\"U$",
+				{"text": "U$","hover_event": {"action": "show_item","id": "command_block","components": {"custom_data": {"smithed": {"dict": {"ingot": {"steel": true}},"id": "_your_namespace:steel_ingot","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ingot": true}},"item_model": "_your_namespace:steel_ingot","item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},[{"text":" ","italic": true,"color": "blue"}, {"translate": "_your_namespace.extensive_template"}]]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_9"}},
+				"U$  \n\"U$",
+				{"text": "$聕","hover_event": {"action": "show_item","id": "minecraft:stick"}},
+				"U$\"\"",
+				{"text": "$$耽","hover_event": {"action": "show_item","id": "iron_shovel","components": {"custom_data": {"smithed": {"dict": {"tools": {"steel": true,"shovel": true}},"id": "_your_namespace:steel_shovel","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_shovel": true}},"max_damage": 750,"attribute_modifiers": [{"type": "attack_damage","amount": 4.5,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_damage"},{"type": "attack_speed","amount": -3.0,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_speed"},{"type": "mining_efficiency","amount": 2,"operation": "add_value","slot": "mainhand","id": "_your_namespace:mining_efficiency.mainhand"}],"item_model": "_your_namespace:steel_shovel","item_name": {"translate": "_your_namespace.steel_shovel"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},[{"text":" ","italic": true,"color": "blue"}, {"translate": "_your_namespace.extensive_template"}]]]}}},
+				"#$\n\"U$",
+				{"text": "U$","hover_event": {"action": "show_item","id": "minecraft:stick"}},
+				"U$\"\"",
+				{"text": "U$","hover_event": {"action": "show_item","id": "iron_shovel","components": {"custom_data": {"smithed": {"dict": {"tools": {"steel": true,"shovel": true}},"id": "_your_namespace:steel_shovel","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_shovel": true}},"max_damage": 750,"attribute_modifiers": [{"type": "attack_damage","amount": 4.5,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_damage"},{"type": "attack_speed","amount": -3.0,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_speed"},{"type": "mining_efficiency","amount": 2,"operation": "add_value","slot": "mainhand","id": "_your_namespace:mining_efficiency.mainhand"}],"item_model": "_your_namespace:steel_shovel","item_name": {"translate": "_your_namespace.steel_shovel"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},[{"text":" ","italic": true,"color": "blue"}, {"translate": "_your_namespace.extensive_template"}]]]}}},
+				"#$\n\"U$",
+				{"text": "$聕","hover_event": {"action": "show_item","id": "minecraft:stick"}},
+				"U$  \n\"U$",
+				{"text": "U$","hover_event": {"action": "show_item","id": "minecraft:stick"}},
+				"U$  \n\n",
+				{"text": "2##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"","U$",{"text": "$耨"},"U$","\n","\"","U$",{"text": "U$"},"U$","\n","\"","U$",{"text": "$聕"},"U$","\"\"",{"text": "$$耽"},"\n","\"","U$",{"text": "U$"},"U$","\"\"",{"text": "U$"},"\n","\"","U$",{"text": "$聕"},"U$","\n","\"","U$",{"text": "U$"},"U$","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"},{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.stick","color": "gray"}]}},
+				{"text": "職\n","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"G\n","\"",{"text": "$耽"},"\n","\"",{"text": "U$"},"\n","\"\"\"\"U$U$",{"text": "$$耬"},"\n","\"\"\"\"U$U$",{"text": "U$"},"\n","\n\n"],[{"text":"\n","color": "yellow"}, {"translate": "_your_namespace.smelting"}],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_shovel","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_10"}},
+				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"","U$",{"text": "$耨"},"U$","\n","\"","U$",{"text": "U$"},"U$","\n","\"","U$",{"text": "$聕"},"U$","\"\"",{"text": "$$耽"},"\n","\"","U$",{"text": "U$"},"U$","\"\"",{"text": "U$"},"\n","\"","U$",{"text": "$聕"},"U$","\n","\"","U$",{"text": "U$"},"U$","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"},{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.stick","color": "gray"}]}},
+				{"text": "0","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"G\n","\"",{"text": "$耽"},"\n","\"",{"text": "U$"},"\n","\"\"\"\"U$U$",{"text": "$$耬"},"\n","\"\"\"\"U$U$",{"text": "U$"},"\n","\n\n"],[{"text":"\n","color": "yellow"}, {"translate": "_your_namespace.smelting"}],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_shovel","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_10"}},
+				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 			],
 			"width": 140
 		}

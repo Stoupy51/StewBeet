@@ -45,7 +45,9 @@
 		"_your_namespace:manual/page_34",
 		"_your_namespace:manual/page_35",
 		"_your_namespace:manual/page_36",
-		"_your_namespace:manual/page_37"
+		"_your_namespace:manual/page_37",
+		"_your_namespace:manual/page_38",
+		"_your_namespace:manual/page_39"
 	],
 	"exit_action": {
 		"label": {"translate": "gui.back"},

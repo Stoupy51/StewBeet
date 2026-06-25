@@ -403,10 +403,10 @@
 		"base_item": "minecraft:furnace",
 		"manual_category": "miscellaneous",
 		"recipes": [
-			{"type": "crafting_shaped","result_count": 1,"category": "blocks","group": "super_stone","shape": ["XXX","XXX","XXX"],"ingredients": {"X": {"item": "minecraft:stone"}}},
-			{"type": "crafting_shapeless","result_count": 1,"category": "blocks","group": "super_stone","ingredients": [{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"}]},
-			{"type": "smelting","result_count": 1,"category": "blocks","group": "super_stone","result": {"item": "minecraft:diamond"},"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"super_stone": true}}}},"experience": 0.1,"cookingtime": 200},
-			{"type": "blasting","result_count": 1,"category": "blocks","group": "super_stone","result": {"item": "minecraft:diamond"},"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"super_stone": true}}}},"experience": 0.1,"cookingtime": 100}
+			{"type": "crafting_shaped","result_count": 1,"category": "building","group": "super_stone","shape": ["XXX","XXX","XXX"],"ingredients": {"X": {"item": "minecraft:stone"}}},
+			{"type": "crafting_shapeless","result_count": 1,"category": "building","group": "super_stone","ingredients": [{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"},{"item": "minecraft:deepslate"}]},
+			{"type": "smelting","result_count": 1,"category": "building","group": "super_stone","result": {"item": "minecraft:diamond"},"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"super_stone": true}}}},"experience": 0.1,"cookingtime": 200},
+			{"type": "blasting","result_count": 1,"category": "building","group": "super_stone","result": {"item": "minecraft:diamond"},"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"super_stone": true}}}},"experience": 0.1,"cookingtime": 100}
 		],
 		"components": {
 			"container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:super_stone","from": "_your_namespace"}}}}}}],
@@ -430,9 +430,9 @@
 		"base_item": "minecraft:painting",
 		"manual_category": "miscellaneous",
 		"recipes": [
-			{"type": "crafting_shaped","result_count": 1,"category": "decorations","group": "stewbeet_painting","shape": ["###","#F#","###"],"ingredients": {"#": {"item": "minecraft:egg"},"F": {"item": "minecraft:beetroot"}}},
-			{"type": "crafting_shaped","result_count": 1,"category": "decorations","group": "stewbeet_painting","shape": ["###","#F#","###"],"ingredients": {"#": {"item": "minecraft:blue_egg"},"F": {"item": "minecraft:beetroot"}}},
-			{"type": "crafting_shaped","result_count": 1,"category": "decorations","group": "stewbeet_painting","shape": ["###","#F#","###"],"ingredients": {"#": {"item": "minecraft:brown_egg"},"F": {"item": "minecraft:beetroot"}}}
+			{"type": "crafting_shaped","result_count": 1,"category": "misc","group": "stewbeet_painting","shape": ["###","#F#","###"],"ingredients": {"#": {"item": "minecraft:egg"},"F": {"item": "minecraft:beetroot"}}},
+			{"type": "crafting_shaped","result_count": 1,"category": "misc","group": "stewbeet_painting","shape": ["###","#F#","###"],"ingredients": {"#": {"item": "minecraft:blue_egg"},"F": {"item": "minecraft:beetroot"}}},
+			{"type": "crafting_shaped","result_count": 1,"category": "misc","group": "stewbeet_painting","shape": ["###","#F#","###"],"ingredients": {"#": {"item": "minecraft:brown_egg"},"F": {"item": "minecraft:beetroot"}}}
 		],
 		"components": {
 			"painting/variant": "_your_namespace:stewbeet_painting",
@@ -471,7 +471,7 @@
 		"base_item": "minecraft:furnace",
 		"manual_category": "miscellaneous",
 		"recipes": [
-			{"type": "crafting_shapeless","result_count": 1,"category": "blocks","group": "vb_no_facing","ingredients": [{"item": "minecraft:cobblestone"}]}
+			{"type": "crafting_shapeless","result_count": 1,"category": "building","group": "vb_no_facing","ingredients": [{"item": "minecraft:cobblestone"}]}
 		],
 		"components": {
 			"container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:vb_no_facing","from": "_your_namespace"}}}}}}],
@@ -494,7 +494,7 @@
 		"base_item": "minecraft:furnace",
 		"manual_category": "miscellaneous",
 		"recipes": [
-			{"type": "crafting_shapeless","result_count": 1,"category": "blocks","group": "vb_visual_facing","ingredients": [{"item": "minecraft:glass"}]}
+			{"type": "crafting_shapeless","result_count": 1,"category": "building","group": "vb_visual_facing","ingredients": [{"item": "minecraft:glass"}]}
 		],
 		"components": {
 			"container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:vb_visual_facing","from": "_your_namespace"}}}}}}],
@@ -517,7 +517,7 @@
 		"base_item": "minecraft:furnace",
 		"manual_category": "miscellaneous",
 		"recipes": [
-			{"type": "crafting_shapeless","result_count": 1,"category": "blocks","group": "vb_block_facing","ingredients": [{"item": "minecraft:furnace"}]}
+			{"type": "crafting_shapeless","result_count": 1,"category": "building","group": "vb_block_facing","ingredients": [{"item": "minecraft:furnace"}]}
 		],
 		"components": {
 			"container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:vb_block_facing","from": "_your_namespace"}}}}}}],
@@ -540,7 +540,7 @@
 		"base_item": "minecraft:furnace",
 		"manual_category": "miscellaneous",
 		"recipes": [
-			{"type": "crafting_shapeless","result_count": 1,"category": "blocks","group": "vb_block_states","ingredients": [{"item": "minecraft:furnace"},{"item": "minecraft:coal"}]}
+			{"type": "crafting_shapeless","result_count": 1,"category": "building","group": "vb_block_states","ingredients": [{"item": "minecraft:furnace"},{"item": "minecraft:coal"}]}
 		],
 		"components": {
 			"container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:vb_block_states","from": "_your_namespace"}}}}}}],
@@ -563,7 +563,7 @@
 		"base_item": "minecraft:item_frame",
 		"manual_category": "miscellaneous",
 		"recipes": [
-			{"type": "crafting_shapeless","result_count": 1,"category": "blocks","group": "vb_contents","ingredients": [{"item": "minecraft:item_frame"}]}
+			{"type": "crafting_shapeless","result_count": 1,"category": "building","group": "vb_contents","ingredients": [{"item": "minecraft:item_frame"}]}
 		],
 		"components": {
 			"entity_data": {"id": "minecraft:item_frame","Tags": ["_your_namespace.new","_your_namespace.vb_contents"],"Invisible": true,"Silent": true},
@@ -584,7 +584,7 @@
 		"base_item": "minecraft:item_frame",
 		"manual_category": "miscellaneous",
 		"recipes": [
-			{"type": "crafting_shapeless","result_count": 1,"category": "blocks","group": "vb_contents_player","ingredients": [{"item": "minecraft:item_frame"},{"item": "minecraft:compass"}]}
+			{"type": "crafting_shapeless","result_count": 1,"category": "building","group": "vb_contents_player","ingredients": [{"item": "minecraft:item_frame"},{"item": "minecraft:compass"}]}
 		],
 		"components": {
 			"entity_data": {"id": "minecraft:item_frame","Tags": ["_your_namespace.new","_your_namespace.vb_contents_player"],"Invisible": true,"Silent": true},
@@ -605,7 +605,7 @@
 		"base_item": "minecraft:item_frame",
 		"manual_category": "miscellaneous",
 		"recipes": [
-			{"type": "crafting_shapeless","result_count": 1,"category": "blocks","group": "vb_contents_frame","ingredients": [{"item": "minecraft:item_frame"},{"item": "minecraft:string"}]}
+			{"type": "crafting_shapeless","result_count": 1,"category": "building","group": "vb_contents_frame","ingredients": [{"item": "minecraft:item_frame"},{"item": "minecraft:string"}]}
 		],
 		"components": {
 			"entity_data": {"id": "minecraft:item_frame","Tags": ["_your_namespace.new","_your_namespace.vb_contents_frame"],"Invisible": true,"Silent": true},

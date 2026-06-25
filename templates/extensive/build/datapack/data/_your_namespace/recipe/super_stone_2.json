@@ -1,6 +1,6 @@
 {
 	"type": "minecraft:crafting_shapeless",
-	"category": "blocks",
+	"category": "building",
 	"group": "super_stone",
 	"ingredients": [
 		"minecraft:deepslate",

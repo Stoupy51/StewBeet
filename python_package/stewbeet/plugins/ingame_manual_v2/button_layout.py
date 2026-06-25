@@ -1,0 +1,63 @@
+"""Wiki-button placement configuration.
+
+A :class:`ButtonLayout` decides *where* and *which* wiki buttons (small clickable
+recipe-result / info icons) appear on a page, and how overflow is handled. It can be set
+as the manual-wide default (``ManualConfig.button_layout``) or overridden per page
+(``Page.button_layout``).
+
+Lives at the package root (not under ``pages/``) so :mod:`..config` can import it without
+triggering the ``pages`` package — which would create an import cycle.
+"""
+
+# Imports
+from __future__ import annotations
+
+from collections.abc import Callable
+from dataclasses import dataclass, field
+from typing import Any
+
+# Runtime import (not just TYPE_CHECKING): the parametrized default_factory below evaluates
+# list[WikiButtonRender] at class-definition time. recipes does not import button_layout, so
+# this does not create an import cycle.
+from .recipes import WikiButtonRender
+
+# Where the button grid is placed inside a page's content: a known keyword or a callable
+# ``(content, buttons, manual) -> content``.
+Position = str  # "after_recipe" | "bottom" | "top" | callable
+
+
+@dataclass(kw_only=True)
+class ButtonLayout:
+	""" Controls wiki-button rendering for a page.
+
+	>>> layout = ButtonLayout(columns=6, position="bottom")
+	>>> layout.columns
+	6
+
+	Attributes:
+		columns			(int):	Number of buttons per row.
+		max_buttons		(int):	Hard cap on how many buttons are shown (overflow dropped by priority).
+		position		(str|Callable):	"after_recipe" (default), "top", "bottom", or a callable
+							``(content, buttons, manual) -> content`` for full control.
+		order			(Callable|None):	Sort key applied to buttons before layout (e.g. ``lambda b: -b.priority``).
+		include			(Callable|None):	Predicate ``(button) -> bool`` filtering which buttons to keep.
+		extra_buttons	(list):	Additional developer-supplied buttons appended before layout.
+	"""
+	columns: int = 5
+	max_buttons: int = 20
+	position: Position | Callable[..., Any] = "after_recipe"
+	""" FIXME: This is currently unused feature. It should """
+	order: Callable[[WikiButtonRender], Any] | None = None
+	include: Callable[[WikiButtonRender], bool] | None = None
+	extra_buttons: list[WikiButtonRender] = field(default_factory=list[WikiButtonRender])
+
+	def clone(self) -> ButtonLayout:
+		""" Return a shallow copy (so per-page overrides don't mutate the shared default). """
+		return ButtonLayout(
+			columns=self.columns,
+			max_buttons=self.max_buttons,
+			position=self.position,
+			order=self.order,
+			include=self.include,
+			extra_buttons=list(self.extra_buttons),
+		)
