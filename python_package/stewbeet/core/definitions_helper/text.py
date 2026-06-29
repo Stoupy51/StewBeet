@@ -5,13 +5,13 @@ from stouputils.typing import JsonDict
 
 
 # Functions
-def create_gradient_text(text: str, start_hex: str = "c24a17", end_hex: str = "c77e36", text_length: int | None = None) -> list[JsonDict]:
+def create_gradient_text(text: str, start_hex: str = "#c24a17", end_hex: str = "#c77e36", text_length: int | None = None) -> list[JsonDict]:
 	""" Create a gradient text effect by interpolating colors between start and end hex.
 
 	Args:
 		text        (str): The text to apply the gradient to.
-		start_hex   (str): Starting color in hex format (e.g. 'c24a17').
-		end_hex     (str): Ending color in hex format (e.g. 'c77e36').
+		start_hex   (str): Starting color in hex format (e.g. '#c24a17').
+		end_hex     (str): Ending color in hex format (e.g. '#c77e36').
 		text_length (int | None): Optional length override for the text. If provided, uses this instead of len(text).
 
 	Returns:
