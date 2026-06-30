@@ -1,9 +1,10 @@
-"""Dialog generation (the primary manual output in v2).
+"""Dialog generation (the only manual output in v2).
 
-Ports v1 ``dialog.generate_dialogs`` into a :class:`DialogEmitter`. v2 is dialog-first, so
-this always runs; the page->item mapping comes from :class:`~.manual.Manual` pages (not the
-old ``SharedMemory.manual_pages``). The manual is reachable through the vanilla
-``quick_actions`` dialog tag; the removed ``universal_manual`` storage is not registered.
+Each page already produces its own dialog body (see :mod:`~.pages.base`), so the
+:class:`DialogEmitter` only wraps that body with the title (item sprite or text, taken from
+the page) and the prev/home/next navigation row — there is no book->dialog conversion. The
+page->item mapping comes from :class:`~.manual.Manual` pages. The manual is reachable through
+the vanilla ``quick_actions`` dialog tag.
 """
 
 # Imports

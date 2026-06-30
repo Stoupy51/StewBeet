@@ -1,9 +1,9 @@
 """The :class:`Page` base class and lifecycle.
 
-A page is a self-contained unit that knows how to render itself to a list of Minecraft text
-components (the intermediate "book" format consumed by the dialog emitter). Subclasses
-implement :meth:`build`; the base :meth:`render` wraps it and applies developer
-``transformers`` last, so per-item/page overrides compose cleanly.
+A page is a self-contained unit that knows how to render itself directly to a dialog body:
+a list of Minecraft text components where element 0 is the parent whose style (notably its
+font) cascades to the siblings. Subclasses implement :meth:`build`; the base :meth:`render`
+wraps it and applies developer ``transformers`` last, so per-item/page overrides compose cleanly.
 """
 
 # Imports
@@ -45,7 +45,7 @@ class Page:
 	transformers: list[Transformer] = field(default_factory=list[Transformer])
 	optimize: bool = True
 	""" Whether the optimizer may merge this page's components. Set False for pre-built
-	content whose element positions are significant (e.g. a RawPage with a bare-string title). """
+	content whose element positions are significant (e.g. a RawPage relying on absolute indices). """
 
 	def prepare(self, manual: Manual) -> None:
 		""" Heavy, order-independent setup (collect data, allocate glyphs). Default: no-op. """
