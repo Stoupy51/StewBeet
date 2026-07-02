@@ -1,7 +1,5 @@
 
 # Imports
-from __future__ import annotations
-
 import stouputils as stp
 from beet.core.utils import TextComponent
 from stouputils.typing import JsonDict
@@ -47,7 +45,6 @@ def text_component_to_str(tc: TextComponent) -> str:
 			result += text_component_to_str(extra)
 	return result
 
-@stp.simple_cache
 def item_id_to_text_component(item_id: str, use_default: bool = True) -> TextComponent:
 	""" Get the TextComponent from an item id
 
@@ -99,7 +96,6 @@ def item_id_to_text_component(item_id: str, use_default: bool = True) -> TextCom
 		return id.replace("_", " ").title()
 	return ""
 
-@stp.simple_cache
 def item_id_to_name(item_id: str) -> str:
 	""" Get the name from an item id
 
