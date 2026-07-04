@@ -6,8 +6,6 @@ have a registered :class:`~.registry.CraftRenderer`, so it auto-extends with new
 """
 
 # Imports
-from __future__ import annotations
-
 import math
 from typing import TYPE_CHECKING
 
@@ -31,7 +29,16 @@ FURNACE_TYPES = (SmeltingRecipe.type, BlastingRecipe.type, CampfireCookingRecipe
 
 @stp.simple_cache
 def convert_shapeless_to_shaped(craft: JsonDict) -> JsonDict:
-	""" Convert a shapeless craft to a readable shaped layout. """
+	""" Convert a shapeless craft to a readable shaped layout.
+
+	>>> craft = {"type": "crafting_shapeless", "result_count": 1, "ingredients": [{"item": "minecraft:stick"}] * 4}
+	>>> shaped = convert_shapeless_to_shaped(craft)
+	>>> shaped["type"], shaped["shape"]
+	('crafting_shaped', ['AA', 'AA'])
+	>>> nine = {"type": "crafting_shapeless", "result_count": 1, "ingredients": [{"item": "minecraft:iron_ingot"}] * 8 + [{"item": "minecraft:diamond"}]}
+	>>> convert_shapeless_to_shaped(nine)["shape"]
+	['AAA', 'ABA', 'AAA']
+	"""
 	shapeless_ingredients: list[str] = craft["ingredients"]
 	total_items: int = len(shapeless_ingredients)
 	shaped_recipe: JsonDict = {"type": "crafting_shaped", "result_count": craft["result_count"], "ingredients": {}}
@@ -176,3 +183,4 @@ def collect_for_item(r: RecipeRenderer, name: str, item_obj: Item, definitions_a
 		crafts.insert(0, mining_recipe)
 
 	return crafts
+

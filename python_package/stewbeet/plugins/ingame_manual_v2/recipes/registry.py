@@ -13,8 +13,7 @@ dispatcher, exposing ``r.config`` / ``r.glyphs`` / ``r.images`` / ``r.item_compo
 
 # ruff: noqa: E501
 # Imports
-from __future__ import annotations
-
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, ClassVar
 
 from beet.core.utils import TextComponent
@@ -26,8 +25,23 @@ if TYPE_CHECKING:
 	from .renderer import RecipeRenderer
 
 
+@dataclass
 class CraftRenderer:
-	""" Base class for a recipe-type renderer. Subclass it and call :func:`register_craft_renderer`. """
+	""" Base class for a recipe-type renderer.
+
+	Subclass it, set :attr:`types` (and optionally :attr:`name`), override the render
+	methods you need, then call :func:`register_craft_renderer` on an instance.
+
+	>>> class _EchoRenderer(CraftRenderer):
+	...     types = ("test_echo",)
+	...     name = "Echo"
+	>>> _ = register_craft_renderer(_EchoRenderer())
+	>>> get_craft_renderer("test_echo") is CRAFT_RENDERERS["test_echo"]
+	True
+	>>> get_craft_renderer("unknown_type") is None
+	True
+	>>> del CRAFT_RENDERERS["test_echo"]
+	"""
 
 	types: ClassVar[tuple[str, ...]] = ()
 	""" The craft ``type`` strings this renderer handles. """
@@ -70,3 +84,4 @@ def register_craft_renderer(renderer: CraftRenderer) -> CraftRenderer:
 def get_craft_renderer(craft_type: str) -> CraftRenderer | None:
 	""" Return the renderer registered for ``craft_type`` (or None). """
 	return CRAFT_RENDERERS.get(craft_type)
+

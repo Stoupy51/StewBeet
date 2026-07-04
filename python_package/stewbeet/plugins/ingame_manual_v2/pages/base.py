@@ -7,8 +7,6 @@ wraps it and applies developer ``transformers`` last, so per-item/page overrides
 """
 
 # Imports
-from __future__ import annotations
-
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
@@ -37,6 +35,10 @@ class Page:
 						resolution and dialog atlas sprites).
 		button_layout	(ButtonLayout|None):	Per-page override of the manual-wide button layout.
 		transformers	(list):	Developer hooks applied to the rendered content, in order.
+
+	>>> page = Page(anchor="demo", transformers=[lambda content, manual: [*content, "!"]])
+	>>> page.render(None)  # the default build() yields [], then transformers run in order
+	['!']
 	"""
 	anchor: str
 	title: str = ""
@@ -65,3 +67,4 @@ class Page:
 	def resolve_button_layout(self, manual: Manual) -> ButtonLayout:
 		""" Return this page's effective button layout (own override or manual default). """
 		return self.button_layout if self.button_layout is not None else manual.config.button_layout
+

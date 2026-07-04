@@ -21,7 +21,7 @@
 - **🗨 Sortie** : Orienté dialogue — génère un dialogue Minecraft par page, accessible via le menu **quick actions** natif (et l'item `manual` en mode 1)
 
 ## 📋 Vue d'ensemble
-`ingame_manual_v2` génère un manuel en jeu à partir de vos items `Mem.definitions` : une page d'introduction, un navigateur de catégories, une page par catégorie, et une page par item avec ses recettes et boutons wiki. Il est **orienté dialogue** (l'ancien mode livre écrit NBT est supprimé) et entièrement **extensible** — vous pouvez modifier la page de n'importe quel item, insérer des pages arbitraires (même sans rapport avec un item), contrôler le placement des boutons, et rendre des pages basées sur votre propre texture.
+`ingame_manual_v2` génère un manuel en jeu à partir de vos items `Mem.definitions` : une page d'introduction, un navigateur de catégories, une page par catégorie, et une page par item avec ses recettes et boutons wiki. Il est **orienté dialogue** (l'ancien mode livre écrit NBT est supprimé) et entièrement **extensible** — vous pouvez modifier la page de n'importe quel item, insérer des pages arbitraires (même sans rapport avec un item), contrôler le placement des boutons, et rendre des pages basées sur votre propre texture. Chaque classe publique de l'API (sous-classes de `Page`, `ButtonLayout`, `BakedText`, `PageRef`, `CraftRenderer`, `Manual` lui-même...) est une **dataclass** Python.
 
 **Activez-le en remplaçant `stewbeet.plugins.ingame_manual` par `stewbeet.plugins.ingame_manual_v2`** dans votre pipeline.
 
@@ -39,19 +39,19 @@
 
 À définir dans `beet.yml` sous `meta.stewbeet.manual` :
 
-| Clé | Type | Défaut | Description |
-|-----|------|--------|-------------|
-| `cache_path` | `str` | — | **Requis.** Dossier des polices/textures/rendus d'items générés |
-| `use_dialog` | `int` | `1` | `1` = dialogue + item `manual` qui l'ouvre · `2` = dialogue seul (sans item) |
-| `high_resolution` | `bool` | `true` | Icônes d'items haute résolution (256px) dans les recettes |
-| `cache_assets` | `bool` | `true` | Évite de re-rendre/re-télécharger les textures d'items déjà présentes |
-| `max_items_per_row` | `int` | `5` | Largeur de la grille de catégorie (max 6) |
-| `max_rows_per_page` | `int` | `5` | Hauteur de la grille de catégorie (max 7) |
-| `name` | `str` | `"{projet} Manual"` | Titre du manuel (max 32 caractères) |
-| `first_page_text` | `TextComponent` | `""` | Texte de la page d'introduction |
-| `manual_overrides` | `str` | `""` | Dossier de textures remplaçant les défauts fournis |
-| `showcase_image` | `int` | `3` | `0` off · `1` items du manuel · `2` tous les items · `3` les deux |
-| `json_dump_path` | `str` | `""` | Export de debug optionnel des pages rendues |
+| Clé                 | Type            | Défaut              | Description                                                                  |
+| ------------------- | --------------- | ------------------- | ---------------------------------------------------------------------------- |
+| `cache_path`        | `str`           | —                   | **Requis.** Dossier des polices/textures/rendus d'items générés              |
+| `use_dialog`        | `int`           | `1`                 | `1` = dialogue + item `manual` qui l'ouvre · `2` = dialogue seul (sans item) |
+| `high_resolution`   | `bool`          | `true`              | Icônes d'items haute résolution (256px) dans les recettes                    |
+| `cache_assets`      | `bool`          | `true`              | Évite de re-rendre/re-télécharger les textures d'items déjà présentes        |
+| `max_items_per_row` | `int`           | `5`                 | Largeur de la grille de catégorie (max 6)                                    |
+| `max_rows_per_page` | `int`           | `5`                 | Hauteur de la grille de catégorie (max 7)                                    |
+| `name`              | `str`           | `"{projet} Manual"` | Titre du manuel (max 32 caractères)                                          |
+| `first_page_text`   | `TextComponent` | `""`                | Texte de la page d'introduction                                              |
+| `manual_overrides`  | `str`           | `""`                | Dossier de textures remplaçant les défauts fournis                           |
+| `showcase_image`    | `int`           | `3`                 | `0` off · `1` items du manuel · `2` tous les items · `3` les deux            |
+| `json_dump_path`    | `str`           | `""`                | Export de debug optionnel des pages rendues                                  |
 
 > **Note** : `use_dialog: 0` et `cache_pages` de la v1 sont supprimés. Le manuel est toujours basé sur les dialogues.
 
@@ -78,14 +78,14 @@ def tweak(m):
         page.transformers.append(lambda content, _m: [*content, {"text": "\nQuel métal !", "color": "dark_gray"}])
 ```
 
-| Phase | Se déclenche après | Usage typique |
-|-------|--------------------|---------------|
-| `DISCOVERED` | pages par défaut créées | insérer/réordonner des pages |
-| `PREPARED` | données par page collectées | éditer les pages d'items, définir les layouts de boutons |
-| `ORDERED` | ordre final calculé | réorganisation de dernière minute |
-| `RENDERED` | pages rendues | ajouter des transformers |
-| `RESOLVED` | liens résolus | inspecter les liens finaux |
-| `BEFORE_EMIT` | juste avant la sortie | ajustements finaux |
+| Phase         | Se déclenche après          | Usage typique                                            |
+| ------------- | --------------------------- | -------------------------------------------------------- |
+| `DISCOVERED`  | pages par défaut créées     | insérer/réordonner des pages                             |
+| `PREPARED`    | données par page collectées | éditer les pages d'items, définir les layouts de boutons |
+| `ORDERED`     | ordre final calculé         | réorganisation de dernière minute                        |
+| `RENDERED`    | pages rendues               | ajouter des transformers                                 |
+| `RESOLVED`    | liens résolus               | inspecter les liens finaux                               |
+| `BEFORE_EMIT` | juste avant la sortie       | ajustements finaux                                       |
 
 `manual.on_item_page(fn)` exécute `fn(page, manual)` sur chaque page d'item pendant la préparation.
 
@@ -119,24 +119,24 @@ manual.on_item_page(lambda page, _m: setattr(
 ))
 ```
 
-| Champ | Description |
-|-------|-------------|
-| `columns` | Boutons par ligne |
-| `max_buttons` | Plafond strict (dépassement supprimé par priorité) |
-| `position` | `"after_recipe"` · `"top"` · `"bottom"` · ou un callable |
-| `order` | Clé de tri, ex. `lambda b: -b.priority` |
-| `include` | Prédicat `(button) -> bool` pour filtrer |
-| `extra_buttons` | `WikiButtonRender` supplémentaires à ajouter |
+| Champ           | Description                                              |
+| --------------- | -------------------------------------------------------- |
+| `columns`       | Boutons par ligne                                        |
+| `max_buttons`   | Plafond strict (dépassement supprimé par priorité)       |
+| `position`      | `"after_recipe"` · `"top"` · `"bottom"` · ou un callable |
+| `order`         | Clé de tri, ex. `lambda b: -b.priority`                  |
+| `include`       | Prédicat `(button) -> bool` pour filtrer                 |
+| `extra_buttons` | `WikiButtonRender` supplémentaires à ajouter             |
 
 ### 🗂 Gestion des pages
-| Méthode | Description |
-|---------|-------------|
-| `manual.add_page(page)` | Ajoute une page à la fin |
-| `manual.insert_page(page, *, before/after/index)` | Insère à une position |
-| `manual.replace_page(anchor, page)` | Remplace une page |
-| `manual.move_page(anchor, *, before/after/index)` | Déplace une page |
-| `manual.remove_page(anchor)` | Supprime une page |
-| `manual.get_page(anchor)` / `get_page_for_item(id)` | Récupère une page |
+| Méthode                                             | Description              |
+| --------------------------------------------------- | ------------------------ |
+| `manual.add_page(page)`                             | Ajoute une page à la fin |
+| `manual.insert_page(page, *, before/after/index)`   | Insère à une position    |
+| `manual.replace_page(anchor, page)`                 | Remplace une page        |
+| `manual.move_page(anchor, *, before/after/index)`   | Déplace une page         |
+| `manual.remove_page(anchor)`                        | Supprime une page        |
+| `manual.get_page(anchor)` / `get_page_for_item(id)` | Récupère une page        |
 
 > Les opérations de page appelées depuis le setup sont différées et rejouées une fois les pages par défaut créées, vous pouvez donc référencer directement des anchors par défaut comme `"intro"`.
 
@@ -211,14 +211,18 @@ def maybe_changelog(m):
 ---
 
 ## 🧱 Types de recettes personnalisés
-Chaque type de recette est rendu par un `CraftRenderer` enregistré dans un registre global : ajouter un type = une classe + un appel à `register_craft_renderer(...)`. Les types intégrés vivent un par fichier sous `recipes/types/` (`shaped`, `furnace`, `smithing`, `linear`, `awakened_forge`).
+Chaque type de recette est rendu par un `CraftRenderer` enregistré dans un registre global : ajouter un type = une classe + un appel à `register_craft_renderer(...)`. Les types intégrés vivent un par fichier sous `recipes/types/` (`shaped`, `furnace`, `smithing`, `linear`, `awakened_forge`). Comme toutes les classes de l'API du manuel, les renderers sont des dataclasses — décorez votre sous-classe avec `@dataclass` pour suivre le style des types intégrés.
 
 ```python
+from dataclasses import dataclass
+from typing import ClassVar
+
 from stewbeet import CraftRenderer, register_craft_renderer
 
+@dataclass
 class MyMachineRenderer(CraftRenderer):
-    types = ("myplugin_machining",)   # le(s) "type" de craft géré(s)
-    name = "Mon Usinage"              # titre du survol ("" = pas de titre, comme le craft vanilla)
+    types: ClassVar[tuple[str, ...]] = ("myplugin_machining",)  # le(s) "type" de craft géré(s)
+    name: ClassVar[str] = "Mon Usinage"                         # titre du survol ("" = pas de titre, comme le craft vanilla)
 
     def render_body(self, r, craft, name, content, result_component, page_font, use_dialog, add_change_page_to_ingr):
         # Ajoutez votre mise en page à `content`. Construisez les cases avec r.item_component(...)
@@ -240,3 +244,4 @@ Seuls `types` et `render_body` sont obligatoires ; `static_glyph` (glyphe de tem
 - `WikiButton` et `set_manual_components(...)` continuent de fonctionner sans changement.
 - Retirez la clé `cache_pages` et utilisez `use_dialog: 1` ou `2` (le mode `0` n'existe plus).
 - Le storage `universal_manual` n'est plus enregistré ; le manuel s'ouvre depuis le menu quick actions natif.
+

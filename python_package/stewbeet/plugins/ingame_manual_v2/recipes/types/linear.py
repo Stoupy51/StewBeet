@@ -2,8 +2,7 @@
 
 # ruff: noqa: E501
 # Imports
-from __future__ import annotations
-
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, ClassVar
 
 from beet.core.utils import TextComponent
@@ -26,11 +25,12 @@ if TYPE_CHECKING:
 	from ..renderer import RecipeRenderer
 
 
-# TODO: They should be dataclasses
+@dataclass
 class LinearRenderer(CraftRenderer):
 	""" Shared single-row layout (ingredient on the left, result on the right). """
 
 	def render_body(self, r: RecipeRenderer, craft: JsonDict, name: str, content: list[TextComponent], result_component: JsonDict, page_font: str, use_dialog: bool, add_change_page_to_ingr: bool) -> None:
+		""" One ingredient -> result row, duplicated for the two-row hover trick. """
 		formatted_ingredient: JsonDict = r.item_component(craft["ingredient"], add_change_page=add_change_page_to_ingr)
 		content.append("\n\n")
 		for i in range(2):
@@ -44,31 +44,40 @@ class LinearRenderer(CraftRenderer):
 		content.append("\n")
 
 
+@dataclass
 class StonecuttingRenderer(LinearRenderer):
+	""" ``stonecutting`` recipes. """
 	types: ClassVar[tuple[str, ...]] = (StonecuttingRecipe.type,)
 	name: ClassVar[str] = "Stonecutting"
 
 	def static_glyph(self, craft: JsonDict) -> str:
+		""" The stonecutter template glyph. """
 		return STONECUTTING_FONT
 
 
+@dataclass
 class PulverizingRenderer(LinearRenderer):
+	""" SimplEnergy ``simplenergy_pulverizing`` recipes. """
 	types: ClassVar[tuple[str, ...]] = (PulverizingRecipe.type,)
 	name: ClassVar[str] = "(SimplEnergy) Pulverizing"
 
 	def static_glyph(self, craft: JsonDict) -> str:
+		""" The pulverizer template glyph. """
 		return PULVERIZING_FONT
 
 
+@dataclass
 class MiningRenderer(LinearRenderer):
 	""" Pseudo-recipe generated from no-silk-touch drops. """
 	types: ClassVar[tuple[str, ...]] = ("mining",)
 	name: ClassVar[str] = "Mining"
 
 	def static_glyph(self, craft: JsonDict) -> str:
+		""" The mining (pickaxe) template glyph. """
 		return MINING_FONT
 
 	def append_hover(self, r: RecipeRenderer, craft: JsonDict, hover: list[TextComponent]) -> None:
+		""" Mine / Drops / Silk-touch hover lines. """
 		mining_hover(craft, hover)
 
 

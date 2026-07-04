@@ -7,8 +7,6 @@ read; ``json_dump_path`` survives only as an optional debug dump.
 """
 
 # Imports
-from __future__ import annotations
-
 from dataclasses import dataclass, field
 
 import stouputils as stp
@@ -31,6 +29,14 @@ class ManualConfig:
 	""" Typed mirror of the ``manual`` stewbeet config block.
 
 	Build one with :meth:`from_meta`. All fields are public.
+
+	>>> config = ManualConfig(project_id="mypack", project_name="My Pack", project_author="me", cache_path="cache", max_items_per_row=9)
+	>>> config.max_items_per_row  # clamped like v1 (max 6 per row)
+	6
+	>>> config.font
+	'mypack:manual'
+	>>> config.name  # defaults to "<project_name> Manual"
+	'My Pack Manual'
 	"""
 	# Project info (copied from ctx for convenience)
 	project_id: str
@@ -77,6 +83,7 @@ class ManualConfig:
 	# Derived properties
 	@property
 	def max_items_per_page(self) -> int:
+		""" Item capacity of a category page (rows x columns). """
 		return self.max_items_per_row * self.max_rows_per_page
 
 	@property
@@ -90,7 +97,7 @@ class ManualConfig:
 		return f"{self.project_id}:manual"
 
 	@classmethod
-	def from_meta(cls, ctx: Context) -> ManualConfig:
+	def from_meta(cls, ctx: Context) -> "ManualConfig":
 		""" Build a :class:`ManualConfig` from the beet context meta. """
 		assert ctx.project_id, "Project ID is not set."
 		assert ctx.project_name, "Project name is not set."

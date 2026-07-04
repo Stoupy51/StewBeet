@@ -5,8 +5,6 @@ the :class:`~.renderer.RecipeRenderer` dispatcher ``r`` for config/glyphs/images
 """
 
 # Imports
-from __future__ import annotations
-
 import os
 from typing import TYPE_CHECKING
 
@@ -111,3 +109,4 @@ def build_item_component(r: RecipeRenderer, ingredient: str | Ingr, only_those_c
 	if r.config.high_resolution:
 		formatted["text"] = high_res_font_from_ingredient(r, ingredient, count)
 	return formatted
+

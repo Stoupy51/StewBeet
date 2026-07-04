@@ -9,8 +9,6 @@
 
 # ruff: noqa: E501
 # Imports
-from __future__ import annotations
-
 from beet import Texture
 from beet.core.utils import TextComponent
 

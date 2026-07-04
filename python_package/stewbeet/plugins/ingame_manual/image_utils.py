@@ -4,8 +4,9 @@
 import os
 
 from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageFont
+from stouputils.typing import JsonDict
 
-from ...core.__memory__ import JsonDict, Mem
+from ...core.__memory__ import Mem
 from .shared_import import (
 	MICRO_NONE_FONT,
 	TEMPLATES_PATH,

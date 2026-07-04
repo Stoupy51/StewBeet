@@ -10,8 +10,6 @@ triggering the ``pages`` package — which would create an import cycle.
 """
 
 # Imports
-from __future__ import annotations
-
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any
@@ -51,8 +49,14 @@ class ButtonLayout:
 	include: Callable[[WikiButtonRender], bool] | None = None
 	extra_buttons: list[WikiButtonRender] = field(default_factory=list[WikiButtonRender])
 
-	def clone(self) -> ButtonLayout:
-		""" Return a shallow copy (so per-page overrides don't mutate the shared default). """
+	def clone(self) -> "ButtonLayout":
+		""" Return a shallow copy (so per-page overrides don't mutate the shared default).
+
+		>>> layout = ButtonLayout(columns=4)
+		>>> copy = layout.clone()
+		>>> copy == layout, copy is layout
+		(True, False)
+		"""
 		return ButtonLayout(
 			columns=self.columns,
 			max_buttons=self.max_buttons,

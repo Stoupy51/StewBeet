@@ -8,8 +8,6 @@ texture-page helpers (:meth:`bake_text_onto`, :meth:`register_full_page_glyph`).
 
 # pyright: reportUnknownMemberType=false
 # Imports
-from __future__ import annotations
-
 import os
 from dataclasses import dataclass
 
@@ -62,7 +60,13 @@ def lighten_color(color_hex: int, factor: float = 1.42) -> tuple[int, int, int, 
 
 
 def careful_resize(image: Image.Image, max_result_size: int, resampling: Image.Resampling = Image.Resampling.NEAREST) -> Image.Image:
-	""" Resize an image while keeping the aspect ratio. """
+	""" Resize an image while keeping the aspect ratio.
+
+	>>> careful_resize(Image.new("RGBA", (64, 32)), 32).size
+	(32, 16)
+	>>> careful_resize(Image.new("RGBA", (16, 64)), 32).size
+	(8, 32)
+	"""
 	if image.size[0] >= image.size[1]:
 		factor = max_result_size / image.size[0]
 		return image.resize((max_result_size, int(image.size[1] * factor)), resampling)
@@ -72,7 +76,13 @@ def careful_resize(image: Image.Image, max_result_size: int, resampling: Image.R
 
 
 def ensure_rgba_color(c: tuple[int, ...]) -> tuple[int, int, int, int]:
-	""" Ensure the color is in RGBA format. """
+	""" Ensure the color is in RGBA format.
+
+	>>> ensure_rgba_color((10, 20, 30))
+	(10, 20, 30, 255)
+	>>> ensure_rgba_color((10, 20, 30, 40))
+	(10, 20, 30, 40)
+	"""
 	if len(c) == 3:
 		return (c[0], c[1], c[2], 255)
 	if len(c) == 4:
@@ -98,11 +108,17 @@ def add_border(image: Image.Image, border_color: tuple[int, int, int, int], bord
 	return out
 
 
+@dataclass
 class GlyphImageBuilder:
 	""" Builds every manual texture and registers its glyph provider.
 
 	Holds a reference to the config and the glyph allocator; all paths/flags come from
 	those instead of globals.
+
+	>>> config = ManualConfig(project_id="demo", project_name="Demo", project_author="me", cache_path="cache")
+	>>> builder = GlyphImageBuilder(config, GlyphAllocator(project_id="demo"))
+	>>> builder.image_count(5).size  # Minecraft-style count overlay, always 32x32
+	(32, 32)
 	"""
 
 	# Expose the module-level PIL helpers as methods so other modules (e.g. recipes/types/*) can
@@ -110,10 +126,12 @@ class GlyphImageBuilder:
 	careful_resize = staticmethod(careful_resize)
 	add_border = staticmethod(add_border)
 
-	def __init__(self, config: ManualConfig, glyphs: GlyphAllocator) -> None:
-		self.config: ManualConfig = config
-		self.glyphs: GlyphAllocator = glyphs
-		self._border_color: tuple[int, int, int, int] | None = None
+	config: ManualConfig
+	""" The manual configuration (paths, resolution flags...). """
+	glyphs: GlyphAllocator
+	""" Where generated textures register their font providers. """
+	_border_color: tuple[int, int, int, int] | None = None
+	""" Cache for :meth:`get_border_color`. """
 
 	# --- helpers ---
 	def get_border_color(self) -> tuple[int, int, int, int]:

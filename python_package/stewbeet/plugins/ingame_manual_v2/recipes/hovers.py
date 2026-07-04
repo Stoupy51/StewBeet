@@ -5,8 +5,6 @@ helpers cover the grid (shaped/forge), smithing and mining shapes that several r
 """
 
 # Imports
-from __future__ import annotations
-
 import stouputils as stp
 from beet.core.utils import TextComponent
 
@@ -60,3 +58,4 @@ def mining_hover(craft: stp.JsonDict, hover: list[TextComponent]) -> None:
 		result_count = craft.get("result_count", "1")
 		hover.append({"text": f"\n- Drops: x{result_count} ", "color": "gray"})
 		hover.append({"text": result_name, "color": "gray"})
+

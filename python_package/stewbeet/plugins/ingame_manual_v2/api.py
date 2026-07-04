@@ -4,8 +4,7 @@ Developers use :func:`get_manual` in their setup to grab the live :class:`Manual
 register pages/hooks before the plugin builds it.
 """
 
-from __future__ import annotations
-
+# Imports
 from .config import ManualConfig
 from .images import BakedText
 from .manual import Manual, Phase

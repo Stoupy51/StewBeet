@@ -2,8 +2,7 @@
 
 # ruff: noqa: E501
 # Imports
-from __future__ import annotations
-
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, ClassVar
 
 from beet.core.utils import TextComponent
@@ -26,18 +25,25 @@ if TYPE_CHECKING:
 	from ..renderer import RecipeRenderer
 
 
+@dataclass
 class AwakenedForgeRenderer(CraftRenderer):
+	""" Stardust Fragment ``stardust_awakened_forge`` recipes (3x3 or 3x4 grid). """
 	types: ClassVar[tuple[str, ...]] = (AwakenedForgeRecipe.type,)
 	name: ClassVar[str] = "(Stardust Fragment) Awakened Forge"
 
 	def static_glyph(self, craft: JsonDict) -> str:
-		# Called before the shapeless->shaped conversion, so ingredients is still the original list.
+		""" 3x3 or 3x4 forge template glyph, from the ingredient count.
+
+		Called before the shapeless->shaped conversion, so ``ingredients`` is still the original list.
+		"""
 		return AWAKENED_3X3_FONT if len(craft["ingredients"]) <= 9 else AWAKENED_3X4_FONT
 
 	def append_hover(self, r: RecipeRenderer, craft: JsonDict, hover: list[TextComponent]) -> None:
+		""" Count + list every grid ingredient. """
 		ingredients_hover(craft, hover)
 
 	def render_body(self, r: RecipeRenderer, craft: JsonDict, name: str, content: list[TextComponent], result_component: JsonDict, page_font: str, use_dialog: bool, add_change_page_to_ingr: bool) -> None:
+		""" Lay the ingredient grid out over the forge template, then place the result. """
 		shape: list[str] = craft["shape"]
 		is_small_craft: bool = len(shape) <= 3 and all(len(x) <= 3 for x in shape)
 		if use_dialog and not is_small_craft:

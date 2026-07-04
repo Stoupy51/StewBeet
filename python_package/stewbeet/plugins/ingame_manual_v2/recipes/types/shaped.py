@@ -2,8 +2,7 @@
 
 # ruff: noqa: E501
 # Imports
-from __future__ import annotations
-
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, ClassVar
 
 from beet.core.utils import TextComponent
@@ -29,18 +28,22 @@ if TYPE_CHECKING:
 	from ..renderer import RecipeRenderer
 
 
+@dataclass
 class ShapedRenderer(CraftRenderer):
 	""" crafting_shaped / crafting_shapeless (shapeless is converted to shaped before rendering). """
 	types: ClassVar[tuple[str, ...]] = ("crafting_shaped", "crafting_shapeless")
 	name: ClassVar[str] = ""  # crafting recipes show no hover title
 
 	def static_glyph(self, craft: JsonDict) -> str:
+		""" 3x3 or 2x2 grid template glyph depending on the craft's shape. """
 		return SHAPED_3X3_FONT if (len(craft["shape"]) == 3 or len(craft["shape"][0]) == 3) else SHAPED_2X2_FONT
 
 	def append_hover(self, r: RecipeRenderer, craft: JsonDict, hover: list[TextComponent]) -> None:
+		""" Count + list every grid ingredient. """
 		ingredients_hover(craft, hover)
 
 	def render_body(self, r: RecipeRenderer, craft: JsonDict, name: str, content: list[TextComponent], result_component: JsonDict, page_font: str, use_dialog: bool, add_change_page_to_ingr: bool) -> None:
+		""" Lay the ingredient grid out over the crafting-table template, then place the result. """
 		shape: list[str] = craft["shape"]
 		is_small_craft: bool = len(shape) <= 2 and all(len(x) <= 2 for x in shape)
 		formatted_ingredients: dict[str, JsonDict] = {k: r.item_component(v) for k, v in craft["ingredients"].items()}
@@ -121,6 +124,7 @@ class ShapedRenderer(CraftRenderer):
 					content.append("\n")
 
 	def build_image(self, r: RecipeRenderer, name: str, page_font: str, craft: JsonDict, output_name: str = "") -> None:
+		""" Low-resolution PNG of the grid + result pasted onto the shaped template. """
 		if r.config.high_resolution:
 			return
 		output_filename = output_name or name

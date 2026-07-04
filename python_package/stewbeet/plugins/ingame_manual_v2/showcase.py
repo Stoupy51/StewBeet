@@ -4,8 +4,6 @@ Ported from v1 ``showcase_image`` with ``cache_path`` passed in rather than read
 """
 
 # Imports
-from __future__ import annotations
-
 import os
 
 import stouputils as stp
@@ -16,7 +14,13 @@ from .images import careful_resize
 
 
 def calculate_optimal_grid(item_count: int) -> tuple[int, int]:
-	""" Grid dimensions closest to a 16:9 aspect ratio for ``item_count`` items. """
+	""" Grid dimensions closest to a 16:9 aspect ratio for ``item_count`` items.
+
+	>>> calculate_optimal_grid(0)
+	(0, 0)
+	>>> calculate_optimal_grid(12)
+	(3, 4)
+	"""
 	if item_count == 0:
 		return 0, 0
 	best_ratio_diff: float = float("inf")

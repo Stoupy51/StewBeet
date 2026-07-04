@@ -1,8 +1,6 @@
 """Introduction page: manual title, project logo, and the configurable first-page text."""
 
 # Imports
-from __future__ import annotations
-
 import os
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
@@ -24,6 +22,7 @@ class IntroPage(Page):
 	""" The first page: manual name, logo glyph, then the project's intro text. """
 
 	def build(self, manual: Manual) -> list[TextComponent]:
+		""" Logo glyph on top, then the configured ``first_page_text`` in the default font. """
 		config = manual.config
 		use_dialog = config.use_dialog > 0
 
@@ -44,3 +43,4 @@ class IntroPage(Page):
 		content.append({"text": "\n" * 6})
 		content.append([{"text": "", "font": "minecraft:default", "color": "black"}, config.first_page_text])
 		return content
+
