@@ -26,6 +26,7 @@ if TYPE_CHECKING:
 	from ..renderer import RecipeRenderer
 
 
+# TODO: They should be dataclasses
 class LinearRenderer(CraftRenderer):
 	""" Shared single-row layout (ingredient on the left, result on the right). """
 
@@ -74,3 +75,4 @@ class MiningRenderer(LinearRenderer):
 register_craft_renderer(StonecuttingRenderer())
 register_craft_renderer(PulverizingRenderer())
 register_craft_renderer(MiningRenderer())
+
