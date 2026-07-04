@@ -1,8 +1,6 @@
 """Category browser page: a clickable grid linking to each category page."""
 
 # Imports
-from __future__ import annotations
-
 import copy
 import os
 from dataclasses import dataclass
@@ -27,6 +25,7 @@ class CategoryBrowserPage(Page):
 	""" The "Category browser" page: one clickable cell per category page. """
 
 	def build(self, manual: Manual) -> list[TextComponent]:
+		""" Draw the case-grid background glyph and overlay one clickable cell per category page. """
 		config = manual.config
 		file_name = "categories_page"
 		simple_case = manual.simple_case

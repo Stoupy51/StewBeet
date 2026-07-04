@@ -2,8 +2,7 @@
 
 # ruff: noqa: E501
 # Imports
-from __future__ import annotations
-
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, ClassVar
 
 from beet.core.utils import TextComponent
@@ -20,13 +19,16 @@ if TYPE_CHECKING:
 	from ..renderer import RecipeRenderer
 
 
+@dataclass
 class FurnaceBase(CraftRenderer):
 	""" Shared layout/glyph/image for all furnace recipes (uses the default single-ingredient hover). """
 
 	def static_glyph(self, craft: JsonDict) -> str:
+		""" The furnace template glyph (same for the whole furnace family). """
 		return FURNACE_FONT
 
 	def render_body(self, r: RecipeRenderer, craft: JsonDict, name: str, content: list[TextComponent], result_component: JsonDict, page_font: str, use_dialog: bool, add_change_page_to_ingr: bool) -> None:
+		""" Ingredient on top of the furnace, result on the output slot. """
 		formatted_ingredient: JsonDict = r.item_component(craft["ingredient"], add_change_page=add_change_page_to_ingr)
 		for i in range(2):
 			content.append(SMALL_NONE_FONT)
@@ -51,6 +53,7 @@ class FurnaceBase(CraftRenderer):
 		content.append("\n\n")
 
 	def build_image(self, r: RecipeRenderer, name: str, page_font: str, craft: JsonDict, output_name: str = "") -> None:
+		""" Low-resolution PNG of the ingredient + result pasted onto the furnace template. """
 		if r.config.high_resolution:
 			return
 		output_filename = output_name or name
@@ -68,22 +71,30 @@ class FurnaceBase(CraftRenderer):
 		template.save(f"{r.config.cache_path}/font/page/{output_filename}.png")
 
 
+@dataclass
 class SmeltingRenderer(FurnaceBase):
+	""" ``smelting`` recipes (regular furnace). """
 	types: ClassVar[tuple[str, ...]] = (SmeltingRecipe.type,)
 	name: ClassVar[str] = "Smelting"
 
 
+@dataclass
 class BlastingRenderer(FurnaceBase):
+	""" ``blasting`` recipes (blast furnace). """
 	types: ClassVar[tuple[str, ...]] = (BlastingRecipe.type,)
 	name: ClassVar[str] = "Blasting"
 
 
+@dataclass
 class SmokingRenderer(FurnaceBase):
+	""" ``smoking`` recipes (smoker). """
 	types: ClassVar[tuple[str, ...]] = (SmokingRecipe.type,)
 	name: ClassVar[str] = "Smoking"
 
 
+@dataclass
 class CampfireRenderer(FurnaceBase):
+	""" ``campfire_cooking`` recipes. """
 	types: ClassVar[tuple[str, ...]] = (CampfireCookingRecipe.type,)
 	name: ClassVar[str] = "Campfire Cooking"
 

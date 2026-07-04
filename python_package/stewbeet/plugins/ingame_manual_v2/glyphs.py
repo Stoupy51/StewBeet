@@ -11,9 +11,8 @@ byte-identical to the v1 plugin so existing template PNGs keep rendering correct
 """
 
 # Imports
-from __future__ import annotations
-
 import threading
+from dataclasses import dataclass, field
 
 import stouputils as stp
 from stouputils.typing import JsonDict
@@ -93,6 +92,7 @@ HEAVY_WORKBENCH_CATEGORY: str = "__private_heavy_workbench"
 
 
 # Allocator
+@dataclass
 class GlyphAllocator:
 	""" Owns the dynamic unicode counter and the bitmap font-provider registry.
 
@@ -104,13 +104,21 @@ class GlyphAllocator:
 	>>> a, b = alloc.allocate(), alloc.allocate()
 	>>> a != b
 	True
+	>>> char = alloc.register_image("test:font/example.png", ascent=8, height=16)
+	>>> alloc.register_image("test:font/example.png", ascent=8, height=16) == char  # deduped by file
+	True
+	>>> alloc.to_font_json()["providers"][0]["file"]
+	'test:font/example.png'
 	"""
 
-	def __init__(self, project_id: str) -> None:
-		self.project_id: str = project_id
-		self.next_craft_font: int = DEFAULT_NEXT_CRAFT_FONT
-		self.providers: list[JsonDict] = []
-		self.lock: threading.Lock = threading.Lock()
+	project_id: str
+	""" Namespace of the project owning the font. """
+	next_craft_font: int = DEFAULT_NEXT_CRAFT_FONT
+	""" Next dynamic code point to hand out (see :meth:`allocate`). """
+	providers: list[JsonDict] = field(default_factory=list[JsonDict])
+	""" Bitmap providers accumulated for ``manual.json``. """
+	lock: threading.Lock = field(default_factory=threading.Lock, repr=False)
+	""" Guards the counter and provider list for multithreaded page preparation. """
 
 	def allocate(self) -> str:
 		""" Reserve and return the next free dynamic glyph character. """

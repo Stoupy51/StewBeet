@@ -5,8 +5,6 @@ Used for special pages whose content is produced elsewhere (e.g. the ported
 """
 
 # Imports
-from __future__ import annotations
-
 import copy
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
@@ -21,8 +19,14 @@ if TYPE_CHECKING:
 
 @dataclass(kw_only=True)
 class RawPage(Page):
-	""" A page that simply yields its pre-built ``content``. """
+	""" A page that simply yields its pre-built ``content``.
+
+	>>> RawPage(anchor="forge", content=["hello"]).build(None)
+	['hello']
+	"""
 	content: list[TextComponent] = field(default_factory=list[TextComponent])
+	""" The ready-made dialog body, deep-copied at build time. """
 
 	def build(self, manual: Manual) -> list[TextComponent]:
+		""" Return a deep copy of ``content`` (so later passes cannot mutate the original). """
 		return copy.deepcopy(self.content)

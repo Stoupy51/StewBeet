@@ -8,9 +8,8 @@ the vanilla ``quick_actions`` dialog tag.
 """
 
 # Imports
-from __future__ import annotations
-
 import os
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, cast
 
 from beet import Advancement, Dialog, DialogTag, Texture
@@ -27,11 +26,16 @@ if TYPE_CHECKING:
 	from .manual import Manual
 
 
+@dataclass(eq=False)
 class DialogEmitter:
-	""" Builds one dialog per manual page plus the open-manual plumbing. """
+	""" Builds one dialog per manual page plus the open-manual plumbing.
 
-	def __init__(self, manual: Manual) -> None:
-		self.manual: Manual = manual
+	``eq=False`` keeps identity semantics (the :class:`~.manual.Manual` reference would make
+	field-based equality both meaningless and expensive).
+	"""
+
+	manual: Manual
+	""" The manual whose rendered pages are emitted as dialogs. """
 
 	def add_sprite(self, title: TextComponent, sprite: str) -> TextComponent:
 		""" Wrap a title between two sprite icons (atlas-aware for pack format >= 93). """

@@ -8,8 +8,6 @@ be added underneath (e.g. clickable links).
 """
 
 # Imports
-from __future__ import annotations
-
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
@@ -40,6 +38,7 @@ class TexturePage(Page):
 	glyph_height: int = 131
 
 	def build(self, manual: Manual) -> list[TextComponent]:
+		""" Composite the background + baked texts, register it as one glyph, append the body. """
 		config = manual.config
 		bg = Image.open(self.background) if isinstance(self.background, str) else self.background
 		composited = manual.images.bake_text_onto(bg, self.baked_texts) if self.baked_texts else bg.convert("RGBA")

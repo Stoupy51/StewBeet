@@ -89,7 +89,13 @@ EVENTS: list[str] = ["hover_event", "click_event"]
 
 
 def remove_events(compound: TextComponent) -> None:
-	""" Remove hover/click events from a compound recursively (in place). """
+	""" Remove hover/click events from a compound recursively (in place).
+
+	>>> component = {"text": "a", "click_event": {"action": "open_url"}, "extra": [{"text": "b", "hover_event": {}}]}
+	>>> remove_events(component)
+	>>> component
+	{'text': 'a', 'extra': [{'text': 'b'}]}
+	"""
 	if not isinstance(compound, dict):
 		if isinstance(compound, list):
 			for element in compound:

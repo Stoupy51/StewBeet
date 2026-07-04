@@ -7,8 +7,6 @@ emitted as deferred :class:`~..refs.PageRef`.
 """
 
 # Imports
-from __future__ import annotations
-
 import copy
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, cast
@@ -43,14 +41,17 @@ class ItemPage(Page):
 	mutated by ``on_item_page`` hooks before :meth:`build` runs.
 	"""
 	crafts: list[JsonDict] = field(default_factory=list[JsonDict])
+	""" Every craft related to the item, gathered by :meth:`prepare`. """
 	buttons: list[WikiButtonRender] = field(default_factory=list[WikiButtonRender])
+	""" The wiki buttons rendered on the page (populated during :meth:`build`). """
 
 	@classmethod
-	def for_item(cls, item_id: str, **kwargs: Any) -> ItemPage:
+	def for_item(cls, item_id: str, **kwargs: Any) -> "ItemPage":
 		""" Convenience constructor producing a page anchored at ``item:<id>``. """
 		return cls(anchor=f"item:{item_id}", item_id=item_id, title=item_id_to_name(item_id), **kwargs)
 
 	def prepare(self, manual: Manual) -> None:
+		""" Collect this item's crafts (own recipes, otherside crafts, mining drops). """
 		if self.item_id is None:
 			return
 		obj = manual.object_for(self.item_id)
@@ -59,6 +60,7 @@ class ItemPage(Page):
 		self.crafts = manual.recipes.collect_for_item(self.item_id, obj, manual.definitions_as_objects)
 
 	def build(self, manual: Manual) -> list[TextComponent]:
+		""" Render the main recipe (or single-item box) followed by the wiki-button grid. """
 		name = self.item_id or self.anchor
 		obj = manual.object_for(name)
 		recipes = manual.recipes

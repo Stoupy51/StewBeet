@@ -6,8 +6,7 @@ button scaffolding; the per-type layout/hover/glyph/image live under :mod:`.type
 """
 
 # Imports
-from __future__ import annotations
-
+from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 import stouputils as stp
@@ -34,22 +33,30 @@ if TYPE_CHECKING:
 	from ..manual import Manual
 
 
+@dataclass(eq=False)
 class RecipeRenderer:
-	""" Dispatcher: delegates per-type rendering to the registry, owns the shared scaffolding. """
+	""" Dispatcher: delegates per-type rendering to the registry, owns the shared scaffolding.
 
-	def __init__(self, manual: Manual) -> None:
-		self.manual: Manual = manual
+	``eq=False`` keeps identity semantics: this class and :class:`~..manual.Manual` reference
+	each other, so field-based equality would recurse.
+	"""
+
+	manual: Manual
+	""" The owning :class:`~..manual.Manual` instance. """
 
 	@property
 	def config(self) -> ManualConfig:
+		""" Shortcut to the manual's :class:`~..config.ManualConfig`. """
 		return self.manual.config
 
 	@property
 	def glyphs(self) -> GlyphAllocator:
+		""" Shortcut to the manual's :class:`~..glyphs.GlyphAllocator`. """
 		return self.manual.glyphs
 
 	@property
 	def images(self) -> GlyphImageBuilder:
+		""" Shortcut to the manual's :class:`~..images.GlyphImageBuilder`. """
 		return self.manual.images
 
 	# --- delegated helpers ---

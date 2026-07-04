@@ -11,11 +11,10 @@ order is final), so inserting/reordering pages never needs page-number bookkeepi
 """
 
 # Imports
-from __future__ import annotations
-
 import enum
 import os
 from collections.abc import Callable
+from dataclasses import dataclass, field
 from typing import Any, cast
 
 import stouputils as stp
@@ -49,35 +48,75 @@ class Phase(enum.Enum):
 	BEFORE_EMIT = "before_emit"
 
 
+@dataclass(eq=False)
 class Manual:
-	""" Orchestrates manual generation and exposes the public extension API. """
+	""" Orchestrates manual generation and exposes the public extension API.
 
-	def __init__(self, config: ManualConfig) -> None:
-		self.config: ManualConfig = config
-		self.glyphs: GlyphAllocator = GlyphAllocator(config.project_id)
-		self.images: GlyphImageBuilder = GlyphImageBuilder(config, self.glyphs)
-		self.recipes: RecipeRenderer = RecipeRenderer(self)
+	Construct with ``Manual(config)``; every other field is derived. ``eq=False`` keeps
+	identity semantics: the manual and its collaborators (:class:`~.recipes.RecipeRenderer`)
+	reference each other, so field-based equality would recurse.
 
-		self.pages: list[Page] = []
-		self.by_anchor: dict[str, Page] = {}
-		self.hooks: dict[Phase, list[Callable[[Manual], None]]] = {p: [] for p in Phase}
-		self.item_page_hooks: list[Callable[[ItemPage, Manual], None]] = []
+	>>> manual = Manual(ManualConfig(project_id="demo", project_name="Demo", project_author="me", cache_path="cache"))
+	>>> manual.recipes.manual is manual
+	True
+	>>> _ = manual.add_page(Page(anchor="later"))
+	>>> len(manual.pages), len(manual.pending_ops)  # deferred until discover() builds the defaults
+	(0, 1)
+	"""
 
-		# Page operations requested before discover() runs are deferred and replayed once the
-		# default pages exist (so setup code can reference default anchors like "intro").
-		self.discovered: bool = False
-		self.pending_ops: list[Callable[[], None]] = []
+	config: ManualConfig
+	""" The typed manual configuration (the only constructor argument). """
 
-		# Computed during the pipeline
-		self.definitions_as_objects: dict[str, Item] = {}
-		self.categories: dict[str, list[str]] = {}
-		self.has_forge_3x3: bool = False
-		self.has_forge_3x4: bool = False
-		self.pages_content: list[list[TextComponent]] = []
-		self.item_index: dict[str, int] = {}
-		self.anchor_index: dict[str, int] = {}
-		self.cached_simple_case: Image.Image | None = None
-		self.texture_cache: dict[str, Image.Image] = {}
+	# Collaborators (created from ``config`` in __post_init__)
+	glyphs: GlyphAllocator = field(init=False, repr=False)
+	""" Dynamic glyph counter + bitmap font-provider registry. """
+	images: GlyphImageBuilder = field(init=False, repr=False)
+	""" Builder for every manual texture (icons, templates, page backgrounds). """
+	recipes: RecipeRenderer = field(init=False, repr=False)
+	""" Dispatcher rendering each recipe through its registered :class:`~.recipes.CraftRenderer`. """
+
+	# Page registry + developer hooks
+	pages: list[Page] = field(init=False, default_factory=list[Page])
+	""" The ordered pages; 1-based page numbers follow this order. """
+	by_anchor: dict[str, Page] = field(init=False, default_factory=dict[str, Page])
+	""" Anchor -> page lookup (rebuilt by :meth:`order`). """
+	hooks: dict[Phase, list[Callable[["Manual"], None]]] = field(init=False, repr=False)
+	""" Per-:class:`Phase` developer hooks (see :meth:`on` / :meth:`register`). """
+	item_page_hooks: list[Callable[[ItemPage, "Manual"], None]] = field(init=False, default_factory=list[Callable[[ItemPage, "Manual"], None]], repr=False)
+	""" Hooks run on every :class:`~.pages.item_page.ItemPage` during preparation. """
+
+	# Page operations requested before discover() runs are deferred and replayed once the
+	# default pages exist (so setup code can reference default anchors like "intro").
+	discovered: bool = field(init=False, default=False)
+	""" True once :meth:`discover` built the default pages. """
+	pending_ops: list[Callable[[], None]] = field(init=False, default_factory=list[Callable[[], None]], repr=False)
+	""" Page operations deferred until after :meth:`discover`. """
+
+	# Computed during the pipeline
+	definitions_as_objects: dict[str, Item] = field(init=False, default_factory=dict[str, Item], repr=False)
+	""" Item id -> :class:`Item` cache built at discover time. """
+	categories: dict[str, list[str]] = field(init=False, default_factory=dict[str, list[str]])
+	""" Category name -> item ids (insertion order preserved). """
+	has_forge_3x3: bool = field(init=False, default=False)
+	""" Whether any recipe needs the 3x3 awakened forge assets. """
+	has_forge_3x4: bool = field(init=False, default=False)
+	""" Whether any recipe needs the 3x4 awakened forge assets. """
+	pages_content: list[list[TextComponent]] = field(init=False, default_factory=list[list[TextComponent]], repr=False)
+	""" Rendered dialog bodies, one list of components per page. """
+	item_index: dict[str, int] = field(init=False, default_factory=dict[str, int], repr=False)
+	""" Item id -> 1-based page index (computed by :meth:`order`). """
+	anchor_index: dict[str, int] = field(init=False, default_factory=dict[str, int], repr=False)
+	""" Anchor -> 1-based page index (computed by :meth:`order`). """
+	cached_simple_case: Image.Image | None = field(init=False, default=None, repr=False)
+	""" Cache for :attr:`simple_case`. """
+	texture_cache: dict[str, Image.Image] = field(init=False, default_factory=dict[str, Image.Image], repr=False)
+	""" Item id -> loaded texture cache (see :meth:`load_item_texture`). """
+
+	def __post_init__(self) -> None:
+		self.glyphs = GlyphAllocator(self.config.project_id)
+		self.images = GlyphImageBuilder(self.config, self.glyphs)
+		self.recipes = RecipeRenderer(self)
+		self.hooks = {p: [] for p in Phase}
 
 	# --- shared lazy resources ---
 	@property
@@ -152,10 +191,12 @@ class Manual:
 			self.apply_move(anchor, before, after, index)
 
 	def apply_add(self, page: Page) -> None:
+		""" Immediate (non-deferred) implementation of :meth:`add_page`. """
 		self.pages.append(page)
 		self.by_anchor[page.anchor] = page
 
 	def apply_insert(self, page: Page, before: str | None, after: str | None, index: int | None) -> None:
+		""" Immediate (non-deferred) implementation of :meth:`insert_page`. """
 		if index is None:
 			if before is not None:
 				index = self.index_of_anchor(before)
@@ -167,6 +208,7 @@ class Manual:
 		self.by_anchor[page.anchor] = page
 
 	def apply_replace(self, anchor: str, page: Page) -> None:
+		""" Immediate (non-deferred) implementation of :meth:`replace_page`. """
 		idx = self.index_of_anchor(anchor)
 		old = self.pages[idx]
 		self.pages[idx] = page
@@ -174,11 +216,13 @@ class Manual:
 		self.by_anchor[page.anchor] = page
 
 	def apply_remove(self, anchor: str) -> None:
+		""" Immediate (non-deferred) implementation of :meth:`remove_page`. """
 		idx = self.index_of_anchor(anchor)
 		page = self.pages.pop(idx)
 		self.by_anchor.pop(page.anchor, None)
 
 	def apply_move(self, anchor: str, before: str | None, after: str | None, index: int | None) -> None:
+		""" Immediate (non-deferred) implementation of :meth:`move_page`. """
 		idx = self.index_of_anchor(anchor)
 		page = self.pages.pop(idx)
 		self.by_anchor.pop(page.anchor, None)
@@ -196,24 +240,25 @@ class Manual:
 		return None
 
 	def index_of_anchor(self, anchor: str) -> int:
+		""" Return the 0-based list index of the page with ``anchor`` (KeyError if absent). """
 		for i, page in enumerate(self.pages):
 			if page.anchor == anchor:
 				return i
 		raise KeyError(f"No manual page with anchor '{anchor}'")
 
 	# --- hook API (public) ---
-	def register(self, phase: Phase, fn: Callable[[Manual], None]) -> Callable[[Manual], None]:
+	def register(self, phase: Phase, fn: Callable[["Manual"], None]) -> Callable[["Manual"], None]:
 		""" Register ``fn`` to run after ``phase``. Returns ``fn`` (usable as a decorator). """
 		self.hooks[phase].append(fn)
 		return fn
 
-	def on(self, phase: Phase) -> Callable[[Callable[[Manual], None]], Callable[[Manual], None]]:
+	def on(self, phase: Phase) -> Callable[[Callable[["Manual"], None]], Callable[["Manual"], None]]:
 		""" Decorator form of :meth:`register`. """
-		def deco(fn: Callable[[Manual], None]) -> Callable[[Manual], None]:
+		def deco(fn: Callable[["Manual"], None]) -> Callable[["Manual"], None]:
 			return self.register(phase, fn)
 		return deco
 
-	def on_item_page(self, fn: Callable[[ItemPage, Manual], None]) -> Callable[[ItemPage, Manual], None]:
+	def on_item_page(self, fn: Callable[[ItemPage, "Manual"], None]) -> Callable[[ItemPage, "Manual"], None]:
 		""" Register ``fn(page, manual)`` to run on every item page during preparation. """
 		self.item_page_hooks.append(fn)
 		return fn

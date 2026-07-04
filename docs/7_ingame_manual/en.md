@@ -21,7 +21,7 @@
 - **🗨 Output**: Dialog-first — generates one Minecraft dialog per page, reachable through the vanilla **quick actions** menu (and the `manual` item in mode 1)
 
 ## 📋 Overview
-`ingame_manual_v2` generates an in-game manual from your `Mem.definitions` items: an introduction page, a category browser, one page per category, and one page per item with its recipes and wiki buttons. It is **dialog-first** (the old written-book NBT mode is removed) and fully **extensible** — you can edit any item's page, insert arbitrary pages (even unrelated to items), control button placement, and render pages backed by your own texture.
+`ingame_manual_v2` generates an in-game manual from your `Mem.definitions` items: an introduction page, a category browser, one page per category, and one page per item with its recipes and wiki buttons. It is **dialog-first** (the old written-book NBT mode is removed) and fully **extensible** — you can edit any item's page, insert arbitrary pages (even unrelated to items), control button placement, and render pages backed by your own texture. Every public class of the API (`Page` subclasses, `ButtonLayout`, `BakedText`, `PageRef`, `CraftRenderer`, `Manual` itself...) is a Python **dataclass**.
 
 **Opt in by replacing `stewbeet.plugins.ingame_manual` with `stewbeet.plugins.ingame_manual_v2`** in your pipeline.
 
@@ -39,19 +39,19 @@
 
 Set in `beet.yml` under `meta.stewbeet.manual`:
 
-| Key | Type | Default | Description |
-|-----|------|---------|-------------|
-| `cache_path` | `str` | — | **Required.** Directory for generated fonts/textures/item renders |
-| `use_dialog` | `int` | `1` | `1` = dialog + `manual` item that opens it · `2` = dialog only (no item) |
-| `high_resolution` | `bool` | `true` | High-res (256px) item icons in recipes |
-| `cache_assets` | `bool` | `true` | Skip re-rendering/re-downloading item textures that already exist |
-| `max_items_per_row` | `int` | `5` | Category grid width (max 6) |
-| `max_rows_per_page` | `int` | `5` | Category grid height (max 7) |
-| `name` | `str` | `"{project} Manual"` | Manual title (max 32 chars) |
-| `first_page_text` | `TextComponent` | `""` | Intro page text |
-| `manual_overrides` | `str` | `""` | Folder of textures that override the bundled defaults |
-| `showcase_image` | `int` | `3` | `0` off · `1` manual items · `2` all items · `3` both |
-| `json_dump_path` | `str` | `""` | Optional debug dump of the rendered pages |
+| Key                 | Type            | Default              | Description                                                              |
+| ------------------- | --------------- | -------------------- | ------------------------------------------------------------------------ |
+| `cache_path`        | `str`           | —                    | **Required.** Directory for generated fonts/textures/item renders        |
+| `use_dialog`        | `int`           | `1`                  | `1` = dialog + `manual` item that opens it · `2` = dialog only (no item) |
+| `high_resolution`   | `bool`          | `true`               | High-res (256px) item icons in recipes                                   |
+| `cache_assets`      | `bool`          | `true`               | Skip re-rendering/re-downloading item textures that already exist        |
+| `max_items_per_row` | `int`           | `5`                  | Category grid width (max 6)                                              |
+| `max_rows_per_page` | `int`           | `5`                  | Category grid height (max 7)                                             |
+| `name`              | `str`           | `"{project} Manual"` | Manual title (max 32 chars)                                              |
+| `first_page_text`   | `TextComponent` | `""`                 | Intro page text                                                          |
+| `manual_overrides`  | `str`           | `""`                 | Folder of textures that override the bundled defaults                    |
+| `showcase_image`    | `int`           | `3`                  | `0` off · `1` manual items · `2` all items · `3` both                    |
+| `json_dump_path`    | `str`           | `""`                 | Optional debug dump of the rendered pages                                |
 
 > **Note**: `use_dialog: 0` and `cache_pages` from v1 are removed. The manual is always dialog-based.
 
@@ -78,14 +78,14 @@ def tweak(m):
         page.transformers.append(lambda content, _m: [*content, {"text": "\nGreat metal!", "color": "dark_gray"}])
 ```
 
-| Phase | Fires after | Typical use |
-|-------|-------------|-------------|
-| `DISCOVERED` | default pages created | insert/reorder pages |
-| `PREPARED` | per-page data collected | edit item pages, set button layouts |
-| `ORDERED` | final order computed | last-minute reordering |
-| `RENDERED` | pages rendered | append transformers |
-| `RESOLVED` | links resolved | inspect final links |
-| `BEFORE_EMIT` | just before output | final tweaks |
+| Phase         | Fires after             | Typical use                         |
+| ------------- | ----------------------- | ----------------------------------- |
+| `DISCOVERED`  | default pages created   | insert/reorder pages                |
+| `PREPARED`    | per-page data collected | edit item pages, set button layouts |
+| `ORDERED`     | final order computed    | last-minute reordering              |
+| `RENDERED`    | pages rendered          | append transformers                 |
+| `RESOLVED`    | links resolved          | inspect final links                 |
+| `BEFORE_EMIT` | just before output      | final tweaks                        |
 
 `manual.on_item_page(fn)` runs `fn(page, manual)` on every item page during preparation.
 
@@ -119,24 +119,24 @@ manual.on_item_page(lambda page, _m: setattr(
 ))
 ```
 
-| Field | Description |
-|-------|-------------|
-| `columns` | Buttons per row |
-| `max_buttons` | Hard cap (overflow dropped by priority) |
-| `position` | `"after_recipe"` · `"top"` · `"bottom"` · or a callable |
-| `order` | Sort key, e.g. `lambda b: -b.priority` |
-| `include` | Predicate `(button) -> bool` to filter |
-| `extra_buttons` | Extra `WikiButtonRender`s to append |
+| Field           | Description                                             |
+| --------------- | ------------------------------------------------------- |
+| `columns`       | Buttons per row                                         |
+| `max_buttons`   | Hard cap (overflow dropped by priority)                 |
+| `position`      | `"after_recipe"` · `"top"` · `"bottom"` · or a callable |
+| `order`         | Sort key, e.g. `lambda b: -b.priority`                  |
+| `include`       | Predicate `(button) -> bool` to filter                  |
+| `extra_buttons` | Extra `WikiButtonRender`s to append                     |
 
 ### 🗂 Page management
-| Method | Description |
-|--------|-------------|
-| `manual.add_page(page)` | Append a page |
-| `manual.insert_page(page, *, before/after/index)` | Insert at a position |
-| `manual.replace_page(anchor, page)` | Replace a page |
-| `manual.move_page(anchor, *, before/after/index)` | Move a page |
-| `manual.remove_page(anchor)` | Remove a page |
-| `manual.get_page(anchor)` / `get_page_for_item(id)` | Look up a page |
+| Method                                              | Description          |
+| --------------------------------------------------- | -------------------- |
+| `manual.add_page(page)`                             | Append a page        |
+| `manual.insert_page(page, *, before/after/index)`   | Insert at a position |
+| `manual.replace_page(anchor, page)`                 | Replace a page       |
+| `manual.move_page(anchor, *, before/after/index)`   | Move a page          |
+| `manual.remove_page(anchor)`                        | Remove a page        |
+| `manual.get_page(anchor)` / `get_page_for_item(id)` | Look up a page       |
 
 > Page operations called from setup are deferred and replayed once the default pages exist, so you can reference default anchors like `"intro"` directly.
 
@@ -211,14 +211,18 @@ def maybe_changelog(m):
 ---
 
 ## 🧱 Custom recipe types
-Each recipe type is rendered by a `CraftRenderer` kept in a global registry, so adding a new type is one class + one `register_craft_renderer(...)` call. The built-in types live one-per-file under `recipes/types/` (`shaped`, `furnace`, `smithing`, `linear`, `awakened_forge`).
+Each recipe type is rendered by a `CraftRenderer` kept in a global registry, so adding a new type is one class + one `register_craft_renderer(...)` call. The built-in types live one-per-file under `recipes/types/` (`shaped`, `furnace`, `smithing`, `linear`, `awakened_forge`). Like every class of the manual API, renderers are dataclasses — decorate your subclass with `@dataclass` to match the built-ins.
 
 ```python
+from dataclasses import dataclass
+from typing import ClassVar
+
 from stewbeet import CraftRenderer, register_craft_renderer
 
+@dataclass
 class MyMachineRenderer(CraftRenderer):
-    types = ("myplugin_machining",)   # the craft "type" string(s) this handles
-    name = "My Machining"             # hover title ("" = no title, like vanilla crafting)
+    types: ClassVar[tuple[str, ...]] = ("myplugin_machining",)  # the craft "type" string(s) this handles
+    name: ClassVar[str] = "My Machining"                        # hover title ("" = no title, like vanilla crafting)
 
     def render_body(self, r, craft, name, content, result_component, page_font, use_dialog, add_change_page_to_ingr):
         # Append your page layout to `content`. Build item cells with r.item_component(...)
@@ -240,3 +244,4 @@ Only `types` and `render_body` are required; `static_glyph` (high-res template g
 - `WikiButton` and `set_manual_components(...)` keep working unchanged.
 - Remove the `cache_pages` key and use `use_dialog: 1` or `2` (mode `0` is gone).
 - The `universal_manual` storage is no longer registered; the manual is opened from the vanilla quick actions menu.
+

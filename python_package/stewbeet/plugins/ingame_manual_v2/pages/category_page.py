@@ -6,8 +6,6 @@ linking to its item page via a deferred :class:`~..refs.PageRef`.
 """
 
 # Imports
-from __future__ import annotations
-
 import copy
 import os
 from dataclasses import dataclass, field
@@ -30,6 +28,7 @@ class CategoryPage(Page):
 	items: list[str] = field(default_factory=list[str])
 
 	def build(self, manual: Manual) -> list[TextComponent]:
+		""" Draw the case-grid background glyph and overlay one clickable component per item. """
 		config = manual.config
 		name = self.title or self.anchor
 		file_name = name.replace(" ", "_").replace("#", "").lower()

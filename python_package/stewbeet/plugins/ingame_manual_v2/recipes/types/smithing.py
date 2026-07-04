@@ -2,8 +2,7 @@
 
 # ruff: noqa: E501
 # Imports
-from __future__ import annotations
-
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, ClassVar
 
 from beet.core.utils import TextComponent
@@ -18,14 +17,18 @@ if TYPE_CHECKING:
 	from ..renderer import RecipeRenderer
 
 
+@dataclass
 class SmithingTransformRenderer(CraftRenderer):
+	""" ``smithing_transform`` recipes (base + template + addition -> result). """
 	types: ClassVar[tuple[str, ...]] = (SmithingTransformRecipe.type,)
 	name: ClassVar[str] = "Smithing Transform"
 
 	def append_hover(self, r: RecipeRenderer, craft: JsonDict, hover: list[TextComponent]) -> None:
+		""" Base / Template / Addition hover lines. """
 		smithing_hover(craft, hover)
 
 	def render_body(self, r: RecipeRenderer, craft: JsonDict, name: str, content: list[TextComponent], result_component: JsonDict, page_font: str, use_dialog: bool, add_change_page_to_ingr: bool) -> None:
+		""" Base, template and addition in a row, then the result. """
 		formatted_base: JsonDict = r.item_component(craft["base"])
 		formatted_addition: JsonDict = r.item_component(craft["addition"])
 		formatted_template: JsonDict = r.item_component(craft["template"])
@@ -43,14 +46,18 @@ class SmithingTransformRenderer(CraftRenderer):
 		content.append("\n")
 
 
+@dataclass
 class SmithingTrimRenderer(CraftRenderer):
+	""" ``smithing_trim`` recipes (no result item; the trim pattern slot is shown empty). """
 	types: ClassVar[tuple[str, ...]] = (SmithingTrimRecipe.type,)
 	name: ClassVar[str] = "Smithing Trim"
 
 	def append_hover(self, r: RecipeRenderer, craft: JsonDict, hover: list[TextComponent]) -> None:
+		""" Base / Template / Addition / Pattern hover lines. """
 		smithing_hover(craft, hover)
 
 	def render_body(self, r: RecipeRenderer, craft: JsonDict, name: str, content: list[TextComponent], result_component: JsonDict, page_font: str, use_dialog: bool, add_change_page_to_ingr: bool) -> None:
+		""" Base, template and addition in a row, with an invisible pattern slot. """
 		formatted_base: JsonDict = r.item_component(craft["base"])
 		formatted_addition: JsonDict = r.item_component(craft["addition"])
 		formatted_template: JsonDict = r.item_component(craft["template"])

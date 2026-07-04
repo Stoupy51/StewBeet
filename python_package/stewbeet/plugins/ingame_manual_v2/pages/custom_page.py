@@ -20,6 +20,10 @@ class CustomPage(Page):
 	``declared_glyphs`` lets a page ship its own bitmap providers
 	(each a dict with ``char``/``file``/``ascent``/``height``);
 	they are registered at build time.
+
+	>>> page = CustomPage(anchor="welcome", title="Welcome", body=[{"text": "Hi"}])
+	>>> page.build(None)  # neutral base first, then the developer body untouched
+	[{'text': '', 'shadow_color': [0, 0, 0, 0]}, {'text': 'Hi'}]
 	"""
 	body: list[TextComponent] = field(default_factory=list[TextComponent])
 	""" The page content, as a list of Minecraft text components. """
@@ -27,6 +31,7 @@ class CustomPage(Page):
 	""" Optional glyphs to register at build time. """
 
 	def build(self, manual: Manual) -> list[TextComponent]:
+		""" Register the declared glyphs, then return the body under a neutral (no-font) base. """
 		for g in self.declared_glyphs:
 			manual.glyphs.add_provider(g["char"], g["file"], g["ascent"], g["height"])
 		# Neutral base (default font, no shadow); the body keeps its own fonts/colors. The manual
