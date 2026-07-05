@@ -157,11 +157,11 @@ from stewbeet import Block, VanillaBlock, CraftingShapedRecipe, SmeltingRecipe, 
 block = Block(
     id="super_stone",
     vanilla_block=VanillaBlock(id="minecraft:cobblestone"),
-    manual_category="blocks",
+    manual_category="building",
     recipes=[
         # Aurait pu être shapeless, mais juste pour l'exemple :
         CraftingShapedRecipe(
-            category="blocks",
+            category="building",
             shape=["XXX", "XXX", "XXX"],
             ingredients={"X": Ingr("minecraft:stone")}
         ),
@@ -169,7 +169,7 @@ block = Block(
         SmeltingRecipe(
             experience=0.1,
             cookingtime=200,
-            category="blocks",
+            category="building",
             ingredient=Ingr("super_stone"),
             result=Ingr("minecraft:diamond")
         )
@@ -588,14 +588,14 @@ export_all_definitions_to_json(f"{Mem.ctx.directory}/definitions_debug.json")
 
 Catégories courantes pour l'organisation du manuel (mais c'est toujours à vous de décider !) :
 
-| Catégorie | Description |
-|----------|-------------|
-| `"materials"` | Matériaux bruts, lingots, gemmes |
-| `"equipment"` | Outils, armes, armures |
-| `"blocks"` | Blocs de construction, blocs décoratifs |
-| `"miscellaneous"` | Autres objets, objets spéciaux |
-| `"food"` | Objets consommables |
-| `"decorations"` | Peintures, objets décoratifs |
+| Catégorie         | Description                             |
+| ----------------- | --------------------------------------- |
+| `"materials"`     | Matériaux bruts, lingots, gemmes        |
+| `"equipment"`     | Outils, armes, armures                  |
+| `"building"`      | Blocs de construction, blocs décoratifs |
+| `"miscellaneous"` | Autres objets, objets spéciaux          |
+| `"food"`          | Objets consommables                     |
+| `"decorations"`   | Peintures, objets décoratifs            |
 
 ## ✨ Fonctionnalités avancées
 

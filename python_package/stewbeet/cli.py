@@ -3,7 +3,6 @@
 import importlib
 import os
 import shutil
-import subprocess
 import sys
 
 import stouputils as stp
@@ -81,7 +80,12 @@ def main() -> None:
         stp.info("Cleaning project and caches...")
 
         # Remove the beet cache directory
-        subprocess.run([sys.executable, "-m", "beet", "cache", "-c"], check=False, capture_output=True)
+        try:
+            from beet.toolchain.project import Project
+            project = Project(resolved_config=cfg)
+            project.clear_cache([])
+        except Exception:
+            pass
         if os.path.exists(".beet_cache"):
             shutil.rmtree(".beet_cache", ignore_errors=True)
 
@@ -120,9 +124,18 @@ def main() -> None:
         def stop_callback(exception: BaseException) -> None:
             sys.exit(1)
 
-        # Try to import all pipeline
+        # Try to import all pipeline (upfront, only for nice error messages)
+        modules_before: set[str] = set(sys.modules)
         for plugin in cfg.pipeline:
             stp.handle_error(importlib.import_module, error_log=stp.LogLevels.WARNING_TRACEBACK, callback=stop_callback)(plugin)
+
+        # Forget project-local modules so beet re-imports them in its own tracked
+        # region, else `stewbeet watch` ignores edits to project source files.
+        for name in set(sys.modules) - modules_before:
+            module = sys.modules.get(name)
+            filename: str | None = getattr(module, "__file__", None)
+            if filename and "site-packages" not in filename and filename.startswith(current_dir):
+                del sys.modules[name]
 
         # Run beet with all remaining arguments
         from beet.toolchain.cli import main as beet_main

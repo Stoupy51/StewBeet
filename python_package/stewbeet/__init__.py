@@ -8,6 +8,7 @@ from beet import *
 
 from .cli import main
 from .core import *
+from .plugins.ingame_manual.api import *
 from .plugins.initialize.source_lore_font import find_pack_png
 from .plugins.resource_pack.item_models.object import AutoModel
 from .plugins.resource_pack.sounds import add_sound

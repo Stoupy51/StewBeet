@@ -14,6 +14,7 @@ from box import Box
 from stouputils.typing import JsonDict
 
 from ...core import LATEST_MC_VERSION, MORE_ASSETS_PACK_FORMATS, MORE_DATA_PACK_FORMATS, MORE_DATA_VERSIONS, Mem, set_json_encoder
+from ...dependencies.official_libs import OFFICIAL_LIBS
 from .source_lore_font import find_pack_png, prepare_source_lore_font
 
 
@@ -30,6 +31,15 @@ def beet_default(ctx: Context, silent: bool = False) -> Generator[None]:
 		Mem.ctx = ctx
 		Mem.definitions = {}
 		Mem.external_definitions = {}
+
+		# Reset per-build module state so consecutive builds in one process (`stewbeet watch`) behave like fresh runs
+		stp.clear_simple_caches()
+		from ..auto.lang_file.utils import lang
+		lang.clear()
+		from ...dependencies.download_manager import BUILD_CACHE
+		BUILD_CACHE.clear()
+		for data in OFFICIAL_LIBS.values():
+			data["is_used"] = False
 
 		# Preprocess project description
 		project_description: TextComponent = Mem.ctx.project_description

@@ -3,7 +3,7 @@
 		"pack_format": 101,
 		"description": "Extensive Template [3.0.0] by Stoupy51",
 		"min_format": [
-			94,
+			101,
 			1
 		],
 		"max_format": [

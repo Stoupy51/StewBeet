@@ -3,7 +3,7 @@
 	"title": [
 		"",
 		{
-			"sprite": "_your_namespace:item/dialog_sprite/steel_chestplate",
+			"sprite": "_your_namespace:item/dialog_sprite/stone_rod",
 			"shadow_color": [
 				0,
 				0,
@@ -14,12 +14,12 @@
 		},
 		" ",
 		{
-			"translate": "_your_namespace.steel_chestplate",
+			"translate": "_your_namespace.stone_rod",
 			"underlined": true
 		},
 		" ",
 		{
-			"sprite": "_your_namespace:item/dialog_sprite/steel_chestplate",
+			"sprite": "_your_namespace:item/dialog_sprite/stone_rod",
 			"shadow_color": [
 				0,
 				0,
@@ -35,10 +35,10 @@
 			"contents": [
 				{"text": "V   ","font": "_your_namespace:manual","color": "white"},
 				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_18"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"}," (18)"]}},
-				" ",
+				{"text": "4","font": "_your_namespace:manual","color": "white","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_1"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_first_page"}]}},
 				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_20"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"}," (20)"]}},
 				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_18"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"}," (18)"]}},
-				" ",
+				{"text": " ","font": "_your_namespace:manual","color": "white","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_1"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_first_page"}]}},
 				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_20"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"}," (20)"]}}
 			],
 			"width": 400
@@ -47,31 +47,24 @@
 			"type": "minecraft:plain_message",
 			"contents": [
 				{"text": "","font": "_your_namespace:manual","color": "white","shadow_color": [0,0,0,0]},
-				"\"$6\n\"",
-				{"text": "$耡","hover_event": {"action": "show_item","id": "command_block","components": {"custom_data": {"smithed": {"dict": {"ingot": {"steel": true}},"id": "_your_namespace:steel_ingot","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ingot": true}},"item_model": "_your_namespace:steel_ingot","item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},[{"text":" ","italic": true,"color": "blue"}, {"translate": "_your_namespace.extensive_template"}]]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_7"}},
-				"U$",
-				{"text": "$耡","hover_event": {"action": "show_item","id": "command_block","components": {"custom_data": {"smithed": {"dict": {"ingot": {"steel": true}},"id": "_your_namespace:steel_ingot","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ingot": true}},"item_model": "_your_namespace:steel_ingot","item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},[{"text":" ","italic": true,"color": "blue"}, {"translate": "_your_namespace.extensive_template"}]]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_7"}},
-				"  \n\"",
-				{"text": "U$","hover_event": {"action": "show_item","id": "command_block","components": {"custom_data": {"smithed": {"dict": {"ingot": {"steel": true}},"id": "_your_namespace:steel_ingot","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ingot": true}},"item_model": "_your_namespace:steel_ingot","item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},[{"text":" ","italic": true,"color": "blue"}, {"translate": "_your_namespace.extensive_template"}]]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_7"}},
-				"U$",
-				{"text": "U$","hover_event": {"action": "show_item","id": "command_block","components": {"custom_data": {"smithed": {"dict": {"ingot": {"steel": true}},"id": "_your_namespace:steel_ingot","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ingot": true}},"item_model": "_your_namespace:steel_ingot","item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},[{"text":" ","italic": true,"color": "blue"}, {"translate": "_your_namespace.extensive_template"}]]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_7"}},
-				"  \n\"",
-				{"text": "$耡$耡$耡","hover_event": {"action": "show_item","id": "command_block","components": {"custom_data": {"smithed": {"dict": {"ingot": {"steel": true}},"id": "_your_namespace:steel_ingot","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ingot": true}},"item_model": "_your_namespace:steel_ingot","item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},[{"text":" ","italic": true,"color": "blue"}, {"translate": "_your_namespace.extensive_template"}]]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_7"}},
-				"\"\"",
-				{"text": "$$耹","hover_event": {"action": "show_item","id": "iron_chestplate","components": {"custom_data": {"smithed": {"dict": {"armor": {"steel": true,"chestplate": true}},"id": "_your_namespace:steel_chestplate","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_chestplate": true}},"max_damage": 720,"equippable": {"slot": "chest","asset_id": "_your_namespace:steel"},"attribute_modifiers": [{"type": "armor","amount": 6.5,"operation": "add_value","slot": "chest","id": "_your_namespace:armor.chest"}],"item_model": "_your_namespace:steel_chestplate","item_name": {"translate": "_your_namespace.steel_chestplate"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},[{"text":" ","italic": true,"color": "blue"}, {"translate": "_your_namespace.extensive_template"}]]]}}},
-				"#$\n\"",
-				{"text": "U$U$U$","hover_event": {"action": "show_item","id": "command_block","components": {"custom_data": {"smithed": {"dict": {"ingot": {"steel": true}},"id": "_your_namespace:steel_ingot","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ingot": true}},"item_model": "_your_namespace:steel_ingot","item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},[{"text":" ","italic": true,"color": "blue"}, {"translate": "_your_namespace.extensive_template"}]]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_7"}},
-				"\"\"",
-				{"text": "U$","hover_event": {"action": "show_item","id": "iron_chestplate","components": {"custom_data": {"smithed": {"dict": {"armor": {"steel": true,"chestplate": true}},"id": "_your_namespace:steel_chestplate","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_chestplate": true}},"max_damage": 720,"equippable": {"slot": "chest","asset_id": "_your_namespace:steel"},"attribute_modifiers": [{"type": "armor","amount": 6.5,"operation": "add_value","slot": "chest","id": "_your_namespace:armor.chest"}],"item_model": "_your_namespace:steel_chestplate","item_name": {"translate": "_your_namespace.steel_chestplate"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},[{"text":" ","italic": true,"color": "blue"}, {"translate": "_your_namespace.extensive_template"}]]]}}},
-				"#$\n\"",
-				{"text": "$耡$耡$耡","hover_event": {"action": "show_item","id": "command_block","components": {"custom_data": {"smithed": {"dict": {"ingot": {"steel": true}},"id": "_your_namespace:steel_ingot","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ingot": true}},"item_model": "_your_namespace:steel_ingot","item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},[{"text":" ","italic": true,"color": "blue"}, {"translate": "_your_namespace.extensive_template"}]]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_7"}},
-				"  \n\"",
-				{"text": "U$U$U$","hover_event": {"action": "show_item","id": "command_block","components": {"custom_data": {"smithed": {"dict": {"ingot": {"steel": true}},"id": "_your_namespace:steel_ingot","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ingot": true}},"item_model": "_your_namespace:steel_ingot","item_name": {"translate": "_your_namespace.steel_ingot"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},[{"text":" ","italic": true,"color": "blue"}, {"translate": "_your_namespace.extensive_template"}]]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_7"}},
-				"  \n\n",
-				{"text": "2##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耡"},"U$",{"text": "$耡"},"\n","\"",{"text": "U$"},"U$",{"text": "U$"},"\n","\"",{"text": "$耡"},{"text": "$耡"},{"text": "$耡"},"\"\"",{"text": "$$耹"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$耡"},{"text": "$耡"},{"text": "$耡"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x8 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]},"priority": 0,"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_7"}},
-				{"text": "脕\n","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"G\n","\"",{"text": "$耹"},"\n","\"",{"text": "U$"},"\n","\"\"\"\"U$U$",{"text": "$$耣"},"\n","\"\"\"\"U$U$",{"text": "U$"},"\n","\n\n"],[{"text":"\n","color": "yellow"}, {"translate": "_your_namespace.smelting"}],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_chestplate","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_8"}},
-				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耡"},"U$",{"text": "$耡"},"\n","\"",{"text": "U$"},"U$",{"text": "U$"},"\n","\"",{"text": "$耡"},{"text": "$耡"},{"text": "$耡"},"\"\"",{"text": "$$耹"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$耡"},{"text": "$耡"},{"text": "$耡"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x8 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]},"priority": 0,"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_7"}},
-				{"text": "0","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"G\n","\"",{"text": "$耹"},"\n","\"",{"text": "U$"},"\n","\"\"\"\"U$U$",{"text": "$$耣"},"\n","\"\"\"\"U$U$",{"text": "U$"},"\n","\n\n"],[{"text":"\n","color": "yellow"}, {"translate": "_your_namespace.smelting"}],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_chestplate","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_8"}},
+				"\"$6\n\"U$",
+				{"text": "$聯","hover_event": {"action": "show_item","id": "minecraft:stone"}},
+				"U$  \n\"U$",
+				{"text": "U$","hover_event": {"action": "show_item","id": "minecraft:stone"}},
+				"U$  \n\"U$",
+				{"text": "$聯","hover_event": {"action": "show_item","id": "minecraft:stone"}},
+				"U$\"\"",
+				{"text": "$$耵","hover_event": {"action": "show_item","id": "command_block","components": {"custom_data": {"smithed": {"dict": {"rod": {"stone": true}},"id": "_your_namespace:stone_rod","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"stone_rod": true}},"item_model": "_your_namespace:stone_rod","item_name": {"translate": "_your_namespace.stone_rod"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},[{"text":" ","italic": true,"color": "blue"}, {"translate": "_your_namespace.extensive_template"}]]]}}},
+				"#$\n\"U$",
+				{"text": "U$","hover_event": {"action": "show_item","id": "minecraft:stone"}},
+				"U$\"\"",
+				{"text": "U$","hover_event": {"action": "show_item","id": "command_block","components": {"custom_data": {"smithed": {"dict": {"rod": {"stone": true}},"id": "_your_namespace:stone_rod","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"stone_rod": true}},"item_model": "_your_namespace:stone_rod","item_name": {"translate": "_your_namespace.stone_rod"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},[{"text":" ","italic": true,"color": "blue"}, {"translate": "_your_namespace.extensive_template"}]]]}}},
+				"#$\n\"U$",
+				{"text": "$聯","hover_event": {"action": "show_item","id": "minecraft:stone"}},
+				"U$  \n\"U$",
+				{"text": "U$","hover_event": {"action": "show_item","id": "minecraft:stone"}},
+				"U$  \n\n",
+				{"text": "2\n0","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"","U$",{"text": "$聯"},"U$","\n","\"","U$",{"text": "U$"},"U$","\n","\"","U$",{"text": "$聯"},"U$","\"\"",{"text": "$$耵"},"\n","\"","U$",{"text": "U$"},"U$","\"\"",{"text": "U$"},"\n","\"","U$",{"text": "$聯"},"U$","\n","\"","U$",{"text": "U$"},"U$","\n"],{"text": "\n- x3 ","color": "gray"},{"translate": "_your_namespace.stone","color": "gray"}]}},
 				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 			],
 			"width": 140

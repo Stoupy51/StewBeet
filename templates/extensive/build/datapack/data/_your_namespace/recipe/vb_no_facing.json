@@ -1,6 +1,6 @@
 {
 	"type": "minecraft:crafting_shapeless",
-	"category": "blocks",
+	"category": "building",
 	"group": "vb_no_facing",
 	"ingredients": [
 		"minecraft:cobblestone"

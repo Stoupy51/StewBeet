@@ -7,8 +7,6 @@ from beet.core.utils import TextComponent
 from stouputils.typing import JsonDict
 
 from ..__memory__ import Mem
-from ..cls.external_item import ExternalItem
-from ..cls.item import Item
 
 
 # Add item model component
@@ -22,8 +20,7 @@ def add_item_model_component(black_list: list[str] | None = None) -> None:
 	if black_list is None:
 		black_list = []
 	for item, data in Mem.definitions.items():
-		if isinstance(data, Item):
-			data = data.components
+		data = data.components
 		if item in black_list or data.get("item_model", None) is not None:
 			continue
 		data["item_model"] = f"{Mem.ctx.project_id}:{item}"
@@ -47,8 +44,7 @@ def add_item_name_and_lore_if_missing(is_external: bool = False, black_list: lis
 	for item, data in defs.items():
 		if item in black_list:
 			continue
-		if isinstance(data, Item | ExternalItem):
-			data = data.components
+		data = data.components
 
 		# Add item name if none
 		if not data.get("item_name"):
@@ -95,8 +91,7 @@ def add_private_custom_data_for_namespace(is_external: bool = False, black_list:
 	for item, data in defs.items():
 		if item in black_list:
 			continue
-		if isinstance(data, Item | ExternalItem):
-			data = data.components
+		data = data.components
 		custom_data: JsonDict = data.setdefault("custom_data", {})
 		if is_external and ":" in item:
 			ns, id = item.split(":")
@@ -118,9 +113,7 @@ def add_smithed_ignore_vanilla_behaviours_convention() -> None:
 	Refer to https://wiki.smithed.dev/conventions/tag-specification/#custom-items for more information.
 	"""
 	for data in Mem.definitions.values():
-		if isinstance(data, Item):
-			data = data.components
-		smithed_ignore: JsonDict = data.setdefault("custom_data", {}).setdefault("smithed", {}).setdefault("ignore", {})
+		smithed_ignore: JsonDict = data.components.setdefault("custom_data", {}).setdefault("smithed", {}).setdefault("ignore", {})
 		smithed_ignore.setdefault("functionality", True)
 		smithed_ignore.setdefault("crafting", True)
 
@@ -133,8 +126,14 @@ def set_manual_components(white_list: list[str]) -> None:
 	"""
 	if not white_list:
 		return
-	from ...plugins.ingame_manual.shared_import import SharedMemory
-	SharedMemory.components_to_include = white_list
+
+	# v2 plugin (ingame_manual): record an override picked up by ManualConfig.from_meta,
+	# and update any Manual already created during setup.
+	from ...plugins.ingame_manual import config as v2_config
+	v2_config.COMPONENTS_OVERRIDE = list(white_list)
+	from ...core.__memory__ import Mem
+	if Mem.manual is not None:
+		Mem.manual.config.components_to_include = list(white_list)
 
 # Export all definitions to JSON
 def export_all_definitions_to_json(file_name: str, is_external: bool | JsonDict = False, verbose: bool = True) -> None:

@@ -63,6 +63,12 @@ export const DocumentationPage: React.FC = () => {
             pathEn: '6_continuous_delivery/en.md',
             pathFr: '6_continuous_delivery/fr.md',
         },
+        {
+            title: `📖 ${t('documentation.ingameManual')}`,
+            description: t('documentation.ingameManualDesc'),
+            pathEn: '7_ingame_manual/en.md',
+            pathFr: '7_ingame_manual/fr.md',
+        },
     ];
 
     return (

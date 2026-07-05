@@ -23,12 +23,12 @@ def main():
         vanilla_block=VanillaBlock(id="minecraft:cobblestone"),
         recipes=[
             # Examples of crafting recipes (shaped and shapeless), no need to specify result -> will default to the Item id
-            CraftingShapedRecipe(category="blocks", shape=["XXX","XXX","XXX"], ingredients={"X": Ingr("minecraft:stone")}),
-            CraftingShapelessRecipe(category="blocks", ingredients=9*[Ingr("minecraft:deepslate")]),
+            CraftingShapedRecipe(category="building", shape=["XXX","XXX","XXX"], ingredients={"X": Ingr("minecraft:stone")}),
+            CraftingShapelessRecipe(category="building", ingredients=9*[Ingr("minecraft:deepslate")]),
 
             # Example of recipe with vanilla result (not custom item)
-            SmeltingRecipe(experience=0.1, cookingtime=200, category="blocks", ingredient=Ingr("super_stone"), result=Ingr("minecraft:diamond")),
-            BlastingRecipe(experience=0.1, cookingtime=100, category="blocks", ingredient=Ingr("super_stone"), result=Ingr("minecraft:diamond")),
+            SmeltingRecipe(experience=0.1, cookingtime=200, category="building", ingredient=Ingr("super_stone"), result=Ingr("minecraft:diamond")),
+            BlastingRecipe(experience=0.1, cookingtime=100, category="building", ingredient=Ingr("super_stone"), result=Ingr("minecraft:diamond")),
         ],
         on_place=f"""
 say Omg, @p[tag={ns}.placer] placed the super stone block!
@@ -46,7 +46,7 @@ particle minecraft:explosion ~ ~ ~
             width=2, height=2
         ),
         recipes=[
-            CraftingShapedRecipe(category="decorations", shape=["###","#F#","###"], ingredients={"#":Ingr("#minecraft:eggs"),"F":Ingr("minecraft:beetroot")}),
+            CraftingShapedRecipe(category="misc", shape=["###","#F#","###"], ingredients={"#":Ingr("#minecraft:eggs"),"F":Ingr("minecraft:beetroot")}),
         ]
     )
 
@@ -74,7 +74,7 @@ particle minecraft:explosion ~ ~ ~
         id="vb_no_facing",
         manual_category="miscellaneous",
         vanilla_block=VanillaBlock(id="minecraft:cobblestone"),
-        recipes=[CraftingShapelessRecipe(category="blocks", ingredients=[Ingr("minecraft:cobblestone")])],
+        recipes=[CraftingShapelessRecipe(category="building", ingredients=[Ingr("minecraft:cobblestone")])],
     )
 
     # Case 2 - Visual-only rotation: item_display rotates with the player (4 horizontal dirs),
@@ -83,7 +83,7 @@ particle minecraft:explosion ~ ~ ~
         id="vb_visual_facing",
         manual_category="miscellaneous",
         vanilla_block=VanillaBlock(id="minecraft:glass", visual_facing="player"),
-        recipes=[CraftingShapelessRecipe(category="blocks", ingredients=[Ingr("minecraft:glass")])],
+        recipes=[CraftingShapelessRecipe(category="building", ingredients=[Ingr("minecraft:glass")])],
     )
 
     # Case 3 - Block + visual rotation: the vanilla block gets a facing= blockstate AND
@@ -92,7 +92,7 @@ particle minecraft:explosion ~ ~ ~
         id="vb_block_facing",
         manual_category="miscellaneous",
         vanilla_block=VanillaBlock(id="minecraft:furnace", block_facing="player"),
-        recipes=[CraftingShapelessRecipe(category="blocks", ingredients=[Ingr("minecraft:furnace")])],
+        recipes=[CraftingShapelessRecipe(category="building", ingredients=[Ingr("minecraft:furnace")])],
     )
 
     # Case 4 - Block + visual rotation WITH extra blockstates: the plugin must preserve
@@ -101,7 +101,7 @@ particle minecraft:explosion ~ ~ ~
         id="vb_block_states",
         manual_category="miscellaneous",
         vanilla_block=VanillaBlock(id="minecraft:furnace[lit=false]", block_facing="player"),
-        recipes=[CraftingShapelessRecipe(category="blocks", ingredients=[Ingr("minecraft:furnace"), Ingr("minecraft:coal")])],
+        recipes=[CraftingShapelessRecipe(category="building", ingredients=[Ingr("minecraft:furnace"), Ingr("minecraft:coal")])],
     )
 
     # Case 5 - Contents with native item_frame facing (6 directions from the frame's Facing NBT).
@@ -109,7 +109,7 @@ particle minecraft:explosion ~ ~ ~
         id="vb_contents",
         manual_category="miscellaneous",
         vanilla_block=VanillaBlock(contents=True),
-        recipes=[CraftingShapelessRecipe(category="blocks", ingredients=[Ingr("minecraft:item_frame")])],
+        recipes=[CraftingShapelessRecipe(category="building", ingredients=[Ingr("minecraft:item_frame")])],
     )
 
     # Case 6 - Contents with player-overridden facing: get_rotation is called while
@@ -118,7 +118,7 @@ particle minecraft:explosion ~ ~ ~
         id="vb_contents_player",
         manual_category="miscellaneous",
         vanilla_block=VanillaBlock(contents=True, visual_facing="player"),
-        recipes=[CraftingShapelessRecipe(category="blocks", ingredients=[Ingr("minecraft:item_frame"), Ingr("minecraft:compass")])],
+        recipes=[CraftingShapelessRecipe(category="building", ingredients=[Ingr("minecraft:item_frame"), Ingr("minecraft:compass")])],
     )
 
     # Case 7 - Contents with explicit item_frame facing (6 directions, same underlying
@@ -127,7 +127,7 @@ particle minecraft:explosion ~ ~ ~
         id="vb_contents_frame",
         manual_category="miscellaneous",
         vanilla_block=VanillaBlock(contents=True, visual_facing="item_frame"),
-        recipes=[CraftingShapelessRecipe(category="blocks", ingredients=[Ingr("minecraft:item_frame"), Ingr("minecraft:string")])],
+        recipes=[CraftingShapelessRecipe(category="building", ingredients=[Ingr("minecraft:item_frame"), Ingr("minecraft:string")])],
     )
 
 
