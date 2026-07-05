@@ -1,0 +1,8 @@
+stewbeet.plugins.ingame\_manual.glyphs module
+=============================================
+
+.. automodule:: stewbeet.plugins.ingame_manual.glyphs
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
