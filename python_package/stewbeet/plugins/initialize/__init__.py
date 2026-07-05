@@ -32,7 +32,12 @@ def beet_default(ctx: Context, silent: bool = False) -> Generator[None]:
 		Mem.definitions = {}
 		Mem.external_definitions = {}
 
-		# Reset official libs
+		# Reset per-build module state so consecutive builds in one process (`stewbeet watch`) behave like fresh runs
+		stp.clear_simple_caches()
+		from ..auto.lang_file.utils import lang
+		lang.clear()
+		from ...dependencies.download_manager import BUILD_CACHE
+		BUILD_CACHE.clear()
 		for data in OFFICIAL_LIBS.values():
 			data["is_used"] = False
 

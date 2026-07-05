@@ -9,11 +9,13 @@ page-content cache.
 # Imports
 import os
 import shutil
+import threading
 from typing import cast
 
 import requests
 import stouputils as stp
 from beet import Model
+from PIL import Image
 from stouputils.typing import JsonDict
 
 from ...core.__memory__ import Mem
@@ -25,6 +27,17 @@ from ...core.constants import (
 )
 from .config import ManualConfig
 
+# Thread-local requests session: reuses HTTP connections (TLS handshakes dominate
+# the texture download time otherwise, since each item tries up to 6 URLs).
+_thread_locals = threading.local()
+
+def _get_session() -> requests.Session:
+	session: requests.Session | None = getattr(_thread_locals, "session", None)
+	if session is None:
+		session = requests.Session()
+		_thread_locals.session = session
+	return session
+
 
 def download_item(path: str, item: str, cache_assets: bool, destination: str = "") -> None:
 	""" Download a single vanilla item texture from the wiki. """
@@ -32,10 +45,11 @@ def download_item(path: str, item: str, cache_assets: bool, destination: str = "
 		destination = f"{path}/minecraft/{item}.png"
 	if os.path.exists(destination) and cache_assets:
 		return
+	session: requests.Session = _get_session()
 	for base_link in (DOWNLOAD_VANILLA_ASSETS_SPECIAL_RAW, DOWNLOAD_VANILLA_ASSETS_RAW):
 		for folder in ["item", "block", "items"]:
 			link: str = f"{base_link}/{folder}/{item}.png"
-			response = requests.get(link)
+			response = session.get(link)
 			if response.status_code == 200:
 				with stp.super_open(destination, "wb") as file:
 					file.write(response.content)
@@ -70,7 +84,38 @@ def run_model_resolver(for_model_resolver: dict[str, str]) -> None:
 	stp.debug(f"Generating iso renders for {len(for_model_resolver)} items, this may take a while...")
 	with stp.MeasureTime(message="Generated iso renders for all items"):
 		from model_resolver.render import Render as ModelResolverRender
-		render = ModelResolverRender(Mem.ctx)
+
+		class FastPaletteRender(ModelResolverRender):
+			""" Same rendering as model_resolver, but with a fast ``apply_palette``.
+
+			The upstream implementation scans the whole palette per texture pixel with
+			``Image.getpixel`` (O(width*height*palette_size) Python calls); this one builds
+			the color mapping once (same column-major first-match semantics) and remaps
+			all pixels in a single pass, producing pixel-identical output.
+			"""
+
+			def apply_palette(self, texture: Image.Image, palette: Image.Image, color_palette: Image.Image) -> Image.Image:
+				texture = texture.convert("RGBA")
+				palette = palette.convert("RGB")
+				color_palette = color_palette.convert("RGB")
+				pal_width: int = palette.width
+				pal_pixels: list[tuple[int, int, int]] = list(palette.getdata())  # pyright: ignore[reportArgumentType, reportUnknownVariableType]
+				col_pixels: list[tuple[int, int, int]] = list(color_palette.getdata())  # pyright: ignore[reportArgumentType, reportUnknownVariableType]
+				mapping: dict[tuple[int, int, int], tuple[int, int, int]] = {}
+				for i in range(pal_width):  # column-major like upstream, first match wins
+					for j in range(palette.height):
+						src: tuple[int, int, int] = pal_pixels[j * pal_width + i]
+						if src not in mapping:
+							mapping[src] = col_pixels[j * color_palette.width + i]
+				tex_pixels: list[tuple[int, int, int, int]] = list(texture.getdata())  # pyright: ignore[reportArgumentType, reportUnknownVariableType]
+				new_image = Image.new("RGBA", texture.size)
+				new_image.putdata([
+					(*new_color, pixel[3]) if (new_color := mapping.get(pixel[:3])) is not None else pixel
+					for pixel in tex_pixels
+				])
+				return new_image
+
+		render = FastPaletteRender(Mem.ctx)  # pyright: ignore[reportCallIssue]
 		for rp_path, dst_path in for_model_resolver.items():
 			render.add_model_task(rp_path, path_save=dst_path, animation_mode="one_file")
 		render.run()

@@ -7,7 +7,7 @@ have a registered :class:`~.registry.CraftRenderer`, so it auto-extends with new
 
 # Imports
 import math
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 import stouputils as stp
 from beet import LootTable
@@ -110,33 +110,62 @@ def remove_unknown_crafts(crafts: list[JsonDict]) -> list[JsonDict]:
 	return [c for c in crafts if c["type"] in CRAFT_RENDERERS]
 
 
-@stp.simple_cache
+def craft_ingredient_ids(craft: RecipeBase) -> set[str]:
+	""" All ingredient ids (without namespace) appearing in a craft. """
+	ids: set[str] = set()
+	if craft.get("ingredient"):
+		ids.add(Ingr(craft["ingredient"]).to_id(add_namespace=False))
+	ingredients: JsonDict | list[JsonDict] | None = craft.get("ingredients")
+	if isinstance(ingredients, dict):
+		ids.update(Ingr(x).to_id(add_namespace=False) for x in ingredients.values())
+	elif isinstance(ingredients, list):
+		ids.update(Ingr(x).to_id(add_namespace=False) for x in ingredients)
+	return ids
+
+
 def item_in_ingredients(item: str, craft: RecipeBase) -> bool:
 	""" Whether ``item`` appears among a craft's ingredients. """
-	return (
-		(craft.get("ingredient") and item == Ingr(craft["ingredient"]).to_id(add_namespace=False)) or
-		(craft.get("ingredients") and isinstance(craft["ingredients"], dict) and item in [Ingr(x).to_id(add_namespace=False) for x in craft["ingredients"].values()]) or
-		(craft.get("ingredients") and isinstance(craft["ingredients"], list) and item in [Ingr(x).to_id(add_namespace=False) for x in craft["ingredients"]])
-	)
+	return item in craft_ingredient_ids(craft)
 
 
-def generate_otherside_crafts(item: str, definitions: dict[str, Item]) -> list[JsonDict]:
-	""" Find crafts in other items that consume ``item`` (the "used for crafting" list). """
-	crafts: list[JsonDict] = []
+def build_consumer_index(definitions: dict[str, Item]) -> dict[str, list[tuple[str, JsonDict]]]:
+	""" Map each ingredient id to the (consumer item, craft) pairs that consume it.
+
+	One pass over all recipes, so :func:`generate_otherside_crafts` becomes a dict lookup
+	instead of an O(items x recipes) rescan per item.
+	"""
+	index: dict[str, list[tuple[str, JsonDict]]] = {}
 	for other, obj in definitions.items():
+		for craft in obj.recipes:
+			for ingr_id in craft_ingredient_ids(craft):
+				index.setdefault(ingr_id, []).append((other, cast(JsonDict, craft)))
+	return index
+
+
+def generate_otherside_crafts(item: str, definitions: dict[str, Item], index: dict[str, list[tuple[str, JsonDict]]] | None = None) -> list[JsonDict]:
+	""" Find crafts in other items that consume ``item`` (the "used for crafting" list). """
+	if index is None:
+		index = build_consumer_index(definitions)
+	crafts: list[JsonDict] = []
+	for other, craft in index.get(item, []):
 		if other != item:
-			for craft in obj.recipes:
-				if item_in_ingredients(item, craft):
-					craft_copy: JsonDict = craft.copy()
-					craft_copy["result"] = Ingr(other, count=craft["result_count"]) if "result" not in craft else craft["result"]
-					crafts.append(craft_copy)
+			craft_copy: JsonDict = craft.copy()
+			craft_copy["result"] = Ingr(other, count=craft["result_count"]) if "result" not in craft else craft["result"]
+			crafts.append(craft_copy)
 	return crafts
 
 
 def collect_for_item(r: RecipeRenderer, name: str, item_obj: Item, definitions_as_objects: dict[str, Item]) -> list[JsonDict]:
 	""" Gather an item's own recipes, otherside crafts, and mining drops (deduped). """
+	# Consumer index cached on the renderer (one instance per manual build, so watch
+	# rebuilds and later definition changes get a fresh index).
+	cached: tuple[dict[str, Item], dict[str, list[tuple[str, JsonDict]]]] | None = getattr(r, "_consumer_index_cache", None)
+	if cached is None or cached[0] is not definitions_as_objects:
+		cached = (definitions_as_objects, build_consumer_index(definitions_as_objects))
+		r._consumer_index_cache = cached  # pyright: ignore[reportAttributeAccessIssue]
+
 	crafts: list[JsonDict] = list(item_obj.to_dict().get("recipes", []))
-	crafts += generate_otherside_crafts(name, definitions_as_objects)
+	crafts += generate_otherside_crafts(name, definitions_as_objects, cached[1])
 	crafts = remove_duplicate_furnace_crafts(crafts, name)
 	crafts = remove_unknown_crafts(crafts)
 	crafts = stp.unique_list(crafts)

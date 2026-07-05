@@ -120,6 +120,8 @@ class GlyphAllocator:
 	""" Bitmap providers accumulated for ``manual.json``. """
 	lock: threading.Lock = field(default_factory=threading.Lock, repr=False)
 	""" Guards the counter and provider list for multithreaded page preparation. """
+	_first_char_by_file: dict[str, str] = field(default_factory=dict[str, str], repr=False)
+	""" First registered glyph char per provider file (index for :meth:`find_char_by_file`). """
 
 	def allocate(self) -> str:
 		""" Reserve and return the next free dynamic glyph character. """
@@ -131,13 +133,11 @@ class GlyphAllocator:
 		""" Register a bitmap provider mapping ``char`` to the texture ``file``. """
 		with self.lock:
 			self.providers.append({"type": "bitmap", "file": file, "ascent": ascent, "height": height, "chars": [char]})
+			self._first_char_by_file.setdefault(file, char)
 
 	def find_char_by_file(self, file: str) -> str | None:
 		""" Return the glyph char already registered for ``file`` (dedupe), if any. """
-		for p in self.providers:
-			if p.get("file") == file and p.get("chars"):
-				return p["chars"][0]
-		return None
+		return self._first_char_by_file.get(file)
 
 	def register_image(self, file: str, ascent: int, height: int) -> str:
 		""" Allocate a glyph for ``file`` (deduped by file) and register its provider.
