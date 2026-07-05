@@ -80,9 +80,9 @@ class Manual:
 	""" The ordered pages; 1-based page numbers follow this order. """
 	by_anchor: dict[str, Page] = field(init=False, default_factory=dict[str, Page])
 	""" Anchor -> page lookup (rebuilt by :meth:`order`). """
-	hooks: dict[Phase, list[Callable[["Manual"], None]]] = field(init=False, repr=False)
+	hooks: dict[Phase, list[Callable[[Manual], None]]] = field(init=False, repr=False)
 	""" Per-:class:`Phase` developer hooks (see :meth:`on` / :meth:`register`). """
-	item_page_hooks: list[Callable[[ItemPage, "Manual"], None]] = field(init=False, default_factory=list[Callable[[ItemPage, "Manual"], None]], repr=False)
+	item_page_hooks: list[Callable[[ItemPage, Manual], None]] = field(init=False, default_factory=list[Callable[[ItemPage, "Manual"], None]], repr=False)
 	""" Hooks run on every :class:`~.pages.item_page.ItemPage` during preparation. """
 
 	# Page operations requested before discover() runs are deferred and replayed once the
@@ -247,18 +247,18 @@ class Manual:
 		raise KeyError(f"No manual page with anchor '{anchor}'")
 
 	# --- hook API (public) ---
-	def register(self, phase: Phase, fn: Callable[["Manual"], None]) -> Callable[["Manual"], None]:
+	def register(self, phase: Phase, fn: Callable[[Manual], None]) -> Callable[[Manual], None]:
 		""" Register ``fn`` to run after ``phase``. Returns ``fn`` (usable as a decorator). """
 		self.hooks[phase].append(fn)
 		return fn
 
-	def on(self, phase: Phase) -> Callable[[Callable[["Manual"], None]], Callable[["Manual"], None]]:
+	def on(self, phase: Phase) -> Callable[[Callable[[Manual], None]], Callable[[Manual], None]]:
 		""" Decorator form of :meth:`register`. """
-		def deco(fn: Callable[["Manual"], None]) -> Callable[["Manual"], None]:
+		def deco(fn: Callable[[Manual], None]) -> Callable[[Manual], None]:
 			return self.register(phase, fn)
 		return deco
 
-	def on_item_page(self, fn: Callable[[ItemPage, "Manual"], None]) -> Callable[[ItemPage, "Manual"], None]:
+	def on_item_page(self, fn: Callable[[ItemPage, Manual], None]) -> Callable[[ItemPage, Manual], None]:
 		""" Register ``fn(page, manual)`` to run on every item page during preparation. """
 		self.item_page_hooks.append(fn)
 		return fn

@@ -24,7 +24,7 @@ class Mem:
     external_definitions: dict[str, ExternalItem] = {}
     """ Secondary JsonDict for storing external items or blocks most likely for recipes. """
 
-    manual: "Manual | None" = None
+    manual: Manual | None = None
     """ The ingame_manual Manual handle, used to register pages/hooks during setup.
     Created lazily via stewbeet.get_manual(); reset after each build (for `beet watch`). """
 

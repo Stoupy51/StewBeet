@@ -54,7 +54,7 @@ class ButtonLayout:
 	include: Callable[[WikiButtonRender], bool] | None = None
 	extra_buttons: list[WikiButtonRender] = field(default_factory=list[WikiButtonRender])
 
-	def clone(self) -> "ButtonLayout":
+	def clone(self) -> ButtonLayout:
 		""" Return a shallow copy (so per-page overrides don't mutate the shared default).
 
 		>>> layout = ButtonLayout(columns=4)
