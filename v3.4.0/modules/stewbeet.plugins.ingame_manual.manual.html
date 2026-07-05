@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="stewbeet.plugins.ingame_manual.manual module" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="modules/stewbeet.plugins.ingame_manual.manual.html" />
+<meta property="og:site_name" content="StewBeet" />
+<meta property="og:description" content="The Manual orchestrator. Owns the ordered list of pages, the glyph allocator, the image builder and the recipe renderer, plus the developer hook registry. build() runs the pipeline: discover -&gt; ..." />
+<meta name="description" content="The Manual orchestrator. Owns the ordered list of pages, the glyph allocator, the image builder and the recipe renderer, plus the developer hook registry. build() runs the pipeline: discover -&gt; ..." />
+<title>stewbeet.plugins.ingame_manual.manual module - StewBeet</title><link rel="icon" href="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png"><link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><script data-cfasync="false">(function(){
+    const m = localStorage.getItem("breeze-mode") || "auto";
+    const d = document.documentElement.dataset;
+    d.mode = m;
+    d.theme = m === "auto"
+      ? (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+      : m;
+  })();
+  </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8e8a900e" /><link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" /><link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" /><link rel="stylesheet" type="text/css" href="../_static/treeview.css?v=f8e9195c" /><link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d4fa5fe7" /><link rel="stylesheet" type="text/css" href="../_static/styles/breeze.css?v=7c62c100" /><script defer="defer" src="../_static/scripts/breeze.js?v=dac9f8c6"></script></head>
+<body>
+  
+  
+  <div class="bz-skip-to-content"><a href="#bz-main-content">Skip to main content</a></div><header class="bz-header-main">
+  <div class="bz-header-start"><a class="bz-header-brand" href="../index.html">
+  <img class="only-light" src="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png" alt="StewBeet" />
+  <img class="only-dark" src="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png" alt="StewBeet" />
+  <span>StewBeet</span>
+</a>
+  </div>
+  <div class="bz-header-end"><div id="docsearch" class="bz-search-button">
+  <a
+    href="../search.html#q"
+    aria-label="Search the docs"
+    data-tooltip="Search the docs"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 -1 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+      />
+    </svg>
+    <span>Search</span>
+    <kbd>Ctrl+K</kbd>
+  </a>
+</div><div class="bz-theme-switcher">
+  <button aria-label="Switch theme" data-tooltip="Switch theme">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="only-light" fill="currentColor">
+      <path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm5.657-8.157a.75.75 0 0 1 0 1.061l-1.061 1.06a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l1.06-1.06a.75.75 0 0 1 1.06 0Zm-9.193 9.193a.75.75 0 0 1 0 1.06l-1.06 1.061a.75.75 0 1 1-1.061-1.06l1.06-1.061a.75.75 0 0 1 1.061 0ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0ZM3 8a.75.75 0 0 1-.75.75H.75a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 3 8Zm13 0a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 16 8Zm-8 5a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13Zm3.536-1.464a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 0 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061ZM2.343 2.343a.75.75 0 0 1 1.061 0l1.06 1.061a.751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018l-1.06-1.06a.75.75 0 0 1 0-1.06Z"></path>
+    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="only-dark" fill="currentColor">
+      <path d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"></path>
+    </svg>
+  </button>
+</div>
+  </div>
+</header><nav class="bz-header-tabs" aria-label="Primary Navigation"><label
+  class="bz-sidebar-primary-toggle"
+  for="bz-sidebar-primary"
+  role="button"
+  tabindex="0"
+  aria-label="Toggle site navigation"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path
+      fill="none"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M3.75 6.75h16.5M3.75 12H12m-8.25 5.25h12.5"
+    />
+  </svg>
+</label><ul><li class="toctree-l1"><a class="reference internal" href="stewbeet.html">stewbeet package</a></li></ul><div class="bz-dropdown">
+    <button aria-haspopup="true" aria-expanded="false">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <g
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+        >
+          <circle cx="12" cy="12" r="1" />
+          <circle cx="19" cy="12" r="1" />
+          <circle cx="5" cy="12" r="1" />
+        </g>
+      </svg>
+    </button>
+    <ul role="menu" aria-hidden="true"></ul>
+  </div>
+</nav><hr class="bz-header-hr">
+  <div class="bz-content"><aside class="bz-sidebar-primary" data-drawer="bz-sidebar-primary">
+  
+  
+    <nav class="bz-sidebar-nav" aria-label="Section Navigation"><ul>
+<li class="toctree-l1"><a class="reference internal" href="stewbeet.plugins.ingame_manual.pages.html">stewbeet.plugins.ingame_manual.pages package</a>
+<details><summary aria-label="Toggle submenu"></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.plugins.ingame_manual.pages.base.html">stewbeet.plugins.ingame_manual.pages.base module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.plugins.ingame_manual.pages.browser_page.html">stewbeet.plugins.ingame_manual.pages.browser_page module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.plugins.ingame_manual.pages.button_layout.html">stewbeet.plugins.ingame_manual.pages.button_layout module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.plugins.ingame_manual.pages.category_page.html">stewbeet.plugins.ingame_manual.pages.category_page module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.plugins.ingame_manual.pages.custom_page.html">stewbeet.plugins.ingame_manual.pages.custom_page module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.plugins.ingame_manual.pages.intro_page.html">stewbeet.plugins.ingame_manual.pages.intro_page module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.plugins.ingame_manual.pages.item_page.html">stewbeet.plugins.ingame_manual.pages.item_page module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.plugins.ingame_manual.pages.raw_page.html">stewbeet.plugins.ingame_manual.pages.raw_page module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.plugins.ingame_manual.pages.texture_page.html">stewbeet.plugins.ingame_manual.pages.texture_page module</a></li>
+</ul></details></li>
+<li class="toctree-l1"><a class="reference internal" href="stewbeet.plugins.ingame_manual.recipes.html">stewbeet.plugins.ingame_manual.recipes package</a>
+<details><summary aria-label="Toggle submenu"></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.plugins.ingame_manual.recipes.types.html">stewbeet.plugins.ingame_manual.recipes.types package</a>
+<details><summary aria-label="Toggle submenu"></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.plugins.ingame_manual.recipes.types.awakened_forge.html">stewbeet.plugins.ingame_manual.recipes.types.awakened_forge module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.plugins.ingame_manual.recipes.types.furnace.html">stewbeet.plugins.ingame_manual.recipes.types.furnace module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.plugins.ingame_manual.recipes.types.linear.html">stewbeet.plugins.ingame_manual.recipes.types.linear module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.plugins.ingame_manual.recipes.types.shaped.html">stewbeet.plugins.ingame_manual.recipes.types.shaped module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.plugins.ingame_manual.recipes.types.smithing.html">stewbeet.plugins.ingame_manual.recipes.types.smithing module</a></li>
+</ul></details></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.plugins.ingame_manual.recipes.buttons.html">stewbeet.plugins.ingame_manual.recipes.buttons module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.plugins.ingame_manual.recipes.collection.html">stewbeet.plugins.ingame_manual.recipes.collection module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.plugins.ingame_manual.recipes.components.html">stewbeet.plugins.ingame_manual.recipes.components module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.plugins.ingame_manual.recipes.hovers.html">stewbeet.plugins.ingame_manual.recipes.hovers module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.plugins.ingame_manual.recipes.registry.html">stewbeet.plugins.ingame_manual.recipes.registry module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.plugins.ingame_manual.recipes.renderer.html">stewbeet.plugins.ingame_manual.recipes.renderer module</a></li>
+</ul></details></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="stewbeet.plugins.ingame_manual.api.html">stewbeet.plugins.ingame_manual.api module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stewbeet.plugins.ingame_manual.button_layout.html">stewbeet.plugins.ingame_manual.button_layout module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stewbeet.plugins.ingame_manual.config.html">stewbeet.plugins.ingame_manual.config module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stewbeet.plugins.ingame_manual.dialog.html">stewbeet.plugins.ingame_manual.dialog module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stewbeet.plugins.ingame_manual.glyphs.html">stewbeet.plugins.ingame_manual.glyphs module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stewbeet.plugins.ingame_manual.images.html">stewbeet.plugins.ingame_manual.images module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stewbeet.plugins.ingame_manual.iso_renders.html">stewbeet.plugins.ingame_manual.iso_renders module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">stewbeet.plugins.ingame_manual.manual module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stewbeet.plugins.ingame_manual.manual_emit.html">stewbeet.plugins.ingame_manual.manual_emit module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stewbeet.plugins.ingame_manual.optimizer.html">stewbeet.plugins.ingame_manual.optimizer module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stewbeet.plugins.ingame_manual.paths.html">stewbeet.plugins.ingame_manual.paths module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stewbeet.plugins.ingame_manual.refs.html">stewbeet.plugins.ingame_manual.refs module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stewbeet.plugins.ingame_manual.showcase.html">stewbeet.plugins.ingame_manual.showcase module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stewbeet.plugins.ingame_manual.special.html">stewbeet.plugins.ingame_manual.special module</a></li>
+</ul>
+</nav>
+  
+
+</aside><main id="bz-main-content"><header class="bz-article-header">
+  
+  
+    <nav class="bz-breadcrumbs" aria-label="Breadcrumb">
+  <ol>
+    <li class="bz-breadcrumbs-home">
+      <a href="../index.html" aria-label="Home">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M8.543 2.232a.75.75 0 0 0-1.085 0l-5.25 5.5A.75.75 0 0 0 2.75 9H4v4a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1a1 1 0 1 1 2 0v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V9h1.25a.75.75 0 0 0 .543-1.268l-5.25-5.5Z" />
+        </svg>
+      </a>
+    </li><li class="bz-breadcrumbs-current">
+      <span>stewbeet.plugins.ingame_manual.manual module</span>
+    </li>
+  </ol>
+</nav>
+  
+<label
+  class="bz-sidebar-secondary-toggle"
+  for="bz-sidebar-secondary"
+  role="button"
+  tabindex="0"
+  aria-label="Toggle table of contents"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path
+      fill="none"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M3.75 6.75H20.25 M11.25 12H20.25 M7.75 17.25H20.25"
+    />
+  </svg>
+</label></header><article class="bz-article-main" role="main"><div class="bz-page-actions" role="group" aria-label="Page actions">
+  <button data-copy-source="../_sources/modules/stewbeet.plugins.ingame_manual.manual.rst.txt">
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M7.024 3.75c0-.966.784-1.75 1.75-1.75H20.25c.966 0 1.75.784 1.75 1.75v11.498a1.75 1.75 0 0 1-1.75 1.75H8.774a1.75 1.75 0 0 1-1.75-1.75Zm1.75-.25a.25.25 0 0 0-.25.25v11.498c0 .139.112.25.25.25H20.25a.25.25 0 0 0 .25-.25V3.75a.25.25 0 0 0-.25-.25Z"></path><path d="M1.995 10.749a1.75 1.75 0 0 1 1.75-1.751H5.25a.75.75 0 1 1 0 1.5H3.745a.25.25 0 0 0-.25.25L3.5 20.25c0 .138.111.25.25.25h9.5a.25.25 0 0 0 .25-.25v-1.51a.75.75 0 1 1 1.5 0v1.51A1.75 1.75 0 0 1 13.25 22h-9.5A1.75 1.75 0 0 1 2 20.25l-.005-9.501Z"></path></svg>
+    <span>Copy page</span>
+  </button>
+  <div class="bz-dropdown">
+    <button
+      aria-label="More actions"
+      aria-haspopup="true"
+      aria-expanded="false"
+    ></button>
+    <ul role="menu" aria-hidden="true">
+      <li>
+        <a href="#" role="menuitem" data-copy-source="../_sources/modules/stewbeet.plugins.ingame_manual.manual.rst.txt">
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M7.024 3.75c0-.966.784-1.75 1.75-1.75H20.25c.966 0 1.75.784 1.75 1.75v11.498a1.75 1.75 0 0 1-1.75 1.75H8.774a1.75 1.75 0 0 1-1.75-1.75Zm1.75-.25a.25.25 0 0 0-.25.25v11.498c0 .139.112.25.25.25H20.25a.25.25 0 0 0 .25-.25V3.75a.25.25 0 0 0-.25-.25Z"></path><path d="M1.995 10.749a1.75 1.75 0 0 1 1.75-1.751H5.25a.75.75 0 1 1 0 1.5H3.745a.25.25 0 0 0-.25.25L3.5 20.25c0 .138.111.25.25.25h9.5a.25.25 0 0 0 .25-.25v-1.51a.75.75 0 1 1 1.5 0v1.51A1.75 1.75 0 0 1 13.25 22h-9.5A1.75 1.75 0 0 1 2 20.25l-.005-9.501Z"></path></svg>
+          <span>Copy page</span>
+        </a>
+      </li>
+      <li>
+        <a href="../_sources/modules/stewbeet.plugins.ingame_manual.manual.rst.txt" role="menuitem" class="bz-page-actions-external" target="_blank" rel="noopener">
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M3 3a2 2 0 0 1 2-2h9.982a2 2 0 0 1 1.414.586l4.018 4.018A2 2 0 0 1 21 7.018V21a2 2 0 0 1-2 2H4.75a.75.75 0 0 1 0-1.5H19a.5.5 0 0 0 .5-.5V8.5h-4a2 2 0 0 1-2-2v-4H5a.5.5 0 0 0-.5.5v6.25a.75.75 0 0 1-1.5 0Zm12-.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 0-.146-.336l-4.018-4.018A.5.5 0 0 0 15 2.5Z"></path><path d="M4.53 12.24a.75.75 0 0 1-.039 1.06l-2.639 2.45 2.64 2.45a.75.75 0 1 1-1.022 1.1l-3.23-3a.75.75 0 0 1 0-1.1l3.23-3a.75.75 0 0 1 1.06.04Zm3.979 1.06a.75.75 0 1 1 1.02-1.1l3.231 3a.75.75 0 0 1 0 1.1l-3.23 3a.75.75 0 1 1-1.021-1.1l2.639-2.45-2.64-2.45Z"></path></svg>
+          <span>View source</span>
+        </a>
+      </li></ul>
+  </div>
+</div><section id="module-stewbeet.plugins.ingame_manual.manual">
+<span id="stewbeet-plugins-ingame-manual-manual-module"></span><h1>stewbeet.plugins.ingame_manual.manual module<a class="headerlink" href="#module-stewbeet.plugins.ingame_manual.manual" title="Link to this heading">#</a></h1>
+<p>The <a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual" title="stewbeet.plugins.ingame_manual.manual.Manual"><code class="xref py py-class docutils literal notranslate"><span class="pre">Manual</span></code></a> orchestrator.</p>
+<p>Owns the ordered list of pages, the glyph allocator, the image builder and the recipe
+renderer, plus the developer hook registry. <code class="docutils literal notranslate"><span class="pre">build()</span></code> runs the pipeline:</p>
+<blockquote>
+<div><p>discover -&gt; prepare -&gt; order -&gt; render -&gt; resolve -&gt; optimize -&gt; emit</p>
+</div></blockquote>
+<p>firing the matching <a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Phase" title="stewbeet.plugins.ingame_manual.manual.Phase"><code class="xref py py-class docutils literal notranslate"><span class="pre">Phase</span></code></a> hooks after each step. Cross-page links are emitted as
+<a class="reference internal" href="stewbeet.plugins.ingame_manual.refs.html#stewbeet.plugins.ingame_manual.refs.PageRef" title="stewbeet.plugins.ingame_manual.refs.PageRef"><code class="xref py py-class docutils literal notranslate"><span class="pre">PageRef</span></code></a> during <code class="docutils literal notranslate"><span class="pre">render</span></code> and substituted once in <code class="docutils literal notranslate"><span class="pre">resolve</span></code> (after the
+order is final), so inserting/reordering pages never needs page-number bookkeeping.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Phase">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Phase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Phase" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>Points in the build pipeline at which developer hooks run.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Phase.DISCOVERED">
+<span class="sig-name descname"><span class="pre">DISCOVERED</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'discovered'</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Phase.DISCOVERED" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Phase.PREPARED">
+<span class="sig-name descname"><span class="pre">PREPARED</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'prepared'</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Phase.PREPARED" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Phase.ORDERED">
+<span class="sig-name descname"><span class="pre">ORDERED</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ordered'</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Phase.ORDERED" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Phase.RENDERED">
+<span class="sig-name descname"><span class="pre">RENDERED</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'rendered'</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Phase.RENDERED" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Phase.RESOLVED">
+<span class="sig-name descname"><span class="pre">RESOLVED</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'resolved'</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Phase.RESOLVED" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Phase.BEFORE_EMIT">
+<span class="sig-name descname"><span class="pre">BEFORE_EMIT</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'before_emit'</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Phase.BEFORE_EMIT" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Manual</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="stewbeet.plugins.ingame_manual.config.html#stewbeet.plugins.ingame_manual.config.ManualConfig" title="stewbeet.plugins.ingame_manual.config.ManualConfig"><span class="pre">ManualConfig</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Orchestrates manual generation and exposes the public extension API.</p>
+<p>Construct with <code class="docutils literal notranslate"><span class="pre">Manual(config)</span></code>; every other field is derived. <code class="docutils literal notranslate"><span class="pre">eq=False</span></code> keeps
+identity semantics: the manual and its collaborators (<code class="xref py py-class docutils literal notranslate"><span class="pre">RecipeRenderer</span></code>)
+reference each other, so field-based equality would recurse.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">manual</span> <span class="o">=</span> <span class="n">Manual</span><span class="p">(</span><span class="n">ManualConfig</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="s2">&quot;demo&quot;</span><span class="p">,</span> <span class="n">project_name</span><span class="o">=</span><span class="s2">&quot;Demo&quot;</span><span class="p">,</span> <span class="n">project_author</span><span class="o">=</span><span class="s2">&quot;me&quot;</span><span class="p">,</span> <span class="n">cache_path</span><span class="o">=</span><span class="s2">&quot;cache&quot;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">manual</span><span class="o">.</span><span class="n">recipes</span><span class="o">.</span><span class="n">manual</span> <span class="ow">is</span> <span class="n">manual</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">manual</span><span class="o">.</span><span class="n">add_page</span><span class="p">(</span><span class="n">Page</span><span class="p">(</span><span class="n">anchor</span><span class="o">=</span><span class="s2">&quot;later&quot;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">manual</span><span class="o">.</span><span class="n">pages</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">manual</span><span class="o">.</span><span class="n">pending_ops</span><span class="p">)</span>  <span class="c1"># deferred until discover() builds the defaults</span>
+<span class="go">(0, 1)</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.config">
+<span class="sig-name descname"><span class="pre">config</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="stewbeet.plugins.ingame_manual.config.html#stewbeet.plugins.ingame_manual.config.ManualConfig" title="stewbeet.plugins.ingame_manual.config.ManualConfig"><span class="pre">ManualConfig</span></a></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.config" title="Link to this definition">#</a></dt>
+<dd><p>The typed manual configuration (the only constructor argument).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.glyphs">
+<span class="sig-name descname"><span class="pre">glyphs</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="stewbeet.plugins.ingame_manual.glyphs.html#stewbeet.plugins.ingame_manual.glyphs.GlyphAllocator" title="stewbeet.plugins.ingame_manual.glyphs.GlyphAllocator"><span class="pre">GlyphAllocator</span></a></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.glyphs" title="Link to this definition">#</a></dt>
+<dd><p>Dynamic glyph counter + bitmap font-provider registry.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.images">
+<span class="sig-name descname"><span class="pre">images</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="stewbeet.plugins.ingame_manual.images.html#stewbeet.plugins.ingame_manual.images.GlyphImageBuilder" title="stewbeet.plugins.ingame_manual.images.GlyphImageBuilder"><span class="pre">GlyphImageBuilder</span></a></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.images" title="Link to this definition">#</a></dt>
+<dd><p>Builder for every manual texture (icons, templates, page backgrounds).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.recipes">
+<span class="sig-name descname"><span class="pre">recipes</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="stewbeet.plugins.ingame_manual.recipes.renderer.html#stewbeet.plugins.ingame_manual.recipes.renderer.RecipeRenderer" title="stewbeet.plugins.ingame_manual.recipes.renderer.RecipeRenderer"><span class="pre">RecipeRenderer</span></a></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.recipes" title="Link to this definition">#</a></dt>
+<dd><p>Dispatcher rendering each recipe through its registered <code class="xref py py-class docutils literal notranslate"><span class="pre">CraftRenderer</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.pages">
+<span class="sig-name descname"><span class="pre">pages</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="stewbeet.plugins.ingame_manual.pages.base.html#stewbeet.plugins.ingame_manual.pages.base.Page" title="stewbeet.plugins.ingame_manual.pages.base.Page"><span class="pre">Page</span></a><span class="p"><span class="pre">]</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.pages" title="Link to this definition">#</a></dt>
+<dd><p>The ordered pages; 1-based page numbers follow this order.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.by_anchor">
+<span class="sig-name descname"><span class="pre">by_anchor</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="stewbeet.plugins.ingame_manual.pages.base.html#stewbeet.plugins.ingame_manual.pages.base.Page" title="stewbeet.plugins.ingame_manual.pages.base.Page"><span class="pre">Page</span></a><span class="p"><span class="pre">]</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.by_anchor" title="Link to this definition">#</a></dt>
+<dd><p>Anchor -&gt; page lookup (rebuilt by <a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.order" title="stewbeet.plugins.ingame_manual.manual.Manual.order"><code class="xref py py-meth docutils literal notranslate"><span class="pre">order()</span></code></a>).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.hooks">
+<span class="sig-name descname"><span class="pre">hooks</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Phase" title="stewbeet.plugins.ingame_manual.manual.Phase"><span class="pre">Phase</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual" title="stewbeet.plugins.ingame_manual.manual.Manual"><span class="pre">Manual</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.hooks" title="Link to this definition">#</a></dt>
+<dd><p>Per-<a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Phase" title="stewbeet.plugins.ingame_manual.manual.Phase"><code class="xref py py-class docutils literal notranslate"><span class="pre">Phase</span></code></a> developer hooks (see <a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.on" title="stewbeet.plugins.ingame_manual.manual.Manual.on"><code class="xref py py-meth docutils literal notranslate"><span class="pre">on()</span></code></a> / <a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.register" title="stewbeet.plugins.ingame_manual.manual.Manual.register"><code class="xref py py-meth docutils literal notranslate"><span class="pre">register()</span></code></a>).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.item_page_hooks">
+<span class="sig-name descname"><span class="pre">item_page_hooks</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="stewbeet.plugins.ingame_manual.pages.item_page.html#stewbeet.plugins.ingame_manual.pages.item_page.ItemPage" title="stewbeet.plugins.ingame_manual.pages.item_page.ItemPage"><span class="pre">ItemPage</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual" title="stewbeet.plugins.ingame_manual.manual.Manual"><span class="pre">Manual</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.item_page_hooks" title="Link to this definition">#</a></dt>
+<dd><p>Hooks run on every <a class="reference internal" href="stewbeet.plugins.ingame_manual.pages.item_page.html#stewbeet.plugins.ingame_manual.pages.item_page.ItemPage" title="stewbeet.plugins.ingame_manual.pages.item_page.ItemPage"><code class="xref py py-class docutils literal notranslate"><span class="pre">ItemPage</span></code></a> during preparation.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.discovered">
+<span class="sig-name descname"><span class="pre">discovered</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.discovered" title="Link to this definition">#</a></dt>
+<dd><p>True once <a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.discover" title="stewbeet.plugins.ingame_manual.manual.Manual.discover"><code class="xref py py-meth docutils literal notranslate"><span class="pre">discover()</span></code></a> built the default pages.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.pending_ops">
+<span class="sig-name descname"><span class="pre">pending_ops</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.pending_ops" title="Link to this definition">#</a></dt>
+<dd><p>Page operations deferred until after <a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.discover" title="stewbeet.plugins.ingame_manual.manual.Manual.discover"><code class="xref py py-meth docutils literal notranslate"><span class="pre">discover()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.definitions_as_objects">
+<span class="sig-name descname"><span class="pre">definitions_as_objects</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="stewbeet.core.cls.item.html#stewbeet.core.cls.item.Item" title="stewbeet.core.cls.item.Item"><span class="pre">Item</span></a><span class="p"><span class="pre">]</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.definitions_as_objects" title="Link to this definition">#</a></dt>
+<dd><p>Item id -&gt; <code class="xref py py-class docutils literal notranslate"><span class="pre">Item</span></code> cache built at discover time.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.categories">
+<span class="sig-name descname"><span class="pre">categories</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.categories" title="Link to this definition">#</a></dt>
+<dd><p>Category name -&gt; item ids (insertion order preserved).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.has_forge_3x3">
+<span class="sig-name descname"><span class="pre">has_forge_3x3</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.has_forge_3x3" title="Link to this definition">#</a></dt>
+<dd><p>Whether any recipe needs the 3x3 awakened forge assets.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.has_forge_3x4">
+<span class="sig-name descname"><span class="pre">has_forge_3x4</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.has_forge_3x4" title="Link to this definition">#</a></dt>
+<dd><p>Whether any recipe needs the 3x4 awakened forge assets.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.pages_content">
+<span class="sig-name descname"><span class="pre">pages_content</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.pages_content" title="Link to this definition">#</a></dt>
+<dd><p>Rendered dialog bodies, one list of components per page.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.item_index">
+<span class="sig-name descname"><span class="pre">item_index</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.item_index" title="Link to this definition">#</a></dt>
+<dd><p>Item id -&gt; 1-based page index (computed by <a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.order" title="stewbeet.plugins.ingame_manual.manual.Manual.order"><code class="xref py py-meth docutils literal notranslate"><span class="pre">order()</span></code></a>).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.anchor_index">
+<span class="sig-name descname"><span class="pre">anchor_index</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.anchor_index" title="Link to this definition">#</a></dt>
+<dd><p>Anchor -&gt; 1-based page index (computed by <a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.order" title="stewbeet.plugins.ingame_manual.manual.Manual.order"><code class="xref py py-meth docutils literal notranslate"><span class="pre">order()</span></code></a>).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.cached_simple_case">
+<span class="sig-name descname"><span class="pre">cached_simple_case</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Image</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.cached_simple_case" title="Link to this definition">#</a></dt>
+<dd><p>Cache for <a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.simple_case" title="stewbeet.plugins.ingame_manual.manual.Manual.simple_case"><code class="xref py py-attr docutils literal notranslate"><span class="pre">simple_case</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.texture_cache">
+<span class="sig-name descname"><span class="pre">texture_cache</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Image</span><span class="p"><span class="pre">]</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.texture_cache" title="Link to this definition">#</a></dt>
+<dd><p>Item id -&gt; loaded texture cache (see <a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.load_item_texture" title="stewbeet.plugins.ingame_manual.manual.Manual.load_item_texture"><code class="xref py py-meth docutils literal notranslate"><span class="pre">load_item_texture()</span></code></a>).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.simple_case">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">simple_case</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Image</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.simple_case" title="Link to this definition">#</a></dt>
+<dd><p>The case background image (cached), widened in high-res mode.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.object_for">
+<span class="sig-name descname"><span class="pre">object_for</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">item_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="stewbeet.core.cls.item.html#stewbeet.core.cls.item.Item" title="stewbeet.core.cls.item.Item"><span class="pre">Item</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.object_for" title="Link to this definition">#</a></dt>
+<dd><p>Return the cached <code class="xref py py-class docutils literal notranslate"><span class="pre">Item</span></code> for an internal id, or None.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.load_item_texture">
+<span class="sig-name descname"><span class="pre">load_item_texture</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Image</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.load_item_texture" title="Link to this definition">#</a></dt>
+<dd><p>Open an item’s cached iso-render texture (placeholder if missing).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.add_page">
+<span class="sig-name descname"><span class="pre">add_page</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="stewbeet.plugins.ingame_manual.pages.base.html#stewbeet.plugins.ingame_manual.pages.base.Page" title="stewbeet.plugins.ingame_manual.pages.base.Page"><span class="pre">Page</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="stewbeet.plugins.ingame_manual.pages.base.html#stewbeet.plugins.ingame_manual.pages.base.Page" title="stewbeet.plugins.ingame_manual.pages.base.Page"><span class="pre">Page</span></a></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.add_page" title="Link to this definition">#</a></dt>
+<dd><p>Append a page to the end of the manual.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.insert_page">
+<span class="sig-name descname"><span class="pre">insert_page</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="stewbeet.plugins.ingame_manual.pages.base.html#stewbeet.plugins.ingame_manual.pages.base.Page" title="stewbeet.plugins.ingame_manual.pages.base.Page"><span class="pre">Page</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">before</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">after</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="stewbeet.plugins.ingame_manual.pages.base.html#stewbeet.plugins.ingame_manual.pages.base.Page" title="stewbeet.plugins.ingame_manual.pages.base.Page"><span class="pre">Page</span></a></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.insert_page" title="Link to this definition">#</a></dt>
+<dd><p>Insert a page before/after an anchor, or at an explicit index.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.replace_page">
+<span class="sig-name descname"><span class="pre">replace_page</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">anchor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="stewbeet.plugins.ingame_manual.pages.base.html#stewbeet.plugins.ingame_manual.pages.base.Page" title="stewbeet.plugins.ingame_manual.pages.base.Page"><span class="pre">Page</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="stewbeet.plugins.ingame_manual.pages.base.html#stewbeet.plugins.ingame_manual.pages.base.Page" title="stewbeet.plugins.ingame_manual.pages.base.Page"><span class="pre">Page</span></a></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.replace_page" title="Link to this definition">#</a></dt>
+<dd><p>Replace the page at <code class="docutils literal notranslate"><span class="pre">anchor</span></code> with <code class="docutils literal notranslate"><span class="pre">page</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.remove_page">
+<span class="sig-name descname"><span class="pre">remove_page</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">anchor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.remove_page" title="Link to this definition">#</a></dt>
+<dd><p>Remove the page identified by <code class="docutils literal notranslate"><span class="pre">anchor</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.move_page">
+<span class="sig-name descname"><span class="pre">move_page</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">anchor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">before</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">after</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.move_page" title="Link to this definition">#</a></dt>
+<dd><p>Move an existing page to a new position.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.apply_add">
+<span class="sig-name descname"><span class="pre">apply_add</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="stewbeet.plugins.ingame_manual.pages.base.html#stewbeet.plugins.ingame_manual.pages.base.Page" title="stewbeet.plugins.ingame_manual.pages.base.Page"><span class="pre">Page</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.apply_add" title="Link to this definition">#</a></dt>
+<dd><p>Immediate (non-deferred) implementation of <a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.add_page" title="stewbeet.plugins.ingame_manual.manual.Manual.add_page"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_page()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.apply_insert">
+<span class="sig-name descname"><span class="pre">apply_insert</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="stewbeet.plugins.ingame_manual.pages.base.html#stewbeet.plugins.ingame_manual.pages.base.Page" title="stewbeet.plugins.ingame_manual.pages.base.Page"><span class="pre">Page</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">before</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">after</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.apply_insert" title="Link to this definition">#</a></dt>
+<dd><p>Immediate (non-deferred) implementation of <a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.insert_page" title="stewbeet.plugins.ingame_manual.manual.Manual.insert_page"><code class="xref py py-meth docutils literal notranslate"><span class="pre">insert_page()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.apply_replace">
+<span class="sig-name descname"><span class="pre">apply_replace</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">anchor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="stewbeet.plugins.ingame_manual.pages.base.html#stewbeet.plugins.ingame_manual.pages.base.Page" title="stewbeet.plugins.ingame_manual.pages.base.Page"><span class="pre">Page</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.apply_replace" title="Link to this definition">#</a></dt>
+<dd><p>Immediate (non-deferred) implementation of <a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.replace_page" title="stewbeet.plugins.ingame_manual.manual.Manual.replace_page"><code class="xref py py-meth docutils literal notranslate"><span class="pre">replace_page()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.apply_remove">
+<span class="sig-name descname"><span class="pre">apply_remove</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">anchor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.apply_remove" title="Link to this definition">#</a></dt>
+<dd><p>Immediate (non-deferred) implementation of <a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.remove_page" title="stewbeet.plugins.ingame_manual.manual.Manual.remove_page"><code class="xref py py-meth docutils literal notranslate"><span class="pre">remove_page()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.apply_move">
+<span class="sig-name descname"><span class="pre">apply_move</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">anchor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">before</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">after</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.apply_move" title="Link to this definition">#</a></dt>
+<dd><p>Immediate (non-deferred) implementation of <a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.move_page" title="stewbeet.plugins.ingame_manual.manual.Manual.move_page"><code class="xref py py-meth docutils literal notranslate"><span class="pre">move_page()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.get_page">
+<span class="sig-name descname"><span class="pre">get_page</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">anchor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="stewbeet.plugins.ingame_manual.pages.base.html#stewbeet.plugins.ingame_manual.pages.base.Page" title="stewbeet.plugins.ingame_manual.pages.base.Page"><span class="pre">Page</span></a></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.get_page" title="Link to this definition">#</a></dt>
+<dd><p>Return the page registered under <code class="docutils literal notranslate"><span class="pre">anchor</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.get_page_for_item">
+<span class="sig-name descname"><span class="pre">get_page_for_item</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">item_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="stewbeet.plugins.ingame_manual.pages.item_page.html#stewbeet.plugins.ingame_manual.pages.item_page.ItemPage" title="stewbeet.plugins.ingame_manual.pages.item_page.ItemPage"><span class="pre">ItemPage</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.get_page_for_item" title="Link to this definition">#</a></dt>
+<dd><p>Return the <code class="xref py py-class docutils literal notranslate"><span class="pre">ItemPage</span></code> for an item id, if present.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.index_of_anchor">
+<span class="sig-name descname"><span class="pre">index_of_anchor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">anchor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.index_of_anchor" title="Link to this definition">#</a></dt>
+<dd><p>Return the 0-based list index of the page with <code class="docutils literal notranslate"><span class="pre">anchor</span></code> (KeyError if absent).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.register">
+<span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">phase</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Phase" title="stewbeet.plugins.ingame_manual.manual.Phase"><span class="pre">Phase</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">fn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual" title="stewbeet.plugins.ingame_manual.manual.Manual"><span class="pre">Manual</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual" title="stewbeet.plugins.ingame_manual.manual.Manual"><span class="pre">Manual</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.register" title="Link to this definition">#</a></dt>
+<dd><p>Register <code class="docutils literal notranslate"><span class="pre">fn</span></code> to run after <code class="docutils literal notranslate"><span class="pre">phase</span></code>. Returns <code class="docutils literal notranslate"><span class="pre">fn</span></code> (usable as a decorator).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.on">
+<span class="sig-name descname"><span class="pre">on</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">phase</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Phase" title="stewbeet.plugins.ingame_manual.manual.Phase"><span class="pre">Phase</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual" title="stewbeet.plugins.ingame_manual.manual.Manual"><span class="pre">Manual</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual" title="stewbeet.plugins.ingame_manual.manual.Manual"><span class="pre">Manual</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.on" title="Link to this definition">#</a></dt>
+<dd><p>Decorator form of <a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.register" title="stewbeet.plugins.ingame_manual.manual.Manual.register"><code class="xref py py-meth docutils literal notranslate"><span class="pre">register()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.on_item_page">
+<span class="sig-name descname"><span class="pre">on_item_page</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">fn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="stewbeet.plugins.ingame_manual.pages.item_page.html#stewbeet.plugins.ingame_manual.pages.item_page.ItemPage" title="stewbeet.plugins.ingame_manual.pages.item_page.ItemPage"><span class="pre">ItemPage</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual" title="stewbeet.plugins.ingame_manual.manual.Manual"><span class="pre">Manual</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="stewbeet.plugins.ingame_manual.pages.item_page.html#stewbeet.plugins.ingame_manual.pages.item_page.ItemPage" title="stewbeet.plugins.ingame_manual.pages.item_page.ItemPage"><span class="pre">ItemPage</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual" title="stewbeet.plugins.ingame_manual.manual.Manual"><span class="pre">Manual</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.on_item_page" title="Link to this definition">#</a></dt>
+<dd><p>Register <code class="docutils literal notranslate"><span class="pre">fn(page,</span> <span class="pre">manual)</span></code> to run on every item page during preparation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.run_hooks">
+<span class="sig-name descname"><span class="pre">run_hooks</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">phase</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Phase" title="stewbeet.plugins.ingame_manual.manual.Phase"><span class="pre">Phase</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.run_hooks" title="Link to this definition">#</a></dt>
+<dd><p>Fire all hooks registered for <code class="docutils literal notranslate"><span class="pre">phase</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.page_index_of">
+<span class="sig-name descname"><span class="pre">page_index_of</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">ref</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="stewbeet.plugins.ingame_manual.refs.html#stewbeet.plugins.ingame_manual.refs.PageRef" title="stewbeet.plugins.ingame_manual.refs.PageRef"><span class="pre">PageRef</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.page_index_of" title="Link to this definition">#</a></dt>
+<dd><p>Resolve a <code class="xref py py-class docutils literal notranslate"><span class="pre">PageRef</span></code> to a 1-based page index (-1 if unknown).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.build">
+<span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.build" title="Link to this definition">#</a></dt>
+<dd><p>Run the full generation pipeline, firing hooks between steps.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.discover">
+<span class="sig-name descname"><span class="pre">discover</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.discover" title="Link to this definition">#</a></dt>
+<dd><p>Create the default page set (intro, browser, categories, items, special).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.prepare">
+<span class="sig-name descname"><span class="pre">prepare</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.prepare" title="Link to this definition">#</a></dt>
+<dd><p>Run per-page preparation and the on_item_page hooks.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.order">
+<span class="sig-name descname"><span class="pre">order</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.order" title="Link to this definition">#</a></dt>
+<dd><p>Finalize the order and compute the anchor/item -&gt; index maps (1-based).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.render">
+<span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.render" title="Link to this definition">#</a></dt>
+<dd><p>Render every page to text components (links left as PageRef).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.normalize">
+<span class="sig-name descname"><span class="pre">normalize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.normalize" title="Link to this definition">#</a></dt>
+<dd><p>Convert the rendered tree to plain dict/list/str (preserving <code class="xref py py-class docutils literal notranslate"><span class="pre">PageRef</span></code>).</p>
+<p>Item components copied from definitions (and meta-derived components like
+<code class="docutils literal notranslate"><span class="pre">first_page_text</span></code>) are beet <code class="docutils literal notranslate"><span class="pre">Box</span></code> objects with default-box behavior: accessing a
+missing key auto-creates an empty <code class="docutils literal notranslate"><span class="pre">{}</span></code> entry, which corrupts the output (Minecraft:
+“Not a string: {}”). Flattening to plain Python types up front makes every later pass
+(resolve/optimize/dialog) safe.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.resolve">
+<span class="sig-name descname"><span class="pre">resolve</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.resolve" title="Link to this definition">#</a></dt>
+<dd><p>Turn every <code class="docutils literal notranslate"><span class="pre">change_page</span></code> click event into a <code class="docutils literal notranslate"><span class="pre">show_dialog</span></code> to the target page.</p>
+<p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">PageRef</span></code> is resolved to its 1-based index first; a literal int page is used
+as-is (covers author-provided WikiButton links). Unresolvable links are dropped.
+Iterative (no recursion limit) and bounded: such links only live in <code class="docutils literal notranslate"><span class="pre">click_event</span></code>,
+so we never descend into <code class="docutils literal notranslate"><span class="pre">hover_event</span></code> subtrees (which hold deep item-component data).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.optimize">
+<span class="sig-name descname"><span class="pre">optimize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.optimize" title="Link to this definition">#</a></dt>
+<dd><p>Merge adjacent compounds per page (skipping pages that opt out).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.manual.Manual.emit">
+<span class="sig-name descname"><span class="pre">emit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/manual.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.manual.Manual.emit" title="Link to this definition">#</a></dt>
+<dd><p>Write fonts/textures, dialogs, the manual item, showcase, and clean up.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+</article><footer class="bz-article-footer">
+  
+  
+    <nav class="bz-related-pages" aria-label="Related pages navigation"></nav>
+  
+
+</footer><aside class="bz-sidebar-secondary" data-drawer="bz-sidebar-secondary">
+  
+  
+    <nav class="bz-sidebar-toc" aria-label="Table of contents">
+  <p>On this page</p><ul>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Phase"><code class="docutils literal notranslate"><span class="pre">Phase</span></code></a><ul>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Phase.DISCOVERED"><code class="docutils literal notranslate"><span class="pre">Phase​.DISCOVERED</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Phase.PREPARED"><code class="docutils literal notranslate"><span class="pre">Phase​.PREPARED</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Phase.ORDERED"><code class="docutils literal notranslate"><span class="pre">Phase​.ORDERED</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Phase.RENDERED"><code class="docutils literal notranslate"><span class="pre">Phase​.RENDERED</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Phase.RESOLVED"><code class="docutils literal notranslate"><span class="pre">Phase​.RESOLVED</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Phase.BEFORE_EMIT"><code class="docutils literal notranslate"><span class="pre">Phase​.BEFORE_​EMIT</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual"><code class="docutils literal notranslate"><span class="pre">Manual</span></code></a><ul>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.config"><code class="docutils literal notranslate"><span class="pre">Manual​.config</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.glyphs"><code class="docutils literal notranslate"><span class="pre">Manual​.glyphs</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.images"><code class="docutils literal notranslate"><span class="pre">Manual​.images</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.recipes"><code class="docutils literal notranslate"><span class="pre">Manual​.recipes</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.pages"><code class="docutils literal notranslate"><span class="pre">Manual​.pages</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.by_anchor"><code class="docutils literal notranslate"><span class="pre">Manual​.by_​anchor</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.hooks"><code class="docutils literal notranslate"><span class="pre">Manual​.hooks</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.item_page_hooks"><code class="docutils literal notranslate"><span class="pre">Manual​.item_​page_​hooks</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.discovered"><code class="docutils literal notranslate"><span class="pre">Manual​.discovered</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.pending_ops"><code class="docutils literal notranslate"><span class="pre">Manual​.pending_​ops</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.definitions_as_objects"><code class="docutils literal notranslate"><span class="pre">Manual​.definitions_​as_​objects</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.categories"><code class="docutils literal notranslate"><span class="pre">Manual​.categories</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.has_forge_3x3"><code class="docutils literal notranslate"><span class="pre">Manual​.has_​forge_​3x3</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.has_forge_3x4"><code class="docutils literal notranslate"><span class="pre">Manual​.has_​forge_​3x4</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.pages_content"><code class="docutils literal notranslate"><span class="pre">Manual​.pages_​content</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.item_index"><code class="docutils literal notranslate"><span class="pre">Manual​.item_​index</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.anchor_index"><code class="docutils literal notranslate"><span class="pre">Manual​.anchor_​index</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.cached_simple_case"><code class="docutils literal notranslate"><span class="pre">Manual​.cached_​simple_​case</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.texture_cache"><code class="docutils literal notranslate"><span class="pre">Manual​.texture_​cache</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.simple_case"><code class="docutils literal notranslate"><span class="pre">Manual​.simple_​case</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.object_for"><code class="docutils literal notranslate"><span class="pre">Manual​.object_​for()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.load_item_texture"><code class="docutils literal notranslate"><span class="pre">Manual​.load_​item_​texture()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.add_page"><code class="docutils literal notranslate"><span class="pre">Manual​.add_​page()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.insert_page"><code class="docutils literal notranslate"><span class="pre">Manual​.insert_​page()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.replace_page"><code class="docutils literal notranslate"><span class="pre">Manual​.replace_​page()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.remove_page"><code class="docutils literal notranslate"><span class="pre">Manual​.remove_​page()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.move_page"><code class="docutils literal notranslate"><span class="pre">Manual​.move_​page()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.apply_add"><code class="docutils literal notranslate"><span class="pre">Manual​.apply_​add()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.apply_insert"><code class="docutils literal notranslate"><span class="pre">Manual​.apply_​insert()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.apply_replace"><code class="docutils literal notranslate"><span class="pre">Manual​.apply_​replace()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.apply_remove"><code class="docutils literal notranslate"><span class="pre">Manual​.apply_​remove()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.apply_move"><code class="docutils literal notranslate"><span class="pre">Manual​.apply_​move()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.get_page"><code class="docutils literal notranslate"><span class="pre">Manual​.get_​page()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.get_page_for_item"><code class="docutils literal notranslate"><span class="pre">Manual​.get_​page_​for_​item()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.index_of_anchor"><code class="docutils literal notranslate"><span class="pre">Manual​.index_​of_​anchor()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.register"><code class="docutils literal notranslate"><span class="pre">Manual​.register()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.on"><code class="docutils literal notranslate"><span class="pre">Manual​.on()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.on_item_page"><code class="docutils literal notranslate"><span class="pre">Manual​.on_​item_​page()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.run_hooks"><code class="docutils literal notranslate"><span class="pre">Manual​.run_​hooks()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.page_index_of"><code class="docutils literal notranslate"><span class="pre">Manual​.page_​index_​of()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.build"><code class="docutils literal notranslate"><span class="pre">Manual​.build()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.discover"><code class="docutils literal notranslate"><span class="pre">Manual​.discover()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.prepare"><code class="docutils literal notranslate"><span class="pre">Manual​.prepare()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.order"><code class="docutils literal notranslate"><span class="pre">Manual​.order()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.render"><code class="docutils literal notranslate"><span class="pre">Manual​.render()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.normalize"><code class="docutils literal notranslate"><span class="pre">Manual​.normalize()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.resolve"><code class="docutils literal notranslate"><span class="pre">Manual​.resolve()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.optimize"><code class="docutils literal notranslate"><span class="pre">Manual​.optimize()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.manual.Manual.emit"><code class="docutils literal notranslate"><span class="pre">Manual​.emit()</span></code></a></li>
+</ul>
+</li>
+</ul></nav>
+  
+    
+  
+  
+  
+  
+
+
+
+<div class="bz-repo-stats">
+  <a
+    data-provider="github"
+    data-user="Stoupy51"
+    data-repo="stewbeet"
+    href="https://github.com/Stoupy51/stewbeet"
+    aria-label="Stoupy51/stewbeet repository"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M10.303 16.652c-2.837-.344-4.835-2.385-4.835-5.028 0-1.074.387-2.235 1.031-3.008-.279-.709-.236-2.214.086-2.837.86-.107 2.02.344 2.708.967.816-.258 1.676-.386 2.728-.386 1.053 0 1.913.128 2.686.365.666-.602 1.848-1.053 2.708-.946.3.581.344 2.085.064 2.815.688.817 1.053 1.913 1.053 3.03 0 2.643-1.998 4.641-4.877 5.006.73.473 1.224 1.504 1.224 2.686v2.235c0 .644.537 1.01 1.182.752 3.889-1.483 6.94-5.372 6.94-10.185 0-6.081-4.942-11.044-11.022-11.044-6.081 0-10.98 4.963-10.98 11.044a10.84 10.84 0 0 0 7.112 10.206c.58.215 1.139-.172 1.139-.752v-1.719a2.768 2.768 0 0 1-1.032.215c-1.418 0-2.256-.773-2.857-2.213-.237-.58-.495-.924-.989-.988-.258-.022-.344-.129-.344-.258 0-.258.43-.451.86-.451.623 0 1.16.386 1.719 1.181.43.623.881.903 1.418.903.537 0 .881-.194 1.375-.688.365-.365.645-.687.903-.902Z"></path></svg>
+    <span
+      style="--bz-repo-stats-name-length: 17"
+      title="Stoupy51/stewbeet"
+    >
+      Stoupy51/stewbeet
+    </span>
+    <div class="bz-repo-stats-row">
+      <span class="bz-repo-stats-item" aria-label="Repository stars">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.751 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Zm0 2.445L6.615 5.5a.75.75 0 0 1-.564.41l-3.097.45 2.24 2.184a.75.75 0 0 1 .216.664l-.528 3.084 2.769-1.456a.75.75 0 0 1 .698 0l2.77 1.456-.53-3.084a.75.75 0 0 1 .216-.664l2.24-2.183-3.096-.45a.75.75 0 0 1-.564-.41L8 2.694Z"></path></svg>
+        <span data-stat="stars">-</span>
+      </span>
+      <span class="bz-repo-stats-item" aria-label="Repository forks">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M5 5.372v.878c0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75v-.878a2.25 2.25 0 1 1 1.5 0v.878a2.25 2.25 0 0 1-2.25 2.25h-1.5v2.128a2.251 2.251 0 1 1-1.5 0V8.5h-1.5A2.25 2.25 0 0 1 3.5 6.25v-.878a2.25 2.25 0 1 1 1.5 0ZM5 3.25a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Zm6.75.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm-3 8.75a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Z"></path></svg>
+        <span data-stat="forks">-</span>
+      </span>
+    </div>
+  </a>
+</div>
+
+  
+    <div class="bz-edit-this-page">
+  <a href="https://github.com/Stoupy51/stewbeet/edit/main/modules/stewbeet.plugins.ingame_manual.manual.rst" rel="edit">
+    Edit this page
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8.22 2.97a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042l2.97-2.97H3.75a.75.75 0 0 1 0-1.5h7.44L8.22 4.03a.75.75 0 0 1 0-1.06Z"></path></svg>
+  </a>
+</div>
+  
+    
+  
+
+</aside></main>
+  </div>
+<footer class="bz-footer">
+  <div class="bz-footer-copyright"><p class="bz-copyright">© Copyright 2025 - 2026, Stoupy</p><p>
+    
+    
+    
+      Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a href="https://github.com/aksiome/breeze">Breeze theme</a>.
+    
+  </p>
+</div>
+</footer><a href="#" class="bz-back-to-top">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m5 12 7-7 7 7"/><path d="M12 19V5"/>
+    </svg>
+    <span>Back to top</span>
+  </a>
+  <label class="bz-overlay bz-overlay-primary" for="bz-sidebar-primary"></label>
+  <label class="bz-overlay bz-overlay-secondary" for="bz-sidebar-secondary"></label>
+  <input type="checkbox" name="bz-sidebar-primary" id="bz-sidebar-primary" aria-label="Toggle section navigation">
+  <input type="checkbox" name="bz-sidebar-secondary" id="bz-sidebar-secondary" aria-label="Toggle table of contents"><script src="../_static/documentation_options.js?v=237dbe43"></script><script src="../_static/doctools.js?v=fd6eb6e6"></script><script src="../_static/sphinx_highlight.js?v=6ffebe34"></script><script src="../_static/clipboard.min.js?v=a7894cd8"></script><script src="../_static/copybutton.js?v=18a8d5f5"></script><script src="../_static/design-tabs.js?v=f930bc37"></script><script src="../_static/treeview.js?v=265ad9b8"></script></body>
+</html>
