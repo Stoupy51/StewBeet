@@ -134,10 +134,6 @@ def set_manual_components(white_list: list[str]) -> None:
 	if not white_list:
 		return
 
-	# v1 plugin (ingame_manual): class-level global
-	from ...plugins.ingame_manual.shared_import import SharedMemory
-	SharedMemory.components_to_include = white_list
-
 	# v2 plugin (ingame_manual): record an override picked up by ManualConfig.from_meta,
 	# and update any Manual already created during setup.
 	from ...plugins.ingame_manual import config as v2_config
