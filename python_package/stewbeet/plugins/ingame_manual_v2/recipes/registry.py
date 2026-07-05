@@ -72,6 +72,7 @@ class CraftRenderer:
 
 # Global registry: craft type string -> renderer instance.
 CRAFT_RENDERERS: dict[str, CraftRenderer] = {}
+""" Registry of all craft renderers, by craft type. """
 
 
 def register_craft_renderer(renderer: CraftRenderer) -> CraftRenderer:

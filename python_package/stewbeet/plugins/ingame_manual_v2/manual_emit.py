@@ -40,6 +40,7 @@ from .glyphs import (
 	SMALL_NONE_FONT,
 	STONECUTTING_FONT,
 	VERY_SMALL_NONE_FONT,
+	WIKI_GROWING_SEED_FONT,
 	WIKI_INFO_FONT,
 	WIKI_INGR_OF_CRAFT_FONT,
 	WIKI_NONE_FONT,
@@ -67,6 +68,7 @@ def register_static_assets(manual: Manual) -> None:
 		tex("font/none", "none.png")
 		tex("font/invisible_item", "invisible_item.png")
 	tex("font/wiki_information", "wiki_information.png")
+	tex("font/wiki_growing_seed", "wiki_growing_seed.png")
 	tex("font/wiki_result_of_craft", "wiki_result_of_craft.png")
 	tex("font/wiki_ingredient_of_craft", "wiki_ingredient_of_craft.png")
 	if manual.config.high_resolution:
@@ -95,6 +97,7 @@ def register_static_assets(manual: Manual) -> None:
 	add(WIKI_NONE_FONT, f("none"), 7, 16)
 	add(INVISIBLE_ITEM_FONT, f("invisible_item"), 7, 16)
 	add(WIKI_INFO_FONT, f("wiki_information"), 8, 16)
+	add(WIKI_GROWING_SEED_FONT, f("wiki_growing_seed"), 8, 16)
 	add(WIKI_RESULT_OF_CRAFT_FONT, f("wiki_result_of_craft"), 8, 16)
 	add(WIKI_INGR_OF_CRAFT_FONT, f("wiki_ingredient_of_craft"), 8, 16)
 	if manual.config.high_resolution:

@@ -64,6 +64,7 @@ HOVER_MINING_FONT: str =			get_font(0x0030)
 HOVER_AWAKENED_3X3_FONT: str =		get_font(0x0031)
 HOVER_AWAKENED_3X4_FONT: str =		get_font(0x0032)
 HOVER_GROWING_SEED_FONT: str =		get_font(0x0033)  # NEW in v2
+WIKI_GROWING_SEED_FONT: str =		get_font(0x0034)  # NEW in v2: growing seed wiki button icon
 INVISIBLE_ITEM_FONT: str =			get_font(0x0035)  # Invisible item to place
 INVISIBLE_ITEM_WIDTH: str =			INVISIBLE_ITEM_FONT + MICRO_NONE_FONT
 BOOK_FONT: str =					get_font(0x0036)

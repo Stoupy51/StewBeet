@@ -19,7 +19,7 @@ from ....core.cls.ingredients import Ingr
 from ....core.cls.item import Item
 from ....core.cls.recipe import CraftingShapelessRecipe
 from ....core.utils.text_component import item_id_to_name
-from ..glyphs import INVISIBLE_ITEM_WIDTH, MICRO_NONE_FONT, SMALL_NONE_FONT, WIKI_RESULT_OF_CRAFT_FONT
+from ..glyphs import INVISIBLE_ITEM_WIDTH, MICRO_NONE_FONT, SMALL_NONE_FONT, WIKI_GROWING_SEED_FONT, WIKI_RESULT_OF_CRAFT_FONT
 from ..refs import PageRef
 from .buttons import WikiButtonRender
 from .collection import collect_for_item, convert_shapeless_to_shaped
@@ -185,13 +185,13 @@ class RecipeRenderer:
 		return button
 
 	# --- growing seed info button (button-only pseudo, built from block metadata) ---
-	def growing_seed_button(self, name: str, item_obj: Item) -> WikiButtonRender | None:
+	def growing_seed_button(self, item_obj: Item) -> WikiButtonRender | None:
 		""" Build an info button describing a block's :class:`GrowingSeed` drops, if any. """
 		if not isinstance(item_obj, Block) or not item_obj.growing_seed:
 			return None
 		seed: GrowingSeed = item_obj.growing_seed
 
-		hover: list[TextComponent] = [{"text": ""}, {"text": "\nGrowing Seed", "color": "yellow"}]
+		hover: list[TextComponent] = [{"text": "Growing Seed", "color": "yellow"}]
 		planted = str(seed.planted_on).replace("minecraft:", "").replace("_", " ").title()
 		hover.append({"text": "\n- Planted on: ", "color": "gray"})
 		hover.append({"text": planted, "color": "gray"})
@@ -214,13 +214,17 @@ class RecipeRenderer:
 				hover.append({"text": f"\n  - x{rolls_str} ", "color": "gray"})
 				hover.append({"text": loot_name, "color": "gray"})
 				if loot.fortune:
-					hover.append({"text": f" (fortune +{loot.fortune.get('extra', 0)} @ {loot.fortune.get('probability', 0)})", "color": "dark_gray"})
+					# binomial_with_bonus_count: each Fortune level (+ 'extra' base tries) is one
+					# 'probability' chance of dropping one more item — phrase it for the player.
+					extra: int = loot.fortune.get("extra", 0)
+					chance: str = f"{loot.fortune.get('probability', 0) * 100:g}%"
+					fortune_text = f" ({chance} chance of +1 per Fortune level"
+					if extra:
+						fortune_text += f", +{extra} base tr{'ies' if extra > 1 else 'y'}"
+					hover.append({"text": fortune_text + ")", "color": "dark_gray"})
 
-		# Icon: result icon of the first internal loot if possible, else generic result-of-craft font
-		glyph = WIKI_RESULT_OF_CRAFT_FONT
+		# Icon: growing seed wiki glyph; link to the first internal loot's page if any
 		target: PageRef | None = None
 		if first_loot_id:
-			fake_craft: JsonDict = {"type": "growing_seed", "result": Ingr(first_loot_id, self.config.project_id)}
-			glyph = self.images.wiki_result_icon(name, fake_craft)
 			target = PageRef(item=first_loot_id)
-		return WikiButtonRender(glyph=glyph, hover=hover, target=target, priority=1)
+		return WikiButtonRender(glyph=WIKI_GROWING_SEED_FONT, hover=hover, target=target, priority=1, is_info=True)

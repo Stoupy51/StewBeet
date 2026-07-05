@@ -111,6 +111,7 @@
 		{"type": "bitmap","file": "_your_namespace:font/none.png","ascent": 7,"height": 16,"chars": ["0"]},
 		{"type": "bitmap","file": "_your_namespace:font/invisible_item.png","ascent": 7,"height": 16,"chars": ["U"]},
 		{"type": "bitmap","file": "_your_namespace:font/wiki_information.png","ascent": 8,"height": 16,"chars": ["1"]},
+		{"type": "bitmap","file": "_your_namespace:font/wiki_growing_seed.png","ascent": 8,"height": 16,"chars": ["T"]},
 		{"type": "bitmap","file": "_your_namespace:font/wiki_result_of_craft.png","ascent": 8,"height": 16,"chars": ["2"]},
 		{"type": "bitmap","file": "_your_namespace:font/wiki_ingredient_of_craft.png","ascent": 8,"height": 16,"chars": ["3"]},
 		{"type": "bitmap","file": "_your_namespace:font/shaped_3x3.png","ascent": 1,"height": 58,"chars": ["6"]},

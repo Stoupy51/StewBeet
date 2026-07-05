@@ -17,7 +17,7 @@ directory: "."
 # Path to a folder for beet to output. If not defined, no files will visibly output
 output: "build"
 # List of files or glob patterns that should be ignored by the file watcher and not cause any rebuild when using `$ beet watch`
-ignore: ["build", "manual_cache", "definitions_debug.json"]
+ignore: ["build", "manual_cache", "definitions_debug.json", "external_definitions.json"]
 
 # A list of importable plugin strings
 require:
