@@ -1,0 +1,8 @@
+stewbeet.plugins.ingame\_manual.pages.texture\_page module
+==========================================================
+
+.. automodule:: stewbeet.plugins.ingame_manual.pages.texture_page
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
