@@ -1,12 +1,14 @@
 
 # Imports
+import logging
 import os
 from pathlib import Path
 
 import stouputils as stp
 from beet import Context
+from stouputils.ctx import Muffle
 
-from .weld import weld_datapack, weld_resource_pack
+from .weld import prepare_weld, weld_to
 
 
 # Main entry point
@@ -27,17 +29,26 @@ def beet_default(ctx: Context) -> None:
 
 	project_name_simple = ctx.project_name.replace(" ", "")
 
-	# Generate destination paths for merged files
-	datapack_dest = str(Path(ctx.output_directory) / f"{project_name_simple}_datapack_with_libs.zip")
-	resource_pack_dest = str(Path(ctx.output_directory) / f"{project_name_simple}_resource_pack_with_libs.zip")
+	# Gather sources for each pack that has a base archive (warnings stay visible: this runs unmuffled)
+	tasks: list[tuple[list[str], str, str]] = []
+	for pack_type in ("datapack", "resource_pack"):
+		source = str(Path(ctx.output_directory) / f"{project_name_simple}_{pack_type}.zip")
+		dest = str(Path(ctx.output_directory) / f"{project_name_simple}_{pack_type}_with_libs.zip")
+		if os.path.exists(source):
+			to_merge: list[str] | None = prepare_weld(ctx, dest, pack_type)
+			if to_merge is not None:
+				tasks.append((to_merge, dest, pack_type))
+	if not tasks:
+		return
 
-	# Call weld functions if the base archives exist
-	datapack_source = str(Path(ctx.output_directory) / f"{project_name_simple}_datapack.zip")
-	resource_pack_source = str(Path(ctx.output_directory) / f"{project_name_simple}_resource_pack.zip")
+	# Run both welds in parallel (they are independent and the zlib work releases the GIL).
+	# Weld logs failures through the "weld" logger instead of raising, so capture its (noisy)
+	# output around the whole parallel section and only replay it when an error actually happens.
+	@stp.handle_error
+	def run_weld_task(task: tuple[list[str], str, str]) -> None:
+		to_merge, dest, pack_type = task
+		weld_to(ctx, to_merge, dest, pack_type)
 
-	if os.path.exists(datapack_source):
-		weld_datapack(ctx, datapack_dest)
-
-	if os.path.exists(resource_pack_source):
-		weld_resource_pack(ctx, resource_pack_dest)
+	with Muffle(mute_stderr=True, replay_on_error=True, error_log_level=logging.ERROR, watch_loggers=["weld"]):
+		stp.multithreading(run_weld_task, tasks, max_workers=len(tasks))
 

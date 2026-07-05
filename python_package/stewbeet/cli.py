@@ -3,7 +3,6 @@
 import importlib
 import os
 import shutil
-import subprocess
 import sys
 
 import stouputils as stp
@@ -81,7 +80,12 @@ def main() -> None:
         stp.info("Cleaning project and caches...")
 
         # Remove the beet cache directory
-        subprocess.run([sys.executable, "-m", "beet", "cache", "-c"], check=False, capture_output=True)
+        try:
+            from beet.toolchain.project import Project
+            project = Project(resolved_config=cfg)
+            project.clear_cache([])
+        except Exception:
+            pass
         if os.path.exists(".beet_cache"):
             shutil.rmtree(".beet_cache", ignore_errors=True)
 

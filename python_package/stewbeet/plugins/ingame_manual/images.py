@@ -9,7 +9,7 @@ texture-page helpers (:meth:`bake_text_onto`, :meth:`register_full_page_glyph`).
 # pyright: reportUnknownMemberType=false
 # Imports
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import stouputils as stp
 from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageFont
@@ -132,6 +132,8 @@ class GlyphImageBuilder:
 	""" Where generated textures register their font providers. """
 	_border_color: tuple[int, int, int, int] | None = None
 	""" Cache for :meth:`get_border_color`. """
+	_wiki_icons_generated: set[str] = field(default_factory=set[str])
+	""" Wiki icon files already generated this build (skip re-encoding identical PNGs). """
 
 	# --- helpers ---
 	def get_border_color(self) -> tuple[int, int, int, int]:
@@ -265,17 +267,21 @@ class GlyphImageBuilder:
 			result_item = result_item.replace("/", "_")
 			dest_path = f"{self.config.cache_path}/font/wiki_icons/{result_item}_{craft_type}.png"
 
-			item_texture = Image.open(texture_path)
-			item_res = 64 if not self.config.high_resolution else 256
-			item_res_adjusted = int(item_res * 0.75)
-			item_texture = careful_resize(item_texture, item_res_adjusted).convert("RGBA")
+			# Same (result, craft type) pairs produce the same file: only encode the PNG once
+			# per build (glyph allocation below is unchanged so the output stays identical).
+			if dest_path not in self._wiki_icons_generated:
+				item_texture = Image.open(texture_path)
+				item_res = 64 if not self.config.high_resolution else 256
+				item_res_adjusted = int(item_res * 0.75)
+				item_texture = careful_resize(item_texture, item_res_adjusted).convert("RGBA")
 
-			filename: str = "wiki_ingredient_of_craft_template.png" if craft_type != "mining" else "wiki_mining_template.png"
-			template = Image.open(f"{TEMPLATES_PATH}/{filename}")
-			template = careful_resize(template, item_res)
-			offset = (item_res - item_res_adjusted) // 2
-			template.paste(item_texture, (offset, offset), item_texture)
-			template.save(dest_path)
+				filename: str = "wiki_ingredient_of_craft_template.png" if craft_type != "mining" else "wiki_mining_template.png"
+				template = Image.open(f"{TEMPLATES_PATH}/{filename}")
+				template = careful_resize(template, item_res)
+				offset = (item_res - item_res_adjusted) // 2
+				template.paste(item_texture, (offset, offset), item_texture)
+				template.save(dest_path)
+				self._wiki_icons_generated.add(dest_path)
 
 			font = self.glyphs.allocate()
 			rel_path: str = dest_path.replace(f"{self.config.cache_path}/", f"{self.config.project_id}:")
