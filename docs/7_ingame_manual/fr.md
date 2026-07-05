@@ -12,18 +12,18 @@
 
 ## 🧪 Exemples
 📄 **Fichier d'exemple** : [extensive/src/definitions/manual_customization.py](../../templates/extensive/src/definitions/manual_customization.py) 🔗<br>
-📄 **Code source** : [stewbeet/plugins/ingame_manual_v2/](../../python_package/stewbeet/plugins/ingame_manual_v2/) 🔗<br>
+📄 **Code source** : [stewbeet/plugins/ingame_manual/](../../python_package/stewbeet/plugins/ingame_manual/) 🔗<br>
 
 ## 🔗 Dépendances
 - **✅ Requis** : Framework StewBeet (`from stewbeet import *`)
-- **📍 Position** : L'étape `stewbeet.plugins.ingame_manual_v2` de votre pipeline `beet.yml`, après `custom_recipes` et avant les plugins de datapack
+- **📍 Position** : L'étape `stewbeet.plugins.ingame_manual` de votre pipeline `beet.yml`, après `custom_recipes` et avant les plugins de datapack
 - **🧩 Personnalisation** : Appelez `get_manual()` dans votre `setup_definitions` (après la définition des items) pour enregistrer pages et hooks
 - **🗨 Sortie** : Orienté dialogue — génère un dialogue Minecraft par page, accessible via le menu **quick actions** natif (et l'item `manual` en mode 1)
 
 ## 📋 Vue d'ensemble
-`ingame_manual_v2` génère un manuel en jeu à partir de vos items `Mem.definitions` : une page d'introduction, un navigateur de catégories, une page par catégorie, et une page par item avec ses recettes et boutons wiki. Il est **orienté dialogue** (l'ancien mode livre écrit NBT est supprimé) et entièrement **extensible** — vous pouvez modifier la page de n'importe quel item, insérer des pages arbitraires (même sans rapport avec un item), contrôler le placement des boutons, et rendre des pages basées sur votre propre texture. Chaque classe publique de l'API (sous-classes de `Page`, `ButtonLayout`, `BakedText`, `PageRef`, `CraftRenderer`, `Manual` lui-même...) est une **dataclass** Python.
+`ingame_manual` génère un manuel en jeu à partir de vos items `Mem.definitions` : une page d'introduction, un navigateur de catégories, une page par catégorie, et une page par item avec ses recettes et boutons wiki. Il est **orienté dialogue** (l'ancien mode livre écrit NBT est supprimé) et entièrement **extensible** — vous pouvez modifier la page de n'importe quel item, insérer des pages arbitraires (même sans rapport avec un item), contrôler le placement des boutons, et rendre des pages basées sur votre propre texture. Chaque classe publique de l'API (sous-classes de `Page`, `ButtonLayout`, `BakedText`, `PageRef`, `CraftRenderer`, `Manual` lui-même...) est une **dataclass** Python.
 
-**Activez-le en remplaçant `stewbeet.plugins.ingame_manual` par `stewbeet.plugins.ingame_manual_v2`** dans votre pipeline.
+**Activez-le en remplaçant `stewbeet.plugins.ingame_manual` par `stewbeet.plugins.ingame_manual`** dans votre pipeline.
 
 ## 🎯 Objectif
 - 📚 Générer automatiquement les pages de recettes de chaque item (craft, cuisson, forge, découpe, minage, et types de recettes personnalisés)
@@ -240,7 +240,7 @@ Seuls `types` et `render_body` sont obligatoires ; `static_glyph` (glyphe de tem
 ---
 
 ## 🔄 Migration depuis la v1
-- Changez l'entrée du pipeline en `stewbeet.plugins.ingame_manual_v2`.
+- Changez l'entrée du pipeline en `stewbeet.plugins.ingame_manual`.
 - `WikiButton` et `set_manual_components(...)` continuent de fonctionner sans changement.
 - Retirez la clé `cache_pages` et utilisez `use_dialog: 1` ou `2` (le mode `0` n'existe plus).
 - Le storage `universal_manual` n'est plus enregistré ; le manuel s'ouvre depuis le menu quick actions natif.

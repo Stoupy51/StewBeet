@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 from beet import Context
 
 if TYPE_CHECKING:
-    from ..plugins.ingame_manual_v2.manual import Manual
+    from ..plugins.ingame_manual.manual import Manual
     from .cls.external_item import ExternalItem
     from .cls.item import Item
 
@@ -25,6 +25,6 @@ class Mem:
     """ Secondary JsonDict for storing external items or blocks most likely for recipes. """
 
     manual: "Manual | None" = None
-    """ The ingame_manual_v2 Manual handle, used to register pages/hooks during setup.
+    """ The ingame_manual Manual handle, used to register pages/hooks during setup.
     Created lazily via stewbeet.get_manual(); reset after each build (for `beet watch`). """
 

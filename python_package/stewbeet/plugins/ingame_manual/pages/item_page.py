@@ -96,6 +96,9 @@ class ItemPage(Page):
 					content.append("\n")
 				content_added = True
 
+		# End of the main craft content: ButtonLayout.position == "after_recipe" inserts here
+		recipe_end: int = len(content)
+
 		# --- wiki buttons ---
 		info_buttons: list[WikiButtonRender] = []
 
@@ -130,7 +133,7 @@ class ItemPage(Page):
 		layout = self.resolve_button_layout(manual)
 		buttons = self.apply_layout_filters(info_buttons, layout)
 		if buttons:
-			self.render_button_grid(content, buttons, layout)
+			content = self.place_button_grid(content, buttons, layout, manual, recipe_end)
 
 		# Drop the in-body title (the dialog shows it from the page/sprite) and disable text
 		# shadow on the page's base style. content[0] is the manual-font setter, content[1] the title.
@@ -198,6 +201,36 @@ class ItemPage(Page):
 		elif isinstance(button.target, dict):
 			component["click_event"] = button.target
 		return component
+
+	def place_button_grid(
+		self, content: list[TextComponent], buttons: list[WikiButtonRender], layout: ButtonLayout, manual: "Manual", recipe_end: int,
+	) -> list[TextComponent]:
+		""" Splice the button grid into ``content`` where ``layout.position`` asks for.
+
+		``recipe_end`` is the index right after the main craft content. At this point ``content``
+		still holds the in-body title at index 1 (dropped later by :meth:`build`), so "top"
+		inserts at index 2.
+
+		>>> layout = ButtonLayout(position=lambda content, buttons, manual: [*content, "grid"])
+		>>> ItemPage(anchor="item:demo").place_button_grid(["base"], [], layout, None, 1)
+		['base', 'grid']
+		"""
+		position = layout.position
+		if callable(position):
+			return position(content, buttons, manual)
+		grid: list[TextComponent] = []
+		self.render_button_grid(grid, buttons, layout)
+		if position == "top":
+			index = min(2, len(content))
+			grid.append("\n")
+		elif position == "after_recipe":
+			index = recipe_end
+		elif position == "bottom":
+			index = len(content)
+		else:
+			raise ValueError(f"Unknown ButtonLayout.position: {position!r} (expected 'after_recipe', 'top', 'bottom', or a callable)")
+		content[index:index] = grid
+		return content
 
 	def render_button_grid(self, content: list[TextComponent], buttons: list[WikiButtonRender], layout: ButtonLayout) -> None:
 		""" Lay buttons into a grid, duplicating each line for the 2-row hover trick (ported). """

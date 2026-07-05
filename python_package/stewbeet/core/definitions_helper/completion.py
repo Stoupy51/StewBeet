@@ -138,9 +138,9 @@ def set_manual_components(white_list: list[str]) -> None:
 	from ...plugins.ingame_manual.shared_import import SharedMemory
 	SharedMemory.components_to_include = white_list
 
-	# v2 plugin (ingame_manual_v2): record an override picked up by ManualConfig.from_meta,
+	# v2 plugin (ingame_manual): record an override picked up by ManualConfig.from_meta,
 	# and update any Manual already created during setup.
-	from ...plugins.ingame_manual_v2 import config as v2_config
+	from ...plugins.ingame_manual import config as v2_config
 	v2_config.COMPONENTS_OVERRIDE = list(white_list)
 	from ...core.__memory__ import Mem
 	if Mem.manual is not None:

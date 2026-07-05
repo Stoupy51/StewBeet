@@ -44,7 +44,12 @@ class ButtonLayout:
 	columns: int = 5
 	max_buttons: int = 20
 	position: Position | Callable[..., Any] = "after_recipe"
-	""" FIXME: This is currently unused feature. It should """
+	""" Where the button grid is spliced into the page content: "after_recipe" inserts it right
+	after the main craft content (before anything appended later, e.g. special notes),
+	"top" places it just under the title (before the recipe), "bottom" appends it at the very
+	end of the page, and a callable ``(content, buttons, manual) -> content`` takes full control
+	(it receives the un-rendered :class:`~.recipes.WikiButtonRender` list and must return the
+	final content). """
 	order: Callable[[WikiButtonRender], Any] | None = None
 	include: Callable[[WikiButtonRender], bool] | None = None
 	extra_buttons: list[WikiButtonRender] = field(default_factory=list[WikiButtonRender])
@@ -65,3 +70,4 @@ class ButtonLayout:
 			include=self.include,
 			extra_buttons=list(self.extra_buttons),
 		)
+

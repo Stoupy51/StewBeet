@@ -71,7 +71,7 @@ class ManualConfig:
 		# Dialog-first: drop mode 0
 		if self.use_dialog not in (1, 2):
 			if self.use_dialog == 0:
-				stp.warning("manual.use_dialog=0 (book-only) is removed in ingame_manual_v2; using dialog mode 1.")
+				stp.warning("manual.use_dialog=0 (book-only) is removed in ingame_manual; using dialog mode 1.")
 			self.use_dialog = 1
 
 		# Resolve manual name + length check

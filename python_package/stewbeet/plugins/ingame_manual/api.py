@@ -1,4 +1,4 @@
-""" Public API surface for ingame_manual_v2 (re-exported from the top-level ``stewbeet``).
+""" Public API surface for ingame_manual (re-exported from the top-level ``stewbeet``).
 
 Developers use :func:`get_manual` in their setup to grab the live :class:`Manual` and
 register pages/hooks before the plugin builds it.
@@ -49,7 +49,7 @@ def get_manual() -> Manual:
 
 	Call this in ``setup_definitions`` (after items are defined) to register custom pages,
 	hooks (``manual.on(...)`` / ``manual.on_item_page(...)``) and button layouts. The
-	ingame_manual_v2 plugin reuses the same handle when it runs.
+	ingame_manual plugin reuses the same handle when it runs.
 	"""
 	from ...core.__memory__ import Mem
 	if Mem.manual is None:

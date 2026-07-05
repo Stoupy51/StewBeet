@@ -36,7 +36,7 @@ def beet_default(ctx: Context):
     add_smithed_ignore_vanilla_behaviours_convention()	# Smithed items convention
     set_manual_components(white_list=["item_name", "lore", "custom_name", "damage", "max_damage"]) # Components to include in the manual when hovering items (here is the default list)
 
-    # Customize the in-game manual using the ingame_manual_v2 API (custom pages, hooks, button layout)
+    # Customize the in-game manual using the ingame_manual API (custom pages, hooks, button layout)
     main_manual_customization()
 
     # Debug purposes: export all definitions to a single json file
