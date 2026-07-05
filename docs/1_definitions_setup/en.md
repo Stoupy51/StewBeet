@@ -157,11 +157,11 @@ from stewbeet import Block, VanillaBlock, CraftingShapedRecipe, SmeltingRecipe, 
 block = Block(
     id="super_stone",
     vanilla_block=VanillaBlock(id="minecraft:cobblestone"),
-    manual_category="blocks",
+    manual_category="building",
     recipes=[
         # Could have been shapeless, but just for example:
         CraftingShapedRecipe(
-            category="blocks",
+            category="building",
             shape=["XXX", "XXX", "XXX"],
             ingredients={"X": Ingr("minecraft:stone")}
         ),
@@ -169,7 +169,7 @@ block = Block(
         SmeltingRecipe(
             experience=0.1,
             cookingtime=200,
-            category="blocks",
+            category="building",
             ingredient=Ingr("super_stone"),
             result=Ingr("minecraft:diamond")
         )
@@ -592,7 +592,7 @@ Common categories for manual organization (but it's always up to you!):
 |----------|-------------|
 | `"materials"` | Raw materials, ingots, gems |
 | `"equipment"` | Tools, weapons, armor |
-| `"blocks"` | Building blocks, decorative blocks |
+| `"building"` | Building blocks, decorative blocks |
 | `"miscellaneous"` | Other items, special items |
 | `"food"` | Consumable items |
 | `"decorations"` | Paintings, decorative items |

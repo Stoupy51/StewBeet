@@ -1,7 +1,7 @@
 {
 	"type": "minecraft:notice",
 	"title": {
-		"translate": "_your_namespace.category_browser",
+		"translate": "_your_namespace.credits",
 		"underlined": true
 	},
 	"body": [
@@ -10,10 +10,10 @@
 			"contents": [
 				{"text": "V   ","font": "_your_namespace:manual","color": "white"},
 				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_2"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"}," (2)"]}},
-				" ",
+				{"text": "4","font": "_your_namespace:manual","color": "white","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_1"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_first_page"}]}},
 				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_4"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"}," (4)"]}},
 				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_2"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"}," (2)"]}},
-				" ",
+				{"text": " ","font": "_your_namespace:manual","color": "white","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_1"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_first_page"}]}},
 				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_4"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"}," (4)"]}}
 			],
 			"width": 400
@@ -21,17 +21,10 @@
 		{
 			"type": "minecraft:plain_message",
 			"contents": [
-				{"text": "","font": "_your_namespace:manual","color": "white","shadow_color": [0,0,0,0]},
-				"\"အ\n\"",
-				{"text": "$耡","hover_event": {"action": "show_item","id": "command_block","components": {"custom_data": {"smithed": {"dict": {"ingot": {"steel": true}},"id": "_your_namespace:steel_ingot","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ingot": true}},"item_model": "_your_namespace:steel_ingot","item_name": {"translate": "_your_namespace.material","color": "white"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},[{"text":" ","italic": true,"color": "blue"}, {"translate": "_your_namespace.extensive_template"}]]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_4"}},
-				{"text": "$耷","hover_event": {"action": "show_item","id": "iron_helmet","components": {"custom_data": {"smithed": {"dict": {"armor": {"steel": true,"helmet": true}},"id": "_your_namespace:steel_helmet","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_helmet": true}},"max_damage": 495,"equippable": {"slot": "head","asset_id": "_your_namespace:steel"},"attribute_modifiers": [{"type": "armor","amount": 2.5,"operation": "add_value","slot": "head","id": "_your_namespace:armor.head"}],"item_model": "_your_namespace:steel_helmet","item_name": {"translate": "_your_namespace.equipment","color": "white"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},[{"text":" ","italic": true,"color": "blue"}, {"translate": "_your_namespace.extensive_template"}]]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_5"}},
-				{"text": "$聉","hover_event": {"action": "show_item","id": "command_block","components": {"custom_data": {"_your_namespace": {"shazinho": true},"smithed": {"dict": {"record": {"shazinho": true,"item_name": "Shazinho"},"jukebox_song": {"comparator_output": 15,"length_in_seconds": 128,"sound_event": {"sound_id": "_your_namespace:shazinho"},"description": {"translate": "_your_namespace.shazinho"}}},"id": "_your_namespace:shazinho","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}},"item_name": {"translate": "_your_namespace.miscellaneous","color": "white"},"jukebox_playable": "_your_namespace:shazinho","max_stack_size": 1,"rarity": "rare","item_model": "_your_namespace:shazinho","lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},[{"text":" ","italic": true,"color": "blue"}, {"translate": "_your_namespace.extensive_template"}]]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_6"}},
-				"#\n\"",
-				{"text": "!","hover_event": {"action": "show_item","id": "command_block","components": {"custom_data": {"smithed": {"dict": {"ingot": {"steel": true}},"id": "_your_namespace:steel_ingot","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ingot": true}},"item_model": "_your_namespace:steel_ingot","item_name": {"translate": "_your_namespace.material","color": "white"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},[{"text":" ","italic": true,"color": "blue"}, {"translate": "_your_namespace.extensive_template"}]]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_4"}},
-				{"text": "!","hover_event": {"action": "show_item","id": "iron_helmet","components": {"custom_data": {"smithed": {"dict": {"armor": {"steel": true,"helmet": true}},"id": "_your_namespace:steel_helmet","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_helmet": true}},"max_damage": 495,"equippable": {"slot": "head","asset_id": "_your_namespace:steel"},"attribute_modifiers": [{"type": "armor","amount": 2.5,"operation": "add_value","slot": "head","id": "_your_namespace:armor.head"}],"item_model": "_your_namespace:steel_helmet","item_name": {"translate": "_your_namespace.equipment","color": "white"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},[{"text":" ","italic": true,"color": "blue"}, {"translate": "_your_namespace.extensive_template"}]]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_5"}},
-				{"text": "!","hover_event": {"action": "show_item","id": "command_block","components": {"custom_data": {"_your_namespace": {"shazinho": true},"smithed": {"dict": {"record": {"shazinho": true,"item_name": "Shazinho"},"jukebox_song": {"comparator_output": 15,"length_in_seconds": 128,"sound_event": {"sound_id": "_your_namespace:shazinho"},"description": {"translate": "_your_namespace.shazinho"}}},"id": "_your_namespace:shazinho","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}},"item_name": {"translate": "_your_namespace.miscellaneous","color": "white"},"jukebox_playable": "_your_namespace:shazinho","max_stack_size": 1,"rarity": "rare","item_model": "_your_namespace:shazinho","lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},[{"text":" ","italic": true,"color": "blue"}, {"translate": "_your_namespace.extensive_template"}]]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_6"}},
-				"#\n",
-				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+				{"text": "","shadow_color": [0,0,0,0]},
+				{"text": "耢\n","font": "_your_namespace:manual","color": "white"},
+				[{"text":"\n\n\n\n\n\n\n","color": "black"}, {"translate": "_your_namespace.the_text_above_is_baked_into_the_page_texture"}],
+				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 			],
 			"width": 140
 		}

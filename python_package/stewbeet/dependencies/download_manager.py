@@ -209,22 +209,16 @@ def get_lib_paths(ctx: Context) -> list[DownloadedLib]:
 	ctx.cache["stewbeet"].timeout(days=30)
 	mc_t = mc_tuple(ctx)
 	mc_v = mc_str(ctx)
-	results: list[DownloadedLib] = []
 
+	# Collect every lib to resolve first, then fetch them in parallel (network bound);
+	# results keep the input order because weld merges packs in this order.
+	tasks: list[tuple[str, JsonDict, str]] = []
 	for lib_ns, lib_data in OFFICIAL_LIBS.items():
 		if not lib_data.get("is_used", False):
 			continue
 		source = lib_data.get("source", "")
-		if source == "smithed":
-			r = resolve_smithed_lib(ctx, lib_ns, lib_data, mc_t)
-		elif source == "modrinth":
-			r = resolve_modrinth_lib(ctx, lib_ns, lib_data, mc_v)
-		elif source == "static":
-			r = resolve_static_lib(ctx, lib_ns, lib_data, mc_t, mc_v)
-		else:
-			continue
-		if r:
-			results.append(r)
+		if source in ("smithed", "modrinth", "static"):
+			tasks.append((lib_ns, lib_data, source))
 
 	# Also process custom load_dependencies entries that specify a source
 	load_deps: JsonDict = ctx.meta.get("stewbeet", {}).get("load_dependencies", {})
@@ -232,17 +226,21 @@ def get_lib_paths(ctx: Context) -> list[DownloadedLib]:
 		source = lib_data.get("source", "")
 		if not source:
 			continue  # old-format entry with explicit version — nothing to download
-		if source == "smithed":
-			r = resolve_smithed_lib(ctx, lib_ns, lib_data, mc_t)
-		elif source == "modrinth":
-			r = resolve_modrinth_lib(ctx, lib_ns, lib_data, mc_v)
-		elif source == "static":
-			r = resolve_static_lib(ctx, lib_ns, lib_data, mc_t, mc_v)
+		if source in ("smithed", "modrinth", "static"):
+			tasks.append((lib_ns, lib_data, source))
 		else:
 			stp.warning(f"Unknown source '{source}' for load_dependency '{lib_ns}'. Skipping download.")
-			continue
-		if r:
-			results.append(r)
+
+	def resolve(task: tuple[str, JsonDict, str]) -> DownloadedLib | None:
+		lib_ns, lib_data, source = task
+		if source == "smithed":
+			return resolve_smithed_lib(ctx, lib_ns, lib_data, mc_t)
+		if source == "modrinth":
+			return resolve_modrinth_lib(ctx, lib_ns, lib_data, mc_v)
+		return resolve_static_lib(ctx, lib_ns, lib_data, mc_t, mc_v)
+
+	resolved: list[DownloadedLib | None] = stp.multithreading(resolve, tasks, max_workers=min(8, len(tasks))) if tasks else []
+	results: list[DownloadedLib] = [r for r in resolved if r]
 
 	BUILD_CACHE[cache_key] = results
 	return results

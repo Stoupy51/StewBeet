@@ -3,7 +3,7 @@
 	"title": [
 		"",
 		{
-			"sprite": "_your_namespace:item/dialog_sprite/stewbeet_painting",
+			"sprite": "_your_namespace:item/dialog_sprite/shazinho",
 			"shadow_color": [
 				0,
 				0,
@@ -14,12 +14,12 @@
 		},
 		" ",
 		{
-			"translate": "_your_namespace.stewbeet_painting",
+			"translate": "_your_namespace.shazinho",
 			"underlined": true
 		},
 		" ",
 		{
-			"sprite": "_your_namespace:item/dialog_sprite/stewbeet_painting",
+			"sprite": "_your_namespace:item/dialog_sprite/shazinho",
 			"shadow_color": [
 				0,
 				0,
@@ -35,10 +35,10 @@
 			"contents": [
 				{"text": "V   ","font": "_your_namespace:manual","color": "white"},
 				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_28"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"}," (28)"]}},
-				" ",
+				{"text": "4","font": "_your_namespace:manual","color": "white","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_1"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_first_page"}]}},
 				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_30"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"}," (30)"]}},
 				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_28"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"}," (28)"]}},
-				" ",
+				{"text": " ","font": "_your_namespace:manual","color": "white","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_1"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_first_page"}]}},
 				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_30"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"}," (30)"]}}
 			],
 			"width": 400
@@ -47,34 +47,9 @@
 			"type": "minecraft:plain_message",
 			"contents": [
 				{"text": "","font": "_your_namespace:manual","color": "white","shadow_color": [0,0,0,0]},
-				"\"$6\n\"",
-				{"text": "$腜$腜$腜","hover_event": {"action": "show_item","id": "minecraft:egg","components": {}}},
-				"  \n\"",
-				{"text": "U$U$U$","hover_event": {"action": "show_item","id": "minecraft:egg","components": {}}},
-				"  \n\"",
-				{"text": "$腜","hover_event": {"action": "show_item","id": "minecraft:egg","components": {}}},
-				{"text": "$腝","hover_event": {"action": "show_item","id": "minecraft:beetroot","components": {}}},
-				{"text": "$腜","hover_event": {"action": "show_item","id": "minecraft:egg","components": {}}},
-				"\"\"",
-				{"text": "$$聍","hover_event": {"action": "show_item","id": "painting","components": {"painting/variant": "_your_namespace:stewbeet_painting","item_model": "_your_namespace:stewbeet_painting","item_name": {"translate": "_your_namespace.stewbeet_painting"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},[{"text":" ","italic": true,"color": "blue"}, {"translate": "_your_namespace.extensive_template"}]]],"custom_data": {"_your_namespace": {"stewbeet_painting": true},"smithed": {"id": "_your_namespace:stewbeet_painting","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}}}},
-				"#$\n\"",
-				{"text": "U$","hover_event": {"action": "show_item","id": "minecraft:egg","components": {}}},
-				{"text": "U$","hover_event": {"action": "show_item","id": "minecraft:beetroot","components": {}}},
-				{"text": "U$","hover_event": {"action": "show_item","id": "minecraft:egg","components": {}}},
-				"\"\"",
-				{"text": "U$","hover_event": {"action": "show_item","id": "painting","components": {"painting/variant": "_your_namespace:stewbeet_painting","item_model": "_your_namespace:stewbeet_painting","item_name": {"translate": "_your_namespace.stewbeet_painting"},"lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},[{"text":" ","italic": true,"color": "blue"}, {"translate": "_your_namespace.extensive_template"}]]],"custom_data": {"_your_namespace": {"stewbeet_painting": true},"smithed": {"id": "_your_namespace:stewbeet_painting","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}}}},
-				"#$\n\"",
-				{"text": "$腜$腜$腜","hover_event": {"action": "show_item","id": "minecraft:egg","components": {}}},
-				"  \n\"",
-				{"text": "U$U$U$","hover_event": {"action": "show_item","id": "minecraft:egg","components": {}}},
-				"  \n\n",
-				{"text": "2##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$腜"},{"text": "$腜"},{"text": "$腜"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$腜"},{"text": "$腝"},{"text": "$腜"},"\"\"",{"text": "$$聍"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$腜"},{"text": "$腜"},{"text": "$腜"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x8 ","color": "gray"},{"translate": "_your_namespace.egg","color": "gray"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.beetroot","color": "gray"}]}},
-				{"text": "2##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$腢"},{"text": "$腢"},{"text": "$腢"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$腢"},{"text": "$腝"},{"text": "$腢"},"\"\"",{"text": "$$聍"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$腢"},{"text": "$腢"},{"text": "$腢"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x8 ","color": "gray"},{"translate": "_your_namespace.blue_egg","color": "gray"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.beetroot","color": "gray"}]}},
-				{"text": "2\n","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$腥"},{"text": "$腥"},{"text": "$腥"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$腥"},{"text": "$腝"},{"text": "$腥"},"\"\"",{"text": "$$聍"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$腥"},{"text": "$腥"},{"text": "$腥"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x8 ","color": "gray"},{"translate": "_your_namespace.brown_egg","color": "gray"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.beetroot","color": "gray"}]}},
-				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$腜"},{"text": "$腜"},{"text": "$腜"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$腜"},{"text": "$腝"},{"text": "$腜"},"\"\"",{"text": "$$聍"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$腜"},{"text": "$腜"},{"text": "$腜"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x8 ","color": "gray"},{"translate": "_your_namespace.egg","color": "gray"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.beetroot","color": "gray"}]}},
-				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$腢"},{"text": "$腢"},{"text": "$腢"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$腢"},{"text": "$腝"},{"text": "$腢"},"\"\"",{"text": "$$聍"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$腢"},{"text": "$腢"},{"text": "$腢"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x8 ","color": "gray"},{"translate": "_your_namespace.blue_egg","color": "gray"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.beetroot","color": "gray"}]}},
-				{"text": "0","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$腥"},{"text": "$腥"},{"text": "$腥"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$腥"},{"text": "$腝"},{"text": "$腥"},"\"\"",{"text": "$$聍"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$腥"},{"text": "$腥"},{"text": "$腥"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x8 ","color": "gray"},{"translate": "_your_namespace.brown_egg","color": "gray"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.beetroot","color": "gray"}]}},
-				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+				"聹\n",
+				{"text": "  \n  \n  \n  \n","hover_event": {"action": "show_item","id": "command_block","components": {"custom_data": {"_your_namespace": {"shazinho": true},"smithed": {"dict": {"record": {"shazinho": true,"item_name": "Shazinho"},"jukebox_song": {"comparator_output": 15,"length_in_seconds": 128,"sound_event": {"sound_id": "_your_namespace:shazinho"},"description": {"translate": "_your_namespace.shazinho"}}},"id": "_your_namespace:shazinho","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}},"item_name": {"translate": "_your_namespace.music_disc","italic": false},"jukebox_playable": "_your_namespace:shazinho","max_stack_size": 1,"rarity": "rare","item_model": "_your_namespace:shazinho","lore": [["",{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},[{"text":" ","italic": true,"color": "blue"}, {"translate": "_your_namespace.extensive_template"}]]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_29"}},
+				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 			],
 			"width": 140
 		}

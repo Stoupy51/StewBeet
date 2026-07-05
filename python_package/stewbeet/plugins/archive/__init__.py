@@ -1,8 +1,10 @@
 
 # Imports
+import io
 import os
 import time
 import zipfile
+from typing import IO, Any, Literal
 from zipfile import ZipInfo
 
 import stouputils as stp
@@ -34,6 +36,60 @@ def get_consistent_timestamp(ctx: Context) -> tuple[int, int, int, int, int, int
 	return default_time
 
 
+class ConstantTimeZipFile(zipfile.ZipFile):
+	""" ZipFile that forces a constant timestamp and normalized metadata on every entry.
+
+	Replaces the old two-pass approach (dump to zip, read everything back, re-deflate with
+	fixed timestamps): every write path used by ``pack.dump()`` (``open(mode="w")``,
+	``writestr`` and ``write``) goes through a fresh :class:`ZipInfo` carrying the constant
+	``date_time``, so a single compression pass produces the exact same bytes.
+
+	Entries whose name is in ``skip_names`` are silently dropped (used to replace
+	``pack.mcmeta``/``pack.png`` with fixed content afterwards via :meth:`force_writestr`).
+	"""
+
+	def __init__(self, *args: Any, date_time: tuple[int, int, int, int, int, int], skip_names: tuple[str, ...] = (), **kwargs: Any) -> None:
+		super().__init__(*args, **kwargs)
+		self.date_time: tuple[int, int, int, int, int, int] = date_time
+		self.skip_names: set[str] = set(skip_names)
+
+	def _forced_info(self, name: str) -> ZipInfo:
+		info = ZipInfo(filename=name)
+		info.date_time = self.date_time
+		info.compress_type = zipfile.ZIP_DEFLATED
+		return info
+
+	def open(self, name: str | ZipInfo, mode: Literal["r", "w"] = "r", pwd: bytes | None = None, *, force_zip64: bool = False) -> IO[bytes]:
+		if mode != "w":
+			return super().open(name, mode, pwd, force_zip64=force_zip64)
+		filename: str = name.filename if isinstance(name, ZipInfo) else name
+		if filename in self.skip_names:
+			return io.BytesIO()  # Discard the content, the caller will write a fixed version
+		return super().open(self._forced_info(filename), mode, pwd, force_zip64=force_zip64)
+
+	def writestr(self, zinfo_or_arcname: str | ZipInfo, data: Any, compress_type: int | None = None, compresslevel: int | None = None) -> None:
+		filename: str = zinfo_or_arcname.filename if isinstance(zinfo_or_arcname, ZipInfo) else zinfo_or_arcname
+		if filename in self.skip_names:
+			return
+		super().writestr(self._forced_info(filename), data, compress_type, compresslevel)
+
+	def write(self, filename: Any, arcname: Any = None, compress_type: int | None = None, compresslevel: int | None = None) -> None:
+		name: str = str(arcname if arcname is not None else filename)
+		if name in self.skip_names:
+			return
+		with open(filename, "rb") as f:
+			super().writestr(self._forced_info(name), f.read(), compress_type, compresslevel)
+
+	def force_writestr(self, name: str, data: bytes) -> None:
+		""" Write an entry with the constant timestamp, bypassing ``skip_names``.
+
+		Drops ``name`` from ``skip_names`` first: ``ZipFile.writestr`` internally goes through
+		``self.open`` which would otherwise discard the entry again.
+		"""
+		self.skip_names.discard(name)
+		self.writestr(name, data)
+
+
 # Main entry point
 @stp.measure_time(message="Execution time of 'stewbeet.plugins.archive'")
 def beet_default(ctx: Context) -> None:
@@ -54,6 +110,11 @@ def beet_default(ctx: Context) -> None:
 	os.makedirs(Mem.ctx.output_directory, exist_ok=True)
 
 	consistent_time: tuple[int, int, int, int, int, int] = get_consistent_timestamp(Mem.ctx)
+	pack_png_path: str = find_pack_png() or ""
+	pack_png_content: bytes = b""
+	if pack_png_path:
+		with open(pack_png_path, "rb") as f:
+			pack_png_content = f.read()
 
 	# Create archives for each pack
 	@stp.handle_error
@@ -75,43 +136,21 @@ def beet_default(ctx: Context) -> None:
 		# Create archive filename
 		archive_path = f"{Mem.ctx.output_directory}/{pack_name}_{pack_type}.zip"
 
-		# Create zip archive using pack.dump() to avoid interfering with existing directories
-		# This approach writes pack contents directly to a zip file without modifying the original pack structure
-
-		# First pass: Create the zip file normally
+		# Single pass: dump the pack through a ZipFile that forces consistent timestamps,
+		# replacing pack.png with the project's icon (appended last, like the old two-pass code).
 		@stp.retry(exceptions=Exception, max_attempts=10, delay=0.5)
 		def dump_with_retry():
-			with zipfile.ZipFile(archive_path, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=6) as zip_file:
+			skip_names: tuple[str, ...] = ("pack.png",) if pack_png_path else ()
+			with ConstantTimeZipFile(
+				archive_path, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=6,
+				date_time=consistent_time, skip_names=skip_names,
+			) as zip_file:
 				pack.dump(zip_file)
+				if pack_png_path:
+					zip_file.force_writestr("pack.png", pack_png_content)
 		dump_with_retry()
 
-		# Second pass: Read all contents and recreate with consistent timestamps
-		# This is necessary because beet's dump() uses origin.open() which bypasses writestr() completely
-		temp_contents: dict[str, bytes] = {}
-		with zipfile.ZipFile(archive_path, "r") as temp_zip:
-			for item in temp_zip.filelist:
-				temp_contents[item.filename] = temp_zip.read(item.filename)
-
-		# Check if pack.png exists and prepare it
-		pack_png_path = find_pack_png()
-		if pack_png_path:
-			# Remove pack.png from temp_contents if it exists to avoid duplicates
-			temp_contents.pop("pack.png", None)
-
-			# Read pack.png content
-			with open(pack_png_path, "rb") as f:
-				temp_contents["pack.png"] = f.read()
-
-		# Recreate the zip file with proper timestamps and compression
-		with zipfile.ZipFile(archive_path, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=6) as final_zip:
-			for filename, content in temp_contents.items():
-				info = ZipInfo(filename=filename)
-				info.date_time = consistent_time
-				info.compress_type = zipfile.ZIP_DEFLATED
-				final_zip.writestr(info, content)
-
-	# Process each pack in parallel
-	#stp.multithreading(handle_pack, Mem.ctx.packs, max_workers=len(Mem.ctx.packs))
-	for pack in Mem.ctx.packs:
-		handle_pack(pack)
+	# Process each pack in parallel (zlib compression releases the GIL)
+	packs = list(Mem.ctx.packs)
+	stp.multithreading(handle_pack, packs, max_workers=max(1, len(packs)))
 

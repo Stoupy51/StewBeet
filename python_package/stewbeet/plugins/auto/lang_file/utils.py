@@ -574,6 +574,10 @@ def handle_file(content: TextFileBase[str] | None, ctx: Context | None = None) -
 	else:
 		raise ValueError(f"Unsupported content type: {type(content)}")
 
+	# Fast path: TEXT_RE requires a literal "text" key, so skip the regex machinery entirely
+	if "text" not in string:
+		return
+
 	matches: list[tuple[str, int, int, str, str | None]] = extract_texts(string)
 
 	# Collect (replace_start, replace_end, new_fragment) in reverse-position order,

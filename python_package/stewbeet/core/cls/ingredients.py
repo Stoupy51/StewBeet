@@ -137,7 +137,6 @@ class Ingr(dict[str, Any]):
 			return namespace + ":" + id
 		return id
 
-	@stp.simple_cache
 	def to_name(self) -> str:
 		""" Get the name of the ingredient, ex: "Stick" or "Adamantium Ingot" """
 		return item_id_to_name(self.to_id(add_namespace=True))

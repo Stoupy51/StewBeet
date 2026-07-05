@@ -1,6 +1,6 @@
 {
 	"type": "minecraft:crafting_shapeless",
-	"category": "blocks",
+	"category": "building",
 	"group": "vb_block_states",
 	"ingredients": [
 		"minecraft:furnace",

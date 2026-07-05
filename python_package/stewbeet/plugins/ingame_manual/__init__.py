@@ -1,60 +1,57 @@
+"""ingame_manual — modern, extensible, dialog-first in-game manual generator.
+
+Opt in by replacing ``stewbeet.plugins.ingame_manual`` with ``stewbeet.plugins.ingame_manual``
+in your beet pipeline. See :mod:`.api` (`get_manual`, `Page` subclasses, `Phase`, `ButtonLayout`,
+`BakedText`) for the customization API.
+"""
 
 # Imports
+import os
+import shutil
 import sys
 
 import stouputils as stp
 from beet import Context
-from stouputils.typing import JsonDict
 
 from ...core.__memory__ import Mem
-from .main import manual_main
-from .shared_import import DEFAULT_NEXT_CRAFT_FONT, SharedMemory
+from .api import get_manual
+from .config import ManualConfig
+from .iso_renders import generate_all_iso_renders
+from .paths import MANUAL_ASSETS_PATH, TEMPLATES_PATH
+from .special import register_heavy_workbench
 
 
-# Main entry point
+def copy_templates(config: ManualConfig) -> None:
+	""" Copy bundled assets (and optional manual_overrides) into the temporary templates dir. """
+	shutil.copytree(MANUAL_ASSETS_PATH + "/assets", TEMPLATES_PATH, dirs_exist_ok=True)
+	if config.manual_overrides and os.path.exists(config.manual_overrides):
+		shutil.copytree(config.manual_overrides, TEMPLATES_PATH, dirs_exist_ok=True)
+
+
 @stp.measure_time(message="Execution time of 'stewbeet.plugins.ingame_manual'")
-def beet_default(ctx: Context):
-	""" Main entry point for the ingame manual plugin.
-	This plugin generates an in-game manual/guide book with item information and crafting recipes.
-
-	Args:
-		ctx (Context): The beet context.
-	"""
-	# Set up memory context
-	if Mem.ctx is None: # pyright: ignore[reportUnnecessaryComparison]
+@stp.handle_error(message="An error occurred while generating the in-game manual", error_log=stp.LogLevels.ERROR_TRACEBACK)
+def beet_default(ctx: Context) -> None:
+	""" Entry point: build the manual (reusing any Manual registered during setup). """
+	if Mem.ctx is None:  # pyright: ignore[reportUnnecessaryComparison]
 		Mem.ctx = ctx
 
-	# Only generate manual if we have definitions items
 	if not Mem.definitions:
 		stp.warning("Database is empty, skipping manual generation.", file=sys.stdout)
 		return
 
-	# Assertions
-	assert ctx.project_id, "Project ID is not set. Please set it in the project configuration."
-	assert ctx.project_name, "Project name is not set. Please set it in the project configuration."
-	assert ctx.project_author, "Project author is not set. Please set it in the project configuration."
-	assert ctx.output_directory, "Output directory must be specified in the project configuration."
-	stewbeet: JsonDict = ctx.meta.get("stewbeet", {})
-	assert stewbeet, "stewbeet configuration is not set. Please set it in the project configuration."
-	assert stewbeet.get("textures_folder"), "Textures folder is not set. Please set it in the project configuration."
-	manual_config: JsonDict = stewbeet.get("manual", {})
-	assert manual_config, "Manual configuration is not set. Please set it in the project configuration."
+	# Reuse the Manual the developer may have created during setup, else create it now.
+	manual = get_manual()
+	config = manual.config
 
-	# Reset shared memory (in case of `beet watch`)
-	SharedMemory.next_craft_font = DEFAULT_NEXT_CRAFT_FONT
-	SharedMemory.font_providers = []
-	SharedMemory.manual_pages = []
+	# Prepare assets, register special blocks, render item textures, then build.
+	copy_templates(config)
+	os.makedirs(f"{config.cache_path}/font/page", exist_ok=True)
+	os.makedirs(f"{config.cache_path}/font/wiki_icons", exist_ok=True)
+	os.makedirs(f"{config.cache_path}/font/high_res", exist_ok=True)
+	register_heavy_workbench()
+	generate_all_iso_renders(config)
+	manual.build()
 
-	# Set up manual path
-	SharedMemory.cache_path = manual_config.get("cache_path", "")
-	assert SharedMemory.cache_path, "Manual cache path is not set. Please set it in the project configuration."
-
-	# Set up high resolution in the shared_import module
-	SharedMemory.high_resolution = manual_config.get("high_resolution", True)
-
-	# Set up use_dialog in the shared_import module
-	SharedMemory.use_dialog = manual_config.get("use_dialog", 0)
-
-	# Call the main manual generation function
-	manual_main()
+	# Reset so `beet watch` starts each cycle with a fresh, hook-free Manual.
+	Mem.manual = None
 

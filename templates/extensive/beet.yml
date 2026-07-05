@@ -10,14 +10,14 @@ author: "Stoupy51"
 # Project version in semantic versioning format: major.minor.patch (e.g., 1.0.0 or 2.84.615).
 version: "3.0.0"
 # Minecraft version. Determines what resources beet loads (plugins like `mecha` determine what commands to use). Defaults: Latest
-minecraft: "26.2"
+minecraft: "26.1"
 
 # Defines the directory that beet uses for the base path
 directory: "."
 # Path to a folder for beet to output. If not defined, no files will visibly output
 output: "build"
 # List of files or glob patterns that should be ignored by the file watcher and not cause any rebuild when using `$ beet watch`
-ignore: ["build", "manual_cache", "definitions_debug.json"]
+ignore: ["build", "manual_cache", "definitions_debug.json", "external_definitions.json"]
 
 # A list of importable plugin strings
 require:
@@ -144,9 +144,7 @@ meta:
             cache_path: "manual_cache"
             # Enables caching of Minecraft assets and item renders
             cache_assets: true
-            # Enables caching of manual content and images
-            cache_pages: false
-            # Path for manual debug dump
+            # Path for manual debug dump (debug only; not a cache)
             json_dump_path: "manual_cache/content.json"
             # Manual title used in book and first page. Defaults to "{name} Manual"
             name: ""
@@ -158,6 +156,6 @@ meta:
             first_page_text: [{"text":"Modify in beet.yml the text that will be shown in this first manual page", "color":"#505050"}]
             # Controls generation of showcase images: 0=disabled, 1=manual items only, 2=all project items, 3=both
             showcase_image: 3
-            # Use dialog system instead of a book (dialogs requires server restart to take effect)
-            use_dialog: 1 # 0 = no, 1 = yes, 2 = yes and no book
+            # Dialog-first manual (ingame_manual). 1 = dialog + manual item, 2 = dialog only (no item).
+            use_dialog: 1
 

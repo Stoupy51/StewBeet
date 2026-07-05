@@ -5,6 +5,7 @@ from stewbeet import *  # type: ignore
 
 # Additional imports (specific to this project)
 from .definitions.additions import main as main_additions
+from .definitions.manual_customization import main as main_manual_customization
 from .definitions.ores import main as main_ores
 
 
@@ -34,6 +35,9 @@ def beet_default(ctx: Context):
     add_private_custom_data_for_namespace()		# Add a custom namespace for easy item detection
     add_smithed_ignore_vanilla_behaviours_convention()	# Smithed items convention
     set_manual_components(white_list=["item_name", "lore", "custom_name", "damage", "max_damage"]) # Components to include in the manual when hovering items (here is the default list)
+
+    # Customize the in-game manual using the ingame_manual API (custom pages, hooks, button layout)
+    main_manual_customization()
 
     # Debug purposes: export all definitions to a single json file
     export_all_definitions_to_json(f"{Mem.ctx.directory}/definitions_debug.json")
