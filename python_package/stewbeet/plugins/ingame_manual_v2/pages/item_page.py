@@ -110,6 +110,11 @@ class ItemPage(Page):
 			# WikiButton info buttons
 			info_buttons += self.wiki_info_buttons(obj)
 
+			# Growing seed info button (right after the other info buttons)
+			gs_button = recipes.growing_seed_button(obj) if obj is not None else None
+			if gs_button is not None:
+				info_buttons.append(gs_button)
+
 			# One button per craft (skip consecutive duplicate results)
 			previous_result = None
 			for idx, craft in enumerate(crafts):
@@ -119,11 +124,6 @@ class ItemPage(Page):
 					continue
 				previous_result = current_result
 				info_buttons.append(recipes.render_button(craft, name, idx))
-
-			# NEW: growing seed info button
-			gs_button = recipes.growing_seed_button(name, obj) if obj is not None else None
-			if gs_button is not None:
-				info_buttons.append(gs_button)
 
 		# Combine with the page's button layout
 		self.buttons = info_buttons

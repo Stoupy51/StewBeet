@@ -22,14 +22,10 @@ from .special import register_heavy_workbench
 
 
 def copy_templates(config: ManualConfig) -> None:
-	""" Copy bundled assets (and optional manual_overrides) into the runtime templates dir. """
-	with stp.super_open(f"{TEMPLATES_PATH}/.gitignore", "w") as f:
-		f.write("*")
+	""" Copy bundled assets (and optional manual_overrides) into the temporary templates dir. """
 	shutil.copytree(MANUAL_ASSETS_PATH + "/assets", TEMPLATES_PATH, dirs_exist_ok=True)
 	if config.manual_overrides and os.path.exists(config.manual_overrides):
 		shutil.copytree(config.manual_overrides, TEMPLATES_PATH, dirs_exist_ok=True)
-		with stp.super_open(f"{TEMPLATES_PATH}/.gitignore", "w") as f:
-			f.write("*")
 
 
 @stp.measure_time(message="Execution time of 'stewbeet.plugins.ingame_manual_v2'")
