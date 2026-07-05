@@ -1,6 +1,10 @@
 
 # 📖 Guide du Manuel en jeu StewBeet
 
+## ✨ Présentation des fonctionnalités
+
+<img src="../plugins/img/ingame_manual.gif" style="width: min(480px, 100%)">
+
 ## 📖 Définitions
 - **Manual** : L'objet orchestrateur qui possède la liste ordonnée des pages, le registre de glyphes/polices, le constructeur d'images, le rendu des recettes et les hooks développeur. Récupéré avec `get_manual()`.
 - **Page** : Une unité autonome rendue en composants de texte Minecraft. Sous-classes : `IntroPage`, `CategoryBrowserPage`, `CategoryPage`, `ItemPage`, ainsi que `CustomPage`, `TexturePage` et `RawPage` destinées aux développeurs.
