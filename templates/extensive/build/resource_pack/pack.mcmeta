@@ -1,9 +1,9 @@
 {
 	"pack": {
-		"pack_format": 84,
+		"pack_format": 88,
 		"description": "Extensive Template [3.0.0] by Stoupy51",
 		"min_format": [
-			84,
+			88,
 			0
 		],
 		"max_format": [
