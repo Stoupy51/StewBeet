@@ -1,3 +1,10 @@
+"""Isometric item renders + vanilla texture download.
+
+Ported from v1 ``iso_renders`` with the cache flag taken from :class:`~.config.ManualConfig`
+(``cache_assets``) instead of reading meta directly. This is an *asset* cache (skip
+already-generated PNGs because 3D rendering is expensive), unrelated to the removed v1
+page-content cache.
+"""
 
 # Imports
 import os
@@ -7,7 +14,6 @@ from typing import cast
 import requests
 import stouputils as stp
 from beet import Model
-from model_resolver.render import Render
 from stouputils.typing import JsonDict
 
 from ...core.__memory__ import Mem
@@ -17,7 +23,7 @@ from ...core.constants import (
 	DOWNLOAD_VANILLA_ASSETS_SOURCE,
 	DOWNLOAD_VANILLA_ASSETS_SPECIAL_RAW,
 )
-from .shared_import import SharedMemory
+from .config import ManualConfig
 
 
 def download_item(path: str, item: str, cache_assets: bool, destination: str = "") -> None:
@@ -62,11 +68,12 @@ def run_model_resolver(for_model_resolver: dict[str, str]) -> None:
 		Mem.ctx.assets["minecraft"].atlases["temporary_stewbeet"] = Mem.ctx.assets.overlays["before_format_73"]["minecraft"].atlases["blocks"]
 
 	stp.debug(f"Generating iso renders for {len(for_model_resolver)} items, this may take a while...")
-	render = Render(Mem.ctx)
-	for rp_path, dst_path in for_model_resolver.items():
-		render.add_model_task(rp_path, path_save=dst_path, animation_mode="one_file")
-	render.run()
-	stp.debug("Generated iso renders for all items")
+	with stp.MeasureTime(message="Generated iso renders for all items"):
+		from model_resolver.render import Render as ModelResolverRender
+		render = ModelResolverRender(Mem.ctx)
+		for rp_path, dst_path in for_model_resolver.items():
+			render.add_model_task(rp_path, path_save=dst_path, animation_mode="one_file")
+		render.run()
 
 	if any_atlas_used:
 		del Mem.ctx.assets["minecraft"].atlases["temporary_stewbeet"]
@@ -98,12 +105,8 @@ def download_vanilla_textures(path: str, used_vanilla_items: set[str], cache_ass
 	if not used_vanilla_items:
 		return
 	args = [(path, item, cache_assets) for item in used_vanilla_items]
-	stp.multithreading(
-		download_item,
-		args,
-		use_starmap=True,
-		max_workers=min(32, len(used_vanilla_items))
-	)
+	stp.multithreading(download_item, args, use_starmap=True, max_workers=min(32, len(used_vanilla_items)))
+
 
 def copy_painting_textures(path: str, ns: str, cache_assets: bool) -> None:
 	""" Download and copy painting textures for custom painting items. """
@@ -117,27 +120,25 @@ def copy_painting_textures(path: str, ns: str, cache_assets: bool) -> None:
 				shutil.copy(last_painting_path, f"{path}/{ns}/{item}.png")
 
 
-# Generate iso renders for every item in the definitions
-def generate_all_iso_renders(override_cache_path: str | None = None, ignore_vanilla: bool = False, ignore_painting: bool = False):
-	ns: str = Mem.ctx.project_id
-
-	# Create the items folder
-	path = override_cache_path or (SharedMemory.cache_path + "/items")
+def generate_all_iso_renders(
+	config: ManualConfig,
+	override_cache_path: str | None = None,
+	ignore_vanilla: bool = False,
+	ignore_painting: bool = False,
+) -> None:
+	""" Generate iso renders for every item plus download referenced vanilla textures. """
+	ns: str = config.project_id
+	path = override_cache_path or (config.cache_path + "/items")
 	os.makedirs(f"{path}/{ns}", exist_ok=True)
+	cache_assets: bool = config.cache_assets
 
-	cache_assets: bool = Mem.ctx.meta.get("stewbeet", {}).get("manual", {}).get("cache_assets", True)
-
-	# Build queue and run model resolver
 	for_model_resolver = build_model_resolver_queue(path, ns, cache_assets)
 	if for_model_resolver:
 		run_model_resolver(for_model_resolver)
 
-	# Download vanilla textures used in recipes
 	if not ignore_vanilla:
-		used_vanilla_items = collect_used_vanilla_items()
-		download_vanilla_textures(path, used_vanilla_items, cache_assets)
+		download_vanilla_textures(path, collect_used_vanilla_items(), cache_assets)
 
-	# Handle custom painting textures
 	if not ignore_painting:
 		copy_painting_textures(path, ns, cache_assets)
 

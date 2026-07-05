@@ -12,18 +12,18 @@
 
 ## 🧪 Examples
 📄 **Example File**: [extensive/src/definitions/manual_customization.py](../../templates/extensive/src/definitions/manual_customization.py) 🔗<br>
-📄 **Source Code**: [stewbeet/plugins/ingame_manual_v2/](../../python_package/stewbeet/plugins/ingame_manual_v2/) 🔗<br>
+📄 **Source Code**: [stewbeet/plugins/ingame_manual/](../../python_package/stewbeet/plugins/ingame_manual/) 🔗<br>
 
 ## 🔗 Dependencies
 - **✅ Required**: StewBeet framework (`from stewbeet import *`)
-- **📍 Position**: The `stewbeet.plugins.ingame_manual_v2` step in your `beet.yml` pipeline, after `custom_recipes` and before the datapack plugins
+- **📍 Position**: The `stewbeet.plugins.ingame_manual` step in your `beet.yml` pipeline, after `custom_recipes` and before the datapack plugins
 - **🧩 Customization**: Call `get_manual()` in your `setup_definitions` (after items are defined) to register pages and hooks
 - **🗨 Output**: Dialog-first — generates one Minecraft dialog per page, reachable through the vanilla **quick actions** menu (and the `manual` item in mode 1)
 
 ## 📋 Overview
-`ingame_manual_v2` generates an in-game manual from your `Mem.definitions` items: an introduction page, a category browser, one page per category, and one page per item with its recipes and wiki buttons. It is **dialog-first** (the old written-book NBT mode is removed) and fully **extensible** — you can edit any item's page, insert arbitrary pages (even unrelated to items), control button placement, and render pages backed by your own texture. Every public class of the API (`Page` subclasses, `ButtonLayout`, `BakedText`, `PageRef`, `CraftRenderer`, `Manual` itself...) is a Python **dataclass**.
+`ingame_manual` generates an in-game manual from your `Mem.definitions` items: an introduction page, a category browser, one page per category, and one page per item with its recipes and wiki buttons. It is **dialog-first** (the old written-book NBT mode is removed) and fully **extensible** — you can edit any item's page, insert arbitrary pages (even unrelated to items), control button placement, and render pages backed by your own texture. Every public class of the API (`Page` subclasses, `ButtonLayout`, `BakedText`, `PageRef`, `CraftRenderer`, `Manual` itself...) is a Python **dataclass**.
 
-**Opt in by replacing `stewbeet.plugins.ingame_manual` with `stewbeet.plugins.ingame_manual_v2`** in your pipeline.
+**Opt in by replacing `stewbeet.plugins.ingame_manual` with `stewbeet.plugins.ingame_manual`** in your pipeline.
 
 ## 🎯 Purpose
 - 📚 Auto-generate recipe pages for every item (crafting, smelting, smithing, stonecutting, mining, and custom recipe types)
@@ -240,7 +240,7 @@ Only `types` and `render_body` are required; `static_glyph` (high-res template g
 ---
 
 ## 🔄 Migration from v1
-- Switch the pipeline entry to `stewbeet.plugins.ingame_manual_v2`.
+- Switch the pipeline entry to `stewbeet.plugins.ingame_manual`.
 - `WikiButton` and `set_manual_components(...)` keep working unchanged.
 - Remove the `cache_pages` key and use `use_dialog: 1` or `2` (mode `0` is gone).
 - The `universal_manual` storage is no longer registered; the manual is opened from the vanilla quick actions menu.
