@@ -24,7 +24,7 @@ from .glyphs import (
 	WIKI_INGR_OF_CRAFT_FONT,
 	GlyphAllocator,
 )
-from .paths import TEMPLATES_PATH
+from .paths import template_path
 
 
 @dataclass(kw_only=True)
@@ -139,7 +139,7 @@ class GlyphImageBuilder:
 	def get_border_color(self) -> tuple[int, int, int, int]:
 		""" Border color from the top-right pixel of the case template, lightened (cached). """
 		if self._border_color is None:
-			img = Image.open(TEMPLATES_PATH + "/simple_case_no_border.png")
+			img = Image.open(template_path("simple_case_no_border.png"))
 			width = img.size[0]
 			pixel = img.getpixel((width - 1, 0))
 			if isinstance(pixel, tuple) and len(pixel) >= 3:
@@ -151,8 +151,7 @@ class GlyphImageBuilder:
 
 	def load_simple_case_no_border(self, high_res: bool) -> Image.Image:
 		""" Load the case template, widened by one pixel column in high-res mode. """
-		path = f"{TEMPLATES_PATH}/simple_case_no_border.png"
-		img = Image.open(path)
+		img = Image.open(template_path("simple_case_no_border.png"))
 		if not high_res:
 			return img
 		middle_x = img.size[0] // 2
@@ -168,7 +167,7 @@ class GlyphImageBuilder:
 		img = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
 		draw = ImageDraw.Draw(img)
 		font_size: int = 16 if len(count) < 3 else 8
-		font = ImageFont.truetype(f"{TEMPLATES_PATH}/minecraft_font.ttf", size=font_size)
+		font = ImageFont.truetype(template_path("minecraft_font.ttf"), size=font_size)
 		text_width = draw.textlength(count, font=font)
 		text_height = font_size + 4
 		shadow_offset: int = 0 if font_size == 16 else 1
@@ -239,7 +238,7 @@ class GlyphImageBuilder:
 		else:
 			result_texture = Image.open(image_path)
 
-		template = Image.open(f"{TEMPLATES_PATH}/simple_case_no_border.png")
+		template = Image.open(template_path("simple_case_no_border.png"))
 		factor: int = 1
 		if self.config.high_resolution:
 			factor_float: float = 256 / template.size[0]
@@ -276,7 +275,7 @@ class GlyphImageBuilder:
 				item_texture = careful_resize(item_texture, item_res_adjusted).convert("RGBA")
 
 				filename: str = "wiki_ingredient_of_craft_template.png" if craft_type != "mining" else "wiki_mining_template.png"
-				template = Image.open(f"{TEMPLATES_PATH}/{filename}")
+				template = Image.open(template_path(filename))
 				template = careful_resize(template, item_res)
 				offset = (item_res - item_res_adjusted) // 2
 				template.paste(item_texture, (offset, offset), item_texture)
@@ -296,7 +295,7 @@ class GlyphImageBuilder:
 		out = background.convert("RGBA").copy()
 		draw = ImageDraw.Draw(out)
 		for bt in baked_texts:
-			font_path = bt.font_path or f"{TEMPLATES_PATH}/minecraft_font.ttf"
+			font_path = bt.font_path or template_path("minecraft_font.ttf")
 			font = ImageFont.truetype(font_path, size=bt.font_size)
 			x, y = bt.xy
 			if bt.align in ("center", "right"):
