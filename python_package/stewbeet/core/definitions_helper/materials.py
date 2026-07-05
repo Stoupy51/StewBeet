@@ -161,8 +161,8 @@ def generate_everything_about_this_material(
 		return False
 
 	# Process top and bottom armor layers
-	top_layer: bool = handle_armor_layer(1, ["helmet", "chestplate"], "humanoid")
-	bottom_layer: bool = handle_armor_layer(2, ["leggings", "boots"], "humanoid_leggings")
+	top_layer: bool = handle_armor_layer(1, ["helmet", "chestplate", "boots"], "humanoid")
+	bottom_layer: bool = handle_armor_layer(2, ["leggings"], "humanoid_leggings")
 
 	# Create equipment asset if any layers were processed
 	if top_layer or bottom_layer:
@@ -216,7 +216,7 @@ def generate_everything_about_this_material(
 				if equipments_config:
 					gear_config = VanillaEquipments.BOOTS.value[equipments_config.equivalent_to]
 					obj.components["max_damage"] = int(gear_config["durability"] * durability_factor)
-				if bottom_layer:
+				if top_layer:
 					obj.components["equippable"] = {"slot":"feet", "asset_id":f"{Mem.ctx.project_id}:{material_base}"}
 			if equipments_config:
 				obj.components["attribute_modifiers"] = format_attributes(equipments_config.get_armor_attributes(), SLOTS[gear], gear_config)
