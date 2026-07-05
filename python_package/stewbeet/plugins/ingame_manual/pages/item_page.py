@@ -46,7 +46,7 @@ class ItemPage(Page):
 	""" The wiki buttons rendered on the page (populated during :meth:`build`). """
 
 	@classmethod
-	def for_item(cls, item_id: str, **kwargs: Any) -> "ItemPage":
+	def for_item(cls, item_id: str, **kwargs: Any) -> ItemPage:
 		""" Convenience constructor producing a page anchored at ``item:<id>``. """
 		return cls(anchor=f"item:{item_id}", item_id=item_id, title=item_id_to_name(item_id), **kwargs)
 
@@ -203,7 +203,7 @@ class ItemPage(Page):
 		return component
 
 	def place_button_grid(
-		self, content: list[TextComponent], buttons: list[WikiButtonRender], layout: ButtonLayout, manual: "Manual", recipe_end: int,
+		self, content: list[TextComponent], buttons: list[WikiButtonRender], layout: ButtonLayout, manual: Manual, recipe_end: int,
 	) -> list[TextComponent]:
 		""" Splice the button grid into ``content`` where ``layout.position`` asks for.
 

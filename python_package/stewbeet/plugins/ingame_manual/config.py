@@ -97,7 +97,7 @@ class ManualConfig:
 		return f"{self.project_id}:manual"
 
 	@classmethod
-	def from_meta(cls, ctx: Context) -> "ManualConfig":
+	def from_meta(cls, ctx: Context) -> ManualConfig:
 		""" Build a :class:`ManualConfig` from the beet context meta. """
 		assert ctx.project_id, "Project ID is not set."
 		assert ctx.project_name, "Project name is not set."
