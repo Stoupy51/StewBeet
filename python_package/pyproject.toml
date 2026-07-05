@@ -8,7 +8,7 @@ module-root = ""
 
 [project]
 name = "stewbeet"
-version = "3.4.1"
+version = "3.4.3"
 description = "Beet Framework made to help generating advanced Minecraft datapack contents"
 readme = "README.md"
 license = "MIT"
@@ -24,7 +24,7 @@ authors = [
     { name = "Stoupy51", email = "stoupy51@gmail.com" },
 ]
 dependencies = [
-	"stouputils>=1.29.3",
+	"stouputils>=1.29.4",
 	"model_resolver>=1.15.2",
 	"beet>=0.116.0",
 	"bolt>=0.50.1",
