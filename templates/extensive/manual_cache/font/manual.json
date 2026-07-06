@@ -130,6 +130,7 @@
 		{"type": "bitmap","file": "_your_namespace:font/mining.png","ascent": -3,"height": 58,"chars": ["P"]},
 		{"type": "bitmap","file": "_your_namespace:font/book.png","ascent": 25,"height": 300,"chars": ["V"]},
 		{"type": "bitmap","file": "_your_namespace:font/home.png","ascent": 8,"height": 20,"chars": ["4"]},
-		{"type": "bitmap","file": "_your_namespace:font/page/book_welcome.png","ascent": 25,"height": 300,"chars": ["肊"]}
+		{"type": "bitmap","file": "_your_namespace:font/page/book_welcome.png","ascent": 25,"height": 300,"chars": ["肊"]},
+		{"type": "bitmap","file": "_your_namespace:font/page/home_welcome.png","ascent": 8,"height": 20,"chars": ["肋"]}
 	]
 }

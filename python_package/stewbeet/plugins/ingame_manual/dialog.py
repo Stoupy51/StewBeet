@@ -132,12 +132,19 @@ class DialogEmitter:
 				"click_event": {"action": "show_dialog", "dialog": next_dialog_id},
 				"hover_event": {"action": "show_text", "value": [{"text": "Go to next page"}, f" ({next_index + 1})"]},
 			}
-			# Book background: the page's own override glyph if it set book_texture, else the shared one.
+			# Book background & home button: the page's own override glyphs if set, else the shared ones.
 			book_font: str = page_obj.book_font if page_obj is not None and page_obj.book_font else BOOK_FONT
+			home_font: str = page_obj.home_font if page_obj is not None and page_obj.home_font else HOME_FONT
 			nav_contents: list[TextComponent] = [{"text": book_font + NONE_FONT * 3, "font": f"{ns}:manual", "color": "white"}]
+			# No home button on the first page (it IS the home page) or when the page opts out.
+			hide_home: bool = page_index == 0 or (page_obj is not None and not page_obj.home_button)
 			for row in range(2):
 				nav_contents.append({"text": "\n" + NONE_FONT * 3, **prev_event})
-				nav_contents.append({"text": (HOME_FONT if row == 0 else NONE_FONT), "font": f"{ns}:manual", "color": "white", **home_event})
+				if hide_home:
+					# Keep the spacing but drop the button
+					nav_contents.append({"text": NONE_FONT, "font": f"{ns}:manual", "color": "white"})
+				else:
+					nav_contents.append({"text": (home_font if row == 0 else NONE_FONT), "font": f"{ns}:manual", "color": "white", **home_event})
 				nav_contents.append({"text": NONE_FONT * 3, **next_event})
 
 			dialog: JsonDict = {
@@ -185,3 +192,4 @@ execute if items entity @s weapon.* *[custom_data~{{{ns}:{{manual:true}}}}] run 
 			"dialogs": dialog_ids,
 			"exit_action": {"label": {"translate": "gui.back"}, "width": 200},
 		}))
+

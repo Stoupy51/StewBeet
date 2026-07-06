@@ -10,10 +10,10 @@
 			"contents": [
 				{"text": "V   ","font": "_your_namespace:manual","color": "white"},
 				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_2"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"}," (2)"]}},
-				{"text": "4","font": "_your_namespace:manual","color": "white","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_1"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_first_page"}]}},
+				{"text": " ","font": "_your_namespace:manual","color": "white"},
 				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_4"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"}," (4)"]}},
 				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_2"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"}," (2)"]}},
-				{"text": " ","font": "_your_namespace:manual","color": "white","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_1"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_first_page"}]}},
+				{"text": " ","font": "_your_namespace:manual","color": "white"},
 				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_4"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"}," (4)"]}}
 			],
 			"width": 400

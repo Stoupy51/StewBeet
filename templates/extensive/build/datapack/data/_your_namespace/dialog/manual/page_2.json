@@ -10,7 +10,7 @@
 			"contents": [
 				{"text": "肊   ","font": "_your_namespace:manual","color": "white"},
 				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_1"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"}," (1)"]}},
-				{"text": "4","font": "_your_namespace:manual","color": "white","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_1"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_first_page"}]}},
+				{"text": "肋","font": "_your_namespace:manual","color": "white","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_1"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_first_page"}]}},
 				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_3"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"}," (3)"]}},
 				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_1"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"}," (1)"]}},
 				{"text": " ","font": "_your_namespace:manual","color": "white","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_1"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_first_page"}]}},
