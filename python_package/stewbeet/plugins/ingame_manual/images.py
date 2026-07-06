@@ -134,6 +134,8 @@ class GlyphImageBuilder:
 	""" Cache for :meth:`get_border_color`. """
 	_wiki_icons_generated: set[str] = field(default_factory=set[str])
 	""" Wiki icon files already generated this build (skip re-encoding identical PNGs). """
+	_spacer_chars: dict[int, str] = field(default_factory=dict[int, str])
+	""" Invisible spacer glyph per pixel width (see :meth:`invisible_spacer`). """
 
 	# --- helpers ---
 	def get_border_color(self) -> tuple[int, int, int, int]:
@@ -290,6 +292,22 @@ class GlyphImageBuilder:
 		return font
 
 	# --- new texture-page helpers ---
+	def invisible_spacer(self, width_px: int) -> str:
+		""" Return an invisible glyph advancing exactly ``width_px`` pixels ("" if <= 0).
+
+		The square ``none`` texture rendered at height ``H`` advances ``H + 1`` pixels, so one
+		provider (ascent 0, height ``width_px - 1``) is registered per distinct width, then reused.
+		Used by :class:`~.pages.texture_page.TexturePage` left/right paddings.
+		"""
+		if width_px <= 0:
+			return ""
+		char: str | None = self._spacer_chars.get(width_px)
+		if char is None:
+			char = self.glyphs.allocate()
+			self.glyphs.add_provider(char, f"{self.config.project_id}:font/none.png", ascent=0, height=width_px - 1)
+			self._spacer_chars[width_px] = char
+		return char
+
 	def bake_text_onto(self, background: Image.Image, baked_texts: list[BakedText]) -> Image.Image:
 		""" Draw a list of :class:`BakedText` onto a copy of ``background`` and return it. """
 		out = background.convert("RGBA").copy()

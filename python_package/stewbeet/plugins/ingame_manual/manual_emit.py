@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING
 
 import stouputils as stp
 from beet import Font, Texture
+from PIL import Image
 
 from ...core.__memory__ import Mem
 from ...core.cls.item import Item
@@ -18,7 +19,9 @@ from .glyphs import (
 	AWAKENED_3X3_FONT,
 	AWAKENED_3X4_FONT,
 	AWAKENED_FORGE_STRUCT_FONT,
+	BOOK_ASCENT,
 	BOOK_FONT,
+	BOOK_HEIGHT,
 	FURNACE_FONT,
 	HOME_FONT,
 	HOVER_AWAKENED_3X3_FONT,
@@ -46,7 +49,7 @@ from .glyphs import (
 	WIKI_NONE_FONT,
 	WIKI_RESULT_OF_CRAFT_FONT,
 )
-from .paths import TEMPLATES_PATH
+from .paths import TEMPLATES_PATH, template_path
 
 if TYPE_CHECKING:
 	from .manual import Manual
@@ -122,8 +125,27 @@ def register_static_assets(manual: Manual) -> None:
 		if manual.has_forge_3x3 or manual.has_forge_3x4:
 			add(AWAKENED_FORGE_STRUCT_FONT[0], f("awakened_forge_1"), 8, 56)
 			add(AWAKENED_FORGE_STRUCT_FONT[1], f("awakened_forge_2"), 8, 56)
-	add(BOOK_FONT, f("book"), 25, 300)
+	add(BOOK_FONT, f("book"), BOOK_ASCENT, BOOK_HEIGHT)
 	add(HOME_FONT, f("home"), 8, 20)  # same advance as NONE_FONT so the prev/next gap stays aligned
+
+
+def register_book_overrides(manual: Manual) -> None:
+	""" Register a dedicated book-background glyph for every page overriding ``book_texture``.
+
+	The glyph replaces ``BOOK_FONT`` in that page's dialog navigation row, with the same
+	ascent/height as the shared book provider so the layout stays put. A string resolves as a
+	project path first, then against the templates dir (so a ``manual_overrides`` filename works).
+	"""
+	for page in manual.pages:
+		if page.book_texture is None:
+			continue
+		if isinstance(page.book_texture, str):
+			source: str = page.book_texture if os.path.exists(page.book_texture) else template_path(page.book_texture)
+			image = Image.open(source)
+		else:
+			image = page.book_texture
+		glyph_name: str = "book_" + page.anchor.replace(":", "_").replace(" ", "_").lower()
+		page.book_font = manual.images.register_full_page_glyph(image.convert("RGBA"), glyph_name, ascent=BOOK_ASCENT, height=BOOK_HEIGHT)
 
 
 def write_font(manual: Manual) -> None:

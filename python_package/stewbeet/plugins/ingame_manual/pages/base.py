@@ -12,6 +12,7 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
 from beet.core.utils import TextComponent
+from PIL import Image
 
 from ..button_layout import ButtonLayout
 
@@ -34,6 +35,9 @@ class Page:
 		item_id			(str|None):	If this page represents an item, its id (drives ``PageRef(item=...)``
 						resolution and dialog atlas sprites).
 		button_layout	(ButtonLayout|None):	Per-page override of the manual-wide button layout.
+		book_texture	(str|Image.Image|None):	Per-page override of the book background ("book.png").
+						A path (project path, or a filename resolved against the templates dir so
+						``manual_overrides`` files work) or a ready PIL image. None = shared book.
 		transformers	(list):	Developer hooks applied to the rendered content, in order.
 
 	>>> page = Page(anchor="demo", transformers=[lambda content, manual: [*content, "!"]])
@@ -44,6 +48,9 @@ class Page:
 	title: str = ""
 	item_id: str | None = None
 	button_layout: ButtonLayout | None = None
+	book_texture: str | Image.Image | None = None
+	book_font: str = field(default="", init=False, repr=False)
+	""" Glyph char registered for :attr:`book_texture` (set during emit, "" = shared BOOK_FONT). """
 	transformers: list[Transformer] = field(default_factory=list[Transformer])
 	optimize: bool = True
 	""" Whether the optimizer may merge this page's components. Set False for pre-built

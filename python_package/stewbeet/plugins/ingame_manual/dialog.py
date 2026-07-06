@@ -132,7 +132,9 @@ class DialogEmitter:
 				"click_event": {"action": "show_dialog", "dialog": next_dialog_id},
 				"hover_event": {"action": "show_text", "value": [{"text": "Go to next page"}, f" ({next_index + 1})"]},
 			}
-			nav_contents: list[TextComponent] = [{"text": BOOK_FONT + NONE_FONT * 3, "font": f"{ns}:manual", "color": "white"}]
+			# Book background: the page's own override glyph if it set book_texture, else the shared one.
+			book_font: str = page_obj.book_font if page_obj is not None and page_obj.book_font else BOOK_FONT
+			nav_contents: list[TextComponent] = [{"text": book_font + NONE_FONT * 3, "font": f"{ns}:manual", "color": "white"}]
 			for row in range(2):
 				nav_contents.append({"text": "\n" + NONE_FONT * 3, **prev_event})
 				nav_contents.append({"text": (HOME_FONT if row == 0 else NONE_FONT), "font": f"{ns}:manual", "color": "white", **home_event})
