@@ -22,7 +22,7 @@
 			"type": "minecraft:plain_message",
 			"contents": [
 				{"text": "","font": "_your_namespace:manual","color": "white","shadow_color": [0,0,0,0]},
-				"耡\n\n\n\n\n\n",
+				"耥\n\n\n\n\n\n",
 				[{"text": "","font": "minecraft:default","color": "black"},{"translate": "_your_namespace.modify_in_beet_yml_the_text_that_will_be_shown_in_this_first_man","color": "#505050"}],
 				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 			],

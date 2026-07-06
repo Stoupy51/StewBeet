@@ -28,6 +28,7 @@ def main() -> None:
 	# 1) Insert a free-form page (unrelated to any item) right after the intro.
 	#    CustomPage takes any list of Minecraft text components as its body.
 	#    book_texture (available on ANY page) replaces the book background ("book.png") on this page only
+	textures_folder: str = Mem.ctx.meta["stewbeet"]["textures_folder"]
 	manual.insert_page(
 		CustomPage(
 			anchor="welcome",	# Page id used for linking and ordering
@@ -36,7 +37,7 @@ def main() -> None:
 				{"text": "Welcome to the Extensive Template!", "color": "black", "bold": True},
 				{"text": "\n\nThis page was added with the public manual API\n(CustomPage + insert_page).", "color": "#505050"},
 			],
-			book_texture=f"{Mem.ctx.meta['stewbeet']['textures_folder']}/manual/a_custom_book_page.png",
+			book_texture=f"{textures_folder}/manual/a_custom_book_page.png",
 		),
 		after="intro",	# After page with id "intro"
 	)

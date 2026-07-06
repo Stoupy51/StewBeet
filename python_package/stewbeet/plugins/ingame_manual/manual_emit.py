@@ -141,6 +141,7 @@ def register_book_overrides(manual: Manual) -> None:
 			continue
 		if isinstance(page.book_texture, str):
 			source: str = page.book_texture if os.path.exists(page.book_texture) else template_path(page.book_texture)
+			Mem.used_textures.add(source)  # the file is re-encoded under a new name, mark the source as used
 			image = Image.open(source)
 		else:
 			image = page.book_texture

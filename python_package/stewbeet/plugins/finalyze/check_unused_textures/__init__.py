@@ -8,6 +8,8 @@ import stouputils as stp
 from beet import Context, Texture
 from stouputils.typing import JsonDict
 
+from ....core.__memory__ import Mem
+
 
 # Main entry point
 @stp.measure_time(message="Execution time of 'stewbeet.plugins.finalyze.check_unused_textures'")
@@ -29,8 +31,15 @@ def beet_default(ctx: Context) -> None:
 	textures: set[str] = {stp.relative_path(str(p), textures_folder) for p in Path(textures_folder).rglob("*.png")}
 
 	# 2) For each texture, check if any of the ctx.assets.textures matches the texture filename.
+	# Textures consumed as source files by generators (e.g. manual book_texture / TexturePage
+	# backgrounds) are re-encoded under new names, so they never appear in ctx.assets.textures:
+	# they are recorded in Mem.used_textures and skipped here.
+	consumed: set[str] = {stp.clean_path(p) for p in Mem.used_textures}
 	unused_paths: set[str] = set()
 	for path in textures:
+		full_path: str = stp.clean_path(f"{textures_folder}/{path}")
+		if any(u == full_path or u.endswith("/" + path) for u in consumed):
+			continue
 		# Get just the filename without extension for comparison
 		filename_no_ext: str = os.path.splitext(os.path.basename(path))[0]
 		no_extension_path: str = os.path.splitext(path)[0]

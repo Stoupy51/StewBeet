@@ -14,6 +14,7 @@ from typing import TYPE_CHECKING
 from beet.core.utils import TextComponent
 from PIL import Image
 
+from ....core.__memory__ import Mem
 from ..images import BakedText
 from .base import Page
 
@@ -45,7 +46,11 @@ class TexturePage(Page):
 	def build(self, manual: Manual) -> list[TextComponent]:
 		""" Composite the background + baked texts, register it as one glyph, append the body. """
 		config = manual.config
-		bg = Image.open(self.background) if isinstance(self.background, str) else self.background
+		if isinstance(self.background, str):
+			Mem.used_textures.add(self.background)  # the file is re-encoded under a new name, mark the source as used
+			bg = Image.open(self.background)
+		else:
+			bg = self.background
 		composited = manual.images.bake_text_onto(bg, self.baked_texts) if self.baked_texts else bg.convert("RGBA")
 
 		glyph_name = self.anchor.replace(":", "_").replace(" ", "_").lower()

@@ -184,6 +184,40 @@ class RecipeRenderer:
 				button.target = PageRef(item=craft_ingredient)
 		return button
 
+	# --- cross-page buttons (add another item's recipe/link to any page's extra_buttons) ---
+	def button_for_item(self, item_id: str, index: int = 0) -> WikiButtonRender | None:
+		""" Build the wiki button of another item's craft, linking to that item's page.
+
+		Use it to cross-link related pages, e.g. show the Starlight Infuser's recipe button on
+		the Stardust Pillar page. ``index`` selects which of the item's crafts to render (same
+		order as its own page). Returns None (with a warning) if the item has no such craft.
+		"""
+		obj = self.manual.object_for(item_id)
+		if obj is None:
+			stp.warning(f"button_for_item: no item '{item_id}' in the definitions")
+			return None
+		page = self.manual.get_page_for_item(item_id)
+		crafts: list[JsonDict] = page.crafts if page is not None and page.crafts \
+			else self.collect_for_item(item_id, obj, self.manual.definitions_as_objects)
+		if not 0 <= index < len(crafts):
+			stp.warning(f"button_for_item: no craft at index {index} for '{item_id}' ({len(crafts)} available)")
+			return None
+		button = self.render_button(crafts[index], item_id, index)
+		if button.target is None:  # crafts producing the item itself get no target on their own page
+			button.target = PageRef(item=item_id)
+		return button
+
+	def link_button(self, item_id: str, hover: TextComponent | None = None) -> WikiButtonRender:
+		""" Build a wiki button that simply links to another item's page (no recipe).
+
+		The icon shows the item in a wiki slot; ``hover`` defaults to its name plus a click hint.
+		"""
+		ingr = Ingr(item_id)
+		glyph: str = self.images.wiki_result_icon(item_id, {"type": "page_link", "result": ingr})
+		if hover is None:
+			hover = [{"text": ingr.to_name(), "color": "yellow"}, {"text": "\nClick to open this page", "color": "gray"}]
+		return WikiButtonRender(glyph=glyph, hover=hover, target=PageRef(item=item_id), is_info=True)
+
 	# --- growing seed info button (button-only pseudo, built from block metadata) ---
 	def growing_seed_button(self, item_obj: Item) -> WikiButtonRender | None:
 		""" Build an info button describing a block's :class:`GrowingSeed` drops, if any. """

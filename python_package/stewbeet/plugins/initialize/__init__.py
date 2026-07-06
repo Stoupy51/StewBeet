@@ -31,6 +31,7 @@ def beet_default(ctx: Context, silent: bool = False) -> Generator[None]:
 		Mem.ctx = ctx
 		Mem.definitions = {}
 		Mem.external_definitions = {}
+		Mem.used_textures = set()
 
 		# Reset per-build module state so consecutive builds in one process (`stewbeet watch`) behave like fresh runs
 		stp.clear_simple_caches()
