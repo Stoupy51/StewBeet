@@ -27,7 +27,8 @@ def main() -> None:
 
 	# 1) Insert a free-form page (unrelated to any item) right after the intro.
 	#    CustomPage takes any list of Minecraft text components as its body.
-	#    book_texture (available on ANY page) replaces the book background ("book.png") on this page only
+	#    book_texture and home_texture (available on ANY page) replace the book background
+	#    ("book.png") and the home button ("home.png") on this page only.
 	textures_folder: str = Mem.ctx.meta["stewbeet"]["textures_folder"]
 	manual.insert_page(
 		CustomPage(
@@ -38,6 +39,7 @@ def main() -> None:
 				{"text": "\n\nThis page was added with the public manual API\n(CustomPage + insert_page).", "color": "#505050"},
 			],
 			book_texture=f"{textures_folder}/manual/a_custom_book_page.png",
+			home_texture=f"{textures_folder}/manual/home_for_welcome_page.png",
 		),
 		after="intro",	# After page with id "intro"
 	)
@@ -60,6 +62,8 @@ def main() -> None:
 			# (left_padding shifts right, right_padding shifts left, each by half the pixels).
 			# Keep texture width + paddings within the dialog body (140px) or the line wraps.
 			left_padding=10,
+			# Any page can also hide its home button (prev/next layout is preserved)
+			home_button=False,
 		),
 		after="welcome",
 	)

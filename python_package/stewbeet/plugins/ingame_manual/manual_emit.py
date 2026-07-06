@@ -23,7 +23,9 @@ from .glyphs import (
 	BOOK_FONT,
 	BOOK_HEIGHT,
 	FURNACE_FONT,
+	HOME_ASCENT,
 	HOME_FONT,
+	HOME_HEIGHT,
 	HOVER_AWAKENED_3X3_FONT,
 	HOVER_AWAKENED_3X4_FONT,
 	HOVER_FURNACE_FONT,
@@ -126,27 +128,35 @@ def register_static_assets(manual: Manual) -> None:
 			add(AWAKENED_FORGE_STRUCT_FONT[0], f("awakened_forge_1"), 8, 56)
 			add(AWAKENED_FORGE_STRUCT_FONT[1], f("awakened_forge_2"), 8, 56)
 	add(BOOK_FONT, f("book"), BOOK_ASCENT, BOOK_HEIGHT)
-	add(HOME_FONT, f("home"), 8, 20)  # same advance as NONE_FONT so the prev/next gap stays aligned
+	add(HOME_FONT, f("home"), HOME_ASCENT, HOME_HEIGHT)  # same advance as NONE_FONT so the prev/next gap stays aligned
 
 
-def register_book_overrides(manual: Manual) -> None:
-	""" Register a dedicated book-background glyph for every page overriding ``book_texture``.
+def load_page_texture(texture: str | Image.Image) -> Image.Image:
+	""" Open a per-page override texture. A string resolves as a project path first, then
+	against the templates dir (so a ``manual_overrides`` filename works); the source is marked
+	used because it gets re-encoded under a new name. """
+	if isinstance(texture, str):
+		source: str = texture if os.path.exists(texture) else template_path(texture)
+		Mem.used_textures.add(source)
+		return Image.open(source)
+	return texture
 
-	The glyph replaces ``BOOK_FONT`` in that page's dialog navigation row, with the same
-	ascent/height as the shared book provider so the layout stays put. A string resolves as a
-	project path first, then against the templates dir (so a ``manual_overrides`` filename works).
+
+def register_nav_overrides(manual: Manual) -> None:
+	""" Register dedicated glyphs for every page overriding ``book_texture`` / ``home_texture``.
+
+	Each glyph replaces ``BOOK_FONT`` / ``HOME_FONT`` in that page's dialog navigation row, with
+	the same ascent/height as the shared provider so the layout stays put (a home texture should
+	keep the default's 16x16 proportions, since the glyph advance follows the image content).
 	"""
 	for page in manual.pages:
-		if page.book_texture is None:
-			continue
-		if isinstance(page.book_texture, str):
-			source: str = page.book_texture if os.path.exists(page.book_texture) else template_path(page.book_texture)
-			Mem.used_textures.add(source)  # the file is re-encoded under a new name, mark the source as used
-			image = Image.open(source)
-		else:
-			image = page.book_texture
-		glyph_name: str = "book_" + page.anchor.replace(":", "_").replace(" ", "_").lower()
-		page.book_font = manual.images.register_full_page_glyph(image.convert("RGBA"), glyph_name, ascent=BOOK_ASCENT, height=BOOK_HEIGHT)
+		glyph_suffix: str = page.anchor.replace(":", "_").replace(" ", "_").lower()
+		if page.book_texture is not None:
+			image = load_page_texture(page.book_texture)
+			page.book_font = manual.images.register_full_page_glyph(image.convert("RGBA"), f"book_{glyph_suffix}", ascent=BOOK_ASCENT, height=BOOK_HEIGHT)
+		if page.home_texture is not None:
+			image = load_page_texture(page.home_texture)
+			page.home_font = manual.images.register_full_page_glyph(image.convert("RGBA"), f"home_{glyph_suffix}", ascent=HOME_ASCENT, height=HOME_HEIGHT)
 
 
 def write_font(manual: Manual) -> None:

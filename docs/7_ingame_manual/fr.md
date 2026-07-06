@@ -34,7 +34,7 @@
 - 🧩 Insérer/remplacer/réordonner des pages arbitraires via une API Python claire
 - 🔌 Enregistrer des fonctions exécutées pendant la création du manuel (hooks `Phase`)
 - 🎨 Fournir des pages basées sur une texture personnalisée, avec le texte intégré dans l'image elle-même
-- 📕 Remplacer la texture de fond du livre sur une page spécifique (`book_texture`)
+- 📕 Remplacer la texture de fond du livre ou du bouton home sur une page spécifique (`book_texture`, `home_texture`)
 - 🔀 Lier des pages entre elles : afficher le bouton de recette d'un autre item, ou un bouton de lien vers sa page (`extra_buttons`)
 - 🔘 Décider où apparaissent les boutons wiki et comment gérer le dépassement (`ButtonLayout`)
 - 🔗 Les liens différés `PageRef` gardent la navigation correcte après toute insertion/réorganisation
@@ -126,23 +126,33 @@ Attributs de placement de `TexturePage` :
 
 Le dialogue centre la ligne : `left_padding` décale donc la texture vers la **droite** et `right_padding` vers la **gauche**, chacun de la moitié du padding. Gardez largeur de texture + paddings dans le corps du dialogue (140px), sinon la ligne passe à la ligne.
 
-### 📕 Fond de livre par page
-Chaque page (toute sous-classe de `Page`) accepte `book_texture` pour remplacer le fond de livre (`book.png`) sur cette page uniquement — ex. un livre fermé sur la première page. Elle prend une image PIL prête, ou un chemin résolu d'abord comme chemin du projet, puis dans le dossier des templates (un nom de fichier de votre dossier `manual_overrides` fonctionne donc). `template_path(filename)` retourne le chemin effectif d'un asset de template fourni/surchargé.
+### 📕 Fond de livre & bouton home par page
+Chaque page (toute sous-classe de `Page`) accepte `book_texture` pour remplacer le fond de livre (`book.png`) et `home_texture` pour remplacer le bouton home (`home.png`) sur cette page uniquement — ex. un livre fermé sur la première page. Les deux prennent une image PIL prête, ou un chemin résolu d'abord comme chemin du projet, puis dans le dossier des templates (un nom de fichier de votre dossier `manual_overrides` fonctionne donc). `template_path(filename)` retourne le chemin effectif d'un asset de template fourni/surchargé.
 
 ```python
-from PIL import Image
-from stewbeet import Phase, template_path
+from stewbeet import CustomPage, Mem, Phase, get_manual
 
-# Une texture de manual_overrides sur la page d'intro...
+manual = get_manual()
+
+# Tiré du template extensive : une page d'accueil avec son propre fond de livre et sa propre flèche home
+textures_folder: str = Mem.ctx.meta["stewbeet"]["textures_folder"]
+manual.insert_page(
+    CustomPage(
+        anchor="welcome", title="Bienvenue",
+        body=[{"text": "Bienvenue dans le Template Extensive !", "color": "black", "bold": True}],
+        book_texture=f"{textures_folder}/manual/a_custom_book_page.png",
+        home_texture=f"{textures_folder}/manual/home_for_welcome_page.png",
+    ),
+    after="intro",
+)
+
+# Les pages existantes fonctionnent aussi, ex. un livre fermé depuis votre dossier manual_overrides sur la page d'intro
 @manual.on(Phase.DISCOVERED)
 def closed_book_intro(m):
     m.get_page("intro").book_texture = "closed_book.png"  # résolu depuis manual_overrides
-
-# ...ou n'importe quelle image PIL (ici : le livre par défaut pivoté de 90°)
-@manual.on(Phase.DISCOVERED)
-def rotated_book_welcome(m):
-    m.get_page("welcome").book_texture = Image.open(template_path("book.png")).transpose(Image.Transpose.ROTATE_90)
 ```
+
+> **Notes** : gardez une `home_texture` proche des proportions 16x16 par défaut, car l'avance du glyphe dépend du contenu de l'image (une flèche plus large décale les boutons précédent/suivant sur cette page). La **première page n'affiche jamais le bouton home** — elle *est* la page d'accueil (un espaceur invisible conserve la mise en page des boutons précédent/suivant), et toute autre page peut aussi le masquer avec `home_button=False`.
 
 ### 🔘 Placement des boutons
 Contrôlez où les boutons wiki sont rendus, par page ou comme défaut global du manuel (`ManualConfig.button_layout`) :

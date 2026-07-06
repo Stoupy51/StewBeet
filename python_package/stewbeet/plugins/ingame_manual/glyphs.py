@@ -89,6 +89,10 @@ DEFAULT_NEXT_CRAFT_FONT: int = 0x8000
 BOOK_ASCENT: int = 25
 BOOK_HEIGHT: int = 300
 
+# Bitmap placement of the home button glyph (shared HOME_FONT and per-page overrides)
+HOME_ASCENT: int = 8
+HOME_HEIGHT: int = 20
+
 # Misc constants
 SQUARE_SIZE: int = 32
 FONT_FILE: str = "manual"

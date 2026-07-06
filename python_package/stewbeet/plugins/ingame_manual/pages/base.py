@@ -30,14 +30,20 @@ class Page:
 
 	Attributes:
 		anchor			(str):	Stable identity used for ordering and deferred links (e.g. "intro",
-						"category:Materials", "item:wrench"). Must be unique within a manual.
+			"category:Materials", "item:wrench"). Must be unique within a manual.
 		title			(str):	Human-readable page title.
 		item_id			(str|None):	If this page represents an item, its id (drives ``PageRef(item=...)``
-						resolution and dialog atlas sprites).
+			resolution and dialog atlas sprites).
 		button_layout	(ButtonLayout|None):	Per-page override of the manual-wide button layout.
 		book_texture	(str|Image.Image|None):	Per-page override of the book background ("book.png").
 						A path (project path, or a filename resolved against the templates dir so
 						``manual_overrides`` files work) or a ready PIL image. None = shared book.
+		home_texture	(str|Image.Image|None):	Per-page override of the home button ("home.png"),
+			same accepted values as ``book_texture``. Keep the default's 16x16
+			proportions so the navigation row stays aligned. None = shared home.
+		home_button	(bool):	Whether this page shows the home button in its navigation row
+			(an invisible spacer keeps the prev/next layout when hidden).
+			The first page never shows it regardless of this flag.
 		transformers	(list):	Developer hooks applied to the rendered content, in order.
 
 	>>> page = Page(anchor="demo", transformers=[lambda content, manual: [*content, "!"]])
@@ -51,6 +57,10 @@ class Page:
 	book_texture: str | Image.Image | None = None
 	book_font: str = field(default="", init=False, repr=False)
 	""" Glyph char registered for :attr:`book_texture` (set during emit, "" = shared BOOK_FONT). """
+	home_texture: str | Image.Image | None = None
+	home_font: str = field(default="", init=False, repr=False)
+	""" Glyph char registered for :attr:`home_texture` (set during emit, "" = shared HOME_FONT). """
+	home_button: bool = True
 	transformers: list[Transformer] = field(default_factory=list[Transformer])
 	optimize: bool = True
 	""" Whether the optimizer may merge this page's components. Set False for pre-built

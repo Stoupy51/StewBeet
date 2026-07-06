@@ -34,7 +34,7 @@
 - 🧩 Insert/replace/reorder arbitrary pages via a clean Python API
 - 🔌 Register functions that run during manual creation (`Phase` hooks)
 - 🎨 Ship pages backed by a custom texture, with text baked into the image itself
-- 📕 Replace the book background texture on any specific page (`book_texture`)
+- 📕 Replace the book background or home button texture on any specific page (`book_texture`, `home_texture`)
 - 🔀 Cross-link related pages: show another item's recipe button, or a link button to its page (`extra_buttons`)
 - 🔘 Decide where wiki buttons appear and how overflow is handled (`ButtonLayout`)
 - 🔗 Deferred `PageRef` links keep navigation correct after any insert/reorder
@@ -126,23 +126,33 @@ manual.insert_page(TexturePage(
 
 The dialog centers the line, so `left_padding` shifts the texture **right** and `right_padding` shifts it **left**, each by half the padding. Keep texture width + paddings within the dialog body (140px), otherwise the line wraps.
 
-### 📕 Per-page book background
-Every page (any `Page` subclass) accepts `book_texture` to replace the book background (`book.png`) on that page only — e.g. a closed book on the first page. It takes a ready PIL image, or a path resolved as a project path first, then against the templates dir (so a filename from your `manual_overrides` folder works). `template_path(filename)` returns the effective path of a bundled/overridden template asset.
+### 📕 Per-page book background & home button
+Every page (any `Page` subclass) accepts `book_texture` to replace the book background (`book.png`) and `home_texture` to replace the home button (`home.png`) on that page only — e.g. a closed book on the first page. Both take a ready PIL image, or a path resolved as a project path first, then against the templates dir (so a filename from your `manual_overrides` folder works). `template_path(filename)` returns the effective path of a bundled/overridden template asset.
 
 ```python
-from PIL import Image
-from stewbeet import Phase, template_path
+from stewbeet import CustomPage, Mem, Phase, get_manual
 
-# A manual_overrides texture on the intro page...
+manual = get_manual()
+
+# From the extensive template: a welcome page with its own book background and home arrow
+textures_folder: str = Mem.ctx.meta["stewbeet"]["textures_folder"]
+manual.insert_page(
+    CustomPage(
+        anchor="welcome", title="Welcome",
+        body=[{"text": "Welcome to the Extensive Template!", "color": "black", "bold": True}],
+        book_texture=f"{textures_folder}/manual/a_custom_book_page.png",
+        home_texture=f"{textures_folder}/manual/home_for_welcome_page.png",
+    ),
+    after="intro",
+)
+
+# Existing pages work too, e.g. a closed book from your manual_overrides folder on the intro page
 @manual.on(Phase.DISCOVERED)
 def closed_book_intro(m):
     m.get_page("intro").book_texture = "closed_book.png"  # resolved from manual_overrides
-
-# ...or any PIL image (here: the default book rotated 90°)
-@manual.on(Phase.DISCOVERED)
-def rotated_book_welcome(m):
-    m.get_page("welcome").book_texture = Image.open(template_path("book.png")).transpose(Image.Transpose.ROTATE_90)
 ```
+
+> **Notes**: keep a `home_texture` close to the default's 16x16 proportions, since the glyph advance follows the image content (a wider arrow shifts the prev/next buttons on that page). The **first page never shows the home button** — it *is* the home page (an invisible spacer keeps the prev/next layout unchanged), and any other page can hide it too with `home_button=False`.
 
 ### 🔘 Button placement
 Control where wiki buttons render, per page or as the manual-wide default (`ManualConfig.button_layout`):

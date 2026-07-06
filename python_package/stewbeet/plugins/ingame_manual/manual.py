@@ -459,7 +459,7 @@ class Manual:
 		from .showcase import generate_showcase_images
 
 		manual_emit.register_static_assets(self)
-		manual_emit.register_book_overrides(self)
+		manual_emit.register_nav_overrides(self)
 		manual_emit.write_font(self)
 		manual_emit.copy_generated_textures(self)
 		manual_emit.validate_providers(self)
