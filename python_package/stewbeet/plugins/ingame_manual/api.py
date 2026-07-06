@@ -19,6 +19,7 @@ from .pages import (
 	RawPage,
 	TexturePage,
 )
+from .paths import template_path
 from .recipes import CraftRenderer, WikiButtonRender, register_craft_renderer
 from .refs import PageRef
 
@@ -41,6 +42,7 @@ __all__ = [
 	"WikiButtonRender",
 	"get_manual",
 	"register_craft_renderer",
+	"template_path",
 ]
 
 

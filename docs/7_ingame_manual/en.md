@@ -34,6 +34,7 @@
 - 🧩 Insert/replace/reorder arbitrary pages via a clean Python API
 - 🔌 Register functions that run during manual creation (`Phase` hooks)
 - 🎨 Ship pages backed by a custom texture, with text baked into the image itself
+- 📕 Replace the book background texture on any specific page (`book_texture`)
 - 🔘 Decide where wiki buttons appear and how overflow is handled (`ButtonLayout`)
 - 🔗 Deferred `PageRef` links keep navigation correct after any insert/reorder
 
@@ -111,7 +112,35 @@ manual.insert_page(TexturePage(
     baked_texts=[BakedText(text="Made with StewBeet", xy=(128, 40), align="center", color=(255, 255, 255, 255))],
     body=[{"text": "\n[the text above is part of the image]", "color": "black"}],
     glyph_height=64,
+    left_padding=10,  # nudge the texture to the right (see below)
 ), after="welcome")
+```
+
+`TexturePage` placement attributes:
+
+| Attribute                      | Description                                                                     |
+| ------------------------------ | ------------------------------------------------------------------------------- |
+| `glyph_ascent` / `glyph_height`| Bitmap placement of the page texture: size and **Y offset**                     |
+| `left_padding` / `right_padding`| Invisible pixels emitted before/after the texture glyph (**X offset**)         |
+
+The dialog centers the line, so `left_padding` shifts the texture **right** and `right_padding` shifts it **left**, each by half the padding. Keep texture width + paddings within the dialog body (140px), otherwise the line wraps.
+
+### 📕 Per-page book background
+Every page (any `Page` subclass) accepts `book_texture` to replace the book background (`book.png`) on that page only — e.g. a closed book on the first page. It takes a ready PIL image, or a path resolved as a project path first, then against the templates dir (so a filename from your `manual_overrides` folder works). `template_path(filename)` returns the effective path of a bundled/overridden template asset.
+
+```python
+from PIL import Image
+from stewbeet import Phase, template_path
+
+# A manual_overrides texture on the intro page...
+@manual.on(Phase.DISCOVERED)
+def closed_book_intro(m):
+    m.get_page("intro").book_texture = "closed_book.png"  # resolved from manual_overrides
+
+# ...or any PIL image (here: the default book rotated 90°)
+@manual.on(Phase.DISCOVERED)
+def rotated_book_welcome(m):
+    m.get_page("welcome").book_texture = Image.open(template_path("book.png")).transpose(Image.Transpose.ROTATE_90)
 ```
 
 ### 🔘 Button placement

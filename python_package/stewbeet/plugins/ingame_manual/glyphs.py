@@ -85,6 +85,10 @@ HOVER_EQUIVALENTS: dict[str, str] = {
 # First dynamically-allocated code point (high-res item icons, wiki result icons, page glyphs...)
 DEFAULT_NEXT_CRAFT_FONT: int = 0x8000
 
+# Bitmap placement of the book background glyph (shared BOOK_FONT and per-page overrides)
+BOOK_ASCENT: int = 25
+BOOK_HEIGHT: int = 300
+
 # Misc constants
 SQUARE_SIZE: int = 32
 FONT_FILE: str = "manual"

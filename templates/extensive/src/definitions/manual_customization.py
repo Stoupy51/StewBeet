@@ -7,6 +7,7 @@ from stewbeet import (
 	CustomPage,
 	ItemPage,
 	Manual,
+	Mem,
 	Phase,
 	TexturePage,
 	get_manual,
@@ -26,6 +27,7 @@ def main() -> None:
 
 	# 1) Insert a free-form page (unrelated to any item) right after the intro.
 	#    CustomPage takes any list of Minecraft text components as its body.
+	#    book_texture (available on ANY page) replaces the book background ("book.png") on this page only
 	manual.insert_page(
 		CustomPage(
 			anchor="welcome",	# Page id used for linking and ordering
@@ -34,6 +36,7 @@ def main() -> None:
 				{"text": "Welcome to the Extensive Template!", "color": "black", "bold": True},
 				{"text": "\n\nThis page was added with the public manual API\n(CustomPage + insert_page).", "color": "#505050"},
 			],
+			book_texture=f"{Mem.ctx.meta['stewbeet']['textures_folder']}/manual/a_custom_book_page.png",
 		),
 		after="intro",	# After page with id "intro"
 	)
@@ -52,6 +55,10 @@ def main() -> None:
 			],
 			body=[{"text": "\n\n\n\n\n\n\nThe text above is baked into the page texture.", "color": "black"}],
 			glyph_height=64,
+			# The dialog centers the texture; invisible paddings nudge it horizontally
+			# (left_padding shifts right, right_padding shifts left, each by half the pixels).
+			# Keep texture width + paddings within the dialog body (140px) or the line wraps.
+			left_padding=10,
 		),
 		after="welcome",
 	)
@@ -74,4 +81,22 @@ def main() -> None:
 					{"text": "\nTip: steel is the backbone of this pack!", "color": "dark_gray","font": "minecraft:default"}
 				]
 			)
+
+	# 5) Cross-link two related pages with extra wiki buttons (ItemPage.extra_buttons):
+	#    - button_for_item(): another item's full recipe button (hover shows the recipe, click opens its page)
+	#    - link_button(): a simple button with the item's icon that just opens its page
+	@manual.on(Phase.PREPARED)
+	def cross_link_pages(m: Manual) -> None: # pyright: ignore[reportUnusedFunction]
+		stone = m.get_page_for_item("super_stone")
+		painting = m.get_page_for_item("stewbeet_painting")
+		if stone is None or painting is None:
+			return
+
+		# Show the painting's recipe on the super stone page (click -> painting page)
+		painting_recipe_button = m.recipes.button_for_item("stewbeet_painting")
+		if painting_recipe_button is not None:
+			stone.extra_buttons.append(painting_recipe_button)
+
+		# And link back: a button on the painting page opening the super stone page
+		painting.extra_buttons.append(m.recipes.link_button("super_stone"))
 

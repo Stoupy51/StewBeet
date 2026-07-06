@@ -34,6 +34,7 @@
 - 🧩 Insérer/remplacer/réordonner des pages arbitraires via une API Python claire
 - 🔌 Enregistrer des fonctions exécutées pendant la création du manuel (hooks `Phase`)
 - 🎨 Fournir des pages basées sur une texture personnalisée, avec le texte intégré dans l'image elle-même
+- 📕 Remplacer la texture de fond du livre sur une page spécifique (`book_texture`)
 - 🔘 Décider où apparaissent les boutons wiki et comment gérer le dépassement (`ButtonLayout`)
 - 🔗 Les liens différés `PageRef` gardent la navigation correcte après toute insertion/réorganisation
 
@@ -111,7 +112,35 @@ manual.insert_page(TexturePage(
     baked_texts=[BakedText(text="Fait avec StewBeet", xy=(128, 40), align="center", color=(255, 255, 255, 255))],
     body=[{"text": "\n[le texte ci-dessus fait partie de l'image]", "color": "black"}],
     glyph_height=64,
+    left_padding=10,  # décale la texture vers la droite (voir ci-dessous)
 ), after="welcome")
+```
+
+Attributs de placement de `TexturePage` :
+
+| Attribut                        | Description                                                                          |
+| ------------------------------- | ------------------------------------------------------------------------------------ |
+| `glyph_ascent` / `glyph_height` | Placement bitmap de la texture de page : taille et **décalage Y**                    |
+| `left_padding` / `right_padding`| Pixels invisibles émis avant/après le glyphe de la texture (**décalage X**)          |
+
+Le dialogue centre la ligne : `left_padding` décale donc la texture vers la **droite** et `right_padding` vers la **gauche**, chacun de la moitié du padding. Gardez largeur de texture + paddings dans le corps du dialogue (140px), sinon la ligne passe à la ligne.
+
+### 📕 Fond de livre par page
+Chaque page (toute sous-classe de `Page`) accepte `book_texture` pour remplacer le fond de livre (`book.png`) sur cette page uniquement — ex. un livre fermé sur la première page. Elle prend une image PIL prête, ou un chemin résolu d'abord comme chemin du projet, puis dans le dossier des templates (un nom de fichier de votre dossier `manual_overrides` fonctionne donc). `template_path(filename)` retourne le chemin effectif d'un asset de template fourni/surchargé.
+
+```python
+from PIL import Image
+from stewbeet import Phase, template_path
+
+# Une texture de manual_overrides sur la page d'intro...
+@manual.on(Phase.DISCOVERED)
+def closed_book_intro(m):
+    m.get_page("intro").book_texture = "closed_book.png"  # résolu depuis manual_overrides
+
+# ...ou n'importe quelle image PIL (ici : le livre par défaut pivoté de 90°)
+@manual.on(Phase.DISCOVERED)
+def rotated_book_welcome(m):
+    m.get_page("welcome").book_texture = Image.open(template_path("book.png")).transpose(Image.Transpose.ROTATE_90)
 ```
 
 ### 🔘 Placement des boutons
