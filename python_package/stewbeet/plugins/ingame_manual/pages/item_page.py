@@ -7,6 +7,8 @@ emitted as deferred :class:`~..refs.PageRef`.
 """
 
 # Imports
+from __future__ import annotations
+
 import copy
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, cast
@@ -44,6 +46,9 @@ class ItemPage(Page):
 	""" Every craft related to the item, gathered by :meth:`prepare`. """
 	buttons: list[WikiButtonRender] = field(default_factory=list[WikiButtonRender])
 	""" The wiki buttons rendered on the page (populated during :meth:`build`). """
+	extra_buttons: list[WikiButtonRender] = field(default_factory=list[WikiButtonRender])
+	""" Developer-added buttons appended after the automatic ones (e.g. another item's recipe
+	via ``manual.recipes.button_for_item(...)`` or a page link via ``manual.recipes.link_button(...)``). """
 
 	@classmethod
 	def for_item(cls, item_id: str, **kwargs: Any) -> ItemPage:
@@ -127,6 +132,9 @@ class ItemPage(Page):
 					continue
 				previous_result = current_result
 				info_buttons.append(recipes.render_button(craft, name, idx))
+
+		# Developer-added buttons (cross-page recipe buttons, page links...)
+		info_buttons += self.extra_buttons
 
 		# Combine with the page's button layout
 		self.buttons = info_buttons

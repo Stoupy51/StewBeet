@@ -14,6 +14,8 @@ if TYPE_CHECKING:
 
 # Shared variables among plugins
 class Mem:
+
+    # Public and should be used
     ctx: Context = None
     """ Global context object that holds the beet project configuration.
     This is set during plugins.initialize and used throughout the codebase. """
@@ -24,7 +26,14 @@ class Mem:
     external_definitions: dict[str, ExternalItem] = {}
     """ Secondary JsonDict for storing external items or blocks most likely for recipes. """
 
+
+    # Very internal,
     manual: Manual | None = None
     """ The ingame_manual Manual handle, used to register pages/hooks during setup.
     Created lazily via stewbeet.get_manual(); reset after each build (for `beet watch`). """
+
+    used_textures: set[str] = set()
+    """ Source texture paths consumed by generators (e.g. manual book_texture / TexturePage
+    backgrounds) that get re-encoded under new names. The check_unused_textures plugin treats
+    them as used. Reset by plugins.initialize (for `beet watch`). """
 

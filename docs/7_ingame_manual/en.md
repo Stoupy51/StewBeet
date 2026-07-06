@@ -35,6 +35,7 @@
 - 🔌 Register functions that run during manual creation (`Phase` hooks)
 - 🎨 Ship pages backed by a custom texture, with text baked into the image itself
 - 📕 Replace the book background texture on any specific page (`book_texture`)
+- 🔀 Cross-link related pages: show another item's recipe button, or a link button to its page (`extra_buttons`)
 - 🔘 Decide where wiki buttons appear and how overflow is handled (`ButtonLayout`)
 - 🔗 Deferred `PageRef` links keep navigation correct after any insert/reorder
 
@@ -221,6 +222,27 @@ def tidy_buttons(m):
             include=lambda b: not b.blue_craft,   # keep only recipes that produce a result
             order=lambda b: -b.priority,          # highest priority first
         )
+```
+
+### Cross-link two related item pages (recipe buttons across pages)
+`ItemPage.extra_buttons` holds developer-added wiki buttons, appended after the automatic ones. Build them with:
+- `manual.recipes.button_for_item(item_id, index=0)` — another item's **recipe button**: hover shows that recipe, click opens the item's page (`index` selects which of its crafts; returns `None` with a warning if there is no such craft);
+- `manual.recipes.link_button(item_id, hover=None)` — a simple **page link**: the item's icon in a wiki slot, click opens its page (`hover` defaults to the item's name plus a click hint).
+
+```python
+# Example from Stardust Fragment: the Starlight Infuser summons the Stardust Pillar boss,
+# so each page points to the other.
+@manual.on(Phase.PREPARED)
+def link_pillar_and_infuser(m):
+    pillar = m.get_page_for_item("stardust_pillar")
+    infuser = m.get_page_for_item("starlight_infuser")
+    if pillar is not None and infuser is not None:
+        # Show the Starlight Infuser's recipe on the Stardust Pillar page (click -> its page)
+        button = m.recipes.button_for_item("starlight_infuser")
+        if button is not None:
+            pillar.extra_buttons.append(button)
+        # And link back: a button on the Starlight Infuser page opening the Stardust Pillar page
+        infuser.extra_buttons.append(m.recipes.link_button("stardust_pillar"))
 ```
 
 ### Insert a texture page from a PNG file (instead of a generated image)
