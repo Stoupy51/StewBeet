@@ -60,7 +60,6 @@ execute if score #{ctx.project_id}.major load.status matches {major} if score #{
 f"""
 # Avoiding multiple executions of the same load function
 execute unless score #{ctx.project_id}.loaded load.status matches 1 run function {ctx.project_id}:v{ctx.project_version}/load/secondary
-
 """)
 
 	# Confirm load
