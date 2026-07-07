@@ -146,9 +146,9 @@ class StMapping(Mapping[str, Any]):
                 return cls.from_dict(Mem.external_definitions[item_id], item_id)
         else:
             if ":" not in item_id:
-                return cls.from_dict(Mem.definitions.get(item_id, {}), item_id)
+                return cls.from_dict(Mem.definitions.get(item_id) or {}, item_id)
             else:
-                return cls.from_dict(Mem.external_definitions.get(item_id, {}), item_id)
+                return cls.from_dict(Mem.external_definitions.get(item_id) or {}, item_id)
 
     @classmethod
     def clone(cls, other: Self) -> Self:
