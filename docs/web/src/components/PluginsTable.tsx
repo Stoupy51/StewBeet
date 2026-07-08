@@ -21,6 +21,7 @@ import {
     HiArchive,
     HiLink,
     HiFolderOpen,
+    HiRefresh,
     HiShieldCheck,
     HiHashtag,
     HiX
@@ -82,6 +83,7 @@ const getPlugins = (t: (key: string) => string): Plugin[] => [
     { id: 18, name: 'archive', category: t('pluginsTable.categoryBuild'), descriptionKey: 'pluginsTable.archiveDesc', color: 'from-gray-500 to-slate-500', icon: HiArchive, dependency: '🟢', delay: 0.9, link: 'https://github.com/Stoupy51/StewBeet/blob/main/docs/plugins/archive.md', image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/archive.output_directory.jpg' },
     { id: 19, name: 'merge_smithed_weld', category: t('pluginsTable.categoryBuild'), descriptionKey: 'pluginsTable.mergeSmithedWeldDesc', color: 'from-indigo-500 to-blue-500', icon: HiLink, dependency: '🟢', delay: 0.95, link: 'https://github.com/Stoupy51/StewBeet/blob/main/docs/plugins/merge_smithed_weld.md', image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/merged_smithed_weld.output_directory.jpg' },
     { id: 20, name: 'copy_to_destination', category: t('pluginsTable.categoryBuild'), descriptionKey: 'pluginsTable.copyToDestinationDesc', color: 'from-cyan-500 to-teal-500', icon: HiFolderOpen, dependency: '🟢', delay: 1.0, link: 'https://github.com/Stoupy51/StewBeet/blob/main/docs/plugins/copy_to_destination.md', image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/copy_to_destination.datapack_destination.jpg' },
+    { id: 25, name: 'livereload', category: t('pluginsTable.categoryBuild'), descriptionKey: 'pluginsTable.livereloadDesc', color: 'from-lime-500 to-green-500', icon: HiRefresh, dependency: '🟢', delay: 1.025, link: 'https://github.com/Stoupy51/StewBeet/blob/main/docs/plugins/livereload.md', image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/copy_to_destination.datapack_destination.jpg' },
     { id: 21, name: 'compute_sha1', category: t('pluginsTable.categoryBuild'), descriptionKey: 'pluginsTable.computeSha1Desc', color: 'from-green-500 to-emerald-500', icon: HiShieldCheck, dependency: '🟢', delay: 1.05, link: 'https://github.com/Stoupy51/StewBeet/blob/main/docs/plugins/compute_sha1.md', image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/compute_sha1.example.jpg' },
 ];
 

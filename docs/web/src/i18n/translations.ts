@@ -154,6 +154,7 @@ export const translations = {
             archiveDesc: 'Creates zip archives of datapacks and resource packs',
             mergeSmithedWeldDesc: 'Merges datapacks and resource packs with libraries',
             copyToDestinationDesc: 'Copies generated packs to destination folders',
+            livereloadDesc: 'Auto in-game /reload on each build via link or copy destinations',
             computeSha1Desc: 'Computes SHA1 hashes for all zip files',
         },
         
@@ -372,6 +373,7 @@ export const translations = {
             archiveDesc: 'Crée des archives zip des datapacks et packs de ressources',
             mergeSmithedWeldDesc: 'Fusionne les datapacks et packs de ressources avec les bibliothèques',
             copyToDestinationDesc: 'Copie les packs générés vers les dossiers de destination',
+            livereloadDesc: 'Rechargement /reload automatique en jeu à chaque build (link ou destinations)',
             computeSha1Desc: 'Calcule les hachages SHA1 pour tous les fichiers zip',
         },        
         // Documentation Page
