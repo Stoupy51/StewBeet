@@ -15,6 +15,7 @@ from stouputils.typing import JsonDict
 
 from ...core import LATEST_MC_VERSION, MORE_ASSETS_PACK_FORMATS, MORE_DATA_PACK_FORMATS, MORE_DATA_VERSIONS, Mem, set_json_encoder
 from ...dependencies.official_libs import OFFICIAL_LIBS
+from ..livereload import patch_livereload_for_copy_destinations
 from .source_lore_font import find_pack_png, prepare_source_lore_font
 
 
@@ -41,6 +42,9 @@ def beet_default(ctx: Context, silent: bool = False) -> Generator[None]:
 		BUILD_CACHE.clear()
 		for data in OFFICIAL_LIBS.values():
 			data["is_used"] = False
+
+		# Enable livereload through `build_copy_destinations` if beet.contrib.livereload is used (no `beet link` needed)
+		patch_livereload_for_copy_destinations(ctx)
 
 		# Preprocess project description
 		project_description: TextComponent = Mem.ctx.project_description
