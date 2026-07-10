@@ -1,7 +1,7 @@
 
 # Imports
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, ClassVar
 
 import stouputils as stp
 from beet.core.utils import TextComponent
@@ -77,8 +77,13 @@ class Item(StMapping):
     """ (Optional) List of recipes associated with this item. """
     override_model: JsonDict | None = None
     """ (Optional) Merge with/Override auto-generated item model (based on the textures folder). """
+    DEFAULT_OVERRIDE_MODEL_CONTEXTS: ClassVar[list[str]] = ["none", "fixed"]
+    """ Default display contexts in which the regular model is kept when a hand_model is defined (item display entities and item frames). """
+
     hand_model: JsonDict | None = None
-    """ (Optional) If None, hand_model will be the same model as override_model. """
+    """ (Optional) Model used instead of the regular model in most display contexts (hand, gui, ground, ...), see override_model_contexts. If None, the item uses the same model everywhere. """
+    override_model_contexts: list[str] | None = None
+    """ (Optional) When hand_model is set, display contexts in which the regular model is still used (default: DEFAULT_OVERRIDE_MODEL_CONTEXTS, i.e. item display entities and item frames). """
     wiki_buttons: list[WikiButton] | TextComponent | None = None
     """ (Optional) Additional informations to be displayed in the ingame manual. """
     components: JsonDict = field(default_factory=dict[str, Any])
@@ -101,8 +106,6 @@ class Item(StMapping):
         # Warnings
         if self.wiki_buttons and not self.manual_category:
             stp.warning(f"Item '{self.id}' has wiki_buttons but no manual_category. It won't be displayed in the ingame manual.")
-        if self.hand_model:
-            stp.warning(f"Item '{self.id}' has a hand_model defined, but Stoupy is lazy and didn't implement it yet. Please mention him 10 times on discord!")
 
         ## Fix some fields
         # Convert recipes to RecipeList for automatic normalization
