@@ -104,7 +104,8 @@ Definition of the `Item` class properties:
 | `manual_category` | `str \| None` | Category for in-game manual organization |
 | `recipes` | `list[RecipeBase]` | List of recipe objects that create this item |
 | `override_model` | `JsonDict \| None` | Override auto-generated item model |
-| `hand_model` | `JsonDict \| None` | Special model when held in hand |
+| `hand_model` | `JsonDict \| None` | Model used instead of the regular one in most display contexts (hand, gui, ground, ...) |
+| `override_model_contexts` | `list[str] \| None` | Display contexts keeping the regular model when `hand_model` is set (default: `["none", "fixed"]`, i.e. item display entities and item frames) |
 | `wiki_buttons` | `list[WikiButton] \| TextComponent \| None` | Manual documentation |
 | `components` | `JsonDict` | Minecraft item components (without `minecraft:` prefix) |
 
@@ -126,6 +127,7 @@ item = Item(
     ],
     override_model=None,                        # Override auto-generated model
     hand_model=None,                            # Special hand-held model
+    override_model_contexts=None,               # Contexts keeping the regular model when hand_model is set
     wiki_buttons=[                              # Manual documentation buttons
         WikiButton({"text": "A powerful sword", "color": "gold"})
     ],

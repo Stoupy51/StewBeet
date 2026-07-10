@@ -207,6 +207,86 @@ class AutoModel:
 			# Add the texture to assets
 			Mem.ctx.assets[self.ns].textures[f"item/seeds/{stage_texture_name}"] = texture_mcmeta(stage_textures[stage_texture_name])
 
+	def copy_and_register_textures(self, content: JsonDict) -> None:
+		""" Copy a model's textures to the assets and register them for atlas handling.
+
+		Args:
+			content (JsonDict): The model content whose textures should be processed (may be modified in place).
+		"""
+		if not content.get("textures"):
+			return
+
+		# Copy used textures
+		for texture in content["textures"].values():
+			# Ignore if minecraft namespace
+			if texture.startswith("minecraft:"):
+				continue
+
+			texture_name = texture.split(":")[-1].split("/")[-1]  # Get just the filename
+			texture_name += ".png"
+			if texture_name in self.source_textures:
+				Mem.ctx.assets[texture] = texture_mcmeta(self.source_textures[texture_name])
+			else:
+				if not self.ignore_textures:
+					raise ValueError(f"Texture '{texture_name}' not found in source textures")
+
+		# Check if there are textures from different atlases
+		textures_values: list[str] = list(content["textures"].values())
+		has_minecraft: bool = any(t.startswith("minecraft:") for t in textures_values)
+		has_custom: bool = any(not t.startswith("minecraft:") for t in textures_values)
+		needs_atlas_conversion: bool = has_minecraft and has_custom
+
+		for key, texture in content["textures"].items():
+			if texture.startswith("minecraft:"):
+				self.used_minecraft_textures.add(texture)
+				if needs_atlas_conversion:
+					content["textures"][key] = to_atlas(texture)
+			else:
+				self.used_textures.add(texture)
+
+	def handle_hand_model(self, variants: list[str], on_off: str) -> JsonDict:
+		""" Generate the in-hand model from the item's hand_model and return the items/ definition
+		switching between the regular and in-hand models based on the display context.
+
+		Args:
+			variants (list[str]): List of texture variants of the item.
+			on_off   (str):       The power state suffix.
+
+		Returns:
+			JsonDict: The content of the items/ definition file.
+		"""
+		# Copy the hand model content (so the powered loop doesn't mutate the original)
+		hand_model: JsonDict = self.obj.hand_model or {}
+		content: JsonDict = {k: (v.copy() if isinstance(v, dict) else v) for k, v in hand_model.items()}
+
+		# If powered, check if the on state is in the variants and add it
+		if on_off == "_on":
+			for key, texture in content.get("textures", {}).items():
+				texture: str
+				if (texture.split("/")[-1] + on_off) in variants:
+					content["textures"][key] = texture + on_off
+
+		# Copy and register used textures
+		self.copy_and_register_textures(content)
+
+		# Add the in-hand model to assets
+		Mem.ctx.assets[self.ns].models[f"item/{self.obj.id}_in_hand{on_off}"] = set_json_encoder(Model(content), max_level=4)
+
+		# Return the items/ definition keeping the regular model for block-like contexts and using the in-hand model otherwise
+		return {
+			"model": {
+				"type": "minecraft:select",
+				"cases": [
+					{
+						"model": {"type": "minecraft:model","model": f"{self.ns}:item/{self.obj.id}{on_off}"},
+						"when": self.obj.override_model_contexts or Item.DEFAULT_OVERRIDE_MODEL_CONTEXTS
+					}
+				],
+				"fallback": {"type": "minecraft:model","model": f"{self.ns}:item/{self.obj.id}_in_hand{on_off}"},
+				"property": "minecraft:display_context"
+			}
+		}
+
 	@stp.handle_error(exceptions=ValueError, error_log=stp.LogLevels.ERROR_TRACEBACK)
 	def process(self) -> set[str]:
 		""" Process the item model.
@@ -431,36 +511,8 @@ class AutoModel:
 				if "textures" in content:
 					del content["textures"]
 
-			# Copy used textures
-			if not exclude_textures and content.get("textures"):
-				for texture in content["textures"].values():
-					# Ignore if minecraft namespace
-					if texture.startswith("minecraft:"):
-						continue
-
-					texture_name = texture.split(":")[-1].split("/")[-1]  # Get just the filename
-					texture_name += ".png"
-					if texture_name in self.source_textures:
-						Mem.ctx.assets[texture] = texture_mcmeta(self.source_textures[texture_name])
-					else:
-						if not self.ignore_textures:
-							raise ValueError(f"Texture '{texture_name}' not found in source textures")
-
-			# Add used textures
-			if content.get("textures"):
-				# Check if there are textures from different atlases
-				textures_values: list[str] = list(content["textures"].values())
-				has_minecraft: bool = any(t.startswith("minecraft:") for t in textures_values)
-				has_custom: bool = any(not t.startswith("minecraft:") for t in textures_values)
-				needs_atlas_conversion: bool = has_minecraft and has_custom
-
-				for key, texture in content["textures"].items():
-					if texture.startswith("minecraft:"):
-						self.used_minecraft_textures.add(texture)
-						if needs_atlas_conversion:
-							content["textures"][key] = to_atlas(texture)
-					else:
-						self.used_textures.add(texture)
+			# Copy and register used textures
+			self.copy_and_register_textures(content)
 
 			# Add model to assets
 			if self.obj.override_model != {}:
@@ -469,8 +521,12 @@ class AutoModel:
 
 			# Generate the json file required in items/
 			if not self.obj.base_item.endswith("bow"):
+				# Check if the item has a custom hand model
+				if self.obj.hand_model:
+					items_model: JsonDict = self.handle_hand_model(variants, on_off)
+
 				# Check if this is a spear with an in_hand variant
-				if self.obj.id.endswith("_spear") and f"{self.obj.id}_in_hand.png" in self.source_textures:
+				elif self.obj.id.endswith("_spear") and f"{self.obj.id}_in_hand.png" in self.source_textures:
 					# Create the special spear model with display context switching
 					items_model: JsonDict = {
 						"model": {
