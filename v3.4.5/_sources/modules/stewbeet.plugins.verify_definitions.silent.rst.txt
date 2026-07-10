@@ -1,0 +1,8 @@
+stewbeet.plugins.verify\_definitions.silent module
+==================================================
+
+.. automodule:: stewbeet.plugins.verify_definitions.silent
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
