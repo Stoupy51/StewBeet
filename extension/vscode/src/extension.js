@@ -2,17 +2,9 @@
 "use strict";
 
 const vscode = require("vscode");
+const { findBlockOffsets } = require("./blocks");
 
 // ─── Constants ───────────────────────────────────────────────────────────────
-
-const FUNC_RE = /\b(write_function|write_versioned_function|write_scheduled_function|write_load_file|write_unload_file|write_tick_file)\s*\(/g;
-
-/** Functions where the mcfunction content is the 2nd argument (after a path). */
-const FUNCS_2ND_ARG = new Set([
-  "write_function",
-  "write_versioned_function",
-  "write_scheduled_function",
-]);
 
 const CFG_KEY = "StewBeet";
 
@@ -104,135 +96,23 @@ function deactivate() { disposeDecos(); }
 // ─── Block detection ─────────────────────────────────────────────────────────
 
 /**
- * Skip past the first argument of a write_* call (the path), stopping just
- * after the separating comma. Handles nested parens/brackets and strings.
- * Returns the index of the first non-whitespace character after the comma, or -1.
- * @param {string} text
- * @param {number} start  Index just after the opening '(' of the call.
- */
-function skipFirstArg(text, start) {
-  let i = start;
-  let depth = 0;
-
-  while (i < text.length) {
-    const c = text[i];
-
-    if (c === "(" || c === "[" || c === "{") { depth++; i++; continue; }
-    if (c === ")" || c === "]" || c === "}") {
-      if (depth === 0) return -1;
-      depth--; i++; continue;
-    }
-    if (depth === 0 && c === ",") {
-      i++;
-      while (i < text.length && /[ \t\r\n]/.test(text[i])) i++;
-      return i;
-    }
-
-    // Skip over string literals so their commas/brackets are ignored.
-    if (c === '"' || c === "'") {
-      const triple = c.repeat(3);
-      if (text.slice(i, i + 3) === triple) {
-        i += 3;
-        while (i < text.length && text.slice(i, i + 3) !== triple) i++;
-        i += 3;
-      } else {
-        i++;
-        while (i < text.length && text[i] !== c && text[i] !== "\n") {
-          if (text[i] === "\\") i++;
-          i++;
-        }
-        i++;
-      }
-      continue;
-    }
-
-    i++;
-  }
-  return -1;
-}
-
-/**
- * Read the opening quote (optionally preceded by f/F) at position i,
- * skipping leading whitespace.
- * Returns { quoteStyle, quoteStart, contentStart } or null.
- * quoteStart includes the 'f' prefix if present.
- * @param {string} text
- * @param {number} i
- */
-function readOpeningQuote(text, i) {
-  while (i < text.length && /[ \t\r\n]/.test(text[i])) i++;
-  const start = i;
-  if (i < text.length && (text[i] === "f" || text[i] === "F")) i++;
-  if (i >= text.length) return null;
-  for (const qs of ['"""', "'''", '"', "'"]) {
-    if (text.slice(i, i + qs.length) === qs) {
-      return { quoteStyle: qs, quoteStart: start, contentStart: i + qs.length };
-    }
-  }
-  return null;
-}
-
-/**
- * Find the index of the closing quote, skipping escaped characters for
- * single-line styles.
- * @param {string} text
- * @param {string} quoteStyle
- * @param {number} from
- */
-function findClosingQuote(text, quoteStyle, from) {
-  if (quoteStyle === '"""' || quoteStyle === "'''") {
-    return text.indexOf(quoteStyle, from);
-  }
-  let i = from;
-  while (i < text.length) {
-    if (text[i] === quoteStyle) return i;
-    if (text[i] === "\\") i += 2;
-    else i++;
-  }
-  return -1;
-}
-
-/**
  * Find all mcfunction string blocks in a Python document.
+ * Scanning logic lives in ./blocks.js (pure, unit-tested).
  * @param {vscode.TextDocument} doc
  * @returns {{ startLine:number, startChar:number, endLine:number, endChar:number, multiline:boolean }[]}
  */
 function findBlocks(doc) {
-  const text = doc.getText();
-  const blocks = [];
-
-  FUNC_RE.lastIndex = 0;
-  let m;
-  while ((m = FUNC_RE.exec(text)) !== null) {
-    const afterOpen = m.index + m[0].length;
-
-    let contentIdx;
-    if (FUNCS_2ND_ARG.has(m[1])) {
-      contentIdx = skipFirstArg(text, afterOpen);
-      if (contentIdx === -1) continue;
-    } else {
-      contentIdx = afterOpen;
-    }
-
-    const opening = readOpeningQuote(text, contentIdx);
-    if (!opening) continue;
-
-    const closeIdx = findClosingQuote(text, opening.quoteStyle, opening.contentStart);
-    if (closeIdx === -1) continue;
-
-    const startPos = doc.positionAt(opening.quoteStart);
-    const endPos   = doc.positionAt(closeIdx + opening.quoteStyle.length);
-
-    blocks.push({
+  return findBlockOffsets(doc.getText()).map(({ start, end }) => {
+    const startPos = doc.positionAt(start);
+    const endPos   = doc.positionAt(end);
+    return {
       startLine: startPos.line,
       startChar: startPos.character,
       endLine:   endPos.line,
       endChar:   endPos.character,
       multiline: endPos.line > startPos.line,
-    });
-  }
-
-  return blocks;
+    };
+  });
 }
 
 // ─── Decoration rendering ─────────────────────────────────────────────────────

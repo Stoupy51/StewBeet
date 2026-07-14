@@ -15,6 +15,9 @@
   "keywords": ["mcfunction", "stewbeet", "beet", "minecraft", "datapack", "syntax", "highlighting", "pre-compiler"],
   "activationEvents": ["onLanguage:python"],
   "main": "./src/extension.js",
+  "scripts": {
+    "test": "node --test"
+  },
   "extensionDependencies": ["minecraftcommands.syntax-mcfunction"],
   "contributes": {
     "grammars": [
