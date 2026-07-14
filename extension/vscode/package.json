@@ -2,7 +2,7 @@
   "name": "stewbeet",
   "displayName": "StewBeet",
   "description": "Syntax highlighting for mcfunction strings inside StewBeet write_* calls in Python files, with configurable block decorations.",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "publisher": "stoupy",
   "license": "MIT",
   "icon": "icon.png",
