@@ -75,7 +75,7 @@
               "name": "comment.line.mcfunction"
             }
           },
-          "match": "^\\s*#(?!\\{)(?:[^\\\\\n\"]|\\\\[^n])*",
+          "match": "^\\s*#(?!\\{)(?:[^\\\\\n]|\\\\[^n])*",
           "name": "meta.comments"
         }
       ]
@@ -88,7 +88,7 @@
               "name": "comment.line.mcfunction"
             }
           },
-          "match": "#(?!\\{)(?:[^\\\\\n\"]|\\\\[^n])*",
+          "match": "#(?!\\{)(?:[^\\\\\n]|\\\\[^n])*",
           "name": "meta.comments"
         }
       ]
@@ -235,6 +235,66 @@
           },
           "match": "\\.\\.",
           "name": "meta.ellipse.literals"
+        },
+        {
+          "comment": "Triple-double-quoted string (nested Python f-string inside an interpolation). Must come before the single-double rule so the quotes pair up instead of leaking.",
+          "begin": "\"\"\"",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.begin.mcfunction"
+            }
+          },
+          "end": "\"\"\"",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.end.mcfunction"
+            }
+          },
+          "name": "string.quoted.triple.mcfunction",
+          "patterns": [
+            {
+              "captures": {
+                "0": {
+                  "name": "constant.character.escape.mcfunction"
+                }
+              },
+              "match": "\\\\.",
+              "name": "meta.literals_string-triple"
+            },
+            {
+              "include": "#macro-name"
+            }
+          ]
+        },
+        {
+          "comment": "Triple-single-quoted string (nested Python f-string inside an interpolation). Must come before the single-single rule so the quotes pair up instead of leaking.",
+          "begin": "'''",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.begin.mcfunction"
+            }
+          },
+          "end": "'''",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.end.mcfunction"
+            }
+          },
+          "name": "string.quoted.triple.mcfunction",
+          "patterns": [
+            {
+              "captures": {
+                "0": {
+                  "name": "constant.character.escape.mcfunction"
+                }
+              },
+              "match": "\\\\.",
+              "name": "meta.literals_string-triple"
+            },
+            {
+              "include": "#macro-name"
+            }
+          ]
         },
         {
           "applyEndPatternLast": 1,
@@ -706,5 +766,5 @@
       ]
     }
   },
-  "comment": "Patched mcfunction grammar for StewBeet embedded use: property.paren removed to avoid eating closing ) of write_* calls."
+  "comment": "Patched mcfunction grammar for StewBeet embedded use: property.paren removed to avoid eating closing ) of write_* calls; triple-quoted string rules added so nested Python f-strings inside {interpolations} pair up correctly; comment patterns consume quotes so a \" in a comment line cannot open a runaway string."
 }
