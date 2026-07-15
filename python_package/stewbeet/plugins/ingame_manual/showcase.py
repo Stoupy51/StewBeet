@@ -37,8 +37,19 @@ def calculate_optimal_grid(item_count: int) -> tuple[int, int]:
 	return best_rows, best_cols
 
 
-def generate_showcase_images(showcase_mode: int, categories: dict[str, list[str]], simple_case: Image.Image, cache_path: str) -> None:
-	""" Generate showcase image(s) per mode (1=manual, 2=all, 3=both). """
+def generate_showcase_images(
+	showcase_mode: int,
+	categories: dict[str, list[str]],
+	simple_case: Image.Image,
+	cache_path: str,
+	all_items: list[str] | None = None,
+) -> None:
+	""" Generate showcase image(s) per mode (1=manual, 2=all, 3=both).
+
+	When ``all_items`` is given it overrides the default "all items" set (every definition) used
+	for ``all_items.png`` — e.g. to skip items that have no iso render. Defaults to
+	``list(Mem.definitions.keys())`` when ``None``.
+	"""
 	if showcase_mode in (1, 3):
 		manual_items: list[str] = []
 		for items in categories.values():
@@ -49,7 +60,8 @@ def generate_showcase_images(showcase_mode: int, categories: dict[str, list[str]
 				str(Mem.ctx.output_directory), Mem.ctx.project_id, cache_path, no_join=True,
 			)
 	if showcase_mode in (2, 3):
-		all_items: list[str] = list(Mem.definitions.keys())
+		if all_items is None:
+			all_items = list(Mem.definitions.keys())
 		if all_items:
 			stp.run_in_subprocess(
 				create_showcase_image, all_items, "all_items.png", simple_case,
