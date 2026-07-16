@@ -188,6 +188,8 @@ def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
 		[s]strikethrough[/s]
 		>>> print(convert_markdown_to_bbcode('*italic* and _also italic_', verbose=False))
 		[i]italic[/i] and [i]also italic[/i]
+		>>> print(convert_markdown_to_bbcode('<u>underline</u>', verbose=False))
+		[u]underline[/u]
 		>>> print(convert_markdown_to_bbcode('> blockquote', verbose=False))
 		[quote]blockquote[/quote]
 		>>> nested_list_md = '- item 1\\n  - sub item 1\\n  - sub item 2\\n- item 2'
@@ -313,7 +315,11 @@ def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
 	# Format: ~~text~~ -> [s]text[/s]
 	bbcode = re.sub(r"~~([^~]+)~~", r"[s]\1[/s]", bbcode)
 
-	# Step 7c: Convert italic text (single * or _)
+	# Step 7c: Convert underline tags
+	# Format: <u>text</u> -> [u]text[/u]
+	bbcode = re.sub(r"<u>(.*?)</u>", r"[u]\1[/u]", bbcode, flags=re.DOTALL)
+
+	# Step 7d: Convert italic text (single * or _)
 	# Format: *text* or _text_ -> [i]text[/i]
 	# Exclude [*] and [/*] list tags by checking for [ and / before *
 	bbcode = re.sub(r"(?<![\[/])\*(?![*\]])([^*\n]+)(?<![\[/])\*(?![*\]])", r"[i]\1[/i]", bbcode)

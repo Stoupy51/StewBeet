@@ -189,7 +189,11 @@ export function convertMarkdownToBBCode(markdown: string): string {
   // Format: ~~text~~ -> [s]text[/s]
   bbcode = bbcode.replace(/~~([^~]+)~~/g, '[s]$1[/s]');
 
-  // Step 7c: Convert italic text (single * or _)
+  // Step 7c: Convert underline tags
+  // Format: <u>text</u> -> [u]text[/u]
+  bbcode = bbcode.replace(/<u>([\s\S]*?)<\/u>/g, '[u]$1[/u]');
+
+  // Step 7d: Convert italic text (single * or _)
   // Format: *text* or _text_ -> [i]text[/i]
   // Exclude [*] and [/*] list tags by checking for [ and / before *
   bbcode = bbcode.replace(/(?<![[/])\*(?![*\]])([^*\n]+)(?<![[/])\*(?![*\]])/g, '[i]$1[/i]');
