@@ -1,59 +1,16 @@
 
 # Imports
-import os
 from collections.abc import Callable
-from typing import Any, TypeVar, cast
+from typing import Any, cast
 
 import stouputils as stp
-from beet import Advancement, Function, JsonFile, NamespaceContainer, NamespaceProxy, TagFile, Texture
+from beet import Function, NamespaceContainer, NamespaceProxy, TagFile
 from stouputils.typing import JsonDict
 
-from ..__memory__ import Mem
+from ...__memory__ import Mem
 
 # Constants
-JsonFileT = TypeVar("JsonFileT", bound=JsonFile)
 type McFunction = str
-
-# Advancements
-def write_advancement(
-	path: str,
-	advancement: Advancement | JsonDict,
-	overwrite: bool = False,
-	max_level: int = -1,
-	condition: Callable[[JsonDict], bool] = lambda existing_data: True, # pyright: ignore[reportUnknownLambdaType]
-) -> Advancement | None:
-	""" Write an advancement at the given path.
-
-	Args:
-		path        (str):                         The path to the advancement (ex: "namespace:folder/advancement_name")
-		advancement (Advancement | JsonDict):      The advancement to write
-		overwrite   (bool):                        If the file should be overwritten (default: Merge with existing content using super_merge_dict)
-		max_level   (int):                         The maximum level of the JSON dump, -1 for default behavior (default: -1)
-		condition   (Callable[[JsonDict], bool]):  A function that takes the existing advancement data
-			and returns whether the new advancement should be written (default: always write)
-	Returns:
-		Advancement | None: The written advancement, or None if the condition was not met
-	"""
-	path = path.removesuffix(".json")  # Remove .json extension if present
-
-	# Get existing advancement or create empty one, and check condition with its data
-	existing_data: JsonDict = Mem.ctx.data.advancements.get(path, Advancement()).data
-	if not condition(existing_data):
-		return None
-
-	# Convert to dict if it's an Advancement object
-	new_data: JsonDict = advancement.data if isinstance(advancement, Advancement) else advancement
-
-	if overwrite or not existing_data:
-		adv: Advancement = set_json_encoder(Advancement(new_data), max_level=max_level)
-	else:
-		# Merge the new data with existing data
-		merged_data: JsonDict = super_merge_dict(existing_data, new_data)
-		adv: Advancement = set_json_encoder(Advancement(merged_data), max_level=max_level)
-
-	# Write the advancement to memory and return it
-	Mem.ctx.data.advancements[path] = adv
-	return adv
 
 # Functions
 def write_tag(
@@ -312,106 +269,4 @@ def write_scheduled_function(
 
 	# Return the function object
 	return func
-
-
-# Merge two dict recursively
-def super_merge_dict(dict1: JsonDict, dict2: JsonDict) -> JsonDict:
-	""" Merge the two dictionaries recursively without modifying originals
-
-	Args:
-		dict1 (dict): The first dictionary
-		dict2 (dict): The second dictionary
-	Returns:
-		dict: The merged dictionary
-
-	Examples:
-		>>> super_merge_dict({"a": 1}, {"b": 2})
-		{'a': 1, 'b': 2}
-		>>> super_merge_dict({"a": 1}, {"a": 99})
-		{'a': 99}
-		>>> super_merge_dict({"nested": {"x": 1, "y": 2}}, {"nested": {"y": 99, "z": 3}})
-		{'nested': {'x': 1, 'y': 99, 'z': 3}}
-		>>> super_merge_dict({"tags": ["a", "b"]}, {"tags": ["b", "c"]})
-		{'tags': ['a', 'b', 'c']}
-		>>> result = super_merge_dict({"items": [{"id": 1}]}, {"items": [{"id": 2}]})
-		>>> result["items"]
-		[{'id': 1}, {'id': 2}]
-	"""
-	# Copy first dictionary
-	new_dict: JsonDict = {}
-	for key, value in dict1.items():
-		new_dict[key] = value
-
-	# For each key of the second dictionnary,
-	for key, value in dict2.items():
-
-		# If key exists in dict1, and both values are also dict, merge recursively
-		if key in dict1 and isinstance(dict1[key], dict) and isinstance(value, dict):
-			new_dict[key] = super_merge_dict(dict1[key], cast(JsonDict, value))
-
-		# Else if it's a list, merge it
-		elif key in dict1 and isinstance(dict1[key], list) and isinstance(value, list):
-			new_dict[key] = dict1[key] + value
-			if not any(isinstance(x, dict) for x in new_dict[key]):
-				new_dict[key] = stp.unique_list(new_dict[key])
-
-		# Else, just overwrite or add value
-		else:
-			new_dict[key] = value
-
-	# Return the new dict
-	return new_dict
-
-
-# Set the JSON encoder to json_dump for a JsonFile object
-def set_json_encoder[JsonFileT: JsonFile](
-	obj: JsonFileT, max_level: int | None = None, indent: str | int = '\t'
-) -> JsonFileT:
-	""" Set the encoder of the given object to json_dump
-
-	Args:
-		obj			(JsonFile):		The object to set the encoder for
-		max_level	(int | None):	The maximum level of the JSON dump, or None for default behavior
-		indent		(str | int):	The indentation character (default: '\t')
-	Returns:
-		JsonFile: The object with the encoder set
-	"""
-	if max_level is None:
-		obj.encoder = lambda x: stp.json_dump(x, indent=indent)
-	else:
-		obj.encoder = lambda x: stp.json_dump(x, max_level=max_level, indent=indent)
-	return obj
-
-# Create a texture object with mcmeta if found
-def texture_mcmeta(source_path: str) -> Texture:
-	""" Create a Texture object with mcmeta if found
-
-	Args:
-		source_path (str): The path to the texture (ex: "assets/textures/texture_name.png")
-	Returns:
-		Texture: The texture object
-	"""
-	mcmeta_path: str = f"{source_path}.mcmeta"
-	if os.path.exists(mcmeta_path):
-		return Texture(source_path=source_path, mcmeta=stp.json_load(mcmeta_path))
-	return Texture(source_path=source_path)
-
-
-
-# Deprecated functions
-@stp.deprecated(message="convert_to_serializable is deprecated, prefer using stp.convert_to_serializable from stouputils", version="v3.1.3")
-def convert_to_serializable(obj: Any) -> Any:
-	return stp.convert_to_serializable(obj)
-
-
-@stp.deprecated(message="write_function_tag is deprecated, prefer using write_tag or `tags` argument of write_function instead", version="v3.1.3")
-def write_function_tag(
-	path: str,
-	functions: list[Any] | None = None,
-	prepend: bool = False,
-	max_level: int | None = None,
-	condition: Callable[[list[Any]], bool] = lambda existing_values: True, # pyright: ignore[reportUnknownLambdaType]
-) -> TagFile | None:
-	""" write_function_tag is deprecated, prefer using write_tag or `tags` argument of write_function instead """
-	return write_tag(path, Mem.ctx.data.function_tags, functions, prepend, max_level, condition)
 

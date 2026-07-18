@@ -8,6 +8,7 @@ from stouputils.typing import JsonDict
 
 from ....core.__memory__ import Mem
 from ....core.cls.item import Item
+from ....core.utils.io import setup_model_cache
 from .object import AutoModel, to_atlas
 
 
@@ -80,6 +81,11 @@ def beet_default(ctx: Context):
 	# Stewbeet Initialized
 	if Mem.ctx is None: # pyright: ignore[reportUnnecessaryComparison]
 		Mem.ctx = ctx
+
+	# Serialized models are cached between builds, keyed by a hash of their content (see
+	# ModelSerializationCache). Models are encoded lazily at dump time, well after this plugin runs,
+	# so the cache only needs installing here.
+	setup_model_cache(ctx)
 
 	# Textures folder
 	textures_folder: str = stp.relative_path(Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", ""))

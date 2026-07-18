@@ -305,7 +305,6 @@ def patch_livereload_for_copy_destinations(ctx: Context) -> None:
 
 
 # Main entry point
-@stp.measure_time(message="Execution time of 'stewbeet.plugins.livereload'")
 def beet_default(ctx: Context) -> None:
 	""" Live reload wrapper plugin for StewBeet.
 
