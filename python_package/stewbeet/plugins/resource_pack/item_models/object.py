@@ -332,16 +332,17 @@ class AutoModel:
 			print(f"Overrides: {overrides}")
 			print(f"Powered states: {powered}")
 
+		all_variants: list[str] = [
+			x.replace(".png", "") for x in self.source_textures
+			if x.startswith(self.obj.id)
+			and abs(x.count("_") - self.obj.id.count("_")) <= 2  # Allow for up to 2 extra underscores. Preventing "awakened_stardust.png" to match "awakened_stardust_furnace_generator_on.png"
+		]
+		# Filter to only include variants in the same folder
+		variants: list[str] = self.get_same_folder_variants(all_variants)
+
 		# Generate its model file(s)
 		for on_off in powered:
 			content: JsonDict = {}			# Get all variants
-			all_variants: list[str] = [
-				x.replace(".png", "") for x in self.source_textures
-				if os.path.basename(x).startswith(self.obj.id)
-				and abs(x.count("_") - self.obj.id.count("_")) <= 2  # Allow for up to 2 extra underscores. Preventing "awakened_stardust.png" to match "awakened_stardust_furnace_generator_on.png"
-			]
-			# Filter to only include variants in the same folder
-			variants: list[str] = self.get_same_folder_variants(all_variants)
 
 			if self.obj.override_model != {}:
 				# If it's a block
