@@ -4,20 +4,24 @@ from dataclasses import dataclass, field
 from typing import Any, ClassVar
 
 import stouputils as stp
+from beet import ItemModel, LootTable, Model, Recipe, Texture
 from beet.core.utils import TextComponent
 from stouputils.typing import JsonDict
 
 from ..constants import (
     CATEGORY,
     CUSTOM_ITEM_VANILLA,
+    ITEMS_LOOT_FOLDER,
     OVERRIDE_MODEL,
     RESULT_OF_CRAFTING,
     USED_FOR_CRAFTING,
     WIKI_COMPONENT,
 )
+from ..utils.loot_table import result_count_to_suffix
 from ._recipe_list import RecipeList
 from ._utils import StMapping
 from .recipe import RecipeBase
+from .resource import Resource
 from .wiki_button import WikiButton
 
 
@@ -65,6 +69,30 @@ class Item(StMapping):
     >>> also_obj = Item.from_id("stardust_ingot")
     >>> obj is also_obj
     True
+
+    ## Resource locations (namespace falls back to "your_namespace" outside a build)
+    >>> obj.loot_table
+    'your_namespace:i/stardust_ingot'
+    >>> obj.loot_table_for(5)
+    'your_namespace:i/stardust_ingot_x5'
+    >>> obj.loot_table_for({"min": 4, "max": 6})
+    'your_namespace:i/stardust_ingot_x4to6'
+    >>> obj.item_model
+    'your_namespace:stardust_ingot'
+    >>> obj.model
+    'your_namespace:item/stardust_ingot'
+    >>> obj.texture
+    'your_namespace:item/stardust_ingot'
+    >>> obj.recipe(), obj.recipe(2)
+    ('your_namespace:stardust_ingot', 'your_namespace:stardust_ingot_2')
+
+    A user-defined "item_model" component wins, but the generated file location doesn't move:
+    >>> obj.components["item_model"] = "minecraft:air"
+    >>> obj.item_model
+    'minecraft:air'
+    >>> obj.generated_item_model
+    'your_namespace:stardust_ingot'
+    >>> del obj.components["item_model"]
     """
 
     id: str
@@ -121,6 +149,59 @@ class Item(StMapping):
         from ..__memory__ import Mem
         if self.id and ":" not in self.id and self.id not in Mem.definitions:
             Mem.definitions[self.id] = self
+
+    # Resource locations
+    def loot_table_for(self, result_count: int | JsonDict) -> Resource[LootTable]:
+        """ Get the loot table giving this item in the requested amount.
+
+        Args:
+            result_count (int|JsonDict): The amount to give, ex: 1, 5, {"min":4,"max":6}
+        Returns:
+            Resource[LootTable]: The loot table, ex: "your_namespace:i/stardust_ingot_x5"
+        """
+        return Resource(LootTable, f"{ITEMS_LOOT_FOLDER}/{self.id}{result_count_to_suffix(result_count)}")
+
+    @property
+    def loot_table(self) -> Resource[LootTable]:
+        """ The loot table giving one of this item, ex: "your_namespace:i/stardust_ingot". """
+        return self.loot_table_for(1)
+
+    @property
+    def item_model(self) -> Resource[ItemModel]:
+        """ The item model this item renders as, honoring the "item_model" component when set.
+
+        Beware: this is what the item points to, which the user can override to anything.
+        Use `generated_item_model` for the location StewBeet actually writes the file at.
+        """
+        override: Any = self.components.get("item_model")
+        if override:
+            return Resource(ItemModel, str(override))
+        return self.generated_item_model
+
+    @property
+    def generated_item_model(self) -> Resource[ItemModel]:
+        """ The item model location StewBeet generates for this item, ex: "your_namespace:stardust_ingot". """
+        return Resource(ItemModel, self.id)
+
+    @property
+    def model(self) -> Resource[Model]:
+        """ The model generated for this item, ex: "your_namespace:item/stardust_ingot". """
+        return Resource(Model, f"item/{self.id}")
+
+    @property
+    def texture(self) -> Resource[Texture]:
+        """ The main texture of this item, ex: "your_namespace:item/stardust_ingot". """
+        return Resource(Texture, f"item/{self.id}")
+
+    def recipe(self, index: int = 1) -> Resource[Recipe]:
+        """ Get the vanilla recipe file of this item.
+
+        Args:
+            index (int): The recipe number when the item has multiple vanilla recipes (1-based)
+        Returns:
+            Resource[Recipe]: The recipe, ex: "your_namespace:stardust_ingot" or "your_namespace:stardust_ingot_2"
+        """
+        return Resource(Recipe, self.id if index <= 1 else f"{self.id}_{index}")
 
     # Mapping methods (__getitem__, __len__, and __iter__)
     def _get_mapping(self) -> JsonDict:

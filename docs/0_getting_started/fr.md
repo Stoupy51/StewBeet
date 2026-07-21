@@ -279,7 +279,7 @@ def main():
 **Incroyable !** 🎉 StewBeet a automatiquement :
 - ✅ Créé le modèle d'objet et la référence
 - ✅ Ajouté au resource pack
-- ✅ Créé les composants d'objet appropriés
+- ✅ Créé les components d'objet appropriés
 - ✅ Ajouté au manuel (si activé)
 
 ## 🎯 Étape 8 : Ajouter votre premier bloc personnalisé

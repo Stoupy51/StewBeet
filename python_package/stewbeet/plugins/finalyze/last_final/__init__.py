@@ -10,8 +10,7 @@ from ...initialize.source_lore_font import create_source_lore_font, find_pack_pn
 # Main entry point
 @stp.measure_time(message="Execution time of 'stewbeet.plugins.finalyze.last_final'")
 def beet_default(ctx: Context):
-	if Mem.ctx is None: # pyright: ignore[reportUnnecessaryComparison]
-		Mem.ctx = ctx
+	Mem.ctx = ctx
 
 	# If source lore is present and there are item definitions using it, create the source lore font
 	pack_icon_path: str = Mem.ctx.meta.get("stewbeet", {}).get("pack_icon_path", "")

@@ -67,8 +67,8 @@ def build_model_resolver_queue(path: str, ns: str, cache_assets: bool) -> dict[s
 			continue
 		if os.path.exists(f"{path}/{ns}/{item}.png") and cache_assets:
 			continue
-		model: Model | None = Mem.ctx.assets[ns].models.get(f"item/{item}")
-		rp_path = f"{ns}:item/{item}"
+		rp_path = obj.model
+		model: Model | None = rp_path.get()
 		dst_path = f"{path}/{ns}/{item}.png"
 		if model is not None and model.get_content().get("textures", None) is not None:  # type: ignore
 			for_model_resolver[rp_path] = dst_path

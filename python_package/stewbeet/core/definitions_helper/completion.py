@@ -19,11 +19,11 @@ def add_item_model_component(black_list: list[str] | None = None) -> None:
 	"""
 	if black_list is None:
 		black_list = []
-	for item, data in Mem.definitions.items():
-		data = data.components
+	for item, obj in Mem.definitions.items():
+		data = obj.components
 		if item in black_list or data.get("item_model", None) is not None:
 			continue
-		data["item_model"] = f"{Mem.ctx.project_id}:{item}"
+		data["item_model"] = obj.generated_item_model
 	return
 
 # Add item name and lore

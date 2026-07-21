@@ -282,7 +282,7 @@ export const translations = {
             manualTitle: 'Manuel en Jeu',
             manualDesc: 'Manuel interactif généré automatiquement avec la documentation des objets, recettes de craft, et navigation cliquable.',
             langTitle: 'Fichiers Lang Auto',
-            langDesc: 'Extrait automatiquement les composants de texte de votre code et génère les fichiers de traduction en_us.json.',
+            langDesc: 'Extrait automatiquement les components de texte de votre code et génère les fichiers de traduction en_us.json.',
             customBlocksTitle: 'Blocs Personnalisés',
             customBlocksDesc: 'Système complet de blocs personnalisés avec placement, destruction, drops de minerais (fortune/silk touch), et intégration Smithed.',
         },

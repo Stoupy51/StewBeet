@@ -2,10 +2,12 @@
 # Imports
 from dataclasses import dataclass
 
+from beet import PaintingVariant, Texture
 from beet.core.utils import TextComponent
 
 from ._utils import StMapping
 from .item import Item
+from .resource import Resource
 
 
 @dataclass(kw_only=True)
@@ -51,6 +53,14 @@ class Painting(Item):
     ... )
     >>> my_painting
     Painting(id='stewbeet_painting_2x2', base_item='minecraft:painting', manual_category=None, recipes=[], override_model=None, hand_model=None, override_model_contexts=None, wiki_buttons=None, components={'max_stack_size': 16, 'painting/variant': 'your_namespace:stewbeet_painting_2x2'}, skip_gives=False, painting_data=PaintingData(texture='stewbeet_painting_2x2', author={'text': 'An Artist I would say', 'color': 'yellow'}, title={'text': 'Stewbeet Painting 2X2'}, width=2, height=2))
+
+    ### Resource locations
+    >>> my_painting.variant
+    'your_namespace:stewbeet_painting_2x2'
+    >>> my_painting.painting_texture
+    'your_namespace:painting/stewbeet_painting_2x2'
+    >>> my_painting.asset_id
+    'your_namespace:stewbeet_painting_2x2'
     """  # noqa: E501
     base_item: str = "minecraft:painting"
     painting_data: PaintingData
@@ -66,9 +76,31 @@ class Painting(Item):
 
         # Ensure the painting variant is set in components
         if "painting/variant" not in self.components:
-            ns = Mem.ctx.project_id if Mem.ctx else "your_namespace"
-            self.components["painting/variant"] = f"{ns}:{self.id}"
+            self.components["painting/variant"] = f"{Mem.ctx.project_id}:{self.id}"
 
         # Call the parent post-init to register the item
         super().__post_init__()
+
+    # Resource locations
+    @property
+    def variant(self) -> Resource[PaintingVariant]:
+        """ The painting variant of this painting, honoring the "painting/variant" component when set. """
+        override: str | None = self.components.get("painting/variant")
+        if override:
+            return Resource(PaintingVariant, override)
+        return Resource(PaintingVariant, self.id)
+
+    @property
+    def painting_texture(self) -> Resource[Texture]:
+        """ The texture of this painting, ex: "your_namespace:painting/stewbeet_painting_2x2". """
+        return Resource(Texture, f"painting/{self.painting_data.texture or self.id}")
+
+    @property
+    def asset_id(self) -> str:
+        """ The asset_id referenced by the painting variant, ex: "your_namespace:stewbeet_painting_2x2".
+
+        Beware: this is NOT the texture resource location. Minecraft resolves a painting asset_id of
+        "ns:name" to "assets/ns/textures/painting/name.png", so the two strings differ.
+        """
+        return f"{self.painting_texture.namespace}:{self.painting_data.texture or self.id}"
 

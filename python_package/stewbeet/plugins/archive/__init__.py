@@ -100,10 +100,8 @@ def beet_default(ctx: Context) -> None:
 	Args:
 		ctx (Context): The beet context.
 	"""
-	if Mem.ctx is None: # pyright: ignore[reportUnnecessaryComparison]
-		Mem.ctx = ctx
-
 	# Assertions
+	Mem.ctx = ctx
 	assert Mem.ctx.output_directory, "Output directory must be specified in the project configuration."
 
 	# Ensure output directory exists

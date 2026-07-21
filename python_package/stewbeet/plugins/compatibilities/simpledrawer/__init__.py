@@ -51,8 +51,7 @@ def beet_default(ctx: Context):
 	Args:
 		ctx (Context): The beet context.
 	"""
-	if Mem.ctx is None: # pyright: ignore[reportUnnecessaryComparison]
-		Mem.ctx = ctx
+	Mem.ctx = ctx
 
 	# Get namespace
 	assert ctx.project_id, "Project ID is not set. Please set it in the project configuration."

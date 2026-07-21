@@ -3,7 +3,7 @@
 # Imports
 from beet import FunctionTag
 
-from ...core import Block, Mem, set_json_encoder, write_function
+from ...core import CUSTOM_BLOCKS_FOLDER, Block, BlockFunctions, Mem, set_json_encoder, write_function
 
 
 # Setup simplenergy wrench rotatable tags and mechanization calls
@@ -21,7 +21,7 @@ def setup_wrench(blocks: list[str] | str, tag_ns: str = "simplenergy") -> None:
 	# Add tags for rotatables
 	for rotatable in blocks:
 		write_function(
-			f"{ns}:custom_blocks/{rotatable}/place_secondary",
+			BlockFunctions(rotatable).place_secondary,
 			f"\n# Make the block rotatable by wrench\ntag @s add {tag_ns}.rotatable"
 		)
 
@@ -36,7 +36,7 @@ def setup_wrench(blocks: list[str] | str, tag_ns: str = "simplenergy") -> None:
 	# Write slots functions
 	write_function(f"{ns}:calls/mechanization/wrench_break", f"""
 execute if entity @s[tag={ns}.custom_block] run setblock ~ ~ ~ air destroy
-execute if entity @s[tag={ns}.custom_block] run function {ns}:custom_blocks/destroy
+execute if entity @s[tag={ns}.custom_block] run function {ns}:{CUSTOM_BLOCKS_FOLDER}/destroy
 """)
 	write_function(
 		f"{ns}:calls/mechanization/wrench_modify",

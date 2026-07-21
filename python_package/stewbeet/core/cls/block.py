@@ -4,18 +4,23 @@ from dataclasses import dataclass
 from typing import Literal
 
 import stouputils as stp
-from beet import LootTable
+from beet import Advancement, Function, ItemModel, LootTable, Model, Texture
 from stouputils.typing import JsonDict
 
 from ..constants import (
     CUSTOM_BLOCK_ALTERNATIVE,
     CUSTOM_BLOCK_HEAD,
     CUSTOM_BLOCK_VANILLA,
+    CUSTOM_BLOCKS_FOLDER,
     NO_SILK_TOUCH_DROP,
+    PLAYER_HEAD_FOLDER,
+    SEEDS_FOLDER,
     VANILLA_BLOCK,
 )
 from ._utils import StMapping
+from .block_functions import BlockFunctions
 from .item import Item
+from .resource import Resource
 
 
 # Subclasses
@@ -229,11 +234,41 @@ class Block(Item):
     ...         planted_on="diamond_block",
     ...         loots=[GrowingSeedLoot(id="stardust_fragment", rolls=3)]
     ...     ),
-    ...     on_place="tag @s add seed"
     ... )
     >>> also_obj = Block.from_id("stardust_seed")
     >>> obj is also_obj
     True
+
+    ## Resource locations
+    >>> block.functions.place_main
+    'your_namespace:custom_blocks/machine_block/place_main'
+    >>> block.functions.place_secondary
+    'your_namespace:custom_blocks/machine_block/place_secondary'
+    >>> block.functions.destroy
+    'your_namespace:custom_blocks/machine_block/destroy'
+    >>> block.functions["any_custom_function"]
+    'your_namespace:custom_blocks/machine_block/any_custom_function'
+    >>> block.functions.folder
+    'your_namespace:custom_blocks/machine_block'
+    >>> block.loot_table
+    'your_namespace:i/machine_block'
+    >>> block.no_silk_touch_loot_table
+    'your_namespace:custom_blocks/no_silk_touch_drop/machine_block'
+
+    Growing seed stages use the seed texture basename, not the block ID:
+    >>> obj.seed_stage_item_model(2)
+    'your_namespace:seeds/stardust_stage_2'
+    >>> obj.seed_stage_model(2)
+    'your_namespace:item/seeds/stardust_stage_2'
+    >>> obj.seed_loot_table
+    'your_namespace:seeds/stardust_seed'
+
+    Regular custom blocks are detected by the smithed custom_block library, so they have
+    no placement advancement of their own:
+    >>> block.advancement
+    Traceback (most recent call last):
+    ...
+    ValueError: Block 'machine_block' uses base_item 'minecraft:furnace' and has no placement advancement (regular custom blocks are detected by the smithed custom_block library)
     """
     base_item: str = CUSTOM_BLOCK_VANILLA
     """ Can either be CUSTOM_BLOCK_VANILLA, CUSTOM_BLOCK_ALTERNATIVE, CUSTOM_BLOCK_HEAD, or a vanilla block like 'minecraft:stone'. """
@@ -244,7 +279,7 @@ class Block(Item):
     no_silk_touch_drop: NoSilkTouchDrop | LootTable | str | None = None
     """ (Optional) No-silk drop mode: deterministic (e.g. `NoSilkTouchDrop(id="raw_simplunium")` or string item id "raw_simplunium") or dynamic (`LootTable` object from beet). """
     on_place: str | None = None
-    """ (Optional) Text to append to the function ``{ns}:custom_blocks/{id}/place_secondary`` that is executed on block placement as the item display """
+    """ Deprecated since v3.5.0. """
 
     # Others
     growing_seed: GrowingSeed | None = None
@@ -252,7 +287,16 @@ class Block(Item):
 
     def __post_init__(self) -> None:
         from ..__memory__ import Mem
-        ns: str = Mem.ctx.project_id if Mem.ctx else "your_namespace"
+        ns: str = Mem.ctx.project_id
+
+        # Deprecation warning
+        if self.on_place:
+            stp.warning(
+                f"Block '{self.id}': 'on_place' is deprecated since v3.5.0 and will be removed in a future version. "
+                f"Use Block.from_id({self.id!r}).functions.place_secondary.obj.append(...) instead, "
+                "from a plugin running AFTER 'stewbeet.plugins.datapack.custom_blocks' so the commands "
+                "still land after the block setup (.obj raises KeyError if you access it too early)."
+            )
 
         # Add additional data to the custom blocks
         if self.base_item == CUSTOM_BLOCK_VANILLA:
@@ -270,6 +314,97 @@ class Block(Item):
             self.components["entity_data"] = {"id":"minecraft:item_frame","Tags":[f"{ns}.new",f"{ns}.{self.id}"],"Invisible":True,"Silent":True}
         super().__post_init__()
 
+    # Resource locations
+    @property
+    def functions(self) -> BlockFunctions:
+        """ The mcfunctions of this custom block, ex: `block.functions.place_secondary`. """
+        return BlockFunctions(self.id)
+
+    @property
+    def no_silk_touch_loot_table(self) -> Resource[LootTable]:
+        """ The loot table used when this block is broken without silk touch. """
+        return Resource(LootTable, f"{CUSTOM_BLOCKS_FOLDER}/no_silk_touch_drop/{self.id}")
+
+    @property
+    def seed_loot_table(self) -> Resource[LootTable]:
+        """ The loot table dropped when this growing seed is fully grown and harvested. """
+        return Resource(LootTable, f"{SEEDS_FOLDER}/{self.id}")
+
+    @property
+    def alternative_advancement(self) -> Resource[Advancement]:
+        """ The advancement detecting the placement of an item frame based custom block. """
+        return Resource(Advancement, f"custom_block_alternative/{self.id}")
+
+    @property
+    def head_advancement(self) -> Resource[Advancement]:
+        """ The advancement detecting the placement of a player head based custom block. """
+        return Resource(Advancement, f"custom_block_head/{self.id}")
+
+    @property
+    def advancement(self) -> Resource[Advancement]:
+        """ The advancement detecting the placement of this custom block.
+
+        Returns:
+            Resource[Advancement]: The placement advancement
+        Raises:
+            ValueError: If the block is a regular custom block, since those are handled by the
+                smithed custom_block library instead of a per-block advancement.
+        """
+        if self.base_item == CUSTOM_BLOCK_ALTERNATIVE:
+            return self.alternative_advancement
+        if self.base_item == CUSTOM_BLOCK_HEAD:
+            return self.head_advancement
+        raise ValueError(
+            f"Block '{self.id}' uses base_item '{self.base_item}' and has no placement advancement "
+            "(regular custom blocks are detected by the smithed custom_block library)"
+        )
+
+    @property
+    def head_search(self) -> Resource[Function]:
+        """ The function searching the placed player head of this custom block. """
+        return Resource(Function, f"{PLAYER_HEAD_FOLDER}/search_{self.id}")
+
+    def seed_stage_name(self, stage: str | int) -> str:
+        """ Get the shared base name of a growth stage of this growing seed.
+
+        Args:
+            stage (str|int): The growth stage, ex: 0, 1, 2, ...
+        Returns:
+            str: The stage name, ex: "stardust_stage_2"
+        """
+        basename: str = (self.growing_seed.texture_basename or self.id) if self.growing_seed else self.id
+        return f"{basename}_stage_{stage}"
+
+    def seed_stage_item_model(self, stage: str | int) -> Resource[ItemModel]:
+        """ Get the item model of a growth stage of this growing seed.
+
+        Args:
+            stage (str|int): The growth stage, ex: 0, 1, 2, ...
+        Returns:
+            Resource[ItemModel]: The item model, ex: "your_namespace:seeds/stardust_stage_2"
+        """
+        return Resource(ItemModel, f"{SEEDS_FOLDER}/{self.seed_stage_name(stage)}")
+
+    def seed_stage_model(self, stage: str | int) -> Resource[Model]:
+        """ Get the model of a growth stage of this growing seed.
+
+        Args:
+            stage (str|int): The growth stage, ex: 0, 1, 2, ...
+        Returns:
+            Resource[Model]: The model, ex: "your_namespace:item/seeds/stardust_stage_2"
+        """
+        return Resource(Model, f"item/{SEEDS_FOLDER}/{self.seed_stage_name(stage)}")
+
+    def seed_stage_texture(self, stage: str | int) -> Resource[Texture]:
+        """ Get the texture of a growth stage of this growing seed.
+
+        Args:
+            stage (str|int): The growth stage, ex: 0, 1, 2, ...
+        Returns:
+            Resource[Texture]: The texture, ex: "your_namespace:item/seeds/stardust_stage_2"
+        """
+        return Resource(Texture, f"item/{SEEDS_FOLDER}/{self.seed_stage_name(stage)}")
+
     # Mapping methods
     def _get_mapping(self) -> JsonDict:
         mapping: JsonDict = super()._get_mapping()
@@ -286,6 +421,10 @@ class BlockAlternative(Block):
     >>> ba = BlockAlternative(id="servo_inserter", vanilla_block=VanillaBlock(contents=True))
     >>> ba.base_item
     'minecraft:item_frame'
+    >>> ba.advancement
+    'your_namespace:custom_block_alternative/servo_inserter'
+    >>> ba.functions.search
+    'your_namespace:custom_blocks/servo_inserter/search'
     """
     base_item = CUSTOM_BLOCK_ALTERNATIVE
     def __post_init__(self) -> None:
@@ -299,6 +438,10 @@ class BlockHead(Block):
     >>> bh = BlockHead(id="custom_head", vanilla_block=VanillaBlock(id="minecraft:player_head"))
     >>> bh.base_item
     'minecraft:player_head'
+    >>> bh.advancement
+    'your_namespace:custom_block_head/custom_head'
+    >>> bh.head_search
+    'your_namespace:custom_blocks/_player_head/search_custom_head'
     """
     base_item = CUSTOM_BLOCK_HEAD
     def __post_init__(self) -> None:

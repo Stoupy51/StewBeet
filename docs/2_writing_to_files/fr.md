@@ -255,6 +255,36 @@ write_function(f"{ns}:my_function", modified_content, overwrite=True)
 
 ---
 
+#### 📍 Préférez les accesseurs Resource aux chemins codés en dur
+
+Dès que le chemin appartient à une définition, récupérez-le depuis l'`Item`/`Block` plutôt que de retaper la convention.
+Un objet `Resource` est une chaîne, il s'utilise donc directement dans toutes ces fonctions :
+
+```python
+furnace = Block.from_id("electric_furnace")
+
+# ❌ Codé en dur — casse silencieusement si la convention change
+write_function(f"{ns}:custom_blocks/electric_furnace/tick", "...")
+
+# ✅ Dérivé de la définition
+write_function(furnace.functions.tick, "...")
+
+# ✅ Équivalent, sans passer par la définition (BlockFunctions construit les mêmes chemins)
+write_function(BlockFunctions("electric_furnace").tick, "...")
+
+# ✅ Ajouter à une fonction qui existe déjà ? Récupérez la Function beet via .obj :
+furnace.functions.place_secondary.obj.append("tag @s add my_ns.active")
+# (lève KeyError si la fonction n'a pas encore été générée — un échec bruyant
+#  plutôt que vos commandes placées silencieusement avant le setup du bloc)
+
+# Fonctionne pareil pour les loot tables, modèles, textures, progrès
+write_function(f"{ns}:give_furnace", f"loot give @s loot {furnace.loot_table}")
+```
+
+Voir [Emplacements de ressources](../1_definitions_setup/fr.md#-emplacements-de-ressources) pour la liste complète des accesseurs.
+
+---
+
 #### `write_load_file()`
 Écrire du contenu dans la fonction de chargement principale (s'exécute au chargement du datapack).
 

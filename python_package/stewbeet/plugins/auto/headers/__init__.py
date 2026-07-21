@@ -19,8 +19,7 @@ def beet_default(ctx: Context):
     Args:
         ctx (Context): The beet context.
     """
-    if Mem.ctx is None: # pyright: ignore[reportUnnecessaryComparison]
-        Mem.ctx = ctx
+    Mem.ctx = ctx
 
     # Get all mcfunctions paths and create Header objects
     mcfunctions: dict[str, Header] = {}

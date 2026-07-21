@@ -77,10 +77,7 @@ def beet_default(ctx: Context):
 	Args:
 		ctx (Context): The beet context.
 	"""
-	## Assertions
-	# Stewbeet Initialized
-	if Mem.ctx is None: # pyright: ignore[reportUnnecessaryComparison]
-		Mem.ctx = ctx
+	Mem.ctx = ctx
 
 	# Serialized models are cached between builds, keyed by a hash of their content (see
 	# ModelSerializationCache). Models are encoded lazily at dump time, well after this plugin runs,
@@ -111,7 +108,7 @@ def beet_default(ctx: Context):
 			continue
 
 		# Skip items not in our namespace
-		if not item_model.startswith(Mem.ctx.project_id):
+		if obj.item_model.namespace != Mem.ctx.project_id:
 			continue
 
 		# Create an MyItemModel object from the definitions entry

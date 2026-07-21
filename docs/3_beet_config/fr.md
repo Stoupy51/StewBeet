@@ -366,7 +366,7 @@ manual:
 **🎨 Personnalisation:**
 - `manual_overrides: "assets/manual_overrides"` - Remplace les assets par défaut du manuel en plaçant des fichiers avec les mêmes noms. Voir les [assets disponibles](https://github.com/Stoupy51/StewBeet/tree/main/python_package/stewbeet/plugins/ingame_manual/assets) pour la liste complète des fichiers remplaçables
 - `name: ""` - Titre du manuel (vide = auto-généré depuis le nom du projet)
-- `first_page_text: [...]` - Message de bienvenue utilisant les composants de texte
+- `first_page_text: [...]` - Message de bienvenue utilisant les components de texte
 
 **💾 Cache:**
 - `cache_path: "manual_cache"` - Où stocker les fichiers de cache

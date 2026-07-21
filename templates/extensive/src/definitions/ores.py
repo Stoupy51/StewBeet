@@ -5,7 +5,6 @@ from stewbeet import *  # type: ignore
 
 # Main entry point
 def main():
-    ns: str = Mem.ctx.project_id
 
     # Configuration to generate everything about the material based on "steel_ingot"
     ORES_CONFIGS: dict[str, EquipmentsConfig|None] = {
@@ -44,7 +43,7 @@ def main():
             "rolls": 1,
             "entries": [{
                 "type": "minecraft:loot_table",
-                "value": f"{ns}:i/raw_steel",
+                "value": Item.from_id("raw_steel").loot_table,
                 "functions": [{
                     "function": "minecraft:set_count",
                     "count": {"type": "minecraft:uniform", "min": 4, "max": 9}

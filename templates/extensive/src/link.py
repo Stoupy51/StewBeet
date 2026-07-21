@@ -68,12 +68,26 @@ function #bs.math:divide
 tellraw @a [{"text": "9 / 5 = ", "color": "dark_gray"},{"score":{"name":"$math.divide", "objective": "bs.out"}, "color": "gold"}]
 """)
 
-    # A custom block ticking example
-    write_function(f"{ns}:custom_blocks/steel_block/tick", """
+    # Run commands as the block entity when it is placed, by appending to the place_secondary
+    # Function object directly. This must happen after the datapack.custom_blocks plugin
+    # (hence src/link.py, and not src/setup_definitions.py): .obj raises KeyError if the function
+    # doesn't exist yet, so doing it too early fails loudly instead of silently misplacing commands.
+    stone = Block.from_id("super_stone")
+    stone.functions.place_secondary.obj.append(f"""
+say Omg, @p[tag={ns}.placer] placed the super stone block!
+particle minecraft:explosion ~ ~ ~
+""")
+    # Alternatively, you can use this directly
+    write_function(stone.functions.place_secondary, "say another way to append to the place_secondary function")
+
+    # A custom block ticking example.
+    # Block.functions gives you every mcfunction of a custom block.
+    steel_block = Block.from_id("steel_block")
+    write_function(steel_block.functions.tick, """
 # This function is called every tick for the custom block "steel_block"
 particle heart ~ ~1 ~ 0.5 0.5 0.5 0.01 1
 """)
-    write_function(f"{ns}:custom_blocks/steel_block/second", """
+    write_function(steel_block.functions.second, """
 # This function is called every second for the custom block "steel_block"
 particle angry_villager ~ ~1 ~ 0.2 0.2 0.2 0.01 10
 """)

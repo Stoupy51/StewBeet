@@ -9,6 +9,8 @@ from stouputils.typing import JsonDict
 
 from ...dependencies import official_lib_used
 from ..__memory__ import Mem
+from ..cls.block import Block
+from ..cls.block_functions import BlockFunctions
 from ..utils.io import set_json_encoder, write_function
 
 
@@ -101,7 +103,7 @@ class CustomOreGeneration:
 			custom_ore (str):	The custom ore to generate
 		"""
 		if not self.placer_command:
-			self.placer_command = f"run function {Mem.ctx.project_id}:custom_blocks/{custom_ore}/place_main"
+			self.placer_command = f"run function {BlockFunctions(custom_ore).place_main}"
 
 			# Handle deepslate variants
 			if custom_ore.startswith("deepslate_") and custom_ore.replace("deepslate_", "") in Mem.definitions:
@@ -179,11 +181,12 @@ execute at @s if block ~ ~ ~ {self.provider} {self.placer_command}
 		write_function(vein_path, content)
 
 	@staticmethod
-	def all_with_config(ore_configs: dict[str, list[CustomOreGeneration]]) -> None:
+	def all_with_config(ore_configs: dict[str | Block, list[CustomOreGeneration]]) -> None:
 		""" Generate all custom ore generation files with the configurations provided
 
 		Args:
-			ore_configs (dict[str, list[CustomOreGeneration]]):	The custom ore generation configurations, ex:
+			ore_configs (dict[str|Block, list[CustomOreGeneration]]):	The custom ore generation configurations.
+				Keys can be either the custom ore ID or the Block object itself, ex:
 
 		```py
 		{
@@ -214,10 +217,11 @@ execute at @s if block ~ ~ ~ {self.provider} {self.placer_command}
 		```
 		"""
 		for ore, config_list in ore_configs.items():
+			ore_id: str = ore.id if isinstance(ore, Block) else ore
 			for i, gen_config in enumerate(config_list):
 				if len(config_list) > 1:
-					gen_config.generate_files(ore, i)
+					gen_config.generate_files(ore_id, i)
 				else:
-					gen_config.generate_files(ore)
+					gen_config.generate_files(ore_id)
 		return
 

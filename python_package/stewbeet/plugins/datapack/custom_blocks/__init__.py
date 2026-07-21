@@ -10,6 +10,7 @@ from stouputils.typing import JsonDict
 from ....core.__memory__ import Mem
 from ....core.cls.block import VANILLA_BLOCK_FOR_ORES, Block, GrowingSeed, GrowingSeedLoot, NoSilkTouchDrop
 from ....core.cls.item import Item
+from ....core.cls.resource import Resource
 from ....core.constants import (
 	BLOCKS_WITH_INTERFACES,
 	CUSTOM_BLOCK_ALTERNATIVE,
@@ -17,6 +18,7 @@ from ....core.constants import (
 	CUSTOM_BLOCK_HEAD_CUBE_RADIUS,
 	CUSTOM_BLOCK_VANILLA,
 	GROWING_SEED,
+	ITEMS_LOOT_FOLDER,
 	NO_SILK_TOUCH_DROP,
 	VANILLA_BLOCK,
 )
@@ -33,9 +35,7 @@ def beet_default(ctx: Context):
 	Args:
 		ctx (Context): The beet context.
 	"""
-	# Set up memory context
-	if Mem.ctx is None: # pyright: ignore[reportUnnecessaryComparison]
-		Mem.ctx = ctx
+	Mem.ctx = ctx
 	ns: str = ctx.project_id
 	textures_folder: str = stp.relative_path(ctx.meta.get("stewbeet", {}).get("textures_folder", ""))
 
@@ -122,7 +122,7 @@ execute store result entity @s brightness.sky int 1 run scoreboard players get #
 		if data.get(VANILLA_BLOCK):
 			obj_block = Block.from_id(item)
 			block: JsonDict = data[VANILLA_BLOCK]
-			path = f"{ns}:custom_blocks/{item}"
+			path = obj_block.functions.folder
 
 			# Write the line in stats_custom_blocks
 			write_function(f"{ns}:_stats_custom_blocks",
@@ -157,33 +157,33 @@ execute store result entity @s brightness.sky int 1 run scoreboard players get #
 					"requirements":[["requirement"]],
 					"rewards":{}
 				}
-				adv["rewards"]["function"] = f"{ns}:custom_blocks/{item}/search"
-				ctx.data[ns].advancements[f"custom_block_alternative/{item}"] = set_json_encoder(Advancement(adv), max_level=-1)
+				adv["rewards"]["function"] = obj_block.functions.search
+				obj_block.alternative_advancement.write(set_json_encoder(Advancement(adv), max_level=-1))
 
 				# Make search function
-				write_function(f"{ns}:custom_blocks/{item}/search", f"""
+				write_function(obj_block.functions.search, f"""
 # Advancement revoke
-advancement revoke @s only {ns}:custom_block_alternative/{item}
+advancement revoke @s only {obj_block.alternative_advancement}
 
 # Execute the place function as and at the new placed item frame""")
 				# Get player rotation if visual_facing is "player" (while @s is still the player)
 				if block.get("visual_facing") == "player":
-					write_function(f"{ns}:custom_blocks/{item}/search", f"function {ns}:custom_blocks/get_rotation")
+					write_function(obj_block.functions.search, f"function {ns}:custom_blocks/get_rotation")
 				if "id" not in block:
-					write_function(f"{ns}:custom_blocks/{item}/search", f"execute as @e[type=item_frame,tag={ns}.new,tag={ns}.{item}] at @s run function {ns}:custom_blocks/{item}/place_main")
+					write_function(obj_block.functions.search, f"execute as @e[type=item_frame,tag={ns}.new,tag={ns}.{item}] at @s run function {obj_block.functions.place_main}")
 				# Make place check function (only if "id" is in VANILLA_BLOCK)
 				else:
-					write_function(f"{ns}:custom_blocks/{item}/search", f"""tag @s add {ns}.to_refund
-execute as @e[type=item_frame,tag={ns}.new,tag={ns}.{item}] at @s run function {ns}:custom_blocks/{item}/place_check
+					write_function(obj_block.functions.search, f"""tag @s add {ns}.to_refund
+execute as @e[type=item_frame,tag={ns}.new,tag={ns}.{item}] at @s run function {obj_block.functions.place_check}
 tag @s remove {ns}.to_refund
 """)
-					write_function(f"{ns}:custom_blocks/{item}/place_check", f"""
+					write_function(obj_block.functions.place_check, f"""
 # Check if there is air block at the position
-execute if block ~ ~ ~ air run return run function {ns}:custom_blocks/{item}/place_main
+execute if block ~ ~ ~ air run return run function {obj_block.functions.place_main}
 
 # If not air, give back the item to the player
 tag @e[type=item] add {ns}.temp
-execute as @p[tag={ns}.to_refund] at @s run loot spawn ~ ~ ~ loot {ns}:i/{item}
+execute as @p[tag={ns}.to_refund] at @s run loot spawn ~ ~ ~ loot {obj_block.loot_table}
 data merge entity @n[type=item,tag=!{ns}.temp] {{PickupDelay:0s,Motion:[0.0d,0.0d,0.0d]}}
 data modify entity @n[type=item,tag=!{ns}.temp] Owner set from entity @p[tag={ns}.to_refund] UUID
 tag @n[type=item] remove {ns}.temp
@@ -224,7 +224,7 @@ kill @s
 
 				# Summon item display and call secondary function
 				custom_block_entities.add("minecraft:item_display")  # Add item display entity for custom blocks
-				content += f"execute align xyz positioned ~0.5 ~0.5 ~0.5 summon item_display at @s run function {ns}:custom_blocks/{item}/place_secondary\n"
+				content += f"execute align xyz positioned ~0.5 ~0.5 ~0.5 summon item_display at @s run function {obj_block.functions.place_secondary}\n"
 
 				# Add temporary tags and call main function
 				content = f"tag @s add {ns}.placer\n" + content + f"tag @s remove {ns}.placer\n"
@@ -298,14 +298,14 @@ execute if score #rotation {ns}.data matches 4 run data modify entity @s Rotatio
 			elif block.get("contents", False):
 
 				# Write the place main function
-				write_function(f"{ns}:custom_blocks/{item}/place_main", f"""
+				write_function(obj_block.functions.place_main, f"""
 # Get the facing direction of the item frame
 scoreboard players set #item_frame_facing {ns}.data 1
-execute if entity @s[type=item_frame] run function {ns}:custom_blocks/{item}/get_facing
+execute if entity @s[type=item_frame] run function {obj_block.functions.get_facing}
 
 # Summon the new item frame (not execute summon because it would not be invisible for a tick)
 summon item_frame ~ ~ ~ {{Tags:["{ns}.new"],Invulnerable:false,Invisible:true,Fixed:false,Silent:true}}
-execute as @n[tag={ns}.new] at @s run function {ns}:custom_blocks/{item}/place_secondary
+execute as @n[tag={ns}.new] at @s run function {obj_block.functions.place_secondary}
 
 # Increment count scores
 scoreboard players add #total_custom_blocks {ns}.data 1
@@ -316,7 +316,7 @@ scoreboard players add #total_{item} {ns}.data 1
 # Replace the placing sound
 playsound minecraft:block.stone.place block @a[distance=..5]
 """)
-				write_function(f"{ns}:custom_blocks/{item}/get_facing", f"""
+				write_function(obj_block.functions.get_facing, f"""
 # Get the facing and delete the old entity
 execute store result score #item_frame_facing {ns}.data run data get entity @s Facing
 kill @s
@@ -365,17 +365,17 @@ execute if score #rotation {ns}.data matches 4 run data modify entity @s ItemRot
 				if obj_block.on_place:
 					content += f"\n# Custom on_place commands\n{obj_block.on_place}\n"
 
-				write_function(f"{ns}:custom_blocks/{item}/place_secondary", content)
+				write_function(obj_block.functions.place_secondary, content)
 				pass
 
 			# If the block is a growing seed, make the update_seed_model function and call it in the place_secondary function
 			if obj_block.growing_seed:
 				growing_seed: GrowingSeed = obj_block.growing_seed
 				has_growing_seed = True
-				write_function(f"{ns}:custom_blocks/{item}/place_secondary", f"""
+				write_function(obj_block.functions.place_secondary, f"""
 # Update seed model
 scoreboard players add @s {ns}.growth_time 0
-function {ns}:custom_blocks/{item}/update_seed_model
+function {obj_block.functions.update_seed_model}
 """)
 				# Get the number of growth stages
 				texture_basename: str = growing_seed.texture_basename or item
@@ -392,20 +392,20 @@ function {ns}:custom_blocks/{item}/update_seed_model
 					time_to_str: str = str(time_to) if stage < progress_stages else ""
 					content += (
 						f"execute if score @s {ns}.growth_time matches {time_from}..{time_to_str} unless score @s {ns}.growth_stage matches {stage} run "
-						f"""function {ns}:custom_blocks/change_seed_stage {{stage:{stage}, model:"{ns}:seeds/{starts}{stage}"}}\n"""
+						f"""function {ns}:custom_blocks/change_seed_stage {{stage:{stage}, model:"{obj_block.seed_stage_item_model(stage)}"}}\n"""
 					)
-				write_function(f"{ns}:custom_blocks/{item}/update_seed_model", f"""
+				write_function(obj_block.functions.update_seed_model, f"""
 # Update growth stage based on growth_time
 {content}
 """)
 				# Optimisation: If total growing time is higher than 60*stages second, we will increment the growth_time score every minute
 				for (speed, secs) in [(60, "minute"), (5, "second_5"), (1, "second")]:
 					if growing_time > speed * progress_stages:
-						write_function(f"{ns}:custom_blocks/{item}/{secs}", f"""
+						write_function(obj_block.functions[secs], f"""
 # Increment growth time score by {speed} and update model
 scoreboard players add @s {ns}.growth_time {speed}
 execute if score #boost_growth_time {ns}.data matches 1.. run scoreboard players operation @s {ns}.growth_time += #boost_growth_time {ns}.data
-function {ns}:custom_blocks/{item}/update_seed_model
+function {obj_block.functions.update_seed_model}
 """)
 						break
 				else:
@@ -414,7 +414,7 @@ function {ns}:custom_blocks/{item}/update_seed_model
 				# Make the loot table for the seed
 				loot_table: str | list[GrowingSeedLoot] = growing_seed.loots
 				if not isinstance(loot_table, str):
-					ctx.data[ns].loot_tables[f"seeds/{item}"] = set_json_encoder(LootTable({
+					obj_block.seed_loot_table.write(set_json_encoder(LootTable({
 						"type": "minecraft:block",
 						"pools": [
 							{
@@ -426,7 +426,9 @@ function {ns}:custom_blocks/{item}/update_seed_model
 										# Custom item if plain string
 										# Another loot table if ':' in id
 										"type": "minecraft:item" if "minecraft:" in pool.id else "minecraft:loot_table",
-										"name" if "minecraft:" in pool.id else "value": (f"{ns}:i/{pool.id}" if ":" not in pool.id else pool.id),
+										# pool.id may name any item, not necessarily one of our own definitions
+										"name" if "minecraft:" in pool.id else "value":
+											(Resource(LootTable, f"{ITEMS_LOOT_FOLDER}/{pool.id}") if ":" not in pool.id else pool.id),
 										**({} if not pool.fortune else {
 											"functions": [
 												{
@@ -442,11 +444,11 @@ function {ns}:custom_blocks/{item}/update_seed_model
 							}
 							for pool in loot_table
 						]
-					}), max_level=-1)
-					loot_table = f"{ns}:seeds/{item}"
+					}), max_level=-1))
+					loot_table = obj_block.seed_loot_table
 
 				# Make the is_fully_grown function that will be called on destroy
-				write_function(f"{ns}:custom_blocks/{item}/is_fully_grown", f"""
+				write_function(obj_block.functions.is_fully_grown, f"""
 # If fully grown, drop the loot table and kill the current entity (item)
 execute if score #growth_time {ns}.data matches {growing_time}.. as @p[gamemode=!spectator] run loot spawn ~ ~ ~ fish {loot_table} ~ ~ ~ mainhand
 execute if score #growth_time {ns}.data matches {growing_time}.. run kill @s
@@ -491,7 +493,8 @@ scoreboard objectives add {ns}.growth_stage dummy
 		for item in Mem.definitions.keys():
 			obj = Item.from_id(item)
 			if obj.base_item == CUSTOM_BLOCK_VANILLA:
-				content += f"""execute if data storage smithed.custom_block:main blockApi{{id:"{ns}:{item}"}} run function {ns}:custom_blocks/{item}/place_main\n"""
+				place_main = Block.from_id(item).functions.place_main
+				content += f"""execute if data storage smithed.custom_block:main blockApi{{id:"{ns}:{item}"}} run function {place_main}\n"""
 		content += f"tag @s remove {ns}.placer\n"
 		write_function(f"{ns}:custom_blocks/place", content)
 
@@ -560,6 +563,7 @@ $function {ns}:custom_blocks/$(item)/destroy
 		# For every custom block, add a tag check for destroy if it's the right vanilla block
 		for item, data in Mem.definitions.items():
 			if data.get(VANILLA_BLOCK):
+				obj_block = Block.from_id(item)
 
 				# Get the vanilla block
 				vanilla_block: JsonDict = data[VANILLA_BLOCK]
@@ -574,12 +578,13 @@ $function {ns}:custom_blocks/$(item)/destroy
 				# Add the line if it's the same vanilla block
 				if this_block == block_underscore:
 					score_check: str = f"score #total_{item} {ns}.data matches 1.."
-					content += f"execute if {score_check} if entity @s[tag={ns}.{item}] run function {ns}:custom_blocks/{item}/destroy\n"
+					content += f"execute if {score_check} if entity @s[tag={ns}.{item}] run function {obj_block.functions.destroy}\n"
 		write_function(f"{ns}:custom_blocks/_groups/{block_underscore}", content + "\n")
 
 	# For each custom block, make it's destroy function
 	for item, data in Mem.definitions.items():
 		if data.get(VANILLA_BLOCK):
+			obj_block = Block.from_id(item)
 			vanilla_block: JsonDict = data[VANILLA_BLOCK]
 			if vanilla_block.get("id"):
 				block_id: str = vanilla_block["id"].split('[')[0].split('{')[0]
@@ -594,7 +599,7 @@ $function {ns}:custom_blocks/$(item)/destroy
 				item_nbt = f"""{{components:{{"minecraft:custom_data":{{"{ns}":{{"item_frame_destroy":true}}}}}}}}"""
 			content = f"""
 # Replace the item with the custom one
-execute as @n[type=item,nbt={{Item:{item_nbt}}},distance=..1] run function {ns}:custom_blocks/{item}/replace_item
+execute as @n[type=item,nbt={{Item:{item_nbt}}},distance=..1] run function {obj_block.functions.replace_item}
 """
 			# If growing seed, get the growth_time score
 			if data.get(GROWING_SEED):
@@ -609,7 +614,7 @@ scoreboard players remove #total_{item} {ns}.data 1
 """
 
 			# Add the destroy function
-			write_function(f"{ns}:custom_blocks/{item}/destroy", content + "\n# Kill the custom block entity\nkill @s\n")
+			write_function(obj_block.functions.destroy, content + "\n# Kill the custom block entity\nkill @s\n")
 
 			# Replace item function
 			if not data.get(NO_SILK_TOUCH_DROP):
@@ -621,7 +626,7 @@ data modify entity @s Item.id set from storage {ns}:items all.{item}.id
 			else:
 				# If no VANILLA_BLOCK_FOR_ORES, check if the player has silk touch in mainhand
 				if data.get(VANILLA_BLOCK) != VANILLA_BLOCK_FOR_ORES:
-					write_function(f"{ns}:custom_blocks/{item}/destroy", f"""
+					write_function(obj_block.functions.destroy, f"""
 # Check if the player has silk touch in mainhand
 scoreboard players set #is_silk_touch {ns}.data 0
 execute as @p[distance=..10,gamemode=!spectator] if data entity @s SelectedItem.components."minecraft:enchantments"."minecraft:silk_touch" run scoreboard players set #is_silk_touch {ns}.data 1
@@ -633,16 +638,16 @@ execute unless entity @n[type=item,nbt={{Item:{item_nbt}}},distance=..1] run loo
 				# Handle no silk touch drop
 				no_silk_touch_drop: str | JsonDict | NoSilkTouchDrop | LootTable = data[NO_SILK_TOUCH_DROP]
 				if isinstance(no_silk_touch_drop, LootTable):
-					loot_table_path = f"custom_blocks/no_silk_touch_drop/{item}"
-					ctx.data[ns].loot_tables[loot_table_path] = set_json_encoder(no_silk_touch_drop, max_level=-1)
+					no_silk_loot_table = obj_block.no_silk_touch_loot_table
+					no_silk_loot_table.write(set_json_encoder(no_silk_touch_drop, max_level=-1))
 					content = f"""
 # If silk touch applied
 execute if score #is_silk_touch {ns}.data matches 1 run data modify entity @s Item.id set from storage {ns}:items all.{item}.id
 execute if score #is_silk_touch {ns}.data matches 1 run data modify entity @s Item.components set from storage {ns}:items all.{item}.components
 
 # Else, no silk touch
-execute if score #is_silk_touch {ns}.data matches 0 positioned ~ ~ ~ as @p[distance=..10,gamemode=!spectator] run loot spawn ~ ~ ~ fish {ns}:{loot_table_path} ~ ~ ~ mainhand
-execute if score #is_silk_touch {ns}.data matches 0 unless entity @p[distance=..10,gamemode=!spectator] run loot spawn ~ ~ ~ loot {ns}:{loot_table_path}
+execute if score #is_silk_touch {ns}.data matches 0 positioned ~ ~ ~ as @p[distance=..10,gamemode=!spectator] run loot spawn ~ ~ ~ fish {no_silk_loot_table} ~ ~ ~ mainhand
+execute if score #is_silk_touch {ns}.data matches 0 unless entity @p[distance=..10,gamemode=!spectator] run loot spawn ~ ~ ~ loot {no_silk_loot_table}
 execute if score #is_silk_touch {ns}.data matches 0 run kill @s
 """
 					if data.get(VANILLA_BLOCK) == VANILLA_BLOCK_FOR_ORES:
@@ -696,11 +701,11 @@ execute store result entity @s Item.count byte 1 run scoreboard players get #ite
 			if data.get(GROWING_SEED):
 				content += f"""
 # Check if the seed is fully grown
-function {ns}:custom_blocks/{item}/is_fully_grown
+function {obj_block.functions.is_fully_grown}
 """
 
 			# Write the function
-			write_function(f"{ns}:custom_blocks/{item}/replace_item", content)
+			write_function(obj_block.functions.replace_item, content)
 
 
 	# Write the used_vanilla_blocks tag, the predicate to check the blocks with the tag and an advanced one
@@ -849,6 +854,7 @@ execute as @n[type=item,nbt={{Item:{{id:"minecraft:item_frame"}}}},distance=..1]
 	for item, data in Mem.definitions.items():
 		obj = Item.from_id(item)
 		if obj.base_item == CUSTOM_BLOCK_HEAD and data.get(VANILLA_BLOCK):
+			obj_block = Block.from_id(item)
 
 			# Make advancement
 			adv: JsonDict = {
@@ -870,8 +876,8 @@ execute as @n[type=item,nbt={{Item:{{id:"minecraft:item_frame"}}}},distance=..1]
 				"requirements":[["requirement"]],
 				"rewards":{}
 			}
-			adv["rewards"]["function"] = f"{ns}:custom_blocks/_player_head/search_{item}"
-			ctx.data[ns].advancements[f"custom_block_head/{item}"] = set_json_encoder(Advancement(adv), max_level=-1)
+			adv["rewards"]["function"] = obj_block.head_search
+			obj_block.head_advancement.write(set_json_encoder(Advancement(adv), max_level=-1))
 
 			## Make search function
 			content = "# Search where the head has been placed\n"
@@ -879,19 +885,19 @@ execute as @n[type=item,nbt={{Item:{{id:"minecraft:item_frame"}}}},distance=..1]
 
 			# Generate main search function that calls x-loop
 			for x in range(-mid_x, mid_x + 1):
-				content += f"execute positioned ~{x} ~ ~ run function {ns}:custom_blocks/_player_head/search_{item}_y\n"
-			content += f"\n# Advancement\nadvancement revoke @s only {ns}:custom_block_head/{item}\n\n"
-			write_function(f"{ns}:custom_blocks/_player_head/search_{item}", content)
+				content += f"execute positioned ~{x} ~ ~ run function {obj_block.head_search}_y\n"
+			content += f"\n# Advancement\nadvancement revoke @s only {obj_block.head_advancement}\n\n"
+			write_function(obj_block.head_search, content)
 
 			# Generate y-loop function
 			content_y = "# Search y coordinates\n"
 			for y in range(-mid_y, mid_y + 1):
-				content_y += f"execute positioned ~ ~{y} ~ run function {ns}:custom_blocks/_player_head/search_{item}_z\n"
-			write_function(f"{ns}:custom_blocks/_player_head/search_{item}_y", content_y)
+				content_y += f"execute positioned ~ ~{y} ~ run function {obj_block.head_search}_z\n"
+			write_function(f"{obj_block.head_search}_y", content_y)
 
 			# Generate z-loop function
 			content_z = "# Search z coordinates\n"
 			for z in range(-mid_z, mid_z + 1):
-				content_z += f"execute positioned ~ ~ ~{z} if data block ~ ~ ~ components.\"minecraft:custom_data\".{ns}.{item} run function {ns}:custom_blocks/{item}/place_main\n"
-			write_function(f"{ns}:custom_blocks/_player_head/search_{item}_z", content_z)
+				content_z += f"execute positioned ~ ~ ~{z} if data block ~ ~ ~ components.\"minecraft:custom_data\".{ns}.{item} run function {obj_block.functions.place_main}\n"
+			write_function(f"{obj_block.head_search}_z", content_z)
 

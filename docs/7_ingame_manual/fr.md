@@ -7,7 +7,7 @@
 
 ## 📖 Définitions
 - **Manual** : L'objet orchestrateur qui possède la liste ordonnée des pages, le registre de glyphes/polices, le constructeur d'images, le rendu des recettes et les hooks développeur. Récupéré avec `get_manual()`.
-- **Page** : Une unité autonome rendue en composants de texte Minecraft. Sous-classes : `IntroPage`, `CategoryBrowserPage`, `CategoryPage`, `ItemPage`, ainsi que `CustomPage`, `TexturePage` et `RawPage` destinées aux développeurs.
+- **Page** : Une unité autonome rendue en components de texte Minecraft. Sous-classes : `IntroPage`, `CategoryBrowserPage`, `CategoryPage`, `ItemPage`, ainsi que `CustomPage`, `TexturePage` et `RawPage` destinées aux développeurs.
 - **PageRef** : Un lien *différé* vers une page (par `item`, `anchor` ou `page` littéral). Les liens sont résolus en numéros de page concrets **après** l'ordonnancement, donc insérer/réordonner des pages ne casse jamais les liens inter-pages.
 - **Phase hook** : Une fonction que vous enregistrez pour s'exécuter pendant la création du manuel (`manual.on(Phase.X)`), à une étape précise du pipeline de génération.
 - **ButtonLayout** : Contrôle *où* et *quels* boutons wiki apparaissent sur une page (colonnes, maximum, tri, filtrage, position).
@@ -99,7 +99,7 @@ def tweak(m):
 `insert_page` accepte `before=`/`after=` (un anchor) ou `index=`. Les anchors par défaut incluent `"intro"`, `"category_browser"`, `"category:<Titre>"` et `"item:<id>"`.
 
 ```python
-# Une page libre (n'importe quels composants de texte)
+# Une page libre (n'importe quels components de texte)
 manual.insert_page(CustomPage(
     anchor="welcome", title="Bienvenue",
     body=[{"text": "Bonjour depuis une page personnalisée !", "color": "black"}],

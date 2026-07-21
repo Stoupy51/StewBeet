@@ -92,7 +92,7 @@ class CraftingShapedRecipe(RecipeBase):
     >>> recipe.ingredients['I']
     {'item': 'minecraft:iron_ingot'}
     >>> recipe.ingredients['C']
-    {'components': {'minecraft:custom_data': {'detected_namespace': {'simplunium_ingot': True}}}}
+    {'components': {'minecraft:custom_data': {'your_namespace': {'simplunium_ingot': True}}}}
 
     Shape exceeding 3 rows raises ValueError:
     >>> try:

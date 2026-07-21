@@ -483,10 +483,10 @@ class Manual:
 		# Cleanup heavy workbench temp item
 		from ...dependencies.official_libs import OFFICIAL_LIBS
 		if OFFICIAL_LIBS["smithed.crafter"]["is_used"] and "heavy_workbench" in Mem.definitions:
+			workbench = Item.from_id("heavy_workbench")
 			del Mem.definitions["heavy_workbench"]
-			ns = self.config.project_id
-			Mem.ctx.assets[ns].textures.pop("item/heavy_workbench", None)
-			Mem.ctx.assets[ns].models.pop("item/heavy_workbench", None)
-			Mem.ctx.assets[ns].item_models.pop("heavy_workbench", None)
+			workbench.texture.delete()
+			workbench.model.delete()
+			workbench.generated_item_model.delete()
 
 

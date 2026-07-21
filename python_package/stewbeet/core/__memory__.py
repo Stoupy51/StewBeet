@@ -1,10 +1,11 @@
 
 # ruff: noqa: RUF012
-# pyright: reportAssignmentType=false
 # Imports
 from typing import TYPE_CHECKING
 
 from beet import Context
+
+from .placeholder_context import PLACEHOLDER_CTX
 
 if TYPE_CHECKING:
     from ..plugins.ingame_manual.manual import Manual
@@ -14,9 +15,18 @@ if TYPE_CHECKING:
 
 # Shared variables among plugins
 class Mem:
+    """ Global memory shared among all StewBeet plugins.
+
+    Examples:
+        >>> from stewbeet import PLACEHOLDER_CTX, Mem
+        >>> Mem.ctx.project_id  # Out of a build, the placeholder context is active
+        'your_namespace'
+        >>> Mem.ctx is PLACEHOLDER_CTX
+        True
+    """
 
     # Public and should be used
-    ctx: Context = None
+    ctx: Context = PLACEHOLDER_CTX
     """ Global context object that holds the beet project configuration.
     This is set during plugins.initialize and used throughout the codebase. """
 

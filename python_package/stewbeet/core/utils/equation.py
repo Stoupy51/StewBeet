@@ -27,16 +27,16 @@ def is_macro_argument(value: str) -> bool:
 def get_scoreboard_set(player: str, scoreboard: str, value: str | int) -> str:
 	""" Returns a ``scoreboard players set`` command string.
 
-	>>> get_scoreboard_set("#42", "test.data", 42)
-	'scoreboard players set #42 test.data 42'
+	>>> get_scoreboard_set("#42", "your_namespace.data", 42)
+	'scoreboard players set #42 your_namespace.data 42'
 	"""
 	return f"scoreboard players set {player} {scoreboard} {value}"
 
 def get_scoreboard_operation(player: str, scoreboard: str, operator: AnyOperator, source: str, source_scoreboard: str) -> str:
 	""" Returns a ``scoreboard players operation`` command string.
 
-	>>> get_scoreboard_operation("@s", "test.data", "*", "#1000000", "test.data")
-	'scoreboard players operation @s test.data *= #1000000 test.data'
+	>>> get_scoreboard_operation("@s", "your_namespace.data", "*", "#1000000", "your_namespace.data")
+	'scoreboard players operation @s your_namespace.data *= #1000000 your_namespace.data'
 	"""
 	return f"scoreboard players operation {player} {scoreboard} {operator}= {source} {source_scoreboard}"
 
@@ -105,24 +105,18 @@ class BaseEquation:
 			temp        (str):         Name of the temporary fake player used for macro args.
 
 		Examples:
-			>>> from unittest.mock import MagicMock
-			>>> from stewbeet.core.__memory__ import Mem
-			>>> Mem.ctx = MagicMock()
-			>>> Mem.ctx.project_id = "test"
-			>>> Mem.ctx.project_version = "1.0.0"
-
 			>>> # The following examples do not precise the scoreboard argument, so it defaults to {ctx.project_id}.data
 			>>> eq = BaseEquation("@s")
 			>>> eq.apply_operation("other_player", "other_scoreboard", "/").ops
-			['scoreboard players operation @s test.data /= other_player other_scoreboard']
+			['scoreboard players operation @s your_namespace.data /= other_player other_scoreboard']
 
 			>>> eq2 = BaseEquation("@s")
 			>>> eq2.apply_operation("$(macro_arg)", None, "-", temp="temp_macro").ops
-			['$scoreboard players set #temp_macro test.data $(macro_arg)', 'scoreboard players operation @s test.data -= #temp_macro test.data']
+			['$scoreboard players set #temp_macro your_namespace.data $(macro_arg)', 'scoreboard players operation @s your_namespace.data -= #temp_macro your_namespace.data']
 
 			>>> eq3 = BaseEquation("@s")
 			>>> eq3.apply_operation(42, None, "+").ops
-			['scoreboard players operation @s test.data += #42 test.data']
+			['scoreboard players operation @s your_namespace.data += #42 your_namespace.data']
 		"""
 		# Special case with another equation as source:
 		# we need to render it first to generate the intermediate scoreboard operations,
@@ -146,15 +140,15 @@ class BaseEquation:
 
 		# Handle different source types
 		if isinstance(player, int):
-			# e.g. "scoreboard players operation @s test.data += #42 test.data"
+			# e.g. "scoreboard players operation @s your_namespace.data += #42 your_namespace.data"
 			add_op(get_scoreboard_operation(self.player, self.scoreboard, operator, f"#{player}", f"{Mem.ctx.project_id}.data"))
 		elif is_macro_argument(player):
-			# e.g. "$scoreboard players set #temp test.data $(macro_arg)""
+			# e.g. "$scoreboard players set #temp your_namespace.data $(macro_arg)""
 			add_op(f"${get_scoreboard_set(f'#{temp}', f"{Mem.ctx.project_id}.data", player)}")
-			# e.g. "scoreboard players operation @s test.data -= #temp test.data"
+			# e.g. "scoreboard players operation @s your_namespace.data -= #temp your_namespace.data"
 			add_op(get_scoreboard_operation(self.player, self.scoreboard, operator, f"#{temp}", f"{Mem.ctx.project_id}.data"))
 		else:
-			# e.g. "scoreboard players operation @s test.data /= other_player other_scoreboard"
+			# e.g. "scoreboard players operation @s your_namespace.data /= other_player other_scoreboard"
 			resolved: str = scoreboard or self.scoreboard
 			add_op(get_scoreboard_operation(self.player, self.scoreboard, operator, str(player), resolved))
 
@@ -169,19 +163,13 @@ class BaseEquation:
 			scoreboard  (str | None):  Source scoreboard (ignored for int/macro).
 
 		Examples:
-			>>> from unittest.mock import MagicMock
-			>>> from stewbeet.core.__memory__ import Mem
-			>>> Mem.ctx = MagicMock()
-			>>> Mem.ctx.project_id = "test"
-			>>> Mem.ctx.project_version = "1.0.0"
-
-			>>> # Setting @s in test.data to 42 and checking the generated commands with .ops
+			>>> # Setting @s in your_namespace.data to 42 and checking the generated commands with .ops
 			>>> BaseEquation("@s").set(42).ops
-			['scoreboard players set @s test.data 42']
+			['scoreboard players set @s your_namespace.data 42']
 
-			>>> # Setting @s in test.data to a macro argument and checking the generated commands with .ops
+			>>> # Setting @s in your_namespace.data to a macro argument and checking the generated commands with .ops
 			>>> BaseEquation("@s").set("$(macro_value)").ops
-			['$scoreboard players set @s test.data $(macro_value)']
+			['$scoreboard players set @s your_namespace.data $(macro_value)']
 		"""
 		# Handle different source types for the initial set operation
 		if isinstance(player, int):
@@ -237,15 +225,9 @@ class ScoreboardEquation(BaseEquation):
 	""" Equation whose result is stored directly in a scoreboard objective.
 
 	Examples:
-		>>> from unittest.mock import MagicMock
-		>>> from stewbeet.core.__memory__ import Mem
-		>>> Mem.ctx = MagicMock()
-		>>> Mem.ctx.project_id = "test"
-		>>> Mem.ctx.project_version = "1.0.0"
-
 		>>> # Simple equation
 		>>> str((ScoreboardEquation("@s").set(10) + 5) * (-2) / 3 % 4 - "#toto").splitlines()[0]
-		'# scoreboard @s test.data = 10 + 5 * -2 / 3 % 4 - #toto'
+		'# scoreboard @s your_namespace.data = 10 + 5 * -2 / 3 % 4 - #toto'
 
 		>>> # Building a complex equation with method chaining and checking the generated commands with .ops
 		>>> result = str(ScoreboardEquation("#temp_durability", "some_score").set("-$(amount)").multiply(1000000).divide("$(max_damage)").subtract("#toto"))
@@ -253,9 +235,9 @@ class ScoreboardEquation(BaseEquation):
 		>>> expected = (
 		...     "# scoreboard #temp_durability some_score = -$(amount) * 1000000 / $(max_damage) - #toto\\n"
 		...     "$scoreboard players set #temp_durability some_score -$(amount)\\n"
-		...     "scoreboard players operation #temp_durability some_score *= #1000000 test.data\\n"
-		...     "$scoreboard players set #temp_divide test.data $(max_damage)\\n"
-		...     "scoreboard players operation #temp_durability some_score /= #temp_divide test.data\\n"
+		...     "scoreboard players operation #temp_durability some_score *= #1000000 your_namespace.data\\n"
+		...     "$scoreboard players set #temp_divide your_namespace.data $(max_damage)\\n"
+		...     "scoreboard players operation #temp_durability some_score /= #temp_divide your_namespace.data\\n"
 		...     "scoreboard players operation #temp_durability some_score -= #toto some_score"	# <== Note that #toto inherits the scoreboard from the equation ("some_score")
 		... )
 		>>> result == expected and shorter == expected
@@ -266,12 +248,12 @@ class ScoreboardEquation(BaseEquation):
 		>>> eq5 = ScoreboardEquation("#toto", "some_score").set(20) * 2
 		>>> result = str(eq4 * eq5)
 		>>> expected = (
-		...     "# scoreboard @s test.data = 10 * 5 * (scoreboard #toto some_score = 20 * 2)\\n"
-		...     "scoreboard players set @s test.data 10\\n"
-		...     "scoreboard players operation @s test.data *= #5 test.data\\n"
+		...     "# scoreboard @s your_namespace.data = 10 * 5 * (scoreboard #toto some_score = 20 * 2)\\n"
+		...     "scoreboard players set @s your_namespace.data 10\\n"
+		...     "scoreboard players operation @s your_namespace.data *= #5 your_namespace.data\\n"
 		...     "scoreboard players set #toto some_score 20\\n"
-		...     "scoreboard players operation #toto some_score *= #2 test.data\\n"
-		...     "scoreboard players operation @s test.data *= #toto some_score"
+		...     "scoreboard players operation #toto some_score *= #2 your_namespace.data\\n"
+		...     "scoreboard players operation @s your_namespace.data *= #toto some_score"
 		... )
 		>>> result == expected
 		True
@@ -289,23 +271,17 @@ class StorageEquation(BaseEquation):
 	The ``scale`` factor is applied when flushing the temp scoreboard value to storage.
 
 	Examples:
-		>>> from unittest.mock import MagicMock
-		>>> from stewbeet.core.__memory__ import Mem
-		>>> Mem.ctx = MagicMock()
-		>>> Mem.ctx.project_id = "test"
-		>>> Mem.ctx.project_version = "1.0.0"
-
 		>>> start = lambda: StorageEquation("some_namespace:some_path", "result_path", 0.000005, "double").set("-$(amount)")
 		>>> result = str(start().multiply(1000000).divide("$(max_damage)").subtract("#toto"))
 		>>> shorter = str(start() * 1000000 / "$(max_damage)" - "#toto")
 		>>> expected = (
 		...     "# storage some_namespace:some_path result_path = (-$(amount) * 1000000 / $(max_damage) - #toto) * 0.000005\\n"
-		...     "$scoreboard players set #temp_result test.data -$(amount)\\n"
-		...     "scoreboard players operation #temp_result test.data *= #1000000 test.data\\n"
-		...     "$scoreboard players set #temp_divide test.data $(max_damage)\\n"
-		...     "scoreboard players operation #temp_result test.data /= #temp_divide test.data\\n"
-		...     "scoreboard players operation #temp_result test.data -= #toto test.data\\n"
-		...     "execute store result storage some_namespace:some_path result_path double 0.000005 run scoreboard players get #temp_result test.data"
+		...     "$scoreboard players set #temp_result your_namespace.data -$(amount)\\n"
+		...     "scoreboard players operation #temp_result your_namespace.data *= #1000000 your_namespace.data\\n"
+		...     "$scoreboard players set #temp_divide your_namespace.data $(max_damage)\\n"
+		...     "scoreboard players operation #temp_result your_namespace.data /= #temp_divide your_namespace.data\\n"
+		...     "scoreboard players operation #temp_result your_namespace.data -= #toto your_namespace.data\\n"
+		...     "execute store result storage some_namespace:some_path result_path double 0.000005 run scoreboard players get #temp_result your_namespace.data"
 		... )
 		>>> result == expected and shorter == expected
 		True

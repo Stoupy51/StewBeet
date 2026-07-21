@@ -7,7 +7,7 @@ import stouputils as stp
 from beet import ItemModel, Model, Texture
 from PIL import Image
 
-from ...core import Item, JsonDict, Mem, set_json_encoder, texture_mcmeta, write_advancement, write_function, write_load_file
+from ...core import BlockFunctions, Item, JsonDict, Mem, set_json_encoder, texture_mcmeta, write_advancement, write_function, write_load_file
 
 # Constants
 ENERGY_CABLE_MODELS_FOLDER: str = stp.get_root_path(__file__) + "/energy_cable_models"
@@ -74,7 +74,7 @@ def energy_cables_models(cables: list[str]) -> None:
 		Mem.ctx.assets[ns].textures[f"block/{cable}"] = texture_mcmeta(f"{textures_folder}/{cable}.png")
 
 		# On placement, rotate
-		write_function(f"{ns}:custom_blocks/{cable}/place_secondary", f"""
+		write_function(BlockFunctions(cable).place_secondary, f"""
 # Cable rotation for models, and common cable tag
 data modify entity @s item_display set value "fixed"
 tag @s add {ns}.cable
@@ -188,7 +188,7 @@ def item_cables_models(cables: dict[str, dict[str, str] | None]) -> None:
 				Mem.ctx.assets[ns].textures[dst] = texture_mcmeta(src)
 
 		# On placement, add itemio.cable tag and call init function
-		write_function(f"{ns}:custom_blocks/{cable}/place_secondary", f"""
+		write_function(BlockFunctions(cable).place_secondary, f"""
 # Item cable setup for models, and common itemio cable tag
 tag @s add {ns}.cable
 tag @s add itemio.cable
@@ -196,7 +196,7 @@ function #itemio:calls/cables/init
 """)
 
 		# On destruction, call destroy function
-		write_function(f"{ns}:custom_blocks/{cable}/destroy", """
+		write_function(BlockFunctions(cable).destroy, """
 # Item cable destruction cleanup
 function #itemio:calls/cables/destroy
 """)
@@ -313,7 +313,7 @@ def servo_mechanisms_models(servos: dict[str, dict[str, str] | None]) -> None:
 		ns_data: dict[str, int] = item.components.get("custom_data", {}).get(ns, {})
 		stack_limit: int = ns_data.get("stack_limit", 1)
 		retry_limit: int = ns_data.get("retry_limit", 1)
-		write_function(f"{ns}:custom_blocks/{servo}/place_secondary", f"""
+		write_function(BlockFunctions(servo).place_secondary, f"""
 # Servo mechanism setup (1 item by 1 item: stack_limit)
 tag @s add itemio.servo.{typ}
 tag @s add itemio.servo
@@ -324,7 +324,7 @@ scoreboard players set @s {ns}.servo_off 0
 function #itemio:calls/servos/init
 """)
 		# On destruction, call destroy function of itemio
-		write_function(f"{ns}:custom_blocks/{servo}/destroy", """
+		write_function(BlockFunctions(servo).destroy, """
 # Servo mechanism destruction cleanup
 function #itemio:calls/servos/destroy
 """)
