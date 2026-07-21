@@ -27,7 +27,7 @@ from .glyphs import (
 from .paths import template_path
 
 
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, slots=True)
 class BakedText:
 	""" A piece of text to draw directly onto a :class:`~.pages.texture_page.TexturePage` background.
 
@@ -108,7 +108,7 @@ def add_border(image: Image.Image, border_color: tuple[int, int, int, int], bord
 	return out
 
 
-@dataclass
+@dataclass(slots=True)
 class GlyphImageBuilder:
 	""" Builds every manual texture and registers its glyph provider.
 

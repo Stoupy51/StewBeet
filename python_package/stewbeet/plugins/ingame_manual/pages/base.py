@@ -24,7 +24,7 @@ if TYPE_CHECKING:
 Transformer = Callable[[list[TextComponent], "Manual"], list[TextComponent]]
 
 
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, slots=True)
 class Page:
 	""" Base class for every manual page.
 

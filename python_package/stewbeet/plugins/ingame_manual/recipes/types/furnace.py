@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 	from ..renderer import RecipeRenderer
 
 
-@dataclass
+@dataclass(slots=True)
 class FurnaceBase(CraftRenderer):
 	""" Shared layout/glyph/image for all furnace recipes (uses the default single-ingredient hover). """
 
@@ -71,28 +71,28 @@ class FurnaceBase(CraftRenderer):
 		template.save(f"{r.config.cache_path}/font/page/{output_filename}.png")
 
 
-@dataclass
+@dataclass(slots=True)
 class SmeltingRenderer(FurnaceBase):
 	""" ``smelting`` recipes (regular furnace). """
 	types: ClassVar[tuple[str, ...]] = (SmeltingRecipe.type,)
 	name: ClassVar[str] = "Smelting"
 
 
-@dataclass
+@dataclass(slots=True)
 class BlastingRenderer(FurnaceBase):
 	""" ``blasting`` recipes (blast furnace). """
 	types: ClassVar[tuple[str, ...]] = (BlastingRecipe.type,)
 	name: ClassVar[str] = "Blasting"
 
 
-@dataclass
+@dataclass(slots=True)
 class SmokingRenderer(FurnaceBase):
 	""" ``smoking`` recipes (smoker). """
 	types: ClassVar[tuple[str, ...]] = (SmokingRecipe.type,)
 	name: ClassVar[str] = "Smoking"
 
 
-@dataclass
+@dataclass(slots=True)
 class CampfireRenderer(FurnaceBase):
 	""" ``campfire_cooking`` recipes. """
 	types: ClassVar[tuple[str, ...]] = (CampfireCookingRecipe.type,)

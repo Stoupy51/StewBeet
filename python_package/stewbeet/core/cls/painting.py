@@ -10,7 +10,7 @@ from .item import Item
 from .resource import Resource
 
 
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, slots=True)
 class PaintingData(StMapping):
     """ Data class for painting-specific data.
 
@@ -34,7 +34,7 @@ class PaintingData(StMapping):
     """ Height of the painting in blocks. """
 
 # Class
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, slots=True)
 class Painting(Item):
     """ Represents a custom painting item.
 

@@ -45,6 +45,11 @@ class AutoModel:
 		source_textures (dict[str, str]): Dictionary of source textures.
 		ignore_textures (bool):           Whether to ignore texture-related errors.
 	"""
+	__slots__ = (
+		"block_or_item", "ignore_textures", "ns", "obj", "parent",
+		"source_textures", "textures", "used_minecraft_textures", "used_textures",
+	)
+
 	# Class variables
 	DEFAULT_PARENT: str = "item/generated"
 	def __init__(self, data: Item, source_textures: dict[str, str], ignore_textures: bool = False):

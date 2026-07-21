@@ -27,6 +27,8 @@ class Header:
         >>> header.content
         'say Hello'
     """
+    __slots__ = ("args", "content", "executed", "other", "path", "within")
+
     def __init__(
         self,
         path: str,

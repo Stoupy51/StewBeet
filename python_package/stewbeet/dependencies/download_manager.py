@@ -28,7 +28,7 @@ HEADERS: dict[str, str] = {"User-Agent": "StewBeet"}
 BUILD_CACHE: dict[str, list[DownloadedLib]] = {}  # cache-dir -> results
 
 
-@dataclass
+@dataclass(slots=True)
 class DownloadedLib:
 	lib_ns: str
 	name: str

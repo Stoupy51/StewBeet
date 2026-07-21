@@ -33,7 +33,7 @@ if TYPE_CHECKING:
 	from ..manual import Manual
 
 
-@dataclass(eq=False)
+@dataclass(eq=False, slots=True)
 class RecipeRenderer:
 	""" Dispatcher: delegates per-type rendering to the registry, owns the shared scaffolding.
 

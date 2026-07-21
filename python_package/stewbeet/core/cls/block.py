@@ -24,7 +24,7 @@ from .resource import Resource
 
 
 # Subclasses
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, slots=True)
 class VanillaBlock(StMapping):
     """ Represents a vanilla block with explicit facing semantics.
 
@@ -135,7 +135,7 @@ class VanillaBlock(StMapping):
         if self.contents and self.block_facing:
             raise ValueError("contents=True cannot use block_facing=\"player\"; use visual_facing instead.")
 
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, slots=True)
 class NoSilkTouchDrop(StMapping):
     """ Defines deterministic drops when the block is broken without silk touch.
 
@@ -154,7 +154,7 @@ class NoSilkTouchDrop(StMapping):
         if isinstance(self.count, dict):
             assert "min" in self.count and "max" in self.count, "If count is a dict, it must contain 'min' and 'max' keys."
 
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, slots=True)
 class GrowingSeedLoot(StMapping):
     """ Defines a single loot entry for a growing seed.
 
@@ -171,7 +171,7 @@ class GrowingSeedLoot(StMapping):
     fortune: JsonDict | None = None
     """ (Optional) The fortune modifier for the loot, e.g. {"extra":0,"probability":0.5}. """
 
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, slots=True)
 class GrowingSeed(StMapping):
     """ Defines a seed that grows over time (Stardust Seed from Stardust Fragment).
 
@@ -196,7 +196,7 @@ class GrowingSeed(StMapping):
 
 
 # Class
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, slots=True)
 class Block(Item):
     """ Represents a block item with vanilla block properties.
 
@@ -414,7 +414,7 @@ class Block(Item):
         })
         return mapping
 
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, slots=True)
 class BlockAlternative(Block):
     """ Represents a block that uses an item frame for placement (e.g., servo inserter/extractor).
 
@@ -426,12 +426,11 @@ class BlockAlternative(Block):
     >>> ba.functions.search
     'your_namespace:custom_blocks/servo_inserter/search'
     """
-    base_item = CUSTOM_BLOCK_ALTERNATIVE
     def __post_init__(self) -> None:
         self.base_item = CUSTOM_BLOCK_ALTERNATIVE
         super().__post_init__()
 
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, slots=True)
 class BlockHead(Block):
     """ Represents a block that uses a player head for placement.
 
@@ -443,7 +442,6 @@ class BlockHead(Block):
     >>> bh.head_search
     'your_namespace:custom_blocks/_player_head/search_custom_head'
     """
-    base_item = CUSTOM_BLOCK_HEAD
     def __post_init__(self) -> None:
         self.base_item = CUSTOM_BLOCK_HEAD
         super().__post_init__()

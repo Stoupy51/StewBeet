@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 	from ..manual import Manual
 
 
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, slots=True)
 class RawPage(Page):
 	""" A page that simply yields its pre-built ``content``.
 

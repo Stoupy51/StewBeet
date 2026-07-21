@@ -26,7 +26,7 @@ from .wiki_button import WikiButton
 
 
 # Class
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, slots=True)
 class Item(StMapping):
     """ Represents an item with a unique identifier.
 

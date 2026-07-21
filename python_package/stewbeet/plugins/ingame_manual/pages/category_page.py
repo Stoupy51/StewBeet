@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 	from ..manual import Manual
 
 
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, slots=True)
 class CategoryPage(Page):
 	""" A page showing every item of one category as a clickable grid. """
 	items: list[str] = field(default_factory=list[str])

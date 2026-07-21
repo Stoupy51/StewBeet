@@ -24,7 +24,7 @@ DEFAULT_COMPONENTS_TO_INCLUDE: list[str] = ["item_name", "lore", "custom_name", 
 COMPONENTS_OVERRIDE: list[str] | None = None
 
 
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, slots=True)
 class ManualConfig:
 	""" Typed mirror of the ``manual`` stewbeet config block.
 

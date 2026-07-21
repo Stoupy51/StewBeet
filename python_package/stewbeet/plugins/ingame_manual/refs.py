@@ -10,7 +10,7 @@ pages never requires the manual ``+1`` page-number bumping the v1 plugin needed.
 from dataclasses import dataclass
 
 
-@dataclass
+@dataclass(slots=True)
 class PageRef:
 	""" A deferred reference to a manual page.
 

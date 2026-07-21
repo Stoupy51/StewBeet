@@ -26,7 +26,7 @@ if TYPE_CHECKING:
 	from .manual import Manual
 
 
-@dataclass(eq=False)
+@dataclass(eq=False, slots=True)
 class DialogEmitter:
 	""" Builds one dialog per manual page plus the open-manual plumbing.
 

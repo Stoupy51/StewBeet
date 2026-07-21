@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 	from ..manual import Manual
 
 
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, slots=True)
 class CategoryBrowserPage(Page):
 	""" The "Category browser" page: one clickable cell per category page. """
 
