@@ -218,9 +218,10 @@ class RecipeList(list[Any]):
         return current_recipes if current_recipes else [recipe]
 
     def _try_expand_tags(self) -> None:
-        """ Try to expand tags if context is available. """
+        """ Try to expand tags if a real build context is available (not the placeholder). """
         from ..__memory__ import Mem
-        if Mem.ctx:
+        from ..placeholder_context import PLACEHOLDER_CTX
+        if Mem.ctx is not PLACEHOLDER_CTX:
             self.expand_tags_now()
 
     def expand_tags_now(self) -> None:

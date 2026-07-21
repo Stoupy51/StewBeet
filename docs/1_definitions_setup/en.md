@@ -275,30 +275,6 @@ seed = Block(
 )
 ```
 
-#### **`on_place` — Custom Placement Commands**
-
-An optional string of Minecraft commands appended to `{ns}:custom_blocks/{id}/place_secondary`, executed **as the item display (or item frame) entity** right after the block is fully set up:
-
-```python
-block = Block(
-    id="my_machine",
-    vanilla_block=VanillaBlock(id="minecraft:furnace"),
-    on_place="tag @s add my_ns.active\nscoreboard players set @s my_ns.energy 0"
-)
-
-# Multi-line strings work too
-block = Block(
-    id="stardust_seed",
-    vanilla_block=VanillaBlock(id="minecraft:wheat"),
-    on_place=(
-        "tag @s add my_ns.seed\n"
-        "scoreboard players add @s my_ns.growth_time 0"
-    )
-)
-```
-
-> **Note**: Commands run as the item_display entity, not the player. Use `execute as @p[tag={ns}.placer]` if you need to target the placing player.
-
 #### **BlockAlternative and BlockHead**
 
 Alternative block types for special placement methods:
@@ -625,6 +601,100 @@ item.recipes.append(CraftingShapelessRecipe(
     ingredients=[Ingr("something")]
 ))
 ```
+
+### 📍 Resource Locations
+
+Never hardcode a resource location like `f"{ns}:custom_blocks/{item}/place_secondary"` again. Every location StewBeet derives from an item ID is exposed as a property returning a `Resource`.
+
+A `Resource` **is** a string holding the full `namespace:path` location, so it works everywhere a path is expected — inside f-strings, as a `write_function` argument, as a dict key, compared against a literal. On top of that it gives you the underlying beet file.
+
+```python
+item = Item.from_id("steel_ingot")
+
+item.loot_table                  # "ns:i/steel_ingot"          -> Resource[LootTable]
+item.loot_table_for(4)           # "ns:i/steel_ingot_x4"
+item.item_model                  # "ns:steel_ingot"            -> Resource[ItemModel]
+item.model                       # "ns:item/steel_ingot"       -> Resource[Model]
+item.texture                     # "ns:item/steel_ingot"       -> Resource[Texture]
+item.recipe()                    # "ns:steel_ingot"            -> Resource[Recipe]
+
+# Use it directly in a command
+write_function(f"{ns}:give_steel", f"loot give @s loot {item.loot_table}")
+```
+
+> [!NOTE]
+> `item_model` follows the `item_model` component when you override it, while `generated_item_model` always points at the file StewBeet writes. They only differ if you set the component yourself.
+
+#### **Block Functions**
+
+`Block.functions` groups every mcfunction of a custom block:
+
+```python
+block = Block.from_id("steel_block")
+
+block.functions.place_main        # "ns:custom_blocks/steel_block/place_main"
+block.functions.place_secondary   # "ns:custom_blocks/steel_block/place_secondary"
+block.functions.destroy           # "ns:custom_blocks/steel_block/destroy"
+block.functions.tick              # "ns:custom_blocks/steel_block/tick"
+block.functions.second            # "ns:custom_blocks/steel_block/second"
+block.functions["my_own_call"]    # any other function in that folder
+block.functions.folder            # "ns:custom_blocks/steel_block"
+
+# Also available: place_check, search, get_facing, replace_item,
+# update_seed_model, is_fully_grown, tick_2, second_5, minute
+
+block.no_silk_touch_loot_table    # "ns:custom_blocks/no_silk_touch_drop/steel_block"
+block.seed_loot_table             # "ns:seeds/steel_block"
+block.advancement                 # placement advancement (BlockAlternative / BlockHead only)
+
+# So the ticking example from the template becomes:
+write_function(block.functions.tick, "particle heart ~ ~1 ~ 0.5 0.5 0.5 0.01 1")
+```
+
+`Block.functions` returns a `BlockFunctions` object, which you can also build directly from a block ID if that reads better to you — no `Block.from_id` lookup needed, so it even works for IDs that have no definition:
+
+```python
+from stewbeet import BlockFunctions
+
+funcs = BlockFunctions("steel_block")
+funcs.tick                                   # "ns:custom_blocks/steel_block/tick"
+BlockFunctions("steel_block").destroy        # same paths as Block.from_id("steel_block").functions.destroy
+BlockFunctions("gauge", namespace="other")   # target another namespace
+```
+
+Both forms produce the exact same `Resource[Function]` objects — use whichever you prefer.
+
+#### **Reading and Writing the File**
+
+```python
+res = item.loot_table
+
+res.exists()          # is the file in the pack yet?
+res.get()             # the beet LootTable, or None
+res.obj               # the beet LootTable, raises KeyError if missing
+res.obj = LootTable({...})    # write it
+res.write(LootTable({...}))   # same, and returns the file
+res.delete()          # remove it if present
+
+res.namespace         # "ns"
+res.relative_path     # "i/steel_ingot"
+res.file_type         # beet.LootTable
+```
+
+For mcfunctions, `.obj` is a beet `Function` object, so you can append commands to an existing function directly — same result as calling `write_function(res, ...)`:
+
+```python
+# Run commands as the block display entity when it is placed
+# (from a plugin running AFTER datapack.custom_blocks, so the function exists):
+Block.from_id("super_stone").functions.place_secondary.obj.append("""
+say Someone placed the super stone!
+particle minecraft:explosion ~ ~ ~
+""")
+```
+
+> [!TIP]
+> Reading `.obj` before the plugin that generates it has run raises `KeyError`. Use `.get()` or `.exists()` when the file may not exist yet or do your code after plugin execution.
+> For the append example above, that's actually a feature: appending too early fails loudly instead of silently landing your commands before the block setup.
 
 ### 🎨 Complex Model Examples
 

@@ -54,7 +54,6 @@ pipeline:
 | `vanilla_block.visual_facing` | `"none"` \| `"player"` \| `"item_frame"` | `"none"` | Source of the visual orientation for the display entity |
 | `item_model` | string | Optional | Custom item model for the block display entity |
 | `no_silk_touch_drop` | string \| dict \| LootTable | Optional | Alternative drop when mined without silk touch (for ores), including dynamic drops via beet `LootTable` |
-| `on_place` | string | Optional | Commands appended to `{ns}:custom_blocks/{id}/place_secondary`, executed as the item display (or item frame) entity on block placement |
 | `custom_data` | object | Optional | Custom NBT data for player head blocks |
 
 Check extensive template [examples in `setup_definitions.py`](../../templates/extensive/src/setup_definitions.py)!
@@ -67,7 +66,6 @@ Automatically generates placement functions for each custom block:
 - 🔄 Applies rotation and facing mechanics when configured
 - 🎯 Summons item display entities for visual representation
 - 📊 Updates statistics and optimization scoreboards
-- 🧱 Supports custom `on_place` commands appended to `place_secondary` (executed as the display/frame entity)
 
 ### 🔄 Rotation and Facing Mechanics
 Implements smart rotation detection for directional blocks:

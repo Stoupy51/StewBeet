@@ -6,12 +6,13 @@ import os
 from collections.abc import Iterable
 
 import stouputils as stp
-from beet import ItemModel, Model
+from beet import ItemModel, Model, Texture
 from stouputils.typing import JsonDict
 
 from ....core.__memory__ import Mem
 from ....core.cls.block import Block, GrowingSeed
 from ....core.cls.item import Item
+from ....core.cls.resource import Resource
 from ....core.constants import CUSTOM_BLOCK_VANILLA, CUSTOM_ITEM_VANILLA
 from ....core.utils.io import set_json_encoder, set_model_encoder, texture_mcmeta
 
@@ -187,7 +188,7 @@ class AutoModel:
 			stage_model: JsonDict = {
 				"textures": {
 					"1": to_atlas(f"minecraft:block/{planted_on}"),
-					"2": f"{self.ns}:item/seeds/{stage_texture_name}",
+					"2": self.obj.seed_stage_texture(i),
 					"particle": to_atlas(f"minecraft:block/{planted_on}")
 				},
 				"elements": [
@@ -200,12 +201,13 @@ class AutoModel:
 			}
 
 			# Add the model to assets and create item model
-			Mem.ctx.assets[self.ns].models[f"item/seeds/{stage_texture_name}"] = set_model_encoder(Model(stage_model), max_level=4)
-			items_model = {"model": {"type": "minecraft:model", "model": f"{self.ns}:item/seeds/{stage_texture_name}"}}
-			Mem.ctx.assets[self.ns].item_models[f"seeds/{stage_texture_name}"] = set_json_encoder(ItemModel(items_model), max_level=4)
+			stage_model_res = self.obj.seed_stage_model(i)
+			stage_model_res.write(set_model_encoder(Model(stage_model), max_level=4))
+			items_model: JsonDict = {"model": {"type": "minecraft:model", "model": stage_model_res}}
+			self.obj.seed_stage_item_model(i).write(set_json_encoder(ItemModel(items_model), max_level=4))
 
 			# Add the texture to assets
-			Mem.ctx.assets[self.ns].textures[f"item/seeds/{stage_texture_name}"] = texture_mcmeta(stage_textures[stage_texture_name])
+			self.obj.seed_stage_texture(i).write(texture_mcmeta(stage_textures[stage_texture_name]))
 
 	def copy_and_register_textures(self, content: JsonDict) -> None:
 		""" Copy a model's textures to the assets and register them for atlas handling.
@@ -270,7 +272,7 @@ class AutoModel:
 		self.copy_and_register_textures(content)
 
 		# Add the in-hand model to assets
-		Mem.ctx.assets[self.ns].models[f"item/{self.obj.id}_in_hand{on_off}"] = set_model_encoder(Model(content), max_level=4)
+		self.obj.model.suffixed(f"_in_hand{on_off}").write(set_model_encoder(Model(content), max_level=4))
 
 		# Return the items/ definition keeping the regular model for block-like contexts and using the in-hand model otherwise
 		return {
@@ -278,11 +280,11 @@ class AutoModel:
 				"type": "minecraft:select",
 				"cases": [
 					{
-						"model": {"type": "minecraft:model","model": f"{self.ns}:item/{self.obj.id}{on_off}"},
+						"model": {"type": "minecraft:model","model": self.obj.model.suffixed(on_off)},
 						"when": self.obj.override_model_contexts or Item.DEFAULT_OVERRIDE_MODEL_CONTEXTS
 					}
 				],
-				"fallback": {"type": "minecraft:model","model": f"{self.ns}:item/{self.obj.id}_in_hand{on_off}"},
+				"fallback": {"type": "minecraft:model","model": self.obj.model.suffixed(f"_in_hand{on_off}")},
 				"property": "minecraft:display_context"
 			}
 		}
@@ -371,7 +373,7 @@ class AutoModel:
 							for i in range(1, 7):
 								name: str = f"{self.obj.id}_slice{i}"
 								slice_content: JsonDict = {"parent": f"block/cake_slice{i}", "textures": content["textures"]}
-								Mem.ctx.assets[self.ns].models[f"item/{name}{on_off}"] = set_model_encoder(Model(slice_content), max_level=4)
+								Resource(Model, f"item/{name}{on_off}").write(set_model_encoder(Model(slice_content), max_level=4))
 
 						# Check orientable_with_bottom model
 						elif self.model_in_variants(orientable_with_bottom, variants):
@@ -474,10 +476,10 @@ class AutoModel:
 								# Add texture to assets
 								variant_png: str = variant + ".png"
 								if variant_png in self.source_textures:
-									Mem.ctx.assets[self.ns].textures[f"item/{variant}"] = texture_mcmeta(self.source_textures[variant_png])
+									Resource(Texture, f"item/{variant}").write(texture_mcmeta(self.source_textures[variant_png]))
 
 								# Add model to assets
-								Mem.ctx.assets[self.ns].models[f"item/{self.obj.id}_pulling_{i}"] = set_model_encoder(Model(pull_content), max_level=4)
+								self.obj.model.suffixed(f"_pulling_{i}").write(set_model_encoder(Model(pull_content), max_level=4))
 
 								if i < (len(sorted_pull_variants) - 1):
 									pull: float = 0.65 + (0.25 * i)
@@ -491,7 +493,7 @@ class AutoModel:
 									})
 
 							# Add the items/bow.json file
-							Mem.ctx.assets[self.ns].item_models[self.obj.id + on_off] = set_json_encoder(ItemModel(items_content), max_level=4)
+							self.obj.generated_item_model.suffixed(on_off).write(set_json_encoder(ItemModel(items_content), max_level=4))
 
 			# Add overrides
 			for key, value in overrides.items():
@@ -517,7 +519,7 @@ class AutoModel:
 
 			# Add model to assets
 			if self.obj.override_model != {}:
-				Mem.ctx.assets[self.ns].models[f"item/{self.obj.id}{on_off}"] = set_model_encoder(Model(content), max_level=4)
+				self.obj.model.suffixed(on_off).write(set_model_encoder(Model(content), max_level=4))
 			Mem.ctx.meta["stewbeet"]["rendered_item_models"].add(self.obj.components["item_model"])
 
 			# Generate the json file required in items/
@@ -534,33 +536,33 @@ class AutoModel:
 							"type": "minecraft:select",
 							"cases": [
 								{
-									"model": {"type": "minecraft:model","model": f"{self.ns}:item/{self.obj.id}{on_off}"},
+									"model": {"type": "minecraft:model","model": self.obj.model.suffixed(on_off)},
 									"when": ["gui","ground","fixed","on_shelf"]
 								}
 							],
-							"fallback": {"type": "minecraft:model","model": f"{self.ns}:item/{self.obj.id}_in_hand{on_off}"},
+							"fallback": {"type": "minecraft:model","model": self.obj.model.suffixed(f"_in_hand{on_off}")},
 							"property": "minecraft:display_context"
 						},
 						"swap_animation_scale": 1.95
 					}
 
 					# Create the in_hand model
-					in_hand_content: JsonDict = {"parent": "item/spear_in_hand","textures": {"layer0": f"{self.ns}:item/{self.obj.id}_in_hand{on_off}"}}
+					in_hand_content: JsonDict = {"parent": "item/spear_in_hand","textures": {"layer0": self.obj.texture.suffixed(f"_in_hand{on_off}")}}
 
 					# Add the in_hand model to assets
-					Mem.ctx.assets[self.ns].models[f"item/{self.obj.id}_in_hand{on_off}"] = set_model_encoder(Model(in_hand_content), max_level=4)
+					self.obj.model.suffixed(f"_in_hand{on_off}").write(set_model_encoder(Model(in_hand_content), max_level=4))
 
 					# Add the in_hand texture to assets
 					in_hand_texture = f"{self.obj.id}_in_hand{on_off}.png"
 					if in_hand_texture in self.source_textures:
-						Mem.ctx.assets[self.ns].textures[f"item/{self.obj.id}_in_hand{on_off}"] = texture_mcmeta(self.source_textures[in_hand_texture])
+						self.obj.texture.suffixed(f"_in_hand{on_off}").write(texture_mcmeta(self.source_textures[in_hand_texture]))
 					elif f"{self.obj.id}_in_hand.png" in self.source_textures and not on_off:
-						Mem.ctx.assets[self.ns].textures[f"item/{self.obj.id}_in_hand"] = texture_mcmeta(self.source_textures[f"{self.obj.id}_in_hand.png"])
+						self.obj.texture.suffixed("_in_hand").write(texture_mcmeta(self.source_textures[f"{self.obj.id}_in_hand.png"]))
 				else:
 					# Standard item model
-					items_model = {"model": {"type": "minecraft:model", "model": f"{self.ns}:item/{self.obj.id}{on_off}"}}
+					items_model = {"model": {"type": "minecraft:model", "model": self.obj.model.suffixed(on_off)}}
 
-				Mem.ctx.assets[self.ns].item_models[self.obj.id + on_off] = set_json_encoder(ItemModel(items_model), max_level=4)
+				self.obj.generated_item_model.suffixed(on_off).write(set_json_encoder(ItemModel(items_model), max_level=4))
 
 		# Return
 		return self.used_minecraft_textures

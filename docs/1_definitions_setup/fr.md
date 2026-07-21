@@ -275,30 +275,6 @@ seed = Block(
 )
 ```
 
-#### **`on_place` — Commandes de placement personnalisées**
-
-Chaîne optionnelle de commandes Minecraft ajoutées à `{ns}:custom_blocks/{id}/place_secondary`, exécutées **en tant qu'entité item display (ou item frame)** juste après la mise en place complète du bloc :
-
-```python
-block = Block(
-    id="my_machine",
-    vanilla_block=VanillaBlock(id="minecraft:furnace"),
-    on_place="tag @s add my_ns.active\nscoreboard players set @s my_ns.energy 0"
-)
-
-# Les chaînes multi-lignes fonctionnent aussi
-block = Block(
-    id="stardust_seed",
-    vanilla_block=VanillaBlock(id="minecraft:wheat"),
-    on_place=(
-        "tag @s add my_ns.seed\n"
-        "scoreboard players add @s my_ns.growth_time 0"
-    )
-)
-```
-
-> **Note** : Les commandes s'exécutent en tant qu'item_display, pas en tant que joueur. Utilisez `execute as @p[tag={ns}.placer]` si vous devez cibler le joueur qui place le bloc.
-
 #### **BlockAlternative et BlockHead**
 
 Types de blocs alternatifs pour des méthodes de placement spéciales :
@@ -579,7 +555,7 @@ add_private_custom_data_for_namespace()
 # Ajouter les données de convention Smithed
 add_smithed_ignore_vanilla_behaviours_convention()
 
-# Configurer les composants de survol du manuel
+# Configurer les components de survol du manuel
 set_manual_components(white_list=["item_name", "lore", "custom_name", "damage", "max_damage"])
 
 # Exporter les définitions pour le débogage
@@ -625,6 +601,100 @@ item.recipes.append(CraftingShapelessRecipe(
     ingredients=[Ingr("something")]
 ))
 ```
+
+### 📍 Emplacements de ressources
+
+Ne codez plus jamais en dur un emplacement comme `f"{ns}:custom_blocks/{item}/place_secondary"`. Chaque emplacement que StewBeet dérive d'un ID d'objet est exposé sous forme de propriété renvoyant un objet `Resource`.
+
+Un `Resource` **est** un str contenant l'emplacement complet `namespace:path`, il fonctionne donc partout où un chemin est attendu — dans une f-string, comme argument de `write_function`, comme clé de dictionnaire, ou comparé à un littéral. En plus de ça, il donne accès au fichier beet sous-jacent.
+
+```python
+item = Item.from_id("steel_ingot")
+
+item.loot_table                  # "ns:i/steel_ingot"          -> Resource[LootTable]
+item.loot_table_for(4)           # "ns:i/steel_ingot_x4"
+item.item_model                  # "ns:steel_ingot"            -> Resource[ItemModel]
+item.model                       # "ns:item/steel_ingot"       -> Resource[Model]
+item.texture                     # "ns:item/steel_ingot"       -> Resource[Texture]
+item.recipe()                    # "ns:steel_ingot"            -> Resource[Recipe]
+
+# Utilisation directe dans une commande
+write_function(f"{ns}:give_steel", f"loot give @s loot {item.loot_table}")
+```
+
+> [!NOTE]
+> `item_model` suit le component `item_model` lorsque vous le surchargez, tandis que `generated_item_model` pointe toujours vers le fichier réellement écrit par StewBeet. Ils ne diffèrent que si vous définissez le component vous-même.
+
+#### **Fonctions de bloc**
+
+`Block.functions` regroupe toutes les mcfunctions d'un bloc personnalisé :
+
+```python
+block = Block.from_id("steel_block")
+
+block.functions.place_main        # "ns:custom_blocks/steel_block/place_main"
+block.functions.place_secondary   # "ns:custom_blocks/steel_block/place_secondary"
+block.functions.destroy           # "ns:custom_blocks/steel_block/destroy"
+block.functions.tick              # "ns:custom_blocks/steel_block/tick"
+block.functions.second            # "ns:custom_blocks/steel_block/second"
+block.functions["my_own_call"]    # n'importe quelle autre fonction de ce dossier
+block.functions.folder            # "ns:custom_blocks/steel_block"
+
+# Également disponibles : place_check, search, get_facing, replace_item,
+# update_seed_model, is_fully_grown, tick_2, second_5, minute
+
+block.no_silk_touch_loot_table    # "ns:custom_blocks/no_silk_touch_drop/steel_block"
+block.seed_loot_table             # "ns:seeds/steel_block"
+block.advancement                 # progrès de placement (BlockAlternative / BlockHead uniquement)
+
+# L'exemple de ticking du template devient donc :
+write_function(block.functions.tick, "particle heart ~ ~1 ~ 0.5 0.5 0.5 0.01 1")
+```
+
+`Block.functions` renvoie un objet `BlockFunctions`, que vous pouvez aussi construire directement depuis un ID de bloc si vous trouvez ça plus lisible — pas besoin de passer par `Block.from_id`, ça fonctionne donc même pour des IDs sans définition :
+
+```python
+from stewbeet import BlockFunctions
+
+funcs = BlockFunctions("steel_block")
+funcs.tick                                   # "ns:custom_blocks/steel_block/tick"
+BlockFunctions("steel_block").destroy        # mêmes chemins que Block.from_id("steel_block").functions.destroy
+BlockFunctions("gauge", namespace="other")   # cibler un autre namespace
+```
+
+Les deux formes produisent exactement les mêmes objets `Resource[Function]` — utilisez celle que vous préférez.
+
+#### **Lire et écrire le fichier**
+
+```python
+res = item.loot_table
+
+res.exists()          # le fichier est-il déjà dans le pack ?
+res.get()             # la LootTable beet, ou None
+res.obj               # la LootTable beet, lève KeyError si absente
+res.obj = LootTable({...})    # l'écrire
+res.write(LootTable({...}))   # pareil, et renvoie le fichier
+res.delete()          # la supprimer si présente
+
+res.namespace         # "ns"
+res.relative_path     # "i/steel_ingot"
+res.file_type         # beet.LootTable
+```
+
+Pour les mcfunctions, `.obj` est un objet `Function` beet, vous pouvez donc ajouter des commandes à une fonction existante directement — même résultat qu'un appel à `write_function(res, ...)` :
+
+```python
+# Exécuter des commandes en tant qu'entité display du bloc quand il est placé
+# (depuis un plugin exécuté APRÈS datapack.custom_blocks, pour que la fonction existe) :
+Block.from_id("super_stone").functions.place_secondary.obj.append("""
+say Quelqu'un a placé la super stone !
+particle minecraft:explosion ~ ~ ~
+""")
+```
+
+> [!TIP]
+> Lire `.obj` avant que le plugin qui le génère n'ait été exécuté lève une `KeyError`. Utilisez `.get()` ou `.exists()` lorsque le fichier peut ne pas encore exister ou faites votre code après exécution des plugins cibles.
+> Pour l'exemple d'append ci-dessus, c'est en réalité un avantage : ajouter trop tôt échoue bruyamment au lieu de placer silencieusement vos commandes avant le setup du bloc.
 
 ### 🎨 Exemples de modèles complexes
 

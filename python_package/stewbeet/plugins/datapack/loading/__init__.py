@@ -20,11 +20,8 @@ def beet_default(ctx: Context):
 	Args:
 		ctx (Context): The beet context.
 	"""
-	# Set up memory context
-	if Mem.ctx is None: # pyright: ignore[reportUnnecessaryComparison]
-		Mem.ctx = ctx
-
 	# Assertions
+	Mem.ctx = ctx
 	assert ctx.project_version, "Project version is not set. Please set it in the project configuration."
 	assert ctx.project_id, "Project ID is not set. Please set it in the project configuration."
 	assert ctx.project_version.count(".") == 2, "Project version must be in the format 'major.minor.patch'."

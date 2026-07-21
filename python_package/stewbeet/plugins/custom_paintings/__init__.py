@@ -7,6 +7,7 @@ from beet import Context, PaintingVariant, PaintingVariantTag
 from stouputils.typing import JsonDict
 
 from ...core.__memory__ import Mem
+from ...core.cls.painting import Painting
 from ...core.constants import PAINTING_DATA
 from ...core.utils.io import set_json_encoder, texture_mcmeta
 
@@ -22,9 +23,7 @@ def beet_default(ctx: Context) -> None:
     Args:
         ctx (Context): The beet context.
     """
-    if Mem.ctx is None: # pyright: ignore[reportUnnecessaryComparison]
-        Mem.ctx = ctx
-    ns: str = ctx.project_id
+    Mem.ctx = ctx
     textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
     placeable_values: list[str] = []
 
@@ -35,11 +34,12 @@ def beet_default(ctx: Context) -> None:
     for item, data in Mem.definitions.items():
         painting_data: JsonDict = data.get(PAINTING_DATA, {})
         if painting_data:
+            obj_painting = Painting.from_id(item)
 
             ## Datapack
             # Add the item id to the list of painting variants values
             if not painting_data.get("not_placeable", False):
-                placeable_values.append(f"{ns}:{item}")
+                placeable_values.append(obj_painting.variant)
 
             # Set default author and title if not provided
             if "author" not in painting_data:
@@ -48,14 +48,13 @@ def beet_default(ctx: Context) -> None:
                 painting_data["title"] = data.get("item_name") or {"text": item.replace("_", " ").title()}
 
             # Create ordered painting data with asset_id first
-            texture_name: str = painting_data.get("texture", item)
-            ordered_painting_data = {"asset_id": f"{ns}:{texture_name}"}
+            ordered_painting_data = {"asset_id": obj_painting.asset_id}
             ordered_painting_data.update(painting_data)
             ordered_painting_data.pop("not_placeable", None)
             ordered_painting_data.pop("texture", None)
 
             # Create the painting definition
-            Mem.ctx.data[ns].painting_variants[item] = set_json_encoder(PaintingVariant(ordered_painting_data))
+            obj_painting.variant.write(set_json_encoder(PaintingVariant(ordered_painting_data)))
 
             ## Resource pack
             # Get the texture path
@@ -74,11 +73,11 @@ def beet_default(ctx: Context) -> None:
                 elif len(matching_textures) > 1:
                     stp.warning(f"Multiple textures found for painting '{item}' in the textures folder '{textures_folder}'. Using the first one found: '{matching_textures[0]}'.")
                 src: str = matching_textures[0]
-            dst: str = f"painting/{texture_name}"
+            dst = obj_painting.painting_texture
 
             # Check if the texture is not already registered
-            if not Mem.ctx.assets[ns].textures.get(dst):
-                Mem.ctx.assets[ns].textures[dst] = texture_mcmeta(src)
+            if not dst.exists():
+                dst.write(texture_mcmeta(src))
 
     # Add the painting variant tag to the context data
     if placeable_values:

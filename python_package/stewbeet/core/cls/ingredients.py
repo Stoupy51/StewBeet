@@ -9,9 +9,11 @@ from beet import LootTable
 from stouputils.typing import JsonDict
 
 from ..__memory__ import Mem
+from ..constants import EXTERNAL_RECIPES_FOLDER, ITEMS_LOOT_FOLDER
 from ..utils.io import set_json_encoder
 from ..utils.loot_table import result_count_to_suffix
 from ..utils.text_component import item_id_to_name
+from .resource import Resource
 
 # Recipes constants
 FURNACES_RECIPES_TYPES: tuple[str, ...] = ("smelting", "blasting", "smoking", "campfire_cooking")
@@ -51,9 +53,9 @@ class Ingr(dict[str, Any]):
 			>>> Ingr("adamantium_fragment", ns="iyc", count=3)
 			{'components': {'minecraft:custom_data': {'iyc': {'adamantium_fragment': True}}}, 'count': 3}
 			>>> Ingr("diamond")
-			{'components': {'minecraft:custom_data': {'detected_namespace': {'diamond': True}}}}
+			{'components': {'minecraft:custom_data': {'your_namespace': {'diamond': True}}}}
 			>>> print(Ingr("diamond"))
-			{'components': {'minecraft:custom_data': {'detected_namespace': {'diamond': True}}}}
+			{'components': {'minecraft:custom_data': {'your_namespace': {'diamond': True}}}}
 		"""
 		# Copy from another dict
 		if isinstance(id, dict):
@@ -65,7 +67,7 @@ class Ingr(dict[str, Any]):
 			self["item"] = id
 		else:
 			if ns is None:
-				ns = Mem.ctx.project_id if Mem.ctx else "detected_namespace"
+				ns = Mem.ctx.project_id
 			self["components"] = {"minecraft:custom_data":{ns:{id:True}}}
 		if count is not None:
 			self["count"] = count
@@ -240,26 +242,27 @@ class Ingr(dict[str, Any]):
 		return Ingr(item).item_to_id()
 
 	@stp.simple_cache
-	def register_loot_table(self, result_count: int | JsonDict) -> str:
-		""" Get the loot table for an ingredient dict
+	def register_loot_table(self, result_count: int | JsonDict) -> Resource[LootTable]:
+		""" Get the loot table for an ingredient dict, generating it when the item is external
 
 		Args:
 			result_count (int|dict): The count of the result item, can be an int or a dict for random counts
 				ex: 1
 				ex: {"type": "minecraft:uniform","min": 4,"max": 6}
 		Returns:
-			str: The loot table path, ex: "my_datapack:i/stick"
+			Resource[LootTable]: The loot table, ex: "my_datapack:i/stick"
 		"""
 		# If item from this datapack
 		item: str = self.to_id()
 		if item.startswith(Mem.ctx.project_id):
 			item = item.split(":")[1]
-			loot_table = f"{Mem.ctx.project_id}:i/{item}{result_count_to_suffix(result_count)}"
-			return loot_table
+			return Resource(LootTable, f"{ITEMS_LOOT_FOLDER}/{item}{result_count_to_suffix(result_count)}")
 
 		# Else, external item (minecraft or another datapack)
 		namespace, item = item.split(":")
-		loot_table = f"{Mem.ctx.project_id}:recipes/{namespace}/{item}{result_count_to_suffix(result_count)}"
+		loot_table: Resource[LootTable] = Resource(
+			LootTable, f"{EXTERNAL_RECIPES_FOLDER}/{namespace}/{item}{result_count_to_suffix(result_count)}"
+		)
 
 		# If item from another datapack, generate the loot table
 		if namespace != "minecraft":
@@ -274,7 +277,7 @@ class Ingr(dict[str, Any]):
 		if (isinstance(result_count, int) and result_count > 1) or hasattr(result_count, "get"):
 			file["pools"][0]["entries"][0]["functions"] = [{"function": "minecraft:set_count","count": result_count}]
 
-		Mem.ctx.data[loot_table] = set_json_encoder(LootTable(file), max_level=9)
+		loot_table.write(set_json_encoder(LootTable(file), max_level=9))
 		return loot_table
 
 	@staticmethod

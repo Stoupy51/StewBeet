@@ -1,10 +1,11 @@
 
-# Test: stewbeet.plugins.custom_paintings
-# Verifies that a Painting item produces a painting_variant JSON in the datapack,
-# a texture in the resource pack, and the placeable painting tag.
+# Test: stewbeet.core.cls.resource
+# Verifies that the Resource accessors on Item/Block/Painting resolve to the
+# exact resource locations the plugins write to, and that .obj/.get()/.exists()
+# reach the real beet files.
 
 id: "tns"
-name: "Test Custom Paintings"
+name: "Test Core Resource"
 version: "1.0.0"
 author: "test"
 minecraft: "26.2"
@@ -25,7 +26,8 @@ resource_pack:
 
 pipeline:
     - "src.definitions"
-    - "stewbeet.plugins.custom_paintings"
+    - "stewbeet.plugins.datapack.loot_tables"
+    - "stewbeet.plugins.datapack.custom_blocks"
     - "src.assertions"
 
 meta:

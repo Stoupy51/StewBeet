@@ -1,6 +1,6 @@
 
 # Imports
-from ...core import Mem, write_function
+from ...core import BlockFunctions, Mem, write_function
 
 
 # Setup functions for keeping energy for batteries
@@ -17,14 +17,14 @@ def keep_energy_for_batteries(batteries: list[str]) -> None:
 	for battery in batteries:
 
 		# Copy current energy storage before destroying the block
-		write_function(f"{ns}:custom_blocks/{battery}/destroy", f"""
+		write_function(BlockFunctions(battery).destroy, f"""
 # Keep energy when destroying the block
 scoreboard players operation #storage {ns}.data = @s energy.storage
 
 """, prepend = True)
 
 		# Keep energy when replacing the item
-		write_function(f"{ns}:custom_blocks/{battery}/replace_item", f"""
+		write_function(BlockFunctions(battery).replace_item, f"""
 # Keep energy
 function {ns}:utils/keep_energy
 """)

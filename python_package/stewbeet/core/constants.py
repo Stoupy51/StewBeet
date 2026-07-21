@@ -154,6 +154,26 @@ BLOCKS_WITH_INTERFACES: list[str] = [	# List of blocks that are containers and h
 	"minecraft:crafter",
 ]
 
+# Resource location constants (the folders every Resource accessor derives its paths from)
+CUSTOM_BLOCKS_FOLDER: str = "custom_blocks"
+""" Folder holding every custom block function, e.g. "{ns}:custom_blocks/{id}/place_main".
+
+WARNING: plugins.finalyze.custom_blocks_ticking discovers ticking functions by matching this prefix
+against every function path. Changing it without updating that plugin silently breaks ticking. """
+
+ITEMS_LOOT_FOLDER: str = "i"
+""" Folder holding the "give this item" loot tables, e.g. "{ns}:i/{id}". """
+
+SEEDS_FOLDER: str = "seeds"
+""" Folder holding growing seed loot tables and item models, e.g. "{ns}:seeds/{id}". """
+
+PLAYER_HEAD_FOLDER: str = f"{CUSTOM_BLOCKS_FOLDER}/_player_head"
+""" Folder holding the search functions of player head based custom blocks. """
+
+EXTERNAL_RECIPES_FOLDER: str = "recipes"
+""" Folder holding the loot tables generated for external/vanilla ingredients, e.g. "{ns}:recipes/minecraft/stick". """
+
+
 # Conventions constants
 class ConventionTags(list[str]):
 	def __init__(self, *args: str):

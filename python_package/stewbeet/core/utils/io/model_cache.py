@@ -6,6 +6,7 @@ import os
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path
+from typing import Any, cast
 
 import stouputils as stp
 from beet import Context, JsonFile
@@ -25,6 +26,60 @@ Caching costs a directory lookup, a file read and a timestamp update, which toge
 0.2ms per entry; serializing runs at roughly 55ms per megabyte. Below a few kilobytes the cache is
 therefore slower than simply doing the work, and on a pack with thousands of tiny json files that
 overhead adds up to more than it saves. """
+
+EXACT_JSON_TYPES: frozenset[type] = frozenset((str, int, float, bool, type(None)))
+""" Types ``marshal`` accepts as-is, checked by identity since it rejects every subclass. """
+
+
+def to_plain_builtin(value: Any) -> Any:
+	""" Rebuild a value out of exact builtin types so ``marshal`` can serialize it.
+
+	``marshal`` rejects subclasses of the types it supports: a ``Resource`` is a ``str`` but not
+	exactly a ``str``, so a single one anywhere in a model would make that model uncacheable and
+	silently re-serialized on every build.
+
+	Normalizing is safe because only the plain view of a value decides its json text: two values
+	with the same plain form always serialize to the same string. Tuples become lists for that same
+	reason, json rendering both as arrays. The key stays stable from build to build, but it is not
+	comparable to the one a plain-string model would get: ``marshal`` back-references repeated
+	*objects*, so payloads also depend on which values happen to be the same object.
+
+	Args:
+		value (Any): The value to normalize.
+
+	Returns:
+		Any: The same value built exclusively from ``dict``, ``list``, ``str``, ``int``, ``float``,
+			``bool`` and ``None``. Anything else is returned untouched, letting ``marshal`` reject it.
+
+	Examples:
+		>>> to_plain_builtin({"a": (1, 2), "b": [None, True]})
+		{'a': [1, 2], 'b': [None, True]}
+
+		>>> class MyStr(str): pass
+		>>> plain = to_plain_builtin({"model": MyStr("ns:item/x")})
+		>>> plain, type(plain["model"]) is str
+		({'model': 'ns:item/x'}, True)
+	"""
+	# Exact builtins are by far the common case and need no work
+	if type(value) in EXACT_JSON_TYPES:
+		return value
+
+	# Containers: normalize their contents (a dict subclass such as Ingr is rejected by marshal too)
+	if isinstance(value, dict):
+		return {to_plain_builtin(k): to_plain_builtin(v) for k, v in cast(dict[Any, Any], value).items()}
+	if isinstance(value, (list, tuple)):
+		return [to_plain_builtin(v) for v in cast(list[Any], value)]
+
+	# Subclasses of the scalar types, bool first since it is also an int
+	if isinstance(value, bool):
+		return bool(value)
+	if isinstance(value, str):
+		return str(value)
+	if isinstance(value, int):
+		return int(value)
+	if isinstance(value, float):
+		return float(value)
+	return value
 
 
 class ModelSerializationCache:
@@ -99,7 +154,12 @@ class ModelSerializationCache:
 		try:
 			payload: bytes = marshal.dumps(data)
 		except ValueError:
-			return None  # Unmarshalable value: fall back to serializing every time
+			# Almost always a subclass of a builtin (a Resource, an Ingr...). Normalizing keeps the
+			# model cacheable and gives it the same key as the plain-builtin model it serializes to.
+			try:
+				payload = marshal.dumps(to_plain_builtin(data))
+			except ValueError:
+				return None  # Unmarshalable value: fall back to serializing every time
 
 		# Too small for the cache to pay for itself (see MODEL_CACHE_MIN_SIZE)
 		if len(payload) < MODEL_CACHE_MIN_SIZE:

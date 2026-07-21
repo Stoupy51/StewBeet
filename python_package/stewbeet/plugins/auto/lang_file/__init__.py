@@ -17,8 +17,7 @@ def beet_default(ctx: Context) -> None:
 	Args:
 		ctx (Context): The beet context.
 	"""
-	if Mem.ctx is None: # pyright: ignore[reportUnnecessaryComparison]
-		Mem.ctx = ctx
+	Mem.ctx = ctx
 
 	# Get all functions and loot tables
 	files_to_process: dict[str, TextFileBase[str] | None] = {}

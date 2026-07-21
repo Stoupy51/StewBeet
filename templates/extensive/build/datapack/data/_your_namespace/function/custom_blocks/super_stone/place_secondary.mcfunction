@@ -23,8 +23,6 @@ item replace entity @s contents with minecraft:furnace[item_model="_your_namespa
 data modify entity @s transformation.scale set value [1.002f, 1.002f, 1.002f]
 function _your_namespace:custom_blocks/compute_brightness
 
-# Custom on_place commands
-
 say Omg, @p[tag=_your_namespace.placer] placed the super stone block!
 particle minecraft:explosion ~ ~ ~
 

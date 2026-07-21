@@ -7,8 +7,9 @@ from stouputils.typing import JsonDict
 from ....core.__memory__ import Mem
 from ....core.cls.ingredients import Ingr
 from ....core.cls.item import Item
+from ....core.cls.resource import Resource
+from ....core.constants import ITEMS_LOOT_FOLDER
 from ....core.utils.io import write_function
-from ....core.utils.loot_table import result_count_to_suffix
 
 
 # Main entry point
@@ -20,10 +21,8 @@ def beet_default(ctx: Context):
 	Args:
 		ctx (Context): The beet context.
 	"""
-	if Mem.ctx is None: # pyright: ignore[reportUnnecessaryComparison]
-		Mem.ctx = ctx
-
 	# Get data from memory
+	Mem.ctx = ctx
 	assert ctx.meta["stewbeet"].get("source_lore", None) is not None, "Source lore is not set in the context metadata."
 	assert ctx.project_id, "Project ID is not set. Please set it in the project configuration."
 	ns: str = ctx.project_id
@@ -60,10 +59,10 @@ def beet_default(ctx: Context):
 		loot_table["pools"][0]["entries"][0]["functions"] = [set_components]
 
 		# Create loot table with beet
-		ctx.data[ns].loot_tables[f"i/{item}"] = LootTable(stp.json_dump(loot_table, max_level = 10))
+		obj.loot_table.write(LootTable(stp.json_dump(loot_table, max_level = 10)))
 
 		# Add the pool to the creative loot table
-		creative_loot_table["pools"].append({"rolls": 1, "entries":[{"type":"minecraft:loot_table","value":f"{ns}:i/{item}"}] })
+		creative_loot_table["pools"].append({"rolls": 1, "entries":[{"type":"minecraft:loot_table","value":obj.loot_table}] })
 
 	# Loot tables for items with crafting recipes
 	for item in not_skipped_items:
@@ -89,7 +88,7 @@ def beet_default(ctx: Context):
 						"rolls": 1,
 						"entries": [{
 							"type": "minecraft:loot_table",
-							"value": f"{ns}:i/{item}",
+							"value": obj.loot_table,
 							"functions": [{
 								"function": "minecraft:set_count",
 								"count": result_count
@@ -97,8 +96,7 @@ def beet_default(ctx: Context):
 						}]
 					}]
 				}
-				loot_table_path = f"i/{item}{result_count_to_suffix(result_count)}"
-				ctx.data[ns].loot_tables[loot_table_path] = LootTable(stp.json_dump(loot_table, max_level=10))
+				obj.loot_table_for(result_count).write(LootTable(stp.json_dump(loot_table, max_level=10)))
 
 	# Second loot table for the manual (if present)
 	if "manual" in not_skipped_items:
@@ -107,11 +105,12 @@ def beet_default(ctx: Context):
 				"rolls": 1,
 				"entries": [{
 					"type": "minecraft:loot_table",
-					"value": f"{ns}:i/manual"
+					"value": Item.from_id("manual").loot_table
 				}]
 			}]
 		}
-		ctx.data[ns].loot_tables[f"i/{ns}_manual"] = LootTable(stp.json_dump(loot_table, max_level=10))
+		# Namespaced alias of the manual loot table, not an item of its own
+		Resource(LootTable, f"{ITEMS_LOOT_FOLDER}/{ns}_manual").write(LootTable(stp.json_dump(loot_table, max_level=10)))
 
 	# Write the creative loot table
 	if creative_loot_table["pools"]:

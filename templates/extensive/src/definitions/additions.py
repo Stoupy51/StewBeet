@@ -30,10 +30,6 @@ def main():
             SmeltingRecipe(experience=0.1, cookingtime=200, category="building", ingredient=Ingr("super_stone"), result=Ingr("minecraft:diamond")),
             BlastingRecipe(experience=0.1, cookingtime=100, category="building", ingredient=Ingr("super_stone"), result=Ingr("minecraft:diamond")),
         ],
-        on_place=f"""
-say Omg, @p[tag={ns}.placer] placed the super stone block!
-particle minecraft:explosion ~ ~ ~
-"""
     )
 
     # Example of a custom painting

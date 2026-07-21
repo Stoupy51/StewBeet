@@ -8,7 +8,7 @@ id: "tns"
 name: "Test Compat SimpleDrawer"
 version: "1.0.0"
 author: "test"
-minecraft: "26.1"
+minecraft: "26.2"
 
 directory: "."
 output: "build"

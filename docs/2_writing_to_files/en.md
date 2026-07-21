@@ -255,6 +255,36 @@ write_function(f"{ns}:my_function", modified_content, overwrite=True)
 
 ---
 
+#### 📍 Prefer Resource accessors over hardcoded paths
+
+Whenever the path belongs to a definition, take it from the `Item`/`Block` instead of retyping the convention.
+A `Resource` is a string, so it drops straight into any of these functions:
+
+```python
+furnace = Block.from_id("electric_furnace")
+
+# ❌ Hardcoded — silently breaks if the convention ever changes
+write_function(f"{ns}:custom_blocks/electric_furnace/tick", "...")
+
+# ✅ Derived from the definition
+write_function(furnace.functions.tick, "...")
+
+# ✅ Equivalent, without the definition lookup (BlockFunctions builds the same paths)
+write_function(BlockFunctions("electric_furnace").tick, "...")
+
+# ✅ Appending to a function that already exists? Grab the beet Function via .obj:
+furnace.functions.place_secondary.obj.append("tag @s add my_ns.active")
+# (raises KeyError if the function hasn't been generated yet — a loud failure
+#  instead of your commands silently landing before the block setup)
+
+# Works the same for loot tables, models, textures, advancements
+write_function(f"{ns}:give_furnace", f"loot give @s loot {furnace.loot_table}")
+```
+
+See [Resource Locations](../1_definitions_setup/en.md#-resource-locations) for the full list of accessors.
+
+---
+
 #### `write_load_file()`
 Write content to the main load function (runs when datapack loads).
 

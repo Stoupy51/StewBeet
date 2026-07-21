@@ -32,9 +32,7 @@ def copy_templates(config: ManualConfig) -> None:
 @stp.handle_error(message="An error occurred while generating the in-game manual", error_log=stp.LogLevels.ERROR_TRACEBACK)
 def beet_default(ctx: Context) -> None:
 	""" Entry point: build the manual (reusing any Manual registered during setup). """
-	if Mem.ctx is None:  # pyright: ignore[reportUnnecessaryComparison]
-		Mem.ctx = ctx
-
+	Mem.ctx = ctx
 	if not Mem.definitions:
 		stp.warning("Database is empty, skipping manual generation.", file=sys.stdout)
 		return
