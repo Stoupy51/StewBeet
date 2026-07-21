@@ -10,7 +10,7 @@
 		"X": "minecraft:stone"
 	},
 	"result": {
-		"id": "minecraft:command_block",
+		"id": "minecraft:recovery_compass",
 		"count": 4,
 		"components": {
 			"minecraft:custom_data": {

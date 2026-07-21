@@ -2,7 +2,7 @@
 	"type": "minecraft:smelting",
 	"ingredient": "minecraft:iron_shovel",
 	"result": {
-		"id": "minecraft:command_block",
+		"id": "minecraft:recovery_compass",
 		"count": 1,
 		"components": {
 			"minecraft:custom_data": {
