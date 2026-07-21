@@ -98,7 +98,7 @@ class Item(StMapping):
     id: str
     """ Unique identifier for the item, e.g. 'multimeter', 'simplunium_block'. """
     base_item: str = CUSTOM_ITEM_VANILLA
-    """ Represents an item with a unique identifier, e.g 'minecraft:command_block'. """
+    """ Represents an item with a unique identifier, e.g 'minecraft:recovery_compass'. """
     manual_category: str | None = None
     """ (Optional) manual category for organizing items in the ingame-manual. """
     recipes: list[RecipeBase] = field(default_factory=list[RecipeBase])

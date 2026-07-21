@@ -159,10 +159,10 @@ def collect_for_item(r: RecipeRenderer, name: str, item_obj: Item, definitions_a
 	""" Gather an item's own recipes, otherside crafts, and mining drops (deduped). """
 	# Consumer index cached on the renderer (one instance per manual build, so watch
 	# rebuilds and later definition changes get a fresh index).
-	cached: tuple[dict[str, Item], dict[str, list[tuple[str, JsonDict]]]] | None = getattr(r, "_consumer_index_cache", None)
+	cached: tuple[dict[str, Item], dict[str, list[tuple[str, JsonDict]]]] | None = r.consumer_index_cache
 	if cached is None or cached[0] is not definitions_as_objects:
 		cached = (definitions_as_objects, build_consumer_index(definitions_as_objects))
-		r._consumer_index_cache = cached  # pyright: ignore[reportAttributeAccessIssue]
+		r.consumer_index_cache = cached
 
 	crafts: list[JsonDict] = list(item_obj.to_dict().get("recipes", []))
 	crafts += generate_otherside_crafts(name, definitions_as_objects, cached[1])

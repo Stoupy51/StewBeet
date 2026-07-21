@@ -1,7 +1,5 @@
 
 # Imports
-from __future__ import annotations
-
 import stouputils as stp
 from beet import Recipe
 from stouputils.typing import JsonDict
@@ -11,6 +9,7 @@ from ...core.cls.external_item import ExternalItem
 from ...core.cls.ingredients import Ingr
 from ...core.cls.item import Item
 from ...core.cls.recipe import BlastingRecipe, SmeltingRecipe, SmokingRecipe
+from ...core.constants import CUSTOM_ITEM_VANILLA
 from ...core.utils.io import set_json_encoder, write_function
 
 
@@ -106,8 +105,8 @@ scoreboard players reset #count furnace_nbt_recipes.data
         # Create the recipe for the reward
         json_file: JsonDict = {
             "type": "minecraft:smelting",
-            "ingredient": "minecraft:command_block",
-            "result": {"id": "minecraft:command_block"},
+            "ingredient": CUSTOM_ITEM_VANILLA,
+            "result": {"id": CUSTOM_ITEM_VANILLA},
             "experience": experience,
             "cookingtime": 200
         }
