@@ -66,7 +66,7 @@ class Resource[FileT: NamespaceFile](str):
     writer (write_function, write_tag, write_advancement, ctx.data[...], ...) without conversion.
     On top of that, it gives access to the underlying beet file through `.obj`, `.get()`, ...
 
-    ## Building resource locations
+    Building resource locations
     >>> from beet import Function, LootTable
     >>> res = Resource(LootTable, "i/multimeter")
     >>> res
@@ -76,7 +76,7 @@ class Resource[FileT: NamespaceFile](str):
     >>> res.file_type is LootTable
     True
 
-    ## It behaves exactly like a str
+    It behaves exactly like a str
     >>> res == "your_namespace:i/multimeter"
     True
     >>> isinstance(res, str)
@@ -86,11 +86,11 @@ class Resource[FileT: NamespaceFile](str):
     >>> {res: 1}["your_namespace:i/multimeter"]
     1
 
-    ## The file extension is stripped
+    The file extension is stripped
     >>> Resource(Function, "custom_blocks/machine_block/place_main.mcfunction")
     'your_namespace:custom_blocks/machine_block/place_main'
 
-    ## A foreign namespace can be given either way, and a location already carrying one wins
+    A foreign namespace can be given either way, and a location already carrying one wins
     >>> Resource(LootTable, "base/tin_raw", namespace="mechanization")
     'mechanization:base/tin_raw'
     >>> Resource(LootTable, "mechanization:base/tin_raw").namespace
@@ -98,13 +98,13 @@ class Resource[FileT: NamespaceFile](str):
     >>> Resource(LootTable, "mechanization:base/tin_raw", namespace="ignored").namespace
     'mechanization'
 
-    ## Copies survive (mandatory: components dicts get deep-copied during serialization)
+    Copies survive (mandatory: components dicts get deep-copied during serialization)
     >>> import copy
     >>> copied = copy.deepcopy(res)
     >>> copied == res and copied.file_type is LootTable
     True
 
-    ## Out of a build, pack accessors run against an empty placeholder context
+    Out of a build, pack accessors run against an empty placeholder context
     >>> res.exists()
     False
     >>> res.get() is None
