@@ -6,7 +6,7 @@ button scaffolding; the per-type layout/hover/glyph/image live under :mod:`.type
 """
 
 # Imports
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
 import stouputils as stp
@@ -43,6 +43,12 @@ class RecipeRenderer:
 
 	manual: Manual
 	""" The owning :class:`~..manual.Manual` instance. """
+
+	consumer_index_cache: tuple[dict[str, Item], dict[str, list[tuple[str, JsonDict]]]] | None = field(default=None, init=False, repr=False)
+	""" Memoized (definitions, consumer index) pair used by :func:`~.collection.collect_for_item`.
+
+	Keyed on the definitions dict identity so watch rebuilds and later definition changes get a
+	fresh index. One renderer exists per manual build, hence caching it here. """
 
 	@property
 	def config(self) -> ManualConfig:
