@@ -78,7 +78,7 @@ def uuid2inline(uuid: str) -> str:
 	# Format as the standard UUID layout: 8-4-4-4-12
 	return f"{hex_str[:8]}-{hex_str[8:12]}-{hex_str[12:16]}-{hex_str[16:20]}-{hex_str[20:]}"
 
-@dataclass
+@dataclass(slots=True)
 class UnloadEntry:
 	""" One category of commands to generate during unload. """
 	header: str

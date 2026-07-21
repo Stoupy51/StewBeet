@@ -101,7 +101,7 @@ HEAVY_WORKBENCH_CATEGORY: str = "__private_heavy_workbench"
 
 
 # Allocator
-@dataclass
+@dataclass(slots=True)
 class GlyphAllocator:
 	""" Owns the dynamic unicode counter and the bitmap font-provider registry.
 

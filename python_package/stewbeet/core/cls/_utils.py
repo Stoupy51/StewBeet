@@ -14,7 +14,7 @@ from ..constants import NOT_COMPONENTS
 
 
 # Class for mapping behavior
-@dataclass
+@dataclass(slots=True)
 class StMapping(Mapping[str, Any]):
     def __getitem__(self, key: str) -> Any:
         return getattr(self, key)

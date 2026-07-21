@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 	from ..renderer import RecipeRenderer
 
 
-@dataclass
+@dataclass(slots=True)
 class AwakenedForgeRenderer(CraftRenderer):
 	""" Stardust Fragment ``stardust_awakened_forge`` recipes (3x3 or 3x4 grid). """
 	types: ClassVar[tuple[str, ...]] = (AwakenedForgeRecipe.type,)

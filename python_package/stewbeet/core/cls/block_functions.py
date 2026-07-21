@@ -27,6 +27,8 @@ class BlockFunctions(ResourceFolder[Function]):
     >>> funcs.folder
     'your_namespace:custom_blocks/machine_block'
     """
+    __slots__ = ()
+
     def __init__(self, block_id: str, namespace: str | None = None) -> None:
         """ Build the function accessor of a custom block.
 

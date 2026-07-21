@@ -24,7 +24,7 @@ from .recipes import WikiButtonRender
 Position = str  # "after_recipe" | "bottom" | "top" | callable
 
 
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, slots=True)
 class ButtonLayout:
 	""" Controls wiki-button rendering for a page.
 

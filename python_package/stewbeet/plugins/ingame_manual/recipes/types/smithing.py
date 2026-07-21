@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 	from ..renderer import RecipeRenderer
 
 
-@dataclass
+@dataclass(slots=True)
 class SmithingTransformRenderer(CraftRenderer):
 	""" ``smithing_transform`` recipes (base + template + addition -> result). """
 	types: ClassVar[tuple[str, ...]] = (SmithingTransformRecipe.type,)
@@ -46,7 +46,7 @@ class SmithingTransformRenderer(CraftRenderer):
 		content.append("\n")
 
 
-@dataclass
+@dataclass(slots=True)
 class SmithingTrimRenderer(CraftRenderer):
 	""" ``smithing_trim`` recipes (no result item; the trim pattern slot is shown empty). """
 	types: ClassVar[tuple[str, ...]] = (SmithingTrimRecipe.type,)

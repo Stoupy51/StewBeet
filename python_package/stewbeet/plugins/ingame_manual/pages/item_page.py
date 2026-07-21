@@ -35,7 +35,7 @@ if TYPE_CHECKING:
 	from ..manual import Manual
 
 
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, slots=True)
 class ItemPage(Page):
 	""" A page describing a single item: its main recipe, then a grid of wiki buttons.
 

@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 	from .renderer import RecipeRenderer
 
 
-@dataclass
+@dataclass(slots=True)
 class CraftRenderer:
 	""" Base class for a recipe-type renderer.
 

@@ -34,6 +34,8 @@ def get_vanilla_item_tags() -> dict[str, ItemTag]:
 class RecipeList(list[Any]):
     """ Custom list that normalizes recipes when they are added and expands item tags. """
 
+    __slots__ = ("item_id",)
+
     item_id: str
 
     def __init__(self, item_id: str, *args: Any, **kwargs: Any) -> None:

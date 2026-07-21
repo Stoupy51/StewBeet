@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 	from ..manual import Manual
 
 
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, slots=True)
 class CustomPage(Page):
 	""" A page with a developer-supplied component body and optional extra glyphs.
 

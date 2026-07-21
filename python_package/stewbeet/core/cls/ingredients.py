@@ -31,6 +31,7 @@ ALL_RECIPES_TYPES: tuple[str, ...] = (*FURNACES_RECIPES_TYPES, *CRAFTING_RECIPES
 
 # Ingr class
 class Ingr(dict[str, Any]):
+	__slots__ = ()
 
 	def __init__(self, id: str | JsonDict, ns: str | None = None, count: int | None = None, **kwargs: Any) -> None:
 		""" Get the identity of the ingredient from its id for custom crafts

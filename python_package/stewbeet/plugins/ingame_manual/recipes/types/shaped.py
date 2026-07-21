@@ -28,7 +28,7 @@ if TYPE_CHECKING:
 	from ..renderer import RecipeRenderer
 
 
-@dataclass
+@dataclass(slots=True)
 class ShapedRenderer(CraftRenderer):
 	""" crafting_shaped / crafting_shapeless (shapeless is converted to shaped before rendering). """
 	types: ClassVar[tuple[str, ...]] = ("crafting_shaped", "crafting_shapeless")

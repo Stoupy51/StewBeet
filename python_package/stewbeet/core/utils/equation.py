@@ -68,6 +68,8 @@ class BaseEquation:
 	All methods return ``self`` to allow method chaining.
 	"""
 
+	__slots__ = ("comment_parts", "ops", "player", "scoreboard")
+
 	def __init__(self, target_player: str, target_scoreboard: str | None = None) -> None:
 		self.player: str = target_player
 		self.scoreboard: str = target_scoreboard or f"{Mem.ctx.project_id}.data"
@@ -258,6 +260,9 @@ class ScoreboardEquation(BaseEquation):
 		>>> result == expected
 		True
 	"""
+
+	__slots__ = ()
+
 	def __init__(self, player: str, scoreboard: str | None = None) -> None:
 		super().__init__(player, scoreboard)
 
@@ -286,6 +291,9 @@ class StorageEquation(BaseEquation):
 		>>> result == expected and shorter == expected
 		True
 	"""
+
+	__slots__ = ("path", "scale", "storage", "storage_type")
+
 	def __init__(self, storage: str, path: str, scale: float = 1.0, storage_type: str = "double") -> None:
 		super().__init__("#temp_result")
 		self.storage: str = storage

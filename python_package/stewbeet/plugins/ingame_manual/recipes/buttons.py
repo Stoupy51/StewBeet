@@ -9,7 +9,7 @@ from stouputils.typing import JsonDict
 from ..refs import PageRef
 
 
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, slots=True)
 class WikiButtonRender:
 	""" A single wiki button (icon + hover) with a deferred click target.
 

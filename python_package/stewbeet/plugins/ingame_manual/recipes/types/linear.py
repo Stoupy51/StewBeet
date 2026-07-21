@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 	from ..renderer import RecipeRenderer
 
 
-@dataclass
+@dataclass(slots=True)
 class LinearRenderer(CraftRenderer):
 	""" Shared single-row layout (ingredient on the left, result on the right). """
 
@@ -44,7 +44,7 @@ class LinearRenderer(CraftRenderer):
 		content.append("\n")
 
 
-@dataclass
+@dataclass(slots=True)
 class StonecuttingRenderer(LinearRenderer):
 	""" ``stonecutting`` recipes. """
 	types: ClassVar[tuple[str, ...]] = (StonecuttingRecipe.type,)
@@ -55,7 +55,7 @@ class StonecuttingRenderer(LinearRenderer):
 		return STONECUTTING_FONT
 
 
-@dataclass
+@dataclass(slots=True)
 class PulverizingRenderer(LinearRenderer):
 	""" SimplEnergy ``simplenergy_pulverizing`` recipes. """
 	types: ClassVar[tuple[str, ...]] = (PulverizingRecipe.type,)
@@ -66,7 +66,7 @@ class PulverizingRenderer(LinearRenderer):
 		return PULVERIZING_FONT
 
 
-@dataclass
+@dataclass(slots=True)
 class MiningRenderer(LinearRenderer):
 	""" Pseudo-recipe generated from no-silk-touch drops. """
 	types: ClassVar[tuple[str, ...]] = ("mining",)

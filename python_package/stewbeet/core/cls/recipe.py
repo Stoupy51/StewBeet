@@ -11,6 +11,11 @@ from .ingredients import ALL_RECIPES_TYPES, Ingr
 
 
 # Base Class
+# Beware: this hierarchy cannot use slots=True. Every subclass exposes its recipe type both as an
+# instance field (`recipe.type`, serialized by to_dict()) and as a class-level constant compared
+# against at ~15 call sites (`recipe["type"] == CraftingShapedRecipe.type`). dataclasses strips every
+# field name from the class body when generating slots, so the constant would silently become a
+# member descriptor and every one of those comparisons would evaluate to False without raising.
 @dataclass(kw_only=True)
 class RecipeBase(StMapping):
     """ Base class for all recipe types. """

@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 	from ..manual import Manual
 
 
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, slots=True)
 class TexturePage(Page):
 	""" A full-texture page with optional baked-in text and trailing MC components.
 

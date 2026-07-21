@@ -131,6 +131,8 @@ class VanillaEquipments(Enum):
 					})
 
 class EquipmentsConfig:
+	__slots__ = ("attributes", "equivalent_to", "ignore_recipes", "pickaxe_durability")
+
 	def __init__(self, equivalent_to: DefaultOre = DefaultOre.DIAMOND, pickaxe_durability: float | int = 0, attributes: dict[str, float] | None = None, ignore_recipes: bool = False) -> None:
 		""" Creates a configuration for equipments (based on the pickaxe)
 

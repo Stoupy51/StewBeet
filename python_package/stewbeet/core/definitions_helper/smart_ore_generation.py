@@ -15,6 +15,11 @@ from ..utils.io import set_json_encoder, write_function
 
 
 class CustomOreGeneration:
+	__slots__ = (
+		"dimensions", "maximum_height", "minimum_height", "placer_command",
+		"provider", "vein_size_logic", "veins_per_region",
+	)
+
 	def __init__(
 		self,
 		dimensions: list[str],
