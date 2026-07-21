@@ -13,4 +13,5 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
+   stewbeet.plugins.initialize.silent
    stewbeet.plugins.initialize.source_lore_font

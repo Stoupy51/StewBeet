@@ -7,22 +7,32 @@ stewbeet.plugins.ingame\_manual package
    :show-inheritance:
    :undoc-members:
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.plugins.ingame_manual.pages
+   stewbeet.plugins.ingame_manual.recipes
+
 Submodules
 ----------
 
 .. toctree::
    :maxdepth: 4
 
-   stewbeet.plugins.ingame_manual.book_components
-   stewbeet.plugins.ingame_manual.book_optimizer
-   stewbeet.plugins.ingame_manual.craft_content
+   stewbeet.plugins.ingame_manual.api
+   stewbeet.plugins.ingame_manual.button_layout
+   stewbeet.plugins.ingame_manual.config
    stewbeet.plugins.ingame_manual.dialog
-   stewbeet.plugins.ingame_manual.image_utils
+   stewbeet.plugins.ingame_manual.glyphs
+   stewbeet.plugins.ingame_manual.images
    stewbeet.plugins.ingame_manual.iso_renders
-   stewbeet.plugins.ingame_manual.main
-   stewbeet.plugins.ingame_manual.other_utils
-   stewbeet.plugins.ingame_manual.page_font
-   stewbeet.plugins.ingame_manual.shared_import
-   stewbeet.plugins.ingame_manual.showcase_image
-   stewbeet.plugins.ingame_manual.stardust_forge
-   stewbeet.plugins.ingame_manual.text_components
+   stewbeet.plugins.ingame_manual.manual
+   stewbeet.plugins.ingame_manual.manual_emit
+   stewbeet.plugins.ingame_manual.optimizer
+   stewbeet.plugins.ingame_manual.paths
+   stewbeet.plugins.ingame_manual.refs
+   stewbeet.plugins.ingame_manual.showcase
+   stewbeet.plugins.ingame_manual.special

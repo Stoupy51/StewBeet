@@ -1,0 +1,8 @@
+stewbeet.plugins.compatibilities.neo\_enchant.silent module
+===========================================================
+
+.. automodule:: stewbeet.plugins.compatibilities.neo_enchant.silent
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

@@ -6,3 +6,11 @@ stewbeet.plugins.datapack.custom\_blocks package
    :private-members:
    :show-inheritance:
    :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.plugins.datapack.custom_blocks.silent

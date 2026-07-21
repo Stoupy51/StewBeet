@@ -16,5 +16,6 @@ Subpackages
    stewbeet.plugins.custom_recipes
    stewbeet.plugins.ingame_manual
    stewbeet.plugins.initialize
+   stewbeet.plugins.livereload
    stewbeet.plugins.merge_smithed_weld
    stewbeet.plugins.verify_definitions

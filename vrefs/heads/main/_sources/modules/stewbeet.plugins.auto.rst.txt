@@ -11,3 +11,4 @@ Subpackages
 
    stewbeet.plugins.auto.headers
    stewbeet.plugins.auto.lang_file
+   stewbeet.plugins.auto.scoreboard_constants

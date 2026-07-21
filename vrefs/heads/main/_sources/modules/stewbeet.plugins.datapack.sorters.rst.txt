@@ -18,3 +18,4 @@ Submodules
    stewbeet.plugins.datapack.sorters.match
    stewbeet.plugins.datapack.sorters.quick_sort
    stewbeet.plugins.datapack.sorters.selection_sort
+   stewbeet.plugins.datapack.sorters.silent

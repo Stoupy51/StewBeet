@@ -19,4 +19,5 @@ Submodules
    stewbeet.plugins.auto.headers.macro_analyzer
    stewbeet.plugins.auto.headers.macro_parser
    stewbeet.plugins.auto.headers.object
+   stewbeet.plugins.auto.headers.silent
    stewbeet.plugins.auto.headers.type_inference

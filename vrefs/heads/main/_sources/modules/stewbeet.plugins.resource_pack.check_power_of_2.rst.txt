@@ -6,3 +6,11 @@ stewbeet.plugins.resource\_pack.check\_power\_of\_2 package
    :private-members:
    :show-inheritance:
    :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.plugins.resource_pack.check_power_of_2.silent

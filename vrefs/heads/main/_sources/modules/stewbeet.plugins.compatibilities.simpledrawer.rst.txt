@@ -6,3 +6,11 @@ stewbeet.plugins.compatibilities.simpledrawer package
    :private-members:
    :show-inheritance:
    :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.plugins.compatibilities.simpledrawer.silent

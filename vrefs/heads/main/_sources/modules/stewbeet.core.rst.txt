@@ -27,4 +27,5 @@ Submodules
    stewbeet.core.constants
    stewbeet.core.dump
    stewbeet.core.migrate
+   stewbeet.core.placeholder_context
    stewbeet.core.template

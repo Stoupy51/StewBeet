@@ -1,66 +1,37 @@
 <!DOCTYPE html>
-
 <html lang="en" data-content_root="../">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta property="og:title" content="stewbeet.core.cls.recipe module" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="modules/stewbeet.core.cls.recipe.html" />
 <meta property="og:site_name" content="StewBeet" />
-
-    <title>stewbeet.core.cls.recipe module &#8212; StewBeet</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8e8a900e" />
-    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../_static/treeview.css?v=f8e9195c" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/breeze.css?v=93f23127" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=1637c05a" />
-  <noscript>
-    <style>
-      .bz-js-only { display: none !important; }
-    </style>
-  </noscript>
+<title>stewbeet.core.cls.recipe module - StewBeet</title><link rel="icon" href="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png"><link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="stewbeet.core.cls.resource module" href="stewbeet.core.cls.resource.html"><link rel="prev" title="stewbeet.core.cls.painting module" href="stewbeet.core.cls.painting.html"><script data-cfasync="false">(function(){
+    const m = localStorage.getItem("breeze-mode") || "auto";
+    const d = document.documentElement.dataset;
+    d.mode = m;
+    d.theme = m === "auto"
+      ? (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+      : m;
+  })();
+  </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8e8a900e" /><link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" /><link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" /><link rel="stylesheet" type="text/css" href="../_static/treeview.css?v=f8e9195c" /><link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d4fa5fe7" /><link rel="stylesheet" type="text/css" href="../_static/styles/breeze.css?v=7c62c100" /><script defer="defer" src="../_static/scripts/breeze.js?v=dac9f8c6"></script></head>
+<body>
   
-    <script defer src="../_static/documentation_options.js?v=6d4b8ac6"></script>
-    <script defer src="../_static/doctools.js?v=9bcbadda"></script>
-    <script defer src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script defer src="../_static/clipboard.min.js?v=a7894cd8"></script>
-    <script defer src="../_static/copybutton.js?v=18a8d5f5"></script>
-    <script defer src="../_static/design-tabs.js?v=f930bc37"></script>
-    <script defer src="../_static/treeview.js?v=265ad9b8"></script>
-    <script defer src="../_static/scripts/breeze.js?v=8ef74970"></script>
-  <script data-cfasync="false">
-    const mode = localStorage.getItem("breeze-mode") || "auto";
-    document.documentElement.dataset.mode = mode;
-    if (mode === "auto") {
-      const prefers = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
-      document.documentElement.dataset.theme = prefers;
-    } else {
-      document.documentElement.dataset.theme = mode;
-    }
-  </script>
-    <link rel="icon" href="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png"/>
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="stewbeet.core.cls.wiki_button module" href="stewbeet.core.cls.wiki_button.html" />
-    <link rel="prev" title="stewbeet.core.cls.painting module" href="stewbeet.core.cls.painting.html" /><meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="" />
-  </head><body>
   
-  <div class="bz-skip-to-content">
-    <a href="#bz-main-content">Skip to main content</a>
-  </div><header class="bz-header-main">
-  <div class="bz-header-start"><a class="bz-header-brand" href="../index.html"><img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png" alt="Site Logo" /><span>StewBeet</span>
-</a></div>
-  <div class="bz-header-end"><div class="bz-search-button">
+  <div class="bz-skip-to-content"><a href="#bz-main-content">Skip to main content</a></div><header class="bz-header-main">
+  <div class="bz-header-start"><a class="bz-header-brand" href="../index.html">
+  <img class="only-light" src="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png" alt="StewBeet" />
+  <img class="only-dark" src="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png" alt="StewBeet" />
+  <span>StewBeet</span>
+</a>
+  </div>
+  <div class="bz-header-end"><div id="docsearch" class="bz-search-button">
   <a
     href="../search.html#q"
     aria-label="Search the docs"
     data-tooltip="Search the docs"
   >
     <svg
-      class="sized"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 -1 24 24"
@@ -85,43 +56,26 @@
       <path d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"></path>
     </svg>
   </button>
-</div><div class="bz-external-links">
-  <a
-    href="https://github.com/Stoupy51/stewbeet"
-    aria-label="GitHub"
-    data-tooltip="GitHub"
-    target="_blank"
-  >
-    <svg
+</div>
+  </div>
+</header><nav class="bz-header-tabs" aria-label="Primary Navigation"><label
+  class="bz-sidebar-primary-toggle"
+  for="bz-sidebar-primary"
+  role="button"
+  tabindex="0"
+  aria-label="Toggle site navigation"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path
+      fill="none"
       stroke="currentColor"
-      fill="currentColor"
-      stroke-width="0"
-      viewBox="0 0 16 16"
-    >
-      <path
-        fill-rule="evenodd"
-        d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"
-      ></path>
-    </svg>
-  </a></div></div>
-</header><nav class="bz-header-tabs" aria-label="Primary Navigation">
-  <label
-    class="bz-sidebar-primary-toggle"
-    for="bz-sidebar-primary"
-    role="button"
-    tabindex="0"
-  >
-    <svg class="sized muted" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-      <path
-        fill="none"
-        stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M3.75 6.75h16.5M3.75 12H12m-8.25 5.25h12.5"
-      />
-    </svg>
-  </label><ul><li class="toctree-l1 current"><a class="reference internal" href="stewbeet.html">stewbeet package</a></li></ul><div class="bz-dropdown">
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M3.75 6.75h16.5M3.75 12H12m-8.25 5.25h12.5"
+    />
+  </svg>
+</label><ul><li class="toctree-l1 current"><a class="reference internal" href="stewbeet.html">stewbeet package</a></li></ul><div class="bz-dropdown">
     <button aria-haspopup="true" aria-expanded="false">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
         <g
@@ -139,12 +93,17 @@
     </button>
     <ul role="menu" aria-hidden="true"></ul>
   </div>
-</nav><div class="bz-content"><aside class="bz-sidebar-primary" data-drawer="bz-sidebar-primary">
+</nav><hr class="bz-header-hr">
+  <div class="bz-content"><aside class="bz-sidebar-primary" data-drawer="bz-sidebar-primary">
   
   
     <nav class="bz-sidebar-nav" aria-label="Section Navigation"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="stewbeet.all.html">stewbeet.all package</a>
+<details><summary aria-label="Toggle submenu"></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.all.silent.html">stewbeet.all.silent module</a></li>
+</ul></details></li>
 <li class="toctree-l1"><a class="reference internal" href="stewbeet.continuous_delivery.html">stewbeet.continuous_delivery package</a>
-<details><summary></summary><ul>
+<details><summary aria-label="Toggle submenu"></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="stewbeet.continuous_delivery.cd_utils.html">stewbeet.continuous_delivery.cd_utils module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="stewbeet.continuous_delivery.github.html">stewbeet.continuous_delivery.github module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="stewbeet.continuous_delivery.modrinth.html">stewbeet.continuous_delivery.modrinth module</a></li>
@@ -152,20 +111,24 @@
 <li class="toctree-l2"><a class="reference internal" href="stewbeet.continuous_delivery.smithed.html">stewbeet.continuous_delivery.smithed module</a></li>
 </ul></details></li>
 <li class="toctree-l1 current"><a class="reference internal" href="stewbeet.core.html">stewbeet.core package</a>
-<details open=""><summary></summary><ul class="current">
+<details open=""><summary aria-label="Toggle submenu"></summary><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="stewbeet.core.cls.html">stewbeet.core.cls namespace</a>
-<details open=""><summary></summary><ul class="current">
+<details open=""><summary aria-label="Toggle submenu"></summary><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="stewbeet.core.cls._recipe_list.html">stewbeet.core.cls._recipe_list module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="stewbeet.core.cls._utils.html">stewbeet.core.cls._utils module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="stewbeet.core.cls.block.html">stewbeet.core.cls.block module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.cls.block_functions.html">stewbeet.core.cls.block_functions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.cls.external_item.html">stewbeet.core.cls.external_item module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="stewbeet.core.cls.ingredients.html">stewbeet.core.cls.ingredients module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="stewbeet.core.cls.item.html">stewbeet.core.cls.item module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="stewbeet.core.cls.painting.html">stewbeet.core.cls.painting module</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">stewbeet.core.cls.recipe module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.cls.resource.html">stewbeet.core.cls.resource module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.cls.resource_folder.html">stewbeet.core.cls.resource_folder module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="stewbeet.core.cls.wiki_button.html">stewbeet.core.cls.wiki_button module</a></li>
 </ul></details></li>
 <li class="toctree-l2"><a class="reference internal" href="stewbeet.core.definitions_helper.html">stewbeet.core.definitions_helper package</a>
-<details><summary></summary><ul>
+<details><summary aria-label="Toggle submenu"></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="stewbeet.core.definitions_helper.completion.html">stewbeet.core.definitions_helper.completion module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="stewbeet.core.definitions_helper.equipments.html">stewbeet.core.definitions_helper.equipments module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="stewbeet.core.definitions_helper.materials.html">stewbeet.core.definitions_helper.materials module</a></li>
@@ -175,8 +138,17 @@
 <li class="toctree-l3"><a class="reference internal" href="stewbeet.core.definitions_helper.text.html">stewbeet.core.definitions_helper.text module</a></li>
 </ul></details></li>
 <li class="toctree-l2"><a class="reference internal" href="stewbeet.core.utils.html">stewbeet.core.utils namespace</a>
-<details><summary></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.utils.io.html">stewbeet.core.utils.io module</a></li>
+<details><summary aria-label="Toggle submenu"></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.utils.io.html">stewbeet.core.utils.io package</a>
+<details><summary aria-label="Toggle submenu"></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="stewbeet.core.utils.io.advancements.html">stewbeet.core.utils.io.advancements module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="stewbeet.core.utils.io.deprecated.html">stewbeet.core.utils.io.deprecated module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="stewbeet.core.utils.io.dicts.html">stewbeet.core.utils.io.dicts module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="stewbeet.core.utils.io.files.html">stewbeet.core.utils.io.files module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="stewbeet.core.utils.io.functions.html">stewbeet.core.utils.io.functions module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="stewbeet.core.utils.io.model_cache.html">stewbeet.core.utils.io.model_cache module</a></li>
+</ul></details></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.utils.equation.html">stewbeet.core.utils.equation module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="stewbeet.core.utils.loot_table.html">stewbeet.core.utils.loot_table module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="stewbeet.core.utils.sounds.html">stewbeet.core.utils.sounds module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="stewbeet.core.utils.text_component.html">stewbeet.core.utils.text_component module</a></li>
@@ -185,17 +157,19 @@
 <li class="toctree-l2"><a class="reference internal" href="stewbeet.core.constants.html">stewbeet.core.constants module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="stewbeet.core.dump.html">stewbeet.core.dump module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="stewbeet.core.migrate.html">stewbeet.core.migrate module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.core.placeholder_context.html">stewbeet.core.placeholder_context module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="stewbeet.core.template.html">stewbeet.core.template module</a></li>
 </ul></details></li>
 <li class="toctree-l1"><a class="reference internal" href="stewbeet.dependencies.html">stewbeet.dependencies package</a>
-<details><summary></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="stewbeet.dependencies.bookshelf.html">stewbeet.dependencies.bookshelf module</a></li>
+<details><summary aria-label="Toggle submenu"></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.dependencies.download_manager.html">stewbeet.dependencies.download_manager module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.dependencies.official_libs.html">stewbeet.dependencies.official_libs module</a></li>
 </ul></details></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="stewbeet.__main__.html">stewbeet.__main__ module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="stewbeet.all.html">stewbeet.all module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="stewbeet.cli.html">stewbeet.cli module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stewbeet.silent.html">stewbeet.silent module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="stewbeet.utils.html">stewbeet.utils module</a></li>
 </ul>
 </nav>
@@ -207,17 +181,9 @@
     <nav class="bz-breadcrumbs" aria-label="Breadcrumb">
   <ol>
     <li class="bz-breadcrumbs-home">
-      <a href="../index.html">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-        >
-          <path
-            fill-rule="evenodd"
-            d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z"
-            clip-rule="evenodd"
-          />
+      <a href="../index.html" aria-label="Home">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M8.543 2.232a.75.75 0 0 0-1.085 0l-5.25 5.5A.75.75 0 0 0 2.75 9H4v4a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1a1 1 0 1 1 2 0v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V9h1.25a.75.75 0 0 0 .543-1.268l-5.25-5.5Z" />
         </svg>
       </a>
     </li><li class="bz-breadcrumbs-parent">
@@ -232,30 +198,53 @@
   </ol>
 </nav>
   
-
-  <label
-    class="bz-sidebar-secondary-toggle"
-    for="bz-sidebar-secondary"
-    role="button"
-    tabindex="0"
-  >
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="sized muted">
-      <path
-        fill="none"
-        stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M3.75 6.75H20.25 M11.25 12H20.25 M7.75 17.25H20.25"
-      />
-    </svg>
-  </label>
-</header><article class="bz-article-main" role="main">
-  <section id="module-stewbeet.core.cls.recipe">
+<label
+  class="bz-sidebar-secondary-toggle"
+  for="bz-sidebar-secondary"
+  role="button"
+  tabindex="0"
+  aria-label="Toggle table of contents"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path
+      fill="none"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M3.75 6.75H20.25 M11.25 12H20.25 M7.75 17.25H20.25"
+    />
+  </svg>
+</label></header><article class="bz-article-main" role="main"><div class="bz-page-actions" role="group" aria-label="Page actions">
+  <button data-copy-source="../_sources/modules/stewbeet.core.cls.recipe.rst.txt">
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M7.024 3.75c0-.966.784-1.75 1.75-1.75H20.25c.966 0 1.75.784 1.75 1.75v11.498a1.75 1.75 0 0 1-1.75 1.75H8.774a1.75 1.75 0 0 1-1.75-1.75Zm1.75-.25a.25.25 0 0 0-.25.25v11.498c0 .139.112.25.25.25H20.25a.25.25 0 0 0 .25-.25V3.75a.25.25 0 0 0-.25-.25Z"></path><path d="M1.995 10.749a1.75 1.75 0 0 1 1.75-1.751H5.25a.75.75 0 1 1 0 1.5H3.745a.25.25 0 0 0-.25.25L3.5 20.25c0 .138.111.25.25.25h9.5a.25.25 0 0 0 .25-.25v-1.51a.75.75 0 1 1 1.5 0v1.51A1.75 1.75 0 0 1 13.25 22h-9.5A1.75 1.75 0 0 1 2 20.25l-.005-9.501Z"></path></svg>
+    <span>Copy page</span>
+  </button>
+  <div class="bz-dropdown">
+    <button
+      aria-label="More actions"
+      aria-haspopup="true"
+      aria-expanded="false"
+    ></button>
+    <ul role="menu" aria-hidden="true">
+      <li>
+        <a href="#" role="menuitem" data-copy-source="../_sources/modules/stewbeet.core.cls.recipe.rst.txt">
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M7.024 3.75c0-.966.784-1.75 1.75-1.75H20.25c.966 0 1.75.784 1.75 1.75v11.498a1.75 1.75 0 0 1-1.75 1.75H8.774a1.75 1.75 0 0 1-1.75-1.75Zm1.75-.25a.25.25 0 0 0-.25.25v11.498c0 .139.112.25.25.25H20.25a.25.25 0 0 0 .25-.25V3.75a.25.25 0 0 0-.25-.25Z"></path><path d="M1.995 10.749a1.75 1.75 0 0 1 1.75-1.751H5.25a.75.75 0 1 1 0 1.5H3.745a.25.25 0 0 0-.25.25L3.5 20.25c0 .138.111.25.25.25h9.5a.25.25 0 0 0 .25-.25v-1.51a.75.75 0 1 1 1.5 0v1.51A1.75 1.75 0 0 1 13.25 22h-9.5A1.75 1.75 0 0 1 2 20.25l-.005-9.501Z"></path></svg>
+          <span>Copy page</span>
+        </a>
+      </li>
+      <li>
+        <a href="../_sources/modules/stewbeet.core.cls.recipe.rst.txt" role="menuitem" class="bz-page-actions-external" target="_blank" rel="noopener">
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M3 3a2 2 0 0 1 2-2h9.982a2 2 0 0 1 1.414.586l4.018 4.018A2 2 0 0 1 21 7.018V21a2 2 0 0 1-2 2H4.75a.75.75 0 0 1 0-1.5H19a.5.5 0 0 0 .5-.5V8.5h-4a2 2 0 0 1-2-2v-4H5a.5.5 0 0 0-.5.5v6.25a.75.75 0 0 1-1.5 0Zm12-.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 0-.146-.336l-4.018-4.018A.5.5 0 0 0 15 2.5Z"></path><path d="M4.53 12.24a.75.75 0 0 1-.039 1.06l-2.639 2.45 2.64 2.45a.75.75 0 1 1-1.022 1.1l-3.23-3a.75.75 0 0 1 0-1.1l3.23-3a.75.75 0 0 1 1.06.04Zm3.979 1.06a.75.75 0 1 1 1.02-1.1l3.231 3a.75.75 0 0 1 0 1.1l-3.23 3a.75.75 0 1 1-1.021-1.1l2.639-2.45-2.64-2.45Z"></path></svg>
+          <span>View source</span>
+        </a>
+      </li></ul>
+  </div>
+</div><section id="module-stewbeet.core.cls.recipe">
 <span id="stewbeet-core-cls-recipe-module"></span><h1>stewbeet.core.cls.recipe module<a class="headerlink" href="#module-stewbeet.core.cls.recipe" title="Link to this heading">#</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.RecipeBase">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RecipeBase</span></span><span class="sig-paren">(</span>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">RecipeBase</span></span><span class="sig-paren">(</span>
 
 <dl>
 <dd><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>,</dd>
@@ -268,125 +257,125 @@
 <dd><em class="sig-param"><span class="n"><span class="pre">smithed_crafter_command</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span><a class="reference internal" href="../_modules/stewbeet/core/cls/recipe.html#RecipeBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase" title="Link to this definition">#</a></dt>
+<span class="sig-paren">)</span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="stewbeet.core.cls._utils.html#stewbeet.core.cls._utils.StMapping" title="stewbeet.core.cls._utils.StMapping"><code class="xref py py-class docutils literal notranslate"><span class="pre">StMapping</span></code></a></p>
 <p>Base class for all recipe types.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.RecipeBase.type">
-<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase.type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase.type" title="Link to this definition">#</a></dt>
 <dd><p>The type of the recipe, e.g. ‘crafting_shaped’, ‘smelting’, etc.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.RecipeBase.result_count">
-<span class="sig-name descname"><span class="pre">result_count</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase.result_count" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">result_count</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase.result_count" title="Link to this definition">#</a></dt>
 <dd><p>(Optional) The number of items produced by the recipe. Default is 1.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.RecipeBase.category">
-<span class="sig-name descname"><span class="pre">category</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase.category" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">category</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase.category" title="Link to this definition">#</a></dt>
 <dd><p>(Optional) The category of the recipe for organizing in the crafting book.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.RecipeBase.group">
-<span class="sig-name descname"><span class="pre">group</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase.group" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">group</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase.group" title="Link to this definition">#</a></dt>
 <dd><p>(Optional) The group of the recipe for recipe book grouping.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.RecipeBase.result">
-<span class="sig-name descname"><span class="pre">result</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase.result" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">result</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase.result" title="Link to this definition">#</a></dt>
 <dd><p>(Optional) The result item of the recipe. If None, defaults to the item being defined.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.RecipeBase.manual_priority">
-<span class="sig-name descname"><span class="pre">manual_priority</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase.manual_priority" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">manual_priority</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase.manual_priority" title="Link to this definition">#</a></dt>
 <dd><p>(Optional) Manual priority for recipe button sorting in the ingame-manual. Used to remove buttons when too many are present.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.RecipeBase.smithed_crafter_command">
-<span class="sig-name descname"><span class="pre">smithed_crafter_command</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase.smithed_crafter_command" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">smithed_crafter_command</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase.smithed_crafter_command" title="Link to this definition">#</a></dt>
 <dd><p>(Optional) Custom command to be used with Smithed Crafter recipes. If None, defaults to giving the loot table.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.RecipeBase.from_dict">
-<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span>
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span>
 
 <dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="stewbeet.core.cls._utils.html#stewbeet.core.cls._utils.StMapping" title="stewbeet.core.cls._utils.StMapping"><span class="pre">StMapping</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">JsonDict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="stewbeet.core.cls._utils.html#stewbeet.core.cls._utils.StMapping" title="stewbeet.core.cls._utils.StMapping"><span class="pre">StMapping</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">item_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../_modules/stewbeet/core/cls/recipe.html#RecipeBase.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase.from_dict" title="Link to this definition">#</a></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase.from_dict" title="Link to this definition">#</a></dt>
 <dd><p>Create an object based on a dictionary.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.RecipeBase._validate_ingredient">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_validate_ingredient</span></span><span class="sig-paren">(</span>
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.RecipeBase.validate_ingredient">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">validate_ingredient</span></span><span class="sig-paren">(</span>
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">ingredient</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ingr</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Ingredient'</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/stewbeet/core/cls/recipe.html#RecipeBase._validate_ingredient"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase._validate_ingredient" title="Link to this definition">#</a></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase.validate_ingredient" title="Link to this definition">#</a></dt>
 <dd><p>Validate a single ingredient dictionary.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.RecipeBase._validate_ingredients_list">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_validate_ingredients_list</span></span><span class="sig-paren">(</span>
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.RecipeBase.validate_ingredients_list">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">validate_ingredients_list</span></span><span class="sig-paren">(</span>
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">ingredients</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Ingr</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/stewbeet/core/cls/recipe.html#RecipeBase._validate_ingredients_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase._validate_ingredients_list" title="Link to this definition">#</a></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase.validate_ingredients_list" title="Link to this definition">#</a></dt>
 <dd><p>Validate a list of ingredients.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.RecipeBase._validate_numeric_fields">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_validate_numeric_fields</span></span><span class="sig-paren">(</span>
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.RecipeBase.validate_numeric_fields">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">validate_numeric_fields</span></span><span class="sig-paren">(</span>
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">experience</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">cookingtime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/stewbeet/core/cls/recipe.html#RecipeBase._validate_numeric_fields"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase._validate_numeric_fields" title="Link to this definition">#</a></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase.validate_numeric_fields" title="Link to this definition">#</a></dt>
 <dd><p>Validate experience and cookingtime fields for furnace recipes.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.RecipeBase._validate_string_field">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_validate_string_field</span></span><span class="sig-paren">(</span>
+<dt class="sig sig-object py" id="stewbeet.core.cls.recipe.RecipeBase.validate_string_field">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">validate_string_field</span></span><span class="sig-paren">(</span>
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/stewbeet/core/cls/recipe.html#RecipeBase._validate_string_field"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase._validate_string_field" title="Link to this definition">#</a></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase.validate_string_field" title="Link to this definition">#</a></dt>
 <dd><p>Validate that a field is a string.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.RecipeBase._abc_impl">
-<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase._abc_impl" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.RecipeBase._abc_impl" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.CraftingShapedRecipe">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CraftingShapedRecipe</span></span><span class="sig-paren">(</span>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">CraftingShapedRecipe</span></span><span class="sig-paren">(</span>
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
@@ -401,7 +390,7 @@
 <dd><em class="sig-param"><span class="n"><span class="pre">smithed_crafter_command</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span><a class="reference internal" href="../_modules/stewbeet/core/cls/recipe.html#CraftingShapedRecipe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.CraftingShapedRecipe" title="Link to this definition">#</a></dt>
+<span class="sig-paren">)</span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.CraftingShapedRecipe" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase" title="stewbeet.core.cls.recipe.RecipeBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecipeBase</span></code></a></p>
 <p>Recipe for shaped crafting.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">stewbeet</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
@@ -414,37 +403,55 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">recipe</span><span class="o">.</span><span class="n">ingredients</span><span class="p">[</span><span class="s1">&#39;I&#39;</span><span class="p">]</span>
 <span class="go">{&#39;item&#39;: &#39;minecraft:iron_ingot&#39;}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">recipe</span><span class="o">.</span><span class="n">ingredients</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">]</span>
-<span class="go">{&#39;components&#39;: {&#39;minecraft:custom_data&#39;: {&#39;detected_namespace&#39;: {&#39;simplunium_ingot&#39;: True}}}}</span>
+<span class="go">{&#39;components&#39;: {&#39;minecraft:custom_data&#39;: {&#39;your_namespace&#39;: {&#39;simplunium_ingot&#39;: True}}}}</span>
 </pre></div>
 </div>
+<p>Shape exceeding 3 rows raises ValueError:
+&gt;&gt;&gt; try:
+…     CraftingShapedRecipe(shape=[“I”, “I”, “I”, “I”], ingredients={“I”: Ingr(“minecraft:iron_ingot”)})
+… except ValueError as e:
+…     “3 rows” in str(e)
+True</p>
+<p>Symbol defined in ingredients but absent from shape raises ValueError:
+&gt;&gt;&gt; try:
+…     CraftingShapedRecipe(shape=[“II”], ingredients={“I”: Ingr(“minecraft:iron_ingot”), “X”: Ingr(“minecraft:gold_ingot”)})
+… except ValueError as e:
+…     “must appear in the shape” in str(e)
+True</p>
+<p>Rows with inconsistent lengths raise ValueError:
+&gt;&gt;&gt; try:
+…     CraftingShapedRecipe(shape=[“II”, “I”], ingredients={“I”: Ingr(“minecraft:iron_ingot”)})
+… except ValueError as e:
+…     “same number of columns” in str(e)
+True</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.CraftingShapedRecipe.shape">
-<span class="sig-name descname"><span class="pre">shape</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.CraftingShapedRecipe.shape" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">shape</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.CraftingShapedRecipe.shape" title="Link to this definition">#</a></dt>
 <dd><p>The shape pattern for the crafting recipe.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.CraftingShapedRecipe.ingredients">
-<span class="sig-name descname"><span class="pre">ingredients</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Ingr</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.CraftingShapedRecipe.ingredients" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">ingredients</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Ingr</span><span class="p"><span class="pre">]</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.CraftingShapedRecipe.ingredients" title="Link to this definition">#</a></dt>
 <dd><p>Dictionary mapping shape symbols to ingredient specifications.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.CraftingShapedRecipe.type">
-<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'crafting_shaped'</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.CraftingShapedRecipe.type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'crafting_shaped'</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.CraftingShapedRecipe.type" title="Link to this definition">#</a></dt>
 <dd><p>The type of the recipe, e.g. ‘crafting_shaped’, ‘smelting’, etc.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.CraftingShapedRecipe._abc_impl">
-<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.CraftingShapedRecipe._abc_impl" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.CraftingShapedRecipe._abc_impl" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.CraftingShapelessRecipe">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CraftingShapelessRecipe</span></span><span class="sig-paren">(</span>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">CraftingShapelessRecipe</span></span><span class="sig-paren">(</span>
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">ingredients</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Ingr</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
@@ -458,7 +465,7 @@
 <dd><em class="sig-param"><span class="n"><span class="pre">smithed_crafter_command</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span><a class="reference internal" href="../_modules/stewbeet/core/cls/recipe.html#CraftingShapelessRecipe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.CraftingShapelessRecipe" title="Link to this definition">#</a></dt>
+<span class="sig-paren">)</span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.CraftingShapelessRecipe" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase" title="stewbeet.core.cls.recipe.RecipeBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecipeBase</span></code></a></p>
 <p>Recipe for shapeless crafting.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">stewbeet</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
@@ -469,28 +476,34 @@
 <span class="go">&#39;crafting_shapeless&#39;</span>
 </pre></div>
 </div>
+<p>Non-list ingredients raises ValueError:
+&gt;&gt;&gt; try:
+…     CraftingShapelessRecipe(ingredients=Ingr(“minecraft:iron_ingot”))  # type: ignore[arg-type]
+… except ValueError as e:
+…     “must be a list” in str(e)
+True</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.CraftingShapelessRecipe.ingredients">
-<span class="sig-name descname"><span class="pre">ingredients</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Ingr</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.CraftingShapelessRecipe.ingredients" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">ingredients</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Ingr</span><span class="p"><span class="pre">]</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.CraftingShapelessRecipe.ingredients" title="Link to this definition">#</a></dt>
 <dd><p>List of ingredient specifications for shapeless crafting.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.CraftingShapelessRecipe.type">
-<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'crafting_shapeless'</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.CraftingShapelessRecipe.type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'crafting_shapeless'</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.CraftingShapelessRecipe.type" title="Link to this definition">#</a></dt>
 <dd><p>The type of the recipe, e.g. ‘crafting_shaped’, ‘smelting’, etc.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.CraftingShapelessRecipe._abc_impl">
-<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.CraftingShapelessRecipe._abc_impl" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.CraftingShapelessRecipe._abc_impl" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmeltingRecipe">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SmeltingRecipe</span></span><span class="sig-paren">(</span>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">SmeltingRecipe</span></span><span class="sig-paren">(</span>
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">ingredient</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ingr</span></span></em>,</dd>
@@ -506,7 +519,7 @@
 <dd><em class="sig-param"><span class="n"><span class="pre">smithed_crafter_command</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span><a class="reference internal" href="../_modules/stewbeet/core/cls/recipe.html#SmeltingRecipe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.SmeltingRecipe" title="Link to this definition">#</a></dt>
+<span class="sig-paren">)</span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.SmeltingRecipe" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase" title="stewbeet.core.cls.recipe.RecipeBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecipeBase</span></code></a></p>
 <p>Recipe for smelting in a furnace.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">stewbeet</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
@@ -517,40 +530,52 @@
 <span class="go">200</span>
 </pre></div>
 </div>
+<p>Non-numeric experience raises ValueError:
+&gt;&gt;&gt; try:
+…     SmeltingRecipe(ingredient=Ingr(“minecraft:iron_ore”), experience=”high”, cookingtime=200)  # type: ignore[arg-type]
+… except ValueError as e:
+…     “Experience must be a float or int” in str(e)
+True</p>
+<p>Non-integer cookingtime raises ValueError:
+&gt;&gt;&gt; try:
+…     SmeltingRecipe(ingredient=Ingr(“minecraft:iron_ore”), experience=0.7, cookingtime=1.5)  # type: ignore[arg-type]
+… except ValueError as e:
+…     “Cookingtime must be an int” in str(e)
+True</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmeltingRecipe.ingredient">
-<span class="sig-name descname"><span class="pre">ingredient</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmeltingRecipe.ingredient" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">ingredient</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.SmeltingRecipe.ingredient" title="Link to this definition">#</a></dt>
 <dd><p>The ingredient to be smelted.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmeltingRecipe.experience">
-<span class="sig-name descname"><span class="pre">experience</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmeltingRecipe.experience" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">experience</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.SmeltingRecipe.experience" title="Link to this definition">#</a></dt>
 <dd><p>Experience points awarded when the recipe is used.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmeltingRecipe.cookingtime">
-<span class="sig-name descname"><span class="pre">cookingtime</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">200</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmeltingRecipe.cookingtime" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">cookingtime</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">200</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.SmeltingRecipe.cookingtime" title="Link to this definition">#</a></dt>
 <dd><p>Cooking time in ticks (200 ticks = 10 seconds by default).</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmeltingRecipe.type">
-<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'smelting'</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmeltingRecipe.type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'smelting'</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.SmeltingRecipe.type" title="Link to this definition">#</a></dt>
 <dd><p>The type of the recipe, e.g. ‘crafting_shaped’, ‘smelting’, etc.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmeltingRecipe._abc_impl">
-<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmeltingRecipe._abc_impl" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.SmeltingRecipe._abc_impl" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.BlastingRecipe">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">BlastingRecipe</span></span><span class="sig-paren">(</span>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">BlastingRecipe</span></span><span class="sig-paren">(</span>
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">ingredient</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ingr</span></span></em>,</dd>
@@ -566,7 +591,7 @@
 <dd><em class="sig-param"><span class="n"><span class="pre">smithed_crafter_command</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span><a class="reference internal" href="../_modules/stewbeet/core/cls/recipe.html#BlastingRecipe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.BlastingRecipe" title="Link to this definition">#</a></dt>
+<span class="sig-paren">)</span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.BlastingRecipe" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase" title="stewbeet.core.cls.recipe.RecipeBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecipeBase</span></code></a></p>
 <p>Recipe for blasting in a blast furnace.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">stewbeet</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
@@ -579,38 +604,38 @@
 </div>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.BlastingRecipe.ingredient">
-<span class="sig-name descname"><span class="pre">ingredient</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.BlastingRecipe.ingredient" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">ingredient</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.BlastingRecipe.ingredient" title="Link to this definition">#</a></dt>
 <dd><p>The ingredient to be blasted.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.BlastingRecipe.experience">
-<span class="sig-name descname"><span class="pre">experience</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.BlastingRecipe.experience" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">experience</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.BlastingRecipe.experience" title="Link to this definition">#</a></dt>
 <dd><p>Experience points awarded when the recipe is used.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.BlastingRecipe.cookingtime">
-<span class="sig-name descname"><span class="pre">cookingtime</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">100</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.BlastingRecipe.cookingtime" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">cookingtime</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">100</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.BlastingRecipe.cookingtime" title="Link to this definition">#</a></dt>
 <dd><p>Cooking time in ticks (100 ticks = 5 seconds by default).</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.BlastingRecipe.type">
-<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'blasting'</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.BlastingRecipe.type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'blasting'</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.BlastingRecipe.type" title="Link to this definition">#</a></dt>
 <dd><p>The type of the recipe, e.g. ‘crafting_shaped’, ‘smelting’, etc.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.BlastingRecipe._abc_impl">
-<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.BlastingRecipe._abc_impl" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.BlastingRecipe._abc_impl" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmokingRecipe">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SmokingRecipe</span></span><span class="sig-paren">(</span>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">SmokingRecipe</span></span><span class="sig-paren">(</span>
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">ingredient</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ingr</span></span></em>,</dd>
@@ -626,7 +651,7 @@
 <dd><em class="sig-param"><span class="n"><span class="pre">smithed_crafter_command</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span><a class="reference internal" href="../_modules/stewbeet/core/cls/recipe.html#SmokingRecipe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.SmokingRecipe" title="Link to this definition">#</a></dt>
+<span class="sig-paren">)</span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.SmokingRecipe" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase" title="stewbeet.core.cls.recipe.RecipeBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecipeBase</span></code></a></p>
 <p>Recipe for smoking in a smoker.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">stewbeet</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
@@ -639,38 +664,38 @@
 </div>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmokingRecipe.ingredient">
-<span class="sig-name descname"><span class="pre">ingredient</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmokingRecipe.ingredient" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">ingredient</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.SmokingRecipe.ingredient" title="Link to this definition">#</a></dt>
 <dd><p>The ingredient to be smoked.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmokingRecipe.experience">
-<span class="sig-name descname"><span class="pre">experience</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmokingRecipe.experience" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">experience</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.SmokingRecipe.experience" title="Link to this definition">#</a></dt>
 <dd><p>Experience points awarded when the recipe is used.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmokingRecipe.cookingtime">
-<span class="sig-name descname"><span class="pre">cookingtime</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">100</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmokingRecipe.cookingtime" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">cookingtime</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">100</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.SmokingRecipe.cookingtime" title="Link to this definition">#</a></dt>
 <dd><p>Cooking time in ticks (100 ticks = 5 seconds by default).</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmokingRecipe.type">
-<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'smoking'</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmokingRecipe.type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'smoking'</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.SmokingRecipe.type" title="Link to this definition">#</a></dt>
 <dd><p>The type of the recipe, e.g. ‘crafting_shaped’, ‘smelting’, etc.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmokingRecipe._abc_impl">
-<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmokingRecipe._abc_impl" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.SmokingRecipe._abc_impl" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.CampfireCookingRecipe">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CampfireCookingRecipe</span></span><span class="sig-paren">(</span>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">CampfireCookingRecipe</span></span><span class="sig-paren">(</span>
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">ingredient</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ingr</span></span></em>,</dd>
@@ -686,7 +711,7 @@
 <dd><em class="sig-param"><span class="n"><span class="pre">smithed_crafter_command</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span><a class="reference internal" href="../_modules/stewbeet/core/cls/recipe.html#CampfireCookingRecipe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.CampfireCookingRecipe" title="Link to this definition">#</a></dt>
+<span class="sig-paren">)</span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.CampfireCookingRecipe" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase" title="stewbeet.core.cls.recipe.RecipeBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecipeBase</span></code></a></p>
 <p>Recipe for cooking on a campfire.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">stewbeet</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
@@ -699,38 +724,38 @@
 </div>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.CampfireCookingRecipe.ingredient">
-<span class="sig-name descname"><span class="pre">ingredient</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.CampfireCookingRecipe.ingredient" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">ingredient</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.CampfireCookingRecipe.ingredient" title="Link to this definition">#</a></dt>
 <dd><p>The ingredient to be cooked.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.CampfireCookingRecipe.experience">
-<span class="sig-name descname"><span class="pre">experience</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.CampfireCookingRecipe.experience" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">experience</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.CampfireCookingRecipe.experience" title="Link to this definition">#</a></dt>
 <dd><p>Experience points awarded when the recipe is used.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.CampfireCookingRecipe.cookingtime">
-<span class="sig-name descname"><span class="pre">cookingtime</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.CampfireCookingRecipe.cookingtime" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">cookingtime</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.CampfireCookingRecipe.cookingtime" title="Link to this definition">#</a></dt>
 <dd><p>Cooking time in ticks (600 ticks = 30 seconds by default).</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.CampfireCookingRecipe.type">
-<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'campfire_cooking'</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.CampfireCookingRecipe.type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'campfire_cooking'</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.CampfireCookingRecipe.type" title="Link to this definition">#</a></dt>
 <dd><p>The type of the recipe, e.g. ‘crafting_shaped’, ‘smelting’, etc.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.CampfireCookingRecipe._abc_impl">
-<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.CampfireCookingRecipe._abc_impl" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.CampfireCookingRecipe._abc_impl" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmithingTransformRecipe">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SmithingTransformRecipe</span></span><span class="sig-paren">(</span>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">SmithingTransformRecipe</span></span><span class="sig-paren">(</span>
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ingr</span></span></em>,</dd>
@@ -746,7 +771,7 @@
 <dd><em class="sig-param"><span class="n"><span class="pre">smithed_crafter_command</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span><a class="reference internal" href="../_modules/stewbeet/core/cls/recipe.html#SmithingTransformRecipe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTransformRecipe" title="Link to this definition">#</a></dt>
+<span class="sig-paren">)</span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTransformRecipe" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase" title="stewbeet.core.cls.recipe.RecipeBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecipeBase</span></code></a></p>
 <p>Recipe for smithing table transformation.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">stewbeet</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
@@ -761,30 +786,30 @@
 </div>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmithingTransformRecipe.template">
-<span class="sig-name descname"><span class="pre">template</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTransformRecipe.template" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">template</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTransformRecipe.template" title="Link to this definition">#</a></dt>
 <dd><p>The template item (e.g., upgrade template).</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmithingTransformRecipe.base">
-<span class="sig-name descname"><span class="pre">base</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTransformRecipe.base" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">base</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTransformRecipe.base" title="Link to this definition">#</a></dt>
 <dd><p>The base item to be transformed.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmithingTransformRecipe.addition">
-<span class="sig-name descname"><span class="pre">addition</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTransformRecipe.addition" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">addition</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTransformRecipe.addition" title="Link to this definition">#</a></dt>
 <dd><p>The addition item (e.g., material).</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmithingTransformRecipe._abc_impl">
-<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTransformRecipe._abc_impl" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTransformRecipe._abc_impl" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmithingTransformRecipe.type">
-<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'smithing_transform'</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTransformRecipe.type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'smithing_transform'</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTransformRecipe.type" title="Link to this definition">#</a></dt>
 <dd><p>The type of the recipe, e.g. ‘crafting_shaped’, ‘smelting’, etc.</p>
 </dd></dl>
 
@@ -792,7 +817,7 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmithingTrimRecipe">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SmithingTrimRecipe</span></span><span class="sig-paren">(</span>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">SmithingTrimRecipe</span></span><span class="sig-paren">(</span>
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ingr</span></span></em>,</dd>
@@ -809,7 +834,7 @@
 <dd><em class="sig-param"><span class="n"><span class="pre">smithed_crafter_command</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span><a class="reference internal" href="../_modules/stewbeet/core/cls/recipe.html#SmithingTrimRecipe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTrimRecipe" title="Link to this definition">#</a></dt>
+<span class="sig-paren">)</span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTrimRecipe" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase" title="stewbeet.core.cls.recipe.RecipeBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecipeBase</span></code></a></p>
 <p>Recipe for applying armor trims.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">stewbeet</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
@@ -825,36 +850,36 @@
 </div>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmithingTrimRecipe._abc_impl">
-<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTrimRecipe._abc_impl" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTrimRecipe._abc_impl" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmithingTrimRecipe.template">
-<span class="sig-name descname"><span class="pre">template</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTrimRecipe.template" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">template</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTrimRecipe.template" title="Link to this definition">#</a></dt>
 <dd><p>The trim template.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmithingTrimRecipe.base">
-<span class="sig-name descname"><span class="pre">base</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTrimRecipe.base" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">base</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTrimRecipe.base" title="Link to this definition">#</a></dt>
 <dd><p>The armor piece.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmithingTrimRecipe.addition">
-<span class="sig-name descname"><span class="pre">addition</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTrimRecipe.addition" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">addition</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTrimRecipe.addition" title="Link to this definition">#</a></dt>
 <dd><p>The material for the trim.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmithingTrimRecipe.pattern">
-<span class="sig-name descname"><span class="pre">pattern</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTrimRecipe.pattern" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">pattern</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTrimRecipe.pattern" title="Link to this definition">#</a></dt>
 <dd><p>The trim pattern.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.SmithingTrimRecipe.type">
-<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'smithing_trim'</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTrimRecipe.type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'smithing_trim'</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.SmithingTrimRecipe.type" title="Link to this definition">#</a></dt>
 <dd><p>The type of the recipe, e.g. ‘crafting_shaped’, ‘smelting’, etc.</p>
 </dd></dl>
 
@@ -862,7 +887,7 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.StonecuttingRecipe">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">StonecuttingRecipe</span></span><span class="sig-paren">(</span>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">StonecuttingRecipe</span></span><span class="sig-paren">(</span>
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">ingredient</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ingr</span></span></em>,</dd>
@@ -876,7 +901,7 @@
 <dd><em class="sig-param"><span class="n"><span class="pre">smithed_crafter_command</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span><a class="reference internal" href="../_modules/stewbeet/core/cls/recipe.html#StonecuttingRecipe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.StonecuttingRecipe" title="Link to this definition">#</a></dt>
+<span class="sig-paren">)</span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.StonecuttingRecipe" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase" title="stewbeet.core.cls.recipe.RecipeBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecipeBase</span></code></a></p>
 <p>Recipe for stonecutting.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">stewbeet</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
@@ -887,18 +912,18 @@
 </div>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.StonecuttingRecipe._abc_impl">
-<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.StonecuttingRecipe._abc_impl" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.StonecuttingRecipe._abc_impl" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.StonecuttingRecipe.ingredient">
-<span class="sig-name descname"><span class="pre">ingredient</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.StonecuttingRecipe.ingredient" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">ingredient</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.StonecuttingRecipe.ingredient" title="Link to this definition">#</a></dt>
 <dd><p>The ingredient to be cut.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.StonecuttingRecipe.type">
-<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'stonecutting'</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.StonecuttingRecipe.type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'stonecutting'</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.StonecuttingRecipe.type" title="Link to this definition">#</a></dt>
 <dd><p>The type of the recipe, e.g. ‘crafting_shaped’, ‘smelting’, etc.</p>
 </dd></dl>
 
@@ -906,7 +931,7 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.PulverizingRecipe">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PulverizingRecipe</span></span><span class="sig-paren">(</span>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">PulverizingRecipe</span></span><span class="sig-paren">(</span>
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">ingredient</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ingr</span></span></em>,</dd>
@@ -920,7 +945,7 @@
 <dd><em class="sig-param"><span class="n"><span class="pre">smithed_crafter_command</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span><a class="reference internal" href="../_modules/stewbeet/core/cls/recipe.html#PulverizingRecipe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.PulverizingRecipe" title="Link to this definition">#</a></dt>
+<span class="sig-paren">)</span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.PulverizingRecipe" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase" title="stewbeet.core.cls.recipe.RecipeBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecipeBase</span></code></a></p>
 <p>Custom recipe for SimplEnergy pulverizing.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">stewbeet</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
@@ -931,18 +956,18 @@
 </div>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.PulverizingRecipe._abc_impl">
-<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.PulverizingRecipe._abc_impl" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.PulverizingRecipe._abc_impl" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.PulverizingRecipe.ingredient">
-<span class="sig-name descname"><span class="pre">ingredient</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.PulverizingRecipe.ingredient" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">ingredient</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Ingr</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.PulverizingRecipe.ingredient" title="Link to this definition">#</a></dt>
 <dd><p>The ingredient to be pulverized.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.PulverizingRecipe.type">
-<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'simplenergy_pulverizing'</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.PulverizingRecipe.type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'simplenergy_pulverizing'</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.PulverizingRecipe.type" title="Link to this definition">#</a></dt>
 <dd><p>The type of the recipe, e.g. ‘crafting_shaped’, ‘smelting’, etc.</p>
 </dd></dl>
 
@@ -950,7 +975,7 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.AwakenedForgeRecipe">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">AwakenedForgeRecipe</span></span><span class="sig-paren">(</span>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">AwakenedForgeRecipe</span></span><span class="sig-paren">(</span>
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">ingredients</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Ingr</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
@@ -965,7 +990,7 @@
 <dd><em class="sig-param"><span class="n"><span class="pre">smithed_crafter_command</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span><a class="reference internal" href="../_modules/stewbeet/core/cls/recipe.html#AwakenedForgeRecipe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.AwakenedForgeRecipe" title="Link to this definition">#</a></dt>
+<span class="sig-paren">)</span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.AwakenedForgeRecipe" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase" title="stewbeet.core.cls.recipe.RecipeBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecipeBase</span></code></a></p>
 <p>Custom recipe for Stardust awakened forge.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">stewbeet</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
@@ -976,24 +1001,24 @@
 </div>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.AwakenedForgeRecipe._abc_impl">
-<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.AwakenedForgeRecipe._abc_impl" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.AwakenedForgeRecipe._abc_impl" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.AwakenedForgeRecipe.ingredients">
-<span class="sig-name descname"><span class="pre">ingredients</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Ingr</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.AwakenedForgeRecipe.ingredients" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">ingredients</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Ingr</span><span class="p"><span class="pre">]</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.AwakenedForgeRecipe.ingredients" title="Link to this definition">#</a></dt>
 <dd><p>List of ingredients for the awakened forge.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.AwakenedForgeRecipe.particle">
-<span class="sig-name descname"><span class="pre">particle</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.AwakenedForgeRecipe.particle" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">particle</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.AwakenedForgeRecipe.particle" title="Link to this definition">#</a></dt>
 <dd><p>(Optional) Particle effect for the recipe.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.AwakenedForgeRecipe.type">
-<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'stardust_awakened_forge'</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.AwakenedForgeRecipe.type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'stardust_awakened_forge'</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.AwakenedForgeRecipe.type" title="Link to this definition">#</a></dt>
 <dd><p>The type of the recipe, e.g. ‘crafting_shaped’, ‘smelting’, etc.</p>
 </dd></dl>
 
@@ -1001,7 +1026,7 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.HardcodedRecipe">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">HardcodedRecipe</span></span><span class="sig-paren">(</span>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">HardcodedRecipe</span></span><span class="sig-paren">(</span>
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'crafting_decorated_pot'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'crafting_special_armordye'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'crafting_special_bannerduplicate'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'crafting_special_bookcloning'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'crafting_special_firework_rocket'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'crafting_special_firework_star'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'crafting_special_firework_star_fade'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'crafting_special_mapcloning'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'crafting_special_mapextending'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'crafting_special_repairitem'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'crafting_special_shielddecoration'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'crafting_special_tippedarrow'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'crafting_transmute'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>,</dd>
@@ -1014,7 +1039,7 @@
 <dd><em class="sig-param"><span class="n"><span class="pre">smithed_crafter_command</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span><a class="reference internal" href="../_modules/stewbeet/core/cls/recipe.html#HardcodedRecipe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.HardcodedRecipe" title="Link to this definition">#</a></dt>
+<span class="sig-paren">)</span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.HardcodedRecipe" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase" title="stewbeet.core.cls.recipe.RecipeBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecipeBase</span></code></a></p>
 <p>Recipe for special/hardcoded crafting types.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">recipe</span> <span class="o">=</span> <span class="n">HardcodedRecipe</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">&quot;crafting_special_armordye&quot;</span><span class="p">)</span>
@@ -1024,14 +1049,14 @@
 </div>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.HardcodedRecipe._abc_impl">
-<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.HardcodedRecipe._abc_impl" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.HardcodedRecipe._abc_impl" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="stewbeet.core.cls.recipe.Recipe">
-<span class="sig-name descname"><span class="pre">Recipe</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">stewbeet.core.cls.recipe.CraftingShapedRecipe</span> <span class="pre">|</span> <span class="pre">stewbeet.core.cls.recipe.CraftingShapelessRecipe</span> <span class="pre">|</span> <span class="pre">stewbeet.core.cls.recipe.SmeltingRecipe</span> <span class="pre">|</span> <span class="pre">stewbeet.core.cls.recipe.BlastingRecipe</span> <span class="pre">|</span> <span class="pre">stewbeet.core.cls.recipe.SmokingRecipe</span> <span class="pre">|</span> <span class="pre">stewbeet.core.cls.recipe.CampfireCookingRecipe</span> <span class="pre">|</span> <span class="pre">stewbeet.core.cls.recipe.SmithingTransformRecipe</span> <span class="pre">|</span> <span class="pre">stewbeet.core.cls.recipe.SmithingTrimRecipe</span> <span class="pre">|</span> <span class="pre">stewbeet.core.cls.recipe.StonecuttingRecipe</span> <span class="pre">|</span> <span class="pre">stewbeet.core.cls.recipe.PulverizingRecipe</span> <span class="pre">|</span> <span class="pre">stewbeet.core.cls.recipe.AwakenedForgeRecipe</span> <span class="pre">|</span> <span class="pre">stewbeet.core.cls.recipe.HardcodedRecipe</span></em><a class="headerlink" href="#stewbeet.core.cls.recipe.Recipe" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">Recipe</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">stewbeet.core.cls.recipe.CraftingShapedRecipe</span> <span class="pre">|</span> <span class="pre">stewbeet.core.cls.recipe.CraftingShapelessRecipe</span> <span class="pre">|</span> <span class="pre">stewbeet.core.cls.recipe.SmeltingRecipe</span> <span class="pre">|</span> <span class="pre">stewbeet.core.cls.recipe.BlastingRecipe</span> <span class="pre">|</span> <span class="pre">stewbeet.core.cls.recipe.SmokingRecipe</span> <span class="pre">|</span> <span class="pre">stewbeet.core.cls.recipe.CampfireCookingRecipe</span> <span class="pre">|</span> <span class="pre">stewbeet.core.cls.recipe.SmithingTransformRecipe</span> <span class="pre">|</span> <span class="pre">stewbeet.core.cls.recipe.SmithingTrimRecipe</span> <span class="pre">|</span> <span class="pre">stewbeet.core.cls.recipe.StonecuttingRecipe</span> <span class="pre">|</span> <span class="pre">stewbeet.core.cls.recipe.PulverizingRecipe</span> <span class="pre">|</span> <span class="pre">stewbeet.core.cls.recipe.AwakenedForgeRecipe</span> <span class="pre">|</span> <span class="pre">stewbeet.core.cls.recipe.HardcodedRecipe</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/cls/recipe.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.cls.recipe.Recipe" title="Link to this definition">#</a></dt>
 <dd><p>Type alias for all recipe types (CraftingShapedRecipe | CraftingShapelessRecipe | …)</p>
 </dd></dl>
 
@@ -1041,9 +1066,9 @@
   
   
     <nav class="bz-related-pages" aria-label="Related pages navigation"><a class="bz-related-pages-previous" href="stewbeet.core.cls.painting.html" rel="prev">
-    <span>Previous</span><span class="bz-related-pages-title">stewbeet.core.cls.painting module</span></a><a class="bz-related-pages-next" href="stewbeet.core.cls.wiki_button.html" rel="next">
+    <span>Previous</span><span class="bz-related-pages-title">stewbeet.core.cls.painting module</span></a><a class="bz-related-pages-next" href="stewbeet.core.cls.resource.html" rel="next">
     <span>Next</span>
-    <span class="bz-related-pages-title">stewbeet.core.cls.wiki_button module</span>
+    <span class="bz-related-pages-title">stewbeet.core.cls.resource module</span>
   </a></nav>
   
 
@@ -1051,25 +1076,7 @@
   
   
     <nav class="bz-sidebar-toc" aria-label="Table of contents">
-  <p>
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    >
-      <path d="M16 12H3" />
-      <path d="M16 18H3" />
-      <path d="M16 6H3" />
-      <path d="M21 12h.01" />
-      <path d="M21 18h.01" />
-      <path d="M21 6h.01" />
-    </svg>
-    On this page
-  </p><ul>
+  <p>On this page</p><ul>
 <li><a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase"><code class="docutils literal notranslate"><span class="pre">RecipeBase</span></code></a><ul>
 <li><a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase.type"><code class="docutils literal notranslate"><span class="pre">RecipeBase​.type</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase.result_count"><code class="docutils literal notranslate"><span class="pre">RecipeBase​.result_​count</span></code></a></li>
@@ -1079,10 +1086,10 @@
 <li><a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase.manual_priority"><code class="docutils literal notranslate"><span class="pre">RecipeBase​.manual_​priority</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase.smithed_crafter_command"><code class="docutils literal notranslate"><span class="pre">RecipeBase​.smithed_​crafter_​command</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase.from_dict"><code class="docutils literal notranslate"><span class="pre">RecipeBase​.from_​dict()</span></code></a></li>
-<li><a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase._validate_ingredient"><code class="docutils literal notranslate"><span class="pre">RecipeBase​._​validate_​ingredient()</span></code></a></li>
-<li><a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase._validate_ingredients_list"><code class="docutils literal notranslate"><span class="pre">RecipeBase​._​validate_​ingredients_​list()</span></code></a></li>
-<li><a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase._validate_numeric_fields"><code class="docutils literal notranslate"><span class="pre">RecipeBase​._​validate_​numeric_​fields()</span></code></a></li>
-<li><a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase._validate_string_field"><code class="docutils literal notranslate"><span class="pre">RecipeBase​._​validate_​string_​field()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase.validate_ingredient"><code class="docutils literal notranslate"><span class="pre">RecipeBase​.validate_​ingredient()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase.validate_ingredients_list"><code class="docutils literal notranslate"><span class="pre">RecipeBase​.validate_​ingredients_​list()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase.validate_numeric_fields"><code class="docutils literal notranslate"><span class="pre">RecipeBase​.validate_​numeric_​fields()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase.validate_string_field"><code class="docutils literal notranslate"><span class="pre">RecipeBase​.validate_​string_​field()</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.core.cls.recipe.RecipeBase._abc_impl"><code class="docutils literal notranslate"><span class="pre">RecipeBase​._​abc_​impl</span></code></a></li>
 </ul>
 </li>
@@ -1174,12 +1181,47 @@
 <li><a class="reference internal" href="#stewbeet.core.cls.recipe.Recipe"><code class="docutils literal notranslate"><span class="pre">Recipe</span></code></a></li>
 </ul></nav>
   
+    
+  
+  
+  
+  
+
+
+
+<div class="bz-repo-stats">
+  <a
+    data-provider="github"
+    data-user="Stoupy51"
+    data-repo="stewbeet"
+    href="https://github.com/Stoupy51/stewbeet"
+    aria-label="Stoupy51/stewbeet repository"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M10.303 16.652c-2.837-.344-4.835-2.385-4.835-5.028 0-1.074.387-2.235 1.031-3.008-.279-.709-.236-2.214.086-2.837.86-.107 2.02.344 2.708.967.816-.258 1.676-.386 2.728-.386 1.053 0 1.913.128 2.686.365.666-.602 1.848-1.053 2.708-.946.3.581.344 2.085.064 2.815.688.817 1.053 1.913 1.053 3.03 0 2.643-1.998 4.641-4.877 5.006.73.473 1.224 1.504 1.224 2.686v2.235c0 .644.537 1.01 1.182.752 3.889-1.483 6.94-5.372 6.94-10.185 0-6.081-4.942-11.044-11.022-11.044-6.081 0-10.98 4.963-10.98 11.044a10.84 10.84 0 0 0 7.112 10.206c.58.215 1.139-.172 1.139-.752v-1.719a2.768 2.768 0 0 1-1.032.215c-1.418 0-2.256-.773-2.857-2.213-.237-.58-.495-.924-.989-.988-.258-.022-.344-.129-.344-.258 0-.258.43-.451.86-.451.623 0 1.16.386 1.719 1.181.43.623.881.903 1.418.903.537 0 .881-.194 1.375-.688.365-.365.645-.687.903-.902Z"></path></svg>
+    <span
+      style="--bz-repo-stats-name-length: 17"
+      title="Stoupy51/stewbeet"
+    >
+      Stoupy51/stewbeet
+    </span>
+    <div class="bz-repo-stats-row">
+      <span class="bz-repo-stats-item" aria-label="Repository stars">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.751 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Zm0 2.445L6.615 5.5a.75.75 0 0 1-.564.41l-3.097.45 2.24 2.184a.75.75 0 0 1 .216.664l-.528 3.084 2.769-1.456a.75.75 0 0 1 .698 0l2.77 1.456-.53-3.084a.75.75 0 0 1 .216-.664l2.24-2.183-3.096-.45a.75.75 0 0 1-.564-.41L8 2.694Z"></path></svg>
+        <span data-stat="stars">-</span>
+      </span>
+      <span class="bz-repo-stats-item" aria-label="Repository forks">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M5 5.372v.878c0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75v-.878a2.25 2.25 0 1 1 1.5 0v.878a2.25 2.25 0 0 1-2.25 2.25h-1.5v2.128a2.251 2.251 0 1 1-1.5 0V8.5h-1.5A2.25 2.25 0 0 1 3.5 6.25v-.878a2.25 2.25 0 1 1 1.5 0ZM5 3.25a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Zm6.75.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm-3 8.75a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Z"></path></svg>
+        <span data-stat="forks">-</span>
+      </span>
+    </div>
+  </a>
+</div>
+
+  
     <div class="bz-edit-this-page">
-  <a href="https://github.com/Stoupy51/stewbeet/edit/main/modules/stewbeet.core.cls.recipe.rst">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="sized" fill="currentColor"">
-      <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"></path>
-    </svg>
+  <a href="https://github.com/Stoupy51/stewbeet/edit/main/modules/stewbeet.core.cls.recipe.rst" rel="edit">
     Edit this page
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8.22 2.97a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042l2.97-2.97H3.75a.75.75 0 0 1 0-1.5h7.44L8.22 4.03a.75.75 0 0 1 0-1.06Z"></path></svg>
   </a>
 </div>
   
@@ -1187,42 +1229,24 @@
   
 
 </aside></main>
-  </div><footer class="bz-footer">
-  <div class="bz-footer-copyright"><p class="bz-copyright">© Copyright 2025, Stoupy</p><p>
-    Made with
+  </div>
+<footer class="bz-footer">
+  <div class="bz-footer-copyright"><p class="bz-copyright">© Copyright 2025 - 2026, Stoupy</p><p>
     
-    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
     
-    <a href="https://github.com/aksiome/breeze">Breeze theme</a>.
+    
+      Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a href="https://github.com/aksiome/breeze">Breeze theme</a>.
+    
   </p>
-</div><div class="bz-external-links">
-  <a
-    href="https://github.com/Stoupy51/stewbeet"
-    aria-label="GitHub"
-    data-tooltip="GitHub"
-    target="_blank"
-  >
-    <svg
-      stroke="currentColor"
-      fill="currentColor"
-      stroke-width="0"
-      viewBox="0 0 16 16"
-    >
-      <path
-        fill-rule="evenodd"
-        d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"
-      ></path>
-    </svg>
-  </a></div>
+</div>
 </footer><a href="#" class="bz-back-to-top">
-    <svg class="sized" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
       <path d="m5 12 7-7 7 7"/><path d="M12 19V5"/>
     </svg>
     <span>Back to top</span>
   </a>
   <label class="bz-overlay bz-overlay-primary" for="bz-sidebar-primary"></label>
   <label class="bz-overlay bz-overlay-secondary" for="bz-sidebar-secondary"></label>
-  <input type="checkbox" name="bz-sidebar-primary" id="bz-sidebar-primary" aria-label="Toggle site navigation sidebar">
-  <input type="checkbox" name="bz-sidebar-secondary" id="bz-sidebar-secondary" aria-label="Toggle table of contents sidebar">
-  </body>
+  <input type="checkbox" name="bz-sidebar-primary" id="bz-sidebar-primary" aria-label="Toggle section navigation">
+  <input type="checkbox" name="bz-sidebar-secondary" id="bz-sidebar-secondary" aria-label="Toggle table of contents"><script src="../_static/documentation_options.js?v=6d4b8ac6"></script><script src="../_static/doctools.js?v=fd6eb6e6"></script><script src="../_static/sphinx_highlight.js?v=6ffebe34"></script><script src="../_static/clipboard.min.js?v=a7894cd8"></script><script src="../_static/copybutton.js?v=18a8d5f5"></script><script src="../_static/design-tabs.js?v=f930bc37"></script><script src="../_static/treeview.js?v=265ad9b8"></script></body>
 </html>

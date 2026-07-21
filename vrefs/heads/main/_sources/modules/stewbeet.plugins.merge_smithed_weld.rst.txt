@@ -13,4 +13,5 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
+   stewbeet.plugins.merge_smithed_weld.silent
    stewbeet.plugins.merge_smithed_weld.weld

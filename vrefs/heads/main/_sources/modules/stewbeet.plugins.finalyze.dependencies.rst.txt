@@ -6,3 +6,11 @@ stewbeet.plugins.finalyze.dependencies package
    :private-members:
    :show-inheritance:
    :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.plugins.finalyze.dependencies.silent

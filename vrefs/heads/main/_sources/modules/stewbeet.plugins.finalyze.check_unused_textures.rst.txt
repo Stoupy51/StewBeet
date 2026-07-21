@@ -6,3 +6,11 @@ stewbeet.plugins.finalyze.check\_unused\_textures package
    :private-members:
    :show-inheritance:
    :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.plugins.finalyze.check_unused_textures.silent

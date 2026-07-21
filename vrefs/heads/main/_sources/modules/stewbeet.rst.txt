@@ -13,6 +13,7 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   stewbeet.all
    stewbeet.continuous_delivery
    stewbeet.core
    stewbeet.dependencies
@@ -24,6 +25,6 @@ Submodules
    :maxdepth: 4
 
    stewbeet.__main__
-   stewbeet.all
    stewbeet.cli
+   stewbeet.silent
    stewbeet.utils

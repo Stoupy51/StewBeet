@@ -1,8 +1,16 @@
-stewbeet.all module
-===================
+stewbeet.all package
+====================
 
 .. automodule:: stewbeet.all
    :members:
    :private-members:
    :show-inheritance:
    :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.all.silent

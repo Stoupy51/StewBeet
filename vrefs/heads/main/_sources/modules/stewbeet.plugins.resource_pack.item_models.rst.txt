@@ -14,3 +14,4 @@ Submodules
    :maxdepth: 4
 
    stewbeet.plugins.resource_pack.item_models.object
+   stewbeet.plugins.resource_pack.item_models.silent

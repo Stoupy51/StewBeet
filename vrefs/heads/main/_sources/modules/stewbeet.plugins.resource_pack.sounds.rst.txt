@@ -6,3 +6,11 @@ stewbeet.plugins.resource\_pack.sounds package
    :private-members:
    :show-inheritance:
    :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.plugins.resource_pack.sounds.silent

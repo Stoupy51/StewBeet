@@ -14,3 +14,4 @@ Subpackages
    stewbeet.plugins.finalyze.custom_blocks_ticking
    stewbeet.plugins.finalyze.dependencies
    stewbeet.plugins.finalyze.last_final
+   stewbeet.plugins.finalyze.unload

@@ -6,3 +6,11 @@ stewbeet.plugins.datapack.loot\_tables package
    :private-members:
    :show-inheritance:
    :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.plugins.datapack.loot_tables.silent

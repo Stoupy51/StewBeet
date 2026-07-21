@@ -12,8 +12,12 @@ Submodules
    stewbeet.core.cls._recipe_list
    stewbeet.core.cls._utils
    stewbeet.core.cls.block
+   stewbeet.core.cls.block_functions
+   stewbeet.core.cls.external_item
    stewbeet.core.cls.ingredients
    stewbeet.core.cls.item
    stewbeet.core.cls.painting
    stewbeet.core.cls.recipe
+   stewbeet.core.cls.resource
+   stewbeet.core.cls.resource_folder
    stewbeet.core.cls.wiki_button
