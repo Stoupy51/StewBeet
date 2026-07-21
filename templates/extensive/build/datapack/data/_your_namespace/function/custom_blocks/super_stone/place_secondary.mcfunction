@@ -26,3 +26,5 @@ function _your_namespace:custom_blocks/compute_brightness
 say Omg, @p[tag=_your_namespace.placer] placed the super stone block!
 particle minecraft:explosion ~ ~ ~
 
+say another way to append to the place_secondary function
+
