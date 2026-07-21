@@ -433,7 +433,8 @@
               "name": "keyword.control.flow.mcfunction"
             }
           },
-          "end": "\\n",
+          "comment": "A say block must also end where the *embedded Python string* ends, otherwise it swallows the closing quote and the rest of the file: while a begin/end rule is open, TextMate never tests the parent injection's end pattern. So stop at a literal \\n escape (same convention as #comments_inline), at a Python triple quote, and at a quote that closes the write_* call on this line.",
+          "end": "(?=\\\\n)|(?=\"\"\")|(?=''')|(?=[\"'][^\"'\\n]*\\)[ \\t]*$)|\\n",
           "name": "meta.say.mcfunction",
           "patterns": [
             {
@@ -466,7 +467,8 @@
               "name": "keyword.control.flow.mcfunction"
             }
           },
-          "end": "\\n",
+          "comment": "A say block must also end where the *embedded Python string* ends, otherwise it swallows the closing quote and the rest of the file: while a begin/end rule is open, TextMate never tests the parent injection's end pattern. So stop at a literal \\n escape (same convention as #comments_inline), at a Python triple quote, and at a quote that closes the write_* call on this line.",
+          "end": "(?=\\\\n)|(?=\"\"\")|(?=''')|(?=[\"'][^\"'\\n]*\\)[ \\t]*$)|\\n",
           "name": "meta.say.mcfunction",
           "patterns": [
             {

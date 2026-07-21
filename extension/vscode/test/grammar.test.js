@@ -72,6 +72,51 @@ test("line comment pattern still stops at a literal \\n escape", () => {
   assert.equal(m[0], "# hello ");
 });
 
+// ─── say blocks must not swallow the end of the Python string ────────────────
+//
+// A begin/end rule hides the parent injection's end pattern from the tokenizer,
+// so a say block ending only at "\n" ate the closing quote, the ")", and every
+// following line of the file.
+
+test("both say rules end at more than a real newline", () => {
+  const ends = embedded.repository.say.patterns.map(p => p.end);
+  assert.equal(ends.length, 2);
+  for (const end of ends) {
+    assert.notEqual(end, "\\n", "say must not end on a bare newline (swallows the closing quote)");
+    assert.ok(end.includes("(?=\\\\n)"), "say must stop before a literal \\n escape");
+  }
+});
+
+test("say end matches where the mcfunction line really ends", () => {
+  const [lineStart, afterRun] = embedded.repository.say.patterns.map(p => new RegExp(p.end));
+  const cases = [
+    // [line, index the say block must end at]
+    ['execute if score #spam ns.data matches 1 run say every minute\\n")', 61],  // literal \n escape
+    ['execute run say hi")', 18],                                               // closing quote + call paren
+    ['execute run say hi""")', 18],                                             // triple-quoted string
+    ["execute run say hi''')", 18],
+    ['execute run say hi", prepend=True)', 18],                                 // quote, then kwargs
+  ];
+  for (const [line, expected] of cases) {
+    for (const re of [lineStart, afterRun]) {
+      const m = re.exec(line);
+      assert.ok(m, `no end match in ${JSON.stringify(line)}`);
+      assert.equal(m.index, expected, `wrong end position in ${JSON.stringify(line)}`);
+    }
+  }
+});
+
+test("say end does not fire early on quotes inside a multiline block", () => {
+  for (const p of embedded.repository.say.patterns) {
+    const re = new RegExp(p.end);
+    for (const line of ["say Don't panic\n", 'say Hello "world" bye\n']) {
+      const m = re.exec(line);
+      assert.ok(m);
+      assert.equal(m.index, line.length - 1, `say must run to the newline in ${JSON.stringify(line)}`);
+    }
+  }
+});
+
 // ─── Triple-quote string rules must exist before single-quote ones ──────────
 
 test("literals define triple-quote rules before single-quote rules", () => {
