@@ -1,7 +1,7 @@
 {
 	"steel_ingot": {
 		"id": "steel_ingot",
-		"base_item": "minecraft:command_block",
+		"base_item": "minecraft:recovery_compass",
 		"manual_category": "material",
 		"recipes": [
 			{"type": "crafting_shapeless","result_count": 9,"category": "misc","group": "steel","ingredients": [{"components": {"minecraft:custom_data": {"_your_namespace": {"steel_block": true}}}}]},
@@ -29,7 +29,7 @@
 	},
 	"steel_nugget": {
 		"id": "steel_nugget",
-		"base_item": "minecraft:command_block",
+		"base_item": "minecraft:recovery_compass",
 		"manual_category": "material",
 		"recipes": [
 			{"type": "crafting_shapeless","result_count": 9,"category": "misc","group": "steel","ingredients": [{"components": {"minecraft:custom_data": {"_your_namespace": {"steel_ingot": true}}}}]},
@@ -53,7 +53,7 @@
 	},
 	"raw_steel": {
 		"id": "raw_steel",
-		"base_item": "minecraft:command_block",
+		"base_item": "minecraft:recovery_compass",
 		"manual_category": "material",
 		"recipes": [
 			{"type": "crafting_shapeless","result_count": 9,"category": "misc","group": "steel","ingredients": [{"components": {"minecraft:custom_data": {"_your_namespace": {"raw_steel_block": true}}}}]}
@@ -68,7 +68,7 @@
 	},
 	"steel_dust": {
 		"id": "steel_dust",
-		"base_item": "minecraft:command_block",
+		"base_item": "minecraft:recovery_compass",
 		"manual_category": "material",
 		"recipes": [
 			{"type": "smelting","result_count": 1,"category": "misc","group": "steel","result": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_ingot": true}}}},"ingredient": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_dust": true}}}},"experience": 0.8,"cookingtime": 200},
@@ -88,7 +88,7 @@
 	},
 	"steel_stick": {
 		"id": "steel_stick",
-		"base_item": "minecraft:command_block",
+		"base_item": "minecraft:recovery_compass",
 		"manual_category": "material",
 		"recipes": [
 			{"type": "crafting_shaped","result_count": 4,"category": "misc","group": "steel_stick","shape": ["X","X"],"ingredients": {"X": {"components": {"minecraft:custom_data": {"_your_namespace": {"steel_ingot": true}}}}}}
@@ -354,7 +354,7 @@
 	},
 	"stone_stick": {
 		"id": "stone_stick",
-		"base_item": "minecraft:command_block",
+		"base_item": "minecraft:recovery_compass",
 		"manual_category": "material",
 		"recipes": [
 			{"type": "crafting_shaped","result_count": 4,"category": "misc","group": "stone_stick","shape": ["X","X"],"ingredients": {"X": {"item": "minecraft:stone"}}}
@@ -369,7 +369,7 @@
 	},
 	"stone_rod": {
 		"id": "stone_rod",
-		"base_item": "minecraft:command_block",
+		"base_item": "minecraft:recovery_compass",
 		"manual_category": "material",
 		"recipes": [
 			{"type": "crafting_shaped","result_count": 1,"category": "misc","group": "stone_rod","shape": ["X","X","X"],"ingredients": {"X": {"item": "minecraft:stone"}}}
@@ -384,7 +384,7 @@
 	},
 	"shazinho": {
 		"id": "shazinho",
-		"base_item": "minecraft:command_block",
+		"base_item": "minecraft:recovery_compass",
 		"manual_category": "miscellaneous",
 		"recipes": [],
 		"components": {
@@ -451,7 +451,7 @@
 	},
 	"manual": {
 		"id": "manual",
-		"base_item": "minecraft:command_block",
+		"base_item": "minecraft:recovery_compass",
 		"manual_category": "miscellaneous",
 		"recipes": [
 			{"type": "crafting_shapeless","result_count": 1,"category": "misc","group": "manual","ingredients": [{"item": "minecraft:book"},{"components": {"minecraft:custom_data": {"_your_namespace": {"steel_ingot": true}}}}]},

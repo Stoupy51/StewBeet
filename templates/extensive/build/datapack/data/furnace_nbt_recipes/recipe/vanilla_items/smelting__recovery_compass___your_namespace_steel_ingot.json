@@ -1,8 +1,8 @@
 {
-	"type": "minecraft:blasting",
-	"ingredient": "minecraft:command_block",
+	"type": "minecraft:smelting",
+	"ingredient": "minecraft:recovery_compass",
 	"result": {
-		"id": "minecraft:command_block",
+		"id": "minecraft:recovery_compass",
 		"count": 1,
 		"components": {
 			"minecraft:custom_data": {
@@ -46,5 +46,5 @@
 		}
 	},
 	"experience": 0.8,
-	"cookingtime": 100
+	"cookingtime": 200
 }
