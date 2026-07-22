@@ -115,7 +115,7 @@ class DialogEmitter:
 				elif isinstance(element, list):
 					return sum(count_breaklines(sub) for sub in element)
 				return str(element).count("\n")
-			nb_breaklines_to_add: int = max(0, 25 - count_breaklines(new_content))
+			nb_breaklines_to_add: int = max(0, 22 - count_breaklines(new_content))
 			if nb_breaklines_to_add > 0:
 				new_content.append("\n" * nb_breaklines_to_add)
 

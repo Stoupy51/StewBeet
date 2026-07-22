@@ -62,7 +62,7 @@
 				{"text": "2\n","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$聆"},"\n","\"",{"text": "U$"},"U$U$",{"text": "$$聆"},"\n\"","U$U$U$",{"text": "U$"},"\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.extensive_template_manual","color": "gray"}]}},
 				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$聟"},{"text": "$耭"},"\n","\"",{"text": "U$"},{"text": "U$"},"U$",{"text": "$$聆"},"\n\"","U$U$U$",{"text": "U$"},"\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.book","color": "gray"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]}},
 				{"text": "0","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$聆"},"\n","\"",{"text": "U$"},"U$U$",{"text": "$$聆"},"\n\"","U$U$U$",{"text": "U$"},"\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.extensive_template_manual","color": "gray"}]}},
-				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 			],
 			"width": 140
 		}
