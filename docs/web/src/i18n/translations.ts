@@ -208,6 +208,27 @@ export const translations = {
             markdownToBBCodeDesc: 'Convert Markdown text to BBCode format for publishing on PlanetMinecraft. Supports badges, lists, tables, code blocks, spoilers, and more.',
         },
         
+        // Search
+        search: {
+            button: 'Search',
+            placeholder: 'Search the documentation, plugins and API...',
+            hint: 'Type a keyword to search every guide, plugin page and Python symbol.',
+            loading: 'Loading the search index...',
+            noResults: 'No result found.',
+            close: 'Close search',
+            hintNavigate: 'to navigate',
+            hintOpen: 'to open',
+            hintClose: 'to close',
+            typeDoc: 'Guide',
+            typePlugin: 'Plugin',
+            typeApi: 'API',
+            typeSite: 'Site',
+            sectionDoc: 'Guides',
+            sectionApi: 'API',
+            sectionPlugin: 'Plugins',
+            sectionSite: 'Site',
+        },
+
         // Footer
         footer: {
             tagline: 'Powerful automation framework to create Minecraft datapacks effortlessly.',
@@ -426,6 +447,27 @@ export const translations = {
             markdownToBBCodeDesc: 'Convertissez du texte Markdown en format BBCode pour publier sur PlanetMinecraft. Supporte les badges, listes, tableaux, blocs de code, spoilers et plus.',
         },
         
+        // Search
+        search: {
+            button: 'Rechercher',
+            placeholder: 'Rechercher dans la documentation, les plugins et l\'API...',
+            hint: 'Tapez un mot-clé pour chercher dans chaque guide, page de plugin et symbole Python.',
+            loading: 'Chargement de l\'index de recherche...',
+            noResults: 'Aucun résultat trouvé.',
+            close: 'Fermer la recherche',
+            hintNavigate: 'pour naviguer',
+            hintOpen: 'pour ouvrir',
+            hintClose: 'pour fermer',
+            typeDoc: 'Guide',
+            typePlugin: 'Plugin',
+            typeApi: 'API',
+            typeSite: 'Site',
+            sectionDoc: 'Guides',
+            sectionApi: 'API',
+            sectionPlugin: 'Plugins',
+            sectionSite: 'Site',
+        },
+
         // Footer
         footer: {
             tagline: 'Framework d\'automatisation puissant pour créer des datapacks Minecraft sans effort.',

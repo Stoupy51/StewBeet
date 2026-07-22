@@ -24,6 +24,8 @@ const DOC_SRC_PATTERN = /^(?:[A-Za-z0-9._-]+\/)*[A-Za-z0-9._-]+\.md$/;
 // _template.html is the original Vite-built index.html before prerender modifies it.
 // It contains the empty <div id="root"></div> used as the injection target.
 const template = readFileSync(join(distDir, '_template.html'), 'utf-8');
+/** Gzipped search indexes, built on first request and kept for the process lifetime. */
+const gzipCache = new Map<string, Uint8Array>();
 
 /** Convert a `src` param to the raw GitHub URL (same logic as MarkdownPage.tsx). */
 function isValidDocSrc(src: string): boolean {
@@ -88,6 +90,27 @@ Bun.serve({
             return new Response(output, {
                 headers: { 'Content-Type': 'text/html; charset=utf-8' },
             });
+        }
+
+        // ── Search index (large JSON, worth compressing once per process) ─────
+        if (/^\/search-index\.[a-z]{2}\.json$/.test(pathname)) {
+            const file = Bun.file(join(distDir, pathname));
+            if (await file.exists()) {
+                if (!req.headers.get('accept-encoding')?.includes('gzip')) {
+                    return new Response(file);
+                }
+                let compressed = gzipCache.get(pathname);
+                if (!compressed) {
+                    compressed = Bun.gzipSync(new Uint8Array(await file.arrayBuffer()));
+                    gzipCache.set(pathname, compressed);
+                }
+                return new Response(compressed, {
+                    headers: {
+                        'Content-Type': 'application/json; charset=utf-8',
+                        'Content-Encoding': 'gzip',
+                    },
+                });
+            }
         }
 
         // ── Static file serving ───────────────────────────────────────────────

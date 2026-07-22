@@ -1,16 +1,20 @@
-import { useState, useEffect, memo } from 'react';
+import { useState, useEffect, useCallback, memo, lazy, Suspense } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { HiMenu, HiX } from 'react-icons/hi';
+import { HiMenu, HiSearch, HiX } from 'react-icons/hi';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
 import type { Language } from '../context/LanguageContext';
 import { useTranslation } from '../i18n/useTranslation';
+import { loadIndex } from '../utils/search';
 import { GRADIENT_TEXT_LOGO, BTN_PRIMARY, NAV_SHADOW, LIST_SELECTED } from '../theme';
+
+const SearchModal = lazy(() => import('./SearchModal').then(m => ({ default: m.SearchModal })));
 
 export const Navbar = memo(() => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
     const { language, setLanguage } = useLanguage();
     const { t } = useTranslation();
     const navigate = useNavigate();
@@ -23,6 +27,44 @@ export const Navbar = memo(() => {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    // Ctrl/Cmd+K opens the search from anywhere on the site
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key.toLowerCase() === 'k' && (event.ctrlKey || event.metaKey)) {
+                event.preventDefault();
+                setIsSearchOpen(true);
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, []);
+
+    const openSearch = () => {
+        setIsSearchOpen(true);
+        setIsMobileMenuOpen(false);
+    };
+
+    /** Warm the modal chunk and the index, so opening the search feels instant. */
+    const prefetchSearch = useCallback(() => {
+        import('./SearchModal').catch(() => undefined);
+        loadIndex(language).catch(() => undefined);
+    }, [language]);
+
+    // Prefetch once the browser is idle, unless the connection asks us not to
+    useEffect(() => {
+        const connection = (navigator as Navigator & {
+            connection?: { saveData?: boolean; effectiveType?: string };
+        }).connection;
+        if (connection?.saveData || /(^|-)2g$/.test(connection?.effectiveType ?? '')) return;
+
+        if (!window.requestIdleCallback) {
+            const timeout = window.setTimeout(prefetchSearch, 2000);
+            return () => window.clearTimeout(timeout);
+        }
+        const handle = window.requestIdleCallback(prefetchSearch, { timeout: 5000 });
+        return () => window.cancelIdleCallback(handle);
+    }, [prefetchSearch]);
 
     const scrollToSection = (id: string) => {
         // First, check if the element exists on the current page
@@ -118,6 +160,19 @@ export const Navbar = memo(() => {
                             </button>
                         ))}
                         
+                        <motion.button
+                            onClick={openSearch}
+                            onMouseEnter={prefetchSearch}
+                            onFocus={prefetchSearch}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="flex items-center gap-2 pl-3 pr-2 py-2 bg-slate-800/50 hover:bg-slate-700/50 rounded-lg text-slate-300 hover:text-white text-sm font-medium transition-all border border-white/10"
+                        >
+                            <HiSearch className="text-lg" />
+                            <span>{t('search.button')}</span>
+                            <kbd className="hidden lg:inline px-1.5 py-0.5 rounded bg-white/10 text-[10px] text-slate-400 border border-white/10">Ctrl K</kbd>
+                        </motion.button>
+
                         <motion.a
                             href="/documentation"
                             onClick={handleDocumentationClick}
@@ -212,13 +267,22 @@ export const Navbar = memo(() => {
                         </div>
                     </div>
 
-                    {/* Mobile Menu Button */}
-                    <button
-                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                        className="md:hidden text-slate-300 hover:text-white transition-colors"
-                    >
-                        {isMobileMenuOpen ? <HiX className="text-2xl" /> : <HiMenu className="text-2xl" />}
-                    </button>
+                    {/* Mobile Search + Menu Buttons */}
+                    <div className="md:hidden flex items-center gap-3">
+                        <button
+                            onClick={openSearch}
+                            aria-label={t('search.button')}
+                            className="text-slate-300 hover:text-white transition-colors"
+                        >
+                            <HiSearch className="text-2xl" />
+                        </button>
+                        <button
+                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                            className="text-slate-300 hover:text-white transition-colors"
+                        >
+                            {isMobileMenuOpen ? <HiX className="text-2xl" /> : <HiMenu className="text-2xl" />}
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -232,6 +296,13 @@ export const Navbar = memo(() => {
                         className="md:hidden bg-slate-900/95 backdrop-blur-md border-t border-white/5"
                     >
                         <div className="px-4 py-4 space-y-3">
+                            <button
+                                onClick={openSearch}
+                                className="flex items-center justify-center gap-2 w-full px-4 py-2 bg-slate-800/50 hover:bg-slate-700/50 rounded-lg text-slate-300 hover:text-white font-medium transition-all border border-white/10"
+                            >
+                                <HiSearch className="text-lg" />
+                                {t('search.button')}
+                            </button>
                             {navItems.map((item) => (
                                 <button
                                     key={item.id}
@@ -300,6 +371,15 @@ export const Navbar = memo(() => {
                             </div>
                         </div>
                     </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Search overlay */}
+            <AnimatePresence>
+                {isSearchOpen && (
+                    <Suspense fallback={null}>
+                        <SearchModal onClose={() => setIsSearchOpen(false)} />
+                    </Suspense>
                 )}
             </AnimatePresence>
         </motion.nav>
