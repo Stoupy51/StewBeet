@@ -22,18 +22,18 @@ class Sorter(BaseModel):
 	that can sort lists stored in storage using various algorithms.
 
 	Example:
-	```
-		{
-			"algorithm": "selection_sort",
-			"functions_location": "switch:stats/minigame/sort_leaderboard",
-			"to_sort": {
-				"storage": "switch:stats",
-				"target": "all.modes.sheepwars.played"
-			},
-			"key": "count",
-			"scale": 100
-		}
-	```
+		.. code-block:: json
+
+			{
+				"algorithm": "selection_sort",
+				"functions_location": "switch:stats/minigame/sort_leaderboard",
+				"to_sort": {
+					"storage": "switch:stats",
+					"target": "all.modes.sheepwars.played"
+				},
+				"key": "count",
+				"scale": 100
+			}
 	"""
 	algorithm: SorterAlgorithm = "selection_sort"
 	""" Algorithm used to sort the elements, defaults to `selection_sort`. """

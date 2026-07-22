@@ -5,6 +5,8 @@ Used for special pages whose content is produced elsewhere (e.g. the ported
 """
 
 # Imports
+from __future__ import annotations
+
 import copy
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING

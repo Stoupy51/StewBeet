@@ -31,18 +31,11 @@ class ButtonLayout:
 	>>> layout = ButtonLayout(columns=6, position="bottom")
 	>>> layout.columns
 	6
-
-	Attributes:
-		columns			(int):	Number of buttons per row.
-		max_buttons		(int):	Hard cap on how many buttons are shown (overflow dropped by priority).
-		position		(str|Callable):	"after_recipe" (default), "top", "bottom", or a callable
-							``(content, buttons, manual) -> content`` for full control.
-		order			(Callable|None):	Sort key applied to buttons before layout (e.g. ``lambda b: -b.priority``).
-		include			(Callable|None):	Predicate ``(button) -> bool`` filtering which buttons to keep.
-		extra_buttons	(list):	Additional developer-supplied buttons appended before layout.
 	"""
 	columns: int = 5
+	""" Number of buttons per row. """
 	max_buttons: int = 20
+	""" Hard cap on how many buttons are shown (overflow dropped by priority). """
 	position: Position | Callable[..., Any] = "after_recipe"
 	""" Where the button grid is spliced into the page content: "after_recipe" inserts it right
 	after the main craft content (before anything appended later, e.g. special notes),
@@ -51,8 +44,11 @@ class ButtonLayout:
 	(it receives the un-rendered :class:`~.recipes.WikiButtonRender` list and must return the
 	final content). """
 	order: Callable[[WikiButtonRender], Any] | None = None
+	""" Sort key applied to buttons before layout (e.g. ``lambda b: -b.priority``). """
 	include: Callable[[WikiButtonRender], bool] | None = None
+	""" Predicate ``(button) -> bool`` filtering which buttons to keep. """
 	extra_buttons: list[WikiButtonRender] = field(default_factory=list[WikiButtonRender])
+	""" Additional developer-supplied buttons appended before layout. """
 
 	def clone(self) -> ButtonLayout:
 		""" Return a shallow copy (so per-page overrides don't mutate the shared default).

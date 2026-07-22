@@ -6,6 +6,8 @@ have a registered :class:`~.registry.CraftRenderer`, so it auto-extends with new
 """
 
 # Imports
+from __future__ import annotations
+
 import math
 from typing import TYPE_CHECKING, cast
 

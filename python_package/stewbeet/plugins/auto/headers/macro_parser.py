@@ -21,6 +21,7 @@ def extract_macro_variables(content: str) -> list[str]:
 
     Examples:
         Basic example:
+
         >>> content = '''
         ... $execute if score @s temp matches $(slot) run say Found
         ... $data modify entity @s Items[{Slot:$(slot)b}].id set value "$(id)"
@@ -30,11 +31,13 @@ def extract_macro_variables(content: str) -> list[str]:
         ['slot', 'id', 'count']
 
         From StardustFragment teleport_to:
+
         >>> content = '$execute in $(dimension) run tp @s $(x) $(y).6 $(z) $(yaw) $(pitch)'
         >>> extract_macro_variables(content)
         ['dimension', 'x', 'y', 'z', 'yaw', 'pitch']
 
         From SimplEnergy get_max_stack_size:
+
         >>> content = '''
         ... $execute if items entity @s container.$(result) *[minecraft:max_stack_size=64] run return 64
         ... $execute if items entity @s container.$(result) *[minecraft:max_stack_size=16] run return 16
@@ -43,6 +46,7 @@ def extract_macro_variables(content: str) -> list[str]:
         ['result']
 
         From SimplEnergy update_energy_lore with multiple vars:
+
         >>> content = '$data modify storage energy:temp list[0] value [$(part_1),$(part_2),$(scale)]'
         >>> extract_macro_variables(content)
         ['part_1', 'part_2', 'scale']
@@ -82,22 +86,27 @@ def is_macro_function(content: str) -> bool:
 
     Examples:
         Non-macro function:
+
         >>> is_macro_function("say Hello")
         False
 
         Simple macro:
+
         >>> is_macro_function("$say $(message)")
         True
 
         Macro with comment:
+
         >>> is_macro_function("# Comment\\n$execute run say $(text)")
         True
 
         From StardustFragment:
+
         >>> is_macro_function("$execute in $(dimension) run tp @s $(x) $(y) $(z)")
         True
 
         From SimplEnergy:
+
         >>> is_macro_function("$execute if items entity @s container.$(result) *[max_stack_size=64] run return 64")
         True
     """

@@ -31,24 +31,18 @@ def to_atlas(texture: str) -> str:
 
 # Class
 class AutoModel:
-	""" Class to handle item model processing.
-
-	Attributes:
-		item_name       (str):            The name of the item.
-		data            (dict):           The parsed JSON data of the item model.
-		parent          (str | None):     The parent model of this item model.
-		textures        (dict):           The textures used by this item model.
-		namespace       (str):            The namespace of the item model.
-		block_or_item   (str):            Whether this is a block or item model.
-		used_textures   (set[str]):       Set of used textures.
-		used_minecraft_textures (set[str]): Set of used Minecraft textures.
-		source_textures (dict[str, str]): Dictionary of source textures.
-		ignore_textures (bool):           Whether to ignore texture-related errors.
-	"""
-	__slots__ = (
-		"block_or_item", "ignore_textures", "ns", "obj", "parent",
-		"source_textures", "textures", "used_minecraft_textures", "used_textures",
-	)
+	""" Class to handle item model processing. """
+	__slots__ = {
+		"block_or_item":    "Whether this is a block or item model.",
+		"ignore_textures":  "Whether to ignore texture-related errors.",
+		"ns":               "The namespace of the item model.",
+		"obj":              "The item data from the definitions.",
+		"parent":           "The parent model of this item model.",
+		"source_textures":  "Dictionary of source textures.",
+		"textures":         "The textures used by this item model.",
+		"used_minecraft_textures": "Set of used Minecraft textures.",
+		"used_textures":    "Set of used textures.",
+	}
 
 	# Class variables
 	DEFAULT_PARENT: str = "item/generated"

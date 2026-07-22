@@ -1,6 +1,8 @@
 """ A free-form page: arbitrary Minecraft text components, unrelated to any item. """
 
 # Imports
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 

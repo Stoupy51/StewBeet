@@ -375,6 +375,7 @@ def upload_to_pmc(pmc_config: JsonDict, changelog: str = "") -> None:
 
 	Disclaimer:
 		There is no API for PlanetMinecraft, so everything is done manually.
+
 	Args:
 		pmc_config		(dict):		Configuration for the PlanetMinecraft project
 		changelog		(str):		Changelog text for the release

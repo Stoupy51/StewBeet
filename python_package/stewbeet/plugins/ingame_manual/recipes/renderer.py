@@ -6,6 +6,8 @@ button scaffolding; the per-type layout/hover/glyph/image live under :mod:`.type
 """
 
 # Imports
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 

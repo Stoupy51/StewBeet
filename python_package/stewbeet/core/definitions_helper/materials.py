@@ -25,8 +25,10 @@ def generate_everything_about_this_material(
 	ignore_recipes: bool = False
 ) -> None:
 	""" Generate everything related to the ore (armor, tools, weapons, ore, and ingredients (raw, nuggets, blocks)).
-		The function will try to find textures in the assets folder to each item
-		And return a list of generated items if you want to do something with it.
+
+	The function will try to find textures in the assets folder to each item
+	And return a list of generated items if you want to do something with it.
+
 	Args:
 		material			(str):					The ore/material to generate everything about (ex: "adamantium_fragment", "steel_ingot", "minecraft:emerald", "minecraft:copper_ingot", "awakened_stardust!")
 													When the material ends with "!", the material base will be the material without the "!"
@@ -280,10 +282,11 @@ def generate_everything_about_this_material(
 # Generate everything about these ores
 def generate_everything_about_these_materials(ores: dict[str, EquipmentsConfig|None], ignore_recipes: bool = False) -> None:
 	""" Uses function 'generate_everything_about_this_material' for each ore in the ores dictionary.
+
 	Args:
 		ores		(dict[str, EquipmentsConfig|None]):	The ores to apply.
-				The ore/material (key) to generate everything about (ex: "adamantium_fragment", "steel_ingot", "minecraft:emerald", "minecraft:copper_ingot", "awakened_stardust!")
-				When the material ends with "!", the material base will be the material without the "!", else we try to cut before the last "_".
+			The ore/material (key) to generate everything about (ex: "adamantium_fragment", "steel_ingot", "minecraft:emerald", "minecraft:copper_ingot", "awakened_stardust!")
+			When the material ends with "!", the material base will be the material without the "!", else we try to cut before the last "_".
 		ignore_recipes	(bool):						If True, no recipes will be added in the definitions.
 	"""
 	for material, ore_config in ores.items():
@@ -340,16 +343,17 @@ def add_recipes_for_all_dusts(dusts_configs: dict[str, tuple[list[str | JsonDict
 	""" Add recipes for all dusts in the dusts_configs dictionary using the add_recipes_for_dust function.
 
 	Args:
-		dusts_configs	(dict[str, tuple[list[str|dict],dict]]):	The dusts to add recipes for, ex:
+		dusts_configs	(dict[str, tuple[list[str|dict],dict]]):	The dusts to add recipes for.
 
-	```py
-	{
-		"copper": (
-			["raw_copper", "copper_ore", "deepslate_copper_ore", Ingr("custom_copper", "some_namespace")],
-			Ingr("minecraft:copper_ingot")
-		)
-	}
-	```
+	Examples:
+		.. code-block:: python
+
+			{
+				"copper": (
+					["raw_copper", "copper_ore", "deepslate_copper_ore", Ingr("custom_copper", "some_namespace")],
+					Ingr("minecraft:copper_ingot")
+				)
+			}
 	"""
 	for dust, (pulverize, smelt_to) in dusts_configs.items():
 		add_recipes_for_dust(dust, pulverize, smelt_to)

@@ -506,9 +506,7 @@ def handle_file(content: TextFileBase[str] | None, ctx: Context | None = None) -
 	For each {"text": "..."} component found:
 		- Decodes the value and skips non-useful strings (no alnum, too short, macros).
 		- Strips non-alphanumeric prefix/suffix from the value to derive a stable key.
-		- When prefix/suffix exist, wraps the enclosing JSON object into a list so
-		the core translate component can share a key with other components that have
-		the same alphanumeric content but different surrounding punctuation/whitespace.
+		- When prefix/suffix exist, wraps the enclosing JSON object into a list so the core translate component shares its key with components having the same alphanumeric content.
 		- Falls back to numeric suffix (_2, _3, …) if object wrapping is not possible.
 
 	Args:

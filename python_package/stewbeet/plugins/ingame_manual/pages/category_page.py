@@ -6,6 +6,8 @@ linking to its item page via a deferred :class:`~..refs.PageRef`.
 """
 
 # Imports
+from __future__ import annotations
+
 import copy
 import os
 from dataclasses import dataclass, field

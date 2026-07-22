@@ -7,15 +7,6 @@ from __future__ import annotations
 class Header:
     """ A class representing a function header.
 
-    Attributes:
-        path (str): The path to the function (ex: "namespace:folder/function_name")
-        within (list[str]): List of functions that call this function
-        other (list[str]): List of other information about the function
-        content (str): The content of the function
-        executed (str): The execution context (ex: "as the player & at current position")
-        args (dict[str, tuple[str, list[str]]]): Dictionary mapping macro argument names to (type, description_lines)
-            where description_lines is a list of strings (empty list if no description)
-
     Examples:
         >>> header = Header("test:function", ["other:function"], ["Some info"], "say Hello")
         >>> header.path
@@ -27,7 +18,15 @@ class Header:
         >>> header.content
         'say Hello'
     """
-    __slots__ = ("args", "content", "executed", "other", "path", "within")
+    __slots__ = {
+        "args": "Dictionary mapping macro argument names to (type, description_lines), "
+                "where description_lines is a list of strings (empty list if no description)",
+        "content": "The content of the function",
+        "executed": "The execution context (ex: \"as the player & at current position\")",
+        "other": "List of other information about the function",
+        "path": "The path to the function (ex: \"namespace:folder/function_name\")",
+        "within": "List of functions that call this function",
+    }
 
     def __init__(
         self,
