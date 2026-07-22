@@ -1,6 +1,8 @@
 """Category browser page: a clickable grid linking to each category page."""
 
 # Imports
+from __future__ import annotations
+
 import copy
 import os
 from dataclasses import dataclass

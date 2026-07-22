@@ -8,6 +8,8 @@ the vanilla ``quick_actions`` dialog tag.
 """
 
 # Imports
+from __future__ import annotations
+
 import os
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, cast

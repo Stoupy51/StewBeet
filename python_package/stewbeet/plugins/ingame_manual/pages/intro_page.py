@@ -1,6 +1,8 @@
 """Introduction page: manual title, project logo, and the configurable first-page text."""
 
 # Imports
+from __future__ import annotations
+
 import os
 from dataclasses import dataclass
 from typing import TYPE_CHECKING

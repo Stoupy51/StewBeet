@@ -82,7 +82,7 @@ class BaseEquation:
 
 	@stp.abstract
 	def render_header(self) -> str:
-		""" Returns the human-readable equation comment (without the leading ``# ``). """
+		""" Returns the human-readable equation comment (without the leading ``"# "``). """
 		...
 
 	# Operation builder

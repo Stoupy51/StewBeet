@@ -5,6 +5,8 @@ the :class:`~.renderer.RecipeRenderer` dispatcher ``r`` for config/glyphs/images
 """
 
 # Imports
+from __future__ import annotations
+
 import os
 from typing import TYPE_CHECKING
 
