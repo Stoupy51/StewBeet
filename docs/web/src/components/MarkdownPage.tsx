@@ -22,6 +22,8 @@ interface Heading {
 
 const DOC_SRC_PATTERN = /^(?:[A-Za-z0-9._-]+\/)*[A-Za-z0-9._-]+\.md$/;
 const FETCH_TIMEOUT_MS = 7000;
+/** How long to keep an anchor aligned while Shiki finishes highlighting the code blocks. */
+const SCROLL_SETTLE_MS = 4000;
 const MAX_MARKDOWN_CHARS = 500_000;
 
 function isValidDocSrc(src: string): boolean {
@@ -30,6 +32,31 @@ function isValidDocSrc(src: string): boolean {
 
 function srcToGithubUrl(src: string): string {
     return `https://github.com/Stoupy51/StewBeet/blob/main/docs/${src}`;
+}
+
+/**
+ * Resolve a relative markdown link against the document containing it, so links between
+ * guides and plugin pages stay on the site: `2_writing_to_files/en.md` +
+ * `../1_definitions_setup/en.md#-resource-locations` -> `1_definitions_setup/en.md`.
+ * Returns null for anything that escapes docs/ or is not a markdown page (images, source
+ * files...), which the caller then sends to GitHub as before.
+ */
+function resolveDocSrc(currentSrc: string, href: string): { src: string; hash: string } | null {
+    const [path, hash = ''] = href.split('#');
+    const segments = currentSrc.split('/').slice(0, -1);
+
+    for (const part of path.split('/')) {
+        if (part === '' || part === '.') continue;
+        if (part === '..') {
+            if (segments.length === 0) return null;
+            segments.pop();
+            continue;
+        }
+        segments.push(part);
+    }
+
+    const src = segments.join('/');
+    return isValidDocSrc(src) ? { src, hash } : null;
 }
 
 function githubToRawUrl(githubUrl: string): string {
@@ -93,7 +120,7 @@ const ShikiCodeBlock: React.FC<{ code: string; language: string }> = ({ code, la
 export const MarkdownPage: React.FC = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
-    const { hash } = useLocation();
+    const { hash, search } = useLocation();
     const { language } = useLanguage();
     const src = searchParams.get('src');
     // ssrContent is non-null when pre-rendered by the SSR server (server.tsx)
@@ -116,6 +143,23 @@ export const MarkdownPage: React.FC = () => {
         }
     }, [language, src, setSearchParams]);
     
+    // A bare <a href="#id"> is a same-document jump: it fires hashchange, which the router
+    // does not listen to, so useLocation().hash would never update and the scroll effect
+    // below would never run. Going through navigate() keeps both in sync.
+    const goToHeading = (id: string) => (event: React.MouseEvent) => {
+        if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+        event.preventDefault();
+        setTocOpen(false);
+
+        // Re-clicking the current heading leaves the hash untouched, so the effect would
+        // not re-run; by now the layout has settled and a plain scroll is enough.
+        if (hash === `#${id}`) {
+            document.getElementById(id)?.scrollIntoView();
+            return;
+        }
+        navigate({ search, hash: `#${id}` });
+    };
+
     const handleBack = () => {
         // Check if there's history to go back to
         if (window.history.length > 1) {
@@ -139,6 +183,9 @@ export const MarkdownPage: React.FC = () => {
     const basePath = rawUrl
         ? rawUrl.substring(0, rawUrl.lastIndexOf('/'))
         : null;
+
+    // Only a document from the repo's own docs/ folder can resolve its links to site routes
+    const localSrc = src && hasValidSrc && !isExternalUrl(src) ? src : null;
 
     // Extract headings for table of contents
     const headings = useMemo(() => {
@@ -226,19 +273,37 @@ export const MarkdownPage: React.FC = () => {
     // Scroll to the heading targeted by the URL hash (search results, shared links).
     // The content arrives asynchronously, so this cannot rely on the browser's own handling.
     useEffect(() => {
-        if (loading || !content || !hash) return;
+        if (loading || !content) return;
 
-        const scroll = () => {
-            const target = document.getElementById(decodeURIComponent(hash.slice(1)));
-            target?.scrollIntoView({ behavior: 'smooth' });
-        };
+        // A plain document link keeps the previous page's scroll offset otherwise
+        if (!hash) {
+            window.scrollTo({ top: 0 });
+            return;
+        }
 
-        // Second pass corrects the offset once Shiki has replaced the plain code blocks
-        const raf = requestAnimationFrame(scroll);
-        const timeout = window.setTimeout(scroll, 600);
+        const id = decodeURIComponent(hash.slice(1));
+        const scroll = () => document.getElementById(id)?.scrollIntoView();
+        scroll();
+
+        // Shiki replaces every code block with taller highlighted markup one grammar at a
+        // time, pushing later headings down long after the first paint. Re-align on each
+        // layout change until it settles, or a deep anchor lands hundreds of pixels short.
+        const observer = new ResizeObserver(scroll);
+        observer.observe(document.body);
+
+        // The reader taking over always wins over a late correction
+        const release = () => observer.disconnect();
+        const timeout = window.setTimeout(release, SCROLL_SETTLE_MS);
+        window.addEventListener('wheel', release, { passive: true });
+        window.addEventListener('touchstart', release, { passive: true });
+        window.addEventListener('keydown', release);
+
         return () => {
-            cancelAnimationFrame(raf);
             window.clearTimeout(timeout);
+            window.removeEventListener('wheel', release);
+            window.removeEventListener('touchstart', release);
+            window.removeEventListener('keydown', release);
+            observer.disconnect();
         };
     }, [loading, content, hash]);
 
@@ -332,7 +397,7 @@ export const MarkdownPage: React.FC = () => {
                                                 heading.level === 2 ? 'pl-4 text-slate-400' :
                                                 'pl-8 text-slate-500'
                                             }`}
-                                            onClick={() => setTocOpen(false)}
+                                            onClick={goToHeading(heading.id)}
                                         >
                                             {heading.text}
                                         </a>
@@ -437,23 +502,45 @@ export const MarkdownPage: React.FC = () => {
                                     // Keep anchor links as-is
                                     const isAnchor = href?.startsWith('#');
                                     const isExternal = href?.startsWith('http');
-                                    let linkHref = href;
-                                    
-                                    if (!isAnchor && !isExternal && href && basePath) {
+                                    const isRelative = !isAnchor && !isExternal && !!href && !!basePath;
+
+                                    // A link to another documentation page keeps the reader on the site
+                                    const target = isRelative && localSrc ? resolveDocSrc(localSrc, href) : null;
+                                    const internalHref = target
+                                        ? `/markdown?src=${encodeURIComponent(target.src)}${target.hash ? `#${target.hash}` : ''}`
+                                        : null;
+
+                                    let linkHref = internalHref ?? href;
+                                    if (isRelative && !internalHref) {
+                                        // Anything else (images, source files) still points at GitHub.
                                         // Convert basePath from raw.githubusercontent to github.com/blob format
                                         const viewBasePath = basePath.replace(
                                             'https://raw.githubusercontent.com/',
                                             'https://github.com/'
                                         ).replace('/main/', '/blob/main/');
-                                        
+
                                         linkHref = `${viewBasePath}/${href}`;
                                     }
-                                    
+
+                                    // Leaving the site — including the GitHub fallback built just above
+                                    const opensAway = linkHref?.startsWith('http') ?? false;
+
                                     return (
                                         <a
                                             href={linkHref}
-                                            target={isExternal ? '_blank' : undefined}
-                                            rel={isExternal ? 'noopener noreferrer' : undefined}
+                                            target={opensAway ? '_blank' : undefined}
+                                            rel={opensAway ? 'noopener noreferrer' : undefined}
+                                            onClick={
+                                                // In-page links need the same settle handling as the contents panel
+                                                isAnchor && href ? goToHeading(decodeURIComponent(href.slice(1)))
+                                                : internalHref ? (event) => {
+                                                    // Let the browser keep ctrl/cmd-click opening a new tab
+                                                    if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+                                                    event.preventDefault();
+                                                    navigate(internalHref);
+                                                }
+                                                : undefined
+                                            }
                                         >
                                             {children}
                                         </a>
@@ -512,7 +599,7 @@ export const MarkdownPage: React.FC = () => {
                                                 heading.level === 2 ? 'pl-4 text-slate-400' :
                                                 'pl-8 text-slate-500'
                                             }`}
-                                            onClick={() => setTocOpen(false)}
+                                            onClick={goToHeading(heading.id)}
                                         >
                                             {heading.text}
                                         </a>
