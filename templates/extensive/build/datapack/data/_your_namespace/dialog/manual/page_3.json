@@ -24,7 +24,7 @@
 				{"text": "","shadow_color": [0,0,0,0]},
 				{"text": "耧耦\n","font": "_your_namespace:manual","color": "white"},
 				[{"text":"\n\n\n\n\n\n\n","color": "black"}, {"translate": "_your_namespace.the_text_above_is_baked_into_the_page_texture"}],
-				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 			],
 			"width": 140
 		}

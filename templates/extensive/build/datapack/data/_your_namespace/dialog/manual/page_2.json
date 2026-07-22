@@ -24,7 +24,7 @@
 				{"text": "","shadow_color": [0,0,0,0]},
 				{"translate": "_your_namespace.welcome_to_the_extensive_template","color": "black","bold": true},
 				[{"text":"\n\n","color": "#505050"}, {"translate": "_your_namespace.this_page_was_added_with_the_public_manual_apicustompage_insert_"}],
-				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 			],
 			"width": 140
 		}

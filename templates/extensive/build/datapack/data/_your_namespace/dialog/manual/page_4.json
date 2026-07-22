@@ -69,7 +69,7 @@
 				{"text": "U$U$U$","hover_event": {"action": "show_item","id": "minecraft:smooth_stone"}},
 				"  \n",
 				[[{"text":"\n","font": "minecraft:default","color": "black"}, {"translate": "_your_namespace.every_recipe_that_uses_custom_items"}],{"translate": "_your_namespace.must","color": "red","underlined": true}," be crafted using the Heavy Workbench."],
-				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 			],
 			"width": 140
 		}

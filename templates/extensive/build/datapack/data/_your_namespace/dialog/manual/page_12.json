@@ -66,7 +66,7 @@
 				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"I\n","\n\n","\"",{"text": "$耲"},"\"\"\"\"#U$",{"text": "$$聦"},"\n","\"",{"text": "U$"},"\"\"\"\"#U$",{"text": "U$"},"\n","\n"],[{"text":"\n","color": "yellow"}, {"translate": "_your_namespace.simplenergy_pulverizing"}],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.raw_steel","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_11"}},
 				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"I\n","\n\n","\"",{"text": "$耶"},"\"\"\"\"#U$",{"text": "$$聦"},"\n","\"",{"text": "U$"},"\"\"\"\"#U$",{"text": "U$"},"\n","\n"],[{"text":"\n","color": "yellow"}, {"translate": "_your_namespace.simplenergy_pulverizing"}],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_ore","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_15"}},
 				{"text": "0","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"I\n","\n\n","\"",{"text": "$耷"},"\"\"\"\"#U$",{"text": "$$聦"},"\n","\"",{"text": "U$"},"\"\"\"\"#U$",{"text": "U$"},"\n","\n"],[{"text":"\n","color": "yellow"}, {"translate": "_your_namespace.simplenergy_pulverizing"}],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.deepslate_steel_ore","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_16"}},
-				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 			],
 			"width": 140
 		}

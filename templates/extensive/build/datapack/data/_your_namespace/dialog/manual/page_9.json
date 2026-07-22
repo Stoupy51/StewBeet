@@ -101,7 +101,7 @@
 				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耭"},{"text": "$耭"},"\n","\"",{"text": "U$"},{"text": "U$"},"\n","\"","U$",{"text": "$聙"},"U$\"\"",{"text": "$$聃"},"\n","\"","U$",{"text": "U$"},"U$\"\"",{"text": "U$"},"\n","\"","U$",{"text": "$聙"},"\n","\"","U$",{"text": "U$"},"\n"],{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"},{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.stick","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_28"}},
 				{"text": "0","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$聟"},{"text": "$耭"},"\n","\"",{"text": "U$"},{"text": "U$"},"U$",{"text": "$$聆"},"\n\"","U$U$U$",{"text": "U$"},"\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.book","color": "gray"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_32"}},
 				[{"text":"\n","color": "dark_gray","font": "minecraft:default"}, {"translate": "_your_namespace.tip_steel_is_the_backbone_of_this_pack"}],
-				"\n\n\n\n\n\n\n"
+				"\n\n\n\n"
 			],
 			"width": 140
 		}
