@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build && bun scripts/prerender.tsx",
+    "dev": "bun scripts/build-search-index.ts && vite",
+    "build": "bun scripts/build-search-index.ts && tsc -b && vite build && bun scripts/prerender.tsx",
     "lint": "eslint .",
     "my_server": "bun server.tsx",
     "preview": "vite preview"

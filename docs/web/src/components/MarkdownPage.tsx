@@ -1,5 +1,5 @@
-import { useEffect, useState, useMemo } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useEffect, useState, useMemo, isValidElement } from 'react';
+import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
@@ -11,6 +11,7 @@ import { Footer } from './Footer';
 import { useLanguage } from '../context/LanguageContext';
 import { useMarkdownContent } from '../context/MarkdownContentContext';
 import { useShiki } from '../hooks/useShiki';
+import { headingTextToSlug, slugify } from '../utils/slugify';
 import { ALERT_ACCENT, GLOW_PRIMARY, GLOW_SECONDARY, LOADER_ACCENT, PROSE_BRAND, SELECTION_BRAND, TEXT_ACCENT, TEXT_ACCENT_HOVER, TOOLBAR_ACCENT } from '../theme';
 
 interface Heading {
@@ -38,6 +39,38 @@ function githubToRawUrl(githubUrl: string): string {
         .replace('/raw/refs/heads/', '/');
 }
 
+/** Plain text of a rendered node — headings may contain <strong>, <code>, links... */
+function getNodeText(node: React.ReactNode): string {
+    if (typeof node === 'string' || typeof node === 'number') {
+        return String(node);
+    }
+    if (Array.isArray(node)) {
+        return node.map(getNodeText).join('');
+    }
+    if (isValidElement<{ children?: React.ReactNode }>(node)) {
+        return getNodeText(node.props.children);
+    }
+    return '';
+}
+
+/** Heading renderer that gives every level an anchor id matching the search index. */
+function makeHeading(Tag: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6') {
+    const Heading = ({ children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
+        <Tag id={slugify(getNodeText(children))} {...props}>{children}</Tag>
+    );
+    Heading.displayName = `Markdown${Tag.toUpperCase()}`;
+    return Heading;
+}
+
+const HEADING_COMPONENTS = {
+    h1: makeHeading('h1'),
+    h2: makeHeading('h2'),
+    h3: makeHeading('h3'),
+    h4: makeHeading('h4'),
+    h5: makeHeading('h5'),
+    h6: makeHeading('h6'),
+};
+
 const ShikiCodeBlock: React.FC<{ code: string; language: string }> = ({ code, language }) => {
     const highlighted = useShiki(code, language, 'dark-plus');
 
@@ -60,6 +93,7 @@ const ShikiCodeBlock: React.FC<{ code: string; language: string }> = ({ code, la
 export const MarkdownPage: React.FC = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
+    const { hash } = useLocation();
     const { language } = useLanguage();
     const src = searchParams.get('src');
     // ssrContent is non-null when pre-rendered by the SSR server (server.tsx)
@@ -121,13 +155,16 @@ export const MarkdownPage: React.FC = () => {
         while ((match = headingRegex.exec(contentWithoutCodeBlocks)) !== null) {
             const level = match[1].length;
             let text = match[2].trim();
-            
+
+            // The id must come from the original heading, since that is what the renderer uses
+            const id = headingTextToSlug(text);
+
             // Remove HTML tags from text
             text = text.replace(/<[^>]*>/g, '');
-            
+
             // Remove markdown bold markers
             text = text.replace(/\*\*/g, '');
-            
+
             // Replace first heading (plugin name) with shorter version but keep emoji
             if (matches.length === 0 && level === 1) {
                 // Extract emoji from the beginning (if exists)
@@ -135,12 +172,7 @@ export const MarkdownPage: React.FC = () => {
                 const emoji = emojiMatch ? emojiMatch[0] : '';
                 text = emoji + pluginName;
             }
-            
-            const id = text
-                .toLowerCase()
-                .replace(/[^\w\s-]/g, '')
-                .replace(/\s+/g, '-');
-            
+
             matches.push({ id, text, level });
         }
         
@@ -190,6 +222,25 @@ export const MarkdownPage: React.FC = () => {
 
         fetchMarkdown();
     }, [src, rawUrl]);
+
+    // Scroll to the heading targeted by the URL hash (search results, shared links).
+    // The content arrives asynchronously, so this cannot rely on the browser's own handling.
+    useEffect(() => {
+        if (loading || !content || !hash) return;
+
+        const scroll = () => {
+            const target = document.getElementById(decodeURIComponent(hash.slice(1)));
+            target?.scrollIntoView({ behavior: 'smooth' });
+        };
+
+        // Second pass corrects the offset once Shiki has replaced the plain code blocks
+        const raf = requestAnimationFrame(scroll);
+        const timeout = window.setTimeout(scroll, 600);
+        return () => {
+            cancelAnimationFrame(raf);
+            window.clearTimeout(timeout);
+        };
+    }, [loading, content, hash]);
 
     // Set page title
     useEffect(() => {
@@ -350,27 +401,7 @@ export const MarkdownPage: React.FC = () => {
                                         </code>
                                     );
                                 },
-                                h1: ({ children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => {
-                                    const id = String(children)
-                                        .toLowerCase()
-                                        .replace(/[^\w\s-]/g, '')
-                                        .replace(/\s+/g, '-');
-                                    return <h1 id={id} {...props}>{children}</h1>;
-                                },
-                                h2: ({ children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => {
-                                    const id = String(children)
-                                        .toLowerCase()
-                                        .replace(/[^\w\s-]/g, '')
-                                        .replace(/\s+/g, '-');
-                                    return <h2 id={id} {...props}>{children}</h2>;
-                                },
-                                h3: ({ children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => {
-                                    const id = String(children)
-                                        .toLowerCase()
-                                        .replace(/[^\w\s-]/g, '')
-                                        .replace(/\s+/g, '-');
-                                    return <h3 id={id} {...props}>{children}</h3>;
-                                },
+                                    ...HEADING_COMPONENTS,
                                 img({ src, alt }: React.ImgHTMLAttributes<HTMLImageElement>) {
                                     // Convert relative GitHub image paths to absolute URLs
                                     let imageSrc = src;
