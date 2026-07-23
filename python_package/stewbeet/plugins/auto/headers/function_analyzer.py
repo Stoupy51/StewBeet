@@ -17,6 +17,15 @@ from .object import Header
 
 FUNCTION_CALL_RE = re.compile(r"function\s+([#]?[\w./-]+:[\w./-]+)")
 
+# A *command* call to a function: the "function" keyword sits at the start of the command (after an
+# optional "$" macro prefix), or right after "run "/"schedule ". This deliberately excludes
+# references that live inside an argument
+# string — most commonly a tellraw suggest_command/run_command like "/function ns:foo" — whose
+# trailing JSON must never be mistaken for a macro ({...}) or a schedule time (100t). Note "run "
+# also appears inside quoted dialog commands (`command:"/execute ... run function ns:foo"`), so a
+# regex match is only a real command when it is NOT inside a string — see is_inside_string.
+COMMAND_CALL_RE = re.compile(r"(?:^\s*\$?\s*|\brun\s+|(?P<sched>\bschedule\s+))function\s+([#]?[\w./-]+:[\w./-]+)")
+
 
 # Class
 class FunctionAnalyzer:
@@ -84,42 +93,58 @@ class FunctionAnalyzer:
             >>> analyzer.analyze_function_calls()
             >>> any(item.startswith("test:caller") for item in mcfunctions["test:earth/on_exit"].within)
             True
+
+            A function name that only appears inside a tellraw suggest_command is recorded as a
+            "string in <caller>" reference (mirroring the "advancement <path>" convention), without
+            dragging the surrounding JSON into the header as macro data:
+            >>> caller = Header(
+            ...     "test:menu",
+            ...     [],
+            ...     [],
+            ...     'tellraw @a [{"text":"[Restart]","click_event":{"action":"suggest_command","command":"/function test:restart"}}]',
+            ... )
+            >>> restart = Header("test:restart", [], [], "")
+            >>> mcfunctions = {"test:menu": caller, "test:restart": restart}
+            >>> analyzer = FunctionAnalyzer(None, mcfunctions)  # type: ignore[arg-type]
+            >>> analyzer.analyze_function_calls()
+            >>> mcfunctions["test:restart"].within
+            ['string in test:menu']
+
+            A macro function call (leading "$") is a real command call, not a string reference:
+            >>> caller = Header("test:caller", [], [], '$function test:target {slot:"$(slot)"}')
+            >>> target = Header("test:target", [], [], "")
+            >>> mcfunctions = {"test:caller": caller, "test:target": target}
+            >>> analyzer = FunctionAnalyzer(None, mcfunctions)  # type: ignore[arg-type]
+            >>> analyzer.analyze_function_calls()
+            >>> mcfunctions["test:target"].within
+            ['test:caller {slot:"$(slot)"}']
         """
         # For each mcfunction file, look at each line
         for path, header in self.mcfunctions.items():
             for line in header.content.split("\n"):
 
-                # If the line calls a function
-                if "function " in line:
-                    # Split the line on "function " to get before and after parts
-                    split_on_function: list[str] = line.split("function ", 1)
-                    before_function: str = split_on_function[0]
-                    after_function: str = split_on_function[1].replace("\n", "")
+                # Skip lines with no function reference at all
+                if "function " not in line:
+                    continue
 
-                    # Get the called function
-                    splitted: list[str] = after_function.split(" ")
-                    calling: str = splitted[0].replace('"', '').replace("'", "")
-                    called_functions: list[str] = [calling]
+                # A real command call anchors "function" at the command start or after run/schedule,
+                # AND is not inside a quoted argument string (a dialog button's
+                # command:"/execute ... run function ns:foo" also contains "run function").
+                # Its payload (macros / schedule time) and execution context only apply to THAT call.
+                command_match = next(
+                    (m for m in COMMAND_CALL_RE.finditer(line) if not self.is_inside_string(line, m.start())),
+                    None,
+                )
+                if command_match is not None:
+                    primary: str = command_match.group(2)
 
-                    # Also detect nested function references in arguments, e.g.
-                    # function #tag:run {with: {on_exit_point: "function namespace:path"}}
-                    for match in FUNCTION_CALL_RE.finditer(line):
-                        candidate = match.group(1)
-                        if candidate not in called_functions:
-                            called_functions.append(candidate)
+                    # Everything after the called function is macro data ({...}) or a schedule time
+                    more_text: str = line[command_match.end():].replace("\n", "").strip()
+                    more: str = f" {more_text}" if more_text else ""
 
-                    # Get additional text like macros, ex: function iyc:function {id:"51"}
-                    more: str = ""
-                    if len(splitted) > 1:
-                        more = " " + " ".join(splitted[1:])  # Add Macros or schedule time
-
-                    # Check if "schedule" appears right before "function" (loses execution context)
-                    is_scheduled: bool = before_function.rstrip().endswith("schedule")
-
-                    # Parse execution context from the line (only if not scheduled)
-                    line_context: str | None = None
-                    if not is_scheduled:
-                        line_context = parse_execution_context_from_line(line)
+                    # "schedule function ..." loses execution context (it runs on a later tick)
+                    is_scheduled: bool = command_match.group("sched") is not None
+                    line_context: str | None = None if is_scheduled else parse_execution_context_from_line(line)
 
                     # Create the caller string with context if available
                     caller_info: str = path + more
@@ -133,13 +158,62 @@ class FunctionAnalyzer:
                         # Mark scheduled calls with a special marker so context analyzer knows not to inherit context
                         caller_info += " [ scheduled ]"
 
-                    # If a called function is registered, append the caller info
+                    # The primary call plus any nested references inside its macro payload (e.g.
+                    # function #tag:run {with: {on_exit_point: "function ns:path"}}) share this caller info.
+                    called_functions: list[str] = [primary]
+                    for match in FUNCTION_CALL_RE.finditer(line):
+                        candidate: str = match.group(1)
+                        if candidate not in called_functions:
+                            called_functions.append(candidate)
                     for called in called_functions:
                         if called in self.mcfunctions and caller_info not in self.mcfunctions[called].within:
                             self.mcfunctions[called].within.append(caller_info)
+
+                # No real command call: the reference lives inside an argument string (tellraw
+                # suggest_command/run_command, etc.). Record it as "string in <caller>", mirroring the
+                # "advancement <path>" convention, so the header shows it is only a string reference.
+                # The "string" prefix also keeps the context analyzer from inheriting the caller's
+                # execution context — a clicked chat command runs as the player, not in that context.
+                else:
+                    for match in FUNCTION_CALL_RE.finditer(line):
+                        candidate = match.group(1)
+                        caller_ref: str = f"string in {path}"
+                        if candidate in self.mcfunctions and caller_ref not in self.mcfunctions[candidate].within:
+                            self.mcfunctions[candidate].within.append(caller_ref)
 
     def analyze_all_relationships(self) -> None:
         """ Analyze all function relationships. """
         self.analyze_function_tags()
         self.analyze_advancements()
         self.analyze_function_calls()
+
+    @staticmethod
+    def is_inside_string(line: str, pos: int) -> bool:
+        """ Return whether character index ``pos`` in ``line`` sits inside a double-quoted string.
+
+        Counts unescaped double quotes before ``pos``; an odd count means an unclosed string is open.
+
+        Args:
+            line (str): The line to scan.
+            pos  (int): The character index whose string-membership is tested.
+
+        Examples:
+            >>> FunctionAnalyzer.is_inside_string('run function a:b', 4)
+            False
+            >>> FunctionAnalyzer.is_inside_string('command:"/execute run function a:b"', 26)
+            True
+            >>> FunctionAnalyzer.is_inside_string('data set value {a:"x"} run function a:b', 30)
+            False
+        """
+        quotes: int = 0
+        i: int = 0
+        while i < pos and i < len(line):
+            char: str = line[i]
+            if char == "\\":
+                i += 2  # Skip the escaped character
+                continue
+            if char == '"':
+                quotes += 1
+            i += 1
+        return quotes % 2 == 1
+
