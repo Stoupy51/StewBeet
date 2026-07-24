@@ -39,6 +39,11 @@ class ContextAnalyzer:
             >>> ctx_analyzer.determine_execution_context("test:func")
             'as the player & at current position'
 
+            A dialog button runs as the clicking player, same as an advancement reward:
+            >>> hd = Header("test:menu", ["dialog test:config"], [], "say hi")
+            >>> ContextAnalyzer({"test:menu": hd}).determine_execution_context("test:menu")
+            'as the player & at current position'
+
             Function called by tick tag returns None:
             >>> h2 = Header("test:tick", ["#minecraft:tick"], [], "say tick")
             >>> ctx_analyzer2 = ContextAnalyzer({"test:tick": h2})
@@ -90,8 +95,8 @@ class ContextAnalyzer:
             if " [ scheduled ]" in caller:
                 continue
 
-            # Advancement functions are executed as the player at current position
-            if caller.startswith("advancement "):
+            # Advancement rewards and dialog buttons both run as the clicking/earning player
+            if caller.startswith(("advancement ", "dialog ")):
                 self.execution_contexts[func_path] = "as the player & at current position"
                 return self.execution_contexts[func_path]
 

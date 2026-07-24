@@ -28,3 +28,15 @@ scoreboard players add #count {ns}.data 1
 say Work complete
 tellraw @a [{{"text":"count: "}},{{"score":{{"name":"#count","objective":"{ns}.data"}}}}]
 """)
+
+    # Reachable ONLY from a dialog button: no mcfunction, tag, or advancement calls it.
+    # Without the dialog pass in FunctionAnalyzer this would be reported as "@within ???".
+    write_function(f"{ns}:menu_from_dialog", "say Opened from a dialog button")
+
+    ctx.data[ns].dialogs["config"] = Dialog({
+        "type": "minecraft:multi_action",
+        "title": {"text": "Test"},
+        "actions": [
+            {"label": {"text": "Open"}, "action": {"type": "run_command", "command": f"/function {ns}:menu_from_dialog"}},
+        ],
+    })
