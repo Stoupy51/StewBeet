@@ -237,7 +237,7 @@ class FunctionAnalyzer:
         self.analyze_function_tags()
         self.analyze_advancements()
         self.analyze_function_calls()
-        self.analyze_dialogs()
+        self.analyze_dialogs()  # Last: ContextAnalyzer takes the FIRST caller, so mcfunction callers keep priority
 
     @staticmethod
     def is_inside_string(line: str, pos: int) -> bool:
