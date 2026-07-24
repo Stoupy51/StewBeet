@@ -71,6 +71,57 @@ class FunctionAnalyzer:
                 if function_path in self.mcfunctions:
                     self.mcfunctions[function_path].within.append(to_be_called)
 
+    def analyze_dialogs(self) -> None:
+        """ Analyze dialogs and build relationships.
+
+        A dialog's ``run_command`` / ``suggest_command`` actions carry their command as a plain
+        string (``"command": "/function ns:menu"``). Nothing else in this plugin sees those:
+        :meth:`analyze_function_calls` only scans mcfunction bodies. Without this pass, a function
+        reachable *only* from a dialog button is reported as an orphan (``@within ???``), which is
+        actively misleading — it looks like dead code.
+
+        The dialog is scanned as **serialized text**, never through ``.data``: reading ``.data``
+        calls beet's ``ensure_deserialized()``, which replaces the file's stored content with the
+        parsed form, so the dialog would then be re-encoded on output and lose its original
+        formatting. ``.text`` goes through the file's own encoder — the same one used to write it —
+        so analysis stays read-only. Scanning the whole serialized dialog also means this does not
+        need to know where in the dialog schema a command may appear.
+
+        Examples:
+            >>> from types import SimpleNamespace
+            >>> dialog = SimpleNamespace(
+            ...     text='{"actions":[{"action":{"type":"run_command","command":"/function test:menu"}}]}'
+            ... )
+            >>> ctx = SimpleNamespace(data=SimpleNamespace(dialogs={"test:config": dialog}))
+            >>> menu = Header("test:menu", [], [], "")
+            >>> FunctionAnalyzer(ctx, {"test:menu": menu}).analyze_dialogs()  # type: ignore[arg-type]
+            >>> menu.within
+            ['dialog test:config']
+
+            A dialog that references no function leaves every header untouched:
+            >>> dialog = SimpleNamespace(text='{"type":"minecraft:notice","title":"hi"}')
+            >>> ctx = SimpleNamespace(data=SimpleNamespace(dialogs={"test:notice": dialog}))
+            >>> menu = Header("test:menu", [], [], "")
+            >>> FunctionAnalyzer(ctx, {"test:menu": menu}).analyze_dialogs()  # type: ignore[arg-type]
+            >>> menu.within
+            []
+
+            The same function referenced by two buttons is only listed once:
+            >>> dialog = SimpleNamespace(text='["/function test:menu", "/function test:menu"]')
+            >>> ctx = SimpleNamespace(data=SimpleNamespace(dialogs={"test:config": dialog}))
+            >>> menu = Header("test:menu", [], [], "")
+            >>> FunctionAnalyzer(ctx, {"test:menu": menu}).analyze_dialogs()  # type: ignore[arg-type]
+            >>> menu.within
+            ['dialog test:config']
+        """
+        for dialog_path, dialog in self.ctx.data.dialogs.items():
+            # Mirrors the "advancement <path>" convention used by analyze_advancements
+            to_be_called: str = f"dialog {dialog_path}"
+            for match in FUNCTION_CALL_RE.finditer(dialog.text):
+                called: str = match.group(1)
+                if called in self.mcfunctions and to_be_called not in self.mcfunctions[called].within:
+                    self.mcfunctions[called].within.append(to_be_called)
+
     def analyze_function_calls(self) -> None:
         """ Analyze function calls within mcfunction files.
 
@@ -186,6 +237,10 @@ class FunctionAnalyzer:
         self.analyze_function_tags()
         self.analyze_advancements()
         self.analyze_function_calls()
+        # Last on purpose: ContextAnalyzer resolves @executed from the FIRST caller it recognises,
+        # so a function called both from a dialog button and from another function keeps the
+        # caller's more specific context ("as @a[...]") instead of the generic player one.
+        self.analyze_dialogs()
 
     @staticmethod
     def is_inside_string(line: str, pos: int) -> bool:
