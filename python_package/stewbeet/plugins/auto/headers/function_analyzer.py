@@ -237,9 +237,6 @@ class FunctionAnalyzer:
         self.analyze_function_tags()
         self.analyze_advancements()
         self.analyze_function_calls()
-        # Last on purpose: ContextAnalyzer resolves @executed from the FIRST caller it recognises,
-        # so a function called both from a dialog button and from another function keeps the
-        # caller's more specific context ("as @a[...]") instead of the generic player one.
         self.analyze_dialogs()
 
     @staticmethod
