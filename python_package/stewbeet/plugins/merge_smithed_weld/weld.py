@@ -14,7 +14,7 @@ from beet import Context, DataPack, ProjectCache, ResourcePack
 
 from ...dependencies.download_manager import get_lib_paths
 from ..archive import ConstantTimeZipFile, get_consistent_timestamp
-from ..initialize.source_lore_font import find_pack_png
+from ..initialize.project_images import find_pack_png
 
 
 def gather_packs(ctx: Context, pack_type: str) -> list[str]:

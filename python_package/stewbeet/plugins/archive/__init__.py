@@ -11,7 +11,7 @@ import stouputils as stp
 from beet import Context, DataPack, ResourcePack
 
 from ...core.__memory__ import Mem
-from ..initialize.source_lore_font import find_pack_png
+from ..initialize.project_images import find_pack_png
 
 
 # Silent mode entry point

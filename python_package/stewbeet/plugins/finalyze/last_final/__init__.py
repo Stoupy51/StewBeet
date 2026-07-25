@@ -4,7 +4,8 @@ import stouputils as stp
 from beet import Context, PngFile
 
 from ....core import Item, Mem
-from ...initialize.source_lore_font import create_source_lore_font, find_pack_png
+from ...initialize.project_images import find_pack_png
+from ...initialize.source_lore_font import TOOLTIP_FONT, create_source_lore_font, uses_font
 
 
 # Main entry point
@@ -12,10 +13,10 @@ from ...initialize.source_lore_font import create_source_lore_font, find_pack_pn
 def beet_default(ctx: Context):
 	Mem.ctx = ctx
 
-	# If source lore is present and there are item definitions using it, create the source lore font
+	# If the source lore uses the tooltip font and there are item definitions using it, create the font
 	pack_icon_path: str = Mem.ctx.meta.get("stewbeet", {}).get("pack_icon_path", "")
 	source_lore: str = Mem.ctx.meta.get("stewbeet", {}).get("source_lore", "")
-	if pack_icon_path and source_lore:
+	if source_lore and uses_font(source_lore, f"{ctx.project_id}:{TOOLTIP_FONT}"):
 		for item in Mem.definitions.keys():
 			obj = Item.from_id(item)
 			if source_lore in obj.components.get("lore", []):

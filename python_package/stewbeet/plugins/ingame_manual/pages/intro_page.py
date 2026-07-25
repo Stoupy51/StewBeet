@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 from beet.core.utils import TextComponent
 from PIL import Image
 
-from ...initialize.source_lore_font import find_pack_png
+from ...initialize.project_images import find_pack_png
 from ..glyphs import MEDIUM_NONE_FONT
 from ..images import careful_resize
 from .base import Page
