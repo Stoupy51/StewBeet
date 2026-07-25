@@ -49,6 +49,7 @@ description: ""  # or custom description
 meta:
   stewbeet:
     source_lore: ""          # or custom text component
+    source_lore_color: "auto"  # or "#55FFFF" / "gold" / [85, 255, 255] / false
     textures_folder: "assets/textures"
     manual:
       name: ""                   # defaults to "{project_name} Manual"
@@ -59,7 +60,8 @@ meta:
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `description` | TextComponent | `""` | Project description for pack.mcmeta. Defaults to "{project_name} [{project_version}] by {project_author}" |
-| `source_lore` | TextComponent | `""` | Lore text for item identification. Defaults [{"text":"ICON"},{"text":" {project_name}","italic":true,"color":"blue"}] |
+| `source_lore` | TextComponent | `""` | Lore text for item identification. Defaults to the logo glyph followed by the project name, both rendered with the generated `{project_id}:tooltip` font |
+| `source_lore_color` | string \| list \| false | `"auto"` | Color of the tooltip font. `"auto"` derives it from `pack.png`, any Pillow color (`"#55FFFF"`, `"gold"`, `[85, 255, 255]`) forces it, `false` keeps the packaged gold |
 | `textures_folder` | string | `"assets/textures"` | Path to the textures folder |
 | `manual.name` | string | `""` | Name for the in-game manual. Defaults to "{project_name} Manual" |
 
@@ -82,9 +84,42 @@ Automatically generates pack.mcmeta files for both datapacks and resource packs 
 - **🏷️ Source Lore**: Creates item identification lore
 - **📖 Manual Name**: Sets default manual name if not specified
 
+### 🏷️ Source Lore Tooltip Font
+When `source_lore` is `"auto"` (or unset), items get a branded lore line rendered with a font
+generated in your namespace, `{project_id}:tooltip`:
+
+| Provider | Texture | Role |
+|----------|---------|------|
+| `space` | – | Provides the 2px spacer glyph `뀁` between the logo and the name |
+| `bitmap` | `{project_id}:font/tooltip.png` | 8×8 pixel character atlas (printable ASCII + CP437 extras) used to draw the project name |
+| `bitmap` | `{project_id}:tooltip/tooltip.png` | The `ꀁ` glyph showing your `pack.png` logo (skipped when the project has no logo) |
+
+The font (and the lore) is only generated when at least one item definition actually carries the
+source lore, so a project that overrides every lore pays nothing for it.
+
+**🎨 Automatic recoloring**<br>
+The packaged atlas ships in gold. By default (`source_lore_color: "auto"`) StewBeet picks the
+dominant color of your `pack.png` — ignoring transparent, gray and dark pixels — then rotates the
+atlas hues onto it. Rotating instead of flattening keeps the vertical gradient of the glyphs, so the
+result still looks hand-made rather than a single flat color.
+
+```yaml
+meta:
+  stewbeet:
+    source_lore_color: "auto"        # derive from pack.png (default)
+    # source_lore_color: "#55FFFF"   # force a color (anything Pillow parses: hex, "gold", "rgb(...)")
+    # source_lore_color: [85, 255, 255]
+    # source_lore_color: false       # keep the packaged gold, no recolor at all
+```
+
+**🖌️ Bringing your own atlas**<br>
+Drop a `tooltip.png` next to your `pack.png` (i.e. `assets/tooltip.png`, or `src/tooltip.png`) and it
+replaces the packaged atlas verbatim — never recolored, since you already chose its colors. It must
+keep the same 16×16 grid layout of 8×8 glyphs.
+
 ### 🖼️ Pack Icon Management
 Automatically handles pack.png icon distribution:
-- 🔍 Searches for pack.png in common locations (`src/pack.png`, `assets/pack.png`, `*pack.png`)
+- 🔍 Searches for pack.png next to the beet project directory (`src/pack.png`, `assets/pack.png`, then `*pack.png`)
 - 📦 Copies pack.png to both datapack and resource pack outputs
 - 🎨 Uses `PngFile` for proper beet integration
 - ✅ Ensures consistent branding across both pack types

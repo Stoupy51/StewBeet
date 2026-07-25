@@ -319,8 +319,16 @@ Définit le marquage de lore par défaut appliqué aux items personnalisés gén
 
 ```yaml
 source_lore: "auto" # Format TextComponents
+source_lore_color: "auto" # "auto" | une couleur | false
 ```
-Ajouté au lore des items personnalisés, `"auto"` utilise par défaut l'icône du projet + le nom.
+Ajouté au lore des items personnalisés, `"auto"` utilise par défaut l'icône du projet + le nom, tous
+deux dessinés avec la police `{id}:tooltip` générée.
+
+`source_lore_color` contrôle les couleurs de cette police : `"auto"` reprend la couleur dominante de
+votre `pack.png`, n'importe quelle couleur Pillow la force (`"#55FFFF"`, `"gold"`,
+`[85, 255, 255]`), et `false` conserve le doré fourni par défaut. Placer votre propre
+`assets/tooltip.png` à côté du `pack.png` remplace entièrement l'atlas de caractères (et il n'est
+jamais recoloré).
 
 #### 📦 Dépendances de Chargement
 Définit les contrôles de dépendances à l'exécution pour signaler les datapacks manquants ou obsolètes.

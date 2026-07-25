@@ -320,8 +320,15 @@ Defines default lore branding for generated custom items.
 
 ```yaml
 source_lore: "auto" # TextComponents format
+source_lore_color: "auto" # "auto" | any color | false
 ```
-Appended to custom items lore, `"auto"` defaults to project icon + name.
+Appended to custom items lore, `"auto"` defaults to project icon + name, both drawn with the
+generated `{id}:tooltip` font.
+
+`source_lore_color` controls that font's colors: `"auto"` takes the dominant color of your
+`pack.png`, any Pillow color forces it (`"#55FFFF"`, `"gold"`, `[85, 255, 255]`), and `false` keeps
+the packaged gold. Dropping your own `assets/tooltip.png` next to `pack.png` replaces the character
+atlas entirely (and is never recolored).
 
 #### 📦 Load Dependencies
 Defines runtime dependency checks shown when required datapacks are missing or outdated.

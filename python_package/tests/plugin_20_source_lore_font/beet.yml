@@ -1,0 +1,35 @@
+
+# Test: stewbeet.plugins.initialize.source_lore_font
+# Verifies the "auto" source lore is built on the generated <ns>:tooltip font, that the packaged
+# character atlas is recolored from the colors of assets/pack.png, and that source_lore_color
+# accepts an explicit color or disables the recolor entirely.
+
+id: "tns"
+name: "Test Source Lore Font"
+version: "1.0.0"
+author: "test"
+minecraft: "26.2"
+
+directory: "."
+output: "build"
+
+require:
+    - "stewbeet"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+resource_pack:
+    name: "resource_pack"
+    load: ["src"]
+
+pipeline:
+    - "src.definitions"
+    - "stewbeet.plugins.finalyze.last_final"
+    - "src.assertions"
+
+meta:
+    stewbeet:
+        source_lore: "auto"
+        source_lore_color: "auto"

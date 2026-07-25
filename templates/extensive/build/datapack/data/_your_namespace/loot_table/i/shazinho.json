@@ -32,8 +32,8 @@
 								"minecraft:lore": [
 									[
 										"",
-										{"text": "I","color": "white","italic": false,"font": "_your_namespace:icons"},
-										[{"text":" ","italic": true,"color": "blue"}, {"translate": "_your_namespace.extensive_template"}]
+										{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"},
+										[{"text":"뀁","italic": false,"color": "white","font": "_your_namespace:tooltip"}, {"translate": "_your_namespace.extensive_template"}]
 									]
 								]
 							}

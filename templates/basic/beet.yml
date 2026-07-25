@@ -105,8 +105,11 @@ meta:
             datapack: []
             # Paths to copy the resource pack(s) to (See extensive_template/beet.yml for example)
             resource_pack: []
-        # Custom item lore configuration. If set to "auto" or unset, uses project icon followed by PROJECT_NAME
+        # Custom item lore configuration. If set to "auto" or unset, uses project icon followed by PROJECT_NAME (rendered with the generated tooltip font)
         source_lore: "auto"
+        # Color of the tooltip font used by source_lore: "auto" (taken from the pack.png logo), any color ("#55FFFF", "gold", [85, 255, 255]), or false to keep the packaged gold.
+        # A tooltip.png placed in "assets/" (next to pack.png) replaces the packaged character atlas and is never recolored.
+        source_lore_color: "auto"
         # Custom dependencies to check at runtime alongside the official ones.
         # Each entry key is the dependency namespace; the value is a dict with:
         #   name    : display name used in error messages

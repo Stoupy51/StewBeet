@@ -21,7 +21,7 @@ from stouputils.typing import JsonDict
 
 from ...core import Mem, set_json_encoder, text_component_to_str, write_function, write_load_file
 from ...core.utils.text_component import item_id_to_text_component
-from ..initialize.source_lore_font import find_pack_png
+from ..initialize.project_images import find_pack_png
 from .glyphs import BOOK_FONT, HOME_FONT, NONE_FONT
 
 if TYPE_CHECKING:

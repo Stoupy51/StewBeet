@@ -42,15 +42,16 @@
 				[
 					"",
 					{
-						"text": "I",
+						"text": "ꀁ",
 						"color": "white",
 						"italic": false,
-						"font": "_your_namespace:icons"
+						"font": "_your_namespace:tooltip"
 					},
 					[{
-						"text":" ",
-						"italic": true,
-						"color": "blue"
+						"text":"뀁",
+						"italic": false,
+						"color": "white",
+						"font": "_your_namespace:tooltip"
 					}, {"translate": "_your_namespace.extensive_template"}]
 				]
 			],

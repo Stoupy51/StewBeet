@@ -16,7 +16,8 @@ from stouputils.typing import JsonDict
 from ...core import LATEST_MC_VERSION, MORE_ASSETS_PACK_FORMATS, MORE_DATA_PACK_FORMATS, MORE_DATA_VERSIONS, Mem, set_json_encoder
 from ...dependencies.official_libs import OFFICIAL_LIBS
 from ..livereload import patch_livereload_for_copy_destinations
-from .source_lore_font import find_pack_png, prepare_source_lore_font
+from .project_images import find_pack_png
+from .source_lore_font import SPACER_CHAR, TOOLTIP_FONT, prepare_source_lore_font
 
 
 # Main entry point
@@ -55,10 +56,12 @@ def beet_default(ctx: Context, silent: bool = False) -> Generator[None]:
 		# Preprocess source lore
 		source_lore: TextComponent = Mem.ctx.meta.get("stewbeet", {}).get("source_lore", "")
 		if not source_lore or source_lore == "auto":
+			# The project name is rendered with the tooltip font, prefixed by the logo glyph when there is a pack.png
+			name: JsonDict = {"text": ctx.project_name, "italic": False, "color": "white", "font": f"{ctx.project_id}:{TOOLTIP_FONT}"}
 			if not find_pack_png():
-				Mem.ctx.meta["stewbeet"]["source_lore"] = [{"text": ctx.project_name,"italic":True,"color":"blue"}]
+				Mem.ctx.meta["stewbeet"]["source_lore"] = [name]
 			else:
-				Mem.ctx.meta["stewbeet"]["source_lore"] = [{"text":"ICON"},{"text":f" {ctx.project_name}","italic":True,"color":"blue"}]
+				Mem.ctx.meta["stewbeet"]["source_lore"] = [{"text":"ICON"}, {**name, "text": f"{SPACER_CHAR}{ctx.project_name}"}]
 		Mem.ctx.meta["stewbeet"]["pack_icon_path"] = prepare_source_lore_font(Mem.ctx.meta.get("stewbeet", {}).get("source_lore", []))
 
 		# Preprocess manual name
