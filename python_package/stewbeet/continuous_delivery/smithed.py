@@ -54,7 +54,7 @@ def validate_config(smithed_config: dict[str, str]) -> tuple[str, str, str]:
 
 	return (
 		smithed_config["project_id"],
-		smithed_config["project_name"],
+		smithed_config["project_name"].replace(" ", ""),
 		smithed_config["version"]
 	)
 
