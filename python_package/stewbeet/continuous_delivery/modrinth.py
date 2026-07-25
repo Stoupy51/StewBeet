@@ -62,7 +62,7 @@ def validate_config(modrinth_config: JsonDict) -> tuple[str, str, str, str, str,
 		modrinth_config["authors"] = [x.strip() for x in modrinth_config["authors"].split(",")]
 
 	return (
-		modrinth_config["project_name"],
+		modrinth_config["project_name"].replace(" ", ""),
 		modrinth_config["version"],
 		modrinth_config["slug"],
 		modrinth_config["summary"],
