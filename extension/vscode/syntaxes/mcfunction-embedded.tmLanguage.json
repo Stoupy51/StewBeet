@@ -47,7 +47,7 @@
       "patterns": [
         {
           "applyEndPatternLast": 1,
-          "begin": "^\\s*(#[>!#])((?:(?![\"'][^\"'\n]*\\)[ \\t]*$).)+)",
+          "begin": "^\\s*(#[>!#])((?:(?![\"'](?:[ \\t]*,[ \\t]*[^\\n()]*)?[ \\t]*\\)[ \\t]*$).)+)",
           "beginCaptures": {
             "1": {
               "name": "comment.block.mcfunction"
@@ -75,8 +75,8 @@
               "name": "comment.line.mcfunction"
             }
           },
-          "comment": "Stops before the quote that closes an inline write_* call, otherwise the comment eats the closing \")\" (same convention as #say).",
-          "match": "^\\s*#(?!\\{)(?:(?![\"'][^\"'\n]*\\)[ \\t]*$)(?:[^\\\\\n]|\\\\[^n]))*",
+          "comment": "Stops before the quote that closes an inline write_* call, otherwise the comment eats the closing \")\" (same convention as #say). The tail between quote and \")\" must look like a Python argument list, so prose such as 'or \"name\" field)' keeps its quotes.",
+          "match": "^\\s*#(?!\\{)(?:(?![\"'](?:[ \\t]*,[ \\t]*[^\\n()]*)?[ \\t]*\\)[ \\t]*$)(?:[^\\\\\n]|\\\\[^n]))*",
           "name": "meta.comments"
         }
       ]
@@ -89,8 +89,8 @@
               "name": "comment.line.mcfunction"
             }
           },
-          "comment": "Stops before the quote that closes an inline write_* call, otherwise the comment eats the closing \")\" (same convention as #say).",
-          "match": "#(?!\\{)(?:(?![\"'][^\"'\n]*\\)[ \\t]*$)(?:[^\\\\\n]|\\\\[^n]))*",
+          "comment": "Stops before the quote that closes an inline write_* call, otherwise the comment eats the closing \")\" (same convention as #say). The tail between quote and \")\" must look like a Python argument list, so prose such as 'or \"name\" field)' keeps its quotes.",
+          "match": "#(?!\\{)(?:(?![\"'](?:[ \\t]*,[ \\t]*[^\\n()]*)?[ \\t]*\\)[ \\t]*$)(?:[^\\\\\n]|\\\\[^n]))*",
           "name": "meta.comments"
         }
       ]
@@ -436,7 +436,7 @@
             }
           },
           "comment": "A say block must also end where the *embedded Python string* ends, otherwise it swallows the closing quote and the rest of the file: while a begin/end rule is open, TextMate never tests the parent injection's end pattern. So stop at a literal \\n escape (same convention as #comments_inline), at a Python triple quote, and at a quote that closes the write_* call on this line.",
-          "end": "(?=\\\\n)|(?=\"\"\")|(?=''')|(?=[\"'][^\"'\\n]*\\)[ \\t]*$)|\\n",
+          "end": "(?=\\\\n)|(?=\"\"\")|(?=''')|(?=[\"'](?:[ \\t]*,[ \\t]*[^\\n()]*)?[ \\t]*\\)[ \\t]*$)|\\n",
           "name": "meta.say.mcfunction",
           "patterns": [
             {
@@ -470,7 +470,7 @@
             }
           },
           "comment": "A say block must also end where the *embedded Python string* ends, otherwise it swallows the closing quote and the rest of the file: while a begin/end rule is open, TextMate never tests the parent injection's end pattern. So stop at a literal \\n escape (same convention as #comments_inline), at a Python triple quote, and at a quote that closes the write_* call on this line.",
-          "end": "(?=\\\\n)|(?=\"\"\")|(?=''')|(?=[\"'][^\"'\\n]*\\)[ \\t]*$)|\\n",
+          "end": "(?=\\\\n)|(?=\"\"\")|(?=''')|(?=[\"'](?:[ \\t]*,[ \\t]*[^\\n()]*)?[ \\t]*\\)[ \\t]*$)|\\n",
           "name": "meta.say.mcfunction",
           "patterns": [
             {
