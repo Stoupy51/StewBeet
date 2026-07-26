@@ -72,6 +72,62 @@ test("line comment pattern still stops at a literal \\n escape", () => {
   assert.equal(m[0], "# hello ");
 });
 
+// ─── Comments must not swallow the end of an inline write_* call ─────────────
+//
+// write_versioned_function("ns/tick", "# Hijacked map tick (no-op placeholder)")
+// used to highlight the trailing `")` as part of the comment, because the
+// comment pattern ran to end of line regardless of the Python string ending.
+
+const COMMENT_PATTERNS = () => [
+  ["line", embedded.repository.comments.patterns.find(p => p.match && p.match.includes("^\\s*#(?!\\{)"))],
+  ["inline", embedded.repository.comments_inline.patterns.find(p => p.match)],
+];
+
+test("comment patterns stop before the quote closing an inline write_* call", () => {
+  const cases = [
+    // [mcfunction content + python tail, what the comment must cover]
+    ['# Hijacked map tick (no-op placeholder)")', "# Hijacked map tick (no-op placeholder)"],
+    ["# Hijacked map tick (no-op placeholder)')", "# Hijacked map tick (no-op placeholder)"],
+    ['# Some comment", prepend=True)', "# Some comment"],
+    ['# Trailing spaces after paren")  ', "# Trailing spaces after paren"],
+  ];
+  for (const [name, pattern] of COMMENT_PATTERNS()) {
+    assert.ok(pattern, `${name} comment pattern not found`);
+    const re = new RegExp(pattern.match);
+    for (const [line, expected] of cases) {
+      const m = line.match(re);
+      assert.ok(m, `${name}: no match in ${JSON.stringify(line)}`);
+      assert.equal(m[0], expected, `${name}: wrong end in ${JSON.stringify(line)}`);
+    }
+  }
+});
+
+test("comment patterns still run to end of line inside a multiline block", () => {
+  const cases = [
+    "# Reset the counter (per player)",       // parenthesis, but no closing quote
+    '# Increment "down count',                 // lone quote
+    "# Kill entities (tagged) then continue",
+  ];
+  for (const [name, pattern] of COMMENT_PATTERNS()) {
+    const re = new RegExp(pattern.match);
+    for (const line of cases) {
+      const m = line.match(re);
+      assert.ok(m, `${name}: no match in ${JSON.stringify(line)}`);
+      assert.equal(m[0], line, `${name}: comment must reach end of line in ${JSON.stringify(line)}`);
+    }
+  }
+});
+
+test("block comment begin stops before the quote closing an inline write_* call", () => {
+  const pattern = embedded.repository.comments.patterns.find(p => p.begin && p.begin.includes("#[>!#]"));
+  assert.ok(pattern, "block comment pattern not found");
+  const re = new RegExp(pattern.begin);
+  const m = '#> Hijacked map (placeholder)")'.match(re);
+  assert.ok(m);
+  assert.equal(m[0], "#> Hijacked map (placeholder)");
+  assert.equal(m[2], " Hijacked map (placeholder)");
+});
+
 // ─── say blocks must not swallow the end of the Python string ────────────────
 //
 // A begin/end rule hides the parent injection's end pattern from the tokenizer,

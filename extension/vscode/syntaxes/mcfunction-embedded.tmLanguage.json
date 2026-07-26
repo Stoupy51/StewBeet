@@ -47,7 +47,7 @@
       "patterns": [
         {
           "applyEndPatternLast": 1,
-          "begin": "^\\s*(#[>!#])(.+)$",
+          "begin": "^\\s*(#[>!#])((?:(?![\"'][^\"'\n]*\\)[ \\t]*$).)+)",
           "beginCaptures": {
             "1": {
               "name": "comment.block.mcfunction"
@@ -75,7 +75,8 @@
               "name": "comment.line.mcfunction"
             }
           },
-          "match": "^\\s*#(?!\\{)(?:[^\\\\\n]|\\\\[^n])*",
+          "comment": "Stops before the quote that closes an inline write_* call, otherwise the comment eats the closing \")\" (same convention as #say).",
+          "match": "^\\s*#(?!\\{)(?:(?![\"'][^\"'\n]*\\)[ \\t]*$)(?:[^\\\\\n]|\\\\[^n]))*",
           "name": "meta.comments"
         }
       ]
@@ -88,7 +89,8 @@
               "name": "comment.line.mcfunction"
             }
           },
-          "match": "#(?!\\{)(?:[^\\\\\n]|\\\\[^n])*",
+          "comment": "Stops before the quote that closes an inline write_* call, otherwise the comment eats the closing \")\" (same convention as #say).",
+          "match": "#(?!\\{)(?:(?![\"'][^\"'\n]*\\)[ \\t]*$)(?:[^\\\\\n]|\\\\[^n]))*",
           "name": "meta.comments"
         }
       ]
