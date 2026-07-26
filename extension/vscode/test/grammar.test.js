@@ -89,7 +89,10 @@ test("comment patterns stop before the quote closing an inline write_* call", ()
     ['# Hijacked map tick (no-op placeholder)")', "# Hijacked map tick (no-op placeholder)"],
     ["# Hijacked map tick (no-op placeholder)')", "# Hijacked map tick (no-op placeholder)"],
     ['# Some comment", prepend=True)', "# Some comment"],
+    ['# Some comment", overwrite=True, tags=["ns:my_tag"])', "# Some comment"],
     ['# Trailing spaces after paren")  ', "# Trailing spaces after paren"],
+    // Quotes inside the comment must not be mistaken for the closing quote.
+    [`# Override with 'name' or "name" field")`, `# Override with 'name' or "name" field`],
   ];
   for (const [name, pattern] of COMMENT_PATTERNS()) {
     assert.ok(pattern, `${name} comment pattern not found`);
@@ -107,6 +110,12 @@ test("comment patterns still run to end of line inside a multiline block", () =>
     "# Reset the counter (per player)",       // parenthesis, but no closing quote
     '# Increment "down count',                 // lone quote
     "# Kill entities (tagged) then continue",
+    // Prose whose quotes happen to be followed by a parenthesis at end of line:
+    // the tail between quote and ")" is not a Python argument list, so it stays a comment.
+    `# Read display name (default to weapon_id, override with 'name' or "name" field)`,
+    '# Set the "flag" then reset (x)',
+    "# Toggle 'debug' mode (owner only)",
+    '# Store as "value" (integer)',
   ];
   for (const [name, pattern] of COMMENT_PATTERNS()) {
     const re = new RegExp(pattern.match);
@@ -165,7 +174,12 @@ test("say end matches where the mcfunction line really ends", () => {
 test("say end does not fire early on quotes inside a multiline block", () => {
   for (const p of embedded.repository.say.patterns) {
     const re = new RegExp(p.end);
-    for (const line of ["say Don't panic\n", 'say Hello "world" bye\n']) {
+    for (const line of [
+      "say Don't panic\n",
+      'say Hello "world" bye\n',
+      'say Hello "world" (bye)\n',   // quote then paren at end of line, but not a Python arg tail
+      "say Press 'F' to pay respects (now)\n",
+    ]) {
       const m = re.exec(line);
       assert.ok(m);
       assert.equal(m.index, line.length - 1, `say must run to the newline in ${JSON.stringify(line)}`);
