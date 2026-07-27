@@ -1,7 +1,5 @@
 
 # Imports
-from __future__ import annotations
-
 import stouputils as stp
 from stouputils.typing import JsonDict
 
