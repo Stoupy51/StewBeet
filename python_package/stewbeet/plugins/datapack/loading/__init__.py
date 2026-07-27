@@ -89,8 +89,7 @@ execute unless score #{ctx.project_id}.loaded load.status matches 1 run function
 
 	# Write the loading tellraw and score, along with the final dataset
 	project_name = ctx.project_name or ctx.project_id
-	write_load_file(
-f"""
+	write_load_file(f"""
 # Confirm load
 tellraw @a[tag=convention.debug] {{"text":"[Loaded {project_name} v{ctx.project_version}]","color":"green"}}
 scoreboard players set #{ctx.project_id}.loaded load.status 1
