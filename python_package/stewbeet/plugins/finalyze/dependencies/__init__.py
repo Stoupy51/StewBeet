@@ -68,24 +68,28 @@ def beet_default(ctx: Context) -> None:
 	# Track newly found official libraries
 	newly_found_libs: list[str] = []
 
-	# Find if furnace_nbt_recipes, common_signals, realistic_explosion, itemio are used
-	for lib in ["furnace_nbt_recipes", "common_signals", "realistic_explosion", "itemio", "smithed.actionbar", "player_motion"]:
-		if ns != lib:
-			for function in ctx.data.functions.values():
-				if lib in function.text:
-					if not official_lib_used(lib):
-						newly_found_libs.append(lib)
-					break
-
-	# Find for each bookshelf module if it is used
+	# Map every marker to search for onto the library it proves the use of.
+	markers: dict[str, str] = {
+		lib: lib
+		for lib in ("furnace_nbt_recipes", "common_signals", "realistic_explosion", "itemio", "smithed.actionbar", "player_motion")
+		if ns != lib
+	}
 	if ns != "bookshelf":
-		for module_ns in OFFICIAL_LIBS.keys():
-			if module_ns.startswith("bs."):
-				for function in ctx.data.functions.values():
-					if f"#{module_ns}:" in function.text:
-						if not official_lib_used(module_ns):
-							newly_found_libs.append(module_ns)
-						break
+		markers.update({f"#{module_ns}:": module_ns for module_ns in OFFICIAL_LIBS if module_ns.startswith("bs.")})
+
+	remaining: dict[str, str] = dict(markers)
+	found_libs: set[str] = set()
+	for function in ctx.data.functions.values():
+		if not remaining:
+			break
+		text: str = function.text
+		for marker in [m for m in remaining if m in text]:
+			found_libs.add(remaining.pop(marker))
+
+	# Report in marker declaration order so the debug message stays stable across builds
+	for lib_ns in markers.values():
+		if lib_ns in found_libs and not official_lib_used(lib_ns):
+			newly_found_libs.append(lib_ns)
 
 	# Debug message for newly found libraries
 	if newly_found_libs:
