@@ -257,6 +257,11 @@ class FunctionAnalyzer:
             >>> FunctionAnalyzer.is_inside_string('data set value {a:"x"} run function a:b', 30)
             False
         """
+        # Without a single backslash there is nothing to escape, so counting quotes is exact
+        prefix: str = line[:pos]
+        if "\\" not in prefix:
+            return prefix.count('"') % 2 == 1
+
         quotes: int = 0
         i: int = 0
         while i < pos and i < len(line):

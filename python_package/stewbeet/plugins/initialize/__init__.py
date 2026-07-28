@@ -16,6 +16,7 @@ from stouputils.typing import JsonDict
 from ...core import LATEST_MC_VERSION, MORE_ASSETS_PACK_FORMATS, MORE_DATA_PACK_FORMATS, MORE_DATA_VERSIONS, Mem, set_json_encoder
 from ...dependencies.official_libs import OFFICIAL_LIBS
 from ..livereload import patch_livereload_for_copy_destinations
+from .beet_patches import apply_beet_patches
 from .project_images import find_pack_png
 from .source_lore_font import SPACER_CHAR, TOOLTIP_FONT, prepare_source_lore_font
 
@@ -23,6 +24,9 @@ from .source_lore_font import SPACER_CHAR, TOOLTIP_FONT, prepare_source_lore_fon
 # Main entry point
 def beet_default(ctx: Context, silent: bool = False) -> Generator[None]:
 	with stp.MeasureTime(print_func=stp.debug, message="Total execution time") if not silent else stp.NullContextManager():
+
+		# Monkey patch beet before anything walks a directory or saves a pack (see beet_patches)
+		apply_beet_patches()
 
 		# Assertions
 		assert ctx.project_id, "Project ID must be set in the project configuration."
@@ -171,9 +175,6 @@ def beet_default(ctx: Context, silent: bool = False) -> Generator[None]:
 		# Setup pack.mcmeta for both packs
 		setup_pack_mcmeta(ctx.data, ctx.data.pack_format)
 		setup_pack_mcmeta(ctx.assets, ctx.assets.pack_format)
-
-		# Fix pack.save to retry when there is a PermissionError (for example, when vscode or another program locks a file temporarily)
-		Pack.save = stp.retry(Pack.save, exceptions=PermissionError, max_attempts=10, delay=1.0, backoff=1.2)  # type: ignore
 
 		# # Setup dialog convention for pause screen additions
 		# Mem.ctx.data["minecraft"].dialogs_tags["pause_screen_additions"] = set_json_encoder(DialogTag({"values":[{"id":"smithed:data_packs","required":False}]}))

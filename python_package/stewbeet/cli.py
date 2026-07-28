@@ -8,9 +8,6 @@ import sys
 import stouputils as stp
 from beet import ProjectConfig
 
-from .core.dump import dump_command
-from .core.migrate import migrate_command
-from .core.template import template_command
 from .utils import get_project_config
 
 
@@ -60,16 +57,20 @@ def main() -> None:
     if second_arg in ("--version", "-v", "version"):
         return stp.show_version("stewbeet", primary_color=stp.RED, secondary_color=stp.GREEN, max_depth=int(sys.argv[-1]) if len(sys.argv) == 3 else 2)
 
-    # Handle "init/template" command
+    # Handle "init/template" command (local imports: every one of these commands drags dependencies
+    # the far more frequent "build" has no use for, `migrate` alone costs a fifth of a second of requests)
     if second_arg in ("init", "template"):
+        from .core.template import template_command
         return template_command()
 
     # Handle "migrate" command
     if second_arg == "migrate":
+        from .core.migrate import migrate_command
         return migrate_command()
 
     # Handle "dump" command
     if second_arg == "dump":
+        from .core.dump import dump_command
         return dump_command()
 
     # Try to find and load the beet configuration file

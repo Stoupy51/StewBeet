@@ -6,11 +6,17 @@ populate the @args section in function headers.
 """
 
 # Imports
+import re
+
 import stouputils as stp
 
 from .macro_parser import is_macro_function
 from .object import Header
 from .type_inference import infer_macro_types
+
+# Constants
+CALLER_PATH_RE: re.Pattern[str] = re.compile(r"([^\s{]+)")
+""" Isolates the function path at the head of a caller entry, before its macro payload or context. """
 
 
 # Class
@@ -83,8 +89,7 @@ class MacroAnalyzer:
         # First, recursively analyze all caller functions
         for caller in header.within:
             # Extract the caller function path (everything before the first space or {)
-            import re
-            caller_match: re.Match[str] | None = re.match(r'([^\s{]+)', caller)
+            caller_match: re.Match[str] | None = CALLER_PATH_RE.match(caller)
             if caller_match:
                 caller_func: str = caller_match.group(1)
                 # Recursively analyze the caller to ensure its types are populated
