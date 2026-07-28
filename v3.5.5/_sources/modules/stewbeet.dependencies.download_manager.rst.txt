@@ -1,0 +1,8 @@
+stewbeet.dependencies.download\_manager module
+==============================================
+
+.. automodule:: stewbeet.dependencies.download_manager
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
