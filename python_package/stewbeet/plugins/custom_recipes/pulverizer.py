@@ -21,7 +21,7 @@ class PulverizerRecipeHandler:
         handler = cls()
         handler.generate_recipes()
 
-    @stp.simple_cache
+    @stp.simple_cache(method="str")
     def simplenergy_pulverizer_recipe(self, recipe: PulverizingRecipe, item: str) -> str:
         """ Generate a pulverizer recipe.
 

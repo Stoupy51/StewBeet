@@ -29,7 +29,7 @@ if TYPE_CHECKING:
 FURNACE_TYPES = (SmeltingRecipe.type, BlastingRecipe.type, CampfireCookingRecipe.type, SmokingRecipe.type)
 
 
-@stp.simple_cache
+@stp.simple_cache(method="str")
 def convert_shapeless_to_shaped(craft: JsonDict) -> JsonDict:
 	""" Convert a shapeless craft to a readable shaped layout.
 

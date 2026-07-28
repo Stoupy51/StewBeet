@@ -28,7 +28,7 @@ class SmithedRecipeHandler:
         handler = cls()
         handler.generate_recipes()
 
-    @stp.simple_cache
+    @stp.simple_cache(method="str")
     def smithed_shapeless_recipe(self, recipe: CraftingShapelessRecipe, result_loot: str) -> str:
         """ Generate a Smithed Crafter shapeless recipe.
 
@@ -69,7 +69,7 @@ class SmithedRecipeHandler:
             line += f""" run function {self.apply_path} {{"command":"loot replace block ~ ~ ~ container.16 loot {result_loot}"}}"""
         return line
 
-    @stp.simple_cache
+    @stp.simple_cache(method="str")
     def smithed_shaped_recipe(self, recipe: CraftingShapedRecipe, result_loot: str) -> str:
         """ Generate a Smithed Crafter shaped recipe.
 

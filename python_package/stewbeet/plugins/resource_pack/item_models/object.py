@@ -130,7 +130,7 @@ class AutoModel:
 
 		return all(any(model_matches(model, x) for x in variants) for model in models)
 
-	@stp.simple_cache
+	@stp.simple_cache(method="str")
 	def get_same_folder_variants(self, variants: Iterable[str]) -> list[str]:
 		""" Get variants that are in the same folder as the item.
 

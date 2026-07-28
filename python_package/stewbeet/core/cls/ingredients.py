@@ -77,7 +77,7 @@ class Ingr(dict[str, Any]):
 	def copy(self) -> Ingr:
 		return Ingr(dict(self))
 
-	@stp.simple_cache
+	@stp.simple_cache(method="str")
 	def item_to_id(self) -> Ingr:
 		""" Replace the "item" key by "id" in an item ingredient representation
 
@@ -106,7 +106,7 @@ class Ingr(dict[str, Any]):
 		r.pop("item")
 		return Ingr(r)
 
-	@stp.simple_cache
+	@stp.simple_cache(method="str")
 	def to_id(self, add_namespace: bool = True) -> str:
 		""" Get the id from an ingredient dict
 
@@ -144,7 +144,7 @@ class Ingr(dict[str, Any]):
 		""" Get the name of the ingredient, ex: "Stick" or "Adamantium Ingot" """
 		return item_id_to_name(self.to_id(add_namespace=True))
 
-	@stp.simple_cache
+	@stp.simple_cache(method="str")
 	def to_vanilla_item_id(self, add_namespace: bool = True) -> str:
 		""" Get the id of the vanilla item from an ingredient dict
 
@@ -242,7 +242,7 @@ class Ingr(dict[str, Any]):
 		item.update(kwargs)
 		return Ingr(item).item_to_id()
 
-	@stp.simple_cache
+	@stp.simple_cache(method="str")
 	def register_loot_table(self, result_count: int | JsonDict) -> Resource[LootTable]:
 		""" Get the loot table for an ingredient dict, generating it when the item is external
 
@@ -282,7 +282,7 @@ class Ingr(dict[str, Any]):
 		return loot_table
 
 	@staticmethod
-	@stp.simple_cache
+	@stp.simple_cache(method="str")
 	def get_ingredients_from_vanilla_recipe(recipe: JsonDict) -> list[str]:
 		""" Get the ingredients from a vanilla recipe dict
 
