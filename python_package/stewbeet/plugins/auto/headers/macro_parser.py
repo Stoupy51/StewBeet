@@ -8,6 +8,8 @@ by finding lines that start with '$' and extracting $(variable_name) patterns.
 # Imports
 import re
 
+import stouputils as stp
+
 
 # Functions
 def extract_macro_variables(content: str) -> list[str]:
@@ -72,6 +74,7 @@ def extract_macro_variables(content: str) -> list[str]:
     return macro_vars
 
 
+@stp.simple_cache
 def is_macro_function(content: str) -> bool:
     """ Check if a function is a macro function.
 
@@ -110,9 +113,5 @@ def is_macro_function(content: str) -> bool:
         >>> is_macro_function("$execute if items entity @s container.$(result) *[max_stack_size=64] run return 64")
         True
     """
-    lines: list[str] = content.split("\n")
-    for line in lines:
-        stripped: str = line.strip()
-        if stripped.startswith("$"):
-            return True
-    return False
+    return "$" in content and any(line.lstrip().startswith("$") for line in content.split("\n"))
+

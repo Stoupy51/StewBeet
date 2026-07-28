@@ -180,8 +180,12 @@ def _file_sha1(path: str) -> str:
 	return digest.hexdigest()
 
 
+@stp.simple_cache
 def _sftp_password(netloc: str, explicit: str | None) -> str | None:
 	""" Resolve the SFTP password from the URL, falling back to the stewbeet credentials file.
+
+	Cached for the whole build: every copy task resolves its destination, and re-parsing the
+	credentials file each time costs more than the upload it is preparing.
 
 	Args:
 		netloc   (str):        The ``user@host`` part of the destination URL, used as credentials key.
@@ -203,9 +207,8 @@ def _sftp_password(netloc: str, explicit: str | None) -> str | None:
 def _sftp_filesystem(dst: str):  # type: ignore[no-untyped-def]
 	""" Open (or reuse) the fsspec SFTP filesystem for a destination URL.
 
-	fsspec caches filesystem instances by connection arguments, so every destination on the same
-	host shares one paramiko transport. Connections are opened before the parallel dispatch so
-	threads never race to perform the handshake.
+	fsspec mixes ``threading.get_ident()`` into its instance cache key, so the connection is shared
+	between every destination of the same host within a thread, but each copy worker opens its own.
 
 	Args:
 		dst (str): SFTP destination URL (sftp://user[:pass]@host[:port]/path).
@@ -215,12 +218,18 @@ def _sftp_filesystem(dst: str):  # type: ignore[no-untyped-def]
 	import fsspec  # type: ignore  # Local import: pulls in paramiko, useless for local-only destinations
 
 	parsed = urllib.parse.urlparse(dst)
+	password: str | None = _sftp_password(parsed.netloc, parsed.password)
+
+	# With a password in hand, skip paramiko's key hunt: it decrypts every ~/.ssh key and burns a
+	# failed publickey round trip before falling back to the password anyway.
+	credentials: dict[str, bool] = {"look_for_keys": False, "allow_agent": False} if password else {}
 	fs = fsspec.filesystem(  # type: ignore
 		"sftp",
 		host=parsed.hostname,
 		username=parsed.username,
-		password=_sftp_password(parsed.netloc, parsed.password),
+		password=password,
 		port=parsed.port or 22,
+		**credentials,
 	)
 	return fs, parsed.path
 

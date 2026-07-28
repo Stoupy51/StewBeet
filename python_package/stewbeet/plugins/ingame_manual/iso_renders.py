@@ -10,9 +10,8 @@ page-content cache.
 import os
 import shutil
 import threading
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
-import requests
 import stouputils as stp
 from beet import Model
 from PIL import Image
@@ -27,11 +26,20 @@ from ...core.constants import (
 )
 from .config import ManualConfig
 
+if TYPE_CHECKING:
+	import requests
+
 # Thread-local requests session: reuses HTTP connections (TLS handshakes dominate
 # the texture download time otherwise, since each item tries up to 6 URLs).
 _thread_locals = threading.local()
 
-def _get_session() -> requests.Session:
+def _get_session() -> "requests.Session":
+	""" `requests` is imported here rather than at module level: this module is reachable from the
+	top-level ``stewbeet`` package, and paying a fifth of a second of HTTP stack on every single
+	build only to download textures the manual may never ask for is not worth it.
+	"""
+	import requests
+
 	session: requests.Session | None = getattr(_thread_locals, "session", None)
 	if session is None:
 		session = requests.Session()

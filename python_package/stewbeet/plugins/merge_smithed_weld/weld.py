@@ -1,5 +1,6 @@
 
 # Imports
+import hashlib
 import logging
 import os
 import shutil
@@ -7,6 +8,7 @@ import sys
 import tempfile
 import time
 from collections.abc import Generator
+from dataclasses import dataclass
 from glob import glob
 from pathlib import Path
 from zipfile import ZIP_DEFLATED
@@ -26,6 +28,22 @@ WELDED_META_KEY: str = "merge_smithed_weld_done"
 """ ctx.meta key listing the pack types welded during this build. """
 ASKED_PACK_TYPES: str = "merge_smithed_weld_asked"
 """ ctx.meta key listing the pack types that were asked to be welded. """
+CACHE_NAME: str = "stewbeet_weld"
+""" Beet cache slot holding the signature of the sources each merged archive was built from. """
+
+
+# Classes
+@dataclass(frozen=True)
+class WeldTask:
+	""" One merged archive to produce. """
+	sources: list[str]
+	""" Absolute paths of the packs to merge, main pack last. """
+	destination: str
+	""" Path of the `_with_libs.zip` to write. """
+	pack_type: str
+	""" Either "datapack" or "resource_pack". """
+	signature: str
+	""" Fingerprint of `sources`, recorded in the cache once the merge succeeded. """
 
 
 def gather_packs(ctx: Context, pack_type: str) -> list[str]:
@@ -51,6 +69,42 @@ def gather_packs(ctx: Context, pack_type: str) -> list[str]:
 	expanded: list[str] = [os.path.abspath(x) for pack in to_merge for x in glob(pack)]
 	expanded.reverse()	# Reverse so the main pack is last (overwrites pack format)
 	return expanded
+
+
+def weld_signature(sources: list[str]) -> str:
+	""" Fingerprint the exact bytes that would be merged, so an unchanged merge can be skipped.
+
+	Args:
+		sources (list[str]): Absolute paths of the packs about to be merged, in merge order.
+	Returns:
+		str: Hexadecimal digest covering every source name and content.
+	"""
+	digest = hashlib.sha1()
+	for source in sources:
+		digest.update(f"\0{source}\0".encode())
+		with open(source, "rb") as file:
+			while chunk := file.read(1 << 20):
+				digest.update(chunk)
+	return digest.hexdigest()
+
+
+def is_merge_up_to_date(destination: str, signature: str, recorded: list[object] | None) -> bool:
+	""" Whether the merged archive on disk was already produced from exactly these sources.
+
+	Args:
+		destination (str):                 Path of the merged archive.
+		signature   (str):                 Fingerprint of the sources about to be merged.
+		recorded    (list[object] | None):  Cached [signature, size, mtime_ns] of the last merge, if any.
+	Returns:
+		bool: True when the merge can be skipped entirely.
+	"""
+	if not recorded or len(recorded) != 3 or recorded[0] != signature:
+		return False
+	try:
+		stat_result = os.stat(destination)
+	except OSError:
+		return False
+	return [stat_result.st_size, stat_result.st_mtime_ns] == recorded[1:]
 
 
 def weld_to(ctx: Context, sources: list[str], dest_path: str, pack_type: str) -> None:
@@ -230,15 +284,26 @@ def weld_pack_types(ctx: Context, pack_types: tuple[str, ...]) -> None:
 	welded: list[str] = ctx.meta[WELDED_META_KEY]
 
 	# Gather sources for each pack that has a base archive (warnings stay visible: this runs unmuffled)
+	cache = ctx.cache[CACHE_NAME]
+	merges: dict[str, list[object]] = cache.json.setdefault("merges", {})
 	project_name_simple: str = ctx.project_name.replace(" ", "")
-	tasks: list[tuple[list[str], str, str]] = []
+	tasks: list[WeldTask] = []
 	for pack_type in pack_types:
 		source: str = str(Path(ctx.output_directory) / f"{project_name_simple}_{pack_type}.zip")
-		if os.path.exists(source):
-			to_merge: list[str] | None = prepare_weld(ctx, merged_archive_path(ctx, pack_type), pack_type)
-			if to_merge is not None:
-				tasks.append((to_merge, merged_archive_path(ctx, pack_type), pack_type))
-				welded.append(pack_type)
+		if not os.path.exists(source):
+			continue
+		destination: str = merged_archive_path(ctx, pack_type)
+
+		# Merging is deterministic, so the same sources give back the archive already sitting on disk
+		signature: str = weld_signature(gather_packs(ctx, pack_type))
+		if is_merge_up_to_date(destination, signature, merges.get(destination)):
+			welded.append(pack_type)
+			continue
+
+		to_merge: list[str] | None = prepare_weld(ctx, destination, pack_type)
+		if to_merge is not None:
+			tasks.append(WeldTask(sources=to_merge, destination=destination, pack_type=pack_type, signature=signature))
+			welded.append(pack_type)
 	drop_unwelded_archives(ctx)
 
 	if not tasks:
@@ -248,10 +313,12 @@ def weld_pack_types(ctx: Context, pack_types: tuple[str, ...]) -> None:
 	# Weld logs failures through the "weld" logger instead of raising, so capture its (noisy)
 	# output around the whole parallel section and only replay it when an error actually happens.
 	@stp.handle_error
-	def run_weld_task(task: tuple[list[str], str, str]) -> None:
-		to_merge, dest, pack_type = task
-		weld_to(ctx, to_merge, dest, pack_type)
+	def run_weld_task(task: WeldTask) -> None:
+		weld_to(ctx, task.sources, task.destination, task.pack_type)
+		written = os.stat(task.destination)
+		merges[task.destination] = [task.signature, written.st_size, written.st_mtime_ns]
 
 	with Muffle(mute_stderr=True, replay_on_error=True, error_log_level=logging.ERROR, watch_loggers=["weld"]):
 		stp.multithreading(run_weld_task, tasks, max_workers=len(tasks))
+	cache.json["merges"] = merges
 
