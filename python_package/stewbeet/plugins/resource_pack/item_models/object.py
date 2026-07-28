@@ -425,12 +425,8 @@ class AutoModel:
 					if data_id != CUSTOM_ITEM_VANILLA and "elements" not in overrides:
 						parent = data_id.replace(':', ":item/")
 
-					# A child model (declares `parent`, no `textures`) inherits its parent's textures, so it
-					# must not get the default layer0 pointing at a same-named png that won't exist.
-					inherits_textures: bool = bool(overrides.get("parent")) and "textures" not in overrides
-
 					# Get textures
-					if exclude_textures or inherits_textures:
+					if exclude_textures or overrides.get("textures", {}) is None:
 						content = {"parent": parent}
 					else:
 						textures = {"layer0": f"{self.ns}:item/{self.obj.id}{on_off}"}
