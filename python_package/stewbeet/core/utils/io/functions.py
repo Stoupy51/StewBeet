@@ -85,7 +85,7 @@ def write_function(
 	overwrite: bool = False,
 	prepend: bool = False,
 	tags: list[str] | None = None,
-	condition: Callable[[str], bool] | None = lambda existing_content: True, # pyright: ignore[reportUnknownLambdaType]
+	condition: Callable[[str], bool] | None = None,
 ) -> Function | None:
 	""" Write the content to the function at the given path.
 
@@ -95,7 +95,7 @@ def write_function(
 		overwrite       (bool):                   If the file should be overwritten (default: Append the content)
 		prepend         (bool):                   If the content should be prepended instead of appended (not used if overwrite is True)
 		tags            (list[str] | None):       The function tags to add to the function (ex: ["namespace:something"] for 'data/namespace/tags/function/something.json')
-		condition       (Callable[[str], bool]):  A function that takes the existing content and returns whether the new content should be written (default: always write)
+		condition       (Callable[[str], bool] | None):  A function that takes the existing content and returns whether the new content should be written (default: None, always write)
 	Returns:
 		Function | None: The written function, or None if the condition was not met
 	"""
@@ -134,7 +134,7 @@ def write_versioned_function(
 	overwrite: bool = False,
 	prepend: bool = False,
 	tags: list[str] | None = None,
-	condition: Callable[[str], bool] | None = lambda existing_content: True, # pyright: ignore[reportUnknownLambdaType]
+	condition: Callable[[str], bool] | None = None,
 ) -> Function | None:
 	""" Write the content to a versioned function at the given path.
 
@@ -144,7 +144,7 @@ def write_versioned_function(
 		overwrite       (bool):                   If the file should be overwritten (default: Append the content)
 		prepend         (bool):                   If the content should be prepended instead of appended (not used if overwrite is True)
 		tags            (list[str] | None):       The function tags to add to the function (ex: ["namespace:something"] for 'data/namespace/tags/function/something.json')
-		condition       (Callable[[str], bool]):  A function that takes the existing content and returns whether the new content should be written (default: always write)
+		condition       (Callable[[str], bool] | None):  A function that takes the existing content and returns whether the new content should be written (default: None, always write)
 	"""
 	return write_function(f"{Mem.ctx.project_id}:v{Mem.ctx.project_version}/{path}", content, overwrite, prepend, tags, condition)
 
@@ -154,7 +154,7 @@ def write_load_file(
 	overwrite: bool = False,
 	prepend: bool = False,
 	tags: list[str] | None = None,
-	condition: Callable[[str], bool] | None = lambda existing_content: True, # pyright: ignore[reportUnknownLambdaType]
+	condition: Callable[[str], bool] | None = None,
 ) -> Function | None:
 	""" Write the content to the load file
 
@@ -163,7 +163,7 @@ def write_load_file(
 		overwrite   (bool):                   If the file should be overwritten (default: Append the content)
 		prepend     (bool):                   If the content should be prepended instead of appended (not used if overwrite is True)
 		tags        (list[str] | None):       The function tags to add to the function (ex: ["namespace:something"] for 'data/namespace/tags/function/something.json')
-		condition   (Callable[[str], bool]):  A function that takes the existing content and returns whether the new content should be written (default: always write)
+		condition   (Callable[[str], bool] | None):  A function that takes the existing content and returns whether the new content should be written (default: None, always write)
 	"""
 	return write_versioned_function("load/confirm_load", content, overwrite, prepend, tags, condition)
 
@@ -173,7 +173,7 @@ def write_unload_file(
 	overwrite: bool = False,
 	prepend: bool = False,
 	tags: list[str] | None = None,
-	condition: Callable[[str], bool] | None = lambda existing_content: True, # pyright: ignore[reportUnknownLambdaType]
+	condition: Callable[[str], bool] | None = None,
 ) -> Function | None:
 	""" Write the content to the unload file
 
@@ -182,7 +182,7 @@ def write_unload_file(
 		overwrite   (bool):                   If the file should be overwritten (default: Append the content)
 		prepend     (bool):                   If the content should be prepended instead of appended (not used if overwrite is True)
 		tags        (list[str] | None):       The function tags to add to the function (ex: ["namespace:something"] for 'data/namespace/tags/function/something.json')
-		condition   (Callable[[str], bool]):  A function that takes the existing content and returns whether the new content should be written (default: always write)
+		condition   (Callable[[str], bool] | None):  A function that takes the existing content and returns whether the new content should be written (default: None, always write)
 	"""
 	unload_tag = f"{Mem.ctx.project_id}:unload"
 	tags = (tags or []) + [unload_tag]
@@ -194,7 +194,7 @@ def write_tick_file(
 	overwrite: bool = False,
 	prepend: bool = False,
 	tags: list[str] | None = None,
-	condition: Callable[[str], bool] | None = lambda existing_content: True, # pyright: ignore[reportUnknownLambdaType]
+	condition: Callable[[str], bool] | None = None,
 ) -> Function | None:
 	""" Write the content to the tick file
 
@@ -203,7 +203,7 @@ def write_tick_file(
 		overwrite   (bool):                   If the file should be overwritten (default: Append the content)
 		prepend     (bool):                   If the content should be prepended instead of appended (not used if overwrite is True)
 		tags        (list[str] | None):       The function tags to add to the function (ex: ["namespace:something"] for 'data/namespace/tags/function/something.json')
-		condition   (Callable[[str], bool]):  A function that takes the existing content and returns whether the new content should be written (default: always write)
+		condition   (Callable[[str], bool] | None):  A function that takes the existing content and returns whether the new content should be written (default: None, always write)
 	"""
 	return write_versioned_function("tick", content, overwrite, prepend, tags, condition)
 
