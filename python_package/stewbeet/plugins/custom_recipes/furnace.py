@@ -45,7 +45,7 @@ class FurnaceRecipeHandler:
                     tags=["furnace_nbt_recipes:v1/disable_cooking"]
                 )
 
-    @stp.simple_cache
+    @stp.simple_cache(method="str")
     def furnace_nbt_recipe(self, recipe: SmeltingRecipe | BlastingRecipe | SmokingRecipe, result_loot: str, result_ingr: JsonDict) -> str:
         """ Generate a furnace NBT recipe.
 
@@ -80,7 +80,7 @@ class FurnaceRecipeHandler:
         line += f" run loot replace block ~ ~ ~ container.3 loot {result_loot}"
         return line
 
-    @stp.simple_cache
+    @stp.simple_cache(method="str")
     def furnace_xp_reward(self, recipe: SmeltingRecipe | BlastingRecipe | SmokingRecipe, experience: float) -> str:
         """ Generate a furnace XP reward.
 

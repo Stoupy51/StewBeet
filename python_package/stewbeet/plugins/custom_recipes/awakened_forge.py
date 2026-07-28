@@ -23,7 +23,7 @@ class AwakenedForgeRecipeHandler:
         handler = cls()
         handler.generate_recipes()
 
-    @stp.simple_cache
+    @stp.simple_cache(method="str")
     def stardust_awakened_forge_recipe(self, recipe: JsonDict, item: str) -> str:
         """ Generate a awakened forge recipe.
 

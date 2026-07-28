@@ -5,7 +5,7 @@ from stouputils.typing import JsonDict
 
 
 # Utility function to convert result_count to string suffix
-@stp.simple_cache
+@stp.simple_cache(method="str")
 def result_count_to_suffix(result_count: int | JsonDict) -> str:
 	""" Convert a result count to a string suffix for loot table paths
 

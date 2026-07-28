@@ -8,7 +8,7 @@ from ..__memory__ import Mem
 
 
 # Utility functions
-@stp.simple_cache
+@stp.simple_cache(method="str")
 def text_component_to_str(tc: TextComponent) -> str:
 	""" Convert a TextComponent to a string
 	Args:

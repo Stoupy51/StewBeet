@@ -145,7 +145,7 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
         to_return["result"]["count"] = recipe.result_count
         return to_return
 
-    @stp.simple_cache
+    @stp.simple_cache(method="str")
     def vanilla_furnace_recipe(self, recipe: SmeltingRecipe | BlastingRecipe | SmokingRecipe | CampfireCookingRecipe, item: str) -> JsonDict:
         """ Generate a vanilla furnace recipe.
 
@@ -173,7 +173,7 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
         to_return["result"]["count"] = recipe.result_count
         return to_return
 
-    @stp.simple_cache
+    @stp.simple_cache(method="str")
     def vanilla_stonecutting_recipe(self, recipe: StonecuttingRecipe, item: str) -> JsonDict:
         """ Generate a vanilla stonecutting recipe.
 
@@ -200,7 +200,7 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
         to_return["result"]["count"] = recipe.result_count
         return to_return
 
-    @stp.simple_cache
+    @stp.simple_cache(method="str")
     def vanilla_smithing_transform_recipe(self, recipe: SmithingTransformRecipe, item: str) -> JsonDict:
         """ Generate a vanilla smithing transform recipe.
 
@@ -222,7 +222,7 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
         to_return["result"]["count"] = recipe.result_count
         return to_return
 
-    @stp.simple_cache
+    @stp.simple_cache(method="str")
     def vanilla_smithing_trim_recipe(self, recipe: SmithingTrimRecipe, item: str) -> JsonDict:
         """ Generate a vanilla smithing trim recipe.
 
