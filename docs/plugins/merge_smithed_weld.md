@@ -3,6 +3,8 @@
 
 📄 **Source Code**: [`stewbeet/plugins/merge_smithed_weld/__init__.py`](../../python_package/stewbeet/plugins/merge_smithed_weld/__init__.py) 🔗<br>
 📄 **Source Code**: [`stewbeet/plugins/merge_smithed_weld/weld.py`](../../python_package/stewbeet/plugins/merge_smithed_weld/weld.py) 🔗<br>
+📄 **Source Code**: [`stewbeet/plugins/merge_smithed_weld/datapack.py`](../../python_package/stewbeet/plugins/merge_smithed_weld/datapack.py) 🔗<br>
+📄 **Source Code**: [`stewbeet/plugins/merge_smithed_weld/resource_pack.py`](../../python_package/stewbeet/plugins/merge_smithed_weld/resource_pack.py) 🔗<br>
 
 ## 🔗 Dependencies
 - **✅ Required**: Generated base archives from archive plugin
@@ -43,12 +45,39 @@ name: "My Project"
 
 pipeline:
   - ...
-  - stewbeet.plugins.merge_smithed_weld
+  - stewbeet.plugins.merge_smithed_weld.datapack
+  - stewbeet.plugins.merge_smithed_weld.resource_pack
 
 meta:
   stewbeet:
     libs_folder: "libs"  # Optional: custom libraries folder
 ```
+
+### 🎚️ Choosing Which Packs Get Merged
+Welding is the slowest step of most builds (it re-compresses every library into the output),
+so **prefer the split entry points** and list only the pack types you actually ship:
+
+| Pipeline entry | Merges |
+|----------------|--------|
+| `stewbeet.plugins.merge_smithed_weld.datapack` | 📄 Only the datapack |
+| `stewbeet.plugins.merge_smithed_weld.resource_pack` | 🎨 Only the resource pack |
+| `stewbeet.plugins.merge_smithed_weld` | 📦 Both at once (shorthand for listing both of the above) |
+
+Listing both split entries is equivalent to the plain one, in any order.
+
+```yaml
+pipeline:
+  - ...
+  - stewbeet.plugins.archive
+  # Skip the datapack weld during development: copy_to_destination already ships the datapack
+  # and every lib zip separately, so the merged datapack is only needed to publish a release.
+  - stewbeet.plugins.merge_smithed_weld.resource_pack
+```
+
+> ⚠️ **A pack type nobody welds gets its `_with_libs.zip` deleted from the output directory.**<br>
+> This is deliberate: a leftover archive from an earlier build would be picked up by `compute_sha1`
+> and by a release upload, silently shipping stale content. Switch back to the plain entry (or add
+> the missing one) before publishing a release that bundles both packs.
 
 ### 📋 Configuration Options
 
@@ -58,6 +87,7 @@ meta:
 | `name` | string | **Required** | Project name used for archive naming |
 | `libs_folder` | string | `"libs"` | Folder containing custom library archives (datapack/*.zip, resource_pack/*.zip) |
 | Archive Naming | automatic | `{project}_with_libs.zip` | Naming pattern for merged archive outputs |
+| Pack Type Selection | pipeline entry | both | Use the `.datapack` / `.resource_pack` entry points to merge only that pack type |
 
 ## ✨ Features
 
@@ -67,6 +97,13 @@ Automatically detects and validates base archives for merging:
 - ✅ Only processes packs when base archives exist
 - 🏷️ Uses sanitized project names for consistent file naming
 - 📁 Ensures output directory structure is properly created
+
+### 🎚️ Selective Pack Merging
+Lets the pipeline pick which pack types are worth the compression cost:
+- 🎯 Prefer the `.datapack` and `.resource_pack` entry points, each merging a single pack type
+- 🔀 Both can be listed together, in any order, for the same result as the plain entry
+- 🧹 Deletes the `_with_libs.zip` of any pack type nobody welds, so stale archives never ship
+- 📢 Reports the skipped pack types once, at the end of the build
 
 ### 🔗 Smithed Weld Integration
 Uses Smithed Weld CLI for professional pack merging:
