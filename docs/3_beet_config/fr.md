@@ -182,7 +182,8 @@ pipeline:
     - "stewbeet.plugins.auto.lang_file"                    # 🌐 Génère auto les fichiers de langue
     - "stewbeet.plugins.auto.headers"                      # 📄 Ajoute les en-têtes de fichiers
     - "stewbeet.plugins.archive"                           # 🗜️ Crée les archives ZIP
-    - "stewbeet.plugins.merge_smithed_weld"                # 🔀 Fusionne les libs Smithed Weld
+    - "stewbeet.plugins.merge_smithed_weld.datapack"       # 🔀 Fusionne les libs Smithed Weld dans le datapack
+    - "stewbeet.plugins.merge_smithed_weld.resource_pack"  # 🔀 Fusionne les libs Smithed Weld dans le resource pack
     - "stewbeet.plugins.copy_to_destination"               # 📁 Copie vers les dossiers de jeu
     - "stewbeet.plugins.compute_sha1"                      # #️⃣ Calcule les hashs de fichiers
 ```
