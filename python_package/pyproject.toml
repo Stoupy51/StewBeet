@@ -31,7 +31,7 @@ dependencies = [
 	"mecha>=0.104.1",
 	"mutagen>=1.48.1",
 	"pyperclip>=1.11.0",
-	"fsspec>=2026.6.0",
+	"fsspec>=2026.7.0",
 	"paramiko>=5.0.0",
 	"smithed",
 ]
