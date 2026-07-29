@@ -1,0 +1,8 @@
+stewbeet.dependencies.official\_libs module
+===========================================
+
+.. automodule:: stewbeet.dependencies.official_libs
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
