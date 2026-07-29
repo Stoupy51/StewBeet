@@ -10,6 +10,9 @@ import re
 
 from .object import Header
 
+WITHIN_CALLER_RE: re.Pattern[str] = re.compile(r"(?:string in )?([^\s{]+)")
+""" Isolates the function path at the head of a @within entry, past the optional "string in " prefix and before its macro payload or context. """
+
 # Type mapping for NBT suffixes
 NBT_TYPE_MAP = {
     "b": "byte",
@@ -193,7 +196,7 @@ def infer_types_from_direct_call(call_string: str, macro_vars: list[str], all_fu
 
                     # This is a reference to another macro variable
                     # Try to find the type from the calling function
-                    caller_match = re.match(r'([^\s]+)', call_string)
+                    caller_match = WITHIN_CALLER_RE.match(call_string)
                     if caller_match:
                         caller_func = caller_match.group(1)
                         if caller_func in all_functions:
@@ -235,7 +238,8 @@ def infer_types_from_storage_call(within_list: list[str], macro_vars: list[str],
         # Check if this is a storage call
         if "with storage" in caller or "with entity" in caller:
             # Extract the caller function name
-            caller_func: str = caller.split()[0]
+            caller_match: re.Match[str] | None = WITHIN_CALLER_RE.match(caller)
+            caller_func: str = caller_match.group(1) if caller_match else ""
 
             # Look up the caller function
             if caller_func in all_functions:
