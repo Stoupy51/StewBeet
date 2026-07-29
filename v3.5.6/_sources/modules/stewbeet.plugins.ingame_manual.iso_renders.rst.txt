@@ -1,0 +1,8 @@
+stewbeet.plugins.ingame\_manual.iso\_renders module
+===================================================
+
+.. automodule:: stewbeet.plugins.ingame_manual.iso_renders
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
