@@ -169,6 +169,15 @@ class FunctionAnalyzer:
             >>> analyzer.analyze_function_calls()
             >>> mcfunctions["test:target"].within
             ['test:caller {slot:"$(slot)"}']
+
+            A string reference keeps the macro payload written right after it, which is often the
+            only place a macro function's arguments are ever spelled out (documentation lines):
+            >>> place = Header("test:place", [], [], '## /function test:place {x:-280,duration:80}\\n$say $(x) $(duration)')
+            >>> mcfunctions = {"test:place": place}
+            >>> analyzer = FunctionAnalyzer(None, mcfunctions)  # type: ignore[arg-type]
+            >>> analyzer.analyze_function_calls()
+            >>> mcfunctions["test:place"].within
+            ['string in test:place {x:-280,duration:80}']
         """
         # For each mcfunction file, look at each line
         for path, header in self.mcfunctions.items():
@@ -225,11 +234,17 @@ class FunctionAnalyzer:
                 # "advancement <path>" convention, so the header shows it is only a string reference.
                 # The "string" prefix also keeps the context analyzer from inheriting the caller's
                 # execution context — a clicked chat command runs as the player, not in that context.
+                # A macro payload written right after the reference is still real argument data and is
+                # kept: a documentation line (## /function ns:foo {x:1}) is often the only place a macro
+                # function's arguments appear, so dropping it would leave its @args typed as "unknown".
                 else:
                     for match in FUNCTION_CALL_RE.finditer(line):
                         candidate = match.group(1)
-                        caller_ref: str = f"string in {path}"
-                        if candidate in self.mcfunctions and caller_ref not in self.mcfunctions[candidate].within:
+                        if candidate not in self.mcfunctions:
+                            continue
+                        payload: str = self.extract_macro_payload(line, match.end())
+                        caller_ref: str = f"string in {path}" + (f" {payload}" if payload else "")
+                        if caller_ref not in self.mcfunctions[candidate].within:
                             self.mcfunctions[candidate].within.append(caller_ref)
 
     def analyze_all_relationships(self) -> None:
@@ -238,6 +253,39 @@ class FunctionAnalyzer:
         self.analyze_advancements()
         self.analyze_function_calls()
         self.analyze_dialogs()  # Last: ContextAnalyzer takes the FIRST caller, so mcfunction callers keep priority
+
+    @staticmethod
+    def extract_macro_payload(line: str, pos: int) -> str:
+        """ Return the balanced ``{...}`` compound starting at index ``pos`` in ``line``, or "" if there is none.
+
+        Only a compound that immediately follows the function reference counts as macro data, so the
+        JSON surrounding a ``suggest_command`` reference (which closes with ``"}}]``) yields "".
+
+        Args:
+            line (str): The line to scan.
+            pos  (int): The character index right after the function reference.
+
+        Examples:
+            >>> FunctionAnalyzer.extract_macro_payload('## /function ns:foo {x:-280,is_auto:1}', 19)
+            '{x:-280,is_auto:1}'
+            >>> FunctionAnalyzer.extract_macro_payload('function ns:foo {with:{a:1}}', 15)
+            '{with:{a:1}}'
+            >>> FunctionAnalyzer.extract_macro_payload('{"command":"/function ns:foo"}]', 27)
+            ''
+        """
+        rest: str = line[pos:].lstrip()
+        if not rest.startswith("{"):
+            return ""
+
+        depth: int = 0
+        for i, char in enumerate(rest):
+            if char == "{":
+                depth += 1
+            elif char == "}":
+                depth -= 1
+                if depth == 0:
+                    return rest[:i + 1]
+        return ""
 
     @staticmethod
     def is_inside_string(line: str, pos: int) -> bool:
