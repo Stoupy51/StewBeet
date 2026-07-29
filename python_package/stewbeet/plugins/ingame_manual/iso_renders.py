@@ -33,7 +33,7 @@ if TYPE_CHECKING:
 # the texture download time otherwise, since each item tries up to 6 URLs).
 _thread_locals = threading.local()
 
-def _get_session() -> "requests.Session":
+def _get_session() -> requests.Session:
 	""" `requests` is imported here rather than at module level: this module is reachable from the
 	top-level ``stewbeet`` package, and paying a fifth of a second of HTTP stack on every single
 	build only to download textures the manual may never ask for is not worth it.

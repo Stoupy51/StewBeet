@@ -1,7 +1,9 @@
 
 # Get start time & Enable colors in Windows 10 console
 import os
+
 import stouputils as stp
+
 os.system("color")
 
 @stp.measure_time(message="Optimized textures")
