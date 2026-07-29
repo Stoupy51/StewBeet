@@ -5,7 +5,9 @@
 import os
 import subprocess
 from multiprocessing import Pool
+
 from compress_ogg import COMPRESSION
+
 
 def convert_file(args):
 	src, dst = args

@@ -48,8 +48,8 @@ stewbeet = "stewbeet:main"
 
 [dependency-groups]
 dev = [
-    "pyright>=1.1.408",
-    "ruff>=0.15.10",
+    "pyright",
+    "ruff",
 ]
 
 [tool.pyright]
@@ -57,36 +57,35 @@ typeCheckingMode = "strict"
 
 [tool.ruff]
 exclude = [
-	".git",
-	".ruff_cache",
-	".venv",
-	".vscode",
-	".cursor",
-	"build",
-	"dist",
-	"*.pyi",
+    ".git",
+    ".ruff_cache",
+    ".venv",
+    ".vscode",
+    "build",
+    "dist",
+    "*.pyi",
 ]
 line-length = 200
 
 [tool.ruff.lint]
 select = [
-	"E",
-	"W",
-	"F",
-	"I",
-	"N",
-	"UP",
-	"B",
-	"C4",
-	"T20",
-	"RUF",
+    "E",
+    "W",
+    "F",
+    "I",
+    "N",
+    "UP",
+    "B",
+    "C4",
+    "T20",
+    "RUF",
 ]
 ignore = [
-	"T201",
-	"W191",
-	"N803",
-	"N806",
-	"F403",
-	"F405",
+    "T201",
+    "W191",
+    "N803",
+    "N806",
+    "F403",
+    "F405",
 ]
 
