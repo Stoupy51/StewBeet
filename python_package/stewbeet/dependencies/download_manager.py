@@ -7,24 +7,21 @@ Downloads official libraries on first use via beet's content-addressed cache
 2. **Modrinth API** — ``itemio`` (and future Modrinth libs)
 3. **Static URLs** — ``common_signals``, ``furnace_nbt_recipes``, etc.
 """
-
+# Imports
 from __future__ import annotations
 
-import json
 from dataclasses import dataclass
-from pathlib import Path
-from typing import Any
 
 import stouputils as stp
 from beet import Context
 from stouputils.typing import JsonDict
 
 from ..core.constants import LATEST_MC_VERSION
+from .network import cached_json, cached_zip
 from .official_libs import OFFICIAL_LIBS
 
 SMITHED_API_BASE: str = "https://api.smithed.dev/v2/packs"
 MODRINTH_API_BASE: str = "https://api.modrinth.com/v2"
-HEADERS: dict[str, str] = {"User-Agent": "StewBeet"}
 BUILD_CACHE: dict[str, list[DownloadedLib]] = {}  # cache-dir -> results
 
 
@@ -58,30 +55,6 @@ def lookup_static(lib_data: JsonDict, mc_tup: tuple[int, ...]) -> tuple[tuple[in
 	return (best[1], best[2]) if best else None
 
 
-def cached_json(ctx: Context, url: str) -> Any | None:
-	try:
-		path: Path = ctx.cache["stewbeet"].download(url, headers=HEADERS)
-		return json.loads(path.read_text(encoding="utf-8"))
-	except Exception as exc:
-		stp.warning(f"Failed to fetch '{url}': {exc}")
-		return None
-
-
-def cached_zip(ctx: Context, url: str) -> Path | None:
-	"""Download *url* via beet cache, ensuring the file has a ``.zip`` suffix."""
-	if not url or url == "can't find":
-		return None
-	try:
-		cache = ctx.cache["stewbeet"]
-		path = cache.get_path(url)
-		if not path.suffix:
-			path = path.with_suffix(".zip")
-		return cache.download(url, path, headers=HEADERS)
-	except Exception as exc:
-		stp.warning(f"Failed to download '{url}': {exc}")
-		return None
-
-
 def version_str(ver: list[int] | tuple[int, ...]) -> str:
 	return ".".join(str(x) for x in ver)
 
@@ -109,8 +82,11 @@ def resolve_smithed_lib(ctx: Context, lib_ns: str, lib_data: JsonDict, mc_tup: t
 	target: str | None = version_str(lib_data["version"]) if "version" in lib_data else None
 
 	data = cached_json(ctx, f"{SMITHED_API_BASE}/{smithed_id}")
-	if not data or "versions" not in data:
-		stp.warning(f"Smithed API returned no data for '{smithed_id}'. Skipping.")
+	if data is None:
+		stp.warning(f"Could not read the Smithed API for '{smithed_id}' (see the failure above). Skipping.")
+		return None
+	if "versions" not in data:
+		stp.warning(f"Smithed API returned no versions for '{smithed_id}'. Skipping.")
 		return None
 
 	versions: list[JsonDict] = data["versions"]
@@ -150,6 +126,9 @@ def resolve_modrinth_lib(ctx: Context, lib_ns: str, lib_data: JsonDict, mc_ver: 
 	versions = cached_json(ctx, f"{base}?game_versions=[%22{mc_ver}%22]&loaders=[%22datapack%22]")
 	if not versions:
 		versions = cached_json(ctx, f"{base}?loaders=[%22datapack%22]")
+	if versions is None:
+		stp.warning(f"Could not read the Modrinth API for '{slug}' (see the failure above). Skipping.")
+		return None
 	if not versions:
 		stp.warning(f"No Modrinth release for '{slug}' (MC {mc_ver}). Skipping.")
 		return None
@@ -244,3 +223,4 @@ def get_lib_paths(ctx: Context) -> list[DownloadedLib]:
 
 	BUILD_CACHE[cache_key] = results
 	return results
+
