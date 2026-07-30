@@ -1,0 +1,8 @@
+stewbeet.plugins.livereload package
+===================================
+
+.. automodule:: stewbeet.plugins.livereload
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

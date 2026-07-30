@@ -1,0 +1,8 @@
+stewbeet.core.cls.resource\_folder module
+=========================================
+
+.. automodule:: stewbeet.core.cls.resource_folder
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
