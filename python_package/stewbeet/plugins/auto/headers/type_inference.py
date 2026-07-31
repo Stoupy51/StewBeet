@@ -13,6 +13,9 @@ from .object import Header
 WITHIN_CALLER_RE: re.Pattern[str] = re.compile(r"(?:string in )?([^\s{]+)")
 """ Isolates the function path at the head of a @within entry, past the optional "string in " prefix and before its macro payload or context. """
 
+ESCAPED_QUOTE_RE: re.Pattern[str] = re.compile(r'\\(["\'])')
+""" Matches a backslash-escaped quote. Payloads read from inside a JSON string (tellraw / dialog run_command) carry them, e.g. {jump:\\"green\\"}. """
+
 # Type mapping for NBT suffixes
 NBT_TYPE_MAP = {
     "b": "byte",
@@ -52,11 +55,15 @@ def parse_nbt_compound(nbt_string: str) -> dict[str, tuple[str, str]]:
         'compound'
         >>> result['items'][1]
         'list'
+
+        Payload written inside a JSON string, so its quotes arrive escaped:
+        >>> parse_nbt_compound(r'{jump:\\"green\\",delay:20}')
+        {'jump': ('green', 'string'), 'delay': ('20', 'int')}
     """
     result: dict[str, tuple[str, str]] = {}
 
     # Remove outer braces and split by commas (but not commas inside nested structures)
-    nbt_string = nbt_string.strip()
+    nbt_string = ESCAPED_QUOTE_RE.sub(r"\1", nbt_string.strip())
     if nbt_string.startswith("{") and nbt_string.endswith("}"):
         nbt_string = nbt_string[1:-1]
 
@@ -289,6 +296,11 @@ def infer_macro_types(header: Header, all_functions: dict[str, Header]) -> dict[
         >>> header = Header("test:lore", ["test:main {part_1:100,part_2:50,scale:'kJ'}"], [], "$say $(part_1).$(part_2)$(scale)")
         >>> infer_macro_types(header, {})
         {'part_1': 'int', 'part_2': 'int', 'scale': 'string'}
+
+        An unparsable caller never shadows a later caller that does spell the type out:
+        >>> header = Header("test:list", ["test:menu {jump:???}", 'test:remove {jump:"$(jump)"}'], [], "$say $(jump)")
+        >>> infer_macro_types(header, {})
+        {'jump': 'string'}
     """
     from .macro_parser import extract_macro_variables
 
@@ -303,13 +315,13 @@ def infer_macro_types(header: Header, all_functions: dict[str, Header]) -> dict[
     for caller in header.within:
         direct_types: dict[str, str] = infer_types_from_direct_call(caller, macro_vars, all_functions)
         for var, var_type in direct_types.items():
-            if var not in types:
+            if types.get(var, "unknown") == "unknown":
                 types[var] = var_type
 
     # Second pass: Check for storage-based calls
     storage_types: dict[str, str] = infer_types_from_storage_call(header.within, macro_vars, all_functions)
     for var, var_type in storage_types.items():
-        if var not in types:
+        if types.get(var, "unknown") == "unknown":
             types[var] = var_type
 
     # Fill in unknowns for variables we couldn't infer
