@@ -48,7 +48,7 @@ export const Templates: React.FC = () => {
     ];
 
     return (
-        <section id="templates" className="py-12 px-4 bg-slate-950/50 relative overflow-hidden">
+        <section id="templates" className="py-20 px-4 relative overflow-hidden bg-gradient-to-b from-[#0a0a0a] to-slate-950">
             {/* Background decoration */}
             <div className="absolute inset-0 overflow-hidden">
                 <div className={`absolute -top-40 right-1/4 w-80 h-80 ${GLOW_SECONDARY} rounded-full blur-[100px]`} />
@@ -69,6 +69,29 @@ export const Templates: React.FC = () => {
                     <p className="text-slate-400 text-lg max-w-3xl mx-auto">
                         {t('templates.subtitle')} <span className={`${TEXT_ACCENT_SOFT} font-semibold`}>{t('templates.subtitleHighlight')}</span> {t('templates.subtitleEnd')}
                     </p>
+                </motion.div>
+
+                {/* Info Box */}
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5 }}
+                    className={`mb-8 backdrop-blur-sm rounded-2xl p-6 ${PANEL_ACCENT}`}
+                >
+                    <div className="flex items-start gap-4">
+                        <div className="w-10 h-10 bg-indigo-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <span className="text-2xl">💡</span>
+                        </div>
+                        <div>
+                            <h4 className="text-lg font-semibold text-slate-100 mb-2">
+                                {t('templates.tipTitle')}
+                            </h4>
+                            <p className="text-slate-300 leading-relaxed">
+                                {t('templates.tipBody')}
+                            </p>
+                        </div>
+                    </div>
                 </motion.div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -158,28 +181,6 @@ export const Templates: React.FC = () => {
                     })}
                 </div>
 
-                {/* Info Box */}
-                <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.4 }}
-                    className={`mt-12 backdrop-blur-sm rounded-2xl p-6 ${PANEL_ACCENT}`}
-                >
-                    <div className="flex items-start gap-4">
-                        <div className="w-10 h-10 bg-indigo-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                            <span className="text-2xl">💡</span>
-                        </div>
-                        <div>
-                            <h4 className="text-lg font-semibold text-slate-100 mb-2">
-                                {t('templates.tipTitle')}
-                            </h4>
-                            <p className="text-slate-300 leading-relaxed">
-                                {t('templates.tipBody')}
-                            </p>
-                        </div>
-                    </div>
-                </motion.div>
             </div>
         </section>
     );

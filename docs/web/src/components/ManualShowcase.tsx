@@ -9,7 +9,7 @@ export const ManualShowcase: React.FC = () => {
     const manualDoc = `/markdown?src=${encodeURIComponent(language === 'fr' ? '7_ingame_manual/fr.md' : '7_ingame_manual/en.md')}`;
 
     return (
-        <section id="manual" className="py-20 px-4 bg-slate-900/50 relative overflow-hidden">
+        <section id="manual" className="py-20 px-4 relative overflow-hidden bg-gradient-to-b from-slate-950 to-slate-900">
             <div className="absolute inset-0 overflow-hidden">
                 <div className={`absolute top-1/4 -left-40 w-80 h-80 ${GLOW_PRIMARY} rounded-full blur-[100px]`} />
                 <div className={`absolute bottom-1/4 -right-40 w-80 h-80 ${GLOW_SECONDARY} rounded-full blur-[100px]`} />

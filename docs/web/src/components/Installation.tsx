@@ -1,6 +1,6 @@
-import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect } from 'react';
-import { HiDownload, HiTerminal, HiFolder, HiPlay, HiChevronRight } from 'react-icons/hi';
+import { motion } from 'framer-motion';
+import { useState, useEffect, useRef, useSyncExternalStore } from 'react';
+import { HiDownload, HiTerminal, HiFolder, HiPlay } from 'react-icons/hi';
 import { useStewBeetVersion } from '../hooks/useStewBeetVersion';
 import { useTranslation } from '../i18n/useTranslation';
 import { TEXT_ACCENT, STEP_ACTIVE, ICON_ACTIVE } from '../theme';
@@ -14,10 +14,26 @@ interface Step {
     icon: React.ComponentType<{ className?: string }>;
 }
 
+/** Milliseconds per typed character, then the reading time that follows the output. */
+const TYPING_SPEED = 45;
+const READ_TIME_PER_LINE = 260;
+const MIN_READ_TIME = 2600;
+const MAX_READ_TIME = 9000;
+
+/** False while server-rendering and on the hydration pass, true once the client owns the DOM. */
+const subscribeNever = () => () => {};
+const useIsHydrated = () => useSyncExternalStore(subscribeNever, () => true, () => false);
+
+function stepDurations(step: Step): { typing: number; total: number } {
+    const typing = step.command.length * TYPING_SPEED;
+    const read = Math.min(MAX_READ_TIME, Math.max(MIN_READ_TIME, step.output.length * READ_TIME_PER_LINE));
+    return { typing, total: typing + read };
+}
+
 export const Installation: React.FC = () => {
     const { version } = useStewBeetVersion();
     const { t } = useTranslation();
-    
+
     const steps: Step[] = [
         {
             id: 1,
@@ -83,63 +99,85 @@ export const Installation: React.FC = () => {
             icon: HiPlay
         }
     ];
-    
-    const [activeStep, setActiveStep] = useState<Step>(steps[0]);
-    const [typedCommand, setTypedCommand] = useState('');
-    const [showOutput, setShowOutput] = useState(false);
+
+    const [activeIndex, setActiveIndex] = useState(0);
+    const [progress, setProgress] = useState(0);
+    // Before hydration the whole step is shown at once, so crawlers get the text
+    const mounted = useIsHydrated();
+    const pausedRef = useRef(false);
+
+    const activeStep = steps[activeIndex];
+    const { typing, total } = stepDurations(activeStep);
 
     useEffect(() => {
-        setTypedCommand('');
-        setShowOutput(false);
+        if (!mounted) return;
 
-        let charIndex = 0;
-        const command = activeStep.command;
+        let frame = 0;
+        let start = performance.now();
+        let lastTick = start;
 
-        const typeInterval = setInterval(() => {
-            if (charIndex <= command.length) {
-                setTypedCommand(command.substring(0, charIndex));
-                charIndex++;
-            } else {
-                clearInterval(typeInterval);
-                setTimeout(() => setShowOutput(true), 300);
+        const tick = (now: number) => {
+            // Hovering the terminal freezes the clock rather than resetting it
+            if (pausedRef.current) {
+                start += now - lastTick;
             }
-        }, 50);
+            lastTick = now;
 
-        return () => clearInterval(typeInterval);
-    }, [activeStep]);
+            const elapsed = now - start;
+            if (elapsed >= total) {
+                setProgress(0);
+                setActiveIndex((index) => (index + 1) % steps.length);
+                return;
+            }
+            setProgress(elapsed / total);
+            frame = requestAnimationFrame(tick);
+        };
+
+        frame = requestAnimationFrame(tick);
+        return () => cancelAnimationFrame(frame);
+    }, [activeIndex, mounted, total, steps.length]);
+
+    const typedLength = mounted ? Math.round(Math.min(1, progress / (typing / total)) * activeStep.command.length) : activeStep.command.length;
+    const typedCommand = activeStep.command.slice(0, typedLength);
+    const showOutput = !mounted || progress >= typing / total;
 
     return (
-        <section id="installation" className="py-8 px-4 bg-[#0a0a0a] relative overflow-hidden">
+        <section id="installation" className="py-20 px-4 relative overflow-hidden bg-gradient-to-b from-slate-900/60 via-[#0a0a0a] to-[#0a0a0a]">
             <div className="max-w-5xl mx-auto relative z-10">
-                <div className="text-center mb-8">
+                <div className="text-center mb-10">
                     <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
                         {t('installation.title')} <span className={TEXT_ACCENT}>{t('installation.titleHighlight')}</span>
                     </h2>
                 </div>
 
                 <div className="flex flex-col md:flex-row gap-8">
-                    {/* Steps Navigation */}
+                    {/* Steps Navigation — each one fills as its turn plays */}
                     <div className="md:w-1/3 space-y-2">
-                        {steps.map((step) => {
+                        {steps.map((step, index) => {
                             const Icon = step.icon;
-                            const isActive = activeStep.id === step.id;
+                            const isActive = index === activeIndex;
                             return (
                                 <button
                                     key={step.id}
-                                    onClick={() => setActiveStep(step)}
-                                    className={`w-full flex items-center gap-4 p-4 rounded-xl transition-all duration-200 border text-left group ${isActive
-                                            ? STEP_ACTIVE
-                                            : 'bg-transparent border-transparent hover:bg-white/5 text-slate-400 hover:text-slate-200'
+                                    onClick={() => { setActiveIndex(index); setProgress(0); }}
+                                    className={`relative w-full flex items-center gap-4 p-4 rounded-xl transition-all duration-200 border text-left group overflow-hidden ${isActive
+                                        ? STEP_ACTIVE
+                                        : 'bg-transparent border-transparent hover:bg-white/5 text-slate-400 hover:text-slate-200'
                                         }`}
                                 >
-                                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${isActive ? ICON_ACTIVE : 'bg-slate-800 text-slate-500 group-hover:text-slate-300'}`}>
+                                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors flex-shrink-0 ${isActive ? ICON_ACTIVE : 'bg-slate-800 text-slate-500 group-hover:text-slate-300'}`}>
                                         <Icon />
                                     </div>
-                                    <div>
+                                    <div className="min-w-0">
                                         <div className="font-bold text-sm">{step.title}</div>
                                         <div className="text-xs opacity-60">{step.description}</div>
                                     </div>
-                                    {isActive && <HiChevronRight className={`ml-auto ${TEXT_ACCENT}`} />}
+                                    {isActive && (
+                                        <span
+                                            className="absolute bottom-0 left-0 h-0.5 bg-indigo-400"
+                                            style={{ width: `${progress * 100}%` }}
+                                        />
+                                    )}
                                 </button>
                             );
                         })}
@@ -147,47 +185,59 @@ export const Installation: React.FC = () => {
 
                     {/* Terminal Window */}
                     <div className="md:w-2/3">
-                        <div className="bg-[#1e1e1e] rounded-xl border border-white/10 shadow-2xl overflow-hidden h-[350px] flex flex-col font-mono text-sm">
+                        <div
+                            onMouseEnter={() => { pausedRef.current = true; }}
+                            onMouseLeave={() => { pausedRef.current = false; }}
+                            className="bg-[#1e1e1e] rounded-xl border border-white/10 shadow-2xl overflow-hidden h-[26rem] flex flex-col font-mono text-sm"
+                        >
                             {/* Terminal Header */}
-                            <div className="bg-[#2d2d2d] px-4 py-3 flex items-center gap-2 border-b border-white/5">
+                            <div className="bg-[#2d2d2d] px-4 py-3 flex items-center gap-2 border-b border-white/5 flex-shrink-0">
                                 <div className="w-3 h-3 rounded-full bg-[#ff5f56]" />
                                 <div className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
                                 <div className="w-3 h-3 rounded-full bg-[#27c93f]" />
                                 <div className="ml-2 text-xs text-gray-400">terminal — bash</div>
+                                <div className="ml-auto text-[0.6875rem] text-slate-500">{activeIndex + 1} / {steps.length}</div>
+                            </div>
+
+                            {/* Progress across the terminal width */}
+                            <div className="h-0.5 bg-white/5 flex-shrink-0">
+                                <div
+                                    className="h-full bg-gradient-to-r from-indigo-500 to-purple-500"
+                                    style={{ width: `${progress * 100}%` }}
+                                />
                             </div>
 
                             {/* Terminal Content */}
-                            <div className="p-6 text-slate-300 flex-1 overflow-auto">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <span className="text-green-400">user@stewbeet:~$</span>
-                                    <span>{typedCommand}</span>
+                            <div className="p-6 text-slate-300 flex-1 overflow-auto custom-scrollbar">
+                                <div className="flex items-baseline gap-2 mb-2">
+                                    <span className="text-green-400 flex-shrink-0">user@stewbeet:~$</span>
+                                    <span className="break-all">{typedCommand}</span>
                                     <motion.span
                                         animate={{ opacity: [0, 1, 0] }}
                                         transition={{ duration: 0.8, repeat: Infinity }}
-                                        className="w-2 h-4 bg-slate-400 inline-block align-middle"
+                                        className="w-2 h-4 bg-slate-400 inline-block self-center"
                                     />
                                 </div>
 
-                                <AnimatePresence>
-                                    {showOutput && (
-                                        <motion.div
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            className="space-y-1 text-slate-400"
-                                        >
-                                            {activeStep.output.map((line, i) => (
-                                                line.text === '' ? (
-                                                    <div key={i} className="h-4" />
-                                                ) : (
-                                                    <div key={i} className={line.color || ''}>
-                                                        {line.text}
-                                                    </div>
-                                                )
-                                            ))}
-                                            <div className="mt-4 text-green-400">user@stewbeet:~$</div>
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
+                                {showOutput && (
+                                    <motion.div
+                                        key={activeStep.id}
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        className="space-y-1 text-slate-400"
+                                    >
+                                        {activeStep.output.map((line, i) => (
+                                            line.text === '' ? (
+                                                <div key={i} className="h-4" />
+                                            ) : (
+                                                <div key={i} className={line.color || ''}>
+                                                    {line.text}
+                                                </div>
+                                            )
+                                        ))}
+                                        <div className="pt-3 text-green-400">user@stewbeet:~$</div>
+                                    </motion.div>
+                                )}
                             </div>
                         </div>
                     </div>
