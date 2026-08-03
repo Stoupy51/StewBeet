@@ -4,7 +4,7 @@ import {
     HiCube,
     HiTemplate,
     HiClock,
-    HiBookOpen,
+    HiGift,
     HiGlobe,
     HiBeaker,
     HiClipboard,
@@ -13,26 +13,39 @@ import {
 } from 'react-icons/hi';
 import { useTranslation } from '../i18n/useTranslation';
 import { useShiki } from '../hooks/useShiki';
-import { ACCENT_BORDER_HOVER, ICON_ACCENT, TEXT_ACCENT, STEP_ACTIVE, ICON_ACTIVE, TEXT_ACTIVE_SUBTLE } from '../theme';
+import { ICON_ACCENT, STEP_ACTIVE, ICON_ACTIVE, TEXT_ACTIVE_SUBTLE } from '../theme';
 
 interface Feature {
     id: string;
     icon: React.ComponentType<{ className?: string }>;
     title: string;
     description: string;
-    previewType: 'code' | 'image';
     previewContent: string;
-    previewLang?: string;
+    previewLang: string;
 }
 
 const getFeatures = (t: (key: string) => string): Feature[] => [
+    {
+        id: 'recipes',
+        icon: HiBeaker,
+        title: t('features.recipesTitle'),
+        description: t('features.recipesDesc'),
+        previewLang: 'mcfunction',
+        previewContent: `#> _your_namespace:calls/smithed_crafter/shaped_recipes
+#
+# @within	#smithed.crafter:event/recipes
+#
+
+execute if score @s smithed.data matches 0 store result score @s smithed.data if data storage smithed.crafter:input recipe{0: [{Slot: 0b, components: {"minecraft:custom_data": {_your_namespace: {steel_ingot: true}}}}, {Slot: 1b, id: "minecraft:air"}, {Slot: 2b, components: {"minecraft:custom_data": {_your_namespace: {steel_ingot: true}}}}], 1: [...]} run function _your_namespace:calls/smithed_crafter/apply_recipe {command: "loot replace block ~ ~ ~ container.16 loot _your_namespace:i/steel_helmet"}
+
+# One line per recipe, generated for every custom item that cannot use a vanilla recipe.`
+    },
     {
         id: 'item_models',
         icon: HiTemplate,
         title: t('features.itemModelsTitle'),
         description: t('features.itemModelsDesc'),
-            previewType: 'code',
-            previewLang: 'json',
+        previewLang: 'json',
         previewContent: `{
   "parent": "block/orientable",
   "textures": {
@@ -43,33 +56,37 @@ const getFeatures = (t: (key: string) => string): Feature[] => [
 }`
     },
     {
-        id: 'loading',
-        icon: HiClock,
-        title: t('features.loadingTitle'),
-        description: t('features.loadingDesc'),
-        previewType: 'code',
-        previewLang: 'mcfunction',
-        previewContent: `#> stardust:v4.0.0/tick
-#
-# @within	stardust:v4.0.0/load/tick_verification
-#
-
-# Timers
-scoreboard players add #tick_2 stardust.data 1
-scoreboard players add #second stardust.data 1
-scoreboard players add #second_5 stardust.data 1
-scoreboard players add #minute stardust.data 1
-execute if score #tick_2 stardust.data matches 3.. run function stardust:v4.0.0/tick_2
-execute if score #second stardust.data matches 20.. run function stardust:v4.0.0/second
-execute if score #second_5 stardust.data matches 90 run function stardust:v4.0.0/second_5
-execute if score #minute stardust.data matches 1200.. run function stardust:v4.0.0/minute`
+        id: 'custom_blocks',
+        icon: HiCube,
+        title: t('features.customBlocksTitle'),
+        description: t('features.customBlocksDesc'),
+        previewLang: 'python',
+        previewContent: `Block(
+    id="stardust_ore",
+    vanilla_block=VanillaBlockForOres,
+    # Mining drops 2-8 fragments (fortune/silk touch handled automatically)
+    no_silk_touch_drop=NoSilkTouchDrop(
+        id="stardust_fragment",
+        count={"min": 2, "max": 8}
+    ),
+    # Smelting and blasting recipes for ore to 4x fragments
+    recipes=[
+        SmeltingRecipe(
+            result_count=4, experience=0.1, cookingtime=200, category="building",
+            ingredient=Ingr("stardust_ore"), result=Ingr("stardust_fragment")
+        ),
+        BlastingRecipe(
+            result_count=4, experience=0.1, cookingtime=100, category="building",
+            ingredient=Ingr("stardust_ore"), result=Ingr("stardust_fragment")
+        ),
+    ],
+)`
     },
     {
         id: 'loot_tables',
-        icon: HiCube,
+        icon: HiGift,
         title: t('features.lootTablesTitle'),
         description: t('features.lootTablesDesc'),
-        previewType: 'code',
         previewLang: 'json',
         previewContent: `{
   "pools": [
@@ -100,21 +117,13 @@ execute if score #minute stardust.data matches 1200.. run function stardust:v4.0
               }
             }
 ]}]}]}
-`    },
-    {
-        id: 'manual',
-        icon: HiBookOpen,
-        title: t('features.manualTitle'),
-        description: t('features.manualDesc'),
-        previewType: 'image',
-        previewContent: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/plugins/img/ingame_manual.gif'
+`
     },
     {
         id: 'lang',
         icon: HiGlobe,
         title: t('features.langTitle'),
         description: t('features.langDesc'),
-        previewType: 'code',
         previewLang: 'json',
         previewContent: `{
 	"simplenergy": " SimplEnergy",
@@ -136,38 +145,31 @@ execute if score #minute stardust.data matches 1200.. run function stardust:v4.0
 }`
     },
     {
-        id: 'custom_blocks',
-        icon: HiBeaker,
-        title: t('features.customBlocksTitle'),
-        description: t('features.customBlocksDesc'),
-        previewType: 'code',
-        previewLang: 'python',
-        previewContent: `Block(
-    id="stardust_ore",
-    vanilla_block=VanillaBlockForOres,
-    # Mining drops 2-8 fragments (fortune/silk touch handled automatically)
-    no_silk_touch_drop=NoSilkTouchDrop(
-        id="stardust_fragment",
-        count={"min": 2, "max": 8}
-    ),
-    # Smelting and blasting recipes for ore to 4x fragments
-    recipes=[
-        SmeltingRecipe(
-            result_count=4, experience=0.1, cookingtime=200, category="building",
-            ingredient=Ingr("stardust_ore"), result=Ingr("stardust_fragment")
-        ),
-        BlastingRecipe(
-            result_count=4, experience=0.1, cookingtime=100, category="building",
-            ingredient=Ingr("stardust_ore"), result=Ingr("stardust_fragment")
-        ),
-    ],
-)`
+        id: 'loading',
+        icon: HiClock,
+        title: t('features.loadingTitle'),
+        description: t('features.loadingDesc'),
+        previewLang: 'mcfunction',
+        previewContent: `#> stardust:v4.0.0/tick
+#
+# @within	stardust:v4.0.0/load/tick_verification
+#
+
+# Timers
+scoreboard players add #tick_2 stardust.data 1
+scoreboard players add #second stardust.data 1
+scoreboard players add #second_5 stardust.data 1
+scoreboard players add #minute stardust.data 1
+execute if score #tick_2 stardust.data matches 3.. run function stardust:v4.0.0/tick_2
+execute if score #second stardust.data matches 20.. run function stardust:v4.0.0/second
+execute if score #second_5 stardust.data matches 90 run function stardust:v4.0.0/second_5
+execute if score #minute stardust.data matches 1200.. run function stardust:v4.0.0/minute`
     }
 ];
 
-const CodeBlock = ({ code, lang }: { code: string; lang?: string }) => {
+const CodeBlock = ({ code, lang }: { code: string; lang: string }) => {
     const [copied, setCopied] = useState(false);
-    const highlighted = useShiki(code, lang || 'text', 'dark-plus');
+    const highlighted = useShiki(code, lang, 'dark-plus');
 
     const handleCopy = () => {
         navigator.clipboard.writeText(code);
@@ -220,11 +222,11 @@ export const Features: React.FC = () => {
     };
 
     return (
-        <section id="features" className="py-12 px-4 bg-[#0a0a0a] relative overflow-hidden">
+        <section id="features" className="py-20 px-4 bg-[#0a0a0a] relative overflow-hidden">
             <div className="max-w-7xl mx-auto relative z-10">
                 <div className="text-center mb-12">
                     <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
-                        {t('features.title')} <span className={TEXT_ACCENT}>{t('features.titleHighlight')}</span>
+                        {t('features.title')}
                     </h2>
                     <p className="text-slate-400 text-lg max-w-2xl mx-auto">
                         {t('features.subtitle')}
@@ -275,8 +277,8 @@ export const Features: React.FC = () => {
                                     <div className="w-3 h-3 rounded-full bg-[#27c93f]" />
                                 </div>
                                 <div className="text-xs text-slate-400 font-mono flex items-center gap-2">
-                                    {activeFeature.previewType === 'code' && <HiCode className={ICON_ACCENT} />}
-                                    {activeFeature.previewLang ? `preview.${activeFeature.previewLang}` : 'preview'}
+                                    <HiCode className={ICON_ACCENT} />
+                                    {`generated.${activeFeature.previewLang}`}
                                 </div>
                                 <div className="w-16" /> {/* Spacer for centering */}
                             </div>
@@ -295,53 +297,17 @@ export const Features: React.FC = () => {
                                             style={{ display: isActive ? 'block' : 'none' }}
                                             aria-hidden={!isActive}
                                         >
-                                            {rendered.has(feature.id) && (feature.previewType === 'code' ? (
+                                            {rendered.has(feature.id) && (
                                                 <div className="overflow-auto custom-scrollbar" style={{ maxHeight: '500px' }}>
                                                     <CodeBlock
                                                         code={feature.previewContent}
                                                         lang={feature.previewLang}
                                                     />
                                                 </div>
-                                            ) : (
-                                                <div className="h-full w-full flex items-center justify-center bg-black/20">
-                                                    <img
-                                                        src={feature.previewContent}
-                                                        alt={feature.title}
-                                                        className="max-w-full object-contain"
-                                                        style={{ maxHeight: '500px' }}
-                                                    />
-                                                </div>
-                                            ))}
+                                            )}
                                         </motion.div>
                                     );
                                 })}
-                            </div>
-                        </div>
-
-                        {/* Integration Badges */}
-                        <div className="mt-8">
-                            <p className="text-sm text-slate-500 mb-4 font-mono uppercase tracking-wider">{t('features.integrations')}</p>
-                            <div className="flex flex-wrap gap-3">
-                                {[
-                                    { name: 'Smithed Custom Blocks', url: 'https://wiki.smithed.dev/libraries/custom-block/' },
-                                    { name: 'Smithed Crafter', url: 'https://wiki.smithed.dev/libraries/crafter/' },
-                                    { name: 'Furnace NBT Recipes', url: 'https://github.com/Stoupy51/FurnaceNbtRecipes/' },
-                                    { name: 'Smart Ore Generation', url: 'https://github.com/Stoupy51/SmartOreGeneration' },
-                                    { name: 'Bookshelf', url: 'https://github.com/mcbookshelf/bookshelf' },
-                                    { name: 'ItemIO', url: 'https://github.com/edayot/ItemIO' },
-                                    { name: 'Common Signals', url: 'https://github.com/Stoupy51/CommonSignals' },
-                                    { name: '...', url: '' }
-                                ].map((lib, idx) => (
-                                    <a
-                                        key={idx}
-                                        href={lib.url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className={`px-3 py-1.5 bg-slate-900 border border-white/10 rounded-md text-xs text-slate-400 font-mono ${ACCENT_BORDER_HOVER} hover:text-indigo-400 transition-colors cursor-pointer`}
-                                    >
-                                        {lib.name}
-                                    </a>
-                                ))}
                             </div>
                         </div>
                     </div>

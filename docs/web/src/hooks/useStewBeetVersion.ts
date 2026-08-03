@@ -4,6 +4,9 @@ interface GitHubTag {
     name: string;
 }
 
+/** Shown when the unauthenticated GitHub tags API is unreachable or rate-limited. Keep in sync with python_package/pyproject.toml. */
+const FALLBACK_VERSION = '3.5.8';
+
 // Module-level cache so only one fetch is made regardless of how many components call the hook
 let cachedVersion: string | null = null;
 let pendingFetch: Promise<string> | null = null;
@@ -18,19 +21,19 @@ const fetchOnce = (): Promise<string> => {
                 const tagName = data[0].name;
                 cachedVersion = tagName.startsWith('v') ? tagName.slice(1) : tagName;
             } else {
-                cachedVersion = '3.0.0';
+                cachedVersion = FALLBACK_VERSION;
             }
             return cachedVersion;
         })
         .catch(() => {
-            cachedVersion = '3.0.0';
+            cachedVersion = FALLBACK_VERSION;
             return cachedVersion;
         });
     return pendingFetch;
 };
 
 export const useStewBeetVersion = () => {
-    const [version, setVersion] = useState<string>(cachedVersion ?? '3.0.0');
+    const [version, setVersion] = useState<string>(cachedVersion ?? FALLBACK_VERSION);
     const [loading, setLoading] = useState<boolean>(cachedVersion === null);
 
     useEffect(() => {

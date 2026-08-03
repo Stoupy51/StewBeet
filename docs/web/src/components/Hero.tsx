@@ -1,91 +1,40 @@
 import { motion } from 'framer-motion';
-import { HiTerminal, HiDocumentText, HiClipboard, HiCheck } from 'react-icons/hi';
-import { useEffect, useState } from 'react';
+import { HiArrowRight, HiClipboard, HiCheck, HiArrowSmRight } from 'react-icons/hi';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useStewBeetVersion } from '../hooks/useStewBeetVersion';
 import { useTranslation } from '../i18n/useTranslation';
-import { ACCENT_BORDER_HOVER, BRAND_DOT, BRAND_PILL, GRADIENT_TEXT_BRIGHT, ICON_ACCENT, ICON_BADGE, TERMINAL_GLOW, TEXT_ACCENT_HOVER } from '../theme';
+import { useShiki } from '../hooks/useShiki';
+import { ACCENT_BORDER_HOVER, BRAND_DOT, BRAND_PILL, BTN_PRIMARY, GRADIENT_TEXT_BRIGHT, ICON_ACCENT, TERMINAL_GLOW, TEXT_ACCENT_HOVER } from '../theme';
 
-const TerminalWindow = () => {
-    const { version } = useStewBeetVersion();
-    const [lines, setLines] = useState<Array<{ text: string; color?: string }>>([]);
+/** Three lines from templates/extensive/src/definitions/ores.py, trimmed of its comments. */
+const HERO_CODE = `from stewbeet import *
 
-    useEffect(() => {
-        const fullLines: Array<{ text: string; color?: string }> = [
-            { text: "> pip install stewbeet", color: "text-slate-300" },
-            { text: "Installing stewbeet...", color: "text-slate-400" },
-            { text: `Successfully installed stewbeet-${version}`, color: "text-green-400" },
-            { text: "> stewbeet init basic", color: "text-slate-300" },
-            { text: "[INFO] Template initialized successfully!", color: "text-green-400" },
-            { text: "> stewbeet", color: "text-slate-300" },
-            { text: "Building project...", color: "text-slate-400" },
-            { text: "...", color: "text-slate-500" },
-            { text: "[DEBUG] Total execution time: 0.79140s", color: "text-blue-400" },
-            { text: "Done!", color: "text-green-400" },
-        ];
+generate_everything_about_these_materials({
+    "steel_ingot": EquipmentsConfig(equivalent_to=DefaultOre.IRON),
+})`;
 
-        let currentLine = 0;
-        let currentChar = 0;
-        let timeout: ReturnType<typeof setTimeout>;
+interface GeneratedGroup {
+    count: string;
+    label: string;
+    detail: string;
+}
 
-        const typeLine = () => {
-            if (currentLine >= fullLines.length) {
-                return;
-            }
+/** Counted in templates/extensive/build — every generated file whose name contains "steel". */
+const GENERATED_GROUPS: GeneratedGroup[] = [
+    { count: '20', label: 'items', detail: 'ingot, nugget, block, raw ore, deepslate ore, 5 tools, 4 armour pieces…' },
+    { count: '24', label: 'loot tables', detail: 'data/<ns>/loot_table/i/steel_pickaxe.json …' },
+    { count: '18', label: 'item models', detail: 'assets/<ns>/items/ + models/item/' },
+    { count: '13', label: 'furnace recipes', detail: 'smelting and blasting, NBT-aware' },
+    { count: '19', label: 'recipe renders', detail: 'crafting grids drawn for the manual' },
+    { count: '3', label: 'ore veins', detail: 'Smart Ore Generation placement functions' },
+];
 
-            const line = fullLines[currentLine];
-
-            if (currentChar <= line.text.length) {
-                setLines(prev => {
-                    const newLines = [...prev];
-                    newLines[currentLine] = {
-                        text: line.text.substring(0, currentChar),
-                        color: line.color
-                    };
-                    return newLines;
-                });
-                currentChar++;
-                timeout = setTimeout(typeLine, 20 + Math.random() * 20);
-            } else {
-                currentLine++;
-                currentChar = 0;
-                timeout = setTimeout(typeLine, 300);
-            }
-        };
-
-        typeLine();
-        return () => clearTimeout(timeout);
-    }, [version]);
-
-    return (
-        <div className="w-full bg-[#1e1e1e] rounded-lg shadow-2xl overflow-hidden border border-white/10 font-mono text-sm">
-            <div className="bg-[#2d2d2d] px-4 py-2 flex items-center gap-2 border-b border-white/5">
-                <div className="w-3 h-3 rounded-full bg-[#ff5f56]" />
-                <div className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
-                <div className="w-3 h-3 rounded-full bg-[#27c93f]" />
-                <div className="ml-2 text-xs text-gray-400">terminal — stewbeet</div>
-            </div>
-            <div className="p-4 h-[20rem] overflow-hidden text-gray-300">
-                {lines.map((line, i) => (
-                    <div key={i} className="mb-1">
-                        <span className="text-green-400 mr-2">$</span>
-                        <span className={line.color || 'text-gray-300'}>{line.text}</span>
-                    </div>
-                ))}
-                <motion.span
-                    animate={{ opacity: [0, 1, 0] }}
-                    transition={{ duration: 0.8, repeat: Infinity }}
-                    className="inline-block w-2 h-4 bg-gray-400 align-middle ml-1"
-                />
-            </div>
-        </div>
-    );
-};
-
-const CopyButton = ({ text }: { text: string }) => {
+const CopyInstall = () => {
     const [copied, setCopied] = useState(false);
 
     const handleCopy = () => {
-        navigator.clipboard.writeText(text);
+        navigator.clipboard.writeText('pip install stewbeet');
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     };
@@ -93,138 +42,143 @@ const CopyButton = ({ text }: { text: string }) => {
     return (
         <button
             onClick={handleCopy}
-            className={`group relative flex items-center gap-3 px-6 py-3 bg-slate-800/50 hover:bg-slate-800 border border-slate-700 ${ACCENT_BORDER_HOVER} rounded-lg transition-all duration-200`}
+            className={`group flex items-center gap-3 px-4 py-2.5 bg-slate-900/60 border border-slate-800 ${ACCENT_BORDER_HOVER} rounded-lg transition-colors duration-200`}
         >
-            <div className="font-mono text-slate-300">
+            <span className="font-mono text-sm text-slate-300">
                 <span className={ICON_ACCENT}>$</span> pip install stewbeet
-            </div>
-            <div className="w-px h-4 bg-slate-700" />
+            </span>
             {copied ? (
-                <HiCheck className="text-green-400 text-lg" />
+                <HiCheck className="text-green-400" />
             ) : (
-                <HiClipboard className="text-slate-400 group-hover:text-white transition-colors text-lg" />
+                <HiClipboard className="text-slate-500 group-hover:text-slate-300 transition-colors" />
             )}
         </button>
     );
 };
 
-export const Hero: React.FC = () => {
-    const { version } = useStewBeetVersion();
-    const { t } = useTranslation();
+const CodePanel = ({ caption }: { caption: string }) => {
+    const highlighted = useShiki(HERO_CODE, 'python', 'dark-plus');
 
     return (
-        <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 bg-[#0a0a0a]">
+        <div className="bg-[#1e1e1e] rounded-xl border border-white/10 shadow-2xl overflow-hidden">
+            <div className="bg-[#2d2d2d] px-4 py-2.5 flex items-center gap-2 border-b border-white/5">
+                <div className="w-3 h-3 rounded-full bg-[#ff5f56]" />
+                <div className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
+                <div className="w-3 h-3 rounded-full bg-[#27c93f]" />
+                <span className="ml-2 text-xs text-slate-400 font-mono">{caption}</span>
+            </div>
+            <div className="p-4 overflow-x-auto custom-scrollbar">
+                {highlighted ? (
+                    <div
+                        dangerouslySetInnerHTML={{ __html: highlighted }}
+                        style={{ fontSize: '0.8125rem', lineHeight: '1.7' }}
+                        className="[&>pre]:!bg-transparent [&>pre]:!m-0 [&>pre]:!p-0"
+                    />
+                ) : (
+                    <pre className="m-0 text-[0.8125rem] leading-[1.7] text-slate-300 font-mono">
+                        <code>{HERO_CODE}</code>
+                    </pre>
+                )}
+            </div>
+        </div>
+    );
+};
+
+const OutputPanel = ({ caption, summary, note }: { caption: string; summary: string; note: string }) => (
+    <div className="bg-[#1e1e1e] rounded-xl border border-white/10 shadow-2xl overflow-hidden">
+        <div className="bg-[#2d2d2d] px-4 py-2.5 flex items-center justify-between gap-2 border-b border-white/5">
+            <span className="text-xs text-slate-400 font-mono">{caption}</span>
+            <span className="text-xs font-mono text-green-400">{summary}</span>
+        </div>
+        <div className="p-4 space-y-2">
+            {GENERATED_GROUPS.map((group) => (
+                <div key={group.label} className="flex items-baseline gap-3 font-mono text-[0.8125rem]">
+                    <HiCheck className="text-green-400 flex-shrink-0 translate-y-0.5" />
+                    <span className="text-white tabular-nums w-6 text-right">{group.count}</span>
+                    <span className="text-slate-200 w-32 flex-shrink-0">{group.label}</span>
+                    <span className="text-slate-500 truncate hidden xl:block">{group.detail}</span>
+                </div>
+            ))}
+            <p className="pt-2 text-xs text-slate-500 leading-relaxed border-t border-white/5 mt-3">{note}</p>
+        </div>
+    </div>
+);
+
+export const Hero: React.FC = () => {
+    const { version } = useStewBeetVersion();
+    const { t, language } = useTranslation();
+    const gettingStarted = `/markdown?src=${encodeURIComponent(language === 'fr' ? '0_getting_started/fr.md' : '0_getting_started/en.md')}`;
+
+    return (
+        <section id="hero" className="relative min-h-screen flex items-center overflow-hidden pt-24 pb-12 bg-[#0a0a0a]">
             {/* Technical Grid Background */}
             <div className="absolute inset-0 z-0 opacity-20">
                 <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
                 <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-indigo-500 opacity-20 blur-[100px]" />
             </div>
 
-            <div className="relative z-10 w-full max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                {/* Left Column: Content */}
+            <div className="relative z-10 w-full max-w-7xl mx-auto px-4">
                 <motion.div
-                    className="text-left"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="max-w-3xl"
                 >
-                    <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.5 }}
-                        className={`inline-flex items-center gap-2 px-3 py-1 rounded-full ${BRAND_PILL} text-xs font-mono mb-6`}
-                    >
+                    <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full ${BRAND_PILL} text-xs font-mono mb-6`}>
                         <span className={`w-2 h-2 rounded-full ${BRAND_DOT} animate-pulse`} />
                         v{version} {t('hero.versionStable')}
-                    </motion.div>
+                    </div>
 
-                    <motion.h1
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.1 }}
-                        className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight"
-                    >
-                        {t('hero.automateTitle')} <br />
-                        <span className={GRADIENT_TEXT_BRIGHT}>
-                            {t('hero.minecraftDatapacks')}
-                        </span>
-                    </motion.h1>
+                    <h1 className="text-4xl md:text-6xl font-bold text-white mb-5 tracking-tight leading-[1.1]">
+                        {t('hero.titleLine1')} <br />
+                        <span className={GRADIENT_TEXT_BRIGHT}>{t('hero.titleLine2')}</span>
+                    </h1>
 
-                    <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.2 }}
-                        className="text-lg text-slate-400 mb-8 max-w-xl leading-relaxed"
-                    >
-                        {t('hero.description')} <a href="https://github.com/mcbeet/beet" target="_blank" rel="noopener noreferrer" className={TEXT_ACCENT_HOVER}>{t('hero.beet')}</a> {t('hero.descriptionContinued')}
-                    </motion.p>
+                    <p className="text-lg text-slate-400 mb-8 leading-relaxed">
+                        {t('hero.description')}{' '}
+                        <a href="https://github.com/mcbeet/beet" target="_blank" rel="noopener noreferrer" className={TEXT_ACCENT_HOVER}>
+                            {t('hero.beet')}
+                        </a>{' '}
+                        {t('hero.descriptionContinued')}
+                    </p>
 
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.3 }}
-                        className="flex flex-col sm:flex-row gap-4"
-                    >
-                        <CopyButton text="pip install stewbeet" />
-
-                        <a
-                            href="/documentation"
-                            className="flex items-center justify-center gap-2 px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-lg text-slate-300 transition-all duration-200 font-medium"
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-14">
+                        <Link
+                            to={gettingStarted}
+                            className={`flex items-center gap-2 px-6 py-3 ${BTN_PRIMARY} rounded-lg text-white font-semibold transition-all duration-200`}
                         >
-                            <HiDocumentText className="text-lg" />
+                            {t('hero.getStarted')}
+                            <HiArrowRight />
+                        </Link>
+                        <CopyInstall />
+                        <a href="/documentation" className={`text-sm text-slate-400 ${TEXT_ACCENT_HOVER} underline-offset-4 hover:underline`}>
                             {t('hero.viewDocs')}
                         </a>
-                    </motion.div>
-
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.8 }}
-                        className="mt-12 flex items-center gap-6 text-sm text-slate-500 font-mono"
-                    >
-                        <div className="flex items-center gap-2">
-                            <HiCheck className={ICON_ACCENT} />
-                            <span>{t('hero.typeSafe')}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <HiCheck className={ICON_ACCENT} />
-                            <span>{t('hero.autoGenerated')}</span>
-                        </div>
-                    </motion.div>
+                    </div>
                 </motion.div>
 
-                {/* Right Column: Terminal */}
+                {/* Input -> output, the whole pitch in one look */}
                 <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
+                    initial={{ opacity: 0, scale: 0.98 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.8, delay: 0.2 }}
-                    className="relative hidden lg:block"
+                    transition={{ duration: 0.6, delay: 0.2 }}
+                    className="relative grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-10 items-start"
                 >
-                    <div className="relative w-full max-w-lg mx-auto">
-                        <div className={`absolute -inset-1 ${TERMINAL_GLOW} rounded-xl blur-[24px] opacity-20`} />
-                        <TerminalWindow />
+                    <div className={`absolute -inset-2 ${TERMINAL_GLOW} rounded-2xl blur-[40px] opacity-10 pointer-events-none`} />
+
+                    <div className="relative">
+                        <CodePanel caption={t('hero.codeCaption')} />
                     </div>
 
-                    {/* Floating Elements around terminal */}
-                    <div className="animate-float-up absolute -top-8 -right-8 bg-[#1e1e1e] p-4 rounded-lg border border-white/10 shadow-xl">
-                        <div className="flex items-center gap-3 mb-2">
-                            <div className={`w-8 h-8 rounded flex items-center justify-center ${ICON_BADGE}`}>
-                                <HiTerminal />
-                            </div>
-                            <div>
-                                <div className="text-xs text-slate-400">{t('hero.buildTime')}</div>
-                                <div className="text-sm font-bold text-white">{t('hero.fast')}</div>
-                            </div>
+                    <div className="relative">
+                        <div className="hidden lg:flex absolute -left-8 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-slate-800 border border-white/10 items-center justify-center">
+                            <HiArrowSmRight className={ICON_ACCENT} />
                         </div>
-                    </div>
-
-                    <div className="animate-float-down absolute -bottom-8 -left-8 bg-[#1e1e1e] p-4 rounded-lg border border-white/10 shadow-xl">
-                        <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded bg-green-500/20 flex items-center justify-center text-green-400">
-                                <HiCheck />
-                            </div>
-                            <div>
-                                <div className="text-xs text-slate-400">{t('hero.filesGenerated')}</div>
-                                <div className="text-sm font-bold text-white">2,026+</div>
-                            </div>
-                        </div>
+                        <OutputPanel
+                            caption={t('hero.outputCaption')}
+                            summary={t('hero.outputSummary')}
+                            note={t('hero.outputNote')}
+                        />
                     </div>
                 </motion.div>
             </div>

@@ -66,24 +66,25 @@ export const Navbar = memo(() => {
         return () => window.cancelIdleCallback(handle);
     }, [prefetchSearch]);
 
-    const scrollToSection = (id: string) => {
+    const scrollToSection = (id: string, homePath = '/') => {
         // First, check if the element exists on the current page
         const element = document.getElementById(id);
         if (element) {
             // Element exists on current page, just scroll to it
             element.scrollIntoView({ behavior: 'smooth' });
         } else {
-            // Element doesn't exist, navigate to home page with hash
-            window.location.href = `/#${id}`;
+            // Element doesn't exist, navigate to the page that owns the section
+            window.location.href = `${homePath}#${id}`;
         }
         setIsMobileMenuOpen(false);
     };
 
+    // The plugins table lives on /documentation, every other section on the landing page
     const navItems = [
-        { label: t('nav.features'), id: 'features' },
-        { label: t('nav.installation'), id: 'installation' },
-        { label: t('nav.templates'), id: 'templates' },
-        { label: t('nav.plugins'), id: 'plugins' },
+        { label: t('nav.features'), id: 'features', homePath: '/' },
+        { label: t('nav.installation'), id: 'installation', homePath: '/' },
+        { label: t('nav.templates'), id: 'templates', homePath: '/' },
+        { label: t('nav.plugins'), id: 'plugins', homePath: '/documentation' },
     ];
 
     const handleDocumentationClick = (e: React.MouseEvent) => {
@@ -153,7 +154,7 @@ export const Navbar = memo(() => {
                         {navItems.map((item) => (
                             <button
                                 key={item.id}
-                                onClick={() => scrollToSection(item.id)}
+                                onClick={() => scrollToSection(item.id, item.homePath)}
                                 className="text-slate-300 hover:text-white transition-colors duration-200 text-sm font-medium"
                             >
                                 {item.label}
@@ -306,7 +307,7 @@ export const Navbar = memo(() => {
                             {navItems.map((item) => (
                                 <button
                                     key={item.id}
-                                    onClick={() => scrollToSection(item.id)}
+                                    onClick={() => scrollToSection(item.id, item.homePath)}
                                     className="block w-full text-left text-slate-300 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg transition-all"
                                 >
                                     {item.label}

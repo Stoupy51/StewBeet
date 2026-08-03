@@ -2,15 +2,19 @@
  * Post-build prerender script — run with Bun after `vite build`.
  * Renders each route to static HTML so AI crawlers and search engines
  * receive real content instead of an empty <div id="root">.
+ *
+ * Uses `prerender` from react-dom/static rather than renderToString: the routes in
+ * AppRoutes are React.lazy, and renderToString cannot suspend, so it aborted every
+ * route to client rendering and emitted an empty shell.
  */
-import { renderToString } from 'react-dom/server';
+import { prerender } from 'react-dom/static';
 import { StaticRouter } from 'react-router';
 import { LanguageProvider } from '../src/context/LanguageContext';
 import { AppRoutes } from '../src/AppRoutes';
 import { readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { join } from 'path';
 
-const routes = ['/', '/documentation', '/markdown', '/markdown_to_pmc_bbcode'];
+const routes = ['/', '/documentation', '/markdown', '/markdown_to_pmc_bbcode', '/tools'];
 
 const distDir = join(import.meta.dir, '..', 'dist');
 const template = readFileSync(join(distDir, 'index.html'), 'utf-8');
@@ -19,18 +23,27 @@ const template = readFileSync(join(distDir, 'index.html'), 'utf-8');
 // Must be done before the '/' route overwrites dist/index.html with pre-rendered content.
 writeFileSync(join(distDir, '_template.html'), template);
 
+/** Body of the document `prerender` emits — everything that belongs inside #root. */
+function extractBody(html: string): string {
+    const start = html.indexOf('<body>');
+    const end = html.lastIndexOf('</body>');
+    if (start === -1 || end === -1) return html;
+    return html.slice(start + '<body>'.length, end);
+}
+
 for (const route of routes) {
-    const html = renderToString(
+    const { prelude } = await prerender(
         <StaticRouter location={route}>
             <LanguageProvider>
                 <AppRoutes />
             </LanguageProvider>
         </StaticRouter>
     );
+    const body = extractBody(await new Response(prelude).text());
 
     const output = template.replace(
         '<div id="root"></div>',
-        `<div id="root">${html}</div>`,
+        `<div id="root">${body}</div>`,
     );
 
     if (route === '/') {
@@ -41,7 +54,7 @@ for (const route of routes) {
         writeFileSync(join(routeDir, 'index.html'), output);
     }
 
-    console.log(`Pre-rendered: ${route}`);
+    console.log(`Pre-rendered: ${route} (${body.length} chars)`);
 }
 
 console.log('Pre-rendering complete.');
