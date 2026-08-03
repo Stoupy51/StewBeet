@@ -1,30 +1,37 @@
 import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Navbar } from './Navbar';
 import { Hero } from './Hero';
-import { WhatIsStewBeet } from './WhatIsStewBeet';
+import { ManualShowcase } from './ManualShowcase';
 import { Features } from './Features';
+import { BuiltWith } from './BuiltWith';
 import { Installation } from './Installation';
 import { Templates } from './Templates';
-import { Showcase } from './Showcase';
 import { Footer } from './Footer';
 import { SELECTION_BRAND } from '../theme';
 
 function HomePage() {
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Handle hash navigation
   useEffect(() => {
-    if (location.hash) {
-      const element = document.querySelector(location.hash);
-      if (element) {
-        // Small delay to ensure page is rendered
-        setTimeout(() => {
-          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 100);
-      }
+    if (!location.hash) return;
+
+    // The plugins table now lives on /documentation — keep the old anchor working
+    if (location.hash === '#plugins') {
+      navigate('/documentation#plugins', { replace: true });
+      return;
     }
-  }, [location]);
+
+    const element = document.querySelector(location.hash);
+    if (element) {
+      // Small delay to ensure page is rendered
+      setTimeout(() => {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  }, [location, navigate]);
 
   return (
     <div className={`min-h-screen bg-slate-950 text-slate-100 ${SELECTION_BRAND}`}>
@@ -32,11 +39,11 @@ function HomePage() {
 
       <main>
         <Hero />
-        <WhatIsStewBeet />
+        <ManualShowcase />
         <Features />
+        <BuiltWith />
         <Installation />
         <Templates />
-        <Showcase />
       </main>
 
       <Footer />

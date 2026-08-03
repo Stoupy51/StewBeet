@@ -9,7 +9,7 @@
  * All other requests are served as static files from dist/.
  * Unknown paths fall back to dist/index.html (SPA fallback).
  */
-import { renderToString } from 'react-dom/server';
+import { prerender } from 'react-dom/static';
 import { StaticRouter } from 'react-router';
 import { LanguageProvider } from './src/context/LanguageContext';
 import { AppRoutes } from './src/AppRoutes';
@@ -30,6 +30,14 @@ const gzipCache = new Map<string, Uint8Array>();
 /** Convert a `src` param to the raw GitHub URL (same logic as MarkdownPage.tsx). */
 function isValidDocSrc(src: string): boolean {
     return DOC_SRC_PATTERN.test(src) && !src.includes('..');
+}
+
+/** Body of the document `prerender` emits — everything that belongs inside #root. */
+function extractBody(html: string): string {
+    const start = html.indexOf('<body>');
+    const end = html.lastIndexOf('</body>');
+    if (start === -1 || end === -1) return html;
+    return html.slice(start + '<body>'.length, end);
 }
 
 function srcToRawUrl(src: string): string {
@@ -72,7 +80,7 @@ Bun.serve({
             }
 
             const location = pathname + url.search;
-            const html = renderToString(
+            const { prelude } = await prerender(
                 <MarkdownContentProvider content={markdownContent}>
                     <StaticRouter location={location}>
                         <LanguageProvider>
@@ -81,10 +89,11 @@ Bun.serve({
                     </StaticRouter>
                 </MarkdownContentProvider>
             );
+            const body = extractBody(await new Response(prelude).text());
 
             const output = template.replace(
                 '<div id="root"></div>',
-                `<div id="root">${html}</div>`,
+                `<div id="root">${body}</div>`,
             );
 
             return new Response(output, {

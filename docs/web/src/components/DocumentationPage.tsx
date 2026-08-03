@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { HiArrowRight } from 'react-icons/hi';
 import { Navbar } from './Navbar';
@@ -18,6 +19,16 @@ interface DocItem {
 
 export const DocumentationPage: React.FC = () => {
     const { t, language } = useTranslation();
+    const location = useLocation();
+
+    // #plugins used to live on the landing page; it now resolves here
+    useEffect(() => {
+        if (!location.hash) return;
+        const element = document.querySelector(location.hash);
+        if (element) {
+            setTimeout(() => element.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+        }
+    }, [location]);
 
     const docs: DocItem[] = [
         {
@@ -179,7 +190,7 @@ export const DocumentationPage: React.FC = () => {
                         className="mt-12 text-center"
                     >
                         <p className="text-slate-500 text-sm">
-                            More documentation coming soon...
+                            {t('documentation.comingSoon')}
                         </p>
                     </motion.div>
                 </div>
@@ -199,8 +210,8 @@ export const DocumentationPage: React.FC = () => {
                             {t('documentation.plugins')}
                         </h2>
                         <p className="text-slate-400 text-lg max-w-3xl mx-auto mb-8">
-                            {t('documentation.pluginsSubtitle')}<br />
-                            <span className="text-sm">Legend: <span className="text-red-400">🔴 Fully dependent</span> <span className="text-yellow-400 ml-2">🟡 Partly dependent</span> <span className="text-green-400 ml-2">🟢 Independent</span></span>
+                            {t('showcase.subtitle')}<br />
+                            <span className="text-sm">{t('showcase.legend')} <span className="text-red-400">🔴 {t('showcase.fullyDependent')}</span> <span className="text-yellow-400 ml-2">🟡 {t('showcase.partlyDependent')}</span> <span className="text-green-400 ml-2">🟢 {t('showcase.independent')}</span></span>
                         </p>
                     </motion.div>
 

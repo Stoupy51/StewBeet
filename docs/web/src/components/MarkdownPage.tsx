@@ -9,6 +9,7 @@ import { HiArrowLeft, HiExternalLink, HiMenu, HiX } from 'react-icons/hi';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 import { useLanguage } from '../context/LanguageContext';
+import { useTranslation } from '../i18n/useTranslation';
 import { useMarkdownContent } from '../context/MarkdownContentContext';
 import { useShiki } from '../hooks/useShiki';
 import { headingTextToSlug, slugify } from '../utils/slugify';
@@ -122,6 +123,7 @@ export const MarkdownPage: React.FC = () => {
     const navigate = useNavigate();
     const { hash, search } = useLocation();
     const { language } = useLanguage();
+    const { t } = useTranslation();
     const src = searchParams.get('src');
     // ssrContent is non-null when pre-rendered by the SSR server (server.tsx)
     const ssrContent = useMarkdownContent();
@@ -228,7 +230,7 @@ export const MarkdownPage: React.FC = () => {
 
     useEffect(() => {
         if (!src) {
-            setError('No plugin specified. Please provide a "src" parameter.');
+            setError(t('markdown.noPlugin'));
             setLoading(false);
             return;
         }
@@ -268,7 +270,7 @@ export const MarkdownPage: React.FC = () => {
         };
 
         fetchMarkdown();
-    }, [src, rawUrl]);
+    }, [src, rawUrl, t]);
 
     // Scroll to the heading targeted by the URL hash (search results, shared links).
     // The content arrives asynchronously, so this cannot rely on the browser's own handling.
@@ -343,7 +345,7 @@ export const MarkdownPage: React.FC = () => {
                         className={`flex items-center gap-2 ${TEXT_ACCENT_HOVER} group`}
                     >
                         <HiArrowLeft className="text-xl group-hover:-translate-x-1 transition-transform" />
-                        <span className="font-medium">Back</span>
+                        <span className="font-medium">{t('markdown.back')}</span>
                     </button>
                     
                     <div className="flex items-center gap-4">
@@ -353,7 +355,7 @@ export const MarkdownPage: React.FC = () => {
                                 className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all lg:hidden ${TOOLBAR_ACCENT}`}
                             >
                                 <HiMenu className="text-xl" />
-                                <span className="text-sm font-medium">Contents</span>
+                                <span className="text-sm font-medium">{t('markdown.contents')}</span>
                             </button>
                         )}
                         {fullUrl && (
@@ -363,7 +365,7 @@ export const MarkdownPage: React.FC = () => {
                                 rel="noopener noreferrer"
                                 className="flex items-center gap-2 text-slate-400 hover:text-slate-200 transition-colors text-sm group"
                             >
-                                <span>View on GitHub</span>
+                                <span>{t('markdown.viewOnGithub')}</span>
                                 <HiExternalLink className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                             </a>
                         )}
@@ -417,7 +419,7 @@ export const MarkdownPage: React.FC = () => {
 
                 {error && (
                     <div className={`rounded-xl p-8 text-center backdrop-blur-sm ${ALERT_ACCENT}`}>
-                        <p className="text-indigo-400 text-xl font-bold mb-3">Error</p>
+                        <p className="text-indigo-400 text-xl font-bold mb-3">{t('markdown.error')}</p>
                         <p className="text-slate-300 text-lg">{error}</p>
                     </div>
                 )}

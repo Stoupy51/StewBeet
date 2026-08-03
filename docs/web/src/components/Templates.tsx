@@ -18,34 +18,31 @@ export const Templates: React.FC = () => {
         {
             icon: HiLightningBolt,
             name: 'minimal',
-            displayName: 'Minimal',
+            displayName: t('templates.minimal'),
             emoji: '🔹',
             recommended: false,
-            description: 'A very minimal template using only one stewbeet plugin.',
-            bestFor: 'Learning Beet basics',
-            color: 'from-slate-500 to-gray-500',
+            description: t('templates.minimalDesc'),
+            bestFor: t('templates.minimalBestFor'),
             downloadUrl: 'https://github.com/Stoupy51/StewBeet/raw/main/templates/minimal_template.zip'
         },
         {
             icon: HiStar,
             name: 'basic',
-            displayName: 'Basic',
+            displayName: t('templates.basic'),
             emoji: '⭐',
             recommended: true,
-            description: 'A template with complete configuration but no coded features.',
-            bestFor: 'Most users (recommended)',
-            color: 'from-indigo-500 to-purple-500',
+            description: t('templates.basicDesc'),
+            bestFor: t('templates.basicBestFor'),
             downloadUrl: 'https://github.com/Stoupy51/StewBeet/raw/main/templates/basic_template.zip'
         },
         {
             icon: HiSparkles,
             name: 'extensive',
-            displayName: 'Extensive',
+            displayName: t('templates.extensive'),
             emoji: '🌟',
             recommended: false,
-            description: 'A template with all the features of the framework, including all the plugins.',
-            bestFor: 'Advanced users looking for examples',
-            color: 'from-amber-500 to-orange-500',
+            description: t('templates.extensiveDesc'),
+            bestFor: t('templates.extensiveBestFor'),
             downloadUrl: 'https://github.com/Stoupy51/StewBeet/raw/main/templates/extensive_template.zip'
         }
     ];
@@ -106,7 +103,7 @@ export const Templates: React.FC = () => {
                                                     </h3>
                                                     {template.recommended && (
                                                         <span className={`text-xs ${TEXT_ACCENT} font-medium`}>
-                                                            Recommended
+                                                            {t('templates.recommended')}
                                                         </span>
                                                     )}
                                                 </div>
@@ -152,7 +149,7 @@ export const Templates: React.FC = () => {
                                             className="flex items-center justify-center gap-2 w-full py-2 rounded bg-white/5 hover:bg-white/10 text-slate-400 hover:text-slate-300 border border-white/5 hover:border-white/10 transition-all text-xs"
                                         >
                                             <HiDownload className="text-xs" />
-                                            or download .zip
+                                            {t('templates.downloadZip')}
                                         </motion.a>
                                     </div>
                                 </div>
@@ -175,11 +172,10 @@ export const Templates: React.FC = () => {
                         </div>
                         <div>
                             <h4 className="text-lg font-semibold text-slate-100 mb-2">
-                                Getting Started Tip
+                                {t('templates.tipTitle')}
                             </h4>
                             <p className="text-slate-300 leading-relaxed">
-                                I strongly recommend the <span className={`${TEXT_ACCENT_SOFT} font-semibold`}>Basic Template</span> as it includes all plugins with clear and commented configuration,
-                                without overwhelming you with code examples. You can start from a clean base and add only what you need!
+                                {t('templates.tipBody')}
                             </p>
                         </div>
                     </div>
