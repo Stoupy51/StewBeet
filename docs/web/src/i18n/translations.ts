@@ -17,17 +17,17 @@ export const translations = {
         // Hero Section
         hero: {
             versionStable: 'Stable Release',
-            titleLine1: 'Define a material in Python.',
+            titleLine1: 'Define a block in Python.',
             titleLine2: 'Get the whole datapack.',
             description: 'StewBeet is a',
             beet: 'Beet',
             descriptionContinued: 'framework for Minecraft datapacks. Describe your content once — models, recipes, loot tables, translations and an in-game manual are built from that description on every compile.',
             getStarted: 'Get Started',
             viewDocs: 'Documentation',
-            codeCaption: 'src/definitions/ores.py',
+            codeCaption: 'definitions/additions/equipments.py',
             outputCaption: 'build/',
-            outputSummary: '158 files, from three lines',
-            outputNote: 'Real output of the extensive template. Tools, armour, ore, blocks, their recipes, loot tables, models and manual pages.',
+            outputSummary: '15 files generated',
+            outputNote: 'Placement, destruction, the Silk Touch branch, the recipe and its drawn crafting grid, world generation, models and textures. The manual page and the translation keys come with it.',
         },
 
         // In-game manual showcase
@@ -52,8 +52,8 @@ export const translations = {
             itemModelsTitle: 'Textures become models without touching JSON',
             itemModelsDesc: 'Drop top, side and bottom PNGs into assets/textures and the block is recognised as a cube. An _on suffix gives you the powered state for free.',
 
-            customBlocksTitle: 'Custom ores drop like vanilla ores',
-            customBlocksDesc: 'Say what the block drops. Fortune, Silk Touch, placement, destruction and Smithed Custom Blocks registration are handled for you.',
+            materialsTitle: 'One material, the whole tier',
+            materialsDesc: 'Name an ingot and what it is equivalent to. Tools, armour, ore, blocks and nuggets are registered from the textures you dropped in, recipes included.',
 
             lootTablesTitle: 'Every item is givable, immediately',
             lootTablesDesc: 'Each defined item gets a loot table, plus a _give_all function that hands you the entire pack in named chests for testing.',
@@ -61,8 +61,8 @@ export const translations = {
             langTitle: 'Translation keys extracted from your code',
             langDesc: 'Write your text once in Python. en_us.json is generated from what you actually wrote, so the lang file never drifts from the items.',
 
-            loadingTitle: 'Timers and version checks on day one',
-            loadingDesc: 'tick, second and minute functions, LanternLoad-compatible loading, and runtime checks that tell players which library is missing.',
+            dependenciesTitle: 'A missing library tells the player what to download',
+            dependenciesDesc: 'StewBeet reads your functions, works out which libraries you actually used, fetches them and writes the runtime version check. Load without one and the chat names it, with a clickable link.',
         },
 
         // Built with StewBeet
@@ -269,17 +269,17 @@ export const translations = {
         // Hero Section
         hero: {
             versionStable: 'Version stable',
-            titleLine1: 'Définissez un matériau en Python.',
+            titleLine1: 'Définissez un bloc en Python.',
             titleLine2: 'Obtenez tout le datapack.',
             description: 'StewBeet est un framework',
             beet: 'Beet',
             descriptionContinued: 'pour datapacks Minecraft. Décrivez votre contenu une fois — modèles, recettes, tables de butin, traductions et manuel en jeu sont construits à partir de cette description à chaque compilation.',
             getStarted: 'Commencer',
             viewDocs: 'Documentation',
-            codeCaption: 'src/definitions/ores.py',
+            codeCaption: 'definitions/additions/equipments.py',
             outputCaption: 'build/',
-            outputSummary: '158 fichiers, à partir de trois lignes',
-            outputNote: 'Sortie réelle du modèle extensive. Outils, armures, minerai, blocs, leurs recettes, tables de butin, modèles et pages de manuel.',
+            outputSummary: '15 fichiers générés',
+            outputNote: 'Placement, destruction, la branche Silk Touch, la recette et sa grille de craft dessinée, la génération dans le monde, les modèles et les textures. La page de manuel et les clés de traduction viennent avec.',
         },
 
         // In-game manual showcase
@@ -304,8 +304,8 @@ export const translations = {
             itemModelsTitle: 'Les textures deviennent des modèles sans JSON',
             itemModelsDesc: 'Déposez des PNG top, side et bottom dans assets/textures et le bloc est reconnu comme un cube. Un suffixe _on donne l\'état alimenté sans rien écrire.',
 
-            customBlocksTitle: 'Vos minerais se cassent comme ceux du jeu',
-            customBlocksDesc: 'Dites ce que le bloc drop. Fortune, Silk Touch, placement, destruction et enregistrement Smithed Custom Blocks sont gérés pour vous.',
+            materialsTitle: 'Un matériau, tout le palier',
+            materialsDesc: 'Nommez un lingot et son équivalent vanilla. Outils, armures, minerai, blocs et pépites sont enregistrés depuis les textures déposées, recettes comprises.',
 
             lootTablesTitle: 'Chaque objet est donnable, tout de suite',
             lootTablesDesc: 'Chaque objet défini reçoit sa table de butin, plus une fonction _give_all qui vous remet tout le pack dans des coffres nommés pour tester.',
@@ -313,8 +313,8 @@ export const translations = {
             langTitle: 'Les clés de traduction extraites de votre code',
             langDesc: 'Écrivez votre texte une fois en Python. en_us.json est généré depuis ce que vous avez réellement écrit, donc le fichier lang ne dérive jamais.',
 
-            loadingTitle: 'Timers et vérifications de version dès le départ',
-            loadingDesc: 'Fonctions tick, second et minute, chargement compatible LanternLoad, et vérifications runtime qui indiquent aux joueurs quelle bibliothèque manque.',
+            dependenciesTitle: 'Une bibliothèque manquante prévient le joueur',
+            dependenciesDesc: 'StewBeet lit vos fonctions, déduit les bibliothèques réellement utilisées, les télécharge et écrit la vérification de version au runtime. S\'il en manque une, le chat la nomme, avec un lien cliquable.',
         },
 
         // Built with StewBeet
