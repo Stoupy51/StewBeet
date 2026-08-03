@@ -14,8 +14,10 @@ FROM ${BUN_IMAGE} AS build
 ARG REPO_URL=https://github.com/Stoupy51/StewBeet.git
 ARG REPO_REF=main
 
-# git is the only extra tool the build needs; bun ships with the base image
-RUN apt-get update && apt-get install -y --no-install-recommends git && \
+# git is the only extra tool the build needs; bun ships with the base image.
+# ca-certificates is only a *recommended* package of git, so --no-install-recommends
+# drops it and the clone then fails on "Problem with the SSL CA cert".
+RUN apt-get update && apt-get install -y --no-install-recommends git ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -50,4 +52,3 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
     CMD bun --eval "const r = await fetch('http://127.0.0.1:4173/'); process.exit(r.ok ? 0 : 1)"
 
 CMD ["bun", "server.tsx"]
-
