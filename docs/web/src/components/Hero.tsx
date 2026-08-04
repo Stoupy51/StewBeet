@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { HiArrowRight, HiClipboard, HiCheck } from 'react-icons/hi';
+import { HiArrowRight, HiArrowNarrowRight, HiClipboard, HiCheck } from 'react-icons/hi';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useStewBeetVersion } from '../hooks/useStewBeetVersion';
@@ -13,26 +13,27 @@ import { ACCENT_BORDER_HOVER, BRAND_DOT, BRAND_PILL, BTN_PRIMARY, GRADIENT_TEXT_
  * the EQUIPMENT constant is inlined, the long override_model is dropped, and a components block in
  * the shape that project uses on dragon_pearl is added. The file tree beside it is that block's real
  * build output — components change what those files contain, not how many there are.
+ *
+ * Lines are kept under 80 columns: the snippet sits in half the hero and anything longer is
+ * cut mid-string on a 1280px screen, which reads as a rendering bug rather than as scrollable code.
  */
 const HERO_CODE = `Block(
     id="life_crystal_block",
-    vanilla_block=VanillaBlock(id="minecraft:glass", visual_facing="player"),
+    vanilla_block=VanillaBlock(id="minecraft:glass"),
     manual_category="equipment",
 
     components={
-        "item_name": {"text": "Life Crystal Block", "italic": False, "color": "light_purple"},
-        "lore": [{"text": "Break it to get the crystal back", "italic": False, "color": "gray"}],
+        "item_name": {"text": "Life Crystal Block", "color": "light_purple"},
+        "lore": [{"text": "Break it to get the crystal back"}],
     },
 
     # Broken without Silk Touch, it hands the crystal back
     no_silk_touch_drop=NoSilkTouchDrop(id="life_crystal", count=1),
 
-    recipes=[
-        CraftingShapelessRecipe(
-            category="equipment", result_count=1,
-            ingredients=8 * [Ingr("minecraft:glass")] + [Ingr("life_crystal")],
-        ),
-    ],
+    recipes=[CraftingShapelessRecipe(
+        category="equipment", result_count=1,
+        ingredients=8 * [Ingr("minecraft:glass")] + [Ingr("life_crystal")],
+    )],
 )`;
 
 /** Every file in the Stardust Fragment build that belongs to life_crystal_block. */
@@ -101,8 +102,9 @@ const CopyInstall = () => {
     );
 };
 
+/** `h-full` is what lets the two hero panels end at the same line under `items-stretch`. */
 const Panel = ({ caption, accessory, children }: { caption: string; accessory?: React.ReactNode; children: React.ReactNode }) => (
-    <div className="bg-[#1e1e1e] rounded-xl border border-white/10 shadow-2xl overflow-hidden">
+    <div className="h-full flex flex-col bg-[#1e1e1e] rounded-xl border border-white/10 shadow-2xl overflow-hidden">
         <div className="bg-[#2d2d2d] px-4 py-2.5 flex items-center justify-between gap-2 border-b border-white/5">
             <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-[#ff5f56]" />
@@ -121,15 +123,15 @@ const CodePanel = ({ caption }: { caption: string }) => {
 
     return (
         <Panel caption={caption}>
-            <div className="p-4 overflow-x-auto custom-scrollbar">
+            <div className="flex-1 p-4 overflow-x-auto custom-scrollbar">
                 {highlighted ? (
                     <div
                         dangerouslySetInnerHTML={{ __html: highlighted }}
-                        style={{ fontSize: '0.8125rem', lineHeight: '1.65' }}
+                        style={{ fontSize: '0.75rem', lineHeight: '1.7' }}
                         className="[&>pre]:!bg-transparent [&>pre]:!m-0 [&>pre]:!p-0"
                     />
                 ) : (
-                    <pre className="m-0 text-[0.8125rem] leading-[1.65] text-slate-300 font-mono">
+                    <pre className="m-0 text-xs leading-[1.7] text-slate-300 font-mono">
                         <code>{HERO_CODE}</code>
                     </pre>
                 )}
@@ -151,75 +153,81 @@ export const Hero: React.FC = () => {
                 <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-indigo-500 opacity-20 blur-[100px]" />
             </div>
 
-            <div className="relative z-10 w-full max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center">
-                {/* Left: the pitch and the definition that backs it */}
-                <div>
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
-                    >
-                        <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full ${BRAND_PILL} text-xs font-mono mb-5`}>
-                            <span className={`w-2 h-2 rounded-full ${BRAND_DOT} animate-pulse`} />
-                            v{version} {t('hero.versionStable')}
-                        </div>
+            <div className="relative z-10 w-full max-w-7xl 2xl:max-w-[90rem] mx-auto px-4">
+                {/* The pitch spans the section: at half width the headline broke over four lines */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="max-w-3xl"
+                >
+                    <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full ${BRAND_PILL} text-xs font-mono mb-5`}>
+                        <span className={`w-2 h-2 rounded-full ${BRAND_DOT} animate-pulse`} />
+                        v{version} {t('hero.versionStable')}
+                    </div>
 
-                        <h1 className="text-4xl md:text-5xl xl:text-6xl font-bold text-white mb-4 tracking-tight leading-[1.1]">
-                            {t('hero.titleLine1')} <br />
-                            <span className={GRADIENT_TEXT_BRIGHT}>{t('hero.titleLine2')}</span>
-                        </h1>
+                    <h1 className="text-4xl md:text-5xl xl:text-6xl font-bold text-white mb-4 tracking-tight leading-[1.1]">
+                        {t('hero.titleLine1')} <br />
+                        <span className={GRADIENT_TEXT_BRIGHT}>{t('hero.titleLine2')}</span>
+                    </h1>
 
-                        <p className="text-base xl:text-lg text-slate-400 mb-7 leading-relaxed">
-                            {t('hero.description')}{' '}
-                            <a href="https://github.com/mcbeet/beet" target="_blank" rel="noopener noreferrer" className={TEXT_ACCENT_HOVER}>
-                                {t('hero.beet')}
-                            </a>{' '}
-                            {t('hero.descriptionContinued')}
-                        </p>
+                    <p className="text-base xl:text-lg text-slate-400 mb-7 leading-relaxed">
+                        {t('hero.description')}{' '}
+                        <a href="https://github.com/mcbeet/beet" target="_blank" rel="noopener noreferrer" className={TEXT_ACCENT_HOVER}>
+                            {t('hero.beet')}
+                        </a>{' '}
+                        {t('hero.descriptionContinued')}
+                    </p>
 
-                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-8">
-                            <Link
-                                to={gettingStarted}
-                                className={`flex items-center gap-2 px-6 py-3 ${BTN_PRIMARY} rounded-lg text-white font-semibold transition-all duration-200`}
-                            >
-                                {t('hero.getStarted')}
-                                <HiArrowRight />
-                            </Link>
-                            <CopyInstall />
-                        </div>
-                    </motion.div>
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                        <Link
+                            to={gettingStarted}
+                            className={`flex items-center gap-2 px-6 py-3 ${BTN_PRIMARY} rounded-lg text-white font-semibold transition-all duration-200`}
+                        >
+                            {t('hero.getStarted')}
+                            <HiArrowRight />
+                        </Link>
+                        <CopyInstall />
+                    </div>
+                </motion.div>
 
+                {/* The definition and what it compiled into, read as one statement: same top,
+                    same bottom, an arrow in between. The pair only goes side by side at xl —
+                    below that each column is narrower than the 74-column snippet it has to hold. */}
+                <div className="mt-10 grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-5 xl:gap-4 items-stretch">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 0.15 }}
+                        className="min-w-0"
                     >
                         <CodePanel caption={t('hero.codeCaption')} />
                     </motion.div>
-                </div>
 
-                {/* Right: what that definition compiled into */}
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.98 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.6, delay: 0.25 }}
-                    className="relative"
-                >
-                    <div className={`absolute -inset-3 ${TERMINAL_GLOW} rounded-2xl blur-[48px] opacity-10 pointer-events-none`} />
-                    <div className="relative">
+                    <div className="flex items-center justify-center text-slate-600" aria-hidden="true">
+                        <HiArrowNarrowRight className="text-2xl rotate-90 xl:rotate-0" />
+                    </div>
+
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.98 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.6, delay: 0.25 }}
+                        className="relative min-w-0"
+                    >
+                        <div className={`absolute -inset-3 ${TERMINAL_GLOW} rounded-2xl blur-[48px] opacity-10 pointer-events-none`} />
                         <Panel
                             caption={t('hero.outputCaption')}
                             accessory={<span className="text-xs font-mono text-green-400">{t('hero.outputSummary')}</span>}
                         >
-                            <div className="p-4">
+                            <div className="flex-1 flex flex-col p-4 overflow-x-auto custom-scrollbar">
                                 <FileTree nodes={GENERATED_FILES} />
                                 <p className="mt-4 pt-3 border-t border-white/5 text-xs text-slate-500 leading-relaxed">
                                     {t('hero.outputNote')}
                                 </p>
                             </div>
                         </Panel>
-                    </div>
-                </motion.div>
+                    </motion.div>
+                </div>
             </div>
         </section>
     );
