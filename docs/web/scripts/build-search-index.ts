@@ -8,11 +8,15 @@
  *
  * Landing-page sections are NOT indexed here: SearchModal matches them directly
  * against the i18n translations, which are already bundled.
+ *
+ * Also emits public/sitemap.xml, since walking the documentation tree is exactly the
+ * work a complete sitemap needs and a hand-maintained one listed 5 of the 37 pages.
  */
 import { readdirSync, readFileSync, statSync, writeFileSync } from 'fs';
 import { join, relative, sep } from 'path';
 import { inflateSync } from 'zlib';
 import { headingTextToSlug } from '../src/utils/slugify';
+import { SITE_ORIGIN, STATIC_ROUTE_META } from '../src/utils/pageMeta';
 
 interface Entry {
     /** Entry kind: markdown guide, plugin page, or Python API symbol. */
@@ -216,13 +220,54 @@ async function collectApiSymbols(): Promise<Entry[]> {
     return entries;
 }
 
+// ── Sitemap ───────────────────────────────────────────────────────────────────
+
+/** Same encoding the site's own links use, so a crawler never sees two URLs for one page. */
+function srcToUrl(src: string): string {
+    return `${SITE_ORIGIN}/markdown?src=${encodeURIComponent(src)}`.replace(/&/g, '&amp;');
+}
+
+function writeSitemap(docSrcs: Set<string>): void {
+    const lastmod = new Date().toISOString().slice(0, 10);
+    const urls: { loc: string; changefreq: string; priority: string }[] = [
+        ...Object.values(STATIC_ROUTE_META)
+            .filter((meta) => !meta.noindex)
+            .map((meta) => ({
+                loc: `${SITE_ORIGIN}${meta.path}`,
+                changefreq: 'weekly',
+                priority: meta.path === '/' ? '1.0' : meta.path === '/documentation' ? '0.9' : '0.5',
+            })),
+        ...[...docSrcs].sort().map((src) => ({
+            loc: srcToUrl(src),
+            changefreq: 'weekly',
+            priority: '0.7',
+        })),
+    ];
+
+    const body = urls
+        .map(({ loc, changefreq, priority }) =>
+            `  <url>\n    <loc>${loc}</loc>\n    <lastmod>${lastmod}</lastmod>\n` +
+            `    <changefreq>${changefreq}</changefreq>\n    <priority>${priority}</priority>\n  </url>`,
+        )
+        .join('\n');
+
+    writeFileSync(
+        join(outDir, 'sitemap.xml'),
+        `<?xml version="1.0" encoding="UTF-8"?>\n` +
+        `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>\n`,
+    );
+    console.log(`[sitemap] ${urls.length} URLs -> public/sitemap.xml`);
+}
+
 // ── Output ────────────────────────────────────────────────────────────────────
 
 const plugins: Entry[] = collectPlugins();
 const api: Entry[] = await collectApiSymbols();
+const docSrcs = new Set<string>(plugins.map((entry) => entry.p));
 
 for (const lang of ['en', 'fr'] as const) {
     const guides = collectGuides(lang);
+    for (const entry of guides) docSrcs.add(entry.p);
     const entries = [...guides, ...plugins, ...api];
     const path = join(outDir, `search-index.${lang}.json`);
     const json = JSON.stringify({ generated: new Date().toISOString(), apiBase: SPHINX_BASE, entries });
@@ -233,3 +278,5 @@ for (const lang of ['en', 'fr'] as const) {
         `-> ${(json.length / 1024).toFixed(0)} KB`,
     );
 }
+
+writeSitemap(docSrcs);

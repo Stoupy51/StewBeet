@@ -11,10 +11,13 @@ import { prerender } from 'react-dom/static';
 import { StaticRouter } from 'react-router';
 import { LanguageProvider } from '../src/context/LanguageContext';
 import { AppRoutes } from '../src/AppRoutes';
+import { applyPageMeta, STATIC_ROUTE_META } from '../src/utils/pageMeta';
 import { readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { join } from 'path';
 
-const routes = ['/', '/documentation', '/markdown', '/markdown_to_pmc_bbcode', '/tools'];
+// '/404' matches the catch-all route in AppRoutes; server.tsx serves the file it produces
+// with a real 404 status instead of answering unknown paths with the landing page.
+const routes = Object.keys(STATIC_ROUTE_META);
 
 const distDir = join(import.meta.dir, '..', 'dist');
 const template = readFileSync(join(distDir, 'index.html'), 'utf-8');
@@ -41,13 +44,15 @@ for (const route of routes) {
     );
     const body = extractBody(await new Response(prelude).text());
 
-    const output = template.replace(
+    const output = applyPageMeta(template, STATIC_ROUTE_META[route]).replace(
         '<div id="root"></div>',
         `<div id="root">${body}</div>`,
     );
 
     if (route === '/') {
         writeFileSync(join(distDir, 'index.html'), output);
+    } else if (route === '/404') {
+        writeFileSync(join(distDir, '404.html'), output);
     } else {
         const routeDir = join(distDir, route.slice(1));
         mkdirSync(routeDir, { recursive: true });

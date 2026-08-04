@@ -209,6 +209,14 @@ export const translations = {
             noPlugin: 'No plugin specified. Please provide a "src" parameter.',
         },
 
+        // 404 Page
+        notFound: {
+            title: 'This page does not exist',
+            description: 'The link may be outdated, or the page may have been renamed. The documentation index lists every guide and plugin page.',
+            backHome: 'Back to home',
+            browseDocs: 'Browse the documentation',
+        },
+
         // Tools Page
         tools: {
             title: 'Tools',
@@ -459,6 +467,14 @@ export const translations = {
             error: 'Erreur',
             loading: 'Chargement...',
             noPlugin: 'Aucun plugin spécifié. Veuillez fournir un paramètre "src".',
+        },
+
+        // 404 Page
+        notFound: {
+            title: "Cette page n'existe pas",
+            description: "Le lien est peut-être obsolète, ou la page a été renommée. L'index de la documentation liste tous les guides et toutes les pages de plugins.",
+            backHome: "Retour à l'accueil",
+            browseDocs: 'Parcourir la documentation',
         },
 
         // Tools Page
