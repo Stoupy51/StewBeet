@@ -1,10 +1,11 @@
 import type { FileNode } from './FileTree';
 
 /**
- * Adapted from the life_crystal_block of Stardust Fragment, src/definitions/additions/equipments.py:
- * the EQUIPMENT constant is inlined, the long override_model is dropped, and a components block in
- * the shape that project uses on dragon_pearl is added. The file tree beside it is that block's real
- * build output — components change what those files contain, not how many there are.
+ * Adapted from the life_crystal_block of Stardust Fragment: the EQUIPMENT constant is inlined and
+ * the long override_model dropped, from src/definitions/additions/equipments.py, and the ore
+ * generation call is folded in from src/utils/custom_ore_generation.py, where that project keeps
+ * it. Both belong here because the file tree beside this is the block's real build output, and
+ * without the second call three of its entries would have nothing on this side that asks for them.
  *
  * Lines are kept under 80 columns: the snippet sits in half the hero and anything longer is
  * cut mid-string on a 1280px screen, which reads as a rendering bug rather than as scrollable code.
@@ -27,7 +28,12 @@ export const HERO_CODE: string = `Block(
         category="equipment", result_count=1,
         ingredients=8 * [Ingr("minecraft:glass")] + [Ingr("life_crystal")],
     )],
-)`;
+)
+# Single-block veins, deep in the overworld, carved into stone
+CustomOreGeneration.all_with_config({"life_crystal_block": [CustomOreGeneration(
+    dimensions=["minecraft:overworld"], minimum_height=-32, maximum_height=50,
+    veins_per_region=2.5, provider=["#minecraft:overworld_carver_replaceables"],
+)]})`;
 
 /** Every file in the Stardust Fragment build that belongs to life_crystal_block. */
 export const GENERATED_FILES: FileNode[] = [

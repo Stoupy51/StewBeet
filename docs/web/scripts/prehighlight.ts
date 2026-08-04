@@ -12,8 +12,9 @@ import { codeToHtml } from 'shiki';
 import { writeFileSync, mkdirSync } from 'fs';
 import { join } from 'path';
 import { HERO_CODE } from '../src/components/heroCode';
+import { pythonSemantics } from '../src/utils/pythonSemantics';
 
-const html = await codeToHtml(HERO_CODE, { lang: 'python', theme: 'dark-plus' });
+const html = await codeToHtml(HERO_CODE, { lang: 'python', theme: 'dark-plus', transformers: [pythonSemantics] });
 
 const outputDir = join(import.meta.dir, '..', 'src', 'generated');
 mkdirSync(outputDir, { recursive: true });
