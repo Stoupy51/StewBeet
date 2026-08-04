@@ -18,6 +18,8 @@ export interface Entry {
 
 /** A project shown as a card, with the build output it produces. */
 export interface Flagship extends Entry {
+    /** Where players get it. `url` stays on the repository, for reading the source. */
+    modrinth: string;
     /** Statements only: comments, docstrings and blank lines are excluded from the count. */
     sourceLines: number;
     image: string;
@@ -44,6 +46,7 @@ export const FLAGSHIPS: Flagship[] = [
         name: 'Stardust Fragment',
         owner: 'Stoupy51',
         url: 'https://github.com/Stoupy51/StardustFragment',
+        modrinth: 'https://modrinth.com/datapack/stardust-fragment',
         image: '/img/stardustfragment_items.png',
         sourceLines: 5738,
         functions: 774,
@@ -55,6 +58,7 @@ export const FLAGSHIPS: Flagship[] = [
         name: 'SimplEnergy',
         owner: 'Stoupy51',
         url: 'https://github.com/Stoupy51/SimplEnergy',
+        modrinth: 'https://modrinth.com/datapack/simplenergy',
         image: '/img/simplenergy_items.png',
         sourceLines: 1422,
         functions: 270,

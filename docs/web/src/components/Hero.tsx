@@ -98,7 +98,7 @@ export const Hero: React.FC = () => {
                         animate: { y: 0 },
                         transition: { duration: 0.5 },
                     })}
-                    className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_auto] gap-x-10 gap-y-6 items-end"
+                    className="grid grid-cols-1 lg:grid-cols-[auto_minmax(0,1fr)] gap-x-10 gap-y-6 items-end"
                 >
                     <div className="max-w-3xl">
                         <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full ${BRAND_PILL} text-xs font-mono mb-4`}>
@@ -111,7 +111,7 @@ export const Hero: React.FC = () => {
                             <span className={GRADIENT_TEXT_BRIGHT}>{t('hero.titleLine2')}</span>
                         </h1>
 
-                        <p className="text-base xl:text-lg text-slate-300 leading-relaxed">
+                        <p className="text-base xl:text-lg text-slate-300 leading-relaxed text-balance">
                             {t('hero.description')}{' '}
                             <a href="https://github.com/mcbeet/beet" target="_blank" rel="noopener noreferrer" className={TEXT_ACCENT_HOVER}>
                                 {t('hero.beet')}
@@ -120,7 +120,7 @@ export const Hero: React.FC = () => {
                         </p>
                     </div>
 
-                    <div className="flex flex-col items-stretch gap-3 lg:w-[19rem]">
+                    <div className="flex flex-col items-stretch gap-3 lg:w-[19rem] lg:justify-self-center">
                         <Link
                             to={gettingStarted}
                             className={`flex items-center justify-center gap-2 px-6 py-3 ${BTN_PRIMARY} rounded-panel font-semibold transition-colors duration-200`}
