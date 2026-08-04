@@ -42,7 +42,7 @@ smithed = { git = "https://github.com/Stoupy51/smithed-python" }
 [project.urls]
 Homepage = "https://stewbeet.paralya.fr"
 Issues = "https://github.com/Stoupy51/stewbeet/issues"
-Source = "https://github.com/Stoupy51/stewbeet"
+Repository = "https://github.com/Stoupy51/stewbeet"
 
 [project.scripts]
 stewbeet = "stewbeet:main"
