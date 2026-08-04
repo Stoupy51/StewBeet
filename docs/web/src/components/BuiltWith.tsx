@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { HiExternalLink } from 'react-icons/hi';
+import { HiChevronRight, HiExternalLink } from 'react-icons/hi';
 import { useTranslation } from '../i18n/useTranslation';
 import { useMotionSafe } from '../hooks/useMotionSafe';
 import { HEADING, PIXEL_RULE, TEXT_ACCENT_HOVER } from '../theme';
@@ -60,25 +60,39 @@ const FlagshipCard = ({ project }: { project: Flagship }) => {
         [project.textures, t('builtWith.unitTextures')],
     ];
 
+    // The card is not one big anchor any more: the pack itself points at Modrinth, where a
+    // player installs it, and a separate link keeps the source reachable for a reader.
     return (
-        <a
-            href={project.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group block rounded-panel border border-white/10 hover:border-mc-emerald/50 bg-slate-900/60 overflow-hidden transition-colors"
-        >
-            <img
-                src={project.image}
-                alt={t('builtWith.itemsAlt').replace('{project}', project.name)}
-                loading="lazy"
-                decoding="async"
-                className="w-full h-36 object-cover object-top border-b border-white/10"
-            />
+        <div className="group rounded-panel border border-white/10 hover:border-mc-emerald/50 bg-slate-900/60 overflow-hidden transition-colors">
+            <a href={project.modrinth} target="_blank" rel="noopener noreferrer" className="block">
+                <img
+                    src={project.image}
+                    alt={t('builtWith.itemsAlt').replace('{project}', project.name)}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-56 object-cover object-top border-b border-white/10"
+                />
+            </a>
 
             <div className="p-6">
                 <div className="flex items-baseline justify-between gap-3 mb-2">
-                    <h4 className="text-lg font-semibold text-slate-50">{project.name}</h4>
-                    <HiExternalLink className="text-slate-400 group-hover:text-mc-emerald transition-colors flex-shrink-0" />
+                    <a
+                        href={project.modrinth}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-baseline gap-2 text-lg font-semibold text-slate-50 hover:text-mc-emerald transition-colors"
+                    >
+                        {project.name}
+                        <HiExternalLink className="self-center flex-shrink-0" aria-hidden="true" />
+                    </a>
+                    <a
+                        href={project.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs font-mono text-slate-400 hover:text-mc-diamond transition-colors flex-shrink-0"
+                    >
+                        {t('builtWith.sourceLink')}
+                    </a>
                 </div>
 
                 <p className="text-sm text-slate-400 leading-relaxed mb-5">{t(project.descriptionKey)}</p>
@@ -97,7 +111,7 @@ const FlagshipCard = ({ project }: { project: Flagship }) => {
                     ))}
                 </div>
             </div>
-        </a>
+        </div>
     );
 };
 
@@ -126,18 +140,33 @@ const GroupHeading = ({ label, note, style }: { label: string; note?: string; st
     </div>
 );
 
-/** The author's own lists fold away: present as evidence, but not competing for attention. */
-const CollapsedGroup = ({ label, entries, style }: { label: string; entries: Entry[]; style: GroupStyle }) => (
-    <details className="group/details">
-        <summary className="cursor-pointer list-none flex items-baseline gap-3 mb-4">
-            <span className={`text-sm font-mono uppercase tracking-wider ${style.label}`}>{label}</span>
-            <span className="text-xs text-slate-400">
-                {entries.length} · <span className="group-open/details:hidden">▾</span><span className="hidden group-open/details:inline">▴</span>
-            </span>
-        </summary>
-        <Pills entries={entries} style={style} />
-    </details>
-);
+/**
+ * The author's own lists fold away: present as evidence, but not competing for attention.
+ * The summary is styled as a control rather than a heading — bordered, hoverable, with a
+ * chevron that turns — because a bare label with a small caret did not read as clickable.
+ */
+const CollapsedGroup = ({ label, entries, style }: { label: string; entries: Entry[]; style: GroupStyle }) => {
+    const { t } = useTranslation();
+
+    return (
+        <details className="group/details">
+            <summary className="cursor-pointer list-none flex items-center gap-3 px-4 py-3 rounded-panel border border-white/10 bg-slate-900/60 hover:border-white/25 hover:bg-slate-900 transition-colors">
+                <HiChevronRight
+                    className="text-slate-400 flex-shrink-0 transition-transform group-open/details:rotate-90"
+                    aria-hidden="true"
+                />
+                <span className={`text-sm font-mono uppercase tracking-wider ${style.label}`}>{label}</span>
+                <span className="ml-auto text-xs text-slate-400 flex-shrink-0">
+                    <span className="group-open/details:hidden">{t('builtWith.showCount').replace('{n}', String(entries.length))}</span>
+                    <span className="hidden group-open/details:inline">{t('builtWith.hide')}</span>
+                </span>
+            </summary>
+            <div className="pt-4">
+                <Pills entries={entries} style={style} />
+            </div>
+        </details>
+    );
+};
 
 export const BuiltWith: React.FC = () => {
     const { t } = useTranslation();

@@ -68,14 +68,16 @@ const getFeatures = (t: (key: string) => string): Feature[] => [
             snippets: [{
                 lang: 'python',
                 label: t('features.materialsSnippetLabel'),
-                code: `ORES_CONFIGS: dict[str, EquipmentsConfig | None] = {
+                code: `DIAMOND_PICKAXE = VanillaEquipments.PICKAXE.value[DefaultOre.DIAMOND]
+
+ORES_CONFIGS: dict[str, EquipmentsConfig | None] = {
     "solarium_ingot": EquipmentsConfig(
         # Solarium behaves like diamond,
         equivalent_to=DefaultOre.DIAMOND,
         # but the pickaxe lasts three times longer,
-        pickaxe_durability=3 * VanillaEquipments.PICKAXE.value[DefaultOre.DIAMOND]["durability"],
-        # and it hits harder, protects more, and mines faster
-        attributes={"attack_damage": 1, "armor": 0.5, "mining_efficiency": 2},
+        pickaxe_durability=3 * DIAMOND_PICKAXE["durability"],
+        # and it hits harder, protects more, mines faster
+        attributes={"attack_damage": 1, "armor": 0.5},
     ),
 }
 generate_everything_about_these_materials(ORES_CONFIGS)`,
@@ -128,21 +130,24 @@ generate_everything_about_these_materials(ORES_CONFIGS)`,
             snippets: [{
                 lang: 'mcfunction',
                 label: t('features.recipesSnippetLabel'),
-                code: `# One CraftingShapelessRecipe on the item produces this.
-# The backslashes are ours so it fits; the generated file is one line.
+                code: `#> stardust:calls/smithed_crafter/shapeless_recipes
+#
+# @within	#smithed.crafter:event/shapeless_recipes
+#
+
+# The backslashes are ours so it fits — the real file is one line per recipe.
 execute \\
-    if score @s smithed.data matches 0 \\
-    store result score @s smithed.data \\
-    if data storage smithed.crafter:input {recipe:{ingredients:[ \\
-        {Slot:0b,id:"minecraft:glass"},{Slot:1b,id:"minecraft:glass"}, \\
-        {Slot:2b,id:"minecraft:glass"},{Slot:3b,id:"minecraft:glass"}, \\
-        {Slot:4b,id:"minecraft:glass"},{Slot:5b,id:"minecraft:glass"}, \\
-        {Slot:6b,id:"minecraft:glass"},{Slot:7b,id:"minecraft:glass"}, \\
-        {Slot:8b,components:{"minecraft:custom_data": \\
-            {stardust_fragment:{life_crystal:true}}}} \\
-    ]}} \\
-    run loot replace block ~ ~ ~ container.16 \\
-        loot stardust_fragment:i/life_crystal_block`,
+  if score @s smithed.data matches 0 \\
+  store result score @s smithed.data \\
+  if score count smithed.data matches 2 \\
+  if data storage smithed.crafter:input {"recipe": [ \\
+    {"id": "minecraft:iron_ingot", "count": 1}, \\
+    {"components": {"minecraft:custom_data": \\
+      {"stardust": {"stardust_fragment": true}}}, "count": 8} \\
+  ]} \\
+  run function stardust:calls/smithed_crafter/apply_recipe \\
+  {"command":"loot replace block ~ ~ ~ container.16 loot
+   stardust:i/stardust_ingot"}`,
             }],
         },
     },
@@ -237,36 +242,42 @@ const CodeBlock = ({ code, lang }: { code: string; lang: string }) => {
     );
 };
 
-const PreviewBody = ({ preview }: { preview: Preview }) => (
-    <div className="h-full overflow-y-auto custom-scrollbar">
-        {preview.image && (
-            <div className="flex items-center justify-center bg-black/30 p-3">
-                <img
-                    src={preview.image.src}
-                    alt={preview.image.alt}
-                    loading="lazy"
-                    decoding="async"
-                    className="max-h-64 max-w-full object-contain rounded-panel"
-                />
-            </div>
-        )}
+const PreviewBody = ({ preview }: { preview: Preview }) => {
+    // A screenshot that is the whole preview should fill the panel; one sharing the panel
+    // with code has to leave room for it. Capping both shrank the screenshot-only previews.
+    const imageOnly = !preview.nodes && !preview.snippets?.length;
 
-        {preview.nodes && (
-            <div className="p-4 border-b border-white/5 bg-black/20">
-                <FileTree nodes={preview.nodes} />
-            </div>
-        )}
+    return (
+        <div className={`h-full custom-scrollbar ${imageOnly ? 'flex' : 'overflow-y-auto'}`}>
+            {preview.image && (
+                <div className={`flex items-center justify-center bg-black/30 p-3 ${imageOnly ? 'flex-1 min-h-0' : ''}`}>
+                    <img
+                        src={preview.image.src}
+                        alt={preview.image.alt}
+                        loading="lazy"
+                        decoding="async"
+                        className={`max-w-full object-contain rounded-panel ${imageOnly ? 'max-h-full' : 'max-h-52'}`}
+                    />
+                </div>
+            )}
 
-        {preview.snippets?.map((snippet, index) => (
-            <div key={snippet.label ?? index} className={index > 0 ? 'border-t border-white/5' : undefined}>
-                {snippet.label && (
-                    <p className="px-4 pt-3 text-xs font-mono text-slate-400">{snippet.label}</p>
-                )}
-                <CodeBlock code={snippet.code} lang={snippet.lang} />
-            </div>
-        ))}
-    </div>
-);
+            {preview.nodes && (
+                <div className="p-4 border-b border-white/5 bg-black/20">
+                    <FileTree nodes={preview.nodes} />
+                </div>
+            )}
+
+            {preview.snippets?.map((snippet, index) => (
+                <div key={snippet.label ?? index} className={index > 0 ? 'border-t border-white/5' : undefined}>
+                    {snippet.label && (
+                        <p className="px-4 pt-3 text-xs font-mono text-slate-400">{snippet.label}</p>
+                    )}
+                    <CodeBlock code={snippet.code} lang={snippet.lang} />
+                </div>
+            ))}
+        </div>
+    );
+};
 
 export const Features: React.FC = () => {
     const { t } = useTranslation();
