@@ -62,6 +62,13 @@ export const translations = {
             langDesc: 'Write your text once in Python. en_us.json is generated from what you actually wrote, so the lang file never drifts from the items.',
 
             dependenciesTitle: 'A missing library tells the player what to download',
+            materialsImageAlt: 'One ingot texture, and the tools and armour registered from it',
+            materialsSnippetLabel: 'the whole tier from one entry',
+            itemModelsOnLabel: 'electric_furnace_on.json — written because a _front_on texture exists',
+            recipesSnippetLabel: 'generated, NBT-aware',
+            langBeforeLabel: 'what you wrote',
+            langAfterLabel: 'what is built — the text became a translate key',
+            langFileLabel: 'and the keys it collected',
             dependenciesDesc: 'StewBeet reads your functions, works out which libraries you actually used, fetches them and writes the runtime version check. Load without one and the chat names it, with a clickable link.',
         },
 
@@ -78,13 +85,16 @@ export const translations = {
         // Why StewBeet exists
         why: {
             title: 'Why this exists',
-            intro: 'A datapack is not one file per feature. Adding a single custom block means writing its loot table, its item definition, its model, its recipe in every crafting system you support, its translation key, its placement and destruction functions, and its manual page — by hand, in six directories, in four formats.',
+            intro: 'A datapack is not one file per feature. Adding a single custom block means writing its loot table, its item definition, its model, its recipe in every crafting system you support, its translation key, and its placement and destruction functions — by hand, in seven directories, in four formats.',
             pain1: 'Miss one of those files and nothing errors. The block just quietly does not drop, or does not craft, and you find out in-game twenty minutes later.',
             pain2: 'Rename an item and you are doing find-and-replace across hundreds of JSON files, hoping nothing shared that string.',
-            pain3: 'The in-game manual is screenshotted by hand, so it is wrong the moment you rebalance anything.',
-            resolution: 'StewBeet makes the Python definition the only thing you maintain. Every file above is derived from it on each build, which means they cannot drift apart — and when you change the recipe, the drawn crafting grid in the manual changes with it.',
-            limitsTitle: 'What it will not do for you',
-            limitsBody: 'It is opinionated. The project layout, the Smithed conventions and the build pipeline are decisions the framework has already made, and working against them is harder than working without it. It is a Python API, not a GUI, and it expects Python 3.14+. If your pack is a handful of functions, hand-writing them is genuinely the right call.',
+            pain3: 'The same recipe has to be written once as vanilla JSON and again for every NBT crafting system you support, in a different format each time. Change the ingredients and you change it everywhere, or it silently disagrees with itself.',
+            resolution: 'StewBeet makes one definition the only thing you maintain. Every file above is derived from it on each build, so they cannot drift apart — change the ingredients once and the vanilla recipe, the Smithed Crafter recipe and the furnace variant all follow.',
+            noPython: 'You do not need to know Python to use it. A definition is a name, some values and a list of recipes — closer to filling in a form than to writing a program. If you can read a datapack JSON file, you can read one of these.',
+            byHandTitle: 'One custom block, by hand',
+            byHandNote: 'Eight files across two packs and four formats, for one block. Miss one and nothing errors.',
+            limitsTitle: 'Where it will not help you',
+            limitsBody: 'It is opinionated. The project layout, the Smithed conventions and the build pipeline are decisions the framework has already made, and working against them is harder than working without it. It needs Python 3.14+ installed on your machine. And if your pack is a handful of functions, writing them by hand is genuinely the right call.',
         },
 
         // Built with StewBeet
@@ -100,7 +110,8 @@ export const translations = {
             integrations: 'Works with the libraries you already use',
             integrationsNote: 'Detected from your code and merged into the build automatically.',
             seeAll: 'See the full list on GitHub',
-            unitSourceLines: 'lines of Python produce',
+            unitSourceLines: 'lines of Python (no comments) produce',
+            itemsAlt: 'Every item in {project}, drawn from its build',
             unitFunctions: '.mcfunction',
             unitJson: '.json',
             unitTextures: 'textures',
@@ -365,6 +376,13 @@ export const translations = {
             langDesc: 'Écrivez votre texte une fois en Python. en_us.json est généré depuis ce que vous avez réellement écrit, donc le fichier lang ne dérive jamais.',
 
             dependenciesTitle: 'Une bibliothèque manquante prévient le joueur',
+            materialsImageAlt: 'Une texture de lingot, et les outils et armures enregistrés à partir d\'elle',
+            materialsSnippetLabel: 'tout le palier depuis une seule entrée',
+            itemModelsOnLabel: 'electric_furnace_on.json — écrit parce qu\'une texture _front_on existe',
+            recipesSnippetLabel: 'généré, compatible NBT',
+            langBeforeLabel: 'ce que vous avez écrit',
+            langAfterLabel: 'ce qui est construit — le texte est devenu une clé translate',
+            langFileLabel: 'et les clés collectées',
             dependenciesDesc: 'StewBeet lit vos fonctions, déduit les bibliothèques réellement utilisées, les télécharge et écrit la vérification de version au runtime. S\'il en manque une, le chat la nomme, avec un lien cliquable.',
         },
 
@@ -381,13 +399,16 @@ export const translations = {
         // Why StewBeet exists
         why: {
             title: 'Pourquoi ça existe',
-            intro: 'Un datapack, ce n\'est pas un fichier par fonctionnalité. Ajouter un seul bloc personnalisé, c\'est écrire sa table de butin, sa définition d\'objet, son modèle, sa recette dans chaque système de craft supporté, sa clé de traduction, ses fonctions de placement et de destruction, et sa page de manuel — à la main, dans six répertoires, dans quatre formats.',
+            intro: 'Un datapack, ce n\'est pas un fichier par fonctionnalité. Ajouter un seul bloc personnalisé, c\'est écrire sa table de butin, sa définition d\'objet, son modèle, sa recette dans chaque système de craft supporté, sa clé de traduction, et ses fonctions de placement et de destruction — à la main, dans sept répertoires, dans quatre formats.',
             pain1: 'Oubliez un de ces fichiers et rien ne plante. Le bloc ne drop simplement pas, ou ne se craft pas, et vous le découvrez en jeu vingt minutes plus tard.',
             pain2: 'Renommez un objet et vous voilà à faire des rechercher-remplacer dans des centaines de fichiers JSON, en espérant que rien d\'autre ne partageait cette chaîne.',
-            pain3: 'Le manuel en jeu est capturé à la main, donc il est faux dès que vous rééquilibrez quoi que ce soit.',
-            resolution: 'StewBeet fait de la définition Python la seule chose que vous maintenez. Tous les fichiers ci-dessus en sont dérivés à chaque build, ce qui les empêche de diverger — et quand vous changez la recette, la grille de craft dessinée dans le manuel change avec elle.',
-            limitsTitle: 'Ce qu\'il ne fera pas pour vous',
-            limitsBody: 'Il est dogmatique. L\'organisation du projet, les conventions Smithed et le pipeline de build sont des décisions que le framework a déjà prises, et travailler contre elles est plus dur que travailler sans lui. C\'est une API Python, pas une interface graphique, et il exige Python 3.14+. Si votre pack tient en quelques fonctions, les écrire à la main est vraiment le bon choix.',
+            pain3: 'La même recette doit être écrite une fois en JSON vanilla, puis à nouveau pour chaque système de craft NBT que vous supportez, dans un format différent à chaque fois. Changez les ingrédients et vous les changez partout, sinon ça se contredit en silence.',
+            resolution: 'StewBeet fait d\'une seule définition la seule chose que vous maintenez. Tous les fichiers ci-dessus en sont dérivés à chaque build, donc ils ne peuvent pas diverger — changez les ingrédients une fois et la recette vanilla, la recette Smithed Crafter et la variante four suivent.',
+            noPython: 'Pas besoin de connaître Python pour l\'utiliser. Une définition, c\'est un nom, des valeurs et une liste de recettes — plus proche d\'un formulaire à remplir que d\'un programme à écrire. Si vous savez lire un JSON de datapack, vous savez lire ça.',
+            byHandTitle: 'Un bloc personnalisé, à la main',
+            byHandNote: 'Huit fichiers, deux packs, quatre formats, pour un seul bloc. Oubliez-en un et rien ne plante.',
+            limitsTitle: 'Là où il ne vous aidera pas',
+            limitsBody: 'Il est dogmatique. L\'organisation du projet, les conventions Smithed et le pipeline de build sont des décisions que le framework a déjà prises, et travailler contre elles est plus dur que travailler sans lui. Il faut Python 3.14+ installé sur votre machine. Et si votre pack tient en quelques fonctions, les écrire à la main est vraiment le bon choix.',
         },
 
         // Built with StewBeet
@@ -403,7 +424,8 @@ export const translations = {
             integrations: 'Compatible avec les bibliothèques que vous utilisez déjà',
             integrationsNote: 'Détectées depuis votre code et fusionnées automatiquement dans le build.',
             seeAll: 'Voir la liste complète sur GitHub',
-            unitSourceLines: 'lignes de Python produisent',
+            unitSourceLines: 'lignes de Python (hors commentaires) produisent',
+            itemsAlt: 'Tous les objets de {project}, tirés de son build',
             unitFunctions: '.mcfunction',
             unitJson: '.json',
             unitTextures: 'textures',

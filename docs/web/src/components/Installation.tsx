@@ -14,11 +14,15 @@ interface Step {
     icon: React.ComponentType<{ className?: string }>;
 }
 
-/** Milliseconds per typed character, then the reading time that follows the output. */
-const TYPING_SPEED = 45;
-const READ_TIME_PER_LINE = 260;
-const MIN_READ_TIME = 2600;
-const MAX_READ_TIME = 9000;
+/**
+ * Milliseconds per typed character, then the reading time that follows the output.
+ * The walkthrough advanced faster than the output could be read, so every value here is
+ * the original divided by 0.6.
+ */
+const TYPING_SPEED = 75;
+const READ_TIME_PER_LINE = 433;
+const MIN_READ_TIME = 4333;
+const MAX_READ_TIME = 15000;
 
 /** False while server-rendering and on the hydration pass, true once the client owns the DOM. */
 const subscribeNever = () => () => {};

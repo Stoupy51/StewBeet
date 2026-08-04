@@ -45,7 +45,7 @@ const TreeRow = ({ node, depth, index }: { node: FileNode; depth: number; index:
                     viewport: { once: true },
                     transition: { duration: 0.25, delay: revealDelay(depth, index) },
                 })}
-                className="flex items-baseline gap-2 leading-[1.7] whitespace-nowrap"
+                className="flex items-baseline gap-2 leading-[1.55] whitespace-nowrap"
                 style={{ paddingLeft: `${depth * 0.9}rem` }}
             >
                 {isDirectory ? (

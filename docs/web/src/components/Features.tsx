@@ -18,10 +18,22 @@ import { ICON_ACTIVE, STEP_ACTIVE, TEXT_ACTIVE_SUBTLE } from '../theme';
 
 const PLUGIN_IMG = '/img';
 
-type Preview =
-    | { kind: 'code'; code: string; lang: string; caption: string }
-    | { kind: 'image'; src: string; caption: string }
-    | { kind: 'files'; nodes: FileNode[]; code: string; lang: string; caption: string };
+/** A labelled code sample inside a preview. The label sits above it as a caption. */
+interface Snippet {
+    lang: string;
+    code: string;
+    label?: string;
+}
+
+interface Preview {
+    /** Filename or context shown in the window's title bar. */
+    caption: string;
+    /** Screenshot or generated artefact, rendered above everything else. */
+    image?: { src: string; alt: string };
+    /** Files the author drops in, rendered above the snippets. */
+    nodes?: FileNode[];
+    snippets?: Snippet[];
+}
 
 interface Feature {
     id: string;
@@ -51,26 +63,23 @@ const getFeatures = (t: (key: string) => string): Feature[] => [
         title: t('features.materialsTitle'),
         description: t('features.materialsDesc'),
         preview: {
-            kind: 'code',
-            lang: 'python',
             caption: 'definitions/ores.py',
-            code: `ORES_CONFIGS: dict[str, EquipmentsConfig | None] = {
-    "steel_ingot": EquipmentsConfig(
-
-        # Steel behaves like iron,
-        equivalent_to=DefaultOre.IRON,
-
+            image: { src: `${PLUGIN_IMG}/material_tier.png`, alt: t('features.materialsImageAlt') },
+            snippets: [{
+                lang: 'python',
+                label: t('features.materialsSnippetLabel'),
+                code: `ORES_CONFIGS: dict[str, EquipmentsConfig | None] = {
+    "solarium_ingot": EquipmentsConfig(
+        # Solarium behaves like diamond,
+        equivalent_to=DefaultOre.DIAMOND,
         # but the pickaxe lasts three times longer,
-        pickaxe_durability=3 * VanillaEquipments.PICKAXE.value[DefaultOre.IRON]["durability"],
-
+        pickaxe_durability=3 * VanillaEquipments.PICKAXE.value[DefaultOre.DIAMOND]["durability"],
         # and it hits harder, protects more, and mines faster
         attributes={"attack_damage": 1, "armor": 0.5, "mining_efficiency": 2},
     ),
 }
-
-# Registers steel_pickaxe, steel_sword, steel_helmet, steel_block, steel_ore,
-# raw_steel, steel_nugget… — 158 files in the extensive template's build
 generate_everything_about_these_materials(ORES_CONFIGS)`,
+            }],
         },
     },
     {
@@ -79,11 +88,25 @@ generate_everything_about_these_materials(ORES_CONFIGS)`,
         title: t('features.itemModelsTitle'),
         description: t('features.itemModelsDesc'),
         preview: {
-            kind: 'files',
+            caption: 'models/item/electric_furnace{,_on}.json',
             nodes: TEXTURE_FILES,
-            lang: 'json',
-            caption: 'models/item/electric_furnace.json',
-            code: `{
+            snippets: [
+                {
+                    lang: 'json',
+                    label: 'electric_furnace.json',
+                    code: `{
+  "parent": "block/orientable",
+  "textures": {
+    "front": "simplenergy:item/electric_furnace_front",
+    "side": "simplenergy:item/electric_furnace_side",
+    "top": "simplenergy:item/electric_furnace_top"
+  }
+}`,
+                },
+                {
+                    lang: 'json',
+                    label: t('features.itemModelsOnLabel'),
+                    code: `{
   "parent": "block/orientable",
   "textures": {
     "front": "simplenergy:item/electric_furnace_front_on",
@@ -91,6 +114,8 @@ generate_everything_about_these_materials(ORES_CONFIGS)`,
     "top": "simplenergy:item/electric_furnace_top"
   }
 }`,
+                },
+            ],
         },
     },
     {
@@ -98,14 +123,38 @@ generate_everything_about_these_materials(ORES_CONFIGS)`,
         icon: GiAnvil,
         title: t('features.recipesTitle'),
         description: t('features.recipesDesc'),
-        preview: { kind: 'image', src: `${PLUGIN_IMG}/custom_recipes.smithed_recipe.jpg`, caption: 'in-game' },
+        preview: {
+            caption: 'calls/smithed_crafter/shapeless_recipes.mcfunction',
+            snippets: [{
+                lang: 'mcfunction',
+                label: t('features.recipesSnippetLabel'),
+                code: `# One CraftingShapelessRecipe on the item produces this.
+# The backslashes are ours so it fits; the generated file is one line.
+execute \\
+    if score @s smithed.data matches 0 \\
+    store result score @s smithed.data \\
+    if data storage smithed.crafter:input {recipe:{ingredients:[ \\
+        {Slot:0b,id:"minecraft:glass"},{Slot:1b,id:"minecraft:glass"}, \\
+        {Slot:2b,id:"minecraft:glass"},{Slot:3b,id:"minecraft:glass"}, \\
+        {Slot:4b,id:"minecraft:glass"},{Slot:5b,id:"minecraft:glass"}, \\
+        {Slot:6b,id:"minecraft:glass"},{Slot:7b,id:"minecraft:glass"}, \\
+        {Slot:8b,components:{"minecraft:custom_data": \\
+            {stardust_fragment:{life_crystal:true}}}} \\
+    ]}} \\
+    run loot replace block ~ ~ ~ container.16 \\
+        loot stardust_fragment:i/life_crystal_block`,
+            }],
+        },
     },
     {
         id: 'loot_tables',
         icon: GiChest,
         title: t('features.lootTablesTitle'),
         description: t('features.lootTablesDesc'),
-        preview: { kind: 'image', src: `${PLUGIN_IMG}/datapack.loot_tables.give_all.jpg`, caption: 'function …:_give_all' },
+        preview: {
+            caption: 'function …:_give_all',
+            image: { src: `${PLUGIN_IMG}/datapack.loot_tables.give_all.jpg`, alt: t('features.lootTablesTitle') },
+        },
     },
     {
         id: 'lang',
@@ -113,22 +162,33 @@ generate_everything_about_these_materials(ORES_CONFIGS)`,
         title: t('features.langTitle'),
         description: t('features.langDesc'),
         preview: {
-            kind: 'code',
-            lang: 'json',
             caption: 'lang/en_us.json',
-            code: `{
-  "simplenergy": " SimplEnergy",
-  "simplenergy.a_better_furnace": "A Better Furnace",
-  "simplenergy.a_simple_energy_storage": "A Simple Energy Storage",
-  "simplenergy.a_very_fast_smelter": "A Very Fast Smelter",
-  "simplenergy.advanced_battery": "Advanced Battery",
-  "simplenergy.advanced_cable": "Advanced Cable",
-  "simplenergy.allows_you_to_analyse_machines": "Allows you to analyse machines",
-  "simplenergy.also_named_the_coal_generator": "Also named the Coal Generator",
+            snippets: [
+                {
+                    lang: 'mcfunction',
+                    label: t('features.langBeforeLabel'),
+                    code: `tellraw @s [{text:"\\n[Datapack Energy Stats]",color:"yellow"}]
+tellraw @s ["",{text:"Entities: ",color:"gray"}, \\
+    {score:{name:"#entities",objective:"simplenergy.data"},color:"gold"}]`,
+                },
+                {
+                    lang: 'mcfunction',
+                    label: t('features.langAfterLabel'),
+                    code: `tellraw @s [{"translate":"simplenergy.datapack_energy_stats",color:"yellow"}]
+tellraw @s ["",{"translate":"simplenergy.entities",color:"gray"}, \\
+    {score:{name:"#entities",objective:"simplenergy.data"},color:"gold"}]`,
+                },
+                {
+                    lang: 'json',
+                    label: t('features.langFileLabel'),
+                    code: `{
+  "simplenergy.datapack_energy_stats": "[Datapack Energy Stats]",
+  "simplenergy.entities": "Entities: ",
   "simplenergy.electric_furnace": "Electric Furnace",
-  "simplenergy.energy_buffer_1600_kj": "Energy buffer: 1600 kJ",
-  "simplenergy.power_usage_20_kw": "Power usage: 20 kW"
+  "simplenergy.energy_buffer_1600_kj": "Energy buffer: 1600 kJ"
 }`,
+                },
+            ],
         },
     },
     {
@@ -136,8 +196,11 @@ generate_everything_about_these_materials(ORES_CONFIGS)`,
         icon: GiLinkedRings,
         title: t('features.dependenciesTitle'),
         description: t('features.dependenciesDesc'),
-        preview: { kind: 'image', src: `${PLUGIN_IMG}/finalyze.dependencies.ingame_errors.jpg`, caption: 'in-game' },
-    }
+        preview: {
+            caption: 'in-game',
+            image: { src: `${PLUGIN_IMG}/finalyze.dependencies.ingame_errors.jpg`, alt: t('features.dependenciesTitle') },
+        },
+    },
 ];
 
 const CodeBlock = ({ code, lang }: { code: string; lang: string }) => {
@@ -174,34 +237,36 @@ const CodeBlock = ({ code, lang }: { code: string; lang: string }) => {
     );
 };
 
-const PreviewBody = ({ preview, alt }: { preview: Preview; alt: string }) => {
-    if (preview.kind === 'image') {
-        return (
-            <div className="h-full w-full flex items-center justify-center bg-black/30 p-3">
-                <img src={preview.src} alt={alt} loading="lazy" decoding="async" className="max-h-full max-w-full object-contain rounded" />
+const PreviewBody = ({ preview }: { preview: Preview }) => (
+    <div className="h-full overflow-y-auto custom-scrollbar">
+        {preview.image && (
+            <div className="flex items-center justify-center bg-black/30 p-3">
+                <img
+                    src={preview.image.src}
+                    alt={preview.image.alt}
+                    loading="lazy"
+                    decoding="async"
+                    className="max-h-64 max-w-full object-contain rounded-panel"
+                />
             </div>
-        );
-    }
+        )}
 
-    if (preview.kind === 'files') {
-        return (
-            <div className="h-full flex flex-col">
-                <div className="p-4 border-b border-white/5 bg-black/20 flex-shrink-0">
-                    <FileTree nodes={preview.nodes} />
-                </div>
-                <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar">
-                    <CodeBlock code={preview.code} lang={preview.lang} />
-                </div>
+        {preview.nodes && (
+            <div className="p-4 border-b border-white/5 bg-black/20">
+                <FileTree nodes={preview.nodes} />
             </div>
-        );
-    }
+        )}
 
-    return (
-        <div className="h-full overflow-y-auto custom-scrollbar">
-            <CodeBlock code={preview.code} lang={preview.lang} />
-        </div>
-    );
-};
+        {preview.snippets?.map((snippet, index) => (
+            <div key={snippet.label ?? index} className={index > 0 ? 'border-t border-white/5' : undefined}>
+                {snippet.label && (
+                    <p className="px-4 pt-3 text-xs font-mono text-slate-400">{snippet.label}</p>
+                )}
+                <CodeBlock code={snippet.code} lang={snippet.lang} />
+            </div>
+        ))}
+    </div>
+);
 
 export const Features: React.FC = () => {
     const { t } = useTranslation();
@@ -242,7 +307,7 @@ export const Features: React.FC = () => {
                                 <button
                                     key={feature.id}
                                     onClick={() => handleFeatureSelect(feature)}
-                                    className={`w-full text-left p-4 rounded-xl transition-all duration-200 border ${isActive
+                                    className={`w-full text-left select-text p-4 rounded-panel transition-all duration-200 border ${isActive
                                         ? STEP_ACTIVE
                                         : 'bg-transparent border-transparent hover:bg-white/5'
                                         }`}
@@ -267,7 +332,7 @@ export const Features: React.FC = () => {
 
                     {/* Preview Window */}
                     <div className="lg:col-span-7 lg:sticky lg:top-24">
-                        <div className="bg-[#1e1e1e] rounded-xl border border-white/10 shadow-2xl overflow-hidden flex flex-col h-[30rem]">
+                        <div className="bg-[#1e1e1e] rounded-xl border border-white/10 shadow-2xl overflow-hidden flex flex-col h-[34rem]">
                             {/* Window Header */}
                             <div className="bg-[#2d2d2d] px-4 py-3 flex items-center justify-between border-b border-white/5 flex-shrink-0">
                                 <div className="flex items-center gap-2">
@@ -295,7 +360,7 @@ export const Features: React.FC = () => {
                                             aria-hidden={!isActive}
                                         >
                                             {rendered.has(feature.id) && (
-                                                <PreviewBody preview={feature.preview} alt={feature.title} />
+                                                <PreviewBody preview={feature.preview} />
                                             )}
                                         </motion.div>
                                     );

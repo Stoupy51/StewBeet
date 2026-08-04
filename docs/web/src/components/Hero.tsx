@@ -31,7 +31,7 @@ const CopyInstall = () => {
     return (
         <button
             onClick={handleCopy}
-            className={`group flex items-center gap-3 px-4 py-2.5 bg-slate-900/60 border border-slate-800 ${ACCENT_BORDER_HOVER} rounded-panel transition-colors duration-200`}
+            className={`group flex items-center justify-center gap-3 px-4 py-2.5 bg-slate-900/60 border border-slate-800 ${ACCENT_BORDER_HOVER} rounded-panel transition-colors duration-200`}
         >
             <span className="font-mono text-sm text-slate-300">
                 <span className={ICON_ACCENT}>$</span> pip install stewbeet
@@ -68,7 +68,7 @@ const CodePanel = ({ caption }: { caption: string }) => (
         <div className="flex-1 p-4 overflow-x-auto custom-scrollbar">
             <div
                 dangerouslySetInnerHTML={{ __html: heroCode.html }}
-                style={{ fontSize: '0.75rem', lineHeight: '1.7' }}
+                style={{ fontSize: '0.75rem', lineHeight: '1.55' }}
                 className="[&>pre]:!bg-transparent [&>pre]:!m-0 [&>pre]:!p-0"
             />
         </div>
@@ -81,7 +81,7 @@ export const Hero: React.FC = () => {
     const gettingStarted = `/markdown?src=${encodeURIComponent(language === 'fr' ? '0_getting_started/fr.md' : '0_getting_started/en.md')}`;
 
     return (
-        <section id="hero" className="relative min-h-screen flex items-center overflow-hidden pt-24 pb-16 bg-slate-950">
+        <section id="hero" className="relative overflow-hidden pt-20 pb-4 bg-slate-950">
             {/* The one decorative glow left on the site, behind the technical grid. */}
             <div className="absolute inset-0 z-0 opacity-20">
                 <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
@@ -89,49 +89,54 @@ export const Hero: React.FC = () => {
             </div>
 
             <div className="relative z-10 w-full max-w-7xl 2xl:max-w-[90rem] mx-auto px-4">
-                {/* The pitch spans the section: at half width the headline broke over four lines */}
+                {/* The headline needs its full width to stay on two lines, so the actions sit
+                    beside it instead of on a row below. That reclaims the empty right half and
+                    is what lets the whole hero — pitch, definition and output — fit one screen. */}
                 <motion.div
                     {...motionSafe({
                         initial: { y: 20 },
                         animate: { y: 0 },
                         transition: { duration: 0.5 },
                     })}
-                    className="max-w-3xl"
+                    className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_auto] gap-x-10 gap-y-6 items-end"
                 >
-                    <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full ${BRAND_PILL} text-xs font-mono mb-5`}>
-                        <span className={`w-2 h-2 rounded-full ${BRAND_DOT}`} />
-                        v{stats.version} {t('hero.versionStable')}
+                    <div className="max-w-3xl">
+                        <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full ${BRAND_PILL} text-xs font-mono mb-4`}>
+                            <span className={`w-2 h-2 rounded-full ${BRAND_DOT}`} />
+                            v{stats.version} {t('hero.versionStable')}
+                        </div>
+
+                        <h1 className="text-4xl md:text-5xl xl:text-6xl font-bold text-white mb-3 tracking-tight leading-[1.1]">
+                            {t('hero.titleLine1')} <br />
+                            <span className={GRADIENT_TEXT_BRIGHT}>{t('hero.titleLine2')}</span>
+                        </h1>
+
+                        <p className="text-base xl:text-lg text-slate-300 leading-relaxed">
+                            {t('hero.description')}{' '}
+                            <a href="https://github.com/mcbeet/beet" target="_blank" rel="noopener noreferrer" className={TEXT_ACCENT_HOVER}>
+                                {t('hero.beet')}
+                            </a>{' '}
+                            {t('hero.descriptionContinued')}
+                        </p>
                     </div>
 
-                    <h1 className="text-4xl md:text-5xl xl:text-6xl font-bold text-white mb-4 tracking-tight leading-[1.1]">
-                        {t('hero.titleLine1')} <br />
-                        <span className={GRADIENT_TEXT_BRIGHT}>{t('hero.titleLine2')}</span>
-                    </h1>
-
-                    <p className="text-base xl:text-lg text-slate-300 mb-7 leading-relaxed">
-                        {t('hero.description')}{' '}
-                        <a href="https://github.com/mcbeet/beet" target="_blank" rel="noopener noreferrer" className={TEXT_ACCENT_HOVER}>
-                            {t('hero.beet')}
-                        </a>{' '}
-                        {t('hero.descriptionContinued')}
-                    </p>
-
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                    <div className="flex flex-col items-stretch gap-3 lg:w-[19rem]">
                         <Link
                             to={gettingStarted}
-                            className={`flex items-center gap-2 px-6 py-3 ${BTN_PRIMARY} rounded-panel font-semibold transition-colors duration-200`}
+                            className={`flex items-center justify-center gap-2 px-6 py-3 ${BTN_PRIMARY} rounded-panel font-semibold transition-colors duration-200`}
                         >
                             {t('hero.getStarted')}
                             <HiArrowRight aria-hidden="true" />
                         </Link>
                         <CopyInstall />
+                        <p className="text-xs text-slate-400 text-center">{t('finalCta.microcopy')}</p>
                     </div>
                 </motion.div>
 
                 {/* The definition and what it compiled into, read as one statement: same top,
                     same bottom, an arrow in between. The pair only goes side by side at xl —
                     below that each column is narrower than the 74-column snippet it has to hold. */}
-                <div className="mt-10 grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-5 xl:gap-4 items-stretch">
+                <div className="mt-6 grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-5 xl:gap-4 items-stretch">
                     <motion.div
                         {...motionSafe({
                             initial: { y: 20 },

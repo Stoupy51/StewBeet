@@ -120,9 +120,10 @@ export const Navbar = memo(() => {
     return (
         <motion.nav
             {...motionSafe({ initial: { y: -100 }, animate: { y: 0 } })}
-            className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${isScrolled
-                ? `bg-slate-950/95 backdrop-blur-md shadow-lg ${NAV_SHADOW} border-b border-slate-800/70`
-                : 'bg-transparent border-b border-transparent'
+            /* The bar used to be transparent until the first scroll, so it dissolved into the
+               hero and the nav items read as loose words floating over the headline. It now
+               always sits on its own surface; scrolling only deepens the shadow. */
+            className={`fixed top-0 left-0 right-0 z-50 bg-slate-950/95 backdrop-blur-md border-b border-slate-800/70 transition-shadow duration-300 ${isScrolled ? `shadow-lg ${NAV_SHADOW}` : ''
                 }`}
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

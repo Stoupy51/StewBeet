@@ -17,15 +17,12 @@ export const HERO_CODE: string = `Block(
     id="life_crystal_block",
     vanilla_block=VanillaBlock(id="minecraft:glass"),
     manual_category="equipment",
-
     components={
         "item_name": {"text": "Life Crystal Block", "color": "light_purple"},
         "lore": [{"text": "Break it to get the crystal back"}],
     },
-
     # Broken without Silk Touch, it hands the crystal back
     no_silk_touch_drop=NoSilkTouchDrop(id="life_crystal", count=1),
-
     recipes=[CraftingShapelessRecipe(
         category="equipment", result_count=1,
         ingredients=8 * [Ingr("minecraft:glass")] + [Ingr("life_crystal")],
@@ -65,7 +62,7 @@ export const GENERATED_FILES: FileNode[] = [
                     { name: 'textures/item/life_crystal_block.png.mcmeta' },
                     { name: 'textures/item/dialog_sprite/life_crystal_block.png' },
                     { name: 'textures/font/high_res/life_crystal_block.png' },
-                    { name: 'textures/font/wiki_icons/life_crystal_block_crafting_shapeless.png', note: 'recipe drawn for the manual' },
+                    { name: 'textures/font/wiki_icons/life_crystal_block_crafting_shapeless.png' },
                 ],
             },
         ],
