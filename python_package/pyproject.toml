@@ -40,8 +40,9 @@ dependencies = [
 smithed = { git = "https://github.com/Stoupy51/smithed-python" }
 
 [project.urls]
-Homepage = "https://github.com/Stoupy51/stewbeet"
+Homepage = "https://stewbeet.paralya.fr"
 Issues = "https://github.com/Stoupy51/stewbeet/issues"
+Source = "https://github.com/Stoupy51/stewbeet"
 
 [project.scripts]
 stewbeet = "stewbeet:main"
