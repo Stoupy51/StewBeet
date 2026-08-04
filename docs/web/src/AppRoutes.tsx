@@ -6,6 +6,7 @@ const MarkdownPage = lazy(() => import('./components/MarkdownPage').then(m => ({
 const DocumentationPage = lazy(() => import('./components/DocumentationPage').then(m => ({ default: m.DocumentationPage })));
 const MarkdownToBBCodePage = lazy(() => import('./components/MarkdownToBBCodePage').then(m => ({ default: m.MarkdownToBBCodePage })));
 const ToolsPage = lazy(() => import('./components/ToolsPage').then(m => ({ default: m.ToolsPage })));
+const NotFoundPage = lazy(() => import('./components/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
 
 export function AppRoutes() {
     return (
@@ -16,6 +17,7 @@ export function AppRoutes() {
                 <Route path="/markdown" element={<MarkdownPage />} />
                 <Route path="/markdown_to_pmc_bbcode" element={<MarkdownToBBCodePage />} />
                 <Route path="/tools" element={<ToolsPage />} />
+                <Route path="*" element={<NotFoundPage />} />
             </Routes>
         </Suspense>
     );

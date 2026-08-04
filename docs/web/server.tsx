@@ -4,16 +4,18 @@
  * For /markdown?src=... requests:
  *   1. Fetches the GitHub raw markdown content server-side.
  *   2. Renders the full page HTML via renderToString (so crawlers receive real content).
- *   3. Returns the enriched HTML response.
+ *   3. Rewrites the <head> for that document (title, description, og/twitter, canonical).
+ *   4. Returns the enriched HTML response.
  *
  * All other requests are served as static files from dist/.
- * Unknown paths fall back to dist/index.html (SPA fallback).
+ * Unknown paths get dist/404.html with a 404 status.
  */
 import { prerender } from 'react-dom/static';
 import { StaticRouter } from 'react-router';
 import { LanguageProvider } from './src/context/LanguageContext';
 import { AppRoutes } from './src/AppRoutes';
 import { MarkdownContentProvider } from './src/context/MarkdownContentContext';
+import { applyPageMeta, markdownPageMeta } from './src/utils/pageMeta';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
@@ -91,7 +93,9 @@ Bun.serve({
             );
             const body = extractBody(await new Response(prelude).text());
 
-            const output = template.replace(
+            // Without this the document would ship index.html's head: same title and same
+            // link preview for every page of the documentation.
+            const output = applyPageMeta(template, markdownPageMeta(src, markdownContent)).replace(
                 '<div id="root"></div>',
                 `<div id="root">${body}</div>`,
             );
@@ -138,8 +142,11 @@ Bun.serve({
             });
         }
 
-        // SPA fallback — let the client-side router handle unknown paths
-        return new Response(Bun.file(join(distDir, 'index.html')), {
+        // Unknown path: the pre-rendered catch-all route, with the status that goes with it.
+        // Answering 200 with the landing page turned every dead link into a soft 404 and
+        // showed the reader the home page instead of telling them the page was gone.
+        return new Response(Bun.file(join(distDir, '404.html')), {
+            status: 404,
             headers: { 'Content-Type': 'text/html; charset=utf-8' },
         });
     },
