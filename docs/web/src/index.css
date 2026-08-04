@@ -69,3 +69,74 @@
     @apply bg-mc-emerald;
   }
 }
+/*
+ * Entrance animation — "the build runs".
+ *
+ * The page introduces itself by doing the thing it is for: a compile scan sweeps down the
+ * definition, and the files it produces stream into the panel beside it while the counter
+ * climbs. Everything is transform and opacity, so nothing reflows and nothing shifts.
+ *
+ * All of it hangs off [data-intro="play"], which useIntro writes before the first paint and
+ * only when the visitor has not asked for reduced motion. Without that attribute the rules
+ * below never match and the page simply renders finished — which is what the prerendered
+ * HTML already contains.
+ */
+
+@keyframes intro-rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes intro-grid {
+  from { opacity: 0; transform: scale(1.04); }
+  to   { opacity: 0.2; transform: none; }
+}
+
+/* The scan travels a little past both edges so it enters and leaves cleanly. */
+@keyframes intro-scan {
+  0%   { opacity: 0; transform: translateY(-30%); }
+  12%  { opacity: 1; }
+  88%  { opacity: 1; }
+  100% { opacity: 0; transform: translateY(560%); }
+}
+
+@keyframes intro-row {
+  from { opacity: 0; transform: translateX(-10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes intro-arrow {
+  0%, 100% { opacity: 1; transform: none; }
+  50%      { opacity: 1; transform: translateX(6px); color: theme('colors.mc.emerald'); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-intro='play'] .intro-grid {
+    animation: intro-grid 900ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+
+  /* Eyebrow, headline, paragraph, actions — each a beat behind the last. */
+  [data-intro='play'] .intro-step {
+    animation: intro-rise 620ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    animation-delay: calc(var(--step, 0) * 90ms);
+  }
+
+  [data-intro='play'] .intro-panel {
+    animation: intro-rise 700ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    animation-delay: calc(420ms + var(--step, 0) * 120ms);
+  }
+
+  [data-intro='play'] .intro-scan {
+    animation: intro-scan 900ms cubic-bezier(0.4, 0, 0.5, 1) 640ms both;
+  }
+
+  /* Files land in document order, tracking the scan as it passes over the definition. */
+  [data-intro='play'] .intro-row {
+    animation: intro-row 320ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    animation-delay: calc(760ms + var(--row, 0) * 42ms);
+  }
+
+  [data-intro='play'] .intro-arrow {
+    animation: intro-arrow 700ms ease-in-out 900ms 1;
+  }
+}

@@ -1,9 +1,10 @@
 import { motion } from 'framer-motion';
 import { HiArrowRight, HiArrowNarrowRight, HiClipboard, HiCheck } from 'react-icons/hi';
-import { useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from '../i18n/useTranslation';
 import { useMotionSafe } from '../hooks/useMotionSafe';
+import { introWillPlay, useIntro } from '../hooks/useIntro';
 import { FileTree } from './FileTree';
 import { GENERATED_FILES } from './heroCode';
 import heroCode from '../generated/heroCode.json';
@@ -65,7 +66,11 @@ const Panel = ({ caption, accessory, children }: { caption: string; accessory?: 
 /** Markup comes from scripts/prehighlight.ts, so this paints coloured on the first frame. */
 const CodePanel = ({ caption }: { caption: string }) => (
     <Panel caption={caption}>
-        <div className="flex-1 p-4 overflow-x-auto custom-scrollbar">
+        <div className="relative flex-1 p-4 overflow-x-auto custom-scrollbar">
+            <div
+                aria-hidden="true"
+                className="intro-scan pointer-events-none absolute inset-x-0 top-0 h-16 opacity-0 bg-gradient-to-b from-transparent via-mc-emerald/25 to-transparent"
+            />
             <div
                 dangerouslySetInnerHTML={{ __html: heroCode.html }}
                 style={{ fontSize: '0.75rem', lineHeight: '1.55' }}
@@ -75,15 +80,55 @@ const CodePanel = ({ caption }: { caption: string }) => (
     </Panel>
 );
 
+/**
+ * Counts up to the number of generated files while they stream into the tree below.
+ *
+ * The text is driven straight through a ref rather than through state: the rendered output
+ * then always matches the prerendered markup — no hydration mismatch, no rewind visible to
+ * a visitor who is not being shown the intro — and updating the DOM from an effect is what
+ * effects are for, where a setState per frame would be a cascade of renders.
+ */
+const FileCounter = ({ label }: { label: string }) => {
+    const node = useRef<HTMLSpanElement>(null);
+
+    useLayoutEffect(() => {
+        const total = Number(label.match(/\d+/)?.[0] ?? 0);
+        const element = node.current;
+        if (!element || !total || !introWillPlay()) return;
+
+        // Matches the row cascade in index.css: 760ms before the first file, 42ms apart.
+        const START = 760;
+        const STEP = 42;
+        const write = (value: number) => {
+            element.textContent = label.replace(String(total), String(value));
+        };
+
+        write(0);
+        let frame = 0;
+        const begun = performance.now();
+        const tick = () => {
+            const elapsed = performance.now() - begun;
+            const landed = Math.max(0, Math.min(total, Math.floor((elapsed - START) / STEP)));
+            write(landed);
+            if (landed < total) frame = requestAnimationFrame(tick);
+        };
+        frame = requestAnimationFrame(tick);
+        return () => cancelAnimationFrame(frame);
+    }, [label]);
+
+    return <span ref={node} className="text-xs font-mono text-mc-emerald tabular-nums">{label}</span>;
+};
+
 export const Hero: React.FC = () => {
     const { t, language } = useTranslation();
     const motionSafe = useMotionSafe();
+    const section = useIntro<HTMLElement>();
     const gettingStarted = `/markdown?src=${encodeURIComponent(language === 'fr' ? '0_getting_started/fr.md' : '0_getting_started/en.md')}`;
 
     return (
-        <section id="hero" className="relative overflow-hidden pt-20 pb-4 bg-slate-950">
+        <section ref={section} id="hero" className="relative overflow-hidden pt-20 pb-4 bg-slate-950">
             {/* The one decorative glow left on the site, behind the technical grid. */}
-            <div className="absolute inset-0 z-0 opacity-20">
+            <div className="intro-grid absolute inset-0 z-0 opacity-20">
                 <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
                 <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-mc-emerald opacity-20 blur-[100px]" />
             </div>
@@ -101,17 +146,17 @@ export const Hero: React.FC = () => {
                     className="grid grid-cols-1 lg:grid-cols-[auto_minmax(0,1fr)] gap-x-10 gap-y-6 items-end"
                 >
                     <div className="max-w-3xl">
-                        <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full ${BRAND_PILL} text-xs font-mono mb-4`}>
+                        <div className={`intro-step inline-flex items-center gap-2 px-3 py-1 rounded-full ${BRAND_PILL} text-xs font-mono mb-4`} style={{ '--step': 0 } as React.CSSProperties}>
                             <span className={`w-2 h-2 rounded-full ${BRAND_DOT}`} />
                             v{stats.version} {t('hero.versionStable')}
                         </div>
 
-                        <h1 className="text-4xl md:text-5xl xl:text-6xl font-bold text-white mb-3 tracking-tight leading-[1.1]">
+                        <h1 className="intro-step text-4xl md:text-5xl xl:text-6xl font-bold text-white mb-3 tracking-tight leading-[1.1]" style={{ '--step': 1 } as React.CSSProperties}>
                             {t('hero.titleLine1')} <br />
                             <span className={GRADIENT_TEXT_BRIGHT}>{t('hero.titleLine2')}</span>
                         </h1>
 
-                        <p className="text-base xl:text-lg text-slate-300 leading-relaxed text-balance">
+                        <p className="intro-step text-base xl:text-lg text-slate-300 leading-relaxed text-balance" style={{ '--step': 2 } as React.CSSProperties}>
                             {t('hero.description')}{' '}
                             <a href="https://github.com/mcbeet/beet" target="_blank" rel="noopener noreferrer" className={TEXT_ACCENT_HOVER}>
                                 {t('hero.beet')}
@@ -120,7 +165,7 @@ export const Hero: React.FC = () => {
                         </p>
                     </div>
 
-                    <div className="flex flex-col items-stretch gap-3 lg:w-[19rem] lg:justify-self-center">
+                    <div className="intro-step flex flex-col items-stretch gap-3 lg:w-[19rem] lg:justify-self-center" style={{ '--step': 3 } as React.CSSProperties}>
                         <Link
                             to={gettingStarted}
                             className={`flex items-center justify-center gap-2 px-6 py-3 ${BTN_PRIMARY} rounded-panel font-semibold transition-colors duration-200`}
@@ -143,13 +188,14 @@ export const Hero: React.FC = () => {
                             animate: { y: 0 },
                             transition: { duration: 0.6, delay: 0.15 },
                         })}
-                        className="min-w-0"
+                        className="intro-panel min-w-0"
+                        style={{ '--step': 0 } as React.CSSProperties}
                     >
                         <CodePanel caption={t('hero.codeCaption')} />
                     </motion.div>
 
                     <div className="flex items-center justify-center text-slate-400" aria-hidden="true">
-                        <HiArrowNarrowRight className="text-2xl rotate-90 xl:rotate-0" />
+                        <HiArrowNarrowRight className="intro-arrow text-2xl rotate-90 xl:rotate-0" />
                     </div>
 
                     <motion.div
@@ -158,11 +204,12 @@ export const Hero: React.FC = () => {
                             animate: { scale: 1 },
                             transition: { duration: 0.6, delay: 0.25 },
                         })}
-                        className="relative min-w-0"
+                        className="intro-panel relative min-w-0"
+                        style={{ '--step': 1 } as React.CSSProperties}
                     >
                         <Panel
                             caption={t('hero.outputCaption')}
-                            accessory={<span className="text-xs font-mono text-mc-emerald">{t('hero.outputSummary')}</span>}
+                            accessory={<FileCounter label={t('hero.outputSummary')} />}
                         >
                             <div className="flex-1 flex flex-col p-4 overflow-x-auto custom-scrollbar">
                                 <FileTree nodes={GENERATED_FILES} />

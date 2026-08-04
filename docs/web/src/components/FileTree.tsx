@@ -1,6 +1,4 @@
 import { useState } from 'react';
-import { useMotionSafe } from '../hooks/useMotionSafe';
-import { motion } from 'framer-motion';
 import { HiChevronDown, HiChevronRight } from 'react-icons/hi';
 
 export interface FileNode {
@@ -26,27 +24,39 @@ function fileColor(name: string): string {
     return EXTENSION_COLORS[extension] ?? 'text-slate-300';
 }
 
-/** Cascade the reveal by nesting level and position, without threading a counter through the tree. */
-function revealDelay(depth: number, index: number): number {
-    return Math.min((depth * 2 + index) * 0.05, 0.7);
+/**
+ * Rows carry their position in document order as `--row`, which the entrance animation turns
+ * into a delay so files land top to bottom. A per-parent index would restart the count inside
+ * every directory and the stream would arrive out of order, so the number is threaded through
+ * the recursion: each child starts after everything its previous siblings expand to.
+ */
+function visibleRowCount(node: FileNode): number {
+    const expanded = node.children !== undefined && node.open !== false;
+    if (!expanded) return 1;
+    return 1 + (node.children ?? []).reduce((total, child) => total + visibleRowCount(child), 0);
 }
 
-const TreeRow = ({ node, depth, index }: { node: FileNode; depth: number; index: number }) => {
+/** Positions each node at its place in the flattened, document-order sequence. */
+function rowOffsets(nodes: FileNode[], from: number): number[] {
+    const offsets: number[] = [];
+    let running = from;
+    for (const node of nodes) {
+        offsets.push(running);
+        running += visibleRowCount(node);
+    }
+    return offsets;
+}
+
+const TreeRow = ({ node, depth, order }: { node: FileNode; depth: number; order: number }) => {
     const isDirectory = node.children !== undefined;
     const [open, setOpen] = useState(node.open !== false);
-    const motionSafe = useMotionSafe();
+    const childOffsets = rowOffsets(node.children ?? [], order + 1);
 
     return (
         <>
-            <motion.div
-                {...motionSafe({
-                    initial: { x: -6 },
-                    whileInView: { x: 0 },
-                    viewport: { once: true },
-                    transition: { duration: 0.25, delay: revealDelay(depth, index) },
-                })}
-                className="flex items-baseline gap-2 leading-[1.55] whitespace-nowrap"
-                style={{ paddingLeft: `${depth * 0.9}rem` }}
+            <div
+                className="intro-row flex items-baseline gap-2 leading-[1.55] whitespace-nowrap"
+                style={{ paddingLeft: `${depth * 0.9}rem`, '--row': order } as React.CSSProperties}
             >
                 {isDirectory ? (
                     <button
@@ -63,20 +73,23 @@ const TreeRow = ({ node, depth, index }: { node: FileNode; depth: number; index:
                     </>
                 )}
                 {node.note && <span className="text-slate-400 text-[0.6875rem] truncate">{node.note}</span>}
-            </motion.div>
+            </div>
 
-            {isDirectory && open && node.children?.map((child, childIndex) => (
-                <TreeRow key={child.name} node={child} depth={depth + 1} index={childIndex} />
+            {isDirectory && open && node.children?.map((child, index) => (
+                <TreeRow key={child.name} node={child} depth={depth + 1} order={childOffsets[index]} />
             ))}
         </>
     );
 };
 
-/** Same 12px/1.7 as the hero code panel: the tree and the snippet read as one pair, not two widgets. */
-export const FileTree: React.FC<{ nodes: FileNode[] }> = ({ nodes }) => (
-    <div className="font-mono text-xs">
-        {nodes.map((node, index) => (
-            <TreeRow key={node.name} node={node} depth={0} index={index} />
-        ))}
-    </div>
-);
+/** Same 12px/1.55 as the hero code panel: the tree and the snippet read as one pair, not two widgets. */
+export const FileTree: React.FC<{ nodes: FileNode[] }> = ({ nodes }) => {
+    const offsets = rowOffsets(nodes, 0);
+    return (
+        <div className="font-mono text-xs">
+            {nodes.map((node, index) => (
+                <TreeRow key={node.name} node={node} depth={0} order={offsets[index]} />
+            ))}
+        </div>
+    );
+};
