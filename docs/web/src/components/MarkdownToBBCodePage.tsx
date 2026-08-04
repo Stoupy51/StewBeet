@@ -5,7 +5,8 @@ import { convertMarkdownToBBCode } from '../utils/markdownToBBCode';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 import { useTranslation } from '../i18n/useTranslation';
-import { BTN_SOLID, DOT_ACTIVE, GLOW_PRIMARY, GLOW_SECONDARY, GRADIENT_TEXT_BRIGHT, INPUT_FOCUS, TEXT_ACCENT, TEXT_ACCENT_SOFT, TOGGLE_ACTIVE } from '../theme';
+import { useMotionSafe } from '../hooks/useMotionSafe';
+import { BTN_SOLID, DOT_ACTIVE, GRADIENT_TEXT_BRIGHT, INPUT_FOCUS, TEXT_ACCENT, TEXT_ACCENT_SOFT, TOGGLE_ACTIVE } from '../theme';
 
 type DiffLine = { type: 'unchanged' | 'removed' | 'added'; text: string };
 
@@ -64,6 +65,7 @@ export function MarkdownToBBCodePage() {
   const [showDiff, setShowDiff] = useState(false);
   const [noWrap, setNoWrap] = useState(true);
   const { language } = useTranslation();
+  const motionSafe = useMotionSafe();
 
   const bbcodeOutput = useMemo(
     () => (autoUpdate ? convertMarkdownToBBCode(markdownInput) : manualBbcodeOutput),
@@ -102,18 +104,14 @@ export function MarkdownToBBCodePage() {
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <Navbar />
 
-      {/* Background decoration */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className={`absolute top-20 right-0 w-96 h-96 ${GLOW_SECONDARY} rounded-full blur-[120px]`} />
-        <div className={`absolute bottom-0 left-0 w-96 h-96 ${GLOW_PRIMARY} rounded-full blur-[120px]`} />
-      </div>
-
       <main className="relative pt-24 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+            {...motionSafe({
+                initial: { y: 20 },
+                animate: { y: 0 },
+                transition: { duration: 0.5 },
+            })}
           >
             <h1 className={`text-4xl sm:text-5xl font-bold text-center mb-4 ${GRADIENT_TEXT_BRIGHT}`}>
               {language === 'fr' ? 'Convertisseur Markdown vers BBCode' : 'Markdown to BBCode Converter'}
@@ -124,9 +122,11 @@ export function MarkdownToBBCodePage() {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
+            {...motionSafe({
+                initial: { y: 20 },
+                animate: { y: 0 },
+                transition: { duration: 0.5, delay: 0.1 },
+            })}
             className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8"
           >
             {/* Input Section */}
@@ -160,7 +160,7 @@ export function MarkdownToBBCodePage() {
                   <button
                     onClick={handleCopyOutput}
                     disabled={!bbcodeOutput}
-                    className={`px-3 py-1.5 text-sm ${BTN_SOLID} text-white rounded-lg transition-colors disabled:bg-slate-800 disabled:text-slate-600 disabled:cursor-not-allowed flex items-center gap-2`}
+                    className={`px-3 py-1.5 text-sm ${BTN_SOLID} text-white rounded-lg transition-colors disabled:bg-slate-800 disabled:text-slate-400 disabled:cursor-not-allowed flex items-center gap-2`}
                   >
                     <HiClipboardCopy className="w-4 h-4" />
                     {language === 'fr' ? 'Copier' : 'Copy'}
@@ -182,9 +182,11 @@ export function MarkdownToBBCodePage() {
 
           {/* Action Buttons */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+            {...motionSafe({
+                initial: { y: 20 },
+                animate: { y: 0 },
+                transition: { duration: 0.5, delay: 0.2 },
+            })}
             className="flex justify-center gap-4 mb-12"
           >
             {!autoUpdate && (
@@ -246,9 +248,11 @@ export function MarkdownToBBCodePage() {
 
           {/* Example Section */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
+            {...motionSafe({
+                initial: { y: 20 },
+                animate: { y: 0 },
+                transition: { duration: 0.5, delay: 0.3 },
+            })}
             className="bg-slate-900/50 backdrop-blur-sm rounded-xl shadow-xl border border-white/10 p-6"
           >
             <h3 className="text-lg font-semibold text-slate-200 mb-6">

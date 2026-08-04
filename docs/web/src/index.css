@@ -62,10 +62,10 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-indigo-500/50 rounded-full;
+    @apply bg-mc-emerald/50 rounded-full;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-indigo-500;
+    @apply bg-mc-emerald;
   }
 }

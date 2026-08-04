@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { useState, useEffect, useRef, useSyncExternalStore } from 'react';
 import { HiDownload, HiTerminal, HiFolder, HiPlay } from 'react-icons/hi';
-import { useStewBeetVersion } from '../hooks/useStewBeetVersion';
+import stats from '../generated/stats.json';
 import { useTranslation } from '../i18n/useTranslation';
 import { TEXT_ACCENT, STEP_ACTIVE, ICON_ACTIVE } from '../theme';
 
@@ -31,7 +31,6 @@ function stepDurations(step: Step): { typing: number; total: number } {
 }
 
 export const Installation: React.FC = () => {
-    const { version } = useStewBeetVersion();
     const { t } = useTranslation();
 
     const steps: Step[] = [
@@ -50,9 +49,9 @@ export const Installation: React.FC = () => {
             command: 'pip install stewbeet',
             output: [
                 { text: 'Collecting stewbeet' },
-                { text: `Downloading stewbeet-${version}-py3-none-any.whl (45 kB)` },
+                { text: `Downloading stewbeet-${stats.version}-py3-none-any.whl (45 kB)` },
                 { text: 'Installing collected packages: stewbeet' },
-                { text: `Successfully installed stewbeet-${version}`, color: 'text-blue-400' }
+                { text: `Successfully installed stewbeet-${stats.version}`, color: 'text-blue-400' }
             ],
             icon: HiTerminal
         },
@@ -80,18 +79,18 @@ export const Installation: React.FC = () => {
             output: [
                 { text: 'Building project...', color: 'text-red-400' },
                 { text: '' },
-                { text: '[PROGRESS] resource_pack.sounds: 44.76ms', color: 'text-purple-400' },
-                { text: '[PROGRESS] resource_pack.item_models: 3.60ms', color: 'text-purple-400' },
-                { text: '[PROGRESS] custom_recipes: 6.55ms', color: 'text-purple-400' },
-                { text: 'Creating manual pages: 100%|████████████| 28/28 [69.36it/s]', color: 'text-purple-400' },
-                { text: '[PROGRESS] ingame_manual: 0.66s', color: 'text-purple-400' },
-                { text: '[PROGRESS] datapack.loading: 1.42ms', color: 'text-purple-400' },
-                { text: '[PROGRESS] datapack.custom_blocks: 3.10ms', color: 'text-purple-400' },
-                { text: '[PROGRESS] datapack.loot_tables: 3.13ms', color: 'text-purple-400' },
+                { text: '[PROGRESS] resource_pack.sounds: 44.76ms', color: 'text-mc-diamond' },
+                { text: '[PROGRESS] resource_pack.item_models: 3.60ms', color: 'text-mc-diamond' },
+                { text: '[PROGRESS] custom_recipes: 6.55ms', color: 'text-mc-diamond' },
+                { text: 'Creating manual pages: 100%|████████████| 28/28 [69.36it/s]', color: 'text-mc-diamond' },
+                { text: '[PROGRESS] ingame_manual: 0.66s', color: 'text-mc-diamond' },
+                { text: '[PROGRESS] datapack.loading: 1.42ms', color: 'text-mc-diamond' },
+                { text: '[PROGRESS] datapack.custom_blocks: 3.10ms', color: 'text-mc-diamond' },
+                { text: '[PROGRESS] datapack.loot_tables: 3.13ms', color: 'text-mc-diamond' },
                 { text: '[INFO] Summary of the official supported libraries used in the datapack: Common Signals, Smithed Custom Block, Smithed Crafter, Furnace NBT Recipes, SmartOreGeneration, Bookshelf Math', color: 'text-green-400' },
                 { text: 'Generating lang file: 100%|██████████| 198/198 [4731.85it/s]', color: 'text-blue-400' },
-                { text: '[PROGRESS] auto.lang_file: 0.16s', color: 'text-purple-400' },
-                { text: '[PROGRESS] merge_smithed_weld: 0.58s', color: 'text-purple-400' },
+                { text: '[PROGRESS] auto.lang_file: 0.16s', color: 'text-mc-diamond' },
+                { text: '[PROGRESS] merge_smithed_weld: 0.58s', color: 'text-mc-diamond' },
                 { text: '' },
                 { text: '[DEBUG] Total execution time: 4.96s', color: 'text-cyan-400' },
                 { text: 'Done!', color: 'text-green-400' }
@@ -165,7 +164,7 @@ export const Installation: React.FC = () => {
                                         : 'bg-transparent border-transparent hover:bg-white/5 text-slate-400 hover:text-slate-200'
                                         }`}
                                 >
-                                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors flex-shrink-0 ${isActive ? ICON_ACTIVE : 'bg-slate-800 text-slate-500 group-hover:text-slate-300'}`}>
+                                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors flex-shrink-0 ${isActive ? ICON_ACTIVE : 'bg-slate-800 text-slate-400 group-hover:text-slate-300'}`}>
                                         <Icon />
                                     </div>
                                     <div className="min-w-0">
@@ -174,7 +173,7 @@ export const Installation: React.FC = () => {
                                     </div>
                                     {isActive && (
                                         <span
-                                            className="absolute bottom-0 left-0 h-0.5 bg-indigo-400"
+                                            className="absolute bottom-0 left-0 h-0.5 bg-mc-emerald"
                                             style={{ width: `${progress * 100}%` }}
                                         />
                                     )}
@@ -196,13 +195,13 @@ export const Installation: React.FC = () => {
                                 <div className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
                                 <div className="w-3 h-3 rounded-full bg-[#27c93f]" />
                                 <div className="ml-2 text-xs text-gray-400">terminal — bash</div>
-                                <div className="ml-auto text-[0.6875rem] text-slate-500">{activeIndex + 1} / {steps.length}</div>
+                                <div className="ml-auto text-[0.6875rem] text-slate-400">{activeIndex + 1} / {steps.length}</div>
                             </div>
 
                             {/* Progress across the terminal width */}
                             <div className="h-0.5 bg-white/5 flex-shrink-0">
                                 <div
-                                    className="h-full bg-gradient-to-r from-indigo-500 to-purple-500"
+                                    className="h-full bg-gradient-to-r from-mc-emerald to-mc-diamond"
                                     style={{ width: `${progress * 100}%` }}
                                 />
                             </div>
@@ -220,10 +219,8 @@ export const Installation: React.FC = () => {
                                 </div>
 
                                 {showOutput && (
-                                    <motion.div
+                                    <div
                                         key={activeStep.id}
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
                                         className="space-y-1 text-slate-400"
                                     >
                                         {activeStep.output.map((line, i) => (
@@ -235,8 +232,8 @@ export const Installation: React.FC = () => {
                                                 </div>
                                             )
                                         ))}
-                                        <div className="pt-3 text-green-400">user@stewbeet:~$</div>
-                                    </motion.div>
+                                        <div className="pt-3 text-mc-emerald">user@stewbeet:~$</div>
+                                    </div>
                                 )}
                             </div>
                         </div>

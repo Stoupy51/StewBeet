@@ -11,6 +11,7 @@ export default defineConfig({
     allowedHosts: ['stewbeet.paralya.fr'],
   },
   build: {
-    minify: false,
+    // Left off, this shipped a 627 kB unminified entry chunk to every visitor.
+    minify: 'esbuild',
   },
 })

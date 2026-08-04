@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { HiExternalLink } from 'react-icons/hi';
 import { useTranslation } from '../i18n/useTranslation';
-import { GRADIENT_TEXT, GLOW_PRIMARY, GLOW_SECONDARY, TEXT_ACCENT_HOVER } from '../theme';
+import { HEADING, TEXT_ACCENT_HOVER } from '../theme';
 
 export const Footer = memo(() => {
     const { t } = useTranslation();
@@ -19,19 +19,13 @@ export const Footer = memo(() => {
     };
 
     return (
-        <footer className="bg-slate-950 border-t border-white/5 relative overflow-hidden">
-            {/* Background decoration */}
-            <div className="absolute inset-0 overflow-hidden opacity-30">
-                <div className={`absolute -bottom-40 left-1/4 w-96 h-96 ${GLOW_PRIMARY} rounded-full blur-[120px]`} />
-                <div className={`absolute -bottom-40 right-1/4 w-96 h-96 ${GLOW_SECONDARY} rounded-full blur-[120px]`} />
-            </div>
-
+        <footer className="bg-slate-950 border-t border-white/10 relative">
             <div className="max-w-7xl mx-auto px-4 py-16 relative z-10">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
                     {/* Logo & Description */}
                     <div className="md:col-span-2">
-                        <div className={`flex items-center gap-2 text-2xl font-bold ${GRADIENT_TEXT} mb-4`}>
-                            <img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png" alt="StewBeet" className="w-8 h-8" />
+                        <div className={`flex items-center gap-2 text-2xl font-bold ${HEADING} mb-4`}>
+                            <img src="/stewbeet-logo.png" alt="StewBeet" className="w-8 h-8" />
                             StewBeet
                         </div>
                         <p className="text-slate-400 text-sm leading-relaxed">
@@ -70,16 +64,14 @@ export const Footer = memo(() => {
                     ))}
                 </div>
 
-                {/* Bottom Bar */}
-                <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <div className="text-slate-500 text-sm">
+                {/* The shields.io badges that used to sit here are now the trust strip under
+                    the hero: same numbers, baked at build time, seen by everyone rather than
+                    only by visitors who scrolled the whole page. */}
+                <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div className="text-slate-400 text-sm">
                         © {new Date().getFullYear()} {t('footer.copyright')} <a href="https://github.com/Stoupy51" target="_blank" rel="noopener noreferrer" className={TEXT_ACCENT_HOVER}>Stoupy51</a>
                     </div>
-                    <div className="flex flex-wrap gap-4 justify-center">
-                        <img src="https://img.shields.io/github/v/release/Stoupy51/stewbeet?logo=github&label=GitHub" alt="GitHub" className="h-5" />
-                        <img src="https://img.shields.io/pypi/dm/stewbeet?logo=python&label=PyPI downloads" alt="PyPI" className="h-5" />
-                        <img src="https://img.shields.io/discord/1216400498488377467?label=Discord&logo=discord" alt="Discord" className="h-5" />
-                    </div>
+                    <p className="text-slate-400 text-sm font-mono">{t('footer.license')}</p>
                 </div>
             </div>
         </footer>

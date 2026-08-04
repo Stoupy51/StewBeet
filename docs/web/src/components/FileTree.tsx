@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useMotionSafe } from '../hooks/useMotionSafe';
 import { motion } from 'framer-motion';
 import { HiChevronDown, HiChevronRight } from 'react-icons/hi';
 
@@ -14,7 +15,7 @@ export interface FileNode {
 
 /** Colour per file extension, so a tree reads as datapack / resource pack / function at a glance. */
 const EXTENSION_COLORS: Record<string, string> = {
-    json: 'text-indigo-300',
+    json: 'text-mc-diamond',
     png: 'text-emerald-300',
     mcfunction: 'text-amber-300',
     py: 'text-sky-300',
@@ -33,14 +34,17 @@ function revealDelay(depth: number, index: number): number {
 const TreeRow = ({ node, depth, index }: { node: FileNode; depth: number; index: number }) => {
     const isDirectory = node.children !== undefined;
     const [open, setOpen] = useState(node.open !== false);
+    const motionSafe = useMotionSafe();
 
     return (
         <>
             <motion.div
-                initial={{ opacity: 0, x: -6 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.25, delay: revealDelay(depth, index) }}
+                {...motionSafe({
+                    initial: { x: -6 },
+                    whileInView: { x: 0 },
+                    viewport: { once: true },
+                    transition: { duration: 0.25, delay: revealDelay(depth, index) },
+                })}
                 className="flex items-baseline gap-2 leading-[1.7] whitespace-nowrap"
                 style={{ paddingLeft: `${depth * 0.9}rem` }}
             >
@@ -58,7 +62,7 @@ const TreeRow = ({ node, depth, index }: { node: FileNode; depth: number; index:
                         <span className={fileColor(node.name)}>{node.name}</span>
                     </>
                 )}
-                {node.note && <span className="text-slate-600 text-[0.6875rem] truncate">{node.note}</span>}
+                {node.note && <span className="text-slate-400 text-[0.6875rem] truncate">{node.note}</span>}
             </motion.div>
 
             {isDirectory && open && node.children?.map((child, childIndex) => (

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, memo, lazy, Suspense } from 'react';
+import { useMotionSafe } from '../hooks/useMotionSafe';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { HiMenu, HiSearch, HiX } from 'react-icons/hi';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -6,11 +7,12 @@ import { useLanguage } from '../context/LanguageContext';
 import type { Language } from '../context/LanguageContext';
 import { useTranslation } from '../i18n/useTranslation';
 import { loadIndex } from '../utils/search';
-import { GRADIENT_TEXT_LOGO, BTN_PRIMARY, NAV_SHADOW, LIST_SELECTED } from '../theme';
+import { LOGO_TEXT, BTN_PRIMARY, NAV_SHADOW, LIST_SELECTED } from '../theme';
 
 const SearchModal = lazy(() => import('./SearchModal').then(m => ({ default: m.SearchModal })));
 
 export const Navbar = memo(() => {
+    const motionSafe = useMotionSafe();
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
@@ -117,8 +119,7 @@ export const Navbar = memo(() => {
 
     return (
         <motion.nav
-            initial={{ y: -100 }}
-            animate={{ y: 0 }}
+            {...motionSafe({ initial: { y: -100 }, animate: { y: 0 } })}
             className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${isScrolled
                 ? `bg-slate-950/95 backdrop-blur-md shadow-lg ${NAV_SHADOW} border-b border-slate-800/70`
                 : 'bg-transparent border-b border-transparent'
@@ -141,11 +142,11 @@ export const Navbar = memo(() => {
                                 navigate('/');
                             }
                         }}
-                        className={`flex items-center gap-2 text-xl font-bold ${GRADIENT_TEXT_LOGO} transition-all`}
+                        className={`flex items-center gap-2 text-xl font-bold ${LOGO_TEXT} transition-all`}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                     >
-                        <img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png" alt="StewBeet" className="w-8 h-8" />
+                        <img src="/stewbeet-logo.png" alt="StewBeet" className="w-8 h-8" />
                         StewBeet
                     </motion.a>
 
@@ -179,7 +180,7 @@ export const Navbar = memo(() => {
                             onClick={handleDocumentationClick}
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 rounded-lg text-white text-sm font-semibold transition-all shadow-lg shadow-purple-500/30"
+                            className="px-4 py-2 bg-mc-emerald hover:bg-mc-diamond rounded-panel text-slate-950 text-sm font-semibold transition-colors"
                         >
                             {t('nav.documentation')}
                         </motion.a>
@@ -189,7 +190,7 @@ export const Navbar = memo(() => {
                             onClick={handleToolsClick}
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            className="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 rounded-lg text-white text-sm font-semibold transition-all shadow-lg shadow-blue-500/30"
+                            className="px-4 py-2 rounded-panel text-slate-300 hover:text-white text-sm font-medium transition-colors"
                         >
                             {t('nav.tools')}
                         </motion.a>
@@ -200,12 +201,12 @@ export const Navbar = memo(() => {
                             rel="noopener noreferrer"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-500 to-blue-500 hover:from-indigo-400 hover:to-blue-400 rounded-lg text-white text-sm font-semibold transition-all shadow-lg shadow-indigo-500/30"
+                            aria-label="Discord"
+                            className="flex items-center justify-center w-9 h-9 rounded-panel text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
                         >
                             <span className="w-5 h-5 flex items-center">
                                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" /></svg>
                             </span>
-                            Discord
                         </motion.a>
                         <motion.a
                             href="https://github.com/Stoupy51/StewBeet"
@@ -213,12 +214,12 @@ export const Navbar = memo(() => {
                             rel="noopener noreferrer"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 rounded-lg text-white text-sm font-semibold transition-all shadow-lg shadow-indigo-500/30"
+                            aria-label="GitHub"
+                            className="flex items-center justify-center w-9 h-9 rounded-panel text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
                         >
                             <span className="w-5 h-5 flex items-center">
                                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" /></svg>
                             </span>
-                            GitHub
                         </motion.a>
 
                         {/* Language Selector - Desktop */}

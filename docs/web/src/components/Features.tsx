@@ -1,21 +1,22 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
+import { HiClipboard, HiCheck } from 'react-icons/hi';
+// Feature marks name the thing they stand for — an anvil for recipes, a chest for loot —
+// instead of the interchangeable cube/sparkle/bolt set every framework site draws from.
 import {
-    HiCube,
-    HiTemplate,
-    HiGift,
-    HiGlobe,
-    HiBeaker,
-    HiClipboard,
-    HiCheck,
-    HiShieldCheck
-} from 'react-icons/hi';
+    GiMineralPearls,
+    GiStoneBlock,
+    GiAnvil,
+    GiChest,
+    GiOpenBook,
+    GiLinkedRings,
+} from 'react-icons/gi';
 import { useTranslation } from '../i18n/useTranslation';
 import { useShiki } from '../hooks/useShiki';
 import { FileTree, type FileNode } from './FileTree';
 import { ICON_ACTIVE, STEP_ACTIVE, TEXT_ACTIVE_SUBTLE } from '../theme';
 
-const PLUGIN_IMG = 'https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/plugins/img';
+const PLUGIN_IMG = '/img';
 
 type Preview =
     | { kind: 'code'; code: string; lang: string; caption: string }
@@ -46,7 +47,7 @@ const TEXTURE_FILES: FileNode[] = [
 const getFeatures = (t: (key: string) => string): Feature[] => [
     {
         id: 'materials',
-        icon: HiCube,
+        icon: GiMineralPearls,
         title: t('features.materialsTitle'),
         description: t('features.materialsDesc'),
         preview: {
@@ -74,7 +75,7 @@ generate_everything_about_these_materials(ORES_CONFIGS)`,
     },
     {
         id: 'item_models',
-        icon: HiTemplate,
+        icon: GiStoneBlock,
         title: t('features.itemModelsTitle'),
         description: t('features.itemModelsDesc'),
         preview: {
@@ -94,21 +95,21 @@ generate_everything_about_these_materials(ORES_CONFIGS)`,
     },
     {
         id: 'recipes',
-        icon: HiBeaker,
+        icon: GiAnvil,
         title: t('features.recipesTitle'),
         description: t('features.recipesDesc'),
         preview: { kind: 'image', src: `${PLUGIN_IMG}/custom_recipes.smithed_recipe.jpg`, caption: 'in-game' },
     },
     {
         id: 'loot_tables',
-        icon: HiGift,
+        icon: GiChest,
         title: t('features.lootTablesTitle'),
         description: t('features.lootTablesDesc'),
         preview: { kind: 'image', src: `${PLUGIN_IMG}/datapack.loot_tables.give_all.jpg`, caption: 'function …:_give_all' },
     },
     {
         id: 'lang',
-        icon: HiGlobe,
+        icon: GiOpenBook,
         title: t('features.langTitle'),
         description: t('features.langDesc'),
         preview: {
@@ -132,7 +133,7 @@ generate_everything_about_these_materials(ORES_CONFIGS)`,
     },
     {
         id: 'dependencies',
-        icon: HiShieldCheck,
+        icon: GiLinkedRings,
         title: t('features.dependenciesTitle'),
         description: t('features.dependenciesDesc'),
         preview: { kind: 'image', src: `${PLUGIN_IMG}/finalyze.dependencies.ingame_errors.jpg`, caption: 'in-game' },
@@ -254,7 +255,7 @@ export const Features: React.FC = () => {
                                             <h3 className={`font-bold ${isActive ? 'text-white' : 'text-slate-300'}`}>
                                                 {feature.title}
                                             </h3>
-                                            <p className={`text-sm mt-1 ${isActive ? TEXT_ACTIVE_SUBTLE : 'text-slate-500'}`}>
+                                            <p className={`text-sm mt-1 ${isActive ? TEXT_ACTIVE_SUBTLE : 'text-slate-400'}`}>
                                                 {feature.description}
                                             </p>
                                         </div>

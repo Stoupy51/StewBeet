@@ -6,7 +6,8 @@ import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 import { PluginsTable } from './PluginsTable';
 import { useTranslation } from '../i18n/useTranslation';
-import { GRADIENT_TEXT, GLOW_PRIMARY, GLOW_SECONDARY, HOVER_CARD, CARD_HOVER_TEXT, CARD_HOVER_ARROW } from '../theme';
+import { useMotionSafe } from '../hooks/useMotionSafe';
+import { HEADING, HOVER_CARD, CARD_HOVER_TEXT, CARD_HOVER_ARROW } from '../theme';
 
 interface DocItem {
     title: string;
@@ -19,6 +20,7 @@ interface DocItem {
 
 export const DocumentationPage: React.FC = () => {
     const { t, language } = useTranslation();
+    const motionSafe = useMotionSafe();
     const location = useLocation();
 
     // #plugins used to live on the landing page; it now resolves here
@@ -86,26 +88,24 @@ export const DocumentationPage: React.FC = () => {
         <div className="min-h-screen bg-slate-950 text-slate-100">
             <Navbar />
 
-            {/* Background decoration */}
-            <div className="fixed inset-0 overflow-hidden pointer-events-none">
-                <div className={`absolute top-20 right-0 w-96 h-96 ${GLOW_SECONDARY} rounded-full blur-[120px]`} />
-                <div className={`absolute bottom-0 left-0 w-96 h-96 ${GLOW_PRIMARY} rounded-full blur-[120px]`} />
-            </div>
-
             {/* Hero Section */}
             <div className="relative z-10 pt-32 pb-16 px-4">
                 <div className="max-w-7xl mx-auto text-center">
                     <motion.h1
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
+                        {...motionSafe({
+                            initial: { y: 20 },
+                            animate: { y: 0 },
+                        })}
                         className="text-5xl md:text-6xl font-bold mb-6"
                     >
-                        📖 <span className={GRADIENT_TEXT}>{t('documentation.title')}</span>
+                        📖 <span className={HEADING}>{t('documentation.title')}</span>
                     </motion.h1>
                     <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.1 }}
+                        {...motionSafe({
+                            initial: { y: 20 },
+                            animate: { y: 0 },
+                            transition: { delay: 0.1 },
+                        })}
                         className="text-xl text-slate-300 max-w-3xl mx-auto"
                     >
                         {t('documentation.subtitle')}
@@ -119,9 +119,11 @@ export const DocumentationPage: React.FC = () => {
                     <div className="space-y-4">
                         {/* Getting Started - Full Width */}
                         <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.2 }}
+                            {...motionSafe({
+                                initial: { y: 20 },
+                                animate: { y: 0 },
+                                transition: { delay: 0.2 },
+                            })}
                         >
                             <Link
                                 to={`/markdown?src=${encodeURIComponent(language === 'fr' ? docs[0].pathFr : docs[0].pathEn)}`}
@@ -150,9 +152,11 @@ export const DocumentationPage: React.FC = () => {
                             {docs.slice(1).map((doc, index) => (
                                 <motion.div
                                     key={language === 'fr' ? doc.pathFr : doc.pathEn}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 0.3 + index * 0.1 }}
+                                    {...motionSafe({
+                                        initial: { y: 20 },
+                                        animate: { y: 0 },
+                                        transition: { delay: 0.3 + index * 0.1 },
+                                    })}
                                 >
                                     <Link
                                         to={`/markdown?src=${encodeURIComponent(language === 'fr' ? doc.pathFr : doc.pathEn)}`}
@@ -183,16 +187,11 @@ export const DocumentationPage: React.FC = () => {
                     </div>
 
                     {/* Coming Soon Section */}
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.5 }}
-                        className="mt-12 text-center"
-                    >
-                        <p className="text-slate-500 text-sm">
+                    <div className="mt-12 text-center">
+                        <p className="text-slate-400 text-sm">
                             {t('documentation.comingSoon')}
                         </p>
-                    </motion.div>
+                    </div>
                 </div>
             </div>
 
@@ -200,13 +199,15 @@ export const DocumentationPage: React.FC = () => {
             <div id="plugins" className="relative z-10 pb-20 px-4">
                 <div className="max-w-7xl mx-auto">
                     <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.6 }}
+                        {...motionSafe({
+                            initial: { y: 30 },
+                            whileInView: { y: 0 },
+                            viewport: { once: true },
+                            transition: { duration: 0.6 },
+                        })}
                         className="text-center mb-16"
                     >
-                        <h2 className={`text-4xl md:text-5xl font-bold mb-4 ${GRADIENT_TEXT}`}>
+                        <h2 className={`text-4xl md:text-5xl font-bold mb-4 ${HEADING}`}>
                             {t('documentation.plugins')}
                         </h2>
                         <p className="text-slate-400 text-lg max-w-3xl mx-auto mb-8">
