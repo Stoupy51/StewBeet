@@ -41,7 +41,7 @@ const TreeRow = ({ node, depth, index }: { node: FileNode; depth: number; index:
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.25, delay: revealDelay(depth, index) }}
-                className="flex items-baseline gap-2 leading-6"
+                className="flex items-baseline gap-2 leading-[1.7] whitespace-nowrap"
                 style={{ paddingLeft: `${depth * 0.9}rem` }}
             >
                 {isDirectory ? (
@@ -68,8 +68,9 @@ const TreeRow = ({ node, depth, index }: { node: FileNode; depth: number; index:
     );
 };
 
+/** Same 12px/1.7 as the hero code panel: the tree and the snippet read as one pair, not two widgets. */
 export const FileTree: React.FC<{ nodes: FileNode[] }> = ({ nodes }) => (
-    <div className="font-mono text-[0.8125rem]">
+    <div className="font-mono text-xs">
         {nodes.map((node, index) => (
             <TreeRow key={node.name} node={node} depth={0} index={index} />
         ))}

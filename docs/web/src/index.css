@@ -3,6 +3,22 @@
 @tailwind utilities;
 
 @layer utilities {
+  /* Slim scrollbar for code panels: the page-wide 10px bar is far too heavy inside a card,
+     and the default one gives a horizontally scrolling snippet no visible affordance at all. */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-white/10 rounded-full;
+  }
+  .custom-scrollbar:hover::-webkit-scrollbar-thumb {
+    @apply bg-white/25;
+  }
+
   .animate-float-up {
     animation: floatUp 4s ease-in-out infinite;
   }
