@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { getSingletonHighlighter } from 'shiki';
 import type { LanguageRegistration } from '@shikijs/types';
 import mcfunctionGrammar from '../langs/mcfunction.tmLanguage.json';
+import { pythonSemantics } from '../utils/pythonSemantics';
 
 const LANGUAGE_ALIASES: Record<string, string> = {
     function: 'mcfunction',
@@ -64,6 +65,7 @@ export function useShiki(code: string, language: string | LanguageRegistration, 
             .then((highlighter) => highlighter.codeToHtml(code, {
                 lang: langName,
                 theme,
+                transformers: [pythonSemantics],
             }))
             .then((result) => {
                 if (isActive) setHtml(result);
