@@ -57,6 +57,12 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
         }
     }, [language]);
 
+    // The document was served as lang="en" and never updated, so a screen reader kept
+    // reading French pages with an English voice and pronunciation rules.
+    useEffect(() => {
+        document.documentElement.lang = language;
+    }, [language]);
+
     const setLanguage = (lang: Language) => {
         setLanguageState(lang);
     };

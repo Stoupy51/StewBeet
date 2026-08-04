@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
+import { useMotionSafe } from '../hooks/useMotionSafe';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
@@ -48,13 +49,13 @@ const getPlugins = (t: (key: string) => string): Plugin[] => [
     { id: 1, name: 'initialize', category: t('pluginsTable.categoryCore'), descriptionKey: 'pluginsTable.initializeDesc', color: 'from-red-500 to-orange-500', icon: HiCog, dependency: '🔴', delay: 0, image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/initialize.source_lore.jpg' },
 
     // Resource Pack
-    { id: 2, name: 'resource_pack.sounds', category: t('pluginsTable.categoryResourcePack'), descriptionKey: 'pluginsTable.soundsDesc', color: 'from-purple-500 to-pink-500', icon: HiVolumeUp, dependency: '🟡', delay: 0.1, image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/resource_pack.sounds.result.jpg' },
+    { id: 2, name: 'resource_pack.sounds', category: t('pluginsTable.categoryResourcePack'), descriptionKey: 'pluginsTable.soundsDesc', color: 'from-mc-diamond to-mc-gold', icon: HiVolumeUp, dependency: '🟡', delay: 0.1, image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/resource_pack.sounds.result.jpg' },
     { id: 3, name: 'resource_pack.item_models', category: t('pluginsTable.categoryResourcePack'), descriptionKey: 'pluginsTable.itemModelsDesc', color: 'from-blue-500 to-cyan-500', icon: HiColorSwatch, dependency: '🟡', delay: 0.15, image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/resource_pack.item_models.pattern_detection.jpg' },
-    { id: 4, name: 'resource_pack.check_power_of_2', category: t('pluginsTable.categoryResourcePack'), descriptionKey: 'pluginsTable.checkPowerOf2Desc', color: 'from-indigo-500 to-purple-500', icon: HiPhotograph, dependency: '🟢', delay: 0.2, image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/resource_pack.check_power_of_2.warning.jpg' },
+    { id: 4, name: 'resource_pack.check_power_of_2', category: t('pluginsTable.categoryResourcePack'), descriptionKey: 'pluginsTable.checkPowerOf2Desc', color: 'from-mc-emerald to-mc-diamond', icon: HiPhotograph, dependency: '🟢', delay: 0.2, image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/resource_pack.check_power_of_2.warning.jpg' },
 
     // Recipes & Custom Content
     { id: 5, name: 'custom_recipes', category: t('pluginsTable.categoryRecipes'), descriptionKey: 'pluginsTable.customRecipesDesc', color: 'from-orange-500 to-red-500', icon: HiBeaker, dependency: '🔴', delay: 0.25, image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/custom_recipes.smithed_recipe.jpg' },
-    { id: 6, name: 'custom_paintings', category: t('pluginsTable.categoryCustomContent'), descriptionKey: 'pluginsTable.customPaintingsDesc', color: 'from-pink-500 to-rose-500', icon: HiPhotograph, dependency: '🔴', delay: 0.3, image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/custom_paintings.placed_painting.jpg' },
+    { id: 6, name: 'custom_paintings', category: t('pluginsTable.categoryCustomContent'), descriptionKey: 'pluginsTable.customPaintingsDesc', color: 'from-mc-gold to-rose-500', icon: HiPhotograph, dependency: '🔴', delay: 0.3, image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/custom_paintings.placed_painting.jpg' },
 
     // Documentation
     { id: 7, name: 'ingame_manual', category: t('pluginsTable.categoryDocumentation'), descriptionKey: 'pluginsTable.ingameManualDesc', color: 'from-amber-500 to-yellow-500', icon: HiBookOpen, dependency: '🔴', delay: 0.35, image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/plugins/img/ingame_manual.gif', docSrc: '7_ingame_manual/{lang}.md' },
@@ -63,32 +64,33 @@ const getPlugins = (t: (key: string) => string): Plugin[] => [
     { id: 8, name: 'datapack.loading', category: t('pluginsTable.categoryDatapack'), descriptionKey: 'pluginsTable.loadingDesc', color: 'from-cyan-500 to-blue-500', icon: HiLightningBolt, dependency: '🟡', delay: 0.4, image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/datapack.loading.load_messages.jpg' },
     { id: 9, name: 'datapack.custom_blocks', category: t('pluginsTable.categoryDatapack'), descriptionKey: 'pluginsTable.customBlocksDesc', color: 'from-teal-500 to-emerald-500', icon: HiCube, dependency: '🔴', delay: 0.45, image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/datapack.custom_blocks.stats.jpg' },
     { id: 10, name: 'datapack.loot_tables', category: t('pluginsTable.categoryDatapack'), descriptionKey: 'pluginsTable.lootTablesDesc', color: 'from-green-500 to-lime-500', icon: HiGift, dependency: '🔴', delay: 0.5, image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/datapack.loot_tables.give_all.jpg' },
-    { id: 11, name: 'datapack.sorters', category: t('pluginsTable.categoryDatapack'), descriptionKey: 'pluginsTable.sortersDesc', color: 'from-violet-500 to-purple-500', icon: HiSortAscending, dependency: '🟢', delay: 0.55, image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/datapack.sorters.registry.jpg' },
+    { id: 11, name: 'datapack.sorters', category: t('pluginsTable.categoryDatapack'), descriptionKey: 'pluginsTable.sortersDesc', color: 'from-violet-500 to-mc-diamond', icon: HiSortAscending, dependency: '🟢', delay: 0.55, image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/datapack.sorters.registry.jpg' },
 
     // Compatibility
     { id: 23, name: 'compatibilities.simpledrawer', category: t('pluginsTable.categoryCompatibility'), descriptionKey: 'pluginsTable.simpledrawerDesc', color: 'from-amber-500 to-yellow-500', icon: HiCollection, dependency: '🔴', delay: 0.575, image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/compatibilities.simpledrawer.complete_file_tree.jpg' },
-    { id: 24, name: 'compatibilities.neo_enchant', category: t('pluginsTable.categoryCompatibility'), descriptionKey: 'pluginsTable.neoEnchantDesc', color: 'from-purple-500 to-violet-500', icon: HiLightningBolt, dependency: '🔴', delay: 0.5875, image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/compatibilities.neo_enchant.veinminer.jpg' },
+    { id: 24, name: 'compatibilities.neo_enchant', category: t('pluginsTable.categoryCompatibility'), descriptionKey: 'pluginsTable.neoEnchantDesc', color: 'from-mc-diamond to-violet-500', icon: HiLightningBolt, dependency: '🔴', delay: 0.5875, image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/compatibilities.neo_enchant.veinminer.jpg' },
 
     // Finalization
-    { id: 12, name: 'finalyze.custom_blocks_ticking', category: t('pluginsTable.categoryFinalization'), descriptionKey: 'pluginsTable.customBlocksTickingDesc', color: 'from-rose-500 to-pink-500', icon: HiClock, dependency: '🔴', delay: 0.6, image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/finalyze.custom_blocks_ticking.timers.jpg' },
+    { id: 12, name: 'finalyze.custom_blocks_ticking', category: t('pluginsTable.categoryFinalization'), descriptionKey: 'pluginsTable.customBlocksTickingDesc', color: 'from-rose-500 to-mc-gold', icon: HiClock, dependency: '🔴', delay: 0.6, image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/finalyze.custom_blocks_ticking.timers.jpg' },
     { id: 13, name: 'finalyze.basic_datapack_structure', category: t('pluginsTable.categoryFinalization'), descriptionKey: 'pluginsTable.basicDatapackStructureDesc', color: 'from-slate-500 to-gray-500', icon: HiCollection, dependency: '🟡', delay: 0.65, image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/finalyze.basic_datapack_structure.timers.jpg' },
-    { id: 14, name: 'finalyze.dependencies', category: t('pluginsTable.categoryFinalization'), descriptionKey: 'pluginsTable.dependenciesDesc', color: 'from-blue-500 to-indigo-500', icon: HiClipboardList, dependency: '🔴', delay: 0.7, image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/finalyze.dependencies.ingame_errors.jpg' },
+    { id: 14, name: 'finalyze.dependencies', category: t('pluginsTable.categoryFinalization'), descriptionKey: 'pluginsTable.dependenciesDesc', color: 'from-blue-500 to-mc-emerald', icon: HiClipboardList, dependency: '🔴', delay: 0.7, image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/finalyze.dependencies.ingame_errors.jpg' },
     { id: 15, name: 'finalyze.check_unused_textures', category: t('pluginsTable.categoryFinalization'), descriptionKey: 'pluginsTable.checkUnusedTexturesDesc', color: 'from-yellow-500 to-orange-500', icon: HiEye, dependency: '🟢', delay: 0.75, image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/finalyze.check_unused_textures.warnings.jpg' },
 
     // Automation
     { id: 16, name: 'auto.lang_file', category: t('pluginsTable.categoryAutomation'), descriptionKey: 'pluginsTable.langFileDesc', color: 'from-emerald-500 to-teal-500', icon: HiGlobe, dependency: '🟢', delay: 0.8, image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/auto.lang_file.en_us_example.jpg' },
-    { id: 17, name: 'auto.headers', category: t('pluginsTable.categoryAutomation'), descriptionKey: 'pluginsTable.headersDesc', color: 'from-purple-500 to-indigo-500', icon: HiCode, dependency: '🟢', delay: 0.85, image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/auto.headers.macro_example.jpg' },
+    { id: 17, name: 'auto.headers', category: t('pluginsTable.categoryAutomation'), descriptionKey: 'pluginsTable.headersDesc', color: 'from-mc-diamond to-mc-emerald', icon: HiCode, dependency: '🟢', delay: 0.85, image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/auto.headers.macro_example.jpg' },
     { id: 22, name: 'auto.scoreboard_constants', category: t('pluginsTable.categoryAutomation'), descriptionKey: 'pluginsTable.scoreboardConstantsDesc', color: 'from-orange-500 to-amber-500', icon: HiHashtag, dependency: '🟢', delay: 0.875, image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/auto.scoreboard_constants.example.jpg' },
 
     // Build
     { id: 18, name: 'archive', category: t('pluginsTable.categoryBuild'), descriptionKey: 'pluginsTable.archiveDesc', color: 'from-gray-500 to-slate-500', icon: HiArchive, dependency: '🟢', delay: 0.9, image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/archive.output_directory.jpg' },
-    { id: 19, name: 'merge_smithed_weld', category: t('pluginsTable.categoryBuild'), descriptionKey: 'pluginsTable.mergeSmithedWeldDesc', color: 'from-indigo-500 to-blue-500', icon: HiLink, dependency: '🟢', delay: 0.95, image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/merged_smithed_weld.output_directory.jpg' },
+    { id: 19, name: 'merge_smithed_weld', category: t('pluginsTable.categoryBuild'), descriptionKey: 'pluginsTable.mergeSmithedWeldDesc', color: 'from-mc-emerald to-blue-500', icon: HiLink, dependency: '🟢', delay: 0.95, image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/merged_smithed_weld.output_directory.jpg' },
     { id: 20, name: 'copy_to_destination', category: t('pluginsTable.categoryBuild'), descriptionKey: 'pluginsTable.copyToDestinationDesc', color: 'from-cyan-500 to-teal-500', icon: HiFolderOpen, dependency: '🟢', delay: 1.0, image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/copy_to_destination.datapack_destination.jpg' },
     { id: 25, name: 'livereload', category: t('pluginsTable.categoryBuild'), descriptionKey: 'pluginsTable.livereloadDesc', color: 'from-lime-500 to-green-500', icon: HiRefresh, dependency: '🟢', delay: 1.025, image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/copy_to_destination.datapack_destination.jpg' },
     { id: 21, name: 'compute_sha1', category: t('pluginsTable.categoryBuild'), descriptionKey: 'pluginsTable.computeSha1Desc', color: 'from-green-500 to-emerald-500', icon: HiShieldCheck, dependency: '🟢', delay: 1.05, image: 'https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/compute_sha1.example.jpg' },
 ];
 
 export const PluginsTable: React.FC = () => {
+    const motionSafe = useMotionSafe();
     const { t, language } = useTranslation();
     const plugins = getPlugins(t);
     const docLink = (plugin: Plugin) =>
@@ -121,10 +123,12 @@ export const PluginsTable: React.FC = () => {
                             return (
                                 <motion.tr
                                     key={plugin.id}
-                                    initial={{ opacity: 0, x: -20 }}
-                                    whileInView={{ opacity: 1, x: 0 }}
-                                    viewport={{ once: true }}
-                                    transition={{ delay: index * 0.02 }}
+                                    {...motionSafe({
+                                        initial: { x: -20 },
+                                        whileInView: { x: 0 },
+                                        viewport: { once: true },
+                                        transition: { delay: index * 0.02 },
+                                    })}
                                     className="hover:bg-white/5 transition-colors group"
                                 >
                                     <td className="p-4">
@@ -152,7 +156,7 @@ export const PluginsTable: React.FC = () => {
                                     <td className="p-4">
                                         <button
                                             onClick={() => setSelectedImage({ src: plugin.image, alt: plugin.name })}
-                                            className="block w-64 h-36 rounded-lg overflow-hidden border border-white/10 bg-slate-950 relative group-hover:border-indigo-500/30 transition-colors cursor-pointer"
+                                            className="block w-64 h-36 rounded-lg overflow-hidden border border-white/10 bg-slate-950 relative group-hover:border-mc-emerald/30 transition-colors cursor-pointer"
                                         >
                                             <img
                                                 src={plugin.image}

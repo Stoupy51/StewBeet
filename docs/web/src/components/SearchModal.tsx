@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useMotionSafe } from '../hooks/useMotionSafe';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { HiExternalLink, HiSearch, HiX } from 'react-icons/hi';
@@ -13,9 +14,9 @@ const FILTERS_STORAGE_KEY = 'search-filters';
 
 /** Per-category colors, used by both the filter chips and the section headers. */
 const TYPE_STYLES: Record<EntryType, { active: string; text: string }> = {
-    doc: { active: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/40', text: 'text-indigo-300' },
+    doc: { active: 'bg-mc-emerald/20 text-mc-diamond border-mc-emerald/40', text: 'text-mc-diamond' },
     api: { active: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40', text: 'text-emerald-300' },
-    plugin: { active: 'bg-purple-500/20 text-purple-300 border-purple-500/40', text: 'text-purple-300' },
+    plugin: { active: 'bg-mc-diamond/20 text-mc-diamond border-mc-diamond/40', text: 'text-mc-diamond' },
     site: { active: 'bg-sky-500/20 text-sky-300 border-sky-500/40', text: 'text-sky-300' },
 };
 
@@ -41,6 +42,7 @@ function readStoredFilters(): Set<EntryType> {
 }
 
 export const SearchModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+    const motionSafe = useMotionSafe();
     const { t } = useTranslation();
     const { language } = useLanguage();
     const navigate = useNavigate();
@@ -176,10 +178,12 @@ export const SearchModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             className="fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm p-4 pt-[10vh] flex justify-center"
         >
             <motion.div
-                initial={{ scale: 0.97, y: -10 }}
-                animate={{ scale: 1, y: 0 }}
-                exit={{ scale: 0.97, y: -10 }}
-                transition={{ duration: 0.15 }}
+                {...motionSafe({
+                    initial: { scale: 0.97, y: -10 },
+                    animate: { scale: 1, y: 0 },
+                    exit: { scale: 0.97, y: -10 },
+                    transition: { duration: 0.15 },
+                })}
                 onClick={(event) => event.stopPropagation()}
                 onKeyDown={handleKeyDown}
                 className="w-full max-w-2xl h-fit max-h-[80vh] flex flex-col bg-slate-900/95 border border-white/10 rounded-2xl shadow-2xl overflow-hidden"
@@ -214,7 +218,7 @@ export const SearchModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                             className={`px-2.5 py-1 rounded-full border text-xs font-medium transition-colors ${
                                 filters.has(type)
                                     ? TYPE_STYLES[type].active
-                                    : 'bg-transparent border-white/10 text-slate-500 hover:text-slate-300'
+                                    : 'bg-transparent border-white/10 text-slate-400 hover:text-slate-300'
                             }`}
                         >
                             {t(SECTION_KEYS[type])}
@@ -251,7 +255,7 @@ export const SearchModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                             >
                                 <div className="flex items-center gap-2 mb-1">
                                     <span className="text-xs text-slate-400 truncate">{result.document}</span>
-                                    {result.external && <HiExternalLink className="text-xs text-slate-500 flex-shrink-0" />}
+                                    {result.external && <HiExternalLink className="text-xs text-slate-400 flex-shrink-0" />}
                                 </div>
                                 {result.heading && (
                                     <div className="text-slate-100 font-semibold text-sm mb-0.5 truncate">{result.heading}</div>
@@ -260,7 +264,7 @@ export const SearchModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                                     <p className="text-xs text-slate-400 leading-relaxed line-clamp-2">
                                         {result.snippet.map((segment, segmentIndex) =>
                                             segment.hit
-                                                ? <mark key={segmentIndex} className="bg-indigo-500/30 text-indigo-200 rounded px-0.5">{segment.text}</mark>
+                                                ? <mark key={segmentIndex} className="bg-mc-emerald/30 text-mc-diamond rounded px-0.5">{segment.text}</mark>
                                                 : <span key={segmentIndex}>{segment.text}</span>,
                                         )}
                                     </p>
@@ -271,7 +275,7 @@ export const SearchModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 </div>
 
                 {/* Footer hints */}
-                <div className="flex items-center gap-4 px-4 py-2 border-t border-white/10 text-[11px] text-slate-500">
+                <div className="flex items-center gap-4 px-4 py-2 border-t border-white/10 text-[11px] text-slate-400">
                     <span><kbd className="px-1 rounded bg-white/10">↑</kbd> <kbd className="px-1 rounded bg-white/10">↓</kbd> {t('search.hintNavigate')}</span>
                     <span><kbd className="px-1 rounded bg-white/10">↵</kbd> {t('search.hintOpen')}</span>
                     <span><kbd className="px-1 rounded bg-white/10">esc</kbd> {t('search.hintClose')}</span>

@@ -4,7 +4,8 @@ import { HiArrowRight } from 'react-icons/hi';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 import { useTranslation } from '../i18n/useTranslation';
-import { GRADIENT_TEXT, GLOW_PRIMARY, GLOW_SECONDARY, HOVER_CARD, CARD_HOVER_TEXT, CARD_HOVER_ARROW } from '../theme';
+import { useMotionSafe } from '../hooks/useMotionSafe';
+import { HEADING, HOVER_CARD, CARD_HOVER_TEXT, CARD_HOVER_ARROW } from '../theme';
 
 interface ToolItem {
     title: string;
@@ -15,6 +16,7 @@ interface ToolItem {
 
 export const ToolsPage: React.FC = () => {
     const { t } = useTranslation();
+    const motionSafe = useMotionSafe();
 
     const tools: ToolItem[] = [
         {
@@ -29,26 +31,24 @@ export const ToolsPage: React.FC = () => {
         <div className="min-h-screen bg-slate-950 text-slate-100">
             <Navbar />
 
-            {/* Background decoration */}
-            <div className="fixed inset-0 overflow-hidden pointer-events-none">
-                <div className={`absolute top-20 right-0 w-96 h-96 ${GLOW_PRIMARY} rounded-full blur-[120px]`} />
-                <div className={`absolute bottom-0 left-0 w-96 h-96 ${GLOW_SECONDARY} rounded-full blur-[120px]`} />
-            </div>
-
             {/* Hero Section */}
             <div className="relative z-10 pt-32 pb-16 px-4">
                 <div className="max-w-7xl mx-auto text-center">
                     <motion.h1
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
+                        {...motionSafe({
+                            initial: { y: 20 },
+                            animate: { y: 0 },
+                        })}
                         className="text-5xl md:text-6xl font-bold mb-6"
                     >
-                        🛠️ <span className={GRADIENT_TEXT}>{t('tools.title')}</span>
+                        🛠️ <span className={HEADING}>{t('tools.title')}</span>
                     </motion.h1>
                     <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.1 }}
+                        {...motionSafe({
+                            initial: { y: 20 },
+                            animate: { y: 0 },
+                            transition: { delay: 0.1 },
+                        })}
                         className="text-xl text-slate-300 max-w-3xl mx-auto"
                     >
                         {t('tools.subtitle')}
@@ -63,9 +63,11 @@ export const ToolsPage: React.FC = () => {
                         {tools.map((tool, index) => (
                             <motion.div
                                 key={tool.path}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.2 + index * 0.1 }}
+                                {...motionSafe({
+                                    initial: { y: 20 },
+                                    animate: { y: 0 },
+                                    transition: { delay: 0.2 + index * 0.1 },
+                                })}
                             >
                                 <Link to={tool.path} className="block group">
                                     <div className={`bg-slate-900/30 backdrop-blur-sm border border-white/10 rounded-2xl p-6 ${HOVER_CARD} transition-all hover:bg-slate-900/50`}>

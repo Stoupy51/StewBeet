@@ -1,12 +1,15 @@
 import { motion } from 'framer-motion';
-import { HiStar, HiSparkles, HiLightningBolt, HiDownload, HiClipboard, HiCheck } from 'react-icons/hi';
+import { HiDownload, HiClipboard, HiCheck } from 'react-icons/hi';
+import { GiStoneBlock, GiChest, GiCrystalGrowth } from 'react-icons/gi';
 import { useState } from 'react';
 import { useTranslation } from '../i18n/useTranslation';
-import { ACCENT_BORDER_HOVER, CARD_HIGHLIGHT, GLOW_PRIMARY, GLOW_SECONDARY, GRADIENT_TEXT, PANEL_ACCENT, TEXT_ACCENT, TEXT_ACCENT_SOFT } from '../theme';
+import { useMotionSafe } from '../hooks/useMotionSafe';
+import { ACCENT_BORDER_HOVER, CARD_HIGHLIGHT, HEADING, PANEL_ACCENT, PIXEL_RULE, TEXT_ACCENT, TEXT_ACCENT_SOFT } from '../theme';
 
 export const Templates: React.FC = () => {
     const [copiedTemplate, setCopiedTemplate] = useState<string | null>(null);
     const { t } = useTranslation();
+    const motionSafe = useMotionSafe();
 
     const handleCopy = (command: string, templateName: string) => {
         navigator.clipboard.writeText(command);
@@ -16,30 +19,27 @@ export const Templates: React.FC = () => {
 
     const templates = [
         {
-            icon: HiLightningBolt,
+            icon: GiStoneBlock,
             name: 'minimal',
             displayName: t('templates.minimal'),
-            emoji: '🔹',
             recommended: false,
             description: t('templates.minimalDesc'),
             bestFor: t('templates.minimalBestFor'),
             downloadUrl: 'https://github.com/Stoupy51/StewBeet/raw/main/templates/minimal_template.zip'
         },
         {
-            icon: HiStar,
+            icon: GiChest,
             name: 'basic',
             displayName: t('templates.basic'),
-            emoji: '⭐',
             recommended: true,
             description: t('templates.basicDesc'),
             bestFor: t('templates.basicBestFor'),
             downloadUrl: 'https://github.com/Stoupy51/StewBeet/raw/main/templates/basic_template.zip'
         },
         {
-            icon: HiSparkles,
+            icon: GiCrystalGrowth,
             name: 'extensive',
             displayName: t('templates.extensive'),
-            emoji: '🌟',
             recommended: false,
             description: t('templates.extensiveDesc'),
             bestFor: t('templates.extensiveBestFor'),
@@ -48,22 +48,20 @@ export const Templates: React.FC = () => {
     ];
 
     return (
-        <section id="templates" className="py-20 px-4 relative overflow-hidden bg-gradient-to-b from-[#0a0a0a] to-slate-950">
-            {/* Background decoration */}
-            <div className="absolute inset-0 overflow-hidden">
-                <div className={`absolute -top-40 right-1/4 w-80 h-80 ${GLOW_SECONDARY} rounded-full blur-[100px]`} />
-                <div className={`absolute -bottom-40 left-1/4 w-80 h-80 ${GLOW_PRIMARY} rounded-full blur-[100px]`} />
-            </div>
+        <section id="templates" className="py-20 px-4 relative bg-slate-950">
+            <div className={`${PIXEL_RULE} absolute top-0 left-0`} />
 
             <div className="max-w-7xl mx-auto relative z-10">
                 <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6 }}
+                    {...motionSafe({
+                        initial: { y: 30 },
+                        whileInView: { y: 0 },
+                        viewport: { once: true },
+                        transition: { duration: 0.6 },
+                    })}
                     className="text-center mb-8"
                 >
-                    <h2 className={`text-4xl md:text-5xl font-bold mb-4 ${GRADIENT_TEXT}`}>
+                    <h2 className={`text-4xl md:text-5xl font-bold mb-4 ${HEADING}`}>
                         {t('templates.title')}
                     </h2>
                     <p className="text-slate-400 text-lg max-w-3xl mx-auto">
@@ -73,14 +71,16 @@ export const Templates: React.FC = () => {
 
                 {/* Info Box */}
                 <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5 }}
+                    {...motionSafe({
+                        initial: { y: 30 },
+                        whileInView: { y: 0 },
+                        viewport: { once: true },
+                        transition: { duration: 0.5 },
+                    })}
                     className={`mb-8 backdrop-blur-sm rounded-2xl p-6 ${PANEL_ACCENT}`}
                 >
                     <div className="flex items-start gap-4">
-                        <div className="w-10 h-10 bg-indigo-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <div className="w-10 h-10 bg-mc-emerald/20 rounded-lg flex items-center justify-center flex-shrink-0">
                             <span className="text-2xl">💡</span>
                         </div>
                         <div>
@@ -100,10 +100,12 @@ export const Templates: React.FC = () => {
                         return (
                             <motion.div
                                 key={index}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.4, delay: index * 0.1 }}
+                                {...motionSafe({
+                                    initial: { y: 20 },
+                                    whileInView: { y: 0 },
+                                    viewport: { once: true },
+                                    transition: { duration: 0.4, delay: index * 0.1 },
+                                })}
                                 className="group relative"
                             >
                                 <div className={`h-full bg-slate-900/80 backdrop-blur-sm rounded-lg p-6 border ${template.recommended ? CARD_HIGHLIGHT : 'border-white/5'
@@ -117,11 +119,11 @@ export const Templates: React.FC = () => {
                                     >
                                         <div className="flex items-start justify-between mb-4">
                                             <div className="flex items-center gap-3">
-                                                <div className={`w-10 h-10 rounded bg-slate-800 flex items-center justify-center text-2xl`}>
-                                                    {template.emoji}
+                                                <div className="w-10 h-10 rounded-panel bg-slate-800 flex items-center justify-center">
+                                                    <Icon className="text-xl text-mc-emerald" aria-hidden="true" />
                                                 </div>
                                                 <div>
-                                                    <h3 className="text-lg font-bold text-slate-100 group-hover:text-indigo-300 transition-colors">
+                                                    <h3 className="text-lg font-bold text-slate-100 group-hover:text-mc-diamond transition-colors">
                                                         {template.displayName}
                                                     </h3>
                                                     {template.recommended && (
@@ -131,7 +133,6 @@ export const Templates: React.FC = () => {
                                                     )}
                                                 </div>
                                             </div>
-                                            <Icon className="text-slate-500 text-xl" />
                                         </div>
 
                                         <p className="text-sm text-slate-400 mb-6 flex-grow leading-relaxed">
@@ -140,7 +141,7 @@ export const Templates: React.FC = () => {
                                     </a>
 
                                     <div className="space-y-3">
-                                        <div className="text-xs text-slate-500 font-mono bg-slate-950/50 p-2 rounded border border-white/5">
+                                        <div className="text-xs text-slate-400 font-mono bg-slate-950/50 p-2 rounded border border-white/5">
                                             {template.bestFor}
                                         </div>
 
@@ -151,7 +152,7 @@ export const Templates: React.FC = () => {
                                                 <span className="text-slate-400 flex-grow">stewbeet init {template.name}</span>
                                                 <button
                                                     onClick={() => handleCopy(`stewbeet init ${template.name}`, template.name)}
-                                                    className="text-slate-400 hover:text-indigo-300 transition-colors"
+                                                    className="text-slate-400 hover:text-mc-diamond transition-colors"
                                                     title="Copy command"
                                                 >
                                                     {copiedTemplate === template.name ? (

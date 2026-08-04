@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo, isValidElement } from 'react';
+import { useMotionSafe } from '../hooks/useMotionSafe';
 import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -13,7 +14,7 @@ import { useTranslation } from '../i18n/useTranslation';
 import { useMarkdownContent } from '../context/MarkdownContentContext';
 import { useShiki } from '../hooks/useShiki';
 import { headingTextToSlug, slugify } from '../utils/slugify';
-import { ALERT_ACCENT, GLOW_PRIMARY, GLOW_SECONDARY, LOADER_ACCENT, PROSE_BRAND, SELECTION_BRAND, TEXT_ACCENT, TEXT_ACCENT_HOVER, TOOLBAR_ACCENT } from '../theme';
+import { ALERT_ACCENT, LOADER_ACCENT, PROSE_BRAND, SELECTION_BRAND, TEXT_ACCENT, TEXT_ACCENT_HOVER, TOOLBAR_ACCENT } from '../theme';
 
 interface Heading {
     id: string;
@@ -119,6 +120,7 @@ const ShikiCodeBlock: React.FC<{ code: string; language: string }> = ({ code, la
 };
 
 export const MarkdownPage: React.FC = () => {
+    const motionSafe = useMotionSafe();
     const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
     const { hash, search } = useLocation();
@@ -331,12 +333,6 @@ export const MarkdownPage: React.FC = () => {
         <div className={`min-h-screen bg-slate-950 text-slate-100 ${SELECTION_BRAND}`}>
             <Navbar />
             
-            {/* Background decoration */}
-            <div className="fixed inset-0 overflow-hidden pointer-events-none">
-                <div className={`absolute top-20 right-0 w-96 h-96 ${GLOW_SECONDARY} rounded-full blur-[120px]`} />
-                <div className={`absolute bottom-0 left-0 w-96 h-96 ${GLOW_PRIMARY} rounded-full blur-[120px]`} />
-            </div>
-
             {/* Header with back button */}
             <div className="sticky top-16 z-30 border-b border-white/10 bg-slate-950/80 backdrop-blur-md">
                 <div className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between">
@@ -375,9 +371,11 @@ export const MarkdownPage: React.FC = () => {
 
             {/* Content */}
             <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
+                {...motionSafe({
+                    initial: { y: 20 },
+                    animate: { y: 0 },
+                    transition: { duration: 0.5 },
+                })}
                 className="relative z-10 max-w-7xl mx-auto px-4 py-16"
             >
                 <div className="flex gap-8 items-start">
@@ -394,10 +392,10 @@ export const MarkdownPage: React.FC = () => {
                                         <a
                                             key={idx}
                                             href={`#${heading.id}`}
-                                            className={`block text-sm hover:text-indigo-400 transition-colors ${
+                                            className={`block text-sm hover:text-mc-emerald transition-colors ${
                                                 heading.level === 1 ? 'font-semibold text-slate-300' :
                                                 heading.level === 2 ? 'pl-4 text-slate-400' :
-                                                'pl-8 text-slate-500'
+                                                'pl-8 text-slate-400'
                                             }`}
                                             onClick={goToHeading(heading.id)}
                                         >
@@ -419,7 +417,7 @@ export const MarkdownPage: React.FC = () => {
 
                 {error && (
                     <div className={`rounded-xl p-8 text-center backdrop-blur-sm ${ALERT_ACCENT}`}>
-                        <p className="text-indigo-400 text-xl font-bold mb-3">{t('markdown.error')}</p>
+                        <p className="text-mc-emerald text-xl font-bold mb-3">{t('markdown.error')}</p>
                         <p className="text-slate-300 text-lg">{error}</p>
                     </div>
                 )}
@@ -596,10 +594,10 @@ export const MarkdownPage: React.FC = () => {
                                         <a
                                             key={idx}
                                             href={`#${heading.id}`}
-                                            className={`block text-sm hover:text-indigo-400 transition-colors ${
+                                            className={`block text-sm hover:text-mc-emerald transition-colors ${
                                                 heading.level === 1 ? 'font-semibold text-slate-300' :
                                                 heading.level === 2 ? 'pl-4 text-slate-400' :
-                                                'pl-8 text-slate-500'
+                                                'pl-8 text-slate-400'
                                             }`}
                                             onClick={goToHeading(heading.id)}
                                         >

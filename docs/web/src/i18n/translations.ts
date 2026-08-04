@@ -65,15 +65,57 @@ export const translations = {
             dependenciesDesc: 'StewBeet reads your functions, works out which libraries you actually used, fetches them and writes the runtime version check. Load without one and the chat names it, with a clickable link.',
         },
 
+        // Trust strip
+        trust: {
+            label: 'Project activity',
+            releasedDaysAgo: 'released {n} days ago',
+            latestRelease: 'latest release',
+            downloadsPerMonth: 'PyPI downloads / month',
+            publicProjects: 'public projects built with it',
+            githubStars: 'GitHub stars',
+        },
+
+        // Why StewBeet exists
+        why: {
+            title: 'Why this exists',
+            intro: 'A datapack is not one file per feature. Adding a single custom block means writing its loot table, its item definition, its model, its recipe in every crafting system you support, its translation key, its placement and destruction functions, and its manual page — by hand, in six directories, in four formats.',
+            pain1: 'Miss one of those files and nothing errors. The block just quietly does not drop, or does not craft, and you find out in-game twenty minutes later.',
+            pain2: 'Rename an item and you are doing find-and-replace across hundreds of JSON files, hoping nothing shared that string.',
+            pain3: 'The in-game manual is screenshotted by hand, so it is wrong the moment you rebalance anything.',
+            resolution: 'StewBeet makes the Python definition the only thing you maintain. Every file above is derived from it on each build, which means they cannot drift apart — and when you change the recipe, the drawn crafting grid in the manual changes with it.',
+            limitsTitle: 'What it will not do for you',
+            limitsBody: 'It is opinionated. The project layout, the Smithed conventions and the build pipeline are decisions the framework has already made, and working against them is harder than working without it. It is a Python API, not a GUI, and it expects Python 3.14+. If your pack is a handful of functions, hand-writing them is genuinely the right call.',
+        },
+
         // Built with StewBeet
         builtWith: {
             title: 'Built with StewBeet',
-            subtitle: 'Datapacks and libraries whose source is public and compiles with the framework.',
-            projects: 'Projects',
+            subtitle: 'Public source you can read, compiled with the framework.',
+            community: 'Written by other people',
+            communityNote: 'Not maintained by the framework author',
+            atScale: 'What it handles at scale',
+            atScaleNote: "The author's own packs — counted from their build output",
+            maintainerPacks: 'Also by the author',
             libraries: 'Libraries & tools',
             integrations: 'Works with the libraries you already use',
             integrationsNote: 'Detected from your code and merged into the build automatically.',
             seeAll: 'See the full list on GitHub',
+            unitSourceLines: 'lines of Python produce',
+            unitFunctions: '.mcfunction',
+            unitJson: '.json',
+            unitTextures: 'textures',
+            stardustDesc: 'A large progression pack: custom ore tiers, blocks, paintings and a full in-game manual.',
+            simplenergyDesc: 'An energy and machine library other packs depend on, with cables, generators and machines.',
+        },
+
+        // Final call to action
+        finalCta: {
+            title: 'Define a block. Build the pack.',
+            subtitle: 'The Basic template wires up every plugin with commented configuration and no example content to delete.',
+            action: 'Read the getting started guide',
+            microcopy: 'MIT licensed · Python 3.14+ · no account needed',
+            copyCommand: 'Copy the install command',
+            copied: 'Install command copied',
         },
 
         // Installation
@@ -257,6 +299,7 @@ export const translations = {
             pypiPackage: 'PyPI Package',
             planetMinecraft: 'PlanetMinecraft',
             reportBug: 'Report Bug',
+            license: 'MIT licensed',
             copyright: 'StewBeet by',
         },
     },
@@ -325,15 +368,57 @@ export const translations = {
             dependenciesDesc: 'StewBeet lit vos fonctions, déduit les bibliothèques réellement utilisées, les télécharge et écrit la vérification de version au runtime. S\'il en manque une, le chat la nomme, avec un lien cliquable.',
         },
 
+        // Trust strip
+        trust: {
+            label: 'Activité du projet',
+            releasedDaysAgo: 'publiée il y a {n} jours',
+            latestRelease: 'dernière version',
+            downloadsPerMonth: 'téléchargements PyPI / mois',
+            publicProjects: 'projets publics qui l\'utilisent',
+            githubStars: 'étoiles GitHub',
+        },
+
+        // Why StewBeet exists
+        why: {
+            title: 'Pourquoi ça existe',
+            intro: 'Un datapack, ce n\'est pas un fichier par fonctionnalité. Ajouter un seul bloc personnalisé, c\'est écrire sa table de butin, sa définition d\'objet, son modèle, sa recette dans chaque système de craft supporté, sa clé de traduction, ses fonctions de placement et de destruction, et sa page de manuel — à la main, dans six répertoires, dans quatre formats.',
+            pain1: 'Oubliez un de ces fichiers et rien ne plante. Le bloc ne drop simplement pas, ou ne se craft pas, et vous le découvrez en jeu vingt minutes plus tard.',
+            pain2: 'Renommez un objet et vous voilà à faire des rechercher-remplacer dans des centaines de fichiers JSON, en espérant que rien d\'autre ne partageait cette chaîne.',
+            pain3: 'Le manuel en jeu est capturé à la main, donc il est faux dès que vous rééquilibrez quoi que ce soit.',
+            resolution: 'StewBeet fait de la définition Python la seule chose que vous maintenez. Tous les fichiers ci-dessus en sont dérivés à chaque build, ce qui les empêche de diverger — et quand vous changez la recette, la grille de craft dessinée dans le manuel change avec elle.',
+            limitsTitle: 'Ce qu\'il ne fera pas pour vous',
+            limitsBody: 'Il est dogmatique. L\'organisation du projet, les conventions Smithed et le pipeline de build sont des décisions que le framework a déjà prises, et travailler contre elles est plus dur que travailler sans lui. C\'est une API Python, pas une interface graphique, et il exige Python 3.14+. Si votre pack tient en quelques fonctions, les écrire à la main est vraiment le bon choix.',
+        },
+
         // Built with StewBeet
         builtWith: {
             title: 'Fait avec StewBeet',
-            subtitle: 'Datapacks et bibliothèques dont le code est public et compile avec le framework.',
-            projects: 'Projets',
+            subtitle: 'Du code public que vous pouvez lire, compilé avec le framework.',
+            community: 'Écrits par d\'autres personnes',
+            communityNote: 'Non maintenus par l\'auteur du framework',
+            atScale: 'Ce qu\'il encaisse à grande échelle',
+            atScaleNote: 'Les packs de l\'auteur — comptés depuis leur build',
+            maintainerPacks: 'Également par l\'auteur',
             libraries: 'Bibliothèques et outils',
             integrations: 'Compatible avec les bibliothèques que vous utilisez déjà',
             integrationsNote: 'Détectées depuis votre code et fusionnées automatiquement dans le build.',
             seeAll: 'Voir la liste complète sur GitHub',
+            unitSourceLines: 'lignes de Python produisent',
+            unitFunctions: '.mcfunction',
+            unitJson: '.json',
+            unitTextures: 'textures',
+            stardustDesc: 'Un gros pack de progression : paliers de minerais, blocs, tableaux et un manuel en jeu complet.',
+            simplenergyDesc: 'Une bibliothèque d\'énergie et de machines dont d\'autres packs dépendent : câbles, générateurs et machines.',
+        },
+
+        // Final call to action
+        finalCta: {
+            title: 'Définissez un bloc. Compilez le pack.',
+            subtitle: 'Le modèle Basic configure chaque plugin avec des commentaires et aucun contenu d\'exemple à supprimer.',
+            action: 'Lire le guide de démarrage',
+            microcopy: 'Licence MIT · Python 3.14+ · aucun compte requis',
+            copyCommand: 'Copier la commande d\'installation',
+            copied: 'Commande copiée',
         },
 
         // Installation
@@ -517,6 +602,7 @@ export const translations = {
             pypiPackage: 'Package PyPI',
             planetMinecraft: 'PlanetMinecraft',
             reportBug: 'Signaler un Bug',
+            license: 'Licence MIT',
             copyright: 'StewBeet par',
         },
     },
