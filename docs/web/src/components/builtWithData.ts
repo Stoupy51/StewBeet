@@ -5,8 +5,9 @@
  * presents all of it as undifferentiated adoption invites a visitor to check two links and
  * conclude the whole list is self-referential. Naming the third-party projects first, and
  * labelling the rest as the maintainer's, is both honest and the stronger claim: the
- * maintainer's packs are what proves the framework holds up at size, and the file counts
- * below are measured from their actual build output rather than estimated.
+ * maintainer's packs are what proves the framework holds up at size, and the counts below
+ * are measured rather than estimated: outputs from their build directories, source lines
+ * from tokenising every .py file and dropping comments, docstrings and blank lines.
  */
 
 export interface Entry {
@@ -17,7 +18,9 @@ export interface Entry {
 
 /** A project shown as a card, with the build output it produces. */
 export interface Flagship extends Entry {
+    /** Statements only: comments, docstrings and blank lines are excluded from the count. */
     sourceLines: number;
+    image: string;
     functions: number;
     jsonFiles: number;
     textures: number;
@@ -41,7 +44,8 @@ export const FLAGSHIPS: Flagship[] = [
         name: 'Stardust Fragment',
         owner: 'Stoupy51',
         url: 'https://github.com/Stoupy51/StardustFragment',
-        sourceLines: 7563,
+        image: '/img/stardustfragment_items.png',
+        sourceLines: 5738,
         functions: 774,
         jsonFiles: 1331,
         textures: 971,
@@ -51,7 +55,8 @@ export const FLAGSHIPS: Flagship[] = [
         name: 'SimplEnergy',
         owner: 'Stoupy51',
         url: 'https://github.com/Stoupy51/SimplEnergy',
-        sourceLines: 1934,
+        image: '/img/simplenergy_items.png',
+        sourceLines: 1422,
         functions: 270,
         jsonFiles: 805,
         textures: 434,
