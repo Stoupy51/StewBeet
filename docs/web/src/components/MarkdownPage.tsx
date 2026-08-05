@@ -33,7 +33,16 @@ function isValidDocSrc(src: string): boolean {
 }
 
 function srcToGithubUrl(src: string): string {
-    return `https://github.com/Stoupy51/StewBeet/blob/main/docs/${src}`;
+    return `https://github.com/Stoupy51/StewBeet/blob/main/docs/web/public/docs/${src}`;
+}
+
+/**
+ * Documentation is served by this site from public/docs, so a page always matches the build
+ * it shipped with. `srcToGithubUrl` is still used for the "View on GitHub" link and as the
+ * fetch target for external sources.
+ */
+function srcToBundledUrl(src: string): string {
+    return `/docs/${src}`;
 }
 
 /**
@@ -182,6 +191,9 @@ export const MarkdownPage: React.FC = () => {
     
     // Convert to raw URL for fetching
     const rawUrl = fullUrl ? githubToRawUrl(fullUrl) : null;
+
+    // Repo documentation is served by this site; external sources still come from their host.
+    const bundledUrl = src && hasValidSrc && !isExternalUrl(src) ? srcToBundledUrl(src) : null;
     
     // Extract the base path for relative links (directory containing the markdown file)
     const basePath = rawUrl
@@ -248,7 +260,7 @@ export const MarkdownPage: React.FC = () => {
                     throw new Error('Invalid source URL');
                 }
 
-                const response = await fetch(rawUrl, { signal: controller.signal });
+                const response = await fetch(bundledUrl ?? rawUrl, { signal: controller.signal });
 
                 if (!response.ok) {
                     throw new Error(`Failed to fetch plugin documentation (${response.status})`);
@@ -272,7 +284,7 @@ export const MarkdownPage: React.FC = () => {
         };
 
         fetchMarkdown();
-    }, [src, rawUrl, t]);
+    }, [src, rawUrl, bundledUrl, t]);
 
     // Scroll to the heading targeted by the URL hash (search results, shared links).
     // The content arrives asynchronously, so this cannot rely on the browser's own handling.

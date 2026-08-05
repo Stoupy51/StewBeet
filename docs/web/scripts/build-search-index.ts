@@ -35,8 +35,8 @@ interface Entry {
 
 const scriptDir: string = import.meta.dir;
 const webDir: string = join(scriptDir, '..');
-const docsDir: string = join(webDir, '..');
-const repoRoot: string = join(docsDir, '..');
+const docsDir: string = join(webDir, 'public', 'docs');
+const repoRoot: string = join(webDir, '..', '..');
 const pythonRoot: string = join(repoRoot, 'python_package');
 const outDir: string = join(webDir, 'public');
 
