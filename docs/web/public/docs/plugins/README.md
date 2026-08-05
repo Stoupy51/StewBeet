@@ -1,0 +1,40 @@
+
+## StewBeet plugins
+
+Last updated: 2026/07/08
+
+**Dependency Level Legend:**
+- 🔴 **Fully dependent**: Requires StewBeet framework definitions and core functionality to operate
+- 🟡 **Partly dependent**: Uses some StewBeet features but could be adapted for standalone use  
+- 🟢 **Independent**: Can work without StewBeet framework dependencies
+
+Here are all the available plugins for the StewBeet framework:
+
+| Category | Plugin | Description | Image | Dependency |
+|----------|--------|-------------|-------|------------|
+| 🚀 **Core** | [**initialize**](./initialize.md) | Initializes StewBeet framework, sets up project metadata and pack configurations | ![Auto Item Lore](https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/initialize.source_lore.jpg) | 🔴 Fully dependent |
+| 🔊 **Resource Pack** | [**resource_pack.sounds**](./resource_pack.sounds.md) | Processes sound files and generates sounds.json from sounds folder | ![Sound Result](https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/resource_pack.sounds.result.jpg) | 🟡 Partly dependent |
+| 🎨 **Resource Pack** | [**resource_pack.item_models**](./resource_pack.item_models.md) | Automatically generates item models from texture patterns | ![Pattern Detection](https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/resource_pack.item_models.pattern_detection.jpg) | 🟡 Partly dependent |
+| 🖼️ **Resource Pack** | [**resource_pack.check_power_of_2**](./resource_pack.check_power_of_2.md) | Validates that textures use power-of-2 resolutions | ![Texture Warning](https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/resource_pack.check_power_of_2.warning.jpg) | 🟢 Independent |
+| 🍳 **Recipes** | [**custom_recipes**](./custom_recipes.md) | Generates vanilla, smithed, furnace and pulverizer recipes for items | ![Smithed Recipe](https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/custom_recipes.smithed_recipe.jpg) | 🔴 Fully dependent |
+| 🖼️ **Custom Content** | [**custom_paintings**](./custom_paintings.md) | Generates custom painting variants with texture management and placeable tags | ![Custom Painting](https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/custom_paintings.placed_painting.jpg) | 🔴 Fully dependent |
+| 📖 **Documentation** | [**ingame_manual**](../7_ingame_manual/en.md) | Creates interactive in-game manual with item documentation and recipes | ![In-Game Manual](https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/plugins/img/ingame_manual.gif) | 🔴 Fully dependent |
+| ⚡ **Datapack** | [**datapack.loading**](./datapack.loading.md) | Sets up datapack loading system with version checking and dependencies | ![Load messages](https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/datapack.loading.load_messages.jpg) | 🟡 Partly dependent |
+| 🧱 **Datapack** | [**datapack.custom_blocks**](./datapack.custom_blocks.md) | Implements custom block placement, destruction and interaction systems | ![Custom blocks stats](https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/datapack.custom_blocks.stats.jpg) | 🔴 Fully dependent |
+| 🎁 **Datapack** | [**datapack.loot_tables**](./datapack.loot_tables.md) | Generates loot tables for all items and creates give-all functionality | ![Give all function](https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/datapack.loot_tables.give_all.jpg) | 🔴 Fully dependent |
+| 🔢 **Datapack** | [**datapack.sorters**](./datapack.sorters.md) | Generates sorting functions for NBT storage lists | ![Sorting Registry](https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/datapack.sorters.registry.jpg) | 🟢 Independent |
+| 📦 **Compatibility** | [**compatibilities.simpledrawer**](./compatibilities.simpledrawer.md) | Adds SimpleDrawer material compatibility for compacted drawers | ![SimpleDrawer Integration](https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/compatibilities.simpledrawer.complete_file_tree.jpg) | 🔴 Fully dependent |
+| ⚔️ **Compatibility** | [**compatibilities.neo_enchant**](./compatibilities.neo_enchant.md) | Provides NeoEnchant veinminer compatibility for custom ores | ![NeoEnchant Veinminer](https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/compatibilities.neo_enchant.veinminer.jpg) | 🔴 Fully dependent |
+| ⏰ **Finalization** | [**finalyze.custom_blocks_ticking**](./finalyze.custom_blocks_ticking.md) | Sets up custom block ticking and update systems | ![Custom blocks timers](https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/finalyze.custom_blocks_ticking.timers.jpg) | 🔴 Fully dependent |
+| 🏗️ **Finalization** | [**finalyze.basic_datapack_structure**](./finalyze.basic_datapack_structure.md) | Creates basic datapack timing structure (tick, second, minute functions) | ![Datapack timers](https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/finalyze.basic_datapack_structure.timers.jpg) | 🟡 Partly dependent |
+| 📋 **Finalization** | [**finalyze.dependencies**](./finalyze.dependencies.md) | Manages external library dependencies and integration | ![In-game dependency errors](https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/finalyze.dependencies.ingame_errors.jpg) | 🔴 Fully dependent |
+| 🔍 **Finalization** | [**finalyze.check_unused_textures**](./finalyze.check_unused_textures.md) | Identifies unused texture files in the resource pack | ![Unused textures warning](https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/finalyze.check_unused_textures.warnings.jpg) | 🟢 Independent |
+| 🌐 **Automation** | [**auto.lang_file**](./auto.lang_file.md) | Automatically generates language files from text components | ![Automatic Lang File](https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/auto.lang_file.en_us_example.jpg) | 🟢 Independent |
+| 📝 **Automation** | [**auto.headers**](./auto.headers.md) | Adds automatic headers to mcfunction files showing usage context | ![Macro Example](https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/auto.headers.macro_example.jpg) | 🟢 Independent |
+| 🏗️ **Automation** | [**auto.scoreboard_constants**](./auto.scoreboard_constants.md) | Detects scoreboard constant usages and auto-generates their initialization commands | ![Scoreboard Constants](https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/auto.scoreboard_constants.example.jpg) | 🟢 Independent |
+| 📦 **Build** | [**archive**](./archive.md) | Creates zip archives of generated datapacks and resource packs | ![Output Directory](https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/archive.output_directory.jpg) | 🟢 Independent |
+| 🔗 **Build** | [**merge_smithed_weld**](./merge_smithed_weld.md) | Merges datapacks and resource packs with libraries using Smithed Weld (prefer the `.datapack` / `.resource_pack` entry points) | ![Merged Output](https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/merged_smithed_weld.output_directory.jpg) | 🟢 Independent |
+| 📂 **Build** | [**copy_to_destination**](./copy_to_destination.md) | Copies generated packs to configured destination folders | ![Copied datapacks](https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/copy_to_destination.datapack_destination.jpg) | 🟢 Independent |
+| 🔁 **Build** | [**livereload**](./livereload.md) | Auto in-game `/reload` on each build via `beet link` or `build_copy_destinations` | ![Copied datapacks](https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/copy_to_destination.datapack_destination.jpg) | 🟢 Independent |
+| 🔐 **Build** | [**compute_sha1**](./compute_sha1.md) | Computes SHA1 hashes for all generated zip files | ![Generated sha1 hashes](https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/compute_sha1.example.jpg) | 🟢 Independent |
+
