@@ -11,8 +11,23 @@ from beet import ProjectConfig
 from .utils import get_project_config
 
 
+def force_utf8_output() -> None:
+    """ Make stdout and stderr encode UTF-8 whatever the console's code page is.
+
+    Windows consoles default to a legacy code page — cp1252 in Western locales — which cannot
+    encode the emoji in the template list or the box-drawing characters in `--help`. Printing
+    either raised UnicodeEncodeError and took the command down before it did anything, so
+    `stewbeet init` failed on a first run. `errors="replace"` keeps a terminal that genuinely
+    cannot render a glyph from crashing on it.
+    """
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8", errors="replace")
+
+
 @stp.handle_error(message="Error while running 'stewbeet'", error_log=stp.LogLevels.WARNING_TRACEBACK)
 def main() -> None:
+    force_utf8_output()
     second_arg: str = sys.argv[1].lower() if len(sys.argv) >= 2 else ""
     if second_arg == "" and len(sys.argv) == 1:
         sys.argv.append("build")

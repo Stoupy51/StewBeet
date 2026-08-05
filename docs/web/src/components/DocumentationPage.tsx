@@ -49,7 +49,7 @@ export const DocumentationPage: React.FC = () => {
                     title: t('documentation.quickstart'),
                     description: t('documentation.quickstartDesc'),
                     pathEn: 'quickstart/en.md',
-                    pathFr: 'quickstart/en.md',
+                    pathFr: 'quickstart/fr.md',
                 },
                 {
                     title: t('documentation.gettingStarted'),
@@ -78,8 +78,8 @@ export const DocumentationPage: React.FC = () => {
                 {
                     title: t('documentation.cookbook'),
                     description: t('documentation.cookbookDesc'),
-                    pathEn: '2_writing_to_files/cookbook.md',
-                    pathFr: '2_writing_to_files/cookbook.md',
+                    pathEn: '2_writing_to_files/cookbook/en.md',
+                    pathFr: '2_writing_to_files/cookbook/fr.md',
                 },
                 {
                     title: t('documentation.beetConfig'),
@@ -115,8 +115,8 @@ export const DocumentationPage: React.FC = () => {
                 {
                     title: t('documentation.helperReference'),
                     description: t('documentation.helperReferenceDesc'),
-                    pathEn: '2_writing_to_files/reference.md',
-                    pathFr: '2_writing_to_files/reference.md',
+                    pathEn: '2_writing_to_files/reference/en.md',
+                    pathFr: '2_writing_to_files/reference/fr.md',
                 },
                 {
                     title: t('documentation.equations'),

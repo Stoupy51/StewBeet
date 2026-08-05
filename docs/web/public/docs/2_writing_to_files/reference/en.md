@@ -3,8 +3,8 @@
 Every helper StewBeet adds on top of beet for writing datapack files, with the arguments each
 one takes.
 
-**See also** [Writing functions and files](en.md) for choosing between the three approaches,
-and [the cookbook](cookbook.md) for worked examples.
+**See also** [Writing functions and files](../en.md) for choosing between the three approaches,
+and [the cookbook](../cookbook/en.md) for worked examples.
 
 ### Function Writing
 
@@ -76,7 +76,7 @@ furnace.functions.place_secondary.obj.append("tag @s add my_ns.active")
 write_function(f"{ns}:give_furnace", f"loot give @s loot {furnace.loot_table}")
 ```
 
-See [Resource Locations](../1_definitions_setup/en.md#-resource-locations) for the full list of accessors.
+See [Resource Locations](../../1_definitions_setup/en.md#-resource-locations) for the full list of accessors.
 
 ---
 
@@ -415,6 +415,6 @@ Mem.ctx.assets["my_namespace"].textures["block/animated_block"] = texture
 
 ## Next steps
 
-- [Writing functions and files](en.md) — which approach to reach for, and why.
-- [Cookbook](cookbook.md) — these helpers used in complete, working files.
-- [Equations](../4_equations/en.md) — build scoreboard arithmetic to embed in what you write.
+- [Writing functions and files](../en.md) — which approach to reach for, and why.
+- [Cookbook](../cookbook/en.md) — these helpers used in complete, working files.
+- [Equations](../../4_equations/en.md) — build scoreboard arithmetic to embed in what you write.
