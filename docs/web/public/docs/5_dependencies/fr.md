@@ -1,35 +1,20 @@
+# Utiliser des bibliothèques de datapack
 
-# 📦 Support des Bibliothèques de Datapack StewBeet
-
-## 📖 Définitions
-- **`load_dependencies`** : Un dictionnaire dans `beet.yml` où déclarer les bibliothèques externes à télécharger automatiquement et vérifier en version au runtime.
-- **Source type** : La méthode de résolution et téléchargement d'une bibliothèque — `"smithed"` (API Smithed), `"modrinth"` (API Modrinth), ou `"static"` (URL zip figée par version MC).
-- **Bibliothèque officielle** : Une bibliothèque pré-enregistrée dans le registre `OFFICIAL_LIBS` de StewBeet, détectée automatiquement depuis les fonctions — aucune configuration requise.
-- **Lantern Load** : Un standard communautaire pour l'ordre de chargement des datapacks ; StewBeet le configure automatiquement.
-- **`DataVersion`** : Un champ NBT d'entité utilisé pour détecter la version Minecraft au runtime ; comparé au minimum issu de `mc_supports`.
-
-## 🧪 Exemples
-📄 **Référence de configuration** : [extensive/beet.yml](https://github.com/Stoupy51/StewBeet/blob/main/templates/extensive/beet.yml) 🔗<br>
-📄 **Exemple réel** : [SimplEnergy/beet.yml](https://github.com/Stoupy51/SimplEnergy/blob/main/beet.yml) 🔗<br>
-📄 **Code source** : [stewbeet/plugins/finalyze/dependencies/__init__.py](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/finalyze/dependencies/__init__.py) 🔗<br>
-
-## 🔗 Dépendances
-- **✅ Requis** : `stewbeet.plugins.finalyze.dependencies` dans le pipeline
-- **✅ Requis** : `stewbeet.plugins.datapack.loading` doit s'exécuter avant
-- **📍 Position** : Doit être placé **après** que toutes les fonctions utilisateur aient été écrites (les scanne pour détecter les bibliothèques)
-
-## 📋 Vue d'ensemble
 Le système de dépendances de StewBeet a deux couches : les **bibliothèques officielles** auto-détectées depuis les fonctions (sans config), et les **`load_dependencies` personnalisées** déclarées dans `beet.yml`. Les deux sont téléchargées au build et génèrent des vérifications de version au runtime avec des messages d'erreur cliquables.
 
-## 🎯 Objectif
-- 📦 Détecter et télécharger automatiquement les bibliothèques officielles — aucune configuration requise
-- ⚙️ Déclarer des dépendances personnalisées dans `beet.yml` avec `load_dependencies`
-- ✅ Générer des vérifications de version au runtime et de compatibilité Minecraft
-- 📢 Fournir des messages d'erreur en jeu cliquables quand des dépendances sont manquantes
+**Référence de configuration** : [extensive/beet.yml](https://github.com/Stoupy51/StewBeet/blob/main/templates/extensive/beet.yml) <br>  
+**Exemple réel** : [SimplEnergy/beet.yml](https://github.com/Stoupy51/SimplEnergy/blob/main/beet.yml) <br>  
+**Code source** : [stewbeet/plugins/finalyze/dependencies/__init__.py](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/finalyze/dependencies/__init__.py) <br>  
+**Requis** : `stewbeet.plugins.finalyze.dependencies` dans le pipeline  
+**Requis** : `stewbeet.plugins.datapack.loading` doit s'exécuter avant  
+**Position** : Doit être placé **après** que toutes les fonctions utilisateur aient été écrites (les scanne pour détecter les bibliothèques)
 
----
+- Détecter et télécharger automatiquement les bibliothèques officielles — aucune configuration requise
+- Déclarer des dépendances personnalisées dans `beet.yml` avec `load_dependencies`
+- Générer des vérifications de version au runtime et de compatibilité Minecraft
+- Fournir des messages d'erreur en jeu cliquables quand des dépendances sont manquantes
 
-## ⚙️ Déclarer une Dépendance — Partir d'un Exemple Réel
+## Déclarer une Dépendance — Partir d'un Exemple Réel
 
 [SimplEnergy](https://github.com/Stoupy51/SimplEnergy) déclare une bibliothèque externe dans son `beet.yml` :
 
@@ -84,7 +69,7 @@ load_dependencies:
 
 ---
 
-## 🔍 Bibliothèques Officielles (Auto-détectées)
+## Bibliothèques Officielles (Auto-détectées)
 
 Pour les bibliothèques bien connues, **aucune entrée `load_dependencies` n'est nécessaire** — StewBeet les détecte en scannant les fonctions et les télécharge automatiquement.
 
@@ -99,7 +84,7 @@ Pour les bibliothèques bien connues, **aucune entrée `load_dependencies` n'est
 
 ---
 
-## ⚡ Comportement au Runtime
+## Comportement au Runtime
 
 Au chargement du monde, les fonctions générées s'exécutent dans cet ordre :
 
@@ -115,7 +100,7 @@ Au chargement du monde, les fonctions générées s'exécutent dans cet ordre :
 
 ---
 
-## 📋 Fichiers Générés
+## Fichiers Générés
 
 | Fichier | Type | Description |
 |---------|------|-------------|
@@ -131,3 +116,18 @@ Au chargement du monde, les fonctions générées s'exécutent dans cet ordre :
 | `ns:vX.Y.Z/load/confirm_load` | Function | Appelée uniquement quand toutes les vérifications passent |
 | `ns:vX.Y.Z/load/tick_verification` | Function | Route la fonction tick uniquement quand la bonne version est chargée |
 
+## Glossaire
+
+| Terme | Signification |
+|-------|---------------|
+| **`load_dependencies`** | : Un dictionnaire dans `beet.yml` où déclarer les bibliothèques externes à télécharger automatiquement et vérifier en version au runtime. |
+| **Source type** | : La méthode de résolution et téléchargement d'une bibliothèque — `"smithed"` (API Smithed), `"modrinth"` (API Modrinth), ou `"static"` (URL zip figée par version MC). |
+| **Bibliothèque officielle** | : Une bibliothèque pré-enregistrée dans le registre `OFFICIAL_LIBS` de StewBeet, détectée automatiquement depuis les fonctions — aucune configuration requise. |
+| **Lantern Load** | : Un standard communautaire pour l'ordre de chargement des datapacks ; StewBeet le configure automatiquement. |
+| **`DataVersion`** | : Un champ NBT d'entité utilisé pour détecter la version Minecraft au runtime ; comparé au minimum issu de `mc_supports`. |
+
+## Prochaines étapes
+
+- [finalyze.dependencies](../plugins/finalyze.dependencies.md) — le plugin qui effectue les vérifications.
+- [Configurer le build](../3_beet_config/fr.md) — où load_dependencies se déclare.
+- [Publier automatiquement](../6_continuous_delivery/fr.md) — publier un pack qui dépend de bibliothèques.

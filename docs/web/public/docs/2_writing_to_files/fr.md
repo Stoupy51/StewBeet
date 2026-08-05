@@ -1,39 +1,28 @@
+# Écrire fonctions et fichiers
 
-# 📝 Guide d'écriture dans les fichiers StewBeet
-
-## 📖 Définitions
-- **Chargement de fichiers statiques** : Chargement pré-plugin des fichiers déclarés dans `beet.yml` (`data_pack.load` et `resource_pack.load`).
-- **Écriture via API native Beet** : Création de fichiers via les objets `ctx.data`/`ctx.assets` dans le code plugin.
-- **Écriture via helpers StewBeet** : Fonctions utilitaires comme `write_function`, `write_tag` et helpers associés pour générer plus vite.
-
-## 🧪 Exemples
-📄 **Fichier d'exemple** : [extensive/src/link.py](https://github.com/Stoupy51/StewBeet/blob/main/templates/extensive/src/link.py) 🔗<br>
-📄 **Exemple réel** : [SimplEnergy/src/utils/machines.py](https://github.com/Stoupy51/SimplEnergy/blob/main/src/utils/machines.py) 🔗<br>
-📄 **Exemple réel** : [StardustFragment/src/utils/remaining.py](https://github.com/Stoupy51/StardustFragment/blob/main/src/utils/remaining.py) 🔗<br>
-
-## 🔗 Dépendances
-- **✅ Requis** : Utilitaires I/O StewBeet (`from stewbeet import write_function, write_load_file, ...`)
-- **📍 Position** : Appelé après la configuration des définitions, typiquement au milieu du pipeline
-- **🔄 Intégration** : Fonctionne avec tous les types de fichiers (fonctions, advancements, tags, etc.)
-
-## 📋 Vue d'ensemble
 L'écriture dans les fichiers est essentielle pour générer des datapacks et resource packs. StewBeet propose trois approches pour l'écriture de fichiers, chacune avec différents cas d'usage et niveaux de complexité. Ce guide couvre le chargement de fichiers statiques via configuration, l'API native beet, et les fonctions helper simplifiées de StewBeet.
 
 **L'écriture de fichiers se produit typiquement dans les plugins utilisateur après que les définitions soient configurées mais avant la finalisation.**
 
-> **📝 Note sur Bolt** : [Bolt](https://github.com/mcbeet/beet/tree/beta/packages/bolt) est un autre moyen puissant d'écrire des fonctions de datapack en utilisant une syntaxe similaire à Python. Bien qu'il existe et soit un excellent outil, il n'est pas couvert dans ce guide. Consultez le [dépôt Bolt](https://github.com/mcbeet/beet/tree/beta/packages/bolt) pour en savoir plus.
+> **Note sur Bolt** : [Bolt](https://github.com/mcbeet/beet/tree/beta/packages/bolt) est un autre moyen puissant d'écrire des fonctions de datapack en utilisant une syntaxe similaire à Python. Bien qu'il existe et soit un excellent outil, il n'est pas couvert dans ce guide. Consultez le [dépôt Bolt](https://github.com/mcbeet/beet/tree/beta/packages/bolt) pour en savoir plus.
 
-## 🎯 Objectif
-- 📁 Charger des fichiers statiques depuis des répertoires (pré-plugin via `beet.yml`)
-- ✍️ Générer dynamiquement des fonctions, advancements et tags par programme
-- 🔄 Ajouter, préfixer ou écraser le contenu de fichiers
-- 📦 Organiser la logique de datapack à travers plusieurs fichiers
-- 🏷️ Gérer les tags de fonctions et autres types de tags
-- ⏰ Configurer les fonctions d'horloge (tick, second, minute)
+**Fichier d'exemple** : [extensive/src/link.py](https://github.com/Stoupy51/StewBeet/blob/main/templates/extensive/src/link.py) <br>  
+**Exemple réel** : [SimplEnergy/src/utils/machines.py](https://github.com/Stoupy51/SimplEnergy/blob/main/src/utils/machines.py) <br>  
+**Exemple réel** : [StardustFragment/src/utils/remaining.py](https://github.com/Stoupy51/StardustFragment/blob/main/src/utils/remaining.py) <br>  
+**Requis** : Utilitaires I/O StewBeet (`from stewbeet import write_function, write_load_file, ...`)  
+**Position** : Appelé après la configuration des définitions, typiquement au milieu du pipeline  
+**Intégration** : Fonctionne avec tous les types de fichiers (fonctions, advancements, tags, etc.)
 
-## 🎨 Trois approches pour écrire des fichiers
+- Charger des fichiers statiques depuis des répertoires (pré-plugin via `beet.yml`)
+- Générer dynamiquement des fonctions, advancements et tags par programme
+- Ajouter, préfixer ou écraser le contenu de fichiers
+- Organiser la logique de datapack à travers plusieurs fichiers
+- Gérer les tags de fonctions et autres types de tags
+- Configurer les fonctions d'horloge (tick, second, minute)
 
-### 📖 Comparaison rapide
+## Trois approches pour écrire des fichiers
+
+### Comparaison rapide
 
 | Approche | Cas d'usage | Complexité | Flexibilité |
 |----------|----------|------------|-------------|
@@ -43,7 +32,7 @@ L'écriture dans les fichiers est essentielle pour générer des datapacks et re
 
 ---
 
-### 📁 Approche 1 : Chargement de fichiers statiques (beet.yml)
+### Approche 1 : Chargement de fichiers statiques (beet.yml)
 
 L'approche la plus simple - charger des fichiers pré-écrits depuis des répertoires **avant que les plugins ne s'exécutent**.
 
@@ -104,7 +93,7 @@ src/
 
 ---
 
-### 🔧 Approche 2 : API native Beet
+### Approche 2 : API native Beet
 
 Utilisez l'API native orientée objet de beet pour écrire des fichiers par programme dans les plugins.
 
@@ -155,7 +144,7 @@ scoreboard players add @a points 1
 
 ---
 
-### 🚀 Approche 3 : Fonctions helper StewBeet (Recommandé)
+### Approche 3 : Fonctions helper StewBeet (Recommandé)
 
 StewBeet fournit des fonctions helper simplifiées qui facilitent l'écriture de fichiers avec gestion automatique des motifs courants.
 
@@ -209,9 +198,9 @@ say Une minute s'est écoulée !
 
 ---
 
-## 📚 Référence des fonctions helper StewBeet
+## Référence des fonctions helper StewBeet
 
-### 🏆 Écriture de fonctions
+### Écriture de fonctions
 
 #### `write_function()`
 Écrire du contenu dans un fichier de fonction.
@@ -255,7 +244,7 @@ write_function(f"{ns}:my_function", modified_content, overwrite=True)
 
 ---
 
-#### 📍 Préférez les accesseurs Resource aux chemins codés en dur
+#### Préférez les accesseurs Resource aux chemins codés en dur
 
 Dès que le chemin appartient à une définition, récupérez-le depuis l'`Item`/`Block` plutôt que de retaper la convention.
 Un objet `Resource` est une chaîne, il s'utilise donc directement dans toutes ces fonctions :
@@ -275,7 +264,7 @@ write_function(BlockFunctions("electric_furnace").tick, "...")
 # ✅ Ajouter à une fonction qui existe déjà ? Récupérez la Function beet via .obj :
 furnace.functions.place_secondary.obj.append("tag @s add my_ns.active")
 # (lève KeyError si la fonction n'a pas encore été générée — un échec bruyant
-#  plutôt que vos commandes placées silencieusement avant le setup du bloc)
+# plutôt que vos commandes placées silencieusement avant le setup du bloc)
 
 # Fonctionne pareil pour les loot tables, modèles, textures, progrès
 write_function(f"{ns}:give_furnace", f"loot give @s loot {furnace.loot_table}")
@@ -392,7 +381,7 @@ kill @e[type=item,nbt={Age:5400s}]
 
 ---
 
-### 🏅 Écriture d'advancements
+### Écriture d'advancements
 
 #### `write_advancement()`
 Écrire un fichier d'advancement.
@@ -444,7 +433,7 @@ write_advancement(f"{ns}:story/craft_ruby_sword", {
 
 ---
 
-### 🏷️ Écriture de tags
+### Écriture de tags
 
 #### `write_tag()`
 Écrire un fichier de tag (générique pour tous types de tags).
@@ -516,7 +505,7 @@ write_function_tag(f"{ns}:custom_blocks/tick", [
 
 ---
 
-### 🛠️ Fonctions utilitaires
+### Fonctions utilitaires
 
 #### `super_merge_dict()`
 Fusionner récursivement deux dictionnaires sans modifier les originaux.
@@ -618,9 +607,9 @@ Mem.ctx.assets["my_namespace"].textures["block/animated_block"] = texture
 
 ---
 
-## 💡 Exemples concrets
+## Exemples concrets
 
-### 📦 Exemple 1 : Ticking de blocs personnalisés
+### Exemple 1 : Ticking de blocs personnalisés
 
 Générer des fonctions tick pour blocs personnalisés avec différents comportements.
 
@@ -657,7 +646,7 @@ data modify block ~ ~ ~ CookTime set value 199s
 
 ---
 
-### ⚡ Exemple 2 : Gestion d'états de machines
+### Exemple 2 : Gestion d'états de machines
 
 Gérer les états de machines avec plusieurs fonctions.
 
@@ -702,7 +691,7 @@ loot spawn ~ ~ ~ loot {ns}:items/processed_material
 
 ---
 
-### 🎯 Exemple 3 : Déclencheurs d'advancements
+### Exemple 3 : Déclencheurs d'advancements
 
 Configurer un système de détection basé sur les advancements.
 
@@ -757,7 +746,7 @@ function {ns}:items/right_click_handler
 
 ---
 
-### 🔄 Exemple 4 : Génération programmatique de fonctions
+### Exemple 4 : Génération programmatique de fonctions
 
 Générer automatiquement plusieurs fonctions similaires.
 
@@ -795,7 +784,7 @@ title @s actionbar {{"text":"Énergie : ","color":"gray","extra":[{{"score":{{"n
 
 ---
 
-### 📊 Exemple 5 : Configuration complexe du chargement
+### Exemple 5 : Configuration complexe du chargement
 
 Initialiser des systèmes de datapack complets au chargement.
 
@@ -847,7 +836,7 @@ function {ns}:modules/items/load
 
 ---
 
-### 🎮 Exemple 6 : Système de détection de clic droit
+### Exemple 6 : Système de détection de clic droit
 
 Système complet de détection de clic droit utilisant des objets personnalisés.
 
@@ -886,7 +875,7 @@ execute anchored eyes positioned ^ ^ ^1 align xyz positioned ~0.5 ~ ~0.5 as @n[t
 
 ---
 
-### 🌟 Exemple 7 : Système de cultures en croissance
+### Exemple 7 : Système de cultures en croissance
 
 Implémenter des mécaniques de croissance personnalisées.
 
@@ -940,7 +929,7 @@ playsound minecraft:block.crop.break block @a ~ ~ ~ 1 0.8
 
 ---
 
-### 📜 Exemple 8 : Gestion des tags
+### Exemple 8 : Gestion des tags
 
 Organiser les fonctions et entités avec des tags.
 
@@ -993,9 +982,9 @@ def setup_tags(ctx: Context):
 
 ---
 
-## 🚨 Bonnes pratiques
+## Bonnes pratiques
 
-### ✅ À faire
+### À faire
 
 **Organisation des fichiers :**
 - Utilisez des structures de dossiers significatives (ex., `machines/`, `items/`, `utils/`)
@@ -1020,7 +1009,7 @@ def setup_tags(ctx: Context):
 - Utilisez `write_versioned_function()` pour les fonctions d'horloge
 - Appelez les helpers StewBeet au lieu de l'API beet directe quand disponible
 
-### ❌ À ne pas faire
+### À ne pas faire
 
 **Gestion des fichiers :**
 - Ne codez pas en dur les chaînes de namespace (utilisez `ctx.project_id` ou variable `ns`)
@@ -1036,7 +1025,7 @@ def setup_tags(ctx: Context):
 
 ---
 
-## 🎯 Exemple complet
+## Exemple complet
 
 Voici un exemple complet combinant toutes les approches (exemple de [Stardust Fragment](https://github.com/Stoupy51/StardustFragment/blob/main/src/utils/remaining.py)) :
 
@@ -1510,7 +1499,7 @@ clear @s *[custom_data~{{{ns}:{{lucky_artifact_bag:true}}}}] 1
 
 ---
 
-## 📖 Résumé
+## Résumé
 
 ### **Comparaison des trois approches**
 
@@ -1538,3 +1527,16 @@ clear @s *[custom_data~{{{ns}:{{lucky_artifact_bag:true}}}}] 1
 **🎉 Maîtrisez ces approches d'écriture de fichiers pour créer des datapacks efficaces et maintenables avec StewBeet !**<br>
 Consultez les exemples réels en haut de cette page pour voir ces motifs en action ! 🚀
 
+## Glossaire
+
+| Terme | Signification |
+|-------|---------------|
+| **Chargement de fichiers statiques** | : Chargement pré-plugin des fichiers déclarés dans `beet.yml` (`data_pack.load` et `resource_pack.load`). |
+| **Écriture via API native Beet** | : Création de fichiers via les objets `ctx.data`/`ctx.assets` dans le code plugin. |
+| **Écriture via helpers StewBeet** | : Fonctions utilitaires comme `write_function`, `write_tag` et helpers associés pour générer plus vite. |
+
+## Prochaines étapes
+
+- [Équations](../4_equations/fr.md) — construire l'arithmétique de scoreboard.
+- [Configurer le build](../3_beet_config/fr.md) — contrôler quand votre code s'exécute.
+- [auto.headers](../plugins/auto.headers.md) — les en-têtes ajoutés à ce que vous écrivez.

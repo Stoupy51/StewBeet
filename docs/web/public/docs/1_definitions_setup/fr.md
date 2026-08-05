@@ -1,22 +1,5 @@
+# Définir objets et blocs
 
-# 🔧 Guide de configuration des définitions StewBeet
-
-## 📖 Définitions
-- **Configuration des définitions** : Plugin utilisateur qui crée et enrichit `Mem.definitions`.
-- **Définition** : Entrée d'objet typée (`Item`, `Block`, `Painting`, etc.) utilisée par les plugins StewBeet suivants.
-- **Mem.definitions** : Registre global où toutes les définitions sont stockées et partagées dans le pipeline.
-
-## 🧪 Exemples
-📄 **Fichier d'exemple** : [extensive/src/setup_definitions.py](https://github.com/Stoupy51/StewBeet/blob/main/templates/extensive/src/setup_definitions.py) 🔗<br>
-📄 **Exemple réel** : [SimplEnergy/src/definitions/setup_main.py](https://github.com/Stoupy51/SimplEnergy/blob/main/src/definitions/setup_main.py) 🔗<br>
-
-## 🔗 Dépendances
-- **✅ Requis** : Framework StewBeet (`from stewbeet import *`)
-- **✅ Requis** : Contexte Beet (`from beet import Context`)
-- **📍 Position** : Doit être appelé tôt dans le pipeline avant les autres plugins qui dépendent des définitions
-- **🔄 Intégration** : Fonctionne avec tous les plugins StewBeet qui traitent les définitions d'objets
-
-## 📋 Vue d'ensemble
 Les définitions d'objets sont au cœur du framework StewBeet. Elles définissent les objets, blocs, équipements, recettes personnalisés et leurs propriétés en utilisant des classes Python modernes. La configuration des définitions crée une base de données complète de tout le contenu personnalisé que les plugins suivants utilisent pour générer les datapacks et resource packs.
 
 **C'est typiquement le premier plugin créé par l'utilisateur dans le pipeline (après `stewbeet.plugins.initialize`).**
@@ -26,17 +9,23 @@ Les définitions d'objets sont au cœur du framework StewBeet. Elles définissen
 **Définitions d'objets du Template Extensive :**<br>
 <img src="./additions.jpg">
 
-## 🎯 Objectif
-- 🛠️ Définir des objets, blocs et équipements personnalisés en utilisant des classes Python
-- ⚙️ Configurer la génération automatique de matériaux (minerais, lingots, outils, armures)
-- 📦 Configurer les recettes de craft avec des classes typées
-- 🔗 Établir les relations entre les objets et leurs utilisations
-- 🏷️ Configurer les noms, lores et catégories des objets
-- 🎨 Lier les objets à leurs textures et modèles
+**Fichier d'exemple** : [extensive/src/setup_definitions.py](https://github.com/Stoupy51/StewBeet/blob/main/templates/extensive/src/setup_definitions.py) <br>  
+**Exemple réel** : [SimplEnergy/src/definitions/setup_main.py](https://github.com/Stoupy51/SimplEnergy/blob/main/src/definitions/setup_main.py) <br>  
+**Requis** : Framework StewBeet (`from stewbeet import *`)  
+**Requis** : Contexte Beet (`from beet import Context`)  
+**Position** : Doit être appelé tôt dans le pipeline avant les autres plugins qui dépendent des définitions  
+**Intégration** : Fonctionne avec tous les plugins StewBeet qui traitent les définitions d'objets
 
-## ⚙️ Configuration
+- Définir des objets, blocs et équipements personnalisés en utilisant des classes Python
+- Configurer la génération automatique de matériaux (minerais, lingots, outils, armures)
+- Configurer les recettes de craft avec des classes typées
+- Établir les relations entre les objets et leurs utilisations
+- Configurer les noms, lores et catégories des objets
+- Lier les objets à leurs textures et modèles
 
-### 🎯 Structure de base
+## Configuration
+
+### Structure de base
 Cette structure définit le cycle de vie de votre plugin de définitions : génération, normalisation des métadonnées, post-traitements requis et export de debug optionnel.
 
 ```python
@@ -74,9 +63,9 @@ def beet_default(ctx: Context):
     export_all_definitions_to_json(f"{Mem.ctx.directory}/definitions_debug.json")
 ```
 
-## 📚 Concepts de base
+## Concepts de base
 
-### 🔩 La base de données Mem.definitions
+### La base de données Mem.definitions
 Toutes les définitions d'objets sont stockées dans `Mem.definitions`, un dictionnaire global qui se remplit lorsque vous créez des instances `Item`, `Block` ou `Painting` :
 
 ```python
@@ -91,7 +80,7 @@ assert item is same_item  # C'est le même objet !
 assert "my_item" in Mem.definitions
 ```
 
-### 🏗️ Classe Item
+### Classe Item
 
 Définition des propriétés de la classe `Item` :
 
@@ -149,7 +138,7 @@ item = Item(
 )
 ```
 
-### 🧱 Classe Block
+### Classe Block
 
 Les blocs personnalisés étendent la classe `Item` avec des propriétés spécifiques aux blocs :
 
@@ -297,7 +286,7 @@ custom_head = BlockHead(
 )
 ```
 
-### 🎨 Classe Painting
+### Classe Painting
 
 Peintures personnalisées pour la décoration :
 
@@ -317,13 +306,13 @@ painting = Painting(
 )
 ```
 
-## 🍳 Système de recettes
+## Système de recettes
 
-### 📋 Classes de recettes
+### Classes de recettes
 
 StewBeet fournit des classes de recettes typées pour tous les types de recettes Minecraft :
 
-#### **⚔️ Crafting Shaped Recipe**
+#### **Crafting Shaped Recipe**
 Utilisez une recette shaped quand la position des ingrédients est importante ; la `shape` associe des symboles aux ingrédients et impose la disposition.
 
 ```python
@@ -341,7 +330,7 @@ recipe = CraftingShapedRecipe(
 )
 ```
 
-#### **🎯 Crafting Shapeless Recipe**
+#### **Crafting Shapeless Recipe**
 Utilisez une recette shapeless quand seule la présence des ingrédients compte, sans tenir compte de leur position dans la grille.
 
 ```python
@@ -354,7 +343,7 @@ recipe = CraftingShapelessRecipe(
 )
 ```
 
-#### **🔥 Smelting Recipe**
+#### **Smelting Recipe**
 Les recettes de smelting modélisent les transformations de type four avec un temps de cuisson, une récompense XP et une conversion entrée-sortie.
 
 ```python
@@ -368,7 +357,7 @@ recipe = SmeltingRecipe(
 )
 ```
 
-#### **⚡ Autres types de recettes**
+#### **Autres types de recettes**
 StewBeet fournit des wrappers typés pour les mécaniques de recette vanilla spécialisées afin de configurer chaque comportement explicitement.
 
 ```python
@@ -391,7 +380,7 @@ SmithingTransformRecipe(template=Ingr(...), base=Ingr(...), addition=Ingr(...), 
 SmithingTrimRecipe(template=Ingr(...), base=Ingr(...), addition=Ingr(...))
 ```
 
-### 🔄 Helper Ingredient
+### Helper Ingredient
 
 La fonction `Ingr` crée des spécifications d'ingrédients :
 
@@ -420,9 +409,9 @@ recipe = CraftingShapedRecipe(
 )
 ```
 
-## 🛠️ Génération de matériaux
+## Génération de matériaux
 
-### ⚒️ Génération automatique d'équipements
+### Génération automatique d'équipements
 
 Générez des sets de matériaux complets automatiquement :
 
@@ -455,7 +444,7 @@ def main():
     Block.from_id("raw_steel_block").vanilla_block = VanillaBlock(id="minecraft:raw_iron_block")
 ```
 
-### 🧪 Configuration d'équipement
+### Configuration d'équipement
 
 `EquipmentsConfig` contrôle l'héritage des statistiques de base des familles de matériaux générées et l'application des modificateurs personnalisés sur les outils et armures.
 
@@ -474,9 +463,9 @@ class EquipmentsConfig:
 - `"mining_efficiency": 2` -> +20% vitesse de minage pour les outils
 - `"knockback_resistance": 0.1` -> +0.1 résistance au recul (appliqué à l'armure uniquement)
 
-## 📖 Intégration de la documentation
+## Intégration de la documentation
 
-### 📝 Boutons Wiki
+### Boutons Wiki
 
 Ajoutez de la documentation interactive pour le manuel en jeu :
 
@@ -493,7 +482,7 @@ item.wiki_buttons = [
 ]
 ```
 
-### 📚 Objet Manuel
+### Objet Manuel
 
 Créez une recette pour le manuel en jeu :
 
@@ -519,9 +508,9 @@ Item(
 )
 ```
 
-## 🎵 Contenu audio
+## Contenu audio
 
-### 🎶 Disques de musique personnalisés
+### Disques de musique personnalisés
 
 La génération de disques mappe les assets `.ogg` vers les définitions afin de garder sons, objets et références synchronisés automatiquement.
 
@@ -536,9 +525,9 @@ generate_custom_records({
 })
 ```
 
-## 🔧 Fonctions utilitaires
+## Fonctions utilitaires
 
-### 🧰 Fonctions helper essentielles
+### Fonctions helper essentielles
 
 Ces helpers finalisent les définitions pour garantir une sortie cohérente, correctement namespacée, et prête pour les plugins suivants.
 
@@ -562,7 +551,7 @@ set_manual_components(white_list=["item_name", "lore", "custom_name", "damage", 
 export_all_definitions_to_json(f"{Mem.ctx.directory}/definitions_debug.json")
 ```
 
-## 🏷️ Catégories d'objets
+## Catégories d'objets
 
 Catégories courantes pour l'organisation du manuel (mais c'est toujours à vous de décider !) :
 
@@ -575,15 +564,15 @@ Catégories courantes pour l'organisation du manuel (mais c'est toujours à vous
 | `"food"`          | Objets consommables                     |
 | `"decorations"`   | Peintures, objets décoratifs            |
 
-## ✨ Fonctionnalités avancées
+## Fonctionnalités avancées
 
-### 🎨 Intégration de textures
+### Intégration de textures
 Les objets détectent automatiquement les textures par nom depuis `assets/textures/` :
 - `steel_ingot.png` -> objet `steel_ingot`
 - `steel_pickaxe.png` -> outil `steel_pickaxe`
 - `steel_block.png` -> bloc personnalisé `steel_block`
 
-### 🔗 Accéder aux objets existants
+### Accéder aux objets existants
 
 `Item.from_id` permet de récupérer et modifier des définitions déjà déclarées, ce qui facilite une configuration par étapes sans recréer les objets.
 
@@ -602,7 +591,7 @@ item.recipes.append(CraftingShapelessRecipe(
 ))
 ```
 
-### 📍 Emplacements de ressources
+### Emplacements de ressources
 
 Ne codez plus jamais en dur un emplacement comme `f"{ns}:custom_blocks/{item}/place_secondary"`. Chaque emplacement que StewBeet dérive d'un ID d'objet est exposé sous forme de propriété renvoyant un objet `Resource`.
 
@@ -696,7 +685,7 @@ particle minecraft:explosion ~ ~ ~
 > Lire `.obj` avant que le plugin qui le génère n'ait été exécuté lève une `KeyError`. Utilisez `.get()` ou `.exists()` lorsque le fichier peut ne pas encore exister ou faites votre code après exécution des plugins cibles.
 > Pour l'exemple d'append ci-dessus, c'est en réalité un avantage : ajouter trop tôt échoue bruyamment au lieu de placer silencieusement vos commandes avant le setup du bloc.
 
-### 🎨 Exemples de modèles complexes
+### Exemples de modèles complexes
 
 #### **Motifs de textures reconnus**
 
@@ -787,17 +776,16 @@ custom_bow = Item(
 # Textures requises dans assets/textures/item/ :
 # - super_bow.png (texture d'arc de base)
 # - super_bow_pulling_0.png (légèrement tiré)
-# - super_bow_pulling_1.png (à moitié tiré)  
+# - super_bow_pulling_1.png (à moitié tiré)
 # - super_bow_pulling_2.png (complètement tiré)
-# 
-# Fichiers générés :
+# # Fichiers générés :
 # - assets/models/item/super_bow_pulling_0.json, super_bow_pulling_1.json, super_bow_pulling_2.json
 # - assets/items/super_bow.json (avec condition et range_dispatch pour les états de tir)
 ```
 
-## 🚨 Bonnes pratiques
+## Bonnes pratiques
 
-### ✅ À faire
+### À faire
 - Utilisez les classes `Item`, `Block`, `Painting` pour des définitions propres et typées
 - Utilisez `Ingr()` pour toutes les références d'ingrédients
 - Appelez les fonctions d'ajustement final à la fin de `beet_default()`
@@ -805,13 +793,13 @@ custom_bow = Item(
 - Utilisez des catégories significatives pour l'organisation du manuel
 - Définissez `vanilla_block` pour les blocs personnalisés après génération
 
-### ❌ À ne pas faire
+### À ne pas faire
 - Ne modifiez pas `Mem.definitions` directement (utilisez les classes)
 - N'utilisez pas de dictionnaires bruts pour les ingrédients (utilisez `Ingr()`)
 - N'oubliez pas d'appeler les fonctions d'ajustement final
 - Ne sautez pas la configuration de `vanilla_block` pour les blocs personnalisés
 
-## 🎯 Exemple complet
+## Exemple complet
 
 ```python
 # src/setup_definitions.py
@@ -851,3 +839,16 @@ def beet_default(ctx: Context):
 **🎉 Cette approche moderne crée des définitions d'objets propres et type-safe qui s'intègrent parfaitement avec tous les plugins StewBeet !**<br>
 Consultez les exemples réels en haut de cette page pour voir comment ça fonctionne en pratique ! 🚀
 
+## Glossaire
+
+| Terme | Signification |
+|-------|---------------|
+| **Configuration des définitions** | : Plugin utilisateur qui crée et enrichit `Mem.definitions`. |
+| **Définition** | : Entrée d'objet typée (`Item`, `Block`, `Painting`, etc.) utilisée par les plugins StewBeet suivants. |
+| **Mem.definitions** | : Registre global où toutes les définitions sont stockées et partagées dans le pipeline. |
+
+## Prochaines étapes
+
+- [Écrire fonctions et fichiers](../2_writing_to_files/fr.md) — transformer vos définitions en fichiers.
+- [Recettes](../plugins/custom_recipes.md) — comment une recette atteint chaque système de craft.
+- [Manuel en jeu](../7_ingame_manual/fr.md) — le livre généré depuis vos définitions.
