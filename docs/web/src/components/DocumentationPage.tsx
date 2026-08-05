@@ -76,6 +76,12 @@ export const DocumentationPage: React.FC = () => {
                     pathFr: '2_writing_to_files/fr.md',
                 },
                 {
+                    title: t('documentation.cookbook'),
+                    description: t('documentation.cookbookDesc'),
+                    pathEn: '2_writing_to_files/cookbook.md',
+                    pathFr: '2_writing_to_files/cookbook.md',
+                },
+                {
                     title: t('documentation.beetConfig'),
                     description: t('documentation.beetConfigDesc'),
                     iconImg: 'https://raw.githubusercontent.com/mcbeet/beet/refs/heads/main/logo.png',
@@ -106,6 +112,12 @@ export const DocumentationPage: React.FC = () => {
             title: t('documentation.groupReference'),
             description: t('documentation.groupReferenceDesc'),
             items: [
+                {
+                    title: t('documentation.helperReference'),
+                    description: t('documentation.helperReferenceDesc'),
+                    pathEn: '2_writing_to_files/reference.md',
+                    pathFr: '2_writing_to_files/reference.md',
+                },
                 {
                     title: t('documentation.equations'),
                     description: t('documentation.equationsDesc'),
