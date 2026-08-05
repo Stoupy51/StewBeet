@@ -1,37 +1,28 @@
+# Configurer le build
 
-# ⚙️ Guide de Configuration Beet & StewBeet
-
-## 📖 Définitions
-- **Fichier de configuration Beet** : Fichier principal du projet (`beet.yml`, `beet.yaml`, `beet.json` ou `pyproject.toml`) lu au démarrage du build.
-- **Pipeline** : Liste ordonnée de plugins exécutés par beet pour transformer et générer le contenu du projet.
-- **Section meta** : Conteneur de paramètres personnalisés (`meta`) utilisé par StewBeet et les autres outils.
-
-## 🧪 Exemples
-📄 **Fichier d'exemple**: [extensive/beet.yml](https://github.com/Stoupy51/StewBeet/blob/main/templates/extensive/beet.yml) 🔗<br>
-📄 **Exemple réel**: [SimplEnergy/beet.yml](https://github.com/Stoupy51/SimplEnergy/blob/main/beet.yml) 🔗<br>
-📄 **Exemple réel**: [LifeSteal/beet.yml](https://github.com/Stoupy51/LifeSteal/blob/main/beet.yml) 🔗<br>
-
-## 🔗 Formats de Fichier de Configuration
-- **Formats supportés**: `beet.yml`, `beet.yaml`, `beet.json`, ou `pyproject.toml`
-- **📍 Emplacement**: Racine du projet
-- **🔄 Intégration**: Contrôle l'ensemble du processus de build et du pipeline de plugins
-
-## 📋 Aperçu
 Le fichier de configuration est le cœur de votre projet StewBeet. Il définit tout, des métadonnées de base du projet aux pipelines de plugins complexes et aux paramètres personnalisés. Ce guide utilise le format YAML (`beet.yml`) pour les exemples, mais toutes les options fonctionnent également avec JSON ou pyproject.toml.
 
 **Le fichier de configuration est lu au début de chaque build et détermine comment l'ensemble de votre projet est traité.**
 
-## 🎯 Objectifs
-- 🏷️ Définir l'identité du projet (nom, version, auteur)
-- 📂 Configurer la structure des dossiers et la sortie du build
-- 🔌 Gérer les dépendances et les plugins requis
-- 📦 Configurer le chargement du datapack et du resource pack
-- ⚙️ Contrôler le pipeline d'exécution des plugins
-- 🎨 Personnaliser les fonctionnalités spécifiques à StewBeet
-- 📚 Configurer la génération du manuel en jeu
-- 🔄 Configurer la copie automatique des fichiers pour les tests
+**Fichier d'exemple**: [extensive/beet.yml](https://github.com/Stoupy51/StewBeet/blob/main/templates/extensive/beet.yml) <br>  
+**Exemple réel**: [SimplEnergy/beet.yml](https://github.com/Stoupy51/SimplEnergy/blob/main/beet.yml) <br>  
+**Exemple réel**: [LifeSteal/beet.yml](https://github.com/Stoupy51/LifeSteal/blob/main/beet.yml) <br>
 
-## 📚 Table des Matières
+- Définir l'identité du projet (nom, version, auteur)
+- Configurer la structure des dossiers et la sortie du build
+- Gérer les dépendances et les plugins requis
+- Configurer le chargement du datapack et du resource pack
+- Contrôler le pipeline d'exécution des plugins
+- Personnaliser les fonctionnalités spécifiques à StewBeet
+- Configurer la génération du manuel en jeu
+- Configurer la copie automatique des fichiers pour les tests
+
+## Formats de Fichier de Configuration
+- **Formats supportés**: `beet.yml`, `beet.yaml`, `beet.json`, ou `pyproject.toml`
+- **📍 Emplacement**: Racine du projet
+- **🔄 Intégration**: Contrôle l'ensemble du processus de build et du pipeline de plugins
+
+## Table des Matières
 
 - [🎨 Configuration de Base du Projet](#-configuration-de-base-du-projet)
 - [📂 Paramètres des Répertoires](#-paramètres-des-répertoires)
@@ -45,9 +36,9 @@ Le fichier de configuration est le cœur de votre projet StewBeet. Il définit t
   - [⚙️ Paramètres StewBeet](#-paramètres-stewbeet)
 ---
 
-## 🎨 Configuration de Base du Projet
+## Configuration de Base du Projet
 
-### 🆔 Identifiant du Projet
+### Identifiant du Projet
 Définit la racine de namespace utilisée dans les fonctions, tags et clés de stockage générés.
 
 ```yaml
@@ -55,7 +46,7 @@ id: "_votre_namespace"
 ```
 Utilisé pour les espaces de noms des fonctions, tags et stockage. Doit être en minuscules avec uniquement des underscores.
 
-### 📛 Nom du Projet
+### Nom du Projet
 Définit le nom lisible par les joueurs, affiché dans les métadonnées et les textes générés.
 
 ```yaml
@@ -63,7 +54,7 @@ name: "Extensive Template"
 ```
 Affiché dans pack.mcmeta, lore des items et messages en jeu.
 
-### 👤 Auteur
+### Auteur
 Définit un ou plusieurs auteurs pour l'attribution et les conventions liées au projet.
 
 ```yaml
@@ -73,7 +64,7 @@ author: "Joueur1, Joueur2, Joueur3"  # Plusieurs auteurs
 Affiché dans pack.mcmeta. Supporte plusieurs noms séparés par `", "`.<br>
 **🎁 Fonctionnalité spéciale**: Les joueurs avec des noms en jeu correspondants reçoivent automatiquement le tag `convention.debug` pour les outils de développement.
 
-### 🔢 Version
+### Version
 Définit la version de release utilisée pour le suivi et les vérifications de compatibilité.
 
 ```yaml
@@ -81,7 +72,7 @@ version: "3.0.0"
 ```
 Versionnement sémantique (`majeur.mineur.correctif`) utilisé pour la validation des dépendances et les chemins de fonctions versionnés.
 
-### 🎮 Version Minecraft
+### Version Minecraft
 Définit la version principale ciblée pour la compatibilité des commandes et formats de données.
 
 ```yaml
@@ -91,9 +82,9 @@ Détermine les commandes et ressources disponibles. Omettre pour utiliser la der
 
 ---
 
-## 📂 Paramètres des Répertoires
+## Paramètres des Répertoires
 
-### 📁 Répertoire de Base & Sortie
+### Répertoire de Base & Sortie
 Définit la résolution des chemins relatifs et l'emplacement d'écriture des packs générés.
 
 ```yaml
@@ -102,7 +93,7 @@ output: "build"
 ```
 Répertoire de base pour les chemins relatifs. Output définit où les packs générés sont sauvegardés.
 
-### 🚫 Patterns Ignorés
+### Patterns Ignorés
 Définit les fichiers/dossiers ignorés par la surveillance pour éviter les boucles de rebuild.
 
 ```yaml
@@ -112,7 +103,7 @@ Fichiers/patterns ignorés par `beet watch` pour éviter les boucles de rebuild 
 
 ---
 
-## 🔌 Dépendances
+## Dépendances
 
 ```yaml
 require:
@@ -129,9 +120,9 @@ Dépendances courantes:
 
 ---
 
-## 📦 Configuration des Packs
+## Configuration des Packs
 
-### 📊 Data Pack
+### Data Pack
 Définit les règles de chargement des sources de datapack sous `src/data/...`.
 
 ```yaml
@@ -141,7 +132,7 @@ data_pack:
 ```
 Charge les fichiers `.mcfunction` et JSON depuis `src/data/votre_namespace/` dans le datapack.
 
-### 🎨 Resource Pack
+### Resource Pack
 Définit les règles de chargement des assets client sous `src/assets/...`.
 
 ```yaml
@@ -153,7 +144,7 @@ Charge les assets depuis `src/assets/` dans le resource pack.
 
 ---
 
-## ⚡ Pipeline
+## Pipeline
 
 Le pipeline définit l'ordre des plugins exécutés après le chargement des packs. Chaque plugin traite votre projet en séquence:
 
@@ -188,7 +179,7 @@ pipeline:
     - "stewbeet.plugins.compute_sha1"                      # #️⃣ Calcule les hashs de fichiers
 ```
 
-### 📋 Étapes du Pipeline Expliquées
+### Étapes du Pipeline Expliquées
 
 **🎨 Phase 1: Setup** - Définir les items, blocs, recettes pour les plugins StewBeet
 ```yaml
@@ -240,7 +231,7 @@ pipeline:
 - "stewbeet.plugins.copy_to_destination"
 ```
 
-### 💡 Conseils Pipeline
+### Conseils Pipeline
 
 **✅ À FAIRE:**
 - Garder l'ordre recommandé
@@ -252,9 +243,9 @@ pipeline:
 
 ---
 
-## 🎛️ Méta Configuration
+## Méta Configuration
 
-### 🎮 Support Minecraft
+### Support Minecraft
 Déclare les versions supportées pour les métadonnées de distribution et le signalement de compatibilité.
 
 ```yaml
@@ -263,7 +254,7 @@ mc_supports: ["1.21.11", "26.1-snapshot-1", "infinite"]
 Déclare la compatibilité de version pour les uploads de plateformes (Modrinth, Smithed). Utiliser `"infinite"` pour la compatibilité future.<br>
 (Influence les formats supportés dans `pack.mcmeta`)
 
-### 🗄️ Model Resolver
+### Model Resolver
 Configure le cache des modèles afin d'accélérer les rebuilds.
 
 ```yaml
@@ -272,7 +263,7 @@ model_resolver:
 ```
 Met en cache les modèles d'items résolus (80-90% plus rapide). Stocké dans `.beet_cache/model_resolver/`.
 
-### 🔧 Mecha
+### Mecha
 Configure l'analyse et le formatage des commandes pendant la compilation.
 
 ```yaml
@@ -292,9 +283,9 @@ execute
 
 ---
 
-### ⚙️ Paramètres StewBeet
+### Paramètres StewBeet
 
-#### 📁 Chemins des Répertoires
+#### Chemins des Répertoires
 Définit les dossiers sources StewBeet pour les textures, sons, disques et bibliothèques.
 
 ```yaml
@@ -305,7 +296,7 @@ stewbeet:
     libs_folder: "libs"
 ```
 
-#### 🚀 Destinations de Copie du Build
+#### Destinations de Copie du Build
 Définit les cibles de synchronisation post-build pour les sorties datapack et resource pack.
 
 ```yaml
@@ -315,7 +306,7 @@ build_copy_destinations:
 ```
 Copie automatiquement les packs après le build. Parfait avec `beet watch` pour les tests en direct.
 
-#### 🏷️ Lore d'Item Personnalisé
+#### Lore d'Item Personnalisé
 Définit le marquage de lore par défaut appliqué aux items personnalisés générés.
 
 ```yaml
@@ -331,7 +322,7 @@ votre `pack.png`, n'importe quelle couleur Pillow la force (`"#55FFFF"`, `"gold"
 `assets/tooltip.png` à côté du `pack.png` remplace entièrement l'atlas de caractères (et il n'est
 jamais recoloré).
 
-#### 📦 Dépendances de Chargement
+#### Dépendances de Chargement
 Définit les contrôles de dépendances à l'exécution pour signaler les datapacks manquants ou obsolètes.
 
 ```yaml
@@ -347,7 +338,7 @@ load_dependencies:
 
 ---
 
-#### 📚 Configuration du Manuel en Jeu
+#### Configuration du Manuel en Jeu
 
 Définit le rendu, le cache, la mise en page et le mode d'interaction du manuel généré.
 
@@ -405,7 +396,7 @@ first_page_text: [{"text":"Le manuel suivant vous guidera à travers les recette
 
 ---
 
-## 💡 Conseils et Bonnes Pratiques
+## Conseils et Bonnes Pratiques
 
 1. 🆔 **Namespace unique** - Utilisez un `id` unique pour éviter les conflits
 2. 🔢 **Versionnement sémantique** - Suivez le format `majeur.mineur.correctif`
@@ -416,7 +407,7 @@ first_page_text: [{"text":"Le manuel suivant vous guidera à travers les recette
 
 ---
 
-## 📝 Exemple: Configuration Minimale
+## Exemple: Configuration Minimale
 
 ```yaml
 # Chemin du dossier de sortie de beet
@@ -440,3 +431,16 @@ pipeline:
 
 **Besoin d'aide?** Rejoignez la [communauté Discord](https://discord.gg/anxzu6rA9F)!
 
+## Glossaire
+
+| Terme | Signification |
+|-------|---------------|
+| **Fichier de configuration Beet** | : Fichier principal du projet (`beet.yml`, `beet.yaml`, `beet.json` ou `pyproject.toml`) lu au démarrage du build. |
+| **Pipeline** | : Liste ordonnée de plugins exécutés par beet pour transformer et générer le contenu du projet. |
+| **Section meta** | : Conteneur de paramètres personnalisés (`meta`) utilisé par StewBeet et les autres outils. |
+
+## Prochaines étapes
+
+- [Tous les plugins](../plugins/README.md) — ce que fait chaque étape du pipeline.
+- [Bibliothèques de datapack](../5_dependencies/fr.md) — déclarer et télécharger les dépendances.
+- [Publier automatiquement](../6_continuous_delivery/fr.md) — publier le pack que le pipeline construit.

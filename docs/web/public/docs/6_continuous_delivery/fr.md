@@ -1,32 +1,19 @@
+# Publier automatiquement
 
-# 🚀 Livraison Continue avec StewBeet
-
-## 📖 Définitions
-- **`load_credentials`** : Lit `~/stewbeet/credentials.yml` (ou un chemin personnalisé) et retourne un dictionnaire de clés API et secrets utilisés par les fonctions d'upload.
-- **`get_project_config`** : Lit le `beet.yml` du répertoire courant et retourne un objet `ProjectConfig` avec les champs `name`, `version`, `id`, `output` et `directory`.
-- **Changelog** : Une chaîne Markdown générée automatiquement à partir des commits Git depuis le dernier tag. Retournée par `upload_to_github` et transmise aux autres fonctions d'upload.
-- **`version_type`** : La maturité de la release pour Modrinth — `"release"`, `"beta"`, ou `"alpha"`.
-- **`package_as_mod`** : Mode d'empaquetage Modrinth optionnel qui encapsule votre datapack en jar de mod Fabric/Forge/NeoForge/Quilt en plus de l'upload normal.
-
-## 🧪 Exemples
-📄 **Exemple réel** : [SimplEnergy/upload.py](https://github.com/Stoupy51/SimplEnergy/blob/main/upload.py) 🔗<br>
-📄 **Code source** : [stewbeet/continuous_delivery/](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/continuous_delivery/) 🔗<br>
-
-## 📋 Vue d'ensemble
 StewBeet fournit un patron de script `upload.py` unique qui gère la publication d'une nouvelle release sur toutes les grandes plateformes de distribution en une seule commande.<br>
 Vous appelez les fonctions d'upload de chaque plateforme en séquence — GitHub en premier (il génère le changelog), puis Modrinth, Smithed et PlanetMinecraft avec ce changelog.<br>
 Les identifiants sont stockés **en dehors** du projet dans `~/stewbeet/credentials.yml` pour ne jamais être accidentellement commités.
 
-## 🎯 Objectif
-- 🔑 Centraliser toutes les clés API dans un seul fichier hors du dépôt
-- 🐙 Créer une release GitHub taguée et y uploader les artefacts de build automatiquement
-- 📦 Publier sur Modrinth avec synchronisation de description et empaquetage mod optionnel
-- ⚙️ Enregistrer une nouvelle version sur Smithed en liant les artefacts GitHub
-- 🌍 Ouvrir la page d'édition PlanetMinecraft et copier le changelog BBCode dans le presse-papier
+**Exemple réel** : [SimplEnergy/upload.py](https://github.com/Stoupy51/SimplEnergy/blob/main/upload.py) <br>  
+**Code source** : [stewbeet/continuous_delivery/](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/continuous_delivery/) <br>
 
----
+- Centraliser toutes les clés API dans un seul fichier hors du dépôt
+- Créer une release GitHub taguée et y uploader les artefacts de build automatiquement
+- Publier sur Modrinth avec synchronisation de description et empaquetage mod optionnel
+- Enregistrer une nouvelle version sur Smithed en liant les artefacts GitHub
+- Ouvrir la page d'édition PlanetMinecraft et copier le changelog BBCode dans le presse-papier
 
-## 🔐 Configuration des Identifiants
+## Configuration des Identifiants
 
 Créez le fichier `~/stewbeet/credentials.yml` (soit `C:\Users\VotreNom\stewbeet\credentials.yml` sous Windows) :
 
@@ -49,7 +36,7 @@ sftp:
 
 ---
 
-## 🐙 GitHub
+## GitHub
 
 `upload_to_github` crée une release taguée sur GitHub, y upload tous les artefacts de build correspondants et retourne une **chaîne de changelog** générée depuis les commits depuis le tag précédent.
 
@@ -86,7 +73,7 @@ changelog: str = upload_to_github(credentials, github_config)
 
 ---
 
-## 📦 Modrinth
+## Modrinth
 
 `upload_to_modrinth` synchronise la description et le résumé du projet sur Modrinth, puis upload une nouvelle version avec les zips buildés.
 
@@ -135,7 +122,7 @@ upload_to_modrinth(credentials, modrinth_config, changelog)
 
 ---
 
-## ⚙️ Smithed
+## Smithed
 
 `upload_to_smithed` enregistre une nouvelle version sur Smithed. Il résout automatiquement les liens de téléchargement depuis la release GitHub créée à l'étape précédente.
 
@@ -171,7 +158,7 @@ upload_to_smithed(credentials, smithed_config, changelog)
 
 ---
 
-## 🌍 PlanetMinecraft
+## PlanetMinecraft
 
 `upload_to_pmc` n'a pas d'API — il ouvre la page d'édition du projet dans votre navigateur et copie le changelog converti en **BBCode** dans le presse-papier, prêt à coller.
 
@@ -198,7 +185,7 @@ upload_to_pmc(pmc_config, changelog)
 
 ---
 
-## 📋 Script Complet d'Exemple
+## Script Complet d'Exemple
 
 Un `upload.py` complet pour un projet typique (exemple de [SimplEnergy](https://github.com/Stoupy51/SimplEnergy/blob/main/upload.py)):
 
@@ -258,3 +245,18 @@ pmc_config: JsonDict = {
 upload_to_pmc(pmc_config, changelog)
 ```
 
+## Glossaire
+
+| Terme | Signification |
+|-------|---------------|
+| **`load_credentials`** | : Lit `~/stewbeet/credentials.yml` (ou un chemin personnalisé) et retourne un dictionnaire de clés API et secrets utilisés par les fonctions d'upload. |
+| **`get_project_config`** | : Lit le `beet.yml` du répertoire courant et retourne un objet `ProjectConfig` avec les champs `name`, `version`, `id`, `output` et `directory`. |
+| **Changelog** | : Une chaîne Markdown générée automatiquement à partir des commits Git depuis le dernier tag. Retournée par `upload_to_github` et transmise aux autres fonctions d'upload. |
+| **`version_type`** | : La maturité de la release pour Modrinth — `"release"`, `"beta"`, ou `"alpha"`. |
+| **`package_as_mod`** | : Mode d'empaquetage Modrinth optionnel qui encapsule votre datapack en jar de mod Fabric/Forge/NeoForge/Quilt en plus de l'upload normal. |
+
+## Prochaines étapes
+
+- [compute_sha1](../plugins/compute_sha1.md) — les hashes publiés avec les releases.
+- [Configurer le build](../3_beet_config/fr.md) — le build que la publication exécute.
+- [Bibliothèques de datapack](../5_dependencies/fr.md) — les vérifications de version au runtime.

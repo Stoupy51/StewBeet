@@ -1,9 +1,9 @@
+# Tutoriel : votre premier datapack
 
-# 🚀 Débuter avec StewBeet
 
 Bienvenue sur **StewBeet** ! 🎉 Ce guide complet vous accompagnera du statut de débutant complet à la création de votre premier datapack Minecraft utilisant le framework StewBeet. Que vous soyez nouveau dans le développement de datapacks ou que vous veniez des datapacks vanilla, ce guide contient tout ce dont vous avez besoin pour démarrer.
 
-## 📋 Ce que vous allez apprendre
+## Ce que vous allez apprendre
 
 À la fin de ce guide, vous serez capable de :
 - ✅ Installer et configurer StewBeet sur votre ordinateur
@@ -13,7 +13,7 @@ Bienvenue sur **StewBeet** ! 🎉 Ce guide complet vous accompagnera du statut d
 - 📝 Ajouter vos premiers objets et blocs personnalisés
 - 🎮 Charger votre datapack dans Minecraft
 
-## 🎯 Qu'est-ce que StewBeet ?
+## Qu'est-ce que StewBeet ?
 
 StewBeet est un puissant **framework d'automatisation** pour créer des datapacks Minecraft. Considérez-le comme un assistant intelligent qui :
 
@@ -25,23 +25,23 @@ StewBeet est un puissant **framework d'automatisation** pour créer des datapack
 
 Au lieu d'écrire des centaines de fichiers manuellement, vous définissez ce que vous voulez et StewBeet crée tout pour vous !
 
-## 🛠️ Prérequis
+## Prérequis
 
 Avant de commencer, assurez-vous d'avoir :
 
-### ✅ Logiciels requis
+### Logiciels requis
 - **Python 3.14** 🐍 - [Télécharger depuis python.org](https://www.python.org/downloads/)
 - **Éditeur de texte ou IDE** 📝 - Nous recommandons [VS Code](https://code.visualstudio.com/) avec le pack d'extensions Python et l'extension [StewBeet](https://marketplace.visualstudio.com/items?itemName=stoupy.stewbeet)
 - **Minecraft Java Edition** 🎮 - Pour tester vos datapacks
 
-### 🔍 Vérifiez votre installation Python
+### Vérifiez votre installation Python
 Ouvrez un terminal/invite de commande et exécutez :
 ```bash
 python --version
 ```
 Vous devriez voir quelque chose comme `Python 3.14.3` ou supérieur. Sinon, installez Python d'abord.
 
-## 📦 Étape 1 : Installer StewBeet
+## Étape 1 : Installer StewBeet
 
 Ouvrez votre terminal/invite de commande et exécutez :
 
@@ -51,18 +51,18 @@ pip install stewbeet
 
 Cela installe StewBeet avec toutes ses dépendances (beet, bolt, mecha, et plus). L'installation peut prendre quelques minutes.
 
-### ✅ Vérifier l'installation
+### Vérifier l'installation
 Vérifiez que StewBeet est correctement installé :
 ```bash
 stewbeet --version
 ```
 
-## 🎯 Étape 2 : Choisir votre template
+## Étape 2 : Choisir votre template
 
 StewBeet propose trois templates pour bien démarrer.<br>
 **Nous recommandons fortement le Template Basic** pour les débutants :
 
-### 📋 Comparaison des templates
+### Comparaison des templates
 
 | Template | Pour qui | Fonctionnalités | Complexité |
 |----------|----------|----------|------------|
@@ -70,7 +70,7 @@ StewBeet propose trois templates pour bien démarrer.<br>
 | **⭐ Basic** | **La plupart des utilisateurs** | Toutes les fonctionnalités StewBeet, configuration propre | ⭐⭐ Intermédiaire |
 | **🌟 Extensive** | Utilisateurs avancés | Toutes les fonctionnalités + exemples | ⭐⭐⭐ Avancé |
 
-### 🎯 Pourquoi choisir le Template Basic ?
+### Pourquoi choisir le Template Basic ?
 
 Le **Template Basic** est parfait car il :
 - ✅ Inclut **toutes les fonctionnalités StewBeet** mais avec une configuration propre et vide
@@ -78,9 +78,9 @@ Le **Template Basic** est parfait car il :
 - 🎯 Fournit une **base solide** sans exemples écrasants
 - 🔧 Est **facilement personnalisable** pour vos besoins spécifiques
 
-## 📁 Étape 3 : Créer votre projet
+## Étape 3 : Créer votre projet
 
-### 🎯 Initialiser un nouveau projet
+### Initialiser un nouveau projet
 
 1. **Créez** un nouveau dossier pour votre projet (par ex., `C:/MyDatapacks/AwesomeOres/`)
 2. **Ouvrez le dossier dans VS Code** :
@@ -116,11 +116,11 @@ AwesomeOres/
 └── 📄 definitions_debug.json    # Fichier de débogage des définitions
 ```
 
-## ⚙️ Étape 4 : Configurer votre projet
+## Étape 4 : Configurer votre projet
 
 Ouvrez `beet.yml` dans votre éditeur de texte. C'est votre fichier de configuration principal. Personnalisons-le :
 
-### 🎯 Paramètres de base du projet
+### Paramètres de base du projet
 
 Ce sont les champs de métadonnées minimum qui identifient votre pack et sont réutilisés dans les fichiers générés, l'archivage et l'affichage en jeu.
 
@@ -141,16 +141,16 @@ version: "1.0.0"
 description: "Mon premier datapack StewBeet avec des minerais personnalisés !"
 ```
 
-### 🎯 Notes importantes :
+### Notes importantes :
 - **ID** : Utilisez des minuscules, underscores uniquement, pas d'espaces (ex., `awesome_ores`)
 - **Name** : Peut avoir des espaces et caractères spéciaux (ex., `"Awesome Ores & Gems"`)
 - **Version** : Suivez le [versioning sémantique](https://semver.org/) (majeur.mineur.patch)
 
-## 🔨 Étape 5 : Compiler votre premier projet
+## Étape 5 : Compiler votre premier projet
 
 Testons que tout fonctionne :
 
-### ⚡ Ouvrez le terminal dans le dossier du projet et exécutez votre première compilation
+### Ouvrez le terminal dans le dossier du projet et exécutez votre première compilation
 
 🖥️ Ouvrez le terminal dans le dossier du projet et exécutez `stewbeet` ou `stewbeet build`
 
@@ -191,7 +191,7 @@ Generating lang file: 100%|█████████████████�
 Done!
 ```
 
-### 🎯 Vérifiez les résultats
+### Vérifiez les résultats
 
 Regardez dans votre dossier `build/`. Vous devriez voir :
 - 📁 `datapack/` - Votre datapack généré
@@ -202,11 +202,11 @@ Regardez dans votre dossier `build/`. Vous devriez voir :
 
 **Félicitations !** 🎉 Vous avez compilé avec succès votre premier projet StewBeet !
 
-## 🎮 Étape 6 : Tester dans Minecraft
+## Étape 6 : Tester dans Minecraft
 
-### 📦 Installer le datapack
+### Installer le datapack
 
-#### ⚡ Option 1 : Copie automatique (Recommandé)
+#### Option 1 : Copie automatique (Recommandé)
 
 Configurez StewBeet pour copier automatiquement les fichiers vers vos dossiers Minecraft en éditant `beet.yml` :
 
@@ -220,7 +220,7 @@ meta:
 
 Remplacez les chemins par vos vrais dossiers Minecraft. Maintenant quand vous exécutez `stewbeet`, les fichiers sont automatiquement copiés !
 
-#### 📋 Option 2 : Copie manuelle
+#### Option 2 : Copie manuelle
 
 1. **Ouvrez Minecraft** et créez un nouveau monde (ou ouvrez-en un existant)
 2. **Copiez** `build/AwesomeOres_datapack.zip` dans le dossier datapacks de votre monde :
@@ -230,23 +230,23 @@ Remplacez les chemins par vos vrais dossiers Minecraft. Maintenant quand vous ex
    - Windows : `%appdata%\.minecraft\resourcepacks\`
    - Mac : `~/Library/Application Support/minecraft/resourcepacks/`
 
-### 🔧 Activer dans le jeu
+### Activer dans le jeu
 
 1. **Dans Minecraft**, tapez `/reload` dans le chat
 2. Allez dans **Options** -> **Resource Packs** et activez votre resource pack
 3. Testez la fonctionnalité de base avec `/function awesome_ores:chemin/vers/une/fonction/au/hasard` (si vous n'avez pas supprimé la fonction d'exemple dans `src/data/awesome_ores/function/`)
 
-## 📝 Étape 7 : Ajouter votre premier objet personnalisé
+## Étape 7 : Ajouter votre premier objet personnalisé
 
 Ajoutons maintenant un objet personnalisé pour voir la puissance de StewBeet en action !
 
-### 🖼️ Ajouter une texture
+### Ajouter une texture
 
 1. Créez la structure de dossiers : `assets/textures/`
 2. Ajoutez un fichier de texture PNG 16x16, par exemple : [`ruby.png`](./ruby.png)
 3. Votre structure devrait être : `assets/textures/ruby.png`
 
-### 🎯 Définir l'objet
+### Définir l'objet
 
 Ouvrez `src/definitions/additions.py` et ajoutez la définition pour votre nouvel objet :
 
@@ -270,7 +270,7 @@ def main():
     pass
 ```
 
-### 🔨 Compiler et tester
+### Compiler et tester
 
 1. Exécutez `stewbeet` dans votre terminal et attendez qu'il termine (le premier rendu des modèles d'objets peut prendre un peu plus de temps)
 2. Rechargez votre monde avec `/reload`
@@ -282,11 +282,11 @@ def main():
 - ✅ Créé les components d'objet appropriés
 - ✅ Ajouté au manuel (si activé)
 
-## 🎯 Étape 8 : Ajouter votre premier bloc personnalisé
+## Étape 8 : Ajouter votre premier bloc personnalisé
 
 Créons un bloc personnalisé :
 
-### 🖼️ Ajouter les textures de bloc
+### Ajouter les textures de bloc
 
 Ajoutez ces textures à `assets/textures/` :
 - [`ruby_ore.png`](./ruby_ore.png) - La texture principale
@@ -295,7 +295,7 @@ Ajoutez ces textures à `assets/textures/` :
 - [`ruby_layer_1.png`](./ruby_layer_1.png) - Une texture de couche pour la couche supérieure (c'est ainsi que Minecraft gère les armures personnalisées)
 - [`ruby_layer_2.png`](./ruby_layer_2.png) - Une texture de couche pour la couche inférieure
 
-### 🎯 Configurer le bloc
+### Configurer le bloc
 
 Pour simplifier, nous utiliserons la section `ORES_CONFIGS` dans `src/definitions/ores.py` :
 
@@ -326,7 +326,7 @@ def main():
     return
 ```
 
-### 🔨 Compiler et tester
+### Compiler et tester
 
 1. Exécutez `stewbeet`, attendez qu'il termine
 2. Rechargez dans Minecraft
@@ -340,7 +340,7 @@ StewBeet a automatiquement :
 - ✅ Intégré avec la bibliothèque Smithed Custom Blocks
 - ✅ Ajouté le support de fortune et silk touch
 
-## 📖 Étape 9 : Consultez votre manuel en jeu
+## Étape 9 : Consultez votre manuel en jeu
 
 L'une des fonctionnalités les plus cool de StewBeet est la génération automatique de manuel.<br>
 D'abord, assurez-vous de redémarrer votre monde car le manuel en jeu nécessite un redémarrage du serveur (système de dialogues Minecraft), puis :
@@ -349,11 +349,11 @@ D'abord, assurez-vous de redémarrer votre monde car le manuel en jeu nécessite
 2. Ouvrez le livre pour voir votre **manuel généré automatiquement**
 3. Il inclut tous vos objets, recettes et informations de craft !
 
-## 🎯 Étape 10 : Comprendre la configuration
+## Étape 10 : Comprendre la configuration
 
 Explorons quelques options de configuration clés dans `beet.yml` :
 
-### 📁 Dossiers importants
+### Dossiers importants
 
 Ces chemins définissent où StewBeet lit les sources et où il copie les sorties générées pour les tests.
 
@@ -378,7 +378,7 @@ meta:
       resource_pack: ["C:/Users/VotreNom/AppData/Roaming/.minecraft/resourcepacks"]
 ```
 
-### 🔧 Pipeline des plugins
+### Pipeline des plugins
 
 La section `pipeline` contrôle ce que fait StewBeet :
 
@@ -419,13 +419,13 @@ pipeline:
     - "stewbeet.plugins.compute_sha1"                   # Calculer les hashes de fichiers
 ```
 
-## 🚀 Prochaines étapes
+## Prochaines étapes
 
 Félicitations ! Vous avez maintenant un projet StewBeet fonctionnel. Voici ce qu'il faut explorer ensuite :
 
 Pour des guides plus approfondis et des fonctionnalités avancées, consultez la **📖 [Documentation](https://stewbeet.paralya.fr/documentation)** avec des guides complets et des références.
 
-### 🎯 Essayez ces fonctionnalités
+### Essayez ces fonctionnalités
 
 1. **Ajoutez plus d'objets** avec différentes textures et propriétés
 2. **Créez des sets d'armure** en utilisant la configuration d'équipement
@@ -433,7 +433,7 @@ Pour des guides plus approfondis et des fonctionnalités avancées, consultez la
 4. **Configurez la copie automatique** vers vos dossiers Minecraft
 5. **Explorez le template extensive** pour des exemples avancés
 
-### 🌟 Configuration avancée
+### Configuration avancée
 
 Une fois à l'aise, explorez ces fonctionnalités puissantes :
 
@@ -443,7 +443,7 @@ Une fois à l'aise, explorez ces fonctionnalités puissantes :
 - **📝 Génération de fonctions** avec en-têtes appropriés
 - **🌐 Internationalisation** avec fichiers de langue automatiques
 
-## 🤝 Obtenir de l'aide
+## Obtenir de l'aide
 
 Besoin d'assistance ? Voici vos meilleures ressources :
 
@@ -451,7 +451,7 @@ Besoin d'assistance ? Voici vos meilleures ressources :
 - **💬 [Serveur Discord](https://discord.gg/anxzu6rA9F)** - Support communautaire actif
 - **🐛 [GitHub Issues](https://github.com/Stoupy51/StewBeet/issues)** - Rapports de bugs et demandes de fonctionnalités
 
-## 🎉 Conclusion
+## Conclusion
 
 Vous avez réussi à :
 - ✅ Installer StewBeet
