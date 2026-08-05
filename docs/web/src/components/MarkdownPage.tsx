@@ -254,7 +254,12 @@ export const MarkdownPage: React.FC = () => {
                     throw new Error('Invalid source URL');
                 }
 
-                const response = await fetch(bundledUrl ?? rawUrl, { signal: controller.signal });
+                let response = await fetch(bundledUrl ?? rawUrl, { signal: controller.signal });
+
+                // A page that has not been translated yet should read in English, not 404.
+                if (!response.ok && bundledUrl?.endsWith('/fr.md')) {
+                    response = await fetch(bundledUrl.replace(/\/fr\.md$/, '/en.md'), { signal: controller.signal });
+                }
 
                 if (!response.ok) {
                     throw new Error(`Failed to fetch plugin documentation (${response.status})`);

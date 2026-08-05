@@ -41,16 +41,6 @@ build/
 32 files, from the six you can see in `src/`. Load the world, run `/reload`, and
 `/function basic_template:_give_all` puts everything the pack defines in front of you.
 
-## If step 2 fails with a UnicodeEncodeError
-
-On Windows, `cmd.exe` and PowerShell default to the cp1252 code page, which cannot print the
-emoji in the template list. Set the encoding for the session and run it again:
-
-```bash
-set PYTHONIOENCODING=utf-8
-stewbeet init
-```
-
 ## Next steps
 
 - [Tutorial: build your first datapack](../0_getting_started/en.md) — the same ground at

@@ -120,6 +120,22 @@ function collectGuides(lang: 'en' | 'fr'): Entry[] {
         }
         const markdown = readFileSync(path, 'utf-8');
         entries.push(...sectionize(markdown, { t: 'doc', p: `${item.name}/${lang}.md`, d: item.name }));
+
+        // Guides split by mode keep their parts in subdirectories, one file per language.
+        for (const child of readdirSync(join(docsDir, item.name), { withFileTypes: true })) {
+            if (!child.isDirectory()) continue;
+            const nested = join(docsDir, item.name, child.name, `${lang}.md`);
+            try {
+                statSync(nested);
+            } catch {
+                continue;
+            }
+            entries.push(...sectionize(readFileSync(nested, 'utf-8'), {
+                t: 'doc',
+                p: `${item.name}/${child.name}/${lang}.md`,
+                d: `${item.name}/${child.name}`,
+            }));
+        }
     }
     return entries;
 }
