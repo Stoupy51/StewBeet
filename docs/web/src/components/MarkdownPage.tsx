@@ -213,7 +213,6 @@ export const MarkdownPage: React.FC = () => {
         const headingRegex = /^(#{1,6})\s+(.+)$/gm;
         const matches: Heading[] = [];
         let match;
-        const pluginName = src ? src.replace('.md', '') : 'Plugin';
         
         while ((match = headingRegex.exec(contentWithoutCodeBlocks)) !== null) {
             const level = match[1].length;
@@ -228,19 +227,14 @@ export const MarkdownPage: React.FC = () => {
             // Remove markdown bold markers
             text = text.replace(/\*\*/g, '');
 
-            // Replace first heading (plugin name) with shorter version but keep emoji
-            if (matches.length === 0 && level === 1) {
-                // Extract emoji from the beginning (if exists)
-                const emojiMatch = text.match(/^(\p{Emoji_Presentation}|\p{Extended_Pictographic})\s*/u);
-                const emoji = emojiMatch ? emojiMatch[0] : '';
-                text = emoji + pluginName;
-            }
+            // The document's own H1 is the label; it used to be swapped for the src path,
+            // which showed the reader `5_dependencies/en` instead of the page title.
 
             matches.push({ id, text, level });
         }
         
         return matches;
-    }, [content, src]);
+    }, [content]);
 
     useEffect(() => {
         if (!src) {
@@ -325,21 +319,18 @@ export const MarkdownPage: React.FC = () => {
 
     // Set page title
     useEffect(() => {
-        let pluginName = 'Plugin';
-        
-        if (src) {
-            if (hasValidSrc) {
-                pluginName = src.replace('.md', '');
-            }
-        }
-        
-        document.title = `${pluginName} | StewBeet`;
+        // The document's own H1, falling back to the source path only if it has none —
+        // a browser tab reading `5_dependencies/en` tells the reader nothing.
+        const heading = content.match(/^#\s+(.+)$/m)?.[1].replace(/[*`]/g, '').trim();
+        const label = heading || (src && hasValidSrc ? src.replace('.md', '') : 'Documentation');
+
+        document.title = `${label} | StewBeet`;
         
         // Reset title when component unmounts
         return () => {
             document.title = 'StewBeet';
         };
-    }, [src, hasValidSrc]);
+    }, [src, hasValidSrc, content]);
 
     return (
         <div className={`min-h-screen bg-slate-950 text-slate-100 ${SELECTION_BRAND}`}>
