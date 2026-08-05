@@ -46,6 +46,12 @@ export const DocumentationPage: React.FC = () => {
             description: t('documentation.groupStartDesc'),
             items: [
                 {
+                    title: t('documentation.quickstart'),
+                    description: t('documentation.quickstartDesc'),
+                    pathEn: 'quickstart/en.md',
+                    pathFr: 'quickstart/en.md',
+                },
+                {
                     title: t('documentation.gettingStarted'),
                     description: t('documentation.gettingStartedDesc'),
                     pathEn: '0_getting_started/en.md',
