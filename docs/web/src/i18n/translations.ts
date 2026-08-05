@@ -227,6 +227,8 @@ export const translations = {
         documentation: {
             title: 'Documentation',
             subtitle: 'Learn how to use StewBeet',
+            quickstart: 'Quickstart',
+            quickstartDesc: 'Three commands, from nothing to a loadable datapack. Verified end to end.',
             gettingStarted: 'Tutorial: build your first datapack',
             groupStart: 'Start here',
             groupStartDesc: 'Install the framework and build a working pack end to end.',
@@ -550,6 +552,8 @@ export const translations = {
         documentation: {
             title: 'Documentation',
             subtitle: 'Apprenez à utiliser StewBeet',
+            quickstart: 'Démarrage rapide',
+            quickstartDesc: 'Trois commandes, de rien à un datapack chargeable.',
             gettingStarted: 'Tutoriel : votre premier datapack',
             groupStart: 'Commencer ici',
             groupStartDesc: 'Installez le framework et construisez un pack complet de bout en bout.',
