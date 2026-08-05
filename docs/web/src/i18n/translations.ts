@@ -227,6 +227,10 @@ export const translations = {
         documentation: {
             title: 'Documentation',
             subtitle: 'Learn how to use StewBeet',
+            cookbook: 'Cookbook',
+            cookbookDesc: 'Complete, working files you can read top to bottom.',
+            helperReference: 'Helper function reference',
+            helperReferenceDesc: 'Every helper StewBeet adds for writing files, and what each one takes.',
             quickstart: 'Quickstart',
             quickstartDesc: 'Three commands, from nothing to a loadable datapack. Verified end to end.',
             gettingStarted: 'Tutorial: build your first datapack',
@@ -552,6 +556,10 @@ export const translations = {
         documentation: {
             title: 'Documentation',
             subtitle: 'Apprenez à utiliser StewBeet',
+            cookbook: 'Recettes',
+            cookbookDesc: 'Des fichiers complets et fonctionnels, à lire de bout en bout.',
+            helperReference: 'Référence des fonctions utilitaires',
+            helperReferenceDesc: 'Chaque helper que StewBeet ajoute pour écrire des fichiers, et ses arguments.',
             quickstart: 'Démarrage rapide',
             quickstartDesc: 'Trois commandes, de rien à un datapack chargeable.',
             gettingStarted: 'Tutoriel : votre premier datapack',
