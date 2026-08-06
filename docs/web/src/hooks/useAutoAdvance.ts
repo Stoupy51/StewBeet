@@ -44,9 +44,11 @@ export interface AutoAdvanceOptions {
     durationFor: (index: number) => number;
     /** Stop rotating once the visitor picks a panel, rather than resuming from it. */
     stopOnSelect?: boolean;
+    /** Hold at the first panel until this is true, so the rotation starts when it is watched. */
+    enabled?: boolean;
 }
 
-export function useAutoAdvance({ count, durationFor, stopOnSelect = false }: AutoAdvanceOptions): AutoAdvance {
+export function useAutoAdvance({ count, durationFor, stopOnSelect = false, enabled = true }: AutoAdvanceOptions): AutoAdvance {
     const [index, setIndex] = useState(0);
     const [progress, setProgress] = useState(0);
     const [visited, setVisited] = useState<ReadonlySet<number>>(() => new Set([0]));
@@ -56,7 +58,7 @@ export function useAutoAdvance({ count, durationFor, stopOnSelect = false }: Aut
     const heldRef = useRef(false);
 
     const total = durationFor(index);
-    const running = hydrated && !prefersReducedMotion && !stopped;
+    const running = hydrated && enabled && !prefersReducedMotion && !stopped;
 
     useEffect(() => {
         if (!running) return;

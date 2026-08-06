@@ -85,7 +85,7 @@ export const translations = {
         // Why StewBeet exists
         why: {
             title: 'Why this exists',
-            intro: 'One custom block, written by hand, is eight files across two packs in four formats. Miss one and nothing errors. The block just quietly never drops.',
+            intro: 'One custom block, written by hand, is at least eight files across two packs in four formats. Miss one and nothing errors. The block just quietly never drops.',
             byHandTitle: 'By hand',
             byHandUnit: 'files to keep in sync',
             withTitle: 'With StewBeet',
@@ -414,7 +414,7 @@ export const translations = {
         // Why StewBeet exists
         why: {
             title: 'Pourquoi ça existe',
-            intro: 'Un seul bloc personnalisé, écrit à la main, c\'est huit fichiers dans deux packs et quatre formats. Oubliez-en un et rien ne plante. Le bloc ne drop simplement jamais.',
+            intro: 'Un seul bloc personnalisé, écrit à la main, c\'est au moins huit fichiers dans deux packs et quatre formats. Oubliez-en un et rien ne plante. Le bloc ne drop simplement jamais.',
             byHandTitle: 'À la main',
             byHandUnit: 'fichiers à garder synchronisés',
             withTitle: 'Avec StewBeet',

@@ -1,5 +1,5 @@
-import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { motion, useInView } from 'framer-motion';
+import { useRef, useState } from 'react';
 import { HiClipboard, HiCheck } from 'react-icons/hi';
 // Feature marks name the thing they stand for: an anvil for recipes, a chest for loot
 // instead of the interchangeable cube/sparkle/bolt set every framework site draws from.
@@ -288,15 +288,21 @@ export const Features: React.FC = () => {
     const features = getFeatures(t);
     // The panels rotate on their own: a reader who does not notice the labels are buttons
     // still sees all six. Picking one hands control over and the rotation stops for good.
+    // Half the section has to be on screen before the panels start turning, otherwise the
+    // first two have already gone by the time the reader scrolls down to them.
+    const section = useRef<HTMLElement>(null);
+    const watched = useInView(section, { amount: 0.5 });
+
     const { index, progress, select, holdProps, visited } = useAutoAdvance({
         count: features.length,
         durationFor: () => PANEL_MS,
         stopOnSelect: true,
+        enabled: watched,
     });
     const activeFeature = features[index];
 
     return (
-        <section id="features" className="py-20 px-4 relative overflow-hidden bg-gradient-to-b from-slate-900 via-[#0a0a0a] to-[#0a0a0a]">
+        <section ref={section} id="features" className="py-20 px-4 relative overflow-hidden bg-gradient-to-b from-slate-900 via-[#0a0a0a] to-[#0a0a0a]">
             <div className="max-w-6xl mx-auto relative z-10">
                 <div className="text-center mb-12">
                     <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">

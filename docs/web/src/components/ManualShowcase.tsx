@@ -62,7 +62,7 @@ export const ManualShowcase: React.FC = () => {
                         viewport: { once: true },
                         transition: { duration: 0.6, delay: 0.1 },
                     })}
-                    className="relative mx-auto w-full max-w-sm"
+                    className="relative mx-auto w-full max-w-md lg:max-w-none"
                 >
                     {/* A looping autoplay video is motion the visitor did not ask for. Controls
                         are always present: an autoplaying video the viewer cannot stop is the
