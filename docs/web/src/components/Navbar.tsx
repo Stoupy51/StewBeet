@@ -5,7 +5,6 @@ import { HiMenu, HiSearch, HiX } from 'react-icons/hi';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
 import type { Language } from '../context/LanguageContext';
-import { useTranslation } from '../i18n/useTranslation';
 import { loadIndex } from '../utils/search';
 import { LOGO_TEXT, BTN_PRIMARY, NAV_SHADOW, LIST_SELECTED } from '../theme';
 
@@ -18,7 +17,6 @@ export const Navbar = memo(() => {
     const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const { language, setLanguage } = useLanguage();
-    const { t } = useTranslation();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -81,12 +79,12 @@ export const Navbar = memo(() => {
         setIsMobileMenuOpen(false);
     };
 
-    // The plugins table lives on /documentation, every other section on the landing page
-    const navItems = [
-        { label: t('nav.features'), id: 'features', homePath: '/' },
-        { label: t('nav.installation'), id: 'installation', homePath: '/' },
-        { label: t('nav.templates'), id: 'templates', homePath: '/' },
-        { label: t('nav.plugins'), id: 'plugins', homePath: '/documentation' },
+    // Scrolling the page one moment and leaving it the next looked identical, so the two
+    // kinds of destination sit in separate groups with a rule between them.
+    const pageSections = [
+        { label: 'Features', id: 'features', homePath: '/' },
+        { label: 'Installation', id: 'installation', homePath: '/' },
+        { label: 'Templates', id: 'templates', homePath: '/' },
     ];
 
     const handleDocumentationClick = (e: React.MouseEvent) => {
@@ -152,8 +150,8 @@ export const Navbar = memo(() => {
                     </motion.a>
 
                     {/* Desktop Navigation */}
-                    <div className="hidden md:flex items-center gap-4">
-                        {navItems.map((item) => (
+                    <div className="hidden md:flex items-center gap-3">
+                        {pageSections.map((item) => (
                             <button
                                 key={item.id}
                                 onClick={() => scrollToSection(item.id, item.homePath)}
@@ -162,66 +160,69 @@ export const Navbar = memo(() => {
                                 {item.label}
                             </button>
                         ))}
-                        
-                        <motion.button
-                            onClick={openSearch}
-                            onMouseEnter={prefetchSearch}
-                            onFocus={prefetchSearch}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="flex items-center gap-2 pl-3 pr-2 py-2 bg-slate-800/50 hover:bg-slate-700/50 rounded-lg text-slate-300 hover:text-white text-sm font-medium transition-all border border-white/10"
-                        >
-                            <HiSearch className="text-lg" />
-                            <span>{t('search.button')}</span>
-                            <kbd className="hidden lg:inline px-1.5 py-0.5 rounded bg-white/10 text-[10px] text-slate-400 border border-white/10">Ctrl K</kbd>
-                        </motion.button>
 
-                        <motion.a
-                            href="/documentation"
-                            onClick={handleDocumentationClick}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="px-4 py-2 bg-mc-emerald hover:bg-mc-diamond rounded-panel text-slate-950 text-sm font-semibold transition-colors"
-                        >
-                            {t('nav.documentation')}
-                        </motion.a>
+                        <span className="w-px h-5 bg-white/15" aria-hidden="true" />
 
-                        <motion.a
+                        <button
+                            onClick={() => scrollToSection('plugins', '/documentation')}
+                            className="text-slate-300 hover:text-white transition-colors duration-200 text-sm font-medium"
+                        >
+                            Plugins
+                        </button>
+                        <a
                             href="/tools"
                             onClick={handleToolsClick}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="px-4 py-2 rounded-panel text-slate-300 hover:text-white text-sm font-medium transition-colors"
+                            className="text-slate-300 hover:text-white transition-colors duration-200 text-sm font-medium"
                         >
-                            {t('nav.tools')}
-                        </motion.a>
+                            Tools
+                        </a>
 
-                        <motion.a
+                        <span className="w-px h-5 bg-white/15" aria-hidden="true" />
+
+                        <a
                             href="https://discord.gg/anxzu6rA9F"
                             target="_blank"
                             rel="noopener noreferrer"
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
                             aria-label="Discord"
                             className="flex items-center justify-center w-9 h-9 rounded-panel text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
                         >
                             <span className="w-5 h-5 flex items-center">
                                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" /></svg>
                             </span>
-                        </motion.a>
-                        <motion.a
+                        </a>
+                        <a
                             href="https://github.com/Stoupy51/StewBeet"
                             target="_blank"
                             rel="noopener noreferrer"
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
                             aria-label="GitHub"
                             className="flex items-center justify-center w-9 h-9 rounded-panel text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
                         >
                             <span className="w-5 h-5 flex items-center">
                                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" /></svg>
                             </span>
-                        </motion.a>
+                        </a>
+
+                        <span className="w-px h-5 bg-white/15" aria-hidden="true" />
+
+                        <button
+                            onClick={openSearch}
+                            onMouseEnter={prefetchSearch}
+                            onFocus={prefetchSearch}
+                            className="flex items-center gap-2 pl-3 pr-2 py-2 bg-slate-800/50 hover:bg-slate-700/50 rounded-lg text-slate-300 hover:text-white text-sm font-medium transition-colors border border-white/10"
+                        >
+                            <HiSearch className="text-lg" />
+                            <span>Search</span>
+                            <kbd className="hidden lg:inline px-1.5 py-0.5 rounded bg-white/10 text-[10px] text-slate-400 border border-white/10">Ctrl K</kbd>
+                        </button>
+                        <a
+                            href="/documentation"
+                            onClick={handleDocumentationClick}
+                            className="px-4 py-2 bg-mc-emerald hover:bg-mc-diamond rounded-panel text-slate-950 text-sm font-semibold transition-colors"
+                        >
+                            Documentation
+                        </a>
+
+                        <span className="w-px h-5 bg-white/15" aria-hidden="true" />
 
                         {/* Language Selector - Desktop */}
                         <div className="relative">
@@ -274,7 +275,7 @@ export const Navbar = memo(() => {
                     <div className="md:hidden flex items-center gap-3">
                         <button
                             onClick={openSearch}
-                            aria-label={t('search.button')}
+                            aria-label="Search"
                             className="text-slate-300 hover:text-white transition-colors"
                         >
                             <HiSearch className="text-2xl" />
@@ -304,9 +305,9 @@ export const Navbar = memo(() => {
                                 className="flex items-center justify-center gap-2 w-full px-4 py-2 bg-slate-800/50 hover:bg-slate-700/50 rounded-lg text-slate-300 hover:text-white font-medium transition-all border border-white/10"
                             >
                                 <HiSearch className="text-lg" />
-                                {t('search.button')}
+                                Search
                             </button>
-                            {navItems.map((item) => (
+                            {pageSections.map((item) => (
                                 <button
                                     key={item.id}
                                     onClick={() => scrollToSection(item.id, item.homePath)}
@@ -320,14 +321,14 @@ export const Navbar = memo(() => {
                                 onClick={handleDocumentationClick}
                                 className={`block w-full text-center px-4 py-2 ${BTN_PRIMARY} rounded-lg text-white font-semibold`}
                             >
-                                {t('nav.documentation')}
+                                Documentation
                             </a>
                             <a
                                 href="/tools"
                                 onClick={handleToolsClick}
                                 className={`block w-full text-center px-4 py-2 ${BTN_PRIMARY} rounded-lg text-white font-semibold`}
                             >
-                                {t('nav.tools')}
+                                Tools
                             </a>
                             <a
                                 href="https://discord.gg/anxzu6rA9F"
@@ -354,7 +355,7 @@ export const Navbar = memo(() => {
 
                             {/* Language Selector - Mobile */}
                             <div className="pt-2 border-t border-white/10">
-                                <div className="text-xs text-slate-400 mb-2 px-4 font-medium">{t('nav.language')}</div>
+                                <div className="text-xs text-slate-400 mb-2 px-4 font-medium">Language</div>
                                 <div className="space-y-1">
                                     {(Object.entries(languageOptions) as [Language, typeof languageOptions.en][]).map(([lang, option]) => (
                                         <button
