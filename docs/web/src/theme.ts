@@ -126,6 +126,9 @@ export const PROSE_BRAND = [
     'prose-h2:text-slate-100',
     'prose-a:text-mc-emerald hover:prose-a:text-mc-diamond',
     'prose-code:text-mc-diamond',
+    // prose-code wins over prose-a, so `[`ruby.png`](url)` rendered as ordinary code
+    '[&_a_code]:text-mc-emerald [&_a_code]:underline [&_a_code]:underline-offset-2',
+    'hover:[&_a_code]:text-mc-diamond',
     'prose-li:marker:text-mc-emerald',
     'prose-blockquote:border-l-mc-emerald prose-blockquote:bg-mc-emerald/5',
 ].join(' ');

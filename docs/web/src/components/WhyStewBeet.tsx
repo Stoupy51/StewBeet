@@ -74,7 +74,7 @@ export const WhyStewBeet: React.FC = () => {
                                 {BY_HAND.map(({ path, role, pack }) => (
                                     <li key={path} className="flex items-baseline justify-between gap-4">
                                         <span className={`${PACK_COLOR[pack]} truncate`}>{path}</span>
-                                        <span className="text-slate-500 flex-shrink-0">{role}</span>
+                                        <span className="text-slate-400 flex-shrink-0">{role}</span>
                                     </li>
                                 ))}
                             </ul>
