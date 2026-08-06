@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useMotionSafe } from '../hooks/useMotionSafe';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -168,14 +169,14 @@ export const SearchModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         return null;
     }, [error, loading, debounced, results.length, t]);
 
-    return (
+    return createPortal(
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15 }}
             onClick={onClose}
-            className="fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm p-4 pt-[10vh] flex justify-center"
+            className="fixed inset-0 z-[60] bg-black/80 backdrop-blur-md p-4 pt-[10vh] flex justify-center"
         >
             <motion.div
                 {...motionSafe({
@@ -281,7 +282,8 @@ export const SearchModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     <span><kbd className="px-1 rounded bg-white/10">esc</kbd> {t('search.hintClose')}</span>
                 </div>
             </motion.div>
-        </motion.div>
+        </motion.div>,
+        document.body,
     );
 };
 

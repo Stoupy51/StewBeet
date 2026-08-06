@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useState, useEffect, useRef, useSyncExternalStore } from 'react';
+import { useAutoAdvance } from '../hooks/useAutoAdvance';
 import { HiDownload, HiTerminal, HiFolder, HiPlay } from 'react-icons/hi';
 import stats from '../generated/stats.json';
 import { Templates } from './Templates';
@@ -24,10 +24,6 @@ const TYPING_SPEED = 75;
 const READ_TIME_PER_LINE = 433;
 const MIN_READ_TIME = 4333;
 const MAX_READ_TIME = 15000;
-
-/** False while server-rendering and on the hydration pass, true once the client owns the DOM. */
-const subscribeNever = () => () => {};
-const useIsHydrated = () => useSyncExternalStore(subscribeNever, () => true, () => false);
 
 function stepDurations(step: Step): { typing: number; total: number } {
     const typing = step.command.length * TYPING_SPEED;
@@ -104,46 +100,19 @@ export const Installation: React.FC = () => {
         }
     ];
 
-    const [activeIndex, setActiveIndex] = useState(0);
-    const [progress, setProgress] = useState(0);
-    // Before hydration the whole step is shown at once, so crawlers get the text
-    const mounted = useIsHydrated();
-    const pausedRef = useRef(false);
+    // One clock drives the typing, the progress bars and the hand-off to the next step
+    const { index: activeIndex, progress, select, holdProps } = useAutoAdvance({
+        count: steps.length,
+        durationFor: (index) => stepDurations(steps[index]).total,
+    });
 
     const activeStep = steps[activeIndex];
     const { typing, total } = stepDurations(activeStep);
-
-    useEffect(() => {
-        if (!mounted) return;
-
-        let frame = 0;
-        let start = performance.now();
-        let lastTick = start;
-
-        const tick = (now: number) => {
-            // Hovering the terminal freezes the clock rather than resetting it
-            if (pausedRef.current) {
-                start += now - lastTick;
-            }
-            lastTick = now;
-
-            const elapsed = now - start;
-            if (elapsed >= total) {
-                setProgress(0);
-                setActiveIndex((index) => (index + 1) % steps.length);
-                return;
-            }
-            setProgress(elapsed / total);
-            frame = requestAnimationFrame(tick);
-        };
-
-        frame = requestAnimationFrame(tick);
-        return () => cancelAnimationFrame(frame);
-    }, [activeIndex, mounted, total, steps.length]);
-
-    const typedLength = mounted ? Math.round(Math.min(1, progress / (typing / total)) * activeStep.command.length) : activeStep.command.length;
+    // Before the clock starts, the whole step is shown at once so crawlers get the text
+    const idle = progress === 0;
+    const typedLength = idle ? activeStep.command.length : Math.round(Math.min(1, progress / (typing / total)) * activeStep.command.length);
     const typedCommand = activeStep.command.slice(0, typedLength);
-    const showOutput = !mounted || progress >= typing / total;
+    const showOutput = idle || progress >= typing / total;
 
     return (
         <section id="installation" className="py-20 px-4 relative overflow-hidden bg-gradient-to-b from-slate-900/60 via-[#0a0a0a] to-[#0a0a0a]">
@@ -163,7 +132,7 @@ export const Installation: React.FC = () => {
                             return (
                                 <button
                                     key={step.id}
-                                    onClick={() => { setActiveIndex(index); setProgress(0); }}
+                                    onClick={() => select(index)}
                                     className={`relative w-full flex items-center gap-4 p-4 rounded-xl transition-all duration-200 border text-left group overflow-hidden ${isActive
                                         ? STEP_ACTIVE
                                         : 'bg-transparent border-transparent hover:bg-white/5 text-slate-400 hover:text-slate-200'
@@ -190,8 +159,7 @@ export const Installation: React.FC = () => {
                     {/* Terminal Window */}
                     <div className="md:w-2/3">
                         <div
-                            onMouseEnter={() => { pausedRef.current = true; }}
-                            onMouseLeave={() => { pausedRef.current = false; }}
+                            {...holdProps}
                             className="bg-[#1e1e1e] rounded-xl border border-white/10 shadow-2xl overflow-hidden h-[26rem] flex flex-col font-mono text-sm"
                         >
                             {/* Terminal Header */}

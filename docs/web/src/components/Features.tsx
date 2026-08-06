@@ -11,10 +11,14 @@ import {
     GiOpenBook,
     GiLinkedRings,
 } from 'react-icons/gi';
+import { useAutoAdvance } from '../hooks/useAutoAdvance';
 import { useTranslation } from '../i18n/useTranslation';
 import { useShiki } from '../hooks/useShiki';
 import { FileTree, type FileNode } from './FileTree';
 import { ICON_ACTIVE, STEP_ACTIVE, TEXT_ACTIVE_SUBTLE } from '../theme';
+
+/** How long each panel holds before the next one takes over, long enough to read a snippet. */
+const PANEL_MS = 7000;
 
 const PLUGIN_IMG = '/img';
 
@@ -282,19 +286,14 @@ const PreviewBody = ({ preview }: { preview: Preview }) => {
 export const Features: React.FC = () => {
     const { t } = useTranslation();
     const features = getFeatures(t);
-    const [activeFeature, setActiveFeature] = useState<Feature>(features[0]);
-    // Track which tabs have been activated so previews only mount when first visited
-    const [rendered, setRendered] = useState<Set<string>>(() => new Set([features[0].id]));
-
-    const handleFeatureSelect = (feature: Feature) => {
-        setActiveFeature(feature);
-        setRendered(prev => {
-            if (prev.has(feature.id)) return prev;
-            const next = new Set(prev);
-            next.add(feature.id);
-            return next;
-        });
-    };
+    // The panels rotate on their own: a reader who does not notice the labels are buttons
+    // still sees all six. Picking one hands control over and the rotation stops for good.
+    const { index, progress, select, holdProps, visited } = useAutoAdvance({
+        count: features.length,
+        durationFor: () => PANEL_MS,
+        stopOnSelect: true,
+    });
+    const activeFeature = features[index];
 
     return (
         <section id="features" className="py-20 px-4 relative overflow-hidden bg-gradient-to-b from-slate-900 via-[#0a0a0a] to-[#0a0a0a]">
@@ -311,18 +310,27 @@ export const Features: React.FC = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                     {/* Feature List */}
                     <div className="lg:col-span-5 space-y-2">
-                        {features.map((feature) => {
+                        {features.map((feature, featureIndex) => {
                             const Icon = feature.icon;
                             const isActive = activeFeature.id === feature.id;
                             return (
                                 <button
                                     key={feature.id}
-                                    onClick={() => handleFeatureSelect(feature)}
-                                    className={`w-full text-left select-text p-4 rounded-panel transition-all duration-200 border ${isActive
+                                    onClick={() => select(featureIndex)}
+                                    {...holdProps}
+                                    aria-current={isActive}
+                                    className={`relative w-full text-left select-text p-4 rounded-panel transition-all duration-200 border overflow-hidden ${isActive
                                         ? STEP_ACTIVE
                                         : 'bg-transparent border-transparent hover:bg-white/5'
                                         }`}
                                 >
+                                    {isActive && progress > 0 && (
+                                        <span
+                                            className="absolute bottom-0 left-0 h-0.5 bg-mc-emerald"
+                                            style={{ width: `${progress * 100}%` }}
+                                            aria-hidden="true"
+                                        />
+                                    )}
                                     <div className="flex items-center gap-4">
                                         <div className={`p-2 rounded-lg ${isActive ? ICON_ACTIVE : 'bg-slate-800 text-slate-400'}`}>
                                             <Icon className="text-xl" />
@@ -358,7 +366,7 @@ export const Features: React.FC = () => {
 
                             {/* Content: a tab's preview mounts the first time it is opened, then stays */}
                             <div className="flex-1 min-h-0 relative bg-[#1e1e1e]">
-                                {features.map((feature) => {
+                                {features.map((feature, featureIndex) => {
                                     const isActive = activeFeature.id === feature.id;
                                     return (
                                         <motion.div
@@ -370,7 +378,7 @@ export const Features: React.FC = () => {
                                             style={{ display: isActive ? 'block' : 'none' }}
                                             aria-hidden={!isActive}
                                         >
-                                            {rendered.has(feature.id) && (
+                                            {visited.has(featureIndex) && (
                                                 <PreviewBody preview={feature.preview} />
                                             )}
                                         </motion.div>
