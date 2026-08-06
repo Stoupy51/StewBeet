@@ -142,8 +142,8 @@ const GroupHeading = ({ label, note, style }: { label: string; note?: string; st
 
 /**
  * The author's own lists fold away: present as evidence, but not competing for attention.
- * The summary is styled as a control rather than a heading — bordered, hoverable, with a
- * chevron that turns — because a bare label with a small caret did not read as clickable.
+ * The summary is styled as a control rather than a heading: bordered, hoverable, with a
+ * chevron that turns: because a bare label with a small caret did not read as clickable.
  */
 const CollapsedGroup = ({ label, entries, style }: { label: string; entries: Entry[]; style: GroupStyle }) => {
     const { t } = useTranslation();

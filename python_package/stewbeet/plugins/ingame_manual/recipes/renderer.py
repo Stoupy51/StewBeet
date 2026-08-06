@@ -257,7 +257,7 @@ class RecipeRenderer:
 				hover.append({"text": loot_name, "color": "gray"})
 				if loot.fortune:
 					# binomial_with_bonus_count: each Fortune level (+ 'extra' base tries) is one
-					# 'probability' chance of dropping one more item — phrase it for the player.
+					# 'probability' chance of dropping one more item: phrase it for the player.
 					extra: int = loot.fortune.get("extra", 0)
 					chance: str = f"{loot.fortune.get('probability', 0) * 100:g}%"
 					fortune_text = f" ({chance} chance of +1 per Fortune level"

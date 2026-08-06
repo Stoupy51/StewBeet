@@ -3,9 +3,9 @@
 Downloads official libraries on first use via beet's content-addressed cache
 (``ctx.cache["stewbeet"]``).  Three providers are supported:
 
-1. **Smithed API** — ``bs.*`` and ``smithed.*`` libs
-2. **Modrinth API** — ``itemio`` (and future Modrinth libs)
-3. **Static URLs** — ``common_signals``, ``furnace_nbt_recipes``, etc.
+1. **Smithed API**: ``bs.*`` and ``smithed.*`` libs
+2. **Modrinth API**: ``itemio`` (and future Modrinth libs)
+3. **Static URLs**: ``common_signals``, ``furnace_nbt_recipes``, etc.
 """
 # Imports
 from __future__ import annotations
@@ -204,7 +204,7 @@ def get_lib_paths(ctx: Context) -> list[DownloadedLib]:
 	for lib_ns, lib_data in load_deps.items():
 		source = lib_data.get("source", "")
 		if not source:
-			continue  # old-format entry with explicit version — nothing to download
+			continue  # old-format entry with explicit version: nothing to download
 		if source in ("smithed", "modrinth", "static"):
 			tasks.append((lib_ns, lib_data, source))
 		else:

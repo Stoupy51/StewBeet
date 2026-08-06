@@ -855,7 +855,7 @@ clear @s *[custom_data~{{{ns}:{{lucky_artifact_bag:true}}}}] 1
 
 ## Next steps
 
-- [Helper function reference](../reference/en.md) — the arguments each helper takes.
-- [Defining items and blocks](../../1_definitions_setup/en.md) — where the content these files
+- [Helper function reference](../reference/en.md): the arguments each helper takes.
+- [Defining items and blocks](../../1_definitions_setup/en.md): where the content these files
   operate on is declared.
-- [Configuring the build](../../3_beet_config/en.md) — control when your code runs.
+- [Configuring the build](../../3_beet_config/en.md): control when your code runs.

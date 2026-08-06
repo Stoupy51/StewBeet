@@ -25,7 +25,7 @@ runtime version-checking mcfunctions with user-friendly clickable error messages
 
 ## What it does
 
-- Auto-detect and download official libraries used in functions — no manual config required (only optional)
+- Auto-detect and download official libraries used in functions: no manual config required (only optional)
 - Detect Bookshelf modules via `#bs.X:` tag patterns and modrinth/smithed libs via namespace
 - Generate runtime scoreboard version checks for all dependencies
 - Integrate with Lantern Load for correct dependency loading order
@@ -44,14 +44,14 @@ pipeline:
   - stewbeet.plugins.finalyze.dependencies  # Must run after all functions are written
   - ...
 
-# Official libraries are auto-detected — no manual config required (only optional).
+# Official libraries are auto-detected: no manual config required (only optional).
 # Declare custom dependencies to auto-download and version-check at runtime:
 meta:
   stewbeet:
     mc_supports: ["1.21.4", "1.21.5"]  # Optional: minimum is used for DataVersion check
     load_dependencies:
 
-      # Smithed API — latest MC-compatible version auto-fetched
+      # Smithed API: latest MC-compatible version auto-fetched
       "smithed.crafter":
         name: "Smithed Crafter"
         url: "https://wiki.smithed.dev/libraries/crafter/"
@@ -59,14 +59,14 @@ meta:
         smithed_id: "crafter"
         has_resource_pack: true  # optional, default false
 
-      # Modrinth API — latest release for the current MC version auto-fetched
+      # Modrinth API: latest release for the current MC version auto-fetched
       "itemio":
         name: "ItemIO"
         url: "https://github.com/edayot/ItemIO"
         source: "modrinth"
         modrinth_slug: "itemio"
 
-      # Static URL — version pinned, zip downloaded per MC version
+      # Static URL: version pinned, zip downloaded per MC version
       "common_signals":
         version: [0, 2, 0]
         name: "Common Signals"
@@ -116,8 +116,8 @@ Sets up proper loading infrastructure:
 
 ### Runtime Version Validation
 Generates two mcfunctions that run at world load:
-- 🔢 `check_dependencies` — sets `#dependency_error ns.data` flag by checking `#dep.major/minor/patch load.status` scores; uses `$bs` prefix for Bookshelf modules
-- 🎮 `valid_dependencies` — waits for a player entity, reads `DataVersion` to detect Minecraft version, compares against minimum from `mc_supports`
+- 🔢 `check_dependencies`: sets `#dependency_error ns.data` flag by checking `#dep.major/minor/patch load.status` scores; uses `$bs` prefix for Bookshelf modules
+- 🎮 `valid_dependencies`: waits for a player entity, reads `DataVersion` to detect Minecraft version, compares against minimum from `mc_supports`
 - 📢 On failure: `tellraw @a` gold clickable links to each missing library (name, version, URL)
 - ✅ `confirm_load` is only called when both `#mcload_error` and `#dependency_error` are 0
 
@@ -128,6 +128,6 @@ Special automatic wiring for `smart_ore_generation`:
 
 ## Next steps
 
-- [Configuring the build](../3_beet_config/en.md) — where this plugin sits in the pipeline.
-- [All plugins](README.md) — the rest of the pipeline, in the order it runs.
-- [Configuring the build](../3_beet_config/en.md) — enabling, ordering and configuring plugins.
+- [Configuring the build](../3_beet_config/en.md): where this plugin sits in the pipeline.
+- [All plugins](README.md): the rest of the pipeline, in the order it runs.
+- [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.

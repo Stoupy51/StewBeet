@@ -2,13 +2,13 @@ import { useLayoutEffect, useRef } from 'react';
 import type { RefObject } from 'react';
 
 /**
- * Decides — once per page load — whether the entrance animation runs, and marks the element
+ * Decides (once per page load)whether the entrance animation runs, and marks the element
  * that hosts it.
  *
  * The attribute is written in a layout effect rather than through React state, for two
  * reasons. It runs before the browser paints, so nothing shows its finished state and then
  * jumps back to the start; and because the DOM is touched directly, the prerendered markup
- * React hydrates against is untouched — a visitor with no JavaScript, or a crawler that does
+ * React hydrates against is untouched: a visitor with no JavaScript, or a crawler that does
  * not run it, gets the finished page rather than a stage waiting for a cue.
  */
 
@@ -19,7 +19,7 @@ let decision: boolean | null = null;
 
 /**
  * The animation is a flourish, not a gate: anything that argues against it means skip.
- * Safe to call from effects only — it records that the intro has been shown.
+ * Safe to call from effects only. It records that the intro has been shown.
  */
 export function introWillPlay(): boolean {
     if (decision !== null) return decision;

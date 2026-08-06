@@ -289,7 +289,7 @@ Check the real-world examples at the top of this page to see these patterns in a
 
 ## Next steps
 
-- [Helper function reference](reference/en.md) — every helper and the arguments it takes.
-- [Cookbook](cookbook/en.md) — complete worked examples.
-- [Equations](../4_equations/en.md) — build scoreboard arithmetic instead of hand-writing it.
-- [Configuring the build](../3_beet_config/en.md) — control when your code runs in the pipeline.
+- [Helper function reference](reference/en.md): every helper and the arguments it takes.
+- [Cookbook](cookbook/en.md): complete worked examples.
+- [Equations](../4_equations/en.md): build scoreboard arithmetic instead of hand-writing it.
+- [Configuring the build](../3_beet_config/en.md): control when your code runs in the pipeline.

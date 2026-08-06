@@ -43,5 +43,5 @@ build/
 
 ## Prochaines étapes
 
-- [Tutoriel : votre premier datapack](../0_getting_started/fr.md) — le même terrain au pas,
+- [Tutoriel : votre premier datapack](../0_getting_started/fr.md): le même terrain au pas,
   en ajoutant votre propre objet et votre propre bloc.

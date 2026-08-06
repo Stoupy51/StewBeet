@@ -2,7 +2,7 @@
 
 Each page already produces its own dialog body (see :mod:`~.pages.base`), so the
 :class:`DialogEmitter` only wraps that body with the title (item sprite or text, taken from
-the page) and the prev/home/next navigation row — there is no book->dialog conversion. The
+the page) and the prev/home/next navigation row. There is no book->dialog conversion. The
 page->item mapping comes from :class:`~.manual.Manual` pages. The manual is reachable through
 the vanilla ``quick_actions`` dialog tag.
 """

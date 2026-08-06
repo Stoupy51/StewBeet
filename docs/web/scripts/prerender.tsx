@@ -1,5 +1,5 @@
 /**
- * Post-build prerender script — run with Bun after `vite build`.
+ * Post-build prerender script: run with Bun after `vite build`.
  * Renders each route to static HTML so AI crawlers and search engines
  * receive real content instead of an empty <div id="root">.
  *
@@ -26,7 +26,7 @@ const template = readFileSync(join(distDir, 'index.html'), 'utf-8');
 // Must be done before the '/' route overwrites dist/index.html with pre-rendered content.
 writeFileSync(join(distDir, '_template.html'), template);
 
-/** Body of the document `prerender` emits — everything that belongs inside #root. */
+/** Body of the document `prerender` emits: everything that belongs inside #root. */
 function extractBody(html: string): string {
     const start = html.indexOf('<body>');
     const end = html.lastIndexOf('</body>');

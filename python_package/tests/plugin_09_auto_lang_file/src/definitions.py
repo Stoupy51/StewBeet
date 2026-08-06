@@ -7,7 +7,7 @@ from stewbeet import *  # type: ignore
 
 # Main entry point
 def beet_default(ctx: Context):
-    # Item with a recognisable name — the lang plugin must create a translate entry for it
+    # Item with a recognisable name: the lang plugin must create a translate entry for it
     Item(
         id="gold_ring",
         base_item="minecraft:gold_ingot",

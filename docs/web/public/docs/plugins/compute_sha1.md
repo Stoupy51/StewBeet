@@ -93,5 +93,5 @@ Optimized for performance with minimal resource usage:
 
 ## Next steps
 
-- [All plugins](README.md) — the rest of the pipeline, in the order it runs.
-- [Configuring the build](../3_beet_config/en.md) — enabling, ordering and configuring plugins.
+- [All plugins](README.md): the rest of the pipeline, in the order it runs.
+- [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.

@@ -77,6 +77,6 @@ Only activates when relevant ore configurations are detected:
 
 ## Next steps
 
-- [Using datapack libraries](../5_dependencies/en.md) — the integrations this plugin targets.
-- [All plugins](README.md) — the rest of the pipeline, in the order it runs.
-- [Configuring the build](../3_beet_config/en.md) — enabling, ordering and configuring plugins.
+- [Using datapack libraries](../5_dependencies/en.md): the integrations this plugin targets.
+- [All plugins](README.md): the rest of the pipeline, in the order it runs.
+- [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.

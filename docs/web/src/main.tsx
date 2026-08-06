@@ -6,7 +6,7 @@ import App from './App.tsx'
 const rootEl = document.getElementById('root')!
 
 if (rootEl.innerHTML.trim() !== '') {
-  // Pre-rendered HTML exists — hydrate instead of replacing
+  // Pre-rendered HTML exists: hydrate instead of replacing
   hydrateRoot(
     rootEl,
     <StrictMode>

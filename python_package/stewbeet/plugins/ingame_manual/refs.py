@@ -2,7 +2,7 @@
 
 A :class:`PageRef` represents "a link to some page" without committing to a concrete page
 number. Links are emitted during rendering and substituted in a single pass by
-``Manual.resolve()`` *after* the page order is final — so inserting/reordering/replacing
+``Manual.resolve()`` *after* the page order is final. So inserting/reordering/replacing
 pages never requires the manual ``+1`` page-number bumping the v1 plugin needed.
 """
 

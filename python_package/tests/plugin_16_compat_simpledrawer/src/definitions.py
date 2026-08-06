@@ -8,7 +8,7 @@ from stewbeet import *  # type: ignore
 # Main entry point
 def beet_default(ctx: Context):
 
-    # ruby_ingot — the "ingot" unit of the ruby material
+    # ruby_ingot: the "ingot" unit of the ruby material
     Item(
         id="ruby_ingot",
         base_item="minecraft:red_dye",
@@ -24,7 +24,7 @@ def beet_default(ctx: Context):
         ],
     )
 
-    # ruby_nugget — the "nugget" unit
+    # ruby_nugget: the "nugget" unit
     Item(
         id="ruby_nugget",
         base_item="minecraft:pink_dye",
@@ -40,7 +40,7 @@ def beet_default(ctx: Context):
         ],
     )
 
-    # ruby_block — the "block" unit with smithed.dict
+    # ruby_block: the "block" unit with smithed.dict
     ruby_block = Item(
         id="ruby_block",
         base_item="minecraft:red_concrete",

@@ -19,7 +19,7 @@ def beet_default(ctx: Context):
         ),
     )
 
-    # Minimal painting — defaults for author (project_author) and title (item_name)
+    # Minimal painting: defaults for author (project_author) and title (item_name)
     Painting(
         id="stewbeet_painting",
         painting_data=PaintingData(width=1, height=1),

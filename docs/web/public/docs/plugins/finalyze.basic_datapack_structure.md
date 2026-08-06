@@ -99,6 +99,6 @@ Integrates timing logic into the main tick function:
 
 ## Next steps
 
-- [Configuring the build](../3_beet_config/en.md) — where this plugin sits in the pipeline.
-- [All plugins](README.md) — the rest of the pipeline, in the order it runs.
-- [Configuring the build](../3_beet_config/en.md) — enabling, ordering and configuring plugins.
+- [Configuring the build](../3_beet_config/en.md): where this plugin sits in the pipeline.
+- [All plugins](README.md): the rest of the pipeline, in the order it runs.
+- [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.

@@ -20,7 +20,7 @@ def beet_default(ctx: Context):
         vanilla_block=VANILLA_BLOCK_FOR_ORES,
     )
 
-    # A regular block (not an ore) — must NOT affect the veinminer tag
+    # A regular block (not an ore): must NOT affect the veinminer tag
     Block(
         id="ruby_block",
         manual_category="misc",

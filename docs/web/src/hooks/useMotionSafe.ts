@@ -7,8 +7,8 @@ import type { MotionProps } from 'framer-motion';
  *
  * The site animated 39 elements on scroll and none of them consulted the preference, which
  * is the WCAG 2.3.3 failure and, for anyone with a vestibular disorder, the difference
- * between a readable page and an unusable one. Returning the props unchanged or empty — as
- * opposed to setting `transition: { duration: 0 }` — also means the element is never handed
+ * between a readable page and an unusable one. Returning the props unchanged or empty: as
+ * opposed to setting `transition: { duration: 0 }`: also means the element is never handed
  * an opacity-0 initial state it might fail to animate away from.
  *
  * Examples:

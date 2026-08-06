@@ -47,14 +47,14 @@ pipeline:
 ```
 
 When writing those functions from Python, take the path from the block rather than
-retyping the convention — see [Resource Locations](../1_definitions_setup/en.md#-resource-locations):
+retyping the convention: see [Resource Locations](../1_definitions_setup/en.md#-resource-locations):
 
 ```python
 obj = Block.from_id("electric_furnace")
 write_function(obj.functions.tick, "...")
 write_function(obj.functions.second, "...")
 
-# Or build the accessor directly from the block ID — same paths, and it works
+# Or build the accessor directly from the block ID: same paths, and it works
 # even for IDs that have no Block definition:
 write_function(BlockFunctions("electric_furnace").tick, "...")
 ```
@@ -135,6 +135,6 @@ Adds ticking entity statistics to the stats system:
 
 ## Next steps
 
-- [Configuring the build](../3_beet_config/en.md) — where this plugin sits in the pipeline.
-- [All plugins](README.md) — the rest of the pipeline, in the order it runs.
-- [Configuring the build](../3_beet_config/en.md) — enabling, ordering and configuring plugins.
+- [Configuring the build](../3_beet_config/en.md): where this plugin sits in the pipeline.
+- [All plugins](README.md): the rest of the pipeline, in the order it runs.
+- [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.

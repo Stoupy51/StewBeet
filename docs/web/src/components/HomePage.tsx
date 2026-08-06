@@ -21,7 +21,7 @@ function HomePage() {
   useEffect(() => {
     if (!location.hash) return;
 
-    // The plugins table now lives on /documentation — keep the old anchor working
+    // The plugins table now lives on /documentation: keep the old anchor working
     if (location.hash === '#plugins') {
       navigate('/documentation#plugins', { replace: true });
       return;
@@ -40,7 +40,7 @@ function HomePage() {
     <div className={`min-h-screen bg-slate-950 text-slate-100 ${SELECTION_BRAND}`}>
       <Navbar />
 
-      {/* Hero → trust → why → features → social proof → supporting → final CTA: a visitor
+      {/* Hero -> trust -> why -> features -> social proof -> supporting -> final CTA: a visitor
           meets the evidence that the project is alive before being asked to read about it. */}
       <main>
         <Hero />

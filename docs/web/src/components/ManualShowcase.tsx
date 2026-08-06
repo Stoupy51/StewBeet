@@ -65,8 +65,8 @@ export const ManualShowcase: React.FC = () => {
                     className="relative mx-auto w-full max-w-sm"
                 >
                     {/* A looping autoplay video is motion the visitor did not ask for. Controls
-                        are always present — an autoplaying video the viewer cannot stop is the
-                        case NN/g singles out — and the preference suppresses playback entirely. */}
+                        are always present: an autoplaying video the viewer cannot stop is the
+                        case NN/g singles out. And the preference suppresses playback entirely. */}
                     <video
                         ref={videoRef}
                         className="relative w-full rounded-panel border border-white/10 shadow-2xl"

@@ -41,7 +41,7 @@ def beet_default(ctx: Context):
     assert f"{ns}:custom_blocks/compute_brightness" in ctx.data.functions, \
         "compute_brightness function must be generated"
 
-    # Per-block functions — blocks with an 'id'
+    # Per-block functions: blocks with an 'id'
     # All four blocks with an id generate place_main + place_secondary
     for block in ["block_no_facing", "block_visual_facing", "block_with_facing"]:
         assert f"{ns}:custom_blocks/{block}/place_main" in ctx.data.functions, \
@@ -66,7 +66,7 @@ def beet_default(ctx: Context):
     assert "Rotation" in place_secondary_visual_content, \
         "block_visual_facing/place_secondary must set Rotation on the item_display"
 
-    # Per-block functions — BlockAlternative (contents / item_frame)
+    # Per-block functions: BlockAlternative (contents / item_frame)
     assert f"{ns}:custom_blocks/block_contents/place_main" in ctx.data.functions, \
         "block_contents/place_main must be generated"
     assert f"{ns}:custom_blocks/block_contents/place_secondary" in ctx.data.functions, \

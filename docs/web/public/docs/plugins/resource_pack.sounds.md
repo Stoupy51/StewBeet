@@ -83,6 +83,6 @@ These become variants of the sound `dirt_bullet_impact` in sounds.json.
 
 ## Next steps
 
-- [Defining items and blocks](../1_definitions_setup/en.md) — the textures and models this plugin consumes.
-- [All plugins](README.md) — the rest of the pipeline, in the order it runs.
-- [Configuring the build](../3_beet_config/en.md) — enabling, ordering and configuring plugins.
+- [Defining items and blocks](../1_definitions_setup/en.md): the textures and models this plugin consumes.
+- [All plugins](README.md): the rest of the pipeline, in the order it runs.
+- [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.

@@ -121,7 +121,7 @@ attribute @s minecraft:entity_interaction_range base set 5
   assert.equal(blocks.length, 1);
   const block = blocks[0];
   assert.ok(block.startsWith('f"""'));
-  // The block must NOT stop at the nested f""" — it must cover the whole call.
+  // The block must NOT stop at the nested f""". It must cover the whole call.
   assert.ok(block.includes("attribute @s minecraft:entity_interaction_range base set 5"));
   assert.ok(block.includes("post_class_lines"));
   assert.equal(findBlockOffsets(text)[0].end, text.lastIndexOf('"""') + 3);

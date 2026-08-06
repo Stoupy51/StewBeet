@@ -17,6 +17,6 @@ def beet_default(ctx: Context):
     assert "minecraft:polished_deepslate" in veinminer_text, \
         "veinminer tag must contain minecraft:polished_deepslate (VANILLA_BLOCK_FOR_ORES)"
 
-    # Only the vanilla ore placeholder appears — not the custom block that uses red_concrete
+    # Only the vanilla ore placeholder appears: not the custom block that uses red_concrete
     assert "red_concrete" not in veinminer_text, \
         "veinminer tag must NOT contain the non-ore block's vanilla id"

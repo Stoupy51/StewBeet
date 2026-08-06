@@ -1,5 +1,5 @@
 /**
- * Bun SSR server — replaces `vite preview`.
+ * Bun SSR server: replaces `vite preview`.
  *
  * For /markdown?src=... requests:
  *   1. Fetches the GitHub raw markdown content server-side.
@@ -34,7 +34,7 @@ function isValidDocSrc(src: string): boolean {
     return DOC_SRC_PATTERN.test(src) && !src.includes('..');
 }
 
-/** Body of the document `prerender` emits — everything that belongs inside #root. */
+/** Body of the document `prerender` emits: everything that belongs inside #root. */
 function extractBody(html: string): string {
     const start = html.indexOf('<body>');
     const end = html.lastIndexOf('</body>');

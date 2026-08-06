@@ -77,7 +77,7 @@ function githubToRawUrl(githubUrl: string): string {
         .replace('/raw/refs/heads/', '/');
 }
 
-/** Plain text of a rendered node — headings may contain <strong>, <code>, links... */
+/** Plain text of a rendered node: headings may contain <strong>, <code>, links... */
 function getNodeText(node: React.ReactNode): string {
     if (typeof node === 'string' || typeof node === 'number') {
         return String(node);
@@ -324,7 +324,7 @@ export const MarkdownPage: React.FC = () => {
 
     // Set page title
     useEffect(() => {
-        // The document's own H1, falling back to the source path only if it has none —
+        // The document's own H1, falling back to the source path only if it has none
         // a browser tab reading `5_dependencies/en` tells the reader nothing.
         const heading = content.match(/^#\s+(.+)$/m)?.[1].replace(/[*`]/g, '').trim();
         const label = heading || (src && hasValidSrc ? src.replace('.md', '') : 'Documentation');
@@ -530,7 +530,7 @@ export const MarkdownPage: React.FC = () => {
                                         linkHref = `${viewBasePath}/${href}`;
                                     }
 
-                                    // Leaving the site — including the GitHub fallback built just above
+                                    // Leaving the site: including the GitHub fallback built just above
                                     const opensAway = linkHref?.startsWith('http') ?? false;
 
                                     return (

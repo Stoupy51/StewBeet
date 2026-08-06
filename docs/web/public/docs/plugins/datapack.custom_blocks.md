@@ -120,6 +120,6 @@ Statistics tracking and performance optimization:
 
 ## Next steps
 
-- [Defining items and blocks](../1_definitions_setup/en.md) — where the items this plugin reads are declared.
-- [All plugins](README.md) — the rest of the pipeline, in the order it runs.
-- [Configuring the build](../3_beet_config/en.md) — enabling, ordering and configuring plugins.
+- [Defining items and blocks](../1_definitions_setup/en.md): where the items this plugin reads are declared.
+- [All plugins](README.md): the rest of the pipeline, in the order it runs.
+- [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.

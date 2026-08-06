@@ -58,7 +58,7 @@ Un objet `Resource` est une chaîne, il s'utilise donc directement dans toutes c
 ```python
 furnace = Block.from_id("electric_furnace")
 
-# ❌ Codé en dur — casse silencieusement si la convention change
+# ❌ Codé en dur: casse silencieusement si la convention change
 write_function(f"{ns}:custom_blocks/electric_furnace/tick", "...")
 
 # ✅ Dérivé de la définition
@@ -69,7 +69,7 @@ write_function(BlockFunctions("electric_furnace").tick, "...")
 
 # ✅ Ajouter à une fonction qui existe déjà ? Récupérez la Function beet via .obj :
 furnace.functions.place_secondary.obj.append("tag @s add my_ns.active")
-# (lève KeyError si la fonction n'a pas encore été générée — un échec bruyant
+# (lève KeyError si la fonction n'a pas encore été générée: un échec bruyant
 # plutôt que vos commandes placées silencieusement avant le setup du bloc)
 
 # Fonctionne pareil pour les loot tables, modèles, textures, progrès
@@ -415,6 +415,6 @@ Mem.ctx.assets["my_namespace"].textures["block/animated_block"] = texture
 
 ## Prochaines étapes
 
-- [Écrire fonctions et fichiers](../fr.md) — quelle approche choisir, et pourquoi.
-- [Recettes](../cookbook/fr.md) — ces fonctions dans des fichiers complets et fonctionnels.
-- [Équations](../../4_equations/fr.md) — construire l'arithmétique de scoreboard à intégrer.
+- [Écrire fonctions et fichiers](../fr.md): quelle approche choisir, et pourquoi.
+- [Recettes](../cookbook/fr.md): ces fonctions dans des fichiers complets et fonctionnels.
+- [Équations](../../4_equations/fr.md): construire l'arithmétique de scoreboard à intégrer.

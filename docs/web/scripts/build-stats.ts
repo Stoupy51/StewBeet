@@ -8,7 +8,7 @@
  * critical path and lets the prerendered HTML carry real numbers.
  *
  * A metric that cannot be fetched is written as null and dropped from the strip rather
- * than rendered stale — a wrong number costs more trust than a missing one. The file is
+ * than rendered stale: a wrong number costs more trust than a missing one. The file is
  * committed, so a build with no network keeps the previous values instead of emptying.
  */
 import { readFileSync, writeFileSync, mkdirSync } from 'fs';

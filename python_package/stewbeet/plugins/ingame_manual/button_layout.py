@@ -6,7 +6,7 @@ as the manual-wide default (``ManualConfig.button_layout``) or overridden per pa
 (``Page.button_layout``).
 
 Lives at the package root (not under ``pages/``) so :mod:`..config` can import it without
-triggering the ``pages`` package — which would create an import cycle.
+triggering the ``pages`` package: which would create an import cycle.
 """
 
 # Imports
