@@ -6,6 +6,7 @@ import { useTranslation } from '../i18n/useTranslation';
 import { useMotionSafe } from '../hooks/useMotionSafe';
 import { introWillPlay, useIntro } from '../hooks/useIntro';
 import { FileTree } from './FileTree';
+import { TrustStrip } from './TrustStrip';
 import { GENERATED_FILES } from './heroCode';
 import heroCode from '../generated/heroCode.json';
 import stats from '../generated/stats.json';
@@ -220,6 +221,8 @@ export const Hero: React.FC = () => {
                         </Panel>
                     </motion.div>
                 </div>
+
+                <TrustStrip />
             </div>
         </section>
     );

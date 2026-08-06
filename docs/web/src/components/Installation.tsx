@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { useState, useEffect, useRef, useSyncExternalStore } from 'react';
 import { HiDownload, HiTerminal, HiFolder, HiPlay } from 'react-icons/hi';
 import stats from '../generated/stats.json';
+import { Templates } from './Templates';
 import { useTranslation } from '../i18n/useTranslation';
 import { TEXT_ACCENT, STEP_ACTIVE, ICON_ACTIVE } from '../theme';
 
@@ -243,6 +244,8 @@ export const Installation: React.FC = () => {
                         </div>
                     </div>
                 </div>
+
+                <Templates />
             </div>
         </section>
     );

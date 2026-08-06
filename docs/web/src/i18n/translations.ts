@@ -85,16 +85,16 @@ export const translations = {
         // Why StewBeet exists
         why: {
             title: 'Why this exists',
-            intro: 'A datapack is not one file per feature. Adding a single custom block means writing its loot table, its item definition, its model, its recipe in every crafting system you support, its translation key, and its placement and destruction functions, by hand, in seven directories, in four formats.',
-            pain1: 'Miss one of those files and nothing errors. The block just quietly does not drop, or does not craft, and you find out in-game twenty minutes later.',
-            pain2: 'Rename an item and you are doing find-and-replace across hundreds of JSON files, hoping nothing shared that string.',
-            pain3: 'The same recipe has to be written once as vanilla JSON and again for every NBT crafting system you support, in a different format each time. Change the ingredients and you change it everywhere, or it silently disagrees with itself.',
-            resolution: 'StewBeet makes one definition the only thing you maintain. Every file above is derived from it on each build, so they cannot drift apart. Change the ingredients once and the vanilla recipe, the Smithed Crafter recipe and the furnace variant all follow.',
-            noPython: 'You do not need to know Python to use it. A definition is a name, some values and a list of recipes, closer to filling in a form than to writing a program. If you can read a datapack JSON file, you can read one of these.',
-            byHandTitle: 'One custom block, by hand',
-            byHandNote: 'Eight files across two packs and four formats, for one block. Miss one and nothing errors.',
+            intro: 'One custom block, written by hand, is eight files across two packs in four formats. Miss one and nothing errors. The block just quietly never drops.',
+            byHandTitle: 'By hand',
+            byHandUnit: 'files to keep in sync',
+            withTitle: 'With StewBeet',
+            withUnit: 'definition to maintain',
+            withFile: 'definitions/blocks.py',
+            withNote: 'The other eight are derived from it on every build, so they cannot drift apart.',
+            noPython: 'A definition is a name, some values and a list of recipes. If you can read datapack JSON, you can read one.',
             limitsTitle: 'Where it will not help you',
-            limitsBody: 'It is opinionated. The project layout, the Smithed conventions and the build pipeline are decisions the framework has already made, and working against them is harder than working without it. It needs Python 3.14+ installed on your machine. And if your pack is a handful of functions, writing them by hand is genuinely the right call.',
+            limitsBody: 'It is opinionated: the project layout, the Smithed conventions and the pipeline are already decided. It needs Python 3.14+. And for a pack that is a handful of functions, writing them by hand is the right call.',
         },
 
         // Built with StewBeet
@@ -414,16 +414,16 @@ export const translations = {
         // Why StewBeet exists
         why: {
             title: 'Pourquoi ça existe',
-            intro: 'Un datapack, ce n\'est pas un fichier par fonctionnalité. Ajouter un seul bloc personnalisé, c\'est écrire sa table de butin, sa définition d\'objet, son modèle, sa recette dans chaque système de craft supporté, sa clé de traduction, et ses fonctions de placement et de destruction, à la main, dans sept répertoires, dans quatre formats.',
-            pain1: 'Oubliez un de ces fichiers et rien ne plante. Le bloc ne drop simplement pas, ou ne se craft pas, et vous le découvrez en jeu vingt minutes plus tard.',
-            pain2: 'Renommez un objet et vous voilà à faire des rechercher-remplacer dans des centaines de fichiers JSON, en espérant que rien d\'autre ne partageait cette chaîne.',
-            pain3: 'La même recette doit être écrite une fois en JSON vanilla, puis à nouveau pour chaque système de craft NBT que vous supportez, dans un format différent à chaque fois. Changez les ingrédients et vous les changez partout, sinon ça se contredit en silence.',
-            resolution: 'StewBeet fait d\'une seule définition la seule chose que vous maintenez. Tous les fichiers ci-dessus en sont dérivés à chaque build, donc ils ne peuvent pas diverger. Changez les ingrédients une fois et la recette vanilla, la recette Smithed Crafter et la variante four suivent.',
-            noPython: 'Pas besoin de connaître Python pour l\'utiliser. Une définition, c\'est un nom, des valeurs et une liste de recettes, plus proche d\'un formulaire à remplir que d\'un programme à écrire. Si vous savez lire un JSON de datapack, vous savez lire ça.',
-            byHandTitle: 'Un bloc personnalisé, à la main',
-            byHandNote: 'Huit fichiers, deux packs, quatre formats, pour un seul bloc. Oubliez-en un et rien ne plante.',
-            limitsTitle: 'Là où il ne vous aidera pas',
-            limitsBody: 'Il est dogmatique. L\'organisation du projet, les conventions Smithed et le pipeline de build sont des décisions que le framework a déjà prises, et travailler contre elles est plus dur que travailler sans lui. Il faut Python 3.14+ installé sur votre machine. Et si votre pack tient en quelques fonctions, les écrire à la main est vraiment le bon choix.',
+            intro: 'Un seul bloc personnalisé, écrit à la main, c\'est huit fichiers dans deux packs et quatre formats. Oubliez-en un et rien ne plante. Le bloc ne drop simplement jamais.',
+            byHandTitle: 'À la main',
+            byHandUnit: 'fichiers à garder synchronisés',
+            withTitle: 'Avec StewBeet',
+            withUnit: 'définition à maintenir',
+            withFile: 'definitions/blocks.py',
+            withNote: 'Les huit autres en sont dérivés à chaque build, donc ils ne peuvent pas diverger.',
+            noPython: 'Une définition, c\'est un nom, des valeurs et une liste de recettes. Si vous savez lire un JSON de datapack, vous savez en lire une.',
+            limitsTitle: 'Ce pour quoi ça ne vous aidera pas',
+            limitsBody: 'Le framework est très opiniâtre : la structure du projet, les conventions Smithed et le pipeline sont déjà décidés. Il faut Python 3.14+. Et pour un pack qui tient en quelques fonctions, les écrire à la main reste le bon choix.',
         },
 
         // Built with StewBeet
