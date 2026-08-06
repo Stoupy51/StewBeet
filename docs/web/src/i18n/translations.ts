@@ -99,8 +99,8 @@ export const translations = {
 
         // Built with StewBeet
         builtWith: {
-            title: 'Built with StewBeet',
-            subtitle: 'Public source you can read, compiled with the framework.',
+            title: '{n} public projects are built with StewBeet',
+            subtitle: 'Two of them at scale, with the source you can read.',
             community: 'Written by other people',
             communityNote: 'Not maintained by the framework author',
             atScale: 'What it handles at scale',
@@ -428,8 +428,8 @@ export const translations = {
 
         // Built with StewBeet
         builtWith: {
-            title: 'Fait avec StewBeet',
-            subtitle: 'Du code public que vous pouvez lire, compilé avec le framework.',
+            title: '{n} projets publics sont faits avec StewBeet',
+            subtitle: 'Deux d\'entre eux à grande échelle, avec le code que vous pouvez lire.',
             community: 'Écrits par d\'autres personnes',
             communityNote: 'Non maintenus par l\'auteur du framework',
             atScale: 'Ce qu\'il encaisse à grande échelle',
