@@ -6,7 +6,7 @@ import type { ShikiTransformer, ThemedToken } from 'shiki';
  * Shiki highlights with a TextMate grammar, which matches patterns rather than resolving
  * symbols, so it emits `DIAMOND_PICKAXE = VanillaEquipments.PICKAXE.value[DefaultOre.DIAMOND]`
  * as a single foreground-coloured token. VS Code colours that line from semantic tokens
- * supplied by a language server — something that cannot run in a browser or a build script.
+ * supplied by a language server: something that cannot run in a browser or a build script.
  *
  * The gap is closed here by splitting plain tokens on identifier boundaries and colouring
  * each by shape, which is what the eye is reading anyway: SCREAMING_SNAKE is a constant,
@@ -42,7 +42,7 @@ const IDENTIFIER = /[A-Za-z_][A-Za-z0-9_]*/g;
 function classify(name: string, followedByCall: boolean): string | null {
     if (KEYWORDS.has(name)) return null;
     if (BUILTIN_TYPES.has(name)) return TYPE;
-    // SCREAMING_SNAKE_CASE — module constants and enum members alike.
+    // SCREAMING_SNAKE_CASE: module constants and enum members alike.
     if (/^[A-Z][A-Z0-9_]*$/.test(name) && name.length > 1) return CONSTANT;
     if (/^[A-Z][A-Za-z0-9_]*$/.test(name)) return TYPE;
     if (followedByCall) return FUNCTION;
@@ -59,7 +59,7 @@ function splitToken(token: ThemedToken): ThemedToken[] {
     for (let match = IDENTIFIER.exec(text); match !== null; match = IDENTIFIER.exec(text)) {
         const name = match[0];
         const start = match.index;
-        // A `(` straight after the name — allowing no space — means it is being called.
+        // A `(` straight after the name (allowing no space)means it is being called.
         const color = classify(name, text[start + name.length] === '(');
         if (color === null) continue;
 

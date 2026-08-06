@@ -1,6 +1,6 @@
 """Text-component optimization (merge adjacent compounds, strip nested events).
 
-Ported as-is from the v1 ``book_optimizer`` — pure functions with no global state.
+Ported as-is from the v1 ``book_optimizer``: pure functions with no global state.
 """
 
 # Imports

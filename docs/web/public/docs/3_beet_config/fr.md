@@ -376,7 +376,7 @@ manual:
 **📐 Layout:**
 - `max_items_per_row: 5` - Items par ligne (1-6)
 - `max_rows_per_page: 5` - Lignes par page (1-7)
-- Grille par défaut: 5×5 = 25 items/page
+- Grille par défaut: 5x5 = 25 items/page
 
 **📸 Images Vitrine:**
 - `0` - Désactivé
@@ -435,12 +435,12 @@ pipeline:
 
 | Terme | Signification |
 |-------|---------------|
-| **Fichier de configuration Beet** | : Fichier principal du projet (`beet.yml`, `beet.yaml`, `beet.json` ou `pyproject.toml`) lu au démarrage du build. |
-| **Pipeline** | : Liste ordonnée de plugins exécutés par beet pour transformer et générer le contenu du projet. |
-| **Section meta** | : Conteneur de paramètres personnalisés (`meta`) utilisé par StewBeet et les autres outils. |
+| **Fichier de configuration Beet** | Fichier principal du projet (`beet.yml`, `beet.yaml`, `beet.json` ou `pyproject.toml`) lu au démarrage du build. |
+| **Pipeline** | Liste ordonnée de plugins exécutés par beet pour transformer et générer le contenu du projet. |
+| **Section meta** | Conteneur de paramètres personnalisés (`meta`) utilisé par StewBeet et les autres outils. |
 
 ## Prochaines étapes
 
-- [Tous les plugins](../plugins/README.md) — ce que fait chaque étape du pipeline.
-- [Bibliothèques de datapack](../5_dependencies/fr.md) — déclarer et télécharger les dépendances.
-- [Publier automatiquement](../6_continuous_delivery/fr.md) — publier le pack que le pipeline construit.
+- [Tous les plugins](../plugins/README.md): ce que fait chaque étape du pipeline.
+- [Bibliothèques de datapack](../5_dependencies/fr.md): déclarer et télécharger les dépendances.
+- [Publier automatiquement](../6_continuous_delivery/fr.md): publier le pack que le pipeline construit.

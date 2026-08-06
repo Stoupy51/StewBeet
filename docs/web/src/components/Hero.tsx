@@ -84,8 +84,8 @@ const CodePanel = ({ caption }: { caption: string }) => (
  * Counts up to the number of generated files while they stream into the tree below.
  *
  * The text is driven straight through a ref rather than through state: the rendered output
- * then always matches the prerendered markup — no hydration mismatch, no rewind visible to
- * a visitor who is not being shown the intro — and updating the DOM from an effect is what
+ * then always matches the prerendered markup: no hydration mismatch, no rewind visible to
+ * a visitor who is not being shown the intro. And updating the DOM from an effect is what
  * effects are for, where a setState per frame would be a cascade of renders.
  */
 const FileCounter = ({ label }: { label: string }) => {
@@ -136,7 +136,7 @@ export const Hero: React.FC = () => {
             <div className="relative z-10 w-full max-w-7xl 2xl:max-w-[90rem] mx-auto px-4">
                 {/* The headline needs its full width to stay on two lines, so the actions sit
                     beside it instead of on a row below. That reclaims the empty right half and
-                    is what lets the whole hero — pitch, definition and output — fit one screen. */}
+                    is what lets the whole hero (pitch, definition and output)fit one screen. */}
                 <motion.div
                     {...motionSafe({
                         initial: { y: 20 },
@@ -179,7 +179,7 @@ export const Hero: React.FC = () => {
                 </motion.div>
 
                 {/* The definition and what it compiled into, read as one statement: same top,
-                    same bottom, an arrow in between. The pair only goes side by side at xl —
+                    same bottom, an arrow in between. The pair only goes side by side at xl
                     below that each column is narrower than the 74-column snippet it has to hold. */}
                 <div className="mt-6 grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-5 xl:gap-4 items-stretch">
                     <motion.div

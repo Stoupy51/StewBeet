@@ -78,7 +78,7 @@ const SNIPPET_RADIUS = 70;
 /** Results are grouped in this order; the chips follow it too. */
 export const TYPE_ORDER: readonly EntryType[] = ['doc', 'api', 'plugin', 'site'];
 
-/** Weights per field — a hit in a heading beats a hit buried in a paragraph. */
+/** Weights per field: a hit in a heading beats a hit buried in a paragraph. */
 const WEIGHT_DOCUMENT = 8;
 const WEIGHT_HEADING = 6;
 const WEIGHT_BODY = 1;
@@ -89,7 +89,7 @@ const BONUS_EXACT_HEADING = 24;
 const BONUS_EXACT_DOCUMENT = 10;
 
 // A section that keeps coming back to the term is what the term is about. Counted raw
-// rather than per character — density would favour a two-line section over a real one.
+// rather than per character: density would favour a two-line section over a real one.
 const WEIGHT_BODY_REPEAT = 1;
 const MAX_BODY_REPEATS = 5;
 
@@ -158,7 +158,7 @@ const SITE_LABELS: Record<string, string> = {
 
 /**
  * Turn the bundled translations into searchable entries for the static pages.
- * One entry per section — the individual keys are too fragmented to be useful rows.
+ * One entry per section: the individual keys are too fragmented to be useful rows.
  */
 function buildSiteEntries(language: Language): SearchEntry[] {
     const groups = translations[language] as unknown as Record<string, Record<string, unknown>>;
@@ -260,7 +260,7 @@ function buildSnippet(entry: IndexedEntry, terms: string[]): Segment[] {
     }
 
     const end = Math.min(raw.length, start + SNIPPET_RADIUS * 2);
-    const text = (start > 0 ? '…' : '') + raw.slice(start, end).trim() + (end < raw.length ? '…' : '');
+    const text = (start > 0 ? '...' : '') + raw.slice(start, end).trim() + (end < raw.length ? '...' : '');
     const normalized = normalize(text);
 
     // Collect every term occurrence, then walk the excerpt turning them into segments
@@ -326,14 +326,14 @@ export function search(query: string, index: SearchIndex, types?: ReadonlySet<En
             else if (entry.body.includes(normalized)) total += WEIGHT_BODY * 3;
         }
 
-        // The query naming the entry outright — the `Resource` class for `resource`
+        // The query naming the entry outright: the `Resource` class for `resource`
         if (entry.heading === normalized) total += BONUS_EXACT_HEADING;
         if (entry.document.slice(entry.document.lastIndexOf('.') + 1) === normalized) total += BONUS_EXACT_DOCUMENT;
 
         scored.push({ entry, score: total });
     }
 
-    // Group first, score second — the sections are what the reader scans
+    // Group first, score second: the sections are what the reader scans
     scored.sort((a, b) =>
         TYPE_ORDER.indexOf(a.entry.entry.t) - TYPE_ORDER.indexOf(b.entry.entry.t) || b.score - a.score,
     );

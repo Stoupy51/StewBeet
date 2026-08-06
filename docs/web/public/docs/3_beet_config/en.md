@@ -376,7 +376,7 @@ manual:
 **📐 Layout:**
 - `max_items_per_row: 5` - Items per row (1-6)
 - `max_rows_per_page: 5` - Rows per page (1-7)
-- Default grid: 5×5 = 25 items/page
+- Default grid: 5x5 = 25 items/page
 
 **📸 Showcase Images:**
 - `0` - Disabled
@@ -441,6 +441,6 @@ pipeline:
 
 ## Next steps
 
-- [All plugins](../plugins/README.md) — what each pipeline stage does.
-- [Using datapack libraries](../5_dependencies/en.md) — declare and auto-download dependencies.
-- [Shipping releases](../6_continuous_delivery/en.md) — publish the pack the pipeline builds.
+- [All plugins](../plugins/README.md): what each pipeline stage does.
+- [Using datapack libraries](../5_dependencies/en.md): declare and auto-download dependencies.
+- [Shipping releases](../6_continuous_delivery/en.md): publish the pack the pipeline builds.

@@ -117,12 +117,12 @@ def split_text_content(text: str, max_words: int = 5) -> tuple[str, str, str]:
 		unmatched_in_prefix = prefix.count(opener) % 2 if opener == closer else prefix.count(opener) - prefix.count(closer)
 		while unmatched_in_prefix > 0:
 			if closer in core:
-				# Closer already absorbed into core — just pull the opener in too
+				# Closer already absorbed into core: just pull the opener in too
 				idx_open = prefix.rindex(opener)
 				core = prefix[idx_open:] + core
 				prefix = prefix[:idx_open]
 			elif closer in suffix:
-				# Closer still in suffix — pull opener from prefix and closer from suffix
+				# Closer still in suffix: pull opener from prefix and closer from suffix
 				idx_open = prefix.rindex(opener)
 				core = prefix[idx_open:] + core
 				prefix = prefix[:idx_open]
@@ -477,7 +477,7 @@ def build_replacement(
 			obj_content
 		)
 		parts.append(prefix_obj)
-		# Core: bare translate only — styling already on prefix obj, inherited from parent
+		# Core: bare translate only: styling already on prefix obj, inherited from parent
 		colon_spacing = re.search(r'(?:["\'])?text(?:["\'])?\s*(\s*:\s*)', obj_content)
 		colon_str = colon_spacing.group(1) if colon_spacing else ': '
 		parts.append(f'{{{translate_key}{colon_str}{quote}{key_for_lang}{quote}}}')
@@ -507,7 +507,7 @@ def handle_file(content: TextFileBase[str] | None, ctx: Context | None = None) -
 		- Decodes the value and skips non-useful strings (no alnum, too short, macros).
 		- Strips non-alphanumeric prefix/suffix from the value to derive a stable key.
 		- When prefix/suffix exist, wraps the enclosing JSON object into a list so the core translate component shares its key with components having the same alphanumeric content.
-		- Falls back to numeric suffix (_2, _3, …) if object wrapping is not possible.
+		- Falls back to numeric suffix (_2, _3, ...) if object wrapping is not possible.
 
 	Args:
 		content  (TextFileBase): The file content to process (modified in place).

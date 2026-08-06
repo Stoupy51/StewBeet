@@ -14,7 +14,7 @@ from .utils import get_project_config
 def force_utf8_output() -> None:
     """ Make stdout and stderr encode UTF-8 whatever the console's code page is.
 
-    Windows consoles default to a legacy code page — cp1252 in Western locales — which cannot
+    Windows consoles default to a legacy code page (cp1252 in Western locales)which cannot
     encode the emoji in the template list or the box-drawing characters in `--help`. Printing
     either raised UnicodeEncodeError and took the command down before it did anything, so
     `stewbeet init` failed on a first run. `errors="replace"` keeps a terminal that genuinely

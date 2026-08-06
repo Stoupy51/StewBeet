@@ -20,10 +20,10 @@ FUNCTION_CALL_RE = re.compile(r"function\s+([#]?[\w./-]+:[\w./-]+)")
 # A *command* call to a function: the "function" keyword sits at the start of the command (after an
 # optional "$" macro prefix), or right after "run "/"schedule ". This deliberately excludes
 # references that live inside an argument
-# string — most commonly a tellraw suggest_command/run_command like "/function ns:foo" — whose
+# string (most commonly a tellraw suggest_command/run_command like "/function ns:foo")whose
 # trailing JSON must never be mistaken for a macro ({...}) or a schedule time (100t). Note "run "
 # also appears inside quoted dialog commands (`command:"/execute ... run function ns:foo"`), so a
-# regex match is only a real command when it is NOT inside a string — see is_inside_string.
+# regex match is only a real command when it is NOT inside a string: see is_inside_string.
 COMMAND_CALL_RE = re.compile(r"(?:^\s*\$?\s*|\brun\s+|(?P<sched>\bschedule\s+))function\s+([#]?[\w./-]+:[\w./-]+)")
 
 
@@ -78,12 +78,12 @@ class FunctionAnalyzer:
         string (``"command": "/function ns:menu"``). Nothing else in this plugin sees those:
         :meth:`analyze_function_calls` only scans mcfunction bodies. Without this pass, a function
         reachable *only* from a dialog button is reported as an orphan (``@within ???``), which is
-        actively misleading — it looks like dead code.
+        actively misleading. It looks like dead code.
 
         The dialog is scanned as **serialized text**, never through ``.data``: reading ``.data``
         calls beet's ``ensure_deserialized()``, which replaces the file's stored content with the
         parsed form, so the dialog would then be re-encoded on output and lose its original
-        formatting. ``.text`` goes through the file's own encoder — the same one used to write it —
+        formatting. ``.text`` goes through the file's own encoder: the same one used to write it
         so analysis stays read-only. Scanning the whole serialized dialog also means this does not
         need to know where in the dialog schema a command may appear.
 
@@ -233,7 +233,7 @@ class FunctionAnalyzer:
                 # suggest_command/run_command, etc.). Record it as "string in <caller>", mirroring the
                 # "advancement <path>" convention, so the header shows it is only a string reference.
                 # The "string" prefix also keeps the context analyzer from inheriting the caller's
-                # execution context — a clicked chat command runs as the player, not in that context.
+                # execution context: a clicked chat command runs as the player, not in that context.
                 # A macro payload written right after the reference is still real argument data and is
                 # kept: a documentation line (## /function ns:foo {x:1}) is often the only place a macro
                 # function's arguments appear, so dropping it would leave its @args typed as "unknown".

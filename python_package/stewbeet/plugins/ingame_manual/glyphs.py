@@ -35,7 +35,7 @@ def get_font(i: int) -> str:
 	return chr(i)
 
 
-# Reserved (static) glyph characters — DO NOT change the code points, they are alignment-critical.
+# Reserved (static) glyph characters: DO NOT change the code points, they are alignment-critical.
 NONE_FONT: str =					get_font(0x0000)
 MEDIUM_NONE_FONT: str =				get_font(0x0001)
 SMALL_NONE_FONT: str =				get_font(0x0002)

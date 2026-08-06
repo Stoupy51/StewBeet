@@ -18,7 +18,7 @@ export interface PageMeta {
     noindex?: boolean;
 }
 
-/** Longest description before truncation — beyond this both Google and Discord cut it themselves. */
+/** Longest description before truncation: beyond this both Google and Discord cut it themselves. */
 const MAX_DESCRIPTION_CHARS = 200;
 
 const SITE_TITLE = 'StewBeet - Minecraft datapacks from Python definitions';
@@ -78,7 +78,7 @@ function truncate(text: string): string {
     if (text.length <= MAX_DESCRIPTION_CHARS) return text;
     const cut = text.slice(0, MAX_DESCRIPTION_CHARS);
     const lastSpace = cut.lastIndexOf(' ');
-    return `${(lastSpace > MAX_DESCRIPTION_CHARS / 2 ? cut.slice(0, lastSpace) : cut).trimEnd()}…`;
+    return `${(lastSpace > MAX_DESCRIPTION_CHARS / 2 ? cut.slice(0, lastSpace) : cut).trimEnd()}...`;
 }
 
 /**
@@ -102,7 +102,7 @@ function leadParagraph(markdown: string): string {
     return '';
 }
 
-/** Metadata for `/markdown?src=…`, derived from the document the SSR server just fetched. */
+/** Metadata for `/markdown?src=...`, derived from the document the SSR server just fetched. */
 export function markdownPageMeta(src: string | null, markdown: string): PageMeta {
     if (!src || !markdown) return STATIC_ROUTE_META['/markdown'];
 
@@ -112,7 +112,7 @@ export function markdownPageMeta(src: string | null, markdown: string): PageMeta
 
     return {
         title: `${name} | StewBeet`,
-        description: description ? truncate(description) : `${name} — StewBeet documentation.`,
+        description: description ? truncate(description) : `${name}: StewBeet documentation.`,
         path: `/markdown?src=${encodeURIComponent(src)}`,
     };
 }
@@ -127,7 +127,7 @@ function escapeAttribute(value: string): string {
 
 /**
  * Replace a meta tag's content in place.
- * The callback form of `replace` matters here: descriptions contain `$` (`$ pip install …`),
+ * The callback form of `replace` matters here: descriptions contain `$` (`$ pip install ...`),
  * which a string replacement would read as a capture group reference.
  */
 function setMeta(html: string, attribute: 'name' | 'property', key: string, value: string): string {

@@ -188,7 +188,7 @@ function {self.ns}:v{self.version}/unload
 
 		for func in self.ctx.data.functions.values():
 			for line in func.text.splitlines():
-				# Skip macro lines (start with '$') — their arguments are dynamic and can't be statically unloaded
+				# Skip macro lines (start with '$'). Their arguments are dynamic and can't be statically unloaded
 				if line.lstrip().startswith("$"):
 					continue
 				for key, (regex, callback) in regexes.items():

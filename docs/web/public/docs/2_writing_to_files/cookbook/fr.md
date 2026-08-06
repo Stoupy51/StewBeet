@@ -855,6 +855,6 @@ clear @s *[custom_data~{{{ns}:{{lucky_artifact_bag:true}}}}] 1
 
 ## Prochaines étapes
 
-- [Référence des fonctions utilitaires](../reference/fr.md) — les arguments de chaque fonction.
-- [Définir objets et blocs](../../1_definitions_setup/fr.md) — où le contenu manipulé est déclaré.
-- [Configurer le build](../../3_beet_config/fr.md) — contrôler quand votre code s'exécute.
+- [Référence des fonctions utilitaires](../reference/fr.md): les arguments de chaque fonction.
+- [Définir objets et blocs](../../1_definitions_setup/fr.md): où le contenu manipulé est déclaré.
+- [Configurer le build](../../3_beet_config/fr.md): contrôler quand votre code s'exécute.

@@ -58,7 +58,7 @@ A `Resource` is a string, so it drops straight into any of these functions:
 ```python
 furnace = Block.from_id("electric_furnace")
 
-# ❌ Hardcoded — silently breaks if the convention ever changes
+# ❌ Hardcoded: silently breaks if the convention ever changes
 write_function(f"{ns}:custom_blocks/electric_furnace/tick", "...")
 
 # ✅ Derived from the definition
@@ -69,7 +69,7 @@ write_function(BlockFunctions("electric_furnace").tick, "...")
 
 # ✅ Appending to a function that already exists? Grab the beet Function via .obj:
 furnace.functions.place_secondary.obj.append("tag @s add my_ns.active")
-# (raises KeyError if the function hasn't been generated yet — a loud failure
+# (raises KeyError if the function hasn't been generated yet: a loud failure
 #  instead of your commands silently landing before the block setup)
 
 # Works the same for loot tables, models, textures, advancements
@@ -415,6 +415,6 @@ Mem.ctx.assets["my_namespace"].textures["block/animated_block"] = texture
 
 ## Next steps
 
-- [Writing functions and files](../en.md) — which approach to reach for, and why.
-- [Cookbook](../cookbook/en.md) — these helpers used in complete, working files.
-- [Equations](../../4_equations/en.md) — build scoreboard arithmetic to embed in what you write.
+- [Writing functions and files](../en.md): which approach to reach for, and why.
+- [Cookbook](../cookbook/en.md). These helpers used in complete, working files.
+- [Equations](../../4_equations/en.md): build scoreboard arithmetic to embed in what you write.

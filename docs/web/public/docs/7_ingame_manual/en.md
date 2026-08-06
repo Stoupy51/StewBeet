@@ -1,6 +1,6 @@
 # Generating the in-game manual
 
-`ingame_manual` generates an in-game manual from your `Mem.definitions` items: an introduction page, a category browser, one page per category, and one page per item with its recipes and wiki buttons. It is **dialog-first** (the old written-book NBT mode is removed) and fully **extensible** — you can edit any item's page, insert arbitrary pages (even unrelated to items), control button placement, and render pages backed by your own texture. Every public class of the API (`Page` subclasses, `ButtonLayout`, `BakedText`, `PageRef`, `CraftRenderer`, `Manual` itself...) is a Python **dataclass**.
+`ingame_manual` generates an in-game manual from your `Mem.definitions` items: an introduction page, a category browser, one page per category, and one page per item with its recipes and wiki buttons. It is **dialog-first** (the old written-book NBT mode is removed) and fully **extensible**. You can edit any item's page, insert arbitrary pages (even unrelated to items), control button placement, and render pages backed by your own texture. Every public class of the API (`Page` subclasses, `ButtonLayout`, `BakedText`, `PageRef`, `CraftRenderer`, `Manual` itself...) is a Python **dataclass**.
 
 **Opt in by replacing `stewbeet.plugins.ingame_manual` with `stewbeet.plugins.ingame_manual`** in your pipeline.
 
@@ -19,7 +19,7 @@
 **Required**: StewBeet framework (`from stewbeet import *`)  
 **Position**: The `stewbeet.plugins.ingame_manual` step in your `beet.yml` pipeline, after `custom_recipes` and before the datapack plugins  
 **Customization**: Call `get_manual()` in your `setup_definitions` (after items are defined) to register pages and hooks  
-**Output**: Dialog-first — generates one Minecraft dialog per page, reachable through the vanilla **quick actions** menu (and the `manual` item in mode 1)
+**Output**: Dialog-first: generates one Minecraft dialog per page, reachable through the vanilla **quick actions** menu (and the `manual` item in mode 1)
 
 ## Features Showcase
 
@@ -31,7 +31,7 @@ Set in `beet.yml` under `meta.stewbeet.manual`:
 
 | Key                 | Type            | Default              | Description                                                              |
 | ------------------- | --------------- | -------------------- | ------------------------------------------------------------------------ |
-| `cache_path`        | `str`           | —                    | **Required.** Directory for generated fonts/textures/item renders        |
+| `cache_path`        | `str`           | - | **Required.** Directory for generated fonts/textures/item renders        |
 | `use_dialog`        | `int`           | `1`                  | `1` = dialog + `manual` item that opens it · `2` = dialog only (no item) |
 | `high_resolution`   | `bool`          | `true`               | High-res (256px) item icons in recipes                                   |
 | `cache_assets`      | `bool`          | `true`               | Skip re-rendering/re-downloading item textures that already exist        |
@@ -111,7 +111,7 @@ manual.insert_page(TexturePage(
 The dialog centers the line, so `left_padding` shifts the texture **right** and `right_padding` shifts it **left**, each by half the padding. Keep texture width + paddings within the dialog body (140px), otherwise the line wraps.
 
 ### Per-page book background & home button
-Every page (any `Page` subclass) accepts `book_texture` to replace the book background (`book.png`) and `home_texture` to replace the home button (`home.png`) on that page only — e.g. a closed book on the first page. Both take a ready PIL image, or a path resolved as a project path first, then against the templates dir (so a filename from your `manual_overrides` folder works). `template_path(filename)` returns the effective path of a bundled/overridden template asset.
+Every page (any `Page` subclass) accepts `book_texture` to replace the book background (`book.png`) and `home_texture` to replace the home button (`home.png`) on that page only: e.g. a closed book on the first page. Both take a ready PIL image, or a path resolved as a project path first, then against the templates dir (so a filename from your `manual_overrides` folder works). `template_path(filename)` returns the effective path of a bundled/overridden template asset.
 
 ```python
 from stewbeet import CustomPage, Mem, Phase, get_manual
@@ -136,7 +136,7 @@ def closed_book_intro(m):
     m.get_page("intro").book_texture = "closed_book.png"  # resolved from manual_overrides
 ```
 
-> **Notes**: keep a `home_texture` close to the default's 16x16 proportions, since the glyph advance follows the image content (a wider arrow shifts the prev/next buttons on that page). The **first page never shows the home button** — it *is* the home page (an invisible spacer keeps the prev/next layout unchanged), and any other page can hide it too with `home_button=False`.
+> **Notes**: keep a `home_texture` close to the default's 16x16 proportions, since the glyph advance follows the image content (a wider arrow shifts the prev/next buttons on that page). The **first page never shows the home button**. It *is* the home page (an invisible spacer keeps the prev/next layout unchanged), and any other page can hide it too with `home_button=False`.
 
 ### Button placement
 Control where wiki buttons render, per page or as the manual-wide default (`ManualConfig.button_layout`):
@@ -195,7 +195,7 @@ def custom_wrench_page(m):
 @manual.on(Phase.RENDERED)
 def add_footer(m):
     for page in m.pages:
-        page.transformers.append(lambda content, _m: [*content, {"text": "\n— MyPack", "color": "dark_gray"}])
+        page.transformers.append(lambda content, _m: [*content, {"text": "\n- MyPack", "color": "dark_gray"}])
 ```
 
 ### Reorder pages (move a category right after the browser)
@@ -220,8 +220,8 @@ def tidy_buttons(m):
 
 ### Cross-link two related item pages (recipe buttons across pages)
 `ItemPage.extra_buttons` holds developer-added wiki buttons, appended after the automatic ones. Build them with:
-- `manual.recipes.button_for_item(item_id, index=0)` — another item's **recipe button**: hover shows that recipe, click opens the item's page (`index` selects which of its crafts; returns `None` with a warning if there is no such craft);
-- `manual.recipes.link_button(item_id, hover=None)` — a simple **page link**: the item's icon in a wiki slot, click opens its page (`hover` defaults to the item's name plus a click hint).
+- `manual.recipes.button_for_item(item_id, index=0)`: another item's **recipe button**: hover shows that recipe, click opens the item's page (`index` selects which of its crafts; returns `None` with a warning if there is no such craft);
+- `manual.recipes.link_button(item_id, hover=None)`: a simple **page link**: the item's icon in a wiki slot, click opens its page (`hover` defaults to the item's name plus a click hint).
 
 ```python
 # Example from Stardust Fragment: the Starlight Infuser summons the Stardust Pillar boss,
@@ -260,7 +260,7 @@ def maybe_changelog(m):
 ---
 
 ## Custom recipe types
-Each recipe type is rendered by a `CraftRenderer` kept in a global registry, so adding a new type is one class + one `register_craft_renderer(...)` call. The built-in types live one-per-file under `recipes/types/` (`shaped`, `furnace`, `smithing`, `linear`, `awakened_forge`). Like every class of the manual API, renderers are dataclasses — decorate your subclass with `@dataclass` to match the built-ins.
+Each recipe type is rendered by a `CraftRenderer` kept in a global registry, so adding a new type is one class + one `register_craft_renderer(...)` call. The built-in types live one-per-file under `recipes/types/` (`shaped`, `furnace`, `smithing`, `linear`, `awakened_forge`). Like every class of the manual API, renderers are dataclasses: decorate your subclass with `@dataclass` to match the built-ins.
 
 ```python
 from dataclasses import dataclass
@@ -308,6 +308,6 @@ Only `types` and `render_body` are required; `static_glyph` (high-res template g
 
 ## Next steps
 
-- [Defining items and blocks](../1_definitions_setup/en.md) — the items each manual page is generated from.
-- [Recipes](../plugins/custom_recipes.md) — where the drawn crafting grids come from.
-- [All plugins](../plugins/README.md) — the rest of the pipeline.
+- [Defining items and blocks](../1_definitions_setup/en.md): the items each manual page is generated from.
+- [Recipes](../plugins/custom_recipes.md): where the drawn crafting grids come from.
+- [All plugins](../plugins/README.md): the rest of the pipeline.

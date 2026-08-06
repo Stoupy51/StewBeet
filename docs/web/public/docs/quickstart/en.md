@@ -43,5 +43,5 @@ build/
 
 ## Next steps
 
-- [Tutorial: build your first datapack](../0_getting_started/en.md) — the same ground at
+- [Tutorial: build your first datapack](../0_getting_started/en.md): the same ground at
   walking pace, adding a custom item and a custom block of your own.

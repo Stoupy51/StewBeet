@@ -1,5 +1,5 @@
 /**
- * Search index builder — run with Bun before `vite` (dev) and `vite build`.
+ * Search index builder: run with Bun before `vite` (dev) and `vite build`.
  *
  * Emits public/search-index.en.json and public/search-index.fr.json, one entry per
  * markdown heading section plus one entry per Python API symbol. The site itself
@@ -94,7 +94,7 @@ function sectionize(markdown: string, base: Omit<Entry, 'h' | 'a' | 'b'>): Entry
     return entries;
 }
 
-/** Collect plugin pages — English only, so they go into every language index. */
+/** Collect plugin pages: English only, so they go into every language index. */
 function collectPlugins(): Entry[] {
     const dir = join(docsDir, 'plugins');
     const entries: Entry[] = [];
@@ -223,7 +223,7 @@ async function collectApiSymbols(): Promise<Entry[]> {
         const description = docstrings.get(name);
 
         // `uri` keeps Sphinx's `$` placeholder (expanded to the full name client-side)
-        // and stays relative to SPHINX_BASE — both keep the index small.
+        // and stays relative to SPHINX_BASE: both keep the index small.
         entries.push({
             t: 'api',
             p: uri,

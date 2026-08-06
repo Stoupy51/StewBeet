@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { HiClipboard, HiCheck } from 'react-icons/hi';
-// Feature marks name the thing they stand for — an anvil for recipes, a chest for loot —
+// Feature marks name the thing they stand for: an anvil for recipes, a chest for loot
 // instead of the interchangeable cube/sparkle/bolt set every framework site draws from.
 import {
     GiMineralPearls,
@@ -135,7 +135,7 @@ generate_everything_about_these_materials(ORES_CONFIGS)`,
 # @within	#smithed.crafter:event/shapeless_recipes
 #
 
-# The backslashes are ours so it fits — the real file is one line per recipe.
+# The backslashes are ours so it fits: the real file is one line per recipe.
 execute \\
   if score @s smithed.data matches 0 \\
   store result score @s smithed.data \\
@@ -157,7 +157,7 @@ execute \\
         title: t('features.lootTablesTitle'),
         description: t('features.lootTablesDesc'),
         preview: {
-            caption: 'function …:_give_all',
+            caption: 'function ...:_give_all',
             image: { src: `${PLUGIN_IMG}/datapack.loot_tables.give_all.jpg`, alt: t('features.lootTablesTitle') },
         },
     },
@@ -356,7 +356,7 @@ export const Features: React.FC = () => {
                                 </div>
                             </div>
 
-                            {/* Content — a tab's preview mounts the first time it is opened, then stays */}
+                            {/* Content: a tab's preview mounts the first time it is opened, then stays */}
                             <div className="flex-1 min-h-0 relative bg-[#1e1e1e]">
                                 {features.map((feature) => {
                                     const isActive = activeFeature.id === feature.id;

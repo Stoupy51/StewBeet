@@ -5,7 +5,7 @@ import stats from '../generated/stats.json';
 import { TOTAL_BUILT_WITH } from './builtWithData';
 
 /**
- * The numbers that answer "is this alive and does anyone use it?" — the question a visitor
+ * The numbers that answer "is this alive and does anyone use it?": the question a visitor
  * asks immediately after understanding what the tool does.
  *
  * They were previously three shields.io images in the footer, which meant a visitor had to

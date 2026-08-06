@@ -70,7 +70,7 @@
   }
 }
 /*
- * Entrance animation — "the build runs".
+ * Entrance animation: "the build runs".
  *
  * The page introduces itself by doing the thing it is for: a compile scan sweeps down the
  * definition, and the files it produces stream into the panel beside it while the counter
@@ -78,7 +78,7 @@
  *
  * All of it hangs off [data-intro="play"], which useIntro writes before the first paint and
  * only when the visitor has not asked for reduced motion. Without that attribute the rules
- * below never match and the page simply renders finished — which is what the prerendered
+ * below never match and the page simply renders finished: which is what the prerendered
  * HTML already contains.
  */
 
@@ -115,7 +115,7 @@
     animation: intro-grid 900ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
   }
 
-  /* Eyebrow, headline, paragraph, actions — each a beat behind the last. */
+  /* Eyebrow, headline, paragraph, actions: each a beat behind the last. */
   [data-intro='play'] .intro-step {
     animation: intro-rise 620ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
     animation-delay: calc(var(--step, 0) * 90ms);

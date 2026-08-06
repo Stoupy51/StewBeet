@@ -270,13 +270,13 @@ Consultez les exemples réels en haut de cette page pour voir ces motifs en acti
 
 | Terme | Signification |
 |-------|---------------|
-| **Chargement de fichiers statiques** | : Chargement pré-plugin des fichiers déclarés dans `beet.yml` (`data_pack.load` et `resource_pack.load`). |
-| **Écriture via API native Beet** | : Création de fichiers via les objets `ctx.data`/`ctx.assets` dans le code plugin. |
-| **Écriture via helpers StewBeet** | : Fonctions utilitaires comme `write_function`, `write_tag` et helpers associés pour générer plus vite. |
+| **Chargement de fichiers statiques** | Chargement pré-plugin des fichiers déclarés dans `beet.yml` (`data_pack.load` et `resource_pack.load`). |
+| **Écriture via API native Beet** | Création de fichiers via les objets `ctx.data`/`ctx.assets` dans le code plugin. |
+| **Écriture via helpers StewBeet** | Fonctions utilitaires comme `write_function`, `write_tag` et helpers associés pour générer plus vite. |
 
 ## Prochaines étapes
 
-- [Référence des fonctions utilitaires](reference/fr.md) — chaque fonction et ses arguments.
-- [Recettes](cookbook/fr.md) — des exemples complets et fonctionnels.
-- [Équations](../4_equations/fr.md) — construire l'arithmétique de scoreboard.
-- [Configurer le build](../3_beet_config/fr.md) — contrôler quand votre code s'exécute.
+- [Référence des fonctions utilitaires](reference/fr.md): chaque fonction et ses arguments.
+- [Recettes](cookbook/fr.md): des exemples complets et fonctionnels.
+- [Équations](../4_equations/fr.md): construire l'arithmétique de scoreboard.
+- [Configurer le build](../3_beet_config/fr.md): contrôler quand votre code s'exécute.

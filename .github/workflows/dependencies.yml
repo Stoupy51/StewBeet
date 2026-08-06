@@ -79,7 +79,7 @@ jobs:
           commit-message: "chore(deps): 🔧 Update dependencies to latest versions"
           title: "chore(deps): 🔧 Update dependencies"
           body: |
-            Automated dependency update — tests passed ✅
+            Automated dependency update: tests passed ✅
 
             **Updated packages:**
             ${{ env.UPDATED_LIST }}

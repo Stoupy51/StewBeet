@@ -6,7 +6,7 @@ import { ALERT_ACCENT, HEADING, PIXEL_RULE } from '../theme';
 
 /**
  * The page explained what the framework does and showed the output, but never what was
- * wrong with the alternative — so a visitor who has not personally suffered hand-written
+ * wrong with the alternative. So a visitor who has not personally suffered hand-written
  * mcfunction had no reason to care. This section is the only place on the site written in
  * the maintainer's voice, and it carries the honest limitations, which is the part readers
  * quote to other people.
@@ -52,7 +52,7 @@ export const WhyStewBeet: React.FC = () => {
                         <ul className="space-y-3 mb-6">
                             {painPoints.map((point) => (
                                 <li key={point} className="flex gap-3 text-slate-300 leading-relaxed">
-                                    <span className="text-mc-copper font-mono flex-shrink-0" aria-hidden="true">—</span>
+                                    <span className="text-mc-copper font-mono flex-shrink-0" aria-hidden="true">-</span>
                                     <span>{point}</span>
                                 </li>
                             ))}

@@ -16,7 +16,7 @@ from stouputils.typing import JsonDict
 def get_vanilla_item_tags() -> dict[str, ItemTag]:
     from ..__memory__ import Mem
 
-    # Derive a stable, version-scoped key — same pattern as download_manager's URL keys
+    # Derive a stable, version-scoped key: same pattern as download_manager's URL keys
     cache = Mem.ctx.cache["stewbeet"]
     cache_key = f"vanilla_item_tags-{Mem.ctx.minecraft_version}"
 

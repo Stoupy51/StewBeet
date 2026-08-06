@@ -89,8 +89,8 @@ generated in your namespace, `{project_id}:tooltip`:
 
 | Provider | Texture | Role |
 |----------|---------|------|
-| `space` | – | Provides the 2px spacer glyph `뀁` between the logo and the name |
-| `bitmap` | `{project_id}:font/tooltip.png` | 8×8 pixel character atlas (printable ASCII + CP437 extras) used to draw the project name |
+| `space` | - | Provides the 2px spacer glyph `뀁` between the logo and the name |
+| `bitmap` | `{project_id}:font/tooltip.png` | 8x8 pixel character atlas (printable ASCII + CP437 extras) used to draw the project name |
 | `bitmap` | `{project_id}:tooltip/tooltip.png` | The `ꀁ` glyph showing your `pack.png` logo (skipped when the project has no logo) |
 
 The font (and the lore) is only generated when at least one item definition actually carries the
@@ -98,7 +98,7 @@ source lore, so a project that overrides every lore pays nothing for it.
 
 **🎨 Automatic recoloring**<br>
 The packaged atlas ships in gold. By default (`source_lore_color: "auto"`) StewBeet picks the
-dominant color of your `pack.png` — ignoring transparent, gray and dark pixels — then rotates the
+dominant color of your `pack.png` (ignoring transparent, gray and dark pixels)then rotates the
 atlas hues onto it. Rotating instead of flattening keeps the vertical gradient of the glyphs, so the
 result still looks hand-made rather than a single flat color.
 
@@ -113,8 +113,8 @@ meta:
 
 **🖌️ Bringing your own atlas**<br>
 Drop a `tooltip.png` next to your `pack.png` (i.e. `assets/tooltip.png`, or `src/tooltip.png`) and it
-replaces the packaged atlas verbatim — never recolored, since you already chose its colors. It must
-keep the same 16×16 grid layout of 8×8 glyphs.
+replaces the packaged atlas verbatim: never recolored, since you already chose its colors. It must
+keep the same 16x16 grid layout of 8x8 glyphs.
 
 ### Pack Icon Management
 Automatically handles pack.png icon distribution:
@@ -135,5 +135,5 @@ Handles legacy texture naming conversions for better later compatibility/pattern
 
 ## Next steps
 
-- [All plugins](README.md) — the rest of the pipeline, in the order it runs.
-- [Configuring the build](../3_beet_config/en.md) — enabling, ordering and configuring plugins.
+- [All plugins](README.md): the rest of the pipeline, in the order it runs.
+- [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.

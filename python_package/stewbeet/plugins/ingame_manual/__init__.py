@@ -1,4 +1,4 @@
-"""ingame_manual — modern, extensible, dialog-first in-game manual generator.
+"""ingame_manual: modern, extensible, dialog-first in-game manual generator.
 
 Opt in by replacing ``stewbeet.plugins.ingame_manual`` with ``stewbeet.plugins.ingame_manual``
 in your beet pipeline. See :mod:`.api` (`get_manual`, `Page` subclasses, `Phase`, `ButtonLayout`,

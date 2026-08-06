@@ -15,7 +15,7 @@ from stewbeet import (
 
 
 # Showcase of the ingame_manual v2 extension API.
-# Everything here is OPTIONAL — delete this file (and its pipeline entry) if you don't need it.
+# Everything here is OPTIONAL: delete this file (and its pipeline entry) if you don't need it.
 def main() -> None:
 	""" Customize the in-game manual using the public ingame_manual v2 API.
 

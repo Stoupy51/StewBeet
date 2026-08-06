@@ -596,7 +596,7 @@ item.recipes.append(CraftingShapelessRecipe(
 
 Never hardcode a resource location like `f"{ns}:custom_blocks/{item}/place_secondary"` again. Every location StewBeet derives from an item ID is exposed as a property returning a `Resource`.
 
-A `Resource` **is** a string holding the full `namespace:path` location, so it works everywhere a path is expected — inside f-strings, as a `write_function` argument, as a dict key, compared against a literal. On top of that it gives you the underlying beet file.
+A `Resource` **is** a string holding the full `namespace:path` location, so it works everywhere a path is expected: inside f-strings, as a `write_function` argument, as a dict key, compared against a literal. On top of that it gives you the underlying beet file.
 
 ```python
 item = Item.from_id("steel_ingot")
@@ -641,7 +641,7 @@ block.advancement                 # placement advancement (BlockAlternative / Bl
 write_function(block.functions.tick, "particle heart ~ ~1 ~ 0.5 0.5 0.5 0.01 1")
 ```
 
-`Block.functions` returns a `BlockFunctions` object, which you can also build directly from a block ID if that reads better to you — no `Block.from_id` lookup needed, so it even works for IDs that have no definition:
+`Block.functions` returns a `BlockFunctions` object, which you can also build directly from a block ID if that reads better to you: no `Block.from_id` lookup needed, so it even works for IDs that have no definition:
 
 ```python
 from stewbeet import BlockFunctions
@@ -652,7 +652,7 @@ BlockFunctions("steel_block").destroy        # same paths as Block.from_id("stee
 BlockFunctions("gauge", namespace="other")   # target another namespace
 ```
 
-Both forms produce the exact same `Resource[Function]` objects — use whichever you prefer.
+Both forms produce the exact same `Resource[Function]` objects: use whichever you prefer.
 
 #### **Reading and Writing the File**
 
@@ -671,7 +671,7 @@ res.relative_path     # "i/steel_ingot"
 res.file_type         # beet.LootTable
 ```
 
-For mcfunctions, `.obj` is a beet `Function` object, so you can append commands to an existing function directly — same result as calling `write_function(res, ...)`:
+For mcfunctions, `.obj` is a beet `Function` object, so you can append commands to an existing function directly: same result as calling `write_function(res, ...)`:
 
 ```python
 # Run commands as the block display entity when it is placed
@@ -851,6 +851,6 @@ Check the real-world examples at the top of this page to see how it works in pra
 
 ## Next steps
 
-- [Writing to files](../2_writing_to_files/en.md) — turn definitions into functions and files.
-- [Recipes](../plugins/custom_recipes.md) — how a declared recipe reaches every crafting system.
-- [In-game manual](../7_ingame_manual/en.md) — the book your definitions generate.
+- [Writing to files](../2_writing_to_files/en.md): turn definitions into functions and files.
+- [Recipes](../plugins/custom_recipes.md): how a declared recipe reaches every crafting system.
+- [In-game manual](../7_ingame_manual/en.md): the book your definitions generate.

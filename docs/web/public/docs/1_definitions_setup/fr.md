@@ -595,7 +595,7 @@ item.recipes.append(CraftingShapelessRecipe(
 
 Ne codez plus jamais en dur un emplacement comme `f"{ns}:custom_blocks/{item}/place_secondary"`. Chaque emplacement que StewBeet dérive d'un ID d'objet est exposé sous forme de propriété renvoyant un objet `Resource`.
 
-Un `Resource` **est** un str contenant l'emplacement complet `namespace:path`, il fonctionne donc partout où un chemin est attendu — dans une f-string, comme argument de `write_function`, comme clé de dictionnaire, ou comparé à un littéral. En plus de ça, il donne accès au fichier beet sous-jacent.
+Un `Resource` **est** un str contenant l'emplacement complet `namespace:path`, il fonctionne donc partout où un chemin est attendu: dans une f-string, comme argument de `write_function`, comme clé de dictionnaire, ou comparé à un littéral. En plus de ça, il donne accès au fichier beet sous-jacent.
 
 ```python
 item = Item.from_id("steel_ingot")
@@ -640,7 +640,7 @@ block.advancement                 # progrès de placement (BlockAlternative / Bl
 write_function(block.functions.tick, "particle heart ~ ~1 ~ 0.5 0.5 0.5 0.01 1")
 ```
 
-`Block.functions` renvoie un objet `BlockFunctions`, que vous pouvez aussi construire directement depuis un ID de bloc si vous trouvez ça plus lisible — pas besoin de passer par `Block.from_id`, ça fonctionne donc même pour des IDs sans définition :
+`Block.functions` renvoie un objet `BlockFunctions`, que vous pouvez aussi construire directement depuis un ID de bloc si vous trouvez ça plus lisible: pas besoin de passer par `Block.from_id`, ça fonctionne donc même pour des IDs sans définition :
 
 ```python
 from stewbeet import BlockFunctions
@@ -651,7 +651,7 @@ BlockFunctions("steel_block").destroy        # mêmes chemins que Block.from_id(
 BlockFunctions("gauge", namespace="other")   # cibler un autre namespace
 ```
 
-Les deux formes produisent exactement les mêmes objets `Resource[Function]` — utilisez celle que vous préférez.
+Les deux formes produisent exactement les mêmes objets `Resource[Function]`: utilisez celle que vous préférez.
 
 #### **Lire et écrire le fichier**
 
@@ -670,7 +670,7 @@ res.relative_path     # "i/steel_ingot"
 res.file_type         # beet.LootTable
 ```
 
-Pour les mcfunctions, `.obj` est un objet `Function` beet, vous pouvez donc ajouter des commandes à une fonction existante directement — même résultat qu'un appel à `write_function(res, ...)` :
+Pour les mcfunctions, `.obj` est un objet `Function` beet, vous pouvez donc ajouter des commandes à une fonction existante directement: même résultat qu'un appel à `write_function(res, ...)` :
 
 ```python
 # Exécuter des commandes en tant qu'entité display du bloc quand il est placé
@@ -843,12 +843,12 @@ Consultez les exemples réels en haut de cette page pour voir comment ça foncti
 
 | Terme | Signification |
 |-------|---------------|
-| **Configuration des définitions** | : Plugin utilisateur qui crée et enrichit `Mem.definitions`. |
-| **Définition** | : Entrée d'objet typée (`Item`, `Block`, `Painting`, etc.) utilisée par les plugins StewBeet suivants. |
-| **Mem.definitions** | : Registre global où toutes les définitions sont stockées et partagées dans le pipeline. |
+| **Configuration des définitions** | Plugin utilisateur qui crée et enrichit `Mem.definitions`. |
+| **Définition** | Entrée d'objet typée (`Item`, `Block`, `Painting`, etc.) utilisée par les plugins StewBeet suivants. |
+| **Mem.definitions** | Registre global où toutes les définitions sont stockées et partagées dans le pipeline. |
 
 ## Prochaines étapes
 
-- [Écrire fonctions et fichiers](../2_writing_to_files/fr.md) — transformer vos définitions en fichiers.
-- [Recettes](../plugins/custom_recipes.md) — comment une recette atteint chaque système de craft.
-- [Manuel en jeu](../7_ingame_manual/fr.md) — le livre généré depuis vos définitions.
+- [Écrire fonctions et fichiers](../2_writing_to_files/fr.md): transformer vos définitions en fichiers.
+- [Recettes](../plugins/custom_recipes.md): comment une recette atteint chaque système de craft.
+- [Manuel en jeu](../7_ingame_manual/fr.md): le livre généré depuis vos définitions.

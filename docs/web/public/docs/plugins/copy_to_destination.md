@@ -65,8 +65,8 @@ meta:
 
 SFTP destinations use the URL format `sftp://user@host/remote/path`.
 The password is resolved in this order:
-1. **Inline in the URL** — `sftp://user:password@host/remote/path` *(not recommended for version-controlled files)*
-2. **Credentials file** — `~/stewbeet/credentials.yml` (recommended)
+1. **Inline in the URL**: `sftp://user:password@host/remote/path` *(not recommended for version-controlled files)*
+2. **Credentials file**: `~/stewbeet/credentials.yml` (recommended)
 
 #### `~/stewbeet/credentials.yml` structure
 ```yaml
@@ -123,5 +123,5 @@ Determines which files to copy based on availability:
 
 ## Next steps
 
-- [All plugins](README.md) — the rest of the pipeline, in the order it runs.
-- [Configuring the build](../3_beet_config/en.md) — enabling, ordering and configuring plugins.
+- [All plugins](README.md): the rest of the pipeline, in the order it runs.
+- [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.

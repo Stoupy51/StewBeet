@@ -1,7 +1,7 @@
 # Publier automatiquement
 
 StewBeet fournit un patron de script `upload.py` unique qui gère la publication d'une nouvelle release sur toutes les grandes plateformes de distribution en une seule commande.<br>
-Vous appelez les fonctions d'upload de chaque plateforme en séquence — GitHub en premier (il génère le changelog), puis Modrinth, Smithed et PlanetMinecraft avec ce changelog.<br>
+Vous appelez les fonctions d'upload de chaque plateforme en séquence: GitHub en premier (il génère le changelog), puis Modrinth, Smithed et PlanetMinecraft avec ce changelog.<br>
 Les identifiants sont stockés **en dehors** du projet dans `~/stewbeet/credentials.yml` pour ne jamais être accidentellement commités.
 
 **Exemple réel** : [SimplEnergy/upload.py](https://github.com/Stoupy51/SimplEnergy/blob/main/upload.py) <br>  
@@ -19,12 +19,12 @@ Créez le fichier `~/stewbeet/credentials.yml` (soit `C:\Users\VotreNom\stewbeet
 
 ```yaml
 github:
-  api_key: "ghp_..."         # Personal Access Token — https://github.com/settings/tokens
+  api_key: "ghp_..."         # Personal Access Token: https://github.com/settings/tokens
   username: "VotreNom"       # Nom d'utilisateur GitHub
 
-modrinth_api_key: "mrp_..."  # PAT avec le scope "Create versions" — https://modrinth.com/settings/pats
+modrinth_api_key: "mrp_..."  # PAT avec le scope "Create versions": https://modrinth.com/settings/pats
 
-smithed_api_key: "..."       # Token avec le scope WRITE_PACKS — https://smithed.net/settings?tab=account
+smithed_api_key: "..."       # Token avec le scope WRITE_PACKS: https://smithed.net/settings?tab=account
 
 # Optionnel : destinations SFTP utilisées par le plugin copy_to_destination
 sftp:
@@ -51,7 +51,7 @@ sftp:
 | Clé | Requis | Description |
 |-----|--------|-------------|
 | `project_name` | ✅ | Nom du dépôt (utilisé pour construire l'URL de la release) |
-| `version` | ✅ | Chaîne de version, ex. `"1.2.3"` — devient le tag `v1.2.3` |
+| `version` | ✅ | Chaîne de version, ex. `"1.2.3"`: devient le tag `v1.2.3` |
 | `build_folder` | ✅ | Chemin vers le dossier contenant les zips buildés |
 | `endswith` | ❌ | Liste de suffixes pour filtrer les fichiers uploadés (ex. `[".zip"]`) |
 
@@ -94,7 +94,7 @@ changelog: str = upload_to_github(credentials, github_config)
 | `version_type` | ✅ | `"release"`, `"beta"`, ou `"alpha"` |
 | `build_folder` | ✅ | Chemin vers le dossier contenant les zips buildés |
 | `dependencies` | ❌ | Liste d'objets de dépendances Modrinth (défaut : `[]`) |
-| `package_as_mod` | ❌ | `"all"` ou `"separate"` — upload aussi des jars mod pour les plateformes de loaders |
+| `package_as_mod` | ❌ | `"all"` ou `"separate"`: upload aussi des jars mod pour les plateformes de loaders |
 | `mod_platforms` | ❌ | Liste de plateformes pour l'empaquetage mod (défaut : `["fabric", "forge", "neoforge", "quilt"]`) |
 
 ### Exemple
@@ -116,7 +116,7 @@ upload_to_modrinth(credentials, modrinth_config, changelog)
 
 ### Comportement
 - Met toujours à jour la description et le résumé du projet **avant** d'uploader la version.
-- Si la version existe déjà, propose `y/N` — répondre `y` la supprime et la recrée.
+- Si la version existe déjà, propose `y/N`: répondre `y` la supprime et la recrée.
 - Avec `package_as_mod = "all"`, upload une version datapack et une version mod couvrant toutes les plateformes.
 - Avec `package_as_mod = "separate"`, upload une version datapack et une version mod distincte par plateforme.
 
@@ -160,7 +160,7 @@ upload_to_smithed(credentials, smithed_config, changelog)
 
 ## PlanetMinecraft
 
-`upload_to_pmc` n'a pas d'API — il ouvre la page d'édition du projet dans votre navigateur et copie le changelog converti en **BBCode** dans le presse-papier, prêt à coller.
+`upload_to_pmc` n'a pas d'API: il ouvre la page d'édition du projet dans votre navigateur et copie le changelog converti en **BBCode** dans le presse-papier, prêt à coller.
 
 ### Configuration
 
@@ -181,7 +181,7 @@ upload_to_pmc(pmc_config, changelog)
 ### Comportement
 - Ouvre `project_url` dans le navigateur par défaut.
 - Convertit le changelog Markdown en BBCode et le copie dans le presse-papier.
-- Affiche un message de confirmation — collez le contenu dans la description de version sur la page.
+- Affiche un message de confirmation: collez le contenu dans la description de version sur la page.
 
 ---
 
@@ -249,14 +249,14 @@ upload_to_pmc(pmc_config, changelog)
 
 | Terme | Signification |
 |-------|---------------|
-| **`load_credentials`** | : Lit `~/stewbeet/credentials.yml` (ou un chemin personnalisé) et retourne un dictionnaire de clés API et secrets utilisés par les fonctions d'upload. |
-| **`get_project_config`** | : Lit le `beet.yml` du répertoire courant et retourne un objet `ProjectConfig` avec les champs `name`, `version`, `id`, `output` et `directory`. |
-| **Changelog** | : Une chaîne Markdown générée automatiquement à partir des commits Git depuis le dernier tag. Retournée par `upload_to_github` et transmise aux autres fonctions d'upload. |
-| **`version_type`** | : La maturité de la release pour Modrinth — `"release"`, `"beta"`, ou `"alpha"`. |
-| **`package_as_mod`** | : Mode d'empaquetage Modrinth optionnel qui encapsule votre datapack en jar de mod Fabric/Forge/NeoForge/Quilt en plus de l'upload normal. |
+| **`load_credentials`** | Lit `~/stewbeet/credentials.yml` (ou un chemin personnalisé) et retourne un dictionnaire de clés API et secrets utilisés par les fonctions d'upload. |
+| **`get_project_config`** | Lit le `beet.yml` du répertoire courant et retourne un objet `ProjectConfig` avec les champs `name`, `version`, `id`, `output` et `directory`. |
+| **Changelog** | Une chaîne Markdown générée automatiquement à partir des commits Git depuis le dernier tag. Retournée par `upload_to_github` et transmise aux autres fonctions d'upload. |
+| **`version_type`** | La maturité de la release pour Modrinth: `"release"`, `"beta"`, ou `"alpha"`. |
+| **`package_as_mod`** | Mode d'empaquetage Modrinth optionnel qui encapsule votre datapack en jar de mod Fabric/Forge/NeoForge/Quilt en plus de l'upload normal. |
 
 ## Prochaines étapes
 
-- [compute_sha1](../plugins/compute_sha1.md) — les hashes publiés avec les releases.
-- [Configurer le build](../3_beet_config/fr.md) — le build que la publication exécute.
-- [Bibliothèques de datapack](../5_dependencies/fr.md) — les vérifications de version au runtime.
+- [compute_sha1](../plugins/compute_sha1.md): les hashes publiés avec les releases.
+- [Configurer le build](../3_beet_config/fr.md): le build que la publication exécute.
+- [Bibliothèques de datapack](../5_dependencies/fr.md): les vérifications de version au runtime.

@@ -154,7 +154,7 @@ export const Installation: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col md:flex-row gap-8">
-                    {/* Steps Navigation — each one fills as its turn plays */}
+                    {/* Steps Navigation: each one fills as its turn plays */}
                     <div className="md:w-1/3 space-y-2">
                         {steps.map((step, index) => {
                             const Icon = step.icon;
@@ -198,7 +198,7 @@ export const Installation: React.FC = () => {
                                 <div className="w-3 h-3 rounded-full bg-[#ff5f56]" />
                                 <div className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
                                 <div className="w-3 h-3 rounded-full bg-[#27c93f]" />
-                                <div className="ml-2 text-xs text-gray-400">terminal — bash</div>
+                                <div className="ml-2 text-xs text-gray-400">terminal: bash</div>
                                 <div className="ml-auto text-[0.6875rem] text-slate-400">{activeIndex + 1} / {steps.length}</div>
                             </div>
 
