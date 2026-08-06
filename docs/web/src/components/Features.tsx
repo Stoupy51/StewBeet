@@ -297,7 +297,7 @@ export const Features: React.FC = () => {
 
     return (
         <section id="features" className="py-20 px-4 relative overflow-hidden bg-gradient-to-b from-slate-900 via-[#0a0a0a] to-[#0a0a0a]">
-            <div className="max-w-7xl mx-auto relative z-10">
+            <div className="max-w-6xl mx-auto relative z-10">
                 <div className="text-center mb-12">
                     <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
                         {t('features.title')}

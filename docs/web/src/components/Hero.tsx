@@ -134,7 +134,7 @@ export const Hero: React.FC = () => {
                 <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-mc-emerald opacity-20 blur-[100px]" />
             </div>
 
-            <div className="relative z-10 w-full max-w-7xl 2xl:max-w-[90rem] mx-auto px-4">
+            <div className="relative z-10 w-full max-w-6xl mx-auto px-4">
                 {/* The headline needs its full width to stay on two lines, so the actions sit
                     beside it instead of on a row below. That reclaims the empty right half and
                     is what lets the whole hero (pitch, definition and output)fit one screen. */}
