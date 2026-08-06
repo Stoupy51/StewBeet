@@ -7,7 +7,7 @@ import type { FileNode } from './FileTree';
  * it. Both belong here because the file tree beside this is the block's real build output, and
  * without the second call three of its entries would have nothing on this side that asks for them.
  *
- * Lines are kept under 80 columns: the snippet sits in half the hero and anything longer is
+ * Lines are kept under 66 columns: the snippet sits in half the hero and anything longer is
  * cut mid-string on a 1280px screen, which reads as a rendering bug rather than as scrollable code.
  *
  * It lives in its own module so scripts/prehighlight.ts can import it and run Shiki over it at
@@ -19,20 +19,26 @@ export const HERO_CODE: string = `Block(
     vanilla_block=VanillaBlock(id="minecraft:glass"),
     manual_category="equipment",
     components={
-        "item_name": {"text": "Life Crystal Block", "color": "light_purple"},
+        "item_name": {"text": "Life Crystal Block"},
         "lore": [{"text": "Break it to get the crystal back"}],
     },
     # Broken without Silk Touch, it hands the crystal back
-    no_silk_touch_drop=NoSilkTouchDrop(id="life_crystal", count=1),
+    no_silk_touch_drop=NoSilkTouchDrop(
+        id="life_crystal", count=1,
+    ),
     recipes=[CraftingShapelessRecipe(
         category="equipment", result_count=1,
-        ingredients=8 * [Ingr("minecraft:glass")] + [Ingr("life_crystal")],
+        ingredients=8 * [Ingr("minecraft:glass")]
+            + [Ingr("life_crystal")],
     )],
 )
 # Single-block veins, deep in the overworld, carved into stone
-CustomOreGeneration.all_with_config({"life_crystal_block": [CustomOreGeneration(
-    dimensions=["minecraft:overworld"], minimum_height=-32, maximum_height=50,
-    veins_per_region=2.5, provider=["#minecraft:overworld_carver_replaceables"],
+CustomOreGeneration.all_with_config({
+    "life_crystal_block": [CustomOreGeneration(
+    dimensions=["minecraft:overworld"],
+    minimum_height=-32, maximum_height=50,
+    veins_per_region=2.5,
+    provider=["#minecraft:overworld_carver_replaceables"],
 )]})`;
 
 /** Every file in the Stardust Fragment build that belongs to life_crystal_block. */

@@ -1,8 +1,7 @@
 import { motion } from 'framer-motion';
-import { HiOutlineExclamationCircle } from 'react-icons/hi';
 import { useTranslation } from '../i18n/useTranslation';
 import { useMotionSafe } from '../hooks/useMotionSafe';
-import { ALERT_ACCENT, HEADING, PIXEL_RULE } from '../theme';
+import { HEADING, PIXEL_RULE } from '../theme';
 
 /**
  * The page explained what the framework does and showed the output, but never what was
@@ -11,7 +10,7 @@ import { ALERT_ACCENT, HEADING, PIXEL_RULE } from '../theme';
  *
  * The cost used to be three paragraphs of prose. A reader who is deciding in seconds does
  * not read three paragraphs, so it is now two stacks of files side by side: eight against
- * one. This section still carries the honest limitations, which is the part readers quote.
+ * one.
  */
 
 interface HandFile {
@@ -33,9 +32,11 @@ const BY_HAND: HandFile[] = [
     { path: 'lang/en_us.json',                     role: 'translation key', pack: 'assets' },
 ];
 
+/** Copper is 5.2:1 on slate-950 at full strength and fails the floor once faded, so the two
+    packs are told apart by hue rather than by opacity. */
 const PACK_COLOR: Record<HandFile['pack'], string> = {
-    data: 'text-mc-copper/70',
-    assets: 'text-mc-copper/40',
+    data: 'text-mc-copper',
+    assets: 'text-slate-300',
 };
 
 const Tally = ({ count, unit, tone }: { count: string; unit: string; tone: string }) => (
@@ -90,17 +91,8 @@ export const WhyStewBeet: React.FC = () => {
                         </div>
                     </div>
 
-                    <p className="text-slate-300 leading-relaxed max-w-2xl mb-8">{t('why.noPython')}</p>
+                    <p className="text-slate-300 leading-relaxed max-w-2xl">{t('why.noPython')}</p>
 
-                    <div className={`rounded-panel p-6 ${ALERT_ACCENT} max-w-3xl`}>
-                        <div className="flex items-start gap-3">
-                            <HiOutlineExclamationCircle className="text-mc-copper text-xl flex-shrink-0 mt-0.5" aria-hidden="true" />
-                            <div>
-                                <h3 className="font-semibold text-slate-100 mb-2">{t('why.limitsTitle')}</h3>
-                                <p className="text-slate-300 text-sm leading-relaxed">{t('why.limitsBody')}</p>
-                            </div>
-                        </div>
-                    </div>
                 </motion.div>
             </div>
         </section>
