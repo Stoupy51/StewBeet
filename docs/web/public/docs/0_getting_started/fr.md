@@ -39,7 +39,7 @@ Ouvrez un terminal/invite de commande et exécutez :
 ```bash
 python --version
 ```
-Vous devriez voir quelque chose comme `Python 3.14.3` ou supérieur. Sinon, installez Python d'abord.
+Vous devriez voir quelque chose comme `Python 3.14.7` ou supérieur. Sinon, installez Python d'abord.
 
 ## Étape 1 : Installer StewBeet
 
