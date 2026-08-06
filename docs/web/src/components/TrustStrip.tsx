@@ -8,6 +8,9 @@ import { TOTAL_BUILT_WITH } from './builtWithData';
  * The numbers that answer "is this alive and does anyone use it?": the question a visitor
  * asks immediately after understanding what the tool does.
  *
+ * They sit inside the hero rather than in a strip of their own: the evidence belongs next to
+ * the claim, and a separate band was one more section to scroll past.
+ *
  * They were previously three shields.io images in the footer, which meant a visitor had to
  * scroll the entire page to find any evidence of adoption, and the badges arrived without
  * intrinsic dimensions and shifted the layout as they loaded. The values now come from
@@ -66,8 +69,8 @@ export const TrustStrip: React.FC = () => {
     }
 
     return (
-        <section aria-label={t('trust.label')} className="border-y border-white/10 bg-slate-950">
-            <div className="max-w-5xl mx-auto px-4 py-6 grid grid-cols-2 md:grid-cols-4 gap-y-6 gap-x-4">
+        <div aria-label={t('trust.label')} role="group" className="mt-14 pt-8 border-t border-white/10">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-y-6 gap-x-4">
                 {metrics.map(({ icon: Icon, value, label }) => (
                     <div key={label} className="flex items-center gap-3 justify-center">
                         <Icon className={`text-xl flex-shrink-0 ${TEXT_ACCENT}`} />
@@ -78,6 +81,6 @@ export const TrustStrip: React.FC = () => {
                     </div>
                 ))}
             </div>
-        </section>
+        </div>
     );
 };

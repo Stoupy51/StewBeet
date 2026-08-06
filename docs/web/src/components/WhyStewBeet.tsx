@@ -6,29 +6,48 @@ import { ALERT_ACCENT, HEADING, PIXEL_RULE } from '../theme';
 
 /**
  * The page explained what the framework does and showed the output, but never what was
- * wrong with the alternative. So a visitor who has not personally suffered hand-written
- * mcfunction had no reason to care. This section is the only place on the site written in
- * the maintainer's voice, and it carries the honest limitations, which is the part readers
- * quote to other people.
+ * wrong with the alternative, so a visitor who has not personally suffered hand-written
+ * mcfunction had no reason to care.
+ *
+ * The cost used to be three paragraphs of prose. A reader who is deciding in seconds does
+ * not read three paragraphs, so it is now two stacks of files side by side: eight against
+ * one. This section still carries the honest limitations, which is the part readers quote.
  */
 
+interface HandFile {
+    path: string;
+    role: string;
+    /** Which pack the file lands in, which is what makes the count feel like work. */
+    pack: 'data' | 'assets';
+}
+
 /** The files a datapacker touches by hand for one custom block, in the order they hit them. */
-const BY_HAND: { path: string; role: string }[] = [
-    { path: 'data/<ns>/function/place.mcfunction',      role: 'placement' },
-    { path: 'data/<ns>/function/destroy.mcfunction',    role: 'destruction' },
-    { path: 'data/<ns>/loot_table/block.json',          role: 'drops' },
-    { path: 'data/<ns>/recipe/block.json',              role: 'vanilla recipe' },
-    { path: 'data/<ns>/function/calls/crafter.mcfunction', role: 'NBT recipe' },
-    { path: 'assets/<ns>/items/block.json',             role: 'item definition' },
-    { path: 'assets/<ns>/models/item/block.json',       role: 'model' },
-    { path: 'assets/minecraft/lang/en_us.json',         role: 'translation key' },
+const BY_HAND: HandFile[] = [
+    { path: 'function/place.mcfunction',           role: 'placement',       pack: 'data' },
+    { path: 'function/destroy.mcfunction',         role: 'destruction',     pack: 'data' },
+    { path: 'loot_table/block.json',               role: 'drops',           pack: 'data' },
+    { path: 'recipe/block.json',                   role: 'vanilla recipe',  pack: 'data' },
+    { path: 'function/calls/crafter.mcfunction',   role: 'NBT recipe',      pack: 'data' },
+    { path: 'items/block.json',                    role: 'item definition', pack: 'assets' },
+    { path: 'models/item/block.json',              role: 'model',           pack: 'assets' },
+    { path: 'lang/en_us.json',                     role: 'translation key', pack: 'assets' },
 ];
+
+const PACK_COLOR: Record<HandFile['pack'], string> = {
+    data: 'text-mc-copper/70',
+    assets: 'text-mc-copper/40',
+};
+
+const Tally = ({ count, unit, tone }: { count: string; unit: string; tone: string }) => (
+    <div className="flex items-baseline gap-3">
+        <span className={`font-mono text-5xl leading-none ${tone}`}>{count}</span>
+        <span className="text-sm text-slate-400 leading-tight">{unit}</span>
+    </div>
+);
 
 export const WhyStewBeet: React.FC = () => {
     const { t } = useTranslation();
     const motionSafe = useMotionSafe();
-
-    const painPoints = [t('why.pain1'), t('why.pain2'), t('why.pain3')];
 
     return (
         <section id="why" className="py-20 px-4 relative bg-slate-950">
@@ -38,47 +57,42 @@ export const WhyStewBeet: React.FC = () => {
                 <motion.div
                     {...motionSafe({
                         initial: { y: 24 },
-                        animate: { y: 0 },
+                        whileInView: { y: 0 },
                         viewport: { once: true },
                         transition: { duration: 0.5 },
                     })}
-                    className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_auto] gap-x-12 gap-y-10 items-start"
                 >
-                    <div className="max-w-2xl">
-                        <h2 className={`text-3xl md:text-4xl font-bold mb-6 ${HEADING}`}>{t('why.title')}</h2>
+                    <h2 className={`text-3xl md:text-4xl font-bold mb-4 ${HEADING}`}>{t('why.title')}</h2>
+                    <p className="text-lg text-slate-300 leading-relaxed max-w-2xl mb-10">{t('why.intro')}</p>
 
-                        <p className="text-lg text-slate-300 leading-relaxed mb-6">{t('why.intro')}</p>
-
-                        <ul className="space-y-3 mb-6">
-                            {painPoints.map((point) => (
-                                <li key={point} className="flex gap-3 text-slate-300 leading-relaxed">
-                                    <span className="text-mc-copper font-mono flex-shrink-0" aria-hidden="true">-</span>
-                                    <span>{point}</span>
-                                </li>
-                            ))}
-                        </ul>
-
-                        <p className="text-lg text-slate-300 leading-relaxed mb-4">{t('why.resolution')}</p>
-                        <p className="text-slate-300 leading-relaxed">{t('why.noPython')}</p>
-                    </div>
-
-                    {/* The list the prose is describing, so the claim is visible rather than asserted. */}
-                    <div className="lg:w-[24rem] rounded-panel border border-white/10 bg-slate-900/60 overflow-hidden">
-                        <div className="px-4 py-2.5 border-b border-white/10 bg-slate-900">
-                            <p className="text-xs font-mono uppercase tracking-wider text-mc-copper">{t('why.byHandTitle')}</p>
+                    {/* The count is the argument, so it is shown rather than described */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch mb-8">
+                        <div className="rounded-panel border border-mc-copper/25 bg-slate-900/60 p-6">
+                            <p className="text-xs font-mono uppercase tracking-wider text-mc-copper mb-4">{t('why.byHandTitle')}</p>
+                            <Tally count="8" unit={t('why.byHandUnit')} tone="text-mc-copper" />
+                            <ul className="mt-6 space-y-1.5 font-mono text-xs">
+                                {BY_HAND.map(({ path, role, pack }) => (
+                                    <li key={path} className="flex items-baseline justify-between gap-4">
+                                        <span className={`${PACK_COLOR[pack]} truncate`}>{path}</span>
+                                        <span className="text-slate-500 flex-shrink-0">{role}</span>
+                                    </li>
+                                ))}
+                            </ul>
                         </div>
-                        <ul className="p-4 space-y-2 font-mono text-[0.6875rem] leading-relaxed">
-                            {BY_HAND.map(({ path, role }) => (
-                                <li key={path} className="flex flex-col">
-                                    <span className="text-slate-300 break-all">{path}</span>
-                                    <span className="text-slate-400">{role}</span>
-                                </li>
-                            ))}
-                        </ul>
-                        <p className="px-4 pb-4 text-xs text-slate-400 leading-relaxed">{t('why.byHandNote')}</p>
+
+                        <div className="rounded-panel border border-mc-emerald/30 bg-slate-900/60 p-6 flex flex-col">
+                            <p className="text-xs font-mono uppercase tracking-wider text-mc-emerald mb-4">{t('why.withTitle')}</p>
+                            <Tally count="1" unit={t('why.withUnit')} tone="text-mc-emerald" />
+                            <ul className="mt-6 font-mono text-xs">
+                                <li className="text-mc-emerald/80">{t('why.withFile')}</li>
+                            </ul>
+                            <p className="mt-auto pt-6 text-sm text-slate-300 leading-relaxed">{t('why.withNote')}</p>
+                        </div>
                     </div>
 
-                    <div className={`rounded-panel p-6 ${ALERT_ACCENT} lg:col-span-2 max-w-3xl`}>
+                    <p className="text-slate-300 leading-relaxed max-w-2xl mb-8">{t('why.noPython')}</p>
+
+                    <div className={`rounded-panel p-6 ${ALERT_ACCENT} max-w-3xl`}>
                         <div className="flex items-start gap-3">
                             <HiOutlineExclamationCircle className="text-mc-copper text-xl flex-shrink-0 mt-0.5" aria-hidden="true" />
                             <div>

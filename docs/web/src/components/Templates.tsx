@@ -4,7 +4,7 @@ import { GiStoneBlock, GiChest, GiCrystalGrowth } from 'react-icons/gi';
 import { useState } from 'react';
 import { useTranslation } from '../i18n/useTranslation';
 import { useMotionSafe } from '../hooks/useMotionSafe';
-import { ACCENT_BORDER_HOVER, CARD_HIGHLIGHT, HEADING, PANEL_ACCENT, PIXEL_RULE, TEXT_ACCENT, TEXT_ACCENT_SOFT } from '../theme';
+import { ACCENT_BORDER_HOVER, CARD_HIGHLIGHT, HEADING, PANEL_ACCENT, TEXT_ACCENT, TEXT_ACCENT_SOFT } from '../theme';
 
 export const Templates: React.FC = () => {
     const [copiedTemplate, setCopiedTemplate] = useState<string | null>(null);
@@ -48,10 +48,8 @@ export const Templates: React.FC = () => {
     ];
 
     return (
-        <section id="templates" className="py-20 px-4 relative bg-slate-950">
-            <div className={`${PIXEL_RULE} absolute top-0 left-0`} />
-
-            <div className="max-w-7xl mx-auto relative z-10">
+        <div id="templates" className="scroll-mt-24 mt-16 pt-12 border-t border-white/10">
+            <div className="relative z-10">
                 <motion.div
                     {...motionSafe({
                         initial: { y: 30 },
@@ -61,9 +59,9 @@ export const Templates: React.FC = () => {
                     })}
                     className="text-center mb-8"
                 >
-                    <h2 className={`text-4xl md:text-5xl font-bold mb-4 ${HEADING}`}>
+                    <h3 className={`text-2xl md:text-3xl font-bold mb-4 ${HEADING}`}>
                         {t('templates.title')}
-                    </h2>
+                    </h3>
                     <p className="text-slate-400 text-lg max-w-3xl mx-auto">
                         {t('templates.subtitle')} <span className={`${TEXT_ACCENT_SOFT} font-semibold`}>{t('templates.subtitleHighlight')}</span> {t('templates.subtitleEnd')}
                     </p>
@@ -183,6 +181,6 @@ export const Templates: React.FC = () => {
                 </div>
 
             </div>
-        </section>
+        </div>
     );
 };

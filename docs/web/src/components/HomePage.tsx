@@ -2,13 +2,11 @@ import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Navbar } from './Navbar';
 import { Hero } from './Hero';
-import { TrustStrip } from './TrustStrip';
 import { WhyStewBeet } from './WhyStewBeet';
 import { ManualShowcase } from './ManualShowcase';
 import { Features } from './Features';
 import { BuiltWith } from './BuiltWith';
 import { Installation } from './Installation';
-import { Templates } from './Templates';
 import { FinalCTA } from './FinalCTA';
 import { Footer } from './Footer';
 import { SELECTION_BRAND } from '../theme';
@@ -44,13 +42,11 @@ function HomePage() {
           meets the evidence that the project is alive before being asked to read about it. */}
       <main>
         <Hero />
-        <TrustStrip />
         <WhyStewBeet />
         <ManualShowcase />
         <Features />
         <BuiltWith />
         <Installation />
-        <Templates />
         <FinalCTA />
       </main>
 
