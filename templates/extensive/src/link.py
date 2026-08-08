@@ -97,5 +97,21 @@ particle angry_villager ~ ~1 ~ 0.2 0.2 0.2 0.01 10
     equation2 = (ScoreboardEquation("#value2", f"{ns}.data").set(20) - 6 + 7) * 8 // 4 % 5
     write_function(f"{ns}:equation/test", str(equation) + "\n" + str(equation2))
 
+
+    # DO NOT CROSS: THIS IS A WAR CRIME YOU NEED TO REMOVE, IT'S JUST FUNNY THAT YOU *CAN* DO THAT
+    suffixes = ["", "_again"]
+    my_range = range(1, 6)
+    write_function(f"{ns}:war_crime/test", f"""
+for i in {my_range}:
+    say f"Hello, world! {{i}}"
+
+execute function ./goodbye:
+    say Goodbye, world!
+    for suffix in {suffixes}:
+        execute function f"{ns}:war_crime/farewell{{suffix}}":
+            say f"Farewell, world! with {{suffix}}"
+""")
+    del ctx.data[ns].functions["war_crime/test"]
+
     pass
 
