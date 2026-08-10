@@ -39,10 +39,13 @@ def beet_default(ctx: Context):
     })
 
 
-    # Add some commands when loading datapack
+    # Add some commands when loading datapack.
+    # The "render" keys are replaced by the auto.text_renders plugin with glyphs of a generated font,
+    # so any item image can be shown in chat: a project item, a vanilla one, or one from another pack.
     write_load_file("""
 # Add a message when loading
-say Here is a message when loading the datapack, located in `src/link.py`
+tellraw @a ["Here is a message when loading the datapack, located in `src/link.py`\\n\\n\\n"]
+tellraw @a [{"render":"steel_block","height":64},{"render":"minecraft:diamond","height":64},"\\n\\n\\n\\n"]
 """)
     #	write_function("v{version}/load/confirm_load", ...)	<- This is the same as the previous line
 

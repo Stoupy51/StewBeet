@@ -17,6 +17,16 @@ def main():
         WikiButton({"text":"This is another button with a simple text component.","color":"aqua"}),
     ]
 
+    # Add a lore line mixing text and item images. The auto.text_renders plugin turns each "render"
+    # into a glyph of the generated "<ns>:renders" font, so this works in any text component.
+    # "height" is what you see, "resolution" is what gets stored. Without it the 256px render is kept
+    # as-is; here it is shrunk to 64px, still plenty sharp at 10 pixels tall but a smaller pack.
+    obj.components.setdefault("lore", []).append([
+        {"text":"Smelted from ","color":"gray","italic":False},
+        {"render":"raw_steel", "height":10, "resolution":64},
+        {"text":" raw steel","color":"gray","italic":False},
+    ])
+
     # Add a super stone block that can be crafted with 9 deepslate or stone, and has cobblestone as base block
     Block(
         id="super_stone",

@@ -32,12 +32,20 @@
 						"italic": false,
 						"font": "_your_namespace:tooltip"
 					},
-					[{
-						"text":"뀁",
-						"italic": false,
+					" ",
+					{
+						"translate": "_your_namespace.extensive_template",
 						"color": "white",
+						"italic": false,
 						"font": "_your_namespace:tooltip"
-					}, {"translate": "_your_namespace.extensive_template"}]
+					},
+					" ",
+					{
+						"text": "耢","font": "_your_namespace:renders",
+						
+						"color": "white",
+						"italic": false
+					}
 				]
 			],
 			"minecraft:custom_data": {
