@@ -1,10 +1,11 @@
 
 # Imports
 import stouputils as stp
-from beet import Context, Language, TextFileBase
+from beet import Context, Language
 
 from ....core.__memory__ import Mem
 from ....core.utils.io import set_json_encoder
+from ....core.utils.text_component import iter_data_text_files
 from .utils import handle_file, lang
 
 
@@ -19,17 +20,8 @@ def beet_default(ctx: Context) -> None:
 	"""
 	Mem.ctx = ctx
 
-	# Get all functions and loot tables
-	files_to_process: dict[str, TextFileBase[str] | None] = {}
-	files_to_process.update(ctx.data.loot_tables)	# type: ignore # Idk why, but this is needed to ensure loot tables are processed
-	files_to_process.update(dict(ctx.data.all()))	# type: ignore
-
-	# Process all files
-	args: list[TextFileBase[str]] = [
-		content for _, content in sorted(files_to_process.items())
-		if isinstance(content, TextFileBase)
-	]
-	for content in args:
+	# Process every text file of the datapack, loot tables included
+	for content in iter_data_text_files(ctx):
 		handle_file(content)
 
 	# Update the lang file
