@@ -1,0 +1,8 @@
+stewbeet.plugins.auto.text\_renders.scan module
+===============================================
+
+.. automodule:: stewbeet.plugins.auto.text_renders.scan
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

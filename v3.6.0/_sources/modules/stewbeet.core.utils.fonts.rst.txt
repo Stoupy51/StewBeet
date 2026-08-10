@@ -1,0 +1,20 @@
+stewbeet.core.utils.fonts package
+=================================
+
+.. automodule:: stewbeet.core.utils.fonts
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.core.utils.fonts.allocator
+   stewbeet.core.utils.fonts.colors
+   stewbeet.core.utils.fonts.image_utils
+   stewbeet.core.utils.fonts.item_images
+   stewbeet.core.utils.fonts.providers
