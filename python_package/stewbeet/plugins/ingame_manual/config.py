@@ -14,7 +14,12 @@ from beet import Context
 from beet.core.utils import TextComponent
 from stouputils.typing import JsonDict
 
+from ...core.__memory__ import Mem
+from ...core.utils.fonts import iso_renders_path
 from .button_layout import ButtonLayout
+
+# Beet cache holding the generated glyph PNGs and the copied templates (lives in .beet_cache).
+FONT_CACHE_NAME: str = "stewbeet_manual"
 
 # Default item components shown when hovering an item in the manual (target of set_manual_components).
 DEFAULT_COMPONENTS_TO_INCLUDE: list[str] = ["item_name", "lore", "custom_name", "damage", "max_damage"]
@@ -30,7 +35,7 @@ class ManualConfig:
 
 	Build one with :meth:`from_meta`. All fields are public.
 
-	>>> config = ManualConfig(project_id="mypack", project_name="My Pack", project_author="me", cache_path="cache", max_items_per_row=9)
+	>>> config = ManualConfig(project_id="mypack", project_name="My Pack", project_author="me", max_items_per_row=9)
 	>>> config.max_items_per_row  # clamped like v1 (max 6 per row)
 	6
 	>>> config.font
@@ -44,7 +49,10 @@ class ManualConfig:
 	project_author: str
 
 	# Paths
-	cache_path: str
+	iso_renders_path: str = ""
+	""" Folder holding the per-item PNG renders, shared with auto.text_renders. Resolved lazily when empty. """
+	font_cache_path: str = ""
+	""" Throwaway folder for the generated glyph PNGs, inside beet's own cache. Resolved lazily when empty. """
 	manual_overrides: str = ""
 	json_dump_path: str = ""  # Debug dump only (NOT a cache)
 
@@ -80,6 +88,12 @@ class ManualConfig:
 		if len(self.name) >= 32:
 			stp.error(f"Manual name '{self.name}' is too long (max 32 characters), Minecraft does not support it.")
 
+		# Resolve the two cache folders: the item renders are a project artifact, the glyph PNGs are throwaway
+		if not self.iso_renders_path:
+			self.iso_renders_path = iso_renders_path()
+		if not self.font_cache_path:
+			self.font_cache_path = stp.clean_path(str(Mem.ctx.cache[FONT_CACHE_NAME].directory))
+
 	# Derived properties
 	@property
 	def max_items_per_page(self) -> int:
@@ -107,8 +121,6 @@ class ManualConfig:
 		assert stewbeet.get("textures_folder"), "Textures folder is not set."
 		raw: JsonDict = stewbeet.get("manual", {})
 		assert raw, "Manual configuration is not set."
-		cache_path: str = raw.get("cache_path", "")
-		assert cache_path, "Manual cache path is not set."
 
 		components = list(COMPONENTS_OVERRIDE) if COMPONENTS_OVERRIDE else list(DEFAULT_COMPONENTS_TO_INCLUDE)
 
@@ -117,7 +129,6 @@ class ManualConfig:
 			project_id=ctx.project_id,
 			project_name=ctx.project_name,
 			project_author=ctx.project_author,
-			cache_path=cache_path,
 			manual_overrides=raw.get("manual_overrides", ""),
 			json_dump_path=raw.get("json_dump_path", ""),
 			high_resolution=raw.get("high_resolution", True),

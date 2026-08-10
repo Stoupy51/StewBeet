@@ -70,7 +70,7 @@ class FurnaceBase(CraftRenderer):
 		if craft["result_count"] > 1:
 			count_img = r.images.image_count(craft["result_count"])
 			template.paste(count_img, [x + 2 for x in coords], count_img)  # type: ignore
-		template.save(f"{r.config.cache_path}/font/page/{output_filename}.png")
+		template.save(f"{r.config.font_cache_path}/page/{output_filename}.png")
 
 
 @dataclass(slots=True)

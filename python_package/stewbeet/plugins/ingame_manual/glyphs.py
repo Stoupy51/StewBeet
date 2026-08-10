@@ -1,39 +1,18 @@
-"""Glyph (bitmap-font) allocation for the manual.
+"""Glyph code points reserved by the manual.
 
-This module replaces the old class-level globals in ``ingame_manual.shared_import``
-(``SharedMemory.next_craft_font`` / ``SharedMemory.font_providers``) with a proper,
-instance-owned :class:`GlyphAllocator`.
+The allocator itself lives in :mod:`stewbeet.core.utils.fonts.allocator` and is shared with every
+other font generator; this module only owns the manual's own reserved characters and sizes.
 
-Every visual element of the manual (item icon, recipe template, page background,
-invisible spacer) is a PNG mapped to a private-use unicode character inside a Minecraft
-bitmap font. The reserved glyph code points below are **alignment-critical** and are kept
-byte-identical to the v1 plugin so existing template PNGs keep rendering correctly.
+Every visual element of the manual (item icon, recipe template, page background, invisible spacer)
+is a PNG mapped to a private-use unicode character inside a Minecraft bitmap font. The reserved
+glyph code points below are **alignment-critical** and are kept byte-identical to the v1 plugin so
+existing template PNGs keep rendering correctly.
 """
 
+# pyright: reportUnusedImport=false
+# ruff: noqa: F401
 # Imports
-import threading
-from dataclasses import dataclass, field
-
-import stouputils as stp
-from stouputils.typing import JsonDict
-
-
-# Font code-point helpers (kept identical to v1 for pixel alignment)
-def get_font(i: int) -> str:
-	""" Return the unicode character used for a glyph index.
-
-	Minecraft only allows characters starting at 0x0020, so the index is offset by that.
-
-	>>> get_font(0)
-	' '
-	>>> get_font(0x0035) == chr(0x0055)
-	True
-	"""
-	i += 0x0020  # Minecraft only allows starting at this value
-	if i > 0xffff:
-		stp.error(f"Font index {i} is too big. Maximum is 0xffff.")
-	return chr(i)
-
+from ...core.utils.fonts import GlyphAllocator, get_font
 
 # Reserved (static) glyph characters: DO NOT change the code points, they are alignment-critical.
 NONE_FONT: str =					get_font(0x0000)
@@ -98,67 +77,3 @@ SQUARE_SIZE: int = 32
 FONT_FILE: str = "manual"
 BORDER_SIZE: int = 2
 HEAVY_WORKBENCH_CATEGORY: str = "__private_heavy_workbench"
-
-
-# Allocator
-@dataclass(slots=True)
-class GlyphAllocator:
-	""" Owns the dynamic unicode counter and the bitmap font-provider registry.
-
-	This is the single source of truth for ``manual.json`` font providers, replacing the
-	v1 ``SharedMemory.font_providers`` / ``SharedMemory.next_craft_font`` globals. All
-	mutating methods are guarded by a lock so page preparation can be multithreaded.
-
-	>>> alloc = GlyphAllocator(project_id="test")
-	>>> a, b = alloc.allocate(), alloc.allocate()
-	>>> a != b
-	True
-	>>> char = alloc.register_image("test:font/example.png", ascent=8, height=16)
-	>>> alloc.register_image("test:font/example.png", ascent=8, height=16) == char  # deduped by file
-	True
-	>>> alloc.to_font_json()["providers"][0]["file"]
-	'test:font/example.png'
-	"""
-
-	project_id: str
-	""" Namespace of the project owning the font. """
-	next_craft_font: int = DEFAULT_NEXT_CRAFT_FONT
-	""" Next dynamic code point to hand out (see :meth:`allocate`). """
-	providers: list[JsonDict] = field(default_factory=list[JsonDict])
-	""" Bitmap providers accumulated for ``manual.json``. """
-	lock: threading.Lock = field(default_factory=threading.Lock, repr=False)
-	""" Guards the counter and provider list for multithreaded page preparation. """
-	_first_char_by_file: dict[str, str] = field(default_factory=dict[str, str], repr=False)
-	""" First registered glyph char per provider file (index for :meth:`find_char_by_file`). """
-
-	def allocate(self) -> str:
-		""" Reserve and return the next free dynamic glyph character. """
-		with self.lock:
-			self.next_craft_font += 1
-			return get_font(self.next_craft_font)
-
-	def add_provider(self, char: str, file: str, ascent: int, height: int) -> None:
-		""" Register a bitmap provider mapping ``char`` to the texture ``file``. """
-		with self.lock:
-			self.providers.append({"type": "bitmap", "file": file, "ascent": ascent, "height": height, "chars": [char]})
-			self._first_char_by_file.setdefault(file, char)
-
-	def find_char_by_file(self, file: str) -> str | None:
-		""" Return the glyph char already registered for ``file`` (dedupe), if any. """
-		return self._first_char_by_file.get(file)
-
-	def register_image(self, file: str, ascent: int, height: int) -> str:
-		""" Allocate a glyph for ``file`` (deduped by file) and register its provider.
-
-		Returns the glyph character.
-		"""
-		existing: str | None = self.find_char_by_file(file)
-		if existing is not None:
-			return existing
-		char: str = self.allocate()
-		self.add_provider(char, file, ascent, height)
-		return char
-
-	def to_font_json(self) -> JsonDict:
-		""" Build the ``manual.json`` font definition. """
-		return {"providers": self.providers}

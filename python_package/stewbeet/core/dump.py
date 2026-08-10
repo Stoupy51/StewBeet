@@ -48,11 +48,14 @@ def dump_command() -> None:
     if cfg.output:
         exclude_paths.add(stp.relative_path(str(cfg.output)))
 
-    # Add manual cache path from config
-    manual_config = cfg.meta.get("stewbeet", {}).get("manual", {})
-    cache_path: str = manual_config.get("cache_path", "")
-    if cache_path:
-        exclude_paths.add(stp.relative_path(cache_path))
+    # Add the item renders folder from config (the rest of the manual cache lives in .beet_cache)
+    stewbeet_meta = cfg.meta.get("stewbeet", {})
+    renders_path: str = stewbeet_meta.get("iso_renders_path", "")
+    if not renders_path:
+        legacy: str = stewbeet_meta.get("manual", {}).get("cache_path", "")
+        renders_path = legacy
+    if renders_path:
+        exclude_paths.add(stp.relative_path(renders_path))
 
     # Add definitions_debug if specified
     definitions_debug: str = cfg.meta.get("stewbeet", {}).get("definitions_debug", "")

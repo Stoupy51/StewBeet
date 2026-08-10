@@ -12,10 +12,11 @@ import os
 from dataclasses import dataclass, field
 
 import stouputils as stp
-from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageFont
+from PIL import Image, ImageDraw, ImageFont
 from stouputils.typing import JsonDict
 
 from ...core.cls.ingredients import Ingr
+from ...core.utils.fonts import add_border, careful_resize, lighten_color
 from .config import ManualConfig
 from .glyphs import (
 	BORDER_SIZE,
@@ -44,70 +45,6 @@ class BakedText:
 	shadow: tuple[int, int, int, int] | None = None  # Optional shadow color
 
 
-def lighten_color(color_hex: int, factor: float = 1.42) -> tuple[int, int, int, int]:
-	""" Lighten a packed RGB color by a factor and return RGBA.
-
-	>>> lighten_color(0x803721)
-	(182, 78, 47, 255)
-	"""
-	r = (color_hex >> 16) & 0xFF
-	g = (color_hex >> 8) & 0xFF
-	b = color_hex & 0xFF
-	r = min(255, round(r * factor))
-	g = min(255, round(g * factor))
-	b = min(255, round(b * factor))
-	return (r, g, b, 255)
-
-
-def careful_resize(image: Image.Image, max_result_size: int, resampling: Image.Resampling = Image.Resampling.NEAREST) -> Image.Image:
-	""" Resize an image while keeping the aspect ratio.
-
-	>>> careful_resize(Image.new("RGBA", (64, 32)), 32).size
-	(32, 16)
-	>>> careful_resize(Image.new("RGBA", (16, 64)), 32).size
-	(8, 32)
-	"""
-	if image.size[0] >= image.size[1]:
-		factor = max_result_size / image.size[0]
-		return image.resize((max_result_size, int(image.size[1] * factor)), resampling)
-	else:
-		factor = max_result_size / image.size[1]
-		return image.resize((int(image.size[0] * factor), max_result_size), resampling)
-
-
-def ensure_rgba_color(c: tuple[int, ...]) -> tuple[int, int, int, int]:
-	""" Ensure the color is in RGBA format.
-
-	>>> ensure_rgba_color((10, 20, 30))
-	(10, 20, 30, 255)
-	>>> ensure_rgba_color((10, 20, 30, 40))
-	(10, 20, 30, 40)
-	"""
-	if len(c) == 3:
-		return (c[0], c[1], c[2], 255)
-	if len(c) == 4:
-		return c  # type: ignore[return-value]
-	raise ValueError("border_color must be (R,G,B) or (R,G,B,A)")
-
-
-def add_border(image: Image.Image, border_color: tuple[int, int, int, int], border_size: int) -> Image.Image:
-	""" Add a colored border around the opaque region of an image (alpha dilation). """
-	if border_size <= 0:
-		return image
-	image = image.convert("RGBA")
-	border_color = ensure_rgba_color(border_color)
-	filt_size = border_size * 2 + 1
-	alpha = image.split()[3]
-	dilated = alpha.filter(ImageFilter.MaxFilter(filt_size))
-	border_mask = ImageChops.difference(dilated, alpha)
-	if not border_mask.getbbox():
-		return image
-	border_layer = Image.new("RGBA", image.size, border_color)
-	out = image.copy()
-	out.paste(border_layer, (0, 0), border_mask)
-	return out
-
-
 @dataclass(slots=True)
 class GlyphImageBuilder:
 	""" Builds every manual texture and registers its glyph provider.
@@ -115,7 +52,7 @@ class GlyphImageBuilder:
 	Holds a reference to the config and the glyph allocator; all paths/flags come from
 	those instead of globals.
 
-	>>> config = ManualConfig(project_id="demo", project_name="Demo", project_author="me", cache_path="cache")
+	>>> config = ManualConfig(project_id="demo", project_name="Demo", project_author="me")
 	>>> builder = GlyphImageBuilder(config, GlyphAllocator(project_id="demo"))
 	>>> builder.image_count(5).size  # Minecraft-style count overlay, always 32x32
 	(32, 32)
@@ -187,7 +124,7 @@ class GlyphImageBuilder:
 			count = f"{count.get('min', 1)}-{count.get('max', 1)}"
 		item = f"{item}_{str(count).replace('-', '_')}" if isinstance(count, str) or count > 1 else item
 
-		path = f"{self.config.cache_path}/font/high_res/{item}.png"
+		path = f"{self.config.font_cache_path}/high_res/{item}.png"
 		provider_path = f"{self.config.project_id}:font/high_res/{item}.png"
 		existing: str | None = self.glyphs.find_char_by_file(provider_path)
 		if existing is not None:
@@ -210,7 +147,7 @@ class GlyphImageBuilder:
 
 	def load_square_texture(self, path_id: str) -> Image.Image:
 		""" Load an item texture by ``ns/item`` path id, resized to SQUARE_SIZE (placeholder if missing). """
-		ipath = f"{self.config.cache_path}/items/{path_id}.png"
+		ipath = f"{self.config.iso_renders_path}/{path_id}.png"
 		if not os.path.exists(ipath):
 			stp.warning(f"Missing texture at '{ipath}', using placeholder texture")
 			texture = Image.new("RGBA", (SQUARE_SIZE, SQUARE_SIZE), (255, 255, 255, 0))
@@ -230,10 +167,9 @@ class GlyphImageBuilder:
 		""" Generate the single-item box image (item with no recipe). Per-recipe-type images are
 		produced by each renderer's ``build_image`` under :mod:`..recipes.types`. """
 		output_filename = output_name or name
-		cache_path = self.config.cache_path
 		project_id = self.config.project_id
 
-		image_path = f"{cache_path}/items/{project_id}/{name}.png"
+		image_path = f"{self.config.iso_renders_path}/{project_id}/{name}.png"
 		if not os.path.exists(image_path):
 			stp.warning(f"Missing texture at '{image_path}', using placeholder texture")
 			result_texture = Image.new("RGBA", (SQUARE_SIZE, SQUARE_SIZE), (255, 255, 255, 0))
@@ -254,7 +190,7 @@ class GlyphImageBuilder:
 		self.glyphs.add_provider(page_font, f"{project_id}:font/page/{output_filename}.png", ascent=0 if not output_name else 6, height=40)
 		template.paste(result_texture, (2 * factor, 2 * factor), result_mask)
 		template = add_border(template, self.get_border_color(), BORDER_SIZE)
-		template.save(f"{cache_path}/font/page/{output_filename}.png")
+		template.save(f"{self.config.font_cache_path}/page/{output_filename}.png")
 
 	def wiki_result_icon(self, name: str, craft: JsonDict) -> str:
 		""" Generate a small recipe-result wiki icon and return its font (or default font). """
@@ -264,9 +200,9 @@ class GlyphImageBuilder:
 		try:
 			craft_type = craft["type"]
 			result_item: str = Ingr(craft["result"]).to_id().replace(":", "/")
-			texture_path = f"{self.config.cache_path}/items/{result_item}.png"
+			texture_path = f"{self.config.iso_renders_path}/{result_item}.png"
 			result_item = result_item.replace("/", "_")
-			dest_path = f"{self.config.cache_path}/font/wiki_icons/{result_item}_{craft_type}.png"
+			dest_path = f"{self.config.font_cache_path}/wiki_icons/{result_item}_{craft_type}.png"
 
 			# Same (result, craft type) pairs produce the same file: only encode the PNG once
 			# per build (glyph allocation below is unchanged so the output stays identical).
@@ -285,7 +221,7 @@ class GlyphImageBuilder:
 				self._wiki_icons_generated.add(dest_path)
 
 			font = self.glyphs.allocate()
-			rel_path: str = dest_path.replace(f"{self.config.cache_path}/", f"{self.config.project_id}:")
+			rel_path: str = dest_path.replace(self.config.font_cache_path, f"{self.config.project_id}:font")
 			self.glyphs.add_provider(font, rel_path, ascent=8, height=16)
 		except Exception as e:
 			stp.warning(f"Failed to generate craft icon for {name}: {e}\nreturning default font...")
@@ -329,8 +265,8 @@ class GlyphImageBuilder:
 
 		Returns the glyph character. Used by :class:`~.pages.texture_page.TexturePage`.
 		"""
-		os.makedirs(f"{self.config.cache_path}/font/page", exist_ok=True)
-		dest = f"{self.config.cache_path}/font/page/{name}.png"
+		os.makedirs(f"{self.config.font_cache_path}/page", exist_ok=True)
+		dest = f"{self.config.font_cache_path}/page/{name}.png"
 		image.save(dest)
 		font = self.glyphs.allocate()
 		self.glyphs.add_provider(font, f"{self.config.project_id}:font/page/{name}.png", ascent=ascent, height=height)

@@ -1,15 +1,18 @@
 
+# pyright: reportUnusedImport=false
+# ruff: noqa: F401
 # Imports
 import json
 from pathlib import Path
 
 import stouputils as stp
-from beet import Font, Texture
+from beet import Texture
 from beet.core.utils import TextComponent
 from PIL import Image
 from stouputils.typing import JsonDict
 
 from ...core import Mem
+from ...core.utils.fonts import merge_font_providers, uses_font
 from .project_images import find_pack_png, find_tooltip_png
 from .source_lore_colors import recolor_image, resolve_source_lore_color
 
@@ -23,32 +26,6 @@ ICON_TEXTURE: str = "tooltip/tooltip"	# Logo glyph, relative to textures/
 
 
 # Utility functions
-def uses_font(component: TextComponent, font: str) -> bool:
-	""" Recursively check whether a text component (or any of its parts) renders with ``font``.
-
-	Args:
-		component	(TextComponent):	Text component to inspect.
-		font		(str):				Fully qualified font id, e.g. ``"mypack:tooltip"``.
-	Returns:
-		bool: True when at least one part of the component uses that font.
-
-	Examples:
-		>>> uses_font([{"text": "a"}, {"text": "b", "font": "mypack:tooltip"}], "mypack:tooltip")
-		True
-		>>> uses_font({"text": "a", "extra": [{"text": "b", "font": "mypack:tooltip"}]}, "mypack:tooltip")
-		True
-		>>> uses_font("plain string", "mypack:tooltip")
-		False
-	"""
-	if isinstance(component, list):
-		return any(uses_font(part, font) for part in component)
-	if isinstance(component, dict):
-		if component.get("font") == font:
-			return True
-		return any(uses_font(component[key], font) for key in ("extra", "with") if key in component)
-	return False
-
-
 def is_icon_placeholder(component: TextComponent) -> bool:
 	""" Whether a text component is the ``{"text": "ICON"}`` placeholder standing for the logo glyph.
 
@@ -102,9 +79,7 @@ def create_source_lore_font(pack_icon: str = "") -> None:
 		providers = [provider for provider in providers if provider.get("file") != f"{namespace}:{ICON_TEXTURE}.png"]
 
 	# Merge the providers into the font, keeping the ones that were already there
-	font: Font = assets.fonts.setdefault(TOOLTIP_FONT, Font({"providers": []}))
-	font.encoder = lambda x: stp.json_dump(x, max_level=-1)
-	font.data["providers"].extend(providers)
+	merge_font_providers(namespace, TOOLTIP_FONT, providers)
 
 	# Character atlas: a project-supplied tooltip.png wins as-is, else recolor the packaged one
 	override: str | None = find_tooltip_png()
