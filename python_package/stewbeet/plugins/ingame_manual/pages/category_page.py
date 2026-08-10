@@ -16,8 +16,8 @@ from typing import TYPE_CHECKING
 from beet.core.utils import TextComponent
 from PIL import Image
 
+from ....core.utils.fonts import add_border, careful_resize
 from ..glyphs import BORDER_SIZE, MEDIUM_NONE_FONT, SMALL_NONE_FONT, VERY_SMALL_NONE_FONT
-from ..images import add_border, careful_resize
 from .base import Page
 
 if TYPE_CHECKING:
@@ -95,6 +95,6 @@ class CategoryPage(Page):
 			content.extend(["\n", *line, *category_padding, "\n"])
 
 		page_image = add_border(page_image, manual.images.get_border_color(), BORDER_SIZE)
-		os.makedirs(f"{config.cache_path}/font/category", exist_ok=True)
-		page_image.save(f"{config.cache_path}/font/category/{file_name}.png")
+		os.makedirs(f"{config.font_cache_path}/category", exist_ok=True)
+		page_image.save(f"{config.font_cache_path}/category/{file_name}.png")
 		return content

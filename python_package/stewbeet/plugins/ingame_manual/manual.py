@@ -24,7 +24,7 @@ from PIL import Image
 from ...core.__memory__ import Mem
 from ...core.cls.item import Item
 from .config import ManualConfig
-from .glyphs import HEAVY_WORKBENCH_CATEGORY, GlyphAllocator
+from .glyphs import DEFAULT_NEXT_CRAFT_FONT, HEAVY_WORKBENCH_CATEGORY, GlyphAllocator
 from .images import GlyphImageBuilder
 from .optimizer import optimize_element
 
@@ -56,7 +56,7 @@ class Manual:
 	identity semantics: the manual and its collaborators (:class:`~.recipes.RecipeRenderer`)
 	reference each other, so field-based equality would recurse.
 
-	>>> manual = Manual(ManualConfig(project_id="demo", project_name="Demo", project_author="me", cache_path="cache"))
+	>>> manual = Manual(ManualConfig(project_id="demo", project_name="Demo", project_author="me"))
 	>>> manual.recipes.manual is manual
 	True
 	>>> _ = manual.add_page(Page(anchor="later"))
@@ -113,7 +113,7 @@ class Manual:
 	""" Item id -> loaded texture cache (see :meth:`load_item_texture`). """
 
 	def __post_init__(self) -> None:
-		self.glyphs = GlyphAllocator(self.config.project_id)
+		self.glyphs = GlyphAllocator(self.config.project_id, DEFAULT_NEXT_CRAFT_FONT)
 		self.images = GlyphImageBuilder(self.config, self.glyphs)
 		self.recipes = RecipeRenderer(self)
 		self.hooks = {p: [] for p in Phase}
@@ -140,7 +140,7 @@ class Manual:
 		""" Open an item's cached iso-render texture (placeholder if missing). """
 		if item in self.texture_cache:
 			return self.texture_cache[item]
-		path = f"{self.config.cache_path}/items/{self.config.project_id}/{item}.png"
+		path = f"{self.config.iso_renders_path}/{self.config.project_id}/{item}.png"
 		if os.path.exists(path):
 			img = Image.open(path)
 		else:
@@ -472,7 +472,7 @@ class Manual:
 
 		# Showcase
 		if self.config.showcase_image > 0:
-			generate_showcase_images(self.config.showcase_image, self.categories, self.simple_case, self.config.cache_path)
+			generate_showcase_images(self.config.showcase_image, self.categories, self.simple_case, self.config.iso_renders_path)
 
 		# Dialogs (always, dialog-first)
 		DialogEmitter(self).emit()

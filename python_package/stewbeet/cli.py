@@ -114,10 +114,14 @@ def main() -> None:
                 cache_dir: str = os.path.join(root, "__pycache__")
                 shutil.rmtree(cache_dir, ignore_errors=True)
 
-        # Remove manual cache directory if specified in metadata
-        cache_path: str = cfg.meta.get("stewbeet", {}).get("manual", {}).get("cache_path", "")
-        if cache_path and os.path.exists(cache_path):
-            shutil.rmtree(cache_path, ignore_errors=True)
+        # Remove the item renders folder (the rest of what the manual caches lives in .beet_cache)
+        stewbeet_meta = cfg.meta.get("stewbeet", {})
+        renders_path: str = stewbeet_meta.get("iso_renders_path", "")
+        if not renders_path:
+            legacy: str = stewbeet_meta.get("manual", {}).get("cache_path", "")
+            renders_path = f"{legacy}/items" if legacy else ""
+        if renders_path and os.path.exists(renders_path):
+            shutil.rmtree(renders_path, ignore_errors=True)
 
         # Remove debug definitions file if it exists
         definitions_debug: str = cfg.meta.get("stewbeet", {}).get("definitions_debug", "")

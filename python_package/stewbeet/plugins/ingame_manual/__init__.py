@@ -14,9 +14,9 @@ import stouputils as stp
 from beet import Context
 
 from ...core.__memory__ import Mem
+from ...core.utils.fonts import generate_all_iso_renders
 from .api import get_manual
 from .config import ManualConfig
-from .iso_renders import generate_all_iso_renders
 from .paths import MANUAL_ASSETS_PATH, TEMPLATES_PATH
 from .special import register_heavy_workbench
 
@@ -43,11 +43,11 @@ def beet_default(ctx: Context) -> None:
 
 	# Prepare assets, register special blocks, render item textures, then build.
 	copy_templates(config)
-	os.makedirs(f"{config.cache_path}/font/page", exist_ok=True)
-	os.makedirs(f"{config.cache_path}/font/wiki_icons", exist_ok=True)
-	os.makedirs(f"{config.cache_path}/font/high_res", exist_ok=True)
+	os.makedirs(f"{config.font_cache_path}/page", exist_ok=True)
+	os.makedirs(f"{config.font_cache_path}/wiki_icons", exist_ok=True)
+	os.makedirs(f"{config.font_cache_path}/high_res", exist_ok=True)
 	register_heavy_workbench()
-	generate_all_iso_renders(config)
+	generate_all_iso_renders(config.iso_renders_path, config.project_id, config.cache_assets)
 	manual.build()
 
 	# Reset so `beet watch` starts each cycle with a fresh, hook-free Manual.

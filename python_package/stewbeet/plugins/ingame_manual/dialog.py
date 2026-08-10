@@ -71,7 +71,7 @@ class DialogEmitter:
 			if texture_object and texture_object.mcmeta:
 				return self.add_sprite(item_name, sprite)
 
-		supposed_path: str = f"{self.manual.config.cache_path}/items/{ns}/{item}.png"
+		supposed_path: str = f"{self.manual.config.iso_renders_path}/{ns}/{item}.png"
 		if os.path.exists(supposed_path):
 			image: Image.Image = Image.open(supposed_path)
 			if image.width > 16 or image.height > 16:

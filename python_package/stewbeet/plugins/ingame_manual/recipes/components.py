@@ -31,9 +31,9 @@ def high_res_font_from_ingredient(r: RecipeRenderer, ingredient: str | Ingr, cou
 		ingr_str: str = Ingr(ingredient).to_id(add_namespace=True)
 	else:
 		ingr_str = ingredient
-	cache_path = r.config.cache_path
+	renders_path = r.config.iso_renders_path
 	if ':' in ingr_str:
-		image_path = f"{cache_path}/items/{ingr_str.replace(':', '/')}.png"
+		image_path = f"{renders_path}/{ingr_str.replace(':', '/')}.png"
 		if not os.path.exists(image_path):
 			stp.warning(f"Missing texture at '{image_path}', using placeholder texture")
 			item_image = Image.new("RGBA", (16, 16), (255, 255, 255, 0))
@@ -41,7 +41,7 @@ def high_res_font_from_ingredient(r: RecipeRenderer, ingredient: str | Ingr, cou
 			item_image = Image.open(image_path)
 		ingr_str = ingr_str.split(":")[1]
 	else:
-		path: str = f"{cache_path}/items/{r.config.project_id}/{ingr_str}.png"
+		path: str = f"{renders_path}/{r.config.project_id}/{ingr_str}.png"
 		if not os.path.exists(path):
 			stp.warning(f"Missing texture at '{path}', using placeholder texture")
 			item_image = Image.new("RGBA", (16, 16), (255, 255, 255, 0))

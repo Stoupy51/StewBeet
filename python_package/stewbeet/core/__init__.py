@@ -16,6 +16,7 @@ from .constants import *
 from .definitions_helper import *
 from .placeholder_context import *
 from .utils.equation import *
+from .utils.fonts import *
 from .utils.io import *
 from .utils.sounds import *
 from .utils.text_component import *

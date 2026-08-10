@@ -12,11 +12,12 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import stouputils as stp
-from beet import Font, Texture
+from beet import Texture
 from PIL import Image
 
 from ...core.__memory__ import Mem
 from ...core.cls.item import Item
+from ...core.utils.fonts import validate_font_providers, write_font_from_allocator
 from .glyphs import (
 	AWAKENED_3X3_FONT,
 	AWAKENED_3X4_FONT,
@@ -24,6 +25,7 @@ from .glyphs import (
 	BOOK_ASCENT,
 	BOOK_FONT,
 	BOOK_HEIGHT,
+	FONT_FILE,
 	FURNACE_FONT,
 	HOME_ASCENT,
 	HOME_FONT,
@@ -162,11 +164,8 @@ def register_nav_overrides(manual: Manual) -> None:
 
 
 def write_font(manual: Manual) -> None:
-	""" Write ``manual.json`` and register the font in the resource pack. """
-	os.makedirs(f"{manual.config.cache_path}/font", exist_ok=True)
-	with stp.super_open(f"{manual.config.cache_path}/font/manual.json", "w") as fh:
-		fh.write(stp.json_dump(manual.glyphs.to_font_json()))
-	Mem.ctx.assets[manual.config.project_id].fonts["manual"] = Font(source_path=f"{manual.config.cache_path}/font/manual.json")
+	""" Register every collected provider in the ``<ns>:manual`` font of the resource pack. """
+	write_font_from_allocator(manual.config.project_id, FONT_FILE, manual.glyphs)
 
 
 def copy_generated_textures(manual: Manual) -> None:
@@ -174,7 +173,7 @@ def copy_generated_textures(manual: Manual) -> None:
 	ns = manual.config.project_id
 	folders = ["category", "page", "wiki_icons", *(["high_res"] if manual.config.high_resolution else [])]
 	for folder in folders:
-		folder_path = f"{manual.config.cache_path}/font/{folder}"
+		folder_path = f"{manual.config.font_cache_path}/{folder}"
 		if not os.path.isdir(folder_path):
 			continue
 		for file in os.listdir(folder_path):
@@ -186,14 +185,7 @@ def copy_generated_textures(manual: Manual) -> None:
 
 def validate_providers(manual: Manual) -> None:
 	""" Error out if any font provider references a missing texture or has no chars. """
-	ns = manual.config.project_id
-	for fp in manual.glyphs.providers:
-		if "file" in fp:
-			path: str = os.path.splitext(fp["file"].split(":", 1)[-1])[0]
-			if not Mem.ctx.assets[ns].textures.get(path):
-				stp.error(f"Missing font provider at '{path}' for {fp}")
-			if len(fp["chars"]) < 1 or (len(fp["chars"]) == 1 and not fp["chars"][0]):
-				stp.error(f"Font provider '{path}' has no chars")
+	validate_font_providers(manual.config.project_id, manual.glyphs.providers)
 
 
 def create_manual_item(manual: Manual) -> None:

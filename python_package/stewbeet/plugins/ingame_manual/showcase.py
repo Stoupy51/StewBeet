@@ -1,6 +1,6 @@
 """Showcase image generation (promotional grids of items).
 
-Ported from v1 ``showcase_image`` with ``cache_path`` passed in rather than read from a global.
+Ported from v1 ``showcase_image`` with ``renders_path`` passed in rather than read from a global.
 """
 
 # Imports
@@ -10,7 +10,7 @@ import stouputils as stp
 from PIL import Image
 
 from ...core.__memory__ import Mem
-from .images import careful_resize
+from ...core.utils.fonts import careful_resize
 
 
 def calculate_optimal_grid(item_count: int) -> tuple[int, int]:
@@ -41,7 +41,7 @@ def generate_showcase_images(
 	showcase_mode: int,
 	categories: dict[str, list[str]],
 	simple_case: Image.Image,
-	cache_path: str,
+	renders_path: str,
 	all_items: list[str] | None = None,
 ) -> None:
 	""" Generate showcase image(s) per mode (1=manual, 2=all, 3=both).
@@ -57,7 +57,7 @@ def generate_showcase_images(
 		if manual_items:
 			stp.run_in_subprocess(
 				create_showcase_image, manual_items, "all_manual_items.png", simple_case,
-				str(Mem.ctx.output_directory), Mem.ctx.project_id, cache_path, no_join=True,
+				str(Mem.ctx.output_directory), Mem.ctx.project_id, renders_path, no_join=True,
 			)
 	if showcase_mode in (2, 3):
 		if all_items is None:
@@ -65,11 +65,11 @@ def generate_showcase_images(
 		if all_items:
 			stp.run_in_subprocess(
 				create_showcase_image, all_items, "all_items.png", simple_case,
-				str(Mem.ctx.output_directory), Mem.ctx.project_id, cache_path, no_join=True,
+				str(Mem.ctx.output_directory), Mem.ctx.project_id, renders_path, no_join=True,
 			)
 
 
-def create_showcase_image(items: list[str], filename: str, simple_case: Image.Image, output_dir: str, project_id: str, cache_path: str) -> None:
+def create_showcase_image(items: list[str], filename: str, simple_case: Image.Image, output_dir: str, project_id: str, renders_path: str) -> None:
 	""" Build one composite showcase grid image and save it to ``output_dir``. """
 	if not items:
 		return
@@ -91,7 +91,7 @@ def create_showcase_image(items: list[str], filename: str, simple_case: Image.Im
 		col = i % cols
 		x = col * case_size
 		y = row * case_size
-		texture_path = f"{cache_path}/items/{project_id}/{item}.png"
+		texture_path = f"{renders_path}/{project_id}/{item}.png"
 		resized_item = texture_cache.get(texture_path)
 		if resized_item is None:
 			try:
