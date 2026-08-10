@@ -171,6 +171,7 @@ pipeline:
     - "stewbeet.plugins.finalyze.check_unused_textures"    # 🔍 Trouve les textures inutilisées
     - "stewbeet.plugins.finalyze.last_final"               # 🎯 Nettoyage final
     - "stewbeet.plugins.auto.lang_file"                    # 🌐 Génère auto les fichiers de langue
+    - "stewbeet.plugins.auto.text_renders"                 # 🖼️ Transforme les clés "render" en glyphes
     - "stewbeet.plugins.auto.headers"                      # 📄 Ajoute les en-têtes de fichiers
     - "stewbeet.plugins.archive"                           # 🗜️ Crée les archives ZIP
     - "stewbeet.plugins.merge_smithed_weld.datapack"       # 🔀 Fusionne les libs Smithed Weld dans le datapack
@@ -227,6 +228,7 @@ pipeline:
 **📦 Phase 8: Empaquetage** - ZIPs, copie, hashing
 ```yaml
 - "stewbeet.plugins.auto.lang_file"
+- "stewbeet.plugins.auto.text_renders"
 - "stewbeet.plugins.archive"
 - "stewbeet.plugins.copy_to_destination"
 ```
@@ -322,6 +324,35 @@ votre `pack.png`, n'importe quelle couleur Pillow la force (`"#55FFFF"`, `"gold"
 `assets/tooltip.png` à côté du `pack.png` remplace entièrement l'atlas de caractères (et il n'est
 jamais recoloré).
 
+Un source lore est un simple component de texte, il accepte donc aussi la clé `render` du plugin
+[`auto.text_renders`](../plugins/auto.text_renders.md) pour afficher l'image d'un objet à côté du nom
+de votre projet :
+
+```yaml
+source_lore: [{"text":"ICON"}, " ", {"text":"Mon Pack", "color":"white", "italic":false, "font":"mon_pack:tooltip"}, " ", {"render":"steel_ingot", "height":10}]
+```
+
+#### Rendus d'Objets
+Définit où vivent les PNG de chaque objet, et comment la clé `render` des components de texte est dessinée.
+
+```yaml
+iso_renders_path: "iso_renders"
+text_renders:
+    default_height: 16
+    font: "renders"
+```
+
+`iso_renders_path` contient un PNG par objet, sous la forme `<dossier>/<namespace>/<objet>.png`. Les
+objets du projet sont rendus depuis leur modèle, les objets `minecraft:` sont téléchargés, et ceux
+des autres packs sont ceux que vous y déposez vous-même. Ce dossier est partagé par
+[`ingame_manual`](../7_ingame_manual/fr.md) et [`auto.text_renders`](../plugins/auto.text_renders.md),
+donc un objet n'est rendu qu'une seule fois.
+
+> **Déprécié** : `manual.cache_path` est remplacé par `iso_renders_path`. Les projets qui le
+> définissent encore continuent de fonctionner (les rendus sont lus depuis `<cache_path>/items`),
+> mais tout le reste de ce que le manuel mettait en cache vit désormais dans le dossier `.beet_cache`
+> de beet.
+
 #### Dépendances de Chargement
 Définit les contrôles de dépendances à l'exécution pour signaler les datapacks manquants ou obsolètes.
 
@@ -347,7 +378,6 @@ manual:
     debug_mode: false
     manual_overrides: "assets/manual_overrides"
     high_resolution: true
-    cache_path: "manual_cache"
     cache_assets: true
     cache_pages: false
     name: ""
@@ -369,7 +399,7 @@ manual:
 - `first_page_text: [...]` - Message de bienvenue utilisant les components de texte
 
 **💾 Cache:**
-- `cache_path: "manual_cache"` - Où stocker les fichiers de cache
+- Les images de glyphes générées sont mises en cache dans le dossier `.beet_cache` de beet (voir `iso_renders_path` plus haut pour les rendus d'objets)
 - `cache_assets: true` - Met en cache les textures/modèles MC (90% plus rapide)
 - `cache_pages: false` - Met en cache toutes les pages (recommandé à false pour les petits projets)
 

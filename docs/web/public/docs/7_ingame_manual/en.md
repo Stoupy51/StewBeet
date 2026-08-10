@@ -31,7 +31,7 @@ Set in `beet.yml` under `meta.stewbeet.manual`:
 
 | Key                 | Type            | Default              | Description                                                              |
 | ------------------- | --------------- | -------------------- | ------------------------------------------------------------------------ |
-| `cache_path`        | `str`           | - | **Required.** Directory for generated fonts/textures/item renders        |
+| `cache_path`        | `str`           | - | *Deprecated.* Replaced by the top-level `iso_renders_path`; generated fonts and textures now live in `.beet_cache` |
 | `use_dialog`        | `int`           | `1`                  | `1` = dialog + `manual` item that opens it · `2` = dialog only (no item) |
 | `high_resolution`   | `bool`          | `true`               | High-res (256px) item icons in recipes                                   |
 | `cache_assets`      | `bool`          | `true`               | Skip re-rendering/re-downloading item textures that already exist        |
