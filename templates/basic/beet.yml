@@ -20,7 +20,7 @@ directory: "."
 # Path to a folder for beet to output. If not defined, no files will visibly output
 output: "build"
 # List of files or glob patterns that should be ignored by the file watcher and not cause any rebuild when using `$ beet watch`
-ignore: ["build", "manual_cache", "definitions_debug.json"]
+ignore: ["build", "iso_renders", "manual_content.json", "definitions_debug.json"]
 
 # A list of importable plugin strings
 require:
@@ -67,6 +67,7 @@ pipeline:
     - "stewbeet.plugins.finalyze.last_final"
     - "stewbeet.plugins.auto.scoreboard_constants"
     - "stewbeet.plugins.auto.lang_file"
+    - "stewbeet.plugins.auto.text_renders"
     - "stewbeet.plugins.auto.headers"
     - "stewbeet.plugins.archive"
     - "stewbeet.plugins.merge_smithed_weld"
@@ -139,6 +140,22 @@ meta:
             # },
         }
 
+        # Folder holding the per-item PNG renders (isometric renders, downloaded vanilla textures,
+        # and the ones you drop yourself for items of other packs, as "<folder>/<namespace>/<item>.png").
+        # Shared by the ingame_manual and auto.text_renders plugins so an item is only rendered once.
+        iso_renders_path: "iso_renders"
+        # Configuration for the "render" key of text components (auto.text_renders plugin)
+        text_renders:
+            # On-screen glyph height in pixels used when a render node omits its own "height".
+            # There is no width to set: Minecraft derives it from the texture's aspect ratio.
+            default_height: 16
+            # Texture height in pixels used when a render node omits its own "resolution".
+            # 0 stores each source image untouched, keeping all its detail so glyphs stay sharp at
+            # high GUI scales; a lower value shrinks them to save resource pack size.
+            default_resolution: 0
+            # Name of the generated font, in the project namespace
+            font: "renders"
+
         # Configuration for in-game manual
         manual:
             # Enables grid display in the manual for debugging
@@ -147,14 +164,10 @@ meta:
             manual_overrides: "assets/manual_overrides"
             # Enables high-resolution crafting displays in the manual
             high_resolution: true
-            # Directory for storing cached manual assets
-            cache_path: "manual_cache"
             # Enables caching of Minecraft assets and item renders
             cache_assets: true
-            # Enables caching of manual content and images
-            cache_pages: false
-            # Path for manual debug dump
-            json_dump_path: "manual_cache/content.json"
+            # Path for a debug dump of the manual content (debug only; not a cache)
+            json_dump_path: "manual_content.json"
             # Manual title used in book and first page. Defaults to "{name} Manual"
             name: ""
             # Maximum number of items displayed per row in manual (max: 6)

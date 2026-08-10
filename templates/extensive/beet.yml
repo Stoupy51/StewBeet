@@ -17,7 +17,7 @@ directory: "."
 # Path to a folder for beet to output. If not defined, no files will visibly output
 output: "build"
 # List of files or glob patterns that should be ignored by the file watcher and not cause any rebuild when using `$ beet watch`
-ignore: ["build", "manual_cache", "definitions_debug.json", "external_definitions.json"]
+ignore: ["build", "iso_renders", "manual_content.json", "definitions_debug.json", "external_definitions.json"]
 
 # A list of importable plugin strings
 require:
@@ -64,6 +64,7 @@ pipeline:
     - "stewbeet.plugins.finalyze.last_final.silent"
     - "stewbeet.plugins.auto.scoreboard_constants.silent"
     - "stewbeet.plugins.auto.lang_file"
+    - "stewbeet.plugins.auto.text_renders"
     - "stewbeet.plugins.auto.headers"
     - "stewbeet.plugins.archive"
     - "stewbeet.plugins.merge_smithed_weld.datapack"
@@ -105,7 +106,11 @@ meta:
             # Paths to copy the resource pack(s) to
             resource_pack: ["D:/minecraft/snapshot/resourcepacks"]
         # Custom item lore configuration. If set to "auto" or unset, uses project icon followed by PROJECT_NAME (rendered with the generated tooltip font)
-        source_lore: "auto"
+        # Written out here to show both features at once: the "ICON" placeholder becomes the pack.png glyph and the
+        # name is drawn with the generated tooltip font (that part is what "auto" gives you), plus a "render" of a
+        # project item resolved by the auto.text_renders plugin ("resolution" shrinks the stored 256px render down to 64px).
+        # Everything is plain text you can edit freely: no glyph character to preserve.
+        source_lore: [{"text":"ICON"}," ",{"text":"Extensive Template","color":"white","italic":false,"font":"_your_namespace:tooltip"}," ",{"render":"steel_ingot","height":10,"resolution":64,"color":"white","italic":false}]
         # Color of the tooltip font used by source_lore: "auto" (taken from the pack.png logo), any color ("#55FFFF", "gold", [85, 255, 255]), or false to keep the packaged gold.
         # A tooltip.png placed in "assets/" (next to pack.png) replaces the packaged character atlas and is never recolored.
         source_lore_color: "auto"
@@ -137,6 +142,22 @@ meta:
             # },
         }
 
+        # Folder holding the per-item PNG renders (isometric renders, downloaded vanilla textures,
+        # and the ones you drop yourself for items of other packs, as "<folder>/<namespace>/<item>.png").
+        # Shared by the ingame_manual and auto.text_renders plugins so an item is only rendered once.
+        iso_renders_path: "iso_renders"
+        # Configuration for the "render" key of text components (auto.text_renders plugin)
+        text_renders:
+            # On-screen glyph height in pixels used when a render node omits its own "height".
+            # There is no width to set: Minecraft derives it from the texture's aspect ratio.
+            default_height: 16
+            # Texture height in pixels used when a render node omits its own "resolution".
+            # 0 stores each source image untouched, keeping all its detail so glyphs stay sharp at
+            # high GUI scales; a lower value shrinks them to save resource pack size.
+            default_resolution: 0
+            # Name of the generated font, in the project namespace
+            font: "renders"
+
         # Configuration for in-game manual
         manual:
             # Enables grid display in the manual for debugging
@@ -145,12 +166,10 @@ meta:
             manual_overrides: "assets/manual_overrides"
             # Enables high-resolution crafting displays in the manual
             high_resolution: true
-            # Directory for storing cached manual assets
-            cache_path: "manual_cache"
             # Enables caching of Minecraft assets and item renders
             cache_assets: true
-            # Path for manual debug dump (debug only; not a cache)
-            json_dump_path: "manual_cache/content.json"
+            # Path for a debug dump of the manual content (debug only; not a cache)
+            json_dump_path: "manual_content.json"
             # Manual title used in book and first page. Defaults to "{name} Manual"
             name: ""
             # Maximum number of items displayed per row in manual (max: 6)
