@@ -8,6 +8,7 @@ from beet import *
 
 from .cli import main
 from .core import *
+from .plugins.auto.text_renders import resolve_renders
 from .plugins.ingame_manual.api import *
 from .plugins.initialize.project_images import find_pack_png
 from .plugins.resource_pack.item_models.object import AutoModel

@@ -8,6 +8,7 @@ from beet import Context
 from .placeholder_context import PLACEHOLDER_CTX
 
 if TYPE_CHECKING:
+    from ..plugins.auto.text_renders.emit import GlyphEmitter
     from ..plugins.ingame_manual.manual import Manual
     from .cls.external_item import ExternalItem
     from .cls.item import Item
@@ -41,6 +42,10 @@ class Mem:
     manual: Manual | None = None
     """ The ingame_manual Manual handle, used to register pages/hooks during setup.
     Created lazily via stewbeet.get_manual(); reset after each build (for `beet watch`). """
+
+    text_renders: GlyphEmitter | None = None
+    """ The auto.text_renders glyph emitter, shared by the build pass and resolve_renders() so both
+    draw glyph characters from the same allocator. Created lazily; reset by plugins.initialize. """
 
     used_textures: set[str] = set()
     """ Source texture paths consumed by generators (e.g. manual book_texture / TexturePage
