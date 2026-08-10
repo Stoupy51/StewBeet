@@ -25,6 +25,7 @@ ignore: ["build", "manual_cache", "definitions_debug.json"]
 # A list of importable plugin strings
 require:
     - "stewbeet"
+    - "stewbeet.plugins.livereload"
     - "bolt"
 
 # Takes a nested pack config, see PackConfig() documentation
