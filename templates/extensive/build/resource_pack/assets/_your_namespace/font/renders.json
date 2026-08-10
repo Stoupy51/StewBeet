@@ -47,7 +47,7 @@
 		},
 		{
 			"type": "bitmap",
-			"file": "_your_namespace:font/renders/minecraft_stone_256x256.png",
+			"file": "_your_namespace:font/renders/minecraft_crafting_table_256x256.png",
 			"ascent": 11,
 			"height": 16,
 			"chars": [
