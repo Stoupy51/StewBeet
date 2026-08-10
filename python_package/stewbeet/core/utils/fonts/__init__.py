@@ -31,10 +31,11 @@ from .item_images import (
 	resolve_item_image,
 	run_model_resolver,
 )
-from .providers import merge_font_providers, uses_font, validate_font_providers, write_font_from_allocator
+from .providers import FONT_MAX_LEVEL, merge_font_providers, uses_font, validate_font_providers, write_font_from_allocator
 
 __all__ = [
 	"DEFAULT_ISO_RENDERS_PATH",
+	"FONT_MAX_LEVEL",
 	"HUE_BUCKETS",
 	"MIN_SATURATION",
 	"MIN_VALUE",

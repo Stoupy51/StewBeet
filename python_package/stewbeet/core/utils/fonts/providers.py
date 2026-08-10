@@ -12,6 +12,10 @@ from stouputils.typing import JsonDict
 from ...__memory__ import Mem
 from .allocator import GlyphAllocator
 
+# Constants
+FONT_MAX_LEVEL: int = 2
+""" Indentation depth of a generated font file: one line per provider, which stays readable in a diff. """
+
 
 # Functions
 def uses_font(component: TextComponent, font: str) -> bool:
@@ -51,7 +55,7 @@ def merge_font_providers(namespace: str, font_name: str, providers: list[JsonDic
 		Font: The font object stored in the resource pack.
 	"""
 	font: Font = Mem.ctx.assets[namespace].fonts.setdefault(font_name, Font({"providers": []}))
-	font.encoder = lambda x: stp.json_dump(x, max_level=-1)
+	font.encoder = lambda x: stp.json_dump(x, max_level=FONT_MAX_LEVEL)
 	font.data["providers"].extend(providers)
 	return font
 
