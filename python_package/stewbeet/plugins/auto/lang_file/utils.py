@@ -7,6 +7,7 @@ import stouputils as stp
 from beet import Context, TextFileBase
 
 from ....core.__memory__ import Mem
+from ....core.utils.text_component import CLOSERS, Replacement, apply_replacements, find_enclosing_object
 
 # Prepare lang dictionary and lang_format function
 lang: dict[str, str] = {}
@@ -15,7 +16,6 @@ lang: dict[str, str] = {}
 ALNUM_RE: re.Pattern[str] = re.compile(r'[a-zA-Z0-9]')
 LETTER_RE: re.Pattern[str] = re.compile(r'[a-zA-Z].*[a-zA-Z]|[a-zA-Z]', re.DOTALL)
 SENTENCE_PUNCT_RE: re.Pattern[str] = re.compile(r'^[\s:.,!?]*$')
-CLOSERS: dict[str, str] = {'(': ')', '[': ']', '{': '}', '"': '"', "'": "'"}
 
 # Regex pattern for text extraction
 TEXT_RE: re.Pattern[str] = re.compile(
@@ -160,67 +160,6 @@ def split_text_content(text: str, max_words: int = 5) -> tuple[str, str, str]:
 		suffix = ''
 
 	return prefix, core, suffix
-
-
-def find_enclosing_object(string: str, match_start: int, match_end: int) -> tuple[int, int] | None:
-	""" Find the start and end positions of the JSON object enclosing a match.
-
-	Walks backwards from match_start to find the opening '{', then forwards
-	to find the matching closing '}', correctly handling nested braces.
-
-	Args:
-		string      (str): The full string to search in.
-		match_start (int): Start position of the matched text key fragment.
-		match_end   (int): End position of the matched text key fragment (unused but kept for API consistency).
-
-	Returns:
-		tuple[int, int] | None: (obj_start, obj_end) inclusive end, or None if not found.
-
-	Examples:
-		>>> find_enclosing_object('{"text":"hello"}', 1, 15)
-		(0, 16)
-		>>> find_enclosing_object('{"color":"red","text":"hi"}', 16, 25)
-		(0, 27)
-		>>> find_enclosing_object('no braces here', 0, 5) is None
-		True
-		>>> find_enclosing_object('[{"text":"a"},{"text":"b"}]', 2, 12)
-		(1, 13)
-		>>> find_enclosing_object('[{"text":"a"},{"text":"b"}]', 15, 25)
-		(14, 26)
-		>>> find_enclosing_object('{"outer":{"text":"inner"}}', 10, 24)
-		(9, 25)
-	"""
-	# Walk backwards to find the opening brace
-	depth = 0
-	obj_start = None
-	for i in range(match_start, -1, -1):
-		if string[i] == '}':
-			depth += 1
-		elif string[i] == '{':
-			if depth == 0:
-				obj_start = i
-				break
-			depth -= 1
-
-	if obj_start is None:
-		return None
-
-	# Walk forwards to find the matching closing brace
-	depth = 0
-	obj_end = None
-	for i in range(obj_start, len(string)):
-		if string[i] == '{':
-			depth += 1
-		elif string[i] == '}':
-			depth -= 1
-			if depth == 0:
-				obj_end = i + 1
-				break
-
-	if obj_end is None:
-		return None
-
-	return obj_start, obj_end
 
 
 def extract_texts(content: str) -> list[tuple[str, int, int, str, str | None]]:
@@ -578,9 +517,8 @@ def handle_file(content: TextFileBase[str] | None, ctx: Context | None = None) -
 
 	matches: list[tuple[str, int, int, str, str | None]] = extract_texts(string)
 
-	# Collect (replace_start, replace_end, new_fragment) in reverse-position order,
-	# then apply them all in a single join pass instead of rebuilding the string O(n) times.
-	replacements: list[tuple[int, int, str]] = []
+	# Collect the slices to overwrite, then splice them all in a single pass
+	replacements: list[Replacement] = []
 
 	for text, start, end, quote, key_quote in reversed(matches):
 		clean_text: str = text.replace("\\n", "\n").replace("\\", "")
@@ -611,22 +549,10 @@ def handle_file(content: TextFileBase[str] | None, ctx: Context | None = None) -
 		)
 		# Drop any nested replacements fully contained in this broader enclosing-object
 		# replacement to prevent overlapping ranges that corrupt the output JSON.
-		replacements = [
-			(rs, re, frag) for rs, re, frag in replacements
-			if not (replace_start <= rs and re <= replace_end)
-		]
-		replacements.append((replace_start, replace_end, new_fragment))
+		replacements = [r for r in replacements if not (replace_start <= r.start and r.end <= replace_end)]
+		replacements.append(Replacement(replace_start, replace_end, new_fragment))
 
-	if replacements:
-		# Replacements are already in high->low position order; build new string in one pass
-		parts: list[str] = []
-		pos: int = len(string)
-		for replace_start, replace_end, new_fragment in replacements:
-			parts.append(string[replace_end:pos])
-			parts.append(new_fragment)
-			pos = replace_start
-		parts.append(string[:pos])
-		new_string: str = "".join(reversed(parts))
-		if new_string != str(content.text):
-			content.text = new_string
+	new_string: str = apply_replacements(string, replacements)
+	if new_string != string:
+		content.text = new_string
 

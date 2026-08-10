@@ -4,7 +4,7 @@ import stouputils as stp
 from beet.core.utils import TextComponent
 from stouputils.typing import JsonDict
 
-from ..__memory__ import Mem
+from ...__memory__ import Mem
 
 
 # Utility functions
@@ -59,7 +59,7 @@ def item_id_to_text_component(item_id: str, use_default: bool = True) -> TextCom
 
 	# Internal definitions
 	ns, id = item_id.split(":")
-	from ..cls.item import Item
+	from ...cls.item import Item
 	if ns == Mem.ctx.project_id and id in Mem.definitions:
 		definition = Item.from_id(id)
 		components: JsonDict = definition.components
