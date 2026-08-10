@@ -28,6 +28,7 @@ FINALYZE_PLUGINS = (
     "stewbeet.plugins.finalyze.last_final",
     "stewbeet.plugins.auto.scoreboard_constants",
     "stewbeet.plugins.auto.lang_file",
+    "stewbeet.plugins.auto.text_renders",
     "stewbeet.plugins.auto.headers",
     "stewbeet.plugins.archive",
     "stewbeet.plugins.merge_smithed_weld",
