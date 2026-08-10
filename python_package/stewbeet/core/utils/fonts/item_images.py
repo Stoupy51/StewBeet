@@ -142,6 +142,10 @@ def collect_used_vanilla_items() -> set[str]:
 def build_model_resolver_queue(path: str, ns: str, cache_assets: bool, only: Iterable[str] | None = None) -> dict[str, str]:
 	""" Build the queue of items that need iso renders generated.
 
+	A StewBeet definition knows which model backs its item. Without one, the conventional
+	``item/<id>`` model of the resource pack is used instead, so a plain beet project gets its items
+	rendered too rather than having to supply the PNGs by hand.
+
 	Args:
 		path			(str):					Renders folder.
 		ns				(str):					Project namespace.
@@ -152,18 +156,24 @@ def build_model_resolver_queue(path: str, ns: str, cache_assets: bool, only: Ite
 	"""
 	for_model_resolver: dict[str, str] = {}
 	for item in (Mem.definitions.keys() if only is None else only):
-		if item not in Mem.definitions:
-			continue
-		obj = Item.from_id(item)
-		if not obj.components.get("item_model"):
-			continue
 		if os.path.exists(f"{path}/{ns}/{item}.png") and cache_assets:
 			continue
-		rp_path = obj.model
-		model: Model | None = rp_path.get()
-		dst_path = f"{path}/{ns}/{item}.png"
-		if model is not None and model.get_content().get("textures", None) is not None:  # type: ignore
-			for_model_resolver[rp_path] = dst_path
+
+		rp_path: str
+		model: Model | None
+		if item in Mem.definitions:
+			obj = Item.from_id(item)
+			if not obj.components.get("item_model"):
+				continue
+			rp_path = obj.model
+			model = obj.model.get()
+		else:
+			rp_path = f"{ns}:item/{item}"
+			model = Mem.ctx.assets[ns].models.get(f"item/{item}")
+
+		# ".data" rather than ".get_content()": a model loaded from the resource pack is still raw text
+		if model is not None and model.data.get("textures", None) is not None:
+			for_model_resolver[rp_path] = f"{path}/{ns}/{item}.png"
 	return for_model_resolver
 
 

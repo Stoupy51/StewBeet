@@ -88,6 +88,22 @@ A node carrying `render` must not also carry `text`: the glyph occupies that slo
 An id that resolves to nothing gets a warning and is left untouched in the output, so a typo never silently
 disappears from a message.
 
+### Using it without the rest of StewBeet
+
+The plugin needs no item definitions. A project item is looked up in `Mem.definitions` when StewBeet is
+driving the build, and otherwise falls back to the conventional `item/<id>` model of your resource pack, so
+a plain beet project renders its own items just the same:
+
+```yaml
+require:
+  - "stewbeet"
+pipeline:
+  - "stewbeet.plugins.auto.text_renders"
+```
+
+With `assets/<namespace>/models/item/widget.json` in your resource pack, `{"render": "widget"}` works out of
+the box. Vanilla ids, other packs' ids and `ICON` never needed definitions in the first place.
+
 ## Configuration
 
 ### Basic Example Configuration
