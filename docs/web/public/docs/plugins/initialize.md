@@ -96,6 +96,18 @@ generated in your namespace, `{project_id}:tooltip`:
 The font (and the lore) is only generated when at least one item definition actually carries the
 source lore, so a project that overrides every lore pays nothing for it.
 
+**🖼️ Item images in the source lore**<br>
+A source lore is a plain text component, so it also accepts the `render` key of the
+[`auto.text_renders`](auto.text_renders.md) plugin. Writing the lore out explicitly lets you keep the
+tooltip font *and* show an item next to your project name:
+
+```yaml
+source_lore: [{"text":"ICON"}, " ", {"text":"My Pack", "color":"white", "italic":false, "font":"my_pack:tooltip"}, " ", {"render":"steel_ingot", "height":10}]
+```
+
+`{"text":"ICON"}` is the placeholder `"auto"` uses for the logo glyph; everything else is plain text
+you can edit freely, with no font glyph to preserve by hand.
+
 **🎨 Automatic recoloring**<br>
 The packaged atlas ships in gold. By default (`source_lore_color: "auto"`) StewBeet picks the
 dominant color of your `pack.png` (ignoring transparent, gray and dark pixels)then rotates the

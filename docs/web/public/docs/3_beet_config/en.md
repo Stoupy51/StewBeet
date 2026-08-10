@@ -172,6 +172,7 @@ pipeline:
     - "stewbeet.plugins.finalyze.check_unused_textures"    # 🔍 Find unused textures
     - "stewbeet.plugins.finalyze.last_final"               # 🎯 Final cleanup
     - "stewbeet.plugins.auto.lang_file"                    # 🌐 Auto-generate lang files
+    - "stewbeet.plugins.auto.text_renders"                 # 🖼️ Turn "render" keys into item glyphs
     - "stewbeet.plugins.auto.headers"                      # 📄 Add file headers
     - "stewbeet.plugins.archive"                           # 🗜️ Create ZIP archives
     - "stewbeet.plugins.merge_smithed_weld.datapack"       # 🔀 Merge Smithed Weld libs into the datapack
@@ -228,6 +229,7 @@ pipeline:
 **📦 Phase 8: Packaging** - ZIPs, copying, hashing
 ```yaml
 - "stewbeet.plugins.auto.lang_file"
+- "stewbeet.plugins.auto.text_renders"
 - "stewbeet.plugins.archive"
 - "stewbeet.plugins.copy_to_destination"
 ```
@@ -322,6 +324,33 @@ generated `{id}:tooltip` font.
 the packaged gold. Dropping your own `assets/tooltip.png` next to `pack.png` replaces the character
 atlas entirely (and is never recolored).
 
+A source lore is a plain text component, so it also accepts the `render` key of the
+[`auto.text_renders`](../plugins/auto.text_renders.md) plugin to show an item image next to your
+project name:
+
+```yaml
+source_lore: [{"text":"ICON"}, " ", {"text":"My Pack", "color":"white", "italic":false, "font":"my_pack:tooltip"}, " ", {"render":"steel_ingot", "height":10}]
+```
+
+#### Item Renders
+Defines where the per-item PNGs live, and how the `render` key of text components is drawn.
+
+```yaml
+iso_renders_path: "iso_renders"
+text_renders:
+    default_height: 16
+    font: "renders"
+```
+
+`iso_renders_path` holds one PNG per item, as `<folder>/<namespace>/<item>.png`. Project items are
+rendered from their model, `minecraft:` items are downloaded, and items of other packs are the ones
+you drop there yourself. It is shared by [`ingame_manual`](../7_ingame_manual/en.md) and
+[`auto.text_renders`](../plugins/auto.text_renders.md), so an item is only ever rendered once.
+
+> **Deprecated**: `manual.cache_path` is replaced by `iso_renders_path`. Projects still setting it
+> keep working (the renders are read from `<cache_path>/items`), but everything else the manual used
+> to cache now lives in beet's own `.beet_cache` folder.
+
 #### Load Dependencies
 Defines runtime dependency checks shown when required datapacks are missing or outdated.
 
@@ -347,7 +376,6 @@ manual:
     debug_mode: false
     manual_overrides: "assets/manual_overrides"
     high_resolution: true
-    cache_path: "manual_cache"
     cache_assets: true
     cache_pages: false
     name: ""
@@ -369,7 +397,7 @@ manual:
 - `first_page_text: [...]` - Welcome message using text components
 
 **💾 Caching:**
-- `cache_path: "manual_cache"` - Where to store cache files
+- Generated glyph images are cached in beet's own `.beet_cache` folder (see `iso_renders_path` above for the item renders)
 - `cache_assets: true` - Cache MC textures/models (90% faster builds)
 - `cache_pages: false` - Cache all pages (recommended to false for small projects)
 

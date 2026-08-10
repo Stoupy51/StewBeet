@@ -30,7 +30,7 @@
 
 | Clé                 | Type            | Défaut              | Description                                                                  |
 | ------------------- | --------------- | ------------------- | ---------------------------------------------------------------------------- |
-| `cache_path`        | `str`           | - | **Requis.** Dossier des polices/textures/rendus d'items générés              |
+| `cache_path`        | `str`           | - | *Déprécié.* Remplacé par `iso_renders_path` au niveau racine ; les polices et textures générées vivent maintenant dans `.beet_cache` |
 | `use_dialog`        | `int`           | `1`                 | `1` = dialogue + item `manual` qui l'ouvre · `2` = dialogue seul (sans item) |
 | `high_resolution`   | `bool`          | `true`              | Icônes d'items haute résolution (256px) dans les recettes                    |
 | `cache_assets`      | `bool`          | `true`              | Évite de re-rendre/re-télécharger les textures d'items déjà présentes        |
