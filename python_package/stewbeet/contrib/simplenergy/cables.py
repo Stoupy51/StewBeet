@@ -7,7 +7,18 @@ import stouputils as stp
 from beet import ItemModel, Model, Texture
 from PIL import Image
 
-from ...core import BlockFunctions, Item, JsonDict, Mem, set_json_encoder, texture_mcmeta, write_advancement, write_function, write_load_file
+from ...core import (
+	CUSTOM_ITEM_VANILLA,
+	BlockFunctions,
+	Item,
+	JsonDict,
+	Mem,
+	set_json_encoder,
+	texture_mcmeta,
+	write_advancement,
+	write_function,
+	write_load_file,
+)
 
 # Constants
 ENERGY_CABLE_MODELS_FOLDER: str = stp.get_root_path(__file__) + "/energy_cable_models"
@@ -82,7 +93,7 @@ tag @s add {ns}.cable
 
 	# Update_cable_model function
 	cables_str: str = "\n".join([
-		f"execute if entity @s[tag={ns}.{cable}] run item replace entity @s contents with {Item.base_item}[item_model=\"{ns}:{cable}\"]"
+		f"execute if entity @s[tag={ns}.{cable}] run item replace entity @s contents with {CUSTOM_ITEM_VANILLA}[item_model=\"{ns}:{cable}\"]"
 		for cable in cables
 	])
 	cable_update_content: str = f"""
@@ -203,7 +214,7 @@ function #itemio:calls/cables/destroy
 
 	# Update cable_model function
 	cables_str: str = "\n".join([
-		f"execute if entity @s[tag={ns}.{cable}] run item replace entity @s contents with {Item.base_item}[item_model=\"{ns}:{cable}\"]"
+		f"execute if entity @s[tag={ns}.{cable}] run item replace entity @s contents with {CUSTOM_ITEM_VANILLA}[item_model=\"{ns}:{cable}\"]"
 		for cable in cables
 	])
 	cable_update_content: str = f"""
