@@ -1,0 +1,41 @@
+# Test: stewbeet.plugins.auto.text_renders
+# Verifies that every "render" key of a text component is replaced by a glyph of the generated
+# "<ns>:renders" font, for the three kinds of item id (project, vanilla, other pack) plus the
+# reserved "ICON", that "size" and "ascent" are consumed, and that an unresolvable id is left alone.
+#
+# The item PNGs are seeded by src/definitions.py so neither model_resolver nor the network runs.
+
+id: "tns"
+name: "Test Auto Text Renders"
+version: "1.0.0"
+author: "test"
+minecraft: "26.2"
+
+directory: "."
+output: "build"
+
+require:
+    - "stewbeet"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+resource_pack:
+    name: "resource_pack"
+    load: ["src"]
+
+pipeline:
+    - "src.definitions"
+    - "stewbeet.plugins.datapack.loot_tables"
+    - "src.link"
+    - "stewbeet.plugins.auto.text_renders"
+    - "src.assertions"
+
+meta:
+    stewbeet:
+        source_lore: [{"text": "Test Pack", "color": "white", "italic": false}, {"render": "ICON", "height": 8}]
+        iso_renders_path: "iso_renders"
+        text_renders:
+            default_height: 16
+            font: "renders"
