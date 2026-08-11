@@ -16,6 +16,15 @@ SEEDED_IMAGES: dict[str, tuple[int, int, int, int]] = {
     "mechanization/tin_ore": (180, 140, 90, 255),
 }
 
+# The oversized render, cut into a 2x2 grid of glyphs. Each quadrant is its own color so the
+# assertions can tell which part of the source ended up in which tile.
+QUADRANT_COLORS: list[tuple[int, int, int, int]] = [
+    (255, 0, 0, 255),      # top left
+    (0, 255, 0, 255),      # top right
+    (0, 0, 255, 255),      # bottom left
+    (255, 255, 0, 255),    # bottom right
+]
+
 
 # Main entry point
 def beet_default(ctx: Context):
@@ -24,6 +33,12 @@ def beet_default(ctx: Context):
         destination: str = f"iso_renders/{path}.png"
         os.makedirs(os.path.dirname(destination), exist_ok=True)
         Image.new("RGBA", (64, 64), color).save(destination)
+
+    # A 512x512 source, twice what Minecraft fits in one glyph: the plugin must cut it into tiles
+    big: Image.Image = Image.new("RGBA", (512, 512))
+    for index, quadrant in enumerate(QUADRANT_COLORS):
+        big.paste(Image.new("RGBA", (256, 256), quadrant), (256 * (index % 2), 256 * (index // 2)))
+    big.save("iso_renders/tns/big_logo.png")
 
     # Renders in an item lore: a project item, a vanilla one, and one from another pack
     Item(

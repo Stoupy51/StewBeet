@@ -39,16 +39,28 @@ def beet_default(ctx: Context):
 
     # (texture file, ascent, height) -> the glyph char it declares
     by_glyph: dict[tuple[str, int, int], str] = {}
+    spaces: list[JsonDict] = [provider for provider in providers if provider["type"] == "space"]
     for provider in providers:
+        if provider["type"] == "space":
+            continue
         assert provider["type"] == "bitmap", provider
         assert len(provider["chars"]) == 1 and provider["chars"][0], provider
         key = (provider["file"], provider["ascent"], provider["height"])
         assert key not in by_glyph, f"duplicate provider for {key}"
         by_glyph[key] = provider["chars"][0]
 
+    # Every space a spliced render needs shares one provider, one character per distinct advance
+    assert len(spaces) == 1, "the negative spacing must live in a single space provider"
+    space_char: dict[int, str] = {advance: char for char, advance in spaces[0]["advances"].items()}
+    assert set(space_char) == {-1, -32}, space_char
+
     def texture(item: str, stored: tuple[int, int]) -> str:
         """ Fully qualified texture file of an item stored at the given pixel size. """
         return f"{ns}:{TEXTURE_FOLDER}/{item}_{stored[0]}x{stored[1]}.png"
+
+    def tile(row: int, column: int) -> str:
+        """ Fully qualified texture file of one tile of the spliced 512x512 logo. """
+        return f"{ns}:{TEXTURE_FOLDER}/{ns}_big_logo_512x512_h32a16/r{row}c{column}.png"
 
     # Without "resolution" the source image is stored untouched, whatever height it is displayed at
     square: int = DEFAULT_HEIGHT
@@ -70,6 +82,12 @@ def beet_default(ctx: Context):
         # From src/data/test_renders: the same pair at another resolution
         (texture(f"{ns}_steel_ingot", (32, 32)), default_ascent(8), 8),
         (texture(f"{ns}_steel_ingot", (32, 32)), 2, 8),
+        # A 512x512 source shown 32px tall, cut into a 2x2 grid of 256x256 glyphs. The top row hangs
+        # from the ascent down to the baseline, the bottom row hangs from the baseline itself.
+        *((tile(row, column), 16 if row == 0 else 0, 16) for row in (0, 1) for column in (0, 1)),
+        # An ascent above the height: a single glyph again, but its texture is padded down to the
+        # baseline (64x64 of image over 64x96 of nothing) since Minecraft refuses ascent > height.
+        (f"{ns}:{TEXTURE_FOLDER}/{ns}_steel_ingot_64x160_h8a20/r0c0.png", 20, 20),
     }
     assert set(by_glyph) == expected, (sorted(by_glyph), sorted(expected))
     assert len(set(by_glyph.values())) == len(expected), "every glyph must get its own character"
@@ -85,6 +103,10 @@ def beet_default(ctx: Context):
         texture("ICON", native): native,              # assets/pack.png is 64x64, kept untouched
         texture(f"{ns}_steel_ingot", (16, 16)): (16, 16),
         texture(f"{ns}_steel_ingot", (32, 32)): (32, 32),
+        # Each tile of the spliced logo is exactly what one glyph can hold, and the padded one keeps
+        # its 64px of image on top of the transparency filling the gap down to the baseline
+        **{tile(row, column): (256, 256) for row in (0, 1) for column in (0, 1)},
+        f"{ns}:{TEXTURE_FOLDER}/{ns}_steel_ingot_64x160_h8a20/r0c0.png": (64, 160),
     }
     assert {file for file, _, _ in by_glyph} == set(stored_sizes), "providers must only point at the expected textures"
 
@@ -161,6 +183,35 @@ def beet_default(ctx: Context):
     assert f'"text":"{default_glyph}"' in hover, hover
     assert default_glyph != steel_glyph, "the same item at two heights must get two glyphs"
     assert '"height":99' in hover, hover
+
+    # ── A render too big for one glyph became a grid of them ──────────────────────
+    # The four quadrants of the source must land in the four tiles, in reading order
+    quadrants: list[tuple[int, int, int, int]] = [(255, 0, 0, 255), (0, 255, 0, 255), (0, 0, 255, 255), (255, 255, 0, 255)]
+    for index, color in enumerate(quadrants):
+        assert color_of(tile(index // 2, index % 2)) == color, (index, color)
+
+    # Each tile is followed by the spacing correcting Minecraft's own advance, and every row but the
+    # last by a negative space bringing the pen back to the left edge of the image.
+    def glyph(row: int, column: int) -> str:
+        return by_glyph[(tile(row, column), 16 if row == 0 else 0, 16)]
+
+    expected_string: str = "".join([
+        glyph(0, 0), space_char[-1], glyph(0, 1), space_char[-1], space_char[-32],
+        glyph(1, 0), space_char[-1], glyph(1, 1), space_char[-1],
+    ])
+    big: str = tight(ctx.data[ns].functions["big"].text)
+    assert f'"text":"{expected_string}"' in big, big
+    assert f'"font":"{font}"' in big, big
+
+    # A fully opaque 256px tile displayed 16px wide advances 256/16 + 1 = 17 pixels, so the four
+    # tiles and their corrections add up to exactly the width of the image
+    assert 4 * 17 + 4 * (-1) + (-32) == 32, "the spliced glyphs must advance the width of the image, no more"
+
+    # The floating render is one padded glyph, whose 64px of image advances 64/8 + 1 = 9 pixels
+    floating_glyph: str = by_glyph[(f"{ns}:{TEXTURE_FOLDER}/{ns}_steel_ingot_64x160_h8a20/r0c0.png", 20, 20)]
+    floating: str = tight(ctx.data[ns].functions["floating"].text)
+    assert f'"text":"{floating_glyph}{space_char[-1]}"' in floating, floating
+    assert 9 + (-1) == 8, "the padded glyph must advance the width of the image, no more"
 
     # ── The definitions themselves are untouched: the pass only rewrites output ────
     assert Item.from_id("ghost_ingot").components["lore"][0][0] == {"render": "does_not_exist"}
