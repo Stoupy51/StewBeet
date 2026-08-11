@@ -49,6 +49,8 @@ class TextRendersConfig:
 	""" Texture height used when a render node omits its own "resolution". 0 keeps the source image untouched. """
 	cache_assets: bool = True
 	""" Reuse the item PNGs that already exist instead of regenerating them. """
+	allow_oversized: bool | None = None
+	""" Whether a render too big for one glyph may be cut into several, or None to ask in the terminal. """
 
 	@property
 	def font(self) -> str:
@@ -67,6 +69,7 @@ class TextRendersConfig:
 			default_height=raw.get("default_height", DEFAULT_HEIGHT),
 			default_resolution=raw.get("default_resolution", DEFAULT_RESOLUTION),
 			cache_assets=raw.get("cache_assets", stewbeet.get("manual", {}).get("cache_assets", True)),
+			allow_oversized=raw.get("allow_oversized", None),
 		)
 
 
@@ -122,6 +125,30 @@ def scale_to_height(size: tuple[int, int], height: int) -> tuple[int, int]:
 	"""
 	width, source_height = size
 	return (max(1, round(width * height / source_height)), height)
+
+
+def fitting_resolution(size: tuple[int, int], limit: int) -> int:
+	""" Largest texture height keeping both sides of an image within ``limit`` pixels.
+
+	This is the fallback for a render whose splicing was turned down: the picture is stored as one
+	glyph again, shrunk just enough for Minecraft to display it at all.
+
+	Args:
+		size	(tuple[int, int]):	Size of the source image.
+		limit	(int):				Largest side allowed, in pixels.
+	Returns:
+		int: Texture height to store the image at.
+
+	Examples:
+		>>> fitting_resolution((1000, 370), 256)  # a wide image is bound by its width
+		94
+		>>> fitting_resolution((512, 512), 256)
+		256
+		>>> fitting_resolution((64, 64), 256)     # already small enough to keep untouched
+		64
+	"""
+	width, height = size
+	return max(1, min(height, limit, limit * height // width))
 
 
 def first_frame_box(size: tuple[int, int]) -> tuple[int, int, int, int] | None:
