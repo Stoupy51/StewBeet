@@ -1,7 +1,9 @@
 # Test: stewbeet.plugins.auto.text_renders
 # Verifies that every "render" key of a text component is replaced by a glyph of the generated
 # "<ns>:renders" font, for the three kinds of item id (project, vanilla, other pack) plus the
-# reserved "ICON", that "size" and "ascent" are consumed, and that an unresolvable id is left alone.
+# reserved "ICON", that "height" and "ascent" are consumed, and that an unresolvable id is left alone.
+# Also covers the renders Minecraft cannot fit in one glyph: a 512x512 source cut into a 2x2 grid put
+# back together with negative spacing, and an ascent above the height padded down to the baseline.
 #
 # The item PNGs are seeded by src/definitions.py so neither model_resolver nor the network runs.
 
@@ -39,3 +41,6 @@ meta:
         text_renders:
             default_height: 16
             font: "renders"
+            # Answers the "this render is bigger than one glyph" question up front, so the build
+            # never waits on the terminal (which is also what a CI pipeline wants).
+            allow_oversized: true

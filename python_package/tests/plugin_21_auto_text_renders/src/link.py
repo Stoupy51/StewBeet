@@ -16,3 +16,16 @@ tellraw @a ["Look: ",{"render":"steel_ingot","height":8},{"render":"minecraft:st
     write_function(f"{ctx.project_id}:hover", """
 tellraw @a {"render":"steel_ingot","hover_event":{"action":"show_text","value":{"text":"a","height":99}}}
 """)
+
+    # A 512x512 source displayed 32 pixels tall: too big for one glyph, so it becomes a 2x2 grid of
+    # them put back together with negative spacing. The ascent is explicit so the rows cut exactly
+    # on the quadrants of the source.
+    write_function(f"{ctx.project_id}:big", """
+tellraw @a ["Logo: ",{"render":"big_logo","height":32,"ascent":16}]
+""")
+
+    # An ascent above the height floats the glyph over the baseline, which Minecraft only accepts
+    # when the texture reaches down to it: the image is padded rather than the ascent lowered.
+    write_function(f"{ctx.project_id}:floating", """
+tellraw @a ["Up: ",{"render":"steel_ingot","height":8,"ascent":20}]
+""")
