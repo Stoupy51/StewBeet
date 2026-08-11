@@ -99,7 +99,7 @@ scoreboard players operation @s <ns>.data *= #toto some_score
 
 ## StorageEquation
 
-`StorageEquation` fonctionne exactement comme `ScoreboardEquation` pour les étapes arithmétiques, mais lors de l'appel à `str()`, une commande `execute store result storage ...` est ajoutée pour persister le résultat dans le stockage NBT.
+`StorageEquation` fonctionne exactement comme `ScoreboardEquation` pour les étapes arithmétiques, mais lors de l'appel à `str()`, une commande `execute store result storage ...` est ajoutée pour persister le résultat dans le storage NBT.
 
 ### Constructeur
 
@@ -186,4 +186,4 @@ execute store result storage some_namespace:some_path result_path double 0.00000
 
 - [Écrire fonctions et fichiers](../2_writing_to_files/fr.md): intégrer les commandes produites.
 - [auto.scoreboard_constants](../plugins/auto.scoreboard_constants.md): l'initialisation des constantes utilisées.
-- [Définir objets et blocs](../1_definitions_setup/fr.md): où sont déclarés les objets concernés.
+- [Définir items et blocs](../1_definitions_setup/fr.md): où sont déclarés les items concernés.

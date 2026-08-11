@@ -4,7 +4,7 @@ Chaque fonction que StewBeet ajoute par-dessus beet pour écrire des fichiers de
 les arguments que chacune accepte.
 
 **Voir aussi** [Écrire fonctions et fichiers](../fr.md) pour choisir entre les trois
-approches, et [les recettes](../cookbook/fr.md) pour des exemples complets.
+approches, et [le cookbook](../cookbook/fr.md) pour des exemples complets.
 
 ### Écriture de fonctions
 
@@ -72,7 +72,7 @@ furnace.functions.place_secondary.obj.append("tag @s add my_ns.active")
 # (lève KeyError si la fonction n'a pas encore été générée: un échec bruyant
 # plutôt que vos commandes placées silencieusement avant le setup du bloc)
 
-# Fonctionne pareil pour les loot tables, modèles, textures, progrès
+# Fonctionne pareil pour les loot tables, models, textures, advancements
 write_function(f"{ns}:give_furnace", f"loot give @s loot {furnace.loot_table}")
 ```
 
@@ -180,7 +180,7 @@ execute at @e[type=marker,tag=particle_source] run particle flame ~ ~ ~ 0.5 0.5 
 
 # S'exécute toutes les minutes
 write_versioned_function("minute", """
-# Nettoyer les vieux objets
+# Nettoyer les vieux items
 kill @e[type=item,nbt={Age:5400s}]
 """)
 ```
@@ -416,5 +416,5 @@ Mem.ctx.assets["my_namespace"].textures["block/animated_block"] = texture
 ## Prochaines étapes
 
 - [Écrire fonctions et fichiers](../fr.md): quelle approche choisir, et pourquoi.
-- [Recettes](../cookbook/fr.md): ces fonctions dans des fichiers complets et fonctionnels.
+- [Cookbook](../cookbook/fr.md): ces fonctions dans des fichiers complets et fonctionnels.
 - [Équations](../../4_equations/fr.md): construire l'arithmétique de scoreboard à intégrer.

@@ -44,7 +44,7 @@ data_pack:
 
 resource_pack:
     name: resource_pack
-    load: ["src"]  # Charge tous les fichiers de textures, modèles et sons depuis src/
+    load: ["src"]  # Charge tous les fichiers de textures, models et sons depuis src/
 ```
 
 **Comment ça marche :**
@@ -73,12 +73,12 @@ src/
 ```
 
 **Que mettre où :**
-- 📦 **data/** - Tout le contenu du datapack (fonctions, advancements, recettes, tags, etc.)
+- 📦 **data/** - Tout le contenu du datapack (fonctions, advancements, recipes, tags, etc.)
 - ⚙️ **function/** - Commandes Minecraft (fichiers .mcfunction)
 - 🏆 **advancement/** - Succès joueurs et déclencheurs techniques (.json)
-- 🍳 **recipe/** - Recettes de craft, cuisson et autres (.json)
-- 🎨 **assets/** - Tout le contenu du resource pack (textures, modèles, sons)
-- 🖼️ **textures/** - Fichiers PNG pour objets, blocs, etc.
+- 🍳 **recipe/** - Recipes de craft, cuisson et autres (.json)
+- 🎨 **assets/** - Tout le contenu du resource pack (textures, models, sons)
+- 🖼️ **textures/** - Fichiers PNG pour items, blocs, etc.
 - ...
 
 **✅ À utiliser quand :**
@@ -251,7 +251,7 @@ say Une minute s'est écoulée !
 
 ### **Quand utiliser chacune**
 
-- 📁 **Fichiers statiques** : Fichiers de configuration, recettes statiques, fonctions simples
+- 📁 **Fichiers statiques** : Fichiers de configuration, recipes statiques, fonctions simples
 - 🔧 **API native Beet** : Structures imbriquées complexes, types de fichiers personnalisés, contrôle avancé
 - 🚀 **Helpers StewBeet** : La plupart de la logique de datapack, fonctions dynamiques, motifs standards
 
@@ -277,6 +277,6 @@ Consultez les exemples réels en haut de cette page pour voir ces motifs en acti
 ## Prochaines étapes
 
 - [Référence des fonctions utilitaires](reference/fr.md): chaque fonction et ses arguments.
-- [Recettes](cookbook/fr.md): des exemples complets et fonctionnels.
+- [Cookbook](cookbook/fr.md): des exemples complets et fonctionnels.
 - [Équations](../4_equations/fr.md): construire l'arithmétique de scoreboard.
 - [Configurer le build](../3_beet_config/fr.md): contrôler quand votre code s'exécute.

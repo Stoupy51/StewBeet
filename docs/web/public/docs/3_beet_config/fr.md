@@ -39,12 +39,12 @@ Le fichier de configuration est le cœur de votre projet StewBeet. Il définit t
 ## Configuration de Base du Projet
 
 ### Identifiant du Projet
-Définit la racine de namespace utilisée dans les fonctions, tags et clés de stockage générés.
+Définit la racine de namespace utilisée dans les fonctions, tags et clés de storage générés.
 
 ```yaml
 id: "_votre_namespace"
 ```
-Utilisé pour les espaces de noms des fonctions, tags et stockage. Doit être en minuscules avec uniquement des underscores.
+Utilisé pour les espaces de noms des fonctions, tags et storage. Doit être en minuscules avec uniquement des underscores.
 
 ### Nom du Projet
 Définit le nom lisible par les joueurs, affiché dans les métadonnées et les textes générés.
@@ -152,15 +152,15 @@ Le pipeline définit l'ordre des plugins exécutés après le chargement des pac
 pipeline:
     - "src.setup_definitions"                              # 🎨 Code utilisateur de setup
     - "stewbeet.plugins.resource_pack.sounds"              # 🔊 Traite les sons personnalisés
-    - "stewbeet.plugins.resource_pack.item_models"         # 🎁 Génère les modèles d'items
+    - "stewbeet.plugins.resource_pack.item_models"         # 🎁 Génère les item models
     - "stewbeet.plugins.resource_pack.check_power_of_2"    # ✅ Valide les dimensions des textures
-    - "stewbeet.plugins.custom_recipes"                    # 🍳 Génère les recettes personnalisées
-    - "stewbeet.plugins.custom_paintings"                  # 🖼️ Traite les peintures personnalisées
+    - "stewbeet.plugins.custom_recipes"                    # 🍳 Génère les recipes personnalisées
+    - "stewbeet.plugins.custom_paintings"                  # 🖼️ Traite les paintings personnalisées
     - "stewbeet.plugins.ingame_manual"                     # 📚 Génère le manuel en jeu
     - "stewbeet.plugins.datapack.loading"                  # 🚀 Configure le chargement du datapack
     - "stewbeet.plugins.datapack.custom_blocks"            # 🧱 Traite les blocs personnalisés
     - "stewbeet.plugins.datapack.loot_tables"              # 🎁 Génère les loot tables
-    - "stewbeet.plugins.datapack.sorters"                  # 📋 Configure les trieurs d'items
+    - "stewbeet.plugins.datapack.sorters"                  # 📋 Configure les item sorters
     - "stewbeet.plugins.compatibilities.simpledrawer"      # 🗄️ Compatibilité SimpleDrawer
     - "stewbeet.plugins.compatibilities.neo_enchant"       # ✨ Compatibilité NeoEnchant
     - "src.link"                                           # 🔗 Code utilisateur de liaison
@@ -182,19 +182,19 @@ pipeline:
 
 ### Étapes du Pipeline Expliquées
 
-**🎨 Phase 1: Setup** - Définir les items, blocs, recettes pour les plugins StewBeet
+**🎨 Phase 1: Setup** - Définir les items, blocs, recipes pour les plugins StewBeet
 ```yaml
 - "src.setup_definitions"
 ```
 
-**🎨 Phase 2: Resource Pack** - Générer les modèles et sons
+**🎨 Phase 2: Resource Pack** - Générer les models et sons
 ```yaml
 - "stewbeet.plugins.resource_pack.sounds"
 - "stewbeet.plugins.resource_pack.item_models"
 - "stewbeet.plugins.resource_pack.check_power_of_2"
 ```
 
-**🍳 Phase 3: Contenu** - Recettes, peintures, manuel
+**🍳 Phase 3: Contenu** - Recipes, paintings, manuel
 ```yaml
 - "stewbeet.plugins.custom_recipes"
 - "stewbeet.plugins.custom_paintings"
@@ -257,13 +257,13 @@ Déclare la compatibilité de version pour les uploads de plateformes (Modrinth,
 (Influence les formats supportés dans `pack.mcmeta`)
 
 ### Model Resolver
-Configure le cache des modèles afin d'accélérer les rebuilds.
+Configure le cache des models afin d'accélérer les rebuilds.
 
 ```yaml
 model_resolver:
     use_cache: true
 ```
-Met en cache les modèles d'items résolus (80-90% plus rapide). Stocké dans `.beet_cache/model_resolver/`.
+Met en cache les item models résolus (80-90% plus rapide). Stocké dans `.beet_cache/model_resolver/`.
 
 ### Mecha
 Configure l'analyse et le formatage des commandes pendant la compilation.
@@ -288,7 +288,7 @@ execute
 ### Paramètres StewBeet
 
 #### Chemins des Répertoires
-Définit les dossiers sources StewBeet pour les textures, sons, disques et bibliothèques.
+Définit les dossiers sources StewBeet pour les textures, sons, records et bibliothèques.
 
 ```yaml
 stewbeet:
@@ -316,24 +316,24 @@ source_lore: "auto" # Format TextComponents
 source_lore_color: "auto" # "auto" | une couleur | false
 ```
 Ajouté au lore des items personnalisés, `"auto"` utilise par défaut l'icône du projet + le nom, tous
-deux dessinés avec la police `{id}:tooltip` générée.
+deux dessinés avec la font `{id}:tooltip` générée.
 
-`source_lore_color` contrôle les couleurs de cette police : `"auto"` reprend la couleur dominante de
+`source_lore_color` contrôle les couleurs de cette font : `"auto"` reprend la couleur dominante de
 votre `pack.png`, n'importe quelle couleur Pillow la force (`"#55FFFF"`, `"gold"`,
 `[85, 255, 255]`), et `false` conserve le doré fourni par défaut. Placer votre propre
 `assets/tooltip.png` à côté du `pack.png` remplace entièrement l'atlas de caractères (et il n'est
 jamais recoloré).
 
 Un source lore est un simple component de texte, il accepte donc aussi la clé `render` du plugin
-[`auto.text_renders`](../plugins/auto.text_renders.md) pour afficher l'image d'un objet à côté du nom
+[`auto.text_renders`](../plugins/auto.text_renders.md) pour afficher l'image d'un item à côté du nom
 de votre projet :
 
 ```yaml
 source_lore: [{"text":"ICON"}, " ", {"text":"Mon Pack", "color":"white", "italic":false, "font":"mon_pack:tooltip"}, " ", {"render":"steel_ingot", "height":10}]
 ```
 
-#### Rendus d'Objets
-Définit où vivent les PNG de chaque objet, et comment la clé `render` des components de texte est dessinée.
+#### Item Renders
+Définit où vivent les PNG de chaque item, et comment la clé `render` des components de texte est dessinée.
 
 ```yaml
 iso_renders_path: "iso_renders"
@@ -348,11 +348,11 @@ grille de glyphes recollés avec des espaces négatifs, au prix d'une texture pa
 build qui tombe dessus pose la question dans le terminal et retient la réponse dans `.beet_cache` ;
 `allow_oversized` y répond à l'avance, et `false` réduit plutôt ces rendus à un seul glyphe.
 
-`iso_renders_path` contient un PNG par objet, sous la forme `<dossier>/<namespace>/<objet>.png`. Les
-objets du projet sont rendus depuis leur modèle, les objets `minecraft:` sont téléchargés, et ceux
+`iso_renders_path` contient un PNG par item, sous la forme `<dossier>/<namespace>/<item>.png`. Les
+items du projet sont rendus depuis leur model, les items `minecraft:` sont téléchargés, et ceux
 des autres packs sont ceux que vous y déposez vous-même. Ce dossier est partagé par
 [`ingame_manual`](../7_ingame_manual/fr.md) et [`auto.text_renders`](../plugins/auto.text_renders.md),
-donc un objet n'est rendu qu'une seule fois.
+donc un item n'est rendu qu'une seule fois.
 
 > **Déprécié** : `manual.cache_path` est remplacé par `iso_renders_path`. Les projets qui le
 > définissent encore continuent de fonctionner (les rendus sont lus depuis `<cache_path>/items`),
@@ -394,7 +394,7 @@ manual:
     use_dialog: 1
 ```
 
-**Documentation interactive auto-générée** montrant les items personnalisés, recettes et navigation.
+**Documentation interactive auto-générée** montrant les items personnalisés, recipes et navigation.
 
 **🐛 Debug & Développement:**
 - `debug_mode: true` - Affiche une grille overlay pour le debug de layout
@@ -405,8 +405,8 @@ manual:
 - `first_page_text: [...]` - Message de bienvenue utilisant les components de texte
 
 **💾 Cache:**
-- Les images de glyphes générées sont mises en cache dans le dossier `.beet_cache` de beet (voir `iso_renders_path` plus haut pour les rendus d'objets)
-- `cache_assets: true` - Met en cache les textures/modèles MC (90% plus rapide)
+- Les images de glyphes générées sont mises en cache dans le dossier `.beet_cache` de beet (voir `iso_renders_path` plus haut pour les item renders)
+- `cache_assets: true` - Met en cache les textures/models MC (90% plus rapide)
 - `cache_pages: false` - Met en cache toutes les pages (recommandé à false pour les petits projets)
 
 **📐 Layout:**
@@ -427,7 +427,7 @@ manual:
 
 **Exemple de texte de bienvenue:**
 ```yaml
-first_page_text: [{"text":"Le manuel suivant vous guidera à travers les recettes et statistiques énergétiques des appareils.", "color": "#505050"}]
+first_page_text: [{"text":"Le manuel suivant vous guidera à travers les recipes et statistiques énergétiques des appareils.", "color": "#505050"}]
 ```
 
 ---

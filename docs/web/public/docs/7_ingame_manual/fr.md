@@ -1,6 +1,6 @@
 # Générer le manuel en jeu
 
-`ingame_manual` génère un manuel en jeu à partir de vos items `Mem.definitions` : une page d'introduction, un navigateur de catégories, une page par catégorie, et une page par item avec ses recettes et boutons wiki. Il est **orienté dialogue** (l'ancien mode livre écrit NBT est supprimé) et entièrement **extensible**: vous pouvez modifier la page de n'importe quel item, insérer des pages arbitraires (même sans rapport avec un item), contrôler le placement des boutons, et rendre des pages basées sur votre propre texture. Chaque classe publique de l'API (sous-classes de `Page`, `ButtonLayout`, `BakedText`, `PageRef`, `CraftRenderer`, `Manual` lui-même...) est une **dataclass** Python.
+`ingame_manual` génère un manuel en jeu à partir de vos items `Mem.definitions` : une page d'introduction, un navigateur de catégories, une page par catégorie, et une page par item avec ses recipes et boutons wiki. Il est **orienté dialogue** (l'ancien mode livre écrit NBT est supprimé) et entièrement **extensible**: vous pouvez modifier la page de n'importe quel item, insérer des pages arbitraires (même sans rapport avec un item), contrôler le placement des boutons, et rendre des pages basées sur votre propre texture. Chaque classe publique de l'API (sous-classes de `Page`, `ButtonLayout`, `BakedText`, `PageRef`, `CraftRenderer`, `Manual` lui-même...) est une **dataclass** Python.
 
 **Activez-le en remplaçant `stewbeet.plugins.ingame_manual` par `stewbeet.plugins.ingame_manual`** dans votre pipeline.
 
@@ -11,12 +11,12 @@
 **Personnalisation** : Appelez `get_manual()` dans votre `setup_definitions` (après la définition des items) pour enregistrer pages et hooks  
 **Sortie** : Orienté dialogue: génère un dialogue Minecraft par page, accessible via le menu **quick actions** natif (et l'item `manual` en mode 1)
 
-- Générer automatiquement les pages de recettes de chaque item (craft, cuisson, forge, découpe, minage, et types de recettes personnalisés)
+- Générer automatiquement les pages de recipes de chaque item (craft, cuisson, forge, découpe, minage, et types de recipes personnalisés)
 - Insérer/remplacer/réordonner des pages arbitraires via une API Python claire
 - Enregistrer des fonctions exécutées pendant la création du manuel (hooks `Phase`)
 - Fournir des pages basées sur une texture personnalisée, avec le texte intégré dans l'image elle-même
 - Remplacer la texture de fond du livre ou du bouton home sur une page spécifique (`book_texture`, `home_texture`)
-- Lier des pages entre elles : afficher le bouton de recette d'un autre item, ou un bouton de lien vers sa page (`extra_buttons`)
+- Lier des pages entre elles : afficher le bouton de recipe d'un autre item, ou un bouton de lien vers sa page (`extra_buttons`)
 - Décider où apparaissent les boutons wiki et comment gérer le dépassement (`ButtonLayout`)
 - Les liens différés `PageRef` gardent la navigation correcte après toute insertion/réorganisation
 
@@ -30,9 +30,9 @@
 
 | Clé                 | Type            | Défaut              | Description                                                                  |
 | ------------------- | --------------- | ------------------- | ---------------------------------------------------------------------------- |
-| `cache_path`        | `str`           | - | *Déprécié.* Remplacé par `iso_renders_path` au niveau racine ; les polices et textures générées vivent maintenant dans `.beet_cache` |
+| `cache_path`        | `str`           | - | *Déprécié.* Remplacé par `iso_renders_path` au niveau racine ; les fonts et textures générées vivent maintenant dans `.beet_cache` |
 | `use_dialog`        | `int`           | `1`                 | `1` = dialogue + item `manual` qui l'ouvre · `2` = dialogue seul (sans item) |
-| `high_resolution`   | `bool`          | `true`              | Icônes d'items haute résolution (256px) dans les recettes                    |
+| `high_resolution`   | `bool`          | `true`              | Icônes d'items haute résolution (256px) dans les recipes                    |
 | `cache_assets`      | `bool`          | `true`              | Évite de re-rendre/re-télécharger les textures d'items déjà présentes        |
 | `max_items_per_row` | `int`           | `5`                 | Largeur de la grille de catégorie (max 6)                                    |
 | `max_rows_per_page` | `int`           | `5`                 | Hauteur de la grille de catégorie (max 7)                                    |
@@ -212,14 +212,14 @@ def tidy_buttons(m):
     if page is not None:
         page.button_layout = ButtonLayout(
             columns=5,
-            include=lambda b: not b.blue_craft,   # garder uniquement les recettes qui produisent un résultat
+            include=lambda b: not b.blue_craft,   # garder uniquement les recipes qui produisent un résultat
             order=lambda b: -b.priority,          # priorité la plus haute en premier
         )
 ```
 
-### Lier deux pages d'items entre elles (boutons de recette inter-pages)
+### Lier deux pages d'items entre elles (boutons de recipe inter-pages)
 `ItemPage.extra_buttons` contient les boutons wiki ajoutés par le développeur, placés après les boutons automatiques. Construisez-les avec :
-- `manual.recipes.button_for_item(item_id, index=0)`: le **bouton de recette** d'un autre item : le survol montre sa recette, le clic ouvre sa page (`index` choisit lequel de ses crafts ; retourne `None` avec un avertissement si le craft n'existe pas) ;
+- `manual.recipes.button_for_item(item_id, index=0)`: le **bouton de recipe** d'un autre item : le survol montre sa recipe, le clic ouvre sa page (`index` choisit lequel de ses crafts ; retourne `None` avec un avertissement si le craft n'existe pas) ;
 - `manual.recipes.link_button(item_id, hover=None)`: un simple **lien de page** : l'icône de l'item dans une case wiki, le clic ouvre sa page (`hover` vaut par défaut le nom de l'item plus une indication de clic).
 
 ```python
@@ -230,7 +230,7 @@ def link_pillar_and_infuser(m):
     pillar = m.get_page_for_item("stardust_pillar")
     infuser = m.get_page_for_item("starlight_infuser")
     if pillar is not None and infuser is not None:
-        # Afficher la recette du Starlight Infuser sur la page du Stardust Pillar (clic -> sa page)
+        # Afficher la recipe du Starlight Infuser sur la page du Stardust Pillar (clic -> sa page)
         button = m.recipes.button_for_item("starlight_infuser")
         if button is not None:
             pillar.extra_buttons.append(button)
@@ -258,8 +258,8 @@ def maybe_changelog(m):
 
 ---
 
-## Types de recettes personnalisés
-Chaque type de recette est rendu par un `CraftRenderer` enregistré dans un registre global : ajouter un type = une classe + un appel à `register_craft_renderer(...)`. Les types intégrés vivent un par fichier sous `recipes/types/` (`shaped`, `furnace`, `smithing`, `linear`, `awakened_forge`). Comme toutes les classes de l'API du manuel, les renderers sont des dataclasses: décorez votre sous-classe avec `@dataclass` pour suivre le style des types intégrés.
+## Types de recipes personnalisés
+Chaque type de recipe est rendu par un `CraftRenderer` enregistré dans un registre global : ajouter un type = une classe + un appel à `register_craft_renderer(...)`. Les types intégrés vivent un par fichier sous `recipes/types/` (`shaped`, `furnace`, `smithing`, `linear`, `awakened_forge`). Comme toutes les classes de l'API du manuel, les renderers sont des dataclasses: décorez votre sous-classe avec `@dataclass` pour suivre le style des types intégrés.
 
 ```python
 from dataclasses import dataclass
@@ -297,7 +297,7 @@ Seuls `types` et `render_body` sont obligatoires ; `static_glyph` (glyphe de tem
 
 | Terme | Signification |
 |-------|---------------|
-| **Manual** | L'objet orchestrateur qui possède la liste ordonnée des pages, le registre de glyphes/polices, le constructeur d'images, le rendu des recettes et les hooks développeur. Récupéré avec `get_manual()`. |
+| **Manual** | L'objet orchestrateur qui possède la liste ordonnée des pages, le registre de glyphes/fonts, le constructeur d'images, le rendu des recipes et les hooks développeur. Récupéré avec `get_manual()`. |
 | **Page** | Une unité autonome rendue en components de texte Minecraft. Sous-classes : `IntroPage`, `CategoryBrowserPage`, `CategoryPage`, `ItemPage`, ainsi que `CustomPage`, `TexturePage` et `RawPage` destinées aux développeurs. |
 | **PageRef** | Un lien *différé* vers une page (par `item`, `anchor` ou `page` littéral). Les liens sont résolus en numéros de page concrets **après** l'ordonnancement, donc insérer/réordonner des pages ne casse jamais les liens inter-pages. |
 | **Phase hook** | Une fonction que vous enregistrez pour s'exécuter pendant la création du manuel (`manual.on(Phase.X)`), à une étape précise du pipeline de génération. |
@@ -307,6 +307,6 @@ Seuls `types` et `render_body` sont obligatoires ; `static_glyph` (glyphe de tem
 
 ## Prochaines étapes
 
-- [Définir objets et blocs](../1_definitions_setup/fr.md): les objets dont chaque page est générée.
-- [Recettes](../plugins/custom_recipes.md): d'où viennent les grilles de craft dessinées.
+- [Définir items et blocs](../1_definitions_setup/fr.md): les items dont chaque page est générée.
+- [Recipes](../plugins/custom_recipes.md): d'où viennent les grilles de craft dessinées.
 - [Tous les plugins](../plugins/README.md): le reste du pipeline.

@@ -46,7 +46,7 @@ build/
 ├── datapack/
 │   └── data/basic_template/
 │       ├── function/enjoy.mcfunction
-│       ├── function/_give_all.mcfunction        tous les objets, dans des coffres nommés
+│       ├── function/_give_all.mcfunction        tous les items, dans des coffres nommés
 │       └── function/v0.0.1/                     load, tick, second, minute, unload
 └── resource_pack/
 ```
@@ -57,4 +57,4 @@ build/
 ## Prochaines étapes
 
 - [Tutoriel : votre premier datapack](../0_getting_started/fr.md): le même terrain au pas,
-  en ajoutant votre propre objet et votre propre bloc.
+  en ajoutant votre propre item et votre propre bloc.

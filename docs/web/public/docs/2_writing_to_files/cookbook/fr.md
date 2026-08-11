@@ -1,4 +1,4 @@
-# Recettes
+# Cookbook
 
 Des exemples complets et fonctionnels d'écriture de fichiers de datapack avec StewBeet. Chacun
 est un fichier entier, à lire de bout en bout, pas un fragment.
@@ -24,12 +24,12 @@ execute if predicate simplenergy:check_daylight_power run scoreboard players ope
 execute if score @s energy.storage > @s energy.max_storage run scoreboard players operation @s energy.storage = @s energy.max_storage
 """)
     
-    # Four électrique fait fondre des objets en utilisant de l'énergie
+    # Four électrique fait fondre des items en utilisant de l'énergie
     write_versioned_function("custom_blocks/electric_furnace/second", f"""
 # Empêcher la cuisson vanilla
 data modify block ~ ~ ~ cooking_total_time set value -200s
 
-# Vérifier si a de l'énergie et des objets
+# Vérifier si a de l'énergie et des items
 execute if score @s energy.storage matches 20.. if data block ~ ~ ~ Items[{{Slot:0b}}] run function {ns}:custom_blocks/electric_furnace/process
 """)
     
@@ -37,7 +37,7 @@ execute if score @s energy.storage matches 20.. if data block ~ ~ ~ Items[{{Slot
 # Consommer de l'énergie
 scoreboard players remove @s energy.storage 20
 
-# Cuire l'objet (se terminera à la prochaine vérification)
+# Cuire l'item (se terminera à la prochaine vérification)
 data modify block ~ ~ ~ CookTime set value 199s
 """)
 ```
@@ -67,7 +67,7 @@ scoreboard players remove @s {ns}.power 10
 # Afficher des particules en marche
 particle electric_spark ~ ~0.5 ~ 0.2 0.2 0.2 0.01 5
 
-# Traiter les objets
+# Traiter les items
 execute if predicate {ns}:has_input_item run function {ns}:machines/processor/process_item
 """)
     
@@ -113,11 +113,11 @@ def setup_advancement_triggers(ctx: Context):
 # Révoquer l'advancement
 advancement revoke @s only {ns}:technical/inventory_changed
 
-# Vérifier les objets personnalisés
+# Vérifier les items personnalisés
 execute if items entity @s container.* *[custom_data~{{{ns}:{{}}}}] run function {ns}:items/handle_custom_item
 """, prepend=True)
     
-    # Déclencheur d'utilisation d'objet (pour détection de clic droit)
+    # Déclencheur d'utilisation d'item (pour détection de clic droit)
     write_advancement(f"{ns}:technical/used_item", {
         "criteria": {
             "requirement": {
@@ -218,7 +218,7 @@ team modify {ns}.green color green
 team modify {ns}.gold color gold
 team modify {ns}.aqua color aqua
 
-# Initialiser le stockage
+# Initialiser le storage
 data modify storage {ns}:main config set value {{}}
 data modify storage {ns}:main temp set value {{}}
 """)
@@ -236,7 +236,7 @@ function {ns}:modules/items/load
 
 ### Exemple 6 : Système de détection de clic droit
 
-Système complet de détection de clic droit utilisant des objets personnalisés.
+Système complet de détection de clic droit utilisant des items personnalisés.
 
 ```python
 def setup_right_click_detection(ctx: Context):
@@ -258,13 +258,13 @@ execute as @a[scores={{{ns}.right_click=1..}}] run function {ns}:items/right_cli
 # Réinitialiser le score
 scoreboard players set @s {ns}.right_click 0
 
-# Vérifier quel objet a été utilisé
+# Vérifier quel item a été utilisé
 execute if items entity @s weapon.mainhand *[custom_data~{{{ns}:{{wrench:true}}}}] run function {ns}:items/wrench/use
 execute if items entity @s weapon.mainhand *[custom_data~{{{ns}:{{teleporter:true}}}}] run function {ns}:items/teleporter/use
 execute if items entity @s weapon.mainhand *[custom_data~{{{ns}:{{scanner:true}}}}] run function {ns}:items/scanner/use
 """)
     
-    # Gestionnaires d'objets individuels
+    # Gestionnaires d'items individuels
     write_function(f"{ns}:items/wrench/use", """
 # Faire pivoter le bloc regardé par le joueur
 execute anchored eyes positioned ^ ^ ^1 align xyz positioned ~0.5 ~ ~0.5 as @n[type=item_display,tag=custom_block,distance=..1] run function simplenergy:items/wrench/rotate_block
@@ -301,7 +301,7 @@ execute if predicate {ns}:random/0.3 run particle happy_villager ~ ~0.3 ~ 0.2 0.
     
     # Gestionnaire de culture complètement cultivée
     write_function(f"{ns}:crops/fully_grown", f"""
-# Mettre à jour le modèle à l'état cultivé
+# Mettre à jour le model à l'état cultivé
 data modify entity @s item.components."minecraft:item_model" set value "{ns}:block/crop_grown"
 
 # Ajouter le tag cultivé
@@ -314,7 +314,7 @@ playsound minecraft:block.crop.break block @a ~ ~ ~ 1 1.2
     
     # Récolte
     write_function(f"{ns}:crops/harvest", f"""
-# Lâcher les objets
+# Lâcher les items
 loot spawn ~ ~ ~ loot {ns}:crops/harvest_crop
 
 # Retirer l'entité
@@ -470,7 +470,7 @@ execute store result storage {ns}:temp use_durability double 0.000001 run scoreb
 $data modify storage {ns}:temp slot set value "$(slot)"
 function {ns}:utils/use_durability/item_modifier with storage {ns}:temp
 
-# Si l'objet est cassé, le détruire
+# Si l'item est cassé, le détruire
 execute store result score #current_damage {ns}.data run data get entity @s SelectedItem.components."minecraft:damage"
 $execute if score #current_damage {ns}.data matches $(max_damage).. anchored eyes run particle item{{item:{{id:"minecraft:stone",components:{{"minecraft:item_model":"$(item_model)"}}}}}} ^ ^ ^0.5 0 0 0 0.1 10
 $execute if score #current_damage {ns}.data matches $(max_damage).. run playsound minecraft:item.shield.break ambient @a[distance=..16]
@@ -800,7 +800,7 @@ execute positioned ~ ~-1 ~ run function {ns}:utils/dragon_egg_on_death/place_egg
 
 	# Fonctionnalité d'aimant
 	write_function(f"{ns}:advancements/inventory_changed", f"""
-# Si a un aimant d'objets, ajouter le tag et le score
+# Si a un aimant d'items, ajouter le tag et le score
 execute if entity @s[tag={ns}.has_item_magnet] unless items entity @s weapon.offhand *[custom_data~{{{ns}:{{"item_magnet":true}}}}] run function {ns}:utils/magnet/removed
 execute if entity @s[tag=!{ns}.has_item_magnet] if items entity @s weapon.offhand *[custom_data~{{{ns}:{{"item_magnet":true}}}}] run function {ns}:utils/magnet/added
 """, prepend=True)
@@ -815,7 +815,7 @@ tag @s remove {ns}.has_item_magnet
 scoreboard players remove #has_item_magnet {ns}.data 1
 """)
 	write_versioned_function("tick_2", f"""
-# Fonctionnalité d'aimant d'objets
+# Fonctionnalité d'aimant d'items
 execute if score #has_item_magnet {ns}.data matches 1.. at @a[tag={ns}.has_item_magnet] run tp @e[type=item,distance=..4] ~ ~ ~
 """)
 
@@ -856,5 +856,5 @@ clear @s *[custom_data~{{{ns}:{{lucky_artifact_bag:true}}}}] 1
 ## Prochaines étapes
 
 - [Référence des fonctions utilitaires](../reference/fr.md): les arguments de chaque fonction.
-- [Définir objets et blocs](../../1_definitions_setup/fr.md): où le contenu manipulé est déclaré.
+- [Définir items et blocs](../../1_definitions_setup/fr.md): où le contenu manipulé est déclaré.
 - [Configurer le build](../../3_beet_config/fr.md): contrôler quand votre code s'exécute.
