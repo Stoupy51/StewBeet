@@ -1,0 +1,8 @@
+stewbeet.plugins.datapack.sorters.match module
+==============================================
+
+.. automodule:: stewbeet.plugins.datapack.sorters.match
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

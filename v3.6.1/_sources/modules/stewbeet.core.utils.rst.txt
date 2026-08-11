@@ -1,0 +1,24 @@
+stewbeet.core.utils namespace
+=============================
+
+.. py:module:: stewbeet.core.utils
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.core.utils.fonts
+   stewbeet.core.utils.io
+   stewbeet.core.utils.text_component
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.core.utils.equation
+   stewbeet.core.utils.loot_table
+   stewbeet.core.utils.sounds
