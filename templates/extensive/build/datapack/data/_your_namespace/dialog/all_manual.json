@@ -2,11 +2,11 @@
 	"type": "minecraft:dialog_list",
 	"title": [
 		"",
-		{"sprite": "_your_namespace:item/dialog_sprite/pack_icon","shadow_color": [0,0,0,0],"atlas": "minecraft:items"},
+		{"text": "聁","font": "_your_namespace:renders","shadow_color": [0,0,0,0]},
 		" ",
 		{"translate": "_your_namespace.extensive_template_manual","underlined": true},
 		" ",
-		{"sprite": "_your_namespace:item/dialog_sprite/pack_icon","shadow_color": [0,0,0,0],"atlas": "minecraft:items"}
+		{"text": "聁","font": "_your_namespace:renders","shadow_color": [0,0,0,0]}
 	],
 	"dialogs": [
 		"_your_namespace:manual/page_1",

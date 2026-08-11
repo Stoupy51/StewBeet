@@ -3,14 +3,14 @@
 	"title": [
 		"",
 		{
-			"sprite": "_your_namespace:item/dialog_sprite/super_stone",
+			"text": "耷",
+			"font": "_your_namespace:renders",
 			"shadow_color": [
 				0,
 				0,
 				0,
 				0
-			],
-			"atlas": "minecraft:items"
+			]
 		},
 		" ",
 		{
@@ -19,14 +19,14 @@
 		},
 		" ",
 		{
-			"sprite": "_your_namespace:item/dialog_sprite/super_stone",
+			"text": "耷",
+			"font": "_your_namespace:renders",
 			"shadow_color": [
 				0,
 				0,
 				0,
 				0
-			],
-			"atlas": "minecraft:items"
+			]
 		}
 	],
 	"body": [
@@ -54,11 +54,11 @@
 				"  \n\"",
 				{"text": "$聳$聳$聳","hover_event": {"action": "show_item","id": "minecraft:stone"}},
 				"\"\"",
-				{"text": "$$聅","hover_event": {"action": "show_item","id": "furnace","components": {"container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:super_stone","from": "_your_namespace"}}}}}}],"tooltip_display": {"hidden_components": ["minecraft:container"]},"item_model": "_your_namespace:super_stone","item_name": {"translate": "_your_namespace.super_stone"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "耢","font": "_your_namespace:renders","color": "white","italic": false}]],"custom_data": {"_your_namespace": {"super_stone": true},"smithed": {"id": "_your_namespace:super_stone","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}}}},
+				{"text": "$$聅","hover_event": {"action": "show_item","id": "furnace","components": {"container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:super_stone","from": "_your_namespace"}}}}}}],"tooltip_display": {"hidden_components": ["minecraft:container"]},"item_model": "_your_namespace:super_stone","item_name": {"translate": "_your_namespace.super_stone"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聃","font": "_your_namespace:renders","color": "white","italic": false}]],"custom_data": {"_your_namespace": {"super_stone": true},"smithed": {"id": "_your_namespace:super_stone","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}}}},
 				"#$\n\"",
 				{"text": "U$U$U$","hover_event": {"action": "show_item","id": "minecraft:stone"}},
 				"\"\"",
-				{"text": "U$","hover_event": {"action": "show_item","id": "furnace","components": {"container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:super_stone","from": "_your_namespace"}}}}}}],"tooltip_display": {"hidden_components": ["minecraft:container"]},"item_model": "_your_namespace:super_stone","item_name": {"translate": "_your_namespace.super_stone"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "耢","font": "_your_namespace:renders","color": "white","italic": false}]],"custom_data": {"_your_namespace": {"super_stone": true},"smithed": {"id": "_your_namespace:super_stone","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}}}},
+				{"text": "U$","hover_event": {"action": "show_item","id": "furnace","components": {"container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:super_stone","from": "_your_namespace"}}}}}}],"tooltip_display": {"hidden_components": ["minecraft:container"]},"item_model": "_your_namespace:super_stone","item_name": {"translate": "_your_namespace.super_stone"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聃","font": "_your_namespace:renders","color": "white","italic": false}]],"custom_data": {"_your_namespace": {"super_stone": true},"smithed": {"id": "_your_namespace:super_stone","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}}}},
 				"#$\n\"",
 				{"text": "$聳$聳$聳","hover_event": {"action": "show_item","id": "minecraft:stone"}},
 				"  \n\"",

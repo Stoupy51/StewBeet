@@ -3,14 +3,14 @@
 	"title": [
 		"",
 		{
-			"sprite": "_your_namespace:item/dialog_sprite/deepslate_steel_ore",
+			"text": "耩",
+			"font": "_your_namespace:renders",
 			"shadow_color": [
 				0,
 				0,
 				0,
 				0
-			],
-			"atlas": "minecraft:items"
+			]
 		},
 		" ",
 		{
@@ -19,14 +19,14 @@
 		},
 		" ",
 		{
-			"sprite": "_your_namespace:item/dialog_sprite/deepslate_steel_ore",
+			"text": "耩",
+			"font": "_your_namespace:renders",
 			"shadow_color": [
 				0,
 				0,
 				0,
 				0
-			],
-			"atlas": "minecraft:items"
+			]
 		}
 	],
 	"body": [
@@ -48,13 +48,13 @@
 			"contents": [
 				{"text": "","font": "_your_namespace:manual","color": "white","shadow_color": [0,0,0,0]},
 				"\"$@\n\n\n\"",
-				{"text": "$耷","hover_event": {"action": "show_item","id": "furnace","components": {"container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:deepslate_steel_ore","from": "_your_namespace"}}}}}}],"tooltip_display": {"hidden_components": ["minecraft:container"]},"custom_data": {"smithed": {"dict": {"block": {"steel": true},"ore": {"steel": true}},"id": "_your_namespace:deepslate_steel_ore","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"deepslate_steel_ore": true}},"item_model": "_your_namespace:deepslate_steel_ore","item_name": {"translate": "_your_namespace.deepslate_steel_ore"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "耢","font": "_your_namespace:renders","color": "white","italic": false}]]}}},
+				{"text": "$耷","hover_event": {"action": "show_item","id": "furnace","components": {"container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:deepslate_steel_ore","from": "_your_namespace"}}}}}}],"tooltip_display": {"hidden_components": ["minecraft:container"]},"custom_data": {"smithed": {"dict": {"block": {"steel": true},"ore": {"steel": true}},"id": "_your_namespace:deepslate_steel_ore","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"deepslate_steel_ore": true}},"item_model": "_your_namespace:deepslate_steel_ore","item_name": {"translate": "_your_namespace.deepslate_steel_ore"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聃","font": "_your_namespace:renders","color": "white","italic": false}]]}}},
 				"\"\"\"\"#U$",
-				{"text": "$$耲","hover_event": {"action": "show_item","id": "recovery_compass","components": {"custom_data": {"smithed": {"dict": {"raw": {"steel": true}},"id": "_your_namespace:raw_steel","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"raw_steel": true}},"item_model": "_your_namespace:raw_steel","item_name": {"translate": "_your_namespace.raw_steel"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "耢","font": "_your_namespace:renders","color": "white","italic": false}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_11"}},
+				{"text": "$$耲","hover_event": {"action": "show_item","id": "recovery_compass","components": {"custom_data": {"smithed": {"dict": {"raw": {"steel": true}},"id": "_your_namespace:raw_steel","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"raw_steel": true}},"item_model": "_your_namespace:raw_steel","item_name": {"translate": "_your_namespace.raw_steel"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聃","font": "_your_namespace:renders","color": "white","italic": false}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_11"}},
 				"#$\n\"",
-				{"text": "U$","hover_event": {"action": "show_item","id": "furnace","components": {"container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:deepslate_steel_ore","from": "_your_namespace"}}}}}}],"tooltip_display": {"hidden_components": ["minecraft:container"]},"custom_data": {"smithed": {"dict": {"block": {"steel": true},"ore": {"steel": true}},"id": "_your_namespace:deepslate_steel_ore","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"deepslate_steel_ore": true}},"item_model": "_your_namespace:deepslate_steel_ore","item_name": {"translate": "_your_namespace.deepslate_steel_ore"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "耢","font": "_your_namespace:renders","color": "white","italic": false}]]}}},
+				{"text": "U$","hover_event": {"action": "show_item","id": "furnace","components": {"container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:deepslate_steel_ore","from": "_your_namespace"}}}}}}],"tooltip_display": {"hidden_components": ["minecraft:container"]},"custom_data": {"smithed": {"dict": {"block": {"steel": true},"ore": {"steel": true}},"id": "_your_namespace:deepslate_steel_ore","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"deepslate_steel_ore": true}},"item_model": "_your_namespace:deepslate_steel_ore","item_name": {"translate": "_your_namespace.deepslate_steel_ore"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聃","font": "_your_namespace:renders","color": "white","italic": false}]]}}},
 				"\"\"\"\"#U$",
-				{"text": "U$","hover_event": {"action": "show_item","id": "recovery_compass","components": {"custom_data": {"smithed": {"dict": {"raw": {"steel": true}},"id": "_your_namespace:raw_steel","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"raw_steel": true}},"item_model": "_your_namespace:raw_steel","item_name": {"translate": "_your_namespace.raw_steel"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "耢","font": "_your_namespace:renders","color": "white","italic": false}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_11"}},
+				{"text": "U$","hover_event": {"action": "show_item","id": "recovery_compass","components": {"custom_data": {"smithed": {"dict": {"raw": {"steel": true}},"id": "_your_namespace:raw_steel","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"raw_steel": true}},"item_model": "_your_namespace:raw_steel","item_name": {"translate": "_your_namespace.raw_steel"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聃","font": "_your_namespace:renders","color": "white","italic": false}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_11"}},
 				"#$\n\n\n",
 				{"text": "聮##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"P\n","\n\n","\"",{"text": "$耷"},"\"\"\"\"#U$",{"text": "$$耲"},"\n","\"",{"text": "U$"},"\"\"\"\"#U$",{"text": "U$"},"\n","\n"],[{"text":"\n","color": "yellow"}, {"translate": "_your_namespace.mining"}],[{"text":"\n- ","color": "gray"}, {"translate": "_your_namespace.mine"}],{"translate": "_your_namespace.deepslate_steel_ore","color": "gray"},[{"text":"\n- ","color": "gray"}, {"translate": "_your_namespace.drops_x"}, "1 "],{"translate": "_your_namespace.raw_steel","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_11"}},
 				{"text": "聯##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"G\n","\"",{"text": "$耷"},"\n","\"",{"text": "U$"},"\n","\"\"\"\"U$U$",{"text": "$$耭"},"\n","\"\"\"\"U$U$",{"text": "U$"},"\n","\n\n"],[{"text":"\n","color": "yellow"}, {"translate": "_your_namespace.smelting"}],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.deepslate_steel_ore","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_9"}},

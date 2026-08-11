@@ -21,8 +21,13 @@ from stouputils.typing import JsonDict
 
 from ...core import Mem, set_json_encoder, text_component_to_str, write_function, write_load_file
 from ...core.utils.text_component import item_id_to_text_component
+from ..auto.text_renders.config import ICON_ID
 from ..initialize.project_images import find_pack_png
 from .glyphs import BOOK_FONT, HOME_FONT, NONE_FONT
+
+# Constants
+DIALOG_ICON_HEIGHT: int = 16
+""" On-screen height of the item icon framing a dialog title. """
 
 if TYPE_CHECKING:
 	from .manual import Manual
@@ -39,25 +44,47 @@ class DialogEmitter:
 	manual: Manual
 	""" The manual whose rendered pages are emitted as dialogs. """
 
-	def add_sprite(self, title: TextComponent, sprite: str) -> TextComponent:
-		""" Wrap a title between two sprite icons (atlas-aware for pack format >= 93). """
-		title = [
-			"",
-			{"sprite": sprite, "shadow_color": [0,0,0,0]},
-			" ",
-			{"text": text_component_to_str(title), "underlined": True},
-			" ",
-			{"sprite": sprite, "shadow_color": [0,0,0,0]},
-		]
+	def render_icon(self, item: str) -> JsonDict | None:
+		""" The glyph component showing ``item``, or None when no image could be resolved for it.
+
+		Resolved here rather than left to the later ``auto.text_renders`` pass, so the dialogs still
+		show their icons when that plugin is not in the pipeline.
+
+		Args:
+			item (str): Item id, or the reserved ``ICON`` standing for the project logo.
+		Returns:
+			JsonDict | None: A glyph text component, or None to fall back to a sprite.
+		"""
+		from ..auto.text_renders import resolve_renders
+
+		icon = resolve_renders({"render": item, "height": DIALOG_ICON_HEIGHT, "shadow_color": [0, 0, 0, 0]})
+		return icon if isinstance(icon, dict) and "text" in icon else None
+
+	def sprite_icon(self, sprite: str) -> JsonDict:
+		""" A sprite icon component for ``sprite`` (atlas-aware for pack format >= 93). """
+		icon: JsonDict = {"sprite": sprite, "shadow_color": [0, 0, 0, 0]}
 		if Mem.ctx.data.pack_format is not None:
 			pack_format = cast("int | tuple[int, ...]", Mem.ctx.data.pack_format)
 			pack_format = pack_format[0] if isinstance(pack_format, tuple) else pack_format
 			if pack_format >= 93:
-				title[1]["atlas"] = title[-1]["atlas"] = "minecraft:items"
-		return title
+				icon["atlas"] = "minecraft:items"
+		return icon
+
+	def add_icon(self, title: TextComponent, icon: JsonDict) -> TextComponent:
+		""" Wrap a title between two copies of an icon component. """
+		return ["", dict(icon), " ", {"text": text_component_to_str(title), "underlined": True}, " ", dict(icon)]
+
+	def add_sprite(self, title: TextComponent, sprite: str) -> TextComponent:
+		""" Wrap a title between two sprite icons (atlas-aware for pack format >= 93). """
+		return self.add_icon(title, self.sprite_icon(sprite))
 
 	def get_atlas_title(self, item: str) -> TextComponent:
-		""" Build a dialog title with the item's sprite if one is available, else its name. """
+		""" Build a dialog title with the item's icon if one is available, else its name.
+
+		A render glyph is preferred: it keeps the full resolution of the iso render instead of the
+		16x16 the sprite atlas forces. An animated texture still goes through a sprite, since a
+		baked glyph would freeze it on its first frame.
+		"""
 		ns: str = self.manual.config.project_id
 		model = Mem.ctx.assets[ns].models.get(f"item/{item}")
 		model_data: JsonDict = model.data if model else {}
@@ -71,6 +98,11 @@ class DialogEmitter:
 			if texture_object and texture_object.mcmeta:
 				return self.add_sprite(item_name, sprite)
 
+		icon: JsonDict | None = self.render_icon(item)
+		if icon is not None:
+			return self.add_icon(item_name, icon)
+
+		# No render available: fall back to a sprite built from the iso render
 		supposed_path: str = f"{self.manual.config.iso_renders_path}/{ns}/{item}.png"
 		if os.path.exists(supposed_path):
 			image: Image.Image = Image.open(supposed_path)
@@ -182,12 +214,16 @@ execute if items entity @s weapon.* *[custom_data~{{{ns}:{{manual:true}}}}] run 
 			DialogTag({"replace": False, "values": [f"{ns}:all_manual"]})
 		)
 
-		# Main dialog list (with pack icon sprite)
+		# Main dialog list (with the pack icon, as a render glyph when possible)
 		title2: TextComponent = {"text": f"{Mem.ctx.project_name} Manual"}
 		pack_png: str | None = find_pack_png()
 		if pack_png is not None:
-			Mem.ctx.assets[ns].textures["item/dialog_sprite/pack_icon"] = Texture(source_path=pack_png)
-			title2 = self.add_sprite(title2, f"{ns}:item/dialog_sprite/pack_icon")
+			icon: JsonDict | None = self.render_icon(ICON_ID)
+			if icon is not None:
+				title2 = self.add_icon(title2, icon)
+			else:
+				Mem.ctx.assets[ns].textures["item/dialog_sprite/pack_icon"] = Texture(source_path=pack_png)
+				title2 = self.add_sprite(title2, f"{ns}:item/dialog_sprite/pack_icon")
 		Mem.ctx.data[ns].dialogs["all_manual"] = set_json_encoder(Dialog({
 			"type": "minecraft:dialog_list",
 			"title": title2,
