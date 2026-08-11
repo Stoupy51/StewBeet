@@ -1,12 +1,12 @@
-# Définir objets et blocs
+# Définir items et blocs
 
-Les définitions d'objets sont au cœur du framework StewBeet. Elles définissent les objets, blocs, équipements, recettes personnalisés et leurs propriétés en utilisant des classes Python modernes. La configuration des définitions crée une base de données complète de tout le contenu personnalisé que les plugins suivants utilisent pour générer les datapacks et resource packs.
+Les définitions d'items sont au cœur du framework StewBeet. Elles définissent les items, blocs, équipements, recipes personnalisés et leurs propriétés en utilisant des classes Python modernes. La configuration des définitions crée une base de données complète de tout le contenu personnalisé que les plugins suivants utilisent pour générer les datapacks et resource packs.
 
 **C'est typiquement le premier plugin créé par l'utilisateur dans le pipeline (après `stewbeet.plugins.initialize`).**
 
 ### <u>Démonstration de quelques fonctionnalités</u>
 
-**Définitions d'objets du Template Extensive :**<br>
+**Définitions d'items du Template Extensive :**<br>
 <img src="./additions.jpg">
 
 **Fichier d'exemple** : [extensive/src/setup_definitions.py](https://github.com/Stoupy51/StewBeet/blob/main/templates/extensive/src/setup_definitions.py) <br>  
@@ -14,14 +14,14 @@ Les définitions d'objets sont au cœur du framework StewBeet. Elles définissen
 **Requis** : Framework StewBeet (`from stewbeet import *`)  
 **Requis** : Contexte Beet (`from beet import Context`)  
 **Position** : Doit être appelé tôt dans le pipeline avant les autres plugins qui dépendent des définitions  
-**Intégration** : Fonctionne avec tous les plugins StewBeet qui traitent les définitions d'objets
+**Intégration** : Fonctionne avec tous les plugins StewBeet qui traitent les définitions d'items
 
-- Définir des objets, blocs et équipements personnalisés en utilisant des classes Python
+- Définir des items, blocs et équipements personnalisés en utilisant des classes Python
 - Configurer la génération automatique de matériaux (minerais, lingots, outils, armures)
-- Configurer les recettes de craft avec des classes typées
-- Établir les relations entre les objets et leurs utilisations
-- Configurer les noms, lores et catégories des objets
-- Lier les objets à leurs textures et modèles
+- Configurer les recipes de craft avec des classes typées
+- Établir les relations entre les items et leurs utilisations
+- Configurer les noms, lores et catégories des items
+- Lier les items à leurs textures et models
 
 ## Configuration
 
@@ -40,10 +40,10 @@ def beet_default(ctx: Context):
     # 1. Générer les matériaux et équipements
     main_ores()
     
-    # 2. Générer les disques personnalisés
+    # 2. Générer les custom records
     generate_custom_records("auto")
     
-    # 3. Ajouter les objets, blocs, peintures personnalisés
+    # 3. Ajouter les items, blocs, paintings personnalisés
     main_additions()
     
     # 4. Définir les catégories manquantes
@@ -66,10 +66,10 @@ def beet_default(ctx: Context):
 ## Concepts de base
 
 ### La base de données Mem.definitions
-Toutes les définitions d'objets sont stockées dans `Mem.definitions`, un dictionnaire global qui se remplit lorsque vous créez des instances `Item`, `Block` ou `Painting` :
+Toutes les définitions d'items sont stockées dans `Mem.definitions`, un dictionnaire global qui se remplit lorsque vous créez des instances `Item`, `Block` ou `Painting` :
 
 ```python
-# Créer un objet l'enregistre automatiquement
+# Créer un item l'enregistre automatiquement
 item = Item(id="my_item", base_item="minecraft:iron_ingot")
 
 # Y accéder de n'importe où
@@ -89,14 +89,14 @@ Définition des propriétés de la classe `Item` :
 | Propriété | Type | Description |
 |----------|------|-------------|
 | `id` | `str` | **Requis** : Identifiant unique (ex., `"magic_sword"`) |
-| `base_item` | `str` | Objet Minecraft de base (défaut : `CUSTOM_ITEM_VANILLA`) |
+| `base_item` | `str` | Item Minecraft de base (défaut : `CUSTOM_ITEM_VANILLA`) |
 | `manual_category` | `str \| None` | Catégorie pour l'organisation du manuel en jeu |
-| `recipes` | `list[RecipeBase]` | Liste d'objets recette qui créent cet objet |
-| `override_model` | `JsonDict \| None` | Override du modèle d'objet auto-généré |
-| `hand_model` | `JsonDict \| None` | Modèle utilisé à la place du modèle normal dans la plupart des contextes d'affichage (main, gui, sol, ...) |
-| `override_model_contexts` | `list[str] \| None` | Contextes d'affichage gardant le modèle normal quand `hand_model` est défini (défaut : `["none", "fixed"]`, c.-à-d. entités item display et cadres) |
+| `recipes` | `list[RecipeBase]` | Liste d'objets recipe qui créent cet item |
+| `override_model` | `JsonDict \| None` | Override de l'item model auto-généré |
+| `hand_model` | `JsonDict \| None` | Model utilisé à la place du model normal dans la plupart des contextes d'affichage (main, gui, sol, ...) |
+| `override_model_contexts` | `list[str] \| None` | Contextes d'affichage gardant le model normal quand `hand_model` est défini (défaut : `["none", "fixed"]`, c.-à-d. entités item display et cadres) |
 | `wiki_buttons` | `list[WikiButton] \| TextComponent \| None` | Documentation du manuel |
-| `components` | `JsonDict` | Composants d'objets Minecraft (sans préfixe `minecraft:`) |
+| `components` | `JsonDict` | Components d'items Minecraft (sans préfixe `minecraft:`) |
 
 Exemple d'utilisation de la classe `Item` :
 
@@ -105,7 +105,7 @@ from stewbeet import Item, Ingr, CraftingShapedRecipe, WikiButton
 
 item = Item(
     id="magic_sword",                           # Requis : identifiant unique
-    base_item="minecraft:iron_sword",           # Objet Minecraft de base (défaut : CUSTOM_ITEM_VANILLA)
+    base_item="minecraft:iron_sword",           # Item Minecraft de base (défaut : CUSTOM_ITEM_VANILLA)
     manual_category="equipment",                # Catégorie pour le manuel
     recipes=[                                   # Liste d'objets Recipe
         CraftingShapedRecipe(
@@ -114,13 +114,13 @@ item = Item(
             ingredients={"X": Ingr("minecraft:amethyst_shard"), "Y": Ingr("minecraft:stick")}
         )
     ],
-    override_model=None,                        # Override du modèle auto-généré
-    hand_model=None,                            # Modèle spécial tenu en main
-    override_model_contexts=None,               # Contextes gardant le modèle normal quand hand_model est défini
+    override_model=None,                        # Override du model auto-généré
+    hand_model=None,                            # Model spécial tenu en main
+    override_model_contexts=None,               # Contextes gardant le model normal quand hand_model est défini
     wiki_buttons=[                              # Boutons de documentation du manuel
         WikiButton({"text": "Une épée puissante", "color": "gold"})
     ],
-    components={                                # Composants d'objets Minecraft
+    components={                                # Components d'items Minecraft
         "item_name": {"text": "Épée Magique", "color": "gold"},
         "lore": [{"text": "Inflige des dégâts supplémentaires", "color": "gray"}],
         "max_damage": 500,
@@ -156,7 +156,7 @@ block = Block(
             shape=["XXX", "XXX", "XXX"],
             ingredients={"X": Ingr("minecraft:stone")}
         ),
-        # Plusieurs types de recettes supportés
+        # Plusieurs types de recipes supportés
         SmeltingRecipe(
             experience=0.1,
             cookingtime=200,
@@ -166,7 +166,7 @@ block = Block(
         )
     ],
     components={
-        # Le nom d'objet, lore et container seront auto-générés si manquants
+        # Le nom d'item, lore et container seront auto-générés si manquants
     }
 )
 ```
@@ -191,7 +191,7 @@ Définit les drops personnalisés quand le bloc est cassé sans toucher de soie 
 ```python
 @dataclass
 class NoSilkTouchDrop:
-    id: str                     # ID de l'objet à drop (ex., "raw_simplunium")
+    id: str                     # ID de l'item à drop (ex., "raw_simplunium")
     count: dict | int = 1       # Nombre de drops : int ou {"min": 1, "max": 3}
 ```
 ```python
@@ -232,7 +232,7 @@ Pour les graines qui poussent avec le temps (comme Stardust Seed de [Stardust Fr
 ```python
 @dataclass
 class GrowingSeedLoot:
-    id: str                     # ID de l'objet à drop
+    id: str                     # ID de l'item à drop
     rolls: JsonDict | int = 1   # Définition de roll ou nombre
     fortune: JsonDict | None = None  # Modificateur de fortune
 
@@ -288,7 +288,7 @@ custom_head = BlockHead(
 
 ### Classe Painting
 
-Peintures personnalisées pour la décoration :
+Paintings personnalisées pour la décoration :
 
 ```python
 from stewbeet import Painting, PaintingData
@@ -299,29 +299,29 @@ painting = Painting(
     painting_data=PaintingData(
         texture="stewbeet_painting_2x2",                # Nom du fichier texture (sans .png)
         author={"text": "Stoupy", "color": "yellow"},   # Par défaut ctx.project_author
-        title={"text": "L'Icône", "color": "gray"},     # Par défaut nom de l'objet
+        title={"text": "L'Icône", "color": "gray"},     # Par défaut nom de l'item
         width=2,                                        # Largeur en blocs
         height=2                                        # Hauteur en blocs
     )
 )
 ```
 
-## Système de recettes
+## Système de recipes
 
-### Classes de recettes
+### Classes de recipes
 
-StewBeet fournit des classes de recettes typées pour tous les types de recettes Minecraft :
+StewBeet fournit des classes de recipes typées pour tous les types de recipes Minecraft :
 
 #### **Crafting Shaped Recipe**
-Utilisez une recette shaped quand la position des ingrédients est importante ; la `shape` associe des symboles aux ingrédients et impose la disposition.
+Utilisez une recipe shaped quand la position des ingrédients est importante ; la `shape` associe des symboles aux ingrédients et impose la disposition.
 
 ```python
 from stewbeet import CraftingShapedRecipe, Ingr
 
 recipe = CraftingShapedRecipe(
-    result_count=1,                            # Nombre d'objets produits
-    group="tools",                             # Groupement du livre de recettes
-    category="equipment",                      # Catégorie du livre de recettes
+    result_count=1,                            # Nombre d'items produits
+    group="tools",                             # Groupement du recipe book
+    category="equipment",                      # Catégorie du recipe book
     shape=["X X", " Y ", "X X"],               # Motif 3x3
     ingredients={
         "X": Ingr("minecraft:iron_ingot"),
@@ -331,7 +331,7 @@ recipe = CraftingShapedRecipe(
 ```
 
 #### **Crafting Shapeless Recipe**
-Utilisez une recette shapeless quand seule la présence des ingrédients compte, sans tenir compte de leur position dans la grille.
+Utilisez une recipe shapeless quand seule la présence des ingrédients compte, sans tenir compte de leur position dans la grille.
 
 ```python
 recipe = CraftingShapelessRecipe(
@@ -344,7 +344,7 @@ recipe = CraftingShapelessRecipe(
 ```
 
 #### **Smelting Recipe**
-Les recettes de smelting modélisent les transformations de type four avec un temps de cuisson, une récompense XP et une conversion entrée-sortie.
+Les recipes de smelting modélisent les transformations de type four avec un temps de cuisson, une récompense XP et une conversion entrée-sortie.
 
 ```python
 recipe = SmeltingRecipe(
@@ -357,8 +357,8 @@ recipe = SmeltingRecipe(
 )
 ```
 
-#### **Autres types de recettes**
-StewBeet fournit des wrappers typés pour les mécaniques de recette vanilla spécialisées afin de configurer chaque comportement explicitement.
+#### **Autres types de recipes**
+StewBeet fournit des wrappers typés pour les mécaniques de recipe vanilla spécialisées afin de configurer chaque comportement explicitement.
 
 ```python
 # Haut fourneau (cuisson plus rapide)
@@ -387,19 +387,19 @@ La fonction `Ingr` crée des spécifications d'ingrédients :
 ```python
 from stewbeet import Ingr
 
-# Objet du namespace local
+# Item du namespace local
 Ingr("steel_ingot")
 # Résultat : {"custom_data": {"your_namespace": {"steel_ingot": True}}}
 
-# Objet Minecraft
+# Item Minecraft
 Ingr("minecraft:iron_ingot")
 # Résultat : {"id": "minecraft:iron_ingot"}
 
-# Objet de datapack externe
+# Item de datapack externe
 Ingr("tin_ingot", ns="mechanization")
 # Résultat : {"custom_data": {"mechanization": {"tin_ingot": True}}}
 
-# Utilisation dans les recettes
+# Utilisation dans les recipes
 recipe = CraftingShapedRecipe(
     shape=["XXX", "XYX", "XXX"],
     ingredients={
@@ -453,7 +453,7 @@ class EquipmentsConfig:
     equivalent_to: DefaultOre                   # Matériau de base (WOOD, STONE, GOLD, IRON, DIAMOND, NETHERITE, COPPER, CHAINMAIL, LEATHER)
     pickaxe_durability: float | int = 0         # Durabilité personnalisée (0 = utiliser équivalent vanilla)
     attributes: dict[str, float] | None = None  # Modificateurs de stats à AJOUTER (pas remplacer)
-    ignore_recipes: bool = False                # Ignorer la génération automatique de recettes
+    ignore_recipes: bool = False                # Ignorer la génération automatique de recipes
 ```
 
 **Modificateurs d'attributs courants :**
@@ -472,7 +472,7 @@ Ajoutez de la documentation interactive pour le manuel en jeu :
 ```python
 from stewbeet import Item, WikiButton
 
-item = Item.from_id("steel_ingot")  # Récupérer un objet existant
+item = Item.from_id("steel_ingot")  # Récupérer un item existant
 item.wiki_buttons = [
     WikiButton([
         {"text": "L'acier est une variante plus solide du fer.\n"},
@@ -482,9 +482,9 @@ item.wiki_buttons = [
 ]
 ```
 
-### Objet Manuel
+### Item du manuel
 
-Créez une recette pour le manuel en jeu :
+Créez une recipe pour le manuel en jeu :
 
 ```python
 Item(
@@ -510,9 +510,9 @@ Item(
 
 ## Contenu audio
 
-### Disques de musique personnalisés
+### Music discs personnalisés
 
-La génération de disques mappe les assets `.ogg` vers les définitions afin de garder sons, objets et références synchronisés automatiquement.
+La génération de records mappe les assets `.ogg` vers les définitions afin de garder sons, items et références synchronisés automatiquement.
 
 ```python
 # Auto-génération depuis les fichiers assets/records/*.ogg
@@ -532,7 +532,7 @@ generate_custom_records({
 Ces helpers finalisent les définitions pour garantir une sortie cohérente, correctement namespacée, et prête pour les plugins suivants.
 
 ```python
-# Générer les modèles d'objets pour tous les objets définis
+# Générer les item models pour tous les items définis
 add_item_model_component(black_list=["excluded_items"])
 
 # Ajouter les noms et lores par défaut là où manquants
@@ -551,7 +551,7 @@ set_manual_components(white_list=["item_name", "lore", "custom_name", "damage", 
 export_all_definitions_to_json(f"{Mem.ctx.directory}/definitions_debug.json")
 ```
 
-## Catégories d'objets
+## Catégories d'items
 
 Catégories courantes pour l'organisation du manuel (mais c'est toujours à vous de décider !) :
 
@@ -560,31 +560,31 @@ Catégories courantes pour l'organisation du manuel (mais c'est toujours à vous
 | `"materials"`     | Matériaux bruts, lingots, gemmes        |
 | `"equipment"`     | Outils, armes, armures                  |
 | `"building"`      | Blocs de construction, blocs décoratifs |
-| `"miscellaneous"` | Autres objets, objets spéciaux          |
-| `"food"`          | Objets consommables                     |
-| `"decorations"`   | Peintures, objets décoratifs            |
+| `"miscellaneous"` | Autres items, items spéciaux          |
+| `"food"`          | Items consommables                     |
+| `"decorations"`   | Paintings, items décoratifs            |
 
 ## Fonctionnalités avancées
 
 ### Intégration de textures
-Les objets détectent automatiquement les textures par nom depuis `assets/textures/` :
-- `steel_ingot.png` -> objet `steel_ingot`
+Les items détectent automatiquement les textures par nom depuis `assets/textures/` :
+- `steel_ingot.png` -> item `steel_ingot`
 - `steel_pickaxe.png` -> outil `steel_pickaxe`
 - `steel_block.png` -> bloc personnalisé `steel_block`
 
-### Accéder aux objets existants
+### Accéder aux items existants
 
-`Item.from_id` permet de récupérer et modifier des définitions déjà déclarées, ce qui facilite une configuration par étapes sans recréer les objets.
+`Item.from_id` permet de récupérer et modifier des définitions déjà déclarées, ce qui facilite une configuration par étapes sans recréer les items.
 
 ```python
-# Récupérer un objet existant
+# Récupérer un item existant
 item = Item.from_id("my_item")
 
 # Le modifier
 item.manual_category = "materials"
 item.wiki_buttons = [WikiButton({"text": "Nouvelle info !"})]
 
-# Ajouter une recette
+# Ajouter une recipe
 item.recipes.append(CraftingShapelessRecipe(
     category="misc",
     ingredients=[Ingr("something")]
@@ -593,7 +593,7 @@ item.recipes.append(CraftingShapelessRecipe(
 
 ### Emplacements de ressources
 
-Ne codez plus jamais en dur un emplacement comme `f"{ns}:custom_blocks/{item}/place_secondary"`. Chaque emplacement que StewBeet dérive d'un ID d'objet est exposé sous forme de propriété renvoyant un objet `Resource`.
+Ne codez plus jamais en dur un emplacement comme `f"{ns}:custom_blocks/{item}/place_secondary"`. Chaque emplacement que StewBeet dérive d'un ID d'item est exposé sous forme de propriété renvoyant un objet `Resource`.
 
 Un `Resource` **est** un str contenant l'emplacement complet `namespace:path`, il fonctionne donc partout où un chemin est attendu: dans une f-string, comme argument de `write_function`, comme clé de dictionnaire, ou comparé à un littéral. En plus de ça, il donne accès au fichier beet sous-jacent.
 
@@ -634,7 +634,7 @@ block.functions.folder            # "ns:custom_blocks/steel_block"
 
 block.no_silk_touch_loot_table    # "ns:custom_blocks/no_silk_touch_drop/steel_block"
 block.seed_loot_table             # "ns:seeds/steel_block"
-block.advancement                 # progrès de placement (BlockAlternative / BlockHead uniquement)
+block.advancement                 # advancement de placement (BlockAlternative / BlockHead uniquement)
 
 # L'exemple de ticking du template devient donc :
 write_function(block.functions.tick, "particle heart ~ ~1 ~ 0.5 0.5 0.5 0.01 1")
@@ -685,11 +685,11 @@ particle minecraft:explosion ~ ~ ~
 > Lire `.obj` avant que le plugin qui le génère n'ait été exécuté lève une `KeyError`. Utilisez `.get()` ou `.exists()` lorsque le fichier peut ne pas encore exister ou faites votre code après exécution des plugins cibles.
 > Pour l'exemple d'append ci-dessus, c'est en réalité un avantage : ajouter trop tôt échoue bruyamment au lieu de placer silencieusement vos commandes avant le setup du bloc.
 
-### Exemples de modèles complexes
+### Exemples de models complexes
 
 #### **Motifs de textures reconnus**
 
-StewBeet reconnaît automatiquement les motifs de textures et génère les modèles appropriés :
+StewBeet reconnaît automatiquement les motifs de textures et génère les models appropriés :
 
 **Motifs de blocs :**
 - **`cube_all`** : Texture unique (ex., `my_block.png`)
@@ -699,14 +699,14 @@ StewBeet reconnaît automatiquement les motifs de textures et génère les modè
 - **`orientable`** : front, side, top (ex., `dropper_front.png`, `dropper_side.png`, `dropper_top.png`)
 - **`cube_column`** : end, side (ex., `pillar_end.png`, `pillar_side.png`)
 
-**Motifs d'objets :**
-- **`leather_armor`** : Les objets commençant par `leather_` utilisent automatiquement layer1 pour la coloration en overlay
-- **`overlay`** : Objets avec texture `_overlay` (ex., `my_item.png` + `my_item_overlay.png` -> layer0 + layer1)
-- **`bow_pulling`** : Objets d'arc avec `_pulling_0`, `_pulling_1`, `_pulling_2`, etc. (triés numériquement)
+**Motifs d'items :**
+- **`leather_armor`** : Les items commençant par `leather_` utilisent automatiquement layer1 pour la coloration en overlay
+- **`overlay`** : Items avec texture `_overlay` (ex., `my_item.png` + `my_item_overlay.png` -> layer0 + layer1)
+- **`bow_pulling`** : Items d'arc avec `_pulling_0`, `_pulling_1`, `_pulling_2`, etc. (triés numériquement)
 - **`spear_in_hand`** : Lances se terminant par `_spear` + variante de texture `_in_hand` (utilise le changement de contexte d'affichage)
 
 **États alimentés :**
-- N'importe quel bloc/objet peut avoir des variantes `_on` (ex., `furnace_front.png` + `furnace_front_on.png`)
+- N'importe quel bloc/item peut avoir des variantes `_on` (ex., `furnace_front.png` + `furnace_front_on.png`)
 - StewBeet génère automatiquement les deux états si des textures `_on` sont détectées
 
 #### **États multiples (On/Off, Facing)**
@@ -741,14 +741,14 @@ electric_furnace = Block(
     }
 )
 
-# StewBeet détecte automatiquement les motifs de modèles de blocs depuis les noms de textures :
+# StewBeet détecte automatiquement les motifs de block models depuis les noms de textures :
 # Textures requises : electric_furnace_front.png, electric_furnace_side.png, electric_furnace_top.png, electric_furnace_bottom.png
 # Optionnel pour l'état on : electric_furnace_front_on.png (les autres côtés peuvent aussi avoir des variantes _on)
 # Motif reconnu : "orientable_with_bottom" (front, side, top, bottom)
 # Autres motifs supportés : "orientable" (front, side, top), "cube_bottom_top" (bottom, side, top), "cube_column" (end, side)
 ```
 
-#### **Modèles d'objets animés (Tir à l'arc)**
+#### **Item models animés (Tir à l'arc)**
 
 Exemple avec animations de tir à l'arc :
 
@@ -772,7 +772,7 @@ custom_bow = Item(
     }
 )
 
-# StewBeet auto-génère les modèles d'animation de tir et les fichiers JSON item_model :
+# StewBeet auto-génère les models d'animation de tir et les fichiers JSON item_model :
 # Textures requises dans assets/textures/item/ :
 # - super_bow.png (texture d'arc de base)
 # - super_bow_pulling_0.png (légèrement tiré)
@@ -813,10 +813,10 @@ def beet_default(ctx: Context):
     # 1. Générer les matériaux
     main_ores()
     
-    # 2. Générer les disques
+    # 2. Générer les records
     generate_custom_records("auto")
     
-    # 3. Ajouter les objets personnalisés
+    # 3. Ajouter les items personnalisés
     main_additions()
     
     # 4. Définir les catégories manquantes
@@ -836,7 +836,7 @@ def beet_default(ctx: Context):
     export_all_definitions_to_json(f"{Mem.ctx.directory}/definitions_debug.json")
 ```
 
-**🎉 Cette approche moderne crée des définitions d'objets propres et type-safe qui s'intègrent parfaitement avec tous les plugins StewBeet !**<br>
+**🎉 Cette approche moderne crée des définitions d'items propres et type-safe qui s'intègrent parfaitement avec tous les plugins StewBeet !**<br>
 Consultez les exemples réels en haut de cette page pour voir comment ça fonctionne en pratique ! 🚀
 
 ## Glossaire
@@ -850,5 +850,5 @@ Consultez les exemples réels en haut de cette page pour voir comment ça foncti
 ## Prochaines étapes
 
 - [Écrire fonctions et fichiers](../2_writing_to_files/fr.md): transformer vos définitions en fichiers.
-- [Recettes](../plugins/custom_recipes.md): comment une recette atteint chaque système de craft.
+- [Recipes](../plugins/custom_recipes.md): comment une recipe atteint chaque système de craft.
 - [Manuel en jeu](../7_ingame_manual/fr.md): le livre généré depuis vos définitions.
