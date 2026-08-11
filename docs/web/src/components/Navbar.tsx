@@ -105,6 +105,14 @@ export const Navbar = memo(() => {
         setIsMobileMenuOpen(false);
     };
 
+    const handlePluginsClick = (e: React.MouseEvent) => {
+        if (e.ctrlKey || e.metaKey || e.shiftKey) {
+            return;
+        }
+        e.preventDefault();
+        scrollToSection('plugins', '/documentation');
+    };
+
     const handleLanguageChange = (lang: Language) => {
         setLanguage(lang);
         setIsLanguageMenuOpen(false);
@@ -163,12 +171,13 @@ export const Navbar = memo(() => {
 
                         <span className="w-px h-5 bg-white/15" aria-hidden="true" />
 
-                        <button
-                            onClick={() => scrollToSection('plugins', '/documentation')}
+                        <a
+                            href="/documentation#plugins"
+                            onClick={handlePluginsClick}
                             className="text-slate-300 hover:text-white transition-colors duration-200 text-sm font-medium"
                         >
                             Plugins
-                        </button>
+                        </a>
                         <a
                             href="/tools"
                             onClick={handleToolsClick}
