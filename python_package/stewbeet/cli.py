@@ -1,6 +1,7 @@
 
 # Imports
 import importlib
+import io
 import os
 import shutil
 import sys
@@ -21,7 +22,8 @@ def force_utf8_output() -> None:
     cannot render a glyph from crashing on it.
     """
     for stream in (sys.stdout, sys.stderr):
-        if hasattr(stream, "reconfigure"):
+        # Only a real text stream can be reconfigured: a captured or redirected one is left alone
+        if isinstance(stream, io.TextIOWrapper):
             stream.reconfigure(encoding="utf-8", errors="replace")
 
 
