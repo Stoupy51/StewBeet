@@ -1,0 +1,18 @@
+[project]
+name = "template"
+version = "0.0.1"
+requires-python = ">=3.14"
+dependencies = [
+	"smithed",
+	"stewbeet>=3.6.0",
+]
+
+# This project is a datapack, not a Python package: uv only has to manage its dependencies.
+[tool.uv]
+package = false
+
+# The smithed release on PyPI mixes Pydantic V1 and V2 models, which makes Smithed Weld merging
+# fail on recent Python. Remove this section and the "smithed" dependency above once it is fixed upstream.
+[tool.uv.sources]
+smithed = { git = "https://github.com/Stoupy51/smithed-python.git" }
+

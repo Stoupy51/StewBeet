@@ -210,6 +210,15 @@ export const Installation: React.FC = () => {
                                 )}
                             </div>
                         </div>
+
+                        {/* pip is the command on the buttons above, so uv gets its equivalent here */}
+                        <p className="mt-3 text-xs text-slate-400 text-center leading-relaxed">
+                            {t('installation.uvNote')}{' '}
+                            <code className="font-mono text-slate-300">uvx stewbeet init</code>{' '}
+                            {t('installation.uvNoteThen')}{' '}
+                            <code className="font-mono text-slate-300">uv run stewbeet build</code>{' '}
+                            {t('installation.uvNoteEnd')}
+                        </p>
                     </div>
                 </div>
 

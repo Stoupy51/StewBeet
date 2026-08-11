@@ -2,27 +2,40 @@
 
 Trois commandes, de rien à un datapack chargeable. La dernière écrit un zip.
 
-**Nécessite** Python 3.14 ou plus récent
+**Nécessite** [uv](https://docs.astral.sh/uv/). Rien d'autre, pas même Python : uv installe le
+3.14 demandé par le template.
 
-## 1. Installer
+## 1. Installer uv
+
+Windows :
+
+```powershell
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+macOS et Linux :
 
 ```bash
-pip install stewbeet
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
 ## 2. Créer un projet
 
 ```bash
-stewbeet init
+uvx stewbeet init
 ```
 
-Tapez `basic` quand le template vous est demandé, puis Entrée.
+Tapez `basic` quand le template vous est demandé, puis Entrée.<br>
+`uvx` lance StewBeet directement depuis PyPI, il n'y a donc rien à installer avant.
 
 ## 3. Compiler
 
 ```bash
-stewbeet build
+uv run stewbeet build
 ```
+
+Le template fournit un `pyproject.toml` : ce premier lancement crée `.venv/`, récupère Python 3.14 si
+vous ne l'avez pas et installe StewBeet dans le projet. Les lancements suivants compilent directement.
 
 ## Ce que vous obtenez
 

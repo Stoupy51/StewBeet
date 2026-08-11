@@ -43,7 +43,7 @@ meta:
 
 Then run:
 ```bash
-stewbeet watch
+uv run stewbeet watch
 ```
 Every time a source file changes, the datapack is rebuilt, copied to the destinations, and the game
 reloads it automatically. A `livereload - Reloaded` message appears in the in-game chat.
