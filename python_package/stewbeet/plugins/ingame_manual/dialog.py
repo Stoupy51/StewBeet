@@ -26,8 +26,12 @@ from ..initialize.project_images import find_pack_png
 from .glyphs import BOOK_FONT, HOME_FONT, NONE_FONT
 
 # Constants
-DIALOG_ICON_HEIGHT: int = 16
-""" On-screen height of the item icon framing a dialog title. """
+DIALOG_ICON_HEIGHT: int = 12
+""" On-screen height of the item icon framing a dialog title.
+
+An atlas sprite rendered at 8 pixels; the glyph is a little taller so the icon carries next to the
+title text without towering over it.
+"""
 
 if TYPE_CHECKING:
 	from .manual import Manual
