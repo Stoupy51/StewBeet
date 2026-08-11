@@ -58,6 +58,10 @@ class GlyphAllocator:
 	""" Guards the counter and provider list for multithreaded glyph preparation. """
 	first_char_by_file: dict[str, str] = field(default_factory=dict[str, str], repr=False)
 	""" First registered glyph char per provider file (index for :meth:`find_char_by_file`). """
+	space_chars: dict[int, str] = field(default_factory=dict[int, str], repr=False)
+	""" Advance in pixels -> glyph char, for the characters handed out by :meth:`add_space`. """
+	space_provider: JsonDict | None = field(default=None, repr=False)
+	""" The single ``space`` provider collecting those characters, created on first use. """
 
 	def allocate(self) -> str:
 		""" Reserve and return the next free dynamic glyph character. """
@@ -70,6 +74,35 @@ class GlyphAllocator:
 		with self.lock:
 			self.providers.append({"type": "bitmap", "file": file, "ascent": ascent, "height": height, "chars": [char]})
 			self.first_char_by_file.setdefault(file, char)
+
+	def add_space(self, advance: int) -> str:
+		""" Return a glyph char drawing nothing and moving the pen by ``advance`` pixels.
+
+		Negative advances are how a spliced image gets put back together: they bring the pen back to
+		the left edge before the next row is drawn. All of them share one ``space`` provider, and the
+		same advance always hands back the same character.
+
+		>>> alloc = GlyphAllocator(project_id="test")
+		>>> back = alloc.add_space(-64)
+		>>> alloc.add_space(-64) == back  # deduped by advance
+		True
+		>>> alloc.to_font_json()["providers"][0]["advances"][back]
+		-64
+		"""
+		existing: str | None = self.space_chars.get(advance)
+		if existing is not None:
+			return existing
+
+		char: str = self.allocate()
+		with self.lock:
+			if (raced := self.space_chars.get(advance)) is not None:
+				return raced
+			if self.space_provider is None:
+				self.space_provider = {"type": "space", "advances": {}}
+				self.providers.append(self.space_provider)
+			self.space_provider["advances"][char] = advance
+			self.space_chars[advance] = char
+		return char
 
 	def find_char_by_file(self, file: str) -> str | None:
 		""" Return the glyph char already registered for ``file`` (dedupe), if any. """
