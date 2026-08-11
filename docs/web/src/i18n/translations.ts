@@ -144,6 +144,9 @@ export const translations = {
             step3Desc: 'Pick a template, get a working project',
             step4: 'Build',
             step4Desc: 'Datapack and resource pack, zipped',
+            uvNote: 'Prefer uv? Every template ships a pyproject.toml, so',
+            uvNoteThen: 'then',
+            uvNoteEnd: 'covers all four steps, Python included.',
         },
 
         // Templates
@@ -474,6 +477,9 @@ export const translations = {
             step3Desc: 'Choisissez un modèle, obtenez un projet qui compile',
             step4: 'Compiler',
             step4Desc: 'Datapack et resource pack, zippés',
+            uvNote: 'Vous préférez uv ? Chaque modèle fournit un pyproject.toml, donc',
+            uvNoteThen: 'puis',
+            uvNoteEnd: 'remplacent les quatre étapes, Python compris.',
         },
 
         // Templates

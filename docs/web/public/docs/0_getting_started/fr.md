@@ -6,7 +6,7 @@ Bienvenue sur **StewBeet** ! 🎉 Ce guide complet vous accompagnera du statut d
 ## Ce que vous allez apprendre
 
 À la fin de ce guide, vous serez capable de :
-- ✅ Installer et configurer StewBeet sur votre ordinateur
+- ✅ Installer uv et configurer StewBeet sur votre ordinateur
 - 🎯 Choisir le bon template pour votre projet
 - ⚙️ Configurer votre premier projet StewBeet
 - 🔨 Compiler et tester votre datapack
@@ -30,32 +30,35 @@ Au lieu d'écrire des centaines de fichiers manuellement, vous définissez ce qu
 Avant de commencer, assurez-vous d'avoir :
 
 ### Logiciels requis
-- **Python 3.14** 🐍 - [Télécharger depuis python.org](https://www.python.org/downloads/)
+- **uv** 📦 - [Le gestionnaire de paquets Python d'Astral](https://docs.astral.sh/uv/). Il installe Python à votre place, c'est donc la seule chose de cette liste que vous avez à mettre en place.
 - **Éditeur de texte ou IDE** 📝 - Nous recommandons [VS Code](https://code.visualstudio.com/) avec le pack d'extensions Python et l'extension [StewBeet](https://marketplace.visualstudio.com/items?itemName=stoupy.stewbeet)
 - **Minecraft Java Edition** 🎮 - Pour tester vos datapacks
 
-### Vérifiez votre installation Python
-Ouvrez un terminal/invite de commande et exécutez :
-```bash
-python --version
-```
-Vous devriez voir quelque chose comme `Python 3.14.7` ou supérieur. Sinon, installez Python d'abord.
+Vous n'avez **pas** besoin d'installer Python vous-même. StewBeet demande la 3.14, chaque template le déclare dans son `pyproject.toml`, et uv télécharge une version compatible à la première compilation.
 
-## Étape 1 : Installer StewBeet
+## Étape 1 : Installer uv
 
-Ouvrez votre terminal/invite de commande et exécutez :
+Ouvrez votre terminal/invite de commande et exécutez la ligne correspondant à votre système :
 
-```bash
-pip install stewbeet
+```powershell
+# Windows
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
-Cela installe StewBeet avec toutes ses dépendances (beet, bolt, mecha, et plus). L'installation peut prendre quelques minutes.
+```bash
+# macOS et Linux
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+Les autres méthodes d'installation (winget, Homebrew, pipx, binaire autonome) sont listées sur la [page d'installation de uv](https://docs.astral.sh/uv/getting-started/installation/).
 
 ### Vérifier l'installation
-Vérifiez que StewBeet est correctement installé :
+Fermez puis rouvrez votre terminal, et vérifiez que uv est bien dans votre PATH :
 ```bash
-stewbeet --version
+uv --version
 ```
+
+> 💡 Vous avez déjà Python 3.14 et préférez pip ? `pip install stewbeet` fonctionne toujours, et chaque `uv run stewbeet ...` ci-dessous devient simplement `stewbeet ...`. Le reste du guide est identique.
 
 ## Étape 2 : Choisir votre template
 
@@ -91,16 +94,17 @@ Le **Template Basic** est parfait car il :
    - Le terminal s'ouvrira automatiquement dans votre dossier de projet
 4. **Exécutez la commande init** :
    ```bash
-   stewbeet init basic
+   uvx stewbeet init basic
    ```
 
-Cela créera automatiquement tous les fichiers et dossiers nécessaires pour votre projet !
+`uvx` télécharge StewBeet, le lance une fois puis jette la copie : vous n'installez donc jamais rien globalement. La commande crée tous les fichiers et dossiers nécessaires pour votre projet !
 
 La structure de votre projet ressemblera à ceci :
 ```bash
 AwesomeOres/
 ├── 📁 .beet_cache/              # Cache de compilation (auto-généré)
 ├── 📁 build/                    # Dossier de sortie (auto-généré)
+├── 📁 .venv/                    # Environnement du projet (créé par uv à la première compilation)
 ├── 📁 assets/                   # Dossier assets (important pour textures et sons)
 ├── 📁 src/                      # Votre code source
 │   ├── 📁 data/                 # Fonctions et données du datapack
@@ -112,9 +116,37 @@ AwesomeOres/
 │   └── 📄 setup_definitions.py  # Configuration principale des définitions
 ├── 📁 assets/                   # Vos textures et sons
 ├── 📄 .gitignore                # Fichier d'ignore Git
+├── 📄 pyproject.toml            # Dépendances Python (StewBeet et ce que vous ajoutez)
 ├── 📄 beet.yml                  # Fichier de configuration principal
 └── 📄 definitions_debug.json    # Fichier de débogage des définitions
 ```
+
+### À propos de `pyproject.toml`
+
+Chaque template en fournit un, et c'est lui qui rend le projet autonome :
+
+```toml
+[project]
+name = "template"
+version = "0.0.1"
+requires-python = ">=3.14"
+dependencies = [
+	"smithed",
+	"stewbeet>=3.6.0",
+]
+
+[tool.uv]
+package = false
+
+[tool.uv.sources]
+smithed = { git = "https://github.com/Stoupy51/smithed-python.git" }
+```
+
+C'est `requires-python` qui indique à uv quel interpréteur récupérer, Python n'a donc jamais à être installé à la main.
+
+La section `[tool.uv.sources]` est temporaire : la version de `smithed` publiée sur PyPI mélange des modèles Pydantic V1 et V2, ce qui fait échouer la fusion Smithed Weld sur les Python récents. Supprimez cette section et la dépendance `smithed` une fois le problème corrigé en amont.
+
+Besoin d'une autre bibliothèque dans vos définitions (`requests`, `pillow`, n'importe laquelle) ? Lancez `uv add requests` : elle atterrit dans ce fichier, dans votre `.venv`, et dans le fichier de lock que vos collaborateurs réutilisent.
 
 ## Étape 4 : Configurer votre projet
 
@@ -152,7 +184,9 @@ Testons que tout fonctionne :
 
 ### Ouvrez le terminal dans le dossier du projet et exécutez votre première compilation
 
-🖥️ Ouvrez le terminal dans le dossier du projet et exécutez `stewbeet` ou `stewbeet build`
+🖥️ Ouvrez le terminal dans le dossier du projet et exécutez `uv run stewbeet` ou `uv run stewbeet build`
+
+Cette première exécution fait tout le travail de mise en place : uv lit `pyproject.toml`, télécharge Python 3.14 s'il manque, crée `.venv/` et installe StewBeet. Comptez une minute ; les exécutions suivantes compilent immédiatement.
 
 Vous devriez voir une sortie comme :
 ```bash
@@ -218,7 +252,7 @@ meta:
       resource_pack: ["C:/Users/VotreNom/AppData/Roaming/.minecraft/resourcepacks"]
 ```
 
-Remplacez les chemins par vos vrais dossiers Minecraft. Maintenant quand vous exécutez `stewbeet`, les fichiers sont automatiquement copiés !
+Remplacez les chemins par vos vrais dossiers Minecraft. Maintenant quand vous exécutez `uv run stewbeet`, les fichiers sont automatiquement copiés !
 
 #### Option 2 : Copie manuelle
 
@@ -272,7 +306,7 @@ def main():
 
 ### Compiler et tester
 
-1. Exécutez `stewbeet` dans votre terminal et attendez qu'il termine (le premier rendu des modèles d'objets peut prendre un peu plus de temps)
+1. Exécutez `uv run stewbeet` dans votre terminal et attendez qu'il termine (le premier rendu des modèles d'objets peut prendre un peu plus de temps)
 2. Rechargez votre monde avec `/reload`
 3. Obtenez votre objet avec `/loot give @s loot awesome_ores:i/ruby` ou `/function awesome_ores:_give_all`
 
@@ -328,7 +362,7 @@ def main():
 
 ### Compiler et tester
 
-1. Exécutez `stewbeet`, attendez qu'il termine
+1. Exécutez `uv run stewbeet`, attendez qu'il termine
 2. Rechargez dans Minecraft
 3. Obtenez votre bloc avec `/loot give @s awesome_ores:i/ruby_ore`
 4. Placez-le dans le monde - c'est un bloc personnalisé entièrement fonctionnel !
@@ -454,7 +488,7 @@ Besoin d'assistance ? Voici vos meilleures ressources :
 ## Conclusion
 
 Vous avez réussi à :
-- ✅ Installer StewBeet
+- ✅ Installer uv et StewBeet
 - ✅ Configurer votre premier projet
 - ✅ Créer des objets et blocs personnalisés
 - ✅ Compiler et tester dans Minecraft
