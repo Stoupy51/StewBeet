@@ -42,6 +42,23 @@
 		{"type": "bitmap","file": "_your_namespace:font/renders/mechanization_tin_ore_256x256.png","ascent": 12,"height": 24,"chars": ["聈"]},
 		{"type": "bitmap","file": "_your_namespace:font/renders/_your_namespace_steel_ingot_8x8.png","ascent": 11,"height": 16,"chars": ["聉"]},
 		{"type": "bitmap","file": "_your_namespace:font/renders/_your_namespace_steel_ingot_32x32.png","ascent": 8,"height": 8,"chars": ["聊"]},
-		{"type": "bitmap","file": "_your_namespace:font/renders/ICON_32x32.png","ascent": 64,"height": 64,"chars": ["聋"]}
+		{"type": "bitmap","file": "_your_namespace:font/renders/ICON_32x32.png","ascent": 8,"height": 8,"chars": ["聋"]},
+		{"type": "bitmap","file": "_your_namespace:font/renders/_your_namespace_stewbeet_logo_1024x1024_h128a32/r0c0.png","ascent": 32,"height": 32,"chars": ["职"]},
+		{"type": "space","advances": {"聍": -1,"聑": 31,"聒": -128,"聗": 8,"聜": 4,"聡": 20}},
+		{"type": "bitmap","file": "_your_namespace:font/renders/_your_namespace_stewbeet_logo_1024x1024_h128a32/r0c1.png","ascent": 32,"height": 32,"chars": ["聎"]},
+		{"type": "bitmap","file": "_your_namespace:font/renders/_your_namespace_stewbeet_logo_1024x1024_h128a32/r0c2.png","ascent": 32,"height": 32,"chars": ["聏"]},
+		{"type": "bitmap","file": "_your_namespace:font/renders/_your_namespace_stewbeet_logo_1024x1024_h128a32/r0c3.png","ascent": 32,"height": 32,"chars": ["聐"]},
+		{"type": "bitmap","file": "_your_namespace:font/renders/_your_namespace_stewbeet_logo_1024x1024_h128a32/r1c0.png","ascent": 0,"height": 32,"chars": ["聓"]},
+		{"type": "bitmap","file": "_your_namespace:font/renders/_your_namespace_stewbeet_logo_1024x1024_h128a32/r1c1.png","ascent": 0,"height": 32,"chars": ["联"]},
+		{"type": "bitmap","file": "_your_namespace:font/renders/_your_namespace_stewbeet_logo_1024x1024_h128a32/r1c2.png","ascent": 0,"height": 32,"chars": ["聕"]},
+		{"type": "bitmap","file": "_your_namespace:font/renders/_your_namespace_stewbeet_logo_1024x1024_h128a32/r1c3.png","ascent": 0,"height": 32,"chars": ["聖"]},
+		{"type": "bitmap","file": "_your_namespace:font/renders/_your_namespace_stewbeet_logo_1024x1024_h128a32/r2c0.png","ascent": -32,"height": 32,"chars": ["聘"]},
+		{"type": "bitmap","file": "_your_namespace:font/renders/_your_namespace_stewbeet_logo_1024x1024_h128a32/r2c1.png","ascent": -32,"height": 32,"chars": ["聙"]},
+		{"type": "bitmap","file": "_your_namespace:font/renders/_your_namespace_stewbeet_logo_1024x1024_h128a32/r2c2.png","ascent": -32,"height": 32,"chars": ["聚"]},
+		{"type": "bitmap","file": "_your_namespace:font/renders/_your_namespace_stewbeet_logo_1024x1024_h128a32/r2c3.png","ascent": -32,"height": 32,"chars": ["聛"]},
+		{"type": "bitmap","file": "_your_namespace:font/renders/_your_namespace_stewbeet_logo_1024x1024_h128a32/r3c0.png","ascent": -64,"height": 32,"chars": ["聝"]},
+		{"type": "bitmap","file": "_your_namespace:font/renders/_your_namespace_stewbeet_logo_1024x1024_h128a32/r3c1.png","ascent": -64,"height": 32,"chars": ["聞"]},
+		{"type": "bitmap","file": "_your_namespace:font/renders/_your_namespace_stewbeet_logo_1024x1024_h128a32/r3c2.png","ascent": -64,"height": 32,"chars": ["聟"]},
+		{"type": "bitmap","file": "_your_namespace:font/renders/_your_namespace_stewbeet_logo_1024x1024_h128a32/r3c3.png","ascent": -64,"height": 32,"chars": ["聠"]}
 	]
 }
