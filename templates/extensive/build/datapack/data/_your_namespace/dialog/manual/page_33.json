@@ -3,14 +3,14 @@
 	"title": [
 		"",
 		{
-			"sprite": "_your_namespace:item/dialog_sprite/vb_no_facing",
+			"text": "耺",
+			"font": "_your_namespace:renders",
 			"shadow_color": [
 				0,
 				0,
 				0,
 				0
-			],
-			"atlas": "minecraft:items"
+			]
 		},
 		" ",
 		{
@@ -19,14 +19,14 @@
 		},
 		" ",
 		{
-			"sprite": "_your_namespace:item/dialog_sprite/vb_no_facing",
+			"text": "耺",
+			"font": "_your_namespace:renders",
 			"shadow_color": [
 				0,
 				0,
 				0,
 				0
-			],
-			"atlas": "minecraft:items"
+			]
 		}
 	],
 	"body": [
@@ -52,9 +52,9 @@
 				"U$  \n\"",
 				{"text": "U$","hover_event": {"action": "show_item","id": "minecraft:cobblestone"}},
 				"U$U$",
-				{"text": "$$聇","hover_event": {"action": "show_item","id": "furnace","components": {"container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:vb_no_facing","from": "_your_namespace"}}}}}}],"tooltip_display": {"hidden_components": ["minecraft:container"]},"item_model": "_your_namespace:vb_no_facing","item_name": {"translate": "_your_namespace.vb_no_facing"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "耢","font": "_your_namespace:renders","color": "white","italic": false}]],"custom_data": {"_your_namespace": {"vb_no_facing": true},"smithed": {"id": "_your_namespace:vb_no_facing","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}}}},
+				{"text": "$$聇","hover_event": {"action": "show_item","id": "furnace","components": {"container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:vb_no_facing","from": "_your_namespace"}}}}}}],"tooltip_display": {"hidden_components": ["minecraft:container"]},"item_model": "_your_namespace:vb_no_facing","item_name": {"translate": "_your_namespace.vb_no_facing"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聃","font": "_your_namespace:renders","color": "white","italic": false}]],"custom_data": {"_your_namespace": {"vb_no_facing": true},"smithed": {"id": "_your_namespace:vb_no_facing","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}}}},
 				"#$\n\"U$U$U$",
-				{"text": "U$","hover_event": {"action": "show_item","id": "furnace","components": {"container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:vb_no_facing","from": "_your_namespace"}}}}}}],"tooltip_display": {"hidden_components": ["minecraft:container"]},"item_model": "_your_namespace:vb_no_facing","item_name": {"translate": "_your_namespace.vb_no_facing"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "耢","font": "_your_namespace:renders","color": "white","italic": false}]],"custom_data": {"_your_namespace": {"vb_no_facing": true},"smithed": {"id": "_your_namespace:vb_no_facing","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}}}},
+				{"text": "U$","hover_event": {"action": "show_item","id": "furnace","components": {"container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:vb_no_facing","from": "_your_namespace"}}}}}}],"tooltip_display": {"hidden_components": ["minecraft:container"]},"item_model": "_your_namespace:vb_no_facing","item_name": {"translate": "_your_namespace.vb_no_facing"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聃","font": "_your_namespace:renders","color": "white","italic": false}]],"custom_data": {"_your_namespace": {"vb_no_facing": true},"smithed": {"id": "_your_namespace:vb_no_facing","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}}}},
 				"#$\n\n\n",
 				{"text": "2\n0","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$肃"},"\n","\"",{"text": "U$"},"U$U$",{"text": "$$聇"},"\n\"","U$U$U$",{"text": "U$"},"\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.cobblestone","color": "gray"}]}},
 				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"

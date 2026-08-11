@@ -14,7 +14,7 @@ function _your_namespace:v3.0.0/load/set_items_storage
 
 # Add a message when loading
 tellraw @a ["Here is a message when loading the datapack, located in `src/link.py`\n\n\n"]
-tellraw @a [{"text": "耣","font": "_your_namespace:renders"}, {"text": "耤","font": "_your_namespace:renders"}, "\n\n\n\n"]
+tellraw @a [{"text": "聄","font": "_your_namespace:renders"}, {"text": "聅","font": "_your_namespace:renders"}, "\n\n\n\n"]
 
 # Set scoreboard constants for _your_namespace.data
 scoreboard players set #2 _your_namespace.data 2

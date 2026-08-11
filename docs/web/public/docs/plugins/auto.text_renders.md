@@ -143,7 +143,7 @@ component has been serialised into loot tables, `give` commands and dialogs, so 
 - 🏷️ Item lores and `item_name`, through the generated loot tables
 - 💬 `tellraw`, `title` and any other command carrying a text component
 - 🎨 The `source_lore` shared by every item of the pack
-- 📖 The `ingame_manual` dialogs
+- 📖 The `ingame_manual` dialogs, whose item titles are glyphs rather than 16x16 atlas sprites
 
 Running after `auto.lang_file` also keeps the two passes independent: the lang plugin never sees a glyph, and
 this one never sees a translate key.
@@ -157,6 +157,9 @@ this one never sees a translate key.
 ### Shared with the manual
 - 📦 `ingame_manual` and this plugin read the same `iso_renders_path`, so an item is rendered once per build
 - ⚡ With the manual in the pipeline, the renders already exist and nothing is regenerated
+- 🏷️ Dialog titles ask for their glyph directly, so they keep the full render resolution instead of the
+  16x16 an atlas sprite forces. They fall back to a sprite when no image can be resolved, and an animated
+  texture keeps its sprite so it does not freeze on the first frame.
 
 ## Next steps
 

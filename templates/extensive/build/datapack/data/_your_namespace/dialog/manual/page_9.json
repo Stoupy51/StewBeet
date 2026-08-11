@@ -3,14 +3,14 @@
 	"title": [
 		"",
 		{
-			"sprite": "_your_namespace:item/dialog_sprite/steel_ingot",
+			"text": "耢",
+			"font": "_your_namespace:renders",
 			"shadow_color": [
 				0,
 				0,
 				0,
 				0
-			],
-			"atlas": "minecraft:items"
+			]
 		},
 		" ",
 		{
@@ -19,14 +19,14 @@
 		},
 		" ",
 		{
-			"sprite": "_your_namespace:item/dialog_sprite/steel_ingot",
+			"text": "耢",
+			"font": "_your_namespace:renders",
 			"shadow_color": [
 				0,
 				0,
 				0,
 				0
-			],
-			"atlas": "minecraft:items"
+			]
 		}
 	],
 	"body": [
@@ -48,13 +48,13 @@
 			"contents": [
 				{"text": "","font": "_your_namespace:manual","color": "white","shadow_color": [0,0,0,0]},
 				"\"$5\n\"",
-				{"text": "$耵","hover_event": {"action": "show_item","id": "furnace","components": {"container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:steel_block","from": "_your_namespace"}}}}}}],"tooltip_display": {"hidden_components": ["minecraft:container"]},"custom_data": {"smithed": {"dict": {"block": {"steel": true}},"id": "_your_namespace:steel_block","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_block": true}},"item_model": "_your_namespace:steel_block","item_name": {"translate": "_your_namespace.steel_block"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "耢","font": "_your_namespace:renders","color": "white","italic": false}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_14"}},
+				{"text": "$耵","hover_event": {"action": "show_item","id": "furnace","components": {"container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:steel_block","from": "_your_namespace"}}}}}}],"tooltip_display": {"hidden_components": ["minecraft:container"]},"custom_data": {"smithed": {"dict": {"block": {"steel": true}},"id": "_your_namespace:steel_block","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_block": true}},"item_model": "_your_namespace:steel_block","item_name": {"translate": "_your_namespace.steel_block"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聃","font": "_your_namespace:renders","color": "white","italic": false}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_14"}},
 				"U$  \n\"",
-				{"text": "U$","hover_event": {"action": "show_item","id": "furnace","components": {"container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:steel_block","from": "_your_namespace"}}}}}}],"tooltip_display": {"hidden_components": ["minecraft:container"]},"custom_data": {"smithed": {"dict": {"block": {"steel": true}},"id": "_your_namespace:steel_block","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_block": true}},"item_model": "_your_namespace:steel_block","item_name": {"translate": "_your_namespace.steel_block"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "耢","font": "_your_namespace:renders","color": "white","italic": false}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_14"}},
+				{"text": "U$","hover_event": {"action": "show_item","id": "furnace","components": {"container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:steel_block","from": "_your_namespace"}}}}}}],"tooltip_display": {"hidden_components": ["minecraft:container"]},"custom_data": {"smithed": {"dict": {"block": {"steel": true}},"id": "_your_namespace:steel_block","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_block": true}},"item_model": "_your_namespace:steel_block","item_name": {"translate": "_your_namespace.steel_block"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聃","font": "_your_namespace:renders","color": "white","italic": false}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_14"}},
 				"U$U$",
-				{"text": "$$聎","hover_event": {"action": "show_item","id": "recovery_compass","components": {"custom_data": {"smithed": {"dict": {"ingot": {"steel": true}},"id": "_your_namespace:steel_ingot","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ingot": true}},"lore": [[{"translate": "_your_namespace.smelted_from","color": "gray","italic": false},{"text": "耡","font": "_your_namespace:renders"},[{"text":" ","color": "gray","italic": false}, {"translate": "_your_namespace.raw_steel_2"}]],["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "耢","font": "_your_namespace:renders","color": "white","italic": false}]],"item_model": "_your_namespace:steel_ingot","item_name": {"translate": "_your_namespace.steel_ingot"}}}},
+				{"text": "$$聎","hover_event": {"action": "show_item","id": "recovery_compass","components": {"custom_data": {"smithed": {"dict": {"ingot": {"steel": true}},"id": "_your_namespace:steel_ingot","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ingot": true}},"lore": [[{"translate": "_your_namespace.smelted_from","color": "gray","italic": false},{"text": "聂","font": "_your_namespace:renders"},[{"text":" ","color": "gray","italic": false}, {"translate": "_your_namespace.raw_steel_2"}]],["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聃","font": "_your_namespace:renders","color": "white","italic": false}]],"item_model": "_your_namespace:steel_ingot","item_name": {"translate": "_your_namespace.steel_ingot"}}}},
 				"#$\n\"U$U$U$",
-				{"text": "U$","hover_event": {"action": "show_item","id": "recovery_compass","components": {"custom_data": {"smithed": {"dict": {"ingot": {"steel": true}},"id": "_your_namespace:steel_ingot","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ingot": true}},"lore": [[{"translate": "_your_namespace.smelted_from","color": "gray","italic": false},{"text": "耡","font": "_your_namespace:renders"},[{"text":" ","color": "gray","italic": false}, {"translate": "_your_namespace.raw_steel_2"}]],["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "耢","font": "_your_namespace:renders","color": "white","italic": false}]],"item_model": "_your_namespace:steel_ingot","item_name": {"translate": "_your_namespace.steel_ingot"}}}},
+				{"text": "U$","hover_event": {"action": "show_item","id": "recovery_compass","components": {"custom_data": {"smithed": {"dict": {"ingot": {"steel": true}},"id": "_your_namespace:steel_ingot","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ingot": true}},"lore": [[{"translate": "_your_namespace.smelted_from","color": "gray","italic": false},{"text": "聂","font": "_your_namespace:renders"},[{"text":" ","color": "gray","italic": false}, {"translate": "_your_namespace.raw_steel_2"}]],["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聃","font": "_your_namespace:renders","color": "white","italic": false}]],"item_model": "_your_namespace:steel_ingot","item_name": {"translate": "_your_namespace.steel_ingot"}}}},
 				"#$\n\n\n",
 				{"text": "1##","hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.here_is_an_example_of_a_wiki_componentthis_text_component_will_b"},[{"text":"\n","color": "yellow"}, {"translate": "_your_namespace.you_can_write_anything_you_want_here"}]]}},
 				{"text": "1##","hover_event": {"action": "show_text","value": {"translate": "_your_namespace.this_is_another_button_with_a_simple_text_component","color": "aqua"}}},

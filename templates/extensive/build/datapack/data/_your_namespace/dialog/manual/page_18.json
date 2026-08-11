@@ -3,14 +3,14 @@
 	"title": [
 		"",
 		{
-			"sprite": "_your_namespace:item/dialog_sprite/stone_stick",
+			"text": "耫",
+			"font": "_your_namespace:renders",
 			"shadow_color": [
 				0,
 				0,
 				0,
 				0
-			],
-			"atlas": "minecraft:items"
+			]
 		},
 		" ",
 		{
@@ -19,14 +19,14 @@
 		},
 		" ",
 		{
-			"sprite": "_your_namespace:item/dialog_sprite/stone_stick",
+			"text": "耫",
+			"font": "_your_namespace:renders",
 			"shadow_color": [
 				0,
 				0,
 				0,
 				0
-			],
-			"atlas": "minecraft:items"
+			]
 		}
 	],
 	"body": [
@@ -52,11 +52,11 @@
 				"U$  \n\"",
 				{"text": "U$","hover_event": {"action": "show_item","id": "minecraft:stone"}},
 				"U$U$",
-				{"text": "$$聲","hover_event": {"action": "show_item","id": "recovery_compass","components": {"custom_data": {"smithed": {"dict": {"stick": {"stone": true}},"id": "_your_namespace:stone_stick","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"stone_stick": true}},"item_model": "_your_namespace:stone_stick","item_name": {"translate": "_your_namespace.stone_stick"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "耢","font": "_your_namespace:renders","color": "white","italic": false}]]}}},
+				{"text": "$$聲","hover_event": {"action": "show_item","id": "recovery_compass","components": {"custom_data": {"smithed": {"dict": {"stick": {"stone": true}},"id": "_your_namespace:stone_stick","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"stone_stick": true}},"item_model": "_your_namespace:stone_stick","item_name": {"translate": "_your_namespace.stone_stick"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聃","font": "_your_namespace:renders","color": "white","italic": false}]]}}},
 				"#$\n\"",
 				{"text": "$聳","hover_event": {"action": "show_item","id": "minecraft:stone"}},
 				"U$U$",
-				{"text": "U$","hover_event": {"action": "show_item","id": "recovery_compass","components": {"custom_data": {"smithed": {"dict": {"stick": {"stone": true}},"id": "_your_namespace:stone_stick","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"stone_stick": true}},"item_model": "_your_namespace:stone_stick","item_name": {"translate": "_your_namespace.stone_stick"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "耢","font": "_your_namespace:renders","color": "white","italic": false}]]}}},
+				{"text": "U$","hover_event": {"action": "show_item","id": "recovery_compass","components": {"custom_data": {"smithed": {"dict": {"stick": {"stone": true}},"id": "_your_namespace:stone_stick","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"stone_stick": true}},"item_model": "_your_namespace:stone_stick","item_name": {"translate": "_your_namespace.stone_stick"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聃","font": "_your_namespace:renders","color": "white","italic": false}]]}}},
 				"#$\n\"",
 				{"text": "U$\n\n","hover_event": {"action": "show_item","id": "minecraft:stone"}},
 				{"text": "2\n0","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$聳"},"\n","\"",{"text": "U$"},"U$U$",{"text": "$$聲"},"\n","\"",{"text": "$聳"},"U$U$",{"text": "U$"},"\n","\"",{"text": "U$"},"\n"],{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.stone","color": "gray"}]}},

@@ -3,14 +3,14 @@
 	"title": [
 		"",
 		{
-			"sprite": "_your_namespace:item/dialog_sprite/heavy_workbench",
+			"text": "耡",
+			"font": "_your_namespace:renders",
 			"shadow_color": [
 				0,
 				0,
 				0,
 				0
-			],
-			"atlas": "minecraft:items"
+			]
 		},
 		" ",
 		{
@@ -19,14 +19,14 @@
 		},
 		" ",
 		{
-			"sprite": "_your_namespace:item/dialog_sprite/heavy_workbench",
+			"text": "耡",
+			"font": "_your_namespace:renders",
 			"shadow_color": [
 				0,
 				0,
 				0,
 				0
-			],
-			"atlas": "minecraft:items"
+			]
 		}
 	],
 	"body": [

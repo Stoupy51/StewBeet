@@ -24,7 +24,7 @@
 								"minecraft:lore": [
 									[
 										{"translate": "_your_namespace.smelted_from","color": "gray","italic": false},
-										{"text": "耡","font": "_your_namespace:renders"},
+										{"text": "聂","font": "_your_namespace:renders"},
 										[{"text":" ","color": "gray","italic": false}, {"translate": "_your_namespace.raw_steel_2"}]
 									],
 									[
@@ -33,7 +33,7 @@
 										" ",
 										{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"},
 										" ",
-										{"text": "耢","font": "_your_namespace:renders","color": "white","italic": false}
+										{"text": "聃","font": "_your_namespace:renders","color": "white","italic": false}
 									]
 								],
 								"minecraft:item_model": "_your_namespace:steel_ingot",

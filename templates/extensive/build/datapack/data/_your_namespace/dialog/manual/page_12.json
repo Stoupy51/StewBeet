@@ -3,14 +3,14 @@
 	"title": [
 		"",
 		{
-			"sprite": "_your_namespace:item/dialog_sprite/steel_dust",
+			"text": "耥",
+			"font": "_your_namespace:renders",
 			"shadow_color": [
 				0,
 				0,
 				0,
 				0
-			],
-			"atlas": "minecraft:items"
+			]
 		},
 		" ",
 		{
@@ -19,14 +19,14 @@
 		},
 		" ",
 		{
-			"sprite": "_your_namespace:item/dialog_sprite/steel_dust",
+			"text": "耥",
+			"font": "_your_namespace:renders",
 			"shadow_color": [
 				0,
 				0,
 				0,
 				0
-			],
-			"atlas": "minecraft:items"
+			]
 		}
 	],
 	"body": [
@@ -48,13 +48,13 @@
 			"contents": [
 				{"text": "","font": "_your_namespace:manual","color": "white","shadow_color": [0,0,0,0]},
 				"\"$9\n\n\n\"",
-				{"text": "$耲","hover_event": {"action": "show_item","id": "recovery_compass","components": {"custom_data": {"smithed": {"dict": {"raw": {"steel": true}},"id": "_your_namespace:raw_steel","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"raw_steel": true}},"item_model": "_your_namespace:raw_steel","item_name": {"translate": "_your_namespace.raw_steel"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "耢","font": "_your_namespace:renders","color": "white","italic": false}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_11"}},
+				{"text": "$耲","hover_event": {"action": "show_item","id": "recovery_compass","components": {"custom_data": {"smithed": {"dict": {"raw": {"steel": true}},"id": "_your_namespace:raw_steel","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"raw_steel": true}},"item_model": "_your_namespace:raw_steel","item_name": {"translate": "_your_namespace.raw_steel"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聃","font": "_your_namespace:renders","color": "white","italic": false}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_11"}},
 				"\"\"\"\"#U$",
-				{"text": "$$聦","hover_event": {"action": "show_item","id": "recovery_compass","components": {"custom_data": {"smithed": {"dict": {"dust": {"steel": true}},"id": "_your_namespace:steel_dust","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_dust": true}},"item_model": "_your_namespace:steel_dust","item_name": {"translate": "_your_namespace.steel_dust"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "耢","font": "_your_namespace:renders","color": "white","italic": false}]]}}},
+				{"text": "$$聦","hover_event": {"action": "show_item","id": "recovery_compass","components": {"custom_data": {"smithed": {"dict": {"dust": {"steel": true}},"id": "_your_namespace:steel_dust","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_dust": true}},"item_model": "_your_namespace:steel_dust","item_name": {"translate": "_your_namespace.steel_dust"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聃","font": "_your_namespace:renders","color": "white","italic": false}]]}}},
 				"#$\n\"",
-				{"text": "U$","hover_event": {"action": "show_item","id": "recovery_compass","components": {"custom_data": {"smithed": {"dict": {"raw": {"steel": true}},"id": "_your_namespace:raw_steel","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"raw_steel": true}},"item_model": "_your_namespace:raw_steel","item_name": {"translate": "_your_namespace.raw_steel"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "耢","font": "_your_namespace:renders","color": "white","italic": false}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_11"}},
+				{"text": "U$","hover_event": {"action": "show_item","id": "recovery_compass","components": {"custom_data": {"smithed": {"dict": {"raw": {"steel": true}},"id": "_your_namespace:raw_steel","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"raw_steel": true}},"item_model": "_your_namespace:raw_steel","item_name": {"translate": "_your_namespace.raw_steel"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聃","font": "_your_namespace:renders","color": "white","italic": false}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_11"}},
 				"\"\"\"\"#U$",
-				{"text": "U$","hover_event": {"action": "show_item","id": "recovery_compass","components": {"custom_data": {"smithed": {"dict": {"dust": {"steel": true}},"id": "_your_namespace:steel_dust","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_dust": true}},"item_model": "_your_namespace:steel_dust","item_name": {"translate": "_your_namespace.steel_dust"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "耢","font": "_your_namespace:renders","color": "white","italic": false}]]}}},
+				{"text": "U$","hover_event": {"action": "show_item","id": "recovery_compass","components": {"custom_data": {"smithed": {"dict": {"dust": {"steel": true}},"id": "_your_namespace:steel_dust","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_dust": true}},"item_model": "_your_namespace:steel_dust","item_name": {"translate": "_your_namespace.steel_dust"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聃","font": "_your_namespace:renders","color": "white","italic": false}]]}}},
 				"#$\n\n\n",
 				{"text": "聩##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"G\n","\"",{"text": "$耳"},"\n","\"",{"text": "U$"},"\n","\"\"\"\"U$U$",{"text": "$$耭"},"\n","\"\"\"\"U$U$",{"text": "U$"},"\n","\n\n"],[{"text":"\n","color": "yellow"}, {"translate": "_your_namespace.smelting"}],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_dust","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_9"}},
 				{"text": "2##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"I\n","\n\n","\"",{"text": "$耭"},"\"\"\"\"#U$",{"text": "$$耳"},"\n","\"",{"text": "U$"},"\"\"\"\"#U$",{"text": "U$"},"\n","\n"],[{"text":"\n","color": "yellow"}, {"translate": "_your_namespace.simplenergy_pulverizing"}],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","color": "gray"}]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_9"}},
