@@ -340,7 +340,13 @@ iso_renders_path: "iso_renders"
 text_renders:
     default_height: 16
     font: "renders"
+    # allow_oversized: true   # sans valeur, la question est posée une fois dans le terminal
 ```
+
+Une image plus grande que les 256x256 que Minecraft accepte dans un seul glyphe est découpée en une
+grille de glyphes recollés avec des espaces négatifs, au prix d'une texture par morceau. Le premier
+build qui tombe dessus pose la question dans le terminal et retient la réponse dans `.beet_cache` ;
+`allow_oversized` y répond à l'avance, et `false` réduit plutôt ces rendus à un seul glyphe.
 
 `iso_renders_path` contient un PNG par objet, sous la forme `<dossier>/<namespace>/<objet>.png`. Les
 objets du projet sont rendus depuis leur modèle, les objets `minecraft:` sont téléchargés, et ceux
