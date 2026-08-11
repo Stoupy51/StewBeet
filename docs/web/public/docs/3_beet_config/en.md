@@ -340,7 +340,13 @@ iso_renders_path: "iso_renders"
 text_renders:
     default_height: 16
     font: "renders"
+    # allow_oversized: true   # unset asks once in the terminal, and remembers the answer
 ```
+
+A picture bigger than the 256x256 Minecraft fits in one glyph is cut into a grid of glyphs put back
+together with negative spacing, at the cost of one texture per tile. The first build to run into it
+asks in the terminal and remembers the answer in `.beet_cache`; `allow_oversized` answers it up
+front, and `false` shrinks such renders to a single glyph instead.
 
 `iso_renders_path` holds one PNG per item, as `<folder>/<namespace>/<item>.png`. Project items are
 rendered from their model, `minecraft:` items are downloaded, and items of other packs are the ones
