@@ -49,6 +49,7 @@ stewbeet = "stewbeet:main"
 
 [dependency-groups]
 dev = [
+    "bumpversion",  # bump-my-version bump patch
     "pyright",
     "ruff",
 ]
@@ -89,4 +90,31 @@ ignore = [
     "F403",
     "F405",
 ]
+
+# Bumpversion configuration
+[tool.bumpversion]
+current_version = "3.6.0"
+parse = "(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)"
+serialize = ["{major}.{minor}.{patch}"]
+search = "{current_version}"
+replace = "{new_version}"
+
+# List each file where the version appears
+[[tool.bumpversion.files]]
+filename = "pyproject.toml"
+
+[[tool.bumpversion.files]]
+filename = "../docs/web/public/docs/0_getting_started/en.md"
+
+[[tool.bumpversion.files]]
+filename = "../docs/web/public/docs/0_getting_started/fr.md"
+
+[[tool.bumpversion.files]]
+filename = "../templates/minimal/pyproject.toml"
+
+[[tool.bumpversion.files]]
+filename = "../templates/basic/pyproject.toml"
+
+[[tool.bumpversion.files]]
+filename = "../templates/extensive/pyproject.toml"
 
