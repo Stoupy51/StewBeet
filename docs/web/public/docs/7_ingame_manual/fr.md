@@ -11,10 +11,10 @@
 **Personnalisation** : Appelez `get_manual()` dans votre `setup_definitions` (après la définition des items) pour enregistrer pages et hooks  
 **Sortie** : Orienté dialogue: génère un dialogue Minecraft par page, accessible via le menu **quick actions** natif (et l'item `manual` en mode 1)
 
-- Générer automatiquement les pages de recipes de chaque item (craft, cuisson, forge, découpe, minage, et types de recipes personnalisés)
+- Générer automatiquement les pages de recipes de chaque item (craft, cuisson, forge, découpe, minage, et custom recipe types)
 - Insérer/remplacer/réordonner des pages arbitraires via une API Python claire
 - Enregistrer des fonctions exécutées pendant la création du manuel (hooks `Phase`)
-- Fournir des pages basées sur une texture personnalisée, avec le texte intégré dans l'image elle-même
+- Fournir des pages basées sur une custom texture, avec le texte intégré dans l'image elle-même
 - Remplacer la texture de fond du livre ou du bouton home sur une page spécifique (`book_texture`, `home_texture`)
 - Lier des pages entre elles : afficher le bouton de recipe d'un autre item, ou un bouton de lien vers sa page (`extra_buttons`)
 - Décider où apparaissent les boutons wiki et comment gérer le dépassement (`ButtonLayout`)
@@ -78,14 +78,14 @@ def tweak(m):
 
 `manual.on_item_page(fn)` exécute `fn(page, manual)` sur chaque page d'item pendant la préparation.
 
-### Pages personnalisées & texture
+### Custom pages & texture
 `insert_page` accepte `before=`/`after=` (un anchor) ou `index=`. Les anchors par défaut incluent `"intro"`, `"category_browser"`, `"category:<Titre>"` et `"item:<id>"`.
 
 ```python
 # Une page libre (n'importe quels components de texte)
 manual.insert_page(CustomPage(
     anchor="welcome", title="Bienvenue",
-    body=[{"text": "Bonjour depuis une page personnalisée !", "color": "black"}],
+    body=[{"text": "Bonjour depuis une custom page !", "color": "black"}],
 ), after="intro")
 
 # Une page dont le corps est une texture, avec le texte intégré dans l'image elle-même
@@ -258,7 +258,7 @@ def maybe_changelog(m):
 
 ---
 
-## Types de recipes personnalisés
+## Custom recipe types
 Chaque type de recipe est rendu par un `CraftRenderer` enregistré dans un registre global : ajouter un type = une classe + un appel à `register_craft_renderer(...)`. Les types intégrés vivent un par fichier sous `recipes/types/` (`shaped`, `furnace`, `smithing`, `linear`, `awakened_forge`). Comme toutes les classes de l'API du manuel, les renderers sont des dataclasses: décorez votre sous-classe avec `@dataclass` pour suivre le style des types intégrés.
 
 ```python

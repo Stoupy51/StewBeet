@@ -36,5 +36,4 @@ say Here is a message when loading the datapack, located in `src/link.py`
 
     # See more examples in extensive_template/src/link.py
 
-    pass
 

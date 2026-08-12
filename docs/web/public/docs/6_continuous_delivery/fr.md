@@ -249,7 +249,7 @@ upload_to_pmc(pmc_config, changelog)
 
 | Terme | Signification |
 |-------|---------------|
-| **`load_credentials`** | Lit `~/stewbeet/credentials.yml` (ou un chemin personnalisé) et retourne un dictionnaire de clés API et secrets utilisés par les fonctions d'upload. |
+| **`load_credentials`** | Lit `~/stewbeet/credentials.yml` (ou un custom path) et retourne un dictionnaire de clés API et secrets utilisés par les fonctions d'upload. |
 | **`get_project_config`** | Lit le `beet.yml` du répertoire courant et retourne un objet `ProjectConfig` avec les champs `name`, `version`, `id`, `output` et `directory`. |
 | **Changelog** | Une chaîne Markdown générée automatiquement à partir des commits Git depuis le dernier tag. Retournée par `upload_to_github` et transmise aux autres fonctions d'upload. |
 | **`version_type`** | La maturité de la release pour Modrinth: `"release"`, `"beta"`, ou `"alpha"`. |

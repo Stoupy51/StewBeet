@@ -1,6 +1,6 @@
 # Définir items et blocs
 
-Les définitions d'items sont au cœur du framework StewBeet. Elles définissent les items, blocs, équipements, recipes personnalisés et leurs propriétés en utilisant des classes Python modernes. La configuration des définitions crée une base de données complète de tout le contenu personnalisé que les plugins suivants utilisent pour générer les datapacks et resource packs.
+Les définitions d'items sont au cœur du framework StewBeet. Elles définissent les custom items, blocks, équipements et recipes, ainsi que leurs propriétés en utilisant des classes Python modernes. La configuration des définitions crée une base de données complète de tout le custom content que les plugins suivants utilisent pour générer les datapacks et resource packs.
 
 **C'est typiquement le premier plugin créé par l'utilisateur dans le pipeline (après `stewbeet.plugins.initialize`).**
 
@@ -16,7 +16,7 @@ Les définitions d'items sont au cœur du framework StewBeet. Elles définissent
 **Position** : Doit être appelé tôt dans le pipeline avant les autres plugins qui dépendent des définitions  
 **Intégration** : Fonctionne avec tous les plugins StewBeet qui traitent les définitions d'items
 
-- Définir des items, blocs et équipements personnalisés en utilisant des classes Python
+- Définir des custom items, blocks et équipements en utilisant des classes Python
 - Configurer la génération automatique de matériaux (minerais, lingots, outils, armures)
 - Configurer les recipes de craft avec des classes typées
 - Établir les relations entre les items et leurs utilisations
@@ -43,7 +43,7 @@ def beet_default(ctx: Context):
     # 2. Générer les custom records
     generate_custom_records("auto")
     
-    # 3. Ajouter les items, blocs, paintings personnalisés
+    # 3. Ajouter les custom items, blocks et paintings
     main_additions()
     
     # 4. Définir les catégories manquantes
@@ -140,7 +140,7 @@ item = Item(
 
 ### Classe Block
 
-Les blocs personnalisés étendent la classe `Item` avec des propriétés spécifiques aux blocs :
+Les custom blocks étendent la classe `Item` avec des propriétés spécifiques aux blocs :
 
 ```python
 from stewbeet import Block, VanillaBlock, CraftingShapedRecipe, SmeltingRecipe, Ingr
@@ -173,7 +173,7 @@ block = Block(
 
 #### **Configuration VanillaBlock**
 
-`VanillaBlock` définit l'état de bloc vanilla utilisé par StewBeet comme point d'ancrage d'exécution pour le comportement de votre bloc personnalisé.
+`VanillaBlock` définit l'état de bloc vanilla utilisé par StewBeet comme point d'ancrage d'exécution pour le comportement de votre custom block.
 
 ```python
 @dataclass
@@ -186,7 +186,7 @@ class VanillaBlock:
 
 #### **Configuration NoSilkTouchDrop**
 
-Définit les drops personnalisés quand le bloc est cassé sans toucher de soie :
+Définit les custom drops quand le bloc est cassé sans toucher de soie :
 
 ```python
 @dataclass
@@ -278,7 +278,7 @@ servo = BlockAlternative(
     manual_category="machines"
 )
 
-# Utilisant des têtes de joueur (pour des têtes personnalisées)
+# Utilisant des têtes de joueur (pour des custom heads)
 custom_head = BlockHead(
     id="stoupy_head",
     vanilla_block=VanillaBlock(id="minecraft:player_head[profile={name:\"Stoupy51\"}]"),
@@ -288,7 +288,7 @@ custom_head = BlockHead(
 
 ### Classe Painting
 
-Paintings personnalisées pour la décoration :
+Custom paintings pour la décoration :
 
 ```python
 from stewbeet import Painting, PaintingData
@@ -438,7 +438,7 @@ def main():
     # steel_leggings, steel_boots, steel_block, raw_steel, raw_steel_block, etc.
     generate_everything_about_these_materials(ORES_CONFIGS)
     
-    # Configurer les blocs personnalisés après génération
+    # Configurer les custom blocks après génération
     # ⚠️ Nous utilisons Block.from_id() pour accéder aux définitions existantes et les modifier
     Block.from_id("steel_block").vanilla_block = VanillaBlock(id="minecraft:iron_block")
     Block.from_id("raw_steel_block").vanilla_block = VanillaBlock(id="minecraft:raw_iron_block")
@@ -446,12 +446,12 @@ def main():
 
 ### Configuration d'équipement
 
-`EquipmentsConfig` contrôle l'héritage des statistiques de base des familles de matériaux générées et l'application des modificateurs personnalisés sur les outils et armures.
+`EquipmentsConfig` contrôle l'héritage des statistiques de base des familles de matériaux générées et l'application des custom modifiers sur les outils et armures.
 
 ```python
 class EquipmentsConfig:
     equivalent_to: DefaultOre                   # Matériau de base (WOOD, STONE, GOLD, IRON, DIAMOND, NETHERITE, COPPER, CHAINMAIL, LEATHER)
-    pickaxe_durability: float | int = 0         # Durabilité personnalisée (0 = utiliser équivalent vanilla)
+    pickaxe_durability: float | int = 0         # Custom durability (0 = utiliser équivalent vanilla)
     attributes: dict[str, float] | None = None  # Modificateurs de stats à AJOUTER (pas remplacer)
     ignore_recipes: bool = False                # Ignorer la génération automatique de recipes
 ```
@@ -510,7 +510,7 @@ Item(
 
 ## Contenu audio
 
-### Music discs personnalisés
+### Custom music discs
 
 La génération de records mappe les assets `.ogg` vers les définitions afin de garder sons, items et références synchronisés automatiquement.
 
@@ -520,7 +520,7 @@ generate_custom_records("auto")
 
 # Ou spécifier manuellement
 generate_custom_records({
-    "my_disc": "Ma Musique Personnalisée.ogg",
+    "my_disc": "Ma Musique Custom.ogg",
     "battle_theme": "Musique de Combat Épique.ogg"
 })
 ```
@@ -570,7 +570,7 @@ Catégories courantes pour l'organisation du manuel (mais c'est toujours à vous
 Les items détectent automatiquement les textures par nom depuis `assets/textures/` :
 - `steel_ingot.png` -> item `steel_ingot`
 - `steel_pickaxe.png` -> outil `steel_pickaxe`
-- `steel_block.png` -> bloc personnalisé `steel_block`
+- `steel_block.png` -> custom block `steel_block`
 
 ### Accéder aux items existants
 
@@ -616,7 +616,7 @@ write_function(f"{ns}:give_steel", f"loot give @s loot {item.loot_table}")
 
 #### **Fonctions de bloc**
 
-`Block.functions` regroupe toutes les mcfunctions d'un bloc personnalisé :
+`Block.functions` regroupe toutes les mcfunctions d'un custom block :
 
 ```python
 block = Block.from_id("steel_block")
@@ -791,13 +791,13 @@ custom_bow = Item(
 - Appelez les fonctions d'ajustement final à la fin de `beet_default()`
 - Organisez les définitions dans des modules séparés (comme `ores.py`, `additions.py`)
 - Utilisez des catégories significatives pour l'organisation du manuel
-- Définissez `vanilla_block` pour les blocs personnalisés après génération
+- Définissez `vanilla_block` pour les custom blocks après génération
 
 ### À ne pas faire
 - Ne modifiez pas `Mem.definitions` directement (utilisez les classes)
 - N'utilisez pas de dictionnaires bruts pour les ingrédients (utilisez `Ingr()`)
 - N'oubliez pas d'appeler les fonctions d'ajustement final
-- Ne sautez pas la configuration de `vanilla_block` pour les blocs personnalisés
+- Ne sautez pas la configuration de `vanilla_block` pour les custom blocks
 
 ## Exemple complet
 
@@ -816,7 +816,7 @@ def beet_default(ctx: Context):
     # 2. Générer les records
     generate_custom_records("auto")
     
-    # 3. Ajouter les items personnalisés
+    # 3. Ajouter les custom items
     main_additions()
     
     # 4. Définir les catégories manquantes

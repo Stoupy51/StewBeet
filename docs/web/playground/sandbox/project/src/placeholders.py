@@ -24,7 +24,6 @@ from pathlib import Path
 import stouputils as stp
 from beet import Context
 from PIL import Image
-
 from stewbeet import Mem
 
 # Constants
@@ -105,3 +104,4 @@ def beet_default(ctx: Context) -> None:
 			f"The playground ships the textures of SimplEnergy, Stardust Fragment and the extensive template, "
 			f"and any other name gets this placeholder."
 		)
+

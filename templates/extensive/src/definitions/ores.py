@@ -52,5 +52,4 @@ def main():
         }]
     })
 
-    return
 

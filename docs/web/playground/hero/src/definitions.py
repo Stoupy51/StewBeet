@@ -17,7 +17,6 @@ call is folded in from src/utils/custom_ore_generation.py, where that project ke
 """
 # Imports
 from beet import Context
-
 from stewbeet import *  # type: ignore
 
 

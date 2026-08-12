@@ -1,6 +1,6 @@
 # Configurer le build
 
-Le fichier de configuration est le cœur de votre projet StewBeet. Il définit tout, des métadonnées de base du projet aux pipelines de plugins complexes et aux paramètres personnalisés. Ce guide utilise le format YAML (`beet.yml`) pour les exemples, mais toutes les options fonctionnent également avec JSON ou pyproject.toml.
+Le fichier de configuration est le cœur de votre projet StewBeet. Il définit tout, des métadonnées de base du projet aux pipelines de plugins complexes et aux custom settings. Ce guide utilise le format YAML (`beet.yml`) pour les exemples, mais toutes les options fonctionnent également avec JSON ou pyproject.toml.
 
 **Le fichier de configuration est lu au début de chaque build et détermine comment l'ensemble de votre projet est traité.**
 
@@ -151,14 +151,14 @@ Le pipeline définit l'ordre des plugins exécutés après le chargement des pac
 ```yaml
 pipeline:
     - "src.setup_definitions"                              # 🎨 Code utilisateur de setup
-    - "stewbeet.plugins.resource_pack.sounds"              # 🔊 Traite les sons personnalisés
+    - "stewbeet.plugins.resource_pack.sounds"              # 🔊 Traite les custom sounds
     - "stewbeet.plugins.resource_pack.item_models"         # 🎁 Génère les item models
     - "stewbeet.plugins.resource_pack.check_power_of_2"    # ✅ Valide les dimensions des textures
-    - "stewbeet.plugins.custom_recipes"                    # 🍳 Génère les recipes personnalisées
-    - "stewbeet.plugins.custom_paintings"                  # 🖼️ Traite les paintings personnalisées
+    - "stewbeet.plugins.custom_recipes"                    # 🍳 Génère les custom recipes
+    - "stewbeet.plugins.custom_paintings"                  # 🖼️ Traite les custom paintings
     - "stewbeet.plugins.ingame_manual"                     # 📚 Génère le manuel en jeu
     - "stewbeet.plugins.datapack.loading"                  # 🚀 Configure le chargement du datapack
-    - "stewbeet.plugins.datapack.custom_blocks"            # 🧱 Traite les blocs personnalisés
+    - "stewbeet.plugins.datapack.custom_blocks"            # 🧱 Traite les custom blocks
     - "stewbeet.plugins.datapack.loot_tables"              # 🎁 Génère les loot tables
     - "stewbeet.plugins.datapack.sorters"                  # 📋 Configure les item sorters
     - "stewbeet.plugins.compatibilities.simpledrawer"      # 🗄️ Compatibilité SimpleDrawer
@@ -208,7 +208,7 @@ pipeline:
 - "stewbeet.plugins.datapack.loot_tables"
 ```
 
-**🔗 Phase 5: Code Utilisateur** - Vos fonctions personnalisées
+**🔗 Phase 5: Code Utilisateur** - Vos custom functions
 ```yaml
 - "src.link"
 ```
@@ -308,14 +308,14 @@ build_copy_destinations:
 ```
 Copie automatiquement les packs après le build. Parfait avec `beet watch` pour les tests en direct.
 
-#### Lore d'Item Personnalisé
-Définit le marquage de lore par défaut appliqué aux items personnalisés générés.
+#### Custom Item Lore
+Définit le marquage de lore par défaut appliqué aux custom items générés.
 
 ```yaml
 source_lore: "auto" # Format TextComponents
 source_lore_color: "auto" # "auto" | une couleur | false
 ```
-Ajouté au lore des items personnalisés, `"auto"` utilise par défaut l'icône du projet + le nom, tous
+Ajouté au lore des custom items, `"auto"` utilise par défaut l'icône du projet + le nom, tous
 deux dessinés avec la font `{id}:tooltip` générée.
 
 `source_lore_color` contrôle les couleurs de cette font : `"auto"` reprend la couleur dominante de
@@ -394,7 +394,7 @@ manual:
     use_dialog: 1
 ```
 
-**Documentation interactive auto-générée** montrant les items personnalisés, recipes et navigation.
+**Documentation interactive auto-générée** montrant les custom items, recipes et navigation.
 
 **🐛 Debug & Développement:**
 - `debug_mode: true` - Affiche une grille overlay pour le debug de layout
@@ -417,7 +417,7 @@ manual:
 **📸 Images Vitrine:**
 - `0` - Désactivé
 - `1` - Items du manuel uniquement
-- `2` - Tous les items personnalisés
+- `2` - Tous les custom items
 - `3` - Les deux (recommandé)
 
 **💬 Mode d'Affichage:**
@@ -473,7 +473,7 @@ pipeline:
 |-------|---------------|
 | **Fichier de configuration Beet** | Fichier principal du projet (`beet.yml`, `beet.yaml`, `beet.json` ou `pyproject.toml`) lu au démarrage du build. |
 | **Pipeline** | Liste ordonnée de plugins exécutés par beet pour transformer et générer le contenu du projet. |
-| **Section meta** | Conteneur de paramètres personnalisés (`meta`) utilisé par StewBeet et les autres outils. |
+| **Section meta** | Conteneur de custom settings (`meta`) utilisé par StewBeet et les autres outils. |
 
 ## Prochaines étapes
 

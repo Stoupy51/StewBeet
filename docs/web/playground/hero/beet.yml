@@ -1,14 +1,5 @@
 
-# The project behind the landing page hero.
-#
-# scripts/prehighlight.ts reads the `hero-snippet` region of src/definitions.py and runs Shiki
-# over it, and python_package/scripts/build_hero_output.py builds this project for real and writes
-# the file tree and every file's content into docs/web/src/generated/. Neither the tree nor the
-# snippet is hand-written any more, so the hero cannot drift away from what StewBeet produces.
-#
-# `id` and `name` are Stardust Fragment's because the snippet is adapted from its
-# life_crystal_block, and the hero caption names that project's source file.
-
+# Hero project behind the landing page.
 id: "stardust"
 name: "Stardust Fragment"
 version: "1.0.0"
@@ -16,9 +7,6 @@ author: "Stoupy51"
 minecraft: "26.2"
 
 directory: "."
-
-# No `output`: build_hero_output.py reads ctx.data / ctx.assets straight out of memory,
-# so a build never writes a datapack to disk.
 
 require:
     - "stewbeet"
@@ -54,9 +42,6 @@ pipeline:
 meta:
     stewbeet:
         textures_folder: "assets/textures"
-        # Committed renders. core/utils/fonts/item_images.py skips every item whose PNG is already
-        # here when cache_assets is true, so the model_resolver queue comes back empty and the
-        # OpenGL import behind it never runs. That is what lets this build on a headless CI runner.
         iso_renders_path: "iso_renders"
         source_lore: "auto"
         text_renders:
@@ -64,11 +49,7 @@ meta:
             allow_oversized: true
         manual:
             cache_assets: true
-            # Empty disables the debug dump, so nothing is written next to this file.
             json_dump_path: ""
-            # showcase.py reads ctx.output_directory, which is unset here.
             showcase_image: 0
-            # 2 = dialog and no book item. A book item would need a manual.png texture and a
-            # render for it, and it would be the one item with no committed render, which is
-            # exactly what would drag model_resolver and OpenGL back into this build.
             use_dialog: 2
+
