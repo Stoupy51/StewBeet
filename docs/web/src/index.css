@@ -70,6 +70,16 @@
   }
 }
 /*
+ * Height of everything pinned to the top of a documentation page: the 4rem navbar, plus the
+ * toolbar holding Back and View on GitHub.
+ *
+ * Every sticky offset and scroll anchor on the page is derived from it. They used to be three
+ * independent guesses (top-24, calc(100vh-7rem), scroll-mt-32) against a 8.5rem stack, so the
+ * contents panel sat under the toolbar and an anchored heading landed behind it.
+ */
+.doc-page { --doc-header: 6.5rem; }
+
+/*
  * Documentation body, sized like GitHub.
  *
  * This page used to run on @tailwindcss/typography at prose-lg: 18px text on a 1.8 line height,
@@ -91,7 +101,7 @@
   margin: 24px 0 16px;
   font-weight: 600;
   line-height: 1.25;
-  scroll-margin-top: 8rem;
+  scroll-margin-top: calc(var(--doc-header, 6.5rem) + 1rem);
   @apply text-slate-100;
 }
 .markdown-body h1 { font-size: 2em; padding-bottom: 0.3em; @apply border-b border-white/10 text-slate-50; }

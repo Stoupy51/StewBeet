@@ -335,27 +335,28 @@ export const MarkdownPage: React.FC = () => {
     }, [src, hasValidSrc, content]);
 
     return (
-        <div className={`min-h-screen bg-slate-950 text-slate-100 ${SELECTION_BRAND}`}>
+        <div className={`doc-page min-h-screen bg-slate-950 text-slate-100 ${SELECTION_BRAND}`}>
             <Navbar />
-            
-            {/* Header with back button */}
+
+            {/* Toolbar, kept to one 40px line: it is pinned over the document for the whole read,
+                so every pixel it takes is a pixel of documentation nobody ever sees. */}
             <div className="sticky top-16 z-30 border-b border-white/10 bg-slate-950/80 backdrop-blur-md">
-                <div className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between">
+                <div className="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between">
                     <button
                         onClick={handleBack}
-                        className={`flex items-center gap-2 ${TEXT_ACCENT_HOVER} group`}
+                        className={`flex items-center gap-2 text-sm ${TEXT_ACCENT_HOVER} group`}
                     >
-                        <HiArrowLeft className="text-xl group-hover:-translate-x-1 transition-transform" />
+                        <HiArrowLeft className="text-lg group-hover:-translate-x-1 transition-transform" />
                         <span className="font-medium">{t('markdown.back')}</span>
                     </button>
-                    
+
                     <div className="flex items-center gap-4">
                         {headings.length > 0 && (
                             <button
                                 onClick={() => setTocOpen(!tocOpen)}
-                                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all lg:hidden ${TOOLBAR_ACCENT}`}
+                                className={`flex items-center gap-1.5 px-3 py-1 rounded-lg transition-all lg:hidden ${TOOLBAR_ACCENT}`}
                             >
-                                <HiMenu className="text-xl" />
+                                <HiMenu className="text-lg" />
                                 <span className="text-sm font-medium">{t('markdown.contents')}</span>
                             </button>
                         )}
@@ -386,18 +387,18 @@ export const MarkdownPage: React.FC = () => {
                 <div className="flex gap-8 items-start">
                     {/* Table of Contents - Desktop */}
                     {headings.length > 0 && (
-                        <aside className="hidden lg:block sticky top-24 w-64 shrink-0 self-start max-h-[calc(100vh-7rem)] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-                            <div className="bg-slate-900/30 backdrop-blur-sm border border-white/10 rounded-xl p-6">
-                                <h3 className="text-lg font-bold text-slate-200 mb-4 flex items-center gap-2 sticky top-0 bg-slate-900/30 backdrop-blur-sm -mx-6 px-6 pb-4">
+                        <aside className="hidden lg:block sticky top-[calc(var(--doc-header)_+_1rem)] w-64 shrink-0 self-start max-h-[calc(100vh_-_var(--doc-header)_-_2rem)] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                            <div className="bg-slate-900/30 backdrop-blur-sm border border-white/10 rounded-xl p-4">
+                                <h3 className="text-base font-bold text-slate-200 mb-3 flex items-center gap-2 sticky top-0 bg-slate-900/30 backdrop-blur-sm -mx-4 px-4 pb-3">
                                     <HiMenu className={TEXT_ACCENT} />
                                     Contents
                                 </h3>
-                                <nav className="space-y-2">
+                                <nav className="space-y-1.5">
                                     {headings.map((heading, idx) => (
                                         <a
                                             key={idx}
                                             href={`#${heading.id}`}
-                                            className={`block text-sm hover:text-mc-emerald transition-colors ${
+                                            className={`block text-sm leading-snug hover:text-mc-emerald transition-colors ${
                                                 heading.level === 1 ? 'font-semibold text-slate-300' :
                                                 heading.level === 2 ? 'pl-4 text-slate-400' :
                                                 'pl-8 text-slate-400'
