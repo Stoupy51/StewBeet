@@ -1,0 +1,8 @@
+stewbeet.plugins.custom\_paintings.silent module
+================================================
+
+.. automodule:: stewbeet.plugins.custom_paintings.silent
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
