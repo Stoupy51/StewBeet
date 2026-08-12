@@ -25,6 +25,34 @@ Minecraft draws its 8px font with ascent 7, so a character spans from 7px above 
 TEXTURE_FOLDER: str = "font/renders"
 """ Resource pack folder, relative to textures/, holding the generated glyphs. """
 
+RESOURCE_PATH_ALLOWED: str = "abcdefghijklmnopqrstuvwxyz0123456789/._-"
+""" The only characters Minecraft accepts in the path half of a resource location. """
+
+
+# Functions
+def to_resource_path(name: str) -> str:
+	""" Lowercase a generated name and replace anything Minecraft would reject in a resource path.
+
+	Minecraft refuses the whole font, not just the offending glyph, when a provider names a texture
+	outside ``[a-z0-9/._-]``: it fails the resource pack reload with "Not a valid resource location".
+	The reserved ``ICON`` id is what hits this in practice, since it reaches the texture name as
+	written, but any item id carrying an uppercase letter would do the same.
+
+	Args:
+		name (str): Candidate path, ex: "ICON_128x128"
+	Returns:
+		str: The same path, in the characters Minecraft accepts
+
+	Examples:
+		>>> to_resource_path("ICON_128x128")
+		'icon_128x128'
+		>>> to_resource_path("demo_steel_ingot_16x16")
+		'demo_steel_ingot_16x16'
+		>>> to_resource_path("Weird Name!")
+		'weird_name_'
+	"""
+	return "".join(char if char in RESOURCE_PATH_ALLOWED else "_" for char in name.lower())
+
 
 # Classes
 @dataclass(kw_only=True, slots=True)
