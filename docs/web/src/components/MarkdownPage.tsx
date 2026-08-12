@@ -14,7 +14,7 @@ import { useTranslation } from '../i18n/useTranslation';
 import { useMarkdownContent } from '../context/MarkdownContentContext';
 import { useShiki } from '../hooks/useShiki';
 import { headingTextToSlug, slugify } from '../utils/slugify';
-import { ALERT_ACCENT, LOADER_ACCENT, PROSE_BRAND, SELECTION_BRAND, TEXT_ACCENT, TEXT_ACCENT_HOVER, TOOLBAR_ACCENT } from '../theme';
+import { ALERT_ACCENT, LOADER_ACCENT, SELECTION_BRAND, TEXT_ACCENT, TEXT_ACCENT_HOVER, TOOLBAR_ACCENT } from '../theme';
 
 interface Heading {
     id: string;
@@ -120,12 +120,9 @@ const ShikiCodeBlock: React.FC<{ code: string; language: string }> = ({ code, la
         );
     }
 
-    return (
-        <div
-            dangerouslySetInnerHTML={{ __html: highlighted }}
-            className="[&>pre]:!bg-transparent [&>pre]:!m-0 [&>pre]:!p-4"
-        />
-    );
+    // Padding, size and the panel around it all come from `.markdown-body .md-code` in index.css,
+    // so a highlighted block and the plain one above measure the same before and after Shiki runs.
+    return <div className="md-code" dangerouslySetInnerHTML={{ __html: highlighted }} />;
 };
 
 export const MarkdownPage: React.FC = () => {
@@ -384,7 +381,7 @@ export const MarkdownPage: React.FC = () => {
                     animate: { y: 0 },
                     transition: { duration: 0.5 },
                 })}
-                className="relative z-10 max-w-7xl mx-auto px-4 py-16"
+                className="relative z-10 max-w-7xl mx-auto px-4 py-8"
             >
                 <div className="flex gap-8 items-start">
                     {/* Table of Contents - Desktop */}
@@ -431,32 +428,9 @@ export const MarkdownPage: React.FC = () => {
                 )}
 
                 {!loading && !error && content && (
-                    <div className="bg-slate-900/30 backdrop-blur-sm border border-white/10 rounded-2xl p-8 md:p-12 shadow-2xl">
-                        <article className={`prose prose-invert prose-slate prose-lg max-w-none
-                            prose-headings:font-bold prose-headings:scroll-mt-32
-                            prose-h1:text-3xl prose-h1:mb-6 prose-h1:border-b-2 prose-h1:border-white/20 prose-h1:pb-4
-                            prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-5 prose-h2:border-b prose-h2:border-white/10 prose-h2:pb-2
-                            prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3 prose-h3:text-slate-200
-                            prose-h4:text-xl prose-h4:mt-8 prose-h4:mb-3 prose-h4:text-slate-300
-                            prose-h5:text-lg prose-h5:mt-6 prose-h5:mb-2 prose-h5:text-slate-300
-                            prose-h6:text-base prose-h6:mt-4 prose-h6:mb-2 prose-h6:text-slate-400
-                            prose-p:text-slate-300 prose-p:leading-relaxed prose-p:my-4
-                            prose-a:no-underline hover:prose-a:underline prose-a:underline-offset-4 prose-a:transition-colors
-                            prose-code:bg-slate-800/50 prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:text-sm prose-code:font-medium prose-code:before:content-none prose-code:after:content-none
-                            [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:rounded-none
-                            prose-pre:bg-slate-900/90 prose-pre:border prose-pre:border-white/10 prose-pre:rounded-xl prose-pre:shadow-xl prose-pre:my-6
-                            prose-strong:text-slate-100 prose-strong:font-bold
-                            prose-em:text-slate-300 prose-em:italic
-                            prose-ul:my-6 prose-ul:text-slate-300 prose-ol:my-6 prose-ol:text-slate-300
-                            prose-li:my-2
-                            prose-blockquote:border-l-4 prose-blockquote:py-2 prose-blockquote:px-6 prose-blockquote:my-6 prose-blockquote:rounded-r-lg prose-blockquote:text-slate-300 prose-blockquote:italic
-                            prose-img:rounded-xl prose-img:border prose-img:border-white/20 prose-img:shadow-2xl prose-img:my-8
-                            prose-table:border prose-table:border-white/10 prose-table:rounded-lg prose-table:overflow-hidden prose-table:my-8
-                            prose-thead:bg-slate-800/50 prose-thead:border-b-2 prose-thead:border-white/20
-                            prose-th:text-slate-200 prose-th:font-bold prose-th:px-6 prose-th:py-4 prose-th:text-left
-                            prose-td:text-slate-300 prose-td:px-6 prose-td:py-4 prose-td:border-t prose-td:border-white/10
-                            prose-hr:border-white/20 prose-hr:border-t-2 prose-hr:my-12
-                            ${PROSE_BRAND}`}>
+                    <div className="bg-slate-900/30 backdrop-blur-sm border border-white/10 rounded-2xl p-6 md:p-8 shadow-2xl">
+                        {/* Every size and margin lives in `.markdown-body` in index.css. */}
+                        <article className="markdown-body">
                         <ReactMarkdown
                             remarkPlugins={[remarkGfm]}
                             rehypePlugins={[rehypeRaw, rehypeSanitize]}

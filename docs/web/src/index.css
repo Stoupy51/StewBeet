@@ -70,6 +70,103 @@
   }
 }
 /*
+ * Documentation body, sized like GitHub.
+ *
+ * This page used to run on @tailwindcss/typography at prose-lg: 18px text on a 1.8 line height,
+ * 48px above every h2, 32px of card padding on top of 64px of page padding. A reference page then
+ * showed about a third of what the same file shows on GitHub, which is exactly where a reader
+ * compares it, so the docs read as padded rather than dense.
+ *
+ * Every number below is github-markdown-css: 16px/1.5 body, 16px between blocks, 24px above a
+ * heading, 85% for code. Only the colours are the site's.
+ */
+.markdown-body {
+  font-size: 16px;
+  line-height: 1.5;
+  word-wrap: break-word;
+  @apply text-slate-300;
+}
+
+.markdown-body :is(h1, h2, h3, h4, h5, h6) {
+  margin: 24px 0 16px;
+  font-weight: 600;
+  line-height: 1.25;
+  scroll-margin-top: 8rem;
+  @apply text-slate-100;
+}
+.markdown-body h1 { font-size: 2em; padding-bottom: 0.3em; @apply border-b border-white/10 text-slate-50; }
+.markdown-body h2 { font-size: 1.5em; padding-bottom: 0.3em; @apply border-b border-white/10; }
+.markdown-body h3 { font-size: 1.25em; }
+.markdown-body h4 { font-size: 1em; }
+.markdown-body h5 { font-size: 0.875em; }
+.markdown-body h6 { font-size: 0.85em; @apply text-slate-400; }
+
+.markdown-body :is(p, blockquote, ul, ol, dl, table, pre, details) { margin: 0 0 16px; }
+
+.markdown-body a { text-decoration: none; @apply text-mc-emerald transition-colors; }
+.markdown-body a:hover { text-decoration: underline; text-underline-offset: 4px; @apply text-mc-diamond; }
+.markdown-body strong { font-weight: 600; @apply text-slate-100; }
+.markdown-body em { font-style: italic; }
+
+/* Preflight strips the marker, so the list type has to be named again. */
+.markdown-body :is(ul, ol) { padding-left: 2em; }
+.markdown-body ul { list-style: disc; }
+.markdown-body ol { list-style: decimal; }
+.markdown-body li::marker { @apply text-mc-emerald; }
+.markdown-body li + li { margin-top: 0.25em; }
+.markdown-body li > p { margin-top: 16px; }
+.markdown-body :is(ul, ol) :is(ul, ol) { margin: 0; }
+
+.markdown-body blockquote {
+  padding: 0.5em 1em;
+  border-left: 0.25em solid;
+  @apply border-l-mc-emerald bg-mc-emerald/5 text-slate-400;
+}
+
+.markdown-body code {
+  padding: 0.2em 0.4em;
+  font-size: 85%;
+  border-radius: 6px;
+  @apply bg-slate-800/50 text-mc-diamond;
+}
+/* prose-code used to win over prose-a, so `[`ruby.png`](url)` rendered as ordinary code. */
+.markdown-body a code { text-decoration: underline; text-underline-offset: 2px; @apply text-mc-emerald; }
+
+.markdown-body pre {
+  padding: 16px;
+  overflow: auto;
+  font-size: 85%;
+  line-height: 1.45;
+  border-radius: 6px;
+  @apply bg-slate-900/90 border border-white/10;
+}
+.markdown-body pre code { padding: 0; font-size: inherit; border-radius: 0; background: transparent; @apply text-slate-200; }
+
+/* Shiki writes its own background onto the <pre> as an inline style, which no rule here can
+   outrank without !important, so the panel is drawn on the wrapper instead. */
+.markdown-body .md-code {
+  margin-bottom: 16px;
+  border-radius: 6px;
+  overflow: hidden;
+  @apply bg-slate-900/90 border border-white/10;
+}
+.markdown-body .md-code > pre { margin: 0; border: 0; border-radius: 0; background: transparent !important; }
+
+.markdown-body table { display: block; width: max-content; max-width: 100%; overflow: auto; border-collapse: collapse; }
+.markdown-body :is(th, td) { padding: 6px 13px; @apply border border-white/10; }
+.markdown-body th { font-weight: 600; text-align: left; @apply bg-slate-800/50 text-slate-200; }
+.markdown-body tbody tr:nth-child(2n) { @apply bg-white/[0.02]; }
+
+.markdown-body hr { height: 0.25em; padding: 0; margin: 24px 0; border: 0; @apply bg-white/10; }
+.markdown-body img { max-width: 100%; box-sizing: content-box; }
+.markdown-body summary { cursor: pointer; font-weight: 600; @apply text-slate-200; }
+
+/* Last, because these tie with the heading and block rules above on specificity. The card draws
+   the padding around the document; the document must not add a second one inside it. */
+.markdown-body > *:first-child { margin-top: 0; }
+.markdown-body > *:last-child { margin-bottom: 0; }
+
+/*
  * Entrance animation: "the build runs".
  *
  * The page introduces itself by doing the thing it is for: a compile scan sweeps down the
