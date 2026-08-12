@@ -99,6 +99,11 @@ def post(base: str, code: str) -> dict[str, Any]:
 			return dict(json.load(response)) | {"status": response.status}
 	except urllib.error.HTTPError as error:
 		return dict(json.loads(error.read() or b"{}")) | {"status": error.code}
+	except OSError as error:
+		# A dropped connection is a finding, not a reason to abandon the run: it is what a worker
+		# that has run out of pids or threads looks like from here, and the cases after this one are
+		# the ones that say whether it ever recovers.
+		return {"ok": None, "error": f"no_response: {type(error).__name__}: {error}", "status": 0}
 
 
 def probe(body: str) -> str:
@@ -130,7 +135,11 @@ def cases() -> list[Case]:
 
 		# ── Disk ──────────────────────────────────────────────────────────────────────────────
 		Case(
-			name="the image is read only",
+			# Not asserted as EROFS specifically. Every path on the rootfs is root owned and mode
+			# 644, and the build runs as uid 10001, so the permission check answers EACCES before
+			# the read-only check ever gets a say. Nothing outside /tmp being writable is the
+			# property that matters, and it holds either way.
+			name="the image is not writable",
 			body='''
 			try:
 				open("/srv/runner.py", "a")
@@ -138,7 +147,7 @@ def cases() -> list[Case]:
 			except OSError as error:
 				print(f"PROBE:{type(error).__name__}:{error.errno}")
 			''',
-			contains=("PROBE:OSError:30",),
+			contains=("PROBE:OSError:",),
 			absent=("PROBE:WRITABLE",),
 		),
 		Case(
@@ -272,7 +281,7 @@ def cases() -> list[Case]:
 			ok=False,
 		),
 		Case(
-			name="a fork bomb does not take the container down",
+			name="a fork bomb is contained",
 			body='''
 			import os
 			while True:
@@ -282,6 +291,15 @@ def cases() -> list[Case]:
 					pass
 			''',
 			ok=False,
+		),
+		Case(
+			# The case that matters, and the one that caught the zombie leak: containing the fork
+			# bomb is worthless if the worker cannot answer afterwards. It could not, until
+			# `init: true` and Build.reap, because orphans reparented to PID 1 sat as zombies
+			# holding pids until the worker could no longer spawn a thread for a new connection.
+			name="the service still answers after a fork bomb",
+			body='Item(id="steel_ingot", components={"item_name": {"text": "Steel"}})\nadd_item_model_component()',
+			ok=True,
 		),
 
 		# ── No GPU ────────────────────────────────────────────────────────────────────────────

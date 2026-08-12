@@ -43,6 +43,12 @@ WALL_TIMEOUT: float = 20.0
 QUEUE_TIMEOUT: float = 2.0
 """ How long a request waits for the single build slot before being told to come back. """
 
+KILL_GRACE: float = 3.0
+""" How long to keep signalling a process group, and to wait for its output afterwards. """
+
+KILL_INTERVAL: float = 0.05
+""" Gap between signals. Short enough to outpace a fork loop, long enough not to spin. """
+
 MIN_FREE_BYTES: int = 32 * 1024 * 1024
 """ Refuse to start a build when /tmp has less room than this, rather than failing halfway. """
 
@@ -123,6 +129,34 @@ class Build:
 			"LC_ALL": "C.UTF-8",
 			"NO_COLOR": "1",
 		}
+
+	@staticmethod
+	def reap() -> int:
+		""" Reap orphaned descendants, so a fork bomb cannot exhaust the container's pid limit.
+
+		This process is PID 1 in the container, so anything the build left behind is reparented here
+		and stays a zombie until someone waits on it. Zombies still occupy a pid, so a single fork
+		bomb was enough to fill pids_limit and leave the worker unable to spawn a thread for the next
+		connection, which the client saw as a dropped connection rather than an error.
+
+		`init: true` in compose puts a real init in front of this and is the proper fix. This runs
+		anyway, so the worker is not one deployment flag away from that failure.
+
+		Safe against Popen's own bookkeeping because the caller has already waited on the build
+		process and only one build runs at a time, so nothing here is still tracked.
+
+		Returns:
+			int: How many processes were reaped.
+		"""
+		reaped: int = 0
+		while True:
+			try:
+				pid, _ = os.waitpid(-1, os.WNOHANG)
+			except ChildProcessError:
+				return reaped
+			if pid == 0:
+				return reaped
+			reaped += 1
 
 	@staticmethod
 	def sweep() -> None:
@@ -224,22 +258,45 @@ class Build:
 			return output, False
 		except subprocess.TimeoutExpired:
 			Build.kill(process)
-			output, _ = process.communicate()
+			try:
+				output, _ = process.communicate(timeout=KILL_GRACE)
+			except subprocess.TimeoutExpired:
+				# Something that outlived the kill still holds the write end of the stdout pipe, so
+				# EOF will never come. Drop the log rather than block this thread forever with the
+				# single build slot in hand.
+				output = ""
 			return output, True
 		finally:
 			Build.kill(process)
+			if process.stdout is not None:
+				process.stdout.close()
 
 	@staticmethod
 	def kill(process: subprocess.Popen[str]) -> None:
-		""" SIGKILL the child's whole process group, ignoring a group that is already gone.
+		""" SIGKILL the child's whole process group, until there is nothing left in it.
+
+		One signal is not enough against something that forks in a loop. killpg reaches every
+		process in the group at the instant it is delivered, but a fork that lands a microsecond
+		later produces a child that inherits the group and was never signalled. So this repeats
+		until killpg reports the group as empty, which is the only way to know.
 
 		Args:
 			process (subprocess.Popen[str]): The child to kill.
 		"""
 		try:
-			os.killpg(os.getpgid(process.pid), signal.SIGKILL)
+			group: int = os.getpgid(process.pid)
 		except (ProcessLookupError, PermissionError):
-			pass
+			return
+
+		deadline: float = time.monotonic() + KILL_GRACE
+		while True:
+			try:
+				os.killpg(group, signal.SIGKILL)
+			except (ProcessLookupError, PermissionError):
+				return
+			if time.monotonic() > deadline:
+				return
+			time.sleep(KILL_INTERVAL)
 
 	@staticmethod
 	def parse(output: str, timed_out: bool) -> dict[str, Any]:
@@ -285,6 +342,9 @@ class Build:
 			# The tmpfs is a shared budget and it is the only writable place in the container: a
 			# directory leaked here is taken away from every request that follows.
 			shutil.rmtree(workdir, ignore_errors=True)
+			# Both of the container's shared budgets, disk above and pids here, are given back before
+			# the slot is released. Neither is allowed to be spent by a request that already finished.
+			Build.reap()
 
 
 class Handler(BaseHTTPRequestHandler):
