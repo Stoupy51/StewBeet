@@ -15,7 +15,8 @@ Two things read it:
 | `python_package/scripts/build_hero_output.py` | the whole project | `src/generated/heroOutput.json`, `src/generated/heroContents.json`, `public/generated/hero/*.png` |
 | `docs/web/scripts/prehighlight.ts` | the `hero-snippet` region, then `heroContents.json` | `src/generated/heroCode.json`, `src/generated/heroContentsHtml.json` |
 
-Run them in that order: the highlighter derives from the builder's output.
+Run them in that order: the highlighter derives from the builder's output. Both `bun run dev` and
+`bun run build` do it for you, so there is nothing to run by hand and nothing to keep in sync.
 
 Nothing on the landing page loads a syntax highlighter. Both the snippet and the generated file
 bodies are highlighted here at build time, and the bodies go to their own file that the panel
@@ -29,30 +30,22 @@ colored the same. Register the grammar in one place only; two would drift.
 
 ### Where it runs
 
-`docs/web/Dockerfile` installs uv in its build stage and runs the builder there, before
-`bun run build`, writing over whatever the repository had committed. uv brings its own interpreter,
-read from `requires-python`, so the image still has no Python base and no system interpreter. The
-deployed hero can therefore never show a build older than the code being deployed, which is why
-nothing checks the committed copies for staleness.
+The `hero` script in `package.json` is the first prebuild step of both `dev` and `build`, so the
+hero is rebuilt from source every time the site is. `docs/web/src/generated/` is therefore
+gitignored: every file in it carries a fresh timestamp, and committing that would be a diff on
+every build for no gain.
 
-They are still committed, and that is not redundancy: `Hero.tsx` imports `heroOutput.json`
-statically, so without it in the repository `tsc -b` and `bun run dev` fail on a fresh clone and
-every website contributor would need the Python toolchain to see the site at all. Treat the
-committed copies as a local convenience and the Dockerfile as the source of truth.
+It runs through `uv run --project ../../python_package`, which reads `requires-python` and
+downloads that interpreter on its own. That is the whole reason `docs/web/Dockerfile` can install
+uv into a `oven/bun` stage and still have no Python base and no system interpreter, and it is why
+building the site needs uv installed but nothing else.
 
 ### After editing the hero
 
-```bash
-cd python_package && uv run scripts/build_hero_output.py
-cd docs/web       && bun scripts/prehighlight.ts
-```
+Nothing. Start the dev server and it rebuilds.
 
-Commit what changed so local development keeps working. `--check` on the builder tells you whether
-the committed copies still match, if you want to know before pushing; nothing enforces it, because
-the image regenerates them anyway.
-
-Commit what changed under `docs/web/src/generated/` and `docs/web/public/generated/`. CI runs
-`build_hero_output.py --check` and fails if you forget.
+`uv run scripts/build_hero_output.py --check` from `python_package` reports whether the files on
+disk still match a fresh build, which is useful while editing the builder itself.
 
 ### The rules it enforces
 

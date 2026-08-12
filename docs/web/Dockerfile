@@ -27,22 +27,19 @@ ENV PATH="/root/.local/bin:${PATH}"
 WORKDIR /app
 RUN git clone --depth 1 --branch "${REPO_REF}" "${REPO_URL}" .
 
-# Builds docs/web/playground/hero with StewBeet itself and writes the file tree, the file contents
-# and the PNGs the landing page hero shows, over whatever the repository had committed. Doing it
-# here means the deployed hero can never show a build older than the code being deployed.
-#
-# uv reads requires-python from python_package/pyproject.toml and downloads that interpreter.
-# The build needs no display and no network of its own: docs/web/playground/hero/iso_renders holds
-# the renders, so model_resolver, and the OpenGL context behind it, is never reached.
-WORKDIR /app/python_package
-RUN uv run scripts/build_hero_output.py
-
 WORKDIR /app/docs/web
 RUN bun install --frozen-lockfile
 
-# scripts/build-search-index.ts reads ../../docs and ../../python_package, and fetches
-# objects.inv for the API symbols — it warns without failing when that is unreachable.
-# scripts/prehighlight.ts reads the hero output written just above.
+# The prebuild steps, in order:
+#   `bun run hero` builds docs/web/playground/hero with StewBeet itself and writes the file tree,
+#     the file contents and the PNGs the landing page hero shows. uv reads requires-python from
+#     python_package/pyproject.toml and downloads that interpreter, which is why this stage needs
+#     neither a Python base nor a system interpreter. It needs no display and no network of its
+#     own either: docs/web/playground/hero/iso_renders holds the renders, so model_resolver, and
+#     the OpenGL context behind it, is never reached.
+#   build-search-index.ts reads ../../docs and ../../python_package, and fetches objects.inv for
+#     the API symbols. It warns without failing when that is unreachable.
+#   prehighlight.ts highlights the hero output written by the step above.
 RUN bun run build
 
 

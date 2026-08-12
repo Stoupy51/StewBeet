@@ -16,6 +16,10 @@ dist-ssr
 public/search-index.*.json
 public/sitemap.xml
 
+# Written by the prebuild steps of `bun run dev` and `bun run build`, so they are never worth a
+# diff: every one of them carries a fresh timestamp or a rebuilt stat.
+src/generated/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
