@@ -14,20 +14,35 @@ FROM ${BUN_IMAGE} AS build
 ARG REPO_URL=https://github.com/Stoupy51/StewBeet.git
 ARG REPO_REF=main
 
-# git is the only extra tool the build needs; bun ships with the base image.
+# git clones the sources, curl fetches uv. Both are absent from the slim image, and
 # ca-certificates is only a *recommended* package of git, so --no-install-recommends
 # drops it and the clone then fails on "Problem with the SSL CA cert".
-RUN apt-get update && apt-get install -y --no-install-recommends git ca-certificates && \
+RUN apt-get update && apt-get install -y --no-install-recommends git ca-certificates curl && \
     rm -rf /var/lib/apt/lists/*
+
+# uv brings its own Python, so this image never needs a Python base or a system interpreter.
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+ENV PATH="/root/.local/bin:${PATH}"
 
 WORKDIR /app
 RUN git clone --depth 1 --branch "${REPO_REF}" "${REPO_URL}" .
+
+# Builds docs/web/playground/hero with StewBeet itself and writes the file tree, the file contents
+# and the PNGs the landing page hero shows, over whatever the repository had committed. Doing it
+# here means the deployed hero can never show a build older than the code being deployed.
+#
+# uv reads requires-python from python_package/pyproject.toml and downloads that interpreter.
+# The build needs no display and no network of its own: docs/web/playground/hero/iso_renders holds
+# the renders, so model_resolver, and the OpenGL context behind it, is never reached.
+WORKDIR /app/python_package
+RUN uv run scripts/build_hero_output.py
 
 WORKDIR /app/docs/web
 RUN bun install --frozen-lockfile
 
 # scripts/build-search-index.ts reads ../../docs and ../../python_package, and fetches
 # objects.inv for the API symbols — it warns without failing when that is unreachable.
+# scripts/prehighlight.ts reads the hero output written just above.
 RUN bun run build
 
 

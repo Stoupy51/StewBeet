@@ -33,9 +33,4 @@ jobs:
         run: cd ./python_package && uv run stouputils all_doctests ./stewbeet
       - name: Run integration tests with python ${{ inputs.python-version }}
         run: cd ./python_package && uv run scripts/run_integration_tests.py
-      # Rebuilds the landing page hero project and fails if the committed output in docs/web is
-      # stale. Passing here on a runner with no display is also what proves the committed iso
-      # renders keep model_resolver, and the OpenGL context behind it, out of that build.
-      - name: Check the hero output committed in docs/web is up to date
-        run: cd ./python_package && uv run scripts/build_hero_output.py --check
 

@@ -27,9 +27,18 @@ the same theme and the same transformer. The build-time markup is byte-identical
 produces at runtime, so a `.mcfunction` in the hero and one in the features section below it are
 colored the same. Register the grammar in one place only; two would drift.
 
-Both outputs are committed, exactly like `heroCode.json` and `stats.json` already were. That is
-deliberate: the website's Docker build stage runs on `oven/bun:1-slim` and has no Python, so it
-must never need to run a StewBeet build.
+### Where it runs
+
+`docs/web/Dockerfile` installs uv in its build stage and runs the builder there, before
+`bun run build`, writing over whatever the repository had committed. uv brings its own interpreter,
+read from `requires-python`, so the image still has no Python base and no system interpreter. The
+deployed hero can therefore never show a build older than the code being deployed, which is why
+nothing checks the committed copies for staleness.
+
+They are still committed, and that is not redundancy: `Hero.tsx` imports `heroOutput.json`
+statically, so without it in the repository `tsc -b` and `bun run dev` fail on a fresh clone and
+every website contributor would need the Python toolchain to see the site at all. Treat the
+committed copies as a local convenience and the Dockerfile as the source of truth.
 
 ### After editing the hero
 
@@ -37,6 +46,10 @@ must never need to run a StewBeet build.
 cd python_package && uv run scripts/build_hero_output.py
 cd docs/web       && bun scripts/prehighlight.ts
 ```
+
+Commit what changed so local development keeps working. `--check` on the builder tells you whether
+the committed copies still match, if you want to know before pushing; nothing enforces it, because
+the image regenerates them anyway.
 
 Commit what changed under `docs/web/src/generated/` and `docs/web/public/generated/`. CI runs
 `build_hero_output.py --check` and fails if you forget.
