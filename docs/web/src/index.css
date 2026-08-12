@@ -112,6 +112,8 @@
 .markdown-body h6 { font-size: 0.85em; @apply text-slate-400; }
 
 .markdown-body :is(p, blockquote, ul, ol, dl, table, pre, details) { margin: 0 0 16px; }
+.markdown-body blockquote > :first-child { margin-top: 0; }
+.markdown-body blockquote > :last-child { margin-bottom: 0; }
 
 .markdown-body a { text-decoration: none; @apply text-mc-emerald transition-colors; }
 .markdown-body a:hover { text-decoration: underline; text-underline-offset: 4px; @apply text-mc-diamond; }
