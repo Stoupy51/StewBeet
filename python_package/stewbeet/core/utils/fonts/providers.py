@@ -4,6 +4,8 @@ Minecraft fonts are additive: several generators may contribute providers to the
 every write merges into whatever is already there instead of replacing it.
 """
 # Imports
+from collections.abc import Iterator
+
 import stouputils as stp
 from beet import Font
 from beet.core.utils import TextComponent
@@ -18,6 +20,36 @@ FONT_MAX_LEVEL: int = 2
 
 
 # Functions
+def iter_fonts(component: TextComponent) -> Iterator[str]:
+	""" Yield every font id a text component references, its nested lists and parts included.
+
+	Args:
+		component	(TextComponent):	Text component to inspect.
+	Returns:
+		Iterator[str]: Each ``"namespace:font"`` found, in reading order, duplicates included.
+
+	Examples:
+		>>> list(iter_fonts([{"text": "a"}, [{"text": "b", "font": "mypack:tooltip"}]]))
+		['mypack:tooltip']
+		>>> list(iter_fonts({"text": "a", "extra": [{"text": "b", "font": "mypack:glyphs"}]}))
+		['mypack:glyphs']
+		>>> list(iter_fonts("plain string"))
+		[]
+	"""
+	if isinstance(component, list):
+		for part in component:
+			yield from iter_fonts(part)
+	elif isinstance(component, dict):
+		# "in" rather than .get(): beet hands out Box objects built with default_box=True, where
+		# reading a missing key without a default inserts it. Inspecting a component would then
+		# write '"font": {}' into it, which is not something Minecraft accepts.
+		if "font" in component and isinstance(component["font"], str):
+			yield component["font"]
+		for key in ("extra", "with"):
+			if key in component:
+				yield from iter_fonts(component[key])
+
+
 def uses_font(component: TextComponent, font: str) -> bool:
 	""" Recursively check whether a text component (or any of its parts) renders with ``font``.
 
@@ -35,13 +67,7 @@ def uses_font(component: TextComponent, font: str) -> bool:
 		>>> uses_font("plain string", "mypack:tooltip")
 		False
 	"""
-	if isinstance(component, list):
-		return any(uses_font(part, font) for part in component)
-	if isinstance(component, dict):
-		if component.get("font") == font:
-			return True
-		return any(uses_font(component[key], font) for key in ("extra", "with") if key in component)
-	return False
+	return any(referenced == font for referenced in iter_fonts(component))
 
 
 def merge_font_providers(namespace: str, font_name: str, providers: list[JsonDict]) -> Font:

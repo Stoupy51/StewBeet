@@ -12,7 +12,7 @@ from PIL import Image
 from stouputils.typing import JsonDict
 
 from ...core import Mem
-from ...core.utils.fonts import merge_font_providers, uses_font
+from ...core.utils.fonts import iter_fonts, merge_font_providers, uses_font
 from .project_images import find_pack_png, find_tooltip_png
 from .source_lore_colors import recolor_image, resolve_source_lore_color
 
@@ -33,6 +33,30 @@ def is_icon_placeholder(component: TextComponent) -> bool:
 	(True, False, False)
 	"""
 	return isinstance(component, dict) and component.get("text", "") == "ICON"
+
+
+def warn_foreign_tooltip_font(source_lore: TextComponent) -> None:
+	""" Warn when the source lore asks for a tooltip font belonging to another namespace.
+
+	StewBeet only ever generates ``<project_id>:tooltip``, and only when something actually asks for
+	it. A source lore naming ``someone_else:tooltip`` therefore gets no font at all and silently
+	falls back to the default one in game. The templates ship ``_your_namespace:tooltip``, so this
+	is what a project that renamed its id and not its source lore runs into.
+
+	Args:
+		source_lore	(TextComponent):	Source lore to inspect.
+	"""
+	expected: str = f"{Mem.ctx.project_id}:{TOOLTIP_FONT}"
+	foreign: set[str] = {
+		font for font in iter_fonts(source_lore)
+		if font.endswith(f":{TOOLTIP_FONT}") and font != expected
+	}
+	for font in sorted(foreign):
+		stp.warning(
+			f"source_lore asks for the font '{font}', but this project only generates '{expected}'. "
+			f"That font will never be created and the text using it falls back to the default one. "
+			f"Rename it to '{expected}'."
+		)
 
 
 # Main functions to create the source lore font
