@@ -27,6 +27,8 @@ const FETCH_TIMEOUT_MS = 7000;
 /** How long to keep an anchor aligned while Shiki finishes highlighting the code blocks. */
 const SCROLL_SETTLE_MS = 4000;
 const MAX_MARKDOWN_CHARS = 500_000;
+/** Marks a fenced block: react-markdown puts the language on the <code>, and both the <pre> and <code> renderers key off it. */
+const LANGUAGE_CLASS = /language-([A-Za-z0-9_-]+)/;
 
 function isValidDocSrc(src: string): boolean {
     return DOC_SRC_PATTERN.test(src) && !src.includes('..');
@@ -437,14 +439,15 @@ export const MarkdownPage: React.FC = () => {
                             rehypePlugins={[rehypeRaw, rehypeSanitize]}
                             components={{
                                 pre({ children }: React.HTMLAttributes<HTMLPreElement>) {
-                                    // ShikiCodeBlock brings its own panel, so react-markdown's wrapping <pre> would draw a second one around it.
-                                    if (isValidElement(children) && children.type === ShikiCodeBlock) {
+                                    // The child is the `code` renderer below, still unrendered, so the language class is the only way to tell it apart here.
+                                    // A fenced block becomes a ShikiCodeBlock, which draws its own panel and must not be wrapped in a second one.
+                                    if (isValidElement<{ className?: string }>(children) && LANGUAGE_CLASS.test(children.props.className ?? '')) {
                                         return children;
                                     }
                                     return <pre>{children}</pre>;
                                 },
                                 code({ inline, className, children }: React.HTMLAttributes<HTMLElement> & { inline?: boolean }) {
-                                    const match = /language-([A-Za-z0-9_-]+)/.exec(className || '');
+                                    const match = LANGUAGE_CLASS.exec(className || '');
                                     const language = match ? match[1] : '';
                                     const code = String(children).replace(/\n$/, '');
 
