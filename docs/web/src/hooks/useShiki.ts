@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getSingletonHighlighter } from 'shiki';
 import type { LanguageRegistration } from '@shikijs/types';
-import mcfunctionGrammar from '../langs/mcfunction.tmLanguage.json';
+import { MCFUNCTION_LANGUAGE } from '../langs/mcfunction';
 import { pythonSemantics } from '../utils/pythonSemantics';
 
 const LANGUAGE_ALIASES: Record<string, string> = {
@@ -17,13 +17,6 @@ function normalizeLanguage(language: string): string {
     const key = language.trim().toLowerCase();
     return LANGUAGE_ALIASES[key] ?? (key || 'text');
 }
-
-const MCFUNCTION_LANGUAGE: LanguageRegistration = {
-    ...(mcfunctionGrammar as unknown as LanguageRegistration),
-    name: 'mcfunction',
-    // Do not include the language name itself as alias to avoid circular alias resolution.
-    aliases: ['function'],
-};
 
 function resolveLanguage(language: string | LanguageRegistration): string | LanguageRegistration {
     if (typeof language !== 'string') return language;
