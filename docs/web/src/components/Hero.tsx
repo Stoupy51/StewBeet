@@ -5,10 +5,11 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from '../i18n/useTranslation';
 import { useMotionSafe } from '../hooks/useMotionSafe';
 import { introWillPlay, useIntro } from '../hooks/useIntro';
-import { FileTree } from './FileTree';
+import { HeroOutputPanel } from './HeroOutputPanel';
 import { TrustStrip } from './TrustStrip';
-import { GENERATED_FILES } from './heroCode';
+import type { FileNode } from './FileTree';
 import heroCode from '../generated/heroCode.json';
+import heroOutput from '../generated/heroOutput.json';
 import stats from '../generated/stats.json';
 import {
     ACCENT_BORDER_HOVER,
@@ -210,14 +211,9 @@ export const Hero: React.FC = () => {
                     >
                         <Panel
                             caption={t('hero.outputCaption')}
-                            accessory={<FileCounter label={t('hero.outputSummary')} />}
+                            accessory={<FileCounter label={t('hero.outputSummary').replace('{count}', String(heroOutput.fileCount))} />}
                         >
-                            <div className="flex-1 flex flex-col p-4 overflow-x-auto custom-scrollbar">
-                                <FileTree nodes={GENERATED_FILES} />
-                                <p className="mt-4 pt-3 border-t border-white/5 text-xs text-slate-400 leading-relaxed">
-                                    {t('hero.outputNote')}
-                                </p>
-                            </div>
+                            <HeroOutputPanel nodes={heroOutput.tree as FileNode[]} />
                         </Panel>
                     </motion.div>
                 </div>

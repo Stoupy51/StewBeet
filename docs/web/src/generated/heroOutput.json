@@ -1,0 +1,144 @@
+{
+    "generatedAt": "2026-08-12T12:27:55Z",
+    "stewbeetVersion": "3.6.1",
+    "fileCount": 16,
+    "tree": [
+        {
+            "name": "build/",
+            "children": [
+                {
+                    "name": "datapack/",
+                    "children": [
+                        {
+                            "name": "custom_blocks/life_crystal_block/",
+                            "children": [
+                                {
+                                    "name": "place_main.mcfunction",
+                                    "path": "datapack/data/stardust/function/custom_blocks/life_crystal_block/place_main.mcfunction",
+                                    "kind": "text",
+                                    "bytes": 3471,
+                                    "lines": 48
+                                },
+                                {
+                                    "name": "place_secondary.mcfunction",
+                                    "path": "datapack/data/stardust/function/custom_blocks/life_crystal_block/place_secondary.mcfunction",
+                                    "kind": "text",
+                                    "bytes": 824,
+                                    "lines": 26
+                                },
+                                {
+                                    "name": "destroy.mcfunction",
+                                    "path": "datapack/data/stardust/function/custom_blocks/life_crystal_block/destroy.mcfunction",
+                                    "kind": "text",
+                                    "bytes": 1169,
+                                    "lines": 27
+                                },
+                                {
+                                    "name": "replace_item.mcfunction",
+                                    "note": "silk touch, else the crystal",
+                                    "path": "datapack/data/stardust/function/custom_blocks/life_crystal_block/replace_item.mcfunction",
+                                    "kind": "text",
+                                    "bytes": 930,
+                                    "lines": 17
+                                }
+                            ]
+                        },
+                        {
+                            "name": "calls/smithed_crafter/shapeless_recipes.mcfunction",
+                            "note": "the recipe, NBT-aware",
+                            "path": "datapack/data/stardust/function/calls/smithed_crafter/shapeless_recipes.mcfunction",
+                            "kind": "text",
+                            "bytes": 553,
+                            "lines": 9
+                        },
+                        {
+                            "name": "calls/smart_ore_generation/veins/life_crystal_block.mcfunction",
+                            "note": "world gen",
+                            "path": "datapack/data/stardust/function/calls/smart_ore_generation/veins/life_crystal_block.mcfunction",
+                            "kind": "text",
+                            "bytes": 5346,
+                            "lines": 40
+                        },
+                        {
+                            "name": "tags/block/smart_ore_generation/life_crystal_block_provider.json",
+                            "path": "datapack/data/stardust/tags/block/smart_ore_generation/life_crystal_block_provider.json",
+                            "kind": "text",
+                            "bytes": 84,
+                            "lines": 7
+                        },
+                        {
+                            "name": "loot_table/i/life_crystal_block.json",
+                            "path": "datapack/data/stardust/loot_table/i/life_crystal_block.json",
+                            "kind": "text",
+                            "bytes": 1475,
+                            "lines": 56
+                        },
+                        {
+                            "name": "dialog/manual/page_6.json",
+                            "note": "its manual page",
+                            "path": "datapack/data/stardust/dialog/manual/page_6.json",
+                            "kind": "text",
+                            "bytes": 8008,
+                            "lines": 69
+                        }
+                    ]
+                },
+                {
+                    "name": "resource_pack/",
+                    "children": [
+                        {
+                            "name": "items/life_crystal_block.json",
+                            "path": "resource_pack/assets/stardust/items/life_crystal_block.json",
+                            "kind": "text",
+                            "bytes": 94,
+                            "lines": 7
+                        },
+                        {
+                            "name": "models/item/life_crystal_block.json",
+                            "path": "resource_pack/assets/stardust/models/item/life_crystal_block.json",
+                            "kind": "text",
+                            "bytes": 95,
+                            "lines": 7
+                        },
+                        {
+                            "name": "textures/item/life_crystal_block.png",
+                            "path": "resource_pack/assets/stardust/textures/item/life_crystal_block.png",
+                            "kind": "image",
+                            "bytes": 2627,
+                            "url": "/generated/hero/resource_pack__assets__stardust__textures__item__life_crystal_block.png"
+                        },
+                        {
+                            "name": "textures/item/life_crystal_block.png.mcmeta",
+                            "path": "resource_pack/assets/stardust/textures/item/life_crystal_block.png.mcmeta",
+                            "kind": "text",
+                            "bytes": 44,
+                            "lines": 6
+                        },
+                        {
+                            "name": "textures/font/high_res/life_crystal_block.png",
+                            "path": "resource_pack/assets/stardust/textures/font/high_res/life_crystal_block.png",
+                            "kind": "image",
+                            "bytes": 4700,
+                            "url": "/generated/hero/resource_pack__assets__stardust__textures__font__high_res__life_crystal_block.png"
+                        },
+                        {
+                            "name": "textures/font/wiki_icons/life_crystal_block_crafting_shapeless.png",
+                            "path": "resource_pack/assets/stardust/textures/font/wiki_icons/stardust_life_crystal_block_crafting_shapeless.png",
+                            "kind": "image",
+                            "bytes": 8416,
+                            "url": "/generated/hero/resource_pack__assets__stardust__textures__font__wiki_icons__stardust_life_crystal_block_crafting_shapeless.png"
+                        },
+                        {
+                            "name": "lang/en_us.json",
+                            "note": "translation keys",
+                            "path": "resource_pack/assets/minecraft/lang/en_us.json",
+                            "kind": "text",
+                            "bytes": 1105,
+                            "lines": 25
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

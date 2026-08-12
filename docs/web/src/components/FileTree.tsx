@@ -9,6 +9,20 @@ export interface FileNode {
     note?: string;
     /** Directories start collapsed when false. */
     open?: boolean;
+    /**
+     * Path of the real generated file this row stands for, relative to `build/`.
+     * `name` is the shortened label the panel can fit; this is where the bytes actually live.
+     * A leaf that has one becomes selectable when the tree is given an `onSelect`.
+     */
+    path?: string;
+    /** Whether the real file is text or an image. Set by build_hero_output.py. */
+    kind?: 'text' | 'image';
+    /** Size of the real file in bytes. */
+    bytes?: number;
+    /** Line count, for text files only. */
+    lines?: number;
+    /** Public URL of the real file, for images only. */
+    url?: string;
 }
 
 /** Colour per file extension, so a tree reads as datapack / resource pack / function at a glance. */
@@ -47,10 +61,19 @@ function rowOffsets(nodes: FileNode[], from: number): number[] {
     return offsets;
 }
 
-const TreeRow = ({ node, depth, order }: { node: FileNode; depth: number; order: number }) => {
+interface TreeRowProps {
+    node: FileNode;
+    depth: number;
+    order: number;
+    selected?: string;
+    onSelect?: (node: FileNode) => void;
+}
+
+const TreeRow = ({ node, depth, order, selected, onSelect }: TreeRowProps) => {
     const isDirectory = node.children !== undefined;
     const [open, setOpen] = useState(node.open !== false);
     const childOffsets = rowOffsets(node.children ?? [], order + 1);
+    const isSelectable = !isDirectory && node.path !== undefined && onSelect !== undefined;
 
     return (
         <>
@@ -69,26 +92,60 @@ const TreeRow = ({ node, depth, order }: { node: FileNode; depth: number; order:
                 ) : (
                     <>
                         <span className="text-slate-700 select-none">└</span>
-                        <span className={fileColor(node.name)}>{node.name}</span>
+                        {isSelectable ? (
+                            <button
+                                onClick={() => onSelect(node)}
+                                aria-current={node.path === selected ? 'true' : undefined}
+                                className={`${fileColor(node.name)} hover:underline underline-offset-2 decoration-dotted transition-colors ${
+                                    node.path === selected ? 'underline decoration-solid' : ''
+                                }`}
+                            >
+                                {node.name}
+                            </button>
+                        ) : (
+                            <span className={fileColor(node.name)}>{node.name}</span>
+                        )}
                     </>
                 )}
                 {node.note && <span className="text-slate-400 text-[0.6875rem] truncate">{node.note}</span>}
             </div>
 
             {isDirectory && open && node.children?.map((child, index) => (
-                <TreeRow key={child.name} node={child} depth={depth + 1} order={childOffsets[index]} />
+                <TreeRow
+                    key={child.name}
+                    node={child}
+                    depth={depth + 1}
+                    order={childOffsets[index]}
+                    selected={selected}
+                    onSelect={onSelect}
+                />
             ))}
         </>
     );
 };
 
+interface FileTreeProps {
+    nodes: FileNode[];
+    /** `path` of the row to mark as current. */
+    selected?: string;
+    /** Omit to render a plain, non-interactive tree, which is what Features.tsx wants. */
+    onSelect?: (node: FileNode) => void;
+}
+
 /** Same 12px/1.55 as the hero code panel: the tree and the snippet read as one pair, not two widgets. */
-export const FileTree: React.FC<{ nodes: FileNode[] }> = ({ nodes }) => {
+export const FileTree: React.FC<FileTreeProps> = ({ nodes, selected, onSelect }) => {
     const offsets = rowOffsets(nodes, 0);
     return (
         <div className="font-mono text-xs">
             {nodes.map((node, index) => (
-                <TreeRow key={node.name} node={node} depth={0} order={offsets[index]} />
+                <TreeRow
+                    key={node.name}
+                    node={node}
+                    depth={0}
+                    order={offsets[index]}
+                    selected={selected}
+                    onSelect={onSelect}
+                />
             ))}
         </div>
     );

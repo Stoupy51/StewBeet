@@ -1,0 +1,74 @@
+
+# The project behind the landing page hero.
+#
+# scripts/prehighlight.ts reads the `hero-snippet` region of src/definitions.py and runs Shiki
+# over it, and python_package/scripts/build_hero_output.py builds this project for real and writes
+# the file tree and every file's content into docs/web/src/generated/. Neither the tree nor the
+# snippet is hand-written any more, so the hero cannot drift away from what StewBeet produces.
+#
+# `id` and `name` are Stardust Fragment's because the snippet is adapted from its
+# life_crystal_block, and the hero caption names that project's source file.
+
+id: "stardust"
+name: "Stardust Fragment"
+version: "1.0.0"
+author: "Stoupy51"
+minecraft: "26.2"
+
+directory: "."
+
+# No `output`: build_hero_output.py reads ctx.data / ctx.assets straight out of memory,
+# so a build never writes a datapack to disk.
+
+require:
+    - "stewbeet"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+resource_pack:
+    name: "resource_pack"
+    load: ["src"]
+
+# Everything that produces a file the hero shows, and nothing else.
+# Left out on purpose:
+#   finalyze.dependencies, merge_smithed_weld, copy_to_destination  need network or SFTP
+#   archive, compute_sha1, livereload                               need an output directory
+#   finalyze.check_unused_textures                                  only warns
+pipeline:
+    - "src.definitions"
+    - "stewbeet.plugins.resource_pack.item_models"
+    - "stewbeet.plugins.custom_recipes"
+    - "stewbeet.plugins.ingame_manual"
+    - "stewbeet.plugins.datapack.loading"
+    - "stewbeet.plugins.datapack.custom_blocks"
+    - "stewbeet.plugins.datapack.loot_tables"
+    - "stewbeet.plugins.datapack.sorters"
+    - "stewbeet.plugins.finalyze.basic_datapack_structure"
+    - "stewbeet.plugins.auto.scoreboard_constants"
+    - "stewbeet.plugins.auto.lang_file"
+    - "stewbeet.plugins.auto.text_renders"
+    - "stewbeet.plugins.auto.headers"
+
+meta:
+    stewbeet:
+        textures_folder: "assets/textures"
+        # Committed renders. core/utils/fonts/item_images.py skips every item whose PNG is already
+        # here when cache_assets is true, so the model_resolver queue comes back empty and the
+        # OpenGL import behind it never runs. That is what lets this build on a headless CI runner.
+        iso_renders_path: "iso_renders"
+        source_lore: "auto"
+        text_renders:
+            # Without this, plugins/auto/text_renders/confirm.py prompts on stdin.
+            allow_oversized: true
+        manual:
+            cache_assets: true
+            # Empty disables the debug dump, so nothing is written next to this file.
+            json_dump_path: ""
+            # showcase.py reads ctx.output_directory, which is unset here.
+            showcase_image: 0
+            # 2 = dialog and no book item. A book item would need a manual.png texture and a
+            # render for it, and it would be the one item with no committed render, which is
+            # exactly what would drag model_resolver and OpenGL back into this build.
+            use_dialog: 2
