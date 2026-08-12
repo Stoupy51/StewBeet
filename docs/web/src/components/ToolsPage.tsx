@@ -20,6 +20,12 @@ export const ToolsPage: React.FC = () => {
 
     const tools: ToolItem[] = [
         {
+            title: t('tools.playground'),
+            description: t('tools.playgroundDesc'),
+            path: '/playground',
+            icon: '🧪',
+        },
+        {
             title: t('tools.markdownToBBCode'),
             description: t('tools.markdownToBBCodeDesc'),
             path: '/markdown_to_pmc_bbcode',

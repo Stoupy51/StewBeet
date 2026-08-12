@@ -16,6 +16,7 @@ import { LanguageProvider } from './src/context/LanguageContext';
 import { AppRoutes } from './src/AppRoutes';
 import { MarkdownContentProvider } from './src/context/MarkdownContentContext';
 import { applyPageMeta, markdownPageMeta } from './src/utils/pageMeta';
+import { clientIpFrom, handlePlayground } from './src/api/playground';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
@@ -53,9 +54,22 @@ Bun.serve({
     port: 4173,
     hostname: '0.0.0.0',
 
-    async fetch(req) {
+    // The playground body is capped at 16 KB by the handler, so nothing legitimate comes close.
+    // Set here as well, because without it Bun buffers a hostile body in full before any of our
+    // code runs and gets a say about its size.
+    maxRequestBodySize: 64 * 1024,
+
+    async fetch(req, server) {
         const url = new URL(req.url);
         const { pathname } = url;
+
+        // ── Playground builds ─────────────────────────────────────────────────
+        // Before /markdown and before the static branches: the 404 fallthrough at the bottom would
+        // otherwise answer a mistyped API call with dist/404.html, and a caller parsing that as
+        // JSON gets a syntax error instead of a status it can act on.
+        if (pathname === '/api/playground') {
+            return handlePlayground(req, clientIpFrom(req, server.requestIP(req)?.address ?? ''));
+        }
 
         // ── SSR for /markdown?src=... ─────────────────────────────────────────
         if (pathname === '/markdown') {
