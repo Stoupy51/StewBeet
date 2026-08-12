@@ -436,15 +436,23 @@ export const MarkdownPage: React.FC = () => {
                             remarkPlugins={[remarkGfm]}
                             rehypePlugins={[rehypeRaw, rehypeSanitize]}
                             components={{
-                                code({ inline, className, children, ...props }: React.HTMLAttributes<HTMLElement> & { inline?: boolean }) {
+                                pre({ children }: React.HTMLAttributes<HTMLPreElement>) {
+                                    // ShikiCodeBlock brings its own panel, so react-markdown's wrapping <pre> would draw a second one around it.
+                                    if (isValidElement(children) && children.type === ShikiCodeBlock) {
+                                        return children;
+                                    }
+                                    return <pre>{children}</pre>;
+                                },
+                                code({ inline, className, children }: React.HTMLAttributes<HTMLElement> & { inline?: boolean }) {
                                     const match = /language-([A-Za-z0-9_-]+)/.exec(className || '');
                                     const language = match ? match[1] : '';
                                     const code = String(children).replace(/\n$/, '');
-                                    
+
                                     return !inline && language ? (
                                         <ShikiCodeBlock code={code} language={language} />
                                     ) : (
-                                        <code className={className} {...props}>
+                                        // The rest of react-markdown's props are not spread here: they carry the hast `node`, which React writes out as node="[object Object]".
+                                        <code className={className}>
                                             {children}
                                         </code>
                                     );
