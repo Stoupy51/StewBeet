@@ -1,11 +1,5 @@
 
 # The project the playground builds visitor code with.
-#
-# worker.py copies this directory into a fresh tmpdir per request and drops the submitted code at
-# src/user_code.py. Only this file and the src/ skeleton are copied: the textures and renders stay
-# at their absolute path in the image, because copying 32 MB of assets into a 128 MB tmpfs on every
-# request would spend a quarter of the scratch budget on bytes that never change.
-
 id: "playground"
 name: "Playground"
 version: "1.0.0"
@@ -13,9 +7,6 @@ author: "you"
 minecraft: "26.2"
 
 directory: "."
-
-# No `output`: runner.py reads ctx.data / ctx.assets straight out of memory, so a build never
-# writes a datapack to disk. The only thing the build is allowed to touch is its own tmpdir.
 
 require:
     - "stewbeet"
@@ -29,23 +20,9 @@ resource_pack:
     load: ["src"]
 
 # Everything that runs without a display, a network or an output directory.
-#
-# Left out on purpose:
-#   ingame_manual                     the only caller of generate_all_iso_renders, which imports
-#                                     model_resolver.render and needs an OpenGL context
-#   finalyze.dependencies,            need the network
-#     merge_smithed_weld,
-#     copy_to_destination
-#   archive, compute_sha1,            need an output directory
-#     livereload
-#
-# auto.text_renders stays in: emit() skips any item whose render is missing rather than generating
-# one, so it never reaches model_resolver. Items shipped in the bundled render cache get a real
-# glyph, and a visitor's own item simply gets none.
 pipeline:
     - "src.user_code"
-    # Between the two on purpose: item_models is what refuses an item with no texture.
-    - "src.placeholders"
+    - "src.placeholders"    # Plugin that generates placeholders for non-existing textures
     - "stewbeet.plugins.resource_pack.item_models"
     - "stewbeet.plugins.custom_recipes"
     - "stewbeet.plugins.datapack.loading"
@@ -60,19 +37,10 @@ pipeline:
 
 meta:
     stewbeet:
-        # A per-request directory of symlinks into /srv/assets/textures, built by worker.py. It has
-        # to be writable, because src.placeholders adds a checkerboard for every id the bundled
-        # packs do not cover, and the image is read only.
         textures_folder: "../textures"
-        # Also per-request and writable, for the same reason: src.placeholders seeds a render for
-        # every definition, which is what keeps build_model_resolver_queue empty and model_resolver
-        # unreachable. cache_assets below is what makes that seeding count.
         iso_renders_path: "../iso_renders"
         source_lore: "auto"
         text_renders:
-            # Without this, plugins/auto/text_renders/confirm.py prompts on stdin, and there is
-            # nobody at the other end of stdin here.
             allow_oversized: true
-            # Skip any item whose render already exists. src.placeholders makes sure that is all of
-            # them, so the model_resolver queue is always empty.
             cache_assets: true
+

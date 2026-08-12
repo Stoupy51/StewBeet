@@ -14,5 +14,4 @@ def main():
     # Generate ores in definitions (add every stuff (found in the textures folder) related to the given materials, to the definitions)
     generate_everything_about_these_materials(ORES_CONFIGS)
 
-    return
 

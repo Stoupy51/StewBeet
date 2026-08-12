@@ -302,7 +302,7 @@ write_function_tag("minecraft:tick", [
     f"{ns}:tick/main"
 ])
 
-# Tag de fonction personnalisé
+# Custom function tag
 write_function_tag(f"{ns}:custom_blocks/tick", [
     f"{ns}:custom_blocks/furnace/tick",
     f"{ns}:custom_blocks/machine/tick"
@@ -342,7 +342,7 @@ merged = super_merge_dict(base_config, override_config)
 ---
 
 #### `set_json_encoder()`
-Définir un encodeur JSON personnalisé pour un affichage formaté.
+Définir un custom JSON encoder pour un affichage formaté.
 
 ```python
 def set_json_encoder(

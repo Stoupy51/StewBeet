@@ -10,7 +10,7 @@ Bienvenue sur **StewBeet** ! 🎉 Ce guide complet vous accompagnera du statut d
 - 🎯 Choisir le bon template pour votre projet
 - ⚙️ Configurer votre premier projet StewBeet
 - 🔨 Compiler et tester votre datapack
-- 📝 Ajouter vos premiers items et blocs personnalisés
+- 📝 Ajouter vos premiers custom items et blocks
 - 🎮 Charger votre datapack dans Minecraft
 
 ## Qu'est-ce que StewBeet ?
@@ -110,7 +110,7 @@ AwesomeOres/
 │   ├── 📁 data/                 # Fonctions et données du datapack
 │   │   └── 📁 basic_template/  # Votre namespace (renommez-le !)
 │   ├── 📁 definitions/          # Modules de définitions
-│   │   ├── 📄 additions.py      # Définitions personnalisées supplémentaires
+│   │   ├── 📄 additions.py      # Autres custom definitions
 │   │   └── 📄 ores.py           # Configurations d'équipements de minerais
 │   ├── 📄 link.py               # Code utilisateur pour lier les fonctionnalités
 │   └── 📄 setup_definitions.py  # Configuration principale des définitions
@@ -170,7 +170,7 @@ author: "VotreNom"
 version: "1.0.0"
 
 # Brève description
-description: "Mon premier datapack StewBeet avec des minerais personnalisés !"
+description: "Mon premier datapack StewBeet avec des custom ores !"
 ```
 
 ### Notes importantes :
@@ -270,9 +270,9 @@ Remplacez les chemins par vos vrais dossiers Minecraft. Maintenant quand vous ex
 2. Allez dans **Options** -> **Resource Packs** et activez votre resource pack
 3. Testez la fonctionnalité de base avec `/function awesome_ores:chemin/vers/une/fonction/au/hasard` (si vous n'avez pas supprimé la fonction d'exemple dans `src/data/awesome_ores/function/`)
 
-## Étape 7 : Ajouter votre premier item personnalisé
+## Étape 7 : Ajouter votre premier custom item
 
-Ajoutons maintenant un item personnalisé pour voir la puissance de StewBeet en action !
+Ajoutons maintenant un custom item pour voir la puissance de StewBeet en action !
 
 ### Ajouter une texture
 
@@ -316,9 +316,9 @@ def main():
 - ✅ Créé les components d'item appropriés
 - ✅ Ajouté au manuel (si activé)
 
-## Étape 8 : Ajouter votre premier bloc personnalisé
+## Étape 8 : Ajouter votre premier custom block
 
-Créons un bloc personnalisé :
+Créons un custom block :
 
 ### Ajouter les textures de bloc
 
@@ -326,7 +326,7 @@ Ajoutez ces textures à `assets/textures/` :
 - [`ruby_ore.png`](./ruby_ore.png) - La texture principale
 - [`ruby_sword.png`](./ruby_sword.png) - Une texture d'épée
 - [`ruby_chestplate.png`](./ruby_chestplate.png) - Une texture de plastron de rubis
-- [`ruby_layer_1.png`](./ruby_layer_1.png) - Une texture de couche pour la couche supérieure (c'est ainsi que Minecraft gère les armures personnalisées)
+- [`ruby_layer_1.png`](./ruby_layer_1.png) - Une texture de couche pour la couche supérieure (c'est ainsi que Minecraft gère les custom armors)
 - [`ruby_layer_2.png`](./ruby_layer_2.png) - Une texture de couche pour la couche inférieure
 
 ### Configurer le bloc
@@ -365,7 +365,7 @@ def main():
 1. Exécutez `uv run stewbeet`, attendez qu'il termine
 2. Rechargez dans Minecraft
 3. Obtenez votre bloc avec `/loot give @s awesome_ores:i/ruby_ore`
-4. Placez-le dans le monde - c'est un bloc personnalisé entièrement fonctionnel !
+4. Placez-le dans le monde - c'est un custom block entièrement fonctionnel !
 
 StewBeet a automatiquement :
 - ✅ Créé les block models avec les faces appropriées
@@ -397,7 +397,7 @@ meta:
     # Répertoire contenant toutes les textures du projet
     textures_folder: "assets/textures"
 
-    # Répertoire contenant tous les sons personnalisés
+    # Répertoire contenant tous les custom sounds
     sounds_folder: "assets/sounds"
 
     # Répertoire contenant tous les jukebox records
@@ -429,8 +429,8 @@ pipeline:
     - "stewbeet.plugins.resource_pack.sounds"           # Générer les fichiers sons
     - "stewbeet.plugins.resource_pack.item_models"      # Générer les item models
     - "stewbeet.plugins.resource_pack.check_power_of_2" # Vérifier les dimensions des textures
-    - "stewbeet.plugins.custom_recipes"                 # Générer les recipes personnalisées
-    - "stewbeet.plugins.custom_paintings"               # Générer les paintings personnalisées
+    - "stewbeet.plugins.custom_recipes"                 # Générer les custom recipes
+    - "stewbeet.plugins.custom_paintings"               # Générer les custom paintings
     - "stewbeet.plugins.ingame_manual"                  # Générer le manuel en jeu
     - "stewbeet.plugins.datapack.loading"               # Configurer les fonctions load/tick
     - "stewbeet.plugins.datapack.custom_blocks"         # Configurer les mécaniques de blocs
@@ -463,7 +463,7 @@ Pour des guides plus approfondis et des fonctionnalités avancées, consultez la
 
 1. **Ajoutez plus d'items** avec différentes textures et propriétés
 2. **Créez des sets d'armure** en utilisant la configuration d'équipement
-3. **Ajoutez des recipes personnalisées** dans les définitions de recipes
+3. **Ajoutez des custom recipes** dans les définitions de recipes
 4. **Configurez la copie automatique** vers vos dossiers Minecraft
 5. **Explorez le template extensive** pour des exemples avancés
 
@@ -473,7 +473,7 @@ Une fois à l'aise, explorez ces fonctionnalités puissantes :
 
 - **🔄 Auto-génération** de minerais, outils et sets d'armure
 - **📦 Intégration de bibliothèques** avec Smithed, Bookshelf, et plus
-- **🎨 Overrides de models personnalisés** pour items spéciaux
+- **🎨 Custom model overrides** pour items spéciaux
 - **📝 Génération de fonctions** avec en-têtes appropriés
 - **🌐 Internationalisation** avec fichiers de langue automatiques
 
@@ -490,7 +490,7 @@ Besoin d'assistance ? Voici vos meilleures ressources :
 Vous avez réussi à :
 - ✅ Installer uv et StewBeet
 - ✅ Configurer votre premier projet
-- ✅ Créer des items et blocs personnalisés
+- ✅ Créer des custom items et blocks
 - ✅ Compiler et tester dans Minecraft
 - ✅ Explorer les options de configuration clés
 

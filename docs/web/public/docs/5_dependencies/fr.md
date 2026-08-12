@@ -1,6 +1,6 @@
 # Utiliser des bibliothèques de datapack
 
-Le système de dépendances de StewBeet a deux couches : les **bibliothèques officielles** auto-détectées depuis les fonctions (sans config), et les **`load_dependencies` personnalisées** déclarées dans `beet.yml`. Les deux sont téléchargées au build et génèrent des vérifications de version au runtime avec des messages d'erreur cliquables.
+Le système de dépendances de StewBeet a deux couches : les **bibliothèques officielles** auto-détectées depuis les fonctions (sans config), et les **custom `load_dependencies`** déclarées dans `beet.yml`. Les deux sont téléchargées au build et génèrent des vérifications de version au runtime avec des messages d'erreur cliquables.
 
 **Référence de configuration** : [extensive/beet.yml](https://github.com/Stoupy51/StewBeet/blob/main/templates/extensive/beet.yml) <br>  
 **Exemple réel** : [SimplEnergy/beet.yml](https://github.com/Stoupy51/SimplEnergy/blob/main/beet.yml) <br>  
@@ -10,7 +10,7 @@ Le système de dépendances de StewBeet a deux couches : les **bibliothèques of
 **Position** : Doit être placé **après** que toutes les fonctions utilisateur aient été écrites (les scanne pour détecter les bibliothèques)
 
 - Détecter et télécharger automatiquement les bibliothèques officielles: aucune configuration requise
-- Déclarer des dépendances personnalisées dans `beet.yml` avec `load_dependencies`
+- Déclarer des custom dependencies dans `beet.yml` avec `load_dependencies`
 - Générer des vérifications de version au runtime et de compatibilité Minecraft
 - Fournir des messages d'erreur en jeu cliquables quand des dépendances sont manquantes
 

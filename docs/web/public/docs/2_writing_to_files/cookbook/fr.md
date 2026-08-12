@@ -7,9 +7,9 @@ est un fichier entier, à lire de bout en bout, pas un fragment.
 
 ## Exemples concrets
 
-### Exemple 1 : Ticking de blocs personnalisés
+### Exemple 1 : Ticking de custom blocks
 
-Générer des fonctions tick pour blocs personnalisés avec différents comportements.
+Générer des fonctions tick pour custom blocks avec différents comportements.
 
 ```python
 from stewbeet import write_function, write_versioned_function, Mem
@@ -113,7 +113,7 @@ def setup_advancement_triggers(ctx: Context):
 # Révoquer l'advancement
 advancement revoke @s only {ns}:technical/inventory_changed
 
-# Vérifier les items personnalisés
+# Vérifier les custom items
 execute if items entity @s container.* *[custom_data~{{{ns}:{{}}}}] run function {ns}:items/handle_custom_item
 """, prepend=True)
     
@@ -223,7 +223,7 @@ data modify storage {ns}:main config set value {{}}
 data modify storage {ns}:main temp set value {{}}
 """)
     
-    # Charger les modules personnalisés
+    # Charger les custom modules
     write_load_file(f"""
 # Charger les systèmes de modules
 function {ns}:modules/energy/load
@@ -236,7 +236,7 @@ function {ns}:modules/items/load
 
 ### Exemple 6 : Système de détection de clic droit
 
-Système complet de détection de clic droit utilisant des items personnalisés.
+Système complet de détection de clic droit utilisant des custom items.
 
 ```python
 def setup_right_click_detection(ctx: Context):
@@ -275,7 +275,7 @@ execute anchored eyes positioned ^ ^ ^1 align xyz positioned ~0.5 ~ ~0.5 as @n[t
 
 ### Exemple 7 : Système de cultures en croissance
 
-Implémenter des mécaniques de croissance personnalisées.
+Implémenter des custom growing mechanics.
 
 ```python
 def setup_growing_system(ctx: Context):
@@ -345,7 +345,7 @@ def setup_tags(ctx: Context):
         f"{ns}:v{ctx.project_version}/load/tick_verification"
     ])
     
-    # Tags de fonctions personnalisés pour l'organisation
+    # Custom function tags pour l'organisation
     write_function_tag(f"{ns}:custom_blocks/tick", [
         f"{ns}:custom_blocks/solar_panel/tick",
         f"{ns}:custom_blocks/electric_furnace/tick",

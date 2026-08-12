@@ -252,7 +252,7 @@ say Une minute s'est écoulée !
 ### **Quand utiliser chacune**
 
 - 📁 **Fichiers statiques** : Fichiers de configuration, recipes statiques, fonctions simples
-- 🔧 **API native Beet** : Structures imbriquées complexes, types de fichiers personnalisés, contrôle avancé
+- 🔧 **API native Beet** : Structures imbriquées complexes, custom file types, contrôle avancé
 - 🚀 **Helpers StewBeet** : La plupart de la logique de datapack, fonctions dynamiques, motifs standards
 
 ### **Points clés à retenir**
