@@ -134,31 +134,34 @@ def cases() -> list[Case]:
 		),
 
 		# ── Disk ──────────────────────────────────────────────────────────────────────────────
+		# The three probes below print PROBE:REFUSED rather than the exception's class name, because
+		# the class is not the point and asserting on it is how this test was wrong twice. EROFS and
+		# EACCES both arrive as OSError subclasses, and which one you get depends on whether the
+		# permission check or the read-only check answers first: every path on the rootfs is root
+		# owned and mode 644, and the build runs as uid 10001, so in practice it is EACCES. Nothing
+		# outside /tmp being writable is the property that matters, and it holds either way.
 		Case(
-			# Not asserted as EROFS specifically. Every path on the rootfs is root owned and mode
-			# 644, and the build runs as uid 10001, so the permission check answers EACCES before
-			# the read-only check ever gets a say. Nothing outside /tmp being writable is the
-			# property that matters, and it holds either way.
 			name="the image is not writable",
 			body='''
 			try:
 				open("/srv/runner.py", "a")
 				print("PROBE:WRITABLE")
 			except OSError as error:
-				print(f"PROBE:{type(error).__name__}:{error.errno}")
+				print(f"PROBE:REFUSED:{error.errno}:{type(error).__name__}")
 			''',
-			contains=("PROBE:OSError:",),
+			contains=("PROBE:REFUSED:",),
 			absent=("PROBE:WRITABLE",),
 		),
 		Case(
-			name="/etc is read only",
+			name="/etc is not writable",
 			body='''
 			try:
 				open("/etc/passwd", "a")
 				print("PROBE:WRITABLE")
 			except OSError as error:
-				print(f"PROBE:{type(error).__name__}:{error.errno}")
+				print(f"PROBE:REFUSED:{error.errno}:{type(error).__name__}")
 			''',
+			contains=("PROBE:REFUSED:",),
 			absent=("PROBE:WRITABLE",),
 		),
 		Case(
@@ -168,8 +171,9 @@ def cases() -> list[Case]:
 				open("/proc/sysrq-trigger", "w")
 				print("PROBE:WRITABLE")
 			except OSError as error:
-				print(f"PROBE:{type(error).__name__}:{error.errno}")
+				print(f"PROBE:REFUSED:{error.errno}:{type(error).__name__}")
 			''',
+			contains=("PROBE:REFUSED:",),
 			absent=("PROBE:WRITABLE",),
 		),
 		Case(
