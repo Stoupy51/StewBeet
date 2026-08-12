@@ -153,7 +153,7 @@ export const Hero: React.FC = () => {
                             v{stats.version} {t('hero.versionStable')}
                         </div>
 
-                        <h1 className="intro-step text-4xl md:text-5xl xl:text-6xl font-bold text-white mb-3 tracking-tight leading-[1.1]" style={{ '--step': 1 } as React.CSSProperties}>
+                        <h1 className="intro-step text-4xl md:text-5xl xl:text-5xl font-bold text-white mb-3 tracking-tight leading-[1.1]" style={{ '--step': 1 } as React.CSSProperties}>
                             {t('hero.titleLine1')} <br />
                             <span className={GRADIENT_TEXT_BRIGHT}>{t('hero.titleLine2')}</span>
                         </h1>
