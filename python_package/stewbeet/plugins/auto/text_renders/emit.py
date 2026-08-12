@@ -27,7 +27,15 @@ from ....core.utils.fonts import (
 	plan_splice,
 )
 from ...initialize.project_images import find_pack_png
-from .config import ICON_ID, TEXTURE_FOLDER, TextRendersConfig, first_frame_box, fitting_resolution, scale_to_height
+from .config import (
+	ICON_ID,
+	TEXTURE_FOLDER,
+	TextRendersConfig,
+	first_frame_box,
+	fitting_resolution,
+	scale_to_height,
+	to_resource_path,
+)
 from .confirm import ask_oversized
 from .scan import RenderRequest
 
@@ -67,9 +75,10 @@ class GlyphEmitter:
 		""" Resource pack texture name (relative to ``textures/``) for an item stored at ``stored`` pixels.
 
 		The name follows the stored pixels rather than the displayed height, so the same image shown at
-		several heights is only written once.
+		several heights is only written once. It also goes through :func:`to_resource_path`, without
+		which the reserved ``ICON`` id would name a texture Minecraft refuses to load.
 		"""
-		return f"{TEXTURE_FOLDER}/{item_id.replace(':', '_')}_{stored[0]}x{stored[1]}"
+		return f"{TEXTURE_FOLDER}/{to_resource_path(f'{item_id.replace(":", "_")}_{stored[0]}x{stored[1]}')}"
 
 	def source_images(self, item_ids: set[str]) -> dict[str, str]:
 		""" Resolve the PNG backing each item, batching the renders and the downloads.
