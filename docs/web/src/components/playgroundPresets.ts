@@ -67,20 +67,26 @@ from stewbeet import *
 
 
 def beet_default(ctx: Context):
+    # One item, three ways to obtain it. Each recipe produces the vanilla
+    # JSON and, where the ingredients are custom, the Smithed Crafter
+    # variant that makes it work in game.
     Item(
         id="steel_ingot",
         components={"item_name": {"text": "Steel Ingot"}},
         recipes=[
-            FurnaceRecipe(
-                category="misc",
+            SmeltingRecipe(
                 ingredient=Ingr("minecraft:raw_iron"),
-                result_count=1,
+                experience=0.7,
+                cookingtime=200,
             ),
             CraftingShapedRecipe(
-                category="misc",
-                result_count=9,
                 shape=["S"],
                 ingredients={"S": Ingr("steel_block")},
+                result_count=9,
+            ),
+            StonecuttingRecipe(
+                ingredient=Ingr("steel_block"),
+                result_count=9,
             ),
         ],
     )
@@ -88,6 +94,9 @@ def beet_default(ctx: Context):
     Item(
         id="steel_block",
         components={"item_name": {"text": "Steel Block"}},
+        recipes=[CraftingShapelessRecipe(
+            ingredients=9 * [Ingr("steel_ingot")],
+        )],
     )
 
     add_item_model_component()

@@ -176,8 +176,16 @@ export const Hero: React.FC = () => {
                             <HiArrowRight aria-hidden="true" />
                         </Link>
                         <CopyInstall />
-                        <Link to="/playground" className="text-xs text-center text-slate-400 hover:text-slate-200 transition-colors underline decoration-dotted underline-offset-4">
-                            {t('hero.tryItLive')}
+                        {/* The one thing on this page a reader can act on without installing
+                            anything, so it gets a real button rather than a line of small print. */}
+                        <Link
+                            to="/playground"
+                            className="flex flex-col items-center gap-0.5 px-6 py-2.5 rounded-panel border border-mc-emerald/30 bg-mc-emerald/10 hover:bg-mc-emerald/20 hover:border-mc-emerald/50 transition-colors duration-200"
+                        >
+                            <span className="flex items-center gap-2 font-semibold text-mc-emerald">
+                                🧪 {t('hero.tryItLive')}
+                            </span>
+                            <span className="text-xs text-slate-400">{t('hero.tryItLiveNote')}</span>
                         </Link>
                         <p className="text-xs text-slate-400 text-center">{t('finalCta.microcopy')}</p>
                     </div>
@@ -209,7 +217,12 @@ export const Hero: React.FC = () => {
                             animate: { scale: 1 },
                             transition: { duration: 0.6, delay: 0.25 },
                         })}
-                        className="intro-panel relative min-w-0"
+                        // h-0 with min-h-full is what makes this column exactly as tall as the
+                        // snippet beside it: h-0 stops the tree contributing to the grid row, and
+                        // min-h-full then takes the height the code panel established. Only from xl,
+                        // where the two are side by side; below that they stack and each wants its
+                        // own height.
+                        className="intro-panel relative min-w-0 xl:h-0 xl:min-h-full"
                         style={{ '--step': 1 } as React.CSSProperties}
                     >
                         <Panel

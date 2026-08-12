@@ -52,7 +52,7 @@ export const HeroOutputPanel: React.FC<{ nodes: FileNode[] }> = ({ nodes }) => {
 
     if (!selected) {
         return (
-            <div className="flex-1 flex flex-col p-4 overflow-x-auto custom-scrollbar">
+            <div className="flex-1 min-h-0 flex flex-col p-4 overflow-auto custom-scrollbar">
                 <FileTree nodes={nodes} onSelect={openFile} />
                 <p className="mt-4 pt-3 border-t border-white/5 text-xs text-slate-400 leading-relaxed">
                     {t('hero.outputNote')}

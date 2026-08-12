@@ -10,9 +10,11 @@ line and the parent keeps only what follows it.
 """
 # Imports
 import base64
+import difflib
 import io
 import json
 import os
+import re
 import sys
 import traceback
 from importlib.abc import MetaPathFinder
@@ -21,6 +23,9 @@ from typing import Any
 from zipfile import ZipFile
 
 # Constants
+USER_MODULE: str = "user_code.py"
+""" The submitted module, whose frames are the only ones a reader can do anything about. """
+
 SENTINEL: str = "===STEWBEET-RESULT==="
 """ Line after which stdout is the JSON payload and nothing else. """
 
@@ -163,6 +168,87 @@ def to_payload(built: dict[str, bytes]) -> dict[str, Any]:
 	}
 
 
+def root_cause(error: BaseException) -> BaseException:
+	""" Walk to the exception that actually went wrong.
+
+	beet wraps a plugin failure in PluginError, and stouputils turns any error into a prompt on
+	stdin that fails with EOFError and then exits. Reporting either of those tells the reader
+	nothing. The chain is walked to the deepest link, skipping the two that are only plumbing.
+
+	Args:
+		error (BaseException): The exception that reached the top.
+	Returns:
+		BaseException: The most specific cause worth naming.
+	"""
+	chain: list[BaseException] = []
+	seen: set[int] = set()
+	current: BaseException | None = error
+	while current is not None and id(current) not in seen:
+		seen.add(id(current))
+		chain.append(current)
+		current = current.__cause__ or current.__context__
+
+	for candidate in reversed(chain):
+		if not isinstance(candidate, SystemExit | EOFError):
+			return candidate
+	return chain[-1]
+
+
+def suggestions(error: BaseException) -> list[str]:
+	""" Names close to the one a NameError complained about.
+
+	`FurnaceRecipe` is a plausible guess that does not exist, and a bare NameError leaves the reader
+	guessing which of 493 exported names was meant. Anything sharing the trailing word is included
+	as well, so a wrong recipe class lists the recipe classes rather than the nearest four strings.
+
+	Args:
+		error (BaseException): The root cause, only inspected when it is a NameError.
+	Returns:
+		list[str]: Suggestions, closest first, then the rest of the family alphabetically.
+	"""
+	if not isinstance(error, NameError) or not error.name:
+		return []
+
+	import stewbeet
+
+	exported: list[str] = [name for name in dir(stewbeet) if not name.startswith("_")]
+	found: list[str] = difflib.get_close_matches(error.name, exported, n=4, cutoff=0.6)
+
+	if suffix := re.search(r"[A-Z][a-z]+$", error.name):
+		related: list[str] = sorted(name for name in exported if name.endswith(suffix.group()) and name != error.name)
+		if len(related) >= 3:
+			found += [name for name in related if name not in found]
+
+	# Generous, because a truncated list is worse than none: capping this at eight cut
+	# SmeltingRecipe, the one name the reader was actually looking for, off an alphabetical tail.
+	return found[:16]
+
+
+def describe(error: BaseException) -> dict[str, Any]:
+	""" Turn an exception into something a reader can act on.
+
+	Args:
+		error (BaseException): The exception that reached the top.
+	Returns:
+		dict[str, Any]: `message`, and where known the `line` of submitted code and its text.
+	"""
+	cause: BaseException = root_cause(error)
+	described: dict[str, Any] = {
+		"message": f"{type(cause).__name__}: {cause}",
+		"traceback": traceback.format_exc(),
+		"suggestions": suggestions(cause),
+	}
+
+	# The last frame inside the submitted module, which is the line the reader can actually fix.
+	# Its numbering matches the editor exactly, because the code is written to disk verbatim.
+	for frame in reversed(traceback.extract_tb(cause.__traceback__)):
+		if frame.filename.endswith(USER_MODULE):
+			described["line"] = frame.lineno
+			described["source"] = (frame.line or "").strip()
+			break
+	return described
+
+
 def main() -> int:
 	""" Build the project named on the command line and print the payload after the sentinel.
 
@@ -176,10 +262,21 @@ def main() -> int:
 		print(json.dumps({"ok": False, "error": "usage: runner.py <project directory>"}))
 		return 2
 
+	# The configuration this build actually ran with, so the page can show it rather than a copy
+	# that would drift the first time the pipeline changes. Read before the build, so it is present
+	# even when the build fails and the reader wants to know what was configured.
+	config: str = ""
+	try:
+		with open(f"{sys.argv[1]}/beet.yml", encoding="utf-8") as file:
+			config = file.read().replace("\r\n", "\n")
+	except OSError:
+		pass
+
 	try:
 		payload: dict[str, Any] = {"ok": True} | to_payload(build(sys.argv[1]))
-	except BaseException:
-		payload = {"ok": False, "error": "build_failed", "traceback": traceback.format_exc()}
+	except BaseException as error:
+		payload = {"ok": False, "error": "build_failed"} | describe(error)
+	payload["config"] = config
 
 	print(SENTINEL)
 	print(json.dumps(payload))

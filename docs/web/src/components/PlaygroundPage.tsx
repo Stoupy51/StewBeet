@@ -32,7 +32,18 @@ interface BuildResult {
     images?: Record<string, string>;
     truncated?: { files: boolean; bytes: boolean };
     logs?: string;
+    /** The beet.yml the build actually ran with, returned by the sandbox rather than copied here. */
+    config?: string;
     error?: string;
+    /** Where a build failure says what went wrong. Far more useful than the log on its own. */
+    traceback?: string;
+    /** Root cause, already unwrapped from beet's PluginError and stouputils' exit path. */
+    message?: string;
+    /** Line of the submitted code that failed. Numbering matches the editor exactly. */
+    line?: number;
+    source?: string;
+    /** Close names, when the failure was a NameError. */
+    suggestions?: string[];
     retryAfterMs?: number;
 }
 
@@ -54,13 +65,18 @@ function languageOf(path: string): string {
     return 'text';
 }
 
-const FileView: React.FC<{ node: FileNode; result: BuildResult; onBack: () => void; backLabel: string }> = ({
-    node, result, onBack, backLabel,
-}) => {
-    const path = node.path ?? '';
-    const body = result.text?.[path] ?? '';
-    const image = result.images?.[path];
-    const html = useShiki(image ? '' : body, languageOf(path));
+/** One pane of highlighted source, used for both a generated file and the project's beet.yml. */
+const SourceView: React.FC<{
+    label: string;
+    body: string;
+    language: string;
+    image?: string;
+    alt?: string;
+    onBack: () => void;
+    backLabel: string;
+}> = ({ label, body, language, image, alt, onBack, backLabel }) => {
+    const path = label;
+    const html = useShiki(image ? '' : body, language);
 
     return (
         <div className="flex-1 flex flex-col min-h-0">
@@ -79,7 +95,7 @@ const FileView: React.FC<{ node: FileNode; result: BuildResult; onBack: () => vo
                     <div className={`inline-block p-4 rounded ${CHECKERBOARD}`}>
                         <img
                             src={`data:image/png;base64,${image}`}
-                            alt={node.name}
+                            alt={alt ?? label}
                             className="w-32 h-32 object-contain [image-rendering:pixelated]"
                         />
                     </div>
@@ -100,7 +116,8 @@ export const PlaygroundPage: React.FC = () => {
     const [result, setResult] = useState<BuildResult | null>(null);
     const [pending, setPending] = useState(false);
     const [selected, setSelected] = useState<FileNode | null>(null);
-    const [showLimits, setShowLimits] = useState(false);
+    const [active, setActive] = useState(PRESETS[0].id);
+    const [showConfig, setShowConfig] = useState(false);
     const inFlight = useRef<AbortController | null>(null);
 
     // A build in flight when the reader navigates away has nowhere to land, and its response would
@@ -118,6 +135,7 @@ export const PlaygroundPage: React.FC = () => {
 
         setPending(true);
         setSelected(null);
+        setShowConfig(false);
         try {
             const response = await fetch('/api/playground', {
                 method: 'POST',
@@ -158,13 +176,17 @@ export const PlaygroundPage: React.FC = () => {
 
                     {/* ── Editor ─────────────────────────────────────────────── */}
                     <div className="rounded-xl border border-white/10 bg-slate-900/60 flex flex-col overflow-hidden">
-                        <div className="flex items-center gap-2 px-4 py-2 border-b border-white/5 flex-wrap">
-                            <span className="text-xs text-slate-500 mr-1">{t('playground.presets')}</span>
+                        <div className="flex items-center gap-2 px-4 py-3 border-b border-white/10 flex-wrap bg-white/[0.03]">
+                            <span className="text-sm font-semibold text-slate-200 mr-1">{t('playground.presets')}</span>
                             {PRESETS.map(preset => (
                                 <button
                                     key={preset.id}
-                                    onClick={() => { setCode(preset.code); setResult(null); setSelected(null); }}
-                                    className="text-xs px-2 py-1 rounded bg-white/5 hover:bg-white/10 text-slate-300 transition-colors"
+                                    onClick={() => { setCode(preset.code); setActive(preset.id); setResult(null); setSelected(null); }}
+                                    className={`text-sm px-3 py-1.5 rounded-lg border transition-colors ${
+                                        active === preset.id
+                                            ? 'bg-mc-emerald/20 border-mc-emerald/40 text-mc-emerald'
+                                            : 'bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:text-white'
+                                    }`}
                                 >
                                     {t(`playground.preset.${preset.id}`)}
                                 </button>
@@ -194,7 +216,12 @@ export const PlaygroundPage: React.FC = () => {
                     </div>
 
                     {/* ── Output ─────────────────────────────────────────────── */}
-                    <div className="rounded-xl border border-white/10 bg-slate-900/60 flex flex-col overflow-hidden min-h-[24rem]">
+                    {/* Exactly as tall as the editor beside it, with the tree scrolling inside.
+                        h-0 stops the file list contributing to the grid row, and min-h-full then
+                        takes the height the editor column established, so the two always match
+                        without a magic number to keep in sync. Below lg they stack, and a fixed
+                        height is what stops a 500 file build running off the end of the page. */}
+                    <div className="rounded-xl border border-white/10 bg-slate-900/60 flex flex-col overflow-hidden h-[32rem] lg:h-0 lg:min-h-full">
                         <div className="flex items-center gap-2 px-4 py-2 border-b border-white/5">
                             <span className="text-xs text-slate-400">{t('playground.output')}</span>
                             {result?.ok && (
@@ -208,6 +235,14 @@ export const PlaygroundPage: React.FC = () => {
                                     {t('playground.cached')}
                                 </span>
                             )}
+                            {result?.config && (
+                                <button
+                                    onClick={() => { setShowConfig(true); setSelected(null); }}
+                                    className="ml-auto text-xs px-2 py-1 rounded border border-white/10 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white transition-colors"
+                                >
+                                    {t('playground.viewConfig')}
+                                </button>
+                            )}
                         </div>
 
                         {!result && !pending && (
@@ -215,23 +250,61 @@ export const PlaygroundPage: React.FC = () => {
                         )}
                         {pending && <p className="p-4 text-sm text-slate-500">{t('playground.building')}</p>}
 
-                        {result && !result.ok && (
-                            <div className="p-4 space-y-3">
+                        {result && !result.ok && !showConfig && (
+                            <div className="flex-1 flex flex-col p-4 gap-3 min-h-0">
                                 <p className="text-sm text-red-300">
                                     {t(`playground.error.${result.error ?? 'worker_unavailable'}`)}
                                     {result.error === 'rate_limited' && result.retryAfterMs !== undefined &&
                                         ` (${Math.ceil(result.retryAfterMs / 1000)}s)`}
                                 </p>
-                                {result.logs && (
-                                    <pre className="text-[0.7rem] leading-relaxed text-slate-400 bg-black/30 rounded p-3 overflow-auto max-h-72 custom-scrollbar whitespace-pre-wrap">
-                                        {result.logs}
-                                    </pre>
+
+                                {/* The one line the reader can act on, ahead of the traceback that
+                                    buries it under thirty frames of beet internals. */}
+                                {result.message && (
+                                    <div className="rounded-lg border border-red-500/25 bg-red-500/5 p-3 space-y-2">
+                                        <p className="text-sm font-medium text-red-200 break-words">{result.message}</p>
+                                        {result.line !== undefined && (
+                                            <p className="text-xs text-slate-400">
+                                                {t('playground.atLine').replace('{line}', String(result.line))}
+                                                {result.source && (
+                                                    <code className="ml-2 text-slate-300">{result.source}</code>
+                                                )}
+                                            </p>
+                                        )}
+                                        {result.suggestions && result.suggestions.length > 0 && (
+                                            <p className="text-xs text-slate-400">
+                                                {t('playground.didYouMean')}{' '}
+                                                <span className="text-slate-300">{result.suggestions.join(', ')}</span>
+                                            </p>
+                                        )}
+                                    </div>
+                                )}
+
+                                {(result.traceback ?? result.logs) && (
+                                    <details className="flex-1 min-h-0 flex flex-col">
+                                        <summary className="text-xs text-slate-500 hover:text-slate-300 cursor-pointer">
+                                            {t('playground.fullTraceback')}
+                                        </summary>
+                                        <pre className="mt-2 flex-1 text-[0.7rem] leading-relaxed text-slate-400 bg-black/30 rounded p-3 overflow-auto custom-scrollbar whitespace-pre-wrap min-h-0">
+                                            {result.traceback ?? result.logs}
+                                        </pre>
+                                    </details>
                                 )}
                             </div>
                         )}
 
-                        {result?.ok && !selected && (
-                            <div className="flex-1 flex flex-col p-4 overflow-auto custom-scrollbar">
+                        {showConfig && result?.config && (
+                            <SourceView
+                                label="beet.yml"
+                                body={result.config}
+                                language="yaml"
+                                onBack={() => setShowConfig(false)}
+                                backLabel={t('playground.back')}
+                            />
+                        )}
+
+                        {result?.ok && !selected && !showConfig && (
+                            <div className="flex-1 flex flex-col p-4 overflow-auto custom-scrollbar min-h-0">
                                 <FileTree nodes={tree} onSelect={node => node.kind && setSelected(node)} />
                                 {result.truncated?.files && (
                                     <p className="mt-3 text-xs text-amber-400">
@@ -241,10 +314,13 @@ export const PlaygroundPage: React.FC = () => {
                             </div>
                         )}
 
-                        {result?.ok && selected && (
-                            <FileView
-                                node={selected}
-                                result={result}
+                        {result?.ok && selected && !showConfig && (
+                            <SourceView
+                                label={selected.path ?? selected.name}
+                                body={result.text?.[selected.path ?? ''] ?? ''}
+                                language={languageOf(selected.path ?? '')}
+                                image={result.images?.[selected.path ?? '']}
+                                alt={selected.name}
                                 onBack={() => setSelected(null)}
                                 backLabel={t('playground.back')}
                             />
@@ -253,33 +329,25 @@ export const PlaygroundPage: React.FC = () => {
                 </div>
 
                 {/* ── Limitations ────────────────────────────────────────────── */}
+                {/* Always open. Hiding what the playground cannot do behind a toggle means the
+                    reader finds out by being surprised, which is the opposite of the point. */}
                 <div className="max-w-7xl mx-auto mt-4">
-                    <div className="rounded-xl border border-white/10 bg-slate-900/40 p-4">
-                        <button
-                            onClick={() => setShowLimits(!showLimits)}
-                            className="text-sm text-slate-400 hover:text-slate-200 transition-colors text-left"
-                        >
-                            {t('playground.limits')} {showLimits ? '▾' : '▸'}
-                        </button>
-
-                        {showLimits && (
-                            <div className="mt-3 space-y-3 text-sm text-slate-400">
-                                <p>{t('playground.limitsDetail')}</p>
-                                <p>
-                                    {t('playground.limitsNumbers')
-                                        .replace('{cpu}', String(SANDBOX_LIMITS.cpuSeconds))
-                                        .replace('{wall}', String(SANDBOX_LIMITS.wallSeconds))
-                                        .replace('{memory}', String(SANDBOX_LIMITS.memoryMiB))
-                                        .replace('{files}', String(SANDBOX_LIMITS.files))
-                                        .replace('{total}', String(SANDBOX_LIMITS.totalMiB))}
-                                </p>
-                                <p>
-                                    <a href="/documentation" className={`${TEXT_ACCENT} hover:underline`}>
-                                        {t('playground.fullOutput')}
-                                    </a>
-                                </p>
-                            </div>
-                        )}
+                    <div className="rounded-xl border border-white/10 bg-slate-900/40 p-5 space-y-3">
+                        <p className="text-sm font-semibold text-slate-200">{t('playground.limits')}</p>
+                        <p className="text-sm text-slate-400 leading-relaxed">{t('playground.limitsDetail')}</p>
+                        <p className="text-sm text-slate-400">
+                            {t('playground.limitsNumbers')
+                                .replace('{cpu}', String(SANDBOX_LIMITS.cpuSeconds))
+                                .replace('{wall}', String(SANDBOX_LIMITS.wallSeconds))
+                                .replace('{memory}', String(SANDBOX_LIMITS.memoryMiB))
+                                .replace('{files}', String(SANDBOX_LIMITS.files))
+                                .replace('{total}', String(SANDBOX_LIMITS.totalMiB))}
+                        </p>
+                        <p className="text-sm">
+                            <a href="/documentation" className={`${TEXT_ACCENT} hover:underline`}>
+                                {t('playground.fullOutput')}
+                            </a>
+                        </p>
                     </div>
                 </div>
             </div>
