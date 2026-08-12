@@ -25,5 +25,8 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  // Server only, and checked by tsconfig.node.json instead: it imports node:crypto and reads
+  // process.env, neither of which exists in the browser project this config describes.
+  "exclude": ["src/api/playground.ts"]
 }

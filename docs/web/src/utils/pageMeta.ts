@@ -43,6 +43,11 @@ export const STATIC_ROUTE_META: Record<string, PageMeta> = {
         description: 'Tools for StewBeet and Minecraft datapack development, starting with the Markdown to BBCode converter for PlanetMinecraft.',
         path: '/tools',
     },
+    '/playground': {
+        title: 'Playground | StewBeet',
+        description: 'Write a StewBeet definitions module in the browser and see the datapack and resource pack files it generates: models, recipes, loot tables, predicates and translations.',
+        path: '/playground',
+    },
     '/markdown_to_pmc_bbcode': {
         title: 'Markdown to BBCode Converter | StewBeet',
         description: 'Convert Markdown to PlanetMinecraft BBCode in the browser: badges, lists, tables, code blocks and spoilers, with a live preview and diff.',

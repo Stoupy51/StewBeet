@@ -176,6 +176,9 @@ export const Hero: React.FC = () => {
                             <HiArrowRight aria-hidden="true" />
                         </Link>
                         <CopyInstall />
+                        <Link to="/playground" className="text-xs text-center text-slate-400 hover:text-slate-200 transition-colors underline decoration-dotted underline-offset-4">
+                            {t('hero.tryItLive')}
+                        </Link>
                         <p className="text-xs text-slate-400 text-center">{t('finalCta.microcopy')}</p>
                     </div>
                 </motion.div>
