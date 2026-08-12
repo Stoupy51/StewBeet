@@ -59,6 +59,12 @@ services:
     # pids_limit is how a fork bomb is contained. worker.py deliberately does not set RLIMIT_NPROC,
     # because that limit is per uid and would let one request lock out every later one.
     pids_limit: 96
+
+    # Not optional. Without it the worker is PID 1, so every process a build orphans is reparented
+    # to it and stays a zombie holding a pid. One fork bomb was enough to fill pids_limit and leave
+    # the worker unable to spawn a thread for the next connection: the service answered one request
+    # with a dropped connection and never recovered. tini reaps them instead.
+    init: true
     cap_drop: [ALL]
     security_opt:
       - "no-new-privileges:true"

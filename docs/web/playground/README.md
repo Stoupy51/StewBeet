@@ -86,7 +86,7 @@ thing that gets attacked.
 
 ```bash
 docker build -t stewbeet-playground docs/web/playground/sandbox
-docker run -d --name pg --network none --read-only \
+docker run -d --name pg --network none --read-only --init \
   --tmpfs /tmp:rw,noexec,nosuid,nodev,size=128m,mode=1777 \
   --memory 1g --memory-swap 1g --cpus 1 --pids-limit 96 \
   --cap-drop ALL --security-opt no-new-privileges:true \
@@ -137,6 +137,20 @@ rather than a visitor.
 The same plugin writes a magenta checkerboard for any item id the bundled packs have no texture
 for. Without it, `resource_pack.item_models` raises `Texture '<id>.png' not found in source
 textures` and the build dies, which is the first thing a visitor hits after renaming an item.
+
+### Why `init: true` is not optional
+
+The worker is PID 1 in the container, so every process a build orphans is reparented to it and
+stays a zombie until something waits on it. A zombie still holds a pid. One fork bomb was enough to
+fill `pids_limit`, after which the worker could no longer spawn a thread for an incoming
+connection: the next request got a dropped connection with no response, and it never recovered.
+Containing a fork bomb is worthless if the service cannot answer afterwards, which is why
+`tests/test_sandbox.py` builds normally straight after the bomb.
+
+`init: true` puts a real init in front of the worker to reap them. `Build.reap` does it too, after
+every build, so the worker is not one deployment flag away from that failure. `Build.kill` also
+signals the process group repeatedly rather than once, because killpg only reaches what exists at
+the instant it is delivered and a fork landing a microsecond later inherits the group unsignalled.
 
 ### Two things that look like details and are not
 
