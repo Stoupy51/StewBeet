@@ -7,6 +7,7 @@
 
 # Imports
 import json
+import re
 
 from beet import Context, Texture
 from stouputils.typing import JsonDict
@@ -70,7 +71,9 @@ def beet_default(ctx: Context):
         (texture(f"{ns}_steel_ingot", native), default_ascent(8), 8),
         (texture("minecraft_stone", native), default_ascent(square), square),
         (texture("mechanization_tin_ore", native), 3, 12),
-        (texture("ICON", native), default_ascent(8), 8),
+        # Lowercased: the reserved id is "ICON" but Minecraft rejects a resource location path
+        # with an uppercase letter, and refuses the whole font rather than that one glyph.
+        (texture("icon", native), default_ascent(8), 8),
         # From the hover function: same item at the default height, proving the 99 "height" of the
         # nested hover_event object was not mistaken for the render's own. Same texture as the 8px
         # glyph above, since neither asked for a resolution.
@@ -100,7 +103,7 @@ def beet_default(ctx: Context):
         texture(f"{ns}_steel_ingot", native): native,
         texture("minecraft_stone", native): native,
         texture("mechanization_tin_ore", native): native,
-        texture("ICON", native): native,              # assets/pack.png is 64x64, kept untouched
+        texture("icon", native): native,              # assets/pack.png is 64x64, kept untouched
         texture(f"{ns}_steel_ingot", (16, 16)): (16, 16),
         texture(f"{ns}_steel_ingot", (32, 32)): (32, 32),
         # Each tile of the spliced logo is exactly what one glyph can hold, and the padded one keeps
@@ -109,6 +112,12 @@ def beet_default(ctx: Context):
         f"{ns}:{TEXTURE_FOLDER}/{ns}_steel_ingot_64x160_h8a20/r0c0.png": (64, 160),
     }
     assert {file for file, _, _ in by_glyph} == set(stored_sizes), "providers must only point at the expected textures"
+
+    # Minecraft parses every provider "file" as a resource location and refuses the whole font when
+    # one carries a character outside [a-z0-9/._-], so no generated name may drift out of that set.
+    for file, _, _ in by_glyph:
+        path: str = file.split(":", 1)[1]
+        assert re.fullmatch(r"[a-z0-9/._-]+", path), f"invalid resource location path: {file}"
 
     for file, size in stored_sizes.items():
         name: str = file.split(":", 1)[1].removesuffix(".png")
@@ -128,7 +137,7 @@ def beet_default(ctx: Context):
     assert color_of(texture(f"{ns}_steel_ingot", native)) == STEEL_COLOR
     assert color_of(texture("minecraft_stone", native)) == STONE_COLOR
     assert color_of(texture("mechanization_tin_ore", native)) == TIN_COLOR
-    assert color_of(texture("ICON", native)) == ICON_COLOR, "the ICON glyph must come from assets/pack.png"
+    assert color_of(texture("icon", native)) == ICON_COLOR, "the ICON glyph must come from assets/pack.png"
 
     # ── The item lore was rewritten in the generated loot table ───────────────────
     loot_table: JsonDict = json.loads(ctx.data[ns].loot_tables["i/steel_ingot"].text)
@@ -154,7 +163,7 @@ def beet_default(ctx: Context):
     assert by_glyph[(texture("mechanization_tin_ore", native), 3, 12)] == tin_glyph
     assert by_glyph[(texture(f"{ns}_steel_ingot", (16, 16)), 7, 8)] == shrunk_glyph
     assert by_glyph[(texture(f"{ns}_steel_ingot", (16, 16)), 2, 8)] == raised_glyph
-    assert by_glyph[(texture("ICON", native), 7, 8)] == icon_glyph
+    assert by_glyph[(texture("icon", native), 7, 8)] == icon_glyph
 
     # ── An unresolvable render is left untouched rather than dropped ───────────────
     ghost: JsonDict = json.loads(ctx.data[ns].loot_tables["i/ghost_ingot"].text)

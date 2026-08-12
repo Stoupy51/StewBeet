@@ -31,7 +31,14 @@ from .item_images import (
 	resolve_item_image,
 	run_model_resolver,
 )
-from .providers import FONT_MAX_LEVEL, merge_font_providers, uses_font, validate_font_providers, write_font_from_allocator
+from .providers import (
+	FONT_MAX_LEVEL,
+	iter_fonts,
+	merge_font_providers,
+	uses_font,
+	validate_font_providers,
+	write_font_from_allocator,
+)
 from .splicing import MAX_GLYPH_SIZE, SpliceLayout, SpliceTile, glyph_advance, opaque_width, plan_splice
 
 __all__ = [
@@ -62,6 +69,7 @@ __all__ = [
 	"glyph_advance",
 	"iso_renders_path",
 	"item_image_path",
+	"iter_fonts",
 	"lighten_color",
 	"merge_font_providers",
 	"opaque_width",

@@ -18,7 +18,7 @@ from ...dependencies.official_libs import OFFICIAL_LIBS
 from ..livereload import patch_livereload_for_copy_destinations
 from .beet_patches import apply_beet_patches
 from .project_images import find_pack_png
-from .source_lore_font import SPACER_CHAR, TOOLTIP_FONT, prepare_source_lore_font
+from .source_lore_font import SPACER_CHAR, TOOLTIP_FONT, prepare_source_lore_font, warn_foreign_tooltip_font
 
 
 # Main entry point
@@ -67,6 +67,7 @@ def beet_default(ctx: Context, silent: bool = False) -> Generator[None]:
 				Mem.ctx.meta["stewbeet"]["source_lore"] = [name]
 			else:
 				Mem.ctx.meta["stewbeet"]["source_lore"] = [{"text":"ICON"}, {**name, "text": f"{SPACER_CHAR}{ctx.project_name}"}]
+		warn_foreign_tooltip_font(Mem.ctx.meta.get("stewbeet", {}).get("source_lore", []))
 		Mem.ctx.meta["stewbeet"]["pack_icon_path"] = prepare_source_lore_font(Mem.ctx.meta.get("stewbeet", {}).get("source_lore", []))
 
 		# Preprocess manual name
