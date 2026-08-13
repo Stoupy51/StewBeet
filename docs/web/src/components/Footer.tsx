@@ -1,11 +1,19 @@
 import { memo } from 'react';
+import { Link } from 'react-router-dom';
 import { HiExternalLink } from 'react-icons/hi';
 import { useTranslation } from '../i18n/useTranslation';
 import { HEADING, TEXT_ACCENT_HOVER } from '../theme';
 
+/** A footer link. Everything here leaves the site except where `internal` says otherwise. */
+interface FooterLink {
+    label: string;
+    url: string;
+    internal?: boolean;
+}
+
 export const Footer = memo(() => {
     const { t } = useTranslation();
-    const links = {
+    const links: Record<string, FooterLink[]> = {
         [t('footer.community')]: [
             { label: t('footer.github'), url: 'https://github.com/Stoupy51/StewBeet' },
             { label: t('footer.discord'), url: 'https://discord.gg/anxzu6rA9F' },
@@ -14,9 +22,11 @@ export const Footer = memo(() => {
         [t('footer.resources')]: [
             { label: t('footer.pypiPackage'), url: 'https://pypi.org/project/stewbeet/' },
             { label: t('footer.planetMinecraft'), url: 'https://www.planetminecraft.com/data-pack/python-datapack/' },
+            { label: t('footer.credits'), url: '/credits', internal: true },
             { label: t('footer.reportBug'), url: 'https://github.com/Stoupy51/StewBeet/issues' },
         ]
     };
+    const linkClass = 'text-slate-400 hover:text-white transition-colors text-sm flex items-center gap-1 group';
 
     return (
         <footer className="bg-slate-950 border-t border-white/10 relative">
@@ -48,15 +58,21 @@ export const Footer = memo(() => {
                             <ul className="space-y-2">
                                 {items.map((link) => (
                                     <li key={link.label}>
-                                        <a
-                                            href={link.url}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="text-slate-400 hover:text-white transition-colors text-sm flex items-center gap-1 group"
-                                        >
-                                            {link.label}
-                                            <HiExternalLink className="text-xs opacity-0 group-hover:opacity-100 transition-opacity" />
-                                        </a>
+                                        {link.internal ? (
+                                            <Link to={link.url} className={linkClass}>
+                                                {link.label}
+                                            </Link>
+                                        ) : (
+                                            <a
+                                                href={link.url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className={linkClass}
+                                            >
+                                                {link.label}
+                                                <HiExternalLink className="text-xs opacity-0 group-hover:opacity-100 transition-opacity" />
+                                            </a>
+                                        )}
                                     </li>
                                 ))}
                             </ul>

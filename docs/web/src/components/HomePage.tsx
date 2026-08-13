@@ -6,6 +6,7 @@ import { WhyStewBeet } from './WhyStewBeet';
 import { ManualShowcase } from './ManualShowcase';
 import { Features } from './Features';
 import { BuiltWith } from './BuiltWith';
+import { StandingOnGiants } from './StandingOnGiants';
 import { Installation } from './Installation';
 import { FinalCTA } from './FinalCTA';
 import { Footer } from './Footer';
@@ -39,13 +40,15 @@ function HomePage() {
       <Navbar />
 
       {/* Hero -> trust -> why -> features -> social proof -> supporting -> final CTA: a visitor
-          meets the evidence that the project is alive before being asked to read about it. */}
+          meets the evidence that the project is alive before being asked to read about it.
+          The two proof sections sit together: who builds with it, then what it builds on. */}
       <main>
         <Hero />
         <WhyStewBeet />
         <ManualShowcase />
         <Features />
         <BuiltWith />
+        <StandingOnGiants />
         <Installation />
         <FinalCTA />
       </main>
