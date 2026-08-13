@@ -16,6 +16,8 @@ dispatcher, exposing ``r.config`` / ``r.glyphs`` / ``r.images`` / ``r.item_compo
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import cache
+from importlib import import_module
 from typing import TYPE_CHECKING, ClassVar
 
 from beet.core.utils import TextComponent
@@ -76,6 +78,9 @@ class CraftRenderer:
 CRAFT_RENDERERS: dict[str, CraftRenderer] = {}
 """ Registry of all craft renderers, by craft type. """
 
+BUILTIN_RENDERER_MODULES: tuple[str, ...] = ("awakened_forge", "furnace", "linear", "shaped", "smithing")
+""" Modules under .types that register the built-in renderers when they execute. """
+
 
 def register_craft_renderer(renderer: CraftRenderer) -> CraftRenderer:
 	""" Register ``renderer`` for each of its :attr:`~CraftRenderer.types`. Returns it. """
@@ -84,7 +89,27 @@ def register_craft_renderer(renderer: CraftRenderer) -> CraftRenderer:
 	return renderer
 
 
+@cache
+def load_builtin_renderers() -> dict[str, CraftRenderer]:
+	""" Import the built-in renderer modules once, then return the populated registry.
+
+	Those modules register themselves as a side effect of executing, which under PEP 810 never
+	happens on its own since nothing imports them by name. Every lookup goes through here instead
+	of relying on the package import that used to pull them in eagerly.
+
+	Returns:
+		dict[str, CraftRenderer]: The registry, with every built-in renderer present
+
+	Examples:
+		>>> "crafting_shaped" in load_builtin_renderers()
+		True
+	"""
+	for name in BUILTIN_RENDERER_MODULES:
+		import_module(f"{__name__.rsplit('.', 1)[0]}.types.{name}")
+	return CRAFT_RENDERERS
+
+
 def get_craft_renderer(craft_type: str) -> CraftRenderer | None:
 	""" Return the renderer registered for ``craft_type`` (or None). """
-	return CRAFT_RENDERERS.get(craft_type)
+	return load_builtin_renderers().get(craft_type)
 
