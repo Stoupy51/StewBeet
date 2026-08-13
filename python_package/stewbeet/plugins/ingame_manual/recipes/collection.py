@@ -8,6 +8,11 @@ have a registered :class:`~.registry.CraftRenderer`, so it auto-extends with new
 # Imports
 from __future__ import annotations
 
+# Lazy imports (PEP 810), ignored before Python 3.15
+from stouputils.lazy import ALWAYS_LAZY
+
+__lazy_modules__ = ALWAYS_LAZY
+
 import math
 from typing import TYPE_CHECKING, cast
 

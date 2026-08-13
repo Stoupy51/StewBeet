@@ -5,6 +5,11 @@ the API itself is down or blocking us.  These look identical from a single excep
 translated into a sentence naming the likely culprit, backed by one probe of neutral hosts.
 """
 
+# Lazy imports (PEP 810), ignored before Python 3.15
+from stouputils.lazy import ALWAYS_LAZY
+
+__lazy_modules__ = ALWAYS_LAZY
+
 # Imports
 import json
 import socket

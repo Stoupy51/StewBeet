@@ -6,6 +6,11 @@ coerced to 1 with a warning). The old caching keys (``cache_pages``) are intenti
 read; ``json_dump_path`` survives only as an optional debug dump.
 """
 
+# Lazy imports (PEP 810), ignored before Python 3.15
+from stouputils.lazy import ALWAYS_LAZY
+
+__lazy_modules__ = ALWAYS_LAZY
+
 # Imports
 from dataclasses import dataclass, field
 

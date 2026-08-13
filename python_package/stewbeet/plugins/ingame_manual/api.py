@@ -4,6 +4,11 @@ Developers use :func:`get_manual` in their setup to grab the live :class:`Manual
 register pages/hooks before the plugin builds it.
 """
 
+# Lazy imports (PEP 810), ignored before Python 3.15
+from stouputils.lazy import ALWAYS_LAZY
+
+__lazy_modules__ = ALWAYS_LAZY
+
 # Imports
 from .config import ManualConfig
 from .images import BakedText

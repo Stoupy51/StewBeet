@@ -3,6 +3,11 @@
 Imports are explicit rather than star imports: this package is re-exported all the way up to the
 top-level ``stewbeet`` namespace, and star importing would leak ``PIL.Image`` and friends into it.
 """
+# Lazy imports (PEP 810), ignored before Python 3.15
+from stouputils.lazy import ALWAYS_LAZY
+
+__lazy_modules__ = ALWAYS_LAZY
+
 # Imports
 from .allocator import GlyphAllocator, get_font
 from .colors import (
