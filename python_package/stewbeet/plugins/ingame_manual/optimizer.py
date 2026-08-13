@@ -3,6 +3,11 @@
 Ported as-is from the v1 ``book_optimizer``: pure functions with no global state.
 """
 
+# Lazy imports (PEP 810), ignored before Python 3.15
+from stouputils.lazy import ALWAYS_LAZY
+
+__lazy_modules__ = ALWAYS_LAZY
+
 # Imports
 from typing import cast
 

@@ -8,6 +8,11 @@ The pass runs on the generated files rather than on the definitions: by that poi
 component has already been serialised into loot tables, ``give`` commands and dialogs, so one scan
 covers all of them at once.
 """
+# Lazy imports (PEP 810), ignored before Python 3.15
+from stouputils.lazy import ALWAYS_LAZY
+
+__lazy_modules__ = ALWAYS_LAZY
+
 # Imports
 import stouputils as stp
 from beet import Context, TextFileBase

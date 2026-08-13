@@ -15,6 +15,11 @@ dispatcher, exposing ``r.config`` / ``r.glyphs`` / ``r.images`` / ``r.item_compo
 # Imports
 from __future__ import annotations
 
+# Lazy imports (PEP 810), ignored before Python 3.15
+from stouputils.lazy import ALWAYS_LAZY
+
+__lazy_modules__ = ALWAYS_LAZY
+
 from dataclasses import dataclass
 from functools import cache
 from importlib import import_module

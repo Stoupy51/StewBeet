@@ -1,4 +1,9 @@
 """ Typed configuration for the text renders, read from ``ctx.meta["stewbeet"]["text_renders"]``. """
+# Lazy imports (PEP 810), ignored before Python 3.15
+from stouputils.lazy import ALWAYS_LAZY
+
+__lazy_modules__ = ALWAYS_LAZY
+
 # Imports
 from dataclasses import dataclass
 

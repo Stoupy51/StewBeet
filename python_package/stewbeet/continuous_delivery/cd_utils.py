@@ -1,8 +1,13 @@
 
+# Lazy imports (PEP 810), ignored before Python 3.15
+from stouputils.lazy import ALWAYS_LAZY
+
+__lazy_modules__ = ALWAYS_LAZY
+
 # Imports
 import os
 
-from stouputils import load_credentials  # type: ignore # noqa: F401
+from stouputils import load_credentials as load_credentials  # Re-exported, callers reach it through stewbeet.continuous_delivery
 
 from ..core.constants import LATEST_MC_VERSION
 from ..utils import ProjectConfig, get_project_config

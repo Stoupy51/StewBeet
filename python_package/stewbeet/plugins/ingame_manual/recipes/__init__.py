@@ -5,6 +5,11 @@ from ``..recipes``. The built-in type renderers load on first lookup rather than
 :func:`~.registry.load_builtin_renderers`.
 """
 
+# Lazy imports (PEP 810), ignored before Python 3.15
+from stouputils.lazy import ALWAYS_LAZY
+
+__lazy_modules__ = ALWAYS_LAZY
+
 from . import types
 from .buttons import WikiButtonRender
 from .collection import convert_shapeless_to_shaped

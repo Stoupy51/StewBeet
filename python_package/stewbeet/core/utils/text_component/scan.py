@@ -9,6 +9,11 @@ Both :mod:`stewbeet.plugins.auto.lang_file` and :mod:`stewbeet.plugins.auto.text
 same three things, which is what this module factors out: iterate the datapack's text files, skip
 the ones that cannot possibly match, and splice a list of replacements back in one pass.
 """
+# Lazy imports (PEP 810), ignored before Python 3.15
+from stouputils.lazy import ALWAYS_LAZY
+
+__lazy_modules__ = ALWAYS_LAZY
+
 # Imports
 from collections.abc import Iterator
 from typing import NamedTuple

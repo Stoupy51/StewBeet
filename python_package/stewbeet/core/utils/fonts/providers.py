@@ -3,6 +3,11 @@
 Minecraft fonts are additive: several generators may contribute providers to the same font file, so
 every write merges into whatever is already there instead of replacing it.
 """
+# Lazy imports (PEP 810), ignored before Python 3.15
+from stouputils.lazy import ALWAYS_LAZY
+
+__lazy_modules__ = ALWAYS_LAZY
+
 # Imports
 from collections.abc import Iterator
 

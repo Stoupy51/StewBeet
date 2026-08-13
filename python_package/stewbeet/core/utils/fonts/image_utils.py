@@ -1,4 +1,9 @@
 """ PIL helpers shared by every glyph generator. """
+# Lazy imports (PEP 810), ignored before Python 3.15
+from stouputils.lazy import ALWAYS_LAZY
+
+__lazy_modules__ = ALWAYS_LAZY
+
 # Imports
 from PIL import Image, ImageChops, ImageFilter
 
