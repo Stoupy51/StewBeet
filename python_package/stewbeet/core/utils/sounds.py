@@ -55,7 +55,7 @@ def add_sound(ctx: Context, sounds: Sound | dict[str, Sound], name: str, ns: str
 	# Create a new sound config
 	# Use subtitle from the first sound if available, otherwise use the sound name
 	first_sound = next(iter(sounds.values()))
-	subtitle = first_sound.subtitle if first_sound.subtitle else name.split("/")[-1]
+	subtitle = first_sound.subtitle if first_sound.subtitle else name.split("/")[-1].replace("_", " ").title()
 
 	new_config: JsonDict = {name: {
 		"subtitle": subtitle,
