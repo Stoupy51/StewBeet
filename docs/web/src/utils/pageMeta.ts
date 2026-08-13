@@ -43,6 +43,12 @@ export const STATIC_ROUTE_META: Record<string, PageMeta> = {
         description: 'Tools for StewBeet and Minecraft datapack development, starting with the Markdown to BBCode converter for PlanetMinecraft.',
         path: '/tools',
     },
+    '/credits': {
+        title: 'Standing on giants | StewBeet',
+        description:
+            'The open-source projects StewBeet is built on: beet, mecha, bolt, Model Resolver, the Smithed ecosystem, Bookshelf, and every library the build downloads for you.',
+        path: '/credits',
+    },
     '/playground': {
         title: 'Playground | StewBeet',
         description: 'Write a StewBeet definitions module in the browser and see the datapack and resource pack files it generates: models, recipes, loot tables, predicates and translations.',

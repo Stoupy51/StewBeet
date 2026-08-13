@@ -3,6 +3,11 @@
 Ported from v1 ``showcase_image`` with ``renders_path`` passed in rather than read from a global.
 """
 
+# Lazy imports (PEP 810), ignored before Python 3.15
+from stouputils.lazy import ALWAYS_LAZY
+
+__lazy_modules__ = ALWAYS_LAZY
+
 # Imports
 import os
 

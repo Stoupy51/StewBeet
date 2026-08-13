@@ -3,7 +3,7 @@ import { HiExternalLink } from 'react-icons/hi';
 import { useTranslation } from '../i18n/useTranslation';
 import { useMotionSafe } from '../hooks/useMotionSafe';
 import { HEADING, PIXEL_RULE, TEXT_ACCENT_HOVER } from '../theme';
-import { FLAGSHIPS, INTEGRATIONS, TOTAL_BUILT_WITH, type Entry, type Flagship } from './builtWithData';
+import { FLAGSHIPS, TOTAL_BUILT_WITH, type Flagship } from './builtWithData';
 
 const numberFormat = new Intl.NumberFormat('en-US');
 
@@ -14,10 +14,11 @@ const numberFormat = new Intl.NumberFormat('en-US');
  * A visitor weighs one question here: does anyone actually use this? The count answers it in
  * the heading, two packs show what the framework handles at scale, and the roster of every
  * project lives on GitHub, where a reader who wants it will look anyway.
+ *
+ * The libraries StewBeet itself depends on used to hang off the bottom of this section. They
+ * are the opposite direction of the same relationship, and they now have their own: see
+ * StandingOnGiants.tsx.
  */
-
-const INTEGRATION_PILL =
-    'bg-mc-copper/10 border-mc-copper/30 text-slate-100 hover:bg-mc-copper/20 hover:border-mc-copper/60';
 
 /** One flagship pack: what it costs to write, beside what it produces. */
 const FlagshipCard = ({ project }: { project: Flagship }) => {
@@ -83,23 +84,6 @@ const FlagshipCard = ({ project }: { project: Flagship }) => {
     );
 };
 
-const IntegrationPills = ({ entries }: { entries: Entry[] }) => (
-    <div className="flex flex-wrap gap-2">
-        {entries.map((entry) => (
-            <a
-                key={entry.url}
-                href={entry.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`inline-flex items-baseline gap-2 px-3 py-1.5 rounded-panel border text-sm transition-colors ${INTEGRATION_PILL}`}
-            >
-                <span className="font-medium">{entry.name}</span>
-                <span className="text-[0.6875rem] font-mono text-mc-copper/90">{entry.owner}</span>
-            </a>
-        ))}
-    </div>
-);
-
 export const BuiltWith: React.FC = () => {
     const { t } = useTranslation();
     const motionSafe = useMotionSafe();
@@ -139,12 +123,6 @@ export const BuiltWith: React.FC = () => {
                     {t('builtWith.seeAll')}
                     <HiExternalLink aria-hidden="true" />
                 </a>
-
-                <div className="mt-12 pt-8 border-t border-white/10">
-                    <p className="text-sm font-mono uppercase tracking-wider text-mc-copper mb-2">{t('builtWith.integrations')}</p>
-                    <p className="text-sm text-slate-400 mb-4">{t('builtWith.integrationsNote')}</p>
-                    <IntegrationPills entries={INTEGRATIONS} />
-                </div>
             </div>
         </section>
     );

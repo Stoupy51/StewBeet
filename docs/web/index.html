@@ -34,6 +34,30 @@
     
     <!-- Discord -->
     <meta name="theme-color" content="#17DD62" />
+
+    <!--
+      The hero entrance starts its elements at opacity 0, so the decision to play it has to be
+      made before the first paint. Left to the bundle, the prerendered page painted itself
+      finished, then rewound to the start of the animation once React hydrated.
+      No JavaScript means no attribute, which means the finished page, which is the point.
+    -->
+    <script>
+      (function () {
+        var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var play = !reduced && window.location.pathname === '/';
+        if (play) {
+          // Once per tab: a visitor who comes back from another page has already seen it
+          try {
+            play = window.sessionStorage.getItem('stewbeet:intro-played') === null;
+            window.sessionStorage.setItem('stewbeet:intro-played', '1');
+          } catch (error) {
+            // Private mode with storage disabled: play it, just do not remember
+          }
+        }
+        window.stewbeetIntro = play;
+        if (play) document.documentElement.dataset.intro = 'play';
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

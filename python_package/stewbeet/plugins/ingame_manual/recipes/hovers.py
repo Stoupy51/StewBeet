@@ -4,6 +4,11 @@ The base :meth:`~.registry.CraftRenderer.append_hover` covers the single-ingredi
 helpers cover the grid (shaped/forge), smithing and mining shapes that several renderers share.
 """
 
+# Lazy imports (PEP 810), ignored before Python 3.15
+from stouputils.lazy import ALWAYS_LAZY
+
+__lazy_modules__ = ALWAYS_LAZY
+
 # Imports
 import stouputils as stp
 from beet.core.utils import TextComponent

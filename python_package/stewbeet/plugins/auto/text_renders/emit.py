@@ -8,6 +8,11 @@ A render Minecraft cannot fit in a single glyph (more than 256 texture pixels on
 above the baseline) is cut into a grid instead: several glyphs and the spacing putting them back
 together, which the text component carries as one string of characters like any other glyph.
 """
+# Lazy imports (PEP 810), ignored before Python 3.15
+from stouputils.lazy import ALWAYS_LAZY
+
+__lazy_modules__ = ALWAYS_LAZY
+
 # Imports
 from dataclasses import dataclass, field
 

@@ -3,6 +3,11 @@
 Used to tint a packaged glyph atlas towards the colors of a project logo, so a generated font looks
 like it belongs to the pack instead of shipping a hardcoded palette.
 """
+# Lazy imports (PEP 810), ignored before Python 3.15
+from stouputils.lazy import ALWAYS_LAZY
+
+__lazy_modules__ = ALWAYS_LAZY
+
 # Imports
 import colorsys
 import math

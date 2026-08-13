@@ -17,6 +17,11 @@ and ``DynamicAtlasTree``):
   screen pixels wide. Hence ``scale``: the stored texture is an integer multiple of the displayed
   size, so cutting on a screen pixel also cuts on a texture pixel.
 """
+# Lazy imports (PEP 810), ignored before Python 3.15
+from stouputils.lazy import ALWAYS_LAZY
+
+__lazy_modules__ = ALWAYS_LAZY
+
 # Imports
 import math
 from dataclasses import dataclass

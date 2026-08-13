@@ -4,6 +4,11 @@ Every visual element rendered inside a text component (item icon, recipe templat
 invisible spacer) is a PNG mapped to a character inside a Minecraft bitmap font. This module owns the
 counter handing out those characters and the provider registry backing the generated font JSON.
 """
+# Lazy imports (PEP 810), ignored before Python 3.15
+from stouputils.lazy import ALWAYS_LAZY
+
+__lazy_modules__ = ALWAYS_LAZY
+
 # Imports
 import threading
 from dataclasses import dataclass, field

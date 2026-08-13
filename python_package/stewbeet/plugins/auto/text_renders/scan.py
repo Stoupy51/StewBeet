@@ -5,6 +5,11 @@ text components live inside mcfunction commands and SNBT payloads where keys may
 strings single-quoted, so ``json.loads`` is not an option. Only the ``render``, ``height``, ``ascent``
 and ``resolution`` fragments of a node are touched; every other key is left exactly as written.
 """
+# Lazy imports (PEP 810), ignored before Python 3.15
+from stouputils.lazy import ALWAYS_LAZY
+
+__lazy_modules__ = ALWAYS_LAZY
+
 # Imports
 import re
 from dataclasses import dataclass

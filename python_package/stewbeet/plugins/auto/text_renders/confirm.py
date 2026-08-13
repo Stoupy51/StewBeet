@@ -5,6 +5,11 @@ becomes eight textures the resource pack has to carry. The question is asked in 
 first time a project runs into it, and the answer is remembered in ``.beet_cache`` so later builds
 stay quiet. ``meta.stewbeet.text_renders.allow_oversized`` answers it up front and skips the prompt.
 """
+# Lazy imports (PEP 810), ignored before Python 3.15
+from stouputils.lazy import ALWAYS_LAZY
+
+__lazy_modules__ = ALWAYS_LAZY
+
 # Imports
 import sys
 

@@ -6,6 +6,11 @@ to any other pack are read from disk (the project is expected to drop them there
 
 The resulting folder is shared by every consumer, so an item is only ever rendered once per build.
 """
+# Lazy imports (PEP 810), ignored before Python 3.15
+from stouputils.lazy import ALWAYS_LAZY
+
+__lazy_modules__ = ALWAYS_LAZY
+
 # Imports
 import os
 import shutil

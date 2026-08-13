@@ -1,5 +1,10 @@
 """Page classes for the in-game manual."""
 
+# Lazy imports (PEP 810), ignored before Python 3.15
+from stouputils.lazy import ALWAYS_LAZY
+
+__lazy_modules__ = ALWAYS_LAZY
+
 from .base import Page, Transformer
 from .browser_page import CategoryBrowserPage
 from .button_layout import ButtonLayout, Position

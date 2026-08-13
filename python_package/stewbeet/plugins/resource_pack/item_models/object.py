@@ -2,6 +2,11 @@
 # Imports
 from __future__ import annotations
 
+# Lazy imports (PEP 810), ignored before Python 3.15
+from stouputils.lazy import ALWAYS_LAZY
+
+__lazy_modules__ = ALWAYS_LAZY
+
 import os
 from collections.abc import Iterable
 

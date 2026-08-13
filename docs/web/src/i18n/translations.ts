@@ -113,8 +113,6 @@ export const translations = {
             atScaleNote: "The author's own packs, counted from their build output",
             maintainerPacks: 'Also by the author',
             libraries: 'Libraries & tools',
-            integrations: 'Works with the libraries you already use',
-            integrationsNote: 'Detected from your code and merged into the build automatically.',
             seeAll: 'See the full list on GitHub',
             unitSourceLines: 'lines of Python (no comments) produce',
             itemsAlt: 'Every item in {project}, drawn from its build',
@@ -126,6 +124,37 @@ export const translations = {
             unitTextures: 'textures',
             stardustDesc: 'A large progression pack: custom ore tiers, blocks, paintings and a full in-game manual.',
             simplenergyDesc: 'An energy and machine library other packs depend on, with cables, generators and machines.',
+        },
+
+        // Standing on giants: the home page section
+        giants: {
+            title: 'StewBeet did not get here alone',
+            subtitle: 'Behind the magic is a whole family of open-source tools, made by people who love datapacks as much as you do.',
+            beetRole: 'The pipeline. One build for the data pack and the resource pack.',
+            mechaRole: 'The compiler. Type-checked commands, and real Python inside a function.',
+            modelResolverRole: 'The renderer. Every item and block drawn to an image, in pure Python.',
+            smithedRole: 'The conventions. Crafter, Custom Blocks and Weld, wired up for you.',
+            bookshelfRole: 'The toolbox. Call a module in a function and the build fetches it.',
+            autoNote: 'Pulled in automatically: each one is downloaded and version-checked only when a function of yours references it.',
+            readCredits: 'Read the full thank-you',
+            readDocs: 'How dependencies are resolved',
+        },
+
+        // Standing on giants: the /credits page
+        credits: {
+            title: 'Standing on giants',
+            subtitle: 'StewBeet did not get here alone. What follows is a thank-you to the projects it is built on, and to the people behind them.',
+            beetBody: 'A development kit that unifies data pack and resource pack tooling into a single pipeline. StewBeet is a set of beet plugins, so everything beet knows how to do stays available to you. Built by vberlier (fizzy), misode, edayot (airdox), rx97, TheNuclearNexus, and many more.',
+            mechaBody: 'mecha compiles and type-checks every command the build emits, so a typo fails the build instead of the game. bolt lets you script a function in real Python: loops, variables and conditions, compiled down to commands. Both live in the beet repository and carry the same list of names.',
+            modelResolverBody: 'Renders every item and block to a real image, in pure Python. That is how the in-game manual shows your crafts without a single screenshot being taken by hand. Thanks @airdox.',
+            smithedBody: 'Crafter for NBT recipes and Custom Blocks for placement, both wired up automatically. Smithed also sets shared conventions so packs stay interoperable, even in normal worlds outside the ecosystem. Smithed Weld merges your pack with its dependencies on build.',
+            bookshelfBody: 'A modular toolbox of datapack utilities by the Bookshelf team. Call #bs.math:... in a function and StewBeet pulls in just that module, out of the {n} it resolves by name.',
+            librariesTitle: 'And the libraries the build fetches for you',
+            librariesNote: 'Detected from the functions you write, downloaded at build time, then checked in game with a clickable error message when a version is missing.',
+            compatTitle: 'Packs it knows how to get along with',
+            compatNote: 'Nothing is downloaded for these. A plugin emits the extra files they look for, so your items show up correctly when a player has them installed.',
+            docsLink: 'Read the dependencies guide',
+            backHome: 'Back to the home page',
         },
 
         // Final call to action
@@ -382,6 +411,7 @@ export const translations = {
             youtube: 'YouTube',
             pypiPackage: 'PyPI Package',
             planetMinecraft: 'PlanetMinecraft',
+            credits: 'Credits',
             reportBug: 'Report Bug',
             license: 'MIT licensed',
             copyright: 'StewBeet by',
@@ -500,8 +530,6 @@ export const translations = {
             atScaleNote: 'Les packs de l\'auteur, comptés depuis leur build',
             maintainerPacks: 'Également par l\'auteur',
             libraries: 'Bibliothèques et outils',
-            integrations: 'Compatible avec les bibliothèques que vous utilisez déjà',
-            integrationsNote: 'Détectées depuis votre code et fusionnées automatiquement dans le build.',
             seeAll: 'Voir la liste complète sur GitHub',
             unitSourceLines: 'lignes de Python (hors commentaires) produisent',
             itemsAlt: 'Tous les items de {project}, tirés de son build',
@@ -513,6 +541,37 @@ export const translations = {
             unitTextures: 'textures',
             stardustDesc: 'Un gros pack de progression : paliers de minerais, blocs, tableaux et un manuel en jeu complet.',
             simplenergyDesc: 'Une bibliothèque d\'énergie et de machines dont d\'autres packs dépendent : câbles, générateurs et machines.',
+        },
+
+        // Standing on giants: the home page section
+        giants: {
+            title: 'StewBeet n\'est pas arrivé là tout seul',
+            subtitle: 'Derrière la magie, il y a toute une famille d\'outils open-source, faits par des gens qui aiment les datapacks autant que vous.',
+            beetRole: 'Le pipeline. Un seul build pour le datapack et le resource pack.',
+            mechaRole: 'Le compilateur. Des commandes vérifiées, et du vrai Python dans une fonction.',
+            modelResolverRole: 'Le rendu. Chaque item et chaque bloc dessinés en image, en Python pur.',
+            smithedRole: 'Les conventions. Crafter, Custom Blocks et Weld, branchés pour vous.',
+            bookshelfRole: 'La boîte à outils. Appelez un module dans une fonction, le build le récupère.',
+            autoNote: 'Récupérées automatiquement : chacune est téléchargée et vérifiée en version uniquement quand une de vos fonctions y fait appel.',
+            readCredits: 'Lire les remerciements complets',
+            readDocs: 'Comment les dépendances sont résolues',
+        },
+
+        // Standing on giants: the /credits page
+        credits: {
+            title: 'Sur les épaules de géants',
+            subtitle: 'StewBeet n\'est pas arrivé là tout seul. Ce qui suit est un merci aux projets sur lesquels il repose, et aux personnes derrière.',
+            beetBody: 'Un kit de développement qui unifie l\'outillage datapack et resource pack dans un seul pipeline. StewBeet est un ensemble de plugins beet : tout ce que beet sait faire reste à votre disposition. Construit par vberlier (fizzy), misode, edayot (airdox), rx97, TheNuclearNexus, et bien d\'autres.',
+            mechaBody: 'mecha compile et vérifie le type de chaque commande générée : une faute de frappe casse le build au lieu du jeu. bolt permet d\'écrire une fonction en vrai Python : boucles, variables et conditions, compilées en commandes. Les deux vivent dans le dépôt beet et portent la même liste de noms.',
+            modelResolverBody: 'Génère une vraie image de chaque item et de chaque bloc, en Python pur. C\'est comme ça que le manuel en jeu affiche vos crafts sans qu\'une seule capture soit prise à la main. Merci @airdox.',
+            smithedBody: 'Crafter pour les recettes NBT et Custom Blocks pour la pose, branchés automatiquement. Smithed pose aussi des conventions communes pour que les packs restent interopérables, même dans un monde normal en dehors de l\'écosystème. Smithed Weld fusionne votre pack avec ses dépendances au build.',
+            bookshelfBody: 'Une boîte à outils modulaire d\'utilitaires datapack, par l\'équipe Bookshelf. Appelez #bs.math:... dans une fonction et StewBeet récupère uniquement ce module, parmi les {n} qu\'il sait résoudre par leur nom.',
+            librariesTitle: 'Et les bibliothèques que le build récupère pour vous',
+            librariesNote: 'Détectées depuis les fonctions que vous écrivez, téléchargées au build, puis vérifiées en jeu avec un message d\'erreur cliquable quand une version manque.',
+            compatTitle: 'Les packs avec lesquels il sait s\'entendre',
+            compatNote: 'Rien n\'est téléchargé pour ceux-là. Un plugin génère les fichiers supplémentaires qu\'ils cherchent, pour que vos items s\'affichent correctement chez un joueur qui les a installés.',
+            docsLink: 'Lire le guide des dépendances',
+            backHome: 'Retour à l\'accueil',
         },
 
         // Final call to action
@@ -767,6 +826,7 @@ export const translations = {
             youtube: 'YouTube',
             pypiPackage: 'Package PyPI',
             planetMinecraft: 'PlanetMinecraft',
+            credits: 'Remerciements',
             reportBug: 'Signaler un Bug',
             license: 'Licence MIT',
             copyright: 'StewBeet par',
