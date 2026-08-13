@@ -10,6 +10,11 @@ firing the matching :class:`Phase` hooks after each step. Cross-page links are e
 order is final), so inserting/reordering pages never needs page-number bookkeeping.
 """
 
+# Lazy imports (PEP 810), ignored before Python 3.15
+from stouputils.lazy import ALWAYS_LAZY
+
+__lazy_modules__ = ALWAYS_LAZY
+
 # Imports
 import enum
 import os

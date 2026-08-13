@@ -93,18 +93,6 @@ export const LIBRARIES: Entry[] = [
     { name: 'Golf Ball',            owner: 'Stoupy51', url: 'https://github.com/Stoupy51/GolfBall' },
 ];
 
-/** Third-party libraries StewBeet detects in your code and wires into the build. */
-export const INTEGRATIONS: Entry[] = [
-    { name: 'Smithed Custom Blocks', owner: 'smithed.dev', url: 'https://wiki.smithed.dev/libraries/custom-block/' },
-    { name: 'Smithed Crafter',       owner: 'smithed.dev', url: 'https://wiki.smithed.dev/libraries/crafter/' },
-    { name: 'Smithed Weld',          owner: 'smithed.dev', url: 'https://weld.smithed.dev/' },
-    { name: 'Bookshelf',             owner: 'mcbookshelf', url: 'https://github.com/mcbookshelf/bookshelf' },
-    { name: 'ItemIO',                owner: 'edayot',      url: 'https://github.com/edayot/ItemIO' },
-    { name: 'LanternLoad',           owner: 'LanternMC',   url: 'https://github.com/LanternMC/load' },
-    { name: 'NeoEnchant',            owner: 'Modrinth',    url: 'https://modrinth.com/datapack/neoenchant' },
-    { name: 'SimpleDrawer',          owner: 'edayot',      url: 'https://edayot.github.io/SimpleDrawer/material.html' },
-];
-
 /** Everything with public source that compiles with the framework, for the trust strip. */
 export const TOTAL_BUILT_WITH: number =
     COMMUNITY_PROJECTS.length + FLAGSHIPS.length + MAINTAINER_PROJECTS.length + LIBRARIES.length;

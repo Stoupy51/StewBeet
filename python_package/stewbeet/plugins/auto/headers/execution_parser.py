@@ -5,6 +5,11 @@ This module handles parsing execute commands to extract execution contexts
 like 'as @e[...] & at @s' from command lines.
 """
 
+# Lazy imports (PEP 810), ignored before Python 3.15
+from stouputils.lazy import ALWAYS_LAZY
+
+__lazy_modules__ = ALWAYS_LAZY
+
 # Imports
 from stouputils.typing import JsonDict
 

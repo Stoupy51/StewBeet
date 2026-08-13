@@ -17,6 +17,7 @@ requires-python = ">=3.14"
 classifiers = [
 	"Programming Language :: Python :: 3",
 	"Programming Language :: Python :: 3.14",
+	"Programming Language :: Python :: 3.15",
 	"License :: OSI Approved :: MIT License",
 	"Operating System :: OS Independent",
 ]
@@ -24,7 +25,7 @@ authors = [
     { name = "Stoupy51", email = "stoupy51@gmail.com" },
 ]
 dependencies = [
-	"stouputils>=26.0.3",
+	"stouputils>=26.1.1",
 	"model_resolver>=1.15.2",
 	"beet>=0.116.0",
 	"bolt>=0.50.1",
@@ -87,9 +88,10 @@ ignore = [
     "W191",
     "N803",
     "N806",
-    "F403",
-    "F405",
 ]
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
 
 # Bumpversion configuration
 [tool.bumpversion]

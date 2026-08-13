@@ -1,4 +1,9 @@
 
+# Lazy imports (PEP 810), ignored before Python 3.15
+from stouputils.lazy import ALWAYS_LAZY
+
+__lazy_modules__ = ALWAYS_LAZY
+
 # Imports
 import io
 import os
@@ -13,10 +18,6 @@ from beet import Context, DataPack, ResourcePack
 from ...core.__memory__ import Mem
 from ..initialize.project_images import find_pack_png
 
-
-# Silent mode entry point
-def silent(ctx: Context) -> None:
-	return stp.silent(beet_default)(ctx)
 
 def get_consistent_timestamp(ctx: Context) -> tuple[int, int, int, int, int, int]:
 	""" Get a consistent timestamp for archive files based on beet cache .gitignore file modification time. """

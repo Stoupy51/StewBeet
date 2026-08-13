@@ -4,6 +4,11 @@ These live here instead of in a beet fork so upstream stays pullable. Each patch
 behaviour of what it replaces and is applied once per process, never re-wrapping on the second build
 of a `stewbeet watch` session.
 """
+# Lazy imports (PEP 810), ignored before Python 3.15
+from stouputils.lazy import ALWAYS_LAZY
+
+__lazy_modules__ = ALWAYS_LAZY
+
 # Imports
 import os
 from collections.abc import Iterator

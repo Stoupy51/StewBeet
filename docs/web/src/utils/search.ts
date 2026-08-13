@@ -138,10 +138,12 @@ const SITE_ROUTES: Record<string, string> = {
     features: '/#features',
     installation: '/#installation',
     templates: '/#templates',
+    giants: '/#standing-on-giants',
     showcase: '/#plugins',
     pluginsTable: '/documentation#plugins',
     documentation: '/documentation',
     tools: '/tools',
+    credits: '/credits',
 };
 
 const SITE_LABELS: Record<string, string> = {
@@ -150,10 +152,12 @@ const SITE_LABELS: Record<string, string> = {
     features: 'Features',
     installation: 'Installation',
     templates: 'Templates',
+    giants: 'Standing on giants',
     showcase: 'Plugins',
     pluginsTable: 'Plugins',
     documentation: 'Documentation',
     tools: 'Tools',
+    credits: 'Credits',
 };
 
 /**

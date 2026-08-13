@@ -1,5 +1,6 @@
 
 # Imports
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -33,7 +34,9 @@ def main() -> None:
             [sys.executable, "-m", "stewbeet"],
             cwd=test_dir,
             capture_output=True,
-            text=True,
+            encoding="utf-8",
+            errors="replace",
+            env=os.environ | {"PYTHONIOENCODING": "utf-8"},
             timeout=300,
         )
 
