@@ -25,6 +25,8 @@ jobs:
           uv pip install -e .
       - name: Ruff lint with python 3.14
         run: cd ./python_package && uv run ruff check ./stewbeet
+      - name: Check the generated re-exports and lazy markers are in sync
+        run: cd ./python_package && uv run scripts/sync_api.py --check
       - name: Pyright type check with python 3.14
         run: cd ./python_package && uv run pyright ./stewbeet
 
