@@ -19,6 +19,8 @@ DOWNSTREAM_NAMES: tuple[str, ...] = ("SimplEnergy", "StardustFragment", "StoupGu
 """ Sibling repositories consuming StewBeet, expected right next to the StewBeet repository. """
 BUILD_TIMEOUT: int = 1800
 """ Maximum seconds a single project build may take before being killed. """
+UTF8_ENVIRONMENT: dict[str, str] = os.environ | {"PYTHONIOENCODING": "utf-8"}
+""" Environment forcing children to write UTF-8, as their pipes would otherwise use the locale encoding (cp1252 on Windows). """
 
 
 # Utility
@@ -77,7 +79,9 @@ def build_project(project: Path) -> tuple[bool, float]:
 		[sys.executable, "-m", "stewbeet"],
 		cwd=project,
 		capture_output=True,
-		text=True,
+		encoding="utf-8",
+		errors="replace",
+		env=UTF8_ENVIRONMENT,
 		timeout=BUILD_TIMEOUT,
 	)
 	duration: float = time.perf_counter() - start
