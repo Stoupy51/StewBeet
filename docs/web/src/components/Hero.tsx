@@ -124,11 +124,11 @@ const FileCounter = ({ label }: { label: string }) => {
 export const Hero: React.FC = () => {
     const { t, language } = useTranslation();
     const motionSafe = useMotionSafe();
-    const section = useIntro<HTMLElement>();
     const gettingStarted = `/markdown?src=${encodeURIComponent(language === 'fr' ? '0_getting_started/fr.md' : '0_getting_started/en.md')}`;
+    useIntro();
 
     return (
-        <section ref={section} id="hero" className="relative overflow-hidden pt-20 pb-4 bg-slate-950">
+        <section id="hero" className="relative overflow-hidden pt-20 pb-4 bg-slate-950">
             {/* The one decorative glow left on the site, behind the technical grid. */}
             <div className="intro-grid absolute inset-0 z-0 opacity-20">
                 <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
