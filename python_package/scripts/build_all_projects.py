@@ -15,7 +15,7 @@ REPOSITORY: Path = ROOT.parent
 """ The StewBeet repository root, holding the templates. """
 TEMPLATES_FOLDER: Path = REPOSITORY / "templates"
 """ Folder holding every project template (basic, extensive, minimal, ...). """
-DOWNSTREAM_NAMES: tuple[str, ...] = ("SimplEnergy", "StardustFragment")
+DOWNSTREAM_NAMES: tuple[str, ...] = ("SimplEnergy", "StardustFragment", "StoupGun")
 """ Sibling repositories consuming StewBeet, expected right next to the StewBeet repository. """
 BUILD_TIMEOUT: int = 1800
 """ Maximum seconds a single project build may take before being killed. """
