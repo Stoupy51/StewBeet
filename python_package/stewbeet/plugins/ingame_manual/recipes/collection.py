@@ -21,7 +21,7 @@ from ....core.cls.ingredients import Ingr
 from ....core.cls.item import Item
 from ....core.cls.recipe import BlastingRecipe, CampfireCookingRecipe, RecipeBase, SmeltingRecipe, SmokingRecipe
 from ....core.constants import NO_SILK_TOUCH_DROP
-from .registry import CRAFT_RENDERERS
+from .registry import load_builtin_renderers
 
 if TYPE_CHECKING:
 	from .renderer import RecipeRenderer
@@ -109,7 +109,7 @@ def remove_duplicate_furnace_crafts(crafts: list[JsonDict], item: str) -> list[J
 
 def remove_unknown_crafts(crafts: list[JsonDict]) -> list[JsonDict]:
 	""" Drop crafts whose type has no registered renderer. """
-	return [c for c in crafts if c["type"] in CRAFT_RENDERERS]
+	return [c for c in crafts if c["type"] in load_builtin_renderers()]
 
 
 def craft_ingredient_ids(craft: RecipeBase) -> set[str]:
