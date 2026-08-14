@@ -8,7 +8,7 @@ module-root = ""
 
 [project]
 name = "stewbeet"
-version = "3.6.2"
+version = "3.6.3"
 description = "Beet Framework made to help generating advanced Minecraft datapack contents"
 readme = "README.md"
 license = "MIT"
@@ -94,7 +94,7 @@ combine-as-imports = true
 
 # Bumpversion configuration
 [tool.bumpversion]
-current_version = "3.6.2"
+current_version = "3.6.3"
 parse = "(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)"
 serialize = ["{major}.{minor}.{patch}"]
 search = "{current_version}"
