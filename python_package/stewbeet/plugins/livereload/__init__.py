@@ -5,13 +5,13 @@ from stouputils.lazy import ALWAYS_LAZY
 __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
-import os
-import urllib.parse
 from pathlib import Path
 from typing import Any
 
 import stouputils as stp
 from beet import Context
+
+from ..copy_to_destination.sftp import SftpPool, is_sftp_path
 
 # Name of the helper datapack zip dropped into remote destinations to trigger reloads
 LIVERELOAD_ZIP_NAME: str = "livereload.zip"
@@ -25,7 +25,7 @@ def get_local_datapack_destinations(ctx: Context) -> list[str]:
 	Returns:
 		list[str]: Resolved absolute paths of local datapack destination folders (may be empty).
 	"""
-	return [dest for dest in _iter_destinations(ctx, "datapack") if not _is_sftp(dest)]
+	return [dest for dest in _iter_destinations(ctx, "datapack") if not is_sftp_path(dest)]
 
 
 def get_sftp_datapack_destinations(ctx: Context) -> list[str]:
@@ -36,7 +36,7 @@ def get_sftp_datapack_destinations(ctx: Context) -> list[str]:
 	Returns:
 		list[str]: `sftp://` datapack destination URLs (may be empty).
 	"""
-	return [dest for dest in _iter_destinations(ctx, "datapack") if _is_sftp(dest)]
+	return [dest for dest in _iter_destinations(ctx, "datapack") if is_sftp_path(dest)]
 
 
 def get_local_resource_pack_destinations(ctx: Context) -> list[str]:
@@ -47,18 +47,13 @@ def get_local_resource_pack_destinations(ctx: Context) -> list[str]:
 	Returns:
 		list[str]: Resolved absolute paths of local resource pack destination folders (may be empty).
 	"""
-	return [dest for dest in _iter_destinations(ctx, "resource_pack") if not _is_sftp(dest)]
-
-
-def _is_sftp(path: str) -> bool:
-	""" Return whether the given destination is a remote `sftp://` URL. """
-	return str(path).startswith("sftp://")
+	return [dest for dest in _iter_destinations(ctx, "resource_pack") if not is_sftp_path(dest)]
 
 
 def _iter_destinations(ctx: Context, key: str) -> list[str]:
 	""" Return `build_copy_destinations[key]`, resolving local paths to absolute and leaving `sftp://` URLs as-is. """
 	destinations: list[Any] = ctx.meta.get("stewbeet", {}).get("build_copy_destinations", {}).get(key, [])
-	return [str(dest) if _is_sftp(dest) else str(Path(dest).resolve()) for dest in destinations]
+	return [str(dest) if is_sftp_path(dest) else str(Path(dest).resolve()) for dest in destinations]
 
 
 def _walk_up_for_log(start: Path) -> str | None:
@@ -110,33 +105,6 @@ def find_minecraft_dir(ctx: Context, data_pack_dir: Path | None = None, link_min
 	return None
 
 
-def _sftp_filesystem(url: str) -> tuple[Any, urllib.parse.ParseResult]:
-	""" Build an fsspec SFTP filesystem for `url`, resolving the password like `copy_to_destination` does.
-
-	The password is taken from the URL if present, otherwise from `~/stewbeet/credentials.yml` under
-	`sftp: {"user@host": {password: ...}}`.
-
-	Args:
-		url (str): An `sftp://user@host/path` URL.
-	Returns:
-		tuple[Any, ParseResult]: The fsspec filesystem and the parsed URL.
-	"""
-	import fsspec  # type: ignore
-
-	parsed = urllib.parse.urlparse(url)
-	password: str | None = parsed.password
-	if not password:
-		creds_path: str = stp.clean_path("~/stewbeet/credentials.yml")
-		if os.path.exists(creds_path):
-			import yaml
-			with open(creds_path) as f:
-				creds = yaml.safe_load(f)
-			password = creds.get("sftp", {}).get(parsed.netloc, {}).get("password")
-
-	fs = fsspec.filesystem("sftp", host=parsed.hostname, username=parsed.username, password=password, port=parsed.port or 22)  # type: ignore
-	return fs, parsed
-
-
 def _sftp_upload_livereload(local_zip: Path, datapack_url: str) -> str | None:
 	""" Upload the helper zip into a remote `sftp://` datapacks folder.
 
@@ -148,12 +116,10 @@ def _sftp_upload_livereload(local_zip: Path, datapack_url: str) -> str | None:
 	"""
 	zip_url: str = f"{datapack_url.rstrip('/')}/{LIVERELOAD_ZIP_NAME}"
 	try:
-		fs, parsed = _sftp_filesystem(zip_url)
-		remote_dir: str = os.path.dirname(parsed.path)
-		if not fs.exists(remote_dir):
-			stp.warning(f"Remote datapacks directory '{remote_dir}' does not exist. Live reload skipped for '{datapack_url}'.")
+		if SftpPool.list_sizes(zip_url) is None:
+			stp.warning(f"Remote datapacks directory does not exist. Live reload skipped for '{datapack_url}'.")
 			return None
-		fs.put(str(local_zip), parsed.path)
+		SftpPool.put(zip_url, str(local_zip))
 		return zip_url
 	except Exception as e:
 		stp.warning(f"Live reload SFTP upload failed for '{datapack_url}': {e}")
@@ -163,9 +129,7 @@ def _sftp_upload_livereload(local_zip: Path, datapack_url: str) -> str | None:
 def _sftp_remove_livereload(zip_url: str) -> None:
 	""" Remove the previously uploaded helper zip from a remote `sftp://` datapacks folder. """
 	try:
-		fs, parsed = _sftp_filesystem(zip_url)
-		if fs.exists(parsed.path):
-			fs.rm(parsed.path)
+		SftpPool.remove(zip_url)
 	except Exception:
 		pass
 
