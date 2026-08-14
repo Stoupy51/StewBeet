@@ -60,6 +60,7 @@ class MacroAnalyzer:
         """
         self.mcfunctions = mcfunctions
         self.analyzing: set[str] = set()  # Track functions currently being analyzed to prevent infinite recursion
+        self.warnings: list[str] = []  # Kept so a build restoring this analysis from cache can replay them
 
     def analyze_macro_arguments(self, func_path: str) -> None:
         """ Analyze a single function's macro arguments and update its header.
@@ -123,7 +124,8 @@ class MacroAnalyzer:
 
         # Warn if there were missing parameters
         if missing_params:
-            stp.warning(f"Function '{func_path}' had incomplete @args: missing {', '.join(missing_params)}")
+            self.warnings.append(f"Function '{func_path}' had incomplete @args: missing {', '.join(missing_params)}")
+            stp.warning(self.warnings[-1])
 
         self.analyzing.remove(func_path)
 

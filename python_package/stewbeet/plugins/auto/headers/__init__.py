@@ -6,10 +6,11 @@ __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
 import stouputils as stp
-from beet import Context
+from beet import Cache, Context
 
 from ....core.__memory__ import Mem
 from ....core.utils.io import read_function, write_function
+from .cache import CACHE_NAME, analysis_signature, restore_analysis, store_analysis
 from .context_analyzer import ContextAnalyzer
 from .function_analyzer import FunctionAnalyzer
 from .macro_analyzer import MacroAnalyzer
@@ -27,23 +28,32 @@ def beet_default(ctx: Context):
     Mem.ctx = ctx
 
     # Get all mcfunctions paths and create Header objects
-    mcfunctions: dict[str, Header] = {}
-    for path in ctx.data.functions:
-        # Create a Header object from the function content
-        content: str = read_function(path)
-        mcfunctions[path] = Header.from_content(path, content)
+    contents: dict[str, str] = {path: read_function(path) for path in ctx.data.functions}
+    mcfunctions: dict[str, Header] = {path: Header.from_content(path, content) for path, content in contents.items()}
 
-    # Analyze function relationships
-    function_analyzer = FunctionAnalyzer(ctx, mcfunctions)
-    function_analyzer.analyze_all_relationships()
+    # The analysis is cross-referencing, so it is reused as a whole or recomputed as a whole
+    cache: Cache = ctx.cache[CACHE_NAME]
+    signature: str = analysis_signature(ctx, contents)
+    restored: list[str] | None = restore_analysis(cache, signature, mcfunctions)
 
-    # Analyze execution contexts
-    context_analyzer = ContextAnalyzer(mcfunctions)
-    context_analyzer.analyze_all_contexts()
+    if restored is None:
+        # Analyze function relationships
+        function_analyzer = FunctionAnalyzer(ctx, mcfunctions)
+        function_analyzer.analyze_all_relationships()
 
-    # Analyze macro arguments
-    macro_analyzer = MacroAnalyzer(mcfunctions)
-    macro_analyzer.analyze_all_macros()
+        # Analyze execution contexts
+        context_analyzer = ContextAnalyzer(mcfunctions)
+        context_analyzer.analyze_all_contexts()
+
+        # Analyze macro arguments
+        macro_analyzer = MacroAnalyzer(mcfunctions)
+        macro_analyzer.analyze_all_macros()
+
+        store_analysis(cache, signature, mcfunctions, macro_analyzer.warnings)
+    else:
+        # Replay what the skipped analysis would have reported
+        for warning in restored:
+            stp.warning(warning)
 
     # Write updated headers to all mcfunction files
     for path, header in mcfunctions.items():
