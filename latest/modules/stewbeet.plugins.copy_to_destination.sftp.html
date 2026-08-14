@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="stewbeet.plugins.copy_to_destination.sftp module" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="modules/stewbeet.plugins.copy_to_destination.sftp.html" />
+<meta property="og:site_name" content="StewBeet" />
+<meta property="og:description" content="Pooled SFTP connections shared by every plugin that writes to an sftp:// destination. Opening an SSH connection costs roughly half a second: importing paramiko, the key exchange, the authentication..." />
+<meta name="description" content="Pooled SFTP connections shared by every plugin that writes to an sftp:// destination. Opening an SSH connection costs roughly half a second: importing paramiko, the key exchange, the authentication..." />
+<title>stewbeet.plugins.copy_to_destination.sftp module - StewBeet</title><link rel="icon" href="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png"><link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><script data-cfasync="false">(function(){
+    const m = localStorage.getItem("breeze-mode") || "dark";
+    const d = document.documentElement.dataset;
+    d.mode = m;
+    d.theme = m === "auto"
+      ? (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+      : m;
+  })();
+  </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8e8a900e" /><link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" /><link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" /><link rel="stylesheet" type="text/css" href="../_static/treeview.css?v=f8e9195c" /><link rel="stylesheet" type="text/css" href="../_static/custom.css?v=ff2239ef" /><link rel="stylesheet" type="text/css" href="../_static/styles/breeze.css?v=7c62c100" /><script defer="defer" src="../_static/scripts/breeze.js?v=dac9f8c6"></script></head>
+<body>
+  
+  
+  <div class="bz-skip-to-content"><a href="#bz-main-content">Skip to main content</a></div><header class="bz-header-main">
+  <div class="bz-header-start"><a class="bz-header-brand" href="../index.html">
+  <img class="only-light" src="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png" alt="StewBeet" />
+  <img class="only-dark" src="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png" alt="StewBeet" />
+  <span>StewBeet</span>
+</a>
+  </div>
+  <div class="bz-header-end"><div id="docsearch" class="bz-search-button">
+  <a
+    href="../search.html#q"
+    aria-label="Search the docs"
+    data-tooltip="Search the docs"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 -1 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+      />
+    </svg>
+    <span>Search</span>
+    <kbd>Ctrl+K</kbd>
+  </a>
+</div><div class="bz-theme-switcher">
+  <button aria-label="Switch theme" data-tooltip="Switch theme">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="only-light" fill="currentColor">
+      <path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm5.657-8.157a.75.75 0 0 1 0 1.061l-1.061 1.06a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l1.06-1.06a.75.75 0 0 1 1.06 0Zm-9.193 9.193a.75.75 0 0 1 0 1.06l-1.06 1.061a.75.75 0 1 1-1.061-1.06l1.06-1.061a.75.75 0 0 1 1.061 0ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0ZM3 8a.75.75 0 0 1-.75.75H.75a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 3 8Zm13 0a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 16 8Zm-8 5a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13Zm3.536-1.464a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 0 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061ZM2.343 2.343a.75.75 0 0 1 1.061 0l1.06 1.061a.751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018l-1.06-1.06a.75.75 0 0 1 0-1.06Z"></path>
+    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="only-dark" fill="currentColor">
+      <path d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"></path>
+    </svg>
+  </button>
+</div>
+  </div>
+</header><nav class="bz-header-tabs" aria-label="Primary Navigation"><label
+  class="bz-sidebar-primary-toggle"
+  for="bz-sidebar-primary"
+  role="button"
+  tabindex="0"
+  aria-label="Toggle site navigation"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path
+      fill="none"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M3.75 6.75h16.5M3.75 12H12m-8.25 5.25h12.5"
+    />
+  </svg>
+</label><ul><li class="toctree-l1"><a class="reference internal" href="stewbeet.html">stewbeet package</a></li></ul><div class="bz-dropdown">
+    <button aria-haspopup="true" aria-expanded="false">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <g
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+        >
+          <circle cx="12" cy="12" r="1" />
+          <circle cx="19" cy="12" r="1" />
+          <circle cx="5" cy="12" r="1" />
+        </g>
+      </svg>
+    </button>
+    <ul role="menu" aria-hidden="true"></ul>
+  </div>
+</nav><hr class="bz-header-hr">
+  <div class="bz-content"><aside class="bz-sidebar-primary" data-drawer="bz-sidebar-primary">
+  
+  
+    <nav class="bz-sidebar-nav" aria-label="Section Navigation"><ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">stewbeet.plugins.copy_to_destination.sftp module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stewbeet.plugins.copy_to_destination.silent.html">stewbeet.plugins.copy_to_destination.silent module</a></li>
+</ul>
+</nav>
+  
+
+</aside><main id="bz-main-content"><header class="bz-article-header">
+  
+  
+    <nav class="bz-breadcrumbs" aria-label="Breadcrumb">
+  <ol>
+    <li class="bz-breadcrumbs-home">
+      <a href="../index.html" aria-label="Home">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M8.543 2.232a.75.75 0 0 0-1.085 0l-5.25 5.5A.75.75 0 0 0 2.75 9H4v4a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1a1 1 0 1 1 2 0v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V9h1.25a.75.75 0 0 0 .543-1.268l-5.25-5.5Z" />
+        </svg>
+      </a>
+    </li><li class="bz-breadcrumbs-current">
+      <span>stewbeet.plugins.copy_to_destination.sftp module</span>
+    </li>
+  </ol>
+</nav>
+  
+<label
+  class="bz-sidebar-secondary-toggle"
+  for="bz-sidebar-secondary"
+  role="button"
+  tabindex="0"
+  aria-label="Toggle table of contents"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path
+      fill="none"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M3.75 6.75H20.25 M11.25 12H20.25 M7.75 17.25H20.25"
+    />
+  </svg>
+</label></header><article class="bz-article-main" role="main"><div class="bz-page-actions" role="group" aria-label="Page actions">
+  <button data-copy-source="../_sources/modules/stewbeet.plugins.copy_to_destination.sftp.rst.txt">
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M7.024 3.75c0-.966.784-1.75 1.75-1.75H20.25c.966 0 1.75.784 1.75 1.75v11.498a1.75 1.75 0 0 1-1.75 1.75H8.774a1.75 1.75 0 0 1-1.75-1.75Zm1.75-.25a.25.25 0 0 0-.25.25v11.498c0 .139.112.25.25.25H20.25a.25.25 0 0 0 .25-.25V3.75a.25.25 0 0 0-.25-.25Z"></path><path d="M1.995 10.749a1.75 1.75 0 0 1 1.75-1.751H5.25a.75.75 0 1 1 0 1.5H3.745a.25.25 0 0 0-.25.25L3.5 20.25c0 .138.111.25.25.25h9.5a.25.25 0 0 0 .25-.25v-1.51a.75.75 0 1 1 1.5 0v1.51A1.75 1.75 0 0 1 13.25 22h-9.5A1.75 1.75 0 0 1 2 20.25l-.005-9.501Z"></path></svg>
+    <span>Copy page</span>
+  </button>
+  <div class="bz-dropdown">
+    <button
+      aria-label="More actions"
+      aria-haspopup="true"
+      aria-expanded="false"
+    ></button>
+    <ul role="menu" aria-hidden="true">
+      <li>
+        <a href="#" role="menuitem" data-copy-source="../_sources/modules/stewbeet.plugins.copy_to_destination.sftp.rst.txt">
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M7.024 3.75c0-.966.784-1.75 1.75-1.75H20.25c.966 0 1.75.784 1.75 1.75v11.498a1.75 1.75 0 0 1-1.75 1.75H8.774a1.75 1.75 0 0 1-1.75-1.75Zm1.75-.25a.25.25 0 0 0-.25.25v11.498c0 .139.112.25.25.25H20.25a.25.25 0 0 0 .25-.25V3.75a.25.25 0 0 0-.25-.25Z"></path><path d="M1.995 10.749a1.75 1.75 0 0 1 1.75-1.751H5.25a.75.75 0 1 1 0 1.5H3.745a.25.25 0 0 0-.25.25L3.5 20.25c0 .138.111.25.25.25h9.5a.25.25 0 0 0 .25-.25v-1.51a.75.75 0 1 1 1.5 0v1.51A1.75 1.75 0 0 1 13.25 22h-9.5A1.75 1.75 0 0 1 2 20.25l-.005-9.501Z"></path></svg>
+          <span>Copy page</span>
+        </a>
+      </li>
+      <li>
+        <a href="../_sources/modules/stewbeet.plugins.copy_to_destination.sftp.rst.txt" role="menuitem" class="bz-page-actions-external" target="_blank" rel="noopener">
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M3 3a2 2 0 0 1 2-2h9.982a2 2 0 0 1 1.414.586l4.018 4.018A2 2 0 0 1 21 7.018V21a2 2 0 0 1-2 2H4.75a.75.75 0 0 1 0-1.5H19a.5.5 0 0 0 .5-.5V8.5h-4a2 2 0 0 1-2-2v-4H5a.5.5 0 0 0-.5.5v6.25a.75.75 0 0 1-1.5 0Zm12-.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 0-.146-.336l-4.018-4.018A.5.5 0 0 0 15 2.5Z"></path><path d="M4.53 12.24a.75.75 0 0 1-.039 1.06l-2.639 2.45 2.64 2.45a.75.75 0 1 1-1.022 1.1l-3.23-3a.75.75 0 0 1 0-1.1l3.23-3a.75.75 0 0 1 1.06.04Zm3.979 1.06a.75.75 0 1 1 1.02-1.1l3.231 3a.75.75 0 0 1 0 1.1l-3.23 3a.75.75 0 1 1-1.021-1.1l2.639-2.45-2.64-2.45Z"></path></svg>
+          <span>View source</span>
+        </a>
+      </li></ul>
+  </div>
+</div><section id="module-stewbeet.plugins.copy_to_destination.sftp">
+<span id="stewbeet-plugins-copy-to-destination-sftp-module"></span><h1>stewbeet.plugins.copy_to_destination.sftp module<a class="headerlink" href="#module-stewbeet.plugins.copy_to_destination.sftp" title="Link to this heading">#</a></h1>
+<p>Pooled SFTP connections shared by every plugin that writes to an <code class="docutils literal notranslate"><span class="pre">sftp://</span></code> destination.</p>
+<p>Opening an SSH connection costs roughly half a second: importing paramiko, the key exchange, the
+authentication and the first channel. That dwarfs the transfers themselves when a single zip changed.
+One authenticated transport is therefore kept per server for the whole process, and each thread opens a
+cheap channel on top of it instead of shaking hands again. <code class="docutils literal notranslate"><span class="pre">SftpPool.warmup_from_context</span></code> starts all of
+that in the background at the very beginning of the build, so the connection is already waiting by the
+time the copy plugin runs at the end.</p>
+<dl class="py data">
+<dt class="sig sig-object py" id="stewbeet.plugins.copy_to_destination.sftp.CREDENTIALS_PATH">
+<span class="sig-name descname"><span class="pre">CREDENTIALS_PATH</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'~/stewbeet/credentials.yml'</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/copy_to_destination/sftp.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.copy_to_destination.sftp.CREDENTIALS_PATH" title="Link to this definition">#</a></dt>
+<dd><p>{password: …}}` entries used by destinations without an inline password.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>YAML file holding the <a href="#id1"><span class="problematic" id="id2">`</span></a>sftp</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>{”<a class="reference external" href="mailto:user&#37;&#52;&#48;host">user<span>&#64;</span>host</a>”</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="stewbeet.plugins.copy_to_destination.sftp.DESTINATION_KEYS">
+<span class="sig-name descname"><span class="pre">DESTINATION_KEYS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('datapack',</span> <span class="pre">'resource_pack')</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/copy_to_destination/sftp.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.copy_to_destination.sftp.DESTINATION_KEYS" title="Link to this definition">#</a></dt>
+<dd><p>Keys of <cite>meta.stewbeet.build_copy_destinations</cite> that can hold remote destinations.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.plugins.copy_to_destination.sftp.is_sftp_path">
+<span class="sig-name descname"><span class="pre">is_sftp_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/copy_to_destination/sftp.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.copy_to_destination.sftp.is_sftp_path" title="Link to this definition">#</a></dt>
+<dd><p>Return whether the given destination is a remote SFTP URL rather than a local path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – The destination to test.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True when the destination is an <code class="docutils literal notranslate"><span class="pre">sftp://</span></code> URL.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nf">is_sftp_path</span><span class="p">(</span><span class="s2">&quot;sftp://bob@example.com/datapacks&quot;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nf">is_sftp_path</span><span class="p">(</span><span class="s2">&quot;D:/minecraft/latest/resourcepacks&quot;</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.plugins.copy_to_destination.sftp.remote_path_of">
+<span class="sig-name descname"><span class="pre">remote_path_of</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/copy_to_destination/sftp.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.copy_to_destination.sftp.remote_path_of" title="Link to this definition">#</a></dt>
+<dd><p>Return the server-side path of a destination URL.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>url</strong> (<em>str</em>) – An <code class="docutils literal notranslate"><span class="pre">sftp://user[:pass]&#64;host[:port]/path</span></code> URL.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The path part of the URL, always POSIX style.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nf">remote_path_of</span><span class="p">(</span><span class="s2">&quot;sftp://bob@example.com/sftp/Switch/datapacks/x.zip&quot;</span><span class="p">)</span>
+<span class="go">&#39;/sftp/Switch/datapacks/x.zip&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="stewbeet.plugins.copy_to_destination.sftp.SftpEndpoint">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">SftpEndpoint</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">password</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/copy_to_destination/sftp.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.copy_to_destination.sftp.SftpEndpoint" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The SSH server behind one or more <code class="docutils literal notranslate"><span class="pre">sftp://</span></code> destination URLs.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.copy_to_destination.sftp.SftpEndpoint.host">
+<span class="sig-name descname"><span class="pre">host</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/copy_to_destination/sftp.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.copy_to_destination.sftp.SftpEndpoint.host" title="Link to this definition">#</a></dt>
+<dd><p>Hostname of the server.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.copy_to_destination.sftp.SftpEndpoint.port">
+<span class="sig-name descname"><span class="pre">port</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/copy_to_destination/sftp.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.copy_to_destination.sftp.SftpEndpoint.port" title="Link to this definition">#</a></dt>
+<dd><p>SSH port, 22 unless the URL says otherwise.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.copy_to_destination.sftp.SftpEndpoint.username">
+<span class="sig-name descname"><span class="pre">username</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/copy_to_destination/sftp.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.copy_to_destination.sftp.SftpEndpoint.username" title="Link to this definition">#</a></dt>
+<dd><p>User to authenticate as.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.copy_to_destination.sftp.SftpEndpoint.password">
+<span class="sig-name descname"><span class="pre">password</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/copy_to_destination/sftp.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.copy_to_destination.sftp.SftpEndpoint.password" title="Link to this definition">#</a></dt>
+<dd><p>Password to authenticate with, or None to let paramiko try the local keys and agent.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.copy_to_destination.sftp.SftpEndpoint.resolve_password">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">resolve_password</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">netloc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/copy_to_destination/sftp.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.copy_to_destination.sftp.SftpEndpoint.resolve_password" title="Link to this definition">#</a></dt>
+<dd><p>Read the password of a <cite>user&#64;host</cite> pair from the stewbeet credentials file.</p>
+<p>Cached for the whole build: every destination resolves its endpoint, and re-parsing the credentials
+file each time costs more than the upload it is preparing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>netloc</strong> (<em>str</em>) – The <code class="docutils literal notranslate"><span class="pre">user&#64;host</span></code> part of the destination URL, used as credentials key.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The configured password, or None when there is none to be found.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.copy_to_destination.sftp.SftpEndpoint.from_url">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_url</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpEndpoint" title="stewbeet.plugins.copy_to_destination.sftp.SftpEndpoint"><span class="pre">SftpEndpoint</span></a></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/copy_to_destination/sftp.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.copy_to_destination.sftp.SftpEndpoint.from_url" title="Link to this definition">#</a></dt>
+<dd><p>Parse a destination URL into the server it points at.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>url</strong> (<em>str</em>) – An <code class="docutils literal notranslate"><span class="pre">sftp://user[:pass]&#64;host[:port]/path</span></code> URL.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The server behind that URL, password taken from the credentials file when the URL has none.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpEndpoint" title="stewbeet.plugins.copy_to_destination.sftp.SftpEndpoint">SftpEndpoint</a></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nc">SftpEndpoint</span><span class="o">.</span><span class="nf">from_url</span><span class="p">(</span><span class="s2">&quot;sftp://bob:hunter2@example.com/datapacks/x.zip&quot;</span><span class="p">)</span>
+<span class="go">SftpEndpoint(host=&#39;example.com&#39;, port=22, username=&#39;bob&#39;, password=&#39;hunter2&#39;)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="stewbeet.plugins.copy_to_destination.sftp.SftpChannels">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">SftpChannels</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/copy_to_destination/sftp.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.copy_to_destination.sftp.SftpChannels" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_local</span></code></p>
+<p>Per-thread SFTP channel holder: a channel is cheap to open but not safe to share between threads.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.copy_to_destination.sftp.SftpChannels.channel">
+<span class="sig-name descname"><span class="pre">channel</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">SFTPClient</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/copy_to_destination/sftp.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.copy_to_destination.sftp.SftpChannels.channel" title="Link to this definition">#</a></dt>
+<dd><p>This thread’s channel on the shared transport, opened on first use.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="stewbeet.plugins.copy_to_destination.sftp.SftpConnection">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">SftpConnection</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">endpoint</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpEndpoint" title="stewbeet.plugins.copy_to_destination.sftp.SftpEndpoint"><span class="pre">SftpEndpoint</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">ready</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Event</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SSHClient</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">error</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BaseException</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">channels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpChannels" title="stewbeet.plugins.copy_to_destination.sftp.SftpChannels"><span class="pre">SftpChannels</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/copy_to_destination/sftp.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.copy_to_destination.sftp.SftpConnection" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>One authenticated SSH transport, plus one SFTP channel per thread that asks for it.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.copy_to_destination.sftp.SftpConnection.endpoint">
+<span class="sig-name descname"><span class="pre">endpoint</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpEndpoint" title="stewbeet.plugins.copy_to_destination.sftp.SftpEndpoint"><span class="pre">SftpEndpoint</span></a></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/copy_to_destination/sftp.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.copy_to_destination.sftp.SftpConnection.endpoint" title="Link to this definition">#</a></dt>
+<dd><p>The server this connection talks to.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.copy_to_destination.sftp.SftpConnection.ready">
+<span class="sig-name descname"><span class="pre">ready</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">threading.Event</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/copy_to_destination/sftp.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.copy_to_destination.sftp.SftpConnection.ready" title="Link to this definition">#</a></dt>
+<dd><p>Set once the connection attempt finished, successfully or not.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.copy_to_destination.sftp.SftpConnection.client">
+<span class="sig-name descname"><span class="pre">client</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">SSHClient</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/copy_to_destination/sftp.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.copy_to_destination.sftp.SftpConnection.client" title="Link to this definition">#</a></dt>
+<dd><p>The authenticated client, or None while connecting and after a failure.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.copy_to_destination.sftp.SftpConnection.error">
+<span class="sig-name descname"><span class="pre">error</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">BaseException</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/copy_to_destination/sftp.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.copy_to_destination.sftp.SftpConnection.error" title="Link to this definition">#</a></dt>
+<dd><p>The failure raised while connecting, kept to be re-raised in the threads asking for a channel.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.copy_to_destination.sftp.SftpConnection.channels">
+<span class="sig-name descname"><span class="pre">channels</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpChannels" title="stewbeet.plugins.copy_to_destination.sftp.SftpChannels"><span class="pre">SftpChannels</span></a></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/copy_to_destination/sftp.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.copy_to_destination.sftp.SftpConnection.channels" title="Link to this definition">#</a></dt>
+<dd><p>The per-thread channels opened on this connection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.copy_to_destination.sftp.SftpConnection.connect">
+<span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/copy_to_destination/sftp.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.copy_to_destination.sftp.SftpConnection.connect" title="Link to this definition">#</a></dt>
+<dd><p>Open and authenticate the transport, storing any failure instead of raising it.</p>
+<p>This usually runs in the warm-up thread, where nothing would catch an exception. The error is kept
+and re-raised by <cite>channel</cite>, so a broken connection is reported where the copy actually happens.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.copy_to_destination.sftp.SftpConnection.is_usable">
+<span class="sig-name descname"><span class="pre">is_usable</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/copy_to_destination/sftp.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.copy_to_destination.sftp.SftpConnection.is_usable" title="Link to this definition">#</a></dt>
+<dd><p>Return whether this connection is still worth reusing, either still connecting or holding a live transport.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>False once the handshake failed or the server dropped the transport between two builds.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.copy_to_destination.sftp.SftpConnection.channel">
+<span class="sig-name descname"><span class="pre">channel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">SFTPClient</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/copy_to_destination/sftp.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.copy_to_destination.sftp.SftpConnection.channel" title="Link to this definition">#</a></dt>
+<dd><p>Return this thread’s SFTP channel, opening one on the shared transport when needed.</p>
+<p>Waits for the background warm-up to be done. Opening a channel is a single round trip, unlike the
+full handshake <cite>connect</cite> already paid once for the whole build.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A channel this thread can use on its own.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>SFTPClient</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="stewbeet.plugins.copy_to_destination.sftp.SftpPool">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">SftpPool</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/copy_to_destination/sftp.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.copy_to_destination.sftp.SftpPool" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Process-wide registry of SFTP connections, one per server.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.copy_to_destination.sftp.SftpPool.CONNECTIONS">
+<span class="sig-name descname"><span class="pre">CONNECTIONS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpEndpoint" title="stewbeet.plugins.copy_to_destination.sftp.SftpEndpoint"><span class="pre">SftpEndpoint</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpConnection" title="stewbeet.plugins.copy_to_destination.sftp.SftpConnection"><span class="pre">SftpConnection</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/copy_to_destination/sftp.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.copy_to_destination.sftp.SftpPool.CONNECTIONS" title="Link to this definition">#</a></dt>
+<dd><p>Live connections, keyed by server so several destinations on the same host share one transport.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.copy_to_destination.sftp.SftpPool.LOCK">
+<span class="sig-name descname"><span class="pre">LOCK</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">lock</span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;unlocked</span> <span class="pre">_thread.lock</span> <span class="pre">object&gt;</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/copy_to_destination/sftp.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.copy_to_destination.sftp.SftpPool.LOCK" title="Link to this definition">#</a></dt>
+<dd><p>Guards CONNECTIONS so the warm-up and the copy workers cannot open two transports for one server.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.copy_to_destination.sftp.SftpPool.get">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">endpoint</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpEndpoint" title="stewbeet.plugins.copy_to_destination.sftp.SftpEndpoint"><span class="pre">SftpEndpoint</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpConnection" title="stewbeet.plugins.copy_to_destination.sftp.SftpConnection"><span class="pre">SftpConnection</span></a></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/copy_to_destination/sftp.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.copy_to_destination.sftp.SftpPool.get" title="Link to this definition">#</a></dt>
+<dd><p>Return the connection to a server, opening it now when nothing opened it yet.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>endpoint</strong> (<a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpEndpoint" title="stewbeet.plugins.copy_to_destination.sftp.SftpEndpoint"><em>SftpEndpoint</em></a>) – The server to reach.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The shared connection, possibly still being opened by another thread.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpConnection" title="stewbeet.plugins.copy_to_destination.sftp.SftpConnection">SftpConnection</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.copy_to_destination.sftp.SftpPool.channel_for">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">channel_for</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">SFTPClient</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/copy_to_destination/sftp.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.copy_to_destination.sftp.SftpPool.channel_for" title="Link to this definition">#</a></dt>
+<dd><p>Return the channel serving a destination URL, along with the path to write to on the server.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>url</strong> (<em>str</em>) – An <code class="docutils literal notranslate"><span class="pre">sftp://user[:pass]&#64;host[:port]/path</span></code> URL.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>This thread’s channel, and the remote path parsed out of the URL.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[SFTPClient, str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.copy_to_destination.sftp.SftpPool.warmup">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">warmup</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">urls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/copy_to_destination/sftp.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.copy_to_destination.sftp.SftpPool.warmup" title="Link to this definition">#</a></dt>
+<dd><p>Start connecting to every server behind the given destinations, in the background.</p>
+<p>Called at the beginning of the build so the handshake overlaps the rest of the pipeline: by the time
+the copy plugin runs at the end, <cite>get</cite> finds a connection that is already open. Connections left dead
+by a previous build are dropped first, which is what makes <cite>stewbeet watch</cite> reconnect on its own.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>urls</strong> (<em>Iterable</em><em>[</em><em>str</em><em>]</em>) – Destinations to warm up, local paths are ignored.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.copy_to_destination.sftp.SftpPool.warmup_from_context">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">warmup_from_context</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">ctx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Context</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/copy_to_destination/sftp.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.copy_to_destination.sftp.SftpPool.warmup_from_context" title="Link to this definition">#</a></dt>
+<dd><p>Start warming up every remote destination listed in <cite>meta.stewbeet.build_copy_destinations</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ctx</strong> (<em>Context</em>) – The beet context.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.copy_to_destination.sftp.SftpPool.list_sizes">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">list_sizes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/copy_to_destination/sftp.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.copy_to_destination.sftp.SftpPool.list_sizes" title="Link to this definition">#</a></dt>
+<dd><p>List the directory holding a destination, as a mapping of remote path to file size.</p>
+<p>Listing costs one round trip and keeps the upload cache honest: a file deleted or truncated
+server-side gets uploaded again instead of being wrongly considered up to date. A missing directory
+is detected from the listing itself, which saves the extra round trip an existence check would cost.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>url</strong> (<em>str</em>) – An <code class="docutils literal notranslate"><span class="pre">sftp://user[:pass]&#64;host[:port]/path</span></code> URL pointing at a file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Sizes of every entry of the parent directory, or None if it does not exist.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[str, int] | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.copy_to_destination.sftp.SftpPool.put">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">put</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/copy_to_destination/sftp.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.copy_to_destination.sftp.SftpPool.put" title="Link to this definition">#</a></dt>
+<dd><p>Upload a local file to a destination URL.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> (<em>str</em>) – The <code class="docutils literal notranslate"><span class="pre">sftp://</span></code> destination to write to.</p></li>
+<li><p><strong>src</strong> (<em>str</em>) – Path of the local file to send.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.plugins.copy_to_destination.sftp.SftpPool.remove">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">remove</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/copy_to_destination/sftp.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.copy_to_destination.sftp.SftpPool.remove" title="Link to this definition">#</a></dt>
+<dd><p>Delete the file a destination URL points at, doing nothing when it is already gone.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>url</strong> (<em>str</em>) – The <code class="docutils literal notranslate"><span class="pre">sftp://</span></code> destination to delete.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+</article><footer class="bz-article-footer">
+  
+  
+    <nav class="bz-related-pages" aria-label="Related pages navigation"></nav>
+  
+
+</footer><aside class="bz-sidebar-secondary" data-drawer="bz-sidebar-secondary">
+  
+  
+    <nav class="bz-sidebar-toc" aria-label="Table of contents">
+  <p>On this page</p><ul>
+<li><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.CREDENTIALS_PATH"><code class="docutils literal notranslate"><span class="pre">CREDENTIALS_​PATH</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.DESTINATION_KEYS"><code class="docutils literal notranslate"><span class="pre">DESTINATION_​KEYS</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.is_sftp_path"><code class="docutils literal notranslate"><span class="pre">is_​sftp_​path()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.remote_path_of"><code class="docutils literal notranslate"><span class="pre">remote_​path_​of()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpEndpoint"><code class="docutils literal notranslate"><span class="pre">SftpEndpoint</span></code></a><ul>
+<li><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpEndpoint.host"><code class="docutils literal notranslate"><span class="pre">SftpEndpoint​.host</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpEndpoint.port"><code class="docutils literal notranslate"><span class="pre">SftpEndpoint​.port</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpEndpoint.username"><code class="docutils literal notranslate"><span class="pre">SftpEndpoint​.username</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpEndpoint.password"><code class="docutils literal notranslate"><span class="pre">SftpEndpoint​.password</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpEndpoint.resolve_password"><code class="docutils literal notranslate"><span class="pre">SftpEndpoint​.resolve_​password()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpEndpoint.from_url"><code class="docutils literal notranslate"><span class="pre">SftpEndpoint​.from_​url()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpChannels"><code class="docutils literal notranslate"><span class="pre">SftpChannels</span></code></a><ul>
+<li><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpChannels.channel"><code class="docutils literal notranslate"><span class="pre">SftpChannels​.channel</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpConnection"><code class="docutils literal notranslate"><span class="pre">SftpConnection</span></code></a><ul>
+<li><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpConnection.endpoint"><code class="docutils literal notranslate"><span class="pre">SftpConnection​.endpoint</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpConnection.ready"><code class="docutils literal notranslate"><span class="pre">SftpConnection​.ready</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpConnection.client"><code class="docutils literal notranslate"><span class="pre">SftpConnection​.client</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpConnection.error"><code class="docutils literal notranslate"><span class="pre">SftpConnection​.error</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpConnection.channels"><code class="docutils literal notranslate"><span class="pre">SftpConnection​.channels</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpConnection.connect"><code class="docutils literal notranslate"><span class="pre">SftpConnection​.connect()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpConnection.is_usable"><code class="docutils literal notranslate"><span class="pre">SftpConnection​.is_​usable()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpConnection.channel"><code class="docutils literal notranslate"><span class="pre">SftpConnection​.channel()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpPool"><code class="docutils literal notranslate"><span class="pre">SftpPool</span></code></a><ul>
+<li><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpPool.CONNECTIONS"><code class="docutils literal notranslate"><span class="pre">SftpPool​.CONNECTIONS</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpPool.LOCK"><code class="docutils literal notranslate"><span class="pre">SftpPool​.LOCK</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpPool.get"><code class="docutils literal notranslate"><span class="pre">SftpPool​.get()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpPool.channel_for"><code class="docutils literal notranslate"><span class="pre">SftpPool​.channel_​for()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpPool.warmup"><code class="docutils literal notranslate"><span class="pre">SftpPool​.warmup()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpPool.warmup_from_context"><code class="docutils literal notranslate"><span class="pre">SftpPool​.warmup_​from_​context()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpPool.list_sizes"><code class="docutils literal notranslate"><span class="pre">SftpPool​.list_​sizes()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpPool.put"><code class="docutils literal notranslate"><span class="pre">SftpPool​.put()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.copy_to_destination.sftp.SftpPool.remove"><code class="docutils literal notranslate"><span class="pre">SftpPool​.remove()</span></code></a></li>
+</ul>
+</li>
+</ul></nav>
+  
+    
+  
+  
+  
+  
+
+
+
+<div class="bz-repo-stats">
+  <a
+    data-provider="github"
+    data-user="Stoupy51"
+    data-repo="stewbeet"
+    href="https://github.com/Stoupy51/stewbeet"
+    aria-label="Stoupy51/stewbeet repository"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M10.303 16.652c-2.837-.344-4.835-2.385-4.835-5.028 0-1.074.387-2.235 1.031-3.008-.279-.709-.236-2.214.086-2.837.86-.107 2.02.344 2.708.967.816-.258 1.676-.386 2.728-.386 1.053 0 1.913.128 2.686.365.666-.602 1.848-1.053 2.708-.946.3.581.344 2.085.064 2.815.688.817 1.053 1.913 1.053 3.03 0 2.643-1.998 4.641-4.877 5.006.73.473 1.224 1.504 1.224 2.686v2.235c0 .644.537 1.01 1.182.752 3.889-1.483 6.94-5.372 6.94-10.185 0-6.081-4.942-11.044-11.022-11.044-6.081 0-10.98 4.963-10.98 11.044a10.84 10.84 0 0 0 7.112 10.206c.58.215 1.139-.172 1.139-.752v-1.719a2.768 2.768 0 0 1-1.032.215c-1.418 0-2.256-.773-2.857-2.213-.237-.58-.495-.924-.989-.988-.258-.022-.344-.129-.344-.258 0-.258.43-.451.86-.451.623 0 1.16.386 1.719 1.181.43.623.881.903 1.418.903.537 0 .881-.194 1.375-.688.365-.365.645-.687.903-.902Z"></path></svg>
+    <span
+      style="--bz-repo-stats-name-length: 17"
+      title="Stoupy51/stewbeet"
+    >
+      Stoupy51/stewbeet
+    </span>
+    <div class="bz-repo-stats-row">
+      <span class="bz-repo-stats-item" aria-label="Repository stars">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.751 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Zm0 2.445L6.615 5.5a.75.75 0 0 1-.564.41l-3.097.45 2.24 2.184a.75.75 0 0 1 .216.664l-.528 3.084 2.769-1.456a.75.75 0 0 1 .698 0l2.77 1.456-.53-3.084a.75.75 0 0 1 .216-.664l2.24-2.183-3.096-.45a.75.75 0 0 1-.564-.41L8 2.694Z"></path></svg>
+        <span data-stat="stars">-</span>
+      </span>
+      <span class="bz-repo-stats-item" aria-label="Repository forks">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M5 5.372v.878c0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75v-.878a2.25 2.25 0 1 1 1.5 0v.878a2.25 2.25 0 0 1-2.25 2.25h-1.5v2.128a2.251 2.251 0 1 1-1.5 0V8.5h-1.5A2.25 2.25 0 0 1 3.5 6.25v-.878a2.25 2.25 0 1 1 1.5 0ZM5 3.25a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Zm6.75.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm-3 8.75a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Z"></path></svg>
+        <span data-stat="forks">-</span>
+      </span>
+    </div>
+  </a>
+</div>
+
+  
+    <div class="bz-edit-this-page">
+  <a href="https://github.com/Stoupy51/stewbeet/edit/main/modules/stewbeet.plugins.copy_to_destination.sftp.rst" rel="edit">
+    Edit this page
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8.22 2.97a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042l2.97-2.97H3.75a.75.75 0 0 1 0-1.5h7.44L8.22 4.03a.75.75 0 0 1 0-1.06Z"></path></svg>
+  </a>
+</div>
+  
+    
+  
+
+</aside></main>
+  </div>
+<footer class="bz-footer">
+  <div class="bz-footer-copyright"><p class="bz-copyright">© Copyright 2025 - 2026, Stoupy</p><p>
+    
+    
+    
+      Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a href="https://github.com/aksiome/breeze">Breeze theme</a>.
+    
+  </p>
+</div>
+</footer><a href="#" class="bz-back-to-top">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m5 12 7-7 7 7"/><path d="M12 19V5"/>
+    </svg>
+    <span>Back to top</span>
+  </a>
+  <label class="bz-overlay bz-overlay-primary" for="bz-sidebar-primary"></label>
+  <label class="bz-overlay bz-overlay-secondary" for="bz-sidebar-secondary"></label>
+  <input type="checkbox" name="bz-sidebar-primary" id="bz-sidebar-primary" aria-label="Toggle section navigation">
+  <input type="checkbox" name="bz-sidebar-secondary" id="bz-sidebar-secondary" aria-label="Toggle table of contents"><script src="../_static/documentation_options.js?v=ca538420"></script><script src="../_static/doctools.js?v=fd6eb6e6"></script><script src="../_static/sphinx_highlight.js?v=6ffebe34"></script><script src="../_static/clipboard.min.js?v=a7894cd8"></script><script src="../_static/copybutton.js?v=18a8d5f5"></script><script src="../_static/design-tabs.js?v=f930bc37"></script><script src="../_static/treeview.js?v=265ad9b8"></script></body>
+</html>

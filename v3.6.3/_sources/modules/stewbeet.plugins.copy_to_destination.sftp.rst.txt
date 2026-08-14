@@ -1,0 +1,8 @@
+stewbeet.plugins.copy\_to\_destination.sftp module
+==================================================
+
+.. automodule:: stewbeet.plugins.copy_to_destination.sftp
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

@@ -1,0 +1,8 @@
+stewbeet.plugins.auto.text\_renders.confirm module
+==================================================
+
+.. automodule:: stewbeet.plugins.auto.text_renders.confirm
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
