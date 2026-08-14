@@ -20,6 +20,7 @@ from stouputils.typing import JsonDict
 
 from ...core import LATEST_MC_VERSION, MORE_ASSETS_PACK_FORMATS, MORE_DATA_PACK_FORMATS, MORE_DATA_VERSIONS, Mem, set_json_encoder
 from ...dependencies.official_libs import OFFICIAL_LIBS
+from ..copy_to_destination.sftp import SftpPool
 from ..livereload import patch_livereload_for_copy_destinations
 from .beet_patches import apply_beet_patches
 from .project_images import find_pack_png
@@ -56,6 +57,9 @@ def beet_default(ctx: Context, silent: bool = False) -> Generator[None]:
 
 		# Enable livereload through `build_copy_destinations` if beet.contrib.livereload is used (no `beet link` needed)
 		patch_livereload_for_copy_destinations(ctx)
+
+		# Shake hands with the remote destinations while the build runs, so the copy plugin finds an open connection
+		SftpPool.warmup_from_context(ctx)
 
 		# Preprocess project description
 		project_description: TextComponent = Mem.ctx.project_description

@@ -7,14 +7,15 @@ __lazy_modules__ = ALWAYS_LAZY
 # Imports
 import hashlib
 import os
+import posixpath
 import shutil
-import urllib.parse
 from dataclasses import dataclass, field
 
 import stouputils as stp
 from beet import Context
 
 from ...dependencies.download_manager import get_lib_paths
+from .sftp import SftpPool, is_sftp_path, remote_path_of
 
 # Constants
 CACHE_NAME: str = "stewbeet_copy_destinations"
@@ -95,10 +96,6 @@ def beet_default(ctx: Context) -> None:
 			stp.info(f"Copied {group} to destinations: {', '.join(stp.relative_path(x) for x in destinations)}")
 	if report.skipped:
 		stp.debug(f"Skipped {report.skipped} remote file(s) already up to date")
-
-
-def _is_sftp_path(path: str) -> bool:
-	return path.startswith("sftp://")
 
 
 def _datapack_tasks(output_path: str, project_name_simple: str, libs_folder: str, destinations: list[str]) -> list[CopyTask]:
@@ -185,60 +182,6 @@ def _file_sha1(path: str) -> str:
 	return digest.hexdigest()
 
 
-@stp.simple_cache
-def _sftp_password(netloc: str, explicit: str | None) -> str | None:
-	""" Resolve the SFTP password from the URL, falling back to the stewbeet credentials file.
-
-	Cached for the whole build: every copy task resolves its destination, and re-parsing the
-	credentials file each time costs more than the upload it is preparing.
-
-	Args:
-		netloc   (str):        The ``user@host`` part of the destination URL, used as credentials key.
-		explicit (str | None): Password embedded in the URL, if any.
-	Returns:
-		str | None: The password to authenticate with, or None to let paramiko try its keys.
-	"""
-	if explicit:
-		return explicit
-	creds_path: str = stp.clean_path("~/stewbeet/credentials.yml")
-	if not os.path.exists(creds_path):
-		return None
-	import yaml
-	with open(creds_path) as f:
-		creds = yaml.safe_load(f)
-	return creds.get("sftp", {}).get(netloc, {}).get("password")
-
-
-def _sftp_filesystem(dst: str):  # type: ignore[no-untyped-def]
-	""" Open (or reuse) the fsspec SFTP filesystem for a destination URL.
-
-	fsspec mixes ``threading.get_ident()`` into its instance cache key, so the connection is shared
-	between every destination of the same host within a thread, but each copy worker opens its own.
-
-	Args:
-		dst (str): SFTP destination URL (sftp://user[:pass]@host[:port]/path).
-	Returns:
-		The fsspec SFTP filesystem, and the remote path parsed out of the URL.
-	"""
-	import fsspec  # type: ignore  # Local import: pulls in paramiko, useless for local-only destinations
-
-	parsed = urllib.parse.urlparse(dst)
-	password: str | None = _sftp_password(parsed.netloc, parsed.password)
-
-	# With a password in hand, skip paramiko's key hunt: it decrypts every ~/.ssh key and burns a
-	# failed publickey round trip before falling back to the password anyway.
-	credentials: dict[str, bool] = {"look_for_keys": False, "allow_agent": False} if password else {}
-	fs = fsspec.filesystem(  # type: ignore
-		"sftp",
-		host=parsed.hostname,
-		username=parsed.username,
-		password=password,
-		port=parsed.port or 22,
-		**credentials,
-	)
-	return fs, parsed.path
-
-
 def _deduplicate_tasks(tasks: list[CopyTask]) -> list[CopyTask]:
 	""" Drop tasks that would write the same file twice.
 
@@ -254,7 +197,7 @@ def _deduplicate_tasks(tasks: list[CopyTask]) -> list[CopyTask]:
 	unique: list[CopyTask] = []
 	seen: set[str] = set()
 	for task in tasks:
-		key: str = task.dst if _is_sftp_path(task.dst) else os.path.normcase(os.path.realpath(task.dst))
+		key: str = task.dst if is_sftp_path(task.dst) else os.path.normcase(os.path.realpath(task.dst))
 		if key not in seen:
 			seen.add(key)
 			unique.append(task)
@@ -285,33 +228,32 @@ def _run_copy_tasks(ctx: Context, tasks: list[CopyTask]) -> CopyReport:
 	uploaded: dict[str, str] = cache.json.setdefault("uploaded", {})
 
 	# Hash each distinct source once, only when a remote destination needs it
-	remote_tasks: list[CopyTask] = [task for task in tasks if _is_sftp_path(task.dst)]
+	remote_tasks: list[CopyTask] = [task for task in tasks if is_sftp_path(task.dst)]
 	hashes: dict[str, str] = {src: _file_sha1(src) for src in {t.src for t in remote_tasks} if os.path.exists(src)}
 
-	# Connect and list the remote directories once, before any thread starts. Listing is a single
-	# round trip per directory and keeps the sha1 cache honest: a file deleted or truncated
-	# server-side is uploaded again instead of being wrongly considered up to date.
+	# List the remote directories once, before any thread starts. Listing is a single round trip per
+	# directory and keeps the sha1 cache honest: a file deleted or truncated server-side is uploaded
+	# again instead of being wrongly considered up to date.
 	missing_dirs: set[str] = set()
 	listed_dirs: set[str] = set()
 	remote_sizes: dict[str, int] = {}
 	for dst in {t.dst for t in remote_tasks}:
-		fs, remote_path = _sftp_filesystem(dst)
-		remote_dir: str = os.path.dirname(remote_path)
+		remote_dir: str = posixpath.dirname(remote_path_of(dst))
 		if remote_dir in listed_dirs or remote_dir in missing_dirs:
 			continue
-		if not fs.exists(remote_dir):
+		sizes: dict[str, int] | None = SftpPool.list_sizes(dst)
+		if sizes is None:
 			stp.warning(f"Remote directory '{remote_dir}' does not exist. Cannot copy to '{dst}'.")
 			missing_dirs.add(remote_dir)
 			continue
 		listed_dirs.add(remote_dir)
-		remote_sizes.update({str(entry["name"]): int(entry["size"]) for entry in fs.ls(remote_dir, detail=True)})
+		remote_sizes.update(sizes)
 
 	def is_up_to_date(task: CopyTask) -> bool:
 		""" True when the exact same bytes are already sitting at this destination. """
-		_, remote_path = _sftp_filesystem(task.dst)
 		return (
 			uploaded.get(task.dst) == hashes.get(task.src, "")
-			and remote_sizes.get(remote_path) == os.path.getsize(task.src)
+			and remote_sizes.get(remote_path_of(task.dst)) == os.path.getsize(task.src)
 		)
 
 	pending_remote: list[CopyTask] = [t for t in remote_tasks if not is_up_to_date(t)]
@@ -319,19 +261,18 @@ def _run_copy_tasks(ctx: Context, tasks: list[CopyTask]) -> CopyReport:
 
 	def run_task(task: CopyTask) -> tuple[str, bool]:
 		""" Returns (group, copied). """
-		if not _is_sftp_path(task.dst):
+		if not is_sftp_path(task.dst):
 			return task.group, _copy_local(task.src, task.dst)
 
-		fs, remote_path = _sftp_filesystem(task.dst)
-		if os.path.dirname(remote_path) in missing_dirs:
+		if posixpath.dirname(remote_path_of(task.dst)) in missing_dirs:
 			return task.group, False
 
-		fs.put(task.src, remote_path)
+		SftpPool.put(task.dst, task.src)
 		if task.src in hashes:
 			uploaded[task.dst] = hashes[task.src]
 		return task.group, True
 
-	runnable: list[CopyTask] = [t for t in tasks if not _is_sftp_path(t.dst)] + pending_remote
+	runnable: list[CopyTask] = [t for t in tasks if not is_sftp_path(t.dst)] + pending_remote
 	if not runnable:
 		return report
 
