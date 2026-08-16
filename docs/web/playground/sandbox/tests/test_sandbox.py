@@ -133,7 +133,7 @@ def cases() -> list[Case]:
 			ok=True,
 		),
 
-		# ── Disk ──────────────────────────────────────────────────────────────────────────────
+		# ── Disk─────────────────────────────
 		# The three probes below print PROBE:REFUSED rather than the exception's class name, because
 		# the class is not the point and asserting on it is how this test was wrong twice. EROFS and
 		# EACCES both arrive as OSError subclasses, and which one you get depends on whether the
@@ -232,7 +232,7 @@ def cases() -> list[Case]:
 			absent=("PROBE:WROTE100MB",),
 		),
 
-		# ── Memory ────────────────────────────────────────────────────────────────────────────
+		# ── Memory───────────────────────────
 		Case(
 			name="a 2 GB allocation hits RLIMIT_AS, not the container",
 			body='bytearray(2 * 1024 ** 3)\nprint("PROBE:ALLOCATED")',
@@ -241,7 +241,7 @@ def cases() -> list[Case]:
 			absent=("PROBE:ALLOCATED",),
 		),
 
-		# ── Network ───────────────────────────────────────────────────────────────────────────
+		# ── Network──────────────────────────
 		Case(
 			name="there is no route out",
 			body='''
@@ -278,7 +278,7 @@ def cases() -> list[Case]:
 			absent=("PROBE:FETCHED",),
 		),
 
-		# ── Process ───────────────────────────────────────────────────────────────────────────
+		# ── Process──────────────────────────
 		Case(
 			name="an infinite loop is killed",
 			body="while True:\n    pass",
@@ -306,7 +306,7 @@ def cases() -> list[Case]:
 			ok=True,
 		),
 
-		# ── No GPU ────────────────────────────────────────────────────────────────────────────
+		# ── No GPU───────────────────────────
 		Case(
 			name="a made up item id gets a placeholder instead of failing",
 			body='Item(id="zzz_nothing_has_this_name", components={"item_name": {"text": "Nothing"}})\nadd_item_model_component()',

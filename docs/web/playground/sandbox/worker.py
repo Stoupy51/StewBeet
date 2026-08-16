@@ -128,6 +128,8 @@ class Build:
 			"LANG": "C.UTF-8",
 			"LC_ALL": "C.UTF-8",
 			"NO_COLOR": "1",
+			# A visitor clicking Run is not someone building a datapack.
+			"STEWBEET_TELEMETRY": "0",
 		}
 
 	@staticmethod

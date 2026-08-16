@@ -15,7 +15,7 @@ ARG REPO_URL=https://github.com/Stoupy51/StewBeet.git
 ARG REPO_REF=main
 
 
-# ── Textures and renders ──────────────────────────────────────────────────────────────────────
+# ── Textures and renders─────────────────────
 # Its own stage so that editing the worker never re-clones three repositories.
 #
 # Sparse and blobless: only the asset folders are fetched, and .git goes in the same layer so the
@@ -43,7 +43,7 @@ RUN git clone --depth 1 --filter=blob:none --sparse --branch "${REPO_REF}" "${RE
     rm -rf extensive/.git
 
 
-# ── The venv, the assets and the selftest ─────────────────────────────────────────────────────
+# ── The venv, the assets and the selftest────
 FROM ${BASE} AS build
 ARG REPO_URL
 ARG REPO_REF
@@ -83,7 +83,7 @@ RUN /srv/.venv/bin/python -m compileall -q /srv
 RUN /srv/.venv/bin/python /srv/worker.py --selftest
 
 
-# ── Runtime ───────────────────────────────────────────────────────────────────────────────────
+# ── Runtime──────────────────────────────────
 FROM ${BASE} AS runtime
 
 COPY --from=build /srv /srv

@@ -49,6 +49,12 @@ export const STATIC_ROUTE_META: Record<string, PageMeta> = {
             'The open-source projects StewBeet is built on: beet, mecha, bolt, Model Resolver, the Smithed ecosystem, Bookshelf, and every library the build downloads for you.',
         path: '/credits',
     },
+    '/telemetry': {
+        title: 'Telemetry | StewBeet',
+        description:
+            'What StewBeet reports after a successful build: its own version, the Python version and how long the build took. Nothing else, no identifiers, and one environment variable turns it off.',
+        path: '/telemetry',
+    },
     '/playground': {
         title: 'Playground | StewBeet',
         description: 'Write a StewBeet definitions module in the browser and see the datapack and resource pack files it generates: models, recipes, loot tables, predicates and translations.',

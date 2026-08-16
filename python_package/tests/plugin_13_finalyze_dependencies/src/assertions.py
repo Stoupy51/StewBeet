@@ -39,7 +39,7 @@ def beet_default(ctx: Context):
     assert f"#{ns}:load" in load_load_text, \
         f"load:load must reference #{ns}:load for this pack"
 
-    # ── Pack-specific load tag ────────────────────────────────────────────────
+    # ── Pack-specific load tag
     assert f"{ns}:load" in ctx.data.function_tags, \
         f"{ns}:load tag must be created"
     ns_load_text: str = ctx.data.function_tags[f"{ns}:load"].text

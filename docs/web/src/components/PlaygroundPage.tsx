@@ -174,7 +174,7 @@ export const PlaygroundPage: React.FC = () => {
             <div className="relative z-10 px-4 pb-16">
                 <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-4">
 
-                    {/* ── Editor ─────────────────────────────────────────────── */}
+                    {/* ── Editor */}
                     <div className="rounded-xl border border-white/10 bg-slate-900/60 flex flex-col overflow-hidden">
                         <div className="flex items-center gap-2 px-4 py-3 border-b border-white/10 flex-wrap bg-white/[0.03]">
                             <span className="text-sm font-semibold text-slate-200 mr-1">{t('playground.presets')}</span>
@@ -215,7 +215,7 @@ export const PlaygroundPage: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* ── Output ─────────────────────────────────────────────── */}
+                    {/* ── Output */}
                     {/* Exactly as tall as the editor beside it, with the tree scrolling inside.
                         h-0 stops the file list contributing to the grid row, and min-h-full then
                         takes the height the editor column established, so the two always match
@@ -328,7 +328,7 @@ export const PlaygroundPage: React.FC = () => {
                     </div>
                 </div>
 
-                {/* ── Limitations ────────────────────────────────────────────── */}
+                {/* ── Limitations */}
                 {/* Always open. Hiding what the playground cannot do behind a toggle means the
                     reader finds out by being surprised, which is the opposite of the point. */}
                 <div className="max-w-7xl mx-auto mt-4">

@@ -36,7 +36,7 @@ def main() -> None:
             capture_output=True,
             encoding="utf-8",
             errors="replace",
-            env=os.environ | {"PYTHONIOENCODING": "utf-8"},
+            env=os.environ | {"PYTHONIOENCODING": "utf-8", "STEWBEET_TELEMETRY": "0"},
             timeout=300,
         )
 

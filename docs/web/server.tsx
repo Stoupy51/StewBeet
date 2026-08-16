@@ -17,6 +17,7 @@ import { AppRoutes } from './src/AppRoutes';
 import { MarkdownContentProvider } from './src/context/MarkdownContentContext';
 import { applyPageMeta, markdownPageMeta } from './src/utils/pageMeta';
 import { clientIpFrom, handlePlayground } from './src/api/playground';
+import { handleTelemetryBuild, handleTelemetryBuilds } from './src/api/telemetry';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
@@ -63,7 +64,7 @@ Bun.serve({
         const url = new URL(req.url);
         const { pathname } = url;
 
-        // ── Playground builds ─────────────────────────────────────────────────
+        // ── Playground builds
         // Before /markdown and before the static branches: the 404 fallthrough at the bottom would
         // otherwise answer a mistyped API call with dist/404.html, and a caller parsing that as
         // JSON gets a syntax error instead of a status it can act on.
@@ -71,7 +72,17 @@ Bun.serve({
             return handlePlayground(req, clientIpFrom(req, server.requestIP(req)?.address ?? ''));
         }
 
-        // ── SSR for /markdown?src=... ─────────────────────────────────────────
+        // ── Build telemetry──
+        // The address goes no further than the rate limit bucket inside the handler; what reaches
+        // the disk is one number per day. See src/api/telemetry.ts.
+        if (pathname === '/api/telemetry/build') {
+            return handleTelemetryBuild(req, clientIpFrom(req, server.requestIP(req)?.address ?? ''));
+        }
+        if (pathname === '/api/telemetry/builds') {
+            return handleTelemetryBuilds(url);
+        }
+
+        // ── SSR for /markdown?src=...
         if (pathname === '/markdown') {
             const src = url.searchParams.get('src');
             let markdownContent = '';
@@ -140,7 +151,7 @@ Bun.serve({
             }
         }
 
-        // ── Static file serving ───────────────────────────────────────────────
+        // ── Static file serving
         if (pathname !== '/') {
             const file = Bun.file(join(distDir, pathname));
             if (await file.exists()) {

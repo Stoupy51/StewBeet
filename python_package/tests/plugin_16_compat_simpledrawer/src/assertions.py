@@ -16,7 +16,7 @@ def beet_default(ctx: Context):
     assert f"{ns}:calls/simpledrawer/material" in tag_text, \
         "simpledrawer:material tag must reference the namespace material function"
 
-    # ── material dispatch function ────────────────────────────────────────────
+    # ── material dispatch function
     material_path: str = f"{ns}:calls/simpledrawer/material"
     assert material_path in ctx.data.functions, \
         "calls/simpledrawer/material function must be generated"
@@ -38,7 +38,7 @@ def beet_default(ctx: Context):
         assert f"function {ns}:calls/simpledrawer/ruby/main" in variant_content, \
             f"{variant} dispatch must call the ruby/main function"
 
-    # ── main ruby function ────────────────────────────────────────────────────
+    # ── main ruby function───
     main_path: str = f"{ns}:calls/simpledrawer/ruby/main"
     assert main_path in ctx.data.functions, \
         "calls/simpledrawer/ruby/main must be generated"

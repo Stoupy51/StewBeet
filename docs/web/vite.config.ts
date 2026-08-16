@@ -2,30 +2,30 @@ import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 
 /**
- * Serve /api/playground under `bun run dev`.
+ * Serve the /api routes under `bun run dev`.
  *
- * `bun run dev` is Vite and never runs server.tsx, so without this the playground page would get
- * dist-less 404s from the dev server and behave nothing like production. The handler is loaded
- * through ssrLoadModule rather than imported, so editing it stays hot reloadable and there is
- * exactly one implementation of the rate limits, the cache and the build slot.
+ * `bun run dev` is Vite and never runs server.tsx, so without this the playground and telemetry
+ * pages would get dist-less 404s from the dev server and behave nothing like production. The
+ * handlers are loaded through ssrLoadModule rather than imported, so editing them stays hot
+ * reloadable and there is exactly one implementation of the rate limits, the cache, the build slot
+ * and the daily counter.
  *
- * This is the reason src/api/playground.ts may not touch any `Bun.*` API: here it runs on Vite's
- * Node server.
+ * This is the reason src/api/*.ts may not touch any `Bun.*` API: here they run on Vite's Node server.
+ *
+ * The middleware is mounted unprefixed and matches the pathname itself, rather than mounting one
+ * route per endpoint: connect trims a matched prefix off `req.url`, and rebuilding the original
+ * URL from the remainder is exactly the kind of detail that silently drops a query string.
  */
-function playgroundDevApi(): Plugin {
+function apiDevRoutes(): Plugin {
     return {
-        name: 'playground-dev-api',
+        name: 'api-dev-routes',
         configureServer(server) {
-            server.middlewares.use('/api/playground', async (request, response, next) => {
-                if (!request.method) return next()
+            server.middlewares.use(async (request, response, next) => {
+                const url = new URL(request.url ?? '/', 'http://localhost')
+                if (!request.method || !url.pathname.startsWith('/api/')) return next()
 
                 const chunks: Buffer[] = []
                 for await (const chunk of request) chunks.push(chunk as Buffer)
-
-                const module = await server.ssrLoadModule('/src/api/playground.ts') as {
-                    handlePlayground: (req: Request, ip: string) => Promise<Response>
-                    clientIpFrom: (req: Request, socketIp: string) => string
-                }
 
                 // Node's IncomingHttpHeaders allows string[] for repeated headers, which the web
                 // Headers constructor does not take, so they are joined the way HTTP sends them.
@@ -35,13 +35,27 @@ function playgroundDevApi(): Plugin {
                     else if (Array.isArray(value)) headers[name] = value.join(', ')
                 }
 
-                const webRequest = new Request('http://localhost/api/playground', {
+                const webRequest = new Request(url, {
                     method: request.method,
                     headers,
                     body: chunks.length > 0 ? Buffer.concat(chunks) : undefined,
                 })
-                const socketIp = request.socket.remoteAddress ?? ''
-                const result = await module.handlePlayground(webRequest, module.clientIpFrom(webRequest, socketIp))
+
+                const playground = await server.ssrLoadModule('/src/api/playground.ts') as {
+                    handlePlayground: (req: Request, ip: string) => Promise<Response>
+                    clientIpFrom: (req: Request, socketIp: string) => string
+                }
+                const telemetry = await server.ssrLoadModule('/src/api/telemetry.ts') as {
+                    handleTelemetryBuild: (req: Request, ip: string) => Promise<Response>
+                    handleTelemetryBuilds: (url: URL) => Response
+                }
+
+                const clientIp = playground.clientIpFrom(webRequest, request.socket.remoteAddress ?? '')
+                let result: Response
+                if (url.pathname === '/api/playground') result = await playground.handlePlayground(webRequest, clientIp)
+                else if (url.pathname === '/api/telemetry/build') result = await telemetry.handleTelemetryBuild(webRequest, clientIp)
+                else if (url.pathname === '/api/telemetry/builds') result = telemetry.handleTelemetryBuilds(url)
+                else return next()
 
                 response.statusCode = result.status
                 result.headers.forEach((value, name) => response.setHeader(name, value))
@@ -53,7 +67,7 @@ function playgroundDevApi(): Plugin {
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), playgroundDevApi()],
+  plugins: [react(), apiDevRoutes()],
   server: {
     port: 4173,
   },

@@ -24,6 +24,7 @@ export const Footer = memo(() => {
             { label: t('footer.planetMinecraft'), url: 'https://www.planetminecraft.com/data-pack/python-datapack/' },
             { label: t('footer.credits'), url: '/credits', internal: true },
             { label: t('footer.reportBug'), url: 'https://github.com/Stoupy51/StewBeet/issues' },
+            { label: t('footer.telemetry'), url: '/telemetry', internal: true },
         ]
     };
     const linkClass = 'text-slate-400 hover:text-white transition-colors text-sm flex items-center gap-1 group';

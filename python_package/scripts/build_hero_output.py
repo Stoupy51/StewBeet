@@ -82,6 +82,7 @@ def build_hero_project() -> dict[str, bytes]:
     """
     os.chdir(PROJECT)
     sys.path.insert(0, PROJECT)
+    os.environ["STEWBEET_TELEMETRY"] = "0"
     with run_beet(config=f"{PROJECT}/beet.yml", directory=PROJECT, cache=True) as ctx:
         return dump_pack(ctx.data, "datapack") | dump_pack(ctx.assets, "resource_pack")
 
@@ -224,7 +225,7 @@ def check_outputs(meta: dict[str, Any], contents: dict[str, str], images: dict[s
             problems.append(f"{stp.relative_path(path)} is missing.")
             continue
         committed: Any = json.loads(Path(path).read_text(encoding="utf-8"))
-        if isinstance(fresh, dict) and "generatedAt" in fresh:
+        if isinstance(fresh, dict) and "generatedAt" in fresh: # type: ignore
             committed = {**committed, "generatedAt": fresh["generatedAt"]}
         if committed != fresh:
             diff: str = "\n".join(difflib.unified_diff(

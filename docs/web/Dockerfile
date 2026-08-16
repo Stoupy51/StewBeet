@@ -57,6 +57,11 @@ COPY --from=build /app/docs/web/dist ./dist
 COPY --from=build /app/docs/web/src ./src
 COPY --from=build /app/docs/web/server.tsx ./server.tsx
 
+# The telemetry counter is the one piece of state that must outlive the image.
+ENV TELEMETRY_DATA_DIR=/data
+RUN mkdir -p /data && chown bun:bun /data
+VOLUME ["/data"]
+
 USER bun
 EXPOSE 4173
 
