@@ -43,7 +43,7 @@ const outDir: string = join(webDir, 'public');
 const SPHINX_BASE = 'https://stoupy51.github.io/StewBeet/latest/';
 const OBJECTS_INV_URL = `${SPHINX_BASE}objects.inv`;
 
-// ── Markdown ──────────────────────────────────────────────────────────────────
+// ── Markdown─────────────────
 
 /** Strip markdown syntax noise while keeping every searchable word (code included). */
 function toPlainText(markdown: string): string {
@@ -140,7 +140,7 @@ function collectGuides(lang: 'en' | 'fr'): Entry[] {
     return entries;
 }
 
-// ── Python API ────────────────────────────────────────────────────────────────
+// ── Python API───────────────
 
 /** Best-effort map of `module.Symbol` -> first docstring line, for module-level defs/classes. */
 function collectDocstrings(): Map<string, string> {
@@ -236,7 +236,7 @@ async function collectApiSymbols(): Promise<Entry[]> {
     return entries;
 }
 
-// ── Sitemap ───────────────────────────────────────────────────────────────────
+// ── Sitemap──────────────────
 
 /** Same encoding the site's own links use, so a crawler never sees two URLs for one page. */
 function srcToUrl(src: string): string {
@@ -275,7 +275,7 @@ function writeSitemap(docSrcs: Set<string>): void {
     console.log(`[sitemap] ${urls.length} URLs -> public/sitemap.xml`);
 }
 
-// ── Output ────────────────────────────────────────────────────────────────────
+// ── Output───────────────────
 
 const plugins: Entry[] = collectPlugins();
 const api: Entry[] = await collectApiSymbols();

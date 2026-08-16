@@ -5,7 +5,7 @@
 // StewBeet write_* calls. Kept free of any "vscode" dependency so it can be
 // unit-tested with plain Node (see test/blocks.test.js).
 
-// ─── Constants ───────────────────────────────────────────────────────────────
+// ─── Constants──────────────
 
 const FUNC_RE = /\b(write_function|write_versioned_function|write_scheduled_function|write_load_file|write_unload_file|write_tick_file)\s*\(/g;
 
@@ -16,7 +16,7 @@ const FUNCS_2ND_ARG = new Set([
   "write_scheduled_function",
 ]);
 
-// ─── String scanning ─────────────────────────────────────────────────────────
+// ─── String scanning────────
 
 /**
  * Return the string prefix letters (e.g. "f", "rf") sitting immediately before
@@ -91,7 +91,7 @@ function skipInterpolation(text, i) {
   return -1;
 }
 
-// ─── Block detection ─────────────────────────────────────────────────────────
+// ─── Block detection────────
 
 /**
  * Skip past the first argument of a write_* call (the path), stopping just

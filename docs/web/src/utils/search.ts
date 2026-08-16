@@ -94,7 +94,7 @@ const WEIGHT_BODY_REPEAT = 1;
 const MAX_BODY_REPEATS = 5;
 
 
-// ── Normalization ─────────────────────────────────────────────────────────────
+// ── Normalization────────────
 
 // Accent folding is done with a 1:1 character map (not NFD) so that normalized and
 // raw strings keep the same length, letting snippets be sliced from the raw text.
@@ -118,7 +118,7 @@ export function normalize(text: string): string {
     return text.toLowerCase().replace(/[À-ſ]/g, (char) => ACCENT_MAP[char] ?? char);
 }
 
-// ── Index loading ─────────────────────────────────────────────────────────────
+// ── Index loading────────────
 
 const cache = new Map<Language, Promise<SearchIndex>>();
 
@@ -203,7 +203,7 @@ export function loadIndex(language: Language): Promise<SearchIndex> {
     return promise;
 }
 
-// ── Scoring ───────────────────────────────────────────────────────────────────
+// ── Scoring──────────────────
 
 // `_`, `-` and `.` count as boundaries so that snake_case and dotted module paths are
 // matched segment by segment: `pack` is a whole word inside `resource_pack`.

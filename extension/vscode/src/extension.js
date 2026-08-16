@@ -4,7 +4,7 @@
 const vscode = require("vscode");
 const { findBlockOffsets } = require("./blocks");
 
-// ─── Constants ───────────────────────────────────────────────────────────────
+// ─── Constants──────────────
 
 const CFG_KEY = "StewBeet";
 
@@ -68,7 +68,7 @@ function refreshDecos() {
   );
 }
 
-// ─── Extension lifecycle ─────────────────────────────────────────────────────
+// ─── Extension lifecycle────
 
 /** @param {vscode.ExtensionContext} context */
 function activate(context) {
@@ -93,7 +93,7 @@ function activate(context) {
 
 function deactivate() { disposeDecos(); }
 
-// ─── Block detection ─────────────────────────────────────────────────────────
+// ─── Block detection────────
 
 /**
  * Find all mcfunction string blocks in a Python document.
@@ -115,7 +115,7 @@ function findBlocks(doc) {
   });
 }
 
-// ─── Decoration rendering ─────────────────────────────────────────────────────
+// ─── Decoration rendering────
 
 /** @param {vscode.TextEditor} editor */
 function updateDecorations(editor) {

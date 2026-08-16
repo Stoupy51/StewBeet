@@ -16,7 +16,7 @@ const SYNTAXES = path.join(__dirname, "..", "syntaxes");
 const embedded = JSON.parse(fs.readFileSync(path.join(SYNTAXES, "mcfunction-embedded.tmLanguage.json"), "utf8"));
 const injection = JSON.parse(fs.readFileSync(path.join(SYNTAXES, "mcfunction-injection.tmLanguage.json"), "utf8"));
 
-// ─── Structure ───────────────────────────────────────────────────────────────
+// ─── Structure──────────────
 
 test("grammar files are valid JSON with expected scope names", () => {
   assert.equal(embedded.scopeName, "source.mcfunction.embedded");

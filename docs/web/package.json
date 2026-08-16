@@ -8,6 +8,7 @@
     "dev": "bun run hero && bun scripts/build-search-index.ts && bun scripts/prehighlight.ts && vite",
     "build": "bun run hero && bun scripts/build-search-index.ts && bun scripts/build-stats.ts && bun scripts/prehighlight.ts && tsc -b && vite build && bun scripts/prerender.tsx",
     "lint": "eslint .",
+    "test": "bun test",
     "my_server": "bun server.tsx",
     "preview": "vite preview"
   },

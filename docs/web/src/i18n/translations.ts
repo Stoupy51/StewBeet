@@ -413,8 +413,56 @@ export const translations = {
             planetMinecraft: 'PlanetMinecraft',
             credits: 'Credits',
             reportBug: 'Report Bug',
+            telemetry: 'Telemetry',
             license: 'MIT licensed',
             copyright: 'StewBeet by',
+        },
+
+        // Telemetry page
+        telemetry: {
+            title: 'Telemetry',
+            subtitle: 'StewBeet counts successful builds, anonymously, so the project knows whether anyone is using it. Here is the count, the exact contents of that report, and how to switch it off.',
+
+            statsTitle: 'Builds over the last 30 days',
+            buildsLabel: 'builds',
+            averageBuild: 'average build',
+            statsLoading: 'Loading the public numbers...',
+            statsUnavailable: 'The public numbers could not be loaded right now.',
+            chartAlt: 'Daily build counts for the last 30 days.',
+            tableToggle: 'Show the numbers as a table',
+            tableDate: 'Date (UTC)',
+            tableBuilds: 'Builds',
+            tableAverage: 'Average',
+
+            collectedTitle: 'What do we collect?',
+            collectedWhy: 'Three fields, sent once a build has finished. The versions say which releases still need supporting, and the duration says whether builds are getting slower between releases.',
+            collectedHeading: 'Sent after a successful build',
+            collectedVersion: 'The StewBeet version, ex: 3.6.3',
+            collectedPython: 'The Python version, minor only, ex: 3.14',
+            collectedDuration: 'How long the build took, in seconds',
+            collectedDay: 'The day it arrived, kept as a date and never as a time',
+
+            notCollectedHeading: 'Never sent, never stored',
+            notProject: 'Your project, its name or its contents',
+            notCode: 'Your source code',
+            notPaths: 'Your file paths',
+            notUsername: 'Your username',
+            notHostname: 'Your hostname',
+            notEnv: 'Your environment variables',
+            notGit: 'Your repository or its remotes',
+            notIp: 'Your IP address, which the server uses to rate limit and then drops',
+            notIdentifiers: 'Any installation or user identifier, one-off or persistent',
+
+            aggregateNote: 'The server keeps one row per day holding a count and a total duration, so there is no individual build to read back. The public endpoint returns those daily totals and nothing else: GET /api/telemetry/builds?days=30.',
+
+            disableTitle: 'How can I disable telemetry?',
+            disableIntro: 'Set STEWBEET_TELEMETRY=0 before running StewBeet. Nothing is sent, and nothing else about the build changes.',
+            disableNote: 'Telemetry is not required for anything: it runs after the build is already finished, on its own thread, with a three second timeout, and a failure is swallowed. An unreachable server can never fail or delay a build.',
+
+            sourceTitle: 'Telemetry implementation',
+            sourceIntro: 'The whole client side lives in one file, so you do not have to take any of the above on trust:',
+            serverNote: 'The server side is in docs/web/src/api/telemetry.ts in the same repository, and the daily counter it writes is the only telemetry data that exists.',
+            backHome: 'Back to the home page',
         },
     },
 
@@ -828,8 +876,56 @@ export const translations = {
             planetMinecraft: 'PlanetMinecraft',
             credits: 'Remerciements',
             reportBug: 'Signaler un Bug',
+            telemetry: 'Télémétrie',
             license: 'Licence MIT',
             copyright: 'StewBeet par',
+        },
+
+        // Telemetry page
+        telemetry: {
+            title: 'Télémétrie',
+            subtitle: "StewBeet compte les builds réussis, de façon anonyme, pour savoir si le projet sert à quelqu'un. Voici ce compte, le contenu exact de ce qui est envoyé, et comment le désactiver.",
+
+            statsTitle: 'Builds sur les 30 derniers jours',
+            buildsLabel: 'builds',
+            averageBuild: 'build moyen',
+            statsLoading: 'Chargement des chiffres publics...',
+            statsUnavailable: "Les chiffres publics n'ont pas pu être chargés pour le moment.",
+            chartAlt: 'Nombre de builds par jour sur les 30 derniers jours.',
+            tableToggle: 'Afficher les chiffres sous forme de tableau',
+            tableDate: 'Date (UTC)',
+            tableBuilds: 'Builds',
+            tableAverage: 'Moyenne',
+
+            collectedTitle: 'Que collectons-nous ?',
+            collectedWhy: "Trois champs, envoyés une fois le build terminé. Les versions indiquent lesquelles méritent encore d'être supportées, et la durée indique si les builds ralentissent de version en version.",
+            collectedHeading: 'Envoyé après un build réussi',
+            collectedVersion: 'La version de StewBeet, ex : 3.6.3',
+            collectedPython: 'La version de Python, mineure uniquement, ex : 3.14',
+            collectedDuration: 'La durée du build, en secondes',
+            collectedDay: "Le jour d'arrivée, gardé comme une date et jamais comme une heure",
+
+            notCollectedHeading: 'Jamais envoyé, jamais stocké',
+            notProject: 'Votre projet, son nom ou son contenu',
+            notCode: 'Votre code source',
+            notPaths: 'Vos chemins de fichiers',
+            notUsername: "Votre nom d'utilisateur",
+            notHostname: 'Le nom de votre machine',
+            notEnv: "Vos variables d'environnement",
+            notGit: 'Votre dépôt ou ses remotes',
+            notIp: 'Votre adresse IP, que le serveur utilise pour limiter le débit puis oublie',
+            notIdentifiers: "Le moindre identifiant d'installation ou d'utilisateur, temporaire ou permanent",
+
+            aggregateNote: "Le serveur garde une ligne par jour contenant un compte et une durée totale : aucun build individuel n'est donc relisible. Le point d'accès public renvoie ces totaux journaliers et rien d'autre : GET /api/telemetry/builds?days=30.",
+
+            disableTitle: 'Comment désactiver la télémétrie ?',
+            disableIntro: "Définissez STEWBEET_TELEMETRY=0 avant de lancer StewBeet. Rien n'est envoyé, et rien d'autre ne change dans le build.",
+            disableNote: "La télémétrie n'est nécessaire à rien : elle tourne une fois le build déjà terminé, sur son propre thread, avec un délai de trois secondes, et toute erreur est ignorée. Un serveur injoignable ne peut ni faire échouer ni ralentir un build.",
+
+            sourceTitle: 'Le code de la télémétrie',
+            sourceIntro: "Toute la partie cliente tient dans un seul fichier, pour que vous n'ayez rien à croire sur parole :",
+            serverNote: "La partie serveur se trouve dans docs/web/src/api/telemetry.ts du même dépôt, et le compteur journalier qu'elle écrit est la seule donnée de télémétrie qui existe.",
+            backHome: "Retour à l'accueil",
         },
     },
 } as const;

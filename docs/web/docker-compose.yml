@@ -17,6 +17,12 @@ services:
     environment:
       PLAYGROUND_WORKER_URL: "http://playground-worker:8000/build"
       TRUST_PROXY: "1"     # you are behind Traefik
+      TELEMETRY_DATA_DIR: "/data"
+
+    # The build counter, and nothing else, has to survive `docker compose up --force-recreate`.
+    # It is a single JSON file of daily totals, so the volume stays a few kilobytes forever.
+    volumes:
+      - stewbeet-telemetry:/data
 
     labels:
       - "traefik.enable=true"
@@ -51,6 +57,9 @@ services:
     cap_drop: [ALL]
     security_opt: ["no-new-privileges:true"]
     user: "10001:10001"
+
+volumes:
+  stewbeet-telemetry:
 
 networks:
   localnet:

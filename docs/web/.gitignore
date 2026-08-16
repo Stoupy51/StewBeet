@@ -20,6 +20,10 @@ public/sitemap.xml
 # diff: every one of them carries a fresh timestamp or a rebuilt stat.
 src/generated/
 
+# Daily build counter written by src/api/telemetry.ts when TELEMETRY_DATA_DIR is unset,
+# which is the case under `bun run dev`. Production mounts a docker volume instead.
+.telemetry/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

@@ -9,7 +9,7 @@ from beet import Context
 def beet_default(ctx: Context):
     ns: str = ctx.project_id
 
-    # ── shaped_recipes function ───────────────────────────────────────────────
+    # ── shaped_recipes function
     shaped_path: str = f"{ns}:calls/smithed_crafter/shaped_recipes"
     assert shaped_path in ctx.data.functions, \
         "calls/smithed_crafter/shaped_recipes function must be generated"
@@ -23,7 +23,7 @@ def beet_default(ctx: Context):
     assert "shaped_custom" in shaped_content, \
         "shaped_recipes must reference the shaped_custom item result"
 
-    # ── shapeless_recipes function ────────────────────────────────────────────
+    # ── shapeless_recipes function
     shapeless_path: str = f"{ns}:calls/smithed_crafter/shapeless_recipes"
     assert shapeless_path in ctx.data.functions, \
         "calls/smithed_crafter/shapeless_recipes function must be generated"
@@ -33,7 +33,7 @@ def beet_default(ctx: Context):
     assert "shapeless_custom" in shapeless_content, \
         "shapeless_recipes must reference the shapeless_custom result"
 
-    # ── apply_recipe function ─────────────────────────────────────────────────
+    # ── apply_recipe function
     apply_path: str = f"{ns}:calls/smithed_crafter/apply_recipe"
     assert apply_path in ctx.data.functions, \
         "calls/smithed_crafter/apply_recipe function must be generated"

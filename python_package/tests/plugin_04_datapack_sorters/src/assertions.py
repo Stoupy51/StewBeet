@@ -9,7 +9,7 @@ from beet import Context
 def beet_default(ctx: Context):
     base: str = "tns:utils/sort_scores"
 
-    # ── main sort entry function ──────────────────────────────────────────────
+    # ── main sort entry function
     assert f"{base}/sort" in ctx.data.functions, \
         "sort entry function must be generated"
     sort_content: str = ctx.data.functions[f"{base}/sort"].text
@@ -18,7 +18,7 @@ def beet_default(ctx: Context):
     assert "selection_sort_loop" in sort_content, \
         "sort function must call selection_sort_loop"
 
-    # ── selection_sort_loop function ──────────────────────────────────────────
+    # ── selection_sort_loop function
     assert f"{base}/selection_sort_loop" in ctx.data.functions, \
         "selection_sort_loop function must be generated"
     loop_content: str = ctx.data.functions[f"{base}/selection_sort_loop"].text
@@ -27,7 +27,7 @@ def beet_default(ctx: Context):
     assert "move_min_element" in loop_content, \
         "selection_sort_loop must call move_min_element"
 
-    # ── find_min function ─────────────────────────────────────────────────────
+    # ── find_min function────
     assert f"{base}/find_min" in ctx.data.functions, \
         "find_min function must be generated"
     find_min_content: str = ctx.data.functions[f"{base}/find_min"].text

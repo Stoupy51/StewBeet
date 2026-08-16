@@ -39,7 +39,7 @@ def beet_default(ctx: Context):
     assert smoking_data.get("type") == "minecraft:smoking", \
         "smoking recipe must have type minecraft:smoking"
 
-    # ── dispatch mcfunction files ──────────────────────────────────────────────
+    # ── dispatch mcfunction files
     assert f"{fnbt}/smelting_recipes" in ctx.data.functions, \
         "calls/furnace_nbt_recipes/smelting_recipes function must be generated"
     assert f"{fnbt}/blasting_recipes" in ctx.data.functions, \

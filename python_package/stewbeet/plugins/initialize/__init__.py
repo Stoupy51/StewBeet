@@ -8,7 +8,7 @@ __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
 import os
-from collections.abc import Generator
+from collections.abc import Callable, Generator
 from pathlib import Path
 from typing import Any, cast
 
@@ -20,6 +20,7 @@ from stouputils.typing import JsonDict
 
 from ...core import LATEST_MC_VERSION, MORE_ASSETS_PACK_FORMATS, MORE_DATA_PACK_FORMATS, MORE_DATA_VERSIONS, Mem, set_json_encoder
 from ...dependencies.official_libs import OFFICIAL_LIBS
+from ...telemetry import Telemetry
 from ..copy_to_destination.sftp import SftpPool
 from ..livereload import patch_livereload_for_copy_destinations
 from .beet_patches import apply_beet_patches
@@ -29,7 +30,10 @@ from .source_lore_font import SPACER_CHAR, TOOLTIP_FONT, prepare_source_lore_fon
 
 # Main entry point
 def beet_default(ctx: Context, silent: bool = False) -> Generator[None]:
-	with stp.MeasureTime(print_func=stp.debug, message="Total execution time") if not silent else stp.NullContextManager():
+	# The timer runs either way: `silent` only decides whether the line is printed, and the telemetry
+	# event at the bottom needs the same duration the line would have shown.
+	printer: Callable[..., None] = (lambda *_: None) if silent else stp.debug
+	with stp.MeasureTime(print_func=printer, message="Total execution time") as time_ctx:
 
 		# Monkey patch beet before anything walks a directory or saves a pack (see beet_patches)
 		apply_beet_patches()
@@ -208,4 +212,5 @@ def beet_default(ctx: Context, silent: bool = False) -> Generator[None]:
 
 		# Yield message to indicate successful build
 		yield
+		Telemetry.record_build((time_ctx.ns() - time_ctx.start_ns) / 1_000_000_000)
 

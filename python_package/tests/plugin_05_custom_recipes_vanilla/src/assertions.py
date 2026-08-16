@@ -9,7 +9,7 @@ from stewbeet import Context, JsonDict
 def beet_default(ctx: Context):
     ns: str = ctx.project_id
 
-    # ── shaped recipe ─────────────────────────────────────────────────────────
+    # ── shaped recipe────────
     # The recipe file is stored under the namespace with the short key (no namespace prefix)
     assert "shaped_item" in ctx.data[ns].recipes, \
         "shaped_item must have a vanilla recipe file"
@@ -24,7 +24,7 @@ def beet_default(ctx: Context):
     assert shaped_data["pattern"] == ["XX", "XX"], \
         "shaped_item pattern must be [['XX', 'XX']]"
 
-    # ── shapeless recipe ──────────────────────────────────────────────────────
+    # ── shapeless recipe─────
     assert "shapeless_item" in ctx.data[ns].recipes, \
         "shapeless_item must have a vanilla recipe file"
     shapeless_data: JsonDict = ctx.data[ns].recipes["shapeless_item"].data
@@ -33,7 +33,7 @@ def beet_default(ctx: Context):
     assert "ingredients" in shapeless_data, \
         "shapeless recipe must list ingredients"
 
-    # ── stonecutting recipe ───────────────────────────────────────────────────
+    # ── stonecutting recipe──
     assert "stone_slab" in ctx.data[ns].recipes, \
         "stone_slab must have a vanilla recipe file"
     stonecutting_data: JsonDict = ctx.data[ns].recipes["stone_slab"].data
@@ -42,7 +42,7 @@ def beet_default(ctx: Context):
     assert stonecutting_data["result"].get("count") == 2, \
         "stonecutting result_count must be 2"
 
-    # ── smithing transform recipe ─────────────────────────────────────────────
+    # ── smithing transform recipe
     assert "smithed_item" in ctx.data[ns].recipes, \
         "smithed_item must have a vanilla recipe file"
     smithing_data: JsonDict = ctx.data[ns].recipes["smithed_item"].data

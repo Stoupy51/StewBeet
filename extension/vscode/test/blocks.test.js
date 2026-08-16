@@ -17,7 +17,7 @@ function blockTexts(text) {
   return findBlockOffsets(text).map(({ start, end }) => text.slice(start, end));
 }
 
-// ─── Simple blocks ───────────────────────────────────────────────────────────
+// ─── Simple blocks──────────
 
 test("single-line f-string, 2nd arg", () => {
   const text = 'write_function("ns:path", f"say hi")';
