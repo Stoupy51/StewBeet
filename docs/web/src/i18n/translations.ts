@@ -438,7 +438,7 @@ export const translations = {
             collectedWhy: 'Three fields, sent once a build has finished. The versions say which releases still need supporting, and the duration says whether builds are getting slower between releases.',
             collectedHeading: 'Sent after a successful build',
             collectedVersion: 'The StewBeet version, ex: 3.6.3',
-            collectedPython: 'The Python version, minor only, ex: 3.14',
+            collectedPython: 'The Python version, ex: 3.14.7',
             collectedDuration: 'How long the build took, in seconds',
             collectedDay: 'The day it arrived, kept as a date and never as a time',
 
@@ -901,7 +901,7 @@ export const translations = {
             collectedWhy: "Trois champs, envoyés une fois le build terminé. Les versions indiquent lesquelles méritent encore d'être supportées, et la durée indique si les builds ralentissent de version en version.",
             collectedHeading: 'Envoyé après un build réussi',
             collectedVersion: 'La version de StewBeet, ex : 3.6.3',
-            collectedPython: 'La version de Python, mineure uniquement, ex : 3.14',
+            collectedPython: 'La version de Python, ex : 3.14.7',
             collectedDuration: 'La durée du build, en secondes',
             collectedDay: "Le jour d'arrivée, gardé comme une date et jamais comme une heure",
 
