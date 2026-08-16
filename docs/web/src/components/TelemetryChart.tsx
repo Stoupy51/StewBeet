@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 import { useTranslation } from '../i18n/useTranslation';
 
 /** One day of the public series, exactly as /api/telemetry/builds returns it. */
@@ -151,50 +152,97 @@ export const TelemetryChart: React.FC<{ days: TelemetryDay[] }> = ({ days }) => 
 export const TelemetryBreakdownChart: React.FC<{ title: string; items: TelemetryBreakdown[]; emptyLabel: string }> = ({ title, items, emptyLabel }) => {
     const { language } = useTranslation();
     const locale = language === 'fr' ? 'fr-FR' : 'en-US';
+    const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
-    const pieBackground = useMemo(() => {
-        if (items.length === 0) return 'linear-gradient(#1e293b, #1e293b)';
-        let start = 0;
-        const segments = items.map((item, index) => {
-            const end = start + item.percentage;
-            const color = PIE_COLORS[index % PIE_COLORS.length];
-            const segment = `${color} ${start}% ${end}%`;
-            start = end;
-            return segment;
-        });
-        return `conic-gradient(${segments.join(', ')})`;
-    }, [items]);
+    const chartData = useMemo(
+        () => items.map((item, index) => ({
+            name: item.label,
+            value: item.count,
+            percentage: item.percentage,
+            fill: PIE_COLORS[index % PIE_COLORS.length],
+        })),
+        [items],
+    );
 
     const displayedItems = items.slice(0, 6);
 
     return (
         <div className="rounded-panel border border-white/10 bg-slate-900/40 p-4">
             <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-300">{title}</h3>
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-                <div className="relative mx-auto h-24 w-24 shrink-0 rounded-full border border-white/10 shadow-lg shadow-black/30" style={{ background: pieBackground }}>
-                    <div className="absolute inset-[22%] rounded-full border border-white/10 bg-slate-950" />
-                </div>
 
-                <div className="min-w-0 flex-1">
-                    {items.length > 0 ? (
-                        <ul className="space-y-2 text-sm text-slate-300">
-                            {displayedItems.map((item, index) => (
-                                <li key={`${title}-${item.label}`} className="flex items-center justify-between gap-3">
-                                    <span className="flex min-w-0 items-center gap-2">
-                                        <span className="inline-block h-2.5 w-2.5 rounded-full" style={{ backgroundColor: PIE_COLORS[index % PIE_COLORS.length] }} />
-                                        <span className="truncate">{item.label}</span>
-                                    </span>
-                                    <span className="tabular-nums text-slate-400">
-                                        {item.count.toLocaleString(locale)} ({item.percentage.toFixed(1)}%)
-                                    </span>
-                                </li>
-                            ))}
-                        </ul>
-                    ) : (
-                        <p className="text-sm text-slate-400">{emptyLabel}</p>
-                    )}
+            {items.length === 0 ? (
+                <p className="text-sm text-slate-400">{emptyLabel}</p>
+            ) : (
+                <div className="grid gap-4 md:gap-3">
+                    <div className="h-40 w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                                <Tooltip
+                                    formatter={(value, name, item) => {
+                                        const rawValue = Array.isArray(value) ? Number(value[0] ?? 0) : Number(value ?? 0);
+                                        const maybePayload = typeof item === 'object' && item !== null && 'payload' in item
+                                            ? (item as { payload?: { name?: string; value?: number; percentage?: number } }).payload
+                                            : undefined;
+                                        const label = maybePayload?.name ?? String(name ?? '');
+                                        const count = typeof maybePayload?.value === 'number' ? maybePayload.value : rawValue;
+                                        const percentage = typeof maybePayload?.percentage === 'number' ? maybePayload.percentage : 0;
+                                        return [`${count.toLocaleString(locale)} (${percentage.toFixed(1)}%)`, label];
+                                    }}
+                                    contentStyle={{
+                                        backgroundColor: 'rgba(15, 23, 42, 0.96)',
+                                        border: '1px solid rgba(255,255,255,0.15)',
+                                        borderRadius: '12px',
+                                        color: '#e2e8f0',
+                                    }}
+                                />
+                                <Pie
+                                    data={chartData}
+                                    dataKey="value"
+                                    nameKey="name"
+                                    innerRadius={42}
+                                    outerRadius={58}
+                                    paddingAngle={2}
+                                    cx="50%"
+                                    cy="50%"
+                                    isAnimationActive={true}
+                                    onMouseEnter={(_, index) => setHoveredIndex(index)}
+                                    onMouseLeave={() => setHoveredIndex(null)}
+                                >
+                                    {chartData.map((entry, index) => (
+                                        <Cell
+                                            key={`${title}-${entry.name}`}
+                                            fill={entry.fill}
+                                            stroke="rgba(15,23,42,0.9)"
+                                            strokeWidth={2}
+                                            opacity={hoveredIndex === null || hoveredIndex === index ? 1 : 0.45}
+                                        />
+                                    ))}
+                                </Pie>
+                            </PieChart>
+                        </ResponsiveContainer>
+                    </div>
+
+                    <div className="space-y-2 text-sm text-slate-300">
+                        {displayedItems.map((item, index) => (
+                            <button
+                                key={`${title}-${item.label}`}
+                                type="button"
+                                className="flex w-full items-center justify-between gap-3 rounded-md border border-transparent px-2 py-1 text-left transition-colors hover:border-white/10 hover:bg-white/5"
+                                onMouseEnter={() => setHoveredIndex(index)}
+                                onMouseLeave={() => setHoveredIndex(null)}
+                            >
+                                <span className="flex min-w-0 items-center gap-2">
+                                    <span className="inline-block h-2.5 w-2.5 rounded-full" style={{ backgroundColor: PIE_COLORS[index % PIE_COLORS.length] }} />
+                                    <span className="truncate font-medium text-slate-200">{item.label}</span>
+                                </span>
+                                <span className="tabular-nums text-slate-400">
+                                    {item.count.toLocaleString(locale)} <span className="text-slate-500">({item.percentage.toFixed(1)}%)</span>
+                                </span>
+                            </button>
+                        ))}
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 };
