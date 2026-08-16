@@ -42,6 +42,9 @@ describe('the build endpoint', () => {
     test('accepts a documented payload and counts it', async () => {
         expect((await post(validBody)).status).toBe(204);
         expect(publicSeries(30).total).toBe(1);
+        expect(publicSeries(30).breakdowns.versions).toEqual([
+            { label: '3.6.3', count: 1, percentage: 100 },
+        ]);
     });
 
     test('accepts a client that predates duration_seconds', async () => {
@@ -107,17 +110,23 @@ describe('the public series', () => {
 
     test('collapses several builds of one day into one row, never a list of events', () => {
         const at = new Date('2026-08-16T09:00:00Z');
-        countBuild(10, at);
-        countBuild(20, new Date('2026-08-16T23:00:00Z'));
+        countBuild(10, '3.6.3', '3.14.7', at);
+        countBuild(20, '3.6.3', '3.14.7', new Date('2026-08-16T23:00:00Z'));
         const series = publicSeries(30, at);
 
-        expect(Object.keys(series).sort()).toEqual(['avgDurationSeconds', 'days', 'total']);
+        expect(Object.keys(series).sort()).toEqual(['avgDurationSeconds', 'breakdowns', 'days', 'total']);
         for (const day of series.days) {
             expect(Object.keys(day).sort()).toEqual(['avgDurationSeconds', 'builds', 'date']);
         }
         expect(series.days.at(-1)).toEqual({ date: '2026-08-16', builds: 2, avgDurationSeconds: 15 });
         expect(series.total).toBe(2);
         expect(series.avgDurationSeconds).toBe(15);
+        expect(series.breakdowns.versions).toEqual([
+            { label: '3.6.3', count: 2, percentage: 100 },
+        ]);
+        expect(series.breakdowns.pythonVersions).toEqual([
+            { label: '3.14.7', count: 2, percentage: 100 },
+        ]);
     });
 
     test('clamps the window a caller asks for', async () => {
@@ -137,9 +146,23 @@ describe('the public series', () => {
         const body = await handleTelemetryBuilds(new URL('http://localhost/api/telemetry/builds?days=30')).json() as {
             days: { date: string; builds: number }[];
             total: number;
+            breakdowns: {
+                versions: Array<{ label: string; count: number; percentage: number }>;
+                pythonVersions: Array<{ label: string; count: number; percentage: number }>;
+                durationBuckets: Array<{ label: string; count: number; percentage: number }>;
+            };
         };
         expect(body.total).toBe(1);
         expect(body.days.at(-1)).toMatchObject({ date: dayKey(new Date()), builds: 1 });
+        expect(body.breakdowns.versions).toEqual([
+            { label: '3.6.3', count: 1, percentage: 100 },
+        ]);
+        expect(body.breakdowns.pythonVersions).toEqual([
+            { label: '3.14.7', count: 1, percentage: 100 },
+        ]);
+        expect(body.breakdowns.durationBuckets).toEqual([
+            { label: '10s-15s', count: 1, percentage: 100 },
+        ]);
     });
 });
 
