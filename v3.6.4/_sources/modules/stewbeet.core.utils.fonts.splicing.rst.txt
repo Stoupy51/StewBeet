@@ -1,0 +1,8 @@
+stewbeet.core.utils.fonts.splicing module
+=========================================
+
+.. automodule:: stewbeet.core.utils.fonts.splicing
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

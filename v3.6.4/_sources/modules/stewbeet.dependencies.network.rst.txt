@@ -1,0 +1,8 @@
+stewbeet.dependencies.network module
+====================================
+
+.. automodule:: stewbeet.dependencies.network
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

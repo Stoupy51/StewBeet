@@ -1,0 +1,20 @@
+stewbeet.plugins.auto.text\_renders package
+===========================================
+
+.. automodule:: stewbeet.plugins.auto.text_renders
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.plugins.auto.text_renders.config
+   stewbeet.plugins.auto.text_renders.confirm
+   stewbeet.plugins.auto.text_renders.emit
+   stewbeet.plugins.auto.text_renders.scan
+   stewbeet.plugins.auto.text_renders.silent

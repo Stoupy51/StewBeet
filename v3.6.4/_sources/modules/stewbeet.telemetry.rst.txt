@@ -1,0 +1,8 @@
+stewbeet.telemetry module
+=========================
+
+.. automodule:: stewbeet.telemetry
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
