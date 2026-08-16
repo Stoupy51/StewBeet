@@ -433,6 +433,12 @@ export const translations = {
             tableDate: 'Date (UTC)',
             tableBuilds: 'Builds',
             tableAverage: 'Average',
+            versionBreakdown: 'StewBeet versions',
+            pythonBreakdown: 'Python versions',
+            durationBreakdown: 'Build duration',
+            noVersionData: 'No version data yet.',
+            noPythonData: 'No Python data yet.',
+            noDurationData: 'No build duration data yet.',
 
             collectedTitle: 'What do we collect?',
             collectedWhy: 'Three fields, sent once a build has finished. The versions say which releases still need supporting, and the duration says whether builds are getting slower between releases.',
@@ -453,7 +459,7 @@ export const translations = {
             notIp: 'Your IP address, which the server uses to rate limit and then drops',
             notIdentifiers: 'Any installation or user identifier, one-off or persistent',
 
-            aggregateNote: 'The server keeps one row per day holding a count and a total duration, so there is no individual build to read back. The public endpoint returns those daily totals and nothing else: GET /api/telemetry/builds?days=30.',
+            aggregateNote: 'The server keeps one row per day with the count, total duration, and the distribution of StewBeet versions, Python versions and build times. The public endpoint returns the daily totals plus these breakdowns for the chart page: GET /api/telemetry/builds?days=30.',
 
             disableTitle: 'How can I disable telemetry?',
             disableIntro: 'Set STEWBEET_TELEMETRY=0 before running StewBeet. Nothing is sent, and nothing else about the build changes.',
@@ -461,7 +467,7 @@ export const translations = {
 
             sourceTitle: 'Telemetry implementation',
             sourceIntro: 'The whole client side lives in one file, so you do not have to take any of the above on trust:',
-            serverNote: 'The server side is in docs/web/src/api/telemetry.ts in the same repository, and the daily counter it writes is the only telemetry data that exists.',
+            serverNote: 'The server side is in docs/web/src/api/telemetry.ts in the same repository, and it records the daily totals together with version and duration distributions that power the pie charts on this page.',
             backHome: 'Back to the home page',
         },
     },
@@ -916,7 +922,7 @@ export const translations = {
             notIp: 'Votre adresse IP, que le serveur utilise pour limiter le débit puis oublie',
             notIdentifiers: "Le moindre identifiant d'installation ou d'utilisateur, temporaire ou permanent",
 
-            aggregateNote: "Le serveur garde une ligne par jour contenant un compte et une durée totale : aucun build individuel n'est donc relisible. Le point d'accès public renvoie ces totaux journaliers et rien d'autre : GET /api/telemetry/builds?days=30.",
+            aggregateNote: "Le serveur garde une ligne par jour avec le nombre, la durée totale, ainsi que la répartition des versions StewBeet, des versions Python et des durées de build. Le point d'accès public renvoie ces totaux journaliers ainsi que ces répartitions pour la page de graphiques : GET /api/telemetry/builds?days=30.",
 
             disableTitle: 'Comment désactiver la télémétrie ?',
             disableIntro: "Définissez STEWBEET_TELEMETRY=0 avant de lancer StewBeet. Rien n'est envoyé, et rien d'autre ne change dans le build.",
@@ -924,7 +930,7 @@ export const translations = {
 
             sourceTitle: 'Le code de la télémétrie',
             sourceIntro: "Toute la partie cliente tient dans un seul fichier, pour que vous n'ayez rien à croire sur parole :",
-            serverNote: "La partie serveur se trouve dans docs/web/src/api/telemetry.ts du même dépôt, et le compteur journalier qu'elle écrit est la seule donnée de télémétrie qui existe.",
+            serverNote: "La partie serveur se trouve dans docs/web/src/api/telemetry.ts du même dépôt, et elle enregistre les totaux journaliers ainsi que les répartitions de versions et de durées qui alimentent les graphiques de cette page.",
             backHome: "Retour à l'accueil",
         },
     },

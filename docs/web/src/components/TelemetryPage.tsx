@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { HiArrowLeft, HiCheck, HiExternalLink, HiX } from 'react-icons/hi';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
-import { TelemetryChart, type TelemetryDay } from './TelemetryChart';
+import { TelemetryBreakdownChart, TelemetryChart, type TelemetryBreakdown, type TelemetryDay } from './TelemetryChart';
 import { useTranslation } from '../i18n/useTranslation';
 import { useMotionSafe } from '../hooks/useMotionSafe';
 import { HEADING, SELECTION_BRAND, TEXT_ACCENT, TEXT_ACCENT_HOVER } from '../theme';
@@ -17,6 +17,11 @@ interface TelemetrySeries {
     days: TelemetryDay[];
     total: number;
     avgDurationSeconds: number;
+    breakdowns: {
+        versions: TelemetryBreakdown[];
+        pythonVersions: TelemetryBreakdown[];
+        durationBuckets: TelemetryBreakdown[];
+    };
 }
 
 /** The three collected fields, and the eleven things that are never looked at, as translation keys. */
@@ -90,6 +95,24 @@ export const TelemetryPage: React.FC = () => {
                                     {series.avgDurationSeconds > 0 && ` · ${t('telemetry.averageBuild')} ${series.avgDurationSeconds.toFixed(1)}s`}
                                 </p>
                                 <TelemetryChart days={series.days} />
+
+                                <div className="mt-8 grid gap-4 md:grid-cols-3">
+                                    <TelemetryBreakdownChart
+                                        title={t('telemetry.versionBreakdown')}
+                                        items={series.breakdowns.versions}
+                                        emptyLabel={t('telemetry.noVersionData')}
+                                    />
+                                    <TelemetryBreakdownChart
+                                        title={t('telemetry.pythonBreakdown')}
+                                        items={series.breakdowns.pythonVersions}
+                                        emptyLabel={t('telemetry.noPythonData')}
+                                    />
+                                    <TelemetryBreakdownChart
+                                        title={t('telemetry.durationBreakdown')}
+                                        items={series.breakdowns.durationBuckets}
+                                        emptyLabel={t('telemetry.noDurationData')}
+                                    />
+                                </div>
                             </>
                         ) : (
                             <p className="mt-4 text-slate-400">{failed ? t('telemetry.statsUnavailable') : t('telemetry.statsLoading')}</p>

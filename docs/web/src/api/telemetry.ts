@@ -46,6 +46,15 @@ const MAX_DURATION_SECONDS = 24 * 3600;
 interface DayTotals {
     builds: number;
     seconds: number;
+    versions: Record<string, number>;
+    pythonVersions: Record<string, number>;
+    durationBuckets: Record<string, number>;
+}
+
+interface DatasetBreakdownMap {
+    versions: Record<string, number>;
+    pythonVersions: Record<string, number>;
+    durationBuckets: Record<string, number>;
 }
 
 /** The file on disk: a version tag and one entry per `YYYY-MM-DD`. */
@@ -61,6 +70,18 @@ export interface PublicDay {
     avgDurationSeconds: number;
 }
 
+export interface PublicBreakdown {
+    label: string;
+    count: number;
+    percentage: number;
+}
+
+export interface PublicBreakdowns {
+    versions: PublicBreakdown[];
+    pythonVersions: PublicBreakdown[];
+    durationBuckets: PublicBreakdown[];
+}
+
 /** Per address arrival times, pruned on every lookup. Never written to disk. */
 const hits = new Map<string, number[]>();
 
@@ -72,6 +93,40 @@ function json(status: number, body: Record<string, unknown>, headers: Record<str
         status,
         headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...headers },
     });
+}
+
+function emptyDayTotals(): DayTotals {
+    return { builds: 0, seconds: 0, versions: {}, pythonVersions: {}, durationBuckets: {} };
+}
+
+function normalizeDayTotals(totals: Partial<DayTotals> | undefined): DayTotals {
+    const value = totals ?? emptyDayTotals();
+    return {
+        builds: typeof value.builds === 'number' ? value.builds : 0,
+        seconds: typeof value.seconds === 'number' ? value.seconds : 0,
+        versions: typeof value.versions === 'object' && value.versions ? Object.fromEntries(
+            Object.entries(value.versions).filter(([key, count]) => typeof key === 'string' && typeof count === 'number'),
+        ) : {},
+        pythonVersions: typeof value.pythonVersions === 'object' && value.pythonVersions ? Object.fromEntries(
+            Object.entries(value.pythonVersions).filter(([key, count]) => typeof key === 'string' && typeof count === 'number'),
+        ) : {},
+        durationBuckets: typeof value.durationBuckets === 'object' && value.durationBuckets ? Object.fromEntries(
+            Object.entries(value.durationBuckets).filter(([key, count]) => typeof key === 'string' && typeof count === 'number'),
+        ) : {},
+    };
+}
+
+function durationBucketLabel(durationSeconds: number): string {
+    const seconds = Math.max(0, Number.isFinite(durationSeconds) ? durationSeconds : 0);
+    const lowerBound = Math.floor(seconds / 5) * 5;
+    const upperBound = lowerBound + 5;
+    return `${lowerBound}s-${upperBound}s`;
+}
+
+function summarizeBreakdown(values: Record<string, number>, total: number): PublicBreakdown[] {
+    return Object.entries(values)
+        .map(([label, count]) => ({ label, count, percentage: total > 0 ? Number(((count / total) * 100).toFixed(1)) : 0 }))
+        .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
 }
 
 /** `YYYY-MM-DD` in UTC, so the day a build lands on does not depend on where the server is. */
@@ -100,13 +155,13 @@ function load(): Dataset {
         const parsed = JSON.parse(readFileSync(DATA_FILE, 'utf-8')) as Partial<Dataset>;
         const days: Record<string, DayTotals> = {};
         for (const [date, totals] of Object.entries(parsed.days ?? {})) {
-            if (/^\d{4}-\d{2}-\d{2}$/.test(date) && typeof totals?.builds === 'number') {
-                days[date] = { builds: totals.builds, seconds: typeof totals.seconds === 'number' ? totals.seconds : 0 };
+            if (/^\d{4}-\d{2}-\d{2}$/.test(date) && (typeof totals?.builds === 'number' || typeof totals?.seconds === 'number')) {
+                days[date] = normalizeDayTotals(totals as Partial<DayTotals> | undefined);
             }
         }
-        dataset = { version: 1, days };
+        dataset = { version: 2, days };
     } catch {
-        dataset = { version: 1, days: {} };
+        dataset = { version: 2, days: {} };
     }
     return dataset;
 }
@@ -163,11 +218,24 @@ function rateLimited(ip: string): boolean {
  * @param at              When it arrived, which is the only timestamp involved and is kept only as
  *                        the day it falls in.
  */
-export function countBuild(durationSeconds: number, at: Date = new Date()): void {
+export function countBuild(
+    durationSeconds: number,
+    stewbeetVersionOrAt: string | Date = 'unknown',
+    pythonVersionOrAt: string | Date = 'unknown',
+    maybeAt: Date = new Date(),
+): void {
     const data = load();
+    const at = stewbeetVersionOrAt instanceof Date ? stewbeetVersionOrAt : maybeAt;
+    const version = typeof stewbeetVersionOrAt === 'string' ? stewbeetVersionOrAt : 'unknown';
+    const pythonVersion = typeof pythonVersionOrAt === 'string' ? pythonVersionOrAt : 'unknown';
     const key = dayKey(at);
-    const totals = data.days[key] ?? { builds: 0, seconds: 0 };
-    data.days[key] = { builds: totals.builds + 1, seconds: totals.seconds + durationSeconds };
+    const totals = data.days[key] ?? emptyDayTotals();
+    totals.builds += 1;
+    totals.seconds += durationSeconds;
+    totals.versions[version] = (totals.versions[version] ?? 0) + 1;
+    totals.pythonVersions[pythonVersion] = (totals.pythonVersions[pythonVersion] ?? 0) + 1;
+    totals.durationBuckets[durationBucketLabel(durationSeconds)] = (totals.durationBuckets[durationBucketLabel(durationSeconds)] ?? 0) + 1;
+    data.days[key] = totals;
     save(data, at);
 }
 
@@ -177,10 +245,16 @@ export function countBuild(durationSeconds: number, at: Date = new Date()): void
  * @param days  Length of the window, already clamped.
  * @param today The day the window ends on.
  */
-export function publicSeries(days: number, today: Date = new Date()): { days: PublicDay[]; total: number; avgDurationSeconds: number } {
+export function publicSeries(days: number, today: Date = new Date()): {
+    days: PublicDay[];
+    total: number;
+    avgDurationSeconds: number;
+    breakdowns: PublicBreakdowns;
+} {
     const data = load();
-    const series: PublicDay[] = windowDays(days, today).map(date => {
-        const totals = data.days[date] ?? { builds: 0, seconds: 0 };
+    const window = windowDays(days, today);
+    const series: PublicDay[] = window.map(date => {
+        const totals = data.days[date] ?? emptyDayTotals();
         return {
             date,
             builds: totals.builds,
@@ -189,8 +263,26 @@ export function publicSeries(days: number, today: Date = new Date()): { days: Pu
     });
 
     const total = series.reduce((sum, day) => sum + day.builds, 0);
-    const seconds = windowDays(days, today).reduce((sum, date) => sum + (data.days[date]?.seconds ?? 0), 0);
-    return { days: series, total, avgDurationSeconds: total > 0 ? Number((seconds / total).toFixed(3)) : 0 };
+    const seconds = window.reduce((sum, date) => sum + (data.days[date]?.seconds ?? 0), 0);
+
+    const breakdowns: DatasetBreakdownMap = { versions: {}, pythonVersions: {}, durationBuckets: {} };
+    for (const date of window) {
+        const day = data.days[date] ?? emptyDayTotals();
+        for (const [label, count] of Object.entries(day.versions)) breakdowns.versions[label] = (breakdowns.versions[label] ?? 0) + count;
+        for (const [label, count] of Object.entries(day.pythonVersions)) breakdowns.pythonVersions[label] = (breakdowns.pythonVersions[label] ?? 0) + count;
+        for (const [label, count] of Object.entries(day.durationBuckets)) breakdowns.durationBuckets[label] = (breakdowns.durationBuckets[label] ?? 0) + count;
+    }
+
+    return {
+        days: series,
+        total,
+        avgDurationSeconds: total > 0 ? Number((seconds / total).toFixed(3)) : 0,
+        breakdowns: {
+            versions: summarizeBreakdown(breakdowns.versions, total),
+            pythonVersions: summarizeBreakdown(breakdowns.pythonVersions, total),
+            durationBuckets: summarizeBreakdown(breakdowns.durationBuckets, total),
+        },
+    };
 }
 
 /** A version string is only accepted when it is short and made of the characters a version has. */
@@ -233,7 +325,11 @@ export async function handleTelemetryBuild(req: Request, clientIp: string): Prom
         return json(429, { ok: false, error: 'rate_limited' });
     }
 
-    countBuild(typeof duration === 'number' ? duration : 0);
+    countBuild(
+        typeof duration === 'number' ? duration : 0,
+        String(body.stewbeet_version),
+        String(body.python_version),
+    );
     // 204 rather than a body: the client closes the connection without reading, by design.
     return new Response(null, { status: 204, headers: { 'Cache-Control': 'no-store' } });
 }

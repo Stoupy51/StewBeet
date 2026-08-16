@@ -8,6 +8,14 @@ export interface TelemetryDay {
     avgDurationSeconds: number;
 }
 
+export interface TelemetryBreakdown {
+    label: string;
+    count: number;
+    percentage: number;
+}
+
+const PIE_COLORS = ['#38bdf8', '#34d399', '#a78bfa', '#fbbf24', '#f87171', '#fb7185', '#22d3ee', '#f472b6', '#4ade80', '#c084fc'];
+
 /** Height of the plot. Bars are read against each other, so the number only sets the proportions. */
 const PLOT_HEIGHT = 176;
 
@@ -139,3 +147,55 @@ export const TelemetryChart: React.FC<{ days: TelemetryDay[] }> = ({ days }) => 
         </div>
     );
 };
+
+export const TelemetryBreakdownChart: React.FC<{ title: string; items: TelemetryBreakdown[]; emptyLabel: string }> = ({ title, items, emptyLabel }) => {
+    const { language } = useTranslation();
+    const locale = language === 'fr' ? 'fr-FR' : 'en-US';
+
+    const pieBackground = useMemo(() => {
+        if (items.length === 0) return 'linear-gradient(#1e293b, #1e293b)';
+        let start = 0;
+        const segments = items.map((item, index) => {
+            const end = start + item.percentage;
+            const color = PIE_COLORS[index % PIE_COLORS.length];
+            const segment = `${color} ${start}% ${end}%`;
+            start = end;
+            return segment;
+        });
+        return `conic-gradient(${segments.join(', ')})`;
+    }, [items]);
+
+    const displayedItems = items.slice(0, 6);
+
+    return (
+        <div className="rounded-panel border border-white/10 bg-slate-900/40 p-4">
+            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-300">{title}</h3>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                <div className="relative mx-auto h-24 w-24 shrink-0 rounded-full border border-white/10 shadow-lg shadow-black/30" style={{ background: pieBackground }}>
+                    <div className="absolute inset-[22%] rounded-full border border-white/10 bg-slate-950" />
+                </div>
+
+                <div className="min-w-0 flex-1">
+                    {items.length > 0 ? (
+                        <ul className="space-y-2 text-sm text-slate-300">
+                            {displayedItems.map((item, index) => (
+                                <li key={`${title}-${item.label}`} className="flex items-center justify-between gap-3">
+                                    <span className="flex min-w-0 items-center gap-2">
+                                        <span className="inline-block h-2.5 w-2.5 rounded-full" style={{ backgroundColor: PIE_COLORS[index % PIE_COLORS.length] }} />
+                                        <span className="truncate">{item.label}</span>
+                                    </span>
+                                    <span className="tabular-nums text-slate-400">
+                                        {item.count.toLocaleString(locale)} ({item.percentage.toFixed(1)}%)
+                                    </span>
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p className="text-sm text-slate-400">{emptyLabel}</p>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+};
+
