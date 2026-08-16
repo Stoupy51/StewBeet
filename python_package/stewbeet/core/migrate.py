@@ -8,6 +8,7 @@ __lazy_modules__ = ALWAYS_LAZY
 import io
 import os
 import shutil
+import sys
 import zipfile
 from typing import Any
 
@@ -15,6 +16,29 @@ import requests
 import stouputils as stp
 
 from ..utils import get_project_config
+from .template import TEMPLATES_URL
+
+
+def select_template_name() -> str | None:
+    """ Select the template to use when migrating an existing project. """
+    template_name: str = sys.argv[2].lower() if len(sys.argv) >= 3 else ""
+    if template_name:
+        if template_name not in ("minimal", "basic"):
+            stp.error("Migration supports only the 'minimal' and 'basic' templates.")
+            return None
+        return template_name
+
+    stp.warning("Choose a starting template for the migrated project:")
+    stp.info("  - minimal: simple beet project")
+    stp.info("  - basic: wider default setup")
+    stp.info("Press Enter for 'minimal' or type 'basic':", end=" ")
+    choice = input().strip().lower()
+    if not choice:
+        choice = "minimal"
+    if choice not in ("minimal", "basic"):
+        stp.error(f"Template '{choice}' is not available for migration.")
+        return None
+    return choice
 
 
 def migrate_command() -> None:
@@ -57,8 +81,12 @@ def migrate_command() -> None:
     if resource_pack_info:
         stp.info(f"✓ Found resource pack: {stp.relative_path(resource_pack_info['path'])}")
 
+    template_name = select_template_name()
+    if template_name is None:
+        return
+
     # Ask user confirmation
-    stp.warning("This will download the 'basic' template and migrate your existing files to the StewBeet structure.")
+    stp.warning(f"This will download the '{template_name}' template and migrate your existing files to the StewBeet structure.")
     stp.warning("It's recommended to backup your project before proceeding.")
     stp.info("Do you want to continue? (y/n):", end=" ")
     choice = input().strip().lower()
@@ -66,10 +94,10 @@ def migrate_command() -> None:
         stp.info("Migration cancelled.")
         return
 
-    # Download the basic template
-    stp.info("Downloading basic template...")
+    # Download the selected template
+    stp.info(f"Downloading {template_name} template...")
     from importlib.metadata import version
-    template_url = f"https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/tags/v{version('stewbeet')}/templates/basic_template.zip"
+    template_url = TEMPLATES_URL[template_name]["url"].replace("__VERSION__", f"v{version('stewbeet')}")
 
     try:
         response = requests.get(template_url)
