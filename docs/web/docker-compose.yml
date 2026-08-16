@@ -1,0 +1,62 @@
+services:
+  web:
+    container_name: stewbeet-paralya
+    restart: unless-stopped
+
+    # The Dockerfile comes from git too, so there is nothing on this host left to go stale.
+    build:
+      context: "https://github.com/Stoupy51/StewBeet.git#main"
+      dockerfile: docs/web/Dockerfile
+
+    # Connect to your existing Traefik networks
+    networks:
+      - localnet
+      - proxied
+      - playground
+
+    environment:
+      PLAYGROUND_WORKER_URL: "http://playground-worker:8000/build"
+      TRUST_PROXY: "1"     # you are behind Traefik
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxied"
+
+      # Route: stewbeet.paralya.fr
+      - "traefik.http.routers.stewbeet.rule=Host(`stewbeet.paralya.fr`)"
+      - "traefik.http.routers.stewbeet.entrypoints=websecure"
+      - "traefik.http.routers.stewbeet.tls=true"
+      - "traefik.http.routers.stewbeet.tls.certresolver=le"
+
+      # Specify the port for Traefik (Vite preview runs on 4173)
+      - "traefik.http.services.stewbeet.loadbalancer.server.port=4173"
+
+  playground-worker:
+    container_name: stewbeet-playground
+    restart: unless-stopped
+    build:
+      context: "https://github.com/Stoupy51/StewBeet.git#main:docs/web/playground/sandbox"
+    networks: [playground]                      # only this one, never proxied
+    expose: ["8000"]                            # never ports:
+
+    read_only: true
+    tmpfs: ["/tmp:rw,noexec,nosuid,nodev,size=128m,mode=1777"]
+
+    mem_limit: 1g
+    memswap_limit: 1g
+    cpus: 1.0
+
+    pids_limit: 96
+    init: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    user: "10001:10001"
+
+networks:
+  localnet:
+    external: true
+  proxied:
+    external: true
+  playground:
+    internal: true
+
