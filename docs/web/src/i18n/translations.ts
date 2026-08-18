@@ -332,8 +332,8 @@ export const translations = {
             markdownToBBCodeDesc: 'Convert Markdown text to BBCode format for publishing on PlanetMinecraft. Supports badges, lists, tables, code blocks, spoilers, and more.',
             playground: 'Playground',
             playgroundDesc: 'Write a definitions module in the browser and see every file StewBeet generates from it, without installing anything.',
-            autoHeaders: 'auto.headers',
-            autoHeadersDesc: 'Upload a datapack and get it back with a header on every function: who calls it, the context it runs in and the type of each macro argument.',
+            autoHeaders: 'Auto Headers',
+            autoHeadersDesc: 'Upload a datapack and get it back with a header on every function: who calls it, the context it runs in and the type of each macro argument. Runs the standalone auto.headers beet plugin.',
         },
 
         // Playground
@@ -384,8 +384,9 @@ export const translations = {
 
         // auto.headers
         autoHeaders: {
-            title: 'auto.headers',
+            title: 'Auto Headers',
             subtitle: 'Upload a datapack. Get it back with a header on every function.',
+            pluginLink: 'auto.headers is a standalone beet plugin',
             drop: 'Drop a datapack .zip here, or click to pick one',
             maxSize: 'Up to {size} MB',
             pipeline: 'Pipeline: stewbeet.plugins.auto.headers',
@@ -401,7 +402,8 @@ export const translations = {
             limits: 'This runs one plugin and nothing else. Your pack comes back as it was, with the function headers rewritten.',
             limitsDetail: 'Only .mcfunction files are touched. Every other file is returned byte for byte as you uploaded it, so a loot table keeps its own formatting and a texture is never re-encoded. The header of each function names its callers, the execution context it runs in and the type of every macro argument, all inferred from the pack itself. Nothing is stored: the archive you download is the only copy, and it never touches a disk on the server.',
             limitsNumbers: 'Uploads are capped at {pack} MB, {extracted} MB once extracted and {entries} files. Each run gets {cpu} seconds of CPU, {wall} seconds of wall clock and {memory} MiB of memory.',
-            readDocs: 'Read what the plugin infers, and how',
+            standalone: 'This page is only a front end. auto.headers is an ordinary beet plugin with no dependency on the rest of StewBeet: put stewbeet.plugins.auto.headers in the pipeline of any beet project and it does the same thing on every build, with a cache that makes an unchanged pack cost nothing.',
+            readDocs: 'Read the auto.headers plugin page',
             error: {
                 sandbox_disabled: 'This tool is not available on this deployment.',
                 rate_limited: 'Too many runs. Try again in a moment.',
@@ -845,8 +847,8 @@ export const translations = {
             markdownToBBCodeDesc: 'Convertissez du texte Markdown en format BBCode pour publier sur PlanetMinecraft. Supporte les badges, listes, tableaux, blocs de code, spoilers et plus.',
             playground: 'Playground',
             playgroundDesc: 'Écrivez un module de definitions dans le navigateur et voyez tous les fichiers que StewBeet en génère, sans rien installer.',
-            autoHeaders: 'auto.headers',
-            autoHeadersDesc: 'Envoyez un datapack et récupérez-le avec un header sur chaque function : qui l\'appelle, le contexte dans lequel elle s\'exécute et le type de chaque argument de macro.',
+            autoHeaders: 'Auto Headers',
+            autoHeadersDesc: 'Envoyez un datapack et récupérez-le avec un header sur chaque function : qui l\'appelle, le contexte dans lequel elle s\'exécute et le type de chaque argument de macro. Exécute le plugin beet indépendant auto.headers.',
         },
 
         // Playground
@@ -895,8 +897,9 @@ export const translations = {
 
         // auto.headers
         autoHeaders: {
-            title: 'auto.headers',
+            title: 'Auto Headers',
             subtitle: 'Envoyez un datapack. Récupérez-le avec un header sur chaque function.',
+            pluginLink: 'auto.headers est un plugin beet indépendant',
             drop: 'Déposez un .zip de datapack ici, ou cliquez pour en choisir un',
             maxSize: 'Jusqu\'à {size} Mo',
             pipeline: 'Pipeline : stewbeet.plugins.auto.headers',
@@ -912,7 +915,8 @@ export const translations = {
             limits: 'Ceci exécute un seul plugin. Votre pack revient tel quel, avec les headers de functions réécrits.',
             limitsDetail: 'Seuls les fichiers .mcfunction sont touchés. Tous les autres reviennent octet pour octet tels que vous les avez envoyés : une loot table garde son propre formatage et une texture n\'est jamais réencodée. Le header de chaque function nomme ses appelants, le contexte d\'exécution dans lequel elle tourne et le type de chaque argument de macro, le tout déduit du pack lui-même. Rien n\'est conservé : l\'archive que vous téléchargez est la seule copie, et elle ne touche jamais un disque côté serveur.',
             limitsNumbers: 'Les envois sont limités à {pack} Mo, {extracted} Mo une fois décompressés et {entries} fichiers. Chaque exécution dispose de {cpu} secondes de CPU, {wall} secondes de temps réel et {memory} Mio de mémoire.',
-            readDocs: 'Voir ce que le plugin déduit, et comment',
+            standalone: 'Cette page n\'est qu\'une interface. auto.headers est un plugin beet ordinaire, sans dépendance au reste de StewBeet : mettez stewbeet.plugins.auto.headers dans le pipeline de n\'importe quel projet beet et il fait la même chose à chaque build, avec un cache qui rend un pack inchangé gratuit.',
+            readDocs: 'Voir la page du plugin auto.headers',
             error: {
                 sandbox_disabled: 'Cet outil n\'est pas disponible sur ce déploiement.',
                 rate_limited: 'Trop d\'exécutions. Réessayez dans un instant.',

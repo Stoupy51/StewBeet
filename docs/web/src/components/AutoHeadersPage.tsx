@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { unzipSync } from 'fflate';
-import { HiDownload, HiPlay, HiUpload } from 'react-icons/hi';
+import { HiArrowRight, HiDownload, HiPlay, HiPuzzle, HiUpload } from 'react-icons/hi';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 import { FileTree, type FileNode } from './FileTree';
@@ -10,7 +10,7 @@ import { useTranslation } from '../i18n/useTranslation';
 import { buildTree, type BuiltFile } from '../utils/pathsToTree';
 import { formatBytes, languageOf } from '../utils/fileDisplay';
 import { HEADERS_LIMITS, MAX_PACK_BYTES } from '../api/sandboxLimits';
-import { HEADING, TEXT_ACCENT } from '../theme';
+import { BTN_SECONDARY, HEADING, TEXT_ACCENT } from '../theme';
 
 /**
  * /auto_headers: upload a datapack, get it back with a header on every function.
@@ -92,6 +92,9 @@ function toBase64(bytes: Uint8Array): string {
     }
     return btoa(binary);
 }
+
+/** The plugin's own page, linked from the header and from the panel at the bottom. */
+const PLUGIN_DOC = `/markdown?src=${encodeURIComponent('plugins/auto.headers.md')}`;
 
 /** `MyPack.zip` -> `MyPack_headers.zip`, so the result never overwrites the upload it came from. */
 function downloadName(uploaded: string): string {
@@ -204,6 +207,17 @@ export const AutoHeadersPage: React.FC = () => {
                         🏷️ <span className={HEADING}>{t('autoHeaders.title')}</span>
                     </h1>
                     <p className="text-lg text-slate-300 max-w-3xl mx-auto">{t('autoHeaders.subtitle')}</p>
+                    {/* Directly under the title, because the tool is the second-best way to use
+                        auto.headers: a reader who runs it once by hand and never learns it is a
+                        plugin they can put in their own pipeline has been sold the wrong thing. */}
+                    <Link
+                        to={PLUGIN_DOC}
+                        className={`mt-5 inline-flex items-center gap-2 text-sm px-4 py-2 rounded-lg ${BTN_SECONDARY} transition-colors`}
+                    >
+                        <HiPuzzle className="w-4 h-4" />
+                        {t('autoHeaders.pluginLink')}
+                        <HiArrowRight className="w-4 h-4" />
+                    </Link>
                 </div>
             </div>
 
@@ -211,7 +225,11 @@ export const AutoHeadersPage: React.FC = () => {
                 <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-4">
 
                     {/* ── Upload */}
-                    <div className="rounded-xl border border-white/10 bg-slate-900/60 flex flex-col overflow-hidden">
+                    {/* Both columns take the same explicit height rather than one measuring the
+                        other, because there is no editor here to set it: a drop zone is as tall as
+                        you make it, and left to itself it made the result panel too short to read a
+                        function in. Below lg they stack and the upload panel shrinks to its content. */}
+                    <div className="rounded-xl border border-white/10 bg-slate-900/60 flex flex-col overflow-hidden lg:h-[34rem]">
                         {/* A button rather than a div with an onClick, so the picker opens from the
                             keyboard too. The input is its sibling and not its child: inside it, the
                             click it receives from picker.click() would bubble straight back into this
@@ -266,11 +284,9 @@ export const AutoHeadersPage: React.FC = () => {
                     </div>
 
                     {/* ── Output */}
-                    {/* Exactly as tall as the panel beside it, with the tree scrolling inside. h-0
-                        stops the file list contributing to the grid row, and min-h-full then takes
-                        the height the upload column established. Below lg they stack, and a fixed
-                        height is what stops a four thousand file pack running off the page. */}
-                    <div className="rounded-xl border border-white/10 bg-slate-900/60 flex flex-col overflow-hidden h-[32rem] lg:h-0 lg:min-h-full">
+                    {/* A fixed height, not a fitted one: it is what stops a four thousand file pack
+                        running off the end of the page, and the tree scrolls inside it instead. */}
+                    <div className="rounded-xl border border-white/10 bg-slate-900/60 flex flex-col overflow-hidden h-[32rem] lg:h-[34rem]">
                         <div className="flex items-center gap-2 px-4 py-2 border-b border-white/5 flex-wrap">
                             <span className="text-xs text-slate-400">{t('autoHeaders.output')}</span>
                             {output && (
@@ -371,8 +387,9 @@ export const AutoHeadersPage: React.FC = () => {
                                 .replace('{wall}', String(HEADERS_LIMITS.wallSeconds))
                                 .replace('{memory}', String(HEADERS_LIMITS.memoryMiB))}
                         </p>
+                        <p className="text-sm text-slate-400 leading-relaxed">{t('autoHeaders.standalone')}</p>
                         <p className="text-sm">
-                            <Link to={`/markdown?src=${encodeURIComponent('plugins/auto.headers.md')}`} className={`${TEXT_ACCENT} hover:underline`}>
+                            <Link to={PLUGIN_DOC} className={`${TEXT_ACCENT} hover:underline`}>
                                 {t('autoHeaders.readDocs')}
                             </Link>
                         </p>
