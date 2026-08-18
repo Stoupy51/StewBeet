@@ -207,17 +207,6 @@ export const AutoHeadersPage: React.FC = () => {
                         🏷️ <span className={HEADING}>{t('autoHeaders.title')}</span>
                     </h1>
                     <p className="text-lg text-slate-300 max-w-3xl mx-auto">{t('autoHeaders.subtitle')}</p>
-                    {/* Directly under the title, because the tool is the second-best way to use
-                        auto.headers: a reader who runs it once by hand and never learns it is a
-                        plugin they can put in their own pipeline has been sold the wrong thing. */}
-                    <Link
-                        to={PLUGIN_DOC}
-                        className={`mt-5 inline-flex items-center gap-2 text-sm px-4 py-2 rounded-lg ${BTN_SECONDARY} transition-colors`}
-                    >
-                        <HiPuzzle className="w-4 h-4" />
-                        {t('autoHeaders.pluginLink')}
-                        <HiArrowRight className="w-4 h-4" />
-                    </Link>
                 </div>
             </div>
 
@@ -371,6 +360,22 @@ export const AutoHeadersPage: React.FC = () => {
                             />
                         )}
                     </div>
+                </div>
+
+                {/* ── The plugin behind it */}
+                {/* Between the tool and its limitations, which is where a reader who just used it
+                    once looks next: the tool is the second-best way to use auto.headers, and someone
+                    who never learns it is a plugin they can put in their own pipeline has been sold
+                    the wrong thing. */}
+                <div className="max-w-7xl mx-auto mt-4 text-center">
+                    <Link
+                        to={PLUGIN_DOC}
+                        className={`inline-flex items-center gap-2 text-sm px-4 py-2 rounded-lg ${BTN_SECONDARY} transition-colors`}
+                    >
+                        <HiPuzzle className="w-4 h-4" />
+                        {t('autoHeaders.pluginLink')}
+                        <HiArrowRight className="w-4 h-4" />
+                    </Link>
                 </div>
 
                 {/* ── Limitations */}
