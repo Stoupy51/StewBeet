@@ -10,6 +10,8 @@ const CreditsPage = lazy(() => import('./components/CreditsPage').then(m => ({ d
 const TelemetryPage = lazy(() => import('./components/TelemetryPage').then(m => ({ default: m.TelemetryPage })));
 // Lazy above all else: this route is the only one that pulls in CodeMirror.
 const PlaygroundPage = lazy(() => import('./components/PlaygroundPage').then(m => ({ default: m.PlaygroundPage })));
+// Same reasoning: the only route that pulls in fflate.
+const AutoHeadersPage = lazy(() => import('./components/AutoHeadersPage').then(m => ({ default: m.AutoHeadersPage })));
 const NotFoundPage = lazy(() => import('./components/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
 
 export function AppRoutes() {
@@ -24,6 +26,7 @@ export function AppRoutes() {
                 <Route path="/credits" element={<CreditsPage />} />
                 <Route path="/telemetry" element={<TelemetryPage />} />
                 <Route path="/playground" element={<PlaygroundPage />} />
+                <Route path="/auto_headers" element={<AutoHeadersPage />} />
                 <Route path="*" element={<NotFoundPage />} />
             </Routes>
         </Suspense>

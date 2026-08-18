@@ -1,7 +1,7 @@
 # Example compose for the deployment host, where the real docker-compose.yml lives.
 #
-# Copy the parts you need into it. The playground is off until PLAYGROUND_WORKER_URL is set, so the
-# web service keeps working unchanged if you deploy the site without this.
+# Copy the parts you need into it. Every sandbox-backed tool is off until SANDBOX_WORKER_URL is set,
+# so the web service keeps working unchanged if you deploy the site without this.
 #
 #   docker compose build --no-cache && docker compose up -d --force-recreate
 
@@ -22,7 +22,9 @@ services:
     networks: [web, playground]
     ports: ["4173:4173"]
     environment:
-      PLAYGROUND_WORKER_URL: "http://playground-worker:8000/build"
+      # Base URL, not an endpoint: the web service calls /build for the playground and /headers for
+      # the auto.headers tool.
+      SANDBOX_WORKER_URL: "http://playground-worker:8000"
       # Read x-forwarded-for instead of the socket address. Only turn this on behind a reverse
       # proxy you control: with it on, anyone reaching the port directly can spoof their rate limit
       # bucket by setting the header themselves.
@@ -39,24 +41,28 @@ services:
     expose: ["8000"]
 
     # ── Disk─────────────────────────────────
-    # The image and the host filesystem are unwritable, so the only place a build can write is the
-    # tmpfs below. This is the actual guarantee; the rlimits in worker.py are the refinement.
+    # The image and the host filesystem are unwritable, so the only place a job can write is the
+    # tmpfs below. This is the actual guarantee; the rlimits in jobs.py are the refinement.
+    #
+    # 384m rather than 128m since auto.headers landed: a 25 MB upload, the 192 MB it may extract to
+    # and the archive written back all live here at once.
     read_only: true
     tmpfs:
-      - /tmp:rw,noexec,nosuid,nodev,size=128m,mode=1777
+      - /tmp:rw,noexec,nosuid,nodev,size=384m,mode=1777
 
     # ── Memory───────────────────────────────
     # memswap_limit must equal mem_limit. Without it the memory limit is simply bypassed by
-    # swapping, and the container happily grows past 1 GB.
+    # swapping, and the container happily grows past its limit.
     #
     # Note that the tmpfs above is charged to this same cgroup: scratch disk and memory are one
-    # budget, not two. A build trying to fill /tmp runs into this limit rather than the host's disk.
-    mem_limit: 1g
-    memswap_limit: 1g
+    # budget, not two. A job trying to fill /tmp runs into this limit rather than the host's disk.
+    # 2g is the 384m tmpfs plus the 768 MiB address space a headers job may map, with headroom.
+    mem_limit: 2g
+    memswap_limit: 2g
     cpus: 1.0
 
     # ── Process──────────────────────────────
-    # pids_limit is how a fork bomb is contained. worker.py deliberately does not set RLIMIT_NPROC,
+    # pids_limit is how a fork bomb is contained. jobs.py deliberately does not set RLIMIT_NPROC,
     # because that limit is per uid and would let one request lock out every later one.
     pids_limit: 96
 

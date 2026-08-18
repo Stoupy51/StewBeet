@@ -28,5 +28,5 @@
   "include": ["src"],
   // Server only, and checked by tsconfig.node.json instead: they import node:crypto and node:fs
   // and read process.env, none of which exists in the browser project this config describes.
-  "exclude": ["src/api/playground.ts", "src/api/telemetry.ts"]
+  "exclude": ["src/api/sandbox.ts", "src/api/playground.ts", "src/api/headers.ts", "src/api/telemetry.ts"]
 }

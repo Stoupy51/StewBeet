@@ -5,7 +5,7 @@ Real StewBeet projects that the website builds and shows.
 | Directory | What it is |
 |---|---|
 | `hero/` | The project behind the landing page hero, built at website build time |
-| `sandbox/` | The container that builds submitted code for `/playground`, on demand |
+| `sandbox/` | The container behind `/playground` and `/auto_headers`, on demand |
 
 ## hero/
 
@@ -81,14 +81,14 @@ beet runs the whole build inside a temporary directory and the project's relativ
 
 ## sandbox/
 
-The container behind `/playground`. It runs code submitted by strangers, so it is built to be the
-thing that gets attacked.
+The container behind `/playground` and `/auto_headers`. It runs code and archives submitted by
+strangers, so it is built to be the thing that gets attacked.
 
 ```bash
 docker build -t stewbeet-playground docs/web/playground/sandbox
 docker run -d --name pg --network none --read-only --init \
-  --tmpfs /tmp:rw,noexec,nosuid,nodev,size=128m,mode=1777 \
-  --memory 1g --memory-swap 1g --cpus 1 --pids-limit 96 \
+  --tmpfs /tmp:rw,noexec,nosuid,nodev,size=384m,mode=1777 \
+  --memory 2g --memory-swap 2g --cpus 1 --pids-limit 96 \
   --cap-drop ALL --security-opt no-new-privileges:true \
   -p 127.0.0.1:8001:8000 stewbeet-playground
 python docs/web/playground/sandbox/tests/test_sandbox.py http://127.0.0.1:8001
@@ -97,6 +97,45 @@ python docs/web/playground/sandbox/tests/test_sandbox.py http://127.0.0.1:8001
 `docker-compose.example.yml` beside this file is what the deployment host copies. The flags above
 are not decoration: see the comments in it for what each one is actually stopping.
 
+### Two endpoints, one slot
+
+| Module | What it is |
+|---|---|
+| `worker.py` | The HTTP front: `POST /build`, `POST /headers`, `GET /health`, `GET /textures` |
+| `jobs.py` | The ceilings, the throwaway directory and the process-group kill both jobs share |
+| `builds.py` | The two jobs themselves, each one prepare / launch / clean up |
+| `runner.py` | The `/build` child: runs the project and serializes every file it produced |
+| `headers_runner.py` | The `/headers` child: unpacks an upload, rewrites its function headers, zips it back |
+| `selftest.py` | Runs every job once at image build time, so a broken pipeline fails the image |
+
+One `threading.BoundedSemaphore(1)` covers both endpoints, and `src/api/sandbox.ts` holds the single
+build slot on the web side for the same reason: there is one container, sized for one child.
+
+`/build` answers JSON. `/headers` answers the rewritten archive itself, as `application/zip`, with
+its duration, its counts and the analysis warnings base64'd into `X-Sandbox-Meta`, and JSON only when
+it fails. The web handler forwards that verbatim and the browser turns it into a blob URL, so the
+download is instant and nothing is stored anywhere: the copy in the reader's browser is the only one
+that ever existed.
+
+### Why /headers does not dump the pack
+
+`headers_runner.py` unpacks the upload, runs a beet pipeline whose only plugin is
+`stewbeet.plugins.auto.headers`, writes the functions that came back different over the files they
+were read from, and zips the extracted tree as it stands. Handing back `ctx.data.dump(...)` instead
+would re-encode every JSON file in the pack, and a tool whose job is to add comments to functions has
+no business reformatting someone's loot tables.
+
+It also loads the pack with `ctx.data.load(root)` from inside the build rather than through the
+`data_pack.load` config option, because that option goes through `glob`: a folder called `pack[1]` is
+a perfectly ordinary name and a pattern that matches nothing.
+
+The caps are re-applied in the runner rather than trusted from the worker: 25 MB compressed, 192 MB
+extracted, 20 000 entries, and every entry path checked against `..` and absolute paths before a byte
+is written. The extracted cap is the one that actually binds, since datapacks are text and deflate by
+roughly seven to one. `tests/test_sandbox.py` submits a file that is not a zip, a zip with no
+`pack.mcmeta`, one that escapes itself and a zip bomb, and checks that the loot table in the good pack
+comes back with its original formatting.
+
 ### Why the container is the boundary
 
 StewBeet executes submitted Python by design. Pipeline entries are `importlib.import_module` with
@@ -104,8 +143,12 @@ the project directory on `sys.path`, and bolt hands the code every non-underscor
 including `exec`, `eval` and `open`. Beet's `ProjectConfig.whitelist` guards beet's own require and
 inject resolution, not what a whitelisted module then imports, so **it is not a security control**.
 There is no in-process sandbox that makes this safe, which is why the worker is a separate service
-on a network with no gateway. Everything in `worker.py` is the second layer, there so one abusive
+on a network with no gateway. Everything in `jobs.py` is the second layer, there so one abusive
 request degrades into an error message rather than into an outage for the next visitor.
+
+`/headers` executes nothing a visitor wrote, since the pipeline is fixed to one plugin, but it runs
+in the same container under the same ceilings anyway. A hostile archive is still an input a stranger
+chose, and the second layer costs nothing that was not already built.
 
 ### uv is a build-time tool here
 
@@ -147,8 +190,8 @@ connection: the next request got a dropped connection with no response, and it n
 Containing a fork bomb is worthless if the service cannot answer afterwards, which is why
 `tests/test_sandbox.py` builds normally straight after the bomb.
 
-`init: true` puts a real init in front of the worker to reap them. `Build.reap` does it too, after
-every build, so the worker is not one deployment flag away from that failure. `Build.kill` also
+`init: true` puts a real init in front of the worker to reap them. `Job.reap` does it too, after
+every job, so the worker is not one deployment flag away from that failure. `Job.kill` also
 signals the process group repeatedly rather than once, because killpg only reaches what exists at
 the instant it is delivered and a fork landing a microsecond later inherits the group unsignalled.
 

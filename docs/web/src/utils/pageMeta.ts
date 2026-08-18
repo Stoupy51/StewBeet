@@ -40,7 +40,7 @@ export const STATIC_ROUTE_META: Record<string, PageMeta> = {
     },
     '/tools': {
         title: 'Tools | StewBeet',
-        description: 'Tools for StewBeet and Minecraft datapack development, starting with the Markdown to BBCode converter for PlanetMinecraft.',
+        description: 'Tools for StewBeet and Minecraft datapack development: the playground, the auto.headers pass over an existing datapack, and the Markdown to BBCode converter for PlanetMinecraft.',
         path: '/tools',
     },
     '/credits': {
@@ -59,6 +59,11 @@ export const STATIC_ROUTE_META: Record<string, PageMeta> = {
         title: 'Playground | StewBeet',
         description: 'Write a StewBeet definitions module in the browser and see the datapack and resource pack files it generates: models, recipes, loot tables, predicates and translations.',
         path: '/playground',
+    },
+    '/auto_headers': {
+        title: 'auto.headers | StewBeet',
+        description: 'Upload a Minecraft datapack and get it back with a generated header on every function: who calls it, the execution context it runs in, and the type of every macro argument.',
+        path: '/auto_headers',
     },
     '/markdown_to_pmc_bbcode': {
         title: 'Markdown to BBCode Converter | StewBeet',

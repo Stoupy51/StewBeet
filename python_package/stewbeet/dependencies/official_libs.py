@@ -66,5 +66,7 @@ OFFICIAL_LIBS: dict[str, JsonDict] = {
     "bs.vector":            {"name": "Bookshelf Vector",        "url": "https://github.com/mcbookshelf/bookshelf/releases", "is_used": False, "source": "modrinth", "modrinth_slug": "bookshelf-vector"},
     "bs.view":              {"name": "Bookshelf View",          "url": "https://github.com/mcbookshelf/bookshelf/releases", "is_used": False, "source": "modrinth", "modrinth_slug": "bookshelf-view"},
     "bs.xp":                {"name": "Bookshelf Xp",            "url": "https://github.com/mcbookshelf/bookshelf/releases", "is_used": False, "source": "modrinth", "modrinth_slug": "bookshelf-xp"}
+
+    # Gamemode 4 libs: #TODO
 }
 

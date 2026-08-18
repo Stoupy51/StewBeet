@@ -16,7 +16,10 @@ import { LanguageProvider } from './src/context/LanguageContext';
 import { AppRoutes } from './src/AppRoutes';
 import { MarkdownContentProvider } from './src/context/MarkdownContentContext';
 import { applyPageMeta, markdownPageMeta } from './src/utils/pageMeta';
-import { clientIpFrom, handlePlayground } from './src/api/playground';
+import { clientIpFrom } from './src/api/sandbox';
+import { handlePlayground } from './src/api/playground';
+import { handleHeaders } from './src/api/headers';
+import { MAX_PACK_BYTES } from './src/api/sandboxLimits';
 import { handleTelemetryBuild, handleTelemetryBuilds } from './src/api/telemetry';
 import { readFileSync } from 'fs';
 import { join } from 'path';
@@ -55,21 +58,25 @@ Bun.serve({
     port: 4173,
     hostname: '0.0.0.0',
 
-    // The playground body is capped at 16 KB by the handler, so nothing legitimate comes close.
-    // Set here as well, because without it Bun buffers a hostile body in full before any of our
-    // code runs and gets a say about its size.
-    maxRequestBodySize: 64 * 1024,
+    // Set here as well as in the handlers, because without it Bun buffers a hostile body in full
+    // before any of our code runs and gets a say about its size. This is the largest body any route
+    // accepts, which is the auto.headers upload; the playground's own 16 KB cap is far below it and
+    // is enforced by its handler.
+    maxRequestBodySize: MAX_PACK_BYTES + 64 * 1024,
 
     async fetch(req, server) {
         const url = new URL(req.url);
         const { pathname } = url;
 
-        // ── Playground builds
+        // ── Sandbox builds
         // Before /markdown and before the static branches: the 404 fallthrough at the bottom would
         // otherwise answer a mistyped API call with dist/404.html, and a caller parsing that as
         // JSON gets a syntax error instead of a status it can act on.
         if (pathname === '/api/playground') {
             return handlePlayground(req, clientIpFrom(req, server.requestIP(req)?.address ?? ''));
+        }
+        if (pathname === '/api/tools/headers') {
+            return handleHeaders(req, clientIpFrom(req, server.requestIP(req)?.address ?? ''));
         }
 
         // ── Build telemetry──
