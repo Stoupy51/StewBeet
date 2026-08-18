@@ -41,18 +41,24 @@ function apiDevRoutes(): Plugin {
                     body: chunks.length > 0 ? Buffer.concat(chunks) : undefined,
                 })
 
+                const sandbox = await server.ssrLoadModule('/src/api/sandbox.ts') as {
+                    clientIpFrom: (req: Request, socketIp: string) => string
+                }
                 const playground = await server.ssrLoadModule('/src/api/playground.ts') as {
                     handlePlayground: (req: Request, ip: string) => Promise<Response>
-                    clientIpFrom: (req: Request, socketIp: string) => string
+                }
+                const autoHeaders = await server.ssrLoadModule('/src/api/headers.ts') as {
+                    handleHeaders: (req: Request, ip: string) => Promise<Response>
                 }
                 const telemetry = await server.ssrLoadModule('/src/api/telemetry.ts') as {
                     handleTelemetryBuild: (req: Request, ip: string) => Promise<Response>
                     handleTelemetryBuilds: (url: URL) => Response
                 }
 
-                const clientIp = playground.clientIpFrom(webRequest, request.socket.remoteAddress ?? '')
+                const clientIp = sandbox.clientIpFrom(webRequest, request.socket.remoteAddress ?? '')
                 let result: Response
                 if (url.pathname === '/api/playground') result = await playground.handlePlayground(webRequest, clientIp)
+                else if (url.pathname === '/api/tools/headers') result = await autoHeaders.handleHeaders(webRequest, clientIp)
                 else if (url.pathname === '/api/telemetry/build') result = await telemetry.handleTelemetryBuild(webRequest, clientIp)
                 else if (url.pathname === '/api/telemetry/builds') result = telemetry.handleTelemetryBuilds(url)
                 else return next()

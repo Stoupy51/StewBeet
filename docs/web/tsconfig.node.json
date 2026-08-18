@@ -22,5 +22,12 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["vite.config.ts", "src/api/playground.ts", "src/api/playgroundLimits.ts", "src/api/telemetry.ts"]
+  "include": [
+    "vite.config.ts",
+    "src/api/sandbox.ts",
+    "src/api/sandboxLimits.ts",
+    "src/api/playground.ts",
+    "src/api/headers.ts",
+    "src/api/telemetry.ts"
+  ]
 }

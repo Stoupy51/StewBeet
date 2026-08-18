@@ -1,12 +1,13 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { HiArrowLeft, HiPlay } from 'react-icons/hi';
+import { HiPlay } from 'react-icons/hi';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 import { FileTree, type FileNode } from './FileTree';
-import { useShiki } from '../hooks/useShiki';
+import { SourceView } from './SourceView';
 import { useTranslation } from '../i18n/useTranslation';
 import { buildTree, type BuiltFile } from '../utils/pathsToTree';
-import { MAX_CODE_BYTES, SANDBOX_LIMITS, WARN_CODE_BYTES } from '../api/playgroundLimits';
+import { formatBytes, languageOf } from '../utils/fileDisplay';
+import { MAX_CODE_BYTES, SANDBOX_LIMITS, WARN_CODE_BYTES } from '../api/sandboxLimits';
 import { DEFAULT_CODE, PRESETS } from './playgroundPresets';
 import { HEADING, TEXT_ACCENT } from '../theme';
 
@@ -46,69 +47,6 @@ interface BuildResult {
     suggestions?: string[];
     retryAfterMs?: number;
 }
-
-const BYTES_IN_KB = 1024;
-
-/** Checkerboard behind transparent PNGs, drawn with a gradient so it costs no request. */
-const CHECKERBOARD =
-    'bg-[linear-gradient(45deg,#1a1a1a_25%,transparent_25%),linear-gradient(-45deg,#1a1a1a_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#1a1a1a_75%),linear-gradient(-45deg,transparent_75%,#1a1a1a_75%)] bg-[length:16px_16px] bg-[position:0_0,0_8px,8px_-8px,-8px_0]';
-
-function formatBytes(bytes: number): string {
-    return bytes < BYTES_IN_KB ? `${bytes} B` : `${(bytes / BYTES_IN_KB).toFixed(1)} KB`;
-}
-
-/** Same grammars the rest of the site uses, so a .mcfunction is coloured identically everywhere. */
-function languageOf(path: string): string {
-    if (path.endsWith('.mcfunction')) return 'mcfunction';
-    if (path.endsWith('.json') || path.endsWith('.mcmeta')) return 'json';
-    if (path.endsWith('.py')) return 'python';
-    return 'text';
-}
-
-/** One pane of highlighted source, used for both a generated file and the project's beet.yml. */
-const SourceView: React.FC<{
-    label: string;
-    body: string;
-    language: string;
-    image?: string;
-    alt?: string;
-    onBack: () => void;
-    backLabel: string;
-}> = ({ label, body, language, image, alt, onBack, backLabel }) => {
-    const path = label;
-    const html = useShiki(image ? '' : body, language);
-
-    return (
-        <div className="flex-1 flex flex-col min-h-0">
-            <div className="flex items-center gap-2 px-4 py-2 border-b border-white/5">
-                <button
-                    onClick={onBack}
-                    className="flex items-center gap-1 text-xs text-slate-400 hover:text-slate-200 transition-colors"
-                >
-                    <HiArrowLeft className="w-3 h-3" /> {backLabel}
-                </button>
-                <code className="ml-auto text-[0.7rem] text-slate-500 truncate">{path}</code>
-            </div>
-
-            <div className="flex-1 overflow-auto custom-scrollbar p-4">
-                {image ? (
-                    <div className={`inline-block p-4 rounded ${CHECKERBOARD}`}>
-                        <img
-                            src={`data:image/png;base64,${image}`}
-                            alt={alt ?? label}
-                            className="w-32 h-32 object-contain [image-rendering:pixelated]"
-                        />
-                    </div>
-                ) : (
-                    <div
-                        className="text-[0.75rem] leading-[1.55] [&_pre]:!bg-transparent [&_pre]:whitespace-pre"
-                        dangerouslySetInnerHTML={{ __html: html }}
-                    />
-                )}
-            </div>
-        </div>
-    );
-};
 
 export const PlaygroundPage: React.FC = () => {
     const { t } = useTranslation();

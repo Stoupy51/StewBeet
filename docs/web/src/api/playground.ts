@@ -1,28 +1,13 @@
 /**
- * The /api/playground handler: rate limits, the result cache and the single build slot.
+ * The /api/playground handler: the result cache, and the request checks around it.
  *
- * Both server.tsx and the Vite dev middleware import this, so it must use **no `Bun.*` API**.
- * Everything here is `node:crypto`, `fetch`, `Request`, `Response` and `AbortSignal.timeout`, which
- * both runtimes have. That one constraint is what keeps development and production on a single
- * implementation of the limits, rather than on two that drift.
- *
- * It does not sandbox anything. The worker on the other side of `PLAYGROUND_WORKER_URL` runs in its
- * own container on a network with no gateway, because StewBeet executes submitted Python by design
- * and bolt hands it every builtin including `exec` and `open`. What is here only decides who is
- * allowed to ask, how often, and how long they may wait.
+ * The worker address, the rate limit buckets and the single build slot are shared with the other
+ * sandbox-backed tools and live in sandbox.ts. Like it, this module uses **no `Bun.*` API**, since
+ * server.tsx and the Vite dev middleware both import it.
  */
 import { createHash } from 'node:crypto';
-import { MAX_CODE_BYTES } from './playgroundLimits';
-
-const RATE_PER_MINUTE = 10;
-const RATE_PER_HOUR = 60;
-
-/**
- * The worker builds one at a time, so a second request waits and a third is turned away. Waiting
- * forever behind a queue is worse than being told to try again: the tab looks broken either way,
- * and only one of the two says so.
- */
-const MAX_QUEUED = 2;
+import { acquire, json, queueFull, RateLimiter, release, workerBase } from './sandbox';
+import { MAX_CODE_BYTES } from './sandboxLimits';
 
 /** Longer than the worker's own 20 s wall clock ceiling, so its `timeout` reply wins the race. */
 const WORKER_TIMEOUT_MS = 30_000;
@@ -35,52 +20,10 @@ interface CacheEntry {
     body: Record<string, unknown>;
 }
 
-/** Per IP request timestamps, pruned on every lookup. */
-const hits = new Map<string, number[]>();
+const limiter = new RateLimiter(10, 60);
 
 /** sha256(code) -> result. Insertion ordered, so the oldest key is the first one out. */
 const cache = new Map<string, CacheEntry>();
-
-let building = false;
-const waiting: (() => void)[] = [];
-
-function json(status: number, body: Record<string, unknown>, headers: Record<string, string> = {}): Response {
-    return new Response(JSON.stringify(body), {
-        status,
-        headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...headers },
-    });
-}
-
-/**
- * Record one request and report whether the caller has gone over either window.
- *
- * Two windows rather than one: ten a minute keeps a held-down key from monopolising the single
- * build slot, and sixty an hour stops someone from doing that all afternoon at nine a minute.
- */
-function rateLimited(ip: string): number {
-    const now = Date.now();
-    const seen = (hits.get(ip) ?? []).filter(at => now - at < 3_600_000);
-
-    const lastMinute = seen.filter(at => now - at < 60_000);
-    if (lastMinute.length >= RATE_PER_MINUTE) {
-        hits.set(ip, seen);
-        return 60_000 - (now - lastMinute[0]);
-    }
-    if (seen.length >= RATE_PER_HOUR) {
-        hits.set(ip, seen);
-        return 3_600_000 - (now - seen[0]);
-    }
-
-    seen.push(now);
-    hits.set(ip, seen);
-    // Without this the map grows one entry per address seen, for the lifetime of the process.
-    if (hits.size > 10_000) {
-        for (const [key, times] of hits) {
-            if (times.every(at => now - at > 3_600_000)) hits.delete(key);
-        }
-    }
-    return 0;
-}
 
 function cached(key: string): Record<string, unknown> | null {
     const entry = cache.get(key);
@@ -104,20 +47,6 @@ function remember(key: string, body: Record<string, unknown>): void {
     }
 }
 
-async function acquire(): Promise<void> {
-    if (!building) {
-        building = true;
-        return;
-    }
-    return new Promise<void>(resolve => waiting.push(resolve));
-}
-
-function release(): void {
-    const next = waiting.shift();
-    if (next) next();
-    else building = false;
-}
-
 /**
  * Handle one POST /api/playground.
  *
@@ -130,11 +59,9 @@ export async function handlePlayground(req: Request, clientIp: string): Promise<
         return json(405, { ok: false, error: 'method_not_allowed' }, { Allow: 'POST' });
     }
 
-    // Absent in development and on any deploy whose compose stack predates the worker. Answering
-    // clearly beats a connection error the page cannot explain to the reader.
-    const workerUrl = process.env.PLAYGROUND_WORKER_URL;
-    if (!workerUrl) {
-        return json(503, { ok: false, error: 'playground_disabled' });
+    const base = workerBase();
+    if (!base) {
+        return json(503, { ok: false, error: 'sandbox_disabled' });
     }
 
     let code: string;
@@ -164,20 +91,20 @@ export async function handlePlayground(req: Request, clientIp: string): Promise<
         return json(200, { ...hit, cached: true });
     }
 
-    const retryAfterMs = rateLimited(clientIp);
+    const retryAfterMs = limiter.check(clientIp);
     if (retryAfterMs > 0) {
         return json(429, { ok: false, error: 'rate_limited', retryAfterMs }, {
             'Retry-After': String(Math.ceil(retryAfterMs / 1000)),
         });
     }
 
-    if (building && waiting.length >= MAX_QUEUED) {
+    if (queueFull()) {
         return json(503, { ok: false, error: 'busy' });
     }
 
     await acquire();
     try {
-        const response = await fetch(workerUrl, {
+        const response = await fetch(`${base}/build`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ code }),
@@ -206,22 +133,4 @@ export async function handlePlayground(req: Request, clientIp: string): Promise<
     } finally {
         release();
     }
-}
-
-/**
- * Caller address for the rate limit bucket.
- *
- * `x-forwarded-for` is only read when TRUST_PROXY is set, because a client can send that header
- * itself: trusting it unconditionally would let anyone pick their own bucket, and rate limiting
- * would become opt-in. Behind Traefik the socket address is the proxy, so it has to be read there.
- *
- * @param req         The incoming request.
- * @param socketIp    Address of the connection, or an empty string when the host cannot say.
- */
-export function clientIpFrom(req: Request, socketIp: string): string {
-    if (process.env.TRUST_PROXY === '1') {
-        const forwarded = req.headers.get('x-forwarded-for');
-        if (forwarded) return forwarded.split(',')[0].trim();
-    }
-    return socketIp || 'unknown';
 }

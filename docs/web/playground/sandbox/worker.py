@@ -1,356 +1,72 @@
-""" HTTP front of the playground sandbox: one build at a time, each in a throwaway process.
+""" HTTP front of the sandbox: one job at a time, each in a throwaway process.
 
-Deliberately stdlib only, and it never imports stewbeet. The worker has to outlive every way a
-build can die, so it stays a few megabytes of interpreter that cannot be broken by anything the
-build does to its own address space.
+Deliberately stdlib only, and it never imports stewbeet. The worker has to outlive every way a job
+can die, so it stays a few megabytes of interpreter that cannot be broken by anything a build does to
+its own address space. jobs.py holds the ceilings and the kill path, builds.py the two jobs
+themselves; what is here is only the protocol.
 
 The container is the security boundary, not this file: `internal: true` networking, `read_only`
 rootfs, `cap_drop: ALL` and the memory cgroup are what make running submitted Python acceptable.
-What is here is the second layer, so that one abusive request degrades into an error message
-instead of into an outage for the next visitor.
 """
 # Imports
+import base64
 import json
-import os
-import re
-import resource
 import shutil
-import signal
-import subprocess
 import sys
-import tempfile
 import threading
-import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any
 
-# Constants
-SRV: str = "/srv"
-""" Image root holding project/, runner.py and the bundled assets. """
+from builds import Build, Headers
+from jobs import SRV, Job
+from selftest import selftest
 
+# Constants
 PORT: int = 8000
 """ Only ever reached over the internal compose network, never published to the host. """
 
 MAX_CODE_BYTES: int = 16 * 1024
 """ Also enforced on the web side. Repeated here because the worker cannot assume its caller. """
 
-MAX_LOG_CHARS: int = 64 * 1024
-""" Tail of the build log kept for the UI. beet and stouputils are talkative. """
-
-WALL_TIMEOUT: float = 20.0
-""" Wall clock ceiling for one build. RLIMIT_CPU fires first for a busy loop; this covers sleep. """
+MAX_PACK_BYTES: int = 25 * 1024 * 1024
+""" Largest upload /headers accepts, matching MAX_PACK_BYTES in src/api/sandboxLimits.ts. """
 
 QUEUE_TIMEOUT: float = 2.0
-""" How long a request waits for the single build slot before being told to come back. """
-
-KILL_GRACE: float = 3.0
-""" How long to keep signalling a process group, and to wait for its output afterwards. """
-
-KILL_INTERVAL: float = 0.05
-""" Gap between signals. Short enough to outpace a fork loop, long enough not to spin. """
+""" How long a request waits for the single job slot before being told to come back. """
 
 MIN_FREE_BYTES: int = 32 * 1024 * 1024
 """ Refuse to start a build when /tmp has less room than this, rather than failing halfway. """
 
-SENTINEL: str = "===STEWBEET-RESULT==="
-""" Line after which the child's stdout is the JSON payload and nothing else. """
+MIN_HEADERS_FREE_BYTES: int = 256 * 1024 * 1024
+""" The same for /headers, sized for the upload, its extracted form and the archive written back. """
 
-ANSI: re.Pattern[str] = re.compile(r"\x1b\[[0-9;]*[a-zA-Z]")
-""" stouputils colours its output, and the UI shows the log as plain text. """
+MAX_META_CHARS: int = 4 * 1024
+""" Ceiling on the metadata header, so a talkative job cannot produce a response nothing parses. """
+
+MAX_WARNINGS: int = 40
+""" First cut at the warning list, before the header ceiling trims whatever still does not fit. """
+
+META_HEADER: str = "X-Sandbox-Meta"
+""" Where a zip response carries what its body has no room for. Read by src/api/headers.ts. """
+
+HEADERS_STATUS: dict[str, int] = {
+	"invalid_archive": 400,
+	"no_pack_mcmeta": 400,
+	"too_many_entries": 400,
+	"unsafe_archive": 400,
+	"pack_too_large_extracted": 413,
+	"headers_failed": 422,
+	"timeout": 504,
+}
+""" Status for each way a headers pass can fail, so the page can tell a bad upload from an outage. """
 
 SLOT: threading.BoundedSemaphore = threading.BoundedSemaphore(1)
-""" One build at a time: the container is sized for a single 512 MiB child. """
+""" One job at a time: the container is sized for a single child. """
 
 
 # Classes
-class Rlimits:
-	""" Per process ceilings, applied between fork and exec.
-
-	These are the inner layer. The memory cgroup is the hard one, but a cgroup OOM kill takes an
-	arbitrary process in the container, which could be the worker itself. A process that exceeds
-	RLIMIT_AS instead gets a MemoryError inside its own build, which is both survivable and
-	reportable.
-	"""
-
-	ADDRESS_SPACE: int = 512 * 1024 * 1024
-	""" Roughly 7x the 68.5 MB peak measured on a real project. """
-
-	CPU_SECONDS: int = 10
-	""" Roughly 18x the 0.54 s measured on a real project. """
-
-	FILE_SIZE: int = 16 * 1024 * 1024
-	""" One write of a gigabyte dies with SIGXFSZ instead of filling the shared tmpfs. """
-
-	OPEN_FILES: int = 256
-	""" Enough for beet's own file handling, far short of exhausting the container. """
-
-	@staticmethod
-	def apply() -> None:
-		""" Set every limit on the calling process, and start a new session.
-
-		The new session matters as much as the limits: it gives the child its own process group, so
-		a timeout can kill everything it spawned rather than only the process that was waited on.
-
-		RLIMIT_NPROC is deliberately absent. It counts processes per uid, not per process, so with
-		one shared uid a fork bomb in one request would deny service to every later request and to
-		the worker's own threads. The container's pids_limit covers that case without the
-		collateral damage.
-		"""
-		resource.setrlimit(resource.RLIMIT_AS, (Rlimits.ADDRESS_SPACE, Rlimits.ADDRESS_SPACE))
-		resource.setrlimit(resource.RLIMIT_CPU, (Rlimits.CPU_SECONDS, Rlimits.CPU_SECONDS))
-		resource.setrlimit(resource.RLIMIT_FSIZE, (Rlimits.FILE_SIZE, Rlimits.FILE_SIZE))
-		resource.setrlimit(resource.RLIMIT_NOFILE, (Rlimits.OPEN_FILES, Rlimits.OPEN_FILES))
-		resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
-		os.setsid()
-
-
-class Build:
-	""" One submitted build, from throwaway directory to parsed payload. """
-
-	@staticmethod
-	def environment(workdir: str) -> dict[str, str]:
-		""" Minimal environment, with every writable path pointed inside the throwaway directory.
-
-		Args:
-			workdir (str): The per request directory, which is deleted afterwards.
-		Returns:
-			dict[str, str]: Environment for the child process.
-		"""
-		return {
-			"PATH": "/usr/bin:/bin",
-			"HOME": workdir,
-			"TMPDIR": workdir,
-			"XDG_CACHE_HOME": f"{workdir}/cache",
-			# The rootfs is read only and the tmpfs is a shared budget: neither wants __pycache__.
-			"PYTHONDONTWRITEBYTECODE": "1",
-			"PYTHONUNBUFFERED": "1",
-			"PYTHONHASHSEED": "0",
-			"LANG": "C.UTF-8",
-			"LC_ALL": "C.UTF-8",
-			"NO_COLOR": "1",
-			# A visitor clicking Run is not someone building a datapack.
-			"STEWBEET_TELEMETRY": "0",
-		}
-
-	@staticmethod
-	def reap() -> int:
-		""" Reap orphaned descendants, so a fork bomb cannot exhaust the container's pid limit.
-
-		This process is PID 1 in the container, so anything the build left behind is reparented here
-		and stays a zombie until someone waits on it. Zombies still occupy a pid, so a single fork
-		bomb was enough to fill pids_limit and leave the worker unable to spawn a thread for the next
-		connection, which the client saw as a dropped connection rather than an error.
-
-		`init: true` in compose puts a real init in front of this and is the proper fix. This runs
-		anyway, so the worker is not one deployment flag away from that failure.
-
-		Safe against Popen's own bookkeeping because the caller has already waited on the build
-		process and only one build runs at a time, so nothing here is still tracked.
-
-		Returns:
-			int: How many processes were reaped.
-		"""
-		reaped: int = 0
-		while True:
-			try:
-				pid, _ = os.waitpid(-1, os.WNOHANG)
-			except ChildProcessError:
-				return reaped
-			if pid == 0:
-				return reaped
-			reaped += 1
-
-	@staticmethod
-	def sweep() -> None:
-		""" Empty /tmp before a build starts.
-
-		Pointing the child's TMPDIR at its own throwaway directory only redirects code that asks
-		politely. Nothing stops submitted code from writing to /tmp directly, and those files
-		outlive the request that made them, so without this the shared 128 MB tmpfs would fill up
-		one visitor at a time until every build failed on scratch space.
-
-		Safe to do unconditionally because the caller holds the single build slot, so no other build
-		owns anything under /tmp at this point.
-		"""
-		for name in os.listdir("/tmp"):
-			path: str = f"/tmp/{name}"
-			if os.path.isdir(path) and not os.path.islink(path):
-				shutil.rmtree(path, ignore_errors=True)
-			else:
-				try:
-					os.unlink(path)
-				except OSError:
-					pass
-
-	@staticmethod
-	def link_assets(workdir: str) -> None:
-		""" Give the build writable texture and render folders backed by the bundled ones.
-
-		Both have to be writable, because src.placeholders adds a texture for every id the bundled
-		packs do not cover and seeds a render for every definition, and the image is read only.
-		Copying instead would spend a quarter of the 128 MB tmpfs per request on bytes that are
-		identical every time, so the build gets links: a few hundred inodes, no data, and the
-		rglob("*.png") on the other side cannot tell the difference.
-
-		Textures are linked file by file, since placeholders land beside them in the same folder.
-		Renders are linked one namespace at a time, since a placeholder render goes into the
-		project's own namespace, which no bundled pack provides.
-
-		Args:
-			workdir (str): The per request directory, which beet.yml reads as `../textures` and
-				`../iso_renders` from the project beside it.
-		"""
-		textures: str = f"{workdir}/textures"
-		os.makedirs(textures, exist_ok=True)
-		for entry in os.scandir(f"{SRV}/assets/textures"):
-			if entry.is_file():
-				os.symlink(entry.path, f"{textures}/{entry.name}")
-
-		renders: str = f"{workdir}/iso_renders"
-		os.makedirs(renders, exist_ok=True)
-		for entry in os.scandir(f"{SRV}/assets/iso_renders"):
-			if entry.is_dir():
-				os.symlink(entry.path, f"{renders}/{entry.name}")
-
-	@staticmethod
-	def prepare(code: str) -> str:
-		""" Lay out a fresh directory for one build and drop the submitted code into it.
-
-		Args:
-			code (str): The submitted definitions module.
-		Returns:
-			str: Path of the new directory, which the caller must delete.
-		"""
-		workdir: str = tempfile.mkdtemp(dir="/tmp", prefix="build-")
-		project: str = f"{workdir}/project"
-		shutil.copytree(f"{SRV}/project", project)
-		os.makedirs(f"{workdir}/cache", exist_ok=True)
-		# beet.yml reads ../textures and ../iso_renders, so these sit beside the project.
-		Build.link_assets(workdir)
-		with open(f"{project}/src/user_code.py", "w", encoding="utf-8", newline="\n") as file:
-			file.write(code)
-		return workdir
-
-	@staticmethod
-	def launch(project: str, workdir: str) -> tuple[str, bool]:
-		""" Run runner.py against the project and return its stdout.
-
-		The child is killed by process group, twice: once when the wait times out, and again in the
-		finally, because a child that exited normally may still have left grandchildren behind.
-
-		Args:
-			project (str): Directory holding beet.yml and src/.
-			workdir (str): The per request directory, used as the child's home and temp.
-		Returns:
-			tuple[str, bool]: The child's combined output, and whether it timed out.
-		"""
-		process: subprocess.Popen[str] = subprocess.Popen(
-			[f"{SRV}/.venv/bin/python", f"{SRV}/runner.py", project],
-			stdout=subprocess.PIPE,
-			stderr=subprocess.STDOUT,
-			stdin=subprocess.DEVNULL,
-			cwd=project,
-			env=Build.environment(workdir),
-			text=True,
-			errors="replace",
-			preexec_fn=Rlimits.apply,
-		)
-		try:
-			output, _ = process.communicate(timeout=WALL_TIMEOUT)
-			return output, False
-		except subprocess.TimeoutExpired:
-			Build.kill(process)
-			try:
-				output, _ = process.communicate(timeout=KILL_GRACE)
-			except subprocess.TimeoutExpired:
-				# Something that outlived the kill still holds the write end of the stdout pipe, so
-				# EOF will never come. Drop the log rather than block this thread forever with the
-				# single build slot in hand.
-				output = ""
-			return output, True
-		finally:
-			Build.kill(process)
-			if process.stdout is not None:
-				process.stdout.close()
-
-	@staticmethod
-	def kill(process: subprocess.Popen[str]) -> None:
-		""" SIGKILL the child's whole process group, until there is nothing left in it.
-
-		One signal is not enough against something that forks in a loop. killpg reaches every
-		process in the group at the instant it is delivered, but a fork that lands a microsecond
-		later produces a child that inherits the group and was never signalled. So this repeats
-		until killpg reports the group as empty, which is the only way to know.
-
-		Args:
-			process (subprocess.Popen[str]): The child to kill.
-		"""
-		try:
-			group: int = os.getpgid(process.pid)
-		except (ProcessLookupError, PermissionError):
-			return
-
-		deadline: float = time.monotonic() + KILL_GRACE
-		while True:
-			try:
-				os.killpg(group, signal.SIGKILL)
-			except (ProcessLookupError, PermissionError):
-				return
-			if time.monotonic() > deadline:
-				return
-			time.sleep(KILL_INTERVAL)
-
-	@staticmethod
-	def parse(output: str, timed_out: bool) -> dict[str, Any]:
-		""" Split the child's stdout into build log and JSON payload.
-
-		A missing sentinel means the child died before it could report, which is what an OOM kill,
-		a SIGXFSZ or a SIGKILL look like from here.
-
-		Args:
-			output    (str):  Everything the child printed.
-			timed_out (bool): Whether the wall clock ceiling was reached.
-		Returns:
-			dict[str, Any]: The payload, always carrying `ok` and `logs`.
-		"""
-		head, found, tail = output.rpartition(f"{SENTINEL}\n")
-		logs: str = ANSI.sub("", head if found else output)[-MAX_LOG_CHARS:]
-
-		if timed_out:
-			return {"ok": False, "error": "timeout", "logs": logs}
-		if not found:
-			return {"ok": False, "error": "crashed", "logs": logs}
-		try:
-			return dict(json.loads(tail)) | {"logs": logs}
-		except json.JSONDecodeError:
-			return {"ok": False, "error": "crashed", "logs": logs}
-
-	@staticmethod
-	def run(code: str) -> dict[str, Any]:
-		""" Prepare, build and clean up, whatever happens in between.
-
-		Args:
-			code (str): The submitted definitions module.
-		Returns:
-			dict[str, Any]: The payload, with the build duration added.
-		"""
-		started: float = time.monotonic()
-		Build.sweep()
-		workdir: str = Build.prepare(code)
-		try:
-			output, timed_out = Build.launch(f"{workdir}/project", workdir)
-			return Build.parse(output, timed_out) | {"durationMs": round((time.monotonic() - started) * 1000)}
-		finally:
-			# The tmpfs is a shared budget and it is the only writable place in the container: a
-			# directory leaked here is taken away from every request that follows.
-			shutil.rmtree(workdir, ignore_errors=True)
-			# Both of the container's shared budgets, disk above and pids here, are given back before
-			# the slot is released. Neither is allowed to be spent by a request that already finished.
-			Build.reap()
-
-
 class Handler(BaseHTTPRequestHandler):
-	""" POST /build, GET /health, GET /textures. Nothing else exists. """
+	""" POST /build, POST /headers, GET /health, GET /textures. Nothing else exists. """
 
 	protocol_version: str = "HTTP/1.1"
 
@@ -370,10 +86,46 @@ class Handler(BaseHTTPRequestHandler):
 			status  (int):             HTTP status code.
 			payload (dict[str, Any]):  Body to serialize.
 		"""
-		body: bytes = json.dumps(payload).encode("utf-8")
+		self.send_bytes(status, "application/json; charset=utf-8", json.dumps(payload).encode("utf-8"))
+
+	def reply_archive(self, archive: bytes, counts: dict[str, Any], warnings: list[str]) -> None:
+		""" Send a rewritten pack, with the little that does not fit in a zip carried in a header.
+
+		Warnings are the only unbounded part, so they are what gets dropped, last one first, until the
+		header fits. Dropping them silently would be worse than saying how many went, so the count
+		travels with what is left.
+
+		Args:
+			archive  (bytes):          The archive to hand back.
+			counts   (dict[str, Any]): Duration and the function counts, always small enough to fit.
+			warnings (list[str]):      What the analysis warned about, trimmed to fit the ceiling.
+		"""
+		kept: list[str] = warnings[:MAX_WARNINGS]
+		dropped: int = len(warnings) - len(kept)
+		while True:
+			meta: dict[str, Any] = counts | {"warnings": kept} | ({"warningsDropped": dropped} if dropped else {})
+			encoded: str = base64.b64encode(json.dumps(meta).encode("utf-8")).decode("ascii")
+			if len(encoded) <= MAX_META_CHARS or not kept:
+				break
+			kept = kept[:-1]
+			dropped += 1
+
+		self.send_bytes(200, "application/zip", archive, {META_HEADER: encoded})
+
+	def send_bytes(self, status: int, content_type: str, body: bytes, headers: dict[str, str] | None = None) -> None:
+		""" Send one response with an explicit length, so keep-alive stays honest.
+
+		Args:
+			status       (int):              HTTP status code.
+			content_type (str):              Value of the Content-Type header.
+			body         (bytes):            Response body.
+			headers      (dict[str, str]):   Anything else to send.
+		"""
 		self.send_response(status)
-		self.send_header("Content-Type", "application/json; charset=utf-8")
+		self.send_header("Content-Type", content_type)
 		self.send_header("Content-Length", str(len(body)))
+		for name, value in (headers or {}).items():
+			self.send_header(name, value)
 		self.end_headers()
 		self.wfile.write(body)
 
@@ -391,11 +143,16 @@ class Handler(BaseHTTPRequestHandler):
 			self.reply(404, {"ok": False, "error": "not_found"})
 
 	def do_POST(self) -> None:
-		""" Build the submitted code, one at a time. """
-		if self.path != "/build":
+		""" Run one job, one at a time. """
+		if self.path == "/build":
+			self.do_build()
+		elif self.path == "/headers":
+			self.do_headers()
+		else:
 			self.reply(404, {"ok": False, "error": "not_found"})
-			return
 
+	def do_build(self) -> None:
+		""" Build a submitted definitions module. """
 		length: int = int(self.headers.get("Content-Length") or 0)
 		if length > MAX_CODE_BYTES * 2:
 			self.reply(400, {"ok": False, "error": "code_too_large"})
@@ -413,11 +170,7 @@ class Handler(BaseHTTPRequestHandler):
 		if len(code.encode("utf-8")) > MAX_CODE_BYTES:
 			self.reply(400, {"ok": False, "error": "code_too_large"})
 			return
-		if shutil.disk_usage("/tmp").free < MIN_FREE_BYTES:
-			self.reply(503, {"ok": False, "error": "no_scratch_space"})
-			return
-		if not SLOT.acquire(timeout=QUEUE_TIMEOUT):
-			self.reply(503, {"ok": False, "error": "busy"})
+		if not self.take_slot(MIN_FREE_BYTES):
 			return
 
 		try:
@@ -425,46 +178,51 @@ class Handler(BaseHTTPRequestHandler):
 		finally:
 			SLOT.release()
 
+	def do_headers(self) -> None:
+		""" Run auto.headers over an uploaded pack and hand the rewritten archive straight back. """
+		length: int = int(self.headers.get("Content-Length") or 0)
+		if length > MAX_PACK_BYTES:
+			self.reply(413, {"ok": False, "error": "pack_too_large"})
+			return
+		if length == 0:
+			self.reply(400, {"ok": False, "error": "invalid_body"})
+			return
+
+		pack: bytes = self.rfile.read(length)
+		if not self.take_slot(MIN_HEADERS_FREE_BYTES):
+			return
+
+		try:
+			payload, archive = Headers.run(pack)
+			if payload.get("ok") is not True:
+				self.reply(HEADERS_STATUS.get(str(payload.get("error")), 500), payload)
+				return
+			self.reply_archive(
+				archive,
+				{key: payload.get(key) for key in ("durationMs", "functions", "changed")},
+				Job.warnings(str(payload.get("logs", ""))),
+			)
+		finally:
+			SLOT.release()
+
+	def take_slot(self, min_free: int) -> bool:
+		""" Check the scratch space and take the single job slot, answering the caller when it cannot.
+
+		Args:
+			min_free (int): How much room /tmp must have before the job is worth starting.
+		Returns:
+			bool: Whether the slot is now held, in which case the caller must release it.
+		"""
+		if shutil.disk_usage("/tmp").free < min_free:
+			self.reply(503, {"ok": False, "error": "no_scratch_space"})
+			return False
+		if not SLOT.acquire(timeout=QUEUE_TIMEOUT):
+			self.reply(503, {"ok": False, "error": "busy"})
+			return False
+		return True
+
 
 # Functions
-def selftest() -> int:
-	""" Build at image build time, so a broken pipeline fails the image and not a visitor.
-
-	The render node is the case that matters. auto.text_renders reaches model_resolver, and the
-	OpenGL context this container has no display for, for any item with no cached render:
-	emit.source_images -> ensure_item_images -> run_model_resolver. src.placeholders is what keeps
-	that queue empty, and this is what notices the day it stops working.
-
-	Returns:
-		int: 0 when every build succeeded.
-	"""
-	template: str = (
-		"from beet import Context\n"
-		"from stewbeet import *\n"
-		"\n"
-		"\n"
-		"def beet_default(ctx: Context):\n"
-		'    Item(id="{item}", components={{"item_name": {{"text": "Selftest"}}{lore}}})\n'
-		"    add_item_model_component()\n"
-	)
-	render: str = ', "lore": [[{"render": "steel_ingot"}]]'
-	cases: dict[str, str] = {
-		"bundled texture": template.format(item="steel_ingot", lore=""),
-		"no texture at all": template.format(item="zzz_nothing_has_this_name", lore=""),
-		"a render node": template.format(item="steel_ingot", lore=render),
-	}
-	failed: bool = False
-	for name, code in cases.items():
-		result: dict[str, Any] = Build.run(code)
-		count: int = len(result.get("files", []))
-		if result.get("ok") and count > 0:
-			print(f"selftest: {name}: {count} files in {result.get('durationMs')} ms")
-		else:
-			failed = True
-			print(f"selftest: {name}: FAILED ({result.get('error')})\n{result.get('logs', '')[-4000:]}")
-	return 1 if failed else 0
-
-
 def main() -> int:
 	""" Serve until killed, or run the selftest and exit.
 
@@ -474,10 +232,11 @@ def main() -> int:
 	if "--selftest" in sys.argv:
 		return selftest()
 
-	print(f"Playground worker listening on 0.0.0.0:{PORT}", flush=True)
+	print(f"Sandbox worker listening on 0.0.0.0:{PORT}", flush=True)
 	ThreadingHTTPServer(("0.0.0.0", PORT), Handler).serve_forever()
 	return 0
 
 
 if __name__ == "__main__":
 	sys.exit(main())
+

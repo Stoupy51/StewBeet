@@ -1,20 +1,22 @@
-""" Containment tests for the playground sandbox, run against a container that is already up.
+""" Containment tests for the sandbox, run against a container that is already up.
 
     docker build -t stewbeet-playground docs/web/playground/sandbox
     docker run -d --name pg --network none --read-only \
-      --tmpfs /tmp:rw,noexec,nosuid,nodev,size=128m,mode=1777 \
-      --memory 1g --memory-swap 1g --cpus 1 --pids-limit 96 \
+      --tmpfs /tmp:rw,noexec,nosuid,nodev,size=256m,mode=1777 \
+      --memory 2g --memory-swap 2g --cpus 1 --pids-limit 96 \
       --cap-drop ALL --security-opt no-new-privileges:true \
       -p 127.0.0.1:8001:8000 stewbeet-playground
     python docs/web/playground/sandbox/tests/test_sandbox.py http://127.0.0.1:8001
 
-Every case submits code that probes one thing and prints what happened, then asserts on the build
-log. The container has to survive all of it: a case that passes while leaving the service dead is a
-failing run, which is why the last thing this does is build normally one more time.
+Every /build case submits code that probes one thing and prints what happened, then asserts on the
+build log. The /headers cases submit an archive instead and assert on what comes back out. The
+container has to survive all of it: a case that passes while leaving the service dead is a failing
+run, which is why the last thing this does is build normally one more time.
 
 Stdlib only, so it runs with any interpreter, including the one inside the image.
 """
 # Imports
+import io
 import json
 import sys
 import textwrap
@@ -22,13 +24,17 @@ import urllib.error
 import urllib.request
 from dataclasses import dataclass, field
 from typing import Any
+from zipfile import ZipFile
 
 # Constants
-TIMEOUT: float = 60.0
-""" Generous: a case that deliberately runs into the 20 s wall clock ceiling still has to return. """
+TIMEOUT: float = 120.0
+""" Generous: a case that deliberately runs into the 90 s wall clock ceiling still has to return. """
 
 PREAMBLE: str = "from beet import Context\nfrom stewbeet import *\n\n\ndef beet_default(ctx: Context):\n"
 """ Every probe is a definitions module, because that is the only shape the pipeline accepts. """
+
+PACK_MCMETA: str = '{"pack": {"pack_format": 61, "description": "test"}}'
+""" Minimal pack.mcmeta, on a format that uses the `function` folder rather than `functions`. """
 
 
 # Classes
@@ -104,6 +110,61 @@ def post(base: str, code: str) -> dict[str, Any]:
 		# that has run out of pids or threads looks like from here, and the cases after this one are
 		# the ones that say whether it ever recovers.
 		return {"ok": None, "error": f"no_response: {type(error).__name__}: {error}", "status": 0}
+
+
+def post_pack(base: str, pack: bytes) -> tuple[int, str, bytes]:
+	""" Submit an archive to /headers and return the raw response.
+
+	Raw rather than parsed, because telling a zip apart from a JSON error is the contract under test.
+
+	Args:
+		base (str):   Worker base URL, ex: "http://127.0.0.1:8001".
+		pack (bytes): The archive to submit.
+	Returns:
+		tuple[int, str, bytes]: Status, Content-Type and body.
+	"""
+	request: urllib.request.Request = urllib.request.Request(
+		f"{base}/headers",
+		data=pack,
+		headers={"Content-Type": "application/zip"},
+		method="POST",
+	)
+	try:
+		with urllib.request.urlopen(request, timeout=TIMEOUT) as response:
+			return response.status, response.headers.get("Content-Type", ""), response.read()
+	except urllib.error.HTTPError as error:
+		return error.code, error.headers.get("Content-Type", ""), error.read()
+	except OSError as error:
+		return 0, "", f"no_response: {type(error).__name__}: {error}".encode()
+
+
+def zipped(entries: dict[str, str | bytes]) -> bytes:
+	""" Build an archive from a mapping, so a case reads as the pack it is describing.
+
+	Args:
+		entries (dict[str, str | bytes]): Archive path to content.
+	Returns:
+		bytes: The archive.
+	"""
+	buffer: io.BytesIO = io.BytesIO()
+	with ZipFile(buffer, "w") as archive:
+		for path, content in entries.items():
+			archive.writestr(path, content)
+	return buffer.getvalue()
+
+
+def sample_pack() -> bytes:
+	""" A two function datapack, nested one folder deep the way a zipped folder arrives.
+
+	Returns:
+		bytes: The archive.
+	"""
+	return zipped({
+		"MyPack/pack.mcmeta": PACK_MCMETA,
+		"MyPack/data/probe/function/caller.mcfunction": "function probe:called\n",
+		"MyPack/data/probe/function/called.mcfunction": "say hello\n",
+		"MyPack/data/probe/loot_table/thing.json": '{ "type":   "minecraft:generic" }\n',
+	})
 
 
 def probe(body: str) -> str:
@@ -363,6 +424,46 @@ def run_cases(base: str, report: Report) -> None:
 			report.check(f"{case.name} [no {needle!r}]", needle not in blob, "PRESENT IN THE RESPONSE")
 
 
+def run_headers(base: str, report: Report) -> None:
+	""" Check the /headers endpoint: what it rewrites, what it leaves alone and what it refuses.
+
+	Args:
+		base   (str):    Worker base URL.
+		report (Report): Tally to record into.
+	"""
+	status, content_type, body = post_pack(base, sample_pack())
+	report.check("a datapack comes back as a zip", content_type.startswith("application/zip"), f"got {status} {content_type}: {body[:200]!r}")
+
+	if content_type.startswith("application/zip"):
+		with ZipFile(io.BytesIO(body)) as archive:
+			names: list[str] = archive.namelist()
+			called: str = archive.read("MyPack/data/probe/function/called.mcfunction").decode("utf-8")
+			loot: str = archive.read("MyPack/data/probe/loot_table/thing.json").decode("utf-8")
+
+		report.check("the header names the caller", "@within" in called and "probe:caller" in called, f"got {called!r}")
+		report.check("the nesting is preserved", "MyPack/pack.mcmeta" in names, f"got {names}")
+		# The whole reason the runner writes functions back over the upload instead of dumping the
+		# pack: beet would re-encode this file and hand back a loot table nobody asked it to reformat.
+		report.check("other files are untouched", loot == '{ "type":   "minecraft:generic" }\n', f"got {loot!r}")
+
+	refusals: dict[str, bytes] = {
+		"a file that is not a zip": b"this is not an archive at all",
+		"a zip with no pack.mcmeta": zipped({"readme.txt": "nothing to see"}),
+		"a zip that escapes itself": zipped({"../evil.mcfunction": "say pwned", "pack.mcmeta": PACK_MCMETA}),
+	}
+	for name, pack in refusals.items():
+		status, content_type, body = post_pack(base, pack)
+		report.check(f"{name} is refused", not content_type.startswith("application/zip"), f"got {status} {content_type}")
+		report.check(f"{name} says why", b'"error"' in body, f"got {body[:200]!r}")
+
+	# 320 MB of zeroes in a few kilobytes, which is what MAX_EXTRACTED_BYTES exists for. Spread over
+	# forty entries rather than written as one, so the test process never holds more than 8 MB of it.
+	block: bytes = b"0" * (8 * 1024 * 1024)
+	bomb: dict[str, str | bytes] = {"pack.mcmeta": PACK_MCMETA} | {f"data/bomb/function/f{index}.mcfunction": block for index in range(40)}
+	status, content_type, body = post_pack(base, zipped(bomb))
+	report.check("a zip bomb is refused", b"pack_too_large_extracted" in body, f"got {status} {body[:200]!r}")
+
+
 def run_protocol(base: str, report: Report) -> None:
 	""" Check the cases that are about the request rather than about the build.
 
@@ -398,6 +499,8 @@ def main() -> int:
 
 	print("Containment:")
 	run_cases(base, report)
+	print("Headers:")
+	run_headers(base, report)
 	print("Protocol:")
 	run_protocol(base, report)
 
@@ -409,3 +512,4 @@ def main() -> int:
 
 if __name__ == "__main__":
 	sys.exit(main())
+

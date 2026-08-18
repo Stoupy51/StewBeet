@@ -71,14 +71,14 @@ COPY --from=assets /clones /clones
 COPY merge_assets.py /srv/merge_assets.py
 RUN /srv/.venv/bin/python /srv/merge_assets.py /clones /srv/assets && rm -rf /clones
 
-COPY worker.py runner.py /srv/
+COPY worker.py jobs.py builds.py selftest.py errors.py runner.py headers_runner.py /srv/
 COPY project /srv/project
 
 # A read-only rootfs can never write a .pyc, so every one of them has to exist already.
 RUN /srv/.venv/bin/python -m compileall -q /srv
 
-# Builds twice, once with an item that has a bundled render and once with an item that has none.
-# The second case is what fails the image build the day a pipeline change starts reaching for
+# Runs every job once: three playground builds and one auto.headers pass over a sample pack. The
+# build with no bundled render is what fails the image the day a pipeline change starts reaching for
 # model_resolver, instead of letting a visitor discover it as a fifteen second hang.
 RUN /srv/.venv/bin/python /srv/worker.py --selftest
 

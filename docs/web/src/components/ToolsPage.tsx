@@ -26,6 +26,12 @@ export const ToolsPage: React.FC = () => {
             icon: '🧪',
         },
         {
+            title: t('tools.autoHeaders'),
+            description: t('tools.autoHeadersDesc'),
+            path: '/auto_headers',
+            icon: '🏷️',
+        },
+        {
             title: t('tools.markdownToBBCode'),
             description: t('tools.markdownToBBCodeDesc'),
             path: '/markdown_to_pmc_bbcode',

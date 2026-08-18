@@ -22,6 +22,8 @@ from importlib.machinery import ModuleSpec
 from typing import Any
 from zipfile import ZipFile
 
+from errors import root_cause
+
 # Constants
 USER_MODULE: str = "user_code.py"
 """ The submitted module, whose frames are the only ones a reader can do anything about. """
@@ -168,32 +170,6 @@ def to_payload(built: dict[str, bytes]) -> dict[str, Any]:
 	}
 
 
-def root_cause(error: BaseException) -> BaseException:
-	""" Walk to the exception that actually went wrong.
-
-	beet wraps a plugin failure in PluginError, and stouputils turns any error into a prompt on
-	stdin that fails with EOFError and then exits. Reporting either of those tells the reader
-	nothing. The chain is walked to the deepest link, skipping the two that are only plumbing.
-
-	Args:
-		error (BaseException): The exception that reached the top.
-	Returns:
-		BaseException: The most specific cause worth naming.
-	"""
-	chain: list[BaseException] = []
-	seen: set[int] = set()
-	current: BaseException | None = error
-	while current is not None and id(current) not in seen:
-		seen.add(id(current))
-		chain.append(current)
-		current = current.__cause__ or current.__context__
-
-	for candidate in reversed(chain):
-		if not isinstance(candidate, SystemExit | EOFError):
-			return candidate
-	return chain[-1]
-
-
 def suggestions(error: BaseException) -> list[str]:
 	""" Names close to the one a NameError complained about.
 
@@ -285,3 +261,4 @@ def main() -> int:
 
 if __name__ == "__main__":
 	sys.exit(main())
+
