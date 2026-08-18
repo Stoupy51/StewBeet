@@ -61,8 +61,8 @@ export const STATIC_ROUTE_META: Record<string, PageMeta> = {
         path: '/playground',
     },
     '/auto_headers': {
-        title: 'auto.headers | StewBeet',
-        description: 'Upload a Minecraft datapack and get it back with a generated header on every function: who calls it, the execution context it runs in, and the type of every macro argument.',
+        title: 'Auto Headers | StewBeet',
+        description: 'Upload a Minecraft datapack and get it back with a generated header on every function: who calls it, the execution context it runs in, and the type of every macro argument. Runs the standalone auto.headers beet plugin.',
         path: '/auto_headers',
     },
     '/markdown_to_pmc_bbcode': {
