@@ -25,7 +25,7 @@ authors = [
     { name = "Stoupy51", email = "stoupy51@gmail.com" },
 ]
 dependencies = [
-	"stouputils>=26.1.1",
+	"stouputils>=26.2.0",
 	"model_resolver>=1.15.2",
 	"beet>=0.116.0",
 	"bolt>=0.50.1",
