@@ -11,8 +11,9 @@
  * Uses **no `Bun.*` API**, like every module in this folder: server.tsx and the Vite dev middleware
  * both import it.
  */
-import { acquire, json, queueFull, RateLimiter, release, workerBase } from './sandbox';
+import { acquire, json, outcomeOf, queueFull, RateLimiter, release, workerBase } from './sandbox';
 import { MAX_PACK_BYTES } from './sandboxLimits';
+import { packSizeBucket, recordEvent } from './telemetry';
 
 /** Longer than the worker's own 90 s wall clock ceiling, so its `timeout` reply wins the race. */
 const WORKER_TIMEOUT_MS = 120_000;
@@ -67,8 +68,21 @@ export async function handleHeaders(req: Request, clientIp: string): Promise<Res
     } catch {
         return json(400, { ok: false, error: 'invalid_body' });
     }
+    const startedAt = Date.now();
+
+    // Counted from here, which is past the rate limiter and past the header-only size refusal: what
+    // /telemetry shows is uploads that were actually read, so nobody can run the number up with
+    // empty requests, and every way a real one can end is present with the reason it ended that way.
+    const count = (outcome: string): void => {
+        recordEvent('auto_headers', {
+            durationSeconds: (Date.now() - startedAt) / 1000,
+            labels: { outcomes: outcome, packSizes: packSizeBucket(pack.byteLength) },
+        });
+    };
+
     // A chunked upload declares no length, so this is the check that actually holds.
     if (pack.byteLength > MAX_PACK_BYTES) {
+        count('pack_too_large');
         return json(413, { ok: false, error: 'pack_too_large' });
     }
     if (pack.byteLength === 0) {
@@ -76,6 +90,7 @@ export async function handleHeaders(req: Request, clientIp: string): Promise<Res
     }
 
     if (queueFull()) {
+        count('busy');
         return json(503, { ok: false, error: 'busy' });
     }
 
@@ -89,6 +104,7 @@ export async function handleHeaders(req: Request, clientIp: string): Promise<Res
         });
 
         if (response.headers.get('content-type')?.startsWith('application/zip')) {
+            count('ok');
             return new Response(await response.arrayBuffer(), {
                 status: 200,
                 headers: {
@@ -102,9 +118,11 @@ export async function handleHeaders(req: Request, clientIp: string): Promise<Res
         // Everything else is the worker's own JSON, forwarded rather than flattened into a generic
         // upstream failure: its 400s and 503s are about this request and the page can act on them.
         const body = await response.json() as Record<string, unknown>;
+        count(outcomeOf(body));
         return json(response.ok ? 500 : response.status, { ...body, ok: false });
     } catch (error) {
         const timedOut = error instanceof Error && (error.name === 'TimeoutError' || error.name === 'AbortError');
+        count(timedOut ? 'timeout' : 'worker_unavailable');
         return json(timedOut ? 504 : 502, {
             ok: false,
             error: timedOut ? 'timeout' : 'worker_unavailable',

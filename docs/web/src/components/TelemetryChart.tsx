@@ -2,10 +2,10 @@ import { useMemo, useState } from 'react';
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 import { useTranslation } from '../i18n/useTranslation';
 
-/** One day of the public series, exactly as /api/telemetry/builds returns it. */
+/** One day of a public series, exactly as /api/telemetry/streams returns it. */
 export interface TelemetryDay {
     date: string;
-    builds: number;
+    events: number;
     avgDurationSeconds: number;
 }
 
@@ -20,30 +20,33 @@ const PIE_COLORS = ['#38bdf8', '#34d399', '#a78bfa', '#fbbf24', '#f87171', '#fb7
 /** Height of the plot. Bars are read against each other, so the number only sets the proportions. */
 const PLOT_HEIGHT = 176;
 
-/** A day with builds never disappears into the baseline, and a day without one never pretends to have any. */
+/** A day with events never disappears into the baseline, and a day without one never pretends to have any. */
 const MIN_BAR_PIXELS = 3;
 
 /**
- * Thirty daily build counts, as one bar per day.
+ * Thirty daily counts of one stream, as one bar per day.
  *
  * One series, so one colour and no legend: the heading names what the bars are. The only value
  * printed on the plot is the busiest day, because a number above all thirty bars is noise and the
- * hover readout already answers "how many on that one". Days with no builds keep their slot and
+ * hover readout already answers "how many on that one". Days with nothing keep their slot and
  * their tooltip, drawn as a flat tick, since a gap in the row would read as missing data instead
  * of as a quiet day.
+ *
+ * `unitLabel` and `averageLabel` come from the stream being drawn, so the same plot reads as builds,
+ * runs or conversions without a second copy of it existing.
  *
  * The table under the plot is not a fallback, it is the same data in the form a screen reader,
  * a copy-paste or a colourblind reader can actually use, and it is why the bars themselves are
  * left out of the tab order rather than adding thirty stops between the heading and the link.
  */
-export const TelemetryChart: React.FC<{ days: TelemetryDay[] }> = ({ days }) => {
+export const TelemetryChart: React.FC<{ days: TelemetryDay[]; unitLabel: string; averageLabel: string }> = ({ days, unitLabel, averageLabel }) => {
     const { t, language } = useTranslation();
     const [hovered, setHovered] = useState<number | null>(null);
 
     const locale = language === 'fr' ? 'fr-FR' : 'en-US';
     const dayFormat = useMemo(() => new Intl.DateTimeFormat(locale, { month: 'short', day: 'numeric', timeZone: 'UTC' }), [locale]);
-    const peak = Math.max(...days.map(day => day.builds), 1);
-    const peakIndex = days.findIndex(day => day.builds === peak);
+    const peak = Math.max(...days.map(day => day.events), 1);
+    const peakIndex = days.findIndex(day => day.events === peak);
 
     const readout = hovered === null ? null : days[hovered];
     const tooltipAnchor = hovered === null ? 0 : ((hovered + 0.5) / days.length) * 100;
@@ -65,11 +68,11 @@ export const TelemetryChart: React.FC<{ days: TelemetryDay[] }> = ({ days }) => 
                     >
                         <div className="text-xs font-mono text-slate-400">{dayFormat.format(new Date(`${readout.date}T00:00:00Z`))}</div>
                         <div className="text-sm text-slate-100">
-                            {readout.builds.toLocaleString(locale)} {t('telemetry.buildsLabel')}
+                            {readout.events.toLocaleString(locale)} {unitLabel}
                         </div>
-                        {readout.builds > 0 && (
+                        {readout.avgDurationSeconds > 0 && (
                             <div className="text-xs text-slate-400">
-                                {t('telemetry.averageBuild')} {readout.avgDurationSeconds.toFixed(1)}s
+                                {averageLabel} {readout.avgDurationSeconds.toFixed(1)}s
                             </div>
                         )}
                     </div>
@@ -90,20 +93,20 @@ export const TelemetryChart: React.FC<{ days: TelemetryDay[] }> = ({ days }) => 
                             {index === peakIndex && peak > 0 && (
                                 <span
                                     className="absolute inset-x-0 -translate-y-1 text-center text-[0.625rem] font-mono text-slate-400"
-                                    style={{ bottom: `${(day.builds / peak) * 100}%` }}
+                                    style={{ bottom: `${(day.events / peak) * 100}%` }}
                                 >
                                     {peak}
                                 </span>
                             )}
                             <div
                                 className={`w-full rounded-t-[4px] transition-colors ${
-                                    day.builds > 0
+                                    day.events > 0
                                         ? hovered === index ? 'bg-mc-diamond' : 'bg-mc-emerald'
                                         : 'bg-slate-700'
                                 }`}
                                 style={{
-                                    height: day.builds > 0
-                                        ? `max(${MIN_BAR_PIXELS}px, ${(day.builds / peak) * 100}%)`
+                                    height: day.events > 0
+                                        ? `max(${MIN_BAR_PIXELS}px, ${(day.events / peak) * 100}%)`
                                         : `${MIN_BAR_PIXELS - 1}px`,
                                 }}
                             />
@@ -129,7 +132,7 @@ export const TelemetryChart: React.FC<{ days: TelemetryDay[] }> = ({ days }) => 
                         <thead className="sticky top-0 bg-slate-900 text-left text-xs uppercase tracking-wide text-slate-400">
                             <tr>
                                 <th scope="col" className="px-3 py-2 font-medium">{t('telemetry.tableDate')}</th>
-                                <th scope="col" className="px-3 py-2 font-medium text-right">{t('telemetry.tableBuilds')}</th>
+                                <th scope="col" className="px-3 py-2 font-medium text-right">{unitLabel}</th>
                                 <th scope="col" className="px-3 py-2 font-medium text-right">{t('telemetry.tableAverage')}</th>
                             </tr>
                         </thead>
@@ -137,8 +140,8 @@ export const TelemetryChart: React.FC<{ days: TelemetryDay[] }> = ({ days }) => 
                             {days.map(day => (
                                 <tr key={day.date}>
                                     <td className="px-3 py-1.5 font-mono text-slate-300">{day.date}</td>
-                                    <td className="px-3 py-1.5 text-right text-slate-200">{day.builds.toLocaleString(locale)}</td>
-                                    <td className="px-3 py-1.5 text-right text-slate-400">{day.builds > 0 ? `${day.avgDurationSeconds.toFixed(1)}s` : '-'}</td>
+                                    <td className="px-3 py-1.5 text-right text-slate-200">{day.events.toLocaleString(locale)}</td>
+                                    <td className="px-3 py-1.5 text-right text-slate-400">{day.avgDurationSeconds > 0 ? `${day.avgDurationSeconds.toFixed(1)}s` : '-'}</td>
                                 </tr>
                             ))}
                         </tbody>

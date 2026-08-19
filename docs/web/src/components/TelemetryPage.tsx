@@ -4,7 +4,8 @@ import { motion } from 'framer-motion';
 import { HiArrowLeft, HiCheck, HiExternalLink, HiX } from 'react-icons/hi';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
-import { TelemetryBreakdownChart, TelemetryChart, type TelemetryBreakdown, type TelemetryDay } from './TelemetryChart';
+import { TelemetrySlider } from './TelemetrySlider';
+import type { StreamSeries } from './TelemetryStreamPanel';
 import { useTranslation } from '../i18n/useTranslation';
 import { useMotionSafe } from '../hooks/useMotionSafe';
 import { HEADING, SELECTION_BRAND, TEXT_ACCENT, TEXT_ACCENT_HOVER } from '../theme';
@@ -12,16 +13,10 @@ import { HEADING, SELECTION_BRAND, TEXT_ACCENT, TEXT_ACCENT_HOVER } from '../the
 /** The file the whole feature lives in. Linking the repository root instead would prove nothing. */
 const IMPLEMENTATION_URL = 'https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/telemetry.py';
 
-/** Shape of `GET /api/telemetry/builds?days=30`. */
-interface TelemetrySeries {
-    days: TelemetryDay[];
-    total: number;
-    avgDurationSeconds: number;
-    breakdowns: {
-        versions: TelemetryBreakdown[];
-        pythonVersions: TelemetryBreakdown[];
-        durationBuckets: TelemetryBreakdown[];
-    };
+/** Shape of `GET /api/telemetry/streams?days=30`: every counter over one window, in one answer. */
+interface TelemetryStreams {
+    days: number;
+    streams: Record<string, StreamSeries>;
 }
 
 /** The three collected fields, and the eleven things that are never looked at, as translation keys. */
@@ -36,24 +31,22 @@ const NOT_COLLECTED = [
  *
  * It exists to answer three questions without the reader having to trust a paragraph: what leaves
  * their machine, how to stop it, and where the code that sends it is. The numbers at the top are
- * the same aggregates anyone can pull from the public endpoint.
+ * the same aggregates anyone can pull from the public endpoint, one panel per counter.
  */
 export const TelemetryPage: React.FC = () => {
-    const { t, language } = useTranslation();
+    const { t } = useTranslation();
     const motionSafe = useMotionSafe();
-    const [series, setSeries] = useState<TelemetrySeries | null>(null);
+    const [streams, setStreams] = useState<Record<string, StreamSeries> | null>(null);
     const [failed, setFailed] = useState(false);
 
     useEffect(() => {
         let cancelled = false;
-        fetch('/api/telemetry/builds?days=30')
-            .then(response => (response.ok ? response.json() as Promise<TelemetrySeries> : Promise.reject(new Error(String(response.status)))))
-            .then(data => { if (!cancelled && data.days?.length) setSeries(data); })
+        fetch('/api/telemetry/streams?days=30')
+            .then(response => (response.ok ? response.json() as Promise<TelemetryStreams> : Promise.reject(new Error(String(response.status)))))
+            .then(data => { if (!cancelled && data.streams) setStreams(data.streams); })
             .catch(() => { if (!cancelled) setFailed(true); });
         return () => { cancelled = true; };
     }, []);
-
-    const locale = language === 'fr' ? 'fr-FR' : 'en-US';
 
     return (
         <div className={`min-h-screen bg-slate-950 text-slate-100 ${SELECTION_BRAND}`}>
@@ -79,45 +72,15 @@ export const TelemetryPage: React.FC = () => {
 
                 {/* ── Public statistics ──────────────────────────────────────── */}
                 <div className="relative z-10 pb-12 px-4">
-                    <motion.section
-                        {...motionSafe({ initial: { y: 20 }, animate: { y: 0 }, transition: { delay: 0.15 } })}
-                        className="max-w-3xl mx-auto rounded-panel border border-white/10 bg-slate-900/40 p-6 md:p-8"
-                    >
-                        <h2 className="text-sm font-medium uppercase tracking-wide text-slate-400">{t('telemetry.statsTitle')}</h2>
-
-                        {series ? (
-                            <>
-                                <p className={`mt-3 mb-1 text-4xl md:text-5xl font-bold tabular-nums ${TEXT_ACCENT}`}>
-                                    {series.total.toLocaleString(locale)}
-                                </p>
-                                <p className="mb-8 text-sm text-slate-400">
-                                    {t('telemetry.buildsLabel')}
-                                    {series.avgDurationSeconds > 0 && ` · ${t('telemetry.averageBuild')} ${series.avgDurationSeconds.toFixed(1)}s`}
-                                </p>
-                                <TelemetryChart days={series.days} />
-
-                                <div className="mt-8 grid gap-4 md:grid-cols-3">
-                                    <TelemetryBreakdownChart
-                                        title={t('telemetry.versionBreakdown')}
-                                        items={series.breakdowns.versions}
-                                        emptyLabel={t('telemetry.noVersionData')}
-                                    />
-                                    <TelemetryBreakdownChart
-                                        title={t('telemetry.pythonBreakdown')}
-                                        items={series.breakdowns.pythonVersions}
-                                        emptyLabel={t('telemetry.noPythonData')}
-                                    />
-                                    <TelemetryBreakdownChart
-                                        title={t('telemetry.durationBreakdown')}
-                                        items={series.breakdowns.durationBuckets}
-                                        emptyLabel={t('telemetry.noDurationData')}
-                                    />
-                                </div>
-                            </>
+                    <motion.div {...motionSafe({ initial: { y: 20 }, animate: { y: 0 }, transition: { delay: 0.15 } })}>
+                        {streams ? (
+                            <TelemetrySlider streams={streams} />
                         ) : (
-                            <p className="mt-4 text-slate-400">{failed ? t('telemetry.statsUnavailable') : t('telemetry.statsLoading')}</p>
+                            <section className="max-w-3xl mx-auto rounded-panel border border-white/10 bg-slate-900/40 p-6 md:p-8">
+                                <p className="text-slate-400">{failed ? t('telemetry.statsUnavailable') : t('telemetry.statsLoading')}</p>
+                            </section>
                         )}
-                    </motion.section>
+                    </motion.div>
                 </div>
 
                 {/* ── What is collected ──────────────────────────────────────── */}
@@ -153,6 +116,9 @@ export const TelemetryPage: React.FC = () => {
                         </div>
 
                         <p className="mt-5 text-sm text-slate-400">{t('telemetry.aggregateNote')}</p>
+
+                        <h3 className={`mt-8 text-lg font-bold mb-2 ${HEADING}`}>{t('telemetry.websiteTitle')}</h3>
+                        <p className="text-sm text-slate-400">{t('telemetry.websiteNote')}</p>
                     </div>
                 </div>
 

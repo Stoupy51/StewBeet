@@ -26,6 +26,24 @@ const MAX_QUEUED = 2;
 const HOUR_MS = 3_600_000;
 const MINUTE_MS = 60_000;
 
+/**
+ * The label a finished run is counted under in telemetry.
+ *
+ * The worker's own error code when it gave one, so the breakdown separates a pack that failed to
+ * build from a worker that was not there. Anything that is not a plain identifier is flattened to
+ * `error`, since a label is a pie slice and an error message is not.
+ *
+ * Examples:
+ *     >>> outcomeOf({ ok: true })
+ *     'ok'
+ *     >>> outcomeOf({ ok: false, error: 'no_pack_mcmeta' })
+ *     'no_pack_mcmeta'
+ */
+export function outcomeOf(body: Record<string, unknown>): string {
+    if (body.ok === true) return 'ok';
+    return typeof body.error === 'string' && /^[a-z][a-z_]{0,31}$/.test(body.error) ? body.error : 'error';
+}
+
 export function json(status: number, body: Record<string, unknown>, headers: Record<string, string> = {}): Response {
     return new Response(JSON.stringify(body), {
         status,

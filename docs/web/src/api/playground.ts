@@ -6,8 +6,9 @@
  * server.tsx and the Vite dev middleware both import it.
  */
 import { createHash } from 'node:crypto';
-import { acquire, json, queueFull, RateLimiter, release, workerBase } from './sandbox';
+import { acquire, json, outcomeOf, queueFull, RateLimiter, release, workerBase } from './sandbox';
 import { MAX_CODE_BYTES } from './sandboxLimits';
+import { recordEvent } from './telemetry';
 
 /** Longer than the worker's own 20 s wall clock ceiling, so its `timeout` reply wins the race. */
 const WORKER_TIMEOUT_MS = 30_000;
@@ -82,6 +83,16 @@ export async function handlePlayground(req: Request, clientIp: string): Promise<
     }
 
     const key = createHash('sha256').update(code).digest('hex');
+    const startedAt = Date.now();
+
+    // Counted here rather than at each return: what /telemetry shows is runs the worker was asked
+    // for, so a malformed body, a rate limited caller and the cache hit below are all absent, and
+    // every way a real run can end is present with the reason it ended that way. The cache hit in
+    // particular has to stay out: it is answered before the rate limiter, so counting it would be
+    // a number anyone could run up by pressing the same button.
+    const count = (outcome: string): void => {
+        recordEvent('playground', { durationSeconds: (Date.now() - startedAt) / 1000, labels: { outcomes: outcome } });
+    };
 
     // Deliberately before the rate limit and the build slot. Re-running a build nobody has changed
     // costs nothing, so it should not consume either budget, and the page stays responsive while a
@@ -99,6 +110,7 @@ export async function handlePlayground(req: Request, clientIp: string): Promise<
     }
 
     if (queueFull()) {
+        count('busy');
         return json(503, { ok: false, error: 'busy' });
     }
 
@@ -115,6 +127,7 @@ export async function handlePlayground(req: Request, clientIp: string): Promise<
         if (!response.ok) {
             // The worker's own 400s and 503s are about this request, so they are forwarded rather
             // than flattened into a generic upstream failure.
+            count(outcomeOf(body));
             return json(response.status, { ...body, ok: false });
         }
 
@@ -123,9 +136,11 @@ export async function handlePlayground(req: Request, clientIp: string): Promise<
         if (body.ok === true) {
             remember(key, body);
         }
+        count(outcomeOf(body));
         return json(200, { ...body, cached: false });
     } catch (error) {
         const timedOut = error instanceof Error && (error.name === 'TimeoutError' || error.name === 'AbortError');
+        count(timedOut ? 'timeout' : 'worker_unavailable');
         return json(timedOut ? 504 : 502, {
             ok: false,
             error: timedOut ? 'timeout' : 'worker_unavailable',
