@@ -2,6 +2,8 @@ import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { HiClipboardCopy, HiRefresh } from 'react-icons/hi';
 import { convertMarkdownToBBCode } from '../utils/markdownToBBCode';
+import { inputSizeBucket } from '../api/telemetry/streams';
+import { reportToolUse } from '../utils/reportToolUse';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 import { useTranslation } from '../i18n/useTranslation';
@@ -80,14 +82,23 @@ export function MarkdownToBBCodePage() {
   }, [markdownInput, bbcodeOutput]);
   const wrapClass = noWrap ? 'whitespace-pre overflow-x-auto' : 'whitespace-pre-wrap';
 
+  // Counted on the two things a reader does on purpose, never on typing: with auto update on, the
+  // output is recomputed on every keystroke, and counting that would measure the keyboard.
+  const countUse = (action: string) => {
+    if (markdownInput.length === 0) return;
+    reportToolUse('markdown_to_bbcode', { actions: action, inputSizes: inputSizeBucket(markdownInput.length) });
+  };
+
   const handleConvert = () => {
     const converted = convertMarkdownToBBCode(markdownInput);
     setManualBbcodeOutput(converted);
+    countUse('convert');
   };
 
   const handleCopyOutput = async () => {
     try {
       await navigator.clipboard.writeText(bbcodeOutput);
+      countUse('copy');
       alert(language === 'fr' ? 'BBCode copié dans le presse-papiers !' : 'BBCode copied to clipboard!');
     } catch (err) {
       console.error('Erreur lors de la copie:', err);

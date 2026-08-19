@@ -465,24 +465,63 @@ export const translations = {
         // Telemetry page
         telemetry: {
             title: 'Telemetry',
-            subtitle: 'StewBeet counts successful builds, anonymously, so the project knows whether anyone is using it. Here is the count, the exact contents of that report, and how to switch it off.',
+            subtitle: 'StewBeet counts successful builds, anonymously, so the project knows whether anyone is using it, and the tools on this site are counted the same way. Here are the numbers, the exact contents of what is sent, and how to switch it off.',
 
-            statsTitle: 'Builds over the last 30 days',
-            buildsLabel: 'builds',
-            averageBuild: 'average build',
             statsLoading: 'Loading the public numbers...',
             statsUnavailable: 'The public numbers could not be loaded right now.',
-            chartAlt: 'Daily build counts for the last 30 days.',
+            chartAlt: 'Daily counts for the last 30 days.',
             tableToggle: 'Show the numbers as a table',
             tableDate: 'Date (UTC)',
-            tableBuilds: 'Builds',
             tableAverage: 'Average',
-            versionBreakdown: 'StewBeet versions',
-            pythonBreakdown: 'Python versions',
-            durationBreakdown: 'Build duration',
-            noVersionData: 'No version data yet.',
-            noPythonData: 'No Python data yet.',
-            noDurationData: 'No build duration data yet.',
+            noDimensionData: 'Nothing counted yet.',
+            streamTabs: 'Which counter to show',
+            previousStream: 'Previous counter',
+            nextStream: 'Next counter',
+
+            streams: {
+                cli: {
+                    tab: 'Builds',
+                    title: 'Builds over the last 30 days',
+                    unit: 'builds',
+                    average: 'average build',
+                    note: 'Every install of StewBeet that finished a build with telemetry left on. The playground is not in this number: the sandbox runs with STEWBEET_TELEMETRY=0, so what you are looking at is real projects on real machines.',
+                    link: '',
+                },
+                playground: {
+                    tab: 'Playground',
+                    title: 'Playground runs over the last 30 days',
+                    unit: 'runs',
+                    average: 'average run',
+                    note: 'One count per build the server actually ran. Pressing Build again on code nobody changed is answered from the cache and is not counted a second time, and the code you typed is not part of any of this.',
+                    link: 'Open the playground',
+                },
+                auto_headers: {
+                    tab: 'Auto Headers',
+                    title: 'Auto Headers runs over the last 30 days',
+                    unit: 'packs',
+                    average: 'average run',
+                    note: 'One count per datapack that was read, with the size band it fell into and how the run ended. The archive is never written to a disk on the server and nothing about its contents is kept.',
+                    link: 'Open Auto Headers',
+                },
+                markdown_to_bbcode: {
+                    tab: 'Markdown to BBCode',
+                    title: 'Markdown to BBCode conversions over the last 30 days',
+                    unit: 'conversions',
+                    average: '',
+                    note: 'The converter runs entirely in your browser, so this is the one counter the server cannot see for itself: it is a short ping sent when you press Copy or Convert, once the conversion has already happened. Your text never leaves the tab.',
+                    link: 'Open the converter',
+                },
+            },
+
+            dimensions: {
+                versions: 'StewBeet versions',
+                pythonVersions: 'Python versions',
+                durationBuckets: 'Duration',
+                outcomes: 'How it ended',
+                packSizes: 'Upload size',
+                actions: 'What was pressed',
+                inputSizes: 'Input size',
+            },
 
             collectedTitle: 'What do we collect?',
             collectedWhy: 'Three fields, sent once a build has finished. The versions say which releases still need supporting, and the duration says whether builds are getting slower between releases.',
@@ -503,7 +542,10 @@ export const translations = {
             notIp: 'Your IP address, which the server uses to rate limit and then drops',
             notIdentifiers: 'Any installation or user identifier, one-off or persistent',
 
-            aggregateNote: 'The server keeps one row per day with the count, total duration, and the distribution of StewBeet versions, Python versions and build times. The public endpoint returns the daily totals plus these breakdowns for the chart page: GET /api/telemetry/builds?days=30.',
+            aggregateNote: 'The server keeps one row per day per counter: how many events, their total duration, and the distributions that counter declares. Two public endpoints read it back. GET /api/telemetry/builds?days=30 is the build counter, unchanged, and GET /api/telemetry/streams?days=30 is all of them at once.',
+
+            websiteTitle: 'What about the tools on this site?',
+            websiteNote: 'The playground and Auto Headers are counted by the server that runs them, which is how the outcome and duration breakdowns exist without your browser sending anything at all. The converter runs in your browser instead, so it sends one short ping when you press Copy or Convert. None of the three records what you uploaded, typed or built, and none of them sets a cookie or an identifier of any kind.',
 
             disableTitle: 'How can I disable telemetry?',
             disableIntro: 'Set STEWBEET_TELEMETRY=0 before running StewBeet. Nothing is sent, and nothing else about the build changes.',
@@ -511,7 +553,7 @@ export const translations = {
 
             sourceTitle: 'Telemetry implementation',
             sourceIntro: 'The whole client side lives in one file, so you do not have to take any of the above on trust:',
-            serverNote: 'The server side is in docs/web/src/api/telemetry.ts in the same repository, and it records the daily totals together with version and duration distributions that power the pie charts on this page.',
+            serverNote: 'The server side is in docs/web/src/api/telemetry/ in the same repository: streams.ts is the list of what gets counted, storage.ts keeps the daily totals, and handlers.ts is the endpoints. Adding a counter is an entry in that list, which is why nothing here is bespoke to one of them.',
             backHome: 'Back to the home page',
         },
     },
@@ -978,18 +1020,63 @@ export const translations = {
         // Telemetry page
         telemetry: {
             title: 'Télémétrie',
-            subtitle: "StewBeet compte les builds réussis, de façon anonyme, pour savoir si le projet sert à quelqu'un. Voici ce compte, le contenu exact de ce qui est envoyé, et comment le désactiver.",
+            subtitle: "StewBeet compte les builds réussis, de façon anonyme, pour savoir si le projet sert à quelqu'un, et les outils de ce site sont comptés de la même manière. Voici les chiffres, le contenu exact de ce qui est envoyé, et comment le désactiver.",
 
-            statsTitle: 'Builds sur les 30 derniers jours',
-            buildsLabel: 'builds',
-            averageBuild: 'build moyen',
             statsLoading: 'Chargement des chiffres publics...',
             statsUnavailable: "Les chiffres publics n'ont pas pu être chargés pour le moment.",
-            chartAlt: 'Nombre de builds par jour sur les 30 derniers jours.',
+            chartAlt: 'Comptage par jour sur les 30 derniers jours.',
             tableToggle: 'Afficher les chiffres sous forme de tableau',
             tableDate: 'Date (UTC)',
-            tableBuilds: 'Builds',
             tableAverage: 'Moyenne',
+            noDimensionData: 'Rien de compté pour le moment.',
+            streamTabs: 'Quel compteur afficher',
+            previousStream: 'Compteur précédent',
+            nextStream: 'Compteur suivant',
+
+            streams: {
+                cli: {
+                    tab: 'Builds',
+                    title: 'Builds sur les 30 derniers jours',
+                    unit: 'builds',
+                    average: 'build moyen',
+                    note: "Chaque installation de StewBeet ayant terminé un build avec la télémétrie activée. Le playground n'entre pas dans ce chiffre : le bac à sable tourne avec STEWBEET_TELEMETRY=0, donc ce sont de vrais projets sur de vraies machines.",
+                    link: '',
+                },
+                playground: {
+                    tab: 'Playground',
+                    title: 'Exécutions du playground sur les 30 derniers jours',
+                    unit: 'exécutions',
+                    average: 'exécution moyenne',
+                    note: "Un comptage par build réellement exécuté par le serveur. Relancer un build sur du code inchangé est servi depuis le cache et n'est pas compté une deuxième fois, et le code que vous avez tapé n'entre dans rien de tout ça.",
+                    link: 'Ouvrir le playground',
+                },
+                auto_headers: {
+                    tab: 'Auto Headers',
+                    title: 'Exécutions de Auto Headers sur les 30 derniers jours',
+                    unit: 'packs',
+                    average: 'exécution moyenne',
+                    note: "Un comptage par datapack lu, avec sa tranche de taille et la façon dont l'exécution s'est terminée. L'archive n'est jamais écrite sur un disque du serveur et rien de son contenu n'est conservé.",
+                    link: 'Ouvrir Auto Headers',
+                },
+                markdown_to_bbcode: {
+                    tab: 'Markdown vers BBCode',
+                    title: 'Conversions Markdown vers BBCode sur les 30 derniers jours',
+                    unit: 'conversions',
+                    average: '',
+                    note: "Le convertisseur tourne entièrement dans votre navigateur : c'est le seul compteur que le serveur ne peut pas voir de lui-même. Un court ping part quand vous cliquez sur Copier ou Convertir, une fois la conversion déjà faite. Votre texte ne quitte jamais l'onglet.",
+                    link: 'Ouvrir le convertisseur',
+                },
+            },
+
+            dimensions: {
+                versions: 'Versions de StewBeet',
+                pythonVersions: 'Versions de Python',
+                durationBuckets: 'Durée',
+                outcomes: "Fin de l'exécution",
+                packSizes: 'Taille envoyée',
+                actions: 'Bouton utilisé',
+                inputSizes: "Taille de l'entrée",
+            },
 
             collectedTitle: 'Que collectons-nous ?',
             collectedWhy: "Trois champs, envoyés une fois le build terminé. Les versions indiquent lesquelles méritent encore d'être supportées, et la durée indique si les builds ralentissent de version en version.",
@@ -1010,7 +1097,10 @@ export const translations = {
             notIp: 'Votre adresse IP, que le serveur utilise pour limiter le débit puis oublie',
             notIdentifiers: "Le moindre identifiant d'installation ou d'utilisateur, temporaire ou permanent",
 
-            aggregateNote: "Le serveur garde une ligne par jour avec le nombre, la durée totale, ainsi que la répartition des versions StewBeet, des versions Python et des durées de build. Le point d'accès public renvoie ces totaux journaliers ainsi que ces répartitions pour la page de graphiques : GET /api/telemetry/builds?days=30.",
+            aggregateNote: "Le serveur garde une ligne par jour et par compteur : le nombre d'événements, leur durée totale et les répartitions que ce compteur déclare. Deux points d'accès publics les relisent. GET /api/telemetry/builds?days=30 reste le compteur de builds, inchangé, et GET /api/telemetry/streams?days=30 les renvoie tous d'un coup.",
+
+            websiteTitle: 'Et les outils de ce site ?',
+            websiteNote: "Le playground et Auto Headers sont comptés par le serveur qui les exécute, ce qui permet d'avoir les répartitions de fin d'exécution et de durée sans que votre navigateur n'envoie quoi que ce soit. Le convertisseur, lui, tourne dans votre navigateur : il envoie un court ping quand vous cliquez sur Copier ou Convertir. Aucun des trois n'enregistre ce que vous avez envoyé, tapé ou construit, et aucun ne pose de cookie ni d'identifiant.",
 
             disableTitle: 'Comment désactiver la télémétrie ?',
             disableIntro: "Définissez STEWBEET_TELEMETRY=0 avant de lancer StewBeet. Rien n'est envoyé, et rien d'autre ne change dans le build.",
@@ -1018,7 +1108,7 @@ export const translations = {
 
             sourceTitle: 'Le code de la télémétrie',
             sourceIntro: "Toute la partie cliente tient dans un seul fichier, pour que vous n'ayez rien à croire sur parole :",
-            serverNote: "La partie serveur se trouve dans docs/web/src/api/telemetry.ts du même dépôt, et elle enregistre les totaux journaliers ainsi que les répartitions de versions et de durées qui alimentent les graphiques de cette page.",
+            serverNote: "La partie serveur se trouve dans docs/web/src/api/telemetry/ du même dépôt : streams.ts est la liste de ce qui est compté, storage.ts garde les totaux journaliers, handlers.ts contient les points d'accès. Ajouter un compteur, c'est une entrée dans cette liste, et c'est pour ça que rien ici n'est écrit sur mesure pour l'un d'eux.",
             backHome: "Retour à l'accueil",
         },
     },

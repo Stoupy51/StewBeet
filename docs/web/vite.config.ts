@@ -50,9 +50,11 @@ function apiDevRoutes(): Plugin {
                 const autoHeaders = await server.ssrLoadModule('/src/api/headers.ts') as {
                     handleHeaders: (req: Request, ip: string) => Promise<Response>
                 }
-                const telemetry = await server.ssrLoadModule('/src/api/telemetry.ts') as {
+                const telemetry = await server.ssrLoadModule('/src/api/telemetry/index.ts') as {
                     handleTelemetryBuild: (req: Request, ip: string) => Promise<Response>
+                    handleTelemetryEvent: (req: Request, ip: string) => Promise<Response>
                     handleTelemetryBuilds: (url: URL) => Response
+                    handleTelemetryStreams: (url: URL) => Response
                 }
 
                 const clientIp = sandbox.clientIpFrom(webRequest, request.socket.remoteAddress ?? '')
@@ -60,7 +62,9 @@ function apiDevRoutes(): Plugin {
                 if (url.pathname === '/api/playground') result = await playground.handlePlayground(webRequest, clientIp)
                 else if (url.pathname === '/api/tools/headers') result = await autoHeaders.handleHeaders(webRequest, clientIp)
                 else if (url.pathname === '/api/telemetry/build') result = await telemetry.handleTelemetryBuild(webRequest, clientIp)
+                else if (url.pathname === '/api/telemetry/event') result = await telemetry.handleTelemetryEvent(webRequest, clientIp)
                 else if (url.pathname === '/api/telemetry/builds') result = telemetry.handleTelemetryBuilds(url)
+                else if (url.pathname === '/api/telemetry/streams') result = telemetry.handleTelemetryStreams(url)
                 else return next()
 
                 response.statusCode = result.status

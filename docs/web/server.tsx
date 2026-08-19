@@ -20,7 +20,7 @@ import { clientIpFrom } from './src/api/sandbox';
 import { handlePlayground } from './src/api/playground';
 import { handleHeaders } from './src/api/headers';
 import { MAX_PACK_BYTES } from './src/api/sandboxLimits';
-import { handleTelemetryBuild, handleTelemetryBuilds } from './src/api/telemetry';
+import { handleTelemetryBuild, handleTelemetryBuilds, handleTelemetryEvent, handleTelemetryStreams } from './src/api/telemetry';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
@@ -79,14 +79,20 @@ Bun.serve({
             return handleHeaders(req, clientIpFrom(req, server.requestIP(req)?.address ?? ''));
         }
 
-        // ── Build telemetry──
+        // ── Telemetry
         // The address goes no further than the rate limit bucket inside the handler; what reaches
-        // the disk is one number per day. See src/api/telemetry.ts.
+        // the disk is one number per day per counter. See src/api/telemetry/.
         if (pathname === '/api/telemetry/build') {
             return handleTelemetryBuild(req, clientIpFrom(req, server.requestIP(req)?.address ?? ''));
         }
+        if (pathname === '/api/telemetry/event') {
+            return handleTelemetryEvent(req, clientIpFrom(req, server.requestIP(req)?.address ?? ''));
+        }
         if (pathname === '/api/telemetry/builds') {
             return handleTelemetryBuilds(url);
+        }
+        if (pathname === '/api/telemetry/streams') {
+            return handleTelemetryStreams(url);
         }
 
         // ── SSR for /markdown?src=...

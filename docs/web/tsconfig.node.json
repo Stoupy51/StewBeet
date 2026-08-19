@@ -28,6 +28,6 @@
     "src/api/sandboxLimits.ts",
     "src/api/playground.ts",
     "src/api/headers.ts",
-    "src/api/telemetry.ts"
+    "src/api/telemetry/**/*.ts"
   ]
 }
