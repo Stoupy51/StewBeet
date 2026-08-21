@@ -50,6 +50,16 @@ function visibleRowCount(node: FileNode): number {
     return 1 + (node.children ?? []).reduce((total, child) => total + visibleRowCount(child), 0);
 }
 
+/**
+ * How long the cascade may span, however many rows the tree has.
+ * A pack with two hundred functions streamed for eight seconds at full pace; with the 320ms row
+ * fade on top of this, a tree of any size has landed inside a second.
+ */
+const REVEAL_BUDGET_MS: number = 600;
+
+/** Delay between two rows, matching index.css, for a tree small enough to fit the budget at full pace. */
+const REVEAL_STEP_MS: number = 42;
+
 /** Positions each node at its place in the flattened, document-order sequence. */
 function rowOffsets(nodes: FileNode[], from: number): number[] {
     const offsets: number[] = [];
@@ -130,13 +140,25 @@ interface FileTreeProps {
     selected?: string;
     /** Omit to render a plain, non-interactive tree, which is what Features.tsx wants. */
     onSelect?: (node: FileNode) => void;
+    /**
+     * Cascade the rows in as soon as this tree renders, for a tree that appears on a click.
+     * Prerendered trees leave it off and let the `[data-intro='play']` gate decide, so a returning
+     * visitor is not shown an entrance the server already painted as finished.
+     */
+    reveal?: boolean;
 }
 
 /** Same 12px/1.55 as the hero code panel: the tree and the snippet read as one pair, not two widgets. */
-export const FileTree: React.FC<FileTreeProps> = ({ nodes, selected, onSelect }) => {
+export const FileTree: React.FC<FileTreeProps> = ({ nodes, selected, onSelect, reveal }) => {
     const offsets = rowOffsets(nodes, 0);
+    const rows = nodes.reduce((total, node) => total + visibleRowCount(node), 0);
+    const step = Math.min(REVEAL_STEP_MS, REVEAL_BUDGET_MS / Math.max(rows, 1));
     return (
-        <div className="font-mono text-xs">
+        <div
+            className="font-mono text-xs"
+            data-reveal={reveal ? '' : undefined}
+            style={reveal ? ({ '--row-step': `${step}ms` } as React.CSSProperties) : undefined}
+        >
             {nodes.map((node, index) => (
                 <TreeRow
                     key={node.name}

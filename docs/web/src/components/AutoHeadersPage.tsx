@@ -344,7 +344,7 @@ export const AutoHeadersPage: React.FC = () => {
                                         )}
                                     </div>
                                 )}
-                                <FileTree nodes={tree} onSelect={node => node.kind && setSelected(node)} />
+                                <FileTree nodes={tree} onSelect={node => node.kind && setSelected(node)} reveal />
                             </div>
                         )}
 

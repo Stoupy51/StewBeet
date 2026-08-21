@@ -240,10 +240,13 @@
     animation: intro-scan 900ms cubic-bezier(0.4, 0, 0.5, 1) 640ms both;
   }
 
-  /* Files land in document order, tracking the scan as it passes over the definition. */
-  [data-intro='play'] .intro-row {
+  /* Files land in document order, tracking the scan as it passes over the definition.
+     `--row-start` is the hero waiting for its scan; a tree that appears on a click starts at once.
+     `--row-step` comes from FileTree, which shrinks it so a long tree still lands within a second. */
+  [data-intro='play'] .intro-row,
+  [data-reveal] .intro-row {
     animation: intro-row 320ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-    animation-delay: calc(760ms + var(--row, 0) * 42ms);
+    animation-delay: calc(var(--row-start, 0ms) + var(--row, 0) * var(--row-step, 42ms));
   }
 
   [data-intro='play'] .intro-arrow {

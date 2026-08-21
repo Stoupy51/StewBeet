@@ -223,7 +223,8 @@ export const Hero: React.FC = () => {
                         // where the two are side by side; below that they stack and each wants its
                         // own height.
                         className="intro-panel relative min-w-0 xl:h-0 xl:min-h-full"
-                        style={{ '--step': 1 } as React.CSSProperties}
+                        // --row-start holds the tree back until the scan has passed over the definition.
+                        style={{ '--step': 1, '--row-start': '760ms' } as React.CSSProperties}
                     >
                         <Panel
                             caption={t('hero.outputCaption')}

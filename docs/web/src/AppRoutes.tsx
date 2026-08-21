@@ -1,5 +1,6 @@
 import { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
+import { useScrollToTop } from './hooks/useScrollToTop';
 
 const HomePage = lazy(() => import('./components/HomePage'));
 const MarkdownPage = lazy(() => import('./components/MarkdownPage').then(m => ({ default: m.MarkdownPage })));
@@ -15,6 +16,7 @@ const AutoHeadersPage = lazy(() => import('./components/AutoHeadersPage').then(m
 const NotFoundPage = lazy(() => import('./components/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
 
 export function AppRoutes() {
+    useScrollToTop();
     return (
         <Suspense fallback={null}>
             <Routes>

@@ -243,7 +243,7 @@ export const PlaygroundPage: React.FC = () => {
 
                         {result?.ok && !selected && !showConfig && (
                             <div className="flex-1 flex flex-col p-4 overflow-auto custom-scrollbar min-h-0">
-                                <FileTree nodes={tree} onSelect={node => node.kind && setSelected(node)} />
+                                <FileTree nodes={tree} onSelect={node => node.kind && setSelected(node)} reveal />
                                 {result.truncated?.files && (
                                     <p className="mt-3 text-xs text-amber-400">
                                         {t('playground.truncated').replace('{count}', String(SANDBOX_LIMITS.files))}

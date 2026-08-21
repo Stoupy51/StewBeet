@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, memo, lazy, Suspense } from 'react';
 import { useMotionSafe } from '../hooks/useMotionSafe';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { HiMenu, HiSearch, HiX } from 'react-icons/hi';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
 import type { Language } from '../context/LanguageContext';
 import { loadIndex } from '../utils/search';
@@ -12,6 +12,7 @@ const SearchModal = lazy(() => import('./SearchModal').then(m => ({ default: m.S
 
 export const Navbar = memo(() => {
     const motionSafe = useMotionSafe();
+    const prefersReducedMotion = useReducedMotion();
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
@@ -87,22 +88,24 @@ export const Navbar = memo(() => {
         { label: 'Templates', id: 'templates', homePath: '/' },
     ];
 
-    const handleDocumentationClick = (e: React.MouseEvent) => {
-        if (e.ctrlKey || e.metaKey || e.shiftKey) {
-            return;
+    /**
+     * Open a page, or scroll it back to the top when it is the page already showing.
+     * Routing to the path you are already on does nothing at all, so the entry read as a dead link.
+     */
+    const goToPage = useCallback((path: string) => {
+        if (location.pathname === path) {
+            window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+        } else {
+            navigate(path);
         }
-        e.preventDefault();
-        navigate('/documentation');
         setIsMobileMenuOpen(false);
-    };
+    }, [location.pathname, navigate, prefersReducedMotion]);
 
-    const handleToolsClick = (e: React.MouseEvent) => {
-        if (e.ctrlKey || e.metaKey || e.shiftKey) {
-            return;
-        }
-        e.preventDefault();
-        navigate('/tools');
-        setIsMobileMenuOpen(false);
+    /** Ctrl, cmd and shift clicks are the visitor asking for a new tab, so the link keeps its href. */
+    const openPage = (path: string) => (event: React.MouseEvent) => {
+        if (event.ctrlKey || event.metaKey || event.shiftKey) return;
+        event.preventDefault();
+        goToPage(path);
     };
 
     const handlePluginsClick = (e: React.MouseEvent) => {
@@ -143,11 +146,7 @@ export const Navbar = memo(() => {
                                 return;
                             }
                             e.preventDefault();
-                            if (location.pathname === '/') {
-                                scrollToSection('hero');
-                            } else {
-                                navigate('/');
-                            }
+                            goToPage('/');
                         }}
                         className={`flex items-center gap-2 text-xl font-bold ${LOGO_TEXT} transition-all`}
                         whileHover={{ scale: 1.05 }}
@@ -180,7 +179,7 @@ export const Navbar = memo(() => {
                         </a>
                         <a
                             href="/tools"
-                            onClick={handleToolsClick}
+                            onClick={openPage('/tools')}
                             className="text-slate-300 hover:text-white transition-colors duration-200 text-sm font-medium"
                         >
                             Tools
@@ -225,7 +224,7 @@ export const Navbar = memo(() => {
                         </button>
                         <a
                             href="/documentation"
-                            onClick={handleDocumentationClick}
+                            onClick={openPage('/documentation')}
                             className="px-4 py-2 bg-mc-emerald hover:bg-mc-diamond rounded-panel text-slate-950 text-sm font-semibold transition-colors"
                         >
                             Documentation
@@ -327,14 +326,14 @@ export const Navbar = memo(() => {
                             ))}
                             <a
                                 href="/documentation"
-                                onClick={handleDocumentationClick}
+                                onClick={openPage('/documentation')}
                                 className={`block w-full text-center px-4 py-2 ${BTN_PRIMARY} rounded-lg text-white font-semibold`}
                             >
                                 Documentation
                             </a>
                             <a
                                 href="/tools"
-                                onClick={handleToolsClick}
+                                onClick={openPage('/tools')}
                                 className={`block w-full text-center px-4 py-2 ${BTN_PRIMARY} rounded-lg text-white font-semibold`}
                             >
                                 Tools
