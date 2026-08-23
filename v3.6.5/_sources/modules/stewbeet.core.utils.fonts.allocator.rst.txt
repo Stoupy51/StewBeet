@@ -1,0 +1,8 @@
+stewbeet.core.utils.fonts.allocator module
+==========================================
+
+.. automodule:: stewbeet.core.utils.fonts.allocator
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

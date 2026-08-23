@@ -1,0 +1,37 @@
+stewbeet.plugins.ingame\_manual package
+=======================================
+
+.. automodule:: stewbeet.plugins.ingame_manual
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.plugins.ingame_manual.pages
+   stewbeet.plugins.ingame_manual.recipes
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.plugins.ingame_manual.api
+   stewbeet.plugins.ingame_manual.button_layout
+   stewbeet.plugins.ingame_manual.config
+   stewbeet.plugins.ingame_manual.dialog
+   stewbeet.plugins.ingame_manual.glyphs
+   stewbeet.plugins.ingame_manual.images
+   stewbeet.plugins.ingame_manual.manual
+   stewbeet.plugins.ingame_manual.manual_emit
+   stewbeet.plugins.ingame_manual.optimizer
+   stewbeet.plugins.ingame_manual.paths
+   stewbeet.plugins.ingame_manual.refs
+   stewbeet.plugins.ingame_manual.showcase
+   stewbeet.plugins.ingame_manual.special
