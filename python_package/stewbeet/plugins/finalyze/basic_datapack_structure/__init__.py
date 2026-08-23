@@ -34,7 +34,7 @@ def beet_default(ctx: Context) -> None:
 	second_5_path: str = f"{ns}:v{version}/second_5"
 	minute_path: str = f"{ns}:v{version}/minute"
 
-	# Check if functions exist in the data pack
+	# Check if functions exist in the datapack
 	tick_2_exists: bool = tick_2_path in ctx.data.functions
 	second_exists: bool = second_path in ctx.data.functions
 	second_5_exists: bool = second_5_path in ctx.data.functions

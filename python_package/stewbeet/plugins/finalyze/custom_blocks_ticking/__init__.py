@@ -39,7 +39,7 @@ def beet_default(ctx: Context):
 	for ticking in ["tick", "tick_2", "second", "second_5", "minute"]:
 		custom_blocks_tick: list[str] = []
 
-		# Check for custom block functions in the data pack
+		# Check for custom block functions in the datapack
 		for function_path in ctx.data.functions:
 			if function_path.startswith(custom_blocks_prefix) and "/" in function_path[len(custom_blocks_prefix):]:
 

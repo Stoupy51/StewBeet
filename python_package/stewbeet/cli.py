@@ -61,7 +61,7 @@ def main() -> None:
 {stp.CYAN}Beet commands:{stp.RESET}
   {stp.GREEN}build{stp.RESET}                         Build the current project
   {stp.GREEN}watch{stp.RESET}                         Watch the project directory and build on file changes
-  {stp.GREEN}link{stp.RESET}                          Link the generated resource pack and data pack to Minecraft
+  {stp.GREEN}link{stp.RESET}                          Link the generated resource pack and datapack to Minecraft
   {stp.GREEN}cache{stp.RESET}                         Inspect or clear the cache
   {stp.GREEN}ast{stp.RESET}                           Inspect cached mecha ast
   {stp.GREEN}codegen{stp.RESET}                       Inspect cached bolt codegen
