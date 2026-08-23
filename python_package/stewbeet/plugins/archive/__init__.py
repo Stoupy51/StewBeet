@@ -95,7 +95,7 @@ class ConstantTimeZipFile(zipfile.ZipFile):
 @stp.measure_time(message="Execution time of 'stewbeet.plugins.archive'")
 def beet_default(ctx: Context) -> None:
 	""" Archive plugin for StewBeet.
-	Creates zip archives of the generated data pack and resource pack using pack.dump() to avoid
+	Creates zip archives of the generated datapack and resource pack using pack.dump() to avoid
 	interfering with existing pack directories.
 
 	Args:

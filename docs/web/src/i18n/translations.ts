@@ -130,7 +130,7 @@ export const translations = {
         giants: {
             title: 'StewBeet did not get here alone',
             subtitle: 'Behind the magic is a whole family of open-source tools, made by people who love datapacks as much as you do.',
-            beetRole: 'The pipeline. One build for the data pack and the resource pack.',
+            beetRole: 'The pipeline. One build for the datapack and the resource pack.',
             mechaRole: 'The compiler. Type-checked commands, and real Python inside a function.',
             modelResolverRole: 'The renderer. Every item and block drawn to an image, in pure Python.',
             smithedRole: 'The conventions. Crafter, Custom Blocks and Weld, wired up for you.',
@@ -144,7 +144,7 @@ export const translations = {
         credits: {
             title: 'Standing on giants',
             subtitle: 'StewBeet did not get here alone. What follows is a thank-you to the projects it is built on, and to the people behind them.',
-            beetBody: 'A development kit that unifies data pack and resource pack tooling into a single pipeline. StewBeet is a set of beet plugins, so everything beet knows how to do stays available to you. Built by vberlier (fizzy), misode, edayot (airdox), rx97, TheNuclearNexus, and many more.',
+            beetBody: 'A development kit that unifies datapack and resource pack tooling into a single pipeline. StewBeet is a set of beet plugins, so everything beet knows how to do stays available to you. Built by vberlier (fizzy), misode, edayot (airdox), rx97, TheNuclearNexus, and many more.',
             mechaBody: 'mecha compiles and type-checks every command the build emits, so a typo fails the build instead of the game. bolt lets you script a function in real Python: loops, variables and conditions, compiled down to commands. Both live in the beet repository and carry the same list of names.',
             modelResolverBody: 'Renders every item and block to a real image, in pure Python. That is how the in-game manual shows your crafts without a single screenshot being taken by hand. Thanks @airdox.',
             smithedBody: 'Crafter for NBT recipes and Custom Blocks for placement, both wired up automatically. Smithed also sets shared conventions so packs stay interoperable, even in normal worlds outside the ecosystem. Smithed Weld merges your pack with its dependencies on build.',

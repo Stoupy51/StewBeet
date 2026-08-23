@@ -204,8 +204,8 @@ cfg: ProjectConfig = get_project_config()
 
 # Constants
 SUMMARY: str = """
-SimplEnergy is a simple Technology data pack created to add simple energy mechanics in your survival world.
-Also, it has been made to help the development of energy data packs by using an energy library as simple as possible.
+SimplEnergy is a simple Technology datapack created to add simple energy mechanics in your survival world.
+Also, it has been made to help the development of energy datapacks by using an energy library as simple as possible.
 """
 
 ## Uploads

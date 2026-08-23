@@ -1,6 +1,6 @@
 
 # Test: stewbeet.plugins.auto.headers
-# Verifies that every function in the data pack receives a "#>" header line
+# Verifies that every function in the datapack receives a "#>" header line
 # and that caller/callee relationships are captured in @within comments.
 
 id: "tns"
