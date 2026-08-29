@@ -13,7 +13,7 @@ from ....core.__memory__ import Mem
 from ....core.constants import LATEST_MC_VERSION, MORE_DATA_VERSIONS
 from ....core.utils.io import write_function, write_tag, write_versioned_function
 from ....dependencies.download_manager import get_lib_paths
-from ....dependencies.official_libs import OFFICIAL_LIBS, official_lib_used
+from ....dependencies.official_libs import OFFICIAL_LIBS, detection_markers, official_lib_used
 
 
 # Utility functions
@@ -74,13 +74,7 @@ def beet_default(ctx: Context) -> None:
 	newly_found_libs: list[str] = []
 
 	# Map every marker to search for onto the library it proves the use of.
-	markers: dict[str, str] = {
-		lib: lib
-		for lib in ("furnace_nbt_recipes", "common_signals", "realistic_explosion", "itemio", "smithed.actionbar", "player_motion")
-		if ns != lib
-	}
-	if ns != "bookshelf":
-		markers.update({f"#{module_ns}:": module_ns for module_ns in OFFICIAL_LIBS if module_ns.startswith("bs.")})
+	markers: dict[str, str] = detection_markers(ns)
 
 	remaining: dict[str, str] = dict(markers)
 	found_libs: set[str] = set()
