@@ -3,6 +3,9 @@
 A download can fail because the machine is offline, because a firewall/antivirus filters HTTPS, or because
 the API itself is down or blocking us.  These look identical from a single exception, so every failure is
 translated into a sentence naming the likely culprit, backed by one probe of neutral hosts.
+
+Two of those failures clear on their own: a throttled API, and a cache file still held by another process.
+Both are retried with a growing delay before the build is told anything went wrong.
 """
 
 # Lazy imports (PEP 810), ignored before Python 3.15
@@ -22,11 +25,20 @@ from urllib.parse import urlsplit
 from urllib.request import Request, urlopen
 
 import stouputils as stp
-from beet import Context
+from beet import Cache, Context
 
 # Constants
 HEADERS: dict[str, str] = {"User-Agent": "StewBeet"}
 """ Headers sent with every request, some APIs reject the default urllib user-agent. """
+
+DOWNLOAD_ATTEMPTS: int = 4
+""" Attempts allowed per download before the failure is reported. """
+
+DOWNLOAD_DELAY: float = 2.0
+""" Seconds before the second attempt, doubling from there, so a throttled API gets 2s, 4s and 8s to calm down. """
+
+TRANSIENT_STATUS: frozenset[int] = frozenset({408, 425, 429, 500, 502, 503, 504})
+""" HTTP statuses worth another attempt: throttling, and the server side failures that clear on their own. """
 
 PROBE_URLS: tuple[str, ...] = ("https://one.one.one.one", "https://api.github.com")
 """ Neutral hosts probed once when a download fails, to tell a local block apart from a failing service. """
@@ -39,6 +51,14 @@ CONNECTIVITY: dict[str, bool] = {}
 
 CONNECTIVITY_LOCK: Lock = Lock()
 """ Guards CONNECTIVITY since libraries are resolved from several threads. """
+
+DOWNLOAD_LOCKS: dict[Path, Lock] = {}
+""" One lock per cache file. Libraries are resolved in parallel and two of them can share a download URL,
+which on Windows means one thread deleting or writing the file another still holds open.
+"""
+
+DOWNLOAD_LOCKS_GUARD: Lock = Lock()
+""" Guards DOWNLOAD_LOCKS itself, filled from the resolver threads. """
 
 HTTP_HINTS: dict[int, str] = {
 	400: "malformed request",
@@ -71,7 +91,47 @@ SOCKET_HINTS: dict[int, str] = {
 """ Human explanation per socket error, keyed by Windows error code when available, else by errno. """
 
 
+# Classes
+class TransientDownloadError(Exception):
+	""" A failure worth another attempt, wrapping the real one as its cause.
+
+	The retry decorator selects on the exception type, while the diagnosis needs the original exception to
+	name the culprit, so the two are kept apart rather than reported as one another.
+	"""
+
+
 # Functions
+def is_transient(exc: BaseException) -> bool:
+	""" Whether *exc* is worth another attempt: a throttled API, a cut connection, or a locked cache file.
+
+	Args:
+		exc (BaseException): The exception raised while downloading.
+	Returns:
+		bool: True when waiting and trying again can plausibly succeed.
+
+	Examples:
+		>>> is_transient(HTTPError("", 429, "Too Many Requests", {}, None))
+		True
+		>>> is_transient(HTTPError("", 404, "Not Found", {}, None))
+		False
+		>>> is_transient(PermissionError(13, "being used by another process"))
+		True
+		>>> is_transient(URLError(ConnectionResetError()))
+		True
+	"""
+	if isinstance(exc, HTTPError):
+		return exc.code in TRANSIENT_STATUS
+	if isinstance(exc, URLError):
+		return isinstance(exc.reason, BaseException) and is_transient(exc.reason)
+	return isinstance(exc, PermissionError | ConnectionError | TimeoutError)
+
+
+def download_lock(target: Path) -> Lock:
+	""" The lock owning *target*, created on first use. """
+	with DOWNLOAD_LOCKS_GUARD:
+		return DOWNLOAD_LOCKS.setdefault(target, Lock())
+
+
 def internet_reachable() -> bool:
 	""" Return whether any neutral host answers, probing at most once per build. """
 	with CONNECTIVITY_LOCK:
@@ -118,6 +178,8 @@ def describe_network_error(url: str, exc: BaseException) -> str:
 		'HTTP 404 Not Found from api.smithed.dev: not found, ...'
 	"""
 	host: str = urlsplit(url).hostname or url
+	if isinstance(exc, TransientDownloadError) and exc.__cause__ is not None:
+		return f"still failing after {DOWNLOAD_ATTEMPTS} attempts, {describe_network_error(url, exc.__cause__)}"
 	if isinstance(exc, HTTPError):
 		fallback: str = "the server refused the request" if exc.code < 500 else "the server failed to answer"
 		return f"HTTP {exc.code} {exc.reason} from {host}: {HTTP_HINTS.get(exc.code, fallback)}"
@@ -129,6 +191,11 @@ def describe_network_error(url: str, exc: BaseException) -> str:
 		return f"TLS handshake with '{host}' failed ({reason}): traffic is being filtered by a firewall or a proxy{connectivity_verdict()}"
 	if isinstance(reason, socket.gaierror):
 		return f"DNS lookup failed for '{host}' ({reason.strerror}): no internet connection, or DNS is blocked locally{connectivity_verdict()}"
+
+	# A filesystem error names the file it failed on, a socket one does not, which is what tells them apart.
+	# Probing the network for a locked cache file would blame the host for something local.
+	if isinstance(reason, OSError) and reason.filename is not None:
+		return f"{reason.strerror} on '{reason.filename}': the cache file is held by another process, typically an antivirus or a parallel build"
 	if isinstance(reason, OSError):
 		return f"{socket_hint(reason)} while contacting '{host}'{connectivity_verdict()}"
 	return f"{type(exc).__name__} while contacting '{host}': {exc}"
@@ -149,23 +216,35 @@ def describe_body(text: str) -> str:
 	return snippet
 
 
-def download_to_cache(ctx: Context, url: str, path: Path | None = None) -> Path:
-	""" Download *url* through beet's cache, never letting a previously failed attempt masquerade as a hit.
+@stp.retry(exceptions=TransientDownloadError, max_attempts=DOWNLOAD_ATTEMPTS, delay=DOWNLOAD_DELAY, backoff=2.0, message="Download failed")
+def attempt_download(cache: Cache, url: str, target: Path) -> Path:
+	""" One download attempt, never letting a previously failed one masquerade as a hit.
 
 	beet creates the destination file before fetching, so a failed download leaves a 0-byte file that every
 	later build happily reuses, hiding the real error behind a bogus parsing failure.
 	"""
-	cache = ctx.cache["stewbeet"]
-	target: Path = path if path is not None else cache.get_path(url)
-	if target.is_file() and target.stat().st_size == 0:
-		target.unlink()
-		stp.debug(f"Discarded the empty cache entry left by a previous failed download of '{url}'.")
+	try:
+		if target.is_file() and target.stat().st_size == 0:
+			target.unlink()
+			stp.debug(f"Discarded the empty cache entry left by a previous failed download of '{url}'.")
 
-	result: Path = cache.download(url, target, headers=HEADERS)
-	if result.stat().st_size == 0:
-		result.unlink(missing_ok=True)
-		raise ConnectionError("the server accepted the request but sent an empty body")
-	return result
+		result: Path = cache.download(url, target, headers=HEADERS)
+		if result.stat().st_size == 0:
+			result.unlink(missing_ok=True)
+			raise ConnectionError("the server accepted the request but sent an empty body")
+		return result
+	except Exception as exc:
+		if is_transient(exc):
+			raise TransientDownloadError(f"'{url}': {exc}") from exc
+		raise
+
+
+def download_to_cache(ctx: Context, url: str, path: Path | None = None) -> Path:
+	""" Download *url* through beet's cache, one thread at a time per file, retrying what can still succeed. """
+	cache: Cache = ctx.cache["stewbeet"]
+	target: Path = path if path is not None else cache.get_path(url)
+	with download_lock(target):
+		return attempt_download(cache, url, target)
 
 
 def cached_json(ctx: Context, url: str) -> Any | None:
