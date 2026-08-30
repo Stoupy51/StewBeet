@@ -1,0 +1,94 @@
+# Feature Specification: StewBeet VS Code Developer Experience
+
+**Feature Branch**: `001-stewbeet-vscode-dx` | **Date**: 2026-08-30
+**Status**: Draft
+**Source**: [StewBeet issue #41](https://github.com/Stoupy51/StewBeet/issues/41) "Auto Complete Visual Studio Code extension"
+
+## Problem
+
+StewBeet authors write Minecraft commands as Python strings:
+
+```python
+write_function("mynamespace:hello", """
+say hello
+execute as @a run function mynamespace:greet
+""")
+```
+
+The current [StewBeet extension](../../extension/vscode/) colors those strings and draws a box around them. Nothing else works inside the box: no completion, no hover, no diagnostics, no navigation. A typo in a command surfaces only when Minecraft loads the pack, and `function mynamespace:greet` is a dead string that ctrl+click cannot follow.
+
+Meanwhile [Spyglass](https://spyglassmc.com/) already provides all of that for real `.mcfunction` files, and StewBeet already generates real `.mcfunction` files into its build output. The two never meet.
+
+## User Scenarios
+
+### Scenario 1: Completing a command (Priority: P1)
+
+An author types `execute as @a run ` inside a `write_function` string and gets the same completion list Spyglass would offer in a `.mcfunction` file, including the resource locations of functions this project generates.
+
+**Acceptance**: Completion appears inside the string block, is absent outside it, and offers project-defined function paths as well as vanilla commands.
+
+### Scenario 2: Following a function reference (Priority: P1)
+
+An author ctrl+clicks `mynamespace:greet` inside a command string and lands on the `write_function("mynamespace:greet", ...)` call that produced it, even when the path was assembled from an f-string.
+
+**Acceptance**: Definition resolves to the Python call site. When the path is not attributable to a single call site, it falls back to the generated `.mcfunction` file rather than failing.
+
+### Scenario 2b: Following a reference into generated content (Priority: P1)
+
+An author declares a custom block, so a StewBeet plugin generates `mynamespace:block/my_block/place_secondary` on their behalf. They then append their own commands to that same function. Ctrl+clicking the path offers **both** origins: the `Block(...)` declaration that caused the plugin to generate it, and their own `write_function` call.
+
+**Acceptance**: Definition returns every distinct origin contributing to the function, in generated order. Neither origin is a file inside the StewBeet package. If the author had used `overwrite=True`, only their own call is offered.
+
+### Scenario 3: Seeing an error before launching the game (Priority: P2)
+
+A build produces a command the game will reject. The author sees the error underlined on the Python line that wrote it, not only in the build output.
+
+**Acceptance**: Diagnostics reported against generated files appear on the originating Python range, and clear when the build is fixed.
+
+### Scenario 4: Debugging with Sniffer (Priority: P2)
+
+An author sets a breakpoint on a Python line inside a `write_function` string, runs [Sniffer](https://github.com/mcbookshelf/sniffer), and execution halts on the corresponding command in the running game.
+
+**Acceptance**: StewBeet emits a mapping file that a third-party debugger can consume without knowing anything about StewBeet.
+
+### Scenario 5: Finding every caller (Priority: P3)
+
+An author asks for references of a generated function and gets every Python location whose generated output calls it, including calls emitted by StewBeet's own plugins.
+
+**Acceptance**: References list Python call sites, and generated-only sites are reported as generated.
+
+## Requirements
+
+### Functional
+
+- **FR-001**: The extension MUST provide completion inside StewBeet mcfunction string blocks, sourced from an existing Minecraft language service rather than a StewBeet-authored command parser.
+- **FR-002**: The extension MUST provide hover and signature help inside those blocks, from the same source.
+- **FR-003**: The extension MUST resolve go-to-definition on resource locations inside those blocks.
+- **FR-004**: StewBeet MUST be able to emit, per generated function, a machine-readable mapping from generated line to originating Python file and line.
+- **FR-005**: The mapping format MUST be an existing published standard, consumable by tools that have never heard of StewBeet.
+- **FR-006**: Mapping emission MUST be opt-in and MUST NOT appear in released archives.
+- **FR-007**: The extension MUST surface diagnostics produced against generated files on the originating Python ranges.
+- **FR-008**: The extension MUST degrade gracefully when no build output exists: language features that need only the editor buffer keep working.
+- **FR-009**: Correctness of the mapping MUST survive StewBeet's own post-processing passes (`auto.headers`, `auto.text_renders`, `auto.lang_file`), which rewrite function bodies after they are first written.
+- **FR-010**: A mapping MUST NEVER point inside the StewBeet package, beet, or any other installed library. Only files under the project's own source roots are valid targets. A generated line with no valid target MUST be emitted unmapped rather than mapped to a library file.
+- **FR-011**: Content generated by a StewBeet plugin on behalf of a user declaration MUST map to that declaration's site in the project, not to the plugin code that emitted it.
+- **FR-012**: When several origins contribute to one generated function, each MUST keep its own lines, and navigation MUST offer all of them. An `overwrite=True` write discards the origins it replaced.
+
+### Non-functional
+
+- **NFR-001**: No mcfunction grammar, command tree, or registry data may be reimplemented inside StewBeet or its extension.
+- **NFR-002**: Mapping emission must not measurably slow a build when disabled, and must stay under 20% overhead when enabled.
+- **NFR-003**: The extension must keep working if Spyglass is absent, with the Spyglass-backed features silently unavailable.
+
+### Out of scope
+
+- Authoring a general-purpose Minecraft language server.
+- Supporting Bolt or Mecha source syntax (StewBeet writes plain command strings).
+- Refactoring or renaming across the Python/mcfunction boundary.
+- Bedrock Edition.
+
+## Success Criteria
+
+- **SC-001**: Issue #41's two asks (completion, ctrl+click to the `write_function` call) both work on a real project.
+- **SC-002**: Sniffer can set a breakpoint from a Python line without any StewBeet-specific code in Sniffer.
+- **SC-003**: StewBeet contains zero lines of mcfunction syntax knowledge added by this feature.

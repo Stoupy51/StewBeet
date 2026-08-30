@@ -1,0 +1,75 @@
+# Contract: `.mcfunction.map`
+
+The interop surface between StewBeet, the VS Code extension, and any third-party debugger (Sniffer). Consumers must be able to read it with an off-the-shelf source map library.
+
+## Format
+
+[Source Map v3](https://tc39.es/ecma426/), the same JSON shape JavaScript tooling has used for a decade. StewBeet emits the minimal legal subset.
+
+```json
+{
+  "version": 3,
+  "file": "tick.mcfunction",
+  "sources": ["../../../../../src/my_pack/tick.py"],
+  "sourcesContent": [null],
+  "names": [],
+  "mappings": "AAAA;AACA;;AAEA"
+}
+```
+
+| Field | Value |
+|---|---|
+| `version` | Always `3`. A consumer seeing anything else must ignore the file, not fail. |
+| `file` | Basename of the generated function, e.g. `tick.mcfunction`. |
+| `sources` | Python source paths, relative to the map file when the relative path stays inside the workspace, otherwise an absolute `file:` URI. Deduplicated, in first-use order. |
+| `sourcesContent` | All `null`. StewBeet never inlines Python source into the map. |
+| `names` | Always `[]`. mcfunction has no symbol names to record here. |
+| `mappings` | Base64 VLQ, one group per generated line, groups separated by `;`. |
+
+## Mappings encoding
+
+Each generated line contributes at most one segment, because an mcfunction line is one command. A segment is four VLQ fields, each delta-encoded against the previous segment in the file:
+
+```text
+[ generatedColumn, sourceIndex, sourceLine, sourceColumn ]
+```
+
+- `generatedColumn` is always `0`, so the first field of every segment is the delta from the previous segment's column, which is also always `0`.
+- A generated line with no known origin emits an **empty group**: two consecutive `;`. Generated headers, blank separators and content written by StewBeet's own plugins land here.
+- All line and column numbers are 0-based, as the standard requires.
+
+The VLQ alphabet and continuation-bit scheme are the standard ones; see [Variable-length quantity](https://rosettacode.org/wiki/Variable-length_quantity#Python) for the encoder and [source map internals](https://www.polarsignals.com/blog/posts/2025/11/04/javascript-source-maps-internals) for the delta rules.
+
+## Placement and discovery
+
+- One map per generated function, written as a sibling: `data/<ns>/function/<path>.mcfunction.map`.
+- Discovery is by convention: given `foo.mcfunction`, look for `foo.mcfunction.map`.
+- Optionally the generated function's **last** line is `# sourceMappingURL=<basename>.mcfunction.map`. It must be last: Sniffer counts comments and blank lines when placing breakpoints, so a leading comment would shift every mapped line.
+- Maps are emitted only when the `stewbeet.plugins.source_maps` plugin is in the pipeline, and are excluded from release archives.
+
+## Guarantees
+
+- **G1**: If generated line `n` is mapped, the mapped source position is inside a `write_*` call or a declaration in that file.
+- **G2**: Mapped lines are strictly increasing in generated order. The map never goes backwards.
+- **G3**: A missing mapping means "unknown origin", never "same as the previous line". Consumers must not interpolate.
+- **G4**: An unmapped line is always safe to skip. No consumer is required to handle it.
+- **G5**: Every entry in `sources` is a file in the project's own source tree. A map never points into the StewBeet package, beet, bolt, mecha, stouputils, `site-packages` or the stdlib. When no project origin exists for a line, the line is unmapped, because a jump into library internals is worse than no jump.
+- **G6**: One map may carry several sources. A generated function assembled from a declaration, a plugin's addition and a developer's own append has three sources and three runs of lines. Consumers offering navigation should present all of them rather than only the first.
+
+## Non-guarantees
+
+- Column precision inside a line. `sourceColumn` points at the start of the string literal, not at the character that produced the command. mcfunction diagnostics carry their own column, which the extension applies to the Python line separately.
+- Round-tripping content written from a variable or a helper's return value. Those map to the `write_*` call line, flagged `exact: false` at capture time and indistinguishable in the emitted map.
+- Stability across builds. A map is only valid for the build that produced it.
+
+## Test fixtures
+
+`contracts/fixtures/` holds paired inputs and expected maps, consumed by both the Python encoder tests and the JavaScript decoder tests, so the two implementations cannot drift:
+
+- `simple/` a single `write_function` with a literal triple-quoted string.
+- `appended/` three `write_function` calls from two Python files into one path.
+- `headered/` the same, after `auto.headers` prepends a header block, proving empty groups land on the header lines.
+- `fstring/` an f-string whose interpolation changes the rendered line count, proving the collapse-to-first-line fallback.
+- `declared/` a custom block whose `place_secondary` is generated by a plugin and then appended to by the developer. Two sources, two runs of lines, neither pointing at the plugin (G5, G6).
+- `unattributable/` a plugin write with no attribution scope, proving the whole chunk is emitted unmapped instead of pointing into `stewbeet/`.
+- `editable_install/` the same project with StewBeet installed editable from inside the project root, proving the library exclusion is not just a project-root check.
