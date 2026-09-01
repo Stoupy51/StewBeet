@@ -29,7 +29,7 @@ Mechanism 1 needs no build and closes the completion half of issue #41. Mechanis
 
 **Target Platform**: VS Code 1.74+ desktop. The virtual-document mechanism is desktop-only in practice because it relies on the Spyglass extension being installed.
 
-**Project Type**: Two co-located deliverables in one repo: a beet plugin inside the Python package, and a VS Code extension.
+**Project Type**: Two co-located deliverables in one repo: a beet plugin inside the Python package, and a VS Code extension. The extension is intended to grow into a multi-dialect tool covering beet, bolt, mecha and StewBeet; see [contracts/dialects.md](./contracts/dialects.md).
 
 **Performance Goals**: Forwarded completion under 150 ms perceived latency (bounded by Spyglass). Source map emission under 20% of total build time with the plugin enabled, 0% when disabled.
 
@@ -49,7 +49,7 @@ In its absence the gate is evaluated against the conventions the repository and 
 |---|---|---|
 | Python is pyright-strict, no `Any`, no `cast` used to silence | PASS | Design uses dataclasses for every record; see [data-model.md](./data-model.md). |
 | Structural section banners, tabs for indentation, two trailing newlines | PASS | Applies to the new plugin package. |
-| A file near 300 lines becomes a submodule, grouped by feature | PASS | `plugins/source_maps/` is a package from the start: capture, align, encode. |
+| A file near 300 lines becomes a submodule, grouped by feature | PASS | `plugins/sniffer/` is a package from the start: capture, align, encode. |
 | Do not reinvent the wheel | PASS | Source Map v3 rather than a bespoke format; `difflib` rather than a hand-rolled aligner; Spyglass rather than a command parser. |
 | No premature abstraction, no single-use wrappers | PASS | No abstraction layer over Spyglass. Requests are forwarded by name. |
 | Never commit unprompted, never push | PASS | No git actions in this plan. |
@@ -74,6 +74,7 @@ specs/001-stewbeet-vscode-dx/
 ├── contracts/
 │   ├── spyglass-integration.md  # Priority deliverable, self-contained
 │   ├── source-map.md            # The .mcfunction.map contract
+│   ├── dialects.md              # Scope map: beet/bolt/mecha/StewBeet, layers, routing
 │   ├── reference/               # Sniffer's working example, preserved verbatim
 │   └── extension-api.md         # Provider and command contracts
 └── tasks.md             # Created later by /speckit-tasks
@@ -89,7 +90,7 @@ python_package/stewbeet/
 ├── core/__memory__.py               # + Mem.source_map_chunks, Mem.attribution
 ├── plugins/datapack/custom_blocks/
 │   └── __init__.py                  # + attribute_to(obj_block) around the generation loop
-└── plugins/source_maps/
+└── plugins/sniffer/
     ├── __init__.py                  # beet_default: finalize + emit
     ├── capture.py                   # patches beet.Function.append/prepend, restores at teardown
     ├── origin.py                    # project-source filter, frame walk, cached ast index
@@ -111,7 +112,7 @@ extension/vscode/
     └── virtual.test.js              # whitespace projection keeps offsets identical
 ```
 
-**Structure Decision**: Both deliverables stay where they already live. The Python side becomes a normal StewBeet plugin package (`plugins/source_maps/`) so it is opt-in through the beet pipeline like every other plugin, with the single exception of the capture hook, which has to live in `core/utils/io/functions.py` because that is where writes happen. The extension keeps its flat CommonJS `src/` layout and its pure, unit-testable modules.
+**Structure Decision**: Both deliverables stay where they already live. The Python side becomes a normal StewBeet plugin package (`plugins/sniffer/`) so it is opt-in through the beet pipeline like every other plugin, with the single exception of the capture hook, which has to live in `core/utils/io/functions.py` because that is where writes happen. The extension keeps its flat CommonJS `src/` layout and its pure, unit-testable modules.
 
 ## Phasing
 
@@ -122,6 +123,9 @@ extension/vscode/
 | **A. Virtual documents** | Completion, hover, signature help inside blocks. Definition landing in the generated `.mcfunction`. Closes half of #41 with no build required. | Nothing. Q2 spike passed, see [spike/](./spike/). | ~250 lines JS |
 | **B. Source map emission** | `.mcfunction.map` files, project-source targets only. Unblocks Sniffer independently of the extension. | Nothing | ~280 lines Python |
 | **B2. Attribution scopes** | Plugin-generated content maps to the declaration that caused it, starting with `custom_blocks`. Incremental: unscoped plugins emit unmapped lines. | B | ~5 lines per plugin |
+| **D. `bolt` language id + grammar** | Nothing registers `.bolt` today, so those files have no language id at all and no server can select them. | Nothing | small |
+| **E. Mecha AST map emitter** | Maps for bolt/mecha read straight from `AstNode.location`. No capture, no alignment. | Shared `encode` from B | ~80 lines Python |
+| **F. Bolt live editing** | Adopt, route to, or replace aegis. Needs its own research pass before sizing. | D | unsized |
 | **C. Map-driven navigation** | Definition landing on the `write_function` call, references, diagnostics relocated onto Python. Closes the rest of #41. | A and B | ~200 lines JS |
 | **D. Upstream `env.plugins`** | Deletes phase A in favour of a real Spyglass plugin. Optional, unbounded timeline. | Upstream review | 2 PRs |
 

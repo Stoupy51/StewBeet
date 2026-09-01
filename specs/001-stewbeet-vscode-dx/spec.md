@@ -80,12 +80,22 @@ An author asks for references of a generated function and gets every Python loca
 - **NFR-002**: Mapping emission must not measurably slow a build when disabled, and must stay under 20% overhead when enabled.
 - **NFR-003**: The extension must keep working if Spyglass is absent, with the Spyglass-backed features silently unavailable.
 
+### Multi-dialect (scope extension)
+
+The long-term target is one extension serving plain **beet**, **bolt**, **mecha** and **StewBeet**, compatible with Spyglass rather than competing with it. Delivered step by step; see [contracts/dialects.md](./contracts/dialects.md) for the layering and sequencing.
+
+- **FR-013**: The map-consuming half of the extension MUST be dialect-agnostic. It consumes `.mcfunction.map` and MUST NOT know which generator produced it.
+- **FR-014**: The map format and its encoder MUST be shared across dialects. Only the capture half may be dialect-specific.
+- **FR-015**: The extension MUST NOT claim language id `mcfunction` for files Spyglass already serves. Ownership is partitioned by file, not merged.
+- **FR-016**: The extension MUST contribute a `bolt` language id and grammar, since no installed extension registers `.bolt` today and a document without a language id cannot be served by any language server.
+- **FR-017**: bolt and mecha map emission MUST read positions from the mecha AST (`AstNode.location`), not reconstruct them. Reconstruction is a StewBeet-only necessity.
+
 ### Out of scope
 
-- Authoring a general-purpose Minecraft language server.
-- Supporting Bolt or Mecha source syntax (StewBeet writes plain command strings).
-- Refactoring or renaming across the Python/mcfunction boundary.
+- Authoring a general-purpose vanilla Minecraft language server. Spyglass exists and is better at it.
+- Refactoring or renaming across the source/mcfunction boundary.
 - Bedrock Edition.
+- Projects that enable bolt syntax inside `.mcfunction` files via `meta.bolt.entrypoint`. Deferred until one shows up; see the caveat in `contracts/dialects.md`.
 
 ## Success Criteria
 

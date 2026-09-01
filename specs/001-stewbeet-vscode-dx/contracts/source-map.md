@@ -74,7 +74,7 @@ The VLQ alphabet and continuation-bit scheme are the standard ones; see [Variabl
 - One map per generated function, written as a sibling: `data/<ns>/function/<path>.mcfunction.map`.
 - Discovery is by convention: given `foo.mcfunction`, look for `foo.mcfunction.map`.
 - The generated function's **last** line is `## sourceMappingURL=<basename>.mcfunction.map`. Note **two** hash characters, matching the reference. It must be last, and it must be unmapped, because Sniffer counts comments and blank lines when placing breakpoints so a leading comment would shift every mapped line.
-- Maps are emitted only when the `stewbeet.plugins.source_maps` plugin is in the pipeline, and are excluded from release archives.
+- Maps are emitted only when the `stewbeet.plugins.sniffer` plugin is in the pipeline, and are excluded from release archives.
 
 ### When the pack is copied out of the workspace
 
