@@ -1,0 +1,41 @@
+# Integration test
+
+End-to-end proof that the forwarded providers answer inside StewBeet mcfunction blocks, run against the real extension and the real Spyglass in a VS Code extension host.
+
+```sh
+npm run test:integration          # from extension/vscode/
+```
+
+A VS Code window opens, runs the checks and closes itself. Takes about 25 seconds with a warm Spyglass cache; the first ever run downloads mcmeta summaries and takes minutes. Set `VSCODE_EXE` if the launcher cannot find your VS Code.
+
+## Why it exists
+
+It is the regression guard for the assumption the whole design rests on: **Spyglass's document selector carries no scheme filter**, so it attaches to the virtual documents this extension serves. If a future Spyglass release adds one, every provider silently stops answering and nothing else notices.
+
+## What it checks
+
+| Check | Asserts |
+|---|---|
+| `control_realFileCompletions` | Spyglass answers on a real `.mcfunction`. Without this the rest proves nothing, so the run reports INCONCLUSIVE rather than FAIL. |
+| US1 completion inside a block | Completions arrive mid-command inside a `write_function` string. |
+| US1 offers vanilla commands | `say` is among them. |
+| US1 offers the project's own function paths | `probe:alpha` is offered mid resource location, proving the virtual document sees the project symbol table. |
+| US1 no mcfunction items outside a block | Providers stay out of the way in ordinary Python. |
+| US2 hover | Hover answers on a selector. |
+| US3 definition | Resolves to the generated `alpha.mcfunction`. |
+| Setting gate | `StewBeet.languageFeatures: false` stops all forwarding. |
+
+### The trap in the outside-a-block check
+
+VS Code's word-based suggestions collect words from the open document, and `say` and `execute` both appear inside the fixture's mcfunction string. Asserting on those made the check fail with the extension behaving perfectly. It now turns word-based suggestions off and asserts on commands that are **not** words in `demo.py` (`advancement`, `bossbar`, `ban-ip`, ...), with a paired positive control confirming those same tokens do appear inside a block.
+
+## Launch traps
+
+`run.js` exists to avoid two of them:
+
+1. Launched from VS Code's own terminal or an extension host, `ELECTRON_RUN_AS_NODE=1` is inherited and `Code.exe` behaves as plain Node, rejecting every flag with `bad option:`. `VSCODE_IPC_HOOK` is worse: the launch attaches to the running editor instead of starting a new one. Both are stripped.
+2. The `code` CLI wrapper detaches, returning 0 immediately with no result. The Electron binary is invoked directly.
+
+## Fixture
+
+`fixture/` is a minimal datapack (`pack.mcmeta`, `probe:alpha`, `probe:beta`) plus `demo.py` containing one `write_function` block. The datapack exists so there is a project symbol table to complete against.

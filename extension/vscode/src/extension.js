@@ -3,6 +3,14 @@
 
 const vscode = require("vscode");
 const { findBlockOffsets } = require("./blocks");
+const {
+  TRIGGER_CHARACTERS,
+  completionProvider,
+  hoverProvider,
+  signatureHelpProvider,
+  definitionProvider,
+  registerVirtualDocuments,
+} = require("./virtual");
 
 // ─── Constants──────────────
 
@@ -88,6 +96,28 @@ function activate(context) {
     vscode.workspace.onDidChangeConfiguration(e => {
       if (e.affectsConfiguration(CFG_KEY)) { refreshDecos(); refresh(); }
     }),
+  );
+
+  registerLanguageFeatures(context);
+}
+
+// ─── Language features──────
+
+/**
+ * Forward mcfunction language requests inside StewBeet string blocks to whatever
+ * answers for the mcfunction language, in practice Spyglass. All of it degrades
+ * to nothing when Spyglass is absent, so it stays a soft dependency.
+ * @param {vscode.ExtensionContext} context
+ */
+function registerLanguageFeatures(context) {
+  registerVirtualDocuments(context);
+
+  const python = { language: "python" };
+  context.subscriptions.push(
+    vscode.languages.registerCompletionItemProvider(python, completionProvider, ...TRIGGER_CHARACTERS),
+    vscode.languages.registerHoverProvider(python, hoverProvider),
+    vscode.languages.registerSignatureHelpProvider(python, signatureHelpProvider, " "),
+    vscode.languages.registerDefinitionProvider(python, definitionProvider),
   );
 }
 
