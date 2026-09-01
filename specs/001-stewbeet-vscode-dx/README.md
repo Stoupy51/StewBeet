@@ -9,7 +9,8 @@ Closes [issue #41](https://github.com/Stoupy51/StewBeet/issues/41): autocomplete
 | Document | What it holds |
 |---|---|
 | [spec.md](./spec.md) | The problem, six user scenarios, twelve functional requirements, three success criteria. |
-| [research.md](./research.md) | Six architectural options with the reasoning for each adoption and rejection. Four resolved unknowns. Four open questions. |
+| [research.md](./research.md) | Six architectural options with the reasoning for each adoption and rejection. Resolved unknowns, and the two questions still open. |
+| [spike/](./spike/) | The Q2 spike, its probe workspace and its raw output. **Passed.** Keep it as a regression test. |
 | [plan.md](./plan.md) | Technical context, constitution check, file-by-file structure, phasing, complexity justifications. |
 | [contracts/spyglass-integration.md](./contracts/spyglass-integration.md) | **The priority deliverable.** Everything about making Spyglass answer questions about StewBeet's Python files, self-contained. |
 | [contracts/source-map.md](./contracts/source-map.md) | The `.mcfunction.map` format, guarantees, and test fixtures. Validated segment by segment against Sniffer's reference implementation, preserved at [contracts/reference/](./contracts/reference/). |
@@ -29,7 +30,7 @@ Spyglass first. It is the headline ask, it has no build-time dependency, and it 
 
 | Phase | Delivers | Blocked by |
 |---|---|---|
-| **A. Spyglass forwarding** | Completion, hover, signature help. Definition landing in the generated file. | The Q2 spike in `spyglass-integration.md` Part 5. Nothing else. |
+| **A. Spyglass forwarding** | Completion, hover, signature help. Definition landing in the generated file. | Nothing. The Q2 spike passed, see [spike/](./spike/). |
 | **B. Source map emission** | `.mcfunction.map` files. Unblocks Sniffer independently of the extension. | Nothing. Parallel to A. |
 | **B2. Attribution scopes** | Plugin-generated content maps to the declaration that caused it. | B. Incremental, plugin by plugin. |
 | **C. Map-driven navigation** | Definition landing on the `write_function` call, references, diagnostics on Python lines. | A and B. |
