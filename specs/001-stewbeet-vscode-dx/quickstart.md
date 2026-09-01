@@ -82,20 +82,27 @@ Then the rest: `headered/` proves `difflib` alignment survives `auto.headers`, `
 
 ## Phase B2: attribution reaches the declaration
 
-Declare a custom block with an `on_place` body, and separately append to its `place_secondary`:
+Declare a custom block, then extend its `place_secondary` the modern way, from a plugin ordered after `stewbeet.plugins.datapack.custom_blocks`:
 
 ```python
-Block(id="my_block", base_block="minecraft:furnace", on_place="say placed")
-write_function("mynamespace:block/my_block/place_secondary", "say appended")
+# blocks.py, the declaration
+Block(id="my_block", base_block="minecraft:furnace")
+
+# my_plugin.py, running after custom_blocks
+Block.from_id("my_block").functions.place_secondary.obj.append("say appended")
 ```
 
 | Check | Expected |
 |---|---|
 | Decode `place_secondary`'s map | Two sources, both in the project |
-| The line generated from `on_place` | Maps to the `Block(...)` declaration, or to the `on_place=` argument if the scope names the field |
-| The `say appended` line | Maps to the developer's own `write_function` |
-| Lines emitted by `custom_blocks` with no declaration behind them | Unmapped, not pointing at `custom_blocks/__init__.py` |
-| Rewrite the append as `overwrite=True` and rebuild | One source only, the developer's call |
+| The `say appended` line | Maps to the `.obj.append(` line in `my_plugin.py`, resolved by tier 1 |
+| Lines `custom_blocks` synthesised from the declaration | Map to the `Block(...)` call in `blocks.py`, resolved by tier 2 |
+| Lines `custom_blocks` emitted from nothing declarable | Unmapped, and in particular never pointing at `custom_blocks/__init__.py` |
+| Any line at all | Never points at the project's `main()` entry point |
+
+The last two rows are the ones that catch a broken tier order.
+
+Also check the capture point itself, since `.obj.append` bypasses `write_function` entirely: remove the `beet.Function.append` patch and confirm the `say appended` line becomes unmapped rather than misattributed.
 
 ## Phase C: navigation and diagnostics
 
