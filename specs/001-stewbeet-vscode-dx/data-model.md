@@ -69,7 +69,7 @@ One resolved generated line.
 | `source_line` | `int` | 0-based line in that source file. |
 | `source_column` | `int` | 0-based column in that source file. |
 
-**Invariant**: `generated_line` values are strictly increasing within a map, and lines with no origin (generated headers, blank separators) are simply absent.
+**Invariants**: `generated_line` values are strictly increasing within a map, and lines with no origin (generated headers, blank separators, the trailing `## sourceMappingURL` comment) are simply absent. Two `LineMapping`s may share a `source_line`, which is what happens whenever one Python line writes several commands.
 
 ### `FunctionSourceMap`
 
@@ -78,10 +78,13 @@ The emitted artifact for one generated function.
 | Field | Type | Meaning |
 |---|---|---|
 | `generated_path` | `str` | Resource-location path, e.g. `mynamespace:v1.0/tick`. |
-| `sources` | `tuple[str, ...]` | Source paths, deduplicated, in first-use order. |
+| `source_root` | `str` | Relative path from the map file's own directory to the project root. Depth varies per function, so it is computed per map, not once. |
+| `sources` | `tuple[str, ...]` | Source paths relative to `source_root`, deduplicated, in first-use order. Several is the normal case. |
 | `mappings` | `tuple[LineMapping, ...]` | Resolved lines. |
 
-Serialised through the [source map contract](./contracts/source-map.md).
+`sourcesContent` is not modelled and not emitted. The key is omitted from the JSON entirely.
+
+Serialised through the [source map contract](./contracts/source-map.md), which is validated against a working reference implementation at `contracts/reference/`.
 
 ## Relationships
 

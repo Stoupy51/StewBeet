@@ -51,6 +51,8 @@ beet build
 | `ls build/*/data/*/function/**/*.mcfunction.map` | One map per generated function |
 | `python -c "import json;print(json.load(open(<a map>))['version'])"` | `3` |
 | Decode a map with `@jridgewell/trace-mapping` | Generated line 0 of a headered function is unmapped, the first command line maps into the author's `.py` |
+| `tail -1` any generated function | `## sourceMappingURL=<name>.mcfunction.map`, two hashes, and no mapping group for it |
+| Check `sourceRoot` on a nested function | Deeper than a top-level one, since it is relative to the map's own directory |
 | Open the mapped Python line | It is a line inside the `write_function` string that produced the command |
 | Build without the plugin | No `.map` files, and build time within noise of the previous run |
 
@@ -68,7 +70,15 @@ PY
 
 **Expected**: `clean`. Run it again with StewBeet installed editable from inside the project root, which is the case that a naive project-root check passes and must not.
 
-Run the contract fixtures: `pytest python_package/tests/test_source_maps.py`. Three fixtures carry the weight: `headered/` proves `difflib` alignment survives `auto.headers`, `declared/` proves a custom block's generated lines reach the declaration, and `editable_install/` proves the library exclusion is independent of the project root.
+**Conformance against someone else's encoder.** Before trusting our own fixtures, point the decoder at Sniffer's reference implementation and check it reproduces Appendix A of the source map contract:
+
+```sh
+pytest python_package/tests/test_source_maps.py -k reference
+```
+
+It decodes `specs/001-stewbeet-vscode-dx/contracts/reference/**/*.map` and asserts every segment resolves to the expected source line. Two segments there are worth the whole test: `AAAA` in `hit`, where one source statement expands to two commands, and `ACHA` in `aura`, where a segment moves to a different source and three lines backwards in the same step. A hand-rolled VLQ encoder that gets file-wide deltas wrong passes every fixture we write ourselves and fails this.
+
+Then the rest: `headered/` proves `difflib` alignment survives `auto.headers`, `declared/` proves a custom block's generated lines reach the declaration, and `editable_install/` proves the library exclusion is independent of the project root.
 
 ## Phase B2: attribution reaches the declaration
 

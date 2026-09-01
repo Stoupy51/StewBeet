@@ -133,9 +133,17 @@ Two consequences worth stating:
 
 **Source Map v3** ([format internals](https://www.polarsignals.com/blog/posts/2025/11/04/javascript-source-maps-internals)), one sibling `foo.mcfunction.map` per generated function.
 
-Sniffer's author has confirmed the intent to "not reinvent the wheel and reuse the way js/ts mapping is done", as JSON, without publishing an example file yet. So this is agreement on the format with the details still open, and [contracts/source-map.md](./contracts/source-map.md) is written to be sent as the concrete proposal.
+Sniffer's author confirmed the intent to "not reinvent the wheel and reuse the way js/ts mapping is done", then supplied a **working reference implementation**, preserved at [contracts/reference/](./contracts/reference/). Every segment in it has been decoded and verified against its sources. The format is therefore settled, not proposed, and [contracts/source-map.md](./contracts/source-map.md) is written against it.
 
-The fit is exact, not approximate: a JS source map describes one bundled output built from many sources, which is what a generated `.mcfunction` assembled from several `.py` files is.
+The fit is exact, not approximate: a JS source map describes one bundled output built from many sources, which is what a generated `.mcfunction` assembled from several `.py` files is. The reference proves it directly, since its `aura.mcfunction` is generated from calls in two different source files.
+
+Five things the reference settled that guesswork had got wrong or left open:
+
+1. **`sourceRoot` is used**, relative from the map file's own directory to the project root, with `sources` relative to that. No absolute paths anywhere. This resolves Q1 outright.
+2. **`sourcesContent` is not part of the format.** The reference carries one, which its author has since confirmed was an oversight. StewBeet omits the key entirely, which is also what scale wants: inlining every Python source into every one of a thousand maps would cost tens of megabytes of duplicated source in the build output.
+3. **`## sourceMappingURL=`, with two hashes**, not one.
+4. **The trailing `sourceMappingURL` line has no group at all**, rather than an empty one. `mappings` simply runs out before the file does. Absent and empty groups are distinct and both legal.
+5. **Several generated lines mapping to one source line is normal** (G7). The reference's `effect('slowness', 3)` expands to two commands, both pointing at the same position.
 
 - Standard, so consumers already exist: `@jridgewell/trace-mapping` in JS, several readers in Python.
 - Base64 VLQ encoding is about 15 lines to write ([reference](https://rosettacode.org/wiki/Variable-length_quantity#Python)), and StewBeet only needs the trivial subset: one segment per generated line, at generated column 0, with 4 fields `[genCol, sourceIndex, sourceLine, sourceCol]`. No `names`, no nested segments.
@@ -151,7 +159,7 @@ An optional trailing `# sourceMappingURL=foo.mcfunction.map` comment matches the
 
 ## Open questions
 
-- **Q1**: Should the map's source path be relative to the map file or to the project root? Relative to the map file matches Source Map v3, but build output can sit outside the workspace after `copy_to_destination`. Proposal: relative when possible, absolute `file:` URI otherwise.
+- ~~**Q1**: relative or absolute source paths?~~ **Resolved by the reference.** `sourceRoot` holds the relative path from the map file's directory to the project root, `sources` are relative to that, and nothing is ever absolute. When `copy_to_destination` puts the pack outside the workspace the relative root stops resolving, which is what Sniffer's existing `pathMapping` setting is for. Debug from `build/`.
 - **Q2**: Does Spyglass's `LanguageClient` sync a virtual document that is opened but never shown in an editor? Needs a spike before committing to Option A. Fallback if not: open the virtual document in a hidden editor, or spawn a private `@spyglassmc/language-server` process.
-- **Q3**: Send [contracts/source-map.md](./contracts/source-map.md) to Sniffer as the concrete proposal. Format is agreed, three details are not: the `.mcfunction.map` sidecar naming, whether a trailing `# sourceMappingURL=` comment is expected or forbidden, and whether unmapped lines are acceptable to their breakpoint placement (they must be, since generated headers cannot map anywhere).
+- ~~**Q3**: confirm the format with Sniffer.~~ **Resolved.** The reference implementation settled it, and its author has confirmed the stray `sourcesContent` in it should be ignored. Nothing is outstanding. The remaining detail, whether unmapped generated lines are acceptable to breakpoint placement, is answered by the reference itself: it relies on exactly that for its own trailing `sourceMappingURL` comment.
 - **Q4**: Which StewBeet plugins get an `attribute_to` scope in the first pass? `datapack/custom_blocks` is the motivating case. `finalyze/custom_blocks_ticking`, `datapack/loot_tables` and the manual generators are candidates. Everything without a scope simply emits unmapped lines, so this can be filled in incrementally and is not a blocker.

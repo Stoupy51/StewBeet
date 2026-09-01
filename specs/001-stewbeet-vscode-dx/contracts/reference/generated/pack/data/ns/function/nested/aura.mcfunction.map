@@ -1,0 +1,15 @@
+{
+  "version": 3,
+  "file": "aura.mcfunction",
+  "sourceRoot": "../../../../../..",
+  "sources": [
+    "source/combat/hit.ts",
+    "source/spawn.ts"
+  ],
+  "sourcesContent": [
+    "// Fictional TypeScript datapack DSL. See ../../../README.md.\nimport {aura, damage, effect, say} from 'sniffer-example-runtime';\n\n/** Everything a hit does to the entity it landed on. */\nexport function hit(): void {\n    say('hit!');\n    damage(4);\n    effect('slowness', 3);\n    aura();\n}",
+    "// Fictional TypeScript datapack DSL. See ../../README.md.\nimport {aura} from 'sniffer-example-runtime';\n\n/** Run once on every entity the pack spawns. */\nexport function onSpawn(): void {\n    aura();\n    aura.tick('ns.spawned');\n}\n"
+  ],
+  "names": [],
+  "mappings": "AAQA;ACHA;AACA"
+}
