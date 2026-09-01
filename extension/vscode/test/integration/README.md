@@ -38,4 +38,6 @@ VS Code's word-based suggestions collect words from the open document, and `say`
 
 ## Fixture
 
+**The throwaway VS Code profile lives in the OS temp dir, never in the repo.** A profile inside the workspace puts the git extension's askpass sockets under a directory Spyglass' file watcher cannot `scandir`; the resulting EPERM restarts the language server until it stops retrying. Gitignoring it is not enough, because Spyglass watches the project root and does not read `.gitignore`.
+
 `fixture/` is a minimal datapack (`pack.mcmeta`, `probe:alpha`, `probe:beta`) plus `demo.py` containing one `write_function` block. The datapack exists so there is a project symbol table to complete against.
