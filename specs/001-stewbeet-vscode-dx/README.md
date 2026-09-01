@@ -12,7 +12,7 @@ Closes [issue #41](https://github.com/Stoupy51/StewBeet/issues/41): autocomplete
 | [research.md](./research.md) | Six architectural options with the reasoning for each adoption and rejection. Four resolved unknowns. Four open questions. |
 | [plan.md](./plan.md) | Technical context, constitution check, file-by-file structure, phasing, complexity justifications. |
 | [contracts/spyglass-integration.md](./contracts/spyglass-integration.md) | **The priority deliverable.** Everything about making Spyglass answer questions about StewBeet's Python files, self-contained. |
-| [contracts/source-map.md](./contracts/source-map.md) | The `.mcfunction.map` format, guarantees, and test fixtures. The interop contract with Sniffer. |
+| [contracts/source-map.md](./contracts/source-map.md) | The `.mcfunction.map` format, guarantees, and test fixtures. Validated segment by segment against Sniffer's reference implementation, preserved at [contracts/reference/](./contracts/reference/). |
 | [contracts/extension-api.md](./contracts/extension-api.md) | Providers, commands, settings the extension registers. |
 | [data-model.md](./data-model.md) | Entities on both sides of the boundary. |
 | [quickstart.md](./quickstart.md) | How to validate each phase against a real project. |
@@ -38,5 +38,5 @@ Spyglass first. It is the headline ask, it has no build-time dependency, and it 
 ## External context this feature depends on
 
 - **Spyglass**, checkout at `d:/advanced_desktop/Spyglass`. Its architecture is recorded in `contracts/spyglass-integration.md` Part 1 with file and line references, so that document stands alone if the checkout is gone.
-- **Sniffer**, checkout at `d:/advanced_desktop/sniffer`. A Fabric mod plus VS Code extension exposing a running game as a Debug Adapter. `.mcfunction.map` consumption is **not implemented yet**, only `pathMapping` for remote paths. Its author has confirmed the intent to reuse the JS/TS source map approach as JSON, without publishing an example, so `contracts/source-map.md` is written to be sent as the concrete proposal.
+- **Sniffer**, checkout at `d:/advanced_desktop/sniffer`. A Fabric mod plus VS Code extension exposing a running game as a Debug Adapter. `.mcfunction.map` consumption was not implemented in that checkout, which had only `pathMapping` for remote paths. Its author has since supplied a **working reference implementation of the map format**, copied into [contracts/reference/](./contracts/reference/) so it cannot be lost, and confirmed that the `sourcesContent` field in it is an oversight to be ignored. The format is settled with nothing outstanding; `contracts/source-map.md` is written against it, segment by segment.
 - **StewBeet's own extension**, `extension/vscode/`. Today a TextMate injection grammar plus block decorations. `src/blocks.js` is reused unchanged except for exposing interpolation spans.
