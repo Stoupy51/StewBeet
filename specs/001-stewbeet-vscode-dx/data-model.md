@@ -30,9 +30,9 @@ The ambient fallback used when no project frame is on the stack, pushed by StewB
 | Field | Type | Meaning |
 |---|---|---|
 | `origin` | `SourceOrigin` | The declaration's own capture site, recorded by `Item.__post_init__`. |
-| `field` | `str \| None` | Optional keyword argument of the declaration whose literal is the real source, e.g. `"on_place"`. Resolved against the cached AST of the declaration call. |
+Held as a stack on `Mem`, entered with `attribute_to(definition)`. Reentrant, and the innermost scope wins.
 
-Held as a stack on `Mem`, entered with `attribute_to(definition, field=None)`. Reentrant, and the innermost scope wins.
+There is no field-level variant. It was designed to point at a `Block(on_place=...)` keyword argument, but `on_place` is deprecated since v3.5.0 and its replacement is a direct `.obj.append(...)` from the developer's own file, which tier 1 resolves precisely. Tier 2 now covers only what a plugin synthesises from non-deprecated fields.
 
 ### `WriteChunk`
 
@@ -43,11 +43,15 @@ One `write_*` call's contribution to one function, recorded in call order.
 | `lines` | `tuple[str, ...]` | The content as written, split on newlines, no trailing empty element. |
 | `origin` | `SourceOrigin \| None` | Where those lines came from, or `None` when no project origin could be resolved. |
 
+**Captured at** either `beet.Function.append` / `.prepend` (patched by the plugin, and the path `write_function` itself takes for appends) or the overwrite branch of `write_function`.
+
 **Origin resolution**, in order, first hit wins:
 
-1. Innermost stack frame passing the project-source filter, refined to the content argument's literal position through the AST index.
+1. Innermost stack frame that passes the project-source filter **and** whose line the AST index confirms is a write call, meaning one of the six `write_*` functions or `.append` / `.prepend` on a `Resource.obj`. Refined to the content argument's literal position.
 2. Top of the attribution scope stack.
 3. `None`.
+
+Condition 1's AST check is what stops a plugin-generated write from attributing to the user's `main()`, which passes the project-source filter but authored nothing.
 
 **State transitions** mirror `write_function` exactly:
 

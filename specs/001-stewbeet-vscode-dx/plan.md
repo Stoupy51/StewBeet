@@ -84,13 +84,14 @@ specs/001-stewbeet-vscode-dx/
 ```text
 python_package/stewbeet/
 ├── core/utils/io/
-│   └── functions.py                 # + provenance capture in write_function
+│   └── functions.py                 # + provenance capture on the overwrite path only
 ├── core/cls/item.py                 # + Item.origin captured in __post_init__
 ├── core/__memory__.py               # + Mem.source_map_chunks, Mem.attribution
 ├── plugins/datapack/custom_blocks/
 │   └── __init__.py                  # + attribute_to(obj_block) around the generation loop
 └── plugins/source_maps/
     ├── __init__.py                  # beet_default: finalize + emit
+    ├── capture.py                   # patches beet.Function.append/prepend, restores at teardown
     ├── origin.py                    # project-source filter, frame walk, cached ast index
     ├── attribution.py               # attribute_to scope, Mem.attribution stack
     ├── align.py                     # difflib alignment of recorded chunks vs final text

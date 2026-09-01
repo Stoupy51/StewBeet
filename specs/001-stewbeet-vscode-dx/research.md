@@ -81,7 +81,9 @@ That rules out the obvious implementation. Walking out of the `stewbeet` package
 
 **Tier 1, the frame walk.** Walk outward from `write_function` and take the innermost frame that passes the project-source filter **and whose line the AST index confirms is a `write_*` call site**.
 
-That second condition is not decoration, it is what makes the tier ordering work. Without it, a plugin-generated write finds the user's entry point, `main()` in `my_pack/__init__.py`, which passes the project-source filter perfectly well and is the place they called `beet build`, not the place they authored anything. Tier 1 would win, tier 2 would never fire, and every ctrl+click in the whole project would land on the same useless line. Being in project code is not evidence of authorship; being at a `write_*` call is.
+That second condition is not decoration, it is what makes the tier ordering work. Without it, a plugin-generated write finds the user's entry point, `main()` in `my_pack/__init__.py`, which passes the project-source filter perfectly well and is the place they called `beet build`, not the place they authored anything. Tier 1 would win, tier 2 would never fire, and every ctrl+click in the whole project would land on the same useless line. Being in project code is not evidence of authorship; being at a write call is.
+
+The AST predicate accepts a fixed set of forms: the six `write_*` functions, and `.append(...)` / `.prepend(...)` on a `Resource.obj`. Both are direct evidence that this line authored function content.
 
 So tier 1 nails the developer's own `write_function("ns:foo", """...""")`, and it nails developer hooks invoked from inside a plugin, and it correctly declines everything else.
 
@@ -101,7 +103,7 @@ for item, obj_block in blocks.items():
 
 `Item.__post_init__` already runs in the developer's file at declaration time, so it captures its own origin with the same tier-1 walk and stores it on the instance. The scope hands that stored origin to every write inside it.
 
-`attribute_to` takes an optional field name (`attribute_to(obj_block, "on_place")`) so a plugin that knows the content came from a declared field can point at that keyword argument's literal instead of at the `Block(...)` call. The AST index already has the `Call` node, so reading one keyword out of it is free. Opt-in per call site, no plugin is obliged to use it.
+**Tier 2 is narrower than it first looks**, because the modern API for adding commands to generated content does not go through a declaration field at all. See the capture-point section below.
 
 **Tier 3**: no origin. `origin=None`, lines emitted as empty VLQ groups.
 
@@ -112,6 +114,25 @@ for item, obj_block in blocks.items():
 - *Threading an origin parameter through the write API*: changes six public signatures for a debug feature, and every plugin author has to remember it. The ambient scope is opt-in and invisible when unused.
 - *`co_positions()` on the caller frame*: gives the CALL instruction's span, not the argument's.
 - *A `str` subclass carrying provenance*: infects every string StewBeet touches, and dies on the first `f"{x}"` or `.replace()`.
+
+### Where is content actually captured?
+
+Hooking `write_function` alone is not enough, and the reason is the deprecation of `Block.on_place` in v3.5.0. Its replacement, named in the warning the class itself emits, is:
+
+```python
+Block.from_id("my_furnace").functions.place_secondary.obj.append("say placed")
+```
+
+run from a plugin ordered after `stewbeet.plugins.datapack.custom_blocks`. `Resource.obj` returns the raw beet `Function`, so `.append` is **beet's** method and never touches `write_function`. Capturing only at `write_function` would miss the officially recommended way for a developer to extend generated content, which is exactly the content they most want to navigate back to.
+
+So capture hooks two places:
+
+1. **`beet.Function.append` and `.prepend`**, monkey-patched by the `source_maps` plugin at activation and restored at teardown. This is the single choke point every incremental write flows through, `write_function`'s own append and prepend included, so `write_function` needs no capture code for those paths.
+2. **The overwrite path in `write_function`**, which constructs a fresh `Function` and assigns it into the container rather than appending.
+
+Patching a third-party class is not free, so it is opt-in with the plugin, guarded by a check that the methods look as expected, and it degrades to emitting nothing plus one warning if beet's internals move.
+
+This also **retires the field-level attribution idea**. It existed to point at an `on_place=` keyword argument instead of at the `Block(...)` call. With `on_place` deprecated and its replacement being a direct `.append` from the developer's own file, that content is resolved by tier 1 at the exact `.append(` line, which is strictly better than any keyword-argument pointer. Tier 2 is left covering only what a plugin genuinely synthesises from non-deprecated declaration fields such as `vanilla_block`, `growing_seed` and `no_silk_touch_drop`.
 
 ### How does the mapping survive post-processing?
 
@@ -163,9 +184,13 @@ An optional trailing `# sourceMappingURL=foo.mcfunction.map` comment matches the
 
 ## Open questions
 
+All five are now closed. Kept with their resolutions so the reasoning is not lost.
+
 - ~~**Q1**: relative or absolute source paths?~~ **Resolved by the reference.** `sourceRoot` holds the relative path from the map file's directory to the project root, `sources` are relative to that, and nothing is ever absolute. When `copy_to_destination` puts the pack outside the workspace the relative root stops resolving, which is what Sniffer's existing `pathMapping` setting is for. Debug from `build/`.
 - ~~**Q2**: does Spyglass answer on a virtual document that is opened but never shown?~~ **Resolved: yes.** Spike run 2026-09-01 against VS Code 1.135.0 and Spyglass 4.11.0, preserved with its raw output at [spike/](./spike/). 83 completions on an unshown virtual document, identical to the control on a real `.mcfunction`. Hover and definition forward too, and definition resolves to the real generated file. The escalation branch never fired, so no hidden editor and no private language server. Phase A is unblocked as designed.
 
   The spike also settled the largest unstated risk: **the virtual document sees the project symbol table**, returning `probe:alpha` and `probe:beta` for a resource location mid-path. It was not obvious that a document outside the project roots would resolve against project symbols; it does, because `Project.symbols` is global rather than path-relative. That is what makes `function <tab>` inside a `write_function` string offer the pack's own functions.
 - ~~**Q3**: confirm the format with Sniffer.~~ **Resolved.** The reference implementation settled it, and its author has confirmed the stray `sourcesContent` in it should be ignored. Nothing is outstanding. The remaining detail, whether unmapped generated lines are acceptable to breakpoint placement, is answered by the reference itself: it relies on exactly that for its own trailing `sourceMappingURL` comment.
-- **Q4**: Which StewBeet plugins get an `attribute_to` scope in the first pass? `datapack/custom_blocks` is the motivating case. `finalyze/custom_blocks_ticking`, `datapack/loot_tables` and the manual generators are candidates. Everything without a scope simply emits unmapped lines, so this can be filled in incrementally and is not a blocker.
+- ~~**Q4**: which plugins get an `attribute_to` scope first?~~ **Answered: nearest to the declaration goes first.** So `datapack/custom_blocks`, then outward. Everything without a scope emits unmapped lines rather than wrong ones, so the rest is filled in incrementally and blocks nothing.
+
+- ~~**Q5**: should `attribute_to` support field-level attribution?~~ **Retired, the premise is gone.** It was designed to point at a `Block(on_place=...)` keyword argument, and `on_place` is deprecated since v3.5.0. Its replacement resolves through tier 1 at a precise line, which is better than any keyword pointer would have been.

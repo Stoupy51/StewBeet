@@ -9,7 +9,7 @@ Closes [issue #41](https://github.com/Stoupy51/StewBeet/issues/41): autocomplete
 | Document | What it holds |
 |---|---|
 | [spec.md](./spec.md) | The problem, six user scenarios, twelve functional requirements, three success criteria. |
-| [research.md](./research.md) | Six architectural options with the reasoning for each adoption and rejection. Resolved unknowns, and the two questions still open. |
+| [research.md](./research.md) | Six architectural options with the reasoning for each adoption and rejection. Five resolved unknowns, and all five open questions now closed with their reasoning. |
 | [spike/](./spike/) | The Q2 spike, its probe workspace and its raw output. **Passed.** Keep it as a regression test. |
 | [plan.md](./plan.md) | Technical context, constitution check, file-by-file structure, phasing, complexity justifications. |
 | [contracts/spyglass-integration.md](./contracts/spyglass-integration.md) | **The priority deliverable.** Everything about making Spyglass answer questions about StewBeet's Python files, self-contained. |
