@@ -2,7 +2,7 @@
 
 Every record below is a frozen dataclass on the Python side. Nothing is a `dict[str, dict[str, ...]]` blob.
 
-## Python side (`stewbeet.plugins.source_maps`)
+## Python side (`stewbeet.plugins.sniffer`)
 
 ### `SourceOrigin`
 
@@ -133,4 +133,4 @@ Already produced by `blocks.js`, unchanged: `{ start: number, end: number }` off
 
 - A map whose `version` is not `3` is ignored rather than throwing, so a future format bump degrades to "no navigation" instead of breaking the editor.
 - A map whose sources cannot be resolved on disk is ignored for navigation but still used for diagnostics suppression.
-- Capture is a no-op unless the `source_maps` plugin is in the pipeline, so a release build records nothing and pays nothing.
+- Capture is a no-op unless the `sniffer` plugin is in the pipeline, so a release build records nothing and pays nothing.

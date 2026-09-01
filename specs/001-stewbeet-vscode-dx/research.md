@@ -65,6 +65,16 @@ Scan the workspace's `.py` files for `write_function("literal:path", ...)` and i
 
 **Decision: reject.** Strictly weaker than Option D: it cannot resolve f-string paths, cannot see paths emitted by StewBeet's own plugins, and would be a second mechanism answering the same question. Once `beet watch` is running, the map is always current anyway.
 
+### Option G: Adopt or route to Aegis for bolt and mecha
+
+[Aegis](file:///d:/advanced_desktop/aegis) is an existing mecha/bolt language server: `aegis-core` and `aegis-server` in Python, `aegis-vscode` and `aegis-jetbrains` as clients. It shadows beet's `Context`, `Pipeline` and `ProjectBuilder` to compile a document and hand its providers a real mecha AST plus diagnostics, with completion, definition, hover, references, rename and semantic tokens already implemented.
+
+Bolt cannot be served any other way. Its commands are interleaved with Python at statement level and indentation-scoped, so only mecha can say which lines are commands. The virtual-document trick that serves StewBeet is useless here.
+
+Its incompatibility with Spyglass turned out to be one line rather than an architectural clash: `aegis.client.documentSelector` defaults to `{scheme: "file", language: "mcfunction"}`, the same language id Spyglass claims, so both servers answer for the same files. Aegis contributes no `languages` and no `grammars` of its own, riding `minecraftcommands.syntax-mcfunction` and `ms-python.python` instead.
+
+**Decision: in scope, deferred, and not yet decided between adopting and rewriting.** The routing fix is small and the compile shadows are the expensive part nobody should write twice. Whether to upstream the routing fix to aegis, vendor its server, or write a thinner one needs its own research pass. Recorded as step F in [contracts/dialects.md](./contracts/dialects.md).
+
 ### Option F: Validate strings at build time with Mecha
 
 Mecha is already a StewBeet dependency and is a complete mcfunction parser in Python, but StewBeet only exposes it through `stewbeet ast` / `stewbeet codegen` inspection commands and never runs it over written content.
@@ -127,7 +137,7 @@ run from a plugin ordered after `stewbeet.plugins.datapack.custom_blocks`. `Reso
 
 So capture hooks two places:
 
-1. **`beet.Function.append` and `.prepend`**, monkey-patched by the `source_maps` plugin at activation and restored at teardown. This is the single choke point every incremental write flows through, `write_function`'s own append and prepend included, so `write_function` needs no capture code for those paths.
+1. **`beet.Function.append` and `.prepend`**, monkey-patched by the `sniffer` plugin at activation and restored at teardown. This is the single choke point every incremental write flows through, `write_function`'s own append and prepend included, so `write_function` needs no capture code for those paths.
 2. **The overwrite path in `write_function`**, which constructs a fresh `Function` and assigns it into the container rather than appending.
 
 Patching a third-party class is not free, so it is opt-in with the plugin, guarded by a check that the methods look as expected, and it degrades to emitting nothing plus one warning if beet's internals move.
@@ -153,6 +163,21 @@ Two consequences worth stating:
 
 - Go-to-definition on such a path returns a `Location[]`, not a single location, so VS Code shows the peek list. Ordered by generated line.
 - `overwrite=True` clears the chunk list before recording, exactly as it clears the function text, so the origins it replaced disappear from the map. That is the correct answer and it falls out of mirroring the existing semantics rather than being special-cased.
+
+### How do bolt and mecha emit maps?
+
+Not the way StewBeet does, and far more easily. Every `mecha.AstNode` already carries
+
+```python
+location: SourceLocation      # NamedTuple(pos, lineno, colno)
+end_location: SourceLocation
+```
+
+so a map is a walk over the compiled AST reading `location` off each `AstCommand`. No frame walk, no AST re-parse, no `difflib`, and column precision comes free, which the StewBeet path explicitly does not promise.
+
+StewBeet needs all that machinery only because its commands are strings with no recorded positions anywhere. Bolt's positions were never lost.
+
+**Consequence for the code layout**: `capture` and `align` are StewBeet-specific, `encode` is shared. Keeping `encode` free of any StewBeet import costs nothing today and is what lets a mecha backend reuse it. Recorded in [contracts/dialects.md](./contracts/dialects.md).
 
 ### Which mapping format?
 

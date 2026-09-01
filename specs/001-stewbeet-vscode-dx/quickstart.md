@@ -39,7 +39,7 @@ Add the plugin to the project's `beet.yaml` pipeline, then build:
 
 ```yaml
 pipeline:
-  - stewbeet.plugins.source_maps
+  - stewbeet.plugins.sniffer
 ```
 
 ```sh
@@ -73,7 +73,7 @@ PY
 **Conformance against someone else's encoder.** Before trusting our own fixtures, point the decoder at Sniffer's reference implementation and check it reproduces Appendix A of the source map contract:
 
 ```sh
-pytest python_package/tests/test_source_maps.py -k reference
+pytest python_package/tests/test_sniffer.py -k reference
 ```
 
 It decodes `specs/001-stewbeet-vscode-dx/contracts/reference/**/*.map` and asserts every segment resolves to the expected source line. Two segments there are worth the whole test: `AAAA` in `hit`, where one source statement expands to two commands, and `ACHA` in `aura`, where a segment moves to a different source and three lines backwards in the same step. A hand-rolled VLQ encoder that gets file-wide deltas wrong passes every fixture we write ourselves and fails this.
@@ -134,4 +134,4 @@ Not owned by this feature, but the acceptance test for SC-002:
 |---|---|
 | SC-001 completion and ctrl+click | Phase A and Phase C tables |
 | SC-002 Sniffer needs no StewBeet code | Phase D |
-| SC-003 no mcfunction syntax knowledge added | `grep -rn "execute\|@a\|scoreboard" python_package/stewbeet/plugins/source_maps extension/vscode/src` returns nothing outside test fixtures |
+| SC-003 no mcfunction syntax knowledge added | `grep -rn "execute\|@a\|scoreboard" python_package/stewbeet/plugins/sniffer extension/vscode/src` returns nothing outside test fixtures |
