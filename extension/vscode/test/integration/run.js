@@ -23,6 +23,13 @@ const HERE = __dirname;
 const EXT_ROOT = path.resolve(HERE, "..", "..");
 const OUT = path.join(HERE, "result.json");
 
+// The throwaway VS Code profile MUST live outside the repository. Inside it, the
+// git extension's askpass sockets land under a directory Spyglass's file watcher
+// cannot scandir, and the EPERM restarts the language server until it gives up.
+// Gitignoring it does not help: Spyglass watches the project root and does not
+// read .gitignore.
+const USER_DATA_DIR = path.join(os.tmpdir(), "stewbeet-ext-integration-udd");
+
 const CANDIDATES = [
   process.env.VSCODE_EXE,
   "D:\\Programs\\Microsoft VS Code\\Code.exe",
@@ -56,7 +63,7 @@ fs.rmSync(OUT, { force: true });
 const args = [
   `--extensionDevelopmentPath=${EXT_ROOT}`,
   `--extensionTestsPath=${path.join(HERE, "index.js")}`,
-  `--user-data-dir=${path.join(HERE, ".udd")}`,
+  `--user-data-dir=${USER_DATA_DIR}`,
   "--new-window", "--disable-gpu", "--disable-workspace-trust",
   ...NOISY.flatMap(id => ["--disable-extension", id]),
   path.join(HERE, "fixture"),

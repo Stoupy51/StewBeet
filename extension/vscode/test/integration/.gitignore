@@ -1,2 +1,5 @@
-.udd/
 result.json
+
+# Stale from before the profile moved to the OS temp dir. Kept so an old checkout
+# cannot reintroduce a directory Spyglass's file watcher chokes on.
+.udd/
