@@ -79,7 +79,11 @@ The hard rule first: **a mapping may only ever point at the project's own source
 
 That rules out the obvious implementation. Walking out of the `stewbeet` package and taking the next frame is wrong for anything a plugin generates: when `plugins/datapack/custom_blocks` writes `place_secondary`, the frames above it are beet's pipeline runner and the user's entry point, and the declaration that actually caused the write returned long ago. Resolution needs two tiers.
 
-**Tier 1, the frame walk.** Walk outward from `write_function` and take the innermost frame whose file passes the project-source filter. This nails the developer's own `write_function("ns:foo", """...""")`, and it also nails developer hooks invoked from inside a plugin, which is the answer you want in that case.
+**Tier 1, the frame walk.** Walk outward from `write_function` and take the innermost frame that passes the project-source filter **and whose line the AST index confirms is a `write_*` call site**.
+
+That second condition is not decoration, it is what makes the tier ordering work. Without it, a plugin-generated write finds the user's entry point, `main()` in `my_pack/__init__.py`, which passes the project-source filter perfectly well and is the place they called `beet build`, not the place they authored anything. Tier 1 would win, tier 2 would never fire, and every ctrl+click in the whole project would land on the same useless line. Being in project code is not evidence of authorship; being at a `write_*` call is.
+
+So tier 1 nails the developer's own `write_function("ns:foo", """...""")`, and it nails developer hooks invoked from inside a plugin, and it correctly declines everything else.
 
 The frame gives the *call* line, not the string literal. A cached `ast` parse of that file resolves the enclosing `Call` node and reads the content argument's `lineno`:
 
@@ -160,6 +164,8 @@ An optional trailing `# sourceMappingURL=foo.mcfunction.map` comment matches the
 ## Open questions
 
 - ~~**Q1**: relative or absolute source paths?~~ **Resolved by the reference.** `sourceRoot` holds the relative path from the map file's directory to the project root, `sources` are relative to that, and nothing is ever absolute. When `copy_to_destination` puts the pack outside the workspace the relative root stops resolving, which is what Sniffer's existing `pathMapping` setting is for. Debug from `build/`.
-- **Q2**: Does Spyglass's `LanguageClient` sync a virtual document that is opened but never shown in an editor? Needs a spike before committing to Option A. Fallback if not: open the virtual document in a hidden editor, or spawn a private `@spyglassmc/language-server` process.
+- ~~**Q2**: does Spyglass answer on a virtual document that is opened but never shown?~~ **Resolved: yes.** Spike run 2026-09-01 against VS Code 1.135.0 and Spyglass 4.11.0, preserved with its raw output at [spike/](./spike/). 83 completions on an unshown virtual document, identical to the control on a real `.mcfunction`. Hover and definition forward too, and definition resolves to the real generated file. The escalation branch never fired, so no hidden editor and no private language server. Phase A is unblocked as designed.
+
+  The spike also settled the largest unstated risk: **the virtual document sees the project symbol table**, returning `probe:alpha` and `probe:beta` for a resource location mid-path. It was not obvious that a document outside the project roots would resolve against project symbols; it does, because `Project.symbols` is global rather than path-relative. That is what makes `function <tab>` inside a `write_function` string offer the pack's own functions.
 - ~~**Q3**: confirm the format with Sniffer.~~ **Resolved.** The reference implementation settled it, and its author has confirmed the stray `sourcesContent` in it should be ignored. Nothing is outstanding. The remaining detail, whether unmapped generated lines are acceptable to breakpoint placement, is answered by the reference itself: it relies on exactly that for its own trailing `sourceMappingURL` comment.
 - **Q4**: Which StewBeet plugins get an `attribute_to` scope in the first pass? `datapack/custom_blocks` is the motivating case. `finalyze/custom_blocks_ticking`, `datapack/loot_tables` and the manual generators are candidates. Everything without a scope simply emits unmapped lines, so this can be filled in incrementally and is not a blocker.

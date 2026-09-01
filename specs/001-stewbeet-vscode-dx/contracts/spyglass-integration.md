@@ -229,11 +229,25 @@ No position translation anywhere, because of the projection.
 
 If Spyglass is not installed, if it failed to start, or if the workspace has no folder so its client never launched, every forwarded command resolves to `undefined` or an empty array. The providers return that unchanged, the editor behaves exactly as it does today, and nothing is logged above debug level. Spyglass stays a soft dependency, never listed in `extensionDependencies`, per NFR-003.
 
-## Part 5: the spike that gates everything
+## Part 5: the spike that gated everything
 
-Open question Q2. **Do this before writing a single provider**, because a negative answer changes the shape of the whole phase.
+**Status: run, and it passed.** 2026-09-01, VS Code 1.135.0, Spyglass 4.11.0. The probe, the probe workspace and the raw output are preserved at [../spike/](../spike/), which also documents two launch traps worth knowing.
 
-The question is whether `vscode-languageclient` syncs a document that is opened programmatically but never shown in an editor. The client listens to `vscode.workspace.onDidOpenTextDocument` and forwards `didOpen` for documents matching its selector, and `workspace.openTextDocument(uri)` does fire that event, so the expected answer is yes. It is not worth assuming.
+| Check | Result |
+|---|---|
+| Control, completions on a real `.mcfunction` | 83 |
+| Virtual document language id | `mcfunction` |
+| Projection preserves document length | yes |
+| **Completions on a virtual document, never shown** | **83** |
+| **Project symbol completions from the virtual document** | **2**, `probe:alpha` and `probe:beta` |
+| Hover | 1 result |
+| Definition | 1 result, resolving to the real generated `.mcfunction` |
+
+Everything in Parts 3 and 4 is therefore confirmed rather than assumed: the scheme-agnostic selector does match a custom scheme, an unshown document is synced, offsets survive the projection, and a document outside the project roots still resolves against the project's symbol table. The escalation branch below never fired and Part 6 is not needed.
+
+**Keep the spike as a regression test.** It is the one thing that detects a future Spyglass release adding a `scheme` filter to its selector, which would silently break every forwarded provider.
+
+The original question, retained because the escalation is still the right response if a future run regresses: does `vscode-languageclient` sync a document that is opened programmatically but never shown? The client listens to `vscode.workspace.onDidOpenTextDocument` and forwards `didOpen` for documents matching its selector, and `workspace.openTextDocument(uri)` fires that event.
 
 In the extension development host, with Spyglass installed and a datapack workspace open:
 
@@ -303,9 +317,9 @@ This is a stretch goal and **not a dependency**. Parts 3 and 4 deliver the same 
 
 | Risk | Likelihood | Mitigation |
 |---|---|---|
-| Spyglass adds a `scheme` filter to its selector | Low. There is no reason to, and it would break nothing else. | Part 6. Detected instantly by the spike, which should be kept as a regression test. |
-| The client only syncs shown documents | Medium. This is Q2. | Part 5 escalation, preserved-focus preview editor. |
+| Spyglass adds a `scheme` filter to its selector | Low. There is no reason to, and it would break nothing else. | Part 6. Detected instantly by the spike, kept as a regression test at [../spike/](../spike/). |
+| ~~The client only syncs shown documents~~ | **Retired.** The spike proved it syncs unshown documents. | Part 5 escalation remains documented in case a future version regresses. |
+| ~~Spyglass has no project context, so no function paths are offered~~ | **Retired.** The spike returned `probe:alpha` and `probe:beta` from a virtual document. | None needed. `Project.symbols` is global rather than path-relative. |
 | Completion items come back without documentation | High if `itemResolveCount` is forgotten | Pass it. Covered in Part 4. |
 | Masked interpolations produce nonsense completions at that position | Certain, by construction | Accepted. Diagnostics are not taken from the virtual document, so the blast radius is one completion list. |
-| Spyglass has no project context, so no function paths are offered | Low. Symbols are project-global, and the built datapack is normally in the workspace. | Document that `beet build` at least once makes generated paths completable. |
 | Two Spyglass versions disagree about trigger characters | Low | Read them from Part 1 and re-verify on major Spyglass releases. |

@@ -70,9 +70,11 @@ specs/001-stewbeet-vscode-dx/
 ├── data-model.md        # Phase 1: entities
 ├── quickstart.md        # Phase 1: how to validate
 ├── README.md            # Index and reading order
+├── spike/               # Q2 probe, workspace and raw result. Passed, keep as regression test
 ├── contracts/
 │   ├── spyglass-integration.md  # Priority deliverable, self-contained
 │   ├── source-map.md            # The .mcfunction.map contract
+│   ├── reference/               # Sniffer's working example, preserved verbatim
 │   └── extension-api.md         # Provider and command contracts
 └── tasks.md             # Created later by /speckit-tasks
 ```
@@ -116,7 +118,7 @@ extension/vscode/
 
 | Phase | Delivers | Depends on | Rough size |
 |---|---|---|---|
-| **A. Virtual documents** | Completion, hover, signature help inside blocks. Definition landing in the generated `.mcfunction`. Closes half of #41 with no build required. | Nothing. Spike Q2 first. | ~250 lines JS |
+| **A. Virtual documents** | Completion, hover, signature help inside blocks. Definition landing in the generated `.mcfunction`. Closes half of #41 with no build required. | Nothing. Q2 spike passed, see [spike/](./spike/). | ~250 lines JS |
 | **B. Source map emission** | `.mcfunction.map` files, project-source targets only. Unblocks Sniffer independently of the extension. | Nothing | ~280 lines Python |
 | **B2. Attribution scopes** | Plugin-generated content maps to the declaration that caused it, starting with `custom_blocks`. Incremental: unscoped plugins emit unmapped lines. | B | ~5 lines per plugin |
 | **C. Map-driven navigation** | Definition landing on the `write_function` call, references, diagnostics relocated onto Python. Closes the rest of #41. | A and B | ~200 lines JS |
