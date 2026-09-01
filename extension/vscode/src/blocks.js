@@ -191,6 +191,37 @@ function findBlockOffsets(text) {
   return blocks;
 }
 
+/**
+ * Find the `{...}` interpolation spans inside one block, braces included.
+ * Those spans hold Python, not mcfunction, so a consumer projecting the block
+ * into an mcfunction document must mask them.
+ * Returns [] for a non-f-string block, which has no interpolations by definition.
+ * @param {string} text
+ * @param {{ start:number, end:number }} block  One entry from findBlockOffsets.
+ * @returns {{ start:number, end:number }[]}  Sorted, non-overlapping.
+ */
+function findInterpolationSpans(text, block) {
+  const opening = readOpeningQuote(text, block.start);
+  if (!opening || !opening.isFString) return [];
+
+  const spans = [];
+  const contentEnd = block.end - opening.quoteStyle.length;
+  let i = opening.contentStart;
+
+  while (i < contentEnd) {
+    const c = text[i];
+    if (c === "\\") { i += 2; continue; }
+    if (c !== "{") { i++; continue; }
+    if (text[i + 1] === "{") { i += 2; continue; } // literal {{
+    const after = skipInterpolation(text, i + 1);
+    if (after === -1) break;
+    spans.push({ start: i, end: Math.min(after, contentEnd) });
+    i = after;
+  }
+
+  return spans;
+}
+
 module.exports = {
   FUNC_RE,
   FUNCS_2ND_ARG,
@@ -200,4 +231,5 @@ module.exports = {
   skipFirstArg,
   readOpeningQuote,
   findBlockOffsets,
+  findInterpolationSpans,
 };

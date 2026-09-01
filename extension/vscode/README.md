@@ -1,7 +1,17 @@
 
 # StewBeet mcfunction Syntax
 
-> Syntax highlighting and block decorations for **mcfunction** code embedded inside [StewBeet](https://stewbeet.paralya.fr/) `write_*` Python calls.
+> Syntax highlighting, block decorations and **language features** for **mcfunction** code embedded inside [StewBeet](https://stewbeet.paralya.fr/) `write_*` Python calls.
+
+---
+
+## Recommended companion: Spyglass
+
+Install [Datapack Helper Plus](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server) (`SPGoding.datapack-language-server`) to get completion, hover, signature help and go-to-definition inside your mcfunction strings.
+
+This extension does not implement any of that itself. It projects each mcfunction string into a virtual document and asks Spyglass, so you get exactly what you would get in a real `.mcfunction` file, and every Spyglass release improves it for free.
+
+Spyglass is optional. Without it, syntax highlighting and block decorations work as before and the language features are silently unavailable.
 
 ---
 
@@ -11,6 +21,7 @@ All settings are under `StewBeet.*` in your `settings.json`:
 
 | Setting                  | Default                 | Description                     |
 | ------------------------ | ----------------------- | ------------------------------- |
+| `languageFeatures`       | `true`                  | Completion, hover, signature help and go-to-definition inside mcfunction strings |
 | `enableBlockDecorations` | `true`                  | Toggle block decorations on/off |
 | `backgroundColor`        | `rgba(80,40,0,0.15)`    | Background fill color           |
 | `borderColor`            | `rgba(200,120,30,0.30)` | Border color                    |
@@ -49,6 +60,23 @@ Python interpolations (`{variable}`) inside f-strings are parsed correctly and n
 
 ### Block decorations
 Multi-line strings are wrapped in a unified colored rectangle. Single-line strings get an inline border that starts exactly at the quote character.
+
+### Language features (requires Spyglass)
+
+Inside those same blocks, and nowhere else:
+
+| Feature | What you get |
+| ------- | ------------ |
+| Completion | Vanilla commands, plus the resource locations your own pack defines |
+| Hover | Spyglass's documentation for selectors, arguments and resource locations |
+| Signature help | The argument list of the command you are typing |
+| Go to definition | Jumps to the generated `.mcfunction` a resource location refers to |
+
+Completion knows about your project's own functions once the pack has been built at least once, because it resolves against the same symbol table Spyglass builds from your build output.
+
+Turn the whole thing off with `"StewBeet.languageFeatures": false`.
+
+> **Note on go to definition.** It currently lands on the **generated** `.mcfunction` file, not on the `write_function` call that produced it. Jumping back to the Python source needs source maps, which the build does not emit yet. This is a known limitation, not a bug.
 
 ## Grammar
 

@@ -13,3 +13,4 @@ perf.html
 .vscode
 uv.lock
 
+node_modules
