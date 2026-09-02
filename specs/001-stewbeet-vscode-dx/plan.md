@@ -17,6 +17,8 @@ The second mechanism's difficulty is not encoding, it is attribution. A jump tha
 
 Mechanism 1 needs no build and closes the completion half of issue #41. Mechanism 2 needs a build and closes the navigation half, plus unlocks the debugger.
 
+**Scope beyond StewBeet.** The target is one extension serving plain beet, bolt, mecha and StewBeet, compatible with Spyglass rather than competing with it. Mechanism 2 is the layer that unifies them, because a `.mcfunction.map` consumer does not know or care which generator produced the map; mechanism 1 serves only StewBeet, because bolt interleaves commands with Python at statement level and needs the real compiler to find them. [contracts/dialects.md](./contracts/dialects.md) is the scope map and owns the sequencing.
+
 ## Technical Context
 
 **Language/Version**: Python 3.14+ (StewBeet plugin), JavaScript / ES2022 on Node 18+ (VS Code extension, matching the current CommonJS `src/*.js` layout)
@@ -25,13 +27,13 @@ Mechanism 1 needs no build and closes the completion half of issue #41. Mechanis
 
 **Storage**: `.mcfunction.map` sidecar files in the build output. No database, no cache beyond beet's own.
 
-**Testing**: `node --test` for the extension (the existing `test/blocks.test.js` pattern), doctests plus `pytest` for the Python plugin. Contract fixtures under `contracts/`.
+**Testing**: `npm test` for the extension's pure modules (`node --test`, scoped to `test/*.test.js`) and `npm run test:integration` for the end-to-end pass against the real Spyglass; doctests plus `pytest` for the Python plugin. Contract fixtures under `contracts/`.
 
 **Target Platform**: VS Code 1.74+ desktop. The virtual-document mechanism is desktop-only in practice because it relies on the Spyglass extension being installed.
 
 **Project Type**: Two co-located deliverables in one repo: a beet plugin inside the Python package, and a VS Code extension. The extension is intended to grow into a multi-dialect tool covering beet, bolt, mecha and StewBeet; see [contracts/dialects.md](./contracts/dialects.md).
 
-**Performance Goals**: Forwarded completion under 150 ms perceived latency (bounded by Spyglass). Source map emission under 20% of total build time with the plugin enabled, 0% when disabled.
+**Performance Goals**: Forwarded completion under 150 ms perceived latency (bounded by Spyglass). Source map emission under 20% of total build time with the plugin enabled, and within 2% of a baseline build when the plugin is absent, both as the median of five runs (NFR-002).
 
 **Constraints**: Must not reimplement mcfunction syntax (NFR-001). Must not break the build when the extension is absent, and must not break the extension when the build is absent (FR-008). Mapping must survive `auto.headers` rewriting every function (FR-009).
 
@@ -41,22 +43,19 @@ Mechanism 1 needs no build and closes the completion half of issue #41. Mechanis
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-`.specify/memory/constitution.md` is **still the unfilled Spec Kit template**: every principle is a `[PRINCIPLE_N_NAME]` placeholder. There is no ratified constitution to check against. Run `/speckit-constitution` to fix that.
+Evaluated against [constitution v1.0.0](../../.specify/memory/constitution.md), ratified 2026-09-01.
 
-In its absence the gate is evaluated against the conventions the repository and the author actually enforce:
-
-| Rule | Status | Note |
+| Principle | Status | Evidence |
 |---|---|---|
-| Python is pyright-strict, no `Any`, no `cast` used to silence | PASS | Design uses dataclasses for every record; see [data-model.md](./data-model.md). |
-| Structural section banners, tabs for indentation, two trailing newlines | PASS | Applies to the new plugin package. |
-| A file near 300 lines becomes a submodule, grouped by feature | PASS | `plugins/sniffer/` is a package from the start: capture, align, encode. |
-| Do not reinvent the wheel | PASS | Source Map v3 rather than a bespoke format; `difflib` rather than a hand-rolled aligner; Spyglass rather than a command parser. |
-| No premature abstraction, no single-use wrappers | PASS | No abstraction layer over Spyglass. Requests are forwarded by name. |
-| Never commit unprompted, never push | PASS | No git actions in this plan. |
+| I. Reuse Before Building | PASS | Every capability names the tool it reuses: Spyglass for language features, Source Map v3 for the mapping format, `difflib` for line reconciliation, mecha's own `AstNode.location` for bolt positions. Rejected alternatives are recorded in [research.md](./research.md). |
+| II. Typed and Strict by Default | PASS | Every record in [data-model.md](./data-model.md) is a frozen dataclass, no `dict[str, dict[...]]` blobs. `pyright` strict and `ruff check` apply to the step B plugin; no Python has shipped yet. |
+| III. Prove Assumptions Before Building On Them | PASS | The Q2 spike was run before implementation, is committed with its raw output at [spike/](./spike/), and is kept as a regression test at `extension/vscode/test/integration/`. The map format was validated segment by segment against a reference implementation at [contracts/reference/](./contracts/reference/). |
+| IV. Degrade, Never Break | PASS | NFR-003 requires Spyglass to stay optional and every forwarded request resolves to `undefined` when it is absent; FR-008 requires the editor-only features to survive a missing build. Both are verified, see T022 and T027. |
+| V. Maintainable by Humans | PASS | `plugins/sniffer/` is a package from the start, grouped by feature. No abstraction layer over Spyglass: requests are forwarded by their explicit command names. |
 
-**Justified deviation**: mutable module-level capture state (`Mem.source_map_chunks`) is global, which the anti-over-engineering rules would normally frown at. It follows the existing `Mem` pattern exactly and is the only way to record provenance without threading a recorder through every `write_*` signature. Recorded in Complexity Tracking.
+**Justified deviations**, both recorded in Complexity Tracking below: the global capture state on `Mem`, and the ambient attribution stack. Principle V discourages globals, and both are justified there rather than waved through.
 
-**Post-design re-check**: no new violations. The design added no classes that exist only to namespace a function, and no interface that is called once.
+**Post-design re-check**: no new violations. The design added no class that exists only to namespace a function, and no interface that is called once. The pure/impure module split in the extension is required by the constitution's own rule that JavaScript modules which can be pure must have no `vscode` import.
 
 ## Project Structure
 
@@ -100,17 +99,23 @@ python_package/stewbeet/
 
 extension/vscode/
 ├── src/
-│   ├── extension.js                 # + registers the providers below
-│   ├── blocks.js                    # + expose interpolation spans, otherwise unchanged
-│   ├── virtual.js                   # TextDocumentContentProvider + request forwarding
-│   ├── sourcemap.js                 # .mcfunction.map discovery, parse and lookup
-│   ├── navigation.js                # definition / references across the boundary
-│   └── diagnostics.js               # relay Spyglass diagnostics onto Python ranges
+│   ├── extension.js                 # step A: registers the providers below
+│   ├── blocks.js                    # step A: + expose interpolation spans
+│   ├── projection.js                # step A: pure projection and virtual URI paths, no vscode import
+│   ├── virtual.js                   # step A: TextDocumentContentProvider + request forwarding
+│   ├── sourcemap.js                 # step C: .mcfunction.map discovery, parse and lookup
+│   ├── navigation.js                # step C: definition / references across the boundary
+│   └── diagnostics.js               # step C: relay Spyglass diagnostics onto Python ranges
 └── test/
-    ├── blocks.test.js               # existing
-    ├── sourcemap.test.js            # decode round-trip against contract fixtures
-    └── virtual.test.js              # whitespace projection keeps offsets identical
+    ├── blocks.test.js               # existing, extended in step A
+    ├── projection.test.js           # step A: projection keeps offsets identical
+    ├── sourcemap.test.js            # step C: decode round-trip against contract fixtures
+    └── integration/                 # step A: end-to-end against the real Spyglass
 ```
+
+`projection.js` and `virtual.js` are split rather than merged because the constitution requires
+JavaScript modules that can be pure to have no `vscode` import, which is what keeps the projection
+and URI logic testable under `node --test`.
 
 **Structure Decision**: Both deliverables stay where they already live. The Python side becomes a normal StewBeet plugin package (`plugins/sniffer/`) so it is opt-in through the beet pipeline like every other plugin, with the single exception of the capture hook, which has to live in `core/utils/io/functions.py` because that is where writes happen. The extension keeps its flat CommonJS `src/` layout and its pure, unit-testable modules.
 
@@ -120,14 +125,14 @@ extension/vscode/
 
 | Phase | Delivers | Depends on | Rough size |
 |---|---|---|---|
-| **A. Virtual documents** | Completion, hover, signature help inside blocks. Definition landing in the generated `.mcfunction`. Closes half of #41 with no build required. | Nothing. Q2 spike passed, see [spike/](./spike/). | ~250 lines JS |
+| **A. Spyglass forwarding** | Completion, hover, signature help inside blocks. Definition landing in the generated `.mcfunction`. Closes half of #41 with no build required. | Nothing. Q2 spike passed, see [spike/](./spike/). | ~250 lines JS |
 | **B. Source map emission** | `.mcfunction.map` files, project-source targets only. Unblocks Sniffer independently of the extension. | Nothing | ~280 lines Python |
 | **B2. Attribution scopes** | Plugin-generated content maps to the declaration that caused it, starting with `custom_blocks`. Incremental: unscoped plugins emit unmapped lines. | B | ~5 lines per plugin |
+| **C. Map-driven navigation** | Definition landing on the `write_function` call, references, diagnostics relocated onto Python. Closes the rest of #41. | A and B | ~200 lines JS |
 | **D. `bolt` language id + grammar** | Nothing registers `.bolt` today, so those files have no language id at all and no server can select them. | Nothing | small |
 | **E. Mecha AST map emitter** | Maps for bolt/mecha read straight from `AstNode.location`. No capture, no alignment. | Shared `encode` from B | ~80 lines Python |
 | **F. Bolt live editing** | Adopt, route to, or replace aegis. Needs its own research pass before sizing. | D | unsized |
-| **C. Map-driven navigation** | Definition landing on the `write_function` call, references, diagnostics relocated onto Python. Closes the rest of #41. | A and B | ~200 lines JS |
-| **D. Upstream `env.plugins`** | Deletes phase A in favour of a real Spyglass plugin. Optional, unbounded timeline. | Upstream review | 2 PRs |
+| **G. Upstream `env.plugins`** | Deletes phase A in favour of a real Spyglass plugin. Optional, unbounded timeline. | Upstream review | 2 PRs |
 
 Phase A ships first because it is the visible ask and has no build-time dependency. Phase B can proceed in parallel since it touches only Python.
 

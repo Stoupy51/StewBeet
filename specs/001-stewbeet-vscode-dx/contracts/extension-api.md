@@ -8,11 +8,11 @@ The mechanism behind the forwarded providers, the Spyglass facts they rely on, t
 
 **Scheme**: `stewbeet-mcfunction`
 
-**URI shape**: `stewbeet-mcfunction://<encoded original uri>/<basename>.mcfunction`
+**URI shape**: path `/<block index>/<python basename>.mcfunction`, with the originating document's URI carried in the **query**.
 
-The trailing `.mcfunction` is what makes VS Code assign the document language id `mcfunction`, which is what makes Spyglass's document selector match it. The rest of the path is opaque.
+The originating URI goes in the query rather than in a path segment because VS Code decodes percent escapes in a path, which would corrupt an encoded `file:///d:/...` embedded there. The trailing `.mcfunction` is load-bearing: it is what makes VS Code assign the document language id `mcfunction`, which is what makes Spyglass's document selector match.
 
-**Content rule**: the virtual document is the full Python buffer with every character outside the target block replaced by a space, newlines preserved. Consequences:
+**Content rule**: the virtual document is the full Python buffer with every character outside the target block replaced by a space, newlines preserved, and every f-string interpolation span masked to a same-length run of `_`. Consequences:
 
 - Line and column of any position are identical in both documents. No translation table, no off-by-one.
 - Spyglass sees a file of blank lines with one command block in it, which parses cleanly.
@@ -36,7 +36,7 @@ Registered on `{ language: 'python' }`, each provider first asks `blocks.js` whe
 
 **Failure mode**: if no provider answers, every forwarded request resolves to `undefined` and the editor behaves exactly as it does today. Nothing throws, nothing is logged at error level.
 
-## Diagnostic relay
+## Diagnostic relay (step C, not implemented)
 
 **Collection name**: `stewbeet`
 
@@ -51,21 +51,23 @@ Diagnostics are grouped per Python file and replaced wholesale on each change, s
 
 ## Commands
 
-| Command | Title | Behaviour |
-|---|---|---|
-| `stewbeet.goToGenerated` | StewBeet: Go to Generated Function | From a Python position inside a block, open the generated `.mcfunction` at the mapped line. The inverse of ctrl+click. |
-| `stewbeet.goToSource` | StewBeet: Go to Python Source | From a generated `.mcfunction` position, open the Python source at the mapped line. |
-| `stewbeet.reloadSourceMaps` | StewBeet: Reload Source Maps | Drop the decoded map cache. An escape hatch when a build finishes outside the watcher's view. |
+**None of these are implemented yet.** All three depend on source maps and land with step C; `package.json` contributes no commands today.
+
+| Command | Step | Title | Behaviour |
+|---|---|---|---|
+| `stewbeet.goToGenerated` | C | StewBeet: Go to Generated Function | From a Python position inside a block, open the generated `.mcfunction` at the mapped line. The inverse of ctrl+click. |
+| `stewbeet.goToSource` | C | StewBeet: Go to Python Source | From a generated `.mcfunction` position, open the Python source at the mapped line. |
+| `stewbeet.reloadSourceMaps` | C | StewBeet: Reload Source Maps | Drop the decoded map cache. An escape hatch when a build finishes outside the watcher's view. |
 
 ## Settings
 
 Added to the existing `StewBeet.*` configuration block:
 
-| Setting | Type | Default | Meaning |
-|---|---|---|---|
-| `StewBeet.languageFeatures` | `boolean` | `true` | Master switch for the forwarded providers. |
-| `StewBeet.buildOutput` | `string` | `""` | Glob or path to the generated datapack root. Empty means autodetect by searching the workspace for `pack.mcmeta` under a `build` directory. |
-| `StewBeet.sourceMapDiagnostics` | `boolean` | `true` | Whether to relay generated-file diagnostics onto Python. |
+| Setting | Step | Type | Default | Meaning |
+|---|---|---|---|---|
+| `StewBeet.languageFeatures` | **A, shipped** | `boolean` | `true` | Master switch for the forwarded providers. |
+| `StewBeet.buildOutput` | C | `string` | `""` | Glob or path to the generated datapack root. Empty means autodetect by searching the workspace for `pack.mcmeta` under a `build` directory. |
+| `StewBeet.sourceMapDiagnostics` | C | `boolean` | `true` | Whether to relay generated-file diagnostics onto Python. |
 
 ## Backwards compatibility
 

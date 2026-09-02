@@ -77,7 +77,7 @@ An author asks for references of a generated function and gets every Python loca
 ### Non-functional
 
 - **NFR-001**: No mcfunction grammar, command tree, or registry data may be reimplemented inside StewBeet or its extension.
-- **NFR-002**: Mapping emission must not measurably slow a build when disabled, and must stay under 20% overhead when enabled.
+- **NFR-002**: With the `sniffer` plugin absent from the pipeline, build wall time MUST stay within 2% of a baseline build without it, measured as the median of five runs. With it enabled, overhead MUST stay under 20% by the same measure.
 - **NFR-003**: The extension must keep working if Spyglass is absent, with the Spyglass-backed features silently unavailable.
 
 ### Multi-dialect (scope extension)

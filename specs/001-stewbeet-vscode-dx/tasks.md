@@ -8,7 +8,7 @@
 
 **Gate**: already cleared. The Q2 spike passed, see [spike/](./spike/). Do not re-derive the mechanism, it is proven and documented.
 
-**Tests**: included. plan.md specifies `node --test` following the existing `test/blocks.test.js` pattern, and quickstart.md requires `virtual.test.js` to assert offset preservation. Tests cover the pure modules only; the VS Code-dependent parts are covered by the spike harness in Phase 6.
+**Tests**: included. plan.md specifies `node --test` following the existing `test/blocks.test.js` pattern, and quickstart.md requires an offset-preservation assertion. Unit tests cover the pure modules only (`npm test`, scoped to `test/*.test.js`); the VS Code-dependent parts are covered by the integration harness in Phase 6 (`npm run test:integration`).
 
 ## Format: `[ID] [P?] [Story] Description`
 
@@ -46,9 +46,9 @@ All step A work is in `extension/vscode/`. No Python changes, no new npm depende
 
 ### Virtual documents
 
-- [X] T005 [P] Create `extension/vscode/src/virtual.js` with the pure `project(text, start, end, interpolationSpans)` function: every character outside `[start, end)` becomes a space, newlines are preserved, and each interpolation span becomes a same-length run of `_`. See spyglass-integration.md Part 3
-- [X] T006 [P] Add pure `encodeVirtualUri(pythonUri, blockIndex)` and `decodeVirtualUri(virtualUri)` to `extension/vscode/src/virtual.js`, producing `stewbeet-mcfunction://<encoded uri>/<index>/<basename>.mcfunction`. The `.mcfunction` suffix is load-bearing, it is what assigns the language id
-- [X] T007 Add unit tests in `extension/vscode/test/virtual.test.js` asserting that `project()` output has **exactly** the same length as its input and the same newline positions, that content inside the block is byte-identical, and that URI encode/decode round-trips. Offset identity is the property the whole design rests on
+- [X] T005 [P] Create the pure `project(text, start, end, interpolationSpans)` function: every character outside `[start, end)` becomes a space, newlines are preserved, and each interpolation span becomes a same-length run of `_`. See spyglass-integration.md Part 3. **Shipped in `extension/vscode/src/projection.js`, not `virtual.js`**: `virtual.js` must import `vscode` and would be untestable under `node --test`, and the constitution requires JavaScript modules that can be pure to have no `vscode` import
+- [X] T006 [P] Add the pure virtual URI helpers to `extension/vscode/src/projection.js`. **Shipped as `virtualPath(blockIndex, baseName)` and `blockIndexFromPath(path)`**, with the originating document carried in the URI's `query` rather than an encoded path segment: VS Code decodes percent escapes in a path and would corrupt an encoded `file:///d:/...` embedded there. The `.mcfunction` suffix is load-bearing, it is what assigns the language id
+- [X] T007 Add unit tests in `extension/vscode/test/projection.test.js` asserting that `project()` output has **exactly** the same length as its input and the same newline positions, that content inside the block is byte-identical, and that URI encode/decode round-trips. Offset identity is the property the whole design rests on
 - [X] T008 Add `blockAt(document, position)` to `extension/vscode/src/virtual.js`, returning the block index containing the position or `undefined`, built on `findBlockOffsets` from `blocks.js`
 - [X] T009 Add the `TextDocumentContentProvider` for the `stewbeet-mcfunction` scheme to `extension/vscode/src/virtual.js`, with a cache keyed by `(python uri, block index)`, an `onDidChange` emitter fired for affected virtual URIs on `workspace.onDidChangeTextDocument`, and cache eviction when the Python document closes
 
@@ -69,7 +69,7 @@ All step A work is in `extension/vscode/`. No Python changes, no new npm depende
 
 - [X] T012 [US1] Implement `CompletionItemProvider` in `extension/vscode/src/virtual.js` forwarding to `vscode.executeCompletionItemProvider`, passing `context.triggerCharacter` and an `itemResolveCount` of 50. Without the resolve count items arrive with no `documentation` or `detail`, because VS Code will not call `resolveCompletionItem` for items this extension did not create
 - [X] T013 [US1] Register the provider on `{ language: 'python' }` in `extension/vscode/src/extension.js` with Spyglass's own eleven mcfunction trigger characters, exactly: `' '`, `'['`, `'='`, `'!'`, `','`, `'{'`, `':'`, `'/'`, `'.'`, `'"'`, `"'"`. Any other set makes completion fire in different places than it does in a real `.mcfunction` file
-- [X] T014 [US1] Verify results need no range translation: assert in a manual pass that a returned `textEdit` or `additionalTextEdits` range applies correctly to the Python document unmodified, which follows from T007's offset identity
+- [X] T014 [US1] Verify results need no range translation. Evidence is T007's offset-identity property tests (same length, same newline positions, block content byte-identical), which make any returned range valid in the Python document by construction, plus the integration harness applying real Spyglass completions at a Python position
 
 **Checkpoint**: Issue #41's headline ask is closed. Completion works with no build and no source maps.
 
@@ -105,12 +105,14 @@ All step A work is in `extension/vscode/`. No Python changes, no new npm depende
 
 ## Phase 6: Polish & Cross-Cutting Concerns
 
-- [X] T021 [P] Port the Q2 spike from `specs/001-stewbeet-vscode-dx/spike/` into `extension/vscode/test/integration/` as a runnable regression test. It is the only thing that detects a future Spyglass release adding a `scheme` filter to its document selector, which would silently break every provider above. Record the two launch traps from `spike/README.md`: clear `ELECTRON_RUN_AS_NODE` and the `VSCODE_*` variables, and launch `Code.exe` directly rather than the detaching `code` wrapper
+- [X] T021 [P] Port the Q2 spike from `specs/001-stewbeet-vscode-dx/spike/` into `extension/vscode/test/integration/` as a runnable regression test. It is the only thing that detects a future Spyglass release adding a `scheme` filter to its document selector, which would silently break every provider above. Record the two launch traps from `spike/README.md`: clear `ELECTRON_RUN_AS_NODE` and the `VSCODE_*` variables, and launch `Code.exe` directly rather than the detaching `code` wrapper. **The throwaway VS Code profile MUST be written to the OS temp dir, never inside the repository**: a profile in the working tree puts git askpass sockets under a directory Spyglass's file watcher cannot `scandir`, and the resulting EPERM restarts the language server until it stops retrying. `.gitignore` does not constrain file watchers
 - [X] T022 [P] Verify NFR-003 by disabling the Spyglass extension and confirming every provider resolves to `undefined`, the editor behaves exactly as it did before this feature, and nothing is logged above debug level
 - [X] T023 [P] Verify the `StewBeet.languageFeatures` setting actually gates all four providers, toggling it off and confirming the editor returns to grammar-and-decorations only
 - [X] T024 [P] Update `extension/vscode/README.md` with the new capabilities, and state that Spyglass (`SPGoding.datapack-language-server`) is an optional but strongly recommended companion
 - [X] T025 Run the Phase A section of [quickstart.md](./quickstart.md) end to end against a real project, for example [SimplEnergy](file:///d:/advanced_desktop/SimplEnergy)
 - [X] T026 Bump `version` in `extension/vscode/package.json` and add a changelog entry
+- [X] T027 [P] Verify FR-008, that the editor-only features survive a missing build. The integration harness asserts vanilla completions (83, sourced from Spyglass's game data) separately from project resource locations (`probe:alpha`, `probe:beta`, sourced from the build output), so the first is demonstrably independent of the second. Recorded as a row in [quickstart.md](./quickstart.md) Phase A
+- [X] T028 [P] Verify NFR-001 and SC-003, that no mcfunction syntax knowledge was added, by running the grep in [quickstart.md](./quickstart.md). Anchor the pattern on mcfunction token shapes (`@a[`, `scoreboard players`, `execute as|at|if|store`) rather than bare words: a plain `execute` pattern false-positives on `vscode.execute*`, a VS Code API name
 
 ---
 

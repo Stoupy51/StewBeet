@@ -8,7 +8,7 @@ Closes [issue #41](https://github.com/Stoupy51/StewBeet/issues/41): autocomplete
 
 | Document | What it holds |
 |---|---|
-| [spec.md](./spec.md) | The problem, six user scenarios, twelve functional requirements, three success criteria. |
+| [spec.md](./spec.md) | The problem, six user scenarios, seventeen functional requirements, three non-functional, three success criteria. |
 | [research.md](./research.md) | Six architectural options with the reasoning for each adoption and rejection. Five resolved unknowns, and all five open questions now closed with their reasoning. |
 | [spike/](./spike/) | The Q2 spike, its probe workspace and its raw output. **Passed.** Keep it as a regression test. |
 | [plan.md](./plan.md) | Technical context, constitution check, file-by-file structure, phasing, complexity justifications. |
@@ -44,7 +44,7 @@ Spyglass forwarding first. It is the headline ask, it has no build-time dependen
 | **D. `bolt` language id + grammar** | Syntax highlighting for `.bolt`, which nothing on this machine provides today. | bolt | Nothing. |
 | **E. Mecha AST map emitter** | Maps straight from `AstNode.location`, no reconstruction needed. | bolt, mecha | C for the payoff. |
 | **F. Bolt live editing** | Adopt or route to a mecha-backed server. Largest and least defined. | bolt, mecha | D, plus its own research pass. |
-| **G. Upstream `env.plugins`** | Collapses step A into a real Spyglass plugin. Optional, unbounded timeline. | Upstream review. |
+| **G. Upstream `env.plugins`** | Collapses step A into a real Spyglass plugin. Optional, unbounded timeline. | all | Upstream review. |
 
 **C is where this stops being a StewBeet tool.** It consumes maps without knowing who wrote them, so E makes bolt projects light up with no further extension work.
 
