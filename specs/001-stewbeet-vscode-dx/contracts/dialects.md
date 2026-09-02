@@ -91,6 +91,11 @@ Contributing a `bolt` language id plus a TextMate grammar is small, self-contain
 
 The StewBeet-side plugin is **`stewbeet.plugins.sniffer`**, named for the debugger it feeds.
 
+**Two different things share that word, so prose must disambiguate every time.** Write the plugin as
+`` `sniffer` `` in backticks, or "the `sniffer` plugin"; write the debugger as "Sniffer", capitalised
+and unquoted. A sentence like "the sniffer plugin emits maps Sniffer reads" is correct and readable;
+"sniffer emits maps sniffer reads" is not. The same applies to headings and task descriptions.
+
 Its capture and alignment halves are StewBeet-specific, but the encoder and the output contract are not. When a second dialect needs an emitter, the shared half is extracted into a standalone beet plugin that any beet project can require, and `stewbeet.plugins.sniffer` becomes a thin StewBeet front end over it. Designing for that now means keeping `encode` free of any StewBeet import, which costs nothing today.
 
 ## Sequencing

@@ -30,8 +30,9 @@ execute as @a run say hi
 | Hover `@a` | Spyglass's selector hover appears |
 | Put the caret on `write_function` itself and trigger suggest | Normal Python completions, no mcfunction items |
 | Uninstall Spyglass and repeat | No completions, no errors in the extension host log |
+| Open a workspace with **no built datapack** and repeat the first row | Vanilla command completions still appear (FR-008). Only the project's own resource locations are missing, because those come from the build |
 
-Run `node --test` in `extension/vscode/` to confirm `virtual.test.js` asserts that projecting a block preserves every offset.
+Run `npm test` in `extension/vscode/` to confirm `test/projection.test.js` asserts that projecting a block preserves every offset. Then run `npm run test:integration` for the end-to-end pass against the real Spyglass; see [test/integration/README.md](../../extension/vscode/test/integration/README.md).
 
 ## Phase B: source maps are emitted and correct
 
@@ -118,9 +119,9 @@ With phase B's build present:
 | Fix it, rebuild | The squiggle clears |
 | Delete `build/` | Navigation stops, completion from phase A keeps working |
 
-## Phase D: Sniffer interop
+## Sniffer interop (validates SC-002, part of step B)
 
-Not owned by this feature, but the acceptance test for SC-002:
+Not owned by this feature, and deliberately unlettered: step D is the `bolt` language id, not this. See [contracts/dialects.md](./contracts/dialects.md) for the canonical sequencing.
 
 1. Build with the plugin, launch Minecraft with Sniffer, attach from VS Code.
 2. Set a breakpoint on a Python line inside a `write_function` string.
@@ -132,6 +133,17 @@ Not owned by this feature, but the acceptance test for SC-002:
 
 | Criterion | Validated by |
 |---|---|
-| SC-001 completion and ctrl+click | Phase A and Phase C tables |
-| SC-002 Sniffer needs no StewBeet code | Phase D |
-| SC-003 no mcfunction syntax knowledge added | `grep -rn "execute\|@a\|scoreboard" python_package/stewbeet/plugins/sniffer extension/vscode/src` returns nothing outside test fixtures |
+| SC-001 completion and ctrl+click | Phase A table (completion) and Phase C table (ctrl+click to the authoring line) |
+| SC-002 Sniffer needs no StewBeet code | The Sniffer interop section above |
+| SC-003 no mcfunction syntax knowledge added | The grep below |
+
+### SC-003: no mcfunction syntax was reimplemented
+
+```sh
+grep -rnE '@[aeprs]\[|\bscoreboard players\b|\bexecute (as|at|if|store)\b' \
+  python_package/stewbeet/plugins/sniffer extension/vscode/src
+```
+
+**Expected**: no matches.
+
+Anchor on mcfunction-specific token shapes rather than bare words. A pattern matching plain `execute` produces a false positive on `vscode.execute*`, which is a VS Code API name and not a Minecraft command. Test fixtures are excluded by construction because the paths listed are source directories only.
