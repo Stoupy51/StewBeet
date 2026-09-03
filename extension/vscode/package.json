@@ -2,7 +2,7 @@
   "name": "stewbeet",
   "displayName": "StewBeet",
   "description": "Syntax highlighting, block decorations and Spyglass-backed language features for mcfunction strings inside StewBeet write_* calls in Python files.",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "publisher": "stoupy",
   "license": "MIT",
   "icon": "icon.png",
@@ -85,8 +85,32 @@
           "type": "string",
           "default": "2px",
           "markdownDescription": "Border width of the mcfunction block decoration (e.g. `\"1px\"`, `\"2px\"`)."
+        },
+        "StewBeet.buildOutput": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Path or glob to the generated datapack root, the directory holding `pack.mcmeta`. Leave empty to autodetect by searching the workspace for a `pack.mcmeta` under a `build` directory."
+        },
+        "StewBeet.sourceMapDiagnostics": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Relay diagnostics reported against generated `.mcfunction` files onto the Python line that wrote them. Needs a build in the workspace."
         }
       }
-    }
+    },
+    "commands": [
+      {
+        "command": "stewbeet.goToGenerated",
+        "title": "StewBeet: Go to Generated Function"
+      },
+      {
+        "command": "stewbeet.goToSource",
+        "title": "StewBeet: Go to Python Source"
+      },
+      {
+        "command": "stewbeet.reloadSourceMaps",
+        "title": "StewBeet: Reload Source Maps"
+      }
+    ]
   }
 }

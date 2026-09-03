@@ -41,3 +41,19 @@ VS Code's word-based suggestions collect words from the open document, and `say`
 **The throwaway VS Code profile lives in the OS temp dir, never in the repo.** A profile inside the workspace puts the git extension's askpass sockets under a directory Spyglass' file watcher cannot `scandir`; the resulting EPERM restarts the language server until it stops retrying. Gitignoring it is not enough, because Spyglass watches the project root and does not read `.gitignore`.
 
 `fixture/` is a minimal datapack (`pack.mcmeta`, `probe:alpha`, `probe:beta`) plus `demo.py` containing one `write_function` block. The datapack exists so there is a project symbol table to complete against.
+
+## What this run establishes
+
+Two assumptions the design rests on, neither of which is guaranteed by any API, both re-checked
+on every run:
+
+- **Spyglass attaches to our virtual documents.** Its document selector carries no scheme filter.
+  If a release ever adds one, every forwarded provider goes quiet and only this test notices.
+- **`vscode.executeDefinitionProvider` resolves to `Location`, not `LocationLink`.** Recorded as
+  `us3_answerShape` in `result.json`. Both shapes are handled in `src/navigation.js`, because
+  which one arrives depends on the answering provider rather than on us, but the observed value
+  is the one the rewriting is exercised against.
+
+Deleting `fixture/data/probe/function/alpha.mcfunction.map` turns the US3 checks into the step A
+behaviour: definition falls back to the generated `.mcfunction` and completion is unaffected.
+That is the degradation path for a workspace with no build, and it has been verified by hand.
