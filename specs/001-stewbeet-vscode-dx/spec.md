@@ -84,6 +84,11 @@ An author asks for references of a generated function and gets every Python loca
 
 The long-term target is one extension serving plain **beet**, **bolt**, **mecha** and **StewBeet**, compatible with Spyglass rather than competing with it. Delivered step by step; see [contracts/dialects.md](./contracts/dialects.md) for the layering and sequencing.
 
+- **FR-018**: The projection MUST resolve interpolated resource locations rather than masking them, so navigation works on paths computed in Python. Masking makes the feature inapplicable to the idiom StewBeet projects use: SimplEnergy contains one literal resource location in its entire source. The generated file already holds the resolved text, and the map already says which generated line each block line produced, so the projection can substitute the built content instead of guessing at the Python.
+- **FR-019**: Diagnostics MUST appear without the author opening the generated file. A language server publishes diagnostics only for documents it has been given, so a closed generated `.mcfunction` produces none and there is nothing to relay. The extension MUST hand the changed generated files to the server itself, and only the changed ones: a full rebuild touches every function in the pack.
+- **FR-020**: The relay MUST let the author silence diagnostic rules that are noise on generated content. `undeclaredSymbol` fires on every scoreboard objective a dependency declares, and moving that noise onto Python lines makes it far more intrusive than it is in a generated file nobody opens.
+- **FR-021**: Navigation across the boundary MUST be reachable without the command palette. A block that produced generated content SHOULD advertise it in the editor.
+
 - **FR-013**: The map-consuming half of the extension MUST be dialect-agnostic. It consumes `.mcfunction.map` and MUST NOT know which generator produced it.
 - **FR-014**: The map format and its encoder MUST be shared across dialects. Only the capture half may be dialect-specific.
 - **FR-015**: The extension MUST NOT claim language id `mcfunction` for files Spyglass already serves. Ownership is partitioned by file, not merged.

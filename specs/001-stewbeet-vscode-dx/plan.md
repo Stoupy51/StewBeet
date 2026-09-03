@@ -130,10 +130,13 @@ and URI logic testable under `node --test`.
 | **B. Source map emission** | `.mcfunction.map` files, project-source targets only. Unblocks Sniffer independently of the extension. | Nothing | ~280 lines Python |
 | **B2. Attribution scopes** | Plugin-generated content maps to the declaration that caused it, starting with `custom_blocks`. Incremental: unscoped plugins emit unmapped lines. | B, plus a declaration resolver B does not provide | ~60 lines Python, then ~5 per plugin |
 | **C. Map-driven navigation** | Definition landing on the `write_function` call, references, diagnostics relocated onto Python. Closes the rest of #41. | A and B | ~200 lines JS |
+| **C2. Real content in the projection** | Interpolated paths resolve, so navigation works on the idiom StewBeet projects actually use. Plus the three papercuts step C's first real run exposed. | C | ~150 lines JS |
 | **D. `bolt` language id + grammar** | Nothing registers `.bolt` today, so those files have no language id at all and no server can select them. | Nothing | small |
 | **E. Mecha AST map emitter** | Maps for bolt/mecha read straight from `AstNode.location`. No capture, no alignment. | Shared `encode` from B | ~80 lines Python |
 | **F. Bolt live editing** | Adopt, route to, or replace aegis. Needs its own research pass before sizing. | D | unsized |
 | **G. Upstream `env.plugins`** | Deletes phase A in favour of a real Spyglass plugin. Optional, unbounded timeline. | Upstream review | 2 PRs |
+
+**C2 exists because C's first run on a real project found the ceiling.** Everything works, and almost nothing is reachable: SimplEnergy writes exactly one literal resource location in its whole source, because the StewBeet idiom computes paths in Python (`function {ns}:...`, `function {funcs["work"]}`). The projection masks every interpolation with `_`, so Spyglass sees `function ___:utils/foo`, resolves nothing, and there is nothing for C to rewrite. Completion is unaffected, since it acts on what you type. Navigation on an already-written path is not.
 
 Phase A ships first because it is the visible ask and has no build-time dependency. Phase B can proceed in parallel since it touches only Python.
 
