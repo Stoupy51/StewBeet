@@ -4,11 +4,11 @@
 # Imports
 from beet import Context
 
-from stewbeet import Block, VanillaBlock
+from stewbeet import *  # type: ignore
 
 
 # Main entry point
-def beet_default(ctx: Context) -> None:
+def beet_default(ctx: Context):
     Block(
         id="attributed_block",
         manual_category="misc",

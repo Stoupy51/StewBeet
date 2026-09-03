@@ -5,10 +5,10 @@
 # Imports
 from beet import Context
 
-from stewbeet import Block
+from stewbeet import *  # type: ignore
 
 
 # Main entry point
-def beet_default(ctx: Context) -> None:
+def beet_default(ctx: Context):
     Block.from_id("attributed_block").functions.place_secondary.obj.append("say appended by the author")
 

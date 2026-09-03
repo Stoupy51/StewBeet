@@ -142,7 +142,7 @@ def beet_default(ctx: Context):
     # ── The item lore was rewritten in the generated loot table ───────────────────
     loot_table: JsonDict = json.loads(ctx.data[ns].loot_tables["i/steel_ingot"].text)
     components: JsonDict = loot_table["pools"][0]["entries"][0]["functions"][0]["components"]
-    lore: list[JsonDict] = components["minecraft:lore"]
+    lore: list[list[JsonDict]] = components["minecraft:lore"]
 
     rendered_line: list[JsonDict] = lore[0]
     assert rendered_line[0]["text"] == "Made of ", rendered_line
@@ -167,7 +167,7 @@ def beet_default(ctx: Context):
 
     # ── An unresolvable render is left untouched rather than dropped ───────────────
     ghost: JsonDict = json.loads(ctx.data[ns].loot_tables["i/ghost_ingot"].text)
-    ghost_lore: list[JsonDict] = ghost["pools"][0]["entries"][0]["functions"][0]["components"]["minecraft:lore"]
+    ghost_lore: list[list[JsonDict]] = ghost["pools"][0]["entries"][0]["functions"][0]["components"]["minecraft:lore"]
     assert ghost_lore[0][0] == {"render": "does_not_exist"}, ghost_lore
     assert not any("does_not_exist" in file for file, _, _ in by_glyph), "an unresolvable render must not create a provider"
 

@@ -89,6 +89,12 @@ ignore = [
     "N806",
 ]
 
+[tool.ruff.lint.per-file-ignores]
+# Integration fixtures are written the way a StewBeet project is written, and both the docs and the
+# shipped templates tell users to start from `from stewbeet import *`. Linting that away would make
+# the fixtures stop resembling the code they exist to test.
+"tests/**" = ["F403", "F405"]
+
 [tool.ruff.lint.isort]
 combine-as-imports = true
 
