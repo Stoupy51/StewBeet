@@ -132,6 +132,20 @@ With phase B's build present:
 | Fix it, rebuild | The squiggle clears |
 | Delete `build/` | Navigation stops, completion from phase A keeps working |
 
+### What the first real run established
+
+Run against SimplEnergy with the sniffer plugin in the pipeline, on the 1.2.0 extension:
+
+| Check | Result |
+|---|---|
+| Ctrl+click a **literal** resource location | Works, lands on the `write_function` call |
+| Ctrl+click an **interpolated** one (`function {ns}:...`) | Nothing happens. The projection masks the interpolation, so Spyglass resolves nothing and C has nothing to rewrite. This is FR-018 and the reason step C2 exists |
+| Shift+F12 | Works |
+| `Go to Generated Function`, then `Go to Python Source` | Both work, and land on the matching line: `execute store result score #height simplenergy.data ...` in the generated file returns to `execute store result score #height {ns}.data ...` in `machines.py` |
+| Diagnostics | Nothing until the generated file is opened by hand, then correct. FR-019 |
+| Relayed diagnostic quality | `Cannot find objective "energy.storage" (undeclaredSymbol)` on an objective a dependency declares. Correct of Spyglass, noise on a Python line. FR-020 |
+| Deleting the build | Navigation stops, completion keeps working |
+
 ## Sniffer interop (validates SC-002, part of step B)
 
 Not owned by this feature, and deliberately unlettered: step D is the `bolt` language id, not this. See [contracts/dialects.md](./contracts/dialects.md) for the canonical sequencing.

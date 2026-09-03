@@ -108,6 +108,7 @@ Deliberately incremental. Each step is independently useful and none blocks anot
 | **B** | `stewbeet.plugins.sniffer` emits maps | StewBeet | Nothing |
 | **B2** | Attribution scopes reach declarations | StewBeet | B |
 | **C** | Map-driven navigation, references, relocated diagnostics | **any dialect with maps** | A, B |
+| **C2** | Interpolated paths resolve in the projection | StewBeet | C |
 | **D** | `bolt` language id and grammar | bolt | Nothing |
 | **E** | Mecha AST map emitter | bolt, mecha | C for the payoff, D for nothing |
 | **F** | Bolt live editing, adopt or route to a mecha-backed server | bolt, mecha | D |
