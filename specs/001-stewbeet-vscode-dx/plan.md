@@ -90,7 +90,8 @@ python_package/stewbeet/
 ├── plugins/datapack/custom_blocks/
 │   └── __init__.py                  # + attribute_to(obj_block) around the generation loop
 └── plugins/sniffer/
-    ├── __init__.py                  # beet_default: finalize + emit
+    ├── __init__.py                  # beet_default: the capture generator, listed early
+    ├── emit.py                      # beet_default: writes the sidecars, listed before archive
     ├── capture.py                   # patches beet.Function.append/prepend, restores at teardown
     ├── origin.py                    # project-source filter, frame walk, cached ast index
     ├── attribution.py               # attribute_to scope, Mem.attribution stack

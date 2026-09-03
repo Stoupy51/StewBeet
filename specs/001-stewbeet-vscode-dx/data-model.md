@@ -57,7 +57,9 @@ Condition 1's AST check is what stops a plugin-generated write from attributing 
 
 - `append` appends a chunk to the path's list.
 - `prepend` inserts a chunk at index 0.
-- `overwrite` clears the list, then appends, so origins replaced by an overwrite vanish from the map.
+- `overwrite` depends on **who** overwrote. A write whose origin resolves into the project is a developer replacing content, so it clears the list then appends. A write with no project origin is a library transforming the text, and it records nothing and clears nothing.
+
+  That distinction is load-bearing rather than a refinement. `auto.headers` rewrites **every** function with `overwrite=True`, so an unconditional clear wipes every author chunk in the pack and the whole feature emits nothing. A library rewrite is reconciled by alignment instead.
 - A `condition` that returns `False` records nothing.
 
 Several chunks with different origins in one list is the normal case, not an edge case: a custom block's `place_secondary` typically holds a plugin-attributed chunk and a developer-authored one.

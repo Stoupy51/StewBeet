@@ -260,6 +260,7 @@ export const translations = {
             copyToDestinationDesc: 'Copies generated packs to destination folders',
             livereloadDesc: 'Auto in-game /reload on each build via link or copy destinations',
             computeSha1Desc: 'Computes SHA1 hashes for all zip files',
+            snifferDesc: 'Emits source maps linking generated commands back to the Python that wrote them',
         },
 
         // Documentation Page
@@ -817,6 +818,7 @@ export const translations = {
             copyToDestinationDesc: 'Copie les packs générés vers les dossiers de destination',
             livereloadDesc: 'Rechargement /reload automatique en jeu à chaque build (link ou destinations)',
             computeSha1Desc: 'Calcule les hachages SHA1 pour tous les fichiers zip',
+            snifferDesc: 'Genere des source maps reliant les commandes generees au Python qui les a ecrites',
         },
 
         // Documentation Page

@@ -48,6 +48,8 @@ def beet_default(ctx: Context, silent: bool = False) -> Generator[None]:
 		Mem.definitions = {}
 		Mem.external_definitions = {}
 		Mem.used_textures = set()
+		Mem.source_map_chunks = {}
+		Mem.attribution = []
 		Mem.text_renders = None
 
 		# Reset per-build module state so consecutive builds in one process (`stewbeet watch`) behave like fresh runs

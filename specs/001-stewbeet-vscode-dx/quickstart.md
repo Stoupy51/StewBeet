@@ -36,11 +36,18 @@ Run `npm test` in `extension/vscode/` to confirm `test/projection.test.js` asser
 
 ## Phase B: source maps are emitted and correct
 
-Add the plugin to the project's `beet.yaml` pipeline, then build:
+Add the plugin's two entries to the project's `beet.yaml`, then build:
 
 ```yaml
+require:
+  - stewbeet
+  - stewbeet.plugins.sniffer        # runs before the pack is even loaded
+
 pipeline:
-  - stewbeet.plugins.sniffer
+  - ...
+  - stewbeet.plugins.auto.headers
+  - stewbeet.plugins.sniffer.emit   # after every writer, before the archive
+  - stewbeet.plugins.archive
 ```
 
 ```sh
@@ -56,6 +63,8 @@ beet build
 | Check `sourceRoot` on a nested function | Deeper than a top-level one, since it is relative to the map's own directory |
 | Open the mapped Python line | It is a line inside the `write_function` string that produced the command |
 | Build without the plugin | No `.map` files, and build time within noise of the previous run |
+| `unzip -l build/*_datapack.zip \| grep '\.map'` | The maps are in the zip too, since that zip is what reaches `saves/<world>/datapacks` |
+| Drop `stewbeet.plugins.sniffer.emit` and rebuild | Maps still written, plus a warning that the archive did not get them |
 
 **The check that matters most.** No map may point into a library:
 
