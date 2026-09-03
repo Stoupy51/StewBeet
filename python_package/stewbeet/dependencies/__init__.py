@@ -24,23 +24,33 @@ from .download_manager import (
 from .network import (
 	CONNECTIVITY as CONNECTIVITY,
 	CONNECTIVITY_LOCK as CONNECTIVITY_LOCK,
+	DOWNLOAD_ATTEMPTS as DOWNLOAD_ATTEMPTS,
+	DOWNLOAD_DELAY as DOWNLOAD_DELAY,
+	DOWNLOAD_LOCKS as DOWNLOAD_LOCKS,
+	DOWNLOAD_LOCKS_GUARD as DOWNLOAD_LOCKS_GUARD,
 	HEADERS as HEADERS,
 	HTTP_HINTS as HTTP_HINTS,
 	PROBE_TIMEOUT as PROBE_TIMEOUT,
 	PROBE_URLS as PROBE_URLS,
 	SOCKET_HINTS as SOCKET_HINTS,
+	TRANSIENT_STATUS as TRANSIENT_STATUS,
+	TransientDownloadError as TransientDownloadError,
+	attempt_download as attempt_download,
 	cached_json as cached_json,
 	cached_zip as cached_zip,
 	connectivity_verdict as connectivity_verdict,
 	describe_body as describe_body,
 	describe_network_error as describe_network_error,
+	download_lock as download_lock,
 	download_to_cache as download_to_cache,
 	host_answers as host_answers,
 	internet_reachable as internet_reachable,
+	is_transient as is_transient,
 	socket_hint as socket_hint,
 )
 from .official_libs import (
 	OFFICIAL_LIBS as OFFICIAL_LIBS,
+	detection_markers as detection_markers,
 	official_lib_used as official_lib_used,
 )
 
