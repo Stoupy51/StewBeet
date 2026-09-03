@@ -11,6 +11,7 @@ import os
 import sys
 from dataclasses import dataclass
 from functools import cache
+from types import FrameType
 
 from ...core.__memory__ import Mem
 from .model import SourceOrigin
@@ -21,6 +22,9 @@ CONTENT_PARAMETER: str = "content"
 
 WRITE_METHODS: frozenset[str] = frozenset({"append", "prepend"})
 """ Methods on a beet Function that author content, reached through `Resource.obj`. """
+
+GENERATED_INIT: str = "<string>"
+""" Filename of the `__init__` a dataclass generates, the one frame between a definition and its declaration. """
 
 LIBRARY_PACKAGES: tuple[str, ...] = ("stewbeet", "beet", "bolt", "mecha", "stouputils")
 """ Packages whose source may never be a mapping target, even when installed editable inside the project. """
@@ -113,11 +117,13 @@ def is_project_source(path: str) -> bool:
 		>>> package_dir.startswith(repo_root)   # the library really is under the root
 		True
 		>>> Mem.ctx.meta.setdefault("stewbeet", {})["sniffer"] = {"roots": [repo_root]}
+		>>> reset_caches()
 		>>> is_project_source(os.path.join(package_dir, "plugins", "sniffer", "origin.py"))
 		False
 		>>> is_project_source(os.path.join(repo_root, "my_pack", "link.py"))
 		True
 		>>> del Mem.ctx.meta["stewbeet"]["sniffer"]
+		>>> reset_caches()
 	"""
 	normalized: str = os.path.normcase(os.path.abspath(path))
 	if f"{os.sep}site-packages{os.sep}" in normalized:
@@ -195,6 +201,67 @@ def write_calls_of(path: str) -> dict[int, WriteCall]:
 	return calls
 
 
+
+
+def declaration_origin() -> SourceOrigin | None:
+	""" Where a definition was declared, or None when a library declared it.
+
+	Called from `Item.__post_init__`, so the frames above are the construction's own: `item.py`,
+	`block.py` for a `Block`, and the `__init__` the dataclass generated. Unlike `resolve_origin`
+	this consults no AST index, because a constructor's caller **is** the declaration site, with no
+	plugin in between to be mistaken for it.
+
+	The case that must not be attributed is a StewBeet plugin building an `Item` itself: the walk
+	stops at the first frame that is not the construction's, so it lands on the plugin and returns
+	None rather than continuing out to the user's entry point, which declared nothing.
+
+	>>> declaration_origin() is None   # a doctest frame is nobody's declaration
+	True
+	"""
+	frame: FrameType | None = sys._getframe(1) # pyright: ignore[reportPrivateUsage]
+	while frame is not None and is_constructor_frame(frame):
+		frame = frame.f_back
+
+	if frame is None or not is_project_source(frame.f_code.co_filename):
+		return None
+	line, column = call_position(frame)
+	return SourceOrigin(file=os.path.abspath(frame.f_code.co_filename), line=line, column=column, exact=False)
+
+
+def is_constructor_frame(frame: FrameType) -> bool:
+	""" Whether a frame belongs to a definition being built rather than to whoever asked for it. """
+	filename: str = frame.f_code.co_filename
+	if filename == GENERATED_INIT:
+		return True
+	return os.path.normcase(os.path.abspath(filename)).startswith(definition_root() + os.sep)
+
+
+@cache
+def definition_root() -> str:
+	""" Directory holding the definition dataclasses, resolved from the module rather than spelled out. """
+	from ...core.cls import item
+	return os.path.normcase(os.path.dirname(os.path.abspath(item.__file__)))
+
+
+def call_position(frame: FrameType) -> tuple[int, int]:
+	""" Line and column of the call a frame is executing, both 0-based.
+
+	`co_positions()` carries the exact span of every instruction since Python 3.11, so the column of
+	a `Block(` call is available without parsing anything. A frame built without position tables
+	yields no column, and 0 is the honest answer there.
+
+	>>> def probe() -> tuple[int, int]:
+	...     return call_position(sys._getframe())
+	>>> probe()[1]
+	11
+	"""
+	positions = list(frame.f_code.co_positions())
+	index: int = frame.f_lasti // 2
+	if index < len(positions):
+		line, _, column, _ = positions[index]
+		if line is not None:
+			return line - 1, column or 0
+	return frame.f_lineno - 1, 0
 
 
 def resolve_origin() -> SourceOrigin | None:

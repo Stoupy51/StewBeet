@@ -15,6 +15,7 @@ from ...core.cls.ingredients import Ingr
 from ...core.cls.item import Item
 from ...core.cls.recipe import AwakenedForgeRecipe
 from ...core.utils.io import set_json_encoder, write_function, write_load_file, write_versioned_function
+from .. import sniffer
 
 
 class AwakenedForgeRecipeHandler:
@@ -107,7 +108,7 @@ tag @e[type=item,tag=stardust.temp] remove stardust.temp
 
     def generate_recipes(self) -> None:
         """ Generate all pulverizer recipes. """
-        for item in Mem.definitions.keys():
+        for item, _ in sniffer.attributed(Mem.definitions.items()):
             obj = Item.from_id(item)
 
             for recipe in obj.recipes:

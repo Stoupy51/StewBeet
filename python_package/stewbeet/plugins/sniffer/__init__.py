@@ -11,10 +11,10 @@ import stouputils as stp
 from beet import Context
 
 from ...core.__memory__ import Mem
-from .attribution import attribute_to as attribute_to
+from .attribution import attribute_to as attribute_to, attributed as attributed
 from .capture import install, record as record, tag as tag, uninstall
 from .emit import write_maps as write_maps
-from .origin import reset_caches, resolve_origin as resolve_origin
+from .origin import declaration_origin as declaration_origin, reset_caches, resolve_origin as resolve_origin
 
 
 # Main entry point

@@ -5,7 +5,7 @@ from stouputils.lazy import ALWAYS_LAZY
 __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
-from collections.abc import Generator
+from collections.abc import Generator, Iterable
 from contextlib import contextmanager
 from typing import Protocol
 
@@ -29,9 +29,6 @@ def attribute_to(definition: Declared) -> Generator[None]:
 	point above the write. The declaration captured its own origin when it was constructed, and
 	this hands that origin to every write inside the block.
 
-	Nothing in StewBeet enters this scope yet; wiring it into the generation loops is step B2. Until
-	then plugin-generated content resolves to tier 3 and is emitted unmapped, which is correct.
-
 	>>> from stewbeet.plugins.sniffer.model import SourceOrigin
 	>>> class Fake: origin = SourceOrigin(file="/p/blocks.py", line=11, column=0)
 	>>> with attribute_to(Fake()):
@@ -40,7 +37,7 @@ def attribute_to(definition: Declared) -> Generator[None]:
 	>>> Mem.attribution
 	[]
 	"""
-	origin: SourceOrigin | None = definition.origin
+	origin: SourceOrigin | None = getattr(definition, "origin", None)
 	if origin is None:
 		yield
 		return
@@ -50,4 +47,24 @@ def attribute_to(definition: Declared) -> Generator[None]:
 		yield
 	finally:
 		Mem.attribution.pop()
+
+
+
+def attributed[T: Declared](definitions: Iterable[tuple[str, T]]) -> Generator[tuple[str, T]]:
+	""" Iterate definitions, attributing everything each iteration writes to that declaration.
+
+	A generation loop wraps its iterable in this instead of indenting its whole body into a `with`.
+	The scope opens before the body runs and closes when the loop asks for the next item, or when it
+	breaks and the generator is closed, so it always matches the iteration exactly.
+
+	>>> from stewbeet.plugins.sniffer.model import SourceOrigin
+	>>> class Fake: origin = SourceOrigin(file="/p/blocks.py", line=11, column=0)
+	>>> [Mem.attribution[-1].origin.line for _ in attributed([("a", Fake())])]
+	[11]
+	>>> Mem.attribution
+	[]
+	"""
+	for key, declared in definitions:
+		with attribute_to(declared):
+			yield key, declared
 

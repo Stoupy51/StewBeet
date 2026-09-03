@@ -29,6 +29,7 @@ from ....core.constants import (
 )
 from ....core.utils.io import set_json_encoder, write_function, write_load_file, write_tag, write_versioned_function
 from ....dependencies.official_libs import OFFICIAL_LIBS, official_lib_used
+from ... import sniffer
 
 
 # Main entry point
@@ -118,7 +119,7 @@ execute store result entity @s brightness.sky int 1 run scoreboard players get #
 	unique_blocks: set[str] = set()
 	custom_block_entities: set[str] = set()
 	has_growing_seed: bool = False
-	for item, data in Mem.definitions.items():
+	for item, data in sniffer.attributed(Mem.definitions.items()):
 		obj = Item.from_id(item)
 		item_name: str = item.replace("_", " ").title()
 		custom_name: str = stp.json_dump({"CustomName": obj.components.get("item_name", item_name)}, max_level=0)[:-1] # Remove the last new line

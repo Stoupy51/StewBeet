@@ -16,6 +16,7 @@ from ...core.cls.item import Item
 from ...core.cls.recipe import BlastingRecipe, SmeltingRecipe, SmokingRecipe
 from ...core.constants import CUSTOM_ITEM_VANILLA
 from ...core.utils.io import set_json_encoder, write_function
+from .. import sniffer
 
 
 class FurnaceRecipeHandler:
@@ -125,7 +126,7 @@ scoreboard players reset #count furnace_nbt_recipes.data
 
     def generate_recipes(self) -> None:
         """ Generate all furnace NBT recipes. """
-        for item in Mem.definitions.keys():
+        for item, _ in sniffer.attributed(Mem.definitions.items()):
             obj = Item.from_id(item)
 
             for recipe in obj.recipes:

@@ -16,7 +16,11 @@ from .model import SourceOrigin, WriteChunk
 def flatten(chunks: Sequence[WriteChunk]) -> tuple[list[str], list[SourceOrigin | None]]:
 	""" Expand recorded chunks into parallel line and origin lists.
 
-	A chunk's Nth line came from the Nth line of its string literal, so the origin advances with it.
+	A chunk written from a string literal has its Nth line on the literal's Nth line, so the origin
+	advances with it. An origin that is not a literal is a single point instead: a `Block(` call a
+	plugin generated from, or a write whose content argument was a variable. Advancing there walks
+	down the Python file line by line and lands on whatever happens to follow the call, so `exact`
+	decides which of the two applies.
 	"""
 	lines: list[str] = []
 	origins: list[SourceOrigin | None] = []
@@ -25,6 +29,9 @@ def flatten(chunks: Sequence[WriteChunk]) -> tuple[list[str], list[SourceOrigin 
 			lines.append(line)
 			if chunk.origin is None:
 				origins.append(None)
+				continue
+			if not chunk.origin.exact:
+				origins.append(chunk.origin)
 				continue
 			# Only the first line starts where the literal does; every later line starts at column 0.
 			column: int = chunk.origin.column if offset == 0 else 0
