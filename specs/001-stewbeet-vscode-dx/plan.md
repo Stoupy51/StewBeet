@@ -128,7 +128,7 @@ and URI logic testable under `node --test`.
 |---|---|---|---|
 | **A. Spyglass forwarding** | Completion, hover, signature help inside blocks. Definition landing in the generated `.mcfunction`. Closes half of #41 with no build required. | Nothing. Q2 spike passed, see [spike/](./spike/). | ~250 lines JS |
 | **B. Source map emission** | `.mcfunction.map` files, project-source targets only. Unblocks Sniffer independently of the extension. | Nothing | ~280 lines Python |
-| **B2. Attribution scopes** | Plugin-generated content maps to the declaration that caused it, starting with `custom_blocks`. Incremental: unscoped plugins emit unmapped lines. | B | ~5 lines per plugin |
+| **B2. Attribution scopes** | Plugin-generated content maps to the declaration that caused it, starting with `custom_blocks`. Incremental: unscoped plugins emit unmapped lines. | B, plus a declaration resolver B does not provide | ~60 lines Python, then ~5 per plugin |
 | **C. Map-driven navigation** | Definition landing on the `write_function` call, references, diagnostics relocated onto Python. Closes the rest of #41. | A and B | ~200 lines JS |
 | **D. `bolt` language id + grammar** | Nothing registers `.bolt` today, so those files have no language id at all and no server can select them. | Nothing | small |
 | **E. Mecha AST map emitter** | Maps for bolt/mecha read straight from `AstNode.location`. No capture, no alignment. | Shared `encode` from B | ~80 lines Python |
@@ -136,6 +136,8 @@ and URI logic testable under `node --test`.
 | **G. Upstream `env.plugins`** | Deletes phase A in favour of a real Spyglass plugin. Optional, unbounded timeline. | Upstream review | 2 PRs |
 
 Phase A ships first because it is the visible ask and has no build-time dependency. Phase B can proceed in parallel since it touches only Python.
+
+**B2 is not just wiring.** `attribute_to` reads `Item.origin`, and B leaves that field `None` on every declaration: `resolve_origin` anchors tier 1 on a **write call** confirmed against the AST index, and a `Block(...)` constructor is not one. That check is what stops a plugin's write from attributing to the user's `main()`, so it cannot simply be relaxed. B2 therefore opens with a separate resolver that anchors on the constructor's caller instead, and returns nothing when that caller is itself library code.
 
 ## Complexity Tracking
 

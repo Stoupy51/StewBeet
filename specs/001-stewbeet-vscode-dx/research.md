@@ -164,7 +164,7 @@ They do not need to share anything. Chunks are recorded in write order and each 
 Two consequences worth stating:
 
 - Go-to-definition on such a path returns a `Location[]`, not a single location, so VS Code shows the peek list. Ordered by generated line.
-- `overwrite=True` clears the chunk list before recording, exactly as it clears the function text, so the origins it replaced disappear from the map. That is the correct answer and it falls out of mirroring the existing semantics rather than being special-cased.
+- `overwrite=True` clears the chunk list before recording **when the write comes from the project**, exactly as it clears the function text, so the origins a developer replaced disappear from the map. A library's overwrite clears nothing, for the reason given above under capture points.
 
 ### How do bolt and mecha emit maps?
 

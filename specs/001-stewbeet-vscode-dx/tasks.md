@@ -34,19 +34,13 @@ item = Item(id="my_ingot", base_item="minecraft:stick")   # from a project file
 item.origin   # None
 ```
 
-The cause is in `resolve_origin()`. Tier 1 requires the frame to sit on a **write call**, confirmed against the AST index, and a `Block(...)` declaration is not a write call. That check exists for a good reason (it stops a plugin's write from attributing to the user's `main()`, which is project code that authored nothing), but it makes the declaration case unreachable. Phase 2 fixes that, and nothing in phase 3 works until it does.
+The cause is in `resolve_origin()`. Tier 1 requires the frame to sit on a **write call**, confirmed against the AST index, and a `Block(...)` declaration is not a write call. That check exists for a good reason (it stops a plugin's write from attributing to the user's `main()`, which is project code that authored nothing), but it makes the declaration case unreachable. Phase 1 fixes that, and nothing in phase 2 works until it does.
 
 ---
 
-## Phase 1: Setup
+## Phase 1: Foundational (Blocking Prerequisites)
 
-**Purpose**: Nothing to initialise. The package, the plugin entries and the fixture conventions all exist from step B.
-
-*(No tasks. Start at Phase 2.)*
-
----
-
-## Phase 2: Foundational (Blocking Prerequisites)
+There is no setup phase: the package, both plugin entries and the fixture conventions all exist from step B.
 
 **Purpose**: Make a declaration able to carry its own origin. Every user story below is dead code until this phase is done.
 
@@ -60,13 +54,13 @@ The cause is in `resolve_origin()`. Tier 1 requires the frame to sit on a **writ
 
 ---
 
-## Phase 3: User Story 1 - A generated block function points at its declaration (Priority: P1) 🎯 MVP
+## Phase 2: User Story 1 - A generated block function points at its declaration (Priority: P1) 🎯 MVP
 
 **Goal**: Ctrl+clicking a custom block's generated function leads to the `Block(...)` call that caused it, not to `custom_blocks/__init__.py` and not to the user's `main()`.
 
 **Independent Test**: Build `tests/plugin_24_sniffer_attribution`, decode the map of a generated block function, and land on the `Block(...)` line of the fixture's own declarations file. Maps to spec Scenario 3, FR-011, and guarantee G5.
 
-- [ ] T006 [US1] Wrap the per-definition loop body in `python_package/stewbeet/plugins/datapack/custom_blocks/__init__.py` with `attribute_to(obj)`, at the `for item, data in Mem.definitions.items():` loop that starts at line 121. `obj` is already bound on the next line, so the scope is one `with` and one indent level
+- [ ] T006 [US1] Wrap the per-definition loop body in `python_package/stewbeet/plugins/datapack/custom_blocks/__init__.py` with `attribute_to(obj)`, at the `for item, data in Mem.definitions.items():` loop. `obj` is already bound on the next line, so the scope is one `with` and one indent level
 - [ ] T007 [US1] Leave the pack-level scaffolding in the same file **outside** any scope: `custom_blocks/get_rotation`, `check_light` and `compute_brightness` are written before the loop and belong to no declaration. They MUST stay unmapped rather than being attributed to whichever block happens to be first, which is what a scope opened too early would do
 - [ ] T008 [US1] Create the fixture `python_package/tests/plugin_24_sniffer_attribution/` with a `beet.yml` listing `stewbeet.plugins.sniffer` in `require`, then `src.definitions`, `stewbeet.plugins.datapack.custom_blocks`, `src.link`, `stewbeet.plugins.sniffer.emit` in the pipeline, following the shape of `plugin_22_sniffer_source_maps/beet.yml`
 - [ ] T009 [US1] Write `python_package/tests/plugin_24_sniffer_attribution/src/definitions.py` declaring one custom block with a vanilla block base, so `custom_blocks` generates the `place_main` / `place_secondary` / `destroy` family from it. Keep the declaration on a known line, the assertions check that exact line
@@ -77,7 +71,7 @@ The cause is in `resolve_origin()`. Tier 1 requires the frame to sit on a **writ
 
 ---
 
-## Phase 4: User Story 2 - Both origins survive on one function (Priority: P1)
+## Phase 3: User Story 2 - Both origins survive on one function (Priority: P1)
 
 **Goal**: When an author appends to a function a plugin generated for them, the map carries **both** the declaration and their own append, each keeping its own lines.
 
@@ -91,39 +85,39 @@ The cause is in `resolve_origin()`. Tier 1 requires the frame to sit on a **writ
 
 ---
 
-## Phase 5: Polish & Cross-Cutting Concerns
+## Phase 4: Polish & Cross-Cutting Concerns
 
 - [ ] T015 [P] Extend the attribution scope to the remaining per-definition loops, one `with attribute_to(...)` each, in `python_package/stewbeet/plugins/datapack/loot_tables/__init__.py`, `python_package/stewbeet/plugins/custom_recipes/__init__.py`, `python_package/stewbeet/plugins/compatibilities/simpledrawer/__init__.py` and `python_package/stewbeet/plugins/compatibilities/neo_enchant/__init__.py`. Each is independent of the others and of the phases above, and each MUST leave its pack-level scaffolding outside the scope the way T007 does
 - [ ] T016 Re-measure the build overhead against the step B baseline of **+4.9%** on SimplEnergy, median of five runs, discarding the first. `declaration_origin` runs on every `Item` and `Block` construction, which is a hot path on a large pack in a way the write path is not. NFR-002 budgets 20%
 - [ ] T017 [P] Update `specs/001-stewbeet-vscode-dx/data-model.md` so `SourceOrigin` records that a declaration origin is resolved without the AST index and why, and drop the line in `python_package/stewbeet/plugins/sniffer/attribution.py`'s docstring saying nothing enters the scope yet
 - [ ] T018 [P] Update `docs/web/public/docs/plugins/sniffer.md` to say that content generated from a declaration maps to the declaration, and which plugins are scoped so far. A reader whose custom recipes are unmapped needs to see that it is a known boundary, not a bug
-- [ ] T019 Run the full gate: `ruff check stewbeet --config ./pyproject.toml`, `python scripts/all_doctests.py`, `python scripts/run_integration_tests.py`. All three MUST pass, with the fixture count up by one
+- [ ] T019 Run the full gate, which is what `.github/workflows/lint.yml` and the test workflows run: `ruff check stewbeet --config ./pyproject.toml`, `python scripts/sync_api.py --check`, `pyright ./stewbeet`, `python scripts/all_doctests.py`, `python scripts/run_integration_tests.py`. All five MUST pass, with the fixture count up by one. `sync_api.py --check` matters because this step adds a re-export to `plugins/sniffer/__init__.py`, and a stale generated re-export turns CI red without failing anything locally
 
 ---
 
 ## Dependencies
 
 ```
-Phase 2 (T001-T005)  <- blocks everything, Item.origin is None without it
+Phase 1 (T001-T005)  <- blocks everything, Item.origin is None without it
         |
-        +-- Phase 3 (T006-T011)  US1, the MVP
+        +-- Phase 2 (T006-T011)  US1, the MVP
         |         |
-        |         +-- Phase 4 (T012-T014)  US2, extends the same fixture
+        |         +-- Phase 3 (T012-T014)  US2, extends the same fixture
         |
-        +-- T015  independent of US1 and US2, only needs Phase 2
+        +-- T015  independent of US1 and US2, only needs Phase 1
 ```
 
 **Story independence**: US2 shares US1's fixture, so it is sequential after it in practice. It is still separately testable: its assertions fail on their own if the `Function.append` capture regresses, whatever US1 does.
 
 ## Parallel opportunities
 
-- Inside Phase 2, T001 and T002 touch the same function and are sequential. T003 follows both.
-- Inside Phase 3, T008 and T009 are one fixture and are cheapest written together. T010 and T011 both edit `assertions.py`, so sequential.
-- T015 splits four ways across four plugin files, all parallel, and does not wait on Phase 3 or 4.
+- Inside Phase 1, T001 and T002 touch the same function and are sequential. T003 follows both.
+- Inside Phase 2, T008 and T009 are one fixture and are cheapest written together. T010 and T011 both edit `assertions.py`, so sequential.
+- T015 splits four ways across four plugin files, all parallel, and does not wait on Phase 2 or 3.
 - T017 and T018 are documentation in different files, parallel with each other and with anything.
 
 ## Implementation strategy
 
-**MVP is Phase 2 plus Phase 3.** That alone turns the largest generated surface of a real pack from unmapped into mapped, and it is what makes step C's ctrl+click feel finished rather than half-broken.
+**MVP is Phase 1 plus Phase 2.** That alone turns the largest generated surface of a real pack from unmapped into mapped, and it is what makes step C's ctrl+click feel finished rather than half-broken.
 
-Stop after Phase 4 if time is short. T015 is a mechanical repetition of T006 across four more plugins and buys breadth, not correctness; every plugin left unscoped keeps emitting unmapped lines, which is the designed degradation and not a failure.
+Stop after Phase 3 if time is short. T015 is a mechanical repetition of T006 across four more plugins and buys breadth, not correctness; every plugin left unscoped keeps emitting unmapped lines, which is the designed degradation and not a failure.
