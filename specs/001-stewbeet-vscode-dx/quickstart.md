@@ -96,11 +96,15 @@ Declare a custom block, then extend its `place_secondary` the modern way, from a
 
 ```python
 # blocks.py, the declaration
-Block(id="my_block", base_block="minecraft:furnace")
+Block(id="my_block", vanilla_block=VanillaBlock(id="minecraft:furnace"))
 
 # my_plugin.py, running after custom_blocks
 Block.from_id("my_block").functions.place_secondary.obj.append("say appended")
 ```
+
+`Block.from_id` returns the declared instance itself rather than rebuilding one, so the origin
+captured at declaration survives the round trip. A definition loaded from JSON instead of declared
+in Python has no declaration site at all, so its generated content stays unmapped.
 
 | Check | Expected |
 |---|---|
@@ -112,7 +116,7 @@ Block.from_id("my_block").functions.place_secondary.obj.append("say appended")
 
 The last two rows are the ones that catch a broken tier order.
 
-Also check the capture point itself, since `.obj.append` bypasses `write_function` entirely: remove the `beet.Function.append` patch and confirm the `say appended` line becomes unmapped rather than misattributed.
+The `say appended` row is also what covers the capture point itself, since `.obj.append` bypasses `write_function` entirely and reaches beet directly. That line is mapped only because `beet.Function.append` is patched, so the assertion fails on its own if the patch ever stops being installed. No manual experiment needed.
 
 ## Phase C: navigation and diagnostics
 
