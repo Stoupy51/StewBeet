@@ -13,7 +13,21 @@ Where a chunk of written content came from in the author's Python.
 | `file` | `str` | Absolute path of the `.py` file that called a `write_*` function. |
 | `line` | `int` | 0-based line of the content literal's first line, or of the call when the argument is not a literal. |
 | `column` | `int` | 0-based column of the literal's opening quote, or of the call. |
-| `exact` | `bool` | `False` when the origin is the call rather than a literal, so consumers can weight the mapping. |
+| `exact` | `bool` | `False` when the origin is the call rather than a content literal, which is also what decides whether the chunk's lines walk down the source. |
+
+**`exact` is load-bearing, not advisory.** A chunk written from a string literal has its Nth line on
+the literal's Nth line, so its origin advances line by line. An origin that is not a literal is a
+single point and every line of the chunk maps to it: a `Block(` call a plugin generated from, or a
+write whose content argument was a variable. Advancing there walks down the Python file and lands on
+whatever text happens to follow the call, which reads as a plausible mapping and is wrong.
+
+**A declaration's origin is resolved without the AST index.** `resolve_origin` requires the frame to
+sit on a write call, which is what stops a plugin's write from attributing to the user's entry point.
+A constructor has no such ambiguity: its caller **is** the declaration, so `declaration_origin` walks
+out of the construction's own frames (`item.py`, `block.py`, and the `__init__` the dataclass
+generates, whose filename is `<string>`) and takes the next one. It returns `None` when that next
+frame is library code, which is a StewBeet plugin building an `Item` itself, and the case the AST
+check guards on the write path. Column comes from `frame.f_code.co_positions()`, so no parsing.
 
 **Validation**, enforced at construction so an invalid origin cannot exist:
 

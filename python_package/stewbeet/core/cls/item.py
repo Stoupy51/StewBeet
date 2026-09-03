@@ -136,7 +136,7 @@ class Item(StMapping):
         from ..__memory__ import Mem
         if Mem.sniffer_enabled:
             from ...plugins import sniffer
-            self.origin = sniffer.resolve_origin()
+            self.origin = sniffer.declaration_origin()
 
         # Add minecraft: to base item if needed
         if self.base_item and ":" not in self.base_item:

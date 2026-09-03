@@ -26,6 +26,7 @@ the Minecraft debugger the plugin is named after.
 - Resolves each write back to the line and column of the Python that made it
 - Realigns the recorded lines against the final text, so post-processing like `auto.headers` does not shift the mapping
 - Writes one `<name>.mcfunction.map` per function, plus a `## sourceMappingURL=` comment as the function's last line
+- Maps content a plugin generated from one of your declarations back to that `Block(...)` or `Item(...)` call
 - Never names a file inside StewBeet, beet, bolt, mecha or stouputils: a mapping points at your own source or at nothing
 
 ## Configuration
@@ -82,6 +83,24 @@ And the sidecar next to it names your own source, relative to the project root:
 
 `sourcesContent` is deliberately absent. Consumers read your sources from disk through `sourceRoot`,
 and inlining a whole project into every map would cost tens of megabytes.
+
+## What is mapped, and what is not
+
+A command you wrote yourself maps to the line you wrote it on. A command a plugin generated from one
+of your declarations maps to the declaration, not to the plugin: ctrl+clicking inside a custom
+block's `place_main` leads to your `Block(...)` call.
+
+Scoped so far: `datapack.custom_blocks`, and the parts of `custom_recipes` that write a function per
+item (smithed, furnace, pulverizer, awakened forge). Everything else a plugin generates on its own
+account stays unmapped, which is the designed behaviour rather than a failure: an unmapped line costs
+you nothing, a line pointing at the wrong place costs you a wasted search.
+
+Two more things stay unmapped by design:
+
+- **Pack-level scaffolding.** `custom_blocks/get_rotation` and friends are written once for the whole
+  pack and belong to no declaration, so they are attributed to none.
+- **Definitions with no Python declaration**, loaded from JSON or coming from `external_definitions`.
+  There is no call to point at.
 
 ## Shipping a release
 

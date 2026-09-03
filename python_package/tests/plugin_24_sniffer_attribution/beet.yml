@@ -1,0 +1,38 @@
+# Test: attribution scopes (step B2)
+# Verifies that content custom_blocks generates from a declaration maps back to the Block(...)
+# call that caused it, and never to the plugin that emitted it nor to this pipeline's own entry
+# points. Also covers the .obj.append(...) path, which reaches beet without touching
+# write_function and is only mapped because beet.Function.append is patched.
+
+id: "tns"
+name: "Test Sniffer Attribution"
+version: "1.0.0"
+author: "test"
+minecraft: "26.2"
+
+directory: "."
+output: "build"
+
+require:
+    - "stewbeet"
+    - "stewbeet.plugins.sniffer"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+resource_pack:
+    name: "resource_pack"
+    load: ["src"]
+
+pipeline:
+    - "src.assertions"
+    - "src.definitions"
+    - "stewbeet.plugins.datapack.custom_blocks"
+    - "src.link"
+    - "stewbeet.plugins.sniffer.emit"
+
+meta:
+    stewbeet:
+        source_lore: "auto"
+        textures_folder: "../../../templates/extensive/assets/textures"
