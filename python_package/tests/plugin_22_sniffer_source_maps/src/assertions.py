@@ -5,10 +5,10 @@
 import json
 import os
 import zipfile
-
 from collections.abc import Iterator
 
-from beet import Context
+from beet import Context, TextFile
+from stouputils.typing import JsonDict
 
 # Constants
 BASE64: str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
@@ -56,10 +56,10 @@ def beet_default(ctx: Context) -> Iterator[None]:
     yield
 
     ns: str = ctx.project_id
-    maps: dict[str, dict] = {
+    maps: dict[str, JsonDict] = {
         path: json.loads(file.text)
         for path, file in ctx.data.extra.items()
-        if path.endswith(".mcfunction.map")
+        if path.endswith(".mcfunction.map") and isinstance(file, TextFile)
     }
 
     # ── at least one map, and one per mapped function ─────────────────────────
@@ -80,14 +80,16 @@ def beet_default(ctx: Context) -> Iterator[None]:
             f"{path}: sourceRoot must climb from {os.path.dirname(on_disk)} to the project root"
 
         # ── G5: never a library file ─────────────────────────────────────────
-        for source in data["sources"]:
+        sources: list[str] = data["sources"]
+        for source in sources:
             normalized: str = source.replace(os.sep, "/")
             for marker in LIBRARY_MARKERS:
                 assert marker not in normalized, f"{path}: source '{source}' leaks library path '{marker}'"
             assert not os.path.isabs(source), f"{path}: source '{source}' must be relative to sourceRoot"
 
         # ── G2: mapped lines strictly increasing ─────────────────────────────
-        decoded = decode_mappings(data["mappings"])
+        mappings: str = data["mappings"]
+        decoded = decode_mappings(mappings)
         assert list(decoded) == sorted(decoded), f"{path}: generated lines must be strictly increasing"
 
     # ── every function carries the discovery comment, as its LAST line ───────
@@ -99,11 +101,13 @@ def beet_default(ctx: Context) -> Iterator[None]:
             f"{func_path}: last line must be the two-hash sourceMappingURL comment, got {lines[-1]!r}"
 
     # ── the mapping actually lands on the write_function call in link.py ─────
-    root_map: dict = maps[f"data/{ns}/function/root.mcfunction.map"]
-    decoded = decode_mappings(root_map["mappings"])
+    root_map: JsonDict = maps[f"data/{ns}/function/root.mcfunction.map"]
+    root_mappings: str = root_map["mappings"]
+    root_sources: list[str] = root_map["sources"]
+    decoded = decode_mappings(root_mappings)
     assert decoded, "root must have at least one mapped line"
 
-    link_source: str = root_map["sources"][decoded[min(decoded)][0]]
+    link_source: str = root_sources[decoded[min(decoded)][0]]
     assert link_source.endswith("link.py"), f"root's first mapping must come from link.py, got {link_source}"
 
     root_on_disk: str = os.path.join("build", str(ctx.data.name), f"data/{ns}/function/root.mcfunction.map")
@@ -118,7 +122,7 @@ def beet_default(ctx: Context) -> Iterator[None]:
         f"root's first mapping must land on a write_function call, got {source_lines[first_line]!r}"
 
     # ── two call sites contributed to root, so its map carries both ─────────
-    assert len(root_map["sources"]) >= 1, "root was written from more than one call site"
+    assert len(root_sources) >= 1, "root was written from more than one call site"
     lines_hit: set[int] = {line for _, line, _ in decoded.values()}
     assert len(lines_hit) > 1, f"root's mappings should span several source lines, got {sorted(lines_hit)}"
 

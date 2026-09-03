@@ -6,7 +6,8 @@ import json
 import os
 from collections.abc import Iterator
 
-from beet import Context
+from beet import Context, TextFile
+from stouputils.typing import JsonDict
 
 # Constants
 BASE64: str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
@@ -54,7 +55,9 @@ def beet_default(ctx: Context) -> Iterator[None]:
     map_path: str = f"data/{ns}/function/root.mcfunction.map"
     assert map_path in ctx.data.extra, "a map must still be written once auto.headers has rewritten every function"
 
-    data: dict = json.loads(ctx.data.extra[map_path].text)
+    map_file = ctx.data.extra[map_path]
+    assert isinstance(map_file, TextFile), f"{map_path} should have been written as a text file"
+    data: JsonDict = json.loads(map_file.text)
     decoded: dict[int, tuple[int, int, int]] = decode_mappings(data["mappings"])
     generated: list[str] = ctx.data.functions[f"{ns}:root"].text.split("\n")
 
