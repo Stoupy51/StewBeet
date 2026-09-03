@@ -66,7 +66,7 @@ An author asks for references of a generated function and gets every Python loca
 - **FR-003**: The extension MUST resolve go-to-definition on resource locations inside those blocks.
 - **FR-004**: StewBeet MUST be able to emit, per generated function, a machine-readable mapping from generated line to originating Python file and line.
 - **FR-005**: The mapping format MUST be an existing published standard, consumable by tools that have never heard of StewBeet.
-- **FR-006**: Mapping emission MUST be opt-in and MUST NOT appear in released archives.
+- **FR-006**: Mapping emission MUST be opt-in, and when it is on, every artifact the build produces MUST carry the same content. A map that reaches `build/` but not the zip `copy_to_destination` ships is worse than no map, because the zip is what the game loads and the `sourceMappingURL` comment would then dangle.
 - **FR-007**: The extension MUST surface diagnostics produced against generated files on the originating Python ranges.
 - **FR-008**: The extension MUST degrade gracefully when no build output exists: language features that need only the editor buffer keep working.
 - **FR-009**: Correctness of the mapping MUST survive StewBeet's own post-processing passes (`auto.headers`, `auto.text_renders`, `auto.lang_file`), which rewrite function bodies after they are first written.

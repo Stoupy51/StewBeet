@@ -116,12 +116,21 @@ def write_function(
 	if overwrite:
 		func = Function(content)
 		Mem.ctx.data.functions[path] = func
+
+		# The overwrite branch builds a fresh Function instead of appending, so the capture hook on
+		# Function.append never sees it and provenance has to be recorded here.
+		if Mem.sniffer_enabled:
+			from ....plugins import sniffer
+			sniffer.tag(func, path)
+			sniffer.record(path, content, "overwrite")
 	else:
+		func = Mem.ctx.data.functions.setdefault(path, Function())
+		if Mem.sniffer_enabled:
+			from ....plugins import sniffer
+			sniffer.tag(func, path)
 		if prepend:
-			func = Mem.ctx.data.functions.setdefault(path, Function())
 			func.prepend(content)
 		else:
-			func = Mem.ctx.data.functions.setdefault(path, Function())
 			func.append(content)
 
 	# Add the function to the specified tags

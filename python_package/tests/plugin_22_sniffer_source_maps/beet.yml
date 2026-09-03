@@ -1,0 +1,38 @@
+# Test: stewbeet.plugins.sniffer
+# Verifies that every generated function gets a Source Map v3 sidecar pointing back at the
+# write_function call that produced it, that no mapping ever names a library file, and that the
+# sidecars reach the zip the game actually loads.
+# Deliberately omits auto.headers: post-processing is covered by plugin_23.
+
+id: "tns"
+name: "Test Sniffer Source Maps"
+version: "1.0.0"
+author: "test"
+minecraft: "26.2"
+
+directory: "."
+output: "build"
+
+require:
+    - "stewbeet"
+    - "stewbeet.plugins.sniffer"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+resource_pack:
+    name: "resource_pack"
+    load: ["src"]
+
+pipeline:
+    # src.assertions is listed FIRST and yields, so its checks run during teardown, after every
+    # other plugin has finished. beet unwinds generator plugins in reverse pipeline order.
+    - "src.assertions"
+    - "src.link"
+    - "stewbeet.plugins.sniffer.emit"
+    - "stewbeet.plugins.archive"
+
+meta:
+    stewbeet:
+        source_lore: "auto"

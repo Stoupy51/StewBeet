@@ -74,7 +74,37 @@ The VLQ alphabet and continuation-bit scheme are the standard ones; see [Variabl
 - One map per generated function, written as a sibling: `data/<ns>/function/<path>.mcfunction.map`.
 - Discovery is by convention: given `foo.mcfunction`, look for `foo.mcfunction.map`.
 - The generated function's **last** line is `## sourceMappingURL=<basename>.mcfunction.map`. Note **two** hash characters, matching the reference. It must be last, and it must be unmapped, because Sniffer counts comments and blank lines when placing breakpoints so a leading comment would shift every mapped line.
-- Maps are emitted only when the `stewbeet.plugins.sniffer` plugin is in the pipeline, and are excluded from release archives.
+- Maps are emitted only when the `stewbeet.plugins.sniffer` plugin is in the pipeline, and then they appear in every artifact the build produces, the archive zip included.
+
+### When emission happens, and why it is a pipeline entry of its own
+
+Two ordering needs pull in opposite directions. Capture must be installed **before** anything writes
+a function, which is what `require` guarantees: beet runs everything there before it even loads the
+pack (`ProjectBuilder.bootstrap` requires `config.require`, then `load`, then `render`, then yields).
+Emission must happen **after** every rewriting plugin (`auto.headers` above all) and still **before**
+`stewbeet.plugins.archive`, because that zip is what `copy_to_destination` drops into
+`saves/<world>/datapacks` and therefore what a debugger loads.
+
+A beet generator cannot span that gap. beet runs every plugin's forward pass first, then unwinds the
+generators in reverse (`GenericPipeline.run` in `beet/toolchain/pipeline.py`), so a teardown always
+runs after `archive`, never before it. Confirmed by building the canonical pipeline: the zip came out
+with no maps **and** with `.mcfunction` files missing the `sourceMappingURL` comment the build
+directory had, two artifacts from one build that disagreed.
+
+So the plugin has two entries:
+
+| Entry | Where | Does |
+|---|---|---|
+| `stewbeet.plugins.sniffer` | `require`, next to `stewbeet` | installs capture, and at teardown writes anything the emit step missed, with a warning |
+| `stewbeet.plugins.sniffer.emit` | `pipeline`, after every writer and before `stewbeet.plugins.archive` | writes the sidecars and appends the discovery comments |
+
+`require` rather than an early pipeline entry, because position inside `require` cannot be got wrong
+and no write can precede it. Capture is live while the pack's own hand-written `.mcfunction` files
+load; they record chunks with no origin, so they get no map and no comment. A pipeline entry still
+works when it sits before every writer, which is what `tests/plugin_23_sniffer_with_headers` covers.
+
+Emission is idempotent: a function already carrying a `sourceMappingURL` line is skipped, so listing
+the step twice, or falling through to the teardown after it already ran, never doubles a comment.
 
 ### When the pack is copied out of the workspace
 

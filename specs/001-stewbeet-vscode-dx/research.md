@@ -149,7 +149,9 @@ This also **retires the field-level attribution idea**. It existed to point at a
 It cannot be recorded once and trusted. `plugins/auto/headers` rewrites **every** function with `overwrite=True` to prepend a generated header block, and `auto.text_renders` / `auto.lang_file` substitute inside lines. So capture and emission are separated:
 
 1. **Capture** (during writes): each `write_function` appends `(lines, python_file, python_line)` to a per-path chunk list, mirroring the existing append / prepend / overwrite semantics exactly.
-2. **Emit** (end of pipeline): align the concatenated recorded lines against the function's final text with `difflib.SequenceMatcher`. `equal` and `replace` opcodes keep their mapping, `insert` opcodes (header lines) stay unmapped, `delete` opcodes are dropped.
+2. **Emit** (end of pipeline): align the concatenated recorded lines against the function's final text with `difflib.SequenceMatcher`. `equal` and `replace` opcodes keep their mapping, `insert` opcodes (header lines) stay unmapped, `delete` opcodes are dropped. `autojunk` must be off: its heuristic treats lines recurring in a sequence over 200 elements as noise, which mcfunction hits through repeated blanks and identical commands.
+
+**An overwrite by a library must not clear the recorded chunks.** `auto.headers` rewrites every function with `overwrite=True`, so clearing unconditionally destroys every mapping in the pack before emission ever runs. A developer's overwrite genuinely replaces provenance and does clear; a library's is a transformation and is left to alignment. The two are told apart by whether the write's origin resolves into the project.
 
 stdlib only, roughly 40 lines, and it is transformation-agnostic: a future plugin that rewrites functions needs no changes here.
 
@@ -203,7 +205,9 @@ Five things the reference settled that guesswork had got wrong or left open:
 
 ### Where do the `.map` files go?
 
-Next to the generated functions inside the build, discoverable by convention. Minecraft's function loader only reads `*.mcfunction` and ignores unknown siblings, so a dev build stays loadable. Release archives exclude them via the existing archive plugin.
+Next to the generated functions inside the build, discoverable by convention, and inside every zip the build produces. Minecraft's function loader only reads `*.mcfunction` and ignores unknown siblings, so a pack carrying maps stays loadable.
+
+The zip is the artifact that matters: `copy_to_destination` ships `<Project>_datapack.zip` into `saves/<world>/datapacks`, and Sniffer's mod resolves function paths out of whichever pack it loaded, zip included. Excluding maps from the archive would leave the `sourceMappingURL` comment pointing at a file that is not there. Keeping a release free of maps is done by not listing the plugin in a release pipeline, which is where an opt-in belongs.
 
 An optional trailing `# sourceMappingURL=foo.mcfunction.map` comment matches the standard discovery mechanism. It must be the **last** line, since Sniffer counts comment lines when placing breakpoints.
 

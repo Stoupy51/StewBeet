@@ -1,14 +1,20 @@
-# Tasks: Step A, Spyglass forwarding for StewBeet strings
+# Tasks: Step B, source map emission (`stewbeet.plugins.sniffer`)
 
 **Input**: Design documents from `/specs/001-stewbeet-vscode-dx/`
 
-**Scope**: **Step A only.** Completion, hover, signature help and a definition that lands in the generated `.mcfunction`, all inside StewBeet `write_*` string blocks. No build required, no source maps, no bolt. Steps B through G are out of scope for this file.
+**Scope**: **Step B only.** A build emits Source Map v3 `.mcfunction.map` sidecars linking each generated line back to the Python line that wrote it, and only ever to the project's own source. Python-only; the VS Code extension is not touched.
 
-**Prerequisites**: [plan.md](./plan.md), [spec.md](./spec.md), [contracts/spyglass-integration.md](./contracts/spyglass-integration.md) (the implementation reference for every task here), [contracts/extension-api.md](./contracts/extension-api.md).
+**Prerequisites**: [contracts/source-map.md](./contracts/source-map.md) (the output contract, validated against a working reference at [contracts/reference/](./contracts/reference/)), [research.md](./research.md) (origin resolution, capture points, alignment), [data-model.md](./data-model.md) (entities), [plan.md](./plan.md).
 
-**Gate**: already cleared. The Q2 spike passed, see [spike/](./spike/). Do not re-derive the mechanism, it is proven and documented.
+**Explicitly out of scope**, named rather than dropped, per the constitution's scope-discipline rule:
 
-**Tests**: included. plan.md specifies `node --test` following the existing `test/blocks.test.js` pattern, and quickstart.md requires an offset-preservation assertion. Unit tests cover the pure modules only (`npm test`, scoped to `test/*.test.js`); the VS Code-dependent parts are covered by the integration harness in Phase 6 (`npm run test:integration`).
+- **B2**: wiring `attribute_to(...)` into StewBeet's own generation loops (FR-011, FR-012). The scope machinery is built here so B2 is roughly five lines per plugin; no plugin is instrumented in this pass. Until B2, plugin-generated content resolves to tier 3 and is emitted **unmapped**, which is correct and safe.
+- **C**: the extension consuming the maps. **E**: the mecha emitter. **D, F, G**: bolt work. See [contracts/dialects.md](./contracts/dialects.md).
+
+**Tests**: included, following the repository's existing conventions rather than new ones.
+
+- Integration: numbered folders under `python_package/tests/`, each a `beet.yml` pipeline ending in `src.assertions`, discovered by `python_package/scripts/run_integration_tests.py`. Next free number is 22.
+- Doctests in the modules themselves, run by `python_package/scripts/all_doctests.py`.
 
 ## Format: `[ID] [P?] [Story] Description`
 
@@ -18,101 +24,113 @@
 
 ## Path Conventions
 
-All step A work is in `extension/vscode/`. No Python changes, no new npm dependencies: Spyglass is reached through `vscode.commands.executeCommand`, and the extension stays CommonJS `src/*.js` as it is today.
+All work is under `python_package/`. Code is `pyright` strict and `ruff check` clean, tabs for indentation, two trailing newlines per file, structural `# Imports` / `# Constants` / `# Classes` / `# Functions` banners.
 
 ---
 
 ## Phase 1: Setup
 
-**Purpose**: Configuration surface, before any behaviour exists
+**Purpose**: Package skeleton and the pipeline hook, before any behaviour exists
 
-- [X] T001 Add `StewBeet.languageFeatures` boolean setting (default `true`) to the `contributes.configuration.properties` block in `extension/vscode/package.json`, described as the master switch for Spyglass-backed language features
-- [X] T002 Confirm `activationEvents` in `extension/vscode/package.json` still contains only `onLanguage:python`, and that Spyglass is **not** added to `extensionDependencies` (NFR-003 requires it stay a soft dependency)
+- [X] T001 Create the package `python_package/stewbeet/plugins/sniffer/__init__.py` with a `beet_default(ctx: Context)` entry point that sets `Mem.ctx = ctx` and returns immediately, following the shape of `python_package/stewbeet/plugins/compute_sha1/__init__.py`, including the `@stp.measure_time` decorator and the lazy-import preamble every plugin carries
+- [X] T002 [P] Create the integration test folder `python_package/tests/plugin_22_sniffer_source_maps/` with a `beet.yml` whose pipeline is `src.definitions`, `src.link`, `stewbeet.plugins.sniffer`, `src.assertions`, modelled on `tests/plugin_10_auto_headers/beet.yml`. Deliberately **omit** `stewbeet.plugins.auto.headers` so this fixture exercises emission without post-processing
+- [X] T003 [P] Add `source_map_chunks: dict[str, list[WriteChunk]]` and `attribution: list[AttributionScope]` to `python_package/stewbeet/core/__memory__.py`, documented under each field like the existing `Mem` state, and reset both in `stewbeet/plugins/initialize` alongside the other per-build state so `beet watch` does not accumulate across rebuilds
 
-**Checkpoint**: Settings exist, nothing reads them yet
+**Checkpoint**: The plugin loads and does nothing.
 
 ---
 
 ## Phase 2: Foundational (Blocking Prerequisites)
 
-**Purpose**: The virtual document machinery. Every user story below is a thin provider on top of it.
+**Purpose**: The entities and the origin resolver. Every user story below sits on these.
 
 **CRITICAL**: No user story work can begin until T009 is done.
 
-### Block scanning
+### Entities
 
-- [X] T003 Extend `findClosingQuote` and `skipInterpolation` in `extension/vscode/src/blocks.js` to record the `{...}` spans they skip, and export a new `findInterpolationSpans(text, block)` returning `{start, end}[]` for one block. Do not change `findBlockOffsets`'s existing return shape, `test/blocks.test.js` must keep passing
-- [X] T004 [P] Add unit tests for `findInterpolationSpans` in `extension/vscode/test/blocks.test.js`, covering a plain string, a single `{name}`, nested braces, a literal `{{`, and an interpolation containing its own quoted string
+- [X] T004 [P] Create `python_package/stewbeet/plugins/sniffer/model.py` with frozen dataclasses `SourceOrigin` (file, line, column, exact), `WriteChunk` (lines, origin), `AttributionScope` (origin), `LineMapping` (generated_line, source_index, source_line, source_column) and `FunctionSourceMap` (generated_path, source_root, sources, mappings), exactly as specified in [data-model.md](./data-model.md). No `dict[str, dict[...]]` blobs anywhere
 
-### Virtual documents
+### Origin resolution
 
-- [X] T005 [P] Create the pure `project(text, start, end, interpolationSpans)` function: every character outside `[start, end)` becomes a space, newlines are preserved, and each interpolation span becomes a same-length run of `_`. See spyglass-integration.md Part 3. **Shipped in `extension/vscode/src/projection.js`, not `virtual.js`**: `virtual.js` must import `vscode` and would be untestable under `node --test`, and the constitution requires JavaScript modules that can be pure to have no `vscode` import
-- [X] T006 [P] Add the pure virtual URI helpers to `extension/vscode/src/projection.js`. **Shipped as `virtualPath(blockIndex, baseName)` and `blockIndexFromPath(path)`**, with the originating document carried in the URI's `query` rather than an encoded path segment: VS Code decodes percent escapes in a path and would corrupt an encoded `file:///d:/...` embedded there. The `.mcfunction` suffix is load-bearing, it is what assigns the language id
-- [X] T007 Add unit tests in `extension/vscode/test/projection.test.js` asserting that `project()` output has **exactly** the same length as its input and the same newline positions, that content inside the block is byte-identical, and that URI encode/decode round-trips. Offset identity is the property the whole design rests on
-- [X] T008 Add `blockAt(document, position)` to `extension/vscode/src/virtual.js`, returning the block index containing the position or `undefined`, built on `findBlockOffsets` from `blocks.js`
-- [X] T009 Add the `TextDocumentContentProvider` for the `stewbeet-mcfunction` scheme to `extension/vscode/src/virtual.js`, with a cache keyed by `(python uri, block index)`, an `onDidChange` emitter fired for affected virtual URIs on `workspace.onDidChangeTextDocument`, and cache eviction when the Python document closes
+- [X] T005 [P] Implement the project-source filter in `python_package/stewbeet/plugins/sniffer/origin.py`: a path qualifies only when it is under a configured root (defaulting to `ctx.directory`, beet's project directory) **and** not under the package directory of `stewbeet`, `beet`, `bolt`, `mecha` or `stouputils`, and contains no `site-packages` component. The second condition is not implied by the first: StewBeet is frequently installed editable from inside the repository being built, so a library path can sit under the project root
+- [X] T006 Implement the cached AST index in `python_package/stewbeet/plugins/sniffer/origin.py`: parse a caller file once with `ast`, cache by path and mtime, and expose a lookup from a line number to the enclosing write call and the position of its content argument. Recognise the six `write_*` functions plus `.append(...)` and `.prepend(...)` on a `Resource.obj`. A `Constant` str or `JoinedStr` argument yields the literal's own `lineno`; anything else yields the call line with `exact=False`
+- [X] T007 Implement tier 1 of `resolve_origin()` in `python_package/stewbeet/plugins/sniffer/origin.py`: walk outward with `sys._getframe` and return the innermost frame that passes the project-source filter **and** whose line the AST index confirms is a write call. The AST condition is what makes the tier order work: without it a plugin-generated write resolves to the user's `main()` entry point, which passes the filter and authored nothing, so tier 1 would always win and tier 2 would never fire
+- [X] T008 [P] Implement the attribution scope in `python_package/stewbeet/plugins/sniffer/attribution.py`: an `attribute_to(definition)` context manager pushing an `AttributionScope` onto `Mem.attribution`, reentrant, innermost wins. Add tier 2 to `resolve_origin()` reading the top of that stack, and tier 3 returning `None`. No StewBeet plugin is instrumented in this pass, that is step B2
+- [X] T009 [P] Capture the declaration site on `Item`: add `origin: SourceOrigin | None` to `python_package/stewbeet/core/cls/item.py` as a non-init field excluded from `repr`, `compare` and `to_dict`, populated in `__post_init__` by the same tier-1 walk. `Item` is `@dataclass(kw_only=True, slots=True)`, so this must be a declared field rather than an attribute set afterwards
 
-### Forwarding helper
+### Capture
 
-- [X] T010 Add `forward(command, document, position, ...extraArgs)` to `extension/vscode/src/virtual.js`: return `undefined` when `StewBeet.languageFeatures` is false or `blockAt` misses, otherwise `await vscode.workspace.openTextDocument(virtualUri)` then `vscode.commands.executeCommand(command, virtualUri, position, ...extraArgs)`. Every failure resolves to `undefined`, nothing throws, nothing logs above debug (NFR-003)
-- [X] T011 Wire `virtual.js` into `activate()` in `extension/vscode/src/extension.js`: register the content provider, push it onto `context.subscriptions`, and leave the existing decoration logic untouched
+- [X] T010 Implement capture in `python_package/stewbeet/plugins/sniffer/capture.py` by patching `beet.Function.append` and `.prepend` at plugin activation and restoring them at teardown. The plugin belongs in `require`, so activation happens before beet loads the pack and no write can precede it; the pack's own hand-written functions then record chunks with no origin, which produce no map. This is the single choke point every incremental write flows through, `write_function`'s own append and prepend included. Guard the patch by checking the methods look as expected and degrade to emitting nothing plus one warning if beet's internals have moved
+- [X] T011 Add capture to the overwrite branch of `write_function` in `python_package/stewbeet/core/utils/io/functions.py`, which constructs a fresh `Function` and assigns it into the container rather than appending, so the `Function.append` hook never sees it. Clear the path's chunk list first, mirroring the overwrite semantics exactly
+- [X] T012 Make chunk recording mirror `write_function` exactly in `python_package/stewbeet/plugins/sniffer/capture.py`: append adds a chunk, prepend inserts at index 0, overwrite clears then appends, and a `condition` returning `False` records nothing. Several chunks with different origins in one list is the normal case, not an edge case
 
-**Checkpoint**: A virtual document can be produced and requests can be forwarded. No provider is registered yet, so the editor behaves exactly as before.
-
----
-
-## Phase 3: User Story 1 - Completing a command (Priority: P1) 🎯 MVP
-
-**Goal**: An author typing `execute as @a run ` inside a `write_function` string gets the same completion list Spyglass offers in a `.mcfunction` file, including the project's own function paths.
-
-**Independent Test**: Open a StewBeet `.py` file, put the caret mid-command inside a `write_*` string, trigger suggest, and see vanilla commands. Put the caret on `write_function` itself and see normal Python completions with no mcfunction items. Maps to spec Scenario 1 and FR-001.
-
-- [X] T012 [US1] Implement `CompletionItemProvider` in `extension/vscode/src/virtual.js` forwarding to `vscode.executeCompletionItemProvider`, passing `context.triggerCharacter` and an `itemResolveCount` of 50. Without the resolve count items arrive with no `documentation` or `detail`, because VS Code will not call `resolveCompletionItem` for items this extension did not create
-- [X] T013 [US1] Register the provider on `{ language: 'python' }` in `extension/vscode/src/extension.js` with Spyglass's own eleven mcfunction trigger characters, exactly: `' '`, `'['`, `'='`, `'!'`, `','`, `'{'`, `':'`, `'/'`, `'.'`, `'"'`, `"'"`. Any other set makes completion fire in different places than it does in a real `.mcfunction` file
-- [X] T014 [US1] Verify results need no range translation. Evidence is T007's offset-identity property tests (same length, same newline positions, block content byte-identical), which make any returned range valid in the Python document by construction, plus the integration harness applying real Spyglass completions at a Python position
-
-**Checkpoint**: Issue #41's headline ask is closed. Completion works with no build and no source maps.
+**Checkpoint**: Chunks and origins are recorded during a build. Nothing is written to disk yet.
 
 ---
 
-## Phase 4: User Story 2 - Hover and signature help (Priority: P1)
+## Phase 3: User Story 1 - A third-party debugger can consume the maps (Priority: P1) 🎯 MVP
 
-**Goal**: The same block gives Spyglass's hover and signature help, so an author can read what a selector or argument means without leaving the string.
+**Goal**: `beet build` with the plugin in the pipeline emits one `.mcfunction.map` beside each generated function, in a format Sniffer can read without knowing anything about StewBeet.
 
-**Independent Test**: Hover `@a` inside a block and see Spyglass's selector hover. Type a command and see the signature. Both absent outside a block. Maps to FR-002.
+**Independent Test**: Build `tests/plugin_22_sniffer_source_maps`, decode a map, and land on the `write_function` string that produced the command. Maps to spec Scenario 4 and FR-004, FR-005, FR-006.
 
-- [X] T015 [P] [US2] Implement `HoverProvider` in `extension/vscode/src/virtual.js` forwarding to `vscode.executeHoverProvider`, returning the first result unchanged
-- [X] T016 [P] [US2] Implement `SignatureHelpProvider` in `extension/vscode/src/virtual.js` forwarding to `vscode.executeSignatureHelpProvider`
-- [X] T017 [US2] Register both on `{ language: 'python' }` in `extension/vscode/src/extension.js`, with a single space as the signature help trigger character to match Spyglass's server capability
+- [X] T013 [US1] Implement base64 VLQ encoding in `python_package/stewbeet/plugins/sniffer/encode.py`, with the standard alphabet and continuation bit, sign in the least significant bit. Roughly fifteen lines; see the reference linked from [contracts/source-map.md](./contracts/source-map.md)
+- [X] T014 [US1] Implement the `mappings` string builder in `python_package/stewbeet/plugins/sniffer/encode.py`: one segment per mapped generated line as `[generatedColumn, sourceIndex, sourceLine, sourceColumn]`, all four **delta-encoded against the previous segment in the file rather than within the line**, generated column always 0, all values 0-based. A generated line with no origin emits an **empty group** (two consecutive `;`); trailing unmapped lines emit **no group at all** and the string simply ends. Those two are distinct and both legal
+- [X] T015 [US1] Add doctests to `python_package/stewbeet/plugins/sniffer/encode.py` proving conformance with someone else's encoder: encoding the line table of `contracts/reference/.../hit.mcfunction.map` MUST produce exactly `AAKA;AACA;AACA;AAAA;AACA`, and `aura.mcfunction.map`'s MUST produce exactly `AAQA;ACHA;AACA`. The second is the one that matters: its `ACHA` segment moves to a different source **and** three lines backwards in one step, which a hand-rolled encoder treating deltas as per-source gets wrong while passing every fixture we write ourselves
+- [X] T016 [US1] Implement line alignment in `python_package/stewbeet/plugins/sniffer/align.py` using `difflib.SequenceMatcher` over the recorded chunk lines against the function's final text. `equal` and `replace` opcodes keep their mapping, `insert` opcodes stay unmapped, `delete` opcodes are dropped. Roughly forty lines, stdlib only, and transformation-agnostic by construction
+- [X] T017 [US1] Compute `sourceRoot` per map in `python_package/stewbeet/plugins/sniffer/encode.py` as the relative path from **the map file's own directory** to the project root, with `sources` relative to that. Depth therefore varies per function: `../../../../..` for a function at `data/ns/function/`, one more level for one under `nested/`. Nothing absolute is ever written. Omit the `sourcesContent` key entirely, it is not part of the format
+- [X] T018 [US1] Write the sidecars in `python_package/stewbeet/plugins/sniffer/emit.py`, as a pipeline step of its own listed after every writer and **before** `stewbeet.plugins.archive`: one `<name>.mcfunction.map` beside each generated function, and append `## sourceMappingURL=<basename>.mcfunction.map` as the function's **last** line, with **two** hash characters. It must be last and must be unmapped, because Sniffer counts comments and blank lines when placing breakpoints so a leading comment would shift every mapped line
+- [X] T019 [US1] Ensure emission is opt-in and costs nothing when off: capture is a no-op unless the plugin is in the pipeline, and no `.map` files exist after a build without it. The maps MUST reach the archive zip, because that zip is what `copy_to_destination` puts in `saves/<world>/datapacks` and therefore what a debugger loads. `stewbeet.plugins.archive` runs in the pipeline's forward pass, so a generator's teardown is too late; emission is its own pipeline entry placed before it, capture goes in `require` where no write can precede it, and the capture plugin's teardown writes anything left over with a warning rather than silently skipping it
+- [X] T020 [US1] Write `python_package/tests/plugin_22_sniffer_source_maps/src/assertions.py` asserting: one map per generated function; `version` is 3; `names` is empty; no `sourcesContent` key; every function's last line is the two-hash `## sourceMappingURL`; and decoding a known function's mappings lands on the expected line of the expected `src/*.py` file
 
-**Checkpoint**: The block is readable as well as writable.
+**Checkpoint**: SC-002 is reachable. A debugger can consume the output with an off-the-shelf source map library.
 
 ---
 
-## Phase 5: User Story 3 - Following a reference to the generated file (Priority: P1)
+## Phase 4: User Story 2 - A jump never lands in library code (Priority: P1)
 
-**Goal**: Ctrl+click on a resource location inside a block navigates to the generated `.mcfunction` it refers to.
+**Goal**: Every `sources` entry is a file in the project's own tree. A generated line with no valid project origin is emitted unmapped rather than pointed at `site-packages`.
 
-**Independent Test**: With a built datapack in the workspace, ctrl+click `mynamespace:greet` inside a command string and land in `build/.../greet.mcfunction`. Maps to spec Scenario 2, **partially**: step C later rewrites the target to the originating Python call site through the source map. Landing in the generated file is the honest step A answer and is useful on its own.
+**Independent Test**: Grep every emitted map's `sources` for `site-packages` and `/stewbeet/` and find nothing, including when StewBeet is installed editable from inside the project root. Maps to FR-010 and guarantee G5.
 
-- [X] T018 [US3] Implement `DefinitionProvider` in `extension/vscode/src/virtual.js` forwarding to `vscode.executeDefinitionProvider`, returning locations unchanged
-- [X] T019 [US3] Register it on `{ language: 'python' }` in `extension/vscode/src/extension.js`
-- [X] T020 [US3] Add a note to `extension/vscode/README.md` stating that definition currently lands in the generated function and that navigating to the `write_function` call arrives with source maps, so the partial behaviour is not mistaken for a bug
+**Depends on** US1's resolver: this hardens what US1 built rather than running fully parallel to it.
 
-**Checkpoint**: All three step A stories work independently.
+- [X] T021 [US2] Enforce the filter at construction in `python_package/stewbeet/plugins/sniffer/model.py`: `SourceOrigin` validates its path and a failing candidate produces `None` rather than a degraded origin. An invalid origin must be unrepresentable, because a jump into library internals is worse than no jump
+- [X] T022 [US2] Verify the editable-install case explicitly, since it is the one a naive project-root check passes and must not: with `stewbeet` installed editable from inside the repository being built, no emitted map may name a file under the `stewbeet` package directory
+- [X] T023 [P] [US2] Add to `python_package/tests/plugin_22_sniffer_source_maps/src/assertions.py` a scan of every emitted map asserting no `sources` entry contains `site-packages`, or resolves inside the `stewbeet`, `beet`, `bolt`, `mecha` or `stouputils` package directories
+- [X] T024 [P] [US2] Add an assertion that content written by a StewBeet plugin with no attribution scope is emitted **unmapped**, and in particular never attributed to the plugin's own source file nor to the project's entry point
+- [X] T025 [US2] Add doctests to `python_package/stewbeet/plugins/sniffer/origin.py` covering the filter: a project file passes, a `site-packages` path fails, and a path inside the `stewbeet` package fails even when it is under the project root
+
+**Checkpoint**: G5 holds. Navigation built on these maps cannot mislead.
+
+---
+
+## Phase 5: User Story 3 - Maps stay correct after StewBeet rewrites every function (Priority: P2)
+
+**Goal**: `auto.headers` rewrites every function with `overwrite=True` to prepend a header block, and `auto.text_renders` and `auto.lang_file` substitute inside lines. Mappings survive all of it.
+
+**Independent Test**: Build a pipeline that includes `auto.headers`, then confirm the generated header lines are unmapped and every command line still maps to its authoring line. Maps to FR-009.
+
+**Depends on** US1's aligner.
+
+- [X] T026 [US3] Create `python_package/tests/plugin_23_sniffer_with_headers/` with a `beet.yml` whose pipeline includes `stewbeet.plugins.auto.headers` **before** `stewbeet.plugins.sniffer`, so the plugin sees the rewritten text, mirroring a real project's ordering
+- [X] T027 [US3] Write `python_package/tests/plugin_23_sniffer_with_headers/src/assertions.py` asserting that the generated `#>` header lines are unmapped (empty groups), that the first real command still maps to its authoring line in `src/*.py`, and that mapped generated lines remain strictly increasing (G2)
+- [X] T028 [P] [US3] Add an assertion covering `auto.text_renders`-style in-line substitution: a line whose text was rewritten keeps its mapping, because `difflib` reports it as `replace` rather than `insert` plus `delete`
+- [X] T029 [US3] Add doctests to `python_package/stewbeet/plugins/sniffer/align.py` covering each opcode: `equal` keeps, `replace` keeps, `insert` yields unmapped lines, `delete` drops. These are the semantics the whole post-processing story rests on
+
+**Checkpoint**: FR-009 holds against StewBeet's own pipeline, not just a toy one.
 
 ---
 
 ## Phase 6: Polish & Cross-Cutting Concerns
 
-- [X] T021 [P] Port the Q2 spike from `specs/001-stewbeet-vscode-dx/spike/` into `extension/vscode/test/integration/` as a runnable regression test. It is the only thing that detects a future Spyglass release adding a `scheme` filter to its document selector, which would silently break every provider above. Record the two launch traps from `spike/README.md`: clear `ELECTRON_RUN_AS_NODE` and the `VSCODE_*` variables, and launch `Code.exe` directly rather than the detaching `code` wrapper. **The throwaway VS Code profile MUST be written to the OS temp dir, never inside the repository**: a profile in the working tree puts git askpass sockets under a directory Spyglass's file watcher cannot `scandir`, and the resulting EPERM restarts the language server until it stops retrying. `.gitignore` does not constrain file watchers
-- [X] T022 [P] Verify NFR-003 by disabling the Spyglass extension and confirming every provider resolves to `undefined`, the editor behaves exactly as it did before this feature, and nothing is logged above debug level
-- [X] T023 [P] Verify the `StewBeet.languageFeatures` setting actually gates all four providers, toggling it off and confirming the editor returns to grammar-and-decorations only
-- [X] T024 [P] Update `extension/vscode/README.md` with the new capabilities, and state that Spyglass (`SPGoding.datapack-language-server`) is an optional but strongly recommended companion
-- [X] T025 Run the Phase A section of [quickstart.md](./quickstart.md) end to end against a real project, for example [SimplEnergy](file:///d:/advanced_desktop/SimplEnergy)
-- [X] T026 Bump `version` in `extension/vscode/package.json` and add a changelog entry
-- [X] T027 [P] Verify FR-008, that the editor-only features survive a missing build. The integration harness asserts vanilla completions (83, sourced from Spyglass's game data) separately from project resource locations (`probe:alpha`, `probe:beta`, sourced from the build output), so the first is demonstrably independent of the second. Recorded as a row in [quickstart.md](./quickstart.md) Phase A
-- [X] T028 [P] Verify NFR-001 and SC-003, that no mcfunction syntax knowledge was added, by running the grep in [quickstart.md](./quickstart.md). Anchor the pattern on mcfunction token shapes (`@a[`, `scoreboard players`, `execute as|at|if|store`) rather than bare words: a plain `execute` pattern false-positives on `vscode.execute*`, a VS Code API name
+- [X] T030 [P] Verify NFR-002: median of five builds with the plugin absent must stay within 2% of a baseline, and with it enabled must stay under 20% overhead. Measure on a real project such as [SimplEnergy](file:///d:/advanced_desktop/SimplEnergy), not on a test fixture
+- [X] T031 [P] Verify NFR-001 and SC-003 by running the anchored grep from [quickstart.md](./quickstart.md) over `python_package/stewbeet/plugins/sniffer`, confirming no mcfunction syntax knowledge was added
+- [X] T032 [P] Run `ruff check src --config ./pyproject.toml` and `pyright` in strict mode over the new package. No `Any`, no `# type: ignore`, no `cast` used to silence rather than to assert an invariant
+- [X] T033 [P] Confirm `python_package/scripts/all_doctests.py` picks up every new module's doctests, and that `python_package/scripts/run_integration_tests.py` discovers both new test folders
+- [X] T034 Document the plugin in the StewBeet docs: what it emits, that it is opt-in, that maps are excluded from release archives, and that debugging should happen from `build/` because `sourceRoot` is relative and stops resolving once `copy_to_destination` copies the pack elsewhere
+- [X] T035 Run the Phase B section of [quickstart.md](./quickstart.md) end to end, including the library-leak scan
+- [X] T036 Send [contracts/source-map.md](./contracts/source-map.md) and a sample emitted map to Sniffer's author to confirm their reader accepts real StewBeet output, closing the loop on SC-002
 
 ---
 
@@ -120,42 +138,47 @@ All step A work is in `extension/vscode/`. No Python changes, no new npm depende
 
 ### Phase Dependencies
 
-- **Setup (Phase 1)**: no dependencies, start immediately
+- **Setup (Phase 1)**: no dependencies
 - **Foundational (Phase 2)**: depends on Setup. **Blocks all three user stories**
-- **US1, US2, US3 (Phases 3 to 5)**: all depend only on Phase 2, and are independent of each other
+- **US1 (Phase 3)**: depends on Phase 2. The MVP
+- **US2 (Phase 4)**: depends on US1's resolver
+- **US3 (Phase 5)**: depends on US1's aligner
 - **Polish (Phase 6)**: depends on the stories you intend to ship
 
 ### Within Phase 2
 
 ```
-T003 ──> T004
-     └─> T008 ──> T009 ──> T010 ──> T011
-T005 ──> T007
-T006 ──> T007
+T004 ──> T005 ──> T006 ──> T007 ──> T010 ──> T011 ──> T012
+              └─> T008
+              └─> T009
 ```
 
-T005 and T006 are pure and independent of T003. T008 needs `blocks.js`, T009 needs the projection and the URI codec, T010 needs the provider.
+T005 is the filter every tier depends on. T008 and T009 are independent of each other once T007 lands.
 
-### User Story Dependencies
+### Within US1
 
-None between them. Each is a provider registration on top of `forward()`. US1 is the MVP; US2 and US3 are each two to three tasks once Phase 2 exists.
+```
+T013 ──> T014 ──> T015          (encoder, proven against the reference)
+T016 ─────────────┐
+T017 ─────────────┴──> T018 ──> T019 ──> T020
+```
 
 ### Parallel Opportunities
 
-- T004, T005, T006 can run together after T003
-- T015 and T016 can run together
-- All of Phase 6 except T025 and T026 can run together
-- US1, US2 and US3 can be worked in parallel by different people once T011 lands
+- T002 and T003 in Setup
+- T004, T005, T008, T009 early in Phase 2
+- T013 to T015 (encoder) run parallel to T016 (aligner): different files, no shared state
+- T023, T024 within US2
+- Most of Phase 6
 
 ---
 
-## Parallel Example: Phase 2
+## Parallel Example: US1 encoder and aligner
 
 ```bash
-# After T003 lands, these three touch different concerns:
-Task: "Unit tests for findInterpolationSpans in extension/vscode/test/blocks.test.js"
-Task: "Pure project() function in extension/vscode/src/virtual.js"
-Task: "Pure encodeVirtualUri/decodeVirtualUri in extension/vscode/src/virtual.js"
+# Different files, no shared state, both feed T018:
+Task: "VLQ + mappings builder + reference conformance doctests in plugins/sniffer/encode.py"
+Task: "difflib alignment of recorded chunks against final text in plugins/sniffer/align.py"
 ```
 
 ---
@@ -164,12 +187,14 @@ Task: "Pure encodeVirtualUri/decodeVirtualUri in extension/vscode/src/virtual.js
 
 ### MVP: Phases 1 to 3
 
-Setup, Foundational, then User Story 1. That is roughly 13 tasks and closes the headline half of issue #41, with no build, no source map and no bolt work. **Stop and validate here** against a real project before continuing.
+Setup, Foundational, then User Story 1. That is 20 tasks and produces maps a third-party debugger can read, which is the whole point of step B and the thing Sniffer is waiting on. **Stop and validate here** with T036 before continuing.
 
 ### Incremental delivery
 
-US2 and US3 are cheap additions once Phase 2 exists, two to three tasks each, and both are shippable independently. Phase 6's T021 is the one polish task worth doing before release rather than after, because it is the regression guard for the entire mechanism.
+US2 is small and critical; do it before anyone builds navigation on the output, because a map that points into `site-packages` is worse than no map. US3 is what makes the plugin usable on a real StewBeet project, since `auto.headers` runs in essentially all of them.
 
-### What this file deliberately excludes
+### The two places this is most likely to go wrong
 
-Steps B through G from [contracts/dialects.md](./contracts/dialects.md): source map emission, attribution scopes, map-driven navigation and diagnostics, the `bolt` language id, the mecha AST emitter, bolt live editing, and the upstream Spyglass plugin API. Each needs its own tasks pass. In particular T020 exists precisely because step A's definition behaviour is partial and should be documented as such rather than quietly shipped as if complete.
+**T015**, the reference conformance doctests. VLQ deltas are file-wide rather than per-source. An encoder that gets this wrong passes every fixture we write ourselves and fails only against someone else's output, which is exactly why the reference is committed.
+
+**T007**, the AST condition on tier 1. Without it every ctrl+click in the project eventually lands on the user's `main()`, because that frame passes the project-source filter while having authored nothing.
