@@ -123,11 +123,24 @@ exports.run = async () => {
     const sig = await vscode.commands.executeCommand("vscode.executeSignatureHelpProvider", py.uri, IN_COMMAND);
     note("us2_signatureHelp", sig ? (sig.signatures || []).length : "none");
 
-    // US3: definition lands in the generated .mcfunction.
+    // US3: definition crosses back to the Python that wrote the command.
+    //
+    // Step A landed in the generated alpha.mcfunction, which is build output nobody edits.
+    // The fixture ships alpha.mcfunction.map beside it, so step C rewrites the answer to
+    // demo.py. Delete that map and the old behaviour comes back, which is the fallback.
     const defs = await vscode.commands.executeCommand("vscode.executeDefinitionProvider", py.uri, ON_PATH);
-    const targets = (defs || []).map(d => String((d.uri || d.targetUri || {}).fsPath || ""));
+    const answers = defs || [];
+    // Records which of the two shapes actually arrives, since both are handled and neither is
+    // guaranteed by the API. See src/navigation.js targetOf.
+    note("us3_answerShape", answers.length === 0 ? "none" : (answers[0].targetUri ? "LocationLink" : "Location"));
+    const targets = answers.map(d => String((d.uri || d.targetUri || {}).fsPath || ""));
+    const lines = answers.map(d => (d.range || d.targetSelectionRange || d.targetRange || {}).start?.line);
     note("us3_definitionTargets", targets);
-    expect("US3 definition resolves to the generated function", targets.some(t => t.endsWith("alpha.mcfunction")), targets);
+    note("us3_definitionLines", lines);
+    expect("US3 definition resolves back to the Python source", targets.some(t => t.endsWith("demo.py")), targets);
+    expect("US3 definition lands on the write_function line", lines.includes(2), lines);
+    expect("US3 definition no longer stops at the generated file",
+      !targets.some(t => t.endsWith("alpha.mcfunction")), targets);
 
     // The settings gate.
     const cfg = vscode.workspace.getConfiguration("StewBeet");

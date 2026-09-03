@@ -29,14 +29,14 @@ Registered on `{ language: 'python' }`, each provider first asks `blocks.js` whe
 | `CompletionItemProvider` | `vscode.executeCompletionItemProvider` | Trigger characters are Spyglass's own eleven for mcfunction: `' '`, `'['`, `'='`, `'!'`, `','`, `'{'`, `':'`, `'/'`, `'.'`, `'"'`, `"'"`. Pass an `itemResolveCount` or items arrive without documentation. Results are returned as-is; `additionalTextEdits` and `textEdit` ranges are already in matching coordinates. |
 | `HoverProvider` | `vscode.executeHoverProvider` | Ranges pass through unchanged. |
 | `SignatureHelpProvider` | `vscode.executeSignatureHelpProvider` | |
-| `DefinitionProvider` | `vscode.executeDefinitionProvider`, then the source map | Phase A returns Spyglass's answer (the generated `.mcfunction`). Phase C intercepts it and rewrites the target to the Python origins. Returns `Location[]`, one per distinct source in the target's map, ordered by generated line, so a function assembled from a declaration and a developer append opens the peek list with both. Falls back to the generated file when the map has no sources. |
+| `DefinitionProvider` | `vscode.executeDefinitionProvider`, then the source map | Phase C intercepts Spyglass's answer (the generated `.mcfunction`) and rewrites the target to the Python origins. Spyglass answers with `Location`, not `LocationLink`, confirmed by the integration run and recorded as `us3_answerShape`; both shapes are handled since the API guarantees neither. Returns `Location[]`, one per distinct source in the target's map, ordered by generated line, so a function assembled from a declaration and a developer append opens the peek list with both. Falls back to the generated file when the map has no sources. |
 | `ReferenceProvider` | `vscode.executeReferenceProvider`, then the source map | Every generated hit is rewritten to its Python origin. Hits with no origin are returned as generated locations. |
 
 **Contract with Spyglass**: none, beyond it registering providers for language id `mcfunction` without a scheme restriction. Verified true today. If a future Spyglass release restricts the scheme, the fallback is to spawn a private `@spyglassmc/language-server` process (see research.md, Option A risks).
 
 **Failure mode**: if no provider answers, every forwarded request resolves to `undefined` and the editor behaves exactly as it does today. Nothing throws, nothing is logged at error level.
 
-## Diagnostic relay (step C, not implemented)
+## Diagnostic relay (step C, shipped)
 
 **Collection name**: `stewbeet`
 
@@ -51,13 +51,13 @@ Diagnostics are grouped per Python file and replaced wholesale on each change, s
 
 ## Commands
 
-**None of these are implemented yet.** All three depend on source maps and land with step C; `package.json` contributes no commands today.
+All three are shipped in 1.2.0 and depend on the source maps a build emits. Without a build they report on the status bar that the line has no recorded origin rather than doing nothing silently.
 
 | Command | Step | Title | Behaviour |
 |---|---|---|---|
-| `stewbeet.goToGenerated` | C | StewBeet: Go to Generated Function | From a Python position inside a block, open the generated `.mcfunction` at the mapped line. The inverse of ctrl+click. |
-| `stewbeet.goToSource` | C | StewBeet: Go to Python Source | From a generated `.mcfunction` position, open the Python source at the mapped line. |
-| `stewbeet.reloadSourceMaps` | C | StewBeet: Reload Source Maps | Drop the decoded map cache. An escape hatch when a build finishes outside the watcher's view. |
+| `stewbeet.goToGenerated` | **C, shipped** | StewBeet: Go to Generated Function | From a Python position inside a block, open the generated `.mcfunction` at the mapped line. The inverse of ctrl+click. |
+| `stewbeet.goToSource` | **C, shipped** | StewBeet: Go to Python Source | From a generated `.mcfunction` position, open the Python source at the mapped line. |
+| `stewbeet.reloadSourceMaps` | **C, shipped** | StewBeet: Reload Source Maps | Drop the decoded map cache. An escape hatch when a build finishes outside the watcher's view. |
 
 ## Settings
 
@@ -66,8 +66,8 @@ Added to the existing `StewBeet.*` configuration block:
 | Setting | Step | Type | Default | Meaning |
 |---|---|---|---|---|
 | `StewBeet.languageFeatures` | **A, shipped** | `boolean` | `true` | Master switch for the forwarded providers. |
-| `StewBeet.buildOutput` | C | `string` | `""` | Glob or path to the generated datapack root. Empty means autodetect by searching the workspace for `pack.mcmeta` under a `build` directory. |
-| `StewBeet.sourceMapDiagnostics` | C | `boolean` | `true` | Whether to relay generated-file diagnostics onto Python. |
+| `StewBeet.buildOutput` | **C, shipped** | `string` | `""` | Glob or path to the generated datapack root. Empty means autodetect by searching the workspace for `pack.mcmeta` under a `build` directory. |
+| `StewBeet.sourceMapDiagnostics` | **C, shipped** | `boolean` | `true` | Whether to relay generated-file diagnostics onto Python. |
 
 ## Backwards compatibility
 

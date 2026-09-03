@@ -16,6 +16,7 @@
 const vscode = require("vscode");
 const { findBlockOffsets, findInterpolationSpans } = require("./blocks");
 const { SCHEME, project, virtualPath, blockIndexFromPath } = require("./projection");
+const navigation = require("./navigation");
 
 // ─── Constants──────────────
 
@@ -186,8 +187,18 @@ const signatureHelpProvider = {
 
 const definitionProvider = {
   /** @param {vscode.TextDocument} doc @param {vscode.Position} position */
-  provideDefinition(doc, position) {
-    return forward("vscode.executeDefinitionProvider", doc, position);
+  async provideDefinition(doc, position) {
+    // Spyglass answers with the generated .mcfunction, which is build output nobody edits.
+    // The source maps turn that into the write_* call that produced it; without a build there
+    // is nothing to turn it into, and its answer is returned unchanged.
+    return navigation.resolve(await forward("vscode.executeDefinitionProvider", doc, position));
+  },
+};
+
+const referenceProvider = {
+  /** @param {vscode.TextDocument} doc @param {vscode.Position} position */
+  async provideReferences(doc, position) {
+    return navigation.resolve(await forward("vscode.executeReferenceProvider", doc, position));
   },
 };
 
@@ -217,5 +228,6 @@ module.exports = {
   hoverProvider,
   signatureHelpProvider,
   definitionProvider,
+  referenceProvider,
   registerVirtualDocuments,
 };

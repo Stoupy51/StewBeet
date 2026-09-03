@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "alpha.mcfunction",
+	"sourceRoot": "../../..",
+	"sources": [
+		"demo.py"
+	],
+	"names": [],
+	"mappings": "AAEA"
+}

@@ -22,6 +22,8 @@ All settings are under `StewBeet.*` in your `settings.json`:
 | Setting                  | Default                 | Description                     |
 | ------------------------ | ----------------------- | ------------------------------- |
 | `languageFeatures`       | `true`                  | Completion, hover, signature help and go-to-definition inside mcfunction strings |
+| `buildOutput`            | `""`                    | Where the generated datapack is. Empty autodetects a `pack.mcmeta` under `build` |
+| `sourceMapDiagnostics`   | `true`                  | Show build errors on the Python line that wrote the command |
 | `enableBlockDecorations` | `true`                  | Toggle block decorations on/off |
 | `backgroundColor`        | `rgba(80,40,0,0.15)`    | Background fill color           |
 | `borderColor`            | `rgba(200,120,30,0.30)` | Border color                    |
@@ -70,13 +72,40 @@ Inside those same blocks, and nowhere else:
 | Completion | Vanilla commands, plus the resource locations your own pack defines |
 | Hover | Spyglass's documentation for selectors, arguments and resource locations |
 | Signature help | The argument list of the command you are typing |
-| Go to definition | Jumps to the generated `.mcfunction` a resource location refers to |
+| Go to definition | Jumps to the `write_function` call that produced the resource location |
+| Find references | Every Python call site that writes to a resource location |
+| Diagnostics | Build errors mirrored onto the Python line that wrote the command |
 
 Completion knows about your project's own functions once the pack has been built at least once, because it resolves against the same symbol table Spyglass builds from your build output.
 
 Turn the whole thing off with `"StewBeet.languageFeatures": false`.
 
-> **Note on go to definition.** It currently lands on the **generated** `.mcfunction` file, not on the `write_function` call that produced it. Jumping back to the Python source needs source maps, which the build does not emit yet. This is a known limitation, not a bug.
+### Crossing back to your Python (requires a build)
+
+Go to definition, find references and the relayed diagnostics all read the `.mcfunction.map`
+sidecars your build emits. Produce them by putting the sniffer plugin in your pipeline:
+
+```yaml
+require:
+    - "stewbeet"
+    - "stewbeet.plugins.sniffer"
+
+pipeline:
+    - "..."
+    - "stewbeet.plugins.sniffer.emit"
+    - "stewbeet.plugins.archive"
+```
+
+Three commands come with it, from the palette:
+
+| Command | What it does |
+| ------- | ------------ |
+| StewBeet: Go to Python Source | From a generated `.mcfunction`, open the Python that wrote the line |
+| StewBeet: Go to Generated Function | The inverse, from a Python line to what it produced |
+| StewBeet: Reload Source Maps | Drop the cache when a build finished outside the watcher's view |
+
+Without a build there are no maps, and go to definition falls back to opening the generated
+`.mcfunction`, exactly as it did in 1.1.0. Nothing errors and nothing else changes.
 
 ## Grammar
 

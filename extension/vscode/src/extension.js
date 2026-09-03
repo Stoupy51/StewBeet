@@ -9,8 +9,12 @@ const {
   hoverProvider,
   signatureHelpProvider,
   definitionProvider,
+  referenceProvider,
   registerVirtualDocuments,
 } = require("./virtual");
+const navigation = require("./navigation");
+const sourcemap = require("./sourcemap");
+const { registerDiagnosticRelay } = require("./diagnostics");
 
 // ─── Constants──────────────
 
@@ -99,6 +103,8 @@ function activate(context) {
   );
 
   registerLanguageFeatures(context);
+  registerSourceMaps(context);
+  registerDiagnosticRelay(context);
 }
 
 // ─── Language features──────
@@ -118,10 +124,72 @@ function registerLanguageFeatures(context) {
     vscode.languages.registerHoverProvider(python, hoverProvider),
     vscode.languages.registerSignatureHelpProvider(python, signatureHelpProvider, " "),
     vscode.languages.registerDefinitionProvider(python, definitionProvider),
+    vscode.languages.registerReferenceProvider(python, referenceProvider),
   );
 }
 
 function deactivate() { disposeDecos(); }
+
+// ─── Source maps────────────
+
+/**
+ * Keep the decoded maps fresh, and expose the three commands that use them.
+ *
+ * The decode cache validates itself against each file's mtime, so the watcher exists for the
+ * reverse index, which is built by scanning every map at once and cannot notice one changing.
+ * @param {vscode.ExtensionContext} context
+ */
+function registerSourceMaps(context) {
+  const watcher = vscode.workspace.createFileSystemWatcher(`**/*${sourcemap.MAP_SUFFIX}`);
+  const drop = () => sourcemap.clearCache();
+
+  context.subscriptions.push(
+    watcher,
+    watcher.onDidChange(drop),
+    watcher.onDidCreate(drop),
+    watcher.onDidDelete(drop),
+    vscode.commands.registerCommand("stewbeet.reloadSourceMaps", drop),
+    vscode.commands.registerCommand("stewbeet.goToSource", goToSource),
+    vscode.commands.registerCommand("stewbeet.goToGenerated", goToGenerated),
+  );
+}
+
+/** Open the Python that wrote the command under the cursor, from a generated .mcfunction. */
+async function goToSource() {
+  const editor = vscode.window.activeTextEditor;
+  if (!editor || !navigation.isGenerated(editor.document.uri)) return;
+
+  const origin = sourcemap.originOf(editor.document.uri.fsPath, editor.selection.active.line);
+  if (!origin) {
+    vscode.window.setStatusBarMessage("StewBeet: this line has no recorded origin", 3000);
+    return;
+  }
+  await reveal(vscode.Uri.file(origin.file), origin.line, origin.column);
+}
+
+/** Open the generated function a Python line produced, the inverse of ctrl+click. */
+async function goToGenerated() {
+  const editor = vscode.window.activeTextEditor;
+  if (!editor || editor.document.languageId !== "python") return;
+
+  const maps = await navigation.findMaps();
+  const targets = sourcemap.generatedFrom(maps, editor.document.uri.fsPath, editor.selection.active.line);
+  if (targets.length === 0) {
+    vscode.window.setStatusBarMessage("StewBeet: this line generated nothing in the current build", 3000);
+    return;
+  }
+  const target = targets[0];
+  await reveal(vscode.Uri.file(target.file), target.line, 0);
+}
+
+/** @param {vscode.Uri} uri @param {number} line @param {number} column */
+async function reveal(uri, line, column) {
+  const document = await vscode.workspace.openTextDocument(uri);
+  const editor = await vscode.window.showTextDocument(document);
+  const position = new vscode.Position(line, column);
+  editor.selection = new vscode.Selection(position, position);
+  editor.revealRange(new vscode.Range(position, position), vscode.TextEditorRevealType.InCenterIfOutsideViewport);
+}
 
 // ─── Block detection────────
 
