@@ -6,3 +6,9 @@ function probe:alpha
 """)
 
 x = 1
+
+ns = "probe"
+
+write_function(f"{ns}:gamma", f"""
+function {ns}:alpha
+""")

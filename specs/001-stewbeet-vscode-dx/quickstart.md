@@ -126,24 +126,29 @@ With phase B's build present:
 |---|---|
 | Ctrl+click `test:demo` inside a command string | Cursor lands on the `write_function("test:demo", ...)` call |
 | Ctrl+click a path built from an f-string | Same, because the map resolves it |
+| Ctrl+click an **interpolated** path (`function {ns}:utils/loop`) | Lands on the `write_function` call, the same as a literal one. The interpolation is filled in with what the build resolved it to before Spyglass sees the line |
+| Completion after `{ns}:` | Offers the pack's own function paths |
 | Ctrl+click a custom block's `place_secondary` | Peek list with both the `Block(...)` declaration and the developer's append |
 | Shift+F12 on a generated resource location | Every Python call site that generates a call to it |
-| Break a command, rebuild | A red squiggle on the Python line inside the string, sourced `stewbeet (spyglassmc)` |
+| Break a command, rebuild | A red squiggle on the Python line inside the string, sourced `stewbeet (spyglassmc)`, without opening anything under `build/` |
 | Fix it, rebuild | The squiggle clears |
+| A block that produced a function | Carries a lens above it naming the function, one click to open it |
+| `"StewBeet.resolveInterpolations": false` | Interpolations go back to `_`, and ctrl+click on one stops resolving. Everything else keeps working |
 | Delete `build/` | Navigation stops, completion from phase A keeps working |
 
-### What the first real run established
+### What a real run establishes
 
-Run against SimplEnergy with the sniffer plugin in the pipeline, on the 1.2.0 extension:
+Run against SimplEnergy with the sniffer plugin in the pipeline:
 
 | Check | Result |
 |---|---|
 | Ctrl+click a **literal** resource location | Works, lands on the `write_function` call |
-| Ctrl+click an **interpolated** one (`function {ns}:...`) | Nothing happens. The projection masks the interpolation, so Spyglass resolves nothing and C has nothing to rewrite. This is FR-018 and the reason step C2 exists |
+| Ctrl+click an **interpolated** one (`function {ns}:...`) | Works. FR-018 |
 | Shift+F12 | Works |
 | `Go to Generated Function`, then `Go to Python Source` | Both work, and land on the matching line: `execute store result score #height simplenergy.data ...` in the generated file returns to `execute store result score #height {ns}.data ...` in `machines.py` |
-| Diagnostics | Nothing until the generated file is opened by hand, then correct. FR-019 |
-| Relayed diagnostic quality | `Cannot find objective "energy.storage" (undeclaredSymbol)` on an objective a dependency declares. Correct of Spyglass, noise on a Python line. FR-020 |
+| Diagnostics | Appear on a rebuild alone, with no generated file open. FR-019 |
+| Relayed diagnostic quality | `undeclaredSymbol` is not relayed, so an objective a dependency declares raises nothing on the Python. Real errors still arrive. FR-020 |
+| Navigation without the palette | A lens above each block that produced a function. FR-021 |
 | Deleting the build | Navigation stops, completion keeps working |
 
 ## Sniffer interop (validates SC-002, part of step B)

@@ -22,8 +22,11 @@ All settings are under `StewBeet.*` in your `settings.json`:
 | Setting                  | Default                 | Description                     |
 | ------------------------ | ----------------------- | ------------------------------- |
 | `languageFeatures`       | `true`                  | Completion, hover, signature help and go-to-definition inside mcfunction strings |
-| `buildOutput`            | `""`                    | Where the generated datapack is. Empty autodetects a `pack.mcmeta` under `build` |
+| `resolveInterpolations`  | `true`                  | Fill each `{...}` with what the last build resolved it to |
+| `buildOutput`            | `""`                    | Where the generated datapack is. Empty searches the whole workspace for `.mcfunction.map` files |
 | `sourceMapDiagnostics`   | `true`                  | Show build errors on the Python line that wrote the command |
+| `diagnosticRuleDenylist` | `["undeclaredSymbol"]`  | Rules never relayed onto Python |
+| `codeLens`               | `true`                  | Show a link above each block to the function it produced |
 | `enableBlockDecorations` | `true`                  | Toggle block decorations on/off |
 | `backgroundColor`        | `rgba(80,40,0,0.15)`    | Background fill color           |
 | `borderColor`            | `rgba(200,120,30,0.30)` | Border color                    |
@@ -104,8 +107,42 @@ Three commands come with it, from the palette:
 | StewBeet: Go to Generated Function | The inverse, from a Python line to what it produced |
 | StewBeet: Reload Source Maps | Drop the cache when a build finished outside the watcher's view |
 
+A block that produced a function also carries a clickable link above it, so the second command
+is one click rather than a palette search. Turn it off with `"StewBeet.codeLens": false`.
+
 Without a build there are no maps, and go to definition falls back to opening the generated
-`.mcfunction`, exactly as it did in 1.1.0. Nothing errors and nothing else changes.
+`.mcfunction`. Nothing errors and nothing else changes.
+
+### Interpolated paths (requires a build)
+
+StewBeet code rarely writes a literal resource location. It writes this:
+
+```python
+write_function(f"{ns}:utils/loop", f"""
+function {ns}:utils/battery_switcher/loop
+execute if score #height {ns}.data matches 150.. run say high
+""")
+```
+
+Every `{...}` is Python, not mcfunction, so it is filled in with what the last build resolved
+it to before Spyglass sees the line. Ctrl+click on `{ns}:utils/battery_switcher/loop` lands on
+the `write_function` call that wrote it, completion offers your own function paths after
+`{ns}:`, and the squiggles land on the right characters.
+
+The values come from the source maps, so nothing evaluates your Python and nothing runs your
+build. A line the current build does not cover keeps the `_` mask it had before, which is also
+what happens when the build is stale enough that the surrounding text no longer matches.
+
+Turn it off with `"StewBeet.resolveInterpolations": false`.
+
+### What the diagnostics leave out
+
+`undeclaredSymbol` is not relayed by default. It fires on every scoreboard objective or tag a
+dependency declares, which Spyglass cannot see from your sources, and a false error on a Python
+line is far more intrusive than the same one in a generated file nobody opens.
+
+Relay everything with `"StewBeet.diagnosticRuleDenylist": []`, or add rules of your own to the
+list to silence them.
 
 ## Grammar
 

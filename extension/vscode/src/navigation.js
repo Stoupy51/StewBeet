@@ -130,29 +130,43 @@ function resolve(answers) {
 
 // ─── Build output───────────
 
+/** The last discovery, reused until a map is written or deleted. @type {string[] | null} */
+let discovered = null;
+
 /**
  * Every `.mcfunction.map` in the workspace's build output.
  *
- * Honours `StewBeet.buildOutput` when set, and otherwise looks for a `pack.mcmeta` under a
- * `build` directory, which is where `beet` puts one by default. A workspace with no build
- * yields an empty list and nothing else happens: navigation quietly stops working and every
- * step A feature keeps going.
+ * The whole workspace is searched, since a pack's output does not have to sit under `build/`,
+ * and `StewBeet.buildOutput` narrows it for a workspace where that costs too much. A
+ * workspace with no build yields an empty list and nothing else happens: navigation quietly
+ * stops working and every step A feature keeps going.
+ *
+ * The result is cached because the projection now asks for it on every keystroke, and a
+ * workspace-wide `findFiles` per character typed is not something an editor survives.
  *
  * @returns {Promise<string[]>}
  */
 async function findMaps() {
+  if (discovered) return discovered;
+
   const vscode = api();
   const configured = vscode.workspace.getConfiguration(CFG_KEY).get("buildOutput", "");
   const pattern = configured
     ? new vscode.RelativePattern(configured, `**/*${sourcemap.MAP_SUFFIX}`)
-    : `**/build/**/*${sourcemap.MAP_SUFFIX}`;
+    : `**/*${sourcemap.MAP_SUFFIX}`;
   try {
     const found = await vscode.workspace.findFiles(pattern, "**/node_modules/**");
-    return found.map(uri => uri.fsPath);
+    discovered = found.map(uri => uri.fsPath);
+    return discovered;
   } catch (e) {
     console.debug("[StewBeet] source map discovery failed", e);
     return [];
   }
+}
+
+/** Forget which maps exist, so the next lookup searches the workspace again. */
+function forgetMaps() {
+  discovered = null;
 }
 
 module.exports = {
@@ -162,4 +176,5 @@ module.exports = {
   rewrite,
   resolve,
   findMaps,
+  forgetMaps,
 };
