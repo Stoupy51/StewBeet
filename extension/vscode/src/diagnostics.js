@@ -44,7 +44,7 @@ const MAX_PER_PASS = 40;
 const HOLD_MS = 8000;
 
 /** The server reports on a virtual document in bursts as it parses it. */
-const LIVE_DEBOUNCE_MS = 500;
+const LIVE_DEBOUNCE_MS = 120;
 
 /** @type {vscode.DiagnosticCollection | undefined} */
 let collection;

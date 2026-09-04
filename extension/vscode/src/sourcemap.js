@@ -295,6 +295,29 @@ function generatedFilesFor(mapPaths, pythonPath) {
 }
 
 /**
+ * Every Python line of one file that produced something, with the first thing it produced.
+ *
+ * The lens belongs on the line the map recorded, which is the `write_function` call, not on
+ * the string it was handed: those are the same line when the commands are written inline and
+ * twenty lines apart when they arrive in a variable.
+ *
+ * @param {string[]} mapPaths
+ * @param {string} pythonPath
+ * @returns {Map<number, { file: string, line: number }>}
+ */
+function originLinesFor(mapPaths, pythonPath) {
+  if (!reverseIndex) reverseIndex = buildReverseIndex(mapPaths);
+
+  const lines = new Map();
+  const prefix = `${fileKey(pythonPath)}:`;
+  for (const [entry, locations] of reverseIndex) {
+    if (!entry.startsWith(prefix) || locations.length === 0) continue;
+    lines.set(Number(entry.slice(prefix.length)), locations[0]);
+  }
+  return lines;
+}
+
+/**
  * Every generated location produced by a Python line.
  *
  * The maps only run one way, so this needs an index built by reading all of them. Several
@@ -389,5 +412,6 @@ module.exports = {
   originsOf,
   generatedFrom,
   generatedFilesFor,
+  originLinesFor,
   generatedText,
 };

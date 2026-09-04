@@ -87,6 +87,10 @@ exports.run = async () => {
     }
 
     const py = await openWithRetry(vscode.Uri.file(path.join(root, "demo.py")));
+    // Shown, not merely opened: VS Code disposes a document no editor is holding, and the
+    // author always has their Python file visible. Leaving it unshown made the run drift into
+    // a state no user is ever in.
+    await vscode.window.showTextDocument(py, { preview: false });
     note("pythonLanguageId", py.languageId);
     await sleep(2000);
 

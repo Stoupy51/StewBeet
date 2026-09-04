@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.4.1
+
+- **No more errors about the mask.** An interpolation the build cannot resolve becomes a run of `_`, and a parser told that `scoreboard players add @s obj ______` is missing an integer is right about the placeholder and says nothing about your code. Every diagnostic landing on a mask is now dropped, so `{energy["generation"]}` stops carrying a permanent red line.
+- **Errors appear roughly four times sooner**, the wait before asking cut from 500 ms to 120 ms. What is left is Spyglass's own parsing time, which is not ours to shorten.
+- **The link sits on the `write_function` call**, wherever the commands were written. It followed the string before, so a block built in a variable put the link above the assignment instead of above the call.
+
 ## 1.4.0
 
 Errors now reach your Python as you type, with no build and no generated file opened. Blocks passed to `write_*` in a variable are finally seen.
