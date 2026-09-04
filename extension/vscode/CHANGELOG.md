@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.4.0
+
+Errors now reach your Python as you type, with no build and no generated file opened. Blocks passed to `write_*` in a variable are finally seen.
+
+- **Diagnostics come from the projection, not the build.** Spyglass reports on the virtual documents the extension already keeps open for completion, and their lines are in lockstep with your Python, so an error comes home with no source map involved. It appears as you type rather than after a rebuild, and nothing under `build/` is ever opened.
+- **Commands passed in a variable count as blocks.** `content: str = f"""..."""` followed by `write_function(path, content)` gets highlighting, the block box and completion, and so does a later `content += """..."""`. That was 14% of a real project going unseen.
+- **The string quotes no longer raise errors.** The projection handed `"""` to a datapack parser, which correctly replied that it is not a command. Only the commands are projected now.
+- **The `#>` header links to your Python** instead of to the file you are already reading.
+- New command **StewBeet: Show Diagnostics Status**, and the relay traces what it does to the **StewBeet** output channel.
+
+A block written in a variable still gets no interpolation substitution: the source map records the `write_function` call, and the text sits somewhere else entirely. Highlighting, completion and literal paths all work; `{ns}` stays masked there.
+
 ## 1.3.2
 
 The column translation was not reaching the requests at all, which is why completion landed a few characters to the left and accepting one could eat text.

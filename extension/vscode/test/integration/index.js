@@ -220,6 +220,7 @@ exports.run = async () => {
     // Forcing the pass separates "the event never reached us" from "the mapping is broken".
     await vscode.commands.executeCommand("stewbeet.refreshDiagnostics");
     await sleep(3000);
+    note("us5_relayStatus", await vscode.commands.executeCommand("stewbeet.diagnosticsStatus"));
     const relayed = vscode.languages.getDiagnostics(py.uri) || [];
     const ours = relayed.filter(d => String(d.source || "").startsWith("stewbeet"));
     note("us5_relayedOntoPython", ours.map(d => `${d.range.start.line}: ${d.message.slice(0, 45)}`));
