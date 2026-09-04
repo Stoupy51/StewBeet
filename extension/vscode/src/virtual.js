@@ -96,9 +96,43 @@ const onDidChangeEmitter = new vscode.EventEmitter();
  *  @type {Map<string, { sourceUri:string, uri:vscode.Uri }>} */
 const served = new Map();
 
-/** The column translation of each served document, replaced every time it is projected.
- *  @type {Map<string, Map<number, { start:number, pythonWidth:number, virtualWidth:number }[]>>} */
-const tables = new Map();
+/** One projection per document version and block, shared by the content provider and the
+ *  forwarding. Both must agree on the columns to the character: the provider decides what
+ *  Spyglass reads, and the forwarding decides where in it a position lands and where a
+ *  returned range goes back to. Deriving them separately let them drift, and an untranslated
+ *  range does not merely fail, it overwrites the wrong characters.
+ *  @type {Map<string, { version:number, text:string, table:typeof NO_SUBSTITUTION }>} */
+const projections = new Map();
+
+/** @param {string} sourceUri @param {number} blockIndex */
+function projectionKey(sourceUri, blockIndex) {
+  return `${sourceUri}#${blockIndex}`;
+}
+
+/**
+ * The projection of one block, computed once per document version.
+ * @param {vscode.TextDocument} doc
+ * @param {number} blockIndex
+ * @returns {Promise<{ version:number, text:string, table:typeof NO_SUBSTITUTION } | null>}
+ */
+async function projectionFor(doc, blockIndex) {
+  const key = projectionKey(doc.uri.toString(), blockIndex);
+  const cached = projections.get(key);
+  if (cached && cached.version === doc.version) return cached;
+
+  const block = blocksOf(doc)[blockIndex];
+  if (!block) return null;
+
+  // The content range, not the block range: the quotes belong to Python, and handing them to a
+  // datapack parser earns a diagnostic saying `"""` is not a command.
+  const text = doc.getText();
+  const { text: projected, table } = project(
+    text, block.contentStart, block.contentEnd,
+    findInterpolationSpans(text, block), await generatedFor(doc, block));
+  const entry = { version: doc.version, text: projected, table };
+  projections.set(key, entry);
+  return entry;
+}
 
 /**
  * What the build wrote for each Python line of a block, or null when substitution is off.
@@ -128,15 +162,9 @@ const contentProvider = {
     const doc = vscode.workspace.textDocuments.find(d => d.uri.toString() === sourceUri);
     if (!doc) return "";
 
-    const block = blocksOf(doc)[blockIndex];
-    if (!block) return "";
-
     served.set(uri.toString(), { sourceUri, uri });
-    const text = doc.getText();
-    const { text: projected, table } = project(
-      text, block.start, block.end, findInterpolationSpans(text, block), await generatedFor(doc, block));
-    tables.set(uri.toString(), table);
-    return projected;
+    const projection = await projectionFor(doc, blockIndex);
+    return projection ? projection.text : "";
   },
 };
 
@@ -154,12 +182,20 @@ function forget(doc) {
   const key = doc.uri.toString();
   blockCache.delete(key);
   for (const [virtualKey, entry] of served) {
-    if (entry.sourceUri === key) { served.delete(virtualKey); tables.delete(virtualKey); }
+    if (entry.sourceUri === key) served.delete(virtualKey);
+  }
+  for (const projectionEntry of [...projections.keys()]) {
+    if (projectionEntry.startsWith(`${key}#`)) projections.delete(projectionEntry);
   }
 }
 
-/** Reproject every served document, for when a build changed what the interpolations resolve to. */
+/**
+ * Reproject every served document, for when a build changed what the interpolations resolve to.
+ * The cache is keyed by document version, and a build changes none of them, so it is dropped
+ * outright rather than left to expire.
+ */
 function reproject() {
+  projections.clear();
   for (const { uri } of served.values()) onDidChangeEmitter.fire(uri);
 }
 
@@ -188,8 +224,10 @@ async function forward(command, doc, position, ...extraArgs) {
 
   const uri = virtualUriFor(doc, blockIndex);
   try {
+    // The projection is computed before the document is opened, so the provider serves from
+    // the same cache entry this table comes from.
+    const table = (await projectionFor(doc, blockIndex))?.table ?? NO_SUBSTITUTION;
     await vscode.workspace.openTextDocument(uri);
-    const table = tables.get(uri.toString()) ?? NO_SUBSTITUTION;
     const virtual = toVirtual({ line: position.line, character: position.character }, table);
     const answer = await vscode.commands.executeCommand(
       command, uri, new vscode.Position(virtual.line, virtual.character), ...extraArgs);
@@ -203,25 +241,44 @@ async function forward(command, doc, position, ...extraArgs) {
 // ─── Translating answers─────
 
 /**
- * A range back in the Python document, or undefined when it overlaps a substituted span.
- * VS Code accepts `{ inserting, replacing }` wherever a completion range is expected, so
- * both shapes are handled.
+ * A range back in the Python document.
+ *
+ * Always translates, because a range that only draws something (a hover box, the underline
+ * ctrl+click puts under a token) is better drawn approximately than drawn over the wrong
+ * characters. Both ends land honestly whenever the range wraps a whole substituted token,
+ * which is the case that matters: `simplenergy.data` is 16 columns wide and `{ns}.data` is 9,
+ * and translating both ends recovers exactly those 9.
+ *
  * @param {any} range
  * @param {typeof NO_SUBSTITUTION} table
  * @returns {any}
  */
 function pythonRange(range, table) {
   if (!range) return range;
-  if (range.inserting || range.replacing) {
-    const inserting = pythonRange(range.inserting, table);
-    const replacing = pythonRange(range.replacing, table);
-    return inserting && replacing ? { inserting, replacing } : undefined;
-  }
-  if (crossesSubstitution(range.start, range.end, table)) return undefined;
-
   const start = toPython(range.start, table);
   const end = toPython(range.end, table);
   return new vscode.Range(start.line, start.character, end.line, end.character);
+}
+
+/**
+ * A range that will be applied as an edit, or undefined when it overlaps a substituted span.
+ *
+ * The stricter half of the pair: this one rewrites the author's buffer, so an ambiguous range
+ * is dropped rather than approximated. VS Code accepts `{ inserting, replacing }` wherever a
+ * completion range is expected, so both shapes are handled.
+ *
+ * @param {any} range
+ * @param {typeof NO_SUBSTITUTION} table
+ * @returns {any}
+ */
+function pythonEditRange(range, table) {
+  if (!range) return range;
+  if (range.inserting || range.replacing) {
+    const inserting = pythonEditRange(range.inserting, table);
+    const replacing = pythonEditRange(range.replacing, table);
+    return inserting && replacing ? { inserting, replacing } : undefined;
+  }
+  return crossesSubstitution(range.start, range.end, table) ? undefined : pythonRange(range, table);
 }
 
 /**
@@ -231,7 +288,7 @@ function pythonRange(range, table) {
  */
 function pythonEdit(edit, table) {
   if (!edit) return undefined;
-  const range = pythonRange(edit.range, table);
+  const range = pythonEditRange(edit.range, table);
   return range ? new vscode.TextEdit(range, edit.newText) : undefined;
 }
 
@@ -251,7 +308,7 @@ function pythonCompletions(list, table) {
   if (!Array.isArray(items)) return list;
 
   for (const item of items) {
-    item.range = pythonRange(item.range, table);
+    item.range = pythonEditRange(item.range, table);
     item.textEdit = pythonEdit(item.textEdit, table);
     if (!Array.isArray(item.additionalTextEdits) || item.additionalTextEdits.length === 0) continue;
     const edits = item.additionalTextEdits.map((/** @type {any} */ e) => pythonEdit(e, table));
@@ -263,18 +320,27 @@ function pythonCompletions(list, table) {
 
 /**
  * Turn answers pointing back into the virtual document into Python locations.
- * An answer pointing at a generated .mcfunction is left alone; rewriting those is
+ *
+ * `originSelectionRange` is translated on every answer whatever its target, because it is a
+ * range in the document the request came from, not in the one it points at. It is what VS Code
+ * underlines under the cursor on ctrl+click, so leaving it in virtual columns underlines the
+ * wrong characters even when the jump itself is right.
+ *
+ * A target pointing at a generated .mcfunction is otherwise left alone; rewriting those is
  * ./navigation.js's job and it needs the original file to look the map up.
+ *
  * @param {any} answers
  * @param {typeof NO_SUBSTITUTION} table
  */
 function pythonLocations(answers, table) {
   if (!Array.isArray(answers) || table.size === 0) return answers;
   return answers.map(entry => {
+    if (entry && entry.originSelectionRange) {
+      entry.originSelectionRange = pythonRange(entry.originSelectionRange, table);
+    }
     const target = navigation.targetOf(entry);
     if (!target || target.uri.scheme !== SCHEME) return entry;
-    const range = pythonRange(target.range, table);
-    return range ? new vscode.Location(vscode.Uri.parse(target.uri.query), range) : entry;
+    return new vscode.Location(vscode.Uri.parse(target.uri.query), pythonRange(target.range, table));
   });
 }
 
@@ -334,6 +400,50 @@ const referenceProvider = {
   },
 };
 
+// ─── Diagnostics from the projection──
+
+/**
+ * What Spyglass says about one Python document's blocks, in the Python document's coordinates.
+ *
+ * The virtual documents are the honest place to ask. Their lines are in lockstep with the
+ * Python, so a diagnostic needs no source map to come home, and it arrives as the author types
+ * rather than after a build. Reading them off the generated files instead means waiting for a
+ * build and for VS Code to keep a document alive that nothing is looking at, which it does not.
+ *
+ * @param {vscode.TextDocument} doc
+ * @returns {Promise<vscode.Diagnostic[]>}
+ */
+async function pythonDiagnosticsFor(doc) {
+  if (!vscode.workspace.getConfiguration(CFG_KEY).get("languageFeatures", true)) return [];
+
+  const moved = [];
+  const blocks = blocksOf(doc);
+  for (let blockIndex = 0; blockIndex < blocks.length; blockIndex++) {
+    const projection = await projectionFor(doc, blockIndex);
+    if (!projection) continue;
+
+    const uri = virtualUriFor(doc, blockIndex);
+    try {
+      await vscode.workspace.openTextDocument(uri);
+    } catch (e) {
+      console.debug("[StewBeet] could not open a virtual document for diagnostics", e);
+      continue;
+    }
+
+    for (const diagnostic of vscode.languages.getDiagnostics(uri)) {
+      const start = toPython(diagnostic.range.start, projection.table);
+      const end = toPython(diagnostic.range.end, projection.table);
+      const copy = new vscode.Diagnostic(
+        new vscode.Range(start.line, start.character, end.line, end.character),
+        diagnostic.message, diagnostic.severity);
+      copy.code = diagnostic.code;
+      copy.source = diagnostic.source;
+      moved.push(copy);
+    }
+  }
+  return moved;
+}
+
 // ─── Registration───────────
 
 /** @param {vscode.ExtensionContext} context */
@@ -355,8 +465,10 @@ function registerVirtualDocuments(context) {
 
 module.exports = {
   TRIGGER_CHARACTERS,
+  SCHEME,
   blocksOf,
   blockAt,
+  pythonDiagnosticsFor,
   virtualUriFor,
   contentProvider,
   forward,

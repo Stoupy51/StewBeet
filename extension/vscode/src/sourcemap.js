@@ -276,6 +276,24 @@ function originsOf(generatedPath) {
 /** Python file to generated locations, built by scanning every known map. @type {Map<string, { file: string, line: number }[]> | null} */
 let reverseIndex = null;
 
+/** Python file to the generated files it produced, filled alongside the reverse index. @type {Map<string, Set<string>>} */
+const producedBy = new Map();
+
+/**
+ * Every generated file one Python file produced.
+ *
+ * The diagnostic relay uses this to load only what the author is actually looking at. A pack
+ * holds hundreds of generated functions and a Python file accounts for a handful of them.
+ *
+ * @param {string[]} mapPaths
+ * @param {string} pythonPath
+ * @returns {string[]}
+ */
+function generatedFilesFor(mapPaths, pythonPath) {
+  if (!reverseIndex) reverseIndex = buildReverseIndex(mapPaths);
+  return [...(producedBy.get(fileKey(pythonPath)) ?? [])];
+}
+
 /**
  * Every generated location produced by a Python line.
  *
@@ -299,6 +317,8 @@ function generatedFrom(mapPaths, pythonPath, line) {
 function buildReverseIndex(mapPaths) {
   /** @type {Map<string, { file: string, line: number }[]>} */
   const index = new Map();
+  producedBy.clear();
+
   for (const mapPath of mapPaths) {
     const map = load(mapPath);
     if (!map) continue;
@@ -311,6 +331,10 @@ function buildReverseIndex(mapPaths) {
       const location = { file: generatedPath, line: generatedLine };
       if (bucket) bucket.push(location);
       else index.set(key(file, entry.sourceLine), [location]);
+
+      const produced = producedBy.get(fileKey(file));
+      if (produced) produced.add(generatedPath);
+      else producedBy.set(fileKey(file), new Set([generatedPath]));
     }
   }
   return index;
@@ -344,7 +368,12 @@ function generatedText(mapPaths, pythonPath, from, to) {
 
 /** @param {string} file @param {number} line */
 function key(file, line) {
-  return `${path.normalize(file).toLowerCase()}:${line}`;
+  return `${fileKey(file)}:${line}`;
+}
+
+/** @param {string} file */
+function fileKey(file) {
+  return path.normalize(file).toLowerCase();
 }
 
 module.exports = {
@@ -359,5 +388,6 @@ module.exports = {
   originOf,
   originsOf,
   generatedFrom,
+  generatedFilesFor,
   generatedText,
 };

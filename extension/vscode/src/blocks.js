@@ -160,11 +160,16 @@ function readOpeningQuote(text, i) {
 /**
  * Find all mcfunction string blocks in Python source text.
  * @param {string} text
- * @returns {{ start:number, end:number }[]}  Offsets of each block: start is
- *   the opening quote (including prefix), end is just after the closing quote.
+ * @returns {{ start:number, end:number, contentStart:number, contentEnd:number }[]}
+ *   `start` is the opening quote with its prefix and `end` is just past the closing quote,
+ *   which is what a decoration should cover. `contentStart` and `contentEnd` bound the
+ *   commands alone: the quotes are Python, and a projection that hands them to a datapack
+ *   parser gets told, correctly, that `\"\"\"` is not a command.
  */
 function findBlockOffsets(text) {
   const blocks = [];
+  /** Names handed to a write_* call instead of a literal, so their strings count as blocks. */
+  const variables = new Set();
 
   FUNC_RE.lastIndex = 0;
   let m;
@@ -180,12 +185,78 @@ function findBlockOffsets(text) {
     }
 
     const opening = readOpeningQuote(text, contentIdx);
-    if (!opening) continue;
+    if (!opening) {
+      const name = readArgumentName(text, contentIdx);
+      if (name) variables.add(name);
+      continue;
+    }
 
     const closeIdx = findClosingQuote(text, opening.quoteStyle, opening.contentStart, opening.isFString);
     if (closeIdx === -1) continue;
 
-    blocks.push({ start: opening.quoteStart, end: closeIdx + opening.quoteStyle.length });
+    blocks.push({
+      start: opening.quoteStart, end: closeIdx + opening.quoteStyle.length,
+      contentStart: opening.contentStart, contentEnd: closeIdx,
+    });
+  }
+
+  if (variables.size > 0) blocks.push(...findAssignedBlocks(text, variables));
+  return blocks.sort((a, b) => a.start - b.start);
+}
+
+/**
+ * The name of a whole argument, when the argument is exactly one identifier.
+ *
+ * `write_function(path, content)` hands the commands over in a variable, which is how a third
+ * of a real project's blocks are written. Anything else, a call or an expression, is not a
+ * name we could find an assignment for, so it returns null.
+ *
+ * @param {string} text
+ * @param {number} i  First character of the argument, whitespace included.
+ * @returns {string | null}
+ */
+function readArgumentName(text, i) {
+  while (i < text.length && /[ \t\r\n]/.test(text[i])) i++;
+  const start = i;
+  while (i < text.length && /[A-Za-z0-9_]/.test(text[i])) i++;
+  if (i === start || /[0-9]/.test(text[start])) return null;
+
+  let after = i;
+  while (after < text.length && /[ \t\r\n]/.test(text[after])) after++;
+  return text[after] === ")" || text[after] === "," ? text.slice(start, i) : null;
+}
+
+/** An assignment to a bare name, with an optional type annotation, `=` or `+=`. */
+const ASSIGN_RE = /(?:^|\n)[ \t]*([A-Za-z_]\w*)[ \t]*(?::[^=\n]*)?\+?=[ \t]*/g;
+
+/**
+ * The string literals assigned to any of `names`, as blocks.
+ *
+ * Both `content = """..."""` and a later `content += """..."""` count, since building a
+ * function by appending is as common as writing it in one go.
+ *
+ * @param {string} text
+ * @param {Set<string>} names
+ * @returns {{ start:number, end:number, contentStart:number, contentEnd:number }[]}
+ */
+function findAssignedBlocks(text, names) {
+  const blocks = [];
+
+  ASSIGN_RE.lastIndex = 0;
+  let m;
+  while ((m = ASSIGN_RE.exec(text)) !== null) {
+    if (!names.has(m[1])) continue;
+
+    const opening = readOpeningQuote(text, m.index + m[0].length);
+    if (!opening) continue;
+    const closeIdx = findClosingQuote(text, opening.quoteStyle, opening.contentStart, opening.isFString);
+    if (closeIdx === -1) continue;
+
+    blocks.push({
+      start: opening.quoteStart, end: closeIdx + opening.quoteStyle.length,
+      contentStart: opening.contentStart, contentEnd: closeIdx,
+    });
+    ASSIGN_RE.lastIndex = closeIdx + opening.quoteStyle.length;
   }
 
   return blocks;
@@ -231,5 +302,7 @@ module.exports = {
   skipFirstArg,
   readOpeningQuote,
   findBlockOffsets,
+  readArgumentName,
+  findAssignedBlocks,
   findInterpolationSpans,
 };

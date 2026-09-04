@@ -179,6 +179,53 @@ exports.run = async () => {
     await settings.update("resolveInterpolations", undefined, vscode.ConfigurationTarget.Workspace);
     await sleep(3000);
 
+    // Does the server report errors on the virtual documents themselves?
+    //
+    // This decides the whole diagnostics design. Opening a generated file invisibly is
+    // unreliable, because VS Code disposes a document nothing is shown in and the server drops
+    // it. The virtual documents are ones we open and reopen ourselves, and their lines are in
+    // lockstep with the Python, so if errors arrive on them the relay needs no build at all.
+    // demo.py line 16 is `nonexistentcommand foo bar`, which no version of the game accepts.
+    const virtualUri = vscode.Uri.from({
+      scheme: "stewbeet-mcfunction",
+      path: "/2/demo.py.mcfunction",
+      query: py.uri.toString(),
+    });
+    await openWithRetry(virtualUri);
+    await completionsAt(py.uri, new vscode.Position(16, 5), " ");
+    await sleep(4000);
+
+    const virtualDiagnostics = vscode.languages.getDiagnostics(virtualUri) || [];
+    note("virtual_diagnosticCount", virtualDiagnostics.length);
+    note("virtual_diagnostics", virtualDiagnostics.slice(0, 4).map(
+      d => `${d.range.start.line}:${d.range.start.character} ${d.message}`));
+    note("virtual_documentStaysOpen",
+      vscode.workspace.textDocuments.some(d => d.uri.toString() === virtualUri.toString()));
+
+    expect("US5 the server reports on virtual documents", virtualDiagnostics.length > 0);
+
+    // The quotes are Python, and projecting them earned a diagnostic saying `"""` is not a
+    // command. Line 15 and line 17 are the two quote lines around the broken block.
+    const onQuoteLines = virtualDiagnostics.filter(d => d.range.start.line === 15 || d.range.start.line === 17);
+    note("virtual_quoteLineNoise", onQuoteLines.map(d => d.range.start.line));
+    expect("US5 the string quotes raise nothing", onQuoteLines.length === 0,
+      onQuoteLines.map(d => `${d.range.start.line}: ${d.message.slice(0, 40)}`));
+
+    // ...and the whole point: it reaches the Python file without any generated file involved.
+    await sleep(2000);
+    const beforeCommand = (vscode.languages.getDiagnostics(py.uri) || [])
+      .filter(d => String(d.source || "").startsWith("stewbeet")).length;
+    note("us5_relayedBeforeCommand", beforeCommand);
+
+    // Forcing the pass separates "the event never reached us" from "the mapping is broken".
+    await vscode.commands.executeCommand("stewbeet.refreshDiagnostics");
+    await sleep(3000);
+    const relayed = vscode.languages.getDiagnostics(py.uri) || [];
+    const ours = relayed.filter(d => String(d.source || "").startsWith("stewbeet"));
+    note("us5_relayedOntoPython", ours.map(d => `${d.range.start.line}: ${d.message.slice(0, 45)}`));
+    expect("US5 the error reaches the Python file with no build file opened",
+      ours.some(d => d.range.start.line === 16), ours.map(d => d.range.start.line));
+
     // The settings gate.
     const cfg = vscode.workspace.getConfiguration("StewBeet");
     await cfg.update("languageFeatures", false, vscode.ConfigurationTarget.Workspace);

@@ -12,3 +12,7 @@ ns = "probe"
 write_function(f"{ns}:gamma", f"""
 function {ns}:alpha
 """)
+
+write_function("probe:broken", """
+nonexistentcommand foo bar
+""")
