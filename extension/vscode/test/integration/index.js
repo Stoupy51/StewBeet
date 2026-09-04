@@ -24,6 +24,12 @@ const IN_PATH = new vscode.Position(4, "function probe:".length);
 const ON_PATH = new vscode.Position(4, "function probe:al".length);
 const OUTSIDE_BLOCK = new vscode.Position(7, 5);
 
+// Line 12 is "function {ns}:alpha", which gamma.mcfunction resolves to "function probe:alpha".
+// Both columns are Python columns, four characters short of where they land in the virtual
+// document, which is the whole point of the translation these two exercise.
+const IN_INTERPOLATED = new vscode.Position(12, "function {ns}:".length);
+const ON_INTERPOLATED = new vscode.Position(12, "function {ns}:al".length);
+
 /** @param {vscode.Uri} uri @param {vscode.Position} pos @param {string} [trigger] */
 async function completionsAt(uri, pos, trigger) {
   const list = await vscode.commands.executeCommand(
@@ -141,6 +147,37 @@ exports.run = async () => {
     expect("US3 definition lands on the write_function line", lines.includes(2), lines);
     expect("US3 definition no longer stops at the generated file",
       !targets.some(t => t.endsWith("alpha.mcfunction")), targets);
+
+    // US4: the same two answers on a path StewBeet actually writes.
+    //
+    // Nothing here can pass by masking: `function ____:alpha` is not a resource location, so
+    // without the substitution Spyglass resolves nothing and both checks come back empty.
+    const interpolated = await completionsAt(py.uri, IN_INTERPOLATED, ":");
+    note("us4_interpolatedCompletions", interpolated.map(label).slice(0, 10));
+    expect("US4 completion works on an interpolated path",
+      interpolated.some(i => label(i).includes("alpha")), interpolated.map(label).slice(0, 10));
+
+    const interpolatedDefs = (await vscode.commands.executeCommand(
+      "vscode.executeDefinitionProvider", py.uri, ON_INTERPOLATED)) || [];
+    const interpolatedTargets = interpolatedDefs.map(d => String((d.uri || d.targetUri || {}).fsPath || ""));
+    note("us4_interpolatedDefinitionTargets", interpolatedTargets);
+    expect("US4 definition resolves from an interpolated path",
+      interpolatedTargets.some(t => t.endsWith("demo.py")), interpolatedTargets);
+
+    // ...and the escape hatch puts the mask back, which is step A's behaviour exactly.
+    //
+    // Definition is what tells the two apart, not completion: Spyglass answers a resource
+    // location request with every path in the pack whatever the prefix, so `____:` lists the
+    // same items that `probe:` does. Only resolving one needs the real namespace.
+    const settings = vscode.workspace.getConfiguration("StewBeet");
+    await settings.update("resolveInterpolations", false, vscode.ConfigurationTarget.Workspace);
+    await sleep(3000);
+    const maskedDefs = (await vscode.commands.executeCommand(
+      "vscode.executeDefinitionProvider", py.uri, ON_INTERPOLATED)) || [];
+    const maskedTargets = maskedDefs.map(d => String((d.uri || d.targetUri || {}).fsPath || ""));
+    expect("US4 turning substitution off restores masking", maskedTargets.length === 0, maskedTargets);
+    await settings.update("resolveInterpolations", undefined, vscode.ConfigurationTarget.Workspace);
+    await sleep(3000);
 
     // The settings gate.
     const cfg = vscode.workspace.getConfiguration("StewBeet");

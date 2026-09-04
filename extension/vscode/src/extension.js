@@ -11,10 +11,12 @@ const {
   definitionProvider,
   referenceProvider,
   registerVirtualDocuments,
+  reproject,
 } = require("./virtual");
 const navigation = require("./navigation");
 const sourcemap = require("./sourcemap");
-const { registerDiagnosticRelay } = require("./diagnostics");
+const diagnostics = require("./diagnostics");
+const { registerCodeLenses, refreshCodeLenses } = require("./codelens");
 
 // ─── Constants──────────────
 
@@ -104,7 +106,8 @@ function activate(context) {
 
   registerLanguageFeatures(context);
   registerSourceMaps(context);
-  registerDiagnosticRelay(context);
+  registerCodeLenses(context);
+  diagnostics.registerDiagnosticRelay(context);
 }
 
 // ─── Language features──────
@@ -133,21 +136,35 @@ function deactivate() { disposeDecos(); }
 // ─── Source maps────────────
 
 /**
- * Keep the decoded maps fresh, and expose the three commands that use them.
+ * Keep everything derived from a build fresh, and expose the three commands that use it.
  *
- * The decode cache validates itself against each file's mtime, so the watcher exists for the
- * reverse index, which is built by scanning every map at once and cannot notice one changing.
+ * Two watchers, because the two file kinds mean different things. A map changing invalidates
+ * the reverse index, the interpolations already substituted into a projection and the lenses
+ * built from them. A generated function changing is what a rebuild looks like, and those
+ * files are handed to the language server so its diagnostics reach the Python without the
+ * author opening anything.
  * @param {vscode.ExtensionContext} context
  */
 function registerSourceMaps(context) {
-  const watcher = vscode.workspace.createFileSystemWatcher(`**/*${sourcemap.MAP_SUFFIX}`);
-  const drop = () => sourcemap.clearCache();
+  const maps = vscode.workspace.createFileSystemWatcher(`**/*${sourcemap.MAP_SUFFIX}`);
+  const drop = () => {
+    sourcemap.clearCache();
+    navigation.forgetMaps();
+    reproject();
+    refreshCodeLenses();
+  };
+
+  const generated = vscode.workspace.createFileSystemWatcher("**/*.mcfunction");
+  const changed = (/** @type {vscode.Uri} */ uri) => diagnostics.notifyGeneratedChanged([uri]);
 
   context.subscriptions.push(
-    watcher,
-    watcher.onDidChange(drop),
-    watcher.onDidCreate(drop),
-    watcher.onDidDelete(drop),
+    maps, generated,
+    maps.onDidChange(drop),
+    maps.onDidCreate(drop),
+    maps.onDidDelete(drop),
+    generated.onDidChange(changed),
+    generated.onDidCreate(changed),
+    generated.onDidDelete(() => diagnostics.refresh()),
     vscode.commands.registerCommand("stewbeet.reloadSourceMaps", drop),
     vscode.commands.registerCommand("stewbeet.goToSource", goToSource),
     vscode.commands.registerCommand("stewbeet.goToGenerated", goToGenerated),
@@ -167,19 +184,28 @@ async function goToSource() {
   await reveal(vscode.Uri.file(origin.file), origin.line, origin.column);
 }
 
-/** Open the generated function a Python line produced, the inverse of ctrl+click. */
-async function goToGenerated() {
+/**
+ * Open the generated function a Python line produced, the inverse of ctrl+click.
+ * A CodeLens already knows which function its block produced and passes it in; from the
+ * palette there is no argument and the cursor's line decides.
+ * @param {{ file: string, line: number }} [target]
+ */
+async function goToGenerated(target) {
+  if (target) {
+    await reveal(vscode.Uri.file(target.file), target.line, 0);
+    return;
+  }
+
   const editor = vscode.window.activeTextEditor;
   if (!editor || editor.document.languageId !== "python") return;
 
   const maps = await navigation.findMaps();
-  const targets = sourcemap.generatedFrom(maps, editor.document.uri.fsPath, editor.selection.active.line);
-  if (targets.length === 0) {
+  const [found] = sourcemap.generatedFrom(maps, editor.document.uri.fsPath, editor.selection.active.line);
+  if (!found) {
     vscode.window.setStatusBarMessage("StewBeet: this line generated nothing in the current build", 3000);
     return;
   }
-  const target = targets[0];
-  await reveal(vscode.Uri.file(target.file), target.line, 0);
+  await reveal(vscode.Uri.file(found.file), found.line, 0);
 }
 
 /** @param {vscode.Uri} uri @param {number} line @param {number} column */

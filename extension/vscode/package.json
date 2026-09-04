@@ -2,7 +2,7 @@
   "name": "stewbeet",
   "displayName": "StewBeet",
   "description": "Syntax highlighting, block decorations and Spyglass-backed language features for mcfunction strings inside StewBeet write_* calls in Python files.",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "publisher": "stoupy",
   "license": "MIT",
   "icon": "icon.png",
@@ -89,12 +89,32 @@
         "StewBeet.buildOutput": {
           "type": "string",
           "default": "",
-          "markdownDescription": "Path or glob to the generated datapack root, the directory holding `pack.mcmeta`. Leave empty to autodetect by searching the workspace for a `pack.mcmeta` under a `build` directory."
+          "markdownDescription": "Path or glob to the generated datapack root, the directory holding `pack.mcmeta`. Leave empty to search the whole workspace for `.mcfunction.map` files; set it when that search costs too much."
         },
         "StewBeet.sourceMapDiagnostics": {
           "type": "boolean",
           "default": true,
           "markdownDescription": "Relay diagnostics reported against generated `.mcfunction` files onto the Python line that wrote them. Needs a build in the workspace."
+        },
+        "StewBeet.resolveInterpolations": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Fill each `{...}` interpolation with what the last build resolved it to, so `function {ns}:utils/foo` is understood as the path it really is. Turn it off to mask every interpolation with `_` instead. Needs a build in the workspace."
+        },
+        "StewBeet.diagnosticRuleDenylist": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "undeclaredSymbol"
+          ],
+          "markdownDescription": "Rules whose diagnostics are not relayed onto Python. `undeclaredSymbol` fires on every scoreboard objective or tag a dependency declares, which Spyglass cannot see. Set to `[]` to relay everything."
+        },
+        "StewBeet.codeLens": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Show a clickable lens above each block that produced a function in the last build, linking to the generated file."
         }
       }
     },

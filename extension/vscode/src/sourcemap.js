@@ -101,6 +101,21 @@ function decode(json) {
  * @returns {string | null}
  */
 function mapPathFor(generatedPath) {
+  const cached = resolvedMaps.get(generatedPath);
+  if (cached !== undefined) return cached;
+
+  const found = searchMapFor(generatedPath);
+  resolvedMaps.set(generatedPath, found);
+  return found;
+}
+
+/** Answers of mapPathFor, since the diagnostic relay asks it once per diagnostic per refresh.
+ *  A remembered `null` is corrected when the map appears, because writing one drops the cache.
+ *  @type {Map<string, string | null>} */
+const resolvedMaps = new Map();
+
+/** @param {string} generatedPath @returns {string | null} */
+function searchMapFor(generatedPath) {
   const declared = declaredMapName(generatedPath);
   if (declared) {
     const resolved = path.resolve(path.dirname(generatedPath), declared);
@@ -116,14 +131,12 @@ function mapPathFor(generatedPath) {
  * @returns {string | null}
  */
 function declaredMapName(generatedPath) {
-  let text;
-  try {
-    text = fs.readFileSync(generatedPath, "utf8");
-  } catch {
-    return null;
-  }
-  const lines = text.replace(/\r\n/g, "\n").replace(/\n+$/, "").split("\n");
-  const last = lines[lines.length - 1] ?? "";
+  const lines = linesOf(generatedPath);
+  if (!lines) return null;
+
+  let index = lines.length - 1;
+  while (index >= 0 && lines[index] === "") index--;
+  const last = lines[index] ?? "";
   return last.startsWith(SOURCE_MAPPING_URL) ? last.slice(SOURCE_MAPPING_URL.length).trim() : null;
 }
 
@@ -158,9 +171,41 @@ function load(mapPath) {
   }
 }
 
-/** Drop every decoded map, and the reverse index built from them. */
+/** Decoded generated files, keyed by path, with the mtime they were read at.
+ *  @type {Map<string, { mtimeMs: number, lines: string[] }>} */
+const contents = new Map();
+
+/**
+ * The lines of a generated file, read once and reused until it changes.
+ * @param {string} generatedPath
+ * @returns {string[] | null}
+ */
+function linesOf(generatedPath) {
+  let mtimeMs;
+  try {
+    mtimeMs = fs.statSync(generatedPath).mtimeMs;
+  } catch {
+    contents.delete(generatedPath);
+    return null;
+  }
+  const cached = contents.get(generatedPath);
+  if (cached && cached.mtimeMs === mtimeMs) return cached.lines;
+
+  try {
+    const lines = fs.readFileSync(generatedPath, "utf8").split("\n").map(line => line.replace(/\r$/, ""));
+    contents.set(generatedPath, { mtimeMs, lines });
+    return lines;
+  } catch (e) {
+    console.debug(`[StewBeet] could not read ${generatedPath}`, e);
+    return null;
+  }
+}
+
+/** Drop every decoded map, the reverse index built from them, and the generated text. */
 function clearCache() {
   cache.clear();
+  contents.clear();
+  resolvedMaps.clear();
   reverseIndex = null;
 }
 
@@ -271,6 +316,32 @@ function buildReverseIndex(mapPaths) {
   return index;
 }
 
+/**
+ * What the build wrote for each Python line of a range, keyed by that Python line.
+ *
+ * A line that produced nothing, or whose generated file has since been deleted, is simply
+ * absent, which is what a project without a build looks like for every line at once.
+ * Only the first generated location is read: a line that expanded into several commands has
+ * no single answer, and the first one is the one whose text still anchors the line's literals.
+ *
+ * @param {string[]} mapPaths
+ * @param {string} pythonPath
+ * @param {number} from  First 0-based Python line, inclusive.
+ * @param {number} to  Last 0-based Python line, inclusive.
+ * @returns {Map<number, string>}
+ */
+function generatedText(mapPaths, pythonPath, from, to) {
+  /** @type {Map<number, string>} */
+  const found = new Map();
+  for (let line = from; line <= to; line++) {
+    const [target] = generatedFrom(mapPaths, pythonPath, line);
+    if (!target) continue;
+    const text = linesOf(target.file)?.[target.line];
+    if (typeof text === "string") found.set(line, text);
+  }
+  return found;
+}
+
 /** @param {string} file @param {number} line */
 function key(file, line) {
   return `${path.normalize(file).toLowerCase()}:${line}`;
@@ -283,8 +354,10 @@ module.exports = {
   decode,
   mapPathFor,
   load,
+  linesOf,
   clearCache,
   originOf,
   originsOf,
   generatedFrom,
+  generatedText,
 };
