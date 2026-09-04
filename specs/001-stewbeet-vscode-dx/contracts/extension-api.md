@@ -57,11 +57,18 @@ Subscribes to `vscode.languages.onDidChangeDiagnostics`. For each changed URI th
 
 Diagnostics are grouped per Python file and replaced wholesale on each change, so stale entries cannot accumulate.
 
-**Loading what a build wrote (step C2)**: a language server publishes diagnostics only for documents it has been handed, so the relay had nothing to relay until the author opened a generated file themselves. A `**/*.mcfunction` watcher now collects the files a build touches and calls `vscode.workspace.openTextDocument` on them, which loads a document without showing it. The batching is what keeps this usable on a real pack:
+**Loading what a build wrote (step C2)**: a language server publishes diagnostics only for documents it has been handed, so the relay had nothing to relay until the author opened a generated file themselves. A `**/*.mcfunction` watcher now collects the files a build touches and calls `vscode.workspace.openTextDocument` on them, which loads a document without showing it.
 
-- Writes are debounced by 400 ms, so one rebuild produces one pass rather than one per file.
-- At most 150 documents are opened per pass, and the remainder waits for the next one. A pack with two thousand functions refreshes more slowly; it never blocks the window.
-- Nothing is opened at all while `StewBeet.sourceMapDiagnostics` is off.
+Two rules keep this from costing more than it gives, both sized against a real pack (SimplEnergy: 270 generated functions, 117 maps, per build):
+
+- **Only what an open Python file produced is loaded.** The author can only see a squiggle in a file they have open, so the rest of the pack is never handed to the server. This turns 270 documents into 27 for one open file. Opening a Python file later queues what it produced, so nothing is missed.
+- **What the server said is kept, not read live.** VS Code disposes a document nothing references and the server drops its diagnostics with it, which is why relaying straight from `getDiagnostics()` produced squiggles that appeared and immediately vanished. Each generated file's result is captured in a map that survives the document closing, and an empty result for a document that is no longer open is treated as "the server let go", not "the file is clean". A deliberate reload clears the entry first, so a fixed error still disappears.
+
+Plus: writes are debounced by 400 ms so one rebuild is one pass; at most 40 documents are opened per pass with the remainder deferred; a loaded batch is held for 8 s so the server has time to look at it; and nothing is opened at all while `StewBeet.sourceMapDiagnostics` is off.
+
+**Rule extraction**: the denylist matches `code` when the server sets it, and otherwise the `(rule: X)` suffix Spyglass writes at the end of the message. Spyglass leaves `code` empty, so matching only on `code` silences nothing.
+
+**Invalidation cost (step C2)**: dropping the build-derived state clears the decode caches, re-runs the workspace map search, reprojects every served virtual document and recomputes every lens. A build writes one map per function, so this is debounced by 600 ms; doing it per event ran all of that 117 times for one build and was the single largest source of editor lag.
 
 ## CodeLens (step C2)
 

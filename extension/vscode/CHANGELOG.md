@@ -1,5 +1,28 @@
 # Changelog
 
+## 1.3.2
+
+The column translation was not reaching the requests at all, which is why completion landed a few characters to the left and accepting one could eat text.
+
+- **Accepting a completion no longer damages the line.** `matches ` plus the suggestion `matches` produced `matchesmatches`, because the replace range came back in the resolved text's columns and was applied to your file untranslated.
+- **Completion asks at the right place.** After `scoreboard players ` it offered `objectives` and `players`, the choices for the word before, because the position was sent seven columns early, the difference between `{ns}` and `simplenergy`.
+- **Ctrl+click underlines the right characters**, for the same reason.
+- The projection and the request path now share one cached result per document version, so they cannot disagree about a column again.
+- **Header comments in generated files are clickable.** The function names after `@within`, and the one on the `#>` line, lead to the function they name.
+- **A lens above a generated file's header** leads back to the Python that wrote it, the reverse of the lens in your Python files.
+- New setting `StewBeet.headerLinks`, and a new command **StewBeet: Refresh Build Diagnostics**.
+- The relay now logs what it does to the **StewBeet** output channel, so a quiet relay can be diagnosed.
+
+## 1.3.1
+
+Fixes for what the first run of 1.3.0 on a real pack exposed. Three of the four were mine.
+
+- **The editor is responsive again.** A build writes one source map per function, and each one was throwing away every cache, searching the workspace for maps again, reprojecting every open block and recomputing every link. On a 270-function pack that ran a hundred times for a single build. It now runs once.
+- **Only the functions your open Python files produced are loaded** for diagnostics, instead of every function in the pack.
+- **Diagnostics survive a rebuild.** VS Code disposes a document nothing is looking at and the language server drops its diagnostics with it, so squiggles appeared and vanished. What the server reported is now remembered per file.
+- **`undeclaredSymbol` is actually silenced.** The denylist matched the diagnostic's `code`, which Spyglass leaves empty; it names the rule at the end of the message instead. Both are read now.
+- **Ctrl+click underlines the right characters.** The highlight range came back in the resolved text's columns, so `{ns}.data` underlined `{ns}.data matche`, which is what `simplenergy.data` is wide.
+
 ## 1.3.0
 
 Everything 1.2.0 added worked, and almost nothing reached it: StewBeet code writes `function {ns}:utils/loop`, not a literal path, and an interpolation is Python that Spyglass cannot read. Each one is now filled in with what the last build resolved it to, so the whole feature set applies to the code you actually write.

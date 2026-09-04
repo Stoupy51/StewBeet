@@ -17,6 +17,7 @@ const navigation = require("./navigation");
 const sourcemap = require("./sourcemap");
 const diagnostics = require("./diagnostics");
 const { registerCodeLenses, refreshCodeLenses } = require("./codelens");
+const { registerHeaderNavigation } = require("./headers");
 
 // ─── Constants──────────────
 
@@ -107,6 +108,7 @@ function activate(context) {
   registerLanguageFeatures(context);
   registerSourceMaps(context);
   registerCodeLenses(context);
+  registerHeaderNavigation(context);
   diagnostics.registerDiagnosticRelay(context);
 }
 
@@ -147,41 +149,72 @@ function deactivate() { disposeDecos(); }
  */
 function registerSourceMaps(context) {
   const maps = vscode.workspace.createFileSystemWatcher(`**/*${sourcemap.MAP_SUFFIX}`);
-  const drop = () => {
-    sourcemap.clearCache();
-    navigation.forgetMaps();
-    reproject();
-    refreshCodeLenses();
-  };
-
   const generated = vscode.workspace.createFileSystemWatcher("**/*.mcfunction");
   const changed = (/** @type {vscode.Uri} */ uri) => diagnostics.notifyGeneratedChanged([uri]);
 
   context.subscriptions.push(
     maps, generated,
-    maps.onDidChange(drop),
-    maps.onDidCreate(drop),
-    maps.onDidDelete(drop),
+    maps.onDidChange(scheduleDrop),
+    maps.onDidCreate(scheduleDrop),
+    maps.onDidDelete(scheduleDrop),
     generated.onDidChange(changed),
     generated.onDidCreate(changed),
-    generated.onDidDelete(() => diagnostics.refresh()),
+    generated.onDidDelete(uri => diagnostics.forget(uri)),
+    { dispose: () => { if (dropTimer) clearTimeout(dropTimer); } },
     vscode.commands.registerCommand("stewbeet.reloadSourceMaps", drop),
     vscode.commands.registerCommand("stewbeet.goToSource", goToSource),
     vscode.commands.registerCommand("stewbeet.goToGenerated", goToGenerated),
   );
 }
 
-/** Open the Python that wrote the command under the cursor, from a generated .mcfunction. */
-async function goToSource() {
+/** One build writes one map per function, and dropping is expensive enough to do once. */
+const DROP_DEBOUNCE_MS = 600;
+
+/** @type {NodeJS.Timeout | undefined} */
+let dropTimer;
+
+/**
+ * Forget everything derived from the build, and rebuild what is on screen from it.
+ *
+ * Every part of this is costly: the decode caches go, the map search runs over the whole
+ * workspace again, every served virtual document is reprojected and every lens is recomputed.
+ * A pack writes one map per function, so doing it per event would run all of that a hundred
+ * times for one build.
+ */
+function scheduleDrop() {
+  if (dropTimer) clearTimeout(dropTimer);
+  dropTimer = setTimeout(drop, DROP_DEBOUNCE_MS);
+}
+
+function drop() {
+  dropTimer = undefined;
+  sourcemap.clearCache();
+  navigation.forgetMaps();
+  reproject();
+  refreshCodeLenses();
+}
+
+/**
+ * Open the Python that wrote the command under the cursor, from a generated .mcfunction.
+ * The header lens already knows the origin and passes it in; from the palette there is no
+ * argument and the cursor's line decides.
+ * @param {{ file: string, line: number, column: number }} [origin]
+ */
+async function goToSource(origin) {
+  if (origin) {
+    await reveal(vscode.Uri.file(origin.file), origin.line, origin.column);
+    return;
+  }
+
   const editor = vscode.window.activeTextEditor;
   if (!editor || !navigation.isGenerated(editor.document.uri)) return;
 
-  const origin = sourcemap.originOf(editor.document.uri.fsPath, editor.selection.active.line);
-  if (!origin) {
+  const found = sourcemap.originOf(editor.document.uri.fsPath, editor.selection.active.line);
+  if (!found) {
     vscode.window.setStatusBarMessage("StewBeet: this line has no recorded origin", 3000);
     return;
   }
-  await reveal(vscode.Uri.file(origin.file), origin.line, origin.column);
+  await reveal(vscode.Uri.file(found.file), found.line, found.column);
 }
 
 /**

@@ -2,7 +2,7 @@
   "name": "stewbeet",
   "displayName": "StewBeet",
   "description": "Syntax highlighting, block decorations and Spyglass-backed language features for mcfunction strings inside StewBeet write_* calls in Python files.",
-  "version": "1.3.0",
+  "version": "1.3.3",
   "publisher": "stoupy",
   "license": "MIT",
   "icon": "icon.png",
@@ -31,7 +31,8 @@
     "spyglass"
   ],
   "activationEvents": [
-    "onLanguage:python"
+    "onLanguage:python",
+    "onLanguage:mcfunction"
   ],
   "main": "./src/extension.js",
   "scripts": {
@@ -115,6 +116,11 @@
           "type": "boolean",
           "default": true,
           "markdownDescription": "Show a clickable lens above each block that produced a function in the last build, linking to the generated file."
+        },
+        "StewBeet.headerLinks": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Turn the function names inside a generated file's `#` header comments into links, so `@within` leads to the function that calls this one."
         }
       }
     },
@@ -130,6 +136,10 @@
       {
         "command": "stewbeet.reloadSourceMaps",
         "title": "StewBeet: Reload Source Maps"
+      },
+      {
+        "command": "stewbeet.refreshDiagnostics",
+        "title": "StewBeet: Refresh Build Diagnostics"
       }
     ]
   }
