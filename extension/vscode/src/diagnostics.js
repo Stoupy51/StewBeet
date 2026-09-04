@@ -123,12 +123,17 @@ function ruleOf(diagnostic) {
 }
 
 /**
+ * Tag a diagnostic as ours while keeping whoever raised it visible.
+ * Every diagnostic on a Python file goes through this, whether it came from a generated file
+ * or straight off the projection, so one glance says where it came from.
+ * @param {string | undefined} source
+ */
+function label(source) {
+  return source ? `${COLLECTION_NAME} (${source})` : COLLECTION_NAME;
+}
+
+/**
  * Move one diagnostic onto its Python line, or drop it.
- *
- * The map carries no column precision for the generated side, so the whole Python line is
- * marked rather than a range that would be confidently wrong. The original `source` is kept
- * inside the new one so the author can still see who complained.
- *
  * @param {vscode.Diagnostic} diagnostic
  * @param {string} generatedPath
  * @returns {{ file: string, diagnostic: vscode.Diagnostic } | null}
@@ -139,7 +144,7 @@ function relocate(diagnostic, generatedPath) {
 
   const range = new vscode.Range(origin.line, 0, origin.line, Number.MAX_SAFE_INTEGER);
   const moved = new vscode.Diagnostic(range, diagnostic.message, diagnostic.severity);
-  moved.source = diagnostic.source ? `${COLLECTION_NAME} (${diagnostic.source})` : COLLECTION_NAME;
+  moved.source = label(diagnostic.source);
   moved.code = diagnostic.code;
   return { file: origin.file, diagnostic: moved };
 }
@@ -155,14 +160,38 @@ const live = new Map();
  * on them as the author types.
  */
 async function collectLive() {
-  live.clear();
-  for (const doc of vscode.workspace.textDocuments) {
-    if (doc.languageId !== "python" || doc.uri.scheme !== "file") continue;
-    const found = await virtual.pythonDiagnosticsFor(doc);
-    if (found.length > 0) live.set(doc.uri.fsPath, found);
+  const collected = new Map();
+  let blocks = 0;
+  try {
+    for (const doc of vscode.workspace.textDocuments) {
+      if (doc.languageId !== "python" || doc.uri.scheme !== "file") continue;
+      blocks += virtual.blocksOf(doc).length;
+      const found = await virtual.pythonDiagnosticsFor(doc);
+      for (const diagnostic of found) diagnostic.source = label(diagnostic.source);
+      if (found.length > 0) collected.set(doc.uri.fsPath, found);
+    }
+  } catch (e) {
+    // Never let this path fail silently: it is the one the author notices as "nothing happens".
+    log(`reading the projection failed: ${e && e.stack ? e.stack : e}`);
+    return;
   }
-  log(`read ${[...live.values()].reduce((n, d) => n + d.length, 0)} live diagnostic(s) from the projection`);
+
+  live.clear();
+  for (const [file, found] of collected) live.set(file, found);
+  log(`read ${[...live.values()].reduce((n, d) => n + d.length, 0)} live diagnostic(s) `
+    + `from ${blocks} block(s) in ${collected.size} Python file(s)`);
   publish();
+}
+
+/** What the relay currently knows, for the status command and the integration test. */
+function status() {
+  return {
+    captured: captured.size,
+    liveFiles: live.size,
+    liveCount: [...live.values()].reduce((n, d) => n + d.length, 0),
+    openPython: vscode.workspace.textDocuments.filter(d => d.languageId === "python").length,
+    published: published.length,
+  };
 }
 
 /** @type {NodeJS.Timeout | undefined} */
@@ -384,6 +413,7 @@ function registerDiagnosticRelay(context) {
     collection,
     output,
     vscode.commands.registerCommand("stewbeet.refreshDiagnostics", reload),
+    vscode.commands.registerCommand("stewbeet.diagnosticsStatus", status),
     vscode.languages.onDidChangeDiagnostics(onDiagnosticsChanged),
     vscode.workspace.onDidChangeConfiguration(e => {
       if (e.affectsConfiguration(CFG_KEY)) publish();
@@ -411,5 +441,6 @@ module.exports = {
   notifyGeneratedChanged,
   notifyPythonOpened,
   reload,
+  status,
   registerDiagnosticRelay,
 };
