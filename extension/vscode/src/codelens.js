@@ -9,7 +9,6 @@
 
 const vscode = require("vscode");
 const path = require("path");
-const { blocksOf } = require("./virtual");
 const navigation = require("./navigation");
 const sourcemap = require("./sourcemap");
 
@@ -34,22 +33,6 @@ function functionIdOf(generatedPath) {
   return `${parts[data + 1]}:${parts.slice(folder + 1).join("/").replace(/\.mcfunction$/, "")}`;
 }
 
-/**
- * The first generated location any line of a block produced, or null when it produced nothing.
- * @param {string[]} maps
- * @param {string} pythonPath
- * @param {number} from
- * @param {number} to
- * @returns {{ file: string, line: number } | null}
- */
-function targetOfBlock(maps, pythonPath, from, to) {
-  for (let line = from; line <= to; line++) {
-    const [target] = sourcemap.generatedFrom(maps, pythonPath, line);
-    if (target) return target;
-  }
-  return null;
-}
-
 const codeLensProvider = {
   onDidChangeCodeLenses: onDidChangeEmitter.event,
 
@@ -61,12 +44,12 @@ const codeLensProvider = {
     const maps = await navigation.findMaps();
     if (maps.length === 0) return [];
 
+    // Driven by the map, not by the blocks: the map records the `write_function` call, which
+    // is where the reader expects the link, and it is the only thing that still points at the
+    // right line when the commands were built in a variable somewhere above.
     const lenses = [];
-    for (const block of blocksOf(doc)) {
-      const first = doc.positionAt(block.start).line;
-      const target = targetOfBlock(maps, doc.uri.fsPath, first, doc.positionAt(block.end).line);
-      if (!target) continue;
-      lenses.push(new vscode.CodeLens(new vscode.Range(first, 0, first, 0), {
+    for (const [line, target] of sourcemap.originLinesFor(maps, doc.uri.fsPath)) {
+      lenses.push(new vscode.CodeLens(new vscode.Range(line, 0, line, 0), {
         title: `$(go-to-file) ${functionIdOf(target.file)}`,
         tooltip: target.file,
         command: "stewbeet.goToGenerated",
@@ -95,7 +78,6 @@ function registerCodeLenses(context) {
 
 module.exports = {
   functionIdOf,
-  targetOfBlock,
   codeLensProvider,
   refreshCodeLenses,
   registerCodeLenses,

@@ -34,11 +34,16 @@ const MASK = "_";
  * @param {number} end  Offset just past the block's closing quote.
  * @param {{ start:number, end:number }[]} [interpolationSpans]  Sorted, from findInterpolationSpans.
  * @param {Map<number, string> | null} [generatedLines]  Generated text per 0-based document line.
- * @returns {{ text: string, table: Map<number, { start:number, pythonWidth:number, virtualWidth:number }[]> }}
+ * @returns {{ text: string, table: Map<number, { start:number, pythonWidth:number, virtualWidth:number }[]>, masked: Map<number, { start:number, end:number }[]> }}
+ *   `masked` holds, per line, the virtual columns still covered by a `MASK` run. Nothing a
+ *   parser says about those columns is about the author's text, so a consumer reporting
+ *   diagnostics must ignore them.
  */
 function project(text, start, end, interpolationSpans = [], generatedLines = null) {
   /** @type {Map<number, { start:number, pythonWidth:number, virtualWidth:number }[]>} */
   const table = new Map();
+  /** @type {Map<number, { start:number, end:number }[]>} */
+  const masked = new Map();
   const pieces = text.split("\n");
   const projected = [];
   let lineStart = 0;
@@ -56,17 +61,17 @@ function project(text, start, end, interpolationSpans = [], generatedLines = nul
       touching.push(interpolationSpans[k]);
     }
 
-    const masked = maskLine(body, lineStart, start, end, touching);
-    const generated = generatedLines ? generatedLines.get(line) : undefined;
-    const substituted = generated === undefined
-      ? masked
-      : substitute(masked, generated, containedSpans(touching, lineStart, lineEnd, start, end), line, table);
+    const maskedLine = maskLine(body, lineStart, start, end, touching);
+    const present = clipToLine(touching, lineStart, lineEnd, start, end);
+    const substituted = present.length === 0 ? maskedLine : substitute(
+      maskedLine, generatedLines ? generatedLines.get(line) : undefined,
+      containedSpans(touching, lineStart, lineEnd, start, end), present, line, table, masked);
 
     projected.push(substituted + (carriage ? "\r" : ""));
     lineStart += piece.length + 1;
   }
 
-  return { text: projected.join("\n"), table };
+  return { text: projected.join("\n"), table, masked };
 }
 
 /**
@@ -105,28 +110,69 @@ function containedSpans(spans, lineStart, lineEnd, start, end) {
 }
 
 /**
- * Splice the resolved values into a masked line and record the widths that changed.
+ * The part of every span that falls on this line, as line-local columns.
+ * A span crossing a line boundary appears clipped on each line it touches, since its mask does.
+ * @param {{ start:number, end:number }[]} spans
+ * @param {number} lineStart
+ * @param {number} lineEnd
+ * @param {number} start
+ * @param {number} end
+ * @returns {{ start:number, end:number }[]}
+ */
+function clipToLine(spans, lineStart, lineEnd, start, end) {
+  const clipped = [];
+  for (const span of spans) {
+    const from = Math.max(span.start, lineStart, start);
+    const to = Math.min(span.end, lineEnd, end);
+    if (from < to) clipped.push({ start: from - lineStart, end: to - lineStart });
+  }
+  return clipped;
+}
+
+/**
+ * Splice the resolved values into a masked line, recording the widths that changed and the
+ * runs that stayed masked.
  * @param {string} masked
- * @param {string} generated
- * @param {{ start:number, end:number }[]} spans  Line-local, sorted.
+ * @param {string | undefined} generated  Absent when the build says nothing about this line.
+ * @param {{ start:number, end:number }[]} spans  The substitutable ones, line-local and sorted.
+ * @param {{ start:number, end:number }[]} present  Every span on the line, `spans` included.
  * @param {number} line
  * @param {Map<number, { start:number, pythonWidth:number, virtualWidth:number }[]>} table  Written into.
+ * @param {Map<number, { start:number, end:number }[]>} maskedRuns  Written into.
  */
-function substitute(masked, generated, spans, line, table) {
-  const resolved = resolveLine(masked, generated, spans);
-  if (!resolved) return masked;
+function substitute(masked, generated, spans, present, line, table, maskedRuns) {
+  const resolved = (generated === undefined ? null : resolveLine(masked, generated, spans)) ?? [];
+  const byStart = new Map(resolved.map(entry => [entry.start, entry]));
 
   const changed = [];
+  const stillMasked = [];
   let out = "";
   let cursor = 0;
-  for (const { start, end, value } of resolved) {
-    out += masked.slice(cursor, start) + value;
-    cursor = end;
-    if (value.length !== end - start) {
-      changed.push({ start, pythonWidth: end - start, virtualWidth: value.length });
+  let delta = 0;
+
+  for (const span of present) {
+    out += masked.slice(cursor, span.start);
+    cursor = span.end;
+
+    const value = byStart.get(span.start);
+    if (!value) {
+      // Still a run of MASK. Its virtual columns are recorded so a consumer can tell that
+      // anything the parser says about them is about our placeholder, not the author's text.
+      out += masked.slice(span.start, span.end);
+      stillMasked.push({ start: span.start + delta, end: span.end + delta });
+      continue;
     }
+
+    out += value.value;
+    const width = span.end - span.start;
+    if (value.value.length !== width) {
+      changed.push({ start: span.start, pythonWidth: width, virtualWidth: value.value.length });
+    }
+    delta += value.value.length - width;
   }
+
   if (changed.length > 0) table.set(line, changed);
+  if (stillMasked.length > 0) maskedRuns.set(line, stillMasked);
   return out + masked.slice(cursor);
 }
 
@@ -288,6 +334,7 @@ module.exports = {
   SCHEME,
   MASK,
   project,
+  clipToLine,
   resolveLine,
   toVirtual,
   toPython,

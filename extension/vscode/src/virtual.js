@@ -101,7 +101,7 @@ const served = new Map();
  *  Spyglass reads, and the forwarding decides where in it a position lands and where a
  *  returned range goes back to. Deriving them separately let them drift, and an untranslated
  *  range does not merely fail, it overwrites the wrong characters.
- *  @type {Map<string, { version:number, text:string, table:typeof NO_SUBSTITUTION }>} */
+ *  @type {Map<string, { version:number, text:string, table:typeof NO_SUBSTITUTION, masked:Map<number, {start:number,end:number}[]> }>} */
 const projections = new Map();
 
 /** @param {string} sourceUri @param {number} blockIndex */
@@ -113,7 +113,7 @@ function projectionKey(sourceUri, blockIndex) {
  * The projection of one block, computed once per document version.
  * @param {vscode.TextDocument} doc
  * @param {number} blockIndex
- * @returns {Promise<{ version:number, text:string, table:typeof NO_SUBSTITUTION } | null>}
+ * @returns {Promise<{ version:number, text:string, table:typeof NO_SUBSTITUTION, masked:Map<number, {start:number,end:number}[]> } | null>}
  */
 async function projectionFor(doc, blockIndex) {
   const key = projectionKey(doc.uri.toString(), blockIndex);
@@ -126,10 +126,10 @@ async function projectionFor(doc, blockIndex) {
   // The content range, not the block range: the quotes belong to Python, and handing them to a
   // datapack parser earns a diagnostic saying `"""` is not a command.
   const text = doc.getText();
-  const { text: projected, table } = project(
+  const { text: projected, table, masked } = project(
     text, block.contentStart, block.contentEnd,
     findInterpolationSpans(text, block), await generatedFor(doc, block));
-  const entry = { version: doc.version, text: projected, table };
+  const entry = { version: doc.version, text: projected, table, masked };
   projections.set(key, entry);
   return entry;
 }
@@ -431,6 +431,7 @@ async function pythonDiagnosticsFor(doc) {
     }
 
     for (const diagnostic of vscode.languages.getDiagnostics(uri)) {
+      if (touchesMask(diagnostic.range, projection.masked)) continue;
       const start = toPython(diagnostic.range.start, projection.table);
       const end = toPython(diagnostic.range.end, projection.table);
       const copy = new vscode.Diagnostic(
@@ -442,6 +443,30 @@ async function pythonDiagnosticsFor(doc) {
     }
   }
   return moved;
+}
+
+/**
+ * Whether a diagnostic lands on a run of `MASK` rather than on the author's own text.
+ *
+ * An interpolation the build cannot resolve is a placeholder, and a parser told that
+ * `scoreboard players add @s obj ______` is missing an integer is right about the placeholder
+ * and says nothing about the Python. Reporting it would put a permanent red line under every
+ * `{...}` that is not a resource location.
+ *
+ * @param {vscode.Range} range
+ * @param {Map<number, { start:number, end:number }[]>} masked
+ */
+function touchesMask(range, masked) {
+  for (let line = range.start.line; line <= range.end.line; line++) {
+    const runs = masked.get(line);
+    if (!runs) continue;
+    const from = line === range.start.line ? range.start.character : 0;
+    const to = line === range.end.line ? range.end.character : Number.MAX_SAFE_INTEGER;
+    // An empty range sitting exactly on a mask counts, since that is where a parser points
+    // when it expected something the placeholder is not.
+    if (runs.some(run => from <= run.end && to >= run.start)) return true;
+  }
+  return false;
 }
 
 // ─── Registration───────────
@@ -469,6 +494,7 @@ module.exports = {
   blocksOf,
   blockAt,
   pythonDiagnosticsFor,
+  touchesMask,
   virtualUriFor,
   contentProvider,
   forward,
