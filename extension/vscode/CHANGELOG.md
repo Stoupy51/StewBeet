@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.6.2
+
+- **Python is coloured again around an `McFunction` variable or list.** The rule that carries the annotation to a `+=` or an `append` stays open across the lines between them, and while it is open only its own patterns apply, so `if`, `else`, ordinary strings and the declaration itself all lost their colours. Those lines now fall through to Python's own grammar, and the injection excludes its own scope so that cannot recurse.
+
 ## 1.6.1
 
 Commands written into a variable are coloured, and commands written on one line are coloured properly for the first time.

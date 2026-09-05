@@ -1,6 +1,6 @@
 {
   "scopeName": "stewbeet.mcfunction-injection",
-  "injectionSelector": "L:source.python",
+  "injectionSelector": "L:source.python -meta.mcfunction-span.stewbeet",
   "patterns": [
     {
       "include": "#stewbeet-mcfunction-string"
@@ -385,14 +385,6 @@
         {
           "comment": "An McFunction-annotated variable and every += that appends to it.",
           "begin": "([A-Za-z_]\\w*)([ \\t]*:[ \\t]*McFunction[ \\t]*=[ \\t]*)",
-          "beginCaptures": {
-            "1": {
-              "name": "meta.annotation.stewbeet"
-            },
-            "2": {
-              "name": "meta.annotation.stewbeet"
-            }
-          },
           "end": "^[ \\t]*(?!\\1[ \\t]*\\+=)(?=[^ \\t\\n])",
           "patterns": [
             {
@@ -400,7 +392,11 @@
               "begin": "\\G(f?)(\\\"\\\"\\\")",
               "beginCaptures": {
                 "1": {
-                  "name": "meta.annotation.stewbeet"
+                  "patterns": [
+                    {
+                      "include": "source.python"
+                    }
+                  ]
                 },
                 "2": {
                   "name": "string.affix.python"
@@ -427,7 +423,11 @@
               "begin": "\\G(f?)(''')",
               "beginCaptures": {
                 "1": {
-                  "name": "meta.annotation.stewbeet"
+                  "patterns": [
+                    {
+                      "include": "source.python"
+                    }
+                  ]
                 },
                 "2": {
                   "name": "string.affix.python"
@@ -454,7 +454,11 @@
               "begin": "\\G(f?)(?!\\\"\\\"\\\")(\\\")",
               "beginCaptures": {
                 "1": {
-                  "name": "meta.annotation.stewbeet"
+                  "patterns": [
+                    {
+                      "include": "source.python"
+                    }
+                  ]
                 },
                 "2": {
                   "name": "string.affix.python"
@@ -481,7 +485,11 @@
               "begin": "\\G(f?)(?!''')(')",
               "beginCaptures": {
                 "1": {
-                  "name": "meta.annotation.stewbeet"
+                  "patterns": [
+                    {
+                      "include": "source.python"
+                    }
+                  ]
                 },
                 "2": {
                   "name": "string.affix.python"
@@ -508,7 +516,11 @@
               "begin": "([A-Za-z_]\\w*[ \\t]*\\+=[ \\t]*)(f?)(\\\"\\\"\\\")",
               "beginCaptures": {
                 "1": {
-                  "name": "meta.annotation.stewbeet"
+                  "patterns": [
+                    {
+                      "include": "source.python"
+                    }
+                  ]
                 },
                 "2": {
                   "name": "string.affix.python"
@@ -535,7 +547,11 @@
               "begin": "([A-Za-z_]\\w*[ \\t]*\\+=[ \\t]*)(f?)(''')",
               "beginCaptures": {
                 "1": {
-                  "name": "meta.annotation.stewbeet"
+                  "patterns": [
+                    {
+                      "include": "source.python"
+                    }
+                  ]
                 },
                 "2": {
                   "name": "string.affix.python"
@@ -562,7 +578,11 @@
               "begin": "([A-Za-z_]\\w*[ \\t]*\\+=[ \\t]*)(f?)(?!\\\"\\\"\\\")(\\\")",
               "beginCaptures": {
                 "1": {
-                  "name": "meta.annotation.stewbeet"
+                  "patterns": [
+                    {
+                      "include": "source.python"
+                    }
+                  ]
                 },
                 "2": {
                   "name": "string.affix.python"
@@ -589,7 +609,11 @@
               "begin": "([A-Za-z_]\\w*[ \\t]*\\+=[ \\t]*)(f?)(?!''')(')",
               "beginCaptures": {
                 "1": {
-                  "name": "meta.annotation.stewbeet"
+                  "patterns": [
+                    {
+                      "include": "source.python"
+                    }
+                  ]
                 },
                 "2": {
                   "name": "string.affix.python"
@@ -610,20 +634,25 @@
                   "include": "source.mcfunction.embedded#root-inline"
                 }
               ]
+            },
+            {
+              "include": "source.python"
             }
-          ]
+          ],
+          "beginCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "source.python"
+                }
+              ]
+            }
+          },
+          "name": "meta.mcfunction-span.stewbeet"
         },
         {
           "comment": "A list annotated list[McFunction], and every append onto it.",
           "begin": "([A-Za-z_]\\w*)([ \\t]*:[ \\t]*list[ \\t]*\\[[ \\t]*McFunction[ \\t]*\\][ \\t]*=[ \\t]*)",
-          "beginCaptures": {
-            "1": {
-              "name": "meta.annotation.stewbeet"
-            },
-            "2": {
-              "name": "meta.annotation.stewbeet"
-            }
-          },
           "end": "^[ \\t]*(?!\\1[ \\t]*\\.[ \\t]*append[ \\t]*\\()(?!(?:if|elif|else|for|while|try|except|finally|with|match|case)\\b)(?=[^ \\t\\n])",
           "patterns": [
             {
@@ -631,7 +660,11 @@
               "begin": "\\G(\\[)",
               "beginCaptures": {
                 "1": {
-                  "name": "meta.annotation.stewbeet"
+                  "patterns": [
+                    {
+                      "include": "source.python"
+                    }
+                  ]
                 }
               },
               "end": "(\\])",
@@ -756,7 +789,11 @@
               "begin": "([A-Za-z_]\\w*[ \\t]*\\.[ \\t]*append[ \\t]*\\([ \\t]*)(f?)(\\\"\\\"\\\")",
               "beginCaptures": {
                 "1": {
-                  "name": "meta.annotation.stewbeet"
+                  "patterns": [
+                    {
+                      "include": "source.python"
+                    }
+                  ]
                 },
                 "2": {
                   "name": "string.affix.python"
@@ -783,7 +820,11 @@
               "begin": "([A-Za-z_]\\w*[ \\t]*\\.[ \\t]*append[ \\t]*\\([ \\t]*)(f?)(''')",
               "beginCaptures": {
                 "1": {
-                  "name": "meta.annotation.stewbeet"
+                  "patterns": [
+                    {
+                      "include": "source.python"
+                    }
+                  ]
                 },
                 "2": {
                   "name": "string.affix.python"
@@ -810,7 +851,11 @@
               "begin": "([A-Za-z_]\\w*[ \\t]*\\.[ \\t]*append[ \\t]*\\([ \\t]*)(f?)(?!\\\"\\\"\\\")(\\\")",
               "beginCaptures": {
                 "1": {
-                  "name": "meta.annotation.stewbeet"
+                  "patterns": [
+                    {
+                      "include": "source.python"
+                    }
+                  ]
                 },
                 "2": {
                   "name": "string.affix.python"
@@ -837,7 +882,11 @@
               "begin": "([A-Za-z_]\\w*[ \\t]*\\.[ \\t]*append[ \\t]*\\([ \\t]*)(f?)(?!''')(')",
               "beginCaptures": {
                 "1": {
-                  "name": "meta.annotation.stewbeet"
+                  "patterns": [
+                    {
+                      "include": "source.python"
+                    }
+                  ]
                 },
                 "2": {
                   "name": "string.affix.python"
@@ -858,8 +907,21 @@
                   "include": "source.mcfunction.embedded#root-inline"
                 }
               ]
+            },
+            {
+              "include": "source.python"
             }
-          ]
+          ],
+          "beginCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "source.python"
+                }
+              ]
+            }
+          },
+          "name": "meta.mcfunction-span.stewbeet"
         }
       ]
     }
