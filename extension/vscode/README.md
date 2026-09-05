@@ -28,6 +28,7 @@ All settings are under `StewBeet.*` in your `settings.json`:
 | `diagnosticRuleDenylist` | `["undeclaredSymbol"]`  | Rules never relayed onto Python |
 | `codeLens`               | `true`                  | Show a link above each block to the function it produced |
 | `headerLinks`            | `true`                  | Make resource locations in a generated file's `#>` header clickable |
+| `boltInMcfunction`       | `true`                  | Give a `.mcfunction` holding bolt the `bolt` language id, so Spyglass is not asked to parse it |
 | `enableBlockDecorations` | `true`                  | Toggle block decorations on/off |
 | `backgroundColor`        | `rgba(80,40,0,0.15)`    | Background fill color           |
 | `borderColor`            | `rgba(200,120,30,0.30)` | Border color                    |
@@ -163,6 +164,7 @@ Five commands come with it, from the palette:
 | StewBeet: Reload Source Maps | Drop the cache when a build finished outside the watcher's view |
 | StewBeet: Refresh Build Diagnostics | Ask for the errors now instead of waiting |
 | StewBeet: Show Diagnostics Status | Say what the relay has seen, so a quiet relay is not mistaken for a clean file |
+| StewBeet: Exclude Bolt Files From Spyglass | Add the `.mcfunction` files holding bolt to your project's `.spyglassrc.json` |
 
 A block that produced a function also carries a clickable link above it, so the second command
 is one click rather than a palette search. Turn it off with `"StewBeet.codeLens": false`.
@@ -219,7 +221,26 @@ class Ammo(Component):
 
 A word that is both a command and an identifier, such as `item`, `data`, `time` or `list`, is only a command when what follows it is not Python: `item = 3` is an assignment, `item modify entity @s ...` is a command.
 
-This is highlighting only. Completion, hover and go-to-definition inside `.bolt` need a compiler-backed language server, which only mecha can provide, and that is not part of this extension.
+Completion, hover and go-to-definition *inside* a `.bolt` file need a compiler-backed language server, which only mecha can provide, and that is not part of this extension. Navigation across the build boundary does work, and needs no server at all:
+
+- **A lens on each function the file produced**, at the first line that produced it, leading to the generated `.mcfunction`.
+- **A lens on the generated file leading back**, and the resource locations in its `#` header comments become links: `#> ns:name` opens the bolt that wrote it, `@within` opens the caller.
+
+Both need a build that emitted `.mcfunction.map` sidecars. Add `stewbeet.plugins.sniffer.mecha` to your pipeline, **before** `mecha`, and they appear.
+
+### Bolt inside a `.mcfunction`
+
+A project can enable bolt syntax inside `.mcfunction` files, and StewBeet's own minimal template does:
+
+```python
+# src/data/minimal/function/hello.mcfunction
+for i in range(1, 6):
+    say f"Hello, world! {i}"
+```
+
+That file is a `.mcfunction`, so Spyglass parses it as commands, fails on the `for`, and underlines most of it. When bolt is detected in one, the extension gives it the `bolt` language id instead, so it is highlighted as what it is. A vanilla `.mcfunction` is never touched, and neither is anything a build wrote. Turn it off with `StewBeet.boltInMcfunction`.
+
+**The language id is only half of it.** Spyglass indexes a whole data pack off disk, so it reports the file whether or not you have it open, and no extension can clear another extension's diagnostics. Spyglass has its own exclusion list, which does silence it, so **StewBeet: Exclude Bolt Files From Spyglass** adds the file to your project's `.spyglassrc.json`. You are offered this once, only when there is something to fix, and nothing is written unless you accept.
 
 ## Grammar
 

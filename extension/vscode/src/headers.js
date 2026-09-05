@@ -143,11 +143,15 @@ const headerLensProvider = {
 /** @param {vscode.ExtensionContext} context */
 function registerHeaderNavigation(context) {
   const vscode = api();
-  const mcfunction = { language: "mcfunction", scheme: "file" };
-  context.subscriptions.push(
-    vscode.languages.registerDocumentLinkProvider(mcfunction, documentLinkProvider),
-    vscode.languages.registerCodeLensProvider(mcfunction, headerLensProvider),
-  );
+  // Both ids, because a `.mcfunction` holding bolt is switched to `bolt` to keep Spyglass off
+  // it, and losing its header links for that would be a poor trade. A `.bolt` source has no map
+  // of its own, so the lens finds nothing there and only the comment links appear.
+  for (const language of ["mcfunction", "bolt"]) {
+    context.subscriptions.push(
+      vscode.languages.registerDocumentLinkProvider({ language, scheme: "file" }, documentLinkProvider),
+      vscode.languages.registerCodeLensProvider({ language, scheme: "file" }, headerLensProvider),
+    );
+  }
 }
 
 module.exports = {

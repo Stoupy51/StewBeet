@@ -142,6 +142,38 @@ function declaredMapName(generatedPath) {
 
 // Cache
 
+/** How long a path's mtime is trusted without asking the filesystem again.
+ *
+ * A `statSync` costs around 65 microseconds, and every lookup here paid one: a lens pass over an
+ * open file, or a diagnostic relay pass, makes hundreds in a burst and spent all of its time in
+ * the kernel. The map watcher in extension.js already drops these caches when a build writes, so
+ * the stat is only the backstop for a build the watcher cannot see, such as an output directory
+ * outside the workspace. One second of staleness is what that backstop costs. */
+const STAT_TTL_MS = 1000;
+
+/** When each path was last stat'd, and what it said. @type {Map<string, { at: number, mtimeMs: number | null }>} */
+const stats = new Map();
+
+/**
+ * The mtime of a path, asked of the filesystem at most once per `STAT_TTL_MS`.
+ * @param {string} file
+ * @returns {number | null} null when the file does not exist.
+ */
+function mtimeOf(file) {
+  const now = Date.now();
+  const cached = stats.get(file);
+  if (cached && now - cached.at < STAT_TTL_MS) return cached.mtimeMs;
+
+  let mtimeMs = null;
+  try {
+    mtimeMs = fs.statSync(file).mtimeMs;
+  } catch {
+    mtimeMs = null;
+  }
+  stats.set(file, { at: now, mtimeMs });
+  return mtimeMs;
+}
+
 /** Decoded maps, keyed by map path, with the mtime they were decoded at. @type {Map<string, { mtimeMs: number, map: ReturnType<typeof decode> }>} */
 const cache = new Map();
 
@@ -151,10 +183,8 @@ const cache = new Map();
  * @returns {ReturnType<typeof decode> | null}
  */
 function load(mapPath) {
-  let mtimeMs;
-  try {
-    mtimeMs = fs.statSync(mapPath).mtimeMs;
-  } catch {
+  const mtimeMs = mtimeOf(mapPath);
+  if (mtimeMs === null) {
     cache.delete(mapPath);
     return null;
   }
@@ -181,10 +211,8 @@ const contents = new Map();
  * @returns {string[] | null}
  */
 function linesOf(generatedPath) {
-  let mtimeMs;
-  try {
-    mtimeMs = fs.statSync(generatedPath).mtimeMs;
-  } catch {
+  const mtimeMs = mtimeOf(generatedPath);
+  if (mtimeMs === null) {
     contents.delete(generatedPath);
     return null;
   }
@@ -206,6 +234,8 @@ function clearCache() {
   cache.clear();
   contents.clear();
   resolvedMaps.clear();
+  origins.clear();
+  stats.clear();
   reverseIndex = null;
 }
 
@@ -254,22 +284,31 @@ function originsOf(generatedPath) {
   const map = load(mapPath);
   if (!map) return [];
 
+  const cached = origins.get(mapPath);
+  if (cached && cached.map === map) return cached.origins;
+
   const seen = new Set();
-  const origins = [];
-  for (const line of [...map.lines.keys()].sort((a, b) => a - b)) {
-    const entry = map.lines.get(line);
-    if (!entry) continue;
+  const found = [];
+  // `map.lines` is filled in ascending generated order by `decode`, so it needs no sorting.
+  for (const [, entry] of map.lines) {
     const source = map.sources[entry.sourceIndex];
     if (!source || seen.has(entry.sourceIndex)) continue;
     seen.add(entry.sourceIndex);
-    origins.push({
+    found.push({
       file: path.resolve(path.dirname(mapPath), map.sourceRoot, source),
       line: entry.sourceLine,
       column: entry.sourceColumn,
     });
   }
-  return origins;
+  origins.set(mapPath, { map, origins: found });
+  return found;
 }
+
+/** Origins per map, keyed by map path and held against the decoded map they were read from,
+ *  so a rebuild that replaces the map replaces these too. The header lens and the document link
+ *  provider both ask on every request VS Code makes.
+ *  @type {Map<string, { map: ReturnType<typeof decode>, origins: { file: string, line: number, column: number }[] }>} */
+const origins = new Map();
 
 // Lookup: source to generated
 
@@ -291,10 +330,8 @@ function originLinesFor(mapPaths, pythonPath) {
   if (!reverseIndex) reverseIndex = buildReverseIndex(mapPaths);
 
   const lines = new Map();
-  const prefix = `${fileKey(pythonPath)}:`;
-  for (const [entry, locations] of reverseIndex) {
-    if (!entry.startsWith(prefix) || locations.length === 0) continue;
-    lines.set(Number(entry.slice(prefix.length)), locations[0]);
+  for (const [line, locations] of reverseIndex.get(fileKey(pythonPath)) ?? []) {
+    if (locations.length > 0) lines.set(line, locations[0]);
   }
   return lines;
 }
@@ -312,29 +349,41 @@ function originLinesFor(mapPaths, pythonPath) {
  */
 function generatedFrom(mapPaths, pythonPath, line) {
   if (!reverseIndex) reverseIndex = buildReverseIndex(mapPaths);
-  return (reverseIndex.get(key(pythonPath, line)) ?? []).slice();
+  return (reverseIndex.get(fileKey(pythonPath))?.get(line) ?? []).slice();
 }
 
 /**
+ * Source file to source line to what that line generated.
+ *
+ * Nested by file rather than keyed by a `file:line` string so that asking about one file is a
+ * lookup instead of a walk over every mapped line in the project. A pack of two thousand
+ * functions has tens of thousands of entries, and the lens provider asks on every keystroke.
+ *
  * @param {string[]} mapPaths
- * @returns {Map<string, { file: string, line: number }[]>}
+ * @returns {Map<string, Map<number, { file: string, line: number }[]>>}
  */
 function buildReverseIndex(mapPaths) {
-  /** @type {Map<string, { file: string, line: number }[]>} */
+  /** @type {Map<string, Map<number, { file: string, line: number }[]>>} */
   const index = new Map();
 
   for (const mapPath of mapPaths) {
     const map = load(mapPath);
     if (!map) continue;
     const generatedPath = mapPath.slice(0, -".map".length);
+    const directory = path.dirname(mapPath);
+    // One resolve per source, not per mapped line: the same source repeats on every line.
+    const files = map.sources.map(source => fileKey(path.resolve(directory, map.sourceRoot, source)));
+
     for (const [generatedLine, entry] of map.lines) {
-      const source = map.sources[entry.sourceIndex];
-      if (!source) continue;
-      const file = path.resolve(path.dirname(mapPath), map.sourceRoot, source);
-      const bucket = index.get(key(file, entry.sourceLine));
+      const file = files[entry.sourceIndex];
+      if (file === undefined) continue;
+
+      let byLine = index.get(file);
+      if (!byLine) index.set(file, byLine = new Map());
+      const bucket = byLine.get(entry.sourceLine);
       const location = { file: generatedPath, line: generatedLine };
       if (bucket) bucket.push(location);
-      else index.set(key(file, entry.sourceLine), [location]);
+      else byLine.set(entry.sourceLine, [location]);
     }
   }
   return index;
@@ -364,11 +413,6 @@ function generatedText(mapPaths, pythonPath, from, to) {
     if (typeof text === "string") found.set(line, text);
   }
   return found;
-}
-
-/** @param {string} file @param {number} line */
-function key(file, line) {
-  return `${fileKey(file)}:${line}`;
 }
 
 /** @param {string} file */

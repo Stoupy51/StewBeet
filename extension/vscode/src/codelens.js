@@ -8,9 +8,9 @@
 // lens at all, so a project with no build looks exactly as it did before.
 
 const vscode = require("vscode");
-const path = require("path");
 const navigation = require("./navigation");
 const { blocksOf } = require("./virtual");
+const { functionIdOf, targetOfBlock, lensAnchors } = require("./lenses");
 const sourcemap = require("./sourcemap");
 
 // Constants
@@ -20,44 +20,6 @@ const CFG_KEY = "StewBeet";
 // Provider
 
 const onDidChangeEmitter = new vscode.EventEmitter();
-
-/**
- * The resource location a generated path spells, for the lens to name the target.
- * Falls back to the file name for a layout the convention does not cover.
- * @param {string} generatedPath
- */
-function functionIdOf(generatedPath) {
-  const parts = generatedPath.replace(/\\/g, "/").split("/");
-  const data = parts.lastIndexOf("data");
-  const folder = parts.findIndex((part, i) => i > data && (part === "function" || part === "functions"));
-  if (data === -1 || folder === -1 || folder <= data + 1) return path.basename(generatedPath);
-  return `${parts[data + 1]}:${parts.slice(folder + 1).join("/").replace(/\.mcfunction$/, "")}`;
-}
-
-/**
- * What a block produced, or null when the current build knows nothing about it.
- *
- * Two shapes of origin exist. Commands written inline map line by line, so the answer sits on
- * one of the block's own lines. Commands arriving in a variable are all attributed to the call
- * itself, so the answer sits on the call line. Both are tried.
- *
- * @param {Map<number, { file: string, line: number }>} origins
- * @param {vscode.TextDocument} doc
- * @param {{ start:number, end:number }} block
- * @param {number} callLine
- * @returns {{ file: string, line: number } | null}
- */
-function targetOfBlock(origins, doc, block, callLine) {
-  const found = origins.get(callLine);
-  if (found) return found;
-
-  const last = doc.positionAt(block.end).line;
-  for (let line = doc.positionAt(block.start).line; line <= last; line++) {
-    const inside = origins.get(line);
-    if (inside) return inside;
-  }
-  return null;
-}
 
 const codeLensProvider = {
   onDidChangeCodeLenses: onDidChangeEmitter.event,
@@ -99,6 +61,36 @@ const codeLensProvider = {
   },
 };
 
+const boltLensProvider = {
+  onDidChangeCodeLenses: onDidChangeEmitter.event,
+
+  /**
+   * The other half of the header lens, for a source file that is not Python.
+   * A `.bolt` module, or a `.mcfunction` holding bolt, reaches what the build made of it.
+   * @param {vscode.TextDocument} doc
+   */
+  async provideCodeLenses(doc) {
+    if (!vscode.workspace.getConfiguration(CFG_KEY).get("codeLens", true)) return [];
+    if (doc.uri.scheme !== "file") return [];
+
+    const maps = await navigation.findMaps();
+    if (maps.length === 0) return [];
+
+    // A generated file is not a source of anything, so it never appears in the reverse index
+    // and this costs one lookup before returning nothing.
+    const origins = sourcemap.originLinesFor(maps, doc.uri.fsPath);
+    if (origins.size === 0) return [];
+
+    return lensAnchors(origins).map(({ line, target }) => new vscode.CodeLens(
+      new vscode.Range(line, 0, line, 0), {
+        title: `$(go-to-file) ${functionIdOf(target.file)}`,
+        tooltip: target.file,
+        command: "stewbeet.goToGenerated",
+        arguments: [target],
+      }));
+  },
+};
+
 /** Ask VS Code for the lenses again, for when a build changed what the blocks produce. */
 function refreshCodeLenses() {
   onDidChangeEmitter.fire(undefined);
@@ -108,6 +100,10 @@ function refreshCodeLenses() {
 function registerCodeLenses(context) {
   context.subscriptions.push(
     vscode.languages.registerCodeLensProvider({ language: "python" }, codeLensProvider),
+    // `mcfunction` as well as `bolt`, so a source file keeps its lens whether or not the
+    // language switch in bolt.js decided it was bolt. On a generated file this finds nothing.
+    vscode.languages.registerCodeLensProvider({ language: "bolt" }, boltLensProvider),
+    vscode.languages.registerCodeLensProvider({ language: "mcfunction", scheme: "file" }, boltLensProvider),
     vscode.workspace.onDidChangeConfiguration(e => {
       if (e.affectsConfiguration(`${CFG_KEY}.codeLens`)) refreshCodeLenses();
     }),
@@ -119,6 +115,7 @@ module.exports = {
   functionIdOf,
   targetOfBlock,
   codeLensProvider,
+  boltLensProvider,
   refreshCodeLenses,
   registerCodeLenses,
 };

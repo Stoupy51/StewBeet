@@ -168,7 +168,21 @@ No build, no Python, nothing to configure. Install the extension and open any `.
 
 **The corpus check**, worth rerunning after any grammar edit: tokenize all 141 `.bolt` files in [shulker](file:///d:/advanced_desktop/shulker) through `extension/vscode/test/textmate.js` and look for a scope covering a long stretch of consecutive lines. A begin pattern whose end never matches turns the rest of a file into one colour, and a 141-file corpus is the cheapest way to find it. The long runs that do appear are genuine: a 45-line dict literal, blocks of consecutive commands, and multi-line JSON bodies inside an `advancement` command.
 
-**What is not covered**: a `.mcfunction` file containing bolt syntax. StewBeet's own minimal template ships one, and it stays owned by Spyglass, which reports its `for` loop as a syntax error. That is the file partition in [contracts/dialects.md](./contracts/dialects.md), and resolving it is step F.
+### Bolt inside a `.mcfunction`
+
+StewBeet's minimal template ships one: `src/data/minimal/function/hello.mcfunction` opens with `for i in range(1, 6):`.
+
+| Check | Expected |
+|---|---|
+| Open it | The status bar says **Bolt**, not Minecraft Function |
+| A vanilla `.mcfunction` beside it | still **Minecraft Function**, and still completing |
+| The Problems panel | Spyglass still reports it, because it indexes the pack off disk |
+| Run **StewBeet: Exclude Bolt Files From Spyglass** | `.spyglassrc.json` gains the file under `env.exclude`, and the reports clear |
+| Anything else in that config | untouched, including `env.dependencies` |
+
+**Turning `StewBeet.boltInMcfunction` off is the way to see the problem**, which is also how the integration test makes its control deterministic: with the switch off the file stays `mcfunction` and Spyglass reports the `for` loop, so a run that reports nothing has proven nothing.
+
+**What is still not covered**: completion, hover and go-to-definition *inside* bolt, which need mecha. That is step F.
 
 ## Phase E: a bolt or mecha build emits source maps
 
@@ -194,6 +208,16 @@ Listing it after `mecha` is the mistake to expect: it works after its `yield`, a
 **Do not expect every line to map.** On a real bolt project roughly a third do. The rest are commands bolt synthesised from modules that exist only in memory, or whose recorded position is not valid in any project source. An unmapped line is the correct answer there, and G5 in [contracts/source-map.md](./contracts/source-map.md) says why.
 
 **`mecha.contrib.source_map` is not this.** It prepends a `# [source_map] <filename>` header comment and emits no line mapping. Requiring it expecting a source map gets a comment.
+
+### Navigation on a bolt file
+
+| Check | Expected |
+|---|---|
+| Open a `.bolt` module that produced functions | one lens per function, at the first line that produced it |
+| Click one | the generated `.mcfunction` opens |
+| On the generated file | a lens leading back to the `.bolt` line |
+| Its `#>` header, in a StewBeet pipeline | the name is a link to the bolt that wrote it, and `@within` links to the caller |
+| A `.bolt` file that produced nothing | no lens at all, which is every file when there is no build |
 
 ### The payoff, and how to check it without the editor
 

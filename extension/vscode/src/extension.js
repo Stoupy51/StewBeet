@@ -2,6 +2,7 @@
 "use strict";
 
 const vscode = require("vscode");
+const path = require("path");
 const { findBlockOffsets } = require("./blocks");
 const {
   TRIGGER_CHARACTERS,
@@ -18,6 +19,7 @@ const sourcemap = require("./sourcemap");
 const diagnostics = require("./diagnostics");
 const { registerCodeLenses, refreshCodeLenses } = require("./codelens");
 const { registerHeaderNavigation } = require("./headers");
+const { looksLikeBolt, isBuildOutput, addExclusions } = require("./bolt");
 
 // Constants
 
@@ -109,7 +111,113 @@ function activate(context) {
   registerSourceMaps(context);
   registerCodeLenses(context);
   registerHeaderNavigation(context);
+  registerBoltDetection(context);
   diagnostics.registerDiagnosticRelay(context);
+}
+
+// Bolt inside .mcfunction
+
+/**
+ * Take a `.mcfunction` that holds bolt away from Spyglass, which cannot parse it.
+ *
+ * A project can enable bolt syntax inside `.mcfunction` files, and StewBeet's own minimal
+ * template does. Spyglass then reports most of the file as a syntax error, and no API can
+ * remove another extension's diagnostics. Changing the language id is the whole fix: `bolt`
+ * is not in Spyglass's selector, and it is in this extension's grammar.
+ *
+ * Only source files are considered. A generated function is left alone whatever it contains,
+ * because Spyglass is exactly what a build's output wants.
+ *
+ * @param {vscode.ExtensionContext} context
+ */
+function registerBoltDetection(context) {
+  /** Already switched, so a document reopened under its new id is not reconsidered. */
+  const handled = new Set();
+  /** Switched files per workspace folder, which is what an exclusion would name. */
+  const switched = new Map();
+  let offered = false;
+
+  /** @param {vscode.TextDocument} doc */
+  async function consider(doc) {
+    if (doc.languageId !== "mcfunction" || doc.uri.scheme !== "file") return;
+    if (!vscode.workspace.getConfiguration(CFG_KEY).get("boltInMcfunction", true)) return;
+    if (handled.has(doc.uri.fsPath)) return;
+
+    const configured = vscode.workspace.getConfiguration(CFG_KEY).get("buildOutput", "");
+    const outputs = typeof configured === "string" && configured ? [configured] : [];
+    if (isBuildOutput(doc.uri.fsPath, outputs)) return;
+    // A file the build wrote is generated output even when buildOutput names nothing, and its
+    // own trailing comment says so. looksLikeBolt reads it, so this needs no second check.
+    if (!looksLikeBolt(doc.getText())) return;
+
+    handled.add(doc.uri.fsPath);
+    try {
+      await vscode.languages.setTextDocumentLanguage(doc, "bolt");
+    } catch (e) {
+      console.debug("[StewBeet] could not set the bolt language id", e);
+      return;
+    }
+
+    const folder = vscode.workspace.getWorkspaceFolder(doc.uri);
+    if (!folder) return;
+    const root = folder.uri.fsPath;
+    switched.set(root, [...(switched.get(root) ?? []), doc.uri.fsPath]);
+    offerExclusion(doc.uri);
+  }
+
+  /**
+   * Offer once, and only when there is something to fix.
+   *
+   * The language id stops Spyglass answering about the open document; it does not stop Spyglass
+   * indexing the data pack off disk, and that index is what puts the squiggles in the Problems
+   * panel. Its own `env.exclude` does stop it, so the offer is to write that entry.
+   * @param {vscode.Uri} uri
+   */
+  async function offerExclusion(uri) {
+    if (offered) return;
+    // Spyglass publishes on its own schedule, so ask again shortly rather than once immediately.
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    const foreign = (vscode.languages.getDiagnostics(uri) || [])
+      .filter(d => !String(d.source || "").startsWith("stewbeet"));
+    if (foreign.length === 0 || offered) return;
+
+    offered = true;
+    const choice = await vscode.window.showInformationMessage(
+      `${path.basename(uri.fsPath)} holds bolt, which Spyglass cannot parse. Add it to this project's Spyglass exclusions?`,
+      "Add exclusion", "Not now",
+    );
+    if (choice === "Add exclusion") await excludeSwitchedFiles();
+  }
+
+  /** Write every switched file into its project's Spyglass config. */
+  async function excludeSwitchedFiles() {
+    if (switched.size === 0) {
+      vscode.window.showInformationMessage("StewBeet: no bolt was found in a .mcfunction file, so there is nothing to exclude.");
+      return;
+    }
+    for (const [root, files] of switched) {
+      const result = addExclusions(root, files);
+      if (!result) continue;
+      const doc = await vscode.workspace.openTextDocument(result.path);
+      await vscode.window.showTextDocument(doc, { preview: false });
+      vscode.window.showInformationMessage(
+        `StewBeet: excluded ${result.added.length} file(s) from Spyglass in ${path.basename(result.path)}.`);
+    }
+  }
+
+  vscode.workspace.textDocuments.forEach(consider);
+  context.subscriptions.push(
+    vscode.workspace.onDidOpenTextDocument(consider),
+    // A file that becomes bolt while open, which is what adding the first `for` loop looks like.
+    vscode.workspace.onDidSaveTextDocument(consider),
+    vscode.commands.registerCommand("stewbeet.excludeBoltFromSpyglass", excludeSwitchedFiles),
+    vscode.workspace.onDidChangeConfiguration(e => {
+      if (e.affectsConfiguration(`${CFG_KEY}.boltInMcfunction`)) {
+        handled.clear();
+        vscode.workspace.textDocuments.forEach(consider);
+      }
+    }),
+  );
 }
 
 // Language features
