@@ -217,3 +217,53 @@ test("injection grammar covers all six write_* functions", () => {
     assert.ok(text.includes(fn), `injection grammar missing ${fn}`);
   }
 });
+
+// The McFunction annotation rule (FR-023)
+
+/** The annotation rules, in the order the grammar defines them. */
+const annotationRules = injection.repository["stewbeet-mcfunction-string"].patterns
+  .filter(p => typeof p.begin === "string" && p.begin.includes("McFunction"));
+
+test("injection grammar carries an McFunction annotation rule for every quote style", () => {
+  const quotes = annotationRules.map(p => p.begin.replace(/.*\((f\?)\)/, ""));
+  assert.equal(annotationRules.length, 4, "expected one rule per quote style");
+  assert.ok(quotes.some(q => q.includes('\\"\\"\\"')), 'missing triple-double annotation rule');
+  assert.ok(quotes.some(q => q.includes("'''")), "missing triple-single annotation rule");
+});
+
+test("the annotation rule matches the shapes an author writes", () => {
+  const anchored = annotationRules.map(p => new RegExp("^" + p.begin));
+  const matches = text => anchored.some(re => re.test(text));
+  assert.ok(matches('content: McFunction = """'), "plain triple-double");
+  assert.ok(matches('content: McFunction = f"""'), "f-string");
+  assert.ok(matches("content: McFunction = '''"), "triple-single");
+  assert.ok(matches('content: McFunction = "'), "single-double");
+  assert.ok(matches("content: McFunction = '"), "single-single");
+  assert.ok(matches('c:McFunction="""'), "no spaces around the colon or equals");
+  assert.ok(matches('_body2 :  McFunction  =  f"""'), "extra spaces and a name with digits");
+});
+
+test("the annotation rule leaves every other annotation alone", () => {
+  // Unanchored, the way TextMate applies a pattern: an anchored miss would hide a rule
+  // that matches further along the line.
+  const anywhere = annotationRules.map(p => new RegExp(p.begin));
+  const matches = text => anywhere.some(re => re.test(text));
+  assert.ok(!matches('notes: str = """'), "a plain str annotation must stay Python");
+  assert.ok(!matches('content = """'), "an unannotated assignment must stay Python");
+  assert.ok(!matches('content: MyMcFunction = """'), "a name merely ending in McFunction");
+  assert.ok(!matches('content: McFunctions = """'), "a name merely starting with McFunction");
+});
+
+test("annotation triple-quote rules come before their single-quote rules", () => {
+  const idxOf = quote => annotationRules.findIndex(p => p.begin.endsWith(`(${quote})`));
+  assert.ok(idxOf('\\"\\"\\"') < idxOf('\\"'), "triple-double must come before single-double");
+  assert.ok(idxOf("'''") < idxOf("'"), "triple-single must come before single-single");
+});
+
+test("the annotation rule ends at the quote, with no call parenthesis to close", () => {
+  for (const rule of annotationRules) {
+    // The write_* rules capture the call's closing `)` as group 2. An assignment has none.
+    assert.deepEqual(Object.keys(rule.endCaptures), ["1"], `${rule.comment} should end at the quote alone`);
+    assert.equal(rule.contentName, "source.mcfunction.embedded");
+  }
+});

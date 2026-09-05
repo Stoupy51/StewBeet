@@ -57,14 +57,20 @@ Subscribes to `vscode.languages.onDidChangeDiagnostics`. For each changed URI th
 
 Diagnostics are grouped per Python file and replaced wholesale on each change, so stale entries cannot accumulate.
 
-**Loading what a build wrote (step C2)**: a language server publishes diagnostics only for documents it has been handed, so the relay had nothing to relay until the author opened a generated file themselves. A `**/*.mcfunction` watcher now collects the files a build touches and calls `vscode.workspace.openTextDocument` on them, which loads a document without showing it.
+**Where diagnostics come from (FR-019)**: a language server publishes only for documents it has been handed, and opening one is not asking. The relay therefore reads Spyglass's answers on the **virtual documents it already serves for completion**. Their lines are in lockstep with the Python, so an error comes home with no build, no source map, and nothing under the build output ever opened. It appears as the author types.
 
-Two rules keep this from costing more than it gives, both sized against a real pack (SimplEnergy: 270 generated functions, 117 maps, per build):
+A generated `.mcfunction` the author opens themselves still relays through the source map, which is the only path carrying a build's own output. Where both describe the same mistake the projection's wins, because it knows which columns are wrong and the generated file knows only which line.
 
-- **Only what an open Python file produced is loaded.** The author can only see a squiggle in a file they have open, so the rest of the pack is never handed to the server. This turns 270 documents into 27 for one open file. Opening a Python file later queues what it produced, so nothing is missed.
-- **What the server said is kept, not read live.** VS Code disposes a document nothing references and the server drops its diagnostics with it, which is why relaying straight from `getDiagnostics()` produced squiggles that appeared and immediately vanished. Each generated file's result is captured in a map that survives the document closing, and an empty result for a document that is no longer open is treated as "the server let go", not "the file is clean". A deliberate reload clears the entry first, so a fixed error still disappears.
+The pass is shaped by four numbers, in `src/diagnostics.js` and `src/virtual.js`:
 
-Plus: writes are debounced by 400 ms so one rebuild is one pass; at most 40 documents are opened per pass with the remainder deferred; a loaded batch is held for 8 s so the server has time to look at it; and nothing is opened at all while `StewBeet.sourceMapDiagnostics` is off.
+- **120 ms debounce** on the reaction, since the server reports on a document in bursts as it parses it.
+- **One wake per changed block**, batched into a single round trip. Blocks whose text did not move are not woken, so typing in one block does not pay for every other block in the file.
+- **3 s per wake, 20 s per pass.** A request that never comes back leaves the pass marked running, and every later pass then returns immediately with the squiggles frozen where they were.
+- **30 s keepalive.** VS Code lets go of a document nothing is showing once enough have been opened, and the server stops reporting on it with no event to say so, so the blocks are asked again on a timer.
+
+Nothing runs at all while `StewBeet.sourceMapDiagnostics` is off.
+
+**Diagnostics about a mask are dropped.** An interpolation the build cannot resolve becomes a run of `_`, and a parser that has swallowed one is lost for the rest of the line. Suppression keys on where a diagnostic **points**, not on what it overlaps, so a typo earlier on a masked line is still reported while the placeholder stays quiet. Everything the parser says past the mask on that line goes with it: a real mistake sitting after a placeholder goes unreported, which is the better trade.
 
 **Rule extraction**: the denylist matches `code` when the server sets it, and otherwise the `(rule: X)` suffix Spyglass writes at the end of the message. Spyglass leaves `code` empty, so matching only on `code` silences nothing.
 
@@ -76,15 +82,28 @@ Registered on `{ language: 'python' }`. One lens sits on the first line of each 
 
 A block with no generated counterpart gets **no lens at all**, rather than one reporting that there is nothing to open, so a project with no build looks exactly as it did before. Lenses refresh when a map is written or deleted.
 
+## Header links in generated files (step C2)
+
+Not asked for by any requirement, and kept because it is the cheap half of navigation nobody had built. StewBeet's generated headers name the function they belong to and, after `@within`, the functions that call it, but they sit in `#` comments where Spyglass sees prose and offers nothing.
+
+Registered on `{ language: 'mcfunction', scheme: 'file' }`:
+
+- A `DocumentLinkProvider` turns every resource location in a header comment into a link to the file it names. A location naming no real file, and prose that merely contains a colon, stay plain text. The link covers the resource location alone, not the whole comment.
+- A `CodeLensProvider` puts one lens above the header, leading back to the Python that wrote the function. It is the mirror of the lens in Python files: from a block you reach what it produced, and from what was produced you reach the block.
+
+Both are off when `StewBeet.headerLinks` is `false`. `src/headers.js` holds the scanning, keeps no `vscode` import at module scope, and is unit-tested in `test/headers.test.js`.
+
 ## Commands
 
-All three are shipped in 1.2.0 and depend on the source maps a build emits. Without a build they report on the status bar that the line has no recorded origin rather than doing nothing silently.
+The first three depend on the source maps a build emits, and without one they report on the status bar that the line has no recorded origin rather than doing nothing silently. The last two are relay controls and need no build.
 
 | Command | Step | Title | Behaviour |
 |---|---|---|---|
 | `stewbeet.goToGenerated` | **C, shipped** | StewBeet: Go to Generated Function | From a Python position inside a block, open the generated `.mcfunction` at the mapped line. The inverse of ctrl+click. Accepts an optional `{ file, line }` argument, which is how the CodeLens skips the cursor lookup. |
 | `stewbeet.goToSource` | **C, shipped** | StewBeet: Go to Python Source | From a generated `.mcfunction` position, open the Python source at the mapped line. |
 | `stewbeet.reloadSourceMaps` | **C, shipped** | StewBeet: Reload Source Maps | Drop the decoded map cache. An escape hatch when a build finishes outside the watcher's view. |
+| `stewbeet.refreshDiagnostics` | **C2, shipped** | StewBeet: Refresh Build Diagnostics | Force a relay pass now instead of waiting for the keepalive. |
+| `stewbeet.diagnosticsStatus` | **C2, shipped** | StewBeet: Show Diagnostics Status | Report what the relay has captured, published and passed over, so a quiet relay can be told apart from a clean file. |
 
 ## Settings
 
@@ -98,6 +117,7 @@ Added to the existing `StewBeet.*` configuration block:
 | `StewBeet.resolveInterpolations` | **C2, shipped** | `boolean` | `true` | Whether to fill each interpolation with what the last build resolved it to. Off restores step A's masking exactly, which is the escape hatch for a project the anchoring cannot handle. |
 | `StewBeet.diagnosticRuleDenylist` | **C2, shipped** | `string[]` | `["undeclaredSymbol"]` | Rules never relayed onto Python. Empty relays everything. |
 | `StewBeet.codeLens` | **C2, shipped** | `boolean` | `true` | Whether to show the link above a block that produced a function. |
+| `StewBeet.headerLinks` | **C2, shipped** | `boolean` | `true` | Whether resource locations in a generated file's `#>` header comments become links. |
 
 ## Backwards compatibility
 

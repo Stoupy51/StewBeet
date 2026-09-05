@@ -381,6 +381,118 @@
               "include": "source.mcfunction.embedded"
             }
           ]
+        },
+        {
+          "comment": "McFunction annotation, triple-double",
+          "name": "meta.embedded.block.mcfunction.stewbeet",
+          "begin": "([A-Za-z_]\\w*\\s*:\\s*McFunction\\s*=\\s*)(f?)(\\\"\\\"\\\")",
+          "beginCaptures": {
+            "1": {
+              "name": "meta.annotation.stewbeet"
+            },
+            "2": {
+              "name": "string.affix.python"
+            },
+            "3": {
+              "name": "punctuation.definition.string.begin.python"
+            }
+          },
+          "end": "(\\\"\\\"\\\")",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.string.end.python"
+            }
+          },
+          "contentName": "source.mcfunction.embedded",
+          "patterns": [
+            {
+              "include": "source.mcfunction.embedded"
+            }
+          ]
+        },
+        {
+          "comment": "McFunction annotation, triple-single",
+          "name": "meta.embedded.block.mcfunction.stewbeet",
+          "begin": "([A-Za-z_]\\w*\\s*:\\s*McFunction\\s*=\\s*)(f?)(''')",
+          "beginCaptures": {
+            "1": {
+              "name": "meta.annotation.stewbeet"
+            },
+            "2": {
+              "name": "string.affix.python"
+            },
+            "3": {
+              "name": "punctuation.definition.string.begin.python"
+            }
+          },
+          "end": "(''')",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.string.end.python"
+            }
+          },
+          "contentName": "source.mcfunction.embedded",
+          "patterns": [
+            {
+              "include": "source.mcfunction.embedded"
+            }
+          ]
+        },
+        {
+          "comment": "McFunction annotation, single-double",
+          "name": "meta.embedded.inline.mcfunction.stewbeet",
+          "begin": "([A-Za-z_]\\w*\\s*:\\s*McFunction\\s*=\\s*)(f?)(?!\\\"\\\"\\\")(\\\")",
+          "beginCaptures": {
+            "1": {
+              "name": "meta.annotation.stewbeet"
+            },
+            "2": {
+              "name": "string.affix.python"
+            },
+            "3": {
+              "name": "punctuation.definition.string.begin.python"
+            }
+          },
+          "end": "(\\\")",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.string.end.python"
+            }
+          },
+          "contentName": "source.mcfunction.embedded",
+          "patterns": [
+            {
+              "include": "source.mcfunction.embedded"
+            }
+          ]
+        },
+        {
+          "comment": "McFunction annotation, single-single",
+          "name": "meta.embedded.inline.mcfunction.stewbeet",
+          "begin": "([A-Za-z_]\\w*\\s*:\\s*McFunction\\s*=\\s*)(f?)(?!''')(')",
+          "beginCaptures": {
+            "1": {
+              "name": "meta.annotation.stewbeet"
+            },
+            "2": {
+              "name": "string.affix.python"
+            },
+            "3": {
+              "name": "punctuation.definition.string.begin.python"
+            }
+          },
+          "end": "(')",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.string.end.python"
+            }
+          },
+          "contentName": "source.mcfunction.embedded",
+          "patterns": [
+            {
+              "include": "source.mcfunction.embedded"
+            }
+          ]
         }
       ]
     }

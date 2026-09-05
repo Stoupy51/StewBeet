@@ -264,3 +264,12 @@ test("the content range of a variable block excludes its quotes", () => {
   assert.equal(content.includes("Rotation[0]"), true);
 });
 
+test("the McFunction annotation does not change what counts as a block", () => {
+  assert.ok(VARIABLE_BLOCK.includes("to_add: str ="), "fixture no longer carries the annotation this rewrites");
+  const annotated = VARIABLE_BLOCK.replace("to_add: str =", "to_add: McFunction =");
+  assert.deepEqual(
+    findBlockOffsets(annotated).map(b => annotated.slice(b.start, b.end)),
+    blockTexts(VARIABLE_BLOCK),
+    "annotating adds the syntax colours and nothing else (FR-023)",
+  );
+});
