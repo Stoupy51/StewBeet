@@ -8,6 +8,16 @@ npm run test:integration          # from extension/vscode/
 
 A VS Code window opens, runs the checks and closes itself. Takes about 25 seconds with a warm Spyglass cache; the first ever run downloads mcmeta summaries and takes minutes. Set `VSCODE_EXE` if the launcher cannot find your VS Code.
 
+## The probe
+
+```sh
+SB_TESTS=probe node test/integration/run.js
+```
+
+A measurement rather than a set of assertions, for questions the unit tests cannot answer: does a virtual document stay reachable, does the server report on one nobody asked about, and does loading generated files evict it. It is what found the two faults 1.5.0 fixes, and rerunning it is the fastest way to tell a dead relay from a slow one.
+
+It types into `demo.py`, and VS Code saves a dirty document when the window closes, so `run.js` snapshots the fixture and puts it back afterwards.
+
 ## Why it exists
 
 It is the regression guard for the assumption the whole design rests on: **Spyglass's document selector carries no scheme filter**, so it attaches to the virtual documents this extension serves. If a future Spyglass release adds one, every provider silently stops answering and nothing else notices.

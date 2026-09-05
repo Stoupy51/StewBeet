@@ -16,3 +16,7 @@ function {ns}:alpha
 write_function("probe:broken", """
 nonexistentcommand foo bar
 """)
+
+write_function("probe:typo", f"""
+execute store reslt score #h {ns}.data run data get entity @s Pos[1]
+""")

@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.5.0
+
+Errors reached the Python file only by luck. The path that was supposed to deliver them was racing, and a rebuild killed it outright.
+
+- **An error in a block is reported without opening anything.** A language server only looks at a document something has asked it about, and opening one is not asking. The blocks were opened and never asked, so whether a mistake was reported came down to whether the author happened to trigger completion in that exact block. Each block is now woken with one hover before its diagnostics are read.
+- **A rebuild no longer switches diagnostics off.** VS Code lets go of documents nothing is showing once enough have been opened, and loading a rebuild's generated functions, forty at a time, was enough to evict every block in the file. The server then stopped reporting on them with no event to say so, and nothing ever recovered: the only way back was closing and reopening the Python file. Generated functions are no longer loaded at all, which is also what made the editor slow.
+- **The relay does not spin.** Waking a document makes the server publish, and publishing is what asks for the next pass. Waking on every pass ran seven passes a second with nobody typing. A pass wakes when the Python changed and reads when the server has something to say, with a wake every 30 seconds so an eviction cannot go unnoticed.
+- **The precise error wins.** When the same mistake arrives both from a generated file and from the projection, the projection's is kept: it knows which columns are wrong, and the generated file knows only which line.
+
+Diagnostics from generated files still reach Python, for the files the author opens themselves.
+
+## 1.4.3
+
+- **A real mistake is reported again on a line that carries a `{...}`.** 1.4.1 suppressed every diagnostic that overlapped a masked interpolation, which was too broad: a typo like `execute store reslt score #height {ns}.data` produces an error running from the typo to the end of the line, so it crossed the mask and was thrown away with it. Suppression now depends on where the diagnostic **points**, not on what it overlaps, so the placeholder stays quiet and the typo does not.
+
+## 1.4.2
+
+- **One link per `write_*` call, not one per command.** Reading the source map alone put a link on every line of a function, because the map records an origin for each generated line. Blocks now say which call they feed, so the link lands on the call whether the commands sit inside it or arrive in a variable above it.
+
 ## 1.4.1
 
 - **No more errors about the mask.** An interpolation the build cannot resolve becomes a run of `_`, and a parser told that `scoreboard players add @s obj ______` is missing an integer is right about the placeholder and says nothing about your code. Every diagnostic landing on a mask is now dropped, so `{energy["generation"]}` stops carrying a permanent red line.

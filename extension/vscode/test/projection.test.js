@@ -6,7 +6,7 @@ const assert = require("node:assert/strict");
 
 const { findBlockOffsets, findInterpolationSpans } = require("../src/blocks");
 const {
-  project, resolveLine, toVirtual, toPython, crossesSubstitution,
+  project, resolveLine, toVirtual, toPython, describesMask, crossesSubstitution,
   virtualPath, blockIndexFromPath, sanitizeName,
 } = require("../src/projection");
 
@@ -17,7 +17,7 @@ function projectFirstBlock(text) {
   return project(text, block.start, block.end, findInterpolationSpans(text, block)).text;
 }
 
-// ─── findInterpolationSpans──
+// findInterpolationSpans
 
 test("plain string has no interpolation spans", () => {
   const text = 'write_function("ns:p", """\nsay hi\n""")';
@@ -62,7 +62,7 @@ test("several interpolations produce sorted non-overlapping spans", () => {
   assert.ok(spans[0].end <= spans[1].start);
 });
 
-// ─── Offset identity─────────
+// Offset identity
 // The property the whole forwarding design rests on: a position in the Python
 // document is the same position in the virtual one.
 
@@ -109,7 +109,7 @@ test("a multi-line interpolation keeps its newlines so line counts match", () =>
   assert.equal((out.match(/\n/g) || []).length, (text.match(/\n/g) || []).length);
 });
 
-// ─── Virtual URI paths───────
+// Virtual URI paths
 
 test("virtual path round-trips its block index", () => {
   for (const i of [0, 1, 7, 42]) {
@@ -130,7 +130,7 @@ test("blockIndexFromPath rejects a foreign path", () => {
   assert.equal(blockIndexFromPath("/nope/demo.mcfunction"), undefined);
 });
 
-// ─── resolveLine─────────────
+// resolveLine
 
 /** Line-local spans of every `{...}` in a single line. @param {string} line */
 function spansOf(line) {
@@ -193,7 +193,7 @@ test("a generated value spanning lines is refused", () => {
   assert.equal(resolve("function {ns}:foo", "function a\nb:foo"), null);
 });
 
-// ─── Substitution────────────
+// Substitution
 
 /** Project the first block of a Python source against a table of generated lines. */
 function projectWith(text, generatedLines) {
@@ -254,7 +254,7 @@ test("CRLF survives a substitution that changes a line's width", () => {
   assert.equal(text.split("\r\n")[1], "function simplenergy:utils/foo");
 });
 
-// ─── Column translation──────
+// Column translation
 // The round trip is the property that protects the user's buffer: a range that comes back
 // from Spyglass and is applied as an edit must land where the author was actually typing.
 
@@ -312,6 +312,35 @@ test("crossesSubstitution catches a range covering a substituted span", () => {
   assert.equal(crossesSubstitution(at(9), at(20), TABLE), true);
   assert.equal(crossesSubstitution(at(0), at(30), TABLE), true);
   assert.equal(crossesSubstitution(at(14), at(16), TABLE), true);
+});
+
+// Diagnostics about the mask
+// The rule has to separate two things that both touch a masked run: the parser complaining
+// about the placeholder, which is noise, and the parser complaining about a real mistake on a
+// line that happens to contain one, which is the whole point of having diagnostics.
+
+// `execute store reslt score #height {ns}.data run data get entity @s Pos[1]`, where the typo
+// stops the line matching what was built, so `{ns}` stays masked at columns 33 to 37.
+const TYPO_LINE = new Map([[0, [{ start: 33, end: 37 }]]]);
+
+test("a diagnostic pointing at the mask is about the mask", () => {
+  assert.equal(describesMask({ line: 0, character: 33 }, TYPO_LINE), true);
+  assert.equal(describesMask({ line: 0, character: 35 }, TYPO_LINE), true);
+});
+
+test("a typo earlier on the line is reported even though the line carries a mask", () => {
+  // `reslt` sits at column 14. Its diagnostic runs to the end of the line and therefore
+  // overlaps the mask, which is why an overlap test silently swallowed the error.
+  assert.equal(describesMask({ line: 0, character: 14 }, TYPO_LINE), false);
+});
+
+test("a diagnostic just past the mask is about the text after it", () => {
+  assert.equal(describesMask({ line: 0, character: 37 }, TYPO_LINE), false);
+});
+
+test("a line with no mask never suppresses anything", () => {
+  assert.equal(describesMask({ line: 1, character: 35 }, TYPO_LINE), false);
+  assert.equal(describesMask({ line: 0, character: 35 }, new Map()), false);
 });
 
 test("crossesSubstitution leaves a range clear of every span alone", () => {

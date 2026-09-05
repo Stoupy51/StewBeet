@@ -19,11 +19,11 @@ const diagnostics = require("./diagnostics");
 const { registerCodeLenses, refreshCodeLenses } = require("./codelens");
 const { registerHeaderNavigation } = require("./headers");
 
-// ─── Constants──────────────
+// Constants
 
 const CFG_KEY = "StewBeet";
 
-// ─── Decoration types (recreated on config change) ───────────────────────────
+// Decoration types (recreated on config change)
 
 /** @type {{ block: vscode.TextEditorDecorationType, first: vscode.TextEditorDecorationType, last: vscode.TextEditorDecorationType, single: vscode.TextEditorDecorationType } | null} */
 let decos = null;
@@ -83,7 +83,7 @@ function refreshDecos() {
   );
 }
 
-// ─── Extension lifecycle────
+// Extension lifecycle
 
 /** @param {vscode.ExtensionContext} context */
 function activate(context) {
@@ -112,7 +112,7 @@ function activate(context) {
   diagnostics.registerDiagnosticRelay(context);
 }
 
-// ─── Language features──────
+// Language features
 
 /**
  * Forward mcfunction language requests inside StewBeet string blocks to whatever
@@ -135,30 +135,26 @@ function registerLanguageFeatures(context) {
 
 function deactivate() { disposeDecos(); }
 
-// ─── Source maps────────────
+// Source maps
 
 /**
  * Keep everything derived from a build fresh, and expose the three commands that use it.
  *
  * Two watchers, because the two file kinds mean different things. A map changing invalidates
  * the reverse index, the interpolations already substituted into a projection and the lenses
- * built from them. A generated function changing is what a rebuild looks like, and those
- * files are handed to the language server so its diagnostics reach the Python without the
- * author opening anything.
+ * built from them. A generated function being deleted means whatever the server said about it
+ * describes a function that no longer exists.
  * @param {vscode.ExtensionContext} context
  */
 function registerSourceMaps(context) {
   const maps = vscode.workspace.createFileSystemWatcher(`**/*${sourcemap.MAP_SUFFIX}`);
   const generated = vscode.workspace.createFileSystemWatcher("**/*.mcfunction");
-  const changed = (/** @type {vscode.Uri} */ uri) => diagnostics.notifyGeneratedChanged([uri]);
 
   context.subscriptions.push(
     maps, generated,
     maps.onDidChange(scheduleDrop),
     maps.onDidCreate(scheduleDrop),
     maps.onDidDelete(scheduleDrop),
-    generated.onDidChange(changed),
-    generated.onDidCreate(changed),
     generated.onDidDelete(uri => diagnostics.forget(uri)),
     { dispose: () => { if (dropTimer) clearTimeout(dropTimer); } },
     vscode.commands.registerCommand("stewbeet.reloadSourceMaps", drop),
@@ -250,7 +246,7 @@ async function reveal(uri, line, column) {
   editor.revealRange(new vscode.Range(position, position), vscode.TextEditorRevealType.InCenterIfOutsideViewport);
 }
 
-// ─── Block detection────────
+// Block detection
 
 /**
  * Find all mcfunction string blocks in a Python document.
@@ -272,7 +268,7 @@ function findBlocks(doc) {
   });
 }
 
-// ─── Decoration rendering────
+// Decoration rendering
 
 /** @param {vscode.TextEditor} editor */
 function updateDecorations(editor) {

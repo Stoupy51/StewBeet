@@ -23,6 +23,9 @@ const HERE = __dirname;
 const EXT_ROOT = path.resolve(HERE, "..", "..");
 const OUT = path.join(HERE, "result.json");
 
+// SB_TESTS names the entry point, so a measurement can run beside the assertions.
+const ENTRY = path.join(HERE, `${process.env.SB_TESTS || "index"}.js`);
+
 // The throwaway VS Code profile MUST live outside the repository. Inside it, the
 // git extension's askpass sockets land under a directory Spyglass's file watcher
 // cannot scandir, and the EPERM restarts the language server until it gives up.
@@ -60,9 +63,15 @@ const NOISY = [
 
 fs.rmSync(OUT, { force: true });
 
+// A test may type into the fixture, and VS Code saves a dirty document when the window closes.
+// The fixture is a committed file whose line numbers every check is written against, so it is
+// snapshotted here and put back afterwards.
+const FIXTURE = path.join(HERE, "fixture", "demo.py");
+const pristine = fs.readFileSync(FIXTURE);
+
 const args = [
   `--extensionDevelopmentPath=${EXT_ROOT}`,
-  `--extensionTestsPath=${path.join(HERE, "index.js")}`,
+  `--extensionTestsPath=${ENTRY}`,
   `--user-data-dir=${USER_DATA_DIR}`,
   "--new-window", "--disable-gpu", "--disable-workspace-trust",
   ...NOISY.flatMap(id => ["--disable-extension", id]),
@@ -71,6 +80,8 @@ const args = [
 
 console.log(`Launching ${exe}\nA VS Code window will open, run the checks and close itself.`);
 const res = spawnSync(exe, args, { env, stdio: ["ignore", "ignore", "pipe"], encoding: "utf8" });
+
+if (!fs.readFileSync(FIXTURE).equals(pristine)) fs.writeFileSync(FIXTURE, pristine);
 
 if (!fs.existsSync(OUT)) {
   console.error(`No result written. Exit code ${res.status}.`);

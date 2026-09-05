@@ -16,7 +16,7 @@ const SYNTAXES = path.join(__dirname, "..", "syntaxes");
 const embedded = JSON.parse(fs.readFileSync(path.join(SYNTAXES, "mcfunction-embedded.tmLanguage.json"), "utf8"));
 const injection = JSON.parse(fs.readFileSync(path.join(SYNTAXES, "mcfunction-injection.tmLanguage.json"), "utf8"));
 
-// ─── Structure──────────────
+// Structure
 
 test("grammar files are valid JSON with expected scope names", () => {
   assert.equal(embedded.scopeName, "source.mcfunction.embedded");
@@ -42,7 +42,7 @@ test("every regex in both grammars compiles as a RegExp", () => {
   walk(injection, "mcfunction-injection");
 });
 
-// ─── Comment patterns must swallow quotes (TODO example 2) ───────────────────
+// Comment patterns must swallow quotes (TODO example 2)
 
 test("line comment pattern consumes a double quote", () => {
   const pattern = embedded.repository.comments.patterns.find(p => p.match && p.match.includes("^\\s*#(?!\\{)"));
@@ -72,7 +72,7 @@ test("line comment pattern still stops at a literal \\n escape", () => {
   assert.equal(m[0], "# hello ");
 });
 
-// ─── Comments must not swallow the end of an inline write_* call ─────────────
+// Comments must not swallow the end of an inline write_* call
 //
 // write_versioned_function("ns/tick", "# Hijacked map tick (no-op placeholder)")
 // used to highlight the trailing `")` as part of the comment, because the
@@ -137,7 +137,7 @@ test("block comment begin stops before the quote closing an inline write_* call"
   assert.equal(m[2], " Hijacked map (placeholder)");
 });
 
-// ─── say blocks must not swallow the end of the Python string ────────────────
+// say blocks must not swallow the end of the Python string
 //
 // A begin/end rule hides the parent injection's end pattern from the tokenizer,
 // so a say block ending only at "\n" ate the closing quote, the ")", and every
@@ -187,7 +187,7 @@ test("say end does not fire early on quotes inside a multiline block", () => {
   }
 });
 
-// ─── Triple-quote string rules must exist before single-quote ones ──────────
+// Triple-quote string rules must exist before single-quote ones
 
 test("literals define triple-quote rules before single-quote rules", () => {
   const patterns = embedded.repository.literals.patterns;
@@ -202,7 +202,7 @@ test("literals define triple-quote rules before single-quote rules", () => {
   assert.ok(tripleSingle < singleSingle, "''' rule must come before ' rule");
 });
 
-// ─── Injection rules cover all write_* function forms ────────────────────────
+// Injection rules cover all write_* function forms
 
 test("injection grammar covers all six write_* functions", () => {
   const text = JSON.stringify(injection);

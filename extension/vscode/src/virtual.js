@@ -18,12 +18,13 @@
 const vscode = require("vscode");
 const { findBlockOffsets, findInterpolationSpans } = require("./blocks");
 const {
-  SCHEME, project, toVirtual, toPython, crossesSubstitution, virtualPath, blockIndexFromPath,
+  SCHEME, project, toVirtual, toPython, describesMask, crossesSubstitution,
+  virtualPath, blockIndexFromPath,
 } = require("./projection");
 const navigation = require("./navigation");
 const sourcemap = require("./sourcemap");
 
-// ─── Constants──────────────
+// Constants
 
 const CFG_KEY = "StewBeet";
 
@@ -41,7 +42,7 @@ const ITEM_RESOLVE_COUNT = 50;
  *  @type {Map<number, { start:number, pythonWidth:number, virtualWidth:number }[]>} */
 const NO_SUBSTITUTION = new Map();
 
-// ─── Block lookup───────────
+// Block lookup
 
 /** Cache of the block scan, keyed by document URI. @type {Map<string, { version:number, blocks:{start:number,end:number}[] }>} */
 const blockCache = new Map();
@@ -88,7 +89,7 @@ function virtualUriFor(doc, blockIndex) {
   });
 }
 
-// ─── Content provider───────
+// Content provider
 
 const onDidChangeEmitter = new vscode.EventEmitter();
 
@@ -199,7 +200,7 @@ function reproject() {
   for (const { uri } of served.values()) onDidChangeEmitter.fire(uri);
 }
 
-// ─── Forwarding──────────────
+// Forwarding
 
 /**
  * Ask Spyglass a question about the block under the cursor.
@@ -238,7 +239,7 @@ async function forward(command, doc, position, ...extraArgs) {
   }
 }
 
-// ─── Translating answers─────
+// Translating answers
 
 /**
  * A range back in the Python document.
@@ -344,7 +345,7 @@ function pythonLocations(answers, table) {
   });
 }
 
-// ─── Language providers──────
+// Language providers
 
 const completionProvider = {
   /**
@@ -400,20 +401,52 @@ const referenceProvider = {
   },
 };
 
-// ─── Diagnostics from the projection──
+// Diagnostics from the projection
+
+/**
+ * Make the language server look at a virtual document.
+ *
+ * Opening one is not enough, and the difference is the whole reason a block can sit there with
+ * an obvious mistake and no squiggle. VS Code hands a document to a language client when
+ * something asks a question about it, and lets go of it again once the collection those
+ * documents live in fills up. A document in that state is still listed as open and still
+ * answers nothing, so `getDiagnostics` on it stays empty and no later pass recovers it.
+ *
+ * One hover is the cheapest question there is, and answering it is what makes Spyglass parse
+ * the document and report on it.
+ *
+ * @param {vscode.Uri} uri
+ * @returns {Promise<boolean>}  Whether the document could be reached at all.
+ */
+async function wake(uri) {
+  try {
+    await vscode.workspace.openTextDocument(uri);
+    await vscode.commands.executeCommand(
+      "vscode.executeHoverProvider", uri, new vscode.Position(0, 0));
+    return true;
+  } catch (e) {
+    console.debug("[StewBeet] could not wake a virtual document", e);
+    return false;
+  }
+}
 
 /**
  * What Spyglass says about one Python document's blocks, in the Python document's coordinates.
  *
  * The virtual documents are the honest place to ask. Their lines are in lockstep with the
  * Python, so a diagnostic needs no source map to come home, and it arrives as the author types
- * rather than after a build. Reading them off the generated files instead means waiting for a
- * build and for VS Code to keep a document alive that nothing is looking at, which it does not.
+ * rather than after a build.
+ *
+ * `wake` is what makes the server look at a document nobody is showing, and it is deliberately
+ * not the default: the server answers a wake by publishing, and publishing is what asks for
+ * the next pass. Waking on every pass spins. Wake when the Python changed, read when the
+ * server says it has something to say.
  *
  * @param {vscode.TextDocument} doc
+ * @param {{ wake: boolean }} options
  * @returns {Promise<vscode.Diagnostic[]>}
  */
-async function pythonDiagnosticsFor(doc) {
+async function pythonDiagnosticsFor(doc, { wake: shouldWake }) {
   if (!vscode.workspace.getConfiguration(CFG_KEY).get("languageFeatures", true)) return [];
 
   const moved = [];
@@ -423,15 +456,10 @@ async function pythonDiagnosticsFor(doc) {
     if (!projection) continue;
 
     const uri = virtualUriFor(doc, blockIndex);
-    try {
-      await vscode.workspace.openTextDocument(uri);
-    } catch (e) {
-      console.debug("[StewBeet] could not open a virtual document for diagnostics", e);
-      continue;
-    }
+    if (shouldWake && !(await wake(uri))) continue;
 
     for (const diagnostic of vscode.languages.getDiagnostics(uri)) {
-      if (touchesMask(diagnostic.range, projection.masked)) continue;
+      if (describesMask(diagnostic.range.start, projection.masked)) continue;
       const start = toPython(diagnostic.range.start, projection.table);
       const end = toPython(diagnostic.range.end, projection.table);
       const copy = new vscode.Diagnostic(
@@ -445,31 +473,7 @@ async function pythonDiagnosticsFor(doc) {
   return moved;
 }
 
-/**
- * Whether a diagnostic lands on a run of `MASK` rather than on the author's own text.
- *
- * An interpolation the build cannot resolve is a placeholder, and a parser told that
- * `scoreboard players add @s obj ______` is missing an integer is right about the placeholder
- * and says nothing about the Python. Reporting it would put a permanent red line under every
- * `{...}` that is not a resource location.
- *
- * @param {vscode.Range} range
- * @param {Map<number, { start:number, end:number }[]>} masked
- */
-function touchesMask(range, masked) {
-  for (let line = range.start.line; line <= range.end.line; line++) {
-    const runs = masked.get(line);
-    if (!runs) continue;
-    const from = line === range.start.line ? range.start.character : 0;
-    const to = line === range.end.line ? range.end.character : Number.MAX_SAFE_INTEGER;
-    // An empty range sitting exactly on a mask counts, since that is where a parser points
-    // when it expected something the placeholder is not.
-    if (runs.some(run => from <= run.end && to >= run.start)) return true;
-  }
-  return false;
-}
-
-// ─── Registration───────────
+// Registration
 
 /** @param {vscode.ExtensionContext} context */
 function registerVirtualDocuments(context) {
@@ -494,7 +498,6 @@ module.exports = {
   blocksOf,
   blockAt,
   pythonDiagnosticsFor,
-  touchesMask,
   virtualUriFor,
   contentProvider,
   forward,
