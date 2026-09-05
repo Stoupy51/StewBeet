@@ -90,7 +90,7 @@ function onDiagnosticsChanged(event) {
   let touched = false;
   for (const uri of event.uris) {
     // Reading only: the server has just spoken, and waking it here would make it speak again.
-    if (uri.scheme === virtual.SCHEME) { scheduleLive({ wake: false }); continue; }
+    if (uri.scheme === virtual.SCHEME) { scheduleLive({ wake: "none" }); continue; }
     if (isGenerated(uri) && capture(uri)) touched = true;
   }
   if (touched) publish();
@@ -147,8 +147,12 @@ function relocate(diagnostic, generatedPath) {
 /** Diagnostics read off the virtual documents, per Python file. @type {Map<string, vscode.Diagnostic[]>} */
 const live = new Map();
 
-/** Whether a pass is already running, so bursts of edits do not stack round trips. */
-let collecting = false;
+/** When the running pass started, or 0 when none is. Bursts of edits must not stack round
+ *  trips, but a pass that never finishes must not be able to stop every later one either. */
+let collectingSince = 0;
+
+/** Past this, a pass counts as lost and the next one runs regardless. */
+const PASS_TIMEOUT_MS = 20000;
 
 /** Passes made, so the status command shows a relay that is spinning as clearly as a dead one. */
 let livePasses = 0;
@@ -164,11 +168,12 @@ async function collectLive() {
   // Waking a document is a round trip to the server, and an edit arrives long before the last
   // pass has finished. A skipped pass costs nothing: the wake it skipped makes the server
   // report, and that reports back here as another change.
-  if (collecting) return;
-  collecting = true;
+  if (collectingSince && Date.now() - collectingSince < PASS_TIMEOUT_MS) return;
+  collectingSince = Date.now();
   livePasses++;
   const wake = wakeNext;
-  wakeNext = false;
+  wakeNext = "none";
+  const startedAt = Date.now();
   const collected = new Map();
   let blocks = 0;
   try {
@@ -184,14 +189,14 @@ async function collectLive() {
     log(`reading the projection failed: ${e && e.stack ? e.stack : e}`);
     return;
   } finally {
-    collecting = false;
+    collectingSince = 0;
   }
 
   live.clear();
   for (const [file, found] of collected) live.set(file, found);
-  log(`${wake ? "woke and read" : "read"} `
+  log(`${wake === "none" ? "read" : `woke (${wake}) and read`} `
     + `${[...live.values()].reduce((n, d) => n + d.length, 0)} live diagnostic(s) `
-    + `from ${blocks} block(s) in ${collected.size} Python file(s)`);
+    + `from ${blocks} block(s) in ${collected.size} Python file(s) in ${Date.now() - startedAt}ms`);
   publish();
 }
 
@@ -210,15 +215,19 @@ function status() {
 /** @type {NodeJS.Timeout | undefined} */
 let liveTimer;
 
-/** Whether the next pass wakes the blocks. One caller asking for it is enough. */
-let wakeNext = false;
+/** How much waking the next pass owes, the strongest of what its callers asked for.
+ *  @type {"none" | "changed" | "all"} */
+let wakeNext = "none";
+
+/** @type {Record<"none" | "changed" | "all", number>} */
+const WAKE_RANK = { none: 0, changed: 1, all: 2 };
 
 /**
  * Ask for a pass, coalescing the burst the server reports in into one.
- * @param {{ wake: boolean }} options  Whether the blocks need waking, see ./virtual.js.
+ * @param {{ wake: "none" | "changed" | "all" }} options  How much waking it owes, see ./virtual.js.
  */
 function scheduleLive({ wake }) {
-  wakeNext = wakeNext || wake;
+  if (WAKE_RANK[wake] > WAKE_RANK[wakeNext]) wakeNext = wake;
   if (liveTimer) clearTimeout(liveTimer);
   liveTimer = setTimeout(() => { liveTimer = undefined; void collectLive(); }, LIVE_DEBOUNCE_MS);
 }
@@ -312,7 +321,7 @@ function reload() {
   sourcemap.clearCache();
   log("reload requested");
   refresh();
-  scheduleLive({ wake: true });
+  scheduleLive({ wake: "all" });
 }
 
 // Registration
@@ -325,7 +334,7 @@ function reload() {
 function registerDiagnosticRelay(context) {
   collection = vscode.languages.createDiagnosticCollection(COLLECTION_NAME);
   output = vscode.window.createOutputChannel("StewBeet");
-  const keepalive = setInterval(() => scheduleLive({ wake: true }), KEEPALIVE_MS);
+  const keepalive = setInterval(() => scheduleLive({ wake: "all" }), KEEPALIVE_MS);
   context.subscriptions.push(
     collection,
     output,
@@ -335,15 +344,15 @@ function registerDiagnosticRelay(context) {
     vscode.workspace.onDidChangeConfiguration(e => {
       if (e.affectsConfiguration(CFG_KEY)) publish();
     }),
-    vscode.workspace.onDidOpenTextDocument(() => scheduleLive({ wake: true })),
+    vscode.workspace.onDidOpenTextDocument(() => scheduleLive({ wake: "changed" })),
     vscode.workspace.onDidChangeTextDocument(e => {
-      if (e.document.languageId === "python") scheduleLive({ wake: true });
+      if (e.document.languageId === "python") scheduleLive({ wake: "changed" });
     }),
     { dispose: () => { if (liveTimer) clearTimeout(liveTimer); } },
     { dispose: () => clearInterval(keepalive) },
   );
   refresh();
-  scheduleLive({ wake: true });
+  scheduleLive({ wake: "changed" });
 }
 
 module.exports = {

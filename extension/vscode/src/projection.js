@@ -272,20 +272,23 @@ function toPython(position, table) {
 }
 
 /**
- * Whether a diagnostic at this position is about a `MASK` run rather than the author's text.
+ * Whether a `MASK` run explains a diagnostic, rather than the author's own text.
  *
- * The test is where the range **starts**, not whether it overlaps. A parser complaining at the
- * placeholder points at it, so its range starts inside the run. A parser complaining about a
- * real mistake earlier in the line points there, and its range may well run past a mask on its
- * way to the end of the line: `execute store reslt score #height {ns}.data` is a typo the
- * author wants flagged, and an overlap test throws it away along with the placeholder noise.
+ * A parser complaining at the placeholder points at it. It is also lost from there on: an
+ * unparseable token leaves it in a state the real line would never have produced, so what it
+ * says about the rest of the line describes the mask just as much. A diagnostic is therefore
+ * the author's own only where it starts before every mask on its line, which is what keeps
+ * the typo in `execute store reslt score #height {ns}.data` flagged at column 14.
+ *
+ * The cost is a real mistake sitting after a mask on the same line, which goes unreported.
+ * That is the right way round: one silent line beats a file of red on placeholders.
  *
  * @param {{ line:number, character:number }} start  Where the diagnostic points.
  * @param {Map<number, { start:number, end:number }[]>} masked  Virtual columns, per line.
  */
-function describesMask(start, masked) {
+function explainedByMask(start, masked) {
   const runs = masked.get(start.line);
-  return runs ? runs.some(run => start.character >= run.start && start.character < run.end) : false;
+  return runs ? runs.some(run => start.character >= run.start) : false;
 }
 
 /**
@@ -355,7 +358,7 @@ module.exports = {
   resolveLine,
   toVirtual,
   toPython,
-  describesMask,
+  explainedByMask,
   crossesSubstitution,
   sanitizeName,
   virtualPath,

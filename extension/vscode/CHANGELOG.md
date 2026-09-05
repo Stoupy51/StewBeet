@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.5.1
+
+1.5.0 made the errors arrive. This makes them keep arriving, and cuts the noise they arrived with.
+
+- **A stuck request can no longer freeze the relay.** Waking a block is a round trip to the language server, and one that never came back left the pass marked as running forever, so every later pass returned immediately and the squiggles stopped where they were. Each wake now gives up after 3 seconds, and a pass that overruns 20 seconds is treated as lost.
+- **A pass costs one round trip instead of seventeen.** The blocks were woken one after another. They are now woken together, and only the ones whose text actually moved, so typing inside one block no longer pays for every other block in the file.
+- **Far fewer errors about nothing.** A parser that has swallowed a `____` placeholder is lost for the rest of the line, and everything it says past that point describes a line nobody wrote. Those are dropped now, where before only the ones pointing straight at the placeholder were. A real mistake sitting after a placeholder on the same line goes unreported, which is the better trade.
+- The output channel says how long each pass took, so "it feels slow" has a number.
+
 ## 1.5.0
 
 Errors reached the Python file only by luck. The path that was supposed to deliver them was racing, and a rebuild killed it outright.

@@ -18,7 +18,7 @@
 const vscode = require("vscode");
 const { findBlockOffsets, findInterpolationSpans } = require("./blocks");
 const {
-  SCHEME, project, toVirtual, toPython, describesMask, crossesSubstitution,
+  SCHEME, project, toVirtual, toPython, explainedByMask, crossesSubstitution,
   virtualPath, blockIndexFromPath,
 } = require("./projection");
 const navigation = require("./navigation");
@@ -183,7 +183,9 @@ function forget(doc) {
   const key = doc.uri.toString();
   blockCache.delete(key);
   for (const [virtualKey, entry] of served) {
-    if (entry.sourceUri === key) served.delete(virtualKey);
+    if (entry.sourceUri !== key) continue;
+    served.delete(virtualKey);
+    wokenWith.delete(virtualKey);
   }
   for (const projectionEntry of [...projections.keys()]) {
     if (projectionEntry.startsWith(`${key}#`)) projections.delete(projectionEntry);
@@ -197,6 +199,7 @@ function forget(doc) {
  */
 function reproject() {
   projections.clear();
+  wokenWith.clear();
   for (const { uri } of served.values()) onDidChangeEmitter.fire(uri);
 }
 
@@ -403,6 +406,27 @@ const referenceProvider = {
 
 // Diagnostics from the projection
 
+/** A wake is a round trip to a language server, and a server that never answers must not be
+ *  able to stop the next pass from running. */
+const WAKE_TIMEOUT_MS = 3000;
+
+/** The projected text each virtual document was last woken with, so a pass only pays for the
+ *  blocks whose content actually moved. @type {Map<string, string>} */
+const wokenWith = new Map();
+
+/**
+ * Give up on a promise rather than wait on it forever.
+ * @template T @param {Thenable<T>} work @returns {Promise<T>}
+ */
+function withTimeout(work) {
+  /** @type {NodeJS.Timeout} */
+  let timer;
+  const expiry = new Promise((_, reject) => {
+    timer = setTimeout(() => reject(new Error("timed out")), WAKE_TIMEOUT_MS);
+  });
+  return Promise.race([Promise.resolve(work), expiry]).finally(() => clearTimeout(timer));
+}
+
 /**
  * Make the language server look at a virtual document.
  *
@@ -416,17 +440,16 @@ const referenceProvider = {
  * the document and report on it.
  *
  * @param {vscode.Uri} uri
- * @returns {Promise<boolean>}  Whether the document could be reached at all.
+ * @param {string} text  What the document holds, remembered so an unchanged block is skipped.
  */
-async function wake(uri) {
+async function wake(uri, text) {
   try {
-    await vscode.workspace.openTextDocument(uri);
-    await vscode.commands.executeCommand(
-      "vscode.executeHoverProvider", uri, new vscode.Position(0, 0));
-    return true;
+    await withTimeout(vscode.workspace.openTextDocument(uri));
+    await withTimeout(vscode.commands.executeCommand(
+      "vscode.executeHoverProvider", uri, new vscode.Position(0, 0)));
+    wokenWith.set(uri.toString(), text);
   } catch (e) {
     console.debug("[StewBeet] could not wake a virtual document", e);
-    return false;
   }
 }
 
@@ -437,29 +460,38 @@ async function wake(uri) {
  * Python, so a diagnostic needs no source map to come home, and it arrives as the author types
  * rather than after a build.
  *
- * `wake` is what makes the server look at a document nobody is showing, and it is deliberately
+ * Waking is what makes the server look at a document nobody is showing, and it is deliberately
  * not the default: the server answers a wake by publishing, and publishing is what asks for
- * the next pass. Waking on every pass spins. Wake when the Python changed, read when the
- * server says it has something to say.
+ * the next pass, so waking on every pass spins. `"changed"` wakes the blocks whose text moved,
+ * which is what an edit needs; `"all"` wakes them regardless, which is the only way back from
+ * an eviction nothing announced; `"none"` reads what the server has already said.
  *
  * @param {vscode.TextDocument} doc
- * @param {{ wake: boolean }} options
+ * @param {{ wake: "none" | "changed" | "all" }} options
  * @returns {Promise<vscode.Diagnostic[]>}
  */
-async function pythonDiagnosticsFor(doc, { wake: shouldWake }) {
+async function pythonDiagnosticsFor(doc, { wake: waking }) {
   if (!vscode.workspace.getConfiguration(CFG_KEY).get("languageFeatures", true)) return [];
 
-  const moved = [];
   const blocks = blocksOf(doc);
+  const projected = [];
   for (let blockIndex = 0; blockIndex < blocks.length; blockIndex++) {
     const projection = await projectionFor(doc, blockIndex);
-    if (!projection) continue;
+    if (projection) projected.push({ uri: virtualUriFor(doc, blockIndex), projection });
+  }
 
-    const uri = virtualUriFor(doc, blockIndex);
-    if (shouldWake && !(await wake(uri))) continue;
+  // All at once: each wake is a round trip, and seventeen of them in a row is the difference
+  // between reacting to a keystroke and not.
+  if (waking !== "none") {
+    await Promise.all(projected
+      .filter(({ uri, projection }) => waking === "all" || wokenWith.get(uri.toString()) !== projection.text)
+      .map(({ uri, projection }) => wake(uri, projection.text)));
+  }
 
+  const moved = [];
+  for (const { uri, projection } of projected) {
     for (const diagnostic of vscode.languages.getDiagnostics(uri)) {
-      if (describesMask(diagnostic.range.start, projection.masked)) continue;
+      if (explainedByMask(diagnostic.range.start, projection.masked)) continue;
       const start = toPython(diagnostic.range.start, projection.table);
       const end = toPython(diagnostic.range.end, projection.table);
       const copy = new vscode.Diagnostic(
