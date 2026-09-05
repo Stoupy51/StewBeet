@@ -271,6 +271,105 @@ exports.run = async () => {
     expect("US6 the relay does not spin while nothing changes", passesAfter - passesBefore <= 4,
       passesAfter - passesBefore);
 
+    // Step D and E: a bolt file is served, and a .mcfunction holding bolt is taken off Spyglass.
+
+    // Repeatable: the exclusion this test writes is an artifact, not a fixture.
+    const rcPath = path.join(root, ".spyglassrc.json");
+    try { fs.unlinkSync(rcPath); } catch { /* absent is the normal case */ }
+
+    const boltish = vscode.Uri.file(path.join(root, "data", "probe", "function", "boltish.mcfunction"));
+    const boltSettings = vscode.workspace.getConfiguration("StewBeet");
+
+    // With the switch off, this is what the author sees today: Spyglass parsing a `for` loop as
+    // a command and reporting most of the file. Turning it off is what makes the control
+    // deterministic, because Spyglass publishes when a document opens and a warm profile
+    // otherwise carries the answer over from a previous run.
+    await boltSettings.update("boltInMcfunction", false, vscode.ConfigurationTarget.Workspace);
+    await sleep(1000);
+    const boltDoc = await openWithRetry(boltish);
+    await vscode.window.showTextDocument(boltDoc, { preview: false });
+    await sleep(6000);
+
+    const unswitched = vscode.workspace.textDocuments.find(d => d.uri.fsPath === boltish.fsPath);
+    note("boltish_languageIdWhenOff", unswitched && unswitched.languageId);
+    expect("US7 the switch can be turned off", unswitched && unswitched.languageId === "mcfunction",
+      unswitched && unswitched.languageId);
+
+    const complaints = (vscode.languages.getDiagnostics(boltish) || [])
+      .filter(d => !String(d.source || "").startsWith("stewbeet"));
+    note("boltish_complaintsWhenOff", complaints.map(d => `${d.source}|${d.range.start.line}: ${String(d.message).slice(0, 34)}`));
+    note("US7 Spyglass flags bolt in a .mcfunction (control)",
+      complaints.length > 0 ? "PASS" : "INCONCLUSIVE: Spyglass published nothing about it");
+
+    // Now the feature. The language id is the first half: it stops Spyglass answering for the
+    // document and gives the file this extension's bolt grammar.
+    await boltSettings.update("boltInMcfunction", undefined, vscode.ConfigurationTarget.Workspace);
+    await sleep(5000);
+    const boltNow = vscode.workspace.textDocuments.find(d => d.uri.fsPath === boltish.fsPath);
+    note("boltish_languageId", boltNow && boltNow.languageId);
+    expect("US7 a .mcfunction holding bolt becomes the bolt language",
+      boltNow && boltNow.languageId === "bolt", boltNow && boltNow.languageId);
+
+    // A vanilla .mcfunction beside it is untouched, or the detector is too eager to be safe.
+    const vanilla = vscode.workspace.textDocuments.find(d => d.uri.fsPath === realUri.fsPath);
+    note("vanilla_languageId", vanilla && vanilla.languageId);
+    expect("US7 a vanilla .mcfunction keeps Spyglass", vanilla && vanilla.languageId === "mcfunction",
+      vanilla && vanilla.languageId);
+
+    // The second half. Spyglass reads the pack off disk and keeps what it already published, so
+    // only its own exclude list clears it. Nothing lets one extension drop another's diagnostics.
+    await vscode.commands.executeCommand("stewbeet.excludeBoltFromSpyglass");
+    await sleep(6000);
+    note("boltish_rcWritten", fs.existsSync(rcPath) ? fs.readFileSync(rcPath, "utf8").trim() : null);
+    const afterExclude = (vscode.languages.getDiagnostics(boltish) || [])
+      .filter(d => !String(d.source || "").startsWith("stewbeet"));
+    note("boltish_foreignDiagnostics", afterExclude.map(d => `${d.source}|${d.range.start.line}`));
+    expect("US7 the exclusion silences Spyglass on it", afterExclude.length === 0, afterExclude.length);
+
+    // The vanilla file must not have been swept up in the exclusion.
+    const vanillaCompletions = await completionsAt(realUri, new vscode.Position(0, 0));
+    expect("US7 the vanilla file still has Spyglass", vanillaCompletions.length > 0, vanillaCompletions.length);
+
+    // The lens from a bolt source to what the build made of it, the direction Python already had.
+    const boltSource = vscode.Uri.file(path.join(root, "probe.bolt"));
+    const sourceDoc = await openWithRetry(boltSource);
+    await vscode.window.showTextDocument(sourceDoc, { preview: false });
+    note("boltSource_languageId", sourceDoc.languageId);
+    expect("US8 a .bolt file has the bolt language id", sourceDoc.languageId === "bolt", sourceDoc.languageId);
+
+    await vscode.commands.executeCommand("stewbeet.reloadSourceMaps");
+    await sleep(2000);
+    const sourceLenses = await vscode.commands.executeCommand("vscode.executeCodeLensProvider", boltSource, 20) || [];
+    note("us8_boltLenses", sourceLenses.map(l => `${l.range.start.line}: ${l.command && l.command.title}`));
+    expect("US8 a bolt source links to what it generated",
+      sourceLenses.some(l => l.command && String(l.command.title).includes("probe:delta")),
+      sourceLenses.map(l => l.command && l.command.title));
+
+    // And back again, which is the half headers.js already did for Python.
+    const generated = vscode.Uri.file(path.join(root, "data", "probe", "function", "delta.mcfunction"));
+    await openWithRetry(generated);
+    const backLenses = await vscode.commands.executeCommand("vscode.executeCodeLensProvider", generated, 20) || [];
+    note("us8_generatedLenses", backLenses.map(l => l.command && l.command.title));
+    expect("US8 the generated file links back to the bolt source",
+      backLenses.some(l => l.command && String(l.command.title).includes("probe.bolt")),
+      backLenses.map(l => l.command && l.command.title));
+
+    // A bolt file keeps the header links a .mcfunction has, which the language switch would
+    // otherwise take away along with Spyglass.
+    const headerLinks = await vscode.commands.executeCommand("vscode.executeLinkProvider", generated) || [];
+    note("us8_generatedLinks", headerLinks.map(l => `${l.range.start.line}: ${l.target && path.basename(l.target.fsPath)}`));
+    expect("US8 a generated file's header names are clickable",
+      headerLinks.length > 0, headerLinks.length);
+    expect("US8 the header's own name leads to the bolt that wrote it",
+      headerLinks.some(l => l.target && l.target.fsPath.endsWith("probe.bolt")),
+      headerLinks.map(l => l.target && l.target.fsPath));
+    expect("US8 a header reference leads to the function it names",
+      headerLinks.some(l => l.target && l.target.fsPath.endsWith("alpha.mcfunction")),
+      headerLinks.map(l => l.target && l.target.fsPath));
+
+    // Leave the fixture as it was found: the exclusion is this test's own output.
+    try { fs.unlinkSync(rcPath); } catch { /* the command may not have needed to write */ }
+
     // The settings gate.
     const cfg = vscode.workspace.getConfiguration("StewBeet");
     await cfg.update("languageFeatures", false, vscode.ConfigurationTarget.Workspace);

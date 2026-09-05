@@ -118,9 +118,24 @@ The extension contributes **one language**, `bolt`, claiming `.bolt` with `bolt-
 - **`#nesting-statement`** owns `function`, `append function`, `prepend function` and `merge function`, offering a resource location first and falling through to Python, because the argument is a computed expression as often as a literal path.
 - **`#python-call`** rescues a call inside a command argument: nothing in mcfunction puts a bare `(` after a word, so `has_item_predicate(self.item.d())` keeps Python's colours. It also ends at the line end, so an unbalanced parenthesis costs one line rather than the rest of the file.
 
+**Navigation on a bolt document.** The `bolt` language id is registered for the CodeLens provider that leads from a source file to what it generated, and for the header link and lens providers that lead the other way. `mcfunction` keeps both, so a source file is served whether or not it was switched, and the Spyglass-backed providers stay on Python: completion inside bolt needs a compiler, which this extension is not.
+
 **Verified against a real corpus**: all 141 `.bolt` files in shulker, 9075 lines, with no runaway scope. The long single-scope runs that do appear are a 45-line dict literal, blocks of consecutive commands, and the multi-line JSON body of an `advancement` command, which recovers when its braces balance.
 
-**Out of scope for step D**: a `.mcfunction` file containing bolt syntax. That file keeps language id `mcfunction` and belongs to Spyglass, which cannot parse it. See [dialects.md](./dialects.md).
+### Bolt inside a `.mcfunction`, and the two halves of taking it off Spyglass
+
+A project can enable bolt syntax inside `.mcfunction` files, and StewBeet's minimal template does. Spyglass then parses a `for` loop as a command and reports most of the file.
+
+**The extension owns half of the fix and configures the other half.**
+
+| Half | Mechanism | What it achieves |
+|---|---|---|
+| The document | `vscode.languages.setTextDocumentLanguage(doc, "bolt")` when `looksLikeBolt` fires | Correct highlighting, this extension's lenses and links attach, Spyglass stops answering *for the open document* |
+| The project | `env.exclude` in the project's `spyglass.json` / `.spyglassrc` / `.spyglassrc.json` | Stops Spyglass reporting the file at all |
+
+The second half is not optional and cannot be done from the first. **Spyglass indexes a data pack off disk**, so it publishes diagnostics for a file nothing has opened, and no VS Code API lets one extension clear another's `DiagnosticCollection`. Its own exclusion list is the supported route, which is the "routing, not merging" rule in [dialects.md](./dialects.md) applied to a config file. The exclusion is written by the `stewbeet.excludeBoltFromSpyglass` command, offered once when a switched file is actually being flagged, and never written without consent: it is the project's config.
+
+**Detection is precision-first.** A missed bolt file is the status quo; a false positive takes a working vanilla file away from Spyglass. Every signal in `src/bolt.js` is impossible in vanilla mcfunction: a Python import, a `def` or `class`, a `for`/`while`/`if` ending in a colon, a name followed by `=`, an `execute`/`function` line ending in a colon, or a body left open with a trailing `{`. A file carrying `## sourceMappingURL=` is never bolt whatever else it holds, because a build wrote it. Measured against 1047 generated functions in shulker and SimplEnergy: zero false positives.
 
 ## Header links in generated files (step C2)
 
@@ -135,7 +150,7 @@ Both are off when `StewBeet.headerLinks` is `false`. `src/headers.js` holds the 
 
 ## Commands
 
-The first three depend on the source maps a build emits, and without one they report on the status bar that the line has no recorded origin rather than doing nothing silently. The last two are relay controls and need no build.
+The first three depend on the source maps a build emits, and without one they report on the status bar that the line has no recorded origin rather than doing nothing silently. The rest need no build.
 
 | Command | Step | Title | Behaviour |
 |---|---|---|---|
@@ -144,6 +159,7 @@ The first three depend on the source maps a build emits, and without one they re
 | `stewbeet.reloadSourceMaps` | **C, shipped** | StewBeet: Reload Source Maps | Drop the decoded map cache. An escape hatch when a build finishes outside the watcher's view. |
 | `stewbeet.refreshDiagnostics` | **C2, shipped** | StewBeet: Refresh Build Diagnostics | Force a relay pass now instead of waiting for the keepalive. |
 | `stewbeet.diagnosticsStatus` | **C2, shipped** | StewBeet: Show Diagnostics Status | Report what the relay has captured, published and passed over, so a quiet relay can be told apart from a clean file. |
+| `stewbeet.excludeBoltFromSpyglass` | **D, shipped** | StewBeet: Exclude Bolt Files From Spyglass | Add every `.mcfunction` found to hold bolt to the project's own Spyglass `env.exclude`, creating `.spyglassrc.json` when there is none. Writes nothing when there is nothing to add, and touches no other key in the file. |
 
 ## Settings
 
@@ -158,6 +174,7 @@ Added to the existing `StewBeet.*` configuration block:
 | `StewBeet.diagnosticRuleDenylist` | **C2, shipped** | `string[]` | `["undeclaredSymbol"]` | Rules never relayed onto Python. Empty relays everything. |
 | `StewBeet.codeLens` | **C2, shipped** | `boolean` | `true` | Whether to show the link above a block that produced a function. |
 | `StewBeet.headerLinks` | **C2, shipped** | `boolean` | `true` | Whether resource locations in a generated file's `#>` header comments become links. |
+| `StewBeet.boltInMcfunction` | **D, shipped** | `boolean` | `true` | Whether a `.mcfunction` holding bolt is given the `bolt` language id. Off leaves the language alone, which is the escape hatch if the detection is ever wrong about a file. |
 
 ## Backwards compatibility
 

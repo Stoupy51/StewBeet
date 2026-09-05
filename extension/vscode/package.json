@@ -2,7 +2,7 @@
   "name": "stewbeet",
   "displayName": "StewBeet",
   "description": "Syntax highlighting, block decorations and Spyglass-backed language features for mcfunction strings inside StewBeet write_* calls in Python files.",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "publisher": "stoupy",
   "license": "MIT",
   "icon": "icon.png",
@@ -32,7 +32,8 @@
   ],
   "activationEvents": [
     "onLanguage:python",
-    "onLanguage:mcfunction"
+    "onLanguage:mcfunction",
+    "onLanguage:bolt"
   ],
   "main": "./src/extension.js",
   "scripts": {
@@ -142,6 +143,11 @@
           "type": "boolean",
           "default": true,
           "markdownDescription": "Turn the function names inside a generated file's `#` header comments into links, so `@within` leads to the function that calls this one."
+        },
+        "StewBeet.boltInMcfunction": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Treat a `.mcfunction` file that holds bolt as the `bolt` language instead of `mcfunction`. A project can enable bolt syntax inside `.mcfunction` files, and Spyglass then reports most of the file as a syntax error because it cannot parse a `for` loop. Turn this off to leave the language id alone. Generated files are never switched."
         }
       }
     },
@@ -165,6 +171,10 @@
       {
         "command": "stewbeet.diagnosticsStatus",
         "title": "StewBeet: Show Diagnostics Status"
+      },
+      {
+        "command": "stewbeet.excludeBoltFromSpyglass",
+        "title": "StewBeet: Exclude Bolt Files From Spyglass"
       }
     ]
   },

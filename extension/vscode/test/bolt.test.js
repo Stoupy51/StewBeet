@@ -200,24 +200,3 @@ boltTest(
   lines => assert.ok(scopesOf(lines, "class")?.includes("storage.type.class.python")),
 );
 
-// Step D contributes a grammar and an id, and nothing else
-
-test("nothing in the extension selects a bolt document", () => {
-  const fs = require("node:fs");
-  const path = require("node:path");
-  const root = path.join(__dirname, "..");
-  const manifest = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
-
-  assert.ok(!manifest.activationEvents.includes("onLanguage:bolt"),
-    "a grammar needs no activation, and waking up for a file we do nothing with is pure cost");
-  assert.ok(manifest.contributes.languages.some(l => l.id === "bolt"), "the language id is the deliverable");
-  assert.ok(!manifest.contributes.languages.some(l => l.id === "mcfunction"),
-    "FR-015: ownership is partitioned by file, and Spyglass owns mcfunction");
-
-  const sources = fs.readdirSync(path.join(root, "src")).filter(f => f.endsWith(".js"));
-  for (const file of sources) {
-    const text = fs.readFileSync(path.join(root, "src", file), "utf8");
-    assert.ok(!/language:\s*["']bolt["']/.test(text), `${file} registers a provider for bolt`);
-    assert.ok(!/languageId\s*[=!]==\s*["']bolt["']/.test(text), `${file} reacts to a bolt document`);
-  }
-});

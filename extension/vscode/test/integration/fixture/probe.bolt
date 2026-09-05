@@ -1,0 +1,5 @@
+from ./helpers import thing
+
+function probe:delta:
+    say from a bolt module
+    say second line

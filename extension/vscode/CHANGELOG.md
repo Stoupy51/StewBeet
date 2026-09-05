@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.8.0
+
+- **A bolt file links to what it generated, and back.** A `.bolt` module, or a `.mcfunction` holding bolt, gets a lens on each function the last build made of it, and the generated file gets the lens home that Python files already had. One lens per function rather than one per line, at the first line that produced it.
+- **The header comments in a generated file are clickable from a bolt project too.** `#> ns:name` leads to the bolt that wrote it and `@within` leads to the caller, which previously only worked for files the language id `mcfunction` still covered.
+- **A `.mcfunction` holding bolt no longer reads as a broken vanilla file.** Bolt syntax inside a `.mcfunction` is detected and the file is given the `bolt` language id, so it is highlighted properly instead of being parsed as commands. StewBeet's own minimal template ships such a file.
+- **And Spyglass can be told to skip it.** Changing a language id does not stop Spyglass indexing a data pack off disk, and no extension can clear another's diagnostics, so `StewBeet: Exclude Bolt Files From Spyglass` writes the file into your project's own `.spyglassrc.json`. You are asked once, and never without something to fix.
+- **The map layer got much faster.** Looking up what a line generated no longer walks every mapped line in the project, and the two hottest reads no longer make a filesystem call each. Reading the origins of a generated file went from 83 to under 1 microsecond, and a full lens pass over a 141-file project takes 0.7 ms.
+
 ## 1.7.0
 
 - **`.bolt` files open as code.** Nothing else on the marketplace registers that extension, so a bolt project's 141 source files opened as plain text: no language id, no highlighting, no comment toggling. They now get all three. Bolt is Python with commands interleaved, so Python is the ground and commands are the exception, and a word that is both a command and an identifier is only a command when what follows it is not Python.

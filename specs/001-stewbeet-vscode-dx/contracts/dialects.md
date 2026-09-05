@@ -91,7 +91,13 @@ The partition holds in practice: [shulker](file:///d:/advanced_desktop/shulker) 
 
 The caveat to watch is `meta.bolt.entrypoint`, which shulker sets to `"*"`. A project can enable bolt syntax inside `.mcfunction` files, and then the partition needs the beet config to decide the owner rather than the extension alone.
 
-**A project does do it: StewBeet's own minimal template.** `templates/minimal_template.zip` ships `src/data/minimal/function/hello.mcfunction` holding `for i in range(1, 6):` and `execute function ./goodbye:`, which is bolt inside a `.mcfunction`. The step E emitter maps it correctly, because it reads the compiled AST and never looks at the file extension. The partition is what the file breaks: that `.mcfunction` is owned by Spyglass, which cannot parse a `for` loop, so it is reported as a syntax error today. Deciding the owner from the beet config is step F's problem, and the template is the fixture for it.
+**A project does do it: StewBeet's own minimal template.** `templates/minimal_template.zip` ships `src/data/minimal/function/hello.mcfunction` holding `for i in range(1, 6):` and `execute function ./goodbye:`, which is bolt inside a `.mcfunction`. The step E emitter maps it correctly, because it reads the compiled AST and never looks at the file extension.
+
+**The partition is decided by content rather than by the beet config**, which is less than this section imagined and enough in practice. The extension reads the file: a Python import, a `def`, a `for` ending in a colon, a name followed by `=`, or a body left open with a `{` are all impossible in vanilla mcfunction, so a file carrying one is bolt and gets the `bolt` language id. Zero false positives over 1047 generated functions in shulker and SimplEnergy. Reading `meta.bolt.entrypoint` would be more principled and would answer no question the content does not already answer, so it stays unbuilt.
+
+**Ownership has two halves, and only one is a language id.** Changing the id stops Spyglass answering for the open document. It does not stop Spyglass indexing the pack off disk and publishing about a file nothing has opened, and no VS Code API lets one extension clear another's diagnostics. Spyglass's own `env.exclude` does clear them, so the second half is a line in the project's `.spyglassrc.json`, offered by a command rather than written behind the author's back. Routing, not merging, applied to a config file.
+
+What is still step F is everything *inside* such a file: completion, hover and go-to-definition need mecha, and no amount of routing substitutes for a compiler.
 
 ## An immediate, nearly free win
 

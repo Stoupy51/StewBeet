@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "delta.mcfunction",
+	"sourceRoot": "../../..",
+	"sources": [
+		"probe.bolt"
+	],
+	"names": [],
+	"mappings": ";;;;;AAGI;AACA"
+}
