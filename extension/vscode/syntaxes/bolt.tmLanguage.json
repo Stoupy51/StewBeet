@@ -1,0 +1,126 @@
+{
+  "name": "Bolt",
+  "scopeName": "source.bolt",
+  "fileTypes": [
+    "bolt"
+  ],
+  "comment": "Bolt is Python with command statements interleaved at statement level, so Python is the ground and commands are the exception. Command bodies are handed to source.mcfunction.embedded, which this extension already ships, so no mcfunction syntax is described here.",
+  "patterns": [
+    {
+      "include": "#module-import"
+    },
+    {
+      "include": "#nesting-statement"
+    },
+    {
+      "include": "#command-statement"
+    },
+    {
+      "include": "source.python"
+    }
+  ],
+  "repository": {
+    "module-import": {
+      "comment": "Only bolt's own import targets are claimed. A plain `from functools import x` falls through to Python.",
+      "patterns": [
+        {
+          "match": "^([ \\t]*)(from)(\\s+)((?:\\.{1,2}/[\\w./-]*|[a-z_][a-z0-9_.-]*:[a-z0-9_./-]*))(\\s+)(import)\\b",
+          "name": "meta.import.bolt",
+          "captures": {
+            "2": {
+              "name": "keyword.control.import.python"
+            },
+            "4": {
+              "name": "entity.name.function.mcfunction"
+            },
+            "6": {
+              "name": "keyword.control.import.python"
+            }
+          }
+        },
+        {
+          "match": "^([ \\t]*)(import)(\\s+)([a-z_][a-z0-9_.-]*:[a-z0-9_./-]*)",
+          "name": "meta.import.bolt",
+          "captures": {
+            "2": {
+              "name": "keyword.control.import.python"
+            },
+            "4": {
+              "name": "entity.name.function.mcfunction"
+            }
+          }
+        }
+      ]
+    },
+    "nesting-statement": {
+      "comment": "`function <path>:` and its append/prepend/merge forms. The argument is a resource location as often as it is a Python expression, so both are offered and Python catches what is left.",
+      "begin": "^([ \\t]*)(?:(append|prepend|merge)(\\s+))?(function)(?=\\s)",
+      "beginCaptures": {
+        "2": {
+          "name": "keyword.control.flow.mcfunction"
+        },
+        "4": {
+          "name": "keyword.control.flow.mcfunction"
+        }
+      },
+      "end": "$",
+      "name": "meta.nesting.bolt",
+      "patterns": [
+        {
+          "include": "source.mcfunction.embedded#resource-name"
+        },
+        {
+          "match": ":[ \\t]*$",
+          "name": "punctuation.section.block.begin.bolt"
+        },
+        {
+          "include": "#python-call"
+        },
+        {
+          "include": "source.python"
+        }
+      ]
+    },
+    "command-statement": {
+      "comment": "Root command literals derived from mecha's own command tree, never authored here. Regenerate with: python -c \"import contextlib,beet,mecha; ctx=contextlib.ExitStack().enter_context(beet.run_beet({'require':['mecha'],'pipeline':[]})); print('|'.join(sorted((n for n in ctx.inject(mecha.Mecha).spec.tree.children if n != 'return'),key=lambda n:(-len(n),n))))\". `return` is dropped from the set: it is Python's keyword first, and a bolt file returns far more often than it runs the command.",
+      "begin": "(?=^([ \\t]*)(defaultgamemode|setidletimeout|setworldspawn|spreadplayers|fetchprofile|advancement|worldborder|difficulty|experience|scoreboard|spawnpoint|attribute|fillbiome|forceload|pardon-ip|playsound|stopsound|stopwatch|unpublish|whitelist|datapack|function|gamemode|gamerule|particle|save-all|save-off|schedule|setblock|spectate|teleport|transfer|waypoint|banlist|bossbar|enchant|execute|publish|save-on|teammsg|tellraw|trigger|version|weather|ban-ip|damage|dialog|effect|locate|pardon|random|recipe|reload|rotate|summon|clear|clone|debug|place|swing|title|data|deop|fill|give|help|item|kick|kill|list|loot|perf|ride|seed|stop|team|tell|test|tick|time|ban|jfr|msg|say|tag|me|op|tm|tp|xp|w)(?![\\w-])(?!\\s*(?://=|\\*\\*=|>>=|<<=|[-+*/%&|^@]?=|[.,()\\[\\]:])))",
+      "end": "$",
+      "name": "meta.command.bolt",
+      "patterns": [
+        {
+          "include": "#python-call"
+        },
+        {
+          "include": "source.mcfunction.embedded#root"
+        }
+      ]
+    },
+    "python-call": {
+      "comment": "A call inside a command argument is Python, not a resource location. Nothing in mcfunction puts a bare `(` after a word. The end also fires at the line end, so an unbalanced parenthesis costs one line rather than the rest of the file.",
+      "begin": "\\b([A-Za-z_]\\w*)[ \\t]*(\\()",
+      "beginCaptures": {
+        "1": {
+          "name": "entity.name.function.python"
+        },
+        "2": {
+          "name": "punctuation.parenthesis.begin.python"
+        }
+      },
+      "end": "(\\))|(?=$)",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.parenthesis.end.python"
+        }
+      },
+      "name": "meta.function-call.python.bolt",
+      "patterns": [
+        {
+          "include": "#python-call"
+        },
+        {
+          "include": "source.python"
+        }
+      ]
+    }
+  }
+}

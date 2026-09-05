@@ -1,0 +1,3 @@
+# helper module
+append function tns:shared:
+    say from helper

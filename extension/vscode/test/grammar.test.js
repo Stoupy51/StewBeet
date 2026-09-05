@@ -15,12 +15,14 @@ const SYNTAXES = path.join(__dirname, "..", "syntaxes");
 
 const embedded = JSON.parse(fs.readFileSync(path.join(SYNTAXES, "mcfunction-embedded.tmLanguage.json"), "utf8"));
 const injection = JSON.parse(fs.readFileSync(path.join(SYNTAXES, "mcfunction-injection.tmLanguage.json"), "utf8"));
+const bolt = JSON.parse(fs.readFileSync(path.join(SYNTAXES, "bolt.tmLanguage.json"), "utf8"));
 
 // Structure
 
 test("grammar files are valid JSON with expected scope names", () => {
   assert.equal(embedded.scopeName, "source.mcfunction.embedded");
   assert.equal(injection.scopeName, "stewbeet.mcfunction-injection");
+  assert.equal(bolt.scopeName, "source.bolt");
   // The span scope is excluded so the Python this grammar includes cannot re-enter it.
   assert.equal(injection.injectionSelector, "L:source.python -meta.mcfunction-span.stewbeet");
 });
@@ -41,6 +43,49 @@ test("every regex in both grammars compiles as a RegExp", () => {
   };
   walk(embedded, "mcfunction-embedded");
   walk(injection, "mcfunction-injection");
+  walk(bolt, "bolt");
+});
+
+// The bolt grammar
+
+test("bolt is Python first, with commands as the exception", () => {
+  const includes = bolt.patterns.map(p => p.include);
+  assert.deepEqual(includes, ["#module-import", "#nesting-statement", "#command-statement", "source.python"]);
+  assert.equal(includes.indexOf("source.python"), includes.length - 1,
+    "Python must come last, or it claims every line before a command rule is tried");
+});
+
+test("bolt command bodies are handed to the mcfunction grammar rather than described again", () => {
+  const bodies = JSON.stringify(bolt.repository["command-statement"].patterns);
+  assert.ok(bodies.includes("source.mcfunction.embedded#root"), "SC-003: no mcfunction syntax is authored here");
+});
+
+test("the command heads are mecha's own, with return withheld", () => {
+  const heads = bolt.repository["command-statement"].begin.match(/\((?:[a-z-]+\|)+[a-z-]+\)/)[0].slice(1, -1).split("|");
+  assert.equal(heads.length, 91, "mecha's tree has 92 roots and `return` is dropped");
+  assert.ok(!heads.includes("return"), "return is Python's keyword first");
+  for (const head of ["execute", "function", "say", "scoreboard", "item", "ban-ip"]) {
+    assert.ok(heads.includes(head), `${head} is missing from the generated set`);
+  }
+  assert.ok(bolt.repository["command-statement"].comment.includes("Regenerate with:"),
+    "the set is derived from mecha, so the command that derives it must be recorded");
+});
+
+test("a command head only opens a command when what follows is not Python", () => {
+  const begin = new RegExp(bolt.repository["command-statement"].begin);
+  for (const line of ["say hello", "    item modify entity @s", "setblock -1 2 3 stone", "function demo:x:"]) {
+    assert.ok(begin.test(line), line);
+  }
+  for (const line of ["item = 3", "time -= 1", "list(x)", "data.get(k)", "test: int = 3", "item, other = 1, 2"]) {
+    assert.ok(!begin.test(line), line);
+  }
+});
+
+test("every bolt rule that opens a block can close it on the same line", () => {
+  for (const name of ["nesting-statement", "command-statement", "python-call"]) {
+    const rule = bolt.repository[name];
+    assert.ok(rule.end.includes("$"), `${name} must be able to end at the line end`);
+  }
 });
 
 // Comment patterns must swallow quotes (TODO example 2)

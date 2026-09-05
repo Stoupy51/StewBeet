@@ -15,6 +15,7 @@ from types import FrameType
 
 from ...core.__memory__ import Mem
 from .model import SourceOrigin
+from .sources import is_project_source, reset_caches as reset_source_caches
 
 # Constants
 CONTENT_PARAMETER: str = "content"
@@ -25,9 +26,6 @@ WRITE_METHODS: frozenset[str] = frozenset({"append", "prepend"})
 
 GENERATED_INIT: str = "<string>"
 """ Filename of the `__init__` a dataclass generates, the one frame between a definition and its declaration. """
-
-LIBRARY_PACKAGES: tuple[str, ...] = ("stewbeet", "beet", "bolt", "mecha", "stouputils")
-""" Packages whose source may never be a mapping target, even when installed editable inside the project. """
 
 
 # Classes
@@ -67,21 +65,6 @@ def write_helpers() -> dict[str, int]:
 
 
 @cache
-def library_roots() -> tuple[str, ...]:
-	""" Directories of the installed packages that must never be mapping targets.
-
-	Resolved from the imported modules rather than guessed, so an editable install inside the
-	project being built is still excluded.
-	"""
-	roots: list[str] = []
-	for name in LIBRARY_PACKAGES:
-		module = sys.modules.get(name)
-		path: str | None = getattr(module, "__file__", None) if module else None
-		if path:
-			roots.append(os.path.normcase(os.path.dirname(os.path.abspath(path))))
-	return tuple(roots)
-
-@cache
 def project_roots() -> tuple[str, ...]:
 	""" Roots under which a file counts as the project's own source, defaulting to beet's project directory. """
 	configured: list[str] = Mem.ctx.meta.get("stewbeet", {}).get("sniffer", {}).get("roots", [])
@@ -89,62 +72,15 @@ def project_roots() -> tuple[str, ...]:
 		return tuple(os.path.normcase(os.path.abspath(str(root))) for root in configured)
 	return (os.path.normcase(os.path.abspath(str(Mem.ctx.directory))),)
 
-@cache
-def is_project_source(path: str) -> bool:
-	""" Whether a file may be named as a mapping source.
-
-	A path qualifies only when it sits under a project root **and** outside every installed
-	library. The second condition is not implied by the first: StewBeet is frequently installed
-	editable from inside the very repository being built.
-
-	Args:
-		path (str): Absolute path of a Python file.
-	Returns:
-		bool: True when the file is the project's own source.
-	Examples:
-		Anything under site-packages is out, whatever the roots say:
-
-		>>> is_project_source("/nowhere/site-packages/stewbeet/plugins/x.py")
-		False
-
-		And so is the StewBeet package itself **even when it sits under the project root**, which is
-		exactly what an editable install from inside the repository being built looks like. A plain
-		project-root check passes this case and must not:
-
-		>>> import os, stewbeet
-		>>> package_dir = os.path.dirname(stewbeet.__file__)
-		>>> repo_root = os.path.dirname(package_dir)
-		>>> package_dir.startswith(repo_root)   # the library really is under the root
-		True
-		>>> Mem.ctx.meta.setdefault("stewbeet", {})["sniffer"] = {"roots": [repo_root]}
-		>>> reset_caches()
-		>>> is_project_source(os.path.join(package_dir, "plugins", "sniffer", "origin.py"))
-		False
-		>>> is_project_source(os.path.join(repo_root, "my_pack", "link.py"))
-		True
-		>>> del Mem.ctx.meta["stewbeet"]["sniffer"]
-		>>> reset_caches()
-	"""
-	normalized: str = os.path.normcase(os.path.abspath(path))
-	if f"{os.sep}site-packages{os.sep}" in normalized:
-		return False
-	if any(normalized.startswith(root + os.sep) for root in library_roots()):
-		return False
-	return any(normalized.startswith(root + os.sep) or normalized == root for root in project_roots())
-
 
 def reset_caches() -> None:
 	""" Drop the caches whose inputs only hold still within one build.
 
-	`project_roots` reads `Mem.ctx`, which is a different project on the next build, and
-	`is_project_source` is built on top of it. `library_roots` reads `sys.modules`, which grows as
-	lazy imports resolve, so a package absent at the first call would otherwise never be excluded.
-	Without any caching at all the roots are recomputed on every stack frame of every write, which
-	measured +32% on a real build against +20% budgeted, so they are cached and cleared, not dropped.
+	`project_roots` reads `Mem.ctx`, which is a different project on the next build, and the shared
+	source filter is built on top of it.
 	"""
-	library_roots.cache_clear()
 	project_roots.cache_clear()
-	is_project_source.cache_clear()
+	reset_source_caches()
 
 
 def index_write_calls(path: str) -> dict[int, WriteCall]:
@@ -222,7 +158,7 @@ def declaration_origin() -> SourceOrigin | None:
 	while frame is not None and is_constructor_frame(frame):
 		frame = frame.f_back
 
-	if frame is None or not is_project_source(frame.f_code.co_filename):
+	if frame is None or not is_project_source(frame.f_code.co_filename, project_roots()):
 		return None
 	line, column = call_position(frame)
 	return SourceOrigin(file=os.path.abspath(frame.f_code.co_filename), line=line, column=column, exact=False)
@@ -276,7 +212,7 @@ def resolve_origin() -> SourceOrigin | None:
 	frame = sys._getframe(1) # pyright: ignore[reportPrivateUsage]
 	while frame is not None:
 		filename: str = frame.f_code.co_filename
-		if is_project_source(filename):
+		if is_project_source(filename, project_roots()):
 			call: WriteCall | None = write_calls_of(filename).get(frame.f_lineno)
 			if call is not None:
 				return SourceOrigin(file=os.path.abspath(filename), line=call.line, column=call.column, exact=call.exact)

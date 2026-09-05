@@ -1,0 +1,3 @@
+# helper module
+append function demo:shared:
+    say from helper

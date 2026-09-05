@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.7.0
+
+- **`.bolt` files open as code.** Nothing else on the marketplace registers that extension, so a bolt project's 141 source files opened as plain text: no language id, no highlighting, no comment toggling. They now get all three. Bolt is Python with commands interleaved, so Python is the ground and commands are the exception, and a word that is both a command and an identifier is only a command when what follows it is not Python.
+- **Resource locations in bolt imports are coloured** rather than reported as a syntax error by Python's grammar, which is the most visible thing that was wrong with reading a bolt file.
+- The command names come from mecha's own command tree, generated rather than typed, so they cannot drift from what mecha accepts.
+
 ## 1.6.2
 
 - **Python is coloured again around an `McFunction` variable or list.** The rule that carries the annotation to a `+=` or an `append` stays open across the lines between them, and while it is open only its own patterns apply, so `if`, `else`, ordinary strings and the declaration itself all lost their colours. Those lines now fall through to Python's own grammar, and the injection excludes its own scope so that cannot recurse.

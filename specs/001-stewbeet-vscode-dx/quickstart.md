@@ -152,6 +152,53 @@ Run against SimplEnergy with the sniffer plugin in the pipeline:
 | Navigation without the palette | A lens above each block that produced a function. FR-021 |
 | Deleting the build | Navigation stops, completion keeps working |
 
+## Phase D: a bolt file opens as code
+
+No build, no Python, nothing to configure. Install the extension and open any `.bolt` file.
+
+| Check | Expected |
+|---|---|
+| Status bar language | **Bolt**, where it read Plain Text before |
+| `class`, `def`, strings, f-strings | Python's own colours |
+| `say hello`, `scoreboard players add ...` | command colours, from the mcfunction grammar this extension already ships |
+| `from server:core import SERVER_TICK` | `server:core` coloured as a resource location, not as a syntax error |
+| `append function PLAYER_TICK:` | both words command-coloured, `PLAYER_TICK` left as Python |
+| `return x`, `item = 3`, `list(x)` | Python. These heads are also commands, and Python wins when what follows is Python |
+| ctrl+/ | inserts `#` |
+
+**The corpus check**, worth rerunning after any grammar edit: tokenize all 141 `.bolt` files in [shulker](file:///d:/advanced_desktop/shulker) through `extension/vscode/test/textmate.js` and look for a scope covering a long stretch of consecutive lines. A begin pattern whose end never matches turns the rest of a file into one colour, and a 141-file corpus is the cheapest way to find it. The long runs that do appear are genuine: a 45-line dict literal, blocks of consecutive commands, and multi-line JSON bodies inside an `advancement` command.
+
+**What is not covered**: a `.mcfunction` file containing bolt syntax. StewBeet's own minimal template ships one, and it stays owned by Spyglass, which reports its `for` loop as a syntax error. That is the file partition in [contracts/dialects.md](./contracts/dialects.md), and resolving it is step F.
+
+## Phase E: a bolt or mecha build emits source maps
+
+Add `stewbeet.plugins.sniffer.mecha` to the pipeline **before** `mecha`, and build.
+
+```yaml
+pipeline:
+    - "stewbeet.plugins.sniffer.mecha"
+    - "mecha"
+```
+
+Listing it after `mecha` is the mistake to expect: it works after its `yield`, and beet unwinds generator plugins in reverse, so listing it first is what leaves the module sources in the database. Listed after, every line comes out unmapped and it writes nothing.
+
+| Check | Expected |
+|---|---|
+| Build log | `sniffer.mecha: wrote N source maps` |
+| `dist/.../foo.mcfunction` | ends with `## sourceMappingURL=foo.mcfunction.map` |
+| `foo.mcfunction.map` | `sourceRoot` plus each `sources` entry resolves to a real file on disk |
+| A function assembled from two modules | two entries in `sources`, and the lines split between them |
+| A function written only by a library module | **no map at all**, rather than a map pointing into the library |
+| `sourceColumn` | not zero. The mecha producer carries real columns |
+
+**Do not expect every line to map.** On a real bolt project roughly a third do. The rest are commands bolt synthesised from modules that exist only in memory, or whose recorded position is not valid in any project source. An unmapped line is the correct answer there, and G5 in [contracts/source-map.md](./contracts/source-map.md) says why.
+
+**`mecha.contrib.source_map` is not this.** It prepends a `# [source_map] <filename>` header comment and emits no line mapping. Requiring it expecting a source map gets a comment.
+
+### The payoff, and how to check it without the editor
+
+Step C's consumer never asks who wrote a map, so a bolt build lights up with no extension change. To verify that claim without a running VS Code, run `extension/vscode/src/sourcemap.js` over the emitted maps directly: it is free of any `vscode` import for exactly this reason. Every origin it returns should name a real file at a real line, and `git diff extension/vscode/src/` should be empty.
+
 ## Sniffer interop (validates SC-002, part of step B)
 
 Not owned by this feature, and deliberately unlettered: step D is the `bolt` language id, not this. See [contracts/dialects.md](./contracts/dialects.md) for the canonical sequencing.
@@ -181,5 +228,9 @@ grep -rnE '@[aeprs]\[|\bscoreboard players\b|\bexecute (as|at|if|store)\b' \
 **Expected**: no matches.
 
 Anchor on mcfunction-specific token shapes rather than bare words. A pattern matching plain `execute` produces a false positive on `vscode.execute*`, which is a VS Code API name and not a Minecraft command. Test fixtures are excluded by construction because the paths listed are source directories only.
+
+**Step D adds a list of 91 command names, and it is still not authored knowledge.** `extension/vscode/syntaxes/bolt.tmLanguage.json` has to know which words open a command in a bolt file, so it carries the root literals of mecha's own command tree. They are **generated**, not typed: the grammar's `comment` field records the one-liner that regenerates them from `Mecha.spec.tree.children`, and `extension/vscode/test/grammar.test.js` asserts the count. The one human decision in the set is dropping `return`, because Python's keyword wins in a `.bolt` file, and that is a decision about Python rather than about mcfunction.
+
+The grep above covers source directories, not `syntaxes/`. Grammars are where syntax knowledge is supposed to live, and the extension shipped one before this feature existed. What SC-003 forbids is a second command tree growing inside executable code.
 
 **Comment lines are excluded, and that exclusion is the point of the check.** A command quoted in a doc comment is an example of what the code is handed, not knowledge of what it means. `projection.js` quotes `execute store reslt score #height {ns}.data` to explain which column a diagnostic lands on, and rewording it to satisfy a grep would make the comment worse. What SC-003 forbids is a grammar, a command tree or registry data in executable code, which is what the filtered grep tests for.

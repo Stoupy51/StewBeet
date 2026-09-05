@@ -1,101 +1,16 @@
 // @ts-check
 "use strict";
 
-// Tokenization tests, run through the same TextMate engine VS Code uses, with the real Python
-// grammar the injection targets. grammar.test.js checks that the grammars are well-formed;
-// this checks what they actually produce, which is the only way to catch a rule that never
-// fires or one whose end pattern swallows the quote closing the embed.
-//
-// Needs `npm install` for vscode-textmate and vscode-oniguruma, and a VS Code install to read
-// MagicPython from. Missing either, every test here skips rather than fails: the suite reports
-// what it could not check instead of pretending it passed.
+// Tokenization tests for the Python injection, run through the same TextMate engine VS Code uses.
+// grammar.test.js checks that the grammars are well-formed; this checks what they actually produce,
+// which is the only way to catch a rule that never fires or one whose end pattern swallows the
+// quote closing the embed. The engine itself lives in textmate.js, shared with bolt.test.js.
 
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
-const fs = require("node:fs");
-const os = require("node:os");
-const path = require("node:path");
+const { load, scopesOf } = require("./textmate.js");
 
-const SYNTAXES = path.join(__dirname, "..", "syntaxes");
-
-/** VS Code ships MagicPython inside its own install, under a version-stamped directory. */
-function findPythonGrammar() {
-  const roots = [
-    process.env.VSCODE_EXE && path.dirname(process.env.VSCODE_EXE),
-    "D:\\Programs\\Microsoft VS Code",
-    "C:\\Program Files\\Microsoft VS Code",
-    path.join(os.homedir(), "AppData", "Local", "Programs", "Microsoft VS Code"),
-    "/usr/share/code",
-    "/Applications/Visual Studio Code.app/Contents/Resources",
-  ].filter(Boolean);
-  const tail = path.join("resources", "app", "extensions", "python", "syntaxes", "MagicPython.tmLanguage.json");
-  for (const root of roots) {
-    const direct = path.join(String(root), tail);
-    if (fs.existsSync(direct)) return direct;
-    // Some installs interpose a version-stamped directory between the root and `resources`.
-    for (const entry of fs.existsSync(String(root)) ? fs.readdirSync(String(root)) : []) {
-      const nested = path.join(String(root), entry, tail);
-      if (fs.existsSync(nested)) return nested;
-    }
-  }
-  return null;
-}
-
-/** @returns {Promise<{ tokenize: (source: string) => { text: string, scopes: string[] }[][] } | string>} */
-async function loadEngine() {
-  let vsctm, oniguruma;
-  try {
-    vsctm = require("vscode-textmate");
-    oniguruma = require("vscode-oniguruma");
-  } catch {
-    return "vscode-textmate and vscode-oniguruma are not installed; run `npm install`";
-  }
-  const python = findPythonGrammar();
-  if (!python) return "no VS Code install found to read MagicPython from; set VSCODE_EXE";
-
-  await oniguruma.loadWASM(fs.readFileSync(require.resolve("vscode-oniguruma/release/onig.wasm")).buffer);
-  const files = {
-    "source.python": python,
-    "source.mcfunction.embedded": path.join(SYNTAXES, "mcfunction-embedded.tmLanguage.json"),
-    "stewbeet.mcfunction-injection": path.join(SYNTAXES, "mcfunction-injection.tmLanguage.json"),
-  };
-  const registry = new vsctm.Registry({
-    onigLib: Promise.resolve({
-      createOnigScanner: (/** @type {string[]} */ s) => new oniguruma.OnigScanner(s),
-      createOnigString: (/** @type {string} */ s) => new oniguruma.OnigString(s),
-    }),
-    loadGrammar: (/** @type {string} */ scope) => Promise.resolve(
-      files[scope] ? vsctm.parseRawGrammar(fs.readFileSync(files[scope], "utf8"), files[scope]) : null,
-    ),
-    getInjections: (/** @type {string} */ scope) => (scope === "source.python" ? ["stewbeet.mcfunction-injection"] : undefined),
-  });
-  const grammar = await registry.loadGrammar("source.python");
-
-  return {
-    tokenize(source) {
-      let state = vsctm.INITIAL;
-      return source.split("\n").map(line => {
-        const result = grammar.tokenizeLine(line, state);
-        state = result.ruleStack;
-        return result.tokens
-          .map((/** @type {{ startIndex: number, endIndex: number, scopes: string[] }} */ t) =>
-            ({ text: line.substring(t.startIndex, t.endIndex), scopes: t.scopes }))
-          .filter((/** @type {{ text: string }} */ t) => t.text.trim());
-      });
-    },
-  };
-}
-
-const engine = loadEngine();
-
-/** Scopes of the first token whose text is exactly `word`, across every line. */
-function scopesOf(lines, word) {
-  for (const line of lines) {
-    const hit = line.find(t => t.text === word);
-    if (hit) return hit.scopes;
-  }
-  return null;
-}
+const engine = load("source.python");
 
 /** Run `body` with a tokenizer, or skip when the engine could not be built. */
 function tokenizerTest(name, source, body) {
