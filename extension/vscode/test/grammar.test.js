@@ -21,7 +21,8 @@ const injection = JSON.parse(fs.readFileSync(path.join(SYNTAXES, "mcfunction-inj
 test("grammar files are valid JSON with expected scope names", () => {
   assert.equal(embedded.scopeName, "source.mcfunction.embedded");
   assert.equal(injection.scopeName, "stewbeet.mcfunction-injection");
-  assert.equal(injection.injectionSelector, "L:source.python");
+  // The span scope is excluded so the Python this grammar includes cannot re-enter it.
+  assert.equal(injection.injectionSelector, "L:source.python -meta.mcfunction-span.stewbeet");
 });
 
 test("every regex in both grammars compiles as a RegExp", () => {
@@ -234,7 +235,10 @@ const SINGLE_SINGLE = "(')";
 
 test("the annotation rule owns the assignment and every append", () => {
   assert.ok(annotationRule, "no McFunction rule in the injection grammar");
-  assert.equal(valueRules.length, 8, "four quote styles for `=` and four for `+=`");
+  assert.equal(valueRules.length, 9, "four quote styles for `=`, four for `+=`, then Python");
+  assert.equal(valueRules.at(-1).include, "source.python",
+    "the span must fall back to Python, or the lines it covers lose their own colours");
+  assert.equal(annotationRule.name, "meta.mcfunction-span.stewbeet", "the span needs the excluded scope");
   assert.ok(annotationRule.end.includes("\\1"),
     "the end must backreference the annotated name, or the rule runs to the end of the file");
 });
@@ -261,7 +265,7 @@ test("every quote style is covered, triple before single", () => {
 });
 
 test("a value rule ends at the quote, with no call parenthesis to close", () => {
-  for (const rule of valueRules) {
+  for (const rule of valueRules.filter(r => r.end)) {
     // The write_* rules capture the call's closing `)` as group 2. An assignment has none.
     assert.deepEqual(Object.keys(rule.endCaptures), ["1"], `${rule.begin} should end at the quote alone`);
     assert.equal(rule.contentName, "source.mcfunction.embedded");
@@ -269,7 +273,7 @@ test("a value rule ends at the quote, with no call parenthesis to close", () => 
 });
 
 test("inline value rules use the inline flavour of the embedded grammar", () => {
-  for (const rule of valueRules) {
+  for (const rule of valueRules.filter(r => r.name)) {
     const wanted = rule.name.includes(".inline.")
       ? "source.mcfunction.embedded#root-inline"
       : "source.mcfunction.embedded#root";
@@ -302,7 +306,10 @@ const listRule = injection.repository["stewbeet-mcfunction-string"].patterns
 
 test("the list rule owns the literal and every append", () => {
   assert.ok(listRule, "no list[McFunction] rule in the injection grammar");
-  assert.equal(listRule.patterns.length, 5, "one list literal plus four quote styles of append");
+  assert.equal(listRule.patterns.length, 6, "a list literal, four quote styles of append, then Python");
+  assert.equal(listRule.patterns.at(-1).include, "source.python",
+    "the span must fall back to Python, or the lines it covers lose their own colours");
+  assert.equal(listRule.name, "meta.mcfunction-span.stewbeet", "the span needs the excluded scope");
   assert.ok(listRule.end.includes("\\1"), "the end must backreference the annotated name");
   assert.ok(listRule.end.includes("append"), "an append onto the name must not end the run");
 });

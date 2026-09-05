@@ -283,3 +283,29 @@ tokenizerTest(
     assert.ok(!after.some(s => s.includes("mcfunction")), `quoted NBT leaked: ${after.join(" ")}`);
   },
 );
+
+// Python keeps its own colours inside a span
+
+tokenizerTest(
+  "the lines a span covers are still coloured as Python",
+  'def build(m):\n\tout: list[McFunction] = []\n\tif m == "x":\n\t\tout.append("say one")\n\telse:\n\t\tout.append("say two")\n',
+  lines => {
+    // While a begin/end injection rule is open only its own patterns apply, so without a
+    // fallback to Python every line between the declaration and its appends goes colourless.
+    assert.ok(scopesOf(lines, "if")?.includes("keyword.control.flow.python"), "if lost its colour");
+    assert.ok(scopesOf(lines, "else")?.includes("keyword.control.flow.python"), "else lost its colour");
+    assert.ok(scopesOf(lines, "==")?.includes("keyword.operator.comparison.python"), "== lost its colour");
+    assert.ok(scopesOf(lines, "x")?.some(s => s.startsWith("string.quoted")), "a Python string lost its colour");
+    assert.ok(scopesOf(lines, "=")?.includes("keyword.operator.assignment.python"), "= lost its colour");
+    assert.ok(scopesOf(lines, "say")?.includes("keyword.control.flow.mcfunction"), "and the command still colours");
+  },
+);
+
+tokenizerTest(
+  "a += span leaves the Python around it coloured",
+  'content: McFunction = "say one"\ncontent += "say two"\nafter = "plain"\n',
+  lines => {
+    assert.ok(scopesOf(lines, "+=")?.includes("keyword.operator.assignment.python"), "+= lost its colour");
+    assert.equal(lines.flat().filter(t => t.text === "say").length, 2);
+  },
+);
