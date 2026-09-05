@@ -76,7 +76,7 @@ There is no setup phase: the extension, its test runners and the map layer all e
 - [X] T014 [US2] Hand the changed generated files to the language server in `extension/vscode/src/diagnostics.js` by calling `vscode.workspace.openTextDocument` on them, which loads a document without showing it. A server publishes diagnostics only for documents it has been given, which is why the relay currently has nothing to relay until the author opens the file by hand
 - [X] T015 [US2] Drive that from the existing `**/*.mcfunction` watcher and open **only the files the watcher reported**, in `extension/vscode/src/extension.js`. A full rebuild rewrites every function in the pack, and opening all of them at once is the difference between a refresh and a freeze
 - [X] T016 [US2] Debounce the reaction in `extension/vscode/src/diagnostics.js` so one rebuild produces one pass rather than one per file, and cap how many documents are opened in a single pass. A pack with two thousand functions must degrade to a slower refresh, never to an unresponsive window
-- [ ] T017 [US2] Verify on SimplEnergy that a rebuild alone now produces the squiggle, and that a full rebuild does not lock the editor. Both halves matter: the fix is worthless if it makes every build painful
+- [X] T017 [US2] Superseded by T035. FR-019 now reads diagnostics off the projection, so there is no rebuild-driven path left to verify: an error is squiggled as it is typed, with no build at all. The half that still matters, that a full rebuild does not lock the editor, moved to T035
 
 **Checkpoint**: FR-019 holds. The relay works the way the author expected it to.
 
@@ -148,3 +148,28 @@ Phase 4 (T018-T019)  US3 rule filter, independent, one setting
 **Take Phases 3 and 4 first if a quick win matters.** Together they are one afternoon, they need none of the risky work, and they fix two things the author hit within minutes of installing 1.2.0.
 
 **Phase 1 is where this step can go wrong.** Everything else fails visibly; a bad column translation silently rewrites the wrong characters when a completion is accepted. T011 and T013 exist for that, and neither should be skipped to save time.
+
+---
+
+## Phase 7: Convergence
+
+Appended by `/speckit-converge`. The codebase shipped 1.4.0 through 1.5.1 without a task list, so the
+spec, the contracts and the docs describe a diagnostic relay that no longer exists and miss a setting,
+two commands and a module. Nothing here changes behaviour the author relies on except T029.
+
+**Out of this step, named rather than dropped**: FR-016 (`bolt` language id) and FR-017 (mecha AST map
+emitter) are unbuilt and stay that way for now. They are steps D and E in [plan.md](./plan.md)'s phasing
+table and get their own `/speckit-tasks` pass, not a phase inside a step C2 list.
+
+FR-019 is settled in [spec.md](./spec.md) rather than by a task here. The relay reads the projection and
+opens nothing under the build output, which needs no build at all, so the requirement moved to describe
+what the code does.
+
+- [ ] T029 Add a grammar rule keying on the annotation, `name: McFunction = <string>`, to `extension/vscode/syntaxes/mcfunction-injection.tmLanguage.json` per FR-023 (partial). **`McFunction` is the name**, already spelled that way by `type McFunction = str` in `python_package/stewbeet/core/utils/io/functions.py`, already reaching `from stewbeet import *`, and now spelled that way in FR-023 too. Only the grammar half is missing. Match the annotation with an optional `f` prefix and every quote style, the way the twelve `write_*` patterns beside it already do, and cover it in `extension/vscode/test/grammar.test.js`, whose 13 tests all exercise the `write_*` anchor and none the annotation
+- [ ] T031 Rewrite the "Loading what a build wrote (step C2)" block of [contracts/extension-api.md](./contracts/extension-api.md) per plan: diagnostic relay contract (contradicts). It documents a `**/*.mcfunction` watcher, a 40-document cap, an 8 s hold and a 400 ms debounce, none of which exist. Describe the live projection relay in their place: the 120 ms debounce, the 3 s per-wake and 20 s per-pass timeouts, the 30 s idle wake, and the rule that the projection's diagnostic wins over the generated file's
+- [ ] T032 Add `StewBeet.headerLinks` to the Settings table and `stewbeet.refreshDiagnostics` and `stewbeet.diagnosticsStatus` to the Commands table of [contracts/extension-api.md](./contracts/extension-api.md) per plan: extension surface contract (partial). The Commands section also opens with "All three are shipped in 1.2.0", which is no longer the count
+- [ ] T033 Bring `extension/vscode/README.md` to 1.5.1 per FR-020 and FR-022 (partial): add `headerLinks` to the settings table, add the two missing commands to the command table, correct the Diagnostics row that still calls them "Build errors mirrored onto the Python line" when they now arrive as you type with no build, and say in the highlighting section that commands handed to a `write_*` call in a variable are seen
+- [ ] T034 Correct the two Phase C rows in [quickstart.md](./quickstart.md) that say diagnostics appear "on a rebuild alone" per plan: validation guide (contradicts). Replace the rebuild trigger with typing, and keep a row for the generated files the author opens themselves, which is the one path that still relays from disk
+- [ ] T035 Verify on SimplEnergy that an error typed into a block is squiggled with no build present at all, and that a full rebuild neither freezes the editor nor silences the relay, per tasks.md T017 (partial). T017's wording predates the mechanism change and names a rebuild-driven check the relay no longer performs; leave T017 as it stands and record the result against this task. `extension/vscode/test/integration/result.json` covers the typing half already, so the rebuild half is what is missing
+- [ ] T036 Settle the SC-003 verification grep in [quickstart.md](./quickstart.md), which expects no matches and finds one per SC-003 (contradicts). `extension/vscode/src/projection.js:281` carries `execute store reslt score #height {ns}.data` as an example in a doc comment. Either reword the comment or exclude comment lines from the pattern, and say which was chosen so the next reader does not re-derive it
+- [ ] T037 Record `extension/vscode/src/headers.js`, its test and the `StewBeet.headerLinks` setting in [contracts/extension-api.md](./contracts/extension-api.md) (unrequested). Resource locations in a generated file's `#>` header comments are clickable and a lens sits above the header, which no requirement, plan phase or task ever asked for. It is small, tested and useful, so document it under the navigation surface rather than remove it
