@@ -27,6 +27,7 @@ All settings are under `StewBeet.*` in your `settings.json`:
 | `sourceMapDiagnostics`   | `true`                  | Show build errors on the Python line that wrote the command |
 | `diagnosticRuleDenylist` | `["undeclaredSymbol"]`  | Rules never relayed onto Python |
 | `codeLens`               | `true`                  | Show a link above each block to the function it produced |
+| `headerLinks`            | `true`                  | Make resource locations in a generated file's `#>` header clickable |
 | `enableBlockDecorations` | `true`                  | Toggle block decorations on/off |
 | `backgroundColor`        | `rgba(80,40,0,0.15)`    | Background fill color           |
 | `borderColor`            | `rgba(200,120,30,0.30)` | Border color                    |
@@ -63,6 +64,24 @@ Triple-quoted and single-line strings passed to the following functions are high
 All string forms are supported: `"""..."""`, `'''...'''`, `"..."`, `'...'`, and their `f`-string variants.  
 Python interpolations (`{variable}`) inside f-strings are parsed correctly and never mistaken for mcfunction syntax.
 
+**Commands handed over in a variable count too.** `content = f"""..."""` followed by
+`write_function(path, content)` gets the block box, completion and errors, and so does a later
+`content += """..."""`. To colour the commands as well, annotate the variable:
+
+```python
+from stewbeet import McFunction
+
+content: McFunction = f"""
+say hi
+function {ns}:greet
+"""
+write_function(f"{ns}:hello", content)
+```
+
+`McFunction` is `str`, so annotating changes nothing about how the value behaves. It exists because
+a grammar matches one place at a time and cannot tell that `content` reaches a `write_function`
+call seven lines down, so you say so instead. Everything except the colours works without it.
+
 ### Block decorations
 Multi-line strings are wrapped in a unified colored rectangle. Single-line strings get an inline border that starts exactly at the quote character.
 
@@ -77,7 +96,7 @@ Inside those same blocks, and nowhere else:
 | Signature help | The argument list of the command you are typing |
 | Go to definition | Jumps to the `write_function` call that produced the resource location |
 | Find references | Every Python call site that writes to a resource location |
-| Diagnostics | Build errors mirrored onto the Python line that wrote the command |
+| Diagnostics | Command errors underlined on the Python line, as you type, with no build |
 
 Completion knows about your project's own functions once the pack has been built at least once, because it resolves against the same symbol table Spyglass builds from your build output.
 
@@ -99,13 +118,15 @@ pipeline:
     - "stewbeet.plugins.archive"
 ```
 
-Three commands come with it, from the palette:
+Five commands come with it, from the palette:
 
 | Command | What it does |
 | ------- | ------------ |
 | StewBeet: Go to Python Source | From a generated `.mcfunction`, open the Python that wrote the line |
 | StewBeet: Go to Generated Function | The inverse, from a Python line to what it produced |
 | StewBeet: Reload Source Maps | Drop the cache when a build finished outside the watcher's view |
+| StewBeet: Refresh Build Diagnostics | Ask for the errors now instead of waiting |
+| StewBeet: Show Diagnostics Status | Say what the relay has seen, so a quiet relay is not mistaken for a clean file |
 
 A block that produced a function also carries a clickable link above it, so the second command
 is one click rather than a palette search. Turn it off with `"StewBeet.codeLens": false`.

@@ -16,6 +16,11 @@ from ...__memory__ import Mem
 
 # Constants
 type McFunction = str
+""" Commands, as a string. Annotating a variable with it is what colours the commands inside it.
+
+A TextMate grammar matches one place at a time and cannot tell that `content` reaches a `write_*`
+call further down, so the author states the intent instead. `notes: str = \"\"\"...\"\"\"` stays plain Python.
+"""
 
 # Functions
 def write_tag(

@@ -130,8 +130,9 @@ With phase B's build present:
 | Completion after `{ns}:` | Offers the pack's own function paths |
 | Ctrl+click a custom block's `place_secondary` | Peek list with both the `Block(...)` declaration and the developer's append |
 | Shift+F12 on a generated resource location | Every Python call site that generates a call to it |
-| Break a command, rebuild | A red squiggle on the Python line inside the string, sourced `stewbeet (spyglassmc)`, without opening anything under `build/` |
-| Fix it, rebuild | The squiggle clears |
+| Break a command | A red squiggle on the Python line inside the string, as you type. No rebuild, and nothing under `build/` opened |
+| Fix it | The squiggle clears, again without a rebuild |
+| Open a generated `.mcfunction` yourself | Its own diagnostics relay onto the Python too, sourced `stewbeet (spyglassmc)`. This is the one path that reads a build's output |
 | A block that produced a function | Carries a lens above it naming the function, one click to open it |
 | `"StewBeet.resolveInterpolations": false` | Interpolations go back to `_`, and ctrl+click on one stops resolving. Everything else keeps working |
 | Delete `build/` | Navigation stops, completion from phase A keeps working |
@@ -146,7 +147,7 @@ Run against SimplEnergy with the sniffer plugin in the pipeline:
 | Ctrl+click an **interpolated** one (`function {ns}:...`) | Works. FR-018 |
 | Shift+F12 | Works |
 | `Go to Generated Function`, then `Go to Python Source` | Both work, and land on the matching line: `execute store result score #height simplenergy.data ...` in the generated file returns to `execute store result score #height {ns}.data ...` in `machines.py` |
-| Diagnostics | Appear on a rebuild alone, with no generated file open. FR-019 |
+| Diagnostics | Appear as you type, with no build at all and no generated file open. FR-019 |
 | Relayed diagnostic quality | `undeclaredSymbol` is not relayed, so an objective a dependency declares raises nothing on the Python. Real errors still arrive. FR-020 |
 | Navigation without the palette | A lens above each block that produced a function. FR-021 |
 | Deleting the build | Navigation stops, completion keeps working |
@@ -173,9 +174,12 @@ Not owned by this feature, and deliberately unlettered: step D is the `bolt` lan
 
 ```sh
 grep -rnE '@[aeprs]\[|\bscoreboard players\b|\bexecute (as|at|if|store)\b' \
-  python_package/stewbeet/plugins/sniffer extension/vscode/src
+  python_package/stewbeet/plugins/sniffer extension/vscode/src \
+  | grep -vE ':\s*(//|#|\*)'
 ```
 
 **Expected**: no matches.
 
 Anchor on mcfunction-specific token shapes rather than bare words. A pattern matching plain `execute` produces a false positive on `vscode.execute*`, which is a VS Code API name and not a Minecraft command. Test fixtures are excluded by construction because the paths listed are source directories only.
+
+**Comment lines are excluded, and that exclusion is the point of the check.** A command quoted in a doc comment is an example of what the code is handed, not knowledge of what it means. `projection.js` quotes `execute store reslt score #height {ns}.data` to explain which column a diagnostic lands on, and rewording it to satisfy a grep would make the comment worse. What SC-003 forbids is a grammar, a command tree or registry data in executable code, which is what the filtered grep tests for.
