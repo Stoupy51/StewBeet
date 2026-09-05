@@ -6,7 +6,7 @@ const assert = require("node:assert/strict");
 
 const { findBlockOffsets, findInterpolationSpans } = require("../src/blocks");
 const {
-  project, resolveLine, toVirtual, toPython, describesMask, crossesSubstitution,
+  project, resolveLine, toVirtual, toPython, explainedByMask, crossesSubstitution,
   virtualPath, blockIndexFromPath, sanitizeName,
 } = require("../src/projection");
 
@@ -324,23 +324,27 @@ test("crossesSubstitution catches a range covering a substituted span", () => {
 const TYPO_LINE = new Map([[0, [{ start: 33, end: 37 }]]]);
 
 test("a diagnostic pointing at the mask is about the mask", () => {
-  assert.equal(describesMask({ line: 0, character: 33 }, TYPO_LINE), true);
-  assert.equal(describesMask({ line: 0, character: 35 }, TYPO_LINE), true);
+  assert.equal(explainedByMask({ line: 0, character: 33 }, TYPO_LINE), true);
+  assert.equal(explainedByMask({ line: 0, character: 35 }, TYPO_LINE), true);
 });
 
 test("a typo earlier on the line is reported even though the line carries a mask", () => {
   // `reslt` sits at column 14. Its diagnostic runs to the end of the line and therefore
   // overlaps the mask, which is why an overlap test silently swallowed the error.
-  assert.equal(describesMask({ line: 0, character: 14 }, TYPO_LINE), false);
+  assert.equal(explainedByMask({ line: 0, character: 14 }, TYPO_LINE), false);
+  assert.equal(explainedByMask({ line: 0, character: 32 }, TYPO_LINE), false);
 });
 
-test("a diagnostic just past the mask is about the text after it", () => {
-  assert.equal(describesMask({ line: 0, character: 37 }, TYPO_LINE), false);
+test("a diagnostic after the mask is the parser lost in the placeholder", () => {
+  // Everything a parser says once it has swallowed `____` describes a line the author never
+  // wrote. Reporting it fills the file with red that no edit can clear.
+  assert.equal(explainedByMask({ line: 0, character: 37 }, TYPO_LINE), true);
+  assert.equal(explainedByMask({ line: 0, character: 70 }, TYPO_LINE), true);
 });
 
 test("a line with no mask never suppresses anything", () => {
-  assert.equal(describesMask({ line: 1, character: 35 }, TYPO_LINE), false);
-  assert.equal(describesMask({ line: 0, character: 35 }, new Map()), false);
+  assert.equal(explainedByMask({ line: 1, character: 35 }, TYPO_LINE), false);
+  assert.equal(explainedByMask({ line: 0, character: 35 }, new Map()), false);
 });
 
 test("crossesSubstitution leaves a range clear of every span alone", () => {
