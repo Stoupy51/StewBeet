@@ -82,6 +82,20 @@ Registered on `{ language: 'python' }`. One lens sits on the first line of each 
 
 A block with no generated counterpart gets **no lens at all**, rather than one reporting that there is nothing to open, so a project with no build looks exactly as it did before. Lenses refresh when a map is written or deleted.
 
+## Grammar: what is highlighted as mcfunction (FR-022, FR-023)
+
+Three mechanisms, all in the injection grammar, all matching one place at a time:
+
+- **A string handed straight to a `write_*` call.** Twelve rules, one per function group and quote style.
+- **A variable annotated `McFunction`**, plus every `+=` onto that same name. The rule opens at `name: McFunction =` and closes at the first line that is neither an append to that name nor blank, its `end` backreferencing the name captured by its `begin`. Nothing else can carry the annotation across lines: a grammar has no variable bindings, so the author states the intent and the rule's own extent does the rest.
+- **A list annotated `list[McFunction]`**, its literal entries and every `append` onto that name. Its `end` also holds the run open across `if`, `elif`, `else`, `for`, `while`, `try`, `except`, `finally`, `with`, `match` and `case`, because the appends a declaration collects are routinely wrapped in a branch. An `append` onto any other name closes it.
+
+`McFunction` is `str`, exported from `stewbeet`, so annotating changes nothing at runtime. Block detection in `blocks.js` never needed it and still does not: an unannotated variable keeps its decorations, completion and diagnostics, and gains only the colours when annotated.
+
+**A project's own functions are found by `blocks.js`, not by the grammar.** A `def` whose parameter is annotated `McFunction` makes that argument of every call to it a block, so `write("ns:x", "say hi")` gets the block box, completion and diagnostics. `self` and `cls` are discounted so the call site's argument index lines up. This cannot be done in the grammar: a `def` and a call to it share no text, and a rule that matched any call would colour every Python string. Colour therefore stops at the variable annotation; everything else the extension does reaches these calls.
+
+**Inline and block content are tokenized by different entry points.** `#root` for a block, `#root-inline` for a string whose content starts mid-line. They differ in one rule: a `say` block ends at a quote closing the line when inline, because that quote closes the Python string, and must not when in a block, because `say something "quoted"` is an ordinary line that happens to end in a quote. Commands are recognised at `^` or at `\G`, the latter being where an inline embed starts; without it the first word of an inline string falls through to the generic name rule and is not read as a command.
+
 ## Header links in generated files (step C2)
 
 Not asked for by any requirement, and kept because it is the cheap half of navigation nobody had built. StewBeet's generated headers name the function they belong to and, after `@within`, the functions that call it, but they sit in `#` comments where Spyglass sees prose and offers nothing.

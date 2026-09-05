@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.6.1
+
+Commands written into a variable are coloured, and commands written on one line are coloured properly for the first time.
+
+- **Annotate a variable `McFunction` and its commands are coloured.** `content: McFunction = f"""..."""` highlights like a string passed straight to `write_function`. A grammar matches one place at a time and cannot tell that `content` reaches a call further down, so you say so instead. `McFunction` is `str` and is exported from `stewbeet`, so annotating changes nothing about how the value behaves.
+- **Every `+=` onto that name is coloured too**, up to the first statement that is not one, so a function built by appending is highlighted throughout rather than only in its first block. A `+=` onto a different name is left alone.
+- **A `list[McFunction]` is coloured too**, both the entries of a list literal and every `append` onto the name, including appends sitting inside an `if` or a `for`. An `append` onto a different name ends the run and is left alone.
+- **Your own functions are recognised.** Annotate a parameter `McFunction` and the strings passed to it get the block box, completion and errors, wherever the `def` sits in the file. Colours still need the annotation on a variable, because a grammar cannot connect a call to a `def` elsewhere.
+- **A command written on a single line is now read as a command.** `write_function("ns:x", "say hi")` coloured `say` as a plain word, because the rules that recognise a command anchored to the start of a line and an inline string starts in the middle of one. That was true of every single-line string this extension has ever highlighted.
+- The tests now run the real TextMate engine over the real Python grammar, which is what found both of the above. They skip, rather than pass, where that engine or a VS Code install is missing.
+
 ## 1.5.1
 
 1.5.0 made the errors arrive. This makes them keep arriving, and cuts the noise they arrived with.

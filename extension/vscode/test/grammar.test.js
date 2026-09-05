@@ -220,50 +220,106 @@ test("injection grammar covers all six write_* functions", () => {
 
 // The McFunction annotation rule (FR-023)
 
-/** The annotation rules, in the order the grammar defines them. */
-const annotationRules = injection.repository["stewbeet-mcfunction-string"].patterns
-  .filter(p => typeof p.begin === "string" && p.begin.includes("McFunction"));
+/** The rule owning an annotated variable and every append to it. */
+const annotationRule = injection.repository["stewbeet-mcfunction-string"].patterns
+  .find(p => typeof p.begin === "string" && p.begin.includes("McFunction"));
 
-test("injection grammar carries an McFunction annotation rule for every quote style", () => {
-  const quotes = annotationRules.map(p => p.begin.replace(/.*\((f\?)\)/, ""));
-  assert.equal(annotationRules.length, 4, "expected one rule per quote style");
-  assert.ok(quotes.some(q => q.includes('\\"\\"\\"')), 'missing triple-double annotation rule');
-  assert.ok(quotes.some(q => q.includes("'''")), "missing triple-single annotation rule");
+/** Its nested string rules: four quote styles for the assignment, four for `+=`. */
+const valueRules = annotationRule ? annotationRule.patterns : [];
+
+const TRIPLE_DOUBLE = '(\\"\\"\\")';
+const TRIPLE_SINGLE = "(''')";
+const SINGLE_DOUBLE = '(\\")';
+const SINGLE_SINGLE = "(')";
+
+test("the annotation rule owns the assignment and every append", () => {
+  assert.ok(annotationRule, "no McFunction rule in the injection grammar");
+  assert.equal(valueRules.length, 8, "four quote styles for `=` and four for `+=`");
+  assert.ok(annotationRule.end.includes("\\1"),
+    "the end must backreference the annotated name, or the rule runs to the end of the file");
 });
 
 test("the annotation rule matches the shapes an author writes", () => {
-  const anchored = annotationRules.map(p => new RegExp("^" + p.begin));
-  const matches = text => anchored.some(re => re.test(text));
-  assert.ok(matches('content: McFunction = """'), "plain triple-double");
-  assert.ok(matches('content: McFunction = f"""'), "f-string");
-  assert.ok(matches("content: McFunction = '''"), "triple-single");
-  assert.ok(matches('content: McFunction = "'), "single-double");
-  assert.ok(matches("content: McFunction = '"), "single-single");
-  assert.ok(matches('c:McFunction="""'), "no spaces around the colon or equals");
-  assert.ok(matches('_body2 :  McFunction  =  f"""'), "extra spaces and a name with digits");
+  const begin = new RegExp(annotationRule.begin);
+  for (const shape of ["content: McFunction = ", "c:McFunction=", "_body2 :  McFunction  =  "]) {
+    assert.ok(begin.test(shape), shape);
+  }
 });
 
 test("the annotation rule leaves every other annotation alone", () => {
-  // Unanchored, the way TextMate applies a pattern: an anchored miss would hide a rule
-  // that matches further along the line.
-  const anywhere = annotationRules.map(p => new RegExp(p.begin));
-  const matches = text => anywhere.some(re => re.test(text));
-  assert.ok(!matches('notes: str = """'), "a plain str annotation must stay Python");
-  assert.ok(!matches('content = """'), "an unannotated assignment must stay Python");
-  assert.ok(!matches('content: MyMcFunction = """'), "a name merely ending in McFunction");
-  assert.ok(!matches('content: McFunctions = """'), "a name merely starting with McFunction");
+  const begin = new RegExp(annotationRule.begin);
+  for (const shape of ["notes: str = ", "content = ", "content: MyMcFunction = ", "content: McFunctions = "]) {
+    assert.ok(!begin.test(shape), shape);
+  }
 });
 
-test("annotation triple-quote rules come before their single-quote rules", () => {
-  const idxOf = quote => annotationRules.findIndex(p => p.begin.endsWith(`(${quote})`));
-  assert.ok(idxOf('\\"\\"\\"') < idxOf('\\"'), "triple-double must come before single-double");
-  assert.ok(idxOf("'''") < idxOf("'"), "triple-single must come before single-single");
+test("every quote style is covered, triple before single", () => {
+  const idxOf = quote => valueRules.findIndex(p => p.begin.endsWith(quote));
+  assert.ok(idxOf(TRIPLE_DOUBLE) !== -1 && idxOf(TRIPLE_SINGLE) !== -1, "missing a triple-quote rule");
+  assert.ok(idxOf(TRIPLE_DOUBLE) < idxOf(SINGLE_DOUBLE), "triple-double must come before single-double");
+  assert.ok(idxOf(TRIPLE_SINGLE) < idxOf(SINGLE_SINGLE), "triple-single must come before single-single");
 });
 
-test("the annotation rule ends at the quote, with no call parenthesis to close", () => {
-  for (const rule of annotationRules) {
+test("a value rule ends at the quote, with no call parenthesis to close", () => {
+  for (const rule of valueRules) {
     // The write_* rules capture the call's closing `)` as group 2. An assignment has none.
-    assert.deepEqual(Object.keys(rule.endCaptures), ["1"], `${rule.comment} should end at the quote alone`);
+    assert.deepEqual(Object.keys(rule.endCaptures), ["1"], `${rule.begin} should end at the quote alone`);
     assert.equal(rule.contentName, "source.mcfunction.embedded");
+  }
+});
+
+test("inline value rules use the inline flavour of the embedded grammar", () => {
+  for (const rule of valueRules) {
+    const wanted = rule.name.includes(".inline.")
+      ? "source.mcfunction.embedded#root-inline"
+      : "source.mcfunction.embedded#root";
+    assert.equal(rule.patterns[0].include, wanted, rule.begin);
+  }
+});
+
+test("the embedded grammar carries an inline flavour for say", () => {
+  assert.ok(embedded.repository["root-inline"], "missing #root-inline");
+  assert.ok(embedded.repository["say-inline"], "missing #say-inline");
+  const inline = embedded.repository["say-inline"].patterns;
+  const block = embedded.repository["say"].patterns;
+  // The quote closing an inline embed sits at end of line, or before a list literal's comma.
+  const QUOTE_AT_EOL = "|(?=[\\\"'][ \\t]*,?[ \\t]*$)";
+  assert.equal(inline.length, block.length, "every say rule needs both flavours");
+  for (const [i, rule] of inline.entries()) {
+    assert.equal(rule.end, block[i].end + QUOTE_AT_EOL,
+      "an inline say is the block rule plus the quote that closes the embed");
+    assert.ok(!rule.end.includes("\t"), "use the \\t escape, not a literal tab");
+  }
+  for (const rule of block) {
+    assert.ok(!rule.end.endsWith(QUOTE_AT_EOL),
+      "a block say must not, or `say something \"quoted\"` would end the block early");
+  }
+});
+
+/** The rule owning a list annotated list[McFunction] and every append onto it. */
+const listRule = injection.repository["stewbeet-mcfunction-string"].patterns
+  .find(p => typeof p.begin === "string" && p.begin.includes("list"));
+
+test("the list rule owns the literal and every append", () => {
+  assert.ok(listRule, "no list[McFunction] rule in the injection grammar");
+  assert.equal(listRule.patterns.length, 5, "one list literal plus four quote styles of append");
+  assert.ok(listRule.end.includes("\\1"), "the end must backreference the annotated name");
+  assert.ok(listRule.end.includes("append"), "an append onto the name must not end the run");
+});
+
+test("the list rule holds its run open across a branch", () => {
+  for (const keyword of ["if", "elif", "else", "for", "while", "try", "except", "with"]) {
+    assert.ok(listRule.end.includes(keyword),
+      `${keyword} must not end the run, or appends inside a branch lose their colours`);
+  }
+});
+
+test("the list rule matches only a list of McFunction", () => {
+  const begin = new RegExp(listRule.begin);
+  for (const shape of ["out: list[McFunction] = ", "out:list[ McFunction ]= "]) {
+    assert.ok(begin.test(shape), shape);
+  }
+  for (const shape of ["notes: list[str] = ", "out: list[MyMcFunction] = ", "out: McFunction = "]) {
+    assert.ok(!begin.test(shape), shape);
   }
 });

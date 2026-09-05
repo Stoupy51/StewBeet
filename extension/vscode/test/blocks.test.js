@@ -273,3 +273,42 @@ test("the McFunction annotation does not change what counts as a block", () => {
     "annotating adds the syntax colours and nothing else (FR-023)",
   );
 });
+
+// A project's own function taking McFunction (FR-022, FR-023)
+
+test("a def with an McFunction parameter makes its calls blocks", () => {
+  const text = 'def write(path: str, cont: McFunction): pass\nwrite("ns:x", "say hi")';
+  assert.deepEqual(blockTexts(text), ['"say hi"']);
+});
+
+test("the annotated parameter decides which argument carries the commands", () => {
+  const first = 'def emit(cont: McFunction): pass\nemit("say first")';
+  assert.deepEqual(blockTexts(first), ['"say first"']);
+  const third = 'def emit(a: int, b: int, cont: McFunction): pass\nemit(1, 2, "say third")';
+  assert.deepEqual(blockTexts(third), ['"say third"']);
+});
+
+test("self does not count as an argument at the call site", () => {
+  const text = 'class A:\n\tdef emit(self, cont: McFunction): pass\na.emit("say method")';
+  assert.deepEqual(blockTexts(text), ['"say method"']);
+});
+
+test("a parameter list carrying a generic is split on the right commas", () => {
+  const text = 'def w(a: dict[str, int], c: McFunction): pass\nw({}, "say nested")';
+  assert.deepEqual(blockTexts(text), ['"say nested"']);
+});
+
+test("a def with no McFunction parameter is not a block source", () => {
+  const text = 'def plain(cont: str): pass\nplain("ordinary string")';
+  assert.deepEqual(blockTexts(text), []);
+});
+
+test("a variable handed to a project function is a block too", () => {
+  const text = 'def emit(cont: McFunction): pass\nbody = "say via variable"\nemit(body)';
+  assert.deepEqual(blockTexts(text), ['"say via variable"']);
+});
+
+test("a project function takes triple-quoted content as well", () => {
+  const text = 'def emit(cont: McFunction): pass\nemit("""\nsay multi\n""")';
+  assert.deepEqual(blockTexts(text), ['"""\nsay multi\n"""']);
+});
