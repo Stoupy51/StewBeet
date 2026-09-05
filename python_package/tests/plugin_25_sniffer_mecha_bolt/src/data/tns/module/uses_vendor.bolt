@@ -1,0 +1,4 @@
+from lib:vendored import vendored_lines
+
+function tns:from_vendor:
+    vendored_lines()

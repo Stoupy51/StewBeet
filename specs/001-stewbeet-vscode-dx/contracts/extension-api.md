@@ -98,6 +98,30 @@ Three mechanisms, all in the injection grammar, all matching one place at a time
 
 **Inline and block content are tokenized by different entry points.** `#root` for a block, `#root-inline` for a string whose content starts mid-line. They differ in one rule: a `say` block ends at a quote closing the line when inline, because that quote closes the Python string, and must not when in a block, because `say something "quoted"` is an ordinary line that happens to end in a quote. Commands are recognised at `^` or at `\G`, the latter being where an inline embed starts; without it the first word of an inline string falls through to the generic name rule and is not read as a command.
 
+## Languages: the `bolt` id and grammar (FR-016, step D)
+
+The extension contributes **one language**, `bolt`, claiming `.bolt` with `bolt-language-configuration.json`. It contributes **no `mcfunction` language**: FR-015 partitions ownership by file, and Spyglass owns that id.
+
+| Contribution | Value |
+|---|---|
+| `languages[0].id` | `bolt` |
+| `languages[0].extensions` | `[".bolt"]` |
+| `grammars[2].scopeName` | `source.bolt` |
+| `grammars[2].language` | `bolt` |
+| `activationEvents` | **unchanged**. A grammar needs no activation, and no provider selects a bolt document |
+
+`source.bolt` is Python first: its `patterns` are `#module-import`, `#nesting-statement`, `#command-statement`, then `source.python` last. Python must come last, or it claims every line before a command rule is tried.
+
+- **`#command-statement`** matches a line whose first token is a root command literal, and hands the line to `source.mcfunction.embedded#root`, the grammar this extension already ships. Its `begin` is a zero-width lookahead so the embedded grammar still sees `^`, which is what lets its own `say` rule treat the message as a message.
+- **The literal set is generated from mecha**, 91 of the 92 roots of `Mecha.spec.tree.children`. The regeneration command is recorded in the rule's `comment`, and `grammar.test.js` asserts the count and the absence of `return`. `return` is dropped because it is Python's keyword first.
+- **A head is only a command when what follows is not Python.** The rule carries a negative lookahead for `=`, every augmented assignment, `.`, `(`, `[`, `,` and an annotation `:`, so `item = 3` and `list(x)` stay Python while `item modify entity @s ...` is a command. A trailing `:` stays allowed, since that is bolt's nesting form.
+- **`#nesting-statement`** owns `function`, `append function`, `prepend function` and `merge function`, offering a resource location first and falling through to Python, because the argument is a computed expression as often as a literal path.
+- **`#python-call`** rescues a call inside a command argument: nothing in mcfunction puts a bare `(` after a word, so `has_item_predicate(self.item.d())` keeps Python's colours. It also ends at the line end, so an unbalanced parenthesis costs one line rather than the rest of the file.
+
+**Verified against a real corpus**: all 141 `.bolt` files in shulker, 9075 lines, with no runaway scope. The long single-scope runs that do appear are a 45-line dict literal, blocks of consecutive commands, and the multi-line JSON body of an `advancement` command, which recovers when its braces balance.
+
+**Out of scope for step D**: a `.mcfunction` file containing bolt syntax. That file keeps language id `mcfunction` and belongs to Spyglass, which cannot parse it. See [dialects.md](./dialects.md).
+
 ## Header links in generated files (step C2)
 
 Not asked for by any requirement, and kept because it is the cheap half of navigation nobody had built. StewBeet's generated headers name the function they belong to and, after `@within`, the functions that call it, but they sit in `#` comments where Spyglass sees prose and offers nothing.

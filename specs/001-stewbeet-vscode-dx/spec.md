@@ -99,10 +99,10 @@ The long-term target is one extension serving plain **beet**, **bolt**, **mecha*
 - **FR-013**: The map-consuming half of the extension MUST be dialect-agnostic. It consumes `.mcfunction.map` and MUST NOT know which generator produced it.
 - **FR-014**: The map format and its encoder MUST be shared across dialects. Only the capture half may be dialect-specific.
 - **FR-015**: The extension MUST NOT claim language id `mcfunction` for files Spyglass already serves. Ownership is partitioned by file, not merged.
-The next two are steps **D** and **E** in [plan.md](./plan.md)'s phasing table, and neither is in the current pass. They stay MUSTs and get their own `/speckit-tasks` list when their turn comes.
-
-- **FR-016**: The extension MUST contribute a `bolt` language id and grammar, since no installed extension registers `.bolt` today and a document without a language id cannot be served by any language server.
+- **FR-016**: The extension MUST contribute a `bolt` language id and grammar, since no installed extension registers `.bolt` and a document without a language id cannot be served by any language server. The grammar MUST NOT author mcfunction knowledge of its own: the command names it needs are generated from mecha's command tree, and command bodies are handed to the mcfunction grammar the extension already ships.
 - **FR-017**: bolt and mecha map emission MUST read positions from the mecha AST (`AstNode.location`), not reconstruct them. Reconstruction is a StewBeet-only necessity.
+  - A location carries no filename and the compilation unit names only the first contributing module, so the writing file MUST be recovered from the position itself. A line whose file cannot be narrowed to exactly one MUST be emitted unmapped, per FR-010.
+  - Emission MUST survive a plugin that rewrites functions after `mecha`, which `auto.headers` does to every function in a StewBeet pipeline.
 
 ### Out of scope
 

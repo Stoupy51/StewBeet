@@ -2,7 +2,7 @@
   "name": "stewbeet",
   "displayName": "StewBeet",
   "description": "Syntax highlighting, block decorations and Spyglass-backed language features for mcfunction strings inside StewBeet write_* calls in Python files.",
-  "version": "1.6.3",
+  "version": "1.7.0",
   "publisher": "stoupy",
   "license": "MIT",
   "icon": "icon.png",
@@ -43,6 +43,19 @@
     "minecraftcommands.syntax-mcfunction"
   ],
   "contributes": {
+    "languages": [
+      {
+        "id": "bolt",
+        "aliases": [
+          "Bolt",
+          "bolt"
+        ],
+        "extensions": [
+          ".bolt"
+        ],
+        "configuration": "./bolt-language-configuration.json"
+      }
+    ],
     "grammars": [
       {
         "scopeName": "source.mcfunction.embedded",
@@ -54,6 +67,14 @@
         "injectTo": [
           "source.python"
         ],
+        "embeddedLanguages": {
+          "source.mcfunction.embedded": "mcfunction"
+        }
+      },
+      {
+        "language": "bolt",
+        "scopeName": "source.bolt",
+        "path": "./syntaxes/bolt.tmLanguage.json",
         "embeddedLanguages": {
           "source.mcfunction.embedded": "mcfunction"
         }

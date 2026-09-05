@@ -112,7 +112,7 @@ the step twice, or falling through to the teardown after it already ran, never d
 
 ## Guarantees
 
-- **G1**: If generated line `n` is mapped, the mapped source position is inside a `write_*` call or a declaration in that file.
+- **G1**: If generated line `n` is mapped, the mapped source position is inside a `write_*` call or a declaration in that file. For the mecha producer, it is the command's own position in the module that wrote it.
 - **G2**: Mapped lines are strictly increasing in generated order. The map never goes backwards.
 - **G3**: A missing mapping means "unknown origin", never "same as the previous line". Consumers must not interpolate.
 - **G4**: An unmapped line is always safe to skip. No consumer is required to handle it.
@@ -120,9 +120,24 @@ the step twice, or falling through to the teardown after it already ran, never d
 - **G6**: One map may carry several sources. Confirmed by the reference: `aura.mcfunction` is generated from calls in both `hit.ts` and `spawn.ts`, and its map carries two sources with the segments switching between them. Consumers offering navigation should present all of them rather than only the first.
 - **G7**: Several generated lines may map to the same source line. Confirmed by the reference: `effect('slowness', 3)` on line 8 of `hit.ts` expands to both `effect clear` and `effect give`, two segments pointing at the same position. This is the normal case for any statement that expands, and StewBeet hits it whenever one Python line writes multiple commands.
 
+## Two producers, one format
+
+The same artifact is written by two plugins with nothing in common but the encoder, and a consumer cannot tell them apart. It does not need to: everything above holds for both. What differs is how much precision each one had to start with.
+
+| | `stewbeet.plugins.sniffer` | `stewbeet.plugins.sniffer.mecha` |
+|---|---|---|
+| Sources | `.py` files calling `write_*` | `.bolt` modules and `.mcfunction` files compiled by mecha |
+| Where positions come from | reconstructed by frame walk plus an AST index, because none exist | read off `AstNode.location`, because they were never lost |
+| `sourceColumn` | the start of the string literal | **the command's real column** |
+| Reconciled with `difflib` | yes, `auto.headers` rewrites every function | yes, for the same reason |
+
+Both are opt-in pipeline entries, and both emit nothing when a line has no origin in the project's own source.
+
+**The column is the one place a consumer may want to know which wrote the map**, and it can tell without being told: a StewBeet map's columns all point at string literals, while a mecha map's point at commands. Nothing in the format depends on the difference, so a consumer that ignores columns entirely is correct for both.
+
 ## Non-guarantees
 
-- Column precision inside a line. `sourceColumn` is `0` throughout the reference and points at the start of the string literal in ours, not at the character that produced the command. mcfunction diagnostics carry their own column, which the extension applies to the Python line separately.
+- Column precision inside a line, **from the StewBeet producer**. `sourceColumn` is `0` throughout the reference and points at the start of the string literal in ours, not at the character that produced the command. mcfunction diagnostics carry their own column, which the extension applies to the Python line separately. The mecha producer does carry a real column, so this non-guarantee is producer-specific rather than a property of the format.
 - Round-tripping content written from a variable or a helper's return value. Those map to the `write_*` call line, flagged `exact: false` at capture time and indistinguishable in the emitted map.
 - Stability across builds. A map is only valid for the build that produced it.
 

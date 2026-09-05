@@ -1,7 +1,7 @@
 
 # StewBeet mcfunction Syntax
 
-> Syntax highlighting, block decorations and **language features** for **mcfunction** code embedded inside [StewBeet](https://stewbeet.paralya.fr/) `write_*` Python calls.
+> Syntax highlighting, block decorations and **language features** for **mcfunction** code embedded inside [StewBeet](https://stewbeet.paralya.fr/) `write_*` Python calls, plus syntax highlighting for **`.bolt`** files.
 
 ---
 
@@ -201,9 +201,31 @@ line is far more intrusive than the same one in a generated file nobody opens.
 Relay everything with `"StewBeet.diagnosticRuleDenylist": []`, or add rules of your own to the
 list to silence them.
 
+### Bolt files
+
+`.bolt` files open as **Bolt** instead of plain text, with syntax highlighting and `#` comment toggling. Nothing else registers that extension, so before this they had no language id at all, which also meant no language server could ever be asked to serve them.
+
+Bolt is Python with commands interleaved at statement level, so the grammar treats Python as the ground and commands as the exception:
+
+```python
+from server:core import SERVER_TICK      # server:core is a resource location, not a syntax error
+
+class Ammo(Component):
+    def build(self):
+        append function PLAYER_TICK:     # command, and PLAYER_TICK stays Python
+            execute if predicate has_item_predicate(self.item.d()) run function self.tick
+        return self.item                 # Python, because `return` is Python's keyword first
+```
+
+A word that is both a command and an identifier, such as `item`, `data`, `time` or `list`, is only a command when what follows it is not Python: `item = 3` is an assignment, `item modify entity @s ...` is a command.
+
+This is highlighting only. Completion, hover and go-to-definition inside `.bolt` need a compiler-backed language server, which only mecha can provide, and that is not part of this extension.
+
 ## Grammar
 
 mcfunction grammar from [MinecraftCommands/syntax-mcfunction](https://github.com/MinecraftCommands/syntax-mcfunction), bundled via [StewBeet](https://github.com/Stoupy51/StewBeet/blob/main/extension/vscode/syntaxes/mcfunction.tmLanguage.json).
+
+The bolt grammar's command names are generated from mecha's own command tree rather than written by hand; the regeneration command is recorded in the grammar file.
 
 ## Installation
 

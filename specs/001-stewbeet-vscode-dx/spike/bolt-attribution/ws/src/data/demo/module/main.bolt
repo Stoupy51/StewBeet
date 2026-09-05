@@ -1,0 +1,5 @@
+import demo:helper as _
+
+append function demo:shared:
+    say from main one
+    say from main two

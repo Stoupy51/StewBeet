@@ -1,0 +1,14 @@
+{
+  "name": "boltprobe",
+  "data_pack": {
+    "load": ["src"],
+    "pack_format": 48
+  },
+  "require": ["bolt"],
+  "pipeline": ["probe", "mecha"],
+  "meta": {
+    "bolt": {
+      "entrypoint": "*"
+    }
+  }
+}

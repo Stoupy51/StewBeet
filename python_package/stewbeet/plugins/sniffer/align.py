@@ -10,6 +10,7 @@ from dataclasses import replace
 from difflib import SequenceMatcher
 
 from .model import SourceOrigin, WriteChunk
+from .sidecar import final_lines_of
 
 
 # Functions
@@ -37,14 +38,6 @@ def flatten(chunks: Sequence[WriteChunk]) -> tuple[list[str], list[SourceOrigin 
 			column: int = chunk.origin.column if offset == 0 else 0
 			origins.append(replace(chunk.origin, line=chunk.origin.line + offset, column=column))
 	return lines, origins
-
-
-def final_lines_of(text: str) -> list[str]:
-	""" Split a function's final text the way a consumer counts its lines, without the phantom trailing entry. """
-	lines: list[str] = text.split("\n")
-	if lines and lines[-1] == "":
-		lines.pop()
-	return lines
 
 
 def align(chunks: Sequence[WriteChunk], text: str) -> dict[int, SourceOrigin]:

@@ -52,9 +52,19 @@ location: SourceLocation      # NamedTuple(pos, lineno, colno)
 end_location: SourceLocation
 ```
 
-so emitting a map is a walk over the compiled AST reading `location` off each `AstCommand`, with no frame walking, no AST re-parse and no `difflib`. It is both simpler and more precise than the StewBeet path, and it gets column precision for free, which StewBeet's path explicitly does not promise.
+so emitting a map is a walk over the compiled AST reading `location` off each `AstCommand`, with no frame walking and no AST re-parse. It gets column precision for free, which StewBeet's path explicitly does not promise: a nested `execute function ./goodbye:` maps to the `function` token inside that line rather than to its start.
 
-This is why the emitter is split: `capture` and `align` are StewBeet-specific, while `encode` is shared. A mecha backend plugs a different front half onto the same encoder.
+This is why the emitter is split: `capture` is StewBeet-specific, while `encode`, `sidecar`, `sources` and `align` are shared. A mecha backend plugs a different front half onto the same encoder.
+
+**`align` is shared rather than StewBeet-specific**, which the first design got wrong. A StewBeet pipeline runs `auto.headers` after `mecha`, so every function gains a header block after it was compiled and nothing lines up positionally, exactly as on the StewBeet side. The minimal template does this, so the mecha producer reconciles with `difflib` too.
+
+**Three rules the implementation settled**, all measured on [shulker](file:///d:/advanced_desktop/shulker) and recorded in the spike at [spike/bolt-attribution/](../spike/bolt-attribution/):
+
+1. **List the emitter before `mecha`** in the pipeline. It works after its `yield`, and beet unwinds generator plugins in reverse, so listing it first is what leaves the `Module` compilation units and their sources in the database. This is the opposite of `stewbeet.plugins.sniffer.emit`'s placement rule.
+2. **A location carries no filename, and the compilation unit's `filename` names only the first contributing module.** The file is recovered from the redundancy between `pos`, `lineno` and `colno`, with the command's own first word breaking ties at positions every file agrees on, such as the very first character.
+3. **Index the database by resource location, not by file instance.** A plugin that rewrites a function replaces the object the pack holds, and an identity lookup then finds nothing.
+
+Roughly a third of a real bolt project's command lines map. The rest have no trustworthy origin: modules bolt synthesises in memory, positions valid in no project source, and positions whose line and column are valid in the declaring file while the offset disagrees. That last group is why the offset is checked at all, since dropping it maps generated commands onto whatever Python declaration happens to sit at that line.
 
 ## The Spyglass compatibility problem, precisely
 
@@ -79,11 +89,13 @@ Both extensions claim language id `mcfunction`, so installing both gives doubled
 
 The partition holds in practice: [shulker](file:///d:/advanced_desktop/shulker) is 141 `.bolt` files, 14 `.py`, and **zero** `.mcfunction` in `src/`. A bolt project's authored sources are `.bolt`; the `.mcfunction` files are build output.
 
-The caveat to watch is `meta.bolt.entrypoint`, which shulker sets to `"*"`. A project can enable bolt syntax inside `.mcfunction` files, and then the partition needs the beet config to decide the owner rather than the extension alone. Deferred until a project actually does it.
+The caveat to watch is `meta.bolt.entrypoint`, which shulker sets to `"*"`. A project can enable bolt syntax inside `.mcfunction` files, and then the partition needs the beet config to decide the owner rather than the extension alone.
+
+**A project does do it: StewBeet's own minimal template.** `templates/minimal_template.zip` ships `src/data/minimal/function/hello.mcfunction` holding `for i in range(1, 6):` and `execute function ./goodbye:`, which is bolt inside a `.mcfunction`. The step E emitter maps it correctly, because it reads the compiled AST and never looks at the file extension. The partition is what the file breaks: that `.mcfunction` is owned by Spyglass, which cannot parse a `for` loop, so it is reported as a syntax error today. Deciding the owner from the beet config is step F's problem, and the template is the fixture for it.
 
 ## An immediate, nearly free win
 
-**Nothing on this machine registers the `.bolt` file extension.** Checked across every installed extension: no `languages` contribution claims it. So 141 files in shulker open as plain text, with no language id, no syntax highlighting and no comment toggling.
+**Nothing registers the `.bolt` file extension.** Re-checked 2026-09-05 across all 35 installed extensions: no `languages` contribution and no grammar scope claims it, while 8 of them do contribute languages, which is the control that says the scan works. The marketplace has no bolt grammar either, and [mcbeet/bolt](https://github.com/mcbeet/bolt) ships none. So 141 files in shulker open as plain text, with no language id, no syntax highlighting and no comment toggling.
 
 Contributing a `bolt` language id plus a TextMate grammar is small, self-contained, risk-free, and unblocks everything else, since a document with no language id cannot be selected by any language server. It is the first bolt-side step for that reason, not because highlighting is the most valuable feature.
 
@@ -96,7 +108,9 @@ The StewBeet-side plugin is **`stewbeet.plugins.sniffer`**, named for the debugg
 and unquoted. A sentence like "the sniffer plugin emits maps Sniffer reads" is correct and readable;
 "sniffer emits maps sniffer reads" is not. The same applies to headings and task descriptions.
 
-Its capture and alignment halves are StewBeet-specific, but the encoder and the output contract are not. When a second dialect needs an emitter, the shared half is extracted into a standalone beet plugin that any beet project can require, and `stewbeet.plugins.sniffer` becomes a thin StewBeet front end over it. Designing for that now means keeping `encode` free of any StewBeet import, which costs nothing today.
+Its capture and alignment halves are StewBeet-specific, but the encoder and the output contract are not. The shared half is `encode`, `model`, `sidecar` and `filter`, none of which import anything from StewBeet.
+
+**The mecha front end is `stewbeet.plugins.sniffer.mecha`**, a submodule rather than a distribution of its own. A plain beet project requires it by its dotted path like any other plugin, so a separate package would buy nothing but a second release process and a second changelog. The `stewbeet` install it implies is the honest cost, and it is one `pip install` against a dependency the project already builds with. Splitting it out remains possible later precisely because the shared half has no StewBeet imports to unpick.
 
 ## Sequencing
 
@@ -109,11 +123,13 @@ Deliberately incremental. Each step is independently useful and none blocks anot
 | **B2** | Attribution scopes reach declarations | StewBeet | B |
 | **C** | Map-driven navigation, references, relocated diagnostics | **any dialect with maps** | A, B |
 | **C2** | Interpolated paths resolve in the projection | StewBeet | C |
-| **D** | `bolt` language id and grammar | bolt | Nothing |
-| **E** | Mecha AST map emitter | bolt, mecha | C for the payoff, D for nothing |
+| **D** | `bolt` language id and grammar. **Shipped** | bolt | Nothing |
+| **E** | Mecha AST map emitter, `stewbeet.plugins.sniffer.mecha`. **Shipped** | bolt, mecha | C for the payoff, D for nothing |
 | **F** | Bolt live editing, adopt or route to a mecha-backed server | bolt, mecha | D |
 | **G** | Upstream Spyglass `env.plugins`, collapses A | all | Upstream review |
 
 C is the step where the product stops being a StewBeet tool. It consumes maps and does not care who wrote them, so E makes bolt projects light up with no further extension work.
+
+**E proved that.** `extension/vscode/src/sourcemap.js` read 381 maps a bolt build produced and resolved all 815 of their origins to real `.bolt` lines, with no change to any file under `extension/vscode/src/`. One generated function, `event/reset.mcfunction`, resolves into three different modules.
 
 F is the largest and least defined step, and the open question is whether to adopt aegis (contribute the routing fix upstream, or vendor its server) or to write a thinner one. That decision needs its own research pass and is deliberately not made here.
