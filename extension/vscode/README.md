@@ -75,12 +75,48 @@ content: McFunction = f"""
 say hi
 function {ns}:greet
 """
+content += """
+say appended, coloured too
+"""
 write_function(f"{ns}:hello", content)
 ```
 
 `McFunction` is `str`, so annotating changes nothing about how the value behaves. It exists because
 a grammar matches one place at a time and cannot tell that `content` reaches a `write_function`
 call seven lines down, so you say so instead. Everything except the colours works without it.
+
+The annotation carries to every `+=` onto the same name, up to the first statement that is not
+one, so a function built by appending is coloured throughout. A `+=` onto a different name is left
+alone.
+
+**A list of commands works the same way.** Annotate it `list[McFunction]` and every `append` onto
+it is coloured, including the ones inside an `if` or a `for`, along with the entries of a list
+literal:
+
+```python
+output_list: list[McFunction] = []
+if machine == "electric_brewing_stand":
+    output_list.append('data modify entity @s foo set value {"Slot":0b}')
+else:
+    output_list.append('say otherwise')
+```
+
+An `append` onto any other name ends the run and is left alone.
+
+**Your own functions count too.** Annotate a parameter `McFunction` and the strings passed to it
+are treated as blocks:
+
+```python
+def write(path: str, cont: McFunction) -> None:
+    write_function(path, cont)
+
+write("ns:hello", "execute if score #x obj matches 1 run say hi")
+```
+
+That one is detection rather than colour: the call gets the block box, completion and errors,
+because the extension reads your whole file and can see the `def`. Syntax colours come from a
+grammar, which matches one place at a time and cannot connect a call to a `def` elsewhere, so the
+commands inside stay uncoloured. Annotating the variable is what colours it.
 
 ### Block decorations
 Multi-line strings are wrapped in a unified colored rectangle. Single-line strings get an inline border that starts exactly at the quote character.

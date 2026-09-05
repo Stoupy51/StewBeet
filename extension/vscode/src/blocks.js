@@ -7,7 +7,22 @@
 
 // Constants
 
-const FUNC_RE = /\b(write_function|write_versioned_function|write_scheduled_function|write_load_file|write_unload_file|write_tick_file)\s*\(/g;
+/** The StewBeet functions that take mcfunction content. */
+const WRITE_FUNCS = [
+  "write_function",
+  "write_versioned_function",
+  "write_scheduled_function",
+  "write_load_file",
+  "write_unload_file",
+  "write_tick_file",
+];
+
+/** A call to any of them, or to any name in `names`. */
+function callRegex(names = WRITE_FUNCS) {
+  return new RegExp(`\\b(${names.join("|")})\\s*\\(`, "g");
+}
+
+const FUNC_RE = callRegex();
 
 /** Functions where the mcfunction content is the 2nd argument (after a path). */
 const FUNCS_2ND_ARG = new Set([
@@ -15,6 +30,12 @@ const FUNCS_2ND_ARG = new Set([
   "write_versioned_function",
   "write_scheduled_function",
 ]);
+
+/** A `def`, with its parameter list, so a project's own wrappers can be found. */
+const DEF_RE = /\bdef\s+([A-Za-z_]\w*)\s*\(([^)]*)\)/g;
+
+/** A parameter annotated McFunction, ex: `content: McFunction = ""`. */
+const MCFUNCTION_PARAM_RE = /^\s*[A-Za-z_]\w*\s*:\s*McFunction\b/;
 
 // String scanning
 
@@ -172,19 +193,21 @@ function findBlockOffsets(text) {
   const blocks = [];
   /** Names handed to a write_* call instead of a literal, mapped to that call's offset. */
   const variables = new Map();
+  const wrappers = mcfunctionWrappers(text);
+  const callRe = wrappers.size === 0 ? FUNC_RE : callRegex([...wrappers.keys(), ...WRITE_FUNCS]);
 
-  FUNC_RE.lastIndex = 0;
+  callRe.lastIndex = 0;
   let m;
-  while ((m = FUNC_RE.exec(text)) !== null) {
+  while ((m = callRe.exec(text)) !== null) {
     const afterOpen = m.index + m[0].length;
 
-    let contentIdx;
-    if (FUNCS_2ND_ARG.has(m[1])) {
-      contentIdx = skipFirstArg(text, afterOpen);
-      if (contentIdx === -1) continue;
-    } else {
-      contentIdx = afterOpen;
+    const argIndex = wrappers.has(m[1]) ? wrappers.get(m[1]) : Number(FUNCS_2ND_ARG.has(m[1]));
+    let contentIdx = afterOpen;
+    for (let skipped = 0; skipped < argIndex; skipped++) {
+      contentIdx = skipFirstArg(text, contentIdx);
+      if (contentIdx === -1) break;
     }
+    if (contentIdx === -1) continue;
 
     const opening = readOpeningQuote(text, contentIdx);
     if (!opening) {
@@ -204,6 +227,56 @@ function findBlockOffsets(text) {
 
   if (variables.size > 0) blocks.push(...findAssignedBlocks(text, variables));
   return blocks.sort((a, b) => a.start - b.start);
+}
+
+/**
+ * The project's own functions taking commands, mapped to which argument carries them.
+ *
+ * `def write(path: str, cont: McFunction)` makes `write("say hi")`'s second argument a block,
+ * the same as `write_function`'s. A grammar cannot do this, since the `def` and the call share
+ * no text, but a scan of the whole document can.
+ *
+ * @param {string} text
+ * @returns {Map<string, number>}  0-based index of the annotated parameter.
+ *
+ * >>> mcfunctionWrappers("def w(p: str, c: McFunction): pass")
+ * Map(1) { 'w' => 1 }
+ */
+function mcfunctionWrappers(text) {
+  const found = new Map();
+  DEF_RE.lastIndex = 0;
+  let m;
+  while ((m = DEF_RE.exec(text)) !== null) {
+    const params = splitParams(m[2]);
+    const index = params.findIndex(p => MCFUNCTION_PARAM_RE.test(p));
+    // `self` never carries commands, and counting it would shift every call site's argument.
+    const offset = /^\s*(self|cls)\s*(?:[,:]|$)/.test(params[0] ?? "") ? 1 : 0;
+    if (index >= offset) found.set(m[1], index - offset);
+  }
+  return found;
+}
+
+/**
+ * Split a parameter list on the commas that separate parameters.
+ *
+ * @param {string} params  Everything between the parentheses of a `def`.
+ * @returns {string[]}
+ *
+ * >>> splitParams("a: dict[str, int], b: McFunction")
+ * [ 'a: dict[str, int]', ' b: McFunction' ]
+ */
+function splitParams(params) {
+  const parts = [];
+  let depth = 0;
+  let start = 0;
+  for (let i = 0; i < params.length; i++) {
+    const c = params[i];
+    if (c === "[" || c === "{" || c === "(") depth++;
+    else if (c === "]" || c === "}" || c === ")") depth--;
+    else if (c === "," && depth === 0) { parts.push(params.slice(start, i)); start = i + 1; }
+  }
+  parts.push(params.slice(start));
+  return parts;
 }
 
 /**
