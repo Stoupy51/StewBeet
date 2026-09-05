@@ -231,6 +231,46 @@ exports.run = async () => {
     expect("US5 the error reaches the Python file with no build file opened",
       ours.some(d => d.range.start.line === 16), ours.map(d => d.range.start.line));
 
+    // US6: a real mistake on a line that also carries an unresolvable interpolation.
+    //
+    // demo.py line 20 is `execute store reslt score #h {ns}.data run data get entity @s Pos[1]`.
+    // Nothing in the fixture's build matches it, so `{ns}` keeps its mask, and the diagnostic
+    // for the `reslt` typo runs from the typo to the end of the line and therefore crosses that
+    // mask. Suppressing everything that merely overlaps a mask threw this error away.
+    const virtualTypo = vscode.Uri.from({
+      scheme: "stewbeet-mcfunction",
+      path: "/3/demo.py.mcfunction",
+      query: py.uri.toString(),
+    });
+    await openWithRetry(virtualTypo);
+    await completionsAt(py.uri, new vscode.Position(20, 5), " ");
+    await sleep(4000);
+    await vscode.commands.executeCommand("stewbeet.refreshDiagnostics");
+    await sleep(3000);
+
+    const onTypoLine = (vscode.languages.getDiagnostics(py.uri) || [])
+      .filter(d => String(d.source || "").startsWith("stewbeet") && d.range.start.line === 20);
+    note("us6_typoDiagnostics", onTypoLine.map(d => `${d.range.start.character}: ${d.message.slice(0, 40)}`));
+    expect("US6 a typo is reported on a line whose interpolation stayed masked",
+      onTypoLine.length > 0, (vscode.languages.getDiagnostics(py.uri) || []).map(d => d.range.start.line));
+
+    // ...and the mask itself must still raise nothing, which is what US5 established.
+    const maskColumn = "execute store reslt score #h ".length;
+    expect("US6 the mask on that same line still raises nothing",
+      !onTypoLine.some(d => d.range.start.character >= maskColumn
+        && d.range.start.character < maskColumn + "{ns}".length),
+      onTypoLine.map(d => d.range.start.character));
+
+    // Waking a document makes the server publish, and publishing is what asks for the next
+    // pass, so a pass that always wakes never stops. The broken version ran seven a second
+    // with nobody typing, which is what "my editor got slow" looks like from the inside.
+    const passesBefore = (await vscode.commands.executeCommand("stewbeet.diagnosticsStatus")).livePasses;
+    await sleep(10000);
+    const passesAfter = (await vscode.commands.executeCommand("stewbeet.diagnosticsStatus")).livePasses;
+    note("us6_idlePasses", passesAfter - passesBefore);
+    expect("US6 the relay does not spin while nothing changes", passesAfter - passesBefore <= 4,
+      passesAfter - passesBefore);
+
     // The settings gate.
     const cfg = vscode.workspace.getConfiguration("StewBeet");
     await cfg.update("languageFeatures", false, vscode.ConfigurationTarget.Workspace);

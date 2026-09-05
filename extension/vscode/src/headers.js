@@ -21,7 +21,7 @@ function api() {
   return require("vscode");
 }
 
-// ─── Constants──────────────
+// Constants
 
 const CFG_KEY = "StewBeet";
 
@@ -33,7 +33,7 @@ const RESOURCE = /\b([a-z0-9_.-]+):([a-z0-9_./-]+)\b/g;
 /** Both spellings, because the folder was renamed between pack formats. */
 const FUNCTION_FOLDERS = ["function", "functions"];
 
-// ─── Resolving a resource location──
+// Resolving a resource location
 
 /**
  * The file a resource location names, or null when it is not one of this pack's functions.
@@ -82,7 +82,7 @@ function linksIn(text, fromPath) {
   return found;
 }
 
-// ─── Providers──────────────
+// Providers
 
 const documentLinkProvider = {
   /** @param {vscode.TextDocument} doc */

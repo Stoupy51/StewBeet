@@ -13,7 +13,7 @@
 const fs = require("fs");
 const path = require("path");
 
-// ─── Constants──────────────
+// Constants
 
 const MAP_SUFFIX = ".mcfunction.map";
 
@@ -25,7 +25,7 @@ const BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/
 /** @type {Map<string, number>} */
 const BASE64_INDEX = new Map([...BASE64].map((c, i) => [c, i]));
 
-// ─── Decoding───────────────
+// Decoding
 
 /**
  * Decode one base64 VLQ segment into its signed fields.
@@ -88,7 +88,7 @@ function decode(json) {
   return { sources, sourceRoot, lines };
 }
 
-// ─── Discovery──────────────
+// Discovery
 
 /**
  * Path of the map belonging to a generated function, or null when it has none.
@@ -140,7 +140,7 @@ function declaredMapName(generatedPath) {
   return last.startsWith(SOURCE_MAPPING_URL) ? last.slice(SOURCE_MAPPING_URL.length).trim() : null;
 }
 
-// ─── Cache──────────────────
+// Cache
 
 /** Decoded maps, keyed by map path, with the mtime they were decoded at. @type {Map<string, { mtimeMs: number, map: ReturnType<typeof decode> }>} */
 const cache = new Map();
@@ -209,7 +209,7 @@ function clearCache() {
   reverseIndex = null;
 }
 
-// ─── Lookup: generated to source─
+// Lookup: generated to source
 
 /**
  * Where a generated line came from, or null when that line has no origin.
@@ -271,28 +271,10 @@ function originsOf(generatedPath) {
   return origins;
 }
 
-// ─── Lookup: source to generated─
+// Lookup: source to generated
 
 /** Python file to generated locations, built by scanning every known map. @type {Map<string, { file: string, line: number }[]> | null} */
 let reverseIndex = null;
-
-/** Python file to the generated files it produced, filled alongside the reverse index. @type {Map<string, Set<string>>} */
-const producedBy = new Map();
-
-/**
- * Every generated file one Python file produced.
- *
- * The diagnostic relay uses this to load only what the author is actually looking at. A pack
- * holds hundreds of generated functions and a Python file accounts for a handful of them.
- *
- * @param {string[]} mapPaths
- * @param {string} pythonPath
- * @returns {string[]}
- */
-function generatedFilesFor(mapPaths, pythonPath) {
-  if (!reverseIndex) reverseIndex = buildReverseIndex(mapPaths);
-  return [...(producedBy.get(fileKey(pythonPath)) ?? [])];
-}
 
 /**
  * Every Python line of one file that produced something, with the first thing it produced.
@@ -340,7 +322,6 @@ function generatedFrom(mapPaths, pythonPath, line) {
 function buildReverseIndex(mapPaths) {
   /** @type {Map<string, { file: string, line: number }[]>} */
   const index = new Map();
-  producedBy.clear();
 
   for (const mapPath of mapPaths) {
     const map = load(mapPath);
@@ -354,10 +335,6 @@ function buildReverseIndex(mapPaths) {
       const location = { file: generatedPath, line: generatedLine };
       if (bucket) bucket.push(location);
       else index.set(key(file, entry.sourceLine), [location]);
-
-      const produced = producedBy.get(fileKey(file));
-      if (produced) produced.add(generatedPath);
-      else producedBy.set(fileKey(file), new Set([generatedPath]));
     }
   }
   return index;
@@ -411,7 +388,6 @@ module.exports = {
   originOf,
   originsOf,
   generatedFrom,
-  generatedFilesFor,
   originLinesFor,
   generatedText,
 };

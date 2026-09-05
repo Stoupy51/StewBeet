@@ -21,13 +21,13 @@ function api() {
   return require("vscode");
 }
 
-// ─── Constants──────────────
+// Constants
 
 const CFG_KEY = "StewBeet";
 
 const GENERATED_SUFFIX = ".mcfunction";
 
-// ─── Shape normalisation────
+// Shape normalisation
 
 /**
  * The target of one definition answer, whichever of the two shapes VS Code returned.
@@ -51,7 +51,7 @@ function isGenerated(uri) {
   return uri.scheme === "file" && uri.fsPath.endsWith(GENERATED_SUFFIX);
 }
 
-// ─── Rewriting (pure)───────
+// Rewriting (pure)
 
 /**
  * Rewrite one generated location to the Python that wrote it.
@@ -110,7 +110,7 @@ function rewrite(answers, maps = sourcemap) {
   return touched ? rewritten : null;
 }
 
-// ─── vscode adapters────────
+// vscode adapters
 
 /** @param {{ file: string, line: number, column: number }} origin */
 function toLocation(origin) {
@@ -128,7 +128,7 @@ function resolve(answers) {
   return origins ? origins.map(toLocation) : answers;
 }
 
-// ─── Build output───────────
+// Build output
 
 /** The last discovery, reused until a map is written or deleted. @type {string[] | null} */
 let discovered = null;

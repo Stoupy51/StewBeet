@@ -10,13 +10,14 @@
 const vscode = require("vscode");
 const path = require("path");
 const navigation = require("./navigation");
+const { blocksOf } = require("./virtual");
 const sourcemap = require("./sourcemap");
 
-// ─── Constants──────────────
+// Constants
 
 const CFG_KEY = "StewBeet";
 
-// ─── Provider───────────────
+// Provider
 
 const onDidChangeEmitter = new vscode.EventEmitter();
 
@@ -33,6 +34,31 @@ function functionIdOf(generatedPath) {
   return `${parts[data + 1]}:${parts.slice(folder + 1).join("/").replace(/\.mcfunction$/, "")}`;
 }
 
+/**
+ * What a block produced, or null when the current build knows nothing about it.
+ *
+ * Two shapes of origin exist. Commands written inline map line by line, so the answer sits on
+ * one of the block's own lines. Commands arriving in a variable are all attributed to the call
+ * itself, so the answer sits on the call line. Both are tried.
+ *
+ * @param {Map<number, { file: string, line: number }>} origins
+ * @param {vscode.TextDocument} doc
+ * @param {{ start:number, end:number }} block
+ * @param {number} callLine
+ * @returns {{ file: string, line: number } | null}
+ */
+function targetOfBlock(origins, doc, block, callLine) {
+  const found = origins.get(callLine);
+  if (found) return found;
+
+  const last = doc.positionAt(block.end).line;
+  for (let line = doc.positionAt(block.start).line; line <= last; line++) {
+    const inside = origins.get(line);
+    if (inside) return inside;
+  }
+  return null;
+}
+
 const codeLensProvider = {
   onDidChangeCodeLenses: onDidChangeEmitter.event,
 
@@ -44,11 +70,24 @@ const codeLensProvider = {
     const maps = await navigation.findMaps();
     if (maps.length === 0) return [];
 
-    // Driven by the map, not by the blocks: the map records the `write_function` call, which
-    // is where the reader expects the link, and it is the only thing that still points at the
-    // right line when the commands were built in a variable somewhere above.
+    // One lens per `write_*` call, never one per command.
+    //
+    // The map records an origin for every generated line, and for a block written inline that
+    // is every line of the block, so reading the map alone puts a lens on all twenty lines of
+    // a function. The blocks say which call each of them feeds, and that call is the one place
+    // a reader wants the link, whether the commands sit in the call or in a variable above it.
+    const origins = sourcemap.originLinesFor(maps, doc.uri.fsPath);
+    if (origins.size === 0) return [];
+
     const lenses = [];
-    for (const [line, target] of sourcemap.originLinesFor(maps, doc.uri.fsPath)) {
+    const placed = new Set();
+    for (const block of blocksOf(doc)) {
+      const line = doc.positionAt(block.callStart).line;
+      if (placed.has(line)) continue;
+
+      const target = targetOfBlock(origins, doc, block, line);
+      if (!target) continue;
+      placed.add(line);
       lenses.push(new vscode.CodeLens(new vscode.Range(line, 0, line, 0), {
         title: `$(go-to-file) ${functionIdOf(target.file)}`,
         tooltip: target.file,
@@ -78,6 +117,7 @@ function registerCodeLenses(context) {
 
 module.exports = {
   functionIdOf,
+  targetOfBlock,
   codeLensProvider,
   refreshCodeLenses,
   registerCodeLenses,

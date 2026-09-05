@@ -5,7 +5,7 @@
 // StewBeet write_* calls. Kept free of any "vscode" dependency so it can be
 // unit-tested with plain Node (see test/blocks.test.js).
 
-// ─── Constants──────────────
+// Constants
 
 const FUNC_RE = /\b(write_function|write_versioned_function|write_scheduled_function|write_load_file|write_unload_file|write_tick_file)\s*\(/g;
 
@@ -16,7 +16,7 @@ const FUNCS_2ND_ARG = new Set([
   "write_scheduled_function",
 ]);
 
-// ─── String scanning────────
+// String scanning
 
 /**
  * Return the string prefix letters (e.g. "f", "rf") sitting immediately before
@@ -91,7 +91,7 @@ function skipInterpolation(text, i) {
   return -1;
 }
 
-// ─── Block detection────────
+// Block detection
 
 /**
  * Skip past the first argument of a write_* call (the path), stopping just
@@ -164,12 +164,14 @@ function readOpeningQuote(text, i) {
  *   `start` is the opening quote with its prefix and `end` is just past the closing quote,
  *   which is what a decoration should cover. `contentStart` and `contentEnd` bound the
  *   commands alone: the quotes are Python, and a projection that hands them to a datapack
- *   parser gets told, correctly, that `\"\"\"` is not a command.
+ *   parser gets told, correctly, that `\"\"\"` is not a command. `callStart` is the offset of
+ *   the `write_*` call these commands reach, which is the block itself when they are written
+ *   inline and a line further down when they arrive in a variable.
  */
 function findBlockOffsets(text) {
   const blocks = [];
-  /** Names handed to a write_* call instead of a literal, so their strings count as blocks. */
-  const variables = new Set();
+  /** Names handed to a write_* call instead of a literal, mapped to that call's offset. */
+  const variables = new Map();
 
   FUNC_RE.lastIndex = 0;
   let m;
@@ -187,7 +189,7 @@ function findBlockOffsets(text) {
     const opening = readOpeningQuote(text, contentIdx);
     if (!opening) {
       const name = readArgumentName(text, contentIdx);
-      if (name) variables.add(name);
+      if (name && !variables.has(name)) variables.set(name, m.index);
       continue;
     }
 
@@ -196,7 +198,7 @@ function findBlockOffsets(text) {
 
     blocks.push({
       start: opening.quoteStart, end: closeIdx + opening.quoteStyle.length,
-      contentStart: opening.contentStart, contentEnd: closeIdx,
+      contentStart: opening.contentStart, contentEnd: closeIdx, callStart: m.index,
     });
   }
 
@@ -236,8 +238,8 @@ const ASSIGN_RE = /(?:^|\n)[ \t]*([A-Za-z_]\w*)[ \t]*(?::[^=\n]*)?\+?=[ \t]*/g;
  * function by appending is as common as writing it in one go.
  *
  * @param {string} text
- * @param {Set<string>} names
- * @returns {{ start:number, end:number, contentStart:number, contentEnd:number }[]}
+ * @param {Map<string, number>} names  Name to the offset of the write_* call that consumes it.
+ * @returns {{ start:number, end:number, contentStart:number, contentEnd:number, callStart:number }[]}
  */
 function findAssignedBlocks(text, names) {
   const blocks = [];
@@ -255,6 +257,7 @@ function findAssignedBlocks(text, names) {
     blocks.push({
       start: opening.quoteStart, end: closeIdx + opening.quoteStyle.length,
       contentStart: opening.contentStart, contentEnd: closeIdx,
+      callStart: /** @type {number} */ (names.get(m[1])),
     });
     ASSIGN_RE.lastIndex = closeIdx + opening.quoteStyle.length;
   }

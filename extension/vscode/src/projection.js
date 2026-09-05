@@ -12,7 +12,7 @@
 // Every column crossing the boundary goes through toVirtual or toPython with the table
 // project() returns; a line absent from that table has identical columns on both sides.
 
-// ─── Constants──────────────
+// Constants
 
 const SCHEME = "stewbeet-mcfunction";
 
@@ -21,7 +21,7 @@ const SCHEME = "stewbeet-mcfunction";
  *  still parses as a plausible word in most argument positions. */
 const MASK = "_";
 
-// ─── Projection─────────────
+// Projection
 
 /**
  * Project a Python document into the mcfunction document Spyglass should see.
@@ -222,7 +222,7 @@ function resolveLine(pythonLine, generatedLine, spans) {
   return resolved;
 }
 
-// ─── Column translation─────
+// Column translation
 
 /**
  * The same position in the virtual document.
@@ -272,6 +272,23 @@ function toPython(position, table) {
 }
 
 /**
+ * Whether a diagnostic at this position is about a `MASK` run rather than the author's text.
+ *
+ * The test is where the range **starts**, not whether it overlaps. A parser complaining at the
+ * placeholder points at it, so its range starts inside the run. A parser complaining about a
+ * real mistake earlier in the line points there, and its range may well run past a mask on its
+ * way to the end of the line: `execute store reslt score #height {ns}.data` is a typo the
+ * author wants flagged, and an overlap test throws it away along with the placeholder noise.
+ *
+ * @param {{ line:number, character:number }} start  Where the diagnostic points.
+ * @param {Map<number, { start:number, end:number }[]>} masked  Virtual columns, per line.
+ */
+function describesMask(start, masked) {
+  const runs = masked.get(start.line);
+  return runs ? runs.some(run => start.character >= run.start && start.character < run.end) : false;
+}
+
+/**
  * Whether a virtual range overlaps a substituted span, so no honest Python range exists for it.
  * An edit carrying such a range is dropped rather than translated: it would overwrite
  * characters the author never asked to replace.
@@ -296,7 +313,7 @@ function crossesSubstitution(start, end, table) {
   return false;
 }
 
-// ─── Virtual URIs───────────
+// Virtual URIs
 
 /**
  * Strip anything that has no business in a URI path segment.
@@ -338,6 +355,7 @@ module.exports = {
   resolveLine,
   toVirtual,
   toPython,
+  describesMask,
   crossesSubstitution,
   sanitizeName,
   virtualPath,
