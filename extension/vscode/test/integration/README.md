@@ -18,6 +18,16 @@ A measurement rather than a set of assertions, for questions the unit tests cann
 
 It types into `demo.py`, and VS Code saves a dirty document when the window closes, so `run.js` snapshots the fixture and puts it back afterwards.
 
+## Against a real pack
+
+```sh
+SB_TESTS=simplenergy SB_WORKSPACE=d:/advanced_desktop/SimplEnergy   SB_GUARD=d:/advanced_desktop/SimplEnergy/src/utils/machines.py   node test/integration/run.js
+```
+
+A fixture with four blocks and three generated files answers none of the questions a pack of 270 functions and 117 source maps raises. This opens SimplEnergy, types the `reslt` typo into `machines.py` line 245, times how long the squiggle takes to appear, types the fix, and times how long it takes to go.
+
+`SB_GUARD` lists the files a run may type into. Each is snapshotted before launch and written back afterwards, whatever the run did, because VS Code saves a dirty document when the window closes.
+
 ## Why it exists
 
 It is the regression guard for the assumption the whole design rests on: **Spyglass's document selector carries no scheme filter**, so it attaches to the virtual documents this extension serves. If a future Spyglass release adds one, every provider silently stops answering and nothing else notices.

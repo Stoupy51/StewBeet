@@ -63,11 +63,16 @@ const NOISY = [
 
 fs.rmSync(OUT, { force: true });
 
-// A test may type into the fixture, and VS Code saves a dirty document when the window closes.
-// The fixture is a committed file whose line numbers every check is written against, so it is
-// snapshotted here and put back afterwards.
-const FIXTURE = path.join(HERE, "fixture", "demo.py");
-const pristine = fs.readFileSync(FIXTURE);
+// SB_WORKSPACE opens a real project instead of the fixture, which is the only way to measure
+// what a pack of this size actually costs. SB_GUARD lists the files that run may type into.
+const WORKSPACE = process.env.SB_WORKSPACE || path.join(HERE, "fixture");
+
+// A test may type into a file, and VS Code saves a dirty document when the window closes. Every
+// guarded file is a committed file whose line numbers the checks are written against, so each
+// is snapshotted here and put back afterwards, whatever the run did.
+const GUARDED = (process.env.SB_GUARD || path.join(HERE, "fixture", "demo.py"))
+  .split(",").filter(Boolean);
+const pristine = new Map(GUARDED.map(file => [file, fs.readFileSync(file)]));
 
 const args = [
   `--extensionDevelopmentPath=${EXT_ROOT}`,
@@ -75,13 +80,18 @@ const args = [
   `--user-data-dir=${USER_DATA_DIR}`,
   "--new-window", "--disable-gpu", "--disable-workspace-trust",
   ...NOISY.flatMap(id => ["--disable-extension", id]),
-  path.join(HERE, "fixture"),
+  WORKSPACE,
 ];
 
 console.log(`Launching ${exe}\nA VS Code window will open, run the checks and close itself.`);
 const res = spawnSync(exe, args, { env, stdio: ["ignore", "ignore", "pipe"], encoding: "utf8" });
 
-if (!fs.readFileSync(FIXTURE).equals(pristine)) fs.writeFileSync(FIXTURE, pristine);
+for (const [file, bytes] of pristine) {
+  if (!fs.readFileSync(file).equals(bytes)) {
+    fs.writeFileSync(file, bytes);
+    console.log(`Restored ${file}`);
+  }
+}
 
 if (!fs.existsSync(OUT)) {
   console.error(`No result written. Exit code ${res.status}.`);
