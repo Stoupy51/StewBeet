@@ -61,10 +61,14 @@ This is why the emitter is split: `capture` is StewBeet-specific, while `encode`
 **Three rules the implementation settled**, all measured on [shulker](file:///d:/advanced_desktop/shulker) and recorded in the spike at [spike/bolt-attribution/](../spike/bolt-attribution/):
 
 1. **List the emitter before `mecha`** in the pipeline. It works after its `yield`, and beet unwinds generator plugins in reverse, so listing it first is what leaves the `Module` compilation units and their sources in the database. This is the opposite of `stewbeet.plugins.sniffer.emit`'s placement rule.
-2. **A location carries no filename, and the compilation unit's `filename` names only the first contributing module.** The file is recovered from the redundancy between `pos`, `lineno` and `colno`, with the command's own first word breaking ties at positions every file agrees on, such as the very first character.
+2. **A location carries no filename, and the compilation unit's `filename` names only the first contributing module.** Three things decide the file, in order: the text the unit was parsed from, since an offset only means anything relative to that; then the redundancy between `pos`, `lineno` and `colno`; then the command's own first word. All three are required, not preferences. Dropping the last one maps a function assembled in memory onto whichever file happens to agree on offset zero, which is every file.
 3. **Index the database by resource location, not by file instance.** A plugin that rewrites a function replaces the object the pack holds, and an identity lookup then finds nothing.
 
-Roughly a third of a real bolt project's command lines map. The rest have no trustworthy origin: modules bolt synthesises in memory, positions valid in no project source, and positions whose line and column are valid in the declaring file while the offset disagrees. That last group is why the offset is checked at all, since dropping it maps generated commands onto whatever Python declaration happens to sit at that line.
+Roughly a third of a real bolt project's command lines map: 769 of 2802 on shulker, across 371 of its 777 functions. The rest have no trustworthy origin: modules bolt synthesises in memory, positions valid in no project source, positions whose line and column fit the declaring file while the offset disagrees, and commands mecha rewrote so far that their first word no longer matches the source. Requiring that word costs 46 mappings and removes every wrong-file attribution, which is the trade FR-010 asks for.
+
+**Plain beet is served by the StewBeet producer**, which is not where it was expected to come from. `ctx.data.functions[path] = Function(...)` is beet's own idiom and it is now captured, because every insertion into a pack passes through `NamespaceContainer.process` with the namespace and the key in hand. A beet project needs no StewBeet helper to get maps, only the `sniffer` plugin in its pipeline.
+
+The mecha producer still declines that same function, and correctly: its AST positions index into a string assembled in memory, with no file behind them. The two producers disagree about it because they are answering different questions, and the one that knows who wrote it is the one that hooked the write.
 
 ## The Spyglass compatibility problem, precisely
 

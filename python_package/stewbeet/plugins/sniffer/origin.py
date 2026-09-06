@@ -31,10 +31,17 @@ GENERATED_INIT: str = "<string>"
 # Classes
 @dataclass(slots=True)
 class WriteCall:
-	""" A write call found in a source file, and where its content argument starts. """
+	""" A write call found in a source file, and where its content argument starts.
+
+	`kind` separates the two ways a function gets content. `write` is a StewBeet helper or an
+	append, which record themselves. `assign` is `ctx.data.functions[path] = Function(...)`, beet's
+	own idiom, which nothing records until the container hook does, and which must not be recorded
+	twice when a helper is the one doing the assigning.
+	"""
 	line: int
 	column: int
 	exact: bool
+	kind: str = "write"
 
 
 # Functions
@@ -99,6 +106,10 @@ def index_write_calls(path: str) -> dict[int, WriteCall]:
 	helpers: dict[str, int] = write_helpers()
 	found: dict[int, WriteCall] = {}
 	for node in ast.walk(tree):
+		if isinstance(node, ast.Assign) and (assignment := assigned_function(node)) is not None:
+			for line in range(node.lineno, (node.end_lineno or node.lineno) + 1):
+				found.setdefault(line, assignment)
+			continue
 		if not isinstance(node, ast.Call):
 			continue
 
@@ -113,12 +124,51 @@ def index_write_calls(path: str) -> dict[int, WriteCall]:
 			continue
 
 		# A literal argument gives the string's own position; anything else falls back to the call.
-		exact: bool = isinstance(content, ast.Constant | ast.JoinedStr)
-		anchor: ast.expr | ast.Call = content if (content is not None and exact) else node
+		literal: bool = isinstance(content, ast.Constant | ast.JoinedStr)
+		exact: bool = literal and spans_lines(content)
+		anchor: ast.expr | ast.Call = content if (content is not None and literal) else node
 		call = WriteCall(line=anchor.lineno - 1, column=anchor.col_offset, exact=exact)
 		for line in range(node.lineno, (node.end_lineno or node.lineno) + 1):
 			found.setdefault(line, call)
 	return found
+
+
+def spans_lines(node: ast.expr | None) -> bool:
+	""" Whether a literal occupies as many source lines as the content it carries.
+
+	`exact` makes a chunk's Nth line map to the literal's Nth line, which is right for a triple
+	quoted block and wrong for a one-line string whose newlines are escapes: its commands all share
+	one source line. Walking down from there lands on whatever statement follows, and that
+	statement's own map then loses the line to it.
+
+	>>> import ast
+	>>> spans_lines(ast.parse('x = "say a\\\\nsay b"').body[0].value)
+	False
+	>>> spans_lines(ast.parse("x = '''say a" + chr(10) + "say b'''").body[0].value)
+	True
+	"""
+	return node is not None and (node.end_lineno or node.lineno) > node.lineno
+
+
+def assigned_function(node: ast.Assign) -> WriteCall | None:
+	""" A `... [path] = Function(content)` assignment, which is how a plain beet plugin writes.
+
+	The target has to be a subscript so that `func = Function(...)` on its own is not read as a
+	write: nothing has been given a path yet at that point. All three spellings beet offers end
+	up here, since `ctx.data.functions[p]`, `ctx.data["ns"].functions[p]` and
+	`ctx.data[Function][p]` differ only in what precedes the subscript.
+	"""
+	if not any(isinstance(target, ast.Subscript) for target in node.targets):
+		return None
+	value: ast.expr = node.value
+	if not (isinstance(value, ast.Call) and isinstance(value.func, ast.Name) and value.func.id == "Function"):
+		return None
+
+	content: ast.expr | None = value.args[0] if value.args else None
+	literal: bool = isinstance(content, ast.Constant | ast.JoinedStr)
+	anchor: ast.expr = content if (content is not None and literal) else value
+	return WriteCall(line=anchor.lineno - 1, column=anchor.col_offset, exact=literal and spans_lines(content), kind="assign")
+
 
 AST_CACHE: dict[str, tuple[float, dict[int, WriteCall]]] = {}
 """ Parsed write-call index per file, keyed by path and validated against mtime. """
@@ -209,16 +259,30 @@ def resolve_origin() -> SourceOrigin | None:
 	2. The top of the ambient attribution stack, for content a plugin generates from a declaration.
 	3. Nothing, so the lines are emitted unmapped.
 	"""
+	return resolve_site()[0]
+
+
+def resolve_site() -> tuple[SourceOrigin | None, str]:
+	""" `resolve_origin`, plus what kind of call site answered.
+
+	The kind is `write` for a StewBeet helper or an append, `assign` for beet's own
+	`... [path] = Function(...)`, and `""` when nothing in the project answered. Only the container
+	hook needs it, to tell an author assigning a function from a helper doing the same thing one
+	frame further down, which records itself.
+	"""
+	# Starting at the direct caller works whether this was reached through `resolve_origin` or not:
+	# every frame in this package fails the project-source filter and is walked past either way.
 	frame = sys._getframe(1) # pyright: ignore[reportPrivateUsage]
 	while frame is not None:
 		filename: str = frame.f_code.co_filename
 		if is_project_source(filename, project_roots()):
 			call: WriteCall | None = write_calls_of(filename).get(frame.f_lineno)
 			if call is not None:
-				return SourceOrigin(file=os.path.abspath(filename), line=call.line, column=call.column, exact=call.exact)
+				origin = SourceOrigin(file=os.path.abspath(filename), line=call.line, column=call.column, exact=call.exact)
+				return origin, call.kind
 		frame = frame.f_back
 
 	if Mem.attribution:
-		return Mem.attribution[-1].origin
-	return None
+		return Mem.attribution[-1].origin, "write"
+	return None, ""
 

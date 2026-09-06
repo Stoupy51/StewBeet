@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "minute.mcfunction",
+	"sourceRoot": "../../../../../..",
+	"sources": [
+		"src/link.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAsDuC;AAAA"
+}

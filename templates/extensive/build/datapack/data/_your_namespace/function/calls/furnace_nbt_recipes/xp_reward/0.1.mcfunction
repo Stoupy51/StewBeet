@@ -11,3 +11,4 @@ scoreboard players add #count furnace_nbt_recipes.data 1
 execute store result block ~ ~ ~ RecipesUsed."furnace_nbt_recipes:xp/0.1" int 1 run scoreboard players get #count furnace_nbt_recipes.data
 scoreboard players reset #count furnace_nbt_recipes.data
 
+## sourceMappingURL=0.1.mcfunction.map

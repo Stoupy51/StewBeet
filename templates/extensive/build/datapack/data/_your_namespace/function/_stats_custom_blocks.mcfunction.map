@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "_stats_custom_blocks.mcfunction",
+	"sourceRoot": "../../../../..",
+	"sources": [
+		"src/definitions/additions.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;;;;;AAmII;AATA;AATA;AARA;AATA;AATA;AATA;AAhDA;;;;;;;;;AAAA;AAgDA;AASA;AASA;AASA;AAQA;AASA;AASA"
+}

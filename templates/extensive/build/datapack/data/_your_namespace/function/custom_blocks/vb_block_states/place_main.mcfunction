@@ -19,3 +19,4 @@ scoreboard players add #total_custom_blocks _your_namespace.data 1
 scoreboard players add #total_vanilla_furnace _your_namespace.data 1
 scoreboard players add #total_vb_block_states _your_namespace.data 1
 
+## sourceMappingURL=place_main.mcfunction.map

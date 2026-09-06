@@ -15,3 +15,4 @@ scoreboard players add #total_custom_blocks _your_namespace.data 1
 scoreboard players add #total_vanilla_cobblestone _your_namespace.data 1
 scoreboard players add #total_vb_no_facing _your_namespace.data 1
 
+## sourceMappingURL=place_main.mcfunction.map

@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.9.0
+
+- **beet's own way of writing a function is recognised.** `ctx.data.functions[path] = Function(...)` had no colours, no completion and no lens, whichever of the three spellings you used, and neither did an `.append(...)` onto one. All of them now behave like a `write_*` call, including a list of lines, where each entry is its own command. A bare `Function(...)` that is not being given a path is still left alone.
+- **And it maps.** A build records those writes too, so the lens leads to what they generated and ctrl+click leads back to the line that wrote them.
+- **A one-line body no longer claims the lines below it.** `"say a
+say b"` is two commands on one source line, and the map walked down the file as if it were two, taking a line from whatever statement came next.
+- **A list of commands closes its brackets.** The last entry's closing quote was swallowed by the `say` rule, so the `]` and `)` after it were read as command text and VS Code coloured the opening `([` as an unmatched pair. An inline command now ends at a quote followed by a comma or a bracket, which is how an entry of a list ends. This also fixes the last entry of a `list[McFunction]`.
+
+## 1.8.2
+
+- **A raw string block is coloured.** `write_function(path, r"""...""")` had no colours at all: the grammar matched only an optional `f` prefix, while the rest of the extension accepted `r`, `b`, `u` and their pairs. So completion, diagnostics and lenses worked inside those blocks and the commands stayed grey. Both halves now accept the same prefixes, and a test holds them together.
+
+## 1.8.1
+
+- **A comment ending in a colon no longer indents the next line** in a bolt file. The indentation rule keyed on any line ending in `:`, which a comment can do.
+- Documented what the extension does with `ctx.data.functions[path] = Function(...)`, beet's own way of writing a function: it is not recognised, and a wrapper with an `McFunction` parameter is how to opt in.
+
 ## 1.8.0
 
 - **A bolt file links to what it generated, and back.** A `.bolt` module, or a `.mcfunction` holding bolt, gets a lens on each function the last build made of it, and the generated file gets the lens home that Python files already had. One lens per function rather than one per line, at the first line that produced it.

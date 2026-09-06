@@ -26,3 +26,4 @@ execute if score #found furnace_nbt_recipes.data matches 0 store result score #f
 execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input{components: {"minecraft:custom_data": {_your_namespace: {super_stone: true}}}} run function _your_namespace:calls/furnace_nbt_recipes/xp_reward/0.1
 execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input{components: {"minecraft:custom_data": {_your_namespace: {super_stone: true}}}} run function _your_namespace:calls/furnace_nbt_recipes/xp_reward/0.1
 
+## sourceMappingURL=recipes_used.mcfunction.map

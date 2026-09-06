@@ -26,6 +26,7 @@ ignore: ["build", "iso_renders", "manual_content.json", "definitions_debug.json"
 require:
     - "stewbeet"
     - "stewbeet.plugins.livereload"
+    - "stewbeet.plugins.sniffer"
     - "bolt"
 
 # Takes a nested pack config, see PackConfig() documentation
@@ -69,6 +70,7 @@ pipeline:
     - "stewbeet.plugins.auto.lang_file"
     - "stewbeet.plugins.auto.text_renders"
     - "stewbeet.plugins.auto.headers"
+    - "stewbeet.plugins.sniffer.emit"
     - "stewbeet.plugins.archive"
     - "stewbeet.plugins.merge_smithed_weld"
     - "stewbeet.plugins.copy_to_destination"

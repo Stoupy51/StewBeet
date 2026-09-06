@@ -135,6 +135,25 @@ Both are opt-in pipeline entries, and both emit nothing when a line has no origi
 
 **The column is the one place a consumer may want to know which wrote the map**, and it can tell without being told: a StewBeet map's columns all point at string literals, while a mecha map's point at commands. Nothing in the format depends on the difference, so a consumer that ignores columns entirely is correct for both.
 
+### What each producer can see
+
+Neither producer maps everything, and the boundaries are different.
+
+**`stewbeet.plugins.sniffer`** captures at three points: `beet.Function.append` / `.prepend`, `write_function`'s overwrite branch, and `NamespaceContainer.process`, which every insertion into a pack passes through with both the namespace and the key in hand. That last one is what makes beet's own idiom work, in all of its spellings:
+
+```python
+ctx.data.functions["ns:mine"] = Function("say hi")     # mapped
+ctx.data["ns"].functions["mine"] = Function("say hi")  # mapped
+ctx.data[Function]["ns:mine"] = Function("say hi")     # mapped
+write_function("ns:mine", "say hi")                    # mapped
+```
+
+An assignment records only when the caller is genuinely assigning, which the AST index decides. `write_function`'s overwrite branch assigns too, and records itself one frame further down, so without that check every helper write would be recorded twice. An assignment of empty content records nothing, so a `Function()` filled by later appends points at the appends.
+
+**`stewbeet.plugins.sniffer.mecha`** reads positions off the AST, and an offset only means something relative to the text it was parsed from. A function assembled in memory has no file behind it, so its commands are unmapped however confidently their position reads. Roughly a third of a real bolt project's command lines map; the rest are synthesised, rewritten past recognition, or come from a library.
+
+Both boundaries are the same rule: FR-010 makes an unmapped line the correct answer whenever the origin is not certain, because a confident jump to the wrong file costs the reader more than no jump.
+
 ## Non-guarantees
 
 - Column precision inside a line, **from the StewBeet producer**. `sourceColumn` is `0` throughout the reference and points at the start of the string literal in ours, not at the character that produced the command. mcfunction diagnostics carry their own column, which the extension applies to the Python line separately. The mecha producer does carry a real column, so this non-guarantee is producer-specific rather than a property of the format.

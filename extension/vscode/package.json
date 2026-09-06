@@ -2,7 +2,7 @@
   "name": "stewbeet",
   "displayName": "StewBeet",
   "description": "Syntax highlighting, block decorations and Spyglass-backed language features for mcfunction strings inside StewBeet write_* calls in Python files.",
-  "version": "1.8.0",
+  "version": "1.9.1",
   "publisher": "stoupy",
   "license": "MIT",
   "icon": "icon.png",
