@@ -65,6 +65,8 @@ class StMapping(Mapping[str, Any]):
 
         result: JsonDict = {}
         for field_info in fields(self):
+            if field_info.metadata.get("transient"):
+                continue
             value = getattr(self, field_info.name)
             if value is not None:
                 result[field_info.name] = _convert_value(value)

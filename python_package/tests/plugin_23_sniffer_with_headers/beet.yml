@@ -1,0 +1,42 @@
+
+# Test: stewbeet.plugins.sniffer under auto.headers
+# Verifies that every generated function gets a Source Map v3 sidecar pointing back at the
+# write_function call that produced it, and that no mapping ever names a library file.
+# auto.headers rewrites every function with overwrite=True after it was written, so this is
+# the case that proves the alignment pass rather than the naive positional mapping.
+# It also keeps the capture plugin in the pipeline rather than in 'require', and omits
+# 'stewbeet.plugins.sniffer.emit', so it covers both the alternative placement and the fallback
+# path where the capture plugin's own teardown writes the maps and warns.
+
+id: "tns"
+name: "Test Sniffer With Headers"
+version: "1.0.0"
+author: "test"
+minecraft: "26.2"
+
+directory: "."
+output: "build"
+
+require:
+    - "stewbeet"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+resource_pack:
+    name: "resource_pack"
+    load: ["src"]
+
+pipeline:
+    # src.assertions is listed FIRST and yields, so its checks run during teardown, after the
+    # sniffer plugin's own teardown has emitted the maps. beet unwinds generator plugins in
+    # reverse pipeline order.
+    - "src.assertions"
+    - "stewbeet.plugins.sniffer"
+    - "src.link"
+    - "stewbeet.plugins.auto.headers"
+
+meta:
+    stewbeet:
+        source_lore: "auto"

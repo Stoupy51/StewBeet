@@ -2,13 +2,30 @@
 "use strict";
 
 const vscode = require("vscode");
+const path = require("path");
 const { findBlockOffsets } = require("./blocks");
+const {
+  TRIGGER_CHARACTERS,
+  completionProvider,
+  hoverProvider,
+  signatureHelpProvider,
+  definitionProvider,
+  referenceProvider,
+  registerVirtualDocuments,
+  reproject,
+} = require("./virtual");
+const navigation = require("./navigation");
+const sourcemap = require("./sourcemap");
+const diagnostics = require("./diagnostics");
+const { registerCodeLenses, refreshCodeLenses } = require("./codelens");
+const { registerHeaderNavigation } = require("./headers");
+const { looksLikeBolt, isBuildOutput, addExclusions } = require("./bolt");
 
-// ─── Constants──────────────
+// Constants
 
 const CFG_KEY = "StewBeet";
 
-// ─── Decoration types (recreated on config change) ───────────────────────────
+// Decoration types (recreated on config change)
 
 /** @type {{ block: vscode.TextEditorDecorationType, first: vscode.TextEditorDecorationType, last: vscode.TextEditorDecorationType, single: vscode.TextEditorDecorationType } | null} */
 let decos = null;
@@ -68,7 +85,7 @@ function refreshDecos() {
   );
 }
 
-// ─── Extension lifecycle────
+// Extension lifecycle
 
 /** @param {vscode.ExtensionContext} context */
 function activate(context) {
@@ -89,11 +106,255 @@ function activate(context) {
       if (e.affectsConfiguration(CFG_KEY)) { refreshDecos(); refresh(); }
     }),
   );
+
+  registerLanguageFeatures(context);
+  registerSourceMaps(context);
+  registerCodeLenses(context);
+  registerHeaderNavigation(context);
+  registerBoltDetection(context);
+  diagnostics.registerDiagnosticRelay(context);
+}
+
+// Bolt inside .mcfunction
+
+/**
+ * Take a `.mcfunction` that holds bolt away from Spyglass, which cannot parse it.
+ *
+ * A project can enable bolt syntax inside `.mcfunction` files, and StewBeet's own minimal
+ * template does. Spyglass then reports most of the file as a syntax error, and no API can
+ * remove another extension's diagnostics. Changing the language id is the whole fix: `bolt`
+ * is not in Spyglass's selector, and it is in this extension's grammar.
+ *
+ * Only source files are considered. A generated function is left alone whatever it contains,
+ * because Spyglass is exactly what a build's output wants.
+ *
+ * @param {vscode.ExtensionContext} context
+ */
+function registerBoltDetection(context) {
+  /** Already switched, so a document reopened under its new id is not reconsidered. */
+  const handled = new Set();
+  /** Switched files per workspace folder, which is what an exclusion would name. */
+  const switched = new Map();
+  let offered = false;
+
+  /** @param {vscode.TextDocument} doc */
+  async function consider(doc) {
+    if (doc.languageId !== "mcfunction" || doc.uri.scheme !== "file") return;
+    if (!vscode.workspace.getConfiguration(CFG_KEY).get("boltInMcfunction", true)) return;
+    if (handled.has(doc.uri.fsPath)) return;
+
+    const configured = vscode.workspace.getConfiguration(CFG_KEY).get("buildOutput", "");
+    const outputs = typeof configured === "string" && configured ? [configured] : [];
+    if (isBuildOutput(doc.uri.fsPath, outputs)) return;
+    // A file the build wrote is generated output even when buildOutput names nothing, and its
+    // own trailing comment says so. looksLikeBolt reads it, so this needs no second check.
+    if (!looksLikeBolt(doc.getText())) return;
+
+    handled.add(doc.uri.fsPath);
+    try {
+      await vscode.languages.setTextDocumentLanguage(doc, "bolt");
+    } catch (e) {
+      console.debug("[StewBeet] could not set the bolt language id", e);
+      return;
+    }
+
+    const folder = vscode.workspace.getWorkspaceFolder(doc.uri);
+    if (!folder) return;
+    const root = folder.uri.fsPath;
+    switched.set(root, [...(switched.get(root) ?? []), doc.uri.fsPath]);
+    offerExclusion(doc.uri);
+  }
+
+  /**
+   * Offer once, and only when there is something to fix.
+   *
+   * The language id stops Spyglass answering about the open document; it does not stop Spyglass
+   * indexing the data pack off disk, and that index is what puts the squiggles in the Problems
+   * panel. Its own `env.exclude` does stop it, so the offer is to write that entry.
+   * @param {vscode.Uri} uri
+   */
+  async function offerExclusion(uri) {
+    if (offered) return;
+    // Spyglass publishes on its own schedule, so ask again shortly rather than once immediately.
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    const foreign = (vscode.languages.getDiagnostics(uri) || [])
+      .filter(d => !String(d.source || "").startsWith("stewbeet"));
+    if (foreign.length === 0 || offered) return;
+
+    offered = true;
+    const choice = await vscode.window.showInformationMessage(
+      `${path.basename(uri.fsPath)} holds bolt, which Spyglass cannot parse. Add it to this project's Spyglass exclusions?`,
+      "Add exclusion", "Not now",
+    );
+    if (choice === "Add exclusion") await excludeSwitchedFiles();
+  }
+
+  /** Write every switched file into its project's Spyglass config. */
+  async function excludeSwitchedFiles() {
+    if (switched.size === 0) {
+      vscode.window.showInformationMessage("StewBeet: no bolt was found in a .mcfunction file, so there is nothing to exclude.");
+      return;
+    }
+    for (const [root, files] of switched) {
+      const result = addExclusions(root, files);
+      if (!result) continue;
+      const doc = await vscode.workspace.openTextDocument(result.path);
+      await vscode.window.showTextDocument(doc, { preview: false });
+      vscode.window.showInformationMessage(
+        `StewBeet: excluded ${result.added.length} file(s) from Spyglass in ${path.basename(result.path)}.`);
+    }
+  }
+
+  vscode.workspace.textDocuments.forEach(consider);
+  context.subscriptions.push(
+    vscode.workspace.onDidOpenTextDocument(consider),
+    // A file that becomes bolt while open, which is what adding the first `for` loop looks like.
+    vscode.workspace.onDidSaveTextDocument(consider),
+    vscode.commands.registerCommand("stewbeet.excludeBoltFromSpyglass", excludeSwitchedFiles),
+    vscode.workspace.onDidChangeConfiguration(e => {
+      if (e.affectsConfiguration(`${CFG_KEY}.boltInMcfunction`)) {
+        handled.clear();
+        vscode.workspace.textDocuments.forEach(consider);
+      }
+    }),
+  );
+}
+
+// Language features
+
+/**
+ * Forward mcfunction language requests inside StewBeet string blocks to whatever
+ * answers for the mcfunction language, in practice Spyglass. All of it degrades
+ * to nothing when Spyglass is absent, so it stays a soft dependency.
+ * @param {vscode.ExtensionContext} context
+ */
+function registerLanguageFeatures(context) {
+  registerVirtualDocuments(context);
+
+  const python = { language: "python" };
+  context.subscriptions.push(
+    vscode.languages.registerCompletionItemProvider(python, completionProvider, ...TRIGGER_CHARACTERS),
+    vscode.languages.registerHoverProvider(python, hoverProvider),
+    vscode.languages.registerSignatureHelpProvider(python, signatureHelpProvider, " "),
+    vscode.languages.registerDefinitionProvider(python, definitionProvider),
+    vscode.languages.registerReferenceProvider(python, referenceProvider),
+  );
 }
 
 function deactivate() { disposeDecos(); }
 
-// ─── Block detection────────
+// Source maps
+
+/**
+ * Keep everything derived from a build fresh, and expose the three commands that use it.
+ *
+ * Two watchers, because the two file kinds mean different things. A map changing invalidates
+ * the reverse index, the interpolations already substituted into a projection and the lenses
+ * built from them. A generated function being deleted means whatever the server said about it
+ * describes a function that no longer exists.
+ * @param {vscode.ExtensionContext} context
+ */
+function registerSourceMaps(context) {
+  const maps = vscode.workspace.createFileSystemWatcher(`**/*${sourcemap.MAP_SUFFIX}`);
+  const generated = vscode.workspace.createFileSystemWatcher("**/*.mcfunction");
+
+  context.subscriptions.push(
+    maps, generated,
+    maps.onDidChange(scheduleDrop),
+    maps.onDidCreate(scheduleDrop),
+    maps.onDidDelete(scheduleDrop),
+    generated.onDidDelete(uri => diagnostics.forget(uri)),
+    { dispose: () => { if (dropTimer) clearTimeout(dropTimer); } },
+    vscode.commands.registerCommand("stewbeet.reloadSourceMaps", drop),
+    vscode.commands.registerCommand("stewbeet.goToSource", goToSource),
+    vscode.commands.registerCommand("stewbeet.goToGenerated", goToGenerated),
+  );
+}
+
+/** One build writes one map per function, and dropping is expensive enough to do once. */
+const DROP_DEBOUNCE_MS = 600;
+
+/** @type {NodeJS.Timeout | undefined} */
+let dropTimer;
+
+/**
+ * Forget everything derived from the build, and rebuild what is on screen from it.
+ *
+ * Every part of this is costly: the decode caches go, the map search runs over the whole
+ * workspace again, every served virtual document is reprojected and every lens is recomputed.
+ * A pack writes one map per function, so doing it per event would run all of that a hundred
+ * times for one build.
+ */
+function scheduleDrop() {
+  if (dropTimer) clearTimeout(dropTimer);
+  dropTimer = setTimeout(drop, DROP_DEBOUNCE_MS);
+}
+
+function drop() {
+  dropTimer = undefined;
+  sourcemap.clearCache();
+  navigation.forgetMaps();
+  reproject();
+  refreshCodeLenses();
+}
+
+/**
+ * Open the Python that wrote the command under the cursor, from a generated .mcfunction.
+ * The header lens already knows the origin and passes it in; from the palette there is no
+ * argument and the cursor's line decides.
+ * @param {{ file: string, line: number, column: number }} [origin]
+ */
+async function goToSource(origin) {
+  if (origin) {
+    await reveal(vscode.Uri.file(origin.file), origin.line, origin.column);
+    return;
+  }
+
+  const editor = vscode.window.activeTextEditor;
+  if (!editor || !navigation.isGenerated(editor.document.uri)) return;
+
+  const found = sourcemap.originOf(editor.document.uri.fsPath, editor.selection.active.line);
+  if (!found) {
+    vscode.window.setStatusBarMessage("StewBeet: this line has no recorded origin", 3000);
+    return;
+  }
+  await reveal(vscode.Uri.file(found.file), found.line, found.column);
+}
+
+/**
+ * Open the generated function a Python line produced, the inverse of ctrl+click.
+ * A CodeLens already knows which function its block produced and passes it in; from the
+ * palette there is no argument and the cursor's line decides.
+ * @param {{ file: string, line: number }} [target]
+ */
+async function goToGenerated(target) {
+  if (target) {
+    await reveal(vscode.Uri.file(target.file), target.line, 0);
+    return;
+  }
+
+  const editor = vscode.window.activeTextEditor;
+  if (!editor || editor.document.languageId !== "python") return;
+
+  const maps = await navigation.findMaps();
+  const [found] = sourcemap.generatedFrom(maps, editor.document.uri.fsPath, editor.selection.active.line);
+  if (!found) {
+    vscode.window.setStatusBarMessage("StewBeet: this line generated nothing in the current build", 3000);
+    return;
+  }
+  await reveal(vscode.Uri.file(found.file), found.line, 0);
+}
+
+/** @param {vscode.Uri} uri @param {number} line @param {number} column */
+async function reveal(uri, line, column) {
+  const document = await vscode.workspace.openTextDocument(uri);
+  const editor = await vscode.window.showTextDocument(document);
+  const position = new vscode.Position(line, column);
+  editor.selection = new vscode.Selection(position, position);
+  editor.revealRange(new vscode.Range(position, position), vscode.TextEditorRevealType.InCenterIfOutsideViewport);
+}
+
+// Block detection
 
 /**
  * Find all mcfunction string blocks in a Python document.
@@ -115,7 +376,7 @@ function findBlocks(doc) {
   });
 }
 
-// ─── Decoration rendering────
+// Decoration rendering
 
 /** @param {vscode.TextEditor} editor */
 function updateDecorations(editor) {

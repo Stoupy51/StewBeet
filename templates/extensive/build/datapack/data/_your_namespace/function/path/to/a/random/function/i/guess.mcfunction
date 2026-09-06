@@ -6,3 +6,4 @@
 
 tellraw @a {translate: "_your_namespace.hello_world"}
 
+## sourceMappingURL=guess.mcfunction.map

@@ -1,0 +1,44 @@
+{
+  "sources": [
+    "src/data/demo/module/helper.bolt",
+    "src/data/demo/module/main.bolt"
+  ],
+  "functions": {
+    "demo:shared": {
+      "unit_filename": "src/data/demo/module/helper.bolt",
+      "text": "say from helper\nsay from main one\nsay from main two\n",
+      "commands": [
+        {
+          "index": 0,
+          "identifier": "say:message",
+          "pos": 49,
+          "lineno": 3,
+          "colno": 5,
+          "owners": [
+            "src/data/demo/module/helper.bolt"
+          ]
+        },
+        {
+          "index": 1,
+          "identifier": "say:message",
+          "pos": 58,
+          "lineno": 4,
+          "colno": 5,
+          "owners": [
+            "src/data/demo/module/main.bolt"
+          ]
+        },
+        {
+          "index": 2,
+          "identifier": "say:message",
+          "pos": 80,
+          "lineno": 5,
+          "colno": 5,
+          "owners": [
+            "src/data/demo/module/main.bolt"
+          ]
+        }
+      ]
+    }
+  }
+}

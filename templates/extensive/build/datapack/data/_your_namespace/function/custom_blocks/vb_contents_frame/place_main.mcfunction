@@ -22,3 +22,4 @@ scoreboard players add #total_vb_contents_frame _your_namespace.data 1
 # Replace the placing sound
 playsound minecraft:block.stone.place block @a[distance=..5]
 
+## sourceMappingURL=place_main.mcfunction.map

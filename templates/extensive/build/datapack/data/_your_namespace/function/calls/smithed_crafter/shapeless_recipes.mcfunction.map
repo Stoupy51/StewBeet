@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "shapeless_recipes.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/definitions/additions.py"
+	],
+	"names": [],
+	"mappings": ";;;AA8BI;AA6BA;AAAA;AAmBA;AASA;AASA;AASA;AAQA;AASA;AASA"
+}

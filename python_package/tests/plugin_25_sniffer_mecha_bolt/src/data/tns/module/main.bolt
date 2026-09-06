@@ -1,0 +1,5 @@
+import tns:helper as _
+
+append function tns:shared:
+    say from main one
+    say from main two

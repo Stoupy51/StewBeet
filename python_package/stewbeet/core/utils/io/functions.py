@@ -16,6 +16,11 @@ from ...__memory__ import Mem
 
 # Constants
 type McFunction = str
+""" Commands, as a string. Annotating a variable with it is what colours the commands inside it.
+
+A TextMate grammar matches one place at a time and cannot tell that `content` reaches a `write_*`
+call further down, so the author states the intent instead. `notes: str = \"\"\"...\"\"\"` stays plain Python.
+"""
 
 # Functions
 def write_tag(
@@ -116,12 +121,21 @@ def write_function(
 	if overwrite:
 		func = Function(content)
 		Mem.ctx.data.functions[path] = func
+
+		# The overwrite branch builds a fresh Function instead of appending, so the capture hook on
+		# Function.append never sees it and provenance has to be recorded here.
+		if Mem.sniffer_enabled:
+			from ....plugins import sniffer
+			sniffer.tag(func, path)
+			sniffer.record(path, content, "overwrite")
 	else:
+		func = Mem.ctx.data.functions.setdefault(path, Function())
+		if Mem.sniffer_enabled:
+			from ....plugins import sniffer
+			sniffer.tag(func, path)
 		if prepend:
-			func = Mem.ctx.data.functions.setdefault(path, Function())
 			func.prepend(content)
 		else:
-			func = Mem.ctx.data.functions.setdefault(path, Function())
 			func.append(content)
 
 	# Add the function to the specified tags

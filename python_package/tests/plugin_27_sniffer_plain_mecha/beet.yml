@@ -1,0 +1,28 @@
+# Test: stewbeet.plugins.sniffer.mecha with no bolt anywhere.
+# The mecha AST emitter is meant to serve plain beet and plain mecha as well as bolt, and those
+# are the dialects with no test of their own. Two shapes are covered:
+#
+#   on_disk.mcfunction  a real file mecha compiles, which maps to itself with real columns.
+#   assembled           a Function built in Python and assigned into the pack. Its AST positions
+#                       index into that in-memory string, not into any file, so it maps nowhere.
+#                       Mapping it onto whichever file happens to agree on the offset is the
+#                       plausible-looking wrong jump FR-010 forbids.
+
+id: "tns"
+name: "Test Sniffer Plain Mecha"
+version: "1.0.0"
+author: "test"
+minecraft: "26.2"
+
+directory: "."
+output: "build"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+pipeline:
+    - "src.assertions"
+    - "src.link"
+    - "stewbeet.plugins.sniffer.mecha"
+    - "mecha"

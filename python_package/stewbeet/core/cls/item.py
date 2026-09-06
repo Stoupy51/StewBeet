@@ -6,7 +6,7 @@ __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
 from dataclasses import dataclass, field
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 import stouputils as stp
 from beet import ItemModel, LootTable, Model, Recipe, Texture
@@ -28,6 +28,9 @@ from ._utils import StMapping
 from .recipe import RecipeBase
 from .resource import Resource
 from .wiki_button import WikiButton
+
+if TYPE_CHECKING:
+    from ...plugins.sniffer.model import SourceOrigin
 
 
 # Class
@@ -123,9 +126,18 @@ class Item(StMapping):
     """ (Optional) Additional custom components for this item, e.g. "item_name": {...}, etc. """
     skip_gives: bool = False
     """ (Optional) If True, loot tables and give_all chests won't give this item. Useful for items that are never meant to be obtained by players. """
+    origin: SourceOrigin | None = field(default=None, init=False, repr=False, compare=False, metadata={"transient": True})
+    """ Where this definition was declared, captured by the sniffer plugin so content a plugin generates
+    from it maps back to the declaration instead of to the plugin. None unless that plugin is active. """
 
     # Register item in memory
     def __post_init__(self) -> None:
+        # Captured here because this is the only moment the declaring frame is still on the stack.
+        from ..__memory__ import Mem
+        if Mem.sniffer_enabled:
+            from ...plugins import sniffer
+            self.origin = sniffer.declaration_origin()
+
         # Add minecraft: to base item if needed
         if self.base_item and ":" not in self.base_item:
             self.base_item = "minecraft:" + self.base_item
@@ -151,7 +163,6 @@ class Item(StMapping):
                 self.components[k] = {}
 
         # Register the item in the global definitions (if not external)
-        from ..__memory__ import Mem
         if self.id and ":" not in self.id and self.id not in Mem.definitions:
             Mem.definitions[self.id] = self
 

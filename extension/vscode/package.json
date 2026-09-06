@@ -1,8 +1,8 @@
 {
   "name": "stewbeet",
   "displayName": "StewBeet",
-  "description": "Syntax highlighting for mcfunction strings inside StewBeet write_* calls in Python files, with configurable block decorations.",
-  "version": "1.0.6",
+  "description": "Syntax highlighting, block decorations and Spyglass-backed language features for mcfunction strings inside StewBeet write_* calls in Python files.",
+  "version": "1.9.1",
   "publisher": "stoupy",
   "license": "MIT",
   "icon": "icon.png",
@@ -10,16 +10,53 @@
     "type": "git",
     "url": "https://github.com/Stoupy51/StewBeet/tree/main/extension/vscode"
   },
-  "engines": { "vscode": "^1.74.0" },
-  "categories": ["Programming Languages"],
-  "keywords": ["mcfunction", "stewbeet", "beet", "minecraft", "datapack", "syntax", "highlighting", "pre-compiler"],
-  "activationEvents": ["onLanguage:python"],
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "keywords": [
+    "mcfunction",
+    "stewbeet",
+    "beet",
+    "minecraft",
+    "datapack",
+    "syntax",
+    "highlighting",
+    "pre-compiler",
+    "completion",
+    "intellisense",
+    "language server",
+    "spyglass"
+  ],
+  "activationEvents": [
+    "onLanguage:python",
+    "onLanguage:mcfunction",
+    "onLanguage:bolt"
+  ],
   "main": "./src/extension.js",
   "scripts": {
-    "test": "node --test"
+    "test": "node --test \"test/*.test.js\"",
+    "test:integration": "node test/integration/run.js"
   },
-  "extensionDependencies": ["minecraftcommands.syntax-mcfunction"],
+  "extensionDependencies": [
+    "minecraftcommands.syntax-mcfunction"
+  ],
   "contributes": {
+    "languages": [
+      {
+        "id": "bolt",
+        "aliases": [
+          "Bolt",
+          "bolt"
+        ],
+        "extensions": [
+          ".bolt"
+        ],
+        "configuration": "./bolt-language-configuration.json"
+      }
+    ],
     "grammars": [
       {
         "scopeName": "source.mcfunction.embedded",
@@ -28,7 +65,17 @@
       {
         "scopeName": "stewbeet.mcfunction-injection",
         "path": "./syntaxes/mcfunction-injection.tmLanguage.json",
-        "injectTo": ["source.python"],
+        "injectTo": [
+          "source.python"
+        ],
+        "embeddedLanguages": {
+          "source.mcfunction.embedded": "mcfunction"
+        }
+      },
+      {
+        "language": "bolt",
+        "scopeName": "source.bolt",
+        "path": "./syntaxes/bolt.tmLanguage.json",
         "embeddedLanguages": {
           "source.mcfunction.embedded": "mcfunction"
         }
@@ -37,6 +84,11 @@
     "configuration": {
       "title": "StewBeet",
       "properties": {
+        "StewBeet.languageFeatures": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Enable completion, hover, signature help and go-to-definition inside mcfunction strings. Requires the [Spyglass](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server) extension; without it these features are silently unavailable."
+        },
         "StewBeet.enableBlockDecorations": {
           "type": "boolean",
           "default": true,
@@ -56,8 +108,78 @@
           "type": "string",
           "default": "2px",
           "markdownDescription": "Border width of the mcfunction block decoration (e.g. `\"1px\"`, `\"2px\"`)."
+        },
+        "StewBeet.buildOutput": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Path or glob to the generated datapack root, the directory holding `pack.mcmeta`. Leave empty to search the whole workspace for `.mcfunction.map` files; set it when that search costs too much."
+        },
+        "StewBeet.sourceMapDiagnostics": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Relay diagnostics reported against generated `.mcfunction` files onto the Python line that wrote them. Needs a build in the workspace."
+        },
+        "StewBeet.resolveInterpolations": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Fill each `{...}` interpolation with what the last build resolved it to, so `function {ns}:utils/foo` is understood as the path it really is. Turn it off to mask every interpolation with `_` instead. Needs a build in the workspace."
+        },
+        "StewBeet.diagnosticRuleDenylist": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "undeclaredSymbol"
+          ],
+          "markdownDescription": "Rules whose diagnostics are not relayed onto Python. `undeclaredSymbol` fires on every scoreboard objective or tag a dependency declares, which Spyglass cannot see. Set to `[]` to relay everything."
+        },
+        "StewBeet.codeLens": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Show a clickable lens above each block that produced a function in the last build, linking to the generated file."
+        },
+        "StewBeet.headerLinks": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Turn the function names inside a generated file's `#` header comments into links, so `@within` leads to the function that calls this one."
+        },
+        "StewBeet.boltInMcfunction": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Treat a `.mcfunction` file that holds bolt as the `bolt` language instead of `mcfunction`. A project can enable bolt syntax inside `.mcfunction` files, and Spyglass then reports most of the file as a syntax error because it cannot parse a `for` loop. Turn this off to leave the language id alone. Generated files are never switched."
         }
       }
-    }
+    },
+    "commands": [
+      {
+        "command": "stewbeet.goToGenerated",
+        "title": "StewBeet: Go to Generated Function"
+      },
+      {
+        "command": "stewbeet.goToSource",
+        "title": "StewBeet: Go to Python Source"
+      },
+      {
+        "command": "stewbeet.reloadSourceMaps",
+        "title": "StewBeet: Reload Source Maps"
+      },
+      {
+        "command": "stewbeet.refreshDiagnostics",
+        "title": "StewBeet: Refresh Build Diagnostics"
+      },
+      {
+        "command": "stewbeet.diagnosticsStatus",
+        "title": "StewBeet: Show Diagnostics Status"
+      },
+      {
+        "command": "stewbeet.excludeBoltFromSpyglass",
+        "title": "StewBeet: Exclude Bolt Files From Spyglass"
+      }
+    ]
+  },
+  "devDependencies": {
+    "vscode-oniguruma": "^2.0.1",
+    "vscode-textmate": "^9.2.0"
   }
 }

@@ -503,7 +503,7 @@
               "name": "keyword.control.flow.mcfunction"
             }
           },
-          "match": "^(\\s*)([a-z_]+)(?=\\s)",
+          "match": "(?:^|\\G)(\\s*)([a-z_]+)(?=\\s)",
           "name": "meta.names"
         },
         {
@@ -521,7 +521,7 @@
               "name": "keyword.control.flow.mcfunction"
             }
           },
-          "match": "^(\\s*)(\\$)( ?)([a-z_]*)",
+          "match": "(?:^|\\G)(\\s*)(\\$)( ?)([a-z_]*)",
           "name": "meta.names"
         },
         {
@@ -766,6 +766,106 @@
           },
           "match": "@[a-z]+",
           "name": "meta.selectors"
+        }
+      ]
+    },
+    "say-inline": {
+      "patterns": [
+        {
+          "begin": "\\G(\\s*)(say)",
+          "beginCaptures": {
+            "1": {
+              "name": "whitespace.mcfunction"
+            },
+            "2": {
+              "name": "keyword.control.flow.mcfunction"
+            }
+          },
+          "comment": "The inline flavour, reached only from #root-inline. It ends at whatever closes the embed: a quote closing the write_* call, a quote at the end of the line, or a quote followed by a comma or a closing bracket, which is how an entry of a list of commands ends. The block flavour must not do this, because `say something \"quoted\"` is an ordinary block line that happens to end in a quote.",
+          "end": "(?=\\\\n)|(?=\"\"\")|(?=''')|(?=[\"'](?:[ \\t]*,[ \\t]*[^\\n()]*)?[ \\t]*\\)[ \\t]*$)|\\n|(?=[\\\"'][ \\t]*,?[ \\t]*$)|(?=[\\\"'][ \\t]*[,\\]])",
+          "name": "meta.say.mcfunction",
+          "patterns": [
+            {
+              "captures": {
+                "0": {
+                  "name": "constant.character.escape.mcfunction"
+                }
+              },
+              "match": "\\\\\\s*\\n",
+              "meta": "meta.say.backslash.mcfunction"
+            },
+            {
+              "include": "#literals_string-double"
+            },
+            {
+              "include": "#literals_string-single"
+            }
+          ]
+        },
+        {
+          "begin": "(run)(\\s+)(say)",
+          "beginCaptures": {
+            "1": {
+              "name": "entity.name.mcfunction"
+            },
+            "2": {
+              "name": "whitespace.mcfunction"
+            },
+            "3": {
+              "name": "keyword.control.flow.mcfunction"
+            }
+          },
+          "comment": "The inline flavour, reached only from #root-inline. It also ends at a quote closing the line, which is what the end of an inline embed looks like. The block flavour must not, because `say something \"quoted\"` is an ordinary block line that happens to end in a quote.",
+          "end": "(?=\\\\n)|(?=\"\"\")|(?=''')|(?=[\"'](?:[ \\t]*,[ \\t]*[^\\n()]*)?[ \\t]*\\)[ \\t]*$)|\\n|(?=[\\\"'][ \\t]*,?[ \\t]*$)|(?=[\\\"'][ \\t]*[,\\]])",
+          "name": "meta.say.mcfunction",
+          "patterns": [
+            {
+              "captures": {
+                "0": {
+                  "name": "constant.character.escape.mcfunction"
+                }
+              },
+              "match": "\\\\\\s*\\n",
+              "meta": "meta.say.backslash.mcfunction"
+            },
+            {
+              "include": "#literals_string-double"
+            },
+            {
+              "include": "#literals_string-single"
+            }
+          ]
+        }
+      ]
+    },
+    "root-inline": {
+      "patterns": [
+        {
+          "include": "#literals"
+        },
+        {
+          "include": "#comments"
+        },
+        {
+          "include": "#say-inline"
+        },
+        {
+          "include": "#names"
+        },
+        {
+          "include": "#comments_inline"
+        },
+        {
+          "include": "#subcommands"
+        },
+        {
+          "include": "#property"
+        },
+        {
+          "include": "#operators"
+        },
+        {
+          "include": "#selectors"
         }
       ]
     }
