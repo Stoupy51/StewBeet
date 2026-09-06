@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "confirm_load.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/link.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;;;;AA6CA;AACA;AACA"
+}

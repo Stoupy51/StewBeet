@@ -200,3 +200,62 @@ boltTest(
   lines => assert.ok(scopesOf(lines, "class")?.includes("storage.type.class.python")),
 );
 
+
+// Every head mecha knows, not just the handful worth naming
+//
+// These assert on `meta.command.bolt`, the scope this grammar's own rule opens, rather than on
+// the keyword colour inside it. Colouring the head is the embedded mcfunction grammar's job, and
+// it does not handle a hyphen: `ban-ip` is a command line whose head reads as a name. That is a
+// limitation of the vendored grammar, not of the rule that decides what a command line is.
+
+/** Either rule that claims a line as a command. `function` belongs to the nesting rule, which
+ *  runs first because it offers the argument to Python when it is not a resource location. */
+const COMMAND_SCOPES = ["meta.command.bolt", "meta.nesting.bolt"];
+const opensCommand = token => COMMAND_SCOPES.some(scope => token.scopes.includes(scope));
+
+boltTest(
+  "every root command literal opens a command",
+  // Built from the grammar's own set, so this cannot drift from what the rule matches.
+  (() => {
+    const fs = require("node:fs");
+    const path = require("node:path");
+    const grammar = JSON.parse(fs.readFileSync(
+      path.join(__dirname, "..", "syntaxes", "bolt.tmLanguage.json"), "utf8"));
+    const heads = grammar.repository["command-statement"].begin
+      .match(/\((?:[a-z-]+\|)+[a-z-]+\)/)[0].slice(1, -1).split("|");
+    return heads.map(head => `${head} argument`).join("\n") + "\n";
+  })(),
+  lines => {
+    const missed = lines.filter(l => l.length).filter(l => !opensCommand(l[0]));
+    assert.deepEqual(missed.map(l => l[0].text), [],
+      "these heads are in the generated set but their line does not open a command");
+  },
+);
+
+boltTest(
+  "a hyphenated head still opens a command line",
+  "ban-ip someone\nsave-all\npardon-ip someone\n",
+  lines => {
+    for (const line of lines.filter(l => l.length)) {
+      assert.ok(opensCommand(line[0]),
+        `${line[0].text} did not open a command, so the alternation cut it short`);
+    }
+  },
+);
+
+boltTest(
+  "a word that merely starts with a head is not a command",
+  "saying hello\nfunctional = 3\nitemise()\ntagged: int = 1\n",
+  lines => {
+    for (const line of lines.filter(l => l.length)) {
+      assert.equal(opensCommand(line[0]), false, `${line[0].text} must not open a command`);
+    }
+  },
+);
+
+boltTest(
+  "a head indented inside nested blocks is still a command",
+  "class A:\n    def build(self):\n        if x:\n            for i in y:\n                summon marker ~ ~ ~\n",
+  lines => assert.ok(scopesOf(lines, "summon")?.includes(COMMAND),
+    "indentation depth must not matter, since bolt nests freely"),
+);

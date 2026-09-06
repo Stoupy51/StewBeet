@@ -68,10 +68,19 @@ def write_maps(ctx: Context) -> int:
 		if unit is None or unit.ast is None:
 			continue
 
+		own_file: str | None = os.path.abspath(os.path.join(directory, unit.filename)) if unit.filename else None
+
 		chunks: list[WriteChunk] = []
 		for command in unit.ast.commands:
-			serialized: str = mc.serialize(command)
-			owner: str | None = owner_of(command.location, sources, serialized)
+			# A sentinel node carries no command and raises rather than serialising, which
+			# `mecha.contrib.source_map` puts at the top of every function. Emitting no map is a
+			# fair price for one; failing the build over a debug feature is not.
+			try:
+				serialized: str = mc.serialize(command)
+			except Exception as error:
+				stp.debug(f"sniffer.mecha: {path} has a node that does not serialise, skipping it ({error})")
+				continue
+			owner: str | None = owner_of(command.location, sources, serialized, unit.source, own_file)
 			# mecha counts lines and columns from one, the map counts both from zero. A command is
 			# one point in its source however many lines it serialises to, which is what exact=False says.
 			origin: SourceOrigin | None = None if owner is None else SourceOrigin(

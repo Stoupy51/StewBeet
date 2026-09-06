@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "tick.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/link.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAwF+C;AAC/C;AACA;AACA"
+}

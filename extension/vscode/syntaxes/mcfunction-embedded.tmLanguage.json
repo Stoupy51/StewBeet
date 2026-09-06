@@ -781,8 +781,8 @@
               "name": "keyword.control.flow.mcfunction"
             }
           },
-          "comment": "The inline flavour, reached only from #root-inline. It also ends at a quote closing the line, which is what the end of an inline embed looks like. The block flavour must not, because `say something \"quoted\"` is an ordinary block line that happens to end in a quote.",
-          "end": "(?=\\\\n)|(?=\"\"\")|(?=''')|(?=[\"'](?:[ \\t]*,[ \\t]*[^\\n()]*)?[ \\t]*\\)[ \\t]*$)|\\n|(?=[\\\"'][ \\t]*,?[ \\t]*$)",
+          "comment": "The inline flavour, reached only from #root-inline. It ends at whatever closes the embed: a quote closing the write_* call, a quote at the end of the line, or a quote followed by a comma or a closing bracket, which is how an entry of a list of commands ends. The block flavour must not do this, because `say something \"quoted\"` is an ordinary block line that happens to end in a quote.",
+          "end": "(?=\\\\n)|(?=\"\"\")|(?=''')|(?=[\"'](?:[ \\t]*,[ \\t]*[^\\n()]*)?[ \\t]*\\)[ \\t]*$)|\\n|(?=[\\\"'][ \\t]*,?[ \\t]*$)|(?=[\\\"'][ \\t]*[,\\]])",
           "name": "meta.say.mcfunction",
           "patterns": [
             {
@@ -816,7 +816,7 @@
             }
           },
           "comment": "The inline flavour, reached only from #root-inline. It also ends at a quote closing the line, which is what the end of an inline embed looks like. The block flavour must not, because `say something \"quoted\"` is an ordinary block line that happens to end in a quote.",
-          "end": "(?=\\\\n)|(?=\"\"\")|(?=''')|(?=[\"'](?:[ \\t]*,[ \\t]*[^\\n()]*)?[ \\t]*\\)[ \\t]*$)|\\n|(?=[\\\"'][ \\t]*,?[ \\t]*$)",
+          "end": "(?=\\\\n)|(?=\"\"\")|(?=''')|(?=[\"'](?:[ \\t]*,[ \\t]*[^\\n()]*)?[ \\t]*\\)[ \\t]*$)|\\n|(?=[\\\"'][ \\t]*,?[ \\t]*$)|(?=[\\\"'][ \\t]*[,\\]])",
           "name": "meta.say.mcfunction",
           "patterns": [
             {

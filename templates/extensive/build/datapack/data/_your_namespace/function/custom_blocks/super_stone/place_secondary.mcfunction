@@ -28,3 +28,4 @@ particle minecraft:explosion ~ ~ ~
 
 say another way to append to the place_secondary function
 
+## sourceMappingURL=place_secondary.mcfunction.map

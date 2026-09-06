@@ -29,3 +29,4 @@ execute if score #rotation _your_namespace.data matches 2 run data modify entity
 execute if score #rotation _your_namespace.data matches 3 run data modify entity @s Rotation[0] set value 0.0f
 execute if score #rotation _your_namespace.data matches 4 run data modify entity @s Rotation[0] set value 90.0f
 
+## sourceMappingURL=place_secondary.mcfunction.map

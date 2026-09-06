@@ -18,3 +18,4 @@ scoreboard players operation #value2 _your_namespace.data *= #8 _your_namespace.
 scoreboard players operation #value2 _your_namespace.data /= #4 _your_namespace.data
 scoreboard players operation #value2 _your_namespace.data %= #5 _your_namespace.data
 
+## sourceMappingURL=test.mcfunction.map

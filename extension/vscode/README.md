@@ -203,6 +203,29 @@ line is far more intrusive than the same one in a generated file nobody opens.
 Relay everything with `"StewBeet.diagnosticRuleDenylist": []`, or add rules of your own to the
 list to silence them.
 
+### Writing a function with beet's own API
+
+The six `write_*` helpers are not the only thing recognised. beet's own way of putting a function in the pack works too, in every spelling:
+
+```python
+ctx.data.functions["ns:mine"] = Function("say hi")
+ctx.data["ns"].functions["mine"] = Function("say hi")
+ctx.data[Function]["ns:mine"] = Function("say hi")
+ctx.data.functions["ns:mine"] = Function(["say one", "say two"])   # one block per entry
+ctx.data.functions["ns:mine"].append("say more")
+```
+
+All of these get colours, completion, diagnostics and a lens to what they generated, and the source map points back at the line that wrote them.
+
+**The subscript is what makes it safe.** A bare `Function("say hi")` is left alone, because the class name is common enough to appear in unrelated Python; giving one a path is what marks it as a datapack function. A wrapper of your own opts in the same way it always did, by annotating its parameter:
+
+```python
+def put(path: str, content: McFunction):
+    ctx.data.functions[path] = Function(content)
+
+put("ns:mine", "say hi")
+```
+
 ### Bolt files
 
 `.bolt` files open as **Bolt** instead of plain text, with syntax highlighting and `#` comment toggling. Nothing else registers that extension, so before this they had no language id at all, which also meant no language server could ever be asked to serve them.

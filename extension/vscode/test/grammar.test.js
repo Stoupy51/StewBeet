@@ -331,17 +331,24 @@ test("the embedded grammar carries an inline flavour for say", () => {
   assert.ok(embedded.repository["say-inline"], "missing #say-inline");
   const inline = embedded.repository["say-inline"].patterns;
   const block = embedded.repository["say"].patterns;
-  // The quote closing an inline embed sits at end of line, or before a list literal's comma.
-  const QUOTE_AT_EOL = "|(?=[\\\"'][ \\t]*,?[ \\t]*$)";
+  // An inline say ends wherever the embed around it does, which a block say must not do.
+  // Two ways beyond the block rule's own: the quote that ends the line, and the quote that ends
+  // an entry of a list of commands, followed by a comma or the closing bracket.
+  const INLINE_ENDS = [
+    "|(?=[\\\"'][ \\t]*,?[ \\t]*$)",
+    "|(?=[\\\"'][ \\t]*[,\\]])",
+  ];
   assert.equal(inline.length, block.length, "every say rule needs both flavours");
   for (const [i, rule] of inline.entries()) {
-    assert.equal(rule.end, block[i].end + QUOTE_AT_EOL,
-      "an inline say is the block rule plus the quote that closes the embed");
+    assert.equal(rule.end, block[i].end + INLINE_ENDS.join(""),
+      "an inline say is the block rule plus every way an embed can close");
     assert.ok(!rule.end.includes("\t"), "use the \\t escape, not a literal tab");
   }
   for (const rule of block) {
-    assert.ok(!rule.end.endsWith(QUOTE_AT_EOL),
-      "a block say must not, or `say something \"quoted\"` would end the block early");
+    for (const ending of INLINE_ENDS) {
+      assert.ok(!rule.end.includes(ending),
+        "a block say must not end at a quote, or `say something \"quoted\"` would end the block early");
+    }
   }
 });
 
@@ -374,4 +381,24 @@ test("the list rule matches only a list of McFunction", () => {
   for (const shape of ["notes: list[str] = ", "out: list[MyMcFunction] = ", "out: McFunction = "]) {
     assert.ok(!begin.test(shape), shape);
   }
+});
+
+// The grammar and the block finder must agree on what opens a block
+
+test("both halves accept the same string prefixes", () => {
+  const { stringPrefixAt } = require("../src/blocks");
+  const patterns = JSON.stringify(injection).match(/\(\[rRbBuUfF\]\{0,2\}\)/g) ?? [];
+  assert.ok(patterns.length > 20,
+    `the grammar should carry the widened prefix on every rule, found ${patterns.length}`);
+  assert.equal(JSON.stringify(injection).includes('"(f?)"'), false,
+    "an f-only prefix leaves r-strings uncoloured, which is what StardustFragment writes");
+
+  // What blocks.js accepts is the contract, since it decides where completion and diagnostics go.
+  const group = new RegExp(`^${patterns[0]}$`);
+  for (const prefix of ["", "f", "F", "r", "R", "b", "u", "rf", "fr", "rb", "br"]) {
+    const accepted = prefix === "" || stringPrefixAt(`${prefix}"""x`, prefix.length) === prefix;
+    assert.equal(group.test(prefix), accepted,
+      `the grammar and blocks.js disagree about the prefix ${JSON.stringify(prefix)}`);
+  }
+  assert.equal(group.test("xyz"), false, "and neither accepts three letters");
 });

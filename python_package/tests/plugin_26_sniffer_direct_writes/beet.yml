@@ -1,0 +1,27 @@
+# Test: what the StewBeet capture does and does not see.
+# Capture patches beet's Function.append/prepend and reads a tag that StewBeet's own writers put
+# on the object. A Function the author builds and assigns straight into the pack carries no tag,
+# so nothing about it is recorded and it is emitted unmapped. That is the documented boundary of
+# the StewBeet producer, and this test is what stops it moving without anybody noticing.
+
+id: "tns"
+name: "Test Sniffer Direct Writes"
+version: "1.0.0"
+author: "test"
+minecraft: "26.2"
+
+directory: "."
+output: "build"
+
+require:
+    - "stewbeet"
+    - "stewbeet.plugins.sniffer"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+pipeline:
+    - "src.assertions"
+    - "src.link"
+    - "stewbeet.plugins.sniffer.emit"

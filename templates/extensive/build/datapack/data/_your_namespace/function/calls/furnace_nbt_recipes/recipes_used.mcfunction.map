@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "recipes_used.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/definitions/additions.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;;;;;;;;AA8BI;AAAA"
+}

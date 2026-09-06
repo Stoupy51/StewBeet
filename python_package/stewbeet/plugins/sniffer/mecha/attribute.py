@@ -42,28 +42,72 @@ def candidate_sources(mc: Mecha, directory: str, roots: tuple[str, ...]) -> dict
 	return found
 
 
-def owner_of(location: SourceLocation, sources: dict[str, str], command: str) -> str | None:
+def owner_of(location: SourceLocation, sources: dict[str, str], command: str, own: str | None = None, own_file: str | None = None) -> str | None:
 	""" The one file a location can belong to, or None when it cannot be narrowed to one.
 
-	Zero candidates means the writer is a library or lives outside the project. Several means the
-	sources agree on all three fields, which every file does at the very first character, so the
-	command's own first word breaks the tie. It only breaks ties: a position deep in a file is
-	already unambiguous, and mecha rewrites enough that a command's first word often differs from
-	the source that produced it.
+	Two things have to hold. The position must sit where the location says, and the file must
+	actually say there what the command starts with. **Both are required**, and the second is not
+	a tiebreaker: a function assembled in memory has commands whose position is valid in every
+	file on the first character, so a lone candidate proves nothing on its own. Requiring the word
+	costs 46 of 815 mappings on a real project and removes every wrong-file attribution, which is
+	the trade FR-010 asks for.
 
-	Still ambiguous means unmapped, because FR-010 is a validity condition: a confident jump to the
-	wrong file is worse than no jump.
+	What the word check drops is a command mecha rewrote past recognition, such as a bolt
+	expression compiled into `scoreboard players operation`. Its position is the least trustworthy
+	of any, so losing it is not a loss.
 
 	Args:
-		command: The command as mecha serialised it, used only to choose between candidates.
-	"""
-	owners: list[str] = [path for path, text in sources.items() if sits_at(text, location.pos, location.lineno, location.colno)]
-	if len(owners) < 2:
-		return owners[0] if owners else None
+		command:  The command as mecha serialised it. Its first word is the evidence.
+		own:      The text this unit's AST was parsed from, when it has one.
+		own_file: Absolute path of that text on disk, or None when it was assembled in memory.
 
+	>>> from tokenstream import SourceLocation
+	>>> helper = "# helper module\\nappend function demo:shared:\\n    say from helper\\n"
+	>>> main = "import demo:helper as _\\n\\nappend function demo:shared:\\n    say from main one\\n"
+	>>> sources = {"helper.bolt": helper, "main.bolt": main}
+
+	The spike's own case: the position is valid in one file only, and it says `say` there.
+
+	>>> owner_of(SourceLocation(49, 3, 5), sources, "say from helper")
+	'helper.bolt'
+	>>> owner_of(SourceLocation(58, 4, 5), sources, "say from main one")
+	'main.bolt'
+
+	The first character of a file is a valid position in every file, so the word decides:
+
+	>>> owner_of(SourceLocation(0, 1, 1), sources, "import demo:helper as _")
+	'main.bolt'
+	>>> owner_of(SourceLocation(0, 1, 1), sources, "say something else") is None
+	True
+
+	And a command whose word is nowhere near what the file says is unmapped, however confident
+	the position looks:
+
+	>>> owner_of(SourceLocation(49, 3, 5), sources, "scoreboard players set #x obj 1") is None
+	True
+
+	A function assembled in memory has no source file, and its positions index into the string it
+	was parsed from. Passing that string as `own` is what stops its commands being read as
+	positions in somebody else's file:
+
+	>>> assembled = "say direct one\\nsay direct two\\n"
+	>>> owner_of(SourceLocation(0, 1, 1), {"real.mcfunction": "say from a real file\\n"},
+	...          "say direct one", own=assembled) is None
+	True
+	"""
 	head: str = command.split(maxsplit=1)[0] if command.split() else ""
-	narrowed: list[str] = [path for path in owners if sources[path].startswith(head, location.pos)]
-	return narrowed[0] if len(narrowed) == 1 else None
+
+	# The text the AST was parsed from is the strongest evidence there is: an offset indexes into
+	# it, so a command that fits there came from it and from nowhere else. Only when it does not
+	# fit is this a command some other module contributed, which is the case worth searching for.
+	if own is not None and sits_at(own, location.pos, location.lineno, location.colno) and own.startswith(head, location.pos):
+		return own_file if own_file in sources else None
+
+	owners: list[str] = [
+		path for path, text in sources.items()
+		if sits_at(text, location.pos, location.lineno, location.colno) and text.startswith(head, location.pos)
+	]
+	return owners[0] if len(owners) == 1 else None
 
 
 def sits_at(source: str, pos: int, lineno: int, colno: int) -> bool:

@@ -178,3 +178,76 @@ test("writing the exclusion round-trips through a real file", () => {
 
   assert.equal(addExclusions(root, [file]), null, "the second call has nothing to do");
 });
+
+// Writing a Function straight into the pack, which is plain beet's own idiom
+//
+// `ctx.data.functions[path] = Function(...)` is how a plain beet plugin writes a function, and
+// how a StewBeet one does when it wants the object rather than the helper. All three spellings
+// beet offers are recognised, plus the append onto one already in the pack.
+
+const blocks = require("../src/blocks.js");
+
+/** The commands each block covers. */
+function contentsOf(source) {
+  return blocks.findBlockOffsets(source).map(b => source.slice(b.contentStart, b.contentEnd));
+}
+
+test("every way beet assigns a function is a block", () => {
+  const cases = [
+    ['ctx.data.functions["ns:x"] = Function("say hi")', ["say hi"]],
+    ['ctx.data["ns"].functions["x"] = Function("say hi")', ["say hi"]],
+    ['ctx.data[Function]["ns:x"] = Function("say hi")', ["say hi"]],
+    ['ctx.data.functions["ns:x"] = Function("""\nsay a\nsay b\n""")', ["\nsay a\nsay b\n"]],
+    ['ctx.data.functions["ns:x"] = Function(f"say {name}")', ["say {name}"]],
+    ['ctx.data.functions["ns:x"].append("say hi")', ["say hi"]],
+    ['ctx.data.functions["ns:x"].prepend("say hi")', ["say hi"]],
+  ];
+  for (const [source, expected] of cases) {
+    assert.deepEqual(contentsOf(source), expected, `wrong blocks for ${JSON.stringify(source)}`);
+  }
+});
+
+test("a list of lines is one block per entry", () => {
+  const source = 'ctx.data.functions["ns:x"] = Function(["say one", "say two", "say three"])';
+  assert.deepEqual(contentsOf(source), ["say one", "say two", "say three"],
+    "each entry is a command of its own, so each is completed and diagnosed on its own");
+});
+
+test("a Function that is not being given a path is left alone", () => {
+  for (const source of [
+    'func = Function("say hi")',
+    'return Function("say hi")',
+    'helper(Function("say hi"))',
+    'thing.functions = Function("say hi")',
+  ]) {
+    assert.deepEqual(blocks.findBlockOffsets(source), [],
+      `the subscript is what marks a write: ${JSON.stringify(source)}`);
+  }
+});
+
+test("a non-function container assigned nearby is not claimed", () => {
+  for (const source of [
+    'ctx.data.advancements["ns:x"] = Advancement({"criteria": {}})',
+    'ctx.data.loot_tables["ns:x"] = LootTable({"pools": []})',
+  ]) {
+    assert.deepEqual(blocks.findBlockOffsets(source), [],
+      `only functions hold commands: ${JSON.stringify(source)}`);
+  }
+});
+
+test("the six write_ helpers still work beside the new ones", () => {
+  assert.equal(blocks.findBlockOffsets('write_function("ns:x", "say hi")').length, 1);
+  assert.equal(blocks.findBlockOffsets('write_load_file("say hi")').length, 1);
+});
+
+test("a project's own wrapper still opts in by annotating its parameter", () => {
+  const source = [
+    "def put(path: str, content: McFunction):",
+    '    ctx.data.functions[path] = Function(content)',
+    '',
+    'put("ns:direct", "say hi")',
+  ].join("\n");
+  // Two blocks: the wrapper's own call argument, and nothing from the assignment inside it,
+  // whose argument is a name rather than a literal.
+  assert.deepEqual(contentsOf(source), ["say hi"]);
+});

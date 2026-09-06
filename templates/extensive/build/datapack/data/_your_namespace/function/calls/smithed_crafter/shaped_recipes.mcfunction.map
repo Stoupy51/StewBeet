@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "shaped_recipes.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/definitions/additions.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;;;;AA8BI;AAeA;AAAA;AAAA"
+}

@@ -3,34 +3,94 @@
     "lineComment": "#"
   },
   "brackets": [
-    ["{", "}"],
-    ["[", "]"],
-    ["(", ")"]
+    [
+      "{",
+      "}"
+    ],
+    [
+      "[",
+      "]"
+    ],
+    [
+      "(",
+      ")"
+    ]
   ],
   "autoClosingPairs": [
-    { "open": "{", "close": "}" },
-    { "open": "[", "close": "]" },
-    { "open": "(", "close": ")" },
-    { "open": "\"\"\"", "close": "\"\"\"", "notIn": ["string"] },
-    { "open": "'''", "close": "'''", "notIn": ["string"] },
-    { "open": "\"", "close": "\"", "notIn": ["string"] },
-    { "open": "'", "close": "'", "notIn": ["string", "comment"] }
+    {
+      "open": "{",
+      "close": "}"
+    },
+    {
+      "open": "[",
+      "close": "]"
+    },
+    {
+      "open": "(",
+      "close": ")"
+    },
+    {
+      "open": "\"\"\"",
+      "close": "\"\"\"",
+      "notIn": [
+        "string"
+      ]
+    },
+    {
+      "open": "'''",
+      "close": "'''",
+      "notIn": [
+        "string"
+      ]
+    },
+    {
+      "open": "\"",
+      "close": "\"",
+      "notIn": [
+        "string"
+      ]
+    },
+    {
+      "open": "'",
+      "close": "'",
+      "notIn": [
+        "string",
+        "comment"
+      ]
+    }
   ],
   "surroundingPairs": [
-    ["{", "}"],
-    ["[", "]"],
-    ["(", ")"],
-    ["\"", "\""],
-    ["'", "'"]
+    [
+      "{",
+      "}"
+    ],
+    [
+      "[",
+      "]"
+    ],
+    [
+      "(",
+      ")"
+    ],
+    [
+      "\"",
+      "\""
+    ],
+    [
+      "'",
+      "'"
+    ]
   ],
   "indentationRules": {
-    "increaseIndentPattern": "^\\s*\\S.*:\\s*(?:#.*)?$",
+    "increaseIndentPattern": "^\\s*[^#\\s].*:\\s*(?:#.*)?$",
     "decreaseIndentPattern": "^\\s*(?:elif|else|except|finally)\\b.*:\\s*(?:#.*)?$"
   },
   "onEnterRules": [
     {
       "beforeText": "^\\s*(?:return|raise|break|continue|pass)\\b.*$",
-      "action": { "indent": "outdent" }
+      "action": {
+        "indent": "outdent"
+      }
     }
   ]
 }

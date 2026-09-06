@@ -31,6 +31,18 @@ const FUNCS_2ND_ARG = new Set([
   "write_scheduled_function",
 ]);
 
+/** beet's own way of writing a function: `... [path] = Function(<content>)`.
+ *
+ * The subscript before `=` is what makes this safe to claim. `Function` alone is a beet class
+ * whose name is common enough to appear in unrelated Python, while a subscripted assignment of
+ * one is a datapack function and nothing else. All three spellings land here, since
+ * `ctx.data.functions[p]`, `ctx.data["ns"].functions[p]` and `ctx.data[Function][p]` differ only
+ * in what precedes the subscript. */
+const ASSIGN_FUNCTION_RE = /(?:\.functions|\[\s*Function\s*\])\s*\[[^\]\n]*\]\s*=\s*Function\s*\(/g;
+
+/** An append onto a function already in the pack, ex: `ctx.data.functions[p].append("say hi")`. */
+const APPEND_FUNCTION_RE = /(?:\.functions|\[\s*Function\s*\])\s*\[[^\]\n]*\]\s*\.\s*(?:append|prepend)\s*\(/g;
+
 /** A `def`, with its parameter list, so a project's own wrappers can be found. */
 const DEF_RE = /\bdef\s+([A-Za-z_]\w*)\s*\(([^)]*)\)/g;
 
@@ -225,6 +237,7 @@ function findBlockOffsets(text) {
     });
   }
 
+  blocks.push(...findBeetWrites(text));
   if (variables.size > 0) blocks.push(...findAssignedBlocks(text, variables));
   return blocks.sort((a, b) => a.start - b.start);
 }
@@ -254,6 +267,52 @@ function mcfunctionWrappers(text) {
     if (index >= offset) found.set(m[1], index - offset);
   }
   return found;
+}
+
+/**
+ * Find every block beet's own writers open, with no StewBeet helper involved.
+ *
+ * `ctx.data.functions[p] = Function("say hi")` is how a plain beet plugin writes a function, and
+ * how a StewBeet one does when it wants the object rather than the helper. Both a string and the
+ * entries of a list literal count, since `Function(["say a", "say b"])` is the same content
+ * spelled differently.
+ *
+ * @param {string} text
+ * @returns {{ start:number, end:number, contentStart:number, contentEnd:number, callStart:number }[]}
+ */
+function findBeetWrites(text) {
+  const blocks = [];
+
+  for (const pattern of [ASSIGN_FUNCTION_RE, APPEND_FUNCTION_RE]) {
+    pattern.lastIndex = 0;
+    let m;
+    while ((m = pattern.exec(text)) !== null) {
+      const callStart = m.index;
+      let at = m.index + m[0].length;
+
+      // A list literal holds one block per entry; anything else holds at most one.
+      const list = text[at] === "[";
+      if (list) at++;
+
+      for (;;) {
+        while (at < text.length && (text[at] === " " || text[at] === "\t" || text[at] === "\n"
+          || text[at] === "\r" || text[at] === ",")) at++;
+
+        const opening = readOpeningQuote(text, at);
+        if (!opening) break;
+        const closeIdx = findClosingQuote(text, opening.quoteStyle, opening.contentStart, opening.isFString);
+        if (closeIdx === -1) break;
+
+        blocks.push({
+          start: opening.quoteStart, end: closeIdx + opening.quoteStyle.length,
+          contentStart: opening.contentStart, contentEnd: closeIdx, callStart,
+        });
+        at = closeIdx + opening.quoteStyle.length;
+        if (!list) break;
+      }
+    }
+  }
+  return blocks;
 }
 
 /**
@@ -378,6 +437,7 @@ module.exports = {
   skipFirstArg,
   readOpeningQuote,
   findBlockOffsets,
+  findBeetWrites,
   readArgumentName,
   findAssignedBlocks,
   findInterpolationSpans,
