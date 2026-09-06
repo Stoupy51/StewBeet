@@ -1,0 +1,48 @@
+# Test: stewbeet.plugins.sniffer.mecha
+# Verifies that a bolt or mecha build emits the same Source Map v3 sidecars StewBeet emits, read
+# straight off the compiled AST. The encoder is not under test, plugin_22 covers that. These are:
+#
+#   hello.mcfunction  the minimal template's own example, verbatim. A bolt loop turns one source
+#                     line into five commands, and `execute function ./goodbye:` nests two more
+#                     functions out of one file. auto.headers then prepends six lines to every one
+#                     of them, after mecha has already compiled, which is why the emitter aligns
+#                     instead of trusting positions.
+#   shared            one function two modules both append to, which is the case a compilation
+#                     unit's own filename gets wrong and the normal shape of a bolt project.
+#   from_vendor       content written by a module outside the configured roots, which FR-010 says
+#                     must be emitted unmapped rather than mapped into a library.
+#
+# 'stewbeet.plugins.sniffer.mecha' is listed BEFORE 'mecha' on purpose. It works after its yield,
+# and beet unwinds generator plugins in reverse, so listing it first is what leaves the Module
+# compilation units and their sources in the database for attribution to read.
+
+id: "tns"
+name: "Test Sniffer Mecha Bolt"
+version: "1.0.0"
+author: "test"
+minecraft: "26.2"
+
+directory: "."
+output: "build"
+
+require:
+    - "bolt"
+
+data_pack:
+    name: "datapack"
+    load: ["src", "vendor"]
+
+pipeline:
+    # src.assertions is listed first and yields, so its checks run last of all.
+    - "src.assertions"
+    - "stewbeet.plugins.sniffer.mecha"
+    - "mecha"
+    - "stewbeet.plugins.auto.headers.silent"
+
+meta:
+    bolt:
+        entrypoint: "*"
+    sniffer:
+        # vendor/ compiles into the pack but is not the project's own source, so it may not be a
+        # mapping target. Narrowing the roots is what FR-010 needs when a library lives in the tree.
+        roots: ["src"]

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "search.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/definitions/additions.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAmII;AAAA;AAAA;AAAA;AAAA;AAAA"
+}

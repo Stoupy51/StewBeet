@@ -5,9 +5,24 @@
 // StewBeet write_* calls. Kept free of any "vscode" dependency so it can be
 // unit-tested with plain Node (see test/blocks.test.js).
 
-// ─── Constants──────────────
+// Constants
 
-const FUNC_RE = /\b(write_function|write_versioned_function|write_scheduled_function|write_load_file|write_unload_file|write_tick_file)\s*\(/g;
+/** The StewBeet functions that take mcfunction content. */
+const WRITE_FUNCS = [
+  "write_function",
+  "write_versioned_function",
+  "write_scheduled_function",
+  "write_load_file",
+  "write_unload_file",
+  "write_tick_file",
+];
+
+/** A call to any of them, or to any name in `names`. */
+function callRegex(names = WRITE_FUNCS) {
+  return new RegExp(`\\b(${names.join("|")})\\s*\\(`, "g");
+}
+
+const FUNC_RE = callRegex();
 
 /** Functions where the mcfunction content is the 2nd argument (after a path). */
 const FUNCS_2ND_ARG = new Set([
@@ -16,7 +31,25 @@ const FUNCS_2ND_ARG = new Set([
   "write_scheduled_function",
 ]);
 
-// ─── String scanning────────
+/** beet's own way of writing a function: `... [path] = Function(<content>)`.
+ *
+ * The subscript before `=` is what makes this safe to claim. `Function` alone is a beet class
+ * whose name is common enough to appear in unrelated Python, while a subscripted assignment of
+ * one is a datapack function and nothing else. All three spellings land here, since
+ * `ctx.data.functions[p]`, `ctx.data["ns"].functions[p]` and `ctx.data[Function][p]` differ only
+ * in what precedes the subscript. */
+const ASSIGN_FUNCTION_RE = /(?:\.functions|\[\s*Function\s*\])\s*\[[^\]\n]*\]\s*=\s*Function\s*\(/g;
+
+/** An append onto a function already in the pack, ex: `ctx.data.functions[p].append("say hi")`. */
+const APPEND_FUNCTION_RE = /(?:\.functions|\[\s*Function\s*\])\s*\[[^\]\n]*\]\s*\.\s*(?:append|prepend)\s*\(/g;
+
+/** A `def`, with its parameter list, so a project's own wrappers can be found. */
+const DEF_RE = /\bdef\s+([A-Za-z_]\w*)\s*\(([^)]*)\)/g;
+
+/** A parameter annotated McFunction, ex: `content: McFunction = ""`. */
+const MCFUNCTION_PARAM_RE = /^\s*[A-Za-z_]\w*\s*:\s*McFunction\b/;
+
+// String scanning
 
 /**
  * Return the string prefix letters (e.g. "f", "rf") sitting immediately before
@@ -91,7 +124,7 @@ function skipInterpolation(text, i) {
   return -1;
 }
 
-// ─── Block detection────────
+// Block detection
 
 /**
  * Skip past the first argument of a write_* call (the path), stopping just
@@ -160,35 +193,239 @@ function readOpeningQuote(text, i) {
 /**
  * Find all mcfunction string blocks in Python source text.
  * @param {string} text
- * @returns {{ start:number, end:number }[]}  Offsets of each block: start is
- *   the opening quote (including prefix), end is just after the closing quote.
+ * @returns {{ start:number, end:number, contentStart:number, contentEnd:number }[]}
+ *   `start` is the opening quote with its prefix and `end` is just past the closing quote,
+ *   which is what a decoration should cover. `contentStart` and `contentEnd` bound the
+ *   commands alone: the quotes are Python, and a projection that hands them to a datapack
+ *   parser gets told, correctly, that `\"\"\"` is not a command. `callStart` is the offset of
+ *   the `write_*` call these commands reach, which is the block itself when they are written
+ *   inline and a line further down when they arrive in a variable.
  */
 function findBlockOffsets(text) {
   const blocks = [];
+  /** Names handed to a write_* call instead of a literal, mapped to that call's offset. */
+  const variables = new Map();
+  const wrappers = mcfunctionWrappers(text);
+  const callRe = wrappers.size === 0 ? FUNC_RE : callRegex([...wrappers.keys(), ...WRITE_FUNCS]);
 
-  FUNC_RE.lastIndex = 0;
+  callRe.lastIndex = 0;
   let m;
-  while ((m = FUNC_RE.exec(text)) !== null) {
+  while ((m = callRe.exec(text)) !== null) {
     const afterOpen = m.index + m[0].length;
 
-    let contentIdx;
-    if (FUNCS_2ND_ARG.has(m[1])) {
-      contentIdx = skipFirstArg(text, afterOpen);
-      if (contentIdx === -1) continue;
-    } else {
-      contentIdx = afterOpen;
+    const argIndex = wrappers.has(m[1]) ? wrappers.get(m[1]) : Number(FUNCS_2ND_ARG.has(m[1]));
+    let contentIdx = afterOpen;
+    for (let skipped = 0; skipped < argIndex; skipped++) {
+      contentIdx = skipFirstArg(text, contentIdx);
+      if (contentIdx === -1) break;
     }
+    if (contentIdx === -1) continue;
 
     const opening = readOpeningQuote(text, contentIdx);
-    if (!opening) continue;
+    if (!opening) {
+      const name = readArgumentName(text, contentIdx);
+      if (name && !variables.has(name)) variables.set(name, m.index);
+      continue;
+    }
 
     const closeIdx = findClosingQuote(text, opening.quoteStyle, opening.contentStart, opening.isFString);
     if (closeIdx === -1) continue;
 
-    blocks.push({ start: opening.quoteStart, end: closeIdx + opening.quoteStyle.length });
+    blocks.push({
+      start: opening.quoteStart, end: closeIdx + opening.quoteStyle.length,
+      contentStart: opening.contentStart, contentEnd: closeIdx, callStart: m.index,
+    });
+  }
+
+  blocks.push(...findBeetWrites(text));
+  if (variables.size > 0) blocks.push(...findAssignedBlocks(text, variables));
+  return blocks.sort((a, b) => a.start - b.start);
+}
+
+/**
+ * The project's own functions taking commands, mapped to which argument carries them.
+ *
+ * `def write(path: str, cont: McFunction)` makes `write("say hi")`'s second argument a block,
+ * the same as `write_function`'s. A grammar cannot do this, since the `def` and the call share
+ * no text, but a scan of the whole document can.
+ *
+ * @param {string} text
+ * @returns {Map<string, number>}  0-based index of the annotated parameter.
+ *
+ * >>> mcfunctionWrappers("def w(p: str, c: McFunction): pass")
+ * Map(1) { 'w' => 1 }
+ */
+function mcfunctionWrappers(text) {
+  const found = new Map();
+  DEF_RE.lastIndex = 0;
+  let m;
+  while ((m = DEF_RE.exec(text)) !== null) {
+    const params = splitParams(m[2]);
+    const index = params.findIndex(p => MCFUNCTION_PARAM_RE.test(p));
+    // `self` never carries commands, and counting it would shift every call site's argument.
+    const offset = /^\s*(self|cls)\s*(?:[,:]|$)/.test(params[0] ?? "") ? 1 : 0;
+    if (index >= offset) found.set(m[1], index - offset);
+  }
+  return found;
+}
+
+/**
+ * Find every block beet's own writers open, with no StewBeet helper involved.
+ *
+ * `ctx.data.functions[p] = Function("say hi")` is how a plain beet plugin writes a function, and
+ * how a StewBeet one does when it wants the object rather than the helper. Both a string and the
+ * entries of a list literal count, since `Function(["say a", "say b"])` is the same content
+ * spelled differently.
+ *
+ * @param {string} text
+ * @returns {{ start:number, end:number, contentStart:number, contentEnd:number, callStart:number }[]}
+ */
+function findBeetWrites(text) {
+  const blocks = [];
+
+  for (const pattern of [ASSIGN_FUNCTION_RE, APPEND_FUNCTION_RE]) {
+    pattern.lastIndex = 0;
+    let m;
+    while ((m = pattern.exec(text)) !== null) {
+      const callStart = m.index;
+      let at = m.index + m[0].length;
+
+      // A list literal holds one block per entry; anything else holds at most one.
+      const list = text[at] === "[";
+      if (list) at++;
+
+      for (;;) {
+        while (at < text.length && (text[at] === " " || text[at] === "\t" || text[at] === "\n"
+          || text[at] === "\r" || text[at] === ",")) at++;
+
+        const opening = readOpeningQuote(text, at);
+        if (!opening) break;
+        const closeIdx = findClosingQuote(text, opening.quoteStyle, opening.contentStart, opening.isFString);
+        if (closeIdx === -1) break;
+
+        blocks.push({
+          start: opening.quoteStart, end: closeIdx + opening.quoteStyle.length,
+          contentStart: opening.contentStart, contentEnd: closeIdx, callStart,
+        });
+        at = closeIdx + opening.quoteStyle.length;
+        if (!list) break;
+      }
+    }
+  }
+  return blocks;
+}
+
+/**
+ * Split a parameter list on the commas that separate parameters.
+ *
+ * @param {string} params  Everything between the parentheses of a `def`.
+ * @returns {string[]}
+ *
+ * >>> splitParams("a: dict[str, int], b: McFunction")
+ * [ 'a: dict[str, int]', ' b: McFunction' ]
+ */
+function splitParams(params) {
+  const parts = [];
+  let depth = 0;
+  let start = 0;
+  for (let i = 0; i < params.length; i++) {
+    const c = params[i];
+    if (c === "[" || c === "{" || c === "(") depth++;
+    else if (c === "]" || c === "}" || c === ")") depth--;
+    else if (c === "," && depth === 0) { parts.push(params.slice(start, i)); start = i + 1; }
+  }
+  parts.push(params.slice(start));
+  return parts;
+}
+
+/**
+ * The name of a whole argument, when the argument is exactly one identifier.
+ *
+ * `write_function(path, content)` hands the commands over in a variable, which is how a third
+ * of a real project's blocks are written. Anything else, a call or an expression, is not a
+ * name we could find an assignment for, so it returns null.
+ *
+ * @param {string} text
+ * @param {number} i  First character of the argument, whitespace included.
+ * @returns {string | null}
+ */
+function readArgumentName(text, i) {
+  while (i < text.length && /[ \t\r\n]/.test(text[i])) i++;
+  const start = i;
+  while (i < text.length && /[A-Za-z0-9_]/.test(text[i])) i++;
+  if (i === start || /[0-9]/.test(text[start])) return null;
+
+  let after = i;
+  while (after < text.length && /[ \t\r\n]/.test(text[after])) after++;
+  return text[after] === ")" || text[after] === "," ? text.slice(start, i) : null;
+}
+
+/** An assignment to a bare name, with an optional type annotation, `=` or `+=`. */
+const ASSIGN_RE = /(?:^|\n)[ \t]*([A-Za-z_]\w*)[ \t]*(?::[^=\n]*)?\+?=[ \t]*/g;
+
+/**
+ * The string literals assigned to any of `names`, as blocks.
+ *
+ * Both `content = """..."""` and a later `content += """..."""` count, since building a
+ * function by appending is as common as writing it in one go.
+ *
+ * @param {string} text
+ * @param {Map<string, number>} names  Name to the offset of the write_* call that consumes it.
+ * @returns {{ start:number, end:number, contentStart:number, contentEnd:number, callStart:number }[]}
+ */
+function findAssignedBlocks(text, names) {
+  const blocks = [];
+
+  ASSIGN_RE.lastIndex = 0;
+  let m;
+  while ((m = ASSIGN_RE.exec(text)) !== null) {
+    if (!names.has(m[1])) continue;
+
+    const opening = readOpeningQuote(text, m.index + m[0].length);
+    if (!opening) continue;
+    const closeIdx = findClosingQuote(text, opening.quoteStyle, opening.contentStart, opening.isFString);
+    if (closeIdx === -1) continue;
+
+    blocks.push({
+      start: opening.quoteStart, end: closeIdx + opening.quoteStyle.length,
+      contentStart: opening.contentStart, contentEnd: closeIdx,
+      callStart: /** @type {number} */ (names.get(m[1])),
+    });
+    ASSIGN_RE.lastIndex = closeIdx + opening.quoteStyle.length;
   }
 
   return blocks;
+}
+
+/**
+ * Find the `{...}` interpolation spans inside one block, braces included.
+ * Those spans hold Python, not mcfunction, so a consumer projecting the block
+ * into an mcfunction document must mask them.
+ * Returns [] for a non-f-string block, which has no interpolations by definition.
+ * @param {string} text
+ * @param {{ start:number, end:number }} block  One entry from findBlockOffsets.
+ * @returns {{ start:number, end:number }[]}  Sorted, non-overlapping.
+ */
+function findInterpolationSpans(text, block) {
+  const opening = readOpeningQuote(text, block.start);
+  if (!opening || !opening.isFString) return [];
+
+  const spans = [];
+  const contentEnd = block.end - opening.quoteStyle.length;
+  let i = opening.contentStart;
+
+  while (i < contentEnd) {
+    const c = text[i];
+    if (c === "\\") { i += 2; continue; }
+    if (c !== "{") { i++; continue; }
+    if (text[i + 1] === "{") { i += 2; continue; } // literal {{
+    const after = skipInterpolation(text, i + 1);
+    if (after === -1) break;
+    spans.push({ start: i, end: Math.min(after, contentEnd) });
+    i = after;
+  }
+
+  return spans;
 }
 
 module.exports = {
@@ -200,4 +437,8 @@ module.exports = {
   skipFirstArg,
   readOpeningQuote,
   findBlockOffsets,
+  findBeetWrites,
+  readArgumentName,
+  findAssignedBlocks,
+  findInterpolationSpans,
 };

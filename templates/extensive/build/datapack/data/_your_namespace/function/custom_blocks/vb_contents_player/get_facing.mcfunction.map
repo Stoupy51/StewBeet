@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "get_facing.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/definitions/additions.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA0HI;AAAA;AAAA;AAAA;AAAA"
+}

@@ -1,0 +1,11 @@
+{
+	"version": 3,
+	"file": "place_secondary.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/definitions/additions.py",
+		"src/link.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA8BI;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;ACgD2C;AAC/C;AACA;AACA;AAEoD"
+}

@@ -1,0 +1,2 @@
+def vendored_lines():
+    say written by a vendored library

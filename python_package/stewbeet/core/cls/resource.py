@@ -12,6 +12,7 @@ from typing import Any, Self, cast
 from beet import (
     DataPack,
     DataPackNamespace,
+    Function,
     NamespaceContainer,
     NamespaceFile,
     NamespaceProxy,
@@ -194,9 +195,17 @@ class Resource[FileT: NamespaceFile](str):
         True
         """
         try:
-            return self.proxy[str(self)]
+            file: FileT = self.proxy[str(self)]
         except KeyError:
             raise KeyError(str(self)) from None
+
+        # `.obj.append(...)` is the supported way to extend generated content, and it reaches beet
+        # directly without passing through write_function. Tagging here is what lets the capture
+        # hook know which resource location the write belongs to.
+        if Mem.sniffer_enabled and isinstance(file, Function):
+            from ...plugins import sniffer
+            sniffer.tag(file, str(self))
+        return file
 
     @obj.setter
     def obj(self, value: FileT) -> None:

@@ -9,3 +9,4 @@ scoreboard players set #minute _your_namespace.data 1
 
 execute if score #spam _your_namespace.data matches 1 run say This is a message every minute
 
+## sourceMappingURL=minute.mcfunction.map

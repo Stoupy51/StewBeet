@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "second_5.mcfunction",
+	"sourceRoot": "../../../../../..",
+	"sources": [
+		"src/link.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;;;;;AAuDyC;AAAA"
+}

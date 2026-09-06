@@ -1,0 +1,13 @@
+{
+  "version": 3,
+  "file": "hit.mcfunction",
+  "sourceRoot": "../../../../..",
+  "sources": [
+    "source/combat/hit.ts"
+  ],
+  "sourcesContent": [
+    "// Fictional TypeScript datapack DSL. See ../../../README.md.\nimport {aura, damage, effect, say} from 'sniffer-example-runtime';\n\n/** Everything a hit does to the entity it landed on. */\nexport function hit(): void {\n    say('hit!');\n    damage(4);\n    effect('slowness', 3);\n    aura();\n}"
+  ],
+  "names": [],
+  "mappings": "AAKA;AACA;AACA;AAAA;AACA"
+}

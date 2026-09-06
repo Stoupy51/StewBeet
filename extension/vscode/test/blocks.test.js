@@ -17,7 +17,7 @@ function blockTexts(text) {
   return findBlockOffsets(text).map(({ start, end }) => text.slice(start, end));
 }
 
-// ─── Simple blocks──────────
+// Simple blocks
 
 test("single-line f-string, 2nd arg", () => {
   const text = 'write_function("ns:path", f"say hi")';
@@ -49,7 +49,7 @@ test("unterminated string yields no block", () => {
   assert.deepEqual(blockTexts(text), []);
 });
 
-// ─── Interpolation handling (TODO example 1) ─────────────────────────────────
+// Interpolation handling (TODO example 1)
 
 test("braces in a non-f string are not interpolations", () => {
   const text = 'write_function("a", "say {literal} text")';
@@ -127,7 +127,7 @@ attribute @s minecraft:entity_interaction_range base set 5
   assert.equal(findBlockOffsets(text)[0].end, text.lastIndexOf('"""') + 3);
 });
 
-// ─── Quotes in comments (TODO example 2) ─────────────────────────────────────
+// Quotes in comments (TODO example 2)
 
 test("TODO example 2: quote inside a comment line does not break the block", () => {
   const text = `
@@ -149,7 +149,7 @@ function {ns}:v{version}/zombies/revive/on_down
   assert.equal(findBlockOffsets(text)[0].end, text.lastIndexOf('"""') + 3);
 });
 
-// ─── Unit tests for the low-level scanners ───────────────────────────────────
+// Unit tests for the low-level scanners
 
 test("findClosingQuote: plain single-line string", () => {
   const text = '"hello" rest';
@@ -216,3 +216,99 @@ test("readOpeningQuote: non-string returns null", () => {
   assert.equal(readOpeningQuote("variable", 0), null);
 });
 
+// Commands handed over in a variable
+// A third of a real project is written this way. The lens goes on the call, so every block
+// feeding one call has to name that call rather than whichever string was assigned last.
+
+const VARIABLE_BLOCK = [
+  '\tto_add: str = """',
+  "# Rotate the entity and set scale",
+  "data modify entity @s Rotation[0] set value 180.0f",
+  '"""',
+  '\tto_add += "execute"',
+  '\twrite_function(BlockFunctions("electric_brewing_stand").place_secondary, to_add)',
+].join("\n");
+
+/** 0-based line an offset falls on. @param {string} text @param {number} offset */
+function lineOf(text, offset) {
+  return text.slice(0, offset).split("\n").length - 1;
+}
+
+test("a string assigned to a name a write_* call consumes is a block", () => {
+  const blocks = findBlockOffsets(VARIABLE_BLOCK);
+  assert.equal(blocks.length, 2, "the triple-quoted assignment and the appended one");
+  assert.deepEqual(blocks.map(b => lineOf(VARIABLE_BLOCK, b.start)), [0, 4]);
+});
+
+test("every block of a variable points at the call that consumes it", () => {
+  for (const block of findBlockOffsets(VARIABLE_BLOCK)) {
+    assert.equal(lineOf(VARIABLE_BLOCK, block.callStart), 5,
+      "both blocks feed the write_function on line 5, which is where the lens belongs");
+  }
+});
+
+test("an inline block points at its own call", () => {
+  const text = 'write_function("ns:p", """\nsay hi\n""")';
+  const [block] = findBlockOffsets(text);
+  assert.equal(block.callStart, 0);
+});
+
+test("a string assigned to a name nothing writes is not a block", () => {
+  assert.deepEqual(findBlockOffsets('notes: str = """\nsay hi\n"""\nprint(notes)\n'), []);
+});
+
+test("the content range of a variable block excludes its quotes", () => {
+  const [block] = findBlockOffsets(VARIABLE_BLOCK);
+  const content = VARIABLE_BLOCK.slice(block.contentStart, block.contentEnd);
+  assert.equal(content.includes('"""'), false);
+  assert.equal(content.includes("Rotation[0]"), true);
+});
+
+test("the McFunction annotation does not change what counts as a block", () => {
+  assert.ok(VARIABLE_BLOCK.includes("to_add: str ="), "fixture no longer carries the annotation this rewrites");
+  const annotated = VARIABLE_BLOCK.replace("to_add: str =", "to_add: McFunction =");
+  assert.deepEqual(
+    findBlockOffsets(annotated).map(b => annotated.slice(b.start, b.end)),
+    blockTexts(VARIABLE_BLOCK),
+    "annotating adds the syntax colours and nothing else (FR-023)",
+  );
+});
+
+// A project's own function taking McFunction (FR-022, FR-023)
+
+test("a def with an McFunction parameter makes its calls blocks", () => {
+  const text = 'def write(path: str, cont: McFunction): pass\nwrite("ns:x", "say hi")';
+  assert.deepEqual(blockTexts(text), ['"say hi"']);
+});
+
+test("the annotated parameter decides which argument carries the commands", () => {
+  const first = 'def emit(cont: McFunction): pass\nemit("say first")';
+  assert.deepEqual(blockTexts(first), ['"say first"']);
+  const third = 'def emit(a: int, b: int, cont: McFunction): pass\nemit(1, 2, "say third")';
+  assert.deepEqual(blockTexts(third), ['"say third"']);
+});
+
+test("self does not count as an argument at the call site", () => {
+  const text = 'class A:\n\tdef emit(self, cont: McFunction): pass\na.emit("say method")';
+  assert.deepEqual(blockTexts(text), ['"say method"']);
+});
+
+test("a parameter list carrying a generic is split on the right commas", () => {
+  const text = 'def w(a: dict[str, int], c: McFunction): pass\nw({}, "say nested")';
+  assert.deepEqual(blockTexts(text), ['"say nested"']);
+});
+
+test("a def with no McFunction parameter is not a block source", () => {
+  const text = 'def plain(cont: str): pass\nplain("ordinary string")';
+  assert.deepEqual(blockTexts(text), []);
+});
+
+test("a variable handed to a project function is a block too", () => {
+  const text = 'def emit(cont: McFunction): pass\nbody = "say via variable"\nemit(body)';
+  assert.deepEqual(blockTexts(text), ['"say via variable"']);
+});
+
+test("a project function takes triple-quoted content as well", () => {
+  const text = 'def emit(cont: McFunction): pass\nemit("""\nsay multi\n""")';
+  assert.deepEqual(blockTexts(text), ['"""\nsay multi\n"""']);
+});

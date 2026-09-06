@@ -45,6 +45,7 @@ INTERNAL: tuple[str, ...] = (
 	"stewbeet.dependencies",
 	"stewbeet.plugins",
 	"stewbeet.silent",
+	"stewbeet.telemetry",
 	"stewbeet.utils",
 )
 """ Subtrees addressed by their own import path, so they are not expected in the flat namespace.

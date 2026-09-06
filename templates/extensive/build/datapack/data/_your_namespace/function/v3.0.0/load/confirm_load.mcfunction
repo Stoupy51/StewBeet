@@ -7,6 +7,7 @@
 # Opening manual detection
 scoreboard objectives add _your_namespace.open_manual minecraft.used:minecraft.written_book
 
+
 # Confirm load
 tellraw @a[tag=convention.debug] {translate: "_your_namespace.loaded_extensive_template_v3_0_0", color: "green"}
 scoreboard players set #_your_namespace.loaded load.status 1
@@ -26,3 +27,4 @@ scoreboard players set #7 _your_namespace.data 7
 scoreboard players set #8 _your_namespace.data 8
 scoreboard players set #100 _your_namespace.data 100
 
+## sourceMappingURL=confirm_load.mcfunction.map

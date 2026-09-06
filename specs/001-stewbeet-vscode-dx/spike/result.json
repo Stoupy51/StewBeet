@@ -1,0 +1,66 @@
+{
+  "steps": [
+    "spyglassInstalled = true",
+    "spyglassActive = true",
+    "workspaceFolders = [\"c:\\\\Users\\\\ALEXAN~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\d--advanced-desktop-StewBeet\\\\a1b26c39-278f-440a-bef3-e9436040cb13\\\\scratchpad\\\\q2\\\\ws\"]",
+    "realLanguageId = \"mcfunction\"",
+    "control_realFileCompletions = 83",
+    "control_sample = [\"advancement\",\"attribute\",\"ban\",\"ban-ip\",\"banlist\",\"bossbar\",\"clear\",\"clone\"]",
+    "projectedContent = \"                                \\nexecute as @a run say hi\\nfunction probe:alpha\\n    \\n\"",
+    "virtualLanguageId = \"mcfunction\"",
+    "offsetsIdentical = true",
+    "unshown_virtualCompletions = 83",
+    "unshown_sample = [\"advancement\",\"attribute\",\"ban\",\"ban-ip\",\"banlist\",\"bossbar\",\"clear\",\"clone\"]",
+    "projectSymbolCompletions = 2",
+    "projectSymbolSample = [\"probe:alpha\",\"probe:beta\"]",
+    "offersAlpha = true",
+    "hoverResults = 1",
+    "definitionResults = 1",
+    "definitionTargets = [\"c:\\\\Users\\\\ALEXAN~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\d--advanced-desktop-StewBeet\\\\a1b26c39-278f-440a-bef3-e9436040cb13\\\\scratchpad\\\\q2\\\\ws\\\\data\\\\probe\\\\function\\\\alpha.mcfunction\"]",
+    "VERDICT = \"PASS: virtual documents work unshown\""
+  ],
+  "spyglassInstalled": true,
+  "spyglassActive": true,
+  "workspaceFolders": [
+    "c:\\Users\\ALEXAN~1\\AppData\\Local\\Temp\\claude\\d--advanced-desktop-StewBeet\\a1b26c39-278f-440a-bef3-e9436040cb13\\scratchpad\\q2\\ws"
+  ],
+  "realLanguageId": "mcfunction",
+  "spyglassReadyAfterSeconds": 2,
+  "control_realFileCompletions": 83,
+  "control_sample": [
+    "advancement",
+    "attribute",
+    "ban",
+    "ban-ip",
+    "banlist",
+    "bossbar",
+    "clear",
+    "clone"
+  ],
+  "projectedContent": "                                \nexecute as @a run say hi\nfunction probe:alpha\n    \n",
+  "virtualLanguageId": "mcfunction",
+  "offsetsIdentical": true,
+  "unshown_virtualCompletions": 83,
+  "unshown_sample": [
+    "advancement",
+    "attribute",
+    "ban",
+    "ban-ip",
+    "banlist",
+    "bossbar",
+    "clear",
+    "clone"
+  ],
+  "projectSymbolCompletions": 2,
+  "projectSymbolSample": [
+    "probe:alpha",
+    "probe:beta"
+  ],
+  "offersAlpha": true,
+  "hoverResults": 1,
+  "definitionResults": 1,
+  "definitionTargets": [
+    "c:\\Users\\ALEXAN~1\\AppData\\Local\\Temp\\claude\\d--advanced-desktop-StewBeet\\a1b26c39-278f-440a-bef3-e9436040cb13\\scratchpad\\q2\\ws\\data\\probe\\function\\alpha.mcfunction"
+  ],
+  "VERDICT": "PASS: virtual documents work unshown"
+}

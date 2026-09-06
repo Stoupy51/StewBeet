@@ -11,3 +11,4 @@ execute if score #found furnace_nbt_recipes.data matches 0 store result score #f
 execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input{components: {"minecraft:custom_data": {_your_namespace: {steel_dust: true}}}} run loot replace block ~ ~ ~ container.3 loot _your_namespace:i/steel_ingot
 execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input{components: {"minecraft:custom_data": {_your_namespace: {super_stone: true}}}} run loot replace block ~ ~ ~ container.3 loot _your_namespace:recipes/minecraft/diamond
 
+## sourceMappingURL=blasting_recipes.mcfunction.map

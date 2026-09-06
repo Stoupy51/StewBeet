@@ -16,3 +16,4 @@ scoreboard players add #total_custom_blocks _your_namespace.data 1
 scoreboard players add #total_vanilla_glass _your_namespace.data 1
 scoreboard players add #total_vb_visual_facing _your_namespace.data 1
 
+## sourceMappingURL=place_main.mcfunction.map

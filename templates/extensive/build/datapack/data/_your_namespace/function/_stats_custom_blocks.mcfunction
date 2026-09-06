@@ -26,6 +26,7 @@ scoreboard players add #total_raw_steel_block _your_namespace.data 0
 scoreboard players add #total_deepslate_steel_ore _your_namespace.data 0
 scoreboard players add #total_steel_ore _your_namespace.data 0
 scoreboard players add #total_steel_block _your_namespace.data 0
+
 tellraw @s [[{text:"- ", color: "gold"}, {translate: "_your_namespace.total_steel_block"}, ": "], {score: {name: "#total_steel_block", objective: "_your_namespace.data"}, color: "yellow"}]
 tellraw @s [[{text:"- ", color: "gold"}, {translate: "_your_namespace.total_steel_ore"}, ": "], {score: {name: "#total_steel_ore", objective: "_your_namespace.data"}, color: "yellow"}]
 tellraw @s [[{text:"- ", color: "gold"}, {translate: "_your_namespace.total_deepslate_steel_ore"}, ": "], {score: {name: "#total_deepslate_steel_ore", objective: "_your_namespace.data"}, color: "yellow"}]
@@ -49,3 +50,4 @@ tellraw @s [[{text:"- ", color: "dark_aqua"}, {translate: "_your_namespace.total
 tellraw @s [[{"text":"- ","color":"green"}, {"translate":"_your_namespace.tick_tag_function"}],{"score":{"name":"#tick_entities","objective":"_your_namespace.data"},"color":"dark_green"}]
 tellraw @s [[{"text":"- ","color":"green"}, {"translate":"_your_namespace.second_tag_function"}],{"score":{"name":"#second_entities","objective":"_your_namespace.data"},"color":"dark_green"}]
 
+## sourceMappingURL=_stats_custom_blocks.mcfunction.map

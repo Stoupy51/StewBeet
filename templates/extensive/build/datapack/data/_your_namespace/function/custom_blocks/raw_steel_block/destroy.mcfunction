@@ -13,6 +13,7 @@ execute as @p[distance=..10, gamemode=!spectator] if data entity @s SelectedItem
 # If no item found, summon it
 execute unless entity @n[type=item, nbt={Item: {id: "minecraft:raw_iron_block"}}, distance=..1] run loot spawn ~ ~ ~ loot {pools: [{entries: [{type: "minecraft:item", name: "minecraft:glass"}], rolls: 1}]}
 
+
 # Replace the item with the custom one
 execute as @n[type=item, nbt={Item: {id: "minecraft:raw_iron_block"}}, distance=..1] run function _your_namespace:custom_blocks/raw_steel_block/replace_item
 

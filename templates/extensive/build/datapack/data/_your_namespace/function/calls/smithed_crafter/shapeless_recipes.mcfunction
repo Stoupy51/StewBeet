@@ -18,3 +18,4 @@ execute if score @s smithed.data matches 0 store result score @s smithed.data if
 execute if score @s smithed.data matches 0 store result score @s smithed.data if score count smithed.data matches 2 if data storage smithed.crafter:input {recipe: [{id: "minecraft:item_frame", count: 1}, {id: "minecraft:compass", count: 1}]} run function _your_namespace:calls/smithed_crafter/apply_recipe {command: "loot replace block ~ ~ ~ container.16 loot _your_namespace:i/vb_contents_player"}
 execute if score @s smithed.data matches 0 store result score @s smithed.data if score count smithed.data matches 2 if data storage smithed.crafter:input {recipe: [{id: "minecraft:item_frame", count: 1}, {id: "minecraft:string", count: 1}]} run function _your_namespace:calls/smithed_crafter/apply_recipe {command: "loot replace block ~ ~ ~ container.16 loot _your_namespace:i/vb_contents_frame"}
 
+## sourceMappingURL=shapeless_recipes.mcfunction.map
