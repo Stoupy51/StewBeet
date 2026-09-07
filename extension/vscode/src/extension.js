@@ -182,11 +182,40 @@ function registerBoltDetection(context) {
     if (foreign.length === 0 || offered) return;
 
     offered = true;
+    const name = path.basename(uri.fsPath);
     const choice = await vscode.window.showInformationMessage(
-      `${path.basename(uri.fsPath)} holds bolt, which Spyglass cannot parse. Add it to this project's Spyglass exclusions?`,
-      "Add exclusion", "Not now",
+      `${name} holds bolt, which Spyglass cannot parse, so it reports the whole file. ` +
+      "Excluding it from Spyglass is the one supported way to stop that.",
+      "Add exclusion", "Or move it to .bolt", "Not now",
     );
     if (choice === "Add exclusion") await excludeSwitchedFiles();
+    if (choice === "Or move it to .bolt") await explainConversion(name);
+  }
+
+  /**
+   * Why the tidier fix is not a button.
+   *
+   * Moving the file to `data/<ns>/module/<name>.bolt` looks like the obvious answer and is not a
+   * move: a module runs its own statements and defines no function, so the commands that were the
+   * body of `<ns>:<name>` stop being written and the pack silently loses them. Keeping them means
+   * wrapping the body in a `function` block, which is an edit only the author can make.
+   * @param {string} name
+   */
+  async function explainConversion(name) {
+    const target = name.replace(/\.mcfunction$/, ".bolt");
+    await vscode.window.showInformationMessage(
+      `Moving ${name} to a module is not just a rename: a .bolt module defines no function on its own, ` +
+      `so the pack would lose what ${name} writes today.`,
+      { modal: true, detail:
+        `To convert it by hand:\n\n` +
+        `1. Move it to data/<namespace>/module/${target}\n` +
+        `2. Wrap its commands in a block, so they are written somewhere:\n\n` +
+        `       function <namespace>:${name.replace(/\.mcfunction$/, "")}:\n` +
+        `           <the commands that were at the top level>\n\n` +
+        `3. Make sure "bolt" is in your beet require list, and that meta.bolt.entrypoint reaches ` +
+        `the module if it needs to run on its own.\n\n` +
+        `Until then, the exclusion keeps Spyglass quiet and changes nothing about the build.` },
+    );
   }
 
   /** Write every switched file into its project's Spyglass config. */
@@ -305,8 +334,9 @@ function drop() {
  * @param {{ file: string, line: number, column: number }} [origin]
  */
 async function goToSource(origin) {
-  if (origin) {
-    await reveal(vscode.Uri.file(origin.file), origin.line, origin.column);
+  const given = asList(origin);
+  if (given.length > 0) {
+    await revealAll(given);
     return;
   }
 
@@ -328,8 +358,9 @@ async function goToSource(origin) {
  * @param {{ file: string, line: number }} [target]
  */
 async function goToGenerated(target) {
-  if (target) {
-    await reveal(vscode.Uri.file(target.file), target.line, 0);
+  const given = asList(target);
+  if (given.length > 0) {
+    await revealAll(given);
     return;
   }
 
@@ -337,12 +368,47 @@ async function goToGenerated(target) {
   if (!editor || editor.document.languageId !== "python") return;
 
   const maps = await navigation.findMaps();
-  const [found] = sourcemap.generatedFrom(maps, editor.document.uri.fsPath, editor.selection.active.line);
-  if (!found) {
+  const found = sourcemap.generatedFrom(maps, editor.document.uri.fsPath, editor.selection.active.line);
+  if (found.length === 0) {
     vscode.window.setStatusBarMessage("StewBeet: this line generated nothing in the current build", 3000);
     return;
   }
-  await reveal(vscode.Uri.file(found.file), found.line, 0);
+  await revealAll(found);
+}
+
+/** One or many, from a lens argument or a lookup. @param {any} value @returns {{ file: string, line: number, column?: number }[]} */
+function asList(value) {
+  if (Array.isArray(value)) return value;
+  return value ? [value] : [];
+}
+
+/**
+ * Open one location, or offer all of them when a line crossed the boundary more than once.
+ *
+ * A `write_function` in a loop writes several functions from one line, and a generated function
+ * assembled from several declarations has several origins. Opening the first silently loses the
+ * rest, so the peek list VS Code uses for references is shown instead, which is where a reader
+ * already looks for "there is more than one of these".
+ *
+ * @param {{ file: string, line: number, column?: number }[]} locations
+ */
+async function revealAll(locations) {
+  if (locations.length === 1) {
+    const [only] = locations;
+    await reveal(vscode.Uri.file(only.file), only.line, only.column ?? 0);
+    return;
+  }
+
+  const editor = vscode.window.activeTextEditor;
+  const targets = locations.map(l => new vscode.Location(
+    vscode.Uri.file(l.file), new vscode.Position(l.line, l.column ?? 0)));
+
+  if (!editor) {
+    await reveal(vscode.Uri.file(locations[0].file), locations[0].line, locations[0].column ?? 0);
+    return;
+  }
+  await vscode.commands.executeCommand(
+    "editor.action.showReferences", editor.document.uri, editor.selection.active, targets);
 }
 
 /** @param {vscode.Uri} uri @param {number} line @param {number} column */

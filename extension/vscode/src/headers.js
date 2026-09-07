@@ -133,9 +133,9 @@ const headerLensProvider = {
     const extra = origins.length > 1 ? ` (+${origins.length - 1} more)` : "";
     return [new vscode.CodeLens(new vscode.Range(0, 0, 0, 0), {
       title: `$(go-to-file) ${path.basename(origin.file)}:${origin.line + 1}${extra}`,
-      tooltip: origin.file,
+      tooltip: origins.map(o => `${o.file}:${o.line + 1}`).join("\n"),
       command: "stewbeet.goToSource",
-      arguments: [origin],
+      arguments: [origins],
     })];
   },
 };

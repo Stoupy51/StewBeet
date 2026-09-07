@@ -16,7 +16,7 @@
 // back is translated with the table the projection returns.
 
 const vscode = require("vscode");
-const { findBlockOffsets, findInterpolationSpans } = require("./blocks");
+const { findBlockOffsets, findInterpolationSpans, findEscapedBraces } = require("./blocks");
 const {
   SCHEME, project, toVirtual, toPython, explainedByMask, crossesSubstitution,
   virtualPath, blockIndexFromPath,
@@ -129,8 +129,11 @@ async function projectionFor(doc, blockIndex) {
   const text = doc.getText();
   const { text: projected, table, masked } = project(
     text, block.contentStart, block.contentEnd,
-    findInterpolationSpans(text, block), await generatedFor(doc, block));
-  const entry = { version: doc.version, text: projected, table, masked };
+    findInterpolationSpans(text, block), await generatedFor(doc, block), findEscapedBraces(text, block));
+  const entry = {
+    version: doc.version, text: projected, table, masked,
+    contentStart: doc.positionAt(block.contentStart), contentEnd: doc.positionAt(block.contentEnd),
+  };
   projections.set(key, entry);
   return entry;
 }
@@ -488,10 +491,27 @@ async function pythonDiagnosticsFor(doc, { wake: waking }) {
       .map(({ uri, projection }) => wake(uri, projection.text)));
   }
 
+  /**
+   * Whether a position sits in the padding rather than in the block's own commands.
+   *
+   * Everything outside the block becomes a space, and a datapack parser reads the run of spaces
+   * after a command as an argument that never arrived: an inline `write_function(..., "say hi")`
+   * earns an "expected a space" on the `""")` that closed it. Spyglass says the same about a real
+   * file whose command has trailing whitespace, so this is its own view of the padding rather than
+   * anything about the author's line, and nothing outside the block is theirs to answer for.
+   *
+   * @param {vscode.Position} position
+   * @param {{ contentStart: vscode.Position, contentEnd: vscode.Position }} projection
+   */
+  function outsideBlock(position, projection) {
+    return position.isBefore(projection.contentStart) || !position.isBefore(projection.contentEnd);
+  }
+
   const moved = [];
   for (const { uri, projection } of projected) {
     for (const diagnostic of vscode.languages.getDiagnostics(uri)) {
       if (explainedByMask(diagnostic.range.start, projection.masked)) continue;
+      if (outsideBlock(diagnostic.range.start, projection)) continue;
       const start = toPython(diagnostic.range.start, projection.table);
       const end = toPython(diagnostic.range.end, projection.table);
       const copy = new vscode.Diagnostic(

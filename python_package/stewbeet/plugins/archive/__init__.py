@@ -105,6 +105,13 @@ def beet_default(ctx: Context) -> None:
 	Mem.ctx = ctx
 	assert Mem.ctx.output_directory, "Output directory must be specified in the project configuration."
 
+	# Source maps have to be in the pack before it is zipped, and this is the last moment they can
+	# be. Flushing here is what lets a project ask for maps with one `require` line instead of also
+	# placing `stewbeet.plugins.sniffer.emit` by hand, and it costs nothing when capture is off.
+	if Mem.sniffer_enabled:
+		from ..sniffer.emit import write_maps
+		write_maps(ctx)
+
 	# Ensure output directory exists
 	os.makedirs(Mem.ctx.output_directory, exist_ok=True)
 

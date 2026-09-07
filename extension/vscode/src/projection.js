@@ -34,17 +34,21 @@ const MASK = "_";
  * @param {number} end  Offset just past the block's closing quote.
  * @param {{ start:number, end:number }[]} [interpolationSpans]  Sorted, from findInterpolationSpans.
  * @param {Map<number, string> | null} [generatedLines]  Generated text per 0-based document line.
+ * @param {number[]} [escapedBraces]  Offsets of the redundant brace of each `{{` and `}}`, from
+ *   findEscapedBraces. Each becomes a space, so `{{"a":1}}` reaches the parser as the compound
+ *   `{ "a":1 }` it stands for, at the same offsets.
  * @returns {{ text: string, table: Map<number, { start:number, pythonWidth:number, virtualWidth:number }[]>, masked: Map<number, { start:number, end:number }[]> }}
  *   `masked` holds, per line, the virtual columns still covered by a `MASK` run. Nothing a
  *   parser says about those columns is about the author's text, so a consumer reporting
  *   diagnostics must ignore them.
  */
-function project(text, start, end, interpolationSpans = [], generatedLines = null) {
+function project(text, start, end, interpolationSpans = [], generatedLines = null, escapedBraces = []) {
   /** @type {Map<number, { start:number, pythonWidth:number, virtualWidth:number }[]>} */
   const table = new Map();
   /** @type {Map<number, { start:number, end:number }[]>} */
   const masked = new Map();
   const pieces = text.split("\n");
+  const escaped = new Set(escapedBraces);
   const projected = [];
   let lineStart = 0;
   let spanIdx = 0;
@@ -61,7 +65,7 @@ function project(text, start, end, interpolationSpans = [], generatedLines = nul
       touching.push(interpolationSpans[k]);
     }
 
-    const maskedLine = maskLine(body, lineStart, start, end, touching);
+    const maskedLine = maskLine(body, lineStart, start, end, touching, escaped);
     const present = clipToLine(touching, lineStart, lineEnd, start, end);
     const substituted = present.length === 0 ? maskedLine : substitute(
       maskedLine, generatedLines ? generatedLines.get(line) : undefined,
@@ -82,11 +86,12 @@ function project(text, start, end, interpolationSpans = [], generatedLines = nul
  * @param {number} end
  * @param {{ start:number, end:number }[]} spans  Only those touching this line.
  */
-function maskLine(body, lineStart, start, end, spans) {
+function maskLine(body, lineStart, start, end, spans, escaped = new Set()) {
   let out = "";
   for (let i = 0; i < body.length; i++) {
     const offset = lineStart + i;
     if (offset < start || offset >= end) { out += " "; continue; }
+    if (escaped.has(offset)) { out += " "; continue; }
     out += spans.some(s => offset >= s.start && offset < s.end) ? MASK : body[i];
   }
   return out;

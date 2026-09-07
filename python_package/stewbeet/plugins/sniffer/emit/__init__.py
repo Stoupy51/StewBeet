@@ -15,9 +15,9 @@ __lazy_modules__ = ALWAYS_LAZY
 import stouputils as stp
 from beet import Context
 
-from ...core.__memory__ import Mem
-from .align import align
-from .sidecar import write_sidecar
+from ....core.__memory__ import Mem
+from ..align import align
+from ..sidecar import write_sidecar
 
 
 # Functions

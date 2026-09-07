@@ -257,3 +257,48 @@ test("a list of commands with a trailing comma closes too", async t => {
     "a list written across lines must still close, or the rest of the file is one string");
   assert.equal(lines.flat().filter(t => t.text === "say" && t.scopes.includes(COMMAND)).length, 2);
 });
+
+// Doubled braces, which an f-string uses to write a literal brace
+
+test("a doubled brace reaches the parser as the single brace it stands for", () => {
+  const { findEscapedBraces } = require("../src/blocks");
+  const { project } = require("../src/projection");
+
+  // machines.py writes NBT this way throughout, and the parser was handed `{{` and reported a
+  // missing key at the first quote after it.
+  const source = 'write_function(funcs.tick, f"""\ndata modify entity @s a append value {{"Slot":{n}b,"mode":"input"}}\n""")';
+  const [block] = findBlockOffsets(source);
+  const { text } = project(source, block.contentStart, block.contentEnd,
+    findInterpolationSpans(source, block), null, findEscapedBraces(source, block));
+
+  const line = text.split("\n")[1];
+  assert.ok(line.includes('{ "Slot"'), `the opening pair should read as one brace, got ${JSON.stringify(line)}`);
+  assert.ok(line.includes('"input" }'), `and so should the closing pair, got ${JSON.stringify(line)}`);
+  assert.equal(text.length, source.length, "blanking one brace of a pair keeps every offset");
+});
+
+test("a plain string's doubled braces are left alone", () => {
+  const { findEscapedBraces } = require("../src/blocks");
+  const source = 'write_function(funcs.tick, """data modify entity @s a append value {{"Slot":0b}}""")';
+  const [block] = findBlockOffsets(source);
+  assert.deepEqual(findEscapedBraces(source, block), [],
+    "without an f prefix those really are two braces, and thinning them would corrupt the command");
+});
+
+test("braces inside an interpolation are not read as escapes", () => {
+  const { findEscapedBraces } = require("../src/blocks");
+  const source = 'write_function(funcs.tick, f"""say {json.dumps({"a": 1})}""")';
+  const [block] = findBlockOffsets(source);
+  assert.deepEqual(findEscapedBraces(source, block), [],
+    "the braces belong to the Python being interpolated, which the mask covers already");
+});
+
+test("nested doubled braces each lose one half", () => {
+  const { findEscapedBraces } = require("../src/blocks");
+  const { project } = require("../src/projection");
+  const source = 'write_function(funcs.tick, f"""say {{a:{{b:1}}}}""")';
+  const [block] = findBlockOffsets(source);
+  const { text } = project(source, block.contentStart, block.contentEnd,
+    findInterpolationSpans(source, block), null, findEscapedBraces(source, block));
+  assert.ok(text.includes("say { a:{ b:1 } }"), JSON.stringify(text));
+});
