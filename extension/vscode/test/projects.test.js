@@ -122,6 +122,37 @@ test("remaining.py:40 write_tick_file is a first-argument helper too", () => {
   assert.equal(findBlockOffsets(source).length, 1);
 });
 
+test("pulverizer.py:106 a function joined out of a list appended to in a loop", () => {
+  const source = [
+    "\tprogressions_gui: list[str] = []",
+    "\tfor i, progression in enumerate(progressions_cmd):",
+    "\t\tif i == 0:",
+    '\t\t\tprogressions_gui.append(f"$execute if score #progression {ns}.data matches ..0 run item replace block ~ ~ ~ container.$(slot) with {CUSTOM_ITEM_VANILLA}")',
+    "\t\telse:",
+    '\t\t\tprogressions_gui.append(f"$execute if score #progression {ns}.data matches {gui_min}.. run item replace block ~ ~ ~ container.$(slot) with {CUSTOM_ITEM_VANILLA}")',
+    '\twrite_function(funcs["gui_progression"], "\\n".join(progressions_gui))',
+  ].join("\n");
+
+  const contents = contentsOf(source);
+  assert.equal(contents.length, 2, `both appended commands, got ${JSON.stringify(contents)}`);
+  assert.ok(contents.every(c => c.startsWith("$execute if score #progression")), contents.join(" | "));
+  assert.ok(!contents.some(c => c === "\\n"), "the join separator is not one of the commands");
+});
+
+test("ultimate_dragon.py:170 a list literal joined inside the call itself", () => {
+  const source = [
+    'write_function(f"{ns}:mobs/ultimate_dragon/summon_end_crystals", "\\n".join([',
+    '\tf"execute in {ns}:ultimate run summon minecraft:end_crystal {coords}"',
+    "\tfor coords in [",
+    '\t\t"12 76 -40", "33 103 -25"',
+    "\t]",
+    "]))",
+  ].join("\n");
+
+  assert.deepEqual(contentsOf(source), ["execute in {ns}:ultimate run summon minecraft:end_crystal {coords}"],
+    "the comprehension's element is the command; the coordinates it loops over and the separator are not");
+});
+
 test("remaining.py:45 a version name that looks like a path is still a version name", () => {
   const source = 'write_versioned_function("tick_2", f"""\nexecute as @a[tag=!global.ignore.gui] at @s run function {ns}:utils/passive_offhand\n""")';
   const [content] = contentsOf(source);
@@ -224,3 +255,4 @@ test("a command inside a block is coloured somewhere in every file that has one"
   assert.deepEqual(silent, [],
     "these files hold blocks the finder sees and the grammar colours nothing in, so the two disagree");
 });
+
