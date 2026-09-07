@@ -22,6 +22,7 @@ import stouputils as stp
 from beet import Context, DataPack, ProjectCache, ResourcePack
 from stouputils.ctx import Muffle
 
+from ...core.utils.libs import lib_archives
 from ...dependencies.download_manager import get_lib_paths
 from ..archive import ConstantTimeZipFile, get_consistent_timestamp
 from ..initialize.project_images import find_pack_png
@@ -56,15 +57,12 @@ def gather_packs(ctx: Context, pack_type: str) -> list[str]:
 
 	Returns absolute paths, main pack last (so it overwrites pack format).
 	"""
-	stewbeet_config = ctx.meta.get("stewbeet", {})
-	libs_folder = stewbeet_config.get("libs_folder", "libs")
 	project_name_simple = ctx.project_name.replace(" ", "")
 
 	to_merge: list[str] = [
-		str(Path(str(ctx.output_directory)) / f"{project_name_simple}_{pack_type}.zip")
+		str(Path(str(ctx.output_directory)) / f"{project_name_simple}_{pack_type}.zip"),
+		*lib_archives(ctx, pack_type),
 	]
-	if libs_folder and os.path.exists(libs_folder):
-		to_merge.append(f"{libs_folder}/{pack_type}/*.zip")
 
 	# Add the used official libs (downloaded dynamically)
 	for dl in get_lib_paths(ctx):

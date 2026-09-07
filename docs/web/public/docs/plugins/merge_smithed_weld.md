@@ -49,6 +49,18 @@ pipeline:
 meta:
   stewbeet:
     libs_folder: "libs"  # Optional: custom libraries folder
+    libs_exclude_patterns: []  # Optional: library archives to leave out entirely
+```
+
+### Leaving a Library Out
+`libs_exclude_patterns` filters the archives found in `libs_folder`, matched against their path
+relative to that folder. An excluded archive is invisible to the whole build: it is neither welded
+nor copied to a destination, so a module can toggle an optional pack from its own config.
+
+```yaml
+meta:
+  stewbeet:
+    libs_exclude_patterns: ["resource_pack/*ARAM*.zip"]
 ```
 
 ### Choosing Which Packs Get Merged
@@ -84,6 +96,7 @@ pipeline:
 | `output` | string | **Required** | Directory containing base archives and destination for merged archives |
 | `name` | string | **Required** | Project name used for archive naming |
 | `libs_folder` | string | `"libs"` | Folder containing custom library archives (datapack/*.zip, resource_pack/*.zip) |
+| `libs_exclude_patterns` | list[string] | `[]` | Glob patterns, relative to `libs_folder`, of archives to leave out of the build |
 | Archive Naming | automatic | `{project}_with_libs.zip` | Naming pattern for merged archive outputs |
 | Pack Type Selection | pipeline entry | both | Use the `.datapack` / `.resource_pack` entry points to merge only that pack type |
 

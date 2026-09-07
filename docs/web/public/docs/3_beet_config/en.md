@@ -297,6 +297,7 @@ stewbeet:
     sounds_folder: "assets/sounds"
     records_folder: "assets/records"
     libs_folder: "libs"
+    libs_exclude_patterns: []
 ```
 
 #### Build Copy Destinations
