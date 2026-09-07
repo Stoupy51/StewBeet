@@ -406,6 +406,9 @@ meta:
     # Répertoire contenant les bibliothèques qui seront copiées vers la destination de build, et fusionnées avec Smithed Weld si activé.
     libs_folder: "libs"
 
+    # Optionnel : motifs glob (relatifs à libs_folder) des archives de bibliothèque à exclure du build
+    libs_exclude_patterns: []
+
     # Liste optionnelle de chemins de destination où les fichiers générés seront copiés
     build_copy_destinations:
       datapack: ["C:/Users/VotreNom/AppData/Roaming/.minecraft/saves/NomDuMonde/datapacks"]

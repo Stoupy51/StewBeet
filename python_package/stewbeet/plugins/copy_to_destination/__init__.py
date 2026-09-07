@@ -14,6 +14,7 @@ from dataclasses import dataclass, field
 import stouputils as stp
 from beet import Context
 
+from ...core.utils.libs import lib_archives
 from ...dependencies.download_manager import get_lib_paths
 from .sftp import SftpPool, is_sftp_path, remote_path_of
 
@@ -73,12 +74,11 @@ def beet_default(ctx: Context) -> None:
 		return
 	project_name_simple = ctx.project_name.replace(" ", "")
 	output_path: str = str(ctx.output_directory)
-	libs_folder: str = str(stewbeet_config.get("libs_folder", "libs"))
 
 	# Gather every copy up front so they can all run concurrently
 	tasks: list[CopyTask] = []
 	if datapack_destinations:
-		tasks += _datapack_tasks(output_path, project_name_simple, libs_folder, datapack_destinations)
+		tasks += _datapack_tasks(ctx, output_path, project_name_simple, datapack_destinations)
 		tasks += _official_lib_tasks(ctx, datapack_destinations)
 	if resource_pack_destinations:
 		tasks += _resource_pack_tasks(output_path, project_name_simple, resource_pack_destinations)
@@ -98,13 +98,12 @@ def beet_default(ctx: Context) -> None:
 		stp.debug(f"Skipped {report.skipped} remote file(s) already up to date")
 
 
-def _datapack_tasks(output_path: str, project_name_simple: str, libs_folder: str, destinations: list[str]) -> list[CopyTask]:
+def _datapack_tasks(ctx: Context, output_path: str, project_name_simple: str, destinations: list[str]) -> list[CopyTask]:
 	""" Build the copy tasks for the main datapack and every library datapack.
 
 	Args:
 		output_path (str): The output directory path.
 		project_name_simple (str): The simplified project name.
-		libs_folder (str): The folder containing library files.
 		destinations (list[str]): List of destination paths for datapacks.
 	Returns:
 		list[CopyTask]: One task per (file, destination) pair.
@@ -117,12 +116,9 @@ def _datapack_tasks(output_path: str, project_name_simple: str, libs_folder: str
 			tasks.append(CopyTask(main_datapack, f"{dest}/{os.path.basename(main_datapack)}", "datapacks"))
 
 	# Copy all library datapacks
-	libs_datapack_path: str = f"{libs_folder}/datapack"
-	if libs_folder and os.path.exists(libs_datapack_path):
-		for lib_zip in os.listdir(libs_datapack_path):
-			if lib_zip.endswith(".zip"):
-				for dest in destinations:
-					tasks.append(CopyTask(f"{libs_datapack_path}/{lib_zip}", f"{dest}/{lib_zip}", "datapacks"))
+	for lib_zip in lib_archives(ctx, "datapack"):
+		for dest in destinations:
+			tasks.append(CopyTask(lib_zip, f"{dest}/{os.path.basename(lib_zip)}", "datapacks"))
 	return tasks
 
 
