@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.10.0
+
+- **A doubled brace is understood.** `f"...{{\"Slot\":0b}}"` is the NBT `{"Slot":0b}`, and the parser was handed the doubled form and reported a missing key at the first quote. One brace of each pair now reaches it as a space, so the compound reads correctly and every offset stays put.
+- **An inline block no longer errors on the quotes that close it.** `write_function(path, """tellraw @a {...}""")` earned an "expected a space" on the trailing `""")`. Spyglass says the same about a real file whose command has trailing whitespace, so the complaint is about the padding around a block rather than the block, and it is no longer relayed.
+- **A lens leads to everything a line produced, not just the first.** A `write_function` in a loop writes one function per iteration, and a generated function assembled from several declarations has several origins. Both now open the peek list VS Code uses for references, and the lens says how many there are.
+- **A declaration gets a lens too.** `Block(id=...)` writes no commands of its own, so it had nothing to hang one on, while the functions a plugin generates on its behalf map straight back to it. That line now links to all of them.
+- **`.obj.append(...)` is a block.** `Block.from_id("x").functions.place_secondary.obj.append("say hi")` reaches beet without a helper, which the build already recorded and the editor did not colour.
+
 ## 1.9.0
 
 - **beet's own way of writing a function is recognised.** `ctx.data.functions[path] = Function(...)` had no colours, no completion and no lens, whichever of the three spellings you used, and neither did an `.append(...)` onto one. All of them now behave like a `write_*` call, including a list of lines, where each entry is its own command. A bare `Function(...)` that is not being given a path is still left alone.

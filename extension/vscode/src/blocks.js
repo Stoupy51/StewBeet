@@ -43,6 +43,12 @@ const ASSIGN_FUNCTION_RE = /(?:\.functions|\[\s*Function\s*\])\s*\[[^\]\n]*\]\s*
 /** An append onto a function already in the pack, ex: `ctx.data.functions[p].append("say hi")`. */
 const APPEND_FUNCTION_RE = /(?:\.functions|\[\s*Function\s*\])\s*\[[^\]\n]*\]\s*\.\s*(?:append|prepend)\s*\(/g;
 
+/** An append through a StewBeet resource's own beet file, ex:
+ *  `Block.from_id("x").functions.place_secondary.obj.append("say hi")`.
+ *  `.obj` is the beet object behind a resource, so what follows reaches beet with no helper in
+ *  between, which is why the Python side records it and this side has to see it too. */
+const APPEND_OBJ_RE = /\.\s*obj\s*\.\s*(?:append|prepend)\s*\(/g;
+
 /** A `def`, with its parameter list, so a project's own wrappers can be found. */
 const DEF_RE = /\bdef\s+([A-Za-z_]\w*)\s*\(([^)]*)\)/g;
 
@@ -283,7 +289,7 @@ function mcfunctionWrappers(text) {
 function findBeetWrites(text) {
   const blocks = [];
 
-  for (const pattern of [ASSIGN_FUNCTION_RE, APPEND_FUNCTION_RE]) {
+  for (const pattern of [ASSIGN_FUNCTION_RE, APPEND_FUNCTION_RE, APPEND_OBJ_RE]) {
     pattern.lastIndex = 0;
     let m;
     while ((m = pattern.exec(text)) !== null) {
@@ -398,6 +404,47 @@ function findAssignedBlocks(text, names) {
 }
 
 /**
+ * Offsets of the redundant brace in every `{{` and `}}` escape inside one block.
+ *
+ * An f-string writes a literal brace by doubling it, so `{{"Slot":0b}}` is the NBT `{"Slot":0b}`
+ * and a datapack parser handed the doubled form reports a missing key. Blanking one brace of each
+ * pair leaves `{ "Slot":0b }`, which is the same compound and the same number of characters, so
+ * the projection stays offset for offset with the Python.
+ *
+ * The opening pair blanks its second brace and the closing pair its first, which keeps each
+ * remaining brace where the command's own brace really is.
+ *
+ * Returns [] for a non-f-string block, where `{{` is genuinely two braces.
+ * @param {string} text
+ * @param {{ start:number, end:number }} block  One entry from findBlockOffsets.
+ * @returns {number[]}  Sorted offsets, each of one character to blank.
+ */
+function findEscapedBraces(text, block) {
+  const opening = readOpeningQuote(text, block.start);
+  if (!opening || !opening.isFString) return [];
+
+  const found = [];
+  const contentEnd = block.end - opening.quoteStyle.length;
+  let i = opening.contentStart;
+
+  while (i < contentEnd - 1) {
+    const c = text[i];
+    if (c === "\\") { i += 2; continue; }
+    if (c === "{" && text[i + 1] === "{") { found.push(i + 1); i += 2; continue; }
+    if (c === "}" && text[i + 1] === "}") { found.push(i); i += 2; continue; }
+    if (c === "{") {
+      // A real interpolation, whose Python may hold braces of its own.
+      const after = skipInterpolation(text, i + 1);
+      if (after === -1) break;
+      i = after;
+      continue;
+    }
+    i++;
+  }
+  return found;
+}
+
+/**
  * Find the `{...}` interpolation spans inside one block, braces included.
  * Those spans hold Python, not mcfunction, so a consumer projecting the block
  * into an mcfunction document must mask them.
@@ -441,4 +488,5 @@ module.exports = {
   readArgumentName,
   findAssignedBlocks,
   findInterpolationSpans,
+  findEscapedBraces,
 };

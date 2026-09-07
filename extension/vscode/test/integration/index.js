@@ -370,6 +370,39 @@ exports.run = async () => {
     // Leave the fixture as it was found: the exclusion is this test's own output.
     try { fs.unlinkSync(rcPath); } catch { /* the command may not have needed to write */ }
 
+    // Two shapes reported from real projects. Both are notes rather than assertions: what they
+    // record is what Spyglass says about lines the projection hands it unchanged.
+    const onLine = (line) => (vscode.languages.getDiagnostics(py.uri) || [])
+      .filter(d => d.range.start.line === line)
+      .map(d => `${d.range.start.character}-${d.range.end.character}: ${String(d.message).slice(0, 60)}`);
+    // An inline block's closing `""")` is padding, not the author's command, and a datapack
+    // parser reading the run of spaces it becomes asks for an argument that never arrived.
+    note("oneline_tellraw", onLine(23));
+    expect("US9 an inline block raises nothing on the quotes that close it", onLine(23).length === 0, onLine(23));
+
+    // Spyglass is right about these: `render` and `height` are StewBeet's own text-render keys and
+    // nothing has told it they exist. Recorded rather than asserted, since fixing it means teaching
+    // Spyglass the schema rather than changing anything here.
+    note("renders_tellraw", onLine(25));
+
+    // Which of the two, leading mask or trailing mask, Spyglass objects to. Real .mcfunction
+    // files, so the projection is not in the picture at all.
+    // Why that filter is right rather than a workaround: Spyglass says the same about a real file
+    // whose command has trailing whitespace, so the complaint is about the padding and not about
+    // anything the author wrote.
+    for (const probe of ["clean", "trail"]) {
+      await openWithRetry(vscode.Uri.file(path.join(root, "data", "probe", "function", `${probe}.mcfunction`)));
+    }
+    await sleep(4000);
+    const diagnosticsOf = (probe) => (vscode.languages.getDiagnostics(
+      vscode.Uri.file(path.join(root, "data", "probe", "function", `${probe}.mcfunction`))) || [])
+      .map(d => `${d.range.start.character}: ${String(d.message).slice(0, 40)}`);
+    note("probe_clean", diagnosticsOf("clean"));
+    note("probe_trail", diagnosticsOf("trail"));
+    expect("US9 a real file with trailing whitespace is what the filter is for",
+      diagnosticsOf("clean").length === 0 && diagnosticsOf("trail").length > 0,
+      { clean: diagnosticsOf("clean"), trail: diagnosticsOf("trail") });
+
     // The settings gate.
     const cfg = vscode.workspace.getConfiguration("StewBeet");
     await cfg.update("languageFeatures", false, vscode.ConfigurationTarget.Workspace);

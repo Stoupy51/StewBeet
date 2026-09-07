@@ -46,27 +46,37 @@ function docOf(text) {
 }
 
 test("a block whose call line was recorded uses that line", () => {
-  const origins = new Map([[7, { file: "/gen/a.mcfunction", line: 0 }]]);
+  const origins = new Map([[7, [{ file: "/gen/a.mcfunction", line: 0 }]]]);
   const found = targetOfBlock(origins, docOf("x\n".repeat(20)), { start: 0, end: 4 }, 7);
-  assert.equal(found?.file, "/gen/a.mcfunction", "the call line is where the map records a variable write");
+  assert.equal(found?.[0].file, "/gen/a.mcfunction", "the call line is where the map records a variable write");
+});
+
+test("a line that produced several functions answers with all of them", () => {
+  // A `write_function` inside a loop, which is how machines.py writes one function per fuel type.
+  const origins = new Map([[7, [
+    { file: "/gen/consume_dust.mcfunction", line: 0 },
+    { file: "/gen/consume_block.mcfunction", line: 0 },
+  ]]]);
+  const found = targetOfBlock(origins, docOf("x\n".repeat(20)), { start: 0, end: 4 }, 7);
+  assert.equal(found?.length, 2, "opening only the first is what loses the other");
 });
 
 test("a block written inline is found through its own lines", () => {
   // Nothing on the call line 0, but line 2 is inside the block and was recorded.
-  const origins = new Map([[2, { file: "/gen/b.mcfunction", line: 5 }]]);
+  const origins = new Map([[2, [{ file: "/gen/b.mcfunction", line: 5 }]]]);
   const text = "call(\nsay a\nsay b\n)\n";
   const found = targetOfBlock(origins, docOf(text), { start: 0, end: text.length - 1 }, 0);
-  assert.equal(found?.file, "/gen/b.mcfunction");
+  assert.equal(found?.[0].file, "/gen/b.mcfunction");
 });
 
 test("the call line wins over a line inside the block", () => {
   const origins = new Map([
-    [0, { file: "/gen/call.mcfunction", line: 0 }],
-    [2, { file: "/gen/inside.mcfunction", line: 0 }],
+    [0, [{ file: "/gen/call.mcfunction", line: 0 }]],
+    [2, [{ file: "/gen/inside.mcfunction", line: 0 }]],
   ]);
   const text = "call(\nsay a\nsay b\n)\n";
   const found = targetOfBlock(origins, docOf(text), { start: 0, end: text.length - 1 }, 0);
-  assert.equal(found?.file, "/gen/call.mcfunction");
+  assert.equal(found?.[0].file, "/gen/call.mcfunction");
 });
 
 test("a block that produced nothing gets no target", () => {
@@ -79,18 +89,18 @@ test("a block that produced nothing gets no target", () => {
 
 test("anchors are sorted by line whatever order the map is read in", () => {
   const origins = new Map([
-    [9, { file: "/gen/c.mcfunction", line: 0 }],
-    [1, { file: "/gen/a.mcfunction", line: 0 }],
-    [5, { file: "/gen/b.mcfunction", line: 0 }],
+    [9, [{ file: "/gen/c.mcfunction", line: 0 }]],
+    [1, [{ file: "/gen/a.mcfunction", line: 0 }]],
+    [5, [{ file: "/gen/b.mcfunction", line: 0 }]],
   ]);
   assert.deepEqual(lensAnchors(origins).map(a => a.line), [1, 5, 9]);
 });
 
 test("the earliest line wins for a target, whatever order it is seen in", () => {
   const origins = new Map([
-    [9, { file: "/gen/a.mcfunction", line: 3 }],
-    [2, { file: "/gen/a.mcfunction", line: 0 }],
-    [5, { file: "/gen/a.mcfunction", line: 1 }],
+    [9, [{ file: "/gen/a.mcfunction", line: 3 }]],
+    [2, [{ file: "/gen/a.mcfunction", line: 0 }]],
+    [5, [{ file: "/gen/a.mcfunction", line: 1 }]],
   ]);
   const anchors = lensAnchors(origins);
   assert.equal(anchors.length, 1);
@@ -99,4 +109,20 @@ test("the earliest line wins for a target, whatever order it is seen in", () => 
 
 test("no origins means no anchors", () => {
   assert.deepEqual(lensAnchors(new Map()), []);
+});
+
+// A declaration writes no commands of its own, and still causes functions
+
+test("a line with origins but no block is anchored on its own", () => {
+  // `Block(id=...)` is the shape: a plugin generates on the declaration's behalf and the map
+  // points back at the constructor, which holds no mcfunction string to hang a lens on.
+  const origins = new Map([[11, [
+    { file: "/gen/place_main.mcfunction", line: 0 },
+    { file: "/gen/place_secondary.mcfunction", line: 0 },
+    { file: "/gen/_stats.mcfunction", line: 0 },
+  ]]]);
+  const anchors = lensAnchors(origins);
+  assert.equal(anchors.length, 1, "one lens on the declaration");
+  assert.equal(anchors[0].line, 11);
+  assert.equal(anchors[0].targets.length, 3, "and it names every function the declaration caused");
 });

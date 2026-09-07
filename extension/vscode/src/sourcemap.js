@@ -316,22 +316,25 @@ const origins = new Map();
 let reverseIndex = null;
 
 /**
- * Every Python line of one file that produced something, with the first thing it produced.
+ * Every Python line of one file that produced something, with everything it produced.
  *
  * The lens belongs on the line the map recorded, which is the `write_function` call, not on
  * the string it was handed: those are the same line when the commands are written inline and
  * twenty lines apart when they arrive in a variable.
  *
+ * A line routinely produces more than one function, which is what a `write_function` inside a
+ * loop does, so every location is kept rather than the first.
+ *
  * @param {string[]} mapPaths
  * @param {string} pythonPath
- * @returns {Map<number, { file: string, line: number }>}
+ * @returns {Map<number, { file: string, line: number }[]>}
  */
 function originLinesFor(mapPaths, pythonPath) {
   if (!reverseIndex) reverseIndex = buildReverseIndex(mapPaths);
 
   const lines = new Map();
   for (const [line, locations] of reverseIndex.get(fileKey(pythonPath)) ?? []) {
-    if (locations.length > 0) lines.set(line, locations[0]);
+    if (locations.length > 0) lines.set(line, locations.slice());
   }
   return lines;
 }

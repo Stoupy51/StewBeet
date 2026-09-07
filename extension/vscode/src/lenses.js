@@ -30,20 +30,20 @@ function functionIdOf(generatedPath) {
  * one of the block's own lines. Commands arriving in a variable are all attributed to the call
  * itself, so the answer sits on the call line. Both are tried.
  *
- * @param {Map<number, { file: string, line: number }>} origins
+ * @param {Map<number, { file: string, line: number }[]>} origins
  * @param {{ positionAt: (offset: number) => { line: number } }} doc
  * @param {{ start:number, end:number }} block
  * @param {number} callLine
- * @returns {{ file: string, line: number } | null}
+ * @returns {{ file: string, line: number }[] | null}  Every function that line produced.
  */
 function targetOfBlock(origins, doc, block, callLine) {
   const found = origins.get(callLine);
-  if (found) return found;
+  if (found && found.length > 0) return found;
 
   const last = doc.positionAt(block.end).line;
   for (let line = doc.positionAt(block.start).line; line <= last; line++) {
     const inside = origins.get(line);
-    if (inside) return inside;
+    if (inside && inside.length > 0) return inside;
   }
   return null;
 }
@@ -60,13 +60,32 @@ function targetOfBlock(origins, doc, block, callLine) {
  * @returns {{ line: number, target: { file: string, line: number } }[]}
  */
 function lensAnchors(origins) {
-  /** @type {Map<string, { line: number, target: { file: string, line: number } }>} */
+  /** Earliest line each generated function was written from. @type {Map<string, number>} */
   const firsts = new Map();
-  for (const [line, target] of origins) {
-    const seen = firsts.get(target.file);
-    if (!seen || line < seen.line) firsts.set(target.file, { line, target });
+  /** @type {Map<string, { file: string, line: number }>} */
+  const byFile = new Map();
+  for (const [line, targets] of origins) {
+    for (const target of targets) {
+      const seen = firsts.get(target.file);
+      if (seen === undefined || line < seen) firsts.set(target.file, line);
+      if (!byFile.has(target.file)) byFile.set(target.file, target);
+    }
   }
-  return [...firsts.values()].sort((a, b) => a.line - b.line);
+
+  // One lens per line, not per function: a `write_function` in a loop writes several functions
+  // from the same line, and stacking a lens for each would bury the line it sits on.
+  /** @type {Map<number, { file: string, line: number }[]>} */
+  const byLine = new Map();
+  for (const [file, line] of firsts) {
+    const bucket = byLine.get(line);
+    const target = /** @type {{ file: string, line: number }} */ (byFile.get(file));
+    if (bucket) bucket.push(target);
+    else byLine.set(line, [target]);
+  }
+
+  return [...byLine.entries()]
+    .map(([line, targets]) => ({ line, target: targets[0], targets: targets.sort((a, b) => a.file.localeCompare(b.file)) }))
+    .sort((a, b) => a.line - b.line);
 }
 
 module.exports = {

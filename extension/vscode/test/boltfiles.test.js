@@ -251,3 +251,18 @@ test("a project's own wrapper still opts in by annotating its parameter", () => 
   // whose argument is a name rather than a literal.
   assert.deepEqual(contentsOf(source), ["say hi"]);
 });
+
+test("an append through a resource's beet object is a block", () => {
+  // plugin_24 writes this, and the Python side records it because `.obj` reaches beet directly.
+  const source = 'Block.from_id("attributed_block").functions.place_secondary.obj.append("say appended by the author")';
+  assert.deepEqual(
+    blocks.findBlockOffsets(source).map(b => source.slice(b.contentStart, b.contentEnd)),
+    ["say appended by the author"]);
+});
+
+test("an ordinary append is not mistaken for one", () => {
+  for (const source of ['other.append("say hi")', 'results.append("say hi")', 'self.lines.append("say hi")']) {
+    assert.deepEqual(blocks.findBlockOffsets(source), [],
+      `only \`.obj.append\` reaches beet: ${JSON.stringify(source)}`);
+  }
+});

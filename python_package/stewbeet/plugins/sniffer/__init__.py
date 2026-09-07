@@ -43,12 +43,14 @@ def beet_default(ctx: Context) -> Iterator[None]:
 				"List 'stewbeet.plugins.sniffer' in 'require', next to 'stewbeet' itself."
 			)
 		elif late := write_maps(ctx):
-			# Reaching here means the emit step never ran. Writing the maps anyway keeps editor
-			# navigation working off the build directory, but anything already packaged missed them.
+			# Nothing flushed earlier: no `stewbeet.plugins.sniffer.emit` step and no
+			# `stewbeet.plugins.archive`, which flushes on its own. Writing the maps anyway keeps
+			# editor navigation working off the build directory, and anything that packaged the
+			# pack before now missed them.
 			stp.warning(
-				f"sniffer: {late} source map(s) were written after the rest of the pipeline, so plugins "
-				"like 'stewbeet.plugins.archive' did not see them. "
-				"List 'stewbeet.plugins.sniffer.emit' just before 'stewbeet.plugins.archive'."
+				f"sniffer: {late} source map(s) were written after the rest of the pipeline, so any plugin "
+				"that packaged the pack did not see them. "
+				"List 'stewbeet.plugins.sniffer.emit' before whichever plugin packages it."
 			)
 	finally:
 		uninstall()

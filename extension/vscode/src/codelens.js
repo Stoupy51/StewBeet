@@ -21,6 +21,22 @@ const CFG_KEY = "StewBeet";
 
 const onDidChangeEmitter = new vscode.EventEmitter();
 
+/**
+ * The lens itself, named for what it leads to and carrying every target so the command can
+ * offer them all rather than opening the first.
+ * @param {number} line
+ * @param {{ file: string, line: number }[]} targets
+ */
+function lensFor(line, targets) {
+  const extra = targets.length > 1 ? ` (+${targets.length - 1} more)` : "";
+  return new vscode.CodeLens(new vscode.Range(line, 0, line, 0), {
+    title: `$(go-to-file) ${functionIdOf(targets[0].file)}${extra}`,
+    tooltip: targets.map(t => t.file).join("\n"),
+    command: "stewbeet.goToGenerated",
+    arguments: [targets],
+  });
+}
+
 const codeLensProvider = {
   onDidChangeCodeLenses: onDidChangeEmitter.event,
 
@@ -43,21 +59,29 @@ const codeLensProvider = {
 
     const lenses = [];
     const placed = new Set();
+    /** Lines a block already speaks for, so the declaration pass below skips them. */
+    const covered = new Set();
+
     for (const block of blocksOf(doc)) {
       const line = doc.positionAt(block.callStart).line;
+      const last = doc.positionAt(block.end).line;
+      for (let l = Math.min(line, doc.positionAt(block.start).line); l <= last; l++) covered.add(l);
       if (placed.has(line)) continue;
 
-      const target = targetOfBlock(origins, doc, block, line);
-      if (!target) continue;
+      const targets = targetOfBlock(origins, doc, block, line);
+      if (!targets) continue;
       placed.add(line);
-      lenses.push(new vscode.CodeLens(new vscode.Range(line, 0, line, 0), {
-        title: `$(go-to-file) ${functionIdOf(target.file)}`,
-        tooltip: target.file,
-        command: "stewbeet.goToGenerated",
-        arguments: [target],
-      }));
+      lenses.push(lensFor(line, targets));
     }
-    return lenses;
+
+    // A declaration writes no commands of its own, so it has no block, and a plugin generating on
+    // its behalf still maps back to it. `Block(id=...)` is the case: the functions it causes are
+    // attributed to the constructor, and without this pass the one line that knows about them
+    // shows nothing.
+    const orphans = new Map([...origins].filter(([line]) => !covered.has(line) && !placed.has(line)));
+    for (const { line, targets } of lensAnchors(orphans)) lenses.push(lensFor(line, targets));
+
+    return lenses.sort((a, b) => a.range.start.line - b.range.start.line);
   },
 };
 
@@ -81,13 +105,7 @@ const boltLensProvider = {
     const origins = sourcemap.originLinesFor(maps, doc.uri.fsPath);
     if (origins.size === 0) return [];
 
-    return lensAnchors(origins).map(({ line, target }) => new vscode.CodeLens(
-      new vscode.Range(line, 0, line, 0), {
-        title: `$(go-to-file) ${functionIdOf(target.file)}`,
-        tooltip: target.file,
-        command: "stewbeet.goToGenerated",
-        arguments: [target],
-      }));
+    return lensAnchors(origins).map(({ line, targets }) => lensFor(line, targets));
   },
 };
 

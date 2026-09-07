@@ -20,3 +20,7 @@ nonexistentcommand foo bar
 write_function("probe:typo", f"""
 execute store reslt score #h {ns}.data run data get entity @s Pos[1]
 """)
+
+write_function(f"{ns}:oneline", """tellraw @a {"text":"Hello world!"}""")
+
+write_function(f"{ns}:renders", """tellraw @a [{"render":"steel_block","height":64},"\n"]""")
