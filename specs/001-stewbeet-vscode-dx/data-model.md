@@ -89,7 +89,7 @@ One resolved generated line.
 | `source_line` | `int` | 0-based line in that source file. |
 | `source_column` | `int` | 0-based column in that source file. |
 
-**Invariants**: `generated_line` values are strictly increasing within a map, and lines with no origin (generated headers, blank separators, the trailing `## sourceMappingURL` comment) are simply absent. Two `LineMapping`s may share a `source_line`, which is what happens whenever one Python line writes several commands.
+**Invariants**: `generated_line` values are strictly increasing within a map, and lines with no origin (generated headers, blank separators) are simply absent. Two `LineMapping`s may share a `source_line`, which is what happens whenever one Python line writes several commands.
 
 ### `FunctionSourceMap`
 

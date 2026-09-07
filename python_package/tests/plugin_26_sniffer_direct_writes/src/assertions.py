@@ -100,10 +100,10 @@ def beet_default(ctx: Context) -> Iterator[None]:
     assert len(call_lines) > 1, f"both write calls should contribute, got one line {sorted(call_lines)}"
     assert all(str(list(both["sources"])[index]).endswith("link.py") for index, _, _ in origins.values()),         f"both chunks came from link.py, got {both['sources']}"
 
-    # Every function carries a discovery comment now that every one of them has a map.
+    # A map sits beside its function under a derived name, so nothing is appended to the function.
     for path in EXPECTED:
-        assert "sourceMappingURL" in ctx.data.functions[path].text, (
-            f"{path} has a map, so it must point at it"
+        assert "sourceMappingURL" not in ctx.data.functions[path].text, (
+            f"{path} is mapped by its sibling and must not carry a comment saying so"
         )
 
     print(f"plugin_26: {len(EXPECTED)} functions mapped across every way of writing one")

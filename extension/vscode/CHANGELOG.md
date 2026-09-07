@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.0
+
+- **A generated function no longer carries a `## sourceMappingURL=` line.** The map has always been written beside the function it describes, under a name derived from it, so the comment repeated the file name back and cost a line in every function you ship. Maps are found by that name, which is what the extension already did when a function named none. Nothing to change in a project: rebuild and the line is gone.
+- **Your build can keep Spyglass's exclusions for you.** `stewbeet.plugins.spyglass` in your pipeline finds the `.mcfunction` sources Spyglass cannot parse, from what bolt and mecha actually compiled rather than from a guess at the text, and keeps `env.exclude` in step with them. It asks once in the terminal, retracts an entry when a file stops using bolt, and never touches a pattern you wrote yourself. A build with no terminal writes nothing.
+- **The extension offers to install Spyglass**, once, on the first Python file holding mcfunction strings, when it is missing. It stays a soft dependency: everything else works without it, and what does not work was invisible until now. `StewBeet.suggestSpyglass` turns the offer off and **StewBeet: Install Spyglass Language Server** brings it back.
+
 ## 1.10.0
 
 - **A doubled brace is understood.** `f"...{{\"Slot\":0b}}"` is the NBT `{"Slot":0b}`, and the parser was handed the doubled form and reported a missing key at the first quote. One brace of each pair now reaches it as a space, so the compound reads correctly and every offset stays put.

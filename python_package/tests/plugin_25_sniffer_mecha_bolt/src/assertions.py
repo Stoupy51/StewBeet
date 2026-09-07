@@ -143,13 +143,13 @@ def beet_default(ctx: Context) -> Iterator[None]:
     assert "data/tns/function/from_vendor.mcfunction.map" not in maps, \
         "a function written entirely by a vendored module has nothing to map"
 
-    # Every mapped function carries the discovery comment, as its last line.
+    # A map written beside its function needs no comment naming it, so the function ends on a command.
     for func_path, func in ctx.data.functions.items():
         if f"data/{func_path.replace(':', '/function/')}.mcfunction.map" not in maps:
             continue
         text: list[str] = func.text.rstrip("\n").split("\n")
-        assert text[-1].startswith("## sourceMappingURL="), \
-            f"{func_path}: last line must be the two-hash sourceMappingURL comment, got {text[-1]!r}"
+        assert not text[-1].startswith("## sourceMappingURL="), \
+            f"{func_path}: the sibling map needs no discovery comment, got {text[-1]!r}"
 
     print(f"plugin_25: {len(maps)} maps verified across the minimal template's example and two bolt modules")
 

@@ -11,7 +11,7 @@ Install [Datapack Helper Plus](https://marketplace.visualstudio.com/items?itemNa
 
 This extension does not implement any of that itself. It projects each mcfunction string into a virtual document and asks Spyglass, so you get exactly what you would get in a real `.mcfunction` file, and every Spyglass release improves it for free.
 
-Spyglass is optional. Without it, syntax highlighting and block decorations work as before and the language features are silently unavailable.
+Spyglass is optional, and it is not a hard dependency: highlighting, decorations, the lenses and every source-map jump work without it. The one thing that does not is the checking inside the strings, so the extension offers the install once, on the first Python file holding mcfunction strings, and never again if you decline. Turn that offer off with `StewBeet.suggestSpyglass`, or reach it later with **StewBeet: Install Spyglass Language Server**.
 
 ---
 
@@ -22,6 +22,7 @@ All settings are under `StewBeet.*` in your `settings.json`:
 | Setting                  | Default                 | Description                     |
 | ------------------------ | ----------------------- | ------------------------------- |
 | `languageFeatures`       | `true`                  | Completion, hover, signature help and go-to-definition inside mcfunction strings |
+| `suggestSpyglass`        | `true`                  | Offer to install Spyglass once, when it is missing and a file would use it |
 | `resolveInterpolations`  | `true`                  | Fill each `{...}` with what the last build resolved it to |
 | `buildOutput`            | `""`                    | Where the generated datapack is. Empty searches the whole workspace for `.mcfunction.map` files |
 | `sourceMapDiagnostics`   | `true`                  | Show build errors on the Python line that wrote the command |
@@ -148,12 +149,15 @@ sidecars your build emits. Produce them by putting the sniffer plugin in your pi
 require:
     - "stewbeet"
     - "stewbeet.plugins.sniffer"
-
-pipeline:
-    - "..."
-    - "stewbeet.plugins.sniffer.emit"
-    - "stewbeet.plugins.archive"
 ```
+
+That is the whole configuration. `stewbeet.plugins.archive` writes the maps before it zips, so
+they reach both the build directory and the zip. A pipeline that packages the pack some other way
+lists `stewbeet.plugins.sniffer.emit` before whichever plugin does the packaging.
+
+The map is written beside the function it describes, as `<name>.mcfunction.map`, and the function
+itself is left alone: no `## sourceMappingURL=` comment naming a file that is already its
+neighbour, and no extra line in what you ship.
 
 Five commands come with it, from the palette:
 
@@ -165,9 +169,15 @@ Five commands come with it, from the palette:
 | StewBeet: Refresh Build Diagnostics | Ask for the errors now instead of waiting |
 | StewBeet: Show Diagnostics Status | Say what the relay has seen, so a quiet relay is not mistaken for a clean file |
 | StewBeet: Exclude Bolt Files From Spyglass | Add the `.mcfunction` files holding bolt to your project's `.spyglassrc.json` |
+| StewBeet: Install Spyglass Language Server | Install the server the string blocks are checked by |
 
 A block that produced a function also carries a clickable link above it, so the second command
 is one click rather than a palette search. Turn it off with `"StewBeet.codeLens": false`.
+
+One line often produces several functions: a `write_function` inside a loop writes one per
+iteration, and a `Block(id=...)` declaration causes every function a plugin generates on its
+behalf. The lens says how many (`consume_dust (+2 more)`) and opens the same peek list VS Code
+uses for references, in both directions.
 
 Without a build there are no maps, and go to definition falls back to opening the generated
 `.mcfunction`. Nothing errors and nothing else changes.
@@ -264,6 +274,18 @@ for i in range(1, 6):
 That file is a `.mcfunction`, so Spyglass parses it as commands, fails on the `for`, and underlines most of it. When bolt is detected in one, the extension gives it the `bolt` language id instead, so it is highlighted as what it is. A vanilla `.mcfunction` is never touched, and neither is anything a build wrote. Turn it off with `StewBeet.boltInMcfunction`.
 
 **The language id is only half of it.** Spyglass indexes a whole data pack off disk, so it reports the file whether or not you have it open, and no extension can clear another extension's diagnostics. Spyglass has its own exclusion list, which does silence it, so **StewBeet: Exclude Bolt Files From Spyglass** adds the file to your project's `.spyglassrc.json`. You are offered this once, only when there is something to fix, and nothing is written unless you accept.
+
+**Your build can keep that list for you.** The editor reads the file to guess; the build knows. Add `stewbeet.plugins.spyglass` to your pipeline, anywhere after `mecha`:
+
+```yaml
+pipeline:
+    - "mecha"
+    - "stewbeet.plugins.spyglass"
+```
+
+It asks once in the terminal and remembers the answer in `.beet_cache`, then keeps `env.exclude` in step on every build: a file that stops using bolt has its entry taken back, and a pattern you wrote by hand is never touched, because the plugin only ever retracts what it added itself. A build with no terminal to ask, a CI job for instance, writes nothing at all. `meta.stewbeet.spyglass.manage_exclusions` answers up front, either way.
+
+Two signals decide, both read off the build rather than guessed from the text: bolt generated Python for the file, or mecha split it into more than one function. A vanilla `.mcfunction` matches neither.
 
 ## Grammar
 

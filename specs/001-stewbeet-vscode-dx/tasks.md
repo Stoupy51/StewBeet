@@ -142,6 +142,19 @@ Two further facts, both about ordering:
 
 ---
 
+## Phase 7: Follow-ups shipped after this list
+
+Requested against the shipped 1.10.0 build, and covered by [spec.md](./spec.md)'s FR-024 and FR-006.
+
+- [X] T041 Drop the `## sourceMappingURL=` comment from `write_sidecar` in `python_package/stewbeet/plugins/sniffer/sidecar.py`. The map is always the function's own sibling, which every consumer already falls back to, so the comment repeated the file name back at the cost of a line in every shipped function. Idempotence moves onto `ctx.data.extra`, which is exact
+- [X] T042 Replace the comment as the extension's "a build wrote this" signal: `isBuildOutput` in `extension/vscode/src/bolt.js` now also answers yes to a file with a `.map` beside it, so a generated function is never switched to `bolt` when `buildOutput` names nothing
+- [X] T043 Add `stewbeet.plugins.spyglass`, which keeps `env.exclude` in step with what the build cannot parse. `detect.py` reads the two exact signals (bolt generated Python for the file; mecha split it into more than one unit) rather than matching text, `confirm.py` asks once and remembers in `.beet_cache`, `config.py` writes byte-identical JSON to the editor's writer, and only patterns the plugin added are ever retracted
+- [X] T044 Offer the Spyglass install once, from `extension/vscode/src/spyglass.js`, on the first Python file holding blocks. `StewBeet.suggestSpyglass` is what "Never" writes, and `stewbeet.installSpyglass` is the way back. Spyglass stays out of `extensionDependencies`, since everything else works without it (NFR-003)
+- [X] T045 `python_package/tests/plugin_28_spyglass_exclusions` covers all of it in one build: a bolt file and a nested file excluded, a vanilla one left alone, a stale entry retracted, the author's own pattern and `env.dependencies` untouched
+- [X] T046 Update `extension/vscode/README.md` and `CHANGELOG.md`, bump to **2.0.0**, and repackage with `extension/build_publish.sh`
+
+---
+
 ## Dependencies
 
 ```

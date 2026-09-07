@@ -73,6 +73,15 @@ test("a build output path is recognised whatever the slashes", () => {
   assert.equal(isBuildOutput("D:/proj/src/x.mcfunction", []), false);
 });
 
+test("a map beside a file says a build wrote it, with nothing configured", () => {
+  // Generated functions name no map, so the sidecar is the signal that survives when
+  // `buildOutput` is empty. Without it a generated file could be switched away from Spyglass.
+  const generated = path.join(ROOT, "..", "..", "python_package", "tests",
+    "plugin_22_sniffer_source_maps", "build", "datapack", "data", "tns", "function", "root.mcfunction");
+  assert.ok(fs.existsSync(`${generated}.map`), "the fixture build must carry its sidecar");
+  assert.ok(isBuildOutput(generated, []), "a file with a sidecar map is output, whatever buildOutput says");
+});
+
 // The corpus, which is what the precision claim rests on
 
 test("no generated function in this repository is read as bolt", () => {

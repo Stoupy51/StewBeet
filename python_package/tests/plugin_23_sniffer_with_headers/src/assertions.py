@@ -69,8 +69,6 @@ def beet_default(ctx: Context) -> Iterator[None]:
     header_lines: list[int] = [i for i, line in enumerate(generated) if line.startswith("#>") or line.startswith("#")]
     assert header_lines, "the fixture must actually exercise auto.headers"
     for index in header_lines:
-        if generated[index].startswith("## sourceMappingURL"):
-            continue
         assert index not in decoded, \
             f"generated header line {index} ({generated[index]!r}) must be unmapped, it has no author"
 

@@ -59,7 +59,7 @@ beet build
 | `ls build/*/data/*/function/**/*.mcfunction.map` | One map per generated function |
 | `python -c "import json;print(json.load(open(<a map>))['version'])"` | `3` |
 | Decode a map with `@jridgewell/trace-mapping` | Generated line 0 of a headered function is unmapped, the first command line maps into the author's `.py` |
-| `tail -1` any generated function | `## sourceMappingURL=<name>.mcfunction.map`, two hashes, and no mapping group for it |
+| `tail -1` any generated function | A command. No `sourceMappingURL` comment is written, since the map is the sibling |
 | Check `sourceRoot` on a nested function | Deeper than a top-level one, since it is relative to the map's own directory |
 | Open the mapped Python line | It is a line inside the `write_function` string that produced the command |
 | Build without the plugin | No `.map` files, and build time within noise of the previous run |
@@ -199,7 +199,7 @@ Listing it after `mecha` is the mistake to expect: it works after its `yield`, a
 | Check | Expected |
 |---|---|
 | Build log | `sniffer.mecha: wrote N source maps` |
-| `dist/.../foo.mcfunction` | ends with `## sourceMappingURL=foo.mcfunction.map` |
+| `dist/.../foo.mcfunction.map` | sits beside the function, and the function itself is untouched |
 | `foo.mcfunction.map` | `sourceRoot` plus each `sources` entry resolves to a real file on disk |
 | A function assembled from two modules | two entries in `sources`, and the lines split between them |
 | A function written only by a library module | **no map at all**, rather than a map pointing into the library |
