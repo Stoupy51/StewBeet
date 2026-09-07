@@ -1,149 +1,18 @@
 
 # StewBeet mcfunction Syntax
 
-> Syntax highlighting, block decorations and **language features** for **mcfunction** code embedded inside [StewBeet](https://stewbeet.paralya.fr/) `write_*` Python calls, plus syntax highlighting for **`.bolt`** files.
+> The mcfunction strings inside your [StewBeet](https://stewbeet.paralya.fr/) Python are code: highlighted, completed, checked as you type, and linked both ways to the datapack your build produces.
+> Plus a language for `.bolt` files, which nothing else on the marketplace provides.
 
----
+<!-- GIF 1, the hero. In SimplEnergy's machines.py: type inside a write_function block, completion
+     fires on a command and then on your own paths after `{ns}:`. Ctrl+click a `function {ns}:...`
+     and land in the generated file. Click the lens there and come back. ~12s, editor only. -->
+![Completion and navigation inside a block](https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/extension/vscode/images/hero.gif)
 
-## Recommended companion: Spyglass
+## Quick start
 
-Install [Datapack Helper Plus](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server) (`SPGoding.datapack-language-server`) to get completion, hover, signature help and go-to-definition inside your mcfunction strings.
-
-This extension does not implement any of that itself. It projects each mcfunction string into a virtual document and asks Spyglass, so you get exactly what you would get in a real `.mcfunction` file, and every Spyglass release improves it for free.
-
-Spyglass is optional, and it is not a hard dependency: highlighting, decorations, the lenses and every source-map jump work without it. The one thing that does not is the checking inside the strings, so the extension offers the install once, on the first Python file holding mcfunction strings, and never again if you decline. Turn that offer off with `StewBeet.suggestSpyglass`, or reach it later with **StewBeet: Install Spyglass Language Server**.
-
----
-
-## Configuration
-
-All settings are under `StewBeet.*` in your `settings.json`:
-
-| Setting                  | Default                 | Description                     |
-| ------------------------ | ----------------------- | ------------------------------- |
-| `languageFeatures`       | `true`                  | Completion, hover, signature help and go-to-definition inside mcfunction strings |
-| `suggestSpyglass`        | `true`                  | Offer to install Spyglass once, when it is missing and a file would use it |
-| `resolveInterpolations`  | `true`                  | Fill each `{...}` with what the last build resolved it to |
-| `buildOutput`            | `""`                    | Where the generated datapack is. Empty searches the whole workspace for `.mcfunction.map` files |
-| `sourceMapDiagnostics`   | `true`                  | Show build errors on the Python line that wrote the command |
-| `diagnosticRuleDenylist` | `["undeclaredSymbol"]`  | Rules never relayed onto Python |
-| `codeLens`               | `true`                  | Show a link above each block to the function it produced |
-| `headerLinks`            | `true`                  | Make resource locations in a generated file's `#>` header clickable |
-| `boltInMcfunction`       | `true`                  | Give a `.mcfunction` holding bolt the `bolt` language id, so Spyglass is not asked to parse it |
-| `enableBlockDecorations` | `true`                  | Toggle block decorations on/off |
-| `backgroundColor`        | `rgba(80,40,0,0.15)`    | Background fill color           |
-| `borderColor`            | `rgba(200,120,30,0.30)` | Border color                    |
-| `borderWidth`            | `"2px"`                 | Border thickness                |
-
-Example customization:
-```jsonc
-// settings.json - example with a greenish theme and thinner borders
-"StewBeet.backgroundColor": "rgba(0,60,30,0.15)",
-"StewBeet.borderColor": "rgba(80,200,100,0.40)",
-"StewBeet.borderWidth": "1px"
-```
-
----
-
-## Comparison without and with the extension
-
-![Comparison gif](https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/extension/vscode/images/comparison.gif)
-
-## Features
-
-### Syntax highlighting
-Triple-quoted and single-line strings passed to the following functions are highlighted as mcfunction:
-
-| Function                                           | Content argument |
-| -------------------------------------------------- | ---------------- |
-| `write_function(path, content, ...)`               | 2nd              |
-| `write_versioned_function(path, content, ...)`     | 2nd              |
-| `write_scheduled_function(duration, content, ...)` | 2nd              |
-| `write_load_file(content, ...)`                    | 1st              |
-| `write_unload_file(content, ...)`                  | 1st              |
-| `write_tick_file(content, ...)`                    | 1st              |
-
-All string forms are supported: `"""..."""`, `'''...'''`, `"..."`, `'...'`, and their `f`-string variants.  
-Python interpolations (`{variable}`) inside f-strings are parsed correctly and never mistaken for mcfunction syntax.
-
-**Commands handed over in a variable count too.** `content = f"""..."""` followed by
-`write_function(path, content)` gets the block box, completion and errors, and so does a later
-`content += """..."""`. To colour the commands as well, annotate the variable:
-
-```python
-from stewbeet import McFunction
-
-content: McFunction = f"""
-say hi
-function {ns}:greet
-"""
-content += """
-say appended, coloured too
-"""
-write_function(f"{ns}:hello", content)
-```
-
-`McFunction` is `str`, so annotating changes nothing about how the value behaves. It exists because
-a grammar matches one place at a time and cannot tell that `content` reaches a `write_function`
-call seven lines down, so you say so instead. Everything except the colours works without it.
-
-The annotation carries to every `+=` onto the same name, up to the first statement that is not
-one, so a function built by appending is coloured throughout. A `+=` onto a different name is left
-alone.
-
-**A list of commands works the same way.** Annotate it `list[McFunction]` and every `append` onto
-it is coloured, including the ones inside an `if` or a `for`, along with the entries of a list
-literal:
-
-```python
-output_list: list[McFunction] = []
-if machine == "electric_brewing_stand":
-    output_list.append('data modify entity @s foo set value {"Slot":0b}')
-else:
-    output_list.append('say otherwise')
-```
-
-An `append` onto any other name ends the run and is left alone.
-
-**Your own functions count too.** Annotate a parameter `McFunction` and the strings passed to it
-are treated as blocks:
-
-```python
-def write(path: str, cont: McFunction) -> None:
-    write_function(path, cont)
-
-write("ns:hello", "execute if score #x obj matches 1 run say hi")
-```
-
-That one is detection rather than colour: the call gets the block box, completion and errors,
-because the extension reads your whole file and can see the `def`. Syntax colours come from a
-grammar, which matches one place at a time and cannot connect a call to a `def` elsewhere, so the
-commands inside stay uncoloured. Annotating the variable is what colours it.
-
-### Block decorations
-Multi-line strings are wrapped in a unified colored rectangle. Single-line strings get an inline border that starts exactly at the quote character.
-
-### Language features (requires Spyglass)
-
-Inside those same blocks, and nowhere else:
-
-| Feature | What you get |
-| ------- | ------------ |
-| Completion | Vanilla commands, plus the resource locations your own pack defines |
-| Hover | Spyglass's documentation for selectors, arguments and resource locations |
-| Signature help | The argument list of the command you are typing |
-| Go to definition | Jumps to the `write_function` call that produced the resource location |
-| Find references | Every Python call site that writes to a resource location |
-| Diagnostics | Command errors underlined on the Python line, as you type, with no build |
-
-Completion knows about your project's own functions once the pack has been built at least once, because it resolves against the same symbol table Spyglass builds from your build output.
-
-Turn the whole thing off with `"StewBeet.languageFeatures": false`.
-
-### Crossing back to your Python (requires a build)
-
-Go to definition, find references and the relayed diagnostics all read the `.mcfunction.map`
-sidecars your build emits. Produce them by putting the sniffer plugin in your pipeline:
+1. Install [Spyglass](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server). It answers the completion, hover and errors; this extension projects your strings to it. The extension offers the install once if it is missing, and everything else works without it.
+2. For anything that crosses into the build, add the sniffer plugin to your `beet.yml`:
 
 ```yaml
 require:
@@ -151,40 +20,36 @@ require:
     - "stewbeet.plugins.sniffer"
 ```
 
-That is the whole configuration. `stewbeet.plugins.archive` writes the maps before it zips, so
-they reach both the build directory and the zip. A pipeline that packages the pack some other way
-lists `stewbeet.plugins.sniffer.emit` before whichever plugin does the packaging.
+That is the whole configuration.
+The maps are written beside each generated function, and `stewbeet.plugins.archive` writes them before it zips, so the build directory and the zip agree.
+Without a build nothing errors: navigation falls back to opening the generated `.mcfunction`.
 
-The map is written beside the function it describes, as `<name>.mcfunction.map`, and the function
-itself is left alone: no `## sourceMappingURL=` comment naming a file that is already its
-neighbour, and no extra line in what you ship.
+## What you get
 
-Five commands come with it, from the palette:
+### Errors on your own lines, as you type
 
-| Command | What it does |
-| ------- | ------------ |
-| StewBeet: Go to Python Source | From a generated `.mcfunction`, open the Python that wrote the line |
-| StewBeet: Go to Generated Function | The inverse, from a Python line to what it produced |
-| StewBeet: Reload Source Maps | Drop the cache when a build finished outside the watcher's view |
-| StewBeet: Refresh Build Diagnostics | Ask for the errors now instead of waiting |
-| StewBeet: Show Diagnostics Status | Say what the relay has seen, so a quiet relay is not mistaken for a clean file |
-| StewBeet: Exclude Bolt Files From Spyglass | Add the `.mcfunction` files holding bolt to your project's `.spyglassrc.json` |
-| StewBeet: Install Spyglass Language Server | Install the server the string blocks are checked by |
+<!-- GIF 2. Type `scoreboard players ste #x obj 1` inside a block. The squiggle lands on the Python
+     line with nothing built and nothing else open. ~6s. -->
+![A command error underlined on the Python line](https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/extension/vscode/images/diagnostics.gif)
 
-A block that produced a function also carries a clickable link above it, so the second command
-is one click rather than a palette search. Turn it off with `"StewBeet.codeLens": false`.
+No build, and nothing under `build/` is ever opened.
+Errors reported against generated files reach Python too, for the files you open yourself.
+`undeclaredSymbol` is not relayed by default, since it fires on every objective a dependency declares; `StewBeet.diagnosticRuleDenylist` decides.
 
-One line often produces several functions: a `write_function` inside a loop writes one per
-iteration, and a `Block(id=...)` declaration causes every function a plugin generates on its
-behalf. The lens says how many (`consume_dust (+2 more)`) and opens the same peek list VS Code
-uses for references, in both directions.
+### Navigation across the boundary
 
-Without a build there are no maps, and go to definition falls back to opening the generated
-`.mcfunction`. Nothing errors and nothing else changes.
+<!-- GIF 3. The write_function in machines.py's fuel loop: the lens reads `consume_dust (+2 more)`,
+     clicking opens the peek with all three. Then ctrl+click `@within` in a generated file. ~8s. -->
+![A lens leading to every function a line produced](https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/extension/vscode/images/navigation.gif)
 
-### Interpolated paths (requires a build)
+Go to definition on a resource location lands on the call that produced it, find references lists every call site writing to it, and a lens above each block leads to what it generated.
+One line often produces several functions, a `write_function` in a loop or a `Block(id=...)` declaration, so the lens says how many and opens the peek list VS Code uses for references.
+The `#>` header comments in a generated file are clickable in both directions.
 
-StewBeet code rarely writes a literal resource location. It writes this:
+### Interpolated paths
+
+StewBeet rarely writes a literal resource location, and every `{...}` is Python that a datapack parser cannot read.
+Each one is filled in with what the last build resolved it to:
 
 ```python
 write_function(f"{ns}:utils/loop", f"""
@@ -193,89 +58,60 @@ execute if score #height {ns}.data matches 150.. run say high
 """)
 ```
 
-Every `{...}` is Python, not mcfunction, so it is filled in with what the last build resolved
-it to before Spyglass sees the line. Ctrl+click on `{ns}:utils/battery_switcher/loop` lands on
-the `write_function` call that wrote it, completion offers your own function paths after
-`{ns}:`, and the squiggles land on the right characters.
+Ctrl+click on `{ns}:utils/battery_switcher/loop` lands on the call that wrote it, and completion after `{ns}:` offers your own paths.
+Nothing evaluates your Python: the value comes off the line the build produced.
+A line no build covers keeps a `_` mask.
 
-The values come from the source maps, so nothing evaluates your Python and nothing runs your
-build. A line the current build does not cover keeps the `_` mask it had before, which is also
-what happens when the build is stale enough that the surrounding text no longer matches.
+## What counts as a block
 
-Turn it off with `"StewBeet.resolveInterpolations": false`.
+| Written as | Example |
+|---|---|
+| The `write_*` helpers | `write_function(path, content)`, `write_versioned_function`, `write_scheduled_function`; `write_load_file`, `write_unload_file`, `write_tick_file` take theirs first |
+| A variable | `content = f"""..."""`, every `+=` onto it, up to the call that consumes it |
+| A list | `lines.append(...)`, `lines += [...]`, a list literal, a comprehension |
+| A joined list | `write_function(path, "\n".join(lines))`, where the separator is a separator |
+| Your own function | a parameter annotated `McFunction` makes that argument a block at every call |
+| beet's own API | `ctx.data.functions[path] = Function(...)` in all three spellings, `.append(...)` onto one, and `.obj.append(...)` |
 
-### What the diagnostics leave out
+Every string form works, `"""..."""` through `'...'`, with any `f`, `r`, `b` or `u` prefix.
 
-`undeclaredSymbol` is not relayed by default. It fires on every scoreboard objective or tag a
-dependency declares, which Spyglass cannot see from your sources, and a false error on a Python
-line is far more intrusive than the same one in a generated file nobody opens.
+![The same file without and with the extension](https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/extension/vscode/images/comparison.gif)
 
-Relay everything with `"StewBeet.diagnosticRuleDenylist": []`, or add rules of your own to the
-list to silence them.
-
-### Writing a function with beet's own API
-
-The six `write_*` helpers are not the only thing recognised. beet's own way of putting a function in the pack works too, in every spelling:
+**Colours need one annotation.** A grammar matches one place at a time and cannot tell that `content` reaches a call seven lines down, so you say so.
+`McFunction` is `str`, exported from `stewbeet`, so it changes nothing at runtime, and everything except the colours works without it:
 
 ```python
-ctx.data.functions["ns:mine"] = Function("say hi")
-ctx.data["ns"].functions["mine"] = Function("say hi")
-ctx.data[Function]["ns:mine"] = Function("say hi")
-ctx.data.functions["ns:mine"] = Function(["say one", "say two"])   # one block per entry
-ctx.data.functions["ns:mine"].append("say more")
+from stewbeet import McFunction
+
+content: McFunction = f"""
+say hi
+function {ns}:greet
+"""
+content += "say appended, coloured too"
+
+lines: list[McFunction] = []            # appends onto it are coloured too,
+lines.append("say inside a branch")     # including inside an `if` or a `for`
 ```
 
-All of these get colours, completion, diagnostics and a lens to what they generated, and the source map points back at the line that wrote them.
+A bare `Function("say hi")` with no path is left alone, and so is an `append` onto a name nothing writes.
+The subscript, or the call that consumes the name, is what marks commands as commands.
 
-**The subscript is what makes it safe.** A bare `Function("say hi")` is left alone, because the class name is common enough to appear in unrelated Python; giving one a path is what marks it as a datapack function. A wrapper of your own opts in the same way it always did, by annotating its parameter:
+## Bolt
 
-```python
-def put(path: str, content: McFunction):
-    ctx.data.functions[path] = Function(content)
+<!-- GIF 4. hello.mcfunction from the minimal template: a wall of red squiggles, then the same file
+     coloured with a lens on it. Follow with the exclusion prompt. ~8s. -->
+![A bolt file before and after](https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/extension/vscode/images/bolt.gif)
 
-put("ns:mine", "say hi")
-```
+`.bolt` files open as **Bolt** rather than plain text, with highlighting and comment toggling.
+Nothing else registers that extension, so before this they had no language id at all.
+Bolt is Python with commands interleaved, so the grammar treats Python as the ground and commands as the exception: `item = 3` is an assignment, `item modify entity @s ...` is a command.
+The command names are generated from mecha's own command tree, so they cannot drift from what mecha accepts.
 
-### Bolt files
+A `.mcfunction` holding bolt, which StewBeet's own minimal template ships, is detected and given the `bolt` language id too, so Spyglass is not asked to parse a `for` loop.
+That is only half of it: Spyglass indexes a data pack off disk and reports the file whether or not you have it open, and no extension can clear another's diagnostics.
+Its own exclusion list does silence it, so **StewBeet: Exclude Bolt Files From Spyglass** writes the file into your `.spyglassrc.json`, offered once and never written without your say-so.
 
-`.bolt` files open as **Bolt** instead of plain text, with syntax highlighting and `#` comment toggling. Nothing else registers that extension, so before this they had no language id at all, which also meant no language server could ever be asked to serve them.
-
-Bolt is Python with commands interleaved at statement level, so the grammar treats Python as the ground and commands as the exception:
-
-```python
-from server:core import SERVER_TICK      # server:core is a resource location, not a syntax error
-
-class Ammo(Component):
-    def build(self):
-        append function PLAYER_TICK:     # command, and PLAYER_TICK stays Python
-            execute if predicate has_item_predicate(self.item.d()) run function self.tick
-        return self.item                 # Python, because `return` is Python's keyword first
-```
-
-A word that is both a command and an identifier, such as `item`, `data`, `time` or `list`, is only a command when what follows it is not Python: `item = 3` is an assignment, `item modify entity @s ...` is a command.
-
-Completion, hover and go-to-definition *inside* a `.bolt` file need a compiler-backed language server, which only mecha can provide, and that is not part of this extension. Navigation across the build boundary does work, and needs no server at all:
-
-- **A lens on each function the file produced**, at the first line that produced it, leading to the generated `.mcfunction`.
-- **A lens on the generated file leading back**, and the resource locations in its `#` header comments become links: `#> ns:name` opens the bolt that wrote it, `@within` opens the caller.
-
-Both need a build that emitted `.mcfunction.map` sidecars. Add `stewbeet.plugins.sniffer.mecha` to your pipeline, **before** `mecha`, and they appear.
-
-### Bolt inside a `.mcfunction`
-
-A project can enable bolt syntax inside `.mcfunction` files, and StewBeet's own minimal template does:
-
-```python
-# src/data/minimal/function/hello.mcfunction
-for i in range(1, 6):
-    say f"Hello, world! {i}"
-```
-
-That file is a `.mcfunction`, so Spyglass parses it as commands, fails on the `for`, and underlines most of it. When bolt is detected in one, the extension gives it the `bolt` language id instead, so it is highlighted as what it is. A vanilla `.mcfunction` is never touched, and neither is anything a build wrote. Turn it off with `StewBeet.boltInMcfunction`.
-
-**The language id is only half of it.** Spyglass indexes a whole data pack off disk, so it reports the file whether or not you have it open, and no extension can clear another extension's diagnostics. Spyglass has its own exclusion list, which does silence it, so **StewBeet: Exclude Bolt Files From Spyglass** adds the file to your project's `.spyglassrc.json`. You are offered this once, only when there is something to fix, and nothing is written unless you accept.
-
-**Your build can keep that list for you.** The editor reads the file to guess; the build knows. Add `stewbeet.plugins.spyglass` to your pipeline, anywhere after `mecha`:
+**Your build can keep that list instead.** The editor reads the file and infers; the build knows.
 
 ```yaml
 pipeline:
@@ -283,23 +119,42 @@ pipeline:
     - "stewbeet.plugins.spyglass"
 ```
 
-It asks once in the terminal and remembers the answer in `.beet_cache`, then keeps `env.exclude` in step on every build: a file that stops using bolt has its entry taken back, and a pattern you wrote by hand is never touched, because the plugin only ever retracts what it added itself. A build with no terminal to ask, a CI job for instance, writes nothing at all. `meta.stewbeet.spyglass.manage_exclusions` answers up front, either way.
+It asks once in the terminal, remembers in `.beet_cache`, and keeps `env.exclude` in step on every build: an entry is taken back when a file stops needing it, a pattern you wrote is never touched, and a build with no terminal writes nothing.
+Two signals decide, both read off the build rather than guessed: bolt generated Python for the file, or mecha split it into more than one function.
 
-Two signals decide, both read off the build rather than guessed from the text: bolt generated Python for the file, or mecha split it into more than one function. A vanilla `.mcfunction` matches neither.
+Navigation works in a bolt project exactly as in a Python one, from `.mcfunction.map` sidecars.
+Completion *inside* a `.bolt` file needs a compiler-backed server, which only mecha can provide and which is not part of this extension.
+
+## Configuration
+
+All settings are under `StewBeet.*`:
+
+| Setting | Default | |
+|---|---|---|
+| `languageFeatures` | `true` | Completion, hover, signature help and go to definition inside the blocks |
+| `suggestSpyglass` | `true` | Offer the Spyglass install once, when it is missing |
+| `buildOutput` | `""` | Where the generated pack is. Empty searches the workspace for maps |
+| `sourceMapDiagnostics` | `true` | Relay build errors onto the Python that wrote the command |
+| `resolveInterpolations` | `true` | Fill each `{...}` with what the last build resolved it to |
+| `diagnosticRuleDenylist` | `["undeclaredSymbol"]` | Rules never relayed onto Python |
+| `codeLens` | `true` | The link above a block that produced a function |
+| `headerLinks` | `true` | Resource locations in a generated file's `#>` header |
+| `boltInMcfunction` | `true` | Give a `.mcfunction` holding bolt the `bolt` language id |
+| `enableBlockDecorations` | `true` | The coloured box around a block |
+| `backgroundColor` | `rgba(80,40,0,0.15)` | Any CSS colour |
+| `borderColor` | `rgba(200,120,30,0.30)` | Any CSS colour |
+| `borderWidth` | `"2px"` | |
+
+Commands, from the palette: **Go to Generated Function**, **Go to Python Source**, **Reload Source Maps**, **Refresh Build Diagnostics**, **Show Diagnostics Status**, **Exclude Bolt Files From Spyglass**, **Install Spyglass Language Server**.
 
 ## Grammar
 
 mcfunction grammar from [MinecraftCommands/syntax-mcfunction](https://github.com/MinecraftCommands/syntax-mcfunction), bundled via [StewBeet](https://github.com/Stoupy51/StewBeet/blob/main/extension/vscode/syntaxes/mcfunction.tmLanguage.json).
-
-The bolt grammar's command names are generated from mecha's own command tree rather than written by hand; the regeneration command is recorded in the grammar file.
+The bolt grammar's command names are generated from mecha's command tree; the regeneration command is recorded in the grammar file.
 
 ## Installation
 
 **From the marketplace:** search *StewBeet* in the Extensions panel.
 
-**From a `.vsix` file:**
-```bash
-code --install-extension stewbeet-1.0.0.vsix
-```
-Or: **Extensions -> `...` -> Install from VSIX...**
+**From a `.vsix`:** `code --install-extension StewBeet.vsix`, or **Extensions -> `...` -> Install from VSIX...**
 

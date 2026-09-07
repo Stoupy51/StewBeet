@@ -51,8 +51,8 @@ def beet_default(ctx: Context) -> Iterator[None]:
 	detected: list[str] = unparseable_sources(ctx)
 	existing: list[str] = exclusions_of(current)
 
-	# Retracting is not a decision to ask about: these name files an earlier build excluded and
-	# this one can parse, and leaving them in keeps Spyglass off a file it has no trouble with.
+	# Retracting is not a decision to ask about: these name files an earlier build excluded and this one can parse.
+	# Leaving them in keeps Spyglass off a file it has no trouble with.
 	drop: list[str] = [pattern for pattern in remembered_exclusions() if pattern not in detected and pattern in existing]
 	add: list[str] = [pattern for pattern in detected if pattern not in existing]
 	if add and not may_manage(add):

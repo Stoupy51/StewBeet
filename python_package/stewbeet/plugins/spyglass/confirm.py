@@ -75,8 +75,7 @@ def may_manage(files: list[str]) -> bool:
 		stp.warning("Nobody to answer, so nothing is written. Set 'meta.stewbeet.spyglass.manage_exclusions' to decide up front.")
 		return False
 
-	# Only an answer somebody actually gave is remembered, so a build with no terminal never
-	# decides for the author.
+	# Only an answer somebody actually gave is remembered, so a build with no terminal never decides for the author.
 	cache.json[CACHE_ANSWER] = typed
 	return typed
 

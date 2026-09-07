@@ -44,14 +44,11 @@ before the pack is even loaded, so nothing can write a function before recording
 within `require` does not matter. Recording the pack's own hand-written `.mcfunction` files as they
 load costs nothing: they have no Python behind them, so they get no map.
 
-That is the whole configuration. `stewbeet.plugins.archive` writes the maps itself before it zips,
-so both the build directory and the zip that ends up in `saves/<world>/datapacks` carry the same
-thing.
+That is the whole configuration.
+`stewbeet.plugins.archive` writes the maps itself before it zips, so both the build directory and the zip that ends up in `saves/<world>/datapacks` carry the same thing.
 
-If you package the pack some other way, add `stewbeet.plugins.sniffer.emit` to your pipeline,
-**after** every plugin that writes or rewrites functions and **before** whichever plugin packages it.
-Forget it and the maps are still written, at the very end of the build, with a warning telling you
-what missed them.
+If you package the pack some other way, add `stewbeet.plugins.sniffer.emit` to your pipeline, **after** every plugin that writes or rewrites functions and **before** whichever plugin packages it.
+Forget it and the maps are still written, at the very end of the build, with a warning telling you what missed them.
 
 ## What you get
 
@@ -98,8 +95,8 @@ Two more things stay unmapped by design:
 
 ## Shipping a release
 
-The maps are only in your build because you asked for them. A release build that does not ask for them
-produces exactly the same datapack it always did, byte for byte, with no maps beside the functions.
+The maps are only in your build because you asked for them.
+A release build that does not ask for them produces exactly the same datapack it always did, byte for byte, with no maps beside the functions.
 
 ## Next steps
 

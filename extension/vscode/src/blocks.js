@@ -210,8 +210,7 @@ function readOpeningQuote(text, i) {
 function findBlockOffsets(text) {
   const blocks = [];
   /** Names handed to a write_* call instead of a literal, to the offsets of the calls taking them.
-   *  A name is often reused, `content` above all, and each of its blocks belongs to the call that
-   *  comes after it rather than to whichever call was seen first. */
+   *  A name is often reused, `content` above all, so each of its blocks belongs to the call after it rather than to the first one seen. */
   const variables = new Map();
   /** @param {string} name @param {number} offset */
   const consume = name => variables.set(name, [...(variables.get(name) ?? []), m.index]);
@@ -241,9 +240,8 @@ function findBlockOffsets(text) {
     const closeIdx = findClosingQuote(text, opening.quoteStyle, opening.contentStart, opening.isFString);
     if (closeIdx === -1) continue;
 
-    // `"\n".join(lines)` hands the commands over in `lines`; the literal is the separator between
-    // them and holds no command of its own. Reading it as one both decorates a `"\n"` and hides
-    // every line the list was built from, which is most of what a loop-written function is.
+    // `"\n".join(lines)` hands the commands over in `lines`, and the literal separating them holds no command of its own.
+    // Reading it as one both decorates a `"\n"` and hides every line the list was built from, which is all of a loop-written function.
     const joined = readJoinArgument(text, closeIdx + opening.quoteStyle.length);
     if (joined !== null) {
       if ("name" in joined) consume(joined.name);
@@ -383,9 +381,8 @@ function readArgumentName(text, i) {
 /**
  * What a string literal is separating, when it is the separator of a `.join(...)`.
  *
- * `write_function(path, "\n".join(lines))` is how a function built one command at a time is
- * written, and the commands are in `lines`. A generator is the other half of the idiom,
- * `"\n".join(f"say {i}" for i in items)`, where the element is the command.
+ * `write_function(path, "\n".join(lines))` is how a function built one command at a time is written, and the commands are in `lines`.
+ * A generator is the other half of the idiom, `"\n".join(f"say {i}" for i in items)`, where the element is the command.
  *
  * @param {string} text
  * @param {number} i  Just past the closing quote of the literal.
@@ -405,10 +402,8 @@ function readJoinArgument(text, i) {
 /**
  * Every string literal directly inside a list literal, as its own block.
  *
- * `lines: list[McFunction] = ["say a", "say b"]` is one command per entry, which is what the
- * grammar already colours them as, and `[f"say {i}" for i in items]` is one command evaluated
- * per item. What comes after a comprehension's `for` is its plumbing rather than its element,
- * so `if name == "abc"` contributes nothing.
+ * `lines: list[McFunction] = ["say a", "say b"]` is one command per entry, which is what the grammar already colours them as.
+ * `[f"say {i}" for i in items]` is one command evaluated per item, and what comes after the `for` is plumbing rather than element, so `if name == "abc"` contributes nothing.
  *
  * @param {string} text
  * @param {number} open  Index of the `[`.
@@ -436,8 +431,8 @@ function readListEntries(text, open) {
     if (closeIdx === -1) break;
     const after = closeIdx + opening.quoteStyle.length;
 
-    // A nested entry is part of an expression rather than a command of its own, and so is a
-    // literal something is called on: `", ".join(parts)` is a separator, not a command.
+    // A nested entry is part of an expression rather than a command of its own.
+    // So is a literal something is called on: `", ".join(parts)` is a separator, not a command.
     if (depth === 0 && text[skipSpace(text, after)] !== ".") {
       entries.push({
         start: opening.quoteStart, end: after,
@@ -462,9 +457,8 @@ const CONTRIBUTION_RE = /(?:^|\n)[ \t]*([A-Za-z_]\w*)[ \t]*(?:(?::[^=\n]*)?\+?=|
 /**
  * The commands added to any of `names`, as blocks.
  *
- * A function assembled in a variable is written in every shape Python offers: assigned whole,
- * grown with `+=`, appended to a line at a time, or listed. All four count, and all four feed
- * the call that later consumes the name.
+ * A function assembled in a variable is written in every shape Python offers: assigned whole, grown with `+=`, appended to a line at a time, or listed.
+ * All four count, and all four feed the call that later consumes the name.
  *
  * @param {string} text
  * @param {Map<string, number[]>} names  Name to the offsets of the write_* calls consuming it.
@@ -483,8 +477,8 @@ function findAssignedBlocks(text, names) {
     const found = text[value] === "[" ? readListEntries(text, value) : literalAt(text, value);
     if (found.length === 0) continue;
 
-    // The call a name reaches is the first one after these commands, since a name reused later
-    // in the file, `content` above all, is a different function every time.
+    // The call a name reaches is the first one after these commands.
+    // A name reused later in the file, `content` above all, is a different function every time.
     const last = found[found.length - 1].end;
     const callStart = calls.find(offset => offset > last) ?? calls[calls.length - 1];
     for (const entry of found) blocks.push({ ...entry, callStart });
