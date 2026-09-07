@@ -73,7 +73,7 @@ The VLQ alphabet and continuation-bit scheme are the standard ones; see [Variabl
 
 - One map per generated function, written as a sibling: `data/<ns>/function/<path>.mcfunction.map`.
 - Discovery is by convention: given `foo.mcfunction`, look for `foo.mcfunction.map`.
-- The generated function's **last** line is `## sourceMappingURL=<basename>.mcfunction.map`. Note **two** hash characters, matching the reference. It must be last, and it must be unmapped, because Sniffer counts comments and blank lines when placing breakpoints so a leading comment would shift every mapped line.
+- **No `## sourceMappingURL=` comment is written.** The map is always the sibling, so a comment naming it repeats the file name back and costs a line in every shipped function. A consumer that wants to honour one still may: the extension reads a comment when it finds one and falls back to the sibling, which is what every StewBeet build now looks like.
 - Maps are emitted only when the `stewbeet.plugins.sniffer` plugin is in the pipeline, and then they appear in every artifact the build produces, the archive zip included.
 
 ### When emission happens, and why it is a pipeline entry of its own
@@ -88,23 +88,26 @@ Emission must happen **after** every rewriting plugin (`auto.headers` above all)
 A beet generator cannot span that gap. beet runs every plugin's forward pass first, then unwinds the
 generators in reverse (`GenericPipeline.run` in `beet/toolchain/pipeline.py`), so a teardown always
 runs after `archive`, never before it. Confirmed by building the canonical pipeline: the zip came out
-with no maps **and** with `.mcfunction` files missing the `sourceMappingURL` comment the build
-directory had, two artifacts from one build that disagreed.
+with no maps beside functions the build directory had mapped, two artifacts from one build that
+disagreed.
 
 So the plugin has two entries:
 
 | Entry | Where | Does |
 |---|---|---|
 | `stewbeet.plugins.sniffer` | `require`, next to `stewbeet` | installs capture, and at teardown writes anything the emit step missed, with a warning |
-| `stewbeet.plugins.sniffer.emit` | `pipeline`, after every writer and before `stewbeet.plugins.archive` | writes the sidecars and appends the discovery comments |
+| `stewbeet.plugins.sniffer.emit` | `pipeline`, after every writer and before whichever plugin packages the pack | writes the sidecars |
 
 `require` rather than an early pipeline entry, because position inside `require` cannot be got wrong
 and no write can precede it. Capture is live while the pack's own hand-written `.mcfunction` files
-load; they record chunks with no origin, so they get no map and no comment. A pipeline entry still
+load; they record chunks with no origin, so they get no map. A pipeline entry still
 works when it sits before every writer, which is what `tests/plugin_23_sniffer_with_headers` covers.
 
-Emission is idempotent: a function already carrying a `sourceMappingURL` line is skipped, so listing
-the step twice, or falling through to the teardown after it already ran, never doubles a comment.
+`stewbeet.plugins.archive` writes the maps itself before it zips, so a pipeline that packages with it
+needs no `emit` entry at all and the `require` line above is the whole configuration.
+
+Emission is idempotent: a function whose sidecar is already in `ctx.data.extra` is skipped, so
+listing the step twice, or falling through to the teardown after it already ran, writes it once.
 
 ### When the pack is copied out of the workspace
 
@@ -188,7 +191,7 @@ Produced by decoding `mappings` and resolving each segment through `sourceRoot`.
 | 2 | `effect clear @s minecraft:slowness` | `source/combat/hit.ts:8:0` -> `effect('slowness', 3);` |
 | 3 | `effect give @s minecraft:slowness 3 0` | `source/combat/hit.ts:8:0` -> the same line, G7 |
 | 4 | `function ns:nested/aura` | `source/combat/hit.ts:9:0` -> `aura();` |
-| 5 | `## sourceMappingURL=hit.mcfunction.map` | no group, mappings ended |
+| 5 | `## sourceMappingURL=hit.mcfunction.map` (the reference's own) | no group, mappings ended |
 
 `aura.mcfunction.map`, `sourceRoot` `../../../../../..`, mappings `AAQA;ACHA;AACA`:
 
@@ -197,6 +200,6 @@ Produced by decoding `mappings` and resolving each segment through `sourceRoot`.
 | 0 | `particle minecraft:enchant ~ ~1 ~ ...` | `source/combat/hit.ts:9:0` -> `aura();` |
 | 1 | `scoreboard players set @s ns.aura 60` | `source/spawn.ts:6:0` -> `aura();` |
 | 2 | `execute as @e[tag=ns.spawned] run ...` | `source/spawn.ts:7:0` -> `aura.tick('ns.spawned');` |
-| 3 | `## sourceMappingURL=aura.mcfunction.map` | no group, mappings ended |
+| 3 | `## sourceMappingURL=aura.mcfunction.map` (the reference's own) | no group, mappings ended |
 
 Line 1 of `aura` is the segment worth studying: `ACHA` decodes to `[0, +1, -3, 0]`, moving to the next source **and** three lines back, because the deltas are file-wide rather than per-source.

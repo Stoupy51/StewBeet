@@ -92,13 +92,15 @@ def beet_default(ctx: Context) -> Iterator[None]:
         decoded = decode_mappings(mappings)
         assert list(decoded) == sorted(decoded), f"{path}: generated lines must be strictly increasing"
 
-    # ── every function carries the discovery comment, as its LAST line ───────
+    # ── no function carries a discovery comment, because the map is its sibling ──
+    # A comment naming the sibling repeats the file name back and costs a line in every shipped
+    # function, so a mapped function ends on a real command and the map is found by name.
     for func_path, func in ctx.data.functions.items():
         if f"data/{func_path.replace(':', '/function/')}.mcfunction.map" not in maps:
             continue
         lines: list[str] = func.text.rstrip("\n").split("\n")
-        assert lines[-1].startswith("## sourceMappingURL="), \
-            f"{func_path}: last line must be the two-hash sourceMappingURL comment, got {lines[-1]!r}"
+        assert not lines[-1].startswith("## sourceMappingURL="), \
+            f"{func_path}: a map written beside the function needs no discovery comment, got {lines[-1]!r}"
 
     # ── the mapping actually lands on the write_function call in link.py ─────
     root_map: JsonDict = maps[f"data/{ns}/function/root.mcfunction.map"]
@@ -145,5 +147,5 @@ def beet_default(ctx: Context) -> Iterator[None]:
             zipped: str = zip_file.read(entry).decode("utf-8").replace("\r\n", "\n")
             assert zipped == ctx.data.functions[func_path].text, \
                 f"{entry} differs between the archive and the build directory"
-            assert zipped.rstrip("\n").split("\n")[-1].startswith("## sourceMappingURL="), \
-                f"{entry} lost its discovery comment on the way into the archive"
+            assert f"{entry}.map" in entries, \
+                f"{entry} names no map, so the sibling is the only way to find one and it is not in the archive"

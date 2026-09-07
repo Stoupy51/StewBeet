@@ -207,9 +207,9 @@ Five things the reference settled that guesswork had got wrong or left open:
 
 Next to the generated functions inside the build, discoverable by convention, and inside every zip the build produces. Minecraft's function loader only reads `*.mcfunction` and ignores unknown siblings, so a pack carrying maps stays loadable.
 
-The zip is the artifact that matters: `copy_to_destination` ships `<Project>_datapack.zip` into `saves/<world>/datapacks`, and Sniffer's mod resolves function paths out of whichever pack it loaded, zip included. Excluding maps from the archive would leave the `sourceMappingURL` comment pointing at a file that is not there. Keeping a release free of maps is done by not listing the plugin in a release pipeline, which is where an opt-in belongs.
+The zip is the artifact that matters: `copy_to_destination` ships `<Project>_datapack.zip` into `saves/<world>/datapacks`, and Sniffer's mod resolves function paths out of whichever pack it loaded, zip included. Keeping a release free of maps is done by not listing the plugin in a release pipeline, which is where an opt-in belongs.
 
-An optional trailing `# sourceMappingURL=foo.mcfunction.map` comment matches the standard discovery mechanism. It must be the **last** line, since Sniffer counts comment lines when placing breakpoints.
+The standard's trailing `# sourceMappingURL=` comment is not written: it can only ever name the sibling, which is where discovery starts anyway, and every line it adds is a line Sniffer has to count past when placing breakpoints. Reading one is still supported, for a producer that writes its map somewhere else.
 
 ## Open questions
 

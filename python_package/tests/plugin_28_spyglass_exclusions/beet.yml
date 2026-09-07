@@ -1,0 +1,36 @@
+# Test: stewbeet.plugins.spyglass keeps Spyglass's env.exclude in step with what it cannot parse.
+#
+# Three sources, one of each kind:
+#
+#   bolted.mcfunction   uses bolt, so bolt generated Python for it.
+#   nested.mcfunction   uses mecha's `function ./name:` nesting, so it backs two compilation units.
+#   plain.mcfunction    is vanilla, and excluding it would cost it Spyglass's checking for nothing.
+#
+# `manage_exclusions` answers the terminal prompt up front, which is what a build with nobody to
+# answer it needs.
+
+id: "tns"
+name: "Test Spyglass Exclusions"
+version: "1.0.0"
+author: "test"
+minecraft: "26.2"
+
+directory: "."
+output: "build"
+
+require:
+    - "bolt"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+meta:
+    stewbeet:
+        spyglass:
+            manage_exclusions: true
+
+pipeline:
+    - "src.assertions"
+    - "mecha"
+    - "stewbeet.plugins.spyglass"

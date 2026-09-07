@@ -20,6 +20,7 @@ const diagnostics = require("./diagnostics");
 const { registerCodeLenses, refreshCodeLenses } = require("./codelens");
 const { registerHeaderNavigation } = require("./headers");
 const { looksLikeBolt, isBuildOutput, addExclusions } = require("./bolt");
+const { SPYGLASS_EXTENSION_ID, OFFER_MESSAGE, OFFER_ACTIONS, shouldOffer } = require("./spyglass");
 
 // Constants
 
@@ -112,7 +113,66 @@ function activate(context) {
   registerCodeLenses(context);
   registerHeaderNavigation(context);
   registerBoltDetection(context);
+  registerSpyglassOffer(context);
   diagnostics.registerDiagnosticRelay(context);
+}
+
+// The language server the blocks are for
+
+/**
+ * Say once, on a file it applies to, that the checking half needs Spyglass.
+ *
+ * Everything this extension does on its own keeps working without it, which is why it is not an
+ * `extensionDependencies` entry. The cost of that choice is silence: a reader sees highlighted
+ * commands and no completion and has nothing to go on. The offer is that missing sentence, and
+ * "Never" writes the setting rather than a hidden flag, so it can be found again.
+ *
+ * @param {vscode.ExtensionContext} context
+ */
+function registerSpyglassOffer(context) {
+  let asked = false;
+
+  /** @param {vscode.TextDocument | undefined} doc */
+  async function consider(doc) {
+    if (!doc || doc.languageId !== "python" || doc.uri.scheme !== "file") return;
+
+    const config = vscode.workspace.getConfiguration(CFG_KEY);
+    if (!shouldOffer({
+      installed: vscode.extensions.getExtension(SPYGLASS_EXTENSION_ID) !== undefined,
+      suggest: config.get("suggestSpyglass", true),
+      languageFeatures: config.get("languageFeatures", true),
+      asked,
+      blocks: findBlockOffsets(doc.getText()).length,
+    })) return;
+
+    asked = true;
+    const choice = await vscode.window.showInformationMessage(OFFER_MESSAGE, ...OFFER_ACTIONS);
+    if (choice === OFFER_ACTIONS[0]) await installSpyglass();
+    if (choice === OFFER_ACTIONS[2]) {
+      await config.update("suggestSpyglass", false, vscode.ConfigurationTarget.Global);
+    }
+  }
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("stewbeet.installSpyglass", installSpyglass),
+    vscode.window.onDidChangeActiveTextEditor(editor => consider(editor?.document)),
+  );
+  consider(vscode.window.activeTextEditor?.document);
+}
+
+/** Hand the install to VS Code, which is the only thing that can do it. */
+async function installSpyglass() {
+  if (vscode.extensions.getExtension(SPYGLASS_EXTENSION_ID)) {
+    vscode.window.showInformationMessage("Spyglass is already installed.");
+    return;
+  }
+  try {
+    await vscode.commands.executeCommand("workbench.extensions.installExtension", SPYGLASS_EXTENSION_ID);
+    vscode.window.showInformationMessage("Spyglass installed. Reopen a Python file to see completion inside the blocks.");
+  } catch (e) {
+    console.debug("[StewBeet] could not install Spyglass", e);
+    vscode.commands.executeCommand("workbench.extensions.search", SPYGLASS_EXTENSION_ID);
+  }
 }
 
 // Bolt inside .mcfunction
@@ -145,9 +205,9 @@ function registerBoltDetection(context) {
 
     const configured = vscode.workspace.getConfiguration(CFG_KEY).get("buildOutput", "");
     const outputs = typeof configured === "string" && configured ? [configured] : [];
+    // A file the build wrote is generated output even when buildOutput names nothing: the map
+    // beside it says so, and older builds say so in a trailing comment looksLikeBolt reads.
     if (isBuildOutput(doc.uri.fsPath, outputs)) return;
-    // A file the build wrote is generated output even when buildOutput names nothing, and its
-    // own trailing comment says so. looksLikeBolt reads it, so this needs no second check.
     if (!looksLikeBolt(doc.getText())) return;
 
     handled.add(doc.uri.fsPath);

@@ -1,0 +1,12 @@
+{
+  "env": {
+    "dependencies": [
+      "@vanilla-mcdoc"
+    ],
+    "exclude": [
+      "build/**",
+      "src/data/tns/function/bolted.mcfunction",
+      "src/data/tns/function/nested.mcfunction"
+    ]
+  }
+}

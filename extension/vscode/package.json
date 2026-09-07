@@ -2,7 +2,7 @@
   "name": "stewbeet",
   "displayName": "StewBeet",
   "description": "Syntax highlighting, block decorations and Spyglass-backed language features for mcfunction strings inside StewBeet write_* calls in Python files.",
-  "version": "1.10.0",
+  "version": "2.0.0",
   "publisher": "stoupy",
   "license": "MIT",
   "icon": "icon.png",
@@ -20,6 +20,8 @@
     "mcfunction",
     "stewbeet",
     "beet",
+    "bolt",
+    "mecha",
     "minecraft",
     "datapack",
     "syntax",
@@ -88,6 +90,11 @@
           "type": "boolean",
           "default": true,
           "markdownDescription": "Enable completion, hover, signature help and go-to-definition inside mcfunction strings. Requires the [Spyglass](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server) extension; without it these features are silently unavailable."
+        },
+        "StewBeet.suggestSpyglass": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Offer to install [Spyglass](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server) once, on the first Python file holding mcfunction strings, when it is missing. Everything else works without it; completion and error checking inside the strings do not."
         },
         "StewBeet.enableBlockDecorations": {
           "type": "boolean",
@@ -175,6 +182,10 @@
       {
         "command": "stewbeet.excludeBoltFromSpyglass",
         "title": "StewBeet: Exclude Bolt Files From Spyglass"
+      },
+      {
+        "command": "stewbeet.installSpyglass",
+        "title": "StewBeet: Install Spyglass Language Server"
       }
     ]
   },

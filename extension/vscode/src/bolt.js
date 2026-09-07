@@ -56,6 +56,8 @@ const SCAN_LIMIT = 400;
  */
 function looksLikeBolt(text) {
   // A build's own output is never bolt, whatever it contains: mecha has already compiled it.
+  // Only a build written by an older StewBeet names its map in a comment; `isBuildOutput` is
+  // what recognises the rest.
   if (text.includes(SOURCE_MAPPING_URL)) return false;
 
   const lines = text.split("\n", SCAN_LIMIT);
@@ -74,16 +76,20 @@ function looksLikeBolt(text) {
  * A generated function is not bolt even when the module that wrote it was, and switching one
  * would take it away from Spyglass, which is the one thing generated output genuinely wants.
  *
+ * A sidecar map beside the file says the same thing without any configuration: only a build
+ * writes one, and it is the signal that survives when `buildOutput` names nothing.
+ *
  * @param {string} filePath
  * @param {string[]} outputRoots  Absolute paths that hold build output, may be empty.
  * @returns {boolean}
  */
 function isBuildOutput(filePath, outputRoots) {
   const normalized = filePath.replace(/\\/g, "/").toLowerCase();
-  return outputRoots.some(root => {
+  const named = outputRoots.some(root => {
     const prefix = root.replace(/\\/g, "/").toLowerCase().replace(/\/+$/, "");
     return normalized.startsWith(`${prefix}/`);
   });
+  return named || fs.existsSync(`${filePath}.map`);
 }
 
 // Telling Spyglass to skip the file

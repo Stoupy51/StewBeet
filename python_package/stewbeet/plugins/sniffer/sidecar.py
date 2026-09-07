@@ -19,26 +19,19 @@ from beet import Context, Function, TextFile
 from .encode import to_json
 from .model import FunctionSourceMap, LineMapping, SourceOrigin
 
-# Constants
-SOURCE_MAPPING_URL: str = "## sourceMappingURL="
-""" Discovery comment appended as a function's last line. Two hashes, matching the reference implementation. """
-
 
 # Functions
 def write_sidecar(ctx: Context, path: str, func: Function, mapped: dict[int, SourceOrigin]) -> bool:
-	""" Write one `.mcfunction.map` beside a generated function, and point the function at it.
-
-	The discovery comment is appended **last** and is left unmapped on purpose: Sniffer counts
-	comments and blank lines when placing breakpoints, so a leading comment would shift every
-	mapped line by one.
+	""" Write one `.mcfunction.map` beside a generated function.
 
 	Args:
 		path:   Resource location of the function, ex: `mynamespace:v1.0/tick`.
 		mapped: Origin per 0-based generated line. Lines with no origin are simply absent.
 	Returns:
-		False when there was nothing to map or the function already carries a comment.
+		False when there was nothing to map or the sidecar was already written.
 	"""
-	if not mapped or carries_discovery_comment(func.text):
+	file_path: str = function_file_path(path)
+	if not mapped or f"{file_path}.map" in ctx.data.extra:
 		return False
 
 	project_root: str = os.path.abspath(str(ctx.directory))
@@ -46,11 +39,6 @@ def write_sidecar(ctx: Context, path: str, func: Function, mapped: dict[int, Sou
 	if source_map is None:
 		return False
 
-	# Append without collapsing trailing blank lines: those lines are mapped content, and
-	# swallowing them would drop the comment onto an index that already carries an origin.
-	file_path: str = function_file_path(path)
-	body: str = func.text if func.text.endswith("\n") else f"{func.text}\n"
-	func.text = f"{body}{SOURCE_MAPPING_URL}{source_map.file}.map\n"
 	ctx.data.extra[f"{file_path}.map"] = TextFile(stp.json_dump(to_json(source_map, len(final_lines_of(func.text))), max_level=2))
 	return True
 
@@ -121,20 +109,6 @@ def pack_output_depth(ctx: Context) -> int:
 	relative: str = os.path.relpath(output, project_root)
 	segments: list[str] = [part for part in relative.split(os.sep) if part not in (".", "")]
 	return len(segments) + 1 # the pack writes into its own directory, named after the pack
-
-
-def carries_discovery_comment(text: str) -> bool:
-	""" Whether a function already ends with its `sourceMappingURL` line.
-
-	Makes emission idempotent, so listing the step twice, or falling back to it at teardown after it
-	already ran, never appends a second comment.
-
-	>>> carries_discovery_comment("say hi\\n## sourceMappingURL=a.mcfunction.map\\n")
-	True
-	>>> carries_discovery_comment("say hi\\n")
-	False
-	"""
-	return text.rstrip("\n").rsplit("\n", 1)[-1].startswith(SOURCE_MAPPING_URL)
 
 
 def final_lines_of(text: str) -> list[str]:

@@ -38,5 +38,6 @@ Here are all the available plugins for the StewBeet framework:
 | 📂 **Build** | [**copy_to_destination**](./copy_to_destination.md) | Copies generated packs to configured destination folders | ![Copied datapacks](https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/copy_to_destination.datapack_destination.jpg) | 🟢 Independent |
 | 🔁 **Build** | [**livereload**](./livereload.md) | Auto in-game `/reload` on each build via `beet link` or `build_copy_destinations` | ![Copied datapacks](https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/copy_to_destination.datapack_destination.jpg) | 🟢 Independent |
 | 🐛 **Build** | [**sniffer**](./sniffer.md) | Writes Source Map v3 sidecars linking every generated line back to the Python that wrote it | ![Source map](https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/sniffer.source_map.jpg) | 🟡 Partly dependent |
+| 🔍 **Build** | [**spyglass**](./spyglass.md) | Keeps Spyglass's `env.exclude` in step with the sources it cannot parse, so bolt files stop being reported as broken | | 🟢 Independent |
 | 🔐 **Build** | [**compute_sha1**](./compute_sha1.md) | Computes SHA1 hashes for all generated zip files | ![Generated sha1 hashes](https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/compute_sha1.example.jpg) | 🟢 Independent |
 
