@@ -3,10 +3,9 @@
 
 // Offering the language server the string blocks need, once, and never again once it is declined.
 //
-// Spyglass is a soft dependency on purpose: the grammar, the decorations, the lenses and every
-// source-map jump work without it. What does not work is the half a reader assumes is there,
-// completion and errors inside the strings, and nothing in the UI says why. This is that missing
-// sentence, shown where it is relevant and settled either way with one click.
+// Spyglass is a soft dependency on purpose: the grammar, the decorations, the lenses and every source-map jump work without it.
+// What does not work is the half a reader assumes is there, completion and errors inside the strings, and nothing in the UI says why.
+// This is that missing sentence, shown where it is relevant and settled either way with one click.
 //
 // Free of any "vscode" dependency, so the decision is testable under plain `node --test`.
 
