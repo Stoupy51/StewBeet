@@ -209,8 +209,12 @@ function readOpeningQuote(text, i) {
  */
 function findBlockOffsets(text) {
   const blocks = [];
-  /** Names handed to a write_* call instead of a literal, mapped to that call's offset. */
+  /** Names handed to a write_* call instead of a literal, to the offsets of the calls taking them.
+   *  A name is often reused, `content` above all, and each of its blocks belongs to the call that
+   *  comes after it rather than to whichever call was seen first. */
   const variables = new Map();
+  /** @param {string} name @param {number} offset */
+  const consume = name => variables.set(name, [...(variables.get(name) ?? []), m.index]);
   const wrappers = mcfunctionWrappers(text);
   const callRe = wrappers.size === 0 ? FUNC_RE : callRegex([...wrappers.keys(), ...WRITE_FUNCS]);
 
@@ -230,12 +234,22 @@ function findBlockOffsets(text) {
     const opening = readOpeningQuote(text, contentIdx);
     if (!opening) {
       const name = readArgumentName(text, contentIdx);
-      if (name && !variables.has(name)) variables.set(name, m.index);
+      if (name) consume(name);
       continue;
     }
 
     const closeIdx = findClosingQuote(text, opening.quoteStyle, opening.contentStart, opening.isFString);
     if (closeIdx === -1) continue;
+
+    // `"\n".join(lines)` hands the commands over in `lines`; the literal is the separator between
+    // them and holds no command of its own. Reading it as one both decorates a `"\n"` and hides
+    // every line the list was built from, which is most of what a loop-written function is.
+    const joined = readJoinArgument(text, closeIdx + opening.quoteStyle.length);
+    if (joined !== null) {
+      if ("name" in joined) consume(joined.name);
+      else for (const entry of joined.entries) blocks.push({ ...entry, callStart: m.index });
+      continue;
+    }
 
     blocks.push({
       start: opening.quoteStart, end: closeIdx + opening.quoteStyle.length,
@@ -366,41 +380,134 @@ function readArgumentName(text, i) {
   return text[after] === ")" || text[after] === "," ? text.slice(start, i) : null;
 }
 
-/** An assignment to a bare name, with an optional type annotation, `=` or `+=`. */
-const ASSIGN_RE = /(?:^|\n)[ \t]*([A-Za-z_]\w*)[ \t]*(?::[^=\n]*)?\+?=[ \t]*/g;
-
 /**
- * The string literals assigned to any of `names`, as blocks.
+ * What a string literal is separating, when it is the separator of a `.join(...)`.
  *
- * Both `content = """..."""` and a later `content += """..."""` count, since building a
- * function by appending is as common as writing it in one go.
+ * `write_function(path, "\n".join(lines))` is how a function built one command at a time is
+ * written, and the commands are in `lines`. A generator is the other half of the idiom,
+ * `"\n".join(f"say {i}" for i in items)`, where the element is the command.
  *
  * @param {string} text
- * @param {Map<string, number>} names  Name to the offset of the write_* call that consumes it.
+ * @param {number} i  Just past the closing quote of the literal.
+ * @returns {{ name: string } | { entries: { start:number, end:number, contentStart:number, contentEnd:number }[] } | null}
+ *   The name joined, the commands joined, or null when this is not a `.join(` at all.
+ */
+function readJoinArgument(text, i) {
+  const match = /^\.[ \t]*join[ \t]*\(/.exec(text.slice(skipSpace(text, i), skipSpace(text, i) + 16));
+  if (!match) return null;
+
+  const inner = skipSpace(text, skipSpace(text, i) + match[0].length);
+  const name = readArgumentName(text, inner);
+  if (name) return { name };
+  return { entries: text[inner] === "[" ? readListEntries(text, inner) : literalAt(text, inner) };
+}
+
+/**
+ * Every string literal directly inside a list literal, as its own block.
+ *
+ * `lines: list[McFunction] = ["say a", "say b"]` is one command per entry, which is what the
+ * grammar already colours them as, and `[f"say {i}" for i in items]` is one command evaluated
+ * per item. What comes after a comprehension's `for` is its plumbing rather than its element,
+ * so `if name == "abc"` contributes nothing.
+ *
+ * @param {string} text
+ * @param {number} open  Index of the `[`.
+ * @returns {{ start:number, end:number, contentStart:number, contentEnd:number }[]}
+ */
+function readListEntries(text, open) {
+  const entries = [];
+  let i = open + 1;
+  let depth = 0;
+
+  while (i < text.length) {
+    const c = text[i];
+    if (c === "(" || c === "[" || c === "{") { depth++; i++; continue; }
+    if (c === ")" || c === "}") { depth--; i++; continue; }
+    if (c === "]") {
+      if (depth === 0) break;
+      depth--; i++; continue;
+    }
+    if (depth === 0 && /^for\b/.test(text.slice(i, i + 4)) && !/\w/.test(text[i - 1] ?? "")) break;
+    if (c !== '"' && c !== "'") { i++; continue; }
+
+    const opening = readOpeningQuote(text, i - stringPrefixAt(text, i).length);
+    if (!opening) { i++; continue; }
+    const closeIdx = findClosingQuote(text, opening.quoteStyle, opening.contentStart, opening.isFString);
+    if (closeIdx === -1) break;
+    const after = closeIdx + opening.quoteStyle.length;
+
+    // A nested entry is part of an expression rather than a command of its own, and so is a
+    // literal something is called on: `", ".join(parts)` is a separator, not a command.
+    if (depth === 0 && text[skipSpace(text, after)] !== ".") {
+      entries.push({
+        start: opening.quoteStart, end: after,
+        contentStart: opening.contentStart, contentEnd: closeIdx,
+      });
+    }
+    i = after;
+  }
+
+  return entries;
+}
+
+/** The next index at or after `i` that is not whitespace. @param {string} text @param {number} i */
+function skipSpace(text, i) {
+  while (i < text.length && /[ \t\r\n]/.test(text[i])) i++;
+  return i;
+}
+
+/** A line adding to a name: an assignment, an `+=`, or an `.append(...)` onto a list. */
+const CONTRIBUTION_RE = /(?:^|\n)[ \t]*([A-Za-z_]\w*)[ \t]*(?:(?::[^=\n]*)?\+?=|\.[ \t]*append[ \t]*\()[ \t]*/g;
+
+/**
+ * The commands added to any of `names`, as blocks.
+ *
+ * A function assembled in a variable is written in every shape Python offers: assigned whole,
+ * grown with `+=`, appended to a line at a time, or listed. All four count, and all four feed
+ * the call that later consumes the name.
+ *
+ * @param {string} text
+ * @param {Map<string, number[]>} names  Name to the offsets of the write_* calls consuming it.
  * @returns {{ start:number, end:number, contentStart:number, contentEnd:number, callStart:number }[]}
  */
 function findAssignedBlocks(text, names) {
   const blocks = [];
 
-  ASSIGN_RE.lastIndex = 0;
+  CONTRIBUTION_RE.lastIndex = 0;
   let m;
-  while ((m = ASSIGN_RE.exec(text)) !== null) {
-    if (!names.has(m[1])) continue;
+  while ((m = CONTRIBUTION_RE.exec(text)) !== null) {
+    const calls = names.get(m[1]);
+    if (!calls) continue;
 
-    const opening = readOpeningQuote(text, m.index + m[0].length);
-    if (!opening) continue;
-    const closeIdx = findClosingQuote(text, opening.quoteStyle, opening.contentStart, opening.isFString);
-    if (closeIdx === -1) continue;
+    const value = m.index + m[0].length;
+    const found = text[value] === "[" ? readListEntries(text, value) : literalAt(text, value);
+    if (found.length === 0) continue;
 
-    blocks.push({
-      start: opening.quoteStart, end: closeIdx + opening.quoteStyle.length,
-      contentStart: opening.contentStart, contentEnd: closeIdx,
-      callStart: /** @type {number} */ (names.get(m[1])),
-    });
-    ASSIGN_RE.lastIndex = closeIdx + opening.quoteStyle.length;
+    // The call a name reaches is the first one after these commands, since a name reused later
+    // in the file, `content` above all, is a different function every time.
+    const last = found[found.length - 1].end;
+    const callStart = calls.find(offset => offset > last) ?? calls[calls.length - 1];
+    for (const entry of found) blocks.push({ ...entry, callStart });
+    CONTRIBUTION_RE.lastIndex = last;
   }
 
   return blocks;
+}
+
+/**
+ * The string literal at `i`, as a one-element array, or an empty one when there is none.
+ * @param {string} text
+ * @param {number} i
+ */
+function literalAt(text, i) {
+  const opening = readOpeningQuote(text, i);
+  if (!opening) return [];
+  const closeIdx = findClosingQuote(text, opening.quoteStyle, opening.contentStart, opening.isFString);
+  if (closeIdx === -1) return [];
+  return [{
+    start: opening.quoteStart, end: closeIdx + opening.quoteStyle.length,
+    contentStart: opening.contentStart, contentEnd: closeIdx,
+  }];
 }
 
 /**

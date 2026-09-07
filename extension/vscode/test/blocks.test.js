@@ -312,3 +312,106 @@ test("a project function takes triple-quoted content as well", () => {
   const text = 'def emit(cont: McFunction): pass\nemit("""\nsay multi\n""")';
   assert.deepEqual(blockTexts(text), ['"""\nsay multi\n"""']);
 });
+
+// Commands joined out of a list
+//
+// `write_function(path, "\n".join(lines))` is how a function assembled a command at a time is
+// handed over, and every one of its commands is somewhere else in the file.
+
+const JOINED_LIST = [
+  "\tprogressions_gui: list[str] = []",
+  "\tfor i, progression in enumerate(progressions_cmd):",
+  '\t\tprogressions_gui.append(f"$execute if score #progression {ns}.data matches ..0 run say low")',
+  '\t\tprogressions_gui.append(f"$execute if score #progression {ns}.data matches 1.. run say high")',
+  '\twrite_function(funcs["gui_progression"], "\\n".join(progressions_gui))',
+].join("\n");
+
+test("the separator of a join is not a block", () => {
+  for (const block of findBlockOffsets(JOINED_LIST)) {
+    assert.notEqual(JOINED_LIST.slice(block.start, block.end), '"\\n"',
+      "decorating the separator both marks a newline as commands and hides the real ones");
+  }
+});
+
+test("the list a join consumes carries the blocks", () => {
+  const found = blockTexts(JOINED_LIST);
+  assert.equal(found.length, 2, `both appended commands are blocks, got ${JSON.stringify(found)}`);
+  assert.ok(found.every(text => text.includes("#progression")), found.join(" | "));
+});
+
+test("every appended command points at the call that joins them", () => {
+  for (const block of findBlockOffsets(JOINED_LIST)) {
+    assert.equal(lineOf(JOINED_LIST, block.callStart), 4, "the lens belongs on the write_function");
+  }
+});
+
+test("an empty separator joins just the same", () => {
+  const text = 'lines = []\nlines.append("say a")\nwrite_function("ns:p", "".join(lines))';
+  assert.deepEqual(blockTexts(text), ['"say a"']);
+});
+
+test("the spacing inside a join call does not matter", () => {
+  const text = 'lines = []\nlines.append("say a")\nwrite_function("ns:p", "\\n" . join( lines ))';
+  assert.deepEqual(blockTexts(text), ['"say a"']);
+});
+
+test("a generator's element is the command when there is no name to follow", () => {
+  const text = 'write_function("ns:p", "\\n".join(f"say {i}" for i in range(3)))';
+  assert.deepEqual(blockTexts(text), ['f"say {i}"'],
+    "the literal being joined is one command, and the separator is still not one");
+});
+
+test("a join onto a name nothing writes stays inert", () => {
+  const text = 'notes = []\nnotes.append("say hi")\nprint("\\n".join(notes))';
+  assert.deepEqual(blockTexts(text), []);
+});
+
+test("an append onto a name nothing writes is not a block", () => {
+  const text = 'log = []\nlog.append("say hi")\n';
+  assert.deepEqual(blockTexts(text), []);
+});
+
+test("a list literal's entries are one block each", () => {
+  const text = 'lines: list[McFunction] = ["say a", "say b"]\nwrite_function("ns:p", "\\n".join(lines))';
+  assert.deepEqual(blockTexts(text), ['"say a"', '"say b"']);
+});
+
+test("a comprehension's element is the command, and its clauses are not", () => {
+  const text = 'lines = [f"say {i}" for i in range(3) if i != "skip"]\nwrite_function("ns:p", "\\n".join(lines))';
+  assert.deepEqual(blockTexts(text), ['f"say {i}"'],
+    "everything after `for` is how the list is built rather than what it holds");
+});
+
+test("a prefixed literal in a list keeps its prefix", () => {
+  const text = 'lines = [r"say raw\\n"]\nwrite_function("ns:p", "\\n".join(lines))';
+  assert.deepEqual(blockTexts(text), ['r"say raw\\n"'],
+    "starting at the quote would read an r-string as an f-string and mask its braces");
+});
+
+test("a nested list entry belongs to its expression, not to the pack", () => {
+  const text = 'lines = ["say a", ", ".join(["x", "y"])]\nwrite_function("ns:p", "\\n".join(lines))';
+  assert.deepEqual(blockTexts(text), ['"say a"'],
+    "only the top level of the list is one command per entry");
+});
+
+// A name reused down the file
+
+const REUSED = [
+  'content: str = "say first"',
+  'write_function("ns:one", content)',
+  'content = "say second"',
+  'write_function("ns:two", content)',
+].join("\n");
+
+test("each block of a reused name points at the call that follows it", () => {
+  const calls = findBlockOffsets(REUSED).map(b => lineOf(REUSED, b.callStart));
+  assert.deepEqual(calls, [1, 3],
+    "`content` is a different function every time it is rebuilt, so one lens line for all of them is wrong");
+});
+
+test("a contribution after the last call still points somewhere", () => {
+  const text = 'content = "say a"\nwrite_function("ns:p", content)\ncontent = "say b"';
+  const calls = findBlockOffsets(text).map(b => lineOf(text, b.callStart));
+  assert.deepEqual(calls, [1, 1], "the last call is the best answer there is, and no lens is worse");
+});
+
