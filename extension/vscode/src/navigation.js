@@ -150,18 +150,50 @@ async function findMaps() {
   if (discovered) return discovered;
 
   const vscode = api();
-  const configured = vscode.workspace.getConfiguration(CFG_KEY).get("buildOutput", "");
-  const pattern = configured
-    ? new vscode.RelativePattern(configured, `**/*${sourcemap.MAP_SUFFIX}`)
-    : `**/*${sourcemap.MAP_SUFFIX}`;
+  const configured = String(vscode.workspace.getConfiguration(CFG_KEY).get("buildOutput", ""));
   try {
-    const found = await vscode.workspace.findFiles(pattern, "**/node_modules/**");
-    discovered = found.map(uri => uri.fsPath);
+    discovered = await search(searchFor(configured));
+    // A setting naming nowhere is otherwise silent: every lens, every jump and every resolved
+    // interpolation stops at once, which reads as a broken extension rather than as one word
+    // wrong in a settings file.
+    if (discovered.length === 0 && configured) {
+      discovered = await search(searchFor(""));
+      if (discovered.length > 0) {
+        console.debug(`[StewBeet] no maps under "${configured}", searched the workspace instead`);
+      }
+    }
     return discovered;
   } catch (e) {
     console.debug("[StewBeet] source map discovery failed", e);
     return [];
   }
+}
+
+/**
+ * Where to look for the maps, from what `StewBeet.buildOutput` says.
+ *
+ * A relative path is what an author writes there, and `vscode.RelativePattern` reads a bare string
+ * as an absolute path, so `"build"` searched `<drive>:/build` and found nothing at all. A relative
+ * value becomes a workspace-relative glob instead, which searches every workspace folder.
+ *
+ * @param {string} configured
+ * @returns {{ base: string | null, glob: string }}  `base` is an absolute directory to search
+ *   under, and null means the whole workspace, which is what the glob is then relative to.
+ */
+function searchFor(configured) {
+  const glob = `**/*${sourcemap.MAP_SUFFIX}`;
+  const trimmed = configured.trim().replace(/^\.[\\/]/, "").replace(/[\\/]+$/, "");
+  if (!trimmed) return { base: null, glob };
+  if (path.isAbsolute(trimmed)) return { base: trimmed, glob };
+  return { base: null, glob: `${trimmed.replace(/\\/g, "/")}/${glob}` };
+}
+
+/** @param {{ base: string | null, glob: string }} where @returns {Promise<string[]>} */
+async function search(where) {
+  const vscode = api();
+  const pattern = where.base ? new vscode.RelativePattern(where.base, where.glob) : where.glob;
+  const found = await vscode.workspace.findFiles(pattern, "**/node_modules/**");
+  return found.map(uri => uri.fsPath);
 }
 
 /** Forget which maps exist, so the next lookup searches the workspace again. */
@@ -171,6 +203,7 @@ function forgetMaps() {
 
 module.exports = {
   targetOf,
+  searchFor,
   isGenerated,
   originsFor,
   rewrite,

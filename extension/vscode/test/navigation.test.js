@@ -9,7 +9,7 @@ const test = require("node:test");
 const assert = require("node:assert");
 const path = require("path");
 
-const { targetOf, isGenerated, rewrite } = require("../src/navigation");
+const { targetOf, isGenerated, rewrite, searchFor } = require("../src/navigation");
 
 const GENERATED = path.resolve("/pack/build/datapack/data/ns/function/main.mcfunction");
 const OTHER = path.resolve("/pack/build/datapack/data/ns/function/other.mcfunction");
@@ -111,4 +111,27 @@ test("nothing to rewrite is null rather than an empty list", () => {
   assert.strictEqual(rewrite([], fakeMaps({})), null);
   assert.strictEqual(rewrite(undefined, fakeMaps({})), null);
   assert.strictEqual(rewrite(null, fakeMaps({})), null);
+});
+
+// Where the maps are looked for, which one wrong word in a settings file used to switch off
+
+test("an empty buildOutput searches the whole workspace", () => {
+  assert.deepStrictEqual(searchFor(""), { base: null, glob: "**/*.mcfunction.map" });
+  assert.deepStrictEqual(searchFor("   "), { base: null, glob: "**/*.mcfunction.map" });
+});
+
+test("a relative buildOutput becomes a workspace-relative glob", () => {
+  // `new vscode.RelativePattern("build", ...)` reads that as an absolute path and matches nothing,
+  // which is what a project setting `StewBeet.buildOutput: "build"` got: no lens, no jump, no
+  // interpolation resolved, and no error anywhere saying why.
+  const under = (value) => searchFor(value).glob;
+  assert.strictEqual(under("build"), "build/**/*.mcfunction.map");
+  assert.strictEqual(under("./build/"), "build/**/*.mcfunction.map");
+  assert.strictEqual(under("build\\datapack"), "build/datapack/**/*.mcfunction.map");
+  assert.strictEqual(searchFor("build").base, null, "a relative path is never a RelativePattern base");
+});
+
+test("an absolute buildOutput is searched under itself", () => {
+  const absolute = path.resolve("/packs/out");
+  assert.deepStrictEqual(searchFor(absolute), { base: absolute, glob: "**/*.mcfunction.map" });
 });
