@@ -39,13 +39,17 @@ def clean_record_name(name: str) -> str:
 
 # Custom records
 @stp.handle_error(error_log=stp.LogLevels.WARNING)
-def generate_custom_records(records: dict[str, str] | str | None = "auto", category: str | None = None) -> None:
+def generate_custom_records(
+	records: dict[str, str] | str | None = "auto",
+	category: str | None = None,
+	attenuation_distance: int | None = None,
+) -> None:
 	""" Generate custom records by searching in assets/records/ for the files and copying them to the definitions and resource pack folder.
 
 	Args:
-		definitions	(dict[str, dict]):	The definitions to add the custom records items to, ex: {"record_1": "song.ogg", "record_2": "another_song.ogg"}
-		records		(dict[str, str]):	The custom records to apply, ex: {"record_1": "My first Record.ogg", "record_2": "A second one.ogg"}
-		category	(str):				The definitions category to apply to the custom records (ex: "music").
+		records					(dict[str, str]):	The custom records to apply, ex: {"record_1": "My first Record.ogg", "record_2": "A second one.ogg"}
+		category				(str):				The definitions category to apply to the custom records (ex: "music").
+		attenuation_distance	(int):				Blocks after which the record stops being heard, None for the vanilla 16.
 	"""
 	# Assertions
 	assert records is None or isinstance(records, dict) or records in ["auto", "all"], (
@@ -104,7 +108,7 @@ def generate_custom_records(records: dict[str, str] | str | None = "auto", categ
 				obj.components["custom_data"]["smithed"]["dict"]["jukebox_song"] = json_song
 
 				# Create and write sound
-				add_sound(Mem.ctx, sounds=Sound(source_path=file_path, stream=True), name=record)
+				add_sound(Mem.ctx, sounds=Sound(source_path=file_path, stream=True, attenuation_distance=attenuation_distance), name=record)
 
 			except Exception as e:
 				stp.error(f"Error during custom record generation of '{file_path}', make sure it is using proper Ogg format: {e}")
