@@ -523,6 +523,9 @@ generate_custom_records({
     "my_disc": "Ma Musique Custom.ogg",
     "battle_theme": "Musique de Combat Épique.ogg"
 })
+
+# Réduire la portée d'écoute par rapport aux 16 blocs vanilla
+generate_custom_records("auto", attenuation_distance=5)
 ```
 
 ## Fonctions utilitaires

@@ -524,6 +524,9 @@ generate_custom_records({
     "my_disc": "My Custom Music.ogg",
     "battle_theme": "Epic Battle Music.ogg"
 })
+
+# Cut the hearing range down from the vanilla 16 blocks
+generate_custom_records("auto", attenuation_distance=5)
 ```
 
 ## Utility Functions
