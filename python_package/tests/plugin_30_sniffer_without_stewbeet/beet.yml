@@ -1,0 +1,25 @@
+# Test: the sniffer on its own, with no `stewbeet` anywhere in the config.
+# A plain beet project writing `ctx.data.functions[p] = Function(...)` is caught by the same hook,
+# so requiring this one plugin is enough to get maps out of a project that uses none of StewBeet's
+# helpers. It only works while the plugin owns its own state: reset it from `plugins.initialize`
+# and this build starts with whatever the last one left behind, or with nothing at all.
+
+id: "tns"
+name: "Test Sniffer Without StewBeet"
+version: "1.0.0"
+author: "test"
+minecraft: "26.2"
+
+directory: "."
+output: "build"
+
+require:
+    - "src.assertions"
+    - "stewbeet.plugins.sniffer"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+pipeline:
+    - "src.link"

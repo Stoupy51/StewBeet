@@ -50,11 +50,11 @@ class Mem:
 
     source_map_chunks: dict[str, list[WriteChunk]] = {}
     """ Provenance recorded during the build, keyed by resource location, in write order.
-    Reset by plugins.initialize (for `beet watch`). """
+    Reset by plugins.sniffer, which owns it, so consecutive builds in one process start clean. """
 
     attribution: list[AttributionScope] = []
     """ Ambient stack used when no project frame is on the stack, so content a plugin generates from
-    a declaration reaches that declaration instead of the plugin. Reset by plugins.initialize. """
+    a declaration reaches that declaration instead of the plugin. Reset by plugins.sniffer. """
 
 
     # Very internal,

@@ -18,6 +18,7 @@ the Minecraft debugger the plugin is named after.
 **Position**: One entry in `require`. See below.<br>
 **Source Code**: [`stewbeet/plugins/sniffer/__init__.py`](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/sniffer/__init__.py) <br>
 **Source Code**: [`stewbeet/plugins/sniffer/emit/__init__.py`](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/sniffer/emit/__init__.py) <br>
+**Source Code**: [`stewbeet/plugins/sniffer/mecha/__init__.py`](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/sniffer/mecha/__init__.py) <br>
 
 
 ## What it does
@@ -27,16 +28,17 @@ the Minecraft debugger the plugin is named after.
 - Realigns the recorded lines against the final text, so post-processing like `auto.headers` does not shift the mapping
 - Writes one `<name>.mcfunction.map` per function, beside the function and named after it. The function itself is untouched
 - Maps content a plugin generated from one of your declarations back to that `Block(...)` or `Item(...)` call
+- Maps what **mecha** compiled as well, so a `.bolt` module and a `.mcfunction` holding bolt lead back to their own lines
 - Never names a file inside StewBeet, beet, bolt, mecha or stouputils: a mapping points at your own source or at nothing
 
 ## Configuration
 
-There is nothing to configure. There are two entries, and they go in different sections:
+There is nothing to configure, and one entry to add:
 
 ```yaml
 require:
     - "stewbeet"
-    - "stewbeet.plugins.sniffer"          # starts recording
+    - "stewbeet.plugins.sniffer"
 ```
 
 `stewbeet.plugins.sniffer` goes in `require`, next to `stewbeet` itself. Everything in `require` runs
@@ -44,11 +46,28 @@ before the pack is even loaded, so nothing can write a function before recording
 within `require` does not matter. Recording the pack's own hand-written `.mcfunction` files as they
 load costs nothing: they have no Python behind them, so they get no map.
 
-That is the whole configuration.
+That is the whole configuration, `mecha` included: beet unwinds `require` last, so by the time this
+plugin finishes, mecha has compiled and its compilation units are still there to be read.
 `stewbeet.plugins.archive` writes the maps itself before it zips, so both the build directory and the zip that ends up in `saves/<world>/datapacks` carry the same thing.
 
 If you package the pack some other way, add `stewbeet.plugins.sniffer.emit` to your pipeline, **after** every plugin that writes or rewrites functions and **before** whichever plugin packages it.
-Forget it and the maps are still written, at the very end of the build, with a warning telling you what missed them.
+Forget it and the maps are still written at the very end of the build, with a warning naming the count whenever a packaging plugin already ran.
+
+### <u>A project with no StewBeet writes in it</u>
+
+A pure bolt or mecha project has nothing for the recording half to catch, and the compiled half works
+on its own. `stewbeet.plugins.sniffer.mecha` is that half, listed in the pipeline **before** `mecha`:
+
+```yaml
+pipeline:
+    - "stewbeet.plugins.sniffer.mecha"
+    - "mecha"
+```
+
+Listing it after `mecha` is the mistake to expect: it works after its `yield`, and beet unwinds
+generator plugins in reverse, so listing it first is what leaves the module sources in the database.
+A project that lists `stewbeet.plugins.sniffer` needs none of this, and listing both changes nothing:
+a sidecar is never written twice.
 
 ## What you get
 

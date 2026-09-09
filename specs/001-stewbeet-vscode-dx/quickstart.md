@@ -186,7 +186,9 @@ StewBeet's minimal template ships one: `src/data/minimal/function/hello.mcfuncti
 
 ## Phase E: a bolt or mecha build emits source maps
 
-Add `stewbeet.plugins.sniffer.mecha` to the pipeline **before** `mecha`, and build.
+A project that lists `stewbeet.plugins.sniffer` in `require` already has this: beet unwinds `require` last, so that plugin maps what mecha compiled from its own teardown. Build and read the log.
+
+A project with no StewBeet writes in it lists the compiled half on its own, in the pipeline **before** `mecha`:
 
 ```yaml
 pipeline:
@@ -198,7 +200,7 @@ Listing it after `mecha` is the mistake to expect: it works after its `yield`, a
 
 | Check | Expected |
 |---|---|
-| Build log | `sniffer.mecha: wrote N source maps` |
+| Build log | `sniffer: wrote N source maps for what mecha compiled`, or `sniffer.mecha: wrote N source maps` when listed on its own |
 | `dist/.../foo.mcfunction.map` | sits beside the function, and the function itself is untouched |
 | `foo.mcfunction.map` | `sourceRoot` plus each `sources` entry resolves to a real file on disk |
 | A function assembled from two modules | two entries in `sources`, and the lines split between them |

@@ -1,0 +1,39 @@
+# Test: one plugin maps a whole StewBeet project, bolt included.
+# `stewbeet.plugins.sniffer` in `require` is the entire configuration this asserts: it captures
+# what the helpers write, and maps what mecha compiled from its own teardown, which beet unwinds
+# last. Nothing lists `stewbeet.plugins.sniffer.mecha`, and both kinds of function are mapped.
+#
+# It is also where the two halves meet the pack's own files, which is what plugin_25 and plugin_26
+# never do on their own: the capture hook runs on every file as it is loaded, and reading one beet
+# has not deserialised yet drops its `source_path`, which is what mecha names a compilation unit
+# after. Touching one here left every bolt file in `data/<ns>/function/` unmapped.
+
+id: "tns"
+name: "Test Sniffer StewBeet Bolt"
+version: "1.0.0"
+author: "test"
+minecraft: "26.2"
+
+directory: "."
+output: "build"
+
+require:
+    # src.assertions is listed first and yields, so its checks run last of all, after the sniffer
+    # in the same list has written both kinds of map. beet unwinds `require` in reverse too.
+    - "src.assertions"
+    - "bolt"
+    - "stewbeet"
+    - "stewbeet.plugins.sniffer"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+pipeline:
+    - "src.link"
+    - "mecha"
+    - "stewbeet.plugins.auto.headers.silent"
+
+meta:
+    bolt:
+        entrypoint: "*"
