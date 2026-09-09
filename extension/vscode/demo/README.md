@@ -6,7 +6,7 @@ A working pack, small enough to record. One namespace, seventeen functions, and 
 |---|---|---|
 | `src/data/voltaic/module/gui.bolt` | bolt | The Bolt language, and a lens per function a module writes |
 | `src/data/voltaic/function/elevator.mcfunction` | bolt, in a `.mcfunction` | The language switch, and the Spyglass exclusion |
-| `src/turbine.py` | beet on its own | `ctx.data.functions[...] = Function(...)` as a real block, and one `.append` onto it |
+| `src/turbine.py` | beet on its own | `Function(...)` from text and from a `list[str]`, plus `.append` and `.lines.append` onto one |
 | `src/machines.py` | StewBeet | Interpolated paths, a loop writing three functions, commands in a variable |
 
 Nothing here is a mock: `beet build` produces the pack and the `.mcfunction.map` sidecars every recording below relies on.
@@ -28,7 +28,16 @@ Leave a terminal on `beet watch` for the takes that need a rebuild, and none of 
 
 ## The recordings
 
-In this order. Bolt and beet come first because most people who write datapacks in Python have never used StewBeet, and the first ten seconds have to be about them.
+Six takes, cut into the four GIFs the extension README embeds:
+
+| GIF | Takes | Where it sits |
+|---|---|---|
+| `hero.gif` | 4 | The top of the README |
+| `bolt.gif` | 1 and 2 | Bolt |
+| `beet.gif` | 3 and 5 | beet |
+| `edits.gif` | 6 | The links follow your edits |
+
+Record them in this order. Bolt and beet come first because most people who write datapacks in Python have never used StewBeet, and the first ten seconds have to be about them.
 
 ### 1. Bolt has a language at all (`gui.bolt`, 8s)
 
@@ -48,10 +57,10 @@ Delete `.spyglassrc.json` afterwards. It is this take's output, not part of the 
 
 `src/turbine.py` imports `beet` and nothing else. Show, in this order:
 
-1. The commands inside `Function("""...""")` are coloured as commands.
+1. The commands inside `Function("""...""")` are coloured as commands, and so are the entries of the `Function([...])` on line 22 and the `.lines.append` on line 26.
 2. Type a space after `execute store result score #height voltaic.data` on line 11 and let the completion list open.
 3. Break line 13: change `matches` to `mathes`, wait for the squiggle **on the Python line**, undo. No build is involved in that one, and saying so out loud is the point of the take.
-4. Ctrl+click `voltaic:turbine/stall` on line 12. It lands on line 21, the assignment that wrote that function, rather than in `build/`.
+4. Ctrl+click `voltaic:turbine/stall` on line 12. It lands on line 22, the assignment that wrote that function, rather than in `build/`.
 
 ### 4. StewBeet, where the paths are interpolated (`machines.py`, 15s)
 
@@ -76,10 +85,10 @@ The one nobody expects. With no rebuild at all:
 
 ## Exporting a take
 
-The README embeds each recording as a `.gif` under `extension/vscode/images/`, named after the take: `hero`, `bolt`, `diagnostics`, `navigation`, `comparison`.
+The four GIFs live under `extension/vscode/images/` as `hero.gif`, `bolt.gif`, `beet.gif` and `edits.gif`.
 An `.mp4` would be a tenth of the size, and the VS Code marketplace renders no `<video>` tag at all, so a GIF is what a reader of the extension page actually sees.
 
-Keep them small, since the page loads all five: crop to the editor, 12 to 15 frames a second, and no longer than the take needs.
+Keep them small, since the page loads all four: crop to the editor, 12 to 15 frames a second, and no longer than the take needs.
 
 ```sh
 ffmpeg -i take.mov -vf "fps=14,scale=1100:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=128[p];[b][p]paletteuse=dither=bayer:bayer_scale=3" -loop 0 hero.gif
