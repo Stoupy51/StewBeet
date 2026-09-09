@@ -403,6 +403,45 @@ exports.run = async () => {
       diagnosticsOf("clean").length === 0 && diagnosticsOf("trail").length > 0,
       { clean: diagnosticsOf("clean"), trail: diagnosticsOf("trail") });
 
+    // US10: the maps are in the coordinates of the last build, and the author keeps typing.
+    //
+    // Everything above asks about a file nobody has touched since. This is the other half: the
+    // lines move, and every link built on the maps has to move with them or point at the wrong
+    // command until the next build. demo.py is left dirty here, which run.js puts back.
+    const lensesOn = async () => ((await vscode.commands.executeCommand(
+      "vscode.executeCodeLensProvider", py.uri, 20)) || [])
+      .map(l => `${l.range.start.line}: ${l.command && l.command.title}`);
+
+    await vscode.commands.executeCommand("stewbeet.reloadSourceMaps");
+    await sleep(2000);
+    const restingLenses = await lensesOn();
+    note("us10_lensesBeforeEdit", restingLenses);
+    expect("US10 each block that produced a function has a lens on its call",
+      restingLenses.some(t => t.startsWith("2: ") && t.includes("probe:alpha"))
+      && restingLenses.some(t => t.startsWith("12: ") && t.includes("probe:gamma")), restingLenses);
+
+    const insertion = new vscode.WorkspaceEdit();
+    insertion.insert(py.uri, new vscode.Position(0, 0), "# two lines\n# inserted above everything\n");
+    await vscode.workspace.applyEdit(insertion);
+    await sleep(2000);
+    const movedLenses = await lensesOn();
+    note("us10_lensesAfterInsert", movedLenses);
+    expect("US10 both lenses follow their call down the file",
+      movedLenses.some(t => t.startsWith("4: ") && t.includes("probe:alpha"))
+      && movedLenses.some(t => t.startsWith("14: ") && t.includes("probe:gamma")), movedLenses);
+
+    // Deleting the call itself: there is nowhere honest left to put that lens, so it goes.
+    const removal = new vscode.WorkspaceEdit();
+    removal.delete(py.uri, new vscode.Range(4, 0, 5, 0));
+    await vscode.workspace.applyEdit(removal);
+    await sleep(2000);
+    const remainingLenses = await lensesOn();
+    note("us10_lensesAfterDelete", remainingLenses);
+    expect("US10 a deleted call loses its lens rather than moving it onto a neighbour",
+      !remainingLenses.some(t => t.includes("probe:alpha")), remainingLenses);
+    expect("US10 the other call keeps its lens, one line higher",
+      remainingLenses.some(t => t.startsWith("13: ") && t.includes("probe:gamma")), remainingLenses);
+
     // The settings gate.
     const cfg = vscode.workspace.getConfiguration("StewBeet");
     await cfg.update("languageFeatures", false, vscode.ConfigurationTarget.Workspace);

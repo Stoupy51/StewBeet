@@ -56,15 +56,19 @@ function targetOfBlock(origins, doc, block, callLine) {
  * first mapped line of a target is the first command inside it, so the lens sits directly
  * under the `function ...:` that opened it.
  *
- * @param {Map<number, { file: string, line: number }>} origins
- * @returns {{ line: number, target: { file: string, line: number } }[]}
+ * @param {Map<number, { file: string, line: number }[]>} origins
+ * @param {(line: number) => boolean} [holdsText]  Whether a line still holds something. A build
+ *   never attributes a command to a blank line, so one that has become blank is a line the
+ *   author emptied and the lens on it has nothing left to sit on.
+ * @returns {{ line: number, target: { file: string, line: number }, targets: { file: string, line: number }[] }[]}
  */
-function lensAnchors(origins) {
+function lensAnchors(origins, holdsText = () => true) {
   /** Earliest line each generated function was written from. @type {Map<string, number>} */
   const firsts = new Map();
   /** @type {Map<string, { file: string, line: number }>} */
   const byFile = new Map();
   for (const [line, targets] of origins) {
+    if (!holdsText(line)) continue;
     for (const target of targets) {
       const seen = firsts.get(target.file);
       if (seen === undefined || line < seen) firsts.set(target.file, line);
