@@ -98,6 +98,10 @@ def write_maps(ctx: Context) -> int:
 def beet_default(ctx: Context) -> Iterator[None]:
 	""" Map every compiled function back to the module that wrote it.
 
+	**For a project with no StewBeet writes in it.** `stewbeet.plugins.sniffer` calls `write_maps`
+	itself from its own teardown, so a project listing that one needs nothing here, and listing both
+	writes each sidecar once.
+
 	**List this before `mecha` in the pipeline.** It does its work after the yield, and beet unwinds
 	generator plugins in reverse, so listing it first is what leaves the `Module` compilation units
 	and their sources in the database. Listed after `mecha`, they are already purged and every line
