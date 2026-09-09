@@ -81,6 +81,13 @@ def record_assignment(container: NamespaceContainer[Any], key: str, value: Any) 
 	path: str = f"{container.namespace.name}:{key}"
 	tag(value, path)
 
+	# A file still backed by disk is the pack being loaded, not a plugin writing a function, and
+	# reading its text is destructive: beet drops `source_path` the moment a file is deserialised,
+	# and mecha names a compilation unit after that path. Reading it here left every bolt file in
+	# `data/<ns>/function/` unmapped, which is the one place the two halves of the build meet.
+	if value.source_path is not None:
+		return
+
 	# An empty assignment has nothing to map, and recording it would claim the first line the
 	# appends afterwards produce: `ctx.data.functions[p] = Function()` then `.append(...)` should
 	# point at the append, which is where the command was actually written.
