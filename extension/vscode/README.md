@@ -3,9 +3,7 @@
 > Editor support for the [beet](https://github.com/mcbeet/beet) ecosystem: **beet**, **bolt**, **mecha** and **[StewBeet](https://stewbeet.paralya.fr/)**.
 > `.bolt` files get a language of their own, which nothing else on the marketplace provides, and the mcfunction strings inside your Python become code: highlighted, completed, checked as you type, and linked both ways to the datapack your build produces.
 
-<!-- hero.gif, from take 4 of demo/README.md: in machines.py, completion fires on a command and
-     then on your own paths after `{ns}:`. Ctrl+click `function {ns}:turbine/tick` and land in
-     turbine.py. The lens above line 23 reads `(+2 more)`. ~12s, editor only. -->
+<!-- hero.gif: take 4 of demo/README.md, which names every step and every line. -->
 ![Completion and navigation inside a block](https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/extension/vscode/images/hero.gif)
 
 | You write | You get |
@@ -35,8 +33,7 @@ Without a build nothing errors: navigation falls back to opening the generated `
 
 ## Bolt
 
-<!-- bolt.gif, from takes 1 and 2: gui.bolt open with the status bar reading Bolt and a lens on
-     each of its three functions, then elevator.mcfunction losing its wall of red. ~10s. -->
+<!-- bolt.gif: takes 1 and 2 of demo/README.md. -->
 ![A bolt module, coloured, with a lens on each function it writes](https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/extension/vscode/images/bolt.gif)
 
 `.bolt` files open as **Bolt** rather than plain text. Nothing else registers that extension, so before this they had no language id at all.
@@ -89,9 +86,7 @@ ctx.data.functions["voltaic:turbine/stall"] = Function([
 ctx.data.functions["voltaic:turbine/stall"].lines.append("stopsound @a[distance=..16] ambient voltaic:turbine")
 ```
 
-<!-- beet.gif, from take 3: those commands coloured, completion mid-command, `matches` broken into
-     `mathes` and the squiggle landing on the Python line, then ctrl+click on
-     `voltaic:turbine/stall` landing on the assignment that wrote it. ~12s. -->
+<!-- beet.gif: takes 3 and 5 of demo/README.md. -->
 ![Errors and navigation in a plain beet plugin](https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/extension/vscode/images/beet.gif)
 
 **Errors arrive as you type**, with no build, and with nothing under `build/` ever opened. Errors reported against generated files reach Python too, for the files you open yourself. `undeclaredSymbol` is not relayed by default, since it fires on every objective a dependency declares and Spyglass cannot see those.
@@ -136,9 +131,7 @@ write_function(f"{ns}:machines/pulverizer/work", work)
 
 ## The links follow your edits
 
-<!-- edits.gif, from take 6: delete the write_function on lines 12 to 19 of machines.py and watch
-     every lens below move up with its call, then alt+up one, then delete a call and watch its
-     lens go rather than slide onto its neighbour. No rebuild anywhere in the take. ~10s. -->
+<!-- edits.gif: take 6 of demo/README.md. -->
 ![Lenses moving with the calls they belong to](https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/extension/vscode/images/edits.gif)
 
 A map records the line a command was written on when the build ran, and you keep typing afterwards. Lines you delete above a call take its lens up with them, a line moved with alt+up keeps its own, and a call you delete outright loses its lens rather than passing it to the line underneath. Nothing is rebuilt for any of that, and a build puts everything back on the lines it just read.
