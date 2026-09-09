@@ -274,5 +274,6 @@ test("the demo project holds the blocks its recording script names", () => {
 
   // Two of machines.py's blocks are the variable and the `+=` onto it, both consumed by line 35.
   assert.deepEqual(calls("machines.py"), [12, 23, 35, 35]);
-  assert.deepEqual(calls("turbine.py"), [9, 16, 21]);
+  // turbine.py line 22 is a `Function([...])`, whose two entries are two blocks on one call.
+  assert.deepEqual(calls("turbine.py"), [9, 16, 22, 22, 26]);
 });

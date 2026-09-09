@@ -2,12 +2,12 @@
 
 # Imports
 from beet import Context
-from stewbeet import McFunction, Mem, write_function
+from stewbeet import McFunction, write_function
 
 
 # Functions
 def beet_default(ctx: Context) -> None:
-	ns: str = Mem.ctx.project_id
+	ns: str = ctx.project_id
 
 	write_function(f"{ns}:machines/tick", f"""
 # Stop unless the machine has the energy it needs this tick
