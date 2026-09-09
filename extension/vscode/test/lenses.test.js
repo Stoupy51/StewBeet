@@ -126,3 +126,14 @@ test("a line with origins but no block is anchored on its own", () => {
   assert.equal(anchors[0].line, 11);
   assert.equal(anchors[0].targets.length, 3, "and it names every function the declaration caused");
 });
+
+test("a line the author has emptied gets no lens, whatever the map still says", () => {
+  // The safety net under the line tracking: a build never attributes a command to a blank line,
+  // so one that has become blank is a line whose call is gone.
+  const origins = new Map([
+    [4, [{ file: "/gen/a.mcfunction", line: 0 }]],
+    [7, [{ file: "/gen/b.mcfunction", line: 0 }]],
+  ]);
+  const anchors = lensAnchors(origins, line => line !== 7);
+  assert.deepEqual(anchors.map(a => a.line), [4]);
+});

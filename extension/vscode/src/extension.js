@@ -16,6 +16,7 @@ const {
 } = require("./virtual");
 const navigation = require("./navigation");
 const sourcemap = require("./sourcemap");
+const drift = require("./drift");
 const diagnostics = require("./diagnostics");
 const { registerCodeLenses, refreshCodeLenses } = require("./codelens");
 const { registerHeaderNavigation } = require("./headers");
@@ -91,6 +92,8 @@ function refreshDecos() {
 /** @param {vscode.ExtensionContext} context */
 function activate(context) {
   refreshDecos();
+  // First, so everything registered below asks about lines that have already been moved.
+  registerLineTracking(context);
 
   const refresh = () => {
     if (vscode.window.activeTextEditor) updateDecorations(vscode.window.activeTextEditor);
@@ -332,6 +335,49 @@ function registerLanguageFeatures(context) {
 
 function deactivate() { disposeDecos(); }
 
+// Line tracking
+
+/** The source languages a map can name. A generated `.mcfunction` is one of them by extension
+ *  and never appears as a source, so following it costs one table nobody asks about. */
+const SOURCE_LANGUAGES = new Set(["python", "bolt", "mcfunction"]);
+
+/**
+ * Follow the source lines a build recorded while the author moves them.
+ *
+ * Everything the maps answer is in the coordinates of the last build, and an editor is where
+ * lines move. Deleting three lines above a `write_function` puts its lens, its relayed
+ * diagnostics and its resolved interpolations three lines too low until the next build, which
+ * is exactly when a reader stops trusting any of them. ./drift.js keeps the table; this hands
+ * it the edits, the saves and the closes it is a function of.
+ *
+ * @param {vscode.ExtensionContext} context
+ */
+function registerLineTracking(context) {
+  /** @param {vscode.TextDocument} doc */
+  const followed = doc => doc.uri.scheme === "file" && SOURCE_LANGUAGES.has(doc.languageId);
+
+  vscode.workspace.textDocuments.filter(followed).forEach(doc => drift.noteOpen(doc.uri.fsPath, doc));
+  context.subscriptions.push(
+    // Remembering the lines as they are opened is what lets the very first edit of a session be
+    // a line moved rather than a line typed.
+    vscode.workspace.onDidOpenTextDocument(doc => {
+      if (followed(doc)) drift.noteOpen(doc.uri.fsPath, doc);
+    }),
+    vscode.workspace.onDidChangeTextDocument(e => {
+      if (followed(e.document)) drift.noteChanges(e.document.uri.fsPath, e.contentChanges, e.document);
+    }),
+    vscode.workspace.onDidSaveTextDocument(doc => {
+      if (followed(doc)) drift.noteSave(doc.uri.fsPath);
+    }),
+    // A document closed with edits still in it loses them, and the saved lines are what comes
+    // back. One closed dirty is not closed at all: that is the language id changing under it,
+    // which ./bolt.js does, and its buffer outlives the event.
+    vscode.workspace.onDidCloseTextDocument(doc => {
+      if (followed(doc) && !doc.isDirty) drift.noteClose(doc.uri.fsPath);
+    }),
+  );
+}
+
 // Source maps
 
 /**
@@ -381,6 +427,9 @@ function scheduleDrop() {
 
 function drop() {
   dropTimer = undefined;
+  // The build read the files as they were last saved, so the drift left to follow is whatever
+  // has not reached disk yet.
+  drift.rebase();
   sourcemap.clearCache();
   navigation.forgetMaps();
   reproject();

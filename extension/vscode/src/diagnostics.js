@@ -16,6 +16,7 @@
 const vscode = require("vscode");
 const sourcemap = require("./sourcemap");
 const navigation = require("./navigation");
+const drift = require("./drift");
 const virtual = require("./virtual");
 
 // Constants
@@ -207,6 +208,7 @@ function status() {
     liveFiles: live.size,
     liveCount: [...live.values()].reduce((n, d) => n + d.length, 0),
     livePasses,
+    driftFiles: drift.size(),
     openPython: vscode.workspace.textDocuments.filter(d => d.languageId === "python").length,
     published: published.length,
   };
@@ -318,6 +320,9 @@ function reload() {
   captured.clear();
   published = "";
   navigation.forgetMaps();
+  // The reason to ask for this by hand is a build the watcher could not see, so the lines the
+  // maps name are the saved ones again.
+  drift.rebase();
   sourcemap.clearCache();
   log("reload requested");
   refresh();

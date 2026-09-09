@@ -9,9 +9,15 @@
 //
 // The format and its guarantees are specified in
 // specs/001-stewbeet-vscode-dx/contracts/source-map.md.
+//
+// Every source line leaving this file goes through ./drift.js first, and every one arriving comes
+// back through it: a map is in the coordinates of the build that wrote it, and the author has been
+// editing since. That translation is the identity for a file nobody has touched, which is what
+// every test here relies on.
 
 const fs = require("fs");
 const path = require("path");
+const drift = require("./drift");
 
 // Constants
 
@@ -246,7 +252,8 @@ function clearCache() {
  *
  * Never falls back to the nearest mapped line: guarantee G3 says a missing mapping means
  * "unknown origin", never "same as the previous one", and a confident wrong jump costs the
- * reader more than no jump at all.
+ * reader more than no jump at all. A line the author has deleted since the build is the same
+ * answer, which is what ./drift.js turns the recorded line into.
  *
  * @param {string} generatedPath  Absolute path of the .mcfunction.
  * @param {number} line  0-based generated line.
@@ -261,11 +268,9 @@ function originOf(generatedPath, line) {
 
   const source = map.sources[entry.sourceIndex];
   if (!source) return null;
-  return {
-    file: path.resolve(path.dirname(mapPath), map.sourceRoot, source),
-    line: entry.sourceLine,
-    column: entry.sourceColumn,
-  };
+  const file = path.resolve(path.dirname(mapPath), map.sourceRoot, source);
+  const current = drift.currentLineOf(file, entry.sourceLine);
+  return current === null ? null : { file, line: current, column: entry.sourceColumn };
 }
 
 /**
@@ -285,7 +290,7 @@ function originsOf(generatedPath) {
   if (!map) return [];
 
   const cached = origins.get(mapPath);
-  if (cached && cached.map === map) return cached.origins;
+  if (cached && cached.map === map) return moved(cached.origins);
 
   const seen = new Set();
   const found = [];
@@ -301,7 +306,20 @@ function originsOf(generatedPath) {
     });
   }
   origins.set(mapPath, { map, origins: found });
-  return found;
+  return moved(found);
+}
+
+/** The same origins where they sit now, without the ones the author has deleted since.
+ *  Applied on the way out rather than on the way in, so the memo above holds what the build
+ *  said and stays valid for as long as the map does.
+ *  @param {{ file: string, line: number, column: number }[]} found */
+function moved(found) {
+  const current = [];
+  for (const origin of found) {
+    const line = drift.currentLineOf(origin.file, origin.line);
+    if (line !== null) current.push({ ...origin, line });
+  }
+  return current;
 }
 
 /** Origins per map, keyed by map path and held against the decoded map they were read from,
@@ -325,6 +343,9 @@ let reverseIndex = null;
  * A line routinely produces more than one function, which is what a `write_function` inside a
  * loop does, so every location is kept rather than the first.
  *
+ * Keyed by the line each call sits on now, not by the line it sat on when the build ran, so a
+ * lens follows its own block while the file is edited around it. A line deleted since is absent.
+ *
  * @param {string[]} mapPaths
  * @param {string} pythonPath
  * @returns {Map<number, { file: string, line: number }[]>}
@@ -334,7 +355,9 @@ function originLinesFor(mapPaths, pythonPath) {
 
   const lines = new Map();
   for (const [line, locations] of reverseIndex.get(fileKey(pythonPath)) ?? []) {
-    if (locations.length > 0) lines.set(line, locations.slice());
+    if (locations.length === 0) continue;
+    const current = drift.currentLineOf(pythonPath, line);
+    if (current !== null) lines.set(current, locations.slice());
   }
   return lines;
 }
@@ -347,12 +370,14 @@ function originLinesFor(mapPaths, pythonPath) {
  *
  * @param {string[]} mapPaths  Every .mcfunction.map to index, from the build output.
  * @param {string} pythonPath  Absolute path of the Python file.
- * @param {number} line  0-based Python line.
+ * @param {number} line  0-based Python line, as it sits in the buffer now.
  * @returns {{ file: string, line: number }[]}
  */
 function generatedFrom(mapPaths, pythonPath, line) {
   if (!reverseIndex) reverseIndex = buildReverseIndex(mapPaths);
-  return (reverseIndex.get(fileKey(pythonPath))?.get(line) ?? []).slice();
+  const built = drift.buildLineOf(pythonPath, line);
+  if (built === null) return [];
+  return (reverseIndex.get(fileKey(pythonPath))?.get(built) ?? []).slice();
 }
 
 /**

@@ -37,6 +37,17 @@ function lensFor(line, targets) {
   });
 }
 
+/**
+ * Whether a line of this document still holds something, for the anchors that have no block.
+ * A build attributes what it wrote to a line that had a call on it, so a line the author has
+ * since emptied is one whose lens leads from nowhere.
+ * @param {vscode.TextDocument} doc
+ */
+function holdsText(doc) {
+  return (/** @type {number} */ line) =>
+    line < doc.lineCount && doc.lineAt(line).text.trim().length > 0;
+}
+
 const codeLensProvider = {
   onDidChangeCodeLenses: onDidChangeEmitter.event,
 
@@ -79,7 +90,7 @@ const codeLensProvider = {
     // attributed to the constructor, and without this pass the one line that knows about them
     // shows nothing.
     const orphans = new Map([...origins].filter(([line]) => !covered.has(line) && !placed.has(line)));
-    for (const { line, targets } of lensAnchors(orphans)) lenses.push(lensFor(line, targets));
+    for (const { line, targets } of lensAnchors(orphans, holdsText(doc))) lenses.push(lensFor(line, targets));
 
     return lenses.sort((a, b) => a.range.start.line - b.range.start.line);
   },
@@ -105,7 +116,7 @@ const boltLensProvider = {
     const origins = sourcemap.originLinesFor(maps, doc.uri.fsPath);
     if (origins.size === 0) return [];
 
-    return lensAnchors(origins).map(({ line, targets }) => lensFor(line, targets));
+    return lensAnchors(origins, holdsText(doc)).map(({ line, targets }) => lensFor(line, targets));
   },
 };
 
