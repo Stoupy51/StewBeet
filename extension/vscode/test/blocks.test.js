@@ -415,3 +415,31 @@ test("a contribution after the last call still points somewhere", () => {
   assert.deepEqual(calls, [1, 1], "the last call is the best answer there is, and no lens is worse");
 });
 
+
+// beet's own list of commands, which is what a Function holds behind its text
+
+/** The commands a source's blocks cover, which is what a projection hands to the language server.
+ *  @param {string} text */
+function commandsOf(text) {
+  return findBlockOffsets(text).map(block => text.slice(block.contentStart, block.contentEnd));
+}
+
+test("a function assigned a list of commands holds one block per entry", () => {
+  const source = 'ctx.data.functions["ns:a"] = Function(["say one", "say two"])';
+  assert.deepEqual(commandsOf(source), ["say one", "say two"]);
+});
+
+test("lines.append and lines.extend write onto that same list", () => {
+  assert.deepEqual(commandsOf('ctx.data.functions["ns:a"].lines.append("say one")'), ["say one"]);
+  assert.deepEqual(commandsOf('ctx.data.functions["ns:a"].lines.extend(["say one", "say two"])'),
+    ["say one", "say two"]);
+  assert.deepEqual(commandsOf('Block.from_id("x").functions.place.obj.lines.extend(["say one"])'),
+    ["say one"]);
+});
+
+test("a Function has no extend of its own, so nothing claims one", () => {
+  // `ctx.data.functions[p].extend([...])` is an AttributeError at build time. Colouring it would
+  // say it is a command list, which is the one thing it never becomes.
+  assert.deepEqual(commandsOf('ctx.data.functions["ns:a"].extend(["say one"])'), []);
+  assert.deepEqual(commandsOf('items.extend(["not a command"])'), []);
+});

@@ -11,6 +11,8 @@
 
 ### Changed
 
+- **beet's list of commands is read as commands.** `Function(["say a", "say b"])` holds two blocks, and so do `.lines.append(...)` and `.lines.extend([...])` onto a function already in the pack. A `Function` has no `extend` of its own, so nothing claims one: colouring an `AttributeError` as a command list would be worse than leaving it plain.
+
 - **One line of `beet.yml` instead of two.** `stewbeet.plugins.sniffer` in `require` now maps what mecha compiled as well, from its own teardown: beet unwinds `require` last, so mecha has compiled and its compilation units are still there to read. `stewbeet.plugins.sniffer.mecha` stays for a bolt or mecha project with no StewBeet in it, and a project listing both is unaffected.
 
 ### Fixed

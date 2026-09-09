@@ -40,14 +40,19 @@ const FUNCS_2ND_ARG = new Set([
  * in what precedes the subscript. */
 const ASSIGN_FUNCTION_RE = /(?:\.functions|\[\s*Function\s*\])\s*\[[^\]\n]*\]\s*=\s*Function\s*\(/g;
 
-/** An append onto a function already in the pack, ex: `ctx.data.functions[p].append("say hi")`. */
-const APPEND_FUNCTION_RE = /(?:\.functions|\[\s*Function\s*\])\s*\[[^\]\n]*\]\s*\.\s*(?:append|prepend)\s*\(/g;
+/** An append onto a function already in the pack, ex: `ctx.data.functions[p].append("say hi")`.
+ *
+ * `.lines` is the list of commands behind a `Function`, so `.lines.append(...)` and
+ * `.lines.extend([...])` write the same content one level down. A `Function` has no `extend` of
+ * its own, and claiming one would colour an `AttributeError` as if it were a command. */
+const APPEND_FUNCTION_RE =
+  /(?:\.functions|\[\s*Function\s*\])\s*\[[^\]\n]*\]\s*\.\s*(?:append|prepend|lines\s*\.\s*(?:append|extend))\s*\(/g;
 
 /** An append through a StewBeet resource's own beet file, ex:
  *  `Block.from_id("x").functions.place_secondary.obj.append("say hi")`.
  *  `.obj` is the beet object behind a resource, so what follows reaches beet with no helper in
  *  between, which is why the Python side records it and this side has to see it too. */
-const APPEND_OBJ_RE = /\.\s*obj\s*\.\s*(?:append|prepend)\s*\(/g;
+const APPEND_OBJ_RE = /\.\s*obj\s*\.\s*(?:append|prepend|lines\s*\.\s*(?:append|extend))\s*\(/g;
 
 /** A `def`, with its parameter list, so a project's own wrappers can be found. */
 const DEF_RE = /\bdef\s+([A-Za-z_]\w*)\s*\(([^)]*)\)/g;
