@@ -1,0 +1,36 @@
+
+from functools import cached_property
+
+MACHINES = ["pulverizer", "furnace", "smelter"]
+
+
+class Gui:
+    """ One machine's interface, opened by right clicking it. """
+
+    def __init__(self, machine):
+        self.machine = machine
+        self.path = f"voltaic:gui/{self.machine}"
+
+    @cached_property
+    def open(self):
+        function f"{self.path}/open":
+            playsound minecraft:block.barrel.open block @s ~ ~ ~ 0.6 1.4
+            data modify entity @s equipment.head set from storage voltaic:gui Icon
+            tag @s add voltaic.watching
+        return f"{self.path}/open"
+
+    @cached_property
+    def close(self):
+        function f"{self.path}/close":
+            playsound minecraft:block.barrel.close block @s ~ ~ ~ 0.6 1.4
+            data remove entity @s equipment.head
+            tag @s remove voltaic.watching
+        return f"{self.path}/close"
+
+
+for machine in MACHINES:
+    gui = Gui(machine)
+    function f"voltaic:gui/{machine}/tick":
+        execute as @a[tag=voltaic.using] run function gui.open
+        execute as @a[tag=voltaic.watching, tag=!voltaic.using] run function gui.close
+

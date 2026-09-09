@@ -1,5 +1,23 @@
 # Changelog
 
+## 2.1.0
+
+### The links follow your edits
+
+- **A lens, a diagnostic and a resolved path stay on the line they belong to while you edit around them.** A map records the line a command was written on when the build ran, and everything built on it pointed there until the next build: delete three lines above a `write_function` and its lens, its errors and its interpolations sat three lines too low. Each source file's lines are now followed from the edits VS Code reports.
+- **A line moved keeps what it had.** Alt+up on a call reports one edit replacing two lines with the same two, swapped, which no arithmetic on line numbers can follow, so the lines are recognised by their own text. Re-indenting a block into a branch is followed for the same reason.
+- **A line deleted loses its link rather than passing it on.** Nothing slides onto the neighbour underneath, and a call whose line has been emptied gets no lens at all.
+- **A build puts everything back where the map says.** What was saved is what the build read, so an unsaved edit keeps its offset and a rebuild of a file you had already saved forgets it entirely.
+
+### Changed
+
+- **One line of `beet.yml` instead of two.** `stewbeet.plugins.sniffer` in `require` now maps what mecha compiled as well, from its own teardown: beet unwinds `require` last, so mecha has compiled and its compilation units are still there to read. `stewbeet.plugins.sniffer.mecha` stays for a bolt or mecha project with no StewBeet in it, and a project listing both is unaffected.
+
+### Fixed
+
+- **A relative `StewBeet.buildOutput` finds the build.** `"build"` was handed to `vscode.RelativePattern`, which reads a bare string as an absolute path, so it searched `<drive>:/build`, found no maps, and every lens, jump and resolved interpolation went quiet with nothing anywhere saying why. A relative value is now a workspace-relative glob, and a setting that still finds nothing falls back to searching the workspace.
+- **A bolt `.mcfunction` in a StewBeet project is mapped again.** The sniffer's capture read the text of every file as the pack loaded it, and beet drops a file's `source_path` the moment it is deserialised, which is what mecha names a compilation unit after. Every bolt file under `data/<ns>/function/` came out unmapped whenever `stewbeet.plugins.sniffer` and `mecha` ran in the same build, so the extension had nothing to navigate them with. Fixed in the `stewbeet` package after 3.6.5, not in the extension.
+
 ## 2.0.0
 
 Everything since 1.0.6, the last published version.

@@ -1,0 +1,39 @@
+
+## Voltaic, the pack the extension's showcases are recorded from.
+# Small on purpose: every feature has one obvious place, and every file fits on screen.
+# One pack written three ways, because that is what the extension covers:
+#   src/data/voltaic/module/*.bolt      bolt
+#   src/turbine.py                      beet on its own
+#   src/machines.py                     StewBeet
+
+id: "voltaic"
+name: "Voltaic"
+description: "Machines that run on energy"
+author: "Stoupy51"
+version: "1.0.0"
+minecraft: "26.2"
+
+directory: "."
+output: "build"
+ignore: ["build"]
+
+# 'stewbeet.plugins.sniffer' writes the .mcfunction.map files the editor navigates with.
+require:
+    - "stewbeet"
+    - "stewbeet.plugins.sniffer"
+    - "bolt"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+pipeline:
+    - "src.turbine"
+    - "src.machines"
+    - "mecha"
+    - "stewbeet.plugins.auto.headers"
+
+meta:
+    bolt:
+        entrypoint: "*"
+

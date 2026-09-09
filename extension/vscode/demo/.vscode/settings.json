@@ -1,0 +1,10 @@
+{
+	// StewBeet.buildOutput is left unset on purpose: the whole workspace is four source files, so
+	// the search costs nothing, and the demo then behaves the same on any version of the extension.
+	"editor.wordBasedSuggestions": "off",
+	"editor.minimap.enabled": false,
+	"breadcrumbs.enabled": false,
+	"workbench.editor.showTabs": "single",
+	"explorer.compactFolders": false,
+	"python.analysis.typeCheckingMode": "off"
+}
