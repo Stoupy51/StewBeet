@@ -1,8 +1,8 @@
 {
   "name": "stewbeet",
   "displayName": "StewBeet",
-  "description": "Syntax highlighting, block decorations and Spyglass-backed language features for mcfunction strings inside StewBeet write_* calls in Python files.",
-  "version": "2.0.0",
+  "description": "Editor support for the beet ecosystem: the Bolt language, plus highlighting, completion, diagnostics and build navigation for the mcfunction strings inside your beet, mecha and StewBeet Python.",
+  "version": "2.1.0",
   "publisher": "stoupy",
   "license": "MIT",
   "icon": "icon.png",

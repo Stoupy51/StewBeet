@@ -256,3 +256,23 @@ test("a command inside a block is coloured somewhere in every file that has one"
     "these files hold blocks the finder sees and the grammar colours nothing in, so the two disagree");
 });
 
+
+// The showcase project, which ships in this repo and is what the README's recordings come from
+
+/** 1-based line of an offset, which is what demo/README.md's takes name. @param {string} text @param {number} offset */
+function lineOf(text, offset) {
+  return text.slice(0, offset).split("\n").length;
+}
+
+test("the demo project holds the blocks its recording script names", () => {
+  const demo = path.resolve(__dirname, "..", "demo", "src");
+  /** Call line of every block, as demo/README.md tells the recorder to find them. */
+  const calls = (name) => {
+    const text = fs.readFileSync(path.join(demo, name), "utf8");
+    return findBlockOffsets(text).map(block => lineOf(text, block.callStart));
+  };
+
+  // Two of machines.py's blocks are the variable and the `+=` onto it, both consumed by line 35.
+  assert.deepEqual(calls("machines.py"), [12, 23, 35, 35]);
+  assert.deepEqual(calls("turbine.py"), [9, 16, 21]);
+});

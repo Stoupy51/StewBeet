@@ -1,0 +1,6 @@
+build/
+.beet_cache/
+__pycache__/
+
+# The recording setup belongs to the project, and the repository ignores .vscode everywhere else
+!.vscode/
