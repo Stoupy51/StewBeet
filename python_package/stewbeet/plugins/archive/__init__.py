@@ -9,6 +9,7 @@ import io
 import os
 import time
 import zipfile
+from collections.abc import Buffer
 from typing import IO, Any, Literal
 from zipfile import ZipInfo
 
@@ -17,6 +18,14 @@ from beet import Context, DataPack, ResourcePack
 
 from ...core.__memory__ import Mem
 from ..initialize.project_images import find_pack_png
+
+# Constants
+TEXT_EXTENSIONS: frozenset[str] = frozenset({
+	".fsh", ".glsl", ".json", ".lang", ".map", ".mcfunction", ".mcmeta", ".md",
+	".properties", ".snbt", ".txt", ".vsh", ".yaml", ".yml",
+})
+""" Extensions whose entries hold text, so their line endings are normalized on the way into the archive.
+Everything else is archived byte for byte, since a CRLF inside a .png or an .ogg is data rather than a line ending. """
 
 
 def get_consistent_timestamp(ctx: Context) -> tuple[int, int, int, int, int, int]:
@@ -47,6 +56,9 @@ class ConstantTimeZipFile(zipfile.ZipFile):
 
 	Entries whose name is in ``skip_names`` are silently dropped (used to replace
 	``pack.mcmeta``/``pack.png`` with fixed content afterwards via :meth:`force_writestr`).
+
+	A text entry is written with Unix line endings whatever the host would have used, see
+	:class:`UnixNewlineWriter`.
 	"""
 
 	def __init__(self, *args: Any, date_time: tuple[int, int, int, int, int, int], skip_names: tuple[str, ...] = (), **kwargs: Any) -> None:
@@ -66,20 +78,23 @@ class ConstantTimeZipFile(zipfile.ZipFile):
 		filename: str = name.filename if isinstance(name, ZipInfo) else name
 		if filename in self.skip_names:
 			return io.BytesIO()  # Discard the content, the caller will write a fixed version
-		return super().open(self._forced_info(filename), mode, pwd, force_zip64=force_zip64)
+		stream: IO[bytes] = super().open(self._forced_info(filename), mode, pwd, force_zip64=force_zip64)
+		if not is_text_entry(filename):
+			return stream
+		return io.BufferedWriter(UnixNewlineWriter(stream))
 
 	def writestr(self, zinfo_or_arcname: str | ZipInfo, data: Any, compress_type: int | None = None, compresslevel: int | None = None) -> None:
 		filename: str = zinfo_or_arcname.filename if isinstance(zinfo_or_arcname, ZipInfo) else zinfo_or_arcname
 		if filename in self.skip_names:
 			return
-		super().writestr(self._forced_info(filename), data, compress_type, compresslevel)
+		super().writestr(self._forced_info(filename), unix_newlines(filename, data), compress_type, compresslevel)
 
 	def write(self, filename: Any, arcname: Any = None, compress_type: int | None = None, compresslevel: int | None = None) -> None:
 		name: str = str(arcname if arcname is not None else filename)
 		if name in self.skip_names:
 			return
 		with open(filename, "rb") as f:
-			super().writestr(self._forced_info(name), f.read(), compress_type, compresslevel)
+			super().writestr(self._forced_info(name), unix_newlines(name, f.read()), compress_type, compresslevel)
 
 	def force_writestr(self, name: str, data: bytes) -> None:
 		""" Write an entry with the constant timestamp, bypassing ``skip_names``.
@@ -89,6 +104,56 @@ class ConstantTimeZipFile(zipfile.ZipFile):
 		"""
 		self.skip_names.discard(name)
 		self.writestr(name, data)
+
+
+class UnixNewlineWriter(io.RawIOBase):
+	""" Zip entry stream that writes a LF wherever a CRLF was handed to it.
+
+	beet dumps a text file through ``io.TextIOWrapper(newline=None)``, which rewrites every line ending as ``os.linesep``, so a pack built on Windows ships entirely in CRLF.
+	Minecraft reads a command ending in a backslash as continuing on the next line, and the carriage return between the two leaves it incomplete.
+	"""
+
+	def __init__(self, stream: IO[bytes]) -> None:
+		super().__init__()
+		self.stream: IO[bytes] = stream
+		self.pending: bytes = b""
+		""" A trailing carriage return, held back in case the next chunk opens with the newline it belongs to. """
+
+	def writable(self) -> bool:
+		return True
+
+	def write(self, b: Buffer, /) -> int:
+		data: bytes = bytes(b)
+		chunk: bytes = self.pending + data
+		self.pending = chunk[-1:] if chunk.endswith(b"\r") else b""
+		self.stream.write(chunk[:len(chunk) - len(self.pending)].replace(b"\r\n", b"\n"))
+		return len(data)
+
+	def close(self) -> None:
+		if not self.closed:
+			self.stream.write(self.pending)  # A carriage return that ends the file is a character of its own
+			self.stream.close()
+		super().close()
+
+
+def is_text_entry(name: str) -> bool:
+	""" Whether an archive entry holds text, so its line endings are ours to normalize.
+
+	>>> is_text_entry("data/ns/function/tick.mcfunction"), is_text_entry("pack.png")
+	(True, False)
+	"""
+	return os.path.splitext(name)[1].lower() in TEXT_EXTENSIONS
+
+
+def unix_newlines(name: str, data: str | bytes) -> str | bytes:
+	""" The same data with every CRLF turned into a LF, for a text entry only.
+
+	>>> unix_newlines("tick.mcfunction", b"say a\\r\\nsay b\\n"), unix_newlines("icon.png", b"\\r\\n")
+	(b'say a\\nsay b\\n', b'\\r\\n')
+	"""
+	if not is_text_entry(name):
+		return data
+	return data.replace("\r\n", "\n") if isinstance(data, str) else data.replace(b"\r\n", b"\n")
 
 
 # Main entry point
