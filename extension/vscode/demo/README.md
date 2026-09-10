@@ -4,7 +4,7 @@ A working pack, small enough to record. One namespace, seventeen functions, and 
 
 | File | Written with | What it is there to show |
 |---|---|---|
-| `src/data/voltaic/module/gui.bolt` | bolt | The Bolt language, and a lens per function a module writes |
+| `src/data/voltaic/module/gui.bolt` | bolt | The Bolt language, completion and ctrl+click on its commands, and a lens per function it writes |
 | `src/data/voltaic/function/elevator.mcfunction` | bolt, in a `.mcfunction` | The language switch, and the Spyglass exclusion |
 | `src/turbine.py` | beet on its own | `Function(...)` from text and from a `list[str]`, plus `.append` and `.lines.append` onto one |
 | `src/machines.py` | StewBeet | Interpolated paths, a loop writing three functions, commands in a variable |
@@ -30,12 +30,12 @@ Leave a terminal on `beet watch` for the takes that need a rebuild, and none of 
 
 Six takes, cut into the four GIFs the extension README embeds:
 
-| GIF | Takes | Where it sits |
-|---|---|---|
-| `hero.gif` | 4 | The top of the README |
-| `bolt.gif` | 1 and 2 | Bolt |
-| `beet.gif` | 3 and 5 | beet |
-| `edits.gif` | 6 | The links follow your edits |
+| GIF         | Takes   | Where it sits               |
+|-------------|---------|-----------------------------|
+| `hero.gif`  | 4       | The top of the README       |
+| `bolt.gif`  | 1 and 2 | Bolt                        |
+| `beet.gif`  | 3 and 5 | beet                        |
+| `edits.gif` | 6       | The links follow your edits |
 
 Record them in this order. Bolt and beet come first because most people who write datapacks in Python have never used StewBeet, and the first ten seconds have to be about them.
 
@@ -43,7 +43,9 @@ Record them in this order. Bolt and beet come first because most people who writ
 
 Open `gui.bolt`. Every other extension on the marketplace opens it as plain text or as mcfunction; here `class`, `def` and `@cached_property` are Python, and `playsound` on line 16 is a command.
 
-Show the language id in the status bar reading **Bolt**, then the lenses: one above line 16, one above line 24, one above line 33, each naming three functions because the loop at line 30 runs three times. Click the one on line 33 and take the peek list.
+Show the language id in the status bar reading **Bolt**, then the lenses: one above line 16, one above line 24, one above line 33, each naming three functions because the loop at line 30 runs three times. Click the one on line 33 and take the picker it opens.
+
+Then the half nothing else does: put the cursor at the end of line 17 and type a space, so Spyglass completes the `playsound` arguments inside a `.bolt` file. Ctrl+click `voltaic:gui` on line 18 for the same reason.
 
 ### 2. Bolt inside a `.mcfunction` (`elevator.mcfunction`, 10s)
 
@@ -66,7 +68,7 @@ Delete `.spyglassrc.json` afterwards. It is this take's output, not part of the 
 
 1. Line 17, `function {ns}:turbine/tick`: ctrl+click it. `{ns}` is Python that no datapack parser can read, and the jump still lands, on `turbine.py` line 9, where a plugin that has never heard of StewBeet wrote that function.
 2. Type `function {ns}:` on a new line inside the block and let completion offer the pack's own paths.
-3. The lens above line 23 reads **voltaic:machines/pulverizer/fast (+2 more)**: one call in a loop, three functions. Click it for the peek list.
+3. The lens above line 23 reads **voltaic:machines/pulverizer/fast (+2 more)**: one call in a loop, three functions. Click it and pick one.
 4. Line 29, `work: McFunction = f"""`: the commands are coloured six lines above the call that consumes them, and the lens for them sits on line 35 where that call is.
 
 ### 5. The generated side (`build/.../work.mcfunction`, 6s)

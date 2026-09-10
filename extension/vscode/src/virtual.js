@@ -17,6 +17,7 @@
 
 const vscode = require("vscode");
 const { findBlockOffsets, findInterpolationSpans, findEscapedBraces } = require("./blocks");
+const { projectBolt, keptPart } = require("./boltlines");
 const {
   SCHEME, project, toVirtual, toPython, explainedByMask, crossesSubstitution,
   virtualPath, blockIndexFromPath,
@@ -49,6 +50,11 @@ const blockCache = new Map();
 
 /**
  * The blocks of a document, rescanned only when its version changes.
+ *
+ * A bolt file is one block covering the whole file: the commands are the file rather than
+ * something quoted inside it, and ./boltlines.js decides which of its lines a datapack parser
+ * is shown.
+ *
  * @param {vscode.TextDocument} doc
  */
 function blocksOf(doc) {
@@ -56,18 +62,33 @@ function blocksOf(doc) {
   const cached = blockCache.get(key);
   if (cached && cached.version === doc.version) return cached.blocks;
 
-  const blocks = findBlockOffsets(doc.getText());
+  const text = doc.getText();
+  const blocks = isBolt(doc)
+    ? [{ start: 0, end: text.length, contentStart: 0, contentEnd: text.length, callStart: 0 }]
+    : findBlockOffsets(text);
   blockCache.set(key, { version: doc.version, blocks });
   return blocks;
 }
 
+/** @param {vscode.TextDocument} doc */
+function isBolt(doc) {
+  return doc.languageId === "bolt";
+}
+
 /**
  * Index of the block containing a position, or undefined when outside every block.
+ *
+ * In a bolt file the question is which line the position is on, not which block: a Python line
+ * is projected as blanks, and forwarding from one would answer a `for` loop with a list of
+ * every command in the game.
+ *
  * @param {vscode.TextDocument} doc
  * @param {vscode.Position} position
  * @returns {number | undefined}
  */
 function blockAt(doc, position) {
+  if (isBolt(doc)) return keptPart(doc.lineAt(position.line).text) ? 0 : undefined;
+
   const offset = doc.offsetAt(position);
   const index = blocksOf(doc).findIndex(({ start, end }) => offset >= start && offset <= end);
   return index === -1 ? undefined : index;
@@ -127,7 +148,7 @@ async function projectionFor(doc, blockIndex) {
   // The content range, not the block range: the quotes belong to Python, and handing them to a
   // datapack parser earns a diagnostic saying `"""` is not a command.
   const text = doc.getText();
-  const { text: projected, table, masked } = project(
+  const { text: projected, table, masked } = isBolt(doc) ? projectBolt(text) : project(
     text, block.contentStart, block.contentEnd,
     findInterpolationSpans(text, block), await generatedFor(doc, block), findEscapedBraces(text, block));
   const entry = {
@@ -532,10 +553,10 @@ function registerVirtualDocuments(context) {
   context.subscriptions.push(
     vscode.workspace.registerTextDocumentContentProvider(SCHEME, contentProvider),
     vscode.workspace.onDidChangeTextDocument(e => {
-      if (e.document.languageId === "python") invalidate(e.document);
+      if (isProjected(e.document)) invalidate(e.document);
     }),
     vscode.workspace.onDidCloseTextDocument(doc => {
-      if (doc.languageId === "python") forget(doc);
+      if (isProjected(doc)) forget(doc);
     }),
     vscode.workspace.onDidChangeConfiguration(e => {
       if (e.affectsConfiguration(`${CFG_KEY}.resolveInterpolations`)) reproject();
@@ -544,9 +565,15 @@ function registerVirtualDocuments(context) {
   );
 }
 
+/** Whether a document is one this file serves a projection of. @param {vscode.TextDocument} doc */
+function isProjected(doc) {
+  return doc.languageId === "python" || isBolt(doc);
+}
+
 module.exports = {
   TRIGGER_CHARACTERS,
   SCHEME,
+  isProjected,
   blocksOf,
   blockAt,
   pythonDiagnosticsFor,

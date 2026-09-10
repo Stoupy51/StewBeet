@@ -122,12 +122,13 @@ test("the extension owns bolt navigation but not the mcfunction language", () =>
     "taking a file away from Spyglass is the kind of thing that needs a switch");
 });
 
-test("the Spyglass-backed providers stay on Python", () => {
+test("the Spyglass-backed providers reach a bolt file too", () => {
   const source = fs.readFileSync(path.join(ROOT, "src", "extension.js"), "utf8");
   const start = source.indexOf("function registerLanguageFeatures");
   const body = source.slice(start, source.indexOf("\n}", start));
-  assert.ok(!/language:\s*["']bolt["']/.test(body),
-    "completion, hover and signature help need a compiler-backed server for bolt, which this is not");
+  assert.ok(/language:\s*["']bolt["']/.test(body),
+    "a bolt file loses Spyglass with its language id, and the projection is how it asks anyway");
+  assert.ok(/language:\s*["']python["']/.test(body), "and Python keeps what it had");
 });
 
 // Telling Spyglass to skip the file, which is the half a language id cannot do

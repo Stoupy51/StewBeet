@@ -1,14 +1,14 @@
 # StewBeet
 
 > Editor support for the [beet](https://github.com/mcbeet/beet) ecosystem: **beet**, **bolt**, **mecha** and **[StewBeet](https://stewbeet.paralya.fr/)**.
-> `.bolt` files get a language of their own, which nothing else on the marketplace provides, and the mcfunction strings inside your Python become code: highlighted, completed, checked as you type, and linked both ways to the datapack your build produces.
+> `.bolt` files get a language of their own, and the mcfunction strings inside your Python become code: highlighted, completed, checked as you type, and linked both ways to the datapack your build produces.
 
 <!-- hero.gif: take 4 of demo/README.md, which names every step and every line. -->
 ![Completion and navigation inside a block](https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/extension/vscode/images/hero.gif)
 
 | You write | You get |
 |---|---|
-| `.bolt` modules | The **Bolt** language: highlighting that knows `item = 3` from `item modify entity @s`, comment toggling, and a lens per function the module writes |
+| `.bolt` modules | The **Bolt** language: highlighting that knows `item = 3` from `item modify entity @s`, completion and ctrl+click on the commands, and a lens per function the module writes |
 | bolt inside a `.mcfunction` | The same, and Spyglass taken off a file it cannot parse |
 | plain **beet**, `ctx.data.functions[p] = Function(...)` | The commands inside are commands: coloured, completed, checked, and linked to what the build wrote |
 | **mecha** | Navigation from every generated line back to the source line it came from |
@@ -50,7 +50,9 @@ def open(self):
         data modify entity @s equipment.head set from storage voltaic:gui Icon
 ```
 
-Completion *inside* a `.bolt` file needs a compiler-backed server, which only mecha can provide and which is not part of this extension.
+**Completion and ctrl+click work inside a `.bolt` file too**, through the same projection the Python strings use: the commands are kept, the Python around them is blanked, and Spyglass answers about a document that reads as a plain `.mcfunction`. Ctrl+click on a resource location leads to the source that wrote it, through the build.
+
+What the projection cannot give you is anything only the compiler knows: a Python symbol, a bolt expression, the value behind `f"{self.path}/open"`. Those are masked, and completion on them offers nothing.
 
 ### Bolt inside a `.mcfunction`
 
@@ -91,7 +93,7 @@ ctx.data.functions["voltaic:turbine/stall"].lines.append("stopsound @a[distance=
 
 **Errors arrive as you type**, with no build, and with nothing under `build/` ever opened. Errors reported against generated files reach Python too, for the files you open yourself. `undeclaredSymbol` is not relayed by default, since it fires on every objective a dependency declares and Spyglass cannot see those.
 
-**Navigation crosses the boundary both ways.** Go to definition on a resource location lands on the call that produced it, find references lists every call site writing to it, and a lens above each block leads to what it generated. One line often produces several functions, so the lens says how many and opens the peek list VS Code uses for references. The `#>` header comments in a generated file are clickable in both directions.
+**Navigation crosses the boundary both ways.** Go to definition on a resource location lands on the call that produced it, find references lists every call site writing to it, and a lens above each block leads to what it generated. One line often produces several functions, so the lens says how many and offers them by name. The `#>` header comments in a generated file are clickable in both directions.
 
 ## StewBeet
 
@@ -146,7 +148,7 @@ A map records the line a command was written on when the build ran, and you keep
 | Commands inside Python strings | Not covered | Coloured, completed, checked, and linked to the build |
 | Source to build navigation | Not covered | Both directions, off the `.mcfunction.map` sidecars |
 | What it needs to run | `ms-python.python`, a working environment, and your project loaded by a server it launches | Nothing. It reads files |
-| Completion inside a `.bolt` file | Yes, from the real compiler | No, and it says so above |
+| Completion inside a `.bolt` file | Everything, from the real compiler: Python symbols and bolt expressions included | Commands, selectors and resource locations, through Spyglass. The Python is masked |
 
 That last row is the one honest reason to keep Aegis installed.
 

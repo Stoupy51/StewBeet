@@ -14,11 +14,13 @@ const {
   registerVirtualDocuments,
   reproject,
 } = require("./virtual");
+const virtual = require("./virtual");
 const navigation = require("./navigation");
 const sourcemap = require("./sourcemap");
 const drift = require("./drift");
 const diagnostics = require("./diagnostics");
 const { registerCodeLenses, refreshCodeLenses } = require("./codelens");
+const { functionIdOf } = require("./lenses");
 const { registerHeaderNavigation } = require("./headers");
 const { looksLikeBolt, isBuildOutput, addExclusions } = require("./bolt");
 const { SPYGLASS_EXTENSION_ID, OFFER_MESSAGE, OFFER_ACTIONS, shouldOffer } = require("./spyglass");
@@ -323,13 +325,16 @@ function registerBoltDetection(context) {
 function registerLanguageFeatures(context) {
   registerVirtualDocuments(context);
 
-  const python = { language: "python" };
+  // Both languages the projection serves. A bolt file loses Spyglass the moment it stops being
+  // `mcfunction`, and this is how it gets the answers back: the same forwarding, over a
+  // projection that keeps the commands and blanks the Python around them.
+  const projected = [{ language: "python" }, { language: "bolt" }];
   context.subscriptions.push(
-    vscode.languages.registerCompletionItemProvider(python, completionProvider, ...TRIGGER_CHARACTERS),
-    vscode.languages.registerHoverProvider(python, hoverProvider),
-    vscode.languages.registerSignatureHelpProvider(python, signatureHelpProvider, " "),
-    vscode.languages.registerDefinitionProvider(python, definitionProvider),
-    vscode.languages.registerReferenceProvider(python, referenceProvider),
+    vscode.languages.registerCompletionItemProvider(projected, completionProvider, ...TRIGGER_CHARACTERS),
+    vscode.languages.registerHoverProvider(projected, hoverProvider),
+    vscode.languages.registerSignatureHelpProvider(projected, signatureHelpProvider, " "),
+    vscode.languages.registerDefinitionProvider(projected, definitionProvider),
+    vscode.languages.registerReferenceProvider(projected, referenceProvider),
   );
 }
 
@@ -445,7 +450,7 @@ function drop() {
 async function goToSource(origin) {
   const given = asList(origin);
   if (given.length > 0) {
-    await revealAll(given);
+    await revealAll(given, "Where this function came from");
     return;
   }
 
@@ -469,12 +474,12 @@ async function goToSource(origin) {
 async function goToGenerated(target) {
   const given = asList(target);
   if (given.length > 0) {
-    await revealAll(given);
+    await revealAll(given, "What this line wrote");
     return;
   }
 
   const editor = vscode.window.activeTextEditor;
-  if (!editor || editor.document.languageId !== "python") return;
+  if (!editor || !virtual.isProjected(editor.document)) return;
 
   const maps = await navigation.findMaps();
   const found = sourcemap.generatedFrom(maps, editor.document.uri.fsPath, editor.selection.active.line);
@@ -482,7 +487,7 @@ async function goToGenerated(target) {
     vscode.window.setStatusBarMessage("StewBeet: this line generated nothing in the current build", 3000);
     return;
   }
-  await revealAll(found);
+  await revealAll(found, "What this line wrote");
 }
 
 /** One or many, from a lens argument or a lookup. @param {any} value @returns {{ file: string, line: number, column?: number }[]} */
@@ -496,28 +501,28 @@ function asList(value) {
  *
  * A `write_function` in a loop writes several functions from one line, and a generated function
  * assembled from several declarations has several origins. Opening the first silently loses the
- * rest, so the peek list VS Code uses for references is shown instead, which is where a reader
- * already looks for "there is more than one of these".
+ * rest, so all of them are offered by name: the resource location is what a reader is choosing
+ * between, and the picker closes on the choice rather than staying over the file it opened.
  *
  * @param {{ file: string, line: number, column?: number }[]} locations
+ * @param {string} title
  */
-async function revealAll(locations) {
+async function revealAll(locations, title) {
+  const [first] = locations;
   if (locations.length === 1) {
-    const [only] = locations;
-    await reveal(vscode.Uri.file(only.file), only.line, only.column ?? 0);
+    await reveal(vscode.Uri.file(first.file), first.line, first.column ?? 0);
     return;
   }
 
-  const editor = vscode.window.activeTextEditor;
-  const targets = locations.map(l => new vscode.Location(
-    vscode.Uri.file(l.file), new vscode.Position(l.line, l.column ?? 0)));
-
-  if (!editor) {
-    await reveal(vscode.Uri.file(locations[0].file), locations[0].line, locations[0].column ?? 0);
-    return;
-  }
-  await vscode.commands.executeCommand(
-    "editor.action.showReferences", editor.document.uri, editor.selection.active, targets);
+  const picked = await vscode.window.showQuickPick(
+    locations.map(location => ({
+      label: `$(go-to-file) ${functionIdOf(location.file)}`,
+      description: `${vscode.workspace.asRelativePath(location.file)}:${location.line + 1}`,
+      location,
+    })),
+    { title, placeHolder: `${locations.length} places, all from that one line`, matchOnDescription: true },
+  );
+  if (picked) await reveal(vscode.Uri.file(picked.location.file), picked.location.line, picked.location.column ?? 0);
 }
 
 /** @param {vscode.Uri} uri @param {number} line @param {number} column */

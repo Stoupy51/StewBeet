@@ -9,8 +9,17 @@
 - **A line deleted loses its link rather than passing it on.** Nothing slides onto the neighbour underneath, and a call whose line has been emptied gets no lens at all.
 - **A build puts everything back where the map says.** What was saved is what the build read, so an unsaved edit keeps its offset and a rebuild of a file you had already saved forgets it entirely.
 
+### Completion and ctrl+click inside a bolt file
+
+- **A `.bolt` file asks Spyglass through a projection**, the same way a Python string does: the command lines are kept and dedented, everything Python around them is blanked, and what reaches the server is a document that reads as a plain `.mcfunction` whose lines are in lockstep with the source. That is what a bolt file loses by not being `mcfunction`, given back.
+- **Ctrl+click crosses two boundaries at once.** A resource location in a bolt command leads to the generated function, and the map from there leads to whatever wrote it, in whichever dialect.
+- **A Python line offers nothing at all.** Forwarding from a `for` loop would answer it with every command in the game, so a position is only forwarded from a line the grammar reads as a command.
+- **The classifier is the grammar's own.** Both regexes are read out of the bolt grammar this extension ships, so a line coloured as a command is a line projected as one, and regenerating the grammar from mecha's command tree updates both.
+- **The Python a command carries is masked**, so the rest of the line still parses: `execute if predicate has_item(self.item) run function ns:x` keeps its `run function ns:x`.
+
 ### Changed
 
+- **A lens with several targets offers them by name** rather than in the references peek, which stayed open over the file it had just opened.
 - **beet's list of commands is read as commands.** `Function(["say a", "say b"])` holds two blocks, and so do `.lines.append(...)` and `.lines.extend([...])` onto a function already in the pack. A `Function` has no `extend` of its own, so nothing claims one: colouring an `AttributeError` as a command list would be worse than leaving it plain.
 
 - **One line of `beet.yml` instead of two.** `stewbeet.plugins.sniffer` in `require` now maps what mecha compiled as well, from its own teardown: beet unwinds `require` last, so mecha has compiled and its compilation units are still there to read. `stewbeet.plugins.sniffer.mecha` stays for a bolt or mecha project with no StewBeet in it, and a project listing both is unaffected.

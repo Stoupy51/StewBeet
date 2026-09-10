@@ -403,6 +403,37 @@ exports.run = async () => {
       diagnosticsOf("clean").length === 0 && diagnosticsOf("trail").length > 0,
       { clean: diagnosticsOf("clean"), trail: diagnosticsOf("trail") });
 
+    // US11: a bolt file asks Spyglass through the projection, since its language id took it away.
+    //
+    // probe.bolt line 5 (0-based) is `    function probe:alpha`, indented four columns that the
+    // projection removes, so this also proves the column translation: a request at Python column
+    // 20 has to arrive at virtual column 16 or Spyglass answers about the wrong token.
+    // probe.bolt is open and shown from the lens checks above.
+    const inBoltCommand = await completionsAt(boltSource, new vscode.Position(3, "    say ".length), " ");
+    note("us11_completionsInBolt", inBoltCommand.map(label).slice(0, 8));
+    expect("US11 completion answers inside a bolt command", inBoltCommand.length > 0);
+
+    const boltPaths = await completionsAt(boltSource, new vscode.Position(5, "    function probe:".length), ":");
+    note("us11_boltProjectSymbols", boltPaths.map(label).slice(0, 10));
+    expect("US11 a bolt file completes the pack's own function paths",
+      boltPaths.some(i => label(i).includes("alpha")), boltPaths.map(label).slice(0, 10));
+
+    // The negative control. Line 0 is `from ./helpers import thing`, which is Python: the
+    // projection blanks it, so nothing must be offered there.
+    const inBoltPython = await completionsAt(boltSource, new vscode.Position(0, 5));
+    const boltLeak = inBoltPython.filter(i => SPYGLASS_ONLY.includes(label(i)));
+    note("us11_pythonLineItems", inBoltPython.map(label).slice(0, 10));
+    expect("US11 a Python line of a bolt file offers no commands", boltLeak.length === 0, boltLeak.map(label));
+
+    // And ctrl+click, which crosses two boundaries at once: bolt to the generated function, then
+    // the map from that to demo.py, which is what wrote it.
+    const boltDefs = (await vscode.commands.executeCommand("vscode.executeDefinitionProvider",
+      boltSource, new vscode.Position(5, "    function probe:al".length))) || [];
+    const boltTargets = boltDefs.map(d => String((d.uri || d.targetUri || {}).fsPath || ""));
+    note("us11_boltDefinitionTargets", boltTargets);
+    expect("US11 ctrl+click in a bolt file leads to the source that wrote the target",
+      boltTargets.some(t => t.endsWith("demo.py")), boltTargets);
+
     // US10: the maps are in the coordinates of the last build, and the author keeps typing.
     //
     // Everything above asks about a file nobody has touched since. This is the other half: the
