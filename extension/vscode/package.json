@@ -2,7 +2,7 @@
   "name": "stewbeet",
   "displayName": "StewBeet",
   "description": "Editor support for the beet ecosystem: the Bolt language, plus highlighting, completion, diagnostics and build navigation for the mcfunction strings inside your beet, mecha and StewBeet Python.",
-  "version": "2.1.0",
+  "version": "2.0.0",
   "publisher": "stoupy",
   "license": "MIT",
   "icon": "icon.png",
