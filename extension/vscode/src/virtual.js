@@ -3,9 +3,10 @@
 
 // Virtual mcfunction documents, and the request forwarding built on them.
 //
-// Each mcfunction string block in a Python file is served as its own virtual
-// document under the "stewbeet-mcfunction" scheme, whose content is the Python
-// buffer with everything outside that block blanked out (see ./projection.js).
+// Each mcfunction string block in a Python file, and each run of commands in a bolt file, is
+// served as its own virtual document under the "stewbeet-mcfunction" scheme, whose content is
+// the source buffer with everything outside that block blanked out (see ./projection.js and
+// ./boltlines.js).
 // Spyglass's document selector carries no scheme filter, so it attaches to
 // those documents exactly as it would to a real .mcfunction file, and answers
 // completion, hover, signature help and definition for them.
@@ -17,7 +18,7 @@
 
 const vscode = require("vscode");
 const { findBlockOffsets, findInterpolationSpans, findEscapedBraces } = require("./blocks");
-const { projectBolt, keptPart } = require("./boltlines");
+const { projectBolt, commandsOf, commandBlocks } = require("./boltlines");
 const {
   SCHEME, project, toVirtual, toPython, explainedByMask, crossesSubstitution,
   virtualPath, blockIndexFromPath,
@@ -45,29 +46,52 @@ const NO_SUBSTITUTION = new Map();
 
 // Block lookup
 
-/** Cache of the block scan, keyed by document URI. @type {Map<string, { version:number, blocks:{start:number,end:number}[] }>} */
+/** Cache of the block scan, keyed by document URI. @type {Map<string, { version:number, blocks:any[], commands: Map<number, any> | null }>} */
 const blockCache = new Map();
 
 /**
- * The blocks of a document, rescanned only when its version changes.
- *
- * A bolt file is one block covering the whole file: the commands are the file rather than
- * something quoted inside it, and ./boltlines.js decides which of its lines a datapack parser
- * is shown.
- *
+ * The blocks of a document and, for a bolt file, its command lines. Rescanned only when the
+ * document's version changes.
  * @param {vscode.TextDocument} doc
  */
-function blocksOf(doc) {
+function scanOf(doc) {
   const key = doc.uri.toString();
   const cached = blockCache.get(key);
-  if (cached && cached.version === doc.version) return cached.blocks;
+  if (cached && cached.version === doc.version) return cached;
 
   const text = doc.getText();
-  const blocks = isBolt(doc)
-    ? [{ start: 0, end: text.length, contentStart: 0, contentEnd: text.length, callStart: 0 }]
-    : findBlockOffsets(text);
-  blockCache.set(key, { version: doc.version, blocks });
-  return blocks;
+  const scanned = isBolt(doc)
+    ? boltScan(doc, text)
+    : { blocks: findBlockOffsets(text), commands: null };
+  const entry = { version: doc.version, ...scanned };
+  blockCache.set(key, entry);
+  return entry;
+}
+
+/**
+ * A bolt file's blocks, one per run of consecutive commands.
+ *
+ * One block for the whole file would be simpler and is what makes a bolt file feel slow: every
+ * keystroke would hand the parser every command in the file again. A run is what an edit
+ * actually changes, and the runs a keystroke leaves alone are served the same text as before,
+ * which VS Code hands to nobody.
+ *
+ * @param {vscode.TextDocument} doc
+ * @param {string} text
+ */
+function boltScan(doc, text) {
+  const commands = commandsOf(text);
+  const blocks = commandBlocks(commands).map(({ from, to }) => {
+    const start = doc.offsetAt(new vscode.Position(from, 0));
+    const end = doc.offsetAt(doc.lineAt(to).range.end);
+    return { start, end, contentStart: start, contentEnd: end, from, to };
+  });
+  return { blocks, commands };
+}
+
+/** @param {vscode.TextDocument} doc */
+function blocksOf(doc) {
+  return scanOf(doc).blocks;
 }
 
 /** @param {vscode.TextDocument} doc */
@@ -78,16 +102,20 @@ function isBolt(doc) {
 /**
  * Index of the block containing a position, or undefined when outside every block.
  *
- * In a bolt file the question is which line the position is on, not which block: a Python line
- * is projected as blanks, and forwarding from one would answer a `for` loop with a list of
- * every command in the game.
+ * In a bolt file the line decides first: a Python line is projected as nothing, and forwarding
+ * from one would answer a `for` loop with a list of every command in the game.
  *
  * @param {vscode.TextDocument} doc
  * @param {vscode.Position} position
  * @returns {number | undefined}
  */
 function blockAt(doc, position) {
-  if (isBolt(doc)) return keptPart(doc.lineAt(position.line).text) ? 0 : undefined;
+  if (isBolt(doc)) {
+    const { blocks, commands } = scanOf(doc);
+    if (!commands || !commands.has(position.line)) return undefined;
+    const found = blocks.findIndex(({ from, to }) => position.line >= from && position.line <= to);
+    return found === -1 ? undefined : found;
+  }
 
   const offset = doc.offsetAt(position);
   const index = blocksOf(doc).findIndex(({ start, end }) => offset >= start && offset <= end);
@@ -142,15 +170,20 @@ async function projectionFor(doc, blockIndex) {
   const cached = projections.get(key);
   if (cached && cached.version === doc.version) return cached;
 
-  const block = blocksOf(doc)[blockIndex];
+  const scan = scanOf(doc);
+  const block = scan.blocks[blockIndex];
   if (!block) return null;
 
   // The content range, not the block range: the quotes belong to Python, and handing them to a
   // datapack parser earns a diagnostic saying `"""` is not a command.
   const text = doc.getText();
-  const { text: projected, table, masked } = isBolt(doc) ? projectBolt(text) : project(
-    text, block.contentStart, block.contentEnd,
-    findInterpolationSpans(text, block), await generatedFor(doc, block), findEscapedBraces(text, block));
+  const { text: projected, table, masked } = isBolt(doc)
+    ? projectBolt(text, {
+      commands: scan.commands, from: block.from, to: block.to, generated: await generatedFor(doc, block),
+    })
+    : project(
+      text, block.contentStart, block.contentEnd,
+      findInterpolationSpans(text, block), await generatedFor(doc, block), findEscapedBraces(text, block));
   const entry = {
     version: doc.version, text: projected, table, masked,
     contentStart: doc.positionAt(block.contentStart), contentEnd: doc.positionAt(block.contentEnd),
@@ -160,7 +193,7 @@ async function projectionFor(doc, blockIndex) {
 }
 
 /**
- * What the build wrote for each Python line of a block, or null when substitution is off.
+ * What the build wrote for each source line of a block, or null when substitution is off.
  * @param {vscode.TextDocument} doc
  * @param {{ start:number, end:number }} block
  * @returns {Promise<Map<number, string> | null>}
@@ -478,10 +511,10 @@ async function wake(uri, text) {
 }
 
 /**
- * What Spyglass says about one Python document's blocks, in the Python document's coordinates.
+ * What Spyglass says about one source document's blocks, in that document's coordinates.
  *
  * The virtual documents are the honest place to ask. Their lines are in lockstep with the
- * Python, so a diagnostic needs no source map to come home, and it arrives as the author types
+ * source, so a diagnostic needs no source map to come home, and it arrives as the author types
  * rather than after a build.
  *
  * Waking is what makes the server look at a document nobody is showing, and it is deliberately
@@ -494,7 +527,7 @@ async function wake(uri, text) {
  * @param {{ wake: "none" | "changed" | "all" }} options
  * @returns {Promise<vscode.Diagnostic[]>}
  */
-async function pythonDiagnosticsFor(doc, { wake: waking }) {
+async function diagnosticsFor(doc, { wake: waking }) {
   if (!vscode.workspace.getConfiguration(CFG_KEY).get("languageFeatures", true)) return [];
 
   const blocks = blocksOf(doc);
@@ -576,7 +609,7 @@ module.exports = {
   isProjected,
   blocksOf,
   blockAt,
-  pythonDiagnosticsFor,
+  diagnosticsFor,
   virtualUriFor,
   contentProvider,
   forward,

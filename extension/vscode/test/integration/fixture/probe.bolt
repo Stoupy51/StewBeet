@@ -4,3 +4,4 @@ function probe:delta:
     say from a bolt module
     say second line
     function probe:alpha
+    sya hello
