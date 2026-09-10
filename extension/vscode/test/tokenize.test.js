@@ -181,6 +181,33 @@ tokenizerTest(
 );
 
 tokenizerTest(
+  "a comment entry ends with its own quote, and the list ends with its bracket",
+  'ctx.data.functions["ns:x"] = Function([\n\t"# a note",\n\t\'say hi\',\n])\ntail = "plain python"\n',
+  lines => {
+    // A comment runs to the end of its line, so without a boundary it takes the closing quote,
+    // every entry after it and the `])` with it, and the file stays inside the embed for good.
+    assert.ok(scopesOf(lines, "say")?.includes("keyword.control.flow.mcfunction"),
+      "the entry after a comment is still a command");
+    assert.ok(scopesOf(lines, "]")?.includes("punctuation.definition.list.end.python"),
+      "the bracket closing the list is Python's, not part of a comment");
+    const tail = scopesOf(lines, "plain python") ?? [];
+    assert.ok(!tail.some(s => s.includes("mcfunction")), `the comment leaked: ${tail.join(" ")}`);
+  },
+);
+
+tokenizerTest(
+  "a function's own lines are appended to like the function is",
+  'ctx.data.functions["ns:x"].lines.append("stopsound @a ambient ns:hum")\n'
+  + 'ctx.data.functions["ns:x"].lines.extend(["say a"])\ntail = "plain python"\n',
+  lines => {
+    assert.ok(scopesOf(lines, "stopsound")?.includes("keyword.control.flow.mcfunction"));
+    assert.ok(scopesOf(lines, "say")?.includes("keyword.control.flow.mcfunction"));
+    const tail = scopesOf(lines, "plain python") ?? [];
+    assert.ok(!tail.some(s => s.includes("mcfunction")), tail.join(" "));
+  },
+);
+
+tokenizerTest(
   "a plain list annotation is left alone",
   'notes: list[str] = []\nnotes.append("say nothing")\n',
   lines => {

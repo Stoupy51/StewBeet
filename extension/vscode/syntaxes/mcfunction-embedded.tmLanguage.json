@@ -89,8 +89,8 @@
               "name": "comment.line.mcfunction"
             }
           },
-          "comment": "Stops before the quote that closes an inline write_* call, otherwise the comment eats the closing \")\" (same convention as #say). The tail between quote and \")\" must look like a Python argument list, so prose such as 'or \"name\" field)' keeps its quotes.",
-          "match": "#(?!\\{)(?:(?![\"'](?:[ \\t]*,[ \\t]*[^\\n()]*)?[ \\t]*\\)[ \\t]*$)(?:[^\\\\\n]|\\\\[^n]))*",
+          "comment": "Stops before the quote that closes the Python string it sits in, otherwise the comment eats that quote and everything after it (same convention as #say-inline). Three tails end a string: an inline write_* call closing on this line, an entry of a list of commands, and the last entry of one. The tail of the first must look like a Python argument list, so prose such as 'or \"name\" field)' keeps its quotes.",
+          "match": "#(?!\\{)(?:(?![\"'](?:[ \\t]*,[ \\t]*[^\\n()]*)?[ \\t]*\\)[ \\t]*$)(?![\"'][ \\t]*,?[ \\t]*$)(?![\"'][ \\t]*[,\\]])(?:[^\\\\\n]|\\\\[^n]))*",
           "name": "meta.comments"
         }
       ]
