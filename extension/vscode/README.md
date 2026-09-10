@@ -33,8 +33,7 @@ Without a build nothing errors: navigation falls back to opening the generated `
 
 ## Bolt
 
-<!-- bolt.gif: takes 1 and 2 of demo/README.md. -->
-![A bolt module, coloured, with a lens on each function it writes](https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/extension/vscode/images/bolt.mp4)
+<video src="./extension/vscode/images/bolt.mp4" autoplay loop muted playsinline></video>
 
 `.bolt` files open as **Bolt** rather than plain text. Nothing else registers that extension, so before this they had no language id at all.
 
