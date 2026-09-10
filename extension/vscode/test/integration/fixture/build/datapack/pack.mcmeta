@@ -1,0 +1,15 @@
+{
+	"pack": {
+		"pack_format": 107,
+		"description": "Machines that run on energy",
+		"min_format": [
+			107,
+			1
+		],
+		"max_format": [
+			1000,
+			0
+		]
+	},
+	"id": "voltaic"
+}

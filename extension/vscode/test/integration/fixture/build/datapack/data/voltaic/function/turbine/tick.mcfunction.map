@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "tick.mcfunction",
+	"sourceRoot": "../../../../../..",
+	"sources": [
+		"src/turbine.py"
+	],
+	"names": [],
+	"mappings": "AAQuD;AACvD;;;;;AACA;AACA;AACA;AAKA;AACA"
+}
