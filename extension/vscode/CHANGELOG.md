@@ -30,6 +30,9 @@
 
 ### Fixed
 
+- **An error clears when you fix it, whatever you did to the file in between.** A file closed and reopened kept every squiggle it had: VS Code holds on to the virtual document its source fed and asks for content again only when a change is announced for it, and the announcements stopped at the close. The registry of what was handed out now survives a close, and a reopen puts the virtual documents back in step with the file.
+- **A comment in a list of commands ends at its own quote.** `Function(["# a note", "say hi"])` ran the comment to the end of the line, taking the closing quote, every entry after it and the `])` with it, so the brackets and the rest of the file were coloured as one runaway command block.
+- **A function's own lines are coloured like the function is.** `.lines.append(...)` and `.lines.extend([...])` write commands into a function already in the pack, and both now colour them, which is what the completion and the diagnostics on those lines already assumed.
 - **A relative `StewBeet.buildOutput` finds the build.** `"build"` was handed to `vscode.RelativePattern`, which reads a bare string as an absolute path, so it searched `<drive>:/build`, found no maps, and every lens, jump and resolved interpolation went quiet with nothing anywhere saying why. A relative value is now a workspace-relative glob, and a setting that still finds nothing falls back to searching the workspace.
 - **A bolt `.mcfunction` in a StewBeet project is mapped again.** The sniffer's capture read the text of every file as the pack loaded it, and beet drops a file's `source_path` the moment it is deserialised, which is what mecha names a compilation unit after. Every bolt file under `data/<ns>/function/` came out unmapped whenever `stewbeet.plugins.sniffer` and `mecha` ran in the same build, so the extension had nothing to navigate them with. Fixed in the `stewbeet` package after 3.6.5, not in the extension.
 
