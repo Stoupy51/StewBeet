@@ -33,7 +33,7 @@ Without a build nothing errors: navigation falls back to opening the generated `
 
 ## Bolt
 
-<video src="./extension/vscode/images/bolt.mp4" autoplay loop muted playsinline></video>
+https://github.com/user-attachments/assets/57fd9d18-1643-45bc-8257-4942865c9be4
 
 `.bolt` files open as **Bolt** rather than plain text. Nothing else registers that extension, so before this they had no language id at all.
 
