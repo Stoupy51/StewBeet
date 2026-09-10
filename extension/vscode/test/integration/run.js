@@ -70,7 +70,8 @@ const WORKSPACE = process.env.SB_WORKSPACE || path.join(HERE, "fixture");
 // A test may type into a file, and VS Code saves a dirty document when the window closes. Every
 // guarded file is a committed file whose line numbers the checks are written against, so each
 // is snapshotted here and put back afterwards, whatever the run did.
-const GUARDED = (process.env.SB_GUARD || path.join(HERE, "fixture", "demo.py"))
+const GUARDED = (process.env.SB_GUARD
+  || [path.join(HERE, "fixture", "demo.py"), path.join(HERE, "fixture", "probe.bolt")].join(","))
   .split(",").filter(Boolean);
 const pristine = new Map(GUARDED.map(file => [file, fs.readFileSync(file)]));
 

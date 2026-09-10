@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "slow.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/machines.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAsBsD;AACtD;AACA;AACA"
+}

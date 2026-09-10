@@ -441,6 +441,27 @@ exports.run = async () => {
     expect("US11 the Python of a bolt file is flagged by nobody",
       !boltComplaints.some(d => d.range.start.line === 0), boltComplaints.map(d => d.range.start.line));
 
+    // The same file closed and reopened must not keep the errors it had. VS Code hands back the
+    // virtual document it already holds for that URI and asks the provider for content only when
+    // a change is announced, so a reopen that announces nothing leaves the server reporting on
+    // the text the file had when it closed, whatever the author does to it afterwards.
+    await vscode.window.showTextDocument(sourceDoc, { preview: false });
+    await vscode.commands.executeCommand("workbench.action.closeActiveEditor");
+    await sleep(2000);
+    await vscode.window.showTextDocument(await openWithRetry(boltSource), { preview: false });
+    await sleep(2000);
+
+    const correction = new vscode.WorkspaceEdit();
+    correction.replace(boltSource, new vscode.Range(6, 4, 6, 7), "say");
+    await vscode.workspace.applyEdit(correction);
+    await sleep(5000);
+    const afterFix = (vscode.languages.getDiagnostics(boltSource) || [])
+      .filter(d => String(d.source || "").startsWith("stewbeet"));
+    note("us11_boltDiagnosticsAfterFix",
+      afterFix.map(d => `${d.range.start.line}: ${String(d.message).slice(0, 40)}`));
+    expect("US11 a fixed typo loses its squiggle, even after the file was closed and reopened",
+      afterFix.length === 0, afterFix.map(d => d.range.start.line));
+
     // And ctrl+click, which crosses two boundaries at once: bolt to the generated function, then
     // the map from that to demo.py, which is what wrote it.
     const boltDefs = (await vscode.commands.executeCommand("vscode.executeDefinitionProvider",
@@ -449,6 +470,61 @@ exports.run = async () => {
     note("us11_boltDefinitionTargets", boltTargets);
     expect("US11 ctrl+click in a bolt file leads to the source that wrote the target",
       boltTargets.some(t => t.endsWith("demo.py")), boltTargets);
+
+    // US12: the demo project, which is a real module and a real build rather than a probe.
+    //
+    // Everything above is written against files shaped for one check each. This one asks the same
+    // questions of code someone would actually write: a class with cached properties, an f-string
+    // path, a loop writing one function per machine, and the build those produced.
+    const guiUri = vscode.Uri.file(path.join(root, "src", "data", "voltaic", "module", "gui.bolt"));
+    const guiDoc = await openWithRetry(guiUri);
+    await vscode.window.showTextDocument(guiDoc, { preview: false });
+    await sleep(3000);
+
+    const guiLines = guiDoc.getText().split("\n");
+    const playsound = guiLines.findIndex(line => line.includes("playsound minecraft:block.barrel.open"));
+    const insideNesting = await completionsAt(guiUri, new vscode.Position(playsound, guiLines[playsound].indexOf("playsound") + 4));
+    note("us12_completionsInNesting", insideNesting.map(label).slice(0, 8));
+    expect("US12 a command indented inside a nesting block completes",
+      insideNesting.some(i => SPYGLASS_ONLY.includes(label(i))), insideNesting.map(label).slice(0, 8));
+
+    // `function gui.open` is a Python attribute, so the only thing that makes it a path is the
+    // build: the projection hands Spyglass what was written there, and the map leads back to the
+    // module. Two translations and a substitution, on a line nothing in the fixture was shaped for.
+    const computed = guiLines.findIndex(line => line.includes("run function gui.open"));
+    const onComputed = new vscode.Position(computed, guiLines[computed].indexOf("gui.open") + 2);
+    const computedDefs = (await vscode.commands.executeCommand(
+      "vscode.executeDefinitionProvider", guiUri, onComputed)) || [];
+    const computedTargets = computedDefs.map(d => String((d.uri || d.targetUri || {}).fsPath || ""));
+    note("us12_computedPathTargets", computedTargets.map(t => path.basename(t)));
+    expect("US12 a path the Python computes leads back to the module that wrote it",
+      computedTargets.some(t => t.endsWith("gui.bolt")), computedTargets);
+
+    const guiLenses = await vscode.commands.executeCommand("vscode.executeCodeLensProvider", guiUri, 20) || [];
+    note("us12_guiLenses", guiLenses.map(l => `${l.range.start.line}: ${l.command && l.command.title}`));
+    expect("US12 one module writing many functions gets a lens per function",
+      guiLenses.filter(l => l.command && String(l.command.title).includes("voltaic:gui/")).length >= 3,
+      guiLenses.map(l => l.command && l.command.title));
+
+    // beet's own idiom, with no StewBeet helper in the file: a Function built from a list of
+    // commands, which is a block per entry.
+    const turbineUri = vscode.Uri.file(path.join(root, "src", "turbine.py"));
+    const turbineDoc = await openWithRetry(turbineUri);
+    await vscode.window.showTextDocument(turbineDoc, { preview: false });
+    await sleep(3000);
+
+    const turbineLines = turbineDoc.getText().split("\n");
+    const entry = turbineLines.findIndex(line => line.includes("data modify entity @s item.components"));
+    const inListEntry = await completionsAt(turbineUri, new vscode.Position(entry, turbineLines[entry].indexOf("data modify") + 4));
+    note("us12_completionsInListEntry", inListEntry.map(label).slice(0, 8));
+    expect("US12 an entry of a list of commands completes like any other block",
+      inListEntry.some(i => SPYGLASS_ONLY.includes(label(i))), inListEntry.map(label).slice(0, 8));
+
+    const turbineLenses = await vscode.commands.executeCommand("vscode.executeCodeLensProvider", turbineUri, 20) || [];
+    note("us12_turbineLenses", turbineLenses.map(l => `${l.range.start.line}: ${l.command && l.command.title}`));
+    expect("US12 a Function built from a list is linked to what it generated",
+      turbineLenses.some(l => l.command && String(l.command.title).includes("voltaic:turbine/stall")),
+      turbineLenses.map(l => l.command && l.command.title));
 
     // US10: the maps are in the coordinates of the last build, and the author keeps typing.
     //

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "open.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/data/voltaic/module/gui.bolt"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAgBY;AACA;AACA"
+}

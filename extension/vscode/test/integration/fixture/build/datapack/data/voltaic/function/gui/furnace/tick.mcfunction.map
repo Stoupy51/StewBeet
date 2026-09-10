@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "tick.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/data/voltaic/module/gui.bolt"
+	],
+	"names": [],
+	"mappings": ";;;;;;AAiCQ;AACA"
+}

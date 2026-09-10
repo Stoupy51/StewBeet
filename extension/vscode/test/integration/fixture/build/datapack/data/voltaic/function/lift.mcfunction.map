@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "lift.mcfunction",
+	"sourceRoot": "../../../../..",
+	"sources": [
+		"src/data/voltaic/function/elevator.mcfunction"
+	],
+	"names": [],
+	"mappings": ";;;;;;AAQI;AACA"
+}

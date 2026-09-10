@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "stall.mcfunction",
+	"sourceRoot": "../../../../../..",
+	"sources": [
+		"src/turbine.py"
+	],
+	"names": [],
+	"mappings": "AAqB+C;;;;;;AAAA;;AAAA"
+}
