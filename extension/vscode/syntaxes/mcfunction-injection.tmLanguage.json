@@ -926,7 +926,7 @@
         {
           "comment": "beet's own writers handed a list of lines, ex: `... [path] = Function([\"say a\", \"say b\"])`",
           "name": "meta.embedded.block.mcfunction.stewbeet",
-          "begin": "((?:\\.functions|\\[\\s*Function\\s*\\])\\s*\\[[^\\]\\n]*\\]\\s*(?:=\\s*Function\\s*\\(|\\.\\s*(?:append|prepend)\\s*\\())\\s*(\\[)",
+          "begin": "((?:\\.functions|\\[\\s*Function\\s*\\])\\s*\\[[^\\]\\n]*\\]\\s*(?:=\\s*Function\\s*\\(|\\.\\s*(?:lines\\s*\\.\\s*(?:append|extend)|append|prepend)\\s*\\())\\s*(\\[)",
           "beginCaptures": {
             "1": {
               "name": "meta.function-call.stewbeet"
@@ -1039,7 +1039,7 @@
         {
           "comment": "beet's own writers, `... [path] = Function(...)` and `[path].append(...)` triple-double",
           "name": "meta.embedded.block.mcfunction.stewbeet",
-          "begin": "((?:\\.functions|\\[\\s*Function\\s*\\])\\s*\\[[^\\]\\n]*\\]\\s*(?:=\\s*Function\\s*\\(|\\.\\s*(?:append|prepend)\\s*\\())\\s*([rRbBuUfF]{0,2})(\\\"\\\"\\\")",
+          "begin": "((?:\\.functions|\\[\\s*Function\\s*\\])\\s*\\[[^\\]\\n]*\\]\\s*(?:=\\s*Function\\s*\\(|\\.\\s*(?:lines\\s*\\.\\s*(?:append|extend)|append|prepend)\\s*\\())\\s*([rRbBuUfF]{0,2})(\\\"\\\"\\\")",
           "beginCaptures": {
             "1": {
               "name": "meta.function-call.stewbeet"
@@ -1070,7 +1070,7 @@
         {
           "comment": "beet's own writers, `... [path] = Function(...)` and `[path].append(...)` triple-single",
           "name": "meta.embedded.block.mcfunction.stewbeet",
-          "begin": "((?:\\.functions|\\[\\s*Function\\s*\\])\\s*\\[[^\\]\\n]*\\]\\s*(?:=\\s*Function\\s*\\(|\\.\\s*(?:append|prepend)\\s*\\())\\s*([rRbBuUfF]{0,2})(''')",
+          "begin": "((?:\\.functions|\\[\\s*Function\\s*\\])\\s*\\[[^\\]\\n]*\\]\\s*(?:=\\s*Function\\s*\\(|\\.\\s*(?:lines\\s*\\.\\s*(?:append|extend)|append|prepend)\\s*\\())\\s*([rRbBuUfF]{0,2})(''')",
           "beginCaptures": {
             "1": {
               "name": "meta.function-call.stewbeet"
@@ -1101,7 +1101,7 @@
         {
           "comment": "beet's own writers, `... [path] = Function(...)` and `[path].append(...)` single-double",
           "name": "meta.embedded.inline.mcfunction.stewbeet",
-          "begin": "((?:\\.functions|\\[\\s*Function\\s*\\])\\s*\\[[^\\]\\n]*\\]\\s*(?:=\\s*Function\\s*\\(|\\.\\s*(?:append|prepend)\\s*\\())\\s*([rRbBuUfF]{0,2})(?!\\\"\\\"\\\")(\\\")",
+          "begin": "((?:\\.functions|\\[\\s*Function\\s*\\])\\s*\\[[^\\]\\n]*\\]\\s*(?:=\\s*Function\\s*\\(|\\.\\s*(?:lines\\s*\\.\\s*(?:append|extend)|append|prepend)\\s*\\())\\s*([rRbBuUfF]{0,2})(?!\\\"\\\"\\\")(\\\")",
           "beginCaptures": {
             "1": {
               "name": "meta.function-call.stewbeet"
@@ -1132,7 +1132,7 @@
         {
           "comment": "beet's own writers, `... [path] = Function(...)` and `[path].append(...)` single-single",
           "name": "meta.embedded.inline.mcfunction.stewbeet",
-          "begin": "((?:\\.functions|\\[\\s*Function\\s*\\])\\s*\\[[^\\]\\n]*\\]\\s*(?:=\\s*Function\\s*\\(|\\.\\s*(?:append|prepend)\\s*\\())\\s*([rRbBuUfF]{0,2})(?!''')(')",
+          "begin": "((?:\\.functions|\\[\\s*Function\\s*\\])\\s*\\[[^\\]\\n]*\\]\\s*(?:=\\s*Function\\s*\\(|\\.\\s*(?:lines\\s*\\.\\s*(?:append|extend)|append|prepend)\\s*\\())\\s*([rRbBuUfF]{0,2})(?!''')(')",
           "beginCaptures": {
             "1": {
               "name": "meta.function-call.stewbeet"
