@@ -143,9 +143,16 @@ def beet_default(ctx: Context) -> Iterator[None]:
             entry: str = f"data/{func_path.replace(':', '/function/')}.mcfunction"
             if f"{entry}.map" not in maps:
                 continue
-            # beet serializes with the platform's line ending, so compare the text, not the bytes.
-            zipped: str = zip_file.read(entry).decode("utf-8").replace("\r\n", "\n")
+            zipped: str = zip_file.read(entry).decode("utf-8")
             assert zipped == ctx.data.functions[func_path].text, \
                 f"{entry} differs between the archive and the build directory"
             assert f"{entry}.map" in entries, \
                 f"{entry} names no map, so the sibling is the only way to find one and it is not in the archive"
+
+        # The game reads a command ending in a backslash as continuing on the next line, and a
+        # carriage return between the two leaves it incomplete, so the archive is Unix whatever the host is.
+        windows_endings: list[str] = [
+            name for name in sorted(entries)
+            if name.endswith((".mcfunction", ".json", ".mcmeta", ".map")) and b"\r\n" in zip_file.read(name)
+        ]
+        assert not windows_endings, f"these archived entries carry CRLF: {windows_endings}"
