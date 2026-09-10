@@ -7,6 +7,7 @@ __lazy_modules__ = ALWAYS_LAZY
 # Imports
 import io
 import os
+import re
 import time
 import zipfile
 from collections.abc import Buffer
@@ -26,6 +27,10 @@ TEXT_EXTENSIONS: frozenset[str] = frozenset({
 })
 """ Extensions whose entries hold text, so their line endings are normalized on the way into the archive.
 Everything else is archived byte for byte, since a CRLF inside a .png or an .ogg is data rather than a line ending. """
+
+BEFORE_NEWLINE: re.Pattern[bytes] = re.compile(rb"\r+\n")
+""" Carriage returns opening a line ending, however many of them there are.
+A file welded out of a library archive already holding CRLF reaches this as CRCRLF, since TextIOWrapper translates the newline it finds behind the carriage return that was already there. """
 
 
 def get_consistent_timestamp(ctx: Context) -> tuple[int, int, int, int, int, int]:
@@ -111,13 +116,20 @@ class UnixNewlineWriter(io.RawIOBase):
 
 	beet dumps a text file through ``io.TextIOWrapper(newline=None)``, which rewrites every line ending as ``os.linesep``, so a pack built on Windows ships entirely in CRLF.
 	Minecraft reads a command ending in a backslash as continuing on the next line, and the carriage return between the two leaves it incomplete.
+
+	>>> sink = io.BytesIO()
+	>>> writer = UnixNewlineWriter(sink)
+	>>> writer.write(b"say a\\r"), writer.write(b"\\nsay b\\r\\r\\n")
+	(6, 9)
+	>>> sink.getvalue()
+	b'say a\\nsay b\\n'
 	"""
 
 	def __init__(self, stream: IO[bytes]) -> None:
 		super().__init__()
 		self.stream: IO[bytes] = stream
 		self.pending: bytes = b""
-		""" A trailing carriage return, held back in case the next chunk opens with the newline it belongs to. """
+		""" Trailing carriage returns, held back in case the next chunk opens with the newline they belong to. """
 
 	def writable(self) -> bool:
 		return True
@@ -125,8 +137,9 @@ class UnixNewlineWriter(io.RawIOBase):
 	def write(self, b: Buffer, /) -> int:
 		data: bytes = bytes(b)
 		chunk: bytes = self.pending + data
-		self.pending = chunk[-1:] if chunk.endswith(b"\r") else b""
-		self.stream.write(chunk[:len(chunk) - len(self.pending)].replace(b"\r\n", b"\n"))
+		kept: int = len(chunk.rstrip(b"\r"))
+		self.pending = chunk[kept:]
+		self.stream.write(BEFORE_NEWLINE.sub(b"\n", chunk[:kept]))
 		return len(data)
 
 	def close(self) -> None:
@@ -146,14 +159,16 @@ def is_text_entry(name: str) -> bool:
 
 
 def unix_newlines(name: str, data: str | bytes) -> str | bytes:
-	""" The same data with every CRLF turned into a LF, for a text entry only.
+	""" The same data with every line ending turned into a LF, for a text entry only.
 
-	>>> unix_newlines("tick.mcfunction", b"say a\\r\\nsay b\\n"), unix_newlines("icon.png", b"\\r\\n")
+	>>> unix_newlines("tick.mcfunction", b"say a\\r\\nsay b\\r\\r\\n"), unix_newlines("icon.png", b"\\r\\n")
 	(b'say a\\nsay b\\n', b'\\r\\n')
 	"""
 	if not is_text_entry(name):
 		return data
-	return data.replace("\r\n", "\n") if isinstance(data, str) else data.replace(b"\r\n", b"\n")
+	if isinstance(data, str):
+		return re.sub(BEFORE_NEWLINE.pattern.decode(), "\n", data)
+	return BEFORE_NEWLINE.sub(b"\n", data)
 
 
 # Main entry point
