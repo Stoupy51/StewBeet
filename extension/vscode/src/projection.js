@@ -360,6 +360,7 @@ module.exports = {
   MASK,
   project,
   clipToLine,
+  substitute,
   resolveLine,
   toVirtual,
   toPython,

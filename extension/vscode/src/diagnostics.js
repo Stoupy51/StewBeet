@@ -1,12 +1,12 @@
 // @ts-check
 "use strict";
 
-// Diagnostics on the Python that wrote the command, from two sources.
+// Diagnostics on the source that wrote the command, from two sources.
 //
 // The one that matters is the projection: Spyglass reports on the virtual documents in
-// ./virtual.js, whose lines are in lockstep with the Python, so an error comes home with no
-// build and no source map. That is `live`, and it is why nothing under the build output is
-// ever opened here.
+// ./virtual.js, whose lines are in lockstep with the Python or bolt they came from, so an error
+// comes home with no build and no source map. That is `live`, and it is why nothing under the
+// build output is ever opened here.
 //
 // The other is the generated .mcfunction files the author has open themselves. What the server
 // says about each is kept in `captured`, because VS Code disposes a document nothing is
@@ -26,7 +26,7 @@ const CFG_KEY = "StewBeet";
 const COLLECTION_NAME = "stewbeet";
 
 /** Rules silenced by default. `undeclaredSymbol` fires on every objective a dependency
- *  declares, which Spyglass cannot see, and those are far more intrusive on a Python line
+ *  declares, which Spyglass cannot see, and those are far more intrusive on a line you wrote
  *  than in a generated file nobody opens. */
 const DEFAULT_DENYLIST = ["undeclaredSymbol"];
 
@@ -50,7 +50,7 @@ let output;
 /**
  * Trace one step of the relay into the StewBeet output channel.
  * This path has several places where doing nothing looks exactly like working, so it says out
- * loud what it found: no maps, no open Python file, nothing the server would report on.
+ * loud what it found: no maps, no open source file, nothing the server would report on.
  * @param {string} message
  */
 function log(message) {
@@ -120,7 +120,7 @@ function ruleOf(diagnostic) {
 
 /**
  * Tag a diagnostic as ours while keeping whoever raised it visible.
- * Every diagnostic on a Python file goes through this, whether it came from a generated file
+ * Every diagnostic on a source file goes through this, whether it came from a generated file
  * or straight off the projection, so one glance says where it came from.
  * @param {string | undefined} source
  */
@@ -129,7 +129,7 @@ function label(source) {
 }
 
 /**
- * Move one diagnostic onto its Python line, or drop it.
+ * Move one diagnostic onto the source line that wrote it, or drop it.
  * @param {vscode.Diagnostic} diagnostic
  * @param {string} generatedPath
  * @returns {{ file: string, diagnostic: vscode.Diagnostic } | null}
@@ -145,7 +145,7 @@ function relocate(diagnostic, generatedPath) {
   return { file: origin.file, diagnostic: moved };
 }
 
-/** Diagnostics read off the virtual documents, per Python file. @type {Map<string, vscode.Diagnostic[]>} */
+/** Diagnostics read off the virtual documents, per source file. @type {Map<string, vscode.Diagnostic[]>} */
 const live = new Map();
 
 /** When the running pass started, or 0 when none is. Bursts of edits must not stack round
@@ -159,10 +159,10 @@ const PASS_TIMEOUT_MS = 20000;
 let livePasses = 0;
 
 /**
- * Ask Spyglass about every open Python file's blocks directly.
+ * Ask Spyglass about the blocks of every open file the projection covers.
  *
  * This is the path that needs no build and no generated file: the virtual documents are open
- * already for completion, their lines are in lockstep with the Python, and the server reports
+ * already for completion, their lines are in lockstep with the source, and the server reports
  * on them as the author types.
  */
 async function collectLive() {
@@ -179,9 +179,9 @@ async function collectLive() {
   let blocks = 0;
   try {
     for (const doc of vscode.workspace.textDocuments) {
-      if (doc.languageId !== "python" || doc.uri.scheme !== "file") continue;
+      if (!virtual.isProjected(doc) || doc.uri.scheme !== "file") continue;
       blocks += virtual.blocksOf(doc).length;
-      const found = await virtual.pythonDiagnosticsFor(doc, { wake });
+      const found = await virtual.diagnosticsFor(doc, { wake });
       for (const diagnostic of found) diagnostic.source = label(diagnostic.source);
       if (found.length > 0) collected.set(doc.uri.fsPath, found);
     }
@@ -197,7 +197,7 @@ async function collectLive() {
   for (const [file, found] of collected) live.set(file, found);
   log(`${wake === "none" ? "read" : `woke (${wake}) and read`} `
     + `${[...live.values()].reduce((n, d) => n + d.length, 0)} live diagnostic(s) `
-    + `from ${blocks} block(s) in ${collected.size} Python file(s) in ${Date.now() - startedAt}ms`);
+    + `from ${blocks} block(s) in ${collected.size} file(s) in ${Date.now() - startedAt}ms`);
   publish();
 }
 
@@ -209,7 +209,7 @@ function status() {
     liveCount: [...live.values()].reduce((n, d) => n + d.length, 0),
     livePasses,
     driftFiles: drift.size(),
-    openPython: vscode.workspace.textDocuments.filter(d => d.languageId === "python").length,
+    openSources: vscode.workspace.textDocuments.filter(d => virtual.isProjected(d)).length,
     published: published.length,
   };
 }
@@ -238,7 +238,7 @@ function scheduleLive({ wake }) {
 let published = "";
 
 /**
- * Rebuild the Python-side collection from both sources.
+ * Rebuild the source-side collection from both sources.
  *
  * The denylist is applied here rather than at capture time, so changing the setting takes
  * effect without waiting for a rebuild. Writing the collection fires `onDidChangeDiagnostics`,
@@ -257,7 +257,7 @@ function publish() {
   const denylist = new Set(config.get("diagnosticRuleDenylist", DEFAULT_DENYLIST));
 
   /** @type {Map<string, vscode.Diagnostic[]>} */
-  const byPythonFile = new Map();
+  const bySourceFile = new Map();
 
   // Live first, and a build diagnostic saying the same thing about the same line is dropped
   // rather than added beside it. Both describe one mistake; the live one knows which columns
@@ -270,7 +270,7 @@ function publish() {
       seen.add(`${file} ${diagnostic.range.start.line} ${diagnostic.message}`);
       bucket.push(diagnostic);
     }
-    if (bucket.length > 0) byPythonFile.set(file, bucket);
+    if (bucket.length > 0) bySourceFile.set(file, bucket);
   }
 
   for (const [generatedPath, diagnostics] of captured) {
@@ -279,21 +279,21 @@ function publish() {
       const moved = relocate(diagnostic, generatedPath);
       if (!moved) continue;
       if (seen.has(`${moved.file} ${moved.diagnostic.range.start.line} ${moved.diagnostic.message}`)) continue;
-      const bucket = byPythonFile.get(moved.file);
+      const bucket = bySourceFile.get(moved.file);
       if (bucket) bucket.push(moved.diagnostic);
-      else byPythonFile.set(moved.file, [moved.diagnostic]);
+      else bySourceFile.set(moved.file, [moved.diagnostic]);
     }
   }
 
-  const fingerprint = JSON.stringify([...byPythonFile].map(
+  const fingerprint = JSON.stringify([...bySourceFile].map(
     ([file, diagnostics]) => [file, diagnostics.map(d => `${d.range.start.line} ${d.message}`).sort()]));
   if (fingerprint === published) return;
   published = fingerprint;
-  log(`relaying ${[...byPythonFile.values()].reduce((n, d) => n + d.length, 0)} diagnostic(s) `
-    + `onto ${byPythonFile.size} Python file(s), from ${captured.size} captured generated file(s)`);
+  log(`relaying ${[...bySourceFile.values()].reduce((n, d) => n + d.length, 0)} diagnostic(s) `
+    + `onto ${bySourceFile.size} source file(s), from ${captured.size} captured generated file(s)`);
 
   collection.clear();
-  for (const [file, diagnostics] of byPythonFile) {
+  for (const [file, diagnostics] of bySourceFile) {
     collection.set(vscode.Uri.file(file), diagnostics);
   }
 }
@@ -351,7 +351,7 @@ function registerDiagnosticRelay(context) {
     }),
     vscode.workspace.onDidOpenTextDocument(() => scheduleLive({ wake: "changed" })),
     vscode.workspace.onDidChangeTextDocument(e => {
-      if (e.document.languageId === "python") scheduleLive({ wake: "changed" });
+      if (virtual.isProjected(e.document)) scheduleLive({ wake: "changed" });
     }),
     { dispose: () => { if (liveTimer) clearTimeout(liveTimer); } },
     { dispose: () => clearInterval(keepalive) },

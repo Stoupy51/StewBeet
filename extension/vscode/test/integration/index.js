@@ -408,10 +408,13 @@ exports.run = async () => {
     // probe.bolt line 5 (0-based) is `    function probe:alpha`, indented four columns that the
     // projection removes, so this also proves the column translation: a request at Python column
     // 20 has to arrive at virtual column 16 or Spyglass answers about the wrong token.
-    // probe.bolt is open and shown from the lens checks above.
-    const inBoltCommand = await completionsAt(boltSource, new vscode.Position(3, "    say ".length), " ");
+    // probe.bolt is open and shown from the lens checks above. Line 3 is `    say from a bolt
+    // module`, and two letters into `say` is what a keystroke asks: the answer is the root
+    // command list, which is the one thing a bolt file could never get before.
+    const inBoltCommand = await completionsAt(boltSource, new vscode.Position(3, "    sa".length));
     note("us11_completionsInBolt", inBoltCommand.map(label).slice(0, 8));
-    expect("US11 completion answers inside a bolt command", inBoltCommand.length > 0);
+    expect("US11 completion answers inside a bolt command",
+      inBoltCommand.some(i => SPYGLASS_ONLY.includes(label(i))), inBoltCommand.map(label).slice(0, 8));
 
     const boltPaths = await completionsAt(boltSource, new vscode.Position(5, "    function probe:".length), ":");
     note("us11_boltProjectSymbols", boltPaths.map(label).slice(0, 10));
@@ -424,6 +427,19 @@ exports.run = async () => {
     const boltLeak = inBoltPython.filter(i => SPYGLASS_ONLY.includes(label(i)));
     note("us11_pythonLineItems", inBoltPython.map(label).slice(0, 10));
     expect("US11 a Python line of a bolt file offers no commands", boltLeak.length === 0, boltLeak.map(label));
+
+    // A typo is the whole point of the live pass: line 6 is `    sya hello`, which mecha knows
+    // no command for and Python could compile no statement of, so it reaches the parser and
+    // comes back as a squiggle without a build having run.
+    await vscode.commands.executeCommand("stewbeet.refreshDiagnostics");
+    await sleep(4000);
+    const boltComplaints = (vscode.languages.getDiagnostics(boltSource) || [])
+      .filter(d => String(d.source || "").startsWith("stewbeet"));
+    note("us11_boltDiagnostics", boltComplaints.map(d => `${d.range.start.line}: ${String(d.message).slice(0, 40)}`));
+    expect("US11 a misspelled command in a bolt file is flagged as the author types",
+      boltComplaints.some(d => d.range.start.line === 6), boltComplaints.map(d => d.range.start.line));
+    expect("US11 the Python of a bolt file is flagged by nobody",
+      !boltComplaints.some(d => d.range.start.line === 0), boltComplaints.map(d => d.range.start.line));
 
     // And ctrl+click, which crosses two boundaries at once: bolt to the generated function, then
     // the map from that to demo.py, which is what wrote it.
@@ -449,7 +465,7 @@ exports.run = async () => {
     note("us10_lensesBeforeEdit", restingLenses);
     expect("US10 each block that produced a function has a lens on its call",
       restingLenses.some(t => t.startsWith("2: ") && t.includes("probe:alpha"))
-      && restingLenses.some(t => t.startsWith("12: ") && t.includes("probe:gamma")), restingLenses);
+      && restingLenses.some(t => t.startsWith("11: ") && t.includes("probe:gamma")), restingLenses);
 
     const insertion = new vscode.WorkspaceEdit();
     insertion.insert(py.uri, new vscode.Position(0, 0), "# two lines\n# inserted above everything\n");
@@ -459,7 +475,7 @@ exports.run = async () => {
     note("us10_lensesAfterInsert", movedLenses);
     expect("US10 both lenses follow their call down the file",
       movedLenses.some(t => t.startsWith("4: ") && t.includes("probe:alpha"))
-      && movedLenses.some(t => t.startsWith("14: ") && t.includes("probe:gamma")), movedLenses);
+      && movedLenses.some(t => t.startsWith("13: ") && t.includes("probe:gamma")), movedLenses);
 
     // Deleting the call itself: there is nowhere honest left to put that lens, so it goes.
     const removal = new vscode.WorkspaceEdit();
@@ -471,7 +487,7 @@ exports.run = async () => {
     expect("US10 a deleted call loses its lens rather than moving it onto a neighbour",
       !remainingLenses.some(t => t.includes("probe:alpha")), remainingLenses);
     expect("US10 the other call keeps its lens, one line higher",
-      remainingLenses.some(t => t.startsWith("13: ") && t.includes("probe:gamma")), remainingLenses);
+      remainingLenses.some(t => t.startsWith("12: ") && t.includes("probe:gamma")), remainingLenses);
 
     // The settings gate.
     const cfg = vscode.workspace.getConfiguration("StewBeet");
