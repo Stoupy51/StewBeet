@@ -235,14 +235,23 @@ function invalidate(doc) {
   }
 }
 
-/** @param {vscode.TextDocument} doc */
+/**
+ * Drop what a closed document had, and empty the virtual documents it fed.
+ *
+ * The registry of URIs handed out stays. VS Code keeps a virtual document long after the source
+ * that fed it closed, and asks the provider for its content again only when a change is
+ * announced for that URI, so a forgotten entry is a URI nothing can ever announce: the document
+ * stays frozen on the text it held, and the server keeps reporting the mistake that was in it.
+ *
+ * @param {vscode.TextDocument} doc
+ */
 function forget(doc) {
   const key = doc.uri.toString();
   blockCache.delete(key);
   for (const [virtualKey, entry] of served) {
     if (entry.sourceUri !== key) continue;
-    served.delete(virtualKey);
     wokenWith.delete(virtualKey);
+    onDidChangeEmitter.fire(entry.uri);
   }
   for (const projectionEntry of [...projections.keys()]) {
     if (projectionEntry.startsWith(`${key}#`)) projections.delete(projectionEntry);
@@ -587,6 +596,12 @@ function registerVirtualDocuments(context) {
     vscode.workspace.registerTextDocumentContentProvider(SCHEME, contentProvider),
     vscode.workspace.onDidChangeTextDocument(e => {
       if (isProjected(e.document)) invalidate(e.document);
+    }),
+    // A reopened file gets its virtual documents back in step. The provider is asked for content
+    // when a document is created and whenever a change is announced, and a reopen is neither: VS
+    // Code hands back the document it already had, holding whatever the file said when it closed.
+    vscode.workspace.onDidOpenTextDocument(doc => {
+      if (isProjected(doc)) invalidate(doc);
     }),
     vscode.workspace.onDidCloseTextDocument(doc => {
       if (isProjected(doc)) forget(doc);

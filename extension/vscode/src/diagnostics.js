@@ -350,6 +350,11 @@ function registerDiagnosticRelay(context) {
       if (e.affectsConfiguration(CFG_KEY)) publish();
     }),
     vscode.workspace.onDidOpenTextDocument(() => scheduleLive({ wake: "changed" })),
+    // A closed file keeps nothing: the pass reads the open ones, so what it had drops out of the
+    // collection rather than sitting in the Problems panel with no file behind it.
+    vscode.workspace.onDidCloseTextDocument(doc => {
+      if (virtual.isProjected(doc)) scheduleLive({ wake: "none" });
+    }),
     vscode.workspace.onDidChangeTextDocument(e => {
       if (virtual.isProjected(e.document)) scheduleLive({ wake: "changed" });
     }),
