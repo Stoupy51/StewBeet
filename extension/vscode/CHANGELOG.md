@@ -9,13 +9,17 @@
 - **A line deleted loses its link rather than passing it on.** Nothing slides onto the neighbour underneath, and a call whose line has been emptied gets no lens at all.
 - **A build puts everything back where the map says.** What was saved is what the build read, so an unsaved edit keeps its offset and a rebuild of a file you had already saved forgets it entirely.
 
-### Completion and ctrl+click inside a bolt file
+### Completion, diagnostics and ctrl+click inside a bolt file
 
 - **A `.bolt` file asks Spyglass through a projection**, the same way a Python string does: the command lines are kept and dedented, everything Python around them is blanked, and what reaches the server is a document that reads as a plain `.mcfunction` whose lines are in lockstep with the source. That is what a bolt file loses by not being `mcfunction`, given back.
+- **Its commands are checked as you type**, through the same relay that reports on a Python block. A bolt file needs no build to be told that `playound` is not a command.
+- **A word one letter from a command is read as that command.** `playound` and `sya` match no rule mecha has, so a strict classifier leaves them coloured as Python and nothing ever says they are wrong. A word further away than one edit is left alone, since `raw`, `append`, `damage_type` and a project's own macros all open a line and none of them is a typo.
 - **Ctrl+click crosses two boundaries at once.** A resource location in a bolt command leads to the generated function, and the map from there leads to whatever wrote it, in whichever dialect.
+- **A path your Python computes is resolved from the build.** `function gui.open` reaches Spyglass as the path the last build wrote there, which is what makes it clickable and what keeps it from being reported as a function nobody defined.
 - **A Python line offers nothing at all.** Forwarding from a `for` loop would answer it with every command in the game, so a position is only forwarded from a line the grammar reads as a command.
 - **The classifier is the grammar's own.** Both regexes are read out of the bolt grammar this extension ships, so a line coloured as a command is a line projected as one, and regenerating the grammar from mecha's command tree updates both.
 - **The Python a command carries is masked**, so the rest of the line still parses: `execute if predicate has_item(self.item) run function ns:x` keeps its `run function ns:x`.
+- **A file is served as one document per run of commands**, not one for the whole file, so a keystroke costs the parser the run it lands in rather than every command in the module.
 
 ### Changed
 

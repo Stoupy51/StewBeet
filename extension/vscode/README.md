@@ -50,9 +50,11 @@ def open(self):
         data modify entity @s equipment.head set from storage voltaic:gui Icon
 ```
 
-**Completion and ctrl+click work inside a `.bolt` file too**, through the same projection the Python strings use: the commands are kept, the Python around them is blanked, and Spyglass answers about a document that reads as a plain `.mcfunction`. Ctrl+click on a resource location leads to the source that wrote it, through the build.
+**Completion, diagnostics and ctrl+click work inside a `.bolt` file too**, through the same projection the Python strings use: the command lines are kept and dedented, the Python around them is blanked, and Spyglass answers about a document that reads as a plain `.mcfunction`. Type `playound` and it is underlined where you typed it, with no build in between.
 
-What the projection cannot give you is anything only the compiler knows: a Python symbol, a bolt expression, the value behind `f"{self.path}/open"`. Those are masked, and completion on them offers nothing.
+**A path your Python computes stays clickable.** `function gui.open` reaches Spyglass as whatever the last build wrote there, so ctrl+click leads to `voltaic:gui/pulverizer/open`, and from there to the line of the module that opened it.
+
+What the projection cannot give you is anything only the compiler knows: a Python symbol, a bolt expression, the value behind `f"{self.path}/open"` that no build has resolved yet. Those are masked, and nothing is completed or reported about them.
 
 ### Bolt inside a `.mcfunction`
 
@@ -148,7 +150,7 @@ A map records the line a command was written on when the build ran, and you keep
 | Commands inside Python strings | Not covered | Coloured, completed, checked, and linked to the build |
 | Source to build navigation | Not covered | Both directions, off the `.mcfunction.map` sidecars |
 | What it needs to run | `ms-python.python`, a working environment, and your project loaded by a server it launches | Nothing. It reads files |
-| Completion inside a `.bolt` file | Everything, from the real compiler: Python symbols and bolt expressions included | Commands, selectors and resource locations, through Spyglass. The Python is masked |
+| Completion and errors inside a `.bolt` file | Everything, from the real compiler: Python symbols and bolt expressions included | Commands, selectors and resource locations, through Spyglass. The Python is masked |
 
 That last row is the one honest reason to keep Aegis installed.
 
