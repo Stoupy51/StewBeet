@@ -1,0 +1,8 @@
+stewbeet.core.utils.loot\_table module
+======================================
+
+.. automodule:: stewbeet.core.utils.loot_table
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

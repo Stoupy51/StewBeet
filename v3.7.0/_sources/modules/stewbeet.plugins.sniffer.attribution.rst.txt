@@ -1,0 +1,8 @@
+stewbeet.plugins.sniffer.attribution module
+===========================================
+
+.. automodule:: stewbeet.plugins.sniffer.attribution
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

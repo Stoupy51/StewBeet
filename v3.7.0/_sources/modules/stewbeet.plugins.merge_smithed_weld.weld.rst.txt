@@ -1,0 +1,8 @@
+stewbeet.plugins.merge\_smithed\_weld.weld module
+=================================================
+
+.. automodule:: stewbeet.plugins.merge_smithed_weld.weld
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

@@ -1,0 +1,8 @@
+stewbeet.plugins.ingame\_manual.recipes.collection module
+=========================================================
+
+.. automodule:: stewbeet.plugins.ingame_manual.recipes.collection
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

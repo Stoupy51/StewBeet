@@ -1,0 +1,8 @@
+stewbeet.plugins.sniffer.mecha.attribute module
+===============================================
+
+.. automodule:: stewbeet.plugins.sniffer.mecha.attribute
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

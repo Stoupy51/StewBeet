@@ -1,0 +1,8 @@
+stewbeet.plugins.ingame\_manual.pages.intro\_page module
+========================================================
+
+.. automodule:: stewbeet.plugins.ingame_manual.pages.intro_page
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

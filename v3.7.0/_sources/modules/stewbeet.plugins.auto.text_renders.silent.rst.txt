@@ -1,0 +1,8 @@
+stewbeet.plugins.auto.text\_renders.silent module
+=================================================
+
+.. automodule:: stewbeet.plugins.auto.text_renders.silent
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

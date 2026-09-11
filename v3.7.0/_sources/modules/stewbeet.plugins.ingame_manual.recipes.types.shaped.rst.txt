@@ -1,0 +1,8 @@
+stewbeet.plugins.ingame\_manual.recipes.types.shaped module
+===========================================================
+
+.. automodule:: stewbeet.plugins.ingame_manual.recipes.types.shaped
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

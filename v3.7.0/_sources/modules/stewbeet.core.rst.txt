@@ -1,0 +1,31 @@
+stewbeet.core package
+=====================
+
+.. automodule:: stewbeet.core
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.core.cls
+   stewbeet.core.definitions_helper
+   stewbeet.core.utils
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.core.__memory__
+   stewbeet.core.constants
+   stewbeet.core.dump
+   stewbeet.core.migrate
+   stewbeet.core.placeholder_context
+   stewbeet.core.template

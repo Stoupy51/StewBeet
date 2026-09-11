@@ -1,0 +1,8 @@
+stewbeet.plugins.ingame\_manual.recipes.hovers module
+=====================================================
+
+.. automodule:: stewbeet.plugins.ingame_manual.recipes.hovers
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

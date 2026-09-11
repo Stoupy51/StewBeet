@@ -1,0 +1,8 @@
+stewbeet.core.definitions\_helper.smart\_ore\_generation module
+===============================================================
+
+.. automodule:: stewbeet.core.definitions_helper.smart_ore_generation
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

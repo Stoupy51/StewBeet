@@ -1,0 +1,8 @@
+stewbeet.plugins.sniffer.align module
+=====================================
+
+.. automodule:: stewbeet.plugins.sniffer.align
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

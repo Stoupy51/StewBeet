@@ -1,0 +1,8 @@
+stewbeet.plugins.sniffer.sources module
+=======================================
+
+.. automodule:: stewbeet.plugins.sniffer.sources
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

@@ -1,0 +1,8 @@
+stewbeet.core.cls.external\_item module
+=======================================
+
+.. automodule:: stewbeet.core.cls.external_item
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

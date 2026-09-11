@@ -1,0 +1,16 @@
+stewbeet.plugins.verify\_definitions package
+============================================
+
+.. automodule:: stewbeet.plugins.verify_definitions
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.plugins.verify_definitions.silent

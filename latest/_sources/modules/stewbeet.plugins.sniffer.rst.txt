@@ -1,0 +1,33 @@
+stewbeet.plugins.sniffer package
+================================
+
+.. automodule:: stewbeet.plugins.sniffer
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.plugins.sniffer.emit
+   stewbeet.plugins.sniffer.mecha
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.plugins.sniffer.align
+   stewbeet.plugins.sniffer.attribution
+   stewbeet.plugins.sniffer.capture
+   stewbeet.plugins.sniffer.encode
+   stewbeet.plugins.sniffer.model
+   stewbeet.plugins.sniffer.origin
+   stewbeet.plugins.sniffer.sidecar
+   stewbeet.plugins.sniffer.silent
+   stewbeet.plugins.sniffer.sources
