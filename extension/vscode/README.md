@@ -126,6 +126,8 @@ All under `StewBeet.*`:
 
 Commands, from the palette: **Go to Generated Function**, **Go to Python Source**, **Reload Source Maps**, **Refresh Build Diagnostics**, **Show Diagnostics Status**, **Exclude Bolt Files From Spyglass**, **Install Spyglass Language Server**.
 
+![Palette commands](https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/extension/vscode/images/palette_commands.png)
+
 ## Installation
 
 **From the marketplace:** search *StewBeet* in the Extensions panel.
