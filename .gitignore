@@ -12,5 +12,6 @@ perf.html
 .beet_cache
 .vscode
 uv.lock
+specs/
 
 node_modules
