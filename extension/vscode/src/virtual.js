@@ -20,7 +20,7 @@ const vscode = require("vscode");
 const { findBlockOffsets, findInterpolationSpans, findEscapedBraces } = require("./blocks");
 const { projectBolt, commandsOf, commandBlocks } = require("./boltlines");
 const {
-  SCHEME, project, toVirtual, toPython, explainedByMask, crossesSubstitution,
+  SCHEME, project, knownValues, toVirtual, toPython, explainedByMask, crossesSubstitution,
   virtualPath, blockIndexFromPath,
 } = require("./projection");
 const navigation = require("./navigation");
@@ -177,13 +177,14 @@ async function projectionFor(doc, blockIndex) {
   // The content range, not the block range: the quotes belong to Python, and handing them to a
   // datapack parser earns a diagnostic saying `"""` is not a command.
   const text = doc.getText();
+  const build = await buildViewOf(doc, scan);
   const { text: projected, table, masked } = isBolt(doc)
     ? projectBolt(text, {
-      commands: scan.commands, from: block.from, to: block.to, generated: await generatedFor(doc, block),
+      commands: scan.commands, from: block.from, to: block.to, generated: build.generated,
     })
     : project(
       text, block.contentStart, block.contentEnd,
-      findInterpolationSpans(text, block), await generatedFor(doc, block), findEscapedBraces(text, block));
+      findInterpolationSpans(text, block), build.generated, findEscapedBraces(text, block), build.known);
   const entry = {
     version: doc.version, text: projected, table, masked,
     contentStart: doc.positionAt(block.contentStart), contentEnd: doc.positionAt(block.contentEnd),
@@ -192,20 +193,62 @@ async function projectionFor(doc, blockIndex) {
   return entry;
 }
 
+/** What the build says about a document, computed once per version.
+ *  @type {Map<string, { version:number, generated:Map<number, string> | null, known:Map<string, string> }>} */
+const buildViews = new Map();
+
 /**
- * What the build wrote for each source line of a block, or null when substitution is off.
+ * What the build wrote for a document, and what its interpolations resolved to.
+ *
+ * The values are learned across every block rather than within one, because the lines that need
+ * them hold nothing to learn from: a write whose content argument was a variable is a single
+ * point in the map, so no line of that block is covered, and `{ns}` is resolved only by the
+ * blocks handed to a call inline.
+ *
  * @param {vscode.TextDocument} doc
- * @param {{ start:number, end:number }} block
+ * @param {{ blocks: any[] }} scan
+ * @returns {Promise<{ version:number, generated:Map<number, string> | null, known:Map<string, string> }>}
+ */
+async function buildViewOf(doc, scan) {
+  const key = doc.uri.toString();
+  const cached = buildViews.get(key);
+  if (cached && cached.version === doc.version) return cached;
+
+  const generated = await generatedFor(doc);
+  const entry = {
+    version: doc.version,
+    generated,
+    known: generated && !isBolt(doc) ? learn(doc.getText(), scan.blocks, generated) : new Map(),
+  };
+  buildViews.set(key, entry);
+  return entry;
+}
+
+/**
+ * What every block of a document resolved, merged into one table of values.
+ * @param {string} text
+ * @param {any[]} blocks  From scanOf.
+ * @param {Map<number, string>} generated
+ * @returns {Map<string, string>}
+ */
+function learn(text, blocks, generated) {
+  return knownValues(blocks.map(block => project(
+    text, block.contentStart, block.contentEnd, findInterpolationSpans(text, block), generated,
+    findEscapedBraces(text, block)).observed));
+}
+
+/**
+ * What the build wrote for each line of a document, or null when substitution is off.
+ * @param {vscode.TextDocument} doc
  * @returns {Promise<Map<number, string> | null>}
  */
-async function generatedFor(doc, block) {
+async function generatedFor(doc) {
   if (!vscode.workspace.getConfiguration(CFG_KEY).get("resolveInterpolations", true)) return null;
   if (doc.uri.scheme !== "file") return null;
 
   const maps = await navigation.findMaps();
   if (maps.length === 0) return null;
-  return sourcemap.generatedText(
-    maps, doc.uri.fsPath, doc.positionAt(block.start).line, doc.positionAt(block.end).line);
+  return sourcemap.generatedText(maps, doc.uri.fsPath, 0, doc.lineCount - 1);
 }
 
 const contentProvider = {
@@ -248,6 +291,7 @@ function invalidate(doc) {
 function forget(doc) {
   const key = doc.uri.toString();
   blockCache.delete(key);
+  buildViews.delete(key);
   for (const [virtualKey, entry] of served) {
     if (entry.sourceUri !== key) continue;
     wokenWith.delete(virtualKey);
@@ -265,6 +309,7 @@ function forget(doc) {
  */
 function reproject() {
   projections.clear();
+  buildViews.clear();
   wokenWith.clear();
   for (const { uri } of served.values()) onDidChangeEmitter.fire(uri);
 }

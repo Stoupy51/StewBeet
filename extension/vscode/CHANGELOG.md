@@ -9,7 +9,7 @@ This one makes them code: checked as you type, navigable in both directions, and
 
 - **Completion, hover, signature help and go to definition**, answered by [Spyglass](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server) through a virtual `.mcfunction` whose offsets match your Python. Spyglass stays optional, and the install is offered once when it is missing.
 - **Errors as you type**, with no build and with nothing under `build/` ever opened. Build errors are relayed onto the Python that wrote the command, `undeclaredSymbol` aside.
-- **Interpolations resolved rather than masked.** `function {ns}:utils/loop` is read as the path it really is, off the line the last build produced. Nothing evaluates your Python, and a line no build covers keeps a `_` mask.
+- **Interpolations resolved rather than masked.** `function {ns}:utils/loop` is read as the path it really is, off the line the last build produced. A name the build resolved once is reused where it covers nothing, so commands assembled in a variable are clickable too, and a name resolved two ways keeps its `_` mask. Nothing evaluates your Python.
 
 ### Crossing to the datapack and back
 

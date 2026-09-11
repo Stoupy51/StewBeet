@@ -6,7 +6,7 @@ const assert = require("node:assert/strict");
 
 const { findBlockOffsets, findInterpolationSpans } = require("../src/blocks");
 const {
-  project, resolveLine, toVirtual, toPython, explainedByMask, crossesSubstitution,
+  project, resolveLine, knownValues, toVirtual, toPython, explainedByMask, crossesSubstitution,
   virtualPath, blockIndexFromPath, sanitizeName,
 } = require("../src/projection");
 
@@ -252,6 +252,75 @@ test("CRLF survives a substitution that changes a line's width", () => {
   const { text } = projectWith(source, [[1, "function simplenergy:utils/foo"]]);
   assert.equal((text.match(/\r\n/g) || []).length, (source.match(/\r\n/g) || []).length);
   assert.equal(text.split("\r\n")[1], "function simplenergy:utils/foo");
+});
+
+// Borrowed values
+// Commands assembled in a variable reach their call as one point in the map, so no line of that
+// block is covered and nothing on it can be read off a build. What the same name resolved to
+// elsewhere in the file is the only thing that makes those paths clickable.
+
+const VARIABLE_BLOCK = [
+  'write_function(f"{ns}:machines/tick", f"""',
+  "function {ns}:turbine/tick",
+  '""")',
+  'work: McFunction = f"""',
+  "loot replace block ~ ~ ~ container.1 loot {ns}:pulverizer/iron_dust",
+  '"""',
+  'write_function(f"{ns}:machines/pulverizer/work", work)',
+  "",
+].join("\n");
+
+/** Project one block of a source against what the build covers and what is already known. */
+function projectBlock(text, index, generatedLines, known = null) {
+  const block = findBlockOffsets(text)[index];
+  assert.ok(block, `expected a block at index ${index}`);
+  return project(
+    text, block.contentStart, block.contentEnd, findInterpolationSpans(text, block),
+    generatedLines === null ? null : new Map(generatedLines), [], known);
+}
+
+const COVERED = [[1, "function voltaic:turbine/tick"]];
+
+test("what a covered line resolved is offered to the rest of the document", () => {
+  const { observed } = projectBlock(VARIABLE_BLOCK, 0, COVERED);
+  assert.deepEqual([...knownValues([observed])], [["{ns}", "voltaic"]]);
+});
+
+test("a block the build covers nowhere borrows what another block resolved", () => {
+  const { observed } = projectBlock(VARIABLE_BLOCK, 0, COVERED);
+  const { text, masked } = projectBlock(VARIABLE_BLOCK, 1, null, knownValues([observed]));
+  assert.match(text, /loot voltaic:pulverizer\/iron_dust/,
+    "the loot table is a real resource location once {ns} is filled in, which is what makes it clickable");
+  assert.equal(masked.size, 0, "a borrowed span is no placeholder, so nothing about it is suppressed");
+});
+
+test("an expression the build resolved two ways is not borrowed", () => {
+  const source = 'write_function("ns:p", f"""\nsay {n}\nsay {n}\n""")';
+  const { observed } = projectBlock(source, 0, [[1, "say 20"], [2, "say 5"]]);
+  assert.deepEqual([...knownValues([observed])], [],
+    "a loop writes one function per iteration, and guessing which one is worse than the mask");
+});
+
+test("a borrowed value records its width, or every column after it lands wrong", () => {
+  const { table } = projectBlock(VARIABLE_BLOCK, 1, null, new Map([["{ns}", "voltaic"]]));
+  const [span] = table.get(4) ?? [];
+  assert.ok(span, "line 4 holds the borrowed span");
+  assert.deepEqual([span.pythonWidth, span.virtualWidth], [4, 7]);
+});
+
+test("the line's own build text wins over a borrowed value", () => {
+  const { text } = projectBlock(VARIABLE_BLOCK, 0, COVERED, new Map([["{ns}", "stale"]]));
+  assert.match(text, /function voltaic:turbine\/tick/);
+});
+
+test("an expression nothing resolved keeps its mask", () => {
+  const { text } = projectBlock(VARIABLE_BLOCK, 1, null, new Map([["{other}", "voltaic"]]));
+  assert.match(text, /loot ____:pulverizer\/iron_dust/);
+});
+
+test("nothing is learned from a document with no build behind it", () => {
+  const { observed } = projectBlock(VARIABLE_BLOCK, 0, null);
+  assert.deepEqual([...knownValues([observed])], []);
 });
 
 // Column translation

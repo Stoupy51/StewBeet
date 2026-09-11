@@ -69,7 +69,8 @@ execute if entity @s[tag={ns}.turbine] run function {ns}:turbine/tick
 ```
 
 Each `{...}` is filled with what the last build resolved it to, so ctrl+click and completion **work on computed paths**.
-Nothing evaluates your Python, and a line no build covers keeps a `_` mask.
+A name resolved on one line is reused where the build covers nothing, such as commands assembled in a variable.
+Nothing evaluates your Python, and what stays unknown keeps a `_` mask.
 
 ### What counts as a block
 

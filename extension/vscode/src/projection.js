@@ -37,16 +37,22 @@ const MASK = "_";
  * @param {number[]} [escapedBraces]  Offsets of the redundant brace of each `{{` and `}}`, from
  *   findEscapedBraces. Each becomes a space, so `{{"a":1}}` reaches the parser as the compound
  *   `{ "a":1 }` it stands for, at the same offsets.
- * @returns {{ text: string, table: Map<number, { start:number, pythonWidth:number, virtualWidth:number }[]>, masked: Map<number, { start:number, end:number }[]> }}
+ * @param {Map<string, string> | null} [known]  Expression text to its value, from knownValues.
+ *   Used only where the line's own build text resolves nothing.
+ * @returns {{ text: string, table: Map<number, { start:number, pythonWidth:number, virtualWidth:number }[]>, masked: Map<number, { start:number, end:number }[]>, observed: Map<string, string | null> }}
  *   `masked` holds, per line, the virtual columns still covered by a `MASK` run. Nothing a
  *   parser says about those columns is about the author's text, so a consumer reporting
  *   diagnostics must ignore them.
+ *   `observed` is what each expression resolved to here, `null` where it resolved to two
+ *   different values, and is what knownValues merges into the next projection's `known`.
  */
-function project(text, start, end, interpolationSpans = [], generatedLines = null, escapedBraces = []) {
+function project(text, start, end, interpolationSpans = [], generatedLines = null, escapedBraces = [], known = null) {
   /** @type {Map<number, { start:number, pythonWidth:number, virtualWidth:number }[]>} */
   const table = new Map();
   /** @type {Map<number, { start:number, end:number }[]>} */
   const masked = new Map();
+  /** @type {Map<string, string | null>} */
+  const observed = new Map();
   const pieces = text.split("\n");
   const escaped = new Set(escapedBraces);
   const projected = [];
@@ -67,15 +73,29 @@ function project(text, start, end, interpolationSpans = [], generatedLines = nul
 
     const maskedLine = maskLine(body, lineStart, start, end, touching, escaped);
     const present = clipToLine(touching, lineStart, lineEnd, start, end);
+    const contained = containedSpans(touching, lineStart, lineEnd, start, end);
     const substituted = present.length === 0 ? maskedLine : substitute(
       maskedLine, generatedLines ? generatedLines.get(line) : undefined,
-      containedSpans(touching, lineStart, lineEnd, start, end), present, line, table, masked);
+      contained, present, line, table, masked,
+      { expressions: expressionsOf(body, contained), known, observed });
 
     projected.push(substituted + (carriage ? "\r" : ""));
     lineStart += piece.length + 1;
   }
 
-  return { text: projected.join("\n"), table, masked };
+  return { text: projected.join("\n"), table, masked, observed };
+}
+
+/**
+ * The Python each span holds, braces included, keyed by the span's line-local start.
+ * Only spans lying entirely on the line are keyed: half of a multi-line interpolation is not an
+ * expression, and borrowing a value for `{foo(` would be borrowing it for something else.
+ * @param {string} body  The line, unmasked.
+ * @param {{ start:number, end:number }[]} contained  Line-local, from containedSpans.
+ * @returns {Map<number, string>}
+ */
+function expressionsOf(body, contained) {
+  return new Map(contained.map(span => [span.start, body.slice(span.start, span.end)]));
 }
 
 /**
@@ -144,10 +164,13 @@ function clipToLine(spans, lineStart, lineEnd, start, end) {
  * @param {number} line
  * @param {Map<number, { start:number, pythonWidth:number, virtualWidth:number }[]>} table  Written into.
  * @param {Map<number, { start:number, end:number }[]>} maskedRuns  Written into.
+ * @param {{ expressions: Map<number, string>, known: Map<string, string> | null, observed: Map<string, string | null> } | null} [learning]
+ *   What this line's spans say, and what other lines already said. `observed` is written into.
  */
-function substitute(masked, generated, spans, present, line, table, maskedRuns) {
+function substitute(masked, generated, spans, present, line, table, maskedRuns, learning = null) {
   const resolved = (generated === undefined ? null : resolveLine(masked, generated, spans)) ?? [];
   const byStart = new Map(resolved.map(entry => [entry.start, entry]));
+  if (learning) note(learning, resolved);
 
   const changed = [];
   const stillMasked = [];
@@ -159,8 +182,9 @@ function substitute(masked, generated, spans, present, line, table, maskedRuns) 
     out += masked.slice(cursor, span.start);
     cursor = span.end;
 
-    const value = byStart.get(span.start);
-    if (!value) {
+    const own = byStart.get(span.start);
+    const value = own ? own.value : borrowed(learning, span.start);
+    if (value === undefined) {
       // Still a run of MASK. Its virtual columns are recorded so a consumer can tell that
       // anything the parser says about them is about our placeholder, not the author's text.
       out += masked.slice(span.start, span.end);
@@ -168,17 +192,70 @@ function substitute(masked, generated, spans, present, line, table, maskedRuns) 
       continue;
     }
 
-    out += value.value;
+    out += value;
     const width = span.end - span.start;
-    if (value.value.length !== width) {
-      changed.push({ start: span.start, pythonWidth: width, virtualWidth: value.value.length });
+    if (value.length !== width) {
+      changed.push({ start: span.start, pythonWidth: width, virtualWidth: value.length });
     }
-    delta += value.value.length - width;
+    delta += value.length - width;
   }
 
   if (changed.length > 0) table.set(line, changed);
   if (stillMasked.length > 0) maskedRuns.set(line, stillMasked);
   return out + masked.slice(cursor);
+}
+
+/**
+ * Record what this line resolved, so a line the build says nothing about can borrow it.
+ * @param {{ expressions: Map<number, string>, observed: Map<string, string | null> }} learning
+ * @param {{ start:number, end:number, value:string }[]} resolved
+ */
+function note(learning, resolved) {
+  for (const entry of resolved) {
+    const expression = learning.expressions.get(entry.start);
+    if (expression === undefined) continue;
+    const seen = learning.observed.get(expression);
+    learning.observed.set(expression, seen === undefined || seen === entry.value ? entry.value : null);
+  }
+}
+
+/**
+ * The value another line gave this span's expression, or undefined when there is none.
+ * @param {{ expressions: Map<number, string>, known: Map<string, string> | null } | null} learning
+ * @param {number} start  Line-local column the span opens at.
+ * @returns {string | undefined}
+ */
+function borrowed(learning, start) {
+  const expression = learning?.expressions.get(start);
+  return expression === undefined ? undefined : learning?.known?.get(expression);
+}
+
+/**
+ * The value every expression can be projected with, merged over a document's blocks.
+ *
+ * An expression the build resolved twice to two different values is dropped rather than guessed
+ * at: `{speed}` writes three functions from one call and has no single answer, where `{ns}` is
+ * the same word everywhere it appears and is what makes an uncovered line's paths clickable.
+ *
+ * @param {Iterable<Map<string, string | null>>} observations  One `observed` per block.
+ * @returns {Map<string, string>}
+ */
+function knownValues(observations) {
+  /** @type {Map<string, string | null>} */
+  const merged = new Map();
+  for (const block of observations) {
+    for (const [expression, value] of block) {
+      const seen = merged.get(expression);
+      merged.set(expression, seen === undefined || seen === value ? value : null);
+    }
+  }
+
+  /** @type {Map<string, string>} */
+  const values = new Map();
+  for (const [expression, value] of merged) {
+    if (value !== null) values.set(expression, value);
+  }
+  return values;
 }
 
 /**
@@ -362,6 +439,7 @@ module.exports = {
   clipToLine,
   substitute,
   resolveLine,
+  knownValues,
   toVirtual,
   toPython,
   explainedByMask,
