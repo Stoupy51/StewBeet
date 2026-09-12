@@ -33,11 +33,14 @@ def dump_command() -> None:
         ".beet_cache",
         "__pycache__",
         ".git",
+        ".github",
         ".vscode",
         ".idea",
+        ".venv",
         "*.pyc",
         ".DS_Store",
         "Thumbs.db",
+		"docs",
     }
 
     # Add patterns from .gitignore if it exists
