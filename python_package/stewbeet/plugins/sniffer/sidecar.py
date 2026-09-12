@@ -31,7 +31,7 @@ def write_sidecar(ctx: Context, path: str, func: Function, mapped: dict[int, Sou
 		False when there was nothing to map or the sidecar was already written.
 	"""
 	file_path: str = function_file_path(path)
-	if not mapped or f"{file_path}.map" in ctx.data.extra:
+	if not mapped or has_sidecar(ctx, path):
 		return False
 
 	project_root: str = os.path.abspath(str(ctx.directory))
@@ -41,6 +41,16 @@ def write_sidecar(ctx: Context, path: str, func: Function, mapped: dict[int, Sou
 
 	ctx.data.extra[f"{file_path}.map"] = TextFile(stp.json_dump(to_json(source_map, len(final_lines_of(func.text))), max_level=2))
 	return True
+
+
+def has_sidecar(ctx: Context, path: str) -> bool:
+	""" Whether the pack already carries this function's map.
+
+	Asked before a producer resolves anything, since resolving origins is the expensive half and a
+	sidecar is never written twice: `stewbeet.plugins.archive` flushes the maps, and the teardown of
+	`stewbeet.plugins.sniffer` then walks the same functions again.
+	"""
+	return f"{function_file_path(path)}.map" in ctx.data.extra
 
 
 def build_map(path: str, mapped: dict[int, SourceOrigin], project_root: str, output_depth: int) -> FunctionSourceMap | None:

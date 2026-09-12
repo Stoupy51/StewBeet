@@ -51,6 +51,10 @@ def align(chunks: Sequence[WriteChunk], text: str) -> dict[int, SourceOrigin]:
 	generated lines have no recorded counterpart, and `delete` opcodes are dropped. This is
 	transformation-agnostic: a future plugin that rewrites functions needs no change here.
 
+	The lines the two sequences share at each end are matched off before `difflib` sees anything.
+	`find_longest_match` is quadratic in how often a line repeats, and a pack of near-identical commands is its worst case.
+	Trimming hands it only what a rewrite actually changed, which for a function nobody rewrote but the header plugin is nothing at all.
+
 	Args:
 		chunks (Sequence[WriteChunk]): Recorded contributions, in write order.
 		text   (str):                  The function's final text.
@@ -76,17 +80,81 @@ def align(chunks: Sequence[WriteChunk], text: str) -> dict[int, SourceOrigin]:
 	if not recorded or not final:
 		return {}
 
-	# autojunk would treat common lines as noise on any function over 200 lines, which mcfunction
-	# hits easily through repeated blanks and identical commands, and would wreck the alignment.
-	matcher = SequenceMatcher(None, recorded, final, autojunk=False)
+	head: int = common_head(recorded, final)
+	tail: int = common_tail(recorded, final, min(len(recorded), len(final)) - head)
+	middle_recorded: list[str] = recorded[head:len(recorded) - tail]
+	middle_final: list[str] = final[head:len(final) - tail]
 
 	mapped: dict[int, SourceOrigin] = {}
+	map_run(mapped, origins, 0, 0, head)
+	map_run(mapped, origins, len(recorded) - tail, len(final) - tail, tail)
+	if not middle_recorded or not middle_final:
+		return mapped
+
+	# `find_longest_match` walks every occurrence of a line each time it meets that line, so an element repeating a thousand times is quadratic, and a blank line is that element.
+	# Calling blanks junk also aligns more commands, since difflib then anchors on the commands themselves instead of on whichever blank line came first.
+	# autojunk stays off: it does the same to a command repeated across a long function, and those are the lines worth anchoring on.
+	matcher = SequenceMatcher(is_blank, middle_recorded, middle_final, autojunk=False)
 	for tag, i1, i2, j1, j2 in matcher.get_opcodes():
-		if tag not in ("equal", "replace"):
-			continue
-		for offset in range(min(i2 - i1, j2 - j1)):
-			origin: SourceOrigin | None = origins[i1 + offset]
-			if origin is not None:
-				mapped[j1 + offset] = origin
+		if tag in ("equal", "replace"):
+			map_run(mapped, origins, head + i1, head + j1, min(i2 - i1, j2 - j1))
 	return mapped
+
+
+def map_run(
+	mapped: dict[int, SourceOrigin],
+	origins: Sequence[SourceOrigin | None],
+	recorded_at: int,
+	final_at: int,
+	count: int,
+) -> None:
+	""" Give `count` consecutive final lines the origins of the recorded lines they line up with.
+
+	>>> origin = SourceOrigin(file="/p/x.py", line=4, column=0)
+	>>> mapped: dict[int, SourceOrigin] = {}
+	>>> map_run(mapped, [None, origin], recorded_at=0, final_at=7, count=2)
+	>>> sorted(mapped)
+	[8]
+	"""
+	for offset in range(count):
+		origin: SourceOrigin | None = origins[recorded_at + offset]
+		if origin is not None:
+			mapped[final_at + offset] = origin
+
+
+def is_blank(line: str) -> bool:
+	""" Whether a line holds nothing to navigate to, so the alignment may move it freely.
+
+	>>> is_blank(''), is_blank('   '), is_blank('say hi')
+	(True, True, False)
+	"""
+	return not line.strip()
+
+
+def common_head(a: Sequence[str], b: Sequence[str]) -> int:
+	""" How many lines the two sequences open with in common.
+
+	>>> common_head(["say a", "say b"], ["say a", "say c"])
+	1
+	"""
+	limit: int = min(len(a), len(b))
+	index: int = 0
+	while index < limit and a[index] == b[index]:
+		index += 1
+	return index
+
+
+def common_tail(a: Sequence[str], b: Sequence[str], limit: int) -> int:
+	""" How many lines the two sequences end with in common, looking no further back than `limit`.
+
+	The limit is what stops the two ends claiming the same line: whatever the head took is no
+	longer the tail's to take.
+
+	>>> common_tail(["say a", "say b"], ["say c", "say b"], limit=2)
+	1
+	"""
+	index: int = 0
+	while index < limit and a[len(a) - 1 - index] == b[len(b) - 1 - index]:
+		index += 1
+	return index
 
