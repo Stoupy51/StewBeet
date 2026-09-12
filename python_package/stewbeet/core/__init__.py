@@ -144,6 +144,12 @@ from .placeholder_context import (
 	PLACEHOLDER_CTX as PLACEHOLDER_CTX,
 	create_placeholder_context as create_placeholder_context,
 )
+from .source_paths import (
+	origin_path as origin_path,
+	remember_source_path as remember_source_path,
+	remember_source_paths as remember_source_paths,
+	restore_filenames as restore_filenames,
+)
 from .utils.equation import (
 	MACRO_RE as MACRO_RE,
 	AnyOperator as AnyOperator,
