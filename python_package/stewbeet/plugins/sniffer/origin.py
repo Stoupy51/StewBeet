@@ -84,9 +84,11 @@ def reset_caches() -> None:
 	""" Drop the caches whose inputs only hold still within one build.
 
 	`project_roots` reads `Mem.ctx`, which is a different project on the next build, and the shared
-	source filter is built on top of it.
+	source filter is built on top of it. `AST_CACHE` holds a file as it was parsed, which the author
+	has been free to edit between one build and the next.
 	"""
 	project_roots.cache_clear()
+	AST_CACHE.clear()
 	reset_source_caches()
 
 
@@ -170,20 +172,16 @@ def assigned_function(node: ast.Assign) -> WriteCall | None:
 	return WriteCall(line=anchor.lineno - 1, column=anchor.col_offset, exact=literal and spans_lines(content), kind="assign")
 
 
-AST_CACHE: dict[str, tuple[float, dict[int, WriteCall]]] = {}
-""" Parsed write-call index per file, keyed by path and validated against mtime. """
+AST_CACHE: dict[str, dict[int, WriteCall]] = {}
+""" Parsed write-call index per file, held for one build and dropped by `reset_caches`.
+Nobody edits a file halfway through a build and `beet watch` starts a new one, so the alternative is a `stat` on every project frame of every write, which is the plugin's single biggest cost.
+"""
 
 def write_calls_of(path: str) -> dict[int, WriteCall]:
-	""" Cached `index_write_calls`, invalidated when the file's mtime changes. """
-	try:
-		mtime: float = os.path.getmtime(path)
-	except OSError:
-		return {}
-	cached: tuple[float, dict[int, WriteCall]] | None = AST_CACHE.get(path)
-	if cached is not None and cached[0] == mtime:
-		return cached[1]
-	calls: dict[int, WriteCall] = index_write_calls(path)
-	AST_CACHE[path] = (mtime, calls)
+	""" Cached `index_write_calls`, for as long as the build lasts. """
+	calls: dict[int, WriteCall] | None = AST_CACHE.get(path)
+	if calls is None:
+		AST_CACHE[path] = calls = index_write_calls(path)
 	return calls
 
 
