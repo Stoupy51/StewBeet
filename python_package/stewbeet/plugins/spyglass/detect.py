@@ -11,11 +11,15 @@ from stouputils.lazy import ALWAYS_LAZY
 __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
+import os
+from collections import Counter
 from collections.abc import Callable
 
 from beet import Context
 from bolt import Runtime
-from mecha import Mecha
+from mecha import CompilationUnit, Mecha
+
+from ...core.source_paths import restore_filenames
 
 
 # Functions
@@ -28,6 +32,7 @@ def unparseable_sources(ctx: Context) -> list[str]:
 	mc: Mecha | None = existing_service(ctx, Mecha)
 	if mc is None:
 		return []
+	restore_filenames(mc, os.path.abspath(str(ctx.directory)))
 	found: set[str] = nested_sources(mc) | bolt_sources(ctx, mc)
 	return sorted(name for name in found if name.endswith(".mcfunction"))
 
@@ -38,16 +43,20 @@ def nested_sources(mc: Mecha) -> set[str]:
 	Nesting is not vanilla syntax twice over: the line opening a body ends in a colon, and `./name`
 	is not a resource location. A file using it is a file Spyglass underlines.
 	"""
-	seen: set[str] = set()
-	repeated: set[str] = set()
+	# A unit mecha nested out of a file has no file of its own, and the text its AST was parsed from
+	# is the parent file's own, which is all that ties the two together.
+	named: dict[str, str] = {}
 	for unit in mc.database.values():
 		name: str | None = project_relative(unit.filename)
-		if name is None:
-			continue
-		if name in seen:
-			repeated.add(name)
-		seen.add(name)
-	return repeated
+		if name is not None and unit.source:
+			named.setdefault(unit.source, name)
+
+	counts: Counter[str] = Counter()
+	for unit in mc.database.values():
+		name = project_relative(unit.filename) or named.get(unit.source or "")
+		if name is not None:
+			counts[name] += 1
+	return {name for name, count in counts.items() if count > 1}
 
 
 def bolt_sources(ctx: Context, mc: Mecha) -> set[str]:
@@ -64,8 +73,8 @@ def bolt_sources(ctx: Context, mc: Mecha) -> set[str]:
 	for file, module in runtime.modules.registry.items():
 		if not module.python:
 			continue
-		unit = mc.database.get(file)
-		name: str | None = project_relative(unit.filename if unit else None)
+		unit: CompilationUnit | None = mc.database.get(file)
+		name: str | None = project_relative(unit.filename) if unit else None
 		if name is not None:
 			found.add(name)
 	return found

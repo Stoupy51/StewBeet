@@ -16,32 +16,61 @@ __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
 import os
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 
 import stouputils as stp
-from beet import Context
+from beet import Context, Pipeline
+from beet.toolchain.pipeline import Task
 from stouputils.typing import JsonDict
 
 from ...core.__memory__ import Mem
+from ...core.source_paths import remember_source_paths
 from .config import config_path, exclusions_of, read_config, with_exclusions, write_config
 from .confirm import may_manage, remember_exclusions, remembered_exclusions
 from .detect import unparseable_sources
 
 
 # Main entry point
-@stp.measure_time(message="Execution time of 'stewbeet.plugins.spyglass'")
-def beet_default(ctx: Context) -> Iterator[None]:
-	""" Update the project's Spyglass exclusions from what this build compiled.
+def beet_default(ctx: Context) -> None:
+	""" Queue the exclusion update for the very end of the build.
 
-	Runs at the end, because the compilation database is what it reads. Anywhere in the pipeline
-	after `mecha` works.
+	What it reads is mecha's compilation database, which stays empty until mecha compiles, and mecha
+	compiles when beet unwinds it. A generator listed after `mecha` unwinds *before* it and sees
+	nothing, and a plugin requiring mecha from Python moves the compile later still.
 
 	Args:
 		ctx (Context): The beet context.
 	"""
-	Mem.ctx = ctx
-	yield
+	# Now, while beet still says where each file came from: `beet.contrib.find_replace` makes it
+	# forget as it goes, and a versioned project runs that over the whole pack before mecha parses.
+	remember_source_paths(ctx)
+	queue_at_end(ctx, apply_exclusions)
 
+
+# Functions
+def queue_at_end(ctx: Context, work: Callable[[Context], None]) -> None:
+	""" Run `work` once every other plugin in the build has finished, wherever this one is listed.
+
+	Beet pops its task list from the end, so a task put at the front of it is the last one left.
+	It is queued as a generator because beet throws a failing build's exception into a task that
+	has started: `work` then never runs on a pack whose compile gave up half way through.
+	"""
+	Mem.ctx = ctx
+
+	def deferred(ctx: Context) -> Iterator[None]:
+		yield
+		work(ctx)
+
+	ctx.inject(Pipeline).tasks.insert(0, Task(deferred))
+
+
+@stp.measure_time(message="Execution time of 'stewbeet.plugins.spyglass'")
+def apply_exclusions(ctx: Context) -> None:
+	""" Write the sources this build could not parse into the project's Spyglass config.
+
+	Args:
+		ctx (Context): The beet context.
+	"""
 	path: str = config_path(os.path.abspath(str(ctx.directory)))
 	current: JsonDict | None = read_config(path)
 	if current is None:

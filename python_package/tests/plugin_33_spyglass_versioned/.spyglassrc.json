@@ -1,0 +1,8 @@
+{
+  "env": {
+    "exclude": [
+      "src/data/tns/function/impl/bolted.mcfunction",
+      "src/data/tns/function/impl/nested.mcfunction"
+    ]
+  }
+}
