@@ -10,4 +10,3 @@
 execute store result score #item_frame_facing _your_namespace.data run data get entity @s Facing
 kill @s
 
-## sourceMappingURL=get_facing.mcfunction.map

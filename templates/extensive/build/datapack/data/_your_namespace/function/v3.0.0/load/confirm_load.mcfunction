@@ -27,4 +27,3 @@ scoreboard players set #7 _your_namespace.data 7
 scoreboard players set #8 _your_namespace.data 8
 scoreboard players set #100 _your_namespace.data 100
 
-## sourceMappingURL=confirm_load.mcfunction.map
