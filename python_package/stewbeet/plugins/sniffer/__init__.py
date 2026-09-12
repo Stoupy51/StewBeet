@@ -5,7 +5,7 @@ from stouputils.lazy import ALWAYS_LAZY
 __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
-from collections.abc import Iterator
+from collections.abc import Generator
 
 import stouputils as stp
 from beet import Context, Pipeline
@@ -31,8 +31,7 @@ A map written after one of them ran is a map it did not see, which is the only r
 
 
 # Main entry point
-@stp.measure_time(message="Execution time of 'stewbeet.plugins.sniffer'")
-def beet_default(ctx: Context) -> Iterator[None]:
+def beet_default(ctx: Context) -> Generator[None]:
 	""" Record where every generated line came from, and map it once the build is done.
 
 	Belongs in `require`, next to `stewbeet` itself, and that is the whole configuration. Everything
