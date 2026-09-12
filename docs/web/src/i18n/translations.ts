@@ -47,6 +47,18 @@ export const translations = {
             videoFallback: 'Your browser cannot play this video.',
         },
 
+        // Editor showcase
+        editor: {
+            title: 'Your commands, checked in your editor',
+            description: 'A command inside a Python string is still a command. The StewBeet extension for VSCode reads them as such, gives .bolt files their own language, and links every block to the function your build wrote from it.',
+            point1: 'Completion, hover and errors on the commands, as you type',
+            point2: 'Ctrl+click from a write_function call to the generated file, and back',
+            point3: 'The Bolt language, with computed paths still resolving',
+            install: 'Get it on the marketplace',
+            readMore: 'What it does',
+            videoFallback: 'Your browser cannot play this video.',
+        },
+
         // Features
         features: {
             title: 'What you stop writing',
@@ -288,6 +300,8 @@ export const translations = {
             beetConfig: 'Configuring the build',
             beetConfigDesc: 'Complete reference for all beet.yml configuration options including StewBeet-specific settings',
             equations: 'Equations',
+            editorSupport: 'Editor support',
+            editorSupportDesc: 'The VSCode extension: the Bolt language, commands checked inside your Python, and navigation to the built pack',
             equationsDesc: 'Chainable Equation builders that compile to Minecraft scoreboard commands',
             dependencies: 'Using datapack libraries',
             dependenciesDesc: 'Declare library dependencies and auto-generate runtime version checks',
@@ -335,6 +349,8 @@ export const translations = {
             playgroundDesc: 'Write a definitions module in the browser and see every file StewBeet generates from it, without installing anything.',
             autoHeaders: 'Auto Headers',
             autoHeadersDesc: 'Upload a datapack and get it back with a header on every function: who calls it, the context it runs in and the type of each macro argument. Runs the standalone auto.headers beet plugin.',
+            extension: 'VSCode Extension',
+            extensionDesc: 'Editor support for the whole beet ecosystem: the Bolt language, plus highlighting, completion, errors and build navigation for the mcfunction strings inside your Python.',
         },
 
         // Playground
@@ -605,6 +621,18 @@ export const translations = {
             videoFallback: 'Votre navigateur ne peut pas lire cette vidéo.',
         },
 
+        // Editor showcase
+        editor: {
+            title: 'Vos commandes, vérifiées dans votre éditeur',
+            description: 'Une commande dans une chaîne Python reste une commande. L\'extension StewBeet pour VSCode les lit comme telles, donne aux fichiers .bolt leur propre langage, et relie chaque bloc à la fonction que votre build en a tirée.',
+            point1: 'Complétion, survol et erreurs sur les commandes, à la frappe',
+            point2: 'Ctrl+clic d\'un appel write_function vers le fichier généré, et retour',
+            point3: 'Le langage Bolt, avec les chemins calculés qui résolvent toujours',
+            install: 'Installer depuis le marketplace',
+            readMore: 'Ce qu\'elle fait',
+            videoFallback: 'Votre navigateur ne peut pas lire cette vidéo.',
+        },
+
         // Features
         features: {
             title: 'Ce que vous n\'écrivez plus',
@@ -846,6 +874,8 @@ export const translations = {
             beetConfig: 'Configurer le build',
             beetConfigDesc: 'Référence complète pour toutes les options de configuration beet.yml incluant les paramètres spécifiques à StewBeet',
             equations: 'Équations',
+            editorSupport: 'Support éditeur',
+            editorSupportDesc: 'L\'extension VSCode : le langage Bolt, les commandes vérifiées dans votre Python, et la navigation vers le pack construit',
             equationsDesc: 'Constructeurs chaînables Equation qui compilent en commandes scoreboard Minecraft',
             dependencies: 'Utiliser des bibliothèques',
             dependenciesDesc: 'Déclarez des dépendances de bibliothèques et générez automatiquement des vérifications de version au runtime',
@@ -893,6 +923,8 @@ export const translations = {
             playgroundDesc: 'Écrivez un module de definitions dans le navigateur et voyez tous les fichiers que StewBeet en génère, sans rien installer.',
             autoHeaders: 'Auto Headers',
             autoHeadersDesc: 'Envoyez un datapack et récupérez-le avec un header sur chaque function : qui l\'appelle, le contexte dans lequel elle s\'exécute et le type de chaque argument de macro. Exécute le plugin beet indépendant auto.headers.',
+            extension: 'Extension VSCode',
+            extensionDesc: 'Le support éditeur de tout l\'écosystème beet : le langage Bolt, plus la coloration, la complétion, les erreurs et la navigation vers le build pour les chaînes mcfunction dans votre Python.',
         },
 
         // Playground

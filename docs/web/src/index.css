@@ -172,6 +172,7 @@
 
 .markdown-body hr { height: 0.25em; padding: 0; margin: 24px 0; border: 0; @apply bg-white/10; }
 .markdown-body img { max-width: 100%; box-sizing: content-box; }
+.markdown-body video { max-width: 100%; height: auto; margin: 0 0 16px; @apply rounded-panel border border-white/10 shadow-2xl; }
 .markdown-body summary { cursor: pointer; font-weight: 600; @apply text-slate-200; }
 
 /* Last, because these tie with the heading and block rules above on specificity. The card draws

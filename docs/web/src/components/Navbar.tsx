@@ -6,6 +6,7 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
 import type { Language } from '../context/LanguageContext';
 import { loadIndex } from '../utils/search';
+import { VscodeMark } from './VscodeMark';
 import { LOGO_TEXT, BTN_PRIMARY, NAV_SHADOW, LIST_SELECTED } from '../theme';
 
 const SearchModal = lazy(() => import('./SearchModal').then(m => ({ default: m.SearchModal })));
@@ -188,6 +189,16 @@ export const Navbar = memo(() => {
                         <span className="w-px h-5 bg-white/15" aria-hidden="true" />
 
                         <a
+                            href="https://marketplace.visualstudio.com/items?itemName=stoupy.stewbeet"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="VSCode extension"
+                            title="VSCode extension"
+                            className="flex items-center justify-center w-9 h-9 rounded-panel text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
+                        >
+                            <VscodeMark className="w-5 h-5" aria-hidden="true" />
+                        </a>
+                        <a
                             href="https://discord.gg/anxzu6rA9F"
                             target="_blank"
                             rel="noopener noreferrer"
@@ -337,6 +348,15 @@ export const Navbar = memo(() => {
                                 className={`block w-full text-center px-4 py-2 ${BTN_PRIMARY} rounded-lg text-white font-semibold`}
                             >
                                 Tools
+                            </a>
+                            <a
+                                href="https://marketplace.visualstudio.com/items?itemName=stoupy.stewbeet"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={`flex items-center justify-center gap-2 block w-full text-center px-4 py-2 ${BTN_PRIMARY} rounded-lg text-white font-semibold`}
+                            >
+                                <VscodeMark className="w-5 h-5" aria-hidden="true" />
+                                VSCode
                             </a>
                             <a
                                 href="https://discord.gg/anxzu6rA9F"

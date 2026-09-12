@@ -4,7 +4,7 @@ import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
-import rehypeSanitize from 'rehype-sanitize';
+import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
 import { motion, AnimatePresence } from 'framer-motion';
 import { HiArrowLeft, HiExternalLink, HiMenu, HiX } from 'react-icons/hi';
 import { Navbar } from './Navbar';
@@ -21,6 +21,16 @@ interface Heading {
     text: string;
     level: number;
 }
+
+/** GitHub's schema, plus the `<video>` a guide needs to show a recording rather than describe it. */
+const MARKDOWN_SCHEMA = {
+    ...defaultSchema,
+    tagNames: [...(defaultSchema.tagNames ?? []), 'video'],
+    attributes: {
+        ...defaultSchema.attributes,
+        video: ['src', 'controls', 'loop', 'muted', 'playsInline', 'preload', 'width', 'height'],
+    },
+};
 
 const DOC_SRC_PATTERN = /^(?:[A-Za-z0-9._-]+\/)*[A-Za-z0-9._-]+\.md$/;
 const FETCH_TIMEOUT_MS = 7000;
@@ -436,7 +446,7 @@ export const MarkdownPage: React.FC = () => {
                         <article className="markdown-body">
                         <ReactMarkdown
                             remarkPlugins={[remarkGfm]}
-                            rehypePlugins={[rehypeRaw, rehypeSanitize]}
+                            rehypePlugins={[rehypeRaw, [rehypeSanitize, MARKDOWN_SCHEMA]]}
                             components={{
                                 pre({ children }: React.HTMLAttributes<HTMLPreElement>) {
                                     // The child is the `code` renderer below, still unrendered, so the language class is the only way to tell it apart here.
