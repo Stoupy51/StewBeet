@@ -8,6 +8,9 @@
 #
 # `manage_exclusions` answers the terminal prompt up front, which is what a build with nobody to
 # answer it needs.
+#
+# The plugin queues its work for the very end of the build, past every other plugin's teardown, so
+# the checks queue themselves the same way from one entry further down the pipeline.
 
 id: "tns"
 name: "Test Spyglass Exclusions"
@@ -31,6 +34,7 @@ meta:
             manage_exclusions: true
 
 pipeline:
-    - "src.assertions"
     - "mecha"
+    - "src.seed"
     - "stewbeet.plugins.spyglass"
+    - "src.assertions"

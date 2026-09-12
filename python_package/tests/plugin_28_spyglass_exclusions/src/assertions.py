@@ -1,42 +1,31 @@
 # Assertions for: stewbeet.plugins.spyglass
 #
-# Listed first, so its setup seeds the starting state and its teardown runs after the plugin's.
+# Queued the same way the plugin queues itself, one entry further down the pipeline, so these run
+# after it: a task inserted at the front of beet's list pops last, and the later insert pops later.
 
 # Imports
 import json
 import os
-from collections.abc import Iterator
 
 from beet import Context
 
+from stewbeet.plugins.spyglass import queue_at_end
+
+from .seed import AUTHORS_OWN, CACHE_NAME, CONFIG, STALE
+
 # Constants
-CONFIG: str = ".spyglassrc.json"
-""" The config the plugin creates when a project has none of the names Spyglass looks for. """
-
-CACHE_NAME: str = "stewbeet_spyglass"
-""" Where the plugin remembers which patterns are its own. """
-
-AUTHORS_OWN: str = "build/**"
-""" An exclusion the author wrote. It is in nobody's ownership list and must survive untouched. """
-
-STALE: str = "src/data/tns/function/gone.mcfunction"
-""" An exclusion an earlier build added for a file that no longer holds bolt. """
-
 BOLTED: str = "src/data/tns/function/bolted.mcfunction"
 NESTED: str = "src/data/tns/function/nested.mcfunction"
 PLAIN: str = "src/data/tns/function/plain.mcfunction"
 
 
 # Main entry point
-def beet_default(ctx: Context) -> Iterator[None]:
-    # Start from a config that already holds one of the author's own patterns and one this plugin
-    # added last time, so both halves of the contract are exercised in a single build.
-    with open(CONFIG, "w", encoding="utf-8") as file:
-        json.dump({"env": {"dependencies": ["@vanilla-mcdoc"], "exclude": [AUTHORS_OWN, STALE]}}, file, indent=2)
-    ctx.cache[CACHE_NAME].json["excluded"] = [STALE]
+def beet_default(ctx: Context) -> None:
+    queue_at_end(ctx, check)
 
-    yield
 
+# Functions
+def check(ctx: Context) -> None:
     with open(CONFIG, encoding="utf-8") as file:
         config = json.load(file)
 

@@ -1,0 +1,35 @@
+# Test: spyglass finds the same files when a versioning refactor has run over the pack.
+# `simple_item_plugin` requires the refactor and then mecha, and `beet.contrib.find_replace`
+# substitutes inside every file in the pack. beet drops a file's `source_path` the moment its text
+# is read, and mecha names a compilation unit after that path, so by the time anything asks, not
+# one unit can say which file it came from. The names come back off the ledger of where each file
+# was loaded from, and a nested unit off the parent text its AST was parsed from.
+#
+# plugin_28 is the same three sources with nothing moving them.
+
+id: "tns"
+name: "Test Spyglass Versioned"
+version: "1.0.0"
+author: "test"
+minecraft: "26.2"
+
+directory: "."
+output: "build"
+
+require:
+    - "bolt"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+meta:
+    stewbeet:
+        spyglass:
+            manage_exclusions: true
+
+pipeline:
+    - "stewbeet.plugins.spyglass"
+    - "src.versioning"
+    - "mecha"
+    - "src.assertions"

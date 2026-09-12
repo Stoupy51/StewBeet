@@ -9,7 +9,7 @@ Spyglass parses it as commands, fails on the first `for` or the first trailing c
 Nothing can clear another extension's diagnostics, but Spyglass skips whatever its own `env.exclude` names, and your build is the one thing that knows exactly which files belong on that list.
 
 **Required**: Nothing. It is off unless you ask for it.<br>
-**Position**: One entry in `pipeline`, anywhere after `mecha`.<br>
+**Position**: One entry in `pipeline`, anywhere in it.<br>
 **Source Code**: [`stewbeet/plugins/spyglass/__init__.py`](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/spyglass/__init__.py) <br>
 
 ## What it does
@@ -23,9 +23,11 @@ Nothing can clear another extension's diagnostics, but Spyglass skips whatever i
 
 ```yaml
 pipeline:
-    - "mecha"
     - "stewbeet.plugins.spyglass"
 ```
+
+It reads mecha's compilation database, which is empty until mecha compiles, so it queues its own work for the very end of the build.
+Order does not matter: listing it before `mecha`, after it, or in a project where another plugin requires mecha from Python all give the same result.
 
 The first build that finds something to exclude asks you in the terminal, once, and remembers the answer in `.beet_cache`.
 Answer up front instead, and no question is ever asked:
