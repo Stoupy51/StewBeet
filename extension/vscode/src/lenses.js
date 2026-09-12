@@ -38,14 +38,37 @@ function functionIdOf(generatedPath) {
  */
 function targetOfBlock(origins, doc, block, callLine) {
   const found = origins.get(callLine);
-  if (found && found.length > 0) return found;
+  if (found && found.length > 0) return firstPerFile(found);
 
   const last = doc.positionAt(block.end).line;
   for (let line = doc.positionAt(block.start).line; line <= last; line++) {
     const inside = origins.get(line);
-    if (inside && inside.length > 0) return inside;
+    if (inside && inside.length > 0) return firstPerFile(inside);
   }
   return null;
+}
+
+/**
+ * One target per generated function, at the first line of it this source line produced.
+ *
+ * A map records an origin for every generated line, so a twenty-line block is twenty entries
+ * naming the same function. The lens names a function and opens at the top of what the line
+ * wrote, so the other nineteen are one answer repeated nineteen times.
+ *
+ * @param {{ file: string, line: number }[]} targets
+ * @returns {{ file: string, line: number }[]}  In the order the files were first seen.
+ *
+ * >>> firstPerFile([{ file: "a", line: 4 }, { file: "a", line: 1 }, { file: "b", line: 2 }])
+ * [ { file: 'a', line: 1 }, { file: 'b', line: 2 } ]
+ */
+function firstPerFile(targets) {
+  /** @type {Map<string, { file: string, line: number }>} */
+  const first = new Map();
+  for (const target of targets) {
+    const seen = first.get(target.file);
+    if (seen === undefined || target.line < seen.line) first.set(target.file, target);
+  }
+  return [...first.values()];
 }
 
 /**
@@ -95,5 +118,6 @@ function lensAnchors(origins, holdsText = () => true) {
 module.exports = {
   functionIdOf,
   targetOfBlock,
+  firstPerFile,
   lensAnchors,
 };

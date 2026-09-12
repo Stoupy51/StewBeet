@@ -550,6 +550,72 @@ function findEscapedBraces(text, block) {
   return found;
 }
 
+/** Escapes standing for the character behind the backslash, so only the backslash is spelling. */
+const LITERAL_ESCAPES = new Set(["\\", '"', "'"]);
+
+/** Hex digits following the letter of each numeric escape, so the whole run is blanked together. */
+const NUMERIC_ESCAPES = { x: 2, u: 4, U: 8 };
+
+/**
+ * Offsets of every character of every escape sequence inside one block that spells something
+ * other than itself.
+ *
+ * `write_function(path, "\n")` writes an empty function, and a parser handed the two characters
+ * the author typed is told, correctly, that `\n` is not a command. A string holding several
+ * commands is the same thing at greater length: the escape is the line break, and the projection
+ * keeps one Python line to one virtual line, so the break cannot be projected as one.
+ *
+ * `\\` and `\"` keep the character they stand for and blank only the backslash, the way a doubled
+ * brace keeps one brace.
+ *
+ * Returns [] for a raw string, where a backslash is a backslash.
+ * @param {string} text
+ * @param {{ start:number, end:number }} block  One entry from findBlockOffsets.
+ * @returns {number[]}  Sorted offsets, each of one character to blank.
+ */
+function findEscapes(text, block) {
+  const opening = readOpeningQuote(text, block.start);
+  if (!opening) return [];
+  if (/[rR]/.test(text.slice(block.start, opening.contentStart))) return [];
+
+  const found = [];
+  const contentEnd = block.end - opening.quoteStyle.length;
+  let i = opening.contentStart;
+
+  while (i < contentEnd - 1) {
+    if (opening.isFString && text[i] === "{") {
+      if (text[i + 1] === "{") { i += 2; continue; }
+      // An interpolation holds Python, which the mask covers already.
+      const after = skipInterpolation(text, i + 1);
+      if (after === -1) break;
+      i = after;
+      continue;
+    }
+    if (text[i] !== "\\") { i++; continue; }
+
+    found.push(i);
+    const digits = NUMERIC_ESCAPES[text[i + 1]] ?? 0;
+    if (!LITERAL_ESCAPES.has(text[i + 1])) {
+      for (let k = 1; k <= 1 + digits && i + k < contentEnd; k++) found.push(i + k);
+    }
+    i += 2 + digits;
+  }
+  return found;
+}
+
+/**
+ * Every offset of one block whose character is Python spelling rather than a command character.
+ *
+ * The doubled brace of an f-string and an escape sequence are the two of them, and a consumer
+ * blanking both hands the parser the command the author wrote at the columns they wrote it in.
+ * @param {string} text
+ * @param {{ start:number, end:number }} block  One entry from findBlockOffsets.
+ * @returns {number[]}  Sorted offsets, each of one character to blank.
+ */
+function findBlankedOffsets(text, block) {
+  return [...findEscapedBraces(text, block), ...findEscapes(text, block)].sort((a, b) => a - b);
+}
+
 /**
  * Find the `{...}` interpolation spans inside one block, braces included.
  * Those spans hold Python, not mcfunction, so a consumer projecting the block
@@ -595,4 +661,6 @@ module.exports = {
   findAssignedBlocks,
   findInterpolationSpans,
   findEscapedBraces,
+  findEscapes,
+  findBlankedOffsets,
 };
