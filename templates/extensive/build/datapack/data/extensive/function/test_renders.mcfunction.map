@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "test_renders.mcfunction",
+	"sourceRoot": "../../../../..",
+	"sources": [
+		"src/data/extensive/function/test_renders.mcfunction"
+	],
+	"names": [],
+	"mappings": "AAEA;AACA;AACA;AACA;AACA;AACA;;;;;;;AACA;AACA;AAKA"
+}

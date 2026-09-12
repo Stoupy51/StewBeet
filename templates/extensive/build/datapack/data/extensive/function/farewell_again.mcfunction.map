@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "farewell_again.mcfunction",
+	"sourceRoot": "../../../../..",
+	"sources": [
+		"src/data/extensive/function/hello.mcfunction"
+	],
+	"names": [],
+	"mappings": ";;;;;;AAQY"
+}

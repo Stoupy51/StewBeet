@@ -16,4 +16,3 @@ execute if score #total_custom_blocks _your_namespace.data matches 1.. as @e[typ
 
 execute if score #spam _your_namespace.data matches 1 run say This is a SPAM message every 5 seconds
 
-## sourceMappingURL=second_5.mcfunction.map

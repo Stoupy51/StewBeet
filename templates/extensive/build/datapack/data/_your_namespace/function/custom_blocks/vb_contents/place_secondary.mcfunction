@@ -26,4 +26,3 @@ execute store result entity @s Facing byte 1 run scoreboard players get #item_fr
 # Update position (fixes a Minecraft bug)
 execute at @s run tp @s ^ ^ ^0.1
 
-## sourceMappingURL=place_secondary.mcfunction.map

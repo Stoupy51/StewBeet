@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "hello.mcfunction",
+	"sourceRoot": "../../../../..",
+	"sources": [
+		"src/data/extensive/function/hello.mcfunction"
+	],
+	"names": [],
+	"mappings": ";;;;;;AAEI;;AAAA;AAAA;AAAA;AAAA;AAEI"
+}
