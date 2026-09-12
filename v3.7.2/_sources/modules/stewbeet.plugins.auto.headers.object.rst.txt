@@ -1,0 +1,8 @@
+stewbeet.plugins.auto.headers.object module
+===========================================
+
+.. automodule:: stewbeet.plugins.auto.headers.object
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

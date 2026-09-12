@@ -1,0 +1,15 @@
+stewbeet.plugins.datapack namespace
+===================================
+
+.. py:module:: stewbeet.plugins.datapack
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.plugins.datapack.custom_blocks
+   stewbeet.plugins.datapack.loading
+   stewbeet.plugins.datapack.loot_tables
+   stewbeet.plugins.datapack.sorters

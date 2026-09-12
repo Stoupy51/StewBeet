@@ -1,0 +1,8 @@
+stewbeet.plugins.auto.headers.silent module
+===========================================
+
+.. automodule:: stewbeet.plugins.auto.headers.silent
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

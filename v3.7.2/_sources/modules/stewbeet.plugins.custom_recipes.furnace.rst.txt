@@ -1,0 +1,8 @@
+stewbeet.plugins.custom\_recipes.furnace module
+===============================================
+
+.. automodule:: stewbeet.plugins.custom_recipes.furnace
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

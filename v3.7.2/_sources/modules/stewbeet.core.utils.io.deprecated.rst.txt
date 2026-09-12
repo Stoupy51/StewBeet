@@ -1,0 +1,8 @@
+stewbeet.core.utils.io.deprecated module
+========================================
+
+.. automodule:: stewbeet.core.utils.io.deprecated
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

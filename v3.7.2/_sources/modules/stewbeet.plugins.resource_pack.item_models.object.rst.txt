@@ -1,0 +1,8 @@
+stewbeet.plugins.resource\_pack.item\_models.object module
+==========================================================
+
+.. automodule:: stewbeet.plugins.resource_pack.item_models.object
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

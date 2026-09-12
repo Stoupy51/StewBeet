@@ -1,0 +1,8 @@
+stewbeet.core.cls.\_recipe\_list module
+=======================================
+
+.. automodule:: stewbeet.core.cls._recipe_list
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

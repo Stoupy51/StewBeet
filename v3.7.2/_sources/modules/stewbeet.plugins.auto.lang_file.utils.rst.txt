@@ -1,0 +1,8 @@
+stewbeet.plugins.auto.lang\_file.utils module
+=============================================
+
+.. automodule:: stewbeet.plugins.auto.lang_file.utils
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

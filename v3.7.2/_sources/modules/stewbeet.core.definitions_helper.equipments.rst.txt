@@ -1,0 +1,8 @@
+stewbeet.core.definitions\_helper.equipments module
+===================================================
+
+.. automodule:: stewbeet.core.definitions_helper.equipments
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

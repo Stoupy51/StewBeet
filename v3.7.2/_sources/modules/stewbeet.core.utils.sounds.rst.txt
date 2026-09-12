@@ -1,0 +1,8 @@
+stewbeet.core.utils.sounds module
+=================================
+
+.. automodule:: stewbeet.core.utils.sounds
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
