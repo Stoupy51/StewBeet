@@ -13,29 +13,65 @@ __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
 import stouputils as stp
-from beet import Context
+from beet import Cache, Context, Function
 
 from ....core.__memory__ import Mem
 from ....core.source_paths import origin_path
 from ..align import align
-from ..sidecar import has_sidecar, write_sidecar
+from ..cache import CACHE_NAME, load_maps, map_signature, store_maps
+from ..model import WriteChunk
+from ..sidecar import has_sidecar, pack_layout, render_sidecar, store_sidecar
 
 
 # Functions
 def write_maps(ctx: Context) -> int:
 	""" Write one `.mcfunction.map` beside every generated function that has a known origin.
 
+	A function whose chunks, text and pack layout are all unchanged since the last build gets its map
+	back from the cache instead of being reconciled again, which is where nearly all of the time goes.
+
 	Returns:
 		How many sidecars this call wrote, ignoring functions already carrying a comment.
 	"""
+	# Chunks are filed under the path the write named, which a versioning refactor then moves.
+	pending: list[tuple[str, Function, list[WriteChunk]]] = [
+		(path, func, chunks)
+		for path, func in list(ctx.data.functions.items())
+		if not has_sidecar(ctx, path)
+		and (chunks := Mem.source_map_chunks.get(path) or Mem.source_map_chunks.get(origin_path(path)))
+	]
+	if not pending:
+		return 0
+
+	project_root, output_depth = pack_layout(ctx)
+	layout: str = f"{project_root}\0{output_depth}"
+	cache: Cache = ctx.cache[CACHE_NAME]
+	remembered: dict[str, tuple[str, str]] = load_maps(cache)
+	# An earlier flush in this same build already stored what it wrote, and those functions are
+	# skipped above, so their entries are carried over rather than dropped from the record.
+	fresh: dict[str, tuple[str, str]] = {
+		path: entry for path, entry in remembered.items() if path in ctx.data.functions
+	}
+
 	written: int = 0
-	for path, func in list(ctx.data.functions.items()):
-		if has_sidecar(ctx, path):
+	for path, func, chunks in pending:
+		signature: str = map_signature(chunks, func.text, layout)
+		previous: tuple[str, str] | None = remembered.get(path)
+
+		rendered: str | None
+		if previous is not None and previous[0] == signature:
+			rendered = previous[1]
+		else:
+			rendered = render_sidecar(path, func, align(chunks, func.text), project_root, output_depth)
+		if rendered is None:
+			fresh.pop(path, None)
 			continue
-		# Chunks are filed under the path the write named, which a versioning refactor then moves.
-		chunks = Mem.source_map_chunks.get(path) or Mem.source_map_chunks.get(origin_path(path))
-		if chunks and write_sidecar(ctx, path, func, align(chunks, func.text)):
-			written += 1
+
+		store_sidecar(ctx, path, rendered)
+		fresh[path] = (signature, rendered)
+		written += 1
+
+	store_maps(cache, fresh)
 	return written
 
 

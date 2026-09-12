@@ -30,17 +30,35 @@ def write_sidecar(ctx: Context, path: str, func: Function, mapped: dict[int, Sou
 	Returns:
 		False when there was nothing to map or the sidecar was already written.
 	"""
-	file_path: str = function_file_path(path)
 	if not mapped or has_sidecar(ctx, path):
 		return False
 
-	project_root: str = os.path.abspath(str(ctx.directory))
-	source_map: FunctionSourceMap | None = build_map(path, mapped, project_root, pack_output_depth(ctx))
-	if source_map is None:
+	project_root, output_depth = pack_layout(ctx)
+	rendered: str | None = render_sidecar(path, func, mapped, project_root, output_depth)
+	if rendered is None:
 		return False
 
-	ctx.data.extra[f"{file_path}.map"] = TextFile(stp.json_dump(to_json(source_map, len(final_lines_of(func.text))), max_level=2))
+	store_sidecar(ctx, path, rendered)
 	return True
+
+
+def render_sidecar(
+	path: str, func: Function, mapped: dict[int, SourceOrigin], project_root: str, output_depth: int
+) -> str | None:
+	""" The Source Map v3 JSON for one function, or None when none of its lines resolved.
+
+	Split from `write_sidecar` so a producer holding a map it built earlier can put it in the pack
+	without building it again.
+	"""
+	source_map: FunctionSourceMap | None = build_map(path, mapped, project_root, output_depth)
+	if source_map is None:
+		return None
+	return stp.json_dump(to_json(source_map, len(final_lines_of(func.text))), max_level=2)
+
+
+def store_sidecar(ctx: Context, path: str, rendered: str) -> None:
+	""" Put a rendered map into the pack, beside the function it belongs to. """
+	ctx.data.extra[f"{function_file_path(path)}.map"] = TextFile(rendered)
 
 
 def has_sidecar(ctx: Context, path: str) -> bool:
@@ -110,6 +128,11 @@ def source_root_for(file_path: str, output_depth: int) -> str:
 	"""
 	directory_depth: int = len(file_path.split("/")) - 1
 	return "/".join([".."] * (directory_depth + output_depth))
+
+
+def pack_layout(ctx: Context) -> tuple[str, int]:
+	""" The project root every source is named relative to, and how deep the pack sits under it. """
+	return os.path.abspath(str(ctx.directory)), pack_output_depth(ctx)
 
 
 def pack_output_depth(ctx: Context) -> int:
