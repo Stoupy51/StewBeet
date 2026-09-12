@@ -10,7 +10,7 @@ const { test } = require("node:test");
 const assert = require("node:assert/strict");
 const path = require("node:path");
 
-const { functionIdOf, targetOfBlock, lensAnchors } = require("../src/lenses");
+const { functionIdOf, targetOfBlock, firstPerFile, lensAnchors } = require("../src/lenses");
 
 // Naming the target
 
@@ -136,4 +136,30 @@ test("a line the author has emptied gets no lens, whatever the map still says", 
   ]);
   const anchors = lensAnchors(origins, line => line !== 7);
   assert.deepEqual(anchors.map(a => a.line), [4]);
+});
+
+// One entry per function, however many lines of it a call wrote
+
+test("a block's targets are one per function, at the first line of each", () => {
+  const targets = [
+    { file: "/p/build/data/ns/function/a.mcfunction", line: 16 },
+    { file: "/p/build/data/ns/function/a.mcfunction", line: 8 },
+    { file: "/p/build/data/ns/function/a.mcfunction", line: 9 },
+    { file: "/p/build/data/ns/function/b.mcfunction", line: 3 },
+  ];
+  assert.deepEqual(firstPerFile(targets), [
+    { file: "/p/build/data/ns/function/a.mcfunction", line: 8 },
+    { file: "/p/build/data/ns/function/b.mcfunction", line: 3 },
+  ], "a twenty-line block maps twenty generated lines back to the one call that wrote them");
+});
+
+test("a call writing a whole function gets one target, not one per command", () => {
+  // `write_function("ns:denied_dimensions", DENIED_DIMENSIONS, overwrite=True)` writes a block of
+  // seventeen commands, and the map records the call line as the origin of every one of them.
+  const file = "/p/build/data/ns/function/denied_dimensions.mcfunction";
+  const origins = new Map([[31, Array.from({ length: 17 }, (_, i) => ({ file, line: i }))]]);
+  const doc = { positionAt: () => ({ line: 31 }) };
+
+  const found = targetOfBlock(origins, doc, { start: 0, end: 0 }, 31);
+  assert.deepEqual(found, [{ file, line: 0 }], "the lens names one function and opens at its top");
 });

@@ -34,9 +34,10 @@ const MASK = "_";
  * @param {number} end  Offset just past the block's closing quote.
  * @param {{ start:number, end:number }[]} [interpolationSpans]  Sorted, from findInterpolationSpans.
  * @param {Map<number, string> | null} [generatedLines]  Generated text per 0-based document line.
- * @param {number[]} [escapedBraces]  Offsets of the redundant brace of each `{{` and `}}`, from
- *   findEscapedBraces. Each becomes a space, so `{{"a":1}}` reaches the parser as the compound
- *   `{ "a":1 }` it stands for, at the same offsets.
+ * @param {number[]} [blanked]  Offsets holding Python spelling rather than a command character,
+ *   from findBlankedOffsets. Each becomes a space, so `{{"a":1}}` reaches the parser as the
+ *   compound `{ "a":1 }` it stands for and `"\n"` as the empty function it writes, at the same
+ *   offsets either way.
  * @param {Map<string, string> | null} [known]  Expression text to its value, from knownValues.
  *   Used only where the line's own build text resolves nothing.
  * @returns {{ text: string, table: Map<number, { start:number, pythonWidth:number, virtualWidth:number }[]>, masked: Map<number, { start:number, end:number }[]>, observed: Map<string, string | null> }}
@@ -46,7 +47,7 @@ const MASK = "_";
  *   `observed` is what each expression resolved to here, `null` where it resolved to two
  *   different values, and is what knownValues merges into the next projection's `known`.
  */
-function project(text, start, end, interpolationSpans = [], generatedLines = null, escapedBraces = [], known = null) {
+function project(text, start, end, interpolationSpans = [], generatedLines = null, blanked = [], known = null) {
   /** @type {Map<number, { start:number, pythonWidth:number, virtualWidth:number }[]>} */
   const table = new Map();
   /** @type {Map<number, { start:number, end:number }[]>} */
@@ -54,7 +55,7 @@ function project(text, start, end, interpolationSpans = [], generatedLines = nul
   /** @type {Map<string, string | null>} */
   const observed = new Map();
   const pieces = text.split("\n");
-  const escaped = new Set(escapedBraces);
+  const escaped = new Set(blanked);
   const projected = [];
   let lineStart = 0;
   let spanIdx = 0;

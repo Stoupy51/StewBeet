@@ -17,7 +17,7 @@
 // back is translated with the table the projection returns.
 
 const vscode = require("vscode");
-const { findBlockOffsets, findInterpolationSpans, findEscapedBraces } = require("./blocks");
+const { findBlockOffsets, findInterpolationSpans, findBlankedOffsets } = require("./blocks");
 const { projectBolt, commandsOf, commandBlocks } = require("./boltlines");
 const {
   SCHEME, project, knownValues, toVirtual, toPython, explainedByMask, crossesSubstitution,
@@ -184,7 +184,7 @@ async function projectionFor(doc, blockIndex) {
     })
     : project(
       text, block.contentStart, block.contentEnd,
-      findInterpolationSpans(text, block), build.generated, findEscapedBraces(text, block), build.known);
+      findInterpolationSpans(text, block), build.generated, findBlankedOffsets(text, block), build.known);
   const entry = {
     version: doc.version, text: projected, table, masked,
     contentStart: doc.positionAt(block.contentStart), contentEnd: doc.positionAt(block.contentEnd),
@@ -234,7 +234,7 @@ async function buildViewOf(doc, scan) {
 function learn(text, blocks, generated) {
   return knownValues(blocks.map(block => project(
     text, block.contentStart, block.contentEnd, findInterpolationSpans(text, block), generated,
-    findEscapedBraces(text, block)).observed));
+    findBlankedOffsets(text, block)).observed));
 }
 
 /**

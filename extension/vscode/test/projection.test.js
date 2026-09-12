@@ -4,7 +4,7 @@
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
 
-const { findBlockOffsets, findInterpolationSpans } = require("../src/blocks");
+const { findBlockOffsets, findInterpolationSpans, findEscapes, findBlankedOffsets } = require("../src/blocks");
 const {
   project, resolveLine, knownValues, toVirtual, toPython, explainedByMask, crossesSubstitution,
   virtualPath, blockIndexFromPath, sanitizeName,
@@ -420,4 +420,58 @@ test("crossesSubstitution leaves a range clear of every span alone", () => {
   assert.equal(crossesSubstitution(at(0), at(9), TABLE), false);
   assert.equal(crossesSubstitution(at(20), at(30), TABLE), false);
   assert.equal(crossesSubstitution({ line: 0, character: 0 }, { line: 0, character: 40 }, TABLE), false);
+});
+
+// Escape sequences, which a one-line string writes its newlines as
+
+/** Project the first block of a Python source, blanking its Python spelling. */
+function projectBlanked(text) {
+  const [block] = findBlockOffsets(text);
+  assert.ok(block, "expected the fixture to contain a block");
+  return project(text, block.contentStart, block.contentEnd,
+    findInterpolationSpans(text, block), null, findBlankedOffsets(text, block)).text;
+}
+
+test("a function written as one escaped newline reaches the parser as the empty function it is", () => {
+  // `write_function(f"{path}/stop", "\n")` writes nothing, and the parser handed the backslash
+  // and the n the author typed answered with the list of every command in the game.
+  const source = 'write_function(f"{path}/stop", "\\n")';
+  const projected = projectBlanked(source);
+  assert.equal(projected.trim(), "", `nothing should be left to parse, got ${JSON.stringify(projected)}`);
+  assert.equal(projected.length, source.length, "blanking keeps every offset where it was");
+});
+
+test("an escape that stands for its own character keeps that character", () => {
+  const projected = projectBlanked('write_function(p, "say \\"hi\\"")');
+  assert.ok(projected.includes('say  "hi "'), `the quotes are the command's, got ${JSON.stringify(projected)}`);
+});
+
+test("a doubled backslash keeps one backslash", () => {
+  const projected = projectBlanked('write_function(p, "say a\\\\b")');
+  assert.ok(projected.includes("say a \\b"), JSON.stringify(projected));
+});
+
+test("a numeric escape is blanked whole", () => {
+  const projected = projectBlanked('write_function(p, "say \\u00a7cred")');
+  assert.ok(projected.includes("say       cred"), `the hex digits are spelling too, got ${JSON.stringify(projected)}`);
+});
+
+test("a raw string's backslash is a backslash", () => {
+  const source = 'write_function(p, r"say a\\nb")';
+  const [block] = findBlockOffsets(source);
+  assert.deepEqual(findEscapes(source, block), [],
+    "an r prefix means the author wrote the two characters on purpose");
+});
+
+test("a backslash inside an interpolation is the Python's own", () => {
+  const source = 'write_function(p, f"say {x.replace(chr(92), \'/\')}")';
+  const [block] = findBlockOffsets(source);
+  assert.deepEqual(findEscapes(source, block), [],
+    "the mask covers an interpolation already, and its Python is not the command's");
+});
+
+test("a triple quoted block, whose newlines are real, is left alone", () => {
+  const source = 'write_function(p, """\nsay a\nsay b\n""")';
+  const [block] = findBlockOffsets(source);
+  assert.deepEqual(findEscapes(source, block), []);
 });
