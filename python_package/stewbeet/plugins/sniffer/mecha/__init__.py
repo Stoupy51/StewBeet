@@ -21,11 +21,12 @@ import stouputils as stp
 from beet import Context
 from mecha import Mecha
 
+from ....core.source_paths import origin_path, restore_filenames
 from ..align import align
 from ..model import SourceOrigin, WriteChunk
 from ..sidecar import write_sidecar
 from ..sources import reset_caches
-from .attribute import candidate_sources, owner_of
+from .attribute import candidate_sources, owner_of, source_file_of
 
 
 # Functions
@@ -56,19 +57,27 @@ def write_maps(ctx: Context) -> int:
 	"""
 	mc: Mecha = ctx.inject(Mecha)
 	directory: str = os.path.abspath(str(ctx.directory))
+	restore_filenames(mc, directory)
 	sources: dict[str, str] = candidate_sources(mc, directory, project_roots(ctx))
+	# A function mecha nested out of another one has no file of its own, and the text its AST was
+	# parsed from is the parent file's own.
+	parents: dict[str, str] = {text: path for path, text in sources.items()}
 
-	# Keyed by resource location rather than by file instance: the database keys are the objects
-	# mecha compiled, and a plugin that rewrites a function replaces the one the pack holds.
-	compiled = {unit.resource_location: unit for unit in mc.database.values() if unit.resource_location and unit.ast}
+	# The database keys are the objects mecha compiled, which is the link a plain bolt project keeps
+	# whatever else moves. A StewBeet build breaks it, because `auto.headers` replaces every function
+	# object after mecha has compiled, so the resource location is what is left to match on.
+	by_file = {file: unit for file, unit in mc.database.items() if unit.ast}
+	by_location = {unit.resource_location: unit for unit in by_file.values() if unit.resource_location}
 
 	written: int = 0
 	for path, func in list(ctx.data.functions.items()):
-		unit = compiled.get(path)
+		# A versioning refactor moves every function, and whether the unit is filed under the name
+		# before or after the move is decided by whether mecha compiled before or after it.
+		unit = by_file.get(func) or by_location.get(path) or by_location.get(origin_path(path))
 		if unit is None or unit.ast is None:
 			continue
 
-		own_file: str | None = os.path.abspath(os.path.join(directory, unit.filename)) if unit.filename else None
+		own_file: str | None = source_file_of(unit, directory) or parents.get(unit.source or "")
 
 		chunks: list[WriteChunk] = []
 		for command in unit.ast.commands:

@@ -1,0 +1,38 @@
+# Test: a versioning plugin moves every function after mecha compiled, and the maps follow.
+# `smithed.versioning`, and the `simple_item_plugin` built on it, refactor `ns:impl/**` into
+# `ns:v<version>/**` by deleting each key and putting the very same object back under another one.
+# Both halves of the sniffer used to look their work up by resource location, so every function in
+# such a project came out unmapped. Matching on the file object is what survives the move.
+
+id: "tns"
+name: "Test Sniffer Versioned Rename"
+version: "1.0.0"
+author: "test"
+minecraft: "26.2"
+
+directory: "."
+output: "build"
+
+require:
+    # src.assertions is listed first and yields, so its checks run last of all, after the sniffer
+    # in the same list has written both kinds of map. beet unwinds `require` in reverse too.
+    - "src.assertions"
+    - "bolt"
+    - "stewbeet"
+    - "stewbeet.plugins.sniffer"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+pipeline:
+    - "src.link"
+    # Listed before mecha so beet unwinds it after, which is where a versioning refactor belongs:
+    # the pack is finished, and only the sniffer in `require` still has work left to do.
+    - "src.versioning"
+    - "mecha"
+    - "stewbeet.plugins.auto.headers.silent"
+
+meta:
+    bolt:
+        entrypoint: "*"

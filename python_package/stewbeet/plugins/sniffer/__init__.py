@@ -49,6 +49,8 @@ def beet_default(ctx: Context) -> Iterator[None]:
 	# is captured by the same hook. Both are empty between builds when the plugin is off, since
 	# every writer into them is gated on `sniffer_enabled` or on a patch installed below.
 	Mem.source_map_chunks = {}
+	Mem.source_map_origins = {}
+	Mem.source_map_files = {}
 	Mem.attribution = []
 	reset_caches()
 	install()

@@ -14,7 +14,7 @@ __lazy_modules__ = ALWAYS_LAZY
 # Imports
 import os
 
-from mecha import Mecha
+from mecha import CompilationUnit, Mecha
 from tokenstream import SourceLocation
 
 from ..sources import is_project_source
@@ -34,12 +34,21 @@ def candidate_sources(mc: Mecha, directory: str, roots: tuple[str, ...]) -> dict
 	"""
 	found: dict[str, str] = {}
 	for unit in mc.database.values():
-		if not unit.filename or not unit.source:
+		path: str | None = source_file_of(unit, directory)
+		if path is None or not unit.source:
 			continue
-		path: str = os.path.abspath(os.path.join(directory, unit.filename))
 		if is_project_source(path, roots):
 			found[path] = unit.source
 	return found
+
+
+def source_file_of(unit: CompilationUnit, directory: str) -> str | None:
+	""" Absolute path a compilation unit was parsed from, None when it was assembled in memory.
+
+	Args:
+		directory: beet's project directory, which `filename` is relative to.
+	"""
+	return os.path.abspath(os.path.join(directory, unit.filename)) if unit.filename else None
 
 
 def owner_of(location: SourceLocation, sources: dict[str, str], command: str, own: str | None = None, own_file: str | None = None) -> str | None:

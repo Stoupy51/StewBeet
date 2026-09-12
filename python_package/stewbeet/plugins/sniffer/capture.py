@@ -10,9 +10,11 @@ from typing import Any
 
 import stouputils as stp
 from beet import Function
-from beet.library.base import NamespaceContainer
+from beet.core.file import TextFileBase
+from beet.library.base import NamespaceContainer, NamespaceFile
 
 from ...core.__memory__ import Mem
+from ...core.source_paths import origin_path, remember_source_path
 from .model import SourceOrigin, WriteChunk
 from .origin import resolve_origin, resolve_site
 
@@ -28,8 +30,8 @@ ORIGINALS: dict[str, Callable[..., Any]] = {}
 def tag(func: Function, path: str) -> Function:
 	""" Record which resource location a Function belongs to.
 
-	A beet Function does not know its own path, and the patched writers below only receive the
-	object. Tagging is done from the two places that have both: `write_function` and `Resource.obj`.
+	A beet Function does not know its own path, and the patched writers below only receive the object.
+	Tagging is done from the two places that have both: `write_function` and `Resource.obj`.
 	"""
 	setattr(func, PATH_ATTR, path)
 	return func
@@ -79,6 +81,9 @@ def record_assignment(container: NamespaceContainer[Any], key: str, value: Any) 
 		return
 
 	path: str = f"{container.namespace.name}:{key}"
+	previous: str | None = getattr(value, PATH_ATTR, None)
+	if previous is not None and previous != path:
+		Mem.source_map_origins[path] = origin_path(previous)
 	tag(value, path)
 
 	# A file still backed by disk is the pack being loaded, not a plugin writing a function, and
@@ -131,6 +136,9 @@ def install() -> None:
 
 	def process(self: NamespaceContainer[Any], key: str, value: Any) -> Any:
 		result: Any = ORIGINALS["process"](self, key, value)
+		inserted: NamespaceFile = result
+		if isinstance(inserted, TextFileBase):
+			remember_source_path(inserted)
 		record_assignment(self, key, result)
 		return result
 
