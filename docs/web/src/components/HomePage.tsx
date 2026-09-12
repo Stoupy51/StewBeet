@@ -4,6 +4,7 @@ import { Navbar } from './Navbar';
 import { Hero } from './Hero';
 import { WhyStewBeet } from './WhyStewBeet';
 import { ManualShowcase } from './ManualShowcase';
+import { EditorShowcase } from './EditorShowcase';
 import { Features } from './Features';
 import { BuiltWith } from './BuiltWith';
 import { StandingOnGiants } from './StandingOnGiants';
@@ -46,6 +47,7 @@ function HomePage() {
         <Hero />
         <WhyStewBeet />
         <ManualShowcase />
+        <EditorShowcase />
         <Features />
         <BuiltWith />
         <StandingOnGiants />

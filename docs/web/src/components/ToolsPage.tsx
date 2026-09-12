@@ -10,9 +10,17 @@ import { HEADING, HOVER_CARD, CARD_HOVER_TEXT, CARD_HOVER_ARROW } from '../theme
 interface ToolItem {
     title: string;
     description: string;
+    /** An internal route, or an absolute URL for a tool that does not live on this site. */
     path: string;
     icon: string;
 }
+
+/** A card wrapper: a route stays on the site, an absolute URL opens in its own tab. */
+const ToolLink: React.FC<{ path: string; children: React.ReactNode }> = ({ path, children }) => (
+    path.startsWith('http')
+        ? <a href={path} target="_blank" rel="noopener noreferrer" className="block group">{children}</a>
+        : <Link to={path} className="block group">{children}</Link>
+);
 
 export const ToolsPage: React.FC = () => {
     const { t } = useTranslation();
@@ -36,6 +44,12 @@ export const ToolsPage: React.FC = () => {
             description: t('tools.markdownToBBCodeDesc'),
             path: '/markdown_to_pmc_bbcode',
             icon: '🔄',
+        },
+        {
+            title: t('tools.extension'),
+            description: t('tools.extensionDesc'),
+            path: 'https://marketplace.visualstudio.com/items?itemName=stoupy.stewbeet',
+            icon: '🧩',
         },
     ];
 
@@ -81,7 +95,7 @@ export const ToolsPage: React.FC = () => {
                                     transition: { delay: 0.2 + index * 0.1 },
                                 })}
                             >
-                                <Link to={tool.path} className="block group">
+                                <ToolLink path={tool.path}>
                                     <div className={`bg-slate-900/30 backdrop-blur-sm border border-white/10 rounded-2xl p-6 ${HOVER_CARD} transition-all hover:bg-slate-900/50`}>
                                         <div className="flex items-start justify-between gap-4">
                                             <div className="flex-1">
@@ -98,7 +112,7 @@ export const ToolsPage: React.FC = () => {
                                             <HiArrowRight className={CARD_HOVER_ARROW} />
                                         </div>
                                     </div>
-                                </Link>
+                                </ToolLink>
                             </motion.div>
                         ))}
                     </div>
