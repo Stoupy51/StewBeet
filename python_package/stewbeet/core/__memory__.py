@@ -6,9 +6,10 @@ from stouputils.lazy import ALWAYS_LAZY
 __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from beet import Context
+from beet.core.file import TextFileBase
 
 from .placeholder_context import PLACEHOLDER_CTX
 
@@ -51,6 +52,17 @@ class Mem:
     source_map_chunks: dict[str, list[WriteChunk]] = {}
     """ Provenance recorded during the build, keyed by resource location, in write order.
     Reset by plugins.sniffer, which owns it, so consecutive builds in one process start clean. """
+
+    source_map_origins: dict[str, str] = {}
+    """ Resource location a function now sits at, to the one it was first put in the pack under.
+    A versioning refactor deletes every `ns:impl/**` key and puts the same objects back under
+    `ns:v1.2.3/**`, which is what both halves of the sniffer follow through this. """
+
+    source_map_files: dict[TextFileBase[Any], str] = {}
+    """ Pack file to the path on disk it was loaded from.
+    beet drops `source_path` as soon as any plugin reads a file's text, and mecha names a
+    compilation unit after that path, so this is recorded while the pack is still being loaded.
+    Keyed by the file itself, the one handle a rename cannot move. """
 
     attribution: list[AttributionScope] = []
     """ Ambient stack used when no project frame is on the stack, so content a plugin generates from

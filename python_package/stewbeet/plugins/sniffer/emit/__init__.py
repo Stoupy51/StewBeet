@@ -16,6 +16,7 @@ import stouputils as stp
 from beet import Context
 
 from ....core.__memory__ import Mem
+from ....core.source_paths import origin_path
 from ..align import align
 from ..sidecar import write_sidecar
 
@@ -29,7 +30,8 @@ def write_maps(ctx: Context) -> int:
 	"""
 	written: int = 0
 	for path, func in list(ctx.data.functions.items()):
-		chunks = Mem.source_map_chunks.get(path)
+		# Chunks are filed under the path the write named, which a versioning refactor then moves.
+		chunks = Mem.source_map_chunks.get(path) or Mem.source_map_chunks.get(origin_path(path))
 		if chunks and write_sidecar(ctx, path, func, align(chunks, func.text)):
 			written += 1
 	return written
