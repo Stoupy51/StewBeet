@@ -1,0 +1,8 @@
+stewbeet.plugins.auto.text\_renders.config module
+=================================================
+
+.. automodule:: stewbeet.plugins.auto.text_renders.config
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

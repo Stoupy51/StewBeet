@@ -1,0 +1,8 @@
+stewbeet.core.utils.io.functions module
+=======================================
+
+.. automodule:: stewbeet.core.utils.io.functions
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
