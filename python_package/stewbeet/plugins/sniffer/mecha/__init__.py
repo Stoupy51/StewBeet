@@ -24,7 +24,7 @@ from mecha import Mecha
 from ....core.source_paths import origin_path, restore_filenames
 from ..align import align
 from ..model import SourceOrigin, WriteChunk
-from ..sidecar import write_sidecar
+from ..sidecar import has_sidecar, write_sidecar
 from ..sources import reset_caches
 from .attribute import candidate_sources, owner_of, source_file_of
 
@@ -71,6 +71,8 @@ def write_maps(ctx: Context) -> int:
 
 	written: int = 0
 	for path, func in list(ctx.data.functions.items()):
+		if has_sidecar(ctx, path):
+			continue
 		# A versioning refactor moves every function, and whether the unit is filed under the name
 		# before or after the move is decided by whether mecha compiled before or after it.
 		unit = by_file.get(func) or by_location.get(path) or by_location.get(origin_path(path))
