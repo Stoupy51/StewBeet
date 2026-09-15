@@ -10,7 +10,7 @@ author: "Stoupy51"
 # Project version in semantic versioning format: major.minor.patch (e.g., 1.0.0 or 2.84.615).
 version: "3.0.0"
 # Minecraft version. Determines what resources beet loads (plugins like `mecha` determine what commands to use). Defaults: Latest
-minecraft: "26.2"
+minecraft: "26.3"
 
 # Defines the directory that beet uses for the base path
 directory: "."
@@ -77,7 +77,7 @@ pipeline:
 # Generic dict which holds extra information usable by plugins
 meta:
     # List of supported Minecraft versions (used when uploading to Modrinth or Smithed)
-    mc_supports: ["26.2", "infinite"]
+    mc_supports: ["26.3", "infinite"]
 
     # Model resolver configuration for caching models
     model_resolver:
@@ -85,6 +85,8 @@ meta:
 
     # Mecha configuration for multiline support and pattern matching
     mecha:
+        # Command tree used to parse functions, 26.2 until mecha supports the 26.3 argument parsers
+        version: "26.2"
         multiline: true
         formatting: preserve
 
