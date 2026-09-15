@@ -11,6 +11,7 @@ from typing import Any, Literal, Self
 
 from stouputils.typing import JsonDict
 
+from ..utils.versions import minecraft_version_at_least
 from ._utils import StMapping
 from .ingredients import ALL_RECIPES_TYPES, Ingr
 
@@ -305,6 +306,18 @@ class CampfireCookingRecipe(RecipeBase):
         super().__post_init__()
         self.validate_ingredient(self.ingredient)
         self.validate_numeric_fields(self.experience, self.cookingtime)
+
+
+def written_cooking_time(recipe: SmeltingRecipe | BlastingRecipe | SmokingRecipe | CampfireCookingRecipe) -> int:
+    """ The "cookingtime" to write so the recipe takes `recipe.cookingtime` ticks in its own block.
+
+    Since 26.3, blast furnaces and smokers get their double speed from their fuel, so their recipes store the furnace duration.
+
+    >>> written_cooking_time(BlastingRecipe(ingredient=Ingr("minecraft:iron_ore"), cookingtime=100))
+    200
+    """
+    doubled: bool = recipe.type in ("blasting", "smoking") and minecraft_version_at_least((26, 3))
+    return recipe.cookingtime * 2 if doubled else recipe.cookingtime
 
 
 # Smithing Recipes

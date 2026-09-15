@@ -6,9 +6,9 @@
 				{
 					"type": "minecraft:item",
 					"name": "minecraft:item_frame",
-					"functions": [
+					"modifier": [
 						{
-							"function": "minecraft:set_components",
+							"type": "minecraft:set_components",
 							"components": {
 								"minecraft:entity_data": {
 									"id": "minecraft:item_frame",

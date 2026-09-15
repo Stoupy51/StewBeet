@@ -6,9 +6,9 @@
 				{
 					"type": "minecraft:item",
 					"name": "minecraft:furnace",
-					"functions": [
+					"modifier": [
 						{
-							"function": "minecraft:set_components",
+							"type": "minecraft:set_components",
 							"components": {
 								"minecraft:container": [
 									{

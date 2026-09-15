@@ -18,6 +18,9 @@ from ...core import (
 	Item,
 	JsonDict,
 	Mem,
+	advancement_entity,
+	float_score,
+	loot_function,
 	set_json_encoder,
 	texture_mcmeta,
 	write_advancement,
@@ -109,7 +112,7 @@ execute unless entity @s[tag={ns}.custom_block,tag=energy.cable] run return fail
 {cables_str}
 
 # Get the right model
-item modify entity @s contents {{"function": "minecraft:set_custom_model_data","floats": {{"values": [{{"type": "minecraft:score","target": "this","score": "energy.data"}}],"mode": "replace_all"}}}}
+item modify entity @s contents {stp.json_dump(loot_function("minecraft:set_custom_model_data", floats={"values": [float_score("energy.data")], "mode": "replace_all"}), max_level=0)}
 """
 	write_function(f"{ns}:calls/energy/cable_update", cable_update_content, tags=["energy:v1/cable_update"])
 	return
@@ -230,7 +233,7 @@ execute unless entity @s[tag={ns}.custom_block,tag=itemio.cable] run return fail
 {cables_str}
 
 # Get the right model
-item modify entity @s contents {{"function": "minecraft:set_custom_model_data","floats": {{"values": [{{"type": "minecraft:score","target": "this","score": "itemio.math"}}],"mode": "replace_all"}}}}
+item modify entity @s contents {stp.json_dump(loot_function("minecraft:set_custom_model_data", floats={"values": [float_score("itemio.math")], "mode": "replace_all"}), max_level=0)}
 """
 	write_function(f"{ns}:calls/itemio/cable_update", cable_update_content, tags=["itemio:event/cable_update"])
 	return
@@ -384,9 +387,9 @@ def servo_toggle(servos: dict[str, dict[str, str] | None]) -> None:
 			"requirement": {
 				"trigger": "minecraft:player_interacted_with_entity",
 				"conditions": {
-					"entity": {
+					"entity": advancement_entity({
 						"minecraft:entity_tags": {"any_of": [f"{ns}.servo"]},
-					},
+					}),
 				},
 			},
 		},

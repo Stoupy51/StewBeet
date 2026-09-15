@@ -3,23 +3,21 @@
 		"requirement": {
 			"trigger": "minecraft:item_used_on_block",
 			"conditions": {
-				"location": [
-					{
-						"condition": "minecraft:match_tool",
-						"predicate": {
-							"items": [
-								"minecraft:item_frame"
-							],
-							"predicates": {
-								"minecraft:custom_data": {
-									"_your_namespace": {
-										"vb_contents": true
-									}
+				"location": {
+					"type": "minecraft:match_tool",
+					"predicate": {
+						"items": [
+							"minecraft:item_frame"
+						],
+						"predicates": {
+							"minecraft:custom_data": {
+								"_your_namespace": {
+									"vb_contents": true
 								}
 							}
 						}
 					}
-				]
+				}
 			}
 		}
 	},

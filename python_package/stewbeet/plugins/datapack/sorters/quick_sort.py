@@ -15,7 +15,7 @@ __lazy_modules__ = ALWAYS_LAZY
 from beet import Context
 from stouputils.typing import JsonDict
 
-from ....core import Mem, write_function
+from ....core import TYPED_LOOT_VERSION, Mem, minecraft_version_at_least, write_function
 from .constants import MACRO
 
 
@@ -56,8 +56,13 @@ function {functions_location}/quick_sort with {MACRO}
 """)
 
 	# Quicksort recursive function
+	stop_when_sorted: str = (
+		r'$execute if predicate {"type": "minecraft:int_value_check","value": $(high),"test": {"min": -8,"max": $(low)}} run return 0'
+		if minecraft_version_at_least(TYPED_LOOT_VERSION) else
+		r'$execute if predicate {"condition": "value_check","range": {"min": -8,"max": $(low)},"value": $(high)} run return 0'
+	)
 	write_function(f"{functions_location}/quick_sort", f"""
-$execute if predicate {{"condition": "value_check","range": {{"min": -8,"max": $(low)}},"value": $(high)}} run return 0
+{stop_when_sorted}
 $execute store result score pi sorter.val run function {functions_location}/partition_main {{low:$(low),high:$(high)}}
 data modify storage sorter:temp inInt append value 0
 execute store result storage sorter:temp inInt[-1] int 1 store result {MACRO}.high int 1 run scoreboard players remove pi sorter.val 1

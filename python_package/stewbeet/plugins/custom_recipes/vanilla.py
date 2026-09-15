@@ -22,6 +22,7 @@ from ...core.cls.recipe import (
     SmithingTrimRecipe,
     SmokingRecipe,
     StonecuttingRecipe,
+    written_cooking_time,
 )
 from ...core.utils.io import set_json_encoder, write_function
 
@@ -170,6 +171,8 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
             "group": recipe.group,
             "ingredient": ingredient_vanilla,
             "result": result_ingr.to_item().item_to_id(),
+            "experience": recipe.experience,
+            "cookingtime": written_cooking_time(recipe),
         }
 
         if not to_return["group"]:

@@ -1,10 +1,10 @@
 {
 	"pack": {
-		"pack_format": 107,
+		"pack_format": 121,
 		"description": "Extensive Template [3.0.0] by Stoupy51",
 		"min_format": [
-			107,
-			1
+			121,
+			0
 		],
 		"max_format": [
 			9999,

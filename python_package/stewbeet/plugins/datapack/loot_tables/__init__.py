@@ -15,6 +15,7 @@ from ....core.cls.item import Item
 from ....core.cls.resource import Resource
 from ....core.constants import ITEMS_LOOT_FOLDER
 from ....core.utils.io import write_function
+from ....core.utils.loot_table import loot_function, loot_modifiers
 
 
 # Main entry point
@@ -50,10 +51,7 @@ def beet_default(ctx: Context):
 		}
 
 		# Set components
-		set_components: JsonDict = {
-			"function": "minecraft:set_components",
-			"components": {}
-		}
+		set_components: JsonDict = loot_function("minecraft:set_components", components={})
 		for k, v in obj.components.items():
 			if k.startswith("!"):
 				set_components["components"][f"!minecraft:{k[1:]}"] = {}
@@ -61,7 +59,7 @@ def beet_default(ctx: Context):
 				set_components["components"][f"minecraft:{k}"] = v
 
 		# Add functions
-		loot_table["pools"][0]["entries"][0]["functions"] = [set_components]
+		loot_table["pools"][0]["entries"][0].update(loot_modifiers([set_components]))
 
 		# Create loot table with beet
 		obj.loot_table.write(LootTable(stp.json_dump(loot_table, max_level = 10)))
@@ -94,10 +92,7 @@ def beet_default(ctx: Context):
 						"entries": [{
 							"type": "minecraft:loot_table",
 							"value": obj.loot_table,
-							"functions": [{
-								"function": "minecraft:set_count",
-								"count": result_count
-							}]
+							**loot_modifiers([loot_function("minecraft:set_count", count=result_count)])
 						}]
 					}]
 				}

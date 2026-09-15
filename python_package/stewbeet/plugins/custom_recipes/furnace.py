@@ -13,7 +13,7 @@ from ...core.__memory__ import Mem
 from ...core.cls.external_item import ExternalItem
 from ...core.cls.ingredients import Ingr
 from ...core.cls.item import Item
-from ...core.cls.recipe import BlastingRecipe, SmeltingRecipe, SmokingRecipe
+from ...core.cls.recipe import BlastingRecipe, SmeltingRecipe, SmokingRecipe, written_cooking_time
 from ...core.constants import CUSTOM_ITEM_VANILLA
 from ...core.utils.io import set_json_encoder, write_function
 from .. import sniffer
@@ -76,7 +76,7 @@ class FurnaceRecipeHandler:
             "ingredient": ingredient_vanilla,
             "result": result,
             "experience": recipe.experience,
-            "cookingtime": recipe.cookingtime
+            "cookingtime": written_cooking_time(recipe)
         }
         Mem.ctx.data["furnace_nbt_recipes"].recipes[path] = set_json_encoder(Recipe(json_file), max_level=-1)
 
