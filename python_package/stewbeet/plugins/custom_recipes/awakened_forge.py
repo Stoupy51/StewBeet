@@ -15,6 +15,7 @@ from ...core.cls.ingredients import Ingr
 from ...core.cls.item import Item
 from ...core.cls.recipe import AwakenedForgeRecipe
 from ...core.utils.io import set_json_encoder, write_function, write_load_file, write_versioned_function
+from ...core.utils.loot_table import loot_condition
 from .. import sniffer
 
 
@@ -127,18 +128,18 @@ tag @e[type=item,tag=stardust.temp] remove stardust.temp
 # Awakened Forge recipes
 execute as @e[type=item,predicate=stardust:awakened_forge_input] at @s run function stardust:forge/second
 """)
-            Mem.ctx.data["stardust"].predicates["awakened_forge_input"] = set_json_encoder(Predicate({
-                    "condition": "minecraft:entity_properties",
-                    "entity": "this",
-                    "predicate": {
-                        "nbt": """{Item:{components:{"minecraft:custom_data":{}}}}""",
-                        "stepping_on": {
-                            "block": {
-                                "blocks": "minecraft:glass"
-                            }
+            Mem.ctx.data["stardust"].predicates["awakened_forge_input"] = set_json_encoder(Predicate(loot_condition(
+                    "minecraft:entity_properties",
+                    entity="this",
+                    predicate={
+                    "nbt": """{Item:{components:{"minecraft:custom_data":{}}}}""",
+                    "stepping_on": {
+                        "block": {
+                            "blocks": "minecraft:glass"
                         }
                     }
-            }), max_level=-1)
+                }
+            )), max_level=-1)
 
             # Second function, check the structure and call the recipes
             write_function("stardust:forge/second", """

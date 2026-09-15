@@ -63,6 +63,7 @@ from .cls.recipe import (
 	SmithingTrimRecipe as SmithingTrimRecipe,
 	SmokingRecipe as SmokingRecipe,
 	StonecuttingRecipe as StonecuttingRecipe,
+	written_cooking_time as written_cooking_time,
 )
 from .cls.resource import (
 	Resource as Resource,
@@ -230,6 +231,13 @@ from .utils.io import (
 	write_versioned_function as write_versioned_function,
 )
 from .utils.loot_table import (
+	TYPED_LOOT_VERSION as TYPED_LOOT_VERSION,
+	advancement_conditions as advancement_conditions,
+	advancement_entity as advancement_entity,
+	float_score as float_score,
+	loot_condition as loot_condition,
+	loot_function as loot_function,
+	loot_modifiers as loot_modifiers,
 	result_count_to_suffix as result_count_to_suffix,
 )
 from .utils.sounds import (
@@ -245,5 +253,8 @@ from .utils.text_component import (
 	item_id_to_text_component as item_id_to_text_component,
 	iter_data_text_files as iter_data_text_files,
 	text_component_to_str as text_component_to_str,
+)
+from .utils.versions import (
+	minecraft_version_at_least as minecraft_version_at_least,
 )
 

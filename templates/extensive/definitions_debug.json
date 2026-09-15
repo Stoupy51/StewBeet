@@ -192,7 +192,7 @@
 		},
 		"no_silk_touch_drop": {
 			"type": "minecraft:fishing",
-			"pools": [{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/raw_steel","functions": [{"function": "minecraft:set_count","count": {"type": "minecraft:uniform","min": 4,"max": 9}}]}]}]
+			"pools": [{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/raw_steel","modifier": [{"type": "minecraft:set_count","count": {"type": "minecraft:uniform","min": 4,"max": 9}}]}]}]
 		}
 	},
 	"steel_helmet": {

@@ -16,7 +16,7 @@ from stouputils.typing import JsonDict
 from ..__memory__ import Mem
 from ..constants import EXTERNAL_RECIPES_FOLDER, ITEMS_LOOT_FOLDER
 from ..utils.io import set_json_encoder
-from ..utils.loot_table import result_count_to_suffix
+from ..utils.loot_table import loot_function, loot_modifiers, result_count_to_suffix
 from ..utils.text_component import item_id_to_name
 from .resource import Resource
 
@@ -281,7 +281,7 @@ class Ingr(dict[str, Any]):
 
 		# Add set_count function if needed
 		if (isinstance(result_count, int) and result_count > 1) or hasattr(result_count, "get"):
-			file["pools"][0]["entries"][0]["functions"] = [{"function": "minecraft:set_count","count": result_count}]
+			file["pools"][0]["entries"][0].update(loot_modifiers([loot_function("minecraft:set_count", count=result_count)]))
 
 		loot_table.write(set_json_encoder(LootTable(file), max_level=9))
 		return loot_table

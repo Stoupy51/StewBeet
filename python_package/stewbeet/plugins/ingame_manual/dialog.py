@@ -24,7 +24,7 @@ from beet.core.utils import TextComponent
 from PIL import Image
 from stouputils.typing import JsonDict
 
-from ...core import Mem, set_json_encoder, text_component_to_str, write_function, write_load_file
+from ...core import Mem, advancement_conditions, loot_condition, set_json_encoder, text_component_to_str, write_function, write_load_file
 from ...core.utils.text_component import item_id_to_text_component
 from ..auto.text_renders.config import ICON_ID
 from ..initialize.project_images import find_pack_png
@@ -204,9 +204,9 @@ class DialogEmitter:
 		if manual.config.use_dialog != 2 or "manual" in Mem.definitions:
 			write_load_file(f"\n# Opening manual detection\nscoreboard objectives add {ns}.open_manual minecraft.used:minecraft.written_book\n", prepend=True)
 			Mem.ctx.data[ns].advancements["technical/open_manual"] = set_json_encoder(Advancement({
-				"criteria": {"requirement": {"trigger": "minecraft:tick", "conditions": {"player": [
-					{"condition": "minecraft:entity_scores", "entity": "this", "scores": {f"{ns}.open_manual": {"min": 1}}}
-				]}}},
+				"criteria": {"requirement": {"trigger": "minecraft:tick", "conditions": {"player": advancement_conditions([
+					loot_condition("minecraft:entity_scores", entity="this", scores={f"{ns}.open_manual": {"min": 1}})
+				])}}},
 				"rewards": {"function": f"{ns}:advancements/open_manual"},
 			}), max_level=-1)
 			write_function(f"{ns}:advancements/open_manual", f"""

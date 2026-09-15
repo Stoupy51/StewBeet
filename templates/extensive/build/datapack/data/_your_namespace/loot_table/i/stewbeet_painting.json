@@ -6,9 +6,9 @@
 				{
 					"type": "minecraft:item",
 					"name": "minecraft:painting",
-					"functions": [
+					"modifier": [
 						{
-							"function": "minecraft:set_components",
+							"type": "minecraft:set_components",
 							"components": {
 								"minecraft:painting/variant": "_your_namespace:stewbeet_painting",
 								"minecraft:item_model": "_your_namespace:stewbeet_painting",

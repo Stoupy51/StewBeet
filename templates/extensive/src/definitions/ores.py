@@ -44,8 +44,8 @@ def main():
             "entries": [{
                 "type": "minecraft:loot_table",
                 "value": Item.from_id("raw_steel").loot_table,
-                "functions": [{
-                    "function": "minecraft:set_count",
+                "modifier": [{
+                    "type": "minecraft:set_count",
                     "count": {"type": "minecraft:uniform", "min": 4, "max": 9}
                 }]
             }]

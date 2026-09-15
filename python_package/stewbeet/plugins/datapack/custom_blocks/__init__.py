@@ -28,6 +28,7 @@ from ....core.constants import (
 	VANILLA_BLOCK,
 )
 from ....core.utils.io import set_json_encoder, write_function, write_load_file, write_tag, write_versioned_function
+from ....core.utils.loot_table import advancement_conditions, loot_condition, loot_function, loot_modifiers
 from ....dependencies.official_libs import OFFICIAL_LIBS, official_lib_used
 from ... import sniffer
 
@@ -62,12 +63,12 @@ def beet_default(ctx: Context):
 	# Predicates
 	FACING: list[str] = ["north", "east", "south", "west"]
 	for face in FACING:
-		pred: JsonDict = {"condition":"minecraft:location_check","predicate":{"block":{"state":{"facing":face}}}}
+		pred: JsonDict = loot_condition("minecraft:location_check", predicate={"block":{"state":{"facing":face}}})
 		ctx.data[ns].predicates[f"facing/{face}"] = set_json_encoder(Predicate(pred))
 
 	# Light level predicates (for dynamic brightness computation)
 	for level in range(1, 16):
-		light_pred: JsonDict = {"condition": "minecraft:location_check", "predicate": {"light": {"light": level}}}
+		light_pred: JsonDict = loot_condition("minecraft:location_check", predicate={"light": {"light": level}})
 		ctx.data[ns].predicates[f"light/{level}"] = set_json_encoder(Predicate(light_pred), max_level=-1)
 
 	# Get rotation function
@@ -148,15 +149,12 @@ execute store result entity @s brightness.sky int 1 run scoreboard players get #
 						"requirement": {
 							"trigger": "minecraft:item_used_on_block",
 							"conditions": {
-								"location": [
-									{
-										"condition": "minecraft:match_tool",
-										"predicate": {
-											"items": ["minecraft:item_frame"],
-											"predicates": {"minecraft:custom_data": {ns: {item: True}}}
-										}
-									}
-								]
+								"location": advancement_conditions([
+									loot_condition("minecraft:match_tool", predicate={
+										"items": ["minecraft:item_frame"],
+										"predicates": {"minecraft:custom_data": {ns: {item: True}}}
+									})
+								])
 							}
 						}
 					},
@@ -435,16 +433,14 @@ function {obj_block.functions.update_seed_model}
 										# pool.id may name any item, not necessarily one of our own definitions
 										"name" if "minecraft:" in pool.id else "value":
 											(Resource(LootTable, f"{ITEMS_LOOT_FOLDER}/{pool.id}") if ":" not in pool.id else pool.id),
-										**({} if not pool.fortune else {
-											"functions": [
-												{
-													"function": "minecraft:apply_bonus",
-													"enchantment": "minecraft:fortune",
-													"formula": "minecraft:binomial_with_bonus_count",
-													"parameters": pool.fortune,
-												},
-											]
-										})
+										**({} if not pool.fortune else loot_modifiers([
+											loot_function(
+												"minecraft:apply_bonus",
+												enchantment="minecraft:fortune",
+												formula="minecraft:binomial_with_bonus_count",
+												parameters=pool.fortune,
+											),
+										]))
 									}
 								]
 							}
@@ -725,11 +721,11 @@ function {obj_block.functions.is_fully_grown}
 	ctx.data[ns].block_tags[VANILLA_BLOCKS_TAG] = set_json_encoder(BlockTag({"values": listed_blocks}))
 
 	# Create predicate
-	pred = {"condition": "minecraft:location_check", "predicate": {"block": {"blocks": f"#{ns}:{VANILLA_BLOCKS_TAG}"}}}
+	pred = loot_condition("minecraft:location_check", predicate={"block": {"blocks": f"#{ns}:{VANILLA_BLOCKS_TAG}"}})
 	ctx.data[ns].predicates["check_vanilla_blocks"] = set_json_encoder(Predicate(pred))
 
 	# Create advanced predicate
-	advanced_predicate: JsonDict = {"condition": "minecraft:any_of", "terms": []}
+	advanced_predicate: JsonDict = loot_condition("minecraft:any_of", terms=[])
 	for block_id in unique_blocks_sorted:
 		# Replace ":" with "_" for the block name
 		block_underscore = block_id.replace(":","_")
@@ -740,21 +736,15 @@ function {obj_block.functions.is_fully_grown}
 
 		# Create the predicate for the block
 		if block_id != CUSTOM_BLOCK_ALTERNATIVE:
-			pred = {
-				"condition": "minecraft:entity_properties", "entity": "this",
-				"predicate": {
-					"nbt": f"{{Tags:[\"{ns}.vanilla.{block_underscore}\"]}}",
-					"location": { "block": { "blocks": block_id }}
-				}
-			}
+			pred = loot_condition("minecraft:entity_properties", entity="this", predicate={
+				"nbt": f"{{Tags:[\"{ns}.vanilla.{block_underscore}\"]}}",
+				"location": { "block": { "blocks": block_id }}
+			})
 		else:
-			pred = {
-				"condition": "minecraft:entity_properties", "entity": "this",
-				"predicate": {
-					"nbt": f"{{Tags:[\"{ns}.vanilla.{block_underscore}\"]}}",
-					"slots": {"contents":{"predicates":{"minecraft:custom_data": {ns: {"item_frame_destroy": True}}}}}
-				}
-			}
+			pred = loot_condition("minecraft:entity_properties", entity="this", predicate={
+				"nbt": f"{{Tags:[\"{ns}.vanilla.{block_underscore}\"]}}",
+				"slots": {"contents":{"predicates":{"minecraft:custom_data": {ns: {"item_frame_destroy": True}}}}}
+			})
 		advanced_predicate["terms"].append(pred)
 	ctx.data[ns].predicates["advanced_check_vanilla_blocks"] = set_json_encoder(Predicate(advanced_predicate))
 
@@ -868,14 +858,11 @@ execute as @n[type=item,nbt={{Item:{{id:"minecraft:item_frame"}}}},distance=..1]
 					"requirement": {
 						"trigger": "minecraft:placed_block",
 						"conditions": {
-							"location": [
-								{
-									"condition": "minecraft:location_check",
-									"predicate": {
-										"block": {"predicates": {"minecraft:custom_data": {ns: {item: True}}}}
-									}
-								}
-							]
+							"location": advancement_conditions([
+								loot_condition("minecraft:location_check", predicate={
+									"block": {"predicates": {"minecraft:custom_data": {ns: {item: True}}}}
+								})
+							])
 						}
 					}
 				},

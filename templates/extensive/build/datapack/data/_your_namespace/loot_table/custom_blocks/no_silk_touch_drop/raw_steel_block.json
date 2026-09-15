@@ -7,9 +7,9 @@
 				{
 					"type": "minecraft:loot_table",
 					"value": "_your_namespace:i/raw_steel",
-					"functions": [
+					"modifier": [
 						{
-							"function": "minecraft:set_count",
+							"type": "minecraft:set_count",
 							"count": {
 								"type": "minecraft:uniform",
 								"min": 4,
