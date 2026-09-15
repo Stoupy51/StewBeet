@@ -14,6 +14,7 @@ from stouputils.continuous_delivery.github import (
 	extract_github_commit_data as extract_github_commit_data,
 	get_github_commit_date as get_github_commit_date,
 	get_github_sha as get_github_sha,
+	get_pushed_head_sha as get_pushed_head_sha,
 	upload_github_assets as upload_github_assets,
 	upload_to_github as upload_to_github,
 	validate_github_config as validate_github_config,
