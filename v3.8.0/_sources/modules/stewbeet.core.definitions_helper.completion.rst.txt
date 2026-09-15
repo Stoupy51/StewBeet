@@ -1,0 +1,8 @@
+stewbeet.core.definitions\_helper.completion module
+===================================================
+
+.. automodule:: stewbeet.core.definitions_helper.completion
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

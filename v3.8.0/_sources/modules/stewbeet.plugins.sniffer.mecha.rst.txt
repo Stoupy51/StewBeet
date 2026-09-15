@@ -1,0 +1,17 @@
+stewbeet.plugins.sniffer.mecha package
+======================================
+
+.. automodule:: stewbeet.plugins.sniffer.mecha
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.plugins.sniffer.mecha.attribute
+   stewbeet.plugins.sniffer.mecha.silent

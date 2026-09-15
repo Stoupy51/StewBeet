@@ -1,0 +1,8 @@
+stewbeet.core.cls.item module
+=============================
+
+.. automodule:: stewbeet.core.cls.item
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
