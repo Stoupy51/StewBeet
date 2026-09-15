@@ -132,7 +132,7 @@ version = "0.0.1"
 requires-python = ">=3.14"
 dependencies = [
 	"smithed",
-	"stewbeet>=3.7.2",
+	"stewbeet>=3.8.0",
 ]
 
 [tool.uv]
