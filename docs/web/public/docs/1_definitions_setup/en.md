@@ -363,6 +363,7 @@ StewBeet exposes typed wrappers for specialized vanilla recipe systems so each m
 
 ```python
 # Blasting Furnace (faster smelting)
+# cookingtime is the duration inside the block itself, StewBeet writes the value each Minecraft version expects
 BlastingRecipe(cookingtime=100, experience=0.7, ...)
 
 # Smoking (for food)
