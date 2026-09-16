@@ -28,8 +28,8 @@ def beet_default(ctx: Context):
     blasting_data: JsonDict = ctx.data["furnace_nbt_recipes"].recipes[blasting_recipe].data
     assert blasting_data.get("type") == "minecraft:blasting", \
         "blasting recipe must have type minecraft:blasting"
-    assert blasting_data.get("cookingtime") == 100, \
-        "blasting cookingtime must be 100"
+    assert blasting_data.get("cookingtime") == 200, \
+        "blasting cookingtime must be written doubled, a blast furnace gets its speed from its fuel"
 
     # Smoking: beef -> smoked_food
     smoking_recipe: str = "vanilla_items/smoking__beef__tns_smoked_food"
@@ -38,6 +38,8 @@ def beet_default(ctx: Context):
     smoking_data: JsonDict = ctx.data["furnace_nbt_recipes"].recipes[smoking_recipe].data
     assert smoking_data.get("type") == "minecraft:smoking", \
         "smoking recipe must have type minecraft:smoking"
+    assert smoking_data.get("cookingtime") == 200, \
+        "smoking cookingtime must be written doubled, a smoker gets its speed from its fuel"
 
     # ── dispatch mcfunction files
     assert f"{fnbt}/smelting_recipes" in ctx.data.functions, \

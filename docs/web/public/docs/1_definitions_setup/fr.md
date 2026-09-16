@@ -362,6 +362,7 @@ StewBeet fournit des wrappers typés pour les mécaniques de recipe vanilla spé
 
 ```python
 # Haut fourneau (cuisson plus rapide)
+# cookingtime est la durée dans le bloc lui-même, StewBeet écrit la valeur attendue par chaque version de Minecraft
 BlastingRecipe(cookingtime=100, experience=0.7, ...)
 
 # Fumoir (pour la nourriture)
