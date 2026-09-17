@@ -173,7 +173,7 @@ scoreboard players set #max_height smart_ore_generation.data {self.maximum_heigh
 		if remaining_veins > 0:
 			content += (
 				"execute if score #dimension smart_ore_generation.data matches 0.. if predicate "
-				f"{stp.json_dump(loot_condition('minecraft:random_chance', chance=round(remaining_veins, 5)), max_level=0)} run function {vein_path}\n"
+				f"{stp.json_dump(loot_condition('minecraft:random_chance', chance=round(remaining_veins, 5)), max_level=0).strip()} run function {vein_path}\n"
 			)
 
 		# Write file
