@@ -1,0 +1,19 @@
+stewbeet.plugins.spyglass package
+=================================
+
+.. automodule:: stewbeet.plugins.spyglass
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.plugins.spyglass.config
+   stewbeet.plugins.spyglass.confirm
+   stewbeet.plugins.spyglass.detect
+   stewbeet.plugins.spyglass.silent

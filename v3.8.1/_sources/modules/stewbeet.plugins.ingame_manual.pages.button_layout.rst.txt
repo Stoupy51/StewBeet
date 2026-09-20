@@ -1,0 +1,8 @@
+stewbeet.plugins.ingame\_manual.pages.button\_layout module
+===========================================================
+
+.. automodule:: stewbeet.plugins.ingame_manual.pages.button_layout
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

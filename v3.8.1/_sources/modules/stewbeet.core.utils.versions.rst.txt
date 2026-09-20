@@ -1,0 +1,8 @@
+stewbeet.core.utils.versions module
+===================================
+
+.. automodule:: stewbeet.core.utils.versions
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

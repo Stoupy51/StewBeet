@@ -1,0 +1,14 @@
+stewbeet.plugins.resource\_pack namespace
+=========================================
+
+.. py:module:: stewbeet.plugins.resource_pack
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.plugins.resource_pack.check_power_of_2
+   stewbeet.plugins.resource_pack.item_models
+   stewbeet.plugins.resource_pack.sounds
