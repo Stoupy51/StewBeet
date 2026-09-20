@@ -19,7 +19,7 @@ from collections.abc import Iterable
 from typing import TYPE_CHECKING, cast
 
 import stouputils as stp
-from beet import Model
+from beet import Atlas, Model
 from PIL import Image
 from stouputils.typing import JsonDict
 
@@ -190,7 +190,8 @@ def run_model_resolver(for_model_resolver: dict[str, str]) -> None:
 
 	stp.debug(f"Generating iso renders for {len(for_model_resolver)} items, this may take a while...")
 	with stp.MeasureTime(message="Generated iso renders for all items"):
-		from model_resolver.render import Render as ModelResolverRender
+		from model_resolver.render import AtlasDict, Render as ModelResolverRender
+		from model_resolver.utils import resolve_key
 
 		class FastPaletteRender(ModelResolverRender):
 			""" Same rendering as model_resolver, but with a fast ``apply_palette``.
@@ -200,6 +201,18 @@ def run_model_resolver(for_model_resolver: dict[str, str]) -> None:
 			the color mapping once (same column-major first-match semantics) and remaps
 			all pixels in a single pass, producing pixel-identical output.
 			"""
+
+			def resolve_altas(self, key: str, atlas: Atlas) -> None:
+				"""Resolve atlas sources whose palette assets are available."""
+				for source in atlas.data["sources"]:
+					source = cast(AtlasDict, source)
+					if (
+						resolve_key(source["type"]) == "minecraft:paletted_permutations"
+						and resolve_key(source["palette_key"]) not in self.getter.assets.textures
+					):
+						stp.debug(f"Skipping atlas source with missing palette '{source['palette_key']}'")
+						continue
+					super().resolve_altas(key, Atlas({"sources": [source]}))
 
 			def apply_palette(self, texture: Image.Image, palette: Image.Image, color_palette: Image.Image) -> Image.Image:
 				texture = texture.convert("RGBA")
