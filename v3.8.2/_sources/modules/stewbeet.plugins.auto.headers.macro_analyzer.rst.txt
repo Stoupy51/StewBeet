@@ -1,0 +1,8 @@
+stewbeet.plugins.auto.headers.macro\_analyzer module
+====================================================
+
+.. automodule:: stewbeet.plugins.auto.headers.macro_analyzer
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

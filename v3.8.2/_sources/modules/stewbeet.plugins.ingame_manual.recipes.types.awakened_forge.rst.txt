@@ -1,0 +1,8 @@
+stewbeet.plugins.ingame\_manual.recipes.types.awakened\_forge module
+====================================================================
+
+.. automodule:: stewbeet.plugins.ingame_manual.recipes.types.awakened_forge
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

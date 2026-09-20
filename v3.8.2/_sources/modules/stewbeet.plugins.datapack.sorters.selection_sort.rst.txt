@@ -1,0 +1,8 @@
+stewbeet.plugins.datapack.sorters.selection\_sort module
+========================================================
+
+.. automodule:: stewbeet.plugins.datapack.sorters.selection_sort
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
