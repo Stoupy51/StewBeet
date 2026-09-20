@@ -10,7 +10,7 @@ __lazy_modules__ = ALWAYS_LAZY
 from typing import Any, cast
 
 import stouputils as stp
-from beet import LootTable
+from beet import LootTable, LootTableTag
 from stouputils.typing import JsonDict
 
 from ..__memory__ import Mem
@@ -18,6 +18,7 @@ from ..constants import EXTERNAL_RECIPES_FOLDER, ITEMS_LOOT_FOLDER
 from ..utils.io import set_json_encoder
 from ..utils.loot_table import loot_function, loot_modifiers, result_count_to_suffix
 from ..utils.text_component import item_id_to_name
+from ..utils.versions import minecraft_version_at_least
 from .resource import Resource
 
 # Recipes constants
@@ -275,7 +276,15 @@ class Ingr(dict[str, Any]):
 			from .external_item import ExternalItem
 			obj = ExternalItem.from_id(f"{namespace}:{item}")
 			assert obj.loot_table is not None, f"External item '{namespace}:{item}' has no loot table defined, please define one to use it in recipes."
-			file: JsonDict = {"pools":[{"rolls":1,"entries":[{"type":"minecraft:loot_table","value": obj.loot_table}] }] }
+			value: str = obj.loot_table
+
+			# A tag resolves lazily, so an absent datapack leaves it empty instead of leaving the registry unbound
+			if minecraft_version_at_least((26, 3)):
+				tag: Resource[LootTableTag] = Resource(LootTableTag, f"{EXTERNAL_RECIPES_FOLDER}/{namespace}/{item}")
+				tag.write(set_json_encoder(LootTableTag({"values": [{"id": obj.loot_table, "required": False}]}), max_level=2))
+				value = f"#{tag}"
+
+			file: JsonDict = {"pools":[{"rolls":1,"entries":[{"type":"minecraft:loot_table","value": value}] }] }
 		else:
 			file: JsonDict = {"pools":[{"rolls":1,"entries":[{"type":"minecraft:item","name":f"{namespace}:{item}"}] }] }
 
