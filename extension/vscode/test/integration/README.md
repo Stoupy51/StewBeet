@@ -28,6 +28,14 @@ A fixture with four blocks and three generated files answers none of the questio
 
 `SB_GUARD` lists the files a run may type into. Each is snapshotted before launch and written back afterwards, whatever the run did, because VS Code saves a dirty document when the window closes.
 
+## Every diagnostic on a pack
+
+```sh
+SB_TESTS=sweep SB_WORKSPACE=d:/advanced_desktop/StoupGun node test/integration/run.js
+```
+
+Opens every Python file under `src/` that could hold a block and lists each diagnostic the relay puts on it in `result.json`, with the line it sits on. A pack that builds cleanly has few real mistakes, so most of the list is the extension misreading its input. `SB_FILES` narrows the run to a comma-separated list of paths relative to the workspace. A whole pack takes about forty minutes.
+
 ## Why it exists
 
 It is the regression guard for the assumption the whole design rests on: **Spyglass's document selector carries no scheme filter**, so it attaches to the virtual documents this extension serves. If a future Spyglass release adds one, every provider silently stops answering and nothing else notices.

@@ -17,10 +17,10 @@
 // back is translated with the table the projection returns.
 
 const vscode = require("vscode");
-const { findBlockOffsets, findInterpolationSpans, findBlankedOffsets } = require("./blocks");
+const { findBlockOffsets, findInterpolationSpans, findBlankedOffsets, findContinuations } = require("./blocks");
 const { projectBolt, commandsOf, commandBlocks } = require("./boltlines");
 const {
-  SCHEME, project, knownValues, toVirtual, toPython, explainedByMask, crossesSubstitution,
+  SCHEME, project, knownValues, toVirtual, toPython, explainedByMask, outsideContent, inTrailingWhitespace, crossesSubstitution,
   virtualPath, blockIndexFromPath,
 } = require("./projection");
 const navigation = require("./navigation");
@@ -184,7 +184,7 @@ async function projectionFor(doc, blockIndex) {
     })
     : project(
       text, block.contentStart, block.contentEnd,
-      findInterpolationSpans(text, block), build.generated, findBlankedOffsets(text, block), build.known);
+      findInterpolationSpans(text, block), build.generated, findBlankedOffsets(text, block), build.known, findContinuations(block));
   const entry = {
     version: doc.version, text: projected, table, masked,
     contentStart: doc.positionAt(block.contentStart), contentEnd: doc.positionAt(block.contentEnd),
@@ -234,7 +234,7 @@ async function buildViewOf(doc, scan) {
 function learn(text, blocks, generated) {
   return knownValues(blocks.map(block => project(
     text, block.contentStart, block.contentEnd, findInterpolationSpans(text, block), generated,
-    findBlankedOffsets(text, block)).observed));
+    findBlankedOffsets(text, block), null, findContinuations(block)).observed));
 }
 
 /**
@@ -599,27 +599,12 @@ async function diagnosticsFor(doc, { wake: waking }) {
       .map(({ uri, projection }) => wake(uri, projection.text)));
   }
 
-  /**
-   * Whether a position sits in the padding rather than in the block's own commands.
-   *
-   * Everything outside the block becomes a space, and a datapack parser reads the run of spaces
-   * after a command as an argument that never arrived: an inline `write_function(..., "say hi")`
-   * earns an "expected a space" on the `""")` that closed it. Spyglass says the same about a real
-   * file whose command has trailing whitespace, so this is its own view of the padding rather than
-   * anything about the author's line, and nothing outside the block is theirs to answer for.
-   *
-   * @param {vscode.Position} position
-   * @param {{ contentStart: vscode.Position, contentEnd: vscode.Position }} projection
-   */
-  function outsideBlock(position, projection) {
-    return position.isBefore(projection.contentStart) || !position.isBefore(projection.contentEnd);
-  }
-
   const moved = [];
   for (const { uri, projection } of projected) {
     for (const diagnostic of vscode.languages.getDiagnostics(uri)) {
       if (explainedByMask(diagnostic.range.start, projection.masked)) continue;
-      if (outsideBlock(diagnostic.range.start, projection)) continue;
+      if (outsideContent(diagnostic.range.start, projection.table, projection.contentStart, projection.contentEnd)) continue;
+      if (inTrailingWhitespace(projection.text, diagnostic.range.start)) continue;
       const start = toPython(diagnostic.range.start, projection.table);
       const end = toPython(diagnostic.range.end, projection.table);
       const copy = new vscode.Diagnostic(

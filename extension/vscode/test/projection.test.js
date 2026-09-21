@@ -4,9 +4,9 @@
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
 
-const { findBlockOffsets, findInterpolationSpans, findEscapes, findBlankedOffsets } = require("../src/blocks");
+const { findBlockOffsets, findInterpolationSpans, findEscapes, findBlankedOffsets, findContinuations } = require("../src/blocks");
 const {
-  project, resolveLine, knownValues, toVirtual, toPython, explainedByMask, crossesSubstitution,
+  project, resolveLine, knownValues, toVirtual, toPython, explainedByMask, outsideContent, inTrailingWhitespace, crossesSubstitution,
   virtualPath, blockIndexFromPath, sanitizeName,
 } = require("../src/projection");
 
@@ -377,6 +377,23 @@ test("two spans on one line accumulate their deltas", () => {
   }
 });
 
+// Padding after a command
+
+test("the padding after a resolved interpolation that shrank is still padding", () => {
+  // `{ns}` becomes `mgs`, one column narrower, so the padding starts left of the Python quote.
+  const text = "lines: list[str] = [f'scoreboard players set #li {ns}.data 0']\nwrite_function('p', '\\n'.join(lines))\n";
+  const [block] = findBlockOffsets(text);
+  const generated = new Map([[0, "scoreboard players set #li mgs.data 0"]]);
+  const { text: virtual, table } = project(text, block.contentStart, block.contentEnd, findInterpolationSpans(text, block), generated);
+  const lineOf = (/** @type {number} */ offset) => ({ line: 0, character: offset });
+
+  const padding = lineOf(virtual.trimEnd().length);
+  assert.ok(outsideContent(padding, table, lineOf(block.contentStart), lineOf(block.contentEnd)),
+    "the first space after the command belongs to Python, not to the author");
+  const lastDigit = lineOf(virtual.trimEnd().length - 1);
+  assert.ok(!outsideContent(lastDigit, table, lineOf(block.contentStart), lineOf(block.contentEnd)));
+});
+
 test("crossesSubstitution catches a range covering a substituted span", () => {
   assert.equal(crossesSubstitution(at(9), at(20), TABLE), true);
   assert.equal(crossesSubstitution(at(0), at(30), TABLE), true);
@@ -470,8 +487,59 @@ test("a backslash inside an interpolation is the Python's own", () => {
     "the mask covers an interpolation already, and its Python is not the command's");
 });
 
+test("literals joined across a line break reach the parser as one continued command", () => {
+  const source = "lines.append(\n\tf'tellraw {target} '\n\tf'[\"hi\"]'\n)\nwrite_function('ns:p', '\\n'.join(lines))\n";
+  const [block] = findBlockOffsets(source);
+  const lines = project(source, block.contentStart, block.contentEnd, findInterpolationSpans(source, block), null,
+    findBlankedOffsets(source, block), null, findContinuations(block)).text.split("\n");
+  assert.equal(lines[1].trimEnd(), "   tellraw ________ \\", "the closing quote becomes the continuation");
+  assert.equal(lines[2].trimEnd(), '   ["hi"]', "the prefix and quotes of the next literal are Python");
+});
+
+test("the Python between literals joined by + is masked like an interpolation", () => {
+  const source = "write_function('ns:p', '$tellraw @s [\"\",' + TAG + ',\"$(name)\"]')";
+  const [block] = findBlockOffsets(source);
+  const text = project(source, block.contentStart, block.contentEnd, findInterpolationSpans(source, block)).text;
+  assert.equal(text.trim(), '$tellraw @s ["",___________,"$(name)"]');
+});
+
+test("a macro line whose argument hides in an interpolation shows one in its mask", () => {
+  const source = 'write_function(p, f"$data modify storage ns:temp dialog.actions append value {b}")';
+  const [block] = findBlockOffsets(source);
+  const { text, table, masked } = project(source, block.contentStart, block.contentEnd, findInterpolationSpans(source, block));
+  assert.ok(text.includes("append value $(_)"), `a macro line needs an argument somewhere, got ${JSON.stringify(text)}`);
+  assert.deepEqual(table.get(0)?.map(s => s.virtualWidth - s.pythonWidth), [1], "`{b}` is one column too narrow, which the table accounts for");
+  assert.equal(masked.get(0)?.length, 1, "and stays masked, so nothing said about it is reported");
+});
+
+test("a macro line with an argument of its own keeps its masks", () => {
+  const source = 'write_function(p, f"$say $(name) from {team}")';
+  const [block] = findBlockOffsets(source);
+  const { text } = project(source, block.contentStart, block.contentEnd, findInterpolationSpans(source, block));
+  assert.ok(text.includes("$say $(name) from ______"), JSON.stringify(text));
+});
+
+test("a backslash ending a line is kept as the datapack's own line continuation", () => {
+  // Python joins the two lines, and a parser handed `type:"x",` alone reads it as an unknown command.
+  const source = 'write_function(p, f"""$data modify storage ns:temp dialog set value {{\\\ntype:"minecraft:multi_action",\\\r\ntitle:$(title)\\\n}}""")';
+  const [block] = findBlockOffsets(source);
+  assert.deepEqual(findEscapes(source, block), []);
+  const projected = projectBlanked(source).split(/\r?\n/).map(line => line.trimEnd());
+  assert.ok(projected[0].endsWith("{ \\"), projected[0]);
+  assert.equal(projected[1], 'type:"minecraft:multi_action",\\');
+});
+
 test("a triple quoted block, whose newlines are real, is left alone", () => {
   const source = 'write_function(p, """\nsay a\nsay b\n""")';
   const [block] = findBlockOffsets(source);
   assert.deepEqual(findEscapes(source, block), []);
+});
+
+test("the whitespace a trailing escape leaves after a command is not a missing argument", () => {
+  const source = 'content += f"tag @a remove x\\n"';
+  const [block] = findBlockOffsets(source + "\nwrite_function('ns:p', content)");
+  const text = project(source, block.contentStart, block.contentEnd, [], null, findBlankedOffsets(source, block)).text;
+  assert.equal(text.trimEnd(), "             tag @a remove x");
+  assert.ok(inTrailingWhitespace(text, { line: 0, character: "             tag @a remove x".length }));
+  assert.ok(!inTrailingWhitespace(text, { line: 0, character: "             tag @a remove".length }));
 });

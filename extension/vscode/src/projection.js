@@ -40,6 +40,8 @@ const MASK = "_";
  *   offsets either way.
  * @param {Map<string, string> | null} [known]  Expression text to its value, from knownValues.
  *   Used only where the line's own build text resolves nothing.
+ * @param {number[]} [continuations]  Offsets projected as a backslash, from findContinuations,
+ *   so two literals Python joins across a line break are joined by the parser too.
  * @returns {{ text: string, table: Map<number, { start:number, pythonWidth:number, virtualWidth:number }[]>, masked: Map<number, { start:number, end:number }[]>, observed: Map<string, string | null> }}
  *   `masked` holds, per line, the virtual columns still covered by a `MASK` run. Nothing a
  *   parser says about those columns is about the author's text, so a consumer reporting
@@ -47,7 +49,7 @@ const MASK = "_";
  *   `observed` is what each expression resolved to here, `null` where it resolved to two
  *   different values, and is what knownValues merges into the next projection's `known`.
  */
-function project(text, start, end, interpolationSpans = [], generatedLines = null, blanked = [], known = null) {
+function project(text, start, end, interpolationSpans = [], generatedLines = null, blanked = [], known = null, continuations = []) {
   /** @type {Map<number, { start:number, pythonWidth:number, virtualWidth:number }[]>} */
   const table = new Map();
   /** @type {Map<number, { start:number, end:number }[]>} */
@@ -55,7 +57,11 @@ function project(text, start, end, interpolationSpans = [], generatedLines = nul
   /** @type {Map<string, string | null>} */
   const observed = new Map();
   const pieces = text.split("\n");
-  const escaped = new Set(blanked);
+  /** What replaces a character that is Python spelling. @type {Map<number, string>} */
+  const replaced = new Map([
+    ...blanked.map(offset => /** @type {[number, string]} */ ([offset, " "])),
+    ...continuations.map(offset => /** @type {[number, string]} */ ([offset, "\\"])),
+  ]);
   const projected = [];
   let lineStart = 0;
   let spanIdx = 0;
@@ -72,7 +78,7 @@ function project(text, start, end, interpolationSpans = [], generatedLines = nul
       touching.push(interpolationSpans[k]);
     }
 
-    const maskedLine = maskLine(body, lineStart, start, end, touching, escaped);
+    const maskedLine = maskLine(body, lineStart, start, end, touching, replaced);
     const present = clipToLine(touching, lineStart, lineEnd, start, end);
     const contained = containedSpans(touching, lineStart, lineEnd, start, end);
     const substituted = present.length === 0 ? maskedLine : substitute(
@@ -106,13 +112,15 @@ function expressionsOf(body, contained) {
  * @param {number} start
  * @param {number} end
  * @param {{ start:number, end:number }[]} spans  Only those touching this line.
+ * @param {Map<number, string>} [replaced]  Offsets whose character is replaced, by what.
  */
-function maskLine(body, lineStart, start, end, spans, escaped = new Set()) {
+function maskLine(body, lineStart, start, end, spans, replaced = new Map()) {
   let out = "";
   for (let i = 0; i < body.length; i++) {
     const offset = lineStart + i;
     if (offset < start || offset >= end) { out += " "; continue; }
-    if (escaped.has(offset)) { out += " "; continue; }
+    const replacement = replaced.get(offset);
+    if (replacement !== undefined) { out += replacement; continue; }
     out += spans.some(s => offset >= s.start && offset < s.end) ? MASK : body[i];
   }
   return out;
@@ -173,28 +181,31 @@ function substitute(masked, generated, spans, present, line, table, maskedRuns, 
   const byStart = new Map(resolved.map(entry => [entry.start, entry]));
   if (learning) note(learning, resolved);
 
+  const values = present.map(span => byStart.get(span.start)?.value ?? borrowed(learning, span.start));
+  // A macro line whose `$(...)` can only hide in what a mask stands for gets one there, since a parser shown none reports the line.
+  let argumentOwed = /^[ \t]*\$/.test(masked) && !masked.includes("$(") && !values.some(value => value?.includes("$("));
+
   const changed = [];
   const stillMasked = [];
   let out = "";
   let cursor = 0;
   let delta = 0;
 
-  for (const span of present) {
+  for (const [index, span] of present.entries()) {
     out += masked.slice(cursor, span.start);
     cursor = span.end;
+    const width = span.end - span.start;
 
-    const own = byStart.get(span.start);
-    const value = own ? own.value : borrowed(learning, span.start);
+    let value = values[index];
     if (value === undefined) {
-      // Still a run of MASK. Its virtual columns are recorded so a consumer can tell that
+      // Still a mask. Its virtual columns are recorded so a consumer can tell that
       // anything the parser says about them is about our placeholder, not the author's text.
-      out += masked.slice(span.start, span.end);
-      stillMasked.push({ start: span.start + delta, end: span.end + delta });
-      continue;
+      value = argumentOwed ? `$(${MASK.repeat(Math.max(1, width - 3))})` : masked.slice(span.start, span.end);
+      argumentOwed = false;
+      stillMasked.push({ start: span.start + delta, end: span.start + delta + value.length });
     }
 
     out += value;
-    const width = span.end - span.start;
     if (value.length !== width) {
       changed.push({ start: span.start, pythonWidth: width, virtualWidth: value.length });
     }
@@ -375,6 +386,49 @@ function explainedByMask(start, masked) {
 }
 
 /**
+ * Whether a diagnostic sits in the padding rather than in the block's own commands.
+ *
+ * Everything outside the block becomes a space, and a datapack parser reads the run of spaces
+ * after a command as an argument that never arrived: an inline `write_function(..., "say hi")`
+ * earns an "expected a space" on the `")` that closed it. Spyglass says the same about a real
+ * file whose command has trailing whitespace, so nothing outside the block is the author's to answer for.
+ *
+ * The comparison happens in Python columns, since the content bounds are Python positions.
+ * `{ns}` resolving to `mgs` moves the padding one column left of the closing quote, and a virtual column compared as it is would call that padding a command.
+ *
+ * @param {{ line:number, character:number }} start  Where the diagnostic points, in virtual columns.
+ * @param {Map<number, { start:number, pythonWidth:number, virtualWidth:number }[]>} table
+ * @param {{ line:number, character:number }} contentStart  First character of the commands, in Python columns.
+ * @param {{ line:number, character:number }} contentEnd  Just past the last one, in Python columns.
+ *
+ * >>> outsideContent({ line: 0, character: 5 }, new Map([[0, [{ start: 0, pythonWidth: 4, virtualWidth: 3 }]]]), { line: 0, character: 0 }, { line: 0, character: 6 })
+ * true
+ */
+function outsideContent(start, table, contentStart, contentEnd) {
+  const { line, character } = toPython(start, table);
+  const before = line < contentStart.line || (line === contentStart.line && character < contentStart.character);
+  const after = line > contentEnd.line || (line === contentEnd.line && character >= contentEnd.character);
+  return before || after;
+}
+
+/**
+ * Whether a diagnostic points at the whitespace ending its line.
+ *
+ * Minecraft trims every function line, so trailing whitespace is never a missing argument.
+ * A blanked escape makes some: `f"tag @a remove x\n"` reaches the parser as `tag @a remove x  `.
+ *
+ * @param {string} text  The virtual document.
+ * @param {{ line:number, character:number }} start  Where the diagnostic points, in virtual columns.
+ *
+ * >>> inTrailingWhitespace("say hi  \nsay", { line: 0, character: 6 })
+ * true
+ */
+function inTrailingWhitespace(text, start) {
+  const line = text.split("\n")[start.line] ?? "";
+  return line.slice(start.character).trim() === "";
+}
+
+/**
  * Whether a virtual range overlaps a substituted span, so no honest Python range exists for it.
  * An edit carrying such a range is dropped rather than translated: it would overwrite
  * characters the author never asked to replace.
@@ -444,6 +498,8 @@ module.exports = {
   toVirtual,
   toPython,
   explainedByMask,
+  outsideContent,
+  inTrailingWhitespace,
   crossesSubstitution,
   sanitizeName,
   virtualPath,

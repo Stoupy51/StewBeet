@@ -443,3 +443,116 @@ test("a Function has no extend of its own, so nothing claims one", () => {
   assert.deepEqual(commandsOf('ctx.data.functions["ns:a"].extend(["say one"])'), []);
   assert.deepEqual(commandsOf('items.extend(["not a command"])'), []);
 });
+
+// Commands handed over by .extend(...)
+
+test("every entry of an extend onto a consumed list is a block", () => {
+  const text = [
+    "lines: list[str] = [f'scoreboard players set #li {ns}.data 0']",
+    "# Line 0",
+    "lines.extend([",
+    "\tf'scoreboard players add #li {ns}.data 1',",
+    "\tf'function {ns}:v{version}/next',",
+    "])",
+    "lines.append(",
+    "\tf'say appended'",
+    ")",
+    'write_versioned_function("pap/annotate", "\\n".join(lines))',
+  ].join("\n");
+  assert.deepEqual(blockTexts(text), [
+    "f'scoreboard players set #li {ns}.data 0'",
+    "f'scoreboard players add #li {ns}.data 1'",
+    "f'function {ns}:v{version}/next'",
+    "f'say appended'",
+  ]);
+  for (const block of findBlockOffsets(text)) assert.equal(lineOf(text, block.callStart), 9);
+});
+
+test("an extend onto a list nothing writes is not a block", () => {
+  assert.deepEqual(blockTexts('notes = []\nnotes.extend(["say hi"])\n'), []);
+});
+
+// Commands returned from a function annotated McFunction
+
+test("a string returned from a function annotated McFunction is a block", () => {
+  const text = 'class G:\n    @staticmethod\n    def regen(ns: str) -> McFunction:\n        """ Doc. """\n        return f"""\ngamerule natural_health_regeneration false\n""".strip()\n';
+  const blocks = findBlockOffsets(text);
+  assert.deepEqual(blocks.map(b => text.slice(b.start, b.end)), ['f"""\ngamerule natural_health_regeneration false\n"""']);
+  assert.equal(text.slice(blocks[0].callStart, blocks[0].callStart + 6), "return", "the lens line is the return");
+});
+
+test("a name returned from a function annotated McFunction carries its blocks", () => {
+  const text = 'def build() -> McFunction:\n\tcontent = "say a"\n\tcontent += "say b"\n\treturn content\n';
+  assert.deepEqual(blockTexts(text), ['"say a"', '"say b"']);
+});
+
+test("a joined list returned from a function annotated McFunction carries its blocks", () => {
+  const text = 'def build() -> McFunction:\n\tlines = ["say a"]\n\tlines.extend(["say b"])\n\treturn "\\n".join(lines)\n';
+  assert.deepEqual(blockTexts(text), ['"say a"', '"say b"']);
+});
+
+test("a multi-line signature still returns McFunction", () => {
+  const text = 'def build(\n\tns: str,\n\tversion: str,\n) -> McFunction:\n\treturn f"say {ns}"\n';
+  assert.deepEqual(blockTexts(text), ['f"say {ns}"']);
+});
+
+test("only the returns of the function annotated McFunction count", () => {
+  const text = [
+    "def build() -> McFunction:",
+    "\tdef helper() -> str:",
+    '\t\treturn "not a command"',
+    '\treturn "say outer"',
+    "def other() -> str:",
+    '\treturn "plain"',
+    "def untyped():",
+    '\treturn "plain too"',
+  ].join("\n");
+  assert.deepEqual(blockTexts(text), ['"say outer"']);
+});
+
+test("a return inside a block's commands or a docstring is not Python", () => {
+  const text = [
+    "def build() -> McFunction:",
+    '\t""" Example:',
+    "\tdef fake() -> McFunction:",
+    '\t\treturn "not real"',
+    '\t"""',
+    '\twrite_function("ns:x", """',
+    '\treturn "the return command"',
+    '""")',
+    '\treturn "say real"',
+  ].join("\n");
+  assert.deepEqual(blockTexts(text), ['"""\n\treturn "the return command"\n"""', '"say real"']);
+});
+
+// Literals Python concatenates
+
+test("literals continued on the next line inside brackets are one block", () => {
+  const text = [
+    "lines.append(",
+    "\tf'tellraw {target} '",
+    "\tf'[\"  \",{{\"text\":\"Default\"}}]'",
+    ")",
+    'write_function("ns:p", "\\n".join(lines))',
+  ].join("\n");
+  const blocks = findBlockOffsets(text);
+  assert.equal(blocks.length, 1, "Python hands one command over, not two");
+  assert.deepEqual(blocks[0].parts?.map(p => p.join), [undefined, "line"]);
+});
+
+test("a literal on the next line after a statement is not a continuation", () => {
+  const text = 'content = "say a"\n"not joined"\nwrite_function("ns:p", content)';
+  assert.deepEqual(blockTexts(text), ['"say a"']);
+});
+
+test("literals joined by + around a name are one block", () => {
+  const text = "write_function(\"ns:p\", '$tellraw @s [\"\",' + MGS_TAG + ',{\"text\":\"$(name)\"}]')";
+  const [block] = findBlockOffsets(text);
+  assert.equal(text.slice(block.start, block.end), "'$tellraw @s [\"\",' + MGS_TAG + ',{\"text\":\"$(name)\"}]'");
+  assert.deepEqual(block.parts?.map(p => p.join), [undefined, "plus"]);
+});
+
+test("a + ending on something other than a literal ends the block at the literal", () => {
+  const text = 'write_function("ns:p", "say " + name)';
+  assert.deepEqual(blockTexts(text), ['"say "']);
+});
