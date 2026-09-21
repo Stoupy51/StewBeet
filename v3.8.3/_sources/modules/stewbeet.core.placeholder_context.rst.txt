@@ -1,0 +1,8 @@
+stewbeet.core.placeholder\_context module
+=========================================
+
+.. automodule:: stewbeet.core.placeholder_context
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

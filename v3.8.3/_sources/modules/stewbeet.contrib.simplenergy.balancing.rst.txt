@@ -1,0 +1,8 @@
+stewbeet.contrib.simplenergy.balancing module
+=============================================
+
+.. automodule:: stewbeet.contrib.simplenergy.balancing
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

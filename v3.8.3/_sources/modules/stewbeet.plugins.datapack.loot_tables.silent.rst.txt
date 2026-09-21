@@ -1,0 +1,8 @@
+stewbeet.plugins.datapack.loot\_tables.silent module
+====================================================
+
+.. automodule:: stewbeet.plugins.datapack.loot_tables.silent
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

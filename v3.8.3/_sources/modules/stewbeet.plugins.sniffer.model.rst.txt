@@ -1,0 +1,8 @@
+stewbeet.plugins.sniffer.model module
+=====================================
+
+.. automodule:: stewbeet.plugins.sniffer.model
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

@@ -1,0 +1,8 @@
+stewbeet.contrib.simplenergy.energy\_lib\_calls module
+======================================================
+
+.. automodule:: stewbeet.contrib.simplenergy.energy_lib_calls
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
