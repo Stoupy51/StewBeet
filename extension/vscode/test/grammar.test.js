@@ -129,7 +129,7 @@ const COMMENT_PATTERNS = () => [
   ["inline", embedded.repository.comments_inline.patterns.find(p => p.match)],
 ];
 
-test("comment patterns stop before the quote closing an inline write_* call", () => {
+test("the inline comment pattern stops before the quote closing an inline write_* call", () => {
   const cases = [
     // [mcfunction content + python tail, what the comment must cover]
     ['# Hijacked map tick (no-op placeholder)")', "# Hijacked map tick (no-op placeholder)"],
@@ -140,15 +140,25 @@ test("comment patterns stop before the quote closing an inline write_* call", ()
     // Quotes inside the comment must not be mistaken for the closing quote.
     [`# Override with 'name' or "name" field")`, `# Override with 'name' or "name" field`],
   ];
-  for (const [name, pattern] of COMMENT_PATTERNS()) {
-    assert.ok(pattern, `${name} comment pattern not found`);
-    const re = new RegExp(pattern.match);
-    for (const [line, expected] of cases) {
-      const m = line.match(re);
-      assert.ok(m, `${name}: no match in ${JSON.stringify(line)}`);
-      assert.equal(m[0], expected, `${name}: wrong end in ${JSON.stringify(line)}`);
-    }
+  const re = new RegExp(COMMENT_PATTERNS()[1][1].match);
+  for (const [line, expected] of cases) {
+    const m = line.match(re);
+    assert.ok(m, `no match in ${JSON.stringify(line)}`);
+    assert.equal(m[0], expected, `wrong end in ${JSON.stringify(line)}`);
   }
+});
+
+test("a comment line in a triple-quoted block runs past a quote before a parenthesis", () => {
+  // Only a triple quote ends a block, so `")` there is the author's prose.
+  const re = new RegExp(COMMENT_PATTERNS()[0][1].match);
+  for (const line of [
+    '# Swap weapon if same as before (26 chars long = "minecraft:poisonous_potato")',
+    "# Toggle 'debug')",
+    '# Some comment", prepend=True)',
+  ]) {
+    assert.equal(line.match(re)?.[0], line);
+  }
+  assert.equal('# one-liner"""'.match(re)?.[0], "# one-liner", "a block closing on the comment's line still closes");
 });
 
 test("comment patterns still run to end of line inside a multiline block", () => {
@@ -173,14 +183,12 @@ test("comment patterns still run to end of line inside a multiline block", () =>
   }
 });
 
-test("block comment begin stops before the quote closing an inline write_* call", () => {
+test("block comment begin runs to the line end, stopping only at a triple quote", () => {
   const pattern = embedded.repository.comments.patterns.find(p => p.begin && p.begin.includes("#[>!#]"));
   assert.ok(pattern, "block comment pattern not found");
   const re = new RegExp(pattern.begin);
-  const m = '#> Hijacked map (placeholder)")'.match(re);
-  assert.ok(m);
-  assert.equal(m[0], "#> Hijacked map (placeholder)");
-  assert.equal(m[2], " Hijacked map (placeholder)");
+  assert.equal('#> Hijacked map ("placeholder")'.match(re)?.[2], ' Hijacked map ("placeholder")');
+  assert.equal('#> Title"""'.match(re)?.[2], " Title");
 });
 
 // say blocks must not swallow the end of the Python string
@@ -199,17 +207,17 @@ test("both say rules end at more than a real newline", () => {
 });
 
 test("say end matches where the mcfunction line really ends", () => {
-  const [lineStart, afterRun] = embedded.repository.say.patterns.map(p => new RegExp(p.end));
   const cases = [
-    // [line, index the say block must end at]
-    ['execute if score #spam ns.data matches 1 run say every minute\\n")', 61],  // literal \n escape
-    ['execute run say hi")', 18],                                               // closing quote + call paren
-    ['execute run say hi""")', 18],                                             // triple-quoted string
-    ["execute run say hi''')", 18],
-    ['execute run say hi", prepend=True)', 18],                                 // quote, then kwargs
+    // [flavour, line, index the say block must end at]
+    ["say", 'execute if score #spam ns.data matches 1 run say every minute\\n")', 61],  // literal \n escape
+    ["say", 'execute run say hi""")', 18],                                               // triple-quoted string
+    ["say", "execute run say hi''')", 18],
+    ["say", 'execute run say hi ("x")\n', 24],                                           // a block ends only at its triple quote
+    ["say-inline", 'execute run say hi")', 18],                                          // closing quote + call paren
+    ["say-inline", 'execute run say hi", prepend=True)', 18],                            // quote, then kwargs
   ];
-  for (const [line, expected] of cases) {
-    for (const re of [lineStart, afterRun]) {
+  for (const [flavour, line, expected] of cases) {
+    for (const re of embedded.repository[flavour].patterns.map(p => new RegExp(p.end))) {
       const m = re.exec(line);
       assert.ok(m, `no end match in ${JSON.stringify(line)}`);
       assert.equal(m.index, expected, `wrong end position in ${JSON.stringify(line)}`);
@@ -332,15 +340,16 @@ test("the embedded grammar carries an inline flavour for say", () => {
   const inline = embedded.repository["say-inline"].patterns;
   const block = embedded.repository["say"].patterns;
   // An inline say ends wherever the embed around it does, which a block say must not do.
-  // Two ways beyond the block rule's own: the quote that ends the line, and the quote that ends
-  // an entry of a list of commands, followed by a comma or the closing bracket.
+  // Three ways beyond the block rule's own: the quote closing a write_* call on this line, the quote
+  // that ends the line, and the quote that ends an entry of a list of commands.
+  const CALL_END = "|(?=[\"'](?:[ \\t]*,[ \\t]*[^\\n()]*)?[ \\t]*\\)[ \\t]*$)";
   const INLINE_ENDS = [
     "|(?=[\\\"'][ \\t]*,?[ \\t]*$)",
     "|(?=[\\\"'][ \\t]*[,\\]])",
   ];
   assert.equal(inline.length, block.length, "every say rule needs both flavours");
   for (const [i, rule] of inline.entries()) {
-    assert.equal(rule.end, block[i].end + INLINE_ENDS.join(""),
+    assert.equal(rule.end, block[i].end.replace("|\\n", `${CALL_END}|\\n`) + INLINE_ENDS.join(""),
       "an inline say is the block rule plus every way an embed can close");
     assert.ok(!rule.end.includes("\t"), "use the \\t escape, not a literal tab");
   }
@@ -356,14 +365,22 @@ test("the embedded grammar carries an inline flavour for say", () => {
 const listRule = injection.repository["stewbeet-mcfunction-string"].patterns
   .find(p => typeof p.begin === "string" && p.begin.includes("list"));
 
-test("the list rule owns the literal and every append", () => {
+test("the list rule owns the literal and every append or extend", () => {
   assert.ok(listRule, "no list[McFunction] rule in the injection grammar");
-  assert.equal(listRule.patterns.length, 6, "a list literal, four quote styles of append, then Python");
+  assert.equal(listRule.patterns.length, 7, "a list literal, an extend, four quote styles of append, then Python");
   assert.equal(listRule.patterns.at(-1).include, "source.python",
     "the span must fall back to Python, or the lines it covers lose their own colours");
   assert.equal(listRule.name, "meta.mcfunction-span.stewbeet", "the span needs the excluded scope");
   assert.ok(listRule.end.includes("\\1"), "the end must backreference the annotated name");
-  assert.ok(listRule.end.includes("append"), "an append onto the name must not end the run");
+  assert.ok(listRule.end.includes("(?:append|extend)"), "an append or extend onto the name must not end the run");
+});
+
+test("a comment line ends neither variable run", () => {
+  const indented = "\t# Line 1: Ammo capacity";
+  for (const rule of [listRule, annotationRule]) {
+    // The end backreferences the name, which a standalone RegExp reads as an empty group.
+    assert.ok(!new RegExp(rule.end.replace("\\1", "lines"), "m").test(indented), rule.comment);
+  }
 });
 
 test("the list rule holds its run open across a branch", () => {

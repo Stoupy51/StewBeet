@@ -47,7 +47,7 @@
       "patterns": [
         {
           "applyEndPatternLast": 1,
-          "begin": "^\\s*(#[>!#])((?:(?![\"'](?:[ \\t]*,[ \\t]*[^\\n()]*)?[ \\t]*\\)[ \\t]*$).)+)",
+          "begin": "^\\s*(#[>!#])((?:(?!\"\"\"|''').)+)",
           "beginCaptures": {
             "1": {
               "name": "comment.block.mcfunction"
@@ -75,8 +75,8 @@
               "name": "comment.line.mcfunction"
             }
           },
-          "comment": "Stops before the quote that closes an inline write_* call, otherwise the comment eats the closing \")\" (same convention as #say). The tail between quote and \")\" must look like a Python argument list, so prose such as 'or \"name\" field)' keeps its quotes.",
-          "match": "^\\s*#(?!\\{)(?:(?![\"'](?:[ \\t]*,[ \\t]*[^\\n()]*)?[ \\t]*\\)[ \\t]*$)(?:[^\\\\\n]|\\\\[^n]))*",
+          "comment": "Only a triple-quoted string reaches #root, and only its triple quote ends it, so the comment runs to the end of the line whatever quotes it holds. Inline strings use #comments_inline.",
+          "match": "^\\s*#(?!\\{)(?:(?!\"\"\"|''')(?:[^\\\\\n]|\\\\[^n]))*",
           "name": "meta.comments"
         }
       ]
@@ -306,7 +306,7 @@
               "name": "punctuation.definition.string.begin.mcfunction"
             }
           },
-          "end": "\"",
+          "end": "\"|$",
           "endCaptures": {
             "0": {
               "name": "punctuation.definition.string.end.mcfunction"
@@ -327,7 +327,7 @@
               "name": "punctuation.definition.string.begin.mcfunction"
             }
           },
-          "end": "'",
+          "end": "'|$",
           "endCaptures": {
             "0": {
               "name": "punctuation.definition.string.begin.mcfunction"
@@ -384,7 +384,7 @@
               "name": "string.quoted.double.mcfunction"
             }
           },
-          "match": "[^\\\\\"]",
+          "match": "[^\\\\\"\\n]",
           "name": "meta.literals_string-double"
         }
       ]
@@ -418,7 +418,7 @@
               "name": "string.quoted.single.mcfunction"
             }
           },
-          "match": "[^\\\\']",
+          "match": "[^\\\\'\\n]",
           "name": "meta.literals_string-single"
         }
       ]
@@ -435,8 +435,8 @@
               "name": "keyword.control.flow.mcfunction"
             }
           },
-          "comment": "A say block must also end where the *embedded Python string* ends, otherwise it swallows the closing quote and the rest of the file: while a begin/end rule is open, TextMate never tests the parent injection's end pattern. So stop at a literal \\n escape (same convention as #comments_inline), at a Python triple quote, and at a quote that closes the write_* call on this line.",
-          "end": "(?=\\\\n)|(?=\"\"\")|(?=''')|(?=[\"'](?:[ \\t]*,[ \\t]*[^\\n()]*)?[ \\t]*\\)[ \\t]*$)|\\n",
+          "comment": "A say block must also end where the *embedded Python string* ends, otherwise it swallows the closing quote and the rest of the file: while a begin/end rule is open, TextMate never tests the parent injection's end pattern. So stop at a literal \\n escape (same convention as #comments_inline) and at a Python triple quote. Only a triple-quoted string reaches #root, so a quote before a closing parenthesis belongs to the command.",
+          "end": "(?=\\\\n)|(?=\"\"\")|(?=''')|\\n",
           "name": "meta.say.mcfunction",
           "patterns": [
             {
@@ -469,8 +469,8 @@
               "name": "keyword.control.flow.mcfunction"
             }
           },
-          "comment": "A say block must also end where the *embedded Python string* ends, otherwise it swallows the closing quote and the rest of the file: while a begin/end rule is open, TextMate never tests the parent injection's end pattern. So stop at a literal \\n escape (same convention as #comments_inline), at a Python triple quote, and at a quote that closes the write_* call on this line.",
-          "end": "(?=\\\\n)|(?=\"\"\")|(?=''')|(?=[\"'](?:[ \\t]*,[ \\t]*[^\\n()]*)?[ \\t]*\\)[ \\t]*$)|\\n",
+          "comment": "A say block must also end where the *embedded Python string* ends, otherwise it swallows the closing quote and the rest of the file: while a begin/end rule is open, TextMate never tests the parent injection's end pattern. So stop at a literal \\n escape (same convention as #comments_inline) and at a Python triple quote. Only a triple-quoted string reaches #root, so a quote before a closing parenthesis belongs to the command.",
+          "end": "(?=\\\\n)|(?=\"\"\")|(?=''')|\\n",
           "name": "meta.say.mcfunction",
           "patterns": [
             {
@@ -842,9 +842,6 @@
       "patterns": [
         {
           "include": "#literals"
-        },
-        {
-          "include": "#comments"
         },
         {
           "include": "#say-inline"

@@ -60,6 +60,10 @@ const DEF_RE = /\bdef\s+([A-Za-z_]\w*)\s*\(([^)]*)\)/g;
 /** A parameter annotated McFunction, ex: `content: McFunction = ""`. */
 const MCFUNCTION_PARAM_RE = /^\s*[A-Za-z_]\w*\s*:\s*McFunction\b/;
 
+/** One string literal, or a chain of them Python concatenates, with how each part after the first was joined.
+ *  @typedef {{ start:number, end:number, contentStart:number, contentEnd:number, join?: "line" | "plus" }} Part
+ *  @typedef {{ start:number, end:number, parts?: Part[] }} Block */
+
 // String scanning
 
 /**
@@ -211,14 +215,15 @@ function readOpeningQuote(text, i) {
  *   parser gets told, correctly, that `\"\"\"` is not a command. `callStart` is the offset of
  *   the `write_*` call these commands reach, which is the block itself when they are written
  *   inline and a line further down when they arrive in a variable.
+ *   A function annotated `-> McFunction` reaches no call of its own, so its `return` stands in.
  */
 function findBlockOffsets(text) {
   const blocks = [];
   /** Names handed to a write_* call instead of a literal, to the offsets of the calls taking them.
    *  A name is often reused, `content` above all, so each of its blocks belongs to the call after it rather than to the first one seen. */
   const variables = new Map();
-  /** @param {string} name @param {number} offset */
-  const consume = name => variables.set(name, [...(variables.get(name) ?? []), m.index]);
+  /** @param {string} name @param {number} callStart */
+  const consume = (name, callStart) => variables.set(name, [...(variables.get(name) ?? []), callStart]);
   const wrappers = mcfunctionWrappers(text);
   const callRe = wrappers.size === 0 ? FUNC_RE : callRegex([...wrappers.keys(), ...WRITE_FUNCS]);
 
@@ -233,37 +238,135 @@ function findBlockOffsets(text) {
       contentIdx = skipFirstArg(text, contentIdx);
       if (contentIdx === -1) break;
     }
-    if (contentIdx === -1) continue;
+    if (contentIdx !== -1) claimContent(text, contentIdx, m.index, blocks, consume);
+  }
 
-    const opening = readOpeningQuote(text, contentIdx);
-    if (!opening) {
-      const name = readArgumentName(text, contentIdx);
-      if (name) consume(name);
-      continue;
-    }
-
-    const closeIdx = findClosingQuote(text, opening.quoteStyle, opening.contentStart, opening.isFString);
-    if (closeIdx === -1) continue;
-
-    // `"\n".join(lines)` hands the commands over in `lines`, and the literal separating them holds no command of its own.
-    // Reading it as one both decorates a `"\n"` and hides every line the list was built from, which is all of a loop-written function.
-    const joined = readJoinArgument(text, closeIdx + opening.quoteStyle.length);
-    if (joined !== null) {
-      if ("name" in joined) consume(joined.name);
-      else for (const entry of joined.entries) blocks.push({ ...entry, callStart: m.index });
-      continue;
-    }
-
-    blocks.push({
-      start: opening.quoteStart, end: closeIdx + opening.quoteStyle.length,
-      contentStart: opening.contentStart, contentEnd: closeIdx, callStart: m.index,
-    });
+  // A function returning McFunction hands its commands to whoever calls it, exactly as a write_* argument would.
+  for (const { returnStart, valueStart } of findMcFunctionReturns(text)) {
+    claimContent(text, valueStart, returnStart, blocks, consume);
   }
 
   blocks.push(...findBeetWrites(text));
   if (variables.size > 0) blocks.push(...findAssignedBlocks(text, variables));
   return blocks.sort((a, b) => a.start - b.start);
 }
+
+/**
+ * Record what one content argument holds: a literal as a block, a `.join` as its entries or its list, a name for later.
+ *
+ * @param {string} text
+ * @param {number} contentIdx  First character of the argument, whitespace included.
+ * @param {number} callStart  Offset of the call, or of the `return`, the commands reach.
+ * @param {{ start:number, end:number, contentStart:number, contentEnd:number, callStart:number }[]} blocks  Appended to.
+ * @param {(name: string, callStart: number) => void} consume  Told about a name handed over instead of a literal.
+ */
+function claimContent(text, contentIdx, callStart, blocks, consume) {
+  if (!readOpeningQuote(text, contentIdx)) {
+    const name = readArgumentName(text, contentIdx);
+    if (name) consume(name, callStart);
+    return;
+  }
+
+  const literal = readLiteral(text, contentIdx, true);
+  if (!literal) return;
+
+  // `"\n".join(lines)` hands the commands over in `lines`, and the literal separating them holds no command of its own.
+  // Reading it as one both decorates a `"\n"` and hides every line the list was built from, which is all of a loop-written function.
+  const joined = readJoinArgument(text, literal.end);
+  if (joined !== null) {
+    if ("name" in joined) consume(joined.name, callStart);
+    else for (const entry of joined.entries) blocks.push({ ...entry, callStart });
+    return;
+  }
+
+  blocks.push({ ...literal, callStart });
+}
+
+/**
+ * Every `return` of a function annotated `-> McFunction`, with where its value starts.
+ *
+ * One pass over the file that steps over strings, comments and bracketed continuations, so a
+ * `return` inside a block's commands or a `def` inside a docstring is never taken for Python.
+ * A `return` belongs to the innermost `def` indented less than it, which is Python's own rule.
+ *
+ * @param {string} text
+ * @returns {{ returnStart: number, valueStart: number }[]}
+ *
+ * >>> findMcFunctionReturns("def f() -> McFunction:\n\treturn 'say hi'").length
+ * 1
+ */
+function findMcFunctionReturns(text) {
+  const found = [];
+  /** Enclosing defs, innermost last. @type {{ indent: number, returnsMcFunction: boolean }[]} */
+  const defs = [];
+  let depth = 0;
+  let atLineStart = true;
+  let i = 0;
+
+  while (i < text.length) {
+    // A line starts a statement unless a bracket is still open.
+    if (atLineStart) {
+      atLineStart = false;
+      const statement = depth === 0 ? readStatement(text, i) : null;
+      if (statement) {
+        while (defs.length > 0 && defs[defs.length - 1].indent >= statement.indent) defs.pop();
+        if (statement.valueStart !== undefined && defs.at(-1)?.returnsMcFunction) {
+          found.push({ returnStart: i + statement.indent, valueStart: statement.valueStart });
+        }
+        if (statement.returnsMcFunction !== undefined) defs.push({ indent: statement.indent, returnsMcFunction: statement.returnsMcFunction });
+        i = statement.next;
+        continue;
+      }
+    }
+
+    const c = text[i];
+    if (c === "#") { while (i < text.length && text[i] !== "\n") i++; continue; }
+    if (c === '"' || c === "'") {
+      const style = text.startsWith(c.repeat(3), i) ? c.repeat(3) : c;
+      const close = findClosingQuote(text, style, i + style.length, /[fF]/.test(stringPrefixAt(text, i)));
+      i = close === -1 ? i + style.length : close + style.length;
+      continue;
+    }
+    if (c === "(" || c === "[" || c === "{") depth++;
+    else if (c === ")" || c === "]" || c === "}") depth = Math.max(0, depth - 1);
+    else if (c === "\n") atLineStart = true;
+    i++;
+  }
+  return found;
+}
+
+/**
+ * The statement a line opens with, as far as findMcFunctionReturns cares.
+ * @param {string} text
+ * @param {number} lineStart
+ * @returns {{ indent: number, next: number, valueStart?: number, returnsMcFunction?: boolean } | null}
+ *   null for a blank or comment line, which says nothing about indentation.
+ *   `next` is where scanning resumes: past a whole `def` header, which may span lines, and otherwise at the first character.
+ */
+function readStatement(text, lineStart) {
+  let at = lineStart;
+  while (text[at] === " " || text[at] === "\t") at++;
+  if (at >= text.length || "\r\n#".includes(text[at])) return null;
+  const indent = at - lineStart;
+
+  RETURN_RE.lastIndex = at;
+  const returned = RETURN_RE.exec(text);
+  if (returned) {
+    const valueStart = at + returned[0].length;
+    return { indent, next: valueStart, valueStart: "\r\n#;".includes(text[valueStart] ?? "\n") ? undefined : valueStart };
+  }
+
+  DEF_HEADER_RE.lastIndex = at;
+  const header = DEF_HEADER_RE.exec(text);
+  if (header) return { indent, next: at + header[0].length, returnsMcFunction: header[1] !== undefined };
+  return { indent, next: at };
+}
+
+/** A `return` keyword and the spaces after it. Sticky, so it matches only where it is placed. */
+const RETURN_RE = /return\b[ \t]*\(?[ \t]*/y;
+
+/** A whole `def` header up to its colon, capturing McFunction when that is what it returns. Sticky, like RETURN_RE. */
+const DEF_HEADER_RE = /(?:async[ \t]+)?def[ \t]+[A-Za-z_]\w*[ \t]*\([^)]*\)[ \t]*(?:->[ \t]*(?:["']?(McFunction)["']?[ \t]*|[^:\n]*))?:/y;
 
 /**
  * The project's own functions taking commands, mapped to which argument carries them.
@@ -321,16 +424,10 @@ function findBeetWrites(text) {
         while (at < text.length && (text[at] === " " || text[at] === "\t" || text[at] === "\n"
           || text[at] === "\r" || text[at] === ",")) at++;
 
-        const opening = readOpeningQuote(text, at);
-        if (!opening) break;
-        const closeIdx = findClosingQuote(text, opening.quoteStyle, opening.contentStart, opening.isFString);
-        if (closeIdx === -1) break;
-
-        blocks.push({
-          start: opening.quoteStart, end: closeIdx + opening.quoteStyle.length,
-          contentStart: opening.contentStart, contentEnd: closeIdx, callStart,
-        });
-        at = closeIdx + opening.quoteStyle.length;
+        const literal = readLiteral(text, at, true);
+        if (!literal) break;
+        blocks.push({ ...literal, callStart });
+        at = literal.end;
         if (!list) break;
       }
     }
@@ -378,7 +475,10 @@ function readArgumentName(text, i) {
   while (i < text.length && /[A-Za-z0-9_]/.test(text[i])) i++;
   if (i === start || /[0-9]/.test(text[start])) return null;
 
+  // The end of a statement ends a returned name, and a `)` or `,` ends an argument.
   let after = i;
+  while (after < text.length && /[ \t]/.test(text[after])) after++;
+  if (after === text.length || "\r\n;#".includes(text[after])) return text.slice(start, i);
   while (after < text.length && /[ \t\r\n]/.test(text[after])) after++;
   return text[after] === ")" || text[after] === "," ? text.slice(start, i) : null;
 }
@@ -401,7 +501,7 @@ function readJoinArgument(text, i) {
   const inner = skipSpace(text, skipSpace(text, i) + match[0].length);
   const name = readArgumentName(text, inner);
   if (name) return { name };
-  return { entries: text[inner] === "[" ? readListEntries(text, inner) : literalAt(text, inner) };
+  return { entries: text[inner] === "[" ? readListEntries(text, inner) : literalAt(text, inner, true) };
 }
 
 /**
@@ -430,21 +530,13 @@ function readListEntries(text, open) {
     if (depth === 0 && /^for\b/.test(text.slice(i, i + 4)) && !/\w/.test(text[i - 1] ?? "")) break;
     if (c !== '"' && c !== "'") { i++; continue; }
 
-    const opening = readOpeningQuote(text, i - stringPrefixAt(text, i).length);
-    if (!opening) { i++; continue; }
-    const closeIdx = findClosingQuote(text, opening.quoteStyle, opening.contentStart, opening.isFString);
-    if (closeIdx === -1) break;
-    const after = closeIdx + opening.quoteStyle.length;
+    const literal = readLiteral(text, i - stringPrefixAt(text, i).length, true);
+    if (!literal) break;
 
     // A nested entry is part of an expression rather than a command of its own.
     // So is a literal something is called on: `", ".join(parts)` is a separator, not a command.
-    if (depth === 0 && text[skipSpace(text, after)] !== ".") {
-      entries.push({
-        start: opening.quoteStart, end: after,
-        contentStart: opening.contentStart, contentEnd: closeIdx,
-      });
-    }
-    i = after;
+    if (depth === 0 && text[skipSpace(text, literal.end)] !== ".") entries.push(literal);
+    i = literal.end;
   }
 
   return entries;
@@ -456,14 +548,14 @@ function skipSpace(text, i) {
   return i;
 }
 
-/** A line adding to a name: an assignment, an `+=`, or an `.append(...)` onto a list. */
-const CONTRIBUTION_RE = /(?:^|\n)[ \t]*([A-Za-z_]\w*)[ \t]*(?:(?::[^=\n]*)?\+?=|\.[ \t]*append[ \t]*\()[ \t]*/g;
+/** A line adding to a name: an assignment, an `+=`, or an `.append(...)` or `.extend(...)` onto a list. */
+const CONTRIBUTION_RE = /(?:^|\n)[ \t]*([A-Za-z_]\w*)[ \t]*(?:(?::[^=\n]*)?\+?=|\.[ \t]*(?:append|extend)[ \t]*\()[ \t]*/g;
 
 /**
  * The commands added to any of `names`, as blocks.
  *
- * A function assembled in a variable is written in every shape Python offers: assigned whole, grown with `+=`, appended to a line at a time, or listed.
- * All four count, and all four feed the call that later consumes the name.
+ * A function assembled in a variable is written in every shape Python offers: assigned whole, grown with `+=`, appended to a line at a time, extended a list at a time, or listed.
+ * All of them count, and all of them feed the call that later consumes the name.
  *
  * @param {string} text
  * @param {Map<string, number[]>} names  Name to the offsets of the write_* calls consuming it.
@@ -478,8 +570,8 @@ function findAssignedBlocks(text, names) {
     const calls = names.get(m[1]);
     if (!calls) continue;
 
-    const value = m.index + m[0].length;
-    const found = text[value] === "[" ? readListEntries(text, value) : literalAt(text, value);
+    const value = skipSpace(text, m.index + m[0].length);
+    const found = text[value] === "[" ? readListEntries(text, value) : literalAt(text, value, m[0].trimEnd().endsWith("("));
     if (found.length === 0) continue;
 
     // The call a name reaches is the first one after these commands.
@@ -497,16 +589,87 @@ function findAssignedBlocks(text, names) {
  * The string literal at `i`, as a one-element array, or an empty one when there is none.
  * @param {string} text
  * @param {number} i
+ * @param {boolean} [bracketed]  As readLiteral's.
  */
-function literalAt(text, i) {
+function literalAt(text, i, bracketed = false) {
+  const literal = readLiteral(text, i, bracketed);
+  return literal ? [literal] : [];
+}
+
+/**
+ * The string literal at `i`, with every literal Python concatenates onto it.
+ *
+ * `f'tellraw {target} '` followed by `f'["",...]'` on the next line is one command to Python, and a parser handed the first half alone reports a missing argument.
+ * Two joins count: an implicit one across lines, legal only inside brackets, and a `+` on the same line, with or without a name or call between two literals.
+ *
+ * @param {string} text
+ * @param {number} i  First character of the literal, whitespace included.
+ * @param {boolean} bracketed  Whether the literal sits inside brackets, where a literal on the next line continues it.
+ * @returns {{ start:number, end:number, contentStart:number, contentEnd:number, parts?: { start:number, end:number, contentStart:number, contentEnd:number, join?: "line" | "plus" }[] } | null}
+ *   `parts` is present only when something was concatenated, and `join` says how each part after the first was.
+ *
+ * >>> readLiteral("('say ' + name + '!')", 1, true).parts.map(p => p.join)
+ * [ undefined, 'plus' ]
+ */
+function readLiteral(text, i, bracketed) {
+  const first = readPart(text, skipSpace(text, i));
+  if (!first) return null;
+  const parts = [first];
+
+  for (;;) {
+    const last = parts[parts.length - 1];
+    let at = last.end;
+    while (text[at] === " " || text[at] === "\t") at++;
+
+    /** @type {"line" | "plus"} */
+    let join = "plus";
+    if (text[at] === "+") {
+      at++;
+      while (text[at] === " " || text[at] === "\t") at++;
+      if (!readPart(text, at)) {
+        // `'a' + name + 'b'`: the name joins two literals, and a literal ends the chain.
+        OPERAND_RE.lastIndex = at;
+        const operand = OPERAND_RE.exec(text);
+        if (!operand) break;
+        at += operand[0].length;
+        while (text[at] === " " || text[at] === "\t") at++;
+        if (text[at] !== "+") break;
+        at++;
+        while (text[at] === " " || text[at] === "\t") at++;
+      }
+    } else if (bracketed && (text[at] === "\n" || text[at] === "\r")) {
+      join = "line";
+      at = skipSpace(text, at);
+    } else break;
+
+    const next = readPart(text, at);
+    if (!next || (join === "plus" && text.slice(last.end, next.start).includes("\n"))) break;
+    parts.push({ ...next, join });
+  }
+
+  const last = parts[parts.length - 1];
+  const bounds = { start: first.start, end: last.end, contentStart: first.contentStart, contentEnd: last.contentEnd };
+  return parts.length === 1 ? bounds : { ...bounds, parts };
+}
+
+/** A name, attribute chain, call or subscript between two `+`, ex: `MGS_TAG` or `Mem.ctx.project_id`. Sticky. */
+const OPERAND_RE = /[A-Za-z_][\w.]*(?:\([^()\n]*\)|\[[^[\]\n]*\])*/y;
+
+/**
+ * One string literal starting exactly at `i`, prefix included, or null.
+ * @param {string} text
+ * @param {number} i
+ */
+function readPart(text, i) {
+  if (!/[A-Za-z"']/.test(text[i] ?? "")) return null;
   const opening = readOpeningQuote(text, i);
-  if (!opening) return [];
+  if (!opening) return null;
   const closeIdx = findClosingQuote(text, opening.quoteStyle, opening.contentStart, opening.isFString);
-  if (closeIdx === -1) return [];
-  return [{
+  if (closeIdx === -1) return null;
+  return {
     start: opening.quoteStart, end: closeIdx + opening.quoteStyle.length,
     contentStart: opening.contentStart, contentEnd: closeIdx,
-  }];
+  };
 }
 
 /**
@@ -522,10 +685,11 @@ function literalAt(text, i) {
  *
  * Returns [] for a non-f-string block, where `{{` is genuinely two braces.
  * @param {string} text
- * @param {{ start:number, end:number }} block  One entry from findBlockOffsets.
+ * @param {Block} block  One entry from findBlockOffsets.
  * @returns {number[]}  Sorted offsets, each of one character to blank.
  */
 function findEscapedBraces(text, block) {
+  if (block.parts) return block.parts.flatMap(part => findEscapedBraces(text, part));
   const opening = readOpeningQuote(text, block.start);
   if (!opening || !opening.isFString) return [];
 
@@ -568,12 +732,15 @@ const NUMERIC_ESCAPES = { x: 2, u: 4, U: 8 };
  * `\\` and `\"` keep the character they stand for and blank only the backslash, the way a doubled
  * brace keeps one brace.
  *
+ * A backslash ending a line is kept: Python joins the two lines, and so does the `\` continuation a datapack parser already knows.
+ *
  * Returns [] for a raw string, where a backslash is a backslash.
  * @param {string} text
- * @param {{ start:number, end:number }} block  One entry from findBlockOffsets.
+ * @param {Block} block  One entry from findBlockOffsets.
  * @returns {number[]}  Sorted offsets, each of one character to blank.
  */
 function findEscapes(text, block) {
+  if (block.parts) return block.parts.flatMap(part => findEscapes(text, part));
   const opening = readOpeningQuote(text, block.start);
   if (!opening) return [];
   if (/[rR]/.test(text.slice(block.start, opening.contentStart))) return [];
@@ -592,6 +759,8 @@ function findEscapes(text, block) {
       continue;
     }
     if (text[i] !== "\\") { i++; continue; }
+    // A backslash ending the line joins it to the next, which is what a datapack's own `\` continuation does.
+    if (text[i + 1] === "\n" || (text[i + 1] === "\r" && text[i + 2] === "\n")) { i += 2; continue; }
 
     found.push(i);
     const digits = NUMERIC_ESCAPES[text[i + 1]] ?? 0;
@@ -609,11 +778,37 @@ function findEscapes(text, block) {
  * The doubled brace of an f-string and an escape sequence are the two of them, and a consumer
  * blanking both hands the parser the command the author wrote at the columns they wrote it in.
  * @param {string} text
- * @param {{ start:number, end:number }} block  One entry from findBlockOffsets.
+ * @param {Block} block  One entry from findBlockOffsets.
  * @returns {number[]}  Sorted offsets, each of one character to blank.
  */
 function findBlankedOffsets(text, block) {
-  return [...findEscapedBraces(text, block), ...findEscapes(text, block)].sort((a, b) => a - b);
+  const between = linesJoined(block).flatMap(({ before, after }) => {
+    const offsets = [];
+    for (let i = before.contentEnd + 1; i < after.contentStart; i++) if (text[i] !== "\n" && text[i] !== "\r") offsets.push(i);
+    return offsets;
+  });
+  return [...findEscapedBraces(text, block), ...findEscapes(text, block), ...between].sort((a, b) => a - b);
+}
+
+/**
+ * Offsets of the closing quote of every literal the next line continues, each to project as a `\`.
+ *
+ * Python joins `'tellraw @a '` and `'["hi"]'` written on two lines, and a datapack parser joins two lines the same way when the first ends in a backslash.
+ * The quote is the one column that line has to spare, since everything after it is Python.
+ * @param {Block} block  One entry from findBlockOffsets.
+ * @returns {number[]}
+ */
+function findContinuations(block) {
+  return linesJoined(block).map(({ before }) => before.contentEnd);
+}
+
+/**
+ * Each pair of consecutive parts of a block that Python joins across a line break.
+ * @param {Block} block
+ */
+function linesJoined(block) {
+  const parts = block.parts ?? [];
+  return parts.slice(1).flatMap((after, i) => (after.join === "line" ? [{ before: parts[i], after }] : []));
 }
 
 /**
@@ -622,10 +817,18 @@ function findBlankedOffsets(text, block) {
  * into an mcfunction document must mask them.
  * Returns [] for a non-f-string block, which has no interpolations by definition.
  * @param {string} text
- * @param {{ start:number, end:number }} block  One entry from findBlockOffsets.
+ * @param {Block} block  One entry from findBlockOffsets.
  * @returns {{ start:number, end:number }[]}  Sorted, non-overlapping.
  */
 function findInterpolationSpans(text, block) {
+  // Between two literals joined by `+` is Python, exactly as inside an interpolation, and its value is resolved or masked the same way.
+  if (block.parts) {
+    const parts = block.parts;
+    return parts.flatMap((part, i) => [
+      ...(part.join === "plus" ? [{ start: parts[i - 1].contentEnd, end: part.contentStart }] : []),
+      ...findInterpolationSpans(text, part),
+    ]);
+  }
   const opening = readOpeningQuote(text, block.start);
   if (!opening || !opening.isFString) return [];
 
@@ -663,4 +866,5 @@ module.exports = {
   findEscapedBraces,
   findEscapes,
   findBlankedOffsets,
+  findContinuations,
 };

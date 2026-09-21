@@ -251,3 +251,70 @@ tokenizerTest(
     assert.equal(lines.flat().filter(t => t.text === "say").length, 2);
   },
 );
+
+// A triple-quoted block ends only at its triple quote
+
+tokenizerTest(
+  "a comment ending in a quote and a parenthesis stays a comment in a block",
+  'write_versioned_function("switch/anim", f"""\n# Swap if same (26 chars long = "minecraft:poisonous_potato")\nexecute store result score #len {ns}.data run data get storage {ns}:gun SelectedItem.id\n""")\nafter = "plain python"\n',
+  lines => {
+    assert.ok(scopesOf(lines, "execute")?.includes("keyword.control.flow.mcfunction"),
+      "the command after the comment must still be a command");
+    const after = scopesOf(lines, "plain python") ?? [];
+    assert.ok(!after.some(s => s.includes("mcfunction")), `the block leaked past its end: ${after.join(" ")}`);
+  },
+);
+
+tokenizerTest(
+  "a say ending in a quote and a parenthesis keeps the block open",
+  'write_function("ns:x", """\nsay hi ("there")\nfunction ns:after\n""")\n',
+  lines => {
+    assert.ok(scopesOf(lines, "ns:after")?.includes("entity.name.function.mcfunction"));
+  },
+);
+
+tokenizerTest(
+  "an unterminated quote in a command stops at the end of its line",
+  'write_function("ns:x", """\ntellraw @a "unterminated\nfunction ns:after\n""")\nafter = "plain python"\n',
+  lines => {
+    assert.ok(scopesOf(lines, "ns:after")?.includes("entity.name.function.mcfunction"),
+      "the next line must not be read as the rest of the string");
+    const after = scopesOf(lines, "plain python") ?? [];
+    assert.ok(!after.some(s => s.includes("mcfunction")), after.join(" "));
+  },
+);
+
+// Where commands come from besides a write_* call
+
+tokenizerTest(
+  "a string returned from a function annotated McFunction is a command",
+  'class Game:\n    @staticmethod\n    def regen(ns: str) -> McFunction:\n        """ Lines to add at game start. """\n        return f"""\ngamerule natural_health_regeneration false\n""".strip()\n\n    def other(self) -> str:\n        return "plain one"\nafter = "plain two"\n',
+  lines => {
+    assert.ok(scopesOf(lines, "gamerule")?.includes("keyword.control.flow.mcfunction"));
+    for (const plain of ["plain one", "plain two"]) {
+      const scopes = scopesOf(lines, plain) ?? [];
+      assert.ok(!scopes.some(s => s.includes("mcfunction")), `${plain}: ${scopes.join(" ")}`);
+    }
+  },
+);
+
+tokenizerTest(
+  "a write_* call inside a function returning McFunction keeps its colours",
+  'def build() -> McFunction:\n\twrite_function("ns:x", "say inner")\n\treturn "say outer"\n',
+  lines => {
+    const says = lines.flat().filter(t => t.text === "say");
+    assert.equal(says.length, 2);
+    assert.ok(says.every(say => say.scopes.includes("keyword.control.flow.mcfunction")));
+  },
+);
+
+tokenizerTest(
+  "an extend onto a list of McFunction colours its entries",
+  'def f():\n\tlines: list[McFunction] = ["say a"]\n\n\t# Line 1\n\tlines.append("say b")\n\tlines.extend([\n\t\t"say c",\n\t])\n\tx = "plain"\n',
+  lines => {
+    const says = lines.flat().filter(t => t.text === "say");
+    assert.equal(says.length, 3, "the literal, the append after a comment, and the extend");
+    const plain = scopesOf(lines, "plain") ?? [];
+    assert.ok(!plain.some(s => s.includes("mcfunction")), plain.join(" "));
+  },
+);
