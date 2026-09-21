@@ -279,8 +279,8 @@ class Block(Item):
     """ Can either be CUSTOM_BLOCK_VANILLA, CUSTOM_BLOCK_ALTERNATIVE, CUSTOM_BLOCK_HEAD, or a vanilla block like 'minecraft:stone'. """
 
     # Specific to Block class
-    vanilla_block: VanillaBlock
-    """ If the block is based on a vanilla block, this defines which one and whether to apply facing. """
+    vanilla_block: VanillaBlock | None = None
+    """ (Optional) If the block is based on a vanilla block, this defines which one and whether to apply facing. """
     no_silk_touch_drop: NoSilkTouchDrop | LootTable | str | None = None
     """ (Optional) No-silk drop mode: deterministic (e.g. `NoSilkTouchDrop(id="raw_simplunium")` or string item id "raw_simplunium") or dynamic (`LootTable` object from beet). """
     on_place: str | None = None

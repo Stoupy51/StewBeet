@@ -29,18 +29,20 @@ class StMapping(Mapping[str, Any]):
         return self.get(key) is not None
 
     def get(self, key: str, default: Any = None) -> Any:
+        """ Like dict.get(), where a field left at None counts as absent. """
         try:
-            return self[key]
+            value: Any = self[key]
         except (KeyError, AttributeError):
             return default
+        return default if value is None else value
 
     def setdefault(self, key: str, default: Any = None) -> Any:
         """ Set a default value if key doesn't exist, like dict.setdefault(). """
-        try:
-            return self[key]
-        except KeyError:
+        value: Any = self.get(key)
+        if value is None:
             self[key] = default
             return default
+        return value
 
     def to_dict(self) -> JsonDict:
         """ Convert the object to a dictionary for JSON serialization """
@@ -128,11 +130,6 @@ class StMapping(Mapping[str, Any]):
         for key in NOT_COMPONENTS:
             if "components" in known_kwargs and key in known_kwargs["components"]:
                 del known_kwargs["components"][key]
-
-        # Add empty vanilla_block if needed
-        if "vanilla_block" in valid_fields:
-            if "vanilla_block" not in known_kwargs:
-                known_kwargs["vanilla_block"] = ""
 
         # Create the instance
         return cls(**known_kwargs)
