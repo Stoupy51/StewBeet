@@ -56,6 +56,14 @@ def beet_default(ctx: Context):
 		for p in Path(textures_folder).rglob("*.png")
 	}
 
+	# Warn about blocks that will never be placeable
+	incomplete_blocks: list[str] = [item for item, data in Mem.definitions.items() if isinstance(data, Block) and data.vanilla_block is None]
+	if incomplete_blocks:
+		stp.warning(
+			f"Blocks without a vanilla_block won't be placeable: {incomplete_blocks}. "
+			f"Set one in your definitions, e.g. Block.from_id({incomplete_blocks[0]!r}).vanilla_block = VanillaBlock(id=\"minecraft:iron_block\")"
+		)
+
 	# Stop if not custom block
 	if not any(data.get(VANILLA_BLOCK) for data in Mem.definitions.values()):
 		return
