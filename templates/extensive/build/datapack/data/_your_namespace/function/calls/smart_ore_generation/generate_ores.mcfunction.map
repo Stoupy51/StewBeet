@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "generate_ores.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/link.py"
+	],
+	"names": [],
+	"mappings": "AAgBY;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AASA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAWA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAMA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA"
+}
