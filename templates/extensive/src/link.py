@@ -20,7 +20,18 @@ def beet_default(ctx: Context):
                 minimum_height = 0,
                 veins_per_region = 1.2,
                 vein_size_logic = 0.4,
-            )
+            ),
+            # Extra veins in badlands only, replacing terracotta that has terracotta above it.
+            # "vein_conditions" are checked once where the vein starts, "block_conditions" at every block of it.
+            CustomOreGeneration(
+                dimensions = ["minecraft:overworld"],
+                minimum_height = 60,
+                maximum_height = 120,
+                veins_per_region = 2,
+                provider = ["#minecraft:terracotta"],
+                vein_conditions = ["if biome ~ ~ ~ #minecraft:is_badlands"],
+                block_conditions = ["if block ~ ~1 ~ #minecraft:terracotta"],
+            ),
         ],
         "deepslate_steel_ore": [
             CustomOreGeneration(
@@ -34,7 +45,7 @@ def beet_default(ctx: Context):
                 maximum_height = 0,
                 veins_per_region = 3.6,
                 vein_size_logic = 0.8,
-            )
+            ),
         ],
     })
 

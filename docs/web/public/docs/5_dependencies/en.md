@@ -47,6 +47,52 @@ The plugin automatically scans all datapack functions during build and marks a l
 
 > **Note**: `smart_ore_generation` also receives automatic function tag wiring: if your datapack contains `calls/smart_ore_generation/generate_ores`, `denied_dimensions`, or `post_generation` functions, they are wired into the corresponding `smart_ore_generation:v1/signals/` tags automatically.
 
+### Generating custom ores with `CustomOreGeneration`
+
+`CustomOreGeneration` writes those `generate_ores` functions for you, and using it pulls in `smart_ore_generation`. The library scans 96x96 regions around players and starts each vein at a random position next to air, so ores end up where players can find them.
+
+```python
+from stewbeet import CustomOreGeneration
+
+CustomOreGeneration.all_with_config({
+    "steel_ore": [
+        # Common veins, from y=0 to y=50
+        CustomOreGeneration(dimensions=["minecraft:overworld"], minimum_height=0, maximum_height=50, veins_per_region=1.2),
+        # Extra veins in badlands only, replacing terracotta that has terracotta above it
+        CustomOreGeneration(
+            dimensions=["minecraft:overworld"],
+            minimum_height=60,
+            maximum_height=120,
+            veins_per_region=2,
+            provider=["#minecraft:terracotta"],
+            vein_conditions=["if biome ~ ~ ~ #minecraft:is_badlands"],
+            block_conditions=["if block ~ ~1 ~ #minecraft:terracotta"],
+        ),
+    ],
+    "deepslate_steel_ore": [
+        CustomOreGeneration(dimensions=["minecraft:overworld"], maximum_height=0, veins_per_region=1.2),
+    ],
+})
+```
+
+Call it from a plugin that runs after the custom blocks exist, like `src/link.py` in the [extensive template](https://github.com/Stoupy51/StewBeet/blob/main/templates/extensive/src/link.py). Keys are custom block ids (or `Block` objects), and an ore with several configurations gets one vein function per configuration.
+
+| Field | Default | Meaning |
+|-------|---------|---------|
+| `dimensions` | required | Dimensions to generate in, ex: `["minecraft:overworld", "stardust:cavern"]` |
+| `minimum_height` | `None` | Lowest y of a vein, `None` for the bottom of the overworld |
+| `maximum_height` | `70` | Highest y of a vein |
+| `veins_per_region` | `4` | Veins per region, the decimal part being a chance: `1.2` is one vein plus a 20% chance of a second |
+| `vein_size_logic` | `0.4` | Vein size: `0.0` is a single block, `0.4` a small vein, `1.0` a large one |
+| `provider` | overworld carver replaceables | Block, block tag, or list of them, that the ore replaces |
+| `vein_conditions` | `[]` | Conditions checked once at the start of the vein, cancelling all of it |
+| `block_conditions` | `[]` | Conditions checked at every block of the vein |
+| `placer_command` | place the custom block | Execute subcommands ending with `run ...`, placing one ore at `~ ~ ~` |
+
+Conditions are `execute` subcommands starting with `if ` or `unless `, and all of them must hold. Use `vein_conditions` for what is the same across a vein, like a biome (`if biome ~ ~ ~ #minecraft:is_badlands`), and `block_conditions` for what depends on each block, like its neighbours (`if block ~ ~-1 ~ minecraft:deepslate`). To only replace some blocks, set `provider` instead of adding a block condition.
+
+When both `x_ore` and `deepslate_x_ore` are defined, the default placer keeps `x_ore` off deepslate and `deepslate_x_ore` off stone.
+
 ---
 
 ## Custom `load_dependencies`
