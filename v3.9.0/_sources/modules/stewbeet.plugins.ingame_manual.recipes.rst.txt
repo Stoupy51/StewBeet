@@ -1,0 +1,29 @@
+stewbeet.plugins.ingame\_manual.recipes package
+===============================================
+
+.. automodule:: stewbeet.plugins.ingame_manual.recipes
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.plugins.ingame_manual.recipes.types
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.plugins.ingame_manual.recipes.buttons
+   stewbeet.plugins.ingame_manual.recipes.collection
+   stewbeet.plugins.ingame_manual.recipes.components
+   stewbeet.plugins.ingame_manual.recipes.hovers
+   stewbeet.plugins.ingame_manual.recipes.registry
+   stewbeet.plugins.ingame_manual.recipes.renderer

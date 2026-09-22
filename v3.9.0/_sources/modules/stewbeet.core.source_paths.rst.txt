@@ -1,0 +1,8 @@
+stewbeet.core.source\_paths module
+==================================
+
+.. automodule:: stewbeet.core.source_paths
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

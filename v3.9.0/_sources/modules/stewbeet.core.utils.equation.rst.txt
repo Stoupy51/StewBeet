@@ -1,0 +1,8 @@
+stewbeet.core.utils.equation module
+===================================
+
+.. automodule:: stewbeet.core.utils.equation
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

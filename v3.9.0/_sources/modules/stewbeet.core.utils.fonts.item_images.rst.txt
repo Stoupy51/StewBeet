@@ -1,0 +1,8 @@
+stewbeet.core.utils.fonts.item\_images module
+=============================================
+
+.. automodule:: stewbeet.core.utils.fonts.item_images
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

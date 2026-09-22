@@ -1,0 +1,22 @@
+stewbeet.core.definitions\_helper package
+=========================================
+
+.. automodule:: stewbeet.core.definitions_helper
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.core.definitions_helper.completion
+   stewbeet.core.definitions_helper.equipments
+   stewbeet.core.definitions_helper.materials
+   stewbeet.core.definitions_helper.records
+   stewbeet.core.definitions_helper.simplenergy
+   stewbeet.core.definitions_helper.smart_ore_generation
+   stewbeet.core.definitions_helper.text

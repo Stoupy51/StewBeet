@@ -1,0 +1,8 @@
+stewbeet.core.dump module
+=========================
+
+.. automodule:: stewbeet.core.dump
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

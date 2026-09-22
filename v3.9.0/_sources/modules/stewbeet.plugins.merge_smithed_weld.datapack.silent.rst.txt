@@ -1,0 +1,8 @@
+stewbeet.plugins.merge\_smithed\_weld.datapack.silent module
+============================================================
+
+.. automodule:: stewbeet.plugins.merge_smithed_weld.datapack.silent
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

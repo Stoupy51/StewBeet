@@ -1,0 +1,8 @@
+stewbeet.plugins.spyglass.config module
+=======================================
+
+.. automodule:: stewbeet.plugins.spyglass.config
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
