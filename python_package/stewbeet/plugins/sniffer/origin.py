@@ -190,10 +190,10 @@ def write_calls_of(path: str) -> dict[int, WriteCall]:
 def declaration_origin() -> SourceOrigin | None:
 	""" Where a definition was declared, or None when a library declared it.
 
-	Called from `Item.__post_init__`, so the frames above are the construction's own: `item.py`,
-	`block.py` for a `Block`, and the `__init__` the dataclass generated. Unlike `resolve_origin`
-	this consults no AST index, because a constructor's caller **is** the declaration site, with no
-	plugin in between to be mistaken for it.
+	Called from a dataclass `__post_init__`, so the frames above are the construction's own:
+	the caller's file, the definition dataclasses (`block.py` for a `Block`),
+	and the `__init__` the dataclass generated. Unlike `resolve_origin` this consults no AST index,
+	because a constructor's caller **is** the declaration site, with no plugin in between to be mistaken for it.
 
 	The case that must not be attributed is a StewBeet plugin building an `Item` itself: the walk
 	stops at the first frame that is not the construction's, so it lands on the plugin and returns
@@ -203,7 +203,8 @@ def declaration_origin() -> SourceOrigin | None:
 	True
 	"""
 	frame: FrameType | None = sys._getframe(1) # pyright: ignore[reportPrivateUsage]
-	while frame is not None and is_constructor_frame(frame):
+	caller: str = frame.f_code.co_filename
+	while frame is not None and (frame.f_code.co_filename == caller or is_constructor_frame(frame)):
 		frame = frame.f_back
 
 	if frame is None or not is_project_source(frame.f_code.co_filename, project_roots()):

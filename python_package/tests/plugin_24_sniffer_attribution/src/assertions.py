@@ -123,6 +123,18 @@ def beet_default(ctx: Context) -> Iterator[None]:
         assert "custom_blocks/get_rotation" not in path, \
             "get_rotation is written before the loop and belongs to no declaration, it must stay unmapped"
 
+    # Ore generation maps to its CustomOreGeneration( call, not to the all_with_config( call around it
+    ore_declared: int = line_holding("link.py", "CustomOreGeneration(")
+    for ore_path in ("calls/smart_ore_generation/generate_ores", f"calls/smart_ore_generation/veins/{BLOCK_ID}"):
+        ore_map: str = f"data/{ns}/function/{ore_path}.mcfunction.map"
+        assert ore_map in maps, f"expected a map for {ore_path}, got {sorted(maps)}"
+        ore_lines: list[tuple[str, int]] = [
+            (sources_of(maps[ore_map])[index], line) for index, line, _ in mappings_of(maps[ore_map]).values()
+        ]
+        assert ore_lines, f"{ore_path}: no line was mapped"
+        for source, line in ore_lines:
+            assert source.endswith("link.py") and line == ore_declared, f"{ore_path}: should map to link.py:{ore_declared}, got {source}:{line}"
+
     # ── US2: the author's own append keeps its own line, after the generated ones ─
     secondary: str = f"data/{ns}/function/custom_blocks/{BLOCK_ID}/place_secondary.mcfunction.map"
     assert secondary in maps, f"expected a map for place_secondary, got {sorted(maps)}"
