@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "deepslate_steel_ore_1.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/link.py"
+	],
+	"names": [],
+	"mappings": "AA0CY;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA"
+}
