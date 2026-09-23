@@ -1,5 +1,5 @@
 import { HiArrowNarrowRight, HiArrowRight } from 'react-icons/hi';
-import { useLayoutEffect, useRef } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from '../i18n/useTranslation';
 import { introWillPlay, useIntro } from '../hooks/useIntro';
@@ -30,15 +30,21 @@ function releaseAge(days: number, t: (key: string) => string): string {
  * Counts up to the number of generated files while they stream into the tree.
  *
  * The text is written through a ref rather than state, so the rendered output always matches the
- * prerendered markup and a visitor who is not shown the intro never sees a rewind.
+ * prerendered markup and a visitor who is not shown the intro never sees a rewind. Only the first
+ * label counts up: a later one (another tab, another language) is written as is.
  */
 const FileCounter = ({ label }: { label: string }) => {
     const node = useRef<HTMLSpanElement>(null);
+    const initial = useRef(label);
+    const counted = useRef(false);
 
     useLayoutEffect(() => {
         const total = Number(label.match(/\d+/)?.[0] ?? 0);
         const element = node.current;
-        if (!element || !total || !introWillPlay()) return;
+        if (!element) return;
+        // The count below replaces the text node React rendered, so React can no longer update it.
+        element.textContent = label;
+        if (!total || counted.current || label !== initial.current || !introWillPlay()) return;
 
         // Matches the row cascade in index.css: 760ms before the first file, 42ms apart.
         const START = 760;
@@ -54,6 +60,7 @@ const FileCounter = ({ label }: { label: string }) => {
             const landed = Math.max(0, Math.min(total, Math.floor((performance.now() - begun - START) / STEP)));
             write(landed);
             if (landed < total) frame = requestAnimationFrame(tick);
+            else counted.current = true;
         };
         frame = requestAnimationFrame(tick);
         return () => cancelAnimationFrame(frame);
@@ -64,10 +71,19 @@ const FileCounter = ({ label }: { label: string }) => {
 
 const step = (index: number) => ({ '--step': index }) as React.CSSProperties;
 
+/** Files of the tree that the given snippet produces. */
+function filesFrom(nodes: FileNode[], snippet: string): number {
+    return nodes.reduce((total, node) => total + (node.children ? filesFrom(node.children, snippet) : Number(node.snippet === snippet)), 0);
+}
+
+const tree = heroOutput.tree as FileNode[];
+
 export const Hero: React.FC = () => {
     const { t, language } = useTranslation();
     const gettingStarted = `/markdown?src=${encodeURIComponent(language === 'fr' ? '0_getting_started/fr.md' : '0_getting_started/en.md')}`;
     useIntro();
+    const [active, setActive] = useState(heroCode.snippets[0].id);
+    const snippet = heroCode.snippets.find(({ id }) => id === active) ?? heroCode.snippets[0];
     const codeScroll = useOverflowFade();
 
     return (
@@ -125,14 +141,32 @@ export const Hero: React.FC = () => {
                     margin, and the minmax row keeps content from stretching it past that. */}
                 <div className="mt-7 short:mt-5 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_1.5rem_minmax(0,1fr)] lg:grid-rows-[minmax(0,1fr)] gap-3 lg:gap-2 lg:h-[clamp(16rem,calc(100svh-26.25rem),32.5rem)] lg:short:h-[clamp(15rem,calc(100svh-23.25rem),32.5rem)]">
                     <div className="intro-panel min-w-0 min-h-0 max-h-[31rem] lg:max-h-none" style={step(0)}>
-                        <CodeTab path={t('hero.codeCaption')} lang="python">
+                        <CodeTab
+                            path={t('hero.codeCaption')}
+                            accessory={
+                                <div role="group" aria-label={t('hero.snippetTabs')} className="flex items-center gap-1">
+                                    {heroCode.snippets.map(({ id, label }) => (
+                                        <button
+                                            key={id}
+                                            onClick={() => setActive(id)}
+                                            aria-pressed={id === active}
+                                            className={`h-6 px-2 rounded-control font-mono text-[0.6875rem] transition-colors ${
+                                                id === active ? 'bg-ink-800 text-ink-50' : 'text-ink-400 hover:text-ink-100'
+                                            }`}
+                                        >
+                                            {label}
+                                        </button>
+                                    ))}
+                                </div>
+                            }
+                        >
                             <div ref={codeScroll} className="relative flex-1 min-h-0 p-4 overflow-auto custom-scrollbar">
                                 <div
                                     aria-hidden="true"
                                     className="intro-scan pointer-events-none absolute inset-x-0 top-0 h-16 opacity-0 bg-gradient-to-b from-transparent via-beet-500/20 to-transparent"
                                 />
                                 <div
-                                    dangerouslySetInnerHTML={{ __html: heroCode.html }}
+                                    dangerouslySetInnerHTML={{ __html: snippet.html }}
                                     className="font-mono text-[0.75rem] leading-[1.55] [&>pre]:!bg-transparent [&>pre]:!m-0 [&>pre]:!p-0 [&_code]:font-mono"
                                 />
                             </div>
@@ -150,9 +184,15 @@ export const Hero: React.FC = () => {
                     >
                         <CodeTab
                             path={t('hero.outputCaption')}
-                            accessory={<FileCounter label={t('hero.outputSummary').replace('{count}', String(heroOutput.fileCount))} />}
+                            accessory={
+                                <FileCounter
+                                    label={t('hero.outputSummary')
+                                        .replace('{count}', String(filesFrom(tree, snippet.id)))
+                                        .replace('{total}', String(heroOutput.fileCount))}
+                                />
+                            }
                         >
-                            <HeroOutputPanel nodes={heroOutput.tree as FileNode[]} />
+                            <HeroOutputPanel nodes={tree} active={snippet.id} />
                         </CodeTab>
                     </div>
                 </div>

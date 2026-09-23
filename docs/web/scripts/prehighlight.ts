@@ -1,6 +1,6 @@
 /**
- * Runs Shiki over the hero snippet once at build time and writes the markup to
- * src/generated/heroCode.json.
+ * Runs Shiki over the hero snippets once at build time and writes the markup to
+ * src/generated/heroCode.json, one entry per tab of the code panel.
  *
  * The hero code panel is the largest contentful element on the landing page, and it used to
  * be highlighted in a useEffect: plain text painted first, then the whole block was replaced
@@ -8,7 +8,7 @@
  * the correct pixels are in the prerendered HTML and the browser never loads a highlighter
  * for the landing page at all.
  *
- * The snippet is not a string constant any more: it is a region of a real StewBeet project that
+ * Each snippet is a `# region hero-<id>` of a real StewBeet project that
  * python_package/scripts/build_hero_output.py builds for real, so the code shown and the files
  * shown beside it come from the same source and cannot disagree.
  */
@@ -21,7 +21,7 @@ import { MCFUNCTION_LANGUAGE } from '../src/langs/mcfunction';
 /** The snippet sits in half the hero; past this a 1280px screen cuts it mid-string. */
 const MAX_COLUMNS = 66;
 const SOURCE = join(import.meta.dir, '..', 'playground', 'hero', 'src', 'definitions.py');
-const REGION = 'hero-snippet';
+const REGION_MARKER = /^\s*# region (hero-[\w-]+)\s*$/gm;
 
 /**
  * The lines between `# region <name>` and `# endregion <name>`, dedented by their common indent.
@@ -58,12 +58,25 @@ export function extractRegion(source: string, name: string): string {
     return dedented.join('\n');
 }
 
-const code = extractRegion(readFileSync(SOURCE, 'utf-8'), REGION);
-const html = await codeToHtml(code, { lang: 'python', theme: 'dark-plus', transformers: [pythonSemantics] });
+/**
+ * One tab per region, in file order. The id is what heroTree.json leaves name in `snippet`, and the
+ * label is the snippet's first identifier (`Block`, `CustomOreGeneration`), so the tab reads as code.
+ */
+const source = readFileSync(SOURCE, 'utf-8');
+const names = Array.from(source.matchAll(REGION_MARKER), (match) => match[1]);
+if (!names.length) throw new Error(`prehighlight: no "# region hero-<id>" marker in ${SOURCE}`);
+const snippets = await Promise.all(names.map(async (name) => {
+    const code = extractRegion(source, name);
+    return {
+        id: name.slice('hero-'.length),
+        label: code.match(/^[A-Za-z_]\w*/)?.[0] ?? name,
+        html: await codeToHtml(code, { lang: 'python', theme: 'dark-plus', transformers: [pythonSemantics] }),
+    };
+}));
 
 const outputDir = join(import.meta.dir, '..', 'src', 'generated');
 mkdirSync(outputDir, { recursive: true });
-writeFileSync(join(outputDir, 'heroCode.json'), `${JSON.stringify({ html }, null, 4)}\n`);
+writeFileSync(join(outputDir, 'heroCode.json'), `${JSON.stringify({ snippets }, null, 4)}\n`);
 
 /**
  * The generated files the output panel shows are highlighted here too, for the same reason the
@@ -88,5 +101,5 @@ for (const [path, body] of Object.entries(bodies)) {
 writeFileSync(join(outputDir, 'heroContentsHtml.json'), `${JSON.stringify(highlighted, null, 4)}\n`);
 
 const bytes = Object.values(highlighted).reduce((total, item) => total + item.length, 0);
-console.log(`[prehighlight] hero snippet highlighted (${code.split('\n').length} lines, ${html.length} bytes)`);
+console.log(`[prehighlight] ${snippets.length} hero snippets highlighted (${snippets.map((snippet) => snippet.id).join(', ')})`);
 console.log(`[prehighlight] ${Object.keys(highlighted).length} generated files highlighted (${bytes} bytes)`);

@@ -10,20 +10,22 @@ Real StewBeet projects that the website builds and shows.
 ## hero/
 
 The project behind the landing page hero. It exists so that neither half of the hero is written
-by hand: the snippet on the left is a region of `hero/src/definitions.py`, and the file tree on
-the right is what building that file actually produces.
+by hand: each tab of the code panel on the left is a `# region hero-<id>` of
+`hero/src/definitions.py`, and the file tree on the right is what building that file actually
+produces. Every file of the tree names the region it comes from, and the tree dims the files of the
+other tabs.
 
 Two things read it:
 
 | Consumer | Reads | Writes |
 |---|---|---|
 | `python_package/scripts/build_hero_output.py` | the whole project | `src/generated/heroOutput.json`, `src/generated/heroContents.json`, `public/generated/hero/*.png` |
-| `docs/web/scripts/prehighlight.ts` | the `hero-snippet` region, then `heroContents.json` | `src/generated/heroCode.json`, `src/generated/heroContentsHtml.json` |
+| `docs/web/scripts/prehighlight.ts` | every `hero-<id>` region, then `heroContents.json` | `src/generated/heroCode.json`, `src/generated/heroContentsHtml.json` |
 
 Run them in that order: the highlighter derives from the builder's output. Both `bun run dev` and
 `bun run build` do it for you, so there is nothing to run by hand and nothing to keep in sync.
 
-Nothing on the landing page loads a syntax highlighter. Both the snippet and the generated file
+Nothing on the landing page loads a syntax highlighter. Both the snippets and the generated file
 bodies are highlighted here at build time, and the bodies go to their own file that the panel
 imports dynamically, so that markup only reaches a reader who clicked a file.
 
@@ -58,10 +60,11 @@ disk still match a fresh build, which is useful while editing the builder itself
   because the real paths are three times too long to read in half a hero panel, but each leaf
   carries the real path it stands for and the generator fails, naming the closest real paths, when
   one goes missing.
-- **Lines in the region must fit 66 columns once dedented.** Past that a 1280px screen cuts the
+- **Lines in the regions must fit 66 columns once dedented.** Past that a 1280px screen cuts the
   snippet mid-string, which reads as a rendering bug. `prehighlight.ts` fails with the line number.
-- **Both region markers must be present.** A renamed marker fails the build rather than shipping a
-  hero with no code in it.
+- **Each region needs both markers, and each tree leaf a `snippet` naming one.** A renamed marker
+  fails the build rather than shipping a hero with no code in it, and a leaf pointing at a missing
+  region fails `build_hero_output.py`.
 
 ### Why it needs no GPU and no network
 
