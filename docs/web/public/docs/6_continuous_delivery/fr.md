@@ -1,17 +1,18 @@
 # Publier automatiquement
 
-StewBeet fournit un patron de script `upload.py` unique qui gère la publication d'une nouvelle release sur toutes les grandes plateformes de distribution en une seule commande.<br>
-Vous appelez les fonctions d'upload de chaque plateforme en séquence: GitHub en premier (il génère le changelog), puis Modrinth, Smithed et PlanetMinecraft avec ce changelog.<br>
-Les identifiants sont stockés **en dehors** du projet dans `~/stewbeet/credentials.yml` pour ne jamais être accidentellement commités.
+Un seul script `upload.py` publie une release sur GitHub, Modrinth, Smithed et PlanetMinecraft en une commande. Il appelle chaque plateforme tour à tour : GitHub d'abord, parce qu'il écrit le changelog, puis les autres avec ce changelog.
 
-**Exemple réel** : [SimplEnergy/upload.py](https://github.com/Stoupy51/SimplEnergy/blob/main/upload.py) <br>  
-**Code source** : [stewbeet/continuous_delivery/](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/continuous_delivery/) <br>
+Les identifiants vivent **en dehors** du projet, dans `~/stewbeet/credentials.yml`, pour ne jamais être commités par accident.
 
-- Centraliser toutes les clés API dans un seul fichier hors du dépôt
-- Créer une release GitHub taguée et y uploader les artefacts de build automatiquement
-- Publier sur Modrinth avec synchronisation de description et empaquetage mod optionnel
-- Enregistrer une nouvelle version sur Smithed en liant les artefacts GitHub
-- Ouvrir la page d'édition PlanetMinecraft et copier le changelog BBCode dans le presse-papier
+- Un script publié : [SimplEnergy/upload.py](https://github.com/Stoupy51/SimplEnergy/blob/main/upload.py)
+- Le code source : [stewbeet/continuous_delivery/](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/continuous_delivery/)
+
+| Plateforme | Ce que fait le script |
+|------------|-----------------------|
+| GitHub | Crée une release taguée et y envoie les artefacts du build |
+| Modrinth | Publie la version, synchronise la description, empaquette éventuellement des jars de mod |
+| Smithed | Enregistre la version, avec des liens vers les artefacts de la release GitHub |
+| PlanetMinecraft | Ouvre la page d'édition et copie le changelog BBCode dans le presse-papier |
 
 ## Configuration des Identifiants
 
@@ -32,7 +33,7 @@ sftp:
     password: "votre_mot_de_passe"
 ```
 
-> ⚠️ Ne committez jamais `credentials.yml` dans votre dépôt. Ajoutez-le à votre `.gitignore` si vous le gardez dans un dossier de projet.
+> **Attention :** Ne committez jamais `credentials.yml` dans votre dépôt. Ajoutez-le à votre `.gitignore` si vous le gardez dans un dossier de projet.
 
 ---
 
@@ -50,10 +51,10 @@ sftp:
 
 | Clé | Requis | Description |
 |-----|--------|-------------|
-| `project_name` | ✅ | Nom du dépôt (utilisé pour construire l'URL de la release) |
-| `version` | ✅ | Chaîne de version, ex. `"1.2.3"`: devient le tag `v1.2.3` |
-| `build_folder` | ✅ | Chemin vers le dossier contenant les zips buildés |
-| `endswith` | ❌ | Liste de suffixes pour filtrer les fichiers uploadés (ex. `[".zip"]`) |
+| `project_name` | Oui | Nom du dépôt (utilisé pour construire l'URL de la release) |
+| `version` | Oui | Chaîne de version, ex. `"1.2.3"`: devient le tag `v1.2.3` |
+| `build_folder` | Oui | Chemin vers le dossier contenant les zips buildés |
+| `endswith` | Non | Liste de suffixes pour filtrer les fichiers uploadés (ex. `[".zip"]`) |
 
 ### Exemple
 ```python
@@ -86,16 +87,16 @@ changelog: str = upload_to_github(credentials, github_config)
 
 | Clé | Requis | Description |
 |-----|--------|-------------|
-| `slug` | ✅ | Namespace du projet sur Modrinth (ex. `"simplenergy"`) |
-| `project_name` | ✅ | Nom d'affichage du projet |
-| `version` | ✅ | Chaîne de version |
-| `summary` | ✅ | Description courte affichée sur la carte du projet |
-| `description_markdown` | ✅ | Description complète en Markdown (généralement `README.md`) |
-| `version_type` | ✅ | `"release"`, `"beta"`, ou `"alpha"` |
-| `build_folder` | ✅ | Chemin vers le dossier contenant les zips buildés |
-| `dependencies` | ❌ | Liste d'objets de dépendances Modrinth (défaut : `[]`) |
-| `package_as_mod` | ❌ | `"all"` ou `"separate"`: upload aussi des jars mod pour les plateformes de loaders |
-| `mod_platforms` | ❌ | Liste de plateformes pour l'empaquetage mod (défaut : `["fabric", "forge", "neoforge", "quilt"]`) |
+| `slug` | Oui | Namespace du projet sur Modrinth (ex. `"simplenergy"`) |
+| `project_name` | Oui | Nom d'affichage du projet |
+| `version` | Oui | Chaîne de version |
+| `summary` | Oui | Description courte affichée sur la carte du projet |
+| `description_markdown` | Oui | Description complète en Markdown (généralement `README.md`) |
+| `version_type` | Oui | `"release"`, `"beta"`, ou `"alpha"` |
+| `build_folder` | Oui | Chemin vers le dossier contenant les zips buildés |
+| `dependencies` | Non | Liste d'objets de dépendances Modrinth (défaut : `[]`) |
+| `package_as_mod` | Non | `"all"` ou `"separate"`: upload aussi des jars mod pour les plateformes de loaders |
+| `mod_platforms` | Non | Liste de plateformes pour l'empaquetage mod (défaut : `["fabric", "forge", "neoforge", "quilt"]`) |
 
 ### Exemple
 ```python
@@ -137,9 +138,9 @@ upload_to_modrinth(credentials, modrinth_config, changelog)
 
 | Clé | Requis | Description |
 |-----|--------|-------------|
-| `project_id` | ✅ | ID / namespace du projet Smithed |
-| `project_name` | ✅ | Nom du dépôt GitHub (utilisé pour construire les URLs de téléchargement) |
-| `version` | ✅ | Chaîne de version |
+| `project_id` | Oui | ID / namespace du projet Smithed |
+| `project_name` | Oui | Nom du dépôt GitHub (utilisé pour construire les URLs de téléchargement) |
+| `version` | Oui | Chaîne de version |
 
 ### Exemple
 ```python
@@ -166,8 +167,8 @@ upload_to_smithed(credentials, smithed_config, changelog)
 
 | Clé           | Requis | Description                                             |
 | ------------- | ------ | ------------------------------------------------------- |
-| `project_url` | ✅      | URL de la page de gestion du projet sur PlanetMinecraft |
-| `version`     | ✅      | Chaîne de version (incluse pour validation)             |
+| `project_url` | Oui | URL de la page de gestion du projet sur PlanetMinecraft |
+| `version`     | Oui | Chaîne de version (incluse pour validation)             |
 
 ### Exemple
 ```python

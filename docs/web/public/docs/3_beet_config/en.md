@@ -1,280 +1,200 @@
 # Configuring the build
 
-The configuration file is the heart of your StewBeet project. It defines everything from basic project metadata to complex plugin pipelines and custom settings. This guide uses YAML format (`beet.yml`) for examples, but all options work with JSON or pyproject.toml as well.
+Every option of the beet configuration file, and what StewBeet does with it. The file is read at the start of every build and decides how the whole project is processed.
 
-**The configuration file is read at the start of every build and determines how your entire project is processed.**
+The examples use YAML (`beet.yml`). Every option works the same in `beet.yaml`, `beet.json` or `pyproject.toml`. The file lives at the project root.
 
-**Example File**: [extensive/beet.yml](https://github.com/Stoupy51/StewBeet/blob/main/templates/extensive/beet.yml) <br>  
-**Real-world Example**: [SimplEnergy/beet.yml](https://github.com/Stoupy51/SimplEnergy/blob/main/beet.yml) <br>  
-**Real-world Example**: [LifeSteal/beet.yml](https://github.com/Stoupy51/LifeSteal/blob/main/beet.yml) <br>
+Complete files to read alongside this page:
 
-- Define project identity (name, version, author)
-- Configure directory structure and build output
-- Manage dependencies and required plugins
-- Set up datapack and resource pack loading
-- Control plugin execution pipeline
-- Customize StewBeet-specific features
-- Configure in-game manual generation
-- Set up automatic file copying for testing
+- [extensive/beet.yml](https://github.com/Stoupy51/StewBeet/blob/main/templates/extensive/beet.yml), the template that uses every feature
+- [SimplEnergy/beet.yml](https://github.com/Stoupy51/SimplEnergy/blob/main/beet.yml), a published pack
+- [LifeSteal/beet.yml](https://github.com/Stoupy51/LifeSteal/blob/main/beet.yml), a published pack
 
-## Configuration File Formats
-- **Supported formats**: `beet.yml`, `beet.yaml`, `beet.json`, or `pyproject.toml`
-- **📍 Location**: Project root directory
-- **🔄 Integration**: Controls entire build process and plugin pipeline
+## Project identity
 
-## Table of Contents
+### `id`
 
-- [🎨 Basic Project Configuration](#-basic-project-configuration)
-- [📂 Directory Settings](#-directory-settings)
-- [🔌 Dependencies](#-dependencies)
-- [📦 Pack Configuration](#-pack-configuration)
-- [⚡ Pipeline](#-pipeline)
-- [🎛️ Meta Configuration](#-meta-configuration)
-  - [🎮 Minecraft Support](#-minecraft-support)
-  - [🗄️ Model Resolver](#-model-resolver)
-  - [🔧 Mecha](#-mecha)
-  - [⚙️ StewBeet Settings](#-stewbeet-settings)
-
----
-
-## Basic Project Configuration
-
-### Project Identifier
-Defines the namespace root used across generated functions, tags, and storage keys.
+The namespace root of generated functions, tags and storage keys. Lowercase and underscores only.
 
 ```yaml
 id: "_your_namespace"
 ```
-Used for namespacing functions, tags, and storage. Must be lowercase with underscores only.
 
-### Project Name
-Defines the human-readable project label shown in generated metadata and UI-facing text.
+### `name`
+
+The human-readable name, shown in `pack.mcmeta`, item lore and in-game messages.
 
 ```yaml
 name: "Extensive Template"
 ```
-Displayed in pack.mcmeta, item lore, and in-game messages.
 
-### Author
-Defines one or more creators for attribution and author-related conventions.
+### `author`
+
+One or more creators, shown in `pack.mcmeta`. Separate several names with `", "`.
 
 ```yaml
 author: "Stoupy51"
 author: "Player1, Player2, Player3"  # Multiple authors
 ```
-Displayed in pack.mcmeta. Supports multiple names separated by `", "`.<br>
-**🎁 Special feature:** Players with matching in-game names automatically receive the `convention.debug` tag for development tools.
 
-### Version
-Defines the release version used for compatibility checks and versioned outputs.
+Players whose in-game name matches an author automatically receive the `convention.debug` tag, which unlocks development tools.
+
+### `version`
+
+Semantic version (`major.minor.patch`), used for dependency checks and versioned function paths.
 
 ```yaml
 version: "3.0.0"
 ```
-Semantic versioning (`major.minor.patch`) used for dependency validation and versioned function paths.
 
-### Minecraft Version
-Defines the primary target game version for command/data format compatibility.
+### `minecraft`
+
+The target game version, which decides the available commands and resource formats. Omit it to target the latest version.
 
 ```yaml
 minecraft: "1.21.11"
 ```
-Determines available commands and resources. Omit to use latest version.
 
----
+## Directories
 
-## Directory Settings
+### `directory` and `output`
 
-### Base Directory & Output
-Defines where relative paths are resolved and where generated packs are written.
+`directory` is the base for relative paths. `output` is where the built packs are written.
 
 ```yaml
 directory: "."
 output: "build"
 ```
-Base directory for relative paths. Output defines where generated packs are saved.
 
-### Ignore Patterns
-Defines files and folders ignored by watchers to avoid rebuild loops and noise.
+### `ignore`
+
+Files and patterns `beet watch` ignores, which prevents rebuild loops and speeds up watching.
 
 ```yaml
 ignore: ["build", "manual_cache", "definitions_debug.json"]
 ```
-Files/patterns ignored by `beet watch` to prevent infinite rebuild loops and speed up watching
 
----
+## `require`
 
-## Dependencies
+Python packages imported before the build, which makes their plugins available to the pipeline.
 
 ```yaml
 require:
     - "stewbeet"
     - "bolt"
 ```
-Python packages/modules required for your project. Listed packages are imported before processing, making their plugins available in the pipeline.
 
-Common dependencies:
-- `stewbeet` - StewBeet framework (required)
-- `bolt` - Python-like function syntax
-- `beet.contrib.vanilla` - Vanilla data generators
-- `mecha` - Command preprocessor (usually auto-loaded)
+| Package | Role |
+|---------|------|
+| `stewbeet` | The framework (required) |
+| `bolt` | Python-like syntax inside functions |
+| `beet.contrib.vanilla` | Vanilla data generators |
+| `mecha` | Command compiler (usually loaded automatically) |
 
----
+## Packs
 
-## Pack Configuration
+### `data_pack`
 
-### Data Pack
-Defines source loading rules for datapack content under `src/data/...`.
+Loads `.mcfunction` and JSON files from `src/data/your_namespace/` into the datapack.
 
 ```yaml
 data_pack:
     name: "datapack"
     load: ["src"]
 ```
-Loads `.mcfunction` files and JSON from `src/data/your_namespace/` into the datapack.
 
-### Resource Pack
-Defines source loading rules for client assets under `src/assets/...`.
+### `resource_pack`
+
+Loads assets from `src/assets/` into the resource pack.
 
 ```yaml
 resource_pack:
     name: "resource_pack"
     load: ["src"]
 ```
-Loads assets from `src/assets/` into the resource pack.
 
----
+## `pipeline`
 
-## Pipeline
-
-The pipeline defines the order of plugins executed after packs are loaded. Each plugin processes your project in sequence:
+The plugins that run after the packs are loaded, in order. Each one works on the result of the previous one:
 
 ```yaml
 pipeline:
-    - "src.setup_definitions"                              # 🎨 User setup code
-    - "stewbeet.plugins.resource_pack.sounds"              # 🔊 Process custom sounds
-    - "stewbeet.plugins.resource_pack.item_models"         # 🎁 Generate item models
-    - "stewbeet.plugins.resource_pack.check_power_of_2"    # ✅ Validate texture dimensions
-    - "stewbeet.plugins.custom_recipes"                    # 🍳 Generate custom recipes
-    - "stewbeet.plugins.custom_paintings"                  # 🖼️ Process custom paintings
-    - "stewbeet.plugins.ingame_manual"                     # 📚 Generate in-game manual
-    - "stewbeet.plugins.datapack.loading"                  # 🚀 Setup datapack loading
-    - "stewbeet.plugins.datapack.custom_blocks"            # 🧱 Process custom blocks
-    - "stewbeet.plugins.datapack.loot_tables"              # 🎁 Generate loot tables
-    - "stewbeet.plugins.datapack.sorters"                  # 📋 Setup item sorters
-    - "stewbeet.plugins.compatibilities.simpledrawer"      # 🗄️ SimpleDrawer compatibility
-    - "stewbeet.plugins.compatibilities.neo_enchant"       # ✨ NeoEnchant compatibility
-    - "src.link"                                           # 🔗 User linking code
-    - "mecha"                                              # 🔧 Mecha paired with Bolt
-    - "stewbeet.plugins.finalyze.custom_blocks_ticking"    # ⏰ Setup block ticking
-    - "stewbeet.plugins.finalyze.basic_datapack_structure" # 🏗️ Create basic structure
-    - "stewbeet.plugins.finalyze.dependencies"             # 📦 Handle dependencies
-    - "stewbeet.plugins.finalyze.check_unused_textures"    # 🔍 Find unused textures
-    - "stewbeet.plugins.finalyze.last_final"               # 🎯 Final cleanup
-    - "stewbeet.plugins.auto.lang_file"                    # 🌐 Auto-generate lang files
-    - "stewbeet.plugins.auto.text_renders"                 # 🖼️ Turn "render" keys into item glyphs
-    - "stewbeet.plugins.auto.headers"                      # 📄 Add file headers
-    - "stewbeet.plugins.archive"                           # 🗜️ Create ZIP archives
-    - "stewbeet.plugins.merge_smithed_weld.datapack"       # 🔀 Merge Smithed Weld libs into the datapack
-    - "stewbeet.plugins.merge_smithed_weld.resource_pack"  # 🔀 Merge Smithed Weld libs into the resource pack
-    - "stewbeet.plugins.copy_to_destination"               # 📁 Copy to game folders
-    - "stewbeet.plugins.compute_sha1"                      # #️⃣ Compute file hashes
+    - "src.setup_definitions"                              # User setup code
+    - "stewbeet.plugins.resource_pack.sounds"              # Process custom sounds
+    - "stewbeet.plugins.resource_pack.item_models"         # Generate item models
+    - "stewbeet.plugins.resource_pack.check_power_of_2"    # Validate texture dimensions
+    - "stewbeet.plugins.custom_recipes"                    # Generate custom recipes
+    - "stewbeet.plugins.custom_paintings"                  # Process custom paintings
+    - "stewbeet.plugins.ingame_manual"                     # Generate in-game manual
+    - "stewbeet.plugins.datapack.loading"                  # Setup datapack loading
+    - "stewbeet.plugins.datapack.custom_blocks"            # Process custom blocks
+    - "stewbeet.plugins.datapack.loot_tables"              # Generate loot tables
+    - "stewbeet.plugins.datapack.sorters"                  # Setup item sorters
+    - "stewbeet.plugins.compatibilities.simpledrawer"      # SimpleDrawer compatibility
+    - "stewbeet.plugins.compatibilities.neo_enchant"       # NeoEnchant compatibility
+    - "src.link"                                           # User linking code
+    - "mecha"                                              # Mecha paired with Bolt
+    - "stewbeet.plugins.finalyze.custom_blocks_ticking"    # Setup block ticking
+    - "stewbeet.plugins.finalyze.basic_datapack_structure" # Create basic structure
+    - "stewbeet.plugins.finalyze.dependencies"             # Handle dependencies
+    - "stewbeet.plugins.finalyze.check_unused_textures"    # Find unused textures
+    - "stewbeet.plugins.finalyze.last_final"               # Final cleanup
+    - "stewbeet.plugins.auto.lang_file"                    # Auto-generate lang files
+    - "stewbeet.plugins.auto.text_renders"                 # Turn "render" keys into item glyphs
+    - "stewbeet.plugins.auto.headers"                      # Add file headers
+    - "stewbeet.plugins.archive"                           # Create ZIP archives
+    - "stewbeet.plugins.merge_smithed_weld.datapack"       # Merge Smithed Weld libs into the datapack
+    - "stewbeet.plugins.merge_smithed_weld.resource_pack"  # Merge Smithed Weld libs into the resource pack
+    - "stewbeet.plugins.copy_to_destination"               # Copy to game folders
+    - "stewbeet.plugins.compute_sha1"                      # Compute file hashes
 ```
 
-### Pipeline Stages Explained
+The order follows eight phases:
 
-**🎨 Phase 1: Setup** - Define items, blocks, recipes for StewBeet plugins to use
-```yaml
-- "src.setup_definitions"
-```
+| Phase | Plugins | What happens |
+|-------|---------|--------------|
+| 1. Setup | `src.setup_definitions` | Your code declares items, blocks and recipes |
+| 2. Resource pack | `resource_pack.sounds`, `resource_pack.item_models`, `resource_pack.check_power_of_2` | Models and sounds are generated |
+| 3. Content | `custom_recipes`, `custom_paintings`, `ingame_manual` | Recipes, paintings and the manual |
+| 4. Datapack core | `datapack.loading`, `datapack.custom_blocks`, `datapack.loot_tables` | Loading, blocks, loot tables |
+| 5. User code | `src.link` | Your functions, which can use everything above |
+| 6. Compilation | `mecha` | Bolt and mecha compile every function |
+| 7. Finalisation | `finalyze.custom_blocks_ticking`, `finalyze.basic_datapack_structure`, `finalyze.dependencies` | Clock functions and dependency checks |
+| 8. Packaging | `auto.lang_file`, `auto.text_renders`, `archive`, `copy_to_destination` | Lang file, archives, copies, hashes |
 
-**🎨 Phase 2: Resource Pack** - Generate models and sounds
-```yaml
-- "stewbeet.plugins.resource_pack.sounds"
-- "stewbeet.plugins.resource_pack.item_models"
-- "stewbeet.plugins.resource_pack.check_power_of_2"
-```
+Keep the recommended order. Your code goes in `setup_definitions` and `link`, `mecha` comes after it, and the finalisation plugins are not optional: they write the clock functions and the dependency checks the rest relies on.
 
-**🍳 Phase 3: Content** - Recipes, paintings, manual
-```yaml
-- "stewbeet.plugins.custom_recipes"
-- "stewbeet.plugins.custom_paintings"
-- "stewbeet.plugins.ingame_manual"
-```
+## `meta`
 
-**⚙️ Phase 4: Datapack Core** - Loading, blocks, loot tables
-```yaml
-- "stewbeet.plugins.datapack.loading"
-- "stewbeet.plugins.datapack.custom_blocks"
-- "stewbeet.plugins.datapack.loot_tables"
-```
+### `mc_supports`
 
-**🔗 Phase 5: User Code** - Your custom functions
-```yaml
-- "src.link"
-```
-
-**🔧 Phase 6: Compilation** - Mecha/Bolt processing
-```yaml
-- "mecha"
-```
-
-**🎯 Phase 7: Finalization** - Clock functions, dependencies
-```yaml
-- "stewbeet.plugins.finalyze.custom_blocks_ticking"
-- "stewbeet.plugins.finalyze.basic_datapack_structure"
-- "stewbeet.plugins.finalyze.dependencies"
-```
-
-**📦 Phase 8: Packaging** - ZIPs, copying, hashing
-```yaml
-- "stewbeet.plugins.auto.lang_file"
-- "stewbeet.plugins.auto.text_renders"
-- "stewbeet.plugins.archive"
-- "stewbeet.plugins.copy_to_destination"
-```
-
-### Pipeline Tips
-
-**✅ DO:**
-- Keep the recommended order
-- Place user code at strategic points
-
-**❌ DON'T:**
-- Put `mecha` before your code
-- Skip finalization plugins
-
----
-
-## Meta Configuration
-
-### Minecraft Support
-Declares supported versions for distribution metadata and compatibility signaling.
+The versions declared to Modrinth and Smithed on upload. `"infinite"` declares forward compatibility. It also sets the supported formats written to `pack.mcmeta`.
 
 ```yaml
 mc_supports: ["1.21.11", "26.1-snapshot-1", "infinite"]
 ```
-Declares version compatibility for platform uploads (Modrinth, Smithed). Use `"infinite"` for forward compatibility.<br>
-(Influences supported formats in `pack.mcmeta`)
 
-### Model Resolver
-Configures model cache behavior to speed up rebuilds.
+### `model_resolver`
+
+Caches resolved item models in `.beet_cache/model_resolver/`, which makes rebuilds 80 to 90% faster.
 
 ```yaml
 model_resolver:
     use_cache: true
 ```
-Caches resolved item models (80-90% faster builds). Stored in `.beet_cache/model_resolver/`.
 
-### Mecha
-Configures command parsing and formatting behavior during compilation.
+### `mecha`
+
+How commands are parsed and formatted during compilation.
 
 ```yaml
 mecha:
     multiline: true
     formatting: preserve
 ```
-**`multiline: true`** - Enables multi-line command syntax:
+
+`multiline: true` accepts commands split over several lines:
+
 ```mcfunction
 execute
     as @a[scores={health=1..10}]
@@ -282,14 +202,13 @@ execute
     run function my_namespace:fn
 ```
 
-**`formatting: preserve`** - Keeps your original formatting style.
+`formatting: preserve` keeps your own formatting in the output.
 
----
+## `meta.stewbeet`
 
-### StewBeet Settings
+### Source folders
 
-#### Directory Paths
-Defines StewBeet's source folders for textures, sounds, records, and libraries.
+Where StewBeet reads textures, sounds, jukebox records and libraries.
 
 ```yaml
 stewbeet:
@@ -300,41 +219,36 @@ stewbeet:
     libs_exclude_patterns: []
 ```
 
-#### Build Copy Destinations
-Defines optional post-build sync targets for datapack and resource pack outputs.
+### `build_copy_destinations`
+
+Folders the packs are copied to after each build. Combined with `beet watch`, the game always has the latest build.
 
 ```yaml
 build_copy_destinations:
     datapack: ["D:/latest_snapshot/world/datapacks"]
     resource_pack: ["D:/minecraft/snapshot/resourcepacks"]
 ```
-Automatically copies packs after building. Perfect with `beet watch` for live testing.
 
-#### Custom Item Lore
-Defines default lore branding for generated custom items.
+### `source_lore` and `source_lore_color`
+
+A line appended to the lore of every custom item. `"auto"` is the project icon and name, both drawn with the generated `{id}:tooltip` font.
 
 ```yaml
 source_lore: "auto" # TextComponents format
 source_lore_color: "auto" # "auto" | any color | false
 ```
-Appended to custom items lore, `"auto"` defaults to project icon + name, both drawn with the
-generated `{id}:tooltip` font.
 
-`source_lore_color` controls that font's colors: `"auto"` takes the dominant color of your
-`pack.png`, any Pillow color forces it (`"#55FFFF"`, `"gold"`, `[85, 255, 255]`), and `false` keeps
-the packaged gold. Dropping your own `assets/tooltip.png` next to `pack.png` replaces the character
-atlas entirely (and is never recolored).
+`source_lore_color` sets that font's colour. `"auto"` takes the dominant colour of your `pack.png`, any Pillow colour forces it (`"#55FFFF"`, `"gold"`, `[85, 255, 255]`), and `false` keeps the packaged gold. An `assets/tooltip.png` placed next to `pack.png` replaces the character atlas entirely and is never recoloured.
 
-A source lore is a plain text component, so it also accepts the `render` key of the
-[`auto.text_renders`](../plugins/auto.text_renders.md) plugin to show an item image next to your
-project name:
+A source lore is a plain text component, so it also accepts the `render` key of the [`auto.text_renders`](../plugins/auto.text_renders.md) plugin, to show an item image next to the project name:
 
 ```yaml
 source_lore: [{"text":"ICON"}, " ", {"text":"My Pack", "color":"white", "italic":false, "font":"my_pack:tooltip"}, " ", {"render":"steel_ingot", "height":10}]
 ```
 
-#### Item Renders
-Defines where the per-item PNGs live, and how the `render` key of text components is drawn.
+### `iso_renders_path` and `text_renders`
+
+Where the per-item PNGs live, and how the `render` key of text components is drawn.
 
 ```yaml
 iso_renders_path: "iso_renders"
@@ -344,22 +258,15 @@ text_renders:
     # allow_oversized: true   # unset asks once in the terminal, and remembers the answer
 ```
 
-A picture bigger than the 256x256 Minecraft fits in one glyph is cut into a grid of glyphs put back
-together with negative spacing, at the cost of one texture per tile. The first build to run into it
-asks in the terminal and remembers the answer in `.beet_cache`; `allow_oversized` answers it up
-front, and `false` shrinks such renders to a single glyph instead.
+`iso_renders_path` holds one PNG per item, as `<folder>/<namespace>/<item>.png`. Project items are rendered from their model, `minecraft:` items are downloaded, and items from other packs are the ones you put there yourself. It is shared by [`ingame_manual`](../7_ingame_manual/en.md) and [`auto.text_renders`](../plugins/auto.text_renders.md), so an item is only rendered once.
 
-`iso_renders_path` holds one PNG per item, as `<folder>/<namespace>/<item>.png`. Project items are
-rendered from their model, `minecraft:` items are downloaded, and items of other packs are the ones
-you drop there yourself. It is shared by [`ingame_manual`](../7_ingame_manual/en.md) and
-[`auto.text_renders`](../plugins/auto.text_renders.md), so an item is only ever rendered once.
+A picture larger than the 256x256 that fits in one glyph is cut into a grid of glyphs joined with negative spacing, at the cost of one texture per tile. The first build that meets one asks in the terminal and remembers the answer in `.beet_cache`. `allow_oversized` answers up front, and `false` shrinks such renders to a single glyph.
 
-> **Deprecated**: `manual.cache_path` is replaced by `iso_renders_path`. Projects still setting it
-> keep working (the renders are read from `<cache_path>/items`), but everything else the manual used
-> to cache now lives in beet's own `.beet_cache` folder.
+> **Deprecated**: `manual.cache_path` is replaced by `iso_renders_path`. Projects that still set it keep working (renders are read from `<cache_path>/items`), and everything else the manual caches lives in beet's `.beet_cache` folder.
 
-#### Load Dependencies
-Defines runtime dependency checks shown when required datapacks are missing or outdated.
+### `load_dependencies`
+
+Datapacks checked when your pack loads. A missing or outdated one prints an error in chat with a download link.
 
 ```yaml
 load_dependencies:
@@ -368,15 +275,12 @@ load_dependencies:
         name: "DatapackEnergy"
         url: "https://github.com/ICY105/DatapackEnergy"
 ```
-**Runtime dependency checking** - Validates dependencies on datapack load, shows error messages with download links if missing/outdated.
 
-**⚠️ Requirement:** Only works with datapacks following the [LanternLoad](https://github.com/LanternMC/load) convention.
+This only works with datapacks that follow the [LanternLoad](https://github.com/LanternMC/load) convention.
 
----
+### `manual`
 
-#### In-Game Manual Configuration
-Defines rendering, caching, layout, and interaction behavior for the generated manual.
-
+Rendering, caching, layout and interaction of the generated in-game manual.
 
 ```yaml
 manual:
@@ -393,56 +297,31 @@ manual:
     use_dialog: 1
 ```
 
-**Auto-generated interactive documentation** showing custom items, recipes, and navigation.
+| Option | Effect |
+|--------|--------|
+| `debug_mode` | `true` draws a grid overlay to debug the layout |
+| `manual_overrides` | Folder of files that replace the default manual assets by name. See the [overridable assets](https://github.com/Stoupy51/StewBeet/tree/main/python_package/stewbeet/plugins/ingame_manual/assets) |
+| `high_resolution` | Renders item images at high resolution |
+| `cache_assets` | Caches Minecraft textures and models (about 90% faster builds) |
+| `cache_pages` | Caches every page. Leave it `false` on small projects |
+| `name` | Manual title. Empty means generated from the project name |
+| `max_items_per_row` | Items per row, 1 to 6 |
+| `max_rows_per_page` | Rows per page, 1 to 7. The default grid is 5x5, so 25 items a page |
+| `first_page_text` | Welcome text, as text components |
+| `showcase_image` | `0` off, `1` manual items only, `2` all custom items, `3` both (recommended) |
+| `use_dialog` | `0` book only (no server restart needed), `1` book that opens a dialog (recommended, needs a server restart), `2` dialog only (needs a server restart) |
 
-**🐛 Debug & Development:**
-- `debug_mode: true` - Shows grid overlay for layout debugging
+Generated glyph images are cached in beet's `.beet_cache` folder. Item renders live in `iso_renders_path`, above.
 
-**🎨 Customization:**
-- `manual_overrides: "assets/manual_overrides"` - Override default manual assets by placing files with matching names. See [available assets](https://github.com/Stoupy51/StewBeet/tree/main/python_package/stewbeet/plugins/ingame_manual/assets) for the complete list of overridable files
-- `name: ""` - Manual title (empty = auto-generated from project name)
-- `first_page_text: [...]` - Welcome message using text components
+Example welcome text:
 
-**💾 Caching:**
-- Generated glyph images are cached in beet's own `.beet_cache` folder (see `iso_renders_path` above for the item renders)
-- `cache_assets: true` - Cache MC textures/models (90% faster builds)
-- `cache_pages: false` - Cache all pages (recommended to false for small projects)
-
-**📐 Layout:**
-- `max_items_per_row: 5` - Items per row (1-6)
-- `max_rows_per_page: 5` - Rows per page (1-7)
-- Default grid: 5x5 = 25 items/page
-
-**📸 Showcase Images:**
-- `0` - Disabled
-- `1` - Manual items only
-- `2` - All custom items
-- `3` - Both (recommended)
-
-**💬 Display Mode:**
-- `0` - Book only (legacy, no server restart needed)
-- `1` - Book opening dialog (recommended, requires server restart)
-- `2` - Dialog only (requires server restart)
-
-**Example welcome text:**
 ```yaml
 first_page_text: [{"text":"The following manual will guide you through recipes and energy statistics about devices.", "color": "#505050"}]
 ```
 
----
+## Minimal configuration
 
-## Tips and Best Practices
-
-1. 🆔 **Unique namespace** - Use unique `id` to avoid conflicts
-2. 🔢 **Semantic versioning** - Follow `major.minor.patch` format
-3. 🔀 **Pipeline order** - Place user code at `setup_definitions` and `link`
-4. ⚡ **Enable caching** - `cache_assets` and `use_cache` for faster builds
-5. 🧪 **Auto-testing** - Set `build_copy_destinations`
-6. 📦 **Document dependencies** - Always specify in `load_dependencies`
-
----
-
-## Example: Minimal Configuration
+A beet project that only uses the `auto.headers` plugin:
 
 ```yaml
 # Path to a folder for beet to output
@@ -462,20 +341,18 @@ pipeline:
     - "stewbeet.plugins.auto.headers"
 ```
 
----
-
-**Need help?** Join the [Discord community](https://discord.gg/anxzu6rA9F)!
-
 ## Glossary
 
 | Term | Meaning |
 |------|---------|
-| **Beet configuration file** | Main project config (`beet.yml`, `beet.yaml`, `beet.json`, or `pyproject.toml`) loaded at build start. |
-| **Pipeline** | Ordered list of plugins executed to transform and package your project. |
-| **Meta section** | Structured plugin settings container (`meta`) used by StewBeet and related tools. |
+| **Beet configuration file** | The project config (`beet.yml`, `beet.yaml`, `beet.json` or `pyproject.toml`) loaded at the start of a build |
+| **Pipeline** | The ordered list of plugins that transform and package the project |
+| **Meta section** | The `meta` container for plugin settings, used by StewBeet and related tools |
 
 ## Next steps
 
 - [All plugins](../plugins/README.md): what each pipeline stage does.
 - [Using datapack libraries](../5_dependencies/en.md): declare and auto-download dependencies.
 - [Shipping releases](../6_continuous_delivery/en.md): publish the pack the pipeline builds.
+
+Questions go to the [Discord community](https://discord.gg/anxzu6rA9F).

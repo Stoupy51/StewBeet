@@ -1,17 +1,18 @@
 # Shipping releases automatically
 
-StewBeet provides a single `upload.py` script pattern that handles publishing a new release to all major distribution platforms in one command.<br>
-You call each platform's upload function in sequence: GitHub first (it generates the changelog), then Modrinth, Smithed, and PlanetMinecraft with that changelog.<br>
-Credentials are stored **outside** the project in `~/stewbeet/credentials.yml` so they are never accidentally committed.
+One `upload.py` script publishes a release to GitHub, Modrinth, Smithed and PlanetMinecraft in a single command. It calls each platform in turn: GitHub first, because it writes the changelog, then the others with that changelog.
 
-**Real-world Example**: [SimplEnergy/upload.py](https://github.com/Stoupy51/SimplEnergy/blob/main/upload.py) <br>  
-**Source Code**: [stewbeet/continuous_delivery/](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/continuous_delivery/) <br>
+Credentials live **outside** the project, in `~/stewbeet/credentials.yml`, so they can never be committed by accident.
 
-- Centralise all API credentials in a single file outside the repository
-- Create a tagged GitHub release and upload build artifacts automatically
-- Publish to Modrinth with description sync and optional mod packaging
-- Register a new version on Smithed linking to the GitHub release assets
-- Open the PlanetMinecraft edit page and copy the BBCode changelog to the clipboard
+- A published script: [SimplEnergy/upload.py](https://github.com/Stoupy51/SimplEnergy/blob/main/upload.py)
+- The source: [stewbeet/continuous_delivery/](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/continuous_delivery/)
+
+| Platform | What the script does |
+|----------|----------------------|
+| GitHub | Creates a tagged release and uploads the build artefacts |
+| Modrinth | Publishes the version, syncs the description, optionally packages mod jars |
+| Smithed | Registers the version, linking to the GitHub release assets |
+| PlanetMinecraft | Opens the edit page and copies the BBCode changelog to the clipboard |
 
 ## Credentials Setup
 
@@ -32,7 +33,7 @@ sftp:
     password: "your_password"
 ```
 
-> ⚠️ Never commit `credentials.yml` to version control. Add it to your `.gitignore` if you keep it inside a project folder.
+> **Warning:** Never commit `credentials.yml` to version control. Add it to your `.gitignore` if you keep it inside a project folder.
 
 ---
 
@@ -50,10 +51,10 @@ sftp:
 
 | Key | Required | Description |
 |-----|----------|-------------|
-| `project_name` | ✅ | Repository name (used to construct the release URL) |
-| `version` | ✅ | Version string, e.g. `"1.2.3"`: becomes tag `v1.2.3` |
-| `build_folder` | ✅ | Path to the folder containing the built zip files |
-| `endswith` | ❌ | List of suffixes to filter uploaded files (e.g. `[".zip"]`) |
+| `project_name` | Yes | Repository name (used to construct the release URL) |
+| `version` | Yes | Version string, e.g. `"1.2.3"`: becomes tag `v1.2.3` |
+| `build_folder` | Yes | Path to the folder containing the built zip files |
+| `endswith` | No | List of suffixes to filter uploaded files (e.g. `[".zip"]`) |
 
 ### Example
 ```python
@@ -86,16 +87,16 @@ changelog: str = upload_to_github(credentials, github_config)
 
 | Key | Required | Description |
 |-----|----------|-------------|
-| `slug` | ✅ | Project namespace on Modrinth (e.g. `"simplenergy"`) |
-| `project_name` | ✅ | Display name of the project |
-| `version` | ✅ | Version string |
-| `summary` | ✅ | Short description shown on the project card |
-| `description_markdown` | ✅ | Full project description in Markdown (usually `README.md`) |
-| `version_type` | ✅ | `"release"`, `"beta"`, or `"alpha"` |
-| `build_folder` | ✅ | Path to the folder containing the built zip files |
-| `dependencies` | ❌ | List of Modrinth dependency objects (default: `[]`) |
-| `package_as_mod` | ❌ | `"all"` or `"separate"`: also uploads mod jars for loader platforms |
-| `mod_platforms` | ❌ | List of platforms for mod packaging (default: `["fabric", "forge", "neoforge", "quilt"]`) |
+| `slug` | Yes | Project namespace on Modrinth (e.g. `"simplenergy"`) |
+| `project_name` | Yes | Display name of the project |
+| `version` | Yes | Version string |
+| `summary` | Yes | Short description shown on the project card |
+| `description_markdown` | Yes | Full project description in Markdown (usually `README.md`) |
+| `version_type` | Yes | `"release"`, `"beta"`, or `"alpha"` |
+| `build_folder` | Yes | Path to the folder containing the built zip files |
+| `dependencies` | No | List of Modrinth dependency objects (default: `[]`) |
+| `package_as_mod` | No | `"all"` or `"separate"`: also uploads mod jars for loader platforms |
+| `mod_platforms` | No | List of platforms for mod packaging (default: `["fabric", "forge", "neoforge", "quilt"]`) |
 
 ### Example
 ```python
@@ -137,9 +138,9 @@ upload_to_modrinth(credentials, modrinth_config, changelog)
 
 | Key | Required | Description |
 |-----|----------|-------------|
-| `project_id` | ✅ | Smithed project ID / namespace |
-| `project_name` | ✅ | Repository name on GitHub (used to build download URLs) |
-| `version` | ✅ | Version string |
+| `project_id` | Yes | Smithed project ID / namespace |
+| `project_name` | Yes | Repository name on GitHub (used to build download URLs) |
+| `version` | Yes | Version string |
 
 ### Example
 ```python
@@ -166,8 +167,8 @@ upload_to_smithed(credentials, smithed_config, changelog)
 
 | Key           | Required | Description                                           |
 | ------------- | -------- | ----------------------------------------------------- |
-| `project_url` | ✅        | URL to the project management page on PlanetMinecraft |
-| `version`     | ✅        | Version string (included for validation)              |
+| `project_url` | Yes | URL to the project management page on PlanetMinecraft |
+| `version`     | Yes | Version string (included for validation)              |
 
 ### Example
 ```python
