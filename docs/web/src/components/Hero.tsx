@@ -6,6 +6,7 @@ import { introWillPlay, useIntro } from '../hooks/useIntro';
 import { HeroOutputPanel } from './HeroOutputPanel';
 import { CodeTab } from './CodeTab';
 import { CopyCommand } from './CopyCommand';
+import { TrustStrip } from './TrustStrip';
 import type { FileNode } from './FileTree';
 import heroCode from '../generated/heroCode.json';
 import heroOutput from '../generated/heroOutput.json';
@@ -69,7 +70,7 @@ export const Hero: React.FC = () => {
 
     return (
         <section id="hero" className="pt-14">
-            <div className={`${PAGE} pt-10 md:pt-12 pb-10`}>
+            <div className={`${PAGE} pt-8 md:pt-10 pb-12`}>
                 <div className="text-center">
                     <a
                         href={RELEASES_URL}
@@ -110,11 +111,15 @@ export const Hero: React.FC = () => {
                             <HiArrowRight className="text-ink-400 group-hover:translate-x-0.5 transition-transform" aria-hidden="true" />
                         </Link>
                     </div>
+
+                    <div className="intro-step mt-6" style={step(4)}>
+                        <TrustStrip />
+                    </div>
                 </div>
 
                 {/* Side by side from lg, not xl: 1920x1080 at 150% leaves ~1265px once the
                     scrollbar is counted, and the output must not fall under the fold there. */}
-                <div className="mt-8 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_1.5rem_minmax(0,1fr)] gap-3 lg:gap-2 lg:h-[clamp(20rem,calc(100svh-23rem),34rem)]">
+                <div className="mt-7 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_1.5rem_minmax(0,1fr)] gap-3 lg:gap-2 lg:h-[clamp(19rem,calc(100svh-25.5rem),34rem)]">
                     <div className="intro-panel min-w-0 max-h-[26rem] lg:max-h-none" style={step(0)}>
                         <CodeTab path={t('hero.codeCaption')} lang="python">
                             <div className="relative flex-1 min-h-0 p-4 overflow-auto custom-scrollbar">
