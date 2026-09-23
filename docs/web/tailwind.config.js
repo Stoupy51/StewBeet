@@ -41,6 +41,10 @@ export default {
   ],
   theme: {
     extend: {
+      screens: {
+        // Laptop screens with browser chrome: 1366x768 leaves about 650px of page.
+        short: { raw: '(max-height: 760px)' },
+      },
       colors: {
         ink,
         beet: { ...beet, DEFAULT: beet[400] },

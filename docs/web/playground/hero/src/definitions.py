@@ -40,24 +40,20 @@ def beet_default(ctx: Context):
             "item_name": {"text": "Life Crystal Block"},
             "lore": [{"text": "Break it to get the crystal back"}],
         },
-        # Broken without Silk Touch, it hands the crystal back
-        no_silk_touch_drop=NoSilkTouchDrop(
-            id="life_crystal", count=1,
-        ),
+        no_silk_touch_drop=NoSilkTouchDrop(id="life_crystal"),
         recipes=[CraftingShapelessRecipe(
             category="equipment", result_count=1,
             ingredients=8 * [Ingr("minecraft:glass")]
                 + [Ingr("life_crystal")],
         )],
     )
-    # Single-block veins, deep in the overworld, carved into stone
-    CustomOreGeneration.all_with_config({
-        "life_crystal_block": [CustomOreGeneration(
-        dimensions=["minecraft:overworld"],
-        minimum_height=-32, maximum_height=50,
-        veins_per_region=1.5,
-        provider=["#minecraft:overworld_carver_replaceables"],
-    )]})
+    CustomOreGeneration.all_with_config({"life_crystal_block": [
+        CustomOreGeneration(
+            dimensions=["minecraft:overworld"], veins_per_region=1.5,
+            minimum_height=-32, maximum_height=50,
+            provider=["#minecraft:overworld_carver_replaceables"],
+        ),
+    ]})
     # endregion hero-snippet
 
     add_item_model_component()
