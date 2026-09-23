@@ -83,7 +83,7 @@ export const Spotlights: React.FC = () => {
     const doc = (path: string) => `/markdown?src=${encodeURIComponent(`${path}/${language === 'fr' ? 'fr' : 'en'}.md`)}`;
 
     return (
-        <section className="py-20 md:py-28 border-t border-ink-800">
+        <section className="py-14 md:py-28 border-t border-ink-800">
             <div className={`${PAGE} space-y-16 md:space-y-20`}>
                 {/* Portrait clip (574x686): capped in width so it does not tower over its text. */}
                 <Spotlight ns="manual" video="/ingame_manual.mp4" poster="/ingame_manual_poster.jpg" frame="w-full max-w-[26rem] mx-auto aspect-[574/686]">

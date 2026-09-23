@@ -33,7 +33,7 @@ export const StandingOnGiants: React.FC = () => {
     const { t, language } = useTranslation();
 
     return (
-        <section id="standing-on-giants" className="py-20 md:py-28 border-t border-ink-800">
+        <section id="standing-on-giants" className="py-14 md:py-28 border-t border-ink-800">
             <div className={`${PAGE} grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] gap-10 lg:gap-16`}>
                 <div data-rise>
                     <p className={EYEBROW}>{t('giants.eyebrow')}</p>
