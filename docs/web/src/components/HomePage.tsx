@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Navbar } from './Navbar';
 import { Hero } from './Hero';
-import { TrustStrip } from './TrustStrip';
 import { Gains } from './Gains';
 import { Spotlights } from './Spotlights';
 import { BuiltWith } from './BuiltWith';
@@ -36,18 +35,17 @@ function HomePage() {
     }
   }, [location, navigate]);
 
-  // Proof before pitch: the build, the numbers and the packs that use it come first, then what
-  // it does beyond files, the gain in detail, what it stands on, and how to start.
+  // Proof before pitch: the hero holds the build and the adoption numbers, then what StewBeet
+  // does beyond files, the gain in detail, the packs built with it, what it stands on, how to start.
   return (
     <div className={`min-h-screen bg-ink-950 text-ink-200 ${SELECTION_BRAND}`}>
       <Navbar />
 
       <main>
         <Hero />
-        <TrustStrip />
-        <BuiltWith />
         <Spotlights />
         <Gains />
+        <BuiltWith />
         <StandingOnGiants />
         <Installation />
         <FinalCTA />

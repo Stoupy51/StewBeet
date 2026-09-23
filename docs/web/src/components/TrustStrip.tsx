@@ -1,13 +1,12 @@
 import { useTranslation } from '../i18n/useTranslation';
 import stats from '../generated/stats.json';
 import { TOTAL_BUILT_WITH } from './builtWithData';
-import { PAGE } from '../theme';
 
 /**
- * The numbers that answer "does anyone use this?", right under the proof they back up.
- * Values come from src/generated/stats.json, written at build time by scripts/build-stats.ts; a
- * metric that failed to fetch is null and is dropped rather than shown stale. The release age sits
- * in the hero eyebrow, so it is not repeated here.
+ * The numbers that answer "does anyone use this?", inside the hero so they sit above the fold with
+ * the proof they back up. Values come from src/generated/stats.json, written at build time by
+ * scripts/build-stats.ts; a metric that failed to fetch is null and is dropped rather than shown
+ * stale. The release age sits in the hero eyebrow, so it is not repeated here.
  */
 
 interface Metric {
@@ -20,7 +19,7 @@ function formatCount(count: number): string {
     return count >= 1000 ? `${(count / 1000).toFixed(1)}k` : String(count);
 }
 
-export const TrustStrip: React.FC = () => {
+export const TrustStrip = ({ className = '' }: { className?: string }) => {
     const { t } = useTranslation();
 
     const metrics: Metric[] = [
@@ -30,15 +29,13 @@ export const TrustStrip: React.FC = () => {
     ];
 
     return (
-        <section aria-label={t('trust.label')} className="border-t border-ink-800 bg-ink-900/50">
-            <div className={`${PAGE} py-6 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-0 sm:divide-x sm:divide-ink-800`}>
-                {metrics.map(({ value, label }) => (
-                    <div key={label} className="flex items-baseline justify-center gap-3">
-                        <span className="font-mono text-2xl text-ink-50 tabular-nums">{value}</span>
-                        <span className="text-sm text-ink-400">{label}</span>
-                    </div>
-                ))}
-            </div>
-        </section>
+        <ul aria-label={t('trust.label')} className={`flex flex-wrap items-baseline justify-center gap-x-8 gap-y-2 ${className}`}>
+            {metrics.map(({ value, label }) => (
+                <li key={label} className="flex items-baseline gap-2">
+                    <span className="font-mono text-lg text-ink-50 tabular-nums">{value}</span>
+                    <span className="text-sm text-ink-400">{label}</span>
+                </li>
+            ))}
+        </ul>
     );
 };
