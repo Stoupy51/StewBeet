@@ -78,7 +78,7 @@ export const BuiltWith: React.FC = () => {
     const { t } = useTranslation();
 
     return (
-        <section id="built-with" className="py-20 md:py-28 border-t border-ink-800">
+        <section id="built-with" className="py-14 md:py-28 border-t border-ink-800">
             <div className={PAGE}>
                 <div data-rise className="max-w-3xl">
                     <p className={EYEBROW}>{t('builtWith.eyebrow')}</p>
