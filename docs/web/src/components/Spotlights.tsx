@@ -84,7 +84,7 @@ export const Spotlights: React.FC = () => {
 
     return (
         <section className="py-20 md:py-28 border-t border-ink-800">
-            <div className={`${PAGE} space-y-24 md:space-y-32`}>
+            <div className={`${PAGE} space-y-16 md:space-y-20`}>
                 {/* Portrait clip (574x686): capped in width so it does not tower over its text. */}
                 <Spotlight ns="manual" video="/ingame_manual.mp4" poster="/ingame_manual_poster.jpg" frame="w-full max-w-[26rem] mx-auto aspect-[574/686]">
                     <Link to={doc('7_ingame_manual')} className={`inline-flex items-center gap-2 font-medium ${TEXT_ACCENT_HOVER}`}>
