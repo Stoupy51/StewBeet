@@ -46,9 +46,9 @@ class CustomOreGeneration(StMapping):
 	"""
 	OVERWORLD_REPLACEABLES: ClassVar[tuple[str, ...]] = (
 		"#minecraft:base_stone_overworld", "#minecraft:substrate_overworld", "#minecraft:sand", "#minecraft:terracotta",
-		"#minecraft:iron_ores", "#minecraft:copper_ores", "#minecraft:snow", "minecraft:water", "minecraft:gravel",
-		"minecraft:suspicious_gravel", "minecraft:sandstone", "minecraft:red_sandstone", "minecraft:calcite", "minecraft:packed_ice",
-		"minecraft:raw_iron_block", "minecraft:raw_copper_block", "minecraft:cinnabar", "minecraft:sulfur", "minecraft:potent_sulfur",
+		"#minecraft:iron_ores", "#minecraft:copper_ores", "#minecraft:snow", "minecraft:gravel", "minecraft:suspicious_gravel",
+		"minecraft:sandstone", "minecraft:red_sandstone", "minecraft:calcite", "minecraft:packed_ice", "minecraft:raw_iron_block",
+		"minecraft:raw_copper_block", "minecraft:cinnabar", "minecraft:sulfur", "minecraft:potent_sulfur",
 	)
 	""" Blocks of the #minecraft:overworld_carver_replaceables tag, which 26.3 removed. """
 
