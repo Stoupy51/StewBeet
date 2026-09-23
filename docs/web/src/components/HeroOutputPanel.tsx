@@ -28,7 +28,8 @@ type Contents = Record<string, string>;
 const CHECKERBOARD =
     'bg-[linear-gradient(45deg,#24211e_25%,transparent_25%),linear-gradient(-45deg,#24211e_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#24211e_75%),linear-gradient(-45deg,transparent_75%,#24211e_75%)] bg-[length:16px_16px] bg-[position:0_0,0_8px,8px_-8px,-8px_0]';
 
-export const HeroOutputPanel: React.FC<{ nodes: FileNode[] }> = ({ nodes }) => {
+/** `active` is the code tab on show; files the other snippets produce are dimmed. */
+export const HeroOutputPanel: React.FC<{ nodes: FileNode[]; active: string }> = ({ nodes, active }) => {
     const { t } = useTranslation();
     const [selected, setSelected] = useState<FileNode | null>(null);
     const [contents, setContents] = useState<Contents | null>(null);
@@ -49,7 +50,7 @@ export const HeroOutputPanel: React.FC<{ nodes: FileNode[] }> = ({ nodes }) => {
     if (!selected) {
         return (
             <div ref={treeScroll} className="flex-1 min-h-0 flex flex-col p-4 overflow-auto custom-scrollbar">
-                <FileTree nodes={nodes} onSelect={openFile} />
+                <FileTree nodes={nodes} onSelect={openFile} active={active} />
                 <p className="mt-4 pt-3 border-t border-ink-800 text-xs text-ink-400 leading-relaxed">
                     {t('hero.outputNote')}
                 </p>

@@ -1,10 +1,11 @@
 """ Definitions behind the landing page hero.
 
-The `hero-snippet` region below is what the website shows. Two things read this file:
-scripts/prehighlight.ts extracts that region, dedents it and runs Shiki over it, and
-python_package/scripts/build_hero_output.py builds this project and records every file it produced.
+Each `hero-<id>` region below is one tab of the website's code panel, in file order. Two things
+read this file: scripts/prehighlight.ts extracts the regions, dedents them and runs Shiki over
+them, and python_package/scripts/build_hero_output.py builds this project, records every file it
+produced and checks that each file of the hero tree names the region it comes from.
 
-Lines inside the region are kept under 66 columns once dedented. The snippet sits in half the hero
+Lines inside the regions are kept under 66 columns once dedented. The snippet sits in half the hero
 and anything longer is cut mid-string on a 1280px screen, which reads as a rendering bug rather
 than as scrollable code. prehighlight.ts enforces that budget and fails the build if it is broken.
 
@@ -31,7 +32,7 @@ def beet_default(ctx: Context):
         components={"item_name": {"text": "Life Crystal"}},
     )
 
-    # region hero-snippet
+    # region hero-block
     Block(
         id="life_crystal_block",
         vanilla_block=VanillaBlock(id="minecraft:glass"),
@@ -47,6 +48,9 @@ def beet_default(ctx: Context):
                 + [Ingr("life_crystal")],
         )],
     )
+    # endregion hero-block
+
+    # region hero-ore
     CustomOreGeneration.all_with_config({"life_crystal_block": [
         CustomOreGeneration(
             dimensions=["minecraft:overworld"], veins_per_region=1.5,
@@ -54,7 +58,7 @@ def beet_default(ctx: Context):
             provider=["#minecraft:overworld_carver_replaceables"],
         ),
     ]})
-    # endregion hero-snippet
+    # endregion hero-ore
 
     add_item_model_component()
     add_item_name_and_lore_if_missing()

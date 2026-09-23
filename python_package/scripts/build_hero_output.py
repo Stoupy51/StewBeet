@@ -6,8 +6,9 @@ docs/web/playground/hero for real and records what came out.
 
 docs/web/src/components/heroTree.json stays hand-curated, because the real paths are far too long
 to read in half a hero panel, but every one of its leaves carries the exact build path it stands
-for. This script fails when a leaf points at a file the build did not produce, which is what keeps
-the curated tree honest.
+for and the `hero-<id>` region of definitions.py that produces it. This script fails when a leaf
+points at a file the build did not produce, or at a region that does not exist, which is what
+keeps the curated tree honest.
 
 Run `uv run scripts/build_hero_output.py` after touching the hero project, and `--check` in CI.
 """
@@ -17,6 +18,7 @@ import difflib
 import io
 import json
 import os
+import re
 import shutil
 import sys
 from collections.abc import Iterator
@@ -35,6 +37,9 @@ ROOT: str = stp.get_root_path(__file__, go_up=2)
 
 PROJECT: str = f"{ROOT}/docs/web/playground/hero"
 """ The real StewBeet project behind the hero. """
+
+DEFINITIONS_PATH: str = f"{PROJECT}/src/definitions.py"
+""" Source of the hero code panel: each `# region hero-<id>` is one tab. """
 
 TREE_PATH: str = f"{ROOT}/docs/web/src/components/heroTree.json"
 """ Hand-curated display tree whose leaves carry the real build path they stand for. """
@@ -102,16 +107,28 @@ def iter_leaves(nodes: list[dict[str, Any]]) -> Iterator[dict[str, Any]]:
             yield node
 
 
-def validate(leaves: list[dict[str, Any]], built: dict[str, bytes]) -> None:
+def snippet_ids(source: str) -> list[str]:
+    """ The `<id>` of every `# region hero-<id>` marker, in file order.
+
+    >>> snippet_ids("    # region hero-block\\n    Block()\\n    # region hero-ore\\n")
+    ['block', 'ore']
+    """
+    return re.findall(r"^\s*# region hero-([\w-]+)\s*$", source, flags=re.MULTILINE)
+
+
+def validate(leaves: list[dict[str, Any]], built: dict[str, bytes], snippets: list[str]) -> None:
     """ Stop the build when the curated tree no longer matches what StewBeet produced.
 
     Args:
-        leaves (list[dict[str, Any]]): Every leaf of the curated tree.
-        built  (dict[str, bytes]):     Everything the build generated.
+        leaves   (list[dict[str, Any]]): Every leaf of the curated tree.
+        built    (dict[str, bytes]):     Everything the build generated.
+        snippets (list[str]):            Region ids of definitions.py, one per tab of the code panel.
     """
     errors: list[str] = []
     if not leaves:
         errors.append("The curated tree has no files at all.")
+    if not snippets:
+        errors.append(f"{stp.relative_path(DEFINITIONS_PATH)} has no '# region hero-<id>' marker.")
 
     seen: set[str] = set()
     for leaf in leaves:
@@ -125,6 +142,8 @@ def validate(leaves: list[dict[str, Any]], built: dict[str, bytes]) -> None:
             suggestions: str = "\n".join(f"        {match}" for match in close) or "        (nothing similar)"
             errors.append(f"Path {path!r} was not generated. Closest real paths:\n{suggestions}")
         seen.add(path)
+        if leaf.get("snippet") not in snippets:
+            errors.append(f"Leaf {leaf.get('name', '?')!r} has snippet {leaf.get('snippet')!r}, expected one of {snippets}.")
 
     if errors:
         stp.error(f"heroTree.json does not match the build ({len(errors)} problem(s)):")
@@ -270,7 +289,7 @@ def main() -> None:
         stp.info(f"{len(built)} files generated.")
         return
 
-    validate(list(iter_leaves(tree)), built)
+    validate(list(iter_leaves(tree)), built, snippet_ids(Path(DEFINITIONS_PATH).read_text(encoding="utf-8")))
     meta, contents, images = collect_outputs(tree, built)
 
     if args.check:

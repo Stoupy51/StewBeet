@@ -23,6 +23,8 @@ export interface FileNode {
     lines?: number;
     /** Public URL of the real file, for images only. */
     url?: string;
+    /** Id of the hero code tab whose snippet produces this file, e.g. 'block'. */
+    snippet?: string;
 }
 
 /** Colour per file extension, so a tree reads as datapack / resource pack / function at a glance. */
@@ -71,53 +73,64 @@ function rowOffsets(nodes: FileNode[], from: number): number[] {
     return offsets;
 }
 
+/** Whether a row belongs to the active snippet: a file by its tag, a directory by any file below it. */
+function fromSnippet(node: FileNode, active: string): boolean {
+    if (node.children) return node.children.some((child) => fromSnippet(child, active));
+    return node.snippet === undefined || node.snippet === active;
+}
+
 interface TreeRowProps {
     node: FileNode;
     depth: number;
     order: number;
     selected?: string;
     onSelect?: (node: FileNode) => void;
+    active?: string;
 }
 
-const TreeRow = ({ node, depth, order, selected, onSelect }: TreeRowProps) => {
+const TreeRow = ({ node, depth, order, selected, onSelect, active }: TreeRowProps) => {
     const isDirectory = node.children !== undefined;
     const [open, setOpen] = useState(node.open !== false);
     const childOffsets = rowOffsets(node.children ?? [], order + 1);
     const isSelectable = !isDirectory && node.path !== undefined && onSelect !== undefined;
+    const dimmed = active !== undefined && !fromSnippet(node, active);
 
     return (
         <>
+            {/* The row's entrance animation holds its opacity, so the dimming sits on an inner wrapper. */}
             <div
-                className="intro-row flex items-baseline gap-2 leading-[1.55] whitespace-nowrap"
+                className="intro-row leading-[1.55] whitespace-nowrap"
                 style={{ paddingLeft: `${depth * 0.9}rem`, '--row': order } as React.CSSProperties}
             >
-                {isDirectory ? (
-                    <button
-                        onClick={() => setOpen(!open)}
-                        className="flex items-baseline gap-1 text-ink-300 hover:text-ink-50 transition-colors"
-                    >
-                        <span className="translate-y-0.5">{open ? <HiChevronDown /> : <HiChevronRight />}</span>
-                        <span className="font-medium">{node.name}</span>
-                    </button>
-                ) : (
-                    <>
-                        <span className="text-ink-600 select-none">└</span>
-                        {isSelectable ? (
-                            <button
-                                onClick={() => onSelect(node)}
-                                aria-current={node.path === selected ? 'true' : undefined}
-                                className={`${fileColor(node.name)} hover:underline underline-offset-2 decoration-dotted transition-colors ${
-                                    node.path === selected ? 'underline decoration-solid' : ''
-                                }`}
-                            >
-                                {node.name}
-                            </button>
-                        ) : (
-                            <span className={fileColor(node.name)}>{node.name}</span>
-                        )}
-                    </>
-                )}
-                {node.note && <span className="text-ink-400 text-[0.6875rem] truncate">{node.note}</span>}
+                <div className={`flex items-baseline gap-2 transition-opacity duration-200 ${dimmed ? 'opacity-30' : ''}`}>
+                    {isDirectory ? (
+                        <button
+                            onClick={() => setOpen(!open)}
+                            className="flex items-baseline gap-1 text-ink-300 hover:text-ink-50 transition-colors"
+                        >
+                            <span className="translate-y-0.5">{open ? <HiChevronDown /> : <HiChevronRight />}</span>
+                            <span className="font-medium">{node.name}</span>
+                        </button>
+                    ) : (
+                        <>
+                            <span className="text-ink-600 select-none">└</span>
+                            {isSelectable ? (
+                                <button
+                                    onClick={() => onSelect(node)}
+                                    aria-current={node.path === selected ? 'true' : undefined}
+                                    className={`${fileColor(node.name)} hover:underline underline-offset-2 decoration-dotted transition-colors ${
+                                        node.path === selected ? 'underline decoration-solid' : ''
+                                    }`}
+                                >
+                                    {node.name}
+                                </button>
+                            ) : (
+                                <span className={fileColor(node.name)}>{node.name}</span>
+                            )}
+                        </>
+                    )}
+                    {node.note && <span className="text-ink-400 text-[0.6875rem] truncate">{node.note}</span>}
+                </div>
             </div>
 
             {isDirectory && open && node.children?.map((child, index) => (
@@ -128,6 +141,7 @@ const TreeRow = ({ node, depth, order, selected, onSelect }: TreeRowProps) => {
                     order={childOffsets[index]}
                     selected={selected}
                     onSelect={onSelect}
+                    active={active}
                 />
             ))}
         </>
@@ -146,10 +160,12 @@ interface FileTreeProps {
      * visitor is not shown an entrance the server already painted as finished.
      */
     reveal?: boolean;
+    /** Id of the hero code tab on show: files another snippet produces are dimmed, not hidden. */
+    active?: string;
 }
 
 /** Same 12px/1.55 as the hero code panel: the tree and the snippet read as one pair, not two widgets. */
-export const FileTree: React.FC<FileTreeProps> = ({ nodes, selected, onSelect, reveal }) => {
+export const FileTree: React.FC<FileTreeProps> = ({ nodes, selected, onSelect, reveal, active }) => {
     const offsets = rowOffsets(nodes, 0);
     const rows = nodes.reduce((total, node) => total + visibleRowCount(node), 0);
     const step = Math.min(REVEAL_STEP_MS, REVEAL_BUDGET_MS / Math.max(rows, 1));
@@ -167,6 +183,7 @@ export const FileTree: React.FC<FileTreeProps> = ({ nodes, selected, onSelect, r
                     order={offsets[index]}
                     selected={selected}
                     onSelect={onSelect}
+                    active={active}
                 />
             ))}
         </div>
