@@ -18,6 +18,8 @@ interface SpotlightProps {
     ns: 'manual' | 'editor';
     video: string;
     poster: string;
+    /** Size and aspect ratio of the frame, matching the video so it shows without bars. */
+    frame: string;
     /** Puts the video on the left from lg up. */
     videoFirst?: boolean;
     children: React.ReactNode;
@@ -29,7 +31,7 @@ interface SpotlightProps {
  * already started does not stop it, and the preference is only known after the first render, so
  * the pause is explicit.
  */
-const Spotlight = ({ ns, video, poster, videoFirst = false, children }: SpotlightProps) => {
+const Spotlight = ({ ns, video, poster, frame, videoFirst = false, children }: SpotlightProps) => {
     const { t } = useTranslation();
     // `useReducedMotion` is null until it has read the media query; treat that as "no preference".
     const prefersReducedMotion = useReducedMotion() === true;
@@ -56,8 +58,7 @@ const Spotlight = ({ ns, video, poster, videoFirst = false, children }: Spotligh
                 <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">{children}</div>
             </div>
 
-            {/* One frame ratio for both, since the manual clip is portrait and the editor one landscape. */}
-            <div className="aspect-[4/3] rounded-panel border border-ink-800 bg-ink-900 overflow-hidden">
+            <div className={`${frame} rounded-panel border border-ink-800 bg-ink-900 overflow-hidden`}>
                 <video
                     ref={videoRef}
                     className="w-full h-full object-contain"
@@ -84,14 +85,15 @@ export const Spotlights: React.FC = () => {
     return (
         <section className="py-20 md:py-28 border-t border-ink-800">
             <div className={`${PAGE} space-y-24 md:space-y-32`}>
-                <Spotlight ns="manual" video="/ingame_manual.mp4" poster="/ingame_manual_poster.jpg">
+                {/* Portrait clip (574x686): capped in width so it does not tower over its text. */}
+                <Spotlight ns="manual" video="/ingame_manual.mp4" poster="/ingame_manual_poster.jpg" frame="w-full max-w-[26rem] mx-auto aspect-[574/686]">
                     <Link to={doc('7_ingame_manual')} className={`inline-flex items-center gap-2 font-medium ${TEXT_ACCENT_HOVER}`}>
                         {t('manual.readMore')}
                         <HiArrowRight aria-hidden="true" />
                     </Link>
                 </Spotlight>
 
-                <Spotlight ns="editor" video="/vscode_extension.mp4" poster="/vscode_extension_poster.jpg" videoFirst>
+                <Spotlight ns="editor" video="/vscode_extension.mp4" poster="/vscode_extension_poster.jpg" frame="w-full aspect-[960/598]" videoFirst>
                     <a href={MARKETPLACE_URL} target="_blank" rel="noopener noreferrer" className={`${BTN_SECONDARY} h-11 px-4`}>
                         <VscodeMark className="w-5 h-5" aria-hidden="true" />
                         {t('editor.install')}
