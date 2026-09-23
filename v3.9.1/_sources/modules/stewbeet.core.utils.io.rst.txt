@@ -1,0 +1,21 @@
+stewbeet.core.utils.io package
+==============================
+
+.. automodule:: stewbeet.core.utils.io
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.core.utils.io.advancements
+   stewbeet.core.utils.io.deprecated
+   stewbeet.core.utils.io.dicts
+   stewbeet.core.utils.io.files
+   stewbeet.core.utils.io.functions
+   stewbeet.core.utils.io.model_cache

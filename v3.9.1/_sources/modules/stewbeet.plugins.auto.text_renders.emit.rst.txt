@@ -1,0 +1,8 @@
+stewbeet.plugins.auto.text\_renders.emit module
+===============================================
+
+.. automodule:: stewbeet.plugins.auto.text_renders.emit
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

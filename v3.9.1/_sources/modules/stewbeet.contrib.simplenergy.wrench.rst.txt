@@ -1,0 +1,8 @@
+stewbeet.contrib.simplenergy.wrench module
+==========================================
+
+.. automodule:: stewbeet.contrib.simplenergy.wrench
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

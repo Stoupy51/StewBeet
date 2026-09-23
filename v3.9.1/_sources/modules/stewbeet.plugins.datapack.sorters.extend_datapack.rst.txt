@@ -1,0 +1,8 @@
+stewbeet.plugins.datapack.sorters.extend\_datapack module
+=========================================================
+
+.. automodule:: stewbeet.plugins.datapack.sorters.extend_datapack
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

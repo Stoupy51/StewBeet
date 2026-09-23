@@ -1,0 +1,8 @@
+stewbeet.plugins.sniffer.silent module
+======================================
+
+.. automodule:: stewbeet.plugins.sniffer.silent
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
