@@ -371,7 +371,8 @@ export const MarkdownPage: React.FC = () => {
     );
 
     return (
-        <div className={`doc-page min-h-screen bg-ink-950 text-ink-200 ${SELECTION_BRAND}`}>
+        // pt-14 makes room for the fixed navbar, so the toolbar's place in the flow matches where it is pinned.
+        <div className={`doc-page min-h-screen pt-14 bg-ink-950 text-ink-200 ${SELECTION_BRAND}`}>
             <Navbar />
 
             {/* Toolbar, kept to one line: it is pinned over the document for the whole read. */}
