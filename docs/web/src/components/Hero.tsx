@@ -78,6 +78,9 @@ function filesFrom(nodes: FileNode[], snippet: string): number {
 
 const tree = heroOutput.tree as FileNode[];
 
+/** Code panel showing the longest snippet: 2px of border, the 2.5rem tab, 2rem of padding and 0.75rem lines at 1.55. */
+const CODE_HEIGHT = `calc(${Math.max(...heroCode.snippets.map(({ lines }) => lines))} * 1.1625rem + 4.5rem + 2px)`;
+
 export const Hero: React.FC = () => {
     const { t, language } = useTranslation();
     const gettingStarted = `/markdown?src=${encodeURIComponent(language === 'fr' ? '0_getting_started/fr.md' : '0_getting_started/en.md')}`;
@@ -137,10 +140,14 @@ export const Hero: React.FC = () => {
 
                 {/* Side by side from lg, not xl: 1920x1080 at 150% leaves ~1265px once the
                     scrollbar is counted, and the output must not fall under the fold there.
-                    The height subtracts the header above (26.25rem, 23.25rem on short screens) plus a
-                    margin, and the minmax row keeps content from stretching it past that. */}
-                <div className="mt-7 short:mt-5 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_1.5rem_minmax(0,1fr)] lg:grid-rows-[minmax(0,1fr)] gap-3 lg:gap-2 lg:h-[clamp(16rem,calc(100svh-26.25rem),32.5rem)] lg:short:h-[clamp(15rem,calc(100svh-23.25rem),32.5rem)]">
-                    <div className="intro-panel min-w-0 min-h-0 max-h-[31rem] lg:max-h-none" style={step(0)}>
+                    The height is the longest snippet's, capped at the room left under the header
+                    (26.25rem, 23.25rem on short screens) plus a margin, and the minmax row keeps
+                    the taller file tree from stretching it. */}
+                <div
+                    className="mt-7 short:mt-5 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_1.5rem_minmax(0,1fr)] lg:grid-rows-[minmax(0,1fr)] gap-3 lg:gap-2 lg:h-[min(var(--code-height),clamp(16rem,calc(100svh-26.25rem),32.5rem))] lg:short:h-[min(var(--code-height),clamp(15rem,calc(100svh-23.25rem),32.5rem))]"
+                    style={{ '--code-height': CODE_HEIGHT } as React.CSSProperties}
+                >
+                    <div className="intro-panel min-w-0 min-h-[var(--code-height)] lg:min-h-0 max-h-[31rem] lg:max-h-none" style={step(0)}>
                         <CodeTab
                             path={t('hero.codeCaption')}
                             accessory={
@@ -187,12 +194,12 @@ export const Hero: React.FC = () => {
                             accessory={
                                 <FileCounter
                                     label={t('hero.outputSummary')
-                                        .replace('{count}', String(filesFrom(tree, snippet.id)))
+                                        .replace('{count}', String(filesFrom(tree, active)))
                                         .replace('{total}', String(heroOutput.fileCount))}
                                 />
                             }
                         >
-                            <HeroOutputPanel nodes={tree} active={snippet.id} />
+                            <HeroOutputPanel nodes={tree} active={active} />
                         </CodeTab>
                     </div>
                 </div>

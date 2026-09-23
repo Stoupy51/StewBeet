@@ -61,6 +61,7 @@ export function extractRegion(source: string, name: string): string {
 /**
  * One tab per region, in file order. The id is what heroTree.json leaves name in `snippet`, and the
  * label is the snippet's first identifier (`Block`, `CustomOreGeneration`), so the tab reads as code.
+ * The line count sizes the hero panels to the longest snippet.
  */
 const source = readFileSync(SOURCE, 'utf-8');
 const names = Array.from(source.matchAll(REGION_MARKER), (match) => match[1]);
@@ -70,6 +71,7 @@ const snippets = await Promise.all(names.map(async (name) => {
     return {
         id: name.slice('hero-'.length),
         label: code.match(/^[A-Za-z_]\w*/)?.[0] ?? name,
+        lines: code.split('\n').length,
         html: await codeToHtml(code, { lang: 'python', theme: 'dark-plus', transformers: [pythonSemantics] }),
     };
 }));
