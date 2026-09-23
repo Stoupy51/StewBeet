@@ -1,44 +1,18 @@
 # Tutorial: build your first datapack
 
+In this tutorial you create a StewBeet project, build it, load it in Minecraft, then add a custom item and a full ruby ore tier with a working custom block. It takes about 20 minutes.
 
-Welcome to **StewBeet**! 🎉 This guide takes you from complete beginner to creating your first Minecraft datapack using the StewBeet framework. Whether you're new to datapack development or coming from vanilla datapacks, this guide has everything you need to get started.
+You need three things:
 
-## What You'll Learn
+- **uv**, [the Python package manager from Astral](https://docs.astral.sh/uv/). It installs Python for you, so it is the only thing on this list you set up by hand.
+- **A text editor.** [VS Code](https://code.visualstudio.com/) with the Python extension pack and the [StewBeet extension](https://marketplace.visualstudio.com/items?itemName=stoupy.stewbeet) gives you completion inside your commands.
+- **Minecraft Java Edition**, to test the result.
 
-By the end of this guide, you'll be able to:
-- ✅ Install uv and set up StewBeet on your computer
-- 🎯 Choose the right template for your project
-- ⚙️ Configure your first StewBeet project
-- 🔨 Build and test your datapack
-- 📝 Add your first custom items and blocks
-- 🎮 Load your datapack in Minecraft
+You do not install Python yourself. StewBeet needs 3.14, every template says so in its `pyproject.toml`, and uv downloads a matching version the first time you build.
 
-## What is StewBeet?
+## 1. Install uv
 
-StewBeet is an **automation framework** for creating Minecraft datapacks. Think of it as a smart assistant that:
-
-- 🤖 **Automates repetitive tasks** - No more manually creating models, textures, or function files
-- 📦 **Generates resource packs** - Automatically creates all the visual assets your datapack needs
-- 📚 **Integrates libraries** - Works with the datapack libraries you already use like Smithed
-- 📖 **Creates documentation** - Generates in-game manuals and function headers
-- 🔧 **Handles complexity** - Manages dependencies, versioning, and compatibility automatically
-
-Instead of writing hundreds of files manually, you define what you want and StewBeet creates everything for you!
-
-## Prerequisites
-
-Before we start, make sure you have:
-
-### Required Software
-- **uv** 📦 - [The Python package manager from Astral](https://docs.astral.sh/uv/). It installs Python for you, so it is the only thing on this list you have to set up.
-- **Text Editor or IDE** 📝 - We recommend [VS Code](https://code.visualstudio.com/) with Python extension pack and the [StewBeet extension](https://marketplace.visualstudio.com/items?itemName=stoupy.stewbeet)
-- **Minecraft Java Edition** 🎮 - For testing your datapacks
-
-You do **not** need to install Python yourself. StewBeet needs 3.14, every template says so in its `pyproject.toml`, and uv downloads a matching version the first time you build.
-
-## Step 1: Install uv
-
-Open your terminal/command prompt and run the line for your system:
+Run the line for your system:
 
 ```powershell
 # Windows
@@ -52,78 +26,58 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 
 Other ways to install it (winget, Homebrew, pipx, a standalone binary) are listed on the [uv installation page](https://docs.astral.sh/uv/getting-started/installation/).
 
-### Verify Installation
 Close and reopen your terminal, then check that uv is on your PATH:
+
 ```bash
 uv --version
 ```
 
-> 💡 Already have Python 3.14 and prefer pip? `pip install stewbeet` still works, and every `uv run stewbeet ...` below becomes plain `stewbeet ...`. The rest of the guide is identical.
+> Already have Python 3.14 and prefer pip? `pip install stewbeet` works too, and every `uv run stewbeet ...` below becomes plain `stewbeet ...`. The rest of the tutorial is identical.
 
-## Step 2: Choose Your Template
+## 2. Create the project
 
-StewBeet provides three templates to get you started.<br>
-**We strongly recommend the Basic Template** for beginners:
+StewBeet ships three templates. This tutorial uses **Basic**: every plugin is configured and commented, and there is no example content to delete.
 
-### Template Comparison
+| Template | For | What you get |
+|----------|-----|--------------|
+| Minimal | Learning beet on its own | One StewBeet plugin, nothing else |
+| **Basic** | **Most projects** | Every plugin, commented, no example content |
+| Extensive | Reading real examples | Every feature, with working items, ores and a manual |
 
-| Template | Best For | Features | Complexity |
-|----------|----------|----------|------------|
-| **🔹 Minimal** | Learning beet basics | Core beet functionality only | ⭐ Beginner |
-| **⭐ Basic** | **Most users** | Full StewBeet features, clean setup | ⭐⭐ Intermediate |
-| **🌟 Extensive** | Advanced users | All features + examples | ⭐⭐⭐ Advanced |
+1. Create a folder for the project, for example `C:/MyDatapacks/AwesomeOres/`.
+2. Open it in VS Code (right-click the folder and pick "Open with Code", or File, Open Folder).
+3. Open a terminal with Terminal, New Terminal. It starts in the project folder.
+4. Run:
 
-### Why Choose Basic Template?
-
-The **Basic Template** is perfect because it:
-- ✅ Includes **all StewBeet features** but with clean, empty configuration
-- 📝 Has **detailed comments** explaining every option
-- 🎯 Provides a **solid foundation** without overwhelming examples
-- 🔧 Is **easily customizable** for your specific needs
-
-## Step 3: Create Your Project
-
-### Initialize a New Project
-
-1. **Create** a new folder for your project (e.g., `C:/MyDatapacks/AwesomeOres/`)
-2. **Open the folder in VS Code**:
-   - Right-click the folder -> "Open with Code"
-   - Or launch VS Code and use File -> Open Folder
-3. **Open a terminal in VS Code**:
-   - Use Terminal -> New Terminal from the menu
-   - The terminal will automatically open in your project folder
-4. **Run the init command**:
    ```bash
    uvx stewbeet init basic
    ```
 
-`uvx` downloads StewBeet, runs it once and throws the copy away, so you never install anything globally. The command creates all the necessary files and folders for your project!
+`uvx` downloads StewBeet, runs it once and discards the copy, so nothing is installed globally. The folder now looks like this:
 
-Your project structure will look like this:
 ```bash
 AwesomeOres/
-├── 📁 .beet_cache/              # Build cache (auto-generated)
-├── 📁 build/                    # Output folder (auto-generated)
-├── 📁 .venv/                    # Project environment (created by uv on the first build)
-├── 📁 assets/                   # Assets folder (important for textures and sounds)
-├── 📁 src/                      # Your source code
-│   ├── 📁 data/                 # Datapack functions and data
-│   │   └── 📁 basic_template/  # Your namespace (rename this!)
-│   ├── 📁 definitions/          # Definition modules
-│   │   ├── 📄 additions.py      # Additional custom definitions
-│   │   └── 📄 ores.py           # Ore equipment configurations
-│   ├── 📄 link.py               # User code for linking features
-│   └── 📄 setup_definitions.py  # Main definitions setup
-├── 📁 assets/                   # Your textures and sounds
-├── 📄 .gitignore                # Git ignore file
-├── 📄 pyproject.toml            # Python dependencies (StewBeet and anything you add)
-├── 📄 beet.yml                  # Main configuration file
-└── 📄 definitions_debug.json    # Debug definitions file
+├── .beet_cache/              # Build cache (generated)
+├── build/                    # Output folder (generated)
+├── .venv/                    # Project environment (created by uv on the first build)
+├── assets/                   # Your textures and sounds
+├── src/                      # Your source code
+│   ├── data/                 # Datapack functions and data
+│   │   └── basic_template/   # Your namespace (rename this)
+│   ├── definitions/          # Definition modules
+│   │   ├── additions.py      # Custom items and blocks
+│   │   └── ores.py           # Ore and equipment tiers
+│   ├── link.py               # Code that runs after the definitions
+│   └── setup_definitions.py  # Entry point for the definitions
+├── .gitignore
+├── pyproject.toml            # Python dependencies (StewBeet and anything you add)
+├── beet.yml                  # Main configuration file
+└── definitions_debug.json    # What your definitions produced, for debugging
 ```
 
-### About `pyproject.toml`
+### What `pyproject.toml` does
 
-Every template ships one, and it is what makes the project self-contained:
+It makes the project self-contained:
 
 ```toml
 [project]
@@ -142,19 +96,15 @@ package = false
 smithed = { git = "https://github.com/Stoupy51/smithed-python.git" }
 ```
 
-`requires-python` is what tells uv which interpreter to fetch, so Python never has to be installed by hand.
+`requires-python` tells uv which interpreter to fetch.
 
 The `[tool.uv.sources]` section is temporary: the `smithed` release on PyPI mixes Pydantic V1 and V2 models, which makes Smithed Weld merging fail on recent Python. Drop that section and the `smithed` dependency once it is fixed upstream.
 
-Need another library in your definitions (`requests`, `pillow`, anything)? Run `uv add requests` and it lands in this file, in your `.venv`, and in the lock file your collaborators reuse.
+To use another library in your definitions (`requests`, `pillow`), run `uv add requests`. It lands in this file, in your `.venv`, and in the lock file your collaborators reuse.
 
-## Step 4: Configure Your Project
+## 3. Name your pack
 
-Open `beet.yml` in your text editor. This is your main configuration file. Let's customize it:
-
-### Basic Project Settings
-
-These are the minimum metadata fields that identify your pack and are reused by generated files, packaging, and in-game presentation.
+Open `beet.yml`. These fields identify the pack and are reused in `pack.mcmeta`, item lore, archive names and the manual:
 
 ```yaml
 # Project identifier - MUST match your namespace in src/data/
@@ -173,22 +123,22 @@ version: "1.0.0"
 description: "My first StewBeet datapack with custom ores!"
 ```
 
-### Important Notes:
-- **ID**: Use lowercase, underscores only, no spaces (e.g., `awesome_ores`)
-- **Name**: Can have spaces and special characters (e.g., `"Awesome Ores & Gems"`)
-- **Version**: Follow [semantic versioning](https://semver.org/) (major.minor.patch)
+| Field | Rule | Example |
+|-------|------|---------|
+| `id` | Lowercase and underscores, no spaces. Must match the folder in `src/data/` | `awesome_ores` |
+| `name` | Free text | `"Awesome Ores & Gems"` |
+| `version` | [Semantic versioning](https://semver.org/), major.minor.patch | `1.0.0` |
 
-## Step 5: Build Your First Project
+Rename `src/data/basic_template/` to `src/data/awesome_ores/` so it matches `id`.
 
-Let's test that everything works:
+## 4. Build it
 
-### Open Terminal in Project Folder & Run Your First Build
+In the terminal, run `uv run stewbeet` (or `uv run stewbeet build`, which is the same).
 
-🖥️ Open Terminal in Project Folder and run `uv run stewbeet` or `uv run stewbeet build`
+The first run does the setup: uv reads `pyproject.toml`, downloads Python 3.14 if it is missing, creates `.venv/` and installs StewBeet. It takes about a minute. Later runs start building immediately.
 
-This first run does the setup work: uv reads `pyproject.toml`, downloads Python 3.14 if it is missing, creates `.venv/` and installs StewBeet. It takes a minute; every run after it starts building immediately.
+The output looks like this. The warnings are expected on an empty project:
 
-You should see output like:
 ```bash
 Building project...
 
@@ -225,24 +175,19 @@ Generating lang file: 100%|█████████████████�
 Done!
 ```
 
-### Check the Results
+`build/` now contains:
 
-Look in your `build/` folder. You should see:
-- 📁 `datapack/` - Your generated datapack
-- 📁 `resource_pack/` - Your generated resource pack
-- 📦 `AwesomeOres_datapack.zip` - Ready-to-use datapack
-- 📦 `AwesomeOres_resource_pack.zip` - Ready-to-use resource pack
-- 📄 `sha1_hashes.json` - May be useful for server admins
+| Path | What it is |
+|------|------------|
+| `datapack/` | The generated datapack, unzipped |
+| `resource_pack/` | The generated resource pack, unzipped |
+| `AwesomeOres_datapack.zip` | The datapack, ready to drop into a world |
+| `AwesomeOres_resource_pack.zip` | The resource pack, ready to enable |
+| `sha1_hashes.json` | Hashes of the archives, for server admins |
 
-**Congratulations!** 🎉 You've successfully built your first StewBeet project!
+## 5. Load it in Minecraft
 
-## Step 6: Test in Minecraft
-
-### Install the Datapack
-
-#### Option 1: Automatic Copying (Recommended)
-
-Configure StewBeet to automatically copy files to your Minecraft folders by editing `beet.yml`:
+The fastest loop is to let every build copy the packs into your game. Add this to `beet.yml`, with your own paths:
 
 ```yaml
 meta:
@@ -252,37 +197,27 @@ meta:
       resource_pack: ["C:/Users/YourName/AppData/Roaming/.minecraft/resourcepacks"]
 ```
 
-Replace the paths with your actual Minecraft folders. Now when you run `uv run stewbeet`, files are automatically copied!
+From now on, `uv run stewbeet` copies both packs after each build.
 
-#### Option 2: Manual Copying
+To copy them by hand instead:
 
-1. **Open Minecraft** and create a new world (or open an existing one)
-2. **Copy** `build/AwesomeOres_datapack.zip` to your world's datapacks folder:
+1. Copy `build/AwesomeOres_datapack.zip` into the world's datapacks folder:
    - Windows: `%appdata%\.minecraft\saves\[WorldName]\datapacks\`
-   - Mac: `~/Library/Application Support/minecraft/saves/[WorldName]/datapacks/`
-3. **Copy** `build/AwesomeOres_resource_pack.zip` to your resource packs folder:
+   - macOS: `~/Library/Application Support/minecraft/saves/[WorldName]/datapacks/`
+2. Copy `build/AwesomeOres_resource_pack.zip` into the resource packs folder:
    - Windows: `%appdata%\.minecraft\resourcepacks\`
-   - Mac: `~/Library/Application Support/minecraft/resourcepacks/`
+   - macOS: `~/Library/Application Support/minecraft/resourcepacks/`
 
-### Enable in Game
+Then, in game:
 
-1. **In Minecraft**, type `/reload` in chat
-2. Go to **Options** -> **Resource Packs** and enable your resource pack
-3. Test the basic functionality with `/function awesome_ores:path/to/a/random/function/i/guess` (if you didn't remove the example function in `src/data/awesome_ores/function/`)
+1. Run `/reload`.
+2. Enable the resource pack in Options, Resource Packs.
+3. If you kept the example function in `src/data/awesome_ores/function/`, run it with `/function awesome_ores:path/to/a/random/function/i/guess`.
 
-## Step 7: Add Your First Custom Item
+## 6. Add a custom item
 
-Now let's add a custom item to see StewBeet's power in action!
-
-### Add a Texture
-
-1. Create the folder structure: `assets/textures/`
-2. Add a 16x16 PNG texture file, for example: [`ruby.png`](./ruby.png)
-3. Your structure should be: `assets/textures/ruby.png`
-
-### Define the Item
-
-Open `src/definitions/additions.py` and add the definition for your new item:
+1. Create `assets/textures/` and put a 16x16 PNG in it, for example [`ruby.png`](./ruby.png), so the file is `assets/textures/ruby.png`.
+2. Open `src/definitions/additions.py` and declare the item. The `id` matches the texture name, which is how StewBeet finds it:
 
 ```python
 # Imports
@@ -304,34 +239,24 @@ def main():
     pass
 ```
 
-### Build and Test
+3. Run `uv run stewbeet`. The first build that renders item models takes a little longer.
+4. In game, run `/reload`, then `/loot give @s loot awesome_ores:i/ruby` or `/function awesome_ores:_give_all`.
 
-1. Run `uv run stewbeet` in your terminal and wait for it to finish (first time rendering item models may take a bit longer)
-2. Reload your world with `/reload`
-3. Get your item with `/loot give @s loot awesome_ores:i/ruby` or `/function awesome_ores:_give_all`
+From that one declaration, StewBeet wrote the item model and its reference, added the texture to the resource pack, built the item components, and added a manual page.
 
-**Amazing!** 🎉 StewBeet automatically:
-- ✅ Created the item model and reference
-- ✅ Added it to the resource pack
-- ✅ Created proper item components
-- ✅ Added it to the manual (if enabled)
+## 7. Add a whole ore tier
 
-## Step 8: Add Your First Custom Block
+Put these textures in `assets/textures/`:
 
-Let's create a custom block:
+| File | Used for |
+|------|----------|
+| [`ruby_ore.png`](./ruby_ore.png) | The ore block |
+| [`ruby_sword.png`](./ruby_sword.png) | The sword |
+| [`ruby_chestplate.png`](./ruby_chestplate.png) | The chestplate item |
+| [`ruby_layer_1.png`](./ruby_layer_1.png) | Worn armour, top layer (how Minecraft draws custom armour) |
+| [`ruby_layer_2.png`](./ruby_layer_2.png) | Worn armour, bottom layer |
 
-### Add Block Textures
-
-Add these textures to `assets/textures/`:
-- [`ruby_ore.png`](./ruby_ore.png) - The main texture
-- [`ruby_sword.png`](./ruby_sword.png) - A sword texture
-- [`ruby_chestplate.png`](./ruby_chestplate.png) - A ruby chestplate texture
-- [`ruby_layer_1.png`](./ruby_layer_1.png) - A layer texture for the top layer (it's how Minecraft handles custom armors)
-- [`ruby_layer_2.png`](./ruby_layer_2.png) - A layer texture for the bottom layer
-
-### Configure the Block
-
-For simplicity, we'll use the `ORES_CONFIGS` section in `src/definitions/ores.py`:
+Open `src/definitions/ores.py` and describe the material. Everything StewBeet finds in the textures folder under the `ruby` prefix is registered from this entry:
 
 ```python
 # Imports
@@ -360,36 +285,19 @@ def main():
     return
 ```
 
-### Build and Test
+Build, `/reload`, then run `/loot give @s loot awesome_ores:i/ruby_ore` and place the block. It is a working custom block: StewBeet wrote its model, its placement and breaking logic, its drops and mining requirements, its Fortune and Silk Touch behaviour, and wired it to the Smithed Custom Blocks library.
 
-1. Run `uv run stewbeet`, wait for it to finish
-2. Reload in Minecraft
-3. Get your block with `/loot give @s awesome_ores:i/ruby_ore`
-4. Place it in the world - it's a fully functional custom block!
+## 8. Open the in-game manual
 
-StewBeet automatically:
-- ✅ Created block models with proper faces
-- ✅ Set up placement and breaking mechanics
-- ✅ Added mining properties (requires pickaxe, drops, etc.)
-- ✅ Integrated with Smithed Custom Blocks library
-- ✅ Added fortune and silk touch support
+The manual uses Minecraft's dialog system, which only picks up new dialogs on a server restart, so leave and rejoin the world first. Then press G (the quick action keybind), or run `/loot give @s loot awesome_ores:i/manual` if you started from the Extensive template.
 
-## Step 9: Check Your In-Game Manual
+The manual lists your items with their recipes, drawn from the definitions you just wrote.
 
-One of StewBeet's coolest features is the automatic manual generation.<br>
-First, make sure to restart your world since ingame-manual require a server restart (minecraft dialogs system), and then:
+## What is in `beet.yml`
 
-1. In Minecraft, press "G" (quick action keybind) or run `/loot give @s loot awesome_ores:i/manual` if you started with the Extensive Template
-2. Open the book to see your **automatically generated manual**
-3. It includes all your items, recipes, and crafting information!
+You have now used the whole loop. Two more parts of `beet.yml` are worth knowing before you go further.
 
-## Step 10: Understanding the Configuration
-
-Let's explore some key configuration options in `beet.yml`:
-
-### Important Folders
-
-These paths define where StewBeet reads source assets and where it copies generated outputs for testing.
+The folders StewBeet reads from, and where it copies the result:
 
 ```yaml
 meta:
@@ -415,9 +323,7 @@ meta:
       resource_pack: ["C:/Users/YourName/AppData/Roaming/.minecraft/resourcepacks"]
 ```
 
-### Plugin Pipeline
-
-The `pipeline` section controls what StewBeet does:
+The pipeline, which lists every step of the build in order. Remove a line to turn a feature off:
 
 ```yaml
 # Plugins to run first
@@ -456,51 +362,13 @@ pipeline:
     - "stewbeet.plugins.compute_sha1"                   # Compute file hashes
 ```
 
+Every option is described in [Configuring the build](../3_beet_config/en.md).
+
 ## Next steps
 
-Congratulations! You now have a working StewBeet project. Here's what to explore next:
+- [Defining items and blocks](../1_definitions_setup/en.md): every field an `Item` or a `Block` accepts, recipes included.
+- [Writing functions and files](../2_writing_to_files/en.md): add your own commands to the pack.
+- [Using datapack libraries](../5_dependencies/en.md): Smithed, Bookshelf and the version checks StewBeet writes for you.
+- The [Extensive template](https://github.com/Stoupy51/StewBeet/tree/main/templates/extensive/src) is a complete project to read.
 
-For more in-depth guides and advanced features, check out the **📖 [Documentation](https://stewbeet.paralya.fr/documentation)** with the full guides and reference.
-
-### Try These Features
-
-1. **Add more items** with different textures and properties
-2. **Create armor sets** using the equipment configuration
-3. **Add custom recipes** in the recipe definitions
-4. **Set up automatic copying** to your Minecraft folders
-5. **Explore the extensive template** for advanced examples
-
-### Advanced Configuration
-
-Once comfortable, explore these features:
-
-- **🔄 Auto-generation** of ores, tools, and armor sets
-- **📦 Library integration** with Smithed, Bookshelf, and more
-- **🎨 Custom model overrides** for special items
-- **📝 Function generation** with proper headers
-- **🌐 Internationalization** with automatic language files
-
-## Get Help
-
-Need assistance? Here are your best resources:
-
-- **📖 [Documentation](https://stewbeet.paralya.fr/documentation)** - Guides and reference
-- **💬 [Discord Server](https://discord.gg/anxzu6rA9F)** - Active community support
-- **🐛 [GitHub Issues](https://github.com/Stoupy51/StewBeet/issues)** - Bug reports and feature requests
-
-## Conclusion
-
-You've successfully:
-- ✅ Installed uv and StewBeet
-- ✅ Set up your first project
-- ✅ Created custom items and blocks
-- ✅ Built and tested in Minecraft
-- ✅ Explored key configuration options
-
-That is the whole loop: define content in Python, build, and load. Everything else in the documentation is a variation on it.
-
-**Happy datapack development!** 🚀
-
----
-
-*💡 **Pro Tip**: Start small, experiment often, and don't hesitate to ask for help in the Discord community. The StewBeet developers and users are very friendly and helpful!*
+Stuck? Ask on [Discord](https://discord.gg/anxzu6rA9F) or open a [GitHub issue](https://github.com/Stoupy51/StewBeet/issues).

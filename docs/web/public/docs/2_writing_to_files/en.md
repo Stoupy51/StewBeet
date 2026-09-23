@@ -1,45 +1,32 @@
 # Writing functions and files
 
-Writing to files is essential for generating datapacks and resource packs. StewBeet provides four approaches for file writing, each with different use cases and complexity levels. This guide covers static file loading via configuration, the native beet API, StewBeet's streamlined helper functions, and Bolt.
+Four ways to put your own functions, advancements and tags into the pack: static files loaded by `beet.yml`, the native beet API, StewBeet's helper functions, and Bolt. Most packs use the helpers for their logic and static files for the rest.
 
-**File writing typically happens in user plugins after definitions are set up but before finalization.**
+Your code runs in a user plugin, after the definitions are set up and before finalisation.
 
 > **Write all of this with the commands checked as you type.** Every approach below ends with commands inside a Python string, inside a `.bolt` module, or both. The [StewBeet extension for VSCode](https://marketplace.visualstudio.com/items?itemName=stoupy.stewbeet) reads them as what they are: completion, errors, ctrl+click, and a link from each block to the function your build wrote from it. See [Editor support](../8_editor/en.md).
 
 <video src="/vscode_extension.mp4" controls loop muted playsinline preload="auto">
 </video>
 
-**Example File**: [extensive/src/link.py](https://github.com/Stoupy51/StewBeet/blob/main/templates/extensive/src/link.py) <br>  
-**Real-world Example**: [SimplEnergy/src/utils/machines.py](https://github.com/Stoupy51/SimplEnergy/blob/main/src/utils/machines.py) <br>  
-**Real-world Example**: [StardustFragment/src/utils/remaining.py](https://github.com/Stoupy51/StardustFragment/blob/main/src/utils/remaining.py) <br>
+Complete files to read alongside this page:
 
-- Load static files from directories (pre-plugin via `beet.yml`)
-- Generate dynamic functions, advancements, and tags programmatically
-- Append, prepend, or overwrite file content
-- Organize datapack logic across multiple files
-- Manage function tags and other tag types
-- Set up clock functions (tick, second, minute)
+- [extensive/src/link.py](https://github.com/Stoupy51/StewBeet/blob/main/templates/extensive/src/link.py), the template
+- [SimplEnergy/src/utils/machines.py](https://github.com/Stoupy51/SimplEnergy/blob/main/src/utils/machines.py), a published pack
+- [StardustFragment/src/utils/remaining.py](https://github.com/Stoupy51/StardustFragment/blob/main/src/utils/remaining.py), a published pack
 
-**Required**: StewBeet I/O utilities (`from stewbeet import write_function, write_load_file, ...`)  
-**Position**: Called after definitions setup, typically in the middle of the pipeline  
-**Integration**: Works with all file types (functions, advancements, tags, etc.)
+## Which approach to use
 
-## Four Approaches to Writing Files
-
-### Quick Comparison
-
-| Approach | Use Case | Complexity | Flexibility |
-|----------|----------|------------|-------------|
-| **Static Files (beet.yml)** | Pre-written files | ⭐ Simple | ⭐ Low |
-| **Native Beet API** | Full control | ⭐⭐⭐ Complex | ⭐⭐⭐ High |
-| **StewBeet Helpers** | Dynamic generation | ⭐⭐ Medium | ⭐⭐ Medium-High |
-| **Bolt** | Commands as syntax | ⭐⭐⭐ Complex | ⭐⭐⭐ High |
-
----
+| Approach | Best for | Effort |
+|----------|----------|--------|
+| **Static files** (`beet.yml`) | Hand-written functions and JSON that never change | Lowest |
+| **Native beet API** | Unusual file types, full control over every object | Highest |
+| **StewBeet helpers** (recommended) | Logic generated from your definitions, load and clock functions | Low |
+| **Bolt** | Command-heavy logic, loops and arithmetic around commands | Medium, a second language |
 
 ### Approach 1: Static File Loading (beet.yml)
 
-The simplest approach - load pre-written files from directories **before any plugins run**.
+Beet loads hand-written files from a folder **before any plugin runs**.
 
 ```yaml
 # In beet.yml
@@ -61,37 +48,37 @@ resource_pack:
 **Example structure:**
 ```
 src/
-├── 📦 data/
+├── data/
 │   └── my_namespace/
-│       ├── ⚙️ function/
+│       ├── function/
 │       │   ├── load.mcfunction
 │       │   └── tick.mcfunction
-│       ├── 🏆 advancement/
+│       ├── advancement/
 │       │   └── my_advancement.json
-│       └── 🍳 recipe/
+│       └── recipe/
 │           └── my_recipe.json
-└── 🎨 assets/
+└── assets/
     └── my_namespace/
         └── textures/
             └── item/
                 └── my_item.png
 ```
 
-**What goes where:**
-- 📦 **data/** - All datapack content (functions, advancements, recipes, tags, etc.)
-- ⚙️ **function/** - Minecraft commands (.mcfunction files)
-- 🏆 **advancement/** - Player achievements and technical triggers (.json)
-- 🍳 **recipe/** - Crafting, smelting, and other recipes (.json)
-- 🎨 **assets/** - All resource pack content (textures, models, sounds)
-- 🖼️ **textures/** - PNG image files for items, blocks, etc.
-- ...
+| Folder | Holds |
+|--------|-------|
+| `data/` | All datapack content: functions, advancements, recipes, tags |
+| `function/` | Minecraft commands, as `.mcfunction` files |
+| `advancement/` | Achievements and technical triggers, as `.json` |
+| `recipe/` | Crafting, smelting and other recipes, as `.json` |
+| `assets/` | All resource pack content: textures, models, sounds |
+| `textures/` | PNG images for items, blocks and the rest |
 
-**✅ Use when:**
+**Use it when:**
 - You have static files that don't need dynamic generation
 - You're organizing pre-written commands and data
 - You want simple, straightforward file structure
 
-**❌ Don't use when:**
+**Avoid it when:**
 - You need to generate content based on definitions
 - You need to combine multiple sources of data
 - You need conditional file generation
@@ -100,7 +87,7 @@ src/
 
 ### Approach 2: Native Beet API
 
-Use beet's native object-oriented API to write files programmatically in plugins.
+Beet's own object API, used directly from a plugin.
 
 ```python
 from beet import Context, Function, Advancement, FunctionTag
@@ -137,12 +124,12 @@ scoreboard players add @a points 1
     ctx.data["my_namespace"].function_tags["minecraft:load"] = FunctionTag(tag_data)
 ```
 
-**✅ Use when:**
+**Use it when:**
 - You need full control over file objects
 - You're working with complex nested structures
 - You want type safety with beet's object model
 
-**❌ Don't use when:**
+**Avoid it when:**
 - You want simple, quick file writes
 - You're dealing with many small functions
 - You need automatic path handling
@@ -151,7 +138,7 @@ scoreboard players add @a points 1
 
 ### Approach 3: StewBeet Helper Functions (Recommended)
 
-StewBeet provides streamlined helper functions that simplify file writing with automatic handling of common patterns.
+StewBeet helpers take a path and a string, create the file or add to it, and know where the load, tick and clock functions live.
 
 ```python
 from stewbeet import write_function, write_load_file, write_tick_file, Mem
@@ -191,13 +178,13 @@ say One minute has passed!
 """)
 ```
 
-**✅ Use when:**
+**Use it when:**
 - You want simple, readable code
 - You need automatic path management
 - You're using StewBeet's conventions (versioned functions, load/tick files)
 - You want to append/prepend content easily
 
-**❌ Don't use when:**
+**Avoid it when:**
 - You need non-standard file organization
 - You're not using StewBeet framework
 
@@ -367,13 +354,13 @@ It is the same job as [Equations](../4_equations/en.md) on the StewBeet side, ex
 Nothing forces a choice. A pack can declare its items with `Item(...)`, let the plugins generate recipes and the manual, write most of its logic with `write_function`, and keep one `.bolt` module for the part where the commands are the hard bit.
 The [demo pack](https://github.com/Stoupy51/StewBeet/tree/main/extension/vscode/demo) the extension records its showcases from is exactly that: one small pack written three ways.
 
-**✅ Use when:**
+**Use it when:**
 - The commands are the complicated part, not the data behind them
 - You want loops, conditions and classes around commands without an f-string between you and them
 - You are doing scoreboard or storage arithmetic and want to read it as arithmetic
 - You want nesting (`execute ...:`) instead of hand-splitting functions
 
-**❌ Don't use when:**
+**Avoid it when:**
 - The work is generating many near-identical functions from your definitions. `write_function` in a plugin sees `Mem.definitions` and is the shorter road
 - You need a StewBeet plugin to see what you wrote. Plugins run on the pack, and mecha compiles after them
 - Your collaborators do not want a second language in the project
@@ -383,8 +370,7 @@ The [demo pack](https://github.com/Stoupy51/StewBeet/tree/main/extension/vscode/
 - **Spyglass underlines a `.mcfunction` holding bolt**, because it is not vanilla mcfunction. [`stewbeet.plugins.spyglass`](../plugins/spyglass.md) takes those files off its list, from what the build actually compiled.
 - **The [StewBeet extension](https://marketplace.visualstudio.com/items?itemName=stoupy.stewbeet) gives `.bolt` its own language**, with completion and ctrl+click on the commands and a lens per function the module writes. See [Editor support](../8_editor/en.md).
 
----
-## Best Practices
+## Best practices
 
 ### Do's
 
@@ -437,37 +423,15 @@ The [demo pack](https://github.com/Stoupy51/StewBeet/tree/main/extension/vscode/
 - Don't nest folders too deeply
 - Don't create files that are never called
 
----
-## Summary
+## Which one to pick, in short
 
-### **Four Approaches Comparison**
+- **Static files** for configuration, fixed recipes and small functions that never change.
+- **StewBeet helpers** for most datapack logic, and anything generated from your definitions.
+- **The native beet API** only when no helper covers the file you need.
+- **Bolt** where the commands, not the data, are the hard part.
 
-| Approach | Use Case | Complexity | Flexibility |
-|----------|----------|------------|-------------|
-| **Static Files (beet.yml)** | Pre-written files | ⭐ Simple | ⭐ Low |
-| **Native Beet API** | Full control | ⭐⭐⭐ Complex | ⭐⭐⭐ High |
-| **StewBeet Helpers** | Dynamic generation | ⭐⭐ Medium | ⭐⭐ Medium-High |
-| **Bolt** | Commands as syntax | ⭐⭐⭐ Complex | ⭐⭐⭐ High |
+Whichever you use, group functions in folders by feature, and put periodic work in versioned clock functions rather than in tick.
 
-### **When to Use Each**
-
-- 📁 **Static Files**: Configuration files, static recipes, simple functions
-- 🔧 **Native Beet API**: Complex nested structures, custom file types, advanced control
-- 🚀 **StewBeet Helpers**: Most datapack logic, dynamic functions, standard patterns
-- 🧪 **Bolt**: Command-heavy logic, scoreboard arithmetic, nesting instead of hand-split functions
-
-### **Key Takeaways**
-
-✅ Start with static files for simple content<br>
-✅ Use StewBeet helpers for dynamic datapack logic<br>
-✅ Use native beet API only when helpers don't cover your needs<br>
-✅ Reach for Bolt where the commands, not the data, are the hard part<br>
-✅ Organize functions into logical folders<br>
-✅ Use versioned functions for periodic tasks<br>
-✅ Follow naming conventions for consistency<br>
-
-**🎉 Master these file writing approaches to create efficient, maintainable datapacks with StewBeet!**<br>
-Check the real-world examples at the top of this page to see these patterns in action! 🚀
 ## Glossary
 
 | Term | Meaning |
