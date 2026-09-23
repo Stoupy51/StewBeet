@@ -134,8 +134,9 @@ function indexEntry(entry: SearchEntry): IndexedEntry {
 /** Section ids on the home page, and routes for the other indexed site areas. */
 const SITE_ROUTES: Record<string, string> = {
     hero: '/#hero',
-    whatIs: '/#what-is',
-    features: '/#features',
+    gains: '/#features',
+    manual: '/#manual',
+    editor: '/#editor',
     installation: '/#installation',
     templates: '/#templates',
     giants: '/#standing-on-giants',
@@ -148,8 +149,9 @@ const SITE_ROUTES: Record<string, string> = {
 
 const SITE_LABELS: Record<string, string> = {
     hero: 'Home',
-    whatIs: 'What is StewBeet',
-    features: 'Features',
+    gains: 'Features',
+    manual: 'In-game manual',
+    editor: 'Editor extension',
     installation: 'Installation',
     templates: 'Templates',
     giants: 'Standing on giants',

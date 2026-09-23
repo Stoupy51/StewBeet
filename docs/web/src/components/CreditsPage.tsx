@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { HiArrowLeft, HiExternalLink } from 'react-icons/hi';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
+import { PageHeader } from './PageHeader';
 import { LibraryPills } from './LibraryPills';
 import { useTranslation } from '../i18n/useTranslation';
 import { useMotionSafe } from '../hooks/useMotionSafe';
@@ -21,26 +22,11 @@ export const CreditsPage: React.FC = () => {
     const motionSafe = useMotionSafe();
 
     return (
-        <div className={`min-h-screen bg-slate-950 text-slate-100 ${SELECTION_BRAND}`}>
+        <div className={`min-h-screen bg-ink-950 text-ink-100 ${SELECTION_BRAND}`}>
             <Navbar />
 
             <main>
-                <div className="relative z-10 pt-28 pb-8 px-4">
-                    <div className="max-w-3xl mx-auto text-center">
-                        <motion.h1
-                            {...motionSafe({ initial: { y: 20 }, animate: { y: 0 } })}
-                            className={`text-3xl md:text-4xl font-bold mb-3 ${HEADING}`}
-                        >
-                            {t('credits.title')}
-                        </motion.h1>
-                        <motion.p
-                            {...motionSafe({ initial: { y: 20 }, animate: { y: 0 }, transition: { delay: 0.1 } })}
-                            className="text-slate-300"
-                        >
-                            {t('credits.subtitle')}
-                        </motion.p>
-                    </div>
-                </div>
+                <PageHeader eyebrow={t('credits.eyebrow')} title={t('credits.title')} lead={t('credits.subtitle')} width="max-w-3xl" />
 
                 <div className="relative z-10 pb-12 px-4">
                     <div className="max-w-3xl mx-auto space-y-3">
@@ -52,15 +38,15 @@ export const CreditsPage: React.FC = () => {
                                     animate: { y: 0 },
                                     transition: { delay: 0.15 + index * 0.05 },
                                 })}
-                                className={`rounded-panel border border-white/10 bg-slate-900/40 p-5 transition-all ${HOVER_CARD}`}
+                                className={`rounded-panel border border-ink-800 bg-ink-900/40 p-5 transition-all ${HOVER_CARD}`}
                             >
                                 <div className="flex items-baseline justify-between gap-4 mb-2">
-                                    <h2 className="text-lg font-bold text-slate-50">{giant.name}</h2>
-                                    <span className="text-xs font-mono text-slate-400 flex-shrink-0">{giant.owner}</span>
+                                    <h2 className="text-lg font-semibold text-ink-50">{giant.name}</h2>
+                                    <span className="text-xs font-mono text-ink-400 flex-shrink-0">{giant.owner}</span>
                                 </div>
 
                                 {/* Only the Bookshelf paragraph carries {n}; the others pass through untouched */}
-                                <p className="text-sm text-slate-300 leading-relaxed">
+                                <p className="text-sm text-ink-300 leading-relaxed">
                                     {t(giant.bodyKey).replace('{n}', String(BOOKSHELF_MODULE_COUNT))}
                                 </p>
 
@@ -84,13 +70,13 @@ export const CreditsPage: React.FC = () => {
                 </div>
 
                 <div className="relative z-10 pb-20 px-4">
-                    <div className="max-w-3xl mx-auto pt-6 border-t border-white/10">
-                        <h2 className={`text-xl font-bold mb-2 ${HEADING}`}>{t('credits.librariesTitle')}</h2>
-                        <p className="text-sm text-slate-400 mb-4">{t('credits.librariesNote')}</p>
+                    <div className="max-w-3xl mx-auto pt-6 border-t border-ink-800">
+                        <h2 className={`text-xl font-semibold mb-2 ${HEADING}`}>{t('credits.librariesTitle')}</h2>
+                        <p className="text-sm text-ink-400 mb-4">{t('credits.librariesNote')}</p>
                         <LibraryPills entries={AUTO_LIBRARIES} />
 
-                        <h2 className={`text-xl font-bold mt-10 mb-2 ${HEADING}`}>{t('credits.compatTitle')}</h2>
-                        <p className="text-sm text-slate-400 mb-4">{t('credits.compatNote')}</p>
+                        <h2 className={`text-xl font-semibold mt-10 mb-2 ${HEADING}`}>{t('credits.compatTitle')}</h2>
+                        <p className="text-sm text-ink-400 mb-4">{t('credits.compatNote')}</p>
                         <LibraryPills entries={COMPATIBILITIES} />
 
                         <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-3">
@@ -102,7 +88,7 @@ export const CreditsPage: React.FC = () => {
                             </Link>
                             <Link
                                 to="/#standing-on-giants"
-                                className="group inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors"
+                                className="group inline-flex items-center gap-2 text-sm text-ink-400 hover:text-white transition-colors"
                             >
                                 <HiArrowLeft className="group-hover:-translate-x-1 transition-transform" aria-hidden="true" />
                                 {t('credits.backHome')}

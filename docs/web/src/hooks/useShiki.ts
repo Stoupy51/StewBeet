@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { getSingletonHighlighter } from 'shiki';
 import type { LanguageRegistration } from '@shikijs/types';
-import { MCFUNCTION_LANGUAGE } from '../langs/mcfunction';
+import { MCFUNCTION_LANGUAGE, PYTHON_WITH_MCFUNCTION } from '../langs/mcfunction';
 import { pythonSemantics } from '../utils/pythonSemantics';
+import { mcfunctionBlocks } from '../utils/mcfunctionBlocks';
 
 const LANGUAGE_ALIASES: Record<string, string> = {
     function: 'mcfunction',
@@ -51,14 +52,18 @@ export function useShiki(code: string, language: string | LanguageRegistration, 
             ? (resolvedLanguage as LanguageRegistration).name
             : resolvedLanguage) ?? 'text';
 
+        const isPython = langName === 'python';
+
         getSingletonHighlighter({
             themes: [theme],
-            langs: [resolvedLanguage],
+            langs: isPython ? PYTHON_WITH_MCFUNCTION : [resolvedLanguage],
         })
             .then((highlighter) => highlighter.codeToHtml(code, {
                 lang: langName,
                 theme,
-                transformers: [pythonSemantics],
+                // Python strings holding commands are highlighted like the VS Code extension does.
+                includeExplanation: isPython ? 'scopeName' : false,
+                transformers: [mcfunctionBlocks, pythonSemantics],
             }))
             .then((result) => {
                 if (isActive) setHtml(result);

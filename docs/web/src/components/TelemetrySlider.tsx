@@ -59,7 +59,7 @@ export const TelemetrySlider: React.FC<{ streams: Record<string, StreamSeries> }
                     onClick={() => go(index - 1)}
                     disabled={index === 0}
                     aria-label={t('telemetry.previousStream')}
-                    className="flex-shrink-0 rounded-lg border border-white/10 p-2 text-slate-300 transition-colors hover:border-white/25 hover:text-white disabled:opacity-30 disabled:hover:border-white/10 disabled:hover:text-slate-300"
+                    className="flex-shrink-0 rounded-control border border-ink-800 p-2 text-ink-300 transition-colors hover:border-white/25 hover:text-white disabled:opacity-30 disabled:hover:border-ink-800 disabled:hover:text-ink-300"
                 >
                     <HiChevronLeft className="h-5 w-5" aria-hidden="true" />
                 </button>
@@ -88,8 +88,8 @@ export const TelemetrySlider: React.FC<{ streams: Record<string, StreamSeries> }
                             aria-controls={`telemetry-panel-${stream.id}`}
                             tabIndex={position === index ? 0 : -1}
                             onClick={() => go(position)}
-                            className={`flex-shrink-0 rounded-lg border px-3 py-1.5 text-sm transition-colors ${
-                                position === index ? TOGGLE_ACTIVE : 'border-white/10 text-slate-400 hover:border-white/25 hover:text-slate-200'
+                            className={`flex-shrink-0 rounded-control border px-3 py-1.5 text-sm transition-colors ${
+                                position === index ? TOGGLE_ACTIVE : 'border-ink-800 text-ink-400 hover:border-white/25 hover:text-ink-200'
                             }`}
                         >
                             {t(`telemetry.streams.${stream.id}.tab`)}
@@ -102,14 +102,14 @@ export const TelemetrySlider: React.FC<{ streams: Record<string, StreamSeries> }
                     onClick={() => go(index + 1)}
                     disabled={index === last}
                     aria-label={t('telemetry.nextStream')}
-                    className="flex-shrink-0 rounded-lg border border-white/10 p-2 text-slate-300 transition-colors hover:border-white/25 hover:text-white disabled:opacity-30 disabled:hover:border-white/10 disabled:hover:text-slate-300"
+                    className="flex-shrink-0 rounded-control border border-ink-800 p-2 text-ink-300 transition-colors hover:border-white/25 hover:text-white disabled:opacity-30 disabled:hover:border-ink-800 disabled:hover:text-ink-300"
                 >
                     <HiChevronRight className="h-5 w-5" aria-hidden="true" />
                 </button>
             </div>
 
             <div
-                className="mt-3 overflow-hidden rounded-panel border border-white/10 bg-slate-900/40"
+                className="mt-3 overflow-hidden rounded-panel border border-ink-800 bg-ink-900/40"
                 onTouchStart={event => { touchStartX.current = event.touches[0].clientX; }}
                 onTouchEnd={event => {
                     if (touchStartX.current === null) return;

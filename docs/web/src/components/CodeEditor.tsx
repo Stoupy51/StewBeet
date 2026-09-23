@@ -40,13 +40,13 @@ const DARK_PLUS = HighlightStyle.define([
 const THEME = EditorView.theme({
     '&': { backgroundColor: 'transparent', color: '#d4d4d4', height: '100%' },
     '.cm-content': { fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace', fontSize: '0.8125rem', padding: '0.75rem 0' },
-    '.cm-gutters': { backgroundColor: 'transparent', color: '#4b5563', border: 'none' },
-    '.cm-activeLine': { backgroundColor: 'rgba(148, 163, 184, 0.06)' },
-    '.cm-activeLineGutter': { backgroundColor: 'transparent', color: '#94a3b8' },
+    '.cm-gutters': { backgroundColor: 'transparent', color: '#6e665d', border: 'none' },
+    '.cm-activeLine': { backgroundColor: 'rgba(221, 214, 204, 0.05)' },
+    '.cm-activeLineGutter': { backgroundColor: 'transparent', color: '#a0978c' },
     '.cm-cursor': { borderLeftColor: '#d4d4d4' },
     '.cm-scroller': { overflow: 'auto' },
     '&.cm-focused': { outline: 'none' },
-    '.cm-selectionBackground, &.cm-focused .cm-selectionBackground, ::selection': { backgroundColor: 'rgba(56, 189, 248, 0.25)' },
+    '.cm-selectionBackground, &.cm-focused .cm-selectionBackground, ::selection': { backgroundColor: 'rgba(226, 58, 82, 0.28)' },
 }, { dark: true });
 
 interface CodeEditorProps {

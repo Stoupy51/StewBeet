@@ -2,6 +2,7 @@ import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } fro
 import { HiPlay } from 'react-icons/hi';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
+import { PageHeader } from './PageHeader';
 import { FileTree, type FileNode } from './FileTree';
 import { SourceView } from './SourceView';
 import { useTranslation } from '../i18n/useTranslation';
@@ -9,7 +10,7 @@ import { buildTree, type BuiltFile } from '../utils/pathsToTree';
 import { formatBytes, languageOf } from '../utils/fileDisplay';
 import { MAX_CODE_BYTES, SANDBOX_LIMITS, WARN_CODE_BYTES } from '../api/sandboxLimits';
 import { DEFAULT_CODE, PRESETS } from './playgroundPresets';
-import { HEADING, TEXT_ACCENT } from '../theme';
+import { TEXT_ACCENT } from '../theme';
 
 /**
  * /playground: edit a definitions module, see the files StewBeet generates from it.
@@ -97,33 +98,26 @@ export const PlaygroundPage: React.FC = () => {
     const fileCount = result?.files?.length ?? 0;
 
     return (
-        <div className="min-h-screen bg-slate-950 text-slate-100">
+        <div className="min-h-screen bg-ink-950 text-ink-100">
             <Navbar />
 
-            <div className="relative z-10 pt-28 pb-6 px-4">
-                <div className="max-w-7xl mx-auto text-center">
-                    <h1 className="text-4xl md:text-5xl font-bold mb-3">
-                        🧪 <span className={HEADING}>{t('playground.title')}</span>
-                    </h1>
-                    <p className="text-lg text-slate-300 max-w-3xl mx-auto">{t('playground.subtitle')}</p>
-                </div>
-            </div>
+            <PageHeader eyebrow={t('playground.eyebrow')} title={t('playground.title')} lead={t('playground.subtitle')} width="max-w-7xl" />
 
             <div className="relative z-10 px-4 pb-16">
                 <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-4">
 
                     {/* ── Editor */}
-                    <div className="rounded-xl border border-white/10 bg-slate-900/60 flex flex-col overflow-hidden">
-                        <div className="flex items-center gap-2 px-4 py-3 border-b border-white/10 flex-wrap bg-white/[0.03]">
-                            <span className="text-sm font-semibold text-slate-200 mr-1">{t('playground.presets')}</span>
+                    <div className="rounded-panel border border-ink-800 bg-ink-900/60 flex flex-col overflow-hidden">
+                        <div className="flex items-center gap-2 px-4 py-3 border-b border-ink-800 flex-wrap bg-white/[0.03]">
+                            <span className="text-sm font-semibold text-ink-200 mr-1">{t('playground.presets')}</span>
                             {PRESETS.map(preset => (
                                 <button
                                     key={preset.id}
                                     onClick={() => { setCode(preset.code); setActive(preset.id); setResult(null); setSelected(null); }}
-                                    className={`text-sm px-3 py-1.5 rounded-lg border transition-colors ${
+                                    className={`text-sm px-3 py-1.5 rounded-control border transition-colors ${
                                         active === preset.id
-                                            ? 'bg-mc-emerald/20 border-mc-emerald/40 text-mc-emerald'
-                                            : 'bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:text-white'
+                                            ? 'bg-beet-500/20 border-beet-500/40 text-beet-400'
+                                            : 'bg-ink-850 border-ink-800 text-ink-300 hover:bg-ink-800 hover:text-white'
                                     }`}
                                 >
                                     {t(`playground.preset.${preset.id}`)}
@@ -132,20 +126,20 @@ export const PlaygroundPage: React.FC = () => {
                         </div>
 
                         <div className="h-[28rem] lg:h-[34rem]">
-                            <Suspense fallback={<div className="p-4 text-xs text-slate-500">{t('playground.loadingEditor')}</div>}>
+                            <Suspense fallback={<div className="p-4 text-xs text-ink-500">{t('playground.loadingEditor')}</div>}>
                                 <CodeEditor value={code} onChange={setCode} onSubmit={build} />
                             </Suspense>
                         </div>
 
-                        <div className="flex items-center gap-3 px-4 py-2 border-t border-white/5">
-                            <span className={`text-xs ${tooLarge ? 'text-red-400' : size > WARN_CODE_BYTES ? 'text-amber-400' : 'text-slate-500'}`}>
+                        <div className="flex items-center gap-3 px-4 py-2 border-t border-ink-800">
+                            <span className={`text-xs ${tooLarge ? 'text-beet-400' : size > WARN_CODE_BYTES ? 'text-amber-400' : 'text-ink-500'}`}>
                                 {formatBytes(size)} / {formatBytes(MAX_CODE_BYTES)}
                             </span>
-                            <span className="text-[0.7rem] text-slate-600 hidden sm:inline">{t('playground.shortcut')}</span>
+                            <span className="text-[0.7rem] text-ink-600 hidden sm:inline">{t('playground.shortcut')}</span>
                             <button
                                 onClick={build}
                                 disabled={pending || tooLarge}
-                                className="ml-auto flex items-center gap-1.5 text-sm px-4 py-1.5 rounded-lg bg-mc-emerald/20 text-mc-emerald border border-mc-emerald/30 hover:bg-mc-emerald/30 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                                className="ml-auto flex items-center gap-1.5 text-sm px-4 py-1.5 rounded-control bg-beet-500/20 text-beet-400 border border-beet-500/30 hover:bg-beet-500/30 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                             >
                                 <HiPlay className="w-4 h-4" />
                                 {pending ? t('playground.building') : t('playground.build')}
@@ -159,24 +153,24 @@ export const PlaygroundPage: React.FC = () => {
                         takes the height the editor column established, so the two always match
                         without a magic number to keep in sync. Below lg they stack, and a fixed
                         height is what stops a 500 file build running off the end of the page. */}
-                    <div className="rounded-xl border border-white/10 bg-slate-900/60 flex flex-col overflow-hidden h-[32rem] lg:h-0 lg:min-h-full">
-                        <div className="flex items-center gap-2 px-4 py-2 border-b border-white/5">
-                            <span className="text-xs text-slate-400">{t('playground.output')}</span>
+                    <div className="rounded-panel border border-ink-800 bg-ink-900/60 flex flex-col overflow-hidden h-[32rem] lg:h-0 lg:min-h-full">
+                        <div className="flex items-center gap-2 px-4 py-2 border-b border-ink-800">
+                            <span className="text-xs text-ink-400">{t('playground.output')}</span>
                             {result?.ok && (
-                                <span className="text-xs text-slate-500">
+                                <span className="text-xs text-ink-500">
                                     {t('playground.filesGenerated').replace('{count}', String(fileCount))}
                                     {result.durationMs !== undefined && ` · ${result.durationMs} ms`}
                                 </span>
                             )}
                             {result?.cached && (
-                                <span className="text-[0.65rem] px-1.5 py-0.5 rounded bg-white/5 text-slate-400">
+                                <span className="text-[0.65rem] px-1.5 py-0.5 rounded bg-ink-850 text-ink-400">
                                     {t('playground.cached')}
                                 </span>
                             )}
                             {result?.config && (
                                 <button
                                     onClick={() => { setShowConfig(true); setSelected(null); }}
-                                    className="ml-auto text-xs px-2 py-1 rounded border border-white/10 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white transition-colors"
+                                    className="ml-auto text-xs px-2 py-1 rounded border border-ink-800 bg-ink-850 text-ink-300 hover:bg-ink-800 hover:text-white transition-colors"
                                 >
                                     {t('playground.viewConfig')}
                                 </button>
@@ -184,9 +178,9 @@ export const PlaygroundPage: React.FC = () => {
                         </div>
 
                         {!result && !pending && (
-                            <p className="p-4 text-sm text-slate-500">{t('playground.empty')}</p>
+                            <p className="p-4 text-sm text-ink-500">{t('playground.empty')}</p>
                         )}
-                        {pending && <p className="p-4 text-sm text-slate-500">{t('playground.building')}</p>}
+                        {pending && <p className="p-4 text-sm text-ink-500">{t('playground.building')}</p>}
 
                         {result && !result.ok && !showConfig && (
                             <div className="flex-1 flex flex-col p-4 gap-3 min-h-0">
@@ -199,20 +193,20 @@ export const PlaygroundPage: React.FC = () => {
                                 {/* The one line the reader can act on, ahead of the traceback that
                                     buries it under thirty frames of beet internals. */}
                                 {result.message && (
-                                    <div className="rounded-lg border border-red-500/25 bg-red-500/5 p-3 space-y-2">
+                                    <div className="rounded-control border border-red-500/25 bg-red-500/5 p-3 space-y-2">
                                         <p className="text-sm font-medium text-red-200 break-words">{result.message}</p>
                                         {result.line !== undefined && (
-                                            <p className="text-xs text-slate-400">
+                                            <p className="text-xs text-ink-400">
                                                 {t('playground.atLine').replace('{line}', String(result.line))}
                                                 {result.source && (
-                                                    <code className="ml-2 text-slate-300">{result.source}</code>
+                                                    <code className="ml-2 text-ink-300">{result.source}</code>
                                                 )}
                                             </p>
                                         )}
                                         {result.suggestions && result.suggestions.length > 0 && (
-                                            <p className="text-xs text-slate-400">
+                                            <p className="text-xs text-ink-400">
                                                 {t('playground.didYouMean')}{' '}
-                                                <span className="text-slate-300">{result.suggestions.join(', ')}</span>
+                                                <span className="text-ink-300">{result.suggestions.join(', ')}</span>
                                             </p>
                                         )}
                                     </div>
@@ -220,10 +214,10 @@ export const PlaygroundPage: React.FC = () => {
 
                                 {(result.traceback ?? result.logs) && (
                                     <details className="flex-1 min-h-0 flex flex-col">
-                                        <summary className="text-xs text-slate-500 hover:text-slate-300 cursor-pointer">
+                                        <summary className="text-xs text-ink-500 hover:text-ink-300 cursor-pointer">
                                             {t('playground.fullTraceback')}
                                         </summary>
-                                        <pre className="mt-2 flex-1 text-[0.7rem] leading-relaxed text-slate-400 bg-black/30 rounded p-3 overflow-auto custom-scrollbar whitespace-pre-wrap min-h-0">
+                                        <pre className="mt-2 flex-1 text-[0.7rem] leading-relaxed text-ink-400 bg-black/30 rounded p-3 overflow-auto custom-scrollbar whitespace-pre-wrap min-h-0">
                                             {result.traceback ?? result.logs}
                                         </pre>
                                     </details>
@@ -270,10 +264,10 @@ export const PlaygroundPage: React.FC = () => {
                 {/* Always open. Hiding what the playground cannot do behind a toggle means the
                     reader finds out by being surprised, which is the opposite of the point. */}
                 <div className="max-w-7xl mx-auto mt-4">
-                    <div className="rounded-xl border border-white/10 bg-slate-900/40 p-5 space-y-3">
-                        <p className="text-sm font-semibold text-slate-200">{t('playground.limits')}</p>
-                        <p className="text-sm text-slate-400 leading-relaxed">{t('playground.limitsDetail')}</p>
-                        <p className="text-sm text-slate-400">
+                    <div className="rounded-panel border border-ink-800 bg-ink-900/40 p-5 space-y-3">
+                        <p className="text-sm font-semibold text-ink-200">{t('playground.limits')}</p>
+                        <p className="text-sm text-ink-400 leading-relaxed">{t('playground.limitsDetail')}</p>
+                        <p className="text-sm text-ink-400">
                             {t('playground.limitsNumbers')
                                 .replace('{cpu}', String(SANDBOX_LIMITS.cpuSeconds))
                                 .replace('{wall}', String(SANDBOX_LIMITS.wallSeconds))

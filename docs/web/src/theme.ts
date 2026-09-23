@@ -1,121 +1,58 @@
 /**
- * Brand tokens for StewBeet.
- * Primary: mc-emerald · Warm accent: mc-copper · Info accent: mc-diamond
+ * Class tokens shared by several components. Colours live in tailwind.config.js, named after
+ * the part of the logo they come from (ink, beet, leaf).
  *
- * The palette is defined in tailwind.config.js and named after the blocks it comes from.
- * To retheme the site, change the values there; nothing here hardcodes a colour.
- *
- * Two rules hold this together:
- *   - Headings are solid, never gradient. Gradient text is reserved for the single hero
- *     line it is meant to emphasise; applied to every heading it stops being emphasis.
- *   - The primary button is bright emerald with near-black text (10.9:1) rather than a
- *     colour gradient with white text (which measured 1.8:1 on its light end).
+ * One accent only: beet. Filled beet is reserved for the one primary action on a screen, and a
+ * hover goes darker rather than lighter, since white on beet-500 drops under 4.5:1.
  */
 
-/** Section headings. Solid, high contrast, no gradient. */
-export const HEADING = 'text-slate-50';
+/** Page width and gutters, shared by every section so edges line up down the page. */
+export const PAGE = 'max-w-page mx-auto px-4 sm:px-6';
 
-/** Sub-headings inside a section. */
-export const HEADING_SOFT = 'text-slate-200';
+/** Small mono label above a section title, preceded by a beet pixel (see `.eyebrow` in index.css). */
+export const EYEBROW = 'eyebrow';
 
-/** Interactive logo text. */
-export const LOGO_TEXT = 'text-slate-50 hover:text-mc-emerald transition-colors';
+/** Section title. */
+export const SECTION_TITLE = 'text-[1.75rem] md:text-[2.25rem] leading-tight font-semibold tracking-tight text-ink-50 text-balance';
 
-/** The one gradient on the site: the hero's second line. */
-export const GRADIENT_TEXT_BRIGHT = 'bg-gradient-to-r from-mc-emerald via-mc-diamond to-mc-gold bg-clip-text text-transparent';
+/** Paragraph under a section title. */
+export const SECTION_LEAD = 'text-base md:text-lg text-ink-300 leading-relaxed text-pretty';
 
-/** Primary action button: bright emerald, near-black label. */
-export const BTN_PRIMARY = 'bg-mc-emerald hover:bg-mc-diamond text-slate-950 shadow-lg shadow-mc-emerald/20';
+/** Heading colour for titles that set their own size. */
+export const HEADING = 'text-ink-50';
 
-/** Solid accent button for smaller actions. */
-export const BTN_SOLID = 'bg-mc-emerald hover:bg-mc-diamond text-slate-950';
+/** The primary action. */
+export const BTN_PRIMARY = 'inline-flex items-center justify-center gap-2 rounded-control bg-beet-600 hover:bg-beet-700 text-white font-medium transition-colors';
 
-/** Secondary button: outlined, sits beside the primary without competing with it. */
-export const BTN_SECONDARY = 'border border-white/15 hover:border-mc-emerald/60 text-slate-200 hover:text-white';
+/** A secondary action that sits beside the primary one without competing with it. */
+export const BTN_SECONDARY = 'inline-flex items-center justify-center gap-2 rounded-control border border-ink-700 bg-ink-900 hover:border-ink-500 hover:bg-ink-850 text-ink-100 font-medium transition-colors';
 
-/** Crisp 4px divider that replaces the blurred glow blobs between sections. */
-export const PIXEL_RULE = 'h-1 w-full bg-pixel-rule opacity-60';
+/** A bordered surface. */
+export const CARD = 'rounded-panel border border-ink-800 bg-ink-900';
 
-/** The single decorative glow the site still uses, in the hero only. */
-export const GLOW_PRIMARY = 'bg-mc-emerald/10';
+/** Hover state for a card that is a link. */
+export const HOVER_CARD = 'hover:border-ink-600 hover:bg-ink-850 transition-colors';
 
-/** Navbar scrolled-state shadow. */
-export const NAV_SHADOW = 'shadow-black/40';
+/** Card title reacting to its card's hover. */
+export const CARD_HOVER_TEXT = 'group-hover:text-beet-300 transition-colors';
 
-/** Active state for toggle buttons. */
-export const TOGGLE_ACTIVE = 'bg-mc-emerald/15 border-mc-emerald/50 text-mc-emerald hover:bg-mc-emerald/25';
+/** Arrow at the end of a link card. */
+export const CARD_HOVER_ARROW = 'text-xl text-ink-500 group-hover:text-beet-400 group-hover:translate-x-0.5 transition-all flex-shrink-0 mt-1';
 
-/** Active indicator dot. */
-export const DOT_ACTIVE = 'bg-mc-emerald';
+/** Accent text. */
+export const TEXT_ACCENT = 'text-beet-400';
 
-/** Selected item in a dropdown or sidebar. */
-export const LIST_SELECTED = 'bg-mc-emerald/15 text-mc-emerald';
+/** Accent link. */
+export const TEXT_ACCENT_HOVER = 'text-beet-400 hover:text-beet-300 transition-colors';
 
-/** Recommended / highlighted card border. */
-export const CARD_HIGHLIGHT = 'border-mc-emerald/50 shadow-lg shadow-mc-emerald/10';
+/** Selected row in a list or menu. */
+export const LIST_SELECTED = 'bg-beet-500/15 text-beet-300';
 
-/** Interactive card hover effect. */
-export const HOVER_CARD = 'hover:border-mc-emerald/50 hover:shadow-lg hover:shadow-mc-emerald/10';
+/** Pressed state of a toggle button. */
+export const TOGGLE_ACTIVE = 'bg-ink-800 border-ink-600 text-ink-50 hover:bg-ink-700';
 
-/** Shared card title hover colour. */
-export const CARD_HOVER_TEXT = 'group-hover:text-mc-emerald transition-colors';
+/** Text selection colour. */
+export const SELECTION_BRAND = 'selection:bg-beet-500/30 selection:text-white';
 
-/** Shared card arrow hover state. */
-export const CARD_HOVER_ARROW = 'text-2xl text-slate-400 group-hover:text-mc-emerald group-hover:translate-x-1 transition-all flex-shrink-0 mt-1';
-
-/** Brand accent text. */
-export const TEXT_ACCENT = 'text-mc-emerald';
-
-/** Softer accent text. */
-export const TEXT_ACCENT_SOFT = 'text-mc-diamond';
-
-/** Brand accent text with hover transition. */
-export const TEXT_ACCENT_HOVER = 'text-mc-emerald hover:text-mc-diamond transition-colors';
-
-/** Reusable hover state for accent borders. */
-export const ACCENT_BORDER_HOVER = 'hover:border-mc-emerald/50';
-
-/** Accent icon colour. */
-export const ICON_ACCENT = 'text-mc-emerald';
-
-/** Accent icon badge surface. */
-export const ICON_BADGE = 'bg-mc-emerald/15 text-mc-emerald';
-
-/** Accent pill for small badges. */
-export const BRAND_PILL = 'bg-mc-emerald/10 border border-mc-emerald/25 text-mc-emerald';
-
-/** Accent status dot. */
-export const BRAND_DOT = 'bg-mc-emerald';
-
-/** Accent toolbar button surface. */
-export const TOOLBAR_ACCENT = 'bg-mc-emerald/10 hover:bg-mc-emerald/20 text-mc-emerald hover:text-mc-diamond border border-mc-emerald/30';
-
-/** Accent selection background. */
-export const SELECTION_BRAND = 'selection:bg-mc-emerald/30 selection:text-white';
-
-/** Accent panel surface. */
-export const PANEL_ACCENT = 'bg-mc-emerald/10 border border-mc-emerald/25';
-
-/** Accent alert surface. */
-export const ALERT_ACCENT = 'bg-mc-copper/10 border border-mc-copper/30';
-
-/** Accent spinner border. */
-export const LOADER_ACCENT = 'border-mc-emerald';
-
-/** Accent input focus ring. */
-export const INPUT_FOCUS = 'focus:ring-mc-emerald focus:border-transparent';
-
-/** Terminal frame glow. */
-export const TERMINAL_GLOW = 'bg-mc-emerald';
-
-/** Active step / tab item background. */
-export const STEP_ACTIVE = 'bg-mc-emerald/10 border-mc-emerald/50 text-white';
-
-/** Active icon background. */
-export const ICON_ACTIVE = 'bg-mc-emerald text-slate-950';
-
-/** Active item descriptive sub-text. */
-export const TEXT_ACTIVE_SUBTLE = 'text-mc-diamond';
-
-/* Documentation colours moved into `.markdown-body` in index.css when the docs were resized to
-   GitHub's metrics, since sizes and colours for the same element belong in one place. */
+/** Spinner border. */
+export const LOADER_ACCENT = 'border-beet-400';

@@ -27,15 +27,15 @@ export interface FileNode {
 
 /** Colour per file extension, so a tree reads as datapack / resource pack / function at a glance. */
 const EXTENSION_COLORS: Record<string, string> = {
-    json: 'text-mc-diamond',
-    png: 'text-emerald-300',
-    mcfunction: 'text-amber-300',
-    py: 'text-sky-300',
+    json: 'text-sky-300',
+    png: 'text-leaf-400',
+    mcfunction: 'text-mc-gold',
+    py: 'text-beet-300',
 };
 
 function fileColor(name: string): string {
     const extension = name.slice(name.lastIndexOf('.') + 1);
-    return EXTENSION_COLORS[extension] ?? 'text-slate-300';
+    return EXTENSION_COLORS[extension] ?? 'text-ink-300';
 }
 
 /**
@@ -94,14 +94,14 @@ const TreeRow = ({ node, depth, order, selected, onSelect }: TreeRowProps) => {
                 {isDirectory ? (
                     <button
                         onClick={() => setOpen(!open)}
-                        className="flex items-baseline gap-1 text-slate-400 hover:text-white transition-colors"
+                        className="flex items-baseline gap-1 text-ink-300 hover:text-ink-50 transition-colors"
                     >
                         <span className="translate-y-0.5">{open ? <HiChevronDown /> : <HiChevronRight />}</span>
                         <span className="font-medium">{node.name}</span>
                     </button>
                 ) : (
                     <>
-                        <span className="text-slate-700 select-none">└</span>
+                        <span className="text-ink-600 select-none">└</span>
                         {isSelectable ? (
                             <button
                                 onClick={() => onSelect(node)}
@@ -117,7 +117,7 @@ const TreeRow = ({ node, depth, order, selected, onSelect }: TreeRowProps) => {
                         )}
                     </>
                 )}
-                {node.note && <span className="text-slate-400 text-[0.6875rem] truncate">{node.note}</span>}
+                {node.note && <span className="text-ink-400 text-[0.6875rem] truncate">{node.note}</span>}
             </div>
 
             {isDirectory && open && node.children?.map((child, index) => (

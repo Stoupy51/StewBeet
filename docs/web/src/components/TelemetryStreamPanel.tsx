@@ -31,12 +31,12 @@ export const TelemetryStreamPanel: React.FC<{ stream: TelemetryStream; series: S
 
     return (
         <div>
-            <h2 className="text-sm font-medium uppercase tracking-wide text-slate-400">{label('title')}</h2>
+            <h2 className="text-sm font-medium uppercase tracking-wide text-ink-400">{label('title')}</h2>
 
-            <p className={`mt-3 mb-1 text-4xl md:text-5xl font-bold tabular-nums ${TEXT_ACCENT}`}>
+            <p className={`mt-3 mb-1 text-4xl md:text-5xl font-semibold tabular-nums ${TEXT_ACCENT}`}>
                 {series.total.toLocaleString(locale)}
             </p>
-            <p className="mb-8 text-sm text-slate-400">
+            <p className="mb-8 text-sm text-ink-400">
                 {unit}
                 {series.avgDurationSeconds > 0 && ` · ${average} ${series.avgDurationSeconds.toFixed(1)}s`}
             </p>
@@ -55,7 +55,7 @@ export const TelemetryStreamPanel: React.FC<{ stream: TelemetryStream; series: S
                 ))}
             </div>
 
-            <p className="mt-6 text-sm text-slate-400 leading-relaxed">{label('note')}</p>
+            <p className="mt-6 text-sm text-ink-400 leading-relaxed">{label('note')}</p>
 
             {stream.href && (
                 <Link to={stream.href} className={`group mt-3 inline-flex items-center gap-2 text-sm ${TEXT_ACCENT_HOVER} hover:underline underline-offset-4`}>

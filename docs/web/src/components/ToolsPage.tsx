@@ -1,122 +1,57 @@
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { HiArrowRight } from 'react-icons/hi';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
+import { PageHeader } from './PageHeader';
 import { useTranslation } from '../i18n/useTranslation';
-import { useMotionSafe } from '../hooks/useMotionSafe';
-import { HEADING, HOVER_CARD, CARD_HOVER_TEXT, CARD_HOVER_ARROW } from '../theme';
+import { CARD, CARD_HOVER_ARROW, CARD_HOVER_TEXT, HOVER_CARD } from '../theme';
 
 interface ToolItem {
     title: string;
     description: string;
+    /** Where it runs, shown above the title. */
+    where: string;
     /** An internal route, or an absolute URL for a tool that does not live on this site. */
     path: string;
-    icon: string;
 }
 
-/** A card wrapper: a route stays on the site, an absolute URL opens in its own tab. */
-const ToolLink: React.FC<{ path: string; children: React.ReactNode }> = ({ path, children }) => (
+/** A card: a route stays on the site, an absolute URL opens in its own tab. */
+const ToolLink = ({ path, className, children }: { path: string; className: string; children: React.ReactNode }) => (
     path.startsWith('http')
-        ? <a href={path} target="_blank" rel="noopener noreferrer" className="block group">{children}</a>
-        : <Link to={path} className="block group">{children}</Link>
+        ? <a href={path} target="_blank" rel="noopener noreferrer" className={className}>{children}</a>
+        : <Link to={path} className={className}>{children}</Link>
 );
 
 export const ToolsPage: React.FC = () => {
     const { t } = useTranslation();
-    const motionSafe = useMotionSafe();
 
     const tools: ToolItem[] = [
-        {
-            title: t('tools.playground'),
-            description: t('tools.playgroundDesc'),
-            path: '/playground',
-            icon: '🧪',
-        },
-        {
-            title: t('tools.autoHeaders'),
-            description: t('tools.autoHeadersDesc'),
-            path: '/auto_headers',
-            icon: '🏷️',
-        },
-        {
-            title: t('tools.markdownToBBCode'),
-            description: t('tools.markdownToBBCodeDesc'),
-            path: '/markdown_to_pmc_bbcode',
-            icon: '🔄',
-        },
-        {
-            title: t('tools.extension'),
-            description: t('tools.extensionDesc'),
-            path: 'https://marketplace.visualstudio.com/items?itemName=stoupy.stewbeet',
-            icon: '🧩',
-        },
+        { title: t('tools.playground'), description: t('tools.playgroundDesc'), where: t('tools.whereServer'), path: '/playground' },
+        { title: t('tools.autoHeaders'), description: t('tools.autoHeadersDesc'), where: t('tools.whereServer'), path: '/auto_headers' },
+        { title: t('tools.markdownToBBCode'), description: t('tools.markdownToBBCodeDesc'), where: t('tools.whereBrowser'), path: '/markdown_to_pmc_bbcode' },
+        { title: t('tools.extension'), description: t('tools.extensionDesc'), where: t('tools.whereEditor'), path: 'https://marketplace.visualstudio.com/items?itemName=stoupy.stewbeet' },
     ];
 
     return (
-        <div className="min-h-screen bg-slate-950 text-slate-100">
+        <div className="min-h-screen bg-ink-950 text-ink-200">
             <Navbar />
+            <PageHeader eyebrow={t('tools.eyebrow')} title={t('tools.title')} lead={t('tools.subtitle')} width="max-w-5xl" />
 
-            {/* Hero Section */}
-            <div className="relative z-10 pt-32 pb-16 px-4">
-                <div className="max-w-7xl mx-auto text-center">
-                    <motion.h1
-                        {...motionSafe({
-                            initial: { y: 20 },
-                            animate: { y: 0 },
-                        })}
-                        className="text-5xl md:text-6xl font-bold mb-6"
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 pb-24 grid grid-cols-1 md:grid-cols-2 gap-4">
+                {tools.map((tool, index) => (
+                    <ToolLink
+                        key={tool.path}
+                        path={tool.path}
+                        className={`group flex items-start justify-between gap-4 p-6 ${CARD} ${HOVER_CARD} ${index === 0 ? 'md:col-span-2 md:p-8' : ''}`}
                     >
-                        🛠️ <span className={HEADING}>{t('tools.title')}</span>
-                    </motion.h1>
-                    <motion.p
-                        {...motionSafe({
-                            initial: { y: 20 },
-                            animate: { y: 0 },
-                            transition: { delay: 0.1 },
-                        })}
-                        className="text-xl text-slate-300 max-w-3xl mx-auto"
-                    >
-                        {t('tools.subtitle')}
-                    </motion.p>
-                </div>
-            </div>
-
-            {/* Tools List */}
-            <div className="relative z-10 pb-20 px-4">
-                <div className="max-w-4xl mx-auto">
-                    <div className="space-y-4">
-                        {tools.map((tool, index) => (
-                            <motion.div
-                                key={tool.path}
-                                {...motionSafe({
-                                    initial: { y: 20 },
-                                    animate: { y: 0 },
-                                    transition: { delay: 0.2 + index * 0.1 },
-                                })}
-                            >
-                                <ToolLink path={tool.path}>
-                                    <div className={`bg-slate-900/30 backdrop-blur-sm border border-white/10 rounded-2xl p-6 ${HOVER_CARD} transition-all hover:bg-slate-900/50`}>
-                                        <div className="flex items-start justify-between gap-4">
-                                            <div className="flex-1">
-                                                <div className="flex items-center gap-3 mb-2">
-                                                    <span className="text-2xl">{tool.icon}</span>
-                                                    <h2 className={`text-2xl font-bold text-slate-100 ${CARD_HOVER_TEXT}`}>
-                                                        {tool.title}
-                                                    </h2>
-                                                </div>
-                                                <p className="text-slate-400 leading-relaxed">
-                                                    {tool.description}
-                                                </p>
-                                            </div>
-                                            <HiArrowRight className={CARD_HOVER_ARROW} />
-                                        </div>
-                                    </div>
-                                </ToolLink>
-                            </motion.div>
-                        ))}
-                    </div>
-                </div>
+                        <div>
+                            <p className="font-mono text-xs uppercase tracking-wider text-ink-500">{tool.where}</p>
+                            <h2 className={`mt-2 font-semibold tracking-tight text-ink-50 ${index === 0 ? 'text-2xl' : 'text-lg'} ${CARD_HOVER_TEXT}`}>{tool.title}</h2>
+                            <p className="mt-2 text-sm text-ink-400 leading-relaxed max-w-2xl">{tool.description}</p>
+                        </div>
+                        <HiArrowRight className={CARD_HOVER_ARROW} aria-hidden="true" />
+                    </ToolLink>
+                ))}
             </div>
 
             <Footer />

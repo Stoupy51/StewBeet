@@ -2,26 +2,26 @@ import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Navbar } from './Navbar';
 import { Hero } from './Hero';
-import { WhyStewBeet } from './WhyStewBeet';
-import { ManualShowcase } from './ManualShowcase';
-import { EditorShowcase } from './EditorShowcase';
-import { Features } from './Features';
+import { TrustStrip } from './TrustStrip';
+import { Gains } from './Gains';
+import { Spotlights } from './Spotlights';
 import { BuiltWith } from './BuiltWith';
 import { StandingOnGiants } from './StandingOnGiants';
 import { Installation } from './Installation';
 import { FinalCTA } from './FinalCTA';
 import { Footer } from './Footer';
+import { useReveal } from '../hooks/useReveal';
 import { SELECTION_BRAND } from '../theme';
 
 function HomePage() {
   const location = useLocation();
   const navigate = useNavigate();
+  useReveal();
 
-  // Handle hash navigation
   useEffect(() => {
     if (!location.hash) return;
 
-    // The plugins table now lives on /documentation: keep the old anchor working
+    // The plugins table lives on /documentation: keep the old anchor working
     if (location.hash === '#plugins') {
       navigate('/documentation#plugins', { replace: true });
       return;
@@ -36,20 +36,18 @@ function HomePage() {
     }
   }, [location, navigate]);
 
+  // Proof before pitch: the build, the numbers and the packs that use it come first, then what
+  // it does beyond files, the gain in detail, what it stands on, and how to start.
   return (
-    <div className={`min-h-screen bg-slate-950 text-slate-100 ${SELECTION_BRAND}`}>
+    <div className={`min-h-screen bg-ink-950 text-ink-200 ${SELECTION_BRAND}`}>
       <Navbar />
 
-      {/* Hero -> trust -> why -> features -> social proof -> supporting -> final CTA: a visitor
-          meets the evidence that the project is alive before being asked to read about it.
-          The two proof sections sit together: who builds with it, then what it builds on. */}
       <main>
         <Hero />
-        <WhyStewBeet />
-        <ManualShowcase />
-        <EditorShowcase />
-        <Features />
+        <TrustStrip />
         <BuiltWith />
+        <Spotlights />
+        <Gains />
         <StandingOnGiants />
         <Installation />
         <FinalCTA />

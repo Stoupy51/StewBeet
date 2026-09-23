@@ -1,4 +1,5 @@
 import type { ShikiTransformer, ThemedToken } from 'shiki';
+import { isEmbeddedMcfunction } from './mcfunctionBlocks';
 
 /**
  * Adds the colours VS Code gets from Pylance and Shiki cannot.
@@ -87,7 +88,8 @@ export const pythonSemantics: ShikiTransformer = {
     tokens(lines) {
         if (this.options.lang !== 'python') return;
         return lines.map((line) =>
-            line.flatMap((token) => (token.color && PLAIN.has(token.color) ? splitToken(token) : [token])),
+            // Commands inside a Python string are coloured by the mcfunction grammar, not by shape.
+            line.flatMap((token) => (token.color && PLAIN.has(token.color) && !isEmbeddedMcfunction(token) ? splitToken(token) : [token])),
         );
     },
 };

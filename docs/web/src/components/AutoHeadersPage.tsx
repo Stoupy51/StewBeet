@@ -4,13 +4,14 @@ import { unzipSync } from 'fflate';
 import { HiArrowRight, HiDownload, HiPlay, HiPuzzle, HiUpload } from 'react-icons/hi';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
+import { PageHeader } from './PageHeader';
 import { FileTree, type FileNode } from './FileTree';
 import { SourceView } from './SourceView';
 import { useTranslation } from '../i18n/useTranslation';
 import { buildTree, type BuiltFile } from '../utils/pathsToTree';
 import { formatBytes, languageOf } from '../utils/fileDisplay';
 import { HEADERS_LIMITS, MAX_PACK_BYTES } from '../api/sandboxLimits';
-import { BTN_SECONDARY, HEADING, TEXT_ACCENT } from '../theme';
+import { BTN_SECONDARY, TEXT_ACCENT } from '../theme';
 
 /**
  * /auto_headers: upload a datapack, get it back with a header on every function.
@@ -198,17 +199,10 @@ export const AutoHeadersPage: React.FC = () => {
     }, [output, selected]);
 
     return (
-        <div className="min-h-screen bg-slate-950 text-slate-100">
+        <div className="min-h-screen bg-ink-950 text-ink-100">
             <Navbar />
 
-            <div className="relative z-10 pt-28 pb-6 px-4">
-                <div className="max-w-7xl mx-auto text-center">
-                    <h1 className="text-4xl md:text-5xl font-bold mb-3">
-                        🏷️ <span className={HEADING}>{t('autoHeaders.title')}</span>
-                    </h1>
-                    <p className="text-lg text-slate-300 max-w-3xl mx-auto">{t('autoHeaders.subtitle')}</p>
-                </div>
-            </div>
+            <PageHeader eyebrow={t('autoHeaders.eyebrow')} title={t('autoHeaders.title')} lead={t('autoHeaders.subtitle')} width="max-w-7xl" />
 
             <div className="relative z-10 px-4 pb-16">
                 <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-4">
@@ -218,7 +212,7 @@ export const AutoHeadersPage: React.FC = () => {
                         other, because there is no editor here to set it: a drop zone is as tall as
                         you make it, and left to itself it made the result panel too short to read a
                         function in. Below lg they stack and the upload panel shrinks to its content. */}
-                    <div className="rounded-xl border border-white/10 bg-slate-900/60 flex flex-col overflow-hidden lg:h-[34rem]">
+                    <div className="rounded-panel border border-ink-800 bg-ink-900/60 flex flex-col overflow-hidden lg:h-[34rem]">
                         {/* A button rather than a div with an onClick, so the picker opens from the
                             keyboard too. The input is its sibling and not its child: inside it, the
                             click it receives from picker.click() would bubble straight back into this
@@ -233,22 +227,22 @@ export const AutoHeadersPage: React.FC = () => {
                                 accept(event.dataTransfer.files[0] ?? null);
                             }}
                             onClick={() => picker.current?.click()}
-                            className={`m-4 flex-1 min-h-[16rem] rounded-xl border-2 border-dashed flex flex-col items-center justify-center gap-3 p-6 text-center transition-colors ${
-                                dragging ? 'border-mc-emerald/60 bg-mc-emerald/5' : 'border-white/15 hover:border-white/30 hover:bg-white/[0.02]'
+                            className={`m-4 flex-1 min-h-[16rem] rounded-panel border-2 border-dashed flex flex-col items-center justify-center gap-3 p-6 text-center transition-colors ${
+                                dragging ? 'border-beet-500/60 bg-beet-500/5' : 'border-ink-800 hover:border-white/30 hover:bg-white/[0.02]'
                             }`}
                         >
-                            <HiUpload className="w-8 h-8 text-slate-500" />
-                            <span className="text-sm text-slate-300">{t('autoHeaders.drop')}</span>
-                            <span className="text-xs text-slate-500">
+                            <HiUpload className="w-8 h-8 text-ink-500" />
+                            <span className="text-sm text-ink-300">{t('autoHeaders.drop')}</span>
+                            <span className="text-xs text-ink-500">
                                 {t('autoHeaders.maxSize').replace('{size}', String(HEADERS_LIMITS.packMiB))}
                             </span>
                             {file && (
-                                <span className={`text-sm ${tooLarge ? 'text-red-400' : 'text-mc-emerald'}`}>
+                                <span className={`text-sm ${tooLarge ? 'text-beet-400' : 'text-beet-400'}`}>
                                     {file.name} · {formatBytes(file.size)}
                                 </span>
                             )}
                             {tooLarge && (
-                                <span className="text-xs text-red-400">{t('autoHeaders.error.pack_too_large')}</span>
+                                <span className="text-xs text-beet-400">{t('autoHeaders.error.pack_too_large')}</span>
                             )}
                         </button>
                         <input
@@ -259,12 +253,12 @@ export const AutoHeadersPage: React.FC = () => {
                             onChange={event => accept(event.target.files?.[0] ?? null)}
                         />
 
-                        <div className="flex items-center gap-3 px-4 py-2 border-t border-white/5">
-                            <span className="text-xs text-slate-500">{t('autoHeaders.pipeline')}</span>
+                        <div className="flex items-center gap-3 px-4 py-2 border-t border-ink-800">
+                            <span className="text-xs text-ink-500">{t('autoHeaders.pipeline')}</span>
                             <button
                                 onClick={run}
                                 disabled={!file || pending || tooLarge}
-                                className="ml-auto flex items-center gap-1.5 text-sm px-4 py-1.5 rounded-lg bg-mc-emerald/20 text-mc-emerald border border-mc-emerald/30 hover:bg-mc-emerald/30 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                                className="ml-auto flex items-center gap-1.5 text-sm px-4 py-1.5 rounded-control bg-beet-500/20 text-beet-400 border border-beet-500/30 hover:bg-beet-500/30 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                             >
                                 <HiPlay className="w-4 h-4" />
                                 {pending ? t('autoHeaders.running') : t('autoHeaders.run')}
@@ -275,11 +269,11 @@ export const AutoHeadersPage: React.FC = () => {
                     {/* ── Output */}
                     {/* A fixed height, not a fitted one: it is what stops a four thousand file pack
                         running off the end of the page, and the tree scrolls inside it instead. */}
-                    <div className="rounded-xl border border-white/10 bg-slate-900/60 flex flex-col overflow-hidden h-[32rem] lg:h-[34rem]">
-                        <div className="flex items-center gap-2 px-4 py-2 border-b border-white/5 flex-wrap">
-                            <span className="text-xs text-slate-400">{t('autoHeaders.output')}</span>
+                    <div className="rounded-panel border border-ink-800 bg-ink-900/60 flex flex-col overflow-hidden h-[32rem] lg:h-[34rem]">
+                        <div className="flex items-center gap-2 px-4 py-2 border-b border-ink-800 flex-wrap">
+                            <span className="text-xs text-ink-400">{t('autoHeaders.output')}</span>
                             {output && (
-                                <span className="text-xs text-slate-500">
+                                <span className="text-xs text-ink-500">
                                     {t('autoHeaders.rewritten')
                                         .replace('{changed}', String(output.meta.changed ?? 0))
                                         .replace('{functions}', String(output.meta.functions ?? 0))}
@@ -290,7 +284,7 @@ export const AutoHeadersPage: React.FC = () => {
                                 <a
                                     href={output.url}
                                     download={output.name}
-                                    className="ml-auto flex items-center gap-1.5 text-xs px-2.5 py-1 rounded border border-mc-emerald/30 bg-mc-emerald/20 text-mc-emerald hover:bg-mc-emerald/30 transition-colors"
+                                    className="ml-auto flex items-center gap-1.5 text-xs px-2.5 py-1 rounded border border-beet-500/30 bg-beet-500/20 text-beet-400 hover:bg-beet-500/30 transition-colors"
                                 >
                                     <HiDownload className="w-3.5 h-3.5" />
                                     {t('autoHeaders.download').replace('{size}', formatBytes(output.bytes))}
@@ -299,9 +293,9 @@ export const AutoHeadersPage: React.FC = () => {
                         </div>
 
                         {!output && !failure && !pending && (
-                            <p className="p-4 text-sm text-slate-500">{t('autoHeaders.empty')}</p>
+                            <p className="p-4 text-sm text-ink-500">{t('autoHeaders.empty')}</p>
                         )}
-                        {pending && <p className="p-4 text-sm text-slate-500">{t('autoHeaders.running')}</p>}
+                        {pending && <p className="p-4 text-sm text-ink-500">{t('autoHeaders.running')}</p>}
 
                         {failure && (
                             <div className="flex-1 flex flex-col p-4 gap-3 min-h-0">
@@ -312,17 +306,17 @@ export const AutoHeadersPage: React.FC = () => {
                                 </p>
 
                                 {failure.message && (
-                                    <div className="rounded-lg border border-red-500/25 bg-red-500/5 p-3">
+                                    <div className="rounded-control border border-red-500/25 bg-red-500/5 p-3">
                                         <p className="text-sm font-medium text-red-200 break-words">{failure.message}</p>
                                     </div>
                                 )}
 
                                 {(failure.traceback ?? failure.logs) && (
                                     <details className="flex-1 min-h-0 flex flex-col">
-                                        <summary className="text-xs text-slate-500 hover:text-slate-300 cursor-pointer">
+                                        <summary className="text-xs text-ink-500 hover:text-ink-300 cursor-pointer">
                                             {t('autoHeaders.fullTraceback')}
                                         </summary>
-                                        <pre className="mt-2 flex-1 text-[0.7rem] leading-relaxed text-slate-400 bg-black/30 rounded p-3 overflow-auto custom-scrollbar whitespace-pre-wrap min-h-0">
+                                        <pre className="mt-2 flex-1 text-[0.7rem] leading-relaxed text-ink-400 bg-black/30 rounded p-3 overflow-auto custom-scrollbar whitespace-pre-wrap min-h-0">
                                             {failure.traceback ?? failure.logs}
                                         </pre>
                                     </details>
@@ -333,7 +327,7 @@ export const AutoHeadersPage: React.FC = () => {
                         {output && !selected && (
                             <div className="flex-1 flex flex-col p-4 overflow-auto custom-scrollbar min-h-0">
                                 {(output.meta.warnings?.length ?? 0) > 0 && (
-                                    <div className="mb-3 rounded-lg border border-amber-500/25 bg-amber-500/5 p-3 space-y-1">
+                                    <div className="mb-3 rounded-control border border-amber-500/25 bg-amber-500/5 p-3 space-y-1">
                                         {output.meta.warnings?.map(warning => (
                                             <p key={warning} className="text-xs text-amber-200 break-words">{warning}</p>
                                         ))}
@@ -370,7 +364,7 @@ export const AutoHeadersPage: React.FC = () => {
                 <div className="max-w-7xl mx-auto mt-4 text-center">
                     <Link
                         to={PLUGIN_DOC}
-                        className={`inline-flex items-center gap-2 text-sm px-4 py-2 rounded-lg ${BTN_SECONDARY} transition-colors`}
+                        className={`inline-flex items-center gap-2 text-sm px-4 py-2 rounded-control ${BTN_SECONDARY} transition-colors`}
                     >
                         <HiPuzzle className="w-4 h-4" />
                         {t('autoHeaders.pluginLink')}
@@ -380,10 +374,10 @@ export const AutoHeadersPage: React.FC = () => {
 
                 {/* ── Limitations */}
                 <div className="max-w-7xl mx-auto mt-4">
-                    <div className="rounded-xl border border-white/10 bg-slate-900/40 p-5 space-y-3">
-                        <p className="text-sm font-semibold text-slate-200">{t('autoHeaders.limits')}</p>
-                        <p className="text-sm text-slate-400 leading-relaxed">{t('autoHeaders.limitsDetail')}</p>
-                        <p className="text-sm text-slate-400">
+                    <div className="rounded-panel border border-ink-800 bg-ink-900/40 p-5 space-y-3">
+                        <p className="text-sm font-semibold text-ink-200">{t('autoHeaders.limits')}</p>
+                        <p className="text-sm text-ink-400 leading-relaxed">{t('autoHeaders.limitsDetail')}</p>
+                        <p className="text-sm text-ink-400">
                             {t('autoHeaders.limitsNumbers')
                                 .replace('{pack}', String(HEADERS_LIMITS.packMiB))
                                 .replace('{extracted}', String(HEADERS_LIMITS.extractedMiB))
@@ -392,7 +386,7 @@ export const AutoHeadersPage: React.FC = () => {
                                 .replace('{wall}', String(HEADERS_LIMITS.wallSeconds))
                                 .replace('{memory}', String(HEADERS_LIMITS.memoryMiB))}
                         </p>
-                        <p className="text-sm text-slate-400 leading-relaxed">{t('autoHeaders.standalone')}</p>
+                        <p className="text-sm text-ink-400 leading-relaxed">{t('autoHeaders.standalone')}</p>
                         <p className="text-sm">
                             <Link to={PLUGIN_DOC} className={`${TEXT_ACCENT} hover:underline`}>
                                 {t('autoHeaders.readDocs')}

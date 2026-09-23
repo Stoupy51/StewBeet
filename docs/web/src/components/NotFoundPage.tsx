@@ -12,7 +12,7 @@ export const NotFoundPage: React.FC = () => {
     const motionSafe = useMotionSafe();
 
     return (
-        <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
+        <div className="min-h-screen bg-ink-950 text-ink-100 flex flex-col">
             <Navbar />
 
             <div className="relative z-10 flex-1 flex items-center justify-center px-4 py-32">
@@ -23,12 +23,12 @@ export const NotFoundPage: React.FC = () => {
                     })}
                     className="max-w-2xl text-center"
                 >
-                    <p className={`text-7xl md:text-8xl font-bold mb-6 ${HEADING}`}>404</p>
-                    <h1 className="text-3xl md:text-4xl font-bold mb-4">{t('notFound.title')}</h1>
-                    <p className="text-lg text-slate-400 leading-relaxed mb-10">{t('notFound.description')}</p>
+                    <p className={`text-7xl md:text-8xl font-semibold mb-6 ${HEADING}`}>404</p>
+                    <h1 className="text-3xl md:text-4xl font-semibold mb-4">{t('notFound.title')}</h1>
+                    <p className="text-lg text-ink-400 leading-relaxed mb-10">{t('notFound.description')}</p>
 
                     <div className="flex flex-wrap items-center justify-center gap-4">
-                        <Link to="/" className={`px-6 py-3 rounded-xl font-medium transition-all ${BTN_PRIMARY}`}>
+                        <Link to="/" className={`px-6 py-3 rounded-panel font-medium transition-all ${BTN_PRIMARY}`}>
                             {t('notFound.backHome')}
                         </Link>
                         <Link to="/documentation" className={`flex items-center gap-2 px-6 py-3 font-medium group ${TEXT_ACCENT_HOVER}`}>

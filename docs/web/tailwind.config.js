@@ -1,19 +1,37 @@
 /** @type {import('tailwindcss').Config} */
 
 /**
- * Accent colours are taken from the blocks they are named after, so the palette belongs to
- * the domain the tool serves rather than to the indigo-and-purple gradient every framework
- * site ships with. Contrast against slate-950 was measured before each was adopted:
- * emerald 11.1:1, diamond 13.4:1, gold 15.2:1, copper 5.2:1: all clear of the 4.5:1 floor
- * for body text, so any of them is safe on prose, not only on headings.
+ * Every colour comes from the StewBeet logo: `ink` from the cast iron pot, `beet` from the
+ * beetroot, `leaf` from its leaves. Contrast was measured against ink-950 (see
+ * specs/002-website-redesign/research.md): ink-400 text is 6.8:1, beet-400 6.1:1, leaf-400 10.5:1,
+ * and white on beet-600 is 5.7:1. ink-500 (3.4:1) is for boundaries only, never for text.
  */
-const minecraft = {
-  emerald: '#17DD62',
-  diamond: '#4AEDD9',
-  gold: '#FAEE4D',
-  copper: '#C86545',
-  redstone: '#FF4B3E',
-  lapis: '#5A6BE0',
+const ink = {
+  50: '#f8f5f0',
+  100: '#eee8df',
+  200: '#ddd6cc',
+  300: '#c4bbb0',
+  400: '#a0978c',
+  500: '#6e665d',
+  600: '#4b453e',
+  700: '#353029',
+  800: '#24211e',
+  850: '#1c1a17',
+  900: '#161412',
+  950: '#0e0d0c',
+};
+
+const beet = {
+  300: '#ff8a99',
+  400: '#f25c70',
+  500: '#e23a52',
+  600: '#c42340',
+  700: '#9e1a33',
+};
+
+const leaf = {
+  400: '#7fd35b',
+  500: '#5cb83a',
 };
 
 export default {
@@ -24,15 +42,24 @@ export default {
   theme: {
     extend: {
       colors: {
-        mc: minecraft,
+        ink,
+        beet: { ...beet, DEFAULT: beet[400] },
+        leaf: { ...leaf, DEFAULT: leaf[400] },
+        mc: {
+          gold: '#f2c14e',
+          copper: '#d0795a',
+        },
+      },
+      fontFamily: {
+        sans: ['"IBM Plex Sans Variable"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        mono: ['"JetBrains Mono Variable"', 'ui-monospace', 'SFMono-Regular', 'Consolas', 'monospace'],
       },
       borderRadius: {
-        // Structural panels sit on a 4px grid so edges read as placed rather than softened.
-        panel: '6px',
+        panel: '8px',
+        control: '6px',
       },
-      backgroundImage: {
-        // Crisp 4px checker used for section dividers, in place of blurred colour blobs.
-        'pixel-rule': `repeating-linear-gradient(90deg, ${minecraft.emerald}00 0 4px, ${minecraft.emerald}40 4px 8px)`,
+      maxWidth: {
+        page: '72rem',
       },
     },
   },

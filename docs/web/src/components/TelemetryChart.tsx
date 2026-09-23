@@ -15,7 +15,7 @@ export interface TelemetryBreakdown {
     percentage: number;
 }
 
-const PIE_COLORS = ['#38bdf8', '#34d399', '#a78bfa', '#fbbf24', '#f87171', '#fb7185', '#22d3ee', '#f472b6', '#4ade80', '#c084fc'];
+const PIE_COLORS = ['#f25c70', '#7fd35b', '#f2c14e', '#7dd3fc', '#d0795a', '#b4a7f5', '#c4bbb0', '#ff8a99', '#5eead4', '#5cb83a'];
 
 /** Height of the plot. Bars are read against each other, so the number only sets the proportions. */
 const PLOT_HEIGHT = 176;
@@ -58,7 +58,7 @@ export const TelemetryChart: React.FC<{ days: TelemetryDay[]; unitLabel: string;
             <div className="relative" style={{ height: PLOT_HEIGHT }}>
                 {readout && (
                     <div
-                        className="absolute -top-2 z-10 pointer-events-none rounded-panel border border-white/15 bg-slate-950/95 px-3 py-2 shadow-lg shadow-black/50 whitespace-nowrap"
+                        className="absolute -top-2 z-10 pointer-events-none rounded-panel border border-ink-800 bg-ink-950/95 px-3 py-2 shadow-black/50 whitespace-nowrap"
                         style={{
                             left: tooltipSide === 'end' ? undefined : `${tooltipAnchor}%`,
                             right: tooltipSide === 'end' ? 0 : undefined,
@@ -66,12 +66,12 @@ export const TelemetryChart: React.FC<{ days: TelemetryDay[]; unitLabel: string;
                             marginLeft: tooltipSide === 'start' ? '-0.5rem' : undefined,
                         }}
                     >
-                        <div className="text-xs font-mono text-slate-400">{dayFormat.format(new Date(`${readout.date}T00:00:00Z`))}</div>
-                        <div className="text-sm text-slate-100">
+                        <div className="text-xs font-mono text-ink-400">{dayFormat.format(new Date(`${readout.date}T00:00:00Z`))}</div>
+                        <div className="text-sm text-ink-100">
                             {readout.events.toLocaleString(locale)} {unitLabel}
                         </div>
                         {readout.avgDurationSeconds > 0 && (
-                            <div className="text-xs text-slate-400">
+                            <div className="text-xs text-ink-400">
                                 {averageLabel} {readout.avgDurationSeconds.toFixed(1)}s
                             </div>
                         )}
@@ -92,7 +92,7 @@ export const TelemetryChart: React.FC<{ days: TelemetryDay[]; unitLabel: string;
                         >
                             {index === peakIndex && peak > 0 && (
                                 <span
-                                    className="absolute inset-x-0 -translate-y-1 text-center text-[0.625rem] font-mono text-slate-400"
+                                    className="absolute inset-x-0 -translate-y-1 text-center text-[0.625rem] font-mono text-ink-400"
                                     style={{ bottom: `${(day.events / peak) * 100}%` }}
                                 >
                                     {peak}
@@ -101,8 +101,8 @@ export const TelemetryChart: React.FC<{ days: TelemetryDay[]; unitLabel: string;
                             <div
                                 className={`w-full rounded-t-[4px] transition-colors ${
                                     day.events > 0
-                                        ? hovered === index ? 'bg-mc-diamond' : 'bg-mc-emerald'
-                                        : 'bg-slate-700'
+                                        ? hovered === index ? 'bg-beet-300' : 'bg-beet-600'
+                                        : 'bg-ink-700'
                                 }`}
                                 style={{
                                     height: day.events > 0
@@ -116,20 +116,20 @@ export const TelemetryChart: React.FC<{ days: TelemetryDay[]; unitLabel: string;
             </div>
 
             {/* Hairline baseline, one shade off the panel: it places the bars without competing with them. */}
-            <div className="h-px w-full bg-white/10" />
+            <div className="h-px w-full bg-ink-800" />
 
-            <div className="mt-2 flex justify-between text-[0.6875rem] font-mono text-slate-500">
+            <div className="mt-2 flex justify-between text-[0.6875rem] font-mono text-ink-500">
                 <span>{dayFormat.format(new Date(`${days[0].date}T00:00:00Z`))}</span>
                 <span>{dayFormat.format(new Date(`${days[days.length - 1].date}T00:00:00Z`))}</span>
             </div>
 
             <details className="mt-4 group">
-                <summary className="cursor-pointer text-sm text-slate-400 hover:text-slate-200 transition-colors">
+                <summary className="cursor-pointer text-sm text-ink-400 hover:text-ink-200 transition-colors">
                     {t('telemetry.tableToggle')}
                 </summary>
-                <div className="mt-3 max-h-64 overflow-y-auto rounded-panel border border-white/10">
+                <div className="mt-3 max-h-64 overflow-y-auto rounded-panel border border-ink-800">
                     <table className="w-full text-sm">
-                        <thead className="sticky top-0 bg-slate-900 text-left text-xs uppercase tracking-wide text-slate-400">
+                        <thead className="sticky top-0 bg-ink-900 text-left text-xs uppercase tracking-wide text-ink-400">
                             <tr>
                                 <th scope="col" className="px-3 py-2 font-medium">{t('telemetry.tableDate')}</th>
                                 <th scope="col" className="px-3 py-2 font-medium text-right">{unitLabel}</th>
@@ -139,9 +139,9 @@ export const TelemetryChart: React.FC<{ days: TelemetryDay[]; unitLabel: string;
                         <tbody className="divide-y divide-white/5">
                             {days.map(day => (
                                 <tr key={day.date}>
-                                    <td className="px-3 py-1.5 font-mono text-slate-300">{day.date}</td>
-                                    <td className="px-3 py-1.5 text-right text-slate-200">{day.events.toLocaleString(locale)}</td>
-                                    <td className="px-3 py-1.5 text-right text-slate-400">{day.avgDurationSeconds > 0 ? `${day.avgDurationSeconds.toFixed(1)}s` : '-'}</td>
+                                    <td className="px-3 py-1.5 font-mono text-ink-300">{day.date}</td>
+                                    <td className="px-3 py-1.5 text-right text-ink-200">{day.events.toLocaleString(locale)}</td>
+                                    <td className="px-3 py-1.5 text-right text-ink-400">{day.avgDurationSeconds > 0 ? `${day.avgDurationSeconds.toFixed(1)}s` : '-'}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -170,11 +170,11 @@ export const TelemetryBreakdownChart: React.FC<{ title: string; items: Telemetry
     const displayedItems = items.slice(0, 6);
 
     return (
-        <div className="rounded-panel border border-white/10 bg-slate-900/40 p-4">
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-300">{title}</h3>
+        <div className="rounded-panel border border-ink-800 bg-ink-900/40 p-4">
+            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-ink-300">{title}</h3>
 
             {items.length === 0 ? (
-                <p className="text-sm text-slate-400">{emptyLabel}</p>
+                <p className="text-sm text-ink-400">{emptyLabel}</p>
             ) : (
                 <div className="grid gap-4 md:gap-3">
                     <div className="h-40 w-full">
@@ -192,10 +192,10 @@ export const TelemetryBreakdownChart: React.FC<{ title: string; items: Telemetry
                                         return [`${count.toLocaleString(locale)} (${percentage.toFixed(1)}%)`, label];
                                     }}
                                     contentStyle={{
-                                        backgroundColor: 'rgba(15, 23, 42, 0.96)',
-                                        border: '1px solid rgba(255,255,255,0.15)',
+                                        backgroundColor: 'rgba(22, 20, 18, 0.97)',
+                                        border: '1px solid #353029',
                                         borderRadius: '12px',
-                                        color: '#e2e8f0',
+                                        color: '#eee8df',
                                     }}
                                 />
                                 <Pie
@@ -215,7 +215,7 @@ export const TelemetryBreakdownChart: React.FC<{ title: string; items: Telemetry
                                         <Cell
                                             key={`${title}-${entry.name}`}
                                             fill={entry.fill}
-                                            stroke="rgba(15,23,42,0.9)"
+                                            stroke="#0e0d0c"
                                             strokeWidth={2}
                                             opacity={hoveredIndex === null || hoveredIndex === index ? 1 : 0.45}
                                         />
@@ -225,21 +225,21 @@ export const TelemetryBreakdownChart: React.FC<{ title: string; items: Telemetry
                         </ResponsiveContainer>
                     </div>
 
-                    <div className="space-y-2 text-sm text-slate-300">
+                    <div className="space-y-2 text-sm text-ink-300">
                         {displayedItems.map((item, index) => (
                             <button
                                 key={`${title}-${item.label}`}
                                 type="button"
-                                className="flex w-full items-center justify-between gap-3 rounded-md border border-transparent px-2 py-1 text-left transition-colors hover:border-white/10 hover:bg-white/5"
+                                className="flex w-full items-center justify-between gap-3 rounded-md border border-transparent px-2 py-1 text-left transition-colors hover:border-ink-800 hover:bg-ink-850"
                                 onMouseEnter={() => setHoveredIndex(index)}
                                 onMouseLeave={() => setHoveredIndex(null)}
                             >
                                 <span className="flex min-w-0 items-center gap-2">
                                     <span className="inline-block h-2.5 w-2.5 rounded-full" style={{ backgroundColor: PIE_COLORS[index % PIE_COLORS.length] }} />
-                                    <span className="truncate font-medium text-slate-200">{item.label}</span>
+                                    <span className="truncate font-medium text-ink-200">{item.label}</span>
                                 </span>
-                                <span className="tabular-nums text-slate-400">
-                                    {item.count.toLocaleString(locale)} <span className="text-slate-500">({item.percentage.toFixed(1)}%)</span>
+                                <span className="tabular-nums text-ink-400">
+                                    {item.count.toLocaleString(locale)} <span className="text-ink-500">({item.percentage.toFixed(1)}%)</span>
                                 </span>
                             </button>
                         ))}

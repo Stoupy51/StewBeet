@@ -15,9 +15,9 @@ const FILTERS_STORAGE_KEY = 'search-filters';
 
 /** Per-category colors, used by both the filter chips and the section headers. */
 const TYPE_STYLES: Record<EntryType, { active: string; text: string }> = {
-    doc: { active: 'bg-mc-emerald/20 text-mc-diamond border-mc-emerald/40', text: 'text-mc-diamond' },
+    doc: { active: 'bg-beet-500/20 text-beet-300 border-beet-500/40', text: 'text-beet-300' },
     api: { active: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40', text: 'text-emerald-300' },
-    plugin: { active: 'bg-mc-diamond/20 text-mc-diamond border-mc-diamond/40', text: 'text-mc-diamond' },
+    plugin: { active: 'bg-beet-300/20 text-beet-300 border-beet-300/40', text: 'text-beet-300' },
     site: { active: 'bg-sky-500/20 text-sky-300 border-sky-500/40', text: 'text-sky-300' },
 };
 
@@ -176,7 +176,7 @@ export const SearchModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15 }}
             onClick={onClose}
-            className="fixed inset-0 z-[60] bg-black/80 backdrop-blur-md p-4 pt-[10vh] flex justify-center"
+            className="fixed inset-0 z-[60] bg-black/70 p-4 pt-[10vh] flex justify-center"
         >
             <motion.div
                 {...motionSafe({
@@ -187,10 +187,10 @@ export const SearchModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 })}
                 onClick={(event) => event.stopPropagation()}
                 onKeyDown={handleKeyDown}
-                className="w-full max-w-2xl h-fit max-h-[80vh] flex flex-col bg-slate-900/95 border border-white/10 rounded-2xl shadow-2xl overflow-hidden"
+                className="w-full max-w-2xl h-fit max-h-[80vh] flex flex-col bg-ink-900 border border-ink-700 rounded-panel overflow-hidden shadow-[0_32px_80px_-16px_rgba(0,0,0,0.7)]"
             >
                 {/* Input */}
-                <div className="flex items-center gap-3 px-4 py-3 border-b border-white/10">
+                <div className="flex items-center gap-3 px-4 py-3 border-b border-ink-800">
                     <HiSearch className={`text-xl flex-shrink-0 ${TEXT_ACCENT}`} />
                     <input
                         ref={inputRef}
@@ -198,19 +198,19 @@ export const SearchModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                         value={query}
                         onChange={(event) => setQuery(event.target.value)}
                         placeholder={t('search.placeholder')}
-                        className="flex-1 bg-transparent text-slate-100 placeholder-slate-500 outline-none"
+                        className="flex-1 bg-transparent text-ink-100 placeholder-ink-500 outline-none"
                     />
                     <button
                         onClick={onClose}
                         aria-label={t('search.close')}
-                        className="p-1 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-white/10 transition-colors"
+                        className="p-1 rounded-control text-ink-400 hover:text-ink-200 hover:bg-ink-800 transition-colors"
                     >
                         <HiX className="text-xl" />
                     </button>
                 </div>
 
                 {/* Category filters */}
-                <div className="flex flex-wrap items-center gap-2 px-4 py-2 border-b border-white/10">
+                <div className="flex flex-wrap items-center gap-2 px-4 py-2 border-b border-ink-800">
                     {TYPE_ORDER.map((type) => (
                         <button
                             key={type}
@@ -219,7 +219,7 @@ export const SearchModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                             className={`px-2.5 py-1 rounded-full border text-xs font-medium transition-colors ${
                                 filters.has(type)
                                     ? TYPE_STYLES[type].active
-                                    : 'bg-transparent border-white/10 text-slate-400 hover:text-slate-300'
+                                    : 'bg-transparent border-ink-800 text-ink-400 hover:text-ink-300'
                             }`}
                         >
                             {t(SECTION_KEYS[type])}
@@ -230,7 +230,7 @@ export const SearchModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 {/* Results */}
                 <div ref={listRef} className="overflow-y-auto">
                     {status && (
-                        <div className="flex items-center justify-center gap-3 py-10 text-slate-400 text-sm">
+                        <div className="flex items-center justify-center gap-3 py-10 text-ink-400 text-sm">
                             {loading && !error && (
                                 <span className={`animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 ${LOADER_ACCENT}`} />
                             )}
@@ -242,7 +242,7 @@ export const SearchModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                         <div key={`${result.url}-${index}`}>
                             {/* Section header whenever the category changes */}
                             {result.type !== results[index - 1]?.type && (
-                                <div className={`px-4 pt-3 pb-1 text-[11px] font-bold uppercase tracking-wider ${TYPE_STYLES[result.type].text}`}>
+                                <div className={`px-4 pt-3 pb-1 text-[11px] font-semibold uppercase tracking-wider ${TYPE_STYLES[result.type].text}`}>
                                     {t(SECTION_KEYS[result.type])}
                                 </div>
                             )}
@@ -250,22 +250,22 @@ export const SearchModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                                 data-result={index}
                                 onClick={() => goTo(result)}
                                 onMouseEnter={() => setSelected(index)}
-                                className={`w-full text-left px-4 py-3 border-b border-white/5 transition-colors ${
-                                    index === selected ? LIST_SELECTED : 'hover:bg-white/5'
+                                className={`w-full text-left px-4 py-3 border-b border-ink-800 transition-colors ${
+                                    index === selected ? LIST_SELECTED : 'hover:bg-ink-850'
                                 }`}
                             >
                                 <div className="flex items-center gap-2 mb-1">
-                                    <span className="text-xs text-slate-400 truncate">{result.document}</span>
-                                    {result.external && <HiExternalLink className="text-xs text-slate-400 flex-shrink-0" />}
+                                    <span className="text-xs text-ink-400 truncate">{result.document}</span>
+                                    {result.external && <HiExternalLink className="text-xs text-ink-400 flex-shrink-0" />}
                                 </div>
                                 {result.heading && (
-                                    <div className="text-slate-100 font-semibold text-sm mb-0.5 truncate">{result.heading}</div>
+                                    <div className="text-ink-100 font-semibold text-sm mb-0.5 truncate">{result.heading}</div>
                                 )}
                                 {result.snippet.length > 0 && (
-                                    <p className="text-xs text-slate-400 leading-relaxed line-clamp-2">
+                                    <p className="text-xs text-ink-400 leading-relaxed line-clamp-2">
                                         {result.snippet.map((segment, segmentIndex) =>
                                             segment.hit
-                                                ? <mark key={segmentIndex} className="bg-mc-emerald/30 text-mc-diamond rounded px-0.5">{segment.text}</mark>
+                                                ? <mark key={segmentIndex} className="bg-beet-500/30 text-beet-300 rounded px-0.5">{segment.text}</mark>
                                                 : <span key={segmentIndex}>{segment.text}</span>,
                                         )}
                                     </p>
@@ -276,10 +276,10 @@ export const SearchModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 </div>
 
                 {/* Footer hints */}
-                <div className="flex items-center gap-4 px-4 py-2 border-t border-white/10 text-[11px] text-slate-400">
-                    <span><kbd className="px-1 rounded bg-white/10">↑</kbd> <kbd className="px-1 rounded bg-white/10">↓</kbd> {t('search.hintNavigate')}</span>
-                    <span><kbd className="px-1 rounded bg-white/10">↵</kbd> {t('search.hintOpen')}</span>
-                    <span><kbd className="px-1 rounded bg-white/10">esc</kbd> {t('search.hintClose')}</span>
+                <div className="flex items-center gap-4 px-4 py-2 border-t border-ink-800 text-[11px] text-ink-400">
+                    <span><kbd className="px-1 rounded bg-ink-800">↑</kbd> <kbd className="px-1 rounded bg-ink-800">↓</kbd> {t('search.hintNavigate')}</span>
+                    <span><kbd className="px-1 rounded bg-ink-800">↵</kbd> {t('search.hintOpen')}</span>
+                    <span><kbd className="px-1 rounded bg-ink-800">esc</kbd> {t('search.hintClose')}</span>
                 </div>
             </motion.div>
         </motion.div>,
