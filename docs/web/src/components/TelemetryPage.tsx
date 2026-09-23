@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { HiArrowLeft, HiCheck, HiExternalLink, HiX } from 'react-icons/hi';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
+import { PageHeader } from './PageHeader';
 import { TelemetrySlider } from './TelemetrySlider';
 import type { StreamSeries } from './TelemetryStreamPanel';
 import { useTranslation } from '../i18n/useTranslation';
@@ -49,26 +50,11 @@ export const TelemetryPage: React.FC = () => {
     }, []);
 
     return (
-        <div className={`min-h-screen bg-slate-950 text-slate-100 ${SELECTION_BRAND}`}>
+        <div className={`min-h-screen bg-ink-950 text-ink-100 ${SELECTION_BRAND}`}>
             <Navbar />
 
             <main>
-                <div className="relative z-10 pt-28 pb-8 px-4">
-                    <div className="max-w-3xl mx-auto text-center">
-                        <motion.h1
-                            {...motionSafe({ initial: { y: 20 }, animate: { y: 0 } })}
-                            className={`text-3xl md:text-4xl font-bold mb-3 ${HEADING}`}
-                        >
-                            {t('telemetry.title')}
-                        </motion.h1>
-                        <motion.p
-                            {...motionSafe({ initial: { y: 20 }, animate: { y: 0 }, transition: { delay: 0.1 } })}
-                            className="text-slate-300"
-                        >
-                            {t('telemetry.subtitle')}
-                        </motion.p>
-                    </div>
-                </div>
+                <PageHeader eyebrow={t('telemetry.eyebrow')} title={t('telemetry.title')} lead={t('telemetry.subtitle')} width="max-w-3xl" />
 
                 {/* ── Public statistics ──────────────────────────────────────── */}
                 <div className="relative z-10 pb-12 px-4">
@@ -76,8 +62,8 @@ export const TelemetryPage: React.FC = () => {
                         {streams ? (
                             <TelemetrySlider streams={streams} />
                         ) : (
-                            <section className="max-w-3xl mx-auto rounded-panel border border-white/10 bg-slate-900/40 p-6 md:p-8">
-                                <p className="text-slate-400">{failed ? t('telemetry.statsUnavailable') : t('telemetry.statsLoading')}</p>
+                            <section className="max-w-3xl mx-auto rounded-panel border border-ink-800 bg-ink-900/40 p-6 md:p-8">
+                                <p className="text-ink-400">{failed ? t('telemetry.statsUnavailable') : t('telemetry.statsLoading')}</p>
                             </section>
                         )}
                     </motion.div>
@@ -86,15 +72,15 @@ export const TelemetryPage: React.FC = () => {
                 {/* ── What is collected ──────────────────────────────────────── */}
                 <div className="relative z-10 pb-12 px-4">
                     <div className="max-w-3xl mx-auto">
-                        <h2 className={`text-xl font-bold mb-2 ${HEADING}`}>{t('telemetry.collectedTitle')}</h2>
-                        <p className="text-sm text-slate-400 mb-5">{t('telemetry.collectedWhy')}</p>
+                        <h2 className={`text-xl font-semibold mb-2 ${HEADING}`}>{t('telemetry.collectedTitle')}</h2>
+                        <p className="text-sm text-ink-400 mb-5">{t('telemetry.collectedWhy')}</p>
 
                         <div className="grid gap-4 md:grid-cols-2">
-                            <div className="rounded-panel border border-white/10 bg-slate-900/40 p-5">
-                                <h3 className="text-sm font-semibold text-slate-200 mb-3">{t('telemetry.collectedHeading')}</h3>
+                            <div className="rounded-panel border border-ink-800 bg-ink-900/40 p-5">
+                                <h3 className="text-sm font-semibold text-ink-200 mb-3">{t('telemetry.collectedHeading')}</h3>
                                 <ul className="space-y-2">
                                     {COLLECTED.map(key => (
-                                        <li key={key} className="flex items-start gap-2 text-sm text-slate-300">
+                                        <li key={key} className="flex items-start gap-2 text-sm text-ink-300">
                                             <HiCheck className={`mt-0.5 flex-shrink-0 ${TEXT_ACCENT}`} aria-hidden="true" />
                                             {t(key)}
                                         </li>
@@ -102,12 +88,12 @@ export const TelemetryPage: React.FC = () => {
                                 </ul>
                             </div>
 
-                            <div className="rounded-panel border border-white/10 bg-slate-900/40 p-5">
-                                <h3 className="text-sm font-semibold text-slate-200 mb-3">{t('telemetry.notCollectedHeading')}</h3>
+                            <div className="rounded-panel border border-ink-800 bg-ink-900/40 p-5">
+                                <h3 className="text-sm font-semibold text-ink-200 mb-3">{t('telemetry.notCollectedHeading')}</h3>
                                 <ul className="space-y-2">
                                     {NOT_COLLECTED.map(key => (
-                                        <li key={key} className="flex items-start gap-2 text-sm text-slate-400">
-                                            <HiX className="mt-0.5 flex-shrink-0 text-mc-redstone" aria-hidden="true" />
+                                        <li key={key} className="flex items-start gap-2 text-sm text-ink-400">
+                                            <HiX className="mt-0.5 flex-shrink-0 text-beet-500" aria-hidden="true" />
                                             {t(key)}
                                         </li>
                                     ))}
@@ -115,20 +101,20 @@ export const TelemetryPage: React.FC = () => {
                             </div>
                         </div>
 
-                        <p className="mt-5 text-sm text-slate-400">{t('telemetry.aggregateNote')}</p>
+                        <p className="mt-5 text-sm text-ink-400">{t('telemetry.aggregateNote')}</p>
 
-                        <h3 className={`mt-8 text-lg font-bold mb-2 ${HEADING}`}>{t('telemetry.websiteTitle')}</h3>
-                        <p className="text-sm text-slate-400">{t('telemetry.websiteNote')}</p>
+                        <h3 className={`mt-8 text-lg font-semibold mb-2 ${HEADING}`}>{t('telemetry.websiteTitle')}</h3>
+                        <p className="text-sm text-ink-400">{t('telemetry.websiteNote')}</p>
                     </div>
                 </div>
 
                 {/* ── Disabling it */}
                 <div className="relative z-10 pb-12 px-4">
                     <div className="max-w-3xl mx-auto">
-                        <h2 className={`text-xl font-bold mb-2 ${HEADING}`}>{t('telemetry.disableTitle')}</h2>
-                        <p className="text-sm text-slate-400 mb-4">{t('telemetry.disableIntro')}</p>
+                        <h2 className={`text-xl font-semibold mb-2 ${HEADING}`}>{t('telemetry.disableTitle')}</h2>
+                        <p className="text-sm text-ink-400 mb-4">{t('telemetry.disableIntro')}</p>
 
-                        <pre className="rounded-panel border border-white/10 bg-slate-900/60 p-4 overflow-x-auto text-sm font-mono text-slate-200">
+                        <pre className="rounded-panel border border-ink-800 bg-ink-900/60 p-4 overflow-x-auto text-sm font-mono text-ink-200">
 {`# Linux / macOS
 export STEWBEET_TELEMETRY=0
 stewbeet build
@@ -138,15 +124,15 @@ $env:STEWBEET_TELEMETRY = "0"
 stewbeet build`}
                         </pre>
 
-                        <p className="mt-4 text-sm text-slate-400">{t('telemetry.disableNote')}</p>
+                        <p className="mt-4 text-sm text-ink-400">{t('telemetry.disableNote')}</p>
                     </div>
                 </div>
 
                 {/* ── The code itself */}
                 <div className="relative z-10 pb-20 px-4">
-                    <div className="max-w-3xl mx-auto pt-6 border-t border-white/10">
-                        <h2 className={`text-xl font-bold mb-2 ${HEADING}`}>{t('telemetry.sourceTitle')}</h2>
-                        <p className="text-sm text-slate-400 mb-4">{t('telemetry.sourceIntro')}</p>
+                    <div className="max-w-3xl mx-auto pt-6 border-t border-ink-800">
+                        <h2 className={`text-xl font-semibold mb-2 ${HEADING}`}>{t('telemetry.sourceTitle')}</h2>
+                        <p className="text-sm text-ink-400 mb-4">{t('telemetry.sourceIntro')}</p>
 
                         <a
                             href={IMPLEMENTATION_URL}
@@ -158,12 +144,12 @@ stewbeet build`}
                             <HiExternalLink className="text-[0.875em] flex-shrink-0" aria-hidden="true" />
                         </a>
 
-                        <p className="mt-4 text-sm text-slate-400">{t('telemetry.serverNote')}</p>
+                        <p className="mt-4 text-sm text-ink-400">{t('telemetry.serverNote')}</p>
 
                         <div className="mt-10">
                             <Link
                                 to="/"
-                                className="group inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors"
+                                className="group inline-flex items-center gap-2 text-sm text-ink-400 hover:text-white transition-colors"
                             >
                                 <HiArrowLeft className="group-hover:-translate-x-1 transition-transform" aria-hidden="true" />
                                 {t('telemetry.backHome')}

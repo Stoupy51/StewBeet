@@ -2,9 +2,57 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    @apply bg-ink-950;
+  }
+
+  body {
+    @apply m-0 bg-ink-950 text-ink-200 font-sans antialiased;
+  }
+
+  #root {
+    @apply min-h-screen bg-ink-950;
+  }
+
+  code, kbd, pre, samp {
+    font-feature-settings: 'calt' 0;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-beet-400 ring-offset-2 ring-offset-ink-950;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-ink-950;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-ink-700 rounded-full border-2 border-solid border-ink-950;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-ink-600;
+  }
+}
+
+@layer components {
+  /* The one decorative motif of the site: a single beet pixel before each section label. */
+  .eyebrow {
+    @apply inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.12em] text-ink-400;
+  }
+  .eyebrow::before {
+    content: '';
+    @apply w-2 h-2 bg-beet-500 flex-shrink-0;
+  }
+}
+
 @layer utilities {
-  /* Slim scrollbar for code panels: the page-wide 10px bar is far too heavy inside a card,
-     and the default one gives a horizontally scrolling snippet no visible affordance at all. */
+  /* Slim scrollbar for code panels: the page-wide bar is far too heavy inside a card. */
   .custom-scrollbar::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -13,194 +61,176 @@
     background: transparent;
   }
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    @apply bg-white/10 rounded-full;
+    @apply bg-white/10 rounded-full border-0;
   }
   .custom-scrollbar:hover::-webkit-scrollbar-thumb {
     @apply bg-white/25;
   }
 
-  .animate-float-up {
-    animation: floatUp 4s ease-in-out infinite;
-  }
-  .animate-float-down {
-    animation: floatDown 5s ease-in-out infinite;
-    animation-delay: 1s;
+  .pixelated {
+    image-rendering: pixelated;
   }
 }
 
-@keyframes floatUp {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-@keyframes floatDown {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(10px); }
-}
-
-@layer base {
-  html {
-    scroll-behavior: smooth;
-    @apply bg-slate-950;
-  }
-
-  body {
-    @apply m-0 bg-slate-950 text-slate-100 antialiased;
-  }
-
-  #root {
-    @apply min-h-screen bg-slate-950;
-  }
-
-  /* Custom scrollbar */
-  ::-webkit-scrollbar {
-    width: 10px;
-  }
-
-  ::-webkit-scrollbar-track {
-    @apply bg-slate-950;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    @apply bg-mc-emerald/50 rounded-full;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    @apply bg-mc-emerald;
-  }
-}
 /*
- * Height of everything pinned to the top of a documentation page: the 4rem navbar, plus the
- * toolbar holding Back and View on GitHub.
- *
- * Every sticky offset and scroll anchor on the page is derived from it. They used to be three
- * independent guesses (top-24, calc(100vh-7rem), scroll-mt-32) against a 8.5rem stack, so the
- * contents panel sat under the toolbar and an anchored heading landed behind it.
+ * Height of everything pinned to the top of a documentation page: the 3.5rem navbar, plus the
+ * toolbar holding Back and View on GitHub. Every sticky offset and scroll anchor derives from it.
  */
-.doc-page { --doc-header: 6.5rem; }
+.doc-page { --doc-header: 6.25rem; }
 
 /*
- * Documentation body, sized like GitHub.
- *
- * This page used to run on @tailwindcss/typography at prose-lg: 18px text on a 1.8 line height,
- * 48px above every h2, 32px of card padding on top of 64px of page padding. A reference page then
- * showed about a third of what the same file shows on GitHub, which is exactly where a reader
- * compares it, so the docs read as padded rather than dense.
- *
- * Every number below is github-markdown-css: 16px/1.5 body, 16px between blocks, 24px above a
- * heading, 85% for code. Only the colours are the site's.
+ * Documentation body. Metrics follow github-markdown-css (16px/1.6 body, 16px between blocks,
+ * 24px above a heading, 85% code), because GitHub is where readers compare the same file.
  */
 .markdown-body {
   font-size: 16px;
-  line-height: 1.5;
+  line-height: 1.65;
   word-wrap: break-word;
-  @apply text-slate-300;
+  @apply text-ink-300;
 }
 
 .markdown-body :is(h1, h2, h3, h4, h5, h6) {
-  margin: 24px 0 16px;
+  margin: 32px 0 12px;
   font-weight: 600;
   line-height: 1.25;
-  scroll-margin-top: calc(var(--doc-header, 6.5rem) + 1rem);
-  @apply text-slate-100;
+  letter-spacing: -0.01em;
+  scroll-margin-top: calc(var(--doc-header, 6.25rem) + 1rem);
+  @apply text-ink-50;
 }
-.markdown-body h1 { font-size: 2em; padding-bottom: 0.3em; @apply border-b border-white/10 text-slate-50; }
-.markdown-body h2 { font-size: 1.5em; padding-bottom: 0.3em; @apply border-b border-white/10; }
-.markdown-body h3 { font-size: 1.25em; }
+.markdown-body h1 { font-size: 2.25em; margin-top: 0; letter-spacing: -0.02em; }
+.markdown-body h2 { font-size: 1.5em; padding-top: 24px; @apply border-t border-ink-800; }
+.markdown-body h3 { font-size: 1.2em; }
 .markdown-body h4 { font-size: 1em; }
 .markdown-body h5 { font-size: 0.875em; }
-.markdown-body h6 { font-size: 0.85em; @apply text-slate-400; }
+.markdown-body h6 { font-size: 0.85em; @apply text-ink-400; }
 
 .markdown-body :is(p, blockquote, ul, ol, dl, table, pre, details) { margin: 0 0 16px; }
 .markdown-body blockquote > :first-child { margin-top: 0; }
-/* The trailing 16px of a paragraph or a code block would otherwise pad out the box or the list item holding it. */
 .markdown-body :is(li, blockquote) > :last-child { margin-bottom: 0; }
 
-.markdown-body a { text-decoration: none; @apply text-mc-emerald transition-colors; }
-.markdown-body a:hover { text-decoration: underline; text-underline-offset: 4px; @apply text-mc-diamond; }
-.markdown-body strong { font-weight: 600; @apply text-slate-100; }
+.markdown-body a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; @apply text-beet-400 decoration-beet-400/40 transition-colors; }
+.markdown-body a:hover { @apply text-beet-300 decoration-beet-300; }
+.markdown-body strong { font-weight: 600; @apply text-ink-100; }
 .markdown-body em { font-style: italic; }
 
-/* Preflight strips the marker, so the list type has to be named again. */
-.markdown-body :is(ul, ol) { padding-left: 2em; }
+.markdown-body :is(ul, ol) { padding-left: 1.5em; }
 .markdown-body ul { list-style: disc; }
 .markdown-body ol { list-style: decimal; }
-.markdown-body li::marker { @apply text-mc-emerald; }
-.markdown-body li + li { margin-top: 0.25em; }
+.markdown-body li::marker { @apply text-ink-500; }
+.markdown-body ol > li::marker { @apply font-mono text-ink-400; }
+.markdown-body li + li { margin-top: 0.3em; }
 .markdown-body li > p { margin-top: 16px; }
 .markdown-body :is(ul, ol) :is(ul, ol) { margin: 0; }
 
 .markdown-body blockquote {
-  padding: 0.5em 1em;
-  border-left: 0.25em solid;
-  @apply border-l-mc-emerald bg-mc-emerald/5 text-slate-400;
+  padding: 0.75em 1em;
+  border-left: 3px solid;
+  border-radius: 0 6px 6px 0;
+  @apply border-l-beet-500 bg-ink-900 text-ink-300;
 }
 
-.markdown-body code {
-  padding: 0.2em 0.4em;
-  font-size: 85%;
-  border-radius: 6px;
-  @apply bg-slate-800/50 text-mc-diamond;
+/* GitHub alerts (`> [!TIP]`), from remark-github-blockquote-alert. */
+.markdown-body .markdown-alert {
+  margin: 0 0 16px;
+  padding: 0.75em 1em;
+  border-left: 3px solid;
+  border-radius: 0 6px 6px 0;
+  @apply border-l-sky-400 bg-ink-900 text-ink-300;
 }
-/* prose-code used to win over prose-a, so `[`ruby.png`](url)` rendered as ordinary code. */
-.markdown-body a code { text-decoration: underline; text-underline-offset: 2px; @apply text-mc-emerald; }
+.markdown-body .markdown-alert > :last-child { margin-bottom: 0; }
+.markdown-body .markdown-alert-title { margin-bottom: 4px; font-weight: 600; @apply font-mono text-xs uppercase tracking-wider text-sky-300; }
+.markdown-body .markdown-alert-tip { @apply border-l-leaf-400; }
+.markdown-body .markdown-alert-tip .markdown-alert-title { @apply text-leaf-400; }
+.markdown-body .markdown-alert-important { @apply border-l-beet-400; }
+.markdown-body .markdown-alert-important .markdown-alert-title { @apply text-beet-300; }
+.markdown-body :is(.markdown-alert-warning, .markdown-alert-caution) { @apply border-l-mc-gold; }
+.markdown-body :is(.markdown-alert-warning, .markdown-alert-caution) .markdown-alert-title { @apply text-mc-gold; }
+
+.markdown-body code {
+  padding: 0.15em 0.4em;
+  font-size: 85%;
+  border-radius: 4px;
+  @apply bg-ink-800 text-ink-100 font-mono;
+}
+.markdown-body a code { @apply text-beet-400; }
 
 .markdown-body pre {
   padding: 16px;
   overflow: auto;
   font-size: 85%;
-  line-height: 1.45;
-  border-radius: 6px;
-  @apply bg-slate-900/90 border border-white/10;
+  line-height: 1.55;
+  border-radius: 8px;
+  @apply bg-ink-900 border border-ink-800 font-mono;
 }
-.markdown-body pre code { padding: 0; font-size: inherit; border-radius: 0; background: transparent; @apply text-slate-200; }
+.markdown-body pre code { padding: 0; font-size: inherit; border-radius: 0; background: transparent; @apply text-ink-200; }
 
-/* Shiki writes its own background onto the <pre> as an inline style, which no rule here can
-   outrank without !important, so the panel is drawn on the wrapper instead. */
+/* Shiki writes its own background onto the <pre> inline, so the panel is drawn on the wrapper. */
 .markdown-body .md-code {
   margin-bottom: 16px;
-  border-radius: 6px;
+  border-radius: 8px;
   overflow: hidden;
-  @apply bg-slate-900/90 border border-white/10;
+  @apply bg-ink-900 border border-ink-800;
 }
 .markdown-body .md-code > pre { margin: 0; border: 0; border-radius: 0; background: transparent !important; }
 
-.markdown-body table { display: block; width: max-content; max-width: 100%; overflow: auto; border-collapse: collapse; }
-.markdown-body :is(th, td) { padding: 6px 13px; @apply border border-white/10; }
-.markdown-body th { font-weight: 600; text-align: left; @apply bg-slate-800/50 text-slate-200; }
-.markdown-body tbody tr:nth-child(2n) { @apply bg-white/[0.02]; }
+.markdown-body table { display: block; width: max-content; max-width: 100%; overflow: auto; border-collapse: collapse; font-size: 0.9375em; }
+.markdown-body :is(th, td) { padding: 8px 14px; @apply border border-ink-800; }
+.markdown-body th { font-weight: 600; text-align: left; @apply bg-ink-900 text-ink-100; }
+.markdown-body tbody tr:nth-child(2n) { @apply bg-white/[0.015]; }
 
-.markdown-body hr { height: 0.25em; padding: 0; margin: 24px 0; border: 0; @apply bg-white/10; }
+.markdown-body hr { height: 1px; padding: 0; margin: 32px 0; border: 0; @apply bg-ink-800; }
 .markdown-body img { max-width: 100%; box-sizing: content-box; }
-.markdown-body video { max-width: 100%; height: auto; margin: 0 0 16px; @apply rounded-panel border border-white/10 shadow-2xl; }
-.markdown-body summary { cursor: pointer; font-weight: 600; @apply text-slate-200; }
-
-/* Last, because these tie with the heading and block rules above on specificity. The card draws
-   the padding around the document; the document must not add a second one inside it. */
-.markdown-body > *:first-child { margin-top: 0; }
-.markdown-body > *:last-child { margin-bottom: 0; }
+.markdown-body video { max-width: 100%; height: auto; margin: 0 0 16px; @apply rounded-panel border border-ink-800; }
+.markdown-body summary { cursor: pointer; font-weight: 600; @apply text-ink-100; }
 
 /*
- * Entrance animation: "the build runs".
+ * Commands inside a Python string, boxed the way the VS Code extension boxes them, with its default
+ * colours. Lines are classed by utils/mcfunctionBlocks.ts; the frame is drawn with inset shadows so
+ * a block of lines reads as one rectangle.
+ */
+.shiki .mcf-line {
+  --mcf-border: rgba(200, 120, 30, 0.3);
+  display: inline-block;
+  min-width: 100%;
+  min-height: 1lh;
+  background: rgba(80, 40, 0, 0.15);
+  box-shadow: inset 1px 0 var(--mcf-border), inset -1px 0 var(--mcf-border);
+}
+.shiki .mcf-line.mcf-first { box-shadow: inset 1px 0 var(--mcf-border), inset -1px 0 var(--mcf-border), inset 0 1px var(--mcf-border); }
+.shiki .mcf-line.mcf-last { box-shadow: inset 1px 0 var(--mcf-border), inset -1px 0 var(--mcf-border), inset 0 -1px var(--mcf-border); }
+.shiki .mcf-line.mcf-first.mcf-last { box-shadow: inset 0 0 0 1px var(--mcf-border); }
+
+/* Last, because these tie with the rules above on specificity. */
+.markdown-body > *:first-child { margin-top: 0; }
+.markdown-body > *:last-child { margin-bottom: 0; }
+.markdown-body > h2:first-child { border-top: 0; padding-top: 0; }
+
+/*
+ * Section reveal. useReveal marks what is already on screen as risen, then sets data-motion, so
+ * nothing visible ever blinks and a page without JavaScript never hides anything.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  html[data-motion='on'] [data-rise] {
+    transition: opacity 500ms cubic-bezier(0.2, 0.8, 0.2, 1), transform 500ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  html[data-motion='on'] [data-rise]:not([data-risen]) {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
+/*
+ * Entrance animation: "the build runs". A compile scan sweeps down the definition and the files it
+ * produces stream into the panel beside it while the counter climbs. Transform and opacity only.
  *
- * The page introduces itself by doing the thing it is for: a compile scan sweeps down the
- * definition, and the files it produces stream into the panel beside it while the counter
- * climbs. Everything is transform and opacity, so nothing reflows and nothing shifts.
- *
- * All of it hangs off [data-intro="play"], which useIntro writes before the first paint and
- * only when the visitor has not asked for reduced motion. Without that attribute the rules
- * below never match and the page simply renders finished: which is what the prerendered
- * HTML already contains.
+ * All of it hangs off [data-intro="play"], which index.html writes before the first paint and only
+ * when the visitor has not asked for reduced motion. Without it the page renders finished, which is
+ * what the prerendered HTML already contains.
  */
 
 @keyframes intro-rise {
-  from { opacity: 0; transform: translateY(16px); }
+  from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: none; }
-}
-
-@keyframes intro-grid {
-  from { opacity: 0; transform: scale(1.04); }
-  to   { opacity: 0.2; transform: none; }
 }
 
 /* The scan travels a little past both edges so it enters and leaves cleanly. */
@@ -212,45 +242,30 @@
 }
 
 @keyframes intro-row {
-  from { opacity: 0; transform: translateX(-10px); }
+  from { opacity: 0; transform: translateX(-8px); }
   to   { opacity: 1; transform: none; }
 }
 
-@keyframes intro-arrow {
-  0%, 100% { opacity: 1; transform: none; }
-  50%      { opacity: 1; transform: translateX(6px); color: theme('colors.mc.emerald'); }
-}
-
 @media (prefers-reduced-motion: no-preference) {
-  [data-intro='play'] .intro-grid {
-    animation: intro-grid 900ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-  }
-
-  /* Eyebrow, headline, paragraph, actions: each a beat behind the last. */
   [data-intro='play'] .intro-step {
-    animation: intro-rise 620ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-    animation-delay: calc(var(--step, 0) * 90ms);
+    animation: intro-rise 560ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    animation-delay: calc(var(--step, 0) * 80ms);
   }
 
   [data-intro='play'] .intro-panel {
-    animation: intro-rise 700ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-    animation-delay: calc(420ms + var(--step, 0) * 120ms);
+    animation: intro-rise 640ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    animation-delay: calc(320ms + var(--step, 0) * 100ms);
   }
 
   [data-intro='play'] .intro-scan {
     animation: intro-scan 900ms cubic-bezier(0.4, 0, 0.5, 1) 640ms both;
   }
 
-  /* Files land in document order, tracking the scan as it passes over the definition.
-     `--row-start` is the hero waiting for its scan; a tree that appears on a click starts at once.
+  /* `--row-start` holds the hero tree until its scan has passed; a tree opened by a click starts at once.
      `--row-step` comes from FileTree, which shrinks it so a long tree still lands within a second. */
   [data-intro='play'] .intro-row,
   [data-reveal] .intro-row {
     animation: intro-row 320ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
     animation-delay: calc(var(--row-start, 0ms) + var(--row, 0) * var(--row-step, 42ms));
-  }
-
-  [data-intro='play'] .intro-arrow {
-    animation: intro-arrow 700ms ease-in-out 900ms 1;
   }
 }

@@ -1,13 +1,11 @@
 import { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { HiArrowRight } from 'react-icons/hi';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
-import { PluginsTable } from './PluginsTable';
+import { DependencyMark, PluginsTable } from './PluginsTable';
 import { useTranslation } from '../i18n/useTranslation';
-import { useMotionSafe } from '../hooks/useMotionSafe';
-import { HEADING, HOVER_CARD, CARD_HOVER_TEXT, CARD_HOVER_ARROW } from '../theme';
+import { CARD, CARD_HOVER_ARROW, CARD_HOVER_TEXT, EYEBROW, HOVER_CARD, PAGE, SECTION_LEAD, SECTION_TITLE } from '../theme';
 
 interface DocItem {
     title: string;
@@ -26,7 +24,6 @@ interface DocGroup {
 
 export const DocumentationPage: React.FC = () => {
     const { t, language } = useTranslation();
-    const motionSafe = useMotionSafe();
     const location = useLocation();
 
     // #plugins used to live on the landing page; it now resolves here
@@ -135,115 +132,65 @@ export const DocumentationPage: React.FC = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-slate-950 text-slate-100">
+        <div className="min-h-screen bg-ink-950 text-ink-200">
             <Navbar />
 
-            {/* Hero Section */}
-            <div className="relative z-10 pt-32 pb-16 px-4">
-                <div className="max-w-7xl mx-auto text-center">
-                    <motion.h1
-                        {...motionSafe({
-                            initial: { y: 20 },
-                            animate: { y: 0 },
-                        })}
-                        className="text-5xl md:text-6xl font-bold mb-6"
-                    >
-                        📖 <span className={HEADING}>{t('documentation.title')}</span>
-                    </motion.h1>
-                    <motion.p
-                        {...motionSafe({
-                            initial: { y: 20 },
-                            animate: { y: 0 },
-                            transition: { delay: 0.1 },
-                        })}
-                        className="text-xl text-slate-300 max-w-3xl mx-auto"
-                    >
-                        {t('documentation.subtitle')}
-                    </motion.p>
-                </div>
-            </div>
+            <header className={`${PAGE} pt-28 md:pt-32 pb-12`}>
+                <p className={EYEBROW}>{t('documentation.eyebrow')}</p>
+                <h1 className="mt-4 text-4xl md:text-5xl font-semibold tracking-tight text-ink-50">{t('documentation.title')}</h1>
+                <p className={`mt-4 max-w-2xl ${SECTION_LEAD}`}>{t('documentation.subtitle')}</p>
+            </header>
 
-            {/* Documentation List */}
-            <div className="relative z-10 pb-20 px-4">
-                <div className="max-w-4xl mx-auto space-y-14">
-                    {groups.map((group, groupIndex) => (
-                        <section key={group.title}>
-                            <div className="mb-5">
-                                <h2 className="text-sm font-mono uppercase tracking-wider text-mc-emerald mb-1">
-                                    {group.title}
-                                </h2>
-                                <p className="text-slate-400 text-sm">{group.description}</p>
-                            </div>
+            <div className={`${PAGE} pb-20 space-y-14`}>
+                {groups.map((group) => (
+                    <section key={group.title} className="grid grid-cols-1 lg:grid-cols-[16rem_minmax(0,1fr)] gap-4 lg:gap-12 pt-8 border-t border-ink-800">
+                        <div>
+                            <h2 className="text-lg font-semibold tracking-tight text-ink-50">{group.title}</h2>
+                            <p className="mt-1 text-sm text-ink-400 leading-relaxed">{group.description}</p>
+                        </div>
 
-                            <div className={group.items.length === 1 ? '' : 'grid grid-cols-1 md:grid-cols-2 gap-4'}>
-                                {group.items.map((doc, index) => (
-                                    <motion.div
-                                        key={doc.pathEn}
-                                        {...motionSafe({
-                                            initial: { y: 20 },
-                                            animate: { y: 0 },
-                                            transition: { delay: 0.1 + groupIndex * 0.05 + index * 0.05 },
-                                        })}
+                        <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            {group.items.map((doc) => (
+                                <li key={doc.pathEn}>
+                                    <Link
+                                        to={`/markdown?src=${encodeURIComponent(language === 'fr' ? doc.pathFr : doc.pathEn)}`}
+                                        className={`group flex items-start justify-between gap-4 h-full p-5 ${CARD} ${HOVER_CARD}`}
                                     >
-                                        <Link
-                                            to={`/markdown?src=${encodeURIComponent(language === 'fr' ? doc.pathFr : doc.pathEn)}`}
-                                            className="block group h-full"
-                                        >
-                                            <div className={`bg-slate-900/30 backdrop-blur-sm border border-white/10 rounded-panel p-6 ${HOVER_CARD} transition-all hover:bg-slate-900/50 h-full`}>
-                                                <div className="flex items-start justify-between gap-4 h-full">
-                                                    <div className="flex-1">
-                                                        <div className="flex items-center gap-3 mb-2">
-                                                            {doc.iconImg && (
-                                                                <img src={doc.iconImg} alt="" className="w-7 h-7 object-contain flex-shrink-0" />
-                                                            )}
-                                                            <h3 className={`text-xl font-bold text-slate-100 ${CARD_HOVER_TEXT}`}>
-                                                                {doc.title}
-                                                            </h3>
-                                                        </div>
-                                                        <p className="text-slate-400 leading-relaxed">
-                                                            {doc.description}
-                                                        </p>
-                                                    </div>
-                                                    <HiArrowRight className={CARD_HOVER_ARROW} />
-                                                </div>
+                                        <div>
+                                            <div className="flex items-center gap-2.5">
+                                                {doc.iconImg && <img src={doc.iconImg} alt="" className="w-5 h-5 object-contain flex-shrink-0" />}
+                                                <h3 className={`font-semibold text-ink-50 ${CARD_HOVER_TEXT}`}>{doc.title}</h3>
                                             </div>
-                                        </Link>
-                                    </motion.div>
-                                ))}
-                            </div>
-                        </section>
-                    ))}
+                                            <p className="mt-1.5 text-sm text-ink-400 leading-relaxed">{doc.description}</p>
+                                        </div>
+                                        <HiArrowRight className={CARD_HOVER_ARROW} aria-hidden="true" />
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    </section>
+                ))}
 
-                    <p className="text-slate-400 text-sm text-center">
-                        {t('documentation.comingSoon')}
-                    </p>
-                </div>
+                <p className="text-ink-500 text-sm">{t('documentation.comingSoon')}</p>
             </div>
 
-            {/* Plugins Section */}
-            <div id="plugins" className="relative z-10 pb-20 px-4">
-                <div className="max-w-7xl mx-auto">
-                    <motion.div
-                        {...motionSafe({
-                            initial: { y: 30 },
-                            whileInView: { y: 0 },
-                            viewport: { once: true },
-                            transition: { duration: 0.6 },
-                        })}
-                        className="text-center mb-16"
-                    >
-                        <h2 className={`text-4xl md:text-5xl font-bold mb-4 ${HEADING}`}>
-                            {t('documentation.plugins')}
-                        </h2>
-                        <p className="text-slate-400 text-lg max-w-3xl mx-auto mb-8">
-                            {t('showcase.subtitle')}<br />
-                            <span className="text-sm">{t('showcase.legend')} <span className="text-red-400">🔴 {t('showcase.fullyDependent')}</span> <span className="text-yellow-400 ml-2">🟡 {t('showcase.partlyDependent')}</span> <span className="text-green-400 ml-2">🟢 {t('showcase.independent')}</span></span>
+            <section id="plugins" className="border-t border-ink-800 scroll-mt-14">
+                <div className={`${PAGE} py-20`}>
+                    <div className="max-w-3xl mb-10">
+                        <p className={EYEBROW}>{t('documentation.pluginsEyebrow')}</p>
+                        <h2 className={`mt-4 ${SECTION_TITLE}`}>{t('documentation.plugins')}</h2>
+                        <p className={`mt-4 ${SECTION_LEAD}`}>{t('showcase.subtitle')}</p>
+                        <p className="mt-4 flex flex-wrap gap-x-5 gap-y-1 text-sm text-ink-400">
+                            <span>{t('showcase.legend')}</span>
+                            <DependencyMark level="full" />
+                            <DependencyMark level="partial" />
+                            <DependencyMark level="none" />
                         </p>
-                    </motion.div>
+                    </div>
 
                     <PluginsTable />
                 </div>
-            </div>
+            </section>
 
             <Footer />
         </div>

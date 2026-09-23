@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { HiArrowLeft } from 'react-icons/hi';
 import { FileTree, type FileNode } from './FileTree';
 import { useTranslation } from '../i18n/useTranslation';
-import { TEXT_ACCENT } from '../theme';
+import { formatBytes } from '../utils/fileDisplay';
 
 /**
  * The hero's output panel: the generated file tree, and the real content of whichever file the
@@ -23,15 +23,9 @@ import { TEXT_ACCENT } from '../theme';
 
 type Contents = Record<string, string>;
 
-const BYTES_IN_KB = 1024;
-
-function formatBytes(bytes: number): string {
-    return bytes < BYTES_IN_KB ? `${bytes} B` : `${(bytes / BYTES_IN_KB).toFixed(1)} KB`;
-}
-
 /** Checkerboard behind transparent PNGs, drawn with a gradient so it costs no request. */
 const CHECKERBOARD =
-    'bg-[linear-gradient(45deg,#1a1a1a_25%,transparent_25%),linear-gradient(-45deg,#1a1a1a_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#1a1a1a_75%),linear-gradient(-45deg,transparent_75%,#1a1a1a_75%)] bg-[length:16px_16px] bg-[position:0_0,0_8px,8px_-8px,-8px_0]';
+    'bg-[linear-gradient(45deg,#24211e_25%,transparent_25%),linear-gradient(-45deg,#24211e_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#24211e_75%),linear-gradient(-45deg,transparent_75%,#24211e_75%)] bg-[length:16px_16px] bg-[position:0_0,0_8px,8px_-8px,-8px_0]';
 
 export const HeroOutputPanel: React.FC<{ nodes: FileNode[] }> = ({ nodes }) => {
     const { t } = useTranslation();
@@ -54,7 +48,7 @@ export const HeroOutputPanel: React.FC<{ nodes: FileNode[] }> = ({ nodes }) => {
         return (
             <div className="flex-1 min-h-0 flex flex-col p-4 overflow-auto custom-scrollbar">
                 <FileTree nodes={nodes} onSelect={openFile} />
-                <p className="mt-4 pt-3 border-t border-white/5 text-xs text-slate-400 leading-relaxed">
+                <p className="mt-4 pt-3 border-t border-ink-800 text-xs text-ink-400 leading-relaxed">
                     {t('hero.outputNote')}
                 </p>
             </div>
@@ -65,20 +59,20 @@ export const HeroOutputPanel: React.FC<{ nodes: FileNode[] }> = ({ nodes }) => {
 
     return (
         <div className="flex-1 flex flex-col min-h-0">
-            <div className="flex items-center gap-2 px-4 py-2 border-b border-white/5 shrink-0">
+            <div className="flex items-center gap-2 px-4 py-2 border-b border-ink-800 shrink-0">
                 <button
                     onClick={() => setSelected(null)}
-                    className="flex items-center gap-1 text-xs text-slate-400 hover:text-white transition-colors shrink-0"
+                    className="flex items-center gap-1 text-xs text-ink-400 hover:text-ink-50 transition-colors shrink-0"
                 >
                     <HiArrowLeft aria-hidden="true" />
                     {t('hero.outputBack')}
                 </button>
-                <span className="text-slate-700 select-none" aria-hidden="true">|</span>
-                <span className="font-mono text-[0.6875rem] text-slate-400 truncate" title={selected.path}>
-                    <span className={TEXT_ACCENT}>{t('hero.outputRealPath')}</span> build/{selected.path}
+                <span className="text-ink-600 select-none" aria-hidden="true">|</span>
+                <span className="font-mono text-[0.6875rem] text-ink-400 truncate" title={selected.path}>
+                    <span className="text-ink-500">{t('hero.outputRealPath')}</span> build/{selected.path}
                 </span>
                 {selected.bytes !== undefined && (
-                    <span className="ml-auto font-mono text-[0.6875rem] text-slate-500 shrink-0 tabular-nums">
+                    <span className="ml-auto font-mono text-[0.6875rem] text-ink-500 shrink-0 tabular-nums">
                         {formatBytes(selected.bytes)}
                     </span>
                 )}
@@ -94,16 +88,16 @@ export const HeroOutputPanel: React.FC<{ nodes: FileNode[] }> = ({ nodes }) => {
                         />
                     </div>
                 ) : failed ? (
-                    <p className="text-xs text-slate-400">{t('hero.outputUnavailable')}</p>
+                    <p className="text-xs text-ink-400">{t('hero.outputUnavailable')}</p>
                 ) : body === undefined ? (
-                    <p className="text-xs text-slate-500 animate-pulse">{t('hero.outputLoading')}</p>
+                    <p className="text-xs text-ink-500 animate-pulse">{t('hero.outputLoading')}</p>
                 ) : (
                     /* Markup comes from scripts/prehighlight.ts, same as the snippet panel, so no
                        highlighter is ever loaded on the landing page. */
                     <div
                         dangerouslySetInnerHTML={{ __html: body }}
                         style={{ fontSize: '0.75rem', lineHeight: '1.55' }}
-                        className="[&>pre]:!bg-transparent [&>pre]:!m-0 [&>pre]:!p-0"
+                        className="font-mono [&>pre]:!bg-transparent [&>pre]:!m-0 [&>pre]:!p-0"
                     />
                 )}
             </div>

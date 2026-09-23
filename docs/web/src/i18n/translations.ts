@@ -4,26 +4,23 @@ export const translations = {
     en: {
         // Navbar
         nav: {
-            features: 'Features',
-            installation: 'Installation',
-            templates: 'Templates',
+            documentation: 'Docs',
             plugins: 'Plugins',
-            documentation: 'Documentation',
+            playground: 'Playground',
             tools: 'Tools',
-            github: 'GitHub',
-            language: 'Language',
+            switchLanguage: 'Passer en français',
         },
 
         // Hero Section
         hero: {
-            versionStable: 'Stable Release',
-            titleLine1: 'Define a block in Python.',
-            titleLine2: 'Get the whole datapack.',
-            description: 'StewBeet is a',
-            beet: 'Beet',
-            descriptionContinued: 'framework for Minecraft datapacks. Describe your content once. Models, recipes, loot tables, translations and an in-game manual are all built from it on every compile.',
-            getStarted: 'Get Started',
-            viewDocs: 'Documentation',
+            releasedDaysAgo: 'released {n} days ago',
+            releasedToday: 'released today',
+            releasedYesterday: 'released yesterday',
+            license: 'MIT',
+            title: 'Minecraft datapacks, generated from Python',
+            subtitle: 'A beet framework: declare an item once, and its models, recipes, loot tables, translations and in-game manual page are written on every build.',
+            getStarted: 'Get started',
+            tryPlayground: 'Try it in the browser',
             codeCaption: 'definitions/additions/equipments.py',
             outputCaption: 'build/',
             outputSummary: '{count} files generated',
@@ -31,15 +28,55 @@ export const translations = {
             outputRealPath: 'Real path:',
             outputLoading: 'Loading the generated file...',
             outputUnavailable: 'That file could not be loaded.',
-            tryItLive: 'Try it live, edit the code',
-            tryItLiveNote: 'Runs a real build in your browser without needing to install anything.',
             outputNote: 'Placement, destruction, the Silk Touch branch, the recipe and its drawn crafting grid, world generation, models and textures. The manual page and the translation keys come with it.',
+        },
+
+        // Copy buttons
+        copy: {
+            action: 'Copy',
+            copied: 'Copied',
+            command: 'Copy the command',
+        },
+
+        // What you gain: the bento grid
+        gains: {
+            eyebrow: 'What you gain',
+            title: 'Maintain one definition, not eight files',
+            lead: 'One custom block written by hand is eight files across two packs in four formats. Miss one and nothing errors: the block just never drops. StewBeet rebuilds all eight from your definition on every compile, and does the same for everything below.',
+            byHandTitle: 'By hand',
+            byHandUnit: 'files to keep in sync',
+            withTitle: 'With StewBeet',
+            withUnit: 'definition to maintain',
+            withFile: 'definitions/blocks.py',
+            withNote: 'The other eight are derived from it on every build, so they cannot drift apart.',
+            noPython: 'A definition is a name, some values and a list of recipes. If you can read datapack JSON, you can read one.',
+            materialsTitle: 'One material, the whole tier',
+            materialsDesc: 'Name an ingot and what it is equivalent to. Tools, armour, ore, blocks and nuggets are registered from the textures you dropped in, recipes included.',
+            materialsImageAlt: 'One ingot texture, and the tools and armour registered from it',
+            materialsSnippetLabel: 'the whole tier from one entry',
+            lootTablesTitle: 'Every item is givable, immediately',
+            lootTablesDesc: 'Each defined item gets a loot table, plus a _give_all function that hands you the entire pack in named chests for testing.',
+            lootTablesImageAlt: 'The _give_all function filling named chests with every item of a pack',
+            recipesTitle: 'One recipe, every crafting system',
+            recipesDesc: 'Declare a recipe on the item. The vanilla recipe, the Smithed Crafter NBT recipe and the furnace variant all come out of that single declaration.',
+            itemModelsTitle: 'Textures become models without JSON',
+            itemModelsDesc: 'Drop top, side and front PNGs into assets/textures and the block is recognised. An _on suffix gives you the powered state for free.',
+            itemModelsOnLabel: 'electric_furnace_on.json, written because a _front_on texture exists',
+            langTitle: 'Translation keys extracted from your code',
+            langDesc: 'Write your text once in Python. en_us.json is generated from what you actually wrote, so the lang file never drifts from the items.',
+            langBeforeLabel: 'what you wrote',
+            langAfterLabel: 'what is built: the text became a translate key',
+            langFileLabel: 'and the keys it collected',
+            dependenciesTitle: 'A missing library tells the player what to download',
+            dependenciesDesc: 'StewBeet reads your functions, works out which libraries you used, fetches them and writes the version check. Load without one and the chat names it, with a link.',
+            dependenciesImageAlt: 'In-game chat naming the missing library and its version',
         },
 
         // In-game manual showcase
         manual: {
+            eyebrow: 'In-game manual',
             title: 'Your datapack documents itself',
-            description: 'Every item you define gets a manual page: its recipe drawn from the ingredients you declared, its description, and clickable navigation between categories. Players craft the book in-game and it is already up to date.',
+            description: 'Every item you define gets a manual page: its recipe drawn from the ingredients you declared, its description, and clickable navigation between categories. Players craft the book in game and it is already up to date.',
             point1: 'Recipes rendered from your definitions, not screenshotted by hand',
             point2: 'New item today, new manual page on the next build',
             point3: 'Custom pages, hooks and button layouts when you need them',
@@ -49,8 +86,9 @@ export const translations = {
 
         // Editor showcase
         editor: {
+            eyebrow: 'Editor extension',
             title: 'Your commands, checked in your editor',
-            description: 'A command inside a Python string is still a command. The StewBeet extension for VSCode reads them as such, gives .bolt files their own language, and links every block to the function your build wrote from it.',
+            description: 'A command inside a Python string is still a command. The StewBeet extension for VS Code reads them as such, gives .bolt files their own language, and links every block to the function your build wrote from it.',
             point1: 'Completion, hover and errors on the commands, as you type',
             point2: 'Ctrl+click from a write_function call to the generated file, and back',
             point3: 'The Bolt language, with computed paths still resolving',
@@ -59,64 +97,17 @@ export const translations = {
             videoFallback: 'Your browser cannot play this video.',
         },
 
-        // Features
-        features: {
-            title: 'What you stop writing',
-            subtitle: 'Six things StewBeet generates from definitions you already wrote.',
-
-            recipesTitle: 'Recipes reach every crafting system at once',
-            recipesDesc: 'Declare a recipe on the item. The vanilla recipe, the Smithed Crafter NBT recipe and the furnace variant all come out of that single declaration.',
-
-            itemModelsTitle: 'Textures become models without touching JSON',
-            itemModelsDesc: 'Drop top, side and bottom PNGs into assets/textures and the block is recognised as a cube. An _on suffix gives you the powered state for free.',
-
-            materialsTitle: 'One material, the whole tier',
-            materialsDesc: 'Name an ingot and what it is equivalent to. Tools, armour, ore, blocks and nuggets are registered from the textures you dropped in, recipes included.',
-
-            lootTablesTitle: 'Every item is givable, immediately',
-            lootTablesDesc: 'Each defined item gets a loot table, plus a _give_all function that hands you the entire pack in named chests for testing.',
-
-            langTitle: 'Translation keys extracted from your code',
-            langDesc: 'Write your text once in Python. en_us.json is generated from what you actually wrote, so the lang file never drifts from the items.',
-
-            dependenciesTitle: 'A missing library tells the player what to download',
-            materialsImageAlt: 'One ingot texture, and the tools and armour registered from it',
-            materialsSnippetLabel: 'the whole tier from one entry',
-            itemModelsOnLabel: 'electric_furnace_on.json (written because a _front_on texture exists)',
-            recipesSnippetLabel: 'generated, NBT-aware',
-            langBeforeLabel: 'what you wrote',
-            langAfterLabel: 'what is built, the text became a translate key',
-            langFileLabel: 'and the keys it collected',
-            dependenciesDesc: 'StewBeet reads your functions, works out which libraries you actually used, fetches them and writes the runtime version check. Load without one and the chat names it, with a clickable link.',
-        },
-
         // Trust strip
         trust: {
             label: 'Project activity',
-            releasedDaysAgo: 'released {n} days ago',
-            latestRelease: 'latest release',
-            downloadsPerMonth: 'PyPI downloads / month',
+            downloadsPerMonth: 'PyPI downloads a month',
             publicProjects: 'public projects built with it',
             githubStars: 'GitHub stars',
         },
 
-        // Why StewBeet exists
-        why: {
-            title: 'Why this exists',
-            intro: 'One custom block, written by hand, is at least eight files across two packs in four formats. Miss one and nothing errors. The block just quietly never drops.',
-            byHandTitle: 'By hand',
-            byHandUnit: 'files to keep in sync',
-            withTitle: 'With StewBeet',
-            withUnit: 'definition to maintain',
-            withFile: 'definitions/blocks.py',
-            withNote: 'The other eight are derived from it on every build, so they cannot drift apart.',
-            noPython: 'A definition is a name, some values and a list of recipes. If you can read datapack JSON, you can read one.',
-            limitsTitle: 'Where it will not help you',
-            limitsBody: 'It is opinionated: the project layout, the Smithed conventions and the pipeline are already decided. It needs Python 3.14+. And for a pack that is a handful of functions, writing them by hand is the right call.',
-        },
-
         // Built with StewBeet
         builtWith: {
+            eyebrow: 'Built with StewBeet',
             title: '{n} public projects are built with StewBeet',
             subtitle: 'Two of them at scale, with the source you can read.',
             community: 'Written by other people',
@@ -140,8 +131,9 @@ export const translations = {
 
         // Standing on giants: the home page section
         giants: {
+            eyebrow: 'Built on',
             title: 'StewBeet did not get here alone',
-            subtitle: 'Behind the magic is a whole family of open-source tools, made by people who love datapacks as much as you do.',
+            subtitle: 'Every build runs on open-source tools made by people in the datapack community. These are the ones StewBeet could not exist without.',
             beetRole: 'The pipeline. One build for the datapack and the resource pack.',
             mechaRole: 'The compiler. Type-checked commands, and real Python inside a function.',
             modelResolverRole: 'The renderer. Every item and block drawn to an image, in pure Python.',
@@ -154,6 +146,7 @@ export const translations = {
 
         // Standing on giants: the /credits page
         credits: {
+            eyebrow: 'Credits',
             title: 'Standing on giants',
             subtitle: 'StewBeet did not get here alone. What follows is a thank-you to the projects it is built on, and to the people behind them.',
             beetBody: 'A development kit that unifies datapack and resource pack tooling into a single pipeline. StewBeet is a set of beet plugins, so everything beet knows how to do stays available to you. Built by vberlier (fizzy), misode, edayot (airdox), rx97, TheNuclearNexus, and many more.',
@@ -175,22 +168,21 @@ export const translations = {
             subtitle: 'The Basic template wires up every plugin with commented configuration and no example content to delete.',
             action: 'Read the getting started guide',
             microcopy: 'MIT licensed · Python 3.14+ · no account needed',
-            copyCommand: 'Copy the install command',
-            copied: 'Install command copied',
         },
 
         // Installation
         installation: {
-            title: 'From nothing to a built pack in',
-            titleHighlight: 'four commands',
+            eyebrow: 'Get started',
+            title: 'From nothing to a built pack in four commands',
             step1: 'Install Python',
             step1Desc: 'StewBeet needs Python 3.14 or newer',
             step2: 'Install StewBeet',
             step2Desc: 'One pip install, dependencies included',
-            step3: 'Initialize Project',
-            step3Desc: 'Pick a template, get a working project',
+            step3: 'Create a project',
+            step3Desc: 'Pick a template, get a project that builds',
             step4: 'Build',
             step4Desc: 'Datapack and resource pack, zipped',
+            terminal: 'terminal',
             uvNote: 'Prefer uv? Every template ships a pyproject.toml, so',
             uvNoteThen: 'then',
             uvNoteEnd: 'covers all four steps, Python included.',
@@ -198,23 +190,20 @@ export const translations = {
 
         // Templates
         templates: {
-            title: 'Start from a template',
-            subtitle: 'Three starting points. The',
-            subtitleHighlight: 'Basic',
-            subtitleEnd: 'template is the one to pick if you are unsure.',
+            title: 'Pick a template',
+            subtitle: 'Three starting points. If you are unsure, take Basic.',
             minimal: 'Minimal',
             minimalDesc: 'One stewbeet plugin and nothing else, so you can see what beet does on its own.',
-            minimalBestFor: 'Learning Beet basics',
+            minimalBestFor: 'for learning beet',
             basic: 'Basic',
-            basicDesc: 'Every plugin configured and commented, with no example content to delete afterwards.',
-            basicBestFor: 'Most users (recommended)',
+            basicDesc: 'Every plugin configured and commented, with no example content to delete afterwards. You add only what your project needs.',
+            basicBestFor: 'for most projects',
             extensive: 'Extensive',
             extensiveDesc: 'A working project using every feature: ore tiers, custom blocks, paintings, a manual.',
-            extensiveBestFor: 'Reading real examples',
+            extensiveBestFor: 'for reading real examples',
             recommended: 'Recommended',
-            downloadZip: 'or download .zip',
-            tipTitle: 'Which one?',
-            tipBody: 'Take the Basic template. It wires up every plugin with commented configuration and no example content, so you add only what your project needs.',
+            source: 'source',
+            downloadZip: 'or download the .zip',
         },
 
         // Showcase / plugins listing
@@ -277,8 +266,10 @@ export const translations = {
 
         // Documentation Page
         documentation: {
+            pluginsEyebrow: 'Reference',
+            eyebrow: 'Learn StewBeet',
             title: 'Documentation',
-            subtitle: 'Learn how to use StewBeet',
+            subtitle: 'Start with the quickstart, then open the guide for the task in front of you. Every plugin has its own page further down.',
             cookbook: 'Cookbook',
             cookbookDesc: 'Complete, working files you can read top to bottom.',
             helperReference: 'Helper function reference',
@@ -292,23 +283,23 @@ export const translations = {
             groupGuidesDesc: 'One task each, in roughly the order you meet them.',
             groupReference: 'Reference',
             groupReferenceDesc: 'Look-up material: APIs, options and generated output.',
-            gettingStartedDesc: 'Complete guide for beginners - installation, setup, and creating your first datapack',
+            gettingStartedDesc: 'Create a project, build it, load it in Minecraft, then add an item and a whole ore tier. About 20 minutes.',
             definitionsSetup: 'Defining items and blocks',
-            definitionsSetupDesc: 'Learn how to define custom items, blocks, and equipment configurations',
+            definitionsSetupDesc: 'Every field of an Item or a Block, with recipes and equipment tiers.',
             writingToFiles: 'Writing functions and files',
-            writingToFilesDesc: 'Master file writing with static loading, native beet API, and StewBeet helper functions',
+            writingToFilesDesc: 'Static files, the beet API, StewBeet helpers and Bolt, and when to use each.',
             beetConfig: 'Configuring the build',
-            beetConfigDesc: 'Complete reference for all beet.yml configuration options including StewBeet-specific settings',
+            beetConfigDesc: 'Every option of beet.yml, the StewBeet ones included.',
             equations: 'Equations',
             editorSupport: 'Editor support',
-            editorSupportDesc: 'The VSCode extension: the Bolt language, commands checked inside your Python, and navigation to the built pack',
+            editorSupportDesc: 'The VS Code extension: the Bolt language, commands checked inside your Python, and navigation to the built pack.',
             equationsDesc: 'Chainable Equation builders that compile to Minecraft scoreboard commands',
             dependencies: 'Using datapack libraries',
             dependenciesDesc: 'Declare library dependencies and auto-generate runtime version checks',
             continuousDelivery: 'Shipping releases automatically',
             continuousDeliveryDesc: 'Publish releases to GitHub, Modrinth, Smithed, and PlanetMinecraft in one command',
             ingameManual: 'Generating the in-game manual',
-            ingameManualDesc: 'Generate an extensible, dialog-first in-game manual with custom pages, hooks, and button layouts',
+            ingameManualDesc: 'The generated in-game manual, and its custom pages, hooks and button layouts.',
             plugins: 'Available Plugins',
             comingSoon: 'More guides are being written.',
             searchPlaceholder: 'Search plugins...',
@@ -341,8 +332,12 @@ export const translations = {
 
         // Tools Page
         tools: {
+            whereEditor: 'VS Code',
+            whereBrowser: 'Runs in your browser',
+            whereServer: 'Runs on the server',
+            eyebrow: 'Tools',
             title: 'Tools',
-            subtitle: 'Useful tools for StewBeet and Minecraft datapack development',
+            subtitle: 'Things you can use without installing StewBeet, and the extension for when you do.',
             markdownToBBCode: 'Markdown to BBCode Converter',
             markdownToBBCodeDesc: 'Convert Markdown text to BBCode format for publishing on PlanetMinecraft. Supports badges, lists, tables, code blocks, spoilers, and more.',
             playground: 'Playground',
@@ -355,6 +350,7 @@ export const translations = {
 
         // Playground
         playground: {
+            eyebrow: 'Try it',
             title: 'Playground',
             subtitle: 'Write a definitions module. Build it. Read every file it produced.',
             presets: 'Start from:',
@@ -401,6 +397,7 @@ export const translations = {
 
         // auto.headers
         autoHeaders: {
+            eyebrow: 'Tool',
             title: 'Auto Headers',
             subtitle: 'Upload a datapack. Get it back with a header on every function.',
             pluginLink: 'auto.headers is a standalone beet plugin',
@@ -464,23 +461,21 @@ export const translations = {
 
         // Footer
         footer: {
-            tagline: 'A Beet framework that turns Python definitions into finished Minecraft datapacks and resource packs.',
+            tagline: 'A beet framework that turns Python definitions into finished Minecraft datapacks and resource packs.',
+            product: 'Product',
             community: 'Community',
             resources: 'Resources',
-            github: 'GitHub',
-            discord: 'Discord',
-            youtube: 'YouTube',
-            pypiPackage: 'PyPI Package',
-            planetMinecraft: 'PlanetMinecraft',
+            vscode: 'VS Code extension',
             credits: 'Credits',
-            reportBug: 'Report Bug',
+            reportBug: 'Report a bug',
             telemetry: 'Telemetry',
             license: 'MIT licensed',
-            copyright: 'StewBeet by',
+            by: 'by',
         },
 
         // Telemetry page
         telemetry: {
+            eyebrow: 'Privacy',
             title: 'Telemetry',
             subtitle: 'StewBeet counts successful builds, anonymously, so the project knows whether anyone is using it, and the tools on this site are counted the same way. Here are the numbers, the exact contents of what is sent, and how to switch it off.',
 
@@ -578,26 +573,23 @@ export const translations = {
     fr: {
         // Navbar
         nav: {
-            features: 'Fonctionnalités',
-            installation: 'Installation',
-            templates: 'Templates',
+            documentation: 'Docs',
             plugins: 'Plugins',
-            documentation: 'Documentation',
+            playground: 'Bac à sable',
             tools: 'Outils',
-            github: 'GitHub',
-            language: 'Langue',
+            switchLanguage: 'Switch to English',
         },
 
         // Hero Section
         hero: {
-            versionStable: 'Version stable',
-            titleLine1: 'Définissez un bloc en Python.',
-            titleLine2: 'Obtenez tout le datapack.',
-            description: 'StewBeet est un framework',
-            beet: 'Beet',
-            descriptionContinued: 'pour datapacks Minecraft. Décrivez votre contenu une fois. Models, recipes, loot tables, traductions et manuel en jeu en sont tous construits à chaque compilation.',
+            releasedDaysAgo: 'publiée il y a {n} jours',
+            releasedToday: "publiée aujourd'hui",
+            releasedYesterday: 'publiée hier',
+            license: 'MIT',
+            title: 'Des datapacks Minecraft, générés depuis Python',
+            subtitle: 'Un framework beet : déclarez un item une fois, et ses models, recipes, loot tables, traductions et sa page de manuel sont écrits à chaque build.',
             getStarted: 'Commencer',
-            viewDocs: 'Documentation',
+            tryPlayground: 'Essayer dans le navigateur',
             codeCaption: 'definitions/additions/equipments.py',
             outputCaption: 'build/',
             outputSummary: '{count} fichiers générés',
@@ -605,13 +597,53 @@ export const translations = {
             outputRealPath: 'Chemin réel :',
             outputLoading: 'Chargement du fichier généré...',
             outputUnavailable: 'Ce fichier n\'a pas pu être chargé.',
-            tryItLive: 'Essayez-le en direct, modifiez le code',
-            tryItLiveNote: 'Lance un vrai build depuis votre navigateur sans rien n\'avoir à installer.',
             outputNote: 'Placement, destruction, la branche Silk Touch, la recipe et sa grille de craft dessinée, la génération dans le monde, les models et les textures. La page de manuel et les clés de traduction viennent avec.',
+        },
+
+        // Copy buttons
+        copy: {
+            action: 'Copier',
+            copied: 'Copié',
+            command: 'Copier la commande',
+        },
+
+        // What you gain: the bento grid
+        gains: {
+            eyebrow: 'Ce que vous y gagnez',
+            title: 'Maintenez une définition, pas huit fichiers',
+            lead: 'Un seul custom block écrit à la main, c\'est huit fichiers dans deux packs et quatre formats. Oubliez-en un et rien ne plante : le bloc ne drop simplement jamais. StewBeet reconstruit les huit depuis votre définition à chaque compilation, et fait de même pour tout ce qui suit.',
+            byHandTitle: 'À la main',
+            byHandUnit: 'fichiers à garder synchronisés',
+            withTitle: 'Avec StewBeet',
+            withUnit: 'définition à maintenir',
+            withFile: 'definitions/blocks.py',
+            withNote: 'Les huit autres en sont dérivés à chaque build, donc ils ne peuvent pas diverger.',
+            noPython: 'Une définition, c\'est un nom, des valeurs et une liste de recipes. Si vous savez lire un JSON de datapack, vous savez en lire une.',
+            materialsTitle: 'Un matériau, tout le palier',
+            materialsDesc: 'Nommez un lingot et son équivalent vanilla. Outils, armures, minerai, blocs et pépites sont enregistrés depuis les textures déposées, recipes comprises.',
+            materialsImageAlt: 'Une texture de lingot, et les outils et armures enregistrés à partir d\'elle',
+            materialsSnippetLabel: 'tout le palier depuis une seule entrée',
+            lootTablesTitle: 'Chaque item est donnable, tout de suite',
+            lootTablesDesc: 'Chaque item défini reçoit sa loot table, plus une fonction _give_all qui vous remet tout le pack dans des coffres nommés pour tester.',
+            lootTablesImageAlt: 'La fonction _give_all qui remplit des coffres nommés avec chaque item d\'un pack',
+            recipesTitle: 'Une recipe, tous les systèmes de craft',
+            recipesDesc: 'Déclarez une recipe sur l\'item. La recipe vanilla, la recipe NBT Smithed Crafter et la variante four sortent toutes de cette seule déclaration.',
+            itemModelsTitle: 'Les textures deviennent des models sans JSON',
+            itemModelsDesc: 'Déposez des PNG top, side et front dans assets/textures et le bloc est reconnu. Un suffixe _on donne l\'état alimenté sans rien écrire.',
+            itemModelsOnLabel: 'electric_furnace_on.json, écrit parce qu\'une texture _front_on existe',
+            langTitle: 'Les clés de traduction extraites de votre code',
+            langDesc: 'Écrivez votre texte une fois en Python. en_us.json est généré depuis ce que vous avez réellement écrit, donc le fichier lang ne dérive jamais.',
+            langBeforeLabel: 'ce que vous avez écrit',
+            langAfterLabel: 'ce qui est construit : le texte est devenu une clé translate',
+            langFileLabel: 'et les clés collectées',
+            dependenciesTitle: 'Une bibliothèque manquante prévient le joueur',
+            dependenciesDesc: 'StewBeet lit vos fonctions, déduit les bibliothèques utilisées, les télécharge et écrit la vérification de version. S\'il en manque une, le chat la nomme, avec un lien.',
+            dependenciesImageAlt: 'Le chat en jeu qui nomme la bibliothèque manquante et sa version',
         },
 
         // In-game manual showcase
         manual: {
+            eyebrow: 'Manuel en jeu',
             title: 'Votre datapack se documente tout seul',
             description: 'Chaque item défini obtient sa page de manuel : sa recipe dessinée à partir des ingrédients déclarés, sa description, et une navigation cliquable entre catégories. Les joueurs fabriquent le livre en jeu et il est déjà à jour.',
             point1: 'Recipes dessinées depuis vos définitions, pas capturées à la main',
@@ -623,8 +655,9 @@ export const translations = {
 
         // Editor showcase
         editor: {
+            eyebrow: 'Extension d\'éditeur',
             title: 'Vos commandes, vérifiées dans votre éditeur',
-            description: 'Une commande dans une chaîne Python reste une commande. L\'extension StewBeet pour VSCode les lit comme telles, donne aux fichiers .bolt leur propre langage, et relie chaque bloc à la fonction que votre build en a tirée.',
+            description: 'Une commande dans une chaîne Python reste une commande. L\'extension StewBeet pour VS Code les lit comme telles, donne aux fichiers .bolt leur propre langage, et relie chaque bloc à la fonction que votre build en a tirée.',
             point1: 'Complétion, survol et erreurs sur les commandes, à la frappe',
             point2: 'Ctrl+clic d\'un appel write_function vers le fichier généré, et retour',
             point3: 'Le langage Bolt, avec les chemins calculés qui résolvent toujours',
@@ -633,64 +666,17 @@ export const translations = {
             videoFallback: 'Votre navigateur ne peut pas lire cette vidéo.',
         },
 
-        // Features
-        features: {
-            title: 'Ce que vous n\'écrivez plus',
-            subtitle: 'Six choses que StewBeet génère à partir de définitions que vous avez déjà écrites.',
-
-            recipesTitle: 'Une recipe, tous les systèmes de craft',
-            recipesDesc: 'Déclarez une recipe sur l\'item. La recipe vanilla, la recipe NBT Smithed Crafter et la variante four sortent toutes de cette seule déclaration.',
-
-            itemModelsTitle: 'Les textures deviennent des models sans JSON',
-            itemModelsDesc: 'Déposez des PNG top, side et bottom dans assets/textures et le bloc est reconnu comme un cube. Un suffixe _on donne l\'état alimenté sans rien écrire.',
-
-            materialsTitle: 'Un matériau, tout le palier',
-            materialsDesc: 'Nommez un lingot et son équivalent vanilla. Outils, armures, minerai, blocs et pépites sont enregistrés depuis les textures déposées, recipes comprises.',
-
-            lootTablesTitle: 'Chaque item est donnable, tout de suite',
-            lootTablesDesc: 'Chaque item défini reçoit sa loot table, plus une fonction _give_all qui vous remet tout le pack dans des coffres nommés pour tester.',
-
-            langTitle: 'Les clés de traduction extraites de votre code',
-            langDesc: 'Écrivez votre texte une fois en Python. en_us.json est généré depuis ce que vous avez réellement écrit, donc le fichier lang ne dérive jamais.',
-
-            dependenciesTitle: 'Une bibliothèque manquante prévient le joueur',
-            materialsImageAlt: 'Une texture de lingot, et les outils et armures enregistrés à partir d\'elle',
-            materialsSnippetLabel: 'tout le palier depuis une seule entrée',
-            itemModelsOnLabel: 'electric_furnace_on.json (écrit parce qu\'une texture _front_on existe)',
-            recipesSnippetLabel: 'généré, compatible NBT',
-            langBeforeLabel: 'ce que vous avez écrit',
-            langAfterLabel: 'ce qui est construit, le texte est devenu une clé translate',
-            langFileLabel: 'et les clés collectées',
-            dependenciesDesc: 'StewBeet lit vos fonctions, déduit les bibliothèques réellement utilisées, les télécharge et écrit la vérification de version au runtime. S\'il en manque une, le chat la nomme, avec un lien cliquable.',
-        },
-
         // Trust strip
         trust: {
             label: 'Activité du projet',
-            releasedDaysAgo: 'publiée il y a {n} jours',
-            latestRelease: 'dernière version',
-            downloadsPerMonth: 'téléchargements PyPI / mois',
+            downloadsPerMonth: 'téléchargements PyPI par mois',
             publicProjects: 'projets publics qui l\'utilisent',
             githubStars: 'étoiles GitHub',
         },
 
-        // Why StewBeet exists
-        why: {
-            title: 'Pourquoi ça existe',
-            intro: 'Un seul custom block, écrit à la main, c\'est au moins huit fichiers dans deux packs et quatre formats. Oubliez-en un et rien ne plante. Le bloc ne drop simplement jamais.',
-            byHandTitle: 'À la main',
-            byHandUnit: 'fichiers à garder synchronisés',
-            withTitle: 'Avec StewBeet',
-            withUnit: 'définition à maintenir',
-            withFile: 'definitions/blocks.py',
-            withNote: 'Les huit autres en sont dérivés à chaque build, donc ils ne peuvent pas diverger.',
-            noPython: 'Une définition, c\'est un nom, des valeurs et une liste de recipes. Si vous savez lire un JSON de datapack, vous savez en lire une.',
-            limitsTitle: 'Ce pour quoi ça ne vous aidera pas',
-            limitsBody: 'Le framework est très opiniâtre : la structure du projet, les conventions Smithed et le pipeline sont déjà décidés. Il faut Python 3.14+. Et pour un pack qui tient en quelques fonctions, les écrire à la main reste le bon choix.',
-        },
-
         // Built with StewBeet
         builtWith: {
+            eyebrow: 'Faits avec StewBeet',
             title: '{n} projets publics sont faits avec StewBeet',
             subtitle: 'Deux d\'entre eux à grande échelle, avec le code que vous pouvez lire.',
             community: 'Écrits par d\'autres personnes',
@@ -708,14 +694,15 @@ export const translations = {
             unitFunctions: '.mcfunction',
             unitJson: '.json',
             unitTextures: 'textures',
-            stardustDesc: 'Un gros pack de progression : paliers de minerais, blocs, tableaux et un manuel en jeu complet.',
+            stardustDesc: 'Un gros pack de progression : paliers de minerais, custom blocks, paintings et un manuel en jeu complet.',
             simplenergyDesc: 'Une bibliothèque d\'énergie et de machines dont d\'autres packs dépendent : câbles, générateurs et machines.',
         },
 
         // Standing on giants: the home page section
         giants: {
+            eyebrow: 'Construit sur',
             title: 'StewBeet n\'est pas arrivé là tout seul',
-            subtitle: 'Derrière la magie, il y a toute une famille d\'outils open-source, faits par des gens qui aiment les datapacks autant que vous.',
+            subtitle: 'Chaque build repose sur des outils open-source faits par des gens de la communauté datapack. Voici ceux sans lesquels StewBeet n\'existerait pas.',
             beetRole: 'Le pipeline. Un seul build pour le datapack et le resource pack.',
             mechaRole: 'Le compilateur. Des commandes vérifiées, et du vrai Python dans une fonction.',
             modelResolverRole: 'Le rendu. Chaque item et chaque bloc dessinés en image, en Python pur.',
@@ -728,12 +715,13 @@ export const translations = {
 
         // Standing on giants: the /credits page
         credits: {
+            eyebrow: 'Remerciements',
             title: 'Sur les épaules de géants',
             subtitle: 'StewBeet n\'est pas arrivé là tout seul. Ce qui suit est un merci aux projets sur lesquels il repose, et aux personnes derrière.',
             beetBody: 'Un kit de développement qui unifie l\'outillage datapack et resource pack dans un seul pipeline. StewBeet est un ensemble de plugins beet : tout ce que beet sait faire reste à votre disposition. Construit par vberlier (fizzy), misode, edayot (airdox), rx97, TheNuclearNexus, et bien d\'autres.',
             mechaBody: 'mecha compile et vérifie le type de chaque commande générée : une faute de frappe casse le build au lieu du jeu. bolt permet d\'écrire une fonction en vrai Python : boucles, variables et conditions, compilées en commandes. Les deux vivent dans le dépôt beet et portent la même liste de noms.',
             modelResolverBody: 'Génère une vraie image de chaque item et de chaque bloc, en Python pur. C\'est comme ça que le manuel en jeu affiche vos crafts sans qu\'une seule capture soit prise à la main. Merci @airdox.',
-            smithedBody: 'Crafter pour les recettes NBT et Custom Blocks pour la pose, branchés automatiquement. Smithed pose aussi des conventions communes pour que les packs restent interopérables, même dans un monde normal en dehors de l\'écosystème. Smithed Weld fusionne votre pack avec ses dépendances au build.',
+            smithedBody: 'Crafter pour les recipes NBT et Custom Blocks pour la pose, branchés automatiquement. Smithed pose aussi des conventions communes pour que les packs restent interopérables, même dans un monde normal en dehors de l\'écosystème. Smithed Weld fusionne votre pack avec ses dépendances au build.',
             bookshelfBody: 'Une boîte à outils modulaire d\'utilitaires datapack, par l\'équipe Bookshelf. Appelez #bs.math:... dans une fonction et StewBeet récupère uniquement ce module, parmi les {n} qu\'il sait résoudre par leur nom.',
             librariesTitle: 'Et les bibliothèques que le build récupère pour vous',
             librariesNote: 'Détectées depuis les fonctions que vous écrivez, téléchargées au build, puis vérifiées en jeu avec un message d\'erreur cliquable quand une version manque.',
@@ -749,22 +737,21 @@ export const translations = {
             subtitle: 'Le template Basic configure chaque plugin avec des commentaires et aucun contenu d\'exemple à supprimer.',
             action: 'Lire le guide de démarrage',
             microcopy: 'Licence MIT · Python 3.14+ · aucun compte requis',
-            copyCommand: 'Copier la commande d\'installation',
-            copied: 'Commande copiée',
         },
 
         // Installation
         installation: {
-            title: 'De rien à un pack compilé en',
-            titleHighlight: 'quatre commandes',
+            eyebrow: 'Démarrer',
+            title: 'De rien à un pack compilé en quatre commandes',
             step1: 'Installer Python',
             step1Desc: 'StewBeet demande Python 3.14 ou plus récent',
             step2: 'Installer StewBeet',
             step2Desc: 'Un pip install, dépendances comprises',
-            step3: 'Initialiser le projet',
+            step3: 'Créer un projet',
             step3Desc: 'Choisissez un template, obtenez un projet qui compile',
             step4: 'Compiler',
             step4Desc: 'Datapack et resource pack, zippés',
+            terminal: 'terminal',
             uvNote: 'Vous préférez uv ? Chaque template fournit un pyproject.toml, donc',
             uvNoteThen: 'puis',
             uvNoteEnd: 'remplacent les quatre étapes, Python compris.',
@@ -772,23 +759,20 @@ export const translations = {
 
         // Templates
         templates: {
-            title: 'Partez d\'un template',
-            subtitle: 'Trois points de départ. Le template',
-            subtitleHighlight: 'Basic',
-            subtitleEnd: 'est celui à prendre en cas de doute.',
+            title: 'Choisissez un template',
+            subtitle: 'Trois points de départ. En cas de doute, prenez Basic.',
             minimal: 'Minimal',
             minimalDesc: 'Un seul plugin stewbeet et rien d\'autre, pour voir ce que beet fait tout seul.',
-            minimalBestFor: 'Apprendre les bases de Beet',
+            minimalBestFor: 'pour apprendre beet',
             basic: 'Basic',
-            basicDesc: 'Tous les plugins configurés et commentés, sans contenu d\'exemple à supprimer ensuite.',
-            basicBestFor: 'La plupart des utilisateurs (recommandé)',
+            basicDesc: 'Tous les plugins configurés et commentés, sans contenu d\'exemple à supprimer ensuite. Vous n\'ajoutez que ce dont votre projet a besoin.',
+            basicBestFor: 'pour la plupart des projets',
             extensive: 'Extensive',
             extensiveDesc: 'Un projet qui tourne et utilise tout : paliers de minerai, custom blocks, paintings, manuel.',
-            extensiveBestFor: 'Lire de vrais exemples',
+            extensiveBestFor: 'pour lire de vrais exemples',
             recommended: 'Recommandé',
+            source: 'code',
             downloadZip: 'ou télécharger le .zip',
-            tipTitle: 'Lequel choisir ?',
-            tipBody: 'Prenez le template Basic. Il branche tous les plugins avec une configuration commentée et aucun contenu d\'exemple, vous n\'ajoutez que ce dont votre projet a besoin.',
         },
 
         // Showcase / plugins listing
@@ -851,8 +835,10 @@ export const translations = {
 
         // Documentation Page
         documentation: {
+            pluginsEyebrow: 'Référence',
+            eyebrow: 'Apprendre StewBeet',
             title: 'Documentation',
-            subtitle: 'Apprenez à utiliser StewBeet',
+            subtitle: 'Commencez par le quickstart, puis ouvrez le guide de la tâche du moment. Chaque plugin a sa propre page plus bas.',
             cookbook: 'Cookbook',
             cookbookDesc: 'Des fichiers complets et fonctionnels, à lire de bout en bout.',
             helperReference: 'Référence des fonctions utilitaires',
@@ -866,23 +852,23 @@ export const translations = {
             groupGuidesDesc: 'Une tâche par guide, dans l\'ordre où vous les rencontrez.',
             groupReference: 'Référence',
             groupReferenceDesc: 'À consulter : API, options et fichiers générés.',
-            gettingStartedDesc: 'Guide complet pour débutants - installation, configuration et création de votre premier datapack',
+            gettingStartedDesc: 'Créez un projet, compilez-le, chargez-le dans Minecraft, puis ajoutez un item et tout un palier de minerai. Environ 20 minutes.',
             definitionsSetup: 'Définir items et blocs',
-            definitionsSetupDesc: 'Apprenez à définir des custom items, custom blocks et configurations d\'équipement',
+            definitionsSetupDesc: 'Chaque champ d\'un Item ou d\'un Block, avec les recipes et les paliers d\'équipement.',
             writingToFiles: 'Écriture dans les Fichiers',
-            writingToFilesDesc: 'Maîtrisez l\'écriture de fichiers avec le chargement statique, l\'API native de beet et les fonctions d\'aide de StewBeet',
+            writingToFilesDesc: 'Fichiers statiques, API beet, helpers StewBeet et Bolt, et quand utiliser chacun.',
             beetConfig: 'Configurer le build',
-            beetConfigDesc: 'Référence complète pour toutes les options de configuration beet.yml incluant les paramètres spécifiques à StewBeet',
+            beetConfigDesc: 'Chaque option de beet.yml, celles de StewBeet comprises.',
             equations: 'Équations',
             editorSupport: 'Support éditeur',
-            editorSupportDesc: 'L\'extension VSCode : le langage Bolt, les commandes vérifiées dans votre Python, et la navigation vers le pack construit',
+            editorSupportDesc: 'L\'extension VS Code : le langage Bolt, les commandes vérifiées dans votre Python, et la navigation vers le pack construit.',
             equationsDesc: 'Constructeurs chaînables Equation qui compilent en commandes scoreboard Minecraft',
             dependencies: 'Utiliser des bibliothèques',
             dependenciesDesc: 'Déclarez des dépendances de bibliothèques et générez automatiquement des vérifications de version au runtime',
             continuousDelivery: 'Publier automatiquement',
             continuousDeliveryDesc: 'Publiez des releases sur GitHub, Modrinth, Smithed et PlanetMinecraft en une seule commande',
             ingameManual: 'Manuel en jeu',
-            ingameManualDesc: 'Générez un manuel en jeu extensible et orienté dialogue avec custom pages, hooks et agencements de boutons',
+            ingameManualDesc: 'Le manuel en jeu généré, avec ses custom pages, hooks et agencements de boutons.',
             plugins: 'Plugins Disponibles',
             comingSoon: 'D\'autres guides sont en cours d\'écriture.',
             searchPlaceholder: 'Rechercher des plugins...',
@@ -915,8 +901,12 @@ export const translations = {
 
         // Tools Page
         tools: {
+            whereEditor: 'VS Code',
+            whereBrowser: 'Tourne dans votre navigateur',
+            whereServer: 'Tourne sur le serveur',
+            eyebrow: 'Outils',
             title: 'Outils',
-            subtitle: 'Outils utiles pour StewBeet et le développement de datapacks Minecraft',
+            subtitle: 'Ce que vous pouvez utiliser sans installer StewBeet, et l\'extension pour quand vous l\'aurez.',
             markdownToBBCode: 'Convertisseur Markdown vers BBCode',
             markdownToBBCodeDesc: 'Convertissez du texte Markdown en format BBCode pour publier sur PlanetMinecraft. Supporte les badges, listes, tableaux, blocs de code, spoilers et plus.',
             playground: 'Playground',
@@ -929,6 +919,7 @@ export const translations = {
 
         // Playground
         playground: {
+            eyebrow: 'Essayer',
             title: 'Playground',
             subtitle: 'Écrivez un module de definitions. Compilez. Lisez chaque fichier produit.',
             presets: 'Partir de :',
@@ -973,6 +964,7 @@ export const translations = {
 
         // auto.headers
         autoHeaders: {
+            eyebrow: 'Outil',
             title: 'Auto Headers',
             subtitle: 'Envoyez un datapack. Récupérez-le avec un header sur chaque function.',
             pluginLink: 'auto.headers est un plugin beet indépendant',
@@ -1036,23 +1028,21 @@ export const translations = {
 
         // Footer
         footer: {
-            tagline: 'Un framework Beet qui transforme des définitions Python en datapacks et resource packs finis.',
+            tagline: 'Un framework beet qui transforme des définitions Python en datapacks et resource packs finis.',
+            product: 'Produit',
             community: 'Communauté',
             resources: 'Ressources',
-            github: 'GitHub',
-            discord: 'Discord',
-            youtube: 'YouTube',
-            pypiPackage: 'Package PyPI',
-            planetMinecraft: 'PlanetMinecraft',
+            vscode: 'Extension VS Code',
             credits: 'Remerciements',
-            reportBug: 'Signaler un Bug',
+            reportBug: 'Signaler un bug',
             telemetry: 'Télémétrie',
             license: 'Licence MIT',
-            copyright: 'StewBeet par',
+            by: 'par',
         },
 
         // Telemetry page
         telemetry: {
+            eyebrow: 'Vie privée',
             title: 'Télémétrie',
             subtitle: "StewBeet compte les builds réussis, de façon anonyme, pour savoir si le projet sert à quelqu'un, et les outils de ce site sont comptés de la même manière. Voici les chiffres, le contenu exact de ce qui est envoyé, et comment le désactiver.",
 

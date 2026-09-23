@@ -1,8 +1,8 @@
 import { useEffect, useState, useMemo, isValidElement } from 'react';
-import { useMotionSafe } from '../hooks/useMotionSafe';
 import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { remarkAlert } from 'remark-github-blockquote-alert';
 import rehypeRaw from 'rehype-raw';
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -14,7 +14,7 @@ import { useTranslation } from '../i18n/useTranslation';
 import { useMarkdownContent } from '../context/MarkdownContentContext';
 import { useShiki } from '../hooks/useShiki';
 import { headingTextToSlug, slugify } from '../utils/slugify';
-import { ALERT_ACCENT, LOADER_ACCENT, SELECTION_BRAND, TEXT_ACCENT, TEXT_ACCENT_HOVER, TOOLBAR_ACCENT } from '../theme';
+import { LOADER_ACCENT, PAGE, SELECTION_BRAND } from '../theme';
 
 interface Heading {
     id: string;
@@ -22,13 +22,21 @@ interface Heading {
     level: number;
 }
 
-/** GitHub's schema, plus the `<video>` a guide needs to show a recording rather than describe it. */
+const ALERT_TYPES = ['note', 'tip', 'important', 'warning', 'caution'];
+
+/**
+ * GitHub's schema, plus the `<video>` a guide needs to show a recording rather than describe it,
+ * and the classes remark-github-blockquote-alert puts on a `> [!TIP]` block (its icon is SVG,
+ * which the schema drops, so the title keeps only its text).
+ */
 const MARKDOWN_SCHEMA = {
     ...defaultSchema,
     tagNames: [...(defaultSchema.tagNames ?? []), 'video'],
     attributes: {
         ...defaultSchema.attributes,
         video: ['src', 'controls', 'loop', 'muted', 'playsInline', 'preload', 'width', 'height'],
+        div: [...(defaultSchema.attributes?.div ?? []), ['className', 'markdown-alert', ...ALERT_TYPES.map((type) => `markdown-alert-${type}`)]],
+        p: [...(defaultSchema.attributes?.p ?? []), ['className', 'markdown-alert-title']],
     },
 };
 
@@ -138,7 +146,6 @@ const ShikiCodeBlock: React.FC<{ code: string; language: string }> = ({ code, la
 };
 
 export const MarkdownPage: React.FC = () => {
-    const motionSafe = useMotionSafe();
     const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
     const { hash, search } = useLocation();
@@ -346,30 +353,43 @@ export const MarkdownPage: React.FC = () => {
         };
     }, [src, hasValidSrc, content]);
 
+    const tocLinks = (
+        <nav className="flex flex-col border-l border-ink-800">
+            {headings.filter((heading) => heading.level > 1).map((heading, idx) => (
+                <a
+                    key={idx}
+                    href={`#${heading.id}`}
+                    onClick={goToHeading(heading.id)}
+                    className={`-ml-px border-l py-1 text-sm leading-snug transition-colors ${
+                        hash === `#${heading.id}` ? 'border-beet-400 text-ink-50' : 'border-transparent text-ink-400 hover:text-ink-100 hover:border-ink-500'
+                    } ${heading.level === 2 ? 'pl-3' : 'pl-6'}`}
+                >
+                    {heading.text.replace(/`/g, '')}
+                </a>
+            ))}
+        </nav>
+    );
+
     return (
-        <div className={`doc-page min-h-screen bg-slate-950 text-slate-100 ${SELECTION_BRAND}`}>
+        <div className={`doc-page min-h-screen bg-ink-950 text-ink-200 ${SELECTION_BRAND}`}>
             <Navbar />
 
-            {/* Toolbar, kept to one 40px line: it is pinned over the document for the whole read,
-                so every pixel it takes is a pixel of documentation nobody ever sees. */}
-            <div className="sticky top-16 z-30 border-b border-white/10 bg-slate-950/80 backdrop-blur-md">
-                <div className="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between">
-                    <button
-                        onClick={handleBack}
-                        className={`flex items-center gap-2 text-sm ${TEXT_ACCENT_HOVER} group`}
-                    >
-                        <HiArrowLeft className="text-lg group-hover:-translate-x-1 transition-transform" />
-                        <span className="font-medium">{t('markdown.back')}</span>
+            {/* Toolbar, kept to one line: it is pinned over the document for the whole read. */}
+            <div className="sticky top-14 z-30 border-b border-ink-800 bg-ink-950/90 backdrop-blur-md">
+                <div className={`${PAGE} h-11 flex items-center justify-between`}>
+                    <button onClick={handleBack} className="group flex items-center gap-2 text-sm text-ink-300 hover:text-ink-50 transition-colors">
+                        <HiArrowLeft className="group-hover:-translate-x-0.5 transition-transform" aria-hidden="true" />
+                        {t('markdown.back')}
                     </button>
 
                     <div className="flex items-center gap-4">
                         {headings.length > 0 && (
                             <button
                                 onClick={() => setTocOpen(!tocOpen)}
-                                className={`flex items-center gap-1.5 px-3 py-1 rounded-lg transition-all lg:hidden ${TOOLBAR_ACCENT}`}
+                                className="lg:hidden flex items-center gap-1.5 text-sm text-ink-300 hover:text-ink-50 transition-colors"
                             >
-                                <HiMenu className="text-lg" />
-                                <span className="text-sm font-medium">{t('markdown.contents')}</span>
+                                <HiMenu aria-hidden="true" />
+                                {t('markdown.contents')}
                             </button>
                         )}
                         {fullUrl && (
@@ -377,56 +397,26 @@ export const MarkdownPage: React.FC = () => {
                                 href={fullUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center gap-2 text-slate-400 hover:text-slate-200 transition-colors text-sm group"
+                                className="flex items-center gap-1.5 text-sm text-ink-400 hover:text-ink-100 transition-colors"
                             >
-                                <span>{t('markdown.viewOnGithub')}</span>
-                                <HiExternalLink className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                                {t('markdown.viewOnGithub')}
+                                <HiExternalLink aria-hidden="true" />
                             </a>
                         )}
                     </div>
                 </div>
             </div>
 
-            {/* Content */}
-            <motion.div
-                {...motionSafe({
-                    initial: { y: 20 },
-                    animate: { y: 0 },
-                    transition: { duration: 0.5 },
-                })}
-                className="relative z-10 max-w-7xl mx-auto px-4 py-8"
-            >
-                <div className="flex gap-8 items-start">
-                    {/* Table of Contents - Desktop */}
+            <div className={`${PAGE} py-10 md:py-14`}>
+                <div className="flex gap-12 xl:gap-16 items-start">
                     {headings.length > 0 && (
-                        <aside className="hidden lg:block sticky top-[calc(var(--doc-header)_+_1rem)] w-64 shrink-0 self-start max-h-[calc(100vh_-_var(--doc-header)_-_2rem)] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-                            <div className="bg-slate-900/30 backdrop-blur-sm border border-white/10 rounded-xl p-4">
-                                <h3 className="text-base font-bold text-slate-200 mb-3 flex items-center gap-2 sticky top-0 bg-slate-900/30 backdrop-blur-sm -mx-4 px-4 pb-3">
-                                    <HiMenu className={TEXT_ACCENT} />
-                                    Contents
-                                </h3>
-                                <nav className="space-y-1.5">
-                                    {headings.map((heading, idx) => (
-                                        <a
-                                            key={idx}
-                                            href={`#${heading.id}`}
-                                            className={`block text-sm leading-snug hover:text-mc-emerald transition-colors ${
-                                                heading.level === 1 ? 'font-semibold text-slate-300' :
-                                                heading.level === 2 ? 'pl-4 text-slate-400' :
-                                                'pl-8 text-slate-400'
-                                            }`}
-                                            onClick={goToHeading(heading.id)}
-                                        >
-                                            {heading.text}
-                                        </a>
-                                    ))}
-                                </nav>
-                            </div>
+                        <aside className="hidden lg:block sticky top-[calc(var(--doc-header)_+_2rem)] w-60 shrink-0 self-start max-h-[calc(100vh_-_var(--doc-header)_-_4rem)] overflow-y-auto pb-6 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
+                            <p className="mb-3 font-mono text-xs uppercase tracking-wider text-ink-500">{t('markdown.contents')}</p>
+                            {tocLinks}
                         </aside>
                     )}
 
-                    {/* Main Content */}
-                    <div className="flex-1 min-w-0">
+                    <div className="flex-1 min-w-0 max-w-[48rem]">
                 {loading && (
                     <div className="flex items-center justify-center py-20">
                         <div className={`animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 ${LOADER_ACCENT}`}></div>
@@ -434,18 +424,18 @@ export const MarkdownPage: React.FC = () => {
                 )}
 
                 {error && (
-                    <div className={`rounded-xl p-8 text-center backdrop-blur-sm ${ALERT_ACCENT}`}>
-                        <p className="text-mc-emerald text-xl font-bold mb-3">{t('markdown.error')}</p>
-                        <p className="text-slate-300 text-lg">{error}</p>
+                    <div className="rounded-panel border border-mc-gold/30 bg-mc-gold/5 p-8">
+                        <p className="text-mc-gold text-lg font-semibold mb-2">{t('markdown.error')}</p>
+                        <p className="text-ink-300 text-lg">{error}</p>
                     </div>
                 )}
 
                 {!loading && !error && content && (
-                    <div className="bg-slate-900/30 backdrop-blur-sm border border-white/10 rounded-2xl p-6 md:p-8 shadow-2xl">
+                    <div>
                         {/* Every size and margin lives in `.markdown-body` in index.css. */}
                         <article className="markdown-body">
                         <ReactMarkdown
-                            remarkPlugins={[remarkGfm]}
+                            remarkPlugins={[remarkGfm, remarkAlert]}
                             rehypePlugins={[rehypeRaw, [rehypeSanitize, MARKDOWN_SCHEMA]]}
                             components={{
                                 pre({ children }: React.HTMLAttributes<HTMLPreElement>) {
@@ -497,7 +487,7 @@ export const MarkdownPage: React.FC = () => {
                                             alt={alt}
                                             className={isBadge 
                                                 ? "inline-block h-6 mr-2 my-1" 
-                                                : "max-w-full h-auto hover:scale-[1.02] transition-transform duration-300"
+                                                : "max-w-full h-auto rounded-control"
                                             }
                                         />
                                     );
@@ -559,8 +549,8 @@ export const MarkdownPage: React.FC = () => {
                 )}
                     </div>
                 </div>
-            </motion.div>
-            
+            </div>
+
             {/* Mobile TOC Overlay */}
             <AnimatePresence>
                 {tocOpen && (
@@ -571,44 +561,23 @@ export const MarkdownPage: React.FC = () => {
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.2 }}
                             onClick={() => setTocOpen(false)}
-                            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+                            className="fixed inset-0 bg-black/60 z-40 lg:hidden"
                         />
                         <motion.div
                             initial={{ x: '100%' }}
                             animate={{ x: 0 }}
                             exit={{ x: '100%' }}
                             transition={{ type: 'tween', duration: 0.3 }}
-                            className="fixed top-0 right-0 bottom-0 w-80 bg-slate-900 border-l border-white/10 z-50 overflow-y-auto lg:hidden"
+                            className="fixed top-0 right-0 bottom-0 w-80 bg-ink-950 border-l border-ink-800 z-50 overflow-y-auto lg:hidden"
                         >
                             <div className="p-6">
                                 <div className="flex items-center justify-between mb-6">
-                                    <h3 className="text-lg font-bold text-slate-200 flex items-center gap-2">
-                                        <HiMenu className={TEXT_ACCENT} />
-                                        Contents
-                                    </h3>
-                                    <button
-                                        onClick={() => setTocOpen(false)}
-                                        className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-                                    >
-                                        <HiX className="text-xl text-slate-400" />
+                                    <p className="font-mono text-xs uppercase tracking-wider text-ink-500">{t('markdown.contents')}</p>
+                                    <button onClick={() => setTocOpen(false)} aria-label={t('search.close')} className="p-2 rounded-control hover:bg-ink-850 transition-colors">
+                                        <HiX className="text-xl text-ink-400" />
                                     </button>
                                 </div>
-                                <nav className="space-y-2">
-                                    {headings.map((heading, idx) => (
-                                        <a
-                                            key={idx}
-                                            href={`#${heading.id}`}
-                                            className={`block text-sm hover:text-mc-emerald transition-colors ${
-                                                heading.level === 1 ? 'font-semibold text-slate-300' :
-                                                heading.level === 2 ? 'pl-4 text-slate-400' :
-                                                'pl-8 text-slate-400'
-                                            }`}
-                                            onClick={goToHeading(heading.id)}
-                                        >
-                                            {heading.text}
-                                        </a>
-                                    ))}
-                                </nav>
+                                {tocLinks}
                             </div>
                         </motion.div>
                     </>

@@ -21,7 +21,7 @@ export interface PageMeta {
 /** Longest description before truncation: beyond this both Google and Discord cut it themselves. */
 const MAX_DESCRIPTION_CHARS = 200;
 
-const SITE_TITLE = 'StewBeet - Minecraft datapacks from Python definitions';
+const SITE_TITLE = 'StewBeet | Minecraft datapacks, generated from Python';
 const SITE_DESCRIPTION =
     'StewBeet is a Beet framework for Minecraft datapacks. Define a block or an item in Python and get the models, recipes, loot tables, translations and in-game manual generated on every build.';
 

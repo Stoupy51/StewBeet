@@ -10,7 +10,7 @@ import { useShiki } from '../hooks/useShiki';
 
 /** Checkerboard behind transparent PNGs, drawn with a gradient so it costs no request. */
 const CHECKERBOARD =
-    'bg-[linear-gradient(45deg,#1a1a1a_25%,transparent_25%),linear-gradient(-45deg,#1a1a1a_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#1a1a1a_75%),linear-gradient(-45deg,transparent_75%,#1a1a1a_75%)] bg-[length:16px_16px] bg-[position:0_0,0_8px,8px_-8px,-8px_0]';
+    'bg-[linear-gradient(45deg,#24211e_25%,transparent_25%),linear-gradient(-45deg,#24211e_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#24211e_75%),linear-gradient(-45deg,transparent_75%,#24211e_75%)] bg-[length:16px_16px] bg-[position:0_0,0_8px,8px_-8px,-8px_0]';
 
 interface SourceViewProps {
     /** Full path of the file, shown on the right of the bar. */
@@ -29,14 +29,14 @@ export const SourceView: React.FC<SourceViewProps> = ({ label, body, language, i
 
     return (
         <div className="flex-1 flex flex-col min-h-0">
-            <div className="flex items-center gap-2 px-4 py-2 border-b border-white/5">
+            <div className="flex items-center gap-2 px-4 py-2 border-b border-ink-800">
                 <button
                     onClick={onBack}
-                    className="flex items-center gap-1 text-xs text-slate-400 hover:text-slate-200 transition-colors"
+                    className="flex items-center gap-1 text-xs text-ink-400 hover:text-ink-200 transition-colors"
                 >
                     <HiArrowLeft className="w-3 h-3" /> {backLabel}
                 </button>
-                <code className="ml-auto text-[0.7rem] text-slate-500 truncate">{label}</code>
+                <code className="ml-auto text-[0.7rem] text-ink-500 truncate">{label}</code>
             </div>
 
             <div className="flex-1 overflow-auto custom-scrollbar p-4">

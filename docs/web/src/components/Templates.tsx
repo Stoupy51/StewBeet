@@ -1,185 +1,81 @@
-import { motion } from 'framer-motion';
-import { HiDownload, HiClipboard, HiCheck } from 'react-icons/hi';
-import { GiStoneBlock, GiChest, GiCrystalGrowth } from 'react-icons/gi';
-import { useState } from 'react';
+import { HiDownload, HiExternalLink } from 'react-icons/hi';
 import { useTranslation } from '../i18n/useTranslation';
-import { useMotionSafe } from '../hooks/useMotionSafe';
-import { ACCENT_BORDER_HOVER, CARD_HIGHLIGHT, HEADING, PANEL_ACCENT, TEXT_ACCENT, TEXT_ACCENT_SOFT } from '../theme';
+import { CopyCommand } from './CopyCommand';
+import { CARD, TEXT_ACCENT_HOVER } from '../theme';
 
-export const Templates: React.FC = () => {
-    const [copiedTemplate, setCopiedTemplate] = useState<string | null>(null);
+interface TemplateCard {
+    name: 'minimal' | 'basic' | 'extensive';
+    recommended: boolean;
+}
+
+const REPO = 'https://github.com/Stoupy51/StewBeet';
+
+/** Basic sits in the middle, larger and lit, so the default choice needs no reading. */
+const TEMPLATES: TemplateCard[] = [
+    { name: 'minimal', recommended: false },
+    { name: 'basic', recommended: true },
+    { name: 'extensive', recommended: false },
+];
+
+const Card = ({ template }: { template: TemplateCard }) => {
     const { t } = useTranslation();
-    const motionSafe = useMotionSafe();
-
-    const handleCopy = (command: string, templateName: string) => {
-        navigator.clipboard.writeText(command);
-        setCopiedTemplate(templateName);
-        setTimeout(() => setCopiedTemplate(null), 2000);
-    };
-
-    const templates = [
-        {
-            icon: GiStoneBlock,
-            name: 'minimal',
-            displayName: t('templates.minimal'),
-            recommended: false,
-            description: t('templates.minimalDesc'),
-            bestFor: t('templates.minimalBestFor'),
-            downloadUrl: 'https://github.com/Stoupy51/StewBeet/raw/main/templates/minimal_template.zip'
-        },
-        {
-            icon: GiChest,
-            name: 'basic',
-            displayName: t('templates.basic'),
-            recommended: true,
-            description: t('templates.basicDesc'),
-            bestFor: t('templates.basicBestFor'),
-            downloadUrl: 'https://github.com/Stoupy51/StewBeet/raw/main/templates/basic_template.zip'
-        },
-        {
-            icon: GiCrystalGrowth,
-            name: 'extensive',
-            displayName: t('templates.extensive'),
-            recommended: false,
-            description: t('templates.extensiveDesc'),
-            bestFor: t('templates.extensiveBestFor'),
-            downloadUrl: 'https://github.com/Stoupy51/StewBeet/raw/main/templates/extensive_template.zip'
-        }
-    ];
+    const { name, recommended } = template;
+    const command = `stewbeet init ${name}`;
 
     return (
-        <div id="templates" className="scroll-mt-24 mt-16 pt-12 border-t border-white/10">
-            <div className="relative z-10">
-                <motion.div
-                    {...motionSafe({
-                        initial: { y: 30 },
-                        whileInView: { y: 0 },
-                        viewport: { once: true },
-                        transition: { duration: 0.6 },
-                    })}
-                    className="text-center mb-8"
+        <article
+            className={`relative flex flex-col ${recommended ? 'order-first lg:order-none' : ''} ${recommended
+                ? 'rounded-panel border border-beet-500/60 bg-ink-900 p-7 lg:py-10 shadow-[0_24px_64px_-24px_rgba(196,35,64,0.45)] bg-[radial-gradient(120%_60%_at_50%_0%,rgba(226,58,82,0.12),transparent)]'
+                : `${CARD} p-6`}`}
+        >
+            {recommended && (
+                <span className="absolute -top-3 left-7 rounded-control bg-beet-600 px-2.5 py-1 font-mono text-[0.6875rem] uppercase tracking-wider text-white">
+                    {t('templates.recommended')}
+                </span>
+            )}
+
+            <div className="flex items-baseline justify-between gap-3">
+                <h4 className={`font-semibold tracking-tight text-ink-50 ${recommended ? 'text-2xl' : 'text-lg'}`}>{t(`templates.${name}`)}</h4>
+                <a
+                    href={`${REPO}/blob/main/templates/${name}/src/`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 font-mono text-xs text-ink-400 hover:text-ink-100 transition-colors"
                 >
-                    <h3 className={`text-2xl md:text-3xl font-bold mb-4 ${HEADING}`}>
-                        {t('templates.title')}
-                    </h3>
-                    <p className="text-slate-400 text-lg max-w-3xl mx-auto">
-                        {t('templates.subtitle')} <span className={`${TEXT_ACCENT_SOFT} font-semibold`}>{t('templates.subtitleHighlight')}</span> {t('templates.subtitleEnd')}
-                    </p>
-                </motion.div>
+                    {t('templates.source')}
+                    <HiExternalLink aria-hidden="true" />
+                </a>
+            </div>
+            <p className={`mt-1 font-mono text-xs ${recommended ? 'text-beet-300' : 'text-ink-400'}`}>{t(`templates.${name}BestFor`)}</p>
+            <p className={`mt-4 leading-relaxed flex-grow ${recommended ? 'text-ink-200' : 'text-sm text-ink-400'}`}>{t(`templates.${name}Desc`)}</p>
 
-                {/* Info Box */}
-                <motion.div
-                    {...motionSafe({
-                        initial: { y: 30 },
-                        whileInView: { y: 0 },
-                        viewport: { once: true },
-                        transition: { duration: 0.5 },
-                    })}
-                    className={`mb-8 backdrop-blur-sm rounded-2xl p-6 ${PANEL_ACCENT}`}
+            <div className="mt-6 flex flex-col gap-3">
+                <CopyCommand command={command} variant={recommended ? 'primary' : 'default'} className="w-full justify-between" />
+                <a
+                    href={`${REPO}/raw/main/templates/${name}_template.zip`}
+                    download
+                    className={`inline-flex items-center gap-1.5 self-start text-xs ${TEXT_ACCENT_HOVER}`}
                 >
-                    <div className="flex items-start gap-4">
-                        <div className="w-10 h-10 bg-mc-emerald/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                            <span className="text-2xl">💡</span>
-                        </div>
-                        <div>
-                            <h4 className="text-lg font-semibold text-slate-100 mb-2">
-                                {t('templates.tipTitle')}
-                            </h4>
-                            <p className="text-slate-300 leading-relaxed">
-                                {t('templates.tipBody')}
-                            </p>
-                        </div>
-                    </div>
-                </motion.div>
+                    <HiDownload aria-hidden="true" />
+                    {t('templates.downloadZip')}
+                </a>
+            </div>
+        </article>
+    );
+};
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {templates.map((template, index) => {
-                        const Icon = template.icon;
-                        return (
-                            <motion.div
-                                key={index}
-                                {...motionSafe({
-                                    initial: { y: 20 },
-                                    whileInView: { y: 0 },
-                                    viewport: { once: true },
-                                    transition: { duration: 0.4, delay: index * 0.1 },
-                                })}
-                                className="group relative"
-                            >
-                                <div className={`h-full bg-slate-900/80 backdrop-blur-sm rounded-lg p-6 border ${template.recommended ? CARD_HIGHLIGHT : 'border-white/5'
-                                    } ${ACCENT_BORDER_HOVER} transition-all duration-300 flex flex-col`}>
+export const Templates: React.FC = () => {
+    const { t } = useTranslation();
 
-                                    <a
-                                        href={`https://github.com/Stoupy51/StewBeet/blob/main/templates/${template.name}/src/`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="block"
-                                    >
-                                        <div className="flex items-start justify-between mb-4">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-panel bg-slate-800 flex items-center justify-center">
-                                                    <Icon className="text-xl text-mc-emerald" aria-hidden="true" />
-                                                </div>
-                                                <div>
-                                                    <h3 className="text-lg font-bold text-slate-100 group-hover:text-mc-diamond transition-colors">
-                                                        {template.displayName}
-                                                    </h3>
-                                                    {template.recommended && (
-                                                        <span className={`text-xs ${TEXT_ACCENT} font-medium`}>
-                                                            {t('templates.recommended')}
-                                                        </span>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
+    return (
+        <div id="templates" className="mt-20 scroll-mt-20">
+            <div data-rise className="max-w-3xl">
+                <h3 className="text-2xl md:text-[1.75rem] leading-tight font-semibold tracking-tight text-ink-50">{t('templates.title')}</h3>
+                <p className="mt-3 text-ink-300">{t('templates.subtitle')}</p>
+            </div>
 
-                                        <p className="text-sm text-slate-400 mb-6 flex-grow leading-relaxed">
-                                            {template.description}
-                                        </p>
-                                    </a>
-
-                                    <div className="space-y-3">
-                                        <div className="text-xs text-slate-400 font-mono bg-slate-950/50 p-2 rounded border border-white/5">
-                                            {template.bestFor}
-                                        </div>
-
-                                        {/* Command to copy */}
-                                        <div className="relative">
-                                            <div className="flex items-center gap-2 bg-slate-950/70 rounded border border-white/10 p-3 font-mono text-xs">
-                                                <span className="text-green-400">$</span>
-                                                <span className="text-slate-400 flex-grow">stewbeet init {template.name}</span>
-                                                <button
-                                                    onClick={() => handleCopy(`stewbeet init ${template.name}`, template.name)}
-                                                    className="text-slate-400 hover:text-mc-diamond transition-colors"
-                                                    title="Copy command"
-                                                >
-                                                    {copiedTemplate === template.name ? (
-                                                        <HiCheck className="text-green-400" />
-                                                    ) : (
-                                                        <HiClipboard />
-                                                    )}
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        {/* Optional download */}
-                                        <motion.a
-                                            href={template.downloadUrl}
-                                            download
-                                            whileHover={{ scale: 1.02 }}
-                                            whileTap={{ scale: 0.98 }}
-                                            className="flex items-center justify-center gap-2 w-full py-2 rounded bg-white/5 hover:bg-white/10 text-slate-400 hover:text-slate-300 border border-white/5 hover:border-white/10 transition-all text-xs"
-                                        >
-                                            <HiDownload className="text-xs" />
-                                            {t('templates.downloadZip')}
-                                        </motion.a>
-                                    </div>
-                                </div>
-                            </motion.div>
-                        );
-                    })}
-                </div>
-
+            <div data-rise className="mt-10 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)_minmax(0,1fr)] gap-4 lg:gap-5 items-center">
+                {TEMPLATES.map((template) => <Card key={template.name} template={template} />)}
             </div>
         </div>
     );
