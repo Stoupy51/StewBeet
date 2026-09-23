@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import { HiArrowLeft } from 'react-icons/hi';
 import { FileTree, type FileNode } from './FileTree';
 import { useTranslation } from '../i18n/useTranslation';
+import { useOverflowFade } from '../hooks/useOverflowFade';
 import { formatBytes } from '../utils/fileDisplay';
 
 /**
@@ -32,6 +33,7 @@ export const HeroOutputPanel: React.FC<{ nodes: FileNode[] }> = ({ nodes }) => {
     const [selected, setSelected] = useState<FileNode | null>(null);
     const [contents, setContents] = useState<Contents | null>(null);
     const [failed, setFailed] = useState(false);
+    const treeScroll = useOverflowFade();
 
     const openFile = useCallback(async (node: FileNode) => {
         setSelected(node);
@@ -46,7 +48,7 @@ export const HeroOutputPanel: React.FC<{ nodes: FileNode[] }> = ({ nodes }) => {
 
     if (!selected) {
         return (
-            <div className="flex-1 min-h-0 flex flex-col p-4 overflow-auto custom-scrollbar">
+            <div ref={treeScroll} className="flex-1 min-h-0 flex flex-col p-4 overflow-auto custom-scrollbar">
                 <FileTree nodes={nodes} onSelect={openFile} />
                 <p className="mt-4 pt-3 border-t border-ink-800 text-xs text-ink-400 leading-relaxed">
                     {t('hero.outputNote')}

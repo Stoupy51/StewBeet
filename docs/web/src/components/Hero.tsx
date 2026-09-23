@@ -3,6 +3,7 @@ import { useLayoutEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from '../i18n/useTranslation';
 import { introWillPlay, useIntro } from '../hooks/useIntro';
+import { useOverflowFade } from '../hooks/useOverflowFade';
 import { HeroOutputPanel } from './HeroOutputPanel';
 import { CodeTab } from './CodeTab';
 import { CopyCommand } from './CopyCommand';
@@ -67,10 +68,11 @@ export const Hero: React.FC = () => {
     const { t, language } = useTranslation();
     const gettingStarted = `/markdown?src=${encodeURIComponent(language === 'fr' ? '0_getting_started/fr.md' : '0_getting_started/en.md')}`;
     useIntro();
+    const codeScroll = useOverflowFade();
 
     return (
         <section id="hero" className="pt-14">
-            <div className={`${PAGE} pt-8 md:pt-10 pb-12`}>
+            <div className={`${PAGE} pt-8 md:pt-10 short:pt-5 pb-12`}>
                 <div className="text-center">
                     <a
                         href={RELEASES_URL}
@@ -87,17 +89,17 @@ export const Hero: React.FC = () => {
                     </a>
 
                     <h1
-                        className="intro-step mt-4 text-[2.25rem] sm:text-5xl lg:text-[2.875rem] font-semibold tracking-[-0.025em] leading-[1.08] text-ink-50 text-balance"
+                        className="intro-step mt-4 short:mt-3 text-[2rem] sm:text-5xl lg:text-[2.875rem] font-semibold tracking-[-0.025em] leading-[1.08] text-ink-50 text-balance"
                         style={step(1)}
                     >
                         {t('hero.title')}
                     </h1>
 
-                    <p className="intro-step mt-4 max-w-2xl mx-auto text-base sm:text-lg text-ink-300 leading-relaxed text-pretty" style={step(2)}>
+                    <p className="intro-step mt-4 short:mt-3 max-w-2xl mx-auto text-base sm:text-lg text-ink-300 leading-relaxed text-pretty" style={step(2)}>
                         {t('hero.subtitle')}
                     </p>
 
-                    <div className="intro-step mt-6 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3" style={step(3)}>
+                    <div className="intro-step mt-6 short:mt-5 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3" style={step(3)}>
                         <Link to={gettingStarted} className={`${BTN_PRIMARY} h-11 px-5`}>
                             {t('hero.getStarted')}
                             <HiArrowRight aria-hidden="true" />
@@ -112,17 +114,19 @@ export const Hero: React.FC = () => {
                         </Link>
                     </div>
 
-                    <div className="intro-step mt-6" style={step(4)}>
+                    <div className="intro-step mt-6 short:mt-4" style={step(4)}>
                         <TrustStrip />
                     </div>
                 </div>
 
                 {/* Side by side from lg, not xl: 1920x1080 at 150% leaves ~1265px once the
-                    scrollbar is counted, and the output must not fall under the fold there. */}
-                <div className="mt-7 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_1.5rem_minmax(0,1fr)] gap-3 lg:gap-2 lg:h-[clamp(19rem,calc(100svh-25.5rem),34rem)]">
-                    <div className="intro-panel min-w-0 max-h-[26rem] lg:max-h-none" style={step(0)}>
+                    scrollbar is counted, and the output must not fall under the fold there.
+                    The height subtracts the header above (26.25rem, 23.25rem on short screens) plus a
+                    margin, and the minmax row keeps content from stretching it past that. */}
+                <div className="mt-7 short:mt-5 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_1.5rem_minmax(0,1fr)] lg:grid-rows-[minmax(0,1fr)] gap-3 lg:gap-2 lg:h-[clamp(16rem,calc(100svh-26.25rem),32.5rem)] lg:short:h-[clamp(15rem,calc(100svh-23.25rem),32.5rem)]">
+                    <div className="intro-panel min-w-0 min-h-0 max-h-[31rem] lg:max-h-none" style={step(0)}>
                         <CodeTab path={t('hero.codeCaption')} lang="python">
-                            <div className="relative flex-1 min-h-0 p-4 overflow-auto custom-scrollbar">
+                            <div ref={codeScroll} className="relative flex-1 min-h-0 p-4 overflow-auto custom-scrollbar">
                                 <div
                                     aria-hidden="true"
                                     className="intro-scan pointer-events-none absolute inset-x-0 top-0 h-16 opacity-0 bg-gradient-to-b from-transparent via-beet-500/20 to-transparent"
@@ -140,7 +144,7 @@ export const Hero: React.FC = () => {
                     </div>
 
                     <div
-                        className="intro-panel min-w-0 max-h-[30rem] lg:max-h-none"
+                        className="intro-panel min-w-0 min-h-0 max-h-[30rem] lg:max-h-none"
                         // --row-start holds the tree back until the scan has passed over the definition.
                         style={{ ...step(1), '--row-start': '760ms' } as React.CSSProperties}
                     >

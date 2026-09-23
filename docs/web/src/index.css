@@ -70,6 +70,11 @@
   .pixelated {
     image-rendering: pixelated;
   }
+
+  /* Set by useOverflowFade while content remains below the visible area. */
+  [data-more] {
+    mask-image: linear-gradient(to bottom, #000 calc(100% - 3rem), transparent);
+  }
 }
 
 /*
