@@ -15,6 +15,7 @@ from stouputils.lazy import ALWAYS_LAZY
 
 __lazy_modules__ = ALWAYS_LAZY
 
+import re
 from dataclasses import dataclass
 
 import stouputils as stp
@@ -78,6 +79,20 @@ def mc_compatible(versions: list[JsonDict], mc_tup: tuple[int, ...]) -> list[Jso
 	return [v for v in versions if sup_tuples(v) and max(sup_tuples(v)) <= mc_tup]
 
 
+def modrinth_older_versions(versions: list[JsonDict], mc_tup: tuple[int, ...]) -> list[JsonDict]:
+	"""Return versions (order kept) whose release game_versions are all <= mc_tup.
+
+	Snapshots and other non-release game versions (``25w14a``, ``26.3-snapshot-1``) are ignored.
+
+	>>> vs = [{"version_number": "1.11.0", "game_versions": ["26.3"]}, {"version_number": "1.10.1", "game_versions": ["1.21.8", "1.21.11"]}]
+	>>> [v["version_number"] for v in modrinth_older_versions(vs, (26, 2))]
+	['1.10.1']
+	"""
+	def release_tuples(v: JsonDict) -> list[tuple[int, ...]]:
+		return [parse_version(s) for s in v.get("game_versions", []) if re.fullmatch(r"\d+(\.\d+)+", s)]
+	return [v for v in versions if (tuples := release_tuples(v)) and max(tuples) <= mc_tup]
+
+
 # ---------------------------------------------------------------------------
 # Providers
 # ---------------------------------------------------------------------------
@@ -130,7 +145,15 @@ def resolve_modrinth_lib(ctx: Context, lib_ns: str, lib_data: JsonDict, mc_ver: 
 
 	versions = cached_json(ctx, f"{base}?game_versions=[%22{mc_ver}%22]&loaders=[%22datapack%22]")
 	if not versions:
+		# No version explicitly tagged for this MC version: fall back to every version,
+		# but only keep the ones made for an older MC version (never a newer one)
 		versions = cached_json(ctx, f"{base}?loaders=[%22datapack%22]")
+		if versions:
+			older = modrinth_older_versions(versions, parse_version(mc_ver))
+			if older:
+				versions = older
+			else:
+				stp.warning(f"No Modrinth release of '{slug}' supports MC {mc_ver} or older; using the latest one ({versions[0].get('version_number')}) anyway.")
 	if versions is None:
 		stp.warning(f"Could not read the Modrinth API for '{slug}' (see the failure above). Skipping.")
 		return None
