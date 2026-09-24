@@ -4,7 +4,7 @@ import { HiArrowRight, HiCheck } from 'react-icons/hi';
 import { Link } from 'react-router-dom';
 import { useTranslation } from '../i18n/useTranslation';
 import { VscodeMark } from './VscodeMark';
-import { BTN_SECONDARY, EYEBROW, PAGE, SECTION_LEAD, SECTION_TITLE, TEXT_ACCENT_HOVER } from '../theme';
+import { BTN_SECONDARY, PAGE, SECTION_LEAD, SECTION_TITLE, TEXT_ACCENT_HOVER } from '../theme';
 
 const MARKETPLACE_URL = 'https://marketplace.visualstudio.com/items?itemName=stoupy.stewbeet';
 
@@ -14,7 +14,7 @@ const MARKETPLACE_URL = 'https://marketplace.visualstudio.com/items?itemName=sto
  */
 
 interface SpotlightProps {
-    /** Translation namespace holding eyebrow, title, description, point1 to point3 and videoFallback. */
+    /** Translation namespace holding title, description, point1 to point3 and videoFallback. */
     ns: 'manual' | 'editor';
     video: string;
     poster: string;
@@ -44,8 +44,7 @@ const Spotlight = ({ ns, video, poster, frame, videoFirst = false, children }: S
     return (
         <div id={ns} data-rise className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center scroll-mt-20">
             <div className={videoFirst ? 'lg:order-last' : ''}>
-                <p className={EYEBROW}>{t(`${ns}.eyebrow`)}</p>
-                <h2 className={`mt-4 ${SECTION_TITLE}`}>{t(`${ns}.title`)}</h2>
+                <h2 className={SECTION_TITLE}>{t(`${ns}.title`)}</h2>
                 <p className={`mt-4 ${SECTION_LEAD}`}>{t(`${ns}.description`)}</p>
                 <ul className="mt-6 space-y-2.5">
                     {[1, 2, 3].map((index) => (

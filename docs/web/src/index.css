@@ -40,17 +40,6 @@
   }
 }
 
-@layer components {
-  /* The one decorative motif of the site: a single beet pixel before each section label. */
-  .eyebrow {
-    @apply inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.12em] text-ink-400;
-  }
-  .eyebrow::before {
-    content: '';
-    @apply w-2 h-2 bg-beet-500 flex-shrink-0;
-  }
-}
-
 @layer utilities {
   /* Slim scrollbar for code panels: the page-wide bar is far too heavy inside a card. */
   .custom-scrollbar::-webkit-scrollbar {
@@ -246,6 +235,12 @@
   100% { opacity: 0; transform: translateY(560%); }
 }
 
+/* Hero code tabs: same 200ms as the opacity transition dimming the file tree beside it. */
+@keyframes code-swap {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
 @keyframes intro-row {
   from { opacity: 0; transform: translateX(-8px); }
   to   { opacity: 1; transform: none; }
@@ -260,6 +255,10 @@
   [data-intro='play'] .intro-panel {
     animation: intro-rise 640ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
     animation-delay: calc(320ms + var(--step, 0) * 100ms);
+  }
+
+  .code-swap {
+    animation: code-swap 200ms cubic-bezier(0.4, 0, 0.2, 1) both;
   }
 
   [data-intro='play'] .intro-scan {

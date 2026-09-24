@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { HiArrowRight } from 'react-icons/hi';
 import { useTranslation } from '../i18n/useTranslation';
-import { EYEBROW, PAGE, SECTION_LEAD, TEXT_ACCENT_HOVER } from '../theme';
+import { PAGE, SECTION_LEAD, TEXT_ACCENT_HOVER } from '../theme';
 import { LibraryPills } from './LibraryPills';
 import { AUTO_LIBRARIES, DEPENDENCIES_DOC, GIANTS, type Giant } from './giantsData';
 
@@ -36,8 +36,7 @@ export const StandingOnGiants: React.FC = () => {
         <section id="standing-on-giants" className="py-14 md:py-28 border-t border-ink-800">
             <div className={`${PAGE} grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] gap-10 lg:gap-16`}>
                 <div data-rise>
-                    <p className={EYEBROW}>{t('giants.eyebrow')}</p>
-                    <h2 className="mt-4 text-2xl md:text-[1.75rem] leading-tight font-semibold tracking-tight text-ink-50">{t('giants.title')}</h2>
+                    <h2 className="text-2xl md:text-[1.75rem] leading-tight font-semibold tracking-tight text-ink-50">{t('giants.title')}</h2>
                     <p className={`mt-4 ${SECTION_LEAD} md:text-base`}>{t('giants.subtitle')}</p>
                     <div className="mt-6 flex flex-col gap-2">
                         <Link to="/credits" className={`group inline-flex items-center gap-2 text-sm font-medium ${TEXT_ACCENT_HOVER}`}>

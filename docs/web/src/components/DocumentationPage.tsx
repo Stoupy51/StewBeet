@@ -5,7 +5,7 @@ import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 import { DependencyMark, PluginsTable } from './PluginsTable';
 import { useTranslation } from '../i18n/useTranslation';
-import { CARD, CARD_HOVER_ARROW, CARD_HOVER_TEXT, EYEBROW, HOVER_CARD, PAGE, SECTION_LEAD, SECTION_TITLE } from '../theme';
+import { CARD, CARD_HOVER_ARROW, CARD_HOVER_TEXT, HOVER_CARD, PAGE, SECTION_LEAD, SECTION_TITLE } from '../theme';
 
 interface DocItem {
     title: string;
@@ -136,8 +136,7 @@ export const DocumentationPage: React.FC = () => {
             <Navbar />
 
             <header className={`${PAGE} pt-28 md:pt-32 pb-12`}>
-                <p className={EYEBROW}>{t('documentation.eyebrow')}</p>
-                <h1 className="mt-4 text-4xl md:text-5xl font-semibold tracking-tight text-ink-50">{t('documentation.title')}</h1>
+                <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-ink-50">{t('documentation.title')}</h1>
                 <p className={`mt-4 max-w-2xl ${SECTION_LEAD}`}>{t('documentation.subtitle')}</p>
             </header>
 
@@ -177,8 +176,7 @@ export const DocumentationPage: React.FC = () => {
             <section id="plugins" className="border-t border-ink-800 scroll-mt-14">
                 <div className={`${PAGE} py-20`}>
                     <div className="max-w-3xl mb-10">
-                        <p className={EYEBROW}>{t('documentation.pluginsEyebrow')}</p>
-                        <h2 className={`mt-4 ${SECTION_TITLE}`}>{t('documentation.plugins')}</h2>
+                        <h2 className={SECTION_TITLE}>{t('documentation.plugins')}</h2>
                         <p className={`mt-4 ${SECTION_LEAD}`}>{t('showcase.subtitle')}</p>
                         <p className="mt-4 flex flex-wrap gap-x-5 gap-y-1 text-sm text-ink-400">
                             <span>{t('showcase.legend')}</span>
