@@ -101,7 +101,7 @@ export const PlaygroundPage: React.FC = () => {
         <div className="min-h-screen bg-ink-950 text-ink-100">
             <Navbar />
 
-            <PageHeader eyebrow={t('playground.eyebrow')} title={t('playground.title')} lead={t('playground.subtitle')} width="max-w-7xl" />
+            <PageHeader title={t('playground.title')} lead={t('playground.subtitle')} width="max-w-7xl" />
 
             <div className="relative z-10 px-4 pb-16">
                 <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-4">

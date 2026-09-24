@@ -41,7 +41,6 @@ export const translations = {
 
         // What you gain: the bento grid
         gains: {
-            eyebrow: 'What you gain',
             title: 'Maintain one definition, not eight files',
             lead: 'One custom block written by hand is eight files across two packs in four formats. Miss one and nothing errors: the block just never drops. StewBeet rebuilds all eight from your definition on every compile, and does the same for everything below.',
             byHandTitle: 'By hand',
@@ -75,7 +74,6 @@ export const translations = {
 
         // In-game manual showcase
         manual: {
-            eyebrow: 'In-game manual',
             title: 'Your datapack documents itself',
             description: 'Every item you define gets a manual page: its recipe drawn from the ingredients you declared, its description, and clickable navigation between categories. Players craft the book in game and it is already up to date.',
             point1: 'Recipes rendered from your definitions, not screenshotted by hand',
@@ -87,7 +85,6 @@ export const translations = {
 
         // Editor showcase
         editor: {
-            eyebrow: 'Editor extension',
             title: 'Your commands, checked in your editor',
             description: 'A command inside a Python string is still a command. The StewBeet extension for VS Code reads them as such, gives .bolt files their own language, and links every block to the function your build wrote from it.',
             point1: 'Completion, hover and errors on the commands, as you type',
@@ -108,7 +105,6 @@ export const translations = {
 
         // Built with StewBeet
         builtWith: {
-            eyebrow: 'Built with StewBeet',
             title: '{n} public projects are built with StewBeet',
             subtitle: 'Two of them at scale, with the source you can read.',
             community: 'Written by other people',
@@ -132,7 +128,6 @@ export const translations = {
 
         // Standing on giants: the home page section
         giants: {
-            eyebrow: 'Built on',
             title: 'StewBeet did not get here alone',
             subtitle: 'Every build runs on open-source tools made by people in the datapack community. These are the ones StewBeet could not exist without.',
             beetRole: 'The pipeline. One build for the datapack and the resource pack.',
@@ -147,7 +142,6 @@ export const translations = {
 
         // Standing on giants: the /credits page
         credits: {
-            eyebrow: 'Credits',
             title: 'Standing on giants',
             subtitle: 'StewBeet did not get here alone. What follows is a thank-you to the projects it is built on, and to the people behind them.',
             beetBody: 'A development kit that unifies datapack and resource pack tooling into a single pipeline. StewBeet is a set of beet plugins, so everything beet knows how to do stays available to you. Built by vberlier (fizzy), misode, edayot (airdox), rx97, TheNuclearNexus, and many more.',
@@ -173,7 +167,6 @@ export const translations = {
 
         // Installation
         installation: {
-            eyebrow: 'Get started',
             title: 'From nothing to a built pack in four commands',
             step1: 'Install Python',
             step1Desc: 'StewBeet needs Python 3.14 or newer',
@@ -267,8 +260,6 @@ export const translations = {
 
         // Documentation Page
         documentation: {
-            pluginsEyebrow: 'Reference',
-            eyebrow: 'Learn StewBeet',
             title: 'Documentation',
             subtitle: 'Start with the quickstart, then open the guide for the task in front of you. Every plugin has its own page further down.',
             cookbook: 'Cookbook',
@@ -336,7 +327,6 @@ export const translations = {
             whereEditor: 'VS Code',
             whereBrowser: 'Runs in your browser',
             whereServer: 'Runs on the server',
-            eyebrow: 'Tools',
             title: 'Tools',
             subtitle: 'Things you can use without installing StewBeet, and the extension for when you do.',
             markdownToBBCode: 'Markdown to BBCode Converter',
@@ -351,7 +341,6 @@ export const translations = {
 
         // Playground
         playground: {
-            eyebrow: 'Try it',
             title: 'Playground',
             subtitle: 'Write a definitions module. Build it. Read every file it produced.',
             presets: 'Start from:',
@@ -398,7 +387,6 @@ export const translations = {
 
         // auto.headers
         autoHeaders: {
-            eyebrow: 'Tool',
             title: 'Auto Headers',
             subtitle: 'Upload a datapack. Get it back with a header on every function.',
             pluginLink: 'auto.headers is a standalone beet plugin',
@@ -476,7 +464,6 @@ export const translations = {
 
         // Telemetry page
         telemetry: {
-            eyebrow: 'Privacy',
             title: 'Telemetry',
             subtitle: 'StewBeet counts successful builds, anonymously, so the project knows whether anyone is using it, and the tools on this site are counted the same way. Here are the numbers, the exact contents of what is sent, and how to switch it off.',
 
@@ -611,7 +598,6 @@ export const translations = {
 
         // What you gain: the bento grid
         gains: {
-            eyebrow: 'Ce que vous y gagnez',
             title: 'Maintenez une définition, pas huit fichiers',
             lead: 'Un seul custom block écrit à la main, c\'est huit fichiers dans deux packs et quatre formats. Oubliez-en un et rien ne plante : le bloc ne drop simplement jamais. StewBeet reconstruit les huit depuis votre définition à chaque compilation, et fait de même pour tout ce qui suit.',
             byHandTitle: 'À la main',
@@ -645,7 +631,6 @@ export const translations = {
 
         // In-game manual showcase
         manual: {
-            eyebrow: 'Manuel en jeu',
             title: 'Votre datapack se documente tout seul',
             description: 'Chaque item défini obtient sa page de manuel : sa recipe dessinée à partir des ingrédients déclarés, sa description, et une navigation cliquable entre catégories. Les joueurs fabriquent le livre en jeu et il est déjà à jour.',
             point1: 'Recipes dessinées depuis vos définitions, pas capturées à la main',
@@ -657,7 +642,6 @@ export const translations = {
 
         // Editor showcase
         editor: {
-            eyebrow: 'Extension d\'éditeur',
             title: 'Vos commandes, vérifiées dans votre éditeur',
             description: 'Une commande dans une chaîne Python reste une commande. L\'extension StewBeet pour VS Code les lit comme telles, donne aux fichiers .bolt leur propre langage, et relie chaque bloc à la fonction que votre build en a tirée.',
             point1: 'Complétion, survol et erreurs sur les commandes, à la frappe',
@@ -678,7 +662,6 @@ export const translations = {
 
         // Built with StewBeet
         builtWith: {
-            eyebrow: 'Faits avec StewBeet',
             title: '{n} projets publics sont faits avec StewBeet',
             subtitle: 'Deux d\'entre eux à grande échelle, avec le code que vous pouvez lire.',
             community: 'Écrits par d\'autres personnes',
@@ -702,7 +685,6 @@ export const translations = {
 
         // Standing on giants: the home page section
         giants: {
-            eyebrow: 'Construit sur',
             title: 'StewBeet n\'est pas arrivé là tout seul',
             subtitle: 'Chaque build repose sur des outils open-source faits par des gens de la communauté datapack. Voici ceux sans lesquels StewBeet n\'existerait pas.',
             beetRole: 'Le pipeline. Un seul build pour le datapack et le resource pack.',
@@ -717,7 +699,6 @@ export const translations = {
 
         // Standing on giants: the /credits page
         credits: {
-            eyebrow: 'Remerciements',
             title: 'Sur les épaules de géants',
             subtitle: 'StewBeet n\'est pas arrivé là tout seul. Ce qui suit est un merci aux projets sur lesquels il repose, et aux personnes derrière.',
             beetBody: 'Un kit de développement qui unifie l\'outillage datapack et resource pack dans un seul pipeline. StewBeet est un ensemble de plugins beet : tout ce que beet sait faire reste à votre disposition. Construit par vberlier (fizzy), misode, edayot (airdox), rx97, TheNuclearNexus, et bien d\'autres.',
@@ -743,7 +724,6 @@ export const translations = {
 
         // Installation
         installation: {
-            eyebrow: 'Démarrer',
             title: 'De rien à un pack compilé en quatre commandes',
             step1: 'Installer Python',
             step1Desc: 'StewBeet demande Python 3.14 ou plus récent',
@@ -837,8 +817,6 @@ export const translations = {
 
         // Documentation Page
         documentation: {
-            pluginsEyebrow: 'Référence',
-            eyebrow: 'Apprendre StewBeet',
             title: 'Documentation',
             subtitle: 'Commencez par le quickstart, puis ouvrez le guide de la tâche du moment. Chaque plugin a sa propre page plus bas.',
             cookbook: 'Cookbook',
@@ -906,7 +884,6 @@ export const translations = {
             whereEditor: 'VS Code',
             whereBrowser: 'Tourne dans votre navigateur',
             whereServer: 'Tourne sur le serveur',
-            eyebrow: 'Outils',
             title: 'Outils',
             subtitle: 'Ce que vous pouvez utiliser sans installer StewBeet, et l\'extension pour quand vous l\'aurez.',
             markdownToBBCode: 'Convertisseur Markdown vers BBCode',
@@ -921,7 +898,6 @@ export const translations = {
 
         // Playground
         playground: {
-            eyebrow: 'Essayer',
             title: 'Playground',
             subtitle: 'Écrivez un module de definitions. Compilez. Lisez chaque fichier produit.',
             presets: 'Partir de :',
@@ -966,7 +942,6 @@ export const translations = {
 
         // auto.headers
         autoHeaders: {
-            eyebrow: 'Outil',
             title: 'Auto Headers',
             subtitle: 'Envoyez un datapack. Récupérez-le avec un header sur chaque function.',
             pluginLink: 'auto.headers est un plugin beet indépendant',
@@ -1044,7 +1019,6 @@ export const translations = {
 
         // Telemetry page
         telemetry: {
-            eyebrow: 'Vie privée',
             title: 'Télémétrie',
             subtitle: "StewBeet compte les builds réussis, de façon anonyme, pour savoir si le projet sert à quelqu'un, et les outils de ce site sont comptés de la même manière. Voici les chiffres, le contenu exact de ce qui est envoyé, et comment le désactiver.",
 

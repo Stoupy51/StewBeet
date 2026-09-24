@@ -86,6 +86,8 @@ export const Hero: React.FC = () => {
     const gettingStarted = `/markdown?src=${encodeURIComponent(language === 'fr' ? '0_getting_started/fr.md' : '0_getting_started/en.md')}`;
     useIntro();
     const [active, setActive] = useState(heroCode.snippets[0].id);
+    // Only a tab click fades the code in, so the first paint and the intro are left untouched.
+    const [switched, setSwitched] = useState(false);
     const snippet = heroCode.snippets.find(({ id }) => id === active) ?? heroCode.snippets[0];
     const codeScroll = useOverflowFade();
 
@@ -155,7 +157,10 @@ export const Hero: React.FC = () => {
                                     {heroCode.snippets.map(({ id, label }) => (
                                         <button
                                             key={id}
-                                            onClick={() => setActive(id)}
+                                            onClick={() => {
+                                                setActive(id);
+                                                setSwitched(true);
+                                            }}
                                             aria-pressed={id === active}
                                             className={`h-6 px-2 rounded-control font-mono text-[0.6875rem] transition-colors ${
                                                 id === active ? 'bg-ink-800 text-ink-50' : 'text-ink-400 hover:text-ink-100'
@@ -172,9 +177,11 @@ export const Hero: React.FC = () => {
                                     aria-hidden="true"
                                     className="intro-scan pointer-events-none absolute inset-x-0 top-0 h-16 opacity-0 bg-gradient-to-b from-transparent via-beet-500/20 to-transparent"
                                 />
+                                {/* Keyed on the tab so each switch remounts it and replays the fade, matching the dimming of the tree. */}
                                 <div
+                                    key={snippet.id}
                                     dangerouslySetInnerHTML={{ __html: snippet.html }}
-                                    className="font-mono text-[0.75rem] leading-[1.55] [&>pre]:!bg-transparent [&>pre]:!m-0 [&>pre]:!p-0 [&_code]:font-mono"
+                                    className={`${switched ? 'code-swap ' : ''}font-mono text-[0.75rem] leading-[1.55] [&>pre]:!bg-transparent [&>pre]:!m-0 [&>pre]:!p-0 [&_code]:font-mono`}
                                 />
                             </div>
                         </CodeTab>
