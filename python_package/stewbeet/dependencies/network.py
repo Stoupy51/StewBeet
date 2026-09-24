@@ -90,6 +90,22 @@ SOCKET_HINTS: dict[int, str] = {
 }
 """ Human explanation per socket error, keyed by Windows error code when available, else by errno. """
 
+TLS_HINTS: dict[int, str] = {
+	9: "the certificate is not valid yet, the system clock is probably wrong",
+	10: (
+		"a certificate of the chain has expired: either the system clock is wrong, or the OS certificate store holds a stale certificate that Python picks over the valid one "
+		"(on Windows, delete the expired entries from certmgr.msc > Intermediate Certification Authorities, then open the URL once in Edge)"
+	),
+	18: "the server sent a self-signed certificate, HTTPS is being intercepted by an antivirus/proxy",
+	19: "a self-signed certificate sits in the chain, HTTPS is being intercepted by an antivirus/proxy whose root is not trusted",
+	20: "the root certificate is missing from the OS store, or HTTPS is being intercepted by an antivirus/proxy",
+	62: "the certificate does not match this host name, a proxy or captive portal is answering instead",
+}
+""" Human explanation per OpenSSL verification error, keyed by X509_V_ERR code. """
+
+TLS_WORKAROUND: str = "setting the SSL_CERT_FILE environment variable to the path printed by 'python -m certifi' bypasses the OS store"
+""" Appended to certificate failures, since trusting certifi's bundle instead of the OS store fixes most of them. """
+
 
 # Classes
 class TransientDownloadError(Exception):
@@ -186,7 +202,8 @@ def describe_network_error(url: str, exc: BaseException) -> str:
 
 	reason: object = exc.reason if isinstance(exc, URLError) else exc
 	if isinstance(reason, ssl.SSLCertVerificationError):
-		return f"TLS certificate of '{host}' rejected ({reason}): HTTPS is being intercepted by an antivirus/proxy, or the CA bundle is outdated"
+		hint: str = TLS_HINTS.get(reason.verify_code, "HTTPS is being intercepted by an antivirus/proxy, or the OS certificate store is outdated")
+		return f"TLS certificate of '{host}' rejected ({reason.verify_message}): {hint} | {TLS_WORKAROUND}"
 	if isinstance(reason, ssl.SSLError):
 		return f"TLS handshake with '{host}' failed ({reason}): traffic is being filtered by a firewall or a proxy{connectivity_verdict()}"
 	if isinstance(reason, socket.gaierror):
