@@ -116,7 +116,7 @@ export function MarkdownToBBCodePage() {
     <div className="min-h-screen bg-ink-950 text-ink-100">
       <Navbar />
 
-      <PageHeader eyebrow={t('tools.eyebrow')} title={t('tools.markdownToBBCode')} lead={t('tools.markdownToBBCodeDesc')} width="max-w-7xl" />
+      <PageHeader title={t('tools.markdownToBBCode')} lead={t('tools.markdownToBBCodeDesc')} width="max-w-7xl" />
 
       <main className="relative pb-16 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">

@@ -26,7 +26,7 @@ export const CreditsPage: React.FC = () => {
             <Navbar />
 
             <main>
-                <PageHeader eyebrow={t('credits.eyebrow')} title={t('credits.title')} lead={t('credits.subtitle')} width="max-w-3xl" />
+                <PageHeader title={t('credits.title')} lead={t('credits.subtitle')} width="max-w-3xl" />
 
                 <div className="relative z-10 pb-12 px-4">
                     <div className="max-w-3xl mx-auto space-y-3">

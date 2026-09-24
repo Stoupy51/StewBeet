@@ -9,9 +9,6 @@
 /** Page width and gutters, shared by every section so edges line up down the page. */
 export const PAGE = 'max-w-page mx-auto px-4 sm:px-6';
 
-/** Small mono label above a section title, preceded by a beet pixel (see `.eyebrow` in index.css). */
-export const EYEBROW = 'eyebrow';
-
 /** Section title. */
 export const SECTION_TITLE = 'text-[1.75rem] md:text-[2.25rem] leading-tight font-semibold tracking-tight text-ink-50 text-balance';
 

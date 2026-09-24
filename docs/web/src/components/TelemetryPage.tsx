@@ -54,7 +54,7 @@ export const TelemetryPage: React.FC = () => {
             <Navbar />
 
             <main>
-                <PageHeader eyebrow={t('telemetry.eyebrow')} title={t('telemetry.title')} lead={t('telemetry.subtitle')} width="max-w-3xl" />
+                <PageHeader title={t('telemetry.title')} lead={t('telemetry.subtitle')} width="max-w-3xl" />
 
                 {/* ── Public statistics ──────────────────────────────────────── */}
                 <div className="relative z-10 pb-12 px-4">

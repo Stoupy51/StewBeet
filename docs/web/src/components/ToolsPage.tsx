@@ -35,7 +35,7 @@ export const ToolsPage: React.FC = () => {
     return (
         <div className="min-h-screen bg-ink-950 text-ink-200">
             <Navbar />
-            <PageHeader eyebrow={t('tools.eyebrow')} title={t('tools.title')} lead={t('tools.subtitle')} width="max-w-5xl" />
+            <PageHeader title={t('tools.title')} lead={t('tools.subtitle')} width="max-w-5xl" />
 
             <div className="max-w-5xl mx-auto px-4 sm:px-6 pb-24 grid grid-cols-1 md:grid-cols-2 gap-4">
                 {tools.map((tool, index) => (

@@ -202,7 +202,7 @@ export const AutoHeadersPage: React.FC = () => {
         <div className="min-h-screen bg-ink-950 text-ink-100">
             <Navbar />
 
-            <PageHeader eyebrow={t('autoHeaders.eyebrow')} title={t('autoHeaders.title')} lead={t('autoHeaders.subtitle')} width="max-w-7xl" />
+            <PageHeader title={t('autoHeaders.title')} lead={t('autoHeaders.subtitle')} width="max-w-7xl" />
 
             <div className="relative z-10 px-4 pb-16">
                 <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-4">

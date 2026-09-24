@@ -4,7 +4,7 @@ import { useTranslation } from '../i18n/useTranslation';
 import { useShiki } from '../hooks/useShiki';
 import { FileTree } from './FileTree';
 import { BY_HAND, GAIN_TILES, type GainTile, type GainVisual, type Snippet } from './gainsData';
-import { CARD, EYEBROW, PAGE, SECTION_LEAD, SECTION_TITLE } from '../theme';
+import { CARD, PAGE, SECTION_LEAD, SECTION_TITLE } from '../theme';
 
 /**
  * "What you gain": the countable gain first (eight hand-synced files against one definition), then
@@ -135,8 +135,7 @@ export const Gains: React.FC = () => {
         <section id="features" className="py-14 md:py-28 border-t border-ink-800 scroll-mt-14">
             <div className={PAGE}>
                 <div data-rise className="max-w-3xl">
-                    <p className={EYEBROW}>{t('gains.eyebrow')}</p>
-                    <h2 className={`mt-4 ${SECTION_TITLE}`}>{t('gains.title')}</h2>
+                    <h2 className={SECTION_TITLE}>{t('gains.title')}</h2>
                     <p className={`mt-4 ${SECTION_LEAD}`}>{t('gains.lead')}</p>
                 </div>
 

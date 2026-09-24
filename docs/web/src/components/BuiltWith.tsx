@@ -1,6 +1,6 @@
 import { HiExternalLink } from 'react-icons/hi';
 import { useTranslation } from '../i18n/useTranslation';
-import { CARD, EYEBROW, PAGE, SECTION_LEAD, SECTION_TITLE, TEXT_ACCENT_HOVER } from '../theme';
+import { CARD, PAGE, SECTION_LEAD, SECTION_TITLE, TEXT_ACCENT_HOVER } from '../theme';
 import { FLAGSHIPS, TOTAL_BUILT_WITH, type Flagship } from './builtWithData';
 
 const numberFormat = new Intl.NumberFormat('en-US');
@@ -81,8 +81,7 @@ export const BuiltWith: React.FC = () => {
         <section id="built-with" className="py-14 md:py-28 border-t border-ink-800">
             <div className={PAGE}>
                 <div data-rise className="max-w-3xl">
-                    <p className={EYEBROW}>{t('builtWith.eyebrow')}</p>
-                    <h2 className={`mt-4 ${SECTION_TITLE}`}>{t('builtWith.title').replace('{n}', String(TOTAL_BUILT_WITH))}</h2>
+                    <h2 className={SECTION_TITLE}>{t('builtWith.title').replace('{n}', String(TOTAL_BUILT_WITH))}</h2>
                     <p className={`mt-4 ${SECTION_LEAD}`}>{t('builtWith.subtitle')}</p>
                 </div>
 
