@@ -68,14 +68,49 @@ def parse_version(s: str) -> tuple[int, ...]:
 	return tuple(int(x) for x in s.strip("v").split(".") if x.isdigit())
 
 
+def mc_floats(mc_versions: list[str]) -> list[float]:
+	"""Convert MC versions to comparable floats with ``stp.version_to_float``, skipping ``infinite`` and unparsable ones.
+
+	Snapshots of the next version compare as newer than the current release, and release candidates as older:
+
+	>>> [round(x, 6) for x in mc_floats(["1.21.11", "26.3-snapshot-1", "26.2-rc1", "infinite"])]
+	[1.021011, 26.003001, 26.001999]
+	"""
+	floats = (stp.version_to_float(s, error=False) for s in mc_versions if s != "infinite")
+	return [f for f in floats if f is not None]
+
+
 def mc_compatible(versions: list[JsonDict], mc_tup: tuple[int, ...]) -> list[JsonDict]:
-	"""Return versions whose supports list includes mc_tup (exact), falling back to max(supports) <= mc_tup."""
-	def sup_tuples(v: JsonDict) -> list[tuple[int, ...]]:
-		return [parse_version(s) for s in v.get("supports", [])]
-	exact = [v for v in versions if mc_tup in sup_tuples(v)]
+	"""Return Smithed versions whose supports list includes mc_tup (exact), falling back to max(supports) <= mc_tup.
+
+	>>> vs = [{"name": "1.1.0", "supports": ["26.3-snapshot-1"]}, {"name": "1.0.0", "supports": ["1.21.11"]}]
+	>>> [v["name"] for v in mc_compatible(vs, (26, 2))]
+	['1.0.0']
+	"""
+	mc: float = stp.version_to_float(version_str(mc_tup))
+	exact = [v for v in versions if mc in mc_floats(v.get("supports", []))]
 	if exact:
 		return exact
-	return [v for v in versions if sup_tuples(v) and max(sup_tuples(v)) <= mc_tup]
+	return [v for v in versions if (floats := mc_floats(v.get("supports", []))) and max(floats) <= mc]
+
+
+def modrinth_older_versions(versions: list[JsonDict], mc_ver: str) -> list[JsonDict]:
+	"""Return Modrinth versions (order kept) whose game_versions are all <= mc_ver.
+
+	>>> vs = [{"version_number": "1.11.0", "game_versions": ["26.3"]}, {"version_number": "1.10.1", "game_versions": ["1.21.8", "1.21.11"]}]
+	>>> [v["version_number"] for v in modrinth_older_versions(vs, "26.2")]
+	['1.10.1']
+	"""
+	mc: float = stp.version_to_float(mc_ver)
+	return [v for v in versions if (floats := mc_floats(v.get("game_versions", []))) and max(floats) <= mc]
+
+
+def latest_smithed_compatible(smithed_id: str, versions: list[JsonDict], mc_tup: tuple[int, ...]) -> JsonDict | None:
+	"""Return the latest Smithed version compatible with mc_tup, or the latest overall (with a warning) if none is."""
+	compat = mc_compatible(versions, mc_tup)
+	if not compat and versions:
+		stp.warning(f"No Smithed release of '{smithed_id}' supports MC {version_str(mc_tup)} or older; using the latest one anyway.")
+	return max(compat or versions, key=lambda v: stp.version_to_float(v.get("name", "0.0.0"), error=False) or 0.0, default=None)
 
 
 # ---------------------------------------------------------------------------
@@ -99,14 +134,12 @@ def resolve_smithed_lib(ctx: Context, lib_ns: str, lib_data: JsonDict, mc_tup: t
 		# Pinned version: find exact match, fall back to latest compatible
 		match = next((v for v in versions if v.get("name") == target), None)
 		if match is None:
-			compat = mc_compatible(versions, mc_tup)
-			match = max(compat or versions, key=lambda v: parse_version(v.get("name", "0.0.0")), default=None)
+			match = latest_smithed_compatible(smithed_id, versions, mc_tup)
 			if match:
 				stp.warning(f"Smithed '{smithed_id}' v{target} not found; using v{match['name']} instead.")
 	else:
 		# No pinned version: pick latest compatible with user's MC
-		compat = mc_compatible(versions, mc_tup)
-		match = max(compat or versions, key=lambda v: parse_version(v.get("name", "0.0.0")), default=None)
+		match = latest_smithed_compatible(smithed_id, versions, mc_tup)
 
 	if match is None:
 		stp.warning(f"Smithed '{smithed_id}': no versions available. Skipping.")
@@ -130,7 +163,15 @@ def resolve_modrinth_lib(ctx: Context, lib_ns: str, lib_data: JsonDict, mc_ver: 
 
 	versions = cached_json(ctx, f"{base}?game_versions=[%22{mc_ver}%22]&loaders=[%22datapack%22]")
 	if not versions:
+		# No version explicitly tagged for this MC version: fall back to every version,
+		# but only keep the ones made for an older MC version (never a newer one)
 		versions = cached_json(ctx, f"{base}?loaders=[%22datapack%22]")
+		if versions:
+			older = modrinth_older_versions(versions, mc_ver)
+			if older:
+				versions = older
+			else:
+				stp.warning(f"No Modrinth release of '{slug}' supports MC {mc_ver} or older; using the latest one ({versions[0].get('version_number')}) anyway.")
 	if versions is None:
 		stp.warning(f"Could not read the Modrinth API for '{slug}' (see the failure above). Skipping.")
 		return None
