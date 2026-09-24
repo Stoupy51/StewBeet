@@ -1,0 +1,8 @@
+stewbeet.plugins.sniffer.encode module
+======================================
+
+.. automodule:: stewbeet.plugins.sniffer.encode
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

@@ -1,0 +1,8 @@
+stewbeet.plugins.ingame\_manual.showcase module
+===============================================
+
+.. automodule:: stewbeet.plugins.ingame_manual.showcase
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

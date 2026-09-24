@@ -1,0 +1,21 @@
+stewbeet.contrib.simplenergy package
+====================================
+
+.. automodule:: stewbeet.contrib.simplenergy
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.contrib.simplenergy.balancing
+   stewbeet.contrib.simplenergy.batteries
+   stewbeet.contrib.simplenergy.cables
+   stewbeet.contrib.simplenergy.energy_lib_calls
+   stewbeet.contrib.simplenergy.gui
+   stewbeet.contrib.simplenergy.wrench

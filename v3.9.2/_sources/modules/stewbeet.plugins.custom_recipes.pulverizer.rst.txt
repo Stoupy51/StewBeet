@@ -1,0 +1,8 @@
+stewbeet.plugins.custom\_recipes.pulverizer module
+==================================================
+
+.. automodule:: stewbeet.plugins.custom_recipes.pulverizer
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

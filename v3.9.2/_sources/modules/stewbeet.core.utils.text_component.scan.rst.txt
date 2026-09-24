@@ -1,0 +1,8 @@
+stewbeet.core.utils.text\_component.scan module
+===============================================
+
+.. automodule:: stewbeet.core.utils.text_component.scan
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

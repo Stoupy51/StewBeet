@@ -1,0 +1,8 @@
+stewbeet.plugins.spyglass.confirm module
+========================================
+
+.. automodule:: stewbeet.plugins.spyglass.confirm
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
