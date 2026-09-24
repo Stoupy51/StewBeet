@@ -69,28 +69,44 @@ def parse_version(s: str) -> tuple[int, ...]:
 	return tuple(int(x) for x in s.strip("v").split(".") if x.isdigit())
 
 
+def release_tuples(mc_versions: list[str]) -> list[tuple[int, ...]]:
+	"""Parse release MC versions, ignoring snapshots and pre-releases (``25w14a``, ``26.3-snapshot-1``, ``1.21-pre1``).
+
+	>>> release_tuples(["1.21.11", "26.3-snapshot-1", "25w14a", "26.2"])
+	[(1, 21, 11), (26, 2)]
+	"""
+	return [parse_version(s) for s in mc_versions if re.fullmatch(r"\d+(\.\d+)+", s)]
+
+
 def mc_compatible(versions: list[JsonDict], mc_tup: tuple[int, ...]) -> list[JsonDict]:
-	"""Return versions whose supports list includes mc_tup (exact), falling back to max(supports) <= mc_tup."""
-	def sup_tuples(v: JsonDict) -> list[tuple[int, ...]]:
-		return [parse_version(s) for s in v.get("supports", [])]
-	exact = [v for v in versions if mc_tup in sup_tuples(v)]
+	"""Return Smithed versions whose supports list includes mc_tup (exact), falling back to max(supports) <= mc_tup.
+
+	>>> vs = [{"name": "1.1.0", "supports": ["26.3-snapshot-1"]}, {"name": "1.0.0", "supports": ["1.21.11"]}]
+	>>> [v["name"] for v in mc_compatible(vs, (26, 2))]
+	['1.0.0']
+	"""
+	exact = [v for v in versions if mc_tup in release_tuples(v.get("supports", []))]
 	if exact:
 		return exact
-	return [v for v in versions if sup_tuples(v) and max(sup_tuples(v)) <= mc_tup]
+	return [v for v in versions if (tuples := release_tuples(v.get("supports", []))) and max(tuples) <= mc_tup]
 
 
 def modrinth_older_versions(versions: list[JsonDict], mc_tup: tuple[int, ...]) -> list[JsonDict]:
-	"""Return versions (order kept) whose release game_versions are all <= mc_tup.
-
-	Snapshots and other non-release game versions (``25w14a``, ``26.3-snapshot-1``) are ignored.
+	"""Return Modrinth versions (order kept) whose release game_versions are all <= mc_tup.
 
 	>>> vs = [{"version_number": "1.11.0", "game_versions": ["26.3"]}, {"version_number": "1.10.1", "game_versions": ["1.21.8", "1.21.11"]}]
 	>>> [v["version_number"] for v in modrinth_older_versions(vs, (26, 2))]
 	['1.10.1']
 	"""
-	def release_tuples(v: JsonDict) -> list[tuple[int, ...]]:
-		return [parse_version(s) for s in v.get("game_versions", []) if re.fullmatch(r"\d+(\.\d+)+", s)]
-	return [v for v in versions if (tuples := release_tuples(v)) and max(tuples) <= mc_tup]
+	return [v for v in versions if (tuples := release_tuples(v.get("game_versions", []))) and max(tuples) <= mc_tup]
+
+
+def latest_smithed_compatible(smithed_id: str, versions: list[JsonDict], mc_tup: tuple[int, ...]) -> JsonDict | None:
+	"""Return the latest Smithed version compatible with mc_tup, or the latest overall (with a warning) if none is."""
+	compat = mc_compatible(versions, mc_tup)
+	if not compat and versions:
+		stp.warning(f"No Smithed release of '{smithed_id}' supports MC {version_str(mc_tup)} or older; using the latest one anyway.")
+	return max(compat or versions, key=lambda v: parse_version(v.get("name", "0.0.0")), default=None)
 
 
 # ---------------------------------------------------------------------------
@@ -114,14 +130,12 @@ def resolve_smithed_lib(ctx: Context, lib_ns: str, lib_data: JsonDict, mc_tup: t
 		# Pinned version: find exact match, fall back to latest compatible
 		match = next((v for v in versions if v.get("name") == target), None)
 		if match is None:
-			compat = mc_compatible(versions, mc_tup)
-			match = max(compat or versions, key=lambda v: parse_version(v.get("name", "0.0.0")), default=None)
+			match = latest_smithed_compatible(smithed_id, versions, mc_tup)
 			if match:
 				stp.warning(f"Smithed '{smithed_id}' v{target} not found; using v{match['name']} instead.")
 	else:
 		# No pinned version: pick latest compatible with user's MC
-		compat = mc_compatible(versions, mc_tup)
-		match = max(compat or versions, key=lambda v: parse_version(v.get("name", "0.0.0")), default=None)
+		match = latest_smithed_compatible(smithed_id, versions, mc_tup)
 
 	if match is None:
 		stp.warning(f"Smithed '{smithed_id}': no versions available. Skipping.")
