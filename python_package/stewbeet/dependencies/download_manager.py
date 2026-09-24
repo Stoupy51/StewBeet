@@ -15,7 +15,6 @@ from stouputils.lazy import ALWAYS_LAZY
 
 __lazy_modules__ = ALWAYS_LAZY
 
-import re
 from dataclasses import dataclass
 
 import stouputils as stp
@@ -69,13 +68,16 @@ def parse_version(s: str) -> tuple[int, ...]:
 	return tuple(int(x) for x in s.strip("v").split(".") if x.isdigit())
 
 
-def release_tuples(mc_versions: list[str]) -> list[tuple[int, ...]]:
-	"""Parse release MC versions, ignoring snapshots and pre-releases (``25w14a``, ``26.3-snapshot-1``, ``1.21-pre1``).
+def mc_floats(mc_versions: list[str]) -> list[float]:
+	"""Convert MC versions to comparable floats with ``stp.version_to_float``, skipping ``infinite`` and unparsable ones.
 
-	>>> release_tuples(["1.21.11", "26.3-snapshot-1", "25w14a", "26.2"])
-	[(1, 21, 11), (26, 2)]
+	Snapshots of the next version compare as newer than the current release, and release candidates as older:
+
+	>>> [round(x, 6) for x in mc_floats(["1.21.11", "26.3-snapshot-1", "26.2-rc1", "infinite"])]
+	[1.021011, 26.003001, 26.001999]
 	"""
-	return [parse_version(s) for s in mc_versions if re.fullmatch(r"\d+(\.\d+)+", s)]
+	floats = (stp.version_to_float(s, error=False) for s in mc_versions if s != "infinite")
+	return [f for f in floats if f is not None]
 
 
 def mc_compatible(versions: list[JsonDict], mc_tup: tuple[int, ...]) -> list[JsonDict]:
@@ -85,20 +87,22 @@ def mc_compatible(versions: list[JsonDict], mc_tup: tuple[int, ...]) -> list[Jso
 	>>> [v["name"] for v in mc_compatible(vs, (26, 2))]
 	['1.0.0']
 	"""
-	exact = [v for v in versions if mc_tup in release_tuples(v.get("supports", []))]
+	mc: float = stp.version_to_float(version_str(mc_tup))
+	exact = [v for v in versions if mc in mc_floats(v.get("supports", []))]
 	if exact:
 		return exact
-	return [v for v in versions if (tuples := release_tuples(v.get("supports", []))) and max(tuples) <= mc_tup]
+	return [v for v in versions if (floats := mc_floats(v.get("supports", []))) and max(floats) <= mc]
 
 
-def modrinth_older_versions(versions: list[JsonDict], mc_tup: tuple[int, ...]) -> list[JsonDict]:
-	"""Return Modrinth versions (order kept) whose release game_versions are all <= mc_tup.
+def modrinth_older_versions(versions: list[JsonDict], mc_ver: str) -> list[JsonDict]:
+	"""Return Modrinth versions (order kept) whose game_versions are all <= mc_ver.
 
 	>>> vs = [{"version_number": "1.11.0", "game_versions": ["26.3"]}, {"version_number": "1.10.1", "game_versions": ["1.21.8", "1.21.11"]}]
-	>>> [v["version_number"] for v in modrinth_older_versions(vs, (26, 2))]
+	>>> [v["version_number"] for v in modrinth_older_versions(vs, "26.2")]
 	['1.10.1']
 	"""
-	return [v for v in versions if (tuples := release_tuples(v.get("game_versions", []))) and max(tuples) <= mc_tup]
+	mc: float = stp.version_to_float(mc_ver)
+	return [v for v in versions if (floats := mc_floats(v.get("game_versions", []))) and max(floats) <= mc]
 
 
 def latest_smithed_compatible(smithed_id: str, versions: list[JsonDict], mc_tup: tuple[int, ...]) -> JsonDict | None:
@@ -106,7 +110,7 @@ def latest_smithed_compatible(smithed_id: str, versions: list[JsonDict], mc_tup:
 	compat = mc_compatible(versions, mc_tup)
 	if not compat and versions:
 		stp.warning(f"No Smithed release of '{smithed_id}' supports MC {version_str(mc_tup)} or older; using the latest one anyway.")
-	return max(compat or versions, key=lambda v: parse_version(v.get("name", "0.0.0")), default=None)
+	return max(compat or versions, key=lambda v: stp.version_to_float(v.get("name", "0.0.0"), error=False) or 0.0, default=None)
 
 
 # ---------------------------------------------------------------------------
@@ -163,7 +167,7 @@ def resolve_modrinth_lib(ctx: Context, lib_ns: str, lib_data: JsonDict, mc_ver: 
 		# but only keep the ones made for an older MC version (never a newer one)
 		versions = cached_json(ctx, f"{base}?loaders=[%22datapack%22]")
 		if versions:
-			older = modrinth_older_versions(versions, parse_version(mc_ver))
+			older = modrinth_older_versions(versions, mc_ver)
 			if older:
 				versions = older
 			else:
