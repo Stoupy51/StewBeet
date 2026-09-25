@@ -136,7 +136,11 @@ padded down to the baseline with transparency, which is the only shape Minecraft
 | `steel_ingot`, `mypack:steel_ingot` | Isometric render of the item model, via `model_resolver` | Nothing |
 | `minecraft:stone` | Downloaded from the Minecraft wiki | Nothing |
 | `mechanization:tin_ore` | `<iso_renders_path>/mechanization/tin_ore.png` | Drop the PNG there yourself |
+| `mechanization:tin_ore` | `<textures_folder>/mechanization/tin_ore.png`, when the first one is missing | Drop the PNG there yourself |
 | `ICON` | Your `assets/pack.png` | Nothing |
+
+`stewbeet clean` deletes `iso_renders_path`, since everything else in it is generated.
+Hand made pictures (a logo, a countdown, an icon drawn for the pack) therefore go in `textures_folder`, which survives it.
 
 An id that resolves to nothing gets a warning and is left untouched in the output, so a typo never silently
 disappears from a message.

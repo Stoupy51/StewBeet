@@ -293,7 +293,8 @@ def ensure_item_images(item_ids: Iterable[str], cache_assets: bool = True) -> di
 
 	The three namespace kinds are batched: project items go through a single ``model_resolver`` run,
 	``minecraft:`` items through a single multithreaded download, and any other namespace is expected
-	to already be on disk (see the ``iso_renders_path`` documentation).
+	to already be on disk, in ``iso_renders_path`` or else in ``textures_folder``.
+	Only ``textures_folder`` survives ``stewbeet clean``, so it is where hand made images belong.
 
 	Args:
 		item_ids		(Iterable[str]):	Item ids, namespaced or bare (bare means the project namespace).
@@ -319,14 +320,20 @@ def ensure_item_images(item_ids: Iterable[str], cache_assets: bool = True) -> di
 		os.makedirs(f"{path}/minecraft", exist_ok=True)
 		download_vanilla_textures(path, vanilla, cache_assets)
 
-	# Everything else must already be on disk
+	# Everything else must already be on disk, in the renders cache or among the project textures
+	textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
 	resolved: dict[str, str] = {}
 	for item in qualified:
-		image_path: str = item_image_path(item)
-		if os.path.exists(image_path):
+		namespace, name = item.split(":", 1)
+		candidates: list[str] = [item_image_path(item)]
+		if textures_folder and namespace not in (ns, "minecraft"):
+			candidates.append(f"{stp.clean_path(textures_folder)}/{namespace}/{name}.png")
+		image_path: str | None = next((candidate for candidate in candidates if os.path.exists(candidate)), None)
+		if image_path:
 			resolved[item] = image_path
 		else:
-			stp.warning(f"No image found for '{item}', expected it at '{stp.relative_path(image_path)}'")
+			expected: str = "' or '".join(stp.relative_path(candidate) for candidate in candidates)
+			stp.warning(f"No image found for '{item}', expected it at '{expected}'")
 	return resolved
 
 
