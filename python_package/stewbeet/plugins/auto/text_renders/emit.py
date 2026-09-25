@@ -120,10 +120,11 @@ class GlyphEmitter:
 		from the top of the picture down to the baseline and fit in one glyph on its own. Cutting
 		that row thinner does not help, since every row above the baseline still reaches it: only a
 		smaller ascent does, which is why the message names the one that would have worked.
+		Snapping to a whole multiple of the displayed height is not a cap, so it stays silent.
 		"""
-		if layout.stored[1] >= wanted[1]:
-			return
 		scale: int = max(1, wanted[1] // layout.height)
+		if layout.scale >= scale:
+			return
 		stp.warning(
 			f"'{item_id}' is stored at {layout.stored[0]}x{layout.stored[1]} instead of {wanted[0]}x{wanted[1]}: "
 			f"Minecraft refuses a glyph whose ascent exceeds its height, so the topmost tile has to reach from the top "
