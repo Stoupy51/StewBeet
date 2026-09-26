@@ -55,6 +55,12 @@ export const DocumentationPage: React.FC = () => {
                     pathFr: '0_getting_started/fr.md',
                 },
                 {
+                    title: t('documentation.migration'),
+                    description: t('documentation.migrationDesc'),
+                    pathEn: '9_migration/en.md',
+                    pathFr: '9_migration/fr.md',
+                },
+                {
                     title: t('documentation.editorSupport'),
                     description: t('documentation.editorSupportDesc'),
                     pathEn: '8_editor/en.md',

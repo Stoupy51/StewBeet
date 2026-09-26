@@ -1,6 +1,6 @@
 # Tutoriel : votre premier datapack
 
-Dans ce tutoriel, vous créez un projet StewBeet, vous le compilez, vous le chargez dans Minecraft, puis vous ajoutez un custom item et tout un palier de rubis avec un custom block fonctionnel. Comptez une vingtaine de minutes.
+Dans ce tutoriel, vous créez un projet StewBeet, vous le compilez, vous le chargez dans Minecraft, puis vous ajoutez un custom item et tout un palier de rubis avec un custom block fonctionnel. Comptez une vingtaine de minutes. Vous avez déjà un datapack ? [Migrez-le](../9_migration/fr.md) plutôt.
 
 Il vous faut trois choses :
 
