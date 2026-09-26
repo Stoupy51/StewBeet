@@ -67,7 +67,7 @@ exclude = [
     "dist",
     "*.pyi",
 ]
-line-length = 200
+line-length = 135
 
 [tool.ruff.lint]
 select = [

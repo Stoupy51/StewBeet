@@ -44,10 +44,11 @@ def generate_custom_records(
 	category: str | None = None,
 	attenuation_distance: int | None = None,
 ) -> None:
-	""" Generate custom records by searching in assets/records/ for the files and copying them to the definitions and resource pack folder.
+	""" Generate custom records from the files in assets/records/, copying them to the definitions and the resource pack.
 
 	Args:
-		records					(dict[str, str]):	The custom records to apply, ex: {"record_1": "My first Record.ogg", "record_2": "A second one.ogg"}
+		records					(dict[str, str]):	The custom records to apply.
+			Ex: {"record_1": "My first Record.ogg", "record_2": "A second one.ogg"}
 		category				(str):				The definitions category to apply to the custom records (ex: "music").
 		attenuation_distance	(int):				Blocks after which the record stops being heard, None for the vanilla 16.
 	"""
@@ -56,7 +57,8 @@ def generate_custom_records(
         f"Error during custom record generation: records must be a dictionary, 'auto', or 'all' (got {type(records).__name__})"
 	)
 	records_folder: str = stp.clean_path(Mem.ctx.meta.get("stewbeet", {}).get("records_folder", ""))
-	assert records_folder != "", "Records folder path not found in 'ctx.meta.stewbeet.records_folder'. Please set a directory path in project configuration."
+	assert records_folder != "", \
+		"Records folder path not found in 'ctx.meta.stewbeet.records_folder'. Please set a directory path in project configuration."
 
 	# If no records specified, search in the records folder
 	if not records or records in ["auto", "all"]:
@@ -82,7 +84,10 @@ def generate_custom_records(
 			id=record,
 			manual_category=category,
 			components={
-				"custom_data": {Mem.ctx.project_id:{record: True}, "smithed":{"dict":{"record": {record: True, "item_name": item_name}}}},
+				"custom_data": {
+					Mem.ctx.project_id:{record: True},
+					"smithed":{"dict":{"record": {record: True, "item_name": item_name}}},
+				},
 				"item_name": {"text":"Music Disc", "italic": False},
 				"jukebox_playable": f"{Mem.ctx.project_id}:{record}",
 				"max_stack_size": 1,
@@ -108,7 +113,8 @@ def generate_custom_records(
 				obj.components["custom_data"]["smithed"]["dict"]["jukebox_song"] = json_song
 
 				# Create and write sound
-				add_sound(Mem.ctx, sounds=Sound(source_path=file_path, stream=True, attenuation_distance=attenuation_distance), name=record)
+				record_sound: Sound = Sound(source_path=file_path, stream=True, attenuation_distance=attenuation_distance)
+				add_sound(Mem.ctx, sounds=record_sound, name=record)
 
 			except Exception as e:
 				stp.error(f"Error during custom record generation of '{file_path}', make sure it is using proper Ogg format: {e}")

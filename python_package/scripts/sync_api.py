@@ -31,7 +31,7 @@ MARKER_PATTERN: re.Pattern[str] = re.compile(
 )
 """ The generated declaration, matched whole so a partial strip can never leave a duplicate behind. """
 
-EXTERNAL_CACHE: dict[str, "Module | None"] = {}
+EXTERNAL_CACHE: dict[str, Module | None] = {}
 """ Modules parsed from other distributions, keyed by name, since several packages re-export the same ones. """
 
 INTERNAL: tuple[str, ...] = (

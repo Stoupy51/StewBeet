@@ -116,8 +116,10 @@ def beet_default(ctx: Context):
 			for variant, item in material.items():
 				if variant != "material":
 					content += (
-						"execute unless score #success_material simpledrawer.io matches 1 if data storage simpledrawer:io item_material.components"
-						f'."minecraft:custom_data".{ns}.{item} run function {ns}:calls/simpledrawer/{material_base}/{variant}\n'
+						"execute unless score #success_material simpledrawer.io matches 1 "
+						"if data storage simpledrawer:io item_material.components"
+						f'."minecraft:custom_data".{ns}.{item} '
+						f'run function {ns}:calls/simpledrawer/{material_base}/{variant}\n'
 					)
 
 		write_function(f"{ns}:calls/simpledrawer/material", content)
@@ -133,7 +135,10 @@ def beet_default(ctx: Context):
 			# For each variant, make a file
 			for variant in material.keys():
 				if variant != "material":
-					content: str = f"\nscoreboard players set #type simpledrawer.io {types_for_variants[variant]}\nfunction {ns}:calls/simpledrawer/{material_base}/main\n"
+					content: str = (
+						f"\nscoreboard players set #type simpledrawer.io {types_for_variants[variant]}\n"
+						f"function {ns}:calls/simpledrawer/{material_base}/main\n"
+					)
 					write_function(f"{ns}:calls/simpledrawer/{material_base}/{variant}", content)
 
 			# Get ingot and nugget conversions if any

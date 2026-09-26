@@ -53,7 +53,8 @@ def align(chunks: Sequence[WriteChunk], text: str) -> dict[int, SourceOrigin]:
 
 	The lines the two sequences share at each end are matched off before `difflib` sees anything.
 	`find_longest_match` is quadratic in how often a line repeats, and a pack of near-identical commands is its worst case.
-	Trimming hands it only what a rewrite actually changed, which for a function nobody rewrote but the header plugin is nothing at all.
+	Trimming hands it only what a rewrite actually changed.
+	For a function that only the header plugin rewrote, that is nothing at all.
 
 	Args:
 		chunks (Sequence[WriteChunk]): Recorded contributions, in write order.
@@ -91,8 +92,10 @@ def align(chunks: Sequence[WriteChunk], text: str) -> dict[int, SourceOrigin]:
 	if not middle_recorded or not middle_final:
 		return mapped
 
-	# `find_longest_match` walks every occurrence of a line each time it meets that line, so an element repeating a thousand times is quadratic, and a blank line is that element.
-	# Calling blanks junk also aligns more commands, since difflib then anchors on the commands themselves instead of on whichever blank line came first.
+	# `find_longest_match` walks every occurrence of a line each time it meets that line.
+	# An element repeating a thousand times is then quadratic, and a blank line is that element.
+	# Calling blanks junk also aligns more commands.
+	# difflib then anchors on the commands themselves instead of on whichever blank line came first.
 	# autojunk stays off: it does the same to a command repeated across a long function, and those are the lines worth anchoring on.
 	matcher = SequenceMatcher(is_blank, middle_recorded, middle_final, autojunk=False)
 	for tag, i1, i2, j1, j2 in matcher.get_opcodes():

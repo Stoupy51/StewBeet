@@ -51,7 +51,7 @@ class VanillaEquipments(Enum):
 						DefaultOre.IRON:		{"durability": 165,		"armor": 2},
 						DefaultOre.GOLD:		{"durability": 77,		"armor": 2},
 						DefaultOre.DIAMOND:		{"durability": 363,		"armor": 3,	"armor_toughness": 2},
-			 			DefaultOre.NETHERITE:	{"durability": 407,		"armor": 3,	"armor_toughness": 3,	"knockback_resistance": 0.1}
+			 			DefaultOre.NETHERITE:	{"durability": 407,		"armor": 3,	"armor_toughness": 3, "knockback_resistance": 0.1}
 					})
 	CHESTPLATE		= cast(dict[DefaultOre, dict[str, float]],
 					{	DefaultOre.LEATHER:		{"durability": 80,		"armor": 3},
@@ -60,7 +60,7 @@ class VanillaEquipments(Enum):
 						DefaultOre.IRON:		{"durability": 240,		"armor": 6},
 						DefaultOre.GOLD:		{"durability": 112,		"armor": 5},
 						DefaultOre.DIAMOND: 	{"durability": 528,		"armor": 8,	"armor_toughness": 2},
-						DefaultOre.NETHERITE:	{"durability": 592,		"armor": 8,	"armor_toughness": 3,	"knockback_resistance": 0.1}
+						DefaultOre.NETHERITE:	{"durability": 592,		"armor": 8,	"armor_toughness": 3, "knockback_resistance": 0.1}
 					})
 	LEGGINGS		= cast(dict[DefaultOre, dict[str, float]],
 					{	DefaultOre.LEATHER:		{"durability": 75,		"armor": 2},
@@ -69,7 +69,7 @@ class VanillaEquipments(Enum):
 						DefaultOre.IRON:		{"durability": 225,		"armor": 5},
 						DefaultOre.GOLD:		{"durability": 105,		"armor": 3},
 						DefaultOre.DIAMOND:		{"durability": 495,		"armor": 6,	"armor_toughness": 2},
-						DefaultOre.NETHERITE:	{"durability": 555,		"armor": 6,	"armor_toughness": 3,	"knockback_resistance": 0.1}
+						DefaultOre.NETHERITE:	{"durability": 555,		"armor": 6,	"armor_toughness": 3, "knockback_resistance": 0.1}
 					})
 	BOOTS			= cast(dict[DefaultOre, dict[str, float]],
 					{	DefaultOre.LEATHER:		{"durability": 65,		"armor": 1},
@@ -78,7 +78,7 @@ class VanillaEquipments(Enum):
 						DefaultOre.IRON:		{"durability": 195,		"armor": 2},
 						DefaultOre.GOLD:		{"durability": 95,		"armor": 1},
 						DefaultOre.DIAMOND:		{"durability": 429,		"armor": 3,	"armor_toughness": 2},
-						DefaultOre.NETHERITE:	{"durability": 481,		"armor": 3,	"armor_toughness": 3,	"knockback_resistance": 0.1}
+						DefaultOre.NETHERITE:	{"durability": 481,		"armor": 3,	"armor_toughness": 3, "knockback_resistance": 0.1}
 					})
 	SWORD			= cast(dict[DefaultOre, dict[str, float]],
 					{	DefaultOre.LEATHER:		{"durability": 59,		"attack_damage": 4,		"attack_speed": -2.40},
@@ -138,13 +138,20 @@ class VanillaEquipments(Enum):
 class EquipmentsConfig:
 	__slots__ = ("attributes", "equivalent_to", "ignore_recipes", "pickaxe_durability")
 
-	def __init__(self, equivalent_to: DefaultOre = DefaultOre.DIAMOND, pickaxe_durability: float | int = 0, attributes: dict[str, float] | None = None, ignore_recipes: bool = False) -> None:
+	def __init__(
+		self,
+		equivalent_to: DefaultOre = DefaultOre.DIAMOND,
+		pickaxe_durability: float | int = 0,
+		attributes: dict[str, float] | None = None,
+		ignore_recipes: bool = False,
+	) -> None:
 		""" Creates a configuration for equipments (based on the pickaxe)
 
 		Args:
 			equivalent_to (DEFAULT_ORE):	The equivalent ore to compare to (ex: DEFAULT_ORE.DIAMOND)
 			pickaxe_durability (int):		The pickaxe durability that will be used to calculate the durability of other equipments
-			attributes (dict[str, float]):	(optional) Attributes with type "add_value" to add (not override) to the equipment (ex: "attack_damage": 1.0, means 6 attack damage for diamond pickaxe)
+			attributes (dict[str, float]):	(optional) Attributes with type "add_value" to add (not override) to the equipment.
+				Ex: "attack_damage": 1.0 means 6 attack damage for a diamond pickaxe.
 				{"attack_damage": 1.0, "armor": 1.0, "mining_efficiency": 1}
 				attack_damage and mining_efficiency are always on tools
 				armor and armor_toughness is always on armor
@@ -156,7 +163,8 @@ class EquipmentsConfig:
 			attributes = {}
 		self.ignore_recipes: bool = ignore_recipes
 		self.equivalent_to: DefaultOre = equivalent_to
-		self.pickaxe_durability: int = int(pickaxe_durability if pickaxe_durability > 0 else VanillaEquipments.PICKAXE.value[equivalent_to]["durability"])
+		vanilla_durability: float = VanillaEquipments.PICKAXE.value[equivalent_to]["durability"]
+		self.pickaxe_durability: int = int(pickaxe_durability if pickaxe_durability > 0 else vanilla_durability)
 		self.attributes: dict[str, float] = attributes
 		for key in attributes.keys():
 			if "player." in key:
@@ -164,7 +172,10 @@ class EquipmentsConfig:
 			elif "generic." in key:
 				stp.warning("Since 1.21.3, the 'generic.' prefix is no longer written in attributes!!!")
 			if "knockback_resistance" in key and attributes[key] >= 1:
-				stp.warning(f"You are setting the Knockback Resistance of an equipment to {attributes[key]}. Be aware that Minecraft automatically multiplies it by 10 when applied to an equipment.")
+				stp.warning(
+					f"You are setting the Knockback Resistance of an equipment to {attributes[key]}. "
+					"Be aware that Minecraft automatically multiplies it by 10 when applied to an equipment."
+				)
 
 	def getter(self) -> tuple[DefaultOre, int, dict[str, float]]:
 		return self.equivalent_to, self.pickaxe_durability, self.attributes
@@ -180,7 +191,10 @@ class EquipmentsConfig:
 		return {key: value for key, value in self.attributes.items() if key not in NOT_ON_ARMOR}
 
 	def __str__(self) -> str:
-		return f"EquipmentsConfig(equivalent_to={self.equivalent_to}, pickaxe_durability={self.pickaxe_durability}, attributes={self.attributes}, ignore_recipes={self.ignore_recipes})"
+		return (
+			f"EquipmentsConfig(equivalent_to={self.equivalent_to}, pickaxe_durability={self.pickaxe_durability}, "
+			f"attributes={self.attributes}, ignore_recipes={self.ignore_recipes})"
+		)
 
 	def __repr__(self) -> str:
 		return self.__str__()
@@ -201,9 +215,15 @@ def format_attributes(attributes: dict[str, float], slot: str, attr_config: dict
 		# If not durability, we add the base attribute
 		if attribute_name != "durability":
 			if attribute_name in ["attack_damage", "attack_speed"]:
-				attribute_modifiers.append({"type": attribute_name, "amount": value, "operation": "add_value", "slot": slot, "id": f"minecraft:base_{attribute_name}"})
+				attribute_modifiers.append({
+					"type": attribute_name, "amount": value, "operation": "add_value", "slot": slot,
+					"id": f"minecraft:base_{attribute_name}",
+				})
 			else:
-				attribute_modifiers.append({"type": attribute_name, "amount": value, "operation": "add_value", "slot": slot, "id": f"{Mem.ctx.project_id}:{attribute_name}.{slot}"})
+				attribute_modifiers.append({
+					"type": attribute_name, "amount": value, "operation": "add_value", "slot": slot,
+					"id": f"{Mem.ctx.project_id}:{attribute_name}.{slot}",
+				})
 
 	# For each attribute, add it to the list if not in, else add the value
 	for attribute_name, value in attributes.items():
@@ -214,7 +234,10 @@ def format_attributes(attributes: dict[str, float], slot: str, attr_config: dict
 				found = True
 				break
 		if not found:
-			attribute_modifiers.append({"type": attribute_name, "amount": value, "operation": "add_value", "slot": slot, "id": f"{Mem.ctx.project_id}:{attribute_name}.{slot}"})
+			attribute_modifiers.append({
+				"type": attribute_name, "amount": value, "operation": "add_value", "slot": slot,
+				"id": f"{Mem.ctx.project_id}:{attribute_name}.{slot}",
+			})
 
 	# Return the list of attributes
 	return attribute_modifiers

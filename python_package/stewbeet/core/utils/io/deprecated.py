@@ -16,12 +16,16 @@ from .functions import write_tag
 
 
 # Deprecated functions
-@stp.deprecated(message="convert_to_serializable is deprecated, prefer using stp.convert_to_serializable from stouputils", version="v3.1.3")
+@stp.deprecated(
+	message="convert_to_serializable is deprecated, prefer using stp.convert_to_serializable from stouputils", version="v3.1.3"
+)
 def convert_to_serializable(obj: Any) -> Any:
 	return stp.convert_to_serializable(obj)
 
 
-@stp.deprecated(message="write_function_tag is deprecated, prefer using write_tag or `tags` argument of write_function instead", version="v3.1.3")
+@stp.deprecated(
+	message="write_function_tag is deprecated, prefer using write_tag or `tags` argument of write_function instead", version="v3.1.3"
+)
 def write_function_tag(
 	path: str,
 	functions: list[Any] | None = None,

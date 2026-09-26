@@ -34,12 +34,13 @@ def write_tag(
 	""" Write a function tag at the given path.
 
 	Args:
-		path        (str):                          The path to the function tag (ex: "namespace:something" for 'data/namespace/tags/function/something.json')
+		path        (str):                          The path to the function tag,
+			ex: "namespace:something" for 'data/namespace/tags/function/something.json'
 		tag_type    (NamespaceProxy[TagFile]):      The tag type to write to (ex: ctx.data.function_tags)
 		values      (list[Any] | None):             The values to add to the tag
 		prepend     (bool):                         If the values should be prepended instead of appended
 		max_level   (int | None):                   The maximum level of the JSON dump, None for default behavior (default: None)
-		condition   (Callable[[list[Any]], bool]):  A function that takes the existing values and returns whether the new values should be written (default: always write)
+		condition   (Callable[[list[Any]], bool]):  Whether to write the new values, given the existing ones (default: always write)
 	Returns:
 		TagFile | None: The written tag, or None if the condition was not met
 	"""
@@ -103,9 +104,10 @@ def write_function(
 		path            (str):                    The path to the function (ex: "namespace:folder/function_name")
 		content         (str):                    The content to write
 		overwrite       (bool):                   If the file should be overwritten (default: Append the content)
-		prepend         (bool):                   If the content should be prepended instead of appended (not used if overwrite is True)
-		tags            (list[str] | None):       The function tags to add to the function (ex: ["namespace:something"] for 'data/namespace/tags/function/something.json')
-		condition       (Callable[[str], bool] | None):  A function that takes the existing content and returns whether the new content should be written (default: None, always write)
+		prepend         (bool):                   Prepend the content instead of appending it (ignored if overwrite is True)
+		tags            (list[str] | None):       The function tags to add to the function,
+			ex: ["namespace:something"] for 'data/namespace/tags/function/something.json'
+		condition       (Callable[[str], bool] | None):  Whether to write, given the existing content (default: None, always write)
 	Returns:
 		Function | None: The written function, or None if the condition was not met
 	"""
@@ -161,9 +163,10 @@ def write_versioned_function(
 		path            (str):                    The path to the function (ex: "folder/function_name")
 		content         (str):                    The content to write
 		overwrite       (bool):                   If the file should be overwritten (default: Append the content)
-		prepend         (bool):                   If the content should be prepended instead of appended (not used if overwrite is True)
-		tags            (list[str] | None):       The function tags to add to the function (ex: ["namespace:something"] for 'data/namespace/tags/function/something.json')
-		condition       (Callable[[str], bool] | None):  A function that takes the existing content and returns whether the new content should be written (default: None, always write)
+		prepend         (bool):                   Prepend the content instead of appending it (ignored if overwrite is True)
+		tags            (list[str] | None):       The function tags to add to the function,
+			ex: ["namespace:something"] for 'data/namespace/tags/function/something.json'
+		condition       (Callable[[str], bool] | None):  Whether to write, given the existing content (default: None, always write)
 	"""
 	return write_function(f"{Mem.ctx.project_id}:v{Mem.ctx.project_version}/{path}", content, overwrite, prepend, tags, condition)
 
@@ -180,9 +183,10 @@ def write_load_file(
 	Args:
 		content     (str):                    The content to write
 		overwrite   (bool):                   If the file should be overwritten (default: Append the content)
-		prepend     (bool):                   If the content should be prepended instead of appended (not used if overwrite is True)
-		tags        (list[str] | None):       The function tags to add to the function (ex: ["namespace:something"] for 'data/namespace/tags/function/something.json')
-		condition   (Callable[[str], bool] | None):  A function that takes the existing content and returns whether the new content should be written (default: None, always write)
+		prepend     (bool):                   Prepend the content instead of appending it (ignored if overwrite is True)
+		tags        (list[str] | None):       The function tags to add to the function,
+			ex: ["namespace:something"] for 'data/namespace/tags/function/something.json'
+		condition   (Callable[[str], bool] | None):  Whether to write, given the existing content (default: None, always write)
 	"""
 	return write_versioned_function("load/confirm_load", content, overwrite, prepend, tags, condition)
 
@@ -199,9 +203,10 @@ def write_unload_file(
 	Args:
 		content     (str):                    The content to write
 		overwrite   (bool):                   If the file should be overwritten (default: Append the content)
-		prepend     (bool):                   If the content should be prepended instead of appended (not used if overwrite is True)
-		tags        (list[str] | None):       The function tags to add to the function (ex: ["namespace:something"] for 'data/namespace/tags/function/something.json')
-		condition   (Callable[[str], bool] | None):  A function that takes the existing content and returns whether the new content should be written (default: None, always write)
+		prepend     (bool):                   Prepend the content instead of appending it (ignored if overwrite is True)
+		tags        (list[str] | None):       The function tags to add to the function,
+			ex: ["namespace:something"] for 'data/namespace/tags/function/something.json'
+		condition   (Callable[[str], bool] | None):  Whether to write, given the existing content (default: None, always write)
 	"""
 	unload_tag = f"{Mem.ctx.project_id}:unload"
 	tags = (tags or []) + [unload_tag]
@@ -220,9 +225,10 @@ def write_tick_file(
 	Args:
 		content     (str):                    The content to write
 		overwrite   (bool):                   If the file should be overwritten (default: Append the content)
-		prepend     (bool):                   If the content should be prepended instead of appended (not used if overwrite is True)
-		tags        (list[str] | None):       The function tags to add to the function (ex: ["namespace:something"] for 'data/namespace/tags/function/something.json')
-		condition   (Callable[[str], bool] | None):  A function that takes the existing content and returns whether the new content should be written (default: None, always write)
+		prepend     (bool):                   Prepend the content instead of appending it (ignored if overwrite is True)
+		tags        (list[str] | None):       The function tags to add to the function,
+			ex: ["namespace:something"] for 'data/namespace/tags/function/something.json'
+		condition   (Callable[[str], bool] | None):  Whether to write, given the existing content (default: None, always write)
 	"""
 	return write_versioned_function("tick", content, overwrite, prepend, tags, condition)
 
@@ -245,7 +251,7 @@ def write_scheduled_function(
 		path		(str | None):	         Target function path. Defaults to "{project_id}:v{project_version}/scheduled/{duration}".
 		overwrite	(bool):			         If True, overwrite target files instead of appending.
 		prepend		(bool):			         If True, prepend content instead of appending (ignored when overwrite is True).
-		condition	(Callable[[str], bool]): A function that takes the existing content and returns whether the new content should be written (default: always write)
+		condition	(Callable[[str], bool]): Whether to write the new content, given the existing one (default: always write)
 	"""
 	# Normalize duration: keep custom string delays (e.g. "5s"), coerce numeric strings to int.
 	parsed_duration: int | str = duration.strip() if isinstance(duration, str) else duration
@@ -281,10 +287,14 @@ def write_scheduled_function(
 		return write_function(path=resolved_path, content=body_with_reschedule, overwrite=True, prepend=prepend)
 
 	# 3.2. Append/prepend mode: avoid duplicating schedule lines and duplicate content blocks.
-	func = write_function(path=resolved_path, content=body_with_reschedule, overwrite=False, prepend=prepend, condition=is_schedule_missing)
+	func = write_function(
+		path=resolved_path, content=body_with_reschedule, overwrite=False, prepend=prepend, condition=is_schedule_missing
+	)
 	if func is None and content_stripped:
 		def is_content_missing(existing: str) -> bool: return (content_stripped not in existing)
-		return write_function(path=resolved_path, content=content_stripped, overwrite=False, prepend=prepend, condition=is_content_missing)
+		return write_function(
+			path=resolved_path, content=content_stripped, overwrite=False, prepend=prepend, condition=is_content_missing
+		)
 
 	# Return the function object
 	return func

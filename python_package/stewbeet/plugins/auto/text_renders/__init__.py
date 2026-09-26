@@ -124,7 +124,9 @@ def beet_default(ctx: Context) -> None:
 		string: str = str(content.text)
 		if RENDER_KEY not in string:
 			continue
-		requests: list[RenderRequest] = find_requests(string, config.project_id, config.default_height, ICON_ID, config.default_resolution)
+		requests: list[RenderRequest] = find_requests(
+			string, config.project_id, config.default_height, ICON_ID, config.default_resolution
+		)
 		if requests:
 			pending.append((content, string, requests))
 	if not pending:

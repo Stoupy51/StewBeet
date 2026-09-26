@@ -51,7 +51,9 @@ tag @e[tag={adjacent_tag}] remove {adjacent_tag}
 
 		# Write balancing/device/found.mcfunction
 		selector: str = f"@e[tag={ns}.{device},tag={can_balance_tag},tag=!{adjacent_tag},dx=0,dy=0,dz=0]"
-		condition_run: str = f"if score @s energy.max_storage = #max_storage {ns}.data at @s run function {ns}:balancing/{device}/found"
+		condition_run: str = (
+			f"if score @s energy.max_storage = #max_storage {ns}.data at @s run function {ns}:balancing/{device}/found"
+		)
 		write_function(f"{ns}:balancing/{device}/found", f"""
 # Add tags and scores
 tag @s add {adjacent_tag}
@@ -90,7 +92,7 @@ scoreboard players operation @s energy.storage += #remaining {ns}.data
 
 # Sometimes the remaining energy is too high, so we set it to the max storage resulting in a loss of energy (lets assume it's a feature: energy transformed in heat)
 execute if score @s energy.storage > @s energy.max_storage run scoreboard players operation @s energy.storage = @s energy.max_storage
-""")
+""")  # noqa: E501
 
 
 	# Add in the placement function the balancing tag

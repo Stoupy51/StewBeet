@@ -19,7 +19,9 @@ from ....core.utils.io import write_unload_file, write_versioned_function
 from ....dependencies.download_manager import DownloadedLib, get_lib_paths
 
 # Constants
-type UnloadFunctionKeys = Literal["items", "scoreboard_objectives", "storages", "blocks", "libraries", "entities_uuids", "entities_tags"]
+type UnloadFunctionKeys = Literal[
+	"items", "scoreboard_objectives", "storages", "blocks", "libraries", "entities_uuids", "entities_tags"
+]
 
 # Regex patterns for scanning datapack functions
 SCOREBOARD_OBJECTIVE_RE: Pattern[str] = compile(r"scoreboard objectives add ([^ ]+)")
@@ -143,7 +145,8 @@ function {self.ns}:v{self.version}/unload
 			"blocks": UnloadEntry(
 				header="# Destroy custom blocks",
 				commands={
-					f"execute as @e[type=minecraft:item_display,tag={ns}.custom_block] at @s run function {ns}:v{version}/unload/destroy_block",
+					f"execute as @e[type=minecraft:item_display,tag={ns}.custom_block] at @s "
+					f"run function {ns}:v{version}/unload/destroy_block",
 				} if self.ctx.data.function_tags.get("smithed.custom_block:event/on_place") else set(),
 				callback=self.write_destroy_block,
 			),

@@ -30,7 +30,9 @@ Everything else is archived byte for byte, since a CRLF inside a .png or an .ogg
 
 BEFORE_NEWLINE: re.Pattern[bytes] = re.compile(rb"\r+\n")
 """ Carriage returns opening a line ending, however many of them there are.
-A file welded out of a library archive already holding CRLF reaches this as CRCRLF, since TextIOWrapper translates the newline it finds behind the carriage return that was already there. """
+A file welded out of a library archive already holding CRLF reaches this as CRCRLF.
+TextIOWrapper translates the newline it finds behind the carriage return that was already there.
+"""
 
 
 def get_consistent_timestamp(ctx: Context) -> tuple[int, int, int, int, int, int]:
@@ -66,7 +68,9 @@ class ConstantTimeZipFile(zipfile.ZipFile):
 	:class:`UnixNewlineWriter`.
 	"""
 
-	def __init__(self, *args: Any, date_time: tuple[int, int, int, int, int, int], skip_names: tuple[str, ...] = (), **kwargs: Any) -> None:
+	def __init__(
+		self, *args: Any, date_time: tuple[int, int, int, int, int, int], skip_names: tuple[str, ...] = (), **kwargs: Any
+	) -> None:
 		super().__init__(*args, **kwargs)
 		self.date_time: tuple[int, int, int, int, int, int] = date_time
 		self.skip_names: set[str] = set(skip_names)
@@ -77,7 +81,9 @@ class ConstantTimeZipFile(zipfile.ZipFile):
 		info.compress_type = zipfile.ZIP_DEFLATED
 		return info
 
-	def open(self, name: str | ZipInfo, mode: Literal["r", "w"] = "r", pwd: bytes | None = None, *, force_zip64: bool = False) -> IO[bytes]:
+	def open(
+		self, name: str | ZipInfo, mode: Literal["r", "w"] = "r", pwd: bytes | None = None, *, force_zip64: bool = False
+	) -> IO[bytes]:
 		if mode != "w":
 			return super().open(name, mode, pwd, force_zip64=force_zip64)
 		filename: str = name.filename if isinstance(name, ZipInfo) else name
@@ -88,7 +94,9 @@ class ConstantTimeZipFile(zipfile.ZipFile):
 			return stream
 		return io.BufferedWriter(UnixNewlineWriter(stream))
 
-	def writestr(self, zinfo_or_arcname: str | ZipInfo, data: Any, compress_type: int | None = None, compresslevel: int | None = None) -> None:
+	def writestr(
+		self, zinfo_or_arcname: str | ZipInfo, data: Any, compress_type: int | None = None, compresslevel: int | None = None
+	) -> None:
 		filename: str = zinfo_or_arcname.filename if isinstance(zinfo_or_arcname, ZipInfo) else zinfo_or_arcname
 		if filename in self.skip_names:
 			return
@@ -114,8 +122,10 @@ class ConstantTimeZipFile(zipfile.ZipFile):
 class UnixNewlineWriter(io.RawIOBase):
 	""" Zip entry stream that writes a LF wherever a CRLF was handed to it.
 
-	beet dumps a text file through ``io.TextIOWrapper(newline=None)``, which rewrites every line ending as ``os.linesep``, so a pack built on Windows ships entirely in CRLF.
-	Minecraft reads a command ending in a backslash as continuing on the next line, and the carriage return between the two leaves it incomplete.
+	beet dumps a text file through ``io.TextIOWrapper(newline=None)``, which rewrites every line ending as ``os.linesep``.
+	A pack built on Windows therefore ships entirely in CRLF.
+	Minecraft reads a command ending in a backslash as continuing on the next line.
+	The carriage return between the two leaves it incomplete.
 
 	>>> sink = io.BytesIO()
 	>>> writer = UnixNewlineWriter(sink)
@@ -161,7 +171,8 @@ def is_text_entry(name: str) -> bool:
 def unix_lines(data: bytes) -> bytes:
 	""" The same bytes with every line ending turned into a LF.
 
-	`bytes.replace` runs eleven times faster than the pattern and covers the CRLF a Windows `TextIOWrapper` writes, which is all but every entry of an archive built here.
+	`bytes.replace` runs eleven times faster than the pattern.
+	It covers the CRLF a Windows `TextIOWrapper` writes, which is all but every entry of an archive built here.
 	The pattern is only there for a run of carriage returns, which nothing but a welded library archive produces.
 
 	>>> unix_lines(b"say a\\r\\nsay b\\r\\r\\n")

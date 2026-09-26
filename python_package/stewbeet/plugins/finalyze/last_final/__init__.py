@@ -41,7 +41,13 @@ def beet_default(ctx: Context):
 	for func, obj in Mem.ctx.data.functions.items():
 		for i, line in enumerate(obj.text.splitlines()):
 			if line.startswith("$") and "$(" not in line:
-				stp.warning(f"Function '{func}' line {i+1} starts with '$' but does not contain a macro, the function will not be able to execute: '{line}'")
+				stp.warning(
+					f"Function '{func}' line {i+1} starts with '$' but does not contain a macro, "
+					f"the function will not be able to execute: '{line}'"
+				)
 			elif "$(" in line and not line.startswith(("$","#")):
-				stp.warning(f"Function '{func}' line {i+1} appears to use macros but does not start with '$', execution will not be as expected: '{line}'")
+				stp.warning(
+					f"Function '{func}' line {i+1} appears to use macros but does not start with '$', "
+					f"execution will not be as expected: '{line}'"
+				)
 

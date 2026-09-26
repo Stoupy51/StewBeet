@@ -58,7 +58,8 @@ class AwakenedForgeRecipeHandler:
             count: int = ingredient.get("count", 1)
             while True:
                 this_count = count if count < 64 else 64
-                line += f" if entity @n[type=item,nbt={{Item:{ExternalItem.json_dump(ingredient.to_predicate(count=this_count))}}},distance=..1]"
+                predicate: str = ExternalItem.json_dump(ingredient.to_predicate(count=this_count))
+                line += f" if entity @n[type=item,nbt={{Item:{predicate}}},distance=..1]"
                 count -= 64
                 if count <= 0:
                     break
@@ -76,14 +77,15 @@ execute if score @s stardust.forge_timer matches 1.. run particle {particle} ~ ~
 
 # When timer reaches 4, craft the item
 execute if score @s stardust.forge_timer matches 4 run function {Mem.ctx.project_id}:calls/stardust/forge_recipes/{result_function}/craft
-""")
+""")  # noqa: E501
         # Write the second result function
         kill_ingredients: str = ""
         for ingredient in ingredients:
             count: int = ingredient.get("count", 1)
             while True:
                 this_count = count if count < 64 else 64
-                kill_ingredients += f"kill @n[type=item,nbt={{Item:{ExternalItem.json_dump(ingredient.to_predicate(count=this_count))}}},distance=..1]\n"
+                predicate: str = ExternalItem.json_dump(ingredient.to_predicate(count=this_count))
+                kill_ingredients += f"kill @n[type=item,nbt={{Item:{predicate}}},distance=..1]\n"
                 count -= 64
                 if count <= 0:
                     break

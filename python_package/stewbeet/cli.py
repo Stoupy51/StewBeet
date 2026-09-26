@@ -77,7 +77,8 @@ def main() -> None:
 
     # Print the version of stewbeet, beet, bolt, mecha, and stouputils
     if second_arg in ("--version", "-v", "version"):
-        return stp.show_version("stewbeet", primary_color=stp.RED, secondary_color=stp.GREEN, max_depth=int(sys.argv[-1]) if len(sys.argv) == 3 else 2)
+        max_depth: int = int(sys.argv[-1]) if len(sys.argv) == 3 else 2
+        return stp.show_version("stewbeet", primary_color=stp.RED, secondary_color=stp.GREEN, max_depth=max_depth)
 
     # Handle "init/template" command (local imports: every one of these commands drags dependencies
     # the far more frequent "build" has no use for, `migrate` alone costs a fifth of a second of requests)

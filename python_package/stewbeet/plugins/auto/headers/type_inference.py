@@ -16,10 +16,14 @@ import re
 from .object import Header
 
 WITHIN_CALLER_RE: re.Pattern[str] = re.compile(r"(?:string in )?([^\s{]+)")
-""" Isolates the function path at the head of a @within entry, past the optional "string in " prefix and before its macro payload or context. """
+""" Isolates the function path at the head of a @within entry.
+It skips the optional "string in " prefix and stops before the macro payload or context.
+"""
 
 ESCAPED_QUOTE_RE: re.Pattern[str] = re.compile(r'\\(["\'])')
-""" Matches a backslash-escaped quote. Payloads read from inside a JSON string (tellraw / dialog run_command) carry them, e.g. {jump:\\"green\\"}. """
+""" Matches a backslash-escaped quote.
+Payloads read from inside a JSON string (tellraw / dialog run_command) carry them, e.g. {jump:\\"green\\"}.
+"""
 
 # Type mapping for NBT suffixes
 NBT_TYPE_MAP = {
@@ -47,8 +51,14 @@ def parse_nbt_compound(nbt_string: str) -> dict[str, tuple[str, str]]:
         {'id': ('hello', 'string'), 'Slot': ('1', 'byte'), 'count': ('1', 'int'), 'price': ('10.0', 'float')}
 
         From StardustFragment teleport_to storage call:
-        >>> parse_nbt_compound('{x:0,y:0,z:0,yaw:0.0f,pitch:0.0f,dimension:"minecraft:overworld"}')
-        {'x': ('0', 'int'), 'y': ('0', 'int'), 'z': ('0', 'int'), 'yaw': ('0.0', 'float'), 'pitch': ('0.0', 'float'), 'dimension': ('minecraft:overworld', 'string')}
+        >>> for name, parsed in parse_nbt_compound('{x:0,y:0,z:0,yaw:0.0f,pitch:0.0f,dimension:"minecraft:overworld"}').items():
+        ...     print(name, parsed)
+        x ('0', 'int')
+        y ('0', 'int')
+        z ('0', 'int')
+        yaw ('0.0', 'float')
+        pitch ('0.0', 'float')
+        dimension ('minecraft:overworld', 'string')
 
         From SimplEnergy with mixed types:
         >>> parse_nbt_compound('{part_1:100,part_2:50,scale:"kJ"}')
@@ -177,7 +187,9 @@ def infer_types_from_direct_call(call_string: str, macro_vars: list[str], all_fu
         {'result': 'int'}
 
         With float values (like StardustFragment):
-        >>> infer_types_from_direct_call('function test {x:100,y:64,z:-200,yaw:45.0f,pitch:-10.5f}', ['x', 'y', 'z', 'yaw', 'pitch'], {})
+        >>> infer_types_from_direct_call(
+        ...     'function test {x:100,y:64,z:-200,yaw:45.0f,pitch:-10.5f}', ['x', 'y', 'z', 'yaw', 'pitch'], {}
+        ... )
         {'x': 'int', 'y': 'int', 'z': 'int', 'yaw': 'float', 'pitch': 'float'}
     """
     types: dict[str, str] = {}
@@ -291,7 +303,10 @@ def infer_macro_types(header: Header, all_functions: dict[str, Header]) -> dict[
         {'id': 'string', 'count': 'int'}
 
         Storage call (StardustFragment style):
-        >>> caller_content = 'data modify storage test:temp macro set value {x:0,y:64,z:0}\\nfunction test:target with storage test:temp macro'
+        >>> caller_content = (
+        ...     'data modify storage test:temp macro set value {x:0,y:64,z:0}\\n'
+        ...     'function test:target with storage test:temp macro'
+        ... )
         >>> caller = Header("test:caller", [], [], caller_content)
         >>> target = Header("test:target", ["test:caller with storage test:temp macro"], [], "$tp @s $(x) $(y) $(z)")
         >>> infer_macro_types(target, {"test:caller": caller})

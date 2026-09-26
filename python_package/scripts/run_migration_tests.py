@@ -32,7 +32,9 @@ def write(path: Path, content: str) -> None:
 	path.write_text(content, encoding="utf-8")
 
 
-def make_pack(root: Path, *, data: bool = True, assets: bool = False, mcmeta: object = PLAIN_MCMETA, icon_color: str | None = "red") -> None:
+def make_pack(
+	root: Path, *, data: bool = True, assets: bool = False, mcmeta: object = PLAIN_MCMETA, icon_color: str | None = "red"
+) -> None:
 	""" A small pack: one function and its load tag, one lang file, and a pack.png unlike the templates' own. """
 	write(root / "pack.mcmeta", json.dumps(mcmeta))
 	if data:

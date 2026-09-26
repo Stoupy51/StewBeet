@@ -84,7 +84,7 @@ execute if score #sorted_count sorter.val matches ..{limit-1} if data storage so
 
 # If limit reached, append remaining elements without sorting
 execute if score #sorted_count sorter.val matches {limit} run function {functions_location}/append_remaining
-"""
+"""  # noqa: E501
 	else:
 		loop_function_content += f"""
 # Continue if there are more elements to sort
@@ -107,7 +107,7 @@ data remove storage sorter:temp copy_array[0]
 
 # Continue if there are more elements
 execute if data storage sorter:temp copy_array[0] run function {functions_location}/find_min
-""")
+""")  # noqa: E501
 
 	# Move the minimum element from original to sorted array
 	write_function(f"{functions_location}/move_min_element", """

@@ -357,6 +357,6 @@ if __name__ == "__main__":
 #
 
 # Fonction content here
-"""
+"""  # noqa: E501
     header = Header.from_content("alt_launch", example_content)
     print(header.to_str())

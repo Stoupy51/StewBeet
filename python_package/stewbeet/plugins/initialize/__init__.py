@@ -160,10 +160,14 @@ def beet_default(ctx: Context, silent: bool = False) -> Generator[None]:
 			if isinstance(mc_supports, list):
 				mc_supports = cast(list[str], mc_supports)
 				if len(mc_supports) > 0:
-					min_version: tuple[int, ...] = split_version(mc_supports[0] if mc_supports[0] != "infinite" else ctx.minecraft_version or LATEST_MC_VERSION)
+					min_version: tuple[int, ...] = split_version(
+						mc_supports[0] if mc_supports[0] != "infinite" else ctx.minecraft_version or LATEST_MC_VERSION
+					)
 					if min_version > split_version(ctx.minecraft_version or LATEST_MC_VERSION):
 						min_version = split_version(ctx.minecraft_version or LATEST_MC_VERSION)
-					max_version: tuple[int, ...] = split_version(mc_supports[-1]) if mc_supports[-1] != "infinite" else max(MORE_DATA_PACK_FORMATS.keys())
+					max_version: tuple[int, ...] = (
+						split_version(mc_supports[-1]) if mc_supports[-1] != "infinite" else max(MORE_DATA_PACK_FORMATS.keys())
+					)
 					pack_mcmeta["pack"]["min_format"] = pack.pack_format_registry.get(min_version, int_pack_format)
 					pack_mcmeta["pack"]["max_format"] = pack.pack_format_registry.get(max_version, int_pack_format)
 					if isinstance(pack_mcmeta["pack"]["min_format"], int):
@@ -192,7 +196,8 @@ def beet_default(ctx: Context, silent: bool = False) -> Generator[None]:
 		setup_pack_mcmeta(ctx.assets, ctx.assets.pack_format)
 
 		# # Setup dialog convention for pause screen additions
-		# Mem.ctx.data["minecraft"].dialogs_tags["pause_screen_additions"] = set_json_encoder(DialogTag({"values":[{"id":"smithed:data_packs","required":False}]}))
+		# pause_additions = DialogTag({"values":[{"id":"smithed:data_packs","required":False}]})
+		# Mem.ctx.data["minecraft"].dialogs_tags["pause_screen_additions"] = set_json_encoder(pause_additions)
 		# Mem.ctx.data["smithed"].dialogs_tags["data_packs"] = set_json_encoder(DialogTag({"values":[]}))
 		# Mem.ctx.data["smithed"].dialogs["data_packs"] = set_json_encoder(Dialog({
 		# 	"type": "minecraft:dialog_list",

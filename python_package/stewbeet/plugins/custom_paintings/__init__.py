@@ -73,10 +73,16 @@ def beet_default(ctx: Context) -> None:
                     for file in files if file == f"{item}.png"
                 ]
                 if not matching_textures:
-                    stp.error(f"No texture found for painting '{item}' in the textures folder '{textures_folder}'. Expected a file named '{item}.png'.")
+                    stp.error(
+                        f"No texture found for painting '{item}' in the textures folder '{textures_folder}'. "
+                        f"Expected a file named '{item}.png'."
+                    )
                     continue
                 elif len(matching_textures) > 1:
-                    stp.warning(f"Multiple textures found for painting '{item}' in the textures folder '{textures_folder}'. Using the first one found: '{matching_textures[0]}'.")
+                    stp.warning(
+                        f"Multiple textures found for painting '{item}' in the textures folder '{textures_folder}'. "
+                        f"Using the first one found: '{matching_textures[0]}'."
+                    )
                 src: str = matching_textures[0]
             dst = obj_painting.painting_texture
 
@@ -86,5 +92,6 @@ def beet_default(ctx: Context) -> None:
 
     # Add the painting variant tag to the context data
     if placeable_values:
-        Mem.ctx.data["minecraft"].painting_variant_tags["placeable"] = set_json_encoder(PaintingVariantTag({"values": placeable_values}))
+        placeable_tag: PaintingVariantTag = PaintingVariantTag({"values": placeable_values})
+        Mem.ctx.data["minecraft"].painting_variant_tags["placeable"] = set_json_encoder(placeable_tag)
 

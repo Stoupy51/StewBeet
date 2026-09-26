@@ -51,7 +51,9 @@ class RecipeRenderer:
 	manual: Manual
 	""" The owning :class:`~..manual.Manual` instance. """
 
-	consumer_index_cache: tuple[dict[str, Item], dict[str, list[tuple[str, JsonDict]]]] | None = field(default=None, init=False, repr=False)
+	consumer_index_cache: tuple[dict[str, Item], dict[str, list[tuple[str, JsonDict]]]] | None = field(
+		default=None, init=False, repr=False
+	)
 	""" Memoized (definitions, consumer index) pair used by :func:`~.collection.collect_for_item`.
 
 	Keyed on the definitions dict identity so watch rebuilds and later definition changes get a
@@ -73,7 +75,13 @@ class RecipeRenderer:
 		return self.manual.images
 
 	# --- delegated helpers ---
-	def item_component(self, ingredient: str | Ingr, only_those_components: list[str] | None = None, count: int = 1, add_change_page: bool = True) -> JsonDict:
+	def item_component(
+		self,
+		ingredient: str | Ingr,
+		only_those_components: list[str] | None = None,
+		count: int = 1,
+		add_change_page: bool = True,
+	) -> JsonDict:
 		""" Build a hoverable/clickable text component for an ingredient. """
 		return build_item_component(self, ingredient, only_those_components, count, add_change_page)
 
@@ -157,7 +165,10 @@ class RecipeRenderer:
 			btn_renderer = get_craft_renderer(craft_for_button["type"])
 			if btn_renderer is not None:
 				btn_renderer.build_image(self, name, craft_font, craft_for_button, output_name=f"{name}_{index + 1}")
-			hover_text: list[TextComponent] = [{"text": ""}, {"text": craft_font + "\n\n" * breaklines, "font": self.config.font, "color": "white"}]
+			hover_text: list[TextComponent] = [
+				{"text": ""},
+				{"text": craft_font + "\n\n" * breaklines, "font": self.config.font, "color": "white"},
+			]
 		else:
 			from ..glyphs import HOVER_EQUIVALENTS
 			from ..optimizer import remove_events
@@ -188,9 +199,15 @@ class RecipeRenderer:
 			craft_ingredient: str = ""
 			if craft.get("ingredient"):
 				craft_ingredient = Ingr(craft["ingredient"]).to_id(add_namespace=False)
-			elif craft.get("ingredients") and stp.is_generic_instance(craft["ingredients"], list[stp.JsonDict]) and len(craft["ingredients"]) == 1:
+			elif (
+				craft.get("ingredients") and stp.is_generic_instance(craft["ingredients"], list[stp.JsonDict])
+				and len(craft["ingredients"]) == 1
+			):
 				craft_ingredient = Ingr(craft["ingredients"][0]).to_id(add_namespace=False)
-			elif craft.get("ingredients") and stp.is_generic_instance(craft["ingredients"], stp.JsonDict) and len(craft["ingredients"]) == 1:
+			elif (
+				craft.get("ingredients") and stp.is_generic_instance(craft["ingredients"], stp.JsonDict)
+				and len(craft["ingredients"]) == 1
+			):
 				craft_ingredient = Ingr(next(iter(craft["ingredients"].values()))).to_id(add_namespace=False)
 			button.blue_craft = craft_result == ""
 			if craft_ingredient and craft_ingredient in Mem.definitions and craft_ingredient != name:

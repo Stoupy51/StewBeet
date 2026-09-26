@@ -65,7 +65,9 @@ class Item(StMapping):
     ...     base_item="minecraft:raw_iron",
     ...     manual_category="materials",
     ...     recipes=[
-    ...         CraftingShapedRecipe(shape=["###","#F#","###"], ingredients={"#":Ingr("stardust_fragment"),"F":Ingr("minecraft:iron_ingot")})
+    ...         CraftingShapedRecipe(
+    ...             shape=["###","#F#","###"], ingredients={"#":Ingr("stardust_fragment"),"F":Ingr("minecraft:iron_ingot")}
+    ...         )
     ...     ],
     ...     override_model={"parent":"item/generated","textures":{"layer0":"stardust:item/stardust_ingot"}},
     ...     wiki_buttons=[WikiButton({"text":"This is a stardust ingot.","color":"aqua"})],
@@ -114,18 +116,24 @@ class Item(StMapping):
     override_model: JsonDict | None = None
     """ (Optional) Merge with/Override auto-generated item model (based on the textures folder). """
     DEFAULT_OVERRIDE_MODEL_CONTEXTS: ClassVar[list[str]] = ["none", "fixed"]
-    """ Default display contexts in which the regular model is kept when a hand_model is defined (item display entities and item frames). """
+    """ Display contexts that keep the regular model when a hand_model is defined: item display entities and item frames. """
 
     hand_model: JsonDict | None = None
-    """ (Optional) Model used instead of the regular model in most display contexts (hand, gui, ground, ...), see override_model_contexts. If None, the item uses the same model everywhere. """
+    """ (Optional) Model used instead of the regular one in most display contexts (hand, gui, ground, ...).
+    See override_model_contexts. If None, the item uses the same model everywhere.
+    """
     override_model_contexts: list[str] | None = None
-    """ (Optional) When hand_model is set, display contexts in which the regular model is still used (default: DEFAULT_OVERRIDE_MODEL_CONTEXTS, i.e. item display entities and item frames). """
+    """ (Optional) When hand_model is set, display contexts in which the regular model is still used.
+    Defaults to DEFAULT_OVERRIDE_MODEL_CONTEXTS, i.e. item display entities and item frames.
+    """
     wiki_buttons: list[WikiButton] | TextComponent | None = None
     """ (Optional) Additional informations to be displayed in the ingame manual. """
     components: JsonDict = field(default_factory=dict[str, Any])
     """ (Optional) Additional custom components for this item, e.g. "item_name": {...}, etc. """
     skip_gives: bool = False
-    """ (Optional) If True, loot tables and give_all chests won't give this item. Useful for items that are never meant to be obtained by players. """
+    """ (Optional) If True, loot tables and give_all chests won't give this item.
+    Useful for items that are never meant to be obtained by players.
+    """
     origin: SourceOrigin | None = field(default=None, init=False, repr=False, compare=False, metadata={"transient": True})
     """ Where this definition was declared, captured by the sniffer plugin so content a plugin generates
     from it maps back to the declaration instead of to the plugin. None unless that plugin is active. """

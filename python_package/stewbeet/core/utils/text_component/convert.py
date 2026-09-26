@@ -71,7 +71,8 @@ def item_id_to_text_component(item_id: str, use_default: bool = True) -> TextCom
 
 		# If jukebox_playable is present, search for item_name in custom_data
 		if "jukebox_playable" in components:
-			possible_item_name: TextComponent = components.get("custom_data", {}).get("smithed", {}).get("dict", {}).get("record", {}).get("item_name", "")
+			smithed_record: JsonDict = components.get("custom_data", {}).get("smithed", {}).get("dict", {}).get("record", {})
+			possible_item_name: TextComponent = smithed_record.get("item_name", "")
 			if possible_item_name:
 				return possible_item_name
 
@@ -87,7 +88,8 @@ def item_id_to_text_component(item_id: str, use_default: bool = True) -> TextCom
 
 		# If jukebox_playable is present, search for item_name in custom_data
 		if "jukebox_playable" in components:
-			possible_item_name: TextComponent = components.get("custom_data", {}).get("smithed", {}).get("dict", {}).get("record", {}).get("item_name", "")
+			smithed_record: JsonDict = components.get("custom_data", {}).get("smithed", {}).get("dict", {}).get("record", {})
+			possible_item_name: TextComponent = smithed_record.get("item_name", "")
 			if possible_item_name:
 				return possible_item_name
 

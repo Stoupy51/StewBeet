@@ -74,7 +74,9 @@ def generate_showcase_images(
 			)
 
 
-def create_showcase_image(items: list[str], filename: str, simple_case: Image.Image, output_dir: str, project_id: str, renders_path: str) -> None:
+def create_showcase_image(
+	items: list[str], filename: str, simple_case: Image.Image, output_dir: str, project_id: str, renders_path: str
+) -> None:
 	""" Build one composite showcase grid image and save it to ``output_dir``. """
 	if not items:
 		return

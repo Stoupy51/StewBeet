@@ -29,7 +29,10 @@ def validate_credentials(credentials: dict[str, str]) -> str:
 		str: API key for Modrinth
 	"""
 	if "modrinth_api_key" not in credentials:
-		raise ValueError("The credentials file must contain a 'modrinth_api_key' key, which is a PAT (Personal Access Token) for the Modrinth API: https://modrinth.com/settings/pats")
+		raise ValueError(
+			"The credentials file must contain a 'modrinth_api_key' key, "
+			"which is a PAT (Personal Access Token) for the Modrinth API: https://modrinth.com/settings/pats"
+		)
 	return credentials["modrinth_api_key"]
 
 def validate_config(modrinth_config: JsonDict) -> tuple[str, str, str, str, str, str, str]:
@@ -183,7 +186,7 @@ loaderVersion = {loader_version}
 license = '{metadata.get("license", "All Rights Reserved")}'
 showAsResourcePack = false
 mods = [
-	{{ modId = 'stewbeet_{mod_id}', version = '{metadata["version"]}', displayName = '{metadata["name"]}', description = "{description}", logoFile = '{mod_id}_pack.png'"""
+	{{ modId = 'stewbeet_{mod_id}', version = '{metadata["version"]}', displayName = '{metadata["name"]}', description = "{description}", logoFile = '{mod_id}_pack.png'"""  # noqa: E501
 
 	# Add optional fields
 	if homepage:
@@ -320,7 +323,10 @@ def get_file_parts(project_name: str, build_folder: str, modrinth_config: JsonDi
 		]
 		file_parts = [file_part for file_part in file_parts if os.path.exists(file_part)]
 	if len(file_parts) == 0:
-		raise ValueError(f"No file parts (datapack and resourcepack zip files) found in {build_folder}, please check the build_folder path in the modrinth_config file")
+		raise ValueError(
+			f"No file parts (datapack and resourcepack zip files) found in {build_folder}, "
+			"please check the build_folder path in the modrinth_config file"
+		)
 
 	# Convert datapack to mod if requested
 	package_as_mod: str | None = modrinth_config.get("package_as_mod", None)

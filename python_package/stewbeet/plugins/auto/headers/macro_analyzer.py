@@ -33,9 +33,14 @@ class MacroAnalyzer:
         {'x': ('int', []), 'y': ('int', [])}
 
         With storage call (like StardustFragment):
-        >>> caller_content = 'data modify storage test:temp macro set value {dimension:"minecraft:overworld",x:0,y:64,z:0}\\nfunction test:teleport with storage test:temp macro'
+        >>> caller_content = (
+        ...     'data modify storage test:temp macro set value {dimension:"minecraft:overworld",x:0,y:64,z:0}\\n'
+        ...     'function test:teleport with storage test:temp macro'
+        ... )
         >>> caller = Header("test:caller", [], [], caller_content)
-        >>> target = Header("test:teleport", ["test:caller with storage test:temp macro"], [], "$execute in $(dimension) run tp @s $(x) $(y) $(z)")
+        >>> target = Header(
+        ...     "test:teleport", ["test:caller with storage test:temp macro"], [], "$execute in $(dimension) run tp @s $(x) $(y) $(z)"
+        ... )
         >>> analyzer = MacroAnalyzer({"test:caller": caller, "test:teleport": target})
         >>> analyzer.analyze_macro_arguments("test:teleport")
         >>> target.args['dimension']

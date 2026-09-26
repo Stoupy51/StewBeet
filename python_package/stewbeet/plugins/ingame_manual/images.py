@@ -192,7 +192,9 @@ class GlyphImageBuilder:
 		else:
 			result_texture = careful_resize(result_texture, SQUARE_SIZE)
 			result_mask = result_texture.convert("RGBA").split()[3]
-		self.glyphs.add_provider(page_font, f"{project_id}:font/page/{output_filename}.png", ascent=0 if not output_name else 6, height=40)
+		self.glyphs.add_provider(
+			page_font, f"{project_id}:font/page/{output_filename}.png", ascent=0 if not output_name else 6, height=40
+		)
 		template.paste(result_texture, (2 * factor, 2 * factor), result_mask)
 		template = add_border(template, self.get_border_color(), BORDER_SIZE)
 		template.save(f"{self.config.font_cache_path}/page/{output_filename}.png")

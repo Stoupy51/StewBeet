@@ -42,7 +42,10 @@ def convert_shapeless_to_shaped(craft: JsonDict) -> JsonDict:
 	>>> shaped = convert_shapeless_to_shaped(craft)
 	>>> shaped["type"], shaped["shape"]
 	('crafting_shaped', ['AA', 'AA'])
-	>>> nine = {"type": "crafting_shapeless", "result_count": 1, "ingredients": [{"item": "minecraft:iron_ingot"}] * 8 + [{"item": "minecraft:diamond"}]}
+	>>> nine = {
+	...     "type": "crafting_shapeless", "result_count": 1,
+	...     "ingredients": [{"item": "minecraft:iron_ingot"}] * 8 + [{"item": "minecraft:diamond"}],
+	... }
 	>>> convert_shapeless_to_shaped(nine)["shape"]
 	['AAA', 'ABA', 'AAA']
 	"""
@@ -149,7 +152,9 @@ def build_consumer_index(definitions: dict[str, Item]) -> dict[str, list[tuple[s
 	return index
 
 
-def generate_otherside_crafts(item: str, definitions: dict[str, Item], index: dict[str, list[tuple[str, JsonDict]]] | None = None) -> list[JsonDict]:
+def generate_otherside_crafts(
+	item: str, definitions: dict[str, Item], index: dict[str, list[tuple[str, JsonDict]]] | None = None
+) -> list[JsonDict]:
 	""" Find crafts in other items that consume ``item`` (the "used for crafting" list). """
 	if index is None:
 		index = build_consumer_index(definitions)

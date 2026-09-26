@@ -43,10 +43,11 @@ def check_version(lib_ns: str, data: JsonDict, run_command: str) -> str:
 
 	# Check if the version is correct
 	is_decoder: int = 1 if "tellraw @" in run_command else 0
-	checks += f"execute if score #dependency_error {ns}.data matches {is_decoder} unless {score_major}.. run {run_command}\n"
-	checks += f"execute if score #dependency_error {ns}.data matches {is_decoder} if {score_major} unless {score_minor}.. run {run_command}\n"
+	error_check: str = f"execute if score #dependency_error {ns}.data matches {is_decoder}"
+	checks += f"{error_check} unless {score_major}.. run {run_command}\n"
+	checks += f"{error_check} if {score_major} unless {score_minor}.. run {run_command}\n"
 	if score_patch:
-		checks += f"execute if score #dependency_error {ns}.data matches {is_decoder} if {score_major} if {score_minor} unless {score_patch}.. run {run_command}\n"
+		checks += f"{error_check} if {score_major} if {score_minor} unless {score_patch}.. run {run_command}\n"
 	return checks
 
 
@@ -98,7 +99,9 @@ def beet_default(ctx: Context) -> None:
 	get_lib_paths(ctx)
 
 	# Get all dependencies (official and custom)
-	dependencies: list[tuple[str, JsonDict]] = [(lib_ns, data) for lib_ns, data in OFFICIAL_LIBS.items() if data["is_used"] and not data.get("no_lantern_load", False)]
+	dependencies: list[tuple[str, JsonDict]] = [
+		(lib_ns, data) for lib_ns, data in OFFICIAL_LIBS.items() if data["is_used"] and not data.get("no_lantern_load", False)
+	]
 	load_dependencies: list[tuple[str, JsonDict]] = list(ctx.meta.get("stewbeet", {}).get("load_dependencies", {}).items())
 	if load_dependencies:
 		dependencies += [(k, v) for k, v in load_dependencies if not v.get("no_lantern_load", False)]
@@ -171,7 +174,7 @@ function {ns}:v{version}/load/confirm_load
 		write_tag("minecraft:tick", ctx.data.function_tags, [f"{ns}:v{version}/load/tick_verification"])
 		write_versioned_function("load/tick_verification", f"""
 execute if score #{ns}.major load.status matches {major} if score #{ns}.minor load.status matches {minor} if score #{ns}.patch load.status matches {patch} run function {ns}:v{version}/tick
-""")
+""")  # noqa: E501
 
 	# Link smart_ore_generation library functions
 	if OFFICIAL_LIBS["smart_ore_generation"]["is_used"]:
@@ -203,7 +206,10 @@ execute if score #{ns}.major load.status matches {major} if score #{ns}.minor lo
 			name: str = value["name"]
 			url: str = value["url"]
 			lib_version: str = ".".join(map(str, value["version"]))
-			decoder_command: str = f'tellraw @a {{"text":"- [{name} (v{lib_version}+)]","color":"gold","click_event":{{"action":"open_url","url":"{url}"}}}}'
+			decoder_command: str = (
+				f'tellraw @a {{"text":"- [{name} (v{lib_version}+)]","color":"gold",'
+				f'"click_event":{{"action":"open_url","url":"{url}"}}}}'
+			)
 			decoder_checks += check_version(lib_ns, value, decoder_command)
 
 		# Write check_dependencies.mcfunction
@@ -227,7 +233,10 @@ scoreboard players set #dependency_error {ns}.data 0
 
 		# Write valid_dependencies.mcfunction
 		mc_error_msg: str = f'"{project_name} Error: This version is made for Minecraft {mc_version}+."'
-		dep_error_msg: str = f'"{project_name} Error: Libraries are missing\\nplease download the right {project_name} datapack\\nor download each of these libraries one by one:"'
+		dep_error_msg: str = (
+			f'"{project_name} Error: Libraries are missing\\nplease download the right {project_name} datapack\\n'
+			'or download each of these libraries one by one:"'
+		)
 
 		write_versioned_function("load/valid_dependencies", f"""# Waiting for a player to get the game version, but stop function if no player found
 execute unless entity @p run return run schedule function {ns}:v{version}/load/valid_dependencies 1t replace
@@ -243,5 +252,5 @@ execute if score #dependency_error {ns}.data matches 1 run tellraw @a {{"text":{
 {decoder_checks}
 # Load {project_name}
 execute if score #game_version {ns}.data matches 1.. if score #mcload_error {ns}.data matches 0 if score #dependency_error {ns}.data matches 0 run function {ns}:v{version}/load/confirm_load
-""")
+""")  # noqa: E501
 

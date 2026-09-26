@@ -83,13 +83,19 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
                     f"execute store success score #success {Mem.ctx.project_id}.data if items entity @s container.* {ingr}\n"
                 )
                 for recipe_path in recipes_list:
-                    content += f"execute if score #success {Mem.ctx.project_id}.data matches 1 run recipe give @s {Mem.ctx.project_id}:{recipe_path}\n"
+                    content += (
+                        f"execute if score #success {Mem.ctx.project_id}.data matches 1 "
+                        f"run recipe give @s {Mem.ctx.project_id}:{recipe_path}\n"
+                    )
                 content += "\n"
 
             # Add result items
             content += "## Add result items\n"
             for recipe_name, item in handler.vanilla_generated_recipes:
-                content += f"""execute if items entity @s container.* *[custom_data~{{"{Mem.ctx.project_id}": {{"{item}":true}} }}] run recipe give @s {Mem.ctx.project_id}:{recipe_name}\n"""
+                content += (
+                    f"""execute if items entity @s container.* *[custom_data~{{"{Mem.ctx.project_id}": {{"{item}":true}} }}] """
+                    f"run recipe give @s {Mem.ctx.project_id}:{recipe_name}\n"
+                )
 
             write_function(f"{Mem.ctx.project_id}:advancements/unlock_recipes", content)
 
@@ -152,7 +158,9 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
         return to_return
 
     @stp.simple_cache(method="str")
-    def vanilla_furnace_recipe(self, recipe: SmeltingRecipe | BlastingRecipe | SmokingRecipe | CampfireCookingRecipe, item: str) -> JsonDict:
+    def vanilla_furnace_recipe(
+        self, recipe: SmeltingRecipe | BlastingRecipe | SmokingRecipe | CampfireCookingRecipe, item: str
+    ) -> JsonDict:
         """ Generate a vanilla furnace recipe.
 
         Args:
@@ -253,7 +261,8 @@ advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
         """ Generate all vanilla recipes.
 
         Args:
-            override (list[str]): If set, only generate recipes for this item and with override only. Used to regenerate a specific item.
+            override (list[str]): If set, only generate recipes for this item, with override only.
+                Used to regenerate a specific item.
         """
         for item in Mem.definitions.keys():
             if override and item not in override:

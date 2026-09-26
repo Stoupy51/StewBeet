@@ -186,7 +186,8 @@ def run_model_resolver(for_model_resolver: dict[str, str]) -> None:
 	""" Run the model resolver to generate iso renders for the given items. """
 	any_atlas_used: bool = "before_format_73" in Mem.ctx.assets.overlays._wrapped.keys()  # type: ignore
 	if any_atlas_used:
-		Mem.ctx.assets["minecraft"].atlases["temporary_stewbeet"] = Mem.ctx.assets.overlays["before_format_73"]["minecraft"].atlases["blocks"]
+		legacy_atlases = Mem.ctx.assets.overlays["before_format_73"]["minecraft"].atlases
+		Mem.ctx.assets["minecraft"].atlases["temporary_stewbeet"] = legacy_atlases["blocks"]
 
 	stp.debug(f"Generating iso renders for {len(for_model_resolver)} items, this may take a while...")
 	with stp.MeasureTime(message="Generated iso renders for all items"):

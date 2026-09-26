@@ -28,7 +28,7 @@ def write_advancement(
 	Args:
 		path        (str):                         The path to the advancement (ex: "namespace:folder/advancement_name")
 		advancement (Advancement | JsonDict):      The advancement to write
-		overwrite   (bool):                        If the file should be overwritten (default: Merge with existing content using super_merge_dict)
+		overwrite   (bool):                        If True, overwrite the file instead of merging into it with super_merge_dict
 		max_level   (int):                         The maximum level of the JSON dump, -1 for default behavior (default: -1)
 		condition   (Callable[[JsonDict], bool]):  A function that takes the existing advancement data
 			and returns whether the new advancement should be written (default: always write)

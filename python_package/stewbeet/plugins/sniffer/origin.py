@@ -174,7 +174,8 @@ def assigned_function(node: ast.Assign) -> WriteCall | None:
 
 AST_CACHE: dict[str, dict[int, WriteCall]] = {}
 """ Parsed write-call index per file, held for one build and dropped by `reset_caches`.
-Nobody edits a file halfway through a build and `beet watch` starts a new one, so the alternative is a `stat` on every project frame of every write, which is the plugin's single biggest cost.
+Nobody edits a file halfway through a build, and `beet watch` starts a new one.
+The alternative is a `stat` on every project frame of every write, which is the plugin's single biggest cost.
 """
 
 def write_calls_of(path: str) -> dict[int, WriteCall]:

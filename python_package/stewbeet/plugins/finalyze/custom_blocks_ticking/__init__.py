@@ -54,7 +54,8 @@ def beet_default(ctx: Context):
 		for custom_block in custom_blocks_tick:
 			functions: BlockFunctions = BlockFunctions(custom_block)
 			write_function(functions.place_secondary,
-				f"# Add tag for loop every {ticking}\ntag @s add {ns}.{ticking}\nscoreboard players add #{ticking}_entities {ns}.data 1\n")
+				f"# Add tag for loop every {ticking}\ntag @s add {ns}.{ticking}\n"
+				f"scoreboard players add #{ticking}_entities {ns}.data 1\n")
 			write_function(functions.destroy,
 				f"# Decrease the number of entities with {ticking} tag\nscoreboard players remove #{ticking}_entities {ns}.data 1\n")
 
@@ -62,7 +63,11 @@ def beet_default(ctx: Context):
 		if custom_blocks_tick:
 			score_check: str = f"score #{ticking}_entities {ns}.data matches 1.."
 			dispatcher: Resource[Function] = Resource(Function, f"{CUSTOM_BLOCKS_FOLDER}/{ticking}")
-			write_versioned_function(ticking, f"# Custom blocks {ticking} functions\nexecute if {score_check} as @e[tag={ns}.{ticking}] at @s run function {dispatcher}")
+			write_versioned_function(
+				ticking,
+				f"# Custom blocks {ticking} functions\n"
+				f"execute if {score_check} as @e[tag={ns}.{ticking}] at @s run function {dispatcher}",
+			)
 
 			content = "\n".join(
 				f"execute if entity @s[tag={ns}.{custom_block}] run function {BlockFunctions(custom_block)[ticking]}"
@@ -73,5 +78,6 @@ def beet_default(ctx: Context):
 			# Write in stats_custom_blocks
 			write_function(f"{ns}:_stats_custom_blocks", f'scoreboard players add #{ticking}_entities {ns}.data 0', prepend=True)
 			write_function(f"{ns}:_stats_custom_blocks",
-				f'tellraw @s [{{"text":"- \'{ticking}\' tag function: ","color":"green"}},{{"score":{{"name":"#{ticking}_entities","objective":"{ns}.data"}},"color":"dark_green"}}]')
+				f'tellraw @s [{{"text":"- \'{ticking}\' tag function: ","color":"green"}},'
+				f'{{"score":{{"name":"#{ticking}_entities","objective":"{ns}.data"}},"color":"dark_green"}}]')
 

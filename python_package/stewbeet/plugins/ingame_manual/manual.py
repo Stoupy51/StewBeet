@@ -87,7 +87,9 @@ class Manual:
 	""" Anchor -> page lookup (rebuilt by :meth:`order`). """
 	hooks: dict[Phase, list[Callable[[Manual], None]]] = field(init=False, repr=False)
 	""" Per-:class:`Phase` developer hooks (see :meth:`on` / :meth:`register`). """
-	item_page_hooks: list[Callable[[ItemPage, Manual], None]] = field(init=False, default_factory=list[Callable[[ItemPage, "Manual"], None]], repr=False)
+	item_page_hooks: list[Callable[[ItemPage, Manual], None]] = field(
+		init=False, default_factory=list[Callable[[ItemPage, "Manual"], None]], repr=False
+	)
 	""" Hooks run on every :class:`~.pages.item_page.ItemPage` during preparation. """
 
 	# Page operations requested before discover() runs are deferred and replayed once the
@@ -362,7 +364,10 @@ class Manual:
 
 		# Special pages inserted right after the intro, via the public API
 		if self.has_forge_3x3 or self.has_forge_3x4:
-			self.insert_page(RawPage(anchor="stardust_forge", title="Awakened Forge", content=build_stardust_forge_page(), optimize=False), index=1)
+			forge_page: RawPage = RawPage(
+				anchor="stardust_forge", title="Awakened Forge", content=build_stardust_forge_page(), optimize=False
+			)
+			self.insert_page(forge_page, index=1)
 		if "heavy_workbench" in Mem.definitions:
 			self.move_page("item:heavy_workbench", index=1)
 
@@ -433,7 +438,10 @@ class Manual:
 					ce_d = cast("dict[str, Any]", ce)
 					if ce_d.get("action") == "change_page":
 						page_val = ce_d.get("page")
-						idx = self.page_index_of(page_val) if isinstance(page_val, PageRef) else (page_val if isinstance(page_val, int) else -1)
+						idx = (
+							self.page_index_of(page_val) if isinstance(page_val, PageRef)
+							else (page_val if isinstance(page_val, int) else -1)
+						)
 						if idx != -1:
 							ce_d.clear()
 							ce_d["action"] = "show_dialog"

@@ -144,7 +144,10 @@ class SmithedRecipeHandler:
             dump += "}"  # Close the dump string without trailing comma
 
         # Return the line
-        line = f"execute if score @s smithed.data matches 0 store result score @s smithed.data if data storage smithed.crafter:input recipe{dump}"
+        line = (
+            "execute if score @s smithed.data matches 0 "
+            f"store result score @s smithed.data if data storage smithed.crafter:input recipe{dump}"
+        )
         if recipe.smithed_crafter_command:
             line += f""" run function {self.apply_path} {{"command":"{recipe.smithed_crafter_command}"}}"""
         else:
@@ -164,7 +167,9 @@ class SmithedRecipeHandler:
                     else CraftingShapelessRecipe.from_dict(recipe)
 
                 # Get ingredients
-                ingr: list[Ingr] = list(recipe.ingredients.values()) if isinstance(recipe, CraftingShapedRecipe) else recipe.ingredients
+                ingr: list[Ingr] = (
+                    list(recipe.ingredients.values()) if isinstance(recipe, CraftingShapedRecipe) else recipe.ingredients
+                )
                 if not recipe.result:
                     result_loot_table = Ingr(item).register_loot_table(recipe.result_count)
                 else:
@@ -173,18 +178,28 @@ class SmithedRecipeHandler:
                 # If there is a component in the ingredients of shaped/shapeless, use smithed crafter
                 if any(i.get("components") for i in ingr):
                     if not official_lib_used("smithed.crafter"):
-                        stp.debug("Found a crafting table recipe using custom item in ingredients, adding 'smithed.crafter' dependency")
+                        stp.debug(
+                            "Found a crafting table recipe using custom item in ingredients, adding 'smithed.crafter' dependency"
+                        )
 
                         # Add to the give_all function the heavy workbench give command
-                        write_function(f"{Mem.ctx.project_id}:_give_all", "loot give @s loot smithed.crafter:blocks/table\n", prepend=True)
+                        write_function(
+                            f"{Mem.ctx.project_id}:_give_all", "loot give @s loot smithed.crafter:blocks/table\n", prepend=True
+                        )
 
                 # Generate recipe based on type
                 if isinstance(recipe, CraftingShapelessRecipe):
                     line = self.smithed_shapeless_recipe(recipe, result_loot_table)
-                    write_function(f"{Mem.ctx.project_id}:calls/smithed_crafter/shapeless_recipes", line, tags=["smithed.crafter:event/shapeless_recipes"])
+                    write_function(
+                        f"{Mem.ctx.project_id}:calls/smithed_crafter/shapeless_recipes",
+                        line,
+                        tags=["smithed.crafter:event/shapeless_recipes"],
+                    )
                 else:
                     line = self.smithed_shaped_recipe(recipe, result_loot_table)
-                    write_function(f"{Mem.ctx.project_id}:calls/smithed_crafter/shaped_recipes", line, tags=["smithed.crafter:event/recipes"])
+                    write_function(
+                        f"{Mem.ctx.project_id}:calls/smithed_crafter/shaped_recipes", line, tags=["smithed.crafter:event/recipes"]
+                    )
 
         # Apply recipe
         if OFFICIAL_LIBS["smithed.crafter"]["is_used"]:

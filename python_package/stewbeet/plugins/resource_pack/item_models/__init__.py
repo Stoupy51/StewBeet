@@ -91,7 +91,10 @@ def beet_default(ctx: Context):
 
 	# Textures folder
 	textures_folder: str = stp.relative_path(Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", ""))
-	assert textures_folder != "", "Textures folder path not found in 'ctx.meta.stewbeet.textures_folder'. Please set a directory path in project configuration."
+	assert textures_folder != "", (
+		"Textures folder path not found in 'ctx.meta.stewbeet.textures_folder'. "
+		"Please set a directory path in project configuration."
+	)
 
 	# Textures
 	textures: dict[str, str] = {

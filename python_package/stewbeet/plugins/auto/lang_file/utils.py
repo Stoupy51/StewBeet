@@ -365,7 +365,8 @@ def build_replacement(
 		>>> # Suffix only with color: color stays on translate component
 		>>> s = '{"text":"Exited map editor (changes discarded).","color":"red"}'
 		>>> frag, rs, re_ = build_replacement(
-		...		s, 'Exited map editor (changes discarded).', 'Exited map editor (changes discarded).', 1, 62, '"', '"', 'mgs.exited_map_editor_changes_discarded', '', '.'
+		...		s, 'Exited map editor (changes discarded).', 'Exited map editor (changes discarded).', 1, 62,
+		...		'"', '"', 'mgs.exited_map_editor_changes_discarded', '', '.'
 		...	)
 		>>> result = s[:rs] + frag + s[re_:]
 		>>> result
@@ -379,7 +380,9 @@ def build_replacement(
 
 		>>> # Prefix with newline: newline in prefix must be re-escaped back to \\n
 		>>> s = '{"text":"\\nNo secondary magazines","color":"gray"}'
-		>>> frag, rs, re_ = build_replacement(s, '\\nNo secondary magazines', '\nNo secondary magazines', 1, 48, '"', '"', 'mgs.no_secondary_magazines', '\n', '')
+		>>> frag, rs, re_ = build_replacement(
+		...     s, '\\nNo secondary magazines', '\nNo secondary magazines', 1, 48, '"', '"', 'mgs.no_secondary_magazines', '\n', ''
+		... )
 		>>> s[:rs] + frag + s[re_:]
 		'[{"text":"\\n","color":"gray"}, {"translate":"mgs.no_secondary_magazines"}]'
 	"""
@@ -450,7 +453,8 @@ def handle_file(content: TextFileBase[str] | None, ctx: Context | None = None) -
 	For each {"text": "..."} component found:
 		- Decodes the value and skips non-useful strings (no alnum, too short, macros).
 		- Strips non-alphanumeric prefix/suffix from the value to derive a stable key.
-		- When prefix/suffix exist, wraps the enclosing JSON object into a list so the core translate component shares its key with components having the same alphanumeric content.
+		- When prefix/suffix exist, wraps the enclosing JSON object into a list.
+			The core translate component then shares its key with components having the same alphanumeric content.
 		- Falls back to numeric suffix (_2, _3, ...) if object wrapping is not possible.
 
 	Args:

@@ -209,7 +209,10 @@ def parse_execution_context_from_line(line: str) -> str | None:
                     next_i: int
                     selector, next_i = parse_selector_or_argument(parts, index + 1)
                     # Remove any previous position/rotation modifiers when "at" is used
-                    context_parts = [cp for cp in context_parts if not any(keyword in cp for keyword in ["positioned", "align", "rotated", "anchored", "in"])]
+                    context_parts = [
+                        cp for cp in context_parts
+                        if not any(keyword in cp for keyword in ["positioned", "align", "rotated", "anchored", "in"])
+                    ]
                     context_parts.append(f"{part} {selector}")
                     index = next_i
                 else:

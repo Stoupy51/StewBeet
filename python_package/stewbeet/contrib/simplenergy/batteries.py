@@ -50,7 +50,7 @@ scoreboard players add #stack {ns}.data 1
 
 # Update the item
 data modify entity @s Item.components set from storage energy:temp list[0].components
-"""
+"""  # noqa: E501
 	write_function(f"{ns}:utils/keep_energy", content)
 
 
