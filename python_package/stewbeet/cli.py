@@ -53,7 +53,7 @@ def main() -> None:
   {stp.GREEN}--version, -v{stp.RESET} [depth]         Show version information for stewbeet and dependencies
   {stp.GREEN}--help, -h{stp.RESET}                    Show this help message
   {stp.GREEN}init, template{stp.RESET}                Initialize a new StewBeet project from template
-  {stp.GREEN}migrate{stp.RESET}                       Migrate existing datapack/resource pack to StewBeet structure
+  {stp.GREEN}migrate{stp.RESET} [template] [--dry-run]  Turn an existing datapack/resource pack into a StewBeet project
   {stp.GREEN}dump{stp.RESET}                          Create a zip archive of the project (excludes build artifacts)
   {stp.GREEN}clean{stp.RESET}                         Clean all caches and output directories
   {stp.GREEN}rebuild{stp.RESET}                       Clean and rebuild the project
