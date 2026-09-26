@@ -118,7 +118,10 @@ class ContextAnalyzer:
                 if context_start != -1 and context_end != -1:
                     context = caller[context_start + 2:context_end]  # +2 to skip " ["
                     # Only consider it an execution context if it contains execution keywords
-                    if any(keyword in context for keyword in ["as ", "at ", "positioned ", "rotated ", "facing ", "in ", "anchored ", "align "]):
+                    if any(
+                        keyword in context
+                        for keyword in ["as ", "at ", "positioned ", "rotated ", "facing ", "in ", "anchored ", "align "]
+                    ):
                         self.execution_contexts[func_path] = context
                         return self.execution_contexts[func_path]
 

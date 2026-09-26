@@ -56,7 +56,8 @@ def beet_default(ctx: Context):
     source_lore = ctx.meta["stewbeet"]["source_lore"]
     assert source_lore[0] == "", "the lore must start with an empty string to reset the parent formatting"
     assert source_lore[1] == {"text": ICON_CHAR, "color": "white", "italic": False, "font": font_id}, source_lore[1]
-    assert source_lore[2] == {"text": f"{SPACER_CHAR}{ctx.project_name}", "color": "white", "italic": False, "font": font_id}, source_lore[2]
+    expected_name: dict[str, object] = {"text": f"{SPACER_CHAR}{ctx.project_name}", "color": "white", "italic": False, "font": font_id}
+    assert source_lore[2] == expected_name, source_lore[2]
     assert len(source_lore) == 3, source_lore
     assert uses_font(source_lore, font_id)
     assert not uses_font(source_lore, f"{ns}:something_else")

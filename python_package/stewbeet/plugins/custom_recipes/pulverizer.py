@@ -43,7 +43,10 @@ class PulverizerRecipeHandler:
         ingredient = recipe.ingredient.to_predicate()
         result = recipe.result.to_item().item_to_id() if recipe.result else Ingr(item)
 
-        line: str = "execute if score #found simplenergy.data matches 0 store result score #found simplenergy.data if data storage simplenergy:main pulverizer.input"
+        line: str = (
+            "execute if score #found simplenergy.data matches 0 "
+            "store result score #found simplenergy.data if data storage simplenergy:main pulverizer.input"
+        )
         line += ExternalItem.json_dump(ingredient)
         line += f" run loot replace entity @s contents loot {result.register_loot_table(recipe.result_count)}"
         return line

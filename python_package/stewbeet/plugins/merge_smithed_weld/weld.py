@@ -166,7 +166,11 @@ def prepare_weld(ctx: Context, dest_path: str, pack_type: str) -> list[str] | No
 	try:
 		import smithed.weld  # noqa: F401  # pyright: ignore[reportMissingTypeStubs, reportUnusedImport]
 	except Exception as e:
-		stp.error(f"Smithed Weld merging failed: {e}\nThe 'smithed' package is not yet up to date with Python 3.14, consider installing from this fork:\npip install git+https://github.com/Stoupy51/smithed-python.git")
+		stp.error(
+			f"Smithed Weld merging failed: {e}\n"
+			"The 'smithed' package is not yet up to date with Python 3.14, consider installing from this fork:\n"
+			"pip install git+https://github.com/Stoupy51/smithed-python.git"
+		)
 		return None
 
 	return to_merge
@@ -260,7 +264,9 @@ def report_unwelded_archives(ctx: Context) -> Generator[None]:
 	yield
 	for pack_type in ctx.meta.get(ASKED_PACK_TYPES, []):
 		if pack_type not in ctx.meta.get(WELDED_META_KEY, []):
-			stp.debug(f"No '{os.path.basename(merged_archive_path(ctx, pack_type))}' produced (no pipeline entry welds the {pack_type})")
+			stp.debug(
+				f"No '{os.path.basename(merged_archive_path(ctx, pack_type))}' produced (no pipeline entry welds the {pack_type})"
+			)
 
 
 def weld_pack_types(ctx: Context, pack_types: tuple[str, ...]) -> None:

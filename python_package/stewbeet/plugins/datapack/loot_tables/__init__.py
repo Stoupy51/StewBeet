@@ -138,7 +138,10 @@ def beet_default(ctx: Context):
 			chest_contents.append(f'{{slot:{j},item:{{count:1,id:"{obj.base_item}",components:{json_content}}}}}')
 
 		joined_content = ",".join(chest_contents)
-		chests.append(f'give @s chest[container=[{joined_content}],custom_name={{"text":"Chest [{i+1}/{total_chests}]","color":"yellow"}},lore=[{lore}]]')
+		chests.append(
+			f'give @s chest[container=[{joined_content}],'
+			f'custom_name={{"text":"Chest [{i+1}/{total_chests}]","color":"yellow"}},lore=[{lore}]]'
+		)
 
 	# Write the give all function
 	write_function(f"{ns}:_give_all", "\n" + "\n\n".join(chests) + "\n\n")

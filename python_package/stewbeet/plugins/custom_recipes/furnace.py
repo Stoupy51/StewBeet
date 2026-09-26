@@ -52,7 +52,9 @@ class FurnaceRecipeHandler:
                 )
 
     @stp.simple_cache(method="str")
-    def furnace_nbt_recipe(self, recipe: SmeltingRecipe | BlastingRecipe | SmokingRecipe, result_loot: str, result_ingr: JsonDict) -> str:
+    def furnace_nbt_recipe(
+        self, recipe: SmeltingRecipe | BlastingRecipe | SmokingRecipe, result_loot: str, result_ingr: JsonDict
+    ) -> str:
         """ Generate a furnace NBT recipe.
 
         Args:
@@ -81,7 +83,10 @@ class FurnaceRecipeHandler:
         Mem.ctx.data["furnace_nbt_recipes"].recipes[path] = set_json_encoder(Recipe(json_file), max_level=-1)
 
         # Prepare line and return
-        line: str = "execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input"
+        line: str = (
+            "execute if score #found furnace_nbt_recipes.data matches 0 "
+            "store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input"
+        )
         line += ExternalItem.json_dump(recipe.ingredient.to_predicate())
         line += f" run loot replace block ~ ~ ~ container.3 loot {result_loot}"
         return line
@@ -105,7 +110,7 @@ execute store result score #count furnace_nbt_recipes.data run data get storage 
 scoreboard players add #count furnace_nbt_recipes.data 1
 execute store result block ~ ~ ~ RecipesUsed."furnace_nbt_recipes:xp/{experience}" int 1 run scoreboard players get #count furnace_nbt_recipes.data
 scoreboard players reset #count furnace_nbt_recipes.data
-"""
+"""  # noqa: E501
         write_function(f"{self.FURNACE_NBT_PATH}/xp_reward/{experience}", file, overwrite=True)
 
         # Create the recipe for the reward
@@ -119,7 +124,10 @@ scoreboard players reset #count furnace_nbt_recipes.data
         Mem.ctx.data["furnace_nbt_recipes"].recipes[f"xp/{experience}"] = Recipe(stp.json_dump(json_file, max_level=-1))
 
         # Prepare line and return
-        line: str = "execute if score #found furnace_nbt_recipes.data matches 0 store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input"
+        line: str = (
+            "execute if score #found furnace_nbt_recipes.data matches 0 "
+            "store result score #found furnace_nbt_recipes.data if data storage furnace_nbt_recipes:main input"
+        )
         line += ExternalItem.json_dump(recipe.ingredient.to_predicate())
         line += f" run function {Mem.ctx.project_id}:calls/furnace_nbt_recipes/xp_reward/{experience}"
         return line

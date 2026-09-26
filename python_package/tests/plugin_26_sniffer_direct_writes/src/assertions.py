@@ -98,7 +98,8 @@ def beet_default(ctx: Context) -> Iterator[None]:
     # which is step B's line-advance behaviour and not what this test is about.
     call_lines: set[int] = {line for _, line, _ in origins.values()}
     assert len(call_lines) > 1, f"both write calls should contribute, got one line {sorted(call_lines)}"
-    assert all(str(list(both["sources"])[index]).endswith("link.py") for index, _, _ in origins.values()),         f"both chunks came from link.py, got {both['sources']}"
+    assert all(str(list(both["sources"])[index]).endswith("link.py") for index, _, _ in origins.values()), \
+        f"both chunks came from link.py, got {both['sources']}"
 
     # A map sits beside its function under a derived name, so nothing is appended to the function.
     for path in EXPECTED:

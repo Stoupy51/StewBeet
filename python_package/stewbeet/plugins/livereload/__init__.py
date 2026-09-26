@@ -268,7 +268,10 @@ def patch_livereload_for_copy_destinations(ctx: Context) -> None:
 	livereload_module._stewbeet_copy_patch = True  # type: ignore
 	try:
 		autosave = ctx.inject(Autosave)
-		autosave.link_handlers = [livereload_with_copy_destinations if handler is original_livereload else handler for handler in autosave.link_handlers]
+		autosave.link_handlers = [
+			livereload_with_copy_destinations if handler is original_livereload else handler
+			for handler in autosave.link_handlers
+		]
 	except Exception:
 		pass
 

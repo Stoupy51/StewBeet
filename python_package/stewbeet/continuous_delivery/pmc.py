@@ -231,7 +231,7 @@ def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
 		[*]item 1[/*]
 		[*]item 2[/*]
 		[/list]
-	"""
+	"""  # noqa: E501
 	# Make a copy of the original markdown text
 	bbcode: str = markdown
 

@@ -48,7 +48,10 @@ def beet_default(ctx: Context):
 
 	# Assertions
 	assert ctx.project_id, "Project ID is not set. Please set it in the project configuration."
-	assert textures_folder != "", "Textures folder path not found in 'ctx.meta.stewbeet.textures_folder'. Please set a directory path in project configuration."
+	assert textures_folder != "", (
+		"Textures folder path not found in 'ctx.meta.stewbeet.textures_folder'. "
+		"Please set a directory path in project configuration."
+	)
 
 	# Textures
 	source_textures: dict[str, str] = {
@@ -57,11 +60,14 @@ def beet_default(ctx: Context):
 	}
 
 	# Warn about blocks that will never be placeable
-	incomplete_blocks: list[str] = [item for item, data in Mem.definitions.items() if isinstance(data, Block) and data.vanilla_block is None]
+	incomplete_blocks: list[str] = [
+		item for item, data in Mem.definitions.items() if isinstance(data, Block) and data.vanilla_block is None
+	]
 	if incomplete_blocks:
 		stp.warning(
 			f"Blocks without a vanilla_block won't be placeable: {incomplete_blocks}. "
-			f"Set one in your definitions, e.g. Block.from_id({incomplete_blocks[0]!r}).vanilla_block = VanillaBlock(id=\"minecraft:iron_block\")"
+			f"Set one in your definitions, e.g. "
+			f"Block.from_id({incomplete_blocks[0]!r}).vanilla_block = VanillaBlock(id=\"minecraft:iron_block\")"
 		)
 
 	# Stop if not custom block
@@ -100,7 +106,8 @@ execute if score #rotation {ns}.data matches 0 if predicate {ns}:facing/west run
 """)
 	# Check light level at current position and update #light score if higher
 	check_light_lines: str = "".join(
-		f"execute if score #light {ns}.data matches ..{level - 1} if predicate {ns}:light/{level} run return run scoreboard players set #light {ns}.data {level}\n"
+		f"execute if score #light {ns}.data matches ..{level - 1} if predicate {ns}:light/{level} "
+		f"run return run scoreboard players set #light {ns}.data {level}\n"
 		for level in range(1, 16)
 	)
 	write_function(f"{ns}:custom_blocks/check_light", f"""
@@ -131,7 +138,8 @@ execute store result entity @s brightness.sky int 1 run scoreboard players get #
 	for item, data in sniffer.attributed(Mem.definitions.items()):
 		obj = Item.from_id(item)
 		item_name: str = item.replace("_", " ").title()
-		custom_name: str = stp.json_dump({"CustomName": obj.components.get("item_name", item_name)}, max_level=0)[:-1] # Remove the last new line
+		# json_dump ends with a newline
+		custom_name: str = stp.json_dump({"CustomName": obj.components.get("item_name", item_name)}, max_level=0)[:-1]
 
 		# Custom block
 		if data.get(VANILLA_BLOCK):
@@ -141,7 +149,8 @@ execute store result entity @s brightness.sky int 1 run scoreboard players get #
 
 			# Write the line in stats_custom_blocks
 			write_function(f"{ns}:_stats_custom_blocks",
-				f'tellraw @s [{{"text":"- Total \'{item_name}\': ","color":"gold"}},{{"score":{{"name":"#total_{item}","objective":"{ns}.data"}},"color":"yellow"}}]'
+				f'tellraw @s [{{"text":"- Total \'{item_name}\': ","color":"gold"}},'
+				f'{{"score":{{"name":"#total_{item}","objective":"{ns}.data"}},"color":"yellow"}}]'
 			)
 			write_function(f"{ns}:_stats_custom_blocks",
 				f'scoreboard players add #total_{item} {ns}.data 0',
@@ -182,7 +191,11 @@ advancement revoke @s only {obj_block.alternative_advancement}
 				if block.get("visual_facing") == "player":
 					write_function(obj_block.functions.search, f"function {ns}:custom_blocks/get_rotation")
 				if "id" not in block:
-					write_function(obj_block.functions.search, f"execute as @e[type=item_frame,tag={ns}.new,tag={ns}.{item}] at @s run function {obj_block.functions.place_main}")
+					write_function(
+						obj_block.functions.search,
+						f"execute as @e[type=item_frame,tag={ns}.new,tag={ns}.{item}] at @s "
+						f"run function {obj_block.functions.place_main}",
+					)
 				# Make place check function (only if "id" is in VANILLA_BLOCK)
 				else:
 					write_function(obj_block.functions.search, f"""tag @s add {ns}.to_refund
@@ -224,9 +237,16 @@ kill @s
 						block_id = block_id.split('[')[0]
 					for i, face in enumerate(FACING):
 						if block_states:
-							content += f"execute if score #rotation {ns}.data matches {i+1} run setblock ~ ~ ~ {block_id}[facing={face}," + ",".join(block_states) + f"]{beautify_name}\n"
+							states: str = ",".join(block_states)
+							content += (
+								f"execute if score #rotation {ns}.data matches {i+1} "
+								f"run setblock ~ ~ ~ {block_id}[facing={face},{states}]{beautify_name}\n"
+							)
 						else:
-							content += f"execute if score #rotation {ns}.data matches {i+1} run setblock ~ ~ ~ {block_id}[facing={face}]{beautify_name}\n"
+							content += (
+								f"execute if score #rotation {ns}.data matches {i+1} "
+								f"run setblock ~ ~ ~ {block_id}[facing={face}]{beautify_name}\n"
+							)
 				else:
 					if block.get("visual_facing") == "player":
 						content += f"function {ns}:custom_blocks/get_rotation\n"
@@ -236,7 +256,10 @@ kill @s
 
 				# Summon item display and call secondary function
 				custom_block_entities.add("minecraft:item_display")  # Add item display entity for custom blocks
-				content += f"execute align xyz positioned ~0.5 ~0.5 ~0.5 summon item_display at @s run function {obj_block.functions.place_secondary}\n"
+				content += (
+					"execute align xyz positioned ~0.5 ~0.5 ~0.5 summon item_display at @s "
+					f"run function {obj_block.functions.place_secondary}\n"
+				)
 
 				# Add temporary tags and call main function
 				content = f"tag @s add {ns}.placer\n" + content + f"tag @s remove {ns}.placer\n"
@@ -263,7 +286,8 @@ scoreboard players add #total_{item} {ns}.data 1
 				block_id = block_id.replace(":","_")
 				item_model = ""
 				if obj_block.components.get("item_model"):
-					item_model = f"item replace entity @s contents with {CUSTOM_BLOCK_VANILLA}[item_model=\"{obj_block.components['item_model']}\"]\n"
+					model_id: str = obj_block.components["item_model"]
+					item_model = f"item replace entity @s contents with {CUSTOM_BLOCK_VANILLA}[item_model=\"{model_id}\"]\n"
 				content = f"""
 # Add convention and utils tags, and the custom block tag
 tag @s add global.ignore
@@ -295,7 +319,8 @@ execute if score #rotation {ns}.data matches 4 run data modify entity @s Rotatio
 				if OFFICIAL_LIBS["furnace_nbt_recipes"]["is_used"] and block_id.endswith(("_furnace", "_smoker")):
 					content += '\n# Furnace NBT Recipes\n'
 					content += (
-						'execute align xyz positioned ~0.5 ~ ~0.5 unless entity @e[type=marker,dx=-1,dy=-1,dz=-1,tag=furnace_nbt_recipes.furnace] run '
+						'execute align xyz positioned ~0.5 ~ ~0.5 '
+						'unless entity @e[type=marker,dx=-1,dy=-1,dz=-1,tag=furnace_nbt_recipes.furnace] run '
 						'summon marker ~ ~ ~ {Tags:["furnace_nbt_recipes.furnace"]}\n'
 					)
 
@@ -360,7 +385,7 @@ execute store result entity @s Facing byte 1 run scoreboard players get #item_fr
 
 # Update position (fixes a Minecraft bug)
 execute at @s run tp @s ^ ^ ^0.1
-"""
+"""  # noqa: E501
 				if block.get("visual_facing") == "player":
 					content += f"""
 # Force ground position
@@ -403,14 +428,16 @@ function {obj_block.functions.update_seed_model}
 					time_to: int = int((stage + 1) * growing_time / progress_stages) - 1
 					time_to_str: str = str(time_to) if stage < progress_stages else ""
 					content += (
-						f"execute if score @s {ns}.growth_time matches {time_from}..{time_to_str} unless score @s {ns}.growth_stage matches {stage} run "
-						f"""function {ns}:custom_blocks/change_seed_stage {{stage:{stage}, model:"{obj_block.seed_stage_item_model(stage)}"}}\n"""
+						f"execute if score @s {ns}.growth_time matches {time_from}..{time_to_str} "
+						f"unless score @s {ns}.growth_stage matches {stage} run "
+						f"""function {ns}:custom_blocks/change_seed_stage {{stage:{stage}, """
+						f"""model:"{obj_block.seed_stage_item_model(stage)}"}}\n"""
 					)
 				write_function(obj_block.functions.update_seed_model, f"""
 # Update growth stage based on growth_time
 {content}
 """)
-				# Optimisation: If total growing time is higher than 60*stages second, we will increment the growth_time score every minute
+				# Optimisation: with a growing time above 60*stages seconds, the growth_time score is incremented every minute
 				for (speed, secs) in [(60, "minute"), (5, "second_5"), (1, "second")]:
 					if growing_time > speed * progress_stages:
 						write_function(obj_block.functions[secs], f"""
@@ -418,10 +445,13 @@ function {obj_block.functions.update_seed_model}
 scoreboard players add @s {ns}.growth_time {speed}
 execute if score #boost_growth_time {ns}.data matches 1.. run scoreboard players operation @s {ns}.growth_time += #boost_growth_time {ns}.data
 function {obj_block.functions.update_seed_model}
-""")
+""")  # noqa: E501
 						break
 				else:
-					stp.error(f"Growing seed '{item}' has a growing time < to the number of stages ({growing_time} seconds). Please increase the growing time or reduce the number of stages.")
+					stp.error(
+						f"Growing seed '{item}' has a growing time < to the number of stages ({growing_time} seconds). "
+						"Please increase the growing time or reduce the number of stages."
+					)
 
 				# Make the loot table for the seed
 				loot_table: str | list[GrowingSeedLoot] = growing_seed.loots
@@ -462,7 +492,7 @@ function {obj_block.functions.update_seed_model}
 # If fully grown, drop the loot table and kill the current entity (item)
 execute if score #growth_time {ns}.data matches {growing_time}.. as @p[gamemode=!spectator] run loot spawn ~ ~ ~ fish {loot_table} ~ ~ ~ mainhand
 execute if score #growth_time {ns}.data matches {growing_time}.. run kill @s
-""")
+""")  # noqa: E501
 			pass
 		pass
 
@@ -475,7 +505,7 @@ $scoreboard players set @s {ns}.growth_stage $(stage)
 # Change the item model to the right stage
 $execute if entity @s[type=item_display] run return run data modify entity @s item.components."minecraft:item_model" set value "$(model)"
 $execute if entity @s[type=item_frame] run return run data modify entity @s Item.components."minecraft:item_model" set value "$(model)"
-""")
+""")  # noqa: E501
 		write_load_file(f"""
 # Create objectives for growing seeds
 scoreboard objectives add {ns}.growth_time dummy
@@ -487,7 +517,9 @@ scoreboard objectives add {ns}.growth_stage dummy
 
 		# Change is_used state
 		if not official_lib_used("smithed.custom_block"):
-			stp.debug("Found custom blocks using CUSTOM_BLOCK_VANILLA in the definitions, adding 'smithed.custom_block' to the dependencies")
+			stp.debug(
+				"Found custom blocks using CUSTOM_BLOCK_VANILLA in the definitions, adding 'smithed.custom_block' to the dependencies"
+			)
 
 		# Write function tag to link with the library
 		write_tag("smithed.custom_block:event/on_place", ctx.data.function_tags, [f"{ns}:custom_blocks/on_place"])
@@ -504,7 +536,10 @@ scoreboard objectives add {ns}.growth_stage dummy
 			obj = Item.from_id(item)
 			if obj.base_item == CUSTOM_BLOCK_VANILLA:
 				place_main = Block.from_id(item).functions.place_main
-				content += f"""execute if data storage smithed.custom_block:main blockApi{{id:"{ns}:{item}"}} run function {place_main}\n"""
+				content += (
+					f"""execute if data storage smithed.custom_block:main blockApi{{id:"{ns}:{item}"}} """
+					f"run function {place_main}\n"
+				)
 		content += f"tag @s remove {ns}.placer\n"
 		write_function(f"{ns}:custom_blocks/place", content)
 
@@ -530,7 +565,8 @@ scoreboard objectives add {ns}.growth_stage dummy
 		else:
 			content += (
 				f"execute if {score_check} if entity @s[tag={ns}.vanilla.{block_underscore}] "
-				f"unless items entity @s contents *[minecraft:custom_data~{{{ns}:{{item_frame_destroy:true}}}}] run return run function {ns}:custom_blocks/_groups/{block_underscore}\n"
+				f"unless items entity @s contents *[minecraft:custom_data~{{{ns}:{{item_frame_destroy:true}}}}] "
+				f"run return run function {ns}:custom_blocks/_groups/{block_underscore}\n"
 			)
 	write_function(f"{ns}:custom_blocks/destroy", content)
 
@@ -543,7 +579,8 @@ scoreboard objectives add {ns}.growth_stage dummy
 				planted_on: str = growing_seed.planted_on
 				content += (
 					f"execute if score #total_{item} {ns}.data matches 1.. if entity @s[tag={ns}.{item}] "
-					f"""unless block ~ ~-1 ~ {planted_on} run return run function {ns}:custom_blocks/no_block_below {{item:"{item}"}}\n"""
+					f"""unless block ~ ~-1 ~ {planted_on} """
+					f"""run return run function {ns}:custom_blocks/no_block_below {{item:"{item}"}}\n"""
 				)
 		write_function(f"{ns}:custom_blocks/destroy_growing_seeds", content)
 		write_function(f"{ns}:custom_blocks/no_block_below", f"""
@@ -551,7 +588,7 @@ scoreboard objectives add {ns}.growth_stage dummy
 execute if entity @s[type=item_frame] run summon item ~ ~ ~ {{Item:{{id:"minecraft:item_frame",count:1,components:{{"minecraft:custom_data":{{"{ns}":{{"item_frame_destroy":true}}}}}}}}}}
 execute if entity @s[type=item_display] run setblock ~ ~ ~ air destroy
 $function {ns}:custom_blocks/$(item)/destroy
-""")
+""")  # noqa: E501
 
 	# For each unique block, make the group function
 	for block_id in unique_blocks_sorted:
@@ -559,7 +596,8 @@ $function {ns}:custom_blocks/$(item)/destroy
 		# Add a line in the stats_custom_blocks file
 		score_name: str = f"total_vanilla_{block_id.replace('minecraft:','')}"
 		write_function(f"{ns}:_stats_custom_blocks",
-			f'tellraw @s [{{"text":"- Vanilla \'{block_id}\': ","color":"gray"}},{{"score":{{"name":"#{score_name}","objective":"{ns}.data"}},"color":"white"}}]'
+			f'tellraw @s [{{"text":"- Vanilla \'{block_id}\': ","color":"gray"}},'
+			f'{{"score":{{"name":"#{score_name}","objective":"{ns}.data"}},"color":"white"}}]'
 		)
 		write_function(f"{ns}:_stats_custom_blocks",
 			f'scoreboard players add #{score_name} {ns}.data 0',
@@ -613,7 +651,8 @@ execute as @n[type=item,nbt={{Item:{item_nbt}}},distance=..1] run function {obj_
 """
 			# If growing seed, get the growth_time score
 			if data.get(GROWING_SEED):
-				content = content.replace("custom one", f"custom one\nscoreboard players operation #growth_time {ns}.data = @s {ns}.growth_time", 1)
+				growth_line: str = f"scoreboard players operation #growth_time {ns}.data = @s {ns}.growth_time"
+				content = content.replace("custom one", f"custom one\n{growth_line}", 1)
 
 			# Decrease count scores for stats and optimization
 			content += f"""
@@ -643,7 +682,7 @@ execute as @p[distance=..10,gamemode=!spectator] if data entity @s SelectedItem.
 
 # If no item found, summon it
 execute unless entity @n[type=item,nbt={{Item:{item_nbt}}},distance=..1] run loot spawn ~ ~ ~ loot {{pools:[{{entries:[{{type:"minecraft:item",name:"minecraft:glass"}}],rolls:1}}]}}
-""", prepend=True)
+""", prepend=True)  # noqa: E501
 
 				# Handle no silk touch drop
 				no_silk_touch_drop: str | JsonDict | NoSilkTouchDrop | LootTable = data[NO_SILK_TOUCH_DROP]
@@ -659,12 +698,12 @@ execute if score #is_silk_touch {ns}.data matches 1 run data modify entity @s It
 execute if score #is_silk_touch {ns}.data matches 0 positioned ~ ~ ~ as @p[distance=..10,gamemode=!spectator] run loot spawn ~ ~ ~ fish {no_silk_loot_table} ~ ~ ~ mainhand
 execute if score #is_silk_touch {ns}.data matches 0 unless entity @p[distance=..10,gamemode=!spectator] run loot spawn ~ ~ ~ loot {no_silk_loot_table}
 execute if score #is_silk_touch {ns}.data matches 0 run kill @s
-"""
+"""  # noqa: E501
 					if data.get(VANILLA_BLOCK) == VANILLA_BLOCK_FOR_ORES:
 						content += f"""
 # Keep item count when silk touch is applied
 execute if score #is_silk_touch {ns}.data matches 1 store result entity @s Item.count byte 1 run scoreboard players get #item_count {ns}.data
-"""
+"""  # noqa: E501
 				else:
 					if isinstance(no_silk_touch_drop, dict | NoSilkTouchDrop):
 						item_to_drop: str = no_silk_touch_drop["id"]
@@ -679,21 +718,29 @@ execute if score #is_silk_touch {ns}.data matches 1 store result entity @s Item.
 						item_count_min: int = 1
 						item_count_max: int = 1
 					if ':' in item_to_drop:
-						silk_text = f'execute if score #is_silk_touch {ns}.data matches 0 run data modify entity @s Item.id set value "{item_to_drop}"'
+						silk_text = (
+							f'execute if score #is_silk_touch {ns}.data matches 0 '
+							f'run data modify entity @s Item.id set value "{item_to_drop}"'
+						)
 					else:
 						silk_text = (
-							f"execute if score #is_silk_touch {ns}.data matches 0 run data modify entity @s Item.id set from storage {ns}:items all.{item_to_drop}.id"
+							f"execute if score #is_silk_touch {ns}.data matches 0 "
+							f"run data modify entity @s Item.id set from storage {ns}:items all.{item_to_drop}.id"
 							f"\nexecute if score #is_silk_touch {ns}.data matches 0 run "
 							f"data modify entity @s Item.components set from storage {ns}:items all.{item_to_drop}.components"
 						)
+					when_no_silk: str = f"\nexecute if score #is_silk_touch {ns}.data matches 0"
 					if item_count_min == item_count_max and item_count_min != 1:
-						silk_text += f"\nexecute if score #is_silk_touch {ns}.data matches 0 run scoreboard players set #multiplier {ns}.data {item_count_min}"
-						silk_text += f"\nexecute if score #is_silk_touch {ns}.data matches 0 run scoreboard players operation #item_count {ns}.data *= #multiplier {ns}.data"
+						silk_text += f"{when_no_silk} run scoreboard players set #multiplier {ns}.data {item_count_min}"
+						silk_text += f"{when_no_silk} run scoreboard players operation #item_count {ns}.data *= #multiplier {ns}.data"
 					elif item_count_min < item_count_max:
-						silk_text += f"\nexecute if score #is_silk_touch {ns}.data matches 0 run scoreboard players set #divider {ns}.data 100"
-						silk_text += f"\nexecute if score #is_silk_touch {ns}.data matches 0 store result score #multiplier {ns}.data run random value {item_count_min*100}..{item_count_max*100}"
-						silk_text += f"\nexecute if score #is_silk_touch {ns}.data matches 0 run scoreboard players operation #item_count {ns}.data *= #multiplier {ns}.data"
-						silk_text += f"\nexecute if score #is_silk_touch {ns}.data matches 0 run scoreboard players operation #item_count {ns}.data /= #divider {ns}.data"
+						silk_text += f"{when_no_silk} run scoreboard players set #divider {ns}.data 100"
+						silk_text += (
+							f"{when_no_silk} store result score #multiplier {ns}.data "
+							f"run random value {item_count_min*100}..{item_count_max*100}"
+						)
+						silk_text += f"{when_no_silk} run scoreboard players operation #item_count {ns}.data *= #multiplier {ns}.data"
+						silk_text += f"{when_no_silk} run scoreboard players operation #item_count {ns}.data /= #divider {ns}.data"
 					content = f"""
 # If silk touch applied
 execute if score #is_silk_touch {ns}.data matches 1 run data modify entity @s Item.id set from storage {ns}:items all.{item}.id
@@ -701,7 +748,7 @@ execute if score #is_silk_touch {ns}.data matches 1 run data modify entity @s It
 
 # Else, no silk touch
 {silk_text}
-"""
+"""  # noqa: E501
 					if data.get(VANILLA_BLOCK) == VANILLA_BLOCK_FOR_ORES:
 						content += f"""
 # Get item count in every case
@@ -762,24 +809,24 @@ function {obj_block.functions.is_fully_grown}
 	write_versioned_function("tick_2", f"""
 # 2 ticks destroy detection (item_display only)
 execute if {score_check} as @e[type=item_display,tag={ns}.custom_block,tag=!{ns}.vanilla.{ore_block},predicate=!{ns}:check_vanilla_blocks] at @s run function {ns}:custom_blocks/destroy
-""")
+""")  # noqa: E501
 	write_versioned_function("second", f"""
 # 1 second break detection (any custom block)
 execute if {score_check} as @e[type=#{ns}:custom_blocks,tag={ns}.custom_block,tag=!{ns}.vanilla.{ore_block},predicate=!{ns}:advanced_check_vanilla_blocks] at @s run function {ns}:custom_blocks/destroy
-""")
+""")  # noqa: E501
 	write_versioned_function("second_5", f"""
 # 5 seconds break detection (item display only)
 execute if {score_check} as @e[type=item_display,tag={ns}.custom_block,predicate=!{ns}:advanced_check_vanilla_blocks] at @s run function {ns}:custom_blocks/destroy
-""")
+""")  # noqa: E501
 	if has_growing_seed:
 		write_versioned_function("second_5", f"""
 # 5 seconds growing seed break detection (below block check)
 execute if score #total_growing_seeds {ns}.data matches 1.. as @e[type=#{ns}:custom_blocks,tag={ns}.growing_seed] at @s run function {ns}:custom_blocks/destroy_growing_seeds
-""")
+""")  # noqa: E501
 	write_versioned_function("second_5", f"""
 # 5 seconds dynamic brightness update (random sample of item_display custom blocks)
 execute if {score_check} as @e[type=item_display,tag={ns}.custom_block,sort=random,limit=50] at @s run function {ns}:custom_blocks/compute_brightness
-""")
+""")  # noqa: E501
 	# Write the entity type tag for custom blocks
 	ctx.data[ns].entity_type_tags["custom_blocks"] = set_json_encoder(EntityTypeTag({"values": sorted(custom_block_entities)}))
 
@@ -789,7 +836,7 @@ execute if {score_check} as @e[type=item_display,tag={ns}.custom_block,sort=rand
 f"""
 # If the item is from a custom ore, launch the on_ore_destroyed function
 execute if data entity @s Item.components."minecraft:custom_data".common_signals.temp at @s align xyz run function {ns}:calls/common_signals/on_ore_destroyed
-""", tags=["common_signals:signals/on_new_item"])
+""", tags=["common_signals:signals/on_new_item"])  # noqa: E501
 		write_function(f"{ns}:calls/common_signals/on_ore_destroyed",
 f"""
 # Get in a score the item count and if it is a silk touch
@@ -800,7 +847,7 @@ execute store success score #is_silk_touch {ns}.data if data entity @s Item.comp
 
 # Try to destroy the block
 function {ns}:calls/common_signals/custom_block_destroy
-""")
+""")  # noqa: E501
 
 	# Common signals destroy tag
 	write_function(
@@ -815,7 +862,7 @@ function {ns}:calls/common_signals/custom_block_destroy
 f"""
 # If the item is from a custom block alternative, launch the item_frame destroy function
 execute if data entity @s Item.components."minecraft:custom_data".{ns}.item_frame_destroy at @s align xyz run function {ns}:calls/common_signals/on_item_frame_destroy
-""", tags=["common_signals:signals/on_new_item"])
+""", tags=["common_signals:signals/on_new_item"])  # noqa: E501
 		write_function(f"{ns}:calls/common_signals/on_item_frame_destroy",
 f"""
 # Try to destroy the block
@@ -824,7 +871,7 @@ function {ns}:calls/common_signals/custom_block_destroy
 # If still alive, it means that the item_frame has been destroyed too,
 execute at @s if entity @s[distance=..1] run function {ns}:calls/common_signals/item_frame_destroy_alt
 execute at @s if entity @s[distance=..1] as @n[type=item,nbt={{Item:{{id:"minecraft:item_frame"}}}},distance=..1] run function {ns}:calls/common_signals/item_frame_destroy_alt
-""")
+""")  # noqa: E501
 		write_function(f"{ns}:calls/common_signals/item_frame_destroy_alt", f"""
 # Give a new tag to the item frame
 data modify storage {ns}:temp Tags set value []
@@ -833,11 +880,12 @@ data modify entity @n[type=item,nbt={{Item:{{id:"minecraft:item_frame"}}}},dista
 
 # Remove the custom block "properly"
 execute as @n[type=item,nbt={{Item:{{id:"minecraft:item_frame"}}}},distance=..1] run function {ns}:custom_blocks/_groups/{CUSTOM_BLOCK_ALTERNATIVE.replace(':','_')}
-""")
+""")  # noqa: E501
 
 	# Add line in the stats_custom_blocks file
 	write_function(f"{ns}:_stats_custom_blocks",
-		f'tellraw @s [{{"text":"- Total custom blocks: ","color":"dark_aqua"}},{{"score":{{"name":"#total_custom_blocks","objective":"{ns}.data"}},"color":"aqua"}}]'
+		f'tellraw @s [{{"text":"- Total custom blocks: ","color":"dark_aqua"}},'
+		f'{{"score":{{"name":"#total_custom_blocks","objective":"{ns}.data"}},"color":"aqua"}}]'
 	)
 	write_function(f"{ns}:_stats_custom_blocks",
 		f'scoreboard players add #total_custom_blocks {ns}.data 0',
@@ -845,7 +893,8 @@ execute as @n[type=item,nbt={{Item:{{id:"minecraft:item_frame"}}}},distance=..1]
 	)
 	if has_growing_seed:
 		write_function(f"{ns}:_stats_custom_blocks",
-			f'tellraw @s [{{"text":"- Total growing seeds: ","color":"dark_aqua"}},{{"score":{{"name":"#total_growing_seeds","objective":"{ns}.data"}},"color":"aqua"}}]'
+			f'tellraw @s [{{"text":"- Total growing seeds: ","color":"dark_aqua"}},'
+			f'{{"score":{{"name":"#total_growing_seeds","objective":"{ns}.data"}},"color":"aqua"}}]'
 		)
 		write_function(f"{ns}:_stats_custom_blocks",
 			f'scoreboard players add #total_growing_seeds {ns}.data 0',
@@ -899,6 +948,9 @@ execute as @n[type=item,nbt={{Item:{{id:"minecraft:item_frame"}}}},distance=..1]
 			# Generate z-loop function
 			content_z = "# Search z coordinates\n"
 			for z in range(-mid_z, mid_z + 1):
-				content_z += f"execute positioned ~ ~ ~{z} if data block ~ ~ ~ components.\"minecraft:custom_data\".{ns}.{item} run function {obj_block.functions.place_main}\n"
+				content_z += (
+					f"execute positioned ~ ~ ~{z} if data block ~ ~ ~ components.\"minecraft:custom_data\".{ns}.{item} "
+					f"run function {obj_block.functions.place_main}\n"
+				)
 			write_function(f"{obj_block.head_search}_z", content_z)
 

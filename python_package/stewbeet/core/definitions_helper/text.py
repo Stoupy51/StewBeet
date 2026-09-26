@@ -10,7 +10,9 @@ from stouputils.typing import JsonDict
 
 
 # Functions
-def create_gradient_text(text: str, start_hex: str = "#c24a17", end_hex: str = "#c77e36", text_length: int | None = None) -> list[JsonDict]:
+def create_gradient_text(
+	text: str, start_hex: str = "#c24a17", end_hex: str = "#c77e36", text_length: int | None = None
+) -> list[JsonDict]:
 	""" Create a gradient text effect by interpolating colors between start and end hex.
 
 	Args:
@@ -129,5 +131,7 @@ def gradient_text_to_string(gradient_text: list[JsonDict], color_pos: int = 0) -
 		return {"text": text, "color": gradient_text[color_pos]["color"]}
 
 	# If position is invalid, warn and use first color
-	stp.warning(f"Color position {color_pos} is out of range for gradient text of length {len(gradient_text)}. Using first color instead.")
+	stp.warning(
+		f"Color position {color_pos} is out of range for gradient text of length {len(gradient_text)}. Using first color instead."
+	)
 	return {"text": text, "color": gradient_text[0]["color"]}

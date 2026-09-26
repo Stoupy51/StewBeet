@@ -106,7 +106,8 @@ class BaseEquation:
 		- player/selector   -> direct scoreboard operation
 
 		Args:
-			player      (str | int | BaseEquation):   Source value (selector, fake player, int constant, macro arg, or another equation).
+			player      (str | int | BaseEquation):   Source value.
+				A selector, fake player, int constant, macro arg, or another equation.
 			scoreboard  (str | None):  Source scoreboard. Ignored for int/macro; defaults to ``self.scoreboard``.
 			operator    (AnyOperator): One of ``*``, ``/``, ``+``, ``-``, or ``""`` (for assignment via operation).
 			temp        (str):         Name of the temporary fake player used for macro args.
@@ -118,8 +119,10 @@ class BaseEquation:
 			['scoreboard players operation @s your_namespace.data /= other_player other_scoreboard']
 
 			>>> eq2 = BaseEquation("@s")
-			>>> eq2.apply_operation("$(macro_arg)", None, "-", temp="temp_macro").ops
-			['$scoreboard players set #temp_macro your_namespace.data $(macro_arg)', 'scoreboard players operation @s your_namespace.data -= #temp_macro your_namespace.data']
+			>>> for op in eq2.apply_operation("$(macro_arg)", None, "-", temp="temp_macro").ops:
+			...     print(op)
+			$scoreboard players set #temp_macro your_namespace.data $(macro_arg)
+			scoreboard players operation @s your_namespace.data -= #temp_macro your_namespace.data
 
 			>>> eq3 = BaseEquation("@s")
 			>>> eq3.apply_operation(42, None, "+").ops
@@ -133,7 +136,8 @@ class BaseEquation:
 			# Render the other equation to generate its commands in self.ops
 			self.ops.extend(player.ops)
 			source_comment = str(player).splitlines()
-			self.comment_parts.append(f"{operator} ({source_comment[0][2:]})")	# Add the other equation header (without the leading "# ")
+			# The other equation's header, without its leading "# "
+			self.comment_parts.append(f"{operator} ({source_comment[0][2:]})")
 			cancel_next_comment = True	# Prevent the source to add up
 
 			# The final value of the source equation is always stored in self.player and self.scoreboard of the source equation
@@ -219,7 +223,8 @@ class BaseEquation:
 		return self.multiply(other)
 	def __truediv__(self, other: str | int | BaseEquation) -> BaseEquation:
 		return self.divide(other)
-	def __floordiv__(self, other: str | int | BaseEquation) -> BaseEquation: # Same as true div since Minecraft scoreboard operations are all integer-based
+	# Same as true division, since Minecraft scoreboard operations are all integer-based
+	def __floordiv__(self, other: str | int | BaseEquation) -> BaseEquation:
 		return self.divide(other)
 	def __mod__(self, other: str | int | BaseEquation) -> BaseEquation:
 		return self.modulo(other)
@@ -237,7 +242,10 @@ class ScoreboardEquation(BaseEquation):
 		'# scoreboard @s your_namespace.data = 10 + 5 * -2 / 3 % 4 - #toto'
 
 		>>> # Building a complex equation with method chaining and checking the generated commands with .ops
-		>>> result = str(ScoreboardEquation("#temp_durability", "some_score").set("-$(amount)").multiply(1000000).divide("$(max_damage)").subtract("#toto"))
+		>>> result = str(
+		...     ScoreboardEquation("#temp_durability", "some_score")
+		...     .set("-$(amount)").multiply(1000000).divide("$(max_damage)").subtract("#toto")
+		... )
 		>>> shorter = str(ScoreboardEquation("#temp_durability", "some_score").set("-$(amount)") * 1000000 / "$(max_damage)" - "#toto")
 		>>> expected = (
 		...     "# scoreboard #temp_durability some_score = -$(amount) * 1000000 / $(max_damage) - #toto\\n"
@@ -245,7 +253,8 @@ class ScoreboardEquation(BaseEquation):
 		...     "scoreboard players operation #temp_durability some_score *= #1000000 your_namespace.data\\n"
 		...     "$scoreboard players set #temp_divide your_namespace.data $(max_damage)\\n"
 		...     "scoreboard players operation #temp_durability some_score /= #temp_divide your_namespace.data\\n"
-		...     "scoreboard players operation #temp_durability some_score -= #toto some_score"	# <== Note that #toto inherits the scoreboard from the equation ("some_score")
+		...     # #toto inherits the scoreboard of the equation ("some_score")
+		...     "scoreboard players operation #temp_durability some_score -= #toto some_score"
 		... )
 		>>> result == expected and shorter == expected
 		True
@@ -291,7 +300,8 @@ class StorageEquation(BaseEquation):
 		...     "$scoreboard players set #temp_divide your_namespace.data $(max_damage)\\n"
 		...     "scoreboard players operation #temp_result your_namespace.data /= #temp_divide your_namespace.data\\n"
 		...     "scoreboard players operation #temp_result your_namespace.data -= #toto your_namespace.data\\n"
-		...     "execute store result storage some_namespace:some_path result_path double 0.000005 run scoreboard players get #temp_result your_namespace.data"
+		...     "execute store result storage some_namespace:some_path result_path double 0.000005 "
+		...     "run scoreboard players get #temp_result your_namespace.data"
 		... )
 		>>> result == expected and shorter == expected
 		True

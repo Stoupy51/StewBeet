@@ -133,7 +133,8 @@ def beet_default(ctx: Context) -> Iterator[None]:
         ]
         assert ore_lines, f"{ore_path}: no line was mapped"
         for source, line in ore_lines:
-            assert source.endswith("link.py") and line == ore_declared, f"{ore_path}: should map to link.py:{ore_declared}, got {source}:{line}"
+            assert source.endswith("link.py") and line == ore_declared, \
+                f"{ore_path}: should map to link.py:{ore_declared}, got {source}:{line}"
 
     # ── US2: the author's own append keeps its own line, after the generated ones ─
     secondary: str = f"data/{ns}/function/custom_blocks/{BLOCK_ID}/place_secondary.mcfunction.map"

@@ -55,7 +55,13 @@ def high_res_font_from_ingredient(r: RecipeRenderer, ingredient: str | Ingr, cou
 	return r.images.high_res_icon(ingr_str, item_image, count)
 
 
-def build_item_component(r: RecipeRenderer, ingredient: str | Ingr, only_those_components: list[str] | None = None, count: int = 1, add_change_page: bool = True) -> JsonDict:
+def build_item_component(
+	r: RecipeRenderer,
+	ingredient: str | Ingr,
+	only_those_components: list[str] | None = None,
+	count: int = 1,
+	add_change_page: bool = True,
+) -> JsonDict:
 	""" Build a hoverable/clickable text component for an ingredient. """
 	use_dialog: bool = r.config.use_dialog > 0
 	if only_those_components is None or use_dialog:

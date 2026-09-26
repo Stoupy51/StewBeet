@@ -51,7 +51,9 @@ def source_file_of(unit: CompilationUnit, directory: str) -> str | None:
 	return os.path.abspath(os.path.join(directory, unit.filename)) if unit.filename else None
 
 
-def owner_of(location: SourceLocation, sources: dict[str, str], command: str, own: str | None = None, own_file: str | None = None) -> str | None:
+def owner_of(
+	location: SourceLocation, sources: dict[str, str], command: str, own: str | None = None, own_file: str | None = None
+) -> str | None:
 	""" The one file a location can belong to, or None when it cannot be narrowed to one.
 
 	Two things have to hold. The position must sit where the location says, and the file must

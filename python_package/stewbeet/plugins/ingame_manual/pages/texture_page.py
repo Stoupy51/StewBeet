@@ -61,7 +61,8 @@ class TexturePage(Page):
 
 		glyph_name = self.anchor.replace(":", "_").replace(" ", "_").lower()
 		page_font = manual.images.register_full_page_glyph(composited, glyph_name, ascent=self.glyph_ascent, height=self.glyph_height)
-		page_text: str = manual.images.invisible_spacer(self.left_padding) + page_font + manual.images.invisible_spacer(self.right_padding)
+		spacer = manual.images.invisible_spacer
+		page_text: str = spacer(self.left_padding) + page_font + spacer(self.right_padding)
 
 		# Neutral base (default font, no shadow) so the developer body keeps its own font; only the
 		# page-texture glyph is drawn in the manual font. The title is shown by the dialog itself.

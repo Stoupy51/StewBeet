@@ -277,7 +277,9 @@ def check_outputs(meta: dict[str, Any], contents: dict[str, str], images: dict[s
 def main() -> None:
     parser: argparse.ArgumentParser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true", help="Fail when the committed output is stale, instead of rewriting it.")
-    parser.add_argument("--list", action="store_true", help="Print every path the build produced and exit. Useful when editing heroTree.json.")
+    parser.add_argument(
+        "--list", action="store_true", help="Print every path the build produced and exit. Useful when editing heroTree.json."
+    )
     args: argparse.Namespace = parser.parse_args()
 
     tree: list[dict[str, Any]] = json.loads(Path(TREE_PATH).read_text(encoding="utf-8"))

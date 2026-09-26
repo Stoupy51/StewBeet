@@ -125,7 +125,9 @@ class MigrationPlan:
 
 
 # Functions
-def build_plan(working_dir: Path, template: zipfile.ZipFile, datapack: FoundPack | None, resource_pack: FoundPack | None) -> MigrationPlan:
+def build_plan(
+	working_dir: Path, template: zipfile.ZipFile, datapack: FoundPack | None, resource_pack: FoundPack | None
+) -> MigrationPlan:
 	""" Everything moving these packs into the template takes, without touching the disk.
 
 	Args:
@@ -136,7 +138,8 @@ def build_plan(working_dir: Path, template: zipfile.ZipFile, datapack: FoundPack
 	icon: Path | None = next((pack.root / "pack.png" for pack in packs if (pack.root / "pack.png").is_file()), None)
 	template_icon: str = next((member for member in TEMPLATE_ICONS if member in template.namelist()), TEMPLATE_ICONS[0])
 
-	template_steps: list[Step] = plan_template_files(working_dir, template, datapack, resource_pack, replaced_icon=template_icon if icon else None)
+	replaced_icon: str | None = template_icon if icon else None
+	template_steps: list[Step] = plan_template_files(working_dir, template, datapack, resource_pack, replaced_icon)
 	config, config_warnings = plan_config(template.read("beet.yml").decode("utf-8"), working_dir, datapack, resource_pack)
 	moves: list[Step] = plan_moves(working_dir, packs, icon, working_dir / template_icon)
 	mcmeta_steps, mcmeta_warnings = plan_mcmeta(working_dir, packs)
@@ -152,7 +155,13 @@ def build_plan(working_dir: Path, template: zipfile.ZipFile, datapack: FoundPack
 	)
 
 
-def plan_template_files(working_dir: Path, template: zipfile.ZipFile, datapack: FoundPack | None, resource_pack: FoundPack | None, replaced_icon: str | None) -> list[Step]:
+def plan_template_files(
+	working_dir: Path,
+	template: zipfile.ZipFile,
+	datapack: FoundPack | None,
+	resource_pack: FoundPack | None,
+	replaced_icon: str | None,
+) -> list[Step]:
 	""" Which template files are written, and why the others are not. The template never writes over a file. """
 	steps: list[Step] = []
 	for member in template.namelist():
@@ -171,14 +180,19 @@ def plan_template_files(working_dir: Path, template: zipfile.ZipFile, datapack: 
 	return steps
 
 
-def plan_config(text: str, working_dir: Path, datapack: FoundPack | None, resource_pack: FoundPack | None) -> tuple[WriteConfig, list[str]]:
+def plan_config(
+	text: str, working_dir: Path, datapack: FoundPack | None, resource_pack: FoundPack | None
+) -> tuple[WriteConfig, list[str]]:
 	""" The template's beet.yml with the migrated project's own values, and what is still left to fill in by hand. """
 	main_pack: FoundPack | None = datapack or resource_pack
 	text, changes, warnings = fill_identity(text, main_pack, datapack.namespaces if datapack else [])
 	if main_pack and (description := main_pack.description_yaml):
 		text = set_config_key(text, "description", description)
 		changes.append("description: from pack.mcmeta")
-	if datapack and resource_pack and datapack.root != resource_pack.root and resource_pack.description_yaml not in (None, datapack.description_yaml):
+	if (
+		datapack and resource_pack and datapack.root != resource_pack.root
+		and resource_pack.description_yaml not in (None, datapack.description_yaml)
+	):
 		warnings.append("The resource pack's description differs from the datapack's: beet.yml now uses the datapack's for both")
 	if resource_pack and not has_config_key(text, "resource_pack"):
 		text = text.rstrip() + "\n" + RESOURCE_PACK_CONFIG
@@ -235,7 +249,10 @@ def plan_mcmeta(working_dir: Path, packs: list[FoundPack]) -> tuple[list[Step], 
 			kept = mcmeta
 			if mcmeta != working_dir / "src" / "pack.mcmeta":
 				steps.append(Move(mcmeta, working_dir / "src" / "pack.mcmeta"))
-			warnings.append(f"{relative} holds more than a description and a pack format, so it is kept in src/. StewBeet still sets its pack_format and description")
+			warnings.append(
+				f"{relative} holds more than a description and a pack format, so it is kept in src/. "
+				"StewBeet still sets its pack_format and description"
+			)
 		else:
 			warnings.append(f"{relative} is left in place: only one pack.mcmeta can go to src/")
 	return steps, warnings
@@ -243,7 +260,8 @@ def plan_mcmeta(working_dir: Path, packs: list[FoundPack]) -> tuple[list[Step], 
 
 def plan_cleanup(working_dir: Path, packs: list[FoundPack], pack_steps: list[Step]) -> list[Step]:
 	""" The pack folders, and their parents, that nothing is left in once the files have moved. Deepest first. """
-	leaving: set[Path] = {step.source for step in pack_steps if isinstance(step, Move)} | {step.path for step in pack_steps if isinstance(step, Delete)}
+	leaving: set[Path] = {step.source for step in pack_steps if isinstance(step, Move)}
+	leaving |= {step.path for step in pack_steps if isinstance(step, Delete)}
 	emptied: list[Path] = [
 		pack.root for pack in packs
 		if pack.root not in (working_dir, working_dir / "src") and set(pack.root.iterdir()) <= leaving

@@ -147,7 +147,7 @@ def export_all_definitions_to_json(file_name: str, is_external: bool | JsonDict 
 	Args:
 		file_name	(str):	The name of the file to export to.
 		is_external	(bool | JsonDict):	Whether to export external definitions or not.
-					If a JsonDict is provided, it will be used as the source of definitions instead of Mem.definitions or Mem.external_definitions.
+					If a JsonDict is provided, it is the source of definitions instead of Mem.definitions or Mem.external_definitions.
 		verbose		(bool):	Whether to print a debug message or not.
 	"""
 	# Convert everything to fully serializable dicts

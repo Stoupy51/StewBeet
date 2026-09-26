@@ -162,10 +162,14 @@ def register_nav_overrides(manual: Manual) -> None:
 		glyph_suffix: str = page.anchor.replace(":", "_").replace(" ", "_").lower()
 		if page.book_texture is not None:
 			image = load_page_texture(page.book_texture)
-			page.book_font = manual.images.register_full_page_glyph(image.convert("RGBA"), f"book_{glyph_suffix}", ascent=BOOK_ASCENT, height=BOOK_HEIGHT)
+			page.book_font = manual.images.register_full_page_glyph(
+				image.convert("RGBA"), f"book_{glyph_suffix}", ascent=BOOK_ASCENT, height=BOOK_HEIGHT
+			)
 		if page.home_texture is not None:
 			image = load_page_texture(page.home_texture)
-			page.home_font = manual.images.register_full_page_glyph(image.convert("RGBA"), f"home_{glyph_suffix}", ascent=HOME_ASCENT, height=HOME_HEIGHT)
+			page.home_font = manual.images.register_full_page_glyph(
+				image.convert("RGBA"), f"home_{glyph_suffix}", ascent=HOME_ASCENT, height=HOME_HEIGHT
+			)
 
 
 def write_font(manual: Manual) -> None:

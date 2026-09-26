@@ -42,7 +42,10 @@ def energy_cables_models(cables: list[str]) -> None:
 	textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
 
 	# Setup parent cable model
-	parent_model: JsonDict = {"parent":"block/block","display":{"fixed":{"rotation":[180,0,0],"translation":[0,-4,0],"scale":[1.005,1.005,1.005]}}}
+	parent_model: JsonDict = {
+		"parent":"block/block",
+		"display":{"fixed":{"rotation":[180,0,0],"translation":[0,-4,0],"scale":[1.005,1.005,1.005]}},
+	}
 	Mem.ctx.assets[ns].models["block/cable_base"] = set_json_encoder(Model(parent_model))
 
 	# Setup cables models
@@ -101,7 +104,8 @@ tag @s add {ns}.cable
 
 	# Update_cable_model function
 	cables_str: str = "\n".join([
-		f"execute if entity @s[tag={ns}.{cable}] run item replace entity @s contents with {CUSTOM_ITEM_VANILLA}[item_model=\"{ns}:{cable}\"]"
+		f"execute if entity @s[tag={ns}.{cable}] run item replace entity @s contents with "
+		f"{CUSTOM_ITEM_VANILLA}[item_model=\"{ns}:{cable}\"]"
 		for cable in cables
 	])
 	cable_update_content: str = f"""
@@ -113,7 +117,7 @@ execute unless entity @s[tag={ns}.custom_block,tag=energy.cable] run return fail
 
 # Get the right model
 item modify entity @s contents {stp.json_dump(loot_function("minecraft:set_custom_model_data", floats={"values": [float_score("energy.data")], "mode": "replace_all"}), max_level=0)}
-"""
+"""  # noqa: E501
 	write_function(f"{ns}:calls/energy/cable_update", cable_update_content, tags=["energy:v1/cable_update"])
 	return
 
@@ -222,7 +226,8 @@ function #itemio:calls/cables/destroy
 
 	# Update cable_model function
 	cables_str: str = "\n".join([
-		f"execute if entity @s[tag={ns}.{cable}] run item replace entity @s contents with {CUSTOM_ITEM_VANILLA}[item_model=\"{ns}:{cable}\"]"
+		f"execute if entity @s[tag={ns}.{cable}] run item replace entity @s contents with "
+		f"{CUSTOM_ITEM_VANILLA}[item_model=\"{ns}:{cable}\"]"
 		for cable in cables
 	])
 	cable_update_content: str = f"""
@@ -234,7 +239,7 @@ execute unless entity @s[tag={ns}.custom_block,tag=itemio.cable] run return fail
 
 # Get the right model
 item modify entity @s contents {stp.json_dump(loot_function("minecraft:set_custom_model_data", floats={"values": [float_score("itemio.math")], "mode": "replace_all"}), max_level=0)}
-"""
+"""  # noqa: E501
 	write_function(f"{ns}:calls/itemio/cable_update", cable_update_content, tags=["itemio:event/cable_update"])
 	return
 
@@ -419,7 +424,7 @@ execute if score #parity {ns}.data matches 0 unless data entity @s {{ItemRotatio
 # Apply the state only when the parity differs from the current state
 execute if score #parity {ns}.data matches 0 unless score @s {ns}.servo_off matches 0 run function {ns}:utils/servo/enable
 execute if score #parity {ns}.data matches 1 unless score @s {ns}.servo_off matches 1 run function {ns}:utils/servo/disable
-""")
+""")  # noqa: E501
 
 	# Enable: allow item transfers again by adding back the servo tag, then restore the normal model
 	enable_tags: str = "\n".join(
@@ -450,13 +455,15 @@ playsound minecraft:block.lever.click block @a[distance=..16] ~ ~ ~ 0.6 0.7
 
 	# Shared model logic: grayed out when off, normal (depending on the network connection) when on
 	model_lines: list[str] = [
-		f'execute if score @s {ns}.servo_off matches 1 if entity @s[tag={ns}.{servo}] run data modify entity @s Item.components."minecraft:item_model" set value "{ns}:servo/{typ}_off"'
+		f'execute if score @s {ns}.servo_off matches 1 if entity @s[tag={ns}.{servo}] run '
+		f'data modify entity @s Item.components."minecraft:item_model" set value "{ns}:servo/{typ}_off"'
 		for servo, typ in servo_types.items()
 	]
 	for servo, typ in servo_types.items():
 		for number, texture in ((0, "block"), (1, "connected")):
 			model_lines.append(
-				f'execute if score @s {ns}.servo_off matches 0 if score @s itemio.math matches {number} if entity @s[tag={ns}.{servo}] run '
+				f'execute if score @s {ns}.servo_off matches 0 if score @s itemio.math matches {number} '
+				f'if entity @s[tag={ns}.{servo}] run '
 				f'data modify entity @s Item.components."minecraft:item_model" set value "{ns}:servo/{typ}_{texture}"'
 			)
 	write_function(f"{ns}:utils/servo/update_model", "\n".join(model_lines) + "\n")

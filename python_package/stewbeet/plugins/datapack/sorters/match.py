@@ -24,8 +24,10 @@ def generate_sorter(ctx: Context, sorter: JsonDict):
 		sorter (dict): Configuration dictionary containing sorting parameters.
 	"""
 	# Assertions to validate sorter configuration
-	assert isinstance(sorter.get("functions_location"), str), "'functions_location' must be a string, e.g. 'switch:stats/minigame/sort_leaderboard'."
-	assert isinstance(sorter.get("key"), str), "'key' must be a string, e.g. 'count' if you list is looking like [{'id':'...', count:54}, ...]."
+	assert isinstance(sorter.get("functions_location"), str), \
+		"'functions_location' must be a string, e.g. 'switch:stats/minigame/sort_leaderboard'."
+	assert isinstance(sorter.get("key"), str), \
+		"'key' must be a string, e.g. 'count' if you list is looking like [{'id':'...', count:54}, ...]."
 	assert isinstance(sorter.get("to_sort"), dict), "'to_sort' must be a dictionary."
 	assert isinstance(sorter["to_sort"].get("storage"), str), "'to_sort.storage' must be a string, e.g. 'switch:stats'"
 	assert isinstance(sorter["to_sort"].get("target"), str), "'to_sort.target' must be a string, e.g. 'all.modes.sheepwars.played'."

@@ -93,8 +93,10 @@ SOCKET_HINTS: dict[int, str] = {
 TLS_HINTS: dict[int, str] = {
 	9: "the certificate is not valid yet, the system clock is probably wrong",
 	10: (
-		"a certificate of the chain has expired: either the system clock is wrong, or the OS certificate store holds a stale certificate that Python picks over the valid one "
-		"(on Windows, delete the expired entries from certmgr.msc > Intermediate Certification Authorities, then open the URL once in Edge)"
+		"a certificate of the chain has expired: either the system clock is wrong, "
+		"or the OS certificate store holds a stale certificate that Python picks over the valid one "
+		"(on Windows, delete the expired entries from certmgr.msc > Intermediate Certification Authorities, "
+		"then open the URL once in Edge)"
 	),
 	18: "the server sent a self-signed certificate, HTTPS is being intercepted by an antivirus/proxy",
 	19: "a self-signed certificate sits in the chain, HTTPS is being intercepted by an antivirus/proxy whose root is not trusted",
@@ -190,7 +192,9 @@ def describe_network_error(url: str, exc: BaseException) -> str:
 		str: The diagnosis, ex: "HTTP 503 Service Unavailable from api.smithed.dev: the API is down or overloaded"
 
 	Examples:
-		>>> describe_network_error("https://api.smithed.dev/v2/packs/x", HTTPError("", 404, "Not Found", {}, None))  # doctest: +ELLIPSIS
+		>>> describe_network_error(  # doctest: +ELLIPSIS
+		...     "https://api.smithed.dev/v2/packs/x", HTTPError("", 404, "Not Found", {}, None)
+		... )
 		'HTTP 404 Not Found from api.smithed.dev: not found, ...'
 	"""
 	host: str = urlsplit(url).hostname or url
@@ -202,17 +206,28 @@ def describe_network_error(url: str, exc: BaseException) -> str:
 
 	reason: object = exc.reason if isinstance(exc, URLError) else exc
 	if isinstance(reason, ssl.SSLCertVerificationError):
-		hint: str = TLS_HINTS.get(reason.verify_code, "HTTPS is being intercepted by an antivirus/proxy, or the OS certificate store is outdated")
+		hint: str = TLS_HINTS.get(
+			reason.verify_code, "HTTPS is being intercepted by an antivirus/proxy, or the OS certificate store is outdated"
+		)
 		return f"TLS certificate of '{host}' rejected ({reason.verify_message}): {hint} | {TLS_WORKAROUND}"
 	if isinstance(reason, ssl.SSLError):
-		return f"TLS handshake with '{host}' failed ({reason}): traffic is being filtered by a firewall or a proxy{connectivity_verdict()}"
+		return (
+			f"TLS handshake with '{host}' failed ({reason}): "
+			f"traffic is being filtered by a firewall or a proxy{connectivity_verdict()}"
+		)
 	if isinstance(reason, socket.gaierror):
-		return f"DNS lookup failed for '{host}' ({reason.strerror}): no internet connection, or DNS is blocked locally{connectivity_verdict()}"
+		return (
+			f"DNS lookup failed for '{host}' ({reason.strerror}): "
+			f"no internet connection, or DNS is blocked locally{connectivity_verdict()}"
+		)
 
 	# A filesystem error names the file it failed on, a socket one does not, which is what tells them apart.
 	# Probing the network for a locked cache file would blame the host for something local.
 	if isinstance(reason, OSError) and reason.filename is not None:
-		return f"{reason.strerror} on '{reason.filename}': the cache file is held by another process, typically an antivirus or a parallel build"
+		return (
+			f"{reason.strerror} on '{reason.filename}': "
+			"the cache file is held by another process, typically an antivirus or a parallel build"
+		)
 	if isinstance(reason, OSError):
 		return f"{socket_hint(reason)} while contacting '{host}'{connectivity_verdict()}"
 	return f"{type(exc).__name__} while contacting '{host}': {exc}"
@@ -233,7 +248,9 @@ def describe_body(text: str) -> str:
 	return snippet
 
 
-@stp.retry(exceptions=TransientDownloadError, max_attempts=DOWNLOAD_ATTEMPTS, delay=DOWNLOAD_DELAY, backoff=2.0, message="Download failed")
+@stp.retry(
+	exceptions=TransientDownloadError, max_attempts=DOWNLOAD_ATTEMPTS, delay=DOWNLOAD_DELAY, backoff=2.0, message="Download failed"
+)
 def attempt_download(cache: Cache, url: str, target: Path) -> Path:
 	""" One download attempt, never letting a previously failed one masquerade as a hit.
 

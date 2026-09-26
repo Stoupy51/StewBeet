@@ -112,7 +112,9 @@ class VanillaBlock(StMapping):
     block_facing: Literal[False, "player"] = False
     """ Whether to rotate the placed vanilla block based on player orientation ([facing=...] blockstate). """
     visual_facing: Literal["none", "player", "item_frame"] = "none"
-    """ Source of the visual orientation: "none" (no rotation), "player" (4 horizontal directions), "item_frame" (6 directions from item frame Facing). """
+    """ Source of the visual orientation.
+    "none" is no rotation, "player" gives 4 horizontal directions, "item_frame" gives 6 from the item frame's Facing.
+    """
     apply_facing: Literal[False, True, "entity", None] = None
     """ Legacy field for backward compatibility. Prefer ``block_facing`` and ``visual_facing``. """
 
@@ -180,7 +182,9 @@ class GrowingSeedLoot(StMapping):
 class GrowingSeed(StMapping):
     """ Defines a seed that grows over time (Stardust Seed from Stardust Fragment).
 
-    >>> gs = GrowingSeed(texture_basename="stardust", seconds=480, planted_on="diamond_block", loots=[GrowingSeedLoot(id="stardust_fragment")])
+    >>> gs = GrowingSeed(
+    ...     texture_basename="stardust", seconds=480, planted_on="diamond_block", loots=[GrowingSeedLoot(id="stardust_fragment")]
+    ... )
     >>> gs.texture_basename
     'stardust'
     >>> gs.seconds
@@ -270,10 +274,10 @@ class Block(Item):
 
     Regular custom blocks are detected by the smithed custom_block library, so they have
     no placement advancement of their own:
-    >>> block.advancement
+    >>> block.advancement  # doctest: +ELLIPSIS
     Traceback (most recent call last):
     ...
-    ValueError: Block 'machine_block' uses base_item 'minecraft:furnace' and has no placement advancement (regular custom blocks are detected by the smithed custom_block library)
+    ValueError: Block 'machine_block' uses base_item 'minecraft:furnace' and has no placement advancement (...)
     """
     base_item: str = CUSTOM_BLOCK_VANILLA
     """ Can either be CUSTOM_BLOCK_VANILLA, CUSTOM_BLOCK_ALTERNATIVE, CUSTOM_BLOCK_HEAD, or a vanilla block like 'minecraft:stone'. """
@@ -282,7 +286,9 @@ class Block(Item):
     vanilla_block: VanillaBlock | None = None
     """ (Optional) If the block is based on a vanilla block, this defines which one and whether to apply facing. """
     no_silk_touch_drop: NoSilkTouchDrop | LootTable | str | None = None
-    """ (Optional) No-silk drop mode: deterministic (e.g. `NoSilkTouchDrop(id="raw_simplunium")` or string item id "raw_simplunium") or dynamic (`LootTable` object from beet). """
+    """ (Optional) What drops without silk touch.
+    Deterministic with `NoSilkTouchDrop(id="raw_simplunium")` or the item id "raw_simplunium", dynamic with a beet `LootTable`.
+    """
     on_place: str | None = None
     """ Deprecated since v3.5.0. """
 
@@ -316,7 +322,9 @@ class Block(Item):
 
         # Add additional data to the custom blocks alternative
         elif self.base_item == CUSTOM_BLOCK_ALTERNATIVE:
-            self.components["entity_data"] = {"id":"minecraft:item_frame","Tags":[f"{ns}.new",f"{ns}.{self.id}"],"Invisible":True,"Silent":True}
+            self.components["entity_data"] = {
+                "id":"minecraft:item_frame", "Tags":[f"{ns}.new",f"{ns}.{self.id}"], "Invisible":True, "Silent":True
+            }
         super().__post_init__()
 
     # Resource locations

@@ -38,7 +38,8 @@ class FoundPack:
 		has_data, has_assets = (folder / "data").is_dir(), (folder / "assets").is_dir()
 		if not mcmeta_path.is_file() or not (has_data or has_assets):
 			return None
-		return FoundPack(root=folder, has_data=has_data, has_assets=has_assets, mcmeta=json.loads(mcmeta_path.read_text(encoding="utf-8")))
+		mcmeta: JsonDict = json.loads(mcmeta_path.read_text(encoding="utf-8"))
+		return FoundPack(root=folder, has_data=has_data, has_assets=has_assets, mcmeta=mcmeta)
 
 	@property
 	def is_plain(self) -> bool:
@@ -85,6 +86,9 @@ def find_packs(folder: Path, depth: int = SEARCH_DEPTH) -> list[FoundPack]:
 		return [pack]
 	if depth == 0:
 		return []
-	children: list[Path] = sorted(child for child in folder.iterdir() if child.is_dir() and not child.name.startswith(".") and child.name not in SKIPPED_FOLDERS)
+	children: list[Path] = sorted(
+		child for child in folder.iterdir()
+		if child.is_dir() and not child.name.startswith(".") and child.name not in SKIPPED_FOLDERS
+	)
 	return [pack for child in children for pack in find_packs(child, depth - 1)]
 

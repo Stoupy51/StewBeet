@@ -15,7 +15,9 @@ EXPECTED: tuple[str, ...] = ("tns:direct", "tns:appended", "tns:grown")
 """ Every function this project writes, all of them through beet's own API. """
 
 STALE: str = "/gone/previous_build.py"
-""" A file no build of this project ever had. It reaches the map only if the plugin starts a build on what the last one left behind. """
+""" A file no build of this project ever had.
+It reaches the map only if the plugin starts a build on what the last one left behind.
+"""
 
 
 # Main entry point

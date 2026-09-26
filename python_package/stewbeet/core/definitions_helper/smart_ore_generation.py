@@ -69,7 +69,8 @@ class CustomOreGeneration(StMapping):
 	vein_size_logic: float = 0.4
 	""" Higher means larger veins: 0.0 is a single block, 0.4 a small vein, 1.0 a large one. """
 	provider: str | list[str] = field(default_factory=lambda: (
-		list(CustomOreGeneration.OVERWORLD_REPLACEABLES) if minecraft_version_at_least((26, 3)) else "#minecraft:overworld_carver_replaceables"
+		list(CustomOreGeneration.OVERWORLD_REPLACEABLES) if minecraft_version_at_least((26, 3))
+		else "#minecraft:overworld_carver_replaceables"
 	))
 	""" Blocks or block tags the ore replaces. Defaults to the blocks vanilla carvers replace in the overworld. """
 	vein_conditions: list[str] = field(default_factory=list[str])
@@ -129,7 +130,8 @@ class CustomOreGeneration(StMapping):
 		vein_path: str = f"{Mem.ctx.project_id}:calls/smart_ore_generation/veins/{vein_name}"
 		with sniffer.attribute_to(self):
 			self.write_main_function(beautify_ore, vein_path)
-			self.write_vein_function(beautify_ore, vein_path, self.resolve_provider(vein_name), self.resolve_placer_command(custom_ore))
+			provider: str = self.resolve_provider(vein_name)
+			self.write_vein_function(beautify_ore, vein_path, provider, self.resolve_placer_command(custom_ore))
 
 	def write_main_function(self, beautify_ore: str, vein_path: str) -> None:
 		""" Append to the generate_ores signal the calls to the vein function, once per vein. """
@@ -150,11 +152,13 @@ scoreboard players set #max_height smart_ore_generation.data {self.maximum_heigh
 """
 		int_veins_per_region: int = int(self.veins_per_region)
 		remaining_veins: float = self.veins_per_region - int_veins_per_region
-		content += int_veins_per_region * f"execute if score #dimension smart_ore_generation.data matches 0.. run function {vein_path}\n"
+		vein_command: str = f"execute if score #dimension smart_ore_generation.data matches 0.. run function {vein_path}\n"
+		content += int_veins_per_region * vein_command
 		if remaining_veins > 0:
 			content += (
 				"execute if score #dimension smart_ore_generation.data matches 0.. if predicate "
-				f"{stp.json_dump(loot_condition('minecraft:random_chance', chance=round(remaining_veins, 5)), max_level=0).strip()} run function {vein_path}\n"
+				f"{stp.json_dump(loot_condition('minecraft:random_chance', chance=round(remaining_veins, 5)), max_level=0).strip()} "
+				f"run function {vein_path}\n"
 			)
 		write_function(f"{Mem.ctx.project_id}:calls/smart_ore_generation/generate_ores", content)
 
@@ -172,7 +176,9 @@ function #smart_ore_generation:v1/slots/random_position
 		if self.vein_conditions:
 			content += "\n# Cancel the vein unless every vein condition holds at its start\n"
 		for condition in self.vein_conditions:
-			negated: str = f"unless {condition.removeprefix('if ')}" if condition.startswith("if ") else f"if {condition.removeprefix('unless ')}"
+			negated: str = (
+				f"unless {condition.removeprefix('if ')}" if condition.startswith("if ") else f"if {condition.removeprefix('unless ')}"
+			)
 			content += f"execute at @s {negated} run return fail\n"
 
 		place: str = "".join(f"{condition} " for condition in self.block_conditions) + f"if block ~ ~ ~ {provider} {placer_command}"
@@ -191,11 +197,14 @@ function #smart_ore_generation:v1/slots/random_position
 		if isinstance(self.provider, str):
 			return self.provider
 		provider_path: str = f"smart_ore_generation/{vein_name}_provider"
-		Mem.ctx.data[Mem.ctx.project_id].block_tags[provider_path] = set_json_encoder(BlockTag({"replace": False, "values": self.provider}))
+		provider_tag: BlockTag = BlockTag({"replace": False, "values": self.provider})
+		Mem.ctx.data[Mem.ctx.project_id].block_tags[provider_path] = set_json_encoder(provider_tag)
 		return f"#{Mem.ctx.project_id}:{provider_path}"
 
 	def resolve_placer_command(self, custom_ore: str) -> str:
-		""" The placer command, defaulting to placing the custom block, a stone variant skipping deepslate and a deepslate variant skipping stone. """
+		""" The placer command.
+		Defaults to placing the custom block, a stone variant skipping deepslate and a deepslate variant skipping stone.
+		"""
 		if self.placer_command:
 			return self.placer_command
 		placer: str = f"run function {BlockFunctions(custom_ore).place_main}"

@@ -97,7 +97,10 @@ def mc_compatible(versions: list[JsonDict], mc_tup: tuple[int, ...]) -> list[Jso
 def modrinth_older_versions(versions: list[JsonDict], mc_ver: str) -> list[JsonDict]:
 	"""Return Modrinth versions (order kept) whose game_versions are all <= mc_ver.
 
-	>>> vs = [{"version_number": "1.11.0", "game_versions": ["26.3"]}, {"version_number": "1.10.1", "game_versions": ["1.21.8", "1.21.11"]}]
+	>>> vs = [
+	...     {"version_number": "1.11.0", "game_versions": ["26.3"]},
+	...     {"version_number": "1.10.1", "game_versions": ["1.21.8", "1.21.11"]},
+	... ]
 	>>> [v["version_number"] for v in modrinth_older_versions(vs, "26.2")]
 	['1.10.1']
 	"""
@@ -171,7 +174,10 @@ def resolve_modrinth_lib(ctx: Context, lib_ns: str, lib_data: JsonDict, mc_ver: 
 			if older:
 				versions = older
 			else:
-				stp.warning(f"No Modrinth release of '{slug}' supports MC {mc_ver} or older; using the latest one ({versions[0].get('version_number')}) anyway.")
+				stp.warning(
+					f"No Modrinth release of '{slug}' supports MC {mc_ver} or older; "
+					f"using the latest one ({versions[0].get('version_number')}) anyway."
+				)
 	if versions is None:
 		stp.warning(f"Could not read the Modrinth API for '{slug}' (see the failure above). Skipping.")
 		return None

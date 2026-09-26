@@ -33,7 +33,9 @@ UNUSED_RECIPES_TYPES: tuple[str, ...] = (
 	"crafting_transmute",
 )
 SPECIAL_RECIPES_TYPES: tuple[str, ...] = ("simplenergy_pulverizing", "stardust_awakened_forge")
-ALL_RECIPES_TYPES: tuple[str, ...] = (*FURNACES_RECIPES_TYPES, *CRAFTING_RECIPES_TYPES, *OTHER_RECIPES_TYPES, *UNUSED_RECIPES_TYPES, *SPECIAL_RECIPES_TYPES)
+ALL_RECIPES_TYPES: tuple[str, ...] = (
+	*FURNACES_RECIPES_TYPES, *CRAFTING_RECIPES_TYPES, *OTHER_RECIPES_TYPES, *UNUSED_RECIPES_TYPES, *SPECIAL_RECIPES_TYPES
+)
 
 # Ingr class
 class Ingr(dict[str, Any]):
@@ -46,8 +48,10 @@ class Ingr(dict[str, Any]):
 
 		Args:
 			id		(str):		The id of the ingredient, ex: adamantium_fragment
-			ns		(str|None):	The namespace of the ingredient (optional if 'id' argument is a vanilla item), ex: iyc (default: current project id)
-			count	(int|None):	The count of the ingredient (optional, used only when this ingredient format is a result item) (or use a special type of recipe that supports counts)
+			ns		(str|None):	The namespace of the ingredient, ex: iyc (default: current project id).
+				Optional if 'id' is a vanilla item.
+			count	(int|None):	The count of the ingredient (optional).
+				Only used when this ingredient is a result item, or by a special recipe type that supports counts.
 		Returns:
 			str: The identity of the ingredient for custom crafts,
 				ex: {"components":{"minecraft:custom_data":{"iyc":{"adamantium_fragment":True}}}}
@@ -275,7 +279,8 @@ class Ingr(dict[str, Any]):
 		if namespace != "minecraft":
 			from .external_item import ExternalItem
 			obj = ExternalItem.from_id(f"{namespace}:{item}")
-			assert obj.loot_table is not None, f"External item '{namespace}:{item}' has no loot table defined, please define one to use it in recipes."
+			assert obj.loot_table is not None, \
+				f"External item '{namespace}:{item}' has no loot table defined, please define one to use it in recipes."
 			value: str = obj.loot_table
 
 			# A tag resolves lazily, so an absent datapack leaves it empty instead of leaving the registry unbound

@@ -38,7 +38,9 @@ class RecipeBase(StMapping):
 
     # Others
     manual_priority: int | None = None
-    """ (Optional) Manual priority for recipe button sorting in the ingame-manual. Used to remove buttons when too many are present. """
+    """ (Optional) Manual priority for recipe button sorting in the ingame-manual.
+    Used to remove buttons when too many are present.
+    """
     smithed_crafter_command: str | None = None
     """ (Optional) Custom command to be used with Smithed Crafter recipes. If None, defaults to giving the loot table. """
 

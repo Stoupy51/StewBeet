@@ -16,12 +16,16 @@ def setup_wrench(blocks: list[str] | str, tag_ns: str = "simplenergy") -> None:
 	""" Setup rotatable tags for blocks and mechanization wrench calls.
 
 	Args:
-		blocks (list[str]): List of block names that should be rotatable. (e.g. ["furnace_generator", "electric_furnace", "electric_smelter", "pulverizer"])
+		blocks (list[str]): List of block names that should be rotatable.
+			(e.g. ["furnace_generator", "electric_furnace", "electric_smelter", "pulverizer"])
 		tag_ns (str): Namespace for the tags. Default is "simplenergy".
 	"""
 	ns: str = Mem.ctx.project_id
 	if isinstance(blocks, str):
-		blocks = [x for x, y in Mem.definitions.items() if isinstance(y, Block) and y.vanilla_block and y.vanilla_block.block_facing == "player"]
+		blocks = [
+			x for x, y in Mem.definitions.items()
+			if isinstance(y, Block) and y.vanilla_block and y.vanilla_block.block_facing == "player"
+		]
 
 	# Add tags for rotatables
 	for rotatable in blocks:

@@ -105,7 +105,9 @@ class AutoModel:
 			if texture.endswith(side):
 				return texture
 		if not self.ignore_textures:
-			raise ValueError(f"Couldn't find texture for side '{side}' in '{variants}', consider adding missing texture or override the model")
+			raise ValueError(
+				f"Couldn't find texture for side '{side}' in '{variants}', consider adding missing texture or override the model"
+			)
 		return ""
 
 	def model_in_variants(self, models: list[str], variants: list[str]) -> bool:
@@ -341,7 +343,8 @@ class AutoModel:
 		all_variants: list[str] = [
 			x.replace(".png", "") for x in self.source_textures
 			if x.startswith(self.obj.id)
-			and abs(x.count("_") - self.obj.id.count("_")) <= 2  # Allow for up to 2 extra underscores. Preventing "awakened_stardust.png" to match "awakened_stardust_furnace_generator_on.png"
+			# At most 2 extra underscores, so "awakened_stardust.png" does not match "awakened_stardust_furnace_generator_on.png"
+			and abs(x.count("_") - self.obj.id.count("_")) <= 2
 		]
 		# Filter to only include variants in the same folder
 		variants: list[str] = self.get_same_folder_variants(all_variants)
@@ -418,7 +421,8 @@ class AutoModel:
 								}, max_level=1)
 								raise ValueError(
 									f"Block '{self.obj.id}' has invalid variants: {variants},\n"
-									"consider overriding the model or adding missing textures to match up one of the following patterns:"
+									"consider overriding the model or adding missing textures "
+									"to match up one of the following patterns:"
 									f"\n{patterns}"
 								)
 
@@ -497,7 +501,9 @@ class AutoModel:
 									})
 
 							# Add the items/bow.json file
-							self.obj.generated_item_model.suffixed(on_off).write(set_json_encoder(ItemModel(items_content), max_level=4))
+							self.obj.generated_item_model.suffixed(on_off).write(
+								set_json_encoder(ItemModel(items_content), max_level=4)
+							)
 
 			# Add overrides
 			for key, value in overrides.items():
@@ -551,7 +557,10 @@ class AutoModel:
 					}
 
 					# Create the in_hand model
-					in_hand_content: JsonDict = {"parent": "item/spear_in_hand","textures": {"layer0": self.obj.texture.suffixed(f"_in_hand{on_off}")}}
+					in_hand_content: JsonDict = {
+						"parent": "item/spear_in_hand",
+						"textures": {"layer0": self.obj.texture.suffixed(f"_in_hand{on_off}")},
+					}
 
 					# Add the in_hand model to assets
 					self.obj.model.suffixed(f"_in_hand{on_off}").write(set_model_encoder(Model(in_hand_content), max_level=4))

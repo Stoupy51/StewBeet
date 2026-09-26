@@ -58,12 +58,18 @@ def select_packs(working_dir: Path) -> tuple[FoundPack | None, FoundPack | None]
 	datapacks: list[FoundPack] = [pack for pack in packs if pack.has_data]
 	resource_packs: list[FoundPack] = [pack for pack in packs if pack.has_assets]
 	if not packs:
-		stp.error(f"No pack found: migration looks for a pack.mcmeta next to a data/ or assets/ folder, up to {SEARCH_DEPTH} folders deep.")
+		stp.error(
+			"No pack found: migration looks for a pack.mcmeta next to a data/ or assets/ folder, "
+			f"up to {SEARCH_DEPTH} folders deep."
+		)
 		return None
 	for kind, found in (("datapacks", datapacks), ("resource packs", resource_packs)):
 		if len(found) > 1:
 			listing: str = "".join(f"\n  - {pack.root.relative_to(working_dir).as_posix()}" for pack in found)
-			stp.error(f"Found {len(found)} {kind}, migration takes one of each. Run it from the folder of the one to migrate:{listing}")
+			stp.error(
+				f"Found {len(found)} {kind}, migration takes one of each. "
+				f"Run it from the folder of the one to migrate:{listing}"
+			)
 			return None
 	for pack in packs:
 		stp.info(f"Found {pack.kind} in {pack.root.relative_to(working_dir).as_posix()}")
@@ -71,7 +77,11 @@ def select_packs(working_dir: Path) -> tuple[FoundPack | None, FoundPack | None]
 
 
 def ask_template() -> str:
-	stp.info("Template to migrate onto: 'minimal' (beet with one StewBeet plugin) or 'basic' (every plugin configured). Press Enter for minimal:", end=" ")
+	stp.info(
+		"Template to migrate onto: 'minimal' (beet with one StewBeet plugin) or 'basic' (every plugin configured). "
+		"Press Enter for minimal:",
+		end=" ",
+	)
 	return input().strip().lower() or "minimal"
 
 
@@ -90,7 +100,15 @@ def download_template(template_name: str) -> bytes | None:
 	return response.content
 
 
-def run_migration(working_dir: Path, template: zipfile.ZipFile, datapack: FoundPack | None, resource_pack: FoundPack | None, *, dry_run: bool, assume_yes: bool) -> MigrationPlan | None:
+def run_migration(
+	working_dir: Path,
+	template: zipfile.ZipFile,
+	datapack: FoundPack | None,
+	resource_pack: FoundPack | None,
+	*,
+	dry_run: bool,
+	assume_yes: bool,
+) -> MigrationPlan | None:
 	""" Show the plan, then apply it unless this is a dry run or the user declines.
 
 	Returns:
