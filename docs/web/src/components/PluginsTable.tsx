@@ -1,4 +1,3 @@
-import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
@@ -24,10 +23,10 @@ import {
     HiRefresh,
     HiShieldCheck,
     HiHashtag,
-    HiX
 } from 'react-icons/hi';
 import { useTranslation } from '../i18n/useTranslation';
 import { TEXT_ACCENT_HOVER } from '../theme';
+import { ImageLightbox, type LightboxImage } from './ZoomableImage';
 
 type Dependency = 'full' | 'partial' | 'none';
 
@@ -119,7 +118,7 @@ export const PluginsTable: React.FC = () => {
     const plugins = getPlugins(t);
     const docLink = (plugin: Plugin) =>
         `/markdown?src=${encodeURIComponent(plugin.docSrc?.replace('{lang}', language) ?? `plugins/${plugin.name}.md`)}`;
-    const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string } | null>(null);
+    const [selectedImage, setSelectedImage] = useState<LightboxImage | null>(null);
 
     return (
         <>
@@ -187,44 +186,7 @@ export const PluginsTable: React.FC = () => {
                 </table>
             </div>
 
-            {/* Image Modal */}
-            <AnimatePresence mode="wait">
-                {selectedImage && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.1 }}
-                        onClick={() => setSelectedImage(null)}
-                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-4"
-                    >
-                        {/* Close button */}
-                        <button
-                            onClick={() => setSelectedImage(null)}
-                            className="absolute top-4 right-4 p-2 rounded-control bg-ink-900 border border-ink-700 hover:border-ink-500 text-ink-100 transition-colors z-10"
-                            aria-label="Close"
-                        >
-                            <HiX className="text-2xl" />
-                        </button>
-
-                        {/* Image */}
-                        <motion.div
-                            initial={{ scale: 0.9, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.9, opacity: 0 }}
-                            transition={{ duration: 0.15, ease: "easeOut" }}
-                            onClick={(e) => e.stopPropagation()}
-                            className="relative max-w-7xl max-h-[90vh] w-full"
-                        >
-                            <img
-                                src={selectedImage.src}
-                                alt={selectedImage.alt}
-                                className="w-full h-full object-contain rounded-panel"
-                            />
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            <ImageLightbox image={selectedImage} onClose={() => setSelectedImage(null)} />
         </>
     );
 };

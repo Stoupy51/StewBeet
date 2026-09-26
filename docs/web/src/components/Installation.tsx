@@ -133,7 +133,7 @@ export const Installation: React.FC = () => {
                     </ol>
 
                     <div className="flex flex-col gap-3 min-w-0">
-                        <CodeTab path={t('installation.terminal')} accessory={<CopyIcon command={step.command} />} className="h-[26rem]">
+                        <CodeTab path={t('installation.terminal')} accessory={<CopyIcon command={step.command} />} className="code-dark h-[26rem]">
                             <div className="flex-1 overflow-auto custom-scrollbar p-5 font-mono text-[0.8125rem] leading-relaxed">
                                 <p className="text-ink-100">
                                     <span className="text-beet-400 select-none">$ </span>{step.command}

@@ -21,6 +21,11 @@
     font-feature-settings: 'calt' 0;
   }
 
+  /* Text left uncoloured by the highlighter would otherwise inherit the light theme's dark ink. */
+  .code-dark {
+    @apply text-ink-200;
+  }
+
   :focus-visible {
     @apply outline-none ring-2 ring-beet-400 ring-offset-2 ring-offset-ink-950;
   }
@@ -50,10 +55,10 @@
     background: transparent;
   }
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    @apply bg-white/10 rounded-full border-0;
+    @apply bg-ink-500/40 rounded-full border-0;
   }
   .custom-scrollbar:hover::-webkit-scrollbar-thumb {
-    @apply bg-white/25;
+    @apply bg-ink-500/70;
   }
 
   .pixelated {
@@ -170,7 +175,7 @@
 .markdown-body table { display: block; width: max-content; max-width: 100%; overflow: auto; border-collapse: collapse; font-size: 0.9375em; }
 .markdown-body :is(th, td) { padding: 8px 14px; @apply border border-ink-800; }
 .markdown-body th { font-weight: 600; text-align: left; @apply bg-ink-900 text-ink-100; }
-.markdown-body tbody tr:nth-child(2n) { @apply bg-white/[0.015]; }
+.markdown-body tbody tr:nth-child(2n) { @apply bg-ink-50/[0.015]; }
 
 .markdown-body hr { height: 1px; padding: 0; margin: 32px 0; border: 0; @apply bg-ink-800; }
 .markdown-body img { max-width: 100%; box-sizing: content-box; }

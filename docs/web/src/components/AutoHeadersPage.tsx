@@ -228,7 +228,7 @@ export const AutoHeadersPage: React.FC = () => {
                             }}
                             onClick={() => picker.current?.click()}
                             className={`m-4 flex-1 min-h-[16rem] rounded-panel border-2 border-dashed flex flex-col items-center justify-center gap-3 p-6 text-center transition-colors ${
-                                dragging ? 'border-beet-500/60 bg-beet-500/5' : 'border-ink-800 hover:border-white/30 hover:bg-white/[0.02]'
+                                dragging ? 'border-beet-500/60 bg-beet-500/5' : 'border-ink-800 hover:border-ink-50/30 hover:bg-ink-50/[0.02]'
                             }`}
                         >
                             <HiUpload className="w-8 h-8 text-ink-500" />
@@ -269,7 +269,7 @@ export const AutoHeadersPage: React.FC = () => {
                     {/* ── Output */}
                     {/* A fixed height, not a fitted one: it is what stops a four thousand file pack
                         running off the end of the page, and the tree scrolls inside it instead. */}
-                    <div className="rounded-panel border border-ink-800 bg-ink-900/60 flex flex-col overflow-hidden h-[32rem] lg:h-[34rem]">
+                    <div className="code-dark rounded-panel border border-ink-800 bg-ink-900 flex flex-col overflow-hidden h-[32rem] lg:h-[34rem]">
                         <div className="flex items-center gap-2 px-4 py-2 border-b border-ink-800 flex-wrap">
                             <span className="text-xs text-ink-400">{t('autoHeaders.output')}</span>
                             {output && (

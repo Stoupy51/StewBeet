@@ -151,6 +151,7 @@ export const Hero: React.FC = () => {
                 >
                     <div className="intro-panel min-w-0 min-h-[var(--code-height)] lg:min-h-0 max-h-[31rem] lg:max-h-none" style={step(0)}>
                         <CodeTab
+                            className="code-dark"
                             path={t('hero.codeCaption')}
                             accessory={
                                 <div role="group" aria-label={t('hero.snippetTabs')} className="flex items-center gap-1">
@@ -197,6 +198,7 @@ export const Hero: React.FC = () => {
                         style={{ ...step(1), '--row-start': '760ms' } as React.CSSProperties}
                     >
                         <CodeTab
+                            className="code-dark"
                             path={t('hero.outputCaption')}
                             accessory={
                                 <FileCounter

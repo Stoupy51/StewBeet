@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { HiArrowLeft, HiExternalLink, HiMenu, HiX } from 'react-icons/hi';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
+import { ZoomableImage } from './ZoomableImage';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../i18n/useTranslation';
 import { useMarkdownContent } from '../context/MarkdownContentContext';
@@ -134,7 +135,7 @@ const ShikiCodeBlock: React.FC<{ code: string; language: string }> = ({ code, la
 
     if (!highlighted) {
         return (
-            <pre>
+            <pre className="code-dark">
                 <code>{code}</code>
             </pre>
         );
@@ -142,7 +143,7 @@ const ShikiCodeBlock: React.FC<{ code: string; language: string }> = ({ code, la
 
     // Padding, size and the panel around it all come from `.markdown-body .md-code` in index.css,
     // so a highlighted block and the plain one above measure the same before and after Shiki runs.
-    return <div className="md-code" dangerouslySetInnerHTML={{ __html: highlighted }} />;
+    return <div className="md-code code-dark" dangerouslySetInnerHTML={{ __html: highlighted }} />;
 };
 
 export const MarkdownPage: React.FC = () => {
@@ -445,7 +446,7 @@ export const MarkdownPage: React.FC = () => {
                                     if (isValidElement<{ className?: string }>(children) && LANGUAGE_CLASS.test(children.props.className ?? '')) {
                                         return children;
                                     }
-                                    return <pre>{children}</pre>;
+                                    return <pre className="code-dark">{children}</pre>;
                                 },
                                 code({ inline, className, children }: React.HTMLAttributes<HTMLElement> & { inline?: boolean }) {
                                     const match = LANGUAGE_CLASS.exec(className || '');
@@ -482,14 +483,13 @@ export const MarkdownPage: React.FC = () => {
                                     const isBadge = src?.includes('shields.io') || src?.includes('img.shields.io') || 
                                                    src?.includes('badge') || src?.includes('github.com/workflows');
                                     
+                                    if (isBadge) return <img src={imageSrc} alt={alt} className="inline-block h-6 mr-2 my-1" />;
                                     return (
-                                        <img
-                                            src={imageSrc}
-                                            alt={alt}
-                                            className={isBadge 
-                                                ? "inline-block h-6 mr-2 my-1" 
-                                                : "max-w-full h-auto rounded-control"
-                                            }
+                                        <ZoomableImage
+                                            src={imageSrc ?? ''}
+                                            alt={alt ?? ''}
+                                            frameClassName="max-w-full align-top"
+                                            className="max-w-full h-auto rounded-control"
                                         />
                                     );
                                 },
