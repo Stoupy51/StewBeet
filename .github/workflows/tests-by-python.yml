@@ -33,4 +33,6 @@ jobs:
         run: cd ./python_package && uv run stouputils all_doctests ./stewbeet
       - name: Run integration tests with python ${{ inputs.python-version }}
         run: cd ./python_package && uv run scripts/run_integration_tests.py
+      - name: Run migration tests with python ${{ inputs.python-version }}
+        run: cd ./python_package && uv run scripts/run_migration_tests.py
 
