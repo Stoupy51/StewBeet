@@ -10,6 +10,7 @@
     "lint": "eslint .",
     "test": "bun test",
     "my_server": "bun server.tsx",
+    "stack-diagram": "bun scripts/build-stack-diagram.ts",
     "preview": "vite preview"
   },
   "dependencies": {
