@@ -1,10 +1,11 @@
 import { useState, useEffect, useCallback, memo, lazy, Suspense } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { HiMenu, HiSearch, HiX } from 'react-icons/hi';
+import { HiDesktopComputer, HiMenu, HiMoon, HiSearch, HiSun, HiX } from 'react-icons/hi';
 import { SiDiscord, SiGithub } from 'react-icons/si';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../i18n/useTranslation';
+import { useTheme, type ThemePreference } from '../hooks/useTheme';
 import { loadIndex } from '../utils/search';
 import { VscodeMark } from './VscodeMark';
 import stats from '../generated/stats.json';
@@ -17,6 +18,24 @@ const DISCORD_URL = 'https://discord.gg/anxzu6rA9F';
 const MARKETPLACE_URL = 'https://marketplace.visualstudio.com/items?itemName=stoupy.stewbeet';
 
 const ICON_LINK = 'flex items-center justify-center h-9 px-2 rounded-control text-ink-400 hover:text-ink-50 hover:bg-ink-850 transition-colors';
+
+/** Each click moves to the next preference, looping back to the system one. */
+const THEME_STEPS = {
+    system: { next: 'light', Icon: HiDesktopComputer, labelKey: 'nav.themeSystem' },
+    light:  { next: 'dark',   Icon: HiSun,             labelKey: 'nav.themeLight' },
+    dark:   { next: 'system', Icon: HiMoon,            labelKey: 'nav.themeDark' },
+} as const satisfies Record<ThemePreference, { next: ThemePreference; Icon: React.ComponentType<{ className?: string }>; labelKey: string }>;
+
+const ThemeButton = ({ className }: { className: string }) => {
+    const { t } = useTranslation();
+    const { preference, setPreference } = useTheme();
+    const { next, Icon, labelKey } = THEME_STEPS[preference];
+    return (
+        <button onClick={() => setPreference(next)} aria-label={t(labelKey)} title={t(labelKey)} className={className}>
+            <Icon className="w-[18px] h-[18px]" aria-hidden="true" />
+        </button>
+    );
+};
 
 export const Navbar = memo(() => {
     const prefersReducedMotion = useReducedMotion();
@@ -137,6 +156,7 @@ export const Navbar = memo(() => {
                         <span>{t('search.button')}</span>
                         <kbd className="ml-auto hidden lg:inline font-mono text-[0.625rem] px-1.5 py-0.5 rounded border border-ink-700 text-ink-400">Ctrl K</kbd>
                     </button>
+                    <ThemeButton className={ICON_LINK} />
                     <button
                         onClick={toggleLanguage}
                         aria-label={t('nav.switchLanguage')}
@@ -201,7 +221,8 @@ export const Navbar = memo(() => {
                                 <a href={MARKETPLACE_URL} target="_blank" rel="noopener noreferrer" aria-label="VS Code" className={ICON_LINK}>
                                     <VscodeMark className="w-5 h-5" aria-hidden="true" />
                                 </a>
-                                <button onClick={toggleLanguage} aria-label={t('nav.switchLanguage')} className={`${ICON_LINK} ml-auto font-mono text-sm gap-1.5`}>
+                                <ThemeButton className={`${ICON_LINK} ml-auto`} />
+                                <button onClick={toggleLanguage} aria-label={t('nav.switchLanguage')} className={`${ICON_LINK} font-mono text-sm gap-1.5`}>
                                     <span className={language === 'en' ? 'text-ink-50' : ''}>EN</span>
                                     <span className="text-ink-600">/</span>
                                     <span className={language === 'fr' ? 'text-ink-50' : ''}>FR</span>

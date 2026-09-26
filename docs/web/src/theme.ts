@@ -49,7 +49,7 @@ export const LIST_SELECTED = 'bg-beet-500/15 text-beet-300';
 export const TOGGLE_ACTIVE = 'bg-ink-800 border-ink-600 text-ink-50 hover:bg-ink-700';
 
 /** Text selection colour. */
-export const SELECTION_BRAND = 'selection:bg-beet-500/30 selection:text-white';
+export const SELECTION_BRAND = 'selection:bg-beet-500/30 selection:text-ink-50';
 
 /** Spinner border. */
 export const LOADER_ACCENT = 'border-beet-400';

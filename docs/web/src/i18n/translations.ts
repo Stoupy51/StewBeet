@@ -9,6 +9,9 @@ export const translations = {
             playground: 'Playground',
             tools: 'Tools',
             switchLanguage: 'Passer en français',
+            themeSystem: 'Theme: same as your system',
+            themeLight: 'Theme: light',
+            themeDark: 'Theme: dark',
         },
 
         // Hero Section
@@ -566,6 +569,9 @@ export const translations = {
             playground: 'Bac à sable',
             tools: 'Outils',
             switchLanguage: 'Switch to English',
+            themeSystem: 'Thème : celui du système',
+            themeLight: 'Thème : clair',
+            themeDark: 'Thème : sombre',
         },
 
         // Hero Section

@@ -149,7 +149,7 @@ stewbeet build`}
                         <div className="mt-10">
                             <Link
                                 to="/"
-                                className="group inline-flex items-center gap-2 text-sm text-ink-400 hover:text-white transition-colors"
+                                className="group inline-flex items-center gap-2 text-sm text-ink-400 hover:text-ink-50 transition-colors"
                             >
                                 <HiArrowLeft className="group-hover:-translate-x-1 transition-transform" aria-hidden="true" />
                                 {t('telemetry.backHome')}

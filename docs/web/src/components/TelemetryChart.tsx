@@ -136,7 +136,7 @@ export const TelemetryChart: React.FC<{ days: TelemetryDay[]; unitLabel: string;
                                 <th scope="col" className="px-3 py-2 font-medium text-right">{t('telemetry.tableAverage')}</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-white/5">
+                        <tbody className="divide-y divide-ink-50/5">
                             {days.map(day => (
                                 <tr key={day.date}>
                                     <td className="px-3 py-1.5 font-mono text-ink-300">{day.date}</td>
@@ -192,10 +192,10 @@ export const TelemetryBreakdownChart: React.FC<{ title: string; items: Telemetry
                                         return [`${count.toLocaleString(locale)} (${percentage.toFixed(1)}%)`, label];
                                     }}
                                     contentStyle={{
-                                        backgroundColor: 'rgba(22, 20, 18, 0.97)',
-                                        border: '1px solid #353029',
+                                        backgroundColor: 'rgb(var(--ink-900) / 0.97)',
+                                        border: '1px solid rgb(var(--ink-700))',
                                         borderRadius: '12px',
-                                        color: '#eee8df',
+                                        color: 'rgb(var(--ink-100))',
                                     }}
                                 />
                                 <Pie
@@ -215,7 +215,7 @@ export const TelemetryBreakdownChart: React.FC<{ title: string; items: Telemetry
                                         <Cell
                                             key={`${title}-${entry.name}`}
                                             fill={entry.fill}
-                                            stroke="#0e0d0c"
+                                            className="stroke-ink-950"
                                             strokeWidth={2}
                                             opacity={hoveredIndex === null || hoveredIndex === index ? 1 : 0.45}
                                         />

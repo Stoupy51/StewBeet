@@ -5,7 +5,7 @@
     <link rel="icon" type="image/png" href="/stewbeet-logo.png" />
     <link rel="apple-touch-icon" href="/stewbeet-1024.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Tell Dark Reader to leave the site alone (it is already dark by design) -->
+    <!-- Tell Dark Reader to leave the site alone (it ships its own dark theme) -->
     <meta name="darkreader-lock" />
     <title>StewBeet | Minecraft datapacks, generated from Python</title>
 
@@ -56,6 +56,18 @@
         }
         window.stewbeetIntro = play;
         if (play) document.documentElement.dataset.intro = 'play';
+      })();
+
+      // Same resolution as src/hooks/useTheme.ts, run here so a light theme never flashes dark first
+      (function () {
+        var preference = 'system';
+        try {
+          preference = window.localStorage.getItem('stewbeet:theme') || 'system';
+        } catch (error) {
+          // Storage disabled: follow the system
+        }
+        var light = preference === 'light' || (preference === 'system' && window.matchMedia('(prefers-color-scheme: light)').matches);
+        document.documentElement.dataset.theme = light ? 'light' : 'dark';
       })();
     </script>
   </head>

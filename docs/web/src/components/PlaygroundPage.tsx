@@ -107,8 +107,8 @@ export const PlaygroundPage: React.FC = () => {
                 <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-4">
 
                     {/* ── Editor */}
-                    <div className="rounded-panel border border-ink-800 bg-ink-900/60 flex flex-col overflow-hidden">
-                        <div className="flex items-center gap-2 px-4 py-3 border-b border-ink-800 flex-wrap bg-white/[0.03]">
+                    <div className="code-dark rounded-panel border border-ink-800 bg-ink-900 flex flex-col overflow-hidden">
+                        <div className="flex items-center gap-2 px-4 py-3 border-b border-ink-800 flex-wrap bg-ink-50/[0.03]">
                             <span className="text-sm font-semibold text-ink-200 mr-1">{t('playground.presets')}</span>
                             {PRESETS.map(preset => (
                                 <button
@@ -117,7 +117,7 @@ export const PlaygroundPage: React.FC = () => {
                                     className={`text-sm px-3 py-1.5 rounded-control border transition-colors ${
                                         active === preset.id
                                             ? 'bg-beet-500/20 border-beet-500/40 text-beet-400'
-                                            : 'bg-ink-850 border-ink-800 text-ink-300 hover:bg-ink-800 hover:text-white'
+                                            : 'bg-ink-850 border-ink-800 text-ink-300 hover:bg-ink-800 hover:text-ink-50'
                                     }`}
                                 >
                                     {t(`playground.preset.${preset.id}`)}
@@ -153,7 +153,7 @@ export const PlaygroundPage: React.FC = () => {
                         takes the height the editor column established, so the two always match
                         without a magic number to keep in sync. Below lg they stack, and a fixed
                         height is what stops a 500 file build running off the end of the page. */}
-                    <div className="rounded-panel border border-ink-800 bg-ink-900/60 flex flex-col overflow-hidden h-[32rem] lg:h-0 lg:min-h-full">
+                    <div className="code-dark rounded-panel border border-ink-800 bg-ink-900 flex flex-col overflow-hidden h-[32rem] lg:h-0 lg:min-h-full">
                         <div className="flex items-center gap-2 px-4 py-2 border-b border-ink-800">
                             <span className="text-xs text-ink-400">{t('playground.output')}</span>
                             {result?.ok && (
@@ -170,7 +170,7 @@ export const PlaygroundPage: React.FC = () => {
                             {result?.config && (
                                 <button
                                     onClick={() => { setShowConfig(true); setSelected(null); }}
-                                    className="ml-auto text-xs px-2 py-1 rounded border border-ink-800 bg-ink-850 text-ink-300 hover:bg-ink-800 hover:text-white transition-colors"
+                                    className="ml-auto text-xs px-2 py-1 rounded border border-ink-800 bg-ink-850 text-ink-300 hover:bg-ink-800 hover:text-ink-50 transition-colors"
                                 >
                                     {t('playground.viewConfig')}
                                 </button>

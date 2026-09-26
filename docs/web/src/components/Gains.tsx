@@ -3,6 +3,7 @@ import { useInView } from 'framer-motion';
 import { useTranslation } from '../i18n/useTranslation';
 import { useShiki } from '../hooks/useShiki';
 import { FileTree } from './FileTree';
+import { ZoomableImage } from './ZoomableImage';
 import { BY_HAND, GAIN_TILES, type GainTile, type GainVisual, type Snippet } from './gainsData';
 import { CARD, PAGE, SECTION_LEAD, SECTION_TITLE } from '../theme';
 
@@ -28,7 +29,7 @@ const SnippetBlock = ({ snippet, highlight }: { snippet: Snippet; highlight: boo
     const { t } = useTranslation();
     const label = snippet.labelKey ? t(snippet.labelKey) : snippet.label;
     return (
-        <div className="border-t border-ink-800 first:border-t-0">
+        <div className="code-dark bg-ink-950 border-t border-ink-800 first:border-t-0">
             {label && <p className="px-4 pt-3 pb-1 font-mono text-[0.6875rem] text-ink-500 truncate">{label}</p>}
             <div className="overflow-x-auto custom-scrollbar">
                 {highlight
@@ -46,12 +47,13 @@ const Visual = ({ visual, highlight }: { visual: GainVisual; highlight: boolean 
         <div className="flex-1 flex flex-col border-t border-ink-800 bg-ink-950/60">
             {visual.kind === 'image' && (
                 <div className={`flex-1 ${visual.pixelated ? 'flex items-center justify-center p-5' : 'relative min-h-52'} ${snippets.length ? 'border-b border-ink-800' : ''}`}>
-                    <img
+                    <ZoomableImage
                         src={visual.src}
                         alt={t(visual.altKey)}
+                        pixelated={visual.pixelated}
                         loading="lazy"
-                        decoding="async"
-                        className={visual.pixelated ? 'pixelated max-w-full' : 'absolute inset-0 w-full h-full object-cover object-top'}
+                        frameClassName={visual.pixelated ? 'max-w-full' : 'absolute inset-0'}
+                        className={visual.pixelated ? 'pixelated max-w-full' : 'w-full h-full object-cover object-top'}
                     />
                 </div>
             )}
