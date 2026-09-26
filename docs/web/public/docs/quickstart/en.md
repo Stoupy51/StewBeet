@@ -56,5 +56,6 @@ build/
 
 ## Next steps
 
+- [Migrate an existing pack](../9_migration/en.md): start from a datapack you already have instead of a template.
 - [Tutorial: build your first datapack](../0_getting_started/en.md): the same ground at
   walking pace, adding a custom item and a custom block of your own.
