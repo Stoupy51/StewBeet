@@ -2,6 +2,10 @@
 
 Chaque option du fichier de configuration beet, et ce que StewBeet en fait. Le fichier est lu au début de chaque build et décide de la façon dont tout le projet est traité.
 
+Si beet, bolt et mecha sont des noms nouveaux pour vous, voici qui fait quoi :
+
+![beet lance le build, bolt et mecha s'y branchent, tous trois faits par l'équipe de beet. StewBeet est un projet à part qui tourne dans beet sous forme de plugins.](../../img/stack/stewbeet-stack.fr.dark.png)
+
 Les exemples utilisent YAML (`beet.yml`). Chaque option fonctionne de la même façon dans `beet.yaml`, `beet.json` ou `pyproject.toml`. Le fichier se trouve à la racine du projet.
 
 Des fichiers complets à lire en parallèle de cette page :

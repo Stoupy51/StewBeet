@@ -160,6 +160,16 @@ export const translations = {
             backHome: 'Back to the home page',
         },
 
+        // Who makes what: beet, bolt, mecha and StewBeet
+        stack: {
+            title: 'New to beet? Here is who makes what',
+            lead: 'StewBeet sits on top of beet, a build tool made by another team, together with its bolt and mecha plugins. If all four names are new to you, this is how they fit.',
+            share: 'Share it:',
+            dark: 'dark',
+            light: 'light',
+            svgHint: 'animated',
+        },
+
         // Final call to action
         finalCta: {
             title: 'Define a block. Build the pack.',
@@ -718,6 +728,16 @@ export const translations = {
             compatNote: 'Rien n\'est téléchargé pour ceux-là. Un plugin génère les fichiers supplémentaires qu\'ils cherchent, pour que vos items s\'affichent correctement chez un joueur qui les a installés.',
             docsLink: 'Lire le guide des dépendances',
             backHome: 'Retour à l\'accueil',
+        },
+
+        // Qui fait quoi : beet, bolt, mecha et StewBeet
+        stack: {
+            title: 'Nouveau sur beet ? Voici qui fait quoi',
+            lead: "StewBeet repose sur beet, un outil de build fait par une autre équipe, avec ses plugins bolt et mecha. Si vous découvrez ces quatre noms d'un coup, voici comment ils s'assemblent.",
+            share: 'Partager :',
+            dark: 'sombre',
+            light: 'clair',
+            svgHint: 'animé',
         },
 
         // Final call to action
