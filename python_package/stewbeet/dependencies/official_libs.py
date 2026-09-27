@@ -44,7 +44,6 @@ OFFICIAL_LIBS: dict[str, JsonDict] = {
 	"smithed.crafter":      {"name":"Smithed Crafter",        "url":"https://wiki.smithed.dev/libraries/crafter/",        "is_used": False, "source":"smithed", "smithed_id":"crafter", "has_resource_pack": True},
 	"smithed.actionbar":    {"name":"Smithed Actionbar",      "url":"https://wiki.smithed.dev/libraries/actionbar/",      "is_used": False, "source":"smithed", "smithed_id":"actionbar", "detect": "smithed.actionbar"},
 	"realistic_explosion":  {"name":"RealisticExplosion",     "url":"https://github.com/Stoupy51/RealisticExplosion",     "is_used": False, "source":"smithed", "smithed_id":"realistic_explosion", "detect": "realistic_explosion"},
-	"player_motion":        {"name":"Player Motion API",      "url":"https://github.com/MulverineX/player_motion",        "is_used": False, "source":"smithed", "smithed_id":"player_motion", "no_lantern_load": True, "detect": "player_motion"},
 
 	# Modrinth API libs
 	"itemio":               {"name":"ItemIO",                 "url":"https://github.com/edayot/ItemIO",                   "is_used": False, "source":"modrinth", "modrinth_slug":"itemio", "detect": "itemio"},
@@ -52,6 +51,7 @@ OFFICIAL_LIBS: dict[str, JsonDict] = {
 	"furnace_nbt_recipes":  {"name":"Furnace NBT Recipes",    "url":"https://github.com/Stoupy51/FurnaceNbtRecipes",      "is_used": False, "source":"modrinth", "modrinth_slug":"furnace_nbt_recipes", "detect": "furnace_nbt_recipes"},
 	"smart_ore_generation": {"name":"Smart Ore Generation",   "url":"https://github.com/Stoupy51/SmartOreGeneration",     "is_used": False, "source":"modrinth", "modrinth_slug":"smart_ore_generation"},
 	"cinemalya":            {"name":"Cinemalya",              "url":"https://github.com/Stoupy51/Cinemalya",              "is_used": False, "source":"modrinth", "modrinth_slug":"cinemalya", "detect": "cinemalya"},
+	"player_motion":        {"name":"Player Motion API",      "url":"https://github.com/MulverineX/player_motion",        "is_used": False, "source":"modrinth", "modrinth_slug":"player_motion", "no_lantern_load": True, "detect": "player_motion"},
 
 	# Static URL libs (version resolved from static_urls at download time)
 	# "smart_ore_generation":   {"name":"SmartOreGeneration",   "url":"https://github.com/Stoupy51/SmartOreGeneration",         "is_used": False, "source":"static", "static_urls": {
