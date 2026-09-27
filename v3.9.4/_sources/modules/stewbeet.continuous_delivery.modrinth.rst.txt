@@ -1,0 +1,8 @@
+stewbeet.continuous\_delivery.modrinth module
+=============================================
+
+.. automodule:: stewbeet.continuous_delivery.modrinth
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

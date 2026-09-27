@@ -1,0 +1,8 @@
+stewbeet.plugins.ingame\_manual.manual\_emit module
+===================================================
+
+.. automodule:: stewbeet.plugins.ingame_manual.manual_emit
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

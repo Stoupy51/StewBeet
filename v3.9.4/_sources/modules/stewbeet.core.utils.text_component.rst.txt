@@ -1,0 +1,17 @@
+stewbeet.core.utils.text\_component package
+===========================================
+
+.. automodule:: stewbeet.core.utils.text_component
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.core.utils.text_component.convert
+   stewbeet.core.utils.text_component.scan

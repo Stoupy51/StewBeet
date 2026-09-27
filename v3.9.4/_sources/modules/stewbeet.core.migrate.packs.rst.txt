@@ -1,0 +1,8 @@
+stewbeet.core.migrate.packs module
+==================================
+
+.. automodule:: stewbeet.core.migrate.packs
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

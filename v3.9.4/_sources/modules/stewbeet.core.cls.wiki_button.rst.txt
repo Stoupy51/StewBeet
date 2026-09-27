@@ -1,0 +1,8 @@
+stewbeet.core.cls.wiki\_button module
+=====================================
+
+.. automodule:: stewbeet.core.cls.wiki_button
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

@@ -1,0 +1,8 @@
+stewbeet.core.utils.fonts.providers module
+==========================================
+
+.. automodule:: stewbeet.core.utils.fonts.providers
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

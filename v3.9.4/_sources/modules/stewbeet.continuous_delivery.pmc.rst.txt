@@ -1,0 +1,8 @@
+stewbeet.continuous\_delivery.pmc module
+========================================
+
+.. automodule:: stewbeet.continuous_delivery.pmc
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

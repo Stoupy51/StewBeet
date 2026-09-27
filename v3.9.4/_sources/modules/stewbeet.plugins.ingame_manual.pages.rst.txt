@@ -1,0 +1,24 @@
+stewbeet.plugins.ingame\_manual.pages package
+=============================================
+
+.. automodule:: stewbeet.plugins.ingame_manual.pages
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.plugins.ingame_manual.pages.base
+   stewbeet.plugins.ingame_manual.pages.browser_page
+   stewbeet.plugins.ingame_manual.pages.button_layout
+   stewbeet.plugins.ingame_manual.pages.category_page
+   stewbeet.plugins.ingame_manual.pages.custom_page
+   stewbeet.plugins.ingame_manual.pages.intro_page
+   stewbeet.plugins.ingame_manual.pages.item_page
+   stewbeet.plugins.ingame_manual.pages.raw_page
+   stewbeet.plugins.ingame_manual.pages.texture_page

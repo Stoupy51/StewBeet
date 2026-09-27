@@ -1,0 +1,8 @@
+stewbeet.core.cls.painting module
+=================================
+
+.. automodule:: stewbeet.core.cls.painting
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

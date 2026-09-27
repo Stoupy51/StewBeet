@@ -1,0 +1,8 @@
+stewbeet.contrib.simplenergy.cables module
+==========================================
+
+.. automodule:: stewbeet.contrib.simplenergy.cables
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

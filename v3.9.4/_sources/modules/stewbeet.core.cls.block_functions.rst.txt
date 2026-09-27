@@ -1,0 +1,8 @@
+stewbeet.core.cls.block\_functions module
+=========================================
+
+.. automodule:: stewbeet.core.cls.block_functions
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

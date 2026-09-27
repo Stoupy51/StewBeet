@@ -1,0 +1,8 @@
+stewbeet.core.migrate.plan module
+=================================
+
+.. automodule:: stewbeet.core.migrate.plan
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
