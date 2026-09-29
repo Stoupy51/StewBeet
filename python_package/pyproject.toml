@@ -25,7 +25,7 @@ authors = [
     { name = "Stoupy51", email = "stoupy51@gmail.com" },
 ]
 dependencies = [
-	"stouputils>=26.7.2",
+	"stouputils>=26.8.0",
 	"model_resolver>=1.15.2",
 	"beet>=0.119.0",
 	"bolt>=0.51.0",
@@ -81,6 +81,15 @@ select = [
     "C4",
     "T20",
     "RUF",
+    "RET",
+    "SIM",
+    "PIE",
+    "PERF401",
+    "PGH003",
+    "FBT003",
+    "TRY203",
+    "S110",
+    "PLR5501",
 ]
 ignore = [
     "T201",
