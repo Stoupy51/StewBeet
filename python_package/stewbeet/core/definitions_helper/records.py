@@ -62,7 +62,7 @@ def generate_custom_records(
 
 	# If no records specified, search in the records folder
 	if not records or records in ["auto", "all"]:
-		songs: list[str] = [x for x in os.listdir(records_folder) if x.endswith((".ogg",".wav"))]
+		songs: list[str] = [x for x in sorted(os.listdir(records_folder)) if x.endswith((".ogg",".wav"))]
 		records_to_check: dict[str, str] = { clean_record_name(file): file for file in songs }
 	else:
 		records_to_check = records # type: ignore

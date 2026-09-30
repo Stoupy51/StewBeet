@@ -56,7 +56,7 @@ def beet_default(ctx: Context):
 	# Textures
 	source_textures: dict[str, str] = {
 		stp.clean_path(str(p)).split("/")[-1]: stp.relative_path(str(p))
-		for p in Path(textures_folder).rglob("*.png")
+		for p in sorted(Path(textures_folder).rglob("*.png"), key=str)
 	}
 
 	# Warn about blocks that will never be placeable

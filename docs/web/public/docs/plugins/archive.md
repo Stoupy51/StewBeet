@@ -10,13 +10,13 @@ preserving original pack directories and integrating with beet's output system.
 **Output directory will get both datapack and resource pack zipped**<br>
 <img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/archive.output_directory.jpg">
 
-**We can see deterministic `Date modified` based of .beet_cache directory's one (no year 1900)**<br>
+**We can see deterministic `Date modified` based of the last commit of the beet config (no year 1900)**<br>
 <img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/archive.inside_datapack.jpg">
 
 **Required**: Beet context with at least one type of pack (datapacks/resource packs)  
 **Required**: Configured output directory in project settings  
 **Position**: Should run after all pack generation is complete  
-**Optional**: Beet cache directory for timestamp consistency  
+**Optional**: Beet config committed to git, for the same timestamp in every clone  
 **Related**: Works with any plugins that generate pack content  
 **Source Code**: [`stewbeet/plugins/archive/__init__.py`](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/archive/__init__.py)
 
@@ -57,7 +57,8 @@ pipeline:
 
 ### Consistent Timestamp System
 Ensures reproducible builds with deterministic timestamps:
-- 📅 Uses beet cache directory modification time as timestamp source
+- 📅 Uses the date of the last commit of the beet config, in UTC, so every clone builds the same bytes
+- 📂 Falls back to the beet cache directory modification time outside a git repository
 - 🔄 Applies consistent timestamps to all zip entries
 - 📦 Enables reproducible archive builds across environments
 - ⏰ Falls back to default time (2025-01-01) if cache unavailable
