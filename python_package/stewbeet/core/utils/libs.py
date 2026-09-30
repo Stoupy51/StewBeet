@@ -34,7 +34,7 @@ def lib_archives(ctx: Context, pack_type: str) -> list[str]:
 	exclude_patterns: list[str] = stewbeet_config.get("libs_exclude_patterns", [])
 	root: str = os.path.abspath(libs_folder)
 	return [
-		path for path in (os.path.abspath(x) for x in glob(f"{libs_folder}/{pack_type}/*.zip"))
+		path for path in (os.path.abspath(x) for x in sorted(glob(f"{libs_folder}/{pack_type}/*.zip")))
 		if not any(fnmatch.fnmatch(stp.relative_path(path, root), pattern) for pattern in exclude_patterns)
 	]
 

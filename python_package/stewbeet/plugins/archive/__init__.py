@@ -8,6 +8,7 @@ __lazy_modules__ = ALWAYS_LAZY
 import io
 import os
 import re
+import subprocess
 import time
 import zipfile
 from collections.abc import Buffer
@@ -16,6 +17,7 @@ from zipfile import ZipInfo
 
 import stouputils as stp
 from beet import Context, DataPack, ResourcePack
+from beet.toolchain.config import locate_config
 
 from ...core.__memory__ import Mem
 from ..initialize.project_images import find_pack_png
@@ -36,8 +38,23 @@ TextIOWrapper translates the newline it finds behind the carriage return that wa
 
 
 def get_consistent_timestamp(ctx: Context) -> tuple[int, int, int, int, int, int]:
-	""" Get a consistent timestamp for archive files based on beet cache .gitignore file modification time. """
+	""" Date written on every archive entry: the last commit of the beet config, in UTC, identical in every clone.
+
+	A file modification time is not kept by git, so it is only the fallback: the beet cache one, then 2025-01-01.
+	"""
 	default_time = (2025, 1, 1, 0, 0, 0)  # Default time: 2025-01-01 00:00:00
+
+	config_path = locate_config(ctx.directory)
+	if config_path:
+		try:
+			committed: str = subprocess.run(
+				["git", "log", "-1", "--format=%ct", "--", config_path.name],
+				cwd=config_path.parent, capture_output=True, text=True, check=False,
+			).stdout.strip()
+			if committed:
+				return time.gmtime(int(committed))[:6]
+		except OSError:
+			pass  # git is not installed
 
 	try:
 		# Use the beet cache .gitignore file modification time for consistent timestamps

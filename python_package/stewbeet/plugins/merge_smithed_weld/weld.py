@@ -69,7 +69,7 @@ def gather_packs(ctx: Context, pack_type: str) -> list[str]:
 		lib_path: str | None = dl.datapack_path if pack_type == "datapack" else dl.resource_pack_path
 		if lib_path:
 			to_merge.append(lib_path)
-	expanded: list[str] = [os.path.abspath(x) for pack in to_merge for x in glob(pack)]
+	expanded: list[str] = [os.path.abspath(x) for pack in to_merge for x in sorted(glob(pack))]
 	expanded.reverse()	# Reverse so the main pack is last (overwrites pack format)
 	return expanded
 

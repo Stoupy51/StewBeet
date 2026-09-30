@@ -44,7 +44,7 @@ def setup_gui_in_resource_packs(gui_translations: dict[str, GuiTranslation]) -> 
 	textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
 
 	# List gui asset filenames and map with 'gui/{filename}' keys
-	filenames: list[str] = os.listdir(f"{textures_folder}/gui")
+	filenames: list[str] = sorted(os.listdir(f"{textures_folder}/gui"))
 	gui_models: dict[str, str] = {f"gui/{x}": f"{namespace}:gui/{x.replace('.png', '')}" for x in filenames if x.endswith(".png")}
 
 	# Write custom models

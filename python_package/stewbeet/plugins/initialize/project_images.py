@@ -32,7 +32,7 @@ def find_project_png(filename: str, root: str | None = None) -> str | None:
 		path: str = f"{root}/{folder}/{filename}"
 		if os.path.exists(path):
 			return path
-	return next((stp.clean_path(str(p)) for p in Path(root).glob(f"*{filename}")), None)
+	return next((stp.clean_path(str(p)) for p in sorted(Path(root).glob(f"*{filename}"), key=str)), None)
 
 
 def find_pack_png(root: str | None = None) -> str | None:

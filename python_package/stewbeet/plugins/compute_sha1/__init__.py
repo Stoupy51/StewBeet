@@ -29,7 +29,7 @@ def beet_default(ctx: Context):
 
 	# Get SHA1 hash for each zip file in build folder
 	sha1_hashes: dict[str, str] = {}
-	for file in os.listdir(Mem.ctx.output_directory):
+	for file in sorted(os.listdir(Mem.ctx.output_directory)):
 		if file.endswith(".zip"):
 			with open(f"{Mem.ctx.output_directory}/{file}", "rb") as f:
 				sha1_hashes[file] = hashlib.sha1(f.read()).hexdigest()

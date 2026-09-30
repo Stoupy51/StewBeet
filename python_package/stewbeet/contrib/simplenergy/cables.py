@@ -54,8 +54,9 @@ def energy_cables_models(cables: list[str]) -> None:
 		content: JsonDict = {"model": {"type": "minecraft:range_dispatch","property": "minecraft:custom_model_data","entries": []}}
 
 		# Create all the cables variants models
-		for root, _, files in os.walk(ENERGY_CABLE_MODELS_FOLDER):
-			for file in files:
+		for root, dirs, files in os.walk(ENERGY_CABLE_MODELS_FOLDER):
+			dirs.sort()
+			for file in sorted(files):
 				if file.endswith(".json"):
 					path: str = f"{root}/{file}"
 

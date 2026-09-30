@@ -64,7 +64,7 @@ def beet_default(ctx: Context):
 		exclude_patterns = []
 
 	# Get all sound files
-	all_files: list[str] = [os.path.join(root, file) for root, _, files in os.walk(sounds_folder) for file in files]
+	all_files: list[str] = sorted(os.path.join(root, file) for root, _, files in os.walk(sounds_folder) for file in files)
 	sounds_names: list[str] = [sound for sound in all_files if sound.endswith(".ogg")]
 	if not sounds_names:
 		return

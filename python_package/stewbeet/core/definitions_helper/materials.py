@@ -51,7 +51,7 @@ def generate_everything_about_this_material(
 	# Prepare constants
 	textures: dict[str, str] = {
 		stp.clean_path(str(p)).split("/")[-1]: stp.relative_path(str(p))
-		for p in Path(textures_folder).rglob("*.png")
+		for p in sorted(Path(textures_folder).rglob("*.png"), key=str)
 	}
 	durability_factor: float = 1.0
 	if equipments_config:
