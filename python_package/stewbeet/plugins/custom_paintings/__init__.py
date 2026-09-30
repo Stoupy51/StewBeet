@@ -67,11 +67,11 @@ def beet_default(ctx: Context) -> None:
                 texture: str = painting_data["texture"]
                 src: str = stp.relative_path(f"{textures_folder}/{texture}.png")
             else:
-                matching_textures: list[str] = [
+                matching_textures: list[str] = sorted(
                     stp.relative_path(f"{root}/{file}")
                     for root, _, files in os.walk(textures_folder)
                     for file in files if file == f"{item}.png"
-                ]
+                )
                 if not matching_textures:
                     stp.error(
                         f"No texture found for painting '{item}' in the textures folder '{textures_folder}'. "

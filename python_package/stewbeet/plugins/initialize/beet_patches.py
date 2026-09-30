@@ -31,6 +31,7 @@ def fast_list_files(directory: FileSystemPath) -> Iterator[Path]:
 	Upstream builds a `Path` out of every walked file and then re-parses it through
 	`relative_to(directory)`, which is about five times slower than slicing the prefix off the string
 	`os.walk` already hands over.
+	Files come in sorted order, so a pack loads the same way on every file system.
 
 	Args:
 		directory (FileSystemPath): The directory to walk.
@@ -47,9 +48,10 @@ def fast_list_files(directory: FileSystemPath) -> Iterator[Path]:
 	"""
 	base: str = os.fspath(directory)
 	prefix_length: int = len(base) + (0 if base.endswith(("/", os.sep)) else 1)
-	for root, _, files in os.walk(base):
+	for root, dirs, files in os.walk(base):
+		dirs.sort()
 		relative_root: str = root[prefix_length:]
-		for filename in files:
+		for filename in sorted(files):
 			yield Path(relative_root, filename)
 
 

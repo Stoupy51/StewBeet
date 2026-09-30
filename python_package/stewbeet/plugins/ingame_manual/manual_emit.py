@@ -185,7 +185,7 @@ def copy_generated_textures(manual: Manual) -> None:
 		folder_path = f"{manual.config.font_cache_path}/{folder}"
 		if not os.path.isdir(folder_path):
 			continue
-		for file in os.listdir(folder_path):
+		for file in sorted(os.listdir(folder_path)):
 			file_path = f"{folder_path}/{file}"
 			no_extension = os.path.splitext(file)[0]
 			if file.endswith(".png") and os.path.isfile(file_path):
@@ -233,7 +233,7 @@ def create_manual_item(manual: Manual) -> None:
 		textures_folder: str = stp.relative_path(Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", ""))
 		textures: dict[str, str] = {
 			stp.clean_path(str(p)).split("/")[-1]: stp.relative_path(str(p))
-			for p in Path(textures_folder).rglob("*.png")
+			for p in sorted(Path(textures_folder).rglob("*.png"), key=str)
 		}
 		AutoModel.from_definitions(manual_obj, textures).process()
 	VanillaRecipeHandler().generate_recipes(override=["manual"])
