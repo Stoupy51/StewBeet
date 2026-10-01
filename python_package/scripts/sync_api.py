@@ -130,9 +130,11 @@ class Analyzer:
 			if isinstance(node, ast.ImportFrom):
 				target: str = Analyzer.resolve(module, node.level, node.module) if node.level else (node.module or "")
 				end: int = node.end_lineno or node.lineno
+				# A star import from another distribution, like "from beet import *", is left as written
+				same_distribution: bool = target.split(".")[0] == module.fqn.split(".")[0]
 				# A star import, or a parenthesized block whose every name uses the redundant
 				# "name as name" form. A one line "from .x import y as y" stays a selective import.
-				star: bool = any(alias.name == "*" for alias in node.names)
+				star: bool = same_distribution and any(alias.name == "*" for alias in node.names)
 				full: bool = end > node.lineno and all(alias.asname == alias.name for alias in node.names)
 				if star or full:
 					module.reexports[target] = (node.lineno - 1, end)

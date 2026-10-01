@@ -1,10 +1,10 @@
 
-# Imports
 # Lazy imports (PEP 810), ignored before Python 3.15
 from stouputils.lazy import ALWAYS_LAZY
 
 __lazy_modules__ = ALWAYS_LAZY
 
+# Imports
 from dataclasses import dataclass, field
 from itertools import product
 from typing import TYPE_CHECKING, ClassVar

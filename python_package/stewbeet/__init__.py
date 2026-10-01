@@ -7,7 +7,7 @@ __lazy_modules__ = ALWAYS_LAZY
 # Imports
 from typing import Any
 
-from beet import *  # type: ignore # noqa: F403
+from beet import *  # pyright: ignore[reportWildcardImportFromLibrary] # noqa: F403
 
 from .cli import main as main
 from .core import (
