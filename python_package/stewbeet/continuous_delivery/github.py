@@ -6,6 +6,8 @@ __lazy_modules__ = ALWAYS_LAZY
 
 from stouputils.continuous_delivery.github import (
 	GITHUB_API_URL as GITHUB_API_URL,
+	UPLOAD_ATTEMPTS as UPLOAD_ATTEMPTS,
+	UPLOAD_RETRY_DELAY as UPLOAD_RETRY_DELAY,
 	build_github_config as build_github_config,
 	create_github_release as create_github_release,
 	create_github_tag as create_github_tag,
