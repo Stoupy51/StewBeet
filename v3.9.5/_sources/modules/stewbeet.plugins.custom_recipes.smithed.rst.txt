@@ -1,0 +1,8 @@
+stewbeet.plugins.custom\_recipes.smithed module
+===============================================
+
+.. automodule:: stewbeet.plugins.custom_recipes.smithed
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

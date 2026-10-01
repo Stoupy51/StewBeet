@@ -1,0 +1,16 @@
+stewbeet.plugins.archive package
+================================
+
+.. automodule:: stewbeet.plugins.archive
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.plugins.archive.silent

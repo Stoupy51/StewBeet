@@ -1,0 +1,8 @@
+stewbeet.plugins.initialize.source\_lore\_font module
+=====================================================
+
+.. automodule:: stewbeet.plugins.initialize.source_lore_font
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

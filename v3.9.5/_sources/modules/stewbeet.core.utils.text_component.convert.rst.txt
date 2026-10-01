@@ -1,0 +1,8 @@
+stewbeet.core.utils.text\_component.convert module
+==================================================
+
+.. automodule:: stewbeet.core.utils.text_component.convert
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

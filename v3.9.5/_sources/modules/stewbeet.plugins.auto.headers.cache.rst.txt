@@ -1,0 +1,8 @@
+stewbeet.plugins.auto.headers.cache module
+==========================================
+
+.. automodule:: stewbeet.plugins.auto.headers.cache
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

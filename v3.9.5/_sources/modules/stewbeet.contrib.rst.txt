@@ -1,0 +1,12 @@
+stewbeet.contrib namespace
+==========================
+
+.. py:module:: stewbeet.contrib
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.contrib.simplenergy

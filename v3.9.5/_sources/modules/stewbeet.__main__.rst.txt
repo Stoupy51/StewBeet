@@ -1,0 +1,8 @@
+stewbeet.\_\_main\_\_ module
+============================
+
+.. automodule:: stewbeet.__main__
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

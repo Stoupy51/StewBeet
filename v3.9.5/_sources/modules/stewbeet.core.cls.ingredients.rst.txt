@@ -1,0 +1,8 @@
+stewbeet.core.cls.ingredients module
+====================================
+
+.. automodule:: stewbeet.core.cls.ingredients
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

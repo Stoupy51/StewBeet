@@ -1,0 +1,8 @@
+stewbeet.core.definitions\_helper.simplenergy module
+====================================================
+
+.. automodule:: stewbeet.core.definitions_helper.simplenergy
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
