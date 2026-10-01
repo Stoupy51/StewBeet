@@ -46,3 +46,18 @@ def beet_default(ctx: Context):
         "menu_from_dialog must not be reported as an orphan now that dialogs are scanned"
     assert "as the player & at current position" in dialog_menu_content, \
         "a dialog button runs as the clicking player, so @executed must say so"
+
+    # ── calls the analysis used to miss ──────────────────────────────────────
+    def within(path: str) -> str:
+        return ctx.data.functions[path].text.split("\n\n")[0]
+
+    assert f"{ns}:perks/apply" in within(f"{ns}:perks/apply/juggernog"), \
+        "a placeholder in a macro call path must reach every function it can match"
+    assert f"string in {ns}:box" in within(f"{ns}:give/weapon"), \
+        "a quoted function id given to a macro must be listed as a string reference"
+    assert f"enchantment {ns}:left_click" in within(f"{ns}:on_attack"), \
+        "an enchantment run_function effect must be listed as a caller"
+    assert "(public)" in within(f"{ns}:config"), \
+        "an uncalled function outside the versioned folder is public, not dead"
+    assert "???" in within(f"{ns}:v{ctx.project_version}/dead"), \
+        "an uncalled function inside the versioned folder is still reported as dead"
