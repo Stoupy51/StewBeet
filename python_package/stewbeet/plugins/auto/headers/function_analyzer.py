@@ -29,7 +29,16 @@ FUNCTION_CALL_RE = re.compile(r"function\s+([#]?[\w./-]+:[\w./-]+)")
 # trailing JSON must never be mistaken for a macro ({...}) or a schedule time (100t). Note "run "
 # also appears inside quoted dialog commands (`command:"/execute ... run function ns:foo"`), so a
 # regex match is only a real command when it is NOT inside a string: see is_inside_string.
-COMMAND_CALL_RE = re.compile(r"(?:^\s*\$?\s*|\brun\s+|(?P<sched>\bschedule\s+))function\s+([#]?[\w./-]+:[\w./-]+)")
+# The path may hold macro placeholders ($function ns:types/$(type)); the namespace must be literal.
+COMMAND_CALL_RE = re.compile(
+    r"(?:^\s*\$?\s*|\brun\s+|(?P<sched>\bschedule\s+))function\s+([#]?[\w./-]+:(?:[\w./-]|\$\(\w+\))+)"
+)
+
+# A quoted function id under a key naming a function ({give_function:"ns:x"}, "function": "ns:x"), handed to a
+# macro that runs "$function $(id)" or to a run_function effect. Other keys are left out: a dialog id can equal a function id.
+QUOTED_ID_RE = re.compile(r"""\w*function\w*["']?\s*:\s*(["'])([\w.-]+:[\w./-]+)\1""")
+
+PLACEHOLDER_RE = re.compile(r"\$\(\w+\)")
 
 
 # Class
@@ -121,11 +130,39 @@ class FunctionAnalyzer:
         """
         for dialog_path, dialog in self.ctx.data.dialogs.items():
             # Mirrors the "advancement <path>" convention used by analyze_advancements
-            to_be_called: str = f"dialog {dialog_path}"
-            for match in FUNCTION_CALL_RE.finditer(dialog.text):
-                called: str = match.group(1)
-                if called in self.mcfunctions and to_be_called not in self.mcfunctions[called].within:
-                    self.mcfunctions[called].within.append(to_be_called)
+            self.add_text_references(f"dialog {dialog_path}", dialog.text)
+
+    def analyze_enchantments(self) -> None:
+        """ Analyze enchantments, whose ``run_function`` effects name a function as a plain JSON string.
+
+        Scanned as serialized text for the same reason as :meth:`analyze_dialogs`.
+
+        Examples:
+            >>> from types import SimpleNamespace
+            >>> enchantment = SimpleNamespace(
+            ...     text='{"effects":{"minecraft:tick":[{"effect":{"type":"run_function","function":"test:on_tick"}}]}}'
+            ... )
+            >>> ctx = SimpleNamespace(data=SimpleNamespace(enchantments={"test:magic": enchantment}))
+            >>> on_tick = Header("test:on_tick", [], [], "")
+            >>> FunctionAnalyzer(ctx, {"test:on_tick": on_tick}).analyze_enchantments()  # type: ignore[arg-type]
+            >>> on_tick.within
+            ['enchantment test:magic']
+        """
+        for enchantment_path, enchantment in self.ctx.data.enchantments.items():
+            self.add_text_references(f"enchantment {enchantment_path}", enchantment.text)
+
+    def add_text_references(self, caller: str, text: str) -> None:
+        """ Record ``caller`` on every function that ``text`` names, as a command or as a quoted id.
+
+        Args:
+            caller (str): The @within entry to add.
+            text   (str): The serialized file to scan.
+        """
+        found: list[str] = [match.group(1) for match in FUNCTION_CALL_RE.finditer(text)]
+        found += [match.group(2) for match in QUOTED_ID_RE.finditer(text)]
+        for called in found:
+            if called in self.mcfunctions and caller not in self.mcfunctions[called].within:
+                self.mcfunctions[called].within.append(caller)
 
     def analyze_function_calls(self) -> None:
         """ Analyze function calls within mcfunction files.
@@ -183,10 +220,35 @@ class FunctionAnalyzer:
             >>> analyzer.analyze_function_calls()
             >>> mcfunctions["test:place"].within
             ['string in test:place {x:-280,duration:80}']
+
+            A placeholder in the called path stands for every function it can match:
+            >>> caller = Header("test:apply", [], [], '$function test:perks/$(perk) {level:1}')
+            >>> mcfunctions = {"test:apply": caller, "test:perks/a": Header("test:perks/a"), "test:perks/b": Header("test:perks/b")}
+            >>> analyzer = FunctionAnalyzer(None, mcfunctions)  # type: ignore[arg-type]
+            >>> analyzer.analyze_function_calls()
+            >>> mcfunctions["test:perks/a"].within, mcfunctions["test:perks/b"].within
+            (['test:apply {level:1}'], ['test:apply {level:1}'])
+
+            A function id passed as data to a macro is a string reference, a dialog id is not:
+            >>> body = 'function test:give_via {give_function:"test:give/weapon",back:{dialog:"test:give_via"}}'
+            >>> mcfunctions = {"test:box": Header("test:box", content=body)}
+            >>> mcfunctions |= {path: Header(path) for path in ("test:give_via", "test:give/weapon")}
+            >>> analyzer = FunctionAnalyzer(None, mcfunctions)  # type: ignore[arg-type]
+            >>> analyzer.analyze_function_calls()
+            >>> mcfunctions["test:give/weapon"].within
+            ['string in test:box']
+            >>> mcfunctions["test:give_via"].within
+            ['test:box {give_function:"test:give/weapon",back:{dialog:"test:give_via"}}']
         """
         # For each mcfunction file, look at each line
         for path, header in self.mcfunctions.items():
             for line in header.content.split("\n"):
+
+                # A quoted id is data the line hands over, so the function runs from elsewhere: a string reference
+                for match in QUOTED_ID_RE.finditer(line):
+                    quoted: str = match.group(2)
+                    if quoted in self.mcfunctions and f"string in {path}" not in self.mcfunctions[quoted].within:
+                        self.mcfunctions[quoted].within.append(f"string in {path}")
 
                 # Skip lines with no function reference at all
                 if "function " not in line:
@@ -225,7 +287,7 @@ class FunctionAnalyzer:
 
                     # The primary call plus any nested references inside its macro payload (e.g.
                     # function #tag:run {with: {on_exit_point: "function ns:path"}}) share this caller info.
-                    called_functions: list[str] = [primary]
+                    called_functions: list[str] = self.resolve_call(primary)
                     for match in FUNCTION_CALL_RE.finditer(line):
                         candidate: str = match.group(1)
                         if candidate not in called_functions:
@@ -258,6 +320,51 @@ class FunctionAnalyzer:
         self.analyze_advancements()
         self.analyze_function_calls()
         self.analyze_dialogs()  # Last: ContextAnalyzer takes the FIRST caller, so mcfunction callers keep priority
+        self.analyze_enchantments()
+        self.mark_public_functions(self.ctx.project_id, self.ctx.project_version)
+
+    def resolve_call(self, called: str) -> list[str]:
+        """ Return the functions a call can reach: the id itself, or every id its placeholders can match.
+
+        Args:
+            called (str): The called id, possibly holding ``$(name)`` placeholders.
+
+        Examples:
+            >>> headers = {path: Header(path) for path in ("t:a/x", "t:a/y/z", "t:b")}
+            >>> analyzer = FunctionAnalyzer(None, headers)  # type: ignore[arg-type]
+            >>> analyzer.resolve_call("t:a/$(id)")
+            ['t:a/x', 't:a/y/z']
+            >>> analyzer.resolve_call("t:b")
+            ['t:b']
+        """
+        if "$(" not in called:
+            return [called]
+        literals: list[str] = [re.escape(part) for part in PLACEHOLDER_RE.split(called)]
+        pattern: re.Pattern[str] = re.compile(r"[\w./-]*".join(literals))
+        return [path for path in self.mcfunctions if pattern.fullmatch(path)]
+
+    def mark_public_functions(self, namespace: str, version: str) -> None:
+        """ Mark the uncalled functions of the project outside its versioned folder as ``(public)``.
+
+        Those are run by hand or by other packs (``ns:config``, ``ns:_give_all``), so ``???`` stays for dead code.
+        Projects without a ``ns:v<version>/`` folder are left alone: nothing tells their API apart.
+
+        Args:
+            namespace (str): The project namespace.
+            version   (str): The project version.
+
+        Examples:
+            >>> headers = {"t:config": Header("t:config"), "t:v1.0/dead": Header("t:v1.0/dead"), "other:x": Header("other:x")}
+            >>> FunctionAnalyzer(None, headers).mark_public_functions("t", "1.0")  # type: ignore[arg-type]
+            >>> [header.within for header in headers.values()]
+            [['(public)'], [], []]
+        """
+        versioned: str = f"{namespace}:v{version}/"
+        if not version or not any(path.startswith(versioned) for path in self.mcfunctions):
+            return
+        for path, header in self.mcfunctions.items():
+            if not header.within and path.startswith(f"{namespace}:") and not path.startswith(versioned):
+                header.within.append("(public)")
 
     @staticmethod
     def extract_macro_payload(line: str, pos: int) -> str:

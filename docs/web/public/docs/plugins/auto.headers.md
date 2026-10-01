@@ -142,15 +142,22 @@ Analyzes direct function calls within mcfunction files:
 - 🔍 Scans each line for `function ` commands
 - 🎯 Extracts called function names with quote handling
 - 🔧 Captures macro parameters and scheduling information
+- 🧩 Resolves macro placeholders in the called path (`$function ns:types/$(type)`) against every function
+- 🏷️ Lists a quoted function id given as data (`{give_function:"ns:give/weapon"}`) as a `string in` reference
 - 🎮 **Analyzes execution contexts** from `execute` commands (`as @e`, `positioned`, `at`, `rotated`, `facing`, `in`, `anchored`, `align`)
 - 📋 Parses complex selectors with NBT data and multiple attributes
 - 🔄 Inherits execution contexts from calling functions when appropriate
 - 📊 Prevents duplicate entries in the `@within` list
 
+### Dialog and Enchantment Analysis
+Reads functions named in dialogs (`run_command` actions) and enchantments (`run_function` effects):
+- 📋 Creates `dialog namespace:path` and `enchantment namespace:path` references
+
 ### Header Generation System
 Generates documentation headers:
 - 📝 Creates standardized `#> function_name` headers
 - 📋 Generates `@within` sections listing all callers
+- 🔓 Writes `(public)` instead of `???` on an uncalled function of the project outside its `ns:v<version>/` folder
 - 🔧 Preserves existing custom documentation
 - ✅ Uses proper formatting with tabs and spacing
 
