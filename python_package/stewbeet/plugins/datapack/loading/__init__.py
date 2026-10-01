@@ -66,7 +66,7 @@ execute unless score #{ctx.project_id}.loaded load.status matches 1 run function
 
 	# Confirm load
 	items_storage = ""	# Storage representation of every item in the definitions
-	if Mem.definitions:
+	if Mem.definitions and ctx.meta.get("stewbeet", {}).get("items_storage", True):
 		items_storage += f"\n# Items storage\ndata modify storage {ctx.project_id}:items all set value {{}}\n"
 		for item in Mem.definitions.keys():
 			obj = Item.from_id(item)
@@ -98,9 +98,9 @@ execute unless score #{ctx.project_id}.loaded load.status matches 1 run function
 # Confirm load
 tellraw @a[tag=convention.debug] {{"text":"[Loaded {project_name} v{ctx.project_version}]","color":"green"}}
 scoreboard players set #{ctx.project_id}.loaded load.status 1
-function {ctx.project_id}:v{ctx.project_version}/load/set_items_storage
-""")
+""" + (f"function {ctx.project_id}:v{ctx.project_version}/load/set_items_storage\n" if items_storage else ""))
 
 	# Write the items storage function separately to avoid having a huge load function
-	write_versioned_function("load/set_items_storage", items_storage)
+	if items_storage:
+		write_versioned_function("load/set_items_storage", items_storage)
 

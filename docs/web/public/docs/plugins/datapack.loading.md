@@ -56,6 +56,7 @@ pipeline:
 | `version` | string | **Required** | Semantic version in format "major.minor.patch" for version checking |
 | `id` | string | **Required** | Project namespace used for function and storage generation |
 | `name` | string | **Required** | Display name used in load confirmation messages |
+| `meta.stewbeet.items_storage` | bool | `true` | Write every item definition into `<id>:items all` on load. `datapack.custom_blocks` and `compatibilities.simpledrawer` read it; a project using neither can set `false` to skip the function and the storage it fills |
 
 ## Features
 
