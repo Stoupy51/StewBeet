@@ -1,0 +1,37 @@
+
+# Test: stewbeet.plugins.datapack.loading with meta.stewbeet.items_storage set to false
+# Verifies that no items storage function is written or called.
+
+id: "tns"
+name: "Test Datapack Loading Without Items Storage"
+version: "1.2.3"
+author: "test"
+minecraft: "26.2"
+
+directory: "."
+output: "build"
+
+require:
+    - "stewbeet"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+resource_pack:
+    name: "resource_pack"
+    load: ["src"]
+
+pipeline:
+    - "src.definitions"
+    - "stewbeet.plugins.datapack.loading"
+    - "stewbeet.plugins.finalyze.dependencies"
+    - "src.assertions"
+
+meta:
+    mecha:
+        multiline: true
+        formatting: preserve
+    stewbeet:
+        source_lore: "auto"
+        items_storage: false
