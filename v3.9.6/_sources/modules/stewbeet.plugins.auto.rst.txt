@@ -1,0 +1,15 @@
+stewbeet.plugins.auto namespace
+===============================
+
+.. py:module:: stewbeet.plugins.auto
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   stewbeet.plugins.auto.headers
+   stewbeet.plugins.auto.lang_file
+   stewbeet.plugins.auto.scoreboard_constants
+   stewbeet.plugins.auto.text_renders

@@ -1,0 +1,8 @@
+stewbeet.plugins.custom\_recipes.vanilla module
+===============================================
+
+.. automodule:: stewbeet.plugins.custom_recipes.vanilla
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

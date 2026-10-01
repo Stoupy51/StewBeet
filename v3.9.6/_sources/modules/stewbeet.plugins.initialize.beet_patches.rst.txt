@@ -1,0 +1,8 @@
+stewbeet.plugins.initialize.beet\_patches module
+================================================
+
+.. automodule:: stewbeet.plugins.initialize.beet_patches
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

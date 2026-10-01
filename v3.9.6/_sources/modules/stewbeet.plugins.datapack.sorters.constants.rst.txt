@@ -1,0 +1,8 @@
+stewbeet.plugins.datapack.sorters.constants module
+==================================================
+
+.. automodule:: stewbeet.plugins.datapack.sorters.constants
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

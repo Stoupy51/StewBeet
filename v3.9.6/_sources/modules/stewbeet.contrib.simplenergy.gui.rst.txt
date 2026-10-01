@@ -1,0 +1,8 @@
+stewbeet.contrib.simplenergy.gui module
+=======================================
+
+.. automodule:: stewbeet.contrib.simplenergy.gui
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

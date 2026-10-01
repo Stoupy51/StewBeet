@@ -1,0 +1,8 @@
+stewbeet.core.constants module
+==============================
+
+.. automodule:: stewbeet.core.constants
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
