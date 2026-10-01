@@ -2,8 +2,8 @@
 
 Building the @within graph and inferring macro argument types walks every function body, then walks the
 callers of every macro function recursively. The answer is a pure function of the function contents plus
-the tags, advancements and dialogs that can reference them, so a build whose inputs are all unchanged can
-restore the previous answer instead of computing it again. Anything at all changing in those inputs
+the tags, advancements, dialogs and enchantments that can reference them, so a build whose inputs are all
+unchanged can restore the previous answer instead of computing it again. Anything at all changing in those inputs
 invalidates the whole record, which is what keeps a cross-referencing analysis honest: a single edited
 body can change the header of a function on the other side of the pack.
 """
@@ -16,6 +16,7 @@ __lazy_modules__ = ALWAYS_LAZY
 # Imports
 import hashlib
 import json
+from pathlib import Path
 from typing import Any
 
 from beet import Cache, Context
@@ -43,6 +44,11 @@ def analysis_signature(ctx: Context, contents: dict[str, str]) -> str:
         str: Hexadecimal digest covering every input of the analysis.
     """
     digest = hashlib.sha1()
+
+    # The analysis code itself, so a StewBeet update never restores headers an older analysis wrote
+    for source in sorted(Path(__file__).parent.glob("*.py")):
+        digest.update(source.read_bytes())
+    digest.update(f"project\0{ctx.project_id}\0{ctx.project_version}\0".encode())
     for path, content in sorted(contents.items()):
         digest.update(f"function\0{path}\0{content}\0".encode())
     for tag_path, tag in sorted(ctx.data.function_tags.items()):
@@ -51,6 +57,8 @@ def analysis_signature(ctx: Context, contents: dict[str, str]) -> str:
         digest.update(f"advancement\0{adv_path}\0{adv.data.get('rewards', {}).get('function')}\0".encode())
     for dialog_path, dialog in sorted(ctx.data.dialogs.items()):
         digest.update(f"dialog\0{dialog_path}\0{dialog.text}\0".encode())
+    for enchantment_path, enchantment in sorted(ctx.data.enchantments.items()):
+        digest.update(f"enchantment\0{enchantment_path}\0{enchantment.text}\0".encode())
     return digest.hexdigest()
 
 

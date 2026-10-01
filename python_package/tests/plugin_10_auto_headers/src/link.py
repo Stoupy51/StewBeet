@@ -40,3 +40,26 @@ tellraw @a [{{"text":"count: "}},{{"score":{{"name":"#count","objective":"{ns}.d
             {"label": {"text": "Open"}, "action": {"type": "run_command", "command": f"/function {ns}:menu_from_dialog"}},
         ],
     })
+
+    # Reachable only through a placeholder in a macro call path
+    write_function(f"{ns}:perks/apply", f"$function {ns}:perks/apply/$(perk_id)")
+    write_function(f"{ns}:perks/apply/juggernog", "say Juggernog")
+
+    # Reachable only as a function id handed to a macro
+    write_function(f"{ns}:give_via_function", "$function $(give_function)")
+    write_function(f"{ns}:box", f'function {ns}:give_via_function {{give_function:"{ns}:give/weapon"}}')
+    write_function(f"{ns}:give/weapon", "say Weapon")
+
+    # Reachable only from an enchantment effect
+    write_function(f"{ns}:on_attack", "say Attack")
+    ctx.data[ns].enchantments["left_click"] = Enchantment({
+        "description": "", "supported_items": "#minecraft:swords", "weight": 1, "max_level": 1,
+        "min_cost": {"base": 1, "per_level_above_first": 0}, "max_cost": {"base": 1, "per_level_above_first": 0},
+        "anvil_cost": 0, "slots": ["mainhand"],
+        "effects": {"minecraft:post_attack": [{"enchanted": "attacker", "affected": "attacker",
+            "effect": {"type": "minecraft:run_function", "function": f"{ns}:on_attack"}}]},
+    })
+
+    # Uncalled: public outside the versioned folder, dead inside it
+    write_function(f"{ns}:config", "say Config")
+    write_versioned_function("dead", "say Dead")
