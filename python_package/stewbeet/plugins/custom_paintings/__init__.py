@@ -6,9 +6,10 @@ __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
 import os
+from pathlib import Path
 
 import stouputils as stp
-from beet import Context, PaintingVariant, PaintingVariantTag
+from beet import Atlas, Context, PaintingVariant, PaintingVariantTag, Texture
 from stouputils.typing import JsonDict
 
 from ...core.__memory__ import Mem
@@ -31,6 +32,7 @@ def beet_default(ctx: Context) -> None:
     Mem.ctx = ctx
     textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
     placeable_values: list[str] = []
+    paintings_sources: list[JsonDict] = []
 
     # Assertions
     assert textures_folder, "The 'textures_folder' key is missing in the 'stewbeet' section of the beet.yml file."
@@ -84,11 +86,18 @@ def beet_default(ctx: Context) -> None:
                         f"Using the first one found: '{matching_textures[0]}'."
                     )
                 src: str = matching_textures[0]
-            dst = obj_painting.painting_texture
 
-            # Check if the texture is not already registered
-            if not dst.exists():
-                dst.write(texture_mcmeta(src))
+            # Reuse the item texture through the paintings atlas rather than shipping the same image twice
+            item_texture: Texture | None = obj_painting.texture.get()
+            if item_texture and item_texture.source_path and Path(item_texture.source_path).resolve() == Path(src).resolve():
+                paintings_sources.append(
+                    {"type": "minecraft:single", "resource": obj_painting.texture, "sprite": obj_painting.asset_id}
+                )
+            elif not obj_painting.painting_texture.exists():
+                obj_painting.painting_texture.write(texture_mcmeta(src))
+
+    if paintings_sources:
+        Mem.ctx.assets["minecraft"].atlases["paintings"] = set_json_encoder(Atlas({"sources": paintings_sources}))
 
     # Add the painting variant tag to the context data
     if placeable_values:
