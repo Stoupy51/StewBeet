@@ -5,6 +5,7 @@ from stouputils.lazy import ALWAYS_LAZY
 __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
+import contextlib
 import hashlib
 import os
 import posixpath
@@ -54,7 +55,7 @@ def beet_default(ctx: Context) -> None:
 	Copies the resource pack (merged if available, otherwise normal) to all resource pack destinations.
 
 	Args:
-		ctx (Context): The beet context.
+		ctx: The beet context.
 	"""
 	# Assertions
 	assert ctx.output_directory, "Output directory must be specified in the project configuration."
@@ -102,9 +103,9 @@ def _datapack_tasks(ctx: Context, output_path: str, project_name_simple: str, de
 	""" Build the copy tasks for the main datapack and every library datapack.
 
 	Args:
-		output_path (str): The output directory path.
-		project_name_simple (str): The simplified project name.
-		destinations (list[str]): List of destination paths for datapacks.
+		output_path:         The output directory path.
+		project_name_simple: The simplified project name.
+		destinations:        List of destination paths for datapacks.
 	Returns:
 		list[CopyTask]: One task per (file, destination) pair.
 	"""
@@ -112,13 +113,11 @@ def _datapack_tasks(ctx: Context, output_path: str, project_name_simple: str, de
 	main_datapack: str = f"{output_path}/{project_name_simple}_datapack.zip"
 
 	if os.path.exists(main_datapack):
-		for dest in destinations:
-			tasks.append(CopyTask(main_datapack, f"{dest}/{os.path.basename(main_datapack)}", "datapacks"))
+		tasks.extend(CopyTask(main_datapack, f"{dest}/{os.path.basename(main_datapack)}", "datapacks") for dest in destinations)
 
 	# Copy all library datapacks
 	for lib_zip in lib_archives(ctx, "datapack"):
-		for dest in destinations:
-			tasks.append(CopyTask(lib_zip, f"{dest}/{os.path.basename(lib_zip)}", "datapacks"))
+		tasks.extend(CopyTask(lib_zip, f"{dest}/{os.path.basename(lib_zip)}", "datapacks") for dest in destinations)
 	return tasks
 
 
@@ -126,9 +125,9 @@ def _resource_pack_tasks(output_path: str, project_name_simple: str, destination
 	""" Build the copy tasks for the resource pack, preferring the merged one when it exists.
 
 	Args:
-		output_path (str): The output directory path.
-		project_name_simple (str): The simplified project name.
-		destinations (list[str]): List of destination paths for resource packs.
+		output_path:         The output directory path.
+		project_name_simple: The simplified project name.
+		destinations:        List of destination paths for resource packs.
 	Returns:
 		list[CopyTask]: One task per destination.
 	"""
@@ -149,8 +148,8 @@ def _official_lib_tasks(ctx: Context, datapack_destinations: list[str]) -> list[
 	""" Build the copy tasks for every downloaded official library.
 
 	Args:
-		ctx (Context): The beet context (used to resolve download paths).
-		datapack_destinations (list[str]): List of destination paths for datapacks.
+		ctx:                   The beet context (used to resolve download paths).
+		datapack_destinations: List of destination paths for datapacks.
 	Returns:
 		list[CopyTask]: One task per (library, destination) pair.
 	"""
@@ -158,8 +157,7 @@ def _official_lib_tasks(ctx: Context, datapack_destinations: list[str]) -> list[
 	for dl in get_lib_paths(ctx):
 		if not dl.datapack_path or not os.path.exists(dl.datapack_path):
 			continue
-		for dest in datapack_destinations:
-			tasks.append(CopyTask(dl.datapack_path, f"{dest}/{dl.name}.zip", "official libraries"))
+		tasks.extend(CopyTask(dl.datapack_path, f"{dest}/{dl.name}.zip", "official libraries") for dest in datapack_destinations)
 	return tasks
 
 
@@ -167,7 +165,7 @@ def _file_sha1(path: str) -> str:
 	""" Hash a file with sha1, reading it in chunks.
 
 	Args:
-		path (str): Path of the file to hash.
+		path: Path of the file to hash.
 	Returns:
 		str: Hexadecimal digest.
 	"""
@@ -186,7 +184,7 @@ def _deduplicate_tasks(tasks: list[CopyTask]) -> list[CopyTask]:
 	instead of racing each other on the same file.
 
 	Args:
-		tasks (list[CopyTask]): The tasks to filter.
+		tasks: The tasks to filter.
 	Returns:
 		list[CopyTask]: The tasks with duplicate destinations removed, order preserved.
 	"""
@@ -209,8 +207,8 @@ def _run_copy_tasks(ctx: Context, tasks: list[CopyTask]) -> CopyReport:
 	so only genuinely changed files travel over the network.
 
 	Args:
-		ctx (Context): The beet context, used for the upload cache.
-		tasks (list[CopyTask]): The copy tasks to execute.
+		ctx:   The beet context, used for the upload cache.
+		tasks: The copy tasks to execute.
 	Returns:
 		CopyReport: Which groups wrote something, and how many uploads were skipped.
 	"""
@@ -227,9 +225,8 @@ def _run_copy_tasks(ctx: Context, tasks: list[CopyTask]) -> CopyReport:
 	remote_tasks: list[CopyTask] = [task for task in tasks if is_sftp_path(task.dst)]
 	hashes: dict[str, str] = {src: _file_sha1(src) for src in {t.src for t in remote_tasks} if os.path.exists(src)}
 
-	# List the remote directories once, before any thread starts. Listing is a single round trip per
-	# directory and keeps the sha1 cache honest: a file deleted or truncated server-side is uploaded
-	# again instead of being wrongly considered up to date.
+	# List the remote directories once, before any thread starts, in a single round trip per directory.
+	# It keeps the sha1 cache honest: a file deleted or truncated server-side is uploaded again instead of considered up to date.
 	missing_dirs: set[str] = set()
 	listed_dirs: set[str] = set()
 	remote_sizes: dict[str, int] = {}
@@ -283,18 +280,16 @@ def _copy_local(src: str, dst: str, max_retries: int = 10, delay: float = 1.0) -
 	""" Copy a file on the local filesystem, retrying through the transient locks Minecraft holds.
 
 	Args:
-		src (str): Source file path.
-		dst (str): Destination file path.
-		max_retries (int): Maximum number of retry attempts.
-		delay (float): Delay in seconds between retries.
+		src:         Source file path.
+		dst:         Destination file path.
+		max_retries: Maximum number of retry attempts.
+		delay:       Delay in seconds between retries.
 	Returns:
 		bool: True if the file was copied.
 	"""
 	# Delete the destination file if it exists (optional, best effort)
-	try:
+	with contextlib.suppress(OSError):
 		os.remove(dst)
-	except OSError:
-		pass
 
 	# Ensure the destination directory exists
 	dest_dir: str = os.path.dirname(dst)
@@ -304,3 +299,4 @@ def _copy_local(src: str, dst: str, max_retries: int = 10, delay: float = 1.0) -
 
 	stp.retry(shutil.copy, exceptions=PermissionError, max_attempts=max_retries, delay=delay)(src, dst)
 	return True
+

@@ -16,10 +16,10 @@ def create_gradient_text(
 	""" Create a gradient text effect by interpolating colors between start and end hex.
 
 	Args:
-		text        (str): The text to apply the gradient to.
-		start_hex   (str): Starting color in hex format (e.g. '#c24a17').
-		end_hex     (str): Ending color in hex format (e.g. '#c77e36').
-		text_length (int | None): Optional length override for the text. If provided, uses this instead of len(text).
+		text:        The text to apply the gradient to.
+		start_hex:   Starting color in hex format (e.g. '#c24a17').
+		end_hex:     Ending color in hex format (e.g. '#c77e36').
+		text_length: Optional length override for the text. If provided, uses this instead of len(text).
 
 	Returns:
 		list[JsonDict]: List of text components, each with a letter and its color.
@@ -66,7 +66,7 @@ def rainbow_gradient_text(text: str) -> list[JsonDict]:
 	""" Create a rainbow gradient text effect that cycles through the color spectrum from red to red.
 
 	Args:
-		text (str): The text to apply the rainbow gradient to.
+		text: The text to apply the rainbow gradient to.
 
 	Returns:
 		list[JsonDict]: List of text components, each with a letter and its rainbow color.
@@ -117,8 +117,8 @@ def gradient_text_to_string(gradient_text: list[JsonDict], color_pos: int = 0) -
 	""" Convert a gradient text back to a string, optionally getting the color at a specific position.
 
 	Args:
-		gradient_text (list[JsonDict]):  The gradient text to convert back to a string.
-		color_pos     (int):                   The position to get the color from.
+		gradient_text: The gradient text to convert back to a string.
+		color_pos:     The position to get the color from.
 
 	Returns:
 		dict[str, str]: A dictionary containing the concatenated text and its color at the specified position.
@@ -135,3 +135,4 @@ def gradient_text_to_string(gradient_text: list[JsonDict], color_pos: int = 0) -
 		f"Color position {color_pos} is out of range for gradient text of length {len(gradient_text)}. Using first color instead."
 	)
 	return {"text": text, "color": gradient_text[0]["color"]}
+

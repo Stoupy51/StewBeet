@@ -14,26 +14,12 @@ from stouputils.typing import JsonDict
 
 # Functions
 def add_sound(ctx: Context, sounds: Sound | dict[str, Sound], name: str, ns: str = ""):
-	""" Add a sound to the resource pack.
-
-	Example usage:
-
-	.. code-block:: python
-
-		from beet import Context, Sound
-		from stewbeet.core.utils.sounds import add_sound
-
-		def beet_default(ctx: Context):
-			sound = Sound("path/to/sound.ogg", volume=1.0, pitch=1.0)
-			add_sound(ctx, sound, "my_sound")
-			add_sound(ctx, {"my_sound_1": sound, "my_sound_2": sound}, "my_sounds")
-			add_sound(ctx, sound, "my_sound", ns="another_namespace")
+	""" Add a sound to the resource pack, ex: ``add_sound(ctx, Sound("path/to/sound.ogg"), "my_sound")``.
 
 	Args:
-		ctx    (Context):                   The beet context.
-		sounds (Sound | dict[str, Sound]):  The sound object(s) to add. Can be a single Sound or a dict mapping local names to Sounds.
-		name   (str):                       The identifier used in /playsound command (excluding namespace)
-		ns     (str):                       The namespace to write the sound to (defaults to ctx.project_id).
+		sounds: A single Sound, or a dict mapping local names to Sounds.
+		name:   The identifier used in /playsound command (excluding namespace)
+		ns:     The namespace to write the sound to (defaults to ctx.project_id).
 	"""
 	# Default namespace
 	if not ns:
@@ -46,7 +32,7 @@ def add_sound(ctx: Context, sounds: Sound | dict[str, Sound], name: str, ns: str
 	# If sounds.json isn't created, create it
 	if not ctx.assets[ns].extra.get("sounds.json"):
 		ctx.assets[ns].sound_config = SoundConfig()
-	config: JsonDict = ctx.assets[ns].sound_config.data # type: ignore
+	config: JsonDict = ctx.assets[ns].sound_config.data  # pyright: ignore[reportOptionalMemberAccess]
 
 	# Copy the sounds to the resource pack
 	for path, sound in sounds.items():

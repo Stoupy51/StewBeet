@@ -21,9 +21,9 @@ def check_version(lib_ns: str, data: JsonDict, run_command: str) -> str:
 	""" Check version compatibility for a dependency.
 
 	Args:
-		lib_ns (str): The namespace of the library to check
-		data (dict): The dependency data containing version info
-		run_command (str): The command to run if version check fails
+		lib_ns:      The namespace of the library to check
+		data:        The dependency data containing version info
+		run_command: The command to run if version check fails
 
 	Returns:
 		str: The version check commands
@@ -58,7 +58,7 @@ def beet_default(ctx: Context) -> None:
 	This plugin handles dependency management, version checking, and load sequence setup.
 
 	Args:
-		ctx (Context): The beet context.
+		ctx: The beet context.
 	"""
 	Mem.ctx = ctx
 	assert ctx.project_id, "Project ID is not set. Please set it in the project configuration."
@@ -70,9 +70,6 @@ def beet_default(ctx: Context) -> None:
 	major, minor, patch = version.split(".")
 	project_name: str = ctx.project_name
 	author: str = ctx.project_author
-
-	# Track newly found official libraries
-	newly_found_libs: list[str] = []
 
 	# Map every marker to search for onto the library it proves the use of.
 	markers: dict[str, str] = detection_markers(ns)
@@ -87,9 +84,7 @@ def beet_default(ctx: Context) -> None:
 			found_libs.add(remaining.pop(marker))
 
 	# Report in marker declaration order so the debug message stays stable across builds
-	for lib_ns in markers.values():
-		if lib_ns in found_libs and not official_lib_used(lib_ns):
-			newly_found_libs.append(lib_ns)
+	newly_found_libs: list[str] = [lib_ns for lib_ns in markers.values() if lib_ns in found_libs and not official_lib_used(lib_ns)]
 
 	# Debug message for newly found libraries
 	if newly_found_libs:

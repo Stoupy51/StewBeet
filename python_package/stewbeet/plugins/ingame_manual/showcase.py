@@ -51,9 +51,8 @@ def generate_showcase_images(
 ) -> None:
 	""" Generate showcase image(s) per mode (1=manual, 2=all, 3=both).
 
-	When ``all_items`` is given it overrides the default "all items" set (every definition) used
-	for ``all_items.png``: e.g. to skip items that have no iso render. Defaults to
-	``list(Mem.definitions.keys())`` when ``None``.
+	When ``all_items`` is given it overrides the default "all items" set (every definition) used for ``all_items.png``: e.g.
+	to skip items that have no iso render. Defaults to ``list(Mem.definitions.keys())`` when ``None``.
 	"""
 	if showcase_mode in (1, 3):
 		manual_items: list[str] = []
@@ -114,3 +113,4 @@ def create_showcase_image(
 
 	os.makedirs(output_dir, exist_ok=True)
 	showcase_image.convert("RGB").save(os.path.join(output_dir, filename))
+

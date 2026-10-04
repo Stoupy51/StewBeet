@@ -1,9 +1,8 @@
 """All PIL image generation for the manual, encapsulated in :class:`GlyphImageBuilder`.
 
-Ports the v1 ``image_utils`` + ``page_font`` modules into instance methods that read from
-an injected :class:`~.config.ManualConfig` and write glyph providers through an injected
-:class:`~.glyphs.GlyphAllocator` (no more global ``SharedMemory``). Also adds the new
-texture-page helpers (:meth:`bake_text_onto`, :meth:`register_full_page_glyph`).
+Ports the v1 ``image_utils`` + ``page_font`` modules into instance methods that read from an injected :class:`~.config.ManualConfig`
+and write glyph providers through an injected :class:`~.glyphs.GlyphAllocator` (no more global ``SharedMemory``).
+Also adds the new texture-page helpers (:meth:`bake_text_onto`, :meth:`register_full_page_glyph`).
 """
 
 # pyright: reportUnknownMemberType=false
@@ -63,8 +62,8 @@ class GlyphImageBuilder:
 	(32, 32)
 	"""
 
-	# Expose the module-level PIL helpers as methods so other modules (e.g. recipes/types/*) can
-	# reach them through ``r.images.*`` at runtime without importing this module (avoids cycles).
+	# Expose the module-level PIL helpers as methods so other modules (e.g.
+	# recipes/types/*) can reach them through ``r.images.*`` at runtime without importing this module (avoids cycles).
 	careful_resize = staticmethod(careful_resize)
 	add_border = staticmethod(add_border)
 
@@ -86,10 +85,7 @@ class GlyphImageBuilder:
 			img = Image.open(template_path("simple_case_no_border.png"))
 			width = img.size[0]
 			pixel = img.getpixel((width - 1, 0))
-			if isinstance(pixel, tuple) and len(pixel) >= 3:
-				color_hex = (pixel[0] << 16) | (pixel[1] << 8) | pixel[2]
-			else:
-				color_hex = 0x803721
+			color_hex = (pixel[0] << 16) | (pixel[1] << 8) | pixel[2] if isinstance(pixel, tuple) and len(pixel) >= 3 else 0x803721
 			self._border_color = lighten_color(color_hex)
 		return self._border_color
 
@@ -238,8 +234,8 @@ class GlyphImageBuilder:
 	def invisible_spacer(self, width_px: int) -> str:
 		""" Return an invisible glyph advancing exactly ``width_px`` pixels ("" if <= 0).
 
-		The square ``none`` texture rendered at height ``H`` advances ``H + 1`` pixels, so one
-		provider (ascent 0, height ``width_px - 1``) is registered per distinct width, then reused.
+		The square ``none`` texture rendered at height ``H`` advances ``H + 1`` pixels, so one provider (ascent 0,
+		height ``width_px - 1``) is registered per distinct width, then reused.
 		Used by :class:`~.pages.texture_page.TexturePage` left/right paddings.
 		"""
 		if width_px <= 0:
@@ -278,3 +274,4 @@ class GlyphImageBuilder:
 		font = self.glyphs.allocate()
 		self.glyphs.add_provider(font, f"{self.config.project_id}:font/page/{name}.png", ascent=ascent, height=height)
 		return font
+

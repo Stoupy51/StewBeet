@@ -21,7 +21,7 @@ def beet_default(ctx: Context):
 	This plugin computes SHA1 hashes for each zip file in the build folder.
 
 	Args:
-		ctx (Context): The beet context.
+		ctx: The beet context.
 	"""
 	# Assertions
 	Mem.ctx = ctx

@@ -1,8 +1,8 @@
 """ Emits `.mcfunction.map` sidecars for bolt and mecha, read straight off the compiled AST.
 
-Same output contract as `stewbeet.plugins.sniffer`, an entirely different front half. Bolt's
-positions were never lost, so there is no capture, no frame walk and no `difflib`: every
-`mecha.AstNode` carries its own `location`, and column precision comes free.
+Same output contract as `stewbeet.plugins.sniffer`, an entirely different front half. Bolt's positions were never lost,
+so there is no capture, no frame walk and no `difflib`: every `mecha.AstNode` carries its own `location`,
+and column precision comes free.
 
 Not to be confused with `mecha.contrib.source_map`, which prepends a header comment naming the file
 and emits no line mapping at all.
@@ -47,10 +47,9 @@ def project_roots(ctx: Context) -> tuple[str, ...]:
 def write_maps(ctx: Context) -> int:
 	""" Write one sidecar per compiled function whose lines reach the project's own source.
 
-	The serialised commands are reconciled against the function's final text rather than trusted
-	positionally, because a StewBeet pipeline runs `auto.headers` after `mecha` and prepends a header
-	block to every function. That is the same reason the StewBeet producer aligns, so it is the
-	same `align`.
+	The serialised commands are reconciled against the function's final text rather than trusted positionally,
+	because a StewBeet pipeline runs `auto.headers` after `mecha` and prepends a header block to every function.
+	That is the same reason the StewBeet producer aligns, so it is the same `align`.
 
 	Returns:
 		How many sidecars were written.
@@ -63,9 +62,8 @@ def write_maps(ctx: Context) -> int:
 	# parsed from is the parent file's own.
 	parents: dict[str, str] = {text: path for path, text in sources.items()}
 
-	# The database keys are the objects mecha compiled, which is the link a plain bolt project keeps
-	# whatever else moves. A StewBeet build breaks it, because `auto.headers` replaces every function
-	# object after mecha has compiled, so the resource location is what is left to match on.
+	# The database keys are the objects mecha compiled, but `auto.headers` replaces every function object afterwards,
+	# so in a StewBeet build the resource location is what is left to match on.
 	by_file = {file: unit for file, unit in mc.database.items() if unit.ast}
 	by_location = {unit.resource_location: unit for unit in by_file.values() if unit.resource_location}
 
@@ -83,9 +81,8 @@ def write_maps(ctx: Context) -> int:
 
 		chunks: list[WriteChunk] = []
 		for command in unit.ast.commands:
-			# A sentinel node carries no command and raises rather than serialising, which
-			# `mecha.contrib.source_map` puts at the top of every function. Emitting no map is a
-			# fair price for one; failing the build over a debug feature is not.
+			# `mecha.contrib.source_map` puts a sentinel node at the top of every function, which raises rather than serialising.
+			# Skipping it costs one map line, while failing the build over a debug feature is not acceptable.
 			try:
 				serialized: str = mc.serialize(command)
 			except Exception as error:
@@ -109,17 +106,15 @@ def write_maps(ctx: Context) -> int:
 def beet_default(ctx: Context) -> Iterator[None]:
 	""" Map every compiled function back to the module that wrote it.
 
-	**For a project with no StewBeet writes in it.** `stewbeet.plugins.sniffer` calls `write_maps`
-	itself from its own teardown, so a project listing that one needs nothing here, and listing both
-	writes each sidecar once.
+	**For a project with no StewBeet writes in it.** `stewbeet.plugins.sniffer` calls `write_maps` itself from its own teardown,
+	so a project listing that one needs nothing here, and listing both writes each sidecar once.
 
-	**List this before `mecha` in the pipeline.** It does its work after the yield, and beet unwinds
-	generator plugins in reverse, so listing it first is what leaves the `Module` compilation units
-	and their sources in the database. Listed after `mecha`, they are already purged and every line
-	comes out unmapped.
+	**List this before `mecha` in the pipeline.** It does its work after the yield, and beet unwinds generator plugins in reverse,
+	so listing it first is what leaves the `Module` compilation units and their sources in the database. Listed after `mecha`,
+	they are already purged and every line comes out unmapped.
 
 	Args:
-		ctx (Context): The beet context.
+		ctx: The beet context.
 	"""
 	reset_caches()
 

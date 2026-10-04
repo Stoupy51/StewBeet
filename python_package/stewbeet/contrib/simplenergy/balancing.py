@@ -13,7 +13,7 @@ def setup_energy_balancing(can_balance: list[str]) -> None:
 	""" Setup energy balancing for devices.
 
 	Args:
-		can_balance (list[str]): List of devices that can balance energy between them.
+		can_balance: List of devices that can balance energy between them.
 			(e.g. ["solar_panel", "cauldron_generator", "simple_battery", "advanced_battery", "elite_battery"]).
 	"""
 	ns: str = Mem.ctx.project_id

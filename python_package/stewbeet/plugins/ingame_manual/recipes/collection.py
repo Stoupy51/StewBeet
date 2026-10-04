@@ -1,8 +1,8 @@
 """Craft collection + pure recipe helpers (ported from v1 ``other_utils``).
 
-``collect_for_item`` gathers an item's own recipes, the crafts that consume it, and mining
-pseudo-recipes from no-silk-touch drops. ``remove_unknown_crafts`` keeps only craft types that
-have a registered :class:`~.registry.CraftRenderer`, so it auto-extends with new types.
+``collect_for_item`` gathers an item's own recipes, the crafts that consume it, and mining pseudo-recipes from no-silk-touch drops.
+``remove_unknown_crafts`` keeps only craft types that have a registered :class:`~.registry.CraftRenderer`,
+so it auto-extends with new types.
 """
 
 # Imports
@@ -169,8 +169,8 @@ def generate_otherside_crafts(
 
 def collect_for_item(r: RecipeRenderer, name: str, item_obj: Item, definitions_as_objects: dict[str, Item]) -> list[JsonDict]:
 	""" Gather an item's own recipes, otherside crafts, and mining drops (deduped). """
-	# Consumer index cached on the renderer (one instance per manual build, so watch
-	# rebuilds and later definition changes get a fresh index).
+	# Consumer index cached on the renderer (one instance per manual build,
+	# so watch rebuilds and later definition changes get a fresh index).
 	cached: tuple[dict[str, Item], dict[str, list[tuple[str, JsonDict]]]] | None = r.consumer_index_cache
 	if cached is None or cached[0] is not definitions_as_objects:
 		cached = (definitions_as_objects, build_consumer_index(definitions_as_objects))

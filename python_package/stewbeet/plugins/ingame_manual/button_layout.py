@@ -20,8 +20,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 # Runtime import (not just TYPE_CHECKING): the parametrized default_factory below evaluates
-# list[WikiButtonRender] at class-definition time. recipes does not import button_layout, so
-# this does not create an import cycle.
+# list[WikiButtonRender] at class-definition time. recipes does not import button_layout, so this does not create an import cycle.
 from .recipes import WikiButtonRender
 
 # Where the button grid is placed inside a page's content: a known keyword or a callable
@@ -44,10 +43,9 @@ class ButtonLayout:
 	position: Position | Callable[..., Any] = "after_recipe"
 	""" Where the button grid is spliced into the page content: "after_recipe" inserts it right
 	after the main craft content (before anything appended later, e.g. special notes),
-	"top" places it just under the title (before the recipe), "bottom" appends it at the very
-	end of the page, and a callable ``(content, buttons, manual) -> content`` takes full control
-	(it receives the un-rendered :class:`~.recipes.WikiButtonRender` list and must return the
-	final content). """
+	"top" places it just under the title (before the recipe), "bottom" appends it at the very end of the page,
+	and a callable ``(content, buttons, manual) -> content`` takes full control (it receives the un-rendered
+	:class:`~.recipes.WikiButtonRender` list and must return the final content). """
 	order: Callable[[WikiButtonRender], Any] | None = None
 	""" Sort key applied to buttons before layout (e.g. ``lambda b: -b.priority``). """
 	include: Callable[[WikiButtonRender], bool] | None = None

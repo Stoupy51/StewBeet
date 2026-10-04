@@ -20,7 +20,7 @@ def beet_default(ctx: Context):
 	This plugin generates functions that sort lists in storage.
 
 	Args:
-		ctx (Context): The beet context.
+		ctx: The beet context.
 	"""
 	ctx.data.extend_namespace.append(SorterFile)
 

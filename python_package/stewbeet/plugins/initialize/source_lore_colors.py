@@ -6,6 +6,7 @@ this module's documented surface.
 """
 # pyright: reportUnusedImport=false
 # ruff: noqa: F401
+
 # Lazy imports (PEP 810), ignored before Python 3.15
 from stouputils.lazy import ALWAYS_LAZY
 
@@ -30,12 +31,11 @@ from ...core.utils.fonts import (
 def resolve_source_lore_color(logo_path: str | None = None) -> tuple[int, int, int] | None:
 	""" Resolve the ``source_lore_color`` configuration into the color the atlas should use.
 
-	Accepted values are ``"auto"`` (derive it from the logo), any color Pillow understands
-	(``"#55FFFF"``, ``"gold"``, ``[85, 255, 255]``), or a falsy value / ``"none"`` to keep the packaged
-	atlas colors untouched.
+	Accepted values are ``"auto"`` (derive it from the logo), any color Pillow understands (``"#55FFFF"``, ``"gold"``,
+	``[85, 255, 255]``), or a falsy value / ``"none"`` to keep the packaged atlas colors untouched.
 
 	Args:
-		logo_path	(str | None):	Path to the logo used by the ``"auto"`` mode.
+		logo_path: Path to the logo used by the ``"auto"`` mode.
 	Returns:
 		tuple[int, int, int] | None: Target color, or None when no recolor should happen.
 	"""

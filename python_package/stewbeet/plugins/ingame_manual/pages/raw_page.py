@@ -37,3 +37,4 @@ class RawPage(Page):
 	def build(self, manual: Manual) -> list[TextComponent]:
 		""" Return a deep copy of ``content`` (so later passes cannot mutate the original). """
 		return copy.deepcopy(self.content)
+

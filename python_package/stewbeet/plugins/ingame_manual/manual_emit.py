@@ -1,7 +1,7 @@
 """Emit helpers for :class:`~.manual.Manual` (static assets, font/texture output, manual item).
 
-Extracted from ``manual.py`` to keep the orchestrator focused on the pipeline. Each function
-takes the :class:`~.manual.Manual` instance.
+Extracted from ``manual.py`` to keep the orchestrator focused on the pipeline.
+Each function takes the :class:`~.manual.Manual` instance.
 """
 
 # Imports
@@ -141,9 +141,11 @@ def register_static_assets(manual: Manual) -> None:
 
 
 def load_page_texture(texture: str | Image.Image) -> Image.Image:
-	""" Open a per-page override texture. A string resolves as a project path first, then
-	against the templates dir (so a ``manual_overrides`` filename works); the source is marked
-	used because it gets re-encoded under a new name. """
+	""" Open a per-page override texture.
+
+	A string resolves as a project path first, then against the templates dir, so a ``manual_overrides`` filename works.
+	The source is marked used because it gets re-encoded under a new name.
+	"""
 	if isinstance(texture, str):
 		source: str = texture if os.path.exists(texture) else template_path(texture)
 		Mem.used_textures.add(source)
@@ -154,9 +156,9 @@ def load_page_texture(texture: str | Image.Image) -> Image.Image:
 def register_nav_overrides(manual: Manual) -> None:
 	""" Register dedicated glyphs for every page overriding ``book_texture`` / ``home_texture``.
 
-	Each glyph replaces ``BOOK_FONT`` / ``HOME_FONT`` in that page's dialog navigation row, with
-	the same ascent/height as the shared provider so the layout stays put (a home texture should
-	keep the default's 16x16 proportions, since the glyph advance follows the image content).
+	Each glyph replaces ``BOOK_FONT`` / ``HOME_FONT`` in that page's dialog navigation row,
+	with the same ascent/height as the shared provider so the layout stays put (a home texture should keep
+	the default's 16x16 proportions, since the glyph advance follows the image content).
 	"""
 	for page in manual.pages:
 		glyph_suffix: str = page.anchor.replace(":", "_").replace(" ", "_").lower()

@@ -1,7 +1,7 @@
 """Shared wiki-button hover line builders (ported from v1 ``append_ingredient_hover``).
 
-The base :meth:`~.registry.CraftRenderer.append_hover` covers the single-ingredient case; these
-helpers cover the grid (shaped/forge), smithing and mining shapes that several renderers share.
+The base :meth:`~.registry.CraftRenderer.append_hover` covers the single-ingredient case; these helpers cover the grid (shaped/forge),
+smithing and mining shapes that several renderers share.
 """
 
 # Lazy imports (PEP 810), ignored before Python 3.15

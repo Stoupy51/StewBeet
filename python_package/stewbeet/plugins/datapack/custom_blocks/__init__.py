@@ -40,7 +40,7 @@ def beet_default(ctx: Context):
 	This plugin sets up custom blocks in the datapack based of the given definitions configuration.
 
 	Args:
-		ctx (Context): The beet context.
+		ctx: The beet context.
 	"""
 	Mem.ctx = ctx
 	ns: str = ctx.project_id
@@ -403,7 +403,6 @@ execute if score #rotation {ns}.data matches 4 run data modify entity @s ItemRot
 					content += f"\n# Custom on_place commands\n{obj_block.on_place}\n"
 
 				write_function(obj_block.functions.place_secondary, content)
-				pass
 
 			# If the block is a growing seed, make the update_seed_model function and call it in the place_secondary function
 			if obj_block.growing_seed:
@@ -464,9 +463,7 @@ function {obj_block.functions.update_seed_model}
 								"bonus_rolls": 0,
 								"entries": [
 									{
-										# Vanilla item if "minecraft:" in id,
-										# Custom item if plain string
-										# Another loot table if ':' in id
+										# Vanilla item with "minecraft:", custom item if plain, another loot table if ':' in id
 										"type": "minecraft:item" if "minecraft:" in pool.id else "minecraft:loot_table",
 										# pool.id may name any item, not necessarily one of our own definitions
 										"name" if "minecraft:" in pool.id else "value":
@@ -493,8 +490,6 @@ function {obj_block.functions.update_seed_model}
 execute if score #growth_time {ns}.data matches {growing_time}.. as @p[gamemode=!spectator] run loot spawn ~ ~ ~ fish {loot_table} ~ ~ ~ mainhand
 execute if score #growth_time {ns}.data matches {growing_time}.. run kill @s
 """)  # noqa: E501
-			pass
-		pass
 
 	# Make the change_stage function for growing seeds and create scoreboard objectives
 	if has_growing_seed:
@@ -513,7 +508,7 @@ scoreboard objectives add {ns}.growth_stage dummy
 """, prepend=True)
 
 	# Link the custom block library to the datapack
-	if any(Item.from_id(item).base_item == CUSTOM_BLOCK_VANILLA for item in Mem.definitions.keys()):
+	if any(Item.from_id(item).base_item == CUSTOM_BLOCK_VANILLA for item in Mem.definitions):
 
 		# Change is_used state
 		if not official_lib_used("smithed.custom_block"):
@@ -532,7 +527,7 @@ scoreboard objectives add {ns}.growth_stage dummy
 
 		# Write the function that will place the custom blocks
 		content = f"tag @s add {ns}.placer\n"
-		for item in Mem.definitions.keys():
+		for item in Mem.definitions:
 			obj = Item.from_id(item)
 			if obj.base_item == CUSTOM_BLOCK_VANILLA:
 				place_main = Block.from_id(item).functions.place_main

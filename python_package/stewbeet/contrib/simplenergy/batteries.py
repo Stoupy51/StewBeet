@@ -13,7 +13,7 @@ def keep_energy_for_batteries(batteries: list[str]) -> None:
 	""" Setup functions for keeping energy for batteries.
 
 	Args:
-		batteries (list[str]): List of battery names that should keep energy when destroyed or replaced.
+		batteries: List of battery names that should keep energy when destroyed or replaced.
 			(e.g. ["simple_battery", "advanced_battery", "elite_battery", "creative_battery"])
 	"""
 	ns: str = Mem.ctx.project_id

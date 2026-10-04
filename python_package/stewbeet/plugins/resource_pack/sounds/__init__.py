@@ -21,25 +21,20 @@ from ....core.utils.sounds import add_sound
 # Main entry point
 @stp.measure_time(message="Execution time of 'stewbeet.plugins.resource_pack.sounds'")
 def beet_default(ctx: Context):
-	""" Main entry point for the sounds plugin.
-	This plugin handles sound file processing and generation of sounds.json based of the sounds folder.
+	""" Main entry point for the sounds plugin, generating sounds.json from the sounds folder.
 
-	For instance, given a sounds folder structure like:
-	```
-	sounds/
-	├── dirt_bullet_impact_01.ogg
-	├── dirt_bullet_impact_02.ogg
-	├── dirt_bullet_impact_03.ogg
-	└── fireselect.ogg
-	```
+	For instance, given a sounds folder structure like::
+
+		sounds/
+		├── dirt_bullet_impact_01.ogg
+		├── dirt_bullet_impact_02.ogg
+		├── dirt_bullet_impact_03.ogg
+		└── fireselect.ogg
 
 	The plugin will:
 	- Group numbered variants (e.g. dirt_bullet_impact_01, dirt_bullet_impact_02, dirt_bullet_impact_03)
 	- Process individual sounds (e.g. fireselect)
 	- Generate the appropriate sounds.json configuration
-
-	Args:
-		ctx (Context): The beet context.
 	"""
 	# Get sounds config from meta
 	stewbeet_meta: JsonDict = ctx.meta.get("stewbeet", {})

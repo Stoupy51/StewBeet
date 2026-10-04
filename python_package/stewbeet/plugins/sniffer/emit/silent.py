@@ -13,3 +13,4 @@ from beet import Context
 def beet_default(ctx: Context) -> None:
 	from .__init__ import beet_default
 	return stp.silent(beet_default)(ctx)
+

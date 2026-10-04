@@ -1,8 +1,7 @@
 """Category page: a clickable grid of the items in one category.
 
-Ports the v1 ``encode_page`` category branch. The grid background (item "cases") is drawn
-as a single 131px-tall bitmap glyph; clickable per-item glyphs are overlaid on top, each
-linking to its item page via a deferred :class:`~..refs.PageRef`.
+Ports the v1 ``encode_page`` category branch. The grid background (item "cases") is drawn as a single 131px-tall bitmap glyph;
+clickable per-item glyphs are overlaid on top, each linking to its item page via a deferred :class:`~..refs.PageRef`.
 """
 
 # Imports
@@ -103,3 +102,4 @@ class CategoryPage(Page):
 		os.makedirs(f"{config.font_cache_path}/category", exist_ok=True)
 		page_image.save(f"{config.font_cache_path}/category/{file_name}.png")
 		return content
+

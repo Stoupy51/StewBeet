@@ -21,7 +21,7 @@ def beet_default(ctx: Context) -> None:
 	This plugin handles language file generation for the datapack.
 
 	Args:
-		ctx (Context): The beet context.
+		ctx: The beet context.
 	"""
 	Mem.ctx = ctx
 
@@ -32,5 +32,4 @@ def beet_default(ctx: Context) -> None:
 	# Update the lang file
 	lang.update(ctx.assets.languages.get("minecraft:en_us", Language()).data)
 	ctx.assets.languages["minecraft:en_us"] = set_json_encoder(Language(dict(sorted(lang.items()))))
-	pass
 

@@ -18,9 +18,9 @@ from ..refs import PageRef
 class WikiButtonRender:
 	""" A single wiki button (icon + hover) with a deferred click target.
 
-	``blue_craft`` marks a craft that has no result (only ingredients), used by overflow
-	handling. ``target`` is either a :class:`~..refs.PageRef` (resolved after page ordering)
-	or a literal click-event dict (e.g. an author-provided ``open_url`` from a WikiButton).
+	``blue_craft`` marks a craft that has no result (only ingredients), used by overflow handling.
+	``target`` is either a :class:`~..refs.PageRef` (resolved after page ordering) or a literal click-event dict (e.g.
+	an author-provided ``open_url`` from a WikiButton).
 
 	>>> button = WikiButtonRender(glyph="X", hover=["Some hover text"])
 	>>> button.priority, button.target is None
@@ -38,3 +38,4 @@ class WikiButtonRender:
 	""" Higher priority buttons survive overflow trimming longer. """
 	is_info: bool = False
 	""" True for WikiButton info buttons (kept first, never treated as blue). """
+

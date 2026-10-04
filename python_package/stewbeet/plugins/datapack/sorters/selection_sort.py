@@ -21,8 +21,8 @@ def generate_selection_sort(ctx: Context, sorter: JsonDict) -> None:
 	element and moves it to a new sorted array repeatedly.
 
 	Args:
-		ctx (Context): The beet context for generating functions.
-		sorter (dict): Configuration dictionary containing sorting parameters.
+		ctx:    The beet context for generating functions.
+		sorter: Configuration dictionary containing sorting parameters.
 	"""
 	old_ctx: Context = Mem.ctx
 	Mem.ctx = ctx  # Set the current context to the one provided

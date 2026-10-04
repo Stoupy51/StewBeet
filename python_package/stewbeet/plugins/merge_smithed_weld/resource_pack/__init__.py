@@ -17,6 +17,7 @@ def beet_default(ctx: Context) -> None:
 	""" Merge only the resource pack with its libraries, leaving the datapack alone.
 
 	Args:
-		ctx (Context): The beet context.
+		ctx: The beet context.
 	"""
 	weld_pack_types(ctx, ("resource_pack",))
+

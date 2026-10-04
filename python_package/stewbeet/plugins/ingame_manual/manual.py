@@ -1,13 +1,12 @@
 """ The :class:`Manual` orchestrator.
 
-Owns the ordered list of pages, the glyph allocator, the image builder and the recipe
-renderer, plus the developer hook registry. ``build()`` runs the pipeline:
+Owns the ordered list of pages, the glyph allocator, the image builder and the recipe renderer, plus the developer hook registry.
+``build()`` runs the pipeline:
 
 	discover -> prepare -> order -> render -> resolve -> optimize -> emit
 
-firing the matching :class:`Phase` hooks after each step. Cross-page links are emitted as
-:class:`~.refs.PageRef` during ``render`` and substituted once in ``resolve`` (after the
-order is final), so inserting/reordering pages never needs page-number bookkeeping.
+firing the matching :class:`Phase` hooks after each step. Cross-page links are emitted as :class:`~.refs.PageRef` during ``render`` and
+substituted once in ``resolve`` (after the order is final), so inserting/reordering pages never needs page-number bookkeeping.
 """
 
 # Lazy imports (PEP 810), ignored before Python 3.15
@@ -57,9 +56,8 @@ class Phase(enum.Enum):
 class Manual:
 	""" Orchestrates manual generation and exposes the public extension API.
 
-	Construct with ``Manual(config)``; every other field is derived. ``eq=False`` keeps
-	identity semantics: the manual and its collaborators (:class:`~.recipes.RecipeRenderer`)
-	reference each other, so field-based equality would recurse.
+	Construct with ``Manual(config)``; every other field is derived. ``eq=False`` keeps identity semantics:
+	the manual and its collaborators (:class:`~.recipes.RecipeRenderer`) reference each other, so field-based equality would recurse.
 
 	>>> manual = Manual(ManualConfig(project_id="demo", project_name="Demo", project_author="me"))
 	>>> manual.recipes.manual is manual
@@ -156,9 +154,8 @@ class Manual:
 		self.texture_cache[item] = img
 		return img
 
-	# --- page management API (public) ---
-	# Each method applies immediately once the default pages exist (during build), or is
-	# deferred and replayed right after discover() when called from setup code.
+	# Page management API: each method applies immediately once the default pages exist (during build),
+	# or is deferred and replayed right after discover() when called from setup code.
 	def add_page(self, page: Page) -> Page:
 		""" Append a page to the end of the manual. """
 		if not self.discovered:
@@ -311,7 +308,7 @@ class Manual:
 
 		# From here on, page operations apply immediately (defaults now being built).
 		self.discovered = True
-		self.definitions_as_objects = {item: Item.from_id(item) for item in Mem.definitions.keys()}
+		self.definitions_as_objects = {item: Item.from_id(item) for item in Mem.definitions}
 
 		# Detect awakened-forge sizes
 		for obj in self.definitions_as_objects.values():
@@ -399,11 +396,10 @@ class Manual:
 	def normalize(self) -> None:
 		""" Convert the rendered tree to plain dict/list/str (preserving :class:`PageRef`).
 
-		Item components copied from definitions (and meta-derived components like
-		``first_page_text``) are beet ``Box`` objects with default-box behavior: accessing a
-		missing key auto-creates an empty ``{}`` entry, which corrupts the output (Minecraft:
-		"Not a string: {}"). Flattening to plain Python types up front makes every later pass
-		(resolve/optimize/dialog) safe.
+		Item components copied from definitions (and meta-derived components like ``first_page_text``) are beet ``Box``
+		objects with default-box behavior: accessing a missing key auto-creates an empty ``{}`` entry,
+		which corrupts the output (Minecraft: "Not a string: {}"). Flattening to plain Python types up front makes every
+		later pass (resolve/optimize/dialog) safe.
 		"""
 		def to_plain(node: Any) -> Any:
 			if isinstance(node, PageRef):
@@ -454,9 +450,7 @@ class Manual:
 					if isinstance(value, (dict, list)):
 						stack.append(value)
 			elif isinstance(node, list):
-				for value in cast("list[Any]", node):
-					if isinstance(value, (dict, list)):
-						stack.append(value)
+				stack.extend(filter(lambda value: isinstance(value, (dict, list)), cast("list[Any]", node)))
 
 	def optimize(self) -> None:
 		""" Merge adjacent compounds per page (skipping pages that opt out). """
@@ -501,5 +495,4 @@ class Manual:
 			workbench.texture.delete()
 			workbench.model.delete()
 			workbench.generated_item_model.delete()
-
 

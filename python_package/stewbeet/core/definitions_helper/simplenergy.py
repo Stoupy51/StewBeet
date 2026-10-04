@@ -14,24 +14,23 @@ def format_energy_number(number: int) -> str:
 	""" Formats a number into a string with appropriate unit suffix (k, M, G, T).
 
 	Args:
-		number (int): The number to format
+		number: The number to format
 	Returns:
 		str: Formatted string with unit suffix, ex: 12000 -> "12 M", 1200 -> "1200 k"
 	"""
 	if number < 9999:
 		return f"{number} k"
-	elif number < 9999999:
+	if number < 9999999:
 		return f"{number/1000:.0f} M"
-	elif number < 9999999999:
+	if number < 9999999999:
 		return f"{number/1000000:.0f} G"
-	else:
-		return f"{number/1000000000:.0f} T"
+	return f"{number/1000000000:.0f} T"
 
 def create_energy_lore(energy_data: dict[str, int]) -> TextComponent:
 	""" Creates lore entries for energy-related blocks based on their energy data.
 
 	Args:
-		energy_data (dict): Dictionary containing energy configuration values
+		energy_data: Dictionary containing energy configuration values
 	Returns:
 		TextComponent: Formatted text component with energy lore
 	"""

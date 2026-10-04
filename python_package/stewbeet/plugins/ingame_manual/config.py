@@ -1,9 +1,8 @@
 """Typed configuration for the manual, read from ``ctx.meta["stewbeet"]["manual"]``.
 
-Replaces the scattered ``manual_config.get(...)`` calls and the config-ish fields of the
-old ``SharedMemory``. v2 is dialog-first: ``use_dialog`` is validated to be 1 or 2 (0 is
-coerced to 1 with a warning). The old caching keys (``cache_pages``) are intentionally not
-read; ``json_dump_path`` survives only as an optional debug dump.
+Replaces the scattered ``manual_config.get(...)`` calls and the config-ish fields of the old ``SharedMemory``. v2 is dialog-first:
+``use_dialog`` is validated to be 1 or 2 (0 is coerced to 1 with a warning).
+The old caching keys (``cache_pages``) are intentionally not read; ``json_dump_path`` survives only as an optional debug dump.
 """
 
 # Lazy imports (PEP 810), ignored before Python 3.15

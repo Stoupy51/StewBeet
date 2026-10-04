@@ -1,6 +1,7 @@
 
 # pyright: reportUnusedImport=false
 # ruff: noqa: F401
+
 # Lazy imports (PEP 810), ignored before Python 3.15
 from stouputils.lazy import ALWAYS_LAZY
 
@@ -30,8 +31,8 @@ from .source_lore_font import SPACER_CHAR, TOOLTIP_FONT, prepare_source_lore_fon
 
 # Main entry point
 def beet_default(ctx: Context, silent: bool = False) -> Generator[None]:
-	# The timer runs either way: `silent` only decides whether the line is printed, and the telemetry
-	# event at the bottom needs the same duration the line would have shown.
+	# The timer runs either way: `silent` only decides whether the line is printed,
+	# and the telemetry event at the bottom needs the same duration the line would have shown.
 	printer: Callable[..., None] = (lambda *_: None) if silent else stp.debug
 	with stp.MeasureTime(print_func=printer, message="Total execution time") as time_ctx:
 
@@ -42,7 +43,7 @@ def beet_default(ctx: Context, silent: bool = False) -> Generator[None]:
 		assert ctx.project_id, "Project ID must be set in the project configuration."
 
 		# Store the Box object in ctx for access throughout the codebase
-		meta_box: Box = Box(ctx.meta, default_box=True, default_box_attr={}) # type: ignore
+		meta_box: Box = Box(ctx.meta, default_box=True, default_box_attr={})
 		object.__setattr__(ctx, "meta", meta_box) # Bypass FrozenInstanceError
 		Mem.ctx = ctx
 		Mem.definitions = {}
@@ -92,13 +93,13 @@ def beet_default(ctx: Context, silent: bool = False) -> Generator[None]:
 		object.__setattr__(ctx, "output_directory", stp.relative_path(str(Mem.ctx.output_directory)))
 
 		# Add missing pack format registries if not present, and data version
-		ctx.data.pack_format_registry.update(MORE_DATA_PACK_FORMATS) # type: ignore
-		ctx.assets.pack_format_registry.update(MORE_ASSETS_PACK_FORMATS) # type: ignore
+		ctx.data.pack_format_registry.update(MORE_DATA_PACK_FORMATS)  # pyright: ignore[reportArgumentType, reportCallIssue]
+		ctx.assets.pack_format_registry.update(MORE_ASSETS_PACK_FORMATS)  # pyright: ignore[reportArgumentType, reportCallIssue]
 		ctx.meta["data_version"] = MORE_DATA_VERSIONS
 		if ctx.minecraft_version:
 			tuple_version: tuple[int, ...] = tuple(int(x) for x in ctx.minecraft_version.split(".") if x.isdigit())
-			ctx.data.pack_format = ctx.data.pack_format_registry.get(tuple_version, ctx.data.pack_format) # type: ignore
-			ctx.assets.pack_format = ctx.assets.pack_format_registry.get(tuple_version, ctx.assets.pack_format) # type: ignore
+			ctx.data.pack_format = ctx.data.pack_format_registry.get(tuple_version, ctx.data.pack_format)  # pyright: ignore[reportAttributeAccessIssue]
+			ctx.assets.pack_format = ctx.assets.pack_format_registry.get(tuple_version, ctx.assets.pack_format)  # pyright: ignore[reportAttributeAccessIssue]
 
 		# Convert texture names if needed (from old legacy system)
 		textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
@@ -194,26 +195,6 @@ def beet_default(ctx: Context, silent: bool = False) -> Generator[None]:
 		# Setup pack.mcmeta for both packs
 		setup_pack_mcmeta(ctx.data, ctx.data.pack_format)
 		setup_pack_mcmeta(ctx.assets, ctx.assets.pack_format)
-
-		# # Setup dialog convention for pause screen additions
-		# pause_additions = DialogTag({"values":[{"id":"smithed:data_packs","required":False}]})
-		# Mem.ctx.data["minecraft"].dialogs_tags["pause_screen_additions"] = set_json_encoder(pause_additions)
-		# Mem.ctx.data["smithed"].dialogs_tags["data_packs"] = set_json_encoder(DialogTag({"values":[]}))
-		# Mem.ctx.data["smithed"].dialogs["data_packs"] = set_json_encoder(Dialog({
-		# 	"type": "minecraft:dialog_list",
-		# 	"external_title": {
-		# 		"translate": "menu.smithed.data_packs",
-		# 		"fallback": "%s...",
-		# 		"with": [{"translate": "selectWorld.dataPacks"}]
-		# 	},
-		# 	"title": {
-		# 		"translate": "menu.smithed.data_packs.title",
-		# 		"fallback": "%s",
-		# 		"with": [{"translate": "selectWorld.dataPacks"}]
-		# 	},
-		# 	"dialogs": "#smithed:data_packs",
-		# 	"exit_action": {"label": {"translate": "gui.back"}, "width": 200}
-		# }))
 
 		# Yield message to indicate successful build
 		yield

@@ -19,18 +19,18 @@ from .vanilla import VanillaRecipeHandler
 # Main entry point
 @stp.measure_time(message="Execution time of 'stewbeet.plugins.custom_recipes'")
 def beet_default(ctx: Context) -> None:
-    """ Main entry point for the custom recipes plugin.
-    This plugin handles the generation of custom recipes for the datapack.
+	""" Main entry point for the custom recipes plugin.
+	This plugin handles the generation of custom recipes for the datapack.
 
-    Requires a valid definitions in Mem.definitions in order to function properly.
+	Requires a valid definitions in Mem.definitions in order to function properly.
 
-    Args:
-        ctx (Context): The beet context.
-    """
-    Mem.ctx = ctx
-    VanillaRecipeHandler.routine()
-    SmithedRecipeHandler.routine()
-    FurnaceRecipeHandler.routine()
-    PulverizerRecipeHandler.routine()
-    AwakenedForgeRecipeHandler.routine()
+	Args:
+		ctx: The beet context.
+	"""
+	Mem.ctx = ctx
+	VanillaRecipeHandler.routine()
+	SmithedRecipeHandler.routine()
+	FurnaceRecipeHandler.routine()
+	PulverizerRecipeHandler.routine()
+	AwakenedForgeRecipeHandler.routine()
 

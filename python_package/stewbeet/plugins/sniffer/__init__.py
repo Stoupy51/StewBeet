@@ -34,19 +34,17 @@ A map written after one of them ran is a map it did not see, which is the only r
 def beet_default(ctx: Context) -> Generator[None]:
 	""" Record where every generated line came from, and map it once the build is done.
 
-	Belongs in `require`, next to `stewbeet` itself, and that is the whole configuration. Everything
-	there runs before the pack is even loaded, so no write can happen before capture is installed,
+	Belongs in `require`, next to `stewbeet` itself, and that is the whole configuration.
+	Everything there runs before the pack is even loaded, so no write can happen before capture is installed,
 	and beet unwinds `require` last, so what mecha compiled is mapped from here too.
 
 	Args:
-		ctx (Context): The beet context.
+		ctx: The beet context.
 	"""
 	Mem.ctx = ctx
 	Mem.sniffer_enabled = True
-	# Its own state, reset here rather than in `plugins.initialize`, so requiring this one plugin
-	# and nothing else works: a plain beet project writing through `ctx.data.functions[p] = ...`
-	# is captured by the same hook. Both are empty between builds when the plugin is off, since
-	# every writer into them is gated on `sniffer_enabled` or on a patch installed below.
+	# Reset here rather than in `plugins.initialize`, so a plain beet project requiring only this plugin works.
+	# Every writer into this state is gated on `sniffer_enabled` or on a patch installed below, so it stays empty with the plugin off.
 	Mem.source_map_chunks = {}
 	Mem.source_map_origins = {}
 	Mem.source_map_files = {}
@@ -57,9 +55,8 @@ def beet_default(ctx: Context) -> Generator[None]:
 	yield
 
 	try:
-		# Nothing may have flushed earlier: no `stewbeet.plugins.sniffer.emit` step and no
-		# `stewbeet.plugins.archive`, which flushes on its own. Writing the maps anyway keeps
-		# editor navigation working off the build directory.
+		# Without a `stewbeet.plugins.sniffer.emit` step or `stewbeet.plugins.archive`, nothing flushed the maps yet,
+		# and writing them now keeps editor navigation working off the build directory.
 		late: int = write_maps(ctx) if Mem.source_map_chunks else 0
 		if late > 0:
 			stp.info(f"sniffer: wrote {late} source map{'' if late == 1 else 's'} for what the helpers wrote")
@@ -90,11 +87,11 @@ def write_mecha_maps(ctx: Context) -> int:
 	and mecha's compilation units are still in its database. A project lists one plugin instead of
 	two and cannot list them in the wrong order.
 
-	`stewbeet.plugins.sniffer.mecha` stays on its own for a bolt or mecha project with no StewBeet
-	writes in it. Listing both is harmless: a sidecar is never written twice, so this writes none.
+	`stewbeet.plugins.sniffer.mecha` stays on its own for a bolt or mecha project with no StewBeet writes in it.
+	Listing both is harmless: a sidecar is never written twice, so this writes none.
 
 	Args:
-		ctx (Context): The beet context.
+		ctx: The beet context.
 	Returns:
 		How many sidecars this wrote.
 	"""
@@ -110,12 +107,11 @@ def write_mecha_maps(ctx: Context) -> int:
 def packaged(ctx: Context) -> bool:
 	""" Whether a plugin that reads the finished pack ran in this build.
 
-	Read off the plugins beet resolved rather than by importing each of them, since the question is
-	only worth a name comparison. A packaging plugin of your own is not recognised, so nothing is
-	said about a build that has one.
+	Read off the plugins beet resolved rather than by importing each of them, since the question is only worth a name comparison.
+	A packaging plugin of your own is not recognised, so nothing is said about a build that has one.
 
 	Args:
-		ctx (Context): The beet context.
+		ctx: The beet context.
 	"""
 	return any(
 		getattr(plugin, "__module__", "").startswith(PACKAGING_PLUGINS)

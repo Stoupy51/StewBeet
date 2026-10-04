@@ -21,24 +21,20 @@ SorterAlgorithm = Literal[
 
 # Classes
 class Sorter(BaseModel):
-	""" Configuration model for sorting operations.
+	""" Configuration of datapack functions sorting a list held in a storage, with one of several algorithms.
 
-	This class defines the parameters required to generate datapack functions
-	that can sort lists stored in storage using various algorithms.
+	.. code-block:: json
 
-	Example:
-		.. code-block:: json
-
-			{
-				"algorithm": "selection_sort",
-				"functions_location": "switch:stats/minigame/sort_leaderboard",
-				"to_sort": {
-					"storage": "switch:stats",
-					"target": "all.modes.sheepwars.played"
-				},
-				"key": "count",
-				"scale": 100
-			}
+		{
+			"algorithm": "selection_sort",
+			"functions_location": "switch:stats/minigame/sort_leaderboard",
+			"to_sort": {
+				"storage": "switch:stats",
+				"target": "all.modes.sheepwars.played"
+			},
+			"key": "count",
+			"scale": 100
+		}
 	"""
 	algorithm: SorterAlgorithm = "selection_sort"
 	""" Algorithm used to sort the elements, defaults to `selection_sort`. """

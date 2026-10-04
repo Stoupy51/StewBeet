@@ -21,8 +21,8 @@ def lib_archives(ctx: Context, pack_type: str) -> list[str]:
 	An excluded archive is invisible to every plugin: it is neither welded nor copied to a destination.
 
 	Args:
-		ctx       (Context): The beet context.
-		pack_type (str):     Either "datapack" or "resource_pack".
+		ctx:       The beet context.
+		pack_type: Either "datapack" or "resource_pack".
 	Returns:
 		Absolute paths of the archives to ship, in glob order.
 	"""

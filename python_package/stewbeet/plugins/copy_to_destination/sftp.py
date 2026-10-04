@@ -1,11 +1,10 @@
 """ Pooled SFTP connections shared by every plugin that writes to an ``sftp://`` destination.
 
-Opening an SSH connection costs roughly half a second: importing paramiko, the key exchange, the
-authentication and the first channel. That dwarfs the transfers themselves when a single zip changed.
-One authenticated transport is therefore kept per server for the whole process, and each thread opens a
-cheap channel on top of it instead of shaking hands again. ``SftpPool.warmup_from_context`` starts all of
-that in the background at the very beginning of the build, so the connection is already waiting by the
-time the copy plugin runs at the end.
+Opening an SSH connection costs roughly half a second: importing paramiko, the key exchange, the authentication and the first channel.
+That dwarfs the transfers themselves when a single zip changed. One authenticated transport is therefore kept per server
+for the whole process, and each thread opens a cheap channel on top of it instead of shaking hands again.
+``SftpPool.warmup_from_context`` starts all of that in the background at the very beginning of the build,
+so the connection is already waiting by the time the copy plugin runs at the end.
 """
 
 # Lazy imports (PEP 810), ignored before Python 3.15
@@ -14,6 +13,7 @@ from stouputils.lazy import ALWAYS_LAZY
 __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
+import contextlib
 import os
 import posixpath
 import threading
@@ -40,15 +40,14 @@ def is_sftp_path(path: str) -> bool:
 	""" Return whether the given destination is a remote SFTP URL rather than a local path.
 
 	Args:
-		path (str): The destination to test.
+		path: The destination to test.
 	Returns:
 		bool: True when the destination is an ``sftp://`` URL.
 
-	Examples:
-		>>> is_sftp_path("sftp://bob@example.com/datapacks")
-		True
-		>>> is_sftp_path("D:/minecraft/latest/resourcepacks")
-		False
+	>>> is_sftp_path("sftp://bob@example.com/datapacks")
+	True
+	>>> is_sftp_path("D:/minecraft/latest/resourcepacks")
+	False
 	"""
 	return str(path).startswith("sftp://")
 
@@ -57,13 +56,12 @@ def remote_path_of(url: str) -> str:
 	""" Return the server-side path of a destination URL.
 
 	Args:
-		url (str): An ``sftp://user[:pass]@host[:port]/path`` URL.
+		url: An ``sftp://user[:pass]@host[:port]/path`` URL.
 	Returns:
 		str: The path part of the URL, always POSIX style.
 
-	Examples:
-		>>> remote_path_of("sftp://bob@example.com/sftp/Switch/datapacks/x.zip")
-		'/sftp/Switch/datapacks/x.zip'
+	>>> remote_path_of("sftp://bob@example.com/sftp/Switch/datapacks/x.zip")
+	'/sftp/Switch/datapacks/x.zip'
 	"""
 	return urllib.parse.urlparse(url).path
 
@@ -90,7 +88,7 @@ class SftpEndpoint:
 		file each time costs more than the upload it is preparing.
 
 		Args:
-			netloc (str): The ``user@host`` part of the destination URL, used as credentials key.
+			netloc: The ``user@host`` part of the destination URL, used as credentials key.
 		Returns:
 			str | None: The configured password, or None when there is none to be found.
 		"""
@@ -107,13 +105,12 @@ class SftpEndpoint:
 		""" Parse a destination URL into the server it points at.
 
 		Args:
-			url (str): An ``sftp://user[:pass]@host[:port]/path`` URL.
+			url: An ``sftp://user[:pass]@host[:port]/path`` URL.
 		Returns:
 			SftpEndpoint: The server behind that URL, password taken from the credentials file when the URL has none.
 
-		Examples:
-			>>> SftpEndpoint.from_url("sftp://bob:hunter2@example.com/datapacks/x.zip")
-			SftpEndpoint(host='example.com', port=22, username='bob', password='hunter2')
+		>>> SftpEndpoint.from_url("sftp://bob:hunter2@example.com/datapacks/x.zip")
+		SftpEndpoint(host='example.com', port=22, username='bob', password='hunter2')
 		"""
 		parsed: urllib.parse.ParseResult = urllib.parse.urlparse(url)
 		return SftpEndpoint(
@@ -188,8 +185,8 @@ class SftpConnection:
 	def channel(self) -> SFTPClient:
 		""" Return this thread's SFTP channel, opening one on the shared transport when needed.
 
-		Waits for the background warm-up to be done. Opening a channel is a single round trip, unlike the
-		full handshake `connect` already paid once for the whole build.
+		Waits for the background warm-up to be done. Opening a channel is a single round trip,
+		unlike the full handshake `connect` already paid once for the whole build.
 
 		Returns:
 			SFTPClient: A channel this thread can use on its own.
@@ -215,7 +212,7 @@ class SftpPool:
 		""" Return the connection to a server, opening it now when nothing opened it yet.
 
 		Args:
-			endpoint (SftpEndpoint): The server to reach.
+			endpoint: The server to reach.
 		Returns:
 			SftpConnection: The shared connection, possibly still being opened by another thread.
 		"""
@@ -235,7 +232,7 @@ class SftpPool:
 		""" Return the channel serving a destination URL, along with the path to write to on the server.
 
 		Args:
-			url (str): An ``sftp://user[:pass]@host[:port]/path`` URL.
+			url: An ``sftp://user[:pass]@host[:port]/path`` URL.
 		Returns:
 			tuple[SFTPClient, str]: This thread's channel, and the remote path parsed out of the URL.
 		"""
@@ -245,12 +242,12 @@ class SftpPool:
 	def warmup(urls: Iterable[str]) -> None:
 		""" Start connecting to every server behind the given destinations, in the background.
 
-		Called at the beginning of the build so the handshake overlaps the rest of the pipeline: by the time
-		the copy plugin runs at the end, `get` finds a connection that is already open. Connections left dead
-		by a previous build are dropped first, which is what makes `stewbeet watch` reconnect on its own.
+		Called at the beginning of the build so the handshake overlaps the rest of the pipeline:
+		by the time the copy plugin runs at the end, `get` finds a connection that is already open.
+		Connections left dead by a previous build are dropped first, which is what makes `stewbeet watch` reconnect on its own.
 
 		Args:
-			urls (Iterable[str]): Destinations to warm up, local paths are ignored.
+			urls: Destinations to warm up, local paths are ignored.
 		"""
 		endpoints: list[SftpEndpoint] = list(dict.fromkeys(SftpEndpoint.from_url(url) for url in urls if is_sftp_path(url)))
 		if not endpoints:
@@ -267,7 +264,7 @@ class SftpPool:
 		""" Start warming up every remote destination listed in `meta.stewbeet.build_copy_destinations`.
 
 		Args:
-			ctx (Context): The beet context.
+			ctx: The beet context.
 		"""
 		destinations = ctx.meta.get("stewbeet", {}).get("build_copy_destinations", {})
 		SftpPool.warmup([str(dest) for key in DESTINATION_KEYS for dest in destinations.get(key, [])])
@@ -276,12 +273,12 @@ class SftpPool:
 	def list_sizes(url: str) -> dict[str, int] | None:
 		""" List the directory holding a destination, as a mapping of remote path to file size.
 
-		Listing costs one round trip and keeps the upload cache honest: a file deleted or truncated
-		server-side gets uploaded again instead of being wrongly considered up to date. A missing directory
-		is detected from the listing itself, which saves the extra round trip an existence check would cost.
+		Listing costs one round trip and keeps the upload cache honest:
+		a file deleted or truncated server-side gets uploaded again instead of being wrongly considered up to date.
+		A missing directory is detected from the listing itself, which saves the extra round trip an existence check would cost.
 
 		Args:
-			url (str): An ``sftp://user[:pass]@host[:port]/path`` URL pointing at a file.
+			url: An ``sftp://user[:pass]@host[:port]/path`` URL pointing at a file.
 		Returns:
 			dict[str, int] | None: Sizes of every entry of the parent directory, or None if it does not exist.
 		"""
@@ -298,8 +295,8 @@ class SftpPool:
 		""" Upload a local file to a destination URL.
 
 		Args:
-			url (str): The ``sftp://`` destination to write to.
-			src (str): Path of the local file to send.
+			url: The ``sftp://`` destination to write to.
+			src: Path of the local file to send.
 		"""
 		channel, remote_path = SftpPool.channel_for(url)
 		channel.put(src, remote_path)
@@ -309,11 +306,9 @@ class SftpPool:
 		""" Delete the file a destination URL points at, doing nothing when it is already gone.
 
 		Args:
-			url (str): The ``sftp://`` destination to delete.
+			url: The ``sftp://`` destination to delete.
 		"""
 		channel, remote_path = SftpPool.channel_for(url)
-		try:
+		with contextlib.suppress(OSError):
 			channel.remove(remote_path)
-		except OSError:
-			pass
 

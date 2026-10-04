@@ -26,17 +26,17 @@ MORE_DATA_PACK_FORMATS: dict[tuple[int, ...], FormatSpecifier] = {
 	(1, 21, 11): (94, 1),
 
 	# New version numbering system
-	(25, 1): 71,			 # 1.21.5
-	(25, 1, 0): 71,			 # 1.21.5
-	(25, 2): 80,			# 1.21.6
-	(25, 2, 0): 80,			# 1.21.6
-	(25, 2, 1): 80,			# 1.21.6
-	(25, 2, 2): 80,			# 1.21.6
-	(25, 3): 81,			 # 1.21.8
-	(25, 3, 0): 81,			 # 1.21.8
-	(25, 3, 1): 81,			 # 1.21.8
-	(25, 4): (94, 1),		# 1.21.11
-	(25, 4, 0): (94, 1),	# 1.21.11
+	(25, 1): 71,             # 1.21.5
+	(25, 1, 0): 71,          # 1.21.5
+	(25, 2): 80,            # 1.21.6
+	(25, 2, 0): 80,         # 1.21.6
+	(25, 2, 1): 80,         # 1.21.6
+	(25, 2, 2): 80,         # 1.21.6
+	(25, 3): 81,             # 1.21.8
+	(25, 3, 0): 81,          # 1.21.8
+	(25, 3, 1): 81,          # 1.21.8
+	(25, 4): (94, 1),       # 1.21.11
+	(25, 4, 0): (94, 1),    # 1.21.11
 
 	(26, 1): (101, 1),
 	(26, 1, 0): (101, 1),
@@ -63,17 +63,17 @@ MORE_ASSETS_PACK_FORMATS: dict[tuple[int, ...], FormatSpecifier] = {
 	(1, 21, 11): (75, 0),
 
 	# New version numbering system
-	(25, 1): 55,			 # 1.21.5
-	(25, 1, 0): 55,			 # 1.21.5
-	(25, 2): 63,			 # 1.21.6
-	(25, 2, 0): 63,			# 1.21.6
-	(25, 2, 1): 63,			# 1.21.6
-	(25, 2, 2): 63,			# 1.21.6
-	(25, 3): 64,			 # 1.21.8
-	(25, 3, 0): 64,			 # 1.21.8
-	(25, 3, 1): 64,			 # 1.21.8
-	(25, 4): (75, 0),		# 1.21.11
-	(25, 4, 0): (75, 0),	# 1.21.11
+	(25, 1): 55,             # 1.21.5
+	(25, 1, 0): 55,          # 1.21.5
+	(25, 2): 63,             # 1.21.6
+	(25, 2, 0): 63,         # 1.21.6
+	(25, 2, 1): 63,         # 1.21.6
+	(25, 2, 2): 63,         # 1.21.6
+	(25, 3): 64,             # 1.21.8
+	(25, 3, 0): 64,          # 1.21.8
+	(25, 3, 1): 64,          # 1.21.8
+	(25, 4): (75, 0),       # 1.21.11
+	(25, 4, 0): (75, 0),    # 1.21.11
 
 	(26, 1): (84, 0),
 	(26, 1, 0): (84, 0),
@@ -110,21 +110,35 @@ LATEST_MC_VERSION: str = ".".join(str(x) for x in list(MORE_DATA_VERSIONS.keys()
 base.LATEST_MINECRAFT_VERSION = LATEST_MC_VERSION
 
 # Databases
-CATEGORY: str = "manual_category"						# Key for the category, used for recipes and the manual, ex: CATEGORY:"material" or CATEGORY:"equipment"
-CUSTOM_BLOCK_VANILLA: str = "minecraft:furnace"			# Vanilla block used as base for custom blocks, must have the "facing" blockstate
-CUSTOM_BLOCK_ALTERNATIVE: str = "minecraft:item_frame"	# Same purpose as previous, but useful for blocks that can be placed on walls or on player's position (ex: flowers)
-CUSTOM_BLOCK_HEAD: str = "minecraft:player_head"		# Same purpose as previous, but useful for blocks does not have a custom model data
-CUSTOM_ITEM_VANILLA: str = "minecraft:recovery_compass"	# Vanilla item used as base for custom items, must not have any survival vanilla behaviour
-VANILLA_BLOCK: str = "vanilla_block"					# Key to a vanilla block that will be placed for custom block interaction, value needs to be a dict like {"id":"minecraft:chest[type=single,waterlogged=false]", "block_facing": "player"} or a VanillaBlock instance
-NO_SILK_TOUCH_DROP: str = "no_silk_touch_drop"			# Key to no-silk drop data for ores: item id string, deterministic dict-like data (`NoSilkTouchDrop`), or a beet `LootTable`
-OVERRIDE_MODEL: str = "override_model"					# Key to a dictionnary that will be used to override the whole model
-SMITHED_CRAFTER_COMMAND: str = "smithed_crafter_command"	# Key to a command that will be used in a recipe in the Smithed Crafter library. If not present, the command will be defaulted to a loot table. Ex: {"result":...,SMITHED_CRAFTER_COMMAND: "function your_namespace:calls/smithed_crafter/do_something_else"}
-PAINTING_DATA: str = "painting_data"					# Key to a dict that contains the painting data, like {"author":"","title":"","width":1,"height":1} where author and title defaults to beet config values if not given
-GROWING_SEED: str = "growing_seed"						# Key to a seed that has multiple growth stages, value needs to be a dict like {"texture_basename":"wheat","stages":8,"seconds":600,"planted_on":"stone","loots":[{"id":"minecraft:wheat_seeds","min_count":1,"max_count":3}]} where loots can be either this format or a loot table path "namespace:blocks/loot_table_name"
-WIKI_COMPONENT: str = "wiki_buttons"					# Key to a text component that will be used to generate the wiki button in the manual
-RESULT_OF_CRAFTING: str = "result_of_crafting"			# Key to a list of recipes to craft the item, ex: "adamantium": {RESULT_OF_CRAFTING: [...]}
-USED_FOR_CRAFTING: str = "used_for_crafting"			# Should not be used unless you are crafting a vanilla item (ex: iyc.chainmail -> chainmail armor)
-NOT_COMPONENTS: list[str] = [							# Keys that should not be considered as components. Used for recipes, loot tables, etc.
+CATEGORY: str = "manual_category"
+""" Key for the category, used for recipes and the manual, ex: CATEGORY:"material" or CATEGORY:"equipment". """
+CUSTOM_BLOCK_VANILLA: str = "minecraft:furnace"
+""" Vanilla block used as base for custom blocks, must have the "facing" blockstate. """
+CUSTOM_BLOCK_ALTERNATIVE: str = "minecraft:item_frame"
+""" Same purpose as previous, but useful for blocks that can be placed on walls or on player's position (ex: flowers) """
+CUSTOM_BLOCK_HEAD: str = "minecraft:player_head"
+""" Same purpose as previous, but useful for blocks does not have a custom model data. """
+CUSTOM_ITEM_VANILLA: str = "minecraft:recovery_compass"
+""" Vanilla item used as base for custom items, must not have any survival vanilla behaviour. """
+VANILLA_BLOCK: str = "vanilla_block"
+""" Key to a vanilla block that will be placed for custom block interaction, value needs to be a dict like {"id":"minecraft:chest[type=single,waterlogged=false]", "block_facing": "player"} or a VanillaBlock instance. """
+NO_SILK_TOUCH_DROP: str = "no_silk_touch_drop"
+""" Key to no-silk drop data for ores: item id string, deterministic dict-like data (`NoSilkTouchDrop`), or a beet `LootTable`. """
+OVERRIDE_MODEL: str = "override_model"
+""" Key to a dictionnary that will be used to override the whole model. """
+SMITHED_CRAFTER_COMMAND: str = "smithed_crafter_command"
+""" Key to a command that will be used in a recipe in the Smithed Crafter library. If not present, the command will be defaulted to a loot table. Ex: {"result":...,SMITHED_CRAFTER_COMMAND: "function your_namespace:calls/smithed_crafter/do_something_else"}. """
+PAINTING_DATA: str = "painting_data"
+""" Key to a dict that contains the painting data, like {"author":"","title":"","width":1,"height":1} where author and title defaults to beet config values if not given. """
+GROWING_SEED: str = "growing_seed"
+""" Key to a seed that has multiple growth stages, value needs to be a dict like {"texture_basename":"wheat","stages":8,"seconds":600,"planted_on":"stone","loots":[{"id":"minecraft:wheat_seeds","min_count":1,"max_count":3}]} where loots can be either this format or a loot table path "namespace:blocks/loot_table_name". """
+WIKI_COMPONENT: str = "wiki_buttons"
+""" Key to a text component that will be used to generate the wiki button in the manual. """
+RESULT_OF_CRAFTING: str = "result_of_crafting"
+""" Key to a list of recipes to craft the item, ex: "adamantium": {RESULT_OF_CRAFTING: [...]}. """
+USED_FOR_CRAFTING: str = "used_for_crafting"
+""" Should not be used unless you are crafting a vanilla item (ex: iyc.chainmail -> chainmail armor) """
+NOT_COMPONENTS: list[str] = [                           # Keys that should not be considered as components. Used for recipes, loot tables, etc.
 	"id",
 	WIKI_COMPONENT,
 	RESULT_OF_CRAFTING,
@@ -139,15 +153,20 @@ NOT_COMPONENTS: list[str] = [							# Keys that should not be considered as comp
 ]
 
 # Technical constants
-COMMON_SIGNAL: str = r'custom_data={"common_signals":{"temp":true}}'					# NBT to add to items to mark them as temporary for Common Signals library
-COMMON_SIGNAL_HIDDEN: str = r'tooltip_display={"hide_tooltip":true},' + COMMON_SIGNAL	# Same as previous but also hide the tooltip (Useful for GUIs)
-FACES: tuple[str, ...] = ("down", "up", "north", "south", "west", "east")						# Faces of a block, used for resource pack and blocks orientation
-SIDES: tuple[str, ...] = ("_bottom", "_top", "_front", "_back", "_left", "_right", "_side")	# Sides of a block, used for resource pack
+COMMON_SIGNAL: str = r'custom_data={"common_signals":{"temp":true}}'
+""" NBT to add to items to mark them as temporary for Common Signals library. """
+COMMON_SIGNAL_HIDDEN: str = r'tooltip_display={"hide_tooltip":true},' + COMMON_SIGNAL
+""" Same as previous but also hide the tooltip (Useful for GUIs) """
+FACES: tuple[str, ...] = ("down", "up", "north", "south", "west", "east")
+""" Faces of a block, used for resource pack and blocks orientation. """
+SIDES: tuple[str, ...] = ("_bottom", "_top", "_front", "_back", "_left", "_right", "_side")
+""" Sides of a block, used for resource pack. """
 DOWNLOAD_VANILLA_ASSETS_RAW = "https://raw.githubusercontent.com/edayot/renders/renders/resourcepack/assets/minecraft/textures/render"
 DOWNLOAD_VANILLA_ASSETS_SPECIAL_RAW = "https://raw.githubusercontent.com/edayot/renders/renders-special/resourcepack/assets/minecraft/textures/render"
 DOWNLOAD_VANILLA_ASSETS_SOURCE = "https://github.com/edayot/renders/tree/renders/resourcepack/assets/minecraft/textures/render"
-CUSTOM_BLOCK_HEAD_CUBE_RADIUS: tuple[int, int, int] = (16, 16, 16)	# Size of the region to check around the player when placing a CUSTOM_BLOCK_HEAD
-BLOCKS_WITH_INTERFACES: list[str] = [	# List of blocks that are containers and have an interface
+CUSTOM_BLOCK_HEAD_CUBE_RADIUS: tuple[int, int, int] = (16, 16, 16)
+""" Size of the region to check around the player when placing a CUSTOM_BLOCK_HEAD. """
+BLOCKS_WITH_INTERFACES: list[str] = [   # List of blocks that are containers and have an interface
 	"minecraft:barrel",
 	"minecraft:chest",
 	"minecraft:furnace",
@@ -213,13 +232,13 @@ class Conventions:
 	""" Combined list of block tags and no kill tags. """
 
 	AVOID_NO_KILL: str = NO_KILL_TAGS.avoid
-	""" Deprecated (use Conventions.NO_KILL_TAGS.avoid instead): String of tags to avoid when killing entities. Example of use: execute as @e[{Conventions.AVOID_NO_KILL}] run function your_namespace:kill_entity """
+	""" Deprecated, use Conventions.NO_KILL_TAGS.avoid instead. String of tags to avoid when killing entities. Example of use: execute as @e[{Conventions.AVOID_NO_KILL}] run function your_namespace:kill_entity """
 	AVOID_ENTITY_TAGS: str = ENTITY_TAGS.avoid
-	""" Deprecated (use Conventions.ENTITY_TAGS.avoid instead): String of tags to avoid when executing an entity command. Example of use: execute as @e[{Conventions.AVOID_ENTITY_TAGS}] run function your_namespace:kill_entity """
+	""" Deprecated, use Conventions.ENTITY_TAGS.avoid instead. String of tags to avoid when executing an entity command. Example of use: execute as @e[{Conventions.AVOID_ENTITY_TAGS}] run function your_namespace:kill_entity """
 	AVOID_BLOCK_TAGS: str = BLOCK_TAGS.avoid
-	""" Deprecated (use Conventions.BLOCK_TAGS.avoid instead): String of tags to avoid when executing a block command. Example of use: execute as @e[{Conventions.AVOID_BLOCK_TAGS}] run function your_namespace:kill_entity """
+	""" Deprecated, use Conventions.BLOCK_TAGS.avoid instead. String of tags to avoid when executing a block command. Example of use: execute as @e[{Conventions.AVOID_BLOCK_TAGS}] run function your_namespace:kill_entity """
 	AVOID_ENTITY_TAGS_NO_KILL: str = ENTITY_TAGS_NO_KILL.avoid
-	""" Deprecated (use Conventions.ENTITY_TAGS_NO_KILL.avoid instead): String of tags to avoid when executing an entity command. Example of use: execute as @e[{Conventions.AVOID_ENTITY_TAGS_NO_KILL}] run function your_namespace:kill_entity """
+	""" Deprecated, use Conventions.ENTITY_TAGS_NO_KILL.avoid instead. String of tags to avoid when executing an entity command. Example of use: execute as @e[{Conventions.AVOID_ENTITY_TAGS_NO_KILL}] run function your_namespace:kill_entity """
 	AVOID_BLOCK_TAGS_NO_KILL: str = BLOCK_TAGS_NO_KILL.avoid
-	""" Deprecated (use Conventions.BLOCK_TAGS_NO_KILL.avoid instead): String of tags to avoid when executing a block command. Example of use: execute as @e[{Conventions.AVOID_BLOCK_TAGS_NO_KILL}] run function your_namespace:kill_entity """
+	""" Deprecated, use Conventions.BLOCK_TAGS_NO_KILL.avoid instead. String of tags to avoid when executing a block command. Example of use: execute as @e[{Conventions.AVOID_BLOCK_TAGS_NO_KILL}] run function your_namespace:kill_entity """
 

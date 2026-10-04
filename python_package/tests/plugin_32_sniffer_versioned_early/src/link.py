@@ -8,5 +8,5 @@ from stewbeet.core import write_function
 
 # Main entry point
 def beet_default(ctx: Context) -> None:
-    write_function("tns:impl/written", "say written by the helper\n")
+	write_function("tns:impl/written", "say written by the helper\n")
 

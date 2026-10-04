@@ -25,7 +25,7 @@ def beet_default(ctx: Context):
 	Then it will generate all functions to lead to the execution of these files by adding tags.
 
 	Args:
-		ctx (Context): The beet context.
+		ctx: The beet context.
 	"""
 	# Get namespace
 	Mem.ctx = ctx

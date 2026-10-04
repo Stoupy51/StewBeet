@@ -2,12 +2,11 @@
 # Imports
 from beet import Context
 
-from stewbeet import *  # type: ignore
+from stewbeet import *
 
 
 # Main entry point
 def beet_default(ctx: Context):
-    # The sorter configuration is provided as a JSON file in
-    # src/data/tns/sorter/sort_scores.json (loaded automatically by beet).
-    # No Python-side setup is required.
-    pass
+	# The sorter configuration is the JSON file src/data/tns/sorter/sort_scores.json, loaded by beet, so nothing is set up here.
+	pass
+

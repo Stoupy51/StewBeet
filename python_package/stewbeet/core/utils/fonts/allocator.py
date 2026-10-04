@@ -83,9 +83,8 @@ class GlyphAllocator:
 	def add_space(self, advance: int) -> str:
 		""" Return a glyph char drawing nothing and moving the pen by ``advance`` pixels.
 
-		Negative advances are how a spliced image gets put back together: they bring the pen back to
-		the left edge before the next row is drawn. All of them share one ``space`` provider, and the
-		same advance always hands back the same character.
+		Negative advances are how a spliced image gets put back together: they bring the pen back to the left edge before the
+		next row is drawn. All of them share one ``space`` provider, and the same advance always hands back the same character.
 
 		>>> alloc = GlyphAllocator(project_id="test")
 		>>> back = alloc.add_space(-64)

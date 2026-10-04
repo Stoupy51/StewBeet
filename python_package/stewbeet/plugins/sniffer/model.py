@@ -18,10 +18,10 @@ class SourceOrigin:
 	worse than no jump at all.
 
 	Args:
-		file    (str):  Absolute path of the .py file holding the write call.
-		line    (int):  0-based line of the content literal, or of the call when it is not a literal.
-		column  (int):  0-based column of the same.
-		exact   (bool): False when the position is the call rather than a literal.
+		file:   Absolute path of the .py file holding the write call.
+		line:   0-based line of the content literal, or of the call when it is not a literal.
+		column: 0-based column of the same.
+		exact:  False when the position is the call rather than a literal.
 	"""
 	file: str
 	line: int

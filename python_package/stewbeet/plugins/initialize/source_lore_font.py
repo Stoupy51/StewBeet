@@ -1,6 +1,7 @@
 
 # pyright: reportUnusedImport=false
 # ruff: noqa: F401
+
 # Lazy imports (PEP 810), ignored before Python 3.15
 from stouputils.lazy import ALWAYS_LAZY
 
@@ -23,11 +24,16 @@ from .source_lore_colors import recolor_image, resolve_source_lore_color
 
 # Constants
 ASSETS_FOLDER: str = f"{stp.get_root_path(__file__)}/assets"
-TOOLTIP_FONT: str = "tooltip"			# Font generated in the project namespace: <project_id>:tooltip
-ICON_CHAR: str = "ꀁ"					# Glyph showing the project logo (only provided when a pack.png was found)
-SPACER_CHAR: str = "뀁"				# 2px spacer glyph coming from the font "space" provider
-ATLAS_TEXTURE: str = "font/tooltip"		# Character atlas, relative to textures/
-ICON_TEXTURE: str = "tooltip/tooltip"	# Logo glyph, relative to textures/
+TOOLTIP_FONT: str = "tooltip"
+""" Font generated in the project namespace: <project_id>:tooltip. """
+ICON_CHAR: str = "ꀁ"
+""" Glyph showing the project logo (only provided when a pack.png was found) """
+SPACER_CHAR: str = "뀁"
+""" 2px spacer glyph coming from the font "space" provider. """
+ATLAS_TEXTURE: str = "font/tooltip"
+""" Character atlas, relative to textures/. """
+ICON_TEXTURE: str = "tooltip/tooltip"
+""" Logo glyph, relative to textures/. """
 
 
 # Utility functions
@@ -43,13 +49,12 @@ def is_icon_placeholder(component: TextComponent) -> bool:
 def warn_foreign_tooltip_font(source_lore: TextComponent) -> None:
 	""" Warn when the source lore asks for a tooltip font belonging to another namespace.
 
-	StewBeet only ever generates ``<project_id>:tooltip``, and only when something actually asks for
-	it. A source lore naming ``someone_else:tooltip`` therefore gets no font at all and silently
-	falls back to the default one in game. The templates ship ``_your_namespace:tooltip``, so this
-	is what a project that renamed its id and not its source lore runs into.
+	StewBeet only ever generates ``<project_id>:tooltip``, and only when something actually asks for it.
+	A source lore naming ``someone_else:tooltip`` therefore gets no font at all and silently falls back to the default one in game.
+	The templates ship ``_your_namespace:tooltip``, so this is what a project that renamed its id and not its source lore runs into.
 
 	Args:
-		source_lore	(TextComponent):	Source lore to inspect.
+		source_lore: Source lore to inspect.
 	"""
 	expected: str = f"{Mem.ctx.project_id}:{TOOLTIP_FONT}"
 	foreign: set[str] = {
@@ -69,7 +74,7 @@ def prepare_source_lore_font(source_lore: list[TextComponent]) -> str:
 	""" Replace every ``ICON`` placeholder of the source lore with the logo glyph of the tooltip font.
 
 	Args:
-		source_lore	(list[TextComponent]):	Source lore to patch in place.
+		source_lore: Source lore to patch in place.
 	Returns:
 		str: Path to the ``pack.png`` backing the glyph, or "" when there is no placeholder or no logo.
 	"""
@@ -95,7 +100,7 @@ def create_source_lore_font(pack_icon: str = "") -> None:
 	otherwise from the packaged one, recolored according to ``source_lore_color``.
 
 	Args:
-		pack_icon	(str):	Path to the project ``pack.png``. When empty, the logo glyph provider is
+		pack_icon: Path to the project ``pack.png``. When empty, the logo glyph provider is
 			skipped so the font never points at a missing texture.
 	"""
 	namespace: str = Mem.ctx.project_id

@@ -22,6 +22,7 @@ def beet_default(ctx: Context) -> None:
 	types the project actually ships. Listing both is equivalent to this one.
 
 	Args:
-		ctx (Context): The beet context.
+		ctx: The beet context.
 	"""
 	weld_pack_types(ctx, ALL_PACK_TYPES)
+

@@ -1,9 +1,9 @@
 """The :class:`Page` base class and lifecycle.
 
 A page is a self-contained unit that knows how to render itself directly to a dialog body:
-a list of Minecraft text components where element 0 is the parent whose style (notably its
-font) cascades to the siblings. Subclasses implement :meth:`build`; the base :meth:`render`
-wraps it and applies developer ``transformers`` last, so per-item/page overrides compose cleanly.
+a list of Minecraft text components where element 0 is the parent whose style (notably its font) cascades to the siblings.
+Subclasses implement :meth:`build`; the base :meth:`render` wraps it and applies developer ``transformers`` last,
+so per-item/page overrides compose cleanly.
 """
 
 # Imports
@@ -51,8 +51,7 @@ class Page:
 	""" Per-page override of the manual-wide button layout. """
 	book_texture: str | Image.Image | None = None
 	""" Per-page override of the book background ("book.png"). A path (project path, or a filename
-	resolved against the templates dir so ``manual_overrides`` files work) or a ready PIL image.
-	None = shared book. """
+	resolved against the templates dir so ``manual_overrides`` files work) or a ready PIL image. None = shared book. """
 	book_font: str = field(default="", init=False, repr=False)
 	""" Glyph char registered for :attr:`book_texture` (set during emit, "" = shared BOOK_FONT). """
 	home_texture: str | Image.Image | None = None
@@ -71,7 +70,7 @@ class Page:
 
 	def prepare(self, manual: Manual) -> None:
 		""" Heavy, order-independent setup (collect data, allocate glyphs). Default: no-op. """
-		return None
+		return
 
 	def build(self, manual: Manual) -> list[TextComponent]:
 		""" Produce the raw page content. Subclasses override this. """

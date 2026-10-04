@@ -36,7 +36,7 @@ def energy_cables_models(cables: list[str]) -> None:
 	""" Setup energy cables models and functions for SimplEnergy.
 
 	Args:
-		cables (list[str]): List of cables to setup. (e.g. ["simple_cable", "advanced_cable", "elite_cable"])
+		cables: List of cables to setup. (e.g. ["simple_cable", "advanced_cable", "elite_cable"])
 	"""
 	ns: str = Mem.ctx.project_id
 	textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
@@ -129,7 +129,7 @@ def item_cables_models(cables: dict[str, dict[str, str] | None]) -> None:
 	""" Setup item cables models and functions for SimplEnergy.
 
 	Args:
-		cables (dict[str, dict[str, str]]): Dictionary of item cables to setup.
+		cables: Dictionary of item cables to setup.
 			Each key is the cable name, and the value is a dictionary mapping model textures to their paths
 			The mapping dictionnary is optional, if not provided, it will use the default model paths.
 			(e.g. {"item_cable":{"0":"item_cable/center","1":"item_cable/pillon","2":"item_cable/glass"}})
@@ -250,7 +250,7 @@ def servo_mechanisms_models(servos: dict[str, dict[str, str] | None]) -> None:
 	""" Setup servo mechanisms models and functions for SimplEnergy.
 
 	Args:
-		servos (dict[str, dict[str, str]]): Dictionary of servo mechanisms to setup.
+		servos: Dictionary of servo mechanisms to setup.
 			Each key is the servo name, and the value is a dictionary mapping model textures to their paths (excluding the 'type' key)
 			The mapping dictionnary is optional, if not provided, it will use the default model paths.
 			(e.g. {"servo_extractor": {"type": "extract", "default": "servo/extract_default", "connected": "servo/extract_connected"}})
@@ -372,14 +372,14 @@ function {ns}:utils/servo/update_model
 def servo_toggle(servos: dict[str, dict[str, str] | None]) -> None:
 	""" Setup the functions allowing players to turn servo mechanisms off and on by rotating them.
 
-	Rotating (right-clicking) a servo item frame changes its 'ItemRotation'. A vanilla advancement listening to
-	the 'minecraft:player_interacted_with_entity' trigger detects the interaction (so nothing runs every tick),
-	then the nearby servos are checked: an odd rotation disables the rotated one (grayed out texture, item
-	transfers stopped by removing the 'itemio.servo.extract' / 'itemio.servo.insert' tag), an even rotation
-	enables it back to normal. As the check only acts when the parity differs, only the rotated servo toggles.
+	Rotating (right-clicking) a servo item frame changes its 'ItemRotation'.
+	A vanilla advancement listening to the 'minecraft:player_interacted_with_entity' trigger detects the interaction (so
+	nothing runs every tick), then the nearby servos are checked: an odd rotation disables the rotated one (grayed out texture,
+	item transfers stopped by removing the 'itemio.servo.extract' / 'itemio.servo.insert' tag),
+	an even rotation enables it back to normal. As the check only acts when the parity differs, only the rotated servo toggles.
 
 	Args:
-		servos (dict[str, dict[str, str]]): Same servos dictionary as the one passed to 'servo_mechanisms_models'.
+		servos: Same servos dictionary as the one passed to 'servo_mechanisms_models'.
 	"""
 	ns: str = Mem.ctx.project_id
 	servo_types: dict[str, str] = {servo: (textures or {}).get("type", "extract") for servo, textures in servos.items()}

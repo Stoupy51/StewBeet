@@ -66,13 +66,12 @@ class ShapedRenderer(CraftRenderer):
 				for k in line:
 					if k == " ":
 						content.append(INVISIBLE_ITEM_WIDTH)
+					elif i == 0:
+						content.append(formatted_ingredients[k])
 					else:
-						if i == 0:
-							content.append(formatted_ingredients[k])
-						else:
-							copy = formatted_ingredients[k].copy()
-							copy["text"] = INVISIBLE_ITEM_WIDTH
-							content.append(copy)
+						copy = formatted_ingredients[k].copy()
+						copy["text"] = INVISIBLE_ITEM_WIDTH
+						content.append(copy)
 				if use_dialog and index != 1 and (not is_small_craft or i != 1):
 					content.append(INVISIBLE_ITEM_WIDTH * max(0, (2 if is_small_craft else 3) - len(line)))
 					content.append(NONE_FONT * 2)
@@ -166,8 +165,9 @@ class ShapedRenderer(CraftRenderer):
 		template.paste(result_texture, coords, result_mask)
 		if craft.get("result_count", 1) > 1:
 			count_img = r.images.image_count(craft["result_count"])
-			template.paste(count_img, [x + 2 for x in coords], count_img)  # type: ignore
+			template.paste(count_img, [x + 2 for x in coords], count_img)  # pyright: ignore[reportArgumentType]
 		template.save(f"{r.config.font_cache_path}/page/{output_filename}.png")
 
 
 register_craft_renderer(ShapedRenderer())
+

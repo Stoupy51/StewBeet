@@ -1,8 +1,8 @@
 """ Per-item PNG renders, the image source behind every item glyph.
 
-Three kinds of item ids resolve differently: project items are rasterized from their resource pack
-model with ``model_resolver``, ``minecraft:`` items are downloaded from the wiki, and items belonging
-to any other pack are read from disk (the project is expected to drop them there itself).
+Three kinds of item ids resolve differently: project items are rasterized from their resource pack model with ``model_resolver``,
+``minecraft:`` items are downloaded from the wiki, and items belonging to any other pack are read from disk (the project is expected to
+drop them there itself).
 
 The resulting folder is shared by every consumer, so an item is only ever rendered once per build.
 """
@@ -72,7 +72,7 @@ def item_image_path(item_id: str) -> str:
 	""" Path of the PNG backing an item id, whether it exists yet or not.
 
 	Args:
-		item_id (str): Fully qualified item id, e.g. ``"minecraft:stone"``.
+		item_id: Fully qualified item id, e.g. ``"minecraft:stone"``.
 	Returns:
 		str: Path inside the renders folder, e.g. ``"manual_cache/items/minecraft/stone.png"``.
 	"""
@@ -82,9 +82,10 @@ def item_image_path(item_id: str) -> str:
 
 # Vanilla texture download
 def get_session() -> requests.Session:
-	""" `requests` is imported here rather than at module level: this module is reachable from the
-	top-level ``stewbeet`` package, and paying a fifth of a second of HTTP stack on every single
-	build only to download textures the caller may never ask for is not worth it.
+	""" HTTP session of the current thread, created on first use.
+
+	`requests` is imported here rather than at module level, since this module is reachable from the top-level ``stewbeet`` package
+	and the HTTP stack costs a fifth of a second on every build, even one that downloads no texture.
 	"""
 	import requests
 
@@ -125,7 +126,7 @@ def download_vanilla_textures(path: str, used_vanilla_items: set[str], cache_ass
 def collect_used_vanilla_items() -> set[str]:
 	""" Collect all vanilla items referenced in recipes across all definitions. """
 	used_vanilla_items: set[str] = set()
-	for item in Mem.definitions.keys():
+	for item in Mem.definitions:
 		obj = Item.from_id(item)
 		for recipe in obj.recipes:
 			ingredients = []
@@ -152,10 +153,10 @@ def build_model_resolver_queue(path: str, ns: str, cache_assets: bool, only: Ite
 	rendered too rather than having to supply the PNGs by hand.
 
 	Args:
-		path			(str):					Renders folder.
-		ns				(str):					Project namespace.
-		cache_assets	(bool):					Skip items whose PNG already exists.
-		only			(Iterable[str] | None):	Restrict to these item ids, or None for every definition.
+		path:         Renders folder.
+		ns:           Project namespace.
+		cache_assets: Skip items whose PNG already exists.
+		only:         Restrict to these item ids, or None for every definition.
 	Returns:
 		dict[str, str]: Mapping of resource pack model path to destination PNG path.
 	"""
@@ -184,7 +185,7 @@ def build_model_resolver_queue(path: str, ns: str, cache_assets: bool, only: Ite
 
 def run_model_resolver(for_model_resolver: dict[str, str]) -> None:
 	""" Run the model resolver to generate iso renders for the given items. """
-	any_atlas_used: bool = "before_format_73" in Mem.ctx.assets.overlays._wrapped.keys()  # type: ignore
+	any_atlas_used: bool = "before_format_73" in Mem.ctx.assets.overlays._wrapped  # pyright: ignore[reportPrivateUsage]
 	if any_atlas_used:
 		legacy_atlases = Mem.ctx.assets.overlays["before_format_73"]["minecraft"].atlases
 		Mem.ctx.assets["minecraft"].atlases["temporary_stewbeet"] = legacy_atlases["blocks"]
@@ -198,9 +199,8 @@ def run_model_resolver(for_model_resolver: dict[str, str]) -> None:
 			""" Same rendering as model_resolver, but with a fast ``apply_palette``.
 
 			The upstream implementation scans the whole palette per texture pixel with
-			``Image.getpixel`` (O(width*height*palette_size) Python calls); this one builds
-			the color mapping once (same column-major first-match semantics) and remaps
-			all pixels in a single pass, producing pixel-identical output.
+			``Image.getpixel`` (O(width*height*palette_size) Python calls); this one builds the color mapping once (same column-major
+			first-match semantics) and remaps all pixels in a single pass, producing pixel-identical output.
 			"""
 
 			def resolve_altas(self, key: str, atlas: Atlas) -> None:
@@ -267,11 +267,11 @@ def generate_all_iso_renders(
 	""" Generate iso renders for every item plus download referenced vanilla textures.
 
 	Args:
-		renders_path	(str):	Renders folder, defaults to :func:`iso_renders_path`.
-		project_id		(str):	Project namespace, defaults to the context one.
-		cache_assets	(bool):	Skip items whose PNG already exists.
-		ignore_vanilla	(bool):	Skip downloading the vanilla textures used by recipes.
-		ignore_painting	(bool):	Skip copying the painting textures.
+		renders_path:    Renders folder, defaults to :func:`iso_renders_path`.
+		project_id:      Project namespace, defaults to the context one.
+		cache_assets:    Skip items whose PNG already exists.
+		ignore_vanilla:  Skip downloading the vanilla textures used by recipes.
+		ignore_painting: Skip copying the painting textures.
 	"""
 	ns: str = project_id or Mem.ctx.project_id
 	path: str = renders_path or iso_renders_path()
@@ -298,8 +298,8 @@ def ensure_item_images(item_ids: Iterable[str], cache_assets: bool = True) -> di
 	Only ``textures_folder`` survives ``stewbeet clean``, so it is where hand made images belong.
 
 	Args:
-		item_ids		(Iterable[str]):	Item ids, namespaced or bare (bare means the project namespace).
-		cache_assets	(bool):				Reuse the PNGs that already exist instead of regenerating them.
+		item_ids:     Item ids, namespaced or bare (bare means the project namespace).
+		cache_assets: Reuse the PNGs that already exist instead of regenerating them.
 	Returns:
 		dict[str, str]: Mapping of fully qualified item id to PNG path, missing ones left out.
 	"""
@@ -342,8 +342,8 @@ def resolve_item_image(item_id: str, cache_assets: bool = True) -> str | None:
 	""" Path of the PNG for a single item id, generating or downloading it when needed.
 
 	Args:
-		item_id			(str):	Item id, namespaced or bare (bare means the project namespace).
-		cache_assets	(bool):	Reuse the PNG if it already exists instead of regenerating it.
+		item_id:      Item id, namespaced or bare (bare means the project namespace).
+		cache_assets: Reuse the PNG if it already exists instead of regenerating it.
 	Returns:
 		str | None: Path to the PNG, or None when it could not be resolved.
 	"""

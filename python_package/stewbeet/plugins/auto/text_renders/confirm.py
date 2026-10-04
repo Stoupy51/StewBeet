@@ -1,9 +1,10 @@
 """ One-time confirmation before a build starts baking renders too big for a single glyph.
 
-Splicing a picture into a grid of glyphs is cheap to write and expensive to ship: a 1000x370 logo
-becomes eight textures the resource pack has to carry. The question is asked in the terminal the
-first time a project runs into it, and the answer is remembered in ``.beet_cache`` so later builds
-stay quiet. ``meta.stewbeet.text_renders.allow_oversized`` answers it up front and skips the prompt.
+Splicing a picture into a grid of glyphs is cheap to write and expensive to ship:
+a 1000x370 logo becomes eight textures the resource pack has to carry.
+The question is asked in the terminal the first time a project runs into it,
+and the answer is remembered in ``.beet_cache`` so later builds stay quiet.
+``meta.stewbeet.text_renders.allow_oversized`` answers it up front and skips the prompt.
 """
 # Lazy imports (PEP 810), ignored before Python 3.15
 from stouputils.lazy import ALWAYS_LAZY
@@ -30,8 +31,8 @@ CACHE_KEY: str = "allow_oversized"
 def prompt() -> bool | None:
 	""" The answer typed in the terminal, or None when there is nobody to answer.
 
-	A build driven by a script, a CI job or an editor has no terminal to read from, and blocking one
-	forever on a question is worse than the pack size it was meant to save.
+	A build driven by a script, a CI job or an editor has no terminal to read from,
+	and blocking one forever on a question is worse than the pack size it was meant to save.
 
 	Returns:
 		bool | None: True to cut the render into glyphs, False to shrink it, None when unanswered.
@@ -47,14 +48,14 @@ def prompt() -> bool | None:
 def ask_oversized(item_id: str, stored: tuple[int, int], tiles: int) -> bool:
 	""" Ask once whether renders bigger than a font atlas may be baked, and remember the answer.
 
-	Answering no shrinks the render down to a single glyph instead, which keeps the pack small at the
-	cost of sharpness. Outside a terminal (a CI build, a watch loop) there is nobody to answer, so
-	the render is baked and the reason is printed rather than silently changing what gets built.
+	Answering no shrinks the render down to a single glyph instead, which keeps the pack small at the cost of sharpness.
+	Outside a terminal (a CI build, a watch loop) there is nobody to answer,
+	so the render is baked and the reason is printed rather than silently changing what gets built.
 
 	Args:
-		item_id	(str):				Render that ran into the limit.
-		stored	(tuple[int, int]):	Pixel size its texture would be stored at.
-		tiles	(int):				Number of glyph textures it would be cut into.
+		item_id: Render that ran into the limit.
+		stored:  Pixel size its texture would be stored at.
+		tiles:   Number of glyph textures it would be cut into.
 	Returns:
 		bool: True to splice the render, False to shrink it to a single glyph.
 	"""
@@ -76,8 +77,8 @@ def ask_oversized(item_id: str, stored: tuple[int, int], tiles: int) -> bool:
 		stp.warning("Nobody to answer, so it is cut. Set 'meta.stewbeet.text_renders.allow_oversized' to decide up front.")
 		return True
 
-	# Only an answer somebody actually gave is remembered: a build with no terminal must not decide
-	# for the author, it just keeps printing the warning until one of them does.
+	# Only an answer somebody actually gave is remembered: a build with no terminal must not decide for the author,
+	# it just keeps printing the warning until one of them does.
 	cache.json[CACHE_KEY] = typed
 	return typed
 

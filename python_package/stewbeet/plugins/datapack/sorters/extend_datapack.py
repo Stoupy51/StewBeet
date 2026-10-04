@@ -18,7 +18,7 @@ def beet_default(ctx: Context):
 	allowing sorter configuration files to be recognized and processed.
 
 	Args:
-		ctx (Context): The beet context.
+		ctx: The beet context.
 	"""
 	ctx.data.extend_namespace.append(SorterFile)
 

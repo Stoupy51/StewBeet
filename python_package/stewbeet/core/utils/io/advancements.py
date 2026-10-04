@@ -26,11 +26,11 @@ def write_advancement(
 	""" Write an advancement at the given path.
 
 	Args:
-		path        (str):                         The path to the advancement (ex: "namespace:folder/advancement_name")
-		advancement (Advancement | JsonDict):      The advancement to write
-		overwrite   (bool):                        If True, overwrite the file instead of merging into it with super_merge_dict
-		max_level   (int):                         The maximum level of the JSON dump, -1 for default behavior (default: -1)
-		condition   (Callable[[JsonDict], bool]):  A function that takes the existing advancement data
+		path:        The path to the advancement (ex: "namespace:folder/advancement_name")
+		advancement: The advancement to write
+		overwrite:   If True, overwrite the file instead of merging into it with super_merge_dict
+		max_level:   The maximum level of the JSON dump, -1 for default behavior (default: -1)
+		condition:   A function that takes the existing advancement data
 			and returns whether the new advancement should be written (default: always write)
 	Returns:
 		Advancement | None: The written advancement, or None if the condition was not met

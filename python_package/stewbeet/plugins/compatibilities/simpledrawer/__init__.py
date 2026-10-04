@@ -20,8 +20,8 @@ from ....core.utils.io import set_json_encoder, write_function
 def get_result_count(item: str, ingr_to_seek: str) -> int:
 	""" Get the result count of an item in a recipe
 	Args:
-		item			(str):	Item to check recipes for
-		ingr_to_seek	(str):	Ingredient to seek in the recipe
+		item:         Item to check recipes for
+		ingr_to_seek: Ingredient to seek in the recipe
 	"""
 	if item and ingr_to_seek:
 		obj = Item.from_id(item)
@@ -33,7 +33,7 @@ def get_result_count(item: str, ingr_to_seek: str) -> int:
 
 			# If crafting shaped, return the result count if the ingredient is the ingot item
 			if recipe["type"] == CraftingShapedRecipe.type:
-				ingredient: Ingr = next(iter(recipe["ingredients"].values())) # type: ignore
+				ingredient: Ingr = next(iter(recipe["ingredients"].values()))
 				ingr_str: str = ingredient.to_id(add_namespace=False)
 				if ingr_str == ingr_to_seek:
 					return recipe["result_count"]
@@ -54,7 +54,7 @@ def beet_default(ctx: Context):
 	This plugin sets up SimpleDrawer compatibility for compacting drawers.
 
 	Args:
-		ctx (Context): The beet context.
+		ctx: The beet context.
 	"""
 	Mem.ctx = ctx
 
@@ -64,7 +64,7 @@ def beet_default(ctx: Context):
 
 	# For each material block, collect materials and their variants
 	simpledrawer_materials: list[dict[str, str]] = []
-	for item in Mem.definitions.keys():
+	for item in Mem.definitions:
 		if item.endswith("_block"):
 			variants: dict[str, str] = {"block": item}
 
@@ -73,7 +73,7 @@ def beet_default(ctx: Context):
 			smithed_dict: JsonDict = obj.components.get("custom_data", {}).get("smithed", {}).get("dict", {})
 			if not smithed_dict:
 				continue
-			material_base: str = next(iter(next(iter(smithed_dict.values())).keys())) # type: ignore
+			material_base: str = next(iter(next(iter(smithed_dict.values())).keys()))
 
 			# If raw material block, add the ingot raw item if available
 			if item.startswith("raw_"):
@@ -133,7 +133,7 @@ def beet_default(ctx: Context):
 			material_title: str = material_base.replace("_", " ").title()
 
 			# For each variant, make a file
-			for variant in material.keys():
+			for variant in material:
 				if variant != "material":
 					content: str = (
 						f"\nscoreboard players set #type simpledrawer.io {types_for_variants[variant]}\n"

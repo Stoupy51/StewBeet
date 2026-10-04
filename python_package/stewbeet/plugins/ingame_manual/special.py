@@ -72,3 +72,4 @@ def build_stardust_forge_page() -> list[TextComponent]:
 		"\n\n",
 		{"text": AWAKENED_FORGE_STRUCT_FONT[0] + VERY_SMALL_NONE_FONT + AWAKENED_FORGE_STRUCT_FONT[1], "font": f"{ns}:manual"},
 	]
+

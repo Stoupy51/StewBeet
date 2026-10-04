@@ -4,9 +4,9 @@ One :class:`GlyphAllocator` collects every provider of the build. Each distinct
 ``(item id, height, ascent, resolution)`` gets its own glyph character, while the textures backing
 them are written once per ``(item id, stored pixels)``, so several glyphs can share one image.
 
-A render Minecraft cannot fit in a single glyph (more than 256 texture pixels on a side, or floating
-above the baseline) is cut into a grid instead: several glyphs and the spacing putting them back
-together, which the text component carries as one string of characters like any other glyph.
+A render Minecraft cannot fit in a single glyph (more than 256 texture pixels on a side,
+or floating above the baseline) is cut into a grid instead: several glyphs and the spacing putting them back together,
+which the text component carries as one string of characters like any other glyph.
 """
 # Lazy imports (PEP 810), ignored before Python 3.15
 from stouputils.lazy import ALWAYS_LAZY
@@ -79,9 +79,9 @@ class GlyphEmitter:
 	def texture_name(self, item_id: str, stored: tuple[int, int]) -> str:
 		""" Resource pack texture name (relative to ``textures/``) for an item stored at ``stored`` pixels.
 
-		The name follows the stored pixels rather than the displayed height, so the same image shown at
-		several heights is only written once. It also goes through :func:`to_resource_path`, without
-		which the reserved ``ICON`` id would name a texture Minecraft refuses to load.
+		The name follows the stored pixels rather than the displayed height,
+		so the same image shown at several heights is only written once. It also goes through :func:`to_resource_path`,
+		without which the reserved ``ICON`` id would name a texture Minecraft refuses to load.
 		"""
 		return f"{TEXTURE_FOLDER}/{to_resource_path(f'{item_id.replace(":", "_")}_{stored[0]}x{stored[1]}')}"
 
@@ -116,10 +116,10 @@ class GlyphEmitter:
 	def warn_capped(self, item_id: str, layout: SpliceLayout, wanted: tuple[int, int]) -> None:
 		""" Tell the author when the ascent forced a render to be stored smaller than it asked for.
 
-		Minecraft refuses a glyph whose ascent exceeds its height, so the topmost tile has to span
-		from the top of the picture down to the baseline and fit in one glyph on its own. Cutting
-		that row thinner does not help, since every row above the baseline still reaches it: only a
-		smaller ascent does, which is why the message names the one that would have worked.
+		Minecraft refuses a glyph whose ascent exceeds its height, so the topmost tile has to span from the top of the picture down to
+		the baseline and fit in one glyph on its own. Cutting that row thinner does not help,
+		since every row above the baseline still reaches it: only a smaller ascent does,
+		which is why the message names the one that would have worked.
 		Snapping to a whole multiple of the displayed height is not a cap, so it stays silent.
 		"""
 		scale: int = max(1, wanted[1] // layout.height)
@@ -135,8 +135,8 @@ class GlyphEmitter:
 	def provider_char(self, file: str, ascent: int, height: int) -> str:
 		""" Glyph character of the ``(file, ascent, height)`` provider, registering it on first use.
 
-		Two renders differing only in ascent are two glyphs sharing one texture, while two that
-		resolve identically share the glyph itself.
+		Two renders differing only in ascent are two glyphs sharing one texture,
+		while two that resolve identically share the glyph itself.
 		"""
 		char: str | None = self.chars_by_provider.get((file, ascent, height))
 		if char is None:
@@ -160,8 +160,8 @@ class GlyphEmitter:
 	) -> str:
 		""" One glyph showing the whole image, the shape every render small enough to fit takes.
 
-		The stored texture keeps the source aspect ratio: Minecraft has no width to set, it derives
-		the on-screen width from the texture itself.
+		The stored texture keeps the source aspect ratio: Minecraft has no width to set,
+		it derives the on-screen width from the texture itself.
 		"""
 		assets = Mem.ctx.assets[self.config.project_id]
 		name: str = self.texture_name(item_id, stored)
@@ -174,15 +174,15 @@ class GlyphEmitter:
 	) -> str:
 		""" A grid of glyphs showing one image, with the spacing that puts it back together.
 
-		Each row is drawn left to right, a negative space brings the pen back to the left edge before
-		the next one, and the rows hang from decreasing ascents. Every tile is followed by the spacing
-		correcting Minecraft's own advance, so the tiles touch without overlapping.
+		Each row is drawn left to right, a negative space brings the pen back to the left edge before the next one,
+		and the rows hang from decreasing ascents. Every tile is followed by the spacing correcting Minecraft's own advance,
+		so the tiles touch without overlapping.
 
 		Args:
-			item_id	(str):			Fully qualified item id, used to name the textures.
-			opened	(Image.Image):	Source image, still at its original size.
-			frame	(tuple | None):	First frame of an animation strip, or None.
-			layout	(SpliceLayout):	Grid to cut, from :func:`~stewbeet.core.utils.fonts.plan_splice`.
+			item_id: Fully qualified item id, used to name the textures.
+			opened:  Source image, still at its original size.
+			frame:   First frame of an animation strip, or None.
+			layout:  Grid to cut, from :func:`~stewbeet.core.utils.fonts.plan_splice`.
 		Returns:
 			str: The glyph characters to write in the text component, in drawing order.
 		"""
@@ -222,7 +222,7 @@ class GlyphEmitter:
 		ones and never re-renders or re-downloads an image.
 
 		Args:
-			requests (list[RenderRequest]): Every render node found in the build.
+			requests: Every render node found in the build.
 		Returns:
 			dict: Glyph key -> glyph characters, missing images left out.
 		"""
@@ -244,8 +244,8 @@ class GlyphEmitter:
 				native: tuple[int, int] = (frame[2], frame[3]) if frame else opened.size
 				stored: tuple[int, int] = scale_to_height(native, resolution) if resolution > 0 else native
 
-				# Too big for one glyph, or floating over the baseline: both are laid out as a grid, which
-				# may still come out as a single tile once the resolution is capped to what fits
+				# Too big for one glyph, or floating over the baseline: both are laid out as a grid,
+				# which may still come out as a single tile once the resolution is capped to what fits
 				layout: SpliceLayout | None = None
 				if max(stored) > MAX_GLYPH_SIZE or ascent > height:
 					layout = plan_splice(native, height, ascent, resolution)

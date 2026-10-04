@@ -4,12 +4,10 @@ from stouputils.lazy import ALWAYS_LAZY
 __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
-# TextComponent is beet's, but every helper here takes or returns one, so it stays part of the
-# flat namespace rather than forcing callers to reach into beet.core.utils for the annotation.
+# TextComponent is beet's, re-exported because every helper here takes or returns one
 from beet.core.utils import TextComponent as TextComponent
 
-# Star imports keep this package a drop-in replacement for the former text_component.py module:
-# every name it used to expose stays reachable from `core.utils.text_component`.
+# Every name these modules expose stays reachable from `core.utils.text_component`
 from .convert import (
 	item_id_to_name as item_id_to_name,
 	item_id_to_text_component as item_id_to_text_component,
@@ -22,3 +20,4 @@ from .scan import (
 	find_enclosing_object as find_enclosing_object,
 	iter_data_text_files as iter_data_text_files,
 )
+

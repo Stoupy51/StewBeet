@@ -24,7 +24,7 @@ def validate_credentials(credentials: dict[str, str]) -> str:
 	""" Get and validate Modrinth credentials
 
 	Args:
-		credentials (dict[str, str]): Credentials for the Modrinth API
+		credentials: Credentials for the Modrinth API
 	Returns:
 		str: API key for Modrinth
 	"""
@@ -39,7 +39,7 @@ def validate_config(modrinth_config: JsonDict) -> tuple[str, str, str, str, str,
 	""" Validate Modrinth configuration
 
 	Args:
-		modrinth_config (JsonDict): Configuration for the Modrinth project
+		modrinth_config: Configuration for the Modrinth project
 	Returns:
 		str: Project name on Modrinth
 		str: Version of the project
@@ -83,8 +83,8 @@ def get_project(slug: str, headers: dict[str, str]) -> dict[str, str]:
 	""" Get project from Modrinth
 
 	Args:
-		slug (str): Project slug/namespace
-		headers (dict[str, str]): Headers for Modrinth API requests
+		slug:    Project slug/namespace
+		headers: Headers for Modrinth API requests
 	Returns:
 		dict: Project data
 	"""
@@ -97,10 +97,10 @@ def update_project_description(slug: str, description: str, summary: str, header
 	""" Update project description and summary
 
 	Args:
-		slug (str): Project slug/namespace
-		description (str): Project description in Markdown
-		summary (str): Project summary
-		headers (dict[str, str]): Headers for Modrinth API requests
+		slug:        Project slug/namespace
+		description: Project description in Markdown
+		summary:     Project summary
+		headers:     Headers for Modrinth API requests
 	"""
 	stp.progress("Updating project description")
 	update_response = requests.patch(
@@ -114,9 +114,9 @@ def handle_existing_version(slug: str, version: str, headers: dict[str, str]) ->
 	""" Check and handle existing version
 
 	Args:
-		slug (str): Project slug/namespace
-		version (str): Version to check
-		headers (dict[str, str]): Headers for Modrinth API requests
+		slug:    Project slug/namespace
+		version: Version to check
+		headers: Headers for Modrinth API requests
 	Returns:
 		bool: True if we should continue, False otherwise
 	"""
@@ -138,8 +138,8 @@ def generate_fabric_metadata(mod_id: str, metadata: JsonDict) -> str:
 	""" Generate Fabric mod metadata JSON
 
 	Args:
-		mod_id (str): Mod ID
-		metadata (dict): Mod metadata
+		mod_id:   Mod ID
+		metadata: Mod metadata
 	Returns:
 		str: Fabric mod.json content
 	"""
@@ -168,9 +168,9 @@ def generate_forge_metadata(mod_id: str, metadata: JsonDict, is_neoforge: bool =
 	""" Generate Forge/NeoForge mod metadata TOML
 
 	Args:
-		mod_id (str): Mod ID
-		metadata (dict): Mod metadata
-		is_neoforge (bool): Whether this is for NeoForge (uses javafml) or Forge (uses lowcodefml)
+		mod_id:      Mod ID
+		metadata:    Mod metadata
+		is_neoforge: Whether this is for NeoForge (uses javafml) or Forge (uses lowcodefml)
 	Returns:
 		str: mods.toml content
 	"""
@@ -206,8 +206,8 @@ def generate_quilt_metadata(mod_id: str, metadata: JsonDict) -> str:
 	""" Generate Quilt mod metadata JSON
 
 	Args:
-		mod_id (str): Mod ID
-		metadata (dict): Mod metadata
+		mod_id:   Mod ID
+		metadata: Mod metadata
 	Returns:
 		str: quilt.mod.json content
 	"""
@@ -258,11 +258,11 @@ def convert_datapack_to_mod(
 	""" Convert a datapack ZIP to a mod JAR with proper metadata files
 
 	Args:
-		datapack_path (str): Path to the datapack ZIP file
-		output_path (str): Path where to save the mod JAR file
-		metadata (dict): Mod metadata (id, name, version, description, authors, etc.)
-		platforms (list[str]): List of platforms (fabric, forge, neoforge, quilt)
-		resource_pack_path (str): Optional path to the resource pack ZIP file
+		datapack_path:      Path to the datapack ZIP file
+		output_path:        Path where to save the mod JAR file
+		metadata:           Mod metadata (id, name, version, description, authors, etc.)
+		platforms:          List of platforms (fabric, forge, neoforge, quilt)
+		resource_pack_path: Optional path to the resource pack ZIP file
 	"""
 	# Create a new ZIP/JAR file with datapack + resource pack content + mod metadata
 	with zipfile.ZipFile(output_path, 'w', zipfile.ZIP_DEFLATED) as mod_zip:
@@ -304,10 +304,10 @@ def get_file_parts(project_name: str, build_folder: str, modrinth_config: JsonDi
 	""" Get file parts to upload
 
 	Args:
-		project_name (str): Name of the project
-		build_folder (str): Path to build folder
-		modrinth_config (dict): Modrinth configuration
-		project_data (dict): Optional project data from Modrinth API
+		project_name:    Name of the project
+		build_folder:    Path to build folder
+		modrinth_config: Modrinth configuration
+		project_data:    Optional project data from Modrinth API
 	Returns:
 		list[str]: List of file paths to upload
 	"""
@@ -367,9 +367,9 @@ def get_file_parts(project_name: str, build_folder: str, modrinth_config: JsonDi
 				# Use existing project data to fill missing metadata
 				if not base_metadata.get("description") and project_data.get("description"):
 					base_metadata["description"] = project_data["description"]
-				if not base_metadata.get("license") or base_metadata["license"] == "All Rights Reserved":
-					if project_data.get("license") and project_data["license"].get("id"):
-						base_metadata["license"] = project_data["license"]["id"]
+				license_is_placeholder: bool = not base_metadata.get("license") or base_metadata["license"] == "All Rights Reserved"
+				if license_is_placeholder and project_data.get("license") and project_data["license"].get("id"):
+					base_metadata["license"] = project_data["license"]["id"]
 				if not base_metadata.get("homepage") and project_data.get("project_url"):
 					base_metadata["homepage"] = project_data["project_url"]
 				if not base_metadata.get("sources") and project_data.get("source_url"):
@@ -416,15 +416,15 @@ def upload_version(
 	""" Upload new version
 
 	Args:
-		project_id		(str):				Modrinth project ID
-		project_name	(str):				Name of the project
-		version			(str):				Version number
-		version_type	(str):				Type of version (release, beta, alpha)
-		changelog		(str):				Changelog text
-		file_parts		(list[str]):		List of files to upload
-		headers			(dict[str, str]):	Headers for Modrinth API requests
-		dependencies	(list[str]):		List of dependencies
-		loaders			(list[str]):		List of loaders (datapack, fabric, forge, etc.)
+		project_id:   Modrinth project ID
+		project_name: Name of the project
+		version:      Version number
+		version_type: Type of version (release, beta, alpha)
+		changelog:    Changelog text
+		file_parts:   List of files to upload
+		headers:      Headers for Modrinth API requests
+		dependencies: List of dependencies
+		loaders:      List of loaders (datapack, fabric, forge, etc.)
 	Returns:
 		dict: Upload response data
 	"""
@@ -470,9 +470,9 @@ def set_resource_pack_required(version_id: str, resource_pack_hash: str, headers
 	""" Set resource pack as required
 
 	Args:
-		version_id (str): ID of the version
-		resource_pack_hash (str): SHA1 hash of resource pack
-		headers (dict[str, str]): Headers for Modrinth API requests
+		version_id:         ID of the version
+		resource_pack_hash: SHA1 hash of resource pack
+		headers:            Headers for Modrinth API requests
 	"""
 	stp.progress("Setting resource pack as required")
 	version_response = requests.patch(
@@ -488,9 +488,9 @@ def upload_to_modrinth(credentials: dict[str, str], modrinth_config: JsonDict, c
 	""" Upload the project to Modrinth using the credentials and the configuration
 
 	Args:
-		credentials		(dict[str, str]):	Credentials for the Modrinth API
-		modrinth_config	(dict):				Configuration for the Modrinth project
-		changelog		(str):				Changelog text for the release
+		credentials:     Credentials for the Modrinth API
+		modrinth_config: Configuration for the Modrinth project
+		changelog:       Changelog text for the release
 	"""
 	api_key: str = validate_credentials(credentials)
 	headers: dict[str, str] = {"Authorization": api_key}
@@ -579,5 +579,4 @@ def upload_to_modrinth(credentials: dict[str, str], modrinth_config: JsonDict, c
 			set_resource_pack_required(json_response["id"], resource_pack_hash, headers)
 
 	stp.info(f"Project {project_name} updated on Modrinth!")
-
 

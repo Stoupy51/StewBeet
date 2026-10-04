@@ -5,8 +5,7 @@ from stouputils.lazy import ALWAYS_LAZY
 __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
-# JsonDict and the two classes below live outside the blocks sync_api.py owns, since a star import
-# only ever reached them by accident. They stay listed here so the flat namespace keeps exposing them.
+# JsonDict, RecipeList and StMapping are listed by hand, outside the blocks sync_api.py generates, to keep them in the flat namespace
 from stouputils.typing import JsonDict as JsonDict
 
 from .__memory__ import (

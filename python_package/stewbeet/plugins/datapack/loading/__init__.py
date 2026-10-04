@@ -23,7 +23,7 @@ def beet_default(ctx: Context):
 	Requires plugin `stewbeet.plugins.finalyze.dependencies` later in the pipeline to complete.
 
 	Args:
-		ctx (Context): The beet context.
+		ctx: The beet context.
 	"""
 	# Assertions
 	Mem.ctx = ctx
@@ -65,10 +65,10 @@ execute unless score #{ctx.project_id}.loaded load.status matches 1 run function
 """)
 
 	# Confirm load
-	items_storage = ""	# Storage representation of every item in the definitions
+	items_storage = ""  # Storage representation of every item in the definitions
 	if Mem.definitions and ctx.meta.get("stewbeet", {}).get("items_storage", True):
 		items_storage += f"\n# Items storage\ndata modify storage {ctx.project_id}:items all set value {{}}\n"
-		for item in Mem.definitions.keys():
+		for item in Mem.definitions:
 			obj = Item.from_id(item)
 
 			# Prepare storage data with item_model component in first
@@ -77,10 +77,7 @@ execute unless score #{ctx.project_id}.loaded load.status matches 1 run function
 
 				# Add 'minecraft:' if missing
 				if ":" not in k:
-					if k.startswith("!"):
-						k = f"!minecraft:{k[1:]}"
-					else:
-						k = f"minecraft:{k}"
+					k = f"!minecraft:{k[1:]}" if k.startswith("!") else f"minecraft:{k}"
 
 				# Copy component
 				mc_data["components"][k] = v

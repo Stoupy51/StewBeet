@@ -15,3 +15,4 @@ from beet import Context
 def beet_default(ctx: Context) -> Iterator[None]:
 	from .__init__ import beet_default
 	yield from stp.silent(beet_default)(ctx)
+

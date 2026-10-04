@@ -24,7 +24,7 @@ def beet_default(ctx: Context) -> None:
 	and comparing texture references with the available texture files.
 
 	Args:
-		ctx (Context): The beet context.
+		ctx: The beet context.
 	"""
 	# Assertions
 	stewbeet: JsonDict = ctx.meta.get("stewbeet", {})
@@ -36,9 +36,7 @@ def beet_default(ctx: Context) -> None:
 	textures: set[str] = {stp.relative_path(str(p), textures_folder) for p in Path(textures_folder).rglob("*.png")}
 
 	# 2) For each texture, check if any of the ctx.assets.textures matches the texture filename.
-	# Textures consumed as source files by generators (e.g. manual book_texture / TexturePage
-	# backgrounds) are re-encoded under new names, so they never appear in ctx.assets.textures:
-	# they are recorded in Mem.used_textures and skipped here.
+	# Generator sources (manual book_texture, TexturePage backgrounds) are re-encoded under new names, so Mem.used_textures skips them.
 	consumed: set[str] = {stp.clean_path(p) for p in Mem.used_textures}
 	unused_paths: set[str] = set()
 	for path in textures:

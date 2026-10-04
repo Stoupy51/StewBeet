@@ -1,10 +1,10 @@
 """Dialog generation (the only manual output in v2).
 
-Each page already produces its own dialog body (see :mod:`~.pages.base`), so the
-:class:`DialogEmitter` only wraps that body with the title (item sprite or text, taken from
-the page) and the prev/home/next navigation row. There is no book->dialog conversion. The
-page->item mapping comes from :class:`~.manual.Manual` pages. The manual is reachable through
-the vanilla ``quick_actions`` dialog tag.
+Each page already produces its own dialog body (see :mod:`~.pages.base`),
+so the :class:`DialogEmitter` only wraps that body with the title (item sprite or text,
+taken from the page) and the prev/home/next navigation row. There is no book->dialog conversion.
+The page->item mapping comes from :class:`~.manual.Manual` pages. The manual is reachable through the
+vanilla ``quick_actions`` dialog tag.
 """
 
 # Imports
@@ -68,7 +68,7 @@ class DialogEmitter:
 		show their icons when that plugin is not in the pipeline.
 
 		Args:
-			item (str): Item id, or the reserved ``ICON`` standing for the project logo.
+			item: Item id, or the reserved ``ICON`` standing for the project logo.
 		Returns:
 			JsonDict | None: A glyph text component, or None to fall back to a sprite.
 		"""
@@ -98,9 +98,8 @@ class DialogEmitter:
 	def get_atlas_title(self, item: str) -> TextComponent:
 		""" Build a dialog title with the item's icon if one is available, else its name.
 
-		A render glyph is preferred: it keeps the full resolution of the iso render instead of the
-		16x16 the sprite atlas forces. An animated texture still goes through a sprite, since a
-		baked glyph would freeze it on its first frame.
+		A render glyph is preferred: it keeps the full resolution of the iso render instead of the 16x16 the sprite atlas forces.
+		An animated texture still goes through a sprite, since a baked glyph would freeze it on its first frame.
 		"""
 		ns: str = self.manual.config.project_id
 		model = Mem.ctx.assets[ns].models.get(f"item/{item}")
@@ -161,7 +160,7 @@ class DialogEmitter:
 			def count_breaklines(element: TextComponent) -> int:
 				if isinstance(element, dict):
 					return count_breaklines(element.get("text", ""))
-				elif isinstance(element, list):
+				if isinstance(element, list):
 					return sum(count_breaklines(sub) for sub in element)
 				return str(element).count("\n")
 			nb_breaklines_to_add: int = max(0, 22 - count_breaklines(new_content))
@@ -169,8 +168,7 @@ class DialogEmitter:
 				new_content.append("\n" * nb_breaklines_to_add)
 
 			# Top navigation row: prev (left) | home (middle, -> first page) | next (right).
-			# The home glyph shares NONE_FONT's advance so the prev/next layout stays put; it is
-			# drawn on the first row and an invisible spacer on the second (extends the hit area).
+			# The home glyph shares NONE_FONT's advance to keep the layout, and a spacer on the second row extends its hit area.
 			home_event: JsonDict = {
 				"click_event": {"action": "show_dialog", "dialog": f"{ns}:manual/page_1"},
 				"hover_event": {"action": "show_text", "value": [{"text": "Go to first page"}]},

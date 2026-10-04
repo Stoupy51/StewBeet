@@ -1,8 +1,7 @@
 """Recipe rendering package.
 
-Re-exports the dispatcher and the public registry surface. Existing call sites keep importing
-from ``..recipes``. The built-in type renderers load on first lookup rather than on import, see
-:func:`~.registry.load_builtin_renderers`.
+Re-exports the dispatcher and the public registry surface. Existing call sites keep importing from ``..recipes``.
+The built-in type renderers load on first lookup rather than on import, see :func:`~.registry.load_builtin_renderers`.
 """
 
 # Lazy imports (PEP 810), ignored before Python 3.15
@@ -27,3 +26,4 @@ __all__ = [
 	"register_craft_renderer",
 	"types",
 ]
+
