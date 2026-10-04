@@ -9,7 +9,7 @@ which is what CI uses.
 """
 # Imports
 import ast
-import importlib
+import importlib.util
 import re
 import sys
 from dataclasses import dataclass, field
@@ -161,7 +161,7 @@ class Analyzer:
 			return EXTERNAL_CACHE[fqn]
 		try:
 			spec: importlib.machinery.ModuleSpec | None = importlib.util.find_spec(fqn)
-		except (ImportError, AttributeError, ValueError):
+		except (ImportError, ValueError):
 			spec = None
 		found: Module | None = None
 		if spec is not None and spec.origin and spec.origin.endswith(".py"):
