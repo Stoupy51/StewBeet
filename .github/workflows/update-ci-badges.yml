@@ -7,7 +7,6 @@ on:
       - Tests 3.14
       - Tests 3.14t
       - Tests 3.15
-      - Tests 3.15t
     types:
       - completed
   workflow_dispatch:
@@ -51,7 +50,6 @@ jobs:
               "Tests 3.14",
               "Tests 3.14t",
               "Tests 3.15",
-              "Tests 3.15t",
           ]
 
           def gh_get(url):
