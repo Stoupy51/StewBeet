@@ -44,23 +44,17 @@ def get_pixels(image: Image.Image) -> list[Pixel]:
 
 
 def get_dominant_color(image: Image.Image) -> tuple[int, int, int] | None:
-	""" Extract the dominant color of an image, ignoring transparent, gray and dark pixels.
+	""" Dominant color of an image ignoring transparent, gray and dark pixels, None when no colored pixel is left.
 
-	The remaining pixels are grouped by hue and weighted by ``saturation * value``, so a small vivid
-	area wins over a large washed-out one.
+	The remaining pixels are grouped by hue and weighted by ``saturation * value``, so a small vivid area beats a large washed-out one.
+	The result is the average color of the heaviest hue group.
 
-	Args:
-		image	(Image.Image):	Image to analyze, usually the project ``pack.png``.
-	Returns:
-		tuple[int, int, int] | None: Average color of the heaviest hue group, or None when the image has no colored pixel.
-
-	Examples:
-		>>> get_dominant_color(Image.new("RGBA", (4, 4), (30, 90, 200, 255)))
-		(30, 90, 200)
-		>>> get_dominant_color(Image.new("RGBA", (4, 4), (128, 128, 128, 255))) is None  # Gray
-		True
-		>>> get_dominant_color(Image.new("RGBA", (4, 4), (200, 30, 30, 0))) is None  # Transparent
-		True
+	>>> get_dominant_color(Image.new("RGBA", (4, 4), (30, 90, 200, 255)))
+	(30, 90, 200)
+	>>> get_dominant_color(Image.new("RGBA", (4, 4), (128, 128, 128, 255))) is None  # Gray
+	True
+	>>> get_dominant_color(Image.new("RGBA", (4, 4), (200, 30, 30, 0))) is None  # Transparent
+	True
 	"""
 	weights: dict[int, float] = {}
 	sums: dict[int, tuple[float, float, float]] = {}
@@ -86,21 +80,17 @@ def get_dominant_color(image: Image.Image) -> tuple[int, int, int] | None:
 def recolor_image(image: Image.Image, target: tuple[int, int, int]) -> Image.Image:
 	""" Recolor an image so that its average opaque pixel becomes ``target``.
 
-	Hues are rotated by a constant offset while saturation and brightness are scaled, so the gradients
-	of the source image survive instead of being flattened to a single flat color. Alpha is untouched.
+	Hues are rotated by a constant offset while saturation and brightness are scaled,
+	so the gradients of the source image survive instead of being flattened to a single flat color. Alpha is untouched.
 
-	Args:
-		image	(Image.Image):				Image to recolor.
-		target	(tuple[int, int, int]):		RGB color the average opaque pixel should end up at.
 	Returns:
-		Image.Image: A new RGBA image using the target color range.
+		A new RGBA image using the target color range.
 
-	Examples:
-		>>> single = Image.new("RGBA", (2, 2), (255, 162, 20, 255))
-		>>> recolor_image(single, (20, 100, 255)).getpixel((0, 0))  # A single color lands on the target
-		(20, 100, 255, 255)
-		>>> recolor_image(Image.new("RGBA", (2, 2), (0, 0, 0, 0)), (20, 100, 255)).getpixel((0, 0))
-		(0, 0, 0, 0)
+	>>> single = Image.new("RGBA", (2, 2), (255, 162, 20, 255))
+	>>> recolor_image(single, (20, 100, 255)).getpixel((0, 0))  # A single color lands on the target
+	(20, 100, 255, 255)
+	>>> recolor_image(Image.new("RGBA", (2, 2), (0, 0, 0, 0)), (20, 100, 255)).getpixel((0, 0))
+	(0, 0, 0, 0)
 	"""
 	pixels: list[Pixel] = get_pixels(image)
 	counts: Counter[Pixel] = Counter(pixel for pixel in pixels if pixel[3] > 0)
@@ -140,26 +130,16 @@ def recolor_image(image: Image.Image, target: tuple[int, int, int]) -> Image.Ima
 def parse_color(raw: object, logo_path: str | None = None, config_key: str = "color") -> tuple[int, int, int] | None:
 	""" Resolve a user-supplied color value into the RGB an atlas should be recolored to.
 
-	Accepted values are ``"auto"`` (derive it from the logo), any color Pillow understands
-	(``"#55FFFF"``, ``"gold"``, ``[85, 255, 255]``), or a falsy value / ``"none"`` to keep the
-	packaged colors untouched.
+	Accepted values are ``"auto"`` (derive it from the logo), any color Pillow understands (``"#55FFFF"``, ``"gold"``,
+	``[85, 255, 255]``), or a falsy value / ``"none"`` to keep the packaged colors untouched.
 
 	Args:
-		raw			(object):		Raw configuration value.
-		logo_path	(str | None):	Path to the logo used by the ``"auto"`` mode.
-		config_key	(str):			Name shown in the warning emitted for an unparsable color.
-	Returns:
-		tuple[int, int, int] | None: Target color, or None when no recolor should happen.
-
-	Examples:
-		>>> parse_color([85, 255, 255])
-		(85, 255, 255)
-		>>> parse_color("gold")
-		(255, 215, 0)
-		>>> parse_color("none") is None
-		True
-		>>> parse_color("auto") is None  # "auto" without a logo has nothing to derive from
-		True
+		logo_path:  Path to the logo used by the ``"auto"`` mode.
+		config_key: Name shown in the warning emitted for an unparsable color.
+	>>> parse_color("gold")
+	(255, 215, 0)
+	>>> parse_color("auto") is None  # "auto" without a logo has nothing to derive from
+	True
 	"""
 	# Explicit sequence of channels
 	if isinstance(raw, list | tuple) and len(raw) >= 3:  # pyright: ignore[reportUnknownArgumentType]
@@ -183,4 +163,14 @@ def parse_color(raw: object, logo_path: str | None = None, config_key: str = "co
 		return None
 	with Image.open(logo_path) as logo:
 		return get_dominant_color(logo)
+
+
+__test__: dict[str, str] = {
+	"parse_color": """
+	>>> parse_color([85, 255, 255])
+	(85, 255, 255)
+	>>> parse_color("none") is None
+	True
+	""",
+}
 

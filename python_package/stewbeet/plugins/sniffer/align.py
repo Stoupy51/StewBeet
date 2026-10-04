@@ -17,11 +17,10 @@ from .sidecar import final_lines_of
 def flatten(chunks: Sequence[WriteChunk]) -> tuple[list[str], list[SourceOrigin | None]]:
 	""" Expand recorded chunks into parallel line and origin lists.
 
-	A chunk written from a string literal has its Nth line on the literal's Nth line, so the origin
-	advances with it. An origin that is not a literal is a single point instead: a `Block(` call a
-	plugin generated from, or a write whose content argument was a variable. Advancing there walks
-	down the Python file line by line and lands on whatever happens to follow the call, so `exact`
-	decides which of the two applies.
+	A chunk written from a string literal has its Nth line on the literal's Nth line, so the origin advances with it.
+	An origin that is not a literal is a single point instead: a `Block(` call a plugin generated from,
+	or a write whose content argument was a variable. Advancing there walks down the Python file line by line and lands on whatever
+	happens to follow the call, so `exact` decides which of the two applies.
 	"""
 	lines: list[str] = []
 	origins: list[SourceOrigin | None] = []
@@ -41,40 +40,20 @@ def flatten(chunks: Sequence[WriteChunk]) -> tuple[list[str], list[SourceOrigin 
 
 
 def align(chunks: Sequence[WriteChunk], text: str) -> dict[int, SourceOrigin]:
-	""" Map each line of a function's final text back to where it was authored.
+	""" Map each line of a function's final text back to where it was authored, for mapped lines only.
 
-	Recorded chunks cannot be trusted positionally, because StewBeet rewrites functions after they
-	are written: `auto.headers` prepends a header block to every one of them, and `auto.text_renders`
-	substitutes inside lines. So the two sequences are reconciled instead of assumed to match.
-
-	`equal` and `replace` opcodes keep their mapping, `insert` opcodes stay unmapped because those
-	generated lines have no recorded counterpart, and `delete` opcodes are dropped. This is
-	transformation-agnostic: a future plugin that rewrites functions needs no change here.
-
-	The lines the two sequences share at each end are matched off before `difflib` sees anything.
-	`find_longest_match` is quadratic in how often a line repeats, and a pack of near-identical commands is its worst case.
-	Trimming hands it only what a rewrite actually changed.
-	For a function that only the header plugin rewrote, that is nothing at all.
+	StewBeet rewrites functions after they are written, so the recorded chunks are reconciled with difflib:
+	`equal` and `replace` opcodes keep their mapping, `insert` opcodes stay unmapped and `delete` opcodes are dropped.
+	The lines both sequences share at each end are matched off first, since `find_longest_match` is quadratic in repeated lines.
 
 	Args:
-		chunks (Sequence[WriteChunk]): Recorded contributions, in write order.
-		text   (str):                  The function's final text.
-	Returns:
-		dict[int, SourceOrigin]: Generated line index to origin, for mapped lines only.
-	Examples:
-		A header prepended after the fact leaves its own lines unmapped and shifts the rest:
+		chunks: Recorded contributions, in write order.
 
-		>>> origin = SourceOrigin(file="/p/x.py", line=10, column=0)
-		>>> chunks = [WriteChunk(lines=("say a", "say b"), origin=origin)]
-		>>> mapped = align(chunks, "#> ns:demo\\nsay a\\nsay b\\n")
-		>>> sorted(mapped), [mapped[k].line for k in sorted(mapped)]
-		([1, 2], [10, 11])
-
-		A line rewritten in place keeps its mapping, because difflib reports it as `replace`:
-
-		>>> mapped = align(chunks, "say a\\nsay B RENDERED\\n")
-		>>> sorted(mapped), [mapped[k].line for k in sorted(mapped)]
-		([0, 1], [10, 11])
+	>>> origin = SourceOrigin(file="/p/x.py", line=10, column=0)
+	>>> chunks = [WriteChunk(lines=("say a", "say b"), origin=origin)]
+	>>> mapped = align(chunks, "#> ns:demo\\nsay a\\nsay b\\n")  # A prepended header stays unmapped
+	>>> sorted(mapped), [mapped[k].line for k in sorted(mapped)]
+	([1, 2], [10, 11])
 	"""
 	recorded, origins = flatten(chunks)
 	final: list[str] = final_lines_of(text)
@@ -92,11 +71,8 @@ def align(chunks: Sequence[WriteChunk], text: str) -> dict[int, SourceOrigin]:
 	if not middle_recorded or not middle_final:
 		return mapped
 
-	# `find_longest_match` walks every occurrence of a line each time it meets that line.
-	# An element repeating a thousand times is then quadratic, and a blank line is that element.
-	# Calling blanks junk also aligns more commands.
-	# difflib then anchors on the commands themselves instead of on whichever blank line came first.
-	# autojunk stays off: it does the same to a command repeated across a long function, and those are the lines worth anchoring on.
+	# Blank lines are junk: `find_longest_match` is quadratic in a repeated line, and commands make better anchors anyway.
+	# autojunk stays off, since it would also drop a command repeated across a long function, the lines worth anchoring on.
 	matcher = SequenceMatcher(is_blank, middle_recorded, middle_final, autojunk=False)
 	for tag, i1, i2, j1, j2 in matcher.get_opcodes():
 		if tag in ("equal", "replace"):
@@ -160,4 +136,17 @@ def common_tail(a: Sequence[str], b: Sequence[str], limit: int) -> int:
 	while index < limit and a[len(a) - 1 - index] == b[len(b) - 1 - index]:
 		index += 1
 	return index
+
+
+__test__: dict[str, str] = {
+	"align": """
+	A line rewritten in place keeps its mapping, because difflib reports it as `replace`:
+
+	>>> origin = SourceOrigin(file="/p/x.py", line=10, column=0)
+	>>> chunks = [WriteChunk(lines=("say a", "say b"), origin=origin)]
+	>>> mapped = align(chunks, "say a\\nsay B RENDERED\\n")
+	>>> sorted(mapped), [mapped[k].line for k in sorted(mapped)]
+	([0, 1], [10, 11])
+	""",
+}
 

@@ -34,6 +34,7 @@ class CustomOreGeneration(StMapping):
 	Conditions are execute subcommands starting with "if " or "unless ", all of which must hold.
 	`vein_conditions` are checked once at the start of the vein and cancel all of it, which suits biomes.
 	`block_conditions` are checked at every block of the vein, which suits neighbouring blocks.
+
 	```py
 	CustomOreGeneration(
 		dimensions=["minecraft:overworld"],
@@ -42,7 +43,7 @@ class CustomOreGeneration(StMapping):
 		block_conditions=["if block ~ ~1 ~ #minecraft:terracotta"],
 	)
 	```
-	"""
+	"""  # stp: ignore[long-docstring]
 	OVERWORLD_REPLACEABLES: ClassVar[tuple[str, ...]] = (
 		"#minecraft:base_stone_overworld", "#minecraft:substrate_overworld", "#minecraft:sand", "#minecraft:terracotta",
 		"#minecraft:iron_ores", "#minecraft:copper_ores", "#minecraft:snow", "minecraft:gravel", "minecraft:suspicious_gravel",

@@ -33,8 +33,8 @@ def config_path(root: str) -> str:
 def read_config(path: str) -> JsonDict | None:
 	""" The config as it stands, `{}` when there is no file, None when it is not readable JSON.
 
-	A file this plugin cannot parse is a file it must not overwrite: it is the project's, and a
-	comment or a syntax error in it is not a reason to lose the rest.
+	A file this plugin cannot parse is a file it must not overwrite: it is the project's,
+	and a comment or a syntax error in it is not a reason to lose the rest.
 	"""
 	if not os.path.isfile(path):
 		return {}
@@ -65,8 +65,7 @@ def exclusions_of(config: JsonDict) -> list[str]:
 def with_exclusions(config: JsonDict, add: list[str], drop: list[str]) -> JsonDict | None:
 	""" The same config with `env.exclude` brought up to date, or None when it already was.
 
-	Everything outside `env.exclude` is carried through untouched, `env`'s own neighbours included:
-	dependencies and feature switches are the project's business, not this plugin's.
+	Everything outside `env.exclude`, `env`'s own neighbours included, is the project's business and carried through untouched.
 
 	Args:
 		add:  Patterns to append, in order, after the ones already there.
@@ -78,8 +77,6 @@ def with_exclusions(config: JsonDict, add: list[str], drop: list[str]) -> JsonDi
 	True
 	>>> with_exclusions({"env": {"exclude": ["a.mcfunction", "keep/**"]}}, [], ["a.mcfunction"])
 	{'env': {'exclude': ['keep/**']}}
-	>>> with_exclusions({"env": {"dependencies": ["@vanilla-mcdoc"]}}, ["a.mcfunction"], [])
-	{'env': {'dependencies': ['@vanilla-mcdoc'], 'exclude': ['a.mcfunction']}}
 	"""
 	current: list[str] = exclusions_of(config)
 	kept: list[str] = [pattern for pattern in current if pattern not in drop]
@@ -94,9 +91,18 @@ def with_exclusions(config: JsonDict, add: list[str], drop: list[str]) -> JsonDi
 def write_config(path: str, config: JsonDict) -> None:
 	""" Write the config back.
 
-	Two-space indent and a final newline, byte for byte what the editor side writes, so a project
-	where both have run does not see the file rewritten by whichever touched it last.
+	Two-space indent and a final newline, byte for byte what the editor side writes,
+	so a project where both have run does not see the file rewritten by whichever touched it last.
 	"""
 	with open(path, "w", encoding="utf-8", newline="\n") as file:
 		json.dump(config, file, indent=2)
 		file.write("\n")
+
+
+__test__: dict[str, str] = {
+	"with_exclusions": """
+	>>> with_exclusions({"env": {"dependencies": ["@vanilla-mcdoc"]}}, ["a.mcfunction"], [])
+	{'env': {'dependencies': ['@vanilla-mcdoc'], 'exclude': ['a.mcfunction']}}
+	""",
+}
+

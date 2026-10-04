@@ -1,3 +1,4 @@
+
 # Test: stewbeet.plugins.sniffer
 # Verifies that every generated function gets a Source Map v3 sidecar pointing back at the
 # write_function call that produced it, that no mapping ever names a library file, and that the
@@ -36,3 +37,4 @@ pipeline:
 meta:
     stewbeet:
         source_lore: "auto"
+

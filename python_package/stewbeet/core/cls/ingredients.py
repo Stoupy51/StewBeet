@@ -42,31 +42,18 @@ class Ingr(dict[str, Any]):
 	__slots__ = ()
 
 	def __init__(self, id: str | JsonDict, ns: str | None = None, count: int | None = None, **kwargs: Any) -> None:
-		""" Get the identity of the ingredient from its id for custom crafts
-
-		Aliases: Ingredient(), IngrRepr()
+		""" Identity of an ingredient for custom crafts, from its id. Aliased as Ingredient() and IngrRepr().
 
 		Args:
-			id		(str):		The id of the ingredient, ex: adamantium_fragment
-			ns		(str|None):	The namespace of the ingredient, ex: iyc (default: current project id).
-				Optional if 'id' is a vanilla item.
-			count	(int|None):	The count of the ingredient (optional).
-				Only used when this ingredient is a result item, or by a special recipe type that supports counts.
-		Returns:
-			str: The identity of the ingredient for custom crafts,
-				ex: {"components":{"minecraft:custom_data":{"iyc":{"adamantium_fragment":True}}}}
-				ex: {"item": "minecraft:stick"}
-		Examples:
-			>>> Ingr("minecraft:stick")
-			{'item': 'minecraft:stick'}
-			>>> Ingr("adamantium_fragment", ns="iyc")
-			{'components': {'minecraft:custom_data': {'iyc': {'adamantium_fragment': True}}}}
-			>>> Ingr("adamantium_fragment", ns="iyc", count=3)
-			{'components': {'minecraft:custom_data': {'iyc': {'adamantium_fragment': True}}}, 'count': 3}
-			>>> Ingr("diamond")
-			{'components': {'minecraft:custom_data': {'your_namespace': {'diamond': True}}}}
-			>>> print(Ingr("diamond"))
-			{'components': {'minecraft:custom_data': {'your_namespace': {'diamond': True}}}}
+			ns:    The namespace of the ingredient, ex: iyc, the current project id by default and unused for a vanilla item.
+			count: Only used for a result item, or by a special recipe type that supports counts.
+
+		>>> Ingr("minecraft:stick")
+		{'item': 'minecraft:stick'}
+		>>> Ingr("adamantium_fragment", ns="iyc")
+		{'components': {'minecraft:custom_data': {'iyc': {'adamantium_fragment': True}}}}
+		>>> Ingr("adamantium_fragment", ns="iyc", count=3)
+		{'components': {'minecraft:custom_data': {'iyc': {'adamantium_fragment': True}}}, 'count': 3}
 		"""
 		# Copy from another dict
 		if isinstance(id, dict):
@@ -89,19 +76,11 @@ class Ingr(dict[str, Any]):
 
 	@stp.simple_cache(method="str")
 	def item_to_id(self) -> Ingr:
-		""" Replace the "item" key by "id" in an item ingredient representation
-
-		Args:
-			ingr (dict): The item ingredient, ex: {"item": "minecraft:stick"}
-		Returns:
-			Ingr: The item ingredient representation, ex: {"id": "minecraft:stick"}
+		""" Replace the "item" key by "id" in an item ingredient representation.
 
 		>>> i = Ingr("minecraft:stick")
 		>>> (i, i.item_to_id())
 		({'item': 'minecraft:stick'}, {'id': 'minecraft:stick'})
-
-		>>> i["Slot"] = 0
-
 		>>> j = Ingr("adamantium_fragment", ns="iyc")
 		>>> j == j.item_to_id()
 		True
@@ -121,7 +100,7 @@ class Ingr(dict[str, Any]):
 		""" Get the id from an ingredient dict
 
 		Args:
-			add_namespace (bool): Whether to add the namespace to the id
+			add_namespace: Whether to add the namespace to the id
 		Returns:
 			str: The id of the ingredient, ex: "minecraft:stick" or "iyc:adamantium_ingot"
 		"""
@@ -129,7 +108,7 @@ class Ingr(dict[str, Any]):
 			if self.get(k):
 				if not add_namespace and ":" in self[k]:
 					return self[k].split(":")[1]
-				elif add_namespace and ":" not in self[k]:
+				if add_namespace and ":" not in self[k]:
 					return "minecraft:" + self[k]
 				return self[k]
 
@@ -159,7 +138,7 @@ class Ingr(dict[str, Any]):
 		""" Get the id of the vanilla item from an ingredient dict
 
 		Args:
-			add_namespace (bool): Whether to add the namespace to the id
+			add_namespace: Whether to add the namespace to the id
 		Returns:
 			str: The id of the vanilla item, ex: "minecraft:stick"
 		"""
@@ -169,25 +148,23 @@ class Ingr(dict[str, Any]):
 			if add_namespace:
 				return Item.from_id(ingr_id).base_item
 			return Item.from_id(ingr_id).base_item.split(":")[1]
-		elif ns == "minecraft":
+		if ns == "minecraft":
 			if add_namespace:
 				return f"{ns}:{ingr_id}"
 			return ingr_id
-		else:
-			item: str = f"{ns}:{ingr_id}"
-			if Mem.external_definitions.get(item):
-				if add_namespace:
-					return Item.from_id(item).base_item
-				return Item.from_id(item).base_item.split(":")[1]
-			else:
-				stp.error(f"External item '{item}' not found in the external definitions")
+		item: str = f"{ns}:{ingr_id}"
+		if Mem.external_definitions.get(item):
+			if add_namespace:
+				return Item.from_id(item).base_item
+			return Item.from_id(item).base_item.split(":")[1]
+		stp.error(f"External item '{item}' not found in the external definitions")
 		return ""
 
 	def to_item(self, id_key: str = "id") -> Ingr:
 		""" Get the item data dict from an ingredient
 
 		Args:
-			id_key (str): The key to use for the item id, either "id" or "item" (default: "id")
+			id_key: The key to use for the item id, either "id" or "item" (default: "id")
 		Returns:
 			Ingr: The item data dict, ex: {"id": "minecraft:stick", "count": 1}
 		"""
@@ -257,7 +234,7 @@ class Ingr(dict[str, Any]):
 		""" Get the loot table for an ingredient dict, generating it when the item is external
 
 		Args:
-			result_count (int|dict): The count of the result item, can be an int or a dict for random counts
+			result_count: The count of the result item, can be an int or a dict for random counts
 				ex: 1
 				ex: {"type": "minecraft:uniform","min": 4,"max": 6}
 		Returns:
@@ -306,7 +283,7 @@ class Ingr(dict[str, Any]):
 		""" Get the ingredients from a vanilla recipe dict
 
 		Args:
-			recipe (dict): The final recipe JSON dict, ex:
+			recipe: The final recipe JSON dict, ex:
 
 			{
 				"type": "minecraft:crafting_shaped",
@@ -319,15 +296,24 @@ class Ingr(dict[str, Any]):
 		"""
 		if recipe.get("key"):
 			return list(recipe["key"].values())
-		elif recipe.get("ingredients"):
+		if recipe.get("ingredients"):
 			return recipe["ingredients"]
-		elif recipe.get("ingredient"):
+		if recipe.get("ingredient"):
 			return [recipe["ingredient"]]
-		elif recipe.get("template"):
+		if recipe.get("template"):
 			return [recipe["template"]]
-		else:
-			return []
+		return []
 
 # Type aliases
 IngrRepr = Ingredient = Ingr
+
+
+__test__: dict[str, str] = {
+	"Ingr.__init__": """
+	>>> Ingr("diamond")
+	{'components': {'minecraft:custom_data': {'your_namespace': {'diamond': True}}}}
+	>>> print(Ingr("diamond"))
+	{'components': {'minecraft:custom_data': {'your_namespace': {'diamond': True}}}}
+	""",
+}
 

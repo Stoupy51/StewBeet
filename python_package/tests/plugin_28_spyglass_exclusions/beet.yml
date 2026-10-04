@@ -1,3 +1,4 @@
+
 # Test: stewbeet.plugins.spyglass keeps Spyglass's env.exclude in step with what it cannot parse.
 #
 # Three sources, one of each kind:
@@ -38,3 +39,4 @@ pipeline:
     - "src.seed"
     - "stewbeet.plugins.spyglass"
     - "src.assertions"
+

@@ -1,8 +1,8 @@
 """ Which files may be named as a mapping source, shared by every producer.
 
-FR-010 is a validity condition rather than a quality target: a jump into `site-packages` is worse
-than no jump, so a line with no valid project origin is emitted unmapped. Both the StewBeet
-reconstruction path and the mecha AST path answer that question here, and neither owns the rule.
+FR-010 is a validity condition rather than a quality target: a jump into `site-packages` is worse than no jump,
+so a line with no valid project origin is emitted unmapped. Both the StewBeet reconstruction path and the mecha AST path
+answer that question here, and neither owns the rule.
 """
 
 # Lazy imports (PEP 810), ignored before Python 3.15
@@ -39,35 +39,16 @@ def library_roots() -> tuple[str, ...]:
 
 @cache
 def is_project_source(path: str, roots: tuple[str, ...]) -> bool:
-	""" Whether a file may be named as a mapping source.
+	""" Whether a file may be named as a mapping source: under one of `roots` and outside every installed library.
 
-	A path qualifies only when it sits under one of `roots` **and** outside every installed
-	library. The second condition is not implied by the first: StewBeet is frequently installed
-	editable from inside the very repository being built.
+	The second condition is not implied by the first, since StewBeet can be installed editable from inside the repository being built.
 
 	Args:
 		path:  Absolute path of a source file.
 		roots: Normalised absolute directories the project owns.
 
-	Anything under site-packages is out, whatever the roots say:
-
 	>>> is_project_source("/nowhere/site-packages/stewbeet/plugins/x.py", ("/nowhere",))
 	False
-
-	And so is the StewBeet package itself **even when it sits under the project root**, which is
-	exactly what an editable install from inside the repository being built looks like. A plain
-	root check passes this case and must not:
-
-	>>> import os, stewbeet
-	>>> package_dir = os.path.dirname(stewbeet.__file__)
-	>>> repo_root = os.path.dirname(package_dir)
-	>>> package_dir.startswith(repo_root)   # the library really is under the root
-	True
-	>>> roots = (os.path.normcase(repo_root),)
-	>>> is_project_source(os.path.join(package_dir, "plugins", "sniffer", "sources.py"), roots)
-	False
-	>>> is_project_source(os.path.join(repo_root, "my_pack", "link.py"), roots)
-	True
 	"""
 	normalized: str = os.path.normcase(os.path.abspath(path))
 	if f"{os.sep}site-packages{os.sep}" in normalized:
@@ -87,4 +68,22 @@ def reset_caches() -> None:
 	"""
 	library_roots.cache_clear()
 	is_project_source.cache_clear()
+
+
+__test__: dict[str, str] = {
+	"is_project_source": """
+	The StewBeet package itself is out even when it sits under the project root, as an editable install does:
+
+	>>> import os, stewbeet
+	>>> package_dir = os.path.dirname(stewbeet.__file__)
+	>>> repo_root = os.path.dirname(package_dir)
+	>>> package_dir.startswith(repo_root)   # the library really is under the root
+	True
+	>>> roots = (os.path.normcase(repo_root),)
+	>>> is_project_source(os.path.join(package_dir, "plugins", "sniffer", "sources.py"), roots)
+	False
+	>>> is_project_source(os.path.join(repo_root, "my_pack", "link.py"), roots)
+	True
+	""",
+}
 

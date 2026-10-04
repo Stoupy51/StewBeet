@@ -1,3 +1,4 @@
+
 # Test: one plugin maps a whole StewBeet project, bolt included.
 # `stewbeet.plugins.sniffer` in `require` is the entire configuration this asserts: it captures
 # what the helpers write, and maps what mecha compiled from its own teardown, which beet unwinds
@@ -37,3 +38,4 @@ pipeline:
 meta:
     bolt:
         entrypoint: "*"
+

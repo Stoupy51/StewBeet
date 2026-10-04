@@ -1,3 +1,4 @@
+
 # Test: stewbeet.plugins.auto.text_renders
 # Verifies that every "render" key of a text component is replaced by a glyph of the generated
 # "<ns>:renders" font, for the three kinds of item id (project, vanilla, other pack) plus the
@@ -44,3 +45,4 @@ meta:
             # Answers the "this render is bigger than one glyph" question up front, so the build
             # never waits on the terminal (which is also what a CI pipeline wants).
             allow_oversized: true
+

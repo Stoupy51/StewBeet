@@ -1,3 +1,4 @@
+
 # Test: what the StewBeet capture does and does not see.
 # Capture patches beet's Function.append/prepend and reads a tag that StewBeet's own writers put
 # on the object. A Function the author builds and assigns straight into the pack carries no tag,
@@ -25,3 +26,4 @@ pipeline:
     - "src.assertions"
     - "src.link"
     - "stewbeet.plugins.sniffer.emit"
+

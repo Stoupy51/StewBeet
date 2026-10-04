@@ -40,73 +40,13 @@ class FakeContext(NamedTuple):
 
 # Functions
 def split_text_content(text: str, max_words: int = 5) -> tuple[str, str, str]:
-	""" Split text into (prefix, core, suffix) isolating the alphanumeric core.
+	""" Split text into (prefix, core, suffix), the core spanning from the first to the last letter.
 
-	The core spans from the first to the last letter, then expands to close any
-	unmatched brackets/quotes opened within it.
-	Everything before is the prefix, everything after is the suffix.
-	If the core exceeds max_words words, no splitting is done and the full text
-	is returned as core unchanged.
+	The core then expands to close the brackets and quotes opened within it.
+	When it holds more than max_words words, the text is not split and comes back whole as the core.
 
-	Args:
-		text      (str): The text to split.
-		max_words (int): Max number of words in the matched core before splitting is skipped entirely.
-
-	Returns:
-		tuple[str, str, str]: (prefix, core, suffix) where core is the letter-anchored
-			span with balanced brackets, and prefix/suffix hold the rest.
-
-	Examples:
-		>>> split_text_content(" attacks | ")
-		(' ', 'attacks', ' | ')
-		>>> split_text_content("attacks!")
-		('', 'attacks!', '')
-		>>> split_text_content("Hello World")
-		('', 'Hello World', '')
-		>>> split_text_content("\\n- Total 'Vb Contents Frame': \\n")
-		('\\n- ', "Total 'Vb Contents Frame'", ': \\n')
-		>>> split_text_content("💣 BOMB PLANTED!")
-		('💣 ', 'BOMB PLANTED!', '')
-		>>> split_text_content("  !pure!  ")
-		('  !', 'pure!  ', '')
-		>>> split_text_content("no change needed")
-		('', 'no change needed', '')
-		>>> split_text_content("missing\\nplease download more")
-		('', 'missing\\nplease download more', '')
-		>>> split_text_content("💣 BOMB!\\nRun away!")
-		('💣 ', 'BOMB!\\nRun away!', '')
-		>>> split_text_content(" MC Guns System")
-		(' ', 'MC Guns System', '')
-		>>> split_text_content("Round ")
-		('', 'Round ', '')
-		>>> split_text_content("!!!!")
-		('', '!!!!', '')
-		>>> split_text_content("Chest [10/11]")
-		('', 'Chest', ' [10/11]')
-		>>> split_text_content("950 points")
-		('950 ', 'points', '')
-		>>> split_text_content("/100")
-		('', '/100', '')
-		>>> split_text_content("Create Loadout - Scope (Secondary)")
-		('', 'Create Loadout - Scope (Secondary)', '')
-		>>> split_text_content("Click [here] for more!")
-		('', 'Click [here] for more!', '')
-		>>> split_text_content("💣 Bomb (timed)!")
-		('💣 ', 'Bomb (timed)!', '')
-		>>> split_text_content(" (Defenders) win the round!")
-		(' ', '(Defenders) win the round!', '')
-		>>> split_text_content(" (Attackers) win the round!")
-		(' ', '(Attackers) win the round!', '')
-		>>> split_text_content("Run this command to create a new map:")
-		('', 'Run this command to create a new map:', '')
-		>>> split_text_content("Score: ")
-		('', 'Score: ', '')
-		>>> split_text_content("Ability: ")
-		('', 'Ability: ', '')
-		>>> split_text_content("💣 This is a six word sentence!", max_words=5)
-		('', '💣 This is a six word sentence!', '')
-		>>> split_text_content("💣 Yes Five words exactly here!", max_words=5)
-		('💣 ', 'Yes Five words exactly here!', '')
+	>>> split_text_content(" attacks | ")
+	(' ', 'attacks', ' | ')
 	"""
 	match = LETTER_RE.search(text)
 	if not match or len(match.group().split()) > max_words:
@@ -114,10 +54,8 @@ def split_text_content(text: str, max_words: int = 5) -> tuple[str, str, str]:
 
 	prefix, core, suffix = text[:match.start()], match.group(), text[match.end():]
 
-	# If the prefix has unmatched openers whose closers are already in the core,
-	# fold those openers from the prefix into the core.
-	# For symmetric delimiters ('"' and "'") use parity instead of count difference
-	# because opener == closer makes subtraction always 0.
+	# Unmatched openers of the prefix whose closers are already in the core get folded into the core.
+	# Quotes open and close with the same character, so their count difference is always 0 and parity is used instead.
 	for opener, closer in CLOSERS.items():
 		unmatched_in_prefix = prefix.count(opener) % 2 if opener == closer else prefix.count(opener) - prefix.count(closer)
 		while unmatched_in_prefix > 0:
@@ -138,10 +76,8 @@ def split_text_content(text: str, max_words: int = 5) -> tuple[str, str, str]:
 				break
 			unmatched_in_prefix -= 1
 
-	# If the core has unmatched openers, consume matching closers from the suffix.
-	# Same parity rule for symmetric delimiters.
-	# Track whether this pass consumed anything so the final punctuation sweep can
-	# decide how aggressively to absorb the remaining suffix.
+	# Unmatched openers of the core consume their closers from the suffix, with the same parity rule for quotes.
+	# Whether anything was consumed decides how much of the remaining suffix the punctuation sweep absorbs.
 	suffix_was_consumed: bool = False
 	for opener, closer in CLOSERS.items():
 		unmatched = core.count(opener) % 2 if opener == closer else core.count(opener) - core.count(closer)
@@ -152,10 +88,8 @@ def split_text_content(text: str, max_words: int = 5) -> tuple[str, str, str]:
 			unmatched -= 1
 			suffix_was_consumed = True
 
-	# Absorb back suffix that is purely sentence-ending punctuation (: . , ! ?).
-	# After bracket consumption from suffix we only absorb strong terminators
-	# (!, ?, .) so that spacers like ": " that follow a closing bracket are kept
-	# as a separate suffix component rather than being pulled into the core.
+	# Absorb back a suffix that is purely sentence-ending punctuation (: . , ! ?).
+	# After closers were taken from the suffix, only strong terminators (! ? .) are, so a ": " spacer after a bracket stays apart.
 	if suffix_was_consumed:
 		if re.match(r'^[!?.]+$', suffix):
 			core += suffix
@@ -168,48 +102,12 @@ def split_text_content(text: str, max_words: int = 5) -> tuple[str, str, str]:
 
 
 def extract_texts(content: str) -> list[tuple[str, int, int, str, str | None]]:
-	""" Extract all text values from content using regex patterns.
+	""" Every "text" value of content, as (value, start, end, value_quote, key_quote) with key_quote None for a bare key.
 
-	Args:
-		content (str): The content to extract text from.
-
-	Returns:
-		list[tuple[str, int, int, str, str | None]]: List of tuples containing
-			(value, start_pos, end_pos, value_quote_char, key_quote_char).
-
-	Examples:
-		>>> matches = extract_texts('{"text":"Hello World"}')
-		>>> len(matches)
-		1
-		>>> matches[0][0]
-		'Hello World'
-		>>> matches[0][3]
-		'"'
-		>>> matches[0][4]
-		'"'
-
-		>>> matches = extract_texts('{text:"Hey dude!!!!"}')
-		>>> matches[0][0]
-		'Hey dude!!!!'
-		>>> matches[0][4] is None
-		True
-
-		>>> matches = extract_texts("{'text':'Single quotes'}")
-		>>> matches[0][0]
-		'Single quotes'
-		>>> matches[0][3]
-		"'"
-
-		>>> matches = extract_texts('{"text":"first"} and {"text":"second"}')
-		>>> len(matches)
-		2
-		>>> matches[0][0]
-		'first'
-		>>> matches[1][0]
-		'second'
-
-		>>> extract_texts('{"color":"red"}')
-		[]
+	>>> extract_texts('{"text":"Hello World"}')
+	[('Hello World', 1, 21, '"', '"')]
+	>>> extract_texts("{text:'Hey'}")
+	[('Hey', 1, 11, "'", None)]
 	"""
 	matches: list[tuple[str, int, int, str, str | None]] = []
 	for match in TEXT_RE.finditer(content):
@@ -223,35 +121,16 @@ def extract_texts(content: str) -> list[tuple[str, int, int, str, str | None]]:
 
 @stp.simple_cache
 def lang_format(text: str, ctx: Context | None = None) -> tuple[str, str]:
-	""" Format text into a valid lang key.
+	""" Format text into a lang key, returned with its simplified form used for length and alphanumeric checks.
 
-	Replaces path separators with underscores, strips non-alphanumeric chars,
-	lowercases, collapses whitespace/dashes, truncates to 64 chars, and
-	prepends the project_id if not already present.
+	Path separators become underscores, other non-alphanumeric characters go, whitespace and dashes collapse,
+	and the result is lowercased, truncated to 64 characters and prefixed with the project_id.
 
 	Args:
-		text (str):     The text to format.
-		ctx  (Context | None): The beet context providing project_id (None fallback to Mem.ctx)
+		ctx: The beet context providing project_id, None for Mem.ctx
 
-	Returns:
-		tuple[str, str]: (full_key, simplified) where simplified has dots/underscores
-			removed, used for length/alnum validation.
-
-	Examples:
-		>>> ctx = FakeContext(project_id='my_project')
-		>>> lang_format('Hello World', ctx)
-		('my_project.hello_world', 'helloworld')
-		>>> lang_format('Test/Path:Name', ctx)
-		('my_project.test_path_name', 'testpathname')
-		>>> lang_format('Special!@#$%Characters', ctx)
-		('my_project.specialcharacters', 'specialcharacters')
-		>>> key, simplified = lang_format('a' * 100, ctx)
-		>>> len(simplified) <= 64
-		True
-		>>> lang_format('BOMB PLANTED!', ctx)
-		('my_project.bomb_planted', 'bombplanted')
-		>>> lang_format(' attacks | ', ctx)
-		('my_project.attacks', 'attacks')
+	>>> lang_format('BOMB PLANTED!', FakeContext(project_id='mgs'))
+	('mgs.bomb_planted', 'bombplanted')
 	"""
 	if ctx is None:
 		ctx = Mem.ctx
@@ -263,38 +142,9 @@ def lang_format(text: str, ctx: Context | None = None) -> tuple[str, str]:
 
 
 def resolve_lang_key(base_key: str, value: str) -> str:
-	""" Return a unique lang key for the given value, appending a numeric suffix on collision.
+	""" Return a lang key for value, base_key itself when it is free or already holds value.
 
-	If base_key is not yet in lang, it is returned as-is.
-	If base_key already maps to the same value, it is returned as-is (idempotent).
-	If base_key maps to a different value, _2, _3, ... are tried until a free slot
-	or a slot already holding the same value is found.
-
-	Args:
-		base_key (str): The desired key derived from the text.
-		value    (str): The text value that will be stored.
-
-	Returns:
-		str: A unique key (possibly with numeric suffix) safe to write into lang.
-
-	Examples:
-		>>> _orig = lang.copy(); lang.clear()
-
-		>>> resolve_lang_key('mgs.attacks', 'attacks')
-		'mgs.attacks'
-
-		>>> lang['mgs.attacks'] = 'attacks'
-		>>> resolve_lang_key('mgs.attacks', 'attacks')
-		'mgs.attacks'
-
-		>>> resolve_lang_key('mgs.attacks', 'attacks!')
-		'mgs.attacks_2'
-
-		>>> lang['mgs.attacks_2'] = 'attacks!'
-		>>> resolve_lang_key('mgs.attacks', 'attacks?')
-		'mgs.attacks_3'
-
-		>>> lang.clear(); lang.update(_orig)  # restore
+	Otherwise _2, _3, ... are tried until a free slot or a slot already holding value is found.
 	"""
 	if base_key not in lang or lang[base_key] == value:
 		return base_key
@@ -318,73 +168,18 @@ def build_replacement(
 	prefix: str,
 	suffix: str,
 ) -> tuple[str, int, int]:
-	r""" Build the replacement fragment and its insertion bounds in string.
+	r""" Build the replacement fragment, with the start and end positions in string it overwrites.
 
-	When there is no prefix/suffix, replaces only the matched key:value fragment.
-	When prefix or suffix exist, finds the enclosing JSON object and wraps it into
-	a list: [prefix_obj?, {translate: key}, "suffix"?].
-	Falls back to a plain translate replacement if the object cannot be located.
+	Without prefix or suffix, only the matched key:value fragment is replaced. Otherwise the enclosing JSON object
+	is wrapped into a list, [prefix_obj?, {translate: key}, "suffix"?], or replaced in place when it cannot be located.
 
 	Args:
-		string      (str):      Full file content being processed.
-		text        (str):      Raw matched value (as it appears in source, with escapes).
-		clean_text  (str):      Decoded version of text (\\n -> newline, etc.).
-		start       (int):      Start position of the matched key:value fragment.
-		end         (int):      End position of the matched key:value fragment.
-		quote       (str):      Quote character used around the value ('"' or "'").
-		key_quote   (str|None): Quote character used around the "text" key, or None.
-		key_for_lang(str):      The resolved lang key to insert.
-		prefix      (str):      Non-alphanumeric prefix stripped from clean_text.
-		suffix      (str):      Non-alphanumeric suffix stripped from clean_text.
-
-	Returns:
-		tuple[str, int, int]: (new_fragment, replace_start, replace_end) where
-			replace_start/replace_end are the positions in string to overwrite.
-
-	Examples:
-		>>> # Simple case: no prefix/suffix
-		>>> s = '{"text":"Hello World"}'
-		>>> frag, rs, re_ = build_replacement(s, 'Hello World', 'Hello World', 1, 21, '"', '"', 'mgs.hello_world', '', '')
-		>>> s[:rs] + frag + s[re_:]
-		'{"translate":"mgs.hello_world"}'
-
-		>>> # Prefix+suffix: wraps object into list, core gets bare translate
-		>>> s = '{"text":" attacks | ","color":"white"}'
-		>>> frag, rs, re_ = build_replacement(s, ' attacks | ', ' attacks | ', 1, 36, '"', '"', 'mgs.attacks', ' ', ' | ')
-		>>> result = s[:rs] + frag + s[re_:]
-		>>> result
-		'[{"text":" ","color":"white"}, {"translate":"mgs.attacks"}, " | "]'
-
-		>>> # Suffix only: translate keeps all original styling
-		>>> s = '{"text":"attacks!","color":"green"}'
-		>>> frag, rs, re_ = build_replacement(s, 'attacks!', 'attacks!', 1, 33, '"', '"', 'mgs.attacks', '', '!')
-		>>> result = s[:rs] + frag + s[re_:]
-		>>> result
-		'[{"translate":"mgs.attacks","color":"green"}, "!"]'
-
-		>>> # Suffix only with color: color stays on translate component
-		>>> s = '{"text":"Exited map editor (changes discarded).","color":"red"}'
-		>>> frag, rs, re_ = build_replacement(
-		...		s, 'Exited map editor (changes discarded).', 'Exited map editor (changes discarded).', 1, 62,
-		...		'"', '"', 'mgs.exited_map_editor_changes_discarded', '', '.'
-		...	)
-		>>> result = s[:rs] + frag + s[re_:]
-		>>> result
-		'[{"translate":"mgs.exited_map_editor_changes_discarded","color":"red"}, "."]'
-
-		>>> # No object bounds fallback
-		>>> s = 'text: "hello world"'
-		>>> frag, rs, re_ = build_replacement(s, 'hello world', 'hello world', 0, 19, '"', None, 'mgs.hello_world', '', '...')
-		>>> s[:rs] + frag + s[re_:]
-		'translate: "mgs.hello_world"'
-
-		>>> # Prefix with newline: newline in prefix must be re-escaped back to \\n
-		>>> s = '{"text":"\\nNo secondary magazines","color":"gray"}'
-		>>> frag, rs, re_ = build_replacement(
-		...     s, '\\nNo secondary magazines', '\nNo secondary magazines', 1, 48, '"', '"', 'mgs.no_secondary_magazines', '\n', ''
-		... )
-		>>> s[:rs] + frag + s[re_:]
-		'[{"text":"\\n","color":"gray"}, {"translate":"mgs.no_secondary_magazines"}]'
+		text:       Raw matched value, as it appears in source with escapes.
+		clean_text: Decoded version of text (\\n -> newline, etc.).
+		start:      Start position of the matched key:value fragment.
+		quote:      Quote character used around the value, single or double.
+		key_quote:  Quote character used around the "text" key, or None.
+		prefix:     Non-alphanumeric prefix stripped from clean_text.
 	"""
 	translate_key: str = f'{key_quote}translate{key_quote}' if key_quote else 'translate'
 
@@ -448,70 +243,15 @@ def build_replacement(
 
 
 def handle_file(content: TextFileBase[str] | None, ctx: Context | None = None) -> None:
-	""" Process a file to extract and replace text with lang keys.
+	""" Replace in place every useful {"text": "..."} component of a file with a lang key.
 
-	For each {"text": "..."} component found:
-		- Decodes the value and skips non-useful strings (no alnum, too short, macros).
-		- Strips non-alphanumeric prefix/suffix from the value to derive a stable key.
-		- When prefix/suffix exist, wraps the enclosing JSON object into a list.
-			The core translate component then shares its key with components having the same alphanumeric content.
-		- Falls back to numeric suffix (_2, _3, ...) if object wrapping is not possible.
+	Strings without alphanumeric characters, too short or holding macros are skipped.
+	A non-alphanumeric prefix or suffix is stripped to derive a stable key, wrapping the enclosing JSON object into a list,
+	so components sharing the same alphanumeric content share their key.
+	Numeric suffixes (_2, _3, ...) are the fallback when the object cannot be wrapped.
 
 	Args:
-		content  (TextFileBase): The file content to process (modified in place).
-		ctx      (Context | None): The context containing project information (None fallback to Mem.ctx)
-
-	Returns:
-		None
-
-	Examples:
-		>>> from unittest.mock import MagicMock
-
-		>>> def make_content(text):
-		...     m = MagicMock()
-		...     m.text = text
-		...     m.__class__ = TextFileBase
-		...     return m
-
-		>>> ctx = FakeContext(project_id='mgs')
-
-		>>> # Simple replacement
-		>>> lang.clear()
-		>>> c = make_content('{"text":"Hello World"}')
-		>>> handle_file(c, ctx)
-		>>> c.text
-		'{"translate":"mgs.hello_world"}'
-		>>> lang['mgs.hello_world']
-		'Hello World'
-
-		>>> # Prefix/suffix wrapping: attacks with pipe vs attacks with exclamation
-		>>> lang.clear()
-		>>> c1 = make_content('{"text":" attacks | ","color":"white"}')
-		>>> c2 = make_content('{"text":"attacks!","color":"green"}')
-		>>> handle_file(c1, ctx)
-		>>> handle_file(c2, ctx)
-		>>> c1.text
-		'[{"text":" ","color":"white"}, {"translate":"mgs.attacks"}, " | "]'
-		>>> c2.text
-		'{"translate":"mgs.attacks_2","color":"green"}'
-		>>> lang['mgs.attacks']
-		'attacks'
-		>>> lang['mgs.attacks_2']
-		'attacks!'
-
-		>>> # Styling is stripped from core translate component
-		>>> lang.clear()
-		>>> c = make_content('{"text":" MC Guns System","italic":true,"color":"blue"}')
-		>>> handle_file(c, ctx)
-		>>> c.text
-		'[{"text":" ","italic":true,"color":"blue"}, {"translate":"mgs.mc_guns_system"}]'
-
-		>>> # No-op: unchanged content is not written back
-		>>> lang.clear()
-		>>> c = make_content('{"color":"red"}')
-		>>> handle_file(c, ctx)
-		>>> c.text  # setter never called
-		'{"color":"red"}'
+		ctx: The context containing project information, None for Mem.ctx
 	"""
 	if ctx is None:
 		ctx = Mem.ctx
@@ -564,4 +304,201 @@ def handle_file(content: TextFileBase[str] | None, ctx: Context | None = None) -
 	new_string: str = apply_replacements(string, replacements)
 	if new_string != string:
 		content.text = new_string
+
+
+__test__: dict[str, str] = {
+	"build_replacement": r"""
+	>>> # Simple case: no prefix/suffix
+	>>> s = '{"text":"Hello World"}'
+	>>> frag, rs, re_ = build_replacement(s, 'Hello World', 'Hello World', 1, 21, '"', '"', 'mgs.hello_world', '', '')
+	>>> s[:rs] + frag + s[re_:]
+	'{"translate":"mgs.hello_world"}'
+	>>> # Prefix+suffix: wraps object into list, core gets bare translate
+	>>> s = '{"text":" attacks | ","color":"white"}'
+	>>> frag, rs, re_ = build_replacement(s, ' attacks | ', ' attacks | ', 1, 36, '"', '"', 'mgs.attacks', ' ', ' | ')
+	>>> result = s[:rs] + frag + s[re_:]
+	>>> result
+	'[{"text":" ","color":"white"}, {"translate":"mgs.attacks"}, " | "]'
+	>>> # Suffix only: translate keeps all original styling
+	>>> s = '{"text":"attacks!","color":"green"}'
+	>>> frag, rs, re_ = build_replacement(s, 'attacks!', 'attacks!', 1, 33, '"', '"', 'mgs.attacks', '', '!')
+	>>> result = s[:rs] + frag + s[re_:]
+	>>> result
+	'[{"translate":"mgs.attacks","color":"green"}, "!"]'
+	>>> # Suffix only with color: color stays on translate component
+	>>> s = '{"text":"Exited map editor (changes discarded).","color":"red"}'
+	>>> frag, rs, re_ = build_replacement(
+	...		s, 'Exited map editor (changes discarded).', 'Exited map editor (changes discarded).', 1, 62,
+	...		'"', '"', 'mgs.exited_map_editor_changes_discarded', '', '.'
+	...	)
+	>>> result = s[:rs] + frag + s[re_:]
+	>>> result
+	'[{"translate":"mgs.exited_map_editor_changes_discarded","color":"red"}, "."]'
+	>>> # No object bounds fallback
+	>>> s = 'text: "hello world"'
+	>>> frag, rs, re_ = build_replacement(s, 'hello world', 'hello world', 0, 19, '"', None, 'mgs.hello_world', '', '...')
+	>>> s[:rs] + frag + s[re_:]
+	'translate: "mgs.hello_world"'
+	>>> # Prefix with newline: newline in prefix must be re-escaped back to \\n
+	>>> s = '{"text":"\\nNo secondary magazines","color":"gray"}'
+	>>> frag, rs, re_ = build_replacement(
+	...     s, '\\nNo secondary magazines', '\nNo secondary magazines', 1, 48, '"', '"', 'mgs.no_secondary_magazines', '\n', ''
+	... )
+	>>> s[:rs] + frag + s[re_:]
+	'[{"text":"\\n","color":"gray"}, {"translate":"mgs.no_secondary_magazines"}]'
+	""",
+	"extract_texts": """
+	>>> matches = extract_texts('{"text":"Hello World"}')
+	>>> len(matches)
+	1
+	>>> matches[0][0]
+	'Hello World'
+	>>> matches[0][3]
+	'"'
+	>>> matches[0][4]
+	'"'
+	>>> matches = extract_texts('{text:"Hey dude!!!!"}')
+	>>> matches[0][0]
+	'Hey dude!!!!'
+	>>> matches[0][4] is None
+	True
+	>>> matches = extract_texts("{'text':'Single quotes'}")
+	>>> matches[0][0]
+	'Single quotes'
+	>>> matches[0][3]
+	"'"
+	>>> matches = extract_texts('{"text":"first"} and {"text":"second"}')
+	>>> len(matches)
+	2
+	>>> matches[0][0]
+	'first'
+	>>> matches[1][0]
+	'second'
+	>>> extract_texts('{"color":"red"}')
+	[]
+	""",
+	"handle_file": """
+	>>> from unittest.mock import MagicMock
+	>>> def make_content(text):
+	...     m = MagicMock()
+	...     m.text = text
+	...     m.__class__ = TextFileBase
+	...     return m
+	>>> ctx = FakeContext(project_id='mgs')
+	>>> # Simple replacement
+	>>> lang.clear()
+	>>> c = make_content('{"text":"Hello World"}')
+	>>> handle_file(c, ctx)
+	>>> c.text
+	'{"translate":"mgs.hello_world"}'
+	>>> lang['mgs.hello_world']
+	'Hello World'
+	>>> # Prefix/suffix wrapping: attacks with pipe vs attacks with exclamation
+	>>> lang.clear()
+	>>> c1 = make_content('{"text":" attacks | ","color":"white"}')
+	>>> c2 = make_content('{"text":"attacks!","color":"green"}')
+	>>> handle_file(c1, ctx)
+	>>> handle_file(c2, ctx)
+	>>> c1.text
+	'[{"text":" ","color":"white"}, {"translate":"mgs.attacks"}, " | "]'
+	>>> c2.text
+	'{"translate":"mgs.attacks_2","color":"green"}'
+	>>> lang['mgs.attacks']
+	'attacks'
+	>>> lang['mgs.attacks_2']
+	'attacks!'
+	>>> # Styling is stripped from core translate component
+	>>> lang.clear()
+	>>> c = make_content('{"text":" MC Guns System","italic":true,"color":"blue"}')
+	>>> handle_file(c, ctx)
+	>>> c.text
+	'[{"text":" ","italic":true,"color":"blue"}, {"translate":"mgs.mc_guns_system"}]'
+	>>> # No-op: unchanged content is not written back
+	>>> lang.clear()
+	>>> c = make_content('{"color":"red"}')
+	>>> handle_file(c, ctx)
+	>>> c.text  # setter never called
+	'{"color":"red"}'
+	""",
+	"lang_format": """
+	>>> ctx = FakeContext(project_id='my_project')
+	>>> lang_format('Hello World', ctx)
+	('my_project.hello_world', 'helloworld')
+	>>> lang_format('Test/Path:Name', ctx)
+	('my_project.test_path_name', 'testpathname')
+	>>> lang_format('Special!@#$%Characters', ctx)
+	('my_project.specialcharacters', 'specialcharacters')
+	>>> key, simplified = lang_format('a' * 100, ctx)
+	>>> len(simplified) <= 64
+	True
+	>>> lang_format('BOMB PLANTED!', ctx)
+	('my_project.bomb_planted', 'bombplanted')
+	>>> lang_format(' attacks | ', ctx)
+	('my_project.attacks', 'attacks')
+	""",
+	"resolve_lang_key": """
+	>>> _orig = lang.copy(); lang.clear()
+	>>> resolve_lang_key('mgs.attacks', 'attacks')
+	'mgs.attacks'
+	>>> lang['mgs.attacks'] = 'attacks'
+	>>> resolve_lang_key('mgs.attacks', 'attacks')
+	'mgs.attacks'
+	>>> resolve_lang_key('mgs.attacks', 'attacks!')
+	'mgs.attacks_2'
+	>>> lang['mgs.attacks_2'] = 'attacks!'
+	>>> resolve_lang_key('mgs.attacks', 'attacks?')
+	'mgs.attacks_3'
+	>>> lang.clear(); lang.update(_orig)  # restore
+	""",
+	"split_text_content": """
+	>>> split_text_content("attacks!")
+	('', 'attacks!', '')
+	>>> split_text_content("Hello World")
+	('', 'Hello World', '')
+	>>> split_text_content("\\n- Total 'Vb Contents Frame': \\n")
+	('\\n- ', "Total 'Vb Contents Frame'", ': \\n')
+	>>> split_text_content("💣 BOMB PLANTED!")
+	('💣 ', 'BOMB PLANTED!', '')
+	>>> split_text_content("  !pure!  ")
+	('  !', 'pure!  ', '')
+	>>> split_text_content("no change needed")
+	('', 'no change needed', '')
+	>>> split_text_content("missing\\nplease download more")
+	('', 'missing\\nplease download more', '')
+	>>> split_text_content("💣 BOMB!\\nRun away!")
+	('💣 ', 'BOMB!\\nRun away!', '')
+	>>> split_text_content(" MC Guns System")
+	(' ', 'MC Guns System', '')
+	>>> split_text_content("Round ")
+	('', 'Round ', '')
+	>>> split_text_content("!!!!")
+	('', '!!!!', '')
+	>>> split_text_content("Chest [10/11]")
+	('', 'Chest', ' [10/11]')
+	>>> split_text_content("950 points")
+	('950 ', 'points', '')
+	>>> split_text_content("/100")
+	('', '/100', '')
+	>>> split_text_content("Create Loadout - Scope (Secondary)")
+	('', 'Create Loadout - Scope (Secondary)', '')
+	>>> split_text_content("Click [here] for more!")
+	('', 'Click [here] for more!', '')
+	>>> split_text_content("💣 Bomb (timed)!")
+	('💣 ', 'Bomb (timed)!', '')
+	>>> split_text_content(" (Defenders) win the round!")
+	(' ', '(Defenders) win the round!', '')
+	>>> split_text_content(" (Attackers) win the round!")
+	(' ', '(Attackers) win the round!', '')
+	>>> split_text_content("Run this command to create a new map:")
+	('', 'Run this command to create a new map:', '')
+	>>> split_text_content("Score: ")
+	('', 'Score: ', '')
+	>>> split_text_content("Ability: ")
+	('', 'Ability: ', '')
+	>>> split_text_content("💣 This is a six word sentence!", max_words=5)
+	('', '💣 This is a six word sentence!', '')
+	>>> split_text_content("💣 Yes Five words exactly here!", max_words=5)
+	('💣 ', 'Yes Five words exactly here!', '')
+	""",
+}
 

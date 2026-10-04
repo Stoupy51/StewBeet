@@ -88,7 +88,7 @@ class BaseEquation:
 	@stp.abstract
 	def render_header(self) -> str:
 		""" Returns the human-readable equation comment (without the leading ``"# "``). """
-		...
+		raise NotImplementedError
 
 	# Operation builder
 	def apply_operation(
@@ -100,37 +100,19 @@ class BaseEquation:
 	) -> BaseEquation:
 		""" Appends the scoreboard commands for one arithmetic operation.
 
-		Handles three cases:
-		- integer constant  -> registers it in load, uses ``#<value>`` fake player
-		- macro argument    -> stores macro value in a temp variable first
-		- player/selector   -> direct scoreboard operation
+		An int constant is registered in load as a ``#<value>`` fake player, and a macro argument is stored in ``temp`` first.
 
 		Args:
-			player      (str | int | BaseEquation):   Source value.
-				A selector, fake player, int constant, macro arg, or another equation.
-			scoreboard  (str | None):  Source scoreboard. Ignored for int/macro; defaults to ``self.scoreboard``.
-			operator    (AnyOperator): One of ``*``, ``/``, ``+``, ``-``, or ``""`` (for assignment via operation).
-			temp        (str):         Name of the temporary fake player used for macro args.
+			player:     A selector, fake player, int constant, macro arg, or another equation.
+			scoreboard: Source scoreboard, ignored for int/macro, ``self.scoreboard`` when None.
+			operator:   One of ``*``, ``/``, ``+``, ``-``, or ``""`` (for assignment via operation).
 
-		Examples:
-			>>> # The following examples do not precise the scoreboard argument, so it defaults to {ctx.project_id}.data
-			>>> eq = BaseEquation("@s")
-			>>> eq.apply_operation("other_player", "other_scoreboard", "/").ops
-			['scoreboard players operation @s your_namespace.data /= other_player other_scoreboard']
-
-			>>> eq2 = BaseEquation("@s")
-			>>> for op in eq2.apply_operation("$(macro_arg)", None, "-", temp="temp_macro").ops:
-			...     print(op)
-			$scoreboard players set #temp_macro your_namespace.data $(macro_arg)
-			scoreboard players operation @s your_namespace.data -= #temp_macro your_namespace.data
-
-			>>> eq3 = BaseEquation("@s")
-			>>> eq3.apply_operation(42, None, "+").ops
-			['scoreboard players operation @s your_namespace.data += #42 your_namespace.data']
+		>>> eq = BaseEquation("@s")  # Its scoreboard defaults to {ctx.project_id}.data
+		>>> eq.apply_operation("other_player", "other_scoreboard", "/").ops
+		['scoreboard players operation @s your_namespace.data /= other_player other_scoreboard']
 		"""
-		# Special case with another equation as source:
-		# we need to render it first to generate the intermediate scoreboard operations,
-		# then we can use its final value as source for the next operation
+		# Another equation as source is rendered first for its intermediate scoreboard operations,
+		# then its final value is the source of the next operation
 		cancel_next_comment: bool = False
 		if isinstance(player, BaseEquation):
 			# Render the other equation to generate its commands in self.ops
@@ -138,7 +120,7 @@ class BaseEquation:
 			source_comment = str(player).splitlines()
 			# The other equation's header, without its leading "# "
 			self.comment_parts.append(f"{operator} ({source_comment[0][2:]})")
-			cancel_next_comment = True	# Prevent the source to add up
+			cancel_next_comment = True  # Prevent the source to add up
 
 			# The final value of the source equation is always stored in self.player and self.scoreboard of the source equation
 			scoreboard = player.scoreboard
@@ -154,7 +136,7 @@ class BaseEquation:
 			# e.g. "scoreboard players operation @s your_namespace.data += #42 your_namespace.data"
 			add_op(get_scoreboard_operation(self.player, self.scoreboard, operator, f"#{player}", f"{Mem.ctx.project_id}.data"))
 		elif is_macro_argument(player):
-			# e.g. "$scoreboard players set #temp your_namespace.data $(macro_arg)""
+			# e.g. "$scoreboard players set #temp your_namespace.data $(macro_arg)"
 			add_op(f"${get_scoreboard_set(f'#{temp}', f"{Mem.ctx.project_id}.data", player)}")
 			# e.g. "scoreboard players operation @s your_namespace.data -= #temp your_namespace.data"
 			add_op(get_scoreboard_operation(self.player, self.scoreboard, operator, f"#{temp}", f"{Mem.ctx.project_id}.data"))
@@ -170,17 +152,16 @@ class BaseEquation:
 		""" Sets the scoreboard value (assignment, not operation), should be used for the first operation in the chain.
 
 		Args:
-			player      (str | int):   The value to assign. Can be an int, a macro arg, or a player/selector.
-			scoreboard  (str | None):  Source scoreboard (ignored for int/macro).
+			player:     The value to assign. Can be an int, a macro arg, or a player/selector.
+			scoreboard: Source scoreboard (ignored for int/macro).
 
-		Examples:
-			>>> # Setting @s in your_namespace.data to 42 and checking the generated commands with .ops
-			>>> BaseEquation("@s").set(42).ops
-			['scoreboard players set @s your_namespace.data 42']
+		>>> # Setting @s in your_namespace.data to 42 and checking the generated commands with .ops
+		>>> BaseEquation("@s").set(42).ops
+		['scoreboard players set @s your_namespace.data 42']
 
-			>>> # Setting @s in your_namespace.data to a macro argument and checking the generated commands with .ops
-			>>> BaseEquation("@s").set("$(macro_value)").ops
-			['$scoreboard players set @s your_namespace.data $(macro_value)']
+		>>> # Setting @s in your_namespace.data to a macro argument and checking the generated commands with .ops
+		>>> BaseEquation("@s").set("$(macro_value)").ops
+		['$scoreboard players set @s your_namespace.data $(macro_value)']
 		"""
 		# Handle different source types for the initial set operation
 		if isinstance(player, int):
@@ -236,44 +217,43 @@ class BaseEquation:
 class ScoreboardEquation(BaseEquation):
 	""" Equation whose result is stored directly in a scoreboard objective.
 
-	Examples:
-		>>> # Simple equation
-		>>> str((ScoreboardEquation("@s").set(10) + 5) * (-2) / 3 % 4 - "#toto").splitlines()[0]
-		'# scoreboard @s your_namespace.data = 10 + 5 * -2 / 3 % 4 - #toto'
+	>>> # Simple equation
+	>>> str((ScoreboardEquation("@s").set(10) + 5) * (-2) / 3 % 4 - "#toto").splitlines()[0]
+	'# scoreboard @s your_namespace.data = 10 + 5 * -2 / 3 % 4 - #toto'
 
-		>>> # Building a complex equation with method chaining and checking the generated commands with .ops
-		>>> result = str(
-		...     ScoreboardEquation("#temp_durability", "some_score")
-		...     .set("-$(amount)").multiply(1000000).divide("$(max_damage)").subtract("#toto")
-		... )
-		>>> shorter = str(ScoreboardEquation("#temp_durability", "some_score").set("-$(amount)") * 1000000 / "$(max_damage)" - "#toto")
-		>>> expected = (
-		...     "# scoreboard #temp_durability some_score = -$(amount) * 1000000 / $(max_damage) - #toto\\n"
-		...     "$scoreboard players set #temp_durability some_score -$(amount)\\n"
-		...     "scoreboard players operation #temp_durability some_score *= #1000000 your_namespace.data\\n"
-		...     "$scoreboard players set #temp_divide your_namespace.data $(max_damage)\\n"
-		...     "scoreboard players operation #temp_durability some_score /= #temp_divide your_namespace.data\\n"
-		...     # #toto inherits the scoreboard of the equation ("some_score")
-		...     "scoreboard players operation #temp_durability some_score -= #toto some_score"
-		... )
-		>>> result == expected and shorter == expected
-		True
+	>>> # Building a complex equation with method chaining and checking the generated commands with .ops
+	>>> result = str(
+	...     ScoreboardEquation("#temp_durability", "some_score")
+	...     .set("-$(amount)").multiply(1000000).divide("$(max_damage)").subtract("#toto")
+	... )
+	>>> shorter = str(ScoreboardEquation("#temp_durability", "some_score").set("-$(amount)") * 1000000 / "$(max_damage)" - "#toto")
+	>>> expected = (
+	...     "# scoreboard #temp_durability some_score = -$(amount) * 1000000 / $(max_damage) - #toto\\n"
+	...     "$scoreboard players set #temp_durability some_score -$(amount)\\n"
+	...     "scoreboard players operation #temp_durability some_score *= #1000000 your_namespace.data\\n"
+	...     "$scoreboard players set #temp_divide your_namespace.data $(max_damage)\\n"
+	...     "scoreboard players operation #temp_durability some_score /= #temp_divide your_namespace.data\\n"
+	...     # #toto inherits the scoreboard of the equation ("some_score")
+	...     "scoreboard players operation #temp_durability some_score -= #toto some_score"
+	... )
+	>>> result == expected and shorter == expected
+	True
 
-		>>> # Combining two Equation instances
-		>>> eq4 = ScoreboardEquation("@s").set(10) * 5
-		>>> eq5 = ScoreboardEquation("#toto", "some_score").set(20) * 2
-		>>> result = str(eq4 * eq5)
-		>>> expected = (
-		...     "# scoreboard @s your_namespace.data = 10 * 5 * (scoreboard #toto some_score = 20 * 2)\\n"
-		...     "scoreboard players set @s your_namespace.data 10\\n"
-		...     "scoreboard players operation @s your_namespace.data *= #5 your_namespace.data\\n"
-		...     "scoreboard players set #toto some_score 20\\n"
-		...     "scoreboard players operation #toto some_score *= #2 your_namespace.data\\n"
-		...     "scoreboard players operation @s your_namespace.data *= #toto some_score"
-		... )
-		>>> result == expected
-		True
-	"""
+	>>> # Combining two Equation instances
+	>>> eq4 = ScoreboardEquation("@s").set(10) * 5
+	>>> eq5 = ScoreboardEquation("#toto", "some_score").set(20) * 2
+	>>> result = str(eq4 * eq5)
+	>>> expected = (
+	...     "# scoreboard @s your_namespace.data = 10 * 5 * (scoreboard #toto some_score = 20 * 2)\\n"
+	...     "scoreboard players set @s your_namespace.data 10\\n"
+	...     "scoreboard players operation @s your_namespace.data *= #5 your_namespace.data\\n"
+	...     "scoreboard players set #toto some_score 20\\n"
+	...     "scoreboard players operation #toto some_score *= #2 your_namespace.data\\n"
+	...     "scoreboard players operation @s your_namespace.data *= #toto some_score"
+	... )
+	>>> result == expected
+	True
+	"""  # stp: ignore[long-docstring]
 
 	__slots__ = ()
 
@@ -289,23 +269,22 @@ class StorageEquation(BaseEquation):
 
 	The ``scale`` factor is applied when flushing the temp scoreboard value to storage.
 
-	Examples:
-		>>> start = lambda: StorageEquation("some_namespace:some_path", "result_path", 0.000005, "double").set("-$(amount)")
-		>>> result = str(start().multiply(1000000).divide("$(max_damage)").subtract("#toto"))
-		>>> shorter = str(start() * 1000000 / "$(max_damage)" - "#toto")
-		>>> expected = (
-		...     "# storage some_namespace:some_path result_path = (-$(amount) * 1000000 / $(max_damage) - #toto) * 0.000005\\n"
-		...     "$scoreboard players set #temp_result your_namespace.data -$(amount)\\n"
-		...     "scoreboard players operation #temp_result your_namespace.data *= #1000000 your_namespace.data\\n"
-		...     "$scoreboard players set #temp_divide your_namespace.data $(max_damage)\\n"
-		...     "scoreboard players operation #temp_result your_namespace.data /= #temp_divide your_namespace.data\\n"
-		...     "scoreboard players operation #temp_result your_namespace.data -= #toto your_namespace.data\\n"
-		...     "execute store result storage some_namespace:some_path result_path double 0.000005 "
-		...     "run scoreboard players get #temp_result your_namespace.data"
-		... )
-		>>> result == expected and shorter == expected
-		True
-	"""
+	>>> start = lambda: StorageEquation("some_namespace:some_path", "result_path", 0.000005, "double").set("-$(amount)")
+	>>> result = str(start().multiply(1000000).divide("$(max_damage)").subtract("#toto"))
+	>>> shorter = str(start() * 1000000 / "$(max_damage)" - "#toto")
+	>>> expected = (
+	...     "# storage some_namespace:some_path result_path = (-$(amount) * 1000000 / $(max_damage) - #toto) * 0.000005\\n"
+	...     "$scoreboard players set #temp_result your_namespace.data -$(amount)\\n"
+	...     "scoreboard players operation #temp_result your_namespace.data *= #1000000 your_namespace.data\\n"
+	...     "$scoreboard players set #temp_divide your_namespace.data $(max_damage)\\n"
+	...     "scoreboard players operation #temp_result your_namespace.data /= #temp_divide your_namespace.data\\n"
+	...     "scoreboard players operation #temp_result your_namespace.data -= #toto your_namespace.data\\n"
+	...     "execute store result storage some_namespace:some_path result_path double 0.000005 "
+	...     "run scoreboard players get #temp_result your_namespace.data"
+	... )
+	>>> result == expected and shorter == expected
+	True
+	"""  # stp: ignore[long-docstring]
 
 	__slots__ = ("path", "scale", "storage", "storage_type")
 
@@ -327,4 +306,18 @@ class StorageEquation(BaseEquation):
 			f" run scoreboard players get #temp_result {f"{Mem.ctx.project_id}.data"}"
 		)
 		return super().__str__()
+
+
+__test__: dict[str, str] = {
+	"BaseEquation.apply_operation": """
+	>>> eq2 = BaseEquation("@s")
+	>>> for op in eq2.apply_operation("$(macro_arg)", None, "-", temp="temp_macro").ops:
+	...     print(op)
+	$scoreboard players set #temp_macro your_namespace.data $(macro_arg)
+	scoreboard players operation @s your_namespace.data -= #temp_macro your_namespace.data
+	>>> eq3 = BaseEquation("@s")
+	>>> eq3.apply_operation(42, None, "+").ops
+	['scoreboard players operation @s your_namespace.data += #42 your_namespace.data']
+	""",
+}
 

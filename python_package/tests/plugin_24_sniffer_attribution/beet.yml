@@ -1,3 +1,4 @@
+
 # Test: attribution scopes (step B2)
 # Verifies that content custom_blocks generates from a declaration maps back to the Block(...)
 # call that caused it, and never to the plugin that emitted it nor to this pipeline's own entry
@@ -36,3 +37,4 @@ meta:
     stewbeet:
         source_lore: "auto"
         textures_folder: "../../../templates/extensive/assets/textures"
+

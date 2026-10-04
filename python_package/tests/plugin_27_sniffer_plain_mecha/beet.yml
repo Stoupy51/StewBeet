@@ -1,3 +1,4 @@
+
 # Test: stewbeet.plugins.sniffer.mecha with no bolt anywhere.
 # The mecha AST emitter is meant to serve plain beet and plain mecha as well as bolt, and those
 # are the dialects with no test of their own. Two shapes are covered:
@@ -26,3 +27,4 @@ pipeline:
     - "src.link"
     - "stewbeet.plugins.sniffer.mecha"
     - "mecha"
+
