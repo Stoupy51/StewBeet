@@ -20,8 +20,8 @@ def generate_sorter(ctx: Context, sorter: JsonDict):
 	Routes to the appropriate algorithm-specific generator function.
 
 	Args:
-		ctx (Context): The beet context for generating functions.
-		sorter (dict): Configuration dictionary containing sorting parameters.
+		ctx:    The beet context for generating functions.
+		sorter: Configuration dictionary containing sorting parameters.
 	"""
 	# Assertions to validate sorter configuration
 	assert isinstance(sorter.get("functions_location"), str), \

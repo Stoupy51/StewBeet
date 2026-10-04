@@ -1,9 +1,9 @@
 """ Keeps Spyglass's `env.exclude` in step with the sources it cannot parse.
 
-A `.mcfunction` holding bolt or mecha nesting is not vanilla mcfunction, and Spyglass underlines
-most of it. Nothing can clear another extension's diagnostics, but Spyglass skips what its own
-`env.exclude` names, and the build is the one place that knows exactly which files those are:
-bolt says which files it generated Python for, and mecha says which ones it split in two.
+A `.mcfunction` holding bolt or mecha nesting is not vanilla mcfunction, and Spyglass underlines most of it.
+Nothing can clear another extension's diagnostics, but Spyglass skips what its own `env.exclude` names,
+and the build is the one place that knows exactly which files those are: bolt says which files it generated Python for,
+and mecha says which ones it split in two.
 
 The editor offers the same exclusion for the file being opened, which is what a project that has
 never been built still needs. Both write the same key in the same file and both only ever add.
@@ -34,15 +34,15 @@ from .detect import unparseable_sources
 def beet_default(ctx: Context) -> None:
 	""" Queue the exclusion update for the very end of the build.
 
-	What it reads is mecha's compilation database, which stays empty until mecha compiles, and mecha
-	compiles when beet unwinds it. A generator listed after `mecha` unwinds *before* it and sees
-	nothing, and a plugin requiring mecha from Python moves the compile later still.
+	What it reads is mecha's compilation database, which stays empty until mecha compiles, and mecha compiles when beet unwinds it.
+	A generator listed after `mecha` unwinds *before* it and sees nothing,
+	and a plugin requiring mecha from Python moves the compile later still.
 
 	Args:
-		ctx (Context): The beet context.
+		ctx: The beet context.
 	"""
-	# Now, while beet still says where each file came from: `beet.contrib.find_replace` makes it
-	# forget as it goes, and a versioned project runs that over the whole pack before mecha parses.
+	# Now, while beet still says where each file came from: `beet.contrib.find_replace` makes it forget as it goes,
+	# and a versioned project runs that over the whole pack before mecha parses.
 	remember_source_paths(ctx)
 	queue_at_end(ctx, apply_exclusions)
 
@@ -52,8 +52,8 @@ def queue_at_end(ctx: Context, work: Callable[[Context], None]) -> None:
 	""" Run `work` once every other plugin in the build has finished, wherever this one is listed.
 
 	Beet pops its task list from the end, so a task put at the front of it is the last one left.
-	It is queued as a generator because beet throws a failing build's exception into a task that
-	has started: `work` then never runs on a pack whose compile gave up half way through.
+	It is queued as a generator because beet throws a failing build's exception into a task that has started:
+	`work` then never runs on a pack whose compile gave up half way through.
 	"""
 	Mem.ctx = ctx
 
@@ -69,7 +69,7 @@ def apply_exclusions(ctx: Context) -> None:
 	""" Write the sources this build could not parse into the project's Spyglass config.
 
 	Args:
-		ctx (Context): The beet context.
+		ctx: The beet context.
 	"""
 	path: str = config_path(os.path.abspath(str(ctx.directory)))
 	current: JsonDict | None = read_config(path)
@@ -94,3 +94,4 @@ def apply_exclusions(ctx: Context) -> None:
 	write_config(path, updated)
 	remember_exclusions(sorted((set(remembered_exclusions()) | set(add)) - set(drop)))
 	stp.info(f"spyglass: {len(add)} exclusion(s) added and {len(drop)} retracted in {os.path.basename(path)}")
+

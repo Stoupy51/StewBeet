@@ -71,11 +71,10 @@ def record_from(func: Function, other: Function | Iterable[str] | str, mode: str
 def record_assignment(container: NamespaceContainer[Any], key: str, value: Any) -> None:
 	""" Record `ctx.data.functions[path] = Function(...)`, which no other hook sees.
 
-	beet's own way of writing a function builds the object and puts it in the pack, so there is no
-	append to catch and no StewBeet helper to tag it. Tagging happens for every insertion, which is
-	what makes a later `.append(...)` on the same path work; recording happens only when the caller
-	is genuinely assigning, because `write_function`'s overwrite branch assigns too and records
-	itself one frame further down.
+	beet's own way of writing a function builds the object and puts it in the pack,
+	so there is no append to catch and no StewBeet helper to tag it. Tagging happens for every insertion,
+	which is what makes a later `.append(...)` on the same path work; recording happens only when the caller is genuinely assigning,
+	because `write_function`'s overwrite branch assigns too and records itself one frame further down.
 	"""
 	if not isinstance(value, Function) or container.namespace is None or not container.namespace.name:
 		return
@@ -86,16 +85,13 @@ def record_assignment(container: NamespaceContainer[Any], key: str, value: Any) 
 		Mem.source_map_origins[path] = origin_path(previous)
 	tag(value, path)
 
-	# A file still backed by disk is the pack being loaded, not a plugin writing a function, and
-	# reading its text is destructive: beet drops `source_path` the moment a file is deserialised,
-	# and mecha names a compilation unit after that path. Reading it here left every bolt file in
-	# `data/<ns>/function/` unmapped, which is the one place the two halves of the build meet.
+	# A file still backed by disk is the pack being loaded, and reading its text would drop the `source_path` mecha names
+	# its compilation unit after, leaving every bolt file in `data/<ns>/function/` unmapped.
 	if value.source_path is not None:
 		return
 
-	# An empty assignment has nothing to map, and recording it would claim the first line the
-	# appends afterwards produce: `ctx.data.functions[p] = Function()` then `.append(...)` should
-	# point at the append, which is where the command was actually written.
+	# An empty assignment has nothing to map, and recording it would claim the lines later appends produce:
+	# `ctx.data.functions[p] = Function()` then `.append(...)` should point at the append, where the command was written.
 	if not value.text.strip():
 		return
 
@@ -107,10 +103,9 @@ def record_assignment(container: NamespaceContainer[Any], key: str, value: Any) 
 def install() -> None:
 	""" Patch beet's Function writers so every incremental write is captured.
 
-	`Function.append` and `.prepend` are the single choke point every incremental write flows
-	through, including `write_function`'s own. The deprecated `Block.on_place` was replaced by
-	`.functions.place_secondary.obj.append(...)`, which never touches `write_function` at all,
-	which is why the hook lives here.
+	`Function.append` and `.prepend` are the single choke point every incremental write flows through,
+	including `write_function`'s own. The deprecated `Block.on_place` was replaced by `.functions.place_secondary.obj.append(...)`,
+	which never touches `write_function` at all, which is why the hook lives here.
 
 	`NamespaceContainer.process` is the other one. Every way of putting a function into a pack ends
 	there with both the namespace and the key in hand, so `ctx.data.functions[p] = Function(...)`,

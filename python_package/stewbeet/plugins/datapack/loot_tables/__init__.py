@@ -25,7 +25,7 @@ def beet_default(ctx: Context):
 	This plugin sets up loot tables for items in the definitions and external items.
 
 	Args:
-		ctx (Context): The beet context.
+		ctx: The beet context.
 	"""
 	# Get data from memory
 	Mem.ctx = ctx
@@ -35,7 +35,7 @@ def beet_default(ctx: Context):
 
 	# Creative loot table (sort of give all loot table)
 	creative_loot_table: JsonDict = {"pools": []}
-	not_skipped_items: list[str] = [item for item in Mem.definitions.keys() if not Item.from_id(item).skip_gives]
+	not_skipped_items: list[str] = [item for item in Mem.definitions if not Item.from_id(item).skip_gives]
 
 	# For each item in the definitions, create a loot table
 	for item in not_skipped_items:

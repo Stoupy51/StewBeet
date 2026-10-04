@@ -27,7 +27,8 @@ from .official_libs import OFFICIAL_LIBS
 
 SMITHED_API_BASE: str = "https://api.smithed.dev/v2/packs"
 MODRINTH_API_BASE: str = "https://api.modrinth.com/v2"
-BUILD_CACHE: dict[str, list[DownloadedLib]] = {}  # cache-dir -> results
+BUILD_CACHE: dict[str, list[DownloadedLib]] = {}
+""" Downloaded libraries of the current build, keyed by cache directory. """
 
 
 @dataclass(slots=True)
@@ -39,9 +40,7 @@ class DownloadedLib:
 	resource_pack_path: str | None
 
 
-# ---------------------------------------------------------------------------
 # Helpers
-# ---------------------------------------------------------------------------
 
 def mc_tuple(ctx: Context) -> tuple[int, ...]:
 	return tuple(int(x) for x in (ctx.minecraft_version or LATEST_MC_VERSION).split(".") if x.isdigit())
@@ -116,9 +115,7 @@ def latest_smithed_compatible(smithed_id: str, versions: list[JsonDict], mc_tup:
 	return max(compat or versions, key=lambda v: stp.version_to_float(v.get("name", "0.0.0"), error=False) or 0.0, default=None)
 
 
-# ---------------------------------------------------------------------------
 # Providers
-# ---------------------------------------------------------------------------
 
 def resolve_smithed_lib(ctx: Context, lib_ns: str, lib_data: JsonDict, mc_tup: tuple[int, ...]) -> DownloadedLib | None:
 	smithed_id = lib_data.get("smithed_id") or ("bookshelf-" + lib_ns[3:])
@@ -222,9 +219,7 @@ def resolve_static_lib(ctx: Context, lib_ns: str, lib_data: JsonDict, mc_tup: tu
 	return DownloadedLib(lib_ns, lib_data["name"], dep_ver, str(dp), None)
 
 
-# ---------------------------------------------------------------------------
 # Public entry point
-# ---------------------------------------------------------------------------
 
 @stp.handle_error
 def get_lib_paths(ctx: Context) -> list[DownloadedLib]:

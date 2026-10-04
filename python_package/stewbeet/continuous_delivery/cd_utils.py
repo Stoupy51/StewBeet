@@ -22,7 +22,7 @@ def get_supported_versions(version: str | list[str] | None = None) -> list[str]:
 	""" Get the supported versions for a given version of Minecraft
 
 	Args:
-		version (str): Version of Minecraft
+		version: Version of Minecraft
 	Returns:
 		list[str]: List of supported versions, ex: ["1.21.3", "1.21.2"]
 	"""

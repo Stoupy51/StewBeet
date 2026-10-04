@@ -1,9 +1,8 @@
 """ Writes the `.mcfunction.map` sidecars for StewBeet's own writes, as a pipeline step of its own.
 
-It is separate from the capture plugin because the two have opposite ordering needs: capture must be
-installed before anything writes a function, while emission must happen after every rewriting plugin
-and still before `stewbeet.plugins.archive` zips the pack. A generator's teardown cannot sit between
-those two, so the pipeline lists both.
+It is separate from the capture plugin because the two have opposite ordering needs:
+capture must be installed before anything writes a function, while emission must happen after every rewriting plugin and still before
+`stewbeet.plugins.archive` zips the pack. A generator's teardown cannot sit between those two, so the pipeline lists both.
 """
 
 # Lazy imports (PEP 810), ignored before Python 3.15
@@ -47,8 +46,8 @@ def write_maps(ctx: Context) -> int:
 	layout: str = f"{project_root}\0{output_depth}"
 	cache: Cache = ctx.cache[CACHE_NAME]
 	remembered: dict[str, tuple[str, str]] = load_maps(cache)
-	# An earlier flush in this same build already stored what it wrote, and those functions are
-	# skipped above, so their entries are carried over rather than dropped from the record.
+	# An earlier flush in this same build already stored what it wrote, and those functions are skipped above,
+	# so their entries are carried over rather than dropped from the record.
 	fresh: dict[str, tuple[str, str]] = {
 		path: entry for path, entry in remembered.items() if path in ctx.data.functions
 	}
@@ -84,7 +83,7 @@ def beet_default(ctx: Context) -> None:
 	`stewbeet.plugins.archive`.
 
 	Args:
-		ctx (Context): The beet context.
+		ctx: The beet context.
 	"""
 	Mem.ctx = ctx
 	count: int = write_maps(ctx)

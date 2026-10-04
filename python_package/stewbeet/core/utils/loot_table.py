@@ -20,39 +20,31 @@ TYPED_LOOT_VERSION: tuple[int, int] = (26, 3)
 # Utility function to convert result_count to string suffix
 @stp.simple_cache(method="str")
 def result_count_to_suffix(result_count: int | JsonDict) -> str:
-	""" Convert a result count to a string suffix for loot table paths
+	""" Suffix of the loot table path giving result_count items, an int or a {"min", "max"} dict for random counts.
 
-	Args:
-		result_count (int | JsonDict): The count of the result item, can be an int or a dict for random counts
-			ex: 1
-			ex: {"type": "minecraft:uniform","min": 4,"max": 6}
-	Returns:
-		str: The suffix string, ex: "" or "_x5" or "_x4to6"
-
-	Examples:
-		>>> result_count_to_suffix(1)
-		''
-		>>> result_count_to_suffix(5)
-		'_x5'
-		>>> result_count_to_suffix({"min": 4, "max": 6})
-		'_x4to6'
-		>>> result_count_to_suffix({"min": 3, "max": 1})
-		'_x3'
-		>>> result_count_to_suffix({"min": 1, "max": 1})
-		''
-		>>> result_count_to_suffix({})
-		''
+	>>> result_count_to_suffix(1)
+	''
+	>>> result_count_to_suffix(5)
+	'_x5'
+	>>> result_count_to_suffix({"min": 4, "max": 6})
+	'_x4to6'
+	>>> result_count_to_suffix({"min": 3, "max": 1})
+	'_x3'
+	>>> result_count_to_suffix({"min": 1, "max": 1})
+	''
+	>>> result_count_to_suffix({})
+	''
 	"""
 	if isinstance(result_count, int):
 		if result_count > 1:
 			return f"_x{result_count}"
 		return ""
-	elif hasattr(result_count, "get"):
+	if hasattr(result_count, "get"):
 		minimum = result_count.get("min", 1)
 		maximum = result_count.get("max", 1)
 		if maximum > 1:
 			return f"_x{minimum}to{maximum}"
-		elif minimum > 1:
+		if minimum > 1:
 			return f"_x{minimum}"
 	return ""
 

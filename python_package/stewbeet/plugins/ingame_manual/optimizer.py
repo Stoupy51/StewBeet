@@ -111,3 +111,4 @@ def remove_events(compound: TextComponent) -> None:
 			del compound[key]
 	for value in compound.values():
 		remove_events(value)
+

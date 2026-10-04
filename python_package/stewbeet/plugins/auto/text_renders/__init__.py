@@ -4,9 +4,9 @@
 ``tellraw``, a manual dialog) becomes a bitmap glyph showing that item, so packs can put pictures in
 chat and tooltips without hand-managing a font.
 
-The pass runs on the generated files rather than on the definitions: by that point every item
-component has already been serialised into loot tables, ``give`` commands and dialogs, so one scan
-covers all of them at once.
+The pass runs on the generated files rather than on the definitions:
+by that point every item component has already been serialised into loot tables, ``give`` commands and dialogs,
+so one scan covers all of them at once.
 """
 # Lazy imports (PEP 810), ignored before Python 3.15
 from stouputils.lazy import ALWAYS_LAZY
@@ -40,7 +40,7 @@ def get_emitter(config: TextRendersConfig | None = None) -> GlyphEmitter:
 	:func:`resolve_renders` draw glyph characters from the same allocator.
 
 	Args:
-		config (TextRendersConfig | None): Configuration, read from the context when omitted.
+		config: Configuration, read from the context when omitted.
 	Returns:
 		GlyphEmitter: The emitter for the current build.
 	"""
@@ -53,9 +53,9 @@ def build_replacements(requests: list[RenderRequest], glyphs: dict[GlyphKey, str
 	""" Turn resolved requests into the slices rewriting a file's text.
 
 	Args:
-		requests	(list[RenderRequest]):	Requests found in one file.
-		glyphs		(dict):					Glyph key -> glyph character.
-		font		(str):					Fully qualified font id to attach to each glyph.
+		requests: Requests found in one file.
+		glyphs:   Glyph key -> glyph character.
+		font:     Fully qualified font id to attach to each glyph.
 	Returns:
 		list[Replacement]: Slices to overwrite; requests whose image could not be resolved are left untouched.
 	"""
@@ -77,8 +77,8 @@ def resolve_renders(component: TextComponent, config: TextRendersConfig | None =
 	glyph string itself is wanted right away, for instance to measure a line.
 
 	Args:
-		component	(TextComponent):			Component to convert (never mutated).
-		config		(TextRendersConfig | None):	Configuration, read from the context when omitted.
+		component: Component to convert (never mutated).
+		config:    Configuration, read from the context when omitted.
 	Returns:
 		TextComponent: A copy where every render node became a glyph component.
 	"""
@@ -113,7 +113,7 @@ def beet_default(ctx: Context) -> None:
 	``(item id, height, ascent, resolution)`` combination, then rewrites the files to use them.
 
 	Args:
-		ctx (Context): The beet context.
+		ctx: The beet context.
 	"""
 	Mem.ctx = ctx
 	config = TextRendersConfig.from_meta(ctx)
@@ -144,3 +144,4 @@ def beet_default(ctx: Context) -> None:
 
 	total: int = sum(len(requests) for _, _, requests in pending)
 	stp.debug(f"Resolved {total} render(s) into {len(glyphs)} glyph(s) across {rewritten} file(s)")
+

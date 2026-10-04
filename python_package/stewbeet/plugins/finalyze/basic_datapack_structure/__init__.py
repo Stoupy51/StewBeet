@@ -20,7 +20,7 @@ def beet_default(ctx: Context) -> None:
 	for different intervals (tick_2, second, second_5, minute).
 
 	Args:
-		ctx (Context): The beet context.
+		ctx: The beet context.
 	"""
 	# Get namespace and version
 	Mem.ctx = ctx

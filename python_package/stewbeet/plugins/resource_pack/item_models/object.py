@@ -27,7 +27,7 @@ def to_atlas(texture: str) -> str:
 	""" Convert a texture path to its atlas sprite path.
 
 	Args:
-		texture (str): The original texture path.
+		texture: The original texture path.
 
 	Returns:
 		str: The converted atlas sprite path.
@@ -55,9 +55,9 @@ class AutoModel:
 		""" Initialize the AutoModel.
 
 		Args:
-			data (Item): The item data from the definitions.
-			source_textures (dict[str, str]): Dictionary of source textures.
-			ignore_textures (bool): Whether to ignore texture-related errors.
+			data:            The item data from the definitions.
+			source_textures: Dictionary of source textures.
+			ignore_textures: Whether to ignore texture-related errors.
 		"""
 		self.obj: Item = data
 		self.ns: str = Mem.ctx.project_id
@@ -76,9 +76,9 @@ class AutoModel:
 		""" Create an AutoModel from a definitions entry.
 
 		Args:
-			data (Item): The item data from the definitions.
-			source_textures (dict[str, str]): Dictionary of source textures.
-			ignore_textures (bool): Whether to ignore textures in the model.
+			data:            The item data from the definitions.
+			source_textures: Dictionary of source textures.
+			ignore_textures: Whether to ignore textures in the model.
 
 		Returns:
 			AutoModel: The created AutoModel instance.
@@ -90,9 +90,9 @@ class AutoModel:
 		""" Get the powered texture for a given side.
 
 		Args:
-			variants (list[str]): List of texture variants.
-			side (str): The side to get the texture for.
-			on_off (str): The power state suffix.
+			variants: List of texture variants.
+			side:     The side to get the texture for.
+			on_off:   The power state suffix.
 
 		Returns:
 			str: The texture path.
@@ -114,8 +114,8 @@ class AutoModel:
 		""" Check if all models are in a string of any variant.
 
 		Args:
-			models (list[str]): List of models to check.
-			variants (list[str]): List of variants to check against.
+			models:   List of models to check.
+			variants: List of variants to check against.
 
 		Returns:
 			bool: True if all models are in variants.
@@ -131,9 +131,8 @@ class AutoModel:
 			if after_idx < len(variant):
 				# Character after pattern should not be alphanumeric
 				return not variant[after_idx].isalnum()
-			else:
-				# Pattern is at the end of the string, which is valid
-				return True
+			# Pattern is at the end of the string, which is valid
+			return True
 
 		return all(any(model_matches(model, x) for x in variants) for model in models)
 
@@ -142,7 +141,7 @@ class AutoModel:
 		""" Get variants that are in the same folder as the item.
 
 		Args:
-			variants  (Iterable[str]): Iterable of variant names.
+			variants: Iterable of variant names.
 
 		Returns:
 			list[str]: List of variants in the same folder.
@@ -219,7 +218,7 @@ class AutoModel:
 		""" Copy a model's textures to the assets and register them for atlas handling.
 
 		Args:
-			content (JsonDict): The model content whose textures should be processed (may be modified in place).
+			content: The model content whose textures should be processed (may be modified in place).
 		"""
 		if not content.get("textures"):
 			return
@@ -234,9 +233,8 @@ class AutoModel:
 			texture_name += ".png"
 			if texture_name in self.source_textures:
 				Mem.ctx.assets[texture] = texture_mcmeta(self.source_textures[texture_name])
-			else:
-				if not self.ignore_textures:
-					raise ValueError(f"Texture '{texture_name}' not found in source textures")
+			elif not self.ignore_textures:
+				raise ValueError(f"Texture '{texture_name}' not found in source textures")
 
 		# Check if there are textures from different atlases
 		textures_values: list[str] = list(content["textures"].values())
@@ -257,8 +255,8 @@ class AutoModel:
 		switching between the regular and in-hand models based on the display context.
 
 		Args:
-			variants (list[str]): List of texture variants of the item.
-			on_off   (str):       The power state suffix.
+			variants: List of texture variants of the item.
+			on_off:   The power state suffix.
 
 		Returns:
 			JsonDict: The content of the items/ definition file.
@@ -351,7 +349,7 @@ class AutoModel:
 
 		# Generate its model file(s)
 		for on_off in powered:
-			content: JsonDict = {}			# Get all variants
+			content: JsonDict = {}          # Get all variants
 
 			if self.obj.override_model != {}:
 				# If it's a block
@@ -368,7 +366,7 @@ class AutoModel:
 						orientable_with_bottom = ["front", "bottom", "side", "top"]
 						cube_bottom_top = ["bottom", "side", "top"]
 						orientable = ["front", "side", "top"]
-						cube_column = ["end", "side"]						# Check cake model
+						cube_column = ["end", "side"]                       # Check cake model
 						if self.model_in_variants(cake, variants):
 							content["parent"] = "block/cake"
 							for side in cake:
@@ -492,7 +490,7 @@ class AutoModel:
 								if i < (len(sorted_pull_variants) - 1):
 									pull: float = 0.65 + (0.25 * i)
 									model: str = f"{self.ns}:item/{self.obj.id}_pulling_{i + 1}"
-									items_content["model"]["on_true"]["entries"].append({ # type: ignore
+									items_content["model"]["on_true"]["entries"].append({  # pyright: ignore[reportArgumentType, reportAttributeAccessIssue, reportUnknownMemberType]
 										"model": {
 											"type": "minecraft:model",
 											"model": model
@@ -520,9 +518,8 @@ class AutoModel:
 						content["textures"][key] = texture + on_off
 
 			# Remove empty textures
-			if exclude_textures or not content.get("textures"):
-				if "textures" in content:
-					del content["textures"]
+			if (exclude_textures or not content.get("textures")) and "textures" in content:
+				del content["textures"]
 
 			# Copy and register used textures
 			self.copy_and_register_textures(content)

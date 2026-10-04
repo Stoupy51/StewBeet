@@ -1,8 +1,8 @@
 """ HTTP layer of the dependency downloader: cached fetches and failure diagnosis.
 
-A download can fail because the machine is offline, because a firewall/antivirus filters HTTPS, or because
-the API itself is down or blocking us.  These look identical from a single exception, so every failure is
-translated into a sentence naming the likely culprit, backed by one probe of neutral hosts.
+A download can fail because the machine is offline, because a firewall/antivirus filters HTTPS,
+or because the API itself is down or blocking us. These look identical from a single exception,
+so every failure is translated into a sentence naming the likely culprit, backed by one probe of neutral hosts.
 
 Two of those failures clear on their own: a throttled API, and a cache file still held by another process.
 Both are retried with a growing delay before the build is told anything went wrong.
@@ -113,29 +113,23 @@ TLS_WORKAROUND: str = "setting the SSL_CERT_FILE environment variable to the pat
 class TransientDownloadError(Exception):
 	""" A failure worth another attempt, wrapping the real one as its cause.
 
-	The retry decorator selects on the exception type, while the diagnosis needs the original exception to
-	name the culprit, so the two are kept apart rather than reported as one another.
+	The retry decorator selects on the exception type, while the diagnosis needs the original exception to name the culprit,
+	so the two are kept apart rather than reported as one another.
 	"""
 
 
 # Functions
 def is_transient(exc: BaseException) -> bool:
-	""" Whether *exc* is worth another attempt: a throttled API, a cut connection, or a locked cache file.
+	""" Whether a download exception is worth another attempt: a throttled API, a cut connection, or a locked cache file.
 
-	Args:
-		exc (BaseException): The exception raised while downloading.
-	Returns:
-		bool: True when waiting and trying again can plausibly succeed.
-
-	Examples:
-		>>> is_transient(HTTPError("", 429, "Too Many Requests", {}, None))
-		True
-		>>> is_transient(HTTPError("", 404, "Not Found", {}, None))
-		False
-		>>> is_transient(PermissionError(13, "being used by another process"))
-		True
-		>>> is_transient(URLError(ConnectionResetError()))
-		True
+	>>> is_transient(HTTPError("", 429, "Too Many Requests", {}, None))
+	True
+	>>> is_transient(HTTPError("", 404, "Not Found", {}, None))
+	False
+	>>> is_transient(PermissionError(13, "being used by another process"))
+	True
+	>>> is_transient(URLError(ConnectionResetError()))
+	True
 	"""
 	if isinstance(exc, HTTPError):
 		return exc.code in TRANSIENT_STATUS
@@ -186,16 +180,15 @@ def describe_network_error(url: str, exc: BaseException) -> str:
 	""" Turn a raw download exception into a one-line diagnosis naming the likely culprit.
 
 	Args:
-		url  (str):           The URL that failed, used to report the host name.
-		exc  (BaseException): The exception raised while downloading.
+		url: The URL that failed, used to report the host name.
+		exc: The exception raised while downloading.
 	Returns:
 		str: The diagnosis, ex: "HTTP 503 Service Unavailable from api.smithed.dev: the API is down or overloaded"
 
-	Examples:
-		>>> describe_network_error(  # doctest: +ELLIPSIS
-		...     "https://api.smithed.dev/v2/packs/x", HTTPError("", 404, "Not Found", {}, None)
-		... )
-		'HTTP 404 Not Found from api.smithed.dev: not found, ...'
+	>>> describe_network_error(  # doctest: +ELLIPSIS
+	...     "https://api.smithed.dev/v2/packs/x", HTTPError("", 404, "Not Found", {}, None)
+	... )
+	'HTTP 404 Not Found from api.smithed.dev: not found, ...'
 	"""
 	host: str = urlsplit(url).hostname or url
 	if isinstance(exc, TransientDownloadError) and exc.__cause__ is not None:
@@ -236,9 +229,8 @@ def describe_network_error(url: str, exc: BaseException) -> str:
 def describe_body(text: str) -> str:
 	""" Describe a response that is not the expected JSON, so a proxy or captive-portal page is obvious.
 
-	Examples:
-		>>> describe_body("<html>Blocked</html>")
-		'HTML received instead of JSON (proxy, captive portal or error page): <html>Blocked</html>'
+	>>> describe_body("<html>Blocked</html>")
+	'HTML received instead of JSON (proxy, captive portal or error page): <html>Blocked</html>'
 	"""
 	snippet: str = " ".join(text.split())[:200]
 	if not snippet:

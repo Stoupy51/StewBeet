@@ -25,9 +25,8 @@ def attribute_to(definition: Declared) -> Generator[None]:
 	""" Attribute everything written inside this scope to a declaration's own site.
 
 	Needed because a plugin generating from `Mem.definitions` has no project frame on the stack at
-	all: the declaration returned long before, leaving only beet's pipeline and the user's entry
-	point above the write. The declaration captured its own origin when it was constructed, and
-	this hands that origin to every write inside the block.
+	all: the declaration returned long before, leaving only beet's pipeline and the user's entry point above the write.
+	The declaration captured its own origin when it was constructed, and this hands that origin to every write inside the block.
 
 	>>> from stewbeet.plugins.sniffer.model import SourceOrigin
 	>>> class Fake: origin = SourceOrigin(file="/p/blocks.py", line=11, column=0)
@@ -54,8 +53,8 @@ def attributed[T: Declared](definitions: Iterable[tuple[str, T]]) -> Generator[t
 	""" Iterate definitions, attributing everything each iteration writes to that declaration.
 
 	A generation loop wraps its iterable in this instead of indenting its whole body into a `with`.
-	The scope opens before the body runs and closes when the loop asks for the next item, or when it
-	breaks and the generator is closed, so it always matches the iteration exactly.
+	The scope opens before the body runs and closes when the loop asks for the next item,
+	or when it breaks and the generator is closed, so it always matches the iteration exactly.
 
 	>>> from stewbeet.plugins.sniffer.model import SourceOrigin
 	>>> class Fake: origin = SourceOrigin(file="/p/blocks.py", line=11, column=0)

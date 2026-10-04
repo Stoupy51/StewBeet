@@ -60,7 +60,7 @@ def beet_default(ctx: Context) -> None:
 	It also scans library ZIPs for custom unload functions and adds calls to them in the main unload function.
 
 	Args:
-		ctx (Context): The beet context.
+		ctx: The beet context.
 	"""
 	Mem.ctx = ctx
 	assert ctx.project_id, "Project ID is not set. Please set it in the project configuration."

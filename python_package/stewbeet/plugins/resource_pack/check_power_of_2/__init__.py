@@ -15,7 +15,7 @@ def beet_default(ctx: Context) -> None:
 	""" Check if all textures in the resource pack are in power of 2 resolution.
 
 	Args:
-		ctx (Context): The beet context.
+		ctx: The beet context.
 	"""
 	# Get all textures in the resource pack folder
 	wrongs: list[tuple[str, int, int]] = []
@@ -25,10 +25,10 @@ def beet_default(ctx: Context) -> None:
 
 		# Check if the texture is in power of 2 resolution
 		width, height = texture.image.size
-		if bin(width).count("1") != 1 or bin(height).count("1") != 1:  # At least one of them is not a power of 2
-			# If width can't divide height, add it to the wrongs list (else it's probably a GUI or animation texture)
-			if height % width != 0 or height == width:
-				wrongs.append((namespaced, width, height))
+		not_power_of_2: bool = bin(width).count("1") != 1 or bin(height).count("1") != 1
+		# A height that is a multiple of the width is probably a GUI or animation texture
+		if not_power_of_2 and (height % width != 0 or height == width):
+			wrongs.append((namespaced, width, height))
 
 	# Print all wrong textures
 	if wrongs:

@@ -1,8 +1,8 @@
-# Starting state for: stewbeet.plugins.spyglass
-#
-# A config that already holds one of the author's own patterns and one an earlier build added, so
-# both halves of the contract are exercised in a single build.
+""" Starting state for: stewbeet.plugins.spyglass
 
+A config that already holds one of the author's own patterns and one an earlier build added,
+so both halves of the contract are exercised in a single build.
+"""
 # Imports
 import json
 
@@ -24,7 +24,7 @@ STALE: str = "src/data/tns/function/gone.mcfunction"
 
 # Main entry point
 def beet_default(ctx: Context) -> None:
-    with open(CONFIG, "w", encoding="utf-8") as file:
-        json.dump({"env": {"dependencies": ["@vanilla-mcdoc"], "exclude": [AUTHORS_OWN, STALE]}}, file, indent=2)
-    ctx.cache[CACHE_NAME].json["excluded"] = [STALE]
+	with open(CONFIG, "w", encoding="utf-8") as file:
+		json.dump({"env": {"dependencies": ["@vanilla-mcdoc"], "exclude": [AUTHORS_OWN, STALE]}}, file, indent=2)
+	ctx.cache[CACHE_NAME].json["excluded"] = [STALE]
 

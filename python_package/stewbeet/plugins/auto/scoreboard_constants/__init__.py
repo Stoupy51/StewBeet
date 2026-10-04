@@ -21,7 +21,7 @@ def beet_default(ctx: Context):
 	Pattern is ``#{integer} {ctx.project_id}.data``
 
 	Args:
-		ctx (Context): The beet context.
+		ctx: The beet context.
 	"""
 	Mem.ctx = ctx
 

@@ -5,6 +5,7 @@ from stouputils.lazy import ALWAYS_LAZY
 __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
+import contextlib
 from pathlib import Path
 from typing import Any
 
@@ -21,7 +22,7 @@ def get_local_datapack_destinations(ctx: Context) -> list[str]:
 	""" Return the resolved local datapack destinations from `meta.stewbeet.build_copy_destinations.datapack`.
 
 	Args:
-		ctx (Context): The beet context.
+		ctx: The beet context.
 	Returns:
 		list[str]: Resolved absolute paths of local datapack destination folders (may be empty).
 	"""
@@ -32,7 +33,7 @@ def get_sftp_datapack_destinations(ctx: Context) -> list[str]:
 	""" Return the remote `sftp://` datapack destinations from `meta.stewbeet.build_copy_destinations.datapack`.
 
 	Args:
-		ctx (Context): The beet context.
+		ctx: The beet context.
 	Returns:
 		list[str]: `sftp://` datapack destination URLs (may be empty).
 	"""
@@ -43,7 +44,7 @@ def get_local_resource_pack_destinations(ctx: Context) -> list[str]:
 	""" Return the resolved local resource pack destinations from `meta.stewbeet.build_copy_destinations.resource_pack`.
 
 	Args:
-		ctx (Context): The beet context.
+		ctx: The beet context.
 	Returns:
 		list[str]: Resolved absolute paths of local resource pack destination folders (may be empty).
 	"""
@@ -65,13 +66,10 @@ def _walk_up_for_log(start: Path) -> str | None:
 
 
 def find_minecraft_dir(ctx: Context, data_pack_dir: Path | None = None, link_minecraft: str | None = None) -> str | None:
-	""" Locate the Minecraft directory holding `logs/latest.log`, used to detect reload confirmations.
+	""" Locate the client Minecraft directory holding `logs/latest.log`, None if it cannot be determined.
 
-	The reload cycle relies on tailing that log to remove the polling datapack after each `/reload`,
-	so getting this right is what makes live reloading actually work. Live reload watches the *client*
-	`[CHAT]` log, so the client `.minecraft` folder is the correct target even when the datapack is
-	deployed to a separate (local or remote/`sftp`) server/world tree. The resource pack destination
-	usually lives inside that client folder, which makes it the most reliable place to look.
+	Live reload tails that log's `[CHAT]` lines to remove the polling datapack after each `/reload`,
+	so it is the client `.minecraft` even when the datapack is deployed to a separate local or `sftp` server.
 
 	Resolution order:
 		1. Explicit override `meta.stewbeet.livereload.minecraft` (directory containing `logs/`)
@@ -80,11 +78,8 @@ def find_minecraft_dir(ctx: Context, data_pack_dir: Path | None = None, link_min
 		4. Walking up from the local datapack destination (singleplayer worlds stored under `.minecraft/saves`)
 
 	Args:
-		ctx (Context): The beet context.
-		data_pack_dir (Path | None): A local datapack destination folder, if any.
-		link_minecraft (str | None): The Minecraft directory from `beet link`, if any.
-	Returns:
-		str | None: Path to the Minecraft directory, or None if it couldn't be determined.
+		data_pack_dir:  A local datapack destination folder, if any.
+		link_minecraft: The Minecraft directory from `beet link`, if any.
 	"""
 	# 1. Explicit override (accepted as long as the directory exists, so a not-yet-started game still works)
 	override: str = ctx.meta.get("stewbeet", {}).get("livereload", {}).get("minecraft", "")
@@ -109,8 +104,8 @@ def _sftp_upload_livereload(local_zip: Path, datapack_url: str) -> str | None:
 	""" Upload the helper zip into a remote `sftp://` datapacks folder.
 
 	Args:
-		local_zip (Path): Local path to the helper datapack zip.
-		datapack_url (str): The remote `sftp://.../datapacks` destination URL.
+		local_zip:    Local path to the helper datapack zip.
+		datapack_url: The remote `sftp://.../datapacks` destination URL.
 	Returns:
 		str | None: The remote zip URL (for later cleanup), or None if the upload was skipped.
 	"""
@@ -128,10 +123,8 @@ def _sftp_upload_livereload(local_zip: Path, datapack_url: str) -> str | None:
 
 def _sftp_remove_livereload(zip_url: str) -> None:
 	""" Remove the previously uploaded helper zip from a remote `sftp://` datapacks folder. """
-	try:
+	with contextlib.suppress(Exception):
 		SftpPool.remove(zip_url)
-	except Exception:
-		pass
 
 
 def _livereload_cleanup_server(connection: Any) -> None:
@@ -142,7 +135,7 @@ def _livereload_cleanup_server(connection: Any) -> None:
 	and remote helper zips are removed over SFTP, so the next build can re-trigger the reload cycle.
 
 	Args:
-		connection (Any): The beet worker connection.
+		connection: The beet worker connection.
 	"""
 	import logging
 
@@ -183,19 +176,18 @@ def _livereload_cleanup_server(connection: Any) -> None:
 
 def patch_livereload_for_copy_destinations(ctx: Context) -> None:
 	""" Monkey-patch `beet.contrib.livereload` so live reloading also targets the folders listed in
-	`meta.stewbeet.build_copy_destinations.datapack` (local **and** remote `sftp://`), in addition to
-	the usual `beet link` folder.
+	`meta.stewbeet.build_copy_destinations.datapack` (local **and** remote `sftp://`), in addition to the usual `beet link` folder.
 
-	This lets users get automatic in-game `/reload` with nothing more than their existing
-	`build_copy_destinations` configuration (no `beet link` required). All methods coexist: a linked
-	folder, local copy destinations and remote `sftp://` destinations all get reloaded together.
+	This lets users get automatic in-game `/reload` with nothing more than their existing `build_copy_destinations` configuration
+	(no `beet link` required). All methods coexist: a linked folder,
+	local copy destinations and remote `sftp://` destinations all get reloaded together.
 
-	The patch is idempotent (safe to call several times, e.g. from both `stewbeet.plugins.initialize`
-	and `stewbeet.plugins.livereload`) and is a no-op if livereload isn't installed or no datapack
-	destination is configured.
+	The patch is idempotent (safe to call several times, e.g.
+	from both `stewbeet.plugins.initialize` and `stewbeet.plugins.livereload`) and is a no-op if livereload isn't installed or no
+	datapack destination is configured.
 
 	Args:
-		ctx (Context): The beet context.
+		ctx: The beet context.
 	"""
 	# Only patch when the user actually relies on copy destinations (otherwise vanilla livereload is enough)
 	if not get_local_datapack_destinations(ctx) and not get_sftp_datapack_destinations(ctx):
@@ -246,9 +238,8 @@ def patch_livereload_for_copy_destinations(ctx: Context) -> None:
 			with tempfile.TemporaryDirectory() as tmp:
 				local_zip: Path = Path(tmp) / LIVERELOAD_ZIP_NAME
 				create_livereload_data_pack().save(path=local_zip, zipped=True)
-				for url in sftp_urls:
-					if zip_url := _sftp_upload_livereload(local_zip, url):
-						cleanup_targets.append(("sftp", zip_url))
+				uploaded: list[str | None] = [_sftp_upload_livereload(local_zip, url) for url in sftp_urls]
+				cleanup_targets.extend(("sftp", zip_url) for zip_url in uploaded if zip_url)
 
 		if not cleanup_targets:
 			return
@@ -257,36 +248,32 @@ def patch_livereload_for_copy_destinations(ctx: Context) -> None:
 		minecraft: str | None = find_minecraft_dir(ctx, first_local_dir, link_manager.minecraft)
 
 		# A single worker tails the client log and cleans up every helper pack (local + remote) on reload
-		with ctx.worker(_livereload_cleanup_server) as channel: # type: ignore
-			channel.send((minecraft, tuple(cleanup_targets))) # type: ignore
+		with ctx.worker(_livereload_cleanup_server) as channel:  # pyright: ignore[reportUnknownVariableType]
+			channel.send((minecraft, tuple(cleanup_targets)))  # pyright: ignore[reportUnknownMemberType]
 
-	# Swap the module-level function so livereload.beet_default registers our version with Autosave.
-	# Also replace it in any already-registered Autosave handlers (covers the `require` ordering where
-	# beet.contrib.livereload was required before StewBeet had a chance to patch it).
+	# Swap the module-level function so livereload.beet_default registers our version with Autosave,
+	# and in the handlers Autosave already holds when beet.contrib.livereload was required before this patch.
 	original_livereload = livereload_module.livereload
 	livereload_module.livereload = livereload_with_copy_destinations
-	livereload_module._stewbeet_copy_patch = True  # type: ignore
-	try:
+	livereload_module._stewbeet_copy_patch = True  # pyright: ignore[reportAttributeAccessIssue]
+	with contextlib.suppress(Exception):
 		autosave = ctx.inject(Autosave)
 		autosave.link_handlers = [
 			livereload_with_copy_destinations if handler is original_livereload else handler
 			for handler in autosave.link_handlers
 		]
-	except Exception:
-		pass
 
 
 # Main entry point
 def beet_default(ctx: Context) -> None:
 	""" Live reload wrapper plugin for StewBeet.
 
-	Enables in-game `/reload` on each build through `beet link` and/or the StewBeet
-	`build_copy_destinations.datapack` folders (local and remote `sftp://`), then delegates to the
-	underlying `beet.contrib.livereload` plugin. Simply require this plugin (or add it to the pipeline)
-	instead of wiring up `beet.contrib.livereload` and `beet link` manually.
+	Enables in-game `/reload` on each build through `beet link` and/or the StewBeet `build_copy_destinations.datapack` folders
+	(local and remote `sftp://`), then delegates to the underlying `beet.contrib.livereload` plugin.
+	Simply require this plugin (or add it to the pipeline) instead of wiring up `beet.contrib.livereload` and `beet link` manually.
 
 	Args:
-		ctx (Context): The beet context.
+		ctx: The beet context.
 	"""
 	patch_livereload_for_copy_destinations(ctx)
 	ctx.require("beet.contrib.livereload")

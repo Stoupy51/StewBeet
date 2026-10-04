@@ -22,7 +22,7 @@ def beet_default(ctx: Context):
 	pack_icon_path: str = Mem.ctx.meta.get("stewbeet", {}).get("pack_icon_path", "")
 	source_lore: str = Mem.ctx.meta.get("stewbeet", {}).get("source_lore", "")
 	if source_lore and uses_font(source_lore, f"{ctx.project_id}:{TOOLTIP_FONT}"):
-		for item in Mem.definitions.keys():
+		for item in Mem.definitions:
 			obj = Item.from_id(item)
 			if source_lore in obj.components.get("lore", []):
 				create_source_lore_font(pack_icon_path)

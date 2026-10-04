@@ -22,9 +22,9 @@ def set_json_encoder[JsonFileT: JsonFile](
 	""" Set the encoder of the given object to json_dump
 
 	Args:
-		obj			(JsonFile):		The object to set the encoder for
-		max_level	(int | None):	The maximum level of the JSON dump, or None for default behavior
-		indent		(str | int):	The indentation character (default: '\t')
+		obj:       The object to set the encoder for
+		max_level: The maximum level of the JSON dump, or None for default behavior
+		indent:    The indentation character (default: '\t')
 	Returns:
 		JsonFile: The object with the encoder set
 	"""
@@ -40,7 +40,7 @@ def texture_mcmeta(source_path: str) -> Texture:
 	""" Create a Texture object with mcmeta if found
 
 	Args:
-		source_path (str): The path to the texture (ex: "assets/textures/texture_name.png")
+		source_path: The path to the texture (ex: "assets/textures/texture_name.png")
 	Returns:
 		Texture: The texture object
 	"""
@@ -48,3 +48,4 @@ def texture_mcmeta(source_path: str) -> Texture:
 	if os.path.exists(mcmeta_path):
 		return Texture(source_path=source_path, mcmeta=stp.json_load(mcmeta_path))
 	return Texture(source_path=source_path)
+

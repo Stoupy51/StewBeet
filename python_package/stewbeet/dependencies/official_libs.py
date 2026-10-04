@@ -17,14 +17,14 @@ def detection_markers(project_id: str) -> dict[str, str]:
 	""" Map every text marker to the library it proves the use of, skipping the pack being built.
 
 	Args:
-		project_id (str): Project id of the pack being built, so a library never detects itself.
+		project_id: Project id of the pack being built, so a library never detects itself.
 	Returns:
 		dict[str, str]: Marker to look for in function sources, mapped to its library namespace.
-	Examples:
-		>>> detection_markers("my_pack")["#bs.math:"]
-		'bs.math'
-		>>> "#bs.math:" in detection_markers("bookshelf")
-		False
+
+	>>> detection_markers("my_pack")["#bs.math:"]
+	'bs.math'
+	>>> "#bs.math:" in detection_markers("bookshelf")
+	False
 	"""
 	return {
 		data["detect"]: lib_ns
@@ -32,10 +32,7 @@ def detection_markers(project_id: str) -> dict[str, str]:
 		if "detect" in data and project_id not in (lib_ns, data.get("detect_ns", lib_ns))
 	}
 
-# Each entry has: name, url, is_used, source ("smithed"|"modrinth"|"static")
-# Smithed entries can have: version, smithed_id, has_resource_pack
-# Modrinth entries can have: modrinth_slug
-# Static entries have: static_urls {(mc_ver_tuple, dep_ver_tuple): url}
+# Each entry has name, url, is_used and source: "smithed" (version, smithed_id, has_resource_pack), "modrinth" (modrinth_slug) or "static" (static_urls)
 # "detect" is the marker whose presence in a function source auto-enables the library, "detect_ns" being the project id shipping it when it differs from the key
 OFFICIAL_LIBS: dict[str, JsonDict] = {
 
@@ -52,12 +49,6 @@ OFFICIAL_LIBS: dict[str, JsonDict] = {
 	"smart_ore_generation": {"name":"Smart Ore Generation",   "url":"https://github.com/Stoupy51/SmartOreGeneration",     "is_used": False, "source":"modrinth", "modrinth_slug":"smart_ore_generation"},
 	"cinemalya":            {"name":"Cinemalya",              "url":"https://github.com/Stoupy51/Cinemalya",              "is_used": False, "source":"modrinth", "modrinth_slug":"cinemalya", "detect": "cinemalya"},
 	"player_motion":        {"name":"Player Motion API",      "url":"https://github.com/MulverineX/player_motion",        "is_used": False, "source":"modrinth", "modrinth_slug":"player_motion", "no_lantern_load": True, "detect": "player_motion"},
-
-	# Static URL libs (version resolved from static_urls at download time)
-	# "smart_ore_generation":   {"name":"SmartOreGeneration",   "url":"https://github.com/Stoupy51/SmartOreGeneration",         "is_used": False, "source":"static", "static_urls": {
-	#         ((1, 21, 7),  (1, 7, 2)): "https://github.com/Stoupy51/SmartOreGeneration/releases/download/v1.7.2/SmartOreGeneration_datapack.zip",
-	#     }
-	# },
 
 	# Bookshelf modules (resolved via Modrinth API with modrinth_slug)
 	"bs.bitwise":           {"name": "Bookshelf Bitwise",     "url": "https://github.com/mcbookshelf/bookshelf/releases", "is_used": False, "source": "modrinth", "modrinth_slug": "bookshelf-bitwise",     "detect": "#bs.bitwise:",     "detect_ns": "bookshelf"},

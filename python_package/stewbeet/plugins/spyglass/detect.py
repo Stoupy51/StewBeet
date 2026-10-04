@@ -40,8 +40,8 @@ def unparseable_sources(ctx: Context) -> list[str]:
 def nested_sources(mc: Mecha) -> set[str]:
 	""" Files backing more than one compilation unit, which is mecha's `function ./name:` nesting.
 
-	Nesting is not vanilla syntax twice over: the line opening a body ends in a colon, and `./name`
-	is not a resource location. A file using it is a file Spyglass underlines.
+	Nesting is not vanilla syntax twice over: the line opening a body ends in a colon, and `./name` is not a resource location.
+	A file using it is a file Spyglass underlines.
 	"""
 	# A unit mecha nested out of a file has no file of its own, and the text its AST was parsed from
 	# is the parent file's own, which is all that ties the two together.
@@ -94,9 +94,9 @@ def existing_service[T](ctx: Context, service: Callable[[Context], T]) -> T | No
 def project_relative(filename: str | None) -> str | None:
 	""" A compiled file's path relative to the project root, or None when no pattern could name it.
 
-	`CompilationUnit.filename` is already relative to beet's project directory, so this normalises
-	separators and drops what an `env.exclude` entry cannot reach: Spyglass matches its patterns
-	against paths relative to the root it indexes.
+	`CompilationUnit.filename` is already relative to beet's project directory,
+	so this normalises separators and drops what an `env.exclude` entry cannot reach:
+	Spyglass matches its patterns against paths relative to the root it indexes.
 
 	>>> project_relative("src/data/ns/function/a.mcfunction")
 	'src/data/ns/function/a.mcfunction'
@@ -109,3 +109,4 @@ def project_relative(filename: str | None) -> str | None:
 		return None
 	name: str = filename.replace("\\", "/")
 	return None if name.startswith(("../", "/")) or ":" in name else name
+

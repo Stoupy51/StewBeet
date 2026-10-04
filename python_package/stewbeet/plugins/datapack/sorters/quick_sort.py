@@ -28,8 +28,8 @@ def generate_quick_sort(ctx: Context, sorter: JsonDict) -> None:
 	using recursive function calls with macro parameters.
 
 	Args:
-		ctx (Context): The beet context for generating functions.
-		sorter (dict): Configuration dictionary containing sorting parameters.
+		ctx:    The beet context for generating functions.
+		sorter: Configuration dictionary containing sorting parameters.
 	"""
 	old_ctx: Context = Mem.ctx
 	Mem.ctx = ctx  # Set the current context to the one provided

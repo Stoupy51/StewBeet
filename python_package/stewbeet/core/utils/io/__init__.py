@@ -5,8 +5,7 @@ from stouputils.lazy import ALWAYS_LAZY
 __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
-# Star imports keep this package a drop-in replacement for the former io.py module: every name it
-# used to expose, including the ones it merely imported, stays reachable from `core.utils.io`.
+# Every name these modules expose, imported ones included, stays reachable from `core.utils.io`.
 from .advancements import (
 	write_advancement as write_advancement,
 )
@@ -44,3 +43,4 @@ from .model_cache import (
 	setup_model_cache as setup_model_cache,
 	to_plain_builtin as to_plain_builtin,
 )
+

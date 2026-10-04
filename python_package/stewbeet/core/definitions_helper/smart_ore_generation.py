@@ -34,7 +34,6 @@ class CustomOreGeneration(StMapping):
 	Conditions are execute subcommands starting with "if " or "unless ", all of which must hold.
 	`vein_conditions` are checked once at the start of the vein and cancel all of it, which suits biomes.
 	`block_conditions` are checked at every block of the vein, which suits neighbouring blocks.
-
 	```py
 	CustomOreGeneration(
 		dimensions=["minecraft:overworld"],

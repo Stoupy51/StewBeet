@@ -52,8 +52,8 @@ class ItemPage(Page):
 	buttons: list[WikiButtonRender] = field(default_factory=list[WikiButtonRender])
 	""" The wiki buttons rendered on the page (populated during :meth:`build`). """
 	extra_buttons: list[WikiButtonRender] = field(default_factory=list[WikiButtonRender])
-	""" Developer-added buttons appended after the automatic ones (e.g. another item's recipe
-	via ``manual.recipes.button_for_item(...)`` or a page link via ``manual.recipes.link_button(...)``). """
+	""" Developer-added buttons appended after the automatic ones,
+	e.g. another item's recipe via ``manual.recipes.button_for_item(...)`` or a page link via ``manual.recipes.link_button(...)``. """
 
 	@classmethod
 	def for_item(cls, item_id: str, **kwargs: Any) -> ItemPage:
@@ -220,9 +220,9 @@ class ItemPage(Page):
 	) -> list[TextComponent]:
 		""" Splice the button grid into ``content`` where ``layout.position`` asks for.
 
-		``recipe_end`` is the index right after the main craft content. At this point ``content``
-		still holds the in-body title at index 1 (dropped later by :meth:`build`), so "top"
-		inserts at index 2.
+		``recipe_end`` is the index right after the main craft content.
+		At this point ``content`` still holds the in-body title at index 1 (dropped later by :meth:`build`),
+		so "top" inserts at index 2.
 
 		>>> layout = ButtonLayout(position=lambda content, buttons, manual: [*content, "grid"])
 		>>> ItemPage(anchor="item:demo").place_button_grid(["base"], [], layout, None, 1)
@@ -275,3 +275,4 @@ class ItemPage(Page):
 			for j in range(last_i):
 				selected = cast(JsonDict, content[-last_i + j])
 				selected["text"] = WIKI_NONE_FONT + VERY_SMALL_NONE_FONT * (2 if j != (last_i - 1) else 0)
+

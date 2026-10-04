@@ -35,10 +35,10 @@ def generate_everything_about_this_material(
 	And return a list of generated items if you want to do something with it.
 
 	Args:
-		material			(str):					The ore/material to generate everything about (ex: "adamantium_fragment", "steel_ingot", "minecraft:emerald", "minecraft:copper_ingot", "awakened_stardust!")
+		material:          The ore/material to generate everything about (ex: "adamantium_fragment", "steel_ingot", "minecraft:emerald", "minecraft:copper_ingot", "awakened_stardust!")
 													When the material ends with "!", the material base will be the material without the "!"
-		equipments_config	(EquipmentsConfig):	The base multiplier to apply
-		ignore_recipes	(bool):						If True, no recipes will be added in the definitions.
+		equipments_config: The base multiplier to apply
+		ignore_recipes:    If True, no recipes will be added in the definitions.
 	"""
 	# Assertions
 	textures_folder: str = stp.relative_path(Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", ""))
@@ -59,12 +59,12 @@ def generate_everything_about_this_material(
 
 	# Main ingredient constant
 	if '_' in material and not material.endswith("!"):
-		material_base = "_".join(material.split(":")[-1].split("_")[:-1])	# Get the base material name (ex: "adamantium" from "adamantium_fragment")
+		material_base = "_".join(material.split(":")[-1].split("_")[:-1])   # Get the base material name (ex: "adamantium" from "adamantium_fragment")
 	else:
-		if material.endswith("!"):	# Remove the "!" if present
+		if material.endswith("!"):  # Remove the "!" if present
 			material = material[:-1]
-		material_base = material.split(":")[-1]		# Get the base material name (ex: "adamantium" from "adamantium_fragment")
-	main_ingredient = Ingr(material) 			# Get the main ingredient for recipes
+		material_base = material.split(":")[-1]     # Get the base material name (ex: "adamantium" from "adamantium_fragment")
+	main_ingredient = Ingr(material)            # Get the main ingredient for recipes
 
 	## Ingredients (ingot, nugget, raw, and other)
 	for item in [material_base, f"{material_base}_fragment", f"{material_base}_ingot", f"{material_base}_nugget", f"raw_{material_base}", f"{material_base}_dust", f"{material_base}_stick", f"{material_base}_rod"]:
@@ -72,14 +72,14 @@ def generate_everything_about_this_material(
 			continue
 		obj = Item.from_id(item, strict=False)  # Ensure the item is created in the definitions
 		item_type = item.replace(f"{material_base}_", "").replace(f"_{material_base}", "")
-		obj.base_item = CUSTOM_ITEM_VANILLA				# Custom item
-		obj.manual_category = "material"				# Category
-		obj.components["custom_data"] = {"smithed":{}}	# Smithed convention
+		obj.base_item = CUSTOM_ITEM_VANILLA             # Custom item
+		obj.manual_category = "material"                # Category
+		obj.components["custom_data"] = {"smithed":{}}  # Smithed convention
 		obj.components["custom_data"]["smithed"]["dict"] = {item_type: {material_base: True}}
 
 		# Recipes
 		if not ignore_recipes:
-			if item.endswith("ingot") or item.endswith("fragment") or item == material_base:
+			if item.endswith(("ingot", "fragment")) or item == material_base:
 				if f"{material_base}_block.png" in textures:
 					obj.recipes.append(CraftingShapelessRecipe(result_count=9, category="misc", group=material_base, ingredients=[Ingr(f"{material_base}_block")]))
 				if f"{material_base}_nugget.png" in textures:
@@ -96,9 +96,8 @@ def generate_everything_about_this_material(
 				if f"deepslate_{material_base}_ore.png" in textures:
 					obj.recipes.append(SmeltingRecipe(result_count=1, category="misc", group=material_base, experience=0.8, cookingtime=200, ingredient=Ingr(f"deepslate_{material_base}_ore")))
 					obj.recipes.append(BlastingRecipe(result_count=1, category="misc", group=material_base, experience=0.8, cookingtime=100, ingredient=Ingr(f"deepslate_{material_base}_ore")))
-			if item.startswith("raw_"):
-				if f"raw_{material_base}_block.png" in textures:
-					obj.recipes.append(CraftingShapelessRecipe(result_count=9, category="misc", group=material_base, ingredients=[Ingr(f"raw_{material_base}_block")]))
+			if item.startswith("raw_") and f"raw_{material_base}_block.png" in textures:
+				obj.recipes.append(CraftingShapelessRecipe(result_count=9, category="misc", group=material_base, ingredients=[Ingr(f"raw_{material_base}_block")]))
 			if item.endswith("dust"):
 				obj.recipes.append(SmeltingRecipe(result_count=1, category="misc", group=material_base, experience=0.8, cookingtime=200, ingredient=Ingr(item), result=main_ingredient))
 				obj.recipes.append(BlastingRecipe(result_count=1, category="misc", group=material_base, experience=0.8, cookingtime=100, ingredient=Ingr(item), result=main_ingredient))
@@ -108,14 +107,13 @@ def generate_everything_about_this_material(
 						obj.recipes.append(PulverizingRecipe(result_count=2, category="misc", group=material_base, ingredient=Ingr(pulv_ingr)))
 			if item.endswith("nugget"):
 				obj.recipes.insert(0, CraftingShapelessRecipe(result_count=9, category="misc", group=material_base, ingredients=[main_ingredient]))
-				for gear in SLOTS.keys():
+				for gear in SLOTS:
 					if f"{material_base}_{gear}.png" in textures:
 						obj.recipes.append(SmeltingRecipe(result_count=1, category="equipment", experience=0.8, cookingtime=200, ingredient=Ingr(f"{material_base}_{gear}")))
 			if item.endswith("stick"):
 				obj.recipes.append(CraftingShapedRecipe(result_count=4, category="misc", shape=["X","X"], ingredients={"X":main_ingredient}))
 			if item.endswith("rod"):
 				obj.recipes.append(CraftingShapedRecipe(result_count=1, category="misc", shape=["X","X","X"], ingredients={"X":main_ingredient}))
-		pass
 
 
 	## Placeables (ore, deepslate_ore, block, raw_block)
@@ -123,16 +121,16 @@ def generate_everything_about_this_material(
 		if block + ".png" not in textures:
 			continue
 		obj = Block.from_id(block, strict=False)  # Ensure the block is created in the definitions
-		obj.base_item = CUSTOM_BLOCK_VANILLA				# Item for placing custom block
-		obj.manual_category = "material"					# Category
-		obj.components["custom_data"] = {"smithed":{}}		# Smithed convention
+		obj.base_item = CUSTOM_BLOCK_VANILLA                # Item for placing custom block
+		obj.manual_category = "material"                    # Category
+		obj.components["custom_data"] = {"smithed":{}}      # Smithed convention
 		obj.components["custom_data"]["smithed"]["dict"] = {"block": {material_base: True}}
 		is_there_raw_material = f"raw_{material_base}.png" in textures
 		if block.endswith("ore"):
-			obj.vanilla_block = VANILLA_BLOCK_FOR_ORES	# Placeholder for the base block (required for custom ores)
+			obj.vanilla_block = VANILLA_BLOCK_FOR_ORES  # Placeholder for the base block (required for custom ores)
 			obj.components["custom_data"]["smithed"]["dict"]["ore"] = {material_base: True}
 			if is_there_raw_material:
-				obj.no_silk_touch_drop = f"raw_{material_base}"			# Drop without silk touch (raw_steel is an item in the definitions)
+				obj.no_silk_touch_drop = f"raw_{material_base}"         # Drop without silk touch (raw_steel is an item in the definitions)
 			else:
 				obj.no_silk_touch_drop = material
 		if block.endswith("block") and not ignore_recipes:
@@ -140,7 +138,6 @@ def generate_everything_about_this_material(
 				obj.recipes.append(CraftingShapedRecipe(result_count=1, group=material_base, category="misc", shape=["XXX","XXX","XXX"], ingredients={"X":Ingr(f"raw_{material_base}")}))
 			else:
 				obj.recipes.append(CraftingShapedRecipe(result_count=1, group=material_base, category="misc", shape=["XXX","XXX","XXX"], ingredients={"X":main_ingredient}))
-		pass
 
 
 	## Armor equipment entity (top layer and leggings)
@@ -189,8 +186,8 @@ def generate_everything_about_this_material(
 			elif equivalent_to == "wooden":
 				equivalent_to = "leather"
 			obj.base_item = f"minecraft:{equivalent_to}_{gear}"
-			obj.manual_category = "equipment"					# Category
-			obj.components["custom_data"] = {"smithed":{}}			# Smithed convention
+			obj.manual_category = "equipment"                   # Category
+			obj.components["custom_data"] = {"smithed":{}}          # Smithed convention
 			obj.components["custom_data"]["smithed"]["dict"] = {"armor": {material_base: True, gear: True}}
 			gear_config: JsonDict = {}
 			if gear == "helmet":
@@ -235,7 +232,7 @@ def generate_everything_about_this_material(
 			continue
 		obj = Item.from_id(tool, strict=False)  # Ensure the item is created in the definitions
 		if equipments_config:
-			obj.base_item = f"minecraft:{equipments_config.equivalent_to.value}_{gear}"		# Vanilla tool, ex: iron_sword, wooden_hoe
+			obj.base_item = f"minecraft:{equipments_config.equivalent_to.value}_{gear}"     # Vanilla tool, ex: iron_sword, wooden_hoe
 		obj.manual_category = "equipment"
 		obj.components["custom_data"] = {"smithed":{}}
 		obj.components["custom_data"]["smithed"]["dict"] = {"tools": {material_base: True, gear: True}}
@@ -281,7 +278,6 @@ def generate_everything_about_this_material(
 			obj.components["attribute_modifiers"] = format_attributes(equipments_config.get_tools_attributes(), SLOTS[gear], gear_config)
 		if gear in ("sword", "spear"): # Remove the mining_efficiency attribute from swords and spears
 			obj.components["attribute_modifiers"] = [am for am in obj.components["attribute_modifiers"] if am["type"] != "mining_efficiency"]
-	pass
 
 
 # Generate everything about these ores
@@ -289,10 +285,10 @@ def generate_everything_about_these_materials(ores: dict[str, EquipmentsConfig|N
 	""" Uses function 'generate_everything_about_this_material' for each ore in the ores dictionary.
 
 	Args:
-		ores		(dict[str, EquipmentsConfig|None]):	The ores to apply.
+		ores:           The ores to apply.
 			The ore/material (key) to generate everything about (ex: "adamantium_fragment", "steel_ingot", "minecraft:emerald", "minecraft:copper_ingot", "awakened_stardust!")
 			When the material ends with "!", the material base will be the material without the "!", else we try to cut before the last "_".
-		ignore_recipes	(bool):						If True, no recipes will be added in the definitions.
+		ignore_recipes: If True, no recipes will be added in the definitions.
 	"""
 	for material, ore_config in ores.items():
 		generate_everything_about_this_material(material, ore_config, ignore_recipes=ignore_recipes)
@@ -307,9 +303,9 @@ def add_recipes_for_dust(material: str, pulverize: list[str | JsonDict], smelt_t
 	If the item is a string, their Ingr will be used as "minecraft:{item}"
 
 	Args:
-		material	(str):				The material to add dust recipes for, ex: "copper" will add recipes for "copper_dust".
-		pulverize	(list[str|dict]):	The list of items to pulverize to get 2 times the dust, ex: ["raw_copper", "copper_ore", "deepslate_copper_ore", Ingr("custom_copper", "some_namespace")]
-		smelt_to	(Ingr):				The ingredient representation of the result of smelting the dust, ex: Ingr("minecraft:copper_ingot")}
+		material:  The material to add dust recipes for, ex: "copper" will add recipes for "copper_dust".
+		pulverize: The list of items to pulverize to get 2 times the dust, ex: ["raw_copper", "copper_ore", "deepslate_copper_ore", Ingr("custom_copper", "some_namespace")]
+		smelt_to:  The ingredient representation of the result of smelting the dust, ex: Ingr("minecraft:copper_ingot")}
 	"""
 	# Assertions
 	textures_folder: str = stp.relative_path(Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", ""))
@@ -348,17 +344,16 @@ def add_recipes_for_all_dusts(dusts_configs: dict[str, tuple[list[str | JsonDict
 	""" Add recipes for all dusts in the dusts_configs dictionary using the add_recipes_for_dust function.
 
 	Args:
-		dusts_configs	(dict[str, tuple[list[str|dict],dict]]):	The dusts to add recipes for.
+		dusts_configs: The dusts to add recipes for.
 
-	Examples:
-		.. code-block:: python
+	.. code-block:: python
 
-			{
-				"copper": (
-					["raw_copper", "copper_ore", "deepslate_copper_ore", Ingr("custom_copper", "some_namespace")],
-					Ingr("minecraft:copper_ingot")
-				)
-			}
+		{
+			"copper": (
+				["raw_copper", "copper_ore", "deepslate_copper_ore", Ingr("custom_copper", "some_namespace")],
+				Ingr("minecraft:copper_ingot")
+			)
+		}
 	"""
 	for dust, (pulverize, smelt_to) in dusts_configs.items():
 		add_recipes_for_dust(dust, pulverize, smelt_to)

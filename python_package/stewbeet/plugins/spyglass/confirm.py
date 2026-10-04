@@ -1,9 +1,8 @@
 """ One-time confirmation before this project's Spyglass config is written to.
 
-Which files an editor checks is the project's decision and the file holding it is version
-controlled, so the question is asked in the terminal the first time a build finds something to
-exclude, and the answer is remembered in ``.beet_cache``.
-``meta.stewbeet.spyglass.manage_exclusions`` answers it up front and skips the prompt.
+Which files an editor checks is the project's decision and the file holding it is version controlled,
+so the question is asked in the terminal the first time a build finds something to exclude,
+and the answer is remembered in ``.beet_cache``. ``meta.stewbeet.spyglass.manage_exclusions`` answers it up front and skips the prompt.
 """
 
 # Lazy imports (PEP 810), ignored before Python 3.15
@@ -34,8 +33,8 @@ CACHE_OWNED: str = "excluded"
 def prompt() -> bool | None:
 	""" The answer typed in the terminal, or None when there is nobody to answer.
 
-	A build driven by a script, a CI job or an editor has no terminal to read from, and blocking one
-	forever on a question is worse than the diagnostics it was meant to silence.
+	A build driven by a script, a CI job or an editor has no terminal to read from,
+	and blocking one forever on a question is worse than the diagnostics it was meant to silence.
 	"""
 	if sys.stdin is None or not sys.stdin.isatty():
 		return None

@@ -55,8 +55,8 @@ def get_manual() -> Manual:
 	""" Return the current :class:`Manual`, creating it from the beet meta if needed.
 
 	Call this in ``setup_definitions`` (after items are defined) to register custom pages,
-	hooks (``manual.on(...)`` / ``manual.on_item_page(...)``) and button layouts. The
-	ingame_manual plugin reuses the same handle when it runs.
+	hooks (``manual.on(...)`` / ``manual.on_item_page(...)``) and button layouts. The ingame_manual plugin reuses the same
+	handle when it runs.
 	"""
 	from ...core.__memory__ import Mem
 	if Mem.manual is None:

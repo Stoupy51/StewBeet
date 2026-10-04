@@ -1,8 +1,8 @@
 """The :class:`RecipeRenderer` dispatcher.
 
-Builds craft content, item hover components and wiki buttons for a manual by delegating each
-recipe type to its registered :class:`~.registry.CraftRenderer`. Keeps the shared prologue and
-button scaffolding; the per-type layout/hover/glyph/image live under :mod:`.types`.
+Builds craft content, item hover components and wiki buttons for a manual by delegating each recipe type
+to its registered :class:`~.registry.CraftRenderer`. Keeps the shared prologue and button scaffolding;
+the per-type layout/hover/glyph/image live under :mod:`.types`.
 """
 
 # Imports
@@ -56,8 +56,8 @@ class RecipeRenderer:
 	)
 	""" Memoized (definitions, consumer index) pair used by :func:`~.collection.collect_for_item`.
 
-	Keyed on the definitions dict identity so watch rebuilds and later definition changes get a
-	fresh index. One renderer exists per manual build, hence caching it here. """
+	Keyed on the definitions dict identity so watch rebuilds and later definition changes get a fresh index.
+	One renderer exists per manual build, hence caching it here. """
 
 	@property
 	def config(self) -> ManualConfig:
@@ -292,3 +292,4 @@ class RecipeRenderer:
 		if first_loot_id:
 			target = PageRef(item=first_loot_id)
 		return WikiButtonRender(glyph=WIKI_GROWING_SEED_FONT, hover=hover, target=target, priority=1, is_info=True)
+

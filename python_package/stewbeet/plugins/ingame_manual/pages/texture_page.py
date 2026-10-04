@@ -1,10 +1,9 @@
 """A page whose body is a custom background texture, optionally with text baked into it.
 
-This is the feature that lets developers ship "different textures for different pages and
-the text/descriptions on the texture itself": supply a background image (path or PIL
-image) and a list of :class:`~..images.BakedText` drawn onto it via PIL. The composited
-image is registered as a single full-page glyph; optional Minecraft ``body`` components can
-be added underneath (e.g. clickable links).
+This is the feature that lets developers ship "different textures for different pages and the text/descriptions on the texture itself":
+supply a background image (path or PIL image) and a list of :class:`~..images.BakedText` drawn onto it via PIL.
+The composited image is registered as a single full-page glyph; optional Minecraft ``body`` components can be added underneath (e.g.
+clickable links).
 """
 
 # Imports
@@ -43,11 +42,9 @@ class TexturePage(Page):
 	glyph_height: int = 131
 	""" Size of the page texture bitmap. """
 	left_padding: int = 0
-	""" Invisible pixels emitted before the texture glyph. The dialog centers the line, so this
-	shifts the texture right by half the padding. """
+	""" Invisible pixels emitted before the texture glyph, shifting it right by half the padding since the dialog centers the line. """
 	right_padding: int = 0
-	""" Invisible pixels emitted after the texture glyph. The dialog centers the line, so this
-	shifts the texture left by half the padding. """
+	""" Invisible pixels emitted after the texture glyph, shifting it left by half the padding since the dialog centers the line. """
 
 	def build(self, manual: Manual) -> list[TextComponent]:
 		""" Composite the background + baked texts, register it as one glyph, append the body. """
@@ -64,9 +61,10 @@ class TexturePage(Page):
 		spacer = manual.images.invisible_spacer
 		page_text: str = spacer(self.left_padding) + page_font + spacer(self.right_padding)
 
-		# Neutral base (default font, no shadow) so the developer body keeps its own font; only the
-		# page-texture glyph is drawn in the manual font. The title is shown by the dialog itself.
+		# Neutral base (default font, no shadow) so the developer body keeps its own font;
+		# only the page-texture glyph is drawn in the manual font. The title is shown by the dialog itself.
 		content: list[TextComponent] = [{"text": "", "shadow_color": [0,0,0,0]}]
 		content.append({"text": page_text + "\n", "font": config.font, "color": "white"})
 		content += list(self.body)
 		return content
+

@@ -1,6 +1,7 @@
 
 # pyright: reportGeneralTypeIssues=false
 # ruff: noqa: RUF012
+
 # Lazy imports (PEP 810), ignored before Python 3.15
 from stouputils.lazy import ALWAYS_LAZY
 
@@ -34,7 +35,7 @@ def setup_gui_in_resource_packs(gui_translations: dict[str, GuiTranslation]) -> 
 	""" Setup GUI item models in resource packs by creating item models and textures for each GUI.
 
 	Args:
-		gui_translations	(dict[str, GuiTranslation]): A dictionary mapping GUI names to their translation offsets.
+		gui_translations: A dictionary mapping GUI names to their translation offsets.
 			(e.g. {'electric_brewing_stand': GuiTranslation.brewing_stand, 'electric_furnace': GuiTranslation.furnace_bottom, ...})
 	Returns:
 		dict[str, str]: A dictionary mapping GUI filenames to their model paths.

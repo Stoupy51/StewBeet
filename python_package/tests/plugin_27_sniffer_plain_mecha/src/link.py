@@ -6,6 +6,6 @@ from beet import Context, Function
 
 # Main entry point
 def beet_default(ctx: Context) -> None:
-    ctx.data.functions["tns:assembled"] = Function("say assembled in memory\nsay second line\n")
-    ctx.data["tns"].functions["via_namespace"] = Function("say via namespace\n")
+	ctx.data.functions["tns:assembled"] = Function("say assembled in memory\nsay second line\n")
+	ctx.data["tns"].functions["via_namespace"] = Function("say via namespace\n")
 

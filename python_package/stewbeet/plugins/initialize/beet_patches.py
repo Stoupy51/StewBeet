@@ -26,25 +26,19 @@ patches_applied: bool = False
 
 # Functions
 def fast_list_files(directory: FileSystemPath) -> Iterator[Path]:
-	""" Drop-in replacement for `beet.library.utils.list_files`, without the `Path.relative_to` cost.
+	""" Drop-in replacement for `beet.library.utils.list_files`, yielding every file below a directory relative to it.
 
 	Upstream builds a `Path` out of every walked file and then re-parses it through
 	`relative_to(directory)`, which is about five times slower than slicing the prefix off the string
 	`os.walk` already hands over.
 	Files come in sorted order, so a pack loads the same way on every file system.
 
-	Args:
-		directory (FileSystemPath): The directory to walk.
-	Returns:
-		Iterator[Path]: Every file below the directory, as a path relative to it.
-
-	Examples:
-		>>> import tempfile
-		>>> with tempfile.TemporaryDirectory() as tmp:
-		...     Path(tmp, "sub").mkdir()
-		...     _ = Path(tmp, "sub", "a.txt").write_text("a")
-		...     sorted(path.as_posix() for path in fast_list_files(tmp))
-		['sub/a.txt']
+	>>> import tempfile
+	>>> with tempfile.TemporaryDirectory() as tmp:
+	...     Path(tmp, "sub").mkdir()
+	...     _ = Path(tmp, "sub", "a.txt").write_text("a")
+	...     sorted(path.as_posix() for path in fast_list_files(tmp))
+	['sub/a.txt']
 	"""
 	base: str = os.fspath(directory)
 	prefix_length: int = len(base) + (0 if base.endswith(("/", os.sep)) else 1)
@@ -66,5 +60,5 @@ def apply_beet_patches() -> None:
 	beet.library.utils.list_files = fast_list_files
 
 	# Retry saving when another program (vscode, Minecraft, ...) holds a file locked for a moment
-	Pack.save = stp.retry(Pack.save, exceptions=PermissionError, max_attempts=10, delay=1.0, backoff=2.0)  # type: ignore
+	Pack.save = stp.retry(Pack.save, exceptions=PermissionError, max_attempts=10, delay=1.0, backoff=2.0)  # pyright: ignore[reportUnknownArgumentType, reportUnknownMemberType]
 

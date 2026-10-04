@@ -22,7 +22,7 @@ def add_to_atlas(textures: set[str] = set()) -> None:  # noqa: B006
 	""" Add textures to the specified atlas.
 
 	Args:
-		textures	(set[str]):	The set of texture paths to add. Defaults to an empty set.
+		textures: The set of texture paths to add. Defaults to an empty set.
 	"""
 	if not textures:
 		return
@@ -66,8 +66,7 @@ def add_to_atlas(textures: set[str] = set()) -> None:  # noqa: B006
 		data: JsonDict = atlas_object.data
 		sources: list[JsonDict] = data.get("sources", [])
 
-		for texture in textures:
-			sources.append({"type": "minecraft:single", "resource": texture, "sprite": to_atlas(texture)})
+		sources.extend({"type": "minecraft:single", "resource": texture, "sprite": to_atlas(texture)} for texture in textures)
 
 		sources = stp.unique_list(sorted(sources, key=lambda x: x["resource"]))
 		atlas_object.data["sources"] = sources
@@ -80,13 +79,12 @@ def beet_default(ctx: Context):
 	""" Main entry point for the item models plugin.
 
 	Args:
-		ctx (Context): The beet context.
+		ctx: The beet context.
 	"""
 	Mem.ctx = ctx
 
-	# Serialized models are cached between builds, keyed by a hash of their content (see
-	# ModelSerializationCache). Models are encoded lazily at dump time, well after this plugin runs,
-	# so the cache only needs installing here.
+	# Serialized models are cached between builds by a hash of their content, see ModelSerializationCache.
+	# They are encoded lazily at dump time, well after this plugin runs, so the cache only needs installing here.
 	setup_model_cache(ctx)
 
 	# Textures folder
@@ -107,7 +105,7 @@ def beet_default(ctx: Context):
 
 	# Get all item models from definitions
 	item_models: dict[str, AutoModel] = {}
-	for item_name in Mem.definitions.keys():
+	for item_name in Mem.definitions:
 		obj = Item.from_id(item_name)
 
 		# Skip items without models or already rendered

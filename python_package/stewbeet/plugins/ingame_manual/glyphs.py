@@ -1,16 +1,17 @@
 """Glyph code points reserved by the manual.
 
-The allocator itself lives in :mod:`stewbeet.core.utils.fonts.allocator` and is shared with every
-other font generator; this module only owns the manual's own reserved characters and sizes.
+The allocator itself lives in :mod:`stewbeet.core.utils.fonts.allocator` and is shared with every other font generator;
+this module only owns the manual's own reserved characters and sizes.
 
-Every visual element of the manual (item icon, recipe template, page background, invisible spacer)
-is a PNG mapped to a private-use unicode character inside a Minecraft bitmap font. The reserved
-glyph code points below are **alignment-critical** and are kept byte-identical to the v1 plugin so
-existing template PNGs keep rendering correctly.
+Every visual element of the manual (item icon, recipe template, page background,
+invisible spacer) is a PNG mapped to a private-use unicode character inside a Minecraft bitmap font.
+The reserved glyph code points below are **alignment-critical** and are kept byte-identical to the v1 plugin so existing template
+PNGs keep rendering correctly.
 """
 
 # pyright: reportUnusedImport=false
 # ruff: noqa: F401
+
 # Lazy imports (PEP 810), ignored before Python 3.15
 from stouputils.lazy import ALWAYS_LAZY
 
@@ -20,38 +21,41 @@ __lazy_modules__ = ALWAYS_LAZY
 from ...core.utils.fonts import GlyphAllocator, get_font
 
 # Reserved (static) glyph characters: DO NOT change the code points, they are alignment-critical.
-NONE_FONT: str =					get_font(0x0000)
-MEDIUM_NONE_FONT: str =				get_font(0x0001)
-SMALL_NONE_FONT: str =				get_font(0x0002)
-VERY_SMALL_NONE_FONT: str =			get_font(0x0003)
-MICRO_NONE_FONT: str =				get_font(0x0004)
-WIKI_NONE_FONT: str =				get_font(0x0010)
-WIKI_INFO_FONT: str =				get_font(0x0011)
-WIKI_RESULT_OF_CRAFT_FONT: str =	get_font(0x0012)
-WIKI_INGR_OF_CRAFT_FONT: str =		get_font(0x0013)
-HOME_FONT: str =					get_font(0x0014)  # NEW in v2: dialog "go to first page" arrow
-SHAPED_2X2_FONT: str =				get_font(0x0015)
-SHAPED_3X3_FONT: str =				get_font(0x0016)
-FURNACE_FONT: str =					get_font(0x0017)
-STONECUTTING_FONT: str =			get_font(0x0018)
-PULVERIZING_FONT: str =				get_font(0x0019)
-MINING_FONT: str =					get_font(0x0020)
-AWAKENED_3X3_FONT: str =			get_font(0x0021)
-AWAKENED_3X4_FONT: str =			get_font(0x0022)
-GROWING_SEED_FONT: str =			get_font(0x0023)  # NEW in v2 (free slot next to mining/awakened)
-HOVER_SHAPED_2X2_FONT: str =		get_font(0x0025)
-HOVER_SHAPED_3X3_FONT: str =		get_font(0x0026)
-HOVER_FURNACE_FONT: str =			get_font(0x0027)
-HOVER_STONECUTTING_FONT: str =		get_font(0x0028)
-HOVER_PULVERIZING_FONT: str =		get_font(0x0029)
-HOVER_MINING_FONT: str =			get_font(0x0030)
-HOVER_AWAKENED_3X3_FONT: str =		get_font(0x0031)
-HOVER_AWAKENED_3X4_FONT: str =		get_font(0x0032)
-HOVER_GROWING_SEED_FONT: str =		get_font(0x0033)  # NEW in v2
-WIKI_GROWING_SEED_FONT: str =		get_font(0x0034)  # NEW in v2: growing seed wiki button icon
-INVISIBLE_ITEM_FONT: str =			get_font(0x0035)  # Invisible item to place
-INVISIBLE_ITEM_WIDTH: str =			INVISIBLE_ITEM_FONT + MICRO_NONE_FONT
-BOOK_FONT: str =					get_font(0x0036)
+NONE_FONT: str =                    get_font(0x0000)
+MEDIUM_NONE_FONT: str =             get_font(0x0001)
+SMALL_NONE_FONT: str =              get_font(0x0002)
+VERY_SMALL_NONE_FONT: str =         get_font(0x0003)
+MICRO_NONE_FONT: str =              get_font(0x0004)
+WIKI_NONE_FONT: str =               get_font(0x0010)
+WIKI_INFO_FONT: str =               get_font(0x0011)
+WIKI_RESULT_OF_CRAFT_FONT: str =    get_font(0x0012)
+WIKI_INGR_OF_CRAFT_FONT: str =      get_font(0x0013)
+HOME_FONT: str =                    get_font(0x0014)
+""" Dialog "go to first page" arrow. """
+SHAPED_2X2_FONT: str =              get_font(0x0015)
+SHAPED_3X3_FONT: str =              get_font(0x0016)
+FURNACE_FONT: str =                 get_font(0x0017)
+STONECUTTING_FONT: str =            get_font(0x0018)
+PULVERIZING_FONT: str =             get_font(0x0019)
+MINING_FONT: str =                  get_font(0x0020)
+AWAKENED_3X3_FONT: str =            get_font(0x0021)
+AWAKENED_3X4_FONT: str =            get_font(0x0022)
+GROWING_SEED_FONT: str =            get_font(0x0023)
+HOVER_SHAPED_2X2_FONT: str =        get_font(0x0025)
+HOVER_SHAPED_3X3_FONT: str =        get_font(0x0026)
+HOVER_FURNACE_FONT: str =           get_font(0x0027)
+HOVER_STONECUTTING_FONT: str =      get_font(0x0028)
+HOVER_PULVERIZING_FONT: str =       get_font(0x0029)
+HOVER_MINING_FONT: str =            get_font(0x0030)
+HOVER_AWAKENED_3X3_FONT: str =      get_font(0x0031)
+HOVER_AWAKENED_3X4_FONT: str =      get_font(0x0032)
+HOVER_GROWING_SEED_FONT: str =      get_font(0x0033)
+WIKI_GROWING_SEED_FONT: str =       get_font(0x0034)
+""" Growing seed wiki button icon. """
+INVISIBLE_ITEM_FONT: str =          get_font(0x0035)
+""" Invisible item to place. """
+INVISIBLE_ITEM_WIDTH: str =         INVISIBLE_ITEM_FONT + MICRO_NONE_FONT
+BOOK_FONT: str =                    get_font(0x0036)
 AWAKENED_FORGE_STRUCT_FONT: tuple[str, str] = (get_font(0x0037), get_font(0x0038))
 
 HOVER_EQUIVALENTS: dict[str, str] = {
@@ -82,3 +86,4 @@ SQUARE_SIZE: int = 32
 FONT_FILE: str = "manual"
 BORDER_SIZE: int = 2
 HEAVY_WORKBENCH_CATEGORY: str = "__private_heavy_workbench"
+

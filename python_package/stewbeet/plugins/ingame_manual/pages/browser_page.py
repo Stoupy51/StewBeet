@@ -103,3 +103,4 @@ class CategoryBrowserPage(Page):
 		os.makedirs(f"{config.font_cache_path}/category", exist_ok=True)
 		page_image.save(f"{config.font_cache_path}/category/{file_name}.png")
 		return content
+

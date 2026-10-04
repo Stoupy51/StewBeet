@@ -21,7 +21,7 @@ def validate_credentials(credentials: JsonDict) -> tuple[str, str]:
 	""" Get and validate Smithed credentials
 
 	Args:
-		credentials (dict[str, str]): Credentials for the Smithed API
+		credentials: Credentials for the Smithed API
 	Returns:
 		str: API key for Smithed
 		str: GitHub author
@@ -40,7 +40,7 @@ def validate_config(smithed_config: dict[str, str]) -> tuple[str, str, str]:
 	""" Validate Smithed configuration
 
 	Args:
-		smithed_config (dict[str, str]): Configuration for the Smithed project
+		smithed_config: Configuration for the Smithed project
 	Returns:
 		str: Project name on Smithed
 		str: Version of the project
@@ -67,11 +67,11 @@ def upload_version(project_id: str, project_name: str, version: str, api_key: st
 	""" Upload new version
 
 	Args:
-		project_id		(str):				Smithed project ID
-		project_name	(str):				Name of the project
-		version			(str):				Version number
-		api_key			(str):				API key for Smithed
-		author			(str):				Author (for the github link)
+		project_id:   Smithed project ID
+		project_name: Name of the project
+		version:      Version number
+		api_key:      API key for Smithed
+		author:       Author (for the github link)
 	"""
 	stp.progress(f"Creating version {version}")
 	post_url: str = f"{SMITHED_API_URL}/{project_id}/versions"
@@ -88,8 +88,8 @@ def upload_version(project_id: str, project_name: str, version: str, api_key: st
 
 	# Add the download links
 	links: dict[str, str] = {
-		"datapack":			f"https://github.com/{author}/{project_name}/releases/download/v{version}/{project_name}_datapack_with_libs.zip",
-		"resourcepack":		f"https://github.com/{author}/{project_name}/releases/download/v{version}/{project_name}_resource_pack_with_libs.zip"
+		"datapack":         f"https://github.com/{author}/{project_name}/releases/download/v{version}/{project_name}_datapack_with_libs.zip",
+		"resourcepack":     f"https://github.com/{author}/{project_name}/releases/download/v{version}/{project_name}_resource_pack_with_libs.zip"
 	}
 	for key, value in links.items():
 		if requests.get(value).status_code == 200:
@@ -114,9 +114,9 @@ def upload_to_smithed(credentials: dict[str, str], smithed_config: dict[str, str
 	""" Upload the project to Smithed using the credentials and the configuration
 
 	Args:
-		credentials		(dict[str, str]):	Credentials for the Smithed API
-		smithed_config	(dict[str, str]):	Configuration for the Smithed project
-		changelog		(str):				Changelog text for the release
+		credentials:    Credentials for the Smithed API
+		smithed_config: Configuration for the Smithed project
+		changelog:      Changelog text for the release
 	"""
 	api_key, author = validate_credentials(credentials)
 	project_id, project_name, version = validate_config(smithed_config)
@@ -124,5 +124,4 @@ def upload_to_smithed(credentials: dict[str, str], smithed_config: dict[str, str
 	upload_version(project_id, project_name, version, api_key, author)
 
 	stp.info(f"Project {project_name} updated on Smithed!")
-
 

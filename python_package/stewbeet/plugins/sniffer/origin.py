@@ -83,9 +83,9 @@ def project_roots() -> tuple[str, ...]:
 def reset_caches() -> None:
 	""" Drop the caches whose inputs only hold still within one build.
 
-	`project_roots` reads `Mem.ctx`, which is a different project on the next build, and the shared
-	source filter is built on top of it. `AST_CACHE` holds a file as it was parsed, which the author
-	has been free to edit between one build and the next.
+	`project_roots` reads `Mem.ctx`, which is a different project on the next build,
+	and the shared source filter is built on top of it. `AST_CACHE` holds a file as it was parsed,
+	which the author has been free to edit between one build and the next.
 	"""
 	project_roots.cache_clear()
 	AST_CACHE.clear()
@@ -138,10 +138,9 @@ def index_write_calls(path: str) -> dict[int, WriteCall]:
 def spans_lines(node: ast.expr | None) -> bool:
 	""" Whether a literal occupies as many source lines as the content it carries.
 
-	`exact` makes a chunk's Nth line map to the literal's Nth line, which is right for a triple
-	quoted block and wrong for a one-line string whose newlines are escapes: its commands all share
-	one source line. Walking down from there lands on whatever statement follows, and that
-	statement's own map then loses the line to it.
+	`exact` makes a chunk's Nth line map to the literal's Nth line, which is right for a triple quoted block and wrong for a one-line
+	string whose newlines are escapes: its commands all share one source line.
+	Walking down from there lands on whatever statement follows, and that statement's own map then loses the line to it.
 
 	>>> import ast
 	>>> spans_lines(ast.parse('x = "say a\\\\nsay b"').body[0].value)
@@ -156,9 +155,8 @@ def assigned_function(node: ast.Assign) -> WriteCall | None:
 	""" A `... [path] = Function(content)` assignment, which is how a plain beet plugin writes.
 
 	The target has to be a subscript so that `func = Function(...)` on its own is not read as a
-	write: nothing has been given a path yet at that point. All three spellings beet offers end
-	up here, since `ctx.data.functions[p]`, `ctx.data["ns"].functions[p]` and
-	`ctx.data[Function][p]` differ only in what precedes the subscript.
+	write: nothing has been given a path yet at that point. All three spellings beet offers end up here, since `ctx.data.functions[p]`,
+	`ctx.data["ns"].functions[p]` and `ctx.data[Function][p]` differ only in what precedes the subscript.
 	"""
 	if not any(isinstance(target, ast.Subscript) for target in node.targets):
 		return None
@@ -196,9 +194,9 @@ def declaration_origin() -> SourceOrigin | None:
 	and the `__init__` the dataclass generated. Unlike `resolve_origin` this consults no AST index,
 	because a constructor's caller **is** the declaration site, with no plugin in between to be mistaken for it.
 
-	The case that must not be attributed is a StewBeet plugin building an `Item` itself: the walk
-	stops at the first frame that is not the construction's, so it lands on the plugin and returns
-	None rather than continuing out to the user's entry point, which declared nothing.
+	The case that must not be attributed is a StewBeet plugin building an `Item` itself:
+	the walk stops at the first frame that is not the construction's,
+	so it lands on the plugin and returns None rather than continuing out to the user's entry point, which declared nothing.
 
 	>>> declaration_origin() is None   # a doctest frame is nobody's declaration
 	True
@@ -232,9 +230,9 @@ def definition_root() -> str:
 def call_position(frame: FrameType) -> tuple[int, int]:
 	""" Line and column of the call a frame is executing, both 0-based.
 
-	`co_positions()` carries the exact span of every instruction since Python 3.11, so the column of
-	a `Block(` call is available without parsing anything. A frame built without position tables
-	yields no column, and 0 is the honest answer there.
+	`co_positions()` carries the exact span of every instruction since Python 3.11,
+	so the column of a `Block(` call is available without parsing anything. A frame built without position tables yields no column,
+	and 0 is the honest answer there.
 
 	>>> def probe() -> tuple[int, int]:
 	...     return call_position(sys._getframe())
@@ -265,10 +263,9 @@ def resolve_origin() -> SourceOrigin | None:
 def resolve_site() -> tuple[SourceOrigin | None, str]:
 	""" `resolve_origin`, plus what kind of call site answered.
 
-	The kind is `write` for a StewBeet helper or an append, `assign` for beet's own
-	`... [path] = Function(...)`, and `""` when nothing in the project answered. Only the container
-	hook needs it, to tell an author assigning a function from a helper doing the same thing one
-	frame further down, which records itself.
+	The kind is `write` for a StewBeet helper or an append, `assign` for beet's own `... [path] = Function(...)`,
+	and `""` when nothing in the project answered. Only the container hook needs it,
+	to tell an author assigning a function from a helper doing the same thing one frame further down, which records itself.
 	"""
 	# Starting at the direct caller works whether this was reached through `resolve_origin` or not:
 	# every frame in this package fails the project-source filter and is walked past either way.

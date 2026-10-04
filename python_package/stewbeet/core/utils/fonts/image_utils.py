@@ -35,9 +35,8 @@ def careful_resize(image: Image.Image, max_result_size: int, resampling: Image.R
 	if image.size[0] >= image.size[1]:
 		factor = max_result_size / image.size[0]
 		return image.resize((max_result_size, int(image.size[1] * factor)), resampling)
-	else:
-		factor = max_result_size / image.size[1]
-		return image.resize((int(image.size[0] * factor), max_result_size), resampling)
+	factor = max_result_size / image.size[1]
+	return image.resize((int(image.size[0] * factor), max_result_size), resampling)
 
 
 def ensure_rgba_color(c: tuple[int, ...]) -> tuple[int, int, int, int]:

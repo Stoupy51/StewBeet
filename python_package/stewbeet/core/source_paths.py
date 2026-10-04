@@ -1,10 +1,9 @@
 """ Where a pack file came from, and what it was called before a refactor moved it.
 
-beet drops a file's `source_path` as soon as any plugin reads its text, and mecha names a
-compilation unit after that path. A build running `beet.contrib.find_replace` over the whole pack,
-which is what versioning a datapack takes, leaves every unit unable to say which file it was
-authored in. Noting the paths while beet still has them, and giving them back once mecha has
-compiled, is what these do.
+beet drops a file's `source_path` as soon as any plugin reads its text, and mecha names a compilation unit after that path.
+A build running `beet.contrib.find_replace` over the whole pack, which is what versioning a datapack takes,
+leaves every unit unable to say which file it was authored in. Noting the paths while beet still has them,
+and giving them back once mecha has compiled, is what these do.
 """
 
 # Lazy imports (PEP 810), ignored before Python 3.15
@@ -27,8 +26,8 @@ from .__memory__ import Mem
 def remember_source_paths(ctx: Context) -> None:
 	""" Note where every file in the pack was loaded from, while beet still says.
 
-	A plugin running before the pack is loaded has nothing to sweep and hooks each file as it
-	arrives instead, which is what `plugins.sniffer` does.
+	A plugin running before the pack is loaded has nothing to sweep and hooks each file as it arrives instead,
+	which is what `plugins.sniffer` does.
 	"""
 	for pack in (ctx.data, ctx.assets):
 		for _, file in pack.all():
@@ -45,9 +44,9 @@ def remember_source_path(file: TextFileBase[Any]) -> None:
 def restore_filenames(mc: Mecha, directory: str) -> None:
 	""" Give every compilation unit back the `filename` beet stopped mecha from recording.
 
-	The database is keyed by the objects mecha parsed, which is the one handle a rename cannot move
-	and a substitution cannot change, so a unit meets its file again whatever the build did to the
-	pack in between. A unit mecha assembled in memory never had a file and keeps none.
+	The database is keyed by the objects mecha parsed, which is the one handle a rename cannot move and a substitution cannot change,
+	so a unit meets its file again whatever the build did to the pack in between.
+	A unit mecha assembled in memory never had a file and keeps none.
 
 	Args:
 		directory: beet's project directory, which `filename` is relative to.

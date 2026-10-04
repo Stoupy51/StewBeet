@@ -21,8 +21,8 @@ def find_project_png(filename: str, root: str | None = None) -> str | None:
 	""" Find a project image in ``<root>/src/``, then ``<root>/assets/``, then any ``<root>/*<filename>``.
 
 	Args:
-		filename	(str):			Name of the image to look for, e.g. ``"pack.png"``.
-		root		(str | None):	Base directory to search in, defaults to the beet project directory.
+		filename: Name of the image to look for, e.g. ``"pack.png"``.
+		root:     Base directory to search in, defaults to the beet project directory.
 	Returns:
 		str | None: Path to the image, or None when it was not found.
 	"""

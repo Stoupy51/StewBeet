@@ -21,12 +21,12 @@ def beet_default(ctx: Context):
 	This plugin sets up NeoEnchant's Veinminer compatibility.
 
 	Args:
-		ctx (Context): The beet context.
+		ctx: The beet context.
 	"""
 	Mem.ctx = ctx
 
 	# If any block use the vanilla block for ores, add the compatibility
-	if any(VANILLA_BLOCK_FOR_ORES == data.get(VANILLA_BLOCK) for data in Mem.definitions.values()):
+	if any(data.get(VANILLA_BLOCK) == VANILLA_BLOCK_FOR_ORES for data in Mem.definitions.values()):
 
 		# Add the block to veinminer tag
 		tag_content: JsonDict = {"values": [VANILLA_BLOCK_FOR_ORES["id"]]}

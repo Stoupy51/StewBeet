@@ -1,8 +1,8 @@
 """ Turns resolved origins into a `.mcfunction.map` beside its function, for any producer.
 
-Nothing here knows how the origins were found. The StewBeet path reconstructs them from write
-chunks and `difflib`; the mecha path reads them off `AstNode.location`. Both hand the same
-`{generated line: origin}` mapping to `write_sidecar` and get the same artifact.
+Nothing here knows how the origins were found. The StewBeet path reconstructs them from write chunks and `difflib`;
+the mecha path reads them off `AstNode.location`. Both hand the same `{generated line: origin}` mapping to `write_sidecar` and
+get the same artifact.
 """
 
 # Lazy imports (PEP 810), ignored before Python 3.15

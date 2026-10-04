@@ -1,14 +1,14 @@
 """Recipe-type renderer base class and the global registry.
 
-Each recipe type has one :class:`CraftRenderer` that owns *all* of its rendering: the main
-page layout (:meth:`render_body`), the wiki-button hover lines (:meth:`append_hover`), its
-human name (:attr:`name`), its high-res template glyph (:meth:`static_glyph`) and its
-low-res image (:meth:`build_image`). Renderers register themselves into :data:`CRAFT_RENDERERS`
-via :func:`register_craft_renderer`, so adding a recipe type is one new file + one call.
+Each recipe type has one :class:`CraftRenderer` that owns *all* of its rendering: the main page layout (:meth:`render_body`),
+the wiki-button hover lines (:meth:`append_hover`), its human name (:attr:`name`),
+its high-res template glyph (:meth:`static_glyph`) and its low-res image (:meth:`build_image`).
+Renderers register themselves into :data:`CRAFT_RENDERERS` via :func:`register_craft_renderer`, so adding a recipe type is one new
+file + one call.
 
-The ``r`` argument passed to renderer methods is the :class:`~.renderer.RecipeRenderer`
-dispatcher, exposing ``r.config`` / ``r.glyphs`` / ``r.images`` / ``r.item_component(...)`` /
-``r.append_or_invisible(...)`` / ``r.render_main(...)``.
+The ``r`` argument passed to renderer methods is the :class:`~.renderer.RecipeRenderer` dispatcher,
+exposing ``r.config`` / ``r.glyphs`` / ``r.images`` / ``r.item_component(...)``
+/ ``r.append_or_invisible(...)`` / ``r.render_main(...)``.
 """
 
 # ruff: noqa: E501
@@ -38,8 +38,8 @@ if TYPE_CHECKING:
 class CraftRenderer:
 	""" Base class for a recipe-type renderer.
 
-	Subclass it, set :attr:`types` (and optionally :attr:`name`), override the render
-	methods you need, then call :func:`register_craft_renderer` on an instance.
+	Subclass it, set :attr:`types` (and optionally :attr:`name`), override the render methods you need,
+	then call :func:`register_craft_renderer` on an instance.
 
 	>>> class _EchoRenderer(CraftRenderer):
 	...     types = ("test_echo",)
@@ -76,7 +76,7 @@ class CraftRenderer:
 
 	def build_image(self, r: RecipeRenderer, name: str, page_font: str, craft: JsonDict, output_name: str = "") -> None:
 		""" Generate the low-resolution recipe PNG (no-op for types that don't need one). """
-		return None
+		return
 
 
 # Global registry: craft type string -> renderer instance.
@@ -105,9 +105,8 @@ def load_builtin_renderers() -> dict[str, CraftRenderer]:
 	Returns:
 		dict[str, CraftRenderer]: The registry, with every built-in renderer present
 
-	Examples:
-		>>> "crafting_shaped" in load_builtin_renderers()
-		True
+	>>> "crafting_shaped" in load_builtin_renderers()
+	True
 	"""
 	for name in BUILTIN_RENDERER_MODULES:
 		import_module(f"{__name__.rsplit('.', 1)[0]}.types.{name}")

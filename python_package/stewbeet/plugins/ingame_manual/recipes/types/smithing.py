@@ -85,3 +85,4 @@ class SmithingTrimRenderer(CraftRenderer):
 
 register_craft_renderer(SmithingTransformRenderer())
 register_craft_renderer(SmithingTrimRenderer())
+

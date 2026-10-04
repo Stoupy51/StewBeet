@@ -54,7 +54,7 @@ class AwakenedForgeRenderer(CraftRenderer):
 		shape: list[str] = craft["shape"]
 		is_small_craft: bool = len(shape) <= 3 and all(len(x) <= 3 for x in shape)
 		if use_dialog and not is_small_craft:
-			content[-1] = content[-1].replace(page_font, page_font + VERY_SMALL_NONE_FONT * 2)  # type: ignore
+			content[-1] = content[-1].replace(page_font, page_font + VERY_SMALL_NONE_FONT * 2)  # pyright: ignore[reportAttributeAccessIssue, reportUnknownMemberType]
 		formatted_ingredients: dict[str, JsonDict] = {k: r.item_component(v, count=v.get("count", 1)) for k, v in craft["ingredients"].items()}
 
 		if len(shape) == 1 and len(shape[0]) == 3:
@@ -68,13 +68,12 @@ class AwakenedForgeRenderer(CraftRenderer):
 				for k in line:
 					if k == " ":
 						content.append(INVISIBLE_ITEM_WIDTH)
+					elif i == 0:
+						content.append(formatted_ingredients[k])
 					else:
-						if i == 0:
-							content.append(formatted_ingredients[k])
-						else:
-							copy = formatted_ingredients[k].copy()
-							copy["text"] = INVISIBLE_ITEM_WIDTH
-							content.append(copy)
+						copy = formatted_ingredients[k].copy()
+						copy["text"] = INVISIBLE_ITEM_WIDTH
+						content.append(copy)
 				if use_dialog and index != 1 and (not is_small_craft or i != 1):
 					content.append(INVISIBLE_ITEM_WIDTH * max(0, (3 if is_small_craft else 4) - len(line)))
 					if is_small_craft:
@@ -147,3 +146,4 @@ class AwakenedForgeRenderer(CraftRenderer):
 
 
 register_craft_renderer(AwakenedForgeRenderer())
+

@@ -23,7 +23,7 @@ def clean_record_name(name: str) -> str:
 	""" Clean a record name by removing special characters and converting to lowercase.
 
 	Args:
-		name (str): The name to clean
+		name: The name to clean
 
 	Returns:
 		str: The cleaned name containing only lowercase letters, numbers and underscores
@@ -47,14 +47,14 @@ def generate_custom_records(
 	""" Generate custom records from the files in assets/records/, copying them to the definitions and the resource pack.
 
 	Args:
-		records					(dict[str, str]):	The custom records to apply.
+		records:              The custom records to apply.
 			Ex: {"record_1": "My first Record.ogg", "record_2": "A second one.ogg"}
-		category				(str):				The definitions category to apply to the custom records (ex: "music").
-		attenuation_distance	(int):				Blocks after which the record stops being heard, None for the vanilla 16.
+		category:             The definitions category to apply to the custom records (ex: "music").
+		attenuation_distance: Blocks after which the record stops being heard, None for the vanilla 16.
 	"""
 	# Assertions
 	assert records is None or isinstance(records, dict) or records in ["auto", "all"], (
-        f"Error during custom record generation: records must be a dictionary, 'auto', or 'all' (got {type(records).__name__})"
+		f"Error during custom record generation: records must be a dictionary, 'auto', or 'all' (got {type(records).__name__})"
 	)
 	records_folder: str = stp.clean_path(Mem.ctx.meta.get("stewbeet", {}).get("records_folder", ""))
 	assert records_folder != "", \
@@ -65,19 +65,19 @@ def generate_custom_records(
 		songs: list[str] = [x for x in sorted(os.listdir(records_folder)) if x.endswith((".ogg",".wav"))]
 		records_to_check: dict[str, str] = { clean_record_name(file): file for file in songs }
 	else:
-		records_to_check = records # type: ignore
+		records_to_check = records  # pyright: ignore[reportAssignmentType]
 
 	# For each record, add it to the definitions
 	for record, sound in records_to_check.items():
 		# Validate sound file format
-		if not isinstance(sound, str): # type: ignore
+		if not isinstance(sound, str):  # pyright: ignore[reportUnnecessaryIsInstance]
 			stp.error(f"Error during custom record generation: sound '{sound}' is not a string, got {type(sound).__name__}")
 		if not sound.endswith(".ogg"):
 			stp.warning(f"Error during custom record generation: sound '{sound}' is not an ogg file")
 			continue
 
 		# Extract item name from sound file
-		item_name: str = os.path.splitext(sound)[0]	# Remove the file extension
+		item_name: str = os.path.splitext(sound)[0] # Remove the file extension
 
 		# Create definitions entry for the record
 		obj = Item(
@@ -100,7 +100,7 @@ def generate_custom_records(
 		if os.path.exists(file_path):
 			try:
 				# Get song duration from Ogg file
-				duration: int = round(OggVorbis(file_path).info.length) # type: ignore
+				duration: int = round(OggVorbis(file_path).info.length)  # pyright: ignore[reportAttributeAccessIssue, reportUnknownArgumentType, reportUnknownMemberType]
 
 				# Create and write jukebox song configuration
 				json_song: JsonDict = {
@@ -120,3 +120,4 @@ def generate_custom_records(
 				stp.error(f"Error during custom record generation of '{file_path}', make sure it is using proper Ogg format: {e}")
 		else:
 			stp.warning(f"Error during custom record generation: path '{file_path}' does not exist")
+

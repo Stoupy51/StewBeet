@@ -70,7 +70,7 @@ def gather_packs(ctx: Context, pack_type: str) -> list[str]:
 		if lib_path:
 			to_merge.append(lib_path)
 	expanded: list[str] = [os.path.abspath(x) for pack in to_merge for x in sorted(glob(pack))]
-	expanded.reverse()	# Reverse so the main pack is last (overwrites pack format)
+	expanded.reverse()  # Reverse so the main pack is last (overwrites pack format)
 	return expanded
 
 
@@ -78,7 +78,7 @@ def weld_signature(sources: list[str]) -> str:
 	""" Fingerprint the exact bytes that would be merged, so an unchanged merge can be skipped.
 
 	Args:
-		sources (list[str]): Absolute paths of the packs about to be merged, in merge order.
+		sources: Absolute paths of the packs about to be merged, in merge order.
 	Returns:
 		str: Hexadecimal digest covering every source name and content.
 	"""
@@ -95,9 +95,9 @@ def is_merge_up_to_date(destination: str, signature: str, recorded: list[object]
 	""" Whether the merged archive on disk was already produced from exactly these sources.
 
 	Args:
-		destination (str):                 Path of the merged archive.
-		signature   (str):                 Fingerprint of the sources about to be merged.
-		recorded    (list[object] | None):  Cached [signature, size, mtime_ns] of the last merge, if any.
+		destination: Path of the merged archive.
+		signature:   Fingerprint of the sources about to be merged.
+		recorded:    Cached [signature, size, mtime_ns] of the last merge, if any.
 	Returns:
 		bool: True when the merge can be skipped entirely.
 	"""
@@ -114,19 +114,16 @@ def weld_to(ctx: Context, sources: list[str], dest_path: str, pack_type: str) ->
 	""" Weld ``sources`` into ``dest_path`` in a single compression pass.
 
 	Runs the Smithed Weld merge programmatically, then dumps the merged pack straight into
-	a :class:`~..archive.ConstantTimeZipFile` (constant timestamps, fixed pack.mcmeta and
-	pack.png appended last) instead of letting weld save a temporary zip that would need to
-	be fully re-deflated. Also avoids weld's CLI-shared global cache directory, so multiple
-	projects can build concurrently.
+	a :class:`~..archive.ConstantTimeZipFile` (constant timestamps, fixed pack.mcmeta and pack.png appended last) instead of letting
+	weld save a temporary zip that would need to be fully re-deflated. Also avoids weld's CLI-shared global cache directory,
+	so multiple projects can build concurrently.
 	"""
 	from smithed.weld.toolchain.helpers import run_weld  # pyright: ignore[reportMissingTypeStubs]
 
 	constant_time = get_consistent_timestamp(ctx)
 
-	# Give each weld its own throwaway cache: with `cache=False` beet would build in a temporary
-	# directory and os.chdir into it, which is process-global and races when both welds run in
-	# parallel (and previously the weld CLI shared one global cache dir across ALL projects,
-	# breaking concurrent `stewbeet` runs).
+	# Give each weld its own throwaway cache: `cache=False` makes beet os.chdir, which races between the parallel welds,
+	# and a cache dir shared across projects breaks concurrent `stewbeet` runs.
 	cache_dir: str = tempfile.mkdtemp(prefix="stewbeet_weld_cache_")
 	weld_cache = ProjectCache(directory=Path(cache_dir) / "beet_cache", generated_directory=Path(cache_dir) / "generated")
 	try:
@@ -180,9 +177,9 @@ def weld_pack(ctx: Context, dest_path: str, pack_type: str) -> float:
 	""" Merge a pack and its libs into one file using Weld.
 
 	Args:
-		ctx       (Context): The beet context
-		dest_path (str):     The path to the destination file
-		pack_type (str):     Either "datapack" or "resource_pack"
+		ctx:       The beet context
+		dest_path: The path to the destination file
+		pack_type: Either "datapack" or "resource_pack"
 	Returns:
 		float: The time it took to merge the pack and libs
 	"""
@@ -201,8 +198,8 @@ def weld_pack(ctx: Context, dest_path: str, pack_type: str) -> float:
 def weld_datapack(ctx: Context, dest_path: str) -> float:
 	""" Merge the datapack and libs into one file using Weld
 	Args:
-		ctx (Context): The beet context
-		dest_path (str): The path to the destination file
+		ctx:       The beet context
+		dest_path: The path to the destination file
 	Returns:
 		float: The time it took to merge the datapack and libs
 	"""
@@ -214,8 +211,8 @@ def weld_datapack(ctx: Context, dest_path: str) -> float:
 def weld_resource_pack(ctx: Context, dest_path: str) -> float:
 	""" Merge the resource pack and libs into one file using Weld
 	Args:
-		ctx (Context): The beet context
-		dest_path (str): The path to the destination file
+		ctx:       The beet context
+		dest_path: The path to the destination file
 	Returns:
 		float: The time it took to merge the resource pack and libs
 	"""
@@ -226,8 +223,8 @@ def merged_archive_path(ctx: Context, pack_type: str) -> str:
 	""" Path of the ``_with_libs.zip`` produced for a pack type.
 
 	Args:
-		ctx       (Context): The beet context.
-		pack_type (str):     Either "datapack" or "resource_pack".
+		ctx:       The beet context.
+		pack_type: Either "datapack" or "resource_pack".
 	Returns:
 		str: The absolute destination path of the merged archive.
 	"""
@@ -237,14 +234,13 @@ def merged_archive_path(ctx: Context, pack_type: str) -> str:
 def drop_unwelded_archives(ctx: Context) -> None:
 	""" Delete the merged archive of every pack type not welded so far.
 
-	A stale ``_with_libs.zip`` left in the output directory would be picked up by ``compute_sha1``
-	and by a release upload, so it has to be gone before the rest of the pipeline looks at the
-	output directory. When another entry point welds that pack type later in the pipeline it simply
-	writes the archive again, hence the silence here: :func:`report_unwelded_archives` does the
-	reporting once the full set of weld entry points is known.
+	A stale ``_with_libs.zip`` left in the output directory would be picked up by ``compute_sha1`` and by a release upload,
+	so it has to be gone before the rest of the pipeline looks at the output directory.
+	When another entry point welds that pack type later in the pipeline it simply writes the archive again, hence the silence here:
+	:func:`report_unwelded_archives` does the reporting once the full set of weld entry points is known.
 
 	Args:
-		ctx (Context): The beet context.
+		ctx: The beet context.
 	"""
 	for pack_type in ALL_PACK_TYPES:
 		dest: str = merged_archive_path(ctx, pack_type)
@@ -259,7 +255,7 @@ def report_unwelded_archives(ctx: Context) -> Generator[None]:
 	weld entry point that took part regardless of the order they appear in the pipeline.
 
 	Args:
-		ctx (Context): The beet context.
+		ctx: The beet context.
 	"""
 	yield
 	for pack_type in ctx.meta.get(ASKED_PACK_TYPES, []):
@@ -273,8 +269,8 @@ def weld_pack_types(ctx: Context, pack_types: tuple[str, ...]) -> None:
 	""" Merge the given pack types with their libraries.
 
 	Args:
-		ctx        (Context):         The beet context.
-		pack_types (tuple[str, ...]): The pack types to merge, among :data:`ALL_PACK_TYPES`.
+		ctx:        The beet context.
+		pack_types: The pack types to merge, among :data:`ALL_PACK_TYPES`.
 	"""
 	# Assertions
 	assert ctx.output_directory, "Output directory must be specified in the project configuration."
@@ -318,9 +314,8 @@ def weld_pack_types(ctx: Context, pack_types: tuple[str, ...]) -> None:
 	if not tasks:
 		return
 
-	# Run the welds in parallel (they are independent and the zlib work releases the GIL).
-	# Weld logs failures through the "weld" logger instead of raising, so capture its (noisy)
-	# output around the whole parallel section and only replay it when an error actually happens.
+	# Run the welds in parallel, since they are independent and the zlib work releases the GIL.
+	# Weld logs failures through the "weld" logger instead of raising, so its noisy output is captured and replayed only on error.
 	@stp.handle_error
 	def run_weld_task(task: WeldTask) -> None:
 		weld_to(ctx, task.sources, task.destination, task.pack_type)

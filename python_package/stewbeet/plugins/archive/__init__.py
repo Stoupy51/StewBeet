@@ -221,15 +221,14 @@ def beet_default(ctx: Context) -> None:
 	interfering with existing pack directories.
 
 	Args:
-		ctx (Context): The beet context.
+		ctx: The beet context.
 	"""
 	# Assertions
 	Mem.ctx = ctx
 	assert Mem.ctx.output_directory, "Output directory must be specified in the project configuration."
 
-	# Source maps have to be in the pack before it is zipped, and this is the last moment they can
-	# be. Flushing here is what lets a project ask for maps with one `require` line instead of also
-	# placing `stewbeet.plugins.sniffer.emit` by hand, and it costs nothing when capture is off.
+	# Source maps have to be in the pack before it is zipped, and this is the last moment they can be.
+	# Flushing here spares projects from placing `stewbeet.plugins.sniffer.emit` by hand, and costs nothing when capture is off.
 	if Mem.sniffer_enabled:
 		from ..sniffer.emit import write_maps
 		write_maps(ctx)
@@ -254,11 +253,7 @@ def beet_default(ctx: Context) -> None:
 		pack_name: str = Mem.ctx.project_name.replace(" ", "") or pack.name or "pack"
 
 		# Determine pack type based on pack attributes
-		pack_type: str = "pack"
-		if isinstance(pack, DataPack):
-			pack_type = "datapack"
-		else:
-			pack_type = "resource_pack"
+		pack_type: str = "datapack" if isinstance(pack, DataPack) else "resource_pack"
 
 		# Create archive filename
 		archive_path = f"{Mem.ctx.output_directory}/{pack_name}_{pack_type}.zip"

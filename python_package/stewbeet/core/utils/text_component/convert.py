@@ -15,29 +15,24 @@ from ...__memory__ import Mem
 # Utility functions
 @stp.simple_cache(method="str")
 def text_component_to_str(tc: TextComponent) -> str:
-	""" Convert a TextComponent to a string
-	Args:
-		tc (TextComponent): The TextComponent to convert
-	Returns:
-		str: The converted string
+	""" Convert a TextComponent to the plain string it displays.
 
-	Examples:
-		>>> text_component_to_str("hello")
-		'hello'
-		>>> text_component_to_str(["hello", " ", "world"])
-		'hello world'
-		>>> text_component_to_str({"text": "Hello"})
-		'Hello'
-		>>> text_component_to_str({"text": "Hello", "extra": [{"text": " World"}]})
-		'Hello World'
-		>>> text_component_to_str({"text": "A", "extra": ["B", {"text": "C"}]})
-		'ABC'
-		>>> text_component_to_str({"color": "red"})
-		''
+	>>> text_component_to_str("hello")
+	'hello'
+	>>> text_component_to_str(["hello", " ", "world"])
+	'hello world'
+	>>> text_component_to_str({"text": "Hello"})
+	'Hello'
+	>>> text_component_to_str({"text": "Hello", "extra": [{"text": " World"}]})
+	'Hello World'
+	>>> text_component_to_str({"text": "A", "extra": ["B", {"text": "C"}]})
+	'ABC'
+	>>> text_component_to_str({"color": "red"})
+	''
 	"""
 	if isinstance(tc, str):
 		return tc
-	elif isinstance(tc, list):
+	if isinstance(tc, list):
 		result: str = ""
 		for part in tc:
 			result += text_component_to_str(part)
@@ -54,8 +49,8 @@ def item_id_to_text_component(item_id: str, use_default: bool = True) -> TextCom
 	""" Get the TextComponent from an item id
 
 	Args:
-		item_id (str): The item id, ex: "minecraft:stick" or "iyc:adamantium_ingot"
-		use_default (bool): Whether to use the default prettified string if no TextComponent is found
+		item_id:     The item id, ex: "minecraft:stick" or "iyc:adamantium_ingot"
+		use_default: Whether to use the default prettified string if no TextComponent is found
 	Returns:
 		str: The TextComponent of the item, ex: "Stick" or {"text":"Adamantium Ingot"}
 	"""
@@ -107,7 +102,7 @@ def item_id_to_name(item_id: str) -> str:
 	""" Get the name from an item id
 
 	Args:
-		item_id (str): The item id, ex: "minecraft:stick" or "iyc:adamantium_ingot"
+		item_id: The item id, ex: "minecraft:stick" or "iyc:adamantium_ingot"
 	Returns:
 		str: The name of the item, ex: "Stick" or "Adamantium Ingot"
 	"""

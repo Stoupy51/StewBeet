@@ -41,8 +41,8 @@ class CustomPage(Page):
 		""" Register the declared glyphs, then return the body under a neutral (no-font) base. """
 		for g in self.declared_glyphs:
 			manual.glyphs.add_provider(g["char"], g["file"], g["ascent"], g["height"])
-		# Neutral base (default font, no shadow); the body keeps its own fonts/colors. The manual
-		# font is NOT forced here, and the title is shown by the dialog itself.
+		# Neutral base (default font, no shadow); the body keeps its own fonts/colors. The manual font is NOT forced here,
+		# and the title is shown by the dialog itself.
 		content: list[TextComponent] = [{"text": "", "shadow_color": [0,0,0,0]}]
 		content += list(self.body)
 		return content

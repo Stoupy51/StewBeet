@@ -19,8 +19,8 @@ def add_item_model_component(black_list: list[str] | None = None) -> None:
 	""" Add an item model component to all items in the definitions.
 
 	Args:
-		black_list			(list[str]):	The list of items to ignore.
-		ignore_paintings	(bool):			Whether to ignore items that are paintings (have PAINTING_DATA).
+		black_list:       The list of items to ignore.
+		ignore_paintings: Whether to ignore items that are paintings (have PAINTING_DATA).
 	"""
 	if black_list is None:
 		black_list = []
@@ -36,8 +36,8 @@ def add_item_name_and_lore_if_missing(is_external: bool = False, black_list: lis
 	""" Add item name and lore to all items in the definitions if they are missing.
 
 	Args:
-		is_external	(bool):				Whether the definitions is the external one or not (meaning the namespace is in the item name).
-		black_list	(list[str]):		The list of items to ignore.
+		is_external: Whether the definitions is the external one or not (meaning the namespace is in the item name).
+		black_list:  The list of items to ignore.
 	"""
 	# Load the source lore
 	if black_list is None:
@@ -57,7 +57,7 @@ def add_item_name_and_lore_if_missing(is_external: bool = False, black_list: lis
 				item_str: str = item.replace("_"," ").title()
 			else:
 				item_str: str = item.split(":")[-1].replace("_"," ").title()
-			data["item_name"] = {"text": item_str}	# Use a TextComponent to allow auto.lang_file to work properly
+			data["item_name"] = {"text": item_str}  # Use a TextComponent to allow auto.lang_file to work properly
 
 		# Apply namespaced lore if none
 		lore: list[TextComponent] = data.setdefault("lore", [])
@@ -87,8 +87,8 @@ def add_private_custom_data_for_namespace(is_external: bool = False, black_list:
 	""" Add private custom data for namespace to all items in the definitions if they are missing.
 
 	Args:
-		is_external	(bool):				Whether the definitions is the external one or not (meaning the namespace is in the item name).
-		black_list	(list[str]):		The list of items to ignore.
+		is_external: Whether the definitions is the external one or not (meaning the namespace is in the item name).
+		black_list:  The list of items to ignore.
 	"""
 	if black_list is None:
 		black_list = []
@@ -127,7 +127,7 @@ def set_manual_components(white_list: list[str]) -> None:
 	""" Override the components to include in the manual when hovering items.
 
 	Args:
-		white_list	(list[str]):	The list of components to include.
+		white_list: The list of components to include.
 	"""
 	if not white_list:
 		return
@@ -145,10 +145,10 @@ def export_all_definitions_to_json(file_name: str, is_external: bool | JsonDict 
 	""" Export all definitions to a single json file for debugging purposes.
 
 	Args:
-		file_name	(str):	The name of the file to export to.
-		is_external	(bool | JsonDict):	Whether to export external definitions or not.
+		file_name:   The name of the file to export to.
+		is_external: Whether to export external definitions or not.
 					If a JsonDict is provided, it is the source of definitions instead of Mem.definitions or Mem.external_definitions.
-		verbose		(bool):	Whether to print a debug message or not.
+		verbose:     Whether to print a debug message or not.
 	"""
 	# Convert everything to fully serializable dicts
 	definitions_copy: dict[str, JsonDict] = {}

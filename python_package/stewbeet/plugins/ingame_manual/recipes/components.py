@@ -1,7 +1,7 @@
 """Item hover/click component builder (ported from v1 ``book_components.get_item_component``).
 
-Cross-page links are emitted as deferred :class:`~..refs.PageRef` page values. Functions take
-the :class:`~.renderer.RecipeRenderer` dispatcher ``r`` for config/glyphs/images access.
+Cross-page links are emitted as deferred :class:`~..refs.PageRef` page values.
+Functions take the :class:`~.renderer.RecipeRenderer` dispatcher ``r`` for config/glyphs/images access.
 """
 
 # Imports

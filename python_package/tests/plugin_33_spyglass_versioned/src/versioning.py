@@ -8,6 +8,6 @@ from beet.contrib.rename_files import rename_files
 
 # Main entry point
 def beet_default(ctx: Context) -> None:
-    ctx.require(find_replace(data_pack={"match": "tns:*"}, substitute={"find": "tns:impl/", "replace": "tns:v1.0.0/"}))
-    ctx.require(rename_files(data_pack={"match": "tns:*", "find": "tns:impl/", "replace": "tns:v1.0.0/"}))
+	ctx.require(find_replace(data_pack={"match": "tns:*"}, substitute={"find": "tns:impl/", "replace": "tns:v1.0.0/"}))
+	ctx.require(rename_files(data_pack={"match": "tns:*", "find": "tns:impl/", "replace": "tns:v1.0.0/"}))
 

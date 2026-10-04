@@ -74,7 +74,7 @@ class FurnaceBase(CraftRenderer):
 		template.paste(result_texture, coords, result_mask)
 		if craft["result_count"] > 1:
 			count_img = r.images.image_count(craft["result_count"])
-			template.paste(count_img, [x + 2 for x in coords], count_img)  # type: ignore
+			template.paste(count_img, [x + 2 for x in coords], count_img)  # pyright: ignore[reportArgumentType]
 		template.save(f"{r.config.font_cache_path}/page/{output_filename}.png")
 
 
@@ -110,3 +110,4 @@ register_craft_renderer(SmeltingRenderer())
 register_craft_renderer(BlastingRenderer())
 register_craft_renderer(SmokingRenderer())
 register_craft_renderer(CampfireRenderer())
+

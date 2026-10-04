@@ -2,9 +2,8 @@
 
 Reconciling what was written against what the pack ended up holding is a `difflib` pass per function,
 and it is where nearly all of this plugin's time goes. A map is a pure function of the recorded chunks,
-the function's final text and where the pack is written, so a function whose inputs are all unchanged
-gets its previous map back rather than being aligned again. The record is per function rather than per
-pack, so editing one function costs one alignment.
+the function's final text and where the pack is written, so a function whose inputs are all unchanged gets its previous map back rather
+than being aligned again. The record is per function rather than per pack, so editing one function costs one alignment.
 """
 
 # Lazy imports (PEP 810), ignored before Python 3.15
@@ -59,8 +58,7 @@ def map_signature(chunks: Sequence[WriteChunk], text: str, layout: str) -> str:
 def load_maps(cache: Cache) -> dict[str, tuple[str, str]]:
 	""" The previous build's sidecars, keyed by function path, as its signature and its JSON.
 
-	Anything at all wrong with the record reads as an empty one, which costs a rebuild of every map
-	and nothing else.
+	Anything at all wrong with the record reads as an empty one, which costs a rebuild of every map and nothing else.
 	"""
 	try:
 		raw: dict[str, object] = json.loads(cache.get_path(CACHE_KEY).read_text("utf-8"))

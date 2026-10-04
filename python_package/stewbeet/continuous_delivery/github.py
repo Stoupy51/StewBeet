@@ -21,5 +21,5 @@ from stouputils.continuous_delivery.github import (
 	upload_to_github as upload_to_github,
 	validate_github_config as validate_github_config,
 	validate_github_credentials as validate_github_credentials,
-)  # type: ignore
+)
 
