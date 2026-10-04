@@ -1,7 +1,7 @@
 
 #> _your_namespace:bookshelf/test
 #
-# @within	???
+# @within	(public)
 #
 
 # Once

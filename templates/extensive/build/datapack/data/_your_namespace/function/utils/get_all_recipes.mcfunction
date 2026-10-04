@@ -1,7 +1,7 @@
 
 #> _your_namespace:utils/get_all_recipes
 #
-# @within	???
+# @within	(public)
 #
 
 # Get all recipes
