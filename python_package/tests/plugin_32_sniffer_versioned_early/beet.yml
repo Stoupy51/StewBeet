@@ -1,3 +1,4 @@
+
 # Test: a versioning plugin moves every function before mecha ever parses one.
 # `simple_item_plugin` requires the refactor and then mecha, in that order, which is the harder of
 # the two and the one a real project hits. `find_replace` substitutes inside every file in the
@@ -39,3 +40,4 @@ pipeline:
 meta:
     bolt:
         entrypoint: "*"
+

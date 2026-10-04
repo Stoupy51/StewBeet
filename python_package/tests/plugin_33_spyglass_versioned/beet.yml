@@ -1,3 +1,4 @@
+
 # Test: spyglass finds the same files when a versioning refactor has run over the pack.
 # `simple_item_plugin` requires the refactor and then mecha, and `beet.contrib.find_replace`
 # substitutes inside every file in the pack. beet drops a file's `source_path` the moment its text
@@ -33,3 +34,4 @@ pipeline:
     - "src.versioning"
     - "mecha"
     - "src.assertions"
+

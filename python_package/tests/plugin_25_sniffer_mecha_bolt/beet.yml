@@ -1,3 +1,4 @@
+
 # Test: stewbeet.plugins.sniffer.mecha
 # Verifies that a bolt or mecha build emits the same Source Map v3 sidecars StewBeet emits, read
 # straight off the compiled AST. The encoder is not under test, plugin_22 covers that. These are:
@@ -46,3 +47,4 @@ meta:
         # vendor/ compiles into the pack but is not the project's own source, so it may not be a
         # mapping target. Narrowing the roots is what FR-010 needs when a library lives in the tree.
         roots: ["src"]
+

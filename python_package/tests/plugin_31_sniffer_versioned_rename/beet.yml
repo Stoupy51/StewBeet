@@ -1,3 +1,4 @@
+
 # Test: a versioning plugin moves every function after mecha compiled, and the maps follow.
 # `smithed.versioning`, and the `simple_item_plugin` built on it, refactor `ns:impl/**` into
 # `ns:v<version>/**` by deleting each key and putting the very same object back under another one.
@@ -36,3 +37,4 @@ pipeline:
 meta:
     bolt:
         entrypoint: "*"
+

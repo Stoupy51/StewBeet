@@ -17,7 +17,7 @@ def validate_config(pmc_config: dict[str, str]) -> str:
 	""" Validate PlanetMinecraft configuration
 
 	Args:
-		pmc_config (dict[str, str]): Configuration for the PlanetMinecraft project
+		pmc_config: Configuration for the PlanetMinecraft project
 	Returns:
 		str: Project url on PlanetMinecraft
 	"""
@@ -37,7 +37,7 @@ def table_to_bbcode(match: re.Match[str]) -> str:
 	""" Convert a markdown table match to BBCode format
 
 	Args:
-		match (re.Match[str]): Regex match object containing a markdown table block
+		match: Regex match object containing a markdown table block
 
 	Returns:
 		str: BBCode table string
@@ -57,7 +57,7 @@ def table_to_bbcode(match: re.Match[str]) -> str:
 
 def _is_unordered(line: str) -> bool:
 	s = line.lstrip()
-	return s.startswith("- ") or s.startswith("* ")
+	return s.startswith(("- ", "* "))
 
 def _ordered_type(line: str) -> str | None:
 	s = line.lstrip()
@@ -94,8 +94,8 @@ def convert_list_block(block_lines: list[str], list_type: str = "") -> str:
 	""" Convert a block of markdown list lines (with possible nesting) to BBCode
 
 	Args:
-		block_lines (list[str]): Lines of the list block
-		list_type   (str):       BBCode list type: '' for unordered, '1' for numbered, 'a' for alphabetical
+		block_lines: Lines of the list block
+		list_type:   BBCode list type: '' for unordered, '1' for numbered, 'a' for alphabetical
 
 	Returns:
 		str: BBCode list string
@@ -132,106 +132,19 @@ def convert_list_block(block_lines: list[str], list_type: str = "") -> str:
 	return "\n".join(result)
 
 def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
-	""" Convert markdown to bbcode for PlanetMinecraft
+	""" Convert markdown to the bbcode PlanetMinecraft descriptions use.
 
 	Args:
-		markdown (str): Markdown text
-		verbose (bool): If True, print the conversion comparison
+		verbose: If True, print the conversion comparison
 
-	Returns:
-		str: BBcode text
-
-	Examples:
-		>>> markdown_text = '''
-		... [![Discord](https://img.shields.io/discord/1216400498488377467?label=Discord&logo=discord)](https://discord.gg/anxzu6rA9F)
-		... ![Discord](https://img.shields.io/discord/1216400498488377467?label=Discord&logo=discord)
-		... ## Changelog
-		...
-		... ### Build System
-		... - 🚀 Bump version to v1.2.3 ([2111fd2](https://github.com/Stoupy51/LifeSteal/commit/2111fd2f390b80a3aab77a4e7bcbb24b93845e5a))
-		...
-		...
-		...
-		... ### Features
-		... - ✨ Added new configuration for dropping heart (non pvp) ([cde8749](https://github.com/Stoupy51/LifeSteal/commit/cde8749aa9e447302481f50b9887a0b3a846c7fe))
-		...
-		... - 🔧 Another feature with multiple newlines before
-		...
-		... **Full Changelog**: https://github.com/Stoupy51/LifeSteal/compare/v1.2.2...v1.2.3
-		... '''
-		>>> bbcode = convert_markdown_to_bbcode(markdown_text, verbose=False)
-		>>> print(bbcode.strip())
-		[url=https://discord.gg/anxzu6rA9F][img]https://img.shields.io/discord/1216400498488377467?label=Discord&logo=discord[/img][/url] [img]https://img.shields.io/discord/1216400498488377467?label=Discord&logo=discord[/img]
-		[h2]Changelog[/h2][h4]Build System[/h4][list]
-		[*]🚀 Bump version to v1.2.3 ([url=https://github.com/Stoupy51/LifeSteal/commit/2111fd2f390b80a3aab77a4e7bcbb24b93845e5a]2111fd2[/url])[/*]
-		[/list][h4]Features[/h4][list]
-		[*]✨ Added new configuration for dropping heart (non pvp) ([url=https://github.com/Stoupy51/LifeSteal/commit/cde8749aa9e447302481f50b9887a0b3a846c7fe]cde8749[/url])[/*]
-		[*]🔧 Another feature with multiple newlines before[/*]
-		[/list]
-		[b]Full Changelog[/b]: [url]https://github.com/Stoupy51/LifeSteal/compare/v1.2.2...v1.2.3[/url]
-		>>> spoiler_md = '<details>\\n<summary>Preview</summary>\\n![screenshot](https://example.com/img.png)\\n</details>'
-		>>> print(convert_markdown_to_bbcode(spoiler_md, verbose=False))
-		[spoiler=Preview][img]https://example.com/img.png[/img][/spoiler]
-		>>> print(convert_markdown_to_bbcode('Line 1<br>Line 2<br/>Line 3<br />Line 4', verbose=False))
-		Line 1
-		Line 2
-		Line 3
-		Line 4
-		>>> table_md = '| A | B |\\n|---|---|\\n| 1 | 2 |\\n| 3 | 4 |'
-		>>> print(convert_markdown_to_bbcode(table_md, verbose=False))
-		[table][tbody][tr][td]A[/td][td]B[/td][/tr][tr][td]1[/td][td]2[/td][/tr][tr][td]3[/td][td]4[/td][/tr][/tbody][/table]
-		>>> print(convert_markdown_to_bbcode('```\\ncode block\\n```', verbose=False))
-		[code]code block[/code]
-		>>> print(convert_markdown_to_bbcode('`inline code`', verbose=False))
-		[color=#34495e]inline code[/color]
-		>>> print(convert_markdown_to_bbcode('[`Smithed Crafter`](https://wiki.smithed.dev/libraries/crafter/)', verbose=False))
-		[url=https://wiki.smithed.dev/libraries/crafter/][color=#34495e]Smithed Crafter[/color][/url]
-		>>> badges_md = '[![YouTube](https://img.shields.io/youtube/views/zkcQn23DRaw?style=flat&logo=youtube&logoColor=red&label=YouTube)](https://www.youtube.com/watch?v=zkcQn23DRaw)\\n[![GitHub](https://img.shields.io/github/v/release/Stoupy51/stewbeet?logo=github&label=GitHub)](https://github.com/Stoupy51/stewbeet/releases/latest)'
-		>>> print(convert_markdown_to_bbcode(badges_md, verbose=False))
-		[url=https://www.youtube.com/watch?v=zkcQn23DRaw][img]https://img.shields.io/youtube/views/zkcQn23DRaw?style=flat&logo=youtube&logoColor=red&label=YouTube[/img][/url] [url=https://github.com/Stoupy51/stewbeet/releases/latest][img]https://img.shields.io/github/v/release/Stoupy51/stewbeet?logo=github&label=GitHub[/img][/url]
-		>>> print(convert_markdown_to_bbcode('~~strikethrough~~', verbose=False))
-		[s]strikethrough[/s]
-		>>> print(convert_markdown_to_bbcode('*italic* and _also italic_', verbose=False))
-		[i]italic[/i] and [i]also italic[/i]
-		>>> print(convert_markdown_to_bbcode('<u>underline</u>', verbose=False))
-		[u]underline[/u]
-		>>> print(convert_markdown_to_bbcode('> blockquote', verbose=False))
-		[quote]blockquote[/quote]
-		>>> nested_list_md = '- item 1\\n  - sub item 1\\n  - sub item 2\\n- item 2'
-		>>> print(convert_markdown_to_bbcode(nested_list_md, verbose=False))
-		[list]
-		[*]item 1[list]
-		[*]sub item 1[/*]
-		[*]sub item 2[/*]
-		[/list][/*]
-		[*]item 2[/*]
-		[/list]
-		>>> nested_list_urls = '- Actual projects:\\n  - https://github.com/Paralya/Switch\\n  - https://github.com/Stoupy51/LifeSteal'
-		>>> print(convert_markdown_to_bbcode(nested_list_urls, verbose=False))
-		[list]
-		[*]Actual projects:[list]
-		[*][url]https://github.com/Paralya/Switch[/url][/*]
-		[*][url]https://github.com/Stoupy51/LifeSteal[/url][/*]
-		[/list][/*]
-		[/list]
-		>>> print(convert_markdown_to_bbcode('---', verbose=False))
-		[hr]
-		>>> print(convert_markdown_to_bbcode('* item 1\\n* item 2', verbose=False))
-		[list]
-		[*]item 1[/*]
-		[*]item 2[/*]
-		[/list]
-		>>> print(convert_markdown_to_bbcode('1. item 1\\n2. item 2', verbose=False))
-		[list=1]
-		[*]item 1[/*]
-		[*]item 2[/*]
-		[/list]
-		>>> print(convert_markdown_to_bbcode('a. item 1\\nb. item 2', verbose=False))
-		[list=a]
-		[*]item 1[/*]
-		[*]item 2[/*]
-		[/list]
-	"""  # noqa: E501
+	>>> print(convert_markdown_to_bbcode('~~strikethrough~~', verbose=False))
+	[s]strikethrough[/s]
+	>>> print(convert_markdown_to_bbcode('1. item 1\\n2. item 2', verbose=False))
+	[list=1]
+	[*]item 1[/*]
+	[*]item 2[/*]
+	[/list]
+	"""
 	# Make a copy of the original markdown text
 	bbcode: str = markdown
 
@@ -324,15 +237,13 @@ def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
 	# Format: <u>text</u> -> [u]text[/u]
 	bbcode = re.sub(r"<u>(.*?)</u>", r"[u]\1[/u]", bbcode, flags=re.DOTALL)
 
-	# Step 7d: Convert italic text (single * or _)
-	# Format: *text* or _text_ -> [i]text[/i]
-	# Exclude [*] and [/*] list tags by checking for [ and / before *
+	# Step 7d: Convert italic text, *text* or _text_ -> [i]text[/i]
+	# The [*] and [/*] list tags are excluded by checking for [ and / before *
 	bbcode = re.sub(r"(?<![\[/])\*(?![*\]])([^*\n]+)(?<![\[/])\*(?![*\]])", r"[i]\1[/i]", bbcode)
 	bbcode = re.sub(r"(?<![_\w\[])_([^_\n]+)_(?![_\w\]])", r"[i]\1[/i]", bbcode)
 
-	# Step 8: Convert plain URLs (not already in BBCode)
-	# Look for URLs not already inside [url] or [img] tags
-	# Note: [^\s\[\]]+ excludes '[' to avoid consuming BBCode list tags like [/*]
+	# Step 8: Convert plain URLs not already inside [url] or [img] tags
+	# [^\s\[\]]+ excludes '[' to avoid consuming BBCode list tags like [/*]
 	url_pattern = r"(?<!\[url=|\[url\]|\[img\])(https?://[^\s\[\]]+)(?!\[/url\]|\[/img\])"
 	bbcode = re.sub(url_pattern, r"[url]\1[/url]", bbcode)
 
@@ -361,8 +272,8 @@ def upload_version(project_url: str, changelog: str) -> None:
 	""" Upload new version by opening the project url with the browser
 
 	Args:
-		project_url		(str):	Url of the project on PlanetMinecraft to open
-		changelog		(str):	Changelog text
+		project_url: Url of the project on PlanetMinecraft to open
+		changelog:   Changelog text
 	"""
 	# Open the project url in the browser
 	import subprocess
@@ -382,8 +293,8 @@ def upload_to_pmc(pmc_config: JsonDict, changelog: str = "") -> None:
 		There is no API for PlanetMinecraft, so everything is done manually.
 
 	Args:
-		pmc_config		(dict):		Configuration for the PlanetMinecraft project
-		changelog		(str):		Changelog text for the release
+		pmc_config: Configuration for the PlanetMinecraft project
+		changelog:  Changelog text for the release
 	"""
 	project_url: str = validate_config(pmc_config)
 	upload_version(project_url, changelog)
@@ -392,4 +303,92 @@ def upload_to_pmc(pmc_config: JsonDict, changelog: str = "") -> None:
 if __name__ == "__main__":
 	import doctest
 	doctest.testmod()
+
+
+__test__: dict[str, str] = {
+	"convert_markdown_to_bbcode": """
+	>>> markdown_text = '''
+	... [![Discord](https://img.shields.io/discord/1216400498488377467?label=Discord&logo=discord)](https://discord.gg/anxzu6rA9F)
+	... ![Discord](https://img.shields.io/discord/1216400498488377467?label=Discord&logo=discord)
+	... ## Changelog
+	...
+	... ### Build System
+	... - 🚀 Bump version to v1.2.3 ([2111fd2](https://github.com/Stoupy51/LifeSteal/commit/2111fd2f390b80a3aab77a4e7bcbb24b93845e5a))
+	...
+	...
+	...
+	... ### Features
+	... - ✨ Added new configuration for dropping heart (non pvp) ([cde8749](https://github.com/Stoupy51/LifeSteal/commit/cde8749aa9e447302481f50b9887a0b3a846c7fe))
+	...
+	... - 🔧 Another feature with multiple newlines before
+	...
+	... **Full Changelog**: https://github.com/Stoupy51/LifeSteal/compare/v1.2.2...v1.2.3
+	... '''
+	>>> bbcode = convert_markdown_to_bbcode(markdown_text, verbose=False)
+	>>> print(bbcode.strip())
+	[url=https://discord.gg/anxzu6rA9F][img]https://img.shields.io/discord/1216400498488377467?label=Discord&logo=discord[/img][/url] [img]https://img.shields.io/discord/1216400498488377467?label=Discord&logo=discord[/img]
+	[h2]Changelog[/h2][h4]Build System[/h4][list]
+	[*]🚀 Bump version to v1.2.3 ([url=https://github.com/Stoupy51/LifeSteal/commit/2111fd2f390b80a3aab77a4e7bcbb24b93845e5a]2111fd2[/url])[/*]
+	[/list][h4]Features[/h4][list]
+	[*]✨ Added new configuration for dropping heart (non pvp) ([url=https://github.com/Stoupy51/LifeSteal/commit/cde8749aa9e447302481f50b9887a0b3a846c7fe]cde8749[/url])[/*]
+	[*]🔧 Another feature with multiple newlines before[/*]
+	[/list]
+	[b]Full Changelog[/b]: [url]https://github.com/Stoupy51/LifeSteal/compare/v1.2.2...v1.2.3[/url]
+	>>> spoiler_md = '<details>\\n<summary>Preview</summary>\\n![screenshot](https://example.com/img.png)\\n</details>'
+	>>> print(convert_markdown_to_bbcode(spoiler_md, verbose=False))
+	[spoiler=Preview][img]https://example.com/img.png[/img][/spoiler]
+	>>> print(convert_markdown_to_bbcode('Line 1<br>Line 2<br/>Line 3<br />Line 4', verbose=False))
+	Line 1
+	Line 2
+	Line 3
+	Line 4
+	>>> table_md = '| A | B |\\n|---|---|\\n| 1 | 2 |\\n| 3 | 4 |'
+	>>> print(convert_markdown_to_bbcode(table_md, verbose=False))
+	[table][tbody][tr][td]A[/td][td]B[/td][/tr][tr][td]1[/td][td]2[/td][/tr][tr][td]3[/td][td]4[/td][/tr][/tbody][/table]
+	>>> print(convert_markdown_to_bbcode('```\\ncode block\\n```', verbose=False))
+	[code]code block[/code]
+	>>> print(convert_markdown_to_bbcode('`inline code`', verbose=False))
+	[color=#34495e]inline code[/color]
+	>>> print(convert_markdown_to_bbcode('[`Smithed Crafter`](https://wiki.smithed.dev/libraries/crafter/)', verbose=False))
+	[url=https://wiki.smithed.dev/libraries/crafter/][color=#34495e]Smithed Crafter[/color][/url]
+	>>> badges_md = '[![YouTube](https://img.shields.io/youtube/views/zkcQn23DRaw?style=flat&logo=youtube&logoColor=red&label=YouTube)](https://www.youtube.com/watch?v=zkcQn23DRaw)\\n[![GitHub](https://img.shields.io/github/v/release/Stoupy51/stewbeet?logo=github&label=GitHub)](https://github.com/Stoupy51/stewbeet/releases/latest)'
+	>>> print(convert_markdown_to_bbcode(badges_md, verbose=False))
+	[url=https://www.youtube.com/watch?v=zkcQn23DRaw][img]https://img.shields.io/youtube/views/zkcQn23DRaw?style=flat&logo=youtube&logoColor=red&label=YouTube[/img][/url] [url=https://github.com/Stoupy51/stewbeet/releases/latest][img]https://img.shields.io/github/v/release/Stoupy51/stewbeet?logo=github&label=GitHub[/img][/url]
+	>>> print(convert_markdown_to_bbcode('*italic* and _also italic_', verbose=False))
+	[i]italic[/i] and [i]also italic[/i]
+	>>> print(convert_markdown_to_bbcode('<u>underline</u>', verbose=False))
+	[u]underline[/u]
+	>>> print(convert_markdown_to_bbcode('> blockquote', verbose=False))
+	[quote]blockquote[/quote]
+	>>> nested_list_md = '- item 1\\n  - sub item 1\\n  - sub item 2\\n- item 2'
+	>>> print(convert_markdown_to_bbcode(nested_list_md, verbose=False))
+	[list]
+	[*]item 1[list]
+	[*]sub item 1[/*]
+	[*]sub item 2[/*]
+	[/list][/*]
+	[*]item 2[/*]
+	[/list]
+	>>> nested_list_urls = '- Actual projects:\\n  - https://github.com/Paralya/Switch\\n  - https://github.com/Stoupy51/LifeSteal'
+	>>> print(convert_markdown_to_bbcode(nested_list_urls, verbose=False))
+	[list]
+	[*]Actual projects:[list]
+	[*][url]https://github.com/Paralya/Switch[/url][/*]
+	[*][url]https://github.com/Stoupy51/LifeSteal[/url][/*]
+	[/list][/*]
+	[/list]
+	>>> print(convert_markdown_to_bbcode('---', verbose=False))
+	[hr]
+	>>> print(convert_markdown_to_bbcode('* item 1\\n* item 2', verbose=False))
+	[list]
+	[*]item 1[/*]
+	[*]item 2[/*]
+	[/list]
+	>>> print(convert_markdown_to_bbcode('a. item 1\\nb. item 2', verbose=False))
+	[list=a]
+	[*]item 1[/*]
+	[*]item 2[/*]
+	[/list]
+	""",  # noqa: E501
+}
 

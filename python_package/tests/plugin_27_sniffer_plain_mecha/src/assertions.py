@@ -67,9 +67,12 @@ def beet_default(ctx: Context) -> Iterator[None]:
 
 	origins: dict[int, tuple[int, int, int]] = decode_mappings(str(on_disk["mappings"]))
 	assert origins, "the file has two commands and both should be mapped"
+	with open("src/data/tns/function/on_disk.mcfunction", encoding="utf-8") as file:
+		source_lines: list[str] = file.read().splitlines()
+	generated_lines: list[str] = ctx.data.functions["tns:on_disk"].text.splitlines()
 	for generated_line, (_, source_line, _) in origins.items():
-		assert source_line == generated_line, (
-			f"a file that compiles to itself maps line to line, got {generated_line} -> {source_line}"
+		assert source_lines[source_line] == generated_lines[generated_line], (
+			f"a file that compiles to itself maps each command to its own line, got {generated_line} -> {source_line}"
 		)
 
 	# sourceRoot plus sources resolves, or navigation lands nowhere.
