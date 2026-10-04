@@ -1,7 +1,7 @@
 
 #> _your_namespace:_stats_custom_blocks
 #
-# @within	???
+# @within	(public)
 #
 
 scoreboard players add #second_entities _your_namespace.data 0

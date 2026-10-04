@@ -1,7 +1,7 @@
 
 #> _your_namespace:equation/test
 #
-# @within	???
+# @within	(public)
 #
 
 # scoreboard #value _your_namespace.data = 10 + 5 * 2 / 3 % 100
