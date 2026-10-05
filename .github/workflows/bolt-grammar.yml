@@ -1,0 +1,49 @@
+
+name: CI - Regenerate the Bolt grammar
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"  # weekly, monday at 6am
+  workflow_dispatch:
+
+jobs:
+  bolt-grammar:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v7.0.1
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v10.0.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Regenerate the root commands from the latest mecha
+        working-directory: extension/vscode
+        run: |
+          MECHA="uv run --no-project --with mecha python -c"
+          echo "MECHA_VERSION=$($MECHA 'import importlib.metadata as m; print(m.version("mecha"))')" >> "$GITHUB_ENV"
+          node scripts/bolt-grammar.js "$($MECHA 'import mecha, os; print(os.path.join(os.path.dirname(mecha.__file__), "resources"))')"
+
+      - name: Run the extension tests
+        working-directory: extension/vscode
+        run: |
+          npm install --no-audit --no-fund
+          npm test
+
+      - name: Open PR
+        uses: peter-evans/create-pull-request@v8.1.1
+        with:
+          add-paths: extension/vscode/syntaxes/bolt.tmLanguage.json
+          commit-message: "feat(vscode): ✨ Colour the commands of mecha ${{ env.MECHA_VERSION }} in Bolt"
+          title: "feat(vscode): ✨ Colour the commands of mecha ${{ env.MECHA_VERSION }} in Bolt"
+          body: |
+            Automated regeneration of the Bolt grammar's root commands from every command tree mecha ${{ env.MECHA_VERSION }} ships. Extension tests passed.
+          branch: auto/bolt-grammar
+          delete-branch: true
+
