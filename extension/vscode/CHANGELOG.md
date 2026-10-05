@@ -1,5 +1,21 @@
 # Changelog
 
+## Unreleased
+
+### bolt and mecha
+
+- **The build says which `.mcfunction` files are bolt**, so a file using mecha's nesting, `~/` paths or a command over several lines is switched even with no Python in it. The guess from the text remains for a project not built yet.
+- **A command over several lines reaches Spyglass as one**, joined with the `\` continuation it knows, whether mecha's `multiline` mode or a bolt bracket spread it.
+- **`~/child`, `./x` and `../x` are resolved** to the function mecha made of them, so they are no longer reported and ctrl+click follows them.
+- **A value is resolved exactly**, from the columns of each AST node the build records, so `int(major)` or `~/` becomes what mecha produced even where it rewrote the text around it (`1t` into `1`).
+- **A command a plugin added to mecha is no longer reported**: past the first word no vanilla tree has, such as bolt_compute's `compute bolt`, the parser is not asked. A line the build compiled is a command whatever its first word, and the bolt grammar knows the commands of 26.3.
+
+### Python
+
+- **A dataclass field annotated `McFunction`** makes its constructor argument a block, by keyword or by position, and a `write_*` call passing `content=` by keyword is read too.
+- **Both branches of `"..." if cond else "..."`** are blocks and are coloured, and so is the string before `+ "\n".join(...)`.
+- **A plain string's `{name}` fields** are masked like an f-string's interpolations, since `.format` fills them in.
+
 ## 2.0.0
 
 Everything since 1.0.6, which coloured the mcfunction strings in your `write_*` calls and drew a box around them.

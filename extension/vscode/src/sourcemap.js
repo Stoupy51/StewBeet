@@ -68,14 +68,21 @@ function decodeVlq(segment) {
  * A generated line with no origin emits an empty group and is absent from `lines` rather than
  * present with a null value, so a caller that finds nothing knows the line is unmapped (G3).
  *
+ * A line's first segment is where its command starts. A build that compiled the command through
+ * mecha adds one segment per end of each AST node, which is what `points` holds, and two `x_`
+ * fields: the sources written in bolt, and where syntax a plugin added to mecha begins.
+ *
  * @param {any} json  The parsed contents of a .mcfunction.map.
- * @returns {{ sources: string[], sourceRoot: string, lines: Map<number, { sourceIndex: number, sourceLine: number, sourceColumn: number }> }}
+ * @returns {{ sources: string[], sourceRoot: string, lines: Map<number, MappedLine>, bolt: number[], opaque: number[][] }}
  */
 function decode(json) {
   const sources = Array.isArray(json?.sources) ? json.sources : [];
   const sourceRoot = typeof json?.sourceRoot === "string" ? json.sourceRoot : "";
+  const bolt = Array.isArray(json?.x_stewbeet_bolt) ? json.x_stewbeet_bolt : [];
+  const opaque = Array.isArray(json?.x_stewbeet_opaque) ? json.x_stewbeet_opaque : [];
+  /** @type {Map<number, MappedLine>} */
   const lines = new Map();
-  if (typeof json?.mappings !== "string") return { sources, sourceRoot, lines };
+  if (typeof json?.mappings !== "string") return { sources, sourceRoot, lines, bolt, opaque };
 
   let sourceIndex = 0;
   let sourceLine = 0;
@@ -83,16 +90,25 @@ function decode(json) {
 
   json.mappings.split(";").forEach((/** @type {string} */ group, /** @type {number} */ generatedLine) => {
     if (!group) return;
-    const fields = decodeVlq(group);
-    if (fields.length < 4) return;
-    sourceIndex += fields[1];
-    sourceLine += fields[2];
-    sourceColumn += fields[3];
-    lines.set(generatedLine, { sourceIndex, sourceLine, sourceColumn });
+    let generated = 0;
+    /** @type {{ generated: number, line: number, column: number }[]} */
+    const points = [];
+    for (const segment of group.split(",")) {
+      const fields = decodeVlq(segment);
+      if (fields.length < 4) return;
+      generated += fields[0];
+      sourceIndex += fields[1];
+      sourceLine += fields[2];
+      sourceColumn += fields[3];
+      points.push({ generated, line: sourceLine, column: sourceColumn });
+    }
+    lines.set(generatedLine, { sourceIndex, sourceLine: points[0].line, sourceColumn: points[0].column, points: points.slice(1) });
   });
 
-  return { sources, sourceRoot, lines };
+  return { sources, sourceRoot, lines, bolt, opaque };
 }
+
+/** @typedef {{ sourceIndex: number, sourceLine: number, sourceColumn: number, points: { generated: number, line: number, column: number }[] }} MappedLine */
 
 // Discovery
 
@@ -330,8 +346,18 @@ const origins = new Map();
 
 // Lookup: source to generated
 
-/** Python file to generated locations, built by scanning every known map. @type {Map<string, { file: string, line: number }[]> | null} */
+/** What every known map says about each source file, built by scanning all of them once. @type {Map<string, SourceView> | null} */
 let reverseIndex = null;
+
+/**
+ * Everything the maps say about one source file, in the lines of the build that wrote them.
+ * @typedef {{
+ *   produced: Map<number, { file: string, line: number }[]>,
+ *   columns: Map<number, { file: string, line: number, points: { generated: number, column: number }[] }>,
+ *   opaque: Map<number, number>,
+ *   bolt: boolean,
+ * }} SourceView
+ */
 
 /**
  * Every Python line of one file that produced something, with everything it produced.
@@ -354,7 +380,7 @@ function originLinesFor(mapPaths, pythonPath) {
   if (!reverseIndex) reverseIndex = buildReverseIndex(mapPaths);
 
   const lines = new Map();
-  for (const [line, locations] of reverseIndex.get(fileKey(pythonPath)) ?? []) {
+  for (const [line, locations] of reverseIndex.get(fileKey(pythonPath))?.produced ?? []) {
     if (locations.length === 0) continue;
     const current = drift.currentLineOf(pythonPath, line);
     if (current !== null) lines.set(current, locations.slice());
@@ -377,7 +403,67 @@ function generatedFrom(mapPaths, pythonPath, line) {
   if (!reverseIndex) reverseIndex = buildReverseIndex(mapPaths);
   const built = drift.buildLineOf(pythonPath, line);
   if (built === null) return [];
-  return (reverseIndex.get(fileKey(pythonPath))?.get(built) ?? []).slice();
+  return (reverseIndex.get(fileKey(pythonPath))?.produced.get(built) ?? []).slice();
+}
+
+/**
+ * The source view of one file, from an index built on first use.
+ * @param {string[]} mapPaths  Every .mcfunction.map to index.
+ * @param {string} sourcePath
+ * @returns {SourceView | undefined}
+ */
+function viewOf(mapPaths, sourcePath) {
+  if (!reverseIndex) reverseIndex = buildReverseIndex(mapPaths);
+  return reverseIndex.get(fileKey(sourcePath));
+}
+
+/**
+ * Whether a build compiled the file as bolt or mecha syntax, which no vanilla parser reads.
+ * @param {string[]} mapPaths
+ * @param {string} sourcePath
+ */
+function isBoltSource(mapPaths, sourcePath) {
+  return viewOf(mapPaths, sourcePath)?.bolt ?? false;
+}
+
+/**
+ * Per source line as it sits now, the generated line a command written there became and the
+ * columns of it that are positions on that source line, each the end of an AST node.
+ *
+ * Those are what give a masked span its value exactly, whatever mecha did to the text around it:
+ * `~/` between two points becomes the resource location between the same two points of the build.
+ * Only the first generated line of a source line is kept, as `generatedText` does.
+ *
+ * @param {string[]} mapPaths
+ * @param {string} sourcePath
+ * @returns {Map<number, { text: string, points: { generated: number, column: number }[] }>}
+ */
+function compiledColumns(mapPaths, sourcePath) {
+  /** @type {Map<number, { text: string, points: { generated: number, column: number }[] }>} */
+  const found = new Map();
+  for (const [line, { file, line: generatedLine, points }] of viewOf(mapPaths, sourcePath)?.columns ?? []) {
+    const current = drift.currentLineOf(sourcePath, line);
+    const text = linesOf(file)?.[generatedLine];
+    if (current !== null && typeof text === "string") found.set(current, { text, points });
+  }
+  return found;
+}
+
+/**
+ * Where syntax a plugin added to mecha begins, as source line now to column.
+ * The build accepted it, so a vanilla parser's opinion of the rest of that command is not worth showing.
+ * @param {string[]} mapPaths
+ * @param {string} sourcePath
+ * @returns {Map<number, number>}
+ */
+function opaqueStarts(mapPaths, sourcePath) {
+  /** @type {Map<number, number>} */
+  const found = new Map();
+  for (const [line, column] of viewOf(mapPaths, sourcePath)?.opaque ?? []) {
+    const current = drift.currentLineOf(sourcePath, line);
+    if (current !== null) found.set(current, column);
+  }
+  return found;
 }
 
 /**
@@ -388,11 +474,17 @@ function generatedFrom(mapPaths, pythonPath, line) {
  * functions has tens of thousands of entries, and the lens provider asks on every keystroke.
  *
  * @param {string[]} mapPaths
- * @returns {Map<string, Map<number, { file: string, line: number }[]>>}
+ * @returns {Map<string, SourceView>}
  */
 function buildReverseIndex(mapPaths) {
-  /** @type {Map<string, Map<number, { file: string, line: number }[]>>} */
+  /** @type {Map<string, SourceView>} */
   const index = new Map();
+  /** @param {string} file */
+  const viewFor = file => {
+    let view = index.get(file);
+    if (!view) index.set(file, view = { produced: new Map(), columns: new Map(), opaque: new Map(), bolt: false });
+    return view;
+  };
 
   for (const mapPath of mapPaths) {
     const map = load(mapPath);
@@ -406,13 +498,23 @@ function buildReverseIndex(mapPaths) {
       const file = files[entry.sourceIndex];
       if (file === undefined) continue;
 
-      let byLine = index.get(file);
-      if (!byLine) index.set(file, byLine = new Map());
-      const bucket = byLine.get(entry.sourceLine);
+      const view = viewFor(file);
+      const bucket = view.produced.get(entry.sourceLine);
       const location = { file: generatedPath, line: generatedLine };
       if (bucket) bucket.push(location);
-      else byLine.set(entry.sourceLine, [location]);
+      else view.produced.set(entry.sourceLine, [location]);
+
+      // A command spread over several source lines has points on each of them, all in the same generated line.
+      for (const point of entry.points) {
+        let columns = view.columns.get(point.line);
+        if (!columns) view.columns.set(point.line, columns = { ...location, points: [] });
+        if (columns.file === generatedPath && columns.line === generatedLine) {
+          columns.points.push({ generated: point.generated, column: point.column });
+        }
+      }
     }
+    for (const source of map.bolt) if (files[source] !== undefined) viewFor(files[source]).bolt = true;
+    for (const [source, line, column] of map.opaque) if (files[source] !== undefined) viewFor(files[source]).opaque.set(line, column);
   }
   return index;
 }
@@ -462,4 +564,7 @@ module.exports = {
   generatedFrom,
   originLinesFor,
   generatedText,
+  isBoltSource,
+  compiledColumns,
+  opaqueStarts,
 };

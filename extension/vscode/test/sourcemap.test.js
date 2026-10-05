@@ -14,7 +14,11 @@ const assert = require("node:assert");
 const fs = require("fs");
 const path = require("path");
 
-const { decode, decodeVlq, originOf, clearCache } = require("../src/sourcemap");
+const os = require("os");
+
+const {
+  decode, decodeVlq, originOf, clearCache, isBoltSource, compiledColumns, opaqueStarts, originLinesFor,
+} = require("../src/sourcemap");
 
 const REFERENCE = path.resolve(
   __dirname, "../../../specs/001-stewbeet-vscode-dx/contracts/reference/generated/pack/data/ns/function",
@@ -91,6 +95,52 @@ test("originOf resolves through sourceRoot to a file that exists", () => {
   assert.strictEqual(path.basename(origin.file), "hit.ts");
   assert.ok(fs.existsSync(origin.file), `sourceRoot must resolve on disk, got ${origin.file}`);
   assert.strictEqual(origin.line, 5);
+});
+
+// Columns and the x_ fields, which a build compiling through mecha adds
+
+test("a line with several segments keeps the first as its origin and the rest as its points", () => {
+  // `schedule function ~/ 1t replace` on source line 4, compiled to `schedule function t:probe 1 replace`.
+  const map = decode({ sources: ["a.mcfunction"], mappings: "AAIA,kBAAkB,OAAE,CAAC,CAAE" });
+  const line = map.lines.get(0);
+  assert.deepStrictEqual([line?.sourceLine, line?.sourceColumn], [4, 0]);
+  assert.deepStrictEqual(line?.points, [
+    { generated: 18, line: 4, column: 18 },
+    { generated: 25, line: 4, column: 20 },
+    { generated: 26, line: 4, column: 21 },
+    { generated: 27, line: 4, column: 23 },
+  ], "the generated column restarts on each line while the source fields run on");
+});
+
+test("the x_ fields are read, and a map without them has none", () => {
+  const map = decode({ sources: ["a.mcfunction"], mappings: "AAAA", x_stewbeet_bolt: [0], x_stewbeet_opaque: [[0, 3, 8]] });
+  assert.deepStrictEqual([map.bolt, map.opaque], [[0], [[0, 3, 8]]]);
+  assert.deepStrictEqual([decode({ mappings: "AAAA" }).bolt, decode({ mappings: "AAAA" }).opaque], [[], []]);
+});
+
+test("a source file reads what every map says about it", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "stewbeet-sourcemap-"));
+  const source = path.join(root, "src", "tick.mcfunction");
+  const generated = path.join(root, "build", "data", "t", "function", "tick.mcfunction");
+  fs.mkdirSync(path.dirname(source), { recursive: true });
+  fs.mkdirSync(path.dirname(generated), { recursive: true });
+  fs.writeFileSync(source, "say a\n\n\n\nschedule function ~/ 1t replace\ncompute bolt float (1+1)\n");
+  fs.writeFileSync(generated, "say a\nschedule function t:probe 1 replace\ncompute default float 2\n");
+  fs.writeFileSync(`${generated}.map`, JSON.stringify({
+    version: 3, sources: ["src/tick.mcfunction"], sourceRoot: "../../../../",
+    mappings: "AAAA;AAIA,kBAAkB,OAAE;AACpB", x_stewbeet_bolt: [0], x_stewbeet_opaque: [[0, 5, 8]],
+  }));
+  clearCache();
+  const maps = [`${generated}.map`];
+
+  assert.ok(isBoltSource(maps, source));
+  assert.ok(!isBoltSource(maps, path.join(root, "src", "other.mcfunction")));
+  assert.deepStrictEqual([...originLinesFor(maps, source).keys()], [0, 4, 5], "every line a command was compiled from");
+  assert.deepStrictEqual(compiledColumns(maps, source).get(4),
+    { text: "schedule function t:probe 1 replace", points: [{ generated: 18, column: 18 }, { generated: 25, column: 20 }] });
+  assert.deepStrictEqual([...opaqueStarts(maps, source)], [[5, 8]]);
+  fs.rmSync(root, { recursive: true, force: true });
+  clearCache();
 });
 
 test("originOf returns null for an unmapped line rather than the nearest one", () => {

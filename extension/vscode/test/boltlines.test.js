@@ -196,6 +196,91 @@ test("without a build the same path is a mask, and the mask explains the line", 
   assert.deepEqual(masked.get(0), [{ start: 27, end: 35 }]);
 });
 
+test("a relative location is mecha's, so it is masked like any Python a parser cannot read", () => {
+  assert.equal(maskPython("execute as @a run function ~/arrow").text, "execute as @a run function _______");
+  assert.equal(maskPython("schedule function ~/ 1t replace").text, "schedule function __ 1t replace");
+  assert.equal(maskPython("function ./open").text, "function ______");
+  assert.equal(maskPython("function ../sibling/close").text, "function ________________");
+  assert.equal(maskPython("tp @s ~ ~1 ~ ~90 ~").text, "tp @s ~ ~1 ~ ~90 ~", "a coordinate is never followed by a slash");
+});
+
+test("a build gives a relative location the path mecha resolved it to", () => {
+  const source = "execute as @e[type=arrow] at @s run function ~/arrow:\n";
+  const generated = new Map([[0, "execute as @e[type=arrow] at @s run function grappling_hook:v1.4.1/tick/arrow"]]);
+  const { text, masked } = projectBolt(source, { generated });
+  assert.equal(text.split("\n")[0], "execute as @e[type=arrow] at @s run function grappling_hook:v1.4.1/tick/arrow");
+  assert.equal(masked.get(0), undefined);
+});
+
+// What the build says, which no list of commands can
+
+test("a line the build compiled is a command, whatever its first word", () => {
+  const source = "lootpool minecraft:chests/x roll 3\n";
+  assert.equal(commandsOf(source).size, 0, "a plugin's command is in no list here");
+  assert.equal(projectBolt(source, { commands: commandsOf(source, new Set([0])) }).text.split("\n")[0],
+    "lootpool minecraft:chests/x roll 3");
+});
+
+test("syntax a plugin added is masked from where the build says it begins", () => {
+  const source = "    data modify storage t:main r set compute bolt float (1+1)\n";
+  const generated = new Map([[0, 'data modify storage t:main r set compute default float {type:"minecraft:add",inputs:[1.0,1.0,]}']]);
+  const { text, masked } = projectBolt(source, { opaque: new Map([[0, 45]]), generated });
+  assert.equal(text.split("\n")[0], `data modify storage t:main r set compute ${"_".repeat(16)}`);
+  assert.deepEqual(masked.get(0)?.at(-1), { start: 41, end: 57 }, "so whatever a parser says from `bolt` on is explained");
+});
+
+test("the build's columns give a masked run its value even where mecha rewrote the text around it", () => {
+  const source = "schedule function ~/ 1t replace\n";
+  const columns = new Map([[0, {
+    text: "schedule function t:probe 1 replace",
+    points: [{ generated: 18, column: 18 }, { generated: 25, column: 20 }, { generated: 26, column: 21 }, { generated: 27, column: 23 }],
+  }]]);
+  const generated = new Map([[0, "schedule function t:probe 1 replace"]]);
+  assert.equal(projectBolt(source, { generated }).text.split("\n")[0], "schedule function __ 1t replace",
+    "`1t` became `1`, so the text around the path no longer lines up");
+  const { text, masked } = projectBolt(source, { generated, columns });
+  assert.equal(text.split("\n")[0], "schedule function t:probe 1t replace");
+  assert.equal(masked.get(0), undefined);
+});
+
+// A command over several lines, mecha's `multiline` and bolt's brackets
+
+test("an execute written over several lines reaches the parser as one, joined by continuations", () => {
+  const source = [
+    "execute",                                     // 0
+    "    as @e[type=item_display]",                // 1
+    "    run function ~/check:",                   // 2
+    "        say inside",                          // 3
+    "say after",                                   // 4
+  ].join("\n");
+  assert.deepEqual(projected(source), [
+    "execute \\",
+    "as @e[type=item_display] \\",
+    "run function _______",
+    "say inside",
+    "say after",
+  ], "the block the last line opens is commands of its own, so it continues nothing");
+});
+
+test("a bracket left open continues the command whatever the indentation of the line that closes it", () => {
+  const source = "data merge entity @s {\n    item:{id:stone},\n    teleport_duration:2\n}\nsay after\n";
+  assert.deepEqual(projected(source).slice(0, 5),
+    ["data merge entity @s { \\", "item:{id:stone}, \\", "teleport_duration:2 \\", "}", "say after"]);
+});
+
+test("a bolt expression over several lines is masked on every one of them", () => {
+  const source = "compute bolt float (\n    (storage t:main a)*2\n)\nsay after\n";
+  const lines = projected(source);
+  assert.deepEqual(lines.slice(0, 4), ["compute bolt float _ \\", "____________________ \\", "_", "say after"],
+    "`float` is an argument, and only the parenthesis is Python");
+});
+
+test("a command that opens a block is never continued, and a deeper line after a finished one is", () => {
+  assert.equal(commandsOf("function ~/a:\n    say inside\n").get(0)?.continues, undefined);
+  assert.equal(commandsOf("say one\n    two\n").get(0)?.continues, true,
+    "mecha reads a deeper line as the rest of the command, and so does the parser now");
+});
+
 test("a resource location after `function` is left alone", () => {
   assert.equal(maskPython("function voltaic:gui/open").text, "function voltaic:gui/open");
   assert.equal(maskPython("function #voltaic:tick").text, "function #voltaic:tick");
@@ -219,6 +304,12 @@ test("a selector is not read as a call, and a macro is not read as one either", 
   assert.equal(maskPython("clear @s (-self.item) 1").text, "clear @s ____________ 1");
   assert.equal(maskPython("give @s (self.output_item)").text, "give @s __________________");
   assert.equal(maskPython("$say $(name)").text, "$say $(name)");
+});
+
+test("two Python operands an operator joins are one masked expression", () => {
+  assert.equal(maskPython("set compute default float (storage a n)/(storage a d)*2 run").text,
+    `set compute default float ${"_".repeat(29)} run`, "a lone `/` between two masks is what a parser would report");
+  assert.equal(maskPython("give @s (self.item) 1").text, "give @s ___________ 1", "an argument after a space is no operand");
 });
 
 test("an unbalanced parenthesis costs its own line and no more", () => {

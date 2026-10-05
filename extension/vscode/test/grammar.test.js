@@ -62,9 +62,9 @@ test("bolt command bodies are handed to the mcfunction grammar rather than descr
 
 test("the command heads are mecha's own, with return withheld", () => {
   const heads = bolt.repository["command-statement"].begin.match(/\((?:[a-z-]+\|)+[a-z-]+\)/)[0].slice(1, -1).split("|");
-  assert.equal(heads.length, 91, "mecha's tree has 92 roots and `return` is dropped");
+  assert.equal(heads.length, 93, "mecha's 26.3 tree has 94 roots and `return` is dropped");
   assert.ok(!heads.includes("return"), "return is Python's keyword first");
-  for (const head of ["execute", "function", "say", "scoreboard", "item", "ban-ip"]) {
+  for (const head of ["execute", "function", "say", "scoreboard", "item", "ban-ip", "compute", "posteffect"]) {
     assert.ok(heads.includes(head), `${head} is missing from the generated set`);
   }
   assert.ok(bolt.repository["command-statement"].comment.includes("Regenerate with:"),

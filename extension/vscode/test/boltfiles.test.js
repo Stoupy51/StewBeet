@@ -28,6 +28,11 @@ test("bolt detection fires on what Spyglass cannot parse", () => {
     "execute as @a:\n    say hi\n",
     "function demo:inner:\n    say hi\n",
     'enchantment ns:name {\n    "anvil_cost": 1\n}\n',
+    // What grappling_hook writes, none of which has a Python statement of its own
+    "major, minor, patch = ctx.project_version.split('.')\n",
+    "execute \n    as @e[tag=rope]\n    run function ~/check:\n        kill @s\n",
+    "schedule function ~/ 1t replace\n",
+    'tellraw @s {"text":f"[Loaded v{ctx.project_version}]","color":"green"}\n',
   ]) {
     assert.ok(looksLikeBolt(source), `not detected: ${JSON.stringify(source)}`);
   }

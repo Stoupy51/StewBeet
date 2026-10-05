@@ -46,24 +46,26 @@ const NO_SUBSTITUTION = new Map();
 
 // Block lookup
 
-/** Cache of the block scan, keyed by document URI. @type {Map<string, { version:number, blocks:any[], commands: Map<number, any> | null }>} */
+/** Cache of the block scan, keyed by document URI.
+ *  @type {Map<string, { version:number, maps:string[], blocks:any[], commands: Map<number, any> | null, opaque: Map<number, number> }>} */
 const blockCache = new Map();
 
 /**
- * The blocks of a document and, for a bolt file, its command lines. Rescanned only when the
- * document's version changes.
+ * The blocks of a document and, for a bolt file, its command lines. Rescanned when the
+ * document's version changes, and for a bolt file when another build's maps are found.
  * @param {vscode.TextDocument} doc
  */
 function scanOf(doc) {
   const key = doc.uri.toString();
+  const maps = navigation.knownMaps();
   const cached = blockCache.get(key);
-  if (cached && cached.version === doc.version) return cached;
+  if (cached && cached.version === doc.version && cached.maps === maps) return cached;
 
   const text = doc.getText();
   const scanned = isBolt(doc)
-    ? boltScan(doc, text)
-    : { blocks: findBlockOffsets(text), commands: null };
-  const entry = { version: doc.version, ...scanned };
+    ? boltScan(doc, text, maps)
+    : { blocks: findBlockOffsets(text), commands: null, opaque: new Map() };
+  const entry = { version: doc.version, maps, ...scanned };
   blockCache.set(key, entry);
   return entry;
 }
@@ -76,17 +78,22 @@ function scanOf(doc) {
  * actually changes, and the runs a keystroke leaves alone are served the same text as before,
  * which VS Code hands to nobody.
  *
+ * What the last build compiled is a command whatever its first word, and where it says syntax a
+ * plugin added begins is where the parser stops being asked.
+ *
  * @param {vscode.TextDocument} doc
  * @param {string} text
+ * @param {string[]} maps
  */
-function boltScan(doc, text) {
-  const commands = commandsOf(text);
+function boltScan(doc, text, maps) {
+  const file = doc.uri.scheme === "file" && maps.length > 0 ? doc.uri.fsPath : null;
+  const commands = commandsOf(text, file ? new Set(sourcemap.originLinesFor(maps, file).keys()) : new Set());
   const blocks = commandBlocks(commands).map(({ from, to }) => {
     const start = doc.offsetAt(new vscode.Position(from, 0));
     const end = doc.offsetAt(doc.lineAt(to).range.end);
     return { start, end, contentStart: start, contentEnd: end, from, to };
   });
-  return { blocks, commands };
+  return { blocks, commands, opaque: file ? sourcemap.opaqueStarts(maps, file) : new Map() };
 }
 
 /** @param {vscode.TextDocument} doc */
@@ -170,6 +177,7 @@ async function projectionFor(doc, blockIndex) {
   const cached = projections.get(key);
   if (cached && cached.version === doc.version) return cached;
 
+  const maps = navigation.knownMaps();
   const scan = scanOf(doc);
   const block = scan.blocks[blockIndex];
   if (!block) return null;
@@ -178,9 +186,15 @@ async function projectionFor(doc, blockIndex) {
   // datapack parser earns a diagnostic saying `"""` is not a command.
   const text = doc.getText();
   const build = await buildViewOf(doc, scan);
+  // The first search for the build ran while waiting, and a bolt file's lines depend on what it found.
+  if (navigation.knownMaps() !== maps) {
+    reproject();
+    return projectionFor(doc, blockIndex);
+  }
   const { text: projected, table, masked } = isBolt(doc)
     ? projectBolt(text, {
       commands: scan.commands, from: block.from, to: block.to, generated: build.generated,
+      columns: build.columns, opaque: scan.opaque,
     })
     : project(
       text, block.contentStart, block.contentEnd,
@@ -194,7 +208,7 @@ async function projectionFor(doc, blockIndex) {
 }
 
 /** What the build says about a document, computed once per version.
- *  @type {Map<string, { version:number, generated:Map<number, string> | null, known:Map<string, string> }>} */
+ *  @type {Map<string, { version:number, generated:Map<number, string> | null, known:Map<string, string>, columns:ReturnType<typeof sourcemap.compiledColumns> | null }>} */
 const buildViews = new Map();
 
 /**
@@ -205,9 +219,11 @@ const buildViews = new Map();
  * point in the map, so no line of that block is covered, and `{ns}` is resolved only by the
  * blocks handed to a call inline.
  *
+ * A bolt file also gets the columns mecha placed each node at, which resolve a masked run exactly.
+ *
  * @param {vscode.TextDocument} doc
  * @param {{ blocks: any[] }} scan
- * @returns {Promise<{ version:number, generated:Map<number, string> | null, known:Map<string, string> }>}
+ * @returns {Promise<{ version:number, generated:Map<number, string> | null, known:Map<string, string>, columns:ReturnType<typeof sourcemap.compiledColumns> | null }>}
  */
 async function buildViewOf(doc, scan) {
   const key = doc.uri.toString();
@@ -219,6 +235,7 @@ async function buildViewOf(doc, scan) {
     version: doc.version,
     generated,
     known: generated && !isBolt(doc) ? learn(doc.getText(), scan.blocks, generated) : new Map(),
+    columns: generated && isBolt(doc) ? sourcemap.compiledColumns(navigation.knownMaps(), doc.uri.fsPath) : null,
   };
   buildViews.set(key, entry);
   return entry;

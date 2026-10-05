@@ -25,6 +25,8 @@ require:
     - "stewbeet.plugins.sniffer"  # <- this one (requires "stewbeet" to be pip-installed or in your venv)
 ```
 
+Or leave `beet.yml` alone and ask for it on the command line: `beet -s "require[]=stewbeet.plugins.sniffer" build`.
+
 ## Bolt
 
 https://github.com/user-attachments/assets/57fd9d18-1643-45bc-8257-4942865c9be4
@@ -36,9 +38,11 @@ https://github.com/user-attachments/assets/57fd9d18-1643-45bc-8257-4942865c9be4
 - **A lens per function** the module writes, leading to the generated file(s).
 - **Computed paths stay clickable**: `function gui.open` resolves to what the last build wrote.
 
+- **Commands mecha reads and vanilla does not**: `~/child` paths, a command over several lines, and the commands a plugin adds to mecha, such as bolt_compute's `compute bolt`. The build says where each one is.
+
 ### Bolt inside a `.mcfunction`
 
-These files get the `bolt` language id too. Spyglass still reports them from disk,
+These files get the `bolt` language id too: every file the last build compiled as bolt, with mecha's nesting or with a command over several lines, and before any build, the files whose text gives it away. Spyglass still reports them from disk,
 so **StewBeet: Exclude Bolt Files From Spyglass** adds them to `.spyglassrc.json`,
 or your build can keep that list updated:
 
@@ -69,6 +73,7 @@ execute if entity @s[tag={ns}.turbine] run function {ns}:turbine/tick
 ```
 
 Each `{...}` is filled with what the last build resolved it to, so ctrl+click and completion **work on computed paths**.
+A `{name}` in a plain string is read the same way, since `.format` fills it in later.
 A name resolved on one line is reused where the build covers nothing, such as commands assembled in a variable.
 Nothing evaluates your Python, and what stays unknown keeps a `_` mask.
 
@@ -79,7 +84,9 @@ Nothing evaluates your Python, and what stays unknown keeps a `_` mask.
 | `write_*` helpers | `write_function`, `write_versioned_function`, `write_load_file`, ...                    |
 | A variable        | `content = f"""..."""` and every `+=` up to the call that consumes it                   |
 | A list            | `.append`, `+= [...]`, literals, comprehensions, `"\n".join(lines)`                     |
-| Your own function | Any parameter annotated `McFunction`                                                    |
+| Your own function | Any parameter annotated `McFunction`, by position or by keyword                         |
+| Your own class    | A field annotated `McFunction`, ex: `Bonus(name="speed", commands="""...""")`           |
+| An expression     | Both branches of `"..." if cond else "..."`, and `"..." + "\n".join(lines)`             |
 | beet's own API    | `Function(...)` from a string or a `list[str]`, plus `.append`, `.prepend` and `.lines` |
 
 Highlighting a variable needs the `McFunction` annotation (a plain `str` alias from `stewbeet`). Everything else works without it:

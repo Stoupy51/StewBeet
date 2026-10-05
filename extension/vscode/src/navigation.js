@@ -201,6 +201,17 @@ function forgetMaps() {
   discovered = null;
 }
 
+/** No map found yet, one array so a caller can tell by identity that nothing changed. @type {string[]} */
+const NO_MAPS = [];
+
+/**
+ * The maps found by the last search, without searching, for a caller that cannot wait.
+ * A new search returns a new array, which is how such a caller knows to read them again.
+ */
+function knownMaps() {
+  return discovered ?? NO_MAPS;
+}
+
 module.exports = {
   targetOf,
   searchFor,
@@ -210,4 +221,5 @@ module.exports = {
   resolve,
   findMaps,
   forgetMaps,
+  knownMaps,
 };

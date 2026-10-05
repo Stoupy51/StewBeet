@@ -175,10 +175,15 @@ function clipToLine(spans, lineStart, lineEnd, start, end) {
  * @param {Map<number, { start:number, end:number }[]>} maskedRuns  Written into.
  * @param {{ expressions: Map<number, string>, known: Map<string, string> | null, observed: Map<string, string | null> } | null} [learning]
  *   What this line's spans say, and what other lines already said. `observed` is written into.
+ * @param {Map<number, string>} [exact]  Span start to the value the build gave that span exactly, which the text alignment never overrides.
  */
-function substitute(masked, generated, spans, present, line, table, maskedRuns, learning = null) {
+function substitute(masked, generated, spans, present, line, table, maskedRuns, learning = null, exact = new Map()) {
   const resolved = (generated === undefined ? null : resolveLine(masked, generated, spans)) ?? [];
   const byStart = new Map(resolved.map(entry => [entry.start, entry]));
+  for (const span of spans) {
+    const value = exact.get(span.start);
+    if (value !== undefined) byStart.set(span.start, { ...span, value });
+  }
   if (learning) note(learning, resolved);
 
   const values = present.map(span => byStart.get(span.start)?.value ?? borrowed(learning, span.start));

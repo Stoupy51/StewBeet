@@ -213,7 +213,10 @@ function registerBoltDetection(context) {
     // A file the build wrote is generated output even when buildOutput names nothing: the map
     // beside it says so, and older builds say so in a trailing comment looksLikeBolt reads.
     if (isBuildOutput(doc.uri.fsPath, outputs)) return;
-    if (!looksLikeBolt(doc.getText())) return;
+    // The build knows which files it compiled as bolt, and the text is only a guess for a project not built yet.
+    const maps = await navigation.findMaps();
+    if (!sourcemap.isBoltSource(maps, doc.uri.fsPath) && !looksLikeBolt(doc.getText())) return;
+    if (handled.has(doc.uri.fsPath)) return;
 
     handled.add(doc.uri.fsPath);
     try {

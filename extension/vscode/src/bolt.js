@@ -34,7 +34,15 @@ const BOLT_LINES = [
   /^\s*(?:def|class)\s+\w+/,
   /^\s*(?:for|while|if|elif|else|try|except|finally|with)\b[^#]*:\s*(?:#.*)?$/,
   /^\s*[A-Za-z_]\w*(?:\.\w+)*\s*(?:[-+*/%|&^]|\/\/|\*\*|>>|<<)?=(?!=)/,
+  /^\s*[A-Za-z_]\w*(?:\s*,\s*[A-Za-z_]\w*)+\s*=(?!=)/,
   /^\s*(?:append\s+|prepend\s+|merge\s+)?(?:execute|function)\b[^#]*:\s*(?:#.*)?$/,
+  // A nested function opened at the end of an `execute` written over several lines, and a path relative to the current function.
+  /\bfunction\s+[^\s#]+:\s*(?:#.*)?$/,
+  /\bfunction\s+(?:~|\.\.?)\//,
+  // An `execute` alone on its line is the first line of one written over several, which vanilla cannot do.
+  /^\s*execute\s*$/,
+  // An f-string where a command takes a value, which is Python by its prefix alone.
+  /[\s:,[{(]f"[^"\n]*\{/,
   // A body opened on one line and closed on another, which is mecha's nested resources:
   // `enchantment ns:name {` and the JSON that follows. Vanilla closes every NBT and JSON
   // argument on the line that opens it, so a trailing brace cannot be a command.

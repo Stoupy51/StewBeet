@@ -77,8 +77,9 @@ const PYTHON_STATEMENTS = new Set([
  *  so the prefix is what tells one from the quoted arguments a command really does take. */
 const PREFIXED_STRING = /[fFrRbBuU]{1,2}(?:"""[\s\S]*?"""|'''[\s\S]*?'''|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/y;
 
-/** A call, ex: `has_item_predicate(self.item)`. Nothing in mcfunction puts a bare `(` after a word. */
-const PYTHON_CALL = /[A-Za-z_]\w*[ \t]*\(/y;
+/** A call, ex: `has_item_predicate(self.item)`. Nothing in mcfunction puts a bare `(` after a word.
+ *  A space before the parenthesis makes the word an argument of its own, as `float` is in `compute bolt float (1+1)`. */
+const PYTHON_CALL = /[A-Za-z_]\w*\(/y;
 
 /** What Python may not follow. `@s (-self.item)` is a selector and a bolt expression rather than a
  *  call named `s`, and `$(x)` is a macro placeholder rather than either. */
@@ -91,6 +92,11 @@ const QUOTED = /"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'/y;
  *  `function gui.open` is the one place bolt users write a bare Python expression where a
  *  path belongs, and a path with a dot and no namespace is nothing a datapack can name. */
 const FUNCTION_ATTRIBUTE = /\bfunction[ \t]+([A-Za-z_]\w*(?:\.\w+)+)(?![\w./:-])/g;
+
+/** A resource location relative to the function being written, which mecha resolves and a
+ *  datapack parser rejects: `~/` and `./` name a child of the current function, `../` a sibling.
+ *  A coordinate is never followed by a slash, so `~ ~1 ~` stays a position. */
+const RELATIVE_LOCATION = /(?<![^\s=,])(?:~|\.\.?)\/[\w./-]*/g;
 
 /** How many virtual documents one bolt file is worth.
  *  One per run of commands means a keystroke reparses the run it lands in rather than the file.
@@ -107,24 +113,70 @@ const MAX_BLOCKS = 8;
  * opens with a command word by accident, since `list the machines it knows about` has exactly
  * the shape of a command and the quotes around it are all that say it is not one.
  *
+ * A line the build compiled into a command is one, whatever its first word: the root commands of
+ * a newer Minecraft version and the ones a plugin adds to mecha are in no list here.
+ *
+ * A command goes on over the lines mecha's own rule continues it on: while a bracket it opened is
+ * still open, and, in mecha's `multiline` mode, over every line indented deeper than its first,
+ * unless that first line opened a block. `continues` marks every line but the last of one.
+ *
  * @param {string} text
- * @returns {Map<number, { start:number, text:string, partial:boolean }>}
+ * @param {Set<number>} [compiled]  0-based lines the last build compiled a command from.
+ * @returns {Map<number, KeptLine>}
  */
-function commandsOf(text) {
-  /** @type {Map<number, { start:number, text:string, partial:boolean }>} */
+function commandsOf(text, compiled = new Set()) {
+  /** @type {Map<number, KeptLine>} */
   const commands = new Map();
   /** @type {string | null} */
   let inside = null;
+  /** The command the previous line belongs to, while the next line may still continue it. @type {{ indent:number, depth:number } | null} */
+  let open = null;
 
   text.split("\n").forEach((raw, line) => {
     const body = raw.endsWith("\r") ? raw.slice(0, -1) : raw;
     const prose = inside !== null;
     inside = tripleQuoteAfter(body, inside);
     if (prose) return;
-    const kept = keptPart(body);
+
+    const indent = body.length - body.trimStart().length;
+    if (open && body.trim() && (open.depth > 0 || indent > open.indent)) {
+      /** @type {KeptLine} */ (commands.get(line - 1)).continues = true;
+      commands.set(line, command(indent, body));
+      open = stillOpen(open.indent, open.depth, body);
+      return;
+    }
+
+    const kept = keptPart(body) ?? (compiled.has(line) && body.trim() ? command(indent, body) : null);
     if (kept) commands.set(line, kept);
+    open = kept && !kept.partial ? stillOpen(indent, 0, body) : null;
   });
   return commands;
+}
+
+/** @typedef {{ start:number, text:string, partial:boolean, continues?:boolean }} KeptLine */
+
+/**
+ * What a command still has open at the end of one of its lines, or null when the next line cannot continue it.
+ * A line ending in a colon at depth 0 opens a block, whose body is commands of its own.
+ * @param {number} indent  Indentation of the command's first line.
+ * @param {number} depth  Brackets open before this line.
+ * @param {string} body  The line.
+ */
+function stillOpen(indent, depth, body) {
+  const after = depth + bracketBalance(body);
+  return after <= 0 && /:[ \t]*$/.test(body) ? null : { indent, depth: Math.max(0, after) };
+}
+
+/** Brackets a line opens minus those it closes, quoted text aside. @param {string} body */
+function bracketBalance(body) {
+  let balance = 0;
+  for (let at = 0; at < body.length; at++) {
+    const quoted = readAt(QUOTED, body, at);
+    if (quoted) { at += quoted.length - 1; continue; }
+    if ("([{".includes(body[at])) balance++;
+    else if (")]}".includes(body[at])) balance--;
+  }
+  return balance;
 }
 
 /**
@@ -182,37 +234,80 @@ function commandBlocks(commands) {
  *
  * Every line keeps its number, a line outside the range is empty, and a kept line loses its
  * indentation: the virtual document is a flat list of commands, which is what a `.mcfunction`
- * is, and the table gives every column back.
+ * is, and the table gives every column back. A command spread over several lines ends each but
+ * its last with ` \`, the line continuation a datapack parser knows since 1.20.2.
  *
  * @param {string} text
  * @param {object} [options]
- * @param {Map<number, { start:number, text:string, partial:boolean }> | null} [options.commands]  From commandsOf, when it is already known.
+ * @param {Map<number, KeptLine> | null} [options.commands]  From commandsOf, when it is already known.
  * @param {number} [options.from]  First line of the block, 0-based.
  * @param {number} [options.to]  Last line of the block, inclusive.
  * @param {Map<number, string> | null} [options.generated]  What the build wrote per line.
+ * @param {Map<number, { text: string, points: { generated: number, column: number }[] }> | null} [options.columns]
+ *   Per line, the generated line and its columns that are positions on this line, see `compiledColumns`.
+ * @param {Map<number, number>} [options.opaque]  Per line, the column where syntax no vanilla parser knows begins.
  * @returns {{ text: string, table: Map<number, { start:number, pythonWidth:number, virtualWidth:number }[]>, masked: Map<number, { start:number, end:number }[]> }}
  */
-function projectBolt(text, { commands = null, from = 0, to = Number.MAX_SAFE_INTEGER, generated = null } = {}) {
+function projectBolt(text, { commands = null, from = 0, to = Number.MAX_SAFE_INTEGER, generated = null, columns = null, opaque = new Map() } = {}) {
   const found = commands ?? commandsOf(text);
   /** @type {Map<number, { start:number, pythonWidth:number, virtualWidth:number }[]>} */
   const table = new Map();
   /** @type {Map<number, { start:number, end:number }[]>} */
   const masked = new Map();
+  /** Parentheses of a Python expression still open from the line before. */
+  let python = 0;
+  /** Whether the command this line continues has reached syntax no vanilla parser knows. */
+  let unknown = false;
 
   const projected = text.split("\n").map((raw, line) => {
     const kept = line < from || line > to ? undefined : found.get(line);
+    const continued = found.get(line - 1)?.continues ?? false;
+    if (!continued) { python = 0; unknown = false; }
     if (!kept) return "";
 
-    const { text: command, runs } = maskPython(kept.text);
-    const resolved = substitute(command, generated?.get(line), runs, runs, line, table, masked);
+    const cut = Math.max(0, unknown ? 0 : (opaque.get(line) ?? Infinity) - kept.start);
+    const { text: command, runs, open } = maskPython(kept.text, { python, from: cut });
+    python = open;
+    unknown = unknown || cut < kept.text.length;
+    // What follows the cut is the plugin's syntax, which stays a mask: its compiled form is mecha's output, not the author's text.
+    const resolvable = runs.filter(run => run.end < cut);
+    const exact = exactValues(columns?.get(line), resolvable, kept.start);
+    const resolved = substitute(command, generated?.get(line), resolvable, runs, line, table, masked, null, exact);
     dedent(table, line, kept.start);
     // A word still being typed is our guess at a command, so what a parser says about it is
     // about the guess. The author has not finished writing the line they meant.
     if (kept.partial) masked.set(line, [{ start: 0, end: resolved.length }]);
-    return resolved;
+    return kept.continues ? `${resolved} \\` : resolved;
   });
 
   return { text: projected.join("\n"), table, masked };
+}
+
+/**
+ * The value the build gave each masked run whose two ends are both the end of an AST node.
+ *
+ * mecha keeps the position of every node through bolt's evaluation, so `int(major)` between two
+ * points of the source is `1` between the same two points of the generated line, whatever mecha
+ * did to the text around it. A run whose ends are not both points is left to the text alignment.
+ *
+ * @param {{ text: string, points: { generated: number, column: number }[] } | undefined} compiled
+ * @param {{ start:number, end:number }[]} runs  Masked runs, in the columns of the kept text.
+ * @param {number} offset  Column of the source line the kept text starts at.
+ * @returns {Map<number, string>}  Run start to value.
+ */
+function exactValues(compiled, runs, offset) {
+  /** @type {Map<number, string>} */
+  const values = new Map();
+  if (!compiled) return values;
+  for (const run of runs) {
+    const starts = compiled.points.filter(point => point.column === run.start + offset).map(point => point.generated);
+    const ends = compiled.points.filter(point => point.column === run.end + offset).map(point => point.generated);
+    if (starts.length === 0 || ends.length === 0) continue;
+    const from = Math.min(...starts);
+    const until = Math.max(...ends);
+    if (until > from) values.set(run.start, compiled.text.slice(from, until));
+  }
+  return values;
 }
 
 /**
@@ -317,37 +412,53 @@ function withoutBlockColon(text) {
  * everything after it is read as the command it is. What the build resolved each run to is
  * spliced back in by ./projection.js, which is what makes a masked path clickable.
  *
+ * A parenthesis left open goes on over the lines that continue the command, which is how a bolt
+ * expression spans lines: `python` says how many the line starts inside, and `open` how many it
+ * leaves open. Everything from `from` on is masked whatever it holds.
+ *
  * @param {string} line
- * @returns {{ text: string, runs: { start:number, end:number }[] }}
+ * @param {{ python?: number, from?: number }} [options]
+ * @returns {{ text: string, runs: { start:number, end:number }[], open: number }}
  */
-function maskPython(line) {
+function maskPython(line, { python = 0, from = Infinity } = {}) {
   let out = "";
   /** @type {{ start:number, end:number }[]} */
   const runs = [];
-  const attributes = functionAttributes(line);
+  const paths = pathExpressions(line);
+  const stop = Math.min(from, line.length);
+  /** @param {number} start @param {number} end */
+  const mask = (start, end) => { out += MASK.repeat(end - start); runs.push({ start, end }); };
 
-  for (let at = 0; at < line.length; ) {
-    const end = attributes.get(at) ?? pythonEndsAt(line, at);
-    if (end === null) {
+  let { end: at, open } = python > 0 ? closingParen(line, 0, python) : { end: 0, open: 0 };
+  if (at > 0) mask(0, Math.min(at, stop));
+  while (at < stop) {
+    const path = paths.get(at);
+    const expression = path === undefined ? joinedExpression(line, at) : { end: path, open: 0 };
+    if (!expression) {
       const quoted = readAt(QUOTED, line, at);
       out += quoted ?? line[at];
       at += quoted ? quoted.length : 1;
       continue;
     }
-    out += MASK.repeat(end - at);
-    runs.push({ start: at, end });
-    at = end;
+    mask(at, Math.min(expression.end, stop));
+    ({ end: at, open } = expression);
   }
-  return { text: out, runs };
+  // What `from` cuts off, which may begin inside an expression already masked.
+  if (stop < line.length) mask(out.length, line.length);
+  return { text: out, runs, open };
 }
 
-/** Where each `function <name>.<attribute>` argument starts and ends. @param {string} line */
-function functionAttributes(line) {
+/** Where each `function <name>.<attribute>` argument and each relative location starts and ends.
+ *  @param {string} line */
+function pathExpressions(line) {
   /** @type {Map<number, number>} */
   const spans = new Map();
   for (const found of line.matchAll(FUNCTION_ATTRIBUTE)) {
     const start = (found.index ?? 0) + found[0].length - found[1].length;
     spans.set(start, start + found[1].length);
+  }
+  for (const found of line.matchAll(RELATIVE_LOCATION)) {
+    spans.set(found.index ?? 0, (found.index ?? 0) + found[0].length);
   }
   return spans;
 }
@@ -359,12 +470,13 @@ function functionAttributes(line) {
  * with it, and `(-self.item)` on its own is bolt's own way of naming a thing.
  *
  * @param {string} line @param {number} at
+ * @returns {{ end: number, open: number } | null}  `open` is how many parentheses it leaves open at the end of the line.
  */
 function pythonEndsAt(line, at) {
   const before = at > 0 ? line[at - 1] : "";
   if (!NOT_A_NAME.test(before)) {
     const prefixed = readAt(PREFIXED_STRING, line, at);
-    if (prefixed) return at + prefixed.length;
+    if (prefixed) return { end: at + prefixed.length, open: 0 };
 
     const call = readAt(PYTHON_CALL, line, at);
     if (call) return closingParen(line, at + call.length);
@@ -372,17 +484,45 @@ function pythonEndsAt(line, at) {
   return line[at] === "(" && before !== "$" ? closingParen(line, at + 1) : null;
 }
 
-/** Just past the `)` closing a call whose `(` was at `from - 1`, or the end of the line.
- *  @param {string} line @param {number} from */
-function closingParen(line, from) {
-  let depth = 1;
+/** An operator joining two Python operands, ex: the `/` of `(a)/(b)`. Sticky. */
+const PYTHON_OPERATOR = /[ \t]*(?:\*\*|\/\/|[-+*/%@])[ \t]*/y;
+
+/** An operand no parenthesis marks, ex: the `2` of `(a)*2`. Sticky. */
+const BARE_OPERAND = /[\w.]+/y;
+
+/**
+ * The Python starting at `at` together with every operand an operator joins to it, or null when nothing Python starts there.
+ * `(storage a)/(storage b)` is one expression, and masking its two halves alone leaves the `/` for a parser to report.
+ * @param {string} line @param {number} at
+ * @returns {{ end: number, open: number } | null}
+ *
+ * >>> joinedExpression("set compute default float (a)/(b)*2 run", 26)
+ * { end: 35, open: 0 }
+ */
+function joinedExpression(line, at) {
+  let expression = pythonEndsAt(line, at);
+  while (expression && expression.open === 0) {
+    const operator = readAt(PYTHON_OPERATOR, line, expression.end);
+    if (!operator) break;
+    const from = expression.end + operator.length;
+    const bare = readAt(BARE_OPERAND, line, from);
+    const next = pythonEndsAt(line, from) ?? (bare ? { end: from + bare.length, open: 0 } : null);
+    if (!next) break;
+    expression = next;
+  }
+  return expression;
+}
+
+/** Just past the `)` closing the parentheses open at `from`, or the end of the line and how many are still open there.
+ *  @param {string} line @param {number} from @param {number} [depth] */
+function closingParen(line, from, depth = 1) {
   for (let at = from; at < line.length; at++) {
     const quoted = readAt(QUOTED, line, at);
     if (quoted) { at += quoted.length - 1; continue; }
     if (line[at] === "(") depth++;
-    else if (line[at] === ")" && --depth === 0) return at + 1;
+    else if (line[at] === ")" && --depth === 0) return { end: at + 1, open: 0 };
   }
-  return line.length;
+  return { end: line.length, open: depth };
 }
 
 /** @param {RegExp} sticky @param {string} line @param {number} at @returns {string | null} */
