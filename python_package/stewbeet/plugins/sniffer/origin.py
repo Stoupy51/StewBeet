@@ -108,31 +108,35 @@ def index_write_calls(path: str) -> dict[int, WriteCall]:
 	helpers: dict[str, int] = write_helpers()
 	found: dict[int, WriteCall] = {}
 	for node in ast.walk(tree):
-		if isinstance(node, ast.Assign) and (assignment := assigned_function(node)) is not None:
-			for line in range(node.lineno, (node.end_lineno or node.lineno) + 1):
-				found.setdefault(line, assignment)
+		if not isinstance(node, ast.Assign | ast.Call):
 			continue
-		if not isinstance(node, ast.Call):
+		call: WriteCall | None = assigned_function(node) if isinstance(node, ast.Assign) else written_call(node, helpers)
+		if call is None:
 			continue
-
-		content: ast.expr | None = None
-		if isinstance(node.func, ast.Name) and (index := helpers.get(node.func.id)) is not None:
-			content = node.args[index] if len(node.args) > index else None
-			if content is None:
-				content = next((kw.value for kw in node.keywords if kw.arg == CONTENT_PARAMETER), None)
-		elif isinstance(node.func, ast.Attribute) and node.func.attr in WRITE_METHODS:
-			content = node.args[0] if node.args else None
-		else:
-			continue
-
-		# A literal argument gives the string's own position; anything else falls back to the call.
-		literal: bool = isinstance(content, ast.Constant | ast.JoinedStr)
-		exact: bool = literal and spans_lines(content)
-		anchor: ast.expr | ast.Call = content if (content is not None and literal) else node
-		call = WriteCall(line=anchor.lineno - 1, column=anchor.col_offset, exact=exact)
 		for line in range(node.lineno, (node.end_lineno or node.lineno) + 1):
 			found.setdefault(line, call)
 	return found
+
+
+def written_call(node: ast.Call, helpers: dict[str, int]) -> WriteCall | None:
+	""" A StewBeet write helper or a `.append`/`.prepend` call, None for any other call.
+
+	Args:
+		helpers: Each write helper's name and the position of its content argument, see `write_helpers`.
+	"""
+	content: ast.expr | None
+	if isinstance(node.func, ast.Name) and (index := helpers.get(node.func.id)) is not None:
+		by_keyword: ast.expr | None = next((kw.value for kw in node.keywords if kw.arg == CONTENT_PARAMETER), None)
+		content = node.args[index] if len(node.args) > index else by_keyword
+	elif isinstance(node.func, ast.Attribute) and node.func.attr in WRITE_METHODS:
+		content = node.args[0] if node.args else None
+	else:
+		return None
+
+	# A literal argument gives the string's own position; anything else falls back to the call.
+	literal: bool = isinstance(content, ast.Constant | ast.JoinedStr)
+	anchor: ast.expr = content if (content is not None and literal) else node
+	return WriteCall(line=anchor.lineno - 1, column=anchor.col_offset, exact=literal and spans_lines(content))
 
 
 def spans_lines(node: ast.expr | None) -> bool:
