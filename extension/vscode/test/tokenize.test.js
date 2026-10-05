@@ -51,6 +51,19 @@ tokenizerTest(
 );
 
 tokenizerTest(
+  "both branches of a conditional expression handed to write_function are commands",
+  'write_function(f"{root}/turn", f"""\nrotate @s ~ ~\n""" if ring.vertical is None else f"""\nkill @s\n""")\nx = 1\n',
+  lines => {
+    assert.ok(scopesOf(lines, "rotate")?.includes("keyword.control.flow.mcfunction"));
+    assert.ok(scopesOf(lines, "kill")?.includes("keyword.control.flow.mcfunction"),
+      "the string after `else` reaches the same call, so its commands are coloured too");
+    assert.ok(!scopesOf(lines, "None")?.includes("source.mcfunction.embedded") || scopesOf(lines, "None")?.includes("constant.language.python"),
+      "the condition is Python");
+    assert.ok(!scopesOf(lines, "x")?.some(scope => scope.includes("mcfunction")), "and the block ends with the call");
+  },
+);
+
+tokenizerTest(
   "a block still colours its commands",
   'block: McFunction = """\nsay hello\nfunction ns:other\n"""\n',
   lines => {

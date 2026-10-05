@@ -230,14 +230,10 @@ function findBlockOffsets(text) {
   callRe.lastIndex = 0;
   let m;
   while ((m = callRe.exec(text)) !== null) {
-    const afterOpen = m.index + m[0].length;
-
-    const argIndex = wrappers.has(m[1]) ? wrappers.get(m[1]) : Number(FUNCS_2ND_ARG.has(m[1]));
-    let contentIdx = afterOpen;
-    for (let skipped = 0; skipped < argIndex; skipped++) {
-      contentIdx = skipFirstArg(text, contentIdx);
-      if (contentIdx === -1) break;
-    }
+    // The `def` or `class` naming a wrapper is no call of it.
+    if (/\b(?:def|class)[ \t]+$/.test(text.slice(Math.max(0, m.index - 8), m.index))) continue;
+    const { index, keyword } = wrappers.get(m[1]) ?? { index: Number(FUNCS_2ND_ARG.has(m[1])), keyword: "content" };
+    const contentIdx = argumentAt(text, m.index + m[0].length, index, keyword);
     if (contentIdx !== -1) claimContent(text, contentIdx, m.index, blocks, consume);
   }
 
@@ -279,7 +275,70 @@ function claimContent(text, contentIdx, callStart, blocks, consume) {
     return;
   }
 
-  blocks.push({ ...literal, callStart });
+  // `"say a" if cond else "say b"` hands over either, and `"say a\n" + "\n".join(lines)` both, so all of them are commands.
+  const added = skipSpace(text, literal.end);
+  // A separator such as the `"\n"` of `"\n" + "\n".join(lines)` holds no command of its own.
+  const separator = text[added] === "+" && !/\S/.test(text.slice(literal.contentStart, literal.contentEnd).replace(/\\[nrt]/g, ""));
+  if (!separator) blocks.push({ ...literal, callStart });
+  const otherwise = conditionalElse(text, literal.end);
+  if (otherwise !== -1) claimContent(text, otherwise, callStart, blocks, consume);
+  if (text[added] === "+") claimContent(text, added + 1, callStart, blocks, consume);
+}
+
+/**
+ * Where the value of one argument of a call starts: by keyword when the call names it, by position otherwise.
+ * @param {string} text
+ * @param {number} afterOpen  Index just after the call's opening parenthesis.
+ * @param {number} index  0-based position of the argument among the positional ones.
+ * @param {string} keyword  Its name, for a call passing it by keyword.
+ * @returns {number}  -1 when the call does not pass it.
+ *
+ * >>> argumentAt('Bonus(name="x", commands="say")', 6, 2, "commands")
+ * 25
+ */
+function argumentAt(text, afterOpen, index, keyword) {
+  let positional = 0;
+  for (let at = skipSpace(text, afterOpen); at !== -1 && at < text.length && text[at] !== ")"; at = skipFirstArg(text, at)) {
+    KEYWORD_ARGUMENT.lastIndex = at;
+    const named = KEYWORD_ARGUMENT.exec(text);
+    if (named) {
+      if (named[1] === keyword) return skipSpace(text, at + named[0].length);
+    } else if (positional++ === index) {
+      return at;
+    }
+  }
+  return -1;
+}
+
+/** `name=` opening an argument, which `==` does not. Sticky. */
+const KEYWORD_ARGUMENT = /([A-Za-z_]\w*)[ \t]*=(?!=)/y;
+
+/**
+ * Where the value after `else` starts, when a literal is the first branch of a conditional expression.
+ * @param {string} text
+ * @param {number} i  Just past the literal.
+ * @returns {number}  -1 when no `if ... else` follows it within the argument.
+ *
+ * >>> conditionalElse('"a" if x == ")" else "b"', 3)
+ * 20
+ */
+function conditionalElse(text, i) {
+  let at = skipSpace(text, i);
+  if (!/^if\b/.test(text.slice(at, at + 3))) return -1;
+  let depth = 0;
+  for (at += 2; at < text.length; at++) {
+    const c = text[at];
+    if (c === '"' || c === "'") {
+      const style = text.startsWith(c.repeat(3), at) ? c.repeat(3) : c;
+      const close = findClosingQuote(text, style, at + style.length, /[fF]/.test(stringPrefixAt(text, at)));
+      if (close === -1) return -1;
+      at = close + style.length - 1;
+    } else if ("([{".includes(c)) depth++;
+    else if (")]}".includes(c) && depth-- === 0) return -1;
+    else if (c === "," && depth === 0) return -1;
+    else if (depth === 0 && /^else\b/.test(text.slice(at, at + 5)) && !/\w/.test(text[at - 1])) return at + 4;
+  }
+  return -1;
 }
 
 /**
@@ -375,13 +434,17 @@ const DEF_HEADER_RE = /(?:async[ \t]+)?def[ \t]+[A-Za-z_]\w*[ \t]*\([^)]*\)[ \t]
  * the same as `write_function`'s. A grammar cannot do this, since the `def` and the call share
  * no text, but a scan of the whole document can.
  *
+ * A class whose field is annotated McFunction is the same thing at its constructor, which is how a
+ * dataclass holding commands is built: `Bonus(name="speed", commands="...")`.
+ *
  * @param {string} text
- * @returns {Map<string, number>}  0-based index of the annotated parameter.
+ * @returns {Map<string, { index: number, keyword: string }>}  0-based position of the annotated parameter, and its name.
  *
  * >>> mcfunctionWrappers("def w(p: str, c: McFunction): pass")
- * Map(1) { 'w' => 1 }
+ * Map(1) { 'w' => { index: 1, keyword: 'c' } }
  */
 function mcfunctionWrappers(text) {
+  /** @type {Map<string, { index: number, keyword: string }>} */
   const found = new Map();
   DEF_RE.lastIndex = 0;
   let m;
@@ -390,7 +453,55 @@ function mcfunctionWrappers(text) {
     const index = params.findIndex(p => MCFUNCTION_PARAM_RE.test(p));
     // `self` never carries commands, and counting it would shift every call site's argument.
     const offset = /^\s*(self|cls)\s*(?:[,:]|$)/.test(params[0] ?? "") ? 1 : 0;
-    if (index >= offset) found.set(m[1], index - offset);
+    if (index >= offset) found.set(m[1], { index: index - offset, keyword: params[index].trim().split(/\s*:/)[0] });
+  }
+  for (const [name, fields] of classFields(text)) {
+    const index = fields.findIndex(field => MCFUNCTION_TYPE_RE.test(field.annotation));
+    if (index !== -1) found.set(name, { index, keyword: fields[index].name });
+  }
+  return found;
+}
+
+/** A class header. Capture 1 is its indentation and 2 its name. */
+const CLASS_RE = /^([ \t]*)class[ \t]+([A-Za-z_]\w*)[^\n]*:[ \t]*\r?$/gm;
+
+/** An annotated field of a class body. Capture 1 is its indentation, 2 its name and 3 its annotation. */
+const FIELD_RE = /^([ \t]+)([A-Za-z_]\w*)[ \t]*:[ \t]*([^=\n#]+?)[ \t]*(?:=[^\n]*)?\r?$/;
+
+/** The annotation of a field holding commands. */
+const MCFUNCTION_TYPE_RE = /^(?:McFunction|"McFunction"|'McFunction')(?:[ \t]*\|[ \t]*None)?$/;
+
+/**
+ * The annotated fields of every class, in the order a dataclass constructor takes them.
+ * A `ClassVar` is no constructor argument, and a docstring's lines are no fields whatever they look like.
+ * @param {string} text
+ * @returns {Map<string, { name: string, annotation: string }[]>}
+ *
+ * >>> classFields("class A:\n\tname: str\n\tcommands: McFunction\n").get("A")?.map(f => f.name)
+ * [ 'name', 'commands' ]
+ */
+function classFields(text) {
+  /** @type {Map<string, { name: string, annotation: string }[]>} */
+  const found = new Map();
+  const lines = text.split("\n");
+  CLASS_RE.lastIndex = 0;
+  let m;
+  while ((m = CLASS_RE.exec(text)) !== null) {
+    const fields = [];
+    let body = null;
+    let docstring = false;
+    for (const line of lines.slice(text.slice(0, m.index).split("\n").length)) {
+      if (!line.trim()) continue;
+      const indent = line.length - line.trimStart().length;
+      if (indent <= m[1].length) break;
+      body ??= indent;
+      // A docstring opening without closing on its line hides every line up to the one that does.
+      const quotes = (line.match(/"""|'''/g) ?? []).length;
+      if (docstring || quotes % 2 === 1) { if (quotes % 2 === 1) docstring = !docstring; continue; }
+      const field = indent === body ? FIELD_RE.exec(line) : null;
+      if (field && !/\bClassVar\b/.test(field[3])) fields.push({ name: field[2], annotation: field[3] });
+    }
+    found.set(m[2], fields);
   }
   return found;
 }
@@ -644,6 +755,8 @@ function readLiteral(text, i, bracketed) {
 
     const next = readPart(text, at);
     if (!next || (join === "plus" && text.slice(last.end, next.start).includes("\n"))) break;
+    // `f"..." + "\n".join(lines)` adds what `.join` returns, which binds before `+` does: the separator is no part of the command.
+    if (text[skipSpace(text, next.end)] === ".") break;
     parts.push({ ...next, join });
   }
 
@@ -830,7 +943,8 @@ function findInterpolationSpans(text, block) {
     ]);
   }
   const opening = readOpeningQuote(text, block.start);
-  if (!opening || !opening.isFString) return [];
+  if (!opening) return [];
+  if (!opening.isFString) return formatFields(text, block, opening);
 
   const spans = [];
   const contentEnd = block.end - opening.quoteStyle.length;
@@ -848,6 +962,33 @@ function findInterpolationSpans(text, block) {
   }
 
   return spans;
+}
+
+/** A `str.format` replacement field naming a value, ex: `{ns}` or `{self.tag}`. NBT and JSON never hold a bare name in braces. */
+const FORMAT_FIELD_RE = /\{[A-Za-z_]\w*(?:\.\w+)*\}/g;
+
+/**
+ * The `{name}` fields of a plain string, which is a template `str.format` fills in later.
+ *
+ * `commands: McFunction = """scoreboard players add @s {tag}.speed 1"""` is formatted with the
+ * namespace and tag once they are known, so `{tag}` holds Python exactly as an f-string's would.
+ * A raw string is left alone: what it holds is a macro or JSON written to be read verbatim.
+ *
+ * @param {string} text
+ * @param {Block} block
+ * @param {{ quoteStyle: string, contentStart: number }} opening
+ * @returns {{ start:number, end:number }[]}
+ *
+ * >>> findInterpolationSpans('"say {tag}.speed {}"', { start: 0, end: 20, contentStart: 1, contentEnd: 19 })
+ * [ { start: 5, end: 10 } ]
+ */
+function formatFields(text, block, opening) {
+  if (/[rR]/.test(text.slice(block.start, opening.contentStart))) return [];
+  const content = text.slice(opening.contentStart, block.end - opening.quoteStyle.length);
+  return [...content.matchAll(FORMAT_FIELD_RE)].map(found => {
+    const start = opening.contentStart + (found.index ?? 0);
+    return { start, end: start + found[0].length };
+  });
 }
 
 module.exports = {

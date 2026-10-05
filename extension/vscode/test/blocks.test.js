@@ -10,12 +10,80 @@ const {
   skipInterpolation,
   skipFirstArg,
   readOpeningQuote,
+  findInterpolationSpans,
 } = require("../src/blocks");
 
 /** Convenience: run findBlockOffsets and return the sliced block texts. */
 function blockTexts(text) {
   return findBlockOffsets(text).map(({ start, end }) => text.slice(start, end));
 }
+
+// Shapes reported from real projects
+
+test("Survisland bonuses.py: a dataclass field annotated McFunction makes its constructor argument a block", () => {
+  const text = [
+    "@dataclass(frozen=True)",
+    "class Bonus:",
+    '\t""" One bonus of the cycle. """',
+    "\tname: str",
+    '\t""" Function name under breakout/bonus/. """',
+    "\tdisplay: str",
+    "\tcommands: McFunction",
+    "",
+    "BONUSES: list[Bonus] = [",
+    '\tBonus(name="speed", display="Bonus : vitesse x1.5 !", commands="""',
+    "scoreboard players operation @s {tag}.speed *= #3 {ns}.data",
+    '"""),',
+    '\tBonus("split", "Bonus : balles x2 !", "say {tag}"),',
+    "]",
+  ].join("\n");
+  assert.deepEqual(blockTexts(text), ['"""\nscoreboard players operation @s {tag}.speed *= #3 {ns}.data\n"""', '"say {tag}"'],
+    "by keyword and by position, and never the `display` text before it");
+});
+
+test("a keyword argument reaches a write_* helper as well as a position does", () => {
+  assert.deepEqual(blockTexts('write_function("ns:x", content="say hi", overwrite=True)'), ['"say hi"']);
+  assert.deepEqual(blockTexts('write_function(path="ns:x", content="say hi")'), ['"say hi"']);
+  assert.deepEqual(blockTexts('write_function("ns:x", overwrite=True)'), [], "a call passing no content has no block");
+});
+
+test("the string a .format fills in has its fields masked, and NBT braces are left alone", () => {
+  const text = 'c: McFunction = ""\nwrite_function("ns:x", "scoreboard players add @s {tag}.speed 1\\ndata merge entity @s {}")';
+  const [block] = findBlockOffsets(text).filter(b => text.slice(b.start, b.end).includes("{tag}"));
+  const spans = findInterpolationSpans(text, block).map(span => text.slice(span.start, span.end));
+  assert.deepEqual(spans, ["{tag}"], "`{}` is an empty compound, and a name in braces is nothing NBT or JSON can hold");
+  assert.deepEqual(findInterpolationSpans('write_function("x", r"say {tag}")', findBlockOffsets('write_function("x", r"say {tag}")')[0]), [],
+    "a raw string is written to be read verbatim");
+});
+
+test("ring turn: both branches of a conditional expression are blocks of the same call", () => {
+  const text = [
+    'write_function(f"{root}/turn/{index}", f"""',
+    "execute rotated as @s run rotate @s ~{ring.speed} ~",
+    '""" if ring.vertical_yaw is None else f"""',
+    "execute if entity @s[tag=!{tag}.half1] rotated as @s run rotate @s ~ ~{ring.speed}",
+    '""")',
+  ].join("\n");
+  const blocks = findBlockOffsets(text);
+  assert.equal(blocks.length, 2);
+  assert.ok(text.slice(blocks[1].start, blocks[1].end).includes("tag=!{tag}.half1"));
+  assert.equal(blocks[0].callStart, blocks[1].callStart, "both reach the write_function call");
+});
+
+test("StoupGun hooks.py: an f-string followed by `+ \"\\n\".join(...)` is a block, and the separator is not", () => {
+  const text = 'write_versioned_function("progression/adv/catch_up", f"scoreboard players set @s {caught} 1\\n" + "\\n".join(Hooks.check_call(chain) for chain in CHAINS))';
+  assert.deepEqual(blockTexts(text), ['f"scoreboard players set @s {caught} 1\\n"']);
+});
+
+test("Survisland physics.py: the line before `+` and the lines a generator joins are all commands", () => {
+  const text = 'write_function(f"{root}/side", f"scoreboard players set #hit {ns}.data 0\\n" + "\\n".join(\n\tf"execute positioned ^ ^{h} ^ run function {root}/probe" for h in HEIGHTS\n))';
+  assert.deepEqual(blockTexts(text), [
+    'f"scoreboard players set #hit {ns}.data 0\\n"',
+    'f"execute positioned ^ ^{h} ^ run function {root}/probe"',
+  ]);
+  assert.deepEqual(blockTexts('write_function("x", "\\n" + "\\n\\n".join(chests))\nchests.append("give @s chest")'),
+    ['"give @s chest"'], "and a separator in front of a join is no block of its own");
+});
 
 // Simple blocks
 

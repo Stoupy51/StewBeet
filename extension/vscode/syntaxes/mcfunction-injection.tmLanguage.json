@@ -7,6 +7,50 @@
     }
   ],
   "repository": {
+    "else-branch-single": {
+      "comment": "The other branch of a conditional expression handing a block over, which reaches the same call: the condition is Python and the string after `else` is commands.",
+      "match": "(''')([ \\t]+if\\b[^\\n]*?\\belse[ \\t]+)([rRbBuUfF]{0,2})(''')",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.string.end.python"
+        },
+        "2": {
+          "patterns": [
+            {
+              "include": "source.python"
+            }
+          ]
+        },
+        "3": {
+          "name": "string.affix.python"
+        },
+        "4": {
+          "name": "punctuation.definition.string.begin.python"
+        }
+      }
+    },
+    "else-branch-double": {
+      "comment": "The other branch of a conditional expression handing a block over, which reaches the same call: the condition is Python and the string after `else` is commands.",
+      "match": "(\\\"\\\"\\\")([ \\t]+if\\b[^\\n]*?\\belse[ \\t]+)([rRbBuUfF]{0,2})(\\\"\\\"\\\")",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.string.end.python"
+        },
+        "2": {
+          "patterns": [
+            {
+              "include": "source.python"
+            }
+          ]
+        },
+        "3": {
+          "name": "string.affix.python"
+        },
+        "4": {
+          "name": "punctuation.definition.string.begin.python"
+        }
+      }
+    },
     "stewbeet-mcfunction-string": {
       "comment": "Triple-quote patterns MUST come before single/double-quote to avoid greedy mismatch.",
       "patterns": [
@@ -25,7 +69,7 @@
               "name": "punctuation.definition.string.begin.python"
             }
           },
-          "end": "(\\\"\\\"\\\")(\\s*(?:[^)\\n]*)?\\))?",
+          "end": "(\\\"\\\"\\\")(?![ \\t]+if\\b[^\\n]*?\\belse[ \\t]+[rRbBuUfF]{0,2}\\\"\\\"\\\")(\\s*(?:[^)\\n]*)?\\))?",
           "endCaptures": {
             "1": {
               "name": "punctuation.definition.string.end.python"
@@ -36,6 +80,9 @@
           },
           "contentName": "source.mcfunction.embedded",
           "patterns": [
+            {
+              "include": "#else-branch-double"
+            },
             {
               "include": "source.mcfunction.embedded"
             }
@@ -56,7 +103,7 @@
               "name": "punctuation.definition.string.begin.python"
             }
           },
-          "end": "(''')(\\s*(?:[^)\\n]*)?\\))?",
+          "end": "(''')(?![ \\t]+if\\b[^\\n]*?\\belse[ \\t]+[rRbBuUfF]{0,2}''')(\\s*(?:[^)\\n]*)?\\))?",
           "endCaptures": {
             "1": {
               "name": "punctuation.definition.string.end.python"
@@ -67,6 +114,9 @@
           },
           "contentName": "source.mcfunction.embedded",
           "patterns": [
+            {
+              "include": "#else-branch-single"
+            },
             {
               "include": "source.mcfunction.embedded"
             }
@@ -149,7 +199,7 @@
               "name": "punctuation.definition.string.begin.python"
             }
           },
-          "end": "(\\\"\\\"\\\")(\\s*(?:[^)\\n]*)?\\))?",
+          "end": "(\\\"\\\"\\\")(?![ \\t]+if\\b[^\\n]*?\\belse[ \\t]+[rRbBuUfF]{0,2}\\\"\\\"\\\")(\\s*(?:[^)\\n]*)?\\))?",
           "endCaptures": {
             "1": {
               "name": "punctuation.definition.string.end.python"
@@ -160,6 +210,9 @@
           },
           "contentName": "source.mcfunction.embedded",
           "patterns": [
+            {
+              "include": "#else-branch-double"
+            },
             {
               "include": "source.mcfunction.embedded"
             }
@@ -180,7 +233,7 @@
               "name": "punctuation.definition.string.begin.python"
             }
           },
-          "end": "(''')(\\s*(?:[^)\\n]*)?\\))?",
+          "end": "(''')(?![ \\t]+if\\b[^\\n]*?\\belse[ \\t]+[rRbBuUfF]{0,2}''')(\\s*(?:[^)\\n]*)?\\))?",
           "endCaptures": {
             "1": {
               "name": "punctuation.definition.string.end.python"
@@ -191,6 +244,9 @@
           },
           "contentName": "source.mcfunction.embedded",
           "patterns": [
+            {
+              "include": "#else-branch-single"
+            },
             {
               "include": "source.mcfunction.embedded"
             }
@@ -273,7 +329,7 @@
               "name": "punctuation.definition.string.begin.python"
             }
           },
-          "end": "(\\\"\\\"\\\")(\\s*(?:[^)\\n]*)?\\))?",
+          "end": "(\\\"\\\"\\\")(?![ \\t]+if\\b[^\\n]*?\\belse[ \\t]+[rRbBuUfF]{0,2}\\\"\\\"\\\")(\\s*(?:[^)\\n]*)?\\))?",
           "endCaptures": {
             "1": {
               "name": "punctuation.definition.string.end.python"
@@ -284,6 +340,9 @@
           },
           "contentName": "source.mcfunction.embedded",
           "patterns": [
+            {
+              "include": "#else-branch-double"
+            },
             {
               "include": "source.mcfunction.embedded"
             }
@@ -304,7 +363,7 @@
               "name": "punctuation.definition.string.begin.python"
             }
           },
-          "end": "(''')(\\s*(?:[^)\\n]*)?\\))?",
+          "end": "(''')(?![ \\t]+if\\b[^\\n]*?\\belse[ \\t]+[rRbBuUfF]{0,2}''')(\\s*(?:[^)\\n]*)?\\))?",
           "endCaptures": {
             "1": {
               "name": "punctuation.definition.string.end.python"
@@ -315,6 +374,9 @@
           },
           "contentName": "source.mcfunction.embedded",
           "patterns": [
+            {
+              "include": "#else-branch-single"
+            },
             {
               "include": "source.mcfunction.embedded"
             }
@@ -1318,7 +1380,7 @@
               "name": "punctuation.definition.string.begin.python"
             }
           },
-          "end": "(\\\"\\\"\\\")(\\s*(?:[^)\\n]*)?\\))?",
+          "end": "(\\\"\\\"\\\")(?![ \\t]+if\\b[^\\n]*?\\belse[ \\t]+[rRbBuUfF]{0,2}\\\"\\\"\\\")(\\s*(?:[^)\\n]*)?\\))?",
           "endCaptures": {
             "1": {
               "name": "punctuation.definition.string.end.python"
@@ -1329,6 +1391,9 @@
           },
           "contentName": "source.mcfunction.embedded",
           "patterns": [
+            {
+              "include": "#else-branch-double"
+            },
             {
               "include": "source.mcfunction.embedded"
             }
@@ -1349,7 +1414,7 @@
               "name": "punctuation.definition.string.begin.python"
             }
           },
-          "end": "(''')(\\s*(?:[^)\\n]*)?\\))?",
+          "end": "(''')(?![ \\t]+if\\b[^\\n]*?\\belse[ \\t]+[rRbBuUfF]{0,2}''')(\\s*(?:[^)\\n]*)?\\))?",
           "endCaptures": {
             "1": {
               "name": "punctuation.definition.string.end.python"
@@ -1360,6 +1425,9 @@
           },
           "contentName": "source.mcfunction.embedded",
           "patterns": [
+            {
+              "include": "#else-branch-single"
+            },
             {
               "include": "source.mcfunction.embedded"
             }
