@@ -17,7 +17,7 @@ const path = require("path");
 const os = require("os");
 
 const {
-  decode, decodeVlq, originOf, clearCache, isBoltSource, compiledColumns, opaqueStarts, originLinesFor,
+  decode, decodeVlq, originOf, clearCache, isBoltSource, boltSources, compiledColumns, opaqueStarts, originLinesFor,
 } = require("../src/sourcemap");
 
 const REFERENCE = path.resolve(
@@ -135,6 +135,7 @@ test("a source file reads what every map says about it", () => {
 
   assert.ok(isBoltSource(maps, source));
   assert.ok(!isBoltSource(maps, path.join(root, "src", "other.mcfunction")));
+  assert.deepStrictEqual(boltSources(maps), [source], "spelled as on disk, which is what an exclusion pattern is matched against");
   assert.deepStrictEqual([...originLinesFor(maps, source).keys()], [0, 4, 5], "every line a command was compiled from");
   assert.deepStrictEqual(compiledColumns(maps, source).get(4),
     { text: "schedule function t:probe 1 replace", points: [{ generated: 18, column: 18 }, { generated: 25, column: 20 }] });

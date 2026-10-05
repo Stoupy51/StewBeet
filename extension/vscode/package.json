@@ -189,7 +189,7 @@
       }
     ]
   },
-  "devDependencies": {
+  "dependencies": {
     "vscode-oniguruma": "^2.0.1",
     "vscode-textmate": "^9.2.0"
   }

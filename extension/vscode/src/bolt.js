@@ -144,7 +144,7 @@ function withExclusions(config, patterns) {
   const env = base.env && typeof base.env === "object" ? base.env : {};
   const exclude = Array.isArray(env.exclude) ? env.exclude : [];
 
-  const missing = patterns.filter(pattern => !exclude.includes(pattern));
+  const missing = [...new Set(patterns)].filter(pattern => !exclude.includes(pattern));
   if (missing.length === 0) return null;
   return { ...base, env: { ...env, exclude: [...exclude, ...missing] } };
 }
@@ -168,12 +168,12 @@ function addExclusions(root, files) {
     }
   }
 
-  const patterns = files.map(file => excludePatternFor(root, file));
-  const updated = withExclusions(current, patterns);
+  const updated = withExclusions(current, files.map(file => excludePatternFor(root, file)));
   if (!updated) return null;
 
   fs.writeFileSync(configPath, `${JSON.stringify(updated, null, 2)}\n`, "utf8");
-  return { path: configPath, added: patterns };
+  const before = Array.isArray(current.env?.exclude) ? current.env.exclude.length : 0;
+  return { path: configPath, added: updated.env.exclude.slice(before) };
 }
 
 module.exports = {

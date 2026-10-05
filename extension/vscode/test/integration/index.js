@@ -38,6 +38,21 @@ async function completionsAt(uri, pos, trigger) {
 }
 
 /** Wait until Spyglass answers on a real .mcfunction, so a slow start is not read as a failure. */
+/** The semantic tokens VS Code would draw on a document, each with its type's name. */
+async function tokensOf(uri) {
+  const legend = await vscode.commands.executeCommand("vscode.provideDocumentSemanticTokensLegend", uri);
+  const tokens = await vscode.commands.executeCommand("vscode.provideDocumentSemanticTokens", uri);
+  const data = (tokens && tokens.data) || [];
+  const out = [];
+  let [line, char] = [0, 0];
+  for (let i = 0; i + 4 < data.length; i += 5) {
+    char = data[i] === 0 ? char + data[i + 1] : data[i + 1];
+    line += data[i];
+    out.push({ line, char, length: data[i + 2], type: legend ? legend.tokenTypes[data[i + 3]] : data[i + 3] });
+  }
+  return out;
+}
+
 async function waitForSpyglass(uri, results) {
   for (let attempt = 1; attempt <= 40; attempt++) {
     const items = await completionsAt(uri, new vscode.Position(0, 0));
@@ -441,6 +456,14 @@ exports.run = async () => {
     expect("US11 the Python of a bolt file is flagged by nobody",
       !boltComplaints.some(d => d.range.start.line === 0), boltComplaints.map(d => d.range.start.line));
 
+    // US13: the commands of a bolt file take Spyglass's colours, and its Python keeps the grammar's.
+    const boltTokens = await tokensOf(boltSource);
+    note("us13_boltTokens", boltTokens.slice(0, 12));
+    expect("US13 a bolt command is coloured by Spyglass, at the column the author wrote it",
+      boltTokens.some(t => t.line === 3 && t.char === 4), boltTokens.slice(0, 12));
+    expect("US13 the Python of a bolt file is left to the grammar",
+      !boltTokens.some(t => t.line === 0), boltTokens.filter(t => t.line === 0));
+
     // The same file closed and reopened must not keep the errors it had. VS Code hands back the
     // virtual document it already holds for that URI and asks the provider for content only when
     // a change is announced, so a reopen that announces nothing leaves the server reporting on
@@ -499,6 +522,14 @@ exports.run = async () => {
     note("us12_computedPathTargets", computedTargets.map(t => path.basename(t)));
     expect("US12 a path the Python computes leads back to the module that wrote it",
       computedTargets.some(t => t.endsWith("gui.bolt")), computedTargets);
+
+    // The value the build substituted for `gui.open` is a resource location to Spyglass, and the
+    // author wrote a Python attribute there, which the grammar colours as one.
+    const computedAt = guiLines[computed].indexOf("gui.open");
+    const guiTokens = (await tokensOf(guiUri)).filter(t => t.line === computed);
+    note("us13_computedLineTokens", guiTokens);
+    expect("US13 a value bolt computed keeps the grammar's colour, and the command around it takes Spyglass's",
+      guiTokens.length > 0 && !guiTokens.some(t => t.char + t.length > computedAt && t.char < computedAt + "gui.open".length), guiTokens);
 
     const guiLenses = await vscode.commands.executeCommand("vscode.executeCodeLensProvider", guiUri, 20) || [];
     note("us12_guiLenses", guiLenses.map(l => `${l.range.start.line}: ${l.command && l.command.title}`));
@@ -564,6 +595,24 @@ exports.run = async () => {
       !remainingLenses.some(t => t.includes("probe:alpha")), remainingLenses);
     expect("US10 the other call keeps its lens, one line higher",
       remainingLenses.some(t => t.startsWith("12: ") && t.includes("probe:gamma")), remainingLenses);
+
+    // US14: a block only the whole file reveals is painted from the theme in use. Decorations cannot
+    // be read back, so this runs the same steps the painter does, against VS Code's own theme files.
+    const paint = require("../../src/paint");
+    const theme = paint.activeTheme(vscode);
+    note("us14_theme", theme && { file: path.basename(theme.file), settingsId: theme.settingsId });
+    const { vsctm, registry } = await paint.createEngine(path.join(
+      vscode.extensions.getExtension("vscode.python").extensionPath, "syntaxes", "MagicPython.tmLanguage.json"));
+    const read = theme && paint.readTheme(theme.file, vsctm.parseRawGrammar);
+    registry.setTheme({ settings: paint.themeRules(read, theme.uiTheme, [], {}) });
+    const fields = "class Bonus:\n    commands: McFunction\n\nBonus(commands=\"\"\"\nsay hi\n\"\"\")\n";
+    const painted = paint.paintsOf({ vsctm, python: await registry.loadGrammar("source.python") }, fields,
+      require("../../src/blocks").findBlockOffsets(fields)).map(p => ({ ...p, ...paint.styleOf(p.metadata, registry.getColorMap()) }));
+    note("us14_painted", painted.map(p => `${p.line}:${p.from}-${p.to} ${p.color}`));
+    expect("US14 the theme in use is read, its include chain with it",
+      Boolean(read && read.rules.length > 20 && read.colors["editor.foreground"]), theme);
+    expect("US14 a dataclass field's commands are painted, the command in its own colour",
+      painted.some(p => p.line === 4 && p.from === 0 && p.to === 3 && p.color !== read.colors["editor.foreground"]), painted);
 
     // The settings gate.
     const cfg = vscode.workspace.getConfiguration("StewBeet");

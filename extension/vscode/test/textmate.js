@@ -13,6 +13,8 @@ const fs = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
 
+const { createEngine } = require("../src/paint");
+
 const SYNTAXES = path.join(__dirname, "..", "syntaxes");
 
 /** VS Code ships MagicPython inside its own install, under a version-stamped directory. */
@@ -44,33 +46,16 @@ function findPythonGrammar() {
  * @returns {Promise<{ tokenize: (source: string) => { text: string, scopes: string[] }[][] } | string>}
  */
 async function load(rootScope) {
-  let vsctm, oniguruma;
   try {
-    vsctm = require("vscode-textmate");
-    oniguruma = require("vscode-oniguruma");
+    require.resolve("vscode-textmate");
+    require.resolve("vscode-oniguruma");
   } catch {
     return "vscode-textmate and vscode-oniguruma are not installed; run `npm install`";
   }
   const python = findPythonGrammar();
   if (!python) return "no VS Code install found to read MagicPython from; set VSCODE_EXE";
 
-  await oniguruma.loadWASM(fs.readFileSync(require.resolve("vscode-oniguruma/release/onig.wasm")).buffer);
-  const files = {
-    "source.python": python,
-    "source.mcfunction.embedded": path.join(SYNTAXES, "mcfunction-embedded.tmLanguage.json"),
-    "stewbeet.mcfunction-injection": path.join(SYNTAXES, "mcfunction-injection.tmLanguage.json"),
-    "source.bolt": path.join(SYNTAXES, "bolt.tmLanguage.json"),
-  };
-  const registry = new vsctm.Registry({
-    onigLib: Promise.resolve({
-      createOnigScanner: (/** @type {string[]} */ s) => new oniguruma.OnigScanner(s),
-      createOnigString: (/** @type {string} */ s) => new oniguruma.OnigString(s),
-    }),
-    loadGrammar: (/** @type {string} */ scope) => Promise.resolve(
-      files[scope] ? vsctm.parseRawGrammar(fs.readFileSync(files[scope], "utf8"), files[scope]) : null,
-    ),
-    getInjections: (/** @type {string} */ scope) => (scope === "source.python" ? ["stewbeet.mcfunction-injection"] : undefined),
-  });
+  const { vsctm, registry } = await createEngine(python);
   const grammar = await registry.loadGrammar(rootScope);
 
   return {
@@ -97,4 +82,4 @@ function scopesOf(lines, word) {
   return null;
 }
 
-module.exports = { load, scopesOf, SYNTAXES };
+module.exports = { load, scopesOf, findPythonGrammar, SYNTAXES };

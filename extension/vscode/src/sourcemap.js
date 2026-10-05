@@ -356,6 +356,7 @@ let reverseIndex = null;
  *   columns: Map<number, { file: string, line: number, points: { generated: number, column: number }[] }>,
  *   opaque: Map<number, number>,
  *   bolt: boolean,
+ *   path: string,
  * }} SourceView
  */
 
@@ -427,6 +428,16 @@ function isBoltSource(mapPaths, sourcePath) {
 }
 
 /**
+ * Every source a build compiled as bolt or mecha syntax, spelled as the maps resolve it.
+ * @param {string[]} mapPaths
+ * @returns {string[]}
+ */
+function boltSources(mapPaths) {
+  if (!reverseIndex) reverseIndex = buildReverseIndex(mapPaths);
+  return [...reverseIndex.values()].filter(view => view.bolt).map(view => view.path);
+}
+
+/**
  * Per source line as it sits now, the generated line a command written there became and the
  * columns of it that are positions on that source line, each the end of an AST node.
  *
@@ -481,8 +492,8 @@ function buildReverseIndex(mapPaths) {
   const index = new Map();
   /** @param {string} file */
   const viewFor = file => {
-    let view = index.get(file);
-    if (!view) index.set(file, view = { produced: new Map(), columns: new Map(), opaque: new Map(), bolt: false });
+    let view = index.get(fileKey(file));
+    if (!view) index.set(fileKey(file), view = { produced: new Map(), columns: new Map(), opaque: new Map(), bolt: false, path: file });
     return view;
   };
 
@@ -492,7 +503,7 @@ function buildReverseIndex(mapPaths) {
     const generatedPath = mapPath.slice(0, -".map".length);
     const directory = path.dirname(mapPath);
     // One resolve per source, not per mapped line: the same source repeats on every line.
-    const files = map.sources.map(source => fileKey(path.resolve(directory, map.sourceRoot, source)));
+    const files = map.sources.map(source => path.resolve(directory, map.sourceRoot, source));
 
     for (const [generatedLine, entry] of map.lines) {
       const file = files[entry.sourceIndex];
@@ -565,6 +576,7 @@ module.exports = {
   originLinesFor,
   generatedText,
   isBoltSource,
+  boltSources,
   compiledColumns,
   opaqueStarts,
 };

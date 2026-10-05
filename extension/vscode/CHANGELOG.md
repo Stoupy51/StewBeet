@@ -4,14 +4,19 @@
 
 ### bolt and mecha
 
-- **The build says which `.mcfunction` files are bolt**, so a file using mecha's nesting, `~/` paths or a command over several lines is switched even with no Python in it. The guess from the text remains for a project not built yet.
+- **Commands in a bolt file take Spyglass's colours**, as in a `.mcfunction` it reads, through the same projection completion uses. The Python around them keeps the grammar's colours, and so does a value bolt computes inside a command.
+- **The build says which `.mcfunction` files are bolt**, so a file using mecha's nesting, `~/` paths, a command over several lines or a command a plugin added is switched even with no Python in it, and a file already open is switched when the build that names it lands. The guess from the text remains for a project not built yet.
+- **Exclude Bolt Files From Spyglass** names every bolt source the last build compiled, not only the files opened since.
+- **`stewbeet.plugins.spyglass` declares what an excluded file defines** in a pack beside the build output, so a plain `.mcfunction` calling a function only a bolt file defines is not told it does not exist.
 - **A command over several lines reaches Spyglass as one**, joined with the `\` continuation it knows, whether mecha's `multiline` mode or a bolt bracket spread it.
 - **`~/child`, `./x` and `../x` are resolved** to the function mecha made of them, so they are no longer reported and ctrl+click follows them.
 - **A value is resolved exactly**, from the columns of each AST node the build records, so `int(major)` or `~/` becomes what mecha produced even where it rewrote the text around it (`1t` into `1`).
-- **A command a plugin added to mecha is no longer reported**: past the first word no vanilla tree has, such as bolt_compute's `compute bolt`, the parser is not asked. A line the build compiled is a command whatever its first word, and the bolt grammar knows the commands of 26.3.
+- **A command a plugin added to mecha is no longer reported**: past the first word no vanilla tree has, such as bolt_compute's `compute bolt`, the parser is not asked. A line the build compiled is a command whatever its first word.
+- **The bolt grammar knows the commands of every Minecraft version mecha ships**, `replaceitem` for a 1.16 pack as much as `posteffect` for 26.3, and a workflow regenerates it on each mecha release.
 
 ### Python
 
+- **Every block is coloured**, a dataclass field, a parameter of your own function and a variable with no `McFunction` annotation included. What the grammar cannot see from the line a block opens on is painted in the colours it would have given, by the TextMate engine VS Code uses, from your theme and your `editor.tokenColorCustomizations`.
 - **A dataclass field annotated `McFunction`** makes its constructor argument a block, by keyword or by position, and a `write_*` call passing `content=` by keyword is read too.
 - **Both branches of `"..." if cond else "..."`** are blocks and are coloured, and so is the string before `+ "\n".join(...)`.
 - **A plain string's `{name}` fields** are masked like an f-string's interpolations, since `.format` fills them in.

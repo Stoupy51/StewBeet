@@ -672,6 +672,7 @@ module.exports = {
   blocksOf,
   blockAt,
   diagnosticsFor,
+  projectionFor,
   virtualUriFor,
   contentProvider,
   forward,

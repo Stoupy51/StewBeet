@@ -23,6 +23,8 @@ const { registerCodeLenses, refreshCodeLenses } = require("./codelens");
 const { functionIdOf } = require("./lenses");
 const { registerHeaderNavigation } = require("./headers");
 const { looksLikeBolt, isBuildOutput, addExclusions } = require("./bolt");
+const { registerSemanticTokens } = require("./semantic");
+const { registerPainting } = require("./paint");
 const { SPYGLASS_EXTENSION_ID, OFFER_MESSAGE, OFFER_ACTIONS, shouldOffer } = require("./spyglass");
 
 // Constants
@@ -114,6 +116,8 @@ function activate(context) {
   );
 
   registerLanguageFeatures(context);
+  registerSemanticTokens(context, builds.event);
+  registerPainting(context, findBlockOffsets);
   registerSourceMaps(context);
   registerCodeLenses(context);
   registerHeaderNavigation(context);
@@ -286,13 +290,18 @@ function registerBoltDetection(context) {
     );
   }
 
-  /** Write every switched file into its project's Spyglass config. */
+  /** Write every bolt source, those the last build compiled and those switched since, into its project's Spyglass config. */
   async function excludeSwitchedFiles() {
-    if (switched.size === 0) {
+    const sources = new Map(switched);
+    for (const file of sourcemap.boltSources(await navigation.findMaps())) {
+      const root = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(file))?.uri.fsPath;
+      if (root) sources.set(root, [...(sources.get(root) ?? []), file]);
+    }
+    if (sources.size === 0) {
       vscode.window.showInformationMessage("StewBeet: no bolt was found in a .mcfunction file, so there is nothing to exclude.");
       return;
     }
-    for (const [root, files] of switched) {
+    for (const [root, files] of sources) {
       const result = addExclusions(root, files);
       if (!result) continue;
       const doc = await vscode.workspace.openTextDocument(result.path);
@@ -305,6 +314,8 @@ function registerBoltDetection(context) {
   vscode.workspace.textDocuments.forEach(consider);
   context.subscriptions.push(
     vscode.workspace.onDidOpenTextDocument(consider),
+    // A build can name as bolt a file already open, which the text alone did not give away.
+    builds.event(() => vscode.workspace.textDocuments.forEach(consider)),
     // A file that becomes bolt while open, which is what adding the first `for` loop looks like.
     vscode.workspace.onDidSaveTextDocument(consider),
     vscode.commands.registerCommand("stewbeet.excludeBoltFromSpyglass", excludeSwitchedFiles),
@@ -420,6 +431,9 @@ const DROP_DEBOUNCE_MS = 600;
 /** @type {NodeJS.Timeout | undefined} */
 let dropTimer;
 
+/** Fired once the maps of a new build are read. */
+const builds = new vscode.EventEmitter();
+
 /**
  * Forget everything derived from the build, and rebuild what is on screen from it.
  *
@@ -442,6 +456,7 @@ function drop() {
   navigation.forgetMaps();
   reproject();
   refreshCodeLenses();
+  builds.fire(undefined);
 }
 
 /**

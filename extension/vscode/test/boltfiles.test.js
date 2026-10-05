@@ -192,6 +192,10 @@ test("writing the exclusion round-trips through a real file", () => {
     { env: { exclude: ["data/ns/function/x.mcfunction"] } });
 
   assert.equal(addExclusions(root, [file]), null, "the second call has nothing to do");
+
+  // A file both switched in the session and named by the build arrives twice, and is one new exclusion.
+  const other = path.join(root, "data", "ns", "function", "y.mcfunction");
+  assert.deepEqual(addExclusions(root, [file, other, other]).added, ["data/ns/function/y.mcfunction"]);
 });
 
 // Writing a Function straight into the pack, which is plain beet's own idiom

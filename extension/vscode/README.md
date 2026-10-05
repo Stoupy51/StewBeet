@@ -31,20 +31,20 @@ Or leave `beet.yml` alone and ask for it on the command line: `beet -s "require[
 
 https://github.com/user-attachments/assets/57fd9d18-1643-45bc-8257-4942865c9be4
 
-`.bolt` files open as **Bolt**, with a grammar generated from mecha's command tree:
+`.bolt` files open as **Bolt**, with a grammar generated from every command tree mecha ships, whatever version your pack targets:
 `item = 3` is Python, `item modify entity @s ...` is a command.
 
 - **Completion, errors and ctrl+click** on commands, through Spyglass. Python expressions are masked.
+- **Spyglass's colours on the commands**, as in a `.mcfunction` it reads. The Python around them, and a value bolt computes inside one, keep the grammar's.
 - **A lens per function** the module writes, leading to the generated file(s).
 - **Computed paths stay clickable**: `function gui.open` resolves to what the last build wrote.
-
 - **Commands mecha reads and vanilla does not**: `~/child` paths, a command over several lines, and the commands a plugin adds to mecha, such as bolt_compute's `compute bolt`. The build says where each one is.
 
 ### Bolt inside a `.mcfunction`
 
-These files get the `bolt` language id too: every file the last build compiled as bolt, with mecha's nesting or with a command over several lines, and before any build, the files whose text gives it away. Spyglass still reports them from disk,
-so **StewBeet: Exclude Bolt Files From Spyglass** adds them to `.spyglassrc.json`,
-or your build can keep that list updated:
+These files get the `bolt` language id too: every file the last build compiled as bolt, with mecha's nesting, a command over several lines or a command a plugin added, and before any build, the files whose text gives it away. Spyglass still reports them from disk,
+so **StewBeet: Exclude Bolt Files From Spyglass** adds every one the last build compiled to `.spyglassrc.json`,
+or your build can keep that list updated, and declare to Spyglass the functions only those files define:
 
 ```yaml
 pipeline:
@@ -89,7 +89,7 @@ Nothing evaluates your Python, and what stays unknown keeps a `_` mask.
 | An expression     | Both branches of `"..." if cond else "..."`, and `"..." + "\n".join(lines)`             |
 | beet's own API    | `Function(...)` from a string or a `list[str]`, plus `.append`, `.prepend` and `.lines` |
 
-Highlighting a variable needs the `McFunction` annotation (a plain `str` alias from `stewbeet`). Everything else works without it:
+Every block is coloured. The grammar colours what it sees from the line a block opens on, such as a `write_*` call or a variable annotated `McFunction` (a plain `str` alias from `stewbeet`), and a block only the whole file reveals, such as a dataclass field or a variable with no annotation, is painted in the same colours, read from your theme and your `editor.tokenColorCustomizations`:
 
 ![MCFunction type highlighting](https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/extension/vscode/images/mcfunction_type.png)
 
