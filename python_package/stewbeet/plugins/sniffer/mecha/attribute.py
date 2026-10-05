@@ -13,14 +13,92 @@ __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
 import os
+from dataclasses import dataclass
+from difflib import SequenceMatcher
+from typing import Self
 
 from mecha import CompilationUnit, Mecha
 from tokenstream import SourceLocation
 
+from ..sidecar import moved_column
 from ..sources import is_project_source
+
+# Constants
+SIMILAR: float = 0.6
+""" How alike an edited line and an original one must be, by `SequenceMatcher.ratio`, to count as the same line rewritten. """
+
+
+# Classes
+@dataclass(frozen=True)
+class OnDisk:
+	""" A source file as mecha parsed it and as it is on disk, which differ once a plugin edits a function before mecha compiles it.
+
+	`Function.prepend` adds lines, and a versioning refactor rewrites `ns:impl/` into `ns:v1.2.3/` inside them.
+	A line rewritten in place is still the line on disk it came from, with its columns moved through what both share,
+	and a line the plugin added has no line on disk at all.
+
+	>>> on_disk = OnDisk.of(parsed=["say added", "function ns:v1/a"], disk=["function ns:impl/a"])
+	>>> on_disk.position(1, 12), on_disk.position(1, 16), on_disk.position(0, 0)
+	((0, 12), (0, 18), None)
+	"""
+
+	parsed: list[str]
+	disk: list[str]
+	lines: dict[int, int] | None
+	""" The disk line of each parsed line that has one, None when the two texts are the same. """
+
+	@classmethod
+	def read(cls, path: str, parsed: str) -> Self:
+		""" The file at `path` against the text mecha parsed from it. """
+		with open(path, encoding="utf-8") as file:
+			return cls.of(parsed.splitlines(), file.read().splitlines())
+
+	@classmethod
+	def of(cls, parsed: list[str], disk: list[str]) -> Self:
+		""" Two versions of a file, by line, matched once. """
+		if parsed == disk:
+			return cls(parsed, disk, None)
+		lines: dict[int, int] = {}
+		for tag, start, end, to, until in SequenceMatcher(None, parsed, disk, autojunk=False).get_opcodes():
+			if tag == "equal":
+				lines.update((start + offset, to + offset) for offset in range(end - start))
+			elif tag == "replace":
+				lines.update(paired_lines(parsed, disk, range(start, end), range(to, until)))
+		return cls(parsed, disk, lines)
+
+	def position(self, line: int, column: int) -> tuple[int, int] | None:
+		""" The 0-based disk line and column of a parsed position, None when the plugin wrote it. """
+		if self.lines is None:
+			return line, column
+		target: int | None = self.lines.get(line)
+		if target is None:
+			return None
+		moved: int | None = moved_column(column, self.parsed[line], self.disk[target])
+		return None if moved is None else (target, moved)
 
 
 # Functions
+def paired_lines(parsed: list[str], disk: list[str], edited: range, original: range) -> dict[int, int]:
+	""" The lines of an edited run paired, in order, with the original lines they still look like.
+
+	A run holding a line a plugin added has one line more than the original, and which one it is can only be told by looking.
+
+	>>> paired_lines(["say added", "function ns:v1/a"], ["function ns:impl/a"], range(2), range(1))
+	{1: 0}
+	"""
+	pairs: dict[int, int] = {}
+	at, to = edited.start, original.start
+	while at < edited.stop and to < original.stop:
+		if SequenceMatcher(None, parsed[at], disk[to], autojunk=False).ratio() >= SIMILAR:
+			pairs[at] = to
+			at, to = at + 1, to + 1
+		elif edited.stop - at >= original.stop - to:
+			at += 1
+		else:
+			to += 1
+	return pairs
+
+
 def candidate_sources(mc: Mecha, directory: str, roots: tuple[str, ...]) -> dict[str, str]:
 	""" Absolute path to source text, for every compiled file the project may be mapped onto.
 

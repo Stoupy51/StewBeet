@@ -31,17 +31,17 @@ def decode_vlq(segment: str) -> list[int]:
 
 
 def decode_mappings(mappings: str) -> dict[int, tuple[int, int, int]]:
-	""" Decode a mappings string into generated line -> (source index, source line, source column). """
+	""" Decode a mappings string into generated line -> (source index, source line, source column) of its first segment. """
 	out: dict[int, tuple[int, int, int]] = {}
 	source, line, column = 0, 0, 0
 	for generated_line, group in enumerate(mappings.split(";")):
-		if not group:
-			continue
-		fields: list[int] = decode_vlq(group)
-		source += fields[1]
-		line += fields[2]
-		column += fields[3]
-		out[generated_line] = (source, line, column)
+		for index, segment in enumerate(filter(None, group.split(","))):
+			fields: list[int] = decode_vlq(segment)
+			source += fields[1]
+			line += fields[2]
+			column += fields[3]
+			if index == 0:
+				out[generated_line] = (source, line, column)
 	return out
 
 

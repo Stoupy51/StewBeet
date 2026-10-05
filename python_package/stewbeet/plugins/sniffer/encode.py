@@ -49,21 +49,23 @@ def vlq_encode(value: int) -> str:
 def build_mappings(mappings: Iterable[LineMapping], generated_lines: int) -> str:
 	""" Build the base64 VLQ `mappings` string for one generated file.
 
-	Every field is delta-encoded against the previous segment **in the file**, not within the line.
+	A line opens at its column 0 and its points follow.
+	Every field but the generated column runs on from the previous segment **in the file**.
 	A generated line with no origin emits an empty group, and trailing unmapped lines emit no group at all.
 
 	Args:
-		mappings:        Resolved lines, strictly increasing.
-		generated_lines: Total lines in the generated file.
+		mappings: Resolved lines, strictly increasing.
 
 	>>> build_mappings([LineMapping(0, 0, 0, 0), LineMapping(2, 0, 1, 0)], generated_lines=3)
 	'AAAA;;AACA'
+	>>> from stewbeet.plugins.sniffer.model import ColumnPoint
+	>>> build_mappings([LineMapping(0, 0, 4, 2, points=(ColumnPoint(9, 4, 13),))], generated_lines=1)
+	'AAIE,SAAW'
 	"""
 	by_line: dict[int, LineMapping] = {row.generated_line: row for row in mappings}
 	if not by_line:
 		return ""
 
-	previous_column: int = 0
 	previous_source: int = 0
 	previous_source_line: int = 0
 	previous_source_column: int = 0
@@ -74,16 +76,22 @@ def build_mappings(mappings: Iterable[LineMapping], generated_lines: int) -> str
 		if row is None:
 			groups.append("")
 			continue
-		groups.append(
-			vlq_encode(0 - previous_column)
-			+ vlq_encode(row.source_index - previous_source)
-			+ vlq_encode(row.source_line - previous_source_line)
-			+ vlq_encode(row.source_column - previous_source_column)
-		)
-		previous_column = 0
-		previous_source = row.source_index
-		previous_source_line = row.source_line
-		previous_source_column = row.source_column
+		previous_column: int = 0
+		segments: list[str] = []
+		for column, source_line, source_column in [(0, row.source_line, row.source_column)] + [
+			(point.generated, point.line, point.column) for point in row.points if point.generated > 0
+		]:
+			segments.append(
+				vlq_encode(column - previous_column)
+				+ vlq_encode(row.source_index - previous_source)
+				+ vlq_encode(source_line - previous_source_line)
+				+ vlq_encode(source_column - previous_source_column)
+			)
+			previous_column = column
+			previous_source = row.source_index
+			previous_source_line = source_line
+			previous_source_column = source_column
+		groups.append(",".join(segments))
 	return ";".join(groups)
 
 
@@ -92,7 +100,13 @@ def to_json(source_map: FunctionSourceMap, generated_lines: int) -> JsonDict:
 
 	`sourcesContent` is omitted entirely: it is optional in the standard, consumers read sources from disk through `sourceRoot`,
 	and inlining would duplicate the whole project into the build.
+	What only an editor needs travels in `x_` fields, which the standard leaves to vendors and every other consumer ignores.
 	"""
+	extensions: JsonDict = {}
+	if source_map.bolt_sources:
+		extensions["x_stewbeet_bolt"] = list(source_map.bolt_sources)
+	if source_map.opaque:
+		extensions["x_stewbeet_opaque"] = [list(position) for position in source_map.opaque]
 	return {
 		"version": 3,
 		"file": source_map.file,
@@ -100,6 +114,7 @@ def to_json(source_map: FunctionSourceMap, generated_lines: int) -> JsonDict:
 		"sources": list(source_map.sources),
 		"names": [],
 		"mappings": build_mappings(source_map.mappings, generated_lines),
+		**extensions,
 	}
 
 

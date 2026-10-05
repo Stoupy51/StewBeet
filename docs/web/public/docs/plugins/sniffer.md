@@ -46,6 +46,9 @@ before the pack is even loaded, so nothing can write a function before recording
 within `require` does not matter. Recording the pack's own hand-written `.mcfunction` files as they
 load costs nothing: they have no Python behind them, so they get no map.
 
+To try it without editing `beet.yml`, or in a project whose snapshot tests compare the whole pack, ask for it on the command line:
+`beet -s "require[]=stewbeet.plugins.sniffer" build`.
+
 That is the whole configuration, `mecha` included: beet unwinds `require` last, so by the time this
 plugin finishes, mecha has compiled and its compilation units are still there to be read.
 `stewbeet.plugins.archive` writes the maps itself before it zips, so both the build directory and the zip that ends up in `saves/<world>/datapacks` carry the same thing.
@@ -93,6 +96,14 @@ And the sidecar beside it, `root.mcfunction.map`, names your own source relative
 
 `sourcesContent` is deliberately absent. Consumers read your sources from disk through `sourceRoot`,
 and inlining a whole project into every map would cost tens of megabytes.
+
+What mecha compiled carries more, for an editor showing your source to a vanilla parser:
+
+- **A segment for each end of each AST node**, after the one at column 0, so a value bolt computed or a `~/child` path mecha resolved is found in the generated line column for column.
+- **`x_stewbeet_bolt`**: the indices of the `sources` no vanilla parser reads, because bolt generated Python for them, mecha nested a function in them, or one of their commands spans several lines.
+- **`x_stewbeet_opaque`**: `[source, line, column]` where syntax a plugin added to mecha's command tree begins, read against the tree mecha ships for your Minecraft version.
+
+Fields starting with `x_` are the standard's own room for vendors, so every other consumer ignores them.
 
 ## What is mapped, and what is not
 

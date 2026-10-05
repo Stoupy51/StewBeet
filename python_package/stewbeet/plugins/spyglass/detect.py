@@ -1,8 +1,8 @@
 """ Which of the project's own `.mcfunction` sources no vanilla parser can read.
 
-Two things take a source file out of vanilla mcfunction, and both are read off structures the build
-already has rather than guessed from the text: bolt generated Python for it, or mecha split it into
-more than one function.
+Three things take a source file out of vanilla mcfunction, and all are read off structures the build
+already has rather than guessed from the text: bolt generated Python for it, mecha split it into
+more than one function, or one of its commands spans several lines.
 """
 
 # Lazy imports (PEP 810), ignored before Python 3.15
@@ -14,6 +14,7 @@ __lazy_modules__ = ALWAYS_LAZY
 import os
 from collections import Counter
 from collections.abc import Callable
+from itertools import pairwise
 
 from beet import Context
 from bolt import Runtime
@@ -33,8 +34,38 @@ def unparseable_sources(ctx: Context) -> list[str]:
 	if mc is None:
 		return []
 	restore_filenames(mc, os.path.abspath(str(ctx.directory)))
-	found: set[str] = nested_sources(mc) | bolt_sources(ctx, mc)
+	found: set[str] = nested_sources(mc) | bolt_sources(ctx, mc) | spread_sources(mc)
 	return sorted(name for name in found if name.endswith(".mcfunction"))
+
+
+def spread_sources(mc: Mecha) -> set[str]:
+	""" Files holding a command written over several lines, which mecha's `multiline` mode and bolt's brackets allow.
+
+	Counted as more than one line of text between where a command starts and where the next one does,
+	since a plugin's node may carry no end position. A blank line, a comment and vanilla's own `\\` continuation do not count.
+	"""
+	found: set[str] = set()
+	for unit in mc.database.values():
+		name: str | None = project_relative(unit.filename)
+		if name is None or unit.ast is None or not unit.source:
+			continue
+		lines: list[str] = unit.source.splitlines()
+		starts: list[int] = [*sorted({command.location.lineno - 1 for command in unit.ast.commands}), len(lines)]
+		if any(written_lines(lines[start:end]) > 1 for start, end in pairwise(starts)):
+			found.add(name)
+	return found
+
+
+def written_lines(lines: list[str]) -> int:
+	""" How many of the lines hold text, a blank line, a comment and a line a `\\` continues left aside.
+
+	>>> written_lines(["execute", "    as @a", "", "# note", "    run say hi"]), written_lines(["say a \\\\", "  b"])
+	(3, 1)
+	"""
+	return sum(
+		bool(line.strip()) and not line.lstrip().startswith("#") and not (index > 0 and lines[index - 1].rstrip().endswith("\\"))
+		for index, line in enumerate(lines)
+	)
 
 
 def nested_sources(mc: Mecha) -> set[str]:

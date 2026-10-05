@@ -16,17 +16,50 @@ __lazy_modules__ = ALWAYS_LAZY
 # Imports
 import os
 from collections.abc import Iterator
+from dataclasses import dataclass, field
 
 import stouputils as stp
 from beet import Context
-from mecha import Mecha
+from mecha import AstCommand, Mecha, MechaOptions
 
-from ....core.source_paths import origin_path, restore_filenames
+from ....core.source_paths import origin_path, remember_source_paths, restore_filenames
+from ...spyglass.detect import unparseable_sources
 from ..align import align
-from ..model import SourceOrigin, WriteChunk
+from ..model import CompiledLine, SourceOrigin, WriteChunk
 from ..sidecar import has_sidecar, write_sidecar
 from ..sources import reset_caches
-from .attribute import candidate_sources, owner_of, source_file_of
+from .attribute import OnDisk, candidate_sources, owner_of, source_file_of
+from .compiled import compiled_line, vanilla_paths
+
+
+# Classes
+@dataclass(frozen=True)
+class Compilation:
+	""" What every command of one build is attributed against. """
+
+	mc: Mecha
+	sources: dict[str, str]
+	""" Text mecha parsed, by absolute path. """
+	vanilla: frozenset[str]
+	""" Every path of the vanilla command tree, see `vanilla_paths`. """
+	bolt: frozenset[str]
+	""" Normalised absolute paths of the `.mcfunction` sources written in bolt or mecha syntax. """
+	disk: dict[str, OnDisk] = field(default_factory=dict[str, OnDisk])
+	""" Each source file against the text mecha parsed from it, read as files are met. """
+
+	def origin(self, owner: str, command: AstCommand, serialized: str) -> SourceOrigin | None:
+		""" Where a command sits in its file on disk, None when that file has no line for it. """
+		if owner not in self.disk:
+			self.disk[owner] = OnDisk.read(owner, self.sources[owner])
+		# mecha counts lines and columns from one, the map counts both from zero.
+		start: tuple[int, int] | None = self.disk[owner].position(command.location.lineno - 1, command.location.colno - 1)
+		if start is None:
+			return None
+		compiled: CompiledLine = compiled_line(
+			self.mc, command, serialized, self.sources[owner], self.disk[owner], self.vanilla, os.path.normcase(owner) in self.bolt,
+		)
+		# A command is one point in its source however many lines it serialises to, which is what exact=False says.
+		return SourceOrigin(file=owner, line=start[0], column=start[1], exact=False, compiled=compiled)
 
 
 # Functions
@@ -67,6 +100,12 @@ def write_maps(ctx: Context) -> int:
 	by_file = {file: unit for file, unit in mc.database.items() if unit.ast}
 	by_location = {unit.resource_location: unit for unit in by_file.values() if unit.resource_location}
 
+	compilation = Compilation(
+		mc=mc,
+		sources=sources,
+		vanilla=vanilla_paths(str(ctx.validate("mecha", MechaOptions).version or ctx.minecraft_version)),
+		bolt=frozenset(os.path.normcase(os.path.join(directory, name)) for name in unparseable_sources(ctx)),
+	)
 	written: int = 0
 	for path, func in list(ctx.data.functions.items()):
 		if has_sidecar(ctx, path):
@@ -89,11 +128,7 @@ def write_maps(ctx: Context) -> int:
 				stp.debug(f"sniffer.mecha: {path} has a node that does not serialise, skipping it ({error})")
 				continue
 			owner: str | None = owner_of(command.location, sources, serialized, unit.source, own_file)
-			# mecha counts lines and columns from one, the map counts both from zero. A command is
-			# one point in its source however many lines it serialises to, which is what exact=False says.
-			origin: SourceOrigin | None = None if owner is None else SourceOrigin(
-				file=owner, line=command.location.lineno - 1, column=command.location.colno - 1, exact=False,
-			)
+			origin: SourceOrigin | None = None if owner is None else compilation.origin(owner, command, serialized)
 			chunks.append(WriteChunk(lines=tuple(serialized.split("\n")), origin=origin))
 
 		if write_sidecar(ctx, path, func, align(chunks, func.text)):
@@ -117,6 +152,8 @@ def beet_default(ctx: Context) -> Iterator[None]:
 		ctx: The beet context.
 	"""
 	reset_caches()
+	# Now, before a later plugin reads a function and beet forgets which file it came from.
+	remember_source_paths(ctx)
 
 	yield
 

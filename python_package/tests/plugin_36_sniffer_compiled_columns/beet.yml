@@ -1,0 +1,40 @@
+
+# Test: what stewbeet.plugins.sniffer.mecha says about a command beyond the line it starts on.
+# An editor shows a datapack parser the source, and needs three things only the build knows:
+#
+#   bolt      which sources are bolt or mecha syntax, so a .mcfunction holding bolt is not handed
+#             to a parser that cannot read it. main.mcfunction is, plain.mcfunction is not, and
+#             spread.mcfunction is for one command written over three lines, which only mecha reads.
+#   columns   one segment per end of each AST node, so `int(major)` or `~/child` is given the value
+#             mecha resolved it to, column for column, whatever mecha did to the text around it.
+#   opaque    where syntax a plugin added to mecha's tree begins: `say loudly` is accepted by the
+#             build and by no vanilla parser, so the parser's opinion of it is not worth showing.
+
+id: "tns"
+name: "Test Sniffer Compiled Columns"
+version: "1.0.0"
+author: "test"
+minecraft: "26.2"
+
+directory: "."
+output: "build"
+
+require:
+    - "bolt"
+    - "mecha.contrib.relative_location"
+    - "mecha.contrib.nested_location"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+pipeline:
+    - "src.assertions"
+    - "src.loudly"
+    - "stewbeet.plugins.sniffer.mecha"
+    - "mecha"
+
+meta:
+    mecha:
+        multiline: true
+

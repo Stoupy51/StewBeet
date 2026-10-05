@@ -1,0 +1,25 @@
+
+# Test: stewbeet.plugins.sniffer.mecha on a function a plugin edits before mecha compiles it.
+# simple_item_plugin prepends a scoreboard line to the load function of every project using it, and
+# mecha's positions then count lines of the edited text. The map must still name the line on disk
+# each command was written on, and leave the prepended line unmapped since no file holds it.
+
+id: "tns"
+name: "Test Sniffer Mecha Edited"
+version: "1.0.0"
+author: "test"
+minecraft: "26.2"
+
+directory: "."
+output: "build"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+pipeline:
+    - "src.assertions"
+    - "stewbeet.plugins.sniffer.mecha"
+    - "src.prepend"
+    - "mecha"
+
