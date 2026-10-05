@@ -87,6 +87,9 @@ def beet_default(ctx: Context) -> Iterator[None]:
 	# `say loudly` is in no vanilla tree, and it is the plugin's word `loudly` the build says the vanilla syntax ends at.
 	assert main.get("x_stewbeet_opaque") == [[0, 6, 4]], f"got {main.get('x_stewbeet_opaque')}"
 	assert "x_stewbeet_opaque" not in map_of(ctx, "plain")
+	opaque: JsonDict = map_of(ctx, "opaque")
+	assert opaque.get("x_stewbeet_opaque") == [[0, 2, 4]], f"got {opaque.get('x_stewbeet_opaque')}"
+	assert opaque.get("x_stewbeet_bolt") == [0], "a file using a plugin's command is no more vanilla than one using bolt"
 
 	print("plugin_36: bolt sources, node columns and plugin syntax all reach the map")
 

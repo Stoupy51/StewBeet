@@ -1,3 +1,4 @@
+
 # stewbeet.plugins.sniffer
 
 The `sniffer` plugin records where every generated line came from, and writes a<br>
@@ -100,7 +101,7 @@ and inlining a whole project into every map would cost tens of megabytes.
 What mecha compiled carries more, for an editor showing your source to a vanilla parser:
 
 - **A segment for each end of each AST node**, after the one at column 0, so a value bolt computed or a `~/child` path mecha resolved is found in the generated line column for column.
-- **`x_stewbeet_bolt`**: the indices of the `sources` no vanilla parser reads, because bolt generated Python for them, mecha nested a function in them, or one of their commands spans several lines.
+- **`x_stewbeet_bolt`**: the indices of the `sources` no vanilla parser reads, because bolt generated Python for them, mecha nested a function in them, one of their commands spans several lines, or one comes from a plugin.
 - **`x_stewbeet_opaque`**: `[source, line, column]` where syntax a plugin added to mecha's command tree begins, read against the tree mecha ships for your Minecraft version.
 
 Fields starting with `x_` are the standard's own room for vendors, so every other consumer ignores them.
@@ -133,3 +134,4 @@ A release build that does not ask for them produces exactly the same datapack it
 - [Writing functions and files](../2_writing_to_files/en.md): the calls this plugin records.
 - [All plugins](README.md): the rest of the pipeline, in the order it runs.
 - [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.
+

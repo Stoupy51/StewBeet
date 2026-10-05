@@ -48,5 +48,8 @@ def check(ctx: Context) -> None:
 	# The config is written where Spyglass looks, in the project root and nowhere else.
 	assert os.path.isfile(CONFIG), f"{CONFIG} must sit in the project root"
 
+	# Every excluded function keeps its name in the pack, whose build output declares it to Spyglass already.
+	assert not os.path.exists("build/spyglass_declarations"), "a function the pack declares needs no stand-in"
+
 	print(f"plugin_28: {len(exclude)} exclusions, one retracted, the author's own untouched")
 

@@ -1,8 +1,8 @@
 """ Which of the project's own `.mcfunction` sources no vanilla parser can read.
 
-Three things take a source file out of vanilla mcfunction, and all are read off structures the build
+Four things take a source file out of vanilla mcfunction, and all are read off structures the build
 already has rather than guessed from the text: bolt generated Python for it, mecha split it into
-more than one function, or one of its commands spans several lines.
+more than one function, one of its commands spans several lines, or one is a command a plugin added to mecha.
 """
 
 # Lazy imports (PEP 810), ignored before Python 3.15
@@ -12,15 +12,22 @@ __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
 import os
+import re
 from collections import Counter
 from collections.abc import Callable
+from functools import cache
 from itertools import pairwise
 
 from beet import Context
 from bolt import Runtime
-from mecha import CompilationUnit, Mecha
+from mecha import AstCommand, AstNode, AstRoot, CommandSpec, CommandTree, CompilationUnit, Mecha, MechaOptions
+from tokenstream import SourceLocation
 
 from ...core.source_paths import restore_filenames
+
+# Constants
+WORD: re.Pattern[str] = re.compile(r"\s*\S+")
+""" One literal of a command and the whitespace before it. """
 
 
 # Functions
@@ -34,8 +41,21 @@ def unparseable_sources(ctx: Context) -> list[str]:
 	if mc is None:
 		return []
 	restore_filenames(mc, os.path.abspath(str(ctx.directory)))
-	found: set[str] = nested_sources(mc) | bolt_sources(ctx, mc) | spread_sources(mc)
+	found: set[str] = nested_sources(mc) | bolt_sources(ctx, mc) | spread_sources(mc) | opaque_sources(mc, project_vanilla_paths(ctx))
 	return sorted(name for name in found if name.endswith(".mcfunction"))
+
+
+def opaque_sources(mc: Mecha, vanilla: frozenset[str]) -> set[str]:
+	""" Files holding a command a plugin added to mecha's tree, which the build accepts and no vanilla parser reads.
+
+	Args:
+		vanilla: Every path of the vanilla command tree, see `vanilla_paths`.
+	"""
+	return {
+		name for unit in mc.database.values()
+		if (name := project_relative(unit.filename)) is not None and unit.ast is not None and unit.source
+		and any(opaque_start(mc, command, vanilla, unit.source) is not None for command in unit.ast.commands)
+	}
 
 
 def spread_sources(mc: Mecha) -> set[str]:
@@ -140,4 +160,83 @@ def project_relative(filename: str | None) -> str | None:
 		return None
 	name: str = filename.replace("\\", "/")
 	return None if name.startswith(("../", "/")) or ":" in name else name
+
+
+def opaque_start(mc: Mecha, command: AstCommand, vanilla: frozenset[str], source: str) -> SourceLocation | None:
+	""" Where the first piece of syntax the vanilla command tree does not have begins, None for a vanilla command.
+
+	A nested block is mecha's own and its body is compiled as commands of their own, so it is not counted.
+	A literal has no node to read a position from, so it is found as the word it is after the last argument placed before it.
+
+	Args:
+		vanilla: Every path of the vanilla command tree, see `vanilla_paths`.
+		source:  Text the command was parsed from, which the positions index.
+	"""
+	parts: list[str] = command.identifier.split(":")
+	known: int = next((count for count in range(len(parts), 0, -1) if ":".join(parts[:count]) in vanilla), 0)
+	if known == len(parts):
+		nested: AstCommand | None = next((argument for argument in command.arguments if isinstance(argument, AstCommand)), None)
+		return None if nested is None else opaque_start(mc, nested, vanilla, source)
+
+	prototype = mc.spec.prototypes[command.identifier]
+	# A redirect drops the scope in front of it from the signature, so its entries are counted from the end.
+	diverging: int = known - (len(parts) - len(prototype.signature))
+	if diverging < 0:
+		return command.location
+	# Each argument node with the index of its entry in the signature.
+	arguments: dict[int, AstNode] = dict(zip(prototype.arguments, command.arguments, strict=True))
+	node: AstNode | None = arguments.get(diverging)
+	if isinstance(node, AstRoot):
+		return None
+	if node is not None and node.location.lineno:
+		return node.location
+	return literal_start(prototype.signature, arguments, diverging, command.location, source)
+
+
+def literal_start(
+	signature: tuple[object, ...], arguments: dict[int, AstNode], diverging: int, start: SourceLocation, source: str,
+) -> SourceLocation:
+	""" Where entry `diverging` of a signature sits, counted in words from the last argument placed before it.
+
+	Args:
+		arguments: Each argument node by the index of its entry in the signature.
+		start:     Where the command starts, counted from when no argument before it was placed.
+	"""
+	placed: list[int] = [index for index, argument in arguments.items() if index < diverging and argument.end_location.lineno]
+	position: int = arguments[placed[-1]].end_location.pos if placed else start.pos
+	for _ in range(sum(isinstance(entry, str) for entry in signature[(placed[-1] + 1 if placed else 0):diverging])):
+		word = WORD.match(source, position)
+		position = word.end() if word else position
+	position += len(source[position:]) - len(source[position:].lstrip())
+	return location_at(source, position)
+
+
+def location_at(source: str, position: int) -> SourceLocation:
+	""" The 1-based line and column of an offset, which is how mecha spells a position.
+
+	>>> location_at("say a\\ncompute bolt", 14)
+	SourceLocation(pos=14, lineno=2, colno=9)
+	"""
+	before: str = source[:position]
+	return SourceLocation(position, before.count("\n") + 1, position - before.rfind("\n"))
+
+
+def project_vanilla_paths(ctx: Context) -> frozenset[str]:
+	""" The vanilla command paths of the Minecraft version the project compiles for. """
+	return vanilla_paths(str(ctx.validate("mecha", MechaOptions).version or ctx.minecraft_version))
+
+
+@cache
+def vanilla_paths(version: str) -> frozenset[str]:
+	""" Every path of the vanilla command tree of a Minecraft version, spelled like mecha's command identifiers.
+
+	Read from the tree mecha ships for that version, so a new version needs nothing here.
+
+	>>> {"compute", "compute:bolt"} & vanilla_paths("26.3")
+	{'compute'}
+	"""
+	spec = CommandSpec(tree=CommandTree.load_from(version=version))
+	return frozenset(
+		identifier.rsplit(":", depth)[0] for identifier in spec.prototypes for depth in range(identifier.count(":") + 1)
+	)
 

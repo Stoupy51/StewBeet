@@ -5,6 +5,7 @@ a task inserted at the front of beet's list pops last, and the later insert pops
 """
 # Imports
 import json
+import os
 
 from beet import Context
 
@@ -36,6 +37,15 @@ def check(ctx: Context) -> None:
 	assert BOLTED in exclude, f"a file bolt generated Python for must be excluded, got {exclude}"
 	assert NESTED in exclude, f"a file mecha split into two functions must be excluded, got {exclude}"
 	assert PLAIN not in exclude, f"{PLAIN} is vanilla and excluding it costs it Spyglass for nothing"
+
+	# The refactor renamed what the excluded sources define, so the names a plain source calls are declared beside the output.
+	declared: str = "build/spyglass_declarations"
+	stand_ins: list[str] = sorted(
+		os.path.relpath(os.path.join(folder, name), declared).replace(os.sep, "/")
+		for folder, _, names in os.walk(declared) for name in names
+	)
+	expected: list[str] = ["data/tns/function/impl/bolted.mcfunction", "data/tns/function/impl/nested.mcfunction", "pack.mcmeta"]
+	assert stand_ins == expected, stand_ins
 
 	print(f"plugin_33: {len(exclude)} exclusions found through a versioning refactor")
 

@@ -4,6 +4,8 @@ A `.mcfunction` holding bolt or mecha nesting is not vanilla mcfunction, and Spy
 Nothing can clear another extension's diagnostics, but Spyglass skips what its own `env.exclude` names,
 and the build is the one place that knows exactly which files those are: bolt says which files it generated Python for,
 and mecha says which ones it split in two.
+An excluded file declares nothing either, so a function only it defines is declared again
+in a pack beside the build output, see `declarations`.
 
 The editor offers the same exclusion for the file being opened, which is what a project that has
 never been built still needs. Both write the same key in the same file and both only ever add.
@@ -27,6 +29,7 @@ from ...core.__memory__ import Mem
 from ...core.source_paths import remember_source_paths
 from .config import config_path, exclusions_of, read_config, with_exclusions, write_config
 from .confirm import may_manage, remember_exclusions, remembered_exclusions
+from .declarations import DIRECTORY, write_declarations
 from .detect import unparseable_sources
 
 
@@ -88,10 +91,13 @@ def apply_exclusions(ctx: Context) -> None:
 		add = []
 
 	updated: JsonDict | None = with_exclusions(current, add, drop)
-	if updated is None:
-		return
+	if updated is not None:
+		write_config(path, updated)
+		remember_exclusions(sorted((set(remembered_exclusions()) | set(add)) - set(drop)))
+		stp.info(f"spyglass: {len(add)} exclusion(s) added and {len(drop)} retracted in {os.path.basename(path)}")
 
-	write_config(path, updated)
-	remember_exclusions(sorted((set(remembered_exclusions()) | set(add)) - set(drop)))
-	stp.info(f"spyglass: {len(add)} exclusion(s) added and {len(drop)} retracted in {os.path.basename(path)}")
+	excluded: list[str] = exclusions_of(current if updated is None else updated)
+	declared: int = write_declarations(ctx, [name for name in detected if name in excluded])
+	if declared:
+		stp.info(f"spyglass: {declared} function(s) only an excluded source defines are declared in {DIRECTORY}")
 

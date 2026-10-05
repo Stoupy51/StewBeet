@@ -20,16 +20,16 @@ from dataclasses import dataclass, field
 
 import stouputils as stp
 from beet import Context
-from mecha import AstCommand, Mecha, MechaOptions
+from mecha import AstCommand, AstRoot, Mecha
 
 from ....core.source_paths import origin_path, remember_source_paths, restore_filenames
-from ...spyglass.detect import unparseable_sources
+from ...spyglass.detect import project_vanilla_paths, unparseable_sources
 from ..align import align
 from ..model import CompiledLine, SourceOrigin, WriteChunk
 from ..sidecar import has_sidecar, write_sidecar
 from ..sources import reset_caches
 from .attribute import OnDisk, candidate_sources, owner_of, source_file_of
-from .compiled import compiled_line, vanilla_paths
+from .compiled import compiled_line
 
 
 # Classes
@@ -46,6 +46,27 @@ class Compilation:
 	""" Normalised absolute paths of the `.mcfunction` sources written in bolt or mecha syntax. """
 	disk: dict[str, OnDisk] = field(default_factory=dict[str, OnDisk])
 	""" Each source file against the text mecha parsed from it, read as files are met. """
+
+	def chunks(self, path: str, ast: AstRoot, source: str | None, own_file: str | None) -> list[WriteChunk]:
+		""" Each command of a compiled function as mecha serialised it, with the line of the project's source it came from.
+
+		Args:
+			source:   Text the function was parsed from.
+			own_file: The file the function was compiled from, None when no project file backs it.
+		"""
+		chunks: list[WriteChunk] = []
+		for command in ast.commands:
+			# `mecha.contrib.source_map` puts a sentinel node at the top of every function, which raises rather than serialising.
+			# Skipping it costs one map line, while failing the build over a debug feature is not acceptable.
+			try:
+				serialized: str = self.mc.serialize(command)
+			except Exception as error:
+				stp.debug(f"sniffer.mecha: {path} has a node that does not serialise, skipping it ({error})")
+				continue
+			owner: str | None = owner_of(command.location, self.sources, serialized, source, own_file)
+			origin: SourceOrigin | None = None if owner is None else self.origin(owner, command, serialized)
+			chunks.append(WriteChunk(lines=tuple(serialized.split("\n")), origin=origin))
+		return chunks
 
 	def origin(self, owner: str, command: AstCommand, serialized: str) -> SourceOrigin | None:
 		""" Where a command sits in its file on disk, None when that file has no line for it. """
@@ -103,7 +124,7 @@ def write_maps(ctx: Context) -> int:
 	compilation = Compilation(
 		mc=mc,
 		sources=sources,
-		vanilla=vanilla_paths(str(ctx.validate("mecha", MechaOptions).version or ctx.minecraft_version)),
+		vanilla=project_vanilla_paths(ctx),
 		bolt=frozenset(os.path.normcase(os.path.join(directory, name)) for name in unparseable_sources(ctx)),
 	)
 	written: int = 0
@@ -117,20 +138,7 @@ def write_maps(ctx: Context) -> int:
 			continue
 
 		own_file: str | None = source_file_of(unit, directory) or parents.get(unit.source or "")
-
-		chunks: list[WriteChunk] = []
-		for command in unit.ast.commands:
-			# `mecha.contrib.source_map` puts a sentinel node at the top of every function, which raises rather than serialising.
-			# Skipping it costs one map line, while failing the build over a debug feature is not acceptable.
-			try:
-				serialized: str = mc.serialize(command)
-			except Exception as error:
-				stp.debug(f"sniffer.mecha: {path} has a node that does not serialise, skipping it ({error})")
-				continue
-			owner: str | None = owner_of(command.location, sources, serialized, unit.source, own_file)
-			origin: SourceOrigin | None = None if owner is None else compilation.origin(owner, command, serialized)
-			chunks.append(WriteChunk(lines=tuple(serialized.split("\n")), origin=origin))
-
+		chunks: list[WriteChunk] = compilation.chunks(path, unit.ast, unit.source, own_file)
 		if write_sidecar(ctx, path, func, align(chunks, func.text)):
 			written += 1
 	return written
