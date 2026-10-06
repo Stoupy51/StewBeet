@@ -15,28 +15,27 @@ def insert_lib_calls() -> None:
 	# Create new energy_rate scoreboard objective
 	write_load_file(f"\n# Score for energy usage or generation\nscoreboard objectives add {ns}.energy_rate dummy\n", prepend = True)
 
-	# Loop through all items with energy data
 	for item, data in Mem.definitions.items():
-		obj = Item.from_dict(data, item)
-		energy: dict[str, int] = obj.components.get("custom_data", {}).get("energy", {})
-		if len(energy) > 0:
-			funcs: BlockFunctions = BlockFunctions(item)
-			if funcs.place_secondary not in Mem.ctx.data.functions: # Skip if no custom block
-				continue
+		energy: dict[str, int] = Item.from_dict(data, item).components.get("custom_data", {}).get("energy", {})
+		funcs: BlockFunctions = BlockFunctions(item)
+		if energy and funcs.place_secondary in Mem.ctx.data.functions:
+			write_energy_calls(funcs, energy, ns)
 
-			# If the item is a cable
-			if "transfer" in energy:
-				write_function(funcs.destroy, "# Datapack Energy\nfunction energy:v1/api/break_cable\n", prepend = True)
-				write_function(funcs.place_secondary, f"""
+
+def write_energy_calls(funcs: BlockFunctions, energy: dict[str, int], ns: str) -> None:
+	""" Register one custom block with the energy library, as a cable, a machine or a battery. """
+	if "transfer" in energy:
+		write_function(funcs.destroy, "# Datapack Energy\nfunction energy:v1/api/break_cable\n", prepend = True)
+		write_function(funcs.place_secondary, f"""
 tag @s add energy.cable
 scoreboard players set @s energy.transfer_rate {energy["transfer"]}
 function energy:v1/api/init_cable
 """)
-			else:
-				# Else, if if's a machine
-				write_function(funcs.destroy, "# Datapack Energy\nfunction energy:v1/api/break_machine\n", prepend = True)
-				if "usage" in energy or "generation" in energy:
-					write_function(funcs.place_secondary, f"""
+		return
+
+	write_function(funcs.destroy, "# Datapack Energy\nfunction energy:v1/api/break_machine\n", prepend = True)
+	if "usage" in energy or "generation" in energy:
+		write_function(funcs.place_secondary, f"""
 # Energy part
 tag @s add energy.{"send" if "generation" in energy else "receive"}
 scoreboard players set @s {ns}.energy_rate {energy.get("usage", energy.get("generation", 0))}
@@ -46,9 +45,10 @@ scoreboard players add @s energy.storage 0
 scoreboard players add @s energy.change_rate 0
 function energy:v1/api/init_machine
 """)
-				else:
-					# Else, it's a battery.
-					write_function(funcs.place_secondary, f"""
+		return
+
+	# A battery
+	write_function(funcs.place_secondary, f"""
 # Energy part
 tag @s add {ns}.battery_switcher
 tag @s add energy.receive

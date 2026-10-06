@@ -226,24 +226,9 @@ class Header:
 		else:
 			header += "# @within\t???\n#\n"
 
-		# Add the args section (only if there are arguments)
+		# The arguments in the order they were first introduced
 		if self.args:
-			header += "# @args\t\t"
-			# Preserve insertion order of args (first-introduced order).
-			arg_lines: list[str] = []
-			for arg_name, (arg_type, description_lines) in self.args.items():
-				# First line: arg_name (type): description (or just arg_name (type) if no description)
-				if description_lines:
-					# First description line goes on same line as arg
-					first_line: str = f"{arg_name} ({arg_type}): {description_lines[0]}"
-					arg_lines.append(first_line)
-					# Additional description lines (for compound types)
-					arg_lines.extend(f"\t\t\t\t{desc_line}" for desc_line in description_lines[1:])
-				else:
-					# No description
-					arg_lines.append(f"{arg_name} ({arg_type})")
-
-			header += "\n#\t\t\t".join(arg_lines) + "\n#\n"
+			header += "# @args\t\t" + "\n#\t\t\t".join(self.arg_lines()) + "\n#\n"
 
 		# Add other information
 		for line in self.other:
@@ -253,6 +238,17 @@ class Header:
 		if not header.endswith("#\n"):
 			header += "#\n"
 		return (header + "\n" + self.content.strip() + "\n\n").replace("\n\n\n", "\n\n")
+
+	def arg_lines(self) -> list[str]:
+		""" One `name (type): description` line per argument, the further lines of a compound's description indented under it. """
+		lines: list[str] = []
+		for arg_name, (arg_type, description_lines) in self.args.items():
+			if not description_lines:
+				lines.append(f"{arg_name} ({arg_type})")
+				continue
+			lines.append(f"{arg_name} ({arg_type}): {description_lines[0]}")
+			lines.extend(f"\t\t\t\t{desc_line}" for desc_line in description_lines[1:])
+		return lines
 
 if __name__ == "__main__":
 	# Example usage

@@ -39,48 +39,24 @@ def add_item_name_and_lore_if_missing(is_external: bool = False, black_list: lis
 		is_external: Whether the definitions is the external one or not (meaning the namespace is in the item name).
 		black_list:  The list of items to ignore.
 	"""
-	# Load the source lore
-	if black_list is None:
-		black_list = []
 	source_lore: TextComponent = Mem.ctx.meta.get("stewbeet", {}).get("source_lore", {})
-
-	# For each item, add item name and lore if missing (if not in black_list)
 	defs = Mem.external_definitions if is_external else Mem.definitions
 	for item, data in defs.items():
-		if item in black_list:
+		if item in (black_list or []):
 			continue
-		data = data.components
+		components = data.components
 
-		# Add item name if none
-		if not data.get("item_name"):
-			if not is_external:
-				item_str: str = item.replace("_"," ").title()
-			else:
-				item_str: str = item.split(":")[-1].replace("_"," ").title()
-			data["item_name"] = {"text": item_str}  # Use a TextComponent to allow auto.lang_file to work properly
+		# A TextComponent rather than a string, so auto.lang_file can translate it
+		if not components.get("item_name"):
+			components["item_name"] = {"text": item.split(":")[-1].replace("_"," ").title()}
 
-		# Apply namespaced lore if none
-		lore: list[TextComponent] = data.setdefault("lore", [])
-
-		# If item is not external,
-		if not is_external:
-
-			# Add the source lore ONLY if not already present
-			if source_lore not in lore:
-				lore.append(source_lore)
-
-		# If item is external, add the source lore to the item lore (without ICON)
-		else:
-			# Extract the namespace
-			titled_namespace: str = item.split(":")[0].replace("_"," ").title()
-
-			# Create the new namespace lore with the titled namespace
-			new_source_lore: JsonDict = {"text": titled_namespace, "italic": True, "color": "blue"}
-
-			# Add the namespace lore ONLY if not already present
-			if new_source_lore not in lore:
-				lore.append(new_source_lore)
-	return
+		# An external item names the pack it comes from, without the project's icon
+		item_lore: TextComponent = (
+			{"text": item.split(":")[0].replace("_"," ").title(), "italic": True, "color": "blue"} if is_external else source_lore
+		)
+		lore: list[TextComponent] = components.setdefault("lore", [])
+		if item_lore not in lore:
+			lore.append(item_lore)
 
 # Add private custom data for namespace
 def add_private_custom_data_for_namespace(is_external: bool = False, black_list: list[str] | None = None) -> None:

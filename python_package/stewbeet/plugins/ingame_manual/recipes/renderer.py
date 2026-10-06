@@ -21,7 +21,7 @@ from beet.core.utils import TextComponent
 from stouputils.typing import JsonDict
 
 from ....core.__memory__ import Mem
-from ....core.cls.block import Block, GrowingSeed
+from ....core.cls.block import Block, GrowingSeed, GrowingSeedLoot
 from ....core.cls.ingredients import Ingr
 from ....core.cls.item import Item
 from ....core.cls.recipe import CraftingShapelessRecipe
@@ -264,32 +264,32 @@ class RecipeRenderer:
 		hover.append({"text": "\n- Grow time: ", "color": "gray"})
 		hover.append({"text": grow_time, "color": "gray"})
 
-		first_loot_id: str = ""
 		if isinstance(seed.loots, str):
 			hover.append({"text": "\n- Drops: variable (loot table)", "color": "gray"})
+			first_loot_id: str = ""
 		else:
 			hover.append({"text": "\n- Drops:", "color": "gray"})
-			for loot in seed.loots:
-				if not first_loot_id and ":" not in loot.id:
-					first_loot_id = loot.id
-				rolls = loot.rolls
-				rolls_str = (f"{rolls.get('min', 1)}-{rolls.get('max', 1)}" if isinstance(rolls, dict) else str(rolls))
-				loot_name = item_id_to_name(loot.id.split(":")[-1]) if ":" not in loot.id else Ingr(loot.id).to_name()
-				hover.append({"text": f"\n  - x{rolls_str} ", "color": "gray"})
-				hover.append({"text": loot_name, "color": "gray"})
-				if loot.fortune:
-					# binomial_with_bonus_count: each Fortune level (+ 'extra' base tries) is one
-					# 'probability' chance of dropping one more item: phrase it for the player.
-					extra: int = loot.fortune.get("extra", 0)
-					chance: str = f"{loot.fortune.get('probability', 0) * 100:g}%"
-					fortune_text = f" ({chance} chance of +1 per Fortune level"
-					if extra:
-						fortune_text += f", +{extra} base tr{'ies' if extra > 1 else 'y'}"
-					hover.append({"text": fortune_text + ")", "color": "dark_gray"})
+			hover += [line for loot in seed.loots for line in self.drop_lines(loot)]
+			first_loot_id = next((loot.id for loot in seed.loots if ":" not in loot.id), "")
 
 		# Icon: growing seed wiki glyph; link to the first internal loot's page if any
-		target: PageRef | None = None
-		if first_loot_id:
-			target = PageRef(item=first_loot_id)
+		target: PageRef | None = PageRef(item=first_loot_id) if first_loot_id else None
 		return WikiButtonRender(glyph=WIKI_GROWING_SEED_FONT, hover=hover, target=target, priority=1, is_info=True)
+
+	@staticmethod
+	def drop_lines(loot: GrowingSeedLoot) -> list[TextComponent]:
+		""" The hover lines describing one drop of a growing seed: how many, of what, and what Fortune adds. """
+		rolls = loot.rolls
+		rolls_str = (f"{rolls.get('min', 1)}-{rolls.get('max', 1)}" if isinstance(rolls, dict) else str(rolls))
+		loot_name = item_id_to_name(loot.id.split(":")[-1]) if ":" not in loot.id else Ingr(loot.id).to_name()
+		lines: list[TextComponent] = [{"text": f"\n  - x{rolls_str} ", "color": "gray"}, {"text": loot_name, "color": "gray"}]
+		if not loot.fortune:
+			return lines
+		# binomial_with_bonus_count: each Fortune level, and each 'extra' base try, is one 'probability' chance of one more item
+		extra: int = loot.fortune.get("extra", 0)
+		chance: str = f"{loot.fortune.get('probability', 0) * 100:g}%"
+		fortune_text = f" ({chance} chance of +1 per Fortune level"
+		if extra:
+			fortune_text += f", +{extra} base tr{'ies' if extra > 1 else 'y'}"
+		return [*lines, {"text": fortune_text + ")", "color": "dark_gray"}]
 

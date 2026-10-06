@@ -43,61 +43,52 @@ class VanillaRecipeHandler:
 		handler = cls()
 		handler.generate_recipes()
 
-		# Create recipe unlocking function if vanilla recipes were generated
 		if handler.vanilla_generated_recipes:
-			# Create a function that will give all recipes
-			content = "\n# Get all recipes\n"
-			for recipe_file, _ in handler.vanilla_generated_recipes:
-				content += f"recipe give @s {Mem.ctx.project_id}:{recipe_file}\n"
-			write_function(f"{Mem.ctx.project_id}:utils/get_all_recipes", content + "\n")
+			handler.write_recipe_unlocking()
 
-			# Get all ingredients and their associated recipes
-			ingredients: dict[str, set[str]] = {}
-			for recipe_name, _ in handler.vanilla_generated_recipes:
-				recipe: JsonDict = Mem.ctx.data[Mem.ctx.project_id].recipes[recipe_name].data
-				for ingr_str in Ingr.get_ingredients_from_vanilla_recipe(recipe):
-					if ingr_str not in ingredients:
-						ingredients[ingr_str] = set()
-					ingredients[ingr_str].add(recipe_name)
+	def write_recipe_unlocking(self) -> None:
+		""" A function giving every generated recipe, and an advancement unlocking each one when an ingredient or result is held. """
+		ns: str = Mem.ctx.project_id
+		recipes_given: str = "".join(f"recipe give @s {ns}:{recipe_file}\n" for recipe_file, _ in self.vanilla_generated_recipes)
+		write_function(f"{ns}:utils/get_all_recipes", f"\n# Get all recipes\n{recipes_given}\n")
 
-			# Write the advancement
-			adv_path: str = f"{Mem.ctx.project_id}:unlock_recipes"
-			adv_json: JsonDict = {
-				"criteria": {"requirement": {"trigger": "minecraft:inventory_changed"}},
-				"rewards": {"function": f"{Mem.ctx.project_id}:advancements/unlock_recipes"}
-			}
-			Mem.ctx.data[adv_path] = set_json_encoder(Advancement(adv_json), max_level=-1)
+		# Every ingredient with the recipes it takes part in
+		ingredients: dict[str, set[str]] = {}
+		for recipe_name, _ in self.vanilla_generated_recipes:
+			recipe: JsonDict = Mem.ctx.data[ns].recipes[recipe_name].data
+			for ingr_str in Ingr.get_ingredients_from_vanilla_recipe(recipe):
+				ingredients.setdefault(ingr_str, set()).add(recipe_name)
 
-			# Write the function that will unlock the recipes
-			content = f"""
+		adv_json: JsonDict = {
+			"criteria": {"requirement": {"trigger": "minecraft:inventory_changed"}},
+			"rewards": {"function": f"{ns}:advancements/unlock_recipes"}
+		}
+		Mem.ctx.data[f"{ns}:unlock_recipes"] = set_json_encoder(Advancement(adv_json), max_level=-1)
+
+		content: str = f"""
 # Revoke advancement
-advancement revoke @s only {Mem.ctx.project_id}:unlock_recipes
+advancement revoke @s only {ns}:unlock_recipes
 
 ## For each ingredient in inventory, unlock the recipes
 """
-			# Add ingredients
-			for ingr, recipes in ingredients.items():
-				recipes_list: list[str] = sorted(recipes)
-				content += (
-					f"# {ingr}\nscoreboard players set #success {Mem.ctx.project_id}.data 0\n"
-					f"execute store success score #success {Mem.ctx.project_id}.data if items entity @s container.* {ingr}\n"
-				)
-				for recipe_path in recipes_list:
-					content += (
-						f"execute if score #success {Mem.ctx.project_id}.data matches 1 "
-						f"run recipe give @s {Mem.ctx.project_id}:{recipe_path}\n"
-					)
-				content += "\n"
+		for ingr, recipes in ingredients.items():
+			content += (
+				f"# {ingr}\nscoreboard players set #success {ns}.data 0\n"
+				f"execute store success score #success {ns}.data if items entity @s container.* {ingr}\n"
+			)
+			content += "".join(
+				f"execute if score #success {ns}.data matches 1 run recipe give @s {ns}:{recipe_path}\n"
+				for recipe_path in sorted(recipes)
+			)
+			content += "\n"
 
-			# Add result items
-			content += "## Add result items\n"
-			for recipe_name, item in handler.vanilla_generated_recipes:
-				content += (
-					f"""execute if items entity @s container.* *[custom_data~{{"{Mem.ctx.project_id}": {{"{item}":true}} }}] """
-					f"run recipe give @s {Mem.ctx.project_id}:{recipe_name}\n"
-				)
-
-			write_function(f"{Mem.ctx.project_id}:advancements/unlock_recipes", content)
+		content += "## Add result items\n"
+		for recipe_name, item in self.vanilla_generated_recipes:
+			content += (
+				f"""execute if items entity @s container.* *[custom_data~{{"{ns}": {{"{item}":true}} }}] """
+				f"run recipe give @s {ns}:{recipe_name}\n"
+			)
+		write_function(f"{ns}:advancements/unlock_recipes", content)
 
 	def vanilla_shapeless_recipe(self, recipe: CraftingShapelessRecipe, item: str) -> JsonDict:
 		"""Generate a vanilla shapeless recipe.

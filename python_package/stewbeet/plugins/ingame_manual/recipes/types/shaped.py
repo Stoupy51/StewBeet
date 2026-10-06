@@ -136,30 +136,18 @@ class ShapedRenderer(CraftRenderer):
 		output_filename = output_name or name
 		result_texture, result_mask = r.images.load_result_texture(name, craft)
 
-		shape: list[str] = craft["shape"]
-		if len(shape) == 1 and len(shape[0]) == 3:
-			shape = ["   ", shape[0], "   "]
-		elif len(shape) == 3 and all(len(shape_line) == 1 for shape_line in shape):
-			shape = [" " + line + " " for line in shape]
-
+		shape: list[str] = self.centred_shape(craft["shape"])
 		shaped_size = max(2, max(len(shape), len(shape[0])))
 		template = Image.open(f"{TEMPLATES_PATH}/shaped_{shaped_size}x{shaped_size}.png")
 		r.glyphs.add_provider(page_font, f"{r.config.project_id}:font/page/{output_filename}.png", ascent=0 if not output_name else 6, height=60)
 
-		STARTING_PIXEL = (4, 4)
-		CASE_OFFSETS = (4, 4)
-		for i, row in enumerate(shape):
-			for j, symbol in enumerate(row):
-				if symbol != " ":
-					ingredient = Ingr(craft["ingredients"][symbol])
-					item = ingredient.to_id() if ingredient.get("components") else ingredient["item"]
-					item = item.replace(":", "/")
-					item_texture = r.images.load_square_texture(item)
-					coords = (
-						j * (SQUARE_SIZE + CASE_OFFSETS[0]) + STARTING_PIXEL[0],
-						i * (SQUARE_SIZE + CASE_OFFSETS[1]) + STARTING_PIXEL[1],
-					)
-					template.paste(item_texture, coords, item_texture.convert("RGBA").split()[3])
+		# Each ingredient in its square, 4 pixels from the edge and 4 apart
+		cells = ((i, j, symbol) for i, row in enumerate(shape) for j, symbol in enumerate(row) if symbol != " ")
+		for i, j, symbol in cells:
+			ingredient = Ingr(craft["ingredients"][symbol])
+			item: str = (ingredient.to_id() if ingredient.get("components") else ingredient["item"]).replace(":", "/")
+			item_texture = r.images.load_square_texture(item)
+			template.paste(item_texture, (j * (SQUARE_SIZE + 4) + 4, i * (SQUARE_SIZE + 4) + 4), item_texture.convert("RGBA").split()[3])
 
 		coords = (148, 40) if shaped_size == 3 else (118, 25)
 		template.paste(result_texture, coords, result_mask)
@@ -167,6 +155,19 @@ class ShapedRenderer(CraftRenderer):
 			count_img = r.images.image_count(craft["result_count"])
 			template.paste(count_img, [x + 2 for x in coords], count_img)  # pyright: ignore[reportArgumentType]
 		template.save(f"{r.config.font_cache_path}/page/{output_filename}.png")
+
+	@staticmethod
+	def centred_shape(shape: list[str]) -> list[str]:
+		""" A single row or column of three, centred in a 3x3 grid, any other shape as it is.
+
+		>>> ShapedRenderer.centred_shape(["AAA"]), ShapedRenderer.centred_shape(["A", "B", "C"])
+		(['   ', 'AAA', '   '], [' A ', ' B ', ' C '])
+		"""
+		if len(shape) == 1 and len(shape[0]) == 3:
+			return ["   ", shape[0], "   "]
+		if len(shape) == 3 and all(len(shape_line) == 1 for shape_line in shape):
+			return [" " + line + " " for line in shape]
+		return shape
 
 
 register_craft_renderer(ShapedRenderer())

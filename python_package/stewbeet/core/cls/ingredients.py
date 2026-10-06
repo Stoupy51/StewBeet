@@ -113,21 +113,23 @@ class Ingr(dict[str, Any]):
 				return self[k]
 
 		custom_data: JsonDict = self["components"]["minecraft:custom_data"]
-		namespace: str = ""
-		id: str = ""
-		for cd_ns, cd_data in custom_data.items():
-			if isinstance(cd_data, dict) and cd_data:
-				cd_data = cast(JsonDict, cd_data)
-				first_value = next(iter(cd_data.values()))
-				if isinstance(first_value, bool):
-					namespace = cd_ns
-					id = next(iter(cd_data.keys()))
-					break
+		namespace, id = self.custom_data_id(custom_data)
 		if not namespace:
 			stp.error(f"No namespace found in custom data: {custom_data}, ingredient: {self}")
-		if add_namespace:
-			return namespace + ":" + id
-		return id
+		return namespace + ":" + id if add_namespace else id
+
+	@staticmethod
+	def custom_data_id(custom_data: JsonDict) -> tuple[str, str]:
+		""" The namespace and id a custom item names itself by in its custom data, as `{namespace: {id: true}}`, or two empty strings.
+
+		>>> Ingr.custom_data_id({"smithed": {"ignore": {}}, "iyc": {"adamantium_ingot": True}})
+		('iyc', 'adamantium_ingot')
+		"""
+		return next((
+			(cd_ns, next(iter(cast(JsonDict, cd_data))))
+			for cd_ns, cd_data in custom_data.items()
+			if isinstance(cd_data, dict) and cd_data and isinstance(next(iter(cast(JsonDict, cd_data).values())), bool)
+		), ("", ""))
 
 	def to_name(self) -> str:
 		""" Get the name of the ingredient, ex: "Stick" or "Adamantium Ingot" """
@@ -175,39 +177,20 @@ class Ingr(dict[str, Any]):
 		if ns == "minecraft":
 			return Ingr({id_key: id, "count": 1})
 
-		# Get from internal definitions
+		# An item of the project, or one the external definitions describe
 		from .item import Item
-		if ns == Mem.ctx.project_id:
-			item_data = Item.from_id(id)
-			result = Ingr({id_key: item_data.base_item, "count": 1})
-
-			# Add components
-			for k, v in item_data.components.items():
-				if result.get("components") is None:
-					result["components"] = {}
-				if k.startswith("!"):
-					result["components"][f"!minecraft:{k[1:]}"] = {}
-				else:
-					result["components"][f"minecraft:{k}"] = v
-			return result
-
-		# External definitions
-		if Mem.external_definitions.get(ingr_id):
-			item_data = Item.from_id(ingr_id)
-			result = Ingr({id_key: item_data.base_item, "count": 1})
-
-			# Add components
-			for k, v in item_data.components.items():
-				if result.get("components") is None:
-					result["components"] = {}
-				if k.startswith("!"):
-					result["components"][f"!minecraft:{k[1:]}"] = {}
-				else:
-					result["components"][f"minecraft:{k}"] = v
-			return result
-
-		stp.error(f"External item '{ingr_id}' not found in the external definitions")
-		return Ingr({})
+		if ns != Mem.ctx.project_id and not Mem.external_definitions.get(ingr_id):
+			stp.error(f"External item '{ingr_id}' not found in the external definitions")
+			return Ingr({})
+		item_data = Item.from_id(id if ns == Mem.ctx.project_id else ingr_id)
+		result = Ingr({id_key: item_data.base_item, "count": 1})
+		components: JsonDict = {
+			f"!minecraft:{k[1:]}" if k.startswith("!") else f"minecraft:{k}": {} if k.startswith("!") else v
+			for k, v in item_data.components.items()
+		}
+		if components:
+			result["components"] = components
+		return result
 
 	def to_predicate(self, **kwargs: Any) -> Ingr:
 		""" Get the predicate representation of the ingredient (for functions)

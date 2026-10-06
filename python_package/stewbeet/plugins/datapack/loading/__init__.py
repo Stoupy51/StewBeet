@@ -64,30 +64,13 @@ f"""
 execute unless score #{ctx.project_id}.loaded load.status matches 1 run function {ctx.project_id}:v{ctx.project_version}/load/secondary
 """)
 
-	# Confirm load
-	items_storage = ""  # Storage representation of every item in the definitions
+	# Confirm load, with the storage representation of every item in the definitions
+	items_storage: str = ""
 	if Mem.definitions and ctx.meta.get("stewbeet", {}).get("items_storage", True):
-		items_storage += f"\n# Items storage\ndata modify storage {ctx.project_id}:items all set value {{}}\n"
-		for item in Mem.definitions:
-			obj = Item.from_id(item)
-
-			# Prepare storage data with item_model component in first
-			mc_data: JsonDict = {"id": obj.base_item, "count": 1, "components": {"minecraft:item_model": ""}}
-			for k, v in obj.components.items():
-
-				# Add 'minecraft:' if missing
-				if ":" not in k:
-					k = f"!minecraft:{k[1:]}" if k.startswith("!") else f"minecraft:{k}"
-
-				# Copy component
-				mc_data["components"][k] = v
-
-			# If no item_model, remove it
-			if mc_data["components"]["minecraft:item_model"] == "":
-				del mc_data["components"]["minecraft:item_model"]
-
-			# Append to the storage definitions, json_dump adds
-			items_storage += f"data modify storage {ctx.project_id}:items all.{item} set value " + stp.json_dump(mc_data, max_level = 0)
+		items_storage = f"\n# Items storage\ndata modify storage {ctx.project_id}:items all set value {{}}\n" + "".join(
+			f"data modify storage {ctx.project_id}:items all.{item} set value " + stp.json_dump(storage_data(Item.from_id(item)), max_level = 0)
+			for item in Mem.definitions
+		)
 
 	# Write the loading tellraw and score, along with the final dataset
 	project_name = ctx.project_name or ctx.project_id
@@ -100,4 +83,14 @@ scoreboard players set #{ctx.project_id}.loaded load.status 1
 	# Write the items storage function separately to avoid having a huge load function
 	if items_storage:
 		write_versioned_function("load/set_items_storage", items_storage)
+
+
+def storage_data(obj: Item) -> JsonDict:
+	""" An item as the items storage holds it, every component namespaced and its item model first when it has one. """
+	components: JsonDict = {"minecraft:item_model": ""}
+	for k, v in obj.components.items():
+		components[k if ":" in k else f"!minecraft:{k[1:]}" if k.startswith("!") else f"minecraft:{k}"] = v
+	if components["minecraft:item_model"] == "":
+		del components["minecraft:item_model"]
+	return {"id": obj.base_item, "count": 1, "components": components}
 

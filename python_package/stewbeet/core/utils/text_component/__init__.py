@@ -9,6 +9,7 @@ from beet.core.utils import TextComponent as TextComponent
 
 # Every name these modules expose stays reachable from `core.utils.text_component`
 from .convert import (
+	components_name as components_name,
 	item_id_to_name as item_id_to_name,
 	item_id_to_text_component as item_id_to_text_component,
 	text_component_to_str as text_component_to_str,
@@ -17,7 +18,9 @@ from .scan import (
 	CLOSERS as CLOSERS,
 	Replacement as Replacement,
 	apply_replacements as apply_replacements,
+	closing_brace as closing_brace,
 	find_enclosing_object as find_enclosing_object,
 	iter_data_text_files as iter_data_text_files,
+	opening_brace as opening_brace,
 )
 

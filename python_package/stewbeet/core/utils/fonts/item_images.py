@@ -25,6 +25,7 @@ from stouputils.typing import JsonDict
 
 from ...__memory__ import Mem
 from ...cls.item import Item
+from ...cls.recipe import RecipeBase
 from ...constants import (
 	DOWNLOAD_VANILLA_ASSETS_RAW,
 	DOWNLOAD_VANILLA_ASSETS_SOURCE,
@@ -125,23 +126,25 @@ def download_vanilla_textures(path: str, used_vanilla_items: set[str], cache_ass
 
 def collect_used_vanilla_items() -> set[str]:
 	""" Collect all vanilla items referenced in recipes across all definitions. """
-	used_vanilla_items: set[str] = set()
-	for item in Mem.definitions:
-		obj = Item.from_id(item)
-		for recipe in obj.recipes:
-			ingredients = []
-			if recipe.get("ingredients"):
-				ingredients = recipe["ingredients"]
-				if isinstance(ingredients, dict):
-					ingredients = cast(list[JsonDict], ingredients.values())
-			elif recipe.get("ingredient"):
-				ingredients = [recipe["ingredient"]]
-			for ingredient in ingredients:
-				if "item" in ingredient:
-					used_vanilla_items.add(ingredient["item"].split(":")[1])
-			if recipe.get("result") and recipe["result"].get("item"):
-				used_vanilla_items.add(recipe["result"]["item"].split(":")[1])
-	return used_vanilla_items
+	return {
+		item.split(":")[1]
+		for definition in Mem.definitions
+		for recipe in Item.from_id(definition).recipes
+		for item in recipe_items(recipe)
+	}
+
+
+def recipe_items(recipe: RecipeBase) -> list[str]:
+	""" The item ids a recipe names, its ingredients and its result, tags left out. """
+	ingredients: list[JsonDict] = []
+	if recipe.get("ingredients"):
+		listed = recipe["ingredients"]
+		ingredients = list(cast(dict[str, JsonDict], listed).values()) if isinstance(listed, dict) else listed
+	elif recipe.get("ingredient"):
+		ingredients = [recipe["ingredient"]]
+	result: JsonDict = recipe.get("result") or {}
+	named: list[str] = [ingredient["item"] for ingredient in ingredients if "item" in ingredient]
+	return named + ([result["item"]] if result.get("item") else [])
 
 
 # Project item rendering
@@ -216,25 +219,7 @@ def run_model_resolver(for_model_resolver: dict[str, str]) -> None:
 					super().resolve_altas(key, Atlas({"sources": [source]}))
 
 			def apply_palette(self, texture: Image.Image, palette: Image.Image, color_palette: Image.Image) -> Image.Image:
-				texture = texture.convert("RGBA")
-				palette = palette.convert("RGB")
-				color_palette = color_palette.convert("RGB")
-				pal_width: int = palette.width
-				pal_pixels: list[tuple[int, int, int]] = list(palette.getdata())  # pyright: ignore[reportArgumentType, reportUnknownVariableType]
-				col_pixels: list[tuple[int, int, int]] = list(color_palette.getdata())  # pyright: ignore[reportArgumentType, reportUnknownVariableType]
-				mapping: dict[tuple[int, int, int], tuple[int, int, int]] = {}
-				for i in range(pal_width):  # column-major like upstream, first match wins
-					for j in range(palette.height):
-						src: tuple[int, int, int] = pal_pixels[j * pal_width + i]
-						if src not in mapping:
-							mapping[src] = col_pixels[j * color_palette.width + i]
-				tex_pixels: list[tuple[int, int, int, int]] = list(texture.getdata())  # pyright: ignore[reportArgumentType, reportUnknownVariableType]
-				new_image = Image.new("RGBA", texture.size)
-				new_image.putdata([
-					(*new_color, pixel[3]) if (new_color := mapping.get(pixel[:3])) is not None else pixel
-					for pixel in tex_pixels
-				])
-				return new_image
+				return recolored(texture.convert("RGBA"), palette_mapping(palette.convert("RGB"), color_palette.convert("RGB")))
 
 		render = FastPaletteRender(Mem.ctx)  # pyright: ignore[reportCallIssue]
 		for rp_path, dst_path in for_model_resolver.items():
@@ -243,6 +228,32 @@ def run_model_resolver(for_model_resolver: dict[str, str]) -> None:
 
 	if any_atlas_used:
 		del Mem.ctx.assets["minecraft"].atlases["temporary_stewbeet"]
+
+
+def palette_mapping(palette: Image.Image, color_palette: Image.Image) -> dict[tuple[int, int, int], tuple[int, int, int]]:
+	""" Each RGB colour of a palette to the one at the same place in the colour palette.
+
+	Read column-major with the first match winning, as model_resolver reads it.
+	"""
+	pal_pixels: list[tuple[int, int, int]] = list(palette.getdata())  # pyright: ignore[reportArgumentType, reportUnknownVariableType]
+	col_pixels: list[tuple[int, int, int]] = list(color_palette.getdata())  # pyright: ignore[reportArgumentType, reportUnknownVariableType]
+	mapping: dict[tuple[int, int, int], tuple[int, int, int]] = {}
+	for i in range(palette.width):
+		for j in range(palette.height):
+			if pal_pixels[j * palette.width + i] not in mapping:
+				mapping[pal_pixels[j * palette.width + i]] = col_pixels[j * color_palette.width + i]
+	return mapping
+
+
+def recolored(texture: Image.Image, mapping: dict[tuple[int, int, int], tuple[int, int, int]]) -> Image.Image:
+	""" An RGBA texture with every colour the mapping names replaced, alpha kept. """
+	tex_pixels: list[tuple[int, int, int, int]] = list(texture.getdata())  # pyright: ignore[reportArgumentType, reportUnknownVariableType]
+	new_image = Image.new("RGBA", texture.size)
+	new_image.putdata([
+		(*new_color, pixel[3]) if (new_color := mapping.get(pixel[:3])) is not None else pixel
+		for pixel in tex_pixels
+	])
+	return new_image
 
 
 def copy_painting_textures(path: str, ns: str, cache_assets: bool) -> None:
@@ -321,21 +332,24 @@ def ensure_item_images(item_ids: Iterable[str], cache_assets: bool = True) -> di
 		os.makedirs(f"{path}/minecraft", exist_ok=True)
 		download_vanilla_textures(path, vanilla, cache_assets)
 
-	# Everything else must already be on disk, in the renders cache or among the project textures
+	return {item: image for item in qualified if (image := image_on_disk(item, ns)) is not None}
+
+
+def image_on_disk(item: str, ns: str) -> str | None:
+	""" Where the PNG of a qualified item id is, in the renders cache or else, for another pack's item, among the project textures.
+
+	Warns, naming every place looked at, when it is in none of them.
+	"""
+	namespace, name = item.split(":", 1)
 	textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
-	resolved: dict[str, str] = {}
-	for item in qualified:
-		namespace, name = item.split(":", 1)
-		candidates: list[str] = [item_image_path(item)]
-		if textures_folder and namespace not in (ns, "minecraft"):
-			candidates.append(f"{stp.clean_path(textures_folder)}/{namespace}/{name}.png")
-		image_path: str | None = next((candidate for candidate in candidates if os.path.exists(candidate)), None)
-		if image_path:
-			resolved[item] = image_path
-		else:
-			expected: str = "' or '".join(stp.relative_path(candidate) for candidate in candidates)
-			stp.warning(f"No image found for '{item}', expected it at '{expected}'")
-	return resolved
+	candidates: list[str] = [item_image_path(item)]
+	if textures_folder and namespace not in (ns, "minecraft"):
+		candidates.append(f"{stp.clean_path(textures_folder)}/{namespace}/{name}.png")
+	image_path: str | None = next((candidate for candidate in candidates if os.path.exists(candidate)), None)
+	if image_path is None:
+		expected: str = "' or '".join(stp.relative_path(candidate) for candidate in candidates)
+		stp.warning(f"No image found for '{item}', expected it at '{expected}'")
+	return image_path
 
 
 def resolve_item_image(item_id: str, cache_assets: bool = True) -> str | None:

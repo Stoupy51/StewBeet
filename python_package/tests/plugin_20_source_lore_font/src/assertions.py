@@ -9,6 +9,7 @@ import colorsys
 
 from beet import Context, Texture
 from PIL import Image, ImageChops
+from stouputils.typing import JsonDict
 
 from stewbeet import Item
 from stewbeet.plugins.initialize.project_images import find_pack_png, find_tooltip_png
@@ -65,6 +66,16 @@ def beet_default(ctx: Context):
 	# The lore was attached to the item, which is what makes last_final generate the font
 	assert source_lore in Item.from_id("branded_item").components["lore"], "the source lore must be attached to the item"
 
+	providers: list[JsonDict] = check_font(ctx, logo_path)
+	check_atlas(ctx, logo_path, providers)
+	check_color_setting(ctx, logo_path)
+
+
+def check_font(ctx: Context, logo_path: str) -> list[JsonDict]:
+	""" The tooltip font and its textures, returning its providers. """
+	ns: str = ctx.project_id
+	font_id: str = f"{ns}:{TOOLTIP_FONT}"
+
 	# The font was generated with the three providers of the packaged template
 	assert TOOLTIP_FONT in ctx.assets[ns].fonts, f"last_final must generate the '{font_id}' font"
 	providers = ctx.assets[ns].fonts[TOOLTIP_FONT].data["providers"]
@@ -90,6 +101,13 @@ def beet_default(ctx: Context):
 	icon_texture: Texture = ctx.assets[ns].textures[ICON_TEXTURE]
 	assert ImageChops.difference(icon_texture.image.convert("RGBA"), logo).getbbox() is None, \
 		"the logo glyph must be the pack.png (only images wider than 256px get resized)"
+	return providers
+
+
+def check_atlas(ctx: Context, logo_path: str, providers: list[JsonDict]) -> None:
+	""" The character atlas, recolored towards the logo without losing its gradient, its glyph shapes or its baseline. """
+	ns: str = ctx.project_id
+	logo: Image.Image = Image.open(logo_path).convert("RGBA")
 
 	# The dominant color ignores gray and mostly-transparent pixels
 	assert get_dominant_color(logo) == LOGO_COLOR, get_dominant_color(logo)
@@ -105,12 +123,11 @@ def beet_default(ctx: Context):
 
 	# Every letter of the packaged atlas shares one baseline, since a bitmap provider has a single ascent
 	# and glyphs drawn at different heights inside their 8x8 cell would render one pixel off from each other.
-	letter_extents: set[tuple[int, int]] = set()
-	for row, chars in enumerate(providers[1]["chars"]):
-		for column, char in enumerate(chars):
-			box = packaged.crop((column * 8, row * 8, column * 8 + 8, row * 8 + 8)).getbbox() if char.isalpha() else None
-			if box is not None:
-				letter_extents.add((box[1], box[3]))
+	boxes = (
+		packaged.crop((column * 8, row * 8, column * 8 + 8, row * 8 + 8)).getbbox()
+		for row, chars in enumerate(providers[1]["chars"]) for column, char in enumerate(chars) if char.isalpha()
+	)
+	letter_extents: set[tuple[int, int]] = {(box[1], box[3]) for box in boxes if box is not None}
 	assert letter_extents == {(2, 7)}, f"every letter glyph must sit at y=2..7 in its cell, got {sorted(letter_extents)}"
 
 	# The recolor moved the hue onto the logo, and did NOT flatten the gradient
@@ -129,7 +146,9 @@ def beet_default(ctx: Context):
 	assert [pixel[3] for pixel in get_pixels(atlas)] == [pixel[3] for pixel in get_pixels(packaged)], \
 		"the recolor must not touch the alpha channel"
 
-	# Source_lore_color accepts a color, a channel list, or disables the recolor
+
+def check_color_setting(ctx: Context, logo_path: str) -> None:
+	""" source_lore_color accepts a color, a channel list, or disables the recolor. """
 	stewbeet = ctx.meta["stewbeet"]
 	try:
 		assert resolve_source_lore_color(logo_path) == LOGO_COLOR, "the configured 'auto' must follow the logo"

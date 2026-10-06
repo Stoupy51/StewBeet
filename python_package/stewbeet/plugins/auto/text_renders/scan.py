@@ -91,32 +91,29 @@ def top_level_search(node: str, pattern: re.Pattern[str]) -> re.Match[str] | Non
 	'4'
 	"""
 	depth: int = 0
-	quote: str | None = None
 	index: int = 0
 	while index < len(node):
-		char: str = node[index]
-
-		# Inside a string: nothing counts until it closes
-		if quote is not None:
-			if char == "\\":
-				index += 2
-				continue
-			if char == quote:
-				quote = None
-			index += 1
-			continue
-
 		# The match is attempted before the quote handling, since a key starts with one
 		if depth == 1 and (match := pattern.match(node, index)) is not None:
 			return match
-		if char in "\"'":
-			quote = char
-		elif char == "{":
-			depth += 1
-		elif char == "}":
-			depth -= 1
+		if node[index] in "\"'":
+			index = after_string(node, index)
+			continue
+		depth += {"{": 1, "}": -1}.get(node[index], 0)
 		index += 1
 	return None
+
+
+def after_string(text: str, opening: int) -> int:
+	""" Index just past the string literal whose quote is at `opening`, escapes included.
+
+	>>> after_string("'a\\\\'b' + c", 0)
+	6
+	"""
+	index: int = opening + 1
+	while index < len(text) and text[index] != text[opening]:
+		index += 2 if text[index] == "\\" else 1
+	return index + 1
 
 
 def widen_to_comma(string: str, start: int, end: int) -> tuple[int, int]:

@@ -154,8 +154,8 @@ class Analyzer:
 	def external(fqn: str) -> Module | None:
 		""" Parse a module from another distribution, so its exports read like a local one's.
 
-		Returns None for anything without Python source to read, such as a C extension, leaving
-		the caller to fall back on the interpreter.
+		Returns None for anything without Python source to read,
+		such as a C extension, leaving the caller to fall back on the interpreter.
 		"""
 		if fqn in EXTERNAL_CACHE:
 			return EXTERNAL_CACHE[fqn]
@@ -220,13 +220,12 @@ class Renderer:
 	def relative(target: str, package: str) -> str:
 		""" Render an import target as ruff would sort it, relative for anything inside the package.
 
-		Examples:
-			>>> Renderer.relative("stewbeet.core.constants", "stewbeet.core")
-			'.constants'
-			>>> Renderer.relative("stewbeet.core.constants", "stewbeet.core.definitions_helper")
-			'..constants'
-			>>> Renderer.relative("beet", "stewbeet")
-			'beet'
+		>>> Renderer.relative("stewbeet.core.constants", "stewbeet.core")
+		'.constants'
+		>>> Renderer.relative("stewbeet.core.constants", "stewbeet.core.definitions_helper")
+		'..constants'
+		>>> Renderer.relative("beet", "stewbeet")
+		'beet'
 		"""
 		if not target.startswith(f"{ROOT.name}."):
 			return target
@@ -262,18 +261,23 @@ class Renderer:
 			if isinstance(node, ast.ImportFrom) and node.module == "__future__"
 		]
 		if not futures:
-			if any(line.strip() == "# Imports" for line in lines[point:]):
-				point = next(index for index in range(point, len(lines)) if lines[index].strip() == "# Imports")
-			else:
-				while point < len(lines) and not lines[point].strip():
-					point += 1
+			# Above the "# Imports" banner when there is one, else on the first line holding something
+			banner: int | None = next((index for index in range(point, len(lines)) if lines[index].strip() == "# Imports"), None)
+			point = banner if banner is not None else Renderer.next_written(lines, point)
 			return point, point, [*MARKER, ""]
 
 		start: int = max(point, max(futures))
-		end: int = start
-		while end < len(lines) and not lines[end].strip():
-			end += 1
+		end: int = Renderer.next_written(lines, start)
 		return start, end, ["", *MARKER, *[""] * max(end - start, 1)]
+
+	@staticmethod
+	def next_written(lines: list[str], start: int) -> int:
+		""" Index of the first line from start that is not blank, or the number of lines when all are.
+
+		>>> Renderer.next_written(["a", "", " ", "b"], 1), Renderer.next_written(["", ""], 0)
+		(3, 2)
+		"""
+		return next((index for index in range(start, len(lines)) if lines[index].strip()), len(lines))
 
 
 class Syncer:
@@ -294,8 +298,7 @@ class Syncer:
 		newline: str = "\r\n" if "\r\n" in original else "\n"
 		lines: list[str] = original.replace("\r\n", "\n").split("\n")
 
-		# Two targets can export the same name, so the one isort sorts last keeps it, which is the
-		# module a star import used to leave standing. Third party blocks sort before local ones.
+		# Two targets can export the same name, and the one isort sorts last keeps it. Third party blocks sort before local ones.
 		owner: dict[str, str] = {}
 		for target in sorted(module.reexports, key=lambda name: (name.startswith(f"{ROOT.name}."), name)):
 			owner.update(dict.fromkeys(Analyzer.exports_of(target, modules), target))
@@ -320,8 +323,8 @@ class Syncer:
 	def collisions(modules: dict[str, Module]) -> list[str]:
 		""" Report submodules whose name shadows a name their own package binds.
 
-		Such a module cannot be deferred: the import system overwrites the unresolved binding with
-		the module object, so the package ends up exposing a module where a function is expected.
+		Such a module cannot be deferred: the import system overwrites the unresolved binding with the module object,
+		so the package ends up exposing a module where a function is expected.
 		"""
 		problems: list[str] = []
 		for fqn, module in modules.items():
@@ -335,8 +338,8 @@ class Syncer:
 	def unexported(modules: dict[str, Module]) -> list[str]:
 		""" Report modules no package re-exports, so a new one is not silently left out of the API.
 
-		Packages driving their exports through __all__ manage their own children, and the subtrees
-		listed in INTERNAL are reached through their own import path rather than the flat namespace.
+		Packages driving their exports through __all__ manage their own children,
+		and the subtrees listed in INTERNAL are reached through their own import path rather than the flat namespace.
 		"""
 		reexported: set[str] = {target for module in modules.values() for target in module.reexports}
 		forgotten: list[str] = []
@@ -362,27 +365,27 @@ def main() -> int:
 	for problem in problems:
 		print(f"error: {problem}")
 
-	changed: list[str] = []
-	for fqn, module in modules.items():
-		updated: str | None = Syncer.sync(module, modules)
-		if updated is not None:
-			changed.append(fqn)
-			if not check_only:
-				module.path.write_text(updated, encoding="utf-8", newline="")
+	updates: dict[str, str] = {
+		fqn: updated for fqn, module in modules.items() if (updated := Syncer.sync(module, modules)) is not None
+	}
+	if not check_only:
+		for fqn, updated in updates.items():
+			modules[fqn].path.write_text(updated, encoding="utf-8", newline="")
 
 	for fqn in Syncer.unexported(modules):
 		print(f"note: {fqn} is not re-exported by any package, add it by hand if that is wrong")
+	print(summary(list(updates), check_only))
+	return 1 if problems or (check_only and updates) else 0
 
+
+def summary(changed: list[str], check_only: bool) -> str:
+	""" What the run did, or with `--check` the modules it would have rewritten. """
 	if check_only and changed:
-		print(f"\nerror: {len(changed)} modules are out of sync, run: python scripts/sync_api.py")
-		for fqn in changed:
-			print(f"    {fqn}")
-	elif changed:
-		print(f"\n{len(changed)} modules updated")
-	else:
-		print("\nalready in sync")
-	return 1 if problems or (check_only and changed) else 0
+		listed: str = "\n".join(f"    {fqn}" for fqn in changed)
+		return f"\nerror: {len(changed)} modules are out of sync, run: python scripts/sync_api.py\n{listed}"
+	return f"\n{len(changed)} modules updated" if changed else "\nalready in sync"
 
 
 if __name__ == "__main__":
 	raise SystemExit(main())
+

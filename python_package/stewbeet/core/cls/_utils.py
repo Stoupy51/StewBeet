@@ -8,7 +8,7 @@ from stouputils.lazy import ALWAYS_LAZY
 __lazy_modules__ = ALWAYS_LAZY
 
 from collections.abc import Mapping
-from dataclasses import dataclass, fields
+from dataclasses import asdict, dataclass, fields, is_dataclass
 from typing import Any, Self
 
 import stouputils as stp
@@ -16,6 +16,27 @@ from beet import LootTable
 from stouputils.typing import JsonDict
 
 from ..constants import NOT_COMPONENTS
+
+
+def json_ready(value: Any) -> Any:
+	""" A value in a JSON-serializable form: a loot table as its data, a dataclass or anything with `to_dict` as a dict.
+
+	Lists and dicts are converted item by item.
+
+	>>> json_ready({"a": [LootTable({"pools": []}), None]})
+	{'a': [{'pools': []}, None]}
+	"""
+	if isinstance(value, LootTable):
+		return json_ready(value.data)
+	if hasattr(value, 'to_dict'):
+		return value.to_dict()
+	if is_dataclass(value) and not isinstance(value, type):
+		return asdict(value)
+	if isinstance(value, list):
+		return [json_ready(item) for item in value] # pyright: ignore[reportUnknownVariableType]
+	if isinstance(value, dict):
+		return {k: json_ready(v) for k, v in value.items()} # pyright: ignore[reportUnknownVariableType]
+	return value
 
 
 # Class for mapping behavior
@@ -45,33 +66,12 @@ class StMapping(Mapping[str, Any]):
 		return value
 
 	def to_dict(self) -> JsonDict:
-		""" Convert the object to a dictionary for JSON serialization """
-		from dataclasses import asdict, is_dataclass
-
-		def _convert_value(value: Any) -> Any:
-			""" Recursively convert a value to a JSON-serializable form """
-			if value is None:
-				return None
-			if isinstance(value, LootTable):
-				return _convert_value(value.data)
-			if hasattr(value, 'to_dict'):
-				return value.to_dict()
-			if is_dataclass(value) and not isinstance(value, type):
-				return asdict(value)
-			if isinstance(value, list):
-				return [_convert_value(item) for item in value] # pyright: ignore[reportUnknownVariableType]
-			if isinstance(value, dict):
-				return {k: _convert_value(v) for k, v in value.items()} # pyright: ignore[reportUnknownVariableType]
-			return value
-
-		result: JsonDict = {}
-		for field_info in fields(self):
-			if field_info.metadata.get("transient"):
-				continue
-			value = getattr(self, field_info.name)
-			if value is not None:
-				result[field_info.name] = _convert_value(value)
-		return result
+		""" Convert the object to a dictionary for JSON serialization, transient and unset fields left out """
+		return {
+			field_info.name: json_ready(value)
+			for field_info in fields(self)
+			if not field_info.metadata.get("transient") and (value := getattr(self, field_info.name)) is not None
+		}
 
 	@classmethod
 	def from_dict(cls, data: JsonDict | StMapping, item_id: str) -> Self:

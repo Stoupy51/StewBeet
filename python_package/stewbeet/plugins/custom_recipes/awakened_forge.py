@@ -53,16 +53,9 @@ class AwakenedForgeRecipeHandler:
 		ingredients = ingredients[1:]
 
 		# Prepare the check line
+		predicates: list[str] = [predicate for ingredient in ingredients for predicate in self.stack_predicates(ingredient)]
 		line: str = "execute if data entity @s Item" + ExternalItem.json_dump(first_ingredient.to_predicate(count=first_count))
-		for ingredient in ingredients:
-			count: int = ingredient.get("count", 1)
-			while True:
-				this_count = count if count < 64 else 64
-				predicate: str = ExternalItem.json_dump(ingredient.to_predicate(count=this_count))
-				line += f" if entity @n[type=item,nbt={{Item:{predicate}}},distance=..1]"
-				count -= 64
-				if count <= 0:
-					break
+		line += "".join(f" if entity @n[type=item,nbt={{Item:{predicate}}},distance=..1]" for predicate in predicates)
 		line += f" run return run function {Mem.ctx.project_id}:calls/stardust/forge_recipes/{result_function}/timer"
 
 		# Write the first result function
@@ -79,16 +72,7 @@ execute if score @s stardust.forge_timer matches 1.. run particle {particle} ~ ~
 execute if score @s stardust.forge_timer matches 4 run function {Mem.ctx.project_id}:calls/stardust/forge_recipes/{result_function}/craft
 """)  # noqa: E501
 		# Write the second result function
-		kill_ingredients: str = ""
-		for ingredient in ingredients:
-			count: int = ingredient.get("count", 1)
-			while True:
-				this_count = count if count < 64 else 64
-				predicate: str = ExternalItem.json_dump(ingredient.to_predicate(count=this_count))
-				kill_ingredients += f"kill @n[type=item,nbt={{Item:{predicate}}},distance=..1]\n"
-				count -= 64
-				if count <= 0:
-					break
+		kill_ingredients: str = "".join(f"kill @n[type=item,nbt={{Item:{predicate}}},distance=..1]\n" for predicate in predicates)
 		write_function(f"{Mem.ctx.project_id}:calls/stardust/forge_recipes/{result_function}/craft", f"""
 # Visual and audio feedback
 advancement grant @a[distance=..25] only stardust:visible/adventure/use_awakened_forge
@@ -108,6 +92,17 @@ tag @e[type=item,tag=stardust.temp] remove stardust.temp
 
 		# Return check line
 		return line
+
+	@staticmethod
+	def stack_predicates(ingredient: Ingr) -> list[str]:
+		""" The item predicate of each stack, of at most 64, the ingredient's count takes. """
+		predicates: list[str] = []
+		count: int = ingredient.get("count", 1)
+		while True:
+			predicates.append(ExternalItem.json_dump(ingredient.to_predicate(count=min(count, 64))))
+			count -= 64
+			if count <= 0:
+				return predicates
 
 	def generate_recipes(self) -> None:
 		""" Generate all pulverizer recipes. """

@@ -201,43 +201,19 @@ class EquipmentsConfig:
 # UUIDs utils
 def format_attributes(attributes: dict[str, float], slot: str, attr_config: dict[str, float] | None = None) -> list[JsonDict]:
 	""" Returns generated attribute_modifiers key for an item (adds up attributes and config) """
-	# Get attributes from config
-	if attr_config is None:
-		attr_config = {}
-	attribute_modifiers: list[JsonDict] = []
-	for attribute_name, value in attr_config.items():
+	def modifier(name: str, value: float, modifier_id: str) -> JsonDict:
+		return {"type": name, "amount": value, "operation": "add_value", "slot": slot, "id": modifier_id}
 
-		# We already have a base_attack_damage
-		if attribute_name == "attack_damage":
-			value -= 1
-
-		# If not durability, we add the base attribute
-		if attribute_name != "durability":
-			if attribute_name in ["attack_damage", "attack_speed"]:
-				attribute_modifiers.append({
-					"type": attribute_name, "amount": value, "operation": "add_value", "slot": slot,
-					"id": f"minecraft:base_{attribute_name}",
-				})
-			else:
-				attribute_modifiers.append({
-					"type": attribute_name, "amount": value, "operation": "add_value", "slot": slot,
-					"id": f"{Mem.ctx.project_id}:{attribute_name}.{slot}",
-				})
-
-	# For each attribute, add it to the list if not in, else add the value
-	for attribute_name, value in attributes.items():
-		found = False
-		for attribute in attribute_modifiers:
-			if attribute["type"] == attribute_name:
-				attribute["amount"] += value
-				found = True
-				break
-		if not found:
-			attribute_modifiers.append({
-				"type": attribute_name, "amount": value, "operation": "add_value", "slot": slot,
-				"id": f"{Mem.ctx.project_id}:{attribute_name}.{slot}",
-			})
-
-	# Return the list of attributes
-	return attribute_modifiers
+	# The config's base attributes, durability aside. The player already has 1 attack damage of their own.
+	by_type: dict[str, JsonDict] = {
+		name: modifier(name, value - 1 if name == "attack_damage" else value, f"minecraft:base_{name}")
+		if name in ("attack_damage", "attack_speed") else modifier(name, value, f"{Mem.ctx.project_id}:{name}.{slot}")
+		for name, value in (attr_config or {}).items() if name != "durability"
+	}
+	for name, value in attributes.items():
+		if name in by_type:
+			by_type[name]["amount"] += value
+		else:
+			by_type[name] = modifier(name, value, f"{Mem.ctx.project_id}:{name}.{slot}")
+	return list(by_type.values())
 

@@ -60,15 +60,7 @@ def generate_custom_records(
 	assert records_folder != "", \
 		"Records folder path not found in 'ctx.meta.stewbeet.records_folder'. Please set a directory path in project configuration."
 
-	# If no records specified, search in the records folder
-	if not records or records in ["auto", "all"]:
-		songs: list[str] = [x for x in sorted(os.listdir(records_folder)) if x.endswith((".ogg",".wav"))]
-		records_to_check: dict[str, str] = { clean_record_name(file): file for file in songs }
-	else:
-		records_to_check = records  # pyright: ignore[reportAssignmentType]
-
-	# For each record, add it to the definitions
-	for record, sound in records_to_check.items():
+	for record, sound in records_to_generate(records, records_folder).items():
 		# Validate sound file format
 		if not isinstance(sound, str):  # pyright: ignore[reportUnnecessaryIsInstance]
 			stp.error(f"Error during custom record generation: sound '{sound}' is not a string, got {type(sound).__name__}")
@@ -95,29 +87,34 @@ def generate_custom_records(
 			}
 		)
 
-		# Process sound file
 		file_path: str = f"{records_folder}/{sound}"
 		if os.path.exists(file_path):
-			try:
-				# Get song duration from Ogg file
-				duration: int = round(OggVorbis(file_path).info.length)  # pyright: ignore[reportAttributeAccessIssue, reportUnknownArgumentType, reportUnknownMemberType]
-
-				# Create and write jukebox song configuration
-				json_song: JsonDict = {
-					"comparator_output": duration % 16,
-					"length_in_seconds": duration + 1,
-					"sound_event": {"sound_id":f"{Mem.ctx.project_id}:{record}"},
-					"description": {"text": item_name}
-				}
-				Mem.ctx.data[f"{Mem.ctx.project_id}:{record}"] = JukeboxSong(stp.json_dump(json_song))
-				obj.components["custom_data"]["smithed"]["dict"]["jukebox_song"] = json_song
-
-				# Create and write sound
-				record_sound: Sound = Sound(source_path=file_path, stream=True, attenuation_distance=attenuation_distance)
-				add_sound(Mem.ctx, sounds=record_sound, name=record)
-
-			except Exception as e:
-				stp.error(f"Error during custom record generation of '{file_path}', make sure it is using proper Ogg format: {e}")
+			register_record_song(obj, record, item_name, file_path, attenuation_distance)
 		else:
 			stp.warning(f"Error during custom record generation: path '{file_path}' does not exist")
+
+
+def records_to_generate(records: dict[str, str] | str | None, records_folder: str) -> dict[str, str]:
+	""" Record id to sound file: the given mapping, or every sound of the records folder for None, "auto" or "all". """
+	if records and records not in ("auto", "all"):
+		return records  # pyright: ignore[reportReturnType]
+	songs: list[str] = [x for x in sorted(os.listdir(records_folder)) if x.endswith((".ogg",".wav"))]
+	return {clean_record_name(file): file for file in songs}
+
+
+def register_record_song(obj: Item, record: str, item_name: str, file_path: str, attenuation_distance: int | None) -> None:
+	""" Write the jukebox song and the streamed sound of one record, its length read off the Ogg file. """
+	try:
+		duration: int = round(OggVorbis(file_path).info.length)  # pyright: ignore[reportAttributeAccessIssue, reportUnknownArgumentType, reportUnknownMemberType]
+		json_song: JsonDict = {
+			"comparator_output": duration % 16,
+			"length_in_seconds": duration + 1,
+			"sound_event": {"sound_id":f"{Mem.ctx.project_id}:{record}"},
+			"description": {"text": item_name}
+		}
+		Mem.ctx.data[f"{Mem.ctx.project_id}:{record}"] = JukeboxSong(stp.json_dump(json_song))
+		obj.components["custom_data"]["smithed"]["dict"]["jukebox_song"] = json_song
+		add_sound(Mem.ctx, sounds=Sound(source_path=file_path, stream=True, attenuation_distance=attenuation_distance), name=record)
+	except Exception as e:
+		stp.error(f"Error during custom record generation of '{file_path}', make sure it is using proper Ogg format: {e}")
 

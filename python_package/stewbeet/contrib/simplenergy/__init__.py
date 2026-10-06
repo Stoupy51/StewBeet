@@ -19,11 +19,15 @@ from .cables import (
 	ENERGY_CABLE_MODELS_FOLDER as ENERGY_CABLE_MODELS_FOLDER,
 	energy_cables_models as energy_cables_models,
 	item_cables_models as item_cables_models,
+	register_servo_models as register_servo_models,
+	register_servo_textures as register_servo_textures,
 	servo_mechanisms_models as servo_mechanisms_models,
 	servo_toggle as servo_toggle,
+	write_servo_functions as write_servo_functions,
 )
 from .energy_lib_calls import (
 	insert_lib_calls as insert_lib_calls,
+	write_energy_calls as write_energy_calls,
 )
 from .gui import (
 	GuiTranslation as GuiTranslation,

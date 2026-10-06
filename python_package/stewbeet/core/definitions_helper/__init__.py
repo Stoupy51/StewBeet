@@ -31,6 +31,8 @@ from .materials import (
 from .records import (
 	clean_record_name as clean_record_name,
 	generate_custom_records as generate_custom_records,
+	records_to_generate as records_to_generate,
+	register_record_song as register_record_song,
 )
 from .simplenergy import (
 	add_energy_lore_to_definitions as add_energy_lore_to_definitions,

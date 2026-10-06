@@ -35,49 +35,49 @@ def beet_default(ctx: Context):
 	# Prefix shared with the writers, so renaming the folder can't silently break discovery
 	custom_blocks_prefix: str = f"{Resource(Function, CUSTOM_BLOCKS_FOLDER)}/"
 
-	# Get ticks functions from the context
 	for ticking in ["tick", "tick_2", "second", "second_5", "minute"]:
-		custom_blocks_tick: list[str] = []
-
-		# Check for custom block functions in the datapack
-		for function_path in ctx.data.functions:
-			if function_path.startswith(custom_blocks_prefix) and "/" in function_path[len(custom_blocks_prefix):]:
-
-				# Split the path to get custom block name and function type
-				parts = function_path[len(custom_blocks_prefix):].split("/")
-				if len(parts) == 2:
-					custom_block, function_name = parts
-					if function_name == ticking:
-						custom_blocks_tick.append(custom_block)
-
-		# For each custom block, add tags when placed
-		for custom_block in custom_blocks_tick:
-			functions: BlockFunctions = BlockFunctions(custom_block)
-			write_function(functions.place_secondary,
-				f"# Add tag for loop every {ticking}\ntag @s add {ns}.{ticking}\n"
-				f"scoreboard players add #{ticking}_entities {ns}.data 1\n")
-			write_function(functions.destroy,
-				f"# Decrease the number of entities with {ticking} tag\nscoreboard players remove #{ticking}_entities {ns}.data 1\n")
-
-		# Write ticking functions
+		custom_blocks_tick: list[str] = blocks_with_function(custom_blocks_prefix, ticking)
 		if custom_blocks_tick:
-			score_check: str = f"score #{ticking}_entities {ns}.data matches 1.."
-			dispatcher: Resource[Function] = Resource(Function, f"{CUSTOM_BLOCKS_FOLDER}/{ticking}")
-			write_versioned_function(
-				ticking,
-				f"# Custom blocks {ticking} functions\n"
-				f"execute if {score_check} as @e[tag={ns}.{ticking}] at @s run function {dispatcher}",
-			)
+			write_ticking(ns, ticking, custom_blocks_tick)
 
-			content = "\n".join(
-				f"execute if entity @s[tag={ns}.{custom_block}] run function {BlockFunctions(custom_block)[ticking]}"
-				for custom_block in custom_blocks_tick
-			)
-			write_function(dispatcher, content)
 
-			# Write in stats_custom_blocks
-			write_function(f"{ns}:_stats_custom_blocks", f'scoreboard players add #{ticking}_entities {ns}.data 0', prepend=True)
-			write_function(f"{ns}:_stats_custom_blocks",
-				f'tellraw @s [{{"text":"- \'{ticking}\' tag function: ","color":"green"}},'
-				f'{{"score":{{"name":"#{ticking}_entities","objective":"{ns}.data"}},"color":"dark_green"}}]')
+def blocks_with_function(custom_blocks_prefix: str, ticking: str) -> list[str]:
+	""" The custom blocks that have a function of this name, `<custom blocks folder>/<block>/<ticking>`. """
+	blocks: list[str] = []
+	for function_path in Mem.ctx.data.functions:
+		parts: list[str] = function_path[len(custom_blocks_prefix):].split("/")
+		if function_path.startswith(custom_blocks_prefix) and len(parts) == 2 and parts[1] == ticking:
+			blocks.append(parts[0])
+	return blocks
+
+
+def write_ticking(ns: str, ticking: str, custom_blocks_tick: list[str]) -> None:
+	""" Tag each custom block running a function every `ticking` when placed, and dispatch to them from the `ticking` function. """
+	for custom_block in custom_blocks_tick:
+		functions: BlockFunctions = BlockFunctions(custom_block)
+		write_function(functions.place_secondary,
+			f"# Add tag for loop every {ticking}\ntag @s add {ns}.{ticking}\n"
+			f"scoreboard players add #{ticking}_entities {ns}.data 1\n")
+		write_function(functions.destroy,
+			f"# Decrease the number of entities with {ticking} tag\nscoreboard players remove #{ticking}_entities {ns}.data 1\n")
+
+	score_check: str = f"score #{ticking}_entities {ns}.data matches 1.."
+	dispatcher: Resource[Function] = Resource(Function, f"{CUSTOM_BLOCKS_FOLDER}/{ticking}")
+	write_versioned_function(
+		ticking,
+		f"# Custom blocks {ticking} functions\n"
+		f"execute if {score_check} as @e[tag={ns}.{ticking}] at @s run function {dispatcher}",
+	)
+
+	content = "\n".join(
+		f"execute if entity @s[tag={ns}.{custom_block}] run function {BlockFunctions(custom_block)[ticking]}"
+		for custom_block in custom_blocks_tick
+	)
+	write_function(dispatcher, content)
+
+	# Write in stats_custom_blocks
+	write_function(f"{ns}:_stats_custom_blocks", f'scoreboard players add #{ticking}_entities {ns}.data 0', prepend=True)
+	write_function(f"{ns}:_stats_custom_blocks",
+		f'tellraw @s [{{"text":"- \'{ticking}\' tag function: ","color":"green"}},'
+		f'{{"score":{{"name":"#{ticking}_entities","objective":"{ns}.data"}},"color":"dark_green"}}]')
 

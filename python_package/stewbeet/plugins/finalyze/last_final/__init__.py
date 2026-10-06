@@ -21,12 +21,11 @@ def beet_default(ctx: Context):
 	# If the source lore uses the tooltip font and there are item definitions using it, create the font
 	pack_icon_path: str = Mem.ctx.meta.get("stewbeet", {}).get("pack_icon_path", "")
 	source_lore: str = Mem.ctx.meta.get("stewbeet", {}).get("source_lore", "")
-	if source_lore and uses_font(source_lore, f"{ctx.project_id}:{TOOLTIP_FONT}"):
-		for item in Mem.definitions:
-			obj = Item.from_id(item)
-			if source_lore in obj.components.get("lore", []):
-				create_source_lore_font(pack_icon_path)
-				break
+	if (
+		source_lore and uses_font(source_lore, f"{ctx.project_id}:{TOOLTIP_FONT}")
+		and any(source_lore in Item.from_id(item).components.get("lore", []) for item in Mem.definitions)
+	):
+		create_source_lore_font(pack_icon_path)
 
 	# Add the pack icon to the output directory for datapack and resource pack
 	pack_icon = find_pack_png()
@@ -36,18 +35,19 @@ def beet_default(ctx: Context):
 		if len(all_assets) > 0:
 			Mem.ctx.assets.extra["pack.png"] = PngFile(source_path=pack_icon)
 
-	# Warn user if there are functions using macros that are missing $ in the first line,
-	# which would cause them to not be executed as expected (and the other way: $ but no macros used)
-	for func, obj in Mem.ctx.data.functions.items():
-		for i, line in enumerate(obj.text.splitlines()):
-			if line.startswith("$") and "$(" not in line:
-				stp.warning(
-					f"Function '{func}' line {i+1} starts with '$' but does not contain a macro, "
-					f"the function will not be able to execute: '{line}'"
-				)
-			elif "$(" in line and not line.startswith(("$","#")):
-				stp.warning(
-					f"Function '{func}' line {i+1} appears to use macros but does not start with '$', "
-					f"execution will not be as expected: '{line}'"
-				)
+	# A macro line missing its leading $, or a $ line using no macro, does not run as written
+	lines: list[tuple[str, int, str]] = [
+		(func, i, line) for func, obj in Mem.ctx.data.functions.items() for i, line in enumerate(obj.text.splitlines())
+	]
+	for func, i, line in lines:
+		if line.startswith("$") and "$(" not in line:
+			stp.warning(
+				f"Function '{func}' line {i+1} starts with '$' but does not contain a macro, "
+				f"the function will not be able to execute: '{line}'"
+			)
+		elif "$(" in line and not line.startswith(("$","#")):
+			stp.warning(
+				f"Function '{func}' line {i+1} appears to use macros but does not start with '$', "
+				f"execution will not be as expected: '{line}'"
+			)
 

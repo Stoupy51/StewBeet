@@ -57,46 +57,28 @@ def item_id_to_text_component(item_id: str, use_default: bool = True) -> TextCom
 	if ":" not in item_id:
 		item_id = f"{Mem.ctx.project_id}:{item_id}"
 
-	# Internal definitions
+	# The project's own definition first, then an external one
 	ns, id = item_id.split(":")
 	from ...cls.item import Item
-	if ns == Mem.ctx.project_id and id in Mem.definitions:
-		definition = Item.from_id(id)
-		components: JsonDict = definition.components
-
-		# If jukebox_playable is present, search for item_name in custom_data
-		if "jukebox_playable" in components:
-			smithed_record: JsonDict = components.get("custom_data", {}).get("smithed", {}).get("dict", {}).get("record", {})
-			possible_item_name: TextComponent = smithed_record.get("item_name", "")
-			if possible_item_name:
-				return possible_item_name
-
-		# Regular components
-		for component in ("item_name", "custom_name"):
-			if components.get(component):
-				return components[component]
-
-	# External definitions
-	if item_id in Mem.external_definitions:
-		ext_definition = Item.from_id(item_id)
-		components: JsonDict = ext_definition.components
-
-		# If jukebox_playable is present, search for item_name in custom_data
-		if "jukebox_playable" in components:
-			smithed_record: JsonDict = components.get("custom_data", {}).get("smithed", {}).get("dict", {}).get("record", {})
-			possible_item_name: TextComponent = smithed_record.get("item_name", "")
-			if possible_item_name:
-				return possible_item_name
-
-		# Regular components
-		for component in ("item_name", "custom_name"):
-			if components.get(component):
-				return components[component]
+	sources: list[str] = [id] if ns == Mem.ctx.project_id and id in Mem.definitions else []
+	sources += [item_id] if item_id in Mem.external_definitions else []
+	for source in sources:
+		if name := components_name(Item.from_id(source).components):
+			return name
 
 	# Default: prettify the id
 	if use_default:
 		return id.replace("_", " ").title()
 	return ""
+
+
+def components_name(components: JsonDict) -> TextComponent:
+	""" The name an item's components give it, a music disc's record name first, "" when they give none. """
+	if "jukebox_playable" in components:
+		smithed_record: JsonDict = components.get("custom_data", {}).get("smithed", {}).get("dict", {}).get("record", {})
+		if smithed_record.get("item_name"):
+			return smithed_record["item_name"]
+	return next((components[component] for component in ("item_name", "custom_name") if components.get(component)), "")
 
 def item_id_to_name(item_id: str) -> str:
 	""" Get the name from an item id

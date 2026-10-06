@@ -1,6 +1,6 @@
 """Category page: a clickable grid of the items in one category.
 
-Ports the v1 ``encode_page`` category branch. The grid background (item "cases") is drawn as a single 131px-tall bitmap glyph;
+The grid background (item "cases") is drawn as a single 131px-tall bitmap glyph;
 clickable per-item glyphs are overlaid on top, each linking to its item page via a deferred :class:`~..refs.PageRef`.
 """
 
@@ -14,11 +14,13 @@ __lazy_modules__ = ALWAYS_LAZY
 
 import copy
 import os
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
 from beet.core.utils import TextComponent
 from PIL import Image
+from stouputils.typing import JsonDict
 
 from ....core.utils.fonts import add_border, careful_resize
 from ..glyphs import BORDER_SIZE, MEDIUM_NONE_FONT, SMALL_NONE_FONT, VERY_SMALL_NONE_FONT
@@ -35,71 +37,70 @@ class CategoryPage(Page):
 
 	def build(self, manual: Manual) -> list[TextComponent]:
 		""" Draw the case-grid background glyph and overlay one clickable component per item. """
-		config = manual.config
-		name = self.title or self.anchor
-		file_name = name.replace(" ", "_").replace("#", "").lower()
-		simple_case = manual.simple_case
+		file_name: str = (self.title or self.anchor).replace(" ", "_").replace("#", "").lower()
+		return grid_page(manual, file_name, self.items)
 
-		page_font = manual.glyphs.allocate()
-		manual.glyphs.add_provider(page_font, f"{config.project_id}:font/category/{file_name}.png", ascent=1, height=131)
 
-		# Body starts with the manual-font base (shadow disabled for dialogs); the title is shown
-		# by the dialog itself, so it is no longer part of the body.
-		content: list[TextComponent] = []
-		content.append({"text": "", "font": config.font, "color": "white", "shadow_color": [0,0,0,0]})
-		content.append(SMALL_NONE_FONT * config.left_padding + page_font + "\n")
+def grid_page(
+	manual: Manual, file_name: str, items: list[str], decorate: Callable[[int, JsonDict], None] | None = None,
+) -> list[TextComponent]:
+	""" A page of item cases over the glyph `font/category/<file_name>.png`, each case overlaid with its item's component.
 
-		page_image = Image.new("RGBA", (256, 256), (0, 0, 0, 0))
-		x, y = 2, 2
-		line: list[TextComponent] = []
-		category_padding: list[str] = [VERY_SMALL_NONE_FONT]  # dialog-first
+	Args:
+		decorate: Called with each item's index and component before the component is laid out, to change what it shows or does.
+	"""
+	config = manual.config
+	simple_case = manual.simple_case
+	page_font = manual.glyphs.allocate()
+	manual.glyphs.add_provider(page_font, f"{config.project_id}:font/category/{file_name}.png", ascent=1, height=131)
 
-		max_items_reached = False
-		for item in self.items:
-			item_image = manual.load_item_texture(item)
-			if not config.high_resolution:
-				resized = careful_resize(item_image, 32)
-			else:
-				resized = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
-				manual.images.high_res_icon(item, item_image)
+	# The title is shown by the dialog itself, so the body starts with the manual-font base, shadow disabled
+	content: list[TextComponent] = [
+		{"text": "", "font": config.font, "color": "white", "shadow_color": [0,0,0,0]},
+		SMALL_NONE_FONT * config.left_padding + page_font + "\n",
+	]
+	page_image = Image.new("RGBA", (256, 256), (0, 0, 0, 0))
+	line: list[TextComponent] = []
+	rows: int = 0
+	for index, item in enumerate(items):
+		item_image = manual.load_item_texture(item)
+		if not config.high_resolution:
+			resized = careful_resize(item_image, 32)
+		else:
+			resized = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
+			manual.images.high_res_icon(item, item_image)
+		x, y = 2 + len(line) * simple_case.size[0], 2 + rows * simple_case.size[1]
+		page_image.paste(simple_case, (x, y))
+		page_image.paste(resized, (x + 2, y + 2), resized.convert("RGBA").split()[3])
 
-			page_image.paste(simple_case, (x, y))
-			page_image.paste(resized, (x + 2, y + 2), resized.convert("RGBA").split()[3])
-			x += simple_case.size[0]
+		component = manual.recipes.item_component(item)
+		if decorate is not None:
+			decorate(index, component)
+		if not config.high_resolution:
+			component["text"] = MEDIUM_NONE_FONT
+		line.append(component)
+		if len(line) == config.max_items_per_row:
+			content += grid_row(line, config.left_padding)
+			line = []
+			rows += 1
 
-			component = manual.recipes.item_component(item)
-			if not config.high_resolution:
-				component["text"] = MEDIUM_NONE_FONT
-			line.append(component)
+	if line:
+		if rows:
+			line.append(MEDIUM_NONE_FONT * max(0, config.max_items_per_row - len(line)))
+		content += grid_row(line, config.left_padding)
 
-			if len(line) == config.max_items_per_row:
-				max_items_reached = True
-				line.insert(0, SMALL_NONE_FONT * config.left_padding)
-				content.extend(copy.deepcopy(line))
-				content.extend(category_padding)
-				for i in range(1, len(line)):
-					selected = line[-i]
-					if isinstance(selected, dict):
-						selected["text"] = MEDIUM_NONE_FONT
-				content.extend(["\n", *line, *category_padding, "\n"])
-				line = []
-				x = 2
-				y += simple_case.size[1]
+	page_image = add_border(page_image, manual.images.get_border_color(), BORDER_SIZE)
+	os.makedirs(f"{config.font_cache_path}/category", exist_ok=True)
+	page_image.save(f"{config.font_cache_path}/category/{file_name}.png")
+	return content
 
-		if len(line) > 0:
-			if max_items_reached:
-				line.append(MEDIUM_NONE_FONT * max(0, config.max_items_per_row - len(line)))
-			line.insert(0, SMALL_NONE_FONT * config.left_padding)
-			content.extend(copy.deepcopy(line))
-			content.extend(category_padding)
-			for i in range(1, len(line)):
-				selected = line[-i]
-				if isinstance(selected, dict):
-					selected["text"] = MEDIUM_NONE_FONT
-			content.extend(["\n", *line, *category_padding, "\n"])
 
-		page_image = add_border(page_image, manual.images.get_border_color(), BORDER_SIZE)
-		os.makedirs(f"{config.font_cache_path}/category", exist_ok=True)
-		page_image.save(f"{config.font_cache_path}/category/{file_name}.png")
-		return content
+def grid_row(line: list[TextComponent], left_padding: int) -> list[TextComponent]:
+	""" One row of the grid, written twice: once with the item glyphs, then again with each clickable cell blank, laid over them. """
+	line = [SMALL_NONE_FONT * left_padding, *line]
+	shown: list[TextComponent] = copy.deepcopy(line)
+	for selected in line[1:]:
+		if isinstance(selected, dict):
+			selected["text"] = MEDIUM_NONE_FONT
+	return [*shown, VERY_SMALL_NONE_FONT, "\n", *line, VERY_SMALL_NONE_FONT, "\n"]
 

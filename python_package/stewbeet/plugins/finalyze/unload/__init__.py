@@ -194,15 +194,14 @@ function {self.ns}:v{self.version}/unload
 			),
 		}
 
-		for func in self.ctx.data.functions.values():
-			for line in func.text.splitlines():
-				# Skip macro lines (start with '$'). Their arguments are dynamic and can't be statically unloaded
-				if line.lstrip().startswith("$"):
-					continue
-				for key, (regex, callback) in regexes.items():
-					match = regex.search(line)
-					if match:
-						self.entries[key].commands.update(callback(match))
+		# A macro line, starting with '$', has dynamic arguments that cannot be statically unloaded
+		lines: list[str] = [
+			line for func in self.ctx.data.functions.values() for line in func.text.splitlines() if not line.lstrip().startswith("$")
+		]
+		for line in lines:
+			for key, (regex, callback) in regexes.items():
+				if (match := regex.search(line)) is not None:
+					self.entries[key].commands.update(callback(match))
 
 	def unload_library(self, lib: DownloadedLib) -> None:
 		""" Scan a library ZIP for unload functions and add them to the libraries entry.

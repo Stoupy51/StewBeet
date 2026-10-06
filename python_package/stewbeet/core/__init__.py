@@ -138,6 +138,8 @@ from .definitions_helper import (
 	generate_everything_about_this_material as generate_everything_about_this_material,
 	gradient_text_to_string as gradient_text_to_string,
 	rainbow_gradient_text as rainbow_gradient_text,
+	records_to_generate as records_to_generate,
+	register_record_song as register_record_song,
 	set_manual_components as set_manual_components,
 )
 from .placeholder_context import (
@@ -247,10 +249,13 @@ from .utils.text_component import (
 	Replacement as Replacement,
 	TextComponent as TextComponent,
 	apply_replacements as apply_replacements,
+	closing_brace as closing_brace,
+	components_name as components_name,
 	find_enclosing_object as find_enclosing_object,
 	item_id_to_name as item_id_to_name,
 	item_id_to_text_component as item_id_to_text_component,
 	iter_data_text_files as iter_data_text_files,
+	opening_brace as opening_brace,
 	text_component_to_str as text_component_to_str,
 )
 from .utils.versions import (

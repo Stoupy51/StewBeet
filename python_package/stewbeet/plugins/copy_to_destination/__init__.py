@@ -6,6 +6,7 @@ __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
 import contextlib
+import functools
 import hashlib
 import os
 import posixpath
@@ -225,22 +226,7 @@ def _run_copy_tasks(ctx: Context, tasks: list[CopyTask]) -> CopyReport:
 	remote_tasks: list[CopyTask] = [task for task in tasks if is_sftp_path(task.dst)]
 	hashes: dict[str, str] = {src: _file_sha1(src) for src in {t.src for t in remote_tasks} if os.path.exists(src)}
 
-	# List the remote directories once, before any thread starts, in a single round trip per directory.
-	# It keeps the sha1 cache honest: a file deleted or truncated server-side is uploaded again instead of considered up to date.
-	missing_dirs: set[str] = set()
-	listed_dirs: set[str] = set()
-	remote_sizes: dict[str, int] = {}
-	for dst in {t.dst for t in remote_tasks}:
-		remote_dir: str = posixpath.dirname(remote_path_of(dst))
-		if remote_dir in listed_dirs or remote_dir in missing_dirs:
-			continue
-		sizes: dict[str, int] | None = SftpPool.list_sizes(dst)
-		if sizes is None:
-			stp.warning(f"Remote directory '{remote_dir}' does not exist. Cannot copy to '{dst}'.")
-			missing_dirs.add(remote_dir)
-			continue
-		listed_dirs.add(remote_dir)
-		remote_sizes.update(sizes)
+	missing_dirs, remote_sizes = _list_remote_dirs({t.dst for t in remote_tasks})
 
 	def is_up_to_date(task: CopyTask) -> bool:
 		""" True when the exact same bytes are already sitting at this destination. """
@@ -252,28 +238,61 @@ def _run_copy_tasks(ctx: Context, tasks: list[CopyTask]) -> CopyReport:
 	pending_remote: list[CopyTask] = [t for t in remote_tasks if not is_up_to_date(t)]
 	report.skipped = len(remote_tasks) - len(pending_remote)
 
-	def run_task(task: CopyTask) -> tuple[str, bool]:
-		""" Returns (group, copied). """
-		if not is_sftp_path(task.dst):
-			return task.group, _copy_local(task.src, task.dst)
-
-		if posixpath.dirname(remote_path_of(task.dst)) in missing_dirs:
-			return task.group, False
-
-		SftpPool.put(task.dst, task.src)
-		if task.src in hashes:
-			uploaded[task.dst] = hashes[task.src]
-		return task.group, True
-
 	runnable: list[CopyTask] = [t for t in tasks if not is_sftp_path(t.dst)] + pending_remote
 	if not runnable:
 		return report
 
+	run_task = functools.partial(_run_task, missing_dirs=missing_dirs, hashes=hashes, uploaded=uploaded)
 	results: list[tuple[str, bool]] = stp.multithreading(run_task, runnable, max_workers=min(MAX_COPY_WORKERS, len(runnable)))
 	report.copied = {group for group, copied in results if copied}
 
 	cache.json["uploaded"] = uploaded
 	return report
+
+
+def _run_task(task: CopyTask, missing_dirs: set[str], hashes: dict[str, str], uploaded: dict[str, str]) -> tuple[str, bool]:
+	""" Copy one file, locally or over SFTP, recording the sha1 of what was uploaded.
+
+	Args:
+		missing_dirs: Remote directories that do not exist, where nothing is uploaded.
+		hashes:       Sha1 of each local source a remote destination needs.
+		uploaded:     Sha1 last sent to each remote destination, updated.
+	Returns:
+		The task's group, and whether the file was copied.
+	"""
+	if not is_sftp_path(task.dst):
+		return task.group, _copy_local(task.src, task.dst)
+	if posixpath.dirname(remote_path_of(task.dst)) in missing_dirs:
+		return task.group, False
+	SftpPool.put(task.dst, task.src)
+	if task.src in hashes:
+		uploaded[task.dst] = hashes[task.src]
+	return task.group, True
+
+
+def _list_remote_dirs(destinations: set[str]) -> tuple[set[str], dict[str, int]]:
+	""" List the remote directories once, before any thread starts, in a single round trip per directory.
+
+	It keeps the sha1 cache honest: a file deleted or truncated server-side is uploaded again instead of considered up to date.
+
+	Returns:
+		The directories that do not exist, and the size of every file in the others by remote path.
+	"""
+	missing_dirs: set[str] = set()
+	listed_dirs: set[str] = set()
+	remote_sizes: dict[str, int] = {}
+	for dst in destinations:
+		remote_dir: str = posixpath.dirname(remote_path_of(dst))
+		if remote_dir in listed_dirs or remote_dir in missing_dirs:
+			continue
+		sizes: dict[str, int] | None = SftpPool.list_sizes(dst)
+		if sizes is None:
+			stp.warning(f"Remote directory '{remote_dir}' does not exist. Cannot copy to '{dst}'.")
+			missing_dirs.add(remote_dir)
+			continue
+		listed_dirs.add(remote_dir)
+		remote_sizes.update(sizes)
+	return missing_dirs, remote_sizes
 
 
 def _copy_local(src: str, dst: str, max_retries: int = 10, delay: float = 1.0) -> bool:

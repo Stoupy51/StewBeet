@@ -106,30 +106,35 @@ def convert_list_block(block_lines: list[str], list_type: str = "") -> str:
 
 	for line in block_lines:
 		stripped = line.lstrip()
-		indent = len(line) - len(stripped)
-		item_text = re.sub(r'^(?:[a-zA-Z0-9]+\.|-|\*)\s+', '', stripped).strip()
-
-		if not level_stack:
-			level_stack.append(indent)
-			result.append(open_tag)
-		elif indent > level_stack[-1]:
-			level_stack.append(indent)
-			if result and result[-1].endswith("[/*]"):
-				result[-1] = result[-1][:-4] + open_tag
-			else:
-				result.append(open_tag)
-		elif indent < level_stack[-1]:
-			while len(level_stack) > 1 and level_stack[-1] > indent:
-				level_stack.pop()
-				result.append("[/list][/*]")
-
-		result.append(f"[*]{item_text}[/*]")
+		follow_indent(result, level_stack, len(line) - len(stripped), open_tag)
+		result.append(f"[*]{re.sub(r'^(?:[a-zA-Z0-9]+\.|-|\*)\s+', '', stripped).strip()}[/*]")
 
 	while level_stack:
 		level_stack.pop()
 		result.append("[/list][/*]" if level_stack else "[/list]")
 
 	return "\n".join(result)
+
+
+def follow_indent(result: list[str], level_stack: list[int], indent: int, open_tag: str) -> None:
+	""" Open a nested list where an item indents deeper than the last, and close those it dedents out of.
+
+	Args:
+		result:      BBCode lines so far, appended to.
+		level_stack: Indentation of each open list, outermost first, updated.
+	"""
+	if not level_stack or indent > level_stack[-1]:
+		nested: bool = bool(level_stack)
+		level_stack.append(indent)
+		if nested and result and result[-1].endswith("[/*]"):
+			result[-1] = result[-1][:-4] + open_tag
+		else:
+			result.append(open_tag)
+		return
+	while len(level_stack) > 1 and level_stack[-1] > indent:
+		level_stack.pop()
+		result.append("[/list][/*]")
+
 
 def convert_markdown_to_bbcode(markdown: str, verbose: bool = True) -> str:
 	""" Convert markdown to the bbcode PlanetMinecraft descriptions use.

@@ -166,42 +166,40 @@ class ItemPage(Page):
 		wiki_buttons: list[TextComponent] = wiki_component if is_list_of_buttons else [wiki_component]  # type: ignore[assignment, list-item]
 		for button in wiki_buttons:
 			button_value: TextComponent = button.to_dict() if isinstance(button, WikiButton) else button  # type: ignore[redundant-expr]
-			found_event: JsonDict | None = None
-			if isinstance(button_value, dict) and "click_event" in button_value:
-				found_event = cast(JsonDict, button_value["click_event"])
-			elif isinstance(button_value, list):
-				for comp in button_value:
-					if isinstance(comp, dict) and "click_event" in comp:
-						found_event = cast(JsonDict, comp["click_event"])
-						break
-			out.append(WikiButtonRender(glyph=WIKI_INFO_FONT, hover=button_value, target=found_event, is_info=True))
+			event: JsonDict | None = self.click_event_of(button_value)
+			out.append(WikiButtonRender(glyph=WIKI_INFO_FONT, hover=button_value, target=event, is_info=True))
 		return out
 
+	@staticmethod
+	def click_event_of(component: TextComponent) -> JsonDict | None:
+		""" The click event of a text component, or of the first part of one that has one. """
+		if isinstance(component, dict):
+			return cast(JsonDict, component["click_event"]) if "click_event" in component else None
+		if isinstance(component, list):
+			events = (cast(JsonDict, part["click_event"]) for part in component if isinstance(part, dict) and "click_event" in part)
+			return next(events, None)
+		return None
+
 	def apply_layout_filters(self, buttons: list[WikiButtonRender], layout: ButtonLayout) -> list[WikiButtonRender]:
-		""" Apply include/order/extra + overflow handling (ported from v1). """
+		""" Apply the layout's include, extra buttons and order, then trim to its maximum. """
 		buttons = list(buttons)
 		if layout.include is not None:
 			buttons = [b for b in buttons if layout.include(b)]
 		buttons += list(layout.extra_buttons)
 		if layout.order is not None:
 			buttons.sort(key=layout.order)
+		return self.trimmed(buttons, layout.max_buttons) if len(buttons) > layout.max_buttons else buttons
 
-		limit = layout.max_buttons
-		if len(buttons) > limit:
-			# Remove blue crafts except the last one (keep info buttons)
-			has_info = bool(buttons and buttons[0].is_info)
-			first_index = 1 if has_info else 0
-			last_blue = -1
-			for i, b in enumerate(buttons):
-				if b.blue_craft and i != first_index:
-					last_blue = i
-			if (last_blue - first_index) > 1:
-				buttons = buttons[:first_index] + buttons[last_blue:]
-			while len(buttons) > limit:
-				lowest = min(reversed(buttons), key=lambda b: b.priority)
-				buttons.remove(lowest)
-			buttons = buttons[:limit]
-		return buttons
+	@staticmethod
+	def trimmed(buttons: list[WikiButtonRender], limit: int) -> list[WikiButtonRender]:
+		""" Buttons cut down to `limit`: the blue crafts but the last one go first, info buttons kept, then the lowest priorities. """
+		first_index: int = 1 if buttons and buttons[0].is_info else 0
+		last_blue: int = max((i for i, b in enumerate(buttons) if b.blue_craft and i != first_index), default=-1)
+		if (last_blue - first_index) > 1:
+			buttons = buttons[:first_index] + buttons[last_blue:]
+		while len(buttons) > limit:
+			buttons.remove(min(reversed(buttons), key=lambda b: b.priority))
+		return buttons[:limit]
 
 	def button_to_component(self, button: WikiButtonRender) -> JsonDict:
 		""" Convert a button to its visible text component (icon + hover + optional click). """

@@ -55,7 +55,6 @@ def beet_default(ctx: Context) -> Iterator[None]:
 	# Runs on the way out, so the sniffer plugin has already emitted.
 	yield
 
-	ns: str = ctx.project_id
 	maps: dict[str, JsonDict] = {
 		path: json.loads(file.text)
 		for path, file in ctx.data.extra.items()
@@ -66,31 +65,7 @@ def beet_default(ctx: Context) -> Iterator[None]:
 	assert maps, "the sniffer plugin must emit at least one .mcfunction.map"
 
 	for path, data in maps.items():
-		# Format conformance
-		assert data["version"] == 3, f"{path}: version must be 3, got {data['version']}"
-		assert data["names"] == [], f"{path}: names must be empty for mcfunction"
-		assert "sourcesContent" not in data, f"{path}: sourcesContent is not part of the format"
-		assert data["sources"], f"{path}: a map with no sources should not have been written"
-		assert data["file"].endswith(".mcfunction"), f"{path}: file must name the generated function"
-
-		# sourceRoot climbs from the map's real on-disk directory to the project root
-		on_disk: str = os.path.join("build", str(ctx.data.name), path)
-		expected: int = len(os.path.dirname(on_disk).replace(os.sep, "/").split("/"))
-		assert data["sourceRoot"] == "/".join([".."] * expected), \
-			f"{path}: sourceRoot must climb from {os.path.dirname(on_disk)} to the project root"
-
-		# G5: never a library file
-		sources: list[str] = data["sources"]
-		for source in sources:
-			normalized: str = source.replace(os.sep, "/")
-			for marker in LIBRARY_MARKERS:
-				assert marker not in normalized, f"{path}: source '{source}' leaks library path '{marker}'"
-			assert not os.path.isabs(source), f"{path}: source '{source}' must be relative to sourceRoot"
-
-		# G2: mapped lines strictly increasing
-		mappings: str = data["mappings"]
-		decoded = decode_mappings(mappings)
-		assert list(decoded) == sorted(decoded), f"{path}: generated lines must be strictly increasing"
+		check_map_format(ctx, path, data)
 
 	# No function carries a discovery comment, because the map is its sibling A comment naming the sibling repeats the file name back
 	# and costs a line in every shipped function, so a mapped function ends on a real command and the map is found by name.
@@ -101,6 +76,42 @@ def beet_default(ctx: Context) -> Iterator[None]:
 		assert not lines[-1].startswith("## sourceMappingURL="), \
 			f"{func_path}: a map written beside the function needs no discovery comment, got {lines[-1]!r}"
 
+	check_root_mapping(ctx, maps)
+	check_archive(ctx, maps)
+
+
+def check_map_format(ctx: Context, path: str, data: JsonDict) -> None:
+	""" One map against the format, the guarantees on its sources and the order of its lines. """
+	# Format conformance
+	assert data["version"] == 3, f"{path}: version must be 3, got {data['version']}"
+	assert data["names"] == [], f"{path}: names must be empty for mcfunction"
+	assert "sourcesContent" not in data, f"{path}: sourcesContent is not part of the format"
+	assert data["sources"], f"{path}: a map with no sources should not have been written"
+	assert data["file"].endswith(".mcfunction"), f"{path}: file must name the generated function"
+
+	# sourceRoot climbs from the map's real on-disk directory to the project root
+	on_disk: str = os.path.join("build", str(ctx.data.name), path)
+	expected: int = len(os.path.dirname(on_disk).replace(os.sep, "/").split("/"))
+	assert data["sourceRoot"] == "/".join([".."] * expected), \
+		f"{path}: sourceRoot must climb from {os.path.dirname(on_disk)} to the project root"
+
+	# G5: never a library file
+	sources: list[str] = data["sources"]
+	for source in sources:
+		normalized: str = source.replace(os.sep, "/")
+		for marker in LIBRARY_MARKERS:
+			assert marker not in normalized, f"{path}: source '{source}' leaks library path '{marker}'"
+		assert not os.path.isabs(source), f"{path}: source '{source}' must be relative to sourceRoot"
+
+	# G2: mapped lines strictly increasing
+	mappings: str = data["mappings"]
+	decoded = decode_mappings(mappings)
+	assert list(decoded) == sorted(decoded), f"{path}: generated lines must be strictly increasing"
+
+
+def check_root_mapping(ctx: Context, maps: dict[str, JsonDict]) -> None:
+	""" The root function's map leads to the write_function calls of link.py that wrote it. """
+	ns: str = ctx.project_id
 	# The mapping actually lands on the write_function call in link.py
 	root_map: JsonDict = maps[f"data/{ns}/function/root.mcfunction.map"]
 	root_mappings: str = root_map["mappings"]
@@ -127,6 +138,9 @@ def beet_default(ctx: Context) -> Iterator[None]:
 	lines_hit: set[int] = {line for _, line, _ in decoded.values()}
 	assert len(lines_hit) > 1, f"root's mappings should span several source lines, got {sorted(lines_hit)}"
 
+
+def check_archive(ctx: Context, maps: dict[str, JsonDict]) -> None:
+	""" The zip the game loads carries the maps and the functions as the build directory does, with Unix line endings. """
 	# The zip the game loads carries the same thing the build directory does, which is why the emit step runs before archive:
 	# a map left out of the zip shipped to saves/<world>/datapacks is a map the debugger never sees.
 	archive: str = os.path.join("build", f"{ctx.project_name.replace(' ', '')}_datapack.zip")

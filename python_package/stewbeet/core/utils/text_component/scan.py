@@ -55,37 +55,34 @@ def find_enclosing_object(string: str, match_start: int, match_end: int) -> tupl
 	>>> find_enclosing_object('{"outer":{"text":"inner"}}', 10, 24)
 	(9, 25)
 	"""
-	# Walk backwards to find the opening brace
-	depth = 0
-	obj_start = None
-	for i in range(match_start, -1, -1):
+	obj_start: int | None = opening_brace(string, match_start)
+	if obj_start is None:
+		return None
+	obj_end: int | None = closing_brace(string, obj_start)
+	return None if obj_end is None else (obj_start, obj_end)
+
+
+def opening_brace(string: str, start: int) -> int | None:
+	""" Index of the '{' enclosing `start`, walking backwards over the objects closed before it. """
+	depth: int = 0
+	for i in range(start, -1, -1):
 		if string[i] == '}':
 			depth += 1
 		elif string[i] == '{':
 			if depth == 0:
-				obj_start = i
-				break
+				return i
 			depth -= 1
+	return None
 
-	if obj_start is None:
-		return None
 
-	# Walk forwards to find the matching closing brace
-	depth = 0
-	obj_end = None
-	for i in range(obj_start, len(string)):
-		if string[i] == '{':
-			depth += 1
-		elif string[i] == '}':
-			depth -= 1
-			if depth == 0:
-				obj_end = i + 1
-				break
-
-	if obj_end is None:
-		return None
-
-	return obj_start, obj_end
+def closing_brace(string: str, opening: int) -> int | None:
+	""" Index just past the '}' matching the '{' at `opening`. """
+	depth: int = 0
+	for i in range(opening, len(string)):
+		depth += {"{": 1, "}": -1}.get(string[i], 0)
+		if string[i] == '}' and depth == 0:
+			return i + 1
+	return None
 
 
 def apply_replacements(string: str, replacements: list[Replacement]) -> str:

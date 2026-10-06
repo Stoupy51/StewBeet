@@ -23,27 +23,19 @@ def get_result_count(item: str, ingr_to_seek: str) -> int:
 		item:         Item to check recipes for
 		ingr_to_seek: Ingredient to seek in the recipe
 	"""
-	if item and ingr_to_seek:
-		obj = Item.from_id(item)
-
-		# Get recipes with only one ingredient
-		for recipe in obj.recipes:
-			if len(recipe.get("ingredients", [])) != 1:
-				continue
-
-			# If crafting shaped, return the result count if the ingredient is the ingot item
-			if recipe["type"] == CraftingShapedRecipe.type:
-				ingredient: Ingr = next(iter(recipe["ingredients"].values()))
-				ingr_str: str = ingredient.to_id(add_namespace=False)
-				if ingr_str == ingr_to_seek:
-					return recipe["result_count"]
-
-			# If crafting shapeless, return the result count if the ingredient is the ingot item
-			elif recipe["type"] == CraftingShapelessRecipe.type:
-				ingredient: Ingr = recipe["ingredients"][0]
-				ingr_str: str = ingredient.to_id(add_namespace=False)
-				if ingr_str == ingr_to_seek:
-					return recipe["result_count"]
+	if not (item and ingr_to_seek):
+		return 9
+	# A crafting recipe with a single ingredient, the ingot, gives the count one block decompresses into
+	for recipe in Item.from_id(item).recipes:
+		if len(recipe.get("ingredients", [])) != 1:
+			continue
+		ingredient: Ingr | None = (
+			next(iter(recipe["ingredients"].values())) if recipe["type"] == CraftingShapedRecipe.type
+			else recipe["ingredients"][0] if recipe["type"] == CraftingShapelessRecipe.type
+			else None
+		)
+		if ingredient is not None and ingredient.to_id(add_namespace=False) == ingr_to_seek:
+			return recipe["result_count"]
 	return 9
 
 

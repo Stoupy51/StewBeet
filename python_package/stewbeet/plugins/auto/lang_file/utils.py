@@ -52,41 +52,10 @@ def split_text_content(text: str, max_words: int = 5) -> tuple[str, str, str]:
 	if not match or len(match.group().split()) > max_words:
 		return ('', text, '')
 
-	prefix, core, suffix = text[:match.start()], match.group(), text[match.end():]
-
-	# Unmatched openers of the prefix whose closers are already in the core get folded into the core.
-	# Quotes open and close with the same character, so their count difference is always 0 and parity is used instead.
-	for opener, closer in CLOSERS.items():
-		unmatched_in_prefix = prefix.count(opener) % 2 if opener == closer else prefix.count(opener) - prefix.count(closer)
-		while unmatched_in_prefix > 0:
-			if closer in core:
-				# Closer already absorbed into core: just pull the opener in too
-				idx_open = prefix.rindex(opener)
-				core = prefix[idx_open:] + core
-				prefix = prefix[:idx_open]
-			elif closer in suffix:
-				# Closer still in suffix: pull opener from prefix and closer from suffix
-				idx_open = prefix.rindex(opener)
-				core = prefix[idx_open:] + core
-				prefix = prefix[:idx_open]
-				idx_close = suffix.index(closer)
-				core += suffix[:idx_close + 1]
-				suffix = suffix[idx_close + 1:]
-			else:
-				break
-			unmatched_in_prefix -= 1
-
-	# Unmatched openers of the core consume their closers from the suffix, with the same parity rule for quotes.
-	# Whether anything was consumed decides how much of the remaining suffix the punctuation sweep absorbs.
-	suffix_was_consumed: bool = False
-	for opener, closer in CLOSERS.items():
-		unmatched = core.count(opener) % 2 if opener == closer else core.count(opener) - core.count(closer)
-		while unmatched > 0 and closer in suffix:
-			idx = suffix.index(closer)
-			core += suffix[:idx + 1]
-			suffix = suffix[idx + 1:]
-			unmatched -= 1
-			suffix_was_consumed = True
+	prefix, core, suffix = absorb_prefix_openers(text[:match.start()], match.group(), text[match.end():])
+	core, consumed = absorb_core_closers(core, suffix)
+	suffix_was_consumed: bool = len(consumed) < len(suffix)
+	suffix = consumed
 
 	# Absorb back a suffix that is purely sentence-ending punctuation (: . , ! ?).
 	# After closers were taken from the suffix, only strong terminators (! ? .) are, so a ": " spacer after a bracket stays apart.
@@ -99,6 +68,53 @@ def split_text_content(text: str, max_words: int = 5) -> tuple[str, str, str]:
 		suffix = ''
 
 	return prefix, core, suffix
+
+
+def unmatched(text: str, opener: str, closer: str) -> int:
+	""" How many openers of text are left open. A quote opens and closes with the same character, so parity decides for it.
+
+	>>> unmatched("((a)", "(", ")"), unmatched("'a'' ", "'", "'")
+	(1, 1)
+	"""
+	return text.count(opener) % 2 if opener == closer else text.count(opener) - text.count(closer)
+
+
+def absorb_prefix_openers(prefix: str, core: str, suffix: str) -> tuple[str, str, str]:
+	""" Fold into the core each opener of the prefix left open, with its closer when the suffix still holds it. """
+	for opener, closer in CLOSERS.items():
+		for _ in range(unmatched(prefix, opener, closer)):
+			closed_in_core: bool = closer in core
+			if not closed_in_core and closer not in suffix:
+				break
+			idx_open: int = prefix.rindex(opener)
+			core, prefix = prefix[idx_open:] + core, prefix[:idx_open]
+			if not closed_in_core:
+				idx_close: int = suffix.index(closer)
+				core, suffix = core + suffix[:idx_close + 1], suffix[idx_close + 1:]
+	return prefix, core, suffix
+
+
+def absorb_core_closers(core: str, suffix: str) -> tuple[str, str]:
+	""" Let each opener of the core left open take its closer from the suffix. """
+	for opener, closer in CLOSERS.items():
+		for _ in range(unmatched(core, opener, closer)):
+			if closer not in suffix:
+				break
+			idx: int = suffix.index(closer)
+			core, suffix = core + suffix[:idx + 1], suffix[idx + 1:]
+	return core, suffix
+
+
+def lang_parts(clean_text: str) -> tuple[str, str, str]:
+	""" `split_text_content`, with the core's leading and trailing newlines moved out of the translation and its key.
+
+	>>> lang_parts("\\nHello\\n\\n")
+	('\\n', 'Hello', '\\n\\n')
+	"""
+	prefix, core, suffix = split_text_content(clean_text)
+	left: str = core.lstrip("\n")
+	right: str = left.rstrip("\n")
+	return prefix + "\n" * (len(core) - len(left)), right, "\n" * (len(left) - len(right)) + suffix
 
 
 def extract_texts(content: str) -> list[tuple[str, int, int, str, str | None]]:
@@ -242,6 +258,30 @@ def build_replacement(
 	return new_fragment, obj_start, obj_end
 
 
+def translated(
+	string: str, text: str, start: int, end: int, quote: str, key_quote: str | None, ctx: Context | None,
+) -> Replacement | None:
+	""" The replacement turning one "text" value of string into a lang key, registered in `lang`, or None for a value not worth one.
+
+	Args:
+		text: Raw matched value, as `extract_texts` found it at start to end.
+		ctx:  Passed to `lang_format`, None for Mem.ctx.
+	"""
+	clean_text: str = text.replace("\\n", "\n").replace("\\", "")
+	if not ALNUM_RE.search(clean_text):
+		return None
+	prefix, core, suffix = lang_parts(clean_text)
+	key_for_lang, verif = lang_format(core, ctx)
+	if len(verif) < 3 or not verif.isalnum() or "\\u" in text or "$" in clean_text:
+		return None
+	key_for_lang = resolve_lang_key(key_for_lang, core)
+	lang[key_for_lang] = core
+	new_fragment, replace_start, replace_end = build_replacement(
+		string, text, clean_text, start, end, quote, key_quote, key_for_lang, prefix, suffix,
+	)
+	return Replacement(replace_start, replace_end, new_fragment)
+
+
 def handle_file(content: TextFileBase[str] | None, ctx: Context | None = None) -> None:
 	""" Replace in place every useful {"text": "..."} component of a file with a lang key.
 
@@ -270,36 +310,12 @@ def handle_file(content: TextFileBase[str] | None, ctx: Context | None = None) -
 	replacements: list[Replacement] = []
 
 	for text, start, end, quote, key_quote in reversed(matches):
-		clean_text: str = text.replace("\\n", "\n").replace("\\", "")
-		if not ALNUM_RE.search(clean_text):
+		replacement: Replacement | None = translated(string, text, start, end, quote, key_quote, None if Mem.ctx == ctx else ctx)
+		if replacement is None:
 			continue
-
-		prefix, core, suffix = split_text_content(clean_text)
-
-		# Redistribute leading/trailing \n from core into prefix/suffix so they are
-		# not stored in the translation value and don't inflate the lang key.
-		while core.startswith('\n'):
-			prefix += '\n'
-			core = core[1:]
-		while core.endswith('\n'):
-			suffix = '\n' + suffix
-			core = core[:-1]
-
-		key_for_lang, verif = lang_format(core, None if Mem.ctx == ctx else ctx)
-		if len(verif) < 3 or not verif.isalnum() or "\\u" in text or "$" in clean_text:
-			continue
-
-		key_for_lang = resolve_lang_key(key_for_lang, core)
-		lang[key_for_lang] = core
-
-		new_fragment, replace_start, replace_end = build_replacement(
-			string, text, clean_text, start, end, quote, key_quote,
-			key_for_lang, prefix, suffix,
-		)
-		# Drop any nested replacements fully contained in this broader enclosing-object
-		# replacement to prevent overlapping ranges that corrupt the output JSON.
-		replacements = [r for r in replacements if not (replace_start <= r.start and r.end <= replace_end)]
-		replacements.append(Replacement(replace_start, replace_end, new_fragment))
+		# A replacement of the enclosing object drops those nested in it, whose overlapping ranges would corrupt the JSON
+		replacements = [r for r in replacements if not (replacement.start <= r.start and r.end <= replacement.end)]
+		replacements.append(replacement)
 
 	new_string: str = apply_replacements(string, replacements)
 	if new_string != string:

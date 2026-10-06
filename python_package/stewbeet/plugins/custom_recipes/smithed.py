@@ -90,69 +90,67 @@ class SmithedRecipeHandler:
 		Returns:
 			str: The generated recipe command.
 		"""
-		# Convert ingredients to aimed recipes
-		ingredients: dict[str, Ingr] = recipe.ingredients
-		recipes: dict[int, list[JsonDict]] = {0: [], 1: [], 2: []}
+		# A layer is a row of the grid, empty when only air, else padded with air to its three slots
+		layers: list[str] = []
+		for layer in range(3):
+			row: str = recipe.shape[layer] if layer < len(recipe.shape) else ""
+			slots: list[JsonDict] = [self.slot_predicate(recipe.ingredients.get(char), slot) for slot, char in enumerate(row)]
+			if all(slot.get("id") == "minecraft:air" for slot in slots):
+				slots = []
+			slots += [{"Slot": i, "id": "minecraft:air"} for i in range(len(slots), 3)] if slots else []
+			layers.append(f"{layer}:[" + ",".join(self.slot_dump(slot) for slot in slots) + "]")
 
-		for i, row in enumerate(recipe.shape):
-			for slot, char in enumerate(row):
-				ingredient = ingredients.get(char)
-				if ingredient:
-					predicate = ingredient.to_predicate(Slot=slot)
-					predicate.pop("count", None)  # Shaped predicates must not include count (smithed.crafter storage omits it)
-					recipes[i].append(predicate)
-				else:
-					recipes[i].append({"Slot": slot, "id": "minecraft:air"})
-
-		# Initialize the dump string
-		dump: str = "{"
-
-		# Iterate through each layer and its ingredients
-		for i in range(3):
-			if (i not in recipes) or (all(ingr.get("id") == "minecraft:air" for ingr in recipes[i])):
-				recipes[i] = []
-
-		for layer, ingrs in recipes.items():
-			# If the list is empty, continue
-			if not ingrs:
-				dump += f"{layer}:[],"
-				continue
-
-			dump += f"{layer}:["  # Start of layer definition
-
-			# Ensure each layer has exactly 3 ingredients by adding missing slots
-			for i in range(len(ingrs), 3):
-				ingrs.append({"Slot": i, "id": "minecraft:air"})
-
-			# Process each ingredient in the layer
-			for ingr in ingrs:
-				ingr = ingr.copy()  # Create a copy to modify
-				slot: int = ingr.pop("Slot")  # Extract the slot number
-				ingr = ExternalItem.json_dump(ingr)[1:-1]  # Convert to JSON string without brackets
-				dump += f'{{"Slot":{slot}b, {ingr}}},'  # Add the ingredient to the dump with its slot
-
-			# Remove the trailing comma if present
-			if dump[-1] == ',':
-				dump = dump[:-1] + "],"  # End of layer definition
-			else:
-				dump += "],"  # End of layer definition without trailing comma
-
-		# Remove the trailing comma if present and close the dump string
-		if dump[-1] == ',':
-			dump = dump[:-1] + "}"  # Close the dump string
-		else:
-			dump += "}"  # Close the dump string without trailing comma
-
-		# Return the line
-		line = (
+		command: str = recipe.smithed_crafter_command or f"loot replace block ~ ~ ~ container.16 loot {result_loot}"
+		return (
 			"execute if score @s smithed.data matches 0 "
-			f"store result score @s smithed.data if data storage smithed.crafter:input recipe{dump}"
+			f"store result score @s smithed.data if data storage smithed.crafter:input recipe{{{','.join(layers)}}}"
+			f""" run function {self.apply_path} {{"command":"{command}"}}"""
 		)
-		if recipe.smithed_crafter_command:
-			line += f""" run function {self.apply_path} {{"command":"{recipe.smithed_crafter_command}"}}"""
+
+	@staticmethod
+	def slot_predicate(ingredient: Ingr | None, slot: int) -> JsonDict:
+		""" What a slot of a shaped recipe must hold, air when no ingredient goes there.
+
+		Without a count, since smithed.crafter's input storage omits it for individual slots.
+		"""
+		if not ingredient:
+			return {"Slot": slot, "id": "minecraft:air"}
+		predicate = ingredient.to_predicate(Slot=slot)
+		predicate.pop("count", None)
+		return predicate
+
+	@staticmethod
+	def slot_dump(predicate: JsonDict) -> str:
+		""" A slot predicate as SNBT, its slot first and as a byte.
+
+		>>> SmithedRecipeHandler.slot_dump({"id": "minecraft:air", "Slot": 2})
+		'{"Slot":2b, "id": "minecraft:air"}'
+		"""
+		fields: JsonDict = predicate.copy()
+		slot: int = fields.pop("Slot")
+		return f'{{"Slot":{slot}b, {ExternalItem.json_dump(fields)[1:-1]}}}'
+
+	def write_recipe(self, item: str, recipe: CraftingShapedRecipe | CraftingShapelessRecipe) -> None:
+		""" Write one crafting recipe of an item for the Smithed Crafter, needed as soon as an ingredient is a custom item. """
+		ingr: list[Ingr] = list(recipe.ingredients.values()) if isinstance(recipe, CraftingShapedRecipe) else recipe.ingredients
+		result_loot_table = (recipe.result or Ingr(item)).register_loot_table(recipe.result_count)
+
+		if any(i.get("components") for i in ingr) and not official_lib_used("smithed.crafter"):
+			stp.debug("Found a crafting table recipe using custom item in ingredients, adding 'smithed.crafter' dependency")
+			# Add to the give_all function the heavy workbench give command
+			write_function(f"{Mem.ctx.project_id}:_give_all", "loot give @s loot smithed.crafter:blocks/table\n", prepend=True)
+
+		if isinstance(recipe, CraftingShapelessRecipe):
+			line = self.smithed_shapeless_recipe(recipe, result_loot_table)
+			write_function(
+				f"{Mem.ctx.project_id}:calls/smithed_crafter/shapeless_recipes", line,
+				tags=["smithed.crafter:event/shapeless_recipes"],
+			)
 		else:
-			line += f""" run function {self.apply_path} {{"command":"loot replace block ~ ~ ~ container.16 loot {result_loot}"}}"""
-		return line
+			line = self.smithed_shaped_recipe(recipe, result_loot_table)
+			write_function(
+				f"{Mem.ctx.project_id}:calls/smithed_crafter/shaped_recipes", line, tags=["smithed.crafter:event/recipes"],
+			)
 
 	def generate_recipes(self) -> None:
 		""" Generate all Smithed Crafter recipes. """
@@ -160,45 +158,10 @@ class SmithedRecipeHandler:
 			obj = Item.from_id(item)
 
 			for recipe in obj.recipes:
-				if recipe["type"] not in (CraftingShapelessRecipe.type, CraftingShapedRecipe.type):
-					continue
-				recipe = CraftingShapedRecipe.from_dict(recipe) \
-					if recipe["type"] == CraftingShapedRecipe.type \
-					else CraftingShapelessRecipe.from_dict(recipe)
-
-				# Get ingredients
-				ingr: list[Ingr] = (
-					list(recipe.ingredients.values()) if isinstance(recipe, CraftingShapedRecipe) else recipe.ingredients
-				)
-				if not recipe.result:
-					result_loot_table = Ingr(item).register_loot_table(recipe.result_count)
-				else:
-					result_loot_table = recipe.result.register_loot_table(recipe.result_count)
-
-				# If there is a component in the ingredients of shaped/shapeless, use smithed crafter
-				if any(i.get("components") for i in ingr) and not official_lib_used("smithed.crafter"):
-					stp.debug(
-						"Found a crafting table recipe using custom item in ingredients, adding 'smithed.crafter' dependency"
-					)
-
-					# Add to the give_all function the heavy workbench give command
-					write_function(
-						f"{Mem.ctx.project_id}:_give_all", "loot give @s loot smithed.crafter:blocks/table\n", prepend=True
-					)
-
-				# Generate recipe based on type
-				if isinstance(recipe, CraftingShapelessRecipe):
-					line = self.smithed_shapeless_recipe(recipe, result_loot_table)
-					write_function(
-						f"{Mem.ctx.project_id}:calls/smithed_crafter/shapeless_recipes",
-						line,
-						tags=["smithed.crafter:event/shapeless_recipes"],
-					)
-				else:
-					line = self.smithed_shaped_recipe(recipe, result_loot_table)
-					write_function(
-						f"{Mem.ctx.project_id}:calls/smithed_crafter/shaped_recipes", line, tags=["smithed.crafter:event/recipes"]
-					)
+				if recipe["type"] == CraftingShapedRecipe.type:
+					self.write_recipe(item, CraftingShapedRecipe.from_dict(recipe))
+				elif recipe["type"] == CraftingShapelessRecipe.type:
+					self.write_recipe(item, CraftingShapelessRecipe.from_dict(recipe))
 
 		# Apply recipe
 		if OFFICIAL_LIBS["smithed.crafter"]["is_used"]:

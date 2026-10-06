@@ -97,8 +97,12 @@ def register_static_assets(manual: Manual) -> None:
 			tex("font/awakened_forge_2", "awakened_forge_2.png")
 	tex("font/book", "book.png")  # dialog-first: always needed
 	tex("font/home", "home.png")  # dialog "go to first page" arrow (texture is user-overridable)
+	register_static_providers(manual)
 
-	# Reserved providers (ported verbatim for alignment)
+
+def register_static_providers(manual: Manual) -> None:
+	""" Register the font providers of the reserved template textures, whose ascents and heights align the manual's layout. """
+	ns = manual.config.project_id
 	add = manual.glyphs.add_provider
 
 	def f(n: str) -> str:

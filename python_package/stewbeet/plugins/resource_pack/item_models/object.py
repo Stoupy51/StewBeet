@@ -223,24 +223,13 @@ class AutoModel:
 		if not content.get("textures"):
 			return
 
-		# Copy used textures
-		for texture in content["textures"].values():
-			# Ignore if minecraft namespace
-			if texture.startswith("minecraft:"):
-				continue
-
-			texture_name = texture.split(":")[-1].split("/")[-1]  # Get just the filename
-			texture_name += ".png"
-			if texture_name in self.source_textures:
-				Mem.ctx.assets[texture] = texture_mcmeta(self.source_textures[texture_name])
-			elif not self.ignore_textures:
-				raise ValueError(f"Texture '{texture_name}' not found in source textures")
-
-		# Check if there are textures from different atlases
 		textures_values: list[str] = list(content["textures"].values())
-		has_minecraft: bool = any(t.startswith("minecraft:") for t in textures_values)
-		has_custom: bool = any(not t.startswith("minecraft:") for t in textures_values)
-		needs_atlas_conversion: bool = has_minecraft and has_custom
+		for texture in textures_values:
+			if not texture.startswith("minecraft:"):
+				self.copy_texture(texture)
+
+		# Textures from both atlases in one model
+		needs_atlas_conversion: bool = len({t.startswith("minecraft:") for t in textures_values}) == 2
 
 		for key, texture in content["textures"].items():
 			if texture.startswith("minecraft:"):
@@ -249,6 +238,18 @@ class AutoModel:
 					content["textures"][key] = to_atlas(texture)
 			else:
 				self.used_textures.add(texture)
+
+	def copy_texture(self, texture: str) -> None:
+		""" Copy one texture of the project into the assets, found in the source textures by its file name.
+
+		Raises:
+			ValueError: When it is not there and `ignore_textures` is off.
+		"""
+		texture_name: str = texture.split(":")[-1].split("/")[-1] + ".png"
+		if texture_name in self.source_textures:
+			Mem.ctx.assets[texture] = texture_mcmeta(self.source_textures[texture_name])
+		elif not self.ignore_textures:
+			raise ValueError(f"Texture '{texture_name}' not found in source textures")
 
 	def handle_hand_model(self, variants: list[str], on_off: str) -> JsonDict:
 		""" Generate the in-hand model from the item's hand_model and return the items/ definition

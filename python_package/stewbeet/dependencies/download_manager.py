@@ -129,18 +129,7 @@ def resolve_smithed_lib(ctx: Context, lib_ns: str, lib_data: JsonDict, mc_tup: t
 		stp.warning(f"Smithed API returned no versions for '{smithed_id}'. Skipping.")
 		return None
 
-	versions: list[JsonDict] = data["versions"]
-	if target:
-		# Pinned version: find exact match, fall back to latest compatible
-		match = next((v for v in versions if v.get("name") == target), None)
-		if match is None:
-			match = latest_smithed_compatible(smithed_id, versions, mc_tup)
-			if match:
-				stp.warning(f"Smithed '{smithed_id}' v{target} not found; using v{match['name']} instead.")
-	else:
-		# No pinned version: pick latest compatible with user's MC
-		match = latest_smithed_compatible(smithed_id, versions, mc_tup)
-
+	match: JsonDict | None = pick_smithed_version(smithed_id, data["versions"], target, mc_tup)
 	if match is None:
 		stp.warning(f"Smithed '{smithed_id}': no versions available. Skipping.")
 		return None
@@ -157,24 +146,42 @@ def resolve_smithed_lib(ctx: Context, lib_ns: str, lib_data: JsonDict, mc_tup: t
 	return DownloadedLib(lib_ns, lib_data["name"], ver, str(dp), str(rp) if rp else None)
 
 
+def pick_smithed_version(smithed_id: str, versions: list[JsonDict], target: str | None, mc_tup: tuple[int, ...]) -> JsonDict | None:
+	""" The pinned version when there is one and it exists, else the latest one compatible with the project's Minecraft version. """
+	match: JsonDict | None = next((v for v in versions if v.get("name") == target), None) if target else None
+	if match is not None:
+		return match
+	match = latest_smithed_compatible(smithed_id, versions, mc_tup)
+	if target and match:
+		stp.warning(f"Smithed '{smithed_id}' v{target} not found; using v{match['name']} instead.")
+	return match
+
+
+def modrinth_versions(ctx: Context, slug: str, mc_ver: str) -> list[JsonDict] | None:
+	""" The Modrinth versions tagged for this Minecraft version, else those made for an older one, never a newer one.
+
+	Returns:
+		None when the API could not be read.
+	"""
+	base = f"{MODRINTH_API_BASE}/project/{slug}/version"
+	versions = cached_json(ctx, f"{base}?game_versions=[%22{mc_ver}%22]&loaders=[%22datapack%22]")
+	if versions:
+		return versions
+	versions = cached_json(ctx, f"{base}?loaders=[%22datapack%22]")
+	if not versions:
+		return versions
+	older = modrinth_older_versions(versions, mc_ver)
+	if not older:
+		stp.warning(
+			f"No Modrinth release of '{slug}' supports MC {mc_ver} or older; "
+			f"using the latest one ({versions[0].get('version_number')}) anyway."
+		)
+	return older or versions
+
+
 def resolve_modrinth_lib(ctx: Context, lib_ns: str, lib_data: JsonDict, mc_ver: str) -> DownloadedLib | None:
 	slug = lib_data["modrinth_slug"]
-	base = f"{MODRINTH_API_BASE}/project/{slug}/version"
-
-	versions = cached_json(ctx, f"{base}?game_versions=[%22{mc_ver}%22]&loaders=[%22datapack%22]")
-	if not versions:
-		# No version explicitly tagged for this MC version: fall back to every version,
-		# but only keep the ones made for an older MC version (never a newer one)
-		versions = cached_json(ctx, f"{base}?loaders=[%22datapack%22]")
-		if versions:
-			older = modrinth_older_versions(versions, mc_ver)
-			if older:
-				versions = older
-			else:
-				stp.warning(
-					f"No Modrinth release of '{slug}' supports MC {mc_ver} or older; "
-					f"using the latest one ({versions[0].get('version_number')}) anyway."
-				)
+	versions = modrinth_versions(ctx, slug, mc_ver)
 	if versions is None:
 		stp.warning(f"Could not read the Modrinth API for '{slug}' (see the failure above). Skipping.")
 		return None
@@ -236,26 +243,8 @@ def get_lib_paths(ctx: Context) -> list[DownloadedLib]:
 	mc_t = mc_tuple(ctx)
 	mc_v = mc_str(ctx)
 
-	# Collect every lib to resolve first, then fetch them in parallel (network bound);
-	# results keep the input order because weld merges packs in this order.
-	tasks: list[tuple[str, JsonDict, str]] = []
-	for lib_ns, lib_data in OFFICIAL_LIBS.items():
-		if not lib_data.get("is_used", False):
-			continue
-		source = lib_data.get("source", "")
-		if source in ("smithed", "modrinth", "static"):
-			tasks.append((lib_ns, lib_data, source))
-
-	# Also process custom load_dependencies entries that specify a source
-	load_deps: JsonDict = ctx.meta.get("stewbeet", {}).get("load_dependencies", {})
-	for lib_ns, lib_data in load_deps.items():
-		source = lib_data.get("source", "")
-		if not source:
-			continue  # old-format entry with explicit version: nothing to download
-		if source in ("smithed", "modrinth", "static"):
-			tasks.append((lib_ns, lib_data, source))
-		else:
-			stp.warning(f"Unknown source '{source}' for load_dependency '{lib_ns}'. Skipping download.")
+	# Fetched in parallel, network bound, and the results keep the input order because weld merges packs in this order.
+	tasks: list[tuple[str, JsonDict, str]] = lib_tasks(ctx)
 
 	def resolve(task: tuple[str, JsonDict, str]) -> DownloadedLib | None:
 		lib_ns, lib_data, source = task
@@ -270,4 +259,23 @@ def get_lib_paths(ctx: Context) -> list[DownloadedLib]:
 
 	BUILD_CACHE[cache_key] = results
 	return results
+
+
+def lib_tasks(ctx: Context) -> list[tuple[str, JsonDict, str]]:
+	""" Each library to download with its source: the official ones in use, then the `load_dependencies` entries naming a source. """
+	sources: tuple[str, ...] = ("smithed", "modrinth", "static")
+	tasks: list[tuple[str, JsonDict, str]] = [
+		(lib_ns, lib_data, lib_data.get("source", ""))
+		for lib_ns, lib_data in OFFICIAL_LIBS.items()
+		if lib_data.get("is_used", False) and lib_data.get("source", "") in sources
+	]
+	load_deps: JsonDict = ctx.meta.get("stewbeet", {}).get("load_dependencies", {})
+	for lib_ns, lib_data in load_deps.items():
+		source = lib_data.get("source", "")
+		if source in sources:
+			tasks.append((lib_ns, lib_data, source))
+		# An entry with no source is the old format, pinned to an explicit version, with nothing to download
+		elif source:
+			stp.warning(f"Unknown source '{source}' for load_dependency '{lib_ns}'. Skipping download.")
+	return tasks
 

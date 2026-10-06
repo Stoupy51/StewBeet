@@ -268,91 +268,12 @@ def servo_mechanisms_models(servos: dict[str, dict[str, str] | None]) -> None:
 			model_data["parent"] = f"{ns}:block/servo/base_block"
 		Mem.ctx.assets[ns].models[f"block/servo/base_{base}"] = set_json_encoder(Model(model_data), max_level=3)
 
-	# Handle parameters
 	for servo, textures in servos.items():
-		if textures is None:
-			textures = {}
+		textures = textures or {}
 		typ: str = textures.get("type", "extract")  # Default to 'extract' if not specified
-		default_texture: str = textures.get("default", f"servo/{typ}_default")
-		connected_texture: str = textures.get("connected", f"servo/{typ}_connected")
-
-		# Register the block model
-		base_model: JsonDict = stp.json_load(f"{models_path}/{typ}_block.json")
-		base_model["parent"] = f"{ns}:block/servo/base_block"
-		base_model["textures"] = {"0": f"{ns}:block/{default_texture}", "particle": f"{ns}:block/{default_texture}"}
-		Mem.ctx.assets[ns].models[f"block/servo/{typ}_block"] = set_json_encoder(Model(base_model), max_level=3)
-
-		# Register the connected model
-		connected_model: JsonDict = stp.json_load(f"{models_path}/{typ}_connected.json")
-		connected_model["parent"] = f"{ns}:block/servo/base_block"
-		connected_model["textures"] = {"0": f"{ns}:block/{connected_texture}", "particle": f"{ns}:block/{connected_texture}"}
-		Mem.ctx.assets[ns].models[f"block/servo/{typ}_connected"] = set_json_encoder(Model(connected_model), max_level=3)
-
-		# Register the off model (grayed out version of the default texture, shown when the servo is disabled)
-		off_texture: str = f"servo/{typ}_off"
-		off_model: JsonDict = stp.json_load(f"{models_path}/{typ}_block.json")
-		off_model["parent"] = f"{ns}:block/servo/base_block"
-		off_model["textures"] = {"0": f"{ns}:block/{off_texture}", "particle": f"{ns}:block/{off_texture}"}
-		Mem.ctx.assets[ns].models[f"block/servo/{typ}_off"] = set_json_encoder(Model(off_model), max_level=3)
-
-		# Register the item model
-		item_model: JsonDict = stp.json_load(f"{models_path}/{typ}_item.json")
-		item_model["parent"] = f"{ns}:block/servo/base_item"
-		item_model["textures"] = {"0": f"{ns}:block/{default_texture}", "particle": f"{ns}:block/{default_texture}"}
-		Mem.ctx.assets[ns].models[f"block/servo/{typ}_item"] = set_json_encoder(Model(item_model), max_level=3)
-
-		# Register items files (for default, connected and off)
-		for texture in ("block", "connected", "off"):
-			model_data = {
-				"model": {
-					"type": "minecraft:model",
-					"model": f"{ns}:block/servo/{typ}_{texture}"
-				}
-			}
-			Mem.ctx.assets[ns].item_models[f"servo/{typ}_{texture}"] = set_json_encoder(ItemModel(model_data), max_level=3)
-
-		# Copy textures to resource pack
-		for texture_key in ("default", "connected"):
-			texture_path: str = textures.get(texture_key, f"{typ}_{texture_key}")
-			src: str = f"{textures_folder}/{texture_path}.png"
-			dst: str = f"block/{texture_path}"
-
-			# Check if the source file exists and if the texture is not already registered
-			if os.path.exists(src) and (not Mem.ctx.assets[ns].textures.get(dst)):
-				Mem.ctx.assets[ns].textures[dst] = texture_mcmeta(src)
-
-		# Generate the grayed out "off" texture from the default texture (desaturated and darkened)
-		off_dst: str = f"block/{off_texture}"
-		default_src: str = f"{textures_folder}/{textures.get('default', f'{typ}_default')}.png"
-		if os.path.exists(default_src) and (not Mem.ctx.assets[ns].textures.get(off_dst)):
-			with Image.open(default_src) as base_image:
-				rgba: Image.Image = base_image.convert("RGBA")
-			r, g, b, a = rgba.split()
-			gray = Image.merge("RGB", (r, g, b)).convert("L").point(lambda p: int(p * 0.5))
-			off_image: Image.Image = Image.merge("RGBA", (gray, gray, gray, a))
-			Mem.ctx.assets[ns].textures[off_dst] = Texture(off_image)
-
-		## Working functions
-		# On placement, add necessary tag and call init function
-		item = Item.from_id(servo)
-		ns_data: dict[str, int] = item.components.get("custom_data", {}).get(ns, {})
-		stack_limit: int = ns_data.get("stack_limit", 1)
-		retry_limit: int = ns_data.get("retry_limit", 1)
-		write_function(BlockFunctions(servo).place_secondary, f"""
-# Servo mechanism setup (1 item by 1 item: stack_limit)
-tag @s add itemio.servo.{typ}
-tag @s add itemio.servo
-tag @s add {ns}.servo
-scoreboard players set @s itemio.servo.stack_limit {stack_limit}
-scoreboard players set @s itemio.servo.retry_limit {retry_limit}
-scoreboard players set @s {ns}.servo_off 0
-function #itemio:calls/servos/init
-""")
-		# On destruction, call destroy function of itemio
-		write_function(BlockFunctions(servo).destroy, """
-# Servo mechanism destruction cleanup
-function #itemio:calls/servos/destroy
-""")
+		register_servo_models(models_path, typ, textures)
+		register_servo_textures(textures_folder, typ, textures)
+		write_servo_functions(servo, typ)
 
 	# Update the servo model on itemio network changes (delegates to the shared model logic)
 	write_function(f"{ns}:calls/itemio/network_update", f"""
@@ -365,7 +286,69 @@ function {ns}:utils/servo/update_model
 
 	# Setup the "rotate to toggle on/off" feature
 	servo_toggle(servos)
-	return
+
+
+def register_servo_models(models_path: str, typ: str, textures: dict[str, str]) -> None:
+	""" The block models of one servo type, default, connected and off, then its item model and the item files of the three. """
+	ns: str = Mem.ctx.project_id
+	default_texture: str = textures.get("default", f"servo/{typ}_default")
+	shown: dict[str, tuple[str, str, str]] = {
+		"block": (f"{typ}_block", default_texture, "base_block"),
+		"connected": (f"{typ}_connected", textures.get("connected", f"servo/{typ}_connected"), "base_block"),
+		"off": (f"{typ}_block", f"servo/{typ}_off", "base_block"),
+		"item": (f"{typ}_item", default_texture, "base_item"),
+	}
+	for state, (source, texture, parent) in shown.items():
+		model: JsonDict = stp.json_load(f"{models_path}/{source}.json")
+		model["parent"] = f"{ns}:block/servo/{parent}"
+		model["textures"] = {"0": f"{ns}:block/{texture}", "particle": f"{ns}:block/{texture}"}
+		Mem.ctx.assets[ns].models[f"block/servo/{typ}_{state}"] = set_json_encoder(Model(model), max_level=3)
+
+	for texture in ("block", "connected", "off"):
+		model_data = {"model": {"type": "minecraft:model", "model": f"{ns}:block/servo/{typ}_{texture}"}}
+		Mem.ctx.assets[ns].item_models[f"servo/{typ}_{texture}"] = set_json_encoder(ItemModel(model_data), max_level=3)
+
+
+def register_servo_textures(textures_folder: str, typ: str, textures: dict[str, str]) -> None:
+	""" Copy one servo type's textures into the resource pack, and darken a gray copy of the default one into its "off" texture. """
+	ns: str = Mem.ctx.project_id
+	for texture_key in ("default", "connected"):
+		texture_path: str = textures.get(texture_key, f"{typ}_{texture_key}")
+		src: str = f"{textures_folder}/{texture_path}.png"
+		dst: str = f"block/{texture_path}"
+		if os.path.exists(src) and (not Mem.ctx.assets[ns].textures.get(dst)):
+			Mem.ctx.assets[ns].textures[dst] = texture_mcmeta(src)
+
+	off_dst: str = f"block/servo/{typ}_off"
+	default_src: str = f"{textures_folder}/{textures.get('default', f'{typ}_default')}.png"
+	if os.path.exists(default_src) and (not Mem.ctx.assets[ns].textures.get(off_dst)):
+		with Image.open(default_src) as base_image:
+			rgba: Image.Image = base_image.convert("RGBA")
+		r, g, b, a = rgba.split()
+		gray = Image.merge("RGB", (r, g, b)).convert("L").point(lambda p: int(p * 0.5))
+		Mem.ctx.assets[ns].textures[off_dst] = Texture(Image.merge("RGBA", (gray, gray, gray, a)))
+
+
+def write_servo_functions(servo: str, typ: str) -> None:
+	""" Tag a servo as an itemio one when placed, with its stack and retry limits, and let itemio forget it when destroyed. """
+	ns: str = Mem.ctx.project_id
+	ns_data: dict[str, int] = Item.from_id(servo).components.get("custom_data", {}).get(ns, {})
+	stack_limit: int = ns_data.get("stack_limit", 1)
+	retry_limit: int = ns_data.get("retry_limit", 1)
+	write_function(BlockFunctions(servo).place_secondary, f"""
+# Servo mechanism setup (1 item by 1 item: stack_limit)
+tag @s add itemio.servo.{typ}
+tag @s add itemio.servo
+tag @s add {ns}.servo
+scoreboard players set @s itemio.servo.stack_limit {stack_limit}
+scoreboard players set @s itemio.servo.retry_limit {retry_limit}
+scoreboard players set @s {ns}.servo_off 0
+function #itemio:calls/servos/init
+""")
+	write_function(BlockFunctions(servo).destroy, """
+# Servo mechanism destruction cleanup
+function #itemio:calls/servos/destroy
+""")
 
 
 # Setup the ability to turn servos off and on by rotating (right-clicking) them

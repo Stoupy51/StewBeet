@@ -46,6 +46,7 @@ from .modrinth import (
 from .pmc import (
 	convert_list_block as convert_list_block,
 	convert_markdown_to_bbcode as convert_markdown_to_bbcode,
+	follow_indent as follow_indent,
 	table_to_bbcode as table_to_bbcode,
 	upload_to_pmc as upload_to_pmc,
 )
