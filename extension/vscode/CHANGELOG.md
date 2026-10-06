@@ -1,7 +1,7 @@
 
 # Changelog
 
-## Unreleased
+## 2.1.0
 
 ### bolt and mecha
 
