@@ -366,10 +366,10 @@ The [demo pack](https://github.com/Stoupy51/StewBeet/tree/main/extension/vscode/
 - You need a StewBeet plugin to see what you wrote. Plugins run on the pack, and mecha compiles after them
 - Your collaborators do not want a second language in the project
 
-#### Two things to set up once
+#### In the editor
 
-- **Spyglass underlines a `.mcfunction` holding bolt**, because it is not vanilla mcfunction. [`stewbeet.plugins.spyglass`](../plugins/spyglass.md) takes those files off its list, from what the build actually compiled.
-- **The [StewBeet extension](https://marketplace.visualstudio.com/items?itemName=stoupy.stewbeet) gives `.bolt` its own language**, with completion and ctrl+click on the commands and a lens per function the module writes. See [Editor support](../8_editor/en.md).
+The [StewBeet extension](https://marketplace.visualstudio.com/items?itemName=stoupy.stewbeet) gives `.bolt` its own language, with completion and ctrl+click on the commands and a lens per function the module writes.
+It also keeps Spyglass from underlining a `.mcfunction` holding bolt, which Spyglass reads as vanilla mcfunction. See [Editor support](../8_editor/en.md).
 
 ## Best practices
 

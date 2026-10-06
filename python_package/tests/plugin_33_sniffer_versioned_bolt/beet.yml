@@ -1,15 +1,15 @@
 
-# Test: spyglass finds the same files when a versioning refactor has run over the pack.
+# Test: the sniffer tells bolt sources from vanilla ones when a versioning refactor has run over the pack.
 # `simple_item_plugin` requires the refactor and then mecha, and `beet.contrib.find_replace`
 # substitutes inside every file in the pack. beet drops a file's `source_path` the moment its text
 # is read, and mecha names a compilation unit after that path, so by the time anything asks, not
 # one unit can say which file it came from. The names come back off the ledger of where each file
 # was loaded from, and a nested unit off the parent text its AST was parsed from.
 #
-# plugin_28 is the same three sources with nothing moving them.
+# plugin_36 covers the other kinds of bolt source, with nothing moving them.
 
 id: "tns"
-name: "Test Spyglass Versioned"
+name: "Test Sniffer Versioned Bolt"
 version: "1.0.0"
 author: "test"
 minecraft: "26.2"
@@ -24,14 +24,10 @@ data_pack:
     name: "datapack"
     load: ["src"]
 
-meta:
-    stewbeet:
-        spyglass:
-            manage_exclusions: true
-
 pipeline:
-    - "stewbeet.plugins.spyglass"
+    - "src.assertions"
+    # Before the refactor, while beet still says which file each function was loaded from.
+    - "stewbeet.plugins.sniffer.mecha"
     - "src.versioning"
     - "mecha"
-    - "src.assertions"
 

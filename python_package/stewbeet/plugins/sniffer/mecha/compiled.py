@@ -16,9 +16,9 @@ from itertools import islice
 from mecha import AstCommand, AstNode, Mecha
 from tokenstream import SourceLocation
 
-from ...spyglass.detect import opaque_start
 from ..model import ColumnPoint, CompiledLine
 from .attribute import OnDisk
+from .detect import opaque_start
 
 
 # Functions

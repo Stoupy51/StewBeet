@@ -366,10 +366,10 @@ Le [pack de démonstration](https://github.com/Stoupy51/StewBeet/tree/main/exten
 - Un plugin StewBeet doit voir ce que vous avez écrit. Les plugins tournent sur le pack, et mecha compile après eux
 - Vos collaborateurs ne veulent pas d'un second langage dans le projet
 
-#### Deux choses à configurer une fois
+#### Dans l'éditeur
 
-- **Spyglass souligne un `.mcfunction` contenant du bolt**, parce que ce n'est pas du mcfunction vanilla. [`stewbeet.plugins.spyglass`](../plugins/spyglass.md) retire ces fichiers de sa liste, à partir de ce que le build a réellement compilé.
-- **L'[extension StewBeet](https://marketplace.visualstudio.com/items?itemName=stoupy.stewbeet) donne au `.bolt` son propre langage**, avec complétion et ctrl+clic sur les commandes et un lens par fonction que le module écrit. Voir [Support éditeur](../8_editor/fr.md).
+L'[extension StewBeet](https://marketplace.visualstudio.com/items?itemName=stoupy.stewbeet) donne au `.bolt` son propre langage, avec complétion et ctrl+clic sur les commandes et un lens par fonction que le module écrit.
+Elle empêche aussi Spyglass de souligner un `.mcfunction` contenant du bolt, qu'il lit comme du mcfunction vanilla. Voir [Support éditeur](../8_editor/fr.md).
 
 ## Bonnes pratiques
 

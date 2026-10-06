@@ -43,7 +43,7 @@ Les fichiers `.bolt` s'ouvrent en **Bolt**, avec une grammaire générée depuis
 - **Un lens par fonction** que le module écrit, menant au fichier généré.
 - **Les chemins calculés restent cliquables** : `function gui.open` résout vers ce que le dernier build a écrit.
 
-Un `.mcfunction` contenant du bolt reçoit aussi l'id de langage `bolt`. Spyglass les lit toujours depuis le disque, donc **StewBeet: Exclude Bolt Files From Spyglass** les ajoute à `.spyglassrc.json`, ou votre build tient cette liste à jour avec le plugin [spyglass](../plugins/spyglass.md).
+Un `.mcfunction` contenant du bolt reçoit aussi l'id de langage `bolt`. Spyglass continue de l'indexer, donc les fonctions qu'il définit restent connues des fichiers qui les appellent, et les erreurs que Spyglass signale sur ses lignes bolt sont retirées.
 
 Voir [Approche 4 : Bolt](../2_writing_to_files/fr.md#approche-4-bolt) pour le langage lui-même.
 
@@ -84,7 +84,7 @@ Colorer une variable demande l'annotation `McFunction` (un simple alias de `str`
 
 ## Commandes
 
-Depuis la palette : **Go to Generated Function**, **Go to Python Source**, **Reload Source Maps**, **Refresh Build Diagnostics**, **Show Diagnostics Status**, **Exclude Bolt Files From Spyglass**, **Install Spyglass Language Server**.
+Depuis la palette : **Go to Generated Function**, **Go to Python Source**, **Reload Source Maps**, **Refresh Build Diagnostics**, **Show Diagnostics Status**, **Install Spyglass Language Server**.
 
 ## Paramètres
 
@@ -124,5 +124,4 @@ Gardez Aegis si vous avez besoin de cette dernière ligne.
 
 - [Écrire fonctions et fichiers](../2_writing_to_files/fr.md) : tout ce que l'extension lit, Bolt compris.
 - [stewbeet.plugins.sniffer](../plugins/sniffer.md) : les source maps derrière la navigation.
-- [stewbeet.plugins.spyglass](../plugins/spyglass.md) : garder Spyglass loin des fichiers qu'il ne sait pas lire.
 

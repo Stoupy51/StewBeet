@@ -23,7 +23,7 @@ from bolt import Runtime
 from mecha import AstCommand, AstNode, AstRoot, CommandSpec, CommandTree, CompilationUnit, Mecha, MechaOptions
 from tokenstream import SourceLocation
 
-from ...core.source_paths import restore_filenames
+from ....core.source_paths import restore_filenames
 
 # Constants
 WORD: re.Pattern[str] = re.compile(r"\s*\S+")
@@ -35,7 +35,7 @@ def unparseable_sources(ctx: Context) -> list[str]:
 	""" Project-relative paths of the `.mcfunction` sources Spyglass reports as broken.
 
 	Returns:
-		Sorted forward-slash paths, the shape `env.exclude` patterns are matched against.
+		Sorted forward-slash paths.
 	"""
 	mc: Mecha | None = existing_service(ctx, Mecha)
 	if mc is None:
@@ -143,11 +143,10 @@ def existing_service[T](ctx: Context, service: Callable[[Context], T]) -> T | No
 
 
 def project_relative(filename: str | None) -> str | None:
-	""" A compiled file's path relative to the project root, or None when no pattern could name it.
+	""" A compiled file's path relative to the project root, or None when it lies outside the project.
 
-	`CompilationUnit.filename` is already relative to beet's project directory,
-	so this normalises separators and drops what an `env.exclude` entry cannot reach:
-	Spyglass matches its patterns against paths relative to the root it indexes.
+	`CompilationUnit.filename` is already relative to beet's project directory, so this normalises separators
+	and drops a file from a dependency, which is not the project's own source.
 
 	>>> project_relative("src/data/ns/function/a.mcfunction")
 	'src/data/ns/function/a.mcfunction'

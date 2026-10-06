@@ -23,13 +23,13 @@ from beet import Context
 from mecha import AstCommand, AstRoot, Mecha
 
 from ....core.source_paths import origin_path, remember_source_paths, restore_filenames
-from ...spyglass.detect import project_vanilla_paths, unparseable_sources
 from ..align import align
 from ..model import CompiledLine, SourceOrigin, WriteChunk
 from ..sidecar import has_sidecar, write_sidecar
 from ..sources import reset_caches
 from .attribute import OnDisk, candidate_sources, owner_of, source_file_of
 from .compiled import compiled_line
+from .detect import project_vanilla_paths, unparseable_sources
 
 
 # Classes
