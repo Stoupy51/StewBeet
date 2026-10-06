@@ -234,40 +234,11 @@ class GlyphEmitter:
 
 		sources: dict[str, str] = self.source_images({key[0] for key in missing})
 		for key in missing:
-			item_id, height, ascent, resolution = key
-			source: str | None = sources.get(item_id)
+			source: str | None = sources.get(key[0])
 			if source is None:
 				continue
-
 			with Image.open(source) as opened:
-				frame: tuple[int, int, int, int] | None = first_frame_box(opened.size)
-				native: tuple[int, int] = (frame[2], frame[3]) if frame else opened.size
-				stored: tuple[int, int] = scale_to_height(native, resolution) if resolution > 0 else native
-
-				# Too big for one glyph, or floating over the baseline: both are laid out as a grid,
-				# which may still come out as a single tile once the resolution is capped to what fits
-				layout: SpliceLayout | None = None
-				if max(stored) > MAX_GLYPH_SIZE or ascent > height:
-					layout = plan_splice(native, height, ascent, resolution)
-					if len(layout.tiles) > 1 and not self.allow_oversized(item_id, layout):
-						resolution = fitting_resolution(native, MAX_GLYPH_SIZE)
-						stored = scale_to_height(native, resolution)
-						layout = plan_splice(native, height, ascent, resolution) if ascent > height else None
-
-				if layout is not None:
-					self.warn_capped(item_id, layout, stored)
-					stored_size: str = f"{layout.stored[0]}x{layout.stored[1]}"
-					if len(layout.tiles) > 1:
-						self.glyphs[key] = self.spliced_glyph(item_id, opened, frame, layout)
-						stp.debug(f"Cut '{item_id}' into a {layout.columns}x{layout.rows} grid of glyphs, stored at {stored_size}")
-					elif layout.content != layout.stored:
-						self.glyphs[key] = self.spliced_glyph(item_id, opened, frame, layout)
-						stp.debug(f"Padded '{item_id}' down to the baseline, stored at {stored_size}")
-					else:
-						# One tile with nothing to pad is an ordinary glyph, sharing its texture like any other
-						self.glyphs[key] = self.single_glyph(item_id, opened, frame, layout.stored, layout.height, layout.ascent)
-				else:
-					self.glyphs[key] = self.single_glyph(item_id, opened, frame, stored, height, ascent)
+				self.glyphs[key] = self.render_glyph(key, opened)
 			Mem.used_textures.add(stp.clean_path(source))
 
 		# Merge only what this call added, so a second emit() never duplicates providers
@@ -275,4 +246,43 @@ class GlyphEmitter:
 			merge_font_providers(self.config.project_id, self.config.font_name, self.allocator.providers[self.written:])
 			self.written = len(self.allocator.providers)
 		return self.glyphs
+
+	def render_glyph(self, key: GlyphKey, opened: Image.Image) -> str:
+		""" The characters drawing one requested image: one glyph, or a grid of them when too big or floating over the baseline. """
+		item_id, height, ascent, resolution = key
+		frame: tuple[int, int, int, int] | None = first_frame_box(opened.size)
+		native: tuple[int, int] = (frame[2], frame[3]) if frame else opened.size
+		layout, stored = self.fitted_layout(item_id, native, height, ascent, resolution)
+		if layout is None:
+			return self.single_glyph(item_id, opened, frame, stored, height, ascent)
+
+		self.warn_capped(item_id, layout, stored)
+		stored_size: str = f"{layout.stored[0]}x{layout.stored[1]}"
+		if len(layout.tiles) > 1 or layout.content != layout.stored:
+			glyph: str = self.spliced_glyph(item_id, opened, frame, layout)
+			if len(layout.tiles) > 1:
+				stp.debug(f"Cut '{item_id}' into a {layout.columns}x{layout.rows} grid of glyphs, stored at {stored_size}")
+			else:
+				stp.debug(f"Padded '{item_id}' down to the baseline, stored at {stored_size}")
+			return glyph
+		# One tile with nothing to pad is an ordinary glyph, sharing its texture like any other
+		return self.single_glyph(item_id, opened, frame, layout.stored, layout.height, layout.ascent)
+
+	def fitted_layout(
+		self, item_id: str, native: tuple[int, int], height: int, ascent: int, resolution: int
+	) -> tuple[SpliceLayout | None, tuple[int, int]]:
+		""" The grid an image is cut into and the size it is stored at, no grid when one glyph holds it on the baseline.
+
+		Too big for one glyph, or floating over the baseline, both make a grid, which may still come out as a single tile
+		once an image that may not stay oversized has its resolution capped to what fits.
+		"""
+		stored: tuple[int, int] = scale_to_height(native, resolution) if resolution > 0 else native
+		if max(stored) <= MAX_GLYPH_SIZE and ascent <= height:
+			return None, stored
+		layout: SpliceLayout | None = plan_splice(native, height, ascent, resolution)
+		if len(layout.tiles) > 1 and not self.allow_oversized(item_id, layout):
+			resolution = fitting_resolution(native, MAX_GLYPH_SIZE)
+			stored = scale_to_height(native, resolution)
+			layout = plan_splice(native, height, ascent, resolution) if ascent > height else None
+		return layout, stored
 

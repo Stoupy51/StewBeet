@@ -25,6 +25,18 @@ ESCAPED_QUOTE_RE: re.Pattern[str] = re.compile(r'\\(["\'])')
 Payloads read from inside a JSON string (tellraw / dialog run_command) carry them, e.g. {jump:\\"green\\"}.
 """
 
+NBT_PAIR_RE: re.Pattern[str] = re.compile(r'["\']?(\w+)["\']?\s*:\s*(.+)')
+""" A key:value pair of a compound, the key possibly quoted. """
+
+NBT_NUMBER_RE: re.Pattern[str] = re.compile(r'([-+]?\d+\.?\d*)([bslfd]?)')
+""" A number and its type suffix. """
+
+MACRO_REF_RE: re.Pattern[str] = re.compile(r'\$\((\w+)\)')
+""" A value that is another macro variable, `$(name)`. """
+
+STORAGE_SET_RE: re.Pattern[str] = re.compile(r'data\s+modify\s+storage\s+\S+(?:\s+\S+)*\s+set\s+value\s+({.+?})', flags=re.DOTALL)
+""" A compound set into a storage, `data modify storage stardust:temp macro set value {...}`, the path tokens optional. """
+
 # Type mapping for NBT suffixes
 NBT_TYPE_MAP = {
 	"b": "byte",
@@ -44,79 +56,64 @@ def parse_nbt_compound(nbt_string: str) -> dict[str, tuple[str, str]]:
 	>>> parse_nbt_compound(r'{jump:\\"green\\",delay:20}')  # Inside a JSON string, quotes arrive escaped
 	{'jump': ('green', 'string'), 'delay': ('20', 'int')}
 	"""
-	result: dict[str, tuple[str, str]] = {}
-
-	# Remove outer braces and split by commas (but not commas inside nested structures)
 	nbt_string = ESCAPED_QUOTE_RE.sub(r"\1", nbt_string.strip())
 	if nbt_string.startswith("{") and nbt_string.endswith("}"):
 		nbt_string = nbt_string[1:-1]
-
-	# Simple key:value parser, splitting on the commas that sit outside nested structures and quotes
-	pairs: list[str] = []
-	current_pair: str = ""
-	depth: int = 0
-	in_quotes: bool = False
-	quote_char: str = ""
-
-	for char in nbt_string:
-		if char in ['"', "'"]:
-			if not in_quotes:
-				in_quotes = True
-				quote_char = char
-			elif char == quote_char:
-				in_quotes = False
-				quote_char = ""
-		elif char in ['{', '['] and not in_quotes:
-			depth += 1
-		elif char in ['}', ']'] and not in_quotes:
-			depth -= 1
-		elif char == ',' and depth == 0 and not in_quotes:
-			pairs.append(current_pair.strip())
-			current_pair = ""
-			continue
-
-		current_pair += char
-
-	if current_pair.strip():
-		pairs.append(current_pair.strip())
-
-	# Now parse each pair
-	for pair in pairs:
-		# Match key:value with optional spaces and optional quotes around keys
-		match = re.match(r'["\']?(\w+)["\']?\s*:\s*(.+)', pair)
-		if not match:
-			continue
-
-		key: str
-		value: str
-		key, value = match.groups()
-		value = value.strip()
-
-		# String values (quoted)
-		if value.startswith(('"', "'")):
-			result[key] = (value.strip('"\''), "string")
-		# Compound values (nested {})
-		elif value.startswith("{"):
-			result[key] = (value, "compound")
-		# List values ([])
-		elif value.startswith("["):
-			result[key] = (value, "list")
-		# Numeric values
-		else:
-			# Check for numeric suffix
-			numeric_match = re.match(r'([-+]?\d+\.?\d*)([bslfd]?)', value)
-			if numeric_match:
-				num_value: str
-				suffix: str
-				num_value, suffix = numeric_match.groups()
-				suffix = suffix.lower()
-				num_type: str = NBT_TYPE_MAP.get(suffix, "int") if suffix else ("double" if "." in num_value else "int")
-				result[key] = (num_value, num_type)
-			else:
-				# Unknown type
-				result[key] = (value, "unknown")
-
+	result: dict[str, tuple[str, str]] = {}
+	for pair in split_top_level(nbt_string):
+		match: re.Match[str] | None = NBT_PAIR_RE.match(pair)
+		if match:
+			result[match[1]] = nbt_value(match[2].strip())
 	return result
+
+
+def split_top_level(text: str) -> list[str]:
+	""" The parts of `text` between the commas outside nested structures and quotes, stripped.
+
+	>>> split_top_level('a:1, b:{c:2,d:3},e:"f,g"')
+	['a:1', 'b:{c:2,d:3}', 'e:"f,g"']
+	"""
+	pairs: list[str] = []
+	current: str = ""
+	depth: int = 0
+	quote: str = ""
+	for char in text:
+		if char in ('"', "'"):
+			if not quote:
+				quote = char
+			elif char == quote:
+				quote = ""
+		elif not quote and char in ('{', '['):
+			depth += 1
+		elif not quote and char in ('}', ']'):
+			depth -= 1
+		elif not quote and char == ',' and depth == 0:
+			pairs.append(current.strip())
+			current = ""
+			continue
+		current += char
+	if current.strip():
+		pairs.append(current.strip())
+	return pairs
+
+
+def nbt_value(value: str) -> tuple[str, str]:
+	""" A value as written without its quotes or suffix, and its type, from its quotes, brackets or numeric suffix.
+
+	>>> nbt_value("'kJ'"), nbt_value("1.5f"), nbt_value("2.0"), nbt_value("[1]"), nbt_value("???")
+	(('kJ', 'string'), ('1.5', 'float'), ('2.0', 'double'), ('[1]', 'list'), ('???', 'unknown'))
+	"""
+	if value.startswith(('"', "'")):
+		return value.strip('"\''), "string"
+	if value.startswith("{"):
+		return value, "compound"
+	if value.startswith("["):
+		return value, "list"
+	numeric: re.Match[str] | None = NBT_NUMBER_RE.match(value)
+	if not numeric:
+		return value, "unknown"
+	num_value, suffix = numeric[1], numeric[2].lower()
+	return num_value, NBT_TYPE_MAP.get(suffix, "int") if suffix else ("double" if "." in num_value else "int")
 
 
 def infer_types_from_direct_call(call_string: str, macro_vars: list[str], all_functions: dict[str, Header]) -> dict[str, str]:
@@ -125,91 +122,59 @@ def infer_types_from_direct_call(call_string: str, macro_vars: list[str], all_fu
 	>>> infer_types_from_direct_call('function test {"id":"hello",Slot:1b,count:1}', ['id', 'Slot', 'count'], {})
 	{'id': 'string', 'Slot': 'byte', 'count': 'int'}
 	"""
-	types: dict[str, str] = {}
-
 	# The NBT compound follows "function <path> " in direct calls, or the path alone in @within entries
-	match = re.search(r'(?:function\s+\S+\s+)?({.+})', call_string)
-	if match:
-		nbt_string: str = match.group(1)
-		parsed: dict[str, tuple[str, str]] = parse_nbt_compound(nbt_string)
-
-		# Map the parsed types to our macro variables
-		for var in macro_vars:
-			if var in parsed:
-				value: str
-				var_type: str
-				value, var_type = parsed[var]
-
-				# Check if the value is a macro variable reference (e.g., $(other_var))
-				macro_ref_match = re.match(r'\$\((\w+)\)', value)
-				if macro_ref_match:
-					# Quoted macro references are explicit strings (e.g. "$(weapon_id)").
-					# Keep them as string instead of inheriting a potentially unknown parent type.
-					if var_type == "string":
-						types[var] = "string"
-						continue
-
-					# This is a reference to another macro variable
-					# Try to find the type from the calling function
-					caller_match = WITHIN_CALLER_RE.match(call_string)
-					if caller_match:
-						caller_func = caller_match.group(1)
-						if caller_func in all_functions:
-							caller_args = all_functions[caller_func].args
-							ref_var = macro_ref_match.group(1)
-							if ref_var in caller_args:
-								# caller_args[ref_var] is a tuple (type, description_lines)
-								# We only need the type (first element)
-								types[var] = caller_args[ref_var][0]
-							else:
-								types[var] = var_type
-						else:
-							types[var] = var_type
-				else:
-					types[var] = var_type
-
+	match: re.Match[str] | None = re.search(r'(?:function\s+\S+\s+)?({.+})', call_string)
+	if not match:
+		return {}
+	parsed: dict[str, tuple[str, str]] = parse_nbt_compound(match.group(1))
+	types: dict[str, str] = {}
+	for var in macro_vars:
+		if var in parsed:
+			inferred: str | None = passed_type(*parsed[var], call_string, all_functions)
+			if inferred is not None:
+				types[var] = inferred
 	return types
 
 
+def passed_type(value: str, var_type: str, call_string: str, all_functions: dict[str, Header]) -> str | None:
+	""" The type of a value a call passes, a `$(name)` reference taking the type the calling function gives its own `name`.
+
+	A quoted reference is an explicit string. None when the caller cannot be read off `call_string`.
+
+	>>> callers = {"t:c": Header("t:c", args={"n": ("int", [])})}
+	>>> passed_type("$(n)", "unknown", "t:c {x:$(n)}", callers), passed_type("$(n)", "string", "t:c", callers)
+	('int', 'string')
+	"""
+	reference: re.Match[str] | None = MACRO_REF_RE.match(value)
+	if reference is None or var_type == "string":
+		return var_type
+	caller: re.Match[str] | None = WITHIN_CALLER_RE.match(call_string)
+	if caller is None:
+		return None
+	caller_args: dict[str, tuple[str, list[str]]] = all_functions[caller[1]].args if caller[1] in all_functions else {}
+	return caller_args[reference[1]][0] if reference[1] in caller_args else var_type
+
+
 def infer_types_from_storage_call(within_list: list[str], macro_vars: list[str], all_functions: dict[str, Header]) -> dict[str, str]:
-	""" Infer macro argument types by looking at 'with storage' calls and the caller's content.
+	""" Infer macro argument types from the compounds a caller using `with storage` or `with entity` sets into a storage.
 
-	Args:
-		within_list:   List of functions/contexts that call this function
-		macro_vars:    List of macro variable names to infer types for
-		all_functions: Dictionary of all functions for lookup
-
-	Returns:
-		dict[str, str]: Dictionary mapping variable names to their inferred types
+	The first compound giving a variable decides its type.
 
 	>>> # This would need actual function content to work properly
 	>>> infer_types_from_storage_call(['test:caller with storage temp macro'], ['id', 'count'], {})
 	{}
 	"""
 	types: dict[str, str] = {}
-
 	for caller in within_list:
-		# Check if this is a storage call
-		if "with storage" in caller or "with entity" in caller:
-			# Extract the caller function name
-			caller_match: re.Match[str] | None = WITHIN_CALLER_RE.match(caller)
-			caller_func: str = caller_match.group(1) if caller_match else ""
-
-			# Look up the caller function
-			if caller_func in all_functions:
-				caller_content: str = all_functions[caller_func].content
-
-				# Data modify commands setting up the storage: data modify storage <storage_path> [<path...>] set value {<nbt>}
-				# The optional path tokens cover usages like `data modify storage stardust:temp macro set value {...}`
-				storage_pattern: str = r'data\s+modify\s+storage\s+\S+(?:\s+\S+)*\s+set\s+value\s+({.+?})'
-				matches: list[str] = re.findall(storage_pattern, caller_content, flags=re.DOTALL)
-
-				for nbt_string in matches:
-					parsed: dict[str, tuple[str, str]] = parse_nbt_compound(nbt_string)
-					for var in macro_vars:
-						if var in parsed and var not in types:
-							types[var] = parsed[var][1]
-
+		if "with storage" not in caller and "with entity" not in caller:
+			continue
+		caller_match: re.Match[str] | None = WITHIN_CALLER_RE.match(caller)
+		caller_func: str = caller_match.group(1) if caller_match else ""
+		if caller_func not in all_functions:
+			continue
+		for nbt_string in STORAGE_SET_RE.findall(all_functions[caller_func].content):
+			parsed: dict[str, tuple[str, str]] = parse_nbt_compound(nbt_string)
+			types.update({var: parsed[var][1] for var in macro_vars if var in parsed and var not in types})
 	return types
 
 

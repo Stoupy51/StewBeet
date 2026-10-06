@@ -9,12 +9,14 @@ which is what CI uses.
 """
 # Imports
 import ast
+import importlib.machinery
 import importlib.util
 import re
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 from types import ModuleType
+from typing import cast
 
 # Constants
 ROOT: Path = Path(__file__).resolve().parent.parent / "stewbeet"
@@ -121,26 +123,37 @@ class Analyzer:
 		tree: ast.Module = ast.parse(path.read_text(encoding="utf-8").replace("\r\n", "\n"))
 		for node in tree.body:
 			module.defined.extend(n for n in Analyzer.defined_by(node) if n not in module.defined)
-			if isinstance(node, ast.Assign) and isinstance(node.value, ast.List):
-				if any(isinstance(t, ast.Name) and t.id == "__all__" for t in node.targets):
-					module.explicit_all = [
-						element.value for element in node.value.elts
-						if isinstance(element, ast.Constant) and isinstance(element.value, str)
-					]
+			listed: list[str] | None = Analyzer.listed_in_all(node)
+			if listed is not None:
+				module.explicit_all = listed
 			if isinstance(node, ast.ImportFrom):
-				target: str = Analyzer.resolve(module, node.level, node.module) if node.level else (node.module or "")
-				end: int = node.end_lineno or node.lineno
-				# A star import from another distribution, like "from beet import *", is left as written
-				same_distribution: bool = target.split(".")[0] == module.fqn.split(".")[0]
-				# A star import, or a parenthesized block whose every name uses the redundant
-				# "name as name" form. A one line "from .x import y as y" stays a selective import.
-				star: bool = same_distribution and any(alias.name == "*" for alias in node.names)
-				full: bool = end > node.lineno and all(alias.asname == alias.name for alias in node.names)
-				if star or full:
-					module.reexports[target] = (node.lineno - 1, end)
-				elif end == node.lineno:
-					module.selective.extend(a.name for a in node.names if a.asname == a.name)
+				Analyzer.read_import(module, node)
 		return module
+
+	@staticmethod
+	def listed_in_all(node: ast.stmt) -> list[str] | None:
+		""" The names a `__all__ = [...]` statement lists, None for any other statement. """
+		if not isinstance(node, ast.Assign) or not isinstance(node.value, ast.List):
+			return None
+		if not any(isinstance(t, ast.Name) and t.id == "__all__" for t in node.targets):
+			return None
+		return [element.value for element in node.value.elts if isinstance(element, ast.Constant) and isinstance(element.value, str)]
+
+	@staticmethod
+	def read_import(module: Module, node: ast.ImportFrom) -> None:
+		""" Record a `from ... import` of the module as a block it re-exports, or as names it imports selectively. """
+		target: str = Analyzer.resolve(module, node.level, node.module) if node.level else (node.module or "")
+		end: int = node.end_lineno or node.lineno
+		# A star import from another distribution, like "from beet import *", is left as written
+		same_distribution: bool = target.split(".")[0] == module.fqn.split(".")[0]
+		# A star import, or a parenthesized block whose every name uses the redundant
+		# "name as name" form. A one line "from .x import y as y" stays a selective import.
+		star: bool = same_distribution and any(alias.name == "*" for alias in node.names)
+		full: bool = end > node.lineno and all(alias.asname == alias.name for alias in node.names)
+		if star or full:
+			module.reexports[target] = (node.lineno - 1, end)
+		elif end == node.lineno:
+			module.selective.extend(a.name for a in node.names if a.asname == a.name)
 
 	@staticmethod
 	def read_all() -> dict[str, Module]:
@@ -178,10 +191,10 @@ class Analyzer:
 		"""
 		module: ModuleType = importlib.import_module(fqn)
 		declared: object = getattr(module, "__all__", None)
-		names: list[str] = (
-			[name for name in declared if isinstance(name, str)] if isinstance(declared, list | tuple)
-			else [name for name in vars(module) if not name.startswith("_")]
-		)
+		names: list[str] = [name for name in vars(module) if not name.startswith("_")]
+		if isinstance(declared, list | tuple):
+			listed: list[object] = list(cast("list[object] | tuple[object, ...]", declared))
+			names = [name for name in listed if isinstance(name, str)]
 		return sorted(name for name in names if not isinstance(getattr(module, name, None), ModuleType))
 
 	@staticmethod

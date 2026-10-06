@@ -28,6 +28,7 @@ from ...glyphs import (
 	VERY_SMALL_NONE_FONT,
 )
 from ...paths import TEMPLATES_PATH
+from ..grid import append_grid, centred_shape, invisible_copy, place_result_beside
 from ..hovers import ingredients_hover
 from ..registry import CraftRenderer, register_craft_renderer
 
@@ -51,83 +52,34 @@ class ShapedRenderer(CraftRenderer):
 
 	def render_body(self, r: RecipeRenderer, craft: JsonDict, name: str, content: list[TextComponent], result_component: JsonDict, page_font: str, use_dialog: bool, add_change_page_to_ingr: bool) -> None:
 		""" Lay the ingredient grid out over the crafting-table template, then place the result. """
-		shape: list[str] = craft["shape"]
-		is_small_craft: bool = len(shape) <= 2 and all(len(x) <= 2 for x in shape)
+		is_small_craft: bool = len(craft["shape"]) <= 2 and all(len(x) <= 2 for x in craft["shape"])
+		shape: list[str] = centred_shape(craft["shape"])
 		formatted_ingredients: dict[str, JsonDict] = {k: r.item_component(v) for k, v in craft["ingredients"].items()}
-
-		if len(shape) == 1 and len(shape[0]) == 3:
-			shape = ["   ", shape[0], "   "]
-		elif len(shape) == 3 and all(len(shape_line) == 1 for shape_line in shape):
-			shape = [" " + line + " " for line in shape]
-
-		for index, line in enumerate(shape):
-			for i in range(2):
-				content.append(SMALL_NONE_FONT)
-				for k in line:
-					if k == " ":
-						content.append(INVISIBLE_ITEM_WIDTH)
-					elif i == 0:
-						content.append(formatted_ingredients[k])
-					else:
-						copy = formatted_ingredients[k].copy()
-						copy["text"] = INVISIBLE_ITEM_WIDTH
-						content.append(copy)
-				if use_dialog and index != 1 and (not is_small_craft or i != 1):
-					content.append(INVISIBLE_ITEM_WIDTH * max(0, (2 if is_small_craft else 3) - len(line)))
-					content.append(NONE_FONT * 2)
-				content.append("\n")
-		if len(shape) == 1 and len(shape[0]) < 3:
-			content.append("\n")
-
+		filler: str | None = NONE_FONT * 2 if use_dialog else None
+		append_grid(content, shape, formatted_ingredients, filler, columns=2 if is_small_craft else 3, small=is_small_craft)
 		if is_small_craft:
-			len_1 = len(shape[0])
-			offset_1 = 3 - len_1
-			break_line_pos = content.index("\n", content.index("\n") + 1)
-			content.insert(break_line_pos, (INVISIBLE_ITEM_WIDTH * offset_1))
-			content.insert(break_line_pos + 1, result_component)
-			if use_dialog:
-				content.insert(break_line_pos + 2, VERY_SMALL_NONE_FONT + MICRO_NONE_FONT)
-				break_line_pos += 1
-			len_2 = len(shape[1]) if len(shape) > 1 else 0
-			offset_2 = 3 - len_2
-			if len_2 == 0:
-				content.insert(break_line_pos + 2, "\n" + SMALL_NONE_FONT)
-			break_line_pos = content.index("\n", break_line_pos + 3)
-			content.insert(break_line_pos, (INVISIBLE_ITEM_WIDTH * offset_2))
-			copy = result_component.copy()
-			copy["text"] = INVISIBLE_ITEM_WIDTH
-			content.insert(break_line_pos + 1, copy)
-			if use_dialog:
-				content.insert(break_line_pos + 2, VERY_SMALL_NONE_FONT + MICRO_NONE_FONT)
+			self.place_small_result(content, shape, result_component, use_dialog)
 		else:
-			len_line = len(shape[1]) if len(shape) > 1 else 0
-			offset = 4 - len_line
-			break_line_pos = content.index("\n", content.index("\n") + 1)
-			try:
-				break_line_pos = content.index("\n", break_line_pos + 1)
-			except Exception:
-				content.append(SMALL_NONE_FONT)
-				break_line_pos = len(content)
-			content.insert(break_line_pos, (INVISIBLE_ITEM_WIDTH * (offset - 1) + SMALL_NONE_FONT * 2))
-			content.insert(break_line_pos + 1, result_component)
-			if use_dialog:
-				content.insert(break_line_pos + 2, VERY_SMALL_NONE_FONT + MICRO_NONE_FONT)
-				break_line_pos += 1
-			try:
-				break_line_pos = content.index("\n", break_line_pos + 3)
-			except Exception:
-				content.append("\n" + SMALL_NONE_FONT)
-				break_line_pos = len(content)
-			content.insert(break_line_pos, (INVISIBLE_ITEM_WIDTH * (offset - 1) + SMALL_NONE_FONT * 2))
-			copy = result_component.copy()
-			copy["text"] = INVISIBLE_ITEM_WIDTH
-			content.insert(break_line_pos + 1, copy)
-			if use_dialog:
-				content.insert(break_line_pos + 2, VERY_SMALL_NONE_FONT + MICRO_NONE_FONT)
-			if len(shape) < 3 and len(shape[0]) == 3:
-				content.append("\n\n")
-				if len(shape) < 2:
-					content.append("\n")
+			place_result_beside(content, shape, result_component, use_dialog, gap_end=SMALL_NONE_FONT * 2, full_width=3)
+
+	@staticmethod
+	def place_small_result(content: list[TextComponent], shape: list[str], result_component: JsonDict, use_dialog: bool) -> None:
+		""" Put the result of a 2x2 grid right of its rows, on the line of the first row's blank half and the one below. """
+		offset_1 = 3 - len(shape[0])
+		break_line_pos = content.index("\n", content.index("\n") + 1)
+		content.insert(break_line_pos, (INVISIBLE_ITEM_WIDTH * offset_1))
+		content.insert(break_line_pos + 1, result_component)
+		if use_dialog:
+			content.insert(break_line_pos + 2, VERY_SMALL_NONE_FONT + MICRO_NONE_FONT)
+			break_line_pos += 1
+		len_2 = len(shape[1]) if len(shape) > 1 else 0
+		if len_2 == 0:
+			content.insert(break_line_pos + 2, "\n" + SMALL_NONE_FONT)
+		break_line_pos = content.index("\n", break_line_pos + 3)
+		content.insert(break_line_pos, (INVISIBLE_ITEM_WIDTH * (3 - len_2)))
+		content.insert(break_line_pos + 1, invisible_copy(result_component))
+		if use_dialog:
+			content.insert(break_line_pos + 2, VERY_SMALL_NONE_FONT + MICRO_NONE_FONT)
 
 	def build_image(self, r: RecipeRenderer, name: str, page_font: str, craft: JsonDict, output_name: str = "") -> None:
 		""" Low-resolution PNG of the grid + result pasted onto the shaped template. """
@@ -136,7 +88,7 @@ class ShapedRenderer(CraftRenderer):
 		output_filename = output_name or name
 		result_texture, result_mask = r.images.load_result_texture(name, craft)
 
-		shape: list[str] = self.centred_shape(craft["shape"])
+		shape: list[str] = centred_shape(craft["shape"])
 		shaped_size = max(2, max(len(shape), len(shape[0])))
 		template = Image.open(f"{TEMPLATES_PATH}/shaped_{shaped_size}x{shaped_size}.png")
 		r.glyphs.add_provider(page_font, f"{r.config.project_id}:font/page/{output_filename}.png", ascent=0 if not output_name else 6, height=60)
@@ -155,19 +107,6 @@ class ShapedRenderer(CraftRenderer):
 			count_img = r.images.image_count(craft["result_count"])
 			template.paste(count_img, [x + 2 for x in coords], count_img)  # pyright: ignore[reportArgumentType]
 		template.save(f"{r.config.font_cache_path}/page/{output_filename}.png")
-
-	@staticmethod
-	def centred_shape(shape: list[str]) -> list[str]:
-		""" A single row or column of three, centred in a 3x3 grid, any other shape as it is.
-
-		>>> ShapedRenderer.centred_shape(["AAA"]), ShapedRenderer.centred_shape(["A", "B", "C"])
-		(['   ', 'AAA', '   '], [' A ', ' B ', ' C '])
-		"""
-		if len(shape) == 1 and len(shape[0]) == 3:
-			return ["   ", shape[0], "   "]
-		if len(shape) == 3 and all(len(shape_line) == 1 for shape_line in shape):
-			return [" " + line + " " for line in shape]
-		return shape
 
 
 register_craft_renderer(ShapedRenderer())

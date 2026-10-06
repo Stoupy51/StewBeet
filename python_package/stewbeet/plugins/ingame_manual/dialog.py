@@ -1,8 +1,8 @@
-"""Dialog generation (the only manual output in v2).
+"""Dialog generation, the manual's only output.
 
 Each page already produces its own dialog body (see :mod:`~.pages.base`),
 so the :class:`DialogEmitter` only wraps that body with the title (item sprite or text,
-taken from the page) and the prev/home/next navigation row. There is no book->dialog conversion.
+taken from the page) and the prev/home/next navigation row.
 The page->item mapping comes from :class:`~.manual.Manual` pages. The manual is reachable through the
 vanilla ``quick_actions`` dialog tag.
 """
@@ -48,6 +48,7 @@ title text without towering over it.
 
 if TYPE_CHECKING:
 	from .manual import Manual
+	from .pages.base import Page
 
 
 @dataclass(eq=False, slots=True)
@@ -133,80 +134,7 @@ class DialogEmitter:
 		""" Generate per-page dialogs, the open-manual advancement, and the quick action. """
 		manual = self.manual
 		ns: str = manual.config.project_id
-		pages_content = manual.pages_content
-
-		dialog_ids: list[str] = []
-		for page_index, page in enumerate(pages_content):
-			dialog_id: str = f"manual/page_{page_index + 1}"
-			dialog_ids.append(f"{ns}:{dialog_id}")
-
-			prev_index: int = page_index - 1 if page_index > 0 else 0
-			next_index: int = page_index + 1 if page_index + 1 < len(pages_content) else page_index
-			prev_dialog_id: str = f"{ns}:manual/page_{prev_index + 1}"
-			next_dialog_id: str = f"{ns}:manual/page_{next_index + 1}"
-
-			# Title from the page itself: the item sprite for item pages, else its title text.
-			page_obj = manual.pages[page_index] if page_index < len(manual.pages) else None
-			if page_obj is not None and page_obj.item_id:
-				title: TextComponent = self.get_atlas_title(page_obj.item_id)
-			elif page_obj is not None and page_obj.title:
-				title = {"text": page_obj.title, "underlined": True}
-			else:
-				title = ""
-
-			# The page already produced its dialog body directly (no book->dialog conversion).
-			new_content: list[TextComponent] = list(page)
-
-			def count_breaklines(element: TextComponent) -> int:
-				if isinstance(element, dict):
-					return count_breaklines(element.get("text", ""))
-				if isinstance(element, list):
-					return sum(count_breaklines(sub) for sub in element)
-				return str(element).count("\n")
-			nb_breaklines_to_add: int = max(0, 22 - count_breaklines(new_content))
-			if nb_breaklines_to_add > 0:
-				new_content.append("\n" * nb_breaklines_to_add)
-
-			# Top navigation row: prev (left) | home (middle, -> first page) | next (right).
-			# The home glyph shares NONE_FONT's advance to keep the layout, and a spacer on the second row extends its hit area.
-			home_event: JsonDict = {
-				"click_event": {"action": "show_dialog", "dialog": f"{ns}:manual/page_1"},
-				"hover_event": {"action": "show_text", "value": [{"text": "Go to first page"}]},
-			}
-			prev_event: JsonDict = {
-				"click_event": {"action": "show_dialog", "dialog": prev_dialog_id},
-				"hover_event": {"action": "show_text", "value": [{"text": "Go to previous page"}, f" ({prev_index + 1})"]},
-			}
-			next_event: JsonDict = {
-				"click_event": {"action": "show_dialog", "dialog": next_dialog_id},
-				"hover_event": {"action": "show_text", "value": [{"text": "Go to next page"}, f" ({next_index + 1})"]},
-			}
-			# Book background & home button: the page's own override glyphs if set, else the shared ones.
-			book_font: str = page_obj.book_font if page_obj is not None and page_obj.book_font else BOOK_FONT
-			home_font: str = page_obj.home_font if page_obj is not None and page_obj.home_font else HOME_FONT
-			nav_contents: list[TextComponent] = [{"text": book_font + NONE_FONT * 3, "font": f"{ns}:manual", "color": "white"}]
-			# No home button on the first page (it IS the home page) or when the page opts out.
-			hide_home: bool = page_index == 0 or (page_obj is not None and not page_obj.home_button)
-			for row in range(2):
-				nav_contents.append({"text": "\n" + NONE_FONT * 3, **prev_event})
-				if hide_home:
-					# Keep the spacing but drop the button
-					nav_contents.append({"text": NONE_FONT, "font": f"{ns}:manual", "color": "white"})
-				else:
-					nav_contents.append({
-						"text": (home_font if row == 0 else NONE_FONT), "font": f"{ns}:manual", "color": "white", **home_event
-					})
-				nav_contents.append({"text": NONE_FONT * 3, **next_event})
-
-			dialog: JsonDict = {
-				"type": "minecraft:notice",
-				"title": title if title else {"text": ""},
-				"body": [
-					{"type": "minecraft:plain_message", "contents": nav_contents, "width": 400},
-					{"type": "minecraft:plain_message", "contents": new_content, "width": 140},
-				],
-			}
-			Mem.ctx.data[ns].dialogs[dialog_id] = set_json_encoder(Dialog(dialog), max_level=4)
+		dialog_ids: list[str] = [f"{ns}:{self.write_page_dialog(index, page)}" for index, page in enumerate(manual.pages_content)]
 
 		# Open-manual detection (mode 1, or whenever a manual item exists)
 		if manual.config.use_dialog != 2 or "manual" in Mem.definitions:
@@ -234,7 +162,83 @@ execute if items entity @s weapon.* *[custom_data~{{{ns}:{{manual:true}}}}] run 
 			DialogTag({"replace": False, "values": [f"{ns}:all_manual"]})
 		)
 
-		# Main dialog list (with the pack icon, as a render glyph when possible)
+		self.write_dialog_list(dialog_ids)
+
+	def write_page_dialog(self, page_index: int, page: list[TextComponent]) -> str:
+		""" Write the dialog of one page: its title, the navigation row, then its body padded to 22 lines.
+
+		Returns:
+			The dialog's path, without namespace.
+		"""
+		manual = self.manual
+		page_obj: Page | None = manual.pages[page_index] if page_index < len(manual.pages) else None
+		new_content: list[TextComponent] = list(page)
+		nb_breaklines_to_add: int = max(0, 22 - count_breaklines(new_content))
+		if nb_breaklines_to_add > 0:
+			new_content.append("\n" * nb_breaklines_to_add)
+
+		dialog_id: str = f"manual/page_{page_index + 1}"
+		dialog: JsonDict = {
+			"type": "minecraft:notice",
+			"title": self.page_title(page_obj) or {"text": ""},
+			"body": [
+				{"type": "minecraft:plain_message", "contents": self.navigation_row(page_index, page_obj), "width": 400},
+				{"type": "minecraft:plain_message", "contents": new_content, "width": 140},
+			],
+		}
+		Mem.ctx.data[manual.config.project_id].dialogs[dialog_id] = set_json_encoder(Dialog(dialog), max_level=4)
+		return dialog_id
+
+	def page_title(self, page_obj: Page | None) -> TextComponent:
+		""" A page's dialog title: the item sprite for an item page, else its title text, empty for neither. """
+		if page_obj is not None and page_obj.item_id:
+			return self.get_atlas_title(page_obj.item_id)
+		if page_obj is not None and page_obj.title:
+			return {"text": page_obj.title, "underlined": True}
+		return ""
+
+	def navigation_row(self, page_index: int, page_obj: Page | None) -> list[TextComponent]:
+		""" The top of a page: the book background, then previous (left), home (middle, to the first page) and next (right).
+
+		The home glyph shares NONE_FONT's advance to keep the layout, and a spacer on the second row extends its hit area.
+		"""
+		ns: str = self.manual.config.project_id
+		page_count: int = len(self.manual.pages_content)
+		prev_index: int = page_index - 1 if page_index > 0 else 0
+		next_index: int = page_index + 1 if page_index + 1 < page_count else page_index
+		home_event: JsonDict = {
+			"click_event": {"action": "show_dialog", "dialog": f"{ns}:manual/page_1"},
+			"hover_event": {"action": "show_text", "value": [{"text": "Go to first page"}]},
+		}
+		prev_event: JsonDict = {
+			"click_event": {"action": "show_dialog", "dialog": f"{ns}:manual/page_{prev_index + 1}"},
+			"hover_event": {"action": "show_text", "value": [{"text": "Go to previous page"}, f" ({prev_index + 1})"]},
+		}
+		next_event: JsonDict = {
+			"click_event": {"action": "show_dialog", "dialog": f"{ns}:manual/page_{next_index + 1}"},
+			"hover_event": {"action": "show_text", "value": [{"text": "Go to next page"}, f" ({next_index + 1})"]},
+		}
+		# Book background & home button: the page's own override glyphs if set, else the shared ones.
+		book_font: str = page_obj.book_font if page_obj is not None and page_obj.book_font else BOOK_FONT
+		home_font: str = page_obj.home_font if page_obj is not None and page_obj.home_font else HOME_FONT
+		nav_contents: list[TextComponent] = [{"text": book_font + NONE_FONT * 3, "font": f"{ns}:manual", "color": "white"}]
+		# No home button on the first page (it IS the home page) or when the page opts out.
+		hide_home: bool = page_index == 0 or (page_obj is not None and not page_obj.home_button)
+		for row in range(2):
+			nav_contents.append({"text": "\n" + NONE_FONT * 3, **prev_event})
+			if hide_home:
+				# Keep the spacing but drop the button
+				nav_contents.append({"text": NONE_FONT, "font": f"{ns}:manual", "color": "white"})
+			else:
+				nav_contents.append({
+					"text": (home_font if row == 0 else NONE_FONT), "font": f"{ns}:manual", "color": "white", **home_event
+				})
+			nav_contents.append({"text": NONE_FONT * 3, **next_event})
+		return nav_contents
+
+	def write_dialog_list(self, dialog_ids: list[str]) -> None:
+		""" The dialog listing every page, titled with the pack icon, as a render glyph when possible. """
+		ns: str = self.manual.config.project_id
 		title2: TextComponent = {"text": f"{Mem.ctx.project_name} Manual"}
 		pack_png: str | None = find_pack_png()
 		if pack_png is not None:
@@ -250,4 +254,17 @@ execute if items entity @s weapon.* *[custom_data~{{{ns}:{{manual:true}}}}] run 
 			"dialogs": dialog_ids,
 			"exit_action": {"label": {"translate": "gui.back"}, "width": 200},
 		}))
+
+
+def count_breaklines(element: TextComponent) -> int:
+	""" The line breaks a text component holds, nested components included.
+
+	>>> count_breaklines(["a\\n", {"text": "b\\n\\n"}, [{"text": "c"}]])
+	3
+	"""
+	if isinstance(element, dict):
+		return count_breaklines(element.get("text", ""))
+	if isinstance(element, list):
+		return sum(count_breaklines(sub) for sub in element)
+	return str(element).count("\n")
 

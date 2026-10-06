@@ -26,11 +26,12 @@ from ....core.cls.ingredients import Ingr
 from ....core.cls.item import Item
 from ....core.cls.recipe import CraftingShapelessRecipe
 from ....core.utils.text_component import item_id_to_name
-from ..glyphs import INVISIBLE_ITEM_WIDTH, MICRO_NONE_FONT, SMALL_NONE_FONT, WIKI_GROWING_SEED_FONT, WIKI_RESULT_OF_CRAFT_FONT
+from ..glyphs import MICRO_NONE_FONT, SMALL_NONE_FONT, WIKI_GROWING_SEED_FONT, WIKI_RESULT_OF_CRAFT_FONT
 from ..refs import PageRef
 from .buttons import WikiButtonRender
 from .collection import collect_for_item, convert_shapeless_to_shaped
 from .components import build_item_component, high_res_font_from_ingredient
+from .grid import invisible_copy
 from .registry import get_craft_renderer
 
 if TYPE_CHECKING:
@@ -96,12 +97,7 @@ class RecipeRenderer:
 	@staticmethod
 	def append_or_invisible(content: list[TextComponent], component: JsonDict, i: int) -> None:
 		""" Append ``component`` on the first row, an invisible-width copy on the second. """
-		if i == 0:
-			content.append(component)
-		else:
-			copy = component.copy()
-			copy["text"] = INVISIBLE_ITEM_WIDTH
-			content.append(copy)
+		content.append(component if i == 0 else invisible_copy(component))
 
 	# --- main craft content ---
 	def render_main(self, craft: JsonDict, name: str, page_font: str, in_lore: bool = False) -> list[TextComponent]:
@@ -152,33 +148,8 @@ class RecipeRenderer:
 
 		``index`` makes the low-resolution recipe image filename stable/unique per button.
 		"""
-		craft_for_button = craft
-		if craft["type"] == CraftingShapelessRecipe.type:
-			craft_for_button = convert_shapeless_to_shaped(craft)
-
-		breaklines = 3
-		if "shape" in craft_for_button:
-			breaklines = max(2, max(len(craft_for_button["shape"]), len(craft_for_button["shape"][0])))
-
-		if not self.config.high_resolution:
-			craft_font = self.glyphs.allocate()
-			btn_renderer = get_craft_renderer(craft_for_button["type"])
-			if btn_renderer is not None:
-				btn_renderer.build_image(self, name, craft_font, craft_for_button, output_name=f"{name}_{index + 1}")
-			hover_text: list[TextComponent] = [
-				{"text": ""},
-				{"text": craft_font + "\n\n" * breaklines, "font": self.config.font, "color": "white"},
-			]
-		else:
-			from ..glyphs import HOVER_EQUIVALENTS
-			from ..optimizer import remove_events
-			craft_content: list[TextComponent] = self.render_main(craft_for_button, name, "", in_lore=True)
-			craft_content = [craft_content[0], *craft_content[2:]]
-			remove_events(craft_content)
-			for k, v in HOVER_EQUIVALENTS.items():
-				if isinstance(craft_content[1], str):
-					craft_content[1] = craft_content[1].replace(k, v)
-			hover_text = [{"text": ""}, craft_content]
+		craft_for_button: JsonDict = convert_shapeless_to_shaped(craft) if craft["type"] == CraftingShapelessRecipe.type else craft
+		hover_text: list[TextComponent] = self.craft_preview(craft_for_button, name, index)
 
 		# Recipe type title + per-ingredient hover lines (delegated to the renderer)
 		renderer = get_craft_renderer(craft["type"])
@@ -189,30 +160,65 @@ class RecipeRenderer:
 
 		glyph = WIKI_RESULT_OF_CRAFT_FONT if "result" not in craft else self.images.wiki_result_icon(name, craft)
 		button = WikiButtonRender(glyph=glyph, hover=hover_text, priority=craft.get("manual_priority", 1) or 1)
+		self.target_button(button, craft, name)
+		return button
 
-		# Deferred target
+	def craft_preview(self, craft: JsonDict, name: str, index: int) -> list[TextComponent]:
+		""" The start of a button's hover: the craft's glyph in low resolution, its page content in high resolution. """
+		if self.config.high_resolution:
+			from ..glyphs import HOVER_EQUIVALENTS
+			from ..optimizer import remove_events
+			craft_content: list[TextComponent] = self.render_main(craft, name, "", in_lore=True)
+			craft_content = [craft_content[0], *craft_content[2:]]
+			remove_events(craft_content)
+			for k, v in HOVER_EQUIVALENTS.items():
+				if isinstance(craft_content[1], str):
+					craft_content[1] = craft_content[1].replace(k, v)
+			return [{"text": ""}, craft_content]
+
+		breaklines: int = max(2, max(len(craft["shape"]), len(craft["shape"][0]))) if "shape" in craft else 3
+		craft_font = self.glyphs.allocate()
+		btn_renderer = get_craft_renderer(craft["type"])
+		if btn_renderer is not None:
+			btn_renderer.build_image(self, name, craft_font, craft, output_name=f"{name}_{index + 1}")
+		return [
+			{"text": ""},
+			{"text": craft_font + "\n\n" * breaklines, "font": self.config.font, "color": "white"},
+		]
+
+	@staticmethod
+	def target_button(button: WikiButtonRender, craft: JsonDict, name: str) -> None:
+		""" Point a button at the page of what the craft makes, or of its single ingredient when it makes the page's item.
+
+		A craft with no result is one using the page's item, drawn blue.
+		"""
 		craft_result: str = "" if "result" not in craft else Ingr(craft["result"]).to_id(add_namespace=False)
 		if craft_result and craft_result != name:
 			if craft_result in Mem.definitions:
 				button.target = PageRef(item=craft_result)
-		else:
-			craft_ingredient: str = ""
-			if craft.get("ingredient"):
-				craft_ingredient = Ingr(craft["ingredient"]).to_id(add_namespace=False)
-			elif (
-				craft.get("ingredients") and stp.is_generic_instance(craft["ingredients"], list[stp.JsonDict])
-				and len(craft["ingredients"]) == 1
-			):
-				craft_ingredient = Ingr(craft["ingredients"][0]).to_id(add_namespace=False)
-			elif (
-				craft.get("ingredients") and stp.is_generic_instance(craft["ingredients"], stp.JsonDict)
-				and len(craft["ingredients"]) == 1
-			):
-				craft_ingredient = Ingr(next(iter(craft["ingredients"].values()))).to_id(add_namespace=False)
-			button.blue_craft = craft_result == ""
-			if craft_ingredient and craft_ingredient in Mem.definitions and craft_ingredient != name:
-				button.target = PageRef(item=craft_ingredient)
-		return button
+			return
+		button.blue_craft = craft_result == ""
+		craft_ingredient: str = RecipeRenderer.single_ingredient(craft)
+		if craft_ingredient and craft_ingredient in Mem.definitions and craft_ingredient != name:
+			button.target = PageRef(item=craft_ingredient)
+
+	@staticmethod
+	def single_ingredient(craft: JsonDict) -> str:
+		""" The id of a craft's only ingredient, empty when it has several.
+
+		>>> RecipeRenderer.single_ingredient({"ingredients": {"X": {"item": "minecraft:stick"}}})
+		'stick'
+		"""
+		if craft.get("ingredient"):
+			return Ingr(craft["ingredient"]).to_id(add_namespace=False)
+		ingredients = craft.get("ingredients")
+		if not ingredients:
+			return ""
+		if stp.is_generic_instance(ingredients, list[stp.JsonDict]) and len(ingredients) == 1:
+			return Ingr(ingredients[0]).to_id(add_namespace=False)
+		if stp.is_generic_instance(ingredients, stp.JsonDict) and len(ingredients) == 1:
+			return Ingr(next(iter(ingredients.values()))).to_id(add_namespace=False)
+		return ""
 
 	# --- cross-page buttons (add another item's recipe/link to any page's extra_buttons) ---
 	def button_for_item(self, item_id: str, index: int = 0) -> WikiButtonRender | None:

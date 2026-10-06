@@ -7,6 +7,7 @@ __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
 import os
+from collections.abc import Iterable
 
 import stouputils as stp
 from beet import ItemModel, Model, Texture
@@ -31,6 +32,18 @@ from ...core import (
 # Constants
 ENERGY_CABLE_MODELS_FOLDER: str = stp.get_root_path(__file__) + "/energy_cable_models"
 
+ENERGY_CABLE_FACES: tuple[tuple[str, int], ...] = (("u", 2), ("d", 1), ("n", 4), ("s", 8), ("e", 32), ("w", 16))
+""" Each face of an energy cable in the order its variant name lists them, and its bit in the `energy.data` model score. """
+
+ITEM_CABLE_SIDES: tuple[tuple[str, str], ...] = (
+	("u", "top"), ("d", "bottom"), ("n", "north"), ("s", "south"), ("e", "east"), ("w", "west")
+)
+""" Each side of an item cable, its bit in the `itemio.math` model score being its index, and the elements drawing it. """
+
+ITEM_CABLE_TEXTURES: tuple[tuple[str, str], ...] = (("0", "center"), ("1", "pillon"), ("2", "glass"), ("particle", "center"))
+""" The textures of an item cable model, and the file under the cable's folder each defaults to. """
+
+
 # Setup energy cables work and visuals
 def energy_cables_models(cables: list[str]) -> None:
 	""" Setup energy cables models and functions for SimplEnergy.
@@ -40,70 +53,55 @@ def energy_cables_models(cables: list[str]) -> None:
 	"""
 	ns: str = Mem.ctx.project_id
 	textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
-
-	# Setup parent cable model
 	parent_model: JsonDict = {
 		"parent":"block/block",
 		"display":{"fixed":{"rotation":[180,0,0],"translation":[0,-4,0],"scale":[1.005,1.005,1.005]}},
 	}
 	Mem.ctx.assets[ns].models["block/cable_base"] = set_json_encoder(Model(parent_model))
 
-	# Setup cables models
 	for cable in cables:
-		# Setup vanilla model for this cable
-		content: JsonDict = {"model": {"type": "minecraft:range_dispatch","property": "minecraft:custom_model_data","entries": []}}
-
-		# Create all the cables variants models
-		for root, dirs, files in os.walk(ENERGY_CABLE_MODELS_FOLDER):
-			dirs.sort()
-			for file in sorted(files):
-				if file.endswith(".json"):
-					path: str = f"{root}/{file}"
-
-					# Load the json file
-					json_file: JsonDict = stp.json_load(path)
-
-					# Create the new json
-					new_json: JsonDict = {
-						"parent": f"{ns}:block/cable_base",
-						"textures": {"0": f"{ns}:block/{cable}", "particle": f"{ns}:block/{cable}"},
-					}
-					new_json.update(json_file)
-
-					# Write the new json
-					no_ext: str = os.path.splitext(file)[0]
-					Mem.ctx.assets[ns].models[f"block/{cable}/{no_ext}"] = set_json_encoder(Model(new_json), max_level=3)
-
-		# Link vanilla model
-		for i in range(64):
-			# Get faces
-			down: str = "d" if i & 1 else ""
-			up: str = "u" if i & 2 else ""
-			north: str = "n" if i & 4 else ""
-			south: str = "s" if i & 8 else ""
-			west: str = "w" if i & 16 else ""
-			east: str = "e" if i & 32 else ""
-			model_path: str = f"{ns}:block/{cable}/variant_{up}{down}{north}{south}{east}{west}"
-			if model_path.endswith("_"):
-				model_path = model_path[:-1]
-
-			# Add override
-			content["model"]["entries"].append({"threshold": i, "model":{"type": "minecraft:model", "model": model_path}})
-
-		# Write the vanilla model for this cable
-		Mem.ctx.assets[ns].item_models[cable] = set_json_encoder(ItemModel(content), max_level=3)
-
-		# Copy texture to resource pack
+		write_energy_cable_variants(cable)
+		entries: list[JsonDict] = [
+			{"threshold": i, "model":{"type": "minecraft:model", "model": f"{ns}:block/{cable}/{energy_cable_variant(i)}"}}
+			for i in range(64)
+		]
+		Mem.ctx.assets[ns].item_models[cable] = set_json_encoder(ItemModel(model_dispatch(entries)), max_level=3)
 		Mem.ctx.assets[ns].textures[f"block/{cable}"] = texture_mcmeta(f"{textures_folder}/{cable}.png")
-
-		# On placement, rotate
 		write_function(BlockFunctions(cable).place_secondary, f"""
 # Cable rotation for models, and common cable tag
 data modify entity @s item_display set value "fixed"
 tag @s add {ns}.cable
 """)
+	write_cable_update(cables, family="energy", score="energy.data", tag="energy:v1/cable_update")
 
-	# Update_cable_model function
+
+def write_energy_cable_variants(cable: str) -> None:
+	""" Write the cable's model of every connection variant, from the shapes under `ENERGY_CABLE_MODELS_FOLDER`. """
+	ns: str = Mem.ctx.project_id
+	for root, dirs, files in os.walk(ENERGY_CABLE_MODELS_FOLDER):
+		dirs.sort()
+		for file in sorted(f for f in files if f.endswith(".json")):
+			new_json: JsonDict = {
+				"parent": f"{ns}:block/cable_base",
+				"textures": {"0": f"{ns}:block/{cable}", "particle": f"{ns}:block/{cable}"},
+			}
+			new_json.update(stp.json_load(f"{root}/{file}"))
+			variant: str = os.path.splitext(file)[0]
+			Mem.ctx.assets[ns].models[f"block/{cable}/{variant}"] = set_json_encoder(Model(new_json), max_level=3)
+
+
+def energy_cable_variant(i: int) -> str:
+	""" The variant model of an energy cable connected on the faces the bits of `i` set.
+
+	>>> energy_cable_variant(0), energy_cable_variant(1 | 2 | 32)
+	('variant', 'variant_ude')
+	"""
+	return ("variant_" + "".join(face for face, bit in ENERGY_CABLE_FACES if i & bit)).removesuffix("_")
+
+
+def write_cable_update(cables: Iterable[str], family: str, score: str, tag: str) -> None:
+	""" Write the function giving a cable of `family` its item model, then the variant its connections score names. """
+	ns: str = Mem.ctx.project_id
 	cables_str: str = "\n".join([
 		f"execute if entity @s[tag={ns}.{cable}] run item replace entity @s contents with "
 		f"{CUSTOM_ITEM_VANILLA}[item_model=\"{ns}:{cable}\"]"
@@ -111,17 +109,15 @@ tag @s add {ns}.cable
 	])
 	cable_update_content: str = f"""
 # Stop if not {ns} cable
-execute unless entity @s[tag={ns}.custom_block,tag=energy.cable] run return fail
+execute unless entity @s[tag={ns}.custom_block,tag={family}.cable] run return fail
 
 # Apply the model dynamically based on cable tags
 {cables_str}
 
 # Get the right model
-item modify entity @s contents {stp.json_dump(loot_function("minecraft:set_custom_model_data", floats={"values": [float_score("energy.data")], "mode": "replace_all"}), max_level=0)}
+item modify entity @s contents {stp.json_dump(loot_function("minecraft:set_custom_model_data", floats={"values": [float_score(score)], "mode": "replace_all"}), max_level=0)}
 """  # noqa: E501
-	write_function(f"{ns}:calls/energy/cable_update", cable_update_content, tags=["energy:v1/cable_update"])
-	return
-
+	write_function(f"{ns}:calls/{family}/cable_update", cable_update_content, tags=[tag])
 
 
 # Setup item cables work and visuals
@@ -136,113 +132,62 @@ def item_cables_models(cables: dict[str, dict[str, str] | None]) -> None:
 	"""
 	ns: str = Mem.ctx.project_id
 	textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
-
-	# Constants for cable generation (same as your code principle)
-	sides: list[str] = ["u", "d", "n", "s", "e", "w"]
-	cube_names: list[str] = ["top", "bottom", "north", "south", "east", "west"]
-
-	# Path to the base cable model
-	cable_base_path: str = stp.get_root_path(__file__) + "/item_cable_models/cable_base.json"
-
-	# Handle parameters
 	for cable, textures in cables.items():
 		if textures is None:
 			textures = {}
-		if not textures.get("0"):
-			textures["0"] = f"{cable}/center"
-		if not textures.get("1"):
-			textures["1"] = f"{cable}/pillon"
-		if not textures.get("2"):
-			textures["2"] = f"{cable}/glass"
-		if not textures.get("particle"):
-			textures["particle"] = f"{cable}/center"
+		for key, default in ITEM_CABLE_TEXTURES:
+			if not textures.get(key):
+				textures[key] = f"{cable}/{default}"
 
-		# Setup vanilla model for this item cable
-		content: JsonDict = {"model": {"type": "minecraft:range_dispatch","property": "minecraft:custom_model_data","entries": []}}
-
-		# Generate all variants (64 possibilities like your code)
-		for i in range(64):
-			# Generate indicator like your code: _n _u _d _s _e _w _ns _ne _nw _se _sw etc
-			indicator: str = "_"
-			for side in sides:
-				if i & (1 << sides.index(side)):
-					indicator += side
-
-			# Load the base cable model
-			base_data: JsonDict = stp.json_load(cable_base_path)
-
-			# Update textures to use the current cable's textures
-			base_data["textures"] = {
-				"0": f"{ns}:block/{textures['0']}",
-				"1": f"{ns}:block/{textures['1']}",
-				"2": f"{ns}:block/{textures['2']}",
-				"particle": f"{ns}:block/{textures['particle']}"
-			}
-
-			# Remove elements for sides that are not connected (same principle as your code)
-			for side in sides:
-				if side not in indicator:
-					cube_name = cube_names[sides.index(side)]
-					j = 0
-					while j < len(base_data["elements"]):
-						element_name = base_data["elements"][j].get("name", "")
-						if cube_name in element_name:
-							base_data["elements"].pop(j)
-							j -= 1
-						j += 1
-
-			# Save the variant model
-			variant_name = f"variant{indicator}" if indicator != "_" else "no_variant"
-			Mem.ctx.assets[ns].models[f"block/{cable}/{variant_name}"] = set_json_encoder(Model(base_data), max_level=3)
-
-			# Add entry to the range dispatch model
-			model_path = f"{ns}:block/{cable}/{variant_name}"
-			content["model"]["entries"].append({"threshold": i, "model": {"type": "minecraft:model", "model": model_path}})
-
-		# Write the vanilla model for this item cable
-		Mem.ctx.assets[ns].item_models[cable] = set_json_encoder(ItemModel(content), max_level=3)
-
-		# Copy textures to resource pack
+		entries: list[JsonDict] = [write_item_cable_variant(cable, textures, i) for i in range(64)]
+		Mem.ctx.assets[ns].item_models[cable] = set_json_encoder(ItemModel(model_dispatch(entries)), max_level=3)
 		for texture_path in textures.values():
-			src: str = f"{textures_folder}/{texture_path}.png"
-			dst: str = f"block/{texture_path}"
+			copy_block_texture(textures_folder, texture_path)
 
-			# Check if the source file exists and if the texture is not already registered
-			if os.path.exists(src) and (not Mem.ctx.assets[ns].textures.get(dst)):
-				Mem.ctx.assets[ns].textures[dst] = texture_mcmeta(src)
-
-		# On placement, add itemio.cable tag and call init function
 		write_function(BlockFunctions(cable).place_secondary, f"""
 # Item cable setup for models, and common itemio cable tag
 tag @s add {ns}.cable
 tag @s add itemio.cable
 function #itemio:calls/cables/init
 """)
-
-		# On destruction, call destroy function
 		write_function(BlockFunctions(cable).destroy, """
 # Item cable destruction cleanup
 function #itemio:calls/cables/destroy
 """)
+	write_cable_update(cables, family="itemio", score="itemio.math", tag="itemio:event/cable_update")
 
-	# Update cable_model function
-	cables_str: str = "\n".join([
-		f"execute if entity @s[tag={ns}.{cable}] run item replace entity @s contents with "
-		f"{CUSTOM_ITEM_VANILLA}[item_model=\"{ns}:{cable}\"]"
-		for cable in cables
-	])
-	cable_update_content: str = f"""
-# Stop if not {ns} cable
-execute unless entity @s[tag={ns}.custom_block,tag=itemio.cable] run return fail
 
-# Apply the model dynamically based on cable tags
-{cables_str}
+def copy_block_texture(textures_folder: str, texture_path: str) -> None:
+	""" Copy `<textures_folder>/<texture_path>.png` to the resource pack's block textures, unless missing or already there. """
+	ns: str = Mem.ctx.project_id
+	src: str = f"{textures_folder}/{texture_path}.png"
+	dst: str = f"block/{texture_path}"
+	if os.path.exists(src) and (not Mem.ctx.assets[ns].textures.get(dst)):
+		Mem.ctx.assets[ns].textures[dst] = texture_mcmeta(src)
 
-# Get the right model
-item modify entity @s contents {stp.json_dump(loot_function("minecraft:set_custom_model_data", floats={"values": [float_score("itemio.math")], "mode": "replace_all"}), max_level=0)}
-"""  # noqa: E501
-	write_function(f"{ns}:calls/itemio/cable_update", cable_update_content, tags=["itemio:event/cable_update"])
-	return
+
+def model_dispatch(entries: list[JsonDict]) -> JsonDict:
+	""" An item model choosing one of `entries` by the item's custom model data. """
+	return {"model": {"type": "minecraft:range_dispatch","property": "minecraft:custom_model_data","entries": entries}}
+
+
+def write_item_cable_variant(cable: str, textures: dict[str, str], i: int) -> JsonDict:
+	""" Write the item cable's model connected on the sides the bits of `i` set, the base model losing the elements of the others.
+
+	Returns:
+		The entry of the cable's item model pointing at it.
+	"""
+	ns: str = Mem.ctx.project_id
+	connected: list[str] = [side for index, (side, _) in enumerate(ITEM_CABLE_SIDES) if i & (1 << index)]
+	removed: list[str] = [cube for side, cube in ITEM_CABLE_SIDES if side not in connected]
+	base_data: JsonDict = stp.json_load(stp.get_root_path(__file__) + "/item_cable_models/cable_base.json")
+	base_data["textures"] = {key: f"{ns}:block/{textures[key]}" for key, _ in ITEM_CABLE_TEXTURES}
+	base_data["elements"] = [
+		element for element in base_data["elements"] if not any(cube in element.get("name", "") for cube in removed)
+	]
+	variant_name: str = f"variant_{''.join(connected)}" if connected else "no_variant"
+	Mem.ctx.assets[ns].models[f"block/{cable}/{variant_name}"] = set_json_encoder(Model(base_data), max_level=3)
+	return {"threshold": i, "model": {"type": "minecraft:model", "model": f"{ns}:block/{cable}/{variant_name}"}}
 
 
 # Setup servo-mechanisms work and visuals
@@ -313,11 +258,7 @@ def register_servo_textures(textures_folder: str, typ: str, textures: dict[str, 
 	""" Copy one servo type's textures into the resource pack, and darken a gray copy of the default one into its "off" texture. """
 	ns: str = Mem.ctx.project_id
 	for texture_key in ("default", "connected"):
-		texture_path: str = textures.get(texture_key, f"{typ}_{texture_key}")
-		src: str = f"{textures_folder}/{texture_path}.png"
-		dst: str = f"block/{texture_path}"
-		if os.path.exists(src) and (not Mem.ctx.assets[ns].textures.get(dst)):
-			Mem.ctx.assets[ns].textures[dst] = texture_mcmeta(src)
+		copy_block_texture(textures_folder, textures.get(texture_key, f"{typ}_{texture_key}"))
 
 	off_dst: str = f"block/servo/{typ}_off"
 	default_src: str = f"{textures_folder}/{textures.get('default', f'{typ}_default')}.png"

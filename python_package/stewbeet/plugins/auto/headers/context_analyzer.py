@@ -13,6 +13,16 @@ __lazy_modules__ = ALWAYS_LAZY
 # Imports
 from .object import Header
 
+# Constants
+PLAYER_CONTEXT: str = "as the player & at current position"
+""" The context of a function an advancement reward or a dialog button runs. """
+
+DEFAULT_CONTEXT_CALLERS: tuple[str, ...] = ("#minecraft:tick", "#minecraft:load")
+""" Callers running a function with no context at all. """
+
+EXECUTE_KEYWORDS: tuple[str, ...] = ("as ", "at ", "positioned ", "rotated ", "facing ", "in ", "anchored ", "align ")
+""" What a bracketed caller suffix must hold to be an execution context rather than an NBT path. """
+
 
 # Class
 class ContextAnalyzer:
@@ -43,68 +53,36 @@ class ContextAnalyzer:
 		"""
 		if visited is None:
 			visited = set()
-
 		if func_path in visited:
 			return None
-
 		if func_path in self.execution_contexts:
 			return self.execution_contexts[func_path]
-
 		visited.add(func_path)
-
 		if func_path not in self.mcfunctions:
 			return None
+		context: str | None = self.context_from_callers(self.mcfunctions[func_path].within, visited)
+		self.execution_contexts[func_path] = context
+		return context
 
-		within = self.mcfunctions[func_path].within
+	def context_from_callers(self, within: list[str], visited: set[str]) -> str | None:
+		""" The context the first caller able to tell gives, a function inheriting the context of the function calling it.
 
-		# If no callers, default context
-		if not within:
-			self.execution_contexts[func_path] = None
-			return self.execution_contexts[func_path]
-
-		# Check for specific contexts
+		A scheduled caller tells nothing, since the call runs on a later tick.
+		"""
 		for caller in within:
-
-			# Scheduled functions have no execution context - skip them
 			if " [ scheduled ]" in caller:
 				continue
-
-			# Advancement rewards and dialog buttons both run as the clicking/earning player
 			if caller.startswith(("advancement ", "dialog ")):
-				self.execution_contexts[func_path] = "as the player & at current position"
-				return self.execution_contexts[func_path]
-
-			# Tick and load tags have default context
-			if caller in ["#minecraft:tick", "#minecraft:load"]:
-				self.execution_contexts[func_path] = None
-				return self.execution_contexts[func_path]
-
-			# Check if caller has execution context in brackets
-			if " [" in caller and "]" in caller:
-				# Extract the execution context (must have space before [ to distinguish from NBT paths)
-				context_start = caller.find(" [")
-				context_end = caller.rfind("]")  # Find the LAST ] not the first
-				if context_start != -1 and context_end != -1:
-					context = caller[context_start + 2:context_end]  # +2 to skip " ["
-					# Only consider it an execution context if it contains execution keywords
-					if any(
-						keyword in context
-						for keyword in ["as ", "at ", "positioned ", "rotated ", "facing ", "in ", "anchored ", "align "]
-					):
-						self.execution_contexts[func_path] = context
-						return self.execution_contexts[func_path]
-
-			# If called by another function, inherit its context
-			# Extract the function name (remove macros and context info)
-			base_caller = caller.split(" ")[0]  # Get just the function path
+				return PLAYER_CONTEXT
+			if caller in DEFAULT_CONTEXT_CALLERS:
+				return None
+			context: str | None = bracketed_context(caller)
+			if context is not None:
+				return context
+			base_caller: str = caller.split(" ")[0]
 			if base_caller in self.mcfunctions:
-				parent_context = self.determine_execution_context(base_caller, visited.copy())
-				self.execution_contexts[func_path] = parent_context
-				return self.execution_contexts[func_path]
-
-		# Default context
-		self.execution_contexts[func_path] = None
-		return self.execution_contexts[func_path]
+				return self.determine_execution_context(base_caller, visited.copy())
+		return None
 
 	def analyze_all_contexts(self) -> None:
 		""" Analyze and determine execution contexts for all functions. """
@@ -113,6 +91,19 @@ class ContextAnalyzer:
 			# Only set the context if it's not None
 			if context is not None:
 				self.mcfunctions[path].executed = context
+
+
+
+def bracketed_context(caller: str) -> str | None:
+	""" The execution context between ` [` and the last `]` of a caller, None when it holds none.
+
+	>>> bracketed_context("t:f [ as @a ]"), bracketed_context("t:f {path:a[0]}")
+	(' as @a ', None)
+	"""
+	if " [" not in caller or "]" not in caller:
+		return None
+	context: str = caller[caller.find(" [") + 2:caller.rfind("]")]
+	return context if any(keyword in context for keyword in EXECUTE_KEYWORDS) else None
 
 
 __test__: dict[str, str] = {

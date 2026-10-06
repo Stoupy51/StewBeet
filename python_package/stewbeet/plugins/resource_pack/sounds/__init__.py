@@ -36,95 +36,73 @@ def beet_default(ctx: Context):
 	- Process individual sounds (e.g. fireselect)
 	- Generate the appropriate sounds.json configuration
 	"""
-	# Get sounds config from meta
-	stewbeet_meta: JsonDict = ctx.meta.get("stewbeet", {})
-	sounds_config: JsonDict | None = stewbeet_meta.get("sounds", None)
-
-	if isinstance(sounds_config, dict) and sounds_config.get("folder"):
-		# New structure: meta.stewbeet.sounds.folder
-		sounds_folder: str = stp.relative_path(sounds_config["folder"])
-		exclude_patterns: list[str] = sounds_config.get("exclude_patterns", [])
-	else:
-		# Backward compatibility: meta.stewbeet.sounds_folder
-		old_sounds_folder: str = stewbeet_meta.get("sounds_folder", "")
-		assert old_sounds_folder != "", (
-			"Sounds folder path not found. Please set 'meta.stewbeet.sounds.folder' in project configuration."
-		)
-		stp.warning(
-			"'meta.stewbeet.sounds_folder' is deprecated. "
-			"Please migrate to 'meta.stewbeet.sounds.folder' instead. "
-			"(See https://stewbeet.paralya.fr/markdown?src=plugins/resource_pack.sounds.md)"
-		)
-		sounds_folder = stp.relative_path(old_sounds_folder)
-		exclude_patterns = []
-
-	# Get all sound files
+	sounds_folder, exclude_patterns = sounds_settings(ctx.meta.get("stewbeet", {}))
 	all_files: list[str] = sorted(os.path.join(root, file) for root, _, files in os.walk(sounds_folder) for file in files)
 	sounds_names: list[str] = [sound for sound in all_files if sound.endswith(".ogg")]
 	if not sounds_names:
 		return
 
-	# Filter out excluded patterns (matched against relative paths from sounds_folder)
-	if exclude_patterns:
-		sounds_names = [
-			s for s in sounds_names
-			if not any(
-				fnmatch.fnmatch(stp.relative_path(s, sounds_folder), pattern)
-				for pattern in exclude_patterns
-			)
-		]
+	# Excluded patterns are matched against paths relative to the sounds folder
+	sounds_names = [
+		s for s in sounds_names
+		if not any(fnmatch.fnmatch(stp.relative_path(s, sounds_folder), pattern) for pattern in exclude_patterns)
+	]
+	for base_name, variants in sorted(group_variants(sounds_names, sounds_folder).items()):
+		sounds: dict[str, Sound] = {
+			os.path.splitext(variant)[0].lower().replace(" ", "_"): variant_sound(sounds_folder, variant)
+			for variant in sorted(variants)
+		}
+		add_sound(ctx, sounds, base_name)
 
-	# Dictionary to group sound variants
+
+def sounds_settings(stewbeet_meta: JsonDict) -> tuple[str, list[str]]:
+	""" The sounds folder and the patterns excluded from it, from `meta.stewbeet.sounds`.
+
+	The deprecated `meta.stewbeet.sounds_folder` is still read, with a warning and nothing excluded.
+	"""
+	sounds_config: JsonDict | None = stewbeet_meta.get("sounds", None)
+	if isinstance(sounds_config, dict) and sounds_config.get("folder"):
+		return stp.relative_path(sounds_config["folder"]), sounds_config.get("exclude_patterns", [])
+	old_sounds_folder: str = stewbeet_meta.get("sounds_folder", "")
+	assert old_sounds_folder != "", (
+		"Sounds folder path not found. Please set 'meta.stewbeet.sounds.folder' in project configuration."
+	)
+	stp.warning(
+		"'meta.stewbeet.sounds_folder' is deprecated. "
+		"Please migrate to 'meta.stewbeet.sounds.folder' instead. "
+		"(See https://stewbeet.paralya.fr/markdown?src=plugins/resource_pack.sounds.md)"
+	)
+	return stp.relative_path(old_sounds_folder), []
+
+
+def group_variants(sounds_names: list[str], sounds_folder: str) -> dict[str, list[str]]:
+	""" Sound files grouped by name, numbered variants (`name_01`, `name2`) under their shared name.
+
+	Each name is simplified to lowercase letters, digits, `.`, `_` and `/`, and the files are given relative to the folder.
+	"""
 	sound_groups: dict[str, list[str]] = defaultdict(list)
 	for sound in sounds_names:
-		# Get relative path from sounds folder, simplified name, and without extension
 		rel_sound: str = stp.relative_path(sound, sounds_folder)
 		sound_file: str = "".join(char for char in rel_sound.replace(" ", "_").lower() if char.isalnum() or char in "._/")
 		sound_file_no_ext: str = os.path.splitext(sound_file)[0]
-
-		# Check if sound is a numbered variant (e.g. name_01, name_02 or name1, name2)
 		base_name_match = re.match(r'(.+?)(?:_)?(\d+)$', sound_file_no_ext)
 		if base_name_match:
-			base_name: str = base_name_match.group(1)
-			sound_groups[base_name].append(rel_sound)
+			sound_groups[base_name_match.group(1)].append(rel_sound)
 		else:
-			# Not a numbered variant, add as individual sound
 			sound_groups[sound_file_no_ext] = [rel_sound]
+	return sound_groups
 
-	# Create sounds using add_sound function
-	for base_name, variants in sorted(sound_groups.items()):
-		# Create a dictionary mapping variant names to Sound objects
-		sounds: dict[str, Sound] = {}
 
-		# Process each variant
-		for variant_rel_sound in sorted(variants):
-			# Get variant name without extension
-			variant_name: str = os.path.splitext(variant_rel_sound)[0]
-
-			# For subtitle, strip trailing numbers and underscores to avoid "Wolf Howl 1", "Wolf Howl 2"
-			subtitle = re.sub(r'[_\s]*\d+$', '', variant_name).strip()
-
-			# Get stream boolean if longer than 10 seconds
-			source_path: str = stp.clean_path(f"{sounds_folder}/{variant_rel_sound}")
-			try:
-				audio = OggVorbis(source_path)
-				stream = audio.info and audio.info.length > 10.0
-			except Exception:
-				stream = False
-
-			# Create Sound object for this variant
-			if stream:
-				sounds[variant_name.lower().replace(" ","_")] = Sound(
-					source_path=source_path,
-					subtitle=subtitle,
-					stream=True
-				)
-			else:
-				sounds[variant_name.lower().replace(" ","_")] = Sound(
-					source_path=source_path,
-					subtitle=subtitle,
-				)
-
-		# Add all variants to the sound system
-		add_sound(ctx, sounds, base_name)
+def variant_sound(sounds_folder: str, variant: str) -> Sound:
+	""" One variant's sound, streamed when longer than 10 seconds, its subtitle the name without the trailing number. """
+	subtitle: str = re.sub(r'[_\s]*\d+$', '', os.path.splitext(variant)[0]).strip()
+	source_path: str = stp.clean_path(f"{sounds_folder}/{variant}")
+	try:
+		audio = OggVorbis(source_path)
+		stream = audio.info and audio.info.length > 10.0
+	except Exception:
+		stream = False
+	if stream:
+		return Sound(source_path=source_path, subtitle=subtitle, stream=True)
+	return Sound(source_path=source_path, subtitle=subtitle)
 

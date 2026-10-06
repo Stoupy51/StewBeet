@@ -1,7 +1,4 @@
-"""Text-component optimization (merge adjacent compounds, strip nested events).
-
-Ported as-is from the v1 ``book_optimizer``: pure functions with no global state.
-"""
+"""Text-component optimization (merge adjacent compounds, strip nested events)."""
 
 # Lazy imports (PEP 810), ignored before Python 3.15
 from stouputils.lazy import ALWAYS_LAZY
@@ -21,72 +18,60 @@ def optimize_element(content: TextComponent) -> TextComponent:
 	>>> optimize_element(["","",{"text": "A", "color": "red", "bold": True, "shadow_color": [0,0,0,0]}])
 	['', {'text': 'A', 'color': 'red', 'bold': True, 'shadow_color': [0, 0, 0, 0]}]
 	"""
-	# If dict, optimize the values
 	if isinstance(content, dict):
 		if not any(x in content for x in ["text", "translate", "contents"]):
 			return content
-		content = content.copy()
-		new_component: TextComponent = {}
-		for key, value in content.items():
-			new_component[key] = optimize_element(value)
-		return new_component
-
-	# If not a list, just return
+		return {key: optimize_element(value) for key, value in content.items()}
 	if not isinstance(content, list):
 		return content
-
-	# If list with only one element, return the element
 	if len(content) == 1:
 		return content[0]
 
-	# For each compound
 	new_content: list[TextComponent] = []
 	for i, compound in enumerate(content):
 		compound = cast(TextComponent, compound)
-
-		# Case where it's a integer => always add it
 		if isinstance(compound, int):
 			new_content.append(compound)
-
-		# If it's a list or the first compound, add it
 		elif isinstance(compound, list) or i == 0:
 			new_content.append(optimize_element(compound))
-
 		else:
-			# If the current is a dict with only "text" key, transform it to a string
-			if isinstance(compound, dict) and len(compound) == 1 and "text" in compound:
-				compound = cast(TextComponent, compound["text"])
-
-			# For checks
-			compound_without_text = cast(JsonDict, compound.copy() if isinstance(compound, dict) else compound)
-			previous_without_text = cast(JsonDict, new_content[-1].copy() if isinstance(new_content[-1], dict) else new_content[-1])
-			if isinstance(compound, dict) and isinstance(new_content[-1], dict):
-				compound_without_text.pop("text", None)
-				previous_without_text.pop("text", None)
-
-			# If the previous compound is the same as the current one, merge the text
-			if str(compound_without_text) == str(previous_without_text):
-				if isinstance(new_content[-1], str):
-					new_content[-1] += str(compound)
-				elif isinstance(new_content[-1], dict):
-					new_content[-1]["text"] += cast(JsonDict, compound)["text"]
-
-			# Always add break lines to the previous part (string of only break lines)
-			elif isinstance(compound, str) and all(c == "\n" for c in compound):
-				if isinstance(new_content[-1], str):
-					new_content[-1] += compound
-				elif isinstance(new_content[-1], dict):
-					new_content[-1]["text"] += compound
-
-			# Always merge two strings
-			elif isinstance(compound, str) and isinstance(new_content[-1], str):
-				new_content[-1] += compound
-
-			# Otherwise, just add the optimized compound
-			else:
-				new_content.append(optimize_element(compound))
-
+			merge_into(new_content, compound)
 	return new_content
+
+
+def merge_into(new_content: list[TextComponent], compound: TextComponent) -> None:
+	""" Append a compound, merged into the last one when both differ only by their text, or when it is only line breaks.
+
+	A string merges into a string. A compound merging into one that is neither a string nor a dict is dropped.
+	"""
+	# A dict holding nothing but its text is that text
+	if isinstance(compound, dict) and len(compound) == 1 and "text" in compound:
+		compound = cast(TextComponent, compound["text"])
+	previous: TextComponent = new_content[-1]
+	if same_style(compound, previous):
+		if isinstance(previous, str):
+			new_content[-1] = previous + str(compound)
+		elif isinstance(previous, dict):
+			previous["text"] += cast(JsonDict, compound)["text"]
+	elif isinstance(compound, str) and all(c == "\n" for c in compound):
+		if isinstance(previous, str):
+			new_content[-1] = previous + compound
+		elif isinstance(previous, dict):
+			previous["text"] += compound
+	elif isinstance(compound, str) and isinstance(previous, str):
+		new_content[-1] = previous + compound
+	else:
+		new_content.append(optimize_element(compound))
+
+
+def same_style(compound: TextComponent, previous: TextComponent) -> bool:
+	""" Whether two compounds are the same apart from their text, two dicts being compared without it. """
+	compound_without_text = cast(JsonDict, compound.copy() if isinstance(compound, dict) else compound)
+	previous_without_text = cast(JsonDict, previous.copy() if isinstance(previous, dict) else previous)
+	if isinstance(compound, dict) and isinstance(previous, dict):
+		compound_without_text.pop("text", None)
+		previous_without_text.pop("text", None)
+	return str(compound_without_text) == str(previous_without_text)
 
 
 # Remove events recursively

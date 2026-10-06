@@ -136,8 +136,7 @@ class FunctionAnalyzer:
 		found: list[str] = [match.group(1) for match in FUNCTION_CALL_RE.finditer(text)]
 		found += [match.group(2) for match in QUOTED_ID_RE.finditer(text)]
 		for called in found:
-			if called in self.mcfunctions and caller not in self.mcfunctions[called].within:
-				self.mcfunctions[called].within.append(caller)
+			self.add_caller(called, caller)
 
 	def analyze_function_calls(self) -> None:
 		""" Record in the header of every called function which function calls it, with the macro payload it passes.
@@ -151,71 +150,67 @@ class FunctionAnalyzer:
 		>>> mcfunctions["test:target"].within
 		['test:caller {slot:"$(slot)"}']
 		"""
-		# For each mcfunction file, look at each line
 		for path, header in self.mcfunctions.items():
 			for line in header.content.split("\n"):
+				self.analyze_line(path, line)
 
-				# A quoted id is data the line hands over, so the function runs from elsewhere: a string reference
-				for match in QUOTED_ID_RE.finditer(line):
-					quoted: str = match.group(2)
-					if quoted in self.mcfunctions and f"string in {path}" not in self.mcfunctions[quoted].within:
-						self.mcfunctions[quoted].within.append(f"string in {path}")
+	def analyze_line(self, path: str, line: str) -> None:
+		""" Record the calls one line of `path` makes, as a command or from inside a string. """
+		# A quoted id is data the line hands over, so the function runs from elsewhere: a string reference
+		for match in QUOTED_ID_RE.finditer(line):
+			self.add_caller(match.group(2), f"string in {path}")
+		if "function " not in line:
+			return
 
-				# Skip lines with no function reference at all
-				if "function " not in line:
-					continue
+		# A real command call anchors "function" at the command start or after run/schedule, outside quoted arguments.
+		command_match: re.Match[str] | None = next(
+			(m for m in COMMAND_CALL_RE.finditer(line) if not self.is_inside_string(line, m.start())),
+			None,
+		)
+		if command_match is not None:
+			self.add_command_call(path, line, command_match)
+			return
 
-				# A real command call anchors "function" at the command start or after run/schedule, outside quoted arguments.
-				# Its payload (macros, schedule time) and execution context only apply to that call.
-				command_match = next(
-					(m for m in COMMAND_CALL_RE.finditer(line) if not self.is_inside_string(line, m.start())),
-					None,
-				)
-				if command_match is not None:
-					primary: str = command_match.group(2)
+		# A reference inside an argument string is a "string in <caller>", whose clicked command runs as the player.
+		# A macro payload after it is kept, since a "## /function ns:foo {x:1}" line may be the only typed example.
+		for match in FUNCTION_CALL_RE.finditer(line):
+			if match.group(1) in self.mcfunctions:
+				payload: str = self.extract_macro_payload(line, match.end())
+				self.add_caller(match.group(1), f"string in {path}" + (f" {payload}" if payload else ""))
 
-					# Everything after the called function is macro data ({...}) or a schedule time
-					more_text: str = line[command_match.end():].replace("\n", "").strip()
-					more: str = f" {more_text}" if more_text else ""
+	def add_command_call(self, path: str, line: str, command_match: re.Match[str]) -> None:
+		""" Record a command call with what follows it, macro data or a schedule time, and the context it runs in.
 
-					# "schedule function ..." loses execution context (it runs on a later tick)
-					is_scheduled: bool = command_match.group("sched") is not None
-					line_context: str | None = None if is_scheduled else parse_execution_context_from_line(line)
+		The references nested in its macro payload (function #tag:run {with: {on_exit_point: "function ns:path"}}) share that caller.
+		"""
+		more_text: str = line[command_match.end():].replace("\n", "").strip()
+		is_scheduled: bool = command_match.group("sched") is not None
+		caller_info: str = path + (f" {more_text}" if more_text else "") + self.context_suffix(line, is_scheduled=is_scheduled)
+		nested: list[str] = [match.group(1) for match in FUNCTION_CALL_RE.finditer(line)]
+		for called in dict.fromkeys([*self.resolve_call(command_match.group(2)), *nested]):
+			self.add_caller(called, caller_info)
 
-					# Create the caller string with context if available
-					caller_info: str = path + more
-					if line_context:
-						line_context = "".join(
-							x for i, x in enumerate(line_context)
-							if x != " " or (i > 0 and line_context[i - 1] not in ":,")
-						)
-						caller_info += f" [ {line_context} ]"
-					elif is_scheduled:
-						# Mark scheduled calls with a special marker so context analyzer knows not to inherit context
-						caller_info += " [ scheduled ]"
+	@staticmethod
+	def context_suffix(line: str, is_scheduled: bool) -> str:
+		""" The ` [ ... ]` a caller ends with: the execution context of its line, empty when it sets none.
 
-					# The primary call plus any nested references inside its macro payload (e.g.
-					# function #tag:run {with: {on_exit_point: "function ns:path"}}) share this caller info.
-					called_functions: list[str] = self.resolve_call(primary)
-					for match in FUNCTION_CALL_RE.finditer(line):
-						candidate: str = match.group(1)
-						if candidate not in called_functions:
-							called_functions.append(candidate)
-					for called in called_functions:
-						if called in self.mcfunctions and caller_info not in self.mcfunctions[called].within:
-							self.mcfunctions[called].within.append(caller_info)
+		A scheduled call runs on a later tick, outside any context, and is marked `scheduled` so the context analyzer inherits nothing.
 
-				# A reference inside an argument string is a "string in <caller>", whose clicked command runs as the player.
-				# A macro payload after it is kept, since a "## /function ns:foo {x:1}" line may be the only typed example.
-				else:
-					for match in FUNCTION_CALL_RE.finditer(line):
-						candidate = match.group(1)
-						if candidate not in self.mcfunctions:
-							continue
-						payload: str = self.extract_macro_payload(line, match.end())
-						caller_ref: str = f"string in {path}" + (f" {payload}" if payload else "")
-						if caller_ref not in self.mcfunctions[candidate].within:
-							self.mcfunctions[candidate].within.append(caller_ref)
+		>>> FunctionAnalyzer.context_suffix("execute as @a[tag=a, tag=b] run function t:f", is_scheduled=False)
+		' [ as @a[tag=...] ]'
+		"""
+		if is_scheduled:
+			return " [ scheduled ]"
+		line_context: str | None = parse_execution_context_from_line(line)
+		if not line_context:
+			return ""
+		compact: str = "".join(x for i, x in enumerate(line_context) if x != " " or (i > 0 and line_context[i - 1] not in ":,"))
+		return f" [ {compact} ]"
+
+	def add_caller(self, called: str, caller: str) -> None:
+		""" Add `caller` to the @within of `called` once, when `called` is one of the pack's functions. """
+		if called in self.mcfunctions and caller not in self.mcfunctions[called].within:
+			self.mcfunctions[called].within.append(caller)
 
 	def analyze_all_relationships(self) -> None:
 		""" Analyze all function relationships. """

@@ -37,51 +37,51 @@ def template_command() -> None:
 
 	Ex: `stewbeet init [template_name]`
 	"""
-	# Get the template name argument if provided
-	template_name: str = sys.argv[2].lower() if len(sys.argv) >= 3 else ""
-	if not template_name or template_name not in TEMPLATES_URL:
-		string: str = "Available templates:\n"
-		longest_name_length: int = max(len(name) for name in TEMPLATES_URL)
-		for name, data in TEMPLATES_URL.items():
-			name_added_spaces: str = " " * (longest_name_length - len(name))
-			string += f"""  - "{name}":{name_added_spaces} {data["desc"]}\n"""
-		stp.info(string + "\nPlease choose a template from the list above:", end="")
-		template_name = input().strip().lower()
-		if template_name not in TEMPLATES_URL:
-			stp.error(f"Template '{template_name}' is not available.")
+	template_name: str | None = sys.argv[2].lower() if len(sys.argv) >= 3 else ""
+	if template_name not in TEMPLATES_URL:
+		template_name = ask_template_name()
+		if template_name is None:
 			return
 
-	# Get the template URL
 	from importlib.metadata import version
 	template_url: str = TEMPLATES_URL[template_name]["url"].replace("__VERSION__", f'v{version("stewbeet")}')
-
-	# Download the template zip file
 	response: requests.Response = requests.get(template_url)
 	if response.status_code != 200:
 		stp.error(f"Failed to download the template from '{template_url}'. HTTP status code: {response.status_code}")
 		return
-
-	# Open the zip file from the downloaded content
 	with zipfile.ZipFile(io.BytesIO(response.content)) as zip_file:
-		# Extract files one by one and when conflicts occur, ask the user what to do (replace/skip [all])
-		for member in zip_file.namelist():
-			# Check if the file already exists
-			if os.path.exists(member):
-				stp.warning(f"File '{member}' already exists. Do you want to replace it? (y/n/all/skip all):", end=" ")
-				choice: str = input().strip().lower()
-				if choice in ("n", "no"):
-					continue
-				if choice == "skip all":
-					stp.warning("Skipping all existing files.")
-					break
-				if choice == "all":
-					stp.warning("Replacing all existing files.")
-					for m in zip_file.namelist():
-						zip_file.extract(m, ".")
-					stp.info("Template initialized successfully!")
-					return
-			# Extract the file
-			zip_file.extract(member, ".")
-
+		extract_template(zip_file)
 	stp.info("Template initialized successfully!")
+
+
+def ask_template_name() -> str | None:
+	""" Ask which template to use, listing them with their description. None, with an error, for a name not in the list. """
+	longest_name_length: int = max(len(name) for name in TEMPLATES_URL)
+	string: str = "Available templates:\n" + "".join(
+		f"""  - "{name}":{" " * (longest_name_length - len(name))} {data["desc"]}\n""" for name, data in TEMPLATES_URL.items()
+	)
+	stp.info(string + "\nPlease choose a template from the list above:", end="")
+	template_name: str = input().strip().lower()
+	if template_name not in TEMPLATES_URL:
+		stp.error(f"Template '{template_name}' is not available.")
+		return None
+	return template_name
+
+
+def extract_template(zip_file: zipfile.ZipFile) -> None:
+	""" Extract the template into the current directory, asking before replacing a file: yes, no, all, or skip all. """
+	for member in zip_file.namelist():
+		if os.path.exists(member):
+			stp.warning(f"File '{member}' already exists. Do you want to replace it? (y/n/all/skip all):", end=" ")
+			choice: str = input().strip().lower()
+			if choice in ("n", "no"):
+				continue
+			if choice == "skip all":
+				stp.warning("Skipping all existing files.")
+				return
+			if choice == "all":
+				stp.warning("Replacing all existing files.")
+				zip_file.extractall(".")
+				return
+		zip_file.extract(member, ".")
 

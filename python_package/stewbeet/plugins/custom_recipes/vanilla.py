@@ -5,6 +5,8 @@ from stouputils.lazy import ALWAYS_LAZY
 __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
+from typing import cast
+
 import stouputils as stp
 from beet import Advancement, Recipe
 from stouputils.typing import JsonDict
@@ -17,6 +19,7 @@ from ...core.cls.recipe import (
 	CampfireCookingRecipe,
 	CraftingShapedRecipe,
 	CraftingShapelessRecipe,
+	RecipeBase,
 	SmeltingRecipe,
 	SmithingTransformRecipe,
 	SmithingTrimRecipe,
@@ -25,6 +28,15 @@ from ...core.cls.recipe import (
 	written_cooking_time,
 )
 from ...core.utils.io import set_json_encoder, write_function
+
+# Constants
+VANILLA_RECIPES: tuple[type[RecipeBase], ...] = (
+	CraftingShapelessRecipe, CraftingShapedRecipe, SmeltingRecipe, BlastingRecipe, SmokingRecipe, CampfireCookingRecipe,
+	StonecuttingRecipe, SmithingTransformRecipe, SmithingTrimRecipe,
+)
+""" The recipe types vanilla has a recipe file for. """
+
+CookingRecipe = SmeltingRecipe | BlastingRecipe | SmokingRecipe | CampfireCookingRecipe
 
 
 class VanillaRecipeHandler:
@@ -258,57 +270,37 @@ advancement revoke @s only {ns}:unlock_recipes
 		for item in Mem.definitions:
 			if override and item not in override:
 				continue
-			obj = Item.from_id(item)
-
 			i = 1
-			for recipe in obj.recipes:
-				name = f"{item}" if i == 1 else f"{item}_{i}"
+			for recipe in Item.from_id(item).recipes:
+				content: JsonDict | None = self.vanilla_content(recipe, item)
+				if content is None:
+					continue
+				name: str = f"{item}" if i == 1 else f"{item}_{i}"
+				self.write_recipe_file(name, content)
+				i += 1
+				self.vanilla_generated_recipes.append((name, item))
 
-				# Handle different recipe types
-				if recipe["type"] == CraftingShapelessRecipe.type:
-					recipe = CraftingShapelessRecipe.from_dict(recipe)
-					if all(i.get("item") for i in recipe.ingredients):
-						self.write_recipe_file(name, self.vanilla_shapeless_recipe(recipe, item))
-						i += 1
-						self.vanilla_generated_recipes.append((name, item))
+	def vanilla_content(self, recipe: RecipeBase, item: str) -> JsonDict | None:
+		""" The vanilla recipe file of a recipe, None when vanilla has no such type or an ingredient is not a plain item. """
+		recipe_class: type[RecipeBase] | None = next((c for c in VANILLA_RECIPES if c.type == recipe["type"]), None)
+		if recipe_class is None:
+			return None
+		typed: RecipeBase = recipe_class.from_dict(recipe)
+		return self.vanilla_recipe(typed, item) if has_plain_ingredients(typed) else None
 
-				elif recipe["type"] == CraftingShapedRecipe.type:
-					recipe = CraftingShapedRecipe.from_dict(recipe)
-					if all(i.get("item") for i in recipe.ingredients.values()):
-						self.write_recipe_file(name, self.vanilla_shaped_recipe(recipe, item))
-						i += 1
-						self.vanilla_generated_recipes.append((name, item))
-
-				elif recipe["type"] in (SmeltingRecipe.type, BlastingRecipe.type, SmokingRecipe.type, CampfireCookingRecipe.type):
-					recipe = SmeltingRecipe.from_dict(recipe) if recipe["type"] == SmeltingRecipe.type else \
-								BlastingRecipe.from_dict(recipe) if recipe["type"] == BlastingRecipe.type else \
-								SmokingRecipe.from_dict(recipe) if recipe["type"] == SmokingRecipe.type else \
-								CampfireCookingRecipe.from_dict(recipe)
-					if recipe.ingredient.get("item"):
-						self.write_recipe_file(name, self.vanilla_furnace_recipe(recipe, item))
-						i += 1
-						self.vanilla_generated_recipes.append((name, item))
-
-				elif recipe["type"] == StonecuttingRecipe.type:
-					recipe = StonecuttingRecipe.from_dict(recipe)
-					if recipe.ingredient.get("item"):
-						self.write_recipe_file(name, self.vanilla_stonecutting_recipe(recipe, item))
-						i += 1
-						self.vanilla_generated_recipes.append((name, item))
-
-				elif recipe["type"] == SmithingTransformRecipe.type:
-					recipe = SmithingTransformRecipe.from_dict(recipe)
-					if (recipe.base.get("item") and recipe.addition.get("item") and recipe.template.get("item")):
-						self.write_recipe_file(name, self.vanilla_smithing_transform_recipe(recipe, item))
-						i += 1
-						self.vanilla_generated_recipes.append((name, item))
-
-				elif recipe["type"] == SmithingTrimRecipe.type:
-					recipe = SmithingTrimRecipe.from_dict(recipe)
-					if (recipe.base.get("item") and recipe.addition.get("item") and recipe.template.get("item") and recipe.pattern):
-						self.write_recipe_file(name, self.vanilla_smithing_trim_recipe(recipe, item))
-						i += 1
-						self.vanilla_generated_recipes.append((name, item))
+	def vanilla_recipe(self, recipe: RecipeBase, item: str) -> JsonDict:
+		""" The vanilla recipe file of one of `VANILLA_RECIPES`. """
+		if isinstance(recipe, CraftingShapelessRecipe):
+			return self.vanilla_shapeless_recipe(recipe, item)
+		if isinstance(recipe, CraftingShapedRecipe):
+			return self.vanilla_shaped_recipe(recipe, item)
+		if isinstance(recipe, StonecuttingRecipe):
+			return self.vanilla_stonecutting_recipe(recipe, item)
+		if isinstance(recipe, SmithingTransformRecipe):
+			return self.vanilla_smithing_transform_recipe(recipe, item)
+		if isinstance(recipe, SmithingTrimRecipe):
+			return self.vanilla_smithing_trim_recipe(recipe, item)
+		return self.vanilla_furnace_recipe(cast(CookingRecipe, recipe), item)
 
 	def write_recipe_file(self, name: str, content: JsonDict) -> None:
 		""" Write a recipe file.
@@ -318,4 +310,17 @@ advancement revoke @s only {ns}:unlock_recipes
 			content: The recipe content.
 		"""
 		Mem.ctx.data[Mem.ctx.project_id].recipes[name] = set_json_encoder(Recipe(content), max_level=-1)
+
+
+def has_plain_ingredients(recipe: RecipeBase) -> bool:
+	""" Whether every ingredient of a recipe is a plain item, all a vanilla recipe file can name, and a trim has its pattern. """
+	if isinstance(recipe, CraftingShapelessRecipe):
+		return all(x.get("item") for x in recipe.ingredients)
+	if isinstance(recipe, CraftingShapedRecipe):
+		return all(x.get("item") for x in recipe.ingredients.values())
+	if isinstance(recipe, SmithingTrimRecipe):
+		return bool(recipe.base.get("item") and recipe.addition.get("item") and recipe.template.get("item") and recipe.pattern)
+	if isinstance(recipe, SmithingTransformRecipe):
+		return bool(recipe.base.get("item") and recipe.addition.get("item") and recipe.template.get("item"))
+	return bool(cast(CookingRecipe | StonecuttingRecipe, recipe).ingredient.get("item"))
 

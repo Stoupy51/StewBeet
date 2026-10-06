@@ -6,13 +6,17 @@ __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
 import contextlib
+import logging
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import stouputils as stp
 from beet import Context
 
 from ..copy_to_destination.sftp import SftpPool, is_sftp_path
+
+if TYPE_CHECKING:
+	from beet.contrib.livereload import LogWatcher
 
 # Name of the helper datapack zip dropped into remote destinations to trigger reloads
 LIVERELOAD_ZIP_NAME: str = "livereload.zip"
@@ -137,41 +141,43 @@ def _livereload_cleanup_server(connection: Any) -> None:
 	Args:
 		connection: The beet worker connection.
 	"""
-	import logging
-
-	from beet.contrib.livereload import LIVERELOAD_REGEX, LogWatcher
-	from beet.core.utils import remove_path
+	from beet.contrib.livereload import LogWatcher
 
 	logger = logging.getLogger("livereload")
-	minecraft_dir: str | None = None
-	targets: tuple[tuple[str, str], ...] | None = None
-
+	last: tuple[str | None, tuple[tuple[str, str], ...] | None] = (None, None)
 	with LogWatcher() as log_watcher:
 		for client in connection:
 			for message in client:
-				if message == (minecraft_dir, targets):
-					continue
-				minecraft_dir, targets = message
+				if message != last:
+					last = message
+					_tail_for_cleanup(log_watcher, message[0], message[1], logger)
 
-				if not minecraft_dir:
-					logger.warning("Couldn't locate the Minecraft client log. Live reload cleanup disabled.")
-					continue
 
-				log_file_path = Path(minecraft_dir) / "logs" / "latest.log"
-				if not log_file_path.is_file():
-					logger.warning("Couldn't find game log. Live reload cleanup disabled.")
-					continue
+def _tail_for_cleanup(
+	log_watcher: LogWatcher, minecraft_dir: str | None, targets: tuple[tuple[str, str], ...] | None, logger: logging.Logger
+) -> None:
+	""" Tail the client log, removing every target once it logs a reload. """
+	from beet.contrib.livereload import LIVERELOAD_REGEX
+	from beet.core.utils import remove_path
 
-				active_targets: tuple[tuple[str, str], ...] = targets or ()
+	if not minecraft_dir:
+		logger.warning("Couldn't locate the Minecraft client log. Live reload cleanup disabled.")
+		return
+	log_file_path = Path(minecraft_dir) / "logs" / "latest.log"
+	if not log_file_path.is_file():
+		logger.warning("Couldn't find game log. Live reload cleanup disabled.")
+		return
 
-				@log_watcher.tail(log_file_path)
-				def _(args: dict[str, Any], active_targets: tuple[tuple[str, str], ...] = active_targets):
-					if LIVERELOAD_REGEX.search(args["message"]):
-						for kind, ref in active_targets:
-							if kind == "sftp":
-								_sftp_remove_livereload(ref)
-							else:
-								remove_path(ref)
+	active_targets: tuple[tuple[str, str], ...] = targets or ()
+
+	@log_watcher.tail(log_file_path)
+	def _(args: dict[str, Any], active_targets: tuple[tuple[str, str], ...] = active_targets):
+		if LIVERELOAD_REGEX.search(args["message"]):
+			for kind, ref in active_targets:
+				if kind == "sftp":
+					_sftp_remove_livereload(ref)
+				else:
+					remove_path(ref)
 
 
 def patch_livereload_for_copy_destinations(ctx: Context) -> None:
@@ -195,61 +201,13 @@ def patch_livereload_for_copy_destinations(ctx: Context) -> None:
 
 	try:
 		import beet.contrib.livereload as livereload_module
-		from beet import PackOverwrite
 		from beet.contrib.autosave import Autosave
-		from beet.contrib.link import LinkManager
-		from beet.contrib.livereload import create_livereload_data_pack
 	except ImportError:
 		return
 
 	# Only patch once per process (`stewbeet watch` reuses the interpreter across builds)
 	if getattr(livereload_module, "_stewbeet_copy_patch", False):
 		return
-
-	def livereload_with_copy_destinations(ctx: Context) -> None:
-		""" Replacement for `beet.contrib.livereload.livereload` supporting local and SFTP copy destinations. """
-		if not ctx.data:
-			return
-
-		link_manager = ctx.inject(LinkManager)
-		linked: str | None = str(Path(link_manager.data_pack).resolve()) if link_manager.data_pack else None
-
-		# Union of the linked folder and all local copy destinations, plus the remote sftp destinations
-		local_dirs: list[str] = list(dict.fromkeys(([linked] if linked else []) + get_local_datapack_destinations(ctx)))
-		sftp_urls: list[str] = get_sftp_datapack_destinations(ctx)
-
-		cleanup_targets: list[tuple[str, str]] = []
-		first_local_dir: Path | None = None
-
-		# Local: drop the tiny polling datapack folder into each destination
-		for dir_str in local_dirs:
-			data = create_livereload_data_pack()
-			try:
-				livereload_path: Path = Path(str(data.save(dir_str)))
-			except PackOverwrite as exc:
-				livereload_path = Path(exc.path)
-			cleanup_targets.append(("local", str(livereload_path)))
-			if first_local_dir is None:
-				first_local_dir = Path(dir_str)
-
-		# SFTP: upload the polling datapack as a zip into each remote datapacks folder
-		if sftp_urls:
-			import tempfile
-			with tempfile.TemporaryDirectory() as tmp:
-				local_zip: Path = Path(tmp) / LIVERELOAD_ZIP_NAME
-				create_livereload_data_pack().save(path=local_zip, zipped=True)
-				uploaded: list[str | None] = [_sftp_upload_livereload(local_zip, url) for url in sftp_urls]
-				cleanup_targets.extend(("sftp", zip_url) for zip_url in uploaded if zip_url)
-
-		if not cleanup_targets:
-			return
-
-		# The reload confirmation is always logged by the *local* client (`[CHAT]`), even for remote servers
-		minecraft: str | None = find_minecraft_dir(ctx, first_local_dir, link_manager.minecraft)
-
-		# A single worker tails the client log and cleans up every helper pack (local + remote) on reload
-		with ctx.worker(_livereload_cleanup_server) as channel:  # pyright: ignore[reportUnknownVariableType]
-			channel.send((minecraft, tuple(cleanup_targets)))  # pyright: ignore[reportUnknownMemberType]
 
 	# Swap the module-level function so livereload.beet_default registers our version with Autosave,
 	# and in the handlers Autosave already holds when beet.contrib.livereload was required before this patch.
@@ -262,6 +220,59 @@ def patch_livereload_for_copy_destinations(ctx: Context) -> None:
 			livereload_with_copy_destinations if handler is original_livereload else handler
 			for handler in autosave.link_handlers
 		]
+
+
+def livereload_with_copy_destinations(ctx: Context) -> None:
+	""" Replacement for `beet.contrib.livereload.livereload` supporting local and SFTP copy destinations. """
+	from beet.contrib.link import LinkManager
+
+	if not ctx.data:
+		return
+	link_manager = ctx.inject(LinkManager)
+	linked: str | None = str(Path(link_manager.data_pack).resolve()) if link_manager.data_pack else None
+
+	# Union of the linked folder and all local copy destinations, plus the remote sftp destinations
+	local_dirs: list[str] = list(dict.fromkeys(([linked] if linked else []) + get_local_datapack_destinations(ctx)))
+	cleanup_targets: list[tuple[str, str]] = _drop_local_packs(local_dirs) + _upload_sftp_packs(get_sftp_datapack_destinations(ctx))
+	if not cleanup_targets:
+		return
+
+	# The reload confirmation is always logged by the *local* client (`[CHAT]`), even for remote servers
+	first_local_dir: Path | None = Path(local_dirs[0]) if local_dirs else None
+	minecraft: str | None = find_minecraft_dir(ctx, first_local_dir, link_manager.minecraft)
+
+	# A single worker tails the client log and cleans up every helper pack (local + remote) on reload
+	with ctx.worker(_livereload_cleanup_server) as channel:  # pyright: ignore[reportUnknownVariableType]
+		channel.send((minecraft, tuple(cleanup_targets)))  # pyright: ignore[reportUnknownMemberType]
+
+
+def _drop_local_packs(local_dirs: list[str]) -> list[tuple[str, str]]:
+	""" Drop the tiny polling datapack folder into each local destination, and return the cleanup target of each. """
+	from beet import PackOverwrite
+	from beet.contrib.livereload import create_livereload_data_pack
+
+	targets: list[tuple[str, str]] = []
+	for dir_str in local_dirs:
+		try:
+			livereload_path: Path = Path(str(create_livereload_data_pack().save(dir_str)))
+		except PackOverwrite as exc:
+			livereload_path = Path(exc.path)
+		targets.append(("local", str(livereload_path)))
+	return targets
+
+
+def _upload_sftp_packs(sftp_urls: list[str]) -> list[tuple[str, str]]:
+	""" Upload the polling datapack as a zip into each remote datapacks folder, and return the cleanup target of each upload. """
+	from beet.contrib.livereload import create_livereload_data_pack
+
+	if not sftp_urls:
+		return []
+	import tempfile
+	with tempfile.TemporaryDirectory() as tmp:
+		local_zip: Path = Path(tmp) / LIVERELOAD_ZIP_NAME
+		create_livereload_data_pack().save(path=local_zip, zipped=True)
+		uploaded: list[str | None] = [_sftp_upload_livereload(local_zip, url) for url in sftp_urls]
+	return [("sftp", zip_url) for zip_url in uploaded if zip_url]
 
 
 # Main entry point

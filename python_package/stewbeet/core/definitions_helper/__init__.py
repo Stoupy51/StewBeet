@@ -23,10 +23,24 @@ from .equipments import (
 	format_attributes as format_attributes,
 )
 from .materials import (
+	ARMOR as ARMOR,
+	ARMOR_MATERIALS as ARMOR_MATERIALS,
+	TOOLS as TOOLS,
+	Gear as Gear,
+	Material as Material,
 	add_recipes_for_all_dusts as add_recipes_for_all_dusts,
 	add_recipes_for_dust as add_recipes_for_dust,
+	copy_armor_layer as copy_armor_layer,
+	dust_recipes as dust_recipes,
 	generate_everything_about_these_materials as generate_everything_about_these_materials,
 	generate_everything_about_this_material as generate_everything_about_this_material,
+	ingredient_recipes as ingredient_recipes,
+	refined_recipes as refined_recipes,
+	write_armor as write_armor,
+	write_equipment_asset as write_equipment_asset,
+	write_ingredient as write_ingredient,
+	write_placeable as write_placeable,
+	write_tool as write_tool,
 )
 from .records import (
 	clean_record_name as clean_record_name,

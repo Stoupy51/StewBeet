@@ -37,64 +37,24 @@ def beet_default(ctx: Context) -> None:
 	# Assertions
 	assert textures_folder, "The 'textures_folder' key is missing in the 'stewbeet' section of the beet.yml file."
 
-	# For each item definition that has painting data,
 	for item, data in Mem.definitions.items():
 		painting_data: JsonDict = data.get(PAINTING_DATA, {})
-		if painting_data:
-			obj_painting = Painting.from_id(item)
+		if not painting_data:
+			continue
+		obj_painting = Painting.from_id(item)
+		if not painting_data.get("not_placeable", False):
+			placeable_values.append(obj_painting.variant)
+		write_painting_variant(item, data.get("item_name"), painting_data, obj_painting)
 
-			## Datapack
-			# Add the item id to the list of painting variants values
-			if not painting_data.get("not_placeable", False):
-				placeable_values.append(obj_painting.variant)
-
-			# Set default author and title if not provided
-			if "author" not in painting_data:
-				painting_data["author"] = {"text": Mem.ctx.project_author or "Unknown"}
-			if "title" not in painting_data:
-				painting_data["title"] = data.get("item_name") or {"text": item.replace("_", " ").title()}
-
-			# Create ordered painting data with asset_id first
-			ordered_painting_data = {"asset_id": obj_painting.asset_id}
-			ordered_painting_data.update(painting_data)
-			ordered_painting_data.pop("not_placeable", None)
-			ordered_painting_data.pop("texture", None)
-
-			# Create the painting definition
-			obj_painting.variant.write(set_json_encoder(PaintingVariant(ordered_painting_data)))
-
-			## Resource pack
-			# Get the texture path
-			if "texture" in painting_data:
-				texture: str = painting_data["texture"]
-				src: str = stp.relative_path(f"{textures_folder}/{texture}.png")
-			else:
-				matching_textures: list[str] = sorted(
-					stp.relative_path(f"{root}/{file}")
-					for root, _, files in os.walk(textures_folder)
-					for file in files if file == f"{item}.png"
-				)
-				if not matching_textures:
-					stp.error(
-						f"No texture found for painting '{item}' in the textures folder '{textures_folder}'. "
-						f"Expected a file named '{item}.png'."
-					)
-					continue
-				if len(matching_textures) > 1:
-					stp.warning(
-						f"Multiple textures found for painting '{item}' in the textures folder '{textures_folder}'. "
-						f"Using the first one found: '{matching_textures[0]}'."
-					)
-				src: str = matching_textures[0]
-
-			# Reuse the item texture through the paintings atlas rather than shipping the same image twice
-			item_texture: Texture | None = obj_painting.texture.get()
-			if item_texture and item_texture.source_path and Path(item_texture.source_path).resolve() == Path(src).resolve():
-				paintings_sources.append(
-					{"type": "minecraft:single", "resource": obj_painting.texture, "sprite": obj_painting.asset_id}
-				)
-			elif not obj_painting.painting_texture.exists():
-				obj_painting.painting_texture.write(texture_mcmeta(src))
+		src: str | None = painting_source(item, painting_data, textures_folder)
+		if src is None:
+			continue
+		# Reuse the item texture through the paintings atlas rather than shipping the same image twice
+		item_texture: Texture | None = obj_painting.texture.get()
+		if item_texture and item_texture.source_path and Path(item_texture.source_path).resolve() == Path(src).resolve():
+			paintings_sources.append({"type": "minecraft:single", "resource": obj_painting.texture, "sprite": obj_painting.asset_id})
+		elif not obj_painting.painting_texture.exists():
+			obj_painting.painting_texture.write(texture_mcmeta(src))
 
 	if paintings_sources:
 		Mem.ctx.assets["minecraft"].atlases["paintings"] = set_json_encoder(Atlas({"sources": paintings_sources}))
@@ -103,4 +63,45 @@ def beet_default(ctx: Context) -> None:
 	if placeable_values:
 		placeable_tag: PaintingVariantTag = PaintingVariantTag({"values": placeable_values})
 		Mem.ctx.data["minecraft"].painting_variant_tags["placeable"] = set_json_encoder(placeable_tag)
+
+
+def write_painting_variant(item: str, item_name: object, painting_data: JsonDict, obj_painting: Painting) -> None:
+	""" Write the painting variant, its author defaulting to the project's and its title to the item's name. """
+	if "author" not in painting_data:
+		painting_data["author"] = {"text": Mem.ctx.project_author or "Unknown"}
+	if "title" not in painting_data:
+		painting_data["title"] = item_name or {"text": item.replace("_", " ").title()}
+
+	# asset_id first
+	ordered_painting_data: JsonDict = {"asset_id": obj_painting.asset_id}
+	ordered_painting_data.update(painting_data)
+	ordered_painting_data.pop("not_placeable", None)
+	ordered_painting_data.pop("texture", None)
+	obj_painting.variant.write(set_json_encoder(PaintingVariant(ordered_painting_data)))
+
+
+def painting_source(item: str, painting_data: JsonDict, textures_folder: str) -> str | None:
+	""" The image of a painting: its `texture` under the textures folder, else the one file there named `<item>.png`.
+
+	None, with an error, when there is none. Several files of that name warn and the first one is used.
+	"""
+	if "texture" in painting_data:
+		return stp.relative_path(f"{textures_folder}/{painting_data['texture']}.png")
+	matching_textures: list[str] = sorted(
+		stp.relative_path(f"{root}/{file}")
+		for root, _, files in os.walk(textures_folder)
+		for file in files if file == f"{item}.png"
+	)
+	if not matching_textures:
+		stp.error(
+			f"No texture found for painting '{item}' in the textures folder '{textures_folder}'. "
+			f"Expected a file named '{item}.png'."
+		)
+		return None
+	if len(matching_textures) > 1:
+		stp.warning(
+			f"Multiple textures found for painting '{item}' in the textures folder '{textures_folder}'. "
+			f"Using the first one found: '{matching_textures[0]}'."
+		)
+	return matching_textures[0]
 

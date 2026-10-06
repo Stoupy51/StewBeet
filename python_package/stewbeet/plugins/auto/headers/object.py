@@ -7,6 +7,15 @@ from stouputils.lazy import ALWAYS_LAZY
 
 __lazy_modules__ = ALWAYS_LAZY
 
+import re
+
+# Constants
+ARG_WITH_DESCRIPTION: re.Pattern[str] = re.compile(r'(\w+)\s*\((\w+)\)\s*:\s*(.+)')
+""" An argument line of `@args`: `name (type): description`. """
+
+ARG: re.Pattern[str] = re.compile(r'(\w+)\s*\((\w+)\)')
+""" An argument line of `@args` without a description: `name (type)`. """
+
 
 # Header class
 class Header:
@@ -57,140 +66,39 @@ class Header:
 		>>> header.within, header.other, header.content
 		(['other:function'], ['Some info'], 'say Hello')
 		"""
-		# Initialize empty lists
-		within: list[str] = []
-		other: list[str] = []
-		executed: str = ""
-		args: dict[str, tuple[str, list[str]]] = {}
 		actual_content: str = content.strip()
+		if not actual_content.startswith("#> "):
+			return cls(path, [], [], actual_content, "", {})
 
-		# If the content has a header, parse it
-		if content.strip().startswith("#> "):
-			# Split the content into lines
-			lines: list[str] = content.strip().split("\n")
+		# Skip the first line (#> path) and the second line (#)
+		lines: list[str] = actual_content.split("\n")
+		i: int = 2
+		executed: str = ""
+		if i < len(lines) and lines[i].strip().startswith("# @executed"):
+			executed = lines[i].strip().split("@executed")[1].strip()
+			i += 1
+		i = skip_empty_comments(lines, i)
 
-			# Skip the first line (#> path) and the second line (#)
-			i: int = 2
+		args: dict[str, tuple[str, list[str]]] = {}
+		if i < len(lines) and lines[i].strip().startswith("# @args"):
+			i = read_args(lines, i, args)
+		i = skip_empty_comments(lines, i)
 
-			# Parse executed section
-			if i < len(lines) and lines[i].strip().startswith("# @executed"):
-				executed_line: str = lines[i].strip()
-				if executed_line != "# @executed":
-					# Extract the execution context after @executed
-					executed = executed_line.split("@executed")[1].strip()
-				i += 1
+		within: list[str] = []
+		while i < len(lines) and lines[i].strip().startswith("# @within"):
+			if lines[i].strip() != "# @within":
+				within.append(lines[i].strip().split("@within")[1].strip())
+			i += 1
+		i = skip_empty_comments(lines, i)
 
-			# Skip empty comment lines
-			while i < len(lines) and lines[i].strip() == "#":
-				i += 1
-
-			# Parse args section
-			if i < len(lines) and lines[i].strip().startswith("# @args"):
-				args_line: str = lines[i].strip()
-				current_arg: str | None = None
-				current_type: str = ""
-				current_description: list[str] = []
-
-				# Check if there's an argument on the same line as @args
-				import re
-				# Remove "# @args" and any tabs/spaces after it
-				args_content: str = re.sub(r'^#\s*@args\s+', '', args_line)
-				if args_content:
-					# There's an argument on the same line
-					# Try to match with description
-					match: re.Match[str] | None = re.match(r'(\w+)\s*\((\w+)\)\s*:\s*(.+)', args_content)
-					if match:
-						current_arg, current_type, desc = match.groups()
-						current_description = [desc]
-					else:
-						# Try to match without description
-						match = re.match(r'(\w+)\s*\((\w+)\)', args_content)
-						if match:
-							current_arg, current_type = match.groups()
-							current_description = []
-
-				i += 1  # Move to next line
-				# Parse argument lines until we hit a non-indented comment or empty line
-
-				while i < len(lines) and lines[i].strip().startswith("#"):
-					arg_line: str = lines[i].strip()
-
-					# Check if it's an indented argument line (starts with # followed by whitespace)
-					if arg_line.startswith("#") and len(arg_line) > 1 and arg_line[1].isspace():
-						arg_content: str = arg_line[1:].strip()
-
-						# Check if it's a sub-description line (starts with -)
-						if arg_content.startswith("-"):
-							# This is a description line for compound type
-							if current_arg:
-								current_description.append(arg_content)
-						else:
-							# Save previous argument if exists
-							if current_arg:
-								args[current_arg] = (current_type, current_description[:])
-
-							# Parse new argument (format: "arg_name (type): description" or "arg_name (type)")
-							# Try to match with description
-							match = re.match(r'(\w+)\s*\((\w+)\)\s*:\s*(.+)', arg_content)
-							if match:
-								current_arg, current_type, desc = match.groups()
-								current_description = [desc]
-							else:
-								# Try to match without description
-								match = re.match(r'(\w+)\s*\((\w+)\)', arg_content)
-								if match:
-									current_arg, current_type = match.groups()
-									current_description = []
-								else:
-									current_arg = None
-					elif arg_line == "#":
-						# Empty comment line might end args section or be part of description
-						# We'll treat it as end of args section
-						break
-					else:
-						# Non-indented line ends args section
-						break
-					i += 1
-
-				# Save the last argument if exists
-				if current_arg:
-					args[current_arg] = (current_type, current_description[:])
-
-			# Skip empty comment lines
-			while i < len(lines) and lines[i].strip() == "#":
-				i += 1
-
-			# Parse within section
-			while i < len(lines) and lines[i].strip().startswith("# @within"):
-				within_line: str = lines[i].strip()
-				if within_line != "# @within":
-					# Extract the function name after @within
-					func_name: str = within_line.split("@within")[1].strip()
-					within.append(func_name)
-				i += 1
-
-			# Skip empty comment lines
-			while i < len(lines) and lines[i].strip() == "#":
-				i += 1
-
-			# Parse other information (without # prefix)
-			while i < len(lines) and lines[i].strip().startswith("#"):
-				other_line: str = lines[i].strip()
-				other.append(other_line[2:])
-				i += 1
-
-			# Skip any remaining empty comment lines
-			while i < len(lines) and lines[i].strip() == "#":
-				i += 1
-
-			# The remaining lines are the actual content
-			actual_content = "\n".join(lines[i:]).strip()
-
+		# Every comment line left, empty ones included, is other information
+		other: list[str] = []
+		while i < len(lines) and lines[i].strip().startswith("#"):
+			other.append(lines[i].strip()[2:])
+			i += 1
 		if other and other[-1] == "":
-			# Remove the last empty line if it exists
 			other.pop()
-
-		return cls(path, within, other, actual_content, executed, args)
+		return cls(path, within, other, "\n".join(lines[i:]).strip(), executed, args)
 
 	def to_str(self) -> str:
 		""" Convert the Header object to the function content with its header.
@@ -337,4 +245,53 @@ __test__: dict[str, str] = {
 	('compound', ['configuration object', '- duration : int - how long in ticks', '- power : float - effect strength'])
 	""",
 }
+
+
+def skip_empty_comments(lines: list[str], i: int) -> int:
+	""" The index of the first line from `i` that is not a bare `#`. """
+	while i < len(lines) and lines[i].strip() == "#":
+		i += 1
+	return i
+
+
+def read_args(lines: list[str], i: int, args: dict[str, tuple[str, list[str]]]) -> int:
+	""" Read the `@args` section starting on line `i` into `args`, and return the index of the line after it.
+
+	Each argument is an indented `name (type): description` line, followed by its `- ...` lines for a compound.
+	The first one may sit on the `@args` line itself.
+
+	>>> args = {}
+	>>> read_args(["# @args\tcount (int): How many", "#\t\t- at least 1", "#\tname (string)", "say"], 0, args), args
+	(3, {'count': ('int', ['How many', '- at least 1']), 'name': ('string', [])})
+	"""
+	current: tuple[str, str, list[str]] | None = parse_arg(re.sub(r'^#\s*@args\s+', '', lines[i].strip()))
+	i += 1
+	while i < len(lines) and lines[i].strip().startswith("#"):
+		line: str = lines[i].strip()
+		if len(line) <= 1 or not line[1].isspace():
+			break
+		text: str = line[1:].strip()
+		if not text.startswith("-"):
+			if current:
+				args[current[0]] = (current[1], current[2][:])
+			current = parse_arg(text)
+		elif current:
+			current[2].append(text)
+		i += 1
+	if current:
+		args[current[0]] = (current[1], current[2][:])
+	return i
+
+
+def parse_arg(text: str) -> tuple[str, str, list[str]] | None:
+	""" An argument's name, type and description lines, None when `text` is not an argument.
+
+	>>> parse_arg("count (int): How many"), parse_arg("name (string)"), parse_arg("- a field")
+	(('count', 'int', ['How many']), ('name', 'string', []), None)
+	"""
+	if match := ARG_WITH_DESCRIPTION.match(text):
+		return match[1], match[2], [match[3]]
+	if match := ARG.match(text):
+		return match[1], match[2], []
+	return None
 

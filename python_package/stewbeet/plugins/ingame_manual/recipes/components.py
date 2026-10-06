@@ -1,4 +1,4 @@
-"""Item hover/click component builder (ported from v1 ``book_components.get_item_component``).
+"""Item hover/click component builder.
 
 Cross-page links are emitted as deferred :class:`~..refs.PageRef` page values.
 Functions take the :class:`~.renderer.RecipeRenderer` dispatcher ``r`` for config/glyphs/images access.
@@ -38,21 +38,19 @@ def high_res_font_from_ingredient(r: RecipeRenderer, ingredient: str | Ingr, cou
 		ingr_str = ingredient
 	renders_path = r.config.iso_renders_path
 	if ':' in ingr_str:
-		image_path = f"{renders_path}/{ingr_str.replace(':', '/')}.png"
-		if not os.path.exists(image_path):
-			stp.warning(f"Missing texture at '{image_path}', using placeholder texture")
-			item_image = Image.new("RGBA", (16, 16), (255, 255, 255, 0))
-		else:
-			item_image = Image.open(image_path)
+		item_image: Image.Image = open_render(f"{renders_path}/{ingr_str.replace(':', '/')}.png")
 		ingr_str = ingr_str.split(":")[1]
 	else:
-		path: str = f"{renders_path}/{r.config.project_id}/{ingr_str}.png"
-		if not os.path.exists(path):
-			stp.warning(f"Missing texture at '{path}', using placeholder texture")
-			item_image = Image.new("RGBA", (16, 16), (255, 255, 255, 0))
-		else:
-			item_image = Image.open(path)
+		item_image = open_render(f"{renders_path}/{r.config.project_id}/{ingr_str}.png")
 	return r.images.high_res_icon(ingr_str, item_image, count)
+
+
+def open_render(path: str) -> Image.Image:
+	""" The render at `path`, or a transparent 16x16 placeholder with a warning when it is missing. """
+	if not os.path.exists(path):
+		stp.warning(f"Missing texture at '{path}', using placeholder texture")
+		return Image.new("RGBA", (16, 16), (255, 255, 255, 0))
+	return Image.open(path)
 
 
 def build_item_component(
@@ -71,47 +69,19 @@ def build_item_component(
 		"text": NONE_FONT,
 		"hover_event": {"action": "show_item", "id": ""},
 	}
-
 	if isinstance(ingredient, dict) and ingredient.get("item"):
 		formatted["hover_event"]["id"] = ingredient["item"]
 	else:
-		obj: Item | None = None
-		if isinstance(ingredient, str):
-			id = ingredient
-			obj = Item.from_id(ingredient)
-		else:
+		if not isinstance(ingredient, str):
 			ingredient = Ingr(ingredient)
-			custom_data: JsonDict = ingredient["components"]["minecraft:custom_data"]
-			id = ingredient.to_id(add_namespace=False)
-			if custom_data.get(r.config.project_id):
-				if id in Mem.definitions:
-					obj = Item.from_id(id)
-			else:
-				ns = next(iter(custom_data.keys())) + ":"
-				for data in custom_data.values():
-					item_id = ns + next(iter(data.keys()))
-					if item_id not in Mem.external_definitions:
-						continue
-					obj = Item.from_id(item_id)
-					break
+		id, obj = definition_of(r, ingredient)
 		if not obj:
 			stp.error("Item not found in definitions or external definitions: " + str(ingredient))
 			return formatted
 
 		formatted["hover_event"]["id"] = obj.base_item.replace("minecraft:", "")
-		components: JsonDict = {}
-		if only_those_components:
-			for key in only_those_components:
-				if key in obj.components:
-					components[key] = obj.components[key]
-		elif not use_dialog:
-			for key, value in obj.components.items():
-				if key in r.config.components_to_include:
-					components[key] = value
-		else:
-			for key, value in obj.components.items():
-				components[key] = value
 		# Only emit the components map when non-empty (an empty {} is heavy and useless)
+		components: JsonDict = hover_components(r, obj, only_those_components, use_dialog=use_dialog)
 		if components:
 			formatted["hover_event"]["components"] = components
 
@@ -122,4 +92,34 @@ def build_item_component(
 	if r.config.high_resolution:
 		formatted["text"] = high_res_font_from_ingredient(r, ingredient, count)
 	return formatted
+
+
+def definition_of(r: RecipeRenderer, ingredient: str | Ingr) -> tuple[str, Item | None]:
+	""" An ingredient's id, and its definition among this pack's items or a dependency's, None when neither has it. """
+	if isinstance(ingredient, str):
+		return ingredient, Item.from_id(ingredient)
+
+	# If the custom data of the ingredient is a reference to a definition in this pack, return it.
+	custom_data: JsonDict = ingredient["components"]["minecraft:custom_data"]
+	id: str = ingredient.to_id(add_namespace=False)
+	if custom_data.get(r.config.project_id):
+		return id, Item.from_id(id) if id in Mem.definitions else None
+
+	# If the custom data of the ingredient is a reference to a definition in a dependency pack, return it.
+	ns: str = next(iter(custom_data.keys())) + ":"
+	for data in custom_data.values():
+		item_id: str = ns + next(iter(data.keys()))
+		if item_id in Mem.external_definitions:
+			return id, Item.from_id(item_id)
+
+	return id, None
+
+
+def hover_components(r: RecipeRenderer, obj: Item, only_those_components: list[str], use_dialog: bool) -> JsonDict:
+	""" The components an item shows on hover: those asked for, every one in a dialog, else the configured ones. """
+	if only_those_components:
+		return {key: obj.components[key] for key in only_those_components if key in obj.components}
+	if use_dialog:
+		return dict(obj.components)
+	return {key: value for key, value in obj.components.items() if key in r.config.components_to_include}
 

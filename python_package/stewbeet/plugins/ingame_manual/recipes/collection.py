@@ -1,4 +1,4 @@
-"""Craft collection + pure recipe helpers (ported from v1 ``other_utils``).
+"""Craft collection and pure recipe helpers.
 
 ``collect_for_item`` gathers an item's own recipes, the crafts that consume it, and mining pseudo-recipes from no-silk-touch drops.
 ``remove_unknown_crafts`` keeps only craft types that have a registered :class:`~.registry.CraftRenderer`,
@@ -14,6 +14,7 @@ from stouputils.lazy import ALWAYS_LAZY
 __lazy_modules__ = ALWAYS_LAZY
 
 import math
+from collections import Counter
 from typing import TYPE_CHECKING, cast
 
 import stouputils as stp
@@ -49,53 +50,56 @@ def convert_shapeless_to_shaped(craft: JsonDict) -> JsonDict:
 	>>> convert_shapeless_to_shaped(nine)["shape"]
 	['AAA', 'ABA', 'AAA']
 	"""
-	shapeless_ingredients: list[str] = craft["ingredients"]
-	total_items: int = len(shapeless_ingredients)
 	shaped_recipe: JsonDict = {"type": "crafting_shaped", "result_count": craft["result_count"], "ingredients": {}}
 	if craft.get("result"):
 		shaped_recipe["result"] = craft["result"]
 
-	next_key: str = "A"
-	ingredient_to_key: dict[str, str] = {}
-	ingredient_counts: dict[str, int] = {}
+	# One letter per distinct ingredient, in order of first appearance
+	key_of: dict[str, str] = {}
 	ordered_keys: list[str] = []
-	for ingr in shapeless_ingredients:
-		ingr_str = str(ingr)
-		if ingr_str not in ingredient_to_key:
-			ingredient_to_key[ingr_str] = next_key
-			shaped_recipe["ingredients"][next_key] = ingr
-			next_key = chr(ord(next_key) + 1)
-		ingredient_counts[ingr_str] = ingredient_counts.get(ingr_str, 0) + 1
-		ordered_keys.append(ingredient_to_key[ingr_str])
+	for ingr in craft["ingredients"]:
+		key: str = key_of.setdefault(str(ingr), chr(ord("A") + len(key_of)))
+		shaped_recipe["ingredients"].setdefault(key, ingr)
+		ordered_keys.append(key)
+	shaped_recipe["shape"] = shaped_layout(ordered_keys)
+	return shaped_recipe
 
-	if len(shaped_recipe["ingredients"]) == 2 and total_items in (5, 9):
-		len_same: int = len([x for x in shapeless_ingredients if str(x) == str(shaped_recipe["ingredients"]["A"])])
-		big: str = "A" if len_same > 1 else "B"
+
+def shaped_layout(ordered_keys: list[str]) -> list[str]:
+	""" The grid showing a shapeless craft's ingredients, a ring around the odd one out when there is one.
+
+	>>> shaped_layout(list("AAAAB")), shaped_layout(list("ABBBBCCCC")), shaped_layout(list("ABCDE"))
+	([' A ', 'ABA', ' A '], ['BCB', 'CAC', 'BCB'], ['ABC', 'DE'])
+	"""
+	counts: Counter[str] = Counter(ordered_keys)
+	total_items: int = len(ordered_keys)
+	if len(counts) == 2 and total_items in (5, 9):
+		big: str = "A" if counts["A"] > 1 else "B"
 		other: str = "B" if big == "A" else "A"
 		if total_items == 9:
-			shaped_recipe["shape"] = [big * 3, big + other + big, big * 3]
-		elif total_items == 5:
-			shaped_recipe["shape"] = [f" {big} ", big + other + big, f" {big} "]
-	elif len(shaped_recipe["ingredients"]) == 3 and total_items == 9 and all(count in (1, 4) for count in ingredient_counts.values()):
-		len_A: int = len([x for x in shapeless_ingredients if str(x) == str(shaped_recipe["ingredients"]["A"])])
-		len_B: int = len([x for x in shapeless_ingredients if str(x) == str(shaped_recipe["ingredients"]["B"])])
-		len_C: int = len([x for x in shapeless_ingredients if str(x) == str(shaped_recipe["ingredients"]["C"])])
-		small: str = "A" if len_A < len_B and len_A < len_C else "B" if len_B < len_C else "C"
-		other_1: str = "B" if small == "A" else "A" if small == "C" else "C"
-		other_2: str = "C" if small == "A" else "C" if small == "B" else "B"
-		shaped_recipe["shape"] = [other_1 + other_2 + other_1, other_2 + small + other_2, other_1 + other_2 + other_1]
-	else:
-		sqrt_items = int(math.sqrt(total_items))
-		if sqrt_items * sqrt_items == total_items:
-			col_size = sqrt_items
-		elif total_items <= 4:
-			col_size = 2
-		elif total_items <= 9:
-			col_size = 3
-		else:
-			col_size = 4
-		shaped_recipe["shape"] = ["".join(ordered_keys[i:i + col_size]) for i in range(0, len(ordered_keys), col_size)]
-	return shaped_recipe
+			return [big * 3, big + other + big, big * 3]
+		return [f" {big} ", big + other + big, f" {big} "]
+	if len(counts) == 3 and total_items == 9 and all(count in (1, 4) for count in counts.values()):
+		# Counted 1, 4 and 4: the single one sits in the middle
+		small: str = min("ABC", key=counts.__getitem__)
+		other_1, other_2 = (key for key in "ABC" if key != small)
+		return [other_1 + other_2 + other_1, other_2 + small + other_2, other_1 + other_2 + other_1]
+	col_size: int = column_count(total_items)
+	return ["".join(ordered_keys[i:i + col_size]) for i in range(0, len(ordered_keys), col_size)]
+
+
+def column_count(total_items: int) -> int:
+	""" The columns a grid of `total_items` takes: a square when the count is one, else the narrowest of 2, 3 or 4 that fits.
+
+	>>> [column_count(n) for n in (1, 3, 4, 7, 9, 12, 16)]
+	[1, 2, 2, 3, 3, 4, 4]
+	"""
+	sqrt_items: int = int(math.sqrt(total_items))
+	if sqrt_items * sqrt_items == total_items:
+		return sqrt_items
+	if total_items <= 4:
+		return 2
+	return 3 if total_items <= 9 else 4
 
 
 def remove_duplicate_furnace_crafts(crafts: list[JsonDict], item: str) -> list[JsonDict]:
@@ -182,46 +186,59 @@ def collect_for_item(r: RecipeRenderer, name: str, item_obj: Item, definitions_a
 	crafts = remove_unknown_crafts(crafts)
 	crafts = stp.unique_list(crafts)
 
-	def add_count_to_mining_recipe(mining_recipe: JsonDict, no_silk_drop_data: JsonDict | NoSilkTouchDrop | str | LootTable) -> None:
-		if isinstance(no_silk_drop_data, LootTable):
-			mining_recipe["dynamic_drop"] = True
-			return
-		if isinstance(no_silk_drop_data, dict | NoSilkTouchDrop) and "count" in no_silk_drop_data:
-			count_data: JsonDict | int = no_silk_drop_data["count"]
-			if isinstance(count_data, dict):
-				if "min" in count_data and "max" in count_data:
-					mining_recipe["result_count"] = f"{count_data['min']}-{count_data['max']}"
-				elif "min" in count_data:
-					mining_recipe["result_count"] = str(count_data["min"])
-				elif "max" in count_data:
-					mining_recipe["result_count"] = str(count_data["max"])
-			else:
-				mining_recipe["result_count"] = str(count_data)
-
-	ns = r.config.project_id
-	# Items that this item is the no-silk drop of (this item is the result of mining an ore)
-	is_drop_of: list[str] = [
-		i for i, d in Mem.definitions.items()
-		if d.get(NO_SILK_TOUCH_DROP) and (
-			(isinstance(d[NO_SILK_TOUCH_DROP], str) and d[NO_SILK_TOUCH_DROP] == name) or
-			(isinstance(d[NO_SILK_TOUCH_DROP], dict | NoSilkTouchDrop) and d[NO_SILK_TOUCH_DROP]["id"] == name)
-		)
-	]
-	for ore_name in is_drop_of:
+	ns: str = r.config.project_id
+	for ore_name in ores_dropping(name):
 		mining_recipe: JsonDict = {"type": "mining", "ingredient": Ingr(ore_name, ns), "result": Ingr(name, ns)}
-		add_count_to_mining_recipe(mining_recipe, Mem.definitions[ore_name][NO_SILK_TOUCH_DROP])
+		add_mining_count(mining_recipe, Mem.definitions[ore_name][NO_SILK_TOUCH_DROP])
 		crafts.insert(0, mining_recipe)
-
-	# This item is an ore with its own no-silk drop
 	if item_obj.get(NO_SILK_TOUCH_DROP):
-		data = item_obj[NO_SILK_TOUCH_DROP]
-		if isinstance(data, LootTable):
-			mining_recipe = {"type": "mining", "ingredient": Ingr(name, ns), "dynamic_drop": True}
-		else:
-			result_format: str = data if isinstance(data, str) else data["id"]
-			mining_recipe = {"type": "mining", "ingredient": Ingr(name, ns), "result": Ingr(result_format, ns)}
-		add_count_to_mining_recipe(mining_recipe, data)
-		crafts.insert(0, mining_recipe)
-
+		crafts.insert(0, own_mining_recipe(name, item_obj[NO_SILK_TOUCH_DROP], ns))
 	return crafts
+
+
+def ores_dropping(name: str) -> list[str]:
+	""" The items that drop `name` when mined without silk touch. """
+	return [i for i, d in Mem.definitions.items() if d.get(NO_SILK_TOUCH_DROP) and drop_id(d[NO_SILK_TOUCH_DROP]) == name]
+
+
+def drop_id(drop: JsonDict | NoSilkTouchDrop | str | LootTable) -> str | None:
+	""" The item a no silk touch drop gives, None for a loot table. """
+	if isinstance(drop, str):
+		return drop
+	return drop["id"] if isinstance(drop, dict | NoSilkTouchDrop) else None
+
+
+def own_mining_recipe(name: str, drop: JsonDict | NoSilkTouchDrop | str | LootTable, ns: str) -> JsonDict:
+	""" The pseudo recipe showing what mining `name` without silk touch drops, a loot table's drop being dynamic. """
+	mining_recipe: JsonDict
+	if isinstance(drop, LootTable):
+		mining_recipe = {"type": "mining", "ingredient": Ingr(name, ns), "dynamic_drop": True}
+	else:
+		result_format: str = drop if isinstance(drop, str) else drop["id"]
+		mining_recipe = {"type": "mining", "ingredient": Ingr(name, ns), "result": Ingr(result_format, ns)}
+	add_mining_count(mining_recipe, drop)
+	return mining_recipe
+
+
+def add_mining_count(mining_recipe: JsonDict, drop: JsonDict | NoSilkTouchDrop | str | LootTable) -> None:
+	""" Mark a loot table's drop as dynamic, or show the count a drop gives, `min-max` for a range.
+
+	>>> recipe = {}
+	>>> add_mining_count(recipe, {"id": "x", "count": {"min": 1, "max": 3}}); recipe
+	{'result_count': '1-3'}
+	"""
+	if isinstance(drop, LootTable):
+		mining_recipe["dynamic_drop"] = True
+		return
+	if not isinstance(drop, dict | NoSilkTouchDrop) or "count" not in drop:
+		return
+	count_data: JsonDict | int = drop["count"]
+	if not isinstance(count_data, dict):
+		mining_recipe["result_count"] = str(count_data)
+	elif "min" in count_data and "max" in count_data:
+		mining_recipe["result_count"] = f"{count_data['min']}-{count_data['max']}"
+	elif "min" in count_data:
+		mining_recipe["result_count"] = str(count_data["min"])
+	elif "max" in count_data:
+		mining_recipe["result_count"] = str(count_data["max"])
 

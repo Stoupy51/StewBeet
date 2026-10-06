@@ -8,6 +8,7 @@ __lazy_modules__ = ALWAYS_LAZY
 import json
 import os
 import zipfile
+from dataclasses import dataclass
 
 import requests
 import stouputils as stp
@@ -19,6 +20,12 @@ from .cd_utils import get_supported_versions
 MODRINTH_API_URL: str = "https://api.modrinth.com/v2"
 PROJECT_ENDPOINT: str = f"{MODRINTH_API_URL}/project"
 VERSION_ENDPOINT: str = f"{MODRINTH_API_URL}/version"
+MOD_PLATFORMS: list[str] = ["fabric", "forge", "neoforge", "quilt"]
+""" Every platform a datapack is packaged as a mod for, unless `mod_platforms` names some. """
+PROJECT_FALLBACKS: tuple[tuple[str, str], ...] = (
+	("description", "description"), ("homepage", "project_url"), ("sources", "source_url"), ("issues", "issues_url"),
+)
+""" Mod metadata a Modrinth project field fills when the config leaves it empty. """
 
 def validate_credentials(credentials: dict[str, str]) -> str:
 	""" Get and validate Modrinth credentials
@@ -311,96 +318,80 @@ def get_file_parts(project_name: str, build_folder: str, modrinth_config: JsonDi
 	Returns:
 		list[str]: List of file paths to upload
 	"""
-	file_parts: list[str] = [
-		f"{build_folder}/{project_name}_datapack_with_libs.zip",
-		f"{build_folder}/{project_name}_resource_pack_with_libs.zip"
-	]
-	file_parts = [file_part for file_part in file_parts if os.path.exists(file_part)]
-	if len(file_parts) == 0:
-		file_parts = [
-			f"{build_folder}/{project_name}_datapack.zip",
-			f"{build_folder}/{project_name}_resource_pack.zip"
-		]
-		file_parts = [file_part for file_part in file_parts if os.path.exists(file_part)]
-	if len(file_parts) == 0:
-		raise ValueError(
-			f"No file parts (datapack and resourcepack zip files) found in {build_folder}, "
-			"please check the build_folder path in the modrinth_config file"
-		)
-
-	# Convert datapack to mod if requested
+	file_parts: list[str] = existing_packs(project_name, build_folder)
 	package_as_mod: str | None = modrinth_config.get("package_as_mod", None)
-	if package_as_mod in ["all", "separate"]:
+	datapack_file: str = next((part for part in reversed(file_parts) if "datapack" in part.lower()), "")
+	if package_as_mod not in ["all", "separate"] or not datapack_file:
+		return file_parts
+	resource_pack_file: str = next(
+		(part for part in reversed(file_parts) if "resource_pack" in part.lower() and "datapack" not in part.lower()), ""
+	)
 
-		# Find the datapack file and resourcepack file
-		datapack_file: str = ""
-		resource_pack_file: str = ""
-		for file_part in file_parts:
-			if "datapack" in file_part.lower():
-				datapack_file = file_part
-			elif "resource_pack" in file_part.lower():
-				resource_pack_file = file_part
+	platforms: list[str] = mod_platforms(modrinth_config)
+	base_metadata: JsonDict = mod_metadata(project_name, modrinth_config, project_data)
+	if package_as_mod == "all":
+		mod_output_path: str = f"{build_folder}/{project_name}_mod.jar"
+		with stp.MeasureTime(stp.progress, message=f"Converted datapack to mod for platforms: {', '.join(platforms)}"):
+			convert_datapack_to_mod(datapack_file, mod_output_path, base_metadata, platforms, resource_pack_file)
+		file_parts.append(mod_output_path)
+		return file_parts
 
-		if datapack_file:
-
-			# Get mod platforms (default to all platforms)
-			platforms = modrinth_config.get("mod_platforms", ["fabric", "forge", "neoforge", "quilt"])
-			if isinstance(platforms, str):
-				platforms = [platforms]
-
-			# Prepare base metadata
-			base_metadata: JsonDict = {
-				"id": modrinth_config.get("slug", project_name).lower().replace("-", "_").replace(" ", "_"),
-				"name": project_name,
-				"version": modrinth_config.get("version", "1.0.0"),
-				"description": modrinth_config.get("summary", ""),
-				"authors": modrinth_config.get("authors", []),
-				"license": modrinth_config.get("license", "All Rights Reserved"),
-				"homepage": modrinth_config.get("homepage"),
-				"sources": modrinth_config.get("sources"),
-				"issues": modrinth_config.get("issues"),
-				"icon": modrinth_config.get("icon")
-			}
-
-			# Complete metadata from Modrinth project if available
-			if project_data:
-				# Use existing project data to fill missing metadata
-				if not base_metadata.get("description") and project_data.get("description"):
-					base_metadata["description"] = project_data["description"]
-				license_is_placeholder: bool = not base_metadata.get("license") or base_metadata["license"] == "All Rights Reserved"
-				if license_is_placeholder and project_data.get("license") and project_data["license"].get("id"):
-					base_metadata["license"] = project_data["license"]["id"]
-				if not base_metadata.get("homepage") and project_data.get("project_url"):
-					base_metadata["homepage"] = project_data["project_url"]
-				if not base_metadata.get("sources") and project_data.get("source_url"):
-					base_metadata["sources"] = project_data["source_url"]
-				if not base_metadata.get("issues") and project_data.get("issues_url"):
-					base_metadata["issues"] = project_data["issues_url"]
-				if project_data.get("title"):
-					base_metadata["name"] = project_data["title"]
-
-			# Create one mod with all platforms
-			if package_as_mod == "all":
-				mod_output_path: str = f"{build_folder}/{project_name}_mod.jar"
-				with stp.MeasureTime(stp.progress, message=f"Converted datapack to mod for platforms: {', '.join(platforms)}"):
-					convert_datapack_to_mod(datapack_file, mod_output_path, base_metadata, platforms, resource_pack_file)
-
-				# Add mod file to file_parts (keep datapack too)
-				file_parts.append(mod_output_path)
-
-			# Create separate mod for each platform
-			elif package_as_mod == "separate":
-				for platform in platforms:
-					platform_metadata = base_metadata.copy()
-					platform_metadata["name"] = project_name
-					mod_output_path = f"{build_folder}/{project_name}_{platform}_mod.jar"
-					with stp.MeasureTime(stp.progress, message=f"Converted datapack to mod for platform: {platform}"):
-						convert_datapack_to_mod(datapack_file, mod_output_path, platform_metadata, [platform], resource_pack_file)
-
-					# Add platform-specific mod to file_parts
-					file_parts.append(mod_output_path)
-
+	# A separate mod per platform
+	for platform in platforms:
+		mod_output_path = f"{build_folder}/{project_name}_{platform}_mod.jar"
+		with stp.MeasureTime(stp.progress, message=f"Converted datapack to mod for platform: {platform}"):
+			platform_metadata: JsonDict = {**base_metadata, "name": project_name}
+			convert_datapack_to_mod(datapack_file, mod_output_path, platform_metadata, [platform], resource_pack_file)
+		file_parts.append(mod_output_path)
 	return file_parts
+
+def existing_packs(project_name: str, build_folder: str) -> list[str]:
+	""" The datapack and resource pack zips of the build, bundled with their libraries when it made those.
+
+	Raises:
+		ValueError: When the build folder holds neither.
+	"""
+	for suffix in ("_with_libs", ""):
+		packs: tuple[str, str] = (f"{project_name}_datapack{suffix}.zip", f"{project_name}_resource_pack{suffix}.zip")
+		file_parts: list[str] = [f"{build_folder}/{pack}" for pack in packs if os.path.exists(f"{build_folder}/{pack}")]
+		if file_parts:
+			return file_parts
+	raise ValueError(
+		f"No file parts (datapack and resourcepack zip files) found in {build_folder}, "
+		"please check the build_folder path in the modrinth_config file"
+	)
+
+def mod_platforms(modrinth_config: JsonDict) -> list[str]:
+	""" The platforms to package the mod for, `mod_platforms` being one name or a list of them. """
+	platforms: str | list[str] = modrinth_config.get("mod_platforms", MOD_PLATFORMS)
+	return [platforms] if isinstance(platforms, str) else platforms
+
+def mod_metadata(project_name: str, modrinth_config: JsonDict, project_data: JsonDict | None) -> JsonDict:
+	""" The mod's metadata from the config, completed by the Modrinth project, whose title also names the mod. """
+	metadata: JsonDict = {
+		"id": modrinth_config.get("slug", project_name).lower().replace("-", "_").replace(" ", "_"),
+		"name": project_name,
+		"version": modrinth_config.get("version", "1.0.0"),
+		"description": modrinth_config.get("summary", ""),
+		"authors": modrinth_config.get("authors", []),
+		"license": modrinth_config.get("license", "All Rights Reserved"),
+		"homepage": modrinth_config.get("homepage"),
+		"sources": modrinth_config.get("sources"),
+		"issues": modrinth_config.get("issues"),
+		"icon": modrinth_config.get("icon")
+	}
+	if not project_data:
+		return metadata
+	for key, field in PROJECT_FALLBACKS:
+		if not metadata.get(key) and project_data.get(field):
+			metadata[key] = project_data[field]
+	license_is_placeholder: bool = not metadata.get("license") or metadata["license"] == "All Rights Reserved"
+	if license_is_placeholder and project_data.get("license") and project_data["license"].get("id"):
+		metadata["license"] = project_data["license"]["id"]
+	if project_data.get("title"):
+		metadata["name"] = project_data["title"]
+	return metadata
+
 
 def upload_version(
 	project_id: str,
@@ -504,79 +495,60 @@ def upload_to_modrinth(credentials: dict[str, str], modrinth_config: JsonDict, c
 		return
 
 	file_parts = get_file_parts(project_name, build_folder, modrinth_config, project)
-
+	release: Release = Release(
+		project_id=project["id"],
+		project_name=project_name,
+		version_type=version_type,
+		changelog=changelog,
+		headers=headers,
+		dependencies=modrinth_config.get("dependencies", []),
+	)
 	package_as_mod = modrinth_config.get("package_as_mod", None)
-	mod_platforms = modrinth_config.get("mod_platforms", ["fabric", "forge", "neoforge", "quilt"])
-	if isinstance(mod_platforms, str):
-		mod_platforms = [mod_platforms]
-
-	# Handle different packaging modes
-	if package_as_mod == "all":
-		# Upload datapack version first
-		datapack_files = [f for f in file_parts if "_datapack" in f or "_resource_pack" in f]
-		if datapack_files:
+	if package_as_mod in ("all", "separate"):
+		pack_files: list[str] = [f for f in file_parts if "_datapack" in f or "_resource_pack" in f]
+		if pack_files:
 			stp.info("Uploading datapack version...")
-			json_response = upload_version(
-				project["id"], project_name, version, version_type,
-				changelog, datapack_files, headers, modrinth_config.get("dependencies", []),
-				["datapack"]
-			)
-			if len(datapack_files) > 1:
-				resource_pack_hash: str = json_response["files"][1]["hashes"]["sha1"]
-				set_resource_pack_required(json_response["id"], resource_pack_hash, headers)
-
-		# Upload mod version (with all platforms)
-		mod_files = [f for f in file_parts if "_mod" in f and "_datapack" not in f]
-		if mod_files:
-			# Check if mod version already exists
-			mod_version_name = f"{version}+mod"
-			can_continue_mod = handle_existing_version(slug, mod_version_name, headers)
-			if can_continue_mod:
-				stp.info(f"Uploading mod version (all platforms: {', '.join(mod_platforms)})...")
-				upload_version(
-					project["id"], project_name, mod_version_name, version_type,
-					changelog, mod_files, headers, modrinth_config.get("dependencies", []),
-					mod_platforms
-				)
-
-	elif package_as_mod == "separate":
-		# Upload datapack version first
-		datapack_files = [f for f in file_parts if "_datapack" in f or "_resource_pack" in f]
-		if datapack_files:
-			stp.info("Uploading datapack version...")
-			json_response = upload_version(
-				project["id"], project_name, version, version_type,
-				changelog, datapack_files, headers, modrinth_config.get("dependencies", []),
-				["datapack"]
-			)
-			if len(datapack_files) > 1:
-				resource_pack_hash: str = json_response["files"][1]["hashes"]["sha1"]
-				set_resource_pack_required(json_response["id"], resource_pack_hash, headers)
-
-		# Upload separate version for each platform
-		for platform in mod_platforms:
-			platform_files = [f for f in file_parts if f"_{platform}" in f]
-			if platform_files:
-				platform_version_name = f"{version}+{platform}"
-				can_continue_platform = handle_existing_version(slug, platform_version_name, headers)
-				if can_continue_platform:
-					stp.info(f"Uploading {platform} version...")
-					upload_version(
-						project["id"], project_name, platform_version_name, version_type,
-						changelog, platform_files, headers, modrinth_config.get("dependencies", []),
-						[platform]
-					)
-
+			release.upload_pack(version, pack_files)
+		platforms: list[str] = mod_platforms(modrinth_config)
+		upload_mods(release, slug, version, file_parts, every_platform=package_as_mod == "all", platforms=platforms)
 	else:
-		# Default: upload as datapack only
-		json_response = upload_version(
-			project["id"], project_name, version, version_type,
-			changelog, file_parts, headers, modrinth_config.get("dependencies", []),
-			["datapack"]
-		)
-		if len(file_parts) > 1:
-			resource_pack_hash: str = json_response["files"][1]["hashes"]["sha1"]
-			set_resource_pack_required(json_response["id"], resource_pack_hash, headers)
-
+		release.upload_pack(version, file_parts)
 	stp.info(f"Project {project_name} updated on Modrinth!")
+
+def upload_mods(release: Release, slug: str, version: str, file_parts: list[str], every_platform: bool, platforms: list[str]) -> None:
+	""" Upload the mod as one version for all platforms (`<version>+mod`), or one per platform (`<version>+<platform>`). """
+	if every_platform:
+		mod_files: list[str] = [f for f in file_parts if "_mod" in f and "_datapack" not in f]
+		if mod_files and handle_existing_version(slug, f"{version}+mod", release.headers):
+			stp.info(f"Uploading mod version (all platforms: {', '.join(platforms)})...")
+			release.upload(f"{version}+mod", mod_files, platforms)
+		return
+	for platform in platforms:
+		platform_files: list[str] = [f for f in file_parts if f"_{platform}" in f]
+		if platform_files and handle_existing_version(slug, f"{version}+{platform}", release.headers):
+			stp.info(f"Uploading {platform} version...")
+			release.upload(f"{version}+{platform}", platform_files, [platform])
+
+@dataclass(frozen=True)
+class Release:
+	""" What every version uploaded for one release of a project shares. """
+	project_id: str
+	project_name: str
+	version_type: str
+	changelog: str
+	headers: dict[str, str]
+	dependencies: list[str]
+
+	def upload(self, version: str, files: list[str], loaders: list[str]) -> JsonDict:
+		""" Upload one version of the release. """
+		return upload_version(
+			self.project_id, self.project_name, version, self.version_type, self.changelog,
+			files, self.headers, self.dependencies, loaders,
+		)
+
+	def upload_pack(self, version: str, files: list[str]) -> None:
+		""" Upload the datapack version, its second file being the resource pack it requires. """
+		json_response: JsonDict = self.upload(version, files, ["datapack"])
+		if len(files) > 1:
+			set_resource_pack_required(json_response["id"], json_response["files"][1]["hashes"]["sha1"], self.headers)
 

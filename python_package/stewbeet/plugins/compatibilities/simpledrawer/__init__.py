@@ -54,91 +54,73 @@ def beet_default(ctx: Context):
 	assert ctx.project_id, "Project ID is not set. Please set it in the project configuration."
 	ns: str = ctx.project_id
 
-	# For each material block, collect materials and their variants
-	simpledrawer_materials: list[dict[str, str]] = []
-	for item in Mem.definitions:
-		if item.endswith("_block"):
-			variants: dict[str, str] = {"block": item}
+	simpledrawer_materials: list[dict[str, str]] = [
+		variants for item in Mem.definitions
+		if item.endswith("_block") and (variants := material_variants(item)) is not None and len(variants) > 2
+	]
+	if not simpledrawer_materials:
+		return
 
-			# Get material base
-			obj = Item.from_id(item)
-			smithed_dict: JsonDict = obj.components.get("custom_data", {}).get("smithed", {}).get("dict", {})
-			if not smithed_dict:
-				continue
-			material_base: str = next(iter(next(iter(smithed_dict.values())).keys()))
+	json_file: JsonDict = {"values": [f"{ns}:calls/simpledrawer/material"]}
+	ctx.data["simpledrawer"].function_tags["material"] = set_json_encoder(FunctionTag(json_file))
+	content: str = ""
+	for material in simpledrawer_materials:
+		for variant, item in material.items():
+			if variant != "material":
+				content += (
+					"execute unless score #success_material simpledrawer.io matches 1 "
+					"if data storage simpledrawer:io item_material.components"
+					f'."minecraft:custom_data".{ns}.{item} '
+					f'run function {ns}:calls/simpledrawer/{material["material"]}/{variant}\n'
+				)
+	write_function(f"{ns}:calls/simpledrawer/material", content)
+	for material in simpledrawer_materials:
+		write_material_functions(ns, material)
+	stp.debug("Special datapack compatibility done for SimpleDrawer's compacting drawer!")
 
-			# If raw material block, add the ingot raw item if available
-			if item.startswith("raw_"):
-				variants["material"] = "raw_" + material_base
-				if f"raw_{material_base}" in Mem.definitions:
-					variants["ingot"] = f"raw_{material_base}"
 
-			# Else, get the ingot material and the nugget form if any
-			else:
-				variants["material"] = material_base
+def material_variants(block: str) -> dict[str, str] | None:
+	""" The forms of a storage block's material: the block, the material's name, and its ingot and nugget when defined.
 
-				# Get ingot item if any
-				ingot_types: list[str] = [f"{material_base}_ingot", material_base, f"{material_base}_fragment"]
-				ingot_type: str | None = None
-				for ingot in ingot_types:
-					if ingot in Mem.definitions:
-						ingot_type = ingot
-						break
-				if ingot_type:
-					variants["ingot"] = ingot_type
+	A raw block's ingot is the raw material. None for a block with no smithed material.
+	"""
+	smithed_dict: JsonDict = Item.from_id(block).components.get("custom_data", {}).get("smithed", {}).get("dict", {})
+	if not smithed_dict:
+		return None
+	material_base: str = next(iter(next(iter(smithed_dict.values())).keys()))
+	variants: dict[str, str] = {"block": block}
+	if block.startswith("raw_"):
+		variants["material"] = "raw_" + material_base
+		if f"raw_{material_base}" in Mem.definitions:
+			variants["ingot"] = f"raw_{material_base}"
+		return variants
 
-				# Get nugget if any
-				if f"{material_base}_nugget" in Mem.definitions:
-					variants["nugget"] = f"{material_base}_nugget"
+	variants["material"] = material_base
+	ingot_type: str | None = next(
+		(ingot for ingot in (f"{material_base}_ingot", material_base, f"{material_base}_fragment") if ingot in Mem.definitions), None
+	)
+	if ingot_type:
+		variants["ingot"] = ingot_type
+	if f"{material_base}_nugget" in Mem.definitions:
+		variants["nugget"] = f"{material_base}_nugget"
+	return variants
 
-			if len(variants) > 2:
-				simpledrawer_materials.append(variants)
 
-	# If any material block has variants, add the functions
-	if simpledrawer_materials:
+def write_material_functions(ns: str, material: dict[str, str]) -> None:
+	""" A function per form of the material telling SimpleDrawer its type, and the main one giving its conversions and items. """
+	types_for_variants: dict[str, str] = {"block": "0", "ingot": "1", "nugget": "2"}
+	material_base: str = material["material"]
+	material_title: str = material_base.replace("_", " ").title()
+	for variant in material:
+		if variant != "material":
+			write_function(f"{ns}:calls/simpledrawer/{material_base}/{variant}", (
+				f"\nscoreboard players set #type simpledrawer.io {types_for_variants[variant]}\n"
+				f"function {ns}:calls/simpledrawer/{material_base}/main\n"
+			))
 
-		# Link function tag
-		json_file: JsonDict = {"values": [f"{ns}:calls/simpledrawer/material"]}
-		ctx.data["simpledrawer"].function_tags["material"] = set_json_encoder(FunctionTag(json_file))
-
-		# Write material function
-		content: str = ""
-		for material in simpledrawer_materials:
-			material_base = material["material"]
-			for variant, item in material.items():
-				if variant != "material":
-					content += (
-						"execute unless score #success_material simpledrawer.io matches 1 "
-						"if data storage simpledrawer:io item_material.components"
-						f'."minecraft:custom_data".{ns}.{item} '
-						f'run function {ns}:calls/simpledrawer/{material_base}/{variant}\n'
-					)
-
-		write_function(f"{ns}:calls/simpledrawer/material", content)
-
-		# Make materials folders
-		types_for_variants: dict[str, str] = {"block": "0", "ingot": "1", "nugget": "2"}
-		for material in simpledrawer_materials:
-
-			# Get material base
-			material_base: str = material["material"]
-			material_title: str = material_base.replace("_", " ").title()
-
-			# For each variant, make a file
-			for variant in material:
-				if variant != "material":
-					content: str = (
-						f"\nscoreboard players set #type simpledrawer.io {types_for_variants[variant]}\n"
-						f"function {ns}:calls/simpledrawer/{material_base}/main\n"
-					)
-					write_function(f"{ns}:calls/simpledrawer/{material_base}/{variant}", content)
-
-			# Get ingot and nugget conversions if any
-			ingot_in_block: int = get_result_count(material.get("ingot", ""), material.get("block", ""))
-			nugget_in_ingot: int = get_result_count(material.get("nugget", ""), material.get("ingot", ""))
-
-			# Make main function
-			content: str = f"""
+	ingot_in_block: int = get_result_count(material.get("ingot", ""), material.get("block", ""))
+	nugget_in_ingot: int = get_result_count(material.get("nugget", ""), material.get("ingot", ""))
+	content: str = f"""
 # Set score of material found to 1
 scoreboard players set #success_material simpledrawer.io 1
 
@@ -151,12 +133,8 @@ data modify storage simpledrawer:io material set value {{material: "{ns}.{materi
 
 # Fill the NBT with your own items
 """
-			for variant, item in material.items():
-				if variant != "material":
-					content += f"data modify storage simpledrawer:io material.{variant}.item set from storage {ns}:items all.{item}\n"
-
-			write_function(f"{ns}:calls/simpledrawer/{material_base}/main", content)
-
-		# Debug message
-		stp.debug("Special datapack compatibility done for SimpleDrawer's compacting drawer!")
+	for variant, item in material.items():
+		if variant != "material":
+			content += f"data modify storage simpledrawer:io material.{variant}.item set from storage {ns}:items all.{item}\n"
+	write_function(f"{ns}:calls/simpledrawer/{material_base}/main", content)
 

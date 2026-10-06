@@ -73,46 +73,11 @@ class ItemPage(Page):
 		""" Render the main recipe (or single-item box) followed by the wiki-button grid. """
 		name = self.item_id or self.anchor
 		obj = manual.object_for(name)
-		recipes = manual.recipes
-		config = manual.config
-		content: list[TextComponent] = []
-		titled = item_id_to_name(name) + "\n"
-		crafts = list(self.crafts)
-
-		# --- main content selection (ported from v1) ---
-		content_added = False
-		mining_crafts = [c for c in crafts if c.get("type") == "mining"]
-		if mining_crafts:
-			content += recipes.render_main(mining_crafts[0], name, "")
-			content_added = True
-
-		if not content_added:
-			blue_crafts = [c for c in crafts if not c.get("result")]
-			if blue_crafts:
-				blue_crafts.sort(key=lambda c: c.get("result_count", 0), reverse=True)
-				content += recipes.render_main(blue_crafts[0], name, "")
-				content_added = True
-			else:
-				# Single item in a box
-				page_font = manual.glyphs.allocate()
-				manual.images.recipe_image(name, page_font)
-				component = recipes.item_component(name)
-				component["text"] = NONE_FONT * 2
-				content.append({"text": "", "font": config.font, "color": "white"})
-				content.append({"text": titled, "font": "minecraft:default", "color": "black", "underlined": True})
-				content.append(page_font + "\n")
-				for _ in range(4):
-					content.append(copy.deepcopy(component))
-					content.append("\n")
-				content_added = True
+		content: list[TextComponent] = self.main_content(manual, name)
 
 		# End of the main craft content: ButtonLayout.position == "after_recipe" inserts here
 		recipe_end: int = len(content)
-
-		# --- wiki buttons ---
 		info_buttons: list[WikiButtonRender] = []
-
-		# Special hardcoded note for heavy_workbench
 		if name == "heavy_workbench":
 			content.append([
 				{"text": "\nEvery recipe that uses custom items ", "font": "minecraft:default", "color": "black"},
@@ -120,23 +85,7 @@ class ItemPage(Page):
 				{"text": " be crafted using the Heavy Workbench."},
 			])
 		else:
-			# WikiButton info buttons
-			info_buttons += self.wiki_info_buttons(obj)
-
-			# Growing seed info button (right after the other info buttons)
-			gs_button = recipes.growing_seed_button(obj) if obj is not None else None
-			if gs_button is not None:
-				info_buttons.append(gs_button)
-
-			# One button per craft (skip consecutive duplicate results)
-			previous_result = None
-			for idx, craft in enumerate(crafts):
-				craft_for_check = convert_shapeless_to_shaped(craft) if craft["type"] == "crafting_shapeless" else craft
-				current_result = craft_for_check.get("result")
-				if current_result and current_result == previous_result and craft["type"] != "mining":
-					continue
-				previous_result = current_result
-				info_buttons.append(recipes.render_button(craft, name, idx))
+			info_buttons = self.craft_buttons(manual, name, obj)
 
 		# Developer-added buttons (cross-page recipe buttons, page links...)
 		info_buttons += self.extra_buttons
@@ -154,6 +103,48 @@ class ItemPage(Page):
 		if isinstance(content[0], dict):
 			content[0] = {**content[0], "shadow_color": [0,0,0,0]}
 		return content
+
+	def main_content(self, manual: Manual, name: str) -> list[TextComponent]:
+		""" The page's main craft: how the item is mined, else the craft using most of it, else the item alone in a box. """
+		crafts: list[JsonDict] = list(self.crafts)
+		mining_crafts: list[JsonDict] = [c for c in crafts if c.get("type") == "mining"]
+		if mining_crafts:
+			return list(manual.recipes.render_main(mining_crafts[0], name, ""))
+		blue_crafts: list[JsonDict] = [c for c in crafts if not c.get("result")]
+		if blue_crafts:
+			blue_crafts.sort(key=lambda c: c.get("result_count", 0), reverse=True)
+			return list(manual.recipes.render_main(blue_crafts[0], name, ""))
+
+		page_font = manual.glyphs.allocate()
+		manual.images.recipe_image(name, page_font)
+		component = manual.recipes.item_component(name)
+		component["text"] = NONE_FONT * 2
+		content: list[TextComponent] = [
+			{"text": "", "font": manual.config.font, "color": "white"},
+			{"text": item_id_to_name(name) + "\n", "font": "minecraft:default", "color": "black", "underlined": True},
+			page_font + "\n",
+		]
+		for _ in range(4):
+			content.append(copy.deepcopy(component))
+			content.append("\n")
+		return content
+
+	def craft_buttons(self, manual: Manual, name: str, obj: Item | None) -> list[WikiButtonRender]:
+		""" The item's info buttons, its growing seed button, then a button per craft, skipping a repeat of the previous result. """
+		buttons: list[WikiButtonRender] = self.wiki_info_buttons(obj)
+		gs_button = manual.recipes.growing_seed_button(obj) if obj is not None else None
+		if gs_button is not None:
+			buttons.append(gs_button)
+
+		previous_result = None
+		for idx, craft in enumerate(self.crafts):
+			craft_for_check = convert_shapeless_to_shaped(craft) if craft["type"] == "crafting_shapeless" else craft
+			current_result = craft_for_check.get("result")
+			if current_result and current_result == previous_result and craft["type"] != "mining":
+				continue
+			previous_result = current_result
+			buttons.append(manual.recipes.render_button(craft, name, idx))
+		return buttons
 
 	# --- helpers ---
 	def wiki_info_buttons(self, obj: Item | None) -> list[WikiButtonRender]:

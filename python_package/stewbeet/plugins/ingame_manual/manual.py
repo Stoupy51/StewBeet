@@ -310,16 +310,7 @@ class Manual:
 		self.discovered = True
 		self.definitions_as_objects = {item: Item.from_id(item) for item in Mem.definitions}
 
-		# Detect awakened-forge sizes
-		for obj in self.definitions_as_objects.values():
-			for recipe in obj.recipes:
-				if recipe.get("type") == "stardust_awakened_forge":
-					if len(recipe["ingredients"]) <= 9:
-						self.has_forge_3x3 = True
-					else:
-						self.has_forge_3x4 = True
-
-		# Build categories (insertion order preserved)
+		self.detect_forge_sizes()
 		self.categories = {}
 		for item, obj in self.definitions_as_objects.items():
 			if not obj.manual_category:
@@ -329,35 +320,13 @@ class Manual:
 		if len(self.categories) > self.config.max_items_per_page:
 			stp.error(f"Too many categories ({len(self.categories)}). Maximum is {self.config.max_items_per_page}.")
 
-		# Split categories into pages
-		category_pages: list[CategoryPage] = []
-		for cat, items in self.categories.items():
-			if cat == HEAVY_WORKBENCH_CATEGORY:
-				continue
-			i = 0
-			while i < len(items):
-				page_name = cat.title()
-				if len(items) > self.config.max_items_per_page:
-					page_name += f" #{i // self.config.max_items_per_page + 1}"
-				chunk = items[i:i + self.config.max_items_per_page]
-				category_pages.append(CategoryPage(anchor=f"category:{page_name}", title=page_name, items=chunk))
-				i += self.config.max_items_per_page
-
-		# Item pages, sorted by category order
-		category_list = list(self.categories.keys())
-		items_with_category = [(item, obj) for item, obj in self.definitions_as_objects.items() if obj.manual_category]
-		items_with_category.sort(key=lambda x: category_list.index(x[1].manual_category or ""))
-		item_pages: list[ItemPage] = [ItemPage.for_item(item) for item, _ in items_with_category]
-
-		# Assemble base order: intro, browser, categories, items
+		# Base order: intro, browser, categories, items
 		self.pages = []
 		self.by_anchor = {}
 		self.add_page(IntroPage(anchor="intro", title=self.config.name))
 		self.add_page(CategoryBrowserPage(anchor="category_browser", title="Category browser"))
-		for cp in category_pages:
-			self.add_page(cp)
-		for ip in item_pages:
-			self.add_page(ip)
+		for page in [*self.category_pages(), *self.item_pages()]:
+			self.add_page(page)
 
 		# Special pages inserted right after the intro, via the public API
 		if self.has_forge_3x3 or self.has_forge_3x4:
@@ -372,6 +341,35 @@ class Manual:
 		for op in self.pending_ops:
 			op()
 		self.pending_ops = []
+
+	def detect_forge_sizes(self) -> None:
+		""" Note which awakened forge grids the recipes use, 3x3 for up to 9 ingredients and 3x4 above. """
+		for obj in self.definitions_as_objects.values():
+			for recipe in obj.recipes:
+				if recipe.get("type") == "stardust_awakened_forge":
+					if len(recipe["ingredients"]) <= 9:
+						self.has_forge_3x3 = True
+					else:
+						self.has_forge_3x4 = True
+
+	def category_pages(self) -> list[CategoryPage]:
+		""" A page per category, numbered pages of `max_items_per_page` items for a category holding more. """
+		per_page: int = self.config.max_items_per_page
+		pages: list[CategoryPage] = []
+		for cat, items in self.categories.items():
+			if cat == HEAVY_WORKBENCH_CATEGORY:
+				continue
+			for i in range(0, len(items), per_page):
+				page_name: str = cat.title() + (f" #{i // per_page + 1}" if len(items) > per_page else "")
+				pages.append(CategoryPage(anchor=f"category:{page_name}", title=page_name, items=items[i:i + per_page]))
+		return pages
+
+	def item_pages(self) -> list[ItemPage]:
+		""" A page per item with a category, in the order of the categories. """
+		category_list: list[str] = list(self.categories.keys())
+		items_with_category = [(item, obj) for item, obj in self.definitions_as_objects.items() if obj.manual_category]
+		items_with_category.sort(key=lambda x: category_list.index(x[1].manual_category or ""))
+		return [ItemPage.for_item(item) for item, _ in items_with_category]
 
 	def prepare(self) -> None:
 		""" Run per-page preparation and the on_item_page hooks. """
@@ -419,38 +417,41 @@ class Manual:
 		Iterative (no recursion limit) and bounded: such links only live in ``click_event``,
 		so we never descend into ``hover_event`` subtrees (which hold deep item-component data).
 		"""
-		ns = self.config.project_id
 		stack: list[Any] = [self.pages_content]
 		seen: set[int] = set()
 		while stack:
 			node = stack.pop()
-			if isinstance(node, dict):
-				node_d = cast("dict[str, Any]", node)
-				if id(node_d) in seen:
-					continue
-				seen.add(id(node_d))
-				ce = node_d.get("click_event")
-				if isinstance(ce, dict):
-					ce_d = cast("dict[str, Any]", ce)
-					if ce_d.get("action") == "change_page":
-						page_val = ce_d.get("page")
-						idx = (
-							self.page_index_of(page_val) if isinstance(page_val, PageRef)
-							else (page_val if isinstance(page_val, int) else -1)
-						)
-						if idx != -1:
-							ce_d.clear()
-							ce_d["action"] = "show_dialog"
-							ce_d["dialog"] = f"{ns}:manual/page_{idx}"
-						else:
-							del node_d["click_event"]
-				for key, value in node_d.items():
-					if key in ("hover_event", "click_event"):
-						continue  # no PageRefs live here; avoids deep/Box traversal
-					if isinstance(value, (dict, list)):
-						stack.append(value)
-			elif isinstance(node, list):
+			if isinstance(node, list):
 				stack.extend(filter(lambda value: isinstance(value, (dict, list)), cast("list[Any]", node)))
+				continue
+			if not isinstance(node, dict):
+				continue
+			node_d = cast("dict[str, Any]", node)
+			if id(node_d) in seen:
+				continue
+			seen.add(id(node_d))
+			self.resolve_click_event(node_d)
+			# No PageRefs live in events, which also avoids traversing deep Box data
+			for key, value in node_d.items():
+				if key not in ("hover_event", "click_event") and isinstance(value, (dict, list)):
+					stack.append(value)
+
+	def resolve_click_event(self, node: dict[str, Any]) -> None:
+		""" Turn a node's ``change_page`` click event into a ``show_dialog``, or drop it when its page does not exist. """
+		ce = node.get("click_event")
+		if not isinstance(ce, dict):
+			return
+		ce_d = cast("dict[str, Any]", ce)
+		if ce_d.get("action") != "change_page":
+			return
+		page_val = ce_d.get("page")
+		idx: int = self.page_index_of(page_val) if isinstance(page_val, PageRef) else (page_val if isinstance(page_val, int) else -1)
+		if idx == -1:
+			del node["click_event"]
+			return
+		ce_d.clear()
+		ce_d["action"] = "show_dialog"
+		ce_d["dialog"] = f"{self.config.project_id}:manual/page_{idx}"
 
 	def optimize(self) -> None:
 		""" Merge adjacent compounds per page (skipping pages that opt out). """

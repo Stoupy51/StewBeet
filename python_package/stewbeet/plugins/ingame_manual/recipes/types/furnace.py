@@ -39,21 +39,11 @@ class FurnaceBase(CraftRenderer):
 		formatted_ingredient: JsonDict = r.item_component(craft["ingredient"], add_change_page=add_change_page_to_ingr)
 		for i in range(2):
 			content.append(SMALL_NONE_FONT)
-			if i == 0:
-				content.append(formatted_ingredient)
-			else:
-				copy = formatted_ingredient.copy()
-				copy["text"] = INVISIBLE_ITEM_WIDTH
-				content.append(copy)
+			r.append_or_invisible(content, formatted_ingredient, i)
 			content.append("\n")
 		for i in range(2):
 			content.append(SMALL_NONE_FONT * 4 + INVISIBLE_ITEM_WIDTH * 2)
-			if i == 0:
-				content.append(result_component)
-			else:
-				copy = result_component.copy()
-				copy["text"] = INVISIBLE_ITEM_WIDTH
-				content.append(copy)
+			r.append_or_invisible(content, result_component, i)
 			if use_dialog:
 				content.append(VERY_SMALL_NONE_FONT + MICRO_NONE_FONT)
 			content.append("\n")

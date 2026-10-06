@@ -153,70 +153,29 @@ class RecipeList(list[Any]):
 		Returns:
 			List of recipes (original if no tags, or expanded versions)
 		"""
-		ingredients_with_tags: list[tuple[list[str], list[str]]] = []
-
-		# Find all ingredients that use tags
-		for _, ingredient, path_keys in self._get_recipe_ingredients(recipe):
-			# Check if ingredient has an "item" field that starts with "#"
-			item_value: str | None = None
-			if hasattr(ingredient, "get"):
-				item_value = ingredient.get("item", "")
-
-			if isinstance(item_value, str) and item_value.startswith("#"):
-				tag_path = item_value
-				resolved_items = self._resolve_tag_recursively(tag_path)
-				if resolved_items and resolved_items != [tag_path]:  # Only if resolved successfully
-					ingredients_with_tags.append((path_keys, resolved_items))
-
-		# If no tags found, return original recipe
+		ingredients_with_tags: list[tuple[list[str], list[str]]] = self._tagged_ingredients(recipe)
 		if not ingredients_with_tags:
 			return [recipe]
 
-		# Start with the original recipe
+		# Each tagged ingredient multiplies the recipes by the number of items its tag holds
 		current_recipes: list[Any] = [recipe]
-
-		# For each ingredient with tags, multiply the recipes
 		for path_keys, resolved_items in ingredients_with_tags:
-			new_recipes: list[Any] = []
-			for current_recipe in current_recipes:
-				for item_id in resolved_items:
-					# Deep copy the recipe
-					recipe_copy: Any = deepcopy(current_recipe)
-
-					# Navigate to the ingredient and replace the tag
-					target: Any = recipe_copy
-					for key in path_keys[:-1]:
-						target = cast(Any, target[key]) if isinstance(target, dict) else getattr(target, key)
-
-					# Replace the tag with the actual item
-					final_key: str = path_keys[-1]
-					ingredient_copy: dict[str, Any]
-					if isinstance(target, dict):
-						ingredient_copy = dict(cast(JsonDict, target[final_key]))
-					elif isinstance(target, list):
-						ingredient_copy = dict(cast(JsonDict, target[int(final_key)]))
-					else:
-						ingredient_obj = getattr(target, final_key)
-						ingredient_copy = ingredient_obj.copy() if hasattr(ingredient_obj, 'copy') else dict(ingredient_obj)
-
-					# Update the item field
-					ingredient_copy["item"] = item_id
-
-					# Import Ingr to recreate the ingredient
-					from .ingredients import Ingr
-					new_ingredient = Ingr(ingredient_copy)
-
-					# Set it back
-					if isinstance(target, dict):
-						target[final_key] = new_ingredient
-					elif isinstance(target, list):
-						target[int(final_key)] = new_ingredient
-					else:
-						setattr(target, final_key, new_ingredient)
-					new_recipes.append(recipe_copy)
-			current_recipes = new_recipes
-
+			current_recipes = [
+				with_ingredient_item(current_recipe, path_keys, item_id)
+				for current_recipe in current_recipes for item_id in resolved_items
+			]
 		return current_recipes if current_recipes else [recipe]
+
+	def _tagged_ingredients(self, recipe: Any) -> list[tuple[list[str], list[str]]]:
+		""" The path to every ingredient naming an item tag that resolves, and the items it resolves to. """
+		found: list[tuple[list[str], list[str]]] = []
+		for _, ingredient, path_keys in self._get_recipe_ingredients(recipe):
+			item_value: str | None = ingredient.get("item", "") if hasattr(ingredient, "get") else None
+			if isinstance(item_value, str) and item_value.startswith("#"):
+				resolved_items: list[str] = self._resolve_tag_recursively(item_value)
+				if resolved_items and resolved_items != [item_value]:
+					found.append((path_keys, resolved_items))
+		return found
 
 	def _try_expand_tags(self) -> None:
 		""" Try to expand tags if a real build context is available (not the placeholder). """
@@ -285,4 +244,36 @@ class RecipeList(list[Any]):
 	def __iadd__(self, other: Iterable[Any]) -> Self:
 		self.extend(other)
 		return self
+
+
+def with_ingredient_item(recipe: Any, path_keys: list[str], item_id: str) -> Any:
+	""" A deep copy of `recipe` whose ingredient at `path_keys` names `item_id` in place of its tag.
+
+	`path_keys` walks dict keys, list indices and attributes alike.
+	"""
+	from .ingredients import Ingr
+	recipe_copy: Any = deepcopy(recipe)
+	target: Any = recipe_copy
+	for key in path_keys[:-1]:
+		target = cast(Any, target[key]) if isinstance(target, dict) else getattr(target, key)
+
+	final_key: str = path_keys[-1]
+	ingredient_copy: dict[str, Any]
+	if isinstance(target, dict):
+		ingredient_copy = dict(cast(JsonDict, target[final_key]))
+	elif isinstance(target, list):
+		ingredient_copy = dict(cast(JsonDict, target[int(final_key)]))
+	else:
+		ingredient_obj = getattr(target, final_key)
+		ingredient_copy = ingredient_obj.copy() if hasattr(ingredient_obj, 'copy') else dict(ingredient_obj)
+	ingredient_copy["item"] = item_id
+
+	new_ingredient = Ingr(ingredient_copy)
+	if isinstance(target, dict):
+		target[final_key] = new_ingredient
+	elif isinstance(target, list):
+		target[int(final_key)] = new_ingredient
+	else:
+		setattr(target, final_key, new_ingredient)
+	return recipe_copy
 

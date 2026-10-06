@@ -29,18 +29,25 @@ from .github import (
 	validate_github_credentials as validate_github_credentials,
 )
 from .modrinth import (
+	MOD_PLATFORMS as MOD_PLATFORMS,
 	MODRINTH_API_URL as MODRINTH_API_URL,
 	PROJECT_ENDPOINT as PROJECT_ENDPOINT,
+	PROJECT_FALLBACKS as PROJECT_FALLBACKS,
 	VERSION_ENDPOINT as VERSION_ENDPOINT,
+	Release as Release,
 	convert_datapack_to_mod as convert_datapack_to_mod,
+	existing_packs as existing_packs,
 	generate_fabric_metadata as generate_fabric_metadata,
 	generate_forge_metadata as generate_forge_metadata,
 	generate_quilt_metadata as generate_quilt_metadata,
 	get_file_parts as get_file_parts,
 	get_project as get_project,
 	handle_existing_version as handle_existing_version,
+	mod_metadata as mod_metadata,
+	mod_platforms as mod_platforms,
 	set_resource_pack_required as set_resource_pack_required,
 	update_project_description as update_project_description,
+	upload_mods as upload_mods,
 	upload_to_modrinth as upload_to_modrinth,
 )
 from .pmc import (

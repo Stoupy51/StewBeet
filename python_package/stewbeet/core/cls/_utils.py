@@ -17,6 +17,16 @@ from stouputils.typing import JsonDict
 
 from ..constants import NOT_COMPONENTS
 
+# Constants
+RENAMED_FIELDS: dict[str, str] = {
+	"id": "base_item",
+	"category": "manual_category",
+	"result_of_crafting": "recipes",
+	"used_for_crafting": "recipes",
+	"wiki_components": "wiki_buttons",
+}
+""" Fields a StewBeet 2 definition may use, and the field of StewBeet 3 each one fills. """
+
 
 def json_ready(value: Any) -> Any:
 	""" A value in a JSON-serializable form: a loot table as its data, a dataclass or anything with `to_dict` as a dict.
@@ -79,58 +89,24 @@ class StMapping(Mapping[str, Any]):
 		if isinstance(data, StMapping):
 			return data  # pyright: ignore[reportReturnType]
 
-		# Make a copy to avoid modifying the original
-		# Rename some fields from StewBeet v2.x to v3.x
-		rename_dict: dict[str, str] = {
-			"id": "base_item",
-			"category": "manual_category",
-			"result_of_crafting": "recipes",
-			"used_for_crafting": "recipes",
-			"wiki_components": "wiki_buttons",
-		}
 		data_dict: JsonDict = dict(data)
-		for old, new in rename_dict.items():
-			if old in data_dict and new not in data_dict:
-				data_dict[new] = data_dict.pop(old)
-			elif old in data_dict and new in data_dict:
-				if data_dict[new] == data_dict[old]:
-					data_dict.pop(old)
-				elif isinstance(data_dict[new], list) and isinstance(data_dict[old], list):
-					data_dict[new] = stp.unique_list([*data_dict[new], *data_dict.pop(old)])
-				else:
-					pass
+		rename_fields(data_dict)
 		data_dict["id"] = item_id
 
-		# Get valid field names for this class
+		# An unknown field is a component, for a class that has components
 		valid_fields: set[str] = {f.name for f in fields(cls)}
-
-		# Separate known fields from unknown fields
-		known_kwargs: JsonDict = {}
-		unknown_kwargs: JsonDict = {}
-		for key, value in data_dict.items():
-			if key in valid_fields:
-				known_kwargs[key] = value
-			else:
-				unknown_kwargs[key] = value
-
-		# If there are unknown fields and the class has a 'components' field, add them there
-		if unknown_kwargs and "components" in valid_fields:
-			# Merge with existing components if any
-			existing_components = known_kwargs.get('components', {})
-			if isinstance(existing_components, dict):
-				known_kwargs["components"] = {**existing_components, **unknown_kwargs}
-			else:
-				known_kwargs["components"] = unknown_kwargs
-		elif unknown_kwargs:
-			# If no components field exists, raise an error
+		known_kwargs: JsonDict = {key: value for key, value in data_dict.items() if key in valid_fields}
+		unknown_kwargs: JsonDict = {key: value for key, value in data_dict.items() if key not in valid_fields}
+		if unknown_kwargs and "components" not in valid_fields:
 			raise TypeError(f"{cls.__name__}() got unexpected keyword arguments: {', '.join(unknown_kwargs.keys())}")
+		if unknown_kwargs:
+			existing = known_kwargs.get('components', {})
+			known_kwargs["components"] = {**existing, **unknown_kwargs} if isinstance(existing, dict) else unknown_kwargs
 
-		# Remove unexpected components keys (from StewBeet)
+		# Keys StewBeet itself reads, never components
 		for key in NOT_COMPONENTS:
 			if "components" in known_kwargs and key in known_kwargs["components"]:
 				del known_kwargs["components"][key]
-
-		# Create the instance
 		return cls(**known_kwargs)
 
 	@classmethod
@@ -164,4 +140,22 @@ class StMapping(Mapping[str, Any]):
 		return len(self.to_dict())
 	def __iter__(self):
 		return iter(self.to_dict())
+
+
+def rename_fields(data: JsonDict) -> None:
+	""" Move each field of `RENAMED_FIELDS` to the field it fills, merging two lists, and dropping it when both hold the same.
+
+	>>> data = {"category": "misc", "result_of_crafting": [1], "recipes": [2], "used_for_crafting": [1, 3]}
+	>>> rename_fields(data); data
+	{'recipes': [2, 1, 3], 'manual_category': 'misc'}
+	"""
+	for old, new in RENAMED_FIELDS.items():
+		if old not in data:
+			continue
+		if new not in data:
+			data[new] = data.pop(old)
+		elif data[new] == data[old]:
+			data.pop(old)
+		elif isinstance(data[new], list) and isinstance(data[old], list):
+			data[new] = stp.unique_list([*data[new], *data.pop(old)])
 

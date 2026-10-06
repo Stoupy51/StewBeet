@@ -89,7 +89,20 @@ def beet_default(ctx: Context) -> Iterator[None]:
 	}
 	assert maps, "the sniffer plugin must emit at least one .mcfunction.map"
 
-	# US1: generated block content maps to the declaration, never to a library
+	check_declaration_attribution(maps)
+	check_no_library_source(maps)
+
+	# Pack-level scaffolding belongs to no declaration and stays unmapped
+	for path in maps:
+		assert "custom_blocks/get_rotation" not in path, \
+			"get_rotation is written before the loop and belongs to no declaration, it must stay unmapped"
+
+	check_ore_attribution(maps, ns)
+	check_appended_line(maps, ns)
+
+
+def check_declaration_attribution(maps: dict[str, JsonDict]) -> None:
+	""" US1: generated block content maps to the declaration, never to a library. """
 	declared: int = line_holding("definitions.py", "Block(")
 	generated_maps: dict[str, JsonDict] = {
 		path: data for path, data in maps.items()
@@ -109,7 +122,9 @@ def beet_default(ctx: Context) -> Iterator[None]:
 				hit_declaration = True
 	assert hit_declaration, "no generated line was attributed to the declaration, tier 2 never fired"
 
-	# The two negatives, which is what catches a broken tier order
+
+def check_no_library_source(maps: dict[str, JsonDict]) -> None:
+	""" The two negatives, which is what catches a broken tier order. """
 	for path, data in maps.items():
 		for source in sources_of(data):
 			normalized: str = source.replace(os.sep, "/")
@@ -118,12 +133,9 @@ def beet_default(ctx: Context) -> Iterator[None]:
 			assert not normalized.endswith("assertions.py"), \
 				f"{path}: mapped to this pipeline's own entry point, which authored nothing"
 
-	# Pack-level scaffolding belongs to no declaration and stays unmapped
-	for path in maps:
-		assert "custom_blocks/get_rotation" not in path, \
-			"get_rotation is written before the loop and belongs to no declaration, it must stay unmapped"
 
-	# Ore generation maps to its CustomOreGeneration( call, not to the all_with_config( call around it
+def check_ore_attribution(maps: dict[str, JsonDict], ns: str) -> None:
+	""" Ore generation maps to its CustomOreGeneration( call, not to the all_with_config( call around it. """
 	ore_declared: int = line_holding("link.py", "CustomOreGeneration(")
 	for ore_path in ("calls/smart_ore_generation/generate_ores", f"calls/smart_ore_generation/veins/{BLOCK_ID}"):
 		ore_map: str = f"data/{ns}/function/{ore_path}.mcfunction.map"
@@ -136,7 +148,9 @@ def beet_default(ctx: Context) -> Iterator[None]:
 			assert source.endswith("link.py") and line == ore_declared, \
 				f"{ore_path}: should map to link.py:{ore_declared}, got {source}:{line}"
 
-	# US2: the author's own append keeps its own line, after the generated ones
+
+def check_appended_line(maps: dict[str, JsonDict], ns: str) -> None:
+	""" US2: the author's own append keeps its own line, after the generated ones. """
 	secondary: str = f"data/{ns}/function/custom_blocks/{BLOCK_ID}/place_secondary.mcfunction.map"
 	assert secondary in maps, f"expected a map for place_secondary, got {sorted(maps)}"
 

@@ -19,12 +19,12 @@ from .....core.cls.recipe import AwakenedForgeRecipe
 from ...glyphs import (
 	AWAKENED_3X3_FONT,
 	AWAKENED_3X4_FONT,
-	INVISIBLE_ITEM_WIDTH,
 	MICRO_NONE_FONT,
 	NONE_FONT,
 	SMALL_NONE_FONT,
 	VERY_SMALL_NONE_FONT,
 )
+from ..grid import append_grid, centred_shape, place_result_beside
 from ..hovers import ingredients_hover
 from ..registry import CraftRenderer, register_craft_renderer
 
@@ -56,92 +56,13 @@ class AwakenedForgeRenderer(CraftRenderer):
 		if use_dialog and not is_small_craft:
 			content[-1] = content[-1].replace(page_font, page_font + VERY_SMALL_NONE_FONT * 2)  # pyright: ignore[reportAttributeAccessIssue, reportUnknownMemberType]
 		formatted_ingredients: dict[str, JsonDict] = {k: r.item_component(v, count=v.get("count", 1)) for k, v in craft["ingredients"].items()}
-
-		if len(shape) == 1 and len(shape[0]) == 3:
-			shape = ["   ", shape[0], "   "]
-		elif len(shape) == 3 and all(len(shape_line) == 1 for shape_line in shape):
-			shape = [" " + line + " " for line in shape]
-
-		for index, line in enumerate(shape):
-			for i in range(2):
-				content.append(SMALL_NONE_FONT)
-				for k in line:
-					if k == " ":
-						content.append(INVISIBLE_ITEM_WIDTH)
-					elif i == 0:
-						content.append(formatted_ingredients[k])
-					else:
-						copy = formatted_ingredients[k].copy()
-						copy["text"] = INVISIBLE_ITEM_WIDTH
-						content.append(copy)
-				if use_dialog and index != 1 and (not is_small_craft or i != 1):
-					content.append(INVISIBLE_ITEM_WIDTH * max(0, (3 if is_small_craft else 4) - len(line)))
-					if is_small_craft:
-						content.append(NONE_FONT * 2)
-					else:
-						content.append(NONE_FONT + SMALL_NONE_FONT)
-				content.append("\n")
-		if len(shape) == 1 and len(shape[0]) < 3:
-			content.append("\n")
-
+		shape = centred_shape(shape)
+		filler: str | None = (NONE_FONT * 2 if is_small_craft else NONE_FONT + SMALL_NONE_FONT) if use_dialog else None
+		append_grid(content, shape, formatted_ingredients, filler, columns=3 if is_small_craft else 4, small=is_small_craft)
 		if is_small_craft:
-			len_line = len(shape[1]) if len(shape) > 1 else 0
-			offset = 4 - len_line
-			break_line_pos = content.index("\n", content.index("\n") + 1)
-			try:
-				break_line_pos = content.index("\n", break_line_pos + 1)
-			except Exception:
-				content.append(SMALL_NONE_FONT)
-				break_line_pos = len(content)
-			content.insert(break_line_pos, (INVISIBLE_ITEM_WIDTH * (offset - 1) + SMALL_NONE_FONT * 2))
-			content.insert(break_line_pos + 1, result_component)
-			if use_dialog:
-				content.insert(break_line_pos + 2, VERY_SMALL_NONE_FONT + MICRO_NONE_FONT)
-				break_line_pos += 1
-			try:
-				break_line_pos = content.index("\n", break_line_pos + 3)
-			except Exception:
-				content.append("\n" + SMALL_NONE_FONT)
-				break_line_pos = len(content)
-			content.insert(break_line_pos, (INVISIBLE_ITEM_WIDTH * (offset - 1) + SMALL_NONE_FONT * 2))
-			copy = result_component.copy()
-			copy["text"] = INVISIBLE_ITEM_WIDTH
-			content.insert(break_line_pos + 1, copy)
-			if use_dialog:
-				content.insert(break_line_pos + 2, VERY_SMALL_NONE_FONT + MICRO_NONE_FONT)
-			if len(shape) < 3 and len(shape[0]) == 3:
-				content.append("\n\n")
-				if len(shape) < 2:
-					content.append("\n")
+			place_result_beside(content, shape, result_component, use_dialog, gap_end=SMALL_NONE_FONT * 2, full_width=3)
 		else:
-			len_line = len(shape[1]) if len(shape) > 1 else 0
-			offset = 4 - len_line
-			break_line_pos = content.index("\n", content.index("\n") + 1)
-			try:
-				break_line_pos = content.index("\n", break_line_pos + 1)
-			except Exception:
-				content.append(SMALL_NONE_FONT)
-				break_line_pos = len(content)
-			content.insert(break_line_pos, (INVISIBLE_ITEM_WIDTH * (offset - 1)) + MICRO_NONE_FONT)
-			content.insert(break_line_pos + 1, result_component)
-			if use_dialog:
-				content.insert(break_line_pos + 2, VERY_SMALL_NONE_FONT + MICRO_NONE_FONT)
-				break_line_pos += 1
-			try:
-				break_line_pos = content.index("\n", break_line_pos + 3)
-			except Exception:
-				content.append("\n" + SMALL_NONE_FONT)
-				break_line_pos = len(content)
-			content.insert(break_line_pos, (INVISIBLE_ITEM_WIDTH * (offset - 1)) + MICRO_NONE_FONT)
-			copy = result_component.copy()
-			copy["text"] = INVISIBLE_ITEM_WIDTH
-			content.insert(break_line_pos + 1, copy)
-			if use_dialog:
-				content.insert(break_line_pos + 2, VERY_SMALL_NONE_FONT + MICRO_NONE_FONT)
-			if len(shape) < 3 and len(shape[0]) == 4:
-				content.append("\n\n")
-				if len(shape) < 2:
-					content.append("\n")
+			place_result_beside(content, shape, result_component, use_dialog, gap_end=MICRO_NONE_FONT, full_width=4)
 		content.insert(3, "\n")
 
 

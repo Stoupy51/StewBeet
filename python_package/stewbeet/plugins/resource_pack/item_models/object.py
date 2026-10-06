@@ -9,10 +9,11 @@ __lazy_modules__ = ALWAYS_LAZY
 
 import os
 from collections.abc import Iterable
+from dataclasses import dataclass
 
 import stouputils as stp
 from beet import ItemModel, Model, Texture
-from stouputils.typing import JsonDict
+from stouputils.typing import JsonDict, JsonList
 
 from ....core.__memory__ import Mem
 from ....core.cls.block import Block, GrowingSeed
@@ -20,6 +21,24 @@ from ....core.cls.item import Item
 from ....core.cls.resource import Resource
 from ....core.constants import CUSTOM_BLOCK_VANILLA, CUSTOM_ITEM_VANILLA
 from ....core.utils.io import set_json_encoder, set_model_encoder, texture_mcmeta
+
+
+# Constants
+@dataclass(frozen=True)
+class BlockShape:
+	""" A vanilla block model a custom block takes when it has a texture for each of its sides. """
+	parent: str
+	sides: tuple[str, ...]
+
+
+BLOCK_SHAPES: tuple[BlockShape, ...] = (
+	BlockShape(parent="block/cake", sides=("bottom", "side", "top", "inner")),
+	BlockShape(parent="block/orientable_with_bottom", sides=("front", "bottom", "side", "top")),
+	BlockShape(parent="block/cube_bottom_top", sides=("bottom", "side", "top")),
+	BlockShape(parent="block/orientable", sides=("front", "side", "top")),
+	BlockShape(parent="block/cube_column", sides=("end", "side")),
+)
+""" Tried in order, the first whose sides all have a texture winning. """
 
 
 # Utility function
@@ -110,7 +129,7 @@ class AutoModel:
 			)
 		return ""
 
-	def model_in_variants(self, models: list[str], variants: list[str]) -> bool:
+	def model_in_variants(self, models: Iterable[str], variants: list[str]) -> bool:
 		""" Check if all models are in a string of any variant.
 
 		Args:
@@ -266,14 +285,8 @@ class AutoModel:
 		hand_model: JsonDict = self.obj.hand_model or {}
 		content: JsonDict = {k: (v.copy() if isinstance(v, dict) else v) for k, v in hand_model.items()}
 
-		# If powered, check if the on state is in the variants and add it
 		if on_off == "_on":
-			for key, texture in content.get("textures", {}).items():
-				texture: str
-				if (texture.split("/")[-1] + on_off) in variants:
-					content["textures"][key] = texture + on_off
-
-		# Copy and register used textures
+			switch_on(content.get("textures", {}), variants)
 		self.copy_and_register_textures(content)
 
 		# Add the in-hand model to assets
@@ -296,285 +309,206 @@ class AutoModel:
 
 	@stp.handle_error(exceptions=ValueError, error_log=stp.LogLevels.ERROR_TRACEBACK)
 	def process(self) -> set[str]:
-		""" Process the item model.
+		""" Write the item's models, and its items/ definition, for each of its power states.
 
 		Returns:
-			set[str]: Set of blocks textures to be added to the items atlas.
+			Block textures to be added to the items atlas.
 		"""
-		# If the item is a growing seed, handle it
 		self.handle_growing_seeds()
-
-		# If no item model, return
-		if not self.obj.components.get("item_model"):
+		item_model: str | None = self.obj.components.get("item_model")
+		if not item_model or item_model in Mem.ctx.meta["stewbeet"]["rendered_item_models"]:
 			return set()
 
-		# If item_model is already processed, return
-		if self.obj.components["item_model"] in Mem.ctx.meta["stewbeet"]["rendered_item_models"]:
-			return set()
-
-		# Initialize variables
 		overrides: JsonDict = self.obj.override_model or {}
-		if (self.obj.base_item == CUSTOM_BLOCK_VANILLA or
-			any((isinstance(x, str) and "block" in x) for x in overrides.values())):
+		if self.obj.base_item == CUSTOM_BLOCK_VANILLA or any(isinstance(x, str) and "block" in x for x in overrides.values()):
 			self.block_or_item = "block"
-
-
-		# Check if textures should be excluded completely
-		exclude_textures: bool = "textures" in overrides and overrides.get("textures") is None
-
-		# Get powered states (if any)
-		powered: list[str] = [""]
-		count: int = self.obj.id.count("_")
-		for texture_name in self.source_textures:
-			texture_count: int = texture_name.count("_")
-			# Only consider textures with similar underscore count to avoid false positives
-			if texture_name.startswith(self.obj.id) and texture_name.endswith("_on.png") and abs(texture_count - count) <= 2:
-				powered = ["", "_on"]
-
-		# Debug
-		if False:
-			print(self.source_textures)
-			print(f"Processing item model: {self.item_name}")
-			print(f"Block or item: {self.block_or_item}")
-			print(f"Overrides: {overrides}")
-			print(f"Powered states: {powered}")
-
-		all_variants: list[str] = [
-			x.replace(".png", "") for x in self.source_textures
-			if x.startswith(self.obj.id)
-			# At most 2 extra underscores, so "awakened_stardust.png" does not match "awakened_stardust_furnace_generator_on.png"
-			and abs(x.count("_") - self.obj.id.count("_")) <= 2
-		]
-		# Filter to only include variants in the same folder
-		variants: list[str] = self.get_same_folder_variants(all_variants)
-
-		# Generate its model file(s)
-		for on_off in powered:
-			content: JsonDict = {}          # Get all variants
-
-			if self.obj.override_model != {}:
-				# If it's a block
-				if self.block_or_item == "block":
-					# Get parent
-					content = {"parent": "block/cube_all", "textures": {}}
-					# Check in which variants state we are
-					variants_without_on = [x for x in variants if "_on" not in x]
-					if not exclude_textures and len(variants_without_on) == 1:
-						content["textures"]["all"] = f"{self.ns}:item/" + self.get_powered_texture(variants, "", on_off)
-					elif not exclude_textures:
-						# Prepare models to check
-						cake = ["bottom", "side", "top", "inner"]
-						orientable_with_bottom = ["front", "bottom", "side", "top"]
-						cube_bottom_top = ["bottom", "side", "top"]
-						orientable = ["front", "side", "top"]
-						cube_column = ["end", "side"]                       # Check cake model
-						if self.model_in_variants(cake, variants):
-							content["parent"] = "block/cake"
-							for side in cake:
-								texture_key = side.replace("inner", "inside")
-								texture_path = f"{self.ns}:item/" + self.get_powered_texture(variants, side, on_off)
-								content["textures"][texture_key] = texture_path
-
-							# Generate 6 models for each cake slice
-							for i in range(1, 7):
-								name: str = f"{self.obj.id}_slice{i}"
-								slice_content: JsonDict = {"parent": f"block/cake_slice{i}", "textures": content["textures"]}
-								Resource(Model, f"item/{name}{on_off}").write(set_model_encoder(Model(slice_content), max_level=4))
-
-						# Check orientable_with_bottom model
-						elif self.model_in_variants(orientable_with_bottom, variants):
-							content["parent"] = "block/orientable_with_bottom"
-							for side in orientable_with_bottom:
-								texture_path = f"{self.ns}:item/" + self.get_powered_texture(variants, side, on_off)
-								content["textures"][side] = texture_path
-
-						# Check cube_bottom_top model
-						elif self.model_in_variants(cube_bottom_top, variants):
-							content["parent"] = "block/cube_bottom_top"
-							for side in cube_bottom_top:
-								texture_path = f"{self.ns}:item/" + self.get_powered_texture(variants, side, on_off)
-								content["textures"][side] = texture_path
-
-						# Check orientable model
-						elif self.model_in_variants(orientable, variants):
-							content["parent"] = "block/orientable"
-							for side in orientable:
-								texture_path = f"{self.ns}:item/" + self.get_powered_texture(variants, side, on_off)
-								content["textures"][side] = texture_path
-
-						# Check cube_column model
-						elif self.model_in_variants(cube_column, variants):
-							content["parent"] = "block/cube_column"
-							for side in cube_column:
-								texture_path = f"{self.ns}:item/" + self.get_powered_texture(variants, side, on_off)
-								content["textures"][side] = texture_path
-
-						# Else, if there are no textures override, show error
-						elif not overrides.get("textures"):
-							if not self.ignore_textures:
-								patterns = stp.json_dump({
-									"cake": cake,
-									"cube_bottom_top": cube_bottom_top,
-									"orientable": orientable,
-									"cube_column": cube_column
-								}, max_level=1)
-								raise ValueError(
-									f"Block '{self.obj.id}' has invalid variants: {variants},\n"
-									"consider overriding the model or adding missing textures "
-									"to match up one of the following patterns:"
-									f"\n{patterns}"
-								)
-
-				# Else, it's an item
-				else:
-					# Get parent
-					parent = "item/generated"
-					data_id: str = self.obj.base_item
-					if data_id != CUSTOM_ITEM_VANILLA and "elements" not in overrides:
-						parent = data_id.replace(':', ":item/")
-
-					# Get textures
-					if exclude_textures or overrides.get("textures", {}) is None:
-						content = {"parent": parent}
-					else:
-						textures = {"layer0": f"{self.ns}:item/{self.obj.id}{on_off}"}
-						content = {"parent": parent, "textures": textures}
-					data_id = data_id.replace("minecraft:", "")
-
-					# Check for leather armor textures
-					if not exclude_textures and data_id.startswith("leather_"):
-						content["textures"]["layer1"] = content["textures"]["layer0"]
-
-					# If there is a "_overlay" texture, make it as layer1
-					if not exclude_textures and f"{self.obj.id}_overlay" in variants:
-						content["textures"]["layer1"] = f"{self.ns}:item/{self.obj.id}_overlay"
-
-					# Check for bow pulling textures
-					elif not exclude_textures and data_id.endswith("bow"):
-						sorted_pull_variants: list[str] = sorted(
-							[v for v in variants if "_pulling_" in v],
-							key=lambda x: int(x.split("_")[-1])
-						)
-						items_content: JsonDict = {}
-						if sorted_pull_variants:
-							items_content["model"] = {
-								"type": "minecraft:condition",
-								"on_false": {
-									"type": "minecraft:model",
-									"model": f"{self.ns}:item/{self.obj.id}"
-								},
-								"on_true": {
-									"type": "minecraft:range_dispatch",
-									"entries": [],
-									"fallback": {
-										"type": "minecraft:model",
-										"model": f"{self.ns}:item/{self.obj.id}_pulling_0"
-									},
-									"property": "minecraft:use_duration",
-									"scale": 0.05
-								},
-								"property": "minecraft:using_item"
-							}
-
-							# Add override for each pulling state
-							for i, variant in enumerate(sorted_pull_variants):
-								pull_content: JsonDict = {"parent": parent, "textures": {"layer0": f"{self.ns}:item/{variant}"}}
-
-								# Add texture to assets
-								variant_png: str = variant + ".png"
-								if variant_png in self.source_textures:
-									Resource(Texture, f"item/{variant}").write(texture_mcmeta(self.source_textures[variant_png]))
-
-								# Add model to assets
-								self.obj.model.suffixed(f"_pulling_{i}").write(set_model_encoder(Model(pull_content), max_level=4))
-
-								if i < (len(sorted_pull_variants) - 1):
-									pull: float = 0.65 + (0.25 * i)
-									model: str = f"{self.ns}:item/{self.obj.id}_pulling_{i + 1}"
-									items_content["model"]["on_true"]["entries"].append({  # pyright: ignore[reportArgumentType, reportAttributeAccessIssue, reportUnknownMemberType]
-										"model": {
-											"type": "minecraft:model",
-											"model": model
-										},
-										"threshold": pull
-									})
-
-							# Add the items/bow.json file
-							self.obj.generated_item_model.suffixed(on_off).write(
-								set_json_encoder(ItemModel(items_content), max_level=4)
-							)
-
-			# Add overrides
-			for key, value in overrides.items():
-				if key == "textures" and value is None:
-					# Skip adding textures key if it's explicitly set to None
-					continue
-				content[key] = value.copy() if isinstance(value, dict) else value
-
-			# If powered, check if the on state is in the variants and add it
-			if not exclude_textures and on_off == "_on":
-				for key, texture in content.get("textures", {}).items():
-					texture: str
-					if (texture.split("/")[-1] + on_off) in variants:
-						content["textures"][key] = texture + on_off
-
-			# Remove empty textures
-			if (exclude_textures or not content.get("textures")) and "textures" in content:
-				del content["textures"]
-
-			# Copy and register used textures
-			self.copy_and_register_textures(content)
-
-			# Add model to assets
-			if self.obj.override_model != {}:
-				self.obj.model.suffixed(on_off).write(set_model_encoder(Model(content), max_level=4))
-			Mem.ctx.meta["stewbeet"]["rendered_item_models"].add(self.obj.components["item_model"])
-
-			# Generate the json file required in items/
-			if not self.obj.base_item.endswith("bow"):
-				# Check if the item has a custom hand model
-				if self.obj.hand_model:
-					items_model: JsonDict = self.handle_hand_model(variants, on_off)
-
-				# Check if this is a spear with an in_hand variant
-				elif self.obj.id.endswith("_spear") and f"{self.obj.id}_in_hand.png" in self.source_textures:
-					# Create the special spear model with display context switching
-					items_model: JsonDict = {
-						"model": {
-							"type": "minecraft:select",
-							"cases": [
-								{
-									"model": {"type": "minecraft:model","model": self.obj.model.suffixed(on_off)},
-									"when": ["gui","ground","fixed","on_shelf"]
-								}
-							],
-							"fallback": {"type": "minecraft:model","model": self.obj.model.suffixed(f"_in_hand{on_off}")},
-							"property": "minecraft:display_context"
-						},
-						"swap_animation_scale": 1.95
-					}
-
-					# Create the in_hand model
-					in_hand_content: JsonDict = {
-						"parent": "item/spear_in_hand",
-						"textures": {"layer0": self.obj.texture.suffixed(f"_in_hand{on_off}")},
-					}
-
-					# Add the in_hand model to assets
-					self.obj.model.suffixed(f"_in_hand{on_off}").write(set_model_encoder(Model(in_hand_content), max_level=4))
-
-					# Add the in_hand texture to assets
-					in_hand_texture = f"{self.obj.id}_in_hand{on_off}.png"
-					if in_hand_texture in self.source_textures:
-						self.obj.texture.suffixed(f"_in_hand{on_off}").write(texture_mcmeta(self.source_textures[in_hand_texture]))
-					elif f"{self.obj.id}_in_hand.png" in self.source_textures and not on_off:
-						self.obj.texture.suffixed("_in_hand").write(texture_mcmeta(self.source_textures[f"{self.obj.id}_in_hand.png"]))
-				else:
-					# Standard item model
-					items_model = {"model": {"type": "minecraft:model", "model": self.obj.model.suffixed(on_off)}}
-
-				self.obj.generated_item_model.suffixed(on_off).write(set_json_encoder(ItemModel(items_model), max_level=4))
-
-		# Return
+		variants: list[str] = self.get_same_folder_variants(self.own_variants())
+		for on_off in self.power_states():
+			self.write_power_state(variants, on_off, overrides)
 		return self.used_minecraft_textures
+
+	def own_variants(self) -> list[str]:
+		""" The source textures named after the item, at most 2 underscores longer than its id.
+
+		The bound keeps `awakened_stardust.png` from claiming `awakened_stardust_furnace_generator_on.png`.
+		"""
+		count: int = self.obj.id.count("_")
+		return [
+			x.replace(".png", "") for x in self.source_textures
+			if x.startswith(self.obj.id) and abs(x.count("_") - count) <= 2
+		]
+
+	def power_states(self) -> list[str]:
+		""" The suffixes to write a model for, `_on` too when the item has a texture ending in `_on`. """
+		count: int = self.obj.id.count("_")
+		powered: bool = any(
+			name.startswith(self.obj.id) and name.endswith("_on.png") and abs(name.count("_") - count) <= 2
+			for name in self.source_textures
+		)
+		return ["", "_on"] if powered else [""]
+
+	def write_power_state(self, variants: list[str], on_off: str, overrides: JsonDict) -> None:
+		""" Write the model and the items/ definition of one power state, `on_off` being "" or "_on". """
+		exclude_textures: bool = excludes_textures(overrides)
+		content: JsonDict = {}
+		if self.obj.override_model != {}:
+			make_content = self.block_content if self.block_or_item == "block" else self.item_content
+			content = make_content(variants, on_off, overrides)
+		content.update({
+			key: value.copy() if isinstance(value, dict) else value
+			for key, value in overrides.items() if key != "textures" or value is not None
+		})
+
+		if not exclude_textures and on_off == "_on":
+			switch_on(content.get("textures", {}), variants)
+		if (exclude_textures or not content.get("textures")) and "textures" in content:
+			del content["textures"]
+		self.copy_and_register_textures(content)
+
+		if self.obj.override_model != {}:
+			self.obj.model.suffixed(on_off).write(set_model_encoder(Model(content), max_level=4))
+		Mem.ctx.meta["stewbeet"]["rendered_item_models"].add(self.obj.components["item_model"])
+		if not self.obj.base_item.endswith("bow"):
+			definition: JsonDict = self.items_definition(variants, on_off)
+			self.obj.generated_item_model.suffixed(on_off).write(set_json_encoder(ItemModel(definition), max_level=4))
+
+	def block_content(self, variants: list[str], on_off: str, overrides: JsonDict) -> JsonDict:
+		""" A block's model: one texture on every face, or the first of `BLOCK_SHAPES` its textures fill.
+
+		Raises:
+			ValueError: When its textures fill no shape, the model overrides none, and `ignore_textures` is off.
+		"""
+		content: JsonDict = {"parent": "block/cube_all", "textures": {}}
+		if excludes_textures(overrides):
+			return content
+		if len([x for x in variants if "_on" not in x]) == 1:
+			content["textures"]["all"] = f"{self.ns}:item/" + self.get_powered_texture(variants, "", on_off)
+			return content
+
+		shape: BlockShape | None = self.block_shape(variants, overrides)
+		if shape is None:
+			return content
+
+		content["parent"] = shape.parent
+		for side in shape.sides:
+			texture: str = self.get_powered_texture(variants, side, on_off)
+			content["textures"][side.replace("inner", "inside")] = f"{self.ns}:item/" + texture
+		if shape.parent == "block/cake":
+			for i in range(1, 7):
+				slice_content: JsonDict = {"parent": f"block/cake_slice{i}", "textures": content["textures"]}
+				Resource(Model, f"item/{self.obj.id}_slice{i}{on_off}").write(set_model_encoder(Model(slice_content), max_level=4))
+		return content
+
+	def block_shape(self, variants: list[str], overrides: JsonDict) -> BlockShape | None:
+		""" The first of `BLOCK_SHAPES` the block's textures fill, None when they fill none.
+
+		Raises:
+			ValueError: When they fill none, the model overrides no texture, and `ignore_textures` is off.
+		"""
+		shape: BlockShape | None = next((shape for shape in BLOCK_SHAPES if self.model_in_variants(shape.sides, variants)), None)
+		if shape is None and not overrides.get("textures") and not self.ignore_textures:
+			patterns: str = stp.json_dump({s.parent.removeprefix("block/"): list(s.sides) for s in BLOCK_SHAPES}, max_level=1)
+			raise ValueError(
+				f"Block '{self.obj.id}' has invalid variants: {variants},\n"
+				"consider overriding the model or adding missing textures "
+				f"to match up one of the following patterns:\n{patterns}"
+			)
+		return shape
+
+	def item_content(self, variants: list[str], on_off: str, overrides: JsonDict) -> JsonDict:
+		""" An item's model: its base item's parent, with a second layer for leather and overlays, and pulling states for a bow. """
+		data_id: str = self.obj.base_item
+		own_parent: bool = data_id != CUSTOM_ITEM_VANILLA and "elements" not in overrides
+		parent: str = data_id.replace(":", ":item/") if own_parent else "item/generated"
+		if excludes_textures(overrides):
+			return {"parent": parent}
+
+		textures: JsonDict = {"layer0": f"{self.ns}:item/{self.obj.id}{on_off}"}
+		data_id = data_id.replace("minecraft:", "")
+		if data_id.startswith("leather_"):
+			textures["layer1"] = textures["layer0"]
+		if f"{self.obj.id}_overlay" in variants:
+			textures["layer1"] = f"{self.ns}:item/{self.obj.id}_overlay"
+		elif data_id.endswith("bow"):
+			self.write_bow_pulling(variants, parent, on_off)
+		return {"parent": parent, "textures": textures}
+
+	def write_bow_pulling(self, variants: list[str], parent: str, on_off: str) -> None:
+		""" Write a model per `_pulling_<n>` texture, and the items/ definition switching between them as the bow is drawn. """
+		pulling: list[str] = sorted((v for v in variants if "_pulling_" in v), key=lambda x: int(x.split("_")[-1]))
+		if not pulling:
+			return
+
+		entries: JsonList = []
+		for i, variant in enumerate(pulling):
+			if f"{variant}.png" in self.source_textures:
+				Resource(Texture, f"item/{variant}").write(texture_mcmeta(self.source_textures[f"{variant}.png"]))
+			pull_content: JsonDict = {"parent": parent, "textures": {"layer0": f"{self.ns}:item/{variant}"}}
+			self.obj.model.suffixed(f"_pulling_{i}").write(set_model_encoder(Model(pull_content), max_level=4))
+			if i < len(pulling) - 1:
+				model: str = f"{self.ns}:item/{self.obj.id}_pulling_{i + 1}"
+				entries.append({"model": {"type": "minecraft:model", "model": model}, "threshold": 0.65 + (0.25 * i)})
+
+		items_content: JsonDict = {"model": {
+			"type": "minecraft:condition",
+			"on_false": {"type": "minecraft:model", "model": f"{self.ns}:item/{self.obj.id}"},
+			"on_true": {
+				"type": "minecraft:range_dispatch",
+				"entries": entries,
+				"fallback": {"type": "minecraft:model", "model": f"{self.ns}:item/{self.obj.id}_pulling_0"},
+				"property": "minecraft:use_duration",
+				"scale": 0.05
+			},
+			"property": "minecraft:using_item"
+		}}
+		self.obj.generated_item_model.suffixed(on_off).write(set_json_encoder(ItemModel(items_content), max_level=4))
+
+	def items_definition(self, variants: list[str], on_off: str) -> JsonDict:
+		""" The items/ definition: the hand model's switch, a spear's in-hand switch, or the model alone. """
+		if self.obj.hand_model:
+			return self.handle_hand_model(variants, on_off)
+		if self.obj.id.endswith("_spear") and f"{self.obj.id}_in_hand.png" in self.source_textures:
+			return self.spear_definition(on_off)
+		return {"model": {"type": "minecraft:model", "model": self.obj.model.suffixed(on_off)}}
+
+	def spear_definition(self, on_off: str) -> JsonDict:
+		""" Write a spear's in-hand model and texture, and return the items/ definition showing it outside the GUI. """
+		items_model: JsonDict = {
+			"model": {
+				"type": "minecraft:select",
+				"cases": [
+					{
+						"model": {"type": "minecraft:model","model": self.obj.model.suffixed(on_off)},
+						"when": ["gui","ground","fixed","on_shelf"]
+					}
+				],
+				"fallback": {"type": "minecraft:model","model": self.obj.model.suffixed(f"_in_hand{on_off}")},
+				"property": "minecraft:display_context"
+			},
+			"swap_animation_scale": 1.95
+		}
+		in_hand_content: JsonDict = {
+			"parent": "item/spear_in_hand",
+			"textures": {"layer0": self.obj.texture.suffixed(f"_in_hand{on_off}")},
+		}
+		self.obj.model.suffixed(f"_in_hand{on_off}").write(set_model_encoder(Model(in_hand_content), max_level=4))
+
+		in_hand_texture: str = f"{self.obj.id}_in_hand{on_off}.png"
+		if in_hand_texture in self.source_textures:
+			self.obj.texture.suffixed(f"_in_hand{on_off}").write(texture_mcmeta(self.source_textures[in_hand_texture]))
+		elif not on_off:
+			self.obj.texture.suffixed("_in_hand").write(texture_mcmeta(self.source_textures[f"{self.obj.id}_in_hand.png"]))
+		return items_model
+
+
+def excludes_textures(overrides: JsonDict) -> bool:
+	""" Whether the model overrides set `textures` to None, which leaves the model without any. """
+	return "textures" in overrides and overrides["textures"] is None
+
+
+def switch_on(textures: JsonDict, variants: list[str]) -> None:
+	""" Point each texture at its `_on` variant where the item has one. """
+	for key, texture in textures.items():
+		if (texture.split("/")[-1] + "_on") in variants:
+			textures[key] = texture + "_on"
 

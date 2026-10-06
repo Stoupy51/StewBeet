@@ -39,11 +39,49 @@ def main() -> None:
 	if second_arg == "" and len(sys.argv) == 1:
 		sys.argv.append("build")
 
-	# Print help with nice formatting
 	if second_arg in ("--help", "-h", "help"):
-		from importlib.metadata import version
-		separator: str = "─" * 60
-		print(f"""
+		return print_help()
+
+	# Print the version of stewbeet, beet, bolt, mecha, and stouputils
+	if second_arg in ("--version", "-v", "version"):
+		max_depth: int = int(sys.argv[-1]) if len(sys.argv) == 3 else 2
+		return stp.show_version("stewbeet", primary_color=stp.RED, secondary_color=stp.GREEN, max_depth=max_depth)
+
+	# Handle "init/template" command (local imports: every one of these commands drags dependencies
+	# the far more frequent "build" has no use for, `migrate` alone costs a fifth of a second of requests)
+	if second_arg in ("init", "template"):
+		from .core.template import template_command
+		return template_command()
+
+	# Handle "migrate" command
+	if second_arg == "migrate":
+		from .core.migrate import migrate_command
+		return migrate_command()
+
+	# Handle "dump" command
+	if second_arg == "dump":
+		from .core.dump import dump_command
+		return dump_command()
+
+	# Try to find and load the beet configuration file
+	cfg: ProjectConfig = get_project_config()
+
+	if second_arg in ["clean", "rebuild"]:
+		clean_project(cfg)
+		# Replace "rebuild" by "build" to continue the process
+		if second_arg == "rebuild":
+			sys.argv[1] = "build"
+
+	if second_arg != "clean":
+		run_beet(cfg)
+	sys.exit(0)
+
+
+def print_help() -> None:
+	""" Print the commands of stewbeet and of beet, with their options. """
+	from importlib.metadata import version
+	separator: str = "─" * 60
+	print(f"""
 {stp.CYAN}{separator}{stp.RESET}
 {stp.CYAN}StewBeet {stp.GREEN}CLI {stp.CYAN}v{version('stewbeet')}{stp.RESET}
 {stp.CYAN}{separator}{stp.RESET}
@@ -73,100 +111,72 @@ def main() -> None:
   {stp.GREEN}-l, --log LEVEL{stp.RESET}               Configure output verbosity
 {stp.CYAN}{separator}{stp.RESET}
 """.strip())
-		return None
 
-	# Print the version of stewbeet, beet, bolt, mecha, and stouputils
-	if second_arg in ("--version", "-v", "version"):
-		max_depth: int = int(sys.argv[-1]) if len(sys.argv) == 3 else 2
-		return stp.show_version("stewbeet", primary_color=stp.RED, secondary_color=stp.GREEN, max_depth=max_depth)
 
-	# Handle "init/template" command (local imports: every one of these commands drags dependencies
-	# the far more frequent "build" has no use for, `migrate` alone costs a fifth of a second of requests)
-	if second_arg in ("init", "template"):
-		from .core.template import template_command
-		return template_command()
+def clean_project(cfg: ProjectConfig) -> None:
+	""" Remove the beet cache, the build output, every __pycache__, the item renders and the debug definitions file. """
+	stp.info("Cleaning project and caches...")
 
-	# Handle "migrate" command
-	if second_arg == "migrate":
-		from .core.migrate import migrate_command
-		return migrate_command()
+	# Remove the beet cache directory
+	with contextlib.suppress(Exception):
+		from beet.toolchain.project import Project
+		project = Project(resolved_config=cfg)
+		project.clear_cache([])
+	if os.path.exists(".beet_cache"):
+		shutil.rmtree(".beet_cache", ignore_errors=True)
 
-	# Handle "dump" command
-	if second_arg == "dump":
-		from .core.dump import dump_command
-		return dump_command()
+	# Remove the output directory specified in the config
+	shutil.rmtree(str(cfg.output), ignore_errors=True)
 
-	# Try to find and load the beet configuration file
-	cfg: ProjectConfig = get_project_config()
+	# Remove all __pycache__ folders
+	for root, dirs, _ in os.walk("."):
+		if "__pycache__" in dirs:
+			cache_dir: str = os.path.join(root, "__pycache__")
+			shutil.rmtree(cache_dir, ignore_errors=True)
 
-	# Check if the command is "clean" or "rebuild"
-	if second_arg in ["clean", "rebuild"]:
-		stp.info("Cleaning project and caches...")
+	# Remove the item renders folder (the rest of what the manual caches lives in .beet_cache)
+	stewbeet_meta = cfg.meta.get("stewbeet", {})
+	renders_path: str = stewbeet_meta.get("iso_renders_path", "")
+	if not renders_path:
+		legacy: str = stewbeet_meta.get("manual", {}).get("cache_path", "")
+		renders_path = f"{legacy}/items" if legacy else ""
+	if renders_path and os.path.exists(renders_path):
+		shutil.rmtree(renders_path, ignore_errors=True)
 
-		# Remove the beet cache directory
-		with contextlib.suppress(Exception):
-			from beet.toolchain.project import Project
-			project = Project(resolved_config=cfg)
-			project.clear_cache([])
-		if os.path.exists(".beet_cache"):
-			shutil.rmtree(".beet_cache", ignore_errors=True)
+	# Remove debug definitions file if it exists
+	definitions_debug: str = cfg.meta.get("stewbeet", {}).get("definitions_debug", "")
+	if definitions_debug and os.path.exists(definitions_debug):
+		os.remove(definitions_debug)
+	stp.info("Cleaning done!")
 
-		# Remove the output directory specified in the config
-		shutil.rmtree(str(cfg.output), ignore_errors=True)
 
-		# Remove all __pycache__ folders
-		for root, dirs, _ in os.walk("."):
-			if "__pycache__" in dirs:
-				cache_dir: str = os.path.join(root, "__pycache__")
-				shutil.rmtree(cache_dir, ignore_errors=True)
+def run_beet(cfg: ProjectConfig) -> None:
+	""" Import the pipeline up front for readable errors, then hand the command line to beet. """
+	# Add current directory to Python path
+	current_dir: str = os.getcwd()
+	if current_dir not in sys.path:
+		sys.path.insert(0, current_dir)
 
-		# Remove the item renders folder (the rest of what the manual caches lives in .beet_cache)
-		stewbeet_meta = cfg.meta.get("stewbeet", {})
-		renders_path: str = stewbeet_meta.get("iso_renders_path", "")
-		if not renders_path:
-			legacy: str = stewbeet_meta.get("manual", {}).get("cache_path", "")
-			renders_path = f"{legacy}/items" if legacy else ""
-		if renders_path and os.path.exists(renders_path):
-			shutil.rmtree(renders_path, ignore_errors=True)
+	# Stop callback when an error occurs during plugin import
+	def stop_callback(exception: BaseException) -> None:
+		sys.exit(1)
 
-		# Remove debug definitions file if it exists
-		definitions_debug: str = cfg.meta.get("stewbeet", {}).get("definitions_debug", "")
-		if definitions_debug and os.path.exists(definitions_debug):
-			os.remove(definitions_debug)
-		stp.info("Cleaning done!")
+	# Try to import all pipeline (upfront, only for nice error messages)
+	modules_before: set[str] = set(sys.modules)
+	for plugin in cfg.pipeline:
+		stp.handle_error(importlib.import_module, error_log=stp.LogLevels.WARNING_TRACEBACK, callback=stop_callback)(plugin)
 
-		# Replace "rebuild" by "build" to continue the process
-		if second_arg == "rebuild":
-			sys.argv[1] = "build"
+	# Forget project-local modules so beet re-imports them in its own tracked region,
+	# else `stewbeet watch` ignores edits to project source files.
+	for name in set(sys.modules) - modules_before:
+		module = sys.modules.get(name)
+		filename: str | None = getattr(module, "__file__", None)
+		if filename and "site-packages" not in filename and filename.startswith(current_dir):
+			del sys.modules[name]
 
-	# Handle all other commands except "clean"
-	if second_arg != "clean":
-		# Add current directory to Python path
-		current_dir: str = os.getcwd()
-		if current_dir not in sys.path:
-			sys.path.insert(0, current_dir)
-
-		# Stop callback when an error occurs during plugin import
-		def stop_callback(exception: BaseException) -> None:
-			sys.exit(1)
-
-		# Try to import all pipeline (upfront, only for nice error messages)
-		modules_before: set[str] = set(sys.modules)
-		for plugin in cfg.pipeline:
-			stp.handle_error(importlib.import_module, error_log=stp.LogLevels.WARNING_TRACEBACK, callback=stop_callback)(plugin)
-
-		# Forget project-local modules so beet re-imports them in its own tracked region,
-		# else `stewbeet watch` ignores edits to project source files.
-		for name in set(sys.modules) - modules_before:
-			module = sys.modules.get(name)
-			filename: str | None = getattr(module, "__file__", None)
-			if filename and "site-packages" not in filename and filename.startswith(current_dir):
-				del sys.modules[name]
-
-		# Run beet with all remaining arguments
-		from beet.toolchain.cli import main as beet_main
-		beet_main()
-	sys.exit(0)
+	# Run beet with all remaining arguments
+	from beet.toolchain.cli import main as beet_main
+	beet_main()
 
 
 if __name__ == "__main__":

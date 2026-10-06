@@ -18,6 +18,14 @@ from ...core.constants import CUSTOM_ITEM_VANILLA
 from ...core.utils.io import set_json_encoder, write_function
 from .. import sniffer
 
+# Constants
+NBT_FURNACE_RECIPES: dict[str, type[SmeltingRecipe | BlastingRecipe | SmokingRecipe]] = {
+	SmeltingRecipe.type: SmeltingRecipe,
+	BlastingRecipe.type: BlastingRecipe,
+	SmokingRecipe.type: SmokingRecipe,
+}
+""" The cooking types furnace_nbt_recipes handles, and the class reading each. """
+
 
 class FurnaceRecipeHandler:
 	""" Handler for furnace NBT recipe generation.
@@ -135,38 +143,23 @@ scoreboard players reset #count furnace_nbt_recipes.data
 	def generate_recipes(self) -> None:
 		""" Generate all furnace NBT recipes. """
 		for item, _ in sniffer.attributed(Mem.definitions.items()):
-			obj = Item.from_id(item)
+			for recipe in Item.from_id(item).recipes:
+				recipe_class = NBT_FURNACE_RECIPES.get(recipe["type"])
+				if recipe_class is not None:
+					self.write_furnace_recipe(item, recipe_class.from_dict(recipe))
 
-			for recipe in obj.recipes:
-				if recipe["type"] in (SmeltingRecipe.type, BlastingRecipe.type, SmokingRecipe.type):
-					recipe = SmeltingRecipe.from_dict(recipe) if recipe["type"] == SmeltingRecipe.type else \
-								BlastingRecipe.from_dict(recipe) if recipe["type"] == BlastingRecipe.type else \
-								SmokingRecipe.from_dict(recipe)
+	def write_furnace_recipe(self, item: str, recipe: SmeltingRecipe | BlastingRecipe | SmokingRecipe) -> None:
+		""" Write one cooking recipe of `item` for furnace_nbt_recipes and its xp reward, noting an ingredient that is vanilla. """
+		result: Ingr = recipe.result or Ingr(item)
+		result_loot_table = result.register_loot_table(recipe.result_count)
+		line: str = self.furnace_nbt_recipe(recipe, result_loot_table, result)
+		write_function(f"{self.FURNACE_NBT_PATH}/{recipe.type}_recipes", line, tags=[f"furnace_nbt_recipes:v1/{recipe.type}_recipes"])
 
-					# Get possible result item
-					if not recipe.result:
-						result_loot_table = Ingr(item).register_loot_table(recipe.result_count)
-					else:
-						result_loot_table = recipe.result.register_loot_table(recipe.result_count)
+		if not recipe.ingredient.get("item"):
+			self.furnace_nbt_vanilla_items.add(Ingr(recipe.ingredient).to_vanilla_item_id())
 
-					# Generate recipe
-					if recipe.result:
-						line: str = self.furnace_nbt_recipe(recipe, result_loot_table, recipe.result)
-					else:
-						line: str = self.furnace_nbt_recipe(recipe, result_loot_table, Ingr(item))
-
-					type: str = recipe.type
-					path: str = f"{self.FURNACE_NBT_PATH}/{type}_recipes"
-					write_function(path, line, tags=[f"furnace_nbt_recipes:v1/{type}_recipes"])
-
-					# Add vanilla item unless it's a custom item
-					if not recipe.ingredient.get("item"):
-						self.furnace_nbt_vanilla_items.add(Ingr(recipe.ingredient).to_vanilla_item_id())
-
-					# Add xp reward
-					experience: float = recipe.get("experience", 0)
-					if experience > 0:
-						line = self.furnace_xp_reward(recipe, experience)
-						path = f"{self.FURNACE_NBT_PATH}/recipes_used"
-						write_function(path, line, tags=["furnace_nbt_recipes:v1/recipes_used"])
+		experience: float = recipe.get("experience", 0)
+		if experience > 0:
+			line = self.furnace_xp_reward(recipe, experience)
+			write_function(f"{self.FURNACE_NBT_PATH}/recipes_used", line, tags=["furnace_nbt_recipes:v1/recipes_used"])
 
