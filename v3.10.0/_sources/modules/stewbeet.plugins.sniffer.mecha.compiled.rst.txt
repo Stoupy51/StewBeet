@@ -1,0 +1,8 @@
+stewbeet.plugins.sniffer.mecha.compiled module
+==============================================
+
+.. automodule:: stewbeet.plugins.sniffer.mecha.compiled
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

@@ -1,0 +1,8 @@
+stewbeet.continuous\_delivery.smithed module
+============================================
+
+.. automodule:: stewbeet.continuous_delivery.smithed
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

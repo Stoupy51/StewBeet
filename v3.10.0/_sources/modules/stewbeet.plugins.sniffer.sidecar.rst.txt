@@ -1,0 +1,8 @@
+stewbeet.plugins.sniffer.sidecar module
+=======================================
+
+.. automodule:: stewbeet.plugins.sniffer.sidecar
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

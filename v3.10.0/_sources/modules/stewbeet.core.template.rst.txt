@@ -1,0 +1,8 @@
+stewbeet.core.template module
+=============================
+
+.. automodule:: stewbeet.core.template
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

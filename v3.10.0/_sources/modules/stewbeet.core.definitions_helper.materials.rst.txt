@@ -1,0 +1,8 @@
+stewbeet.core.definitions\_helper.materials module
+==================================================
+
+.. automodule:: stewbeet.core.definitions_helper.materials
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:

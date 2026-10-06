@@ -1,0 +1,8 @@
+stewbeet.plugins.sniffer.capture module
+=======================================
+
+.. automodule:: stewbeet.plugins.sniffer.capture
+   :members:
+   :private-members:
+   :show-inheritance:
+   :undoc-members:
