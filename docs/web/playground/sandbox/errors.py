@@ -6,12 +6,13 @@
 def root_cause(error: BaseException) -> BaseException:
 	""" Walk to the exception that actually went wrong.
 
-	beet wraps a plugin failure in PluginError, and stouputils turns any error into a prompt on stdin
-	that fails with EOFError and then exits. Reporting either of those tells the reader nothing. The
-	chain is walked to the deepest link, skipping the two that are only plumbing.
+	beet wraps a plugin failure in PluginError,
+	and stouputils turns any error into a prompt on stdin that fails with EOFError and then exits.
+	Reporting either of those tells the reader nothing,
+	so the chain is walked to the deepest link, skipping the two that are only plumbing.
 
 	Args:
-		error (BaseException): The exception that reached the top.
+		error: The exception that reached the top.
 	Returns:
 		BaseException: The most specific cause worth naming.
 	"""

@@ -1,3 +1,4 @@
+
 # Référence des fonctions utilitaires
 
 Chaque fonction que StewBeet ajoute par-dessus beet pour écrire des fichiers de datapack, avec
@@ -418,3 +419,4 @@ Mem.ctx.assets["my_namespace"].textures["block/animated_block"] = texture
 - [Écrire fonctions et fichiers](../fr.md): quelle approche choisir, et pourquoi.
 - [Cookbook](../cookbook/fr.md): ces fonctions dans des fichiers complets et fonctionnels.
 - [Équations](../../4_equations/fr.md): construire l'arithmétique de scoreboard à intégrer.
+

@@ -1,3 +1,4 @@
+
 # Integration test
 
 End-to-end proof that the forwarded providers answer inside StewBeet mcfunction blocks, run against the real extension and the real Spyglass in a VS Code extension host.
@@ -85,3 +86,4 @@ on every run:
 Deleting `fixture/data/probe/function/alpha.mcfunction.map` turns the US3 checks into the step A
 behaviour: definition falls back to the generated `.mcfunction` and completion is unaffected.
 That is the degradation path for a workspace with no build, and it has been verified by hand.
+

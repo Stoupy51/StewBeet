@@ -8,10 +8,10 @@
       -p 127.0.0.1:8001:8000 stewbeet-playground
     python docs/web/playground/sandbox/tests/test_sandbox.py http://127.0.0.1:8001
 
-Every /build case submits code that probes one thing and prints what happened, then asserts on the
-build log. The /headers cases submit an archive instead and assert on what comes back out. The
-container has to survive all of it: a case that passes while leaving the service dead is a failing
-run, which is why the last thing this does is build normally one more time.
+Every /build case submits code that probes one thing and prints what happened, then asserts on the build log.
+The /headers cases submit an archive instead and assert on what comes back out.
+The container has to survive all of it: a case that passes while leaving the service dead is a failing run,
+which is why the last thing this does is build normally one more time.
 
 Stdlib only, so it runs with any interpreter, including the one inside the image.
 """
@@ -72,9 +72,9 @@ class Report:
 		""" Record one assertion.
 
 		Args:
-			name      (str):  Case name.
-			condition (bool): Whether it held.
-			detail    (str):  Shown when it did not.
+			name:      Case name.
+			condition: Whether it held.
+			detail:    Shown when it did not.
 		"""
 		if condition:
 			self.passed += 1
@@ -89,8 +89,8 @@ def post(base: str, code: str) -> dict[str, Any]:
 	""" Submit code to the worker and return the parsed response.
 
 	Args:
-		base (str): Worker base URL, ex: "http://127.0.0.1:8001".
-		code (str): The definitions module to build.
+		base: Worker base URL, ex: "http://127.0.0.1:8001".
+		code: The definitions module to build.
 	Returns:
 		dict[str, Any]: The response body, with the HTTP status added as `status`.
 	"""
@@ -106,9 +106,8 @@ def post(base: str, code: str) -> dict[str, Any]:
 	except urllib.error.HTTPError as error:
 		return dict(json.loads(error.read() or b"{}")) | {"status": error.code}
 	except OSError as error:
-		# A dropped connection is a finding, not a reason to abandon the run: it is what a worker
-		# that has run out of pids or threads looks like from here, and the cases after this one are
-		# the ones that say whether it ever recovers.
+		# A dropped connection is what a worker out of pids or threads looks like from here, a finding rather than a reason to stop.
+		# The cases after this one say whether it ever recovers.
 		return {"ok": None, "error": f"no_response: {type(error).__name__}: {error}", "status": 0}
 
 
@@ -118,8 +117,8 @@ def post_pack(base: str, pack: bytes) -> tuple[int, str, bytes]:
 	Raw rather than parsed, because telling a zip apart from a JSON error is the contract under test.
 
 	Args:
-		base (str):   Worker base URL, ex: "http://127.0.0.1:8001".
-		pack (bytes): The archive to submit.
+		base: Worker base URL, ex: "http://127.0.0.1:8001".
+		pack: The archive to submit.
 	Returns:
 		tuple[int, str, bytes]: Status, Content-Type and body.
 	"""
@@ -142,7 +141,7 @@ def zipped(entries: dict[str, str | bytes]) -> bytes:
 	""" Build an archive from a mapping, so a case reads as the pack it is describing.
 
 	Args:
-		entries (dict[str, str | bytes]): Archive path to content.
+		entries: Archive path to content.
 	Returns:
 		bytes: The archive.
 	"""
@@ -171,7 +170,7 @@ def probe(body: str) -> str:
 	""" Wrap probe statements into a definitions module.
 
 	Args:
-		body (str): Statements to run, dedented.
+		body: Statements to run, dedented.
 	Returns:
 		str: A complete module the pipeline can import.
 	"""
@@ -194,13 +193,8 @@ def cases() -> list[Case]:
 			ok=True,
 		),
 
-		# ── Disk─────────────────────────────
-		# The three probes below print PROBE:REFUSED rather than the exception's class name, because
-		# the class is not the point and asserting on it is how this test was wrong twice. EROFS and
-		# EACCES both arrive as OSError subclasses, and which one you get depends on whether the
-		# permission check or the read-only check answers first: every path on the rootfs is root
-		# owned and mode 644, and the build runs as uid 10001, so in practice it is EACCES. Nothing
-		# outside /tmp being writable is the property that matters, and it holds either way.
+		# Disk: the probes print PROBE:REFUSED, since EROFS or EACCES depends on which check answers first.
+		# Nothing outside /tmp being writable is the property that matters, and it holds either way.
 		Case(
 			name="the image is not writable",
 			body='''
@@ -293,7 +287,7 @@ def cases() -> list[Case]:
 			absent=("PROBE:WROTE100MB",),
 		),
 
-		# ── Memory───────────────────────────
+		# Memory
 		Case(
 			name="a 2 GB allocation hits RLIMIT_AS, not the container",
 			body='bytearray(2 * 1024 ** 3)\nprint("PROBE:ALLOCATED")',
@@ -302,7 +296,7 @@ def cases() -> list[Case]:
 			absent=("PROBE:ALLOCATED",),
 		),
 
-		# ── Network──────────────────────────
+		# Network
 		Case(
 			name="there is no route out",
 			body='''
@@ -339,7 +333,7 @@ def cases() -> list[Case]:
 			absent=("PROBE:FETCHED",),
 		),
 
-		# ── Process──────────────────────────
+		# Process
 		Case(
 			name="an infinite loop is killed",
 			body="while True:\n    pass",
@@ -358,16 +352,14 @@ def cases() -> list[Case]:
 			ok=False,
 		),
 		Case(
-			# The case that matters, and the one that caught the zombie leak: containing the fork
-			# bomb is worthless if the worker cannot answer afterwards. It could not, until
-			# `init: true` and Build.reap, because orphans reparented to PID 1 sat as zombies
-			# holding pids until the worker could no longer spawn a thread for a new connection.
+			# Containing the fork bomb is worthless if the worker cannot answer afterwards.
+			# Orphans reparented to PID 1 hold pids as zombies, which `init: true` and Build.reap clear.
 			name="the service still answers after a fork bomb",
 			body='Item(id="steel_ingot", components={"item_name": {"text": "Steel"}})\nadd_item_model_component()',
 			ok=True,
 		),
 
-		# ── No GPU───────────────────────────
+		# No GPU
 		Case(
 			name="a made up item id gets a placeholder instead of failing",
 			body='Item(id="zzz_nothing_has_this_name", components={"item_name": {"text": "Nothing"}})\nadd_item_model_component()',
@@ -377,8 +369,8 @@ def cases() -> list[Case]:
 		),
 		Case(
 			name="a render node makes a glyph with no GPU",
-			# The case that proves seeding the render cache works. Without src.placeholders this
-			# reaches emit.source_images -> ensure_item_images -> run_model_resolver -> OpenGL.
+			# The case that proves seeding the render cache works.
+			# Without src.placeholders this reaches emit.source_images -> ensure_item_images -> run_model_resolver -> OpenGL.
 			body='''
 			Item(id="steel_ingot", components={"item_name": {"text": "Steel"},
 				"lore": [[{"render": "steel_ingot"}, {"text": " ingot"}]]})
@@ -407,8 +399,8 @@ def run_cases(base: str, report: Report) -> None:
 	""" Submit every case and check its response.
 
 	Args:
-		base   (str):    Worker base URL.
-		report (Report): Tally to record into.
+		base:   Worker base URL.
+		report: Tally to record into.
 	"""
 	for case in cases():
 		response: dict[str, Any] = post(base, probe(case.body))
@@ -428,8 +420,8 @@ def run_headers(base: str, report: Report) -> None:
 	""" Check the /headers endpoint: what it rewrites, what it leaves alone and what it refuses.
 
 	Args:
-		base   (str):    Worker base URL.
-		report (Report): Tally to record into.
+		base:   Worker base URL.
+		report: Tally to record into.
 	"""
 	status, content_type, body = post_pack(base, sample_pack())
 	report.check("a datapack comes back as a zip", content_type.startswith("application/zip"), f"got {status} {content_type}: {body[:200]!r}")
@@ -456,8 +448,8 @@ def run_headers(base: str, report: Report) -> None:
 		report.check(f"{name} is refused", not content_type.startswith("application/zip"), f"got {status} {content_type}")
 		report.check(f"{name} says why", b'"error"' in body, f"got {body[:200]!r}")
 
-	# 320 MB of zeroes in a few kilobytes, which is what MAX_EXTRACTED_BYTES exists for. Spread over
-	# forty entries rather than written as one, so the test process never holds more than 8 MB of it.
+	# 320 MB of zeroes in a few kilobytes, which is what MAX_EXTRACTED_BYTES exists for.
+	# Spread over forty entries rather than written as one, so the test process never holds more than 8 MB of it.
 	block: bytes = b"0" * (8 * 1024 * 1024)
 	bomb: dict[str, str | bytes] = {"pack.mcmeta": PACK_MCMETA} | {f"data/bomb/function/f{index}.mcfunction": block for index in range(40)}
 	status, content_type, body = post_pack(base, zipped(bomb))
@@ -468,8 +460,8 @@ def run_protocol(base: str, report: Report) -> None:
 	""" Check the cases that are about the request rather than about the build.
 
 	Args:
-		base   (str):    Worker base URL.
-		report (Report): Tally to record into.
+		base:   Worker base URL.
+		report: Tally to record into.
 	"""
 	oversized: dict[str, Any] = post(base, PREAMBLE + "    pass\n" + "#" * (17 * 1024))
 	report.check("oversized code is refused", oversized.get("error") == "code_too_large", f"got {oversized.get('error')}")

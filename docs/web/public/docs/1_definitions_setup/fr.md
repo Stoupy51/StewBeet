@@ -1,3 +1,4 @@
+
 # Définir items et blocs
 
 Les définitions d'items sont au cœur du framework StewBeet. Elles définissent les custom items, blocks, équipements et recipes, ainsi que leurs propriétés en utilisant des classes Python modernes. La configuration des définitions crée une base de données complète de tout le custom content que les plugins suivants utilisent pour générer les datapacks et resource packs.
@@ -856,3 +857,4 @@ Consultez les exemples réels en haut de cette page pour voir comment ça foncti
 - [Écrire fonctions et fichiers](../2_writing_to_files/fr.md): transformer vos définitions en fichiers.
 - [Recipes](../plugins/custom_recipes.md): comment une recipe atteint chaque système de craft.
 - [Manuel en jeu](../7_ingame_manual/fr.md): le livre généré depuis vos définitions.
+

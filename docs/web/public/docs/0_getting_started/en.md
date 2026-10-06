@@ -1,3 +1,4 @@
+
 # Tutorial: build your first datapack
 
 In this tutorial you create a StewBeet project, build it, load it in Minecraft, then add a custom item and a full ruby ore tier with a working custom block. It takes about 20 minutes. Already have a datapack? [Migrate it](../9_migration/en.md) instead.
@@ -372,3 +373,4 @@ Every option is described in [Configuring the build](../3_beet_config/en.md).
 - The [Extensive template](https://github.com/Stoupy51/StewBeet/tree/main/templates/extensive/src) is a complete project to read.
 
 Stuck? Ask on [Discord](https://discord.gg/anxzu6rA9F) or open a [GitHub issue](https://github.com/Stoupy51/StewBeet/issues).
+

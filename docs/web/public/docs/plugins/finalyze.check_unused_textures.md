@@ -1,3 +1,4 @@
+
 # stewbeet.plugins.finalyze.check_unused_textures
 
 The `finalyze.check_unused_textures` plugin analyzes texture usage in resource packs.<br>
@@ -85,3 +86,4 @@ Provides detailed warnings for unused textures:
 - [Configuring the build](../3_beet_config/en.md): where this plugin sits in the pipeline.
 - [All plugins](README.md): the rest of the pipeline, in the order it runs.
 - [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.
+

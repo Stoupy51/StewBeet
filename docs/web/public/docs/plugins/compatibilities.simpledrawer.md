@@ -1,3 +1,4 @@
+
 # stewbeet.plugins.compatibilities.simpledrawer
 
 The `compatibilities.simpledrawer` plugin provides integration with the SimpleDrawer datapack's<br>
@@ -94,3 +95,4 @@ Creates individual functions for each material variant:
 - [Using datapack libraries](../5_dependencies/en.md): the integrations this plugin targets.
 - [All plugins](README.md): the rest of the pipeline, in the order it runs.
 - [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.
+

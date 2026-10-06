@@ -1,3 +1,4 @@
+
 # stewbeet.plugins.finalyze.dependencies
 
 The `finalyze.dependencies` plugin manages datapack dependencies and load sequence.<br>
@@ -131,3 +132,4 @@ Special automatic wiring for `smart_ore_generation`:
 - [Configuring the build](../3_beet_config/en.md): where this plugin sits in the pipeline.
 - [All plugins](README.md): the rest of the pipeline, in the order it runs.
 - [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.
+

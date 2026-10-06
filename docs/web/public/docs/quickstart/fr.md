@@ -1,3 +1,4 @@
+
 # Démarrage rapide
 
 Trois commandes, de rien à un datapack chargeable. La dernière écrit un zip.
@@ -59,3 +60,4 @@ build/
 - [Migrer un pack existant](../9_migration/fr.md) : partir d'un datapack que vous avez déjà plutôt que d'un template.
 - [Tutoriel : votre premier datapack](../0_getting_started/fr.md): le même terrain au pas,
   en ajoutant votre propre item et votre propre bloc.
+

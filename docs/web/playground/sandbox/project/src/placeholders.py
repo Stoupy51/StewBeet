@@ -2,20 +2,20 @@
 
 Two failures this prevents, both of which a visitor hits within a minute of editing:
 
-resource_pack.item_models raises `Texture '<id>.png' not found in source textures` for an item with
-no matching file, and stouputils turns that into sys.exit(1). Locally that is right: you forgot a
-texture and you want to know. Here it means renaming steel_ingot to something of your own kills the
-build over an asset you were never going to have.
+resource_pack.item_models raises `Texture '<id>.png' not found in source textures` for an item with no matching file,
+and stouputils turns that into sys.exit(1).
+Locally that is right: you forgot a texture and you want to know.
+Here it means renaming steel_ingot to something of your own kills the build over an asset you were never going to have.
 
-auto.text_renders reaches model_resolver for any item with no cached render, through
-emit.source_images -> ensure_item_images -> run_model_resolver, which imports OpenGL. That is the
-one thing this container cannot do. build_model_resolver_queue skips an item whose PNG already
-exists when cache_assets is true, so seeding the cache is what keeps the queue empty and the whole
-render path unreachable.
+auto.text_renders reaches model_resolver for any item with no cached render,
+through emit.source_images -> ensure_item_images -> run_model_resolver, which imports OpenGL.
+That is the one thing this container cannot do.
+build_model_resolver_queue skips an item whose PNG already exists when cache_assets is true,
+so seeding the cache is what keeps the queue empty and the whole render path unreachable.
 
-An item's render here is just its texture rather than an isometric view. For a flat item that is
-what the render would have looked like anyway, and for a block it is honest enough: it shows the
-right texture, drawn flat.
+An item's render here is just its texture rather than an isometric view.
+For a flat item that is what the render would have looked like anyway,
+and for a block it is honest enough: it shows the right texture, drawn flat.
 """
 # Imports
 import shutil
@@ -53,7 +53,7 @@ def fill_textures(folder: Path) -> list[str]:
 	""" Write a checkerboard for every definition the bundled packs do not cover.
 
 	Args:
-		folder (Path): The writable texture folder.
+		folder: The writable texture folder.
 	Returns:
 		list[str]: Ids that got a placeholder.
 	"""
@@ -70,9 +70,9 @@ def fill_renders(folder: Path, textures: Path, namespace: str) -> None:
 	""" Seed the render cache so build_model_resolver_queue comes back empty.
 
 	Args:
-		folder    (Path): The writable renders folder.
-		textures  (Path): The texture folder, already filled by fill_textures.
-		namespace (str):  Project namespace, which is the subfolder renders are looked up in.
+		folder:    The writable renders folder.
+		textures:  The texture folder, already filled by fill_textures.
+		namespace: Project namespace, which is the subfolder renders are looked up in.
 	"""
 	destination: Path = folder / namespace
 	destination.mkdir(parents=True, exist_ok=True)
@@ -87,7 +87,7 @@ def beet_default(ctx: Context) -> None:
 	""" Fill both caches, between the submitted module and the plugins that read them.
 
 	Args:
-		ctx (Context): The beet context, read for the project namespace.
+		ctx: The beet context, read for the project namespace.
 	"""
 	stewbeet: dict[str, str] = dict(Mem.ctx.meta.get("stewbeet", {}))
 	textures: Path = Path(stewbeet.get("textures_folder", ""))

@@ -1,9 +1,8 @@
 """ The two jobs the worker can run: a playground build, and an auto.headers pass over an upload.
 
-Each one lays out a throwaway directory, hands it to its runner through jobs.Job, and deletes it
-whatever happened in between. Neither keeps anything: the tmpfs is a shared budget and it is the only
-writable place in the container, so a directory leaked here is taken away from every request that
-follows.
+Each one lays out a throwaway directory, hands it to its runner through jobs.Job, and deletes it whatever happened in between.
+Neither keeps anything: the tmpfs is a shared budget and the only writable place in the container,
+so a directory leaked here is taken away from every request that follows.
 """
 # Imports
 import os
@@ -29,19 +28,15 @@ class Build:
 	def link_assets(workdir: str) -> None:
 		""" Give the build writable texture and render folders backed by the bundled ones.
 
-		Both have to be writable, because src.placeholders adds a texture for every id the bundled
-		packs do not cover and seeds a render for every definition, and the image is read only.
-		Copying instead would spend a quarter of the tmpfs per request on bytes that are identical
-		every time, so the build gets links: a few hundred inodes, no data, and the rglob("*.png") on
-		the other side cannot tell the difference.
-
-		Textures are linked file by file, since placeholders land beside them in the same folder.
-		Renders are linked one namespace at a time, since a placeholder render goes into the project's
-		own namespace, which no bundled pack provides.
+		Both have to be writable, since src.placeholders adds a texture
+		and a render the bundled packs lack, and the image is read only.
+		Links cost a few hundred inodes where copies would spend a quarter of the tmpfs per request,
+		and rglob("*.png") cannot tell them apart.
+		Textures are linked file by file, since placeholders land beside them.
+		Renders are linked one namespace at a time, since a placeholder render goes into the project's own namespace.
 
 		Args:
-			workdir (str): The per request directory, which beet.yml reads as `../textures` and
-				`../iso_renders` from the project beside it.
+			workdir: The per request directory, which beet.yml reads as `../textures` and `../iso_renders` from the project beside it.
 		"""
 		textures: str = f"{workdir}/textures"
 		os.makedirs(textures, exist_ok=True)
@@ -60,7 +55,7 @@ class Build:
 		""" Lay out a fresh directory for one build and drop the submitted code into it.
 
 		Args:
-			code (str): The submitted definitions module.
+			code: The submitted definitions module.
 		Returns:
 			str: Path of the new directory, which the caller must delete.
 		"""
@@ -78,7 +73,7 @@ class Build:
 		""" Prepare, build and clean up, whatever happens in between.
 
 		Args:
-			code (str): The submitted definitions module.
+			code: The submitted definitions module.
 		Returns:
 			dict[str, Any]: The payload, with the build duration added.
 		"""
@@ -107,7 +102,7 @@ class Headers:
 		""" Lay out a fresh directory for one pass and drop the uploaded archive into it.
 
 		Args:
-			pack (bytes): The uploaded archive, already checked against the size ceiling.
+			pack: The uploaded archive, already checked against the size ceiling.
 		Returns:
 			str: Path of the new directory, which the caller must delete.
 		"""
@@ -125,7 +120,7 @@ class Headers:
 		copy left is the one in their browser.
 
 		Args:
-			pack (bytes): The uploaded archive.
+			pack: The uploaded archive.
 		Returns:
 			tuple[dict[str, Any], bytes]: The payload, and the rewritten archive, empty on failure.
 		"""

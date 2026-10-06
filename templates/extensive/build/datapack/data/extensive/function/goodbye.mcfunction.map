@@ -6,5 +6,8 @@
 		"src/data/extensive/function/hello.mcfunction"
 	],
 	"names": [],
-	"mappings": ";;;;;;AAKI;;AAEY;AAAA"
+	"mappings": ";;;;;;AAKI,IAAI,eAAe,fAAf,eAAe;;AAEP,SAAS,kBAA6B;AAAtC,SAAS,wBAA6B",
+	"x_stewbeet_bolt": [
+		0
+	]
 }

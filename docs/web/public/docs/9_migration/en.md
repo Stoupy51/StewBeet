@@ -1,3 +1,4 @@
+
 # Migrate an existing pack
 
 `stewbeet migrate` turns a datapack or resource pack you already have into a StewBeet project. Your files move into `src/`, a template adds `beet.yml` and the rest of a project around them, and `stewbeet build` gives you your pack back. Nothing you wrote is edited, only moved.
@@ -131,3 +132,4 @@ Every check runs before the first file moves, so a refusal leaves the folder as 
 
 - [Definitions](../1_definitions_setup/en.md): turn the items you give with hand-written loot tables into definitions, one at a time. StewBeet then writes their loot tables, models and manual pages.
 - [beet configuration](../3_beet_config/en.md): every option of the `beet.yml` you just got.
+

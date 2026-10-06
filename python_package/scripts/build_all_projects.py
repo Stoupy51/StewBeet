@@ -28,13 +28,13 @@ def display(path: Path) -> str:
 	""" Format a path relatively to the current folder, keeping it absolute when impossible.
 
 	Args:
-		path (Path): The path to format.
+		path: The path to format.
 	Returns:
 		str: The relative path, ex: "../templates/basic" (downstream packs sit outside the repository).
 	"""
 	try:
 		return os.path.relpath(path).replace("\\", "/")
-	except ValueError:	# Different drive on Windows
+	except ValueError:  # Different drive on Windows
 		return str(path).replace("\\", "/")
 
 
@@ -42,12 +42,11 @@ def display(path: Path) -> str:
 def find_projects(filters: list[str]) -> list[Path]:
 	""" Collect every buildable project (templates first, then downstream packs).
 
-	A project is a folder holding a "beet.yml". Templates are globbed so a newly added one is picked
-	up automatically, while downstream packs live outside the repository and are only warned about
-	when missing (a fresh clone won't have them).
+	A project is a folder holding a "beet.yml". Templates are globbed so a newly added one is picked up automatically,
+	while downstream packs live outside the repository and are only warned about when missing, since a fresh clone won't have them.
 
 	Args:
-		filters (list[str]): Case-insensitive substrings; when non-empty, only matching folder names are kept.
+		filters: Case-insensitive substrings; when non-empty, only matching folder names are kept.
 	Returns:
 		list[Path]: The project folders to build, in build order.
 	"""
@@ -70,7 +69,7 @@ def build_project(project: Path) -> tuple[bool, float]:
 	""" Build a single project by running stewbeet inside it.
 
 	Args:
-		project (Path): The project folder, containing a "beet.yml".
+		project: The project folder, containing a "beet.yml".
 	Returns:
 		tuple[bool, float]: Whether the build succeeded, and how long it took in seconds.
 	"""
@@ -126,3 +125,4 @@ def main() -> None:
 
 if __name__ == "__main__":
 	main()
+

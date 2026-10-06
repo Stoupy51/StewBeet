@@ -1,3 +1,4 @@
+
 # stewbeet.plugins.auto.text_renders
 
 The `auto.text_renders` plugin adds a `render` key to Minecraft text components.<br>
@@ -226,3 +227,4 @@ this one never sees a translate key.
 - [initialize](initialize.md): the `source_lore` that every item carries.
 - [All plugins](README.md): the rest of the pipeline, in the order it runs.
 - [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.
+

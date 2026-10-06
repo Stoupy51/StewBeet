@@ -19,20 +19,18 @@ from stewbeet import (
 def main() -> None:
 	""" Customize the in-game manual using the public ingame_manual v2 API.
 
-	Call this after all items are defined (see src/setup_definitions.py). The manual itself
-	is built later by the ``stewbeet.plugins.ingame_manual`` pipeline step; the pages and
-	hooks registered here are applied during that build.
+	Call this after all items are defined (see src/setup_definitions.py).
+	The manual itself is built later by the ``stewbeet.plugins.ingame_manual`` pipeline step,
+	which applies the pages and hooks registered here.
 	"""
 	manual: Manual = get_manual()
 
-	# 1) Insert a free-form page (unrelated to any item) right after the intro.
-	#    CustomPage takes any list of Minecraft text components as its body.
-	#    book_texture and home_texture (available on ANY page) replace the book background
-	#    ("book.png") and the home button ("home.png") on this page only.
+	# 1) A free-form page right after the intro, whose body is any list of text components.
+	# book_texture and home_texture, available on any page, replace "book.png" and "home.png" on this page only.
 	textures_folder: str = Mem.ctx.meta["stewbeet"]["textures_folder"]
 	manual.insert_page(
 		CustomPage(
-			anchor="welcome",	# Page id used for linking and ordering
+			anchor="welcome",  # Page id used for linking and ordering
 			title="Welcome",
 			body=[
 				{"text": "Welcome to the Extensive Template!", "color": "black", "bold": True},
@@ -41,7 +39,7 @@ def main() -> None:
 			book_texture=f"{textures_folder}/manual/a_custom_book_page.png",
 			home_texture=f"{textures_folder}/manual/home_for_welcome_page.png",
 		),
-		after="intro",	# After page with id "intro"
+		after="intro",  # After page with id "intro"
 	)
 
 	# 2) Insert a page whose body is a custom texture, with text baked into the image itself.
@@ -58,9 +56,8 @@ def main() -> None:
 			],
 			body=[{"text": "\n\n\n\n\n\n\nThe text above is baked into the page texture.", "color": "black"}],
 			glyph_height=64,
-			# The dialog centers the texture; invisible paddings nudge it horizontally
-			# (left_padding shifts right, right_padding shifts left, each by half the pixels).
-			# Keep texture width + paddings within the dialog body (140px) or the line wraps.
+			# Paddings nudge the centered texture by half their pixels: left_padding to the right, right_padding to the left.
+			# The texture and its paddings must fit the 140px dialog body, or the line wraps.
 			left_padding=10,
 			# Any page can also hide its home button (prev/next layout is preserved)
 			home_button=False,
@@ -87,9 +84,8 @@ def main() -> None:
 				]
 			)
 
-	# 5) Cross-link two related pages with extra wiki buttons (ItemPage.extra_buttons):
-	#    - button_for_item(): another item's full recipe button (hover shows the recipe, click opens its page)
-	#    - link_button(): a simple button with the item's icon that just opens its page
+	# 5) Extra wiki buttons linking two pages: button_for_item() shows the other item's recipe on hover,
+	# and link_button() only opens its page.
 	@manual.on(Phase.PREPARED)
 	def cross_link_pages(m: Manual) -> None: # pyright: ignore[reportUnusedFunction]
 		stone = m.get_page_for_item("super_stone")

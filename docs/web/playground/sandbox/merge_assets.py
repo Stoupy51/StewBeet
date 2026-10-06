@@ -1,12 +1,12 @@
 """ Merge the textures and renders of several projects into the one folder the sandbox builds with.
 
-Run once at image build time, over the sparse clones. StewBeet resolves a texture by filename, so
-the three packs go into a single flat folder and a name can only belong to one of them: later
-sources in SOURCES win, and every overwrite is reported.
+Run once at image build time, over the sparse clones.
+StewBeet resolves a texture by filename, so the three packs go into a single flat folder and a name can only belong to one of them:
+later sources in SOURCES win, and every overwrite is reported.
 
-Collisions are the normal case, not an error. Measured on the real repositories: 2 among the
-textures, and 89 among the renders, almost all of them the vanilla `minecraft/` items that every
-project caches. Failing the image build over that would mean it never builds.
+Collisions are the normal case, not an error: the real repositories have 2 among the textures and 89 among the renders,
+almost all of them the vanilla `minecraft/` items that every project caches.
+Failing the image build over that would mean it never builds.
 """
 # Imports
 import json
@@ -48,9 +48,9 @@ def merge(clones: Path, destination: Path, attribute: str) -> dict[str, str]:
 	""" Copy one kind of asset from every source, later sources overwriting earlier ones.
 
 	Args:
-		clones      (Path): Directory holding the sparse clones.
-		destination (Path): Directory to fill.
-		attribute   (str):  Either "textures" or "renders".
+		clones:      Directory holding the sparse clones.
+		destination: Directory to fill.
+		attribute:   Either "textures" or "renders".
 	Returns:
 		dict[str, str]: Destination relative path -> name of the source that ended up owning it.
 	"""
@@ -79,8 +79,8 @@ def report(clones: Path, attribute: str) -> int:
 	""" Count how many names more than one source provides.
 
 	Args:
-		clones    (Path): Directory holding the sparse clones.
-		attribute (str):  Either "textures" or "renders".
+		clones:    Directory holding the sparse clones.
+		attribute: Either "textures" or "renders".
 	Returns:
 		int: Number of colliding names.
 	"""
@@ -136,3 +136,4 @@ def main() -> int:
 
 if __name__ == "__main__":
 	sys.exit(main())
+

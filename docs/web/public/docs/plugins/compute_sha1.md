@@ -1,3 +1,4 @@
+
 # stewbeet.plugins.compute_sha1
 
 The `compute_sha1` plugin generates SHA1 hashes for all generated zip archives.<br>
@@ -95,3 +96,4 @@ Optimized for performance with minimal resource usage:
 
 - [All plugins](README.md): the rest of the pipeline, in the order it runs.
 - [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.
+

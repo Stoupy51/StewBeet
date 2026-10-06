@@ -1,14 +1,14 @@
 """ Rewrite the headers of an uploaded datapack, as the child process of worker.py.
 
-This runs with the upload already written to `input.zip` inside a throwaway directory, under the
-ceilings jobs.HEADERS_RLIMITS set before exec. It trusts none of that: the caps below are re-applied
-here because a 25 MB archive of zeroes expands to far more than the tmpfs holds, and finding that out
-halfway through is worse than refusing it up front.
+This runs with the upload already written to `input.zip` inside a throwaway directory,
+under the ceilings jobs.HEADERS_RLIMITS set before exec.
+It trusts none of that: the caps below are re-applied here because a 25 MB archive of zeroes expands to far more than the tmpfs holds,
+and finding that out halfway through is worse than refusing it up front.
 
-The output is deliberately not beet's own dump. Only the `.mcfunction` files auto.headers touched are
-written back over the extracted upload, which is then re-zipped as it stands. Dumping the pack
-instead would re-encode every JSON file in it, and a tool whose job is to add comments to functions
-has no business reformatting a loot table.
+The output is deliberately not beet's own dump.
+Only the `.mcfunction` files auto.headers touched are written back over the extracted upload, which is then re-zipped as it stands.
+Dumping the pack instead would re-encode every JSON file in it,
+and a tool whose job is to add comments to functions has no business reformatting a loot table.
 
 Everything beet and stouputils print goes to stdout, so the payload is written after a sentinel line
 and the parent keeps only what follows it.
@@ -46,13 +46,13 @@ FUNCTION_SCOPES: tuple[str, ...] = ("function", "functions")
 def extract(archive: Path, destination: Path) -> None:
 	""" Unpack the upload, refusing anything that would escape the destination or fill the tmpfs.
 
-	`ZipFile.extract` sanitizes paths on its own, but doing it here is what makes the rule visible and
-	is also where the budgets are enforced. `..` and absolute paths are the escape; the running total
-	is the bomb.
+	`ZipFile.extract` sanitizes paths on its own,
+	but doing it here is what makes the rule visible and is also where the budgets are enforced.
+	`..` and absolute paths are the escape; the running total is the bomb.
 
 	Args:
-		archive     (Path): The uploaded archive.
-		destination (Path): Directory to unpack into, which must already exist.
+		archive:     The uploaded archive.
+		destination: Directory to unpack into, which must already exist.
 	Raises:
 		ValueError: When the archive is over one of the ceilings or tries to write outside.
 	"""
@@ -83,12 +83,12 @@ def extract(archive: Path, destination: Path) -> None:
 def find_root(extracted: Path) -> Path | None:
 	""" The directory the datapack actually starts at.
 
-	An upload is as often `MyPack.zip` holding `pack.mcmeta` at the top as it is a zip of the folder
-	containing it, so both have to work. The shallowest `pack.mcmeta` wins, which is the outer pack
-	when someone has bundled another one inside it.
+	An upload is as often `MyPack.zip` holding `pack.mcmeta` at the top as it is a zip of the folder containing it,
+	so both have to work.
+	The shallowest `pack.mcmeta` wins, which is the outer pack when someone has bundled another one inside it.
 
 	Args:
-		extracted (Path): Where the archive was unpacked.
+		extracted: Where the archive was unpacked.
 	Returns:
 		Path | None: The pack root, or None when the upload holds no pack.mcmeta at all.
 	"""
@@ -99,12 +99,12 @@ def find_root(extracted: Path) -> Path | None:
 def function_files(root: Path) -> dict[str, Path]:
 	""" Map every function beet will report back to the file it was read from.
 
-	Computing the output path from the pack format instead would mean trusting a pack.mcmeta a
-	stranger wrote, and would silently move a function whose pack declares one format and is laid out
-	for the other. The file that was read is the file that gets written.
+	Computing the output path from the pack format instead would mean trusting a pack.mcmeta a stranger wrote,
+	and would silently move a function whose pack declares one format and is laid out for the other.
+	The file that was read is the file that gets written.
 
 	Args:
-		root (Path): The pack root, holding pack.mcmeta and data/.
+		root: The pack root, holding pack.mcmeta and data/.
 	Returns:
 		dict[str, Path]: Absolute path of each function, keyed the way beet keys it, ex: "ns:foo/bar".
 	"""
@@ -128,14 +128,15 @@ def function_files(root: Path) -> dict[str, Path]:
 def rewrite(root: Path, workdir: Path) -> tuple[int, int]:
 	""" Run auto.headers over the pack and write the functions it changed back to their own files.
 
-	The pipeline is empty and the plugin is required from inside the build, rather than named in the
-	config, because the pack is loaded from a path a stranger chose: a folder called `pack[1]` is a
-	perfectly ordinary name and a glob pattern that matches nothing, and beet's `load` option goes
-	through `glob`. Loading it directly has no such reading of the path.
+	The pipeline is empty and the plugin is required from inside the build,
+	rather than named in the config, because the pack is loaded from a path a stranger chose:
+	a folder called `pack[1]` is a perfectly ordinary name
+	and a glob pattern that matches nothing, and beet's `load` option goes through `glob`.
+	Loading it directly has no such reading of the path.
 
 	Args:
-		root    (Path): The pack root.
-		workdir (Path): The throwaway directory, which beet uses for its cache.
+		root:    The pack root.
+		workdir: The throwaway directory, which beet uses for its cache.
 	Returns:
 		tuple[int, int]: How many functions the pack has, and how many came back different.
 	"""
@@ -166,8 +167,8 @@ def repack(source: Path, archive: Path) -> None:
 	""" Zip the extracted tree back up exactly as it stands.
 
 	Args:
-		source  (Path): Directory to zip, whose own name is not part of the entry paths.
-		archive (Path): Archive to write.
+		source:  Directory to zip, whose own name is not part of the entry paths.
+		archive: Archive to write.
 	"""
 	with ZipFile(archive, "w", ZIP_DEFLATED) as zipped:
 		for path in sorted(source.rglob("*")):

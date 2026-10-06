@@ -1,3 +1,4 @@
+
 # stewbeet.plugins.livereload
 
 The `livereload` plugin is a thin wrapper around beet's built-in `beet.contrib.livereload` that adds
@@ -135,3 +136,4 @@ datapack is copied but the game never reloads). Fix one of the following:
 
 - [All plugins](README.md): the rest of the pipeline, in the order it runs.
 - [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.
+

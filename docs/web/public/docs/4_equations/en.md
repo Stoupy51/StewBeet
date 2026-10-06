@@ -1,3 +1,4 @@
+
 # Equations
 
 `ScoreboardEquation` and `StorageEquation` are chainable equation builders that translate a readable Python expression into a series of Minecraft `scoreboard players operation` commands. Both classes generate a self-documenting output: the first line is always a `# comment` showing the full equation, followed by every scoreboard command needed to compute it.
@@ -186,3 +187,4 @@ execute store result storage some_namespace:some_path result_path double 0.00000
 - [Writing to files](../2_writing_to_files/en.md): embed the commands an equation produces.
 - [auto.scoreboard_constants](../plugins/auto.scoreboard_constants.md): how the constants equations need get initialised.
 - [Defining items and blocks](../1_definitions_setup/en.md): where the items equations operate on are declared.
+

@@ -1,3 +1,4 @@
+
 # StewBeet
 
 > Editor support for the [beet](https://github.com/mcbeet/beet) ecosystem: **beet**, **bolt**, **mecha** and **[StewBeet](https://stewbeet.paralya.fr/)**.

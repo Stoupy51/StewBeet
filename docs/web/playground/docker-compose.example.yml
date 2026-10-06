@@ -1,3 +1,4 @@
+
 # Example compose for the deployment host, where the real docker-compose.yml lives.
 #
 # Copy the parts you need into it. Every sandbox-backed tool is off until SANDBOX_WORKER_URL is set,
@@ -40,7 +41,7 @@ services:
     # endpoint on the internet with no rate limiting in front of it.
     expose: ["8000"]
 
-    # ── Disk─────────────────────────────────
+    # Disk
     # The image and the host filesystem are unwritable, so the only place a job can write is the
     # tmpfs below. This is the actual guarantee; the rlimits in jobs.py are the refinement.
     #
@@ -50,7 +51,7 @@ services:
     tmpfs:
       - /tmp:rw,noexec,nosuid,nodev,size=384m,mode=1777
 
-    # ── Memory───────────────────────────────
+    # Memory
     # memswap_limit must equal mem_limit. Without it the memory limit is simply bypassed by
     # swapping, and the container happily grows past its limit.
     #
@@ -61,7 +62,7 @@ services:
     memswap_limit: 2g
     cpus: 1.0
 
-    # ── Process──────────────────────────────
+    # Process
     # pids_limit is how a fork bomb is contained. jobs.py deliberately does not set RLIMIT_NPROC,
     # because that limit is per uid and would let one request lock out every later one.
     pids_limit: 96
@@ -82,3 +83,4 @@ services:
     # container into arbitrary code execution on the host.
     #
     # If the host has gVisor installed, add `runtime: runsc` for a second kernel boundary.
+

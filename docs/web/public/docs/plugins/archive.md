@@ -1,3 +1,4 @@
+
 # stewbeet.plugins.archive
 
 The `archive` plugin creates zip archives of generated datapacks and resource packs.<br>
@@ -95,3 +96,4 @@ Integrates with beet's pack management:
 
 - [All plugins](README.md): the rest of the pipeline, in the order it runs.
 - [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.
+

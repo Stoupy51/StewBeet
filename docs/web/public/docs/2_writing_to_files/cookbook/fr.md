@@ -1,3 +1,4 @@
+
 # Cookbook
 
 Des exemples complets et fonctionnels d'écriture de fichiers de datapack avec StewBeet. Chacun
@@ -858,3 +859,4 @@ clear @s *[custom_data~{{{ns}:{{lucky_artifact_bag:true}}}}] 1
 - [Référence des fonctions utilitaires](../reference/fr.md): les arguments de chaque fonction.
 - [Définir items et blocs](../../1_definitions_setup/fr.md): où le contenu manipulé est déclaré.
 - [Configurer le build](../../3_beet_config/fr.md): contrôler quand votre code s'exécute.
+

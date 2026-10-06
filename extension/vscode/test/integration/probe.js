@@ -60,7 +60,7 @@ exports.run = async () => {
     await vscode.workspace.openTextDocument(real);
     for (let i = 0; i < 40; i++) {
       const list = await vscode.commands.executeCommand(
-        "vscode.executeCompletionItemProvider", real, new vscode.Position(0, 0), undefined, 50);
+        "vscode.executeCompletionItemProvider", real, new vscode.Position(1, 0), undefined, 50);
       if (list && list.items && list.items.length > 0) { note("spyglassReadyAfterSeconds", i * 2); break; }
       await sleep(2000);
     }

@@ -1,3 +1,4 @@
+
 # stewbeet.plugins.merge_smithed_weld
 
 The `merge_smithed_weld` plugin merges generated datapacks and resource packs with their dependencies.<br>
@@ -155,3 +156,4 @@ Maintains consistent timestamps and optimal compression:
 
 - [All plugins](README.md): the rest of the pipeline, in the order it runs.
 - [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.
+

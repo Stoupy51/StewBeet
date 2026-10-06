@@ -1,3 +1,4 @@
+
 # stewbeet.plugins.custom_recipes
 
 The `custom_recipes` plugin generates custom recipes for datapacks based on item definitions.<br>
@@ -117,3 +118,4 @@ pipeline:
 
 - [All plugins](README.md): the rest of the pipeline, in the order it runs.
 - [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.
+

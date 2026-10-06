@@ -1,5 +1,4 @@
 
-
 tellraw @a [{"text": "Made of ", "color": "gray", "italic": False}]
 tellraw @a ["Steel ingot 16: ",{"render": "steel_ingot", "height": 16}, "\n"]
 tellraw @a ["Crafting table: ",{"render": "minecraft:crafting_table"}, "\n"]

@@ -1,3 +1,4 @@
+
 # Helper function reference
 
 Every helper StewBeet adds on top of beet for writing datapack files, with the arguments each
@@ -418,3 +419,4 @@ Mem.ctx.assets["my_namespace"].textures["block/animated_block"] = texture
 - [Writing functions and files](../en.md): which approach to reach for, and why.
 - [Cookbook](../cookbook/en.md). These helpers used in complete, working files.
 - [Equations](../../4_equations/en.md): build scoreboard arithmetic to embed in what you write.
+

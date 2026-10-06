@@ -1,3 +1,4 @@
+
 # Publier automatiquement
 
 Un seul script `upload.py` publie une release sur GitHub, Modrinth, Smithed et PlanetMinecraft en une commande. Il appelle chaque plateforme tour à tour : GitHub d'abord, parce qu'il écrit le changelog, puis les autres avec ce changelog.
@@ -261,3 +262,4 @@ upload_to_pmc(pmc_config, changelog)
 - [compute_sha1](../plugins/compute_sha1.md): les hashes publiés avec les releases.
 - [Configurer le build](../3_beet_config/fr.md): le build que la publication exécute.
 - [Bibliothèques de datapack](../5_dependencies/fr.md): les vérifications de version au runtime.
+

@@ -1,3 +1,4 @@
+
 # Écrire fonctions et fichiers
 
 Quatre façons d'ajouter vos propres fonctions, advancements et tags au pack : des fichiers statiques chargés par `beet.yml`, l'API native de beet, les fonctions helper de StewBeet, et Bolt. La plupart des packs utilisent les helpers pour leur logique et les fichiers statiques pour le reste.
@@ -438,3 +439,4 @@ Quelle que soit l'approche, regroupez les fonctions en dossiers par fonctionnali
 - [Cookbook](cookbook/fr.md): des exemples complets et fonctionnels.
 - [Équations](../4_equations/fr.md): construire l'arithmétique de scoreboard.
 - [Configurer le build](../3_beet_config/fr.md): contrôler quand votre code s'exécute.
+

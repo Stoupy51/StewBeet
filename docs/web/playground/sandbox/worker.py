@@ -1,12 +1,12 @@
 """ HTTP front of the sandbox: one job at a time, each in a throwaway process.
 
-Deliberately stdlib only, and it never imports stewbeet. The worker has to outlive every way a job
-can die, so it stays a few megabytes of interpreter that cannot be broken by anything a build does to
-its own address space. jobs.py holds the ceilings and the kill path, builds.py the two jobs
-themselves; what is here is only the protocol.
+Deliberately stdlib only, and it never imports stewbeet.
+The worker has to outlive every way a job can die,
+so it stays a few megabytes of interpreter that cannot be broken by anything a build does to its own address space.
+jobs.py holds the ceilings and the kill path, builds.py the two jobs themselves, and this file only the protocol.
 
-The container is the security boundary, not this file: `internal: true` networking, `read_only`
-rootfs, `cap_drop: ALL` and the memory cgroup are what make running submitted Python acceptable.
+The container is the security boundary, not this file: `internal: true` networking, `read_only` rootfs,
+`cap_drop: ALL` and the memory cgroup are what make running submitted Python acceptable.
 """
 # Imports
 import base64
@@ -74,8 +74,8 @@ class Handler(BaseHTTPRequestHandler):
 		""" Silence the default per request logging, which says nothing the caller does not know.
 
 		Args:
-			format (str): Unused, part of the BaseHTTPRequestHandler protocol.
-			args   (Any): Unused, part of the BaseHTTPRequestHandler protocol.
+			format: Unused, part of the BaseHTTPRequestHandler protocol.
+			args:   Unused, part of the BaseHTTPRequestHandler protocol.
 		"""
 		return
 
@@ -83,22 +83,21 @@ class Handler(BaseHTTPRequestHandler):
 		""" Send one JSON response.
 
 		Args:
-			status  (int):             HTTP status code.
-			payload (dict[str, Any]):  Body to serialize.
+			status:  HTTP status code.
+			payload: Body to serialize.
 		"""
 		self.send_bytes(status, "application/json; charset=utf-8", json.dumps(payload).encode("utf-8"))
 
 	def reply_archive(self, archive: bytes, counts: dict[str, Any], warnings: list[str]) -> None:
 		""" Send a rewritten pack, with the little that does not fit in a zip carried in a header.
 
-		Warnings are the only unbounded part, so they are what gets dropped, last one first, until the
-		header fits. Dropping them silently would be worse than saying how many went, so the count
-		travels with what is left.
+		Warnings are the only unbounded part, so they are what gets dropped, last one first, until the header fits.
+		Dropping them silently would be worse than saying how many went, so the count travels with what is left.
 
 		Args:
-			archive  (bytes):          The archive to hand back.
-			counts   (dict[str, Any]): Duration and the function counts, always small enough to fit.
-			warnings (list[str]):      What the analysis warned about, trimmed to fit the ceiling.
+			archive:  The archive to hand back.
+			counts:   Duration and the function counts, always small enough to fit.
+			warnings: What the analysis warned about, trimmed to fit the ceiling.
 		"""
 		kept: list[str] = warnings[:MAX_WARNINGS]
 		dropped: int = len(warnings) - len(kept)
@@ -116,10 +115,10 @@ class Handler(BaseHTTPRequestHandler):
 		""" Send one response with an explicit length, so keep-alive stays honest.
 
 		Args:
-			status       (int):              HTTP status code.
-			content_type (str):              Value of the Content-Type header.
-			body         (bytes):            Response body.
-			headers      (dict[str, str]):   Anything else to send.
+			status:       HTTP status code.
+			content_type: Value of the Content-Type header.
+			body:         Response body.
+			headers:      Anything else to send.
 		"""
 		self.send_response(status)
 		self.send_header("Content-Type", content_type)
@@ -209,7 +208,7 @@ class Handler(BaseHTTPRequestHandler):
 		""" Check the scratch space and take the single job slot, answering the caller when it cannot.
 
 		Args:
-			min_free (int): How much room /tmp must have before the job is worth starting.
+			min_free: How much room /tmp must have before the job is worth starting.
 		Returns:
 			bool: Whether the slot is now held, in which case the caller must release it.
 		"""

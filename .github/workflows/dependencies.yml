@@ -1,3 +1,4 @@
+
 name: CI - Check dependency updates
 
 on:
@@ -85,3 +86,4 @@ jobs:
             ${{ env.UPDATED_LIST }}
           branch: auto/dep-updates
           delete-branch: true
+

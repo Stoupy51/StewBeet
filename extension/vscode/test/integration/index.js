@@ -55,7 +55,7 @@ async function tokensOf(uri) {
 
 async function waitForSpyglass(uri, results) {
   for (let attempt = 1; attempt <= 40; attempt++) {
-    const items = await completionsAt(uri, new vscode.Position(0, 0));
+    const items = await completionsAt(uri, new vscode.Position(1, 0));
     if (items.length > 0) {
       results.spyglassReadyAfterSeconds = attempt * 2;
       return items;
@@ -342,7 +342,7 @@ exports.run = async () => {
     expect("US7 the exclusion silences Spyglass on it", afterExclude.length === 0, afterExclude.length);
 
     // The vanilla file must not have been swept up in the exclusion.
-    const vanillaCompletions = await completionsAt(realUri, new vscode.Position(0, 0));
+    const vanillaCompletions = await completionsAt(realUri, new vscode.Position(1, 0));
     expect("US7 the vanilla file still has Spyglass", vanillaCompletions.length > 0, vanillaCompletions.length);
 
     // The lens from a bolt source to what the build made of it, the direction Python already had.

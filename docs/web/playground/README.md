@@ -1,3 +1,4 @@
+
 # playground
 
 Real StewBeet projects that the website builds and shows.
@@ -218,3 +219,4 @@ Names collide across three real packs, so the last source in `SOURCES` wins and 
 reported. Measured at 2 colliding textures and 89 colliding renders, almost all of the latter being
 the vanilla `minecraft/` items every project caches. Failing the build over that, as an earlier
 draft of this planned to do, would have meant it never built.
+

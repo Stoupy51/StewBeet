@@ -1,3 +1,4 @@
+
 # Writing functions and files
 
 Four ways to put your own functions, advancements and tags into the pack: static files loaded by `beet.yml`, the native beet API, StewBeet's helper functions, and Bolt. Most packs use the helpers for their logic and static files for the rest.
@@ -450,3 +451,4 @@ Whichever you use, group functions in folders by feature, and put periodic work 
 - [Cookbook](cookbook/en.md): complete worked examples.
 - [Equations](../4_equations/en.md): build scoreboard arithmetic instead of hand-writing it.
 - [Configuring the build](../3_beet_config/en.md): control when your code runs in the pipeline.
+

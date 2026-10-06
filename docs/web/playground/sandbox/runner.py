@@ -1,9 +1,9 @@
 """ Build one submitted project and print the result, as the child process of worker.py.
 
-This runs with the visitor's code already written to src/user_code.py, inside a throwaway copy of
-the project, under the rlimits worker.py set before exec. It trusts none of that: the caps below
-are re-applied here because a build that legitimately produces 40 000 files would otherwise be
-serialized in full before anyone noticed.
+This runs with the visitor's code already written to src/user_code.py,
+inside a throwaway copy of the project, under the rlimits worker.py set before exec.
+It trusts none of that: the caps below are re-applied here
+because a build that legitimately produces 40 000 files would otherwise be serialized in full before anyone noticed.
 
 Everything beet and stouputils print goes to stdout, so the payload is written after a sentinel
 line and the parent keeps only what follows it.
@@ -48,9 +48,8 @@ BLOCKED_MODULES: tuple[str, ...] = (
 )
 """ Importing any of these means something in the pipeline wants a GPU.
 
-Nothing in the configured pipeline reaches them: generate_all_iso_renders is only called by
-ingame_manual, which is not in it. Blocking them turns a future pipeline change from a fifteen
-second hang behind an OpenGL context into an immediate, readable error.
+Nothing in the configured pipeline reaches them: generate_all_iso_renders is only called by ingame_manual, which is not in it.
+Blocking them turns a future pipeline change from a fifteen second hang behind an OpenGL context into an immediate, readable error.
 """
 
 
@@ -62,9 +61,9 @@ class BlockedImportFinder(MetaPathFinder):
 		""" Raise for a blocked module, and defer to the rest of sys.meta_path otherwise.
 
 		Args:
-			fullname (str): Fully qualified name of the module being imported.
-			path     (Any): Unused, part of the MetaPathFinder protocol.
-			target   (Any): Unused, part of the MetaPathFinder protocol.
+			fullname: Fully qualified name of the module being imported.
+			path:     Unused, part of the MetaPathFinder protocol.
+			target:   Unused, part of the MetaPathFinder protocol.
 		Returns:
 			ModuleSpec | None: Always None, so the next finder on sys.meta_path decides.
 		"""
@@ -81,13 +80,13 @@ class BlockedImportFinder(MetaPathFinder):
 def dump_pack(pack: Any, prefix: str) -> dict[str, bytes]:
 	""" Serialize a pack to the exact paths and bytes it would have written to disk.
 
-	Going through a ZipFile in memory rather than an `output` directory keeps the build side effect
-	free and still goes through beet's own dump path, so what the visitor sees is what they would
-	get locally. Same helper as python_package/scripts/build_hero_output.py.
+	Going through a ZipFile in memory rather than an `output` directory keeps the build side effect free
+	and still goes through beet's own dump path, so what the visitor sees is what they would get locally.
+	Same helper as python_package/scripts/build_hero_output.py.
 
 	Args:
-		pack   (Any): The beet pack to serialize (`ctx.data` or `ctx.assets`).
-		prefix (str): Folder the pack would have been written to, ex: "datapack".
+		pack:   The beet pack to serialize (`ctx.data` or `ctx.assets`).
+		prefix: Folder the pack would have been written to, ex: "datapack".
 	Returns:
 		dict[str, bytes]: Mapping of build-relative path to file content.
 	"""
@@ -106,7 +105,7 @@ def build(project: str) -> dict[str, bytes]:
 	against the wrong place. The cache lands in the throwaway copy and dies with it.
 
 	Args:
-		project (str): Directory holding beet.yml and src/.
+		project: Directory holding beet.yml and src/.
 	Returns:
 		dict[str, bytes]: Mapping of build-relative path to file content.
 	"""
@@ -122,11 +121,11 @@ def build(project: str) -> dict[str, bytes]:
 def to_payload(built: dict[str, bytes]) -> dict[str, Any]:
 	""" Split the build into a listing, decoded text and base64 images, within the caps.
 
-	Text is normalized to LF because a lone CR is its own line break inside a <pre>, which shows up
-	as double spaced output in the browser.
+	Text is normalized to LF because a lone CR is its own line break inside a <pre>,
+	which shows up as double spaced output in the browser.
 
 	Args:
-		built (dict[str, bytes]): Mapping of build-relative path to file content.
+		built: Mapping of build-relative path to file content.
 	Returns:
 		dict[str, Any]: Payload with `files`, `text`, `images` and `truncated`.
 	"""
@@ -173,12 +172,13 @@ def to_payload(built: dict[str, bytes]) -> dict[str, Any]:
 def suggestions(error: BaseException) -> list[str]:
 	""" Names close to the one a NameError complained about.
 
-	`FurnaceRecipe` is a plausible guess that does not exist, and a bare NameError leaves the reader
-	guessing which of 493 exported names was meant. Anything sharing the trailing word is included
-	as well, so a wrong recipe class lists the recipe classes rather than the nearest four strings.
+	`FurnaceRecipe` is a plausible guess that does not exist,
+	and a bare NameError leaves the reader guessing which of 493 exported names was meant.
+	Anything sharing the trailing word is included as well,
+	so a wrong recipe class lists the recipe classes rather than the nearest four strings.
 
 	Args:
-		error (BaseException): The root cause, only inspected when it is a NameError.
+		error: The root cause, only inspected when it is a NameError.
 	Returns:
 		list[str]: Suggestions, closest first, then the rest of the family alphabetically.
 	"""
@@ -204,7 +204,7 @@ def describe(error: BaseException) -> dict[str, Any]:
 	""" Turn an exception into something a reader can act on.
 
 	Args:
-		error (BaseException): The exception that reached the top.
+		error: The exception that reached the top.
 	Returns:
 		dict[str, Any]: `message`, and where known the `line` of submitted code and its text.
 	"""
@@ -238,9 +238,8 @@ def main() -> int:
 		print(json.dumps({"ok": False, "error": "usage: runner.py <project directory>"}))
 		return 2
 
-	# The configuration this build actually ran with, so the page can show it rather than a copy
-	# that would drift the first time the pipeline changes. Read before the build, so it is present
-	# even when the build fails and the reader wants to know what was configured.
+	# The configuration this build ran with, which the page shows rather than a copy that would drift.
+	# Read before the build, so it is there when the build fails too.
 	config: str = ""
 	try:
 		with open(f"{sys.argv[1]}/beet.yml", encoding="utf-8") as file:

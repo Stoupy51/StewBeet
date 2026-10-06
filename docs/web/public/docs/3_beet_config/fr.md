@@ -1,3 +1,4 @@
+
 # Configurer le build
 
 Chaque option du fichier de configuration beet, et ce que StewBeet en fait. Le fichier est lu au début de chaque build et décide de la façon dont tout le projet est traité.
@@ -360,3 +361,4 @@ pipeline:
 - [Publier automatiquement](../6_continuous_delivery/fr.md) : publier le pack que le pipeline construit.
 
 Les questions se posent sur la [communauté Discord](https://discord.gg/anxzu6rA9F).
+

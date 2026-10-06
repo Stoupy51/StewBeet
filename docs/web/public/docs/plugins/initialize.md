@@ -1,3 +1,4 @@
+
 # stewbeet.plugins.initialize
 
 The `initialize` plugin is the foundation of the StewBeet framework.<br>
@@ -149,3 +150,4 @@ Handles legacy texture naming conversions for better later compatibility/pattern
 
 - [All plugins](README.md): the rest of the pipeline, in the order it runs.
 - [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.
+

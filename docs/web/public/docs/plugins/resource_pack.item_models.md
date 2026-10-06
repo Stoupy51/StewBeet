@@ -1,3 +1,4 @@
+
 # stewbeet.plugins.resource_pack.item_models
 
 The `item_models` plugin automatically generates item and block models for custom items defined in the StewBeet framework.<br>
@@ -115,3 +116,4 @@ Automatically detects texture patterns and generates appropriate block models:
 - [Defining items and blocks](../1_definitions_setup/en.md): the textures and models this plugin consumes.
 - [All plugins](README.md): the rest of the pipeline, in the order it runs.
 - [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.
+

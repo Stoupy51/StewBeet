@@ -1,3 +1,4 @@
+
 # Support éditeur
 
 L'[extension StewBeet pour VSCode](https://marketplace.visualstudio.com/items?itemName=stoupy.stewbeet) est le support éditeur de tout l'écosystème [beet](https://github.com/mcbeet/beet) : **beet**, **bolt**, **mecha** et **StewBeet**.
@@ -124,3 +125,4 @@ Gardez Aegis si vous avez besoin de cette dernière ligne.
 - [Écrire fonctions et fichiers](../2_writing_to_files/fr.md) : tout ce que l'extension lit, Bolt compris.
 - [stewbeet.plugins.sniffer](../plugins/sniffer.md) : les source maps derrière la navigation.
 - [stewbeet.plugins.spyglass](../plugins/spyglass.md) : garder Spyglass loin des fichiers qu'il ne sait pas lire.
+

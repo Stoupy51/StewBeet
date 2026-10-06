@@ -1,3 +1,4 @@
+
 # Using datapack libraries
 
 StewBeet's dependency system has two layers: **official libraries** auto-detected from function usage (no config), and **custom `load_dependencies`** declared in `beet.yml`. Both are auto-downloaded at build time and get runtime scoreboard version checks with clickable in-game error messages.
@@ -220,3 +221,4 @@ When the world loads, the generated functions run in this sequence:
 - [finalyze.dependencies](../plugins/finalyze.dependencies.md): the plugin that performs the checks.
 - [Configuring the build](../3_beet_config/en.md): where load_dependencies is declared.
 - [Shipping releases](../6_continuous_delivery/en.md): shipping a pack that depends on libraries.
+

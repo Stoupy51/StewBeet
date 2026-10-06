@@ -1,3 +1,4 @@
+
 # Utiliser des bibliothèques de datapack
 
 Le système de dépendances de StewBeet a deux couches : les **bibliothèques officielles** auto-détectées depuis les fonctions (sans config), et les **custom `load_dependencies`** déclarées dans `beet.yml`. Les deux sont téléchargées au build et génèrent des vérifications de version au runtime avec des messages d'erreur cliquables.
@@ -177,3 +178,4 @@ Au chargement du monde, les fonctions générées s'exécutent dans cet ordre :
 - [finalyze.dependencies](../plugins/finalyze.dependencies.md): le plugin qui effectue les vérifications.
 - [Configurer le build](../3_beet_config/fr.md): où load_dependencies se déclare.
 - [Publier automatiquement](../6_continuous_delivery/fr.md): publier un pack qui dépend de bibliothèques.
+

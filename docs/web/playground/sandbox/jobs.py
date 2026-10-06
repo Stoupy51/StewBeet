@@ -1,13 +1,13 @@
 """ What both sandbox jobs share: the per process ceilings, the throwaway directory and the kill path.
 
-Deliberately stdlib only, and it never imports stewbeet. The worker has to outlive every way a job
-can die, so it stays a few megabytes of interpreter that cannot be broken by anything the child does
-to its own address space.
+Deliberately stdlib only, and it never imports stewbeet.
+The worker has to outlive every way a job can die,
+so it stays a few megabytes of interpreter that cannot be broken by anything the child does to its own address space.
 
-The container is the security boundary, not this file: `internal: true` networking, `read_only`
-rootfs, `cap_drop: ALL` and the memory cgroup are what make running submitted code acceptable. What
-is here is the second layer, so that one abusive request degrades into an error message instead of
-into an outage for the next visitor.
+The container is the security boundary, not this file: `internal: true` networking, `read_only` rootfs,
+`cap_drop: ALL` and the memory cgroup are what make running submitted code acceptable.
+What is here is the second layer,
+so that one abusive request degrades into an error message instead of into an outage for the next visitor.
 """
 # Imports
 import json
@@ -54,9 +54,10 @@ class Rlimits:
 	arbitrary process in the container, which could be the worker itself. A process that exceeds
 	RLIMIT_AS instead gets a MemoryError inside its own job, which is both survivable and reportable.
 
-	RLIMIT_NPROC is deliberately absent. It counts processes per uid, not per process, so with one
-	shared uid a fork bomb in one request would deny service to every later request and to the
-	worker's own threads. The container's pids_limit covers that case without the collateral damage.
+	RLIMIT_NPROC is deliberately absent.
+	It counts processes per uid, not per process,
+	so with one shared uid a fork bomb in one request would deny service to every later request and to the worker's own threads.
+	The container's pids_limit covers that case without the collateral damage.
 	"""
 
 	address_space: int
@@ -74,8 +75,8 @@ class Rlimits:
 	def apply(self) -> None:
 		""" Set every limit on the calling process, and start a new session.
 
-		The new session matters as much as the limits: it gives the child its own process group, so a
-		timeout can kill everything it spawned rather than only the process that was waited on.
+		The new session matters as much as the limits: it gives the child its own process group,
+		so a timeout can kill everything it spawned rather than only the process that was waited on.
 		"""
 		resource.setrlimit(resource.RLIMIT_AS, (self.address_space, self.address_space))
 		resource.setrlimit(resource.RLIMIT_CPU, (self.cpu_seconds, self.cpu_seconds))
@@ -104,7 +105,7 @@ class Job:
 		""" Minimal environment, with every writable path pointed inside the throwaway directory.
 
 		Args:
-			workdir (str): The per request directory, which is deleted afterwards.
+			workdir: The per request directory, which is deleted afterwards.
 		Returns:
 			dict[str, str]: Environment for the child process.
 		"""
@@ -128,16 +129,11 @@ class Job:
 	def reap() -> int:
 		""" Reap orphaned descendants, so a fork bomb cannot exhaust the container's pid limit.
 
-		The worker is PID 1 in the container, so anything a job left behind is reparented there and
-		stays a zombie until someone waits on it. Zombies still occupy a pid, so a single fork bomb was
-		enough to fill pids_limit and leave the worker unable to spawn a thread for the next
-		connection, which the client saw as a dropped connection rather than an error.
+		The worker is PID 1 in the container, so anything a job left behind is reparented there and stays a zombie, holding a pid.
+		One fork bomb fills pids_limit that way, and the next connection is dropped for want of a thread.
+		`init: true` in compose is the proper fix, and this runs anyway, one deployment flag being too little to stand on.
 
-		`init: true` in compose puts a real init in front of the worker and is the proper fix. This
-		runs anyway, so the worker is not one deployment flag away from that failure.
-
-		Safe against Popen's own bookkeeping because the caller has already waited on the child and
-		only one job runs at a time, so nothing here is still tracked.
+		Safe against Popen's own bookkeeping, since the caller has already waited on the child and only one job runs at a time.
 
 		Returns:
 			int: How many processes were reaped.
@@ -156,10 +152,9 @@ class Job:
 	def sweep() -> None:
 		""" Empty /tmp before a job starts.
 
-		Pointing the child's TMPDIR at its own throwaway directory only redirects code that asks
-		politely. Nothing stops submitted code from writing to /tmp directly, and those files outlive
-		the request that made them, so without this the shared tmpfs would fill up one visitor at a
-		time until every job failed on scratch space.
+		Pointing the child's TMPDIR at its own throwaway directory only redirects code that asks politely.
+		Nothing stops submitted code from writing to /tmp directly, and those files outlive the request that made them,
+		so without this the shared tmpfs would fill up one visitor at a time until every job failed on scratch space.
 
 		Safe to do unconditionally because the caller holds the single job slot, so no other job owns
 		anything under /tmp at this point.
@@ -179,7 +174,7 @@ class Job:
 		""" Make a fresh throwaway directory with the cache folder the environment points at.
 
 		Args:
-			prefix (str): Name prefix, so a leaked directory says which job made it.
+			prefix: Name prefix, so a leaked directory says which job made it.
 		Returns:
 			str: Path of the new directory, which the caller must delete.
 		"""
@@ -191,16 +186,15 @@ class Job:
 	def launch(argv: list[str], cwd: str, workdir: str, limits: Rlimits, wall_timeout: float) -> tuple[str, bool]:
 		""" Run one runner under the given ceilings and return its stdout.
 
-		The child is killed by process group, twice: once when the wait times out, and again in the
-		finally, because a child that exited normally may still have left grandchildren behind.
+		The child is killed by process group, twice: once when the wait times out, and again in the finally,
+		because a child that exited normally may still have left grandchildren behind.
 
 		Args:
-			argv         (list[str]): The runner and its arguments, after the interpreter.
-			cwd          (str):       Working directory for the child.
-			workdir      (str):       The per request directory, used as the child's home and temp.
-			limits       (Rlimits):   Ceilings to apply between fork and exec.
-			wall_timeout (float):     Wall clock ceiling. RLIMIT_CPU fires first for a busy loop; this
-				covers sleep.
+			argv:         The runner and its arguments, after the interpreter.
+			cwd:          Working directory for the child.
+			workdir:      The per request directory, used as the child's home and temp.
+			limits:       Ceilings to apply between fork and exec.
+			wall_timeout: Wall clock ceiling, for a sleep, since RLIMIT_CPU fires first for a busy loop.
 		Returns:
 			tuple[str, bool]: The child's combined output, and whether it timed out.
 		"""
@@ -223,9 +217,8 @@ class Job:
 			try:
 				output, _ = process.communicate(timeout=KILL_GRACE)
 			except subprocess.TimeoutExpired:
-				# Something that outlived the kill still holds the write end of the stdout pipe, so
-				# EOF will never come. Drop the log rather than block this thread forever with the
-				# single job slot in hand.
+				# Something that outlived the kill still holds the stdout pipe, so EOF never comes.
+				# The log is dropped rather than block this thread forever with the single job slot in hand.
 				output = ""
 			return output, True
 		finally:
@@ -243,7 +236,7 @@ class Job:
 		the group as empty, which is the only way to know.
 
 		Args:
-			process (subprocess.Popen[str]): The child to kill.
+			process: The child to kill.
 		"""
 		try:
 			group: int = os.getpgid(process.pid)
@@ -268,8 +261,8 @@ class Job:
 		SIGXFSZ or a SIGKILL look like from here.
 
 		Args:
-			output    (str):  Everything the child printed.
-			timed_out (bool): Whether the wall clock ceiling was reached.
+			output:    Everything the child printed.
+			timed_out: Whether the wall clock ceiling was reached.
 		Returns:
 			dict[str, Any]: The payload, always carrying `ok` and `logs`.
 		"""
@@ -290,7 +283,7 @@ class Job:
 		""" The warning lines of a log, which is all a caller with no room for the whole thing wants.
 
 		Args:
-			logs (str): The log, already stripped of colour by parse.
+			logs: The log, already stripped of colour by parse.
 		Returns:
 			list[str]: Every line stouputils marked as a warning, in order.
 		"""

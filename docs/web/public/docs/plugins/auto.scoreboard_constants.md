@@ -1,3 +1,4 @@
+
 # stewbeet.plugins.auto.scoreboard_constants
 
 The `auto.scoreboard_constants` plugin automatically detects scoreboard constant usages across all datapack functions<br>
@@ -67,3 +68,4 @@ Writes sorted initialization commands to the project's load function:
 - [Writing functions and files](../2_writing_to_files/en.md): the functions this plugin post-processes.
 - [All plugins](README.md): the rest of the pipeline, in the order it runs.
 - [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.
+

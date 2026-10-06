@@ -1,3 +1,4 @@
+
 # stewbeet.plugins.resource_pack.check_power_of_2
 
 The `check_power_of_2` plugin validates that all textures in the resource pack have power-of-2 dimensions.<br>
@@ -66,3 +67,4 @@ pipeline:
 - [Defining items and blocks](../1_definitions_setup/en.md): the textures and models this plugin consumes.
 - [All plugins](README.md): the rest of the pipeline, in the order it runs.
 - [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.
+

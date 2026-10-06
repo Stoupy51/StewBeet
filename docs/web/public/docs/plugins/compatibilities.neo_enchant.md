@@ -1,3 +1,4 @@
+
 # stewbeet.plugins.compatibilities.neo_enchant
 
 The `compatibilities.neo_enchant` plugin provides integration with the NeoEnchant datapack's<br>
@@ -80,3 +81,4 @@ Only activates when relevant ore configurations are detected:
 - [Using datapack libraries](../5_dependencies/en.md): the integrations this plugin targets.
 - [All plugins](README.md): the rest of the pipeline, in the order it runs.
 - [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.
+

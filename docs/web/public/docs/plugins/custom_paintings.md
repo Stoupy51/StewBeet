@@ -1,3 +1,4 @@
+
 # stewbeet.plugins.custom_paintings
 
 The `custom_paintings` plugin generates custom paintings for datapacks and resource packs based on item definitions.<br>
@@ -138,3 +139,4 @@ assets/your_namespace/textures/painting/
 
 - [All plugins](README.md): the rest of the pipeline, in the order it runs.
 - [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.
+

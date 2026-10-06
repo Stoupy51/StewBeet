@@ -1,3 +1,4 @@
+
 # stewbeet.plugins.finalyze.custom_blocks_ticking
 
 The `finalyze.custom_blocks_ticking` plugin automatically sets up ticking functionality<br>
@@ -138,3 +139,4 @@ Adds ticking entity statistics to the stats system:
 - [Configuring the build](../3_beet_config/en.md): where this plugin sits in the pipeline.
 - [All plugins](README.md): the rest of the pipeline, in the order it runs.
 - [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.
+

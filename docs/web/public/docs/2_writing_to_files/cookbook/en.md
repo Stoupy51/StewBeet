@@ -1,3 +1,4 @@
+
 # Cookbook
 
 Complete, working examples of writing datapack files with StewBeet. Each one is a whole file
@@ -859,3 +860,4 @@ clear @s *[custom_data~{{{ns}:{{lucky_artifact_bag:true}}}}] 1
 - [Defining items and blocks](../../1_definitions_setup/en.md): where the content these files
   operate on is declared.
 - [Configuring the build](../../3_beet_config/en.md): control when your code runs.
+

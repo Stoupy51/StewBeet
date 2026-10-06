@@ -1,9 +1,9 @@
 """ Run every job once at image build time, so a broken pipeline fails the image and not a visitor.
 
-The render node is the playground case that matters. auto.text_renders reaches model_resolver, and
-the OpenGL context this container has no display for, for any item with no cached render:
-emit.source_images -> ensure_item_images -> run_model_resolver. src.placeholders is what keeps that
-queue empty, and this is what notices the day it stops working.
+The render node is the playground case that matters.
+For any item with no cached render, auto.text_renders reaches model_resolver and the OpenGL context this container has no display for:
+emit.source_images -> ensure_item_images -> run_model_resolver.
+src.placeholders keeps that queue empty, and this notices the day it stops working.
 
 The headers case is here for the same reason: it builds a two function pack and checks that the
 archive that comes back has grown a header, which is the whole contract of the endpoint.
@@ -94,8 +94,8 @@ def check_headers() -> list[str]:
 	failures: list[str] = []
 	if "pack.mcmeta" not in names:
 		failures.append(f"selftest: headers: pack.mcmeta missing from the archive, got {names}")
-	# Naming the caller is what the whole endpoint exists to produce, and it can only be there if the
-	# cross-referencing analysis ran, so one assertion covers both.
+	# Naming the caller is what the endpoint exists to produce,
+	# and only the cross-referencing analysis can, so one assertion covers both.
 	if "@within" not in called or "selftest:caller" not in called:
 		failures.append(f"selftest: headers: the caller was not found\n{called}")
 	if not failures:

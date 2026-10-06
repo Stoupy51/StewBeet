@@ -1,3 +1,4 @@
+
 # Configuring the build
 
 Every option of the beet configuration file, and what StewBeet does with it. The file is read at the start of every build and decides how the whole project is processed.
@@ -360,3 +361,4 @@ pipeline:
 - [Shipping releases](../6_continuous_delivery/en.md): publish the pack the pipeline builds.
 
 Questions go to the [Discord community](https://discord.gg/anxzu6rA9F).
+

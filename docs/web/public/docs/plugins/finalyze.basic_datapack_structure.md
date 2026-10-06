@@ -1,3 +1,4 @@
+
 # stewbeet.plugins.finalyze.basic_datapack_structure
 
 The `finalyze.basic_datapack_structure` plugin sets up essential timing infrastructure<br>
@@ -102,3 +103,4 @@ Integrates timing logic into the main tick function:
 - [Configuring the build](../3_beet_config/en.md): where this plugin sits in the pipeline.
 - [All plugins](README.md): the rest of the pipeline, in the order it runs.
 - [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.
+

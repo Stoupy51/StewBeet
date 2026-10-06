@@ -1,3 +1,4 @@
+
 # stewbeet.plugins.copy_to_destination
 
 The `copy_to_destination` plugin automatically copies generated packs to configured destinations.<br>
@@ -125,3 +126,4 @@ Determines which files to copy based on availability:
 
 - [All plugins](README.md): the rest of the pipeline, in the order it runs.
 - [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.
+

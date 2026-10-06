@@ -1,3 +1,4 @@
+
 # Website todo
 
 Assets only the author can produce. The site works without them: each one has a fallback already in place, listed below. Drop the file where the table says and ping Claude to wire it in.
@@ -15,3 +16,4 @@ Assets only the author can produce. The site works without them: each one has a 
 - Hide the HUD elements that are not the point (F1 in game, a clean VS Code layout).
 - Encode with `ffmpeg -i in.mp4 -an -vcodec libx264 -crf 28 -preset slow -movflags +faststart out.mp4` to keep each clip under 1 MB.
 - Also export the first meaningful frame as a JPG poster next to the video (`<name>_poster.jpg`), so nothing is black before it loads.
+

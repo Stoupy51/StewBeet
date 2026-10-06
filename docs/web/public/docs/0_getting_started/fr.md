@@ -1,3 +1,4 @@
+
 # Tutoriel : votre premier datapack
 
 Dans ce tutoriel, vous créez un projet StewBeet, vous le compilez, vous le chargez dans Minecraft, puis vous ajoutez un custom item et tout un palier de rubis avec un custom block fonctionnel. Comptez une vingtaine de minutes. Vous avez déjà un datapack ? [Migrez-le](../9_migration/fr.md) plutôt.
@@ -372,3 +373,4 @@ Chaque option est décrite dans [Configurer le build](../3_beet_config/fr.md).
 - Le [template Extensive](https://github.com/Stoupy51/StewBeet/tree/main/templates/extensive/src) est un projet complet à lire.
 
 Bloqué ? Demandez sur [Discord](https://discord.gg/anxzu6rA9F) ou ouvrez une [issue GitHub](https://github.com/Stoupy51/StewBeet/issues).
+
