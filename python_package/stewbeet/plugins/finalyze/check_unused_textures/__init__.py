@@ -1,4 +1,4 @@
-
+""" 🔍 Reports the textures of the resource pack that no JSON file references. """
 # Lazy imports (PEP 810), ignored before Python 3.15
 from stouputils.lazy import ALWAYS_LAZY
 

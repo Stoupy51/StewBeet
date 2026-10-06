@@ -1,4 +1,4 @@
-
+""" 🔄 Reloads the world on each build, through `beet link` or the configured datapack destinations. """
 # Lazy imports (PEP 810), ignored before Python 3.15
 from stouputils.lazy import ALWAYS_LAZY
 

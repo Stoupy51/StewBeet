@@ -1,4 +1,4 @@
-""" auto.text_renders: replace every ``render`` key of a text component with a font glyph.
+""" 🖋️ auto.text_renders: replace every ``render`` key of a text component with a font glyph.
 
 ``{"render": "steel_ingot"}`` anywhere a text component can appear (item lore, source lore, a
 ``tellraw``, a manual dialog) becomes a bitmap glyph showing that item, so packs can put pictures in

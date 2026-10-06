@@ -1,4 +1,4 @@
-
+""" 🧠 Shared state, definition classes, constants and helpers every plugin builds on. """
 # Lazy imports (PEP 810), ignored before Python 3.15
 from stouputils.lazy import ALWAYS_LAZY
 

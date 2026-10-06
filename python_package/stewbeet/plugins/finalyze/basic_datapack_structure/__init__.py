@@ -1,4 +1,4 @@
-
+""" ⏱️ Sets up the timed functions of the datapack, run every 2 ticks, second, 5 seconds and minute. """
 # Lazy imports (PEP 810), ignored before Python 3.15
 from stouputils.lazy import ALWAYS_LAZY
 

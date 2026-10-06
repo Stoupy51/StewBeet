@@ -1,4 +1,4 @@
-
+""" 👃 Records where every generated line came from, and maps it once the build is done. """
 # Lazy imports (PEP 810), ignored before Python 3.15
 from stouputils.lazy import ALWAYS_LAZY
 

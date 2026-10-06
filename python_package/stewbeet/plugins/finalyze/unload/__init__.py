@@ -1,4 +1,4 @@
-
+""" 🧹 Generates unload functions clearing the entities, blocks, items, objectives and storages the datapack creates. """
 # Lazy imports (PEP 810), ignored before Python 3.15
 from stouputils.lazy import ALWAYS_LAZY
 

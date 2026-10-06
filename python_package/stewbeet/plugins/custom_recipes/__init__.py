@@ -1,4 +1,4 @@
-
+""" 🍳 Generates the custom recipes of the datapack. """
 # Lazy imports (PEP 810), ignored before Python 3.15
 from stouputils.lazy import ALWAYS_LAZY
 

@@ -1,4 +1,4 @@
-""" Writes the `.mcfunction.map` sidecars for StewBeet's own writes, as a pipeline step of its own.
+""" 🗺️ Writes the `.mcfunction.map` sidecars for StewBeet's own writes, as a pipeline step of its own.
 
 It is separate from the capture plugin because the two have opposite ordering needs:
 capture must be installed before anything writes a function, while emission must happen after every rewriting plugin and still before

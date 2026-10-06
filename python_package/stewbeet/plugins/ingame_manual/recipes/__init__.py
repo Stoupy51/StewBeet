@@ -1,4 +1,4 @@
-"""Recipe rendering package.
+""" 🧾 Recipe rendering package.
 
 Re-exports the dispatcher and the public registry surface. Existing call sites keep importing from ``..recipes``.
 The built-in type renderers load on first lookup rather than on import, see :func:`~.registry.load_builtin_renderers`.

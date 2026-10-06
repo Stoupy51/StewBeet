@@ -30,5 +30,6 @@ if __name__ == "__main__":
 		html_theme="breeze",
 		version=version,
 		skip_undocumented=True,
+		external_links=["https://discord.gg/anxzu6rA9F", "https://pypi.org/project/stewbeet/"],
 	)
 

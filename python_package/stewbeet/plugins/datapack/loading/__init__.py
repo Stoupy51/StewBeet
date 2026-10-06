@@ -1,4 +1,4 @@
-
+""" ⏳ Sets up the load functions of the datapack, completed by `stewbeet.plugins.finalyze.dependencies`. """
 # ruff: noqa: E501
 # Lazy imports (PEP 810), ignored before Python 3.15
 from stouputils.lazy import ALWAYS_LAZY

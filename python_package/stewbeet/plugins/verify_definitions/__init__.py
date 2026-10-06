@@ -1,4 +1,4 @@
-
+""" 💤 Does nothing, since definitions are verified as they are made. Requiring it only prints a deprecation warning. """
 # Lazy imports (PEP 810), ignored before Python 3.15
 from stouputils.lazy import ALWAYS_LAZY
 

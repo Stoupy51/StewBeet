@@ -1,4 +1,4 @@
-
+""" 🏷️ Writes a header at the top of every function, with what calls it and in which execution context. """
 # Lazy imports (PEP 810), ignored before Python 3.15
 from stouputils.lazy import ALWAYS_LAZY
 

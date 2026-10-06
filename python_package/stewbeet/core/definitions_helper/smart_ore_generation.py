@@ -32,18 +32,18 @@ class CustomOreGeneration(StMapping):
 
 	The library scans 96x96 regions around players and starts each vein at a random position next to air.
 	Conditions are execute subcommands starting with "if " or "unless ", all of which must hold.
-	`vein_conditions` are checked once at the start of the vein and cancel all of it, which suits biomes.
-	`block_conditions` are checked at every block of the vein, which suits neighbouring blocks.
+	``vein_conditions`` are checked once at the start of the vein and cancel all of it, which suits biomes.
+	``block_conditions`` are checked at every block of the vein, which suits neighbouring blocks.
 
-	```py
-	CustomOreGeneration(
-		dimensions=["minecraft:overworld"],
-		provider=["#minecraft:terracotta"],
-		vein_conditions=["if biome ~ ~ ~ #minecraft:is_badlands"],
-		block_conditions=["if block ~ ~1 ~ #minecraft:terracotta"],
-	)
-	```
-	"""  # stp: ignore[long-docstring]
+	.. code-block:: python
+
+		CustomOreGeneration(
+			dimensions=["minecraft:overworld"],
+			provider=["#minecraft:terracotta"],
+			vein_conditions=["if biome ~ ~ ~ #minecraft:is_badlands"],
+			block_conditions=["if block ~ ~1 ~ #minecraft:terracotta"],
+		)
+	"""
 	OVERWORLD_REPLACEABLES: ClassVar[tuple[str, ...]] = (
 		"#minecraft:base_stone_overworld", "#minecraft:substrate_overworld", "#minecraft:sand", "#minecraft:terracotta",
 		"#minecraft:iron_ores", "#minecraft:copper_ores", "#minecraft:snow", "minecraft:gravel", "minecraft:suspicious_gravel",
@@ -100,17 +100,17 @@ class CustomOreGeneration(StMapping):
 	def all_with_config(ore_configs: dict[str | Block, list[CustomOreGeneration]]) -> None:
 		""" Generate the files of every configuration, several configurations of one ore getting numbered veins.
 
-		```py
-		CustomOreGeneration.all_with_config({
-			"super_iron_ore": [
-				CustomOreGeneration(dimensions=["minecraft:overworld"], minimum_height=0, maximum_height=50, veins_per_region=2),
-			],
-			"deepslate_super_iron_ore": [
-				CustomOreGeneration(dimensions=["minecraft:overworld"], maximum_height=0, veins_per_region=2),
-				CustomOreGeneration(dimensions=["stardust:cavern"], maximum_height=0, veins_per_region=8, vein_size_logic=0.8),
-			],
-		})
-		```
+		.. code-block:: python
+
+			CustomOreGeneration.all_with_config({
+				"super_iron_ore": [
+					CustomOreGeneration(dimensions=["minecraft:overworld"], minimum_height=0, maximum_height=50, veins_per_region=2),
+				],
+				"deepslate_super_iron_ore": [
+					CustomOreGeneration(dimensions=["minecraft:overworld"], maximum_height=0, veins_per_region=2),
+					CustomOreGeneration(dimensions=["stardust:cavern"], maximum_height=0, veins_per_region=8, vein_size_logic=0.8),
+				],
+			})
 		"""
 		for ore, config_list in ore_configs.items():
 			ore_id: str = ore.id if isinstance(ore, Block) else ore

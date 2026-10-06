@@ -1,4 +1,4 @@
-
+""" 🔁 Every StewBeet plugin that runs once definitions are loaded, yielding before the final steps so a project can run its own. """
 # Lazy imports (PEP 810), ignored before Python 3.15
 from stouputils.lazy import ALWAYS_LAZY
 

@@ -62,7 +62,7 @@ def spread_sources(mc: Mecha) -> set[str]:
 	""" Files holding a command written over several lines, which mecha's `multiline` mode and bolt's brackets allow.
 
 	Counted as more than one line of text between where a command starts and where the next one does,
-	since a plugin's node may carry no end position. A blank line, a comment and vanilla's own `\\` continuation do not count.
+	since a plugin's node may carry no end position. A blank line, a comment and vanilla's own ``\\`` continuation do not count.
 	"""
 	found: set[str] = set()
 	for unit in mc.database.values():
@@ -77,7 +77,7 @@ def spread_sources(mc: Mecha) -> set[str]:
 
 
 def written_lines(lines: list[str]) -> int:
-	""" How many of the lines hold text, a blank line, a comment and a line a `\\` continues left aside.
+	""" How many of the lines hold text, a blank line, a comment and a line a ``\\`` continues left aside.
 
 	>>> written_lines(["execute", "    as @a", "", "# note", "    run say hi"]), written_lines(["say a \\\\", "  b"])
 	(3, 1)

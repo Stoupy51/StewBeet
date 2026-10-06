@@ -1,5 +1,4 @@
-"""Page classes for the in-game manual."""
-
+""" 📄 Page classes for the in-game manual."""
 # Lazy imports (PEP 810), ignored before Python 3.15
 from stouputils.lazy import ALWAYS_LAZY
 

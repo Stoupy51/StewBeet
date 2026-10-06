@@ -1,4 +1,4 @@
-
+""" 🧬 Merges the generated datapack and resource pack with their libraries using Smithed Weld. """
 # Lazy imports (PEP 810), ignored before Python 3.15
 from stouputils.lazy import ALWAYS_LAZY
 

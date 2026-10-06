@@ -1,4 +1,4 @@
-
+""" 🧬 Merges only the datapack with its libraries, leaving the resource pack alone. """
 # Lazy imports (PEP 810), ignored before Python 3.15
 from stouputils.lazy import ALWAYS_LAZY
 

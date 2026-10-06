@@ -1,4 +1,4 @@
-
+""" 🎁 Sets up loot tables for the items of the definitions and external items. """
 # Lazy imports (PEP 810), ignored before Python 3.15
 from stouputils.lazy import ALWAYS_LAZY
 

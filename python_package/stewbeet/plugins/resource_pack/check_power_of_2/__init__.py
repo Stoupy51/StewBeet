@@ -1,4 +1,4 @@
-
+""" 📐 Checks that every texture of the resource pack has a power of 2 resolution. """
 # Lazy imports (PEP 810), ignored before Python 3.15
 from stouputils.lazy import ALWAYS_LAZY
 

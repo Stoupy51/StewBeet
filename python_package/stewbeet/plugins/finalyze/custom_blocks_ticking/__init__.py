@@ -1,4 +1,4 @@
-
+""" 🔁 Calls the tick and second functions of custom blocks. """
 # Lazy imports (PEP 810), ignored before Python 3.15
 from stouputils.lazy import ALWAYS_LAZY
 

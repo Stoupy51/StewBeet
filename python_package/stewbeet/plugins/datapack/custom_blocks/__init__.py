@@ -1,4 +1,4 @@
-
+""" 🧱 Sets up the custom blocks of the definitions in the datapack. """
 # Lazy imports (PEP 810), ignored before Python 3.15
 from stouputils.lazy import ALWAYS_LAZY
 
@@ -62,6 +62,7 @@ def beet_default(ctx: Context):
 		if not data.get(VANILLA_BLOCK):
 			continue
 		obj_block: Block = Block.from_id(item)
+
 		placed: tuple[str, str] | None = write_placement(obj_block, item, data)
 		if placed is not None:
 			unique_blocks.add(placed[0])

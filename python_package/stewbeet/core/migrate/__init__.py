@@ -1,4 +1,4 @@
-""" `stewbeet migrate [minimal|basic] [--dry-run] [--yes]`: turn an existing datapack or resource pack into a StewBeet project. """
+""" 🚚 `stewbeet migrate [minimal|basic] [--dry-run] [--yes]`: turn an existing datapack or resource pack into a StewBeet project. """
 # Lazy imports (PEP 810), ignored before Python 3.15
 from stouputils.lazy import ALWAYS_LAZY
 
@@ -57,6 +57,7 @@ def select_packs(working_dir: Path) -> tuple[FoundPack | None, FoundPack | None]
 	packs: list[FoundPack] = find_packs(working_dir)
 	datapacks: list[FoundPack] = [pack for pack in packs if pack.has_data]
 	resource_packs: list[FoundPack] = [pack for pack in packs if pack.has_assets]
+
 	if not packs:
 		stp.error(
 			"No pack found: migration looks for a pack.mcmeta next to a data/ or assets/ folder, "
@@ -71,6 +72,7 @@ def select_packs(working_dir: Path) -> tuple[FoundPack | None, FoundPack | None]
 				f"Run it from the folder of the one to migrate:{listing}"
 			)
 			return None
+
 	for pack in packs:
 		stp.info(f"Found {pack.kind} in {pack.root.relative_to(working_dir).as_posix()}")
 	return (datapacks[0] if datapacks else None, resource_packs[0] if resource_packs else None)

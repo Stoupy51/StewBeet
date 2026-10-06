@@ -1,4 +1,4 @@
-""" Emits `.mcfunction.map` sidecars for bolt and mecha, read straight off the compiled AST.
+""" 🗺️ Emits `.mcfunction.map` sidecars for bolt and mecha, read straight off the compiled AST.
 
 `stewbeet.plugins.sniffer` runs it from its teardown: the same output contract, an entirely different front half.
 Bolt's positions were never lost, so there is no capture, no frame walk and no `difflib`:

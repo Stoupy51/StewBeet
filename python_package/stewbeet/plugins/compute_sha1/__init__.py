@@ -1,4 +1,4 @@
-
+""" 🧮 Computes the SHA1 of each zip file in the build folder. """
 # Lazy imports (PEP 810), ignored before Python 3.15
 from stouputils.lazy import ALWAYS_LAZY
 

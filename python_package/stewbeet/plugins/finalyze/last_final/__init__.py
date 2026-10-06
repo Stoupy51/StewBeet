@@ -1,4 +1,4 @@
-
+""" 🏁 Last steps before saving: the source lore font, the pack icon and the macro line checks. """
 # Lazy imports (PEP 810), ignored before Python 3.15
 from stouputils.lazy import ALWAYS_LAZY
 

@@ -1,4 +1,4 @@
-
+""" 🗜️ Zips the generated datapack and resource pack. """
 # Lazy imports (PEP 810), ignored before Python 3.15
 from stouputils.lazy import ALWAYS_LAZY
 
@@ -106,6 +106,7 @@ class ConstantTimeZipFile(zipfile.ZipFile):
 		filename: str = name.filename if isinstance(name, ZipInfo) else name
 		if filename in self.skip_names:
 			return io.BytesIO()  # Discard the content, the caller will write a fixed version
+
 		stream: IO[bytes] = super().open(self._forced_info(filename), mode, pwd, force_zip64=force_zip64)
 		if not is_text_entry(filename):
 			return stream

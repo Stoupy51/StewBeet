@@ -1,4 +1,4 @@
-
+""" 🚀 First plugin of a build: resets the build state, fills configuration defaults and sets up both pack.mcmeta files. """
 # pyright: reportUnusedImport=false
 # ruff: noqa: F401
 

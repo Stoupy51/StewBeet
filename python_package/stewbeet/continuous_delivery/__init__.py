@@ -1,4 +1,4 @@
-
+""" 🚀 Publishing a project to GitHub, Modrinth, Smithed and PlanetMinecraft. """
 # Lazy imports (PEP 810), ignored before Python 3.15
 from stouputils.lazy import ALWAYS_LAZY
 

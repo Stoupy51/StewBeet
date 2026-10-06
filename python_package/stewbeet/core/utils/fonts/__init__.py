@@ -1,4 +1,4 @@
-""" Shared building blocks for the custom bitmap fonts StewBeet generates.
+""" 🔤 Shared building blocks for the custom bitmap fonts StewBeet generates.
 
 Imports are explicit rather than star imports: this package is re-exported all the way up to the top-level ``stewbeet`` namespace,
 and star importing would leak ``PIL.Image`` and friends into it.
