@@ -182,7 +182,7 @@ export const Hero: React.FC = () => {
                                 <div
                                     key={snippet.id}
                                     dangerouslySetInnerHTML={{ __html: snippet.html }}
-                                    className={`${switched ? 'code-swap ' : ''}font-mono text-[0.75rem] leading-[1.55] [&>pre]:!bg-transparent [&>pre]:!m-0 [&>pre]:!p-0 [&_code]:font-mono`}
+                                    className={`${switched ? 'code-swap ' : ''}font-mono text-[0.75rem] leading-[1.55] [&>pre]:!bg-transparent [&>pre]:[tab-size:4] [&>pre]:!m-0 [&>pre]:!p-0 [&_code]:font-mono`}
                                 />
                             </div>
                         </CodeTab>

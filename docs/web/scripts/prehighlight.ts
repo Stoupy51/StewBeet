@@ -48,10 +48,12 @@ export function extractRegion(source: string, name: string): string {
 
     // The width budget used to live in a doc comment, which is another way of saying it was not
     // enforced. Failing here is what keeps the hero from silently overflowing.
-    const tooWide = dedented.findIndex((line) => line.length > MAX_COLUMNS);
+    // Hero.tsx sets the panel's tab-size to 4, so a tab is 4 of these columns.
+    const columns = (line: string) => line.replace(/\t/g, '    ').length;
+    const tooWide = dedented.findIndex((line) => columns(line) > MAX_COLUMNS);
     if (tooWide !== -1) {
         throw new Error(
-            `prehighlight: line ${start + 2 + tooWide} of ${SOURCE} is ${dedented[tooWide].length} columns, ` +
+            `prehighlight: line ${start + 2 + tooWide} of ${SOURCE} is ${columns(dedented[tooWide])} columns, ` +
             `the hero panel fits ${MAX_COLUMNS}:\n    ${dedented[tooWide]}`,
         );
     }
