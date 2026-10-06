@@ -203,7 +203,6 @@ from .core import (
 	refined_recipes as refined_recipes,
 	register_record_song as register_record_song,
 	remember_source_path as remember_source_path,
-	remember_source_paths as remember_source_paths,
 	resolve_item_image as resolve_item_image,
 	resolve_pack as resolve_pack,
 	restore_filenames as restore_filenames,

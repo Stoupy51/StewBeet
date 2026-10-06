@@ -1,8 +1,8 @@
 """ Emits `.mcfunction.map` sidecars for bolt and mecha, read straight off the compiled AST.
 
-Same output contract as `stewbeet.plugins.sniffer`, an entirely different front half. Bolt's positions were never lost,
-so there is no capture, no frame walk and no `difflib`: every `mecha.AstNode` carries its own `location`,
-and column precision comes free.
+`stewbeet.plugins.sniffer` runs it from its teardown: the same output contract, an entirely different front half.
+Bolt's positions were never lost, so there is no capture, no frame walk and no `difflib`:
+every `mecha.AstNode` carries its own `location`, and column precision comes free.
 
 Not to be confused with `mecha.contrib.source_map`, which prepends a header comment naming the file
 and emits no line mapping at all.
@@ -15,18 +15,19 @@ __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
 import os
-from collections.abc import Iterator
 from dataclasses import dataclass, field
+from typing import Any
 
 import stouputils as stp
-from beet import Context
-from mecha import AstCommand, AstRoot, Mecha
+from beet import Context, Function
+from beet.core.file import TextFileBase
+from mecha import AstCommand, AstRoot, CompilationUnit, Mecha
 
-from ....core.source_paths import origin_path, remember_source_paths, restore_filenames
+from ....core.__memory__ import Mem
+from ....core.source_paths import origin_path, restore_filenames
 from ..align import align
 from ..model import CompiledLine, SourceOrigin, WriteChunk
-from ..sidecar import has_sidecar, write_sidecar
-from ..sources import reset_caches
+from ..sidecar import has_sidecar, pack_layout, render_sidecar, store_sidecar
 from .attribute import OnDisk, candidate_sources, owner_of, source_file_of
 from .compiled import compiled_line
 from .detect import project_vanilla_paths, unparseable_sources
@@ -105,6 +106,9 @@ def write_maps(ctx: Context) -> int:
 	because a StewBeet pipeline runs `auto.headers` after `mecha` and prepends a header block to every function.
 	That is the same reason the StewBeet producer aligns, so it is the same `align`.
 
+	A function the helpers also wrote into, like a load function a plugin prepends a line to, keeps the origins they recorded
+	and takes mecha's for the lines they left unmapped, replacing the map the capture half wrote first.
+
 	Returns:
 		How many sidecars were written.
 	"""
@@ -118,8 +122,8 @@ def write_maps(ctx: Context) -> int:
 
 	# The database keys are the objects mecha compiled, but `auto.headers` replaces every function object afterwards,
 	# so in a StewBeet build the resource location is what is left to match on.
-	by_file = {file: unit for file, unit in mc.database.items() if unit.ast}
-	by_location = {unit.resource_location: unit for unit in by_file.values() if unit.resource_location}
+	by_file: dict[TextFileBase[Any], CompilationUnit] = {file: unit for file, unit in mc.database.items() if unit.ast}
+	by_location: dict[str, CompilationUnit] = {unit.resource_location: unit for unit in by_file.values() if unit.resource_location}
 
 	compilation = Compilation(
 		mc=mc,
@@ -129,42 +133,35 @@ def write_maps(ctx: Context) -> int:
 	)
 	written: int = 0
 	for path, func in list(ctx.data.functions.items()):
-		if has_sidecar(ctx, path):
+		captured: list[WriteChunk] = Mem.source_map_chunks.get(path) or Mem.source_map_chunks.get(origin_path(path)) or []
+		if has_sidecar(ctx, path) and not captured:
 			continue
 		# A versioning refactor moves every function, and whether the unit is filed under the name
 		# before or after the move is decided by whether mecha compiled before or after it.
-		unit = by_file.get(func) or by_location.get(path) or by_location.get(origin_path(path))
+		unit: CompilationUnit | None = by_file.get(func) or by_location.get(path) or by_location.get(origin_path(path))
 		if unit is None or unit.ast is None:
 			continue
-
 		own_file: str | None = source_file_of(unit, directory) or parents.get(unit.source or "")
-		chunks: list[WriteChunk] = compilation.chunks(path, unit.ast, unit.source, own_file)
-		if write_sidecar(ctx, path, func, align(chunks, func.text)):
-			written += 1
+		compiled: dict[int, SourceOrigin] = align(compilation.chunks(path, unit.ast, unit.source, own_file), func.text)
+		written += write_merged_sidecar(ctx, path, func, merged_origins(compiled, captured, func.text))
 	return written
 
 
-# Main entry point
-@stp.measure_time(message="Execution time of 'stewbeet.plugins.sniffer.mecha'")
-def beet_default(ctx: Context) -> Iterator[None]:
-	""" Map every compiled function back to the module that wrote it.
+def write_merged_sidecar(ctx: Context, path: str, func: Function, mapped: dict[int, SourceOrigin] | None) -> int:
+	""" Write a function's map over any the capture half wrote, and return 1 when one was written. """
+	rendered: str | None = render_sidecar(path, func, mapped, *pack_layout(ctx)) if mapped else None
+	if rendered is None:
+		return 0
+	store_sidecar(ctx, path, rendered)
+	return 1
 
-	**For a project with no StewBeet writes in it.** `stewbeet.plugins.sniffer` calls `write_maps` itself from its own teardown,
-	so a project listing that one needs nothing here, and listing both writes each sidecar once.
 
-	**List this before `mecha` in the pipeline.** It does its work after the yield, and beet unwinds generator plugins in reverse,
-	so listing it first is what leaves the `Module` compilation units and their sources in the database. Listed after `mecha`,
-	they are already purged and every line comes out unmapped.
-
-	Args:
-		ctx: The beet context.
-	"""
-	reset_caches()
-	# Now, before a later plugin reads a function and beet forgets which file it came from.
-	remember_source_paths(ctx)
-
-	yield
-
-	written: int = write_maps(ctx)
-	stp.info(f"sniffer.mecha: wrote {written} source map{'' if written == 1 else 's'}")
+def merged_origins(compiled: dict[int, SourceOrigin], captured: list[WriteChunk], text: str) -> dict[int, SourceOrigin] | None:
+	""" mecha's origins, under those of what the helpers wrote. None when the helpers' map already holds every line mecha maps. """
+	if not captured:
+		return compiled
+	written_lines: dict[int, SourceOrigin] = align(captured, text)
+	if compiled.keys() <= written_lines.keys():
+		return None
+	return {**compiled, **written_lines}
 

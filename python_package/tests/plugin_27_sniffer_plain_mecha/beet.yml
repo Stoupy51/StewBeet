@@ -1,12 +1,12 @@
 
-# Test: stewbeet.plugins.sniffer.mecha with no bolt anywhere.
+# Test: stewbeet.plugins.sniffer on a mecha project with no bolt anywhere.
 # The mecha AST emitter is meant to serve plain beet and plain mecha as well as bolt, and those
 # are the dialects with no test of their own. Two shapes are covered:
 #
 #   on_disk.mcfunction  a real file mecha compiles, which maps to itself with real columns.
-#   assembled           a Function built in Python and assigned into the pack. Its AST positions
-#                       index into that in-memory string, not into any file, so it maps nowhere.
-#                       Mapping it onto whichever file happens to agree on the offset is the
+#   assembled           a Function built in Python and assigned into the pack, which maps to the line
+#                       of Python that built it. Its AST positions index into that in-memory string,
+#                       so mapping it onto whichever file happens to agree on the offset is the
 #                       plausible-looking wrong jump FR-010 forbids.
 
 id: "tns"
@@ -18,13 +18,17 @@ minecraft: "26.2"
 directory: "."
 output: "build"
 
+require:
+    # src.assertions is listed first and yields, so its checks run last of all, after the sniffer
+    # in the same list has mapped what mecha compiled. beet unwinds `require` in reverse too.
+    - "src.assertions"
+    - "stewbeet.plugins.sniffer"
+
 data_pack:
     name: "datapack"
     load: ["src"]
 
 pipeline:
-    - "src.assertions"
     - "src.link"
-    - "stewbeet.plugins.sniffer.mecha"
     - "mecha"
 

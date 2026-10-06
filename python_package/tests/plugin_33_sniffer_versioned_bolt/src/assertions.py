@@ -1,5 +1,5 @@
 
-# Assertions for: the bolt sources stewbeet.plugins.sniffer.mecha marks under a versioning refactor
+# Assertions for: the bolt sources stewbeet.plugins.sniffer marks under a versioning refactor
 
 # Imports
 import json

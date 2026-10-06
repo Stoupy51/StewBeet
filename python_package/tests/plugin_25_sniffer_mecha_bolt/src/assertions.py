@@ -1,4 +1,4 @@
-# Assertions for: stewbeet.plugins.sniffer.mecha
+# Assertions for: stewbeet.plugins.sniffer on a bolt project
 
 # Imports
 import json

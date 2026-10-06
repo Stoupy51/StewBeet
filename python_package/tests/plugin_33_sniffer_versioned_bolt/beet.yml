@@ -18,16 +18,17 @@ directory: "."
 output: "build"
 
 require:
+    # src.assertions is listed first and yields, so its checks run last of all, after the sniffer
+    # in the same list has mapped what mecha compiled. beet unwinds `require` in reverse too.
+    - "src.assertions"
     - "bolt"
+    - "stewbeet.plugins.sniffer"
 
 data_pack:
     name: "datapack"
     load: ["src"]
 
 pipeline:
-    - "src.assertions"
-    # Before the refactor, while beet still says which file each function was loaded from.
-    - "stewbeet.plugins.sniffer.mecha"
     - "src.versioning"
     - "mecha"
 

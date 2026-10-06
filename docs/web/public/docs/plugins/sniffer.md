@@ -30,6 +30,7 @@ the Minecraft debugger the plugin is named after.
 - Writes one `<name>.mcfunction.map` per function, beside the function and named after it. The function itself is untouched
 - Maps content a plugin generated from one of your declarations back to that `Block(...)` or `Item(...)` call
 - Maps what **mecha** compiled as well, so a `.bolt` module and a `.mcfunction` holding bolt lead back to their own lines
+- Maps each line of a function both wrote to, like a load function a plugin prepends to, back to its own origin
 - Never names a file inside StewBeet, beet, bolt, mecha or stouputils: a mapping points at your own source or at nothing
 
 ## Configuration
@@ -59,19 +60,14 @@ Forget it and the maps are still written at the very end of the build, with a wa
 
 ### <u>A project with no StewBeet writes in it</u>
 
-A pure bolt or mecha project has nothing for the recording half to catch, and the compiled half works
-on its own. `stewbeet.plugins.sniffer.mecha` is that half, listed in the pipeline **before** `mecha`:
+A pure bolt or mecha project needs the same single line. Nothing calls the helpers, so nothing is recorded,
+and every function mecha compiled is mapped from its AST:
 
 ```yaml
-pipeline:
-    - "stewbeet.plugins.sniffer.mecha"
-    - "mecha"
+require:
+    - "bolt"
+    - "stewbeet.plugins.sniffer"
 ```
-
-Listing it after `mecha` is the mistake to expect: it works after its `yield`, and beet unwinds
-generator plugins in reverse, so listing it first is what leaves the module sources in the database.
-A project that lists `stewbeet.plugins.sniffer` needs none of this, and listing both changes nothing:
-a sidecar is never written twice.
 
 ## What you get
 

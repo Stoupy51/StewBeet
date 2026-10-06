@@ -1,4 +1,4 @@
-# Assertions for: stewbeet.plugins.sniffer.mecha on a function edited before mecha compiled it
+# Assertions for: stewbeet.plugins.sniffer on a function edited before mecha compiled it
 
 # Imports
 import json
@@ -29,15 +29,18 @@ def decode_vlq(segment: str) -> list[int]:
 	return values
 
 
-def decode_lines(mappings: str) -> dict[int, int]:
-	""" Generated line to source line, reading the first segment of each line. """
-	out: dict[int, int] = {}
+def decode_origins(mappings: str) -> dict[int, tuple[int, int]]:
+	""" Generated line to (source index, source line), reading the first segment of each line. """
+	out: dict[int, tuple[int, int]] = {}
+	source: int = 0
 	line: int = 0
 	for generated_line, group in enumerate(mappings.split(";")):
 		if not group:
 			continue
-		line += decode_vlq(group.split(",")[0])[2]
-		out[generated_line] = line
+		fields: list[int] = decode_vlq(group.split(",")[0])
+		source += fields[1]
+		line += fields[2]
+		out[generated_line] = (source, line)
 	return out
 
 
@@ -53,15 +56,26 @@ def beet_default(ctx: Context) -> Iterator[None]:
 	with open("src/data/tns/function/load.mcfunction", encoding="utf-8") as file:
 		on_disk: list[str] = file.read().splitlines()
 	generated: list[str] = ctx.data.functions["tns:load"].text.splitlines()
-	origins: dict[int, int] = decode_lines(str(source_map["mappings"]))
+	sources: list[str] = [str(source) for source in source_map["sources"]]
+	origins: dict[int, tuple[int, int]] = decode_origins(str(source_map["mappings"]))
 
+	# The prepended line comes from the Python that prepended it
+	with open("src/prepend.py", encoding="utf-8") as file:
+		prepend_line: int = next(i for i, line in enumerate(file.read().splitlines()) if ".prepend(" in line)
 	assert generated[0] == "scoreboard objectives add tns.math dummy", generated
-	assert 0 not in origins, "the prepended line is in no file, so it maps nowhere"
-	for generated_line, source_line in origins.items():
+	assert 0 in origins and sources[origins[0][0]].endswith("prepend.py") and origins[0][1] == prepend_line, (
+		f"the prepended line must map to prepend.py:{prepend_line}, got {origins.get(0)} over {sources}"
+	)
+
+	# And every command written on disk to its own line there
+	from_disk: dict[int, int] = {
+		generated_line: line for generated_line, (source, line) in origins.items() if sources[source].endswith("load.mcfunction")
+	}
+	for generated_line, source_line in from_disk.items():
 		assert on_disk[source_line] == generated[generated_line], (
 			f"generated line {generated_line} '{generated[generated_line]}' maps to '{on_disk[source_line]}' on disk"
 		)
-	assert len(origins) == 3, f"each of the three commands written on disk is mapped, got {origins}"
+	assert len(from_disk) == 3, f"each of the three commands written on disk is mapped, got {origins}"
 
-	print("plugin_35: an edited function maps to the lines on disk, and the added line to nothing")
+	print("plugin_35: an edited function maps to the lines on disk, and the added line to the Python that added it")
 

@@ -15,7 +15,6 @@ __lazy_modules__ = ALWAYS_LAZY
 import os
 from typing import Any
 
-from beet import Context
 from beet.core.file import TextFileBase
 from mecha import Mecha
 
@@ -23,18 +22,6 @@ from .__memory__ import Mem
 
 
 # Functions
-def remember_source_paths(ctx: Context) -> None:
-	""" Note where every file in the pack was loaded from, while beet still says.
-
-	A plugin running before the pack is loaded has nothing to sweep and hooks each file as it arrives instead,
-	which is what `plugins.sniffer` does.
-	"""
-	for pack in (ctx.data, ctx.assets):
-		for _, file in pack.all():
-			if isinstance(file, TextFileBase):
-				remember_source_path(file)
-
-
 def remember_source_path(file: TextFileBase[Any]) -> None:
 	""" Note where one file was loaded from, unless beet has forgotten or somebody got there first. """
 	if file.source_path is not None:

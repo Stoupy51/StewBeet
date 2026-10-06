@@ -84,11 +84,8 @@ def write_mecha_maps(ctx: Context) -> int:
 
 	Done from here rather than from a pipeline entry of its own, because here is where it works:
 	beet unwinds `require` last, so mecha has compiled, `auto.headers` has prepended its headers,
-	and mecha's compilation units are still in its database. A project lists one plugin instead of
-	two and cannot list them in the wrong order.
-
-	`stewbeet.plugins.sniffer.mecha` stays on its own for a bolt or mecha project with no StewBeet writes in it.
-	Listing both is harmless: a sidecar is never written twice, so this writes none.
+	and mecha's compilation units are still in its database. A bolt or mecha project with no StewBeet writes in it
+	needs nothing more than this plugin either.
 
 	Args:
 		ctx: The beet context.

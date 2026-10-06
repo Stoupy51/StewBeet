@@ -1,4 +1,4 @@
-# Assertions for: stewbeet.plugins.sniffer.mecha on a project with no bolt
+# Assertions for: stewbeet.plugins.sniffer on a project with no bolt
 
 # Imports
 import json
@@ -81,22 +81,24 @@ def beet_default(ctx: Context) -> Iterator[None]:
 		str(on_disk["sourceRoot"]), str(next(iter(on_disk["sources"])))))
 	assert os.path.isfile(resolved), f"sourceRoot + sources must resolve on disk, got {resolved}"
 
-	# A Function assembled in Python has no file behind it, and its AST positions index into the string it was parsed from.
-	# Any of them is a valid position in some project file, so a careless emitter maps it onto whichever one it finds.
-	for path in ("assembled", "via_namespace"):
-		assert f"data/tns/function/{path}.mcfunction.map" not in maps, (
-			f"{path} was assembled in memory and has no source file, so it must be emitted unmapped"
-		)
-		assert "sourceMappingURL" not in ctx.data.functions[f"tns:{path}"].text, (
-			f"{path} has no map, so it must not carry a discovery comment"
-		)
+	# A Function assembled in Python maps to the line that assembled it. Its AST positions index into that string,
+	# and any of them is a valid position in some project file, which a careless emitter would map it onto instead.
+	with open("src/link.py", encoding="utf-8") as file:
+		link_lines: list[str] = file.read().splitlines()
+	for path, needle in (("assembled", '"tns:assembled"'), ("via_namespace", '["via_namespace"]')):
+		assembled: JsonDict | None = maps.get(f"data/tns/function/{path}.mcfunction.map")
+		assert assembled is not None, f"{path} was assembled in link.py and must map there, got {sorted(maps)}"
+		assert [str(source) for source in assembled["sources"]] == ["src/link.py"], assembled["sources"]
+		written_at: int = next(i for i, line in enumerate(link_lines) if needle in line)
+		mapped_lines: set[int] = {line for _, line, _ in decode_mappings(str(assembled["mappings"])).values()}
+		assert mapped_lines == {written_at}, f"{path} must map to link.py:{written_at}, got {mapped_lines}"
 
 	# And nothing anywhere may name a file that did not write it.
 	for path, data in maps.items():
 		for source in data["sources"]:
-			assert str(source).endswith("on_disk.mcfunction"), (
+			assert str(source).endswith(("on_disk.mcfunction", "link.py")), (
 				f"{path} names {source}, which is not where its commands came from"
 			)
 
-	print(f"plugin_27: {len(maps)} map(s) from plain mecha, assembled functions correctly unmapped")
+	print(f"plugin_27: {len(maps)} map(s) from plain mecha, assembled functions mapped to the Python that assembled them")
 

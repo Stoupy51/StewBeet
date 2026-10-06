@@ -163,7 +163,6 @@ from .placeholder_context import (
 from .source_paths import (
 	origin_path as origin_path,
 	remember_source_path as remember_source_path,
-	remember_source_paths as remember_source_paths,
 	restore_filenames as restore_filenames,
 )
 from .utils.equation import (

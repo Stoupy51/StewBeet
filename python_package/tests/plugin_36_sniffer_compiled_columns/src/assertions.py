@@ -1,4 +1,4 @@
-# Assertions for: the bolt, columns and opaque data of stewbeet.plugins.sniffer.mecha
+# Assertions for: the bolt, columns and opaque data stewbeet.plugins.sniffer maps
 
 # Imports
 import json
