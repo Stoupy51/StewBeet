@@ -180,10 +180,6 @@
         "title": "StewBeet: Show Diagnostics Status"
       },
       {
-        "command": "stewbeet.excludeBoltFromSpyglass",
-        "title": "StewBeet: Exclude Bolt Files From Spyglass"
-      },
-      {
         "command": "stewbeet.installSpyglass",
         "title": "StewBeet: Install Spyglass Language Server"
       }

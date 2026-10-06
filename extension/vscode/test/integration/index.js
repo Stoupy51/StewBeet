@@ -288,7 +288,7 @@ exports.run = async () => {
 
     // Step D and E: a bolt file is served, and a .mcfunction holding bolt is taken off Spyglass.
 
-    // Repeatable: the exclusion this test writes is an artifact, not a fixture.
+    // A config an older run left would exclude the file this step expects Spyglass to keep indexing.
     const rcPath = path.join(root, ".spyglassrc.json");
     try { fs.unlinkSync(rcPath); } catch { /* absent is the normal case */ }
 
@@ -331,17 +331,20 @@ exports.run = async () => {
     expect("US7 a vanilla .mcfunction keeps Spyglass", vanilla && vanilla.languageId === "mcfunction",
       vanilla && vanilla.languageId);
 
-    // The second half. Spyglass reads the pack off disk and keeps what it already published, so
-    // only its own exclude list clears it. Nothing lets one extension drop another's diagnostics.
-    await vscode.commands.executeCommand("stewbeet.excludeBoltFromSpyglass");
-    await sleep(6000);
-    note("boltish_rcWritten", fs.existsSync(rcPath) ? fs.readFileSync(rcPath, "utf8").trim() : null);
-    const afterExclude = (vscode.languages.getDiagnostics(boltish) || [])
+    // The second half. Spyglass reads the pack off disk and keeps reporting the file it indexed,
+    // and the filter on its diagnostic collection is what drops those reports.
+    await sleep(2000);
+    const afterFilter = (vscode.languages.getDiagnostics(boltish) || [])
       .filter(d => !String(d.source || "").startsWith("stewbeet"));
-    note("boltish_foreignDiagnostics", afterExclude.map(d => `${d.source}|${d.range.start.line}`));
-    expect("US7 the exclusion silences Spyglass on it", afterExclude.length === 0, afterExclude.length);
+    note("boltish_foreignDiagnostics", afterFilter.map(d => `${d.source}|${d.range.start.line}`));
+    expect("US7 Spyglass's reports on it are dropped", afterFilter.length === 0, afterFilter.length);
 
-    // The vanilla file must not have been swept up in the exclusion.
+    // Dropped rather than excluded, so the file stays in Spyglass's index and the function it defines is still offered.
+    const declared = await completionsAt(realUri, new vscode.Position(1, "function probe:".length), ":");
+    expect("US7 the function it defines stays declared", declared.some(it => label(it).includes("boltish")),
+      declared.map(label).slice(0, 20));
+
+    // The vanilla file must not have been swept up by the filter.
     const vanillaCompletions = await completionsAt(realUri, new vscode.Position(1, 0));
     expect("US7 the vanilla file still has Spyglass", vanillaCompletions.length > 0, vanillaCompletions.length);
 

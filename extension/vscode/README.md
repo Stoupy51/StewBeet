@@ -43,15 +43,8 @@ https://github.com/user-attachments/assets/57fd9d18-1643-45bc-8257-4942865c9be4
 
 ### Bolt inside a `.mcfunction`
 
-These files get the `bolt` language id too: every file the last build compiled as bolt, with mecha's nesting, a command over several lines or a command a plugin added, and before any build, the files whose text gives it away. Spyglass still reports them from disk,
-so **StewBeet: Exclude Bolt Files From Spyglass** adds every one the last build compiled to `.spyglassrc.json`,
-or your build can keep that list updated, and declare to Spyglass the functions only those files define:
-
-```yaml
-pipeline:
-    - "mecha"
-    - "stewbeet.plugins.spyglass"
-```
+These files get the `bolt` language id too: every file the last build compiled as bolt, with mecha's nesting, a command over several lines or a command a plugin added, and before any build, the files whose text gives it away.
+Spyglass still indexes them, so the functions they define are known to the files that call them, and the errors it reports on their bolt lines are dropped.
 
 ## beet
 
@@ -132,7 +125,7 @@ All under `StewBeet.*`:
 | `borderColor`            | `rgba(200,120,30,0.30)` | Any CSS colour                                                                                   |
 | `borderWidth`            | `"2px"`                 |                                                                                                  |
 
-Commands, from the palette: **Go to Generated Function**, **Go to Python Source**, **Reload Source Maps**, **Refresh Build Diagnostics**, **Show Diagnostics Status**, **Exclude Bolt Files From Spyglass**, **Install Spyglass Language Server**.
+Commands, from the palette: **Go to Generated Function**, **Go to Python Source**, **Reload Source Maps**, **Refresh Build Diagnostics**, **Show Diagnostics Status**, **Install Spyglass Language Server**.
 
 ![Palette commands](https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/extension/vscode/images/palette_commands.png)
 

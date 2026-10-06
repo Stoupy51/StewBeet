@@ -136,68 +136,6 @@ test("the Spyglass-backed providers reach a bolt file too", () => {
   assert.ok(/language:\s*["']python["']/.test(body), "and Python keeps what it had");
 });
 
-// Telling Spyglass to skip the file, which is the half a language id cannot do
-
-test("an exclusion is added without disturbing the rest of the config", () => {
-  const { withExclusions } = require("../src/bolt.js");
-  const existing = {
-    env: { dependencies: ["@vanilla-datapack"], exclude: ["build/**"] },
-    somethingElse: { kept: true },
-  };
-  const updated = withExclusions(existing, ["src/a.mcfunction"]);
-  assert.deepEqual(updated.env.exclude, ["build/**", "src/a.mcfunction"]);
-  assert.deepEqual(updated.env.dependencies, ["@vanilla-datapack"], "the project's own settings survive");
-  assert.deepEqual(updated.somethingElse, { kept: true });
-});
-
-test("a config with nothing in it still gets a well-formed exclude", () => {
-  const { withExclusions } = require("../src/bolt.js");
-  assert.deepEqual(withExclusions({}, ["a.mcfunction"]), { env: { exclude: ["a.mcfunction"] } });
-});
-
-test("adding an exclusion that is already there changes nothing", () => {
-  const { withExclusions } = require("../src/bolt.js");
-  assert.equal(withExclusions({ env: { exclude: ["a.mcfunction"] } }, ["a.mcfunction"]), null,
-    "null is what stops the command rewriting the file on every invocation");
-});
-
-test("the pattern is relative to the project root, with forward slashes", () => {
-  const { excludePatternFor } = require("../src/bolt.js");
-  const root = path.join("D:", "proj");
-  const file = path.join(root, "data", "ns", "function", "x.mcfunction");
-  assert.equal(excludePatternFor(root, file), "data/ns/function/x.mcfunction",
-    "Spyglass matches a forward-slash relative path whatever the platform");
-});
-
-test("an existing Spyglass config is preferred over creating a new one", () => {
-  const { spyglassConfigPath, SPYGLASS_CONFIG_NAMES } = require("../src/bolt.js");
-  const os = require("node:os");
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), "stewbeet-spyglassrc-"));
-  assert.equal(path.basename(spyglassConfigPath(root)), ".spyglassrc.json", "the default when there is none");
-
-  fs.writeFileSync(path.join(root, "spyglass.json"), "{}");
-  assert.equal(path.basename(spyglassConfigPath(root)), "spyglass.json", "never a second config beside the real one");
-  assert.equal(SPYGLASS_CONFIG_NAMES[0], "spyglass.json", "Spyglass's own precedence order, kept");
-});
-
-test("writing the exclusion round-trips through a real file", () => {
-  const { addExclusions } = require("../src/bolt.js");
-  const os = require("node:os");
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), "stewbeet-spyglassrc-"));
-  const file = path.join(root, "data", "ns", "function", "x.mcfunction");
-
-  const first = addExclusions(root, [file]);
-  assert.ok(first, "the first call writes");
-  assert.deepEqual(JSON.parse(fs.readFileSync(first.path, "utf8")),
-    { env: { exclude: ["data/ns/function/x.mcfunction"] } });
-
-  assert.equal(addExclusions(root, [file]), null, "the second call has nothing to do");
-
-  // A file both switched in the session and named by the build arrives twice, and is one new exclusion.
-  const other = path.join(root, "data", "ns", "function", "y.mcfunction");
-  assert.deepEqual(addExclusions(root, [file, other, other]).added, ["data/ns/function/y.mcfunction"]);
-});
-
 // Writing a Function straight into the pack, which is plain beet's own idiom
 //
 // `ctx.data.functions[path] = Function(...)` is how a plain beet plugin writes a function, and

@@ -7,8 +7,7 @@
 
 - **Commands in a bolt file take Spyglass's colours**, as in a `.mcfunction` it reads, through the same projection completion uses. The Python around them keeps the grammar's colours, and so does a value bolt computes inside a command.
 - **The build says which `.mcfunction` files are bolt**, so a file using mecha's nesting, `~/` paths, a command over several lines or a command a plugin added is switched even with no Python in it, and a file already open is switched when the build that names it lands. The guess from the text remains for a project not built yet.
-- **Exclude Bolt Files From Spyglass** names every bolt source the last build compiled, not only the files opened since.
-- **`stewbeet.plugins.spyglass` declares what an excluded file defines** in a pack beside the build output, so a plain `.mcfunction` calling a function only a bolt file defines is not told it does not exist.
+- **Spyglass no longer underlines a `.mcfunction` holding bolt, and still indexes it**: the functions it defines are known to the files that call them, and ctrl+click reaches it. No `.spyglassrc.json` entry is needed, so **Exclude Bolt Files From Spyglass** is removed.
 - **A command over several lines reaches Spyglass as one**, joined with the `\` continuation it knows, whether mecha's `multiline` mode or a bolt bracket spread it.
 - **`~/child`, `./x` and `../x` are resolved** to the function mecha made of them, so they are no longer reported and ctrl+click follows them.
 - **A value is resolved exactly**, from the columns of each AST node the build records, so `int(major)` or `~/` becomes what mecha produced even where it rewrote the text around it (`1t` into `1`).

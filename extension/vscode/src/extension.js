@@ -2,7 +2,6 @@
 "use strict";
 
 const vscode = require("vscode");
-const path = require("path");
 const { findBlockOffsets } = require("./blocks");
 const {
   TRIGGER_CHARACTERS,
@@ -22,7 +21,8 @@ const diagnostics = require("./diagnostics");
 const { registerCodeLenses, refreshCodeLenses } = require("./codelens");
 const { functionIdOf } = require("./lenses");
 const { registerHeaderNavigation } = require("./headers");
-const { looksLikeBolt, isBuildOutput, addExclusions } = require("./bolt");
+const { looksLikeBolt, isBuildOutput } = require("./bolt");
+const { registerSpyglassFilter } = require("./spyglassfilter");
 const { registerSemanticTokens } = require("./semantic");
 const { registerPainting } = require("./paint");
 const { SPYGLASS_EXTENSION_ID, OFFER_MESSAGE, OFFER_ACTIONS, shouldOffer } = require("./spyglass");
@@ -122,6 +122,7 @@ function activate(context) {
   registerCodeLenses(context);
   registerHeaderNavigation(context);
   registerBoltDetection(context);
+  registerSpyglassFilter(context, builds.event);
   registerSpyglassOffer(context);
   diagnostics.registerDiagnosticRelay(context);
 }
@@ -187,12 +188,11 @@ async function installSpyglass() {
 // Bolt inside .mcfunction
 
 /**
- * Take a `.mcfunction` that holds bolt away from Spyglass, which cannot parse it.
+ * Give a `.mcfunction` that holds bolt this extension's bolt language rather than Spyglass's mcfunction.
  *
  * A project can enable bolt syntax inside `.mcfunction` files, and StewBeet's own minimal
- * template does. Spyglass then reports most of the file as a syntax error, and no API can
- * remove another extension's diagnostics. Changing the language id is the whole fix: `bolt`
- * is not in Spyglass's selector, and it is in this extension's grammar.
+ * template does. `bolt` is not in Spyglass's selector, and it is in this extension's grammar.
+ * What Spyglass still reports from its own index off disk is dropped by `spyglassfilter`.
  *
  * Only source files are considered. A generated function is left alone whatever it contains,
  * because Spyglass is exactly what a build's output wants.
@@ -202,9 +202,6 @@ async function installSpyglass() {
 function registerBoltDetection(context) {
   /** Already switched, so a document reopened under its new id is not reconsidered. */
   const handled = new Set();
-  /** Switched files per workspace folder, which is what an exclusion would name. */
-  const switched = new Map();
-  let offered = false;
 
   /** @param {vscode.TextDocument} doc */
   async function consider(doc) {
@@ -227,87 +224,6 @@ function registerBoltDetection(context) {
       await vscode.languages.setTextDocumentLanguage(doc, "bolt");
     } catch (e) {
       console.debug("[StewBeet] could not set the bolt language id", e);
-      return;
-    }
-
-    const folder = vscode.workspace.getWorkspaceFolder(doc.uri);
-    if (!folder) return;
-    const root = folder.uri.fsPath;
-    switched.set(root, [...(switched.get(root) ?? []), doc.uri.fsPath]);
-    offerExclusion(doc.uri);
-  }
-
-  /**
-   * Offer once, and only when there is something to fix.
-   *
-   * The language id stops Spyglass answering about the open document; it does not stop Spyglass
-   * indexing the data pack off disk, and that index is what puts the squiggles in the Problems
-   * panel. Its own `env.exclude` does stop it, so the offer is to write that entry.
-   * @param {vscode.Uri} uri
-   */
-  async function offerExclusion(uri) {
-    if (offered) return;
-    // Spyglass publishes on its own schedule, so ask again shortly rather than once immediately.
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    const foreign = (vscode.languages.getDiagnostics(uri) || [])
-      .filter(d => !String(d.source || "").startsWith("stewbeet"));
-    if (foreign.length === 0 || offered) return;
-
-    offered = true;
-    const name = path.basename(uri.fsPath);
-    const choice = await vscode.window.showInformationMessage(
-      `${name} holds bolt, which Spyglass cannot parse, so it reports the whole file. ` +
-      "Excluding it from Spyglass is the one supported way to stop that.",
-      "Add exclusion", "Or move it to .bolt", "Not now",
-    );
-    if (choice === "Add exclusion") await excludeSwitchedFiles();
-    if (choice === "Or move it to .bolt") await explainConversion(name);
-  }
-
-  /**
-   * Why the tidier fix is not a button.
-   *
-   * Moving the file to `data/<ns>/module/<name>.bolt` looks like the obvious answer and is not a
-   * move: a module runs its own statements and defines no function, so the commands that were the
-   * body of `<ns>:<name>` stop being written and the pack silently loses them. Keeping them means
-   * wrapping the body in a `function` block, which is an edit only the author can make.
-   * @param {string} name
-   */
-  async function explainConversion(name) {
-    const target = name.replace(/\.mcfunction$/, ".bolt");
-    await vscode.window.showInformationMessage(
-      `Moving ${name} to a module is not just a rename: a .bolt module defines no function on its own, ` +
-      `so the pack would lose what ${name} writes today.`,
-      { modal: true, detail:
-        `To convert it by hand:\n\n` +
-        `1. Move it to data/<namespace>/module/${target}\n` +
-        `2. Wrap its commands in a block, so they are written somewhere:\n\n` +
-        `       function <namespace>:${name.replace(/\.mcfunction$/, "")}:\n` +
-        `           <the commands that were at the top level>\n\n` +
-        `3. Make sure "bolt" is in your beet require list, and that meta.bolt.entrypoint reaches ` +
-        `the module if it needs to run on its own.\n\n` +
-        `Until then, the exclusion keeps Spyglass quiet and changes nothing about the build.` },
-    );
-  }
-
-  /** Write every bolt source, those the last build compiled and those switched since, into its project's Spyglass config. */
-  async function excludeSwitchedFiles() {
-    const sources = new Map(switched);
-    for (const file of sourcemap.boltSources(await navigation.findMaps())) {
-      const root = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(file))?.uri.fsPath;
-      if (root) sources.set(root, [...(sources.get(root) ?? []), file]);
-    }
-    if (sources.size === 0) {
-      vscode.window.showInformationMessage("StewBeet: no bolt was found in a .mcfunction file, so there is nothing to exclude.");
-      return;
-    }
-    for (const [root, files] of sources) {
-      const result = addExclusions(root, files);
-      if (!result) continue;
-      const doc = await vscode.workspace.openTextDocument(result.path);
-      await vscode.window.showTextDocument(doc, { preview: false });
-      vscode.window.showInformationMessage(
-        `StewBeet: excluded ${result.added.length} file(s) from Spyglass in ${path.basename(result.path)}.`);
     }
   }
 
@@ -318,7 +234,6 @@ function registerBoltDetection(context) {
     builds.event(() => vscode.workspace.textDocuments.forEach(consider)),
     // A file that becomes bolt while open, which is what adding the first `for` loop looks like.
     vscode.workspace.onDidSaveTextDocument(consider),
-    vscode.commands.registerCommand("stewbeet.excludeBoltFromSpyglass", excludeSwitchedFiles),
     vscode.workspace.onDidChangeConfiguration(e => {
       if (e.affectsConfiguration(`${CFG_KEY}.boltInMcfunction`)) {
         handled.clear();
