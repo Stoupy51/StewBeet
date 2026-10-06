@@ -16,15 +16,15 @@ import stouputils as stp
 # Constants
 TEMPLATES_URL: dict[str, dict[str, str]] = {
 	"minimal": {
-		"url": "https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/tags/__VERSION__/templates/minimal_template.zip",
+		"url": "https://github.com/Stoupy51/StewBeet/releases/download/__VERSION__/minimal_template.zip",
 		"desc": "🔹 A very minimal template using only one `stewbeet` plugin."
 	},
 	"basic": {
-		"url": "https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/tags/__VERSION__/templates/basic_template.zip",
+		"url": "https://github.com/Stoupy51/StewBeet/releases/download/__VERSION__/basic_template.zip",
 		"desc": "⭐ (Recommended) Complete configuration with all plugins but WITHOUT coded examples."
 	},
 	"extensive": {
-		"url": "https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/tags/__VERSION__/templates/extensive_template.zip",
+		"url": "https://github.com/Stoupy51/StewBeet/releases/download/__VERSION__/extensive_template.zip",
 		"desc": "🌟 Complete template with ALL features and coded examples (ruby ore, tools, etc.)."
 	},
 }

@@ -52,7 +52,7 @@ const Card = ({ template }: { template: TemplateCard }) => {
             <div className="mt-6 flex flex-col gap-3">
                 <CopyCommand command={command} variant={recommended ? 'primary' : 'default'} className="w-full justify-between" />
                 <a
-                    href={`${REPO}/raw/main/templates/${name}_template.zip`}
+                    href={`${REPO}/releases/latest/download/${name}_template.zip`}
                     download
                     className={`inline-flex items-center gap-1.5 self-start text-xs ${TEXT_ACCENT_HOVER}`}
                 >

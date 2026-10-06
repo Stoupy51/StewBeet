@@ -21,7 +21,7 @@ def main() -> None:
 	for template in TEMPLATES:
 		stp.make_archive(
 			source=template,
-			destinations=f"{TEMPLATES_FOLDER}/{os.path.basename(template)}_template.zip",
+			destinations=f"{ROOT}/python_package/dist/{os.path.basename(template)}_template.zip",
 			create_dir=True,
 			ignore_patterns="__pycache__, .beet_cache, build, .venv, uv.lock",
 		)

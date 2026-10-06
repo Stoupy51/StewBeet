@@ -20,8 +20,8 @@ from stewbeet.core.migrate import run_migration, select_packs
 from stewbeet.core.migrate.plan import MigrationPlan
 
 # Constants
-TEMPLATES: Path = Path(__file__).resolve().parents[2] / "templates"
-""" The template archives `stewbeet migrate` would otherwise download. """
+TEMPLATES: Path = Path(__file__).resolve().parents[1] / "dist"
+""" The template archives `stewbeet migrate` would otherwise download, written by `scripts/zip_templates.py`. """
 
 PLAIN_MCMETA: dict[str, dict[str, int | str]] = {"pack": {"pack_format": 48, "description": "My pack"}}
 

@@ -14,6 +14,7 @@ GITHUB_CONFIG: JsonDict = {
 	"endswith": [
 		f"{CURRENT_VERSION}.tar.gz",
 		f"{CURRENT_VERSION}-py3-none-any.whl",
+		"_template.zip",
 	],
 }
 

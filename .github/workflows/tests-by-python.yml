@@ -34,5 +34,5 @@ jobs:
       - name: Run integration tests with python ${{ inputs.python-version }}
         run: cd ./python_package && uv run scripts/run_integration_tests.py
       - name: Run migration tests with python ${{ inputs.python-version }}
-        run: cd ./python_package && uv run scripts/run_migration_tests.py
+        run: cd ./python_package && uv run ../scripts/zip_templates.py && uv run scripts/run_migration_tests.py
 
