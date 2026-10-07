@@ -77,7 +77,7 @@ Want to help improve StewBeet? 🔍<br>
 Here's how you can contribute:
 - 🐛 **Report Bugs**: Found a bug? Open an issue on GitHub describing what happened and how to reproduce it.
 - ✨ **Suggest Features**: Have an idea for a new feature? Share it in the issues section!
-- 🔧 **Submit Pull Requests**: Feel free to fix bugs or add new features by submitting pull requests.
+- 🔧 **Submit Pull Requests**: Feel free to fix bugs or add new features by submitting pull requests. Cloning with `git clone --filter=blob:none https://github.com/Stoupy51/StewBeet` downloads past files only when you need them.
 - 📚 **Improve Documentation**: Help make our docs better by fixing errors or adding examples.
 - 💬 **Help Others**: Join our [Discord server](https://discord.gg/anxzu6rA9F) and help other users with their questions.
 
