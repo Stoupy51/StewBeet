@@ -6,9 +6,6 @@ __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
 # Every name these modules expose, imported ones included, stays reachable from `core.utils.io`.
-from .advancements import (
-	write_advancement as write_advancement,
-)
 from .deprecated import (
 	convert_to_serializable as convert_to_serializable,
 	write_function_tag as write_function_tag,
@@ -31,6 +28,12 @@ from .functions import (
 	write_tick_file as write_tick_file,
 	write_unload_file as write_unload_file,
 	write_versioned_function as write_versioned_function,
+)
+from .json_resources import (
+	write_advancement as write_advancement,
+	write_enchantment as write_enchantment,
+	write_json_resource as write_json_resource,
+	write_predicate as write_predicate,
 )
 from .model_cache import (
 	EXACT_JSON_TYPES as EXACT_JSON_TYPES,

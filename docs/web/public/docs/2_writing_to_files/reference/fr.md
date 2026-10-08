@@ -199,7 +199,7 @@ def write_advancement(
     advancement: Advancement | JsonDict,    # Données ou objet advancement
     overwrite: bool = False,                # Écraser au lieu de fusionner
     max_level: int = -1                     # Profondeur d'indentation JSON (-1 = illimitée)
-) -> None:
+) -> Advancement | None:
 ```
 
 **Exemple :**
@@ -236,6 +236,25 @@ write_advancement(f"{ns}:story/craft_ruby_sword", {
         }
     }
 })
+```
+
+#### `write_predicate()` et `write_enchantment()`
+Même signature et même fusion que `write_advancement()`, pour les prédicats et les enchantements.
+
+```python
+write_predicate(f"{ns}:is_sneaking", {
+    "condition": "minecraft:entity_properties",
+    "entity": "this",
+    "predicate": {"flags": {"is_sneaking": True}}
+})
+```
+
+#### `write_json_resource()`
+La même chose pour n'importe quel autre registre JSON : on passe le registre et sa classe beet.
+
+```python
+from beet import ItemModifier
+write_json_resource(Mem.ctx.data.item_modifiers, ItemModifier, f"{ns}:set_count_4", {"function": "minecraft:set_count", "count": 4})
 ```
 
 ---
