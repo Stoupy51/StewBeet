@@ -13,10 +13,15 @@ from typing import Literal
 import stouputils as stp
 
 from ..__memory__ import Mem
+from .versions import minecraft_version_at_least
 
 # Constants
 MACRO_RE = re.compile(r"\$\(\w+\)")
 AnyOperator = Literal["*", "/", "+", "-", "%", ""]
+COMPUTE_VERSION: tuple[int, int] = (26, 3)
+""" First version with `/compute` and arithmetic number providers: an equation becomes one command. """
+PROVIDER_TYPES: dict[AnyOperator, str] = {"+": "add", "-": "sub", "*": "mul", "/": "floor_div", "%": "floor_mod"}
+""" Context int provider per operator; floor_div and floor_mod round like `scoreboard players operation`. """
 
 # Helpers
 def is_macro_argument(value: str) -> bool:
@@ -63,6 +68,38 @@ def get_comment_token(operator: AnyOperator, player: str | int, scoreboard: str 
 		parts.append(scoreboard)
 	return " ".join(parts)
 
+def score_provider(player: str, scoreboard: str) -> str | None:
+	""" The number provider reading a score, None for a selector a provider cannot name.
+
+	>>> score_provider("@s", "kills")
+	'{type:"score",target:"this",score:"kills"}'
+	>>> score_provider("#total", "kills")
+	'{type:"score",target:{type:"fixed",name:"#total"},score:"kills"}'
+	>>> score_provider("@p", "kills") is None
+	True
+	"""
+	if player == "@s":
+		target: str = '"this"'
+	elif player.startswith("@") or is_macro_argument(player):
+		return None
+	else:
+		target = f'{{type:"fixed",name:"{player}"}}'
+	return f'{{type:"score",target:{target},score:"{scoreboard}"}}'
+
+def combine_providers(operator: AnyOperator, left: str | None, right: str | None) -> str | None:
+	""" The provider of `left <operator> right`, None when either side cannot be expressed.
+
+	>>> combine_providers("+", "1", "2"), combine_providers("/", "7", "2")
+	('{type:"add",inputs:[1,2]}', '{type:"floor_div",left:7,right:2}')
+	"""
+	if not operator:
+		return right
+	if left is None or right is None:
+		return None
+	if operator in ("+", "*"):
+		return f'{{type:"{PROVIDER_TYPES[operator]}",inputs:[{left},{right}]}}'
+	return f'{{type:"{PROVIDER_TYPES[operator]}",left:{left},right:{right}}}'
+
 
 # Classes
 
@@ -73,21 +110,35 @@ class BaseEquation:
 	All methods return ``self`` to allow method chaining.
 	"""
 
-	__slots__ = ("comment_parts", "ops", "player", "scoreboard")
+	__slots__ = ("comment_parts", "ops", "player", "provider", "scoreboard")
 
 	def __init__(self, target_player: str, target_scoreboard: str | None = None) -> None:
 		self.player: str = target_player
 		self.scoreboard: str = target_scoreboard or f"{Mem.ctx.project_id}.data"
 		self.ops: list[str] = []
 		self.comment_parts: list[str] = [f"{target_player} {self.scoreboard}"]
+		self.provider: str | None = score_provider(target_player, self.scoreboard)
+		""" The running value as a number provider, None once an operand cannot be expressed as one. """
 
 	def __str__(self) -> str:
-		lines = [f"# {self.render_header()}", *self.ops]
-		return "\n".join(lines)
+		if not self.uses_compute():
+			return "\n".join([f"# {self.render_header()}", *self.ops])
+		macro: str = "$" if is_macro_argument(str(self.provider)) else ""
+		command: str = f"{macro}execute store result {self.store_target()} run compute default integer {self.provider}"
+		return f"# {self.render_header()}\n{command}"
+
+	def uses_compute(self) -> bool:
+		""" Whether `str()` renders one `/compute` command instead of the scoreboard operations in `ops`. """
+		return self.provider is not None and minecraft_version_at_least(COMPUTE_VERSION)
 
 	@stp.abstract
 	def render_header(self) -> str:
 		""" Returns the human-readable equation comment (without the leading ``"# "``). """
+		raise NotImplementedError
+
+	@stp.abstract
+	def store_target(self) -> str:
+		""" Where `execute store result` writes the value, ex: ``"score @s ns.data"``. """
 		raise NotImplementedError
 
 	# Operation builder
@@ -111,6 +162,19 @@ class BaseEquation:
 		>>> eq.apply_operation("other_player", "other_scoreboard", "/").ops
 		['scoreboard players operation @s your_namespace.data /= other_player other_scoreboard']
 		"""
+		# The operand as a number provider; the target stands for its running value, as in the scoreboard operations
+		if isinstance(player, BaseEquation):
+			operand: str | None = player.provider
+		elif isinstance(player, int):
+			operand = str(player)
+		elif is_macro_argument(player):
+			operand = player
+		elif (player, scoreboard or self.scoreboard) == (self.player, self.scoreboard):
+			operand = self.provider
+		else:
+			operand = score_provider(player, scoreboard or self.scoreboard)
+		self.provider = combine_providers(operator, self.provider, operand)
+
 		# Another equation as source is rendered first for its intermediate scoreboard operations,
 		# then its final value is the source of the next operation
 		cancel_next_comment: bool = False
@@ -166,8 +230,10 @@ class BaseEquation:
 		# Handle different source types for the initial set operation
 		if isinstance(player, int):
 			self.ops.append(get_scoreboard_set(self.player, self.scoreboard, player))
+			self.provider = str(player)
 		elif is_macro_argument(player):
 			self.ops.append(f"${get_scoreboard_set(self.player, self.scoreboard, player)}")
+			self.provider = player
 		else:
 			self.apply_operation(player, scoreboard or self.scoreboard, "")
 
@@ -221,38 +287,31 @@ class ScoreboardEquation(BaseEquation):
 	>>> str((ScoreboardEquation("@s").set(10) + 5) * (-2) / 3 % 4 - "#toto").splitlines()[0]
 	'# scoreboard @s your_namespace.data = 10 + 5 * -2 / 3 % 4 - #toto'
 
-	>>> # Building a complex equation with method chaining and checking the generated commands with .ops
-	>>> result = str(
-	...     ScoreboardEquation("#temp_durability", "some_score")
-	...     .set("-$(amount)").multiply(1000000).divide("$(max_damage)").subtract("#toto")
-	... )
-	>>> shorter = str(ScoreboardEquation("#temp_durability", "some_score").set("-$(amount)") * 1000000 / "$(max_damage)" - "#toto")
-	>>> expected = (
-	...     "# scoreboard #temp_durability some_score = -$(amount) * 1000000 / $(max_damage) - #toto\\n"
-	...     "$scoreboard players set #temp_durability some_score -$(amount)\\n"
-	...     "scoreboard players operation #temp_durability some_score *= #1000000 your_namespace.data\\n"
-	...     "$scoreboard players set #temp_divide your_namespace.data $(max_damage)\\n"
-	...     "scoreboard players operation #temp_durability some_score /= #temp_divide your_namespace.data\\n"
-	...     # #toto inherits the scoreboard of the equation ("some_score")
-	...     "scoreboard players operation #temp_durability some_score -= #toto some_score"
-	... )
-	>>> result == expected and shorter == expected
-	True
+	>>> # From 26.3 the whole chain is one /compute command of .provider, a macro line when an operand is a macro argument
+	>>> durability = ScoreboardEquation("#temp_durability", "some_score").set("-$(amount)") * 1000000 / "$(max_damage)" - "#toto"
+	>>> str(durability).splitlines()[1].split(" compute default integer ")[0]
+	'$execute store result score #temp_durability some_score run'
+	>>> (ScoreboardEquation("#x").set("$(amount)") * 1000000 / "$(max_damage)").provider
+	'{type:"floor_div",left:{type:"mul",inputs:[$(amount),1000000]},right:$(max_damage)}'
 
-	>>> # Combining two Equation instances
+	>>> # Before 26.3, or with an operand a number provider cannot name, the scoreboard operations in .ops are written instead
+	>>> for op in durability.ops:
+	...     print(op)
+	$scoreboard players set #temp_durability some_score -$(amount)
+	scoreboard players operation #temp_durability some_score *= #1000000 your_namespace.data
+	$scoreboard players set #temp_divide your_namespace.data $(max_damage)
+	scoreboard players operation #temp_durability some_score /= #temp_divide your_namespace.data
+	scoreboard players operation #temp_durability some_score -= #toto some_score
+	>>> print(str(ScoreboardEquation("@p").set(1) + "@a"))
+	# scoreboard @p your_namespace.data = 1 + @a
+	scoreboard players set @p your_namespace.data 1
+	scoreboard players operation @p your_namespace.data += @a your_namespace.data
+
+	>>> # Combining two Equation instances: the inner one is computed inline
 	>>> eq4 = ScoreboardEquation("@s").set(10) * 5
 	>>> eq5 = ScoreboardEquation("#toto", "some_score").set(20) * 2
-	>>> result = str(eq4 * eq5)
-	>>> expected = (
-	...     "# scoreboard @s your_namespace.data = 10 * 5 * (scoreboard #toto some_score = 20 * 2)\\n"
-	...     "scoreboard players set @s your_namespace.data 10\\n"
-	...     "scoreboard players operation @s your_namespace.data *= #5 your_namespace.data\\n"
-	...     "scoreboard players set #toto some_score 20\\n"
-	...     "scoreboard players operation #toto some_score *= #2 your_namespace.data\\n"
-	...     "scoreboard players operation @s your_namespace.data *= #toto some_score"
-	... )
-	>>> result == expected
-	True
+	>>> (eq4 * eq5).provider
+	'{type:"mul",inputs:[{type:"mul",inputs:[10,5]},{type:"mul",inputs:[20,2]}]}'
 	"""  # stp: ignore[long-docstring]
 
 	__slots__ = ()
@@ -263,28 +322,20 @@ class ScoreboardEquation(BaseEquation):
 	def render_header(self) -> str:
 		return f"scoreboard {self.player} {self.scoreboard} = {' '.join(self.comment_parts)}"
 
+	def store_target(self) -> str:
+		return f"score {self.player} {self.scoreboard}"
+
 
 class StorageEquation(BaseEquation):
 	""" Equation that computes via a temp scoreboard, then stores the result in a storage path.
 
 	The ``scale`` factor is applied when flushing the temp scoreboard value to storage.
 
-	>>> start = lambda: StorageEquation("some_namespace:some_path", "result_path", 0.000005, "double").set("-$(amount)")
-	>>> result = str(start().multiply(1000000).divide("$(max_damage)").subtract("#toto"))
-	>>> shorter = str(start() * 1000000 / "$(max_damage)" - "#toto")
-	>>> expected = (
-	...     "# storage some_namespace:some_path result_path = (-$(amount) * 1000000 / $(max_damage) - #toto) * 0.000005\\n"
-	...     "$scoreboard players set #temp_result your_namespace.data -$(amount)\\n"
-	...     "scoreboard players operation #temp_result your_namespace.data *= #1000000 your_namespace.data\\n"
-	...     "$scoreboard players set #temp_divide your_namespace.data $(max_damage)\\n"
-	...     "scoreboard players operation #temp_result your_namespace.data /= #temp_divide your_namespace.data\\n"
-	...     "scoreboard players operation #temp_result your_namespace.data -= #toto your_namespace.data\\n"
-	...     "execute store result storage some_namespace:some_path result_path double 0.000005 "
-	...     "run scoreboard players get #temp_result your_namespace.data"
-	... )
-	>>> result == expected and shorter == expected
-	True
-	"""  # stp: ignore[long-docstring]
+	>>> equation = StorageEquation("ns:storage", "result", 0.001, "double").set("-$(amount)") * 1000
+	>>> print(str(equation))
+	# storage ns:storage result = (-$(amount) * 1000) * 0.001000
+	$execute store result storage ns:storage result double 0.001000 run compute default integer {type:"mul",inputs:[-$(amount),1000]}
+	"""
 
 	__slots__ = ("path", "scale", "storage", "storage_type")
 
@@ -299,12 +350,14 @@ class StorageEquation(BaseEquation):
 	def render_header(self) -> str:
 		return f"storage {self.storage} {self.path} = ({' '.join(self.comment_parts)}) * {self.scale:f}"
 
+	def store_target(self) -> str:
+		return f"storage {self.storage} {self.path} {self.storage_type} {self.scale:f}"
+
 	def __str__(self) -> str:
+		if self.uses_compute():
+			return super().__str__()
 		# Add the final command to store the result in storage after all operations
-		self.ops.append(
-			f"execute store result storage {self.storage} {self.path} {self.storage_type} {self.scale:f}"
-			f" run scoreboard players get #temp_result {f"{Mem.ctx.project_id}.data"}"
-		)
+		self.ops.append(f"execute store result {self.store_target()} run scoreboard players get #temp_result {self.scoreboard}")
 		return super().__str__()
 
 

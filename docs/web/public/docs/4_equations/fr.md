@@ -20,6 +20,22 @@
 - Passer une autre instance d'équation comme opérande: ses commandes sont automatiquement intégrées
 - Les arguments macro (`$(nom)`) sont gérés automatiquement avec un préfixe `$scoreboard players set`
 
+## Depuis Minecraft 26.3 : une seule commande `/compute`
+
+Quand le projet vise 26.3 ou plus, une équation devient une seule commande `execute store result ... run compute default integer <provider>`, où le provider est un arbre de number providers `add`, `sub`, `mul`, `floor_div` et `floor_mod` qui arrondit exactement comme les opérations de scoreboard. Les exemples ci-dessous montrent les opérations de scoreboard, que `.ops` contient toujours et qui sont écrites avant 26.3.
+
+```python
+equation = ScoreboardEquation("#value", f"{ns}.data").set(10).add(5).multiply(2)
+```
+```mcfunction
+# scoreboard #value <ns>.data = 10 + 5 * 2
+execute store result score #value <ns>.data run compute default integer {type:"mul",inputs:[{type:"add",inputs:[10,5]},2]}
+```
+
+- Une opérande qu'un number provider ne sait pas nommer, un sélecteur autre que `@s`, garde toute l'équation en opérations de scoreboard.
+- Une équation combinée est calculée en ligne : son propre score cible n'est pas écrit.
+- Aucune constante `#5` n'est nécessaire, donc `auto.scoreboard_constants` n'a rien à initialiser pour ces équations.
+
 ## ScoreboardEquation
 
 ### Constructeur

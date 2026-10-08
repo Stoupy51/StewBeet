@@ -21,6 +21,22 @@
 **Position**: Called inside a `beet_default` plugin hook, after definitions setup  
 **Integration**: Output is passed to `write_function()` to embed commands in datapack functions
 
+## From Minecraft 26.3: one `/compute` command
+
+When the project targets 26.3 or later, an equation is rendered as a single `execute store result ... run compute default integer <provider>` command, the provider being a tree of `add`, `sub`, `mul`, `floor_div` and `floor_mod` number providers that rounds exactly like the scoreboard operations. The examples below show the scoreboard operations, which are still what `.ops` holds and what is written before 26.3.
+
+```python
+equation = ScoreboardEquation("#value", f"{ns}.data").set(10).add(5).multiply(2)
+```
+```mcfunction
+# scoreboard #value <ns>.data = 10 + 5 * 2
+execute store result score #value <ns>.data run compute default integer {type:"mul",inputs:[{type:"add",inputs:[10,5]},2]}
+```
+
+- An operand a number provider cannot name, a selector other than `@s`, keeps the whole equation on scoreboard operations.
+- A combined equation is computed inline: its own target score is not written.
+- No `#5` constant is needed, so `auto.scoreboard_constants` has nothing to initialise for these equations.
+
 ## ScoreboardEquation
 
 ### Constructor
