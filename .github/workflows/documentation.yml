@@ -27,7 +27,7 @@ jobs:
         run: |
           uv run scripts/create_docs.py ${GITHUB_REF#refs/tags/v}
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4.1.0
         with:
           publish_branch: gh-pages
           github_token: ${{ secrets.GITHUB_TOKEN }}
