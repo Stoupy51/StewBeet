@@ -79,7 +79,8 @@ Pour les bibliothèques bien connues, **aucune entrée `load_dependencies` n'est
 
 **Smithed**: `smithed.custom_block`, `smithed.crafter`, `smithed.actionbar`, `realistic_explosion`<br>
 **Modrinth**: `itemio`, `common_signals`, `furnace_nbt_recipes`, `smart_ore_generation`<br>
-**Bookshelf** (tous les modules `bs.*` (`bs.math`, `bs.block`, `bs.raycast`, ...))voir [Bookshelf releases](https://github.com/mcbookshelf/bookshelf/releases)
+**Bookshelf** (tous les modules `bs.*` (`bs.math`, `bs.block`, `bs.raycast`, ...))voir [Bookshelf releases](https://github.com/mcbookshelf/bookshelf/releases)<br>
+**Gamemode 4**: `gm4_forceload`, `gm4_hooked_entity`, `gm4_lore`, `gm4_machines`, `gm4_potion_tracking`, `gm4_trees`. Leur vérification de version lit les scores GM4 (`gm4_forceload` et `gm4_forceload_minor` dans `load.status`). lib_player_motion n'est pas détectée : utilisez `player_motion` à la place.
 
 > `smart_ore_generation` câble aussi automatiquement vos fonctions `calls/smart_ore_generation/generate_ores`, `denied_dimensions` et `post_generation` vers les tags `smart_ore_generation:v1/signals/` correspondants.
 

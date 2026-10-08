@@ -46,6 +46,19 @@ The plugin automatically scans all datapack functions during build and marks a l
 
 **Bookshelf modules**: all `bs.*` modules are supported (e.g. `bs.math`, `bs.block`, `bs.raycast`, ...). See the [official Bookshelf releases](https://github.com/mcbookshelf/bookshelf/releases) for the full list.
 
+**Gamemode 4 libraries**: detected from their namespace (`gm4_forceload:`, `gm4_lore:`, ...), downloaded from Smithed. Their version check reads the GM4 scores (`gm4_forceload` and `gm4_forceload_minor` in `load.status`).
+
+| Key | Library |
+|-----|---------|
+| `gm4_forceload` | lib_forceload |
+| `gm4_hooked_entity` | lib_hooked_entity |
+| `gm4_lore` | lib_lore |
+| `gm4_machines` | lib_machines |
+| `gm4_potion_tracking` | lib_potion_tracking |
+| `gm4_trees` | lib_trees |
+
+GM4's lib_player_motion is not present: use `player_motion` instead, which is original.
+
 > **Note**: `smart_ore_generation` also receives automatic function tag wiring: if your datapack contains `calls/smart_ore_generation/generate_ores`, `denied_dimensions`, or `post_generation` functions, they are wired into the corresponding `smart_ore_generation:v1/signals/` tags automatically.
 
 ### Generating custom ores with `CustomOreGeneration`

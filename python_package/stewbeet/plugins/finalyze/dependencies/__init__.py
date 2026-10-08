@@ -31,9 +31,10 @@ def check_version(lib_ns: str, data: JsonDict, run_command: str) -> str:
 	ns: str = Mem.ctx.project_id
 	checks: str = ""
 	major, minor, patch = data["version"]
-	score_major: str = f"score #{lib_ns}.major load.status matches {major}"
-	score_minor: str = f"score #{lib_ns}.minor load.status matches {minor}"
-	score_patch: str = f"score #{lib_ns}.patch load.status matches {patch}" if patch > 0 else ""
+	holders: JsonDict = data.get("version_scores", {part: f"#{lib_ns}.{part}" for part in ("major", "minor", "patch")})
+	score_major: str = f"score {holders['major']} load.status matches {major}"
+	score_minor: str = f"score {holders['minor']} load.status matches {minor}"
+	score_patch: str = f"score {holders['patch']} load.status matches {patch}" if patch > 0 and "patch" in holders else ""
 
 	# If bookshelf, replace #bs by $bs
 	if lib_ns.startswith("bs."):
