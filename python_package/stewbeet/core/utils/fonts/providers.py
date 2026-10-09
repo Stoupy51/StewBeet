@@ -111,9 +111,11 @@ def validate_font_providers(namespace: str, providers: list[JsonDict]) -> None:
 	for provider in providers:
 		if "file" not in provider:
 			continue
+
 		path: str = provider["file"].split(":", 1)[-1].removesuffix(".png")
 		if not Mem.ctx.assets[namespace].textures.get(path):
 			stp.error(f"Missing font provider at '{path}' for {provider}")
+
 		chars: list[str] = provider["chars"]
 		if len(chars) < 1 or (len(chars) == 1 and not chars[0]):
 			stp.error(f"Font provider '{path}' has no chars")

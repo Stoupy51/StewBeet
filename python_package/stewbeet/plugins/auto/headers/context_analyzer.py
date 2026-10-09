@@ -76,9 +76,11 @@ class ContextAnalyzer:
 				return PLAYER_CONTEXT
 			if caller in DEFAULT_CONTEXT_CALLERS:
 				return None
+
 			context: str | None = bracketed_context(caller)
 			if context is not None:
 				return context
+
 			base_caller: str = caller.split(" ")[0]
 			if base_caller in self.mcfunctions:
 				return self.determine_execution_context(base_caller, visited.copy())

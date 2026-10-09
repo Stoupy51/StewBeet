@@ -166,15 +166,19 @@ from .source_paths import (
 	restore_filenames as restore_filenames,
 )
 from .utils.equation import (
+	COMPUTE_VERSION as COMPUTE_VERSION,
 	MACRO_RE as MACRO_RE,
+	PROVIDER_TYPES as PROVIDER_TYPES,
 	AnyOperator as AnyOperator,
 	BaseEquation as BaseEquation,
 	ScoreboardEquation as ScoreboardEquation,
 	StorageEquation as StorageEquation,
+	combine_providers as combine_providers,
 	get_comment_token as get_comment_token,
 	get_scoreboard_operation as get_scoreboard_operation,
 	get_scoreboard_set as get_scoreboard_set,
 	is_macro_argument as is_macro_argument,
+	score_provider as score_provider,
 )
 from .utils.fonts import (
 	DEFAULT_ISO_RENDERS_PATH as DEFAULT_ISO_RENDERS_PATH,

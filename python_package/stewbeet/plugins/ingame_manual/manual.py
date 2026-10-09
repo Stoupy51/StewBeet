@@ -426,10 +426,12 @@ class Manual:
 				continue
 			if not isinstance(node, dict):
 				continue
+
 			node_d = cast("dict[str, Any]", node)
 			if id(node_d) in seen:
 				continue
 			seen.add(id(node_d))
+
 			self.resolve_click_event(node_d)
 			# No PageRefs live in events, which also avoids traversing deep Box data
 			for key, value in node_d.items():
@@ -444,11 +446,13 @@ class Manual:
 		ce_d = cast("dict[str, Any]", ce)
 		if ce_d.get("action") != "change_page":
 			return
+
 		page_val = ce_d.get("page")
 		idx: int = self.page_index_of(page_val) if isinstance(page_val, PageRef) else (page_val if isinstance(page_val, int) else -1)
 		if idx == -1:
 			del node["click_event"]
 			return
+
 		ce_d.clear()
 		ce_d["action"] = "show_dialog"
 		ce_d["dialog"] = f"{self.config.project_id}:manual/page_{idx}"

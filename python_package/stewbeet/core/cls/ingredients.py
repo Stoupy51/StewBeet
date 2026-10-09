@@ -146,14 +146,17 @@ class Ingr(dict[str, Any]):
 		"""
 		ns, ingr_id = self.to_id().split(":")
 		from .item import Item
+
 		if ns == Mem.ctx.project_id:
 			if add_namespace:
 				return Item.from_id(ingr_id).base_item
 			return Item.from_id(ingr_id).base_item.split(":")[1]
+
 		if ns == "minecraft":
 			if add_namespace:
 				return f"{ns}:{ingr_id}"
 			return ingr_id
+
 		item: str = f"{ns}:{ingr_id}"
 		if Mem.external_definitions.get(item):
 			if add_namespace:
