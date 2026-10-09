@@ -13,12 +13,14 @@ __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
 import os
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from beet.core.file import TextFileBase
-from mecha import Mecha
 
 from .__memory__ import Mem
+
+if TYPE_CHECKING:
+	from mecha import Mecha
 
 
 # Functions

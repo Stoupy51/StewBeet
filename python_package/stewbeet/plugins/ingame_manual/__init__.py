@@ -19,7 +19,7 @@ import stouputils as stp
 from beet import Context
 
 from ...core.__memory__ import Mem
-from ...core.utils.fonts import generate_all_iso_renders
+from ...core.utils.fonts import flush_png_indexes, generate_all_iso_renders
 from .api import get_manual
 from .config import ManualConfig
 from .paths import MANUAL_ASSETS_PATH, TEMPLATES_PATH
@@ -53,7 +53,10 @@ def beet_default(ctx: Context) -> None:
 	os.makedirs(f"{config.font_cache_path}/high_res", exist_ok=True)
 	register_heavy_workbench()
 	generate_all_iso_renders(config.iso_renders_path, config.project_id, config.cache_assets)
-	manual.build()
+	try:
+		manual.build()
+	finally:
+		flush_png_indexes()  # Lets the next build skip encoding the images that did not change
 
 	# Reset so `beet watch` starts each cycle with a fresh, hook-free Manual.
 	Mem.manual = None

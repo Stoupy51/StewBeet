@@ -19,6 +19,7 @@ from ....core.source_paths import origin_path
 from ..align import align
 from ..cache import CACHE_NAME, load_maps, map_signature, store_maps
 from ..model import WriteChunk
+from ..origin import store_index
 from ..sidecar import has_sidecar, pack_layout, render_sidecar, store_sidecar
 
 
@@ -32,6 +33,9 @@ def write_maps(ctx: Context) -> int:
 	Returns:
 		How many sidecars this call wrote, ignoring functions already carrying a comment.
 	"""
+	# The project's writes are done by now, so the source files they were found in can be indexed for the next build
+	store_index()
+
 	# Chunks are filed under the path the write named, which a versioning refactor then moves.
 	pending: list[tuple[str, Function, list[WriteChunk]]] = [
 		(path, func, chunks)

@@ -18,6 +18,7 @@ from stouputils.typing import JsonDict
 
 from .....core.cls.ingredients import Ingr
 from .....core.cls.recipe import BlastingRecipe, CampfireCookingRecipe, SmeltingRecipe, SmokingRecipe
+from .....core.utils.fonts import save_png
 from ...glyphs import FURNACE_FONT, INVISIBLE_ITEM_WIDTH, MICRO_NONE_FONT, SMALL_NONE_FONT, VERY_SMALL_NONE_FONT
 from ...paths import TEMPLATES_PATH
 from ..registry import CraftRenderer, register_craft_renderer
@@ -65,7 +66,7 @@ class FurnaceBase(CraftRenderer):
 		if craft["result_count"] > 1:
 			count_img = r.images.image_count(craft["result_count"])
 			template.paste(count_img, [x + 2 for x in coords], count_img)  # pyright: ignore[reportArgumentType]
-		template.save(f"{r.config.font_cache_path}/page/{output_filename}.png")
+		save_png(template, f"{r.config.font_cache_path}/page/{output_filename}.png")
 
 
 @dataclass(slots=True)

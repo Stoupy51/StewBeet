@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING
 from beet.core.utils import TextComponent
 from PIL import Image
 
-from ....core.utils.fonts import careful_resize
+from ....core.utils.fonts import careful_resize, save_png
 from ...initialize.project_images import find_pack_png
 from ..glyphs import MEDIUM_NONE_FONT
 from .base import Page
@@ -45,7 +45,7 @@ class IntroPage(Page):
 		assert icon_path and os.path.exists(icon_path), "Missing pack.png in your working tree (needed for the manual)"
 		logo = careful_resize(Image.open(icon_path), 256)
 		os.makedirs(f"{config.font_cache_path}/page", exist_ok=True)
-		logo.save(f"{config.font_cache_path}/page/_logo.png")
+		save_png(logo, f"{config.font_cache_path}/page/_logo.png")
 
 		content.append({"text": "\n" * 6})
 		content.append([{"text": "", "font": "minecraft:default", "color": "black"}, config.first_page_text])

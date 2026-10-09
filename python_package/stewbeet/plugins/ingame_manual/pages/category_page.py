@@ -22,7 +22,7 @@ from beet.core.utils import TextComponent
 from PIL import Image
 from stouputils.typing import JsonDict
 
-from ....core.utils.fonts import add_border, careful_resize
+from ....core.utils.fonts import add_border, careful_resize, save_png
 from ..glyphs import BORDER_SIZE, MEDIUM_NONE_FONT, SMALL_NONE_FONT, VERY_SMALL_NONE_FONT
 from .base import Page
 
@@ -91,7 +91,7 @@ def grid_page(
 
 	page_image = add_border(page_image, manual.images.get_border_color(), BORDER_SIZE)
 	os.makedirs(f"{config.font_cache_path}/category", exist_ok=True)
-	page_image.save(f"{config.font_cache_path}/category/{file_name}.png")
+	save_png(page_image, f"{config.font_cache_path}/category/{file_name}.png")
 	return content
 
 

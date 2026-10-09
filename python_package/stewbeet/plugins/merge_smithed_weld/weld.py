@@ -5,6 +5,7 @@ from stouputils.lazy import ALWAYS_LAZY
 __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
+import contextlib
 import hashlib
 import logging
 import os
@@ -231,13 +232,26 @@ def merged_archive_path(ctx: Context, pack_type: str) -> str:
 	return str(Path(str(ctx.output_directory)) / f"{ctx.project_name.replace(' ', '')}_{pack_type}_with_libs.zip")
 
 
+def stashed_archive_path(ctx: Context, pack_type: str) -> str:
+	""" Where :func:`drop_unwelded_archives` puts aside the merged archive of a pack type not welded yet.
+
+	Args:
+		ctx:       The beet context.
+		pack_type: Either "datapack" or "resource_pack".
+	Returns:
+		str: A path in the weld cache, outside the output directory.
+	"""
+	return str(ctx.cache[CACHE_NAME].directory / f"stashed_{pack_type}_with_libs.zip")
+
+
 def drop_unwelded_archives(ctx: Context) -> None:
-	""" Delete the merged archive of every pack type not welded so far.
+	""" Move out of the output directory the merged archive of every pack type not welded so far.
 
 	A stale ``_with_libs.zip`` left in the output directory would be picked up by ``compute_sha1`` and by a release upload,
 	so it has to be gone before the rest of the pipeline looks at the output directory.
-	When another entry point welds that pack type later in the pipeline it simply writes the archive again, hence the silence here:
-	:func:`report_unwelded_archives` does the reporting once the full set of weld entry points is known.
+	It is only put aside, since an entry point welding that pack type later in the pipeline takes it back.
+	See :func:`restore_stashed_archive`.
+	:func:`report_unwelded_archives` deletes what nobody took back and does the reporting, once every weld entry point ran.
 
 	Args:
 		ctx: The beet context.
@@ -245,11 +259,29 @@ def drop_unwelded_archives(ctx: Context) -> None:
 	for pack_type in ALL_PACK_TYPES:
 		dest: str = merged_archive_path(ctx, pack_type)
 		if pack_type not in ctx.meta.get(WELDED_META_KEY, []) and os.path.exists(dest):
-			os.remove(dest)
+			stash: str = stashed_archive_path(ctx, pack_type)
+			os.makedirs(os.path.dirname(stash), exist_ok=True)
+			os.replace(dest, stash)
+
+
+def restore_stashed_archive(ctx: Context, pack_type: str) -> None:
+	""" Put back the merged archive an earlier weld entry point moved aside, before welding its pack type.
+
+	The archive keeps its size and modification time, so an unchanged merge is still skipped,
+	and a merge that has to run reuses its unchanged entries (see :class:`~..archive.ConstantTimeZipFile`).
+
+	Args:
+		ctx:       The beet context.
+		pack_type: Either "datapack" or "resource_pack".
+	"""
+	stash: str = stashed_archive_path(ctx, pack_type)
+	destination: str = merged_archive_path(ctx, pack_type)
+	if os.path.exists(stash) and not os.path.exists(destination):
+		os.replace(stash, destination)
 
 
 def report_unwelded_archives(ctx: Context) -> Generator[None]:
-	""" After the whole pipeline ran, report the pack types no entry point ever welded.
+	""" After the whole pipeline ran, report the pack types no entry point ever welded, and delete their archives put aside.
 
 	Registered once by :func:`weld_pack_types` and resumed at the end of the build, so it sees every
 	weld entry point that took part regardless of the order they appear in the pipeline.
@@ -258,6 +290,9 @@ def report_unwelded_archives(ctx: Context) -> Generator[None]:
 		ctx: The beet context.
 	"""
 	yield
+	for pack_type in ALL_PACK_TYPES:
+		with contextlib.suppress(FileNotFoundError):
+			os.remove(stashed_archive_path(ctx, pack_type))
 	for pack_type in ctx.meta.get(ASKED_PACK_TYPES, []):
 		if pack_type not in ctx.meta.get(WELDED_META_KEY, []):
 			stp.debug(
@@ -298,6 +333,7 @@ def weld_pack_types(ctx: Context, pack_types: tuple[str, ...]) -> None:
 		if not os.path.exists(source):
 			continue
 		destination: str = merged_archive_path(ctx, pack_type)
+		restore_stashed_archive(ctx, pack_type)
 
 		# Merging is deterministic, so the same sources give back the archive already sitting on disk
 		signature: str = weld_signature(gather_packs(ctx, pack_type))

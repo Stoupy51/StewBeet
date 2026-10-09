@@ -17,6 +17,7 @@ from PIL import Image
 from stouputils.typing import JsonDict
 
 from .....core.cls.ingredients import Ingr
+from .....core.utils.fonts import save_png
 from ...glyphs import (
 	INVISIBLE_ITEM_WIDTH,
 	MICRO_NONE_FONT,
@@ -107,7 +108,7 @@ class ShapedRenderer(CraftRenderer):
 		if craft.get("result_count", 1) > 1:
 			count_img = r.images.image_count(craft["result_count"])
 			template.paste(count_img, [x + 2 for x in coords], count_img)  # pyright: ignore[reportArgumentType]
-		template.save(f"{r.config.font_cache_path}/page/{output_filename}.png")
+		save_png(template, f"{r.config.font_cache_path}/page/{output_filename}.png")
 
 
 register_craft_renderer(ShapedRenderer())

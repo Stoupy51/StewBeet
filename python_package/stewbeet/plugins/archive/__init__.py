@@ -11,7 +11,7 @@ import re
 import subprocess
 import time
 import zipfile
-from collections.abc import Buffer
+import zlib
 from typing import IO, Any, Literal
 from zipfile import ZipInfo
 
@@ -20,7 +20,7 @@ from beet import Context, DataPack, ResourcePack
 from beet.toolchain.config import locate_config
 
 from ...core.__memory__ import Mem
-from ..initialize.beet_patches import reuse_unchanged_pngs
+from ..initialize.beet_patches import reuse_unchanged_png_bytes
 from ..initialize.project_images import find_pack_png
 
 # Constants
@@ -82,16 +82,31 @@ class ConstantTimeZipFile(zipfile.ZipFile):
 	Entries whose name is in ``skip_names`` are silently dropped (used to replace
 	``pack.mcmeta``/``pack.png`` with fixed content afterwards via :meth:`force_writestr`).
 
-	A text entry is written with Unix line endings whatever the host would have used, see
-	:class:`UnixNewlineWriter`.
+	A text entry is written with Unix line endings whatever the host would have used, see :func:`unix_newlines`.
+
+	When the archive replaces one written before, an entry holding the same bytes as there is copied
+	still compressed instead of being deflated again, see :meth:`store`.
 	"""
 
 	def __init__(
-		self, *args: Any, date_time: tuple[int, int, int, int, int, int], skip_names: tuple[str, ...] = (), **kwargs: Any
+		self, file: Any, mode: Literal["r", "w", "x", "a"] = "r", *args: Any,
+		date_time: tuple[int, int, int, int, int, int], skip_names: tuple[str, ...] = (), **kwargs: Any
 	) -> None:
-		super().__init__(*args, **kwargs)
+		previous: bytes = b""
+		if mode == "w" and isinstance(file, str) and os.path.isfile(file):
+			with open(file, "rb") as previous_file:
+				previous = previous_file.read()
+		super().__init__(file, mode, *args, **kwargs)
 		self.date_time: tuple[int, int, int, int, int, int] = date_time
 		self.skip_names: set[str] = set(skip_names)
+		self.previous: zipfile.ZipFile | None = None
+		""" The archive this one replaces, read before it was truncated, to reuse its unchanged entries. """
+		self.previous_bytes: bytes = previous
+		if previous:
+			try:
+				self.previous = zipfile.ZipFile(io.BytesIO(previous))
+			except zipfile.BadZipFile:
+				self.previous = None
 
 	def _forced_info(self, name: str) -> ZipInfo:
 		info = ZipInfo(filename=name)
@@ -107,11 +122,7 @@ class ConstantTimeZipFile(zipfile.ZipFile):
 		filename: str = name.filename if isinstance(name, ZipInfo) else name
 		if filename in self.skip_names:
 			return io.BytesIO()  # Discard the content, the caller will write a fixed version
-
-		stream: IO[bytes] = super().open(self._forced_info(filename), mode, pwd, force_zip64=force_zip64)
-		if not is_text_entry(filename):
-			return stream
-		return io.BufferedWriter(UnixNewlineWriter(stream))
+		return EntryWriter(self, filename)
 
 	def writestr(
 		self, zinfo_or_arcname: str | ZipInfo, data: Any, compress_type: int | None = None, compresslevel: int | None = None
@@ -119,14 +130,14 @@ class ConstantTimeZipFile(zipfile.ZipFile):
 		filename: str = zinfo_or_arcname.filename if isinstance(zinfo_or_arcname, ZipInfo) else zinfo_or_arcname
 		if filename in self.skip_names:
 			return
-		super().writestr(self._forced_info(filename), unix_newlines(filename, data), compress_type, compresslevel)
+		self.store(filename, data.encode("utf-8") if isinstance(data, str) else bytes(data))
 
 	def write(self, filename: Any, arcname: Any = None, compress_type: int | None = None, compresslevel: int | None = None) -> None:
 		name: str = str(arcname if arcname is not None else filename)
 		if name in self.skip_names:
 			return
 		with open(filename, "rb") as f:
-			super().writestr(self._forced_info(name), unix_newlines(name, f.read()), compress_type, compresslevel)
+			self.store(name, f.read())
 
 	def force_writestr(self, name: str, data: bytes) -> None:
 		""" Write an entry with the constant timestamp, bypassing ``skip_names``.
@@ -137,44 +148,95 @@ class ConstantTimeZipFile(zipfile.ZipFile):
 		self.skip_names.discard(name)
 		self.writestr(name, data)
 
+	def store(self, name: str, data: bytes) -> None:
+		""" Write one entry, with Unix line endings for text, reusing its compressed bytes from the previous archive when unchanged.
 
-class UnixNewlineWriter(io.RawIOBase):
-	""" Zip entry stream that writes a LF wherever a CRLF was handed to it.
+		Deflate gives the same bytes for the same input, so the copy is what compressing again would have written.
+		The previous entry is decompressed and compared whole: a matching checksum alone is not trusted.
+		"""
+		normalized: str | bytes = unix_newlines(name, data)
+		data = normalized.encode("utf-8") if isinstance(normalized, str) else normalized
+		info: ZipInfo = self._forced_info(name)
+		info.file_size = len(data)
+		internals: Any = self  # ZipFile keeps its writing state in private attributes
+		raw: bytes | None = self.previous_raw(name, data)
+		fp: IO[bytes] | None = self.fp
+		if raw is None or fp is None or not internals._seekable:
+			# What ZipFile.writestr does, minus going back through the overridden `open`
+			with internals._lock, super().open(info, mode="w") as entry:
+				entry.write(data)
+			return
 
-	beet dumps a text file through ``io.TextIOWrapper(newline=None)``, which rewrites every line ending as ``os.linesep``.
-	A pack built on Windows therefore ships entirely in CRLF.
-	Minecraft reads a command ending in a backslash as continuing on the next line.
-	The carriage return between the two leaves it incomplete.
+		# What ZipFile writes for a new entry, with the compressed bytes taken as they are
+		info.flag_bits = 1 << 11  # UTF-8 file name, as ZipFile flags every entry it writes
+		info.external_attr = 0o600 << 16
+		info.compress_size = len(raw)
+		info.CRC = zlib.crc32(data)
+		with internals._lock:
+			fp.seek(self.start_dir)
+			info.header_offset = fp.tell()
+			internals._writecheck(info)
+			internals._didModify = True
+			fp.write(info.FileHeader(zip64=False))
+			fp.write(raw)
+			self.start_dir = fp.tell()
+			self.filelist.append(info)
+			self.NameToInfo[name] = info
 
-	>>> sink = io.BytesIO()
-	>>> writer = UnixNewlineWriter(sink)
-	>>> writer.write(b"say a\\r"), writer.write(b"\\nsay b\\r\\r\\n")
-	(6, 9)
-	>>> sink.getvalue()
+	def previous_entry(self, name: str) -> bytes | None:
+		""" The content of an entry of the archive this one replaces, None when there is no such entry. """
+		if self.previous is None:
+			return None
+		try:
+			return self.previous.read(name)
+		except KeyError:
+			return None
+
+	def previous_raw(self, name: str, data: bytes) -> bytes | None:
+		""" The still compressed bytes of the previous archive's entry when it holds exactly data, else None. """
+		if self.previous is None:
+			return None
+		try:
+			old: ZipInfo = self.previous.getinfo(name)
+		except KeyError:
+			return None
+		if (
+			old.compress_type != zipfile.ZIP_DEFLATED or old.file_size != len(data) or zlib.crc32(data) != old.CRC
+			or old.flag_bits & 0x8 or self.previous.read(old) != data
+		):
+			return None
+
+		# The local header has its own name and extra field lengths, the data follows them
+		header: bytes = self.previous_bytes[old.header_offset:old.header_offset + 30]
+		data_start: int = old.header_offset + 30 + int.from_bytes(header[26:28], "little") + int.from_bytes(header[28:30], "little")
+		return self.previous_bytes[data_start:data_start + old.compress_size]
+
+	def close(self) -> None:
+		if self.previous is not None:
+			self.previous.close()
+			self.previous = None
+		self.previous_bytes = b""
+		super().close()
+
+
+class EntryWriter(io.BytesIO):
+	""" Collects what is written to one entry, and stores it in the archive once closed.
+
+	>>> archive = ConstantTimeZipFile(io.BytesIO(), "w", date_time=(2025, 1, 1, 0, 0, 0))
+	>>> with archive.open("say.mcfunction", "w") as entry:
+	...     _ = entry.write(b"say a\\r\\nsay b\\r\\r\\n")
+	>>> archive.read("say.mcfunction")
 	b'say a\\nsay b\\n'
 	"""
 
-	def __init__(self, stream: IO[bytes]) -> None:
+	def __init__(self, archive: ConstantTimeZipFile, name: str) -> None:
 		super().__init__()
-		self.stream: IO[bytes] = stream
-		self.pending: bytes = b""
-		""" Trailing carriage returns, held back in case the next chunk opens with the newline they belong to. """
-
-	def writable(self) -> bool:
-		return True
-
-	def write(self, b: Buffer, /) -> int:
-		data: bytes = bytes(b)
-		chunk: bytes = self.pending + data
-		kept: int = len(chunk.rstrip(b"\r"))
-		self.pending = chunk[kept:]
-		self.stream.write(unix_lines(chunk[:kept]))
-		return len(data)
+		self.archive: ConstantTimeZipFile = archive
+		self.name: str = name
 
 	def close(self) -> None:
 		if not self.closed:
-			self.stream.write(self.pending)  # A carriage return that ends the file is a character of its own
-			self.stream.close()
+			self.archive.store(self.name, self.getvalue())
 		super().close()
 
 
@@ -260,10 +322,6 @@ def beet_default(ctx: Context) -> None:
 		# Create archive filename
 		archive_path = f"{Mem.ctx.output_directory}/{pack_name}_{pack_type}.zip"
 
-		# Archive the same image bytes the pack folder will keep (see reuse_unchanged_pngs)
-		if pack.name and os.path.isdir(f"{Mem.ctx.output_directory}/{pack.name}"):
-			reuse_unchanged_pngs(pack, f"{Mem.ctx.output_directory}/{pack.name}")
-
 		# Single pass: dump the pack through a ZipFile that forces consistent timestamps,
 		# replacing pack.png with the project's icon (appended last, like the old two-pass code).
 		@stp.retry(exceptions=Exception, max_attempts=10, delay=0.5)
@@ -273,6 +331,8 @@ def beet_default(ctx: Context) -> None:
 				archive_path, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=6,
 				date_time=consistent_time, skip_names=skip_names,
 			) as zip_file:
+				# Archive generated images with the bytes the previous archive holds for the same pixels (see reuse_unchanged_pngs)
+				reuse_unchanged_png_bytes(pack, zip_file.previous_entry)
 				pack.dump(zip_file)
 				if pack_png_path:
 					zip_file.force_writestr("pack.png", pack_png_content)
