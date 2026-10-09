@@ -22,14 +22,12 @@ ALNUM_RE: re.Pattern[str] = re.compile(r'[a-zA-Z0-9]')
 LETTER_RE: re.Pattern[str] = re.compile(r'[a-zA-Z].*[a-zA-Z]|[a-zA-Z]', re.DOTALL)
 SENTENCE_PUNCT_RE: re.Pattern[str] = re.compile(r'^[\s:.,!?]*$')
 
-# Regex pattern for text extraction
+# Regex pattern for text extraction, starting with a literal so the engine jumps from one "text" to the next.
+# The opening quote of a quoted key comes before that literal, `extract_texts` checks it against the closing one.
 TEXT_RE: re.Pattern[str] = re.compile(
 	r'''
-	(?P<key_quote>["'])?text(?(key_quote)(?P=key_quote))  # Match "text", 'text', or text
-	\s*:\s*                                       # Match the colon and spaces
-	(?P<quote>["'])                               # Opening quote for value
-	(?P<value>(?:\\.|[^\\])*?)                    # The value, handling escapes
-	(?P=quote)                                    # Closing quote
+	text(?P<key_quote>["']?)\s*:\s*                                   # Match text, closing quote of the key, colon
+	(?:"(?P<double>(?:[^"\\]|\\.)*)"|'(?P<single>(?:[^'\\]|\\.)*)')  # The value up to its first unescaped closing quote
 	''', re.VERBOSE
 )
 
@@ -105,6 +103,7 @@ def absorb_core_closers(core: str, suffix: str) -> tuple[str, str]:
 	return core, suffix
 
 
+@stp.simple_cache
 def lang_parts(clean_text: str) -> tuple[str, str, str]:
 	""" `split_text_content`, with the core's leading and trailing newlines moved out of the translation and its key.
 
@@ -126,12 +125,23 @@ def extract_texts(content: str) -> list[tuple[str, int, int, str, str | None]]:
 	[('Hey', 1, 11, "'", None)]
 	"""
 	matches: list[tuple[str, int, int, str, str | None]] = []
-	for match in TEXT_RE.finditer(content):
+	last_end: int = 0
+	position: int = 0
+	while (match := TEXT_RE.search(content, position)) is not None:
 		start, end = match.span()
-		value: str = match.group("value")
-		quote: str = match.group("quote")
-		key_quote: str | None = match.group("key_quote")
-		matches.append((value, start, end, quote, key_quote))
+
+		# A quoted key needs the same quote right before it, outside the previous match
+		key_quote: str = match.group("key_quote")
+		if key_quote:
+			if start - 1 < last_end or content[start - 1] != key_quote:
+				position = start + 1
+				continue
+			start -= 1
+
+		double: str | None = match.group("double")
+		value, quote = (double, '"') if double is not None else (match.group("single"), "'")
+		matches.append((value, start, end, quote, key_quote or None))
+		last_end = position = end
 	return matches
 
 
