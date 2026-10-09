@@ -400,8 +400,7 @@ class Manual:
 		later pass (resolve/optimize/dialog) safe.
 		"""
 		def to_plain(node: Any) -> Any:
-			if isinstance(node, PageRef):
-				return node
+			# A PageRef is neither a dict nor a list, so it comes back as it is with every other leaf
 			if isinstance(node, dict):
 				return {k: to_plain(v) for k, v in cast(dict[Any, Any], node).items()}
 			if isinstance(node, (list, tuple)):

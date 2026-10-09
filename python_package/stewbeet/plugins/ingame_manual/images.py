@@ -20,7 +20,7 @@ from PIL import Image, ImageDraw, ImageFont
 from stouputils.typing import JsonDict
 
 from ...core.cls.ingredients import Ingr
-from ...core.utils.fonts import add_border, careful_resize, lighten_color
+from ...core.utils.fonts import add_border, careful_resize, is_png_recorded, lighten_color, record_png, save_png, source_key
 from .config import ManualConfig
 from .glyphs import (
 	BORDER_SIZE,
@@ -133,8 +133,14 @@ class GlyphImageBuilder:
 		font: str = self.glyphs.allocate()
 		self.glyphs.add_provider(font, provider_path, ascent=7, height=16)
 
-		os.makedirs(os.path.dirname(path), exist_ok=True)
+		# An image opened from a file is still undecoded here, and needs no decoding when the glyph drawn from it is up to date
 		high_res: int = 256
+		source: str = str(getattr(item_image, "filename", "") or "")
+		key: str | None = source_key(source, "high_res_icon", high_res, str(count)) if source else None
+		if is_png_recorded(path, key):
+			return MICRO_NONE_FONT + font
+
+		os.makedirs(os.path.dirname(path), exist_ok=True)
 		resized = careful_resize(item_image, high_res).convert("RGBA")
 		if isinstance(count, str) or count > 1:
 			img_count = careful_resize(self.image_count(count), high_res)
@@ -143,7 +149,8 @@ class GlyphImageBuilder:
 		total_height = resized.size[1] - 1
 		for angle in [(0, 0), (total_width, 0), (0, total_height), (total_width, total_height)]:
 			resized.putpixel(angle, (0, 0, 0, 100))
-		resized.save(path)
+		save_png(resized, path)
+		record_png(path, key)
 		return MICRO_NONE_FONT + font
 
 	def load_square_texture(self, path_id: str) -> Image.Image:
@@ -193,7 +200,7 @@ class GlyphImageBuilder:
 		)
 		template.paste(result_texture, (2 * factor, 2 * factor), result_mask)
 		template = add_border(template, self.get_border_color(), BORDER_SIZE)
-		template.save(f"{self.config.font_cache_path}/page/{output_filename}.png")
+		save_png(template, f"{self.config.font_cache_path}/page/{output_filename}.png")
 
 	def wiki_result_icon(self, name: str, craft: JsonDict) -> str:
 		""" Generate a small recipe-result wiki icon and return its font (or default font). """
@@ -209,9 +216,10 @@ class GlyphImageBuilder:
 
 			# Same (result, craft type) pairs produce the same file: only encode the PNG once
 			# per build (glyph allocation below is unchanged so the output stays identical).
-			if dest_path not in self._wiki_icons_generated:
+			item_res: int = 64 if not self.config.high_resolution else 256
+			key: str | None = source_key(texture_path, "wiki_result_icon", craft_type, item_res)
+			if dest_path not in self._wiki_icons_generated and not is_png_recorded(dest_path, key):
 				item_texture = Image.open(texture_path)
-				item_res = 64 if not self.config.high_resolution else 256
 				item_res_adjusted = int(item_res * 0.75)
 				item_texture = careful_resize(item_texture, item_res_adjusted).convert("RGBA")
 
@@ -220,7 +228,8 @@ class GlyphImageBuilder:
 				template = careful_resize(template, item_res)
 				offset = (item_res - item_res_adjusted) // 2
 				template.paste(item_texture, (offset, offset), item_texture)
-				template.save(dest_path)
+				save_png(template, dest_path)
+				record_png(dest_path, key)
 				self._wiki_icons_generated.add(dest_path)
 
 			font = self.glyphs.allocate()
@@ -270,7 +279,7 @@ class GlyphImageBuilder:
 		"""
 		os.makedirs(f"{self.config.font_cache_path}/page", exist_ok=True)
 		dest = f"{self.config.font_cache_path}/page/{name}.png"
-		image.save(dest)
+		save_png(image, dest)
 		font = self.glyphs.allocate()
 		self.glyphs.add_provider(font, f"{self.config.project_id}:font/page/{name}.png", ascent=ascent, height=height)
 		return font
