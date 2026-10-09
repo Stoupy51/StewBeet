@@ -136,6 +136,15 @@ def stable_png_save(save: Callable[..., Path]) -> Callable[..., Path]:
 	return wrapper
 
 
+def stable_png_incremental_save(save: Callable[..., None]) -> Callable[..., None]:
+	""" Wrap beet's `incremental_save`, which writes an output folder without going through `Pack.save`, like `stable_png_save`. """
+	def wrapper(pack: Pack[Any], output_path: FileSystemPath, *args: Any, **kwargs: Any) -> None:
+		if Path(output_path).is_dir():
+			reuse_unchanged_pngs(pack, output_path)
+		save(pack, output_path, *args, **kwargs)
+	return wrapper
+
+
 def apply_beet_patches() -> None:
 	""" Install every beet monkey patch, once per process. """
 	global patches_applied
@@ -151,4 +160,10 @@ def apply_beet_patches() -> None:
 
 	# Keep the previous bytes of generated images whose pixels did not change (see reuse_unchanged_pngs)
 	Pack.save = stable_png_save(Pack.save)  # pyright: ignore[reportUnknownArgumentType, reportUnknownMemberType]
+
+	# beet versions saving output folders incrementally do it without `Pack.save`, so the same goes there too
+	import beet.contrib.output as output_plugin
+	incremental_save: Callable[..., None] | None = getattr(output_plugin, "incremental_save", None)
+	if incremental_save is not None:
+		output_plugin.incremental_save = stable_png_incremental_save(incremental_save)  # pyright: ignore[reportAttributeAccessIssue]
 
