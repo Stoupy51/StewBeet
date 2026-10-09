@@ -85,21 +85,31 @@ def reuse_unchanged_pngs(pack: Pack[Any], directory: FileSystemPath) -> None:
 	...     pack.textures["demo:red"].ensure_serialized() == saved
 	True
 	"""
+	def read_saved(relative_path: str) -> bytes | None:
+		existing: Path = Path(directory, relative_path)
+		return existing.read_bytes() if existing.is_file() else None
+	reuse_unchanged_png_bytes(pack, read_saved)
+
+
+def reuse_unchanged_png_bytes(pack: Pack[Any], read_previous: Callable[[str], bytes | None]) -> None:
+	""" Give the in-memory images of a pack the bytes the previous build wrote, when their pixels are unchanged.
+
+	Args:
+		pack:          The pack whose images to check.
+		read_previous: The bytes the previous build wrote at a path of the pack, None when it wrote nothing there.
+	"""
 	# Pillow's zlib compresses differently on each platform, so a build on another machine would otherwise rewrite them all.
 	# Files loaded from disk or already serialized are copied byte for byte by beet, only encoded images can differ.
 	files: list[tuple[str, PngFile]] = [
 		(relative_path, file)
-		for part in (pack, *pack.overlays.values())
-		for relative_path, file in part.list_files(extend=PngFile)
+		for relative_path, file in pack.list_files(extend=PngFile)
 		if isinstance(file.get_content(), Image.Image)
 	]
 
 	for relative_path, file in files:
-		existing: Path = Path(directory, relative_path)
-		if not existing.is_file():
+		saved: bytes | None = read_previous(relative_path)
+		if saved is None:
 			continue
-
-		saved: bytes = existing.read_bytes()
 		try:
 			unchanged: bool = same_pixels(PngFile(saved).image, file.image)
 		except (OSError, SyntaxError, ValueError):
