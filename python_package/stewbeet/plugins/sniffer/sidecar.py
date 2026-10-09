@@ -95,12 +95,14 @@ def build_map(
 		if origin.file not in indices:
 			indices[origin.file] = len(sources)
 			sources.append(os.path.relpath(origin.file, project_root).replace(os.sep, "/"))
+
 		index: int = indices[origin.file]
 		compiled: CompiledLine | None = origin.compiled
 		if compiled is not None and compiled.bolt:
 			bolt.add(index)
 		if compiled is not None and compiled.opaque is not None:
 			opaque.add((index, *compiled.opaque))
+
 		rows.append(LineMapping(
 			generated_line=line,
 			source_index=index,

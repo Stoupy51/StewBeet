@@ -77,6 +77,7 @@ def place_result_beside(
 	len_line: int = len(shape[1]) if len(shape) > 1 else 0
 	gap: str = INVISIBLE_ITEM_WIDTH * (4 - len_line - 1) + gap_end
 	break_line_pos: int = content.index("\n", content.index("\n") + 1)
+
 	try:
 		break_line_pos = content.index("\n", break_line_pos + 1)
 	except ValueError:
@@ -87,6 +88,7 @@ def place_result_beside(
 	if use_dialog:
 		content.insert(break_line_pos + 2, VERY_SMALL_NONE_FONT + MICRO_NONE_FONT)
 		break_line_pos += 1
+
 	try:
 		break_line_pos = content.index("\n", break_line_pos + 3)
 	except ValueError:
@@ -96,6 +98,7 @@ def place_result_beside(
 	content.insert(break_line_pos + 1, invisible_copy(result_component))
 	if use_dialog:
 		content.insert(break_line_pos + 2, VERY_SMALL_NONE_FONT + MICRO_NONE_FONT)
+
 	if len(shape) < 3 and len(shape[0]) == full_width:
 		content.append("\n\n")
 		if len(shape) < 2:

@@ -166,10 +166,12 @@ def ingredient_recipes(m: Material, item: str) -> list[RecipeBase]:
 	""" The recipes making an ingredient, from the other forms of the material that have a texture. """
 	base: str = m.base
 	recipes: list[RecipeBase] = []
+
 	if item.endswith(("ingot", "fragment")) or item == base:
 		recipes += refined_recipes(m)
 	if item.startswith("raw_") and m.has(f"raw_{base}_block"):
 		recipes.append(CraftingShapelessRecipe(result_count=9, category="misc", group=base, ingredients=[Ingr(f"raw_{base}_block")]))
+
 	if item.endswith("dust"):
 		recipes += dust_recipes(m, item)
 	if item.endswith("nugget"):
@@ -177,6 +179,7 @@ def ingredient_recipes(m: Material, item: str) -> list[RecipeBase]:
 			SmeltingRecipe(result_count=1, category="equipment", experience=0.8, cookingtime=200, ingredient=Ingr(f"{base}_{gear}"))
 			for gear in SLOTS if m.has(f"{base}_{gear}")
 		]
+
 	if item.endswith("stick"):
 		recipes.append(CraftingShapedRecipe(result_count=4, category="misc", shape=["X","X"], ingredients={"X":m.main}))
 	if item.endswith("rod"):
@@ -188,10 +191,12 @@ def refined_recipes(m: Material) -> list[RecipeBase]:
 	""" The recipes making the refined material: out of its block and its nuggets, and by smelting its raw form, dust or ores. """
 	base: str = m.base
 	recipes: list[RecipeBase] = []
+
 	if m.has(f"{base}_block"):
 		recipes.append(CraftingShapelessRecipe(result_count=9, category="misc", group=base, ingredients=[Ingr(f"{base}_block")]))
 	if m.has(f"{base}_nugget"):
 		recipes.append(CraftingShapedRecipe(result_count=1, category="misc", group=base, shape=["XXX","XXX","XXX"], ingredients={"X":Ingr(f"{base}_nugget")}))
+
 	for source in (f"raw_{base}", f"{base}_dust", f"{base}_ore", f"deepslate_{base}_ore"):
 		if m.has(source):
 			recipes += m.smelt_and_blast(Ingr(source))
@@ -276,13 +281,16 @@ def write_tool(m: Material, gear: Gear) -> None:
 		obj.base_item = f"minecraft:{m.config.equivalent_to.value}_{gear.name}"
 	obj.manual_category = "equipment"
 	obj.components["custom_data"] = {"smithed": {"dict": {"tools": {m.base: True, gear.name: True}}}}
+
 	gear_config: JsonDict = {}
 	if m.config:
 		gear_config = gear.vanilla.value[m.config.equivalent_to]
 		obj.components["max_damage"] = int(gear_config["durability"] * m.durability_factor)
+
 	if not m.ignore_recipes:
 		tools_ingr: dict[str, Ingr] = {"X": m.main, "S": Ingr("minecraft:stick")}
 		obj.recipes.append(CraftingShapedRecipe(result_count=1,category="equipment",shape=list(gear.shape),ingredients=tools_ingr,manual_priority=0))
+
 	if m.config:
 		obj.components["attribute_modifiers"] = format_attributes(m.config.get_tools_attributes(), SLOTS[gear.name], gear_config)
 	# A weapon mines nothing

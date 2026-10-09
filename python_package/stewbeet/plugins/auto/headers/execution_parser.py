@@ -75,12 +75,14 @@ def read_selector(parts: list[str], start: int) -> tuple[str, int]:
 	"""
 	arg: str = parts[start]
 	next_index: int = start + 1
+
 	if "[" not in arg and arg.startswith("@"):
 		return arg, next_index
 	if "[" in arg:
 		while next_index < len(parts) and not arg.endswith("]"):
 			arg += " " + parts[next_index]
 			next_index += 1
+
 	arg = arg.replace(", ", ",")
 	if "[" in arg and "]" in arg and "," in arg:
 		arg = simplify_selector(arg)
@@ -114,10 +116,12 @@ def simplify_attribute(part: str, counts: Counter[str], seen: set[str]) -> str |
 		return part
 	name: str = part.split("=")[0]
 	negated: bool = part.startswith(name + "=!")
+
 	if name == "nbt":
 		if len(part.split("=", 1)[1]) <= 50:
 			return part
 		return "nbt=!{...}" if negated else "nbt={...}"
+
 	if counts[name] == 1:
 		return part
 	if name in seen:

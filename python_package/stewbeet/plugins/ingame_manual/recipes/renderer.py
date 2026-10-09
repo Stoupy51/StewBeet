@@ -232,12 +232,14 @@ class RecipeRenderer:
 		if obj is None:
 			stp.warning(f"button_for_item: no item '{item_id}' in the definitions")
 			return None
+
 		page = self.manual.get_page_for_item(item_id)
 		crafts: list[JsonDict] = page.crafts if page is not None and page.crafts \
 			else self.collect_for_item(item_id, obj, self.manual.definitions_as_objects)
 		if not 0 <= index < len(crafts):
 			stp.warning(f"button_for_item: no craft at index {index} for '{item_id}' ({len(crafts)} available)")
 			return None
+
 		button = self.render_button(crafts[index], item_id, index)
 		if button.target is None:  # crafts producing the item itself get no target on their own page
 			button.target = PageRef(item=item_id)

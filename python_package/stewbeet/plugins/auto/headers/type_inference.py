@@ -109,9 +109,11 @@ def nbt_value(value: str) -> tuple[str, str]:
 		return value, "compound"
 	if value.startswith("["):
 		return value, "list"
+
 	numeric: re.Match[str] | None = NBT_NUMBER_RE.match(value)
 	if not numeric:
 		return value, "unknown"
+
 	num_value, suffix = numeric[1], numeric[2].lower()
 	return num_value, NBT_TYPE_MAP.get(suffix, "int") if suffix else ("double" if "." in num_value else "int")
 
@@ -168,10 +170,12 @@ def infer_types_from_storage_call(within_list: list[str], macro_vars: list[str],
 	for caller in within_list:
 		if "with storage" not in caller and "with entity" not in caller:
 			continue
+
 		caller_match: re.Match[str] | None = WITHIN_CALLER_RE.match(caller)
 		caller_func: str = caller_match.group(1) if caller_match else ""
 		if caller_func not in all_functions:
 			continue
+
 		for nbt_string in STORAGE_SET_RE.findall(all_functions[caller_func].content):
 			parsed: dict[str, tuple[str, str]] = parse_nbt_compound(nbt_string)
 			types.update({var: parsed[var][1] for var in macro_vars if var in parsed and var not in types})

@@ -59,12 +59,14 @@ def node_columns(mc: Mecha, command: AstCommand, written: str) -> list[tuple[int
 			continue
 		while len(open_nodes) > 1 and node.location.pos >= open_nodes[-1][0]:
 			open_nodes.pop()
+
 		parent: list[int] = open_nodes[-1]
 		text: str = serialized_alone(mc, node)
 		found: int = written.find(text, parent[1])
 		if found == -1:
 			open_nodes.append([node.end_location.pos, parent[1]])
 			continue
+
 		end: int = found + len(text)
 		columns += [(found, node.location), (end, node.end_location)]
 		parent[1] = end

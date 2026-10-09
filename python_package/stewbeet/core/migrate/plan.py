@@ -189,11 +189,13 @@ def plan_config(
 	if main_pack and (description := main_pack.description_yaml):
 		text = set_config_key(text, "description", description)
 		changes.append("description: from pack.mcmeta")
+
 	if (
 		datapack and resource_pack and datapack.root != resource_pack.root
 		and resource_pack.description_yaml not in (None, datapack.description_yaml)
 	):
 		warnings.append("The resource pack's description differs from the datapack's: beet.yml now uses the datapack's for both")
+
 	if resource_pack and not has_config_key(text, "resource_pack"):
 		text = text.rstrip() + "\n" + RESOURCE_PACK_CONFIG
 		changes.append("resource_pack: added, the template only builds a datapack")
@@ -208,14 +210,17 @@ def fill_identity(text: str, main_pack: FoundPack | None, namespaces: list[str])
 	"""
 	changes: list[str] = []
 	warnings: list[str] = []
+
 	if main_pack and has_config_key(text, "name"):
 		text = set_config_key(text, "name", json.dumps(main_pack.root.name, ensure_ascii=False))
 		changes.append(f"name: {main_pack.root.name}")
+
 	if has_config_key(text, "id") and len(namespaces) == 1:
 		text = set_config_key(text, "id", json.dumps(namespaces[0]))
 		changes.append(f"id: {namespaces[0]}")
 	elif has_config_key(text, "id"):
 		warnings.append(f"Set id in beet.yml to your namespace (found: {', '.join(namespaces) or 'none'})")
+
 	if has_config_key(text, "author"):
 		warnings.append("Set author in beet.yml: it still names the template's author")
 	return text, changes, warnings

@@ -20,6 +20,7 @@ from beet import Context, DataPack, ResourcePack
 from beet.toolchain.config import locate_config
 
 from ...core.__memory__ import Mem
+from ..initialize.beet_patches import reuse_unchanged_pngs
 from ..initialize.project_images import find_pack_png
 
 # Constants
@@ -258,6 +259,10 @@ def beet_default(ctx: Context) -> None:
 
 		# Create archive filename
 		archive_path = f"{Mem.ctx.output_directory}/{pack_name}_{pack_type}.zip"
+
+		# Archive the same image bytes the pack folder will keep (see reuse_unchanged_pngs)
+		if pack.name and os.path.isdir(f"{Mem.ctx.output_directory}/{pack.name}"):
+			reuse_unchanged_pngs(pack, f"{Mem.ctx.output_directory}/{pack.name}")
 
 		# Single pass: dump the pack through a ZipFile that forces consistent timestamps,
 		# replacing pack.png with the project's icon (appended last, like the old two-pass code).

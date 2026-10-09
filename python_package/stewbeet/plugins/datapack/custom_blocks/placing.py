@@ -172,6 +172,7 @@ def display_setup(obj_block: Block, item: str, data: Item, custom_name: str) -> 
 	ns: str = Mem.ctx.project_id
 	block: JsonDict = data[VANILLA_BLOCK]
 	block_id: str = block["id"].split('[')[0].split('{')[0].replace(":", "_")
+
 	item_model: str = ""
 	if obj_block.components.get("item_model"):
 		model_id: str = obj_block.components["item_model"]
@@ -194,6 +195,7 @@ data merge entity @s {custom_name}
 {item_model}data modify entity @s transformation.scale set value [1.002f,1.002f,1.002f]
 function {ns}:custom_blocks/compute_brightness
 """
+
 	if block.get("visual_facing") == "player":
 		content += f"""
 # Apply rotation
@@ -202,6 +204,7 @@ execute if score #rotation {ns}.data matches 2 run data modify entity @s Rotatio
 execute if score #rotation {ns}.data matches 3 run data modify entity @s Rotation[0] set value 0.0f
 execute if score #rotation {ns}.data matches 4 run data modify entity @s Rotation[0] set value 90.0f
 """
+
 	if OFFICIAL_LIBS["furnace_nbt_recipes"]["is_used"] and block_id.endswith(("_furnace", "_smoker")):
 		content += '\n# Furnace NBT Recipes\n'
 		content += (
@@ -209,6 +212,7 @@ execute if score #rotation {ns}.data matches 4 run data modify entity @s Rotatio
 			'unless entity @e[type=marker,dx=-1,dy=-1,dz=-1,tag=furnace_nbt_recipes.furnace] run '
 			'summon marker ~ ~ ~ {Tags:["furnace_nbt_recipes.furnace"]}\n'
 		)
+
 	if obj_block.on_place:
 		content += f"\n# Custom on_place commands\n{obj_block.on_place}\n"
 	return content

@@ -167,9 +167,11 @@ def modrinth_versions(ctx: Context, slug: str, mc_ver: str) -> list[JsonDict] | 
 	versions = cached_json(ctx, f"{base}?game_versions=[%22{mc_ver}%22]&loaders=[%22datapack%22]")
 	if versions:
 		return versions
+
 	versions = cached_json(ctx, f"{base}?loaders=[%22datapack%22]")
 	if not versions:
 		return versions
+
 	older = modrinth_older_versions(versions, mc_ver)
 	if not older:
 		stp.warning(

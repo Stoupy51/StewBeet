@@ -382,12 +382,15 @@ def mod_metadata(project_name: str, modrinth_config: JsonDict, project_data: Jso
 	}
 	if not project_data:
 		return metadata
+
 	for key, field in PROJECT_FALLBACKS:
 		if not metadata.get(key) and project_data.get(field):
 			metadata[key] = project_data[field]
+
 	license_is_placeholder: bool = not metadata.get("license") or metadata["license"] == "All Rights Reserved"
 	if license_is_placeholder and project_data.get("license") and project_data["license"].get("id"):
 		metadata["license"] = project_data["license"]["id"]
+
 	if project_data.get("title"):
 		metadata["name"] = project_data["title"]
 	return metadata

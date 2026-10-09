@@ -72,6 +72,7 @@ class ShapedRenderer(CraftRenderer):
 		if use_dialog:
 			content.insert(break_line_pos + 2, VERY_SMALL_NONE_FONT + MICRO_NONE_FONT)
 			break_line_pos += 1
+
 		len_2 = len(shape[1]) if len(shape) > 1 else 0
 		if len_2 == 0:
 			content.insert(break_line_pos + 2, "\n" + SMALL_NONE_FONT)

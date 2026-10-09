@@ -38,7 +38,7 @@ class Sorter(BaseModel):
 			"key": "count",
 			"scale": 100
 		}
-	"""  # stp: ignore[long-docstring]
+	"""
 	algorithm: SorterAlgorithm = "selection_sort"
 	""" Algorithm used to sort the elements, defaults to `selection_sort`. """
 	functions_location: str
