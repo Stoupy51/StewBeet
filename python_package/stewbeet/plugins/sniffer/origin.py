@@ -7,11 +7,13 @@ __lazy_modules__ = ALWAYS_LAZY
 # Imports
 import ast
 import inspect
+import json
 import os
 import sys
 from dataclasses import dataclass
 from functools import cache
 from types import FrameType
+from typing import Any, cast
 
 from ...core.__memory__ import Mem
 from .model import SourceOrigin
@@ -26,6 +28,12 @@ WRITE_METHODS: frozenset[str] = frozenset({"append", "prepend"})
 
 GENERATED_INIT: str = "<string>"
 """ Filename of the `__init__` a dataclass generates, the one frame between a definition and its declaration. """
+
+INDEX_CACHE_NAME: str = "sniffer_index"
+""" Beet cache slot keeping each source file's write calls from one build to the next. """
+
+INDEX_FORMAT: str = "1"
+""" Part of the index signature: bump it when `write_call_spans` finds calls differently, so every file is parsed again. """
 
 
 # Classes
@@ -89,6 +97,7 @@ def reset_caches() -> None:
 	"""
 	project_roots.cache_clear()
 	AST_CACHE.clear()
+	PERSISTED.files, PERSISTED.loaded, PERSISTED.dirty = {}, False, False
 	reset_source_caches()
 
 
@@ -99,21 +108,38 @@ def index_write_calls(path: str) -> dict[int, WriteCall]:
 	That is what stops a plugin-generated write from attributing to the project's entry point,
 	which passes the project-source filter while having authored nothing.
 	"""
+	return calls_by_line(write_call_spans(path))
+
+
+def write_call_spans(path: str) -> list[tuple[int, int, WriteCall]]:
+	""" Every write call of a source file with the first and last lines it spans, in the order `calls_by_line` expects. """
 	try:
 		with open(path, encoding="utf-8") as file:
 			tree: ast.Module = ast.parse(file.read(), filename=path)
 	except (OSError, SyntaxError):
-		return {}
+		return []
 
 	helpers: dict[str, int] = write_helpers()
-	found: dict[int, WriteCall] = {}
+	spans: list[tuple[int, int, WriteCall]] = []
 	for node in ast.walk(tree):
 		if not isinstance(node, ast.Assign | ast.Call):
 			continue
 		call: WriteCall | None = assigned_function(node) if isinstance(node, ast.Assign) else written_call(node, helpers)
-		if call is None:
-			continue
-		for line in range(node.lineno, (node.end_lineno or node.lineno) + 1):
+		if call is not None:
+			spans.append((node.lineno, node.end_lineno or node.lineno, call))
+	return spans
+
+
+def calls_by_line(spans: list[tuple[int, int, WriteCall]]) -> dict[int, WriteCall]:
+	""" The write call each line belongs to, the first call spanning it winning, as an outer call comes before the ones inside it.
+
+	>>> outer, inner = WriteCall(line=0, column=0, exact=False), WriteCall(line=1, column=4, exact=True)
+	>>> calls_by_line([(1, 3, outer), (2, 2, inner)]) == {1: outer, 2: outer, 3: outer}
+	True
+	"""
+	found: dict[int, WriteCall] = {}
+	for start, end, call in spans:
+		for line in range(start, end + 1):
 			found.setdefault(line, call)
 	return found
 
@@ -180,12 +206,76 @@ Nobody edits a file halfway through a build, and `beet watch` starts a new one.
 The alternative is a `stat` on every project frame of every write, which is the plugin's single biggest cost.
 """
 
+@dataclass(slots=True)
+class PersistedIndex:
+	""" The write calls of every source file seen by earlier builds, with the size and modification time they were read at. """
+	files: dict[str, list[object]]
+	loaded: bool = False
+	dirty: bool = False
+
+
+PERSISTED: PersistedIndex = PersistedIndex(files={})
+""" Parsing a file is the bulk of the sniffer's time, and most files do not change between two builds. """
+
+
 def write_calls_of(path: str) -> dict[int, WriteCall]:
-	""" Cached `index_write_calls`, for as long as the build lasts. """
+	""" Cached `index_write_calls`, for as long as the build lasts, and from one build to the next for an unchanged file. """
 	calls: dict[int, WriteCall] | None = AST_CACHE.get(path)
 	if calls is None:
-		AST_CACHE[path] = calls = index_write_calls(path)
+		AST_CACHE[path] = calls = calls_by_line(persisted_spans(path))
 	return calls
+
+
+def persisted_spans(path: str) -> list[tuple[int, int, WriteCall]]:
+	""" `write_call_spans`, taken from the persisted index when the file has the size and modification time recorded there. """
+	files: dict[str, list[object]] = load_index()
+	try:
+		stat: os.stat_result = os.stat(path)
+	except OSError:
+		return []
+
+	entry: list[object] | None = files.get(path)
+	if entry is not None and len(entry) == 3 and entry[0] == stat.st_mtime_ns and entry[1] == stat.st_size:
+		try:
+			rows: list[list[Any]] = cast("list[list[Any]]", entry[2])
+			return [(int(r[0]), int(r[1]), WriteCall(int(r[2]), int(r[3]), bool(r[4]), str(r[5]))) for r in rows]
+		except (TypeError, ValueError, IndexError):
+			pass  # A record this version cannot read, parsed again below
+
+	spans: list[tuple[int, int, WriteCall]] = write_call_spans(path)
+	files[path] = [stat.st_mtime_ns, stat.st_size, [[s, e, c.line, c.column, c.exact, c.kind] for s, e, c in spans]]
+	PERSISTED.dirty = True
+	return spans
+
+
+def index_signature() -> str:
+	""" What the persisted index depends on besides the files: its format and how write calls are recognized. """
+	return f"{INDEX_FORMAT}|{sorted(write_helpers().items())}|{sorted(WRITE_METHODS)}|{CONTENT_PARAMETER}"
+
+
+def load_index() -> dict[str, list[object]]:
+	""" The persisted index, read from the beet cache the first time, empty when missing, unreadable or made otherwise. """
+	if not PERSISTED.loaded:
+		PERSISTED.loaded = True
+		try:
+			raw: dict[str, object] = json.loads(Mem.ctx.cache[INDEX_CACHE_NAME].get_path("index").read_text("utf-8"))
+			files: object = raw.get("files")
+			if raw.get("signature") == index_signature() and isinstance(files, dict):
+				PERSISTED.files = cast("dict[str, list[object]]", files)
+		except (OSError, ValueError, AttributeError):
+			PERSISTED.files = {}
+	return PERSISTED.files
+
+
+def store_index() -> None:
+	""" Write the persisted index back when this build parsed anything, dropping the files that no longer exist. """
+	if not PERSISTED.dirty:
+		return
+	files: dict[str, list[object]] = {path: entry for path, entry in PERSISTED.files.items() if os.path.exists(path)}
+	path = Mem.ctx.cache[INDEX_CACHE_NAME].get_path("index")
+	path.parent.mkdir(parents=True, exist_ok=True)
+	path.write_text(json.dumps({"signature": index_signature(), "files": files}), "utf-8")
+	PERSISTED.dirty = False
 
 
 
