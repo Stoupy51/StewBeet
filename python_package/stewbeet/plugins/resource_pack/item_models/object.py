@@ -226,7 +226,7 @@ class AutoModel:
 
 			# Add the model to assets and create item model
 			stage_model_res = self.obj.seed_stage_model(i)
-			stage_model_res.write(set_model_encoder(Model(stage_model), max_level=4))
+			stage_model_res.write(set_model_encoder(Model(stage_model), max_level=2))
 			items_model: JsonDict = {"model": {"type": "minecraft:model", "model": stage_model_res}}
 			self.obj.seed_stage_item_model(i).write(set_json_encoder(ItemModel(items_model), max_level=4))
 
@@ -290,7 +290,7 @@ class AutoModel:
 		self.copy_and_register_textures(content)
 
 		# Add the in-hand model to assets
-		self.obj.model.suffixed(f"_in_hand{on_off}").write(set_model_encoder(Model(content), max_level=4))
+		self.obj.model.suffixed(f"_in_hand{on_off}").write(set_model_encoder(Model(content), max_level=2))
 
 		# Return the items/ definition keeping the regular model for block-like contexts and using the in-hand model otherwise
 		return {
@@ -366,7 +366,7 @@ class AutoModel:
 		self.copy_and_register_textures(content)
 
 		if self.obj.override_model != {}:
-			self.obj.model.suffixed(on_off).write(set_model_encoder(Model(content), max_level=4))
+			self.obj.model.suffixed(on_off).write(set_model_encoder(Model(content), max_level=2))
 		Mem.ctx.meta["stewbeet"]["rendered_item_models"].add(self.obj.components["item_model"])
 		if not self.obj.base_item.endswith("bow"):
 			definition: JsonDict = self.items_definition(variants, on_off)
@@ -396,7 +396,7 @@ class AutoModel:
 		if shape.parent == "block/cake":
 			for i in range(1, 7):
 				slice_content: JsonDict = {"parent": f"block/cake_slice{i}", "textures": content["textures"]}
-				Resource(Model, f"item/{self.obj.id}_slice{i}{on_off}").write(set_model_encoder(Model(slice_content), max_level=4))
+				Resource(Model, f"item/{self.obj.id}_slice{i}{on_off}").write(set_model_encoder(Model(slice_content), max_level=2))
 		return content
 
 	def block_shape(self, variants: list[str], overrides: JsonDict) -> BlockShape | None:
@@ -444,7 +444,7 @@ class AutoModel:
 			if f"{variant}.png" in self.source_textures:
 				Resource(Texture, f"item/{variant}").write(texture_mcmeta(self.source_textures[f"{variant}.png"]))
 			pull_content: JsonDict = {"parent": parent, "textures": {"layer0": f"{self.ns}:item/{variant}"}}
-			self.obj.model.suffixed(f"_pulling_{i}").write(set_model_encoder(Model(pull_content), max_level=4))
+			self.obj.model.suffixed(f"_pulling_{i}").write(set_model_encoder(Model(pull_content), max_level=2))
 			if i < len(pulling) - 1:
 				model: str = f"{self.ns}:item/{self.obj.id}_pulling_{i + 1}"
 				entries.append({"model": {"type": "minecraft:model", "model": model}, "threshold": 0.65 + (0.25 * i)})
@@ -491,7 +491,7 @@ class AutoModel:
 			"parent": "item/spear_in_hand",
 			"textures": {"layer0": self.obj.texture.suffixed(f"_in_hand{on_off}")},
 		}
-		self.obj.model.suffixed(f"_in_hand{on_off}").write(set_model_encoder(Model(in_hand_content), max_level=4))
+		self.obj.model.suffixed(f"_in_hand{on_off}").write(set_model_encoder(Model(in_hand_content), max_level=2))
 
 		in_hand_texture: str = f"{self.obj.id}_in_hand{on_off}.png"
 		if in_hand_texture in self.source_textures:
