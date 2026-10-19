@@ -65,3 +65,16 @@ def beet_default(ctx: Context):
 	assert f"{ns}:v{version}/load/resolve" in ctx.data.function_tags[f"{ns}:resolve"].text, \
 		"resolve tag must reference the versioned resolve function"
 
+
+	# Smithed "pack enabled tag" convention
+	installed: str = f"{ns}:v{version}/installed"
+	assert ctx.data.predicates[installed].data == {"type": "minecraft:random_chance", "chance": 1}, \
+		"The installed predicate must always be true"
+	assert ctx.data.predicate_tags[f"{ns}:installed"].data["values"] == [installed], \
+		"The installed predicate tag must wrap the installed predicate"
+	for part, number in zip(("major", "minor", "patch"), (major, minor, patch), strict=True):
+		assert ctx.data.context_int_providers[f"{ns}:v{version}/{part}"].data == int(number), \
+			f"The {part} provider must return the {part} version"
+		assert ctx.data.context_int_provider_tags[f"{ns}:{part}"].data["values"] == [f"{ns}:v{version}/{part}"], \
+			f"The {part} tag must wrap the {part} provider"
+

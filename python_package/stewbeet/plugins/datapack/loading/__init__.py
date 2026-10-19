@@ -7,12 +7,13 @@ __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
 import stouputils as stp
-from beet import Context
+from beet import Context, ContextIntProvider
 from stouputils.typing import JsonDict
 
 from ....core.__memory__ import Mem
 from ....core.cls.item import Item
-from ....core.utils.io import write_load_file, write_tag, write_versioned_function
+from ....core.utils.io import write_load_file, write_predicate, write_tag, write_versioned_function
+from ...finalyze.dependencies import minimum_minecraft_version
 
 
 # Main entry point
@@ -57,6 +58,8 @@ execute if score #{ctx.project_id}.major load.status matches {major} if score #{
 	write_tag(f"{ctx.project_id}:enumerate", ctx.data.function_tags, [f"{ctx.project_id}:v{ctx.project_version}/load/enumerate"])
 	write_tag(f"{ctx.project_id}:resolve", ctx.data.function_tags, [f"{ctx.project_id}:v{ctx.project_version}/load/resolve"])
 
+	write_enabled_tag(ctx)
+
 	# Setup load main function
 	write_versioned_function("load/main",
 f"""
@@ -83,6 +86,21 @@ scoreboard players set #{ctx.project_id}.loaded load.status 1
 	# Write the items storage function separately to avoid having a huge load function
 	if items_storage:
 		write_versioned_function("load/set_items_storage", items_storage)
+
+
+def write_enabled_tag(ctx: Context) -> None:
+	""" The Smithed "pack enabled tag" convention: a predicate tag and version providers other packs read, whatever the load order.
+
+	Minecraft 26.2 and older refuse the predicate's `type` key, so a pack supporting any of them does not get it.
+	"""
+	if stp.version_to_float(minimum_minecraft_version()) < stp.version_to_float("26.3"):
+		return
+	ns, version = ctx.project_id, ctx.project_version
+	write_predicate(f"{ns}:v{version}/installed", {"type": "minecraft:random_chance", "chance": 1})
+	write_tag(f"{ns}:installed", ctx.data.predicate_tags, [f"{ns}:v{version}/installed"])
+	for part, number in zip(("major", "minor", "patch"), version.split("."), strict=True):
+		ctx.data.context_int_providers[f"{ns}:v{version}/{part}"] = ContextIntProvider(number)
+		write_tag(f"{ns}:{part}", ctx.data.context_int_provider_tags, [f"{ns}:v{version}/{part}"])
 
 
 def storage_data(obj: Item) -> JsonDict:

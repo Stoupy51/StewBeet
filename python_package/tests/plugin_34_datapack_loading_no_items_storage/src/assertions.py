@@ -17,3 +17,6 @@ def beet_default(ctx: Context):
 	assert f"scoreboard players set #{ns}.loaded load.status 1" in confirm_content, \
 		"confirm_load must still set the loaded score"
 
+	assert f"{ns}:installed" not in ctx.data.predicate_tags and not ctx.data.context_int_providers, \
+		"A pack for Minecraft 26.2 must not get the enabled tag, whose predicate 26.2 refuses"
+

@@ -28,6 +28,7 @@ The plugin ensures proper datapack initialization with dependency validation and
 - Prevents duplicate datapack loading
 - Follows LanternLoad convention standards
 - Manages load status tracking with scoreboards
+- Announces the pack to others with the Smithed "pack enabled tag" convention (`#ns:installed`, `#ns:major`, `#ns:minor`, `#ns:patch`), for packs supporting Minecraft 26.3 and newer
 
 ## Dependencies
 - **✅ Required**: None (but works best with other StewBeet plugins)
