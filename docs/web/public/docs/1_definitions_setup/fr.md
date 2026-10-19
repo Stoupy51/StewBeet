@@ -194,13 +194,14 @@ Définit les custom drops quand le bloc est cassé sans toucher de soie :
 class NoSilkTouchDrop:
     id: str                     # ID de l'item à drop (ex., "raw_simplunium")
     count: dict | int = 1       # Nombre de drops : int ou {"min": 1, "max": 3}
+    experience: dict | float = 0.0  # Points d'expérience : 2.5 (50 % de chance d'un troisième point) ou {"min": 3, "max": 7}
 ```
 ```python
 # Exemple d'utilisation
 block = Block(
     id="simplunium_ore",
     vanilla_block=VanillaBlockForOres,
-    no_silk_touch_drop=NoSilkTouchDrop(id="raw_simplunium", count={"min": 2, "max": 4})
+    no_silk_touch_drop=NoSilkTouchDrop(id="raw_simplunium", count={"min": 2, "max": 4}, experience={"min": 1, "max": 3})
 )
 
 # Ou raccourci

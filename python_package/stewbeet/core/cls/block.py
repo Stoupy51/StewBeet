@@ -149,17 +149,22 @@ class NoSilkTouchDrop(StMapping):
 	>>> nsd = NoSilkTouchDrop(id="raw_iron")
 	>>> nsd.id
 	'raw_iron'
-	>>> nsd.count
-	1
+	>>> nsd.count, nsd.experience
+	(1, 0.0)
 	"""
 	id: str
 	""" The item ID to drop when the block is broken without silk touch, e.g. 'raw_simplunium'. """
 	count: dict[str, int] | int = 1
 	""" (Optional) The count of items to drop. Can be an integer or a dict with 'min' and 'max' keys. Default is 1. """
+	experience: dict[str, int] | float = 0.0
+	""" (Optional) Experience points dropped with it, like vanilla ores do, as a dict with 'min' and 'max' keys or a number.
+	The fractional part of a number is the chance of one more point: 0.5 gives 1 point half of the time.
+	"""
 
 	def __post_init__(self) -> None:
-		if isinstance(self.count, dict):
-			assert "min" in self.count and "max" in self.count, "If count is a dict, it must contain 'min' and 'max' keys."
+		for value in (self.count, self.experience):
+			if isinstance(value, dict):
+				assert "min" in value and "max" in value, "If count or experience is a dict, it must contain 'min' and 'max' keys."
 
 @dataclass(kw_only=True, slots=True)
 class GrowingSeedLoot(StMapping):

@@ -84,3 +84,10 @@ def beet_default(ctx: Context):
 	assert on_place_tag in ctx.data.function_tags, \
 		"smithed.custom_block:event/on_place tag must be generated"
 
+	# An ore drops its experience only without silk touch
+	replace_item_content: str = ctx.data.functions[f"{ns}:custom_blocks/block_ore_experience/replace_item"].text
+	assert (
+		f"execute if score #is_silk_touch {ns}.data matches 0 summon minecraft:experience_orb "
+		"store result entity @s Value short 1 run random value 3..7"
+	) in replace_item_content, "block_ore_experience/replace_item must summon 3 to 7 experience points without silk touch"
+

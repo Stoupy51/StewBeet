@@ -5,6 +5,7 @@ from stouputils.lazy import ALWAYS_LAZY
 __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
+import stouputils as stp
 from beet import BlockTag, LootTable, Predicate
 from stouputils.typing import JsonDict
 
@@ -199,6 +200,30 @@ def no_silk_touch_drop_lines(ns: str, drop: str | JsonDict | NoSilkTouchDrop) ->
 		lines += f"{when_no_silk} store result score #multiplier {ns}.data run random value {count_min*100}..{count_max*100}"
 		lines += f"{when_no_silk} run scoreboard players operation #item_count {ns}.data *= #multiplier {ns}.data"
 		lines += f"{when_no_silk} run scoreboard players operation #item_count {ns}.data /= #divider {ns}.data"
+	if not isinstance(drop, str):
+		lines += experience_lines(ns, drop.get("experience", 0.0))
+	return lines
+
+
+def experience_lines(ns: str, experience: dict[str, int] | float) -> str:
+	""" The commands summoning, at the block, the experience points a drop gives when no silk touch was used.
+
+	>>> print(experience_lines("ns", {"min": 3, "max": 6}).strip())
+	execute if score #is_silk_touch ns.data matches 0 summon minecraft:experience_orb store result entity @s Value short 1 run random value 3..6
+	>>> print(experience_lines("ns", 2.25).strip())
+	execute if score #is_silk_touch ns.data matches 0 run summon minecraft:experience_orb ~ ~ ~ {Value:2s}
+	execute if score #is_silk_touch ns.data matches 0 if predicate {"type": "minecraft:random_chance","chance": 0.25} run summon minecraft:experience_orb ~ ~ ~ {Value:1s}
+	>>> experience_lines("ns", 0.0)
+	''
+	"""  # noqa: E501
+	when_no_silk: str = f"\nexecute if score #is_silk_touch {ns}.data matches 0"
+	if isinstance(experience, dict):
+		return f"{when_no_silk} summon minecraft:experience_orb store result entity @s Value short 1 run random value {experience['min']}..{experience['max']}"  # noqa: E501
+	points, chance = int(experience), round(experience % 1, 6)
+	lines: str = f"{when_no_silk} run summon minecraft:experience_orb ~ ~ ~ {{Value:{points}s}}" if points else ""
+	if chance:
+		predicate: str = stp.json_dump(loot_condition("minecraft:random_chance", chance=chance), max_level=0).strip()
+		lines += f"{when_no_silk} if predicate {predicate} run summon minecraft:experience_orb ~ ~ ~ {{Value:1s}}"
 	return lines
 
 

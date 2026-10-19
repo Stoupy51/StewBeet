@@ -195,13 +195,14 @@ Defines custom drops when the block is broken without silk touch:
 class NoSilkTouchDrop:
     id: str                     # Item ID to drop (e.g., "raw_simplunium")
     count: dict | int = 1       # Drop count: int or {"min": 1, "max": 3}
+    experience: dict | float = 0.0  # Experience points: 2.5 (a 50% chance of a third point) or {"min": 3, "max": 7}
 ```
 ```python
 # Example usage
 block = Block(
     id="simplunium_ore",
     vanilla_block=VanillaBlockForOres,
-    no_silk_touch_drop=NoSilkTouchDrop(id="raw_simplunium", count={"min": 2, "max": 4})
+    no_silk_touch_drop=NoSilkTouchDrop(id="raw_simplunium", count={"min": 2, "max": 4}, experience={"min": 1, "max": 3})
 )
 
 # Or shorthand

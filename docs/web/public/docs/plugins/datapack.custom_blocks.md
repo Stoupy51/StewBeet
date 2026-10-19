@@ -97,6 +97,7 @@ Implements multi-layered destruction detection system:
 Special handling for custom ore blocks with advanced drop mechanics:
 - 🔨 Silk touch detection and handling
 - 💎 Alternative drops when mined without silk touch
+- ✨ Experience orbs dropped with them (`NoSilkTouchDrop.experience`)
 - 📊 Item count preservation and transfer
 - 🔗 Integration with Common Signals library
 

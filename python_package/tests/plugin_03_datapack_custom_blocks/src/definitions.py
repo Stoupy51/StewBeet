@@ -35,6 +35,14 @@ def beet_default(ctx: Context):
 		vanilla_block=VanillaBlock(contents=True),
 	)
 
+	# Ore dropping a vanilla item and experience unless mined with silk touch
+	Block(
+		id="block_ore_experience",
+		manual_category="misc",
+		vanilla_block=VANILLA_BLOCK_FOR_ORES,
+		no_silk_touch_drop=NoSilkTouchDrop(id="minecraft:diamond", experience={"min": 3, "max": 7}),
+	)
+
 	add_item_model_component()
 	add_item_name_and_lore_if_missing()
 	add_private_custom_data_for_namespace()
