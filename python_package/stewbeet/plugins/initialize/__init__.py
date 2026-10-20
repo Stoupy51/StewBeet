@@ -17,6 +17,7 @@ import stouputils as stp
 from beet import Context, Dialog, DialogTag, FormatSpecifier, Pack
 from beet.core.utils import TextComponent, split_version
 from box import Box
+from mecha import MechaOptions
 from stouputils.typing import JsonDict
 
 from ...core import LATEST_MC_VERSION, MORE_ASSETS_PACK_FORMATS, MORE_DATA_PACK_FORMATS, MORE_DATA_VERSIONS, Mem, set_json_encoder
@@ -63,6 +64,7 @@ def beet_default(ctx: Context, silent: bool = False) -> Generator[None]:
 		SftpPool.warmup_from_context(ctx)
 
 		fill_defaults(ctx)
+		warn_older_mecha_tree(ctx)
 		object.__setattr__(ctx, "output_directory", stp.relative_path(str(Mem.ctx.output_directory)))
 		register_pack_formats(ctx)
 		rename_textures(Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", ""))
@@ -120,6 +122,17 @@ def fill_defaults(ctx: Context) -> None:
 	manual_name: TextComponent = Mem.ctx.meta.get("stewbeet", {}).get("manual", {}).get("name", "")
 	if not manual_name:
 		Mem.ctx.meta["stewbeet"]["manual"]["name"] = f"{ctx.project_name} Manual"
+
+
+def warn_older_mecha_tree(ctx: Context) -> None:
+	""" Warn when `meta.mecha.version` is older than the project's Minecraft version, whose commands mecha would reject. """
+	mecha_version: str = str(ctx.validate("mecha", MechaOptions).version or "")
+	minecraft_version: str = ctx.minecraft_version or LATEST_MC_VERSION
+	if mecha_version and split_version(mecha_version) < split_version(minecraft_version):
+		stp.warning(
+			f"mecha parses functions with the {mecha_version} command tree but the project targets Minecraft {minecraft_version}, "
+			f"so commands added since (like /compute) fail to parse. Remove 'meta.mecha.version' to follow 'minecraft'."
+		)
 
 
 def register_pack_formats(ctx: Context) -> None:
