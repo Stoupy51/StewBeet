@@ -98,6 +98,8 @@ Definition of the `Item` class properties:
 | `hand_model` | `JsonDict \| None` | Model used instead of the regular one in most display contexts (hand, gui, ground, ...) |
 | `override_model_contexts` | `list[str] \| None` | Display contexts keeping the regular model when `hand_model` is set (default: `["none", "fixed"]`, i.e. item display entities and item frames) |
 | `wiki_buttons` | `list[WikiButton] \| TextComponent \| None` | Manual documentation |
+| `remainder` | `str \| None` | Id of the item left once this one is eaten or drunk (e.g. `"beer_mug"`), given back with the container's name, model and custom data, and linked from the item's manual page |
+| `ranged_weapon` | `RangedWeapon \| None` | Charge time, arrow damage and ammunition of a bow or crossbow (see below) |
 | `components` | `JsonDict` | Minecraft item components (without `minecraft:` prefix) |
 
 Example using the `Item` class:
@@ -184,7 +186,46 @@ class VanillaBlock:
     contents: bool = False                           # For blocks using item frames without vanilla block
     block_facing: Literal[False, "player"] = False   # Rotate placed block based on player facing
     visual_facing: Literal["none", "player", "item_frame"] = "none"  # Visual entity orientation source
+    half: Literal["click"] | None = None             # Slab, stairs or trapdoor host on the half the player clicked
+    interaction: Interaction | None = None           # Interaction entity for an invisible host (barrier, structure void, light)
+    uvlock: bool = False                             # With visual_facing="player", turned model copies keeping textures on the world grid
+    margin: float = 1.002                            # Scale of the displayed model about the block's center, 1.0 leaves its size
+    machine_speed: float | None = None               # Furnace, smoker, blast furnace or brewing stand working this many times faster
 ```
+
+With `block_facing="player"`, the host faces the way vanilla turns it: towards the player for a furnace, the way the player looks for stairs and fence gates.
+
+The display entity is scaled by `margin` about the block's center, so its faces are drawn in front of the host's. Use a larger margin when faces still flicker from far away (`1.008` is 1/16 of a pixel on a full block). `margin=1.0` leaves the size.
+
+`half="click"` places the host's `type` (slab) or `half` (stairs, trapdoor) from where the player clicked, found at placement by stepping along the player's look (`{ns}:custom_blocks/_aim/main`). Besides `#upper`, it leaves `#floor {ns}.data` at 1 when the player clicked the top of the block below.
+
+A stairs host takes a corner `shape` from its neighbours, and its display follows it every second with a copy of the model cut from its elements, drawn facing south: an inner corner adds the stairs turned a quarter, an outer corner keeps what both share. A furnace, smoker or blast furnace host with an `_on` model shows it while it burns. Both switch through the display's `custom_model_data` string, and only for a model StewBeet draws.
+
+#### **Invisible hosts: Interaction**
+
+A host without collision or that cannot be mined (`minecraft:barrier`, `minecraft:structure_void`, `minecraft:light[level=N]`) gets an interaction entity breaking the block when hit:
+
+```python
+Block(
+    id="oak_chair",
+    vanilla_block=VanillaBlock(id="minecraft:barrier", visual_facing="player", interaction=Interaction(
+        width=1.01, height=1.01,         # From the bottom of the block
+        seat=0.5,                        # Using it seats the player this high, None for no seat
+        hits=3, hit_timeout=20,          # 3 hits less than 20 ticks apart break it
+        sound="minecraft:block.wood",    # Plays <sound>.hit and <sound>.break with particles of the item
+    )),
+)
+```
+
+The item drops unless the breaker is in creative, and also when no player breaks it (a quarry calling `#common_signals:calls/destroyed_block` gets it). An item id as `no_silk_touch_drop` drops that item instead. For an emissive block without collision, use `minecraft:light[level=15]` as the host. Run commands when a player uses an interaction by appending to `{ns}:custom_blocks/_interaction/use`, run as the interaction with the player tagged `{ns}.user`.
+
+#### **Mining level: Mining**
+
+```python
+Block(id="steel_block", mining=Mining(tool="pickaxe", level="iron"))
+```
+
+A weaker tool breaks the block without dropping its item. Without a host, the block takes the first host of `Mining.hosts` for its level (`minecraft:diamond_block` for iron), whose vanilla drop rules then decide, mining speed and animation included; a host given must be one of them. An interaction host checks the breaker's main hand against the item tag `Mining.item_tag` (any tool kind works there). An ore on `VANILLA_BLOCK_FOR_ORES` checks the tool of the nearest survival player within 8 blocks.
 
 #### **NoSilkTouchDrop Configuration**
 
@@ -193,10 +234,12 @@ Defines custom drops when the block is broken without silk touch:
 ```python
 @dataclass
 class NoSilkTouchDrop:
-    id: str                     # Item ID to drop (e.g., "raw_simplunium")
+    id: str = ""                # Item ID to drop (e.g., "raw_simplunium")
+    loot_table: LootTable | str | None = None  # Or a loot table rolled with the breaker's tool, instead of id and count
     count: dict | int = 1       # Drop count: int or {"min": 1, "max": 3}
     experience: dict | float = 0.0  # Experience points: 2.5 (a 50% chance of a third point) or {"min": 3, "max": 7}
 ```
+The manual shows the experience in the hover of the mining recipe.
 ```python
 # Example usage
 block = Block(
@@ -226,7 +269,30 @@ block = Block(
         }]
     })
 )
+
+# Or a loot table with experience
+block = Block(
+    id="simplunium_ore",
+    vanilla_block=VanillaBlockForOres,
+    no_silk_touch_drop=NoSilkTouchDrop(loot_table="my_ns:blocks/simplunium_ore", experience={"min": 2, "max": 5})
+)
 ```
+
+#### **RangedWeapon Configuration**
+
+```python
+Item(
+    id="crossbow", base_item="minecraft:crossbow",
+    ranged_weapon=RangedWeapon(
+        charge_time=2.5,          # Seconds to load a crossbow, 1.25 in vanilla
+        damage_multiplier=1.5,    # Damage of the arrows it shoots
+        ammunition="bolt",        # The only item of the definitions it loads, anything else is given back
+        name="Heavy Draw",        # Tooltip name of the hidden enchantment applying it
+    ),
+)
+```
+
+The item gets an enchantment (`Item.ranged_weapon_enchantment`) tagged as a curse so a grindstone keeps it, and no enchantment glint. A crossbow with `_pulling_<n>`, `_arrow` and `_firework` textures gets the vanilla crossbow item model: drawn by its charge, and showing what it holds once loaded.
 
 #### **GrowingSeed Configuration**
 
@@ -714,7 +780,7 @@ StewBeet automatically recognizes texture patterns and generates appropriate mod
 
 **Powered States:**
 - Any block/item can have `_on` variants (e.g., `furnace_front.png` + `furnace_front_on.png`)
-- StewBeet automatically generates both states if `_on` textures are detected
+- StewBeet automatically generates both states if `_on` textures are detected, a furnace, smoker or blast furnace host showing the `_on` one while it burns
 
 #### **Multiple States (On/Off, Facing)**
 

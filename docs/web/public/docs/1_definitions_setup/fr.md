@@ -97,6 +97,8 @@ Définition des propriétés de la classe `Item` :
 | `hand_model` | `JsonDict \| None` | Model utilisé à la place du model normal dans la plupart des contextes d'affichage (main, gui, sol, ...) |
 | `override_model_contexts` | `list[str] \| None` | Contextes d'affichage gardant le model normal quand `hand_model` est défini (défaut : `["none", "fixed"]`, c.-à-d. entités item display et cadres) |
 | `wiki_buttons` | `list[WikiButton] \| TextComponent \| None` | Documentation du manuel |
+| `remainder` | `str \| None` | Id de l'item laissé une fois celui-ci mangé ou bu (ex. `"beer_mug"`), rendu avec le nom, le model et les custom data du récipient, et lié depuis la page de l'item dans le manuel |
+| `ranged_weapon` | `RangedWeapon \| None` | Temps de charge, dégâts des flèches et munition d'un arc ou d'une arbalète (voir plus bas) |
 | `components` | `JsonDict` | Components d'items Minecraft (sans préfixe `minecraft:`) |
 
 Exemple d'utilisation de la classe `Item` :
@@ -183,7 +185,46 @@ class VanillaBlock:
     contents: bool = False                           # Pour les blocs utilisant des item frames sans bloc vanilla
     block_facing: Literal[False, "player"] = False   # Rotation du bloc placé selon le joueur
     visual_facing: Literal["none", "player", "item_frame"] = "none"  # Source d'orientation visuelle
+    half: Literal["click"] | None = None             # Dalle, escalier ou trappe sur la moitié cliquée par le joueur
+    interaction: Interaction | None = None           # Entité interaction pour un hôte invisible (barrier, structure void, light)
+    uvlock: bool = False                             # Avec visual_facing="player", copies tournées du model gardant les textures alignées sur le monde
+    margin: float = 1.002                            # Échelle du model affiché autour du centre du bloc, 1.0 garde sa taille
+    machine_speed: float | None = None               # Four, fumoir, haut fourneau ou alambic qui travaille ce nombre de fois plus vite
 ```
+
+Avec `block_facing="player"`, l'hôte est tourné comme vanilla le tourne : vers le joueur pour un four, dans le sens du regard pour les escaliers et les portillons.
+
+L'entité display est mise à l'échelle de `margin` autour du centre du bloc, pour que ses faces passent devant celles de l'hôte. Prenez une marge plus grande si les faces scintillent encore de loin (`1.008` vaut 1/16 de pixel sur un bloc plein). `margin=1.0` garde la taille.
+
+`half="click"` place le `type` (dalle) ou la `half` (escalier, trappe) de l'hôte selon l'endroit cliqué, trouvé au placement en avançant le long du regard du joueur (`{ns}:custom_blocks/_aim/main`). En plus de `#upper`, il laisse `#floor {ns}.data` à 1 quand le joueur a cliqué le dessus du bloc du dessous.
+
+Un hôte escalier prend un `shape` d'angle selon ses voisins, et son display le suit chaque seconde avec une copie du model découpée dans ses éléments, dessinés orientés vers le sud : un angle intérieur ajoute l'escalier tourné d'un quart, un angle extérieur garde ce que les deux ont en commun. Un hôte four, fumoir ou haut fourneau ayant un model `_on` l'affiche tant qu'il brûle. Les deux passent par la chaîne `custom_model_data` du display, et seulement pour un model que StewBeet dessine.
+
+#### **Hôtes invisibles : Interaction**
+
+Un hôte sans collision ou qu'on ne peut pas miner (`minecraft:barrier`, `minecraft:structure_void`, `minecraft:light[level=N]`) reçoit une entité interaction qui casse le bloc quand on la frappe :
+
+```python
+Block(
+    id="oak_chair",
+    vanilla_block=VanillaBlock(id="minecraft:barrier", visual_facing="player", interaction=Interaction(
+        width=1.01, height=1.01,         # Depuis le bas du bloc
+        seat=0.5,                        # L'utiliser assoit le joueur à cette hauteur, None pour aucun siège
+        hits=3, hit_timeout=20,          # 3 coups à moins de 20 ticks d'écart le cassent
+        sound="minecraft:block.wood",    # Joue <sound>.hit et <sound>.break avec des particules de l'item
+    )),
+)
+```
+
+L'item tombe sauf si le joueur qui casse est en créatif, et aussi quand aucun joueur ne le casse (une quarry qui appelle `#common_signals:calls/destroyed_block` le récupère). Un id d'item en `no_silk_touch_drop` fait tomber cet item à la place. Pour un bloc lumineux sans collision, utilisez `minecraft:light[level=15]` comme hôte. Pour lancer des commandes quand un joueur utilise une interaction, ajoutez-les à `{ns}:custom_blocks/_interaction/use`, exécutée en tant que l'interaction avec le joueur tagué `{ns}.user`.
+
+#### **Niveau de minage : Mining**
+
+```python
+Block(id="steel_block", mining=Mining(tool="pickaxe", level="iron"))
+```
+
+Un outil trop faible casse le bloc sans faire tomber son item. Sans hôte, le bloc prend le premier hôte de `Mining.hosts` pour son niveau (`minecraft:diamond_block` pour le fer), dont les règles de drop vanilla décident alors, vitesse et animation de minage comprises ; un hôte donné doit en faire partie. Un hôte interaction vérifie la main principale du joueur avec l'item tag `Mining.item_tag` (tout type d'outil y fonctionne). Un minerai sur `VANILLA_BLOCK_FOR_ORES` vérifie l'outil du joueur en survie le plus proche à 8 blocs.
 
 #### **Configuration NoSilkTouchDrop**
 
@@ -192,10 +233,12 @@ Définit les custom drops quand le bloc est cassé sans toucher de soie :
 ```python
 @dataclass
 class NoSilkTouchDrop:
-    id: str                     # ID de l'item à drop (ex., "raw_simplunium")
+    id: str = ""                # ID de l'item à drop (ex., "raw_simplunium")
+    loot_table: LootTable | str | None = None  # Ou une loot table tirée avec l'outil du joueur, à la place de id et count
     count: dict | int = 1       # Nombre de drops : int ou {"min": 1, "max": 3}
     experience: dict | float = 0.0  # Points d'expérience : 2.5 (50 % de chance d'un troisième point) ou {"min": 3, "max": 7}
 ```
+Le manuel affiche l'expérience dans le survol de la recette de minage.
 ```python
 # Exemple d'utilisation
 block = Block(
@@ -225,7 +268,30 @@ block = Block(
         }]
     })
 )
+
+# Ou une loot table avec de l'expérience
+block = Block(
+    id="simplunium_ore",
+    vanilla_block=VanillaBlockForOres,
+    no_silk_touch_drop=NoSilkTouchDrop(loot_table="my_ns:blocks/simplunium_ore", experience={"min": 2, "max": 5})
+)
 ```
+
+#### **Configuration RangedWeapon**
+
+```python
+Item(
+    id="crossbow", base_item="minecraft:crossbow",
+    ranged_weapon=RangedWeapon(
+        charge_time=2.5,          # Secondes pour charger une arbalète, 1.25 en vanilla
+        damage_multiplier=1.5,    # Dégâts des flèches tirées
+        ammunition="bolt",        # Le seul item des définitions qu'elle charge, tout autre est rendu
+        name="Heavy Draw",        # Nom dans l'infobulle de l'enchantement caché qui l'applique
+    ),
+)
+```
+
+L'item reçoit un enchantement (`Item.ranged_weapon_enchantment`) tagué comme malédiction pour qu'une meule le garde, et pas de reflet d'enchantement. Une arbalète avec des textures `_pulling_<n>`, `_arrow` et `_firework` reçoit l'item model vanilla de l'arbalète : tendue selon sa charge, et montrant ce qu'elle tient une fois chargée.
 
 #### **Configuration GrowingSeed**
 
@@ -713,7 +779,7 @@ StewBeet reconnaît automatiquement les motifs de textures et génère les model
 
 **États alimentés :**
 - N'importe quel bloc/item peut avoir des variantes `_on` (ex., `furnace_front.png` + `furnace_front_on.png`)
-- StewBeet génère automatiquement les deux états si des textures `_on` sont détectées
+- StewBeet génère automatiquement les deux états si des textures `_on` sont détectées, un hôte four, fumoir ou haut fourneau affichant l'état `_on` tant qu'il brûle
 
 #### **États multiples (On/Off, Facing)**
 
