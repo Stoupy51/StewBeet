@@ -10,7 +10,7 @@ from beet import BlockTag, Context
 from stouputils.typing import JsonDict
 
 from ....core.__memory__ import Mem
-from ....core.cls.items.block import VANILLA_BLOCK_FOR_ORES
+from ....core.cls.items.features import VANILLA_BLOCK_FOR_ORES
 from ....core.constants import VANILLA_BLOCK
 
 

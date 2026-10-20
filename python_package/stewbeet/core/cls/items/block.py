@@ -6,7 +6,6 @@ __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
 from dataclasses import dataclass
-from typing import Literal
 
 import stouputils as stp
 from beet import Advancement, Function, ItemModel, LootTable, Model, Texture
@@ -22,191 +21,10 @@ from ...constants import (
 	SEEDS_FOLDER,
 	VANILLA_BLOCK,
 )
-from .._utils import StMapping
 from ..block_functions import BlockFunctions
 from ..resource import Resource
+from .features import GrowingSeed, Mining, NoSilkTouchDrop, VanillaBlock
 from .item import Item
-
-
-# Subclasses
-@dataclass(kw_only=True, slots=True)
-class VanillaBlock(StMapping):
-	""" Represents a vanilla block with explicit facing semantics.
-
-	This class separates block orientation into two independent axes:
-	- ``block_facing``: controls the orientation of the placed vanilla block itself
-	- ``visual_facing``: controls the orientation of the visual entity/display
-
-	Legacy ``apply_facing`` field is still accepted for backward compatibility:
-	- ``apply_facing=True`` -> ``block_facing="player"``, ``visual_facing="player"``
-	- ``apply_facing="entity"`` -> ``visual_facing="player"``
-	- ``apply_facing=False`` -> no change (defaults)
-
-	Default behavior (no facing):
-
-	>>> vb = VanillaBlock(id="minecraft:stone")
-	>>> vb.id
-	'minecraft:stone'
-	>>> vb.block_facing
-	False
-	>>> vb.visual_facing
-	'none'
-
-	Legacy ``apply_facing=True`` (block + visual rotation):
-
-	>>> vb = VanillaBlock(id="minecraft:furnace", apply_facing=True)
-	>>> vb.block_facing
-	'player'
-	>>> vb.visual_facing
-	'player'
-
-	Legacy ``apply_facing="entity"`` (visual only):
-
-	>>> vb = VanillaBlock(id="minecraft:stone", apply_facing="entity")
-	>>> vb.block_facing
-	False
-	>>> vb.visual_facing
-	'player'
-
-	Item frame custom block (no rotation):
-
-	>>> vb = VanillaBlock(contents=True)
-	>>> vb.contents
-	True
-	>>> vb.id is None
-	True
-	>>> vb.visual_facing
-	'none'
-
-	Item frame rotated like player (4 horizontal directions):
-
-	>>> vb = VanillaBlock(contents=True, visual_facing="player")
-	>>> vb.visual_facing
-	'player'
-
-	Item frame using its own facing (6 directions):
-
-	>>> vb = VanillaBlock(contents=True, visual_facing="item_frame")
-	>>> vb.visual_facing
-	'item_frame'
-
-	Invalid: ``block_facing`` with ``contents=True``:
-
-	>>> VanillaBlock(contents=True, block_facing="player")
-	Traceback (most recent call last):
-	...
-	ValueError: contents=True cannot use block_facing="player"; use visual_facing instead.
-
-	New fields directly:
-
-	>>> vb = VanillaBlock(id="minecraft:barrel", block_facing="player")
-	>>> vb.block_facing
-	'player'
-	>>> vb.visual_facing
-	'player'
-	"""  # stp: ignore[long-docstring]
-	id: str | None = ""
-	""" The vanilla block ID, e.g. 'minecraft:stone', "minecraft:conduit[waterlogged=false]". """
-	contents: bool = False
-	""" For blocks using item frames and no vanilla block, e.g. servo inserter/extractor from SimplEnergy. """
-	block_facing: Literal[False, "player"] = False
-	""" Whether to rotate the placed vanilla block based on player orientation ([facing=...] blockstate). """
-	visual_facing: Literal["none", "player", "item_frame"] = "none"
-	""" Source of the visual orientation.
-	"none" is no rotation, "player" gives 4 horizontal directions, "item_frame" gives 6 from the item frame's Facing.
-	"""
-	apply_facing: Literal[False, True, "entity", None] = None
-	""" Legacy field for backward compatibility. Prefer ``block_facing`` and ``visual_facing``. """
-
-	def __post_init__(self) -> None:
-		# Normalize ID
-		if self.id and ":" not in self.id:
-			self.id = "minecraft:" + self.id
-
-		# Handle contents mode (item_frame backend)
-		if self.contents:
-			self.id = None
-
-		# Legacy compatibility: apply_facing -> new fields
-		if self.apply_facing is True:
-			self.block_facing = "player"
-			self.visual_facing = "player"
-		elif self.apply_facing == "entity":
-			self.visual_facing = "player"
-
-		# Implicit: block_facing="player" implies visual_facing="player" unless explicitly set
-		if self.block_facing == "player" and self.visual_facing == "none" and self.apply_facing is None:
-			self.visual_facing = "player"
-
-		# Validation
-		if self.contents and self.block_facing:
-			raise ValueError("contents=True cannot use block_facing=\"player\"; use visual_facing instead.")
-
-@dataclass(kw_only=True, slots=True)
-class NoSilkTouchDrop(StMapping):
-	""" Defines deterministic drops when the block is broken without silk touch.
-
-	>>> nsd = NoSilkTouchDrop(id="raw_iron")
-	>>> nsd.id
-	'raw_iron'
-	>>> nsd.count, nsd.experience
-	(1, 0.0)
-	"""
-	id: str
-	""" The item ID to drop when the block is broken without silk touch, e.g. 'raw_simplunium'. """
-	count: dict[str, int] | int = 1
-	""" (Optional) The count of items to drop. Can be an integer or a dict with 'min' and 'max' keys. Default is 1. """
-	experience: dict[str, int] | float = 0.0
-	""" (Optional) Experience points dropped with it, like vanilla ores do, as a dict with 'min' and 'max' keys or a number.
-	The fractional part of a number is the chance of one more point: 0.5 gives 1 point half of the time.
-	"""
-
-	def __post_init__(self) -> None:
-		for value in (self.count, self.experience):
-			if isinstance(value, dict):
-				assert "min" in value and "max" in value, "If count or experience is a dict, it must contain 'min' and 'max' keys."
-
-@dataclass(kw_only=True, slots=True)
-class GrowingSeedLoot(StMapping):
-	""" Defines a single loot entry for a growing seed.
-
-	>>> gsl = GrowingSeedLoot(id="stardust_fragment", rolls=3)
-	>>> gsl.id
-	'stardust_fragment'
-	>>> gsl.rolls
-	3
-	"""
-	id: str
-	""" The item ID to drop, e.g. "stardust_fragment", "minecraft:stone". """
-	rolls: JsonDict | int = 1
-	""" (Optional) The roll definition for the loot, e.g. {"type":"minecraft:uniform","min":3,"max":9}. """
-	fortune: JsonDict | None = None
-	""" (Optional) The fortune modifier for the loot, e.g. {"extra":0,"probability":0.5}. """
-
-@dataclass(kw_only=True, slots=True)
-class GrowingSeed(StMapping):
-	""" Defines a seed that grows over time (Stardust Seed from Stardust Fragment).
-
-	>>> gs = GrowingSeed(
-	...     texture_basename="stardust", seconds=480, planted_on="diamond_block", loots=[GrowingSeedLoot(id="stardust_fragment")]
-	... )
-	>>> gs.texture_basename
-	'stardust'
-	>>> gs.seconds
-	480
-	"""
-	texture_basename: str
-	""" The base name of the texture for the growing seed, e.g. 'stardust'. """
-	seconds: int
-	""" The time in seconds it takes for the seed to grow, e.g. 480. """
-	planted_on: str
-	""" The block ID on which the seed can be planted, e.g. 'diamond_block'. """
-	loots: list[GrowingSeedLoot] | str
-	""" The list of loot definitions for the seed when it is harvested, or a loot path path. """
-
-	def __post_init__(self) -> None:
-		if self.planted_on.startswith("minecraft:"):
-			self.planted_on = self.planted_on.replace("minecraft:", "", 1)
 
 
 # Class
@@ -296,6 +114,10 @@ class Block(Item):
 	"""
 	on_place: str | None = None
 	""" Deprecated since v3.5.0. """
+	mining: Mining | None = None
+	""" (Optional) The tool needed to get the item when breaking it.
+	A real host left unset becomes the first of `Mining.hosts`, an interaction host checks the breaker's tool itself.
+	"""
 
 	# Others
 	growing_seed: GrowingSeed | None = None
@@ -463,7 +285,4 @@ class BlockHead(Block):
 	def __post_init__(self) -> None:
 		self.base_item = CUSTOM_BLOCK_HEAD
 		super().__post_init__()
-
-# Constants
-VANILLA_BLOCK_FOR_ORES = VanillaBlock(id="minecraft:polished_deepslate")
 

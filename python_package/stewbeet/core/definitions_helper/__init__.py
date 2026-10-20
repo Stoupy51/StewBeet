@@ -11,6 +11,7 @@ from .completion import (
 	add_private_custom_data_for_namespace as add_private_custom_data_for_namespace,
 	add_smithed_ignore_vanilla_behaviours_convention as add_smithed_ignore_vanilla_behaviours_convention,
 	export_all_definitions_to_json as export_all_definitions_to_json,
+	resolve_use_remainders as resolve_use_remainders,
 	set_manual_components as set_manual_components,
 )
 from .equipments import (

@@ -16,17 +16,29 @@ from .cls.block_functions import (
 	BlockFunctions as BlockFunctions,
 )
 from .cls.items.block import (
-	VANILLA_BLOCK_FOR_ORES as VANILLA_BLOCK_FOR_ORES,
 	Block as Block,
 	BlockAlternative as BlockAlternative,
 	BlockHead as BlockHead,
-	GrowingSeed as GrowingSeed,
-	GrowingSeedLoot as GrowingSeedLoot,
-	NoSilkTouchDrop as NoSilkTouchDrop,
-	VanillaBlock as VanillaBlock,
 )
 from .cls.items.external_item import (
 	ExternalItem as ExternalItem,
+)
+from .cls.items.features import (
+	LIT_HOSTS as LIT_HOSTS,
+	MACHINE_HOSTS as MACHINE_HOSTS,
+	MINING_HOSTS as MINING_HOSTS,
+	MINING_LEVELS as MINING_LEVELS,
+	MODEL_MARGIN as MODEL_MARGIN,
+	STAIRS_SHAPES as STAIRS_SHAPES,
+	TOOL_MATERIALS as TOOL_MATERIALS,
+	VANILLA_BLOCK_FOR_ORES as VANILLA_BLOCK_FOR_ORES,
+	GrowingSeed as GrowingSeed,
+	GrowingSeedLoot as GrowingSeedLoot,
+	Interaction as Interaction,
+	Mining as Mining,
+	NoSilkTouchDrop as NoSilkTouchDrop,
+	RangedWeapon as RangedWeapon,
+	VanillaBlock as VanillaBlock,
 )
 from .cls.items.item import (
 	Item as Item,
@@ -149,6 +161,7 @@ from .definitions_helper import (
 	records_to_generate as records_to_generate,
 	refined_recipes as refined_recipes,
 	register_record_song as register_record_song,
+	resolve_use_remainders as resolve_use_remainders,
 	set_manual_components as set_manual_components,
 	write_armor as write_armor,
 	write_equipment_asset as write_equipment_asset,
@@ -262,11 +275,27 @@ from .utils.loot_table import (
 	TYPED_LOOT_VERSION as TYPED_LOOT_VERSION,
 	advancement_conditions as advancement_conditions,
 	advancement_entity as advancement_entity,
+	entity_type_field as entity_type_field,
 	float_score as float_score,
 	loot_condition as loot_condition,
 	loot_function as loot_function,
 	loot_modifiers as loot_modifiers,
 	result_count_to_suffix as result_count_to_suffix,
+)
+from .utils.models import (
+	CUBE_ELEMENT as CUBE_ELEMENT,
+	CUBE_PARENTS as CUBE_PARENTS,
+	DIRECTIONS as DIRECTIONS,
+	UVLOCK_TURNS as UVLOCK_TURNS,
+	cake_element as cake_element,
+	flipped as flipped,
+	model_with_margin as model_with_margin,
+	overlap as overlap,
+	stairs_corner as stairs_corner,
+	turned as turned,
+	uv_locked as uv_locked,
+	vanilla_elements as vanilla_elements,
+	with_margin as with_margin,
 )
 from .utils.sounds import (
 	add_sound as add_sound,

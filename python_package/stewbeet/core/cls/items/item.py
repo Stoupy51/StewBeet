@@ -9,7 +9,7 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, ClassVar
 
 import stouputils as stp
-from beet import ItemModel, LootTable, Model, Recipe, Texture
+from beet import Enchantment, ItemModel, LootTable, Model, Recipe, Texture
 from beet.core.utils import TextComponent
 from stouputils.typing import JsonDict
 
@@ -27,6 +27,7 @@ from .._utils import StMapping
 from ..recipes._recipe_list import RecipeList
 from ..recipes.recipe import RecipeBase
 from ..resource import Resource
+from .features import RangedWeapon
 from .wiki_button import WikiButton
 
 if TYPE_CHECKING:
@@ -134,6 +135,12 @@ class Item(StMapping):
 	""" (Optional) If True, loot tables and give_all chests won't give this item.
 	Useful for items that are never meant to be obtained by players.
 	"""
+	remainder: str | None = None
+	""" (Optional) Id in the definitions of the item left once this one is eaten or drunk, ex: "beer_mug".
+	It becomes the `use_remainder` component, carrying the container's item_name, item_model and custom_data.
+	"""
+	ranged_weapon: RangedWeapon | None = None
+	""" (Optional) Charge time, damage and ammunition of a bow or a crossbow. """
 	origin: SourceOrigin | None = field(default=None, init=False, repr=False, compare=False, metadata={"transient": True})
 	""" Where this definition was declared, captured by the sniffer plugin so content a plugin generates
 	from it maps back to the declaration instead of to the plugin. None unless that plugin is active. """
@@ -170,6 +177,10 @@ class Item(StMapping):
 			if k.startswith("!") and v != {}:
 				self.components[k] = {}
 
+		if self.ranged_weapon:
+			self.components.setdefault("enchantments", {})[str(self.ranged_weapon_enchantment)] = 1
+			self.components.setdefault("enchantment_glint_override", False)
+
 		# Register the item in the global definitions (if not external)
 		if self.id and ":" not in self.id and self.id not in Mem.definitions:
 			Mem.definitions[self.id] = self
@@ -189,6 +200,11 @@ class Item(StMapping):
 	def loot_table(self) -> Resource[LootTable]:
 		""" The loot table giving one of this item, ex: "your_namespace:i/stardust_ingot". """
 		return self.loot_table_for(1)
+
+	@property
+	def ranged_weapon_enchantment(self) -> Resource[Enchantment]:
+		""" The hidden enchantment applying `ranged_weapon`, ex: "your_namespace:ranged_weapon/crossbow". """
+		return Resource(Enchantment, f"ranged_weapon/{self.id}")
 
 	@property
 	def item_model(self) -> Resource[ItemModel]:

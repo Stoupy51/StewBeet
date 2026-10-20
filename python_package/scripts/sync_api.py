@@ -61,7 +61,7 @@ The three stewbeet.core entries back a CLI subcommand each, dispatched by name f
 class Module:
 	""" One source file, described well enough to regenerate the parts this script owns. """
 	fqn: str
-	""" Fully qualified module name, ex: "stewbeet.core.cls.recipe". """
+	""" Fully qualified module name, ex: "stewbeet.core.cls.recipes.recipe". """
 	path: Path
 	""" Source file path. """
 	is_package: bool

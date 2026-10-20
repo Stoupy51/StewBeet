@@ -102,6 +102,15 @@ def advancement_conditions(conditions: list[JsonDict]) -> JsonDict | list[JsonDi
 	return conditions[0] if len(conditions) == 1 else loot_condition("minecraft:all_of", terms=conditions)
 
 
+def entity_type_field(entity_type: str) -> JsonDict:
+	""" Entity predicate field matching an entity type or tag, to unpack into the predicate.
+
+	>>> entity_type_field("#minecraft:arrows")
+	{'entity_type': '#minecraft:arrows'}
+	"""
+	return {"entity_type" if minecraft_version_at_least(TYPED_LOOT_VERSION) else "type": entity_type}
+
+
 def advancement_entity(predicate: JsonDict) -> JsonDict:
 	""" Value of an advancement trigger field matching an entity, such as "entity" or "player".
 

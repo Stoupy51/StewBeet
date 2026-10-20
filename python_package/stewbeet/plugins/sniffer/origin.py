@@ -316,9 +316,9 @@ def is_constructor_frame(frame: FrameType) -> bool:
 
 @cache
 def definition_root() -> str:
-	""" Directory holding the definition dataclasses, resolved from the module rather than spelled out. """
-	from ...core.cls import item
-	return os.path.normcase(os.path.dirname(os.path.abspath(item.__file__)))
+	""" Directory holding the definition dataclasses of items and recipes, resolved from a module rather than spelled out. """
+	from ...core.cls.items import item
+	return os.path.normcase(os.path.dirname(os.path.dirname(os.path.abspath(item.__file__))))
 
 
 def call_position(frame: FrameType) -> tuple[int, int]:

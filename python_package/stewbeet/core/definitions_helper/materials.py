@@ -16,7 +16,8 @@ from beet import Equipment, Texture
 from stouputils.typing import JsonDict
 
 from ..__memory__ import Mem
-from ..cls.items.block import VANILLA_BLOCK_FOR_ORES, Block
+from ..cls.items.block import Block
+from ..cls.items.features import VANILLA_BLOCK_FOR_ORES
 from ..cls.items.item import Item
 from ..cls.recipes.ingredients import Ingr
 from ..cls.recipes.recipe import (

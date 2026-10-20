@@ -98,6 +98,22 @@ def add_smithed_ignore_vanilla_behaviours_convention() -> None:
 		smithed_ignore.setdefault("functionality", True)
 		smithed_ignore.setdefault("crafting", True)
 
+# Use remainders
+def resolve_use_remainders() -> None:
+	""" Give each item with a `remainder` the `use_remainder` component holding that container, with its components at this point.
+
+	The plugins reading final components call it first, once the definitions gave the container its name, model and custom data.
+	"""
+	from ..cls.items.item import Item
+	for obj in Mem.definitions.values():
+		if obj.remainder is None:
+			continue
+		container: Item = Item.from_id(obj.remainder)
+		copied: list[str] = [key for key in ("item_name", "item_model", "custom_data") if key in container.components]
+		obj.components["use_remainder"] = {
+			"id": container.base_item, "count": 1, "components": {f"minecraft:{key}": container.components[key] for key in copied},
+		}
+
 # Set manual components
 def set_manual_components(white_list: list[str]) -> None:
 	""" Override the components to include in the manual when hovering items.
@@ -112,7 +128,7 @@ def set_manual_components(white_list: list[str]) -> None:
 	# and update any Manual already created during setup.
 	from ...plugins.ingame_manual import config as v2_config
 	v2_config.COMPONENTS_OVERRIDE = list(white_list)
-	from ..__memory__ import Mem
+	from ...core.__memory__ import Mem
 	if Mem.manual is not None:
 		Mem.manual.config.components_to_include = list(white_list)
 
