@@ -11,6 +11,7 @@ from stouputils.typing import JsonDict
 
 from ....core.__memory__ import Mem
 from ....core.cls.items.block import Block
+from ....core.cls.items.features import VanillaBlock
 from ....core.cls.items.item import Item
 from ....core.constants import (
 	BLOCKS_WITH_INTERFACES,
@@ -23,11 +24,16 @@ from ....core.constants import (
 )
 from ....core.utils.io import set_json_encoder, write_function, write_tag
 from ....core.utils.loot_table import advancement_conditions, loot_condition
+from ....core.utils.models import UVLOCK_TURNS
 from ....dependencies.official_libs import OFFICIAL_LIBS, official_lib_used
+from .interactions import interaction_summon
 
 # Constants
 FACING: tuple[str, ...] = ("north", "east", "south", "west")
-""" The horizontal directions, in the order the `#rotation` score numbers them from 1. """
+""" The horizontal directions, in the order the `#rotation` score numbers them from 1, a block facing the placer. """
+
+LOOK_FACING_HOSTS: tuple[str, ...] = ("_stairs", "_fence_gate")
+""" Hosts vanilla turns the way the placer looks rather than towards them. """
 
 
 # Functions
@@ -125,8 +131,8 @@ def write_display_placement(obj_block: Block, item: str, data: Item, custom_name
 		The vanilla block's id, without its states or data.
 	"""
 	ns: str = Mem.ctx.project_id
-	block: JsonDict = data[VANILLA_BLOCK]
-	block_id: str = block["id"].split('[')[0].split('{')[0]
+	block: VanillaBlock = data[VANILLA_BLOCK]
+	block_id: str = block.base_id
 	content: str = f"tag @s add {ns}.placer\n" + setblock_lines(block, custom_name) + (
 		"execute align xyz positioned ~0.5 ~0.5 ~0.5 summon item_display at @s "
 		f"run function {obj_block.functions.place_secondary}\n"
@@ -145,26 +151,41 @@ scoreboard players add #total_{item} {ns}.data 1
 	return block_id
 
 
-def setblock_lines(block: JsonDict, custom_name: str) -> str:
-	""" The commands putting the vanilla block in place, facing the placer when `block_facing` asks for it.
+def setblock_lines(block: VanillaBlock, custom_name: str) -> str:
+	""" The commands putting the vanilla block in place, facing as vanilla turns it when `block_facing` asks for it,
+	and on the half the placer clicked when `half` asks for it.
 
 	A block opening an interface is placed with the custom name, which the interface then shows.
 	"""
 	ns: str = Mem.ctx.project_id
-	block_id: str = block["id"]
-	beautify_name: str = custom_name if block_id in BLOCKS_WITH_INTERFACES else ""
-	if block.get("block_facing") != "player":
-		rotation: str = f"function {ns}:custom_blocks/get_rotation\n" if block.get("visual_facing") == "player" else ""
-		return rotation + "setblock ~ ~ ~ air strict\n" + f"setblock ~ ~ ~ {block_id}{beautify_name}\n"
+	beautify_name: str = custom_name if block["id"] in BLOCKS_WITH_INTERFACES else ""
+	lines: str = "setblock ~ ~ ~ air strict\n"
+	if "player" in (block.block_facing, block.visual_facing):
+		lines = f"function {ns}:custom_blocks/get_rotation\n" + lines
+	if block.half:
+		lines = f"execute align xyz positioned ~0.5 ~0.5 ~0.5 summon marker run function {ns}:custom_blocks/_aim/main\n" + lines
 
-	states: str = ""
-	if '[' in block_id:
-		block_id, states = block_id.split('[')[0], "," + block_id.split('[')[1][:-1]
-	return f"function {ns}:custom_blocks/get_rotation\n" + "setblock ~ ~ ~ air strict\n" + "".join(
-		f"execute if score #rotation {ns}.data matches {i+1} "
-		f"run setblock ~ ~ ~ {block_id}[facing={face}{states}]{beautify_name}\n"
-		for i, face in enumerate(FACING)
-	)
+	block_id, _, rest = block["id"].partition("[")
+	given_states, _, block_data = rest.rpartition("]")
+	for condition, states in placed_variants(block, [given_states] if given_states else []):
+		setblock: str = f"setblock ~ ~ ~ {block_id}{f'[{",".join(states)}]' if states else ''}{block_data}{beautify_name}"
+		lines += f"execute {condition}run {setblock}\n" if condition else f"{setblock}\n"
+	return lines
+
+
+def placed_variants(block: VanillaBlock, states: list[str]) -> list[tuple[str, list[str]]]:
+	""" The states the host can be placed with, each after the condition picking it from the placer's rotation and clicked half. """
+	ns: str = Mem.ctx.project_id
+	variants: list[tuple[str, list[str]]] = [("", states)]
+	if block.block_facing == "player":
+		facing: tuple[str, ...] = FACING[2:] + FACING[:2] if block.base_id.endswith(LOOK_FACING_HOSTS) else FACING
+		variants = [(f"if score #rotation {ns}.data matches {i + 1} ", [f"facing={face}", *states]) for i, face in enumerate(facing)]
+	if block.half:
+		variants = [
+			(f"{condition}if score #upper {ns}.data matches {upper} ", [f"{block.half_property}={half}", *variant_states])
+			for condition, variant_states in variants for upper, half in ((0, "bottom"), (1, "top"))
+		]
+	return variants
 
 
 def display_setup(obj_block: Block, item: str, data: Item, custom_name: str) -> str:
@@ -192,11 +213,18 @@ tag @s add {ns}.vanilla.{block_id}
 data merge entity @s {custom_name}
 
 # Modify item display entity to match the custom block
-{item_model}data modify entity @s transformation.scale set value [1.002f,1.002f,1.002f]
-function {ns}:custom_blocks/compute_brightness
+{item_model}function {ns}:custom_blocks/compute_brightness
 """
 
-	if block.get("visual_facing") == "player":
+	if block.get("uvlock"):
+		# An item display draws its model turned half a turn, which the left rotation undoes so each copy keeps its world grid
+		content += "\n# Show the copy of the model turned towards the placer\n"
+		content += "data modify entity @s transformation.left_rotation set value [0.0f,1.0f,0.0f,0.0f]\n" + "".join(
+			f"execute if score #rotation {ns}.data matches {rotation} run data modify entity @s "
+			f"item.components.\"minecraft:item_model\" set value \"{obj_block.generated_item_model.suffixed(f'_y{y}')}\"\n"
+			for rotation, y in UVLOCK_TURNS.items()
+		)
+	elif block.get("visual_facing") == "player":
 		content += f"""
 # Apply rotation
 execute if score #rotation {ns}.data matches 1 run data modify entity @s Rotation[0] set value 180.0f
@@ -204,6 +232,18 @@ execute if score #rotation {ns}.data matches 2 run data modify entity @s Rotatio
 execute if score #rotation {ns}.data matches 3 run data modify entity @s Rotation[0] set value 0.0f
 execute if score #rotation {ns}.data matches 4 run data modify entity @s Rotation[0] set value 90.0f
 """
+
+	# A model drawn by another plugin has no flipped copy, so it shows the upper half itself
+	if block.get("half") and obj_block.generated_item_model.suffixed("_up").exists():
+		upper_models: list[tuple[str, str]] = [("", "_up")]
+		if block.get("uvlock"):
+			upper_models = [(f"if score #rotation {ns}.data matches {rotation} ", f"_y{y}_up") for rotation, y in UVLOCK_TURNS.items()]
+			upper_models.append((f"if score #rotation {ns}.data matches 1 ", "_up"))
+		content += "\n# Show the model flipped on the upper half\n" + "".join(
+			f"execute if score #upper {ns}.data matches 1 {condition}run data modify entity @s "
+			f"item.components.\"minecraft:item_model\" set value \"{obj_block.generated_item_model.suffixed(suffix)}\"\n"
+			for condition, suffix in upper_models
+		)
 
 	if OFFICIAL_LIBS["furnace_nbt_recipes"]["is_used"] and block_id.endswith(("_furnace", "_smoker")):
 		content += '\n# Furnace NBT Recipes\n'
@@ -213,6 +253,8 @@ execute if score #rotation {ns}.data matches 4 run data modify entity @s Rotatio
 			'summon marker ~ ~ ~ {Tags:["furnace_nbt_recipes.furnace"]}\n'
 		)
 
+	if block.get("interaction"):
+		content += interaction_summon(obj_block)
 	if obj_block.on_place:
 		content += f"\n# Custom on_place commands\n{obj_block.on_place}\n"
 	return content

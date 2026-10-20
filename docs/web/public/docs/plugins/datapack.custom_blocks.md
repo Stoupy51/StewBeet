@@ -52,6 +52,12 @@ pipeline:
 | `vanilla_block.id` | string | **Required** | The vanilla block ID to use as the base block |
 | `vanilla_block.block_facing` | `False` \| `"player"` | `False` | Whether to rotate the placed block based on player facing |
 | `vanilla_block.visual_facing` | `"none"` \| `"player"` \| `"item_frame"` | `"none"` | Source of the visual orientation for the display entity |
+| `vanilla_block.half` | `"click"` \| `None` | `None` | Slab, stairs or trapdoor host placed on the half the player clicked |
+| `vanilla_block.interaction` | `Interaction` \| `None` | `None` | Interaction entity breaking an invisible host when hit, with hit count, sounds, particles and an optional seat |
+| `vanilla_block.uvlock` | bool | `False` | Show turned copies of the model instead of turning the display, textures keeping the world grid |
+| `vanilla_block.margin` | float | `1.002` | Scale of the displayed model about the block's center, so it is drawn in front of the host. 1.0 leaves its size |
+| `vanilla_block.machine_speed` | float or None | `None` | Speed factor of a furnace, smoker, blast furnace or brewing stand host |
+| `mining` | `Mining` \| `None` | `None` | Tool level needed to get the item, enforced by a host of that level or checked by StewBeet |
 | `item_model` | string | Optional | Custom item model for the block display entity |
 | `no_silk_touch_drop` | string \| dict \| LootTable | Optional | Alternative drop when mined without silk touch (for ores), including dynamic drops via beet `LootTable` |
 | `custom_data` | object | Optional | Custom NBT data for player head blocks |
@@ -77,8 +83,9 @@ Implements smart rotation detection for directional blocks:
 Sets up item display entities with proper visual settings:
 - 🏷️ Applies convention tags (smithed.entity, smithed.block)
 - ✨ Sets custom names and model overrides
-- 💡 Configures brightness and scale for optimal display
+- 💡 Configures brightness, the display scaled by `margin`
 - 🔄 Applies rotation transformations for directional blocks
+- 🪜 Follows every second the corner of a stairs host and the burning of a furnace, smoker or blast furnace host (`{block}/follow_host`)
 
 ### Smithed Custom Block Integration
 Automatically integrates with Smithed Custom Block library when needed:

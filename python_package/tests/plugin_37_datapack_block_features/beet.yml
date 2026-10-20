@@ -1,0 +1,40 @@
+
+# Test: block and item features of stewbeet.plugins.datapack.custom_blocks, loading and resource_pack.item_models
+# Verifies interaction hosts, seats, hit counts, mining levels, clicked halves, stairs corners, lit furnaces, machine speed, model margins,
+# baked uvlock, loot table drops with experience, use remainders, ranged weapons and the crossbow model.
+
+id: "tns"
+name: "Test Block Features"
+version: "1.0.0"
+author: "test"
+minecraft: "26.3"
+
+directory: "."
+output: "build"
+
+require:
+    - "stewbeet"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+resource_pack:
+    name: "resource_pack"
+    load: ["src"]
+
+pipeline:
+    - "src.definitions"
+    - "stewbeet.plugins.resource_pack.item_models"
+    - "stewbeet.plugins.datapack.loading"
+    - "stewbeet.plugins.datapack.custom_blocks"
+    - "stewbeet.plugins.datapack.loot_tables"
+    - "stewbeet.plugins.finalyze.custom_blocks_ticking"
+    - "stewbeet.plugins.finalyze.dependencies"
+    - "src.assertions"
+
+meta:
+    stewbeet:
+        source_lore: "auto"
+        textures_folder: "assets/textures"
+

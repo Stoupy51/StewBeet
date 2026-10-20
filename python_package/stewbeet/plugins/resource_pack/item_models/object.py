@@ -7,6 +7,7 @@ from stouputils.lazy import ALWAYS_LAZY
 
 __lazy_modules__ = ALWAYS_LAZY
 
+import itertools
 import os
 from collections.abc import Iterable
 from dataclasses import dataclass
@@ -16,11 +17,13 @@ from beet import ItemModel, Model, Texture
 from stouputils.typing import JsonDict, JsonList
 
 from ....core.__memory__ import Mem
-from ....core.cls.items.block import Block, GrowingSeed
+from ....core.cls.items.block import Block
+from ....core.cls.items.features import MODEL_MARGIN, STAIRS_SHAPES, GrowingSeed, VanillaBlock
 from ....core.cls.items.item import Item
 from ....core.cls.resource import Resource
 from ....core.constants import CUSTOM_BLOCK_VANILLA, CUSTOM_ITEM_VANILLA
 from ....core.utils.io import set_json_encoder, set_model_encoder, texture_mcmeta
+from ....core.utils.models import UVLOCK_TURNS, cake_element, flipped, stairs_corner, uv_locked, vanilla_elements, with_margin
 
 
 # Constants
@@ -339,13 +342,16 @@ class AutoModel:
 		]
 
 	def power_states(self) -> list[str]:
-		""" The suffixes to write a model for, `_on` too when the item has a texture ending in `_on`. """
+		""" The suffixes to write a model for, `_on` first when the item has a texture ending in `_on`.
+
+		The plain items definition written after it then finds the `_on` model a lit host shows.
+		"""
 		count: int = self.obj.id.count("_")
 		powered: bool = any(
 			name.startswith(self.obj.id) and name.endswith("_on.png") and abs(name.count("_") - count) <= 2
 			for name in self.source_textures
 		)
-		return ["", "_on"] if powered else [""]
+		return ["_on", ""] if powered else [""]
 
 	def write_power_state(self, variants: list[str], on_off: str, overrides: JsonDict) -> None:
 		""" Write the model and the items/ definition of one power state, `on_off` being "" or "_on". """
@@ -366,11 +372,57 @@ class AutoModel:
 		self.copy_and_register_textures(content)
 
 		if self.obj.override_model != {}:
+			self.write_displayed_elements(content, on_off)
 			self.obj.model.suffixed(on_off).write(set_model_encoder(Model(content), max_level=2))
 		Mem.ctx.meta["stewbeet"]["rendered_item_models"].add(self.obj.components["item_model"])
 		if not self.obj.base_item.endswith("bow"):
 			definition: JsonDict = self.items_definition(variants, on_off)
+			definition["model"] = self.host_state_select(definition["model"], on_off)
 			self.obj.generated_item_model.suffixed(on_off).write(set_json_encoder(ItemModel(definition), max_level=4))
+
+	def margin_scale(self) -> float:
+		""" The scale the elements of the model grow by when a display shows it in a host, 1.0 for none. """
+		if not isinstance(self.obj, Block) or self.block_or_item != "block":
+			return 1.0
+		vanilla: VanillaBlock | None = self.obj.vanilla_block
+		return MODEL_MARGIN if vanilla is None else vanilla.margin if vanilla.id else 1.0
+
+	def write_displayed_elements(self, content: JsonDict, on_off: str) -> None:
+		""" Grow the elements of the model, and write the copies of it a block shows turned by `uvlock`, flipped by `half`,
+		or as the corner its stairs host makes.
+		"""
+		block: Block | None = self.obj if isinstance(self.obj, Block) and self.block_or_item == "block" else None
+		elements: JsonList | None = displayed_elements(content) if block else None
+		if block is None or elements is None:
+			return
+		scale: float = self.margin_scale()
+		if scale != 1.0:
+			content["elements"] = [with_margin(element, scale) for element in elements]
+
+		for y, upper, corner in displayed_variants(block.vanilla_block, on_off):
+			suffix: str = on_off + (f"_y{y}" if y else "") + ("_up" if upper else "")
+			copy: Resource[Model] = block.model.suffixed((f"_{corner}" if corner else "") + suffix)
+			copy_elements: JsonList = displayed_copy(elements, y, upper, corner, scale)
+			copy.write(set_model_encoder(Model({"parent": block.model.suffixed(on_off), "elements": copy_elements}), max_level=2))
+			if not corner:
+				model: JsonDict = {"type": "minecraft:model", "model": copy}
+				definition: JsonDict = {"model": self.host_state_select(model, suffix)}
+				block.generated_item_model.suffixed(suffix).write(set_json_encoder(ItemModel(definition), max_level=5))
+
+	def host_state_select(self, model: JsonDict, suffix: str) -> JsonDict:
+		""" `model`, or a select showing the copy of it drawn for the host state the display's custom_model_data string names.
+
+		`datapack.custom_blocks` keeps that string on the state of `VanillaBlock.host_states` the host is in.
+		"""
+		vanilla: VanillaBlock | None = self.obj.vanilla_block if isinstance(self.obj, Block) else None
+		cases: JsonList = [
+			{"when": state, "model": {"type": "minecraft:model", "model": copy}}
+			for state, state_suffix in (vanilla.host_states if vanilla else {}).items()
+			if state_suffix and (copy := self.obj.model.suffixed(state_suffix + suffix)).exists()
+		]
+		if not cases:
+			return model
+		return {"type": "minecraft:select", "property": "minecraft:custom_model_data", "index": 0, "cases": cases, "fallback": model}
 
 	def block_content(self, variants: list[str], on_off: str, overrides: JsonDict) -> JsonDict:
 		""" A block's model: one texture on every face, or the first of `BLOCK_SHAPES` its textures fill.
@@ -396,6 +448,8 @@ class AutoModel:
 		if shape.parent == "block/cake":
 			for i in range(1, 7):
 				slice_content: JsonDict = {"parent": f"block/cake_slice{i}", "textures": content["textures"]}
+				if self.margin_scale() != 1.0:
+					slice_content["elements"] = [with_margin(cake_element(i), self.margin_scale())]
 				Resource(Model, f"item/{self.obj.id}_slice{i}{on_off}").write(set_model_encoder(Model(slice_content), max_level=2))
 		return content
 
@@ -439,29 +493,51 @@ class AutoModel:
 		if not pulling:
 			return
 
+		crossbow: bool = self.obj.base_item == "minecraft:crossbow"
 		entries: JsonList = []
 		for i, variant in enumerate(pulling):
-			if f"{variant}.png" in self.source_textures:
-				Resource(Texture, f"item/{variant}").write(texture_mcmeta(self.source_textures[f"{variant}.png"]))
-			pull_content: JsonDict = {"parent": parent, "textures": {"layer0": f"{self.ns}:item/{variant}"}}
-			self.obj.model.suffixed(f"_pulling_{i}").write(set_model_encoder(Model(pull_content), max_level=2))
+			self.write_layer_model(variant, parent, f"_pulling_{i}")
 			if i < len(pulling) - 1:
 				model: str = f"{self.ns}:item/{self.obj.id}_pulling_{i + 1}"
-				entries.append({"model": {"type": "minecraft:model", "model": model}, "threshold": 0.65 + (0.25 * i)})
+				threshold: float = round((i + 1) / (len(pulling) - 1), 2) if crossbow else 0.65 + (0.25 * i)
+				entries.append({"model": {"type": "minecraft:model", "model": model}, "threshold": threshold})
 
+		drawn: JsonDict = {
+			"type": "minecraft:range_dispatch",
+			"entries": entries,
+			"fallback": {"type": "minecraft:model", "model": f"{self.ns}:item/{self.obj.id}_pulling_0"},
+			"property": "minecraft:crossbow/pull" if crossbow else "minecraft:use_duration",
+		}
+		idle: JsonDict = {"type": "minecraft:model", "model": f"{self.ns}:item/{self.obj.id}"}
+		if crossbow:
+			idle = {
+				"type": "minecraft:select", "property": "minecraft:charge_type", "fallback": idle,
+				"cases": [
+					{"when": charge, "model": self.charged_model(variants, parent, charge, len(pulling) - 1)}
+					for charge in ("arrow", "rocket")
+				],
+			}
+		else:
+			drawn["scale"] = 0.05
 		items_content: JsonDict = {"model": {
-			"type": "minecraft:condition",
-			"on_false": {"type": "minecraft:model", "model": f"{self.ns}:item/{self.obj.id}"},
-			"on_true": {
-				"type": "minecraft:range_dispatch",
-				"entries": entries,
-				"fallback": {"type": "minecraft:model", "model": f"{self.ns}:item/{self.obj.id}_pulling_0"},
-				"property": "minecraft:use_duration",
-				"scale": 0.05
-			},
-			"property": "minecraft:using_item"
+			"type": "minecraft:condition", "property": "minecraft:using_item", "on_false": idle, "on_true": drawn,
 		}}
 		self.obj.generated_item_model.suffixed(on_off).write(set_json_encoder(ItemModel(items_content), max_level=4))
+
+	def write_layer_model(self, variant: str, parent: str, suffix: str) -> None:
+		""" Copy the texture `variant` and write the model showing it, the item's model with `suffix`. """
+		if f"{variant}.png" in self.source_textures:
+			Resource(Texture, f"item/{variant}").write(texture_mcmeta(self.source_textures[f"{variant}.png"]))
+		content: JsonDict = {"parent": parent, "textures": {"layer0": f"{self.ns}:item/{variant}"}}
+		self.obj.model.suffixed(suffix).write(set_model_encoder(Model(content), max_level=2))
+
+	def charged_model(self, variants: list[str], parent: str, charge: str, last_pulling: int) -> JsonDict:
+		""" The model of a crossbow loaded with an arrow or a rocket, from its `_arrow` or `_firework` texture, else its drawn one. """
+		variant: str = f"{self.obj.id}_{'arrow' if charge == 'arrow' else 'firework'}"
+		if variant not in variants:
+			return {"type": "minecraft:model", "model": self.obj.model.suffixed(f"_pulling_{last_pulling}")}
+		self.write_layer_model(variant, parent, variant.removeprefix(self.obj.id))
+		return {"type": "minecraft:model", "model": self.obj.model.suffixed(variant.removeprefix(self.obj.id))}
 
 	def items_definition(self, variants: list[str], on_off: str) -> JsonDict:
 		""" The items/ definition: the hand model's switch, a spear's in-hand switch, or the model alone. """
@@ -499,6 +575,36 @@ class AutoModel:
 		elif not on_off:
 			self.obj.texture.suffixed("_in_hand").write(texture_mcmeta(self.source_textures[f"{self.obj.id}_in_hand.png"]))
 		return items_model
+
+
+def displayed_elements(model: JsonDict) -> JsonList | None:
+	""" The elements a model draws: its own, its first parent's in the pack, or those of a cube or cake vanilla parent. """
+	while "elements" not in model:
+		parent: str | None = model.get("parent")
+		pack_model: Model | None = Mem.ctx.assets.models.get(parent if ":" in parent else f"minecraft:{parent}") if parent else None
+		if pack_model is None:
+			return vanilla_elements(parent) if parent else None
+		model = pack_model.data
+	return model["elements"]
+
+
+def displayed_variants(vanilla: VanillaBlock | None, on_off: str) -> list[tuple[int, bool, str]]:
+	""" The turn, half and stairs corner of each copy of the model a display shows, all but the model itself.
+
+	The corners of a turn and half come before its plain copy, so the items definition written with that copy finds them.
+	"""
+	if vanilla is None:
+		return []
+	turns: list[int] = [0, *UVLOCK_TURNS.values()] if vanilla.uvlock else [0]
+	halves: tuple[bool, ...] = (False, True) if vanilla.half else (False,)
+	corners: tuple[str, ...] = (*STAIRS_SHAPES[1:], "") if vanilla.base_id.endswith("_stairs") and not on_off else ("",)
+	return [(y, upper, corner) for y, upper, corner in itertools.product(turns, halves, corners) if y or upper or corner]
+
+
+def displayed_copy(elements: JsonList, y: int, upper: bool, corner: str, scale: float) -> JsonList:
+	""" The elements cut into a stairs `corner` unless empty, turned `y` degrees, flipped on the upper half, grown by `scale`. """
+	shape: JsonList = [uv_locked(element, 0, y) for element in (stairs_corner(elements, corner) if corner else elements)]
+	return [with_margin(flipped(element) if upper else element, scale) for element in shape]
 
 
 def excludes_textures(overrides: JsonDict) -> bool:

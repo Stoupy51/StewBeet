@@ -10,11 +10,13 @@ from beet import BlockTag, LootTable, Predicate
 from stouputils.typing import JsonDict
 
 from ....core.__memory__ import Mem
-from ....core.cls.items.block import VANILLA_BLOCK_FOR_ORES, Block, NoSilkTouchDrop
+from ....core.cls.items.block import Block
+from ....core.cls.items.features import VANILLA_BLOCK_FOR_ORES, NoSilkTouchDrop
 from ....core.cls.items.item import Item
 from ....core.constants import CUSTOM_BLOCK_ALTERNATIVE, GROWING_SEED, NO_SILK_TOUCH_DROP, VANILLA_BLOCK
-from ....core.utils.io import set_json_encoder, write_function, write_versioned_function
+from ....core.utils.io import McFunction, set_json_encoder, write_function, write_versioned_function
 from ....core.utils.loot_table import loot_condition
+from .interactions import interaction_destroy
 
 # Constants
 VANILLA_BLOCKS_TAG: str = "used_vanilla_blocks"
@@ -89,14 +91,7 @@ def write_block_destroys(ns: str) -> None:
 def write_block_destroy(ns: str, item: str, data: Item, block_id: str) -> None:
 	""" Write the destroy function of one custom block standing in `block_id`, and its replace_item function. """
 	obj_block: Block = Block.from_id(item)
-	item_nbt: str = f"""{{id:"{block_id}"}}"""
-	if block_id == CUSTOM_BLOCK_ALTERNATIVE:
-		item_nbt = f"""{{components:{{"minecraft:custom_data":{{"{ns}":{{"item_frame_destroy":true}}}}}}}}"""
-	growth_line: str = f"\nscoreboard players operation #growth_time {ns}.data = @s {ns}.growth_time" if data.get(GROWING_SEED) else ""
-	write_function(obj_block.functions.destroy, f"""
-# Replace the item with the custom one{growth_line}
-execute as @n[type=item,nbt={{Item:{item_nbt}}},distance=..1] run function {obj_block.functions.replace_item}
-
+	counts: McFunction = f"""
 # Decrease count scores
 scoreboard players remove #total_custom_blocks {ns}.data 1
 scoreboard players remove #total_vanilla_{block_id.replace('minecraft:','')} {ns}.data 1
@@ -104,7 +99,19 @@ scoreboard players remove #total_{item} {ns}.data 1
 
 # Kill the custom block entity
 kill @s
-""")
+"""
+	if data[VANILLA_BLOCK].get("interaction"):
+		write_function(obj_block.functions.destroy, counts + interaction_destroy(obj_block))
+		return
+
+	item_nbt: str = f"""{{id:"{block_id}"}}"""
+	if block_id == CUSTOM_BLOCK_ALTERNATIVE:
+		item_nbt = f"""{{components:{{"minecraft:custom_data":{{"{ns}":{{"item_frame_destroy":true}}}}}}}}"""
+	growth_line: str = f"\nscoreboard players operation #growth_time {ns}.data = @s {ns}.growth_time" if data.get(GROWING_SEED) else ""
+	write_function(obj_block.functions.destroy, f"""
+# Replace the item with the custom one{growth_line}
+execute as @n[type=item,nbt={{Item:{item_nbt}}},distance=..1] run function {obj_block.functions.replace_item}
+{counts}""")
 
 	content: str = f"""
 # Replace the item with the custom one
@@ -128,29 +135,31 @@ def no_silk_touch_content(ns: str, item: str, data: Item, obj_block: Block, item
 	"""
 	is_ore: bool = data.get(VANILLA_BLOCK) == VANILLA_BLOCK_FOR_ORES
 	if not is_ore:
+		# A host too weak a tool broke drops nothing on purpose, so no item is made up for it
+		made_up: str = "" if obj_block.mining else (
+			f"\n# If no item found, summon it\nexecute unless entity @n[type=item,nbt={{Item:{item_nbt}}},distance=..1] "
+			'run loot spawn ~ ~ ~ loot {pools:[{entries:[{type:"minecraft:item",name:"minecraft:glass"}],rolls:1}]}\n'
+		)
 		write_function(obj_block.functions.destroy, f"""
 # Check if the player has silk touch in mainhand
 scoreboard players set #is_silk_touch {ns}.data 0
 execute as @p[distance=..10,gamemode=!spectator] if data entity @s SelectedItem.components."minecraft:enchantments"."minecraft:silk_touch" run scoreboard players set #is_silk_touch {ns}.data 1
+{made_up}""", prepend=True)  # noqa: E501
 
-# If no item found, summon it
-execute unless entity @n[type=item,nbt={{Item:{item_nbt}}},distance=..1] run loot spawn ~ ~ ~ loot {{pools:[{{entries:[{{type:"minecraft:item",name:"minecraft:glass"}}],rolls:1}}]}}
-""", prepend=True)  # noqa: E501
-
-	no_silk_touch_drop: str | JsonDict | NoSilkTouchDrop | LootTable = data[NO_SILK_TOUCH_DROP]
-	if isinstance(no_silk_touch_drop, LootTable):
-		no_silk_loot_table = obj_block.no_silk_touch_loot_table
-		no_silk_loot_table.write(set_json_encoder(no_silk_touch_drop, max_level=-1))
-		content: str = f"""
+	drop: str | JsonDict | NoSilkTouchDrop | LootTable = data[NO_SILK_TOUCH_DROP]
+	if isinstance(drop, LootTable):
+		drop = NoSilkTouchDrop(loot_table=drop)
+	loot_table: LootTable | str | None = None if isinstance(drop, str) else drop.get("loot_table")
+	experience: dict[str, int] | float = 0.0 if isinstance(drop, str) else drop.get("experience", 0.0)
+	content: str = f"""
 # If silk touch applied
 execute if score #is_silk_touch {ns}.data matches 1 run data modify entity @s Item.id set from storage {ns}:items all.{item}.id
 execute if score #is_silk_touch {ns}.data matches 1 run data modify entity @s Item.components set from storage {ns}:items all.{item}.components
 
 # Else, no silk touch
-execute if score #is_silk_touch {ns}.data matches 0 positioned ~ ~ ~ as @p[distance=..10,gamemode=!spectator] run loot spawn ~ ~ ~ fish {no_silk_loot_table} ~ ~ ~ mainhand
-execute if score #is_silk_touch {ns}.data matches 0 unless entity @p[distance=..10,gamemode=!spectator] run loot spawn ~ ~ ~ loot {no_silk_loot_table}
-execute if score #is_silk_touch {ns}.data matches 0 run kill @s
 """  # noqa: E501
+	if loot_table is not None:
+		content += loot_table_drop_lines(ns, obj_block, loot_table) + experience_lines(ns, experience) + "\n"
 		if is_ore:
 			content += f"""
 # Keep item count when silk touch is applied
@@ -158,20 +167,23 @@ execute if score #is_silk_touch {ns}.data matches 1 store result entity @s Item.
 """  # noqa: E501
 		return content
 
-	content = f"""
-# If silk touch applied
-execute if score #is_silk_touch {ns}.data matches 1 run data modify entity @s Item.id set from storage {ns}:items all.{item}.id
-execute if score #is_silk_touch {ns}.data matches 1 run data modify entity @s Item.components set from storage {ns}:items all.{item}.components
-
-# Else, no silk touch
-{no_silk_touch_drop_lines(ns, no_silk_touch_drop)}
-"""  # noqa: E501
+	content += no_silk_touch_drop_lines(ns, drop) + "\n"
 	if is_ore:
 		content += f"""
 # Get item count in every case
 execute store result entity @s Item.count byte 1 run scoreboard players get #item_count {ns}.data
 """
 	return content
+
+
+def loot_table_drop_lines(ns: str, obj_block: Block, loot_table: LootTable | str) -> str:
+	""" The commands dropping `loot_table` rolled with the breaker's tool instead of the vanilla drop, when no silk touch was used. """
+	path: str = loot_table if isinstance(loot_table, str) else obj_block.no_silk_touch_loot_table
+	if isinstance(loot_table, LootTable):
+		obj_block.no_silk_touch_loot_table.write(set_json_encoder(loot_table, max_level=-1))
+	return f"""execute if score #is_silk_touch {ns}.data matches 0 positioned ~ ~ ~ as @p[distance=..10,gamemode=!spectator] run loot spawn ~ ~ ~ fish {path} ~ ~ ~ mainhand
+execute if score #is_silk_touch {ns}.data matches 0 unless entity @p[distance=..10,gamemode=!spectator] run loot spawn ~ ~ ~ loot {path}
+execute if score #is_silk_touch {ns}.data matches 0 run kill @s"""  # noqa: E501
 
 
 def no_silk_touch_drop_lines(ns: str, drop: str | JsonDict | NoSilkTouchDrop) -> str:

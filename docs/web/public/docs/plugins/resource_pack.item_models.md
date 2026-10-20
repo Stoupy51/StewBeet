@@ -81,12 +81,13 @@ Automatically detects texture patterns and generates appropriate block models:
 ### Item Model Generation
 - 📋 Uses appropriate parent models based on item type
 - 🛡️ Handles leather armor with layer1 overlays
-- 🏹 Creates bow pulling animations with range dispatch
+- 🏹 Creates bow pulling animations with range dispatch, and for a crossbow its charge and loaded states
 - ⚡ Supports powered state variants
 
 ### Powered State Support
 - 🔍 Automatically detects `_on` texture variants
-- 🔄 Generates separate models for powered/unpowered states
+- 🔄 Generates separate models for powered/unpowered states, the plain one selecting the `_on` one while a furnace host burns
+- 🪜 Writes the inner and outer corner copies of a stairs block's model, selected from the display's `custom_model_data` string
 
 ### Texture Processing
 - 📁 Recursively scans textures folder for .png files

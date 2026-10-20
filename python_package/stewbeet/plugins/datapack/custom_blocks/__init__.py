@@ -17,6 +17,7 @@ from ....core.constants import CUSTOM_BLOCK_ALTERNATIVE, VANILLA_BLOCK
 from ....core.utils.io import set_json_encoder, write_function
 from ....core.utils.loot_table import loot_condition
 from ... import sniffer
+from .aiming import write_aim
 from .destroying import (
 	write_block_destroys,
 	write_destroy_dispatch,
@@ -25,6 +26,10 @@ from .destroying import (
 	write_signal_listeners,
 	write_vanilla_checks,
 )
+from .host_states import write_host_state
+from .interactions import write_interactions
+from .machines import write_machine
+from .mining import resolve_mining_hosts, write_mining
 from .placing import FACING, write_head_searches, write_placement, write_smithed_link
 from .seeds import write_growing_seed, write_seed_destroy, write_seed_functions
 
@@ -50,6 +55,8 @@ def beet_default(ctx: Context):
 		stp.clean_path(str(p)).split("/")[-1]: stp.relative_path(str(p))
 		for p in sorted(Path(textures_folder).rglob("*.png"), key=str)
 	}
+	blocks: list[Block] = [data for data in Mem.definitions.values() if isinstance(data, Block)]
+	resolve_mining_hosts(blocks)
 	warn_unplaceable_blocks()
 	if not any(data.get(VANILLA_BLOCK) for data in Mem.definitions.values()):
 		return
@@ -72,6 +79,7 @@ def beet_default(ctx: Context):
 			write_growing_seed(obj_block, obj_block.growing_seed, item, source_textures)
 	if has_growing_seed:
 		write_seed_functions(ns)
+	write_block_features(ns, blocks)
 	write_smithed_link(ns)
 
 	# Custom block alternative last
@@ -90,6 +98,20 @@ def beet_default(ctx: Context):
 
 
 # Functions
+def write_block_features(ns: str, blocks: list[Block]) -> None:
+	""" The functions of the features some blocks use, written only when one does. """
+	for block in blocks:
+		if block.vanilla_block and block.vanilla_block.machine_speed is not None:
+			write_machine(block, block.vanilla_block.machine_speed)
+		write_host_state(block)
+	if any(block.vanilla_block and block.vanilla_block.half for block in blocks):
+		write_aim(ns)
+	interaction_blocks: list[Block] = [block for block in blocks if block.vanilla_block and block.vanilla_block.interaction]
+	if interaction_blocks:
+		write_interactions(interaction_blocks)
+	write_mining(blocks)
+
+
 def warn_unplaceable_blocks() -> None:
 	""" Warn about the blocks without a vanilla block, which nothing can place. """
 	incomplete_blocks: list[str] = [

@@ -91,3 +91,10 @@ def beet_default(ctx: Context):
 		"store result entity @s Value short 1 run random value 3..7"
 	) in replace_item_content, "block_ore_experience/replace_item must summon 3 to 7 experience points without silk touch"
 
+	# A pack using none of the opt-in block features gets none of their files
+	optional: list[str] = [path for path in ctx.data.functions if "/_aim/" in path or "/_interaction/" in path]
+	assert not optional, f"Functions of unused features were generated: {optional}"
+	assert not ctx.data.item_tags, "Mining tags were generated for nothing"
+	assert f"{ns}:custom_blocks/interaction_hit" not in ctx.data.advancements, "Interaction advancements were generated for nothing"
+	assert "transformation.scale" not in ctx.data.functions[f"{ns}:custom_blocks/block_no_facing/place_secondary"].text
+
