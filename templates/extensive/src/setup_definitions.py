@@ -5,6 +5,7 @@ from stewbeet import *  # type: ignore
 
 # Additional imports (specific to this project)
 from .definitions.additions import main as main_additions
+from .definitions.features import main as main_features
 from .definitions.manual_customization import main as main_manual_customization
 from .definitions.ores import main as main_ores
 
@@ -22,6 +23,9 @@ def beet_default(ctx: Context):
 	# Run additional definitions modifications (src/definitions/additions.py)
 	# TODO: If you need to add items, you probably want to add them in src/definitions/additions.py, not here, to keep things organized.
 	main_additions()
+
+	# Blocks and items showing the block and item features (src/definitions/features.py)
+	main_features()
 
 	# Add item categories to the remaining items (should select 'shazinho', 'super_stone', and 'stewbeet_painting' here)
 	for item in Mem.definitions.keys():

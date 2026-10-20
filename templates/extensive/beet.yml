@@ -85,8 +85,7 @@ meta:
 
     # Mecha configuration for multiline support and pattern matching
     mecha:
-        # Command tree used to parse functions, 26.2 until mecha supports the 26.3 argument parsers
-        version: "26.2"
+        # Command tree used to parse functions
         multiline: true
         formatting: preserve
 

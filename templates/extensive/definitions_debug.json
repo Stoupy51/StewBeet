@@ -121,7 +121,9 @@
 			"id": "minecraft:iron_block",
 			"contents": false,
 			"block_facing": false,
-			"visual_facing": "none"
+			"visual_facing": "none",
+			"uvlock": false,
+			"margin": 1.002
 		}
 	},
 	"steel_ore": {
@@ -142,7 +144,9 @@
 			"id": "minecraft:polished_deepslate",
 			"contents": false,
 			"block_facing": false,
-			"visual_facing": "none"
+			"visual_facing": "none",
+			"uvlock": false,
+			"margin": 1.002
 		},
 		"no_silk_touch_drop": "raw_steel"
 	},
@@ -164,7 +168,9 @@
 			"id": "minecraft:polished_deepslate",
 			"contents": false,
 			"block_facing": false,
-			"visual_facing": "none"
+			"visual_facing": "none",
+			"uvlock": false,
+			"margin": 1.002
 		},
 		"no_silk_touch_drop": "raw_steel"
 	},
@@ -188,7 +194,9 @@
 			"id": "minecraft:raw_iron_block",
 			"contents": false,
 			"block_facing": false,
-			"visual_facing": "none"
+			"visual_facing": "none",
+			"uvlock": false,
+			"margin": 1.002
 		},
 		"no_silk_touch_drop": {
 			"type": "minecraft:fishing",
@@ -421,7 +429,9 @@
 			"id": "minecraft:cobblestone",
 			"contents": false,
 			"block_facing": false,
-			"visual_facing": "none"
+			"visual_facing": "none",
+			"uvlock": false,
+			"margin": 1.002
 		}
 	},
 	"stewbeet_painting": {
@@ -485,7 +495,9 @@
 			"id": "minecraft:cobblestone",
 			"contents": false,
 			"block_facing": false,
-			"visual_facing": "none"
+			"visual_facing": "none",
+			"uvlock": false,
+			"margin": 1.002
 		}
 	},
 	"vb_visual_facing": {
@@ -508,7 +520,9 @@
 			"id": "minecraft:glass",
 			"contents": false,
 			"block_facing": false,
-			"visual_facing": "player"
+			"visual_facing": "player",
+			"uvlock": false,
+			"margin": 1.002
 		}
 	},
 	"vb_block_facing": {
@@ -531,7 +545,9 @@
 			"id": "minecraft:furnace",
 			"contents": false,
 			"block_facing": "player",
-			"visual_facing": "player"
+			"visual_facing": "player",
+			"uvlock": false,
+			"margin": 1.002
 		}
 	},
 	"vb_block_states": {
@@ -554,7 +570,9 @@
 			"id": "minecraft:furnace[lit=false]",
 			"contents": false,
 			"block_facing": "player",
-			"visual_facing": "player"
+			"visual_facing": "player",
+			"uvlock": false,
+			"margin": 1.002
 		}
 	},
 	"vb_contents": {
@@ -575,7 +593,9 @@
 		"vanilla_block": {
 			"contents": true,
 			"block_facing": false,
-			"visual_facing": "none"
+			"visual_facing": "none",
+			"uvlock": false,
+			"margin": 1.002
 		}
 	},
 	"vb_contents_player": {
@@ -596,7 +616,9 @@
 		"vanilla_block": {
 			"contents": true,
 			"block_facing": false,
-			"visual_facing": "player"
+			"visual_facing": "player",
+			"uvlock": false,
+			"margin": 1.002
 		}
 	},
 	"vb_contents_frame": {
@@ -617,7 +639,248 @@
 		"vanilla_block": {
 			"contents": true,
 			"block_facing": false,
-			"visual_facing": "item_frame"
+			"visual_facing": "item_frame",
+			"uvlock": false,
+			"margin": 1.002
+		}
+	},
+	"chair": {
+		"id": "chair",
+		"base_item": "minecraft:furnace",
+		"manual_category": "miscellaneous",
+		"recipes": [],
+		"components": {
+			"container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:chair","from": "_your_namespace"}}}}}}],
+			"tooltip_display": {"hidden_components": ["minecraft:container"]},
+			"item_model": "_your_namespace:chair",
+			"item_name": {"text": "Chair"},
+			"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "Extensive Template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"render": "steel_ingot","height": 10,"resolution": 64,"color": "white","italic": false}]],
+			"custom_data": {"_your_namespace": {"chair": true},"smithed": {"id": "_your_namespace:chair","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}
+		},
+		"skip_gives": false,
+		"vanilla_block": {
+			"id": "minecraft:barrier",
+			"contents": false,
+			"block_facing": false,
+			"visual_facing": "player",
+			"interaction": {"width": 1.01,"height": 1.01,"seat": 0.5,"hits": 3,"hit_timeout": 20,"sound": "minecraft:block.wood"},
+			"uvlock": false,
+			"margin": 1.002
+		},
+		"mining": {
+			"tool": "pickaxe",
+			"level": "iron"
+		}
+	},
+	"crate": {
+		"id": "crate",
+		"base_item": "minecraft:furnace",
+		"manual_category": "miscellaneous",
+		"recipes": [],
+		"components": {
+			"container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:crate","from": "_your_namespace"}}}}}}],
+			"tooltip_display": {"hidden_components": ["minecraft:container"]},
+			"item_model": "_your_namespace:crate",
+			"item_name": {"text": "Crate"},
+			"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "Extensive Template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"render": "steel_ingot","height": 10,"resolution": 64,"color": "white","italic": false}]],
+			"custom_data": {"_your_namespace": {"crate": true},"smithed": {"id": "_your_namespace:crate","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}
+		},
+		"skip_gives": false,
+		"mining": {
+			"tool": "pickaxe",
+			"level": "iron"
+		}
+	},
+	"plank_slab": {
+		"id": "plank_slab",
+		"base_item": "minecraft:furnace",
+		"manual_category": "miscellaneous",
+		"recipes": [],
+		"components": {
+			"container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:plank_slab","from": "_your_namespace"}}}}}}],
+			"tooltip_display": {"hidden_components": ["minecraft:container"]},
+			"item_model": "_your_namespace:plank_slab",
+			"item_name": {"text": "Plank Slab"},
+			"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "Extensive Template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"render": "steel_ingot","height": 10,"resolution": 64,"color": "white","italic": false}]],
+			"custom_data": {"_your_namespace": {"plank_slab": true},"smithed": {"id": "_your_namespace:plank_slab","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}
+		},
+		"skip_gives": false,
+		"vanilla_block": {
+			"id": "minecraft:oak_slab",
+			"contents": false,
+			"block_facing": false,
+			"visual_facing": "none",
+			"half": "click",
+			"uvlock": false,
+			"margin": 1.002
+		}
+	},
+	"plank_stairs": {
+		"id": "plank_stairs",
+		"base_item": "minecraft:furnace",
+		"manual_category": "miscellaneous",
+		"recipes": [],
+		"components": {
+			"container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:plank_stairs","from": "_your_namespace"}}}}}}],
+			"tooltip_display": {"hidden_components": ["minecraft:container"]},
+			"item_model": "_your_namespace:plank_stairs",
+			"item_name": {"text": "Plank Stairs"},
+			"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "Extensive Template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"render": "steel_ingot","height": 10,"resolution": 64,"color": "white","italic": false}]],
+			"custom_data": {"_your_namespace": {"plank_stairs": true},"smithed": {"id": "_your_namespace:plank_stairs","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}
+		},
+		"skip_gives": false,
+		"vanilla_block": {
+			"id": "minecraft:oak_stairs",
+			"contents": false,
+			"block_facing": "player",
+			"visual_facing": "player",
+			"half": "click",
+			"uvlock": true,
+			"margin": 1.002
+		}
+	},
+	"fast_furnace": {
+		"id": "fast_furnace",
+		"base_item": "minecraft:furnace",
+		"manual_category": "miscellaneous",
+		"recipes": [],
+		"components": {
+			"container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:fast_furnace","from": "_your_namespace"}}}}}}],
+			"tooltip_display": {"hidden_components": ["minecraft:container"]},
+			"item_model": "_your_namespace:fast_furnace",
+			"item_name": {"text": "Fast Furnace"},
+			"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "Extensive Template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"render": "steel_ingot","height": 10,"resolution": 64,"color": "white","italic": false}]],
+			"custom_data": {"_your_namespace": {"fast_furnace": true},"smithed": {"id": "_your_namespace:fast_furnace","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}
+		},
+		"skip_gives": false,
+		"vanilla_block": {
+			"id": "minecraft:furnace",
+			"contents": false,
+			"block_facing": "player",
+			"visual_facing": "player",
+			"uvlock": false,
+			"margin": 1.005,
+			"machine_speed": 2.0
+		}
+	},
+	"ruby_ore": {
+		"id": "ruby_ore",
+		"base_item": "minecraft:furnace",
+		"manual_category": "miscellaneous",
+		"recipes": [],
+		"components": {
+			"container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:ruby_ore","from": "_your_namespace"}}}}}}],
+			"tooltip_display": {"hidden_components": ["minecraft:container"]},
+			"item_model": "_your_namespace:ruby_ore",
+			"item_name": {"text": "Ruby Ore"},
+			"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "Extensive Template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"render": "steel_ingot","height": 10,"resolution": 64,"color": "white","italic": false}]],
+			"custom_data": {"_your_namespace": {"ruby_ore": true},"smithed": {"id": "_your_namespace:ruby_ore","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}
+		},
+		"skip_gives": false,
+		"vanilla_block": {
+			"id": "minecraft:polished_deepslate",
+			"contents": false,
+			"block_facing": false,
+			"visual_facing": "none",
+			"uvlock": false,
+			"margin": 1.002
+		},
+		"no_silk_touch_drop": {
+			"id": "",
+			"loot_table": {"pools": [{"rolls": 1,"entries": [{"type": "minecraft:item","name": "minecraft:raw_iron"}]}]},
+			"count": 1,
+			"experience": {"min": 2,"max": 4}
+		},
+		"mining": {
+			"tool": "pickaxe",
+			"level": "iron"
+		}
+	},
+	"lamp": {
+		"id": "lamp",
+		"base_item": "minecraft:furnace",
+		"manual_category": "miscellaneous",
+		"recipes": [],
+		"components": {
+			"container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:lamp","from": "_your_namespace"}}}}}}],
+			"tooltip_display": {"hidden_components": ["minecraft:container"]},
+			"item_model": "_your_namespace:lamp",
+			"item_name": {"text": "Lamp"},
+			"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "Extensive Template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"render": "steel_ingot","height": 10,"resolution": 64,"color": "white","italic": false}]],
+			"custom_data": {"_your_namespace": {"lamp": true},"smithed": {"id": "_your_namespace:lamp","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}
+		},
+		"skip_gives": false,
+		"vanilla_block": {
+			"id": "minecraft:light[level=15]",
+			"contents": false,
+			"block_facing": false,
+			"visual_facing": "none",
+			"interaction": {"width": 1.01,"height": 1.01,"seat": null,"hits": 1,"hit_timeout": 20,"sound": "minecraft:block.stone"},
+			"uvlock": false,
+			"margin": 1.002
+		}
+	},
+	"beer_mug": {
+		"id": "beer_mug",
+		"base_item": "minecraft:recovery_compass",
+		"manual_category": "miscellaneous",
+		"recipes": [],
+		"components": {
+			"item_model": "_your_namespace:beer_mug",
+			"item_name": {"text": "Beer Mug"},
+			"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "Extensive Template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"render": "steel_ingot","height": 10,"resolution": 64,"color": "white","italic": false}]],
+			"custom_data": {"_your_namespace": {"beer_mug": true},"smithed": {"id": "_your_namespace:beer_mug","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}
+		},
+		"skip_gives": false
+	},
+	"beer": {
+		"id": "beer",
+		"base_item": "minecraft:recovery_compass",
+		"manual_category": "miscellaneous",
+		"recipes": [],
+		"components": {
+			"max_stack_size": 16,
+			"consumable": {"on_consume_effects": [{"type": "minecraft:apply_effects","effects": [{"id": "minecraft:nausea","duration": 600}]}]},
+			"item_model": "_your_namespace:beer",
+			"item_name": {"text": "Beer"},
+			"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "Extensive Template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"render": "steel_ingot","height": 10,"resolution": 64,"color": "white","italic": false}]],
+			"custom_data": {"_your_namespace": {"beer": true},"smithed": {"id": "_your_namespace:beer","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}
+		},
+		"skip_gives": false,
+		"remainder": "beer_mug"
+	},
+	"bolt": {
+		"id": "bolt",
+		"base_item": "minecraft:arrow",
+		"manual_category": "miscellaneous",
+		"recipes": [],
+		"components": {
+			"item_model": "_your_namespace:bolt",
+			"item_name": {"text": "Bolt"},
+			"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "Extensive Template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"render": "steel_ingot","height": 10,"resolution": 64,"color": "white","italic": false}]],
+			"custom_data": {"_your_namespace": {"bolt": true},"smithed": {"id": "_your_namespace:bolt","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}
+		},
+		"skip_gives": false
+	},
+	"crossbow": {
+		"id": "crossbow",
+		"base_item": "minecraft:crossbow",
+		"manual_category": "miscellaneous",
+		"recipes": [],
+		"components": {
+			"enchantments": {"_your_namespace:ranged_weapon/crossbow": 1},
+			"enchantment_glint_override": false,
+			"item_model": "_your_namespace:crossbow",
+			"item_name": {"text": "Crossbow"},
+			"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "Extensive Template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"render": "steel_ingot","height": 10,"resolution": 64,"color": "white","italic": false}]],
+			"custom_data": {"_your_namespace": {"crossbow": true},"smithed": {"id": "_your_namespace:crossbow","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}
+		},
+		"skip_gives": false,
+		"ranged_weapon": {
+			"charge_time": 2.5,
+			"damage_multiplier": 1.5,
+			"ammunition": "bolt",
+			"name": "Heavy Draw"
 		}
 	}
 }
