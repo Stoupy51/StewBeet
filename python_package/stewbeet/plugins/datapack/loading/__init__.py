@@ -12,8 +12,10 @@ from stouputils.typing import JsonDict
 
 from ....core.__memory__ import Mem
 from ....core.cls.items.item import Item
+from ....core.definitions_helper.completion import resolve_use_remainders
 from ....core.utils.io import write_load_file, write_predicate, write_tag, write_versioned_function
 from ...finalyze.dependencies import minimum_minecraft_version
+from .ranged_weapons import write_ranged_weapons
 
 
 # Main entry point
@@ -28,6 +30,8 @@ def beet_default(ctx: Context):
 	"""
 	# Assertions
 	Mem.ctx = ctx
+	resolve_use_remainders()
+	write_ranged_weapons()
 	assert ctx.project_version, "Project version is not set. Please set it in the project configuration."
 	assert ctx.project_id, "Project ID is not set. Please set it in the project configuration."
 	assert ctx.project_version.count(".") == 2, "Project version must be in the format 'major.minor.patch'."

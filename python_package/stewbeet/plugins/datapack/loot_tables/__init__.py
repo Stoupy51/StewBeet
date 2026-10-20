@@ -15,6 +15,7 @@ from ....core.cls.recipes.ingredients import Ingr
 from ....core.cls.recipes.recipe import RecipeBase
 from ....core.cls.resource import Resource
 from ....core.constants import ITEMS_LOOT_FOLDER
+from ....core.definitions_helper.completion import resolve_use_remainders
 from ....core.utils.io import write_function
 from ....core.utils.loot_table import loot_function, loot_modifiers
 
@@ -30,6 +31,7 @@ def beet_default(ctx: Context):
 	"""
 	# Get data from memory
 	Mem.ctx = ctx
+	resolve_use_remainders()
 	assert ctx.meta["stewbeet"].get("source_lore", None) is not None, "Source lore is not set in the context metadata."
 	assert ctx.project_id, "Project ID is not set. Please set it in the project configuration."
 	ns: str = ctx.project_id

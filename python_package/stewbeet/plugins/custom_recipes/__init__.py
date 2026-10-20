@@ -9,6 +9,7 @@ import stouputils as stp
 from beet import Context
 
 from ...core.__memory__ import Mem
+from ...core.definitions_helper.completion import resolve_use_remainders
 from .awakened_forge import AwakenedForgeRecipeHandler
 from .furnace import FurnaceRecipeHandler
 from .pulverizer import PulverizerRecipeHandler
@@ -28,6 +29,7 @@ def beet_default(ctx: Context) -> None:
 		ctx: The beet context.
 	"""
 	Mem.ctx = ctx
+	resolve_use_remainders()
 	VanillaRecipeHandler.routine()
 	SmithedRecipeHandler.routine()
 	FurnaceRecipeHandler.routine()
