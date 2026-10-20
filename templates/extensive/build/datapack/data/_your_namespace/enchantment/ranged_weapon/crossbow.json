@@ -1,0 +1,30 @@
+{
+	"description": {
+		"translate": "_your_namespace.heavy_draw"
+	},
+	"supported_items": "minecraft:crossbow",
+	"weight": 1,
+	"max_level": 1,
+	"min_cost": {
+		"base": 0,
+		"per_level_above_first": 0
+	},
+	"max_cost": {
+		"base": 0,
+		"per_level_above_first": 0
+	},
+	"anvil_cost": 0,
+	"slots": [
+		"mainhand",
+		"offhand"
+	],
+	"effects": {
+		"minecraft:crossbow_charge_time": {
+			"type": "minecraft:add",
+			"value": 1.25
+		},
+		"minecraft:damage": [
+			{"effect": {"type": "minecraft:multiply","factor": 1.5},"requirements": {"type": "minecraft:entity_properties","entity": "direct_attacker","predicate": {"entity_type": "#minecraft:arrows"}}}
+		]
+	}
+}

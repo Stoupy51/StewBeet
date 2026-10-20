@@ -1,0 +1,61 @@
+{
+	"type": "minecraft:notice",
+	"title": [
+		"",
+		{
+			"text": "聉",
+			"font": "_your_namespace:renders",
+			"shadow_color": [
+				0,
+				0,
+				0,
+				0
+			]
+		},
+		" ",
+		{
+			"translate": "_your_namespace.beer",
+			"underlined": true
+		},
+		" ",
+		{
+			"text": "聉",
+			"font": "_your_namespace:renders",
+			"shadow_color": [
+				0,
+				0,
+				0,
+				0
+			]
+		}
+	],
+	"body": [
+		{
+			"type": "minecraft:plain_message",
+			"contents": [
+				{"text": "V   ","font": "_your_namespace:manual","color": "white"},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_47"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"}," (47)"]}},
+				{"text": "4","font": "_your_namespace:manual","color": "white","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_1"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_first_page"}]}},
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_49"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"}," (49)"]}},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_47"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"}," (47)"]}},
+				{"text": " ","font": "_your_namespace:manual","color": "white","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_1"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_first_page"}]}},
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_49"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"}," (49)"]}}
+			],
+			"width": 400
+		},
+		{
+			"type": "minecraft:plain_message",
+			"contents": [
+				{"text": "","font": "_your_namespace:manual","color": "white","shadow_color": [0,0,0,0]},
+				"肝\n",
+				{"text": "  \n  \n  \n  \n\n","hover_event": {"action": "show_item","id": "recovery_compass","components": {"max_stack_size": 16,"consumable": {"on_consume_effects": [{"type": "minecraft:apply_effects","effects": [{"id": "minecraft:nausea","duration": 600}]}]},"item_model": "_your_namespace:beer","item_name": {"translate": "_your_namespace.beer"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聎","font": "_your_namespace:renders","color": "white","italic": false}]],"custom_data": {"_your_namespace": {"beer": true},"smithed": {"id": "_your_namespace:beer","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}},"use_remainder": {"id": "minecraft:recovery_compass","count": 1,"components": {"minecraft:item_name": {"translate": "_your_namespace.beer_mug"},"minecraft:item_model": "_your_namespace:beer_mug","minecraft:custom_data": {"_your_namespace": {"beer_mug": true},"smithed": {"id": "_your_namespace:beer_mug","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}}}}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_48"}},
+				{"text": "1##","hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.when_consumed","color": "yellow"},[{"text":"\n- ","color": "gray"}, {"translate": "_your_namespace.nausea"}, " (0:30)"]]}},
+				{"text": "肞\n","hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.leaves_once_used","color": "yellow"},[{"text":"\n","color": "gray"}, {"translate": "_your_namespace.beer_mug"}],[{"text":"\n","color": "dark_gray"}, {"translate": "_your_namespace.click_to_open_its_page"}]]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_47"}},
+				{"text": "0##","hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.when_consumed","color": "yellow"},[{"text":"\n- ","color": "gray"}, {"translate": "_your_namespace.nausea"}, " (0:30)"]]}},
+				{"text": "0","hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.leaves_once_used","color": "yellow"},[{"text":"\n","color": "gray"}, {"translate": "_your_namespace.beer_mug"}],[{"text":"\n","color": "dark_gray"}, {"translate": "_your_namespace.click_to_open_its_page"}]]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_47"}},
+				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+			],
+			"width": 140
+		}
+	]
+}

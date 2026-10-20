@@ -30,6 +30,17 @@
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/vb_block_states"}]},
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/vb_contents"}]},
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/vb_contents_player"}]},
-		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/vb_contents_frame"}]}
+		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/vb_contents_frame"}]},
+		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/chair"}]},
+		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/crate"}]},
+		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/plank_slab"}]},
+		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/plank_stairs"}]},
+		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/fast_furnace"}]},
+		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/ruby_ore"}]},
+		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/lamp"}]},
+		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/beer_mug"}]},
+		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/beer"}]},
+		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/bolt"}]},
+		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "_your_namespace:i/crossbow"}]}
 	]
 }

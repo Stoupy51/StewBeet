@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "place_main.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/definitions/features.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;AAgDC;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA"
+}

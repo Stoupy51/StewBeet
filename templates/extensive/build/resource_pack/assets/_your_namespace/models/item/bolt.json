@@ -1,0 +1,6 @@
+{
+	"parent": "minecraft:item/arrow",
+	"textures": {
+		"layer0": "_your_namespace:item/bolt"
+	}
+}

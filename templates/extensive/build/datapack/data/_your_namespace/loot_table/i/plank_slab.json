@@ -1,0 +1,55 @@
+{
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "minecraft:item",
+					"name": "minecraft:furnace",
+					"modifier": [
+						{
+							"type": "minecraft:set_components",
+							"components": {
+								"minecraft:container": [
+									{
+										"slot": 0,
+										"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:plank_slab","from": "_your_namespace"}}}}}
+									}
+								],
+								"minecraft:tooltip_display": {
+									"hidden_components": [
+										"minecraft:container"
+									]
+								},
+								"minecraft:item_model": "_your_namespace:plank_slab",
+								"minecraft:item_name": {
+									"translate": "_your_namespace.plank_slab"
+								},
+								"minecraft:lore": [
+									[
+										"",
+										{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"},
+										" ",
+										{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"},
+										" ",
+										{"text": "聎","font": "_your_namespace:renders","color": "white","italic": false}
+									]
+								],
+								"minecraft:custom_data": {
+									"_your_namespace": {
+										"plank_slab": true
+									},
+									"smithed": {
+										"id": "_your_namespace:plank_slab",
+										"origin": "_your_namespace",
+										"ignore": {"functionality": true,"crafting": true}
+									}
+								}
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}

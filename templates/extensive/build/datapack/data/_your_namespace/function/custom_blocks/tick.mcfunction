@@ -6,5 +6,6 @@
 # @within	_your_namespace:v3.0.0/tick [ as @e[tag=_your_namespace.tick] & at @s ]
 #
 
+execute if entity @s[tag=_your_namespace.fast_furnace] run function _your_namespace:custom_blocks/fast_furnace/tick
 execute if entity @s[tag=_your_namespace.steel_block] run function _your_namespace:custom_blocks/steel_block/tick
 

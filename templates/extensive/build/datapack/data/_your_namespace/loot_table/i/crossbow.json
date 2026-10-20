@@ -1,0 +1,48 @@
+{
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "minecraft:item",
+					"name": "minecraft:crossbow",
+					"modifier": [
+						{
+							"type": "minecraft:set_components",
+							"components": {
+								"minecraft:enchantments": {
+									"_your_namespace:ranged_weapon/crossbow": 1
+								},
+								"minecraft:enchantment_glint_override": false,
+								"minecraft:item_model": "_your_namespace:crossbow",
+								"minecraft:item_name": {
+									"translate": "_your_namespace.crossbow"
+								},
+								"minecraft:lore": [
+									[
+										"",
+										{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"},
+										" ",
+										{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"},
+										" ",
+										{"text": "聎","font": "_your_namespace:renders","color": "white","italic": false}
+									]
+								],
+								"minecraft:custom_data": {
+									"_your_namespace": {
+										"crossbow": true
+									},
+									"smithed": {
+										"id": "_your_namespace:crossbow",
+										"origin": "_your_namespace",
+										"ignore": {"functionality": true,"crafting": true}
+									}
+								}
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}

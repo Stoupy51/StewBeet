@@ -1,7 +1,7 @@
 
 #> _your_namespace:custom_blocks/vb_visual_facing/destroy
 #
-# @executed	as @e[type=item_display,tag=...,predicate=!_your_namespace:check_vanilla_blocks] & at @s
+# @executed	as @e[type=item_display,tag=_your_namespace.custom_block,distance=..0.1]
 #
 # @within	_your_namespace:custom_blocks/_groups/minecraft_glass
 #

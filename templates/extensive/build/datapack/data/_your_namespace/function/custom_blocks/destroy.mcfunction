@@ -1,19 +1,25 @@
 
 #> _your_namespace:custom_blocks/destroy
 #
-# @executed	as @e[type=item_display,tag=...,predicate=!_your_namespace:check_vanilla_blocks] & at @s
+# @executed	as @e[type=item_display,tag=_your_namespace.custom_block,distance=..0.1]
 #
-# @within	_your_namespace:v3.0.0/tick_2 [ as @e[type=item_display,tag=...,predicate=!_your_namespace:check_vanilla_blocks] & at @s ]
+# @within	_your_namespace:custom_blocks/_interaction/break [ as @e[type=item_display,tag=_your_namespace.custom_block,distance=..0.1] ]
 #			_your_namespace:v3.0.0/second [ as @e[type=#_your_namespace:custom_blocks,tag=...,predicate=!_your_namespace:advanced_check_vanilla_blocks] & at @s ]
+#			_your_namespace:v3.0.0/tick_2 [ as @e[type=item_display,tag=...,predicate=!_your_namespace:check_vanilla_blocks] & at @s ]
 #			_your_namespace:v3.0.0/second_5 [ as @e[type=item_display,tag=_your_namespace.custom_block,predicate=!_your_namespace:advanced_check_vanilla_blocks] & at @s ]
 #			_your_namespace:calls/common_signals/custom_block_destroy [ as @e[tag=_your_namespace.custom_block,dx=0,dy=0,dz=0] & at @s ]
 #
 
 # Check for missing vanilla blocks
+execute if score #total_vanilla_barrier _your_namespace.data matches 1.. if entity @s[tag=_your_namespace.vanilla.minecraft_barrier] unless block ~ ~ ~ minecraft:barrier run return run function _your_namespace:custom_blocks/_groups/minecraft_barrier
 execute if score #total_vanilla_cobblestone _your_namespace.data matches 1.. if entity @s[tag=_your_namespace.vanilla.minecraft_cobblestone] unless block ~ ~ ~ minecraft:cobblestone run return run function _your_namespace:custom_blocks/_groups/minecraft_cobblestone
+execute if score #total_vanilla_diamond_block _your_namespace.data matches 1.. if entity @s[tag=_your_namespace.vanilla.minecraft_diamond_block] unless block ~ ~ ~ minecraft:diamond_block run return run function _your_namespace:custom_blocks/_groups/minecraft_diamond_block
 execute if score #total_vanilla_furnace _your_namespace.data matches 1.. if entity @s[tag=_your_namespace.vanilla.minecraft_furnace] unless block ~ ~ ~ minecraft:furnace run return run function _your_namespace:custom_blocks/_groups/minecraft_furnace
 execute if score #total_vanilla_glass _your_namespace.data matches 1.. if entity @s[tag=_your_namespace.vanilla.minecraft_glass] unless block ~ ~ ~ minecraft:glass run return run function _your_namespace:custom_blocks/_groups/minecraft_glass
 execute if score #total_vanilla_iron_block _your_namespace.data matches 1.. if entity @s[tag=_your_namespace.vanilla.minecraft_iron_block] unless block ~ ~ ~ minecraft:iron_block run return run function _your_namespace:custom_blocks/_groups/minecraft_iron_block
+execute if score #total_vanilla_light _your_namespace.data matches 1.. if entity @s[tag=_your_namespace.vanilla.minecraft_light] unless block ~ ~ ~ minecraft:light run return run function _your_namespace:custom_blocks/_groups/minecraft_light
+execute if score #total_vanilla_oak_slab _your_namespace.data matches 1.. if entity @s[tag=_your_namespace.vanilla.minecraft_oak_slab] unless block ~ ~ ~ minecraft:oak_slab run return run function _your_namespace:custom_blocks/_groups/minecraft_oak_slab
+execute if score #total_vanilla_oak_stairs _your_namespace.data matches 1.. if entity @s[tag=_your_namespace.vanilla.minecraft_oak_stairs] unless block ~ ~ ~ minecraft:oak_stairs run return run function _your_namespace:custom_blocks/_groups/minecraft_oak_stairs
 execute if score #total_vanilla_polished_deepslate _your_namespace.data matches 1.. if entity @s[tag=_your_namespace.vanilla.minecraft_polished_deepslate] unless block ~ ~ ~ minecraft:polished_deepslate run return run function _your_namespace:custom_blocks/_groups/minecraft_polished_deepslate
 execute if score #total_vanilla_raw_iron_block _your_namespace.data matches 1.. if entity @s[tag=_your_namespace.vanilla.minecraft_raw_iron_block] unless block ~ ~ ~ minecraft:raw_iron_block run return run function _your_namespace:custom_blocks/_groups/minecraft_raw_iron_block
 execute if score #total_vanilla_item_frame _your_namespace.data matches 1.. if entity @s[tag=_your_namespace.vanilla.minecraft_item_frame] unless items entity @s contents *[minecraft:custom_data~{_your_namespace: {item_frame_destroy: true}}] run return run function _your_namespace:custom_blocks/_groups/minecraft_item_frame

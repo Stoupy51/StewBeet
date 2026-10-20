@@ -12,6 +12,13 @@
 #			_your_namespace:custom_blocks/vb_visual_facing/place_secondary
 #			_your_namespace:custom_blocks/vb_block_facing/place_secondary
 #			_your_namespace:custom_blocks/vb_block_states/place_secondary
+#			_your_namespace:custom_blocks/chair/place_secondary
+#			_your_namespace:custom_blocks/crate/place_secondary
+#			_your_namespace:custom_blocks/plank_slab/place_secondary
+#			_your_namespace:custom_blocks/plank_stairs/place_secondary
+#			_your_namespace:custom_blocks/fast_furnace/place_secondary
+#			_your_namespace:custom_blocks/ruby_ore/place_secondary
+#			_your_namespace:custom_blocks/lamp/place_secondary
 #			_your_namespace:v3.0.0/second_5 [ as @e[type=item_display,tag=_your_namespace.custom_block,sort=random,limit=50] & at @s ]
 #
 

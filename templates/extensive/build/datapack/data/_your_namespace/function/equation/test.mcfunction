@@ -5,16 +5,7 @@
 #
 
 # scoreboard #value _your_namespace.data = 10 + 5 * 2 / 3 % 100
-scoreboard players set #value _your_namespace.data 10
-scoreboard players operation #value _your_namespace.data += #5 _your_namespace.data
-scoreboard players operation #value _your_namespace.data *= #2 _your_namespace.data
-scoreboard players operation #value _your_namespace.data /= #3 _your_namespace.data
-scoreboard players operation #value _your_namespace.data %= #100 _your_namespace.data
+execute store result score #value _your_namespace.data run compute default integer {type: "floor_mod", left: {type: "floor_div", left: {type: "mul", inputs: [{type: "add", inputs: [10, 5]}, 2]}, right: 3}, right: 100}
 # scoreboard #value2 _your_namespace.data = 20 - 6 + 7 * 8 / 4 % 5
-scoreboard players set #value2 _your_namespace.data 20
-scoreboard players operation #value2 _your_namespace.data -= #6 _your_namespace.data
-scoreboard players operation #value2 _your_namespace.data += #7 _your_namespace.data
-scoreboard players operation #value2 _your_namespace.data *= #8 _your_namespace.data
-scoreboard players operation #value2 _your_namespace.data /= #4 _your_namespace.data
-scoreboard players operation #value2 _your_namespace.data %= #5 _your_namespace.data
+execute store result score #value2 _your_namespace.data run compute default integer {type: "floor_mod", left: {type: "floor_div", left: {type: "mul", inputs: [{type: "add", inputs: [{type: "sub", left: 20, right: 6}, 7]}, 8]}, right: 4}, right: 5}
 

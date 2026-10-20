@@ -1,9 +1,14 @@
 {
 	"values": [
+		"minecraft:barrier",
 		"minecraft:cobblestone",
+		"minecraft:diamond_block",
 		"minecraft:furnace",
 		"minecraft:glass",
 		"minecraft:iron_block",
+		"minecraft:light",
+		"minecraft:oak_slab",
+		"minecraft:oak_stairs",
 		"minecraft:polished_deepslate",
 		"minecraft:raw_iron_block"
 	]

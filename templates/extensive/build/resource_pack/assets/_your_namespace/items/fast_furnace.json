@@ -1,0 +1,17 @@
+{
+	"model": {
+		"type": "minecraft:select",
+		"property": "minecraft:custom_model_data",
+		"index": 0,
+		"cases": [
+			{
+				"when": "lit=true",
+				"model": {"type": "minecraft:model","model": "_your_namespace:item/fast_furnace_on"}
+			}
+		],
+		"fallback": {
+			"type": "minecraft:model",
+			"model": "_your_namespace:item/fast_furnace"
+		}
+	}
+}

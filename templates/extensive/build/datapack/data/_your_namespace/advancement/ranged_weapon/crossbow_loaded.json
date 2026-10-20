@@ -1,0 +1,24 @@
+{
+	"criteria": {
+		"requirement": {
+			"trigger": "minecraft:inventory_changed",
+			"conditions": {
+				"items": [
+					{
+						"items": "minecraft:crossbow",
+						"predicates": {
+							"minecraft:custom_data": {
+								"_your_namespace": {
+									"crossbow": true
+								}
+							}
+						}
+					}
+				]
+			}
+		}
+	},
+	"rewards": {
+		"function": "_your_namespace:ranged_weapon/crossbow/loaded"
+	}
+}

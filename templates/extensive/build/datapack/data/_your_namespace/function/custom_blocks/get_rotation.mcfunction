@@ -5,6 +5,9 @@
 #			_your_namespace:custom_blocks/vb_block_facing/place_main
 #			_your_namespace:custom_blocks/vb_block_states/place_main
 #			_your_namespace:custom_blocks/vb_contents_player/search
+#			_your_namespace:custom_blocks/chair/place_main
+#			_your_namespace:custom_blocks/plank_stairs/place_main
+#			_your_namespace:custom_blocks/fast_furnace/place_main
 #
 
 # Set up score

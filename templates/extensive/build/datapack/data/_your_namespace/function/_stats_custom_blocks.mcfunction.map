@@ -3,8 +3,9 @@
 	"file": "_stats_custom_blocks.mcfunction",
 	"sourceRoot": "../../../../..",
 	"sources": [
+		"src/definitions/features.py",
 		"src/definitions/additions.py"
 	],
 	"names": [],
-	"mappings": ";;;;;;;;;;;;;;;;AAgIC;AARA;AATA;AARA;AATA;AATA;AATA;AAhDA;;;;;;;;;AAAA;AAgDA;AASA;AASA;AASA;AAQA;AASA;AAQA"
+	"mappings": ";;;;;;;;;;;;;;;;;;;;;AA2DC;AAXA;AAHA;AAPA;AADA;AAHA;AAZA;AC0GA;AARA;AATA;AARA;AATA;AATA;AATA;AAhDA;;;;;;;;;AAAA;AAgDA;AASA;AASA;AASA;AAQA;AASA;AAQA;AD1GA;AAYA;AAGA;AACA;AAOA;AAGA;AAWA"
 }

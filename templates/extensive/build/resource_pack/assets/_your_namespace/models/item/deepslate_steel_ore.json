@@ -2,5 +2,8 @@
 	"parent": "block/cube_all",
 	"textures": {
 		"all": "_your_namespace:item/deepslate_steel_ore"
-	}
+	},
+	"elements": [
+		{"from": [-0.016000000000000014,-0.016000000000000014,-0.016000000000000014],"to": [16.016,16.016,16.016],"faces": {"north": {"uv": [0,0,16,16],"texture": "#north","cullface": "north"},"south": {"uv": [0,0,16,16],"texture": "#south","cullface": "south"},"east": {"uv": [0,0,16,16],"texture": "#east","cullface": "east"},"west": {"uv": [0,0,16,16],"texture": "#west","cullface": "west"},"up": {"uv": [0,0,16,16],"texture": "#up","cullface": "up"},"down": {"uv": [0,0,16,16],"texture": "#down","cullface": "down"}}}
+	]
 }

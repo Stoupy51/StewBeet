@@ -1,10 +1,15 @@
 {
 	"type": "minecraft:any_of",
 	"terms": [
+		{"type": "minecraft:entity_properties","entity": "this","predicate": {"nbt": "{Tags:[\"_your_namespace.vanilla.minecraft_barrier\"]}","location": {"block": {"blocks": "minecraft:barrier"}}}},
 		{"type": "minecraft:entity_properties","entity": "this","predicate": {"nbt": "{Tags:[\"_your_namespace.vanilla.minecraft_cobblestone\"]}","location": {"block": {"blocks": "minecraft:cobblestone"}}}},
+		{"type": "minecraft:entity_properties","entity": "this","predicate": {"nbt": "{Tags:[\"_your_namespace.vanilla.minecraft_diamond_block\"]}","location": {"block": {"blocks": "minecraft:diamond_block"}}}},
 		{"type": "minecraft:entity_properties","entity": "this","predicate": {"nbt": "{Tags:[\"_your_namespace.vanilla.minecraft_furnace\"]}","location": {"block": {"blocks": "minecraft:furnace"}}}},
 		{"type": "minecraft:entity_properties","entity": "this","predicate": {"nbt": "{Tags:[\"_your_namespace.vanilla.minecraft_glass\"]}","location": {"block": {"blocks": "minecraft:glass"}}}},
 		{"type": "minecraft:entity_properties","entity": "this","predicate": {"nbt": "{Tags:[\"_your_namespace.vanilla.minecraft_iron_block\"]}","location": {"block": {"blocks": "minecraft:iron_block"}}}},
+		{"type": "minecraft:entity_properties","entity": "this","predicate": {"nbt": "{Tags:[\"_your_namespace.vanilla.minecraft_light\"]}","location": {"block": {"blocks": "minecraft:light"}}}},
+		{"type": "minecraft:entity_properties","entity": "this","predicate": {"nbt": "{Tags:[\"_your_namespace.vanilla.minecraft_oak_slab\"]}","location": {"block": {"blocks": "minecraft:oak_slab"}}}},
+		{"type": "minecraft:entity_properties","entity": "this","predicate": {"nbt": "{Tags:[\"_your_namespace.vanilla.minecraft_oak_stairs\"]}","location": {"block": {"blocks": "minecraft:oak_stairs"}}}},
 		{"type": "minecraft:entity_properties","entity": "this","predicate": {"nbt": "{Tags:[\"_your_namespace.vanilla.minecraft_polished_deepslate\"]}","location": {"block": {"blocks": "minecraft:polished_deepslate"}}}},
 		{"type": "minecraft:entity_properties","entity": "this","predicate": {"nbt": "{Tags:[\"_your_namespace.vanilla.minecraft_raw_iron_block\"]}","location": {"block": {"blocks": "minecraft:raw_iron_block"}}}},
 		{"type": "minecraft:entity_properties","entity": "this","predicate": {"nbt": "{Tags:[\"_your_namespace.vanilla.minecraft_item_frame\"]}","slots": {"contents": {"predicates": {"minecraft:custom_data": {"_your_namespace": {"item_frame_destroy": true}}}}}}}

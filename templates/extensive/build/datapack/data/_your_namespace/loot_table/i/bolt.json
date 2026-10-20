@@ -1,0 +1,44 @@
+{
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "minecraft:item",
+					"name": "minecraft:arrow",
+					"modifier": [
+						{
+							"type": "minecraft:set_components",
+							"components": {
+								"minecraft:item_model": "_your_namespace:bolt",
+								"minecraft:item_name": {
+									"translate": "_your_namespace.bolt"
+								},
+								"minecraft:lore": [
+									[
+										"",
+										{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"},
+										" ",
+										{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"},
+										" ",
+										{"text": "聎","font": "_your_namespace:renders","color": "white","italic": false}
+									]
+								],
+								"minecraft:custom_data": {
+									"_your_namespace": {
+										"bolt": true
+									},
+									"smithed": {
+										"id": "_your_namespace:bolt",
+										"origin": "_your_namespace",
+										"ignore": {"functionality": true,"crafting": true}
+									}
+								}
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}

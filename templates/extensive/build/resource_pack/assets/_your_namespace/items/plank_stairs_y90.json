@@ -1,0 +1,41 @@
+{
+	"model": {
+		"type": "minecraft:select",
+		"property": "minecraft:custom_model_data",
+		"index": 0,
+		"cases": [
+			{
+				"when": "shape=inner_left",
+				"model": {
+					"type": "minecraft:model",
+					"model": "_your_namespace:item/plank_stairs_inner_left_y90"
+				}
+			},
+			{
+				"when": "shape=inner_right",
+				"model": {
+					"type": "minecraft:model",
+					"model": "_your_namespace:item/plank_stairs_inner_right_y90"
+				}
+			},
+			{
+				"when": "shape=outer_left",
+				"model": {
+					"type": "minecraft:model",
+					"model": "_your_namespace:item/plank_stairs_outer_left_y90"
+				}
+			},
+			{
+				"when": "shape=outer_right",
+				"model": {
+					"type": "minecraft:model",
+					"model": "_your_namespace:item/plank_stairs_outer_right_y90"
+				}
+			}
+		],
+		"fallback": {
+			"type": "minecraft:model",
+			"model": "_your_namespace:item/plank_stairs_y90"
+		}
+	}
+}

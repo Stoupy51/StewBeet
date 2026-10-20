@@ -13,17 +13,11 @@ tellraw @a[tag=convention.debug] {translate: "_your_namespace.loaded_extensive_t
 scoreboard players set #_your_namespace.loaded load.status 1
 function _your_namespace:v3.0.0/load/set_items_storage
 
+# Hits of interaction blocks
+scoreboard objectives add _your_namespace.hits dummy
+scoreboard objectives add _your_namespace.last_hit dummy
+
 # Add a message when loading
 tellraw @a ["Here is a message when loading the datapack, located in `src/link.py`\n\n\n"]
-tellraw @a [{"text": "聄","font": "_your_namespace:renders"}, {"text": "聅","font": "_your_namespace:renders"}, "\n\n\n\n"]
-
-# Set scoreboard constants for _your_namespace.data
-scoreboard players set #2 _your_namespace.data 2
-scoreboard players set #3 _your_namespace.data 3
-scoreboard players set #4 _your_namespace.data 4
-scoreboard players set #5 _your_namespace.data 5
-scoreboard players set #6 _your_namespace.data 6
-scoreboard players set #7 _your_namespace.data 7
-scoreboard players set #8 _your_namespace.data 8
-scoreboard players set #100 _your_namespace.data 100
+tellraw @a [{"text": "聏","font": "_your_namespace:renders"}, {"text": "聐","font": "_your_namespace:renders"}, "\n\n\n\n"]
 

@@ -1,7 +1,7 @@
 
 #> _your_namespace:custom_blocks/_groups/minecraft_item_frame
 #
-# @executed	as @e[type=item_display,tag=...,predicate=!_your_namespace:check_vanilla_blocks] & at @s
+# @executed	as @e[type=item_display,tag=_your_namespace.custom_block,distance=..0.1]
 #
 # @within	_your_namespace:custom_blocks/destroy
 #			_your_namespace:calls/common_signals/item_frame_destroy_alt [ as @n[type=item,nbt={Item:{id:"minecraft:item_frame"}},distance=..1] ]

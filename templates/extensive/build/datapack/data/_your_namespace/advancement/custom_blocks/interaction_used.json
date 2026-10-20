@@ -1,0 +1,20 @@
+{
+	"criteria": {
+		"requirement": {
+			"trigger": "minecraft:player_interacted_with_entity",
+			"conditions": {
+				"entity": {
+					"type": "minecraft:entity_properties",
+					"entity": "this",
+					"predicate": {
+						"entity_type": "minecraft:interaction",
+						"nbt": "{Tags:[\"_your_namespace.interaction\"]}"
+					}
+				}
+			}
+		}
+	},
+	"rewards": {
+		"function": "_your_namespace:custom_blocks/_interaction/used"
+	}
+}

@@ -12,10 +12,16 @@ clear @a *[custom_data~{"_your_namespace":{}}]
 execute as @e[type=minecraft:item_display,tag=_your_namespace.custom_block] at @s run function _your_namespace:v3.0.0/unload/destroy_block
 
 # Kill entities with custom tags
+execute as @e[tag=_your_namespace.chair] at @s run function _your_namespace:v3.0.0/unload/safe_kill
+execute as @e[tag=_your_namespace.interaction] at @s run function _your_namespace:v3.0.0/unload/safe_kill
+execute as @e[tag=_your_namespace.lamp] at @s run function _your_namespace:v3.0.0/unload/safe_kill
 execute as @e[tag=_your_namespace.new] at @s run function _your_namespace:v3.0.0/unload/safe_kill
+execute as @e[tag=_your_namespace.unloaded] at @s run function _your_namespace:v3.0.0/unload/safe_kill
 
 # Remove scoreboard objectives
 scoreboard objectives remove _your_namespace.data
+scoreboard objectives remove _your_namespace.hits
+scoreboard objectives remove _your_namespace.last_hit
 scoreboard objectives remove _your_namespace.open_manual
 scoreboard objectives remove load.status
 

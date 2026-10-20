@@ -1,0 +1,10 @@
+{
+	"parent": "block/block",
+	"textures": {
+		"t": "_your_namespace:item/cherry_planks",
+		"particle": "_your_namespace:item/cherry_planks"
+	},
+	"elements": [
+		{"from": [-0.016000000000000014,-0.008000000000000007,-0.016000000000000014],"to": [16.016,8.008,16.016],"faces": {"north": {"uv": [0,8,16,16],"texture": "#t"},"south": {"uv": [0,8,16,16],"texture": "#t"},"east": {"uv": [0,8,16,16],"texture": "#t"},"west": {"uv": [0,8,16,16],"texture": "#t"},"up": {"uv": [0,0,16,16],"texture": "#t"},"down": {"uv": [0,0,16,16],"texture": "#t"}}}
+	]
+}

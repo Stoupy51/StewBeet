@@ -2,11 +2,11 @@
 	"type": "minecraft:dialog_list",
 	"title": [
 		"",
-		{"text": "聁","font": "_your_namespace:renders","shadow_color": [0,0,0,0]},
+		{"text": "职","font": "_your_namespace:renders","shadow_color": [0,0,0,0]},
 		" ",
 		{"translate": "_your_namespace.extensive_template_manual","underlined": true},
 		" ",
-		{"text": "聁","font": "_your_namespace:renders","shadow_color": [0,0,0,0]}
+		{"text": "职","font": "_your_namespace:renders","shadow_color": [0,0,0,0]}
 	],
 	"dialogs": [
 		"_your_namespace:manual/page_1",
@@ -47,7 +47,18 @@
 		"_your_namespace:manual/page_36",
 		"_your_namespace:manual/page_37",
 		"_your_namespace:manual/page_38",
-		"_your_namespace:manual/page_39"
+		"_your_namespace:manual/page_39",
+		"_your_namespace:manual/page_40",
+		"_your_namespace:manual/page_41",
+		"_your_namespace:manual/page_42",
+		"_your_namespace:manual/page_43",
+		"_your_namespace:manual/page_44",
+		"_your_namespace:manual/page_45",
+		"_your_namespace:manual/page_46",
+		"_your_namespace:manual/page_47",
+		"_your_namespace:manual/page_48",
+		"_your_namespace:manual/page_49",
+		"_your_namespace:manual/page_50"
 	],
 	"exit_action": {
 		"label": {"translate": "gui.back"},
