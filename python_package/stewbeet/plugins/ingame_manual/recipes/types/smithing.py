@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING, ClassVar
 from beet.core.utils import TextComponent
 from stouputils.typing import JsonDict
 
-from .....core.cls.recipe import SmithingTransformRecipe, SmithingTrimRecipe
+from .....core.cls.recipes.recipe import SmithingTransformRecipe, SmithingTrimRecipe
 from ...glyphs import INVISIBLE_ITEM_WIDTH, SMALL_NONE_FONT
 from ..hovers import smithing_hover
 from ..registry import CraftRenderer, register_craft_renderer

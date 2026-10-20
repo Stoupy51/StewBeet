@@ -9,10 +9,10 @@ import stouputils as stp
 from stouputils.typing import JsonDict
 
 from ...core.__memory__ import Mem
-from ...core.cls.external_item import ExternalItem
-from ...core.cls.ingredients import Ingr
-from ...core.cls.item import Item
-from ...core.cls.recipe import CraftingShapedRecipe, CraftingShapelessRecipe
+from ...core.cls.items.external_item import ExternalItem
+from ...core.cls.items.item import Item
+from ...core.cls.recipes.ingredients import Ingr
+from ...core.cls.recipes.recipe import CraftingShapedRecipe, CraftingShapelessRecipe
 from ...core.utils.io import write_function
 from ...dependencies.official_libs import OFFICIAL_LIBS, official_lib_used
 from .. import sniffer

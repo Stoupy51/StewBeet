@@ -12,7 +12,7 @@ from beet import Atlas, Context, ResourcePack
 from stouputils.typing import JsonDict
 
 from ....core.__memory__ import Mem
-from ....core.cls.item import Item
+from ....core.cls.items.item import Item
 from ....core.utils.io import setup_model_cache
 from .object import AutoModel, to_atlas
 

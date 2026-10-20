@@ -59,7 +59,7 @@ def item_id_to_text_component(item_id: str, use_default: bool = True) -> TextCom
 
 	# The project's own definition first, then an external one
 	ns, id = item_id.split(":")
-	from ...cls.item import Item
+	from ...cls.items.item import Item
 	sources: list[str] = [id] if ns == Mem.ctx.project_id and id in Mem.definitions else []
 	sources += [item_id] if item_id in Mem.external_definitions else []
 	for source in sources:

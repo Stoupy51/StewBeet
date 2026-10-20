@@ -22,10 +22,10 @@ from beet import LootTable
 from stouputils.typing import JsonDict
 
 from ....core.__memory__ import Mem
-from ....core.cls.block import NoSilkTouchDrop
-from ....core.cls.ingredients import Ingr
-from ....core.cls.item import Item
-from ....core.cls.recipe import BlastingRecipe, CampfireCookingRecipe, RecipeBase, SmeltingRecipe, SmokingRecipe
+from ....core.cls.items.block import NoSilkTouchDrop
+from ....core.cls.items.item import Item
+from ....core.cls.recipes.ingredients import Ingr
+from ....core.cls.recipes.recipe import BlastingRecipe, CampfireCookingRecipe, RecipeBase, SmeltingRecipe, SmokingRecipe
 from ....core.constants import NO_SILK_TOUCH_DROP
 from .registry import load_builtin_renderers
 

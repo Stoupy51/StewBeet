@@ -21,7 +21,7 @@ from beet import Texture
 from PIL import Image
 
 from ...core.__memory__ import Mem
-from ...core.cls.item import Item
+from ...core.cls.items.item import Item
 from ...core.utils.fonts import validate_font_providers, write_font_from_allocator
 from .glyphs import (
 	AWAKENED_3X3_FONT,

@@ -13,7 +13,7 @@ from beet import Atlas, Context, PaintingVariant, PaintingVariantTag, Texture
 from stouputils.typing import JsonDict
 
 from ...core.__memory__ import Mem
-from ...core.cls.painting import Painting
+from ...core.cls.items.painting import Painting
 from ...core.constants import PAINTING_DATA
 from ...core.utils.io import set_json_encoder, texture_mcmeta
 

@@ -28,7 +28,7 @@ from typing import TYPE_CHECKING, ClassVar
 from beet.core.utils import TextComponent
 from stouputils.typing import JsonDict
 
-from ....core.cls.ingredients import Ingr
+from ....core.cls.recipes.ingredients import Ingr
 
 if TYPE_CHECKING:
 	from .renderer import RecipeRenderer

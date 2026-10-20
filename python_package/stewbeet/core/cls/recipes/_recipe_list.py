@@ -19,7 +19,7 @@ from stouputils.typing import JsonDict
 
 @stp.simple_cache
 def get_vanilla_item_tags() -> dict[str, ItemTag]:
-	from ..__memory__ import Mem
+	from ...__memory__ import Mem
 
 	# Derive a stable, version-scoped key: same pattern as download_manager's URL keys
 	cache = Mem.ctx.cache["stewbeet"]
@@ -77,7 +77,7 @@ class RecipeList(list[Any]):
 		clean_tag = tag_path[1:] if tag_path.startswith("#") else tag_path
 
 		# Get the tag data from context
-		from ..__memory__ import Mem
+		from ...__memory__ import Mem
 		if not Mem.ctx:
 			return [tag_path]  # Can't resolve without context
 
@@ -179,8 +179,8 @@ class RecipeList(list[Any]):
 
 	def _try_expand_tags(self) -> None:
 		""" Try to expand tags if a real build context is available (not the placeholder). """
-		from ..__memory__ import Mem
-		from ..placeholder_context import PLACEHOLDER_CTX
+		from ...__memory__ import Mem
+		from ...placeholder_context import PLACEHOLDER_CTX
 		if Mem.ctx is not PLACEHOLDER_CTX:
 			self.expand_tags_now()
 

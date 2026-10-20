@@ -11,9 +11,11 @@ from stouputils.typing import JsonDict as JsonDict
 from .__memory__ import (
 	Mem as Mem,
 )
-from .cls._recipe_list import RecipeList as RecipeList
 from .cls._utils import StMapping as StMapping
-from .cls.block import (
+from .cls.block_functions import (
+	BlockFunctions as BlockFunctions,
+)
+from .cls.items.block import (
 	VANILLA_BLOCK_FOR_ORES as VANILLA_BLOCK_FOR_ORES,
 	Block as Block,
 	BlockAlternative as BlockAlternative,
@@ -23,13 +25,21 @@ from .cls.block import (
 	NoSilkTouchDrop as NoSilkTouchDrop,
 	VanillaBlock as VanillaBlock,
 )
-from .cls.block_functions import (
-	BlockFunctions as BlockFunctions,
-)
-from .cls.external_item import (
+from .cls.items.external_item import (
 	ExternalItem as ExternalItem,
 )
-from .cls.ingredients import (
+from .cls.items.item import (
+	Item as Item,
+)
+from .cls.items.painting import (
+	Painting as Painting,
+	PaintingData as PaintingData,
+)
+from .cls.items.wiki_button import (
+	WikiButton as WikiButton,
+)
+from .cls.recipes._recipe_list import RecipeList as RecipeList
+from .cls.recipes.ingredients import (
 	ALL_RECIPES_TYPES as ALL_RECIPES_TYPES,
 	CRAFTING_RECIPES_TYPES as CRAFTING_RECIPES_TYPES,
 	FURNACES_RECIPES_TYPES as FURNACES_RECIPES_TYPES,
@@ -40,14 +50,7 @@ from .cls.ingredients import (
 	Ingredient as Ingredient,
 	IngrRepr as IngrRepr,
 )
-from .cls.item import (
-	Item as Item,
-)
-from .cls.painting import (
-	Painting as Painting,
-	PaintingData as PaintingData,
-)
-from .cls.recipe import (
+from .cls.recipes.recipe import (
 	AwakenedForgeRecipe as AwakenedForgeRecipe,
 	BlastingRecipe as BlastingRecipe,
 	CampfireCookingRecipe as CampfireCookingRecipe,
@@ -71,9 +74,6 @@ from .cls.resource import (
 )
 from .cls.resource_folder import (
 	ResourceFolder as ResourceFolder,
-)
-from .cls.wiki_button import (
-	WikiButton as WikiButton,
 )
 from .constants import (
 	BLOCKS_WITH_INTERFACES as BLOCKS_WITH_INTERFACES,

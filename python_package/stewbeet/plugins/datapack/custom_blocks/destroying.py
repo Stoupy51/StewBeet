@@ -10,8 +10,8 @@ from beet import BlockTag, LootTable, Predicate
 from stouputils.typing import JsonDict
 
 from ....core.__memory__ import Mem
-from ....core.cls.block import VANILLA_BLOCK_FOR_ORES, Block, NoSilkTouchDrop
-from ....core.cls.item import Item
+from ....core.cls.items.block import VANILLA_BLOCK_FOR_ORES, Block, NoSilkTouchDrop
+from ....core.cls.items.item import Item
 from ....core.constants import CUSTOM_BLOCK_ALTERNATIVE, GROWING_SEED, NO_SILK_TOUCH_DROP, VANILLA_BLOCK
 from ....core.utils.io import set_json_encoder, write_function, write_versioned_function
 from ....core.utils.loot_table import loot_condition

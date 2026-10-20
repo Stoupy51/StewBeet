@@ -13,13 +13,13 @@ import stouputils as stp
 from beet import LootTable, LootTableTag
 from stouputils.typing import JsonDict
 
-from ..__memory__ import Mem
-from ..constants import EXTERNAL_RECIPES_FOLDER, ITEMS_LOOT_FOLDER
-from ..utils.io import set_json_encoder
-from ..utils.loot_table import loot_function, loot_modifiers, result_count_to_suffix
-from ..utils.text_component import item_id_to_name
-from ..utils.versions import minecraft_version_at_least
-from .resource import Resource
+from ...__memory__ import Mem
+from ...constants import EXTERNAL_RECIPES_FOLDER, ITEMS_LOOT_FOLDER
+from ...utils.io import set_json_encoder
+from ...utils.loot_table import loot_function, loot_modifiers, result_count_to_suffix
+from ...utils.text_component import item_id_to_name
+from ...utils.versions import minecraft_version_at_least
+from ..resource import Resource
 
 # Recipes constants
 FURNACES_RECIPES_TYPES: tuple[str, ...] = ("smelting", "blasting", "smoking", "campfire_cooking")
@@ -145,7 +145,7 @@ class Ingr(dict[str, Any]):
 			str: The id of the vanilla item, ex: "minecraft:stick"
 		"""
 		ns, ingr_id = self.to_id().split(":")
-		from .item import Item
+		from ..items.item import Item
 
 		if ns == Mem.ctx.project_id:
 			if add_namespace:
@@ -181,7 +181,7 @@ class Ingr(dict[str, Any]):
 			return Ingr({id_key: id, "count": 1})
 
 		# An item of the project, or one the external definitions describe
-		from .item import Item
+		from ..items.item import Item
 		if ns != Mem.ctx.project_id and not Mem.external_definitions.get(ingr_id):
 			stp.error(f"External item '{ingr_id}' not found in the external definitions")
 			return Ingr({})
@@ -208,7 +208,7 @@ class Ingr(dict[str, Any]):
 		item: JsonDict = {}
 		ns_id: str = self.to_id()
 		if ns_id in Mem.external_definitions:
-			from .external_item import ExternalItem
+			from ..items.external_item import ExternalItem
 			item.update({"components": {"minecraft:custom_data": ExternalItem.from_id(ns_id).custom_data_predicate}})
 		else:
 			item.update(self)
@@ -240,7 +240,7 @@ class Ingr(dict[str, Any]):
 
 		# If item from another datapack, generate the loot table
 		if namespace != "minecraft":
-			from .external_item import ExternalItem
+			from ..items.external_item import ExternalItem
 			obj = ExternalItem.from_id(f"{namespace}:{item}")
 			assert obj.loot_table is not None, \
 				f"External item '{namespace}:{item}' has no loot table defined, please define one to use it in recipes."

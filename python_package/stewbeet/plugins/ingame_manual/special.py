@@ -18,9 +18,9 @@ from beet import Texture
 from beet.core.utils import TextComponent
 
 from ...core.__memory__ import Mem
-from ...core.cls.block import Block, VanillaBlock
-from ...core.cls.ingredients import Ingr
-from ...core.cls.recipe import CraftingShapedRecipe
+from ...core.cls.items.block import Block, VanillaBlock
+from ...core.cls.recipes.ingredients import Ingr
+from ...core.cls.recipes.recipe import CraftingShapedRecipe
 from ...dependencies.official_libs import OFFICIAL_LIBS
 from ..resource_pack.item_models.object import AutoModel
 from .glyphs import AWAKENED_FORGE_STRUCT_FONT, HEAVY_WORKBENCH_CATEGORY, VERY_SMALL_NONE_FONT

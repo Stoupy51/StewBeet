@@ -10,8 +10,8 @@ from beet import Advancement
 from stouputils.typing import JsonDict
 
 from ....core.__memory__ import Mem
-from ....core.cls.block import Block
-from ....core.cls.item import Item
+from ....core.cls.items.block import Block
+from ....core.cls.items.item import Item
 from ....core.constants import (
 	BLOCKS_WITH_INTERFACES,
 	CUSTOM_BLOCK_ALTERNATIVE,

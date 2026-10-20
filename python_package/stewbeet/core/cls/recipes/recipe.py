@@ -11,8 +11,8 @@ from typing import Any, Literal, Self
 
 from stouputils.typing import JsonDict
 
-from ..utils.versions import minecraft_version_at_least
-from ._utils import StMapping
+from ...utils.versions import minecraft_version_at_least
+from .._utils import StMapping
 from .ingredients import ALL_RECIPES_TYPES, Ingr
 
 

@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING, ClassVar
 from beet.core.utils import TextComponent
 from stouputils.typing import JsonDict
 
-from .....core.cls.recipe import AwakenedForgeRecipe
+from .....core.cls.recipes.recipe import AwakenedForgeRecipe
 from ...glyphs import (
 	AWAKENED_3X3_FONT,
 	AWAKENED_3X4_FONT,

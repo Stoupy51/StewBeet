@@ -19,7 +19,7 @@ import stouputils as stp
 from PIL import Image, ImageDraw, ImageFont
 from stouputils.typing import JsonDict
 
-from ...core.cls.ingredients import Ingr
+from ...core.cls.recipes.ingredients import Ingr
 from ...core.utils.fonts import add_border, careful_resize, is_png_recorded, lighten_color, record_png, save_png, source_key
 from .config import ManualConfig
 from .glyphs import (

@@ -10,9 +10,9 @@ from dataclasses import dataclass
 from beet import PaintingVariant, Texture
 from beet.core.utils import TextComponent
 
-from ._utils import StMapping
+from .._utils import StMapping
+from ..resource import Resource
 from .item import Item
-from .resource import Resource
 
 
 @dataclass(kw_only=True, slots=True)
@@ -71,7 +71,7 @@ class Painting(Item):
 	painting_data: PaintingData
 
 	def __post_init__(self) -> None:
-		from ..__memory__ import Mem
+		from ...__memory__ import Mem
 		if self.painting_data.texture is None:
 			self.painting_data.texture = self.id
 		if self.painting_data.author is None:

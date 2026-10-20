@@ -12,7 +12,7 @@ import stouputils as stp
 from beet import Advancement, Function, ItemModel, LootTable, Model, Texture
 from stouputils.typing import JsonDict
 
-from ..constants import (
+from ...constants import (
 	CUSTOM_BLOCK_ALTERNATIVE,
 	CUSTOM_BLOCK_HEAD,
 	CUSTOM_BLOCK_VANILLA,
@@ -22,10 +22,10 @@ from ..constants import (
 	SEEDS_FOLDER,
 	VANILLA_BLOCK,
 )
-from ._utils import StMapping
-from .block_functions import BlockFunctions
+from .._utils import StMapping
+from ..block_functions import BlockFunctions
+from ..resource import Resource
 from .item import Item
-from .resource import Resource
 
 
 # Subclasses
@@ -302,7 +302,7 @@ class Block(Item):
 	""" (Optional) Defines a seed that grows over time (Stardust Seed from Stardust Fragment). """
 
 	def __post_init__(self) -> None:
-		from ..__memory__ import Mem
+		from ...__memory__ import Mem
 		ns: str = Mem.ctx.project_id
 
 		# Deprecation warning

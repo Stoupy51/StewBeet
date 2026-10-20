@@ -12,7 +12,7 @@ from beet import Context, EntityTypeTag, Predicate
 from stouputils.typing import JsonDict
 
 from ....core.__memory__ import Mem
-from ....core.cls.block import Block
+from ....core.cls.items.block import Block
 from ....core.constants import CUSTOM_BLOCK_ALTERNATIVE, VANILLA_BLOCK
 from ....core.utils.io import set_json_encoder, write_function
 from ....core.utils.loot_table import loot_condition

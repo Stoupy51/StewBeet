@@ -21,8 +21,8 @@ from typing import TYPE_CHECKING, Any, cast
 from beet.core.utils import TextComponent
 from stouputils.typing import JsonDict
 
-from ....core.cls.item import Item
-from ....core.cls.wiki_button import WikiButton
+from ....core.cls.items.item import Item
+from ....core.cls.items.wiki_button import WikiButton
 from ....core.constants import WIKI_COMPONENT
 from ....core.utils.text_component import item_id_to_name
 from ..button_layout import ButtonLayout

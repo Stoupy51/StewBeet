@@ -24,8 +24,8 @@ from PIL import Image
 from stouputils.typing import JsonDict
 
 from ...__memory__ import Mem
-from ...cls.item import Item
-from ...cls.recipe import RecipeBase
+from ...cls.items.item import Item
+from ...cls.recipes.recipe import RecipeBase
 from ...constants import (
 	DOWNLOAD_VANILLA_ASSETS_RAW,
 	DOWNLOAD_VANILLA_ASSETS_SOURCE,

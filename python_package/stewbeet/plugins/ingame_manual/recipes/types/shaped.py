@@ -16,7 +16,7 @@ from beet.core.utils import TextComponent
 from PIL import Image
 from stouputils.typing import JsonDict
 
-from .....core.cls.ingredients import Ingr
+from .....core.cls.recipes.ingredients import Ingr
 from .....core.utils.fonts import save_png
 from ...glyphs import (
 	INVISIBLE_ITEM_WIDTH,

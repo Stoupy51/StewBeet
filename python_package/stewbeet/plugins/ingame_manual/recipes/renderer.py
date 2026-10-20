@@ -21,10 +21,10 @@ from beet.core.utils import TextComponent
 from stouputils.typing import JsonDict
 
 from ....core.__memory__ import Mem
-from ....core.cls.block import Block, GrowingSeed, GrowingSeedLoot
-from ....core.cls.ingredients import Ingr
-from ....core.cls.item import Item
-from ....core.cls.recipe import CraftingShapelessRecipe
+from ....core.cls.items.block import Block, GrowingSeed, GrowingSeedLoot
+from ....core.cls.items.item import Item
+from ....core.cls.recipes.ingredients import Ingr
+from ....core.cls.recipes.recipe import CraftingShapelessRecipe
 from ....core.utils.text_component import item_id_to_name
 from ..glyphs import MICRO_NONE_FONT, SMALL_NONE_FONT, WIKI_GROWING_SEED_FONT, WIKI_RESULT_OF_CRAFT_FONT
 from ..refs import PageRef

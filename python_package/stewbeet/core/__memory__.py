@@ -17,8 +17,8 @@ if TYPE_CHECKING:
 	from ..plugins.auto.text_renders.emit import GlyphEmitter
 	from ..plugins.ingame_manual.manual import Manual
 	from ..plugins.sniffer.model import AttributionScope, WriteChunk
-	from .cls.external_item import ExternalItem
-	from .cls.item import Item
+	from .cls.items.external_item import ExternalItem
+	from .cls.items.item import Item
 
 
 # Shared variables among plugins

@@ -16,10 +16,17 @@ from beet import Equipment, Texture
 from stouputils.typing import JsonDict
 
 from ..__memory__ import Mem
-from ..cls.block import VANILLA_BLOCK_FOR_ORES, Block
-from ..cls.ingredients import Ingr
-from ..cls.item import Item
-from ..cls.recipe import BlastingRecipe, CraftingShapedRecipe, CraftingShapelessRecipe, PulverizingRecipe, RecipeBase, SmeltingRecipe
+from ..cls.items.block import VANILLA_BLOCK_FOR_ORES, Block
+from ..cls.items.item import Item
+from ..cls.recipes.ingredients import Ingr
+from ..cls.recipes.recipe import (
+	BlastingRecipe,
+	CraftingShapedRecipe,
+	CraftingShapelessRecipe,
+	PulverizingRecipe,
+	RecipeBase,
+	SmeltingRecipe,
+)
 from ..constants import CUSTOM_BLOCK_VANILLA, CUSTOM_ITEM_VANILLA
 from .equipments import SLOTS, EquipmentsConfig, VanillaEquipments, format_attributes
 

@@ -26,7 +26,7 @@ from beet.core.utils import TextComponent
 from PIL import Image
 
 from ...core.__memory__ import Mem
-from ...core.cls.item import Item
+from ...core.cls.items.item import Item
 from .config import ManualConfig
 from .glyphs import DEFAULT_NEXT_CRAFT_FONT, HEAVY_WORKBENCH_CATEGORY, GlyphAllocator
 from .images import GlyphImageBuilder

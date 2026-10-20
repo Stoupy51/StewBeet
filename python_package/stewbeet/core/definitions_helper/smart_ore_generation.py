@@ -15,8 +15,8 @@ from beet import BlockTag
 from ...dependencies import official_lib_used
 from ..__memory__ import Mem
 from ..cls._utils import StMapping
-from ..cls.block import Block
 from ..cls.block_functions import BlockFunctions
+from ..cls.items.block import Block
 from ..utils.io import set_json_encoder, write_function
 from ..utils.loot_table import loot_condition
 from ..utils.versions import minecraft_version_at_least

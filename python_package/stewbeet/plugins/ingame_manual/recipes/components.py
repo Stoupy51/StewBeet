@@ -21,8 +21,8 @@ from PIL import Image
 from stouputils.typing import JsonDict
 
 from ....core.__memory__ import Mem
-from ....core.cls.ingredients import Ingr
-from ....core.cls.item import Item
+from ....core.cls.items.item import Item
+from ....core.cls.recipes.ingredients import Ingr
 from ..glyphs import NONE_FONT
 from ..refs import PageRef
 

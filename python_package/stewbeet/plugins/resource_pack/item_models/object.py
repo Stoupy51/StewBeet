@@ -16,8 +16,8 @@ from beet import ItemModel, Model, Texture
 from stouputils.typing import JsonDict, JsonList
 
 from ....core.__memory__ import Mem
-from ....core.cls.block import Block, GrowingSeed
-from ....core.cls.item import Item
+from ....core.cls.items.block import Block, GrowingSeed
+from ....core.cls.items.item import Item
 from ....core.cls.resource import Resource
 from ....core.constants import CUSTOM_BLOCK_VANILLA, CUSTOM_ITEM_VANILLA
 from ....core.utils.io import set_json_encoder, set_model_encoder, texture_mcmeta

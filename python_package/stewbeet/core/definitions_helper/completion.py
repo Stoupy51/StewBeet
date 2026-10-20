@@ -112,7 +112,7 @@ def set_manual_components(white_list: list[str]) -> None:
 	# and update any Manual already created during setup.
 	from ...plugins.ingame_manual import config as v2_config
 	v2_config.COMPONENTS_OVERRIDE = list(white_list)
-	from ...core.__memory__ import Mem
+	from ..__memory__ import Mem
 	if Mem.manual is not None:
 		Mem.manual.config.components_to_include = list(white_list)
 

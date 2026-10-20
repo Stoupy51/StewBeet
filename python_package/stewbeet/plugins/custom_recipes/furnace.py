@@ -10,10 +10,10 @@ from beet import Recipe
 from stouputils.typing import JsonDict
 
 from ...core.__memory__ import Mem
-from ...core.cls.external_item import ExternalItem
-from ...core.cls.ingredients import Ingr
-from ...core.cls.item import Item
-from ...core.cls.recipe import BlastingRecipe, SmeltingRecipe, SmokingRecipe, written_cooking_time
+from ...core.cls.items.external_item import ExternalItem
+from ...core.cls.items.item import Item
+from ...core.cls.recipes.ingredients import Ingr
+from ...core.cls.recipes.recipe import BlastingRecipe, SmeltingRecipe, SmokingRecipe, written_cooking_time
 from ...core.constants import CUSTOM_ITEM_VANILLA
 from ...core.utils.io import set_json_encoder, write_function
 from .. import sniffer

@@ -14,7 +14,7 @@ from mutagen.oggvorbis import OggVorbis
 from stouputils.typing import JsonDict
 
 from ..__memory__ import Mem
-from ..cls.item import Item
+from ..cls.items.item import Item
 from ..utils.sounds import add_sound
 
 

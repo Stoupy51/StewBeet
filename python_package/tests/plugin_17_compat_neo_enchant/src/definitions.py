@@ -3,7 +3,7 @@
 from beet import Context
 
 from stewbeet import *
-from stewbeet.core.cls.block import VANILLA_BLOCK_FOR_ORES
+from stewbeet.core.cls.items.block import VANILLA_BLOCK_FOR_ORES
 
 
 # Main entry point

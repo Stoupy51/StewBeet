@@ -16,8 +16,8 @@ from beet.core.utils import TextComponent
 from PIL import Image
 from stouputils.typing import JsonDict
 
-from .....core.cls.ingredients import Ingr
-from .....core.cls.recipe import BlastingRecipe, CampfireCookingRecipe, SmeltingRecipe, SmokingRecipe
+from .....core.cls.recipes.ingredients import Ingr
+from .....core.cls.recipes.recipe import BlastingRecipe, CampfireCookingRecipe, SmeltingRecipe, SmokingRecipe
 from .....core.utils.fonts import save_png
 from ...glyphs import FURNACE_FONT, INVISIBLE_ITEM_WIDTH, MICRO_NONE_FONT, SMALL_NONE_FONT, VERY_SMALL_NONE_FONT
 from ...paths import TEMPLATES_PATH

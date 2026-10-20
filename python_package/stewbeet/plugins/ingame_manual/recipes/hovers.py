@@ -13,7 +13,7 @@ __lazy_modules__ = ALWAYS_LAZY
 import stouputils as stp
 from beet.core.utils import TextComponent
 
-from ....core.cls.ingredients import Ingr
+from ....core.cls.recipes.ingredients import Ingr
 
 
 def ingredients_hover(craft: stp.JsonDict, hover: list[TextComponent]) -> None:

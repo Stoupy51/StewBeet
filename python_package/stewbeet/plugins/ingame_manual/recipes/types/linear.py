@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING, ClassVar
 from beet.core.utils import TextComponent
 from stouputils.typing import JsonDict
 
-from .....core.cls.recipe import PulverizingRecipe, StonecuttingRecipe
+from .....core.cls.recipes.recipe import PulverizingRecipe, StonecuttingRecipe
 from ...glyphs import (
 	INVISIBLE_ITEM_WIDTH,
 	MICRO_NONE_FONT,

@@ -12,7 +12,7 @@ from beet import LootTable
 from stouputils.typing import JsonDict
 
 from ....core.__memory__ import Mem
-from ....core.cls.block import Block, GrowingSeed, GrowingSeedLoot
+from ....core.cls.items.block import Block, GrowingSeed, GrowingSeedLoot
 from ....core.cls.resource import Resource
 from ....core.constants import GROWING_SEED, ITEMS_LOOT_FOLDER
 from ....core.utils.io import set_json_encoder, write_function, write_load_file

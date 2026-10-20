@@ -12,9 +12,9 @@ from beet import Advancement, Recipe
 from stouputils.typing import JsonDict
 
 from ...core.__memory__ import Mem
-from ...core.cls.ingredients import Ingr
-from ...core.cls.item import Item
-from ...core.cls.recipe import (
+from ...core.cls.items.item import Item
+from ...core.cls.recipes.ingredients import Ingr
+from ...core.cls.recipes.recipe import (
 	BlastingRecipe,
 	CampfireCookingRecipe,
 	CraftingShapedRecipe,

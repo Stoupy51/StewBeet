@@ -12,10 +12,10 @@ from typing import Any
 from beet import LootTable
 from stouputils.typing import JsonDict
 
-from ..constants import CUSTOM_ITEM_VANILLA, EXTERNAL_RECIPES_FOLDER
-from ..utils.loot_table import result_count_to_suffix
-from ._utils import StMapping
-from .resource import Resource
+from ...constants import CUSTOM_ITEM_VANILLA, EXTERNAL_RECIPES_FOLDER
+from ...utils.loot_table import result_count_to_suffix
+from .._utils import StMapping
+from ..resource import Resource
 
 
 # Class
@@ -65,7 +65,7 @@ class ExternalItem(StMapping):
 				self.components[k] = {}
 
 		# Register the item in the global definitions (if not external)
-		from ..__memory__ import Mem
+		from ...__memory__ import Mem
 		if self.id and self.id not in Mem.external_definitions:
 			Mem.external_definitions[self.id] = self
 

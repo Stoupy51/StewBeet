@@ -10,9 +10,9 @@ from beet import Context, FunctionTag
 from stouputils.typing import JsonDict
 
 from ....core.__memory__ import Mem
-from ....core.cls.ingredients import Ingr
-from ....core.cls.item import Item
-from ....core.cls.recipe import CraftingShapedRecipe, CraftingShapelessRecipe
+from ....core.cls.items.item import Item
+from ....core.cls.recipes.ingredients import Ingr
+from ....core.cls.recipes.recipe import CraftingShapedRecipe, CraftingShapelessRecipe
 from ....core.utils.io import set_json_encoder, write_function
 
 

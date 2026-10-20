@@ -13,7 +13,7 @@ from beet import ItemModel, LootTable, Model, Recipe, Texture
 from beet.core.utils import TextComponent
 from stouputils.typing import JsonDict
 
-from ..constants import (
+from ...constants import (
 	CATEGORY,
 	CUSTOM_ITEM_VANILLA,
 	ITEMS_LOOT_FOLDER,
@@ -22,15 +22,15 @@ from ..constants import (
 	USED_FOR_CRAFTING,
 	WIKI_COMPONENT,
 )
-from ..utils.loot_table import result_count_to_suffix
-from ._recipe_list import RecipeList
-from ._utils import StMapping
-from .recipe import RecipeBase
-from .resource import Resource
+from ...utils.loot_table import result_count_to_suffix
+from .._utils import StMapping
+from ..recipes._recipe_list import RecipeList
+from ..recipes.recipe import RecipeBase
+from ..resource import Resource
 from .wiki_button import WikiButton
 
 if TYPE_CHECKING:
-	from ...plugins.sniffer.model import SourceOrigin
+	from ....plugins.sniffer.model import SourceOrigin
 
 
 # Class
@@ -141,9 +141,9 @@ class Item(StMapping):
 	# Register item in memory
 	def __post_init__(self) -> None:
 		# Captured here because this is the only moment the declaring frame is still on the stack.
-		from ..__memory__ import Mem
+		from ...__memory__ import Mem
 		if Mem.sniffer_enabled:
-			from ...plugins import sniffer
+			from ....plugins import sniffer
 			self.origin = sniffer.declaration_origin()
 
 		# Add minecraft: to base item if needed

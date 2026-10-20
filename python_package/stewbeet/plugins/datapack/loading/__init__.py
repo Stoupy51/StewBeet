@@ -11,7 +11,7 @@ from beet import Context, ContextIntProvider
 from stouputils.typing import JsonDict
 
 from ....core.__memory__ import Mem
-from ....core.cls.item import Item
+from ....core.cls.items.item import Item
 from ....core.utils.io import write_load_file, write_predicate, write_tag, write_versioned_function
 from ...finalyze.dependencies import minimum_minecraft_version
 
