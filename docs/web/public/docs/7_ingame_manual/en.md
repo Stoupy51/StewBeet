@@ -1,7 +1,7 @@
 
 # Generating the in-game manual
 
-`ingame_manual` generates an in-game manual from your `Mem.definitions` items: an introduction page, a category browser, one page per category, and one page per item with its recipes and wiki buttons. It is **dialog-first** (the old written-book NBT mode is removed) and fully **extensible**. You can edit any item's page, insert arbitrary pages (even unrelated to items), control button placement, and render pages backed by your own texture. Every public class of the API (`Page` subclasses, `ButtonLayout`, `BakedText`, `PageRef`, `CraftRenderer`, `Manual` itself...) is a Python **dataclass**.
+`ingame_manual` generates an in-game manual from your `Mem.definitions` items: an introduction page, a category browser, one page per category, and one page per item with its recipes and wiki buttons, including the effects it gives when consumed and a link to the container it leaves (`remainder`). It is **dialog-first** (the old written-book NBT mode is removed) and fully **extensible**. You can edit any item's page, insert arbitrary pages (even unrelated to items), control button placement, and render pages backed by your own texture. Every public class of the API (`Page` subclasses, `ButtonLayout`, `BakedText`, `PageRef`, `CraftRenderer`, `Manual` itself...) is a Python **dataclass**.
 
 **Opt in by replacing `stewbeet.plugins.ingame_manual` with `stewbeet.plugins.ingame_manual`** in your pipeline.
 

@@ -23,6 +23,7 @@ from stouputils.typing import JsonDict
 
 from ....core.cls.items.item import Item
 from ....core.cls.items.wiki_button import WikiButton
+from ....core.cls.recipes.ingredients import Ingr
 from ....core.constants import WIKI_COMPONENT
 from ....core.utils.text_component import item_id_to_name
 from ..button_layout import ButtonLayout
@@ -130,11 +131,29 @@ class ItemPage(Page):
 		return content
 
 	def craft_buttons(self, manual: Manual, name: str, obj: Item | None) -> list[WikiButtonRender]:
-		""" The item's info buttons, its growing seed button, then a button per craft, skipping a repeat of the previous result. """
+		""" The item's info buttons, its growing seed, consume effects and remainder buttons,
+		then a button per craft, skipping a repeat of the previous result.
+		"""
 		buttons: list[WikiButtonRender] = self.wiki_info_buttons(obj)
 		gs_button = manual.recipes.growing_seed_button(obj) if obj is not None else None
-		if gs_button is not None:
-			buttons.append(gs_button)
+		buttons += [button for button in (gs_button, self.consume_effects_button(obj)) if button is not None]
+
+		if obj is not None and obj.remainder:
+			hover: TextComponent = [
+				{"text": "Leaves once used", "color": "yellow"},
+				{"text": f"\n{Ingr(obj.remainder).to_name()}", "color": "gray"},
+				{"text": "\nClick to open its page", "color": "dark_gray"},
+			]
+			buttons.append(manual.recipes.link_button(obj.remainder, hover=hover))
+
+		for source_id, source in manual.definitions_as_objects.items():
+			if source.remainder == self.item_id:
+				hover = [
+					{"text": "Left by", "color": "yellow"},
+					{"text": f"\n{Ingr(source_id).to_name()}", "color": "gray"},
+					{"text": "\nClick to open its page", "color": "dark_gray"},
+				]
+				buttons.append(manual.recipes.link_button(source_id, hover=hover))
 
 		previous_result = None
 		for idx, craft in enumerate(self.crafts):
@@ -160,6 +179,31 @@ class ItemPage(Page):
 			event: JsonDict | None = self.click_event_of(button_value)
 			out.append(WikiButtonRender(glyph=WIKI_INFO_FONT, hover=button_value, target=event, is_info=True))
 		return out
+
+	@staticmethod
+	def consume_effects_button(obj: Item | None) -> WikiButtonRender | None:
+		""" An info button listing the effects the `consumable` component applies, None when it applies none.
+
+		>>> item = Item(id="manual_beer", components={"consumable": {"on_consume_effects": [
+		...     {"type": "minecraft:apply_effects", "effects": [{"id": "minecraft:nausea", "duration": 600}]},
+		... ]}})
+		>>> ItemPage.consume_effects_button(item).hover[1]
+		{'text': '\\n- Nausea (0:30)', 'color': 'gray'}
+		"""
+		consumable: JsonDict = obj.components.get("consumable", {}) if obj is not None else {}
+		effects: list[JsonDict] = [
+			effect for entry in consumable.get("on_consume_effects", [])
+			if entry["type"] == "minecraft:apply_effects" for effect in entry["effects"]
+		]
+		if not effects:
+			return None
+		hover: list[TextComponent] = [{"text": "When consumed", "color": "yellow"}]
+		for effect in effects:
+			name: str = item_id_to_name(effect["id"].split(":")[-1])
+			level: str = f" {effect['amplifier'] + 1}" if effect.get("amplifier") else ""
+			minutes, seconds = divmod(effect.get("duration", 0) // 20, 60)
+			hover.append({"text": f"\n- {name}{level} ({minutes}:{seconds:02})", "color": "gray"})
+		return WikiButtonRender(glyph=WIKI_INFO_FONT, hover=hover, is_info=True)
 
 	@staticmethod
 	def click_event_of(component: TextComponent) -> JsonDict | None:

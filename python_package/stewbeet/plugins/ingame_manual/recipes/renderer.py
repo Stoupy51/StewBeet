@@ -21,7 +21,8 @@ from beet.core.utils import TextComponent
 from stouputils.typing import JsonDict
 
 from ....core.__memory__ import Mem
-from ....core.cls.items.block import Block, GrowingSeed, GrowingSeedLoot
+from ....core.cls.items.block import Block
+from ....core.cls.items.features import GrowingSeed, GrowingSeedLoot
 from ....core.cls.items.item import Item
 from ....core.cls.recipes.ingredients import Ingr
 from ....core.cls.recipes.recipe import CraftingShapelessRecipe

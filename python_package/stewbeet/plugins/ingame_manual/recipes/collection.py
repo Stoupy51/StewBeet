@@ -22,7 +22,7 @@ from beet import LootTable
 from stouputils.typing import JsonDict
 
 from ....core.__memory__ import Mem
-from ....core.cls.items.block import NoSilkTouchDrop
+from ....core.cls.items.features import NoSilkTouchDrop
 from ....core.cls.items.item import Item
 from ....core.cls.recipes.ingredients import Ingr
 from ....core.cls.recipes.recipe import BlastingRecipe, CampfireCookingRecipe, RecipeBase, SmeltingRecipe, SmokingRecipe
@@ -205,17 +205,17 @@ def drop_id(drop: JsonDict | NoSilkTouchDrop | str | LootTable) -> str | None:
 	""" The item a no silk touch drop gives, None for a loot table. """
 	if isinstance(drop, str):
 		return drop
-	return drop["id"] if isinstance(drop, dict | NoSilkTouchDrop) else None
+	return drop.get("id") or None if isinstance(drop, dict | NoSilkTouchDrop) else None
 
 
 def own_mining_recipe(name: str, drop: JsonDict | NoSilkTouchDrop | str | LootTable, ns: str) -> JsonDict:
 	""" The pseudo recipe showing what mining `name` without silk touch drops, a loot table's drop being dynamic. """
-	mining_recipe: JsonDict
-	if isinstance(drop, LootTable):
-		mining_recipe = {"type": "mining", "ingredient": Ingr(name, ns), "dynamic_drop": True}
+	result: str | None = drop_id(drop)
+	mining_recipe: JsonDict = {"type": "mining", "ingredient": Ingr(name, ns)}
+	if result is None:
+		mining_recipe["dynamic_drop"] = True
 	else:
-		result_format: str = drop if isinstance(drop, str) else drop["id"]
-		mining_recipe = {"type": "mining", "ingredient": Ingr(name, ns), "result": Ingr(result_format, ns)}
+		mining_recipe["result"] = Ingr(result, ns)
 	add_mining_count(mining_recipe, drop)
 	return mining_recipe
 
@@ -230,7 +230,17 @@ def add_mining_count(mining_recipe: JsonDict, drop: JsonDict | NoSilkTouchDrop |
 	if isinstance(drop, LootTable):
 		mining_recipe["dynamic_drop"] = True
 		return
-	if not isinstance(drop, dict | NoSilkTouchDrop) or "count" not in drop:
+	if not isinstance(drop, dict | NoSilkTouchDrop):
+		return
+
+	experience: JsonDict | float = drop.get("experience", 0.0)
+	if experience:
+		mining_recipe["experience"] = f"{experience['min']}-{experience['max']}" if isinstance(experience, dict) else str(experience)
+	if drop.get("loot_table"):
+		mining_recipe["dynamic_drop"] = True
+		return
+
+	if "count" not in drop:
 		return
 	count_data: JsonDict | int = drop["count"]
 	if not isinstance(count_data, dict):

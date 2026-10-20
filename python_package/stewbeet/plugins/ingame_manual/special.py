@@ -18,7 +18,8 @@ from beet import Texture
 from beet.core.utils import TextComponent
 
 from ...core.__memory__ import Mem
-from ...core.cls.items.block import Block, VanillaBlock
+from ...core.cls.items.block import Block
+from ...core.cls.items.features import VanillaBlock
 from ...core.cls.recipes.ingredients import Ingr
 from ...core.cls.recipes.recipe import CraftingShapedRecipe
 from ...dependencies.official_libs import OFFICIAL_LIBS
