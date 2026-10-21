@@ -23,7 +23,7 @@ resource_pack:
 # Left out on purpose:
 #   finalyze.dependencies, merge_smithed_weld, copy_to_destination  need network or SFTP
 #   archive, compute_sha1, livereload                               need an output directory
-#   finalyze.check_unused_textures                                  only warns
+#   check_unused_textures                                           only warns
 pipeline:
     - "src.definitions"
     - "stewbeet.plugins.resource_pack.item_models"

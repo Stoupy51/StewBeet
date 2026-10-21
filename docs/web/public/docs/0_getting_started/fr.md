@@ -157,11 +157,11 @@ Building project...
 [PROGRESS 19:05:58] Execution time of 'stewbeet.plugins.finalyze.custom_blocks_ticking': 0.045ms (45100ns) 
 [PROGRESS 19:05:58] Execution time of 'stewbeet.plugins.finalyze.basic_datapack_structure': 0.062ms (61600ns) 
 [PROGRESS 19:05:58] Execution time of 'stewbeet.plugins.finalyze.dependencies': 0.875ms (874900ns) 
-[PROGRESS 19:05:58] Execution time of 'stewbeet.plugins.finalyze.check_unused_textures': 0.125ms (124800ns) 
 [PROGRESS 19:05:58] Execution time of 'stewbeet.plugins.finalyze.last_final': 0.154ms (154500ns) 
 Generating lang file: 100%|████████████████████████████████████████████████| 21/21 [4481.78it/s, 00:00<00:00]
 [PROGRESS 19:05:58] Execution time of 'stewbeet.plugins.auto.lang_file': 73.613ms (73613100ns) 
 [PROGRESS 19:05:58] Execution time of 'stewbeet.plugins.auto.headers': 0.561ms (561000ns) 
+[PROGRESS 19:05:58] Execution time of 'stewbeet.plugins.check_unused_textures': 0.125ms (124800ns) 
 [PROGRESS 19:05:58] Execution time of 'stewbeet.plugins.archive': 23.592ms (23592200ns) 
 [WARNING 19:05:58] No datapacks or libs to merge for build\AwesomeOres_datapack_with_libs.zip. Skipping weld. 
 [WARNING 19:05:58] No resource packs or libs to merge for build\AwesomeOres_resource_pack_with_libs.zip. Skipping weld. 
@@ -349,10 +349,10 @@ pipeline:
     - "stewbeet.plugins.finalyze.custom_blocks_ticking" # Finaliser le ticking des blocs
     - "stewbeet.plugins.finalyze.basic_datapack_structure" # Finalisation de la structure
     - "stewbeet.plugins.finalyze.dependencies"          # Vérification des dépendances
-    - "stewbeet.plugins.finalyze.check_unused_textures" # Trouver les textures inutilisées
     - "stewbeet.plugins.finalyze.last_final"            # Nettoyage final
     - "stewbeet.plugins.auto.lang_file"                 # Générer les fichiers de langue
     - "stewbeet.plugins.auto.headers"                   # Générer les en-têtes de fonctions
+    - "stewbeet.plugins.check_unused_textures"          # Trouver les textures inutilisées
     - "stewbeet.plugins.archive"                        # Créer les fichiers zip
     - "stewbeet.plugins.merge_smithed_weld"             # Fusionner avec Smithed Weld
     - "stewbeet.plugins.copy_to_destination"            # Copier vers les chemins configurés

@@ -1,7 +1,7 @@
 
-# stewbeet.plugins.finalyze.check_unused_textures
+# stewbeet.plugins.check_unused_textures
 
-The `finalyze.check_unused_textures` plugin analyzes texture usage in resource packs.<br>
+The `check_unused_textures` plugin analyzes texture usage in resource packs.<br>
 It scans all PNG files in the textures folder, compares them with texture references<br>
 in the generated resource pack, and provides warnings for unused texture files<br>
 to help optimize resource pack size and identify orphaned assets.
@@ -14,9 +14,9 @@ to help optimize resource pack size and identify orphaned assets.
 ### <u>Feature Showcase</u>
 
 **Warning message in terminal:**<br>
-<img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/finalyze.check_unused_textures.warnings.jpg">
+<img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/check_unused_textures.warnings.jpg">
 
-**Source Code**: [`stewbeet/plugins/finalyze/check_unused_textures/__init__.py`](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/finalyze/check_unused_textures/__init__.py)
+**Source Code**: [`stewbeet/plugins/check_unused_textures/__init__.py`](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/check_unused_textures/__init__.py)
 
 
 ## What it does
@@ -34,7 +34,7 @@ to help optimize resource pack size and identify orphaned assets.
 ```yaml
 pipeline:
   - ...
-  - stewbeet.plugins.finalyze.check_unused_textures  # Should run after all texture-generating plugins
+  - stewbeet.plugins.check_unused_textures  # Should run after all texture-generating plugins
   - ...
 
 meta:

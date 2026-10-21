@@ -8,9 +8,11 @@ __lazy_modules__ = ALWAYS_LAZY
 import stouputils as stp
 from beet import Context
 
+from . import MOVED_MESSAGE
 
-# Silent mode entry point
+
+# Silent mode entry point, the deprecation warning still shows
+@stp.deprecated(message=MOVED_MESSAGE, version="3.11.0")
 def beet_default(ctx: Context) -> None:
-	from .__init__ import beet_default
-	return stp.silent(beet_default)(ctx)
+	ctx.require("stewbeet.plugins.check_unused_textures.silent")
 

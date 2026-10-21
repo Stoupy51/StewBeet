@@ -145,8 +145,8 @@ pipeline:
     - "stewbeet.plugins.finalyze.last_final"               # Final cleanup
     - "stewbeet.plugins.auto.lang_file"                    # Auto-generate lang files
     - "stewbeet.plugins.auto.text_renders"                 # Turn "render" keys into item glyphs
-    - "stewbeet.plugins.finalyze.check_unused_textures"    # Find unused textures
     - "stewbeet.plugins.auto.headers"                      # Add file headers
+    - "stewbeet.plugins.check_unused_textures"             # Find unused textures
     - "stewbeet.plugins.archive"                           # Create ZIP archives
     - "stewbeet.plugins.merge_smithed_weld.datapack"       # Merge Smithed Weld libs into the datapack
     - "stewbeet.plugins.merge_smithed_weld.resource_pack"  # Merge Smithed Weld libs into the resource pack
