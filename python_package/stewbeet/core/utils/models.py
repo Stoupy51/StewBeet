@@ -69,6 +69,9 @@ def with_margin(element: JsonDict, scale: float) -> JsonDict:
 	>>> element["from"], element["to"], element["faces"]["north"]["uv"], element["faces"]["up"]["uv"]
 	([-2.0, -1.0, 5.5], [18.0, 9.0, 10.5], [0, 8, 16, 16], [0, 0, 1, 1])
 	"""
+	# The element's coordinates are floats, we make sure they are rounded to 5 decimal places
+	element["from"] = [round(x, 5) for x in element["from"]]
+	element["to"] = [round(x, 5) for x in element["to"]]
 	(x1, y1, z1), (x2, y2, z2) = element["from"], element["to"]
 	default_uvs: dict[str, list[float]] = {
 		"down": [x1, 16 - z2, x2, 16 - z1], "up": [x1, z1, x2, z2],
@@ -78,8 +81,8 @@ def with_margin(element: JsonDict, scale: float) -> JsonDict:
 	center: list[float] = [(low + high) / 2 for low, high in zip(element["from"], element["to"], strict=True)]
 	return {
 		**element,
-		"from": [c + (low - c) * scale for c, low in zip(center, element["from"], strict=True)],
-		"to": [c + (high - c) * scale for c, high in zip(center, element["to"], strict=True)],
+		"from": [round(c + (low - c) * scale, 5) for c, low in zip(center, element["from"], strict=True)],
+		"to": [round(c + (high - c) * scale, 5) for c, high in zip(center, element["to"], strict=True)],
 		"faces": {direction: {"uv": default_uvs[direction], **face} for direction, face in element["faces"].items()},
 	}
 
