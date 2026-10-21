@@ -164,11 +164,7 @@ def prepare_weld(ctx: Context, dest_path: str, pack_type: str) -> list[str] | No
 	try:
 		import smithed.weld  # noqa: F401  # pyright: ignore[reportMissingTypeStubs, reportUnusedImport]
 	except Exception as e:
-		stp.error(
-			f"Smithed Weld merging failed: {e}\n"
-			"The 'smithed' package is not yet up to date with Python 3.14, consider installing from this fork:\n"
-			"pip install git+https://github.com/Stoupy51/smithed-python.git"
-		)
+		stp.error(f"Smithed Weld merging failed: {e}")
 		return None
 
 	return to_merge

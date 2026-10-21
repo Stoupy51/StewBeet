@@ -26,17 +26,14 @@ authors = [
 dependencies = [
 	"stouputils>=26.10.1",
 	"model_resolver>=1.15.2",
-	"beet>=0.119.1",
-	"bolt>=0.51.0",
-	"mecha>=0.106.0",
+	"beet>=0.121.0",
+	"bolt>=0.52.0",
+	"mecha>=0.107.0",
 	"mutagen>=1.48.1",
 	"pyperclip>=1.11.0",
 	"paramiko>=5.0.0",
-	"smithed",
+	"smithed>=0.22.1",
 ]
-
-[tool.uv.sources]
-smithed = { git = "https://github.com/Stoupy51/smithed-python" }
 
 [project.urls]
 Homepage = "https://stewbeet.paralya.fr"

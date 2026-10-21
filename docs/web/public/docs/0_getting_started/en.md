@@ -86,15 +86,11 @@ name = "template"
 version = "0.0.1"
 requires-python = ">=3.14"
 dependencies = [
-	"smithed",
 	"stewbeet>=3.10.1",
 ]
 
 [tool.uv]
 package = false
-
-[tool.uv.sources]
-smithed = { git = "https://github.com/Stoupy51/smithed-python.git" }
 ```
 
 `requires-python` tells uv which interpreter to fetch.
