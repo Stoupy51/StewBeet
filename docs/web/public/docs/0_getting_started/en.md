@@ -86,7 +86,7 @@ name = "template"
 version = "0.0.1"
 requires-python = ">=3.14"
 dependencies = [
-	"stewbeet>=3.10.1",
+	"stewbeet>=3.11.0",
 ]
 
 [tool.uv]
