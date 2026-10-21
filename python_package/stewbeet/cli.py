@@ -32,7 +32,7 @@ def force_utf8_output() -> None:
 			stream.reconfigure(encoding="utf-8", errors="replace")
 
 
-@stp.handle_error(message="Error while running 'stewbeet'", error_log=stp.LogLevels.WARNING_TRACEBACK)
+@stp.handle_error(message="Error while running 'stewbeet'", error_log=stp.LogLevels.WARNING_TRACEBACK, callback=lambda _: sys.exit(1))
 def main() -> None:
 	force_utf8_output()
 	second_arg: str = sys.argv[1].lower() if len(sys.argv) >= 2 else ""

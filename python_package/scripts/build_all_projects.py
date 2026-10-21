@@ -1,6 +1,7 @@
 
 # Imports
 import os
+import runpy
 import subprocess
 import sys
 import time
@@ -19,8 +20,6 @@ DOWNSTREAM_NAMES: tuple[str, ...] = ("SimplEnergy", "StardustFragment", "StoupGu
 """ Sibling repositories consuming StewBeet, expected right next to the StewBeet repository. """
 BUILD_TIMEOUT: int = 1800
 """ Maximum seconds a single project build may take before being killed. """
-UTF8_ENVIRONMENT: dict[str, str] = os.environ | {"PYTHONIOENCODING": "utf-8"}
-""" Environment forcing children to write UTF-8, as their pipes would otherwise use the locale encoding (cp1252 on Windows). """
 
 
 # Utility
@@ -74,23 +73,12 @@ def build_project(project: Path) -> tuple[bool, float]:
 		tuple[bool, float]: Whether the build succeeded, and how long it took in seconds.
 	"""
 	start: float = time.perf_counter()
-	result: subprocess.CompletedProcess[str] = subprocess.run(
-		[sys.executable, "-m", "stewbeet"],
-		cwd=project,
-		capture_output=True,
-		encoding="utf-8",
-		errors="replace",
-		env=UTF8_ENVIRONMENT,
-		timeout=BUILD_TIMEOUT,
-	)
+	# Not captured: on Windows, beet's prompt_toolkit output crashes without a console to write to
+	result: subprocess.CompletedProcess[bytes] = subprocess.run([sys.executable, "-m", "stewbeet"], cwd=project, timeout=BUILD_TIMEOUT)
 	duration: float = time.perf_counter() - start
 
 	if result.returncode != 0:
 		stp.error(f"FAILED: {project.name} ({duration:.2f}s)")
-		if result.stdout.strip():
-			stp.error(result.stdout.strip())
-		if result.stderr.strip():
-			stp.error(result.stderr.strip())
 		return False, duration
 
 	stp.info(f"PASSED: {project.name} ({duration:.2f}s)")
@@ -100,7 +88,7 @@ def build_project(project: Path) -> tuple[bool, float]:
 # Main
 @stp.measure_time(printer=stp.info, message="All project builds finished")
 def main() -> None:
-	""" Build every template and downstream pack, then report which ones failed. """
+	""" Build every template and downstream pack, then zip the templates once they all built. """
 	projects: list[Path] = find_projects(sys.argv[1:])
 	if not projects:
 		stp.error("No project to build, check the arguments and that 'templates/*/beet.yml' exist")
@@ -121,6 +109,7 @@ def main() -> None:
 			stp.error(f"  - {name}")
 		sys.exit(1)
 	stp.info(f"\nAll {len(projects)} project(s) built successfully!")
+	runpy.run_path(str(REPOSITORY / "scripts" / "zip_templates.py"), run_name="__main__")
 
 
 if __name__ == "__main__":
