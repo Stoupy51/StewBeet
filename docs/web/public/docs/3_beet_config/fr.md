@@ -142,10 +142,10 @@ pipeline:
     - "stewbeet.plugins.finalyze.custom_blocks_ticking"    # Configure le ticking des blocs
     - "stewbeet.plugins.finalyze.basic_datapack_structure" # Crée la structure de base
     - "stewbeet.plugins.finalyze.dependencies"             # Gère les dépendances
-    - "stewbeet.plugins.finalyze.check_unused_textures"    # Trouve les textures inutilisées
     - "stewbeet.plugins.finalyze.last_final"               # Nettoyage final
     - "stewbeet.plugins.auto.lang_file"                    # Génère auto les fichiers de langue
     - "stewbeet.plugins.auto.text_renders"                 # Transforme les clés "render" en glyphes
+    - "stewbeet.plugins.finalyze.check_unused_textures"    # Trouve les textures inutilisées
     - "stewbeet.plugins.auto.headers"                      # Ajoute les en-têtes de fichiers
     - "stewbeet.plugins.archive"                           # Crée les archives ZIP
     - "stewbeet.plugins.merge_smithed_weld.datapack"       # Fusionne les libs Smithed Weld dans le datapack
