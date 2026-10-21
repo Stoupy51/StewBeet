@@ -166,7 +166,7 @@ meta:
             # into a grid of glyphs put back together with negative spacing, at the cost of one
             # texture per tile. Left unset, the first build to run into it asks in the terminal and
             # remembers the answer in ".beet_cache"; set it to true or false to answer up front.
-            # allow_oversized: true
+            allow_oversized: true
 
         # Configuration for in-game manual
         manual:
