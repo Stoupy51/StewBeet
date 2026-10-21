@@ -5,6 +5,6 @@
 		"particle": "_your_namespace:item/crate"
 	},
 	"elements": [
-		{"from": [-0.016000000000000014,-0.016000000000000014,-0.016000000000000014],"to": [16.016,16.016,16.016],"faces": {"north": {"uv": [0,0,16,16],"texture": "#t"},"south": {"uv": [0,0,16,16],"texture": "#t"},"east": {"uv": [0,0,16,16],"texture": "#t"},"west": {"uv": [0,0,16,16],"texture": "#t"},"up": {"uv": [0,0,16,16],"texture": "#t"},"down": {"uv": [0,0,16,16],"texture": "#t"}}}
+		{"from": [-0.016,-0.016,-0.016],"to": [16.016,16.016,16.016],"faces": {"north": {"uv": [0,0,16,16],"texture": "#t"},"south": {"uv": [0,0,16,16],"texture": "#t"},"east": {"uv": [0,0,16,16],"texture": "#t"},"west": {"uv": [0,0,16,16],"texture": "#t"},"up": {"uv": [0,0,16,16],"texture": "#t"},"down": {"uv": [0,0,16,16],"texture": "#t"}}}
 	]
 }
