@@ -1,5 +1,7 @@
 
 # Imports
+import runpy
+
 import stouputils as stp
 from stouputils.typing import JsonDict
 
@@ -20,6 +22,8 @@ GITHUB_CONFIG: JsonDict = {
 
 # Main
 if __name__ == "__main__":
+
+	runpy.run_path(f"{ROOT}/../scripts/zip_templates.py", run_name="__main__")
 
 	# Get credentials
 	credentials: JsonDict = stp.load_credentials(CREDENTIALS_PATH)
