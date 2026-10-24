@@ -18,14 +18,14 @@
 								},
 								"minecraft:item_model": "_your_namespace:beer",
 								"minecraft:item_name": {
-									"translate": "_your_namespace.beer"
+									"translate": "_your_namespace.beer","fallback": "Beer"
 								},
 								"minecraft:lore": [
 									[
 										"",
 										{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"},
 										" ",
-										{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"},
+										{"translate": "_your_namespace.extensive_template","fallback": "Extensive Template","color": "white","italic": false,"font": "_your_namespace:tooltip"},
 										" ",
 										{"text": "聎","font": "_your_namespace:renders","color": "white","italic": false}
 									]
@@ -44,7 +44,7 @@
 									"id": "minecraft:recovery_compass",
 									"count": 1,
 									"components": {
-										"minecraft:item_name": {"translate": "_your_namespace.beer_mug"},
+										"minecraft:item_name": {"translate": "_your_namespace.beer_mug","fallback": "Beer Mug"},
 										"minecraft:item_model": "_your_namespace:beer_mug",
 										"minecraft:custom_data": {"_your_namespace": {"beer_mug": true},"smithed": {"id": "_your_namespace:beer_mug","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}
 									}

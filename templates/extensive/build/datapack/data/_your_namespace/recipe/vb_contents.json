@@ -20,7 +20,7 @@
 			},
 			"minecraft:item_model": "_your_namespace:vb_contents",
 			"minecraft:item_name": {
-				"translate": "_your_namespace.vb_contents"
+				"translate": "_your_namespace.vb_contents","fallback": "Vb Contents"
 			},
 			"minecraft:lore": [
 				[
@@ -33,7 +33,7 @@
 					},
 					" ",
 					{
-						"translate": "_your_namespace.extensive_template",
+						"translate": "_your_namespace.extensive_template","fallback": "Extensive Template",
 						"color": "white",
 						"italic": false,
 						"font": "_your_namespace:tooltip"

@@ -16,7 +16,7 @@ tag @s add _your_namespace.vb_block_states
 tag @s add _your_namespace.vanilla.minecraft_furnace
 
 # Add a custom name
-data merge entity @s {CustomName: {translate: "_your_namespace.vb_block_states"}}
+data merge entity @s {CustomName: {translate: "_your_namespace.vb_block_states",fallback: "Vb Block States"}}
 
 # Modify item display entity to match the custom block
 item replace entity @s contents with minecraft:furnace[item_model="_your_namespace:vb_block_states"]

@@ -1,6 +1,6 @@
 {
 	"description": {
-		"translate": "_your_namespace.heavy_draw"
+		"translate": "_your_namespace.heavy_draw","fallback": "Heavy Draw"
 	},
 	"supported_items": "minecraft:crossbow",
 	"weight": 1,

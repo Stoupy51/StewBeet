@@ -9,7 +9,7 @@ scoreboard objectives add _your_namespace.open_manual minecraft.used:minecraft.w
 
 
 # Confirm load
-tellraw @a[tag=convention.debug] {translate: "_your_namespace.loaded_extensive_template_v3_0_0", color: "green"}
+tellraw @a[tag=convention.debug] {translate: "_your_namespace.loaded_extensive_template_v3_0_0",fallback: "[Loaded Extensive Template v3.0.0]", color: "green"}
 scoreboard players set #_your_namespace.loaded load.status 1
 function _your_namespace:v3.0.0/load/set_items_storage
 

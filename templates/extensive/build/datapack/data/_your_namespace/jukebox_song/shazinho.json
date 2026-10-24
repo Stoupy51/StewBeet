@@ -5,6 +5,6 @@
 		"sound_id": "_your_namespace:shazinho"
 	},
 	"description": {
-		"translate": "_your_namespace.shazinho"
+		"translate": "_your_namespace.shazinho","fallback": "Shazinho"
 	}
 }

@@ -14,7 +14,7 @@
 		},
 		" ",
 		{
-			"translate": "_your_namespace.vb_contents",
+			"translate": "_your_namespace.vb_contents","fallback": "Vb Contents",
 			"underlined": true
 		},
 		" ",
@@ -34,12 +34,12 @@
 			"type": "minecraft:plain_message",
 			"contents": [
 				{"text": "V   ","font": "_your_namespace:manual","color": "white"},
-				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_36"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"}," (36)"]}},
-				{"text": "4","font": "_your_namespace:manual","color": "white","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_1"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_first_page"}]}},
-				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_38"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"}," (38)"]}},
-				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_36"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"}," (36)"]}},
-				{"text": " ","font": "_your_namespace:manual","color": "white","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_1"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_first_page"}]}},
-				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_38"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"}," (38)"]}}
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_36"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page","fallback": "Go to previous page"}," (36)"]}},
+				{"text": "4","font": "_your_namespace:manual","color": "white","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_1"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_first_page","fallback": "Go to first page"}]}},
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_38"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page","fallback": "Go to next page"}," (38)"]}},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_36"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page","fallback": "Go to previous page"}," (36)"]}},
+				{"text": " ","font": "_your_namespace:manual","color": "white","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_1"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_first_page","fallback": "Go to first page"}]}},
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_38"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page","fallback": "Go to next page"}," (38)"]}}
 			],
 			"width": 400
 		},
@@ -52,11 +52,11 @@
 				"U$  \n\"",
 				{"text": "U$","hover_event": {"action": "show_item","id": "minecraft:item_frame"}},
 				"U$U$",
-				{"text": "$$聋","hover_event": {"action": "show_item","id": "item_frame","components": {"entity_data": {"id": "minecraft:item_frame","Tags": ["_your_namespace.new","_your_namespace.vb_contents"],"Invisible": true,"Silent": true},"item_model": "_your_namespace:vb_contents","item_name": {"translate": "_your_namespace.vb_contents"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聎","font": "_your_namespace:renders","color": "white","italic": false}]],"custom_data": {"_your_namespace": {"vb_contents": true},"smithed": {"id": "_your_namespace:vb_contents","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}}}},
+				{"text": "$$聋","hover_event": {"action": "show_item","id": "item_frame","components": {"entity_data": {"id": "minecraft:item_frame","Tags": ["_your_namespace.new","_your_namespace.vb_contents"],"Invisible": true,"Silent": true},"item_model": "_your_namespace:vb_contents","item_name": {"translate": "_your_namespace.vb_contents","fallback": "Vb Contents"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","fallback": "Extensive Template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聎","font": "_your_namespace:renders","color": "white","italic": false}]],"custom_data": {"_your_namespace": {"vb_contents": true},"smithed": {"id": "_your_namespace:vb_contents","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}}}},
 				"#$\n\"U$U$U$",
-				{"text": "U$","hover_event": {"action": "show_item","id": "item_frame","components": {"entity_data": {"id": "minecraft:item_frame","Tags": ["_your_namespace.new","_your_namespace.vb_contents"],"Invisible": true,"Silent": true},"item_model": "_your_namespace:vb_contents","item_name": {"translate": "_your_namespace.vb_contents"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聎","font": "_your_namespace:renders","color": "white","italic": false}]],"custom_data": {"_your_namespace": {"vb_contents": true},"smithed": {"id": "_your_namespace:vb_contents","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}}}},
+				{"text": "U$","hover_event": {"action": "show_item","id": "item_frame","components": {"entity_data": {"id": "minecraft:item_frame","Tags": ["_your_namespace.new","_your_namespace.vb_contents"],"Invisible": true,"Silent": true},"item_model": "_your_namespace:vb_contents","item_name": {"translate": "_your_namespace.vb_contents","fallback": "Vb Contents"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","fallback": "Extensive Template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聎","font": "_your_namespace:renders","color": "white","italic": false}]],"custom_data": {"_your_namespace": {"vb_contents": true},"smithed": {"id": "_your_namespace:vb_contents","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}}}},
 				"#$\n\n\n",
-				{"text": "2\n0","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$肒"},"\n","\"",{"text": "U$"},"U$U$",{"text": "$$聋"},"\n\"","U$U$U$",{"text": "U$"},"\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.item_frame","color": "gray"}]}},
+				{"text": "2\n0","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$肒"},"\n","\"",{"text": "U$"},"U$U$",{"text": "$$聋"},"\n\"","U$U$U$",{"text": "U$"},"\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.item_frame","fallback": "Item Frame","color": "gray"}]}},
 				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 			],
 			"width": 140

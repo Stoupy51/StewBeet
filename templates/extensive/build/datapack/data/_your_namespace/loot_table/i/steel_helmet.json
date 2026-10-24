@@ -37,14 +37,14 @@
 								],
 								"minecraft:item_model": "_your_namespace:steel_helmet",
 								"minecraft:item_name": {
-									"translate": "_your_namespace.steel_helmet"
+									"translate": "_your_namespace.steel_helmet","fallback": "Steel Helmet"
 								},
 								"minecraft:lore": [
 									[
 										"",
 										{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"},
 										" ",
-										{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"},
+										{"translate": "_your_namespace.extensive_template","fallback": "Extensive Template","color": "white","italic": false,"font": "_your_namespace:tooltip"},
 										" ",
 										{"text": "聎","font": "_your_namespace:renders","color": "white","italic": false}
 									]

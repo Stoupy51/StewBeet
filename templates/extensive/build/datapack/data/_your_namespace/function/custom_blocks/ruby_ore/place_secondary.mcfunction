@@ -16,7 +16,7 @@ tag @s add _your_namespace.ruby_ore
 tag @s add _your_namespace.vanilla.minecraft_polished_deepslate
 
 # Add a custom name
-data merge entity @s {CustomName: {translate: "_your_namespace.ruby_ore"}}
+data merge entity @s {CustomName: {translate: "_your_namespace.ruby_ore",fallback: "Ruby Ore"}}
 
 # Modify item display entity to match the custom block
 item replace entity @s contents with minecraft:furnace[item_model="_your_namespace:ruby_ore"]

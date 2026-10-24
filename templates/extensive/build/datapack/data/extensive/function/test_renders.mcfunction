@@ -4,7 +4,7 @@
 # @within	???
 #
 
-tellraw @a [{translate: "_your_namespace.made_of", color: "gray", italic: false}]
+tellraw @a [{translate: "_your_namespace.made_of",fallback: "Made of ", color: "gray", italic: false}]
 tellraw @a ["Steel ingot 16: ", {"text": "聑","font": "_your_namespace:renders"}, "\n"]
 tellraw @a ["Crafting table: ", {"text": "聒","font": "_your_namespace:renders"}, "\n"]
 tellraw @a ["Tin ore: ", {"text": "聓","font": "_your_namespace:renders"}, "\n\n"]

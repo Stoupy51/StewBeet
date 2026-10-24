@@ -14,7 +14,7 @@
 		},
 		" ",
 		{
-			"translate": "_your_namespace.beer_mug",
+			"translate": "_your_namespace.beer_mug","fallback": "Beer Mug",
 			"underlined": true
 		},
 		" ",
@@ -34,12 +34,12 @@
 			"type": "minecraft:plain_message",
 			"contents": [
 				{"text": "V   ","font": "_your_namespace:manual","color": "white"},
-				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_46"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"}," (46)"]}},
-				{"text": "4","font": "_your_namespace:manual","color": "white","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_1"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_first_page"}]}},
-				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_48"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"}," (48)"]}},
-				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_46"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"}," (46)"]}},
-				{"text": " ","font": "_your_namespace:manual","color": "white","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_1"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_first_page"}]}},
-				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_48"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"}," (48)"]}}
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_46"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page","fallback": "Go to previous page"}," (46)"]}},
+				{"text": "4","font": "_your_namespace:manual","color": "white","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_1"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_first_page","fallback": "Go to first page"}]}},
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_48"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page","fallback": "Go to next page"}," (48)"]}},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_46"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page","fallback": "Go to previous page"}," (46)"]}},
+				{"text": " ","font": "_your_namespace:manual","color": "white","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_1"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_first_page","fallback": "Go to first page"}]}},
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_48"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page","fallback": "Go to next page"}," (48)"]}}
 			],
 			"width": 400
 		},
@@ -48,8 +48,8 @@
 			"contents": [
 				{"text": "","font": "_your_namespace:manual","color": "white","shadow_color": [0,0,0,0]},
 				"肛\n",
-				{"text": "  \n  \n  \n  \n\n","hover_event": {"action": "show_item","id": "recovery_compass","components": {"item_model": "_your_namespace:beer_mug","item_name": {"translate": "_your_namespace.beer_mug"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聎","font": "_your_namespace:renders","color": "white","italic": false}]],"custom_data": {"_your_namespace": {"beer_mug": true},"smithed": {"id": "_your_namespace:beer_mug","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_47"}},
-				{"text": "肜\n0","hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.left_by","color": "yellow"},[{"text":"\n","color": "gray"}, {"translate": "_your_namespace.beer"}],[{"text":"\n","color": "dark_gray"}, {"translate": "_your_namespace.click_to_open_its_page"}]]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_48"}},
+				{"text": "  \n  \n  \n  \n\n","hover_event": {"action": "show_item","id": "recovery_compass","components": {"item_model": "_your_namespace:beer_mug","item_name": {"translate": "_your_namespace.beer_mug","fallback": "Beer Mug"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","fallback": "Extensive Template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聎","font": "_your_namespace:renders","color": "white","italic": false}]],"custom_data": {"_your_namespace": {"beer_mug": true},"smithed": {"id": "_your_namespace:beer_mug","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_47"}},
+				{"text": "肜\n0","hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.left_by","fallback": "Left by","color": "yellow"},[{"text":"\n","color": "gray"}, {"translate": "_your_namespace.beer","fallback": "Beer"}],[{"text":"\n","color": "dark_gray"}, {"translate": "_your_namespace.click_to_open_its_page","fallback": "Click to open its page"}]]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_48"}},
 				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 			],
 			"width": 140

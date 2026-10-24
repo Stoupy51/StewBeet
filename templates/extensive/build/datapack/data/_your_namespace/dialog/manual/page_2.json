@@ -1,7 +1,7 @@
 {
 	"type": "minecraft:notice",
 	"title": {
-		"translate": "_your_namespace.welcome",
+		"translate": "_your_namespace.welcome","fallback": "Welcome",
 		"underlined": true
 	},
 	"body": [
@@ -9,12 +9,12 @@
 			"type": "minecraft:plain_message",
 			"contents": [
 				{"text": "股   ","font": "_your_namespace:manual","color": "white"},
-				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_1"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"}," (1)"]}},
-				{"text": "肢","font": "_your_namespace:manual","color": "white","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_1"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_first_page"}]}},
-				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_3"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"}," (3)"]}},
-				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_1"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page"}," (1)"]}},
-				{"text": " ","font": "_your_namespace:manual","color": "white","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_1"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_first_page"}]}},
-				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_3"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page"}," (3)"]}}
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_1"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page","fallback": "Go to previous page"}," (1)"]}},
+				{"text": "肢","font": "_your_namespace:manual","color": "white","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_1"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_first_page","fallback": "Go to first page"}]}},
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_3"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page","fallback": "Go to next page"}," (3)"]}},
+				{"text": "\n   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_1"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_previous_page","fallback": "Go to previous page"}," (1)"]}},
+				{"text": " ","font": "_your_namespace:manual","color": "white","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_1"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_first_page","fallback": "Go to first page"}]}},
+				{"text": "   ","click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_3"},"hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.go_to_next_page","fallback": "Go to next page"}," (3)"]}}
 			],
 			"width": 400
 		},
@@ -22,8 +22,8 @@
 			"type": "minecraft:plain_message",
 			"contents": [
 				{"text": "","shadow_color": [0,0,0,0]},
-				{"translate": "_your_namespace.welcome_to_the_extensive_template","color": "black","bold": true},
-				[{"text":"\n\n","color": "#505050"}, {"translate": "_your_namespace.this_page_was_added_with_the_public_manual_apicustompage_insert_"}],
+				{"translate": "_your_namespace.welcome_to_the_extensive_template","fallback": "Welcome to the Extensive Template!","color": "black","bold": true},
+				[{"text":"\n\n","color": "#505050"}, {"translate": "_your_namespace.this_page_was_added_with_the_public_manual_apicustompage_insert_","fallback": "This page was added with the public manual API\n(CustomPage + insert_page)."}],
 				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 			],
 			"width": 140

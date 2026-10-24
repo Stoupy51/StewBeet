@@ -4,5 +4,5 @@
 # @within	(public)
 #
 
-tellraw @a {translate: "_your_namespace.hello_world"}
+tellraw @a {translate: "_your_namespace.hello_world",fallback: "Hello world!"}
 

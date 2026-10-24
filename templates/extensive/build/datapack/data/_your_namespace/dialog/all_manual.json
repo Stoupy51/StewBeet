@@ -4,7 +4,7 @@
 		"",
 		{"text": "职","font": "_your_namespace:renders","shadow_color": [0,0,0,0]},
 		" ",
-		{"translate": "_your_namespace.extensive_template_manual","underlined": true},
+		{"translate": "_your_namespace.extensive_template_manual","fallback": "Extensive Template Manual","underlined": true},
 		" ",
 		{"text": "职","font": "_your_namespace:renders","shadow_color": [0,0,0,0]}
 	],

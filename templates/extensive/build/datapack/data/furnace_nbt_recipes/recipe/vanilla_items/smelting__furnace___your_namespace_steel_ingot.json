@@ -26,7 +26,7 @@
 			"minecraft:lore": [
 				[
 					{
-						"translate": "_your_namespace.smelted_from",
+						"translate": "_your_namespace.smelted_from","fallback": "Smelted from ",
 						"color": "gray",
 						"italic": false
 					},
@@ -37,7 +37,7 @@
 						"text":" ",
 						"color": "gray",
 						"italic": false
-					}, {"translate": "_your_namespace.raw_steel_2"}]
+					}, {"translate": "_your_namespace.raw_steel_2","fallback": "raw steel"}]
 				],
 				[
 					"",
@@ -49,7 +49,7 @@
 					},
 					" ",
 					{
-						"translate": "_your_namespace.extensive_template",
+						"translate": "_your_namespace.extensive_template","fallback": "Extensive Template",
 						"color": "white",
 						"italic": false,
 						"font": "_your_namespace:tooltip"
@@ -65,7 +65,7 @@
 			],
 			"minecraft:item_model": "_your_namespace:steel_ingot",
 			"minecraft:item_name": {
-				"translate": "_your_namespace.steel_ingot"
+				"translate": "_your_namespace.steel_ingot","fallback": "Steel Ingot"
 			}
 		}
 	},

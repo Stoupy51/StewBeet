@@ -18,7 +18,7 @@
 			"minecraft:painting/variant": "_your_namespace:stewbeet_painting",
 			"minecraft:item_model": "_your_namespace:stewbeet_painting",
 			"minecraft:item_name": {
-				"translate": "_your_namespace.stewbeet_painting"
+				"translate": "_your_namespace.stewbeet_painting","fallback": "Stewbeet Painting"
 			},
 			"minecraft:lore": [
 				[
@@ -31,7 +31,7 @@
 					},
 					" ",
 					{
-						"translate": "_your_namespace.extensive_template",
+						"translate": "_your_namespace.extensive_template","fallback": "Extensive Template",
 						"color": "white",
 						"italic": false,
 						"font": "_your_namespace:tooltip"

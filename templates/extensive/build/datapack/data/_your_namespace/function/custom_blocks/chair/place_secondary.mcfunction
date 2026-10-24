@@ -16,7 +16,7 @@ tag @s add _your_namespace.chair
 tag @s add _your_namespace.vanilla.minecraft_barrier
 
 # Add a custom name
-data merge entity @s {CustomName: {translate: "_your_namespace.chair"}}
+data merge entity @s {CustomName: {translate: "_your_namespace.chair",fallback: "Chair"}}
 
 # Modify item display entity to match the custom block
 item replace entity @s contents with minecraft:furnace[item_model="_your_namespace:chair"]

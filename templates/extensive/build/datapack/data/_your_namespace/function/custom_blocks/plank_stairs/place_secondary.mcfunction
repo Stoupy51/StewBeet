@@ -16,7 +16,7 @@ tag @s add _your_namespace.plank_stairs
 tag @s add _your_namespace.vanilla.minecraft_oak_stairs
 
 # Add a custom name
-data merge entity @s {CustomName: {translate: "_your_namespace.plank_stairs"}}
+data merge entity @s {CustomName: {translate: "_your_namespace.plank_stairs",fallback: "Plank Stairs"}}
 
 # Modify item display entity to match the custom block
 item replace entity @s contents with minecraft:furnace[item_model="_your_namespace:plank_stairs"]

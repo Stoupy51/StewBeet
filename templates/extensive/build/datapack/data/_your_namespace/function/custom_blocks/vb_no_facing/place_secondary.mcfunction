@@ -16,7 +16,7 @@ tag @s add _your_namespace.vb_no_facing
 tag @s add _your_namespace.vanilla.minecraft_cobblestone
 
 # Add a custom name
-data merge entity @s {CustomName: {translate: "_your_namespace.vb_no_facing"}}
+data merge entity @s {CustomName: {translate: "_your_namespace.vb_no_facing",fallback: "Vb No Facing"}}
 
 # Modify item display entity to match the custom block
 item replace entity @s contents with minecraft:furnace[item_model="_your_namespace:vb_no_facing"]

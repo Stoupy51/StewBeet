@@ -36,7 +36,7 @@
 			},
 			"minecraft:item_model": "_your_namespace:vb_block_states",
 			"minecraft:item_name": {
-				"translate": "_your_namespace.vb_block_states"
+				"translate": "_your_namespace.vb_block_states","fallback": "Vb Block States"
 			},
 			"minecraft:lore": [
 				[
@@ -49,7 +49,7 @@
 					},
 					" ",
 					{
-						"translate": "_your_namespace.extensive_template",
+						"translate": "_your_namespace.extensive_template","fallback": "Extensive Template",
 						"color": "white",
 						"italic": false,
 						"font": "_your_namespace:tooltip"

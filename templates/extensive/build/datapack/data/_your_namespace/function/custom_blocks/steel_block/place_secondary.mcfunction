@@ -16,7 +16,7 @@ tag @s add _your_namespace.steel_block
 tag @s add _your_namespace.vanilla.minecraft_iron_block
 
 # Add a custom name
-data merge entity @s {CustomName: {translate: "_your_namespace.steel_block"}}
+data merge entity @s {CustomName: {translate: "_your_namespace.steel_block",fallback: "Steel Block"}}
 
 # Modify item display entity to match the custom block
 item replace entity @s contents with minecraft:furnace[item_model="_your_namespace:steel_block"]

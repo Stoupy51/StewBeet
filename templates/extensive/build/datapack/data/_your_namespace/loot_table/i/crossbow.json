@@ -16,14 +16,14 @@
 								"minecraft:enchantment_glint_override": false,
 								"minecraft:item_model": "_your_namespace:crossbow",
 								"minecraft:item_name": {
-									"translate": "_your_namespace.crossbow"
+									"translate": "_your_namespace.crossbow","fallback": "Crossbow"
 								},
 								"minecraft:lore": [
 									[
 										"",
 										{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"},
 										" ",
-										{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"},
+										{"translate": "_your_namespace.extensive_template","fallback": "Extensive Template","color": "white","italic": false,"font": "_your_namespace:tooltip"},
 										" ",
 										{"text": "聎","font": "_your_namespace:renders","color": "white","italic": false}
 									]

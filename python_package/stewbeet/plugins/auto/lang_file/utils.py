@@ -198,6 +198,7 @@ def build_replacement(
 
 	Without prefix or suffix, only the matched key:value fragment is replaced. Otherwise the enclosing JSON object
 	is wrapped into a list, [prefix_obj?, {translate: key}, "suffix"?], or replaced in place when it cannot be located.
+	Every translate carries the text it replaces as its fallback, shown when no resource pack defines the key.
 
 	Args:
 		text:       Raw matched value, as it appears in source with escapes.
@@ -207,58 +208,47 @@ def build_replacement(
 		key_quote:  Quote character used around the "text" key, or None.
 		prefix:     Non-alphanumeric prefix stripped from clean_text.
 	"""
-	translate_key: str = f'{key_quote}translate{key_quote}' if key_quote else 'translate'
+	kq: str = key_quote or ''
+	def translate_kv(colon: str, value: str) -> str:
+		escaped: str = value.replace(quote, '\\' + quote).replace('\n', '\\n')
+		return f'{kq}translate{kq}{colon}{quote}{key_for_lang}{quote},{kq}fallback{kq}{colon}{quote}{escaped}{quote}'
 
+	core: str = clean_text[len(prefix):len(clean_text) - len(suffix)]
 	if not prefix and not suffix:
 		# Simple case: swap text key/value in-place, preserving original colon spacing
 		src_kv = re.search(r'(?:["\'])?text(?:["\'])?\s*(:\s*)', string[max(0, start-20):end])
 		colon_str = src_kv.group(1) if src_kv else ': '
-		new_fragment = f'{translate_key}{colon_str}{quote}{key_for_lang}{quote}'
-		return new_fragment, start, end
+		return translate_kv(colon_str, core), start, end
 
 	# Try to locate and wrap the enclosing JSON object
 	bounds = find_enclosing_object(string, start, end)
 	if bounds is None:
 		# Fallback: plain replacement, store full text so value is correct
 		lang[key_for_lang] = clean_text
-		return f'{translate_key}: {quote}{key_for_lang}{quote}', start, end
+		return translate_kv(': ', clean_text), start, end
 
 	obj_start, obj_end = bounds
 	obj_content = string[obj_start:obj_end]
 
-	old_kv = re.search(
-		r'(?:["\'])?text(?:["\'])?\s*:\s*["\']' + re.escape(text) + r'["\']',
-		obj_content
-	)
+	old_kv_re: str = r'(?:["\'])?text(?:["\'])?(\s*:\s*)["\']' + re.escape(text) + r'["\']'
+	old_kv = re.search(old_kv_re, obj_content)
 	if old_kv is None:
 		# Fallback: can't locate the key/value inside object
 		lang[key_for_lang] = clean_text
-		return f'{translate_key}: {quote}{key_for_lang}{quote}', start, end
+		return translate_kv(': ', clean_text), start, end
 
 	parts: list[str] = []
+	colon_str = old_kv.group(1)
 
 	if prefix:
 		prefix_escaped = prefix.replace('"', '\\"').replace('\n', '\\n')
-		prefix_obj = re.sub(
-			r'(?:["\'])?text(?:["\'])?\s*:\s*["\']' + re.escape(text) + r'["\']',
-			lambda m: m.group(0)[:m.group(0).index(':')+1] + f'"{prefix_escaped}"',
-			obj_content
-		)
+		prefix_obj = re.sub(old_kv_re, lambda m: m.group(0)[:m.group(0).index(':')+1] + f'"{prefix_escaped}"', obj_content)
 		parts.append(prefix_obj)
 		# Core: bare translate only: styling already on prefix obj, inherited from parent
-		colon_spacing = re.search(r'(?:["\'])?text(?:["\'])?\s*(\s*:\s*)', obj_content)
-		colon_str = colon_spacing.group(1) if colon_spacing else ': '
-		parts.append(f'{{{translate_key}{colon_str}{quote}{key_for_lang}{quote}}}')
+		parts.append(f'{{{translate_kv(colon_str, core)}}}')
 	else:
 		# No prefix: keep all original styling on the translate component
-		core_obj = re.sub(
-			r'(?:["\'])?text(?:["\'])?\s*:\s*["\']' + re.escape(text) + r'["\']',
-			lambda m: m.group(0)[:m.group(0).index(':')+1] + f'"{key_for_lang}"',
-			obj_content
-		).replace('"text"', f'{translate_key}', 1).replace("'text'", f'{translate_key}', 1)
-		# Handle unquoted text key
-		core_obj = re.sub(r'\btext\b', translate_key.strip('"\''), core_obj, count=1)
-		parts.append(core_obj)
+		parts.append(re.sub(old_kv_re, lambda _: translate_kv(colon_str, core), obj_content, count=1))
 
 	if suffix:
 		suffix_escaped = suffix.replace('"', '\\"').replace('\n', '\\n')
@@ -338,19 +328,19 @@ __test__: dict[str, str] = {
 	>>> s = '{"text":"Hello World"}'
 	>>> frag, rs, re_ = build_replacement(s, 'Hello World', 'Hello World', 1, 21, '"', '"', 'mgs.hello_world', '', '')
 	>>> s[:rs] + frag + s[re_:]
-	'{"translate":"mgs.hello_world"}'
+	'{"translate":"mgs.hello_world","fallback":"Hello World"}'
 	>>> # Prefix+suffix: wraps object into list, core gets bare translate
 	>>> s = '{"text":" attacks | ","color":"white"}'
 	>>> frag, rs, re_ = build_replacement(s, ' attacks | ', ' attacks | ', 1, 36, '"', '"', 'mgs.attacks', ' ', ' | ')
 	>>> result = s[:rs] + frag + s[re_:]
 	>>> result
-	'[{"text":" ","color":"white"}, {"translate":"mgs.attacks"}, " | "]'
+	'[{"text":" ","color":"white"}, {"translate":"mgs.attacks","fallback":"attacks"}, " | "]'
 	>>> # Suffix only: translate keeps all original styling
 	>>> s = '{"text":"attacks!","color":"green"}'
 	>>> frag, rs, re_ = build_replacement(s, 'attacks!', 'attacks!', 1, 33, '"', '"', 'mgs.attacks', '', '!')
 	>>> result = s[:rs] + frag + s[re_:]
 	>>> result
-	'[{"translate":"mgs.attacks","color":"green"}, "!"]'
+	'[{"translate":"mgs.attacks","fallback":"attacks","color":"green"}, "!"]'
 	>>> # Suffix only with color: color stays on translate component
 	>>> s = '{"text":"Exited map editor (changes discarded).","color":"red"}'
 	>>> frag, rs, re_ = build_replacement(
@@ -359,19 +349,19 @@ __test__: dict[str, str] = {
 	...	)
 	>>> result = s[:rs] + frag + s[re_:]
 	>>> result
-	'[{"translate":"mgs.exited_map_editor_changes_discarded","color":"red"}, "."]'
+	'[{"translate":"mgs.exited_map_editor_changes_discarded","fallback":"Exited map editor (changes discarded)","color":"red"}, "."]'
 	>>> # No object bounds fallback
 	>>> s = 'text: "hello world"'
 	>>> frag, rs, re_ = build_replacement(s, 'hello world', 'hello world', 0, 19, '"', None, 'mgs.hello_world', '', '...')
 	>>> s[:rs] + frag + s[re_:]
-	'translate: "mgs.hello_world"'
+	'translate: "mgs.hello_world",fallback: "hello world"'
 	>>> # Prefix with newline: newline in prefix must be re-escaped back to \\n
 	>>> s = '{"text":"\\nNo secondary magazines","color":"gray"}'
 	>>> frag, rs, re_ = build_replacement(
 	...     s, '\\nNo secondary magazines', '\nNo secondary magazines', 1, 48, '"', '"', 'mgs.no_secondary_magazines', '\n', ''
 	... )
 	>>> s[:rs] + frag + s[re_:]
-	'[{"text":"\\n","color":"gray"}, {"translate":"mgs.no_secondary_magazines"}]'
+	'[{"text":"\\n","color":"gray"}, {"translate":"mgs.no_secondary_magazines","fallback":"No secondary magazines"}]'
 	""",
 	"extract_texts": """
 	>>> matches = extract_texts('{"text":"Hello World"}')
@@ -416,9 +406,14 @@ __test__: dict[str, str] = {
 	>>> c = make_content('{"text":"Hello World"}')
 	>>> handle_file(c, ctx)
 	>>> c.text
-	'{"translate":"mgs.hello_world"}'
+	'{"translate":"mgs.hello_world","fallback":"Hello World"}'
 	>>> lang['mgs.hello_world']
 	'Hello World'
+	>>> # Quotes in the fallback are escaped back
+	>>> c = make_content('{"text":"Say \\\\"hi\\\\" now"}')
+	>>> handle_file(c, ctx)
+	>>> c.text
+	'{"translate":"mgs.say_hi_now","fallback":"Say \\\\"hi\\\\" now"}'
 	>>> # Prefix/suffix wrapping: attacks with pipe vs attacks with exclamation
 	>>> lang.clear()
 	>>> c1 = make_content('{"text":" attacks | ","color":"white"}')
@@ -426,9 +421,9 @@ __test__: dict[str, str] = {
 	>>> handle_file(c1, ctx)
 	>>> handle_file(c2, ctx)
 	>>> c1.text
-	'[{"text":" ","color":"white"}, {"translate":"mgs.attacks"}, " | "]'
+	'[{"text":" ","color":"white"}, {"translate":"mgs.attacks","fallback":"attacks"}, " | "]'
 	>>> c2.text
-	'{"translate":"mgs.attacks_2","color":"green"}'
+	'{"translate":"mgs.attacks_2","fallback":"attacks!","color":"green"}'
 	>>> lang['mgs.attacks']
 	'attacks'
 	>>> lang['mgs.attacks_2']
@@ -438,7 +433,7 @@ __test__: dict[str, str] = {
 	>>> c = make_content('{"text":" MC Guns System","italic":true,"color":"blue"}')
 	>>> handle_file(c, ctx)
 	>>> c.text
-	'[{"text":" ","italic":true,"color":"blue"}, {"translate":"mgs.mc_guns_system"}]'
+	'[{"text":" ","italic":true,"color":"blue"}, {"translate":"mgs.mc_guns_system","fallback":"MC Guns System"}]'
 	>>> # No-op: unchanged content is not written back
 	>>> lang.clear()
 	>>> c = make_content('{"color":"red"}')

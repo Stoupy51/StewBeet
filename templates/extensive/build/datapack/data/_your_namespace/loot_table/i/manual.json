@@ -16,7 +16,7 @@
 								"minecraft:max_stack_size": 16,
 								"minecraft:lore": [
 									[{
-										"translate":"_your_namespace.by_stoupy",
+										"translate": "_your_namespace.by_stoupy","fallback": "by Stoupy",
 										"color": "gray",
 										"italic": false
 									}, "51"],
@@ -24,7 +24,7 @@
 										"",
 										{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"},
 										" ",
-										{"translate": "_your_namespace.extensive_template","color": "white","italic": false,"font": "_your_namespace:tooltip"},
+										{"translate": "_your_namespace.extensive_template","fallback": "Extensive Template","color": "white","italic": false,"font": "_your_namespace:tooltip"},
 										" ",
 										{"text": "聎","font": "_your_namespace:renders","color": "white","italic": false}
 									]

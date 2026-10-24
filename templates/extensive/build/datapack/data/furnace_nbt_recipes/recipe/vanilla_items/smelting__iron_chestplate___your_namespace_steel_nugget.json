@@ -25,7 +25,7 @@
 			},
 			"minecraft:item_model": "_your_namespace:steel_nugget",
 			"minecraft:item_name": {
-				"translate": "_your_namespace.steel_nugget"
+				"translate": "_your_namespace.steel_nugget","fallback": "Steel Nugget"
 			},
 			"minecraft:lore": [
 				[
@@ -38,7 +38,7 @@
 					},
 					" ",
 					{
-						"translate": "_your_namespace.extensive_template",
+						"translate": "_your_namespace.extensive_template","fallback": "Extensive Template",
 						"color": "white",
 						"italic": false,
 						"font": "_your_namespace:tooltip"
