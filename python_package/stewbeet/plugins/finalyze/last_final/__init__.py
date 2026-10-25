@@ -5,12 +5,18 @@ from stouputils.lazy import ALWAYS_LAZY
 __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
+import re
+
 import stouputils as stp
 from beet import Context, PngFile
 
 from ....core import Item, Mem
 from ...initialize.project_images import find_pack_png
 from ...initialize.source_lore_font import TOOLTIP_FONT, create_source_lore_font, uses_font
+
+# Constants
+DIALOG_TEMPLATE: re.Pattern[str] = re.compile(r"""\btemplate"?\s*:\s*("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')""")
+""" A dialog `dynamic/run_command` template, whose `$(key)` placeholders the client fills in, not the function. """
 
 
 # Main entry point
@@ -40,12 +46,13 @@ def beet_default(ctx: Context):
 		(func, i, line) for func, obj in Mem.ctx.data.functions.items() for i, line in enumerate(obj.text.splitlines())
 	]
 	for func, i, line in lines:
-		if line.startswith("$") and "$(" not in line:
+		uses_macro: bool = "$(" in DIALOG_TEMPLATE.sub("", line)
+		if line.startswith("$") and not uses_macro:
 			stp.warning(
 				f"Function '{func}' line {i+1} starts with '$' but does not contain a macro, "
 				f"the function will not be able to execute: '{line}'"
 			)
-		elif "$(" in line and not line.startswith(("$","#")):
+		elif uses_macro and not line.startswith(("$","#")):
 			stp.warning(
 				f"Function '{func}' line {i+1} appears to use macros but does not start with '$', "
 				f"execution will not be as expected: '{line}'"
