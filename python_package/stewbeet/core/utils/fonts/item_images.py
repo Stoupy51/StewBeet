@@ -20,7 +20,6 @@ from typing import TYPE_CHECKING, cast
 
 import stouputils as stp
 from beet import Atlas, Model
-from PIL import Image
 from stouputils.typing import JsonDict
 
 from ...__memory__ import Mem
@@ -198,62 +197,27 @@ def run_model_resolver(for_model_resolver: dict[str, str]) -> None:
 		from model_resolver.render import AtlasDict, Render as ModelResolverRender
 		from model_resolver.utils import resolve_key
 
-		class FastPaletteRender(ModelResolverRender):
-			""" Same rendering as model_resolver, but with a fast ``apply_palette``.
-
-			The upstream implementation scans the whole palette per texture pixel with
-			``Image.getpixel`` (O(width*height*palette_size) Python calls); this one builds the color mapping once (same column-major
-			first-match semantics) and remaps all pixels in a single pass, producing pixel-identical output.
-			"""
+		class SkipMissingPalettesRender(ModelResolverRender):
+			""" model_resolver raises on an atlas source whose palette is missing, this one skips the source instead. """
 
 			def resolve_altas(self, key: str, atlas: Atlas) -> None:
-				"""Resolve atlas sources whose palette assets are available."""
 				for source in atlas.data["sources"]:
 					source = cast(AtlasDict, source)
-					if (
-						resolve_key(source["type"]) == "minecraft:paletted_permutations"
-						and resolve_key(source["palette_key"]) not in self.getter.assets.textures
-					):
-						stp.debug(f"Skipping atlas source with missing palette '{source['palette_key']}'")
-						continue
+					if resolve_key(source["type"]) == "minecraft:paletted_permutations":
+						# A palette_key names a texture under "textures/palettes/"
+						namespace, palette = resolve_key(source["palette_key"]).split(":", 1)
+						if f"{namespace}:palettes/{palette}" not in self.getter.assets.textures:
+							stp.debug(f"Skipping atlas source with missing palette '{source['palette_key']}'")
+							continue
 					super().resolve_altas(key, Atlas({"sources": [source]}))
 
-			def apply_palette(self, texture: Image.Image, palette: Image.Image, color_palette: Image.Image) -> Image.Image:
-				return recolored(texture.convert("RGBA"), palette_mapping(palette.convert("RGB"), color_palette.convert("RGB")))
-
-		render = FastPaletteRender(Mem.ctx)  # pyright: ignore[reportCallIssue]
+		render = SkipMissingPalettesRender(Mem.ctx)  # pyright: ignore[reportCallIssue]
 		for rp_path, dst_path in for_model_resolver.items():
 			render.add_model_task(rp_path, path_save=dst_path, animation_mode="one_file")
 		render.run()
 
 	if any_atlas_used:
 		del Mem.ctx.assets["minecraft"].atlases["temporary_stewbeet"]
-
-
-def palette_mapping(palette: Image.Image, color_palette: Image.Image) -> dict[tuple[int, int, int], tuple[int, int, int]]:
-	""" Each RGB colour of a palette to the one at the same place in the colour palette.
-
-	Read column-major with the first match winning, as model_resolver reads it.
-	"""
-	pal_pixels: list[tuple[int, int, int]] = list(palette.getdata())  # pyright: ignore[reportArgumentType, reportUnknownVariableType]
-	col_pixels: list[tuple[int, int, int]] = list(color_palette.getdata())  # pyright: ignore[reportArgumentType, reportUnknownVariableType]
-	mapping: dict[tuple[int, int, int], tuple[int, int, int]] = {}
-	for i in range(palette.width):
-		for j in range(palette.height):
-			if pal_pixels[j * palette.width + i] not in mapping:
-				mapping[pal_pixels[j * palette.width + i]] = col_pixels[j * color_palette.width + i]
-	return mapping
-
-
-def recolored(texture: Image.Image, mapping: dict[tuple[int, int, int], tuple[int, int, int]]) -> Image.Image:
-	""" An RGBA texture with every colour the mapping names replaced, alpha kept. """
-	tex_pixels: list[tuple[int, int, int, int]] = list(texture.getdata())  # pyright: ignore[reportArgumentType, reportUnknownVariableType]
-	new_image = Image.new("RGBA", texture.size)
-	new_image.putdata([
-		(*new_color, pixel[3]) if (new_color := mapping.get(pixel[:3])) is not None else pixel
-		for pixel in tex_pixels
-	])
-	return new_image
 
 
 def copy_painting_textures(path: str, ns: str, cache_assets: bool) -> None:

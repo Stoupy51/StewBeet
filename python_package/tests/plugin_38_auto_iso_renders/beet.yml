@@ -1,0 +1,30 @@
+
+# Test: stewbeet.core.utils.fonts.item_images (the model_resolver isometric renders)
+# Renders the same chestplate model with and without the vanilla "chestplate_trim_quartz" layer,
+# a texture that only exists once the paletted_permutations source of the items atlas is resolved,
+# plus a block whose texture is animated.
+# Needs an OpenGL context, so on a headless machine it runs under xvfb-run.
+
+id: "tir"
+name: "Test Auto Iso Renders"
+version: "1.0.0"
+author: "test"
+minecraft: "26.2"
+
+directory: "."
+output: "build"
+
+require:
+    - "stewbeet"
+
+resource_pack:
+    name: "resource_pack"
+    load: ["src"]
+
+pipeline:
+    - "src.assertions"
+
+meta:
+    stewbeet:
+        iso_renders_path: "iso_renders"
+

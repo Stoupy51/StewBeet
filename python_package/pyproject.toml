@@ -25,7 +25,7 @@ authors = [
 ]
 dependencies = [
 	"stouputils>=26.10.1",
-	"model_resolver>=1.15.2",
+	"model_resolver>=1.16.1",
 	"beet>=0.121.2",
 	"bolt>=0.53.0",
 	"mecha>=0.107.0",
