@@ -22,12 +22,12 @@ The [StewBeet extension for VSCode](https://marketplace.visualstudio.com/items?i
 ## Setup
 
 1. Install [Spyglass](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server). It provides the completion, hover and errors the extension routes into your blocks.
-2. For navigation to the build, add the [sniffer](../plugins/sniffer.md) plugin to your `beet.yml`:
+2. For navigation to the build, add the [source_maps](../plugins/source_maps.md) plugin to your `beet.yml`:
 
 ```yaml
 require:
     - "stewbeet"
-    - "stewbeet.plugins.sniffer"    # writes the .mcfunction.map files the editor navigates with
+    - "stewbeet.plugins.source_maps"    # writes the .mcfunction.map files the editor navigates with
 ```
 
 That is the whole setup. The extension works without step 2, minus the links between your Python and the built pack.
@@ -52,7 +52,7 @@ See [Approach 4: Bolt](../2_writing_to_files/en.md#approach-4-bolt) for the lang
 <video src="/vscode_extension_beet.mp4" controls loop muted playsinline preload="auto">
 </video>
 
-Plugins using beet's own API need nothing beyond `stewbeet.plugins.sniffer`:
+Plugins using beet's own API need nothing beyond `stewbeet.plugins.source_maps`:
 
 - **Errors as you type**, no build needed. Build errors are relayed onto the Python that wrote the command.
 - **Navigation both ways**: go to definition lands on the call that wrote a function, find references lists every writer, and a lens above each block opens what it generated.
@@ -67,7 +67,7 @@ execute if entity @s[tag={ns}.turbine] run function {ns}:turbine/tick
 ```
 
 Each `{...}` is filled with what the last build resolved it to, so ctrl+click and completion work on computed paths.
-A name resolved on one line is reused where the build covers nothing, such as commands assembled in a variable.
+A name resolved on one line is reused where the build covers nothing, such as commands collected in a list.
 Nothing evaluates your Python, and what stays unknown keeps a `_` mask.
 
 ### What counts as a block
@@ -75,7 +75,7 @@ Nothing evaluates your Python, and what stays unknown keeps a `_` mask.
 | Written as | Example |
 |------------|---------|
 | `write_*` helpers | `write_function`, `write_versioned_function`, `write_load_file`, ... |
-| A variable | `content = f"""..."""` and every `+=` up to the call that consumes it |
+| A variable | `content = f"""..."""`, every `+=` up to the call that consumes it, and a literal the call adds to it |
 | A list | `.append`, `+= [...]`, literals, comprehensions, `"\n".join(lines)` |
 | Your own function | Any parameter annotated `McFunction` |
 | beet's own API | `Function(...)` from a string or a `list[str]`, plus `.append`, `.prepend` and `.lines` |
@@ -123,5 +123,5 @@ Keep Aegis if you need that last row.
 ## Next steps
 
 - [Writing functions and files](../2_writing_to_files/en.md): everything the extension reads, including Bolt.
-- [stewbeet.plugins.sniffer](../plugins/sniffer.md): the source maps behind the navigation.
+- [stewbeet.plugins.source_maps](../plugins/source_maps.md): the source maps behind the navigation.
 

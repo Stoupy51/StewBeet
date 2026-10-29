@@ -22,7 +22,7 @@ from ..utils.loot_table import loot_condition
 from ..utils.versions import minecraft_version_at_least
 
 if TYPE_CHECKING:
-	from ...plugins.sniffer.model import SourceOrigin
+	from ...plugins.source_maps.model import SourceOrigin
 
 
 # Classes
@@ -80,12 +80,12 @@ class CustomOreGeneration(StMapping):
 	placer_command: str = ""
 	""" Execute subcommands ending with "run ...", placing one ore at ~ ~ ~. Empty places the custom block of the ore. """
 	origin: SourceOrigin | None = field(default=None, init=False, repr=False, compare=False, metadata={"transient": True})
-	""" Where this configuration was declared, so the sniffer plugin maps the generated functions back to it. """
+	""" Where this configuration was declared, so the source_maps plugin maps the generated functions back to it. """
 
 	def __post_init__(self) -> None:
-		if Mem.sniffer_enabled:
-			from ...plugins import sniffer
-			self.origin = sniffer.declaration_origin()
+		if Mem.source_maps_enabled:
+			from ...plugins import source_maps
+			self.origin = source_maps.declaration_origin()
 		if self.minimum_height is not None and self.minimum_height > self.maximum_height:
 			stp.error("Custom ore generation 'minimum_height' must be less or equal to 'maximum_height'")
 		if self.vein_size_logic < 0:
@@ -124,11 +124,11 @@ class CustomOreGeneration(StMapping):
 			custom_ore: Custom block id, ex: "adamantium_ore"
 			number:     Suffix telling apart several configurations of the same ore, ex: 1 for "adamantium_ore_1"
 		"""
-		from ...plugins import sniffer
+		from ...plugins import source_maps
 		beautify_ore: str = custom_ore.replace("_", " ").title()
 		vein_name: str = custom_ore + ("" if number is None else f"_{number}")
 		vein_path: str = f"{Mem.ctx.project_id}:calls/smart_ore_generation/veins/{vein_name}"
-		with sniffer.attribute_to(self):
+		with source_maps.attribute_to(self):
 			self.write_main_function(beautify_ore, vein_path)
 			provider: str = self.resolve_provider(vein_name)
 			self.write_vein_function(beautify_ore, vein_path, provider, self.resolve_placer_command(custom_ore))

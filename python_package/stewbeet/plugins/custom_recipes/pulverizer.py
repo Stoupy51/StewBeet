@@ -13,7 +13,7 @@ from ...core.cls.items.item import Item
 from ...core.cls.recipes.ingredients import Ingr
 from ...core.cls.recipes.recipe import PulverizingRecipe
 from ...core.utils.io import write_function
-from .. import sniffer
+from .. import source_maps
 
 
 class PulverizerRecipeHandler:
@@ -53,7 +53,7 @@ class PulverizerRecipeHandler:
 
 	def generate_recipes(self) -> None:
 		""" Generate all pulverizer recipes. """
-		for item, _ in sniffer.attributed(Mem.definitions.items()):
+		for item, _ in source_maps.attributed(Mem.definitions.items()):
 			obj = Item.from_id(item)
 
 			for recipe in obj.recipes:

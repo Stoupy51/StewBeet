@@ -16,7 +16,7 @@ from ...core.cls.recipes.ingredients import Ingr
 from ...core.cls.recipes.recipe import BlastingRecipe, SmeltingRecipe, SmokingRecipe, written_cooking_time
 from ...core.constants import CUSTOM_ITEM_VANILLA
 from ...core.utils.io import set_json_encoder, write_function
-from .. import sniffer
+from .. import source_maps
 
 # Constants
 NBT_FURNACE_RECIPES: dict[str, type[SmeltingRecipe | BlastingRecipe | SmokingRecipe]] = {
@@ -142,7 +142,7 @@ scoreboard players reset #count furnace_nbt_recipes.data
 
 	def generate_recipes(self) -> None:
 		""" Generate all furnace NBT recipes. """
-		for item, _ in sniffer.attributed(Mem.definitions.items()):
+		for item, _ in source_maps.attributed(Mem.definitions.items()):
 			for recipe in Item.from_id(item).recipes:
 				recipe_class = NBT_FURNACE_RECIPES.get(recipe["type"])
 				if recipe_class is not None:

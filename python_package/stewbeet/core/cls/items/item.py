@@ -31,7 +31,7 @@ from .features import RangedWeapon
 from .wiki_button import WikiButton
 
 if TYPE_CHECKING:
-	from ....plugins.sniffer.model import SourceOrigin
+	from ....plugins.source_maps.model import SourceOrigin
 
 
 # Class
@@ -142,16 +142,16 @@ class Item(StMapping):
 	ranged_weapon: RangedWeapon | None = None
 	""" (Optional) Charge time, damage and ammunition of a bow or a crossbow. """
 	origin: SourceOrigin | None = field(default=None, init=False, repr=False, compare=False, metadata={"transient": True})
-	""" Where this definition was declared, captured by the sniffer plugin so content a plugin generates
+	""" Where this definition was declared, captured by the source_maps plugin so content a plugin generates
 	from it maps back to the declaration instead of to the plugin. None unless that plugin is active. """
 
 	# Register item in memory
 	def __post_init__(self) -> None:
 		# Captured here because this is the only moment the declaring frame is still on the stack.
 		from ...__memory__ import Mem
-		if Mem.sniffer_enabled:
-			from ....plugins import sniffer
-			self.origin = sniffer.declaration_origin()
+		if Mem.source_maps_enabled:
+			from ....plugins import source_maps
+			self.origin = source_maps.declaration_origin()
 
 		# Add minecraft: to base item if needed
 		if self.base_item and ":" not in self.base_item:

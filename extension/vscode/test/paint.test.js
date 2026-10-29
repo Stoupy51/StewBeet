@@ -24,21 +24,49 @@ const SOURCE = [
   '""")',
 ].join("\n");
 
-test("a block only the whole file reveals is painted as the grammar paints the others, and those are left alone", async (t) => {
+/** The Python grammar with its injection, under a theme colouring commands red and italic, or null without a VS Code install. */
+async function redCommands() {
   const python = findPythonGrammar();
-  if (!python) return t.skip("no VS Code install found to read MagicPython from");
+  if (!python) return null;
   const { vsctm, registry } = await createEngine(python);
   registry.setTheme({ settings: [
     { settings: { foreground: "#111111" } },
     { scope: "keyword.control.flow.mcfunction", settings: { foreground: "#FF0000", fontStyle: "italic" } },
   ] });
-  const tokenizer = { vsctm, python: await registry.loadGrammar("source.python") };
+  return { tokenizer: { vsctm, python: await registry.loadGrammar("source.python") }, colorMap: registry.getColorMap() };
+}
 
-  const paints = paintsOf(tokenizer, SOURCE, findBlockOffsets(SOURCE));
+test("a block only the whole file reveals is painted as the grammar paints the others, and those are left alone", async (t) => {
+  const engine = await redCommands();
+  if (!engine) return t.skip("no VS Code install found to read MagicPython from");
+
+  const paints = paintsOf(engine.tokenizer, SOURCE, findBlockOffsets(SOURCE));
   assert.deepEqual([...new Set(paints.map(paint => paint.line))], [6], "the Bonus field, and not the write_function block the grammar colours");
   const say = paints.find(paint => paint.from === 0);
-  assert.deepEqual(say && { to: say.to, ...styleOf(say.metadata, registry.getColorMap()) }, { to: 3, color: "#FF0000", fontStyle: 1 });
+  assert.deepEqual(say && { to: say.to, ...styleOf(say.metadata, engine.colorMap) }, { to: 3, color: "#FF0000", fontStyle: 1 });
   assert.ok(paints.every(paint => paint.from >= 0 && paint.to <= "say hi".length), "nothing outside the commands, quotes included");
+});
+
+test("StoupGun place.py: what a name is grown with in a loop, and the literal added to it in the call, are painted", async (t) => {
+  const engine = await redCommands();
+  if (!engine) return t.skip("no VS Code install found to read MagicPython from");
+  const text = [
+    '\tprocess_element: McFunction = f"""',
+    "# DESTROY handler",
+    '"""',
+    "\tfor etype, handler in HANDLERS.items():",
+    '\t\tprocess_element += f"""',
+    "execute if entity @s[tag={ns}.element.{etype}] run function {ns}:v{version}/maps/editor/{handler}",
+    '"""',
+    '\twrite_versioned_function("maps/editor/process_element", process_element + f"""',
+    "kill @s",
+    '""")',
+  ].join("\n");
+
+  const paints = paintsOf(engine.tokenizer, text, findBlockOffsets(text));
+  assert.deepEqual([...new Set(paints.map(paint => paint.line))], [5, 8], "the loop's command and the call's, which no grammar rule reaches");
+  const kill = paints.find(paint => paint.line === 8 && paint.from === 0);
+  assert.deepEqual(kill && { to: kill.to, ...styleOf(kill.metadata, engine.colorMap) }, { to: 4, color: "#FF0000", fontStyle: 1 });
 });
 
 test("a theme file may carry comments and trailing commas", () => {

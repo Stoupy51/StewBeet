@@ -1,0 +1,28 @@
+
+# Test: stewbeet.plugins.source_maps on content built in variables.
+# A write handed a variable, or a variable plus a literal, gets its commands from every literal that
+# variable was assigned and grown with, as many times as the loop around it ran. Each command must map
+# to the literal line that spells it, and a command no literal spells must map to the write call.
+
+id: "tns"
+name: "Test Source Maps Variable Content"
+version: "1.0.0"
+author: "test"
+minecraft: "26.2"
+
+directory: "."
+output: "build"
+
+require:
+    - "stewbeet"
+    - "stewbeet.plugins.source_maps"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+pipeline:
+    - "src.assertions"
+    - "src.link"
+    - "stewbeet.plugins.source_maps.emit"
+

@@ -15,7 +15,7 @@ from ...core.cls.recipes.ingredients import Ingr
 from ...core.cls.recipes.recipe import CraftingShapedRecipe, CraftingShapelessRecipe
 from ...core.utils.io import write_function
 from ...dependencies.official_libs import OFFICIAL_LIBS, official_lib_used
-from .. import sniffer
+from .. import source_maps
 
 
 class SmithedRecipeHandler:
@@ -154,7 +154,7 @@ class SmithedRecipeHandler:
 
 	def generate_recipes(self) -> None:
 		""" Generate all Smithed Crafter recipes. """
-		for item, _ in sniffer.attributed(Mem.definitions.items()):
+		for item, _ in source_maps.attributed(Mem.definitions.items()):
 			obj = Item.from_id(item)
 
 			for recipe in obj.recipes:

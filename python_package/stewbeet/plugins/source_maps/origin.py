@@ -1,0 +1,377 @@
+
+# Lazy imports (PEP 810), ignored before Python 3.15
+from stouputils.lazy import ALWAYS_LAZY
+
+__lazy_modules__ = ALWAYS_LAZY
+
+# Imports
+import ast
+import inspect
+import json
+import os
+import sys
+from dataclasses import dataclass
+from functools import cache
+from types import FrameType
+from typing import Any, cast
+
+from ...core.__memory__ import Mem
+from .model import SourceOrigin, Template
+from .sources import is_project_source, reset_caches as reset_source_caches
+from .templates import LiteralIndex
+
+# Constants
+CONTENT_PARAMETER: str = "content"
+""" The name every StewBeet write helper gives its mcfunction body, and all `write_helpers` looks for. """
+
+WRITE_METHODS: frozenset[str] = frozenset({"append", "prepend"})
+""" Methods on a beet Function that author content, reached through `Resource.obj`. """
+
+GENERATED_INIT: str = "<string>"
+""" Filename of the `__init__` a dataclass generates, the one frame between a definition and its declaration. """
+
+INDEX_CACHE_NAME: str = "source_maps_index"
+""" Beet cache slot keeping each source file's write calls from one build to the next. """
+
+INDEX_FORMAT: str = "2"
+""" Part of the index signature: bump it when `write_call_spans` finds calls differently, so every file is parsed again. """
+
+
+# Classes
+@dataclass(slots=True)
+class WriteCall:
+	""" A write call found in a source file, and where its content argument starts.
+
+	`kind` separates the two ways a function gets content. `write` is a StewBeet helper or an
+	append, which record themselves. `assign` is `ctx.data.functions[path] = Function(...)`, beet's
+	own idiom, which nothing records until the container hook does, and which must not be recorded
+	twice when a helper is the one doing the assigning.
+	"""
+	line: int
+	column: int
+	templates: tuple[Template, ...]
+	kind: str = "write"
+
+
+# Functions
+@cache
+def write_helpers() -> dict[str, int]:
+	""" StewBeet's write helpers, mapped to the position of their content argument.
+
+	Read off the signatures in `core.utils.io.functions` rather than listed here, so adding a helper
+	there is enough for the source_maps plugin to record it. The convention it reads is the parameter name:
+	`write_function(path, content, ...)` gives 1 and `write_load_file(content, ...)` gives 0, while
+	`write_tag`, having no content argument, is not a write helper at all.
+
+	>>> write_helpers()["write_function"], write_helpers()["write_load_file"]
+	(1, 0)
+	>>> "write_tag" in write_helpers(), "read_function" in write_helpers()
+	(False, False)
+	"""
+	from ...core.utils.io import functions
+
+	found: dict[str, int] = {}
+	for name, helper in inspect.getmembers(functions, inspect.isfunction):
+		if helper.__module__ != functions.__name__:
+			continue
+		parameters: list[str] = list(inspect.signature(helper).parameters)
+		if CONTENT_PARAMETER in parameters:
+			found[name] = parameters.index(CONTENT_PARAMETER)
+	return found
+
+
+@cache
+def project_roots() -> tuple[str, ...]:
+	""" Roots under which a file counts as the project's own source, defaulting to beet's project directory. """
+	configured: list[str] = Mem.ctx.meta.get("stewbeet", {}).get("source_maps", {}).get("roots", [])
+	if configured:
+		return tuple(os.path.normcase(os.path.abspath(str(root))) for root in configured)
+	return (os.path.normcase(os.path.abspath(str(Mem.ctx.directory))),)
+
+
+def reset_caches() -> None:
+	""" Drop the caches whose inputs only hold still within one build.
+
+	`project_roots` reads `Mem.ctx`, which is a different project on the next build,
+	and the shared source filter is built on top of it. `AST_CACHE` holds a file as it was parsed,
+	which the author has been free to edit between one build and the next.
+	"""
+	project_roots.cache_clear()
+	AST_CACHE.clear()
+	PERSISTED.files, PERSISTED.loaded, PERSISTED.dirty = {}, False, False
+	reset_source_caches()
+
+
+def index_write_calls(path: str) -> dict[int, WriteCall]:
+	""" Map every line of a source file that holds a write call to that call's content position.
+
+	Being inside project code is not evidence of authorship; being at a write call is.
+	That is what stops a plugin-generated write from attributing to the project's entry point,
+	which passes the project-source filter while having authored nothing.
+	"""
+	return calls_by_line(write_call_spans(path))
+
+
+def write_call_spans(path: str) -> list[tuple[int, int, WriteCall]]:
+	""" Every write call of a source file with the first and last lines it spans, in the order `calls_by_line` expects. """
+	try:
+		with open(path, encoding="utf-8") as file:
+			tree: ast.Module = ast.parse(file.read(), filename=path)
+	except (OSError, SyntaxError):
+		return []
+
+	helpers: dict[str, int] = write_helpers()
+	literals: LiteralIndex = LiteralIndex(tree)
+	spans: list[tuple[int, int, WriteCall]] = []
+	for node in ast.walk(tree):
+		if not isinstance(node, ast.Assign | ast.Call):
+			continue
+		call: WriteCall | None = (
+			assigned_function(node, literals) if isinstance(node, ast.Assign) else written_call(node, helpers, literals)
+		)
+		if call is not None:
+			spans.append((node.lineno, node.end_lineno or node.lineno, call))
+	return spans
+
+
+def calls_by_line(spans: list[tuple[int, int, WriteCall]]) -> dict[int, WriteCall]:
+	""" The write call each line belongs to, the first call spanning it winning, as an outer call comes before the ones inside it.
+
+	>>> outer, inner = WriteCall(line=0, column=0, templates=()), WriteCall(line=1, column=4, templates=())
+	>>> calls_by_line([(1, 3, outer), (2, 2, inner)]) == {1: outer, 2: outer, 3: outer}
+	True
+	"""
+	found: dict[int, WriteCall] = {}
+	for start, end, call in spans:
+		for line in range(start, end + 1):
+			found.setdefault(line, call)
+	return found
+
+
+def written_call(node: ast.Call, helpers: dict[str, int], literals: LiteralIndex) -> WriteCall | None:
+	""" A StewBeet write helper or a `.append`/`.prepend` call, None for any other call.
+
+	Args:
+		helpers: Each write helper's name and the position of its content argument, see `write_helpers`.
+	"""
+	content: ast.expr | None
+	if isinstance(node.func, ast.Name) and (index := helpers.get(node.func.id)) is not None:
+		by_keyword: ast.expr | None = next((kw.value for kw in node.keywords if kw.arg == CONTENT_PARAMETER), None)
+		content = node.args[index] if len(node.args) > index else by_keyword
+	elif isinstance(node.func, ast.Attribute) and node.func.attr in WRITE_METHODS:
+		content = node.args[0] if node.args else None
+	else:
+		return None
+
+	# A literal argument gives the string's own position; anything else falls back to the call.
+	literal: bool = isinstance(content, ast.Constant | ast.JoinedStr)
+	anchor: ast.expr = content if (content is not None and literal) else node
+	return WriteCall(line=anchor.lineno - 1, column=anchor.col_offset, templates=literals.templates(content))
+
+
+def assigned_function(node: ast.Assign, literals: LiteralIndex) -> WriteCall | None:
+	""" A `... [path] = Function(content)` assignment, which is how a plain beet plugin writes.
+
+	The target has to be a subscript so that `func = Function(...)` on its own is not read as a
+	write: nothing has been given a path yet at that point. All three spellings beet offers end up here, since `ctx.data.functions[p]`,
+	`ctx.data["ns"].functions[p]` and `ctx.data[Function][p]` differ only in what precedes the subscript.
+	"""
+	if not any(isinstance(target, ast.Subscript) for target in node.targets):
+		return None
+	value: ast.expr = node.value
+	if not (isinstance(value, ast.Call) and isinstance(value.func, ast.Name) and value.func.id == "Function"):
+		return None
+
+	content: ast.expr | None = value.args[0] if value.args else None
+	literal: bool = isinstance(content, ast.Constant | ast.JoinedStr)
+	anchor: ast.expr = content if (content is not None and literal) else value
+	return WriteCall(line=anchor.lineno - 1, column=anchor.col_offset, templates=literals.templates(content), kind="assign")
+
+
+AST_CACHE: dict[str, dict[int, WriteCall]] = {}
+""" Parsed write-call index per file, held for one build and dropped by `reset_caches`.
+Nobody edits a file halfway through a build, and `beet watch` starts a new one.
+The alternative is a `stat` on every project frame of every write, which is the plugin's single biggest cost.
+"""
+
+@dataclass(slots=True)
+class PersistedIndex:
+	""" The write calls of every source file seen by earlier builds, with the size and modification time they were read at. """
+	files: dict[str, list[object]]
+	loaded: bool = False
+	dirty: bool = False
+
+
+PERSISTED: PersistedIndex = PersistedIndex(files={})
+""" Parsing a file is the bulk of the plugin's time, and most files do not change between two builds. """
+
+
+def write_calls_of(path: str) -> dict[int, WriteCall]:
+	""" Cached `index_write_calls`, for as long as the build lasts, and from one build to the next for an unchanged file. """
+	calls: dict[int, WriteCall] | None = AST_CACHE.get(path)
+	if calls is None:
+		AST_CACHE[path] = calls = calls_by_line(persisted_spans(path))
+	return calls
+
+
+def persisted_spans(path: str) -> list[tuple[int, int, WriteCall]]:
+	""" `write_call_spans`, taken from the persisted index when the file has the size and modification time recorded there. """
+	files: dict[str, list[object]] = load_index()
+	try:
+		stat: os.stat_result = os.stat(path)
+	except OSError:
+		return []
+
+	entry: list[object] | None = files.get(path)
+	if entry is not None and len(entry) == 3 and entry[0] == stat.st_mtime_ns and entry[1] == stat.st_size:
+		try:
+			rows: list[list[Any]] = cast("list[list[Any]]", entry[2])
+			return [(int(r[0]), int(r[1]), WriteCall(int(r[2]), int(r[3]), read_templates(r[4]), str(r[5]))) for r in rows]
+		except (TypeError, ValueError, IndexError):
+			pass  # A record this version cannot read, parsed again below
+
+	spans: list[tuple[int, int, WriteCall]] = write_call_spans(path)
+	files[path] = [stat.st_mtime_ns, stat.st_size, [
+		[s, e, c.line, c.column, [[t.lines, t.starts] for t in c.templates], c.kind] for s, e, c in spans
+	]]
+	PERSISTED.dirty = True
+	return spans
+
+
+def read_templates(rows: list[Any]) -> tuple[Template, ...]:
+	""" The templates of a write call as `persisted_spans` stores them, each as its lines and their starts. """
+	return tuple(
+		Template(lines=tuple(tuple(line) for line in lines), starts=tuple((int(line), int(column)) for line, column in starts))
+		for lines, starts in rows
+	)
+
+
+def index_signature() -> str:
+	""" What the persisted index depends on besides the files: its format and how write calls are recognized. """
+	return f"{INDEX_FORMAT}|{sorted(write_helpers().items())}|{sorted(WRITE_METHODS)}|{CONTENT_PARAMETER}"
+
+
+def load_index() -> dict[str, list[object]]:
+	""" The persisted index, read from the beet cache the first time, empty when missing, unreadable or made otherwise. """
+	if not PERSISTED.loaded:
+		PERSISTED.loaded = True
+		try:
+			raw: dict[str, object] = json.loads(Mem.ctx.cache[INDEX_CACHE_NAME].get_path("index").read_text("utf-8"))
+			files: object = raw.get("files")
+			if raw.get("signature") == index_signature() and isinstance(files, dict):
+				PERSISTED.files = cast("dict[str, list[object]]", files)
+		except (OSError, ValueError, AttributeError):
+			PERSISTED.files = {}
+	return PERSISTED.files
+
+
+def store_index() -> None:
+	""" Write the persisted index back when this build parsed anything, dropping the files that no longer exist. """
+	if not PERSISTED.dirty:
+		return
+	files: dict[str, list[object]] = {path: entry for path, entry in PERSISTED.files.items() if os.path.exists(path)}
+	path = Mem.ctx.cache[INDEX_CACHE_NAME].get_path("index")
+	path.parent.mkdir(parents=True, exist_ok=True)
+	path.write_text(json.dumps({"signature": index_signature(), "files": files}), "utf-8")
+	PERSISTED.dirty = False
+
+
+
+
+def declaration_origin() -> SourceOrigin | None:
+	""" Where a definition was declared, or None when a library declared it.
+
+	Called from a dataclass `__post_init__`, so the frames above are the construction's own:
+	the caller's file, the definition dataclasses (`block.py` for a `Block`),
+	and the `__init__` the dataclass generated. Unlike `resolve_origin` this consults no AST index,
+	because a constructor's caller **is** the declaration site, with no plugin in between to be mistaken for it.
+
+	The case that must not be attributed is a StewBeet plugin building an `Item` itself:
+	the walk stops at the first frame that is not the construction's,
+	so it lands on the plugin and returns None rather than continuing out to the user's entry point, which declared nothing.
+
+	>>> declaration_origin() is None   # a doctest frame is nobody's declaration
+	True
+	"""
+	frame: FrameType | None = sys._getframe(1) # pyright: ignore[reportPrivateUsage]
+	caller: str = frame.f_code.co_filename
+	while frame is not None and (frame.f_code.co_filename == caller or is_constructor_frame(frame)):
+		frame = frame.f_back
+
+	if frame is None or not is_project_source(frame.f_code.co_filename, project_roots()):
+		return None
+	line, column = call_position(frame)
+	return SourceOrigin(file=os.path.abspath(frame.f_code.co_filename), line=line, column=column)
+
+
+def is_constructor_frame(frame: FrameType) -> bool:
+	""" Whether a frame belongs to a definition being built rather than to whoever asked for it. """
+	filename: str = frame.f_code.co_filename
+	if filename == GENERATED_INIT:
+		return True
+	return os.path.normcase(os.path.abspath(filename)).startswith(definition_root() + os.sep)
+
+
+@cache
+def definition_root() -> str:
+	""" Directory holding the definition dataclasses of items and recipes, resolved from a module rather than spelled out. """
+	from ...core.cls.items import item
+	return os.path.normcase(os.path.dirname(os.path.dirname(os.path.abspath(item.__file__))))
+
+
+def call_position(frame: FrameType) -> tuple[int, int]:
+	""" Line and column of the call a frame is executing, both 0-based.
+
+	`co_positions()` carries the exact span of every instruction since Python 3.11,
+	so the column of a `Block(` call is available without parsing anything. A frame built without position tables yields no column,
+	and 0 is the honest answer there.
+
+	>>> def probe() -> tuple[int, int]:
+	...     return call_position(sys._getframe())
+	>>> probe()[1]
+	11
+	"""
+	positions = list(frame.f_code.co_positions())
+	index: int = frame.f_lasti // 2
+	if index < len(positions):
+		line, _, column, _ = positions[index]
+		if line is not None:
+			return line - 1, column or 0
+	return frame.f_lineno - 1, 0
+
+
+def resolve_origin() -> SourceOrigin | None:
+	""" Where the content being written was authored, or None when nothing in the project authored it.
+
+	Three tiers, first hit wins:
+
+	1. The innermost stack frame that is project source **and** sits on a write call.
+	2. The top of the ambient attribution stack, for content a plugin generates from a declaration.
+	3. Nothing, so the lines are emitted unmapped.
+	"""
+	return resolve_site()[0]
+
+
+def resolve_site() -> tuple[SourceOrigin | None, str]:
+	""" `resolve_origin`, plus what kind of call site answered.
+
+	The kind is `write` for a StewBeet helper or an append, `assign` for beet's own `... [path] = Function(...)`,
+	and `""` when nothing in the project answered. Only the container hook needs it,
+	to tell an author assigning a function from a helper doing the same thing one frame further down, which records itself.
+	"""
+	# Starting at the direct caller works whether this was reached through `resolve_origin` or not:
+	# every frame in this package fails the project-source filter and is walked past either way.
+	frame = sys._getframe(1) # pyright: ignore[reportPrivateUsage]
+	while frame is not None:
+		filename: str = frame.f_code.co_filename
+		if is_project_source(filename, project_roots()):
+			call: WriteCall | None = write_calls_of(filename).get(frame.f_lineno)
+			if call is not None:
+				origin = SourceOrigin(file=os.path.abspath(filename), line=call.line, column=call.column, templates=call.templates)
+				return origin, call.kind
+		frame = frame.f_back
+
+	if Mem.attribution:
+		return Mem.attribution[-1].origin, "write"
+	return None, ""
+

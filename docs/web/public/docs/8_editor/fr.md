@@ -22,12 +22,12 @@ Les fichiers `.bolt` obtiennent leur propre langage, et les chaînes mcfunction 
 ## Mise en place
 
 1. Installez [Spyglass](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server). Il fournit la complétion, le survol et les erreurs que l'extension redirige dans vos blocs.
-2. Pour la navigation vers le build, ajoutez le plugin [sniffer](../plugins/sniffer.md) à votre `beet.yml` :
+2. Pour la navigation vers le build, ajoutez le plugin [source_maps](../plugins/source_maps.md) à votre `beet.yml` :
 
 ```yaml
 require:
     - "stewbeet"
-    - "stewbeet.plugins.sniffer"    # écrit les fichiers .mcfunction.map avec lesquels l'éditeur navigue
+    - "stewbeet.plugins.source_maps"    # écrit les fichiers .mcfunction.map avec lesquels l'éditeur navigue
 ```
 
 C'est toute la configuration. L'extension fonctionne sans l'étape 2, moins les liens entre votre Python et le pack construit.
@@ -52,7 +52,7 @@ Voir [Approche 4 : Bolt](../2_writing_to_files/fr.md#approche-4-bolt) pour le la
 <video src="/vscode_extension_beet.mp4" controls loop muted playsinline preload="auto">
 </video>
 
-Les plugins qui utilisent l'API de beet n'ont besoin de rien d'autre que `stewbeet.plugins.sniffer` :
+Les plugins qui utilisent l'API de beet n'ont besoin de rien d'autre que `stewbeet.plugins.source_maps` :
 
 - **Les erreurs à la frappe**, sans build. Les erreurs de build sont reportées sur le Python qui a écrit la commande.
 - **La navigation dans les deux sens** : aller à la définition atterrit sur l'appel qui a écrit une fonction, chercher les références liste chaque écrivain, et un lens au-dessus de chaque bloc ouvre ce qu'il a généré.
@@ -67,7 +67,7 @@ execute if entity @s[tag={ns}.turbine] run function {ns}:turbine/tick
 ```
 
 Chaque `{...}` est rempli avec ce que le dernier build y a résolu, donc ctrl+clic et complétion fonctionnent sur les chemins calculés.
-Un nom résolu sur une ligne est réutilisé là où le build ne couvre rien, par exemple des commandes assemblées dans une variable.
+Un nom résolu sur une ligne est réutilisé là où le build ne couvre rien, par exemple des commandes rassemblées dans une liste.
 Rien n'évalue votre Python, et ce qui reste inconnu garde un masque `_`.
 
 ### Ce qui compte comme un bloc
@@ -75,7 +75,7 @@ Rien n'évalue votre Python, et ce qui reste inconnu garde un masque `_`.
 | Écrit comme | Exemple |
 |-------------|---------|
 | Les helpers `write_*` | `write_function`, `write_versioned_function`, `write_load_file`, ... |
-| Une variable | Une f-string triple assignée à un nom, et chaque `+=` jusqu'à l'appel qui la consomme |
+| Une variable | Une f-string triple assignée à un nom, chaque `+=` jusqu'à l'appel qui la consomme, et un littéral que l'appel lui ajoute |
 | Une liste | `.append`, `+= [...]`, littéraux, compréhensions, `"\n".join(lines)` |
 | Votre propre fonction | Tout paramètre annoté `McFunction` |
 | L'API de beet | `Function(...)` depuis une chaîne ou une `list[str]`, plus `.append`, `.prepend` et `.lines` |
@@ -123,5 +123,5 @@ Gardez Aegis si vous avez besoin de cette dernière ligne.
 ## Prochaines étapes
 
 - [Écrire fonctions et fichiers](../2_writing_to_files/fr.md) : tout ce que l'extension lit, Bolt compris.
-- [stewbeet.plugins.sniffer](../plugins/sniffer.md) : les source maps derrière la navigation.
+- [stewbeet.plugins.source_maps](../plugins/source_maps.md) : les source maps derrière la navigation.
 

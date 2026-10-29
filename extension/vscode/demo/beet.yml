@@ -17,10 +17,10 @@ directory: "."
 output: "build"
 ignore: ["build"]
 
-# 'stewbeet.plugins.sniffer' writes the .mcfunction.map files the editor navigates with.
+# 'stewbeet.plugins.source_maps' writes the .mcfunction.map files the editor navigates with.
 require:
     - "stewbeet"
-    - "stewbeet.plugins.sniffer"
+    - "stewbeet.plugins.source_maps"
     - "bolt"
 
 data_pack:

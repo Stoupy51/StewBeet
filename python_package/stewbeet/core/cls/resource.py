@@ -196,9 +196,9 @@ class Resource[FileT: NamespaceFile](str):
 
 		# `.obj.append(...)` extends generated content without passing through write_function,
 		# so tagging here is what tells the capture hook which resource location the write belongs to.
-		if Mem.sniffer_enabled and isinstance(file, Function):
-			from ...plugins import sniffer
-			sniffer.tag(file, str(self))
+		if Mem.source_maps_enabled and isinstance(file, Function):
+			from ...plugins import source_maps
+			source_maps.tag(file, str(self))
 		return file
 
 	@obj.setter

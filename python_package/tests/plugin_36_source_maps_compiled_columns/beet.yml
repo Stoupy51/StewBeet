@@ -1,0 +1,43 @@
+
+# Test: what stewbeet.plugins.source_maps says about a compiled command beyond the line it starts on.
+# An editor shows a datapack parser the source, and needs three things only the build knows:
+#
+#   bolt      which sources are bolt or mecha syntax, so a .mcfunction holding bolt is not handed
+#             to a parser that cannot read it. main.mcfunction is, plain.mcfunction is not, and
+#             spread.mcfunction is for one command written over three lines, which only mecha reads.
+#   columns   one segment per end of each AST node, so `int(major)` or `~/child` is given the value
+#             mecha resolved it to, column for column, whatever mecha did to the text around it.
+#   opaque    where syntax a plugin added to mecha's tree begins: `say loudly` is accepted by the
+#             build and by no vanilla parser, so the parser's opinion of it is not worth showing,
+#             and opaque.mcfunction, vanilla but for that command, counts as bolt too.
+
+id: "tns"
+name: "Test Source Maps Compiled Columns"
+version: "1.0.0"
+author: "test"
+minecraft: "26.2"
+
+directory: "."
+output: "build"
+
+require:
+    # src.assertions is listed first and yields, so its checks run last of all, after the source_maps plugin
+    # in the same list has mapped what mecha compiled. beet unwinds `require` in reverse too.
+    - "src.assertions"
+    - "bolt"
+    - "mecha.contrib.relative_location"
+    - "mecha.contrib.nested_location"
+    - "stewbeet.plugins.source_maps"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+pipeline:
+    - "src.loudly"
+    - "mecha"
+
+meta:
+    mecha:
+        multiline: true
+

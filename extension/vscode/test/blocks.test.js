@@ -315,6 +315,29 @@ test("every block of a variable points at the call that consumes it", () => {
   }
 });
 
+test("StoupGun place.py: a name with a literal added to it in the call carries its blocks, and the literal is one too", () => {
+  const text = [
+    '\tprocess_element: McFunction = f"""',
+    "# DESTROY handler",
+    '"""',
+    "\tfor etype, handler in HANDLERS.items():",
+    '\t\tprocess_element += f"""',
+    "execute if entity @s[tag={ns}.element.{etype}] run function {ns}:v{version}/maps/editor/{handler}",
+    '"""',
+    '\twrite_versioned_function("maps/editor/process_element", process_element + f"""',
+    "kill @s",
+    '""")',
+  ].join("\n");
+  const blocks = findBlockOffsets(text);
+  assert.deepEqual(blocks.map(b => lineOf(text, b.start)), [0, 4, 7], "the assignment, the += in the loop and the literal of the call");
+  assert.deepEqual(blocks.map(b => lineOf(text, b.callStart)), [7, 7, 7]);
+});
+
+test("a literal added to an attribute in the call is a block, with no name to follow", () => {
+  const text = 'write_function("a:b", self.header + """\nsay tail\n""")';
+  assert.deepEqual(findBlockOffsets(text).map(b => text.slice(b.contentStart, b.contentEnd)), ["\nsay tail\n"]);
+});
+
 test("an inline block points at its own call", () => {
   const text = 'write_function("ns:p", """\nsay hi\n""")';
   const [block] = findBlockOffsets(text);

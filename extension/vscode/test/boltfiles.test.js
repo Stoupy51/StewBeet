@@ -82,7 +82,7 @@ test("a map beside a file says a build wrote it, with nothing configured", () =>
   // Generated functions name no map, so the sidecar is the signal that survives when
   // `buildOutput` is empty. Without it a generated file could be switched away from Spyglass.
   const generated = path.join(ROOT, "..", "..", "python_package", "tests",
-    "plugin_22_sniffer_source_maps", "build", "datapack", "data", "tns", "function", "root.mcfunction");
+    "plugin_22_source_maps", "build", "datapack", "data", "tns", "function", "root.mcfunction");
   assert.ok(fs.existsSync(`${generated}.map`), "the fixture build must carry its sidecar");
   assert.ok(isBuildOutput(generated, []), "a file with a sidecar map is output, whatever buildOutput says");
 });
@@ -107,7 +107,7 @@ test("no generated function in this repository is read as bolt", () => {
 
 test("the fixture that is bolt in a .mcfunction is read as bolt", () => {
   const hello = path.join(ROOT, "..", "..", "python_package", "tests",
-    "plugin_25_sniffer_mecha_bolt", "src", "data", "tns", "function", "hello.mcfunction");
+    "plugin_25_source_maps_mecha_bolt", "src", "data", "tns", "function", "hello.mcfunction");
   assert.ok(fs.existsSync(hello), "the minimal template's example is the fixture for this");
   assert.ok(looksLikeBolt(fs.readFileSync(hello, "utf8")));
 });

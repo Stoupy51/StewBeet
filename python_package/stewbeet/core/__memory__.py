@@ -16,7 +16,7 @@ from .placeholder_context import PLACEHOLDER_CTX
 if TYPE_CHECKING:
 	from ..plugins.auto.text_renders.emit import GlyphEmitter
 	from ..plugins.ingame_manual.manual import Manual
-	from ..plugins.sniffer.model import AttributionScope, WriteChunk
+	from ..plugins.source_maps.model import AttributionScope, WriteChunk
 	from .cls.items.external_item import ExternalItem
 	from .cls.items.item import Item
 
@@ -43,19 +43,19 @@ class Mem:
 	external_definitions: dict[str, ExternalItem] = {}
 	""" Secondary JsonDict for storing external items or blocks most likely for recipes. """
 
-	# Sniffer
-	sniffer_enabled: bool = False
-	""" Whether the sniffer plugin is active. Gates the provenance capture in write_function so a
+	# Source maps
+	source_maps_enabled: bool = False
+	""" Whether the source_maps plugin is active. Gates the provenance capture in write_function so a
 	build without the plugin pays nothing. """
 
 	source_map_chunks: dict[str, list[WriteChunk]] = {}
 	""" Provenance recorded during the build, keyed by resource location, in write order.
-	Reset by plugins.sniffer, which owns it, so consecutive builds in one process start clean. """
+	Reset by plugins.source_maps, which owns it, so consecutive builds in one process start clean. """
 
 	source_map_origins: dict[str, str] = {}
 	""" Resource location a function now sits at, to the one it was first put in the pack under.
 	A versioning refactor deletes every `ns:impl/**` key and puts the same objects back under
-	`ns:v1.2.3/**`, which is what both halves of the sniffer follow through this. """
+	`ns:v1.2.3/**`, which is what both halves of the source_maps plugin follow through this. """
 
 	source_map_files: dict[TextFileBase[Any], str] = {}
 	""" Pack file to the path on disk it was loaded from.
@@ -65,7 +65,7 @@ class Mem:
 
 	attribution: list[AttributionScope] = []
 	""" Ambient stack used when no project frame is on the stack, so content a plugin generates from
-	a declaration reaches that declaration instead of the plugin. Reset by plugins.sniffer. """
+	a declaration reaches that declaration instead of the plugin. Reset by plugins.source_maps. """
 
 
 	# Very internal,

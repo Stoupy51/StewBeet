@@ -259,7 +259,16 @@ function findBlockOffsets(text) {
 function claimContent(text, contentIdx, callStart, blocks, consume) {
   if (!readOpeningQuote(text, contentIdx)) {
     const name = readArgumentName(text, contentIdx);
-    if (name) consume(name, callStart);
+    if (name) {
+      consume(name, callStart);
+      return;
+    }
+    // `content + f"""..."""` adds commands to the ones `content` holds, so both the name and what follows are claimed.
+    ADDED_OPERAND_RE.lastIndex = contentIdx;
+    const added = ADDED_OPERAND_RE.exec(text);
+    if (!added) return;
+    if (/^[A-Za-z_]\w*$/.test(added[1])) consume(added[1], callStart);
+    claimContent(text, contentIdx + added[0].length, callStart, blocks, consume);
     return;
   }
 
@@ -312,6 +321,9 @@ function argumentAt(text, afterOpen, index, keyword) {
 
 /** `name=` opening an argument, which `==` does not. Sticky. */
 const KEYWORD_ARGUMENT = /([A-Za-z_]\w*)[ \t]*=(?!=)/y;
+
+/** What opens an argument when something is added to it, ex: the `content + ` of `content + f"""say done"""`. Sticky. */
+const ADDED_OPERAND_RE = /[ \t\r\n]*([A-Za-z_][\w.]*(?:\([^()\n]*\)|\[[^[\]\n]*\])*)[ \t]*\+(?!=)/y;
 
 /**
  * Where the value after `else` starts, when a literal is the first branch of a conditional expression.

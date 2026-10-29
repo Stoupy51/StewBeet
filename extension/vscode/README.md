@@ -19,14 +19,14 @@ Every example below comes from [`demo/`](https://github.com/Stoupy51/StewBeet/tr
 ## Quick start
 
 1. Install [Spyglass](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server). It provides completion, hover and errors.
-2. For navigation to the build, add the sniffer plugin to your beet config (`beet.yml`):
+2. For navigation to the build, add the source_maps plugin to your beet config (`beet.yml`):
 
 ```yaml
 require:
-    - "stewbeet.plugins.sniffer"  # <- this one (requires "stewbeet" to be pip-installed or in your venv)
+    - "stewbeet.plugins.source_maps"  # <- this one (requires "stewbeet" to be pip-installed or in your venv)
 ```
 
-Or leave `beet.yml` alone and ask for it on the command line: `beet -s "require[]=stewbeet.plugins.sniffer" build`.
+Or leave `beet.yml` alone and ask for it on the command line: `beet -s "require[]=stewbeet.plugins.source_maps" build`.
 
 ## Bolt
 
@@ -48,7 +48,7 @@ Spyglass still indexes them, so the functions they define are known to the files
 
 ## beet
 
-Plugins using beet's own API need nothing else than `stewbeet.plugins.sniffer`:
+Plugins using beet's own API need nothing else than `stewbeet.plugins.source_maps`:
 
 ![Beet code highlighting](https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/extension/vscode/images/beet.png)
 
@@ -68,7 +68,7 @@ execute if entity @s[tag={ns}.turbine] run function {ns}:turbine/tick
 
 Each `{...}` is filled with what the last build resolved it to, so ctrl+click and completion **work on computed paths**.
 A `{name}` in a plain string is read the same way, since `.format` fills it in later.
-A name resolved on one line is reused where the build covers nothing, such as commands assembled in a variable.
+A name resolved on one line is reused where the build covers nothing, such as commands collected in a list.
 Nothing evaluates your Python, and what stays unknown keeps a `_` mask.
 
 ### What counts as a block
@@ -76,7 +76,7 @@ Nothing evaluates your Python, and what stays unknown keeps a `_` mask.
 | Written as        | Example                                                                                 |
 |-------------------|-----------------------------------------------------------------------------------------|
 | `write_*` helpers | `write_function`, `write_versioned_function`, `write_load_file`, ...                    |
-| A variable        | `content = f"""..."""` and every `+=` up to the call that consumes it                   |
+| A variable        | `content = f"""..."""`, every `+=` up to the call, and a literal the call adds to it    |
 | A list            | `.append`, `+= [...]`, literals, comprehensions, `"\n".join(lines)`                     |
 | Your own function | Any parameter annotated `McFunction`, by position or by keyword                         |
 | Your own class    | A field annotated `McFunction`, ex: `Bonus(name="speed", commands="""...""")`           |
@@ -103,7 +103,7 @@ Keep Aegis if you need that last row.
 
 ## Does it need my venv?
 
-**No.** The extension only reads your sources and the `.mcfunction.map` files your build writes thanks to the `stewbeet.plugins.sniffer` plugin.
+**No.** The extension only reads your sources and the `.mcfunction.map` files your build writes thanks to the `stewbeet.plugins.source_maps` plugin.
 
 ## Settings
 

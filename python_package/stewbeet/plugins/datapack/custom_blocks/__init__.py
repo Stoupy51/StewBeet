@@ -16,7 +16,7 @@ from ....core.cls.items.block import Block
 from ....core.constants import CUSTOM_BLOCK_ALTERNATIVE, VANILLA_BLOCK
 from ....core.utils.io import set_json_encoder, write_function
 from ....core.utils.loot_table import loot_condition
-from ... import sniffer
+from ... import source_maps
 from .aiming import write_aim
 from .destroying import (
 	write_block_destroys,
@@ -65,7 +65,7 @@ def beet_default(ctx: Context):
 	unique_blocks: set[str] = set()
 	custom_block_entities: set[str] = set()
 	has_growing_seed: bool = False
-	for item, data in sniffer.attributed(Mem.definitions.items()):
+	for item, data in source_maps.attributed(Mem.definitions.items()):
 		if not data.get(VANILLA_BLOCK):
 			continue
 		obj_block: Block = Block.from_id(item)
