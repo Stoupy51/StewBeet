@@ -20,19 +20,23 @@ import threading
 import urllib.parse
 from collections.abc import Iterable
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, ClassVar
+from typing import TYPE_CHECKING, ClassVar, cast
 
 import stouputils as stp
 from beet import Context
 
 if TYPE_CHECKING:
-	from paramiko import SFTPClient, SSHClient
+	from paramiko import Channel, SFTPClient, SSHClient, Transport
 
 # Constants
 CREDENTIALS_PATH: str = "~/stewbeet/credentials.yml"
 """ YAML file holding the `sftp: {"user@host": {password: ...}}` entries used by destinations without an inline password. """
 DESTINATION_KEYS: tuple[str, ...] = ("datapack", "resource_pack")
 """ Keys of `meta.stewbeet.build_copy_destinations` that can hold remote destinations. """
+TIMEOUT_SECONDS: float = 30.0
+""" Longest wait on the server for any single step: TCP connect, banner, authentication, channel opening or one SFTP request. """
+KEEPALIVE_SECONDS: int = 15
+""" Interval of the keepalive packets keeping the transport open between the warm-up and the copy at the end of the build. """
 
 
 # Functions
@@ -162,7 +166,13 @@ class SftpConnection:
 				password=self.endpoint.password,
 				look_for_keys=try_keys,
 				allow_agent=try_keys,
+				timeout=TIMEOUT_SECONDS,
+				banner_timeout=TIMEOUT_SECONDS,
+				auth_timeout=TIMEOUT_SECONDS,
+				channel_timeout=TIMEOUT_SECONDS,
 			)
+			# Without traffic during a long build, servers drop the idle transport and the copy then waits forever
+			cast("Transport", client.get_transport()).set_keepalive(KEEPALIVE_SECONDS)
 			self.client = client
 		except BaseException as e:
 			self.error = e
@@ -196,6 +206,7 @@ class SftpConnection:
 			raise self.error or ConnectionError(f"Could not connect to '{self.endpoint.username}@{self.endpoint.host}'")
 		if self.channels.channel is None:
 			self.channels.channel = self.client.open_sftp()
+			cast("Channel", self.channels.channel.get_channel()).settimeout(TIMEOUT_SECONDS)
 		return self.channels.channel
 
 
