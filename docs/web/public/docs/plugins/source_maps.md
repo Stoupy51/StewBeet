@@ -26,6 +26,7 @@ that already speaks source maps, including the Minecraft debugger [Sniffer](http
 - Records every `write_function`, `write_versioned_function`, `.obj.append(...)` and friends, in call order
 - Resolves each write back to the line and column of the Python that made it
 - Follows a variable back to every literal it was assigned and grown with, so a command built in a loop maps to the literal line that spells it
+- Follows a parameter annotated `McFunction` back to the call that passed it, so a function wrapping `write_function` maps to the literal its caller wrote
 - Realigns the recorded lines against the final text, so post-processing like `auto.headers` does not shift the mapping
 - Writes one `<name>.mcfunction.map` per function, beside the function and named after it. The function itself is untouched
 - Maps content a plugin generated from one of your declarations back to that `Block(...)` or `Item(...)` call

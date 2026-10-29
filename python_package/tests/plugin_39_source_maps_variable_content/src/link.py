@@ -3,12 +3,22 @@
 # Imports
 from beet import Context
 
-from stewbeet.core import write_function
+from stewbeet.core import McFunction, write_function
+
+
+# Classes
+class Mode:
+	def sub(self, name: str, body: McFunction) -> None:
+		write_named(f"tns:mode_{name}", body)
 
 
 # Functions
 def helper_lines() -> str:
 	return "say from helper\nsay helper again\n"
+
+
+def write_named(path: str, body: McFunction) -> None:
+	write_function(path, body)
 
 
 # Main entry point
@@ -68,5 +78,13 @@ say reused second tail
 say expanded before
 {block}
 say expanded after
+""")
+
+	# Handed to a function of the project that passes it on to a write, then through a method passing it on to that function.
+	write_named("tns:forwarded", """
+say forwarded
+""")
+	Mode().sub("method", """
+say through a method
 """)
 

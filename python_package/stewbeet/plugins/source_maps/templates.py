@@ -63,6 +63,21 @@ class LiteralIndex:
 			return ()
 		return tuple(LiteralIndex.template_of(literal) for literal in dict.fromkeys(self.literals_of(content, frozenset())))
 
+	def forwarded(self, content: ast.expr | None) -> str | None:
+		""" The parameter annotated McFunction that `content` passes on untouched, whose commands the caller spelled.
+
+		>>> index = LiteralIndex(ast.parse("def sub(name: str, body: McFunction):\\n\\twrite(name, body)"))
+		>>> index.forwarded(index.tree.body[0].body[0].value.args[1])
+		'body'
+		"""
+		if not isinstance(content, ast.Name) or self.values_before(content):
+			return None
+		scope: ast.AST = self.scope_of(content)
+		if not isinstance(scope, ast.FunctionDef | ast.AsyncFunctionDef):
+			return None
+		parameters: list[ast.arg] = [*scope.args.posonlyargs, *scope.args.args, *scope.args.kwonlyargs]
+		return content.id if any(p.arg == content.id and LiteralIndex.is_mcfunction(p.annotation) for p in parameters) else None
+
 	def literals_of(self, node: ast.expr, seen: frozenset[str]) -> list[ast.Constant | ast.JoinedStr]:
 		""" The string literals a value is concatenated from, with none for an operand no literal spells out.
 
@@ -160,6 +175,17 @@ class LiteralIndex:
 				lines.append([text])
 				starts.append((line, literal.col_offset if line == first else 0))
 		return Template(lines=tuple(tuple(token for token in line if token != "") for line in lines), starts=tuple(starts))
+
+	@staticmethod
+	def is_mcfunction(annotation: ast.expr | None) -> bool:
+		""" Whether an annotation is McFunction, quoted or not, alone or in a union such as `McFunction | None`. """
+		match annotation:
+			case ast.Name(id="McFunction") | ast.Constant(value="McFunction"):
+				return True
+			case ast.BinOp(left=left, op=ast.BitOr(), right=right):
+				return LiteralIndex.is_mcfunction(left) or LiteralIndex.is_mcfunction(right)
+			case _:
+				return False
 
 	@staticmethod
 	def resets(statement: ast.stmt, name: str) -> bool:

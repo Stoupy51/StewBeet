@@ -45,6 +45,12 @@ EXPECTED: dict[str, dict[str, str]] = {
 		"say inner two": "{block}",
 		"say expanded after": "say expanded after",
 	},
+	"tns:forwarded": {
+		"say forwarded": "say forwarded",
+	},
+	"tns:mode_method": {
+		"say through a method": "say through a method",
+	},
 }
 """ Per function, a command it holds and the line of `link.py` that command must map to, stripped. """
 

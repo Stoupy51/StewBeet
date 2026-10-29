@@ -12,7 +12,8 @@ import os
 import sys
 from dataclasses import dataclass
 from functools import cache
-from types import FrameType
+from itertools import islice
+from types import CodeType, FrameType
 from typing import Any, cast
 
 from ...core.__memory__ import Mem
@@ -33,8 +34,11 @@ GENERATED_INIT: str = "<string>"
 INDEX_CACHE_NAME: str = "source_maps_index"
 """ Beet cache slot keeping each source file's write calls from one build to the next. """
 
-INDEX_FORMAT: str = "2"
+INDEX_FORMAT: str = "3"
 """ Part of the index signature: bump it when `write_call_spans` finds calls differently, so every file is parsed again. """
+
+type Span = tuple[int | None, int | None, int | None, int | None]
+""" Start line, end line, start column and end column of an expression, in the order `co_positions()` gives them. """
 
 
 # Classes
@@ -51,6 +55,8 @@ class WriteCall:
 	column: int
 	templates: tuple[Template, ...]
 	kind: str = "write"
+	forwards: str | None = None
+	""" The parameter annotated McFunction the content is, when the write passes on what its caller handed over. """
 
 
 # Functions
@@ -93,11 +99,12 @@ def reset_caches() -> None:
 	""" Drop the caches whose inputs only hold still within one build.
 
 	`project_roots` reads `Mem.ctx`, which is a different project on the next build,
-	and the shared source filter is built on top of it. `AST_CACHE` holds a file as it was parsed,
+	and the shared source filter is built on top of it. `AST_CACHE` and `PARSED` hold a file as it was parsed,
 	which the author has been free to edit between one build and the next.
 	"""
 	project_roots.cache_clear()
 	AST_CACHE.clear()
+	PARSED.clear()
 	PERSISTED.files, PERSISTED.loaded, PERSISTED.dirty = {}, False, False
 	reset_source_caches()
 
@@ -166,7 +173,7 @@ def written_call(node: ast.Call, helpers: dict[str, int], literals: LiteralIndex
 	# A literal argument gives the string's own position; anything else falls back to the call.
 	literal: bool = isinstance(content, ast.Constant | ast.JoinedStr)
 	anchor: ast.expr = content if (content is not None and literal) else node
-	return WriteCall(line=anchor.lineno - 1, column=anchor.col_offset, templates=literals.templates(content))
+	return WriteCall(anchor.lineno - 1, anchor.col_offset, literals.templates(content), forwards=literals.forwarded(content))
 
 
 def assigned_function(node: ast.Assign, literals: LiteralIndex) -> WriteCall | None:
@@ -185,7 +192,7 @@ def assigned_function(node: ast.Assign, literals: LiteralIndex) -> WriteCall | N
 	content: ast.expr | None = value.args[0] if value.args else None
 	literal: bool = isinstance(content, ast.Constant | ast.JoinedStr)
 	anchor: ast.expr = content if (content is not None and literal) else value
-	return WriteCall(line=anchor.lineno - 1, column=anchor.col_offset, templates=literals.templates(content), kind="assign")
+	return WriteCall(anchor.lineno - 1, anchor.col_offset, literals.templates(content), "assign", literals.forwarded(content))
 
 
 AST_CACHE: dict[str, dict[int, WriteCall]] = {}
@@ -226,13 +233,16 @@ def persisted_spans(path: str) -> list[tuple[int, int, WriteCall]]:
 	if entry is not None and len(entry) == 3 and entry[0] == stat.st_mtime_ns and entry[1] == stat.st_size:
 		try:
 			rows: list[list[Any]] = cast("list[list[Any]]", entry[2])
-			return [(int(r[0]), int(r[1]), WriteCall(int(r[2]), int(r[3]), read_templates(r[4]), str(r[5]))) for r in rows]
+			return [
+				(int(r[0]), int(r[1]), WriteCall(int(r[2]), int(r[3]), read_templates(r[4]), str(r[5]), r[6] and str(r[6])))
+				for r in rows
+			]
 		except (TypeError, ValueError, IndexError):
 			pass  # A record this version cannot read, parsed again below
 
 	spans: list[tuple[int, int, WriteCall]] = write_call_spans(path)
 	files[path] = [stat.st_mtime_ns, stat.st_size, [
-		[s, e, c.line, c.column, [[t.lines, t.starts] for t in c.templates], c.kind] for s, e, c in spans
+		[s, e, c.line, c.column, [[t.lines, t.starts] for t in c.templates], c.kind, c.forwards] for s, e, c in spans
 	]]
 	PERSISTED.dirty = True
 	return spans
@@ -345,7 +355,8 @@ def resolve_origin() -> SourceOrigin | None:
 
 	Three tiers, first hit wins:
 
-	1. The innermost stack frame that is project source **and** sits on a write call.
+	1. The innermost stack frame that is project source **and** sits on a write call, or the call that handed
+		that write its content when the content is a parameter annotated McFunction, see `forwarded_origin`.
 	2. The top of the ambient attribution stack, for content a plugin generates from a declaration.
 	3. Nothing, so the lines are emitted unmapped.
 	"""
@@ -367,11 +378,76 @@ def resolve_site() -> tuple[SourceOrigin | None, str]:
 		if is_project_source(filename, project_roots()):
 			call: WriteCall | None = write_calls_of(filename).get(frame.f_lineno)
 			if call is not None:
-				origin = SourceOrigin(file=os.path.abspath(filename), line=call.line, column=call.column, templates=call.templates)
-				return origin, call.kind
+				forwarded: SourceOrigin | None = None if call.forwards is None else forwarded_origin(frame, call.forwards)
+				own = SourceOrigin(file=os.path.abspath(filename), line=call.line, column=call.column, templates=call.templates)
+				return forwarded or own, call.kind
 		frame = frame.f_back
 
 	if Mem.attribution:
 		return Mem.attribution[-1].origin, "write"
 	return None, ""
+
+
+def forwarded_origin(frame: FrameType, parameter: str) -> SourceOrigin | None:
+	""" Where the project code calling `frame` spelled what it handed over as `parameter`, None when no project code did.
+
+	A function writing a parameter annotated McFunction holds none of the commands: the call to it does,
+	or the call to its caller when that call passes on a parameter of its own.
+	"""
+	caller: FrameType | None = frame.f_back
+	while caller is not None and is_project_source(caller.f_code.co_filename, project_roots()):
+		filename: str = os.path.abspath(caller.f_code.co_filename)
+		calls, literals = parsed(filename)
+		call: ast.Call | None = calls.get(executing(caller))
+		argument: ast.expr | None = None if call is None else argument_of(call, frame.f_code, parameter)
+		if call is None or argument is None:
+			return None
+
+		passed_on: str | None = literals.forwarded(argument)
+		if passed_on is None:
+			anchor: ast.expr = argument if isinstance(argument, ast.Constant | ast.JoinedStr) else call
+			return SourceOrigin(filename, anchor.lineno - 1, anchor.col_offset, literals.templates(argument))
+		frame, parameter, caller = caller, passed_on, caller.f_back
+	return None
+
+
+def executing(frame: FrameType) -> Span:
+	""" The span of the instruction a frame runs, as `co_positions()` gives it: the whole call for a frame waiting on its callee. """
+	return next(islice(frame.f_code.co_positions(), frame.f_lasti // 2, None), (None, None, None, None))
+
+
+def argument_of(call: ast.Call, callee: CodeType, parameter: str) -> ast.expr | None:
+	""" The expression a call passes for one parameter of the function it runs, by keyword or by position. """
+	by_keyword: ast.expr | None = next((keyword.value for keyword in call.keywords if keyword.arg == parameter), None)
+	if by_keyword is not None:
+		return by_keyword
+	positional: tuple[str, ...] = callee.co_varnames[:callee.co_argcount]
+	if parameter not in positional:
+		return None
+
+	# A method reached through an attribute gets its first parameter from what precedes the dot.
+	index: int = positional.index(parameter) - (1 if isinstance(call.func, ast.Attribute) and positional[0] in ("self", "cls") else 0)
+	if index >= len(call.args) or any(isinstance(argument, ast.Starred) for argument in call.args[:index + 1]):
+		return None
+	return call.args[index]
+
+
+PARSED: dict[str, tuple[dict[Span, ast.Call], LiteralIndex]] = {}
+""" Each file a forwarded write was followed into, as its calls by span and the literals of its writes, for one build. """
+
+
+def parsed(filename: str) -> tuple[dict[Span, ast.Call], LiteralIndex]:
+	""" The calls of a source file keyed as `executing` reports them, with an index of its literals, parsed once per build. """
+	if filename not in PARSED:
+		try:
+			with open(filename, encoding="utf-8") as file:
+				tree: ast.Module = ast.parse(file.read(), filename=filename)
+		except (OSError, SyntaxError):
+			tree = ast.Module(body=[], type_ignores=[])
+		calls: dict[Span, ast.Call] = {
+			(node.lineno, node.end_lineno, node.col_offset, node.end_col_offset): node
+			for node in ast.walk(tree) if isinstance(node, ast.Call)
+		}
+		PARSED[filename] = (calls, LiteralIndex(tree))
+	return PARSED[filename]
 
