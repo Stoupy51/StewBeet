@@ -19,7 +19,7 @@ from collections.abc import Iterable
 from typing import TYPE_CHECKING, cast
 
 import stouputils as stp
-from beet import Atlas, Model
+from beet import Model
 from stouputils.typing import JsonDict
 
 from ...__memory__ import Mem
@@ -194,24 +194,9 @@ def run_model_resolver(for_model_resolver: dict[str, str]) -> None:
 
 	stp.debug(f"Generating iso renders for {len(for_model_resolver)} items, this may take a while...")
 	with stp.MeasureTime(message="Generated iso renders for all items"):
-		from model_resolver.render import AtlasDict, Render as ModelResolverRender
-		from model_resolver.utils import resolve_key
+		from model_resolver.render import Render as ModelResolverRender
 
-		class SkipMissingPalettesRender(ModelResolverRender):
-			""" model_resolver raises on an atlas source whose palette is missing, this one skips the source instead. """
-
-			def resolve_altas(self, key: str, atlas: Atlas) -> None:
-				for source in atlas.data["sources"]:
-					source = cast(AtlasDict, source)
-					if resolve_key(source["type"]) == "minecraft:paletted_permutations":
-						# A palette_key names a texture under "textures/palettes/"
-						namespace, palette = resolve_key(source["palette_key"]).split(":", 1)
-						if f"{namespace}:palettes/{palette}" not in self.getter.assets.textures:
-							stp.debug(f"Skipping atlas source with missing palette '{source['palette_key']}'")
-							continue
-					super().resolve_altas(key, Atlas({"sources": [source]}))
-
-		render = SkipMissingPalettesRender(Mem.ctx)  # pyright: ignore[reportCallIssue]
+		render = ModelResolverRender(Mem.ctx)  # pyright: ignore[reportCallIssue]
 		for rp_path, dst_path in for_model_resolver.items():
 			render.add_model_task(rp_path, path_save=dst_path, animation_mode="one_file")
 		render.run()
