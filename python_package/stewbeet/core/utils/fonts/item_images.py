@@ -16,6 +16,7 @@ import os
 import shutil
 import threading
 from collections.abc import Iterable
+from pathlib import Path
 from typing import TYPE_CHECKING, cast
 
 import stouputils as stp
@@ -147,7 +148,7 @@ def recipe_items(recipe: RecipeBase) -> list[str]:
 
 
 # Project item rendering
-def build_model_resolver_queue(path: str, ns: str, cache_assets: bool, only: Iterable[str] | None = None) -> dict[str, str]:
+def build_model_resolver_queue(path: str, ns: str, cache_assets: bool, only: Iterable[str] | None = None) -> dict[str, str | Item]:
 	""" Build the queue of items that need iso renders generated.
 
 	A StewBeet definition knows which model backs its item. Without one, the conventional
@@ -160,33 +161,47 @@ def build_model_resolver_queue(path: str, ns: str, cache_assets: bool, only: Ite
 		cache_assets: Skip items whose PNG already exists.
 		only:         Restrict to these item ids, or None for every definition.
 	Returns:
-		dict[str, str]: Mapping of resource pack model path to destination PNG path.
+		dict[str, str | Item]: Mapping of destination PNG path to the resource pack model to render, or to the definition
+			whose user-set "item_model" component is rendered through its items/ definition.
 	"""
-	for_model_resolver: dict[str, str] = {}
+	for_model_resolver: dict[str, str | Item] = {}
 	for item in (Mem.definitions.keys() if only is None else only):
-		if os.path.exists(f"{path}/{ns}/{item}.png") and cache_assets:
+		destination: str = f"{path}/{ns}/{item}.png"
+		if os.path.exists(destination) and cache_assets:
 			continue
-
-		rp_path: str
-		model: Model | None
-		if item in Mem.definitions:
-			obj = Item.from_id(item)
-			if not obj.components.get("item_model"):
-				continue
-			rp_path = obj.model
-			model = obj.model.get()
-		else:
-			rp_path = f"{ns}:item/{item}"
-			model = Mem.ctx.assets[ns].models.get(f"item/{item}")
-
-		# ".data" rather than ".get_content()": a model loaded from the resource pack is still raw text
-		if model is not None and model.data.get("textures", None) is not None:
-			for_model_resolver[rp_path] = f"{path}/{ns}/{item}.png"
+		source: str | Item | None = render_source(item, ns)
+		if source is not None:
+			for_model_resolver[destination] = source
 	return for_model_resolver
 
 
-def run_model_resolver(for_model_resolver: dict[str, str]) -> None:
-	""" Run the model resolver to generate iso renders for the given items. """
+def render_source(item: str, ns: str) -> str | Item | None:
+	""" What model_resolver renders an item from, None when there is nothing to render.
+
+	Returns:
+		The definition when its "item_model" component is user-set, else the resource pack model path.
+	"""
+	rp_path: str
+	model: Model | None
+	if item in Mem.definitions:
+		obj = Item.from_id(item)
+		if not obj.components.get("item_model"):
+			return None
+		if obj.item_model != obj.generated_item_model:
+			# Vanilla item models are not in the project pack, model_resolver reads them from the game assets
+			return obj if obj.item_model.namespace == "minecraft" or obj.item_model.exists() else None
+		rp_path = obj.model
+		model = obj.model.get()
+	else:
+		rp_path = f"{ns}:item/{item}"
+		model = Mem.ctx.assets[ns].models.get(f"item/{item}")
+
+	# ".data" rather than ".get_content()": a model loaded from the resource pack is still raw text
+	return rp_path if model is not None and model.data.get("textures", None) is not None else None
+
+
+def run_model_resolver(for_model_resolver: dict[str, str | Item]) -> None:
+	""" Run the model resolver to generate iso renders for a queue built by `build_model_resolver_queue`. """
 	any_atlas_used: bool = "before_format_73" in Mem.ctx.assets.overlays._wrapped  # pyright: ignore[reportPrivateUsage]
 	if any_atlas_used:
 		legacy_atlases = Mem.ctx.assets.overlays["before_format_73"]["minecraft"].atlases
@@ -194,11 +209,20 @@ def run_model_resolver(for_model_resolver: dict[str, str]) -> None:
 
 	stp.debug(f"Generating iso renders for {len(for_model_resolver)} items, this may take a while...")
 	with stp.MeasureTime(message="Generated iso renders for all items"):
+		from model_resolver.item_model.item import Item as ModelResolverItem
 		from model_resolver.render import Render as ModelResolverRender
+		from model_resolver.utils import resolve_key
 
 		render = ModelResolverRender(Mem.ctx)  # pyright: ignore[reportCallIssue]
-		for rp_path, dst_path in for_model_resolver.items():
-			render.add_model_task(rp_path, path_save=dst_path, animation_mode="one_file")
+		for dst_path, source in for_model_resolver.items():
+			if isinstance(source, str):
+				render.add_model_task(source, path_save=dst_path, animation_mode="one_file")
+				continue
+
+			# The items/ definition conditions test namespaced keys, as "minecraft:dyed_color" in components
+			components: JsonDict = {resolve_key(key): value for key, value in source.components.items()}
+			resolver_item = ModelResolverItem(id=source.base_item, components=components)
+			render.add_item_task(resolver_item, path_save=Path(dst_path), animation_mode="one_file")
 		render.run()
 
 	if any_atlas_used:
@@ -271,7 +295,7 @@ def ensure_item_images(item_ids: Iterable[str], cache_assets: bool = True) -> di
 	own: list[str] = [item.split(":", 1)[1] for item in qualified if item.startswith(f"{ns}:")]
 	if own:
 		os.makedirs(f"{path}/{ns}", exist_ok=True)
-		queue: dict[str, str] = build_model_resolver_queue(path, ns, cache_assets, only=own)
+		queue: dict[str, str | Item] = build_model_resolver_queue(path, ns, cache_assets, only=own)
 		if queue:
 			run_model_resolver(queue)
 
