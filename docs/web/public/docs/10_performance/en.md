@@ -48,10 +48,12 @@ Copy a container's `Items` only on the path that needs the full stack, and at mo
 ### Read a block entity once per tick
 
 `execute if data block ~ ~ ~ {lit_time_remaining:0}` serializes the whole block entity, items included, for one value. When a function needs several values, copy the block once with `data modify storage ... set from block ~ ~ ~`, turn the values tested more than once into scores, and test slots with `if items block`.
+Test what the block state already tells before that copy: `execute if block ~ ~ ~ #ns:furnaces[lit=true]` says whether a furnace burns without serializing it, so an idle one returns first.
 
 ### Keep per-entity state in scores and tags
 
 A value an entity reads and writes every tick (a progression, an unlocked flag) costs a full entity serialization each way when it lives in NBT. Store it as a score or a tag on the entity, and move it to and from NBT only when the block is placed or broken, where the item carries it.
+A value that never changes while the entity tracks the block, like the furnace type, is read once, the first tick its score is missing: `execute unless score @s ns.type matches 0.. run function ns:read_type`.
 
 ### Make an absent value absent
 
@@ -67,6 +69,8 @@ execute if score #changed ns.data matches 1 run function ns:expensive_lookup
 ```
 
 Remove `previous_input` where the reuse must stop: at the start of each block's tick, after something consumed the result, or in the load function when a `/reload` can change what the lookup returns.
+
+The same test compares two compounds exactly: copy one into a temporary path, then `execute store success ... run data modify <temporary> set from <other>` gives 0 only when they are equal. It replaces a macro running `if data` both ways, which a macro call reparses.
 
 ### Order a chain of returns by frequency
 

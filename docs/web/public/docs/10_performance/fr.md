@@ -48,10 +48,12 @@ Ne copiez les `Items` d'un conteneur que sur le chemin qui a besoin de la pile c
 ### Lire un bloc une seule fois par tick
 
 `execute if data block ~ ~ ~ {lit_time_remaining:0}` sérialise tout le bloc, items compris, pour une seule valeur. Quand une fonction a besoin de plusieurs valeurs, copiez le bloc une fois avec `data modify storage ... set from block ~ ~ ~`, passez en scores les valeurs testées plus d'une fois, et testez les slots avec `if items block`.
+Testez ce que l'état du bloc dit déjà avant cette copie : `execute if block ~ ~ ~ #ns:furnaces[lit=true]` dit si un four brûle sans le sérialiser, et un four éteint s'arrête avant.
 
 ### Garder l'état d'une entité dans des scores et des tags
 
 Une valeur qu'une entité lit et écrit à chaque tick (une progression, un slot débloqué) coûte une sérialisation complète de l'entité dans chaque sens quand elle vit dans son NBT. Stockez-la en score ou en tag sur l'entité, et ne la passez au NBT qu'à la pose ou à la casse du bloc, quand l'item la transporte.
+Une valeur qui ne change jamais tant que l'entité suit le bloc, comme le type de four, se lit une fois, au premier tick où son score manque : `execute unless score @s ns.type matches 0.. run function ns:read_type`.
 
 ### Une valeur absente doit être absente
 
@@ -67,6 +69,8 @@ execute if score #changed ns.data matches 1 run function ns:expensive_lookup
 ```
 
 Supprimez `previous_input` là où la réutilisation doit s'arrêter : au début du tick de chaque bloc, après qu'une commande a consommé le résultat, ou dans la fonction de load quand un `/reload` peut changer ce que la recherche renvoie.
+
+Le même test compare deux compounds exactement : copiez l'un dans un chemin temporaire, puis `execute store success ... run data modify <temporaire> set from <autre>` donne 0 seulement s'ils sont égaux. Il remplace une macro qui lance `if data` dans les deux sens, qu'un appel de macro analyse à nouveau.
 
 ### Ordonner une chaîne de returns par fréquence
 
