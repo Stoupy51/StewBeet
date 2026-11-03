@@ -24,13 +24,15 @@ The UUID is derived from the project id and the name, so it never changes betwee
 
 The execution position stays the caller's: `execute as <uuid>` changes `@s`, not `~ ~ ~`.
 
-### Write entity NBT only when it changes
+### Write entity and block NBT only when it changes
 
-`data modify entity` serializes the whole entity and loads it back. Guard it with a cheap test of the value it would write:
+`data modify entity` and `store result block` serialize the whole entity or block entity and load it back. Guard them with a cheap test of the value they would write:
 
 ```mcfunction
 execute unless items entity @s contents *[minecraft:item_model="ns:machine_on"] run data modify entity @s item.components."minecraft:item_model" set value "ns:machine_on"
 ```
+
+A value the game moves on its own every tick, like a furnace's `cooking_time_spent`, never equals the one written the tick before. Write it when what the player sees would change instead: Furnace NBT Recipes writes it once the progress arrow would show another of its 24 pixels.
 
 ### Test items with `if items`, not by copying their NBT
 
@@ -42,6 +44,10 @@ execute if items block ~ ~ ~ container.26 *[!custom_data~{"common_signals":{"tem
 ```
 
 Copy a container's `Items` only on the path that needs the full stack, and at most once per tick.
+
+### Read a block entity once per tick
+
+`execute if data block ~ ~ ~ {lit_time_remaining:0}` serializes the whole block entity, items included, for one value. When a function needs several values, copy the block once with `data modify storage ... set from block ~ ~ ~`, turn the values tested more than once into scores, and test slots with `if items block`.
 
 ### Keep per-entity state in scores and tags
 
@@ -60,7 +66,7 @@ execute store success score #changed ns.data run data modify storage ns:temp pre
 execute if score #changed ns.data matches 1 run function ns:expensive_lookup
 ```
 
-Remove `previous_input` where the reuse must stop, for example at the start of each block's tick.
+Remove `previous_input` where the reuse must stop: at the start of each block's tick, after something consumed the result, or in the load function when a `/reload` can change what the lookup returns.
 
 ### Order a chain of returns by frequency
 

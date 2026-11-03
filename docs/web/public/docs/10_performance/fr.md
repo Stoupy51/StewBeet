@@ -24,13 +24,15 @@ L'UUID est dérivé de l'id du projet et du nom : il ne change pas d'un build à
 
 La position d'exécution reste celle de l'appelant : `execute as <uuid>` change `@s`, pas `~ ~ ~`.
 
-### N'écrire le NBT d'une entité que s'il change
+### N'écrire le NBT d'une entité ou d'un bloc que s'il change
 
-`data modify entity` sérialise toute l'entité puis la recharge. Protégez-le par un test peu coûteux de la valeur qu'il écrirait :
+`data modify entity` et `store result block` sérialisent toute l'entité ou tout le bloc puis le rechargent. Protégez-les par un test peu coûteux de la valeur qu'ils écriraient :
 
 ```mcfunction
 execute unless items entity @s contents *[minecraft:item_model="ns:machine_on"] run data modify entity @s item.components."minecraft:item_model" set value "ns:machine_on"
 ```
+
+Une valeur que le jeu fait avancer lui-même à chaque tick, comme le `cooking_time_spent` d'un four, n'est jamais égale à celle écrite au tick précédent. Écrivez-la plutôt quand ce que voit le joueur changerait : Furnace NBT Recipes l'écrit quand la flèche de progression afficherait un autre de ses 24 pixels.
 
 ### Tester les items avec `if items`, pas en copiant leur NBT
 
@@ -42,6 +44,10 @@ execute if items block ~ ~ ~ container.26 *[!custom_data~{"common_signals":{"tem
 ```
 
 Ne copiez les `Items` d'un conteneur que sur le chemin qui a besoin de la pile complète, et au plus une fois par tick.
+
+### Lire un bloc une seule fois par tick
+
+`execute if data block ~ ~ ~ {lit_time_remaining:0}` sérialise tout le bloc, items compris, pour une seule valeur. Quand une fonction a besoin de plusieurs valeurs, copiez le bloc une fois avec `data modify storage ... set from block ~ ~ ~`, passez en scores les valeurs testées plus d'une fois, et testez les slots avec `if items block`.
 
 ### Garder l'état d'une entité dans des scores et des tags
 
@@ -60,7 +66,7 @@ execute store success score #changed ns.data run data modify storage ns:temp pre
 execute if score #changed ns.data matches 1 run function ns:expensive_lookup
 ```
 
-Supprimez `previous_input` là où la réutilisation doit s'arrêter, par exemple au début du tick de chaque bloc.
+Supprimez `previous_input` là où la réutilisation doit s'arrêter : au début du tick de chaque bloc, après qu'une commande a consommé le résultat, ou dans la fonction de load quand un `/reload` peut changer ce que la recherche renvoie.
 
 ### Ordonner une chaîne de returns par fréquence
 
