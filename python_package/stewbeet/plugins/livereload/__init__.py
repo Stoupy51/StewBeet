@@ -7,6 +7,7 @@ __lazy_modules__ = ALWAYS_LAZY
 # Imports
 import contextlib
 import logging
+from collections.abc import Generator
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -276,16 +277,29 @@ def _upload_sftp_packs(sftp_urls: list[str]) -> list[tuple[str, str]]:
 
 
 # Main entry point
-def beet_default(ctx: Context) -> None:
+def beet_default(ctx: Context) -> Generator[None]:
 	""" Live reload wrapper plugin for StewBeet.
 
-	Enables in-game `/reload` on each build through `beet link` and/or the StewBeet `build_copy_destinations.datapack` folders
-	(local and remote `sftp://`), then delegates to the underlying `beet.contrib.livereload` plugin.
+	Triggers an in-game `/reload` after every build, one-shot or watched, through the `beet link` folder
+	and/or the StewBeet `build_copy_destinations.datapack` folders (local and remote `sftp://`).
+	The polling datapack left by the previous build is removed first, so that the game sees it appear again and reloads.
 	Simply require this plugin (or add it to the pipeline) instead of wiring up `beet.contrib.livereload` and `beet link` manually.
 
 	Args:
 		ctx: The beet context.
 	"""
-	patch_livereload_for_copy_destinations(ctx)
-	ctx.require("beet.contrib.livereload")
+	remove_previous_polling_packs(ctx)
+	yield
+	livereload_with_copy_destinations(ctx)
+
+
+def remove_previous_polling_packs(ctx: Context) -> None:
+	""" Remove the polling datapack a previous build left in each destination, as the game only reloads when one appears. """
+	from beet.core.utils import remove_path
+
+	local_dirs: list[str] = get_local_datapack_destinations(ctx)
+	for dir_str in local_dirs:
+		remove_path(Path(dir_str) / "livereload")
+	for url in get_sftp_datapack_destinations(ctx):
+		_sftp_remove_livereload(f"{url.rstrip('/')}/{LIVERELOAD_ZIP_NAME}")
 
