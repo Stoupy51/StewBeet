@@ -32,6 +32,21 @@ The execution position stays the caller's: `execute as <uuid>` changes `@s`, not
 execute unless items entity @s contents *[minecraft:item_model="ns:machine_on"] run data modify entity @s item.components."minecraft:item_model" set value "ns:machine_on"
 ```
 
+### Test items with `if items`, not by copying their NBT
+
+`data modify storage ... set from entity @s SelectedItem` serializes the whole player, inventory included, to read one item. `execute if items` reads the slot directly:
+
+```mcfunction
+execute if items entity @s weapon.offhand *[custom_data~{"ns":{"multimeter":true}}] run function ns:multimeter
+execute if items block ~ ~ ~ container.26 *[!custom_data~{"common_signals":{"temp":true}}] run function ns:drop_intruder
+```
+
+Copy a container's `Items` only on the path that needs the full stack, and at most once per tick.
+
+### Keep per-entity state in scores and tags
+
+A value an entity reads and writes every tick (a progression, an unlocked flag) costs a full entity serialization each way when it lives in NBT. Store it as a score or a tag on the entity, and move it to and from NBT only when the block is placed or broken, where the item carries it.
+
 ### Make an absent value absent
 
 `data modify storage ... set value {}` before an optional `set from` leaves `{}` when the source is missing, and `execute unless data` then never sees the absence. Clear it with `data remove` instead.

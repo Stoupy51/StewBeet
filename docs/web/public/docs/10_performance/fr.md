@@ -32,6 +32,21 @@ La position d'exécution reste celle de l'appelant : `execute as <uuid>` change 
 execute unless items entity @s contents *[minecraft:item_model="ns:machine_on"] run data modify entity @s item.components."minecraft:item_model" set value "ns:machine_on"
 ```
 
+### Tester les items avec `if items`, pas en copiant leur NBT
+
+`data modify storage ... set from entity @s SelectedItem` sérialise tout le joueur, inventaire compris, pour lire un seul item. `execute if items` lit directement le slot :
+
+```mcfunction
+execute if items entity @s weapon.offhand *[custom_data~{"ns":{"multimeter":true}}] run function ns:multimeter
+execute if items block ~ ~ ~ container.26 *[!custom_data~{"common_signals":{"temp":true}}] run function ns:drop_intruder
+```
+
+Ne copiez les `Items` d'un conteneur que sur le chemin qui a besoin de la pile complète, et au plus une fois par tick.
+
+### Garder l'état d'une entité dans des scores et des tags
+
+Une valeur qu'une entité lit et écrit à chaque tick (une progression, un slot débloqué) coûte une sérialisation complète de l'entité dans chaque sens quand elle vit dans son NBT. Stockez-la en score ou en tag sur l'entité, et ne la passez au NBT qu'à la pose ou à la casse du bloc, quand l'item la transporte.
+
 ### Une valeur absente doit être absente
 
 `data modify storage ... set value {}` avant un `set from` optionnel laisse `{}` quand la source manque, et `execute unless data` ne voit alors jamais l'absence. Videz plutôt avec `data remove`.
