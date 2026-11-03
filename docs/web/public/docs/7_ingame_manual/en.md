@@ -24,7 +24,7 @@
 
 ## Features Showcase
 
-<img src="../plugins/img/ingame_manual.gif" style="width: min(480px, 100%)">
+<img src="../../ingame_manual.mp4" style="width: min(480px, 100%)">
 
 ## Configuration
 
