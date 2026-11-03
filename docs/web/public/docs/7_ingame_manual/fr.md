@@ -23,7 +23,8 @@
 
 ## Présentation des fonctionnalités
 
-<img src="../../ingame_manual.mp4" style="width: min(480px, 100%)">
+<video src="/ingame_manual.mp4" poster="/ingame_manual_poster.jpg" controls loop muted playsinline preload="auto" style="width: min(480px, 100%)">
+</video>
 
 ## Configuration
 
