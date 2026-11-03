@@ -1,4 +1,4 @@
-""" 🏁 Last steps before saving: the source lore font, the pack icon and the macro line checks. """
+""" 🏁 Last steps before saving: the source lore font, the pack icon, the overlay formats and the macro line checks. """
 # Lazy imports (PEP 810), ignored before Python 3.15
 from stouputils.lazy import ALWAYS_LAZY
 
@@ -9,10 +9,12 @@ import re
 
 import stouputils as stp
 from beet import Context, PngFile
+from stouputils.typing import JsonDict
 
 from ....core import Item, Mem
 from ...initialize.project_images import find_pack_png
 from ...initialize.source_lore_font import TOOLTIP_FONT, create_source_lore_font, uses_font
+from ...resource_pack.item_models import major_of
 
 # Constants
 DIALOG_TEMPLATE: re.Pattern[str] = re.compile(r"""\btemplate"?\s*:\s*("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')""")
@@ -41,6 +43,10 @@ def beet_default(ctx: Context):
 		if len(all_assets) > 0:
 			Mem.ctx.assets.extra["pack.png"] = PngFile(source_path=pack_icon)
 
+	# The last formats before [major, minor] ones, from PackFormat.lastPreMinorVersion
+	declare_overlay_formats(Mem.ctx.data.mcmeta.data.get("overlays", {}).get("entries", []), last_pre_minor_format=81)
+	declare_overlay_formats(Mem.ctx.assets.mcmeta.data.get("overlays", {}).get("entries", []), last_pre_minor_format=64)
+
 	# A macro line missing its leading $, or a $ line using no macro, does not run as written
 	lines: list[tuple[str, int, str]] = [
 		(func, i, line) for func, obj in Mem.ctx.data.functions.items() for i, line in enumerate(obj.text.splitlines())
@@ -57,4 +63,28 @@ def beet_default(ctx: Context):
 				f"Function '{func}' line {i+1} appears to use macros but does not start with '$', "
 				f"execution will not be as expected: '{line}'"
 			)
+
+
+def declare_overlay_formats(entries: list[JsonDict], last_pre_minor_format: int) -> None:
+	""" Give every overlay the old `formats` key when one reaches `last_pre_minor_format`, and remove it from all otherwise.
+
+	The game refuses the whole pack.mcmeta when overlays disagree on it. Entries without `min_format` keep their own `formats`.
+
+	>>> entries = [{"directory": "a", "formats": [93, 100], "min_format": [93, 0], "max_format": [100, 1]}]
+	>>> declare_overlay_formats(entries, last_pre_minor_format=64)
+	>>> entries
+	[{'directory': 'a', 'min_format': [93, 0], 'max_format': [100, 1]}]
+	>>> entries.append({"directory": "b", "min_format": 0, "max_format": 72})
+	>>> declare_overlay_formats(entries, last_pre_minor_format=64)
+	>>> [entry["formats"] for entry in entries]
+	[[93, 100], [0, 72]]
+	"""
+	needs_formats: bool = any(
+		"min_format" not in entry or major_of(entry["min_format"], default=0) <= last_pre_minor_format for entry in entries
+	)
+	for entry in (entry for entry in entries if "min_format" in entry):
+		if needs_formats:
+			entry["formats"] = [major_of(entry["min_format"], default=0), major_of(entry["max_format"], default=0)]
+		else:
+			entry.pop("formats", None)
 

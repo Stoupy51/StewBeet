@@ -8,7 +8,7 @@ __lazy_modules__ = ALWAYS_LAZY
 from pathlib import Path
 
 import stouputils as stp
-from beet import Atlas, Context, ResourcePack
+from beet import Atlas, Context, FormatSpecifier, ResourcePack
 from stouputils.typing import JsonDict
 
 from ....core.__memory__ import Mem
@@ -18,7 +18,7 @@ from .object import AutoModel, to_atlas
 
 
 # Major number of a pack format, which is an int or a [major, minor] pair
-def major_of(pack_format: int | list[int] | tuple[int, int] | None, default: int) -> int:
+def major_of(pack_format: FormatSpecifier | None, default: int) -> int:
 	if pack_format is None:
 		return default
 	return pack_format if isinstance(pack_format, int) else pack_format[0]
@@ -34,30 +34,14 @@ def add_to_atlas(textures: set[str] = set()) -> None:  # noqa: B006
 	if not textures:
 		return
 
-	# Get mcmeta and setup overlays if needed
-	rp: ResourcePack = Mem.ctx.assets
-
-	# Define overlay configurations
-	overlay_configs: list[JsonDict] = [
-		{
-			"directory": "before_format_73",
-			"formats": [0, 72],
-			"min_format": 0,
-			"max_format": 72,
-			"atlas_name": "blocks"
-		},
-		{
-			"directory": "format_73_plus",
-			"formats": [73, 1000],
-			"min_format": 73,
-			"max_format": 1000,
-			"atlas_name": "items"
-		}
-	]
-
 	# The pack's own formats decide which configurations apply: none outside them, and one covering them all goes straight in the pack
+	rp: ResourcePack = Mem.ctx.assets
 	pack_first: int = major_of(rp.min_format, default=0)
 	pack_last: int = major_of(rp.max_format, default=1000)
+	overlay_configs: list[JsonDict] = [
+		{"directory": "before_format_73", "min_format": 0, "max_format": 72, "atlas_name": "blocks"},
+		{"directory": "format_73_plus", "min_format": 73, "max_format": pack_last, "atlas_name": "items"},
+	]
 
 	for config in overlay_configs:
 		if config["max_format"] < pack_first or config["min_format"] > pack_last:
@@ -67,12 +51,7 @@ def add_to_atlas(textures: set[str] = set()) -> None:  # noqa: B006
 
 		# Add textures to the appropriate atlas
 		if not covers_pack:
-			rp.overlays[directory] = ResourcePack(
-				name=directory,
-				supported_formats=config["formats"],
-				min_format=config["min_format"],
-				max_format=config["max_format"]
-			)
+			rp.overlays[directory] = ResourcePack(name=directory, min_format=config["min_format"], max_format=config["max_format"])
 		target: ResourcePack = rp if covers_pack else rp.overlays[directory]
 		atlas_object: Atlas = target["minecraft"].atlases.setdefault(config["atlas_name"])
 		data: JsonDict = atlas_object.data
