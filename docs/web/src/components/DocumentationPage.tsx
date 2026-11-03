@@ -115,6 +115,12 @@ export const DocumentationPage: React.FC = () => {
                     pathEn: '6_continuous_delivery/en.md',
                     pathFr: '6_continuous_delivery/fr.md',
                 },
+                {
+                    title: t('documentation.performance'),
+                    description: t('documentation.performanceDesc'),
+                    pathEn: '10_performance/en.md',
+                    pathFr: '10_performance/fr.md',
+                },
             ],
         },
         {

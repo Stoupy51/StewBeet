@@ -157,6 +157,8 @@ COMMON_SIGNAL: str = r'custom_data={"common_signals":{"temp":true}}'
 """ NBT to add to items to mark them as temporary for Common Signals library. """
 COMMON_SIGNAL_HIDDEN: str = r'tooltip_display={"hide_tooltip":true},' + COMMON_SIGNAL
 """ Same as previous but also hide the tooltip (Useful for GUIs) """
+FORCELOAD_BLOCK: tuple[int, int] = (-30000000, 1600)
+""" Block x and z of the forceloaded chunk holding persistent utility entities, the same one Bookshelf and Furnace NBT Recipes use. """
 FACES: tuple[str, ...] = ("down", "up", "north", "south", "west", "east")
 """ Faces of a block, used for resource pack and blocks orientation. """
 SIDES: tuple[str, ...] = ("_bottom", "_top", "_front", "_back", "_left", "_right", "_side")

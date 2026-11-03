@@ -103,6 +103,7 @@ from .constants import (
 	DOWNLOAD_VANILLA_ASSETS_SPECIAL_RAW as DOWNLOAD_VANILLA_ASSETS_SPECIAL_RAW,
 	EXTERNAL_RECIPES_FOLDER as EXTERNAL_RECIPES_FOLDER,
 	FACES as FACES,
+	FORCELOAD_BLOCK as FORCELOAD_BLOCK,
 	GROWING_SEED as GROWING_SEED,
 	ITEMS_LOOT_FOLDER as ITEMS_LOOT_FOLDER,
 	LATEST_MC_VERSION as LATEST_MC_VERSION,
@@ -296,6 +297,9 @@ from .utils.models import (
 	uv_locked as uv_locked,
 	vanilla_elements as vanilla_elements,
 	with_margin as with_margin,
+)
+from .utils.persistent_entities import (
+	persistent_item_display as persistent_item_display,
 )
 from .utils.sounds import (
 	add_sound as add_sound,

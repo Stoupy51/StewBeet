@@ -29,7 +29,7 @@ ENTITY_UUID_RE: Pattern[str] = compile(
 	r"summon [^ ]+"                              # entity type
 	r"\s+(?:[\d~.-]+\s+){3}"                     # coordinates (x y z)
 	r"\{.*UUID:\s*"                              # NBT UUID key
-	r"(\[\s*I\s*;(?:\s*[\d.-]+\s*,){3}\s*[\d.-]+\s*\])"  # capture: [I; a, b, c, d]
+	r"(\[\s*I\s*;(?:\s*[\d.-]+\s*,){3}\s*[\d.-]+\s*\]|uuid\(\s*\"[0-9a-fA-F-]{36}\"\s*\))"  # capture: [I; a, b, c, d] or uuid("...")
 )
 ENTITY_TAGS_RE: Pattern[str] = compile(
 	r"summon [^ ]+"                              # entity type
@@ -72,9 +72,12 @@ def beet_default(ctx: Context) -> None:
 def uuid2inline(uuid: str) -> str:
 	""" Convert a Minecraft NBT UUID list to inline UUID string format.
 
-	Input:  '[I; -1234, 5678, -91011, 12131415]'  (four signed 32-bit ints)
+	Input:  '[I; -1234, 5678, -91011, 12131415]'  (four signed 32-bit ints), or 'uuid("<hyphenated uuid>")' returned as is
 	Output: 'fffffb2e-0000162e-fffed97d-00b8e8f7'  (eight hex chars per int, joined with dashes)
 	"""
+	if uuid.startswith("uuid("):
+		return uuid.split('"')[1]
+
 	# Parse the four signed 32-bit integers from "[I; a, b, c, d]"
 	content: str = uuid[uuid.index(";") + 1 : uuid.rindex("]")]
 	ints: list[int] = [int(part.strip()) for part in content.split(",")]

@@ -114,6 +114,15 @@ scoreboard players set #100 data 100
 
 ---
 
+#### `persistent_item_display()`
+Ajoute à la fonction de load un `item_display` gardé dans le chunk forceload de `FORCELOAD_BLOCK`, et renvoie son UUID pour le cibler avec `execute as`. Voir [Garder les fonctions rapides](../../10_performance/fr.md).
+
+```python
+def persistent_item_display(name: str) -> str:   # name : unique dans le projet
+```
+
+---
+
 #### `write_tick_file()`
 Écrire du contenu dans la fonction tick principale (s'exécute à chaque tick du jeu - 20 fois par seconde).
 

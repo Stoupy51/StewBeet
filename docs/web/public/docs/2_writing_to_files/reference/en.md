@@ -114,6 +114,15 @@ scoreboard players set #100 data 100
 
 ---
 
+#### `persistent_item_display()`
+Add to the load function an `item_display` kept in the forceloaded chunk at `FORCELOAD_BLOCK`, and return its UUID to target it with `execute as`. See [Keeping functions fast](../../10_performance/en.md).
+
+```python
+def persistent_item_display(name: str) -> str:   # name: unique within the project
+```
+
+---
+
 #### `write_tick_file()`
 Write content to the main tick function (runs every game tick - 20 times per second).
 
