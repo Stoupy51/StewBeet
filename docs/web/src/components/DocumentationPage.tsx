@@ -121,6 +121,12 @@ export const DocumentationPage: React.FC = () => {
                     pathEn: '10_performance/en.md',
                     pathFr: '10_performance/fr.md',
                 },
+                {
+                    title: t('documentation.testing'),
+                    description: t('documentation.testingDesc'),
+                    pathEn: '11_testing/en.md',
+                    pathFr: '11_testing/fr.md',
+                },
             ],
         },
         {
