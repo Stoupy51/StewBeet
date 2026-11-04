@@ -49,7 +49,7 @@ execute positioned ~2.5 ~.5 ~2.5 run await entity @e[tag=<ns>.pulverizer,distanc
 ```
 
 `dummy @s use block` pose un bloc custom comme le ferait un joueur, donc Smithed Custom Block et les fonctions `place` s'exécutent pour de vrai.
-Donnez au dummy une pile de deux : il est en survie, et un bloc posé avec le dernier objet d'une pile trouve `SelectedItem` déjà vide, si bien que ce que ses fonctions `place` copient de l'objet (énergie stockée, slots sauvegardés) est perdu.
+Donnez au dummy une pile de deux. Son action s'exécute dans une commande, donc le jeu met en file la récompense d'advancement de Smithed Custom Block jusqu'à la fin de cette commande, après que l'objet du dummy, en survie, a été retiré. Posé avec le dernier objet d'une pile, le bloc trouve alors `SelectedItem` vide, et ce que ses fonctions `place` copient de l'objet (énergie stockée, slots sauvegardés) est perdu. Chez un vrai joueur, la récompense s'exécute avant que l'objet soit retiré : cela n'arrive que dans les tests.
 
 `room.nbt` existe parce que la version de Ward pour 26.3 n'a pas les templates `ward:empty/*`, et son template par défaut est un seul bloc d'air, trop bas pour un dummy. Écrivez-le une fois avec le nbtlib qu'installe beet :
 

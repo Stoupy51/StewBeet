@@ -49,7 +49,7 @@ execute positioned ~2.5 ~.5 ~2.5 run await entity @e[tag=<ns>.pulverizer,distanc
 ```
 
 `dummy @s use block` places a custom block the way a player does, so Smithed Custom Block and the `place` functions run for real.
-Hand the dummy a stack of two: it is in survival, and a block placed from the last item of a stack finds `SelectedItem` already empty, so whatever its `place` functions copy from the item (stored energy, saved slots) is lost.
+Hand the dummy a stack of two. Its action runs inside a command, so the game queues the Smithed Custom Block advancement reward until that command ends, after the survival dummy's item is taken. Placed from the last item of a stack, the block then finds `SelectedItem` empty and whatever its `place` functions copy from the item (stored energy, saved slots) is lost. A real player's reward runs before the item is taken, so this only happens in tests.
 
 `room.nbt` exists because the 26.3 build of Ward has no `ward:empty/*` templates, and its default template is one block of air, too low for a dummy. Write it once with the nbtlib that beet installs:
 
