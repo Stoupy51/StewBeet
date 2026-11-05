@@ -3,7 +3,7 @@
 
 // Every diagnostic the relay puts on a real project's Python, one file at a time.
 //
-//   SB_TESTS=sweep SB_WORKSPACE=d:/advanced_desktop/StoupGun node test/integration/run.js
+//   SB_TESTS=sweep SB_WORKSPACE=d:/advanced_desktop/projects/MC_Guns_System node test/integration/run.js
 //
 // A measurement rather than a set of assertions. A pack that builds cleanly has no command
 // mistakes, so nearly everything this lists is the extension misreading its own input: a block

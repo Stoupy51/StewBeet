@@ -47,7 +47,7 @@ test("a block only the whole file reveals is painted as the grammar paints the o
   assert.ok(paints.every(paint => paint.from >= 0 && paint.to <= "say hi".length), "nothing outside the commands, quotes included");
 });
 
-test("StoupGun place.py: what a name is grown with in a loop, and the literal added to it in the call, are painted", async (t) => {
+test("MC_Guns_System place.py: what a name is grown with in a loop, and the literal added to it in the call, are painted", async (t) => {
   const engine = await redCommands();
   if (!engine) return t.skip("no VS Code install found to read MagicPython from");
   const text = [

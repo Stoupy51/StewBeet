@@ -70,7 +70,7 @@ test("ring turn: both branches of a conditional expression are blocks of the sam
   assert.equal(blocks[0].callStart, blocks[1].callStart, "both reach the write_function call");
 });
 
-test("StoupGun hooks.py: an f-string followed by `+ \"\\n\".join(...)` is a block, and the separator is not", () => {
+test("MC_Guns_System hooks.py: an f-string followed by `+ \"\\n\".join(...)` is a block, and the separator is not", () => {
   const text = 'write_versioned_function("progression/adv/catch_up", f"scoreboard players set @s {caught} 1\\n" + "\\n".join(Hooks.check_call(chain) for chain in CHAINS))';
   assert.deepEqual(blockTexts(text), ['f"scoreboard players set @s {caught} 1\\n"']);
 });
@@ -315,7 +315,7 @@ test("every block of a variable points at the call that consumes it", () => {
   }
 });
 
-test("StoupGun place.py: a name with a literal added to it in the call carries its blocks, and the literal is one too", () => {
+test("MC_Guns_System place.py: a name with a literal added to it in the call carries its blocks, and the literal is one too", () => {
   const text = [
     '\tprocess_element: McFunction = f"""',
     "# DESTROY handler",
