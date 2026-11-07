@@ -132,6 +132,11 @@ def weld_to(ctx: Context, sources: list[str], dest_path: str, pack_type: str) ->
 			merged: DataPack | ResourcePack = weld_ctx.data if pack_type == "datapack" else weld_ctx.assets
 			local: DataPack | ResourcePack = ctx.data if pack_type == "datapack" else ctx.assets
 
+			# Minecraft parses lang files strictly: a "__smithed__" array makes the whole language fail to load
+			if isinstance(merged, ResourcePack):
+				for language in merged.languages.values():
+					language.data.pop("__smithed__", None)
+
 			with ConstantTimeZipFile(
 				dest_path, "w", compression=ZIP_DEFLATED, compresslevel=6,
 				date_time=constant_time, skip_names=("pack.mcmeta", "pack.png"),
