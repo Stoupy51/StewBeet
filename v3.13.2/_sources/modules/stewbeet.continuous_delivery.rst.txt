@@ -1,0 +1,34 @@
+🚀 continuous_delivery
+==========================================
+
+.. automodule:: stewbeet.continuous_delivery
+
+cd_utils
+----------------
+
+.. automodule:: stewbeet.continuous_delivery.cd_utils
+   :members: get_supported_versions, load_credentials, replace_tilde
+
+github
+------------
+
+.. automodule:: stewbeet.continuous_delivery.github
+   :members: GITHUB_API_URL, UPLOAD_ATTEMPTS, UPLOAD_RETRY_DELAY, build_github_config, create_github_release, create_github_tag, delete_github_release, delete_github_tag, extract_github_commit_data, get_github_commit_date, get_github_sha, get_pushed_head_sha, upload_github_assets, upload_to_github, validate_github_config, validate_github_credentials
+
+modrinth
+----------------
+
+.. automodule:: stewbeet.continuous_delivery.modrinth
+   :members: MOD_PLATFORMS, MODRINTH_API_URL, PROJECT_ENDPOINT, PROJECT_FALLBACKS, VERSION_ENDPOINT, Release, convert_datapack_to_mod, existing_packs, generate_fabric_metadata, generate_forge_metadata, generate_quilt_metadata, get_file_parts, get_project, handle_existing_version, mod_metadata, mod_platforms, set_resource_pack_required, update_project_description, upload_mods, upload_to_modrinth
+
+pmc
+------
+
+.. automodule:: stewbeet.continuous_delivery.pmc
+   :members: convert_list_block, convert_markdown_to_bbcode, follow_indent, table_to_bbcode, upload_to_pmc
+
+smithed
+--------------
+
+.. automodule:: stewbeet.continuous_delivery.smithed
+   :members: SMITHED_API_URL, upload_to_smithed, upload_version, validate_config, validate_credentials

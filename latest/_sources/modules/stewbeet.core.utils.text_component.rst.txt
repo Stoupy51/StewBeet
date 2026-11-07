@@ -1,17 +1,16 @@
-stewbeet.core.utils.text\_component package
-===========================================
+💬 text_component
+================================
 
 .. automodule:: stewbeet.core.utils.text_component
-   :members:
-   :private-members:
-   :show-inheritance:
-   :undoc-members:
 
-Submodules
-----------
+convert
+--------------
 
-.. toctree::
-   :maxdepth: 4
+.. automodule:: stewbeet.core.utils.text_component.convert
+   :members: components_name, item_id_to_name, item_id_to_text_component, text_component_to_str
 
-   stewbeet.core.utils.text_component.convert
-   stewbeet.core.utils.text_component.scan
+scan
+--------
+
+.. automodule:: stewbeet.core.utils.text_component.scan
+   :members: CLOSERS, Replacement, apply_replacements, closing_brace, find_enclosing_object, iter_data_text_files, opening_brace

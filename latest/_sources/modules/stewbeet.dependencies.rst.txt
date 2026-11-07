@@ -1,18 +1,22 @@
-stewbeet.dependencies package
-=============================
+📦 dependencies
+============================
 
 .. automodule:: stewbeet.dependencies
-   :members:
-   :private-members:
-   :show-inheritance:
-   :undoc-members:
 
-Submodules
-----------
+download_manager
+--------------------------------
 
-.. toctree::
-   :maxdepth: 4
+.. automodule:: stewbeet.dependencies.download_manager
+   :members: BUILD_CACHE, MODRINTH_API_BASE, SMITHED_API_BASE, DownloadedLib, get_lib_paths, latest_smithed_compatible, lib_tasks, lookup_static, mc_compatible, mc_floats, mc_str, mc_tuple, modrinth_older_versions, modrinth_versions, parse_version, pick_smithed_version, resolve_modrinth_lib, resolve_smithed_lib, resolve_static_lib, version_str
 
-   stewbeet.dependencies.download_manager
-   stewbeet.dependencies.network
-   stewbeet.dependencies.official_libs
+network
+--------------
+
+.. automodule:: stewbeet.dependencies.network
+   :members: CONNECTIVITY, CONNECTIVITY_LOCK, DOWNLOAD_ATTEMPTS, DOWNLOAD_DELAY, DOWNLOAD_LOCKS, DOWNLOAD_LOCKS_GUARD, HEADERS, HTTP_HINTS, PROBE_TIMEOUT, PROBE_URLS, SOCKET_HINTS, TLS_HINTS, TLS_WORKAROUND, TRANSIENT_STATUS, TransientDownloadError, attempt_download, cached_json, cached_zip, connectivity_verdict, describe_body, describe_network_error, download_lock, download_to_cache, host_answers, internet_reachable, is_transient, socket_hint
+
+official_libs
+--------------------------
+
+.. automodule:: stewbeet.dependencies.official_libs
+   :members: OFFICIAL_LIBS, detection_markers, official_lib_used

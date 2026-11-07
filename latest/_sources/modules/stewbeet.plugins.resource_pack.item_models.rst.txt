@@ -1,17 +1,14 @@
-stewbeet.plugins.resource\_pack.item\_models package
-====================================================
+🎨 item_models
+==========================
 
 .. automodule:: stewbeet.plugins.resource_pack.item_models
-   :members:
-   :private-members:
-   :show-inheritance:
-   :undoc-members:
 
-Submodules
-----------
+object
+------------
 
-.. toctree::
-   :maxdepth: 4
+.. automodule:: stewbeet.plugins.resource_pack.item_models.object
 
-   stewbeet.plugins.resource_pack.item_models.object
-   stewbeet.plugins.resource_pack.item_models.silent
+silent
+------------
+
+.. automodule:: stewbeet.plugins.resource_pack.item_models.silent

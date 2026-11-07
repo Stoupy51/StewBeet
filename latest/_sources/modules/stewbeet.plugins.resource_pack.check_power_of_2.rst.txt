@@ -1,16 +1,9 @@
-stewbeet.plugins.resource\_pack.check\_power\_of\_2 package
-===========================================================
+📐 check_power_of_2
+====================================
 
 .. automodule:: stewbeet.plugins.resource_pack.check_power_of_2
-   :members:
-   :private-members:
-   :show-inheritance:
-   :undoc-members:
 
-Submodules
-----------
+silent
+------------
 
-.. toctree::
-   :maxdepth: 4
-
-   stewbeet.plugins.resource_pack.check_power_of_2.silent
+.. automodule:: stewbeet.plugins.resource_pack.check_power_of_2.silent

@@ -1,17 +1,14 @@
-stewbeet.plugins.copy\_to\_destination package
-==============================================
+📤 copy_to_destination
+==========================================
 
 .. automodule:: stewbeet.plugins.copy_to_destination
-   :members:
-   :private-members:
-   :show-inheritance:
-   :undoc-members:
 
-Submodules
-----------
+sftp
+--------
 
-.. toctree::
-   :maxdepth: 4
+.. automodule:: stewbeet.plugins.copy_to_destination.sftp
 
-   stewbeet.plugins.copy_to_destination.sftp
-   stewbeet.plugins.copy_to_destination.silent
+silent
+------------
+
+.. automodule:: stewbeet.plugins.copy_to_destination.silent

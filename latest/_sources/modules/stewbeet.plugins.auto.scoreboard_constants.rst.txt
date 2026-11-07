@@ -1,16 +1,9 @@
-stewbeet.plugins.auto.scoreboard\_constants package
-===================================================
+🔢 scoreboard_constants
+============================================
 
 .. automodule:: stewbeet.plugins.auto.scoreboard_constants
-   :members:
-   :private-members:
-   :show-inheritance:
-   :undoc-members:
 
-Submodules
-----------
+silent
+------------
 
-.. toctree::
-   :maxdepth: 4
-
-   stewbeet.plugins.auto.scoreboard_constants.silent
+.. automodule:: stewbeet.plugins.auto.scoreboard_constants.silent

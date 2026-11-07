@@ -1,16 +1,9 @@
-stewbeet.plugins.finalyze.basic\_datapack\_structure package
-============================================================
+⏱️ basic_datapack_structure
+======================================================
 
 .. automodule:: stewbeet.plugins.finalyze.basic_datapack_structure
-   :members:
-   :private-members:
-   :show-inheritance:
-   :undoc-members:
 
-Submodules
-----------
+silent
+------------
 
-.. toctree::
-   :maxdepth: 4
-
-   stewbeet.plugins.finalyze.basic_datapack_structure.silent
+.. automodule:: stewbeet.plugins.finalyze.basic_datapack_structure.silent

@@ -1,26 +1,44 @@
-stewbeet.core.utils namespace
-=============================
-
-.. py:module:: stewbeet.core.utils
-
-Subpackages
------------
+utils
+==========
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 1
 
    stewbeet.core.utils.fonts
    stewbeet.core.utils.io
    stewbeet.core.utils.text_component
 
-Submodules
-----------
+equation
+----------------
 
-.. toctree::
-   :maxdepth: 4
+.. automodule:: stewbeet.core.utils.equation
 
-   stewbeet.core.utils.equation
-   stewbeet.core.utils.libs
-   stewbeet.core.utils.loot_table
-   stewbeet.core.utils.sounds
-   stewbeet.core.utils.versions
+libs
+--------
+
+.. automodule:: stewbeet.core.utils.libs
+
+loot_table
+--------------------
+
+.. automodule:: stewbeet.core.utils.loot_table
+
+models
+------------
+
+.. automodule:: stewbeet.core.utils.models
+
+persistent_entities
+--------------------------------------
+
+.. automodule:: stewbeet.core.utils.persistent_entities
+
+sounds
+------------
+
+.. automodule:: stewbeet.core.utils.sounds
+
+versions
+----------------
+
+.. automodule:: stewbeet.core.utils.versions

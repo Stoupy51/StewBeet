@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="utils" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="modules/stewbeet.core.utils.html" />
+<meta property="og:site_name" content="StewBeet" />
+<meta property="og:description" content="🔤 fonts, 💾 io, 💬 text_component. equation: libs: loot_table: models: Model elements of custom block displays: grown a little, turned, flipped or cut into stairs corners, keeping the world grid. per..." />
+<meta name="description" content="🔤 fonts, 💾 io, 💬 text_component. equation: libs: loot_table: models: Model elements of custom block displays: grown a little, turned, flipped or cut into stairs corners, keeping the world grid. per..." />
+<title>utils - StewBeet</title><link rel="icon" href="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png"><link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="🔤 fonts" href="stewbeet.core.utils.fonts.html"><link rel="prev" title="🚚 migrate" href="stewbeet.core.migrate.html"><script data-cfasync="false">(function(){
+    const m = localStorage.getItem("breeze-mode") || "dark";
+    const d = document.documentElement.dataset;
+    d.mode = m;
+    d.theme = m === "auto"
+      ? (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+      : m;
+  })();
+  </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8e8a900e" /><link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" /><link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" /><link rel="stylesheet" type="text/css" href="../_static/treeview.css?v=f579613a" /><link rel="stylesheet" type="text/css" href="../_static/custom.css?v=3fad17cc" /><link rel="stylesheet" type="text/css" href="../_static/styles/breeze.css?v=7c62c100" /><script defer="defer" src="../_static/scripts/breeze.js?v=dac9f8c6"></script></head>
+<body>
+  
+  
+  <div class="bz-skip-to-content"><a href="#bz-main-content">Skip to main content</a></div><header class="bz-header-main">
+  <div class="bz-header-start"><a class="bz-header-brand" href="../index.html">
+  <img class="only-light" src="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png" alt="StewBeet" />
+  <img class="only-dark" src="https://raw.githubusercontent.com/Stoupy51/StewBeet/refs/heads/main/docs/stewbeet_1024x1024.png" alt="StewBeet" />
+  <span>StewBeet</span>
+</a><div class="bz-version-switcher bz-dropdown">
+  <button
+    aria-label="Change version"
+    aria-haspopup="true"
+    aria-expanded="false"
+    data-url="https://stoupy51.github.io/stewbeet/switcher.json"
+    data-current="3.13.2"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
+      <path d="M1 7.775V2.75C1 1.784 1.784 1 2.75 1h5.025c.464 0 .91.184 1.238.513l6.25 6.25a1.75 1.75 0 0 1 0 2.474l-5.026 5.026a1.75 1.75 0 0 1-2.474 0l-6.25-6.25A1.752 1.752 0 0 1 1 7.775Zm1.5 0c0 .066.026.13.073.177l6.25 6.25a.25.25 0 0 0 .354 0l5.025-5.025a.25.25 0 0 0 0-.354l-6.25-6.25a.25.25 0 0 0-.177-.073H2.75a.25.25 0 0 0-.25.25ZM6 5a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"></path>
+    </svg>
+    <span>3.13.2</span>
+  </button>
+  <ul role="menu" aria-hidden="true"></ul>
+</div>
+  </div>
+  <div class="bz-header-end"><div id="docsearch" class="bz-search-button">
+  <a
+    href="../search.html#q"
+    aria-label="Search the docs"
+    data-tooltip="Search the docs"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 -1 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+      />
+    </svg>
+    <span>Search</span>
+    <kbd>Ctrl+K</kbd>
+  </a>
+</div><div class="bz-theme-switcher">
+  <button aria-label="Switch theme" data-tooltip="Switch theme">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="only-light" fill="currentColor">
+      <path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm5.657-8.157a.75.75 0 0 1 0 1.061l-1.061 1.06a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l1.06-1.06a.75.75 0 0 1 1.06 0Zm-9.193 9.193a.75.75 0 0 1 0 1.06l-1.06 1.061a.75.75 0 1 1-1.061-1.06l1.06-1.061a.75.75 0 0 1 1.061 0ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0ZM3 8a.75.75 0 0 1-.75.75H.75a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 3 8Zm13 0a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 16 8Zm-8 5a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13Zm3.536-1.464a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 0 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061ZM2.343 2.343a.75.75 0 0 1 1.061 0l1.06 1.061a.751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018l-1.06-1.06a.75.75 0 0 1 0-1.06Z"></path>
+    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="only-dark" fill="currentColor">
+      <path d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"></path>
+    </svg>
+  </button>
+</div><div class="bz-external-links">
+  <a
+      href="https://discord.gg/anxzu6rA9F"
+      aria-label="Discord"
+      data-tooltip="Discord"
+      target="_blank"
+    >
+    
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/></svg>
+    
+    </a>
+  <a
+      href="https://pypi.org/project/stewbeet/"
+      aria-label="PyPI"
+      data-tooltip="PyPI"
+      target="_blank"
+    >
+    
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M23.922 13.58v3.912L20.55 18.72l-.078.055.052.037 3.45-1.256.026-.036v-3.997l-.053-.036-.025.092z M23.621 5.618l-3.04 1.107v3.912l3.339-1.215V5.509zM23.92 13.457V9.544l-3.336 1.215v3.913zM20.47 14.71V10.8L17.17 12v3.913zM17.034 19.996v-3.912l-3.313 1.206v3.912zM17.17 16.057v3.868l3.314-1.206V14.85l-3.314 1.206zm2.093 1.882c-.367.134-.663-.074-.663-.463s.296-.814.663-.947c.365-.133.662.075.662.464s-.297.814-.662.946z M13.225 9.315l.365-.132-3.285-1.197-3.323 1.21.102.037 3.184 1.16zM20.507 10.664V6.751L17.17 7.965v3.913zM17.058 11.918V8.005l-3.302 1.202v3.912zM13.643 9.246l-3.336 1.215v3.913l3.336-1.215zM6.907 13.165l3.322 1.209v-3.913L6.907 9.252z M10.34 7.873l3.281 1.193V5.198l-3.28-1.193zM20.507 2.715L17.19 3.922v3.913l3.317-1.207zM16.95 3.903L13.724 2.73l-3.269 1.19 3.225 1.174zM15.365 4.606l-1.624.592v3.868l3.317-1.207V3.991l-1.693.615zm-.391 2.778c-.367.134-.662-.074-.662-.464s.295-.813.662-.946c.366-.133.663.074.663.464s-.297.813-.663.946z M10.229 18.41v-3.914l-3.322-1.209V17.2zM13.678 17.182v-3.913l-3.371 1.227v3.913z M13.756 17.154l3.3-1.2V12.04l-3.3 1.2zM13.678 21.217l-3.371 1.227v-3.912h-.078v3.912l-3.322-1.209v-3.913l-.053-.058-.025-.06-3.336-1.21v-3.948l.034.013 3.287 1.196.015-.078-3.261-1.187 3.26-1.187v-.109L3.876 9.62l-.307-.112 3.26-1.188v.877l.079-.055V6.769l3.257 1.185.058-.061L7.084 6.75l-.102-.037 3.24-1.179v-.083L6.854 6.677v.018l-.025.018v1.523L3.44 9.47v.02l-.025.017v4.007l-3.39 1.233v.019L0 14.784v3.995l.025.037 3.4 1.237.008-.006.007.01 3.4 1.238.008-.006.006.01 3.4 1.237.014-.009.012.01 3.45-1.256.026-.037-.078-.027zM3.493 9.563l3.257 1.185-3.257 1.187V9.562zM3.4 19.96L.078 18.752v-3.913l2.361.86.96.349v3.913zm.015-3.99L.335 14.85l-.182-.066 3.262-1.187v2.374zm3.399 5.231l-3.321-1.209v-3.912l3.321 1.209v3.912zM23.791 5.434l-3.21-1.17v2.338zM20.387 2.643l-3.24-1.18-3.27 1.19 3.247 1.182z"/></svg>
+    
+    </a>
+  <a
+      href="https://github.com/Stoupy51/stewbeet"
+      aria-label="GitHub"
+      data-tooltip="GitHub"
+      target="_blank"
+    >
+    
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M6.766 11.695C4.703 11.437 3.25 9.904 3.25 7.92c0-.806.281-1.677.75-2.258-.203-.532-.172-1.662.062-2.129.626-.081 1.469.258 1.969.726.594-.194 1.219-.291 1.985-.291.765 0 1.39.097 1.953.274.484-.451 1.343-.79 1.969-.709.218.435.25 1.564.046 2.113.5.613.766 1.436.766 2.274 0 1.984-1.453 3.485-3.547 3.759.531.355.891 1.129.891 2.016v1.678c0 .484.39.758.859.564C13.781 14.824 16 11.905 16 8.291 16 3.726 12.406 0 7.984 0 3.562 0 0 3.726 0 8.291c0 3.581 2.203 6.55 5.172 7.663A.595.595 0 0 0 6 15.389v-1.291c-.219.097-.5.162-.75.162-1.031 0-1.641-.581-2.078-1.662-.172-.435-.36-.693-.719-.742-.187-.016-.25-.097-.25-.193 0-.194.313-.339.625-.339.453 0 .844.29 1.25.887.313.468.641.678 1.031.678.391 0 .641-.146 1-.516.266-.275.469-.517.657-.678Z"></path></svg>
+    
+    </a>
+  </div>
+  </div>
+</header><nav class="bz-header-tabs" aria-label="Primary Navigation"><label
+  class="bz-sidebar-primary-toggle"
+  for="bz-sidebar-primary"
+  role="button"
+  tabindex="0"
+  aria-label="Toggle site navigation"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path
+      fill="none"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M3.75 6.75h16.5M3.75 12H12m-8.25 5.25h12.5"
+    />
+  </svg>
+</label><ul><li class="toctree-l1 current"><a class="reference internal" href="stewbeet.html">API reference</a></li></ul><div class="bz-dropdown">
+    <button aria-haspopup="true" aria-expanded="false">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <g
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+        >
+          <circle cx="12" cy="12" r="1" />
+          <circle cx="19" cy="12" r="1" />
+          <circle cx="5" cy="12" r="1" />
+        </g>
+      </svg>
+    </button>
+    <ul role="menu" aria-hidden="true"></ul>
+  </div>
+</nav><hr class="bz-header-hr">
+  <div class="bz-content"><aside class="bz-sidebar-primary" data-drawer="bz-sidebar-primary">
+  
+  
+    <nav class="bz-sidebar-nav" aria-label="Section Navigation"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="stewbeet.all.html"><span class="bz-emoji">🔁</span> all</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stewbeet.continuous_delivery.html"><span class="bz-emoji">🚀</span> continuous_delivery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stewbeet.contrib.html">contrib</a>
+<details><summary aria-label="Toggle submenu"></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.contrib.simplenergy.html"><span class="bz-emoji">⚡</span> simplenergy</a></li>
+</ul></details></li>
+<li class="toctree-l1 current"><a class="reference internal" href="stewbeet.core.html"><span class="bz-emoji">🧠</span> core</a>
+<details open=""><summary aria-label="Toggle submenu"></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.core.cls.html">cls</a>
+<details><summary aria-label="Toggle submenu"></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.cls.items.html">items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.cls.recipes.html">recipes</a></li>
+</ul></details></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.core.definitions_helper.html"><span class="bz-emoji">🧱</span> definitions_helper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.core.migrate.html"><span class="bz-emoji">🚚</span> migrate</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">utils</a>
+<details open=""><summary aria-label="Toggle submenu"></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.utils.fonts.html"><span class="bz-emoji">🔤</span> fonts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.utils.io.html"><span class="bz-emoji">💾</span> io</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.core.utils.text_component.html"><span class="bz-emoji">💬</span> text_component</a></li>
+</ul></details></li>
+</ul></details></li>
+<li class="toctree-l1"><a class="reference internal" href="stewbeet.dependencies.html"><span class="bz-emoji">📦</span> dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stewbeet.plugins.html">plugins</a>
+<details><summary aria-label="Toggle submenu"></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.plugins.archive.html"><span class="bz-emoji">🗜️</span> archive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.plugins.auto.html">auto</a>
+<details><summary aria-label="Toggle submenu"></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.plugins.auto.headers.html"><span class="bz-emoji">🏷️</span> headers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.plugins.auto.lang_file.html"><span class="bz-emoji">🌐</span> lang_file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.plugins.auto.scoreboard_constants.html"><span class="bz-emoji">🔢</span> scoreboard_constants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.plugins.auto.text_renders.html"><span class="bz-emoji">🖋️</span> text_renders</a></li>
+</ul></details></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.plugins.check_unused_textures.html"><span class="bz-emoji">🔍</span> check_unused_textures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.plugins.compatibilities.html">compatibilities</a>
+<details><summary aria-label="Toggle submenu"></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.plugins.compatibilities.neo_enchant.html"><span class="bz-emoji">⛏️</span> neo_enchant</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.plugins.compatibilities.simpledrawer.html"><span class="bz-emoji">🗄️</span> simpledrawer</a></li>
+</ul></details></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.plugins.compute_sha1.html"><span class="bz-emoji">🧮</span> compute_sha1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.plugins.copy_to_destination.html"><span class="bz-emoji">📤</span> copy_to_destination</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.plugins.custom_paintings.html"><span class="bz-emoji">🖼️</span> custom_paintings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.plugins.custom_recipes.html"><span class="bz-emoji">🍳</span> custom_recipes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.plugins.datapack.html">datapack</a>
+<details><summary aria-label="Toggle submenu"></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.plugins.datapack.custom_blocks.html"><span class="bz-emoji">🧱</span> custom_blocks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.plugins.datapack.loading.html"><span class="bz-emoji">⏳</span> loading</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.plugins.datapack.loot_tables.html"><span class="bz-emoji">🎁</span> loot_tables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.plugins.datapack.sorters.html"><span class="bz-emoji">🔀</span> sorters</a></li>
+</ul></details></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.plugins.finalyze.html">finalyze</a>
+<details><summary aria-label="Toggle submenu"></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.plugins.finalyze.basic_datapack_structure.html"><span class="bz-emoji">⏱️</span> basic_datapack_structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.plugins.finalyze.check_unused_textures.html"><span class="bz-emoji">↪️</span> check_unused_textures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.plugins.finalyze.custom_blocks_ticking.html"><span class="bz-emoji">🔁</span> custom_blocks_ticking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.plugins.finalyze.dependencies.html"><span class="bz-emoji">🔗</span> dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.plugins.finalyze.last_final.html"><span class="bz-emoji">🏁</span> last_final</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.plugins.finalyze.unload.html"><span class="bz-emoji">🧹</span> unload</a></li>
+</ul></details></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.plugins.ingame_manual.html"><span class="bz-emoji">📖</span> ingame_manual</a>
+<details><summary aria-label="Toggle submenu"></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.plugins.ingame_manual.pages.html"><span class="bz-emoji">📄</span> pages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.plugins.ingame_manual.recipes.html"><span class="bz-emoji">🧾</span> recipes</a>
+<details><summary aria-label="Toggle submenu"></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="stewbeet.plugins.ingame_manual.recipes.types.html"><span class="bz-emoji">🗂️</span> types</a></li>
+</ul></details></li>
+</ul></details></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.plugins.initialize.html"><span class="bz-emoji">🚀</span> initialize</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.plugins.livereload.html"><span class="bz-emoji">🔄</span> livereload</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.plugins.merge_smithed_weld.html"><span class="bz-emoji">🧬</span> merge_smithed_weld</a>
+<details><summary aria-label="Toggle submenu"></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.plugins.merge_smithed_weld.datapack.html"><span class="bz-emoji">🧬</span> datapack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.plugins.merge_smithed_weld.resource_pack.html"><span class="bz-emoji">🧬</span> resource_pack</a></li>
+</ul></details></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.plugins.resource_pack.html">resource_pack</a>
+<details><summary aria-label="Toggle submenu"></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.plugins.resource_pack.check_power_of_2.html"><span class="bz-emoji">📐</span> check_power_of_2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.plugins.resource_pack.item_models.html"><span class="bz-emoji">🎨</span> item_models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.plugins.resource_pack.sounds.html"><span class="bz-emoji">🔊</span> sounds</a></li>
+</ul></details></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.plugins.source_maps.html"><span class="bz-emoji">👃</span> source_maps</a>
+<details><summary aria-label="Toggle submenu"></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.plugins.source_maps.emit.html"><span class="bz-emoji">🗺️</span> emit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stewbeet.plugins.source_maps.mecha.html"><span class="bz-emoji">🗺️</span> mecha</a></li>
+</ul></details></li>
+<li class="toctree-l2"><a class="reference internal" href="stewbeet.plugins.verify_definitions.html"><span class="bz-emoji">💤</span> verify_definitions</a></li>
+</ul></details></li>
+</ul>
+</nav>
+  
+
+</aside><main id="bz-main-content"><header class="bz-article-header">
+  
+  
+    <nav class="bz-breadcrumbs" aria-label="Breadcrumb">
+  <ol>
+    <li class="bz-breadcrumbs-home">
+      <a href="../index.html" aria-label="Home">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M8.543 2.232a.75.75 0 0 0-1.085 0l-5.25 5.5A.75.75 0 0 0 2.75 9H4v4a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1a1 1 0 1 1 2 0v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V9h1.25a.75.75 0 0 0 .543-1.268l-5.25-5.5Z" />
+        </svg>
+      </a>
+    </li><li class="bz-breadcrumbs-parent">
+      <a href="stewbeet.html">API reference</a>
+    </li><li class="bz-breadcrumbs-parent">
+      <a href="stewbeet.core.html"> core</a>
+    </li><li class="bz-breadcrumbs-current">
+      <span>utils</span>
+    </li>
+  </ol>
+</nav>
+  
+<label
+  class="bz-sidebar-secondary-toggle"
+  for="bz-sidebar-secondary"
+  role="button"
+  tabindex="0"
+  aria-label="Toggle table of contents"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path
+      fill="none"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M3.75 6.75H20.25 M11.25 12H20.25 M7.75 17.25H20.25"
+    />
+  </svg>
+</label></header><article class="bz-article-main" role="main"><div class="bz-page-actions" role="group" aria-label="Page actions">
+  <button data-copy-source="../_sources/modules/stewbeet.core.utils.rst.txt">
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M7.024 3.75c0-.966.784-1.75 1.75-1.75H20.25c.966 0 1.75.784 1.75 1.75v11.498a1.75 1.75 0 0 1-1.75 1.75H8.774a1.75 1.75 0 0 1-1.75-1.75Zm1.75-.25a.25.25 0 0 0-.25.25v11.498c0 .139.112.25.25.25H20.25a.25.25 0 0 0 .25-.25V3.75a.25.25 0 0 0-.25-.25Z"></path><path d="M1.995 10.749a1.75 1.75 0 0 1 1.75-1.751H5.25a.75.75 0 1 1 0 1.5H3.745a.25.25 0 0 0-.25.25L3.5 20.25c0 .138.111.25.25.25h9.5a.25.25 0 0 0 .25-.25v-1.51a.75.75 0 1 1 1.5 0v1.51A1.75 1.75 0 0 1 13.25 22h-9.5A1.75 1.75 0 0 1 2 20.25l-.005-9.501Z"></path></svg>
+    <span>Copy page</span>
+  </button>
+  <div class="bz-dropdown">
+    <button
+      aria-label="More actions"
+      aria-haspopup="true"
+      aria-expanded="false"
+    ></button>
+    <ul role="menu" aria-hidden="true">
+      <li>
+        <a href="#" role="menuitem" data-copy-source="../_sources/modules/stewbeet.core.utils.rst.txt">
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M7.024 3.75c0-.966.784-1.75 1.75-1.75H20.25c.966 0 1.75.784 1.75 1.75v11.498a1.75 1.75 0 0 1-1.75 1.75H8.774a1.75 1.75 0 0 1-1.75-1.75Zm1.75-.25a.25.25 0 0 0-.25.25v11.498c0 .139.112.25.25.25H20.25a.25.25 0 0 0 .25-.25V3.75a.25.25 0 0 0-.25-.25Z"></path><path d="M1.995 10.749a1.75 1.75 0 0 1 1.75-1.751H5.25a.75.75 0 1 1 0 1.5H3.745a.25.25 0 0 0-.25.25L3.5 20.25c0 .138.111.25.25.25h9.5a.25.25 0 0 0 .25-.25v-1.51a.75.75 0 1 1 1.5 0v1.51A1.75 1.75 0 0 1 13.25 22h-9.5A1.75 1.75 0 0 1 2 20.25l-.005-9.501Z"></path></svg>
+          <span>Copy page</span>
+        </a>
+      </li>
+      <li>
+        <a href="../_sources/modules/stewbeet.core.utils.rst.txt" role="menuitem" class="bz-page-actions-external" target="_blank" rel="noopener">
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M3 3a2 2 0 0 1 2-2h9.982a2 2 0 0 1 1.414.586l4.018 4.018A2 2 0 0 1 21 7.018V21a2 2 0 0 1-2 2H4.75a.75.75 0 0 1 0-1.5H19a.5.5 0 0 0 .5-.5V8.5h-4a2 2 0 0 1-2-2v-4H5a.5.5 0 0 0-.5.5v6.25a.75.75 0 0 1-1.5 0Zm12-.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 0-.146-.336l-4.018-4.018A.5.5 0 0 0 15 2.5Z"></path><path d="M4.53 12.24a.75.75 0 0 1-.039 1.06l-2.639 2.45 2.64 2.45a.75.75 0 1 1-1.022 1.1l-3.23-3a.75.75 0 0 1 0-1.1l3.23-3a.75.75 0 0 1 1.06.04Zm3.979 1.06a.75.75 0 1 1 1.02-1.1l3.231 3a.75.75 0 0 1 0 1.1l-3.23 3a.75.75 0 1 1-1.021-1.1l2.639-2.45-2.64-2.45Z"></path></svg>
+          <span>View source</span>
+        </a>
+      </li></ul>
+  </div>
+</div><section id="utils">
+<h1>utils<a class="headerlink" href="#utils" title="Link to this heading">#</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="stewbeet.core.utils.fonts.html"><span class="bz-emoji">🔤</span> fonts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stewbeet.core.utils.io.html"><span class="bz-emoji">💾</span> io</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stewbeet.core.utils.text_component.html"><span class="bz-emoji">💬</span> text_component</a></li>
+</ul>
+</div>
+<section id="module-stewbeet.core.utils.equation">
+<span id="equation"></span><h2>equation<a class="headerlink" href="#module-stewbeet.core.utils.equation" title="Link to this heading">#</a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="stewbeet.core.utils.equation.COMPUTE_VERSION">
+<span class="sig-name descname"><span class="pre">COMPUTE_VERSION</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(26,</span> <span class="pre">3)</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/equation.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.equation.COMPUTE_VERSION" title="Link to this definition">#</a></dt>
+<dd><p>First version with <code class="docutils literal notranslate"><span class="pre">/compute</span></code> and arithmetic number providers: an equation becomes one command.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="stewbeet.core.utils.equation.PROVIDER_TYPES">
+<span class="sig-name descname"><span class="pre">PROVIDER_TYPES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'*'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'/'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'+'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'-'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'%'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">''</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'%':</span> <span class="pre">'floor_mod',</span> <span class="pre">'*':</span> <span class="pre">'mul',</span> <span class="pre">'+':</span> <span class="pre">'add',</span> <span class="pre">'-':</span> <span class="pre">'sub',</span> <span class="pre">'/':</span> <span class="pre">'floor_div'}</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/equation.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.equation.PROVIDER_TYPES" title="Link to this definition">#</a></dt>
+<dd><p>Context int provider per operator; floor_div and floor_mod round like <code class="docutils literal notranslate"><span class="pre">scoreboard</span> <span class="pre">players</span> <span class="pre">operation</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.core.utils.equation.is_macro_argument">
+<span class="sig-name descname"><span class="pre">is_macro_argument</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/equation.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.equation.is_macro_argument" title="Link to this definition">#</a></dt>
+<dd><p>Returns True if the value contains a macro argument pattern like <code class="docutils literal notranslate"><span class="pre">$(foo)</span></code>.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nf">is_macro_argument</span><span class="p">(</span><span class="s2">"$(amount)"</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nf">is_macro_argument</span><span class="p">(</span><span class="s2">"#toto"</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.core.utils.equation.get_scoreboard_set">
+<span class="sig-name descname"><span class="pre">get_scoreboard_set</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">player</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">scoreboard</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/equation.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.equation.get_scoreboard_set" title="Link to this definition">#</a></dt>
+<dd><p>Returns a <code class="docutils literal notranslate"><span class="pre">scoreboard</span> <span class="pre">players</span> <span class="pre">set</span></code> command string.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nf">get_scoreboard_set</span><span class="p">(</span><span class="s2">"#42"</span><span class="p">,</span> <span class="s2">"your_namespace.data"</span><span class="p">,</span> <span class="mi">42</span><span class="p">)</span>
+<span class="go">'scoreboard players set #42 your_namespace.data 42'</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.core.utils.equation.get_scoreboard_operation">
+<span class="sig-name descname"><span class="pre">get_scoreboard_operation</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">player</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">scoreboard</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">operator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'*'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'/'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'+'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'-'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'%'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">''</span></span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">source_scoreboard</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/equation.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.equation.get_scoreboard_operation" title="Link to this definition">#</a></dt>
+<dd><p>Returns a <code class="docutils literal notranslate"><span class="pre">scoreboard</span> <span class="pre">players</span> <span class="pre">operation</span></code> command string.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nf">get_scoreboard_operation</span><span class="p">(</span><span class="s2">"@s"</span><span class="p">,</span> <span class="s2">"your_namespace.data"</span><span class="p">,</span> <span class="s2">"*"</span><span class="p">,</span> <span class="s2">"#1000000"</span><span class="p">,</span> <span class="s2">"your_namespace.data"</span><span class="p">)</span>
+<span class="go">'scoreboard players operation @s your_namespace.data *= #1000000 your_namespace.data'</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.core.utils.equation.get_comment_token">
+<span class="sig-name descname"><span class="pre">get_comment_token</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">operator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'*'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'/'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'+'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'-'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'%'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">''</span></span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">player</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">scoreboard</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/equation.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.equation.get_comment_token" title="Link to this definition">#</a></dt>
+<dd><p>Builds one token for the equation head comment.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nf">get_comment_token</span><span class="p">(</span><span class="s2">"*"</span><span class="p">,</span> <span class="s2">"@s"</span><span class="p">,</span> <span class="s2">"some_score"</span><span class="p">)</span>
+<span class="go">'* @s some_score'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nf">get_comment_token</span><span class="p">(</span><span class="s2">"+"</span><span class="p">,</span> <span class="s2">"$(macro_arg)"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="go">'+ $(macro_arg)'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nf">get_comment_token</span><span class="p">(</span><span class="s2">""</span><span class="p">,</span> <span class="s2">"#source"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="go">'#source'</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.core.utils.equation.score_provider">
+<span class="sig-name descname"><span class="pre">score_provider</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">player</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scoreboard</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/equation.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.equation.score_provider" title="Link to this definition">#</a></dt>
+<dd><p>The number provider reading a score, None for a selector a provider cannot name.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nf">score_provider</span><span class="p">(</span><span class="s2">"@s"</span><span class="p">,</span> <span class="s2">"kills"</span><span class="p">)</span>
+<span class="go">'{type:"score",target:"this",score:"kills"}'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nf">score_provider</span><span class="p">(</span><span class="s2">"#total"</span><span class="p">,</span> <span class="s2">"kills"</span><span class="p">)</span>
+<span class="go">'{type:"score",target:{type:"fixed",name:"#total"},score:"kills"}'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nf">score_provider</span><span class="p">(</span><span class="s2">"@p"</span><span class="p">,</span> <span class="s2">"kills"</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.core.utils.equation.combine_providers">
+<span class="sig-name descname"><span class="pre">combine_providers</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">operator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'*'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'/'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'+'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'-'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'%'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">''</span></span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">left</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">right</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/equation.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.equation.combine_providers" title="Link to this definition">#</a></dt>
+<dd><p>The provider of <code class="docutils literal notranslate"><span class="pre">left</span> <span class="pre">&lt;operator&gt;</span> <span class="pre">right</span></code>, None when either side cannot be expressed.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nf">combine_providers</span><span class="p">(</span><span class="s2">"+"</span><span class="p">,</span> <span class="s2">"1"</span><span class="p">,</span> <span class="s2">"2"</span><span class="p">),</span> <span class="nf">combine_providers</span><span class="p">(</span><span class="s2">"/"</span><span class="p">,</span> <span class="s2">"7"</span><span class="p">,</span> <span class="s2">"2"</span><span class="p">)</span>
+<span class="go">('{type:"add",inputs:[1,2]}', '{type:"floor_div",left:7,right:2}')</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="stewbeet.core.utils.equation.BaseEquation">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">BaseEquation</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">target_player</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">target_scoreboard</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/equation.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.equation.BaseEquation" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Abstract base for chainable scoreboard equation builders.</p>
+<p>Subclasses implement <code class="docutils literal notranslate"><span class="pre">render_header</span></code> and may override <code class="docutils literal notranslate"><span class="pre">__str__</span></code>.
+All methods return <code class="docutils literal notranslate"><span class="pre">self</span></code> to allow method chaining.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.utils.equation.BaseEquation.player">
+<span class="sig-name descname"><span class="pre">player</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/equation.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.equation.BaseEquation.player" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.utils.equation.BaseEquation.scoreboard">
+<span class="sig-name descname"><span class="pre">scoreboard</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/equation.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.equation.BaseEquation.scoreboard" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.utils.equation.BaseEquation.ops">
+<span class="sig-name descname"><span class="pre">ops</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/equation.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.equation.BaseEquation.ops" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.utils.equation.BaseEquation.comment_parts">
+<span class="sig-name descname"><span class="pre">comment_parts</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/equation.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.equation.BaseEquation.comment_parts" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.utils.equation.BaseEquation.provider">
+<span class="sig-name descname"><span class="pre">provider</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/equation.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.equation.BaseEquation.provider" title="Link to this definition">#</a></dt>
+<dd><p>The running value as a number provider, None once an operand cannot be expressed as one.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.core.utils.equation.BaseEquation.uses_compute">
+<span class="sig-name descname"><span class="pre">uses_compute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/equation.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.equation.BaseEquation.uses_compute" title="Link to this definition">#</a></dt>
+<dd><p>Whether <code class="docutils literal notranslate"><span class="pre">str()</span></code> renders one <code class="docutils literal notranslate"><span class="pre">/compute</span></code> command instead of the scoreboard operations in <code class="docutils literal notranslate"><span class="pre">ops</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.core.utils.equation.BaseEquation.render_header">
+<span class="sig-name descname"><span class="pre">render_header</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/equation.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.equation.BaseEquation.render_header" title="Link to this definition">#</a></dt>
+<dd><p>Returns the human-readable equation comment (without the leading <code class="docutils literal notranslate"><span class="pre">&quot;#</span> <span class="pre">&quot;</span></code>).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.core.utils.equation.BaseEquation.store_target">
+<span class="sig-name descname"><span class="pre">store_target</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/equation.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.equation.BaseEquation.store_target" title="Link to this definition">#</a></dt>
+<dd><p>Where <code class="docutils literal notranslate"><span class="pre">execute</span> <span class="pre">store</span> <span class="pre">result</span></code> writes the value, ex: <code class="docutils literal notranslate"><span class="pre">&quot;score</span> <span class="pre">&#64;s</span> <span class="pre">ns.data&quot;</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.core.utils.equation.BaseEquation.apply_operation">
+<span class="sig-name descname"><span class="pre">apply_operation</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">player</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#stewbeet.core.utils.equation.BaseEquation" title="stewbeet.core.utils.equation.BaseEquation"><span class="pre">BaseEquation</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">scoreboard</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">operator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'*'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'/'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'+'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'-'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'%'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">''</span></span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">temp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'temp'</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#stewbeet.core.utils.equation.BaseEquation" title="stewbeet.core.utils.equation.BaseEquation"><span class="pre">BaseEquation</span></a></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/equation.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.equation.BaseEquation.apply_operation" title="Link to this definition">#</a></dt>
+<dd><p>Appends the scoreboard commands for one arithmetic operation.</p>
+<p>An int constant is registered in load as a <code class="docutils literal notranslate"><span class="pre">#&lt;value&gt;</span></code> fake player, and a macro argument is stored in <code class="docutils literal notranslate"><span class="pre">temp</span></code> first.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>player</strong> – A selector, fake player, int constant, macro arg, or another equation.</p></li>
+<li><p><strong>scoreboard</strong> – Source scoreboard, ignored for int/macro, <code class="docutils literal notranslate"><span class="pre">self.scoreboard</span></code> when None.</p></li>
+<li><p><strong>operator</strong> – One of <code class="docutils literal notranslate"><span class="pre">*</span></code>, <code class="docutils literal notranslate"><span class="pre">/</span></code>, <code class="docutils literal notranslate"><span class="pre">+</span></code>, <code class="docutils literal notranslate"><span class="pre">-</span></code>, or <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code> (for assignment via operation).</p></li>
+</ul>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">eq</span> <span class="o">=</span> <span class="nc">BaseEquation</span><span class="p">(</span><span class="s2">"@s"</span><span class="p">)</span>  <span class="c1"># Its scoreboard defaults to {ctx.project_id}.data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">eq</span><span class="o">.</span><span class="nf">apply_operation</span><span class="p">(</span><span class="s2">"other_player"</span><span class="p">,</span> <span class="s2">"other_scoreboard"</span><span class="p">,</span> <span class="s2">"/"</span><span class="p">)</span><span class="o">.</span><span class="n">ops</span>
+<span class="go">['scoreboard players operation @s your_namespace.data /= other_player other_scoreboard']</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.core.utils.equation.BaseEquation.set">
+<span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">player</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">scoreboard</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#stewbeet.core.utils.equation.BaseEquation" title="stewbeet.core.utils.equation.BaseEquation"><span class="pre">BaseEquation</span></a></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/equation.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.equation.BaseEquation.set" title="Link to this definition">#</a></dt>
+<dd><p>Sets the scoreboard value (assignment, not operation), should be used for the first operation in the chain.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>player</strong> – The value to assign. Can be an int, a macro arg, or a player/selector.</p></li>
+<li><p><strong>scoreboard</strong> – Source scoreboard (ignored for int/macro).</p></li>
+</ul>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Setting @s in your_namespace.data to 42 and checking the generated commands with .ops</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nc">BaseEquation</span><span class="p">(</span><span class="s2">"@s"</span><span class="p">)</span><span class="o">.</span><span class="nf">set</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span><span class="o">.</span><span class="n">ops</span>
+<span class="go">['scoreboard players set @s your_namespace.data 42']</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Setting @s in your_namespace.data to a macro argument and checking the generated commands with .ops</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nc">BaseEquation</span><span class="p">(</span><span class="s2">"@s"</span><span class="p">)</span><span class="o">.</span><span class="nf">set</span><span class="p">(</span><span class="s2">"$(macro_value)"</span><span class="p">)</span><span class="o">.</span><span class="n">ops</span>
+<span class="go">['$scoreboard players set @s your_namespace.data $(macro_value)']</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.core.utils.equation.BaseEquation.multiply">
+<span class="sig-name descname"><span class="pre">multiply</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">player</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#stewbeet.core.utils.equation.BaseEquation" title="stewbeet.core.utils.equation.BaseEquation"><span class="pre">BaseEquation</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">scoreboard</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#stewbeet.core.utils.equation.BaseEquation" title="stewbeet.core.utils.equation.BaseEquation"><span class="pre">BaseEquation</span></a></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/equation.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.equation.BaseEquation.multiply" title="Link to this definition">#</a></dt>
+<dd><p>Multiplies the current scoreboard value. See <code class="docutils literal notranslate"><span class="pre">apply_operation</span></code> for details.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.core.utils.equation.BaseEquation.divide">
+<span class="sig-name descname"><span class="pre">divide</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">player</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#stewbeet.core.utils.equation.BaseEquation" title="stewbeet.core.utils.equation.BaseEquation"><span class="pre">BaseEquation</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">scoreboard</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#stewbeet.core.utils.equation.BaseEquation" title="stewbeet.core.utils.equation.BaseEquation"><span class="pre">BaseEquation</span></a></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/equation.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.equation.BaseEquation.divide" title="Link to this definition">#</a></dt>
+<dd><p>Divides the current scoreboard value. See <code class="docutils literal notranslate"><span class="pre">apply_operation</span></code> for details .</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.core.utils.equation.BaseEquation.add">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">player</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#stewbeet.core.utils.equation.BaseEquation" title="stewbeet.core.utils.equation.BaseEquation"><span class="pre">BaseEquation</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">scoreboard</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#stewbeet.core.utils.equation.BaseEquation" title="stewbeet.core.utils.equation.BaseEquation"><span class="pre">BaseEquation</span></a></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/equation.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.equation.BaseEquation.add" title="Link to this definition">#</a></dt>
+<dd><p>Adds to the current scoreboard value. See <code class="docutils literal notranslate"><span class="pre">apply_operation</span></code> for details.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.core.utils.equation.BaseEquation.subtract">
+<span class="sig-name descname"><span class="pre">subtract</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">player</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#stewbeet.core.utils.equation.BaseEquation" title="stewbeet.core.utils.equation.BaseEquation"><span class="pre">BaseEquation</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">scoreboard</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#stewbeet.core.utils.equation.BaseEquation" title="stewbeet.core.utils.equation.BaseEquation"><span class="pre">BaseEquation</span></a></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/equation.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.equation.BaseEquation.subtract" title="Link to this definition">#</a></dt>
+<dd><p>Subtracts from the current scoreboard value. See <code class="docutils literal notranslate"><span class="pre">apply_operation</span></code> for details.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stewbeet.core.utils.equation.BaseEquation.modulo">
+<span class="sig-name descname"><span class="pre">modulo</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">player</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#stewbeet.core.utils.equation.BaseEquation" title="stewbeet.core.utils.equation.BaseEquation"><span class="pre">BaseEquation</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">scoreboard</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#stewbeet.core.utils.equation.BaseEquation" title="stewbeet.core.utils.equation.BaseEquation"><span class="pre">BaseEquation</span></a></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/equation.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.equation.BaseEquation.modulo" title="Link to this definition">#</a></dt>
+<dd><p>Applies modulo to the current scoreboard value. See <code class="docutils literal notranslate"><span class="pre">apply_operation</span></code> for details.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="stewbeet.core.utils.equation.ScoreboardEquation">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ScoreboardEquation</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">player</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">scoreboard</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/equation.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.equation.ScoreboardEquation" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#stewbeet.core.utils.equation.BaseEquation" title="stewbeet.core.utils.equation.BaseEquation"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEquation</span></code></a></p>
+<p>Equation whose result is stored directly in a scoreboard objective.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Simple equation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nc">str</span><span class="p">((</span><span class="nc">ScoreboardEquation</span><span class="p">(</span><span class="s2">"@s"</span><span class="p">)</span><span class="o">.</span><span class="nf">set</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">+</span> <span class="mi">5</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">3</span> <span class="o">%</span> <span class="mi">4</span> <span class="o">-</span> <span class="s2">"#toto"</span><span class="p">)</span><span class="o">.</span><span class="nf">splitlines</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">'# scoreboard @s your_namespace.data = 10 + 5 * -2 / 3 % 4 - #toto'</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># From 26.3 the whole chain is one /compute command of .provider, a macro line when an operand is a macro argument</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">durability</span> <span class="o">=</span> <span class="nc">ScoreboardEquation</span><span class="p">(</span><span class="s2">"#temp_durability"</span><span class="p">,</span> <span class="s2">"some_score"</span><span class="p">)</span><span class="o">.</span><span class="nf">set</span><span class="p">(</span><span class="s2">"-$(amount)"</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000000</span> <span class="o">/</span> <span class="s2">"$(max_damage)"</span> <span class="o">-</span> <span class="s2">"#toto"</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nc">str</span><span class="p">(</span><span class="n">durability</span><span class="p">)</span><span class="o">.</span><span class="nf">splitlines</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="nf">split</span><span class="p">(</span><span class="s2">" compute default integer "</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">'$execute store result score #temp_durability some_score run'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="nc">ScoreboardEquation</span><span class="p">(</span><span class="s2">"#x"</span><span class="p">)</span><span class="o">.</span><span class="nf">set</span><span class="p">(</span><span class="s2">"$(amount)"</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000000</span> <span class="o">/</span> <span class="s2">"$(max_damage)"</span><span class="p">)</span><span class="o">.</span><span class="n">provider</span>
+<span class="go">'{type:"floor_div",left:{type:"mul",inputs:[$(amount),1000000]},right:$(max_damage)}'</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Before 26.3, or with an operand a number provider cannot name, the scoreboard operations in .ops are written instead</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">durability</span><span class="o">.</span><span class="n">ops</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+<span class="go">$scoreboard players set #temp_durability some_score -$(amount)</span>
+<span class="go">scoreboard players operation #temp_durability some_score *= #1000000 your_namespace.data</span>
+<span class="go">$scoreboard players set #temp_divide your_namespace.data $(max_damage)</span>
+<span class="go">scoreboard players operation #temp_durability some_score /= #temp_divide your_namespace.data</span>
+<span class="go">scoreboard players operation #temp_durability some_score -= #toto some_score</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nc">str</span><span class="p">(</span><span class="nc">ScoreboardEquation</span><span class="p">(</span><span class="s2">"@p"</span><span class="p">)</span><span class="o">.</span><span class="nf">set</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"@a"</span><span class="p">))</span>
+<span class="go"># scoreboard @p your_namespace.data = 1 + @a</span>
+<span class="go">scoreboard players set @p your_namespace.data 1</span>
+<span class="go">scoreboard players operation @p your_namespace.data += @a your_namespace.data</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Combining two Equation instances: the inner one is computed inline</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">eq4</span> <span class="o">=</span> <span class="nc">ScoreboardEquation</span><span class="p">(</span><span class="s2">"@s"</span><span class="p">)</span><span class="o">.</span><span class="nf">set</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">*</span> <span class="mi">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">eq5</span> <span class="o">=</span> <span class="nc">ScoreboardEquation</span><span class="p">(</span><span class="s2">"#toto"</span><span class="p">,</span> <span class="s2">"some_score"</span><span class="p">)</span><span class="o">.</span><span class="nf">set</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">eq4</span> <span class="o">*</span> <span class="n">eq5</span><span class="p">)</span><span class="o">.</span><span class="n">provider</span>
+<span class="go">'{type:"mul",inputs:[{type:"mul",inputs:[10,5]},{type:"mul",inputs:[20,2]}]}'</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="stewbeet.core.utils.equation.StorageEquation">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">StorageEquation</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">storage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">storage_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'double'</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/equation.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.equation.StorageEquation" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#stewbeet.core.utils.equation.BaseEquation" title="stewbeet.core.utils.equation.BaseEquation"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEquation</span></code></a></p>
+<p>Equation that computes via a temp scoreboard, then stores the result in a storage path.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">scale</span></code> factor is applied when flushing the temp scoreboard value to storage.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">equation</span> <span class="o">=</span> <span class="nc">StorageEquation</span><span class="p">(</span><span class="s2">"ns:storage"</span><span class="p">,</span> <span class="s2">"result"</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">,</span> <span class="s2">"double"</span><span class="p">)</span><span class="o">.</span><span class="nf">set</span><span class="p">(</span><span class="s2">"-$(amount)"</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nc">str</span><span class="p">(</span><span class="n">equation</span><span class="p">))</span>
+<span class="go"># storage ns:storage result = (-$(amount) * 1000) * 0.001000</span>
+<span class="go">$execute store result storage ns:storage result double 0.001000 run compute default integer {type:"mul",inputs:[-$(amount),1000]}</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.utils.equation.StorageEquation.storage">
+<span class="sig-name descname"><span class="pre">storage</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/equation.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.equation.StorageEquation.storage" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.utils.equation.StorageEquation.path">
+<span class="sig-name descname"><span class="pre">path</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/equation.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.equation.StorageEquation.path" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.utils.equation.StorageEquation.scale">
+<span class="sig-name descname"><span class="pre">scale</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/equation.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.equation.StorageEquation.scale" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.core.utils.equation.StorageEquation.storage_type">
+<span class="sig-name descname"><span class="pre">storage_type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/equation.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.equation.StorageEquation.storage_type" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-stewbeet.core.utils.libs">
+<span id="libs"></span><h2>libs<a class="headerlink" href="#module-stewbeet.core.utils.libs" title="Link to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.core.utils.libs.lib_archives">
+<span class="sig-name descname"><span class="pre">lib_archives</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">ctx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Context</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">pack_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/libs.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.libs.lib_archives" title="Link to this definition">#</a></dt>
+<dd><p>Library archives of a pack type, minus the ones filtered out by <code class="docutils literal notranslate"><span class="pre">meta.stewbeet.libs_exclude_patterns</span></code>.</p>
+<p>Patterns are matched against the archive path relative to the libs folder, ex: “resource_pack/<em>ARAM</em>.zip”.
+An excluded archive is invisible to every plugin: it is neither welded nor copied to a destination.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ctx</strong> – The beet context.</p></li>
+<li><p><strong>pack_type</strong> – Either “datapack” or “resource_pack”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Absolute paths of the archives to ship, in glob order.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-stewbeet.core.utils.loot_table">
+<span id="loot-table"></span><h2>loot_table<a class="headerlink" href="#module-stewbeet.core.utils.loot_table" title="Link to this heading">#</a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="stewbeet.core.utils.loot_table.TYPED_LOOT_VERSION">
+<span class="sig-name descname"><span class="pre">TYPED_LOOT_VERSION</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(26,</span> <span class="pre">3)</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/loot_table.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.loot_table.TYPED_LOOT_VERSION" title="Link to this definition">#</a></dt>
+<dd><p>First Minecraft version dispatching loot functions and conditions on “type”, with single “condition” and “modifier” fields.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.core.utils.loot_table.result_count_to_suffix">
+<span class="sig-name descname"><span class="pre">result_count_to_suffix</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">result_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">JsonDict</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/loot_table.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.loot_table.result_count_to_suffix" title="Link to this definition">#</a></dt>
+<dd><p>Suffix of the loot table path giving result_count items, an int or a {“min”, “max”} dict for random counts.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nf">result_count_to_suffix</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">''</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nf">result_count_to_suffix</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="go">'_x5'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nf">result_count_to_suffix</span><span class="p">({</span><span class="s2">"min"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">"max"</span><span class="p">:</span> <span class="mi">6</span><span class="p">})</span>
+<span class="go">'_x4to6'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nf">result_count_to_suffix</span><span class="p">({</span><span class="s2">"min"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"max"</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+<span class="go">'_x3'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nf">result_count_to_suffix</span><span class="p">({</span><span class="s2">"min"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"max"</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+<span class="go">''</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nf">result_count_to_suffix</span><span class="p">({})</span>
+<span class="go">''</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.core.utils.loot_table.loot_function">
+<span class="sig-name descname"><span class="pre">loot_function</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">fields</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">JsonDict</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/loot_table.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.loot_table.loot_function" title="Link to this definition">#</a></dt>
+<dd><p>Loot function (item modifier) keyed the way the targeted Minecraft version reads it.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nf">loot_function</span><span class="p">(</span><span class="s2">"minecraft:set_count"</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">{'type': 'minecraft:set_count', 'count': 2}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.core.utils.loot_table.loot_condition">
+<span class="sig-name descname"><span class="pre">loot_condition</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">condition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">fields</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">JsonDict</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/loot_table.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.loot_table.loot_condition" title="Link to this definition">#</a></dt>
+<dd><p>Loot condition (predicate) keyed the way the targeted Minecraft version reads it.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nf">loot_condition</span><span class="p">(</span><span class="s2">"minecraft:random_chance"</span><span class="p">,</span> <span class="n">chance</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="go">{'type': 'minecraft:random_chance', 'chance': 0.5}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.core.utils.loot_table.loot_modifiers">
+<span class="sig-name descname"><span class="pre">loot_modifiers</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">JsonDict</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">JsonDict</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/loot_table.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.loot_table.loot_modifiers" title="Link to this definition">#</a></dt>
+<dd><p>Field applying loot functions to a pool entry, to unpack into that entry.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nf">loot_modifiers</span><span class="p">([</span><span class="nf">loot_function</span><span class="p">(</span><span class="s2">"minecraft:set_count"</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">2</span><span class="p">)])</span>
+<span class="go">{'modifier': [{'type': 'minecraft:set_count', 'count': 2}]}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.core.utils.loot_table.float_score">
+<span class="sig-name descname"><span class="pre">float_score</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">objective</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'this'</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">JsonDict</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/loot_table.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.loot_table.float_score" title="Link to this definition">#</a></dt>
+<dd><p>Float number provider reading a score, for fields such as set_custom_model_data floats.</p>
+<p>Since 26.3 only integer providers read scores, so the score is converted with from_int.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nf">float_score</span><span class="p">(</span><span class="s2">"energy.data"</span><span class="p">)</span>
+<span class="go">{'type': 'minecraft:from_int', 'input': {'type': 'minecraft:score', 'target': 'this', 'score': 'energy.data'}}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.core.utils.loot_table.advancement_conditions">
+<span class="sig-name descname"><span class="pre">advancement_conditions</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">conditions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">JsonDict</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">JsonDict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">JsonDict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/loot_table.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.loot_table.advancement_conditions" title="Link to this definition">#</a></dt>
+<dd><p>Value of an advancement trigger field holding conditions, such as “player” or “location”.</p>
+<p>A list before 26.3, a single condition since, wrapped in all_of when there are several.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nf">advancement_conditions</span><span class="p">([</span><span class="nf">loot_condition</span><span class="p">(</span><span class="s2">"minecraft:random_chance"</span><span class="p">,</span> <span class="n">chance</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)])</span>
+<span class="go">{'type': 'minecraft:random_chance', 'chance': 0.5}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.core.utils.loot_table.entity_type_field">
+<span class="sig-name descname"><span class="pre">entity_type_field</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">entity_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">JsonDict</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/loot_table.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.loot_table.entity_type_field" title="Link to this definition">#</a></dt>
+<dd><p>Entity predicate field matching an entity type or tag, to unpack into the predicate.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nf">entity_type_field</span><span class="p">(</span><span class="s2">"#minecraft:arrows"</span><span class="p">)</span>
+<span class="go">{'entity_type': '#minecraft:arrows'}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.core.utils.loot_table.advancement_entity">
+<span class="sig-name descname"><span class="pre">advancement_entity</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">predicate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">JsonDict</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">JsonDict</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/loot_table.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.loot_table.advancement_entity" title="Link to this definition">#</a></dt>
+<dd><p>Value of an advancement trigger field matching an entity, such as “entity” or “player”.</p>
+<p>A bare entity predicate before 26.3, an entity_properties condition on it since.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nf">advancement_entity</span><span class="p">({</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"minecraft:pig"</span><span class="p">})[</span><span class="s2">"predicate"</span><span class="p">]</span>
+<span class="go">{'type': 'minecraft:pig'}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="module-stewbeet.core.utils.models">
+<span id="models"></span><h2>models<a class="headerlink" href="#module-stewbeet.core.utils.models" title="Link to this heading">#</a></h2>
+<p>Model elements of custom block displays: grown a little, turned, flipped or cut into stairs corners, keeping the world grid.</p>
+<dl class="py data">
+<dt class="sig sig-object py" id="stewbeet.core.utils.models.CUBE_ELEMENT">
+<span class="sig-name descname"><span class="pre">CUBE_ELEMENT</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">JsonDict</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'faces':</span> <span class="pre">{'down':</span> <span class="pre">{'cullface':</span> <span class="pre">'down',</span> <span class="pre">'texture':</span> <span class="pre">'#down'},</span> <span class="pre">'east':</span> <span class="pre">{'cullface':</span> <span class="pre">'east',</span> <span class="pre">'texture':</span> <span class="pre">'#east'},</span> <span class="pre">'north':</span> <span class="pre">{'cullface':</span> <span class="pre">'north',</span> <span class="pre">'texture':</span> <span class="pre">'#north'},</span> <span class="pre">'south':</span> <span class="pre">{'cullface':</span> <span class="pre">'south',</span> <span class="pre">'texture':</span> <span class="pre">'#south'},</span> <span class="pre">'up':</span> <span class="pre">{'cullface':</span> <span class="pre">'up',</span> <span class="pre">'texture':</span> <span class="pre">'#up'},</span> <span class="pre">'west':</span> <span class="pre">{'cullface':</span> <span class="pre">'west',</span> <span class="pre">'texture':</span> <span class="pre">'#west'}},</span> <span class="pre">'from':</span> <span class="pre">[0,</span> <span class="pre">0,</span> <span class="pre">0],</span> <span class="pre">'to':</span> <span class="pre">[16,</span> <span class="pre">16,</span> <span class="pre">16]}</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/models.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.models.CUBE_ELEMENT" title="Link to this definition">#</a></dt>
+<dd><p>The element of <code class="docutils literal notranslate"><span class="pre">block/cube</span></code>, which every cube shaped vanilla model inherits.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="stewbeet.core.utils.models.UVLOCK_TURNS">
+<span class="sig-name descname"><span class="pre">UVLOCK_TURNS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{2:</span> <span class="pre">90,</span> <span class="pre">3:</span> <span class="pre">180,</span> <span class="pre">4:</span> <span class="pre">270}</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/models.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.models.UVLOCK_TURNS" title="Link to this definition">#</a></dt>
+<dd><p>Degrees about Y of the model copy shown for each <code class="docutils literal notranslate"><span class="pre">#rotation</span></code> score, 1 (a placer looking south) showing the model itself.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="stewbeet.core.utils.models.CUBE_PARENTS">
+<span class="sig-name descname"><span class="pre">CUBE_PARENTS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('block/cube',</span> <span class="pre">'block/cube_all',</span> <span class="pre">'block/cube_bottom_top',</span> <span class="pre">'block/cube_column',</span> <span class="pre">'block/orientable',</span> <span class="pre">'block/orientable_with_bottom')</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/models.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.models.CUBE_PARENTS" title="Link to this definition">#</a></dt>
+<dd><p>Vanilla models drawing <code class="docutils literal notranslate"><span class="pre">CUBE_ELEMENT</span></code>, without their optional “minecraft:” namespace.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.core.utils.models.cake_element">
+<span class="sig-name descname"><span class="pre">cake_element</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">bites</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">JsonDict</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/models.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.models.cake_element" title="Link to this definition">#</a></dt>
+<dd><p>The element of <code class="docutils literal notranslate"><span class="pre">block/cake</span></code> (0 bites) or <code class="docutils literal notranslate"><span class="pre">block/cake_slice&lt;bites&gt;</span></code>.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nf">cake_element</span><span class="p">(</span><span class="mi">2</span><span class="p">)[</span><span class="s2">"from"</span><span class="p">],</span> <span class="nf">cake_element</span><span class="p">(</span><span class="mi">2</span><span class="p">)[</span><span class="s2">"faces"</span><span class="p">][</span><span class="s2">"west"</span><span class="p">]</span>
+<span class="go">([5, 0, 1], {'texture': '#inside'})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.core.utils.models.vanilla_elements">
+<span class="sig-name descname"><span class="pre">vanilla_elements</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">JsonList</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/models.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.models.vanilla_elements" title="Link to this definition">#</a></dt>
+<dd><p>The elements a vanilla parent model draws, None when it is not one of the cube or cake models.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nf">vanilla_elements</span><span class="p">(</span><span class="s2">"minecraft:block/cube_all"</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="n">CUBE_ELEMENT</span><span class="p">],</span> <span class="nf">vanilla_elements</span><span class="p">(</span><span class="s2">"block/stairs"</span><span class="p">)</span>
+<span class="go">(True, None)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.core.utils.models.with_margin">
+<span class="sig-name descname"><span class="pre">with_margin</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">element</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">JsonDict</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">JsonDict</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/models.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.models.with_margin" title="Link to this definition">#</a></dt>
+<dd><p>The element scaled by <code class="docutils literal notranslate"><span class="pre">scale</span></code> about its own center, so none of its faces lies on a face of the host block.</p>
+<p>Each face keeps the UVs its original size gave it: the game would read UVs past the texture’s edges from the grown size.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">faces</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"north"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"texture"</span><span class="p">:</span> <span class="s2">"#side"</span><span class="p">},</span> <span class="s2">"up"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"uv"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">element</span> <span class="o">=</span> <span class="nf">with_margin</span><span class="p">({</span><span class="s2">"from"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="s2">"to"</span><span class="p">:</span> <span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span> <span class="s2">"faces"</span><span class="p">:</span> <span class="n">faces</span><span class="p">},</span> <span class="mf">1.25</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">element</span><span class="p">[</span><span class="s2">"from"</span><span class="p">],</span> <span class="n">element</span><span class="p">[</span><span class="s2">"to"</span><span class="p">],</span> <span class="n">element</span><span class="p">[</span><span class="s2">"faces"</span><span class="p">][</span><span class="s2">"north"</span><span class="p">][</span><span class="s2">"uv"</span><span class="p">],</span> <span class="n">element</span><span class="p">[</span><span class="s2">"faces"</span><span class="p">][</span><span class="s2">"up"</span><span class="p">][</span><span class="s2">"uv"</span><span class="p">]</span>
+<span class="go">([-2.0, -1.0, 5.5], [18.0, 9.0, 10.5], [0, 8, 16, 16], [0, 0, 1, 1])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.core.utils.models.model_with_margin">
+<span class="sig-name descname"><span class="pre">model_with_margin</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">JsonDict</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">JsonDict</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/models.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.models.model_with_margin" title="Link to this definition">#</a></dt>
+<dd><p>The model with each of its own elements scaled by <code class="docutils literal notranslate"><span class="pre">with_margin</span></code>, unchanged when it has none.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.core.utils.models.flipped">
+<span class="sig-name descname"><span class="pre">flipped</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">element</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">JsonDict</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">JsonDict</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/models.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.models.flipped" title="Link to this definition">#</a></dt>
+<dd><p>A box element mirrored about the horizontal plane through the block center, as a block placed on the upper half is.</p>
+<p>Its faces lose their UVs, so they map the texture from the world grid.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">faces</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"up"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"texture"</span><span class="p">:</span> <span class="s2">"#top"</span><span class="p">,</span> <span class="s2">"cullface"</span><span class="p">:</span> <span class="s2">"up"</span><span class="p">},</span> <span class="s2">"down"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"texture"</span><span class="p">:</span> <span class="s2">"#bottom"</span><span class="p">},</span> <span class="s2">"north"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"uv"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">]}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">element</span> <span class="o">=</span> <span class="nf">flipped</span><span class="p">({</span><span class="s2">"from"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="s2">"to"</span><span class="p">:</span> <span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">16</span><span class="p">],</span> <span class="s2">"faces"</span><span class="p">:</span> <span class="n">faces</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">element</span><span class="p">[</span><span class="s2">"from"</span><span class="p">],</span> <span class="n">element</span><span class="p">[</span><span class="s2">"to"</span><span class="p">],</span> <span class="n">element</span><span class="p">[</span><span class="s2">"faces"</span><span class="p">]</span>
+<span class="go">([0, 8, 0], [16, 16, 16], {'down': {'texture': '#top', 'cullface': 'down'}, 'up': {'texture': '#bottom'}, 'north': {}})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.core.utils.models.stairs_corner">
+<span class="sig-name descname"><span class="pre">stairs_corner</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">elements</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">JsonList</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">JsonList</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/models.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.models.stairs_corner" title="Link to this definition">#</a></dt>
+<dd><p>The elements of a stairs corner, from those of straight stairs facing south, its faces mapping the texture from the world grid.</p>
+<p>An inner corner adds the stairs turned a quarter towards its side, an outer corner keeps what both have in common.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">faces</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"up"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"texture"</span><span class="p">:</span> <span class="s2">"#t"</span><span class="p">,</span> <span class="s2">"uv"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">]}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">straight</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">"from"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="s2">"to"</span><span class="p">:</span> <span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">16</span><span class="p">],</span> <span class="s2">"faces"</span><span class="p">:</span> <span class="n">faces</span><span class="p">},</span> <span class="p">{</span><span class="s2">"from"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span> <span class="s2">"to"</span><span class="p">:</span> <span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">],</span> <span class="s2">"faces"</span><span class="p">:</span> <span class="n">faces</span><span class="p">}]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[(</span><span class="n">e</span><span class="p">[</span><span class="s2">"from"</span><span class="p">],</span> <span class="n">e</span><span class="p">[</span><span class="s2">"to"</span><span class="p">])</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nf">stairs_corner</span><span class="p">(</span><span class="n">straight</span><span class="p">,</span> <span class="s2">"outer_right"</span><span class="p">)]</span>
+<span class="go">[([0, 0, 0], [16, 8, 16]), ([0, 8, 8], [8.0, 16, 16])]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[(</span><span class="n">e</span><span class="p">[</span><span class="s2">"from"</span><span class="p">],</span> <span class="n">e</span><span class="p">[</span><span class="s2">"to"</span><span class="p">])</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nf">stairs_corner</span><span class="p">(</span><span class="n">straight</span><span class="p">,</span> <span class="s2">"inner_left"</span><span class="p">)][</span><span class="mi">2</span><span class="p">:]</span>
+<span class="go">[([8.0, 8.0, 0.0], [16.0, 16.0, 16.0])]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.core.utils.models.overlap">
+<span class="sig-name descname"><span class="pre">overlap</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">element</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">JsonDict</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">other</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">JsonDict</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">JsonDict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/models.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.models.overlap" title="Link to this definition">#</a></dt>
+<dd><p>The part of a box element inside another, its faces without UVs, None when they do not overlap.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.core.utils.models.turned">
+<span class="sig-name descname"><span class="pre">turned</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/models.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.models.turned" title="Link to this definition">#</a></dt>
+<dd><p>A vector turned as a blockstate turns its model.</p>
+<p>It turns <code class="docutils literal notranslate"><span class="pre">x</span></code> degrees about the X axis, then <code class="docutils literal notranslate"><span class="pre">y</span></code> about the Y axis, clockwise seen from the positive side.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nf">turned</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">90</span><span class="p">),</span> <span class="nf">turned</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="go">((1.0, 0.0, 0.0), (0.0, -1.0, 0.0))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.core.utils.models.uv_locked">
+<span class="sig-name descname"><span class="pre">uv_locked</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">element</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">JsonDict</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">JsonDict</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/models.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.models.uv_locked" title="Link to this definition">#</a></dt>
+<dd><p>A box element turned about the block center.</p>
+<p>Its faces lose their UVs, so they map the texture from the world grid as <code class="docutils literal notranslate"><span class="pre">uvlock</span></code> does.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">faces</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"north"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"uv"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">],</span> <span class="s2">"texture"</span><span class="p">:</span> <span class="s2">"#side"</span><span class="p">}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">element</span> <span class="o">=</span> <span class="nf">uv_locked</span><span class="p">({</span><span class="s2">"from"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="s2">"to"</span><span class="p">:</span> <span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span> <span class="s2">"faces"</span><span class="p">:</span> <span class="n">faces</span><span class="p">},</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">90</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">element</span><span class="p">[</span><span class="s2">"from"</span><span class="p">],</span> <span class="n">element</span><span class="p">[</span><span class="s2">"to"</span><span class="p">],</span> <span class="n">element</span><span class="p">[</span><span class="s2">"faces"</span><span class="p">]</span>
+<span class="go">([8.0, 0.0, 0.0], [16.0, 8.0, 16.0], {'east': {'texture': '#side'}})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="module-stewbeet.core.utils.persistent_entities">
+<span id="persistent-entities"></span><h2>persistent_entities<a class="headerlink" href="#module-stewbeet.core.utils.persistent_entities" title="Link to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.core.utils.persistent_entities.persistent_item_display">
+<span class="sig-name descname"><span class="pre">persistent_item_display</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/persistent_entities.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.persistent_entities.persistent_item_display" title="Link to this definition">#</a></dt>
+<dd><p>Have the load function summon an item_display that stays in the forceloaded chunk, and give its UUID.</p>
+<p>Target it with <code class="docutils literal notranslate"><span class="pre">execute</span> <span class="pre">as</span> <span class="pre">&lt;uuid&gt;</span></code> instead of summoning and killing a temporary entity every call:
+a UUID selector is a direct lookup, and the entity is never created twice. The UUID depends only on
+the project id and the name, and the unload function kills the entity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> – Unique within the project, ex: “pulverizer_recipe”.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The UUID in its hyphenated form, usable as a selector.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-stewbeet.core.utils.sounds">
+<span id="sounds"></span><h2>sounds<a class="headerlink" href="#module-stewbeet.core.utils.sounds" title="Link to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.core.utils.sounds.add_sound">
+<span class="sig-name descname"><span class="pre">add_sound</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">ctx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Context</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">sounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sound</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Sound</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">ns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/sounds.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.sounds.add_sound" title="Link to this definition">#</a></dt>
+<dd><p>Add a sound to the resource pack, ex: <code class="docutils literal notranslate"><span class="pre">add_sound(ctx,</span> <span class="pre">Sound(&quot;path/to/sound.ogg&quot;),</span> <span class="pre">&quot;my_sound&quot;)</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sounds</strong> – A single Sound, or a dict mapping local names to Sounds.</p></li>
+<li><p><strong>name</strong> – The identifier used in /playsound command (excluding namespace)</p></li>
+<li><p><strong>ns</strong> – The namespace to write the sound to (defaults to ctx.project_id).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-stewbeet.core.utils.versions">
+<span id="versions"></span><h2>versions<a class="headerlink" href="#module-stewbeet.core.utils.versions" title="Link to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.core.utils.versions.minecraft_version_at_least">
+<span class="sig-name descname"><span class="pre">minecraft_version_at_least</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/utils/versions.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.utils.versions.minecraft_version_at_least" title="Link to this definition">#</a></dt>
+<dd><p>Whether the project targets the given Minecraft version or a later one.</p>
+<p>Projects without a “minecraft” field in their config target the latest version.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nf">minecraft_version_at_least</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">21</span><span class="p">)),</span> <span class="nf">minecraft_version_at_least</span><span class="p">((</span><span class="mi">9999</span><span class="p">,))</span>
+<span class="go">(True, False)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+</article><footer class="bz-article-footer">
+  
+  
+    <nav class="bz-related-pages" aria-label="Related pages navigation"><a class="bz-related-pages-previous" href="stewbeet.core.migrate.html" rel="prev">
+    <span>Previous</span><span class="bz-related-pages-title"> migrate</span></a><a class="bz-related-pages-next" href="stewbeet.core.utils.fonts.html" rel="next">
+    <span>Next</span>
+    <span class="bz-related-pages-title"> fonts</span>
+  </a></nav>
+  
+
+</footer><aside class="bz-sidebar-secondary" data-drawer="bz-sidebar-secondary">
+  
+  
+    <nav class="bz-sidebar-toc" aria-label="Table of contents">
+  <p>On this page</p><ul>
+<li><a class="reference internal" href="#module-stewbeet.core.utils.equation">equation</a><ul>
+<li><a class="reference internal" href="#stewbeet.core.utils.equation.COMPUTE_VERSION"><code class="docutils literal notranslate"><span class="pre">COMPUTE_​VERSION</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.equation.PROVIDER_TYPES"><code class="docutils literal notranslate"><span class="pre">PROVIDER_​TYPES</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.equation.is_macro_argument"><code class="docutils literal notranslate"><span class="pre">is_​macro_​argument()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.equation.get_scoreboard_set"><code class="docutils literal notranslate"><span class="pre">get_​scoreboard_​set()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.equation.get_scoreboard_operation"><code class="docutils literal notranslate"><span class="pre">get_​scoreboard_​operation()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.equation.get_comment_token"><code class="docutils literal notranslate"><span class="pre">get_​comment_​token()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.equation.score_provider"><code class="docutils literal notranslate"><span class="pre">score_​provider()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.equation.combine_providers"><code class="docutils literal notranslate"><span class="pre">combine_​providers()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.equation.BaseEquation"><code class="docutils literal notranslate"><span class="pre">BaseEquation</span></code></a><ul>
+<li><a class="reference internal" href="#stewbeet.core.utils.equation.BaseEquation.player"><code class="docutils literal notranslate"><span class="pre">BaseEquation​.player</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.equation.BaseEquation.scoreboard"><code class="docutils literal notranslate"><span class="pre">BaseEquation​.scoreboard</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.equation.BaseEquation.ops"><code class="docutils literal notranslate"><span class="pre">BaseEquation​.ops</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.equation.BaseEquation.comment_parts"><code class="docutils literal notranslate"><span class="pre">BaseEquation​.comment_​parts</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.equation.BaseEquation.provider"><code class="docutils literal notranslate"><span class="pre">BaseEquation​.provider</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.equation.BaseEquation.uses_compute"><code class="docutils literal notranslate"><span class="pre">BaseEquation​.uses_​compute()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.equation.BaseEquation.render_header"><code class="docutils literal notranslate"><span class="pre">BaseEquation​.render_​header()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.equation.BaseEquation.store_target"><code class="docutils literal notranslate"><span class="pre">BaseEquation​.store_​target()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.equation.BaseEquation.apply_operation"><code class="docutils literal notranslate"><span class="pre">BaseEquation​.apply_​operation()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.equation.BaseEquation.set"><code class="docutils literal notranslate"><span class="pre">BaseEquation​.set()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.equation.BaseEquation.multiply"><code class="docutils literal notranslate"><span class="pre">BaseEquation​.multiply()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.equation.BaseEquation.divide"><code class="docutils literal notranslate"><span class="pre">BaseEquation​.divide()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.equation.BaseEquation.add"><code class="docutils literal notranslate"><span class="pre">BaseEquation​.add()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.equation.BaseEquation.subtract"><code class="docutils literal notranslate"><span class="pre">BaseEquation​.subtract()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.equation.BaseEquation.modulo"><code class="docutils literal notranslate"><span class="pre">BaseEquation​.modulo()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#stewbeet.core.utils.equation.ScoreboardEquation"><code class="docutils literal notranslate"><span class="pre">ScoreboardEquation</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.equation.StorageEquation"><code class="docutils literal notranslate"><span class="pre">StorageEquation</span></code></a><ul>
+<li><a class="reference internal" href="#stewbeet.core.utils.equation.StorageEquation.storage"><code class="docutils literal notranslate"><span class="pre">StorageEquation​.storage</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.equation.StorageEquation.path"><code class="docutils literal notranslate"><span class="pre">StorageEquation​.path</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.equation.StorageEquation.scale"><code class="docutils literal notranslate"><span class="pre">StorageEquation​.scale</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.equation.StorageEquation.storage_type"><code class="docutils literal notranslate"><span class="pre">StorageEquation​.storage_​type</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-stewbeet.core.utils.libs">libs</a><ul>
+<li><a class="reference internal" href="#stewbeet.core.utils.libs.lib_archives"><code class="docutils literal notranslate"><span class="pre">lib_​archives()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-stewbeet.core.utils.loot_table">loot_​table</a><ul>
+<li><a class="reference internal" href="#stewbeet.core.utils.loot_table.TYPED_LOOT_VERSION"><code class="docutils literal notranslate"><span class="pre">TYPED_​LOOT_​VERSION</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.loot_table.result_count_to_suffix"><code class="docutils literal notranslate"><span class="pre">result_​count_​to_​suffix()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.loot_table.loot_function"><code class="docutils literal notranslate"><span class="pre">loot_​function()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.loot_table.loot_condition"><code class="docutils literal notranslate"><span class="pre">loot_​condition()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.loot_table.loot_modifiers"><code class="docutils literal notranslate"><span class="pre">loot_​modifiers()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.loot_table.float_score"><code class="docutils literal notranslate"><span class="pre">float_​score()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.loot_table.advancement_conditions"><code class="docutils literal notranslate"><span class="pre">advancement_​conditions()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.loot_table.entity_type_field"><code class="docutils literal notranslate"><span class="pre">entity_​type_​field()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.loot_table.advancement_entity"><code class="docutils literal notranslate"><span class="pre">advancement_​entity()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-stewbeet.core.utils.models">models</a><ul>
+<li><a class="reference internal" href="#stewbeet.core.utils.models.CUBE_ELEMENT"><code class="docutils literal notranslate"><span class="pre">CUBE_​ELEMENT</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.models.UVLOCK_TURNS"><code class="docutils literal notranslate"><span class="pre">UVLOCK_​TURNS</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.models.CUBE_PARENTS"><code class="docutils literal notranslate"><span class="pre">CUBE_​PARENTS</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.models.cake_element"><code class="docutils literal notranslate"><span class="pre">cake_​element()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.models.vanilla_elements"><code class="docutils literal notranslate"><span class="pre">vanilla_​elements()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.models.with_margin"><code class="docutils literal notranslate"><span class="pre">with_​margin()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.models.model_with_margin"><code class="docutils literal notranslate"><span class="pre">model_​with_​margin()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.models.flipped"><code class="docutils literal notranslate"><span class="pre">flipped()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.models.stairs_corner"><code class="docutils literal notranslate"><span class="pre">stairs_​corner()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.models.overlap"><code class="docutils literal notranslate"><span class="pre">overlap()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.models.turned"><code class="docutils literal notranslate"><span class="pre">turned()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.utils.models.uv_locked"><code class="docutils literal notranslate"><span class="pre">uv_​locked()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-stewbeet.core.utils.persistent_entities">persistent_​entities</a><ul>
+<li><a class="reference internal" href="#stewbeet.core.utils.persistent_entities.persistent_item_display"><code class="docutils literal notranslate"><span class="pre">persistent_​item_​display()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-stewbeet.core.utils.sounds">sounds</a><ul>
+<li><a class="reference internal" href="#stewbeet.core.utils.sounds.add_sound"><code class="docutils literal notranslate"><span class="pre">add_​sound()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-stewbeet.core.utils.versions">versions</a><ul>
+<li><a class="reference internal" href="#stewbeet.core.utils.versions.minecraft_version_at_least"><code class="docutils literal notranslate"><span class="pre">minecraft_​version_​at_​least()</span></code></a></li>
+</ul>
+</li>
+</ul></nav>
+  
+
+</aside></main>
+  </div>
+<footer class="bz-footer">
+  <div class="bz-footer-copyright"><p class="bz-copyright">© Copyright 2025 - 2026, Stoupy</p><p>
+    
+    
+    
+      Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a href="https://github.com/aksiome/breeze">Breeze theme</a>.
+    
+  </p>
+</div><div class="bz-external-links">
+  <a
+      href="https://discord.gg/anxzu6rA9F"
+      aria-label="Discord"
+      data-tooltip="Discord"
+      target="_blank"
+    >
+    
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/></svg>
+    
+    </a>
+  <a
+      href="https://pypi.org/project/stewbeet/"
+      aria-label="PyPI"
+      data-tooltip="PyPI"
+      target="_blank"
+    >
+    
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M23.922 13.58v3.912L20.55 18.72l-.078.055.052.037 3.45-1.256.026-.036v-3.997l-.053-.036-.025.092z M23.621 5.618l-3.04 1.107v3.912l3.339-1.215V5.509zM23.92 13.457V9.544l-3.336 1.215v3.913zM20.47 14.71V10.8L17.17 12v3.913zM17.034 19.996v-3.912l-3.313 1.206v3.912zM17.17 16.057v3.868l3.314-1.206V14.85l-3.314 1.206zm2.093 1.882c-.367.134-.663-.074-.663-.463s.296-.814.663-.947c.365-.133.662.075.662.464s-.297.814-.662.946z M13.225 9.315l.365-.132-3.285-1.197-3.323 1.21.102.037 3.184 1.16zM20.507 10.664V6.751L17.17 7.965v3.913zM17.058 11.918V8.005l-3.302 1.202v3.912zM13.643 9.246l-3.336 1.215v3.913l3.336-1.215zM6.907 13.165l3.322 1.209v-3.913L6.907 9.252z M10.34 7.873l3.281 1.193V5.198l-3.28-1.193zM20.507 2.715L17.19 3.922v3.913l3.317-1.207zM16.95 3.903L13.724 2.73l-3.269 1.19 3.225 1.174zM15.365 4.606l-1.624.592v3.868l3.317-1.207V3.991l-1.693.615zm-.391 2.778c-.367.134-.662-.074-.662-.464s.295-.813.662-.946c.366-.133.663.074.663.464s-.297.813-.663.946z M10.229 18.41v-3.914l-3.322-1.209V17.2zM13.678 17.182v-3.913l-3.371 1.227v3.913z M13.756 17.154l3.3-1.2V12.04l-3.3 1.2zM13.678 21.217l-3.371 1.227v-3.912h-.078v3.912l-3.322-1.209v-3.913l-.053-.058-.025-.06-3.336-1.21v-3.948l.034.013 3.287 1.196.015-.078-3.261-1.187 3.26-1.187v-.109L3.876 9.62l-.307-.112 3.26-1.188v.877l.079-.055V6.769l3.257 1.185.058-.061L7.084 6.75l-.102-.037 3.24-1.179v-.083L6.854 6.677v.018l-.025.018v1.523L3.44 9.47v.02l-.025.017v4.007l-3.39 1.233v.019L0 14.784v3.995l.025.037 3.4 1.237.008-.006.007.01 3.4 1.238.008-.006.006.01 3.4 1.237.014-.009.012.01 3.45-1.256.026-.037-.078-.027zM3.493 9.563l3.257 1.185-3.257 1.187V9.562zM3.4 19.96L.078 18.752v-3.913l2.361.86.96.349v3.913zm.015-3.99L.335 14.85l-.182-.066 3.262-1.187v2.374zm3.399 5.231l-3.321-1.209v-3.912l3.321 1.209v3.912zM23.791 5.434l-3.21-1.17v2.338zM20.387 2.643l-3.24-1.18-3.27 1.19 3.247 1.182z"/></svg>
+    
+    </a>
+  <a
+      href="https://github.com/Stoupy51/stewbeet"
+      aria-label="GitHub"
+      data-tooltip="GitHub"
+      target="_blank"
+    >
+    
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M10.303 16.652c-2.837-.344-4.835-2.385-4.835-5.028 0-1.074.387-2.235 1.031-3.008-.279-.709-.236-2.214.086-2.837.86-.107 2.02.344 2.708.967.816-.258 1.676-.386 2.728-.386 1.053 0 1.913.128 2.686.365.666-.602 1.848-1.053 2.708-.946.3.581.344 2.085.064 2.815.688.817 1.053 1.913 1.053 3.03 0 2.643-1.998 4.641-4.877 5.006.73.473 1.224 1.504 1.224 2.686v2.235c0 .644.537 1.01 1.182.752 3.889-1.483 6.94-5.372 6.94-10.185 0-6.081-4.942-11.044-11.022-11.044-6.081 0-10.98 4.963-10.98 11.044a10.84 10.84 0 0 0 7.112 10.206c.58.215 1.139-.172 1.139-.752v-1.719a2.768 2.768 0 0 1-1.032.215c-1.418 0-2.256-.773-2.857-2.213-.237-.58-.495-.924-.989-.988-.258-.022-.344-.129-.344-.258 0-.258.43-.451.86-.451.623 0 1.16.386 1.719 1.181.43.623.881.903 1.418.903.537 0 .881-.194 1.375-.688.365-.365.645-.687.903-.902Z"></path></svg>
+    
+    </a>
+  </div>
+</footer><a href="#" class="bz-back-to-top">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m5 12 7-7 7 7"/><path d="M12 19V5"/>
+    </svg>
+    <span>Back to top</span>
+  </a>
+  <label class="bz-overlay bz-overlay-primary" for="bz-sidebar-primary"></label>
+  <label class="bz-overlay bz-overlay-secondary" for="bz-sidebar-secondary"></label>
+  <input type="checkbox" name="bz-sidebar-primary" id="bz-sidebar-primary" aria-label="Toggle section navigation">
+  <input type="checkbox" name="bz-sidebar-secondary" id="bz-sidebar-secondary" aria-label="Toggle table of contents"><script src="../_static/documentation_options.js?v=861417a5"></script><script src="../_static/doctools.js?v=fd6eb6e6"></script><script src="../_static/sphinx_highlight.js?v=6ffebe34"></script><script src="../_static/clipboard.min.js?v=a7894cd8"></script><script src="../_static/copybutton.js?v=18a8d5f5"></script><script src="../_static/design-tabs.js?v=f930bc37"></script><script src="../_static/treeview.js?v=265ad9b8"></script></body>
+</html>

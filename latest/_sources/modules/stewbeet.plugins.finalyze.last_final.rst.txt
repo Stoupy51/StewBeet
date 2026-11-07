@@ -1,16 +1,9 @@
-stewbeet.plugins.finalyze.last\_final package
-=============================================
+🏁 last_final
+========================
 
 .. automodule:: stewbeet.plugins.finalyze.last_final
-   :members:
-   :private-members:
-   :show-inheritance:
-   :undoc-members:
 
-Submodules
-----------
+silent
+------------
 
-.. toctree::
-   :maxdepth: 4
-
-   stewbeet.plugins.finalyze.last_final.silent
+.. automodule:: stewbeet.plugins.finalyze.last_final.silent

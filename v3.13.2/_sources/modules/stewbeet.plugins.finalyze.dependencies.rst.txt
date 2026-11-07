@@ -1,0 +1,9 @@
+🔗 dependencies
+============================
+
+.. automodule:: stewbeet.plugins.finalyze.dependencies
+
+silent
+------------
+
+.. automodule:: stewbeet.plugins.finalyze.dependencies.silent

@@ -1,21 +1,40 @@
-stewbeet.contrib.simplenergy package
-====================================
+⚡ simplenergy
+==========================
 
 .. automodule:: stewbeet.contrib.simplenergy
-   :members:
-   :private-members:
-   :show-inheritance:
-   :undoc-members:
 
-Submodules
-----------
+balancing
+------------------
 
-.. toctree::
-   :maxdepth: 4
+.. automodule:: stewbeet.contrib.simplenergy.balancing
+   :members: setup_energy_balancing
 
-   stewbeet.contrib.simplenergy.balancing
-   stewbeet.contrib.simplenergy.batteries
-   stewbeet.contrib.simplenergy.cables
-   stewbeet.contrib.simplenergy.energy_lib_calls
-   stewbeet.contrib.simplenergy.gui
-   stewbeet.contrib.simplenergy.wrench
+batteries
+------------------
+
+.. automodule:: stewbeet.contrib.simplenergy.batteries
+   :members: keep_energy_for_batteries
+
+cables
+------------
+
+.. automodule:: stewbeet.contrib.simplenergy.cables
+   :members: ENERGY_CABLE_FACES, ENERGY_CABLE_MODELS_FOLDER, ITEM_CABLE_SIDES, ITEM_CABLE_TEXTURES, copy_block_texture, energy_cable_variant, energy_cables_models, item_cables_models, model_dispatch, register_servo_models, register_servo_textures, servo_mechanisms_models, servo_toggle, write_cable_update, write_energy_cable_variants, write_item_cable_variant, write_servo_functions
+
+energy_lib_calls
+--------------------------------
+
+.. automodule:: stewbeet.contrib.simplenergy.energy_lib_calls
+   :members: insert_lib_calls, write_energy_calls
+
+gui
+------
+
+.. automodule:: stewbeet.contrib.simplenergy.gui
+   :members: GuiTranslation, setup_gui_in_resource_packs
+
+wrench
+------------
+
+.. automodule:: stewbeet.contrib.simplenergy.wrench
+   :members: setup_wrench

@@ -1,16 +1,9 @@
-stewbeet.plugins.custom\_paintings package
-==========================================
+🖼️ custom_paintings
+======================================
 
 .. automodule:: stewbeet.plugins.custom_paintings
-   :members:
-   :private-members:
-   :show-inheritance:
-   :undoc-members:
 
-Submodules
-----------
+silent
+------------
 
-.. toctree::
-   :maxdepth: 4
-
-   stewbeet.plugins.custom_paintings.silent
+.. automodule:: stewbeet.plugins.custom_paintings.silent

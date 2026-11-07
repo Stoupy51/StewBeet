@@ -1,13 +1,8 @@
-stewbeet.plugins.compatibilities namespace
-==========================================
-
-.. py:module:: stewbeet.plugins.compatibilities
-
-Subpackages
------------
+compatibilities
+==============================
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 1
 
    stewbeet.plugins.compatibilities.neo_enchant
    stewbeet.plugins.compatibilities.simpledrawer

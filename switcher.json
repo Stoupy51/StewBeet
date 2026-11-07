@@ -1,0 +1,92 @@
+[
+	{
+		"name": "latest",
+		"version": "latest",
+		"url": "https://stoupy51.github.io/stewbeet/latest/"
+	},
+	{
+		"name": "v3.13.2",
+		"version": "3.13.2",
+		"url": "https://stoupy51.github.io/stewbeet/v3.13.2/"
+	},
+	{
+		"name": "v3.10.0",
+		"version": "3.10.0",
+		"url": "https://stoupy51.github.io/stewbeet/v3.10.0/"
+	},
+	{
+		"name": "v3.9.6",
+		"version": "3.9.6",
+		"url": "https://stoupy51.github.io/stewbeet/v3.9.6/"
+	},
+	{
+		"name": "v3.9.5",
+		"version": "3.9.5",
+		"url": "https://stoupy51.github.io/stewbeet/v3.9.5/"
+	},
+	{
+		"name": "v3.9.4",
+		"version": "3.9.4",
+		"url": "https://stoupy51.github.io/stewbeet/v3.9.4/"
+	},
+	{
+		"name": "v3.9.2",
+		"version": "3.9.2",
+		"url": "https://stoupy51.github.io/stewbeet/v3.9.2/"
+	},
+	{
+		"name": "v3.9.1",
+		"version": "3.9.1",
+		"url": "https://stoupy51.github.io/stewbeet/v3.9.1/"
+	},
+	{
+		"name": "v3.9.0",
+		"version": "3.9.0",
+		"url": "https://stoupy51.github.io/stewbeet/v3.9.0/"
+	},
+	{
+		"name": "v3.8.3",
+		"version": "3.8.3",
+		"url": "https://stoupy51.github.io/stewbeet/v3.8.3/"
+	},
+	{
+		"name": "v3.7.2",
+		"version": "3.7.2",
+		"url": "https://stoupy51.github.io/stewbeet/v3.7.2/"
+	},
+	{
+		"name": "v3.6.5",
+		"version": "3.6.5",
+		"url": "https://stoupy51.github.io/stewbeet/v3.6.5/"
+	},
+	{
+		"name": "v3.5.9",
+		"version": "3.5.9",
+		"url": "https://stoupy51.github.io/stewbeet/v3.5.9/"
+	},
+	{
+		"name": "v3.4.5",
+		"version": "3.4.5",
+		"url": "https://stoupy51.github.io/stewbeet/v3.4.5/"
+	},
+	{
+		"name": "v3.3.2",
+		"version": "3.3.2",
+		"url": "https://stoupy51.github.io/stewbeet/v3.3.2/"
+	},
+	{
+		"name": "v3.2.10",
+		"version": "3.2.10",
+		"url": "https://stoupy51.github.io/stewbeet/v3.2.10/"
+	},
+	{
+		"name": "v3.1.6",
+		"version": "3.1.6",
+		"url": "https://stoupy51.github.io/stewbeet/v3.1.6/"
+	},
+	{
+		"name": "v3.0.5",
+		"version": "3.0.5",
+		"url": "https://stoupy51.github.io/stewbeet/v3.0.5/"
+	}
+]

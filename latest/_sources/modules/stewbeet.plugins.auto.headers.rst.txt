@@ -1,24 +1,49 @@
-stewbeet.plugins.auto.headers package
-=====================================
+🏷️ headers
+====================
 
 .. automodule:: stewbeet.plugins.auto.headers
-   :members:
-   :private-members:
-   :show-inheritance:
-   :undoc-members:
 
-Submodules
+cache
 ----------
 
-.. toctree::
-   :maxdepth: 4
+.. automodule:: stewbeet.plugins.auto.headers.cache
 
-   stewbeet.plugins.auto.headers.cache
-   stewbeet.plugins.auto.headers.context_analyzer
-   stewbeet.plugins.auto.headers.execution_parser
-   stewbeet.plugins.auto.headers.function_analyzer
-   stewbeet.plugins.auto.headers.macro_analyzer
-   stewbeet.plugins.auto.headers.macro_parser
-   stewbeet.plugins.auto.headers.object
-   stewbeet.plugins.auto.headers.silent
-   stewbeet.plugins.auto.headers.type_inference
+context_analyzer
+--------------------------------
+
+.. automodule:: stewbeet.plugins.auto.headers.context_analyzer
+
+execution_parser
+--------------------------------
+
+.. automodule:: stewbeet.plugins.auto.headers.execution_parser
+
+function_analyzer
+----------------------------------
+
+.. automodule:: stewbeet.plugins.auto.headers.function_analyzer
+
+macro_analyzer
+----------------------------
+
+.. automodule:: stewbeet.plugins.auto.headers.macro_analyzer
+
+macro_parser
+------------------------
+
+.. automodule:: stewbeet.plugins.auto.headers.macro_parser
+
+object
+------------
+
+.. automodule:: stewbeet.plugins.auto.headers.object
+
+silent
+------------
+
+.. automodule:: stewbeet.plugins.auto.headers.silent
+
+type_inference
+----------------------------
+
+.. automodule:: stewbeet.plugins.auto.headers.type_inference

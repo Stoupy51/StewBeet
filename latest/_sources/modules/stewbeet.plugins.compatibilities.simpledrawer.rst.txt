@@ -1,16 +1,9 @@
-stewbeet.plugins.compatibilities.simpledrawer package
-=====================================================
+🗄️ simpledrawer
+==============================
 
 .. automodule:: stewbeet.plugins.compatibilities.simpledrawer
-   :members:
-   :private-members:
-   :show-inheritance:
-   :undoc-members:
 
-Submodules
-----------
+silent
+------------
 
-.. toctree::
-   :maxdepth: 4
-
-   stewbeet.plugins.compatibilities.simpledrawer.silent
+.. automodule:: stewbeet.plugins.compatibilities.simpledrawer.silent

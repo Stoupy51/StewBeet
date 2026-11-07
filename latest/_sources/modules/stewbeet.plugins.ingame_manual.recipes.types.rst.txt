@@ -1,20 +1,29 @@
-stewbeet.plugins.ingame\_manual.recipes.types package
-=====================================================
+🗂️ types
+================
 
 .. automodule:: stewbeet.plugins.ingame_manual.recipes.types
-   :members:
-   :private-members:
-   :show-inheritance:
-   :undoc-members:
 
-Submodules
-----------
+awakened_forge
+----------------------------
 
-.. toctree::
-   :maxdepth: 4
+.. automodule:: stewbeet.plugins.ingame_manual.recipes.types.awakened_forge
 
-   stewbeet.plugins.ingame_manual.recipes.types.awakened_forge
-   stewbeet.plugins.ingame_manual.recipes.types.furnace
-   stewbeet.plugins.ingame_manual.recipes.types.linear
-   stewbeet.plugins.ingame_manual.recipes.types.shaped
-   stewbeet.plugins.ingame_manual.recipes.types.smithing
+furnace
+--------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.recipes.types.furnace
+
+linear
+------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.recipes.types.linear
+
+shaped
+------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.recipes.types.shaped
+
+smithing
+----------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.recipes.types.smithing

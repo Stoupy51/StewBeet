@@ -1,21 +1,34 @@
-stewbeet.plugins.custom\_recipes package
-========================================
+🍳 custom_recipes
+================================
 
 .. automodule:: stewbeet.plugins.custom_recipes
-   :members:
-   :private-members:
-   :show-inheritance:
-   :undoc-members:
 
-Submodules
-----------
+awakened_forge
+----------------------------
 
-.. toctree::
-   :maxdepth: 4
+.. automodule:: stewbeet.plugins.custom_recipes.awakened_forge
 
-   stewbeet.plugins.custom_recipes.awakened_forge
-   stewbeet.plugins.custom_recipes.furnace
-   stewbeet.plugins.custom_recipes.pulverizer
-   stewbeet.plugins.custom_recipes.silent
-   stewbeet.plugins.custom_recipes.smithed
-   stewbeet.plugins.custom_recipes.vanilla
+furnace
+--------------
+
+.. automodule:: stewbeet.plugins.custom_recipes.furnace
+
+pulverizer
+--------------------
+
+.. automodule:: stewbeet.plugins.custom_recipes.pulverizer
+
+silent
+------------
+
+.. automodule:: stewbeet.plugins.custom_recipes.silent
+
+smithed
+--------------
+
+.. automodule:: stewbeet.plugins.custom_recipes.smithed
+
+vanilla
+--------------
+
+.. automodule:: stewbeet.plugins.custom_recipes.vanilla

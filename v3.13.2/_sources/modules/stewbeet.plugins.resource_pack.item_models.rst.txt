@@ -1,0 +1,14 @@
+🎨 item_models
+==========================
+
+.. automodule:: stewbeet.plugins.resource_pack.item_models
+
+object
+------------
+
+.. automodule:: stewbeet.plugins.resource_pack.item_models.object
+
+silent
+------------
+
+.. automodule:: stewbeet.plugins.resource_pack.item_models.silent

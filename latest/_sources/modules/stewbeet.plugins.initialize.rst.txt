@@ -1,20 +1,29 @@
-stewbeet.plugins.initialize package
-===================================
+🚀 initialize
+========================
 
 .. automodule:: stewbeet.plugins.initialize
-   :members:
-   :private-members:
-   :show-inheritance:
-   :undoc-members:
 
-Submodules
-----------
+beet_patches
+------------------------
 
-.. toctree::
-   :maxdepth: 4
+.. automodule:: stewbeet.plugins.initialize.beet_patches
 
-   stewbeet.plugins.initialize.beet_patches
-   stewbeet.plugins.initialize.project_images
-   stewbeet.plugins.initialize.silent
-   stewbeet.plugins.initialize.source_lore_colors
-   stewbeet.plugins.initialize.source_lore_font
+project_images
+----------------------------
+
+.. automodule:: stewbeet.plugins.initialize.project_images
+
+silent
+------------
+
+.. automodule:: stewbeet.plugins.initialize.silent
+
+source_lore_colors
+------------------------------------
+
+.. automodule:: stewbeet.plugins.initialize.source_lore_colors
+
+source_lore_font
+--------------------------------
+
+.. automodule:: stewbeet.plugins.initialize.source_lore_font

@@ -1,16 +1,9 @@
-stewbeet.plugins.finalyze.dependencies package
-==============================================
+🔗 dependencies
+============================
 
 .. automodule:: stewbeet.plugins.finalyze.dependencies
-   :members:
-   :private-members:
-   :show-inheritance:
-   :undoc-members:
 
-Submodules
-----------
+silent
+------------
 
-.. toctree::
-   :maxdepth: 4
-
-   stewbeet.plugins.finalyze.dependencies.silent
+.. automodule:: stewbeet.plugins.finalyze.dependencies.silent

@@ -1,16 +1,9 @@
-stewbeet.plugins.finalyze.unload package
-========================================
+🧹 unload
+================
 
 .. automodule:: stewbeet.plugins.finalyze.unload
-   :members:
-   :private-members:
-   :show-inheritance:
-   :undoc-members:
 
-Submodules
-----------
+silent
+------------
 
-.. toctree::
-   :maxdepth: 4
-
-   stewbeet.plugins.finalyze.unload.silent
+.. automodule:: stewbeet.plugins.finalyze.unload.silent

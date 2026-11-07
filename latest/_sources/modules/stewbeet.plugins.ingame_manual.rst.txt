@@ -1,37 +1,75 @@
-stewbeet.plugins.ingame\_manual package
-=======================================
+📖 ingame_manual
+==============================
 
 .. automodule:: stewbeet.plugins.ingame_manual
-   :members:
-   :private-members:
-   :show-inheritance:
-   :undoc-members:
-
-Subpackages
------------
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 1
 
    stewbeet.plugins.ingame_manual.pages
    stewbeet.plugins.ingame_manual.recipes
 
-Submodules
+api
+------
+
+.. automodule:: stewbeet.plugins.ingame_manual.api
+
+button_layout
+--------------------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.button_layout
+
+config
+------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.config
+
+dialog
+------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.dialog
+
+glyphs
+------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.glyphs
+
+images
+------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.images
+
+manual
+------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.manual
+
+manual_emit
+----------------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.manual_emit
+
+optimizer
+------------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.optimizer
+
+paths
 ----------
 
-.. toctree::
-   :maxdepth: 4
+.. automodule:: stewbeet.plugins.ingame_manual.paths
 
-   stewbeet.plugins.ingame_manual.api
-   stewbeet.plugins.ingame_manual.button_layout
-   stewbeet.plugins.ingame_manual.config
-   stewbeet.plugins.ingame_manual.dialog
-   stewbeet.plugins.ingame_manual.glyphs
-   stewbeet.plugins.ingame_manual.images
-   stewbeet.plugins.ingame_manual.manual
-   stewbeet.plugins.ingame_manual.manual_emit
-   stewbeet.plugins.ingame_manual.optimizer
-   stewbeet.plugins.ingame_manual.paths
-   stewbeet.plugins.ingame_manual.refs
-   stewbeet.plugins.ingame_manual.showcase
-   stewbeet.plugins.ingame_manual.special
+refs
+--------
+
+.. automodule:: stewbeet.plugins.ingame_manual.refs
+
+showcase
+----------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.showcase
+
+special
+--------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.special

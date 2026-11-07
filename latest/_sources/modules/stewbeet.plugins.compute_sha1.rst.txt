@@ -1,16 +1,9 @@
-stewbeet.plugins.compute\_sha1 package
-======================================
+🧮 compute_sha1
+============================
 
 .. automodule:: stewbeet.plugins.compute_sha1
-   :members:
-   :private-members:
-   :show-inheritance:
-   :undoc-members:
 
-Submodules
-----------
+silent
+------------
 
-.. toctree::
-   :maxdepth: 4
-
-   stewbeet.plugins.compute_sha1.silent
+.. automodule:: stewbeet.plugins.compute_sha1.silent

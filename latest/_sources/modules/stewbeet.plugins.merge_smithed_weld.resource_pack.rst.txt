@@ -1,16 +1,9 @@
-stewbeet.plugins.merge\_smithed\_weld.resource\_pack package
-============================================================
+🧬 resource_pack
+==============================
 
 .. automodule:: stewbeet.plugins.merge_smithed_weld.resource_pack
-   :members:
-   :private-members:
-   :show-inheritance:
-   :undoc-members:
 
-Submodules
-----------
+silent
+------------
 
-.. toctree::
-   :maxdepth: 4
-
-   stewbeet.plugins.merge_smithed_weld.resource_pack.silent
+.. automodule:: stewbeet.plugins.merge_smithed_weld.resource_pack.silent

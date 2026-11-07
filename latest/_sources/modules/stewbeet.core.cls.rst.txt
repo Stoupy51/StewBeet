@@ -1,23 +1,23 @@
-stewbeet.core.cls namespace
-===========================
-
-.. py:module:: stewbeet.core.cls
-
-Submodules
-----------
+cls
+======
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 1
 
-   stewbeet.core.cls._recipe_list
-   stewbeet.core.cls._utils
-   stewbeet.core.cls.block
-   stewbeet.core.cls.block_functions
-   stewbeet.core.cls.external_item
-   stewbeet.core.cls.ingredients
-   stewbeet.core.cls.item
-   stewbeet.core.cls.painting
-   stewbeet.core.cls.recipe
-   stewbeet.core.cls.resource
-   stewbeet.core.cls.resource_folder
-   stewbeet.core.cls.wiki_button
+   stewbeet.core.cls.items
+   stewbeet.core.cls.recipes
+
+block_functions
+------------------------------
+
+.. automodule:: stewbeet.core.cls.block_functions
+
+resource
+----------------
+
+.. automodule:: stewbeet.core.cls.resource
+
+resource_folder
+------------------------------
+
+.. automodule:: stewbeet.core.cls.resource_folder

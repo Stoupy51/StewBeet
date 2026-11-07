@@ -1,16 +1,9 @@
-stewbeet.plugins.compatibilities.neo\_enchant package
-=====================================================
+⛏️ neo_enchant
+============================
 
 .. automodule:: stewbeet.plugins.compatibilities.neo_enchant
-   :members:
-   :private-members:
-   :show-inheritance:
-   :undoc-members:
 
-Submodules
-----------
+silent
+------------
 
-.. toctree::
-   :maxdepth: 4
-
-   stewbeet.plugins.compatibilities.neo_enchant.silent
+.. automodule:: stewbeet.plugins.compatibilities.neo_enchant.silent

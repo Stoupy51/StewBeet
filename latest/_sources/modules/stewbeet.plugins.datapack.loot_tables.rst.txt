@@ -1,16 +1,9 @@
-stewbeet.plugins.datapack.loot\_tables package
-==============================================
+🎁 loot_tables
+==========================
 
 .. automodule:: stewbeet.plugins.datapack.loot_tables
-   :members:
-   :private-members:
-   :show-inheritance:
-   :undoc-members:
 
-Submodules
-----------
+silent
+------------
 
-.. toctree::
-   :maxdepth: 4
-
-   stewbeet.plugins.datapack.loot_tables.silent
+.. automodule:: stewbeet.plugins.datapack.loot_tables.silent

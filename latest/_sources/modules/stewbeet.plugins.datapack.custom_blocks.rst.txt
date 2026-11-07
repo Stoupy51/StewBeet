@@ -1,19 +1,49 @@
-stewbeet.plugins.datapack.custom\_blocks package
-================================================
+🧱 custom_blocks
+==============================
 
 .. automodule:: stewbeet.plugins.datapack.custom_blocks
-   :members:
-   :private-members:
-   :show-inheritance:
-   :undoc-members:
 
-Submodules
+aiming
+------------
+
+.. automodule:: stewbeet.plugins.datapack.custom_blocks.aiming
+
+destroying
+--------------------
+
+.. automodule:: stewbeet.plugins.datapack.custom_blocks.destroying
+
+host_states
+----------------------
+
+.. automodule:: stewbeet.plugins.datapack.custom_blocks.host_states
+
+interactions
+------------------------
+
+.. automodule:: stewbeet.plugins.datapack.custom_blocks.interactions
+
+machines
+----------------
+
+.. automodule:: stewbeet.plugins.datapack.custom_blocks.machines
+
+mining
+------------
+
+.. automodule:: stewbeet.plugins.datapack.custom_blocks.mining
+
+placing
+--------------
+
+.. automodule:: stewbeet.plugins.datapack.custom_blocks.placing
+
+seeds
 ----------
 
-.. toctree::
-   :maxdepth: 4
+.. automodule:: stewbeet.plugins.datapack.custom_blocks.seeds
 
-   stewbeet.plugins.datapack.custom_blocks.destroying
-   stewbeet.plugins.datapack.custom_blocks.placing
-   stewbeet.plugins.datapack.custom_blocks.seeds
-   stewbeet.plugins.datapack.custom_blocks.silent
+silent
+------------
+
+.. automodule:: stewbeet.plugins.datapack.custom_blocks.silent

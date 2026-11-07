@@ -1,22 +1,23 @@
-stewbeet.plugins namespace
-==========================
-
-.. py:module:: stewbeet.plugins
-
-Subpackages
------------
+plugins
+==============
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 1
 
    stewbeet.plugins.archive
+   stewbeet.plugins.auto
+   stewbeet.plugins.check_unused_textures
+   stewbeet.plugins.compatibilities
    stewbeet.plugins.compute_sha1
    stewbeet.plugins.copy_to_destination
    stewbeet.plugins.custom_paintings
    stewbeet.plugins.custom_recipes
+   stewbeet.plugins.datapack
+   stewbeet.plugins.finalyze
    stewbeet.plugins.ingame_manual
    stewbeet.plugins.initialize
    stewbeet.plugins.livereload
    stewbeet.plugins.merge_smithed_weld
-   stewbeet.plugins.sniffer
+   stewbeet.plugins.resource_pack
+   stewbeet.plugins.source_maps
    stewbeet.plugins.verify_definitions

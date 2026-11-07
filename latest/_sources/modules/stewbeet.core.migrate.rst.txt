@@ -1,17 +1,14 @@
-stewbeet.core.migrate package
-=============================
+🚚 migrate
+==================
 
 .. automodule:: stewbeet.core.migrate
-   :members:
-   :private-members:
-   :show-inheritance:
-   :undoc-members:
 
-Submodules
+packs
 ----------
 
-.. toctree::
-   :maxdepth: 4
+.. automodule:: stewbeet.core.migrate.packs
 
-   stewbeet.core.migrate.packs
-   stewbeet.core.migrate.plan
+plan
+--------
+
+.. automodule:: stewbeet.core.migrate.plan

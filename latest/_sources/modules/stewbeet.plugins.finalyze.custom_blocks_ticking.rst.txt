@@ -1,16 +1,9 @@
-stewbeet.plugins.finalyze.custom\_blocks\_ticking package
-=========================================================
+🔁 custom_blocks_ticking
+==============================================
 
 .. automodule:: stewbeet.plugins.finalyze.custom_blocks_ticking
-   :members:
-   :private-members:
-   :show-inheritance:
-   :undoc-members:
 
-Submodules
-----------
+silent
+------------
 
-.. toctree::
-   :maxdepth: 4
-
-   stewbeet.plugins.finalyze.custom_blocks_ticking.silent
+.. automodule:: stewbeet.plugins.finalyze.custom_blocks_ticking.silent

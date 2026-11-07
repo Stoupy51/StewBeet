@@ -1,16 +1,14 @@
-stewbeet.plugins.datapack.loading package
-=========================================
+⏳ loading
+==================
 
 .. automodule:: stewbeet.plugins.datapack.loading
-   :members:
-   :private-members:
-   :show-inheritance:
-   :undoc-members:
 
-Submodules
-----------
+ranged_weapons
+----------------------------
 
-.. toctree::
-   :maxdepth: 4
+.. automodule:: stewbeet.plugins.datapack.loading.ranged_weapons
 
-   stewbeet.plugins.datapack.loading.silent
+silent
+------------
+
+.. automodule:: stewbeet.plugins.datapack.loading.silent

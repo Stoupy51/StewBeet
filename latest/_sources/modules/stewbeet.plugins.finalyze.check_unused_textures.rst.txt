@@ -1,16 +1,9 @@
-stewbeet.plugins.finalyze.check\_unused\_textures package
-=========================================================
+↪️ check_unused_textures
+================================================
 
 .. automodule:: stewbeet.plugins.finalyze.check_unused_textures
-   :members:
-   :private-members:
-   :show-inheritance:
-   :undoc-members:
 
-Submodules
-----------
+silent
+------------
 
-.. toctree::
-   :maxdepth: 4
-
-   stewbeet.plugins.finalyze.check_unused_textures.silent
+.. automodule:: stewbeet.plugins.finalyze.check_unused_textures.silent

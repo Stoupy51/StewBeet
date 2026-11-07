@@ -1,13 +1,8 @@
-stewbeet.plugins.auto namespace
-===============================
-
-.. py:module:: stewbeet.plugins.auto
-
-Subpackages
------------
+auto
+========
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 1
 
    stewbeet.plugins.auto.headers
    stewbeet.plugins.auto.lang_file

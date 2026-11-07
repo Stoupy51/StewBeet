@@ -1,16 +1,9 @@
-stewbeet.plugins.resource\_pack.sounds package
-==============================================
+🔊 sounds
+================
 
 .. automodule:: stewbeet.plugins.resource_pack.sounds
-   :members:
-   :private-members:
-   :show-inheritance:
-   :undoc-members:
 
-Submodules
-----------
+silent
+------------
 
-.. toctree::
-   :maxdepth: 4
-
-   stewbeet.plugins.resource_pack.sounds.silent
+.. automodule:: stewbeet.plugins.resource_pack.sounds.silent

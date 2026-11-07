@@ -1,13 +1,8 @@
-stewbeet.plugins.finalyze namespace
-===================================
-
-.. py:module:: stewbeet.plugins.finalyze
-
-Subpackages
------------
+finalyze
+================
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 1
 
    stewbeet.plugins.finalyze.basic_datapack_structure
    stewbeet.plugins.finalyze.check_unused_textures

@@ -1,20 +1,29 @@
-stewbeet.plugins.auto.text\_renders package
-===========================================
+🖋️ text_renders
+==============================
 
 .. automodule:: stewbeet.plugins.auto.text_renders
-   :members:
-   :private-members:
-   :show-inheritance:
-   :undoc-members:
 
-Submodules
-----------
+config
+------------
 
-.. toctree::
-   :maxdepth: 4
+.. automodule:: stewbeet.plugins.auto.text_renders.config
 
-   stewbeet.plugins.auto.text_renders.config
-   stewbeet.plugins.auto.text_renders.confirm
-   stewbeet.plugins.auto.text_renders.emit
-   stewbeet.plugins.auto.text_renders.scan
-   stewbeet.plugins.auto.text_renders.silent
+confirm
+--------------
+
+.. automodule:: stewbeet.plugins.auto.text_renders.confirm
+
+emit
+--------
+
+.. automodule:: stewbeet.plugins.auto.text_renders.emit
+
+scan
+--------
+
+.. automodule:: stewbeet.plugins.auto.text_renders.scan
+
+silent
+------------
+
+.. automodule:: stewbeet.plugins.auto.text_renders.silent

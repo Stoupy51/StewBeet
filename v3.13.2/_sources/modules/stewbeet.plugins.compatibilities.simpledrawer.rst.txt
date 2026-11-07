@@ -1,0 +1,9 @@
+🗄️ simpledrawer
+==============================
+
+.. automodule:: stewbeet.plugins.compatibilities.simpledrawer
+
+silent
+------------
+
+.. automodule:: stewbeet.plugins.compatibilities.simpledrawer.silent

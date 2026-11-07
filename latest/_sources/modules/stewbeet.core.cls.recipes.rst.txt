@@ -1,0 +1,12 @@
+recipes
+==============
+
+ingredients
+----------------------
+
+.. automodule:: stewbeet.core.cls.recipes.ingredients
+
+recipe
+------------
+
+.. automodule:: stewbeet.core.cls.recipes.recipe
