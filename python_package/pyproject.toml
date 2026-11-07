@@ -1,6 +1,6 @@
 
 [build-system]
-requires = ["uv_build>=0.12.0,<0.14.0"]
+requires = ["uv_build>=0.13.0,<0.14.0"]
 build-backend = "uv_build"
 
 [tool.uv.build-backend]
@@ -18,13 +18,14 @@ classifiers = [
 	"Programming Language :: Python :: 3",
 	"Programming Language :: Python :: 3.14",
 	"Programming Language :: Python :: 3.15",
+	"Programming Language :: Python :: 3.16",
 	"Operating System :: OS Independent",
 ]
 authors = [
     { name = "Stoupy51", email = "stoupy51@gmail.com" },
 ]
 dependencies = [
-	"stouputils>=26.10.1",
+	"stouputils>=26.12.0",
 	"model_resolver>=1.16.1",
 	"beet>=0.121.2",
 	"bolt>=0.53.0",
