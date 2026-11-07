@@ -73,6 +73,7 @@ def validate_config(modrinth_config: JsonDict) -> tuple[str, str, str, str, str,
 	for key in required_keys:
 		if key not in modrinth_config:
 			raise ValueError(f"The modrinth_config dictionary must contain a '{key}' key, which is the {error_messages[key]}")
+	explicit_files(modrinth_config)
 	if isinstance(modrinth_config.get("authors"), str):
 		modrinth_config["authors"] = [x.strip() for x in modrinth_config["authors"].split(",")]
 
@@ -318,7 +319,7 @@ def get_file_parts(project_name: str, build_folder: str, modrinth_config: JsonDi
 	Returns:
 		list[str]: List of file paths to upload
 	"""
-	file_parts: list[str] = existing_packs(project_name, build_folder)
+	file_parts: list[str] = explicit_files(modrinth_config) or existing_packs(project_name, build_folder)
 	package_as_mod: str | None = modrinth_config.get("package_as_mod", None)
 	datapack_file: str = next((part for part in reversed(file_parts) if "datapack" in part.lower()), "")
 	if package_as_mod not in ["all", "separate"] or not datapack_file:
@@ -344,6 +345,26 @@ def get_file_parts(project_name: str, build_folder: str, modrinth_config: JsonDi
 			convert_datapack_to_mod(datapack_file, mod_output_path, platform_metadata, [platform], resource_pack_file)
 		file_parts.append(mod_output_path)
 	return file_parts
+
+def explicit_files(modrinth_config: JsonDict) -> list[str]:
+	""" The `files` of the config, to upload instead of the build folder's packs. Empty when not configured.
+
+	Their names contain `datapack` and `resource_pack`, the datapack listed first.
+
+	Raises:
+		FileNotFoundError: When a configured file does not exist.
+		ValueError:        When `files` is configured but empty.
+	"""
+	files: list[str] | None = modrinth_config.get("files")
+	if files is None:
+		return []
+	if not files:
+		raise ValueError("The 'files' configuration of modrinth_config must not be empty")
+
+	missing_files: list[str] = [path for path in files if not os.path.isfile(path)]
+	if missing_files:
+		raise FileNotFoundError(f"Configured Modrinth files do not exist: {', '.join(missing_files)}")
+	return list(files)
 
 def existing_packs(project_name: str, build_folder: str) -> list[str]:
 	""" The datapack and resource pack zips of the build, bundled with their libraries when it made those.
@@ -508,7 +529,7 @@ def upload_to_modrinth(credentials: dict[str, str], modrinth_config: JsonDict, c
 	)
 	package_as_mod = modrinth_config.get("package_as_mod", None)
 	if package_as_mod in ("all", "separate"):
-		pack_files: list[str] = [f for f in file_parts if "_datapack" in f or "_resource_pack" in f]
+		pack_files: list[str] = [f for f in file_parts if f.endswith(".zip")]
 		if pack_files:
 			stp.info("Uploading datapack version...")
 			release.upload_pack(version, pack_files)
@@ -521,13 +542,13 @@ def upload_to_modrinth(credentials: dict[str, str], modrinth_config: JsonDict, c
 def upload_mods(release: Release, slug: str, version: str, file_parts: list[str], every_platform: bool, platforms: list[str]) -> None:
 	""" Upload the mod as one version for all platforms (`<version>+mod`), or one per platform (`<version>+<platform>`). """
 	if every_platform:
-		mod_files: list[str] = [f for f in file_parts if "_mod" in f and "_datapack" not in f]
+		mod_files: list[str] = [f for f in file_parts if f.endswith(".jar")]
 		if mod_files and handle_existing_version(slug, f"{version}+mod", release.headers):
 			stp.info(f"Uploading mod version (all platforms: {', '.join(platforms)})...")
 			release.upload(f"{version}+mod", mod_files, platforms)
 		return
 	for platform in platforms:
-		platform_files: list[str] = [f for f in file_parts if f"_{platform}" in f]
+		platform_files: list[str] = [f for f in file_parts if f.endswith(f"_{platform}_mod.jar")]
 		if platform_files and handle_existing_version(slug, f"{version}+{platform}", release.headers):
 			stp.info(f"Uploading {platform} version...")
 			release.upload(f"{version}+{platform}", platform_files, [platform])

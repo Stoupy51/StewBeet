@@ -98,6 +98,7 @@ changelog: str = upload_to_github(credentials, github_config)
 | `dependencies` | No | List of Modrinth dependency objects (default: `[]`) |
 | `package_as_mod` | No | `"all"` or `"separate"`: also uploads mod jars for loader platforms |
 | `mod_platforms` | No | List of platforms for mod packaging (default: `["fabric", "forge", "neoforge", "quilt"]`) |
+| `files` | No | Zip paths to upload instead of the `build_folder` packs, datapack first. Names must contain `datapack` and `resource_pack` |
 
 ### Example
 ```python
@@ -140,8 +141,10 @@ upload_to_modrinth(credentials, modrinth_config, changelog)
 | Key | Required | Description |
 |-----|----------|-------------|
 | `project_id` | Yes | Smithed project ID / namespace |
-| `project_name` | Yes | Repository name on GitHub (used to build download URLs) |
+| `project_name` | Yes | Pack name, used to build the default download file names |
 | `version` | Yes | Version string |
+| `github_project_name` | No | GitHub repository name, if different from `project_name` |
+| `files` | No | `{"datapack": ..., "resourcepack": ...}` local zips already attached to the GitHub release (`resourcepack` is optional). Names only use letters, digits, `.`, `_` and `-` |
 
 ### Example
 ```python

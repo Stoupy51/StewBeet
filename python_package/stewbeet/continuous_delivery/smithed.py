@@ -7,6 +7,9 @@ __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
 import json
+import os
+import re
+from typing import Any
 
 import requests
 import stouputils as stp
@@ -36,7 +39,7 @@ def validate_credentials(credentials: JsonDict) -> tuple[str, str]:
 		raise ValueError("The credentials file must contain a 'github' key, which is a dictionary containing a 'api_key' key (a PAT for the GitHub API: https://github.com/settings/tokens) and a 'username' key (the username of the account to use)")
 	return credentials["smithed_api_key"], credentials["github"]["username"]
 
-def validate_config(smithed_config: dict[str, str]) -> tuple[str, str, str]:
+def validate_config(smithed_config: dict[str, Any]) -> tuple[str, str, str]:
 	""" Validate Smithed configuration
 
 	Args:
@@ -57,24 +60,45 @@ def validate_config(smithed_config: dict[str, str]) -> tuple[str, str, str]:
 		if key not in smithed_config:
 			raise ValueError(f"The smithed_config dictionary must contain a '{key}' key, which is the {error_messages[key]}")
 
+	files: dict[str, str] | None = smithed_config.get("files")
+	if files is not None:
+		if "datapack" not in files or not set(files) <= {"datapack", "resourcepack"}:
+			raise ValueError("The 'files' configuration of smithed_config must have a 'datapack' path and optionally a 'resourcepack' path")
+		for path in files.values():
+			if not os.path.isfile(path):
+				raise FileNotFoundError(f"Configured Smithed file does not exist: {path}")
+			if not re.fullmatch(r"[A-Za-z0-9._-]+", os.path.basename(path)):
+				raise ValueError(f"The name of {path} must only hold letters, digits, '.', '_' and '-', as GitHub renames other release assets")
+
 	return (
 		smithed_config["project_id"],
 		smithed_config["project_name"].replace(" ", ""),
 		smithed_config["version"]
 	)
 
-def upload_version(project_id: str, project_name: str, version: str, api_key: str, author: str) -> None:
+def upload_version(
+	project_id: str,
+	project_name: str,
+	version: str,
+	api_key: str,
+	author: str,
+	files: dict[str, str] | None = None,
+	github_project_name: str | None = None,
+) -> None:
 	""" Upload new version
 
 	Args:
-		project_id:   Smithed project ID
-		project_name: Name of the project
-		version:      Version number
-		api_key:      API key for Smithed
-		author:       Author (for the github link)
+		project_id:          Smithed project ID
+		project_name:        Name of the project
+		version:             Version number
+		api_key:             API key for Smithed
+		author:              Author (for the github link)
+		files:               Local 'datapack' and optional 'resourcepack' zips, already uploaded to the GitHub release
+		github_project_name: GitHub repository name, if different from project_name
 	"""
 	stp.progress(f"Creating version {version}")
 	post_url: str = f"{SMITHED_API_URL}/{project_id}/versions"
+	repository_name: str = github_project_name or project_name
 	data: JsonDict = {
 		"name": version,
 		"downloads": {},
@@ -87,17 +111,17 @@ def upload_version(project_id: str, project_name: str, version: str, api_key: st
 	}
 
 	# Add the download links
-	links: dict[str, str] = {
-		"datapack":         f"https://github.com/{author}/{project_name}/releases/download/v{version}/{project_name}_datapack_with_libs.zip",
-		"resourcepack":     f"https://github.com/{author}/{project_name}/releases/download/v{version}/{project_name}_resource_pack_with_libs.zip"
-	}
-	for key, value in links.items():
-		if requests.get(value).status_code == 200:
-			data["downloads"][key] = value
-		else:
-			value = value.replace("_with_libs", "")
-			if requests.get(value).status_code == 200:
-				data["downloads"][key] = value
+	release_url: str = f"https://github.com/{author}/{repository_name}/releases/download/v{version}"
+	candidates: dict[str, list[str]] = (
+		{key: [f"{release_url}/{os.path.basename(path)}"] for key, path in files.items()} if files is not None else
+		{
+			"datapack":     [f"{release_url}/{project_name}_datapack_with_libs.zip", f"{release_url}/{project_name}_datapack.zip"],
+			"resourcepack": [f"{release_url}/{project_name}_resource_pack_with_libs.zip", f"{release_url}/{project_name}_resource_pack.zip"],
+		}
+	)
+	for key, urls in candidates.items():
+		if url := next((url for url in urls if requests.get(url).status_code == 200), None):
+			data["downloads"][key] = url
 
 	response = requests.post(
 		post_url,
@@ -110,7 +134,7 @@ def upload_version(project_id: str, project_name: str, version: str, api_key: st
 
 @stp.measure_time(message="Uploading to smithed took")
 @stp.handle_error(error_log=stp.LogLevels.WARNING_TRACEBACK)
-def upload_to_smithed(credentials: dict[str, str], smithed_config: dict[str, str], changelog: str = "") -> None:
+def upload_to_smithed(credentials: dict[str, str], smithed_config: dict[str, Any], changelog: str = "") -> None:
 	""" Upload the project to Smithed using the credentials and the configuration
 
 	Args:
@@ -121,7 +145,9 @@ def upload_to_smithed(credentials: dict[str, str], smithed_config: dict[str, str
 	api_key, author = validate_credentials(credentials)
 	project_id, project_name, version = validate_config(smithed_config)
 
-	upload_version(project_id, project_name, version, api_key, author)
+	files: dict[str, str] | None = smithed_config.get("files")
+	github_project_name: str | None = smithed_config.get("github_project_name")
+	upload_version(project_id, project_name, version, api_key, author, files, github_project_name)
 
 	stp.info(f"Project {project_name} updated on Smithed!")
 

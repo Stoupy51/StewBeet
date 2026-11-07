@@ -98,6 +98,7 @@ changelog: str = upload_to_github(credentials, github_config)
 | `dependencies` | Non | Liste d'objets de dépendances Modrinth (défaut : `[]`) |
 | `package_as_mod` | Non | `"all"` ou `"separate"`: upload aussi des jars mod pour les plateformes de loaders |
 | `mod_platforms` | Non | Liste de plateformes pour l'empaquetage mod (défaut : `["fabric", "forge", "neoforge", "quilt"]`) |
+| `files` | Non | Chemins des zips à uploader à la place de ceux de `build_folder`, datapack en premier. Les noms contiennent `datapack` et `resource_pack` |
 
 ### Exemple
 ```python
@@ -140,8 +141,10 @@ upload_to_modrinth(credentials, modrinth_config, changelog)
 | Clé | Requis | Description |
 |-----|--------|-------------|
 | `project_id` | Oui | ID / namespace du projet Smithed |
-| `project_name` | Oui | Nom du dépôt GitHub (utilisé pour construire les URLs de téléchargement) |
+| `project_name` | Oui | Nom du pack, utilisé pour construire les noms de fichiers par défaut |
 | `version` | Oui | Chaîne de version |
+| `github_project_name` | Non | Nom du dépôt GitHub, s'il diffère de `project_name` |
+| `files` | Non | `{"datapack": ..., "resourcepack": ...}` zips locaux déjà joints à la release GitHub (`resourcepack` est optionnel). Les noms n'utilisent que lettres, chiffres, `.`, `_` et `-` |
 
 ### Exemple
 ```python
