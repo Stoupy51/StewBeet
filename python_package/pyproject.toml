@@ -33,6 +33,7 @@ dependencies = [
 	"pyperclip>=1.11.0",
 	"paramiko>=5.1.0",
 	"smithed>=0.22.1",
+	"lectern>=0.37.0",
 ]
 
 [project.urls]
