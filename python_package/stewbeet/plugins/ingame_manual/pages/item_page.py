@@ -21,6 +21,7 @@ from typing import TYPE_CHECKING, Any, cast
 from beet.core.utils import TextComponent
 from stouputils.typing import JsonDict
 
+from ....core.cls.items.block import Block
 from ....core.cls.items.item import Item
 from ....core.cls.items.wiki_button import WikiButton
 from ....core.cls.recipes.ingredients import Ingr
@@ -155,6 +156,14 @@ class ItemPage(Page):
 			if source.remainder == self.item_id:
 				hover = [
 					{"text": "Left by", "color": "yellow"},
+					{"text": f"\n{Ingr(source_id).to_name()}", "color": "gray"},
+					{"text": "\nClick to open its page", "color": "dark_gray"},
+				]
+				buttons.append(manual.recipes.link_button(source_id, hover=hover))
+			seed = source.growing_seed if isinstance(source, Block) else None
+			if seed and not isinstance(seed.loots, str) and any(loot.id == self.item_id for loot in seed.loots):
+				hover = [
+					{"text": "Grown by", "color": "yellow"},
 					{"text": f"\n{Ingr(source_id).to_name()}", "color": "gray"},
 					{"text": "\nClick to open its page", "color": "dark_gray"},
 				]
