@@ -1,0 +1,23 @@
+cls
+======
+
+.. toctree::
+   :maxdepth: 1
+
+   stewbeet.core.cls.items
+   stewbeet.core.cls.recipes
+
+block_functions
+------------------------------
+
+.. automodule:: stewbeet.core.cls.block_functions
+
+resource
+----------------
+
+.. automodule:: stewbeet.core.cls.resource
+
+resource_folder
+------------------------------
+
+.. automodule:: stewbeet.core.cls.resource_folder

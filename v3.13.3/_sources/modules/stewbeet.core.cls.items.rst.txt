@@ -1,0 +1,32 @@
+items
+==========
+
+block
+----------
+
+.. automodule:: stewbeet.core.cls.items.block
+
+external_item
+--------------------------
+
+.. automodule:: stewbeet.core.cls.items.external_item
+
+features
+----------------
+
+.. automodule:: stewbeet.core.cls.items.features
+
+item
+--------
+
+.. automodule:: stewbeet.core.cls.items.item
+
+painting
+----------------
+
+.. automodule:: stewbeet.core.cls.items.painting
+
+wiki_button
+----------------------
+
+.. automodule:: stewbeet.core.cls.items.wiki_button

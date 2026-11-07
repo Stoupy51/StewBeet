@@ -5,6 +5,11 @@
 		"url": "https://stoupy51.github.io/stewbeet/latest/"
 	},
 	{
+		"name": "v3.13.3",
+		"version": "3.13.3",
+		"url": "https://stoupy51.github.io/stewbeet/v3.13.3/"
+	},
+	{
 		"name": "v3.13.2",
 		"version": "3.13.2",
 		"url": "https://stoupy51.github.io/stewbeet/v3.13.2/"
@@ -18,31 +23,6 @@
 		"name": "v3.9.6",
 		"version": "3.9.6",
 		"url": "https://stoupy51.github.io/stewbeet/v3.9.6/"
-	},
-	{
-		"name": "v3.9.5",
-		"version": "3.9.5",
-		"url": "https://stoupy51.github.io/stewbeet/v3.9.5/"
-	},
-	{
-		"name": "v3.9.4",
-		"version": "3.9.4",
-		"url": "https://stoupy51.github.io/stewbeet/v3.9.4/"
-	},
-	{
-		"name": "v3.9.2",
-		"version": "3.9.2",
-		"url": "https://stoupy51.github.io/stewbeet/v3.9.2/"
-	},
-	{
-		"name": "v3.9.1",
-		"version": "3.9.1",
-		"url": "https://stoupy51.github.io/stewbeet/v3.9.1/"
-	},
-	{
-		"name": "v3.9.0",
-		"version": "3.9.0",
-		"url": "https://stoupy51.github.io/stewbeet/v3.9.0/"
 	},
 	{
 		"name": "v3.8.3",

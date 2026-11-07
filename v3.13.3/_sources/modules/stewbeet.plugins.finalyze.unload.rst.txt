@@ -1,0 +1,9 @@
+🧹 unload
+================
+
+.. automodule:: stewbeet.plugins.finalyze.unload
+
+silent
+------------
+
+.. automodule:: stewbeet.plugins.finalyze.unload.silent
