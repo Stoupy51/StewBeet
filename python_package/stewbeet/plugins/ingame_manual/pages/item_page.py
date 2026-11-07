@@ -50,6 +50,8 @@ class ItemPage(Page):
 	"""
 	crafts: list[JsonDict] = field(default_factory=list[JsonDict])
 	""" Every craft related to the item, gathered by :meth:`prepare`. """
+	main_craft: JsonDict | None = None
+	""" A craft shown as the main recipe instead of the automatic choice, e.g. one of ``crafts``. """
 	buttons: list[WikiButtonRender] = field(default_factory=list[WikiButtonRender])
 	""" The wiki buttons rendered on the page (populated during :meth:`build`). """
 	extra_buttons: list[WikiButtonRender] = field(default_factory=list[WikiButtonRender])
@@ -107,6 +109,9 @@ class ItemPage(Page):
 
 	def main_content(self, manual: Manual, name: str) -> list[TextComponent]:
 		""" The page's main craft: how the item is mined, else the craft using most of it, else the item alone in a box. """
+		if self.main_craft is not None:
+			return list(manual.recipes.render_main(self.main_craft, name, ""))
+
 		crafts: list[JsonDict] = list(self.crafts)
 		mining_crafts: list[JsonDict] = [c for c in crafts if c.get("type") == "mining"]
 		if mining_crafts:

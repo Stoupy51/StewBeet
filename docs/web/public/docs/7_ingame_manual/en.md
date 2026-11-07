@@ -220,6 +220,17 @@ def tidy_buttons(m):
         )
 ```
 
+### Choose the main recipe of an item page
+By default the main recipe is how the item is mined, when it drops from an ore. Set `ItemPage.main_craft` to show another craft instead; the others stay available as buttons.
+
+```python
+@manual.on(Phase.PREPARED)
+def craft_first(m):
+    page = m.get_page_for_item("stardust_fragment")
+    if page is not None:
+        page.main_craft = next(c for c in page.crafts if c["type"].startswith("crafting"))
+```
+
 ### Cross-link two related item pages (recipe buttons across pages)
 `ItemPage.extra_buttons` holds developer-added wiki buttons, appended after the automatic ones. Build them with:
 - `manual.recipes.button_for_item(item_id, index=0)`: another item's **recipe button**: hover shows that recipe, click opens the item's page (`index` selects which of its crafts; returns `None` with a warning if there is no such craft);

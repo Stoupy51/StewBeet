@@ -219,6 +219,17 @@ def tidy_buttons(m):
         )
 ```
 
+### Choisir la recipe principale d'une page d'item
+Par défaut, la recipe principale est la façon de miner l'item quand il tombe d'un minerai. Définissez `ItemPage.main_craft` pour afficher un autre craft à la place ; les autres restent disponibles en boutons.
+
+```python
+@manual.on(Phase.PREPARED)
+def craft_first(m):
+    page = m.get_page_for_item("stardust_fragment")
+    if page is not None:
+        page.main_craft = next(c for c in page.crafts if c["type"].startswith("crafting"))
+```
+
 ### Lier deux pages d'items entre elles (boutons de recipe inter-pages)
 `ItemPage.extra_buttons` contient les boutons wiki ajoutés par le développeur, placés après les boutons automatiques. Construisez-les avec :
 - `manual.recipes.button_for_item(item_id, index=0)`: le **bouton de recipe** d'un autre item : le survol montre sa recipe, le clic ouvre sa page (`index` choisit lequel de ses crafts ; retourne `None` avec un avertissement si le craft n'existe pas) ;
