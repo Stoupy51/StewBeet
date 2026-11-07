@@ -31,6 +31,13 @@ from .glyphs import (
 )
 from .paths import template_path
 
+# Constants
+WIKI_ICON_TEMPLATES: dict[str, str] = {
+	"mining": "wiki_mining_template.png",
+	"source_link": "wiki_source_link_template.png",
+}
+""" Wiki icon background per craft type, the green ingredient-of-craft template being the default. """
+
 
 @dataclass(kw_only=True, slots=True)
 class BakedText:
@@ -223,7 +230,7 @@ class GlyphImageBuilder:
 				item_res_adjusted = int(item_res * 0.75)
 				item_texture = careful_resize(item_texture, item_res_adjusted).convert("RGBA")
 
-				filename: str = "wiki_ingredient_of_craft_template.png" if craft_type != "mining" else "wiki_mining_template.png"
+				filename: str = WIKI_ICON_TEMPLATES.get(craft_type, "wiki_ingredient_of_craft_template.png")
 				template = Image.open(template_path(filename))
 				template = careful_resize(template, item_res)
 				offset = (item_res - item_res_adjusted) // 2

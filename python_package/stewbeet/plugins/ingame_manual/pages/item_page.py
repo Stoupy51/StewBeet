@@ -150,7 +150,7 @@ class ItemPage(Page):
 				{"text": f"\n{Ingr(obj.remainder).to_name()}", "color": "gray"},
 				{"text": "\nClick to open its page", "color": "dark_gray"},
 			]
-			buttons.append(manual.recipes.link_button(obj.remainder, hover=hover))
+			buttons.append(manual.recipes.link_button(obj.remainder, hover=hover, craft_type="source_link"))
 
 		for source_id, source in manual.definitions_as_objects.items():
 			if source.remainder == self.item_id:
@@ -159,7 +159,7 @@ class ItemPage(Page):
 					{"text": f"\n{Ingr(source_id).to_name()}", "color": "gray"},
 					{"text": "\nClick to open its page", "color": "dark_gray"},
 				]
-				buttons.append(manual.recipes.link_button(source_id, hover=hover))
+				buttons.append(manual.recipes.link_button(source_id, hover=hover, craft_type="source_link"))
 			seed = source.growing_seed if isinstance(source, Block) else None
 			if seed and not isinstance(seed.loots, str) and any(loot.id == self.item_id for loot in seed.loots):
 				hover = [
@@ -167,7 +167,7 @@ class ItemPage(Page):
 					{"text": f"\n{Ingr(source_id).to_name()}", "color": "gray"},
 					{"text": "\nClick to open its page", "color": "dark_gray"},
 				]
-				buttons.append(manual.recipes.link_button(source_id, hover=hover))
+				buttons.append(manual.recipes.link_button(source_id, hover=hover, craft_type="source_link"))
 
 		previous_result = None
 		for idx, craft in enumerate(self.crafts):

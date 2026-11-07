@@ -246,13 +246,14 @@ class RecipeRenderer:
 			button.target = PageRef(item=item_id)
 		return button
 
-	def link_button(self, item_id: str, hover: TextComponent | None = None) -> WikiButtonRender:
+	def link_button(self, item_id: str, hover: TextComponent | None = None, craft_type: str = "page_link") -> WikiButtonRender:
 		""" Build a wiki button that simply links to another item's page (no recipe).
 
 		The icon shows the item in a wiki slot; ``hover`` defaults to its name plus a click hint.
+		``craft_type`` picks the slot background: ``"source_link"`` is the grey one of the seeds and containers an item comes from.
 		"""
 		ingr = Ingr(item_id)
-		glyph: str = self.images.wiki_result_icon(item_id, {"type": "page_link", "result": ingr})
+		glyph: str = self.images.wiki_result_icon(item_id, {"type": craft_type, "result": ingr})
 		if hover is None:
 			hover = [{"text": ingr.to_name(), "color": "yellow"}, {"text": "\nClick to open this page", "color": "gray"}]
 		return WikiButtonRender(glyph=glyph, hover=hover, target=PageRef(item=item_id), is_info=True)
