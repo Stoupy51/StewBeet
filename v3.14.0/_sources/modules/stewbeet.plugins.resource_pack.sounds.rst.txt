@@ -1,0 +1,9 @@
+🔊 sounds
+================
+
+.. automodule:: stewbeet.plugins.resource_pack.sounds
+
+silent
+------------
+
+.. automodule:: stewbeet.plugins.resource_pack.sounds.silent

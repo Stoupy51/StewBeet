@@ -1,0 +1,49 @@
+🧱 custom_blocks
+==============================
+
+.. automodule:: stewbeet.plugins.datapack.custom_blocks
+
+aiming
+------------
+
+.. automodule:: stewbeet.plugins.datapack.custom_blocks.aiming
+
+destroying
+--------------------
+
+.. automodule:: stewbeet.plugins.datapack.custom_blocks.destroying
+
+host_states
+----------------------
+
+.. automodule:: stewbeet.plugins.datapack.custom_blocks.host_states
+
+interactions
+------------------------
+
+.. automodule:: stewbeet.plugins.datapack.custom_blocks.interactions
+
+machines
+----------------
+
+.. automodule:: stewbeet.plugins.datapack.custom_blocks.machines
+
+mining
+------------
+
+.. automodule:: stewbeet.plugins.datapack.custom_blocks.mining
+
+placing
+--------------
+
+.. automodule:: stewbeet.plugins.datapack.custom_blocks.placing
+
+seeds
+----------
+
+.. automodule:: stewbeet.plugins.datapack.custom_blocks.seeds
+
+silent
+------------
+
+.. automodule:: stewbeet.plugins.datapack.custom_blocks.silent

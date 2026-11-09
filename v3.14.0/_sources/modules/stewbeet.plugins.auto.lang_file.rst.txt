@@ -1,0 +1,14 @@
+🌐 lang_file
+======================
+
+.. automodule:: stewbeet.plugins.auto.lang_file
+
+silent
+------------
+
+.. automodule:: stewbeet.plugins.auto.lang_file.silent
+
+utils
+----------
+
+.. automodule:: stewbeet.plugins.auto.lang_file.utils

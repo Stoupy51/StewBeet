@@ -1,0 +1,14 @@
+⏳ loading
+==================
+
+.. automodule:: stewbeet.plugins.datapack.loading
+
+ranged_weapons
+----------------------------
+
+.. automodule:: stewbeet.plugins.datapack.loading.ranged_weapons
+
+silent
+------------
+
+.. automodule:: stewbeet.plugins.datapack.loading.silent

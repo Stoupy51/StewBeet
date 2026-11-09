@@ -1,0 +1,28 @@
+👃 source_maps
+==========================
+
+.. automodule:: stewbeet.plugins.source_maps
+
+.. toctree::
+   :maxdepth: 1
+
+   stewbeet.plugins.source_maps.emit
+   stewbeet.plugins.source_maps.mecha
+
+attribution
+----------------------
+
+.. automodule:: stewbeet.plugins.source_maps.attribution
+   :members: attribute_to, attributed
+
+capture
+--------------
+
+.. automodule:: stewbeet.plugins.source_maps.capture
+   :members: record, tag
+
+origin
+------------
+
+.. automodule:: stewbeet.plugins.source_maps.origin
+   :members: declaration_origin, resolve_origin

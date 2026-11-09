@@ -1,0 +1,9 @@
+🧮 compute_sha1
+============================
+
+.. automodule:: stewbeet.plugins.compute_sha1
+
+silent
+------------
+
+.. automodule:: stewbeet.plugins.compute_sha1.silent

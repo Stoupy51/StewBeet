@@ -1,0 +1,9 @@
+🏁 last_final
+========================
+
+.. automodule:: stewbeet.plugins.finalyze.last_final
+
+silent
+------------
+
+.. automodule:: stewbeet.plugins.finalyze.last_final.silent
