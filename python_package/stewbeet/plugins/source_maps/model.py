@@ -100,7 +100,6 @@ class FunctionSourceMap:
 	Python source into every map would cost tens of megabytes on a real project.
 	"""
 	generated_path: str
-	source_root: str
 	sources: tuple[str, ...]
 	mappings: tuple[LineMapping, ...]
 	file: str = field(default="")

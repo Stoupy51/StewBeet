@@ -1,7 +1,6 @@
 {
 	"version": 3,
 	"file": "work.mcfunction",
-	"sourceRoot": "../../../../../../..",
 	"sources": [
 		"src/machines.py"
 	],

@@ -52,11 +52,9 @@ def source_of(data: JsonDict, generated_line: int) -> tuple[str, int, int]:
 
 
 def resolve(ctx: Context, data: JsonDict, path: str, source: str) -> list[str]:
-	""" Lines of a mapped source, reached the way a consumer reaches it: sourceRoot then sources. """
-	on_disk: str = os.path.join("build", str(ctx.data.name), path)
-	resolved: str = os.path.normpath(os.path.join(os.path.dirname(on_disk), str(data["sourceRoot"]), source))
-	assert os.path.isfile(resolved), f"{path}: sourceRoot + sources must resolve on disk, got {resolved}"
-	with open(resolved, encoding="utf-8") as file:
+	""" Lines of a mapped source, reached the way a consumer reaches it: sources, from the project root. """
+	assert os.path.isfile(source), f"{path}: sources must resolve on disk from the project root, got {source}"
+	with open(source, encoding="utf-8") as file:
 		return file.read().split("\n")
 
 

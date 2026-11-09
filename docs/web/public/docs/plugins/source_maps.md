@@ -85,15 +85,14 @@ And the sidecar beside it, `root.mcfunction.map`, names your own source relative
 {
 	"version": 3,
 	"file": "root.mcfunction",
-	"sourceRoot": "../../../../..",
 	"sources": ["src/link.py"],
 	"names": [],
 	"mappings": "AAKA;AACA;AACA"
 }
 ```
 
-`sourcesContent` is deliberately absent. Consumers read your sources from disk through `sourceRoot`,
-and inlining a whole project into every map would cost tens of megabytes.
+`sourcesContent` is deliberately absent. Consumers read your sources from disk, and inlining a whole project into every map would cost tens of megabytes.
+There is no `sourceRoot` either: Sniffer resolves it itself, so `sources` are plain paths from the project root and a consumer looks for the first folder above the map that holds them.
 
 What mecha compiled carries more, for an editor showing your source to a vanilla parser:
 

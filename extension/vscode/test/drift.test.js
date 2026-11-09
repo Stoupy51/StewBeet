@@ -306,7 +306,7 @@ function writePack() {
   const generated = path.join(functions, "alpha.mcfunction");
   fs.writeFileSync(generated, "say a\nsay b\nsay c\n");
   fs.writeFileSync(`${generated}.map`, JSON.stringify({
-    version: 3, file: "alpha.mcfunction", sourceRoot: "../../../..",
+    version: 3, file: "alpha.mcfunction",
     sources: ["src/link.py"], names: [], mappings: "AAGA;AACA;AACA",
   }));
   return { source, generated, mapPath: `${generated}.map` };

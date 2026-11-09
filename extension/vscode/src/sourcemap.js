@@ -73,16 +73,15 @@ function decodeVlq(segment) {
  * fields: the sources written in bolt, and where syntax a plugin added to mecha begins.
  *
  * @param {any} json  The parsed contents of a .mcfunction.map.
- * @returns {{ sources: string[], sourceRoot: string, lines: Map<number, MappedLine>, bolt: number[], opaque: number[][] }}
+ * @returns {{ sources: string[], lines: Map<number, MappedLine>, bolt: number[], opaque: number[][] }}
  */
 function decode(json) {
   const sources = Array.isArray(json?.sources) ? json.sources : [];
-  const sourceRoot = typeof json?.sourceRoot === "string" ? json.sourceRoot : "";
   const bolt = Array.isArray(json?.x_stewbeet_bolt) ? json.x_stewbeet_bolt : [];
   const opaque = Array.isArray(json?.x_stewbeet_opaque) ? json.x_stewbeet_opaque : [];
   /** @type {Map<number, MappedLine>} */
   const lines = new Map();
-  if (typeof json?.mappings !== "string") return { sources, sourceRoot, lines, bolt, opaque };
+  if (typeof json?.mappings !== "string") return { sources, lines, bolt, opaque };
 
   let sourceIndex = 0;
   let sourceLine = 0;
@@ -105,7 +104,41 @@ function decode(json) {
     lines.set(generatedLine, { sourceIndex, sourceLine: points[0].line, sourceColumn: points[0].column, points: points.slice(1) });
   });
 
-  return { sources, sourceRoot, lines, bolt, opaque };
+  return { sources, lines, bolt, opaque };
+}
+
+/** The last project root a source was found under, tried first for the next map. @type {string | null} */
+let projectRoot = null;
+
+/**
+ * Where a map's source lives on disk.
+ *
+ * A map names its sources relative to the project root and does not say where that is, since the
+ * standard `sourceRoot` is resolved by Sniffer on its own. The root is the closest folder above the
+ * map that holds the source, and the one found last is tried first, so a pack costs one lookup
+ * per source instead of one per folder climbed. A root only serves the maps below it, so two
+ * projects holding the same relative source do not borrow each other's.
+ *
+ * @param {string} mapPath
+ * @param {string} source
+ * @returns {string}  Where the source would be under the map's folder when it exists nowhere.
+ */
+function sourceFile(mapPath, source) {
+  if (projectRoot && mapPath.startsWith(projectRoot + path.sep) && fs.existsSync(path.resolve(projectRoot, source))) {
+    return path.resolve(projectRoot, source);
+  }
+
+  let folder = path.dirname(mapPath);
+  while (true) {
+    const candidate = path.resolve(folder, source);
+    if (fs.existsSync(candidate)) {
+      projectRoot = folder;
+      return candidate;
+    }
+    const parent = path.dirname(folder);
+    if (parent === folder) return path.resolve(path.dirname(mapPath), source);
+    folder = parent;
+  }
 }
 
 /** @typedef {{ sourceIndex: number, sourceLine: number, sourceColumn: number, points: { generated: number, line: number, column: number }[] }} MappedLine */
@@ -284,7 +317,7 @@ function originOf(generatedPath, line) {
 
   const source = map.sources[entry.sourceIndex];
   if (!source) return null;
-  const file = path.resolve(path.dirname(mapPath), map.sourceRoot, source);
+  const file = sourceFile(mapPath, source);
   const current = drift.currentLineOf(file, entry.sourceLine);
   return current === null ? null : { file, line: current, column: entry.sourceColumn };
 }
@@ -316,7 +349,7 @@ function originsOf(generatedPath) {
     if (!source || seen.has(entry.sourceIndex)) continue;
     seen.add(entry.sourceIndex);
     found.push({
-      file: path.resolve(path.dirname(mapPath), map.sourceRoot, source),
+      file: sourceFile(mapPath, source),
       line: entry.sourceLine,
       column: entry.sourceColumn,
     });
@@ -501,9 +534,8 @@ function buildReverseIndex(mapPaths) {
     const map = load(mapPath);
     if (!map) continue;
     const generatedPath = mapPath.slice(0, -".map".length);
-    const directory = path.dirname(mapPath);
     // One resolve per source, not per mapped line: the same source repeats on every line.
-    const files = map.sources.map(source => path.resolve(directory, map.sourceRoot, source));
+    const files = map.sources.map(source => sourceFile(mapPath, source));
 
     for (const [generatedLine, entry] of map.lines) {
       const file = files[entry.sourceIndex];

@@ -36,7 +36,7 @@ function makePack() {
 function writeMap(functions, name, sources, mappings) {
   fs.writeFileSync(path.join(functions, `${name}.mcfunction`), "say generated\n");
   fs.writeFileSync(path.join(functions, `${name}.mcfunction.map`), JSON.stringify({
-    version: 3, file: `${name}.mcfunction`, sourceRoot: "../../../../..", sources, names: [], mappings,
+    version: 3, file: `${name}.mcfunction`, sources, names: [], mappings,
   }));
 }
 

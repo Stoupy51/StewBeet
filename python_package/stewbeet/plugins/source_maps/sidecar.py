@@ -35,8 +35,7 @@ def write_sidecar(ctx: Context, path: str, func: Function, mapped: dict[int, Sou
 	if not mapped or has_sidecar(ctx, path):
 		return False
 
-	project_root, output_depth = pack_layout(ctx)
-	rendered: str | None = render_sidecar(path, func, mapped, project_root, output_depth)
+	rendered: str | None = render_sidecar(path, func, mapped, pack_layout(ctx))
 	if rendered is None:
 		return False
 
@@ -45,7 +44,7 @@ def write_sidecar(ctx: Context, path: str, func: Function, mapped: dict[int, Sou
 
 
 def render_sidecar(
-	path: str, func: Function, mapped: dict[int, SourceOrigin], project_root: str, output_depth: int
+	path: str, func: Function, mapped: dict[int, SourceOrigin], project_root: str
 ) -> str | None:
 	""" The Source Map v3 JSON for one function, or None when none of its lines resolved.
 
@@ -53,7 +52,7 @@ def render_sidecar(
 	without building it again.
 	"""
 	final: list[str] = final_lines_of(func.text)
-	source_map: FunctionSourceMap | None = build_map(path, mapped, project_root, output_depth, final)
+	source_map: FunctionSourceMap | None = build_map(path, mapped, project_root, final)
 	if source_map is None:
 		return None
 	return stp.json_dump(to_json(source_map, len(final)), max_level=2)
@@ -75,7 +74,7 @@ def has_sidecar(ctx: Context, path: str) -> bool:
 
 
 def build_map(
-	path: str, mapped: dict[int, SourceOrigin], project_root: str, output_depth: int, final: list[str]
+	path: str, mapped: dict[int, SourceOrigin], project_root: str, final: list[str]
 ) -> FunctionSourceMap | None:
 	""" Turn resolved origins into the artifact for one generated function.
 
@@ -114,7 +113,6 @@ def build_map(
 	file_path: str = function_file_path(path)
 	return FunctionSourceMap(
 		generated_path=path,
-		source_root=source_root_for(file_path, output_depth),
 		sources=tuple(sources),
 		mappings=tuple(rows),
 		file=os.path.basename(file_path),
@@ -169,37 +167,9 @@ def function_file_path(path: str) -> str:
 	return f"data/{namespace}/function/{name}.mcfunction"
 
 
-def source_root_for(file_path: str, output_depth: int) -> str:
-	""" Relative path from a map file's own directory back to the project root.
-
-	Two things contribute: how deep the function sits inside the pack, and how deep the pack itself
-	sits under the project root once it is dumped. Missing the second half lands on the pack root
-	instead of the project root, and every `sources` entry then fails to resolve.
-
-	Args:
-		output_depth: Segments between the project root and the pack root, ex: 2 for build/datapack.
-
-	>>> source_root_for("data/ns/function/foo.mcfunction", 2)
-	'../../../../..'
-	>>> source_root_for("data/ns/function/nested/foo.mcfunction", 2)
-	'../../../../../..'
-	"""
-	directory_depth: int = len(file_path.split("/")) - 1
-	return "/".join([".."] * (directory_depth + output_depth))
-
-
-def pack_layout(ctx: Context) -> tuple[str, int]:
-	""" The project root every source is named relative to, and how deep the pack sits under it. """
-	return os.path.abspath(str(ctx.directory)), pack_output_depth(ctx)
-
-
-def pack_output_depth(ctx: Context) -> int:
-	""" How many directories separate the project root from the dumped pack root. """
-	project_root: str = os.path.abspath(str(ctx.directory))
-	output: str = os.path.abspath(str(ctx.output_directory or project_root))
-	relative: str = os.path.relpath(output, project_root)
-	segments: list[str] = [part for part in relative.split(os.sep) if part not in (".", "")]
-	return len(segments) + 1 # the pack writes into its own directory, named after the pack
+def pack_layout(ctx: Context) -> str:
+	""" The project root every source is named relative to. """
+	return os.path.abspath(str(ctx.directory))
 
 
 def final_lines_of(text: str) -> list[str]:

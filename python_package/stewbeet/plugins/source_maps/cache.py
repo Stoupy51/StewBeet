@@ -34,7 +34,7 @@ def map_signature(chunks: Sequence[WriteChunk], text: str, layout: str) -> str:
 
 	Args:
 		text:   The function's final text, which the chunks are reconciled against.
-		layout: Where the pack is written, since `sourceRoot` and every source are relative to it.
+		layout: Where the pack is written, since every source is relative to it.
 
 	>>> chunk = WriteChunk(lines=("say a",), origin=None)
 	>>> map_signature([chunk], "say a\\n", "/p") == map_signature([chunk], "say a\\n", "/p")

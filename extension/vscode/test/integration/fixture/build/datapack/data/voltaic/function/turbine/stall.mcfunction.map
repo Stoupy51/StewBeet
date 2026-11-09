@@ -1,7 +1,6 @@
 {
 	"version": 3,
 	"file": "stall.mcfunction",
-	"sourceRoot": "../../../../../..",
 	"sources": [
 		"src/turbine.py"
 	],

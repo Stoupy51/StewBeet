@@ -1,7 +1,6 @@
 {
 	"version": 3,
 	"file": "gamma.mcfunction",
-	"sourceRoot": "../../..",
 	"sources": [
 		"demo.py"
 	],

@@ -46,8 +46,7 @@ def write_maps(ctx: Context) -> int:
 	if not pending:
 		return 0
 
-	project_root, output_depth = pack_layout(ctx)
-	layout: str = f"{project_root}\0{output_depth}"
+	project_root = pack_layout(ctx)
 	cache: Cache = ctx.cache[CACHE_NAME]
 	remembered: dict[str, tuple[str, str]] = load_maps(cache)
 	# An earlier flush in this same build already stored what it wrote, and those functions are skipped above,
@@ -58,14 +57,14 @@ def write_maps(ctx: Context) -> int:
 
 	written: int = 0
 	for path, func, chunks in pending:
-		signature: str = map_signature(chunks, func.text, layout)
+		signature: str = map_signature(chunks, func.text, project_root)
 		previous: tuple[str, str] | None = remembered.get(path)
 
 		rendered: str | None
 		if previous is not None and previous[0] == signature:
 			rendered = previous[1]
 		else:
-			rendered = render_sidecar(path, func, align(chunks, func.text), project_root, output_depth)
+			rendered = render_sidecar(path, func, align(chunks, func.text), project_root)
 		if rendered is None:
 			fresh.pop(path, None)
 			continue

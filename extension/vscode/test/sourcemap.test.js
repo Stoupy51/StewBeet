@@ -78,7 +78,7 @@ test("the trailing sourceMappingURL comment is unmapped", () => {
 });
 
 test("an unmapped line in the middle is an empty group, not a missing one", () => {
-  const map = decode({ sources: ["a.py"], sourceRoot: "", mappings: "AAAA;;AACA" });
+  const map = decode({ sources: ["a.py"], mappings: "AAAA;;AACA" });
   assert.deepStrictEqual([...map.lines.keys()], [0, 2]);
 });
 
@@ -88,12 +88,12 @@ test("a malformed map decodes to nothing rather than throwing", () => {
   assert.deepStrictEqual(decode(null).sources, []);
 });
 
-test("originOf resolves through sourceRoot to a file that exists", () => {
+test("originOf resolves the source to a file that exists", () => {
   clearCache();
   const origin = originOf(path.join(REFERENCE, "hit.mcfunction"), 0);
   assert.ok(origin, "line 0 of the reference is mapped");
   assert.strictEqual(path.basename(origin.file), "hit.ts");
-  assert.ok(fs.existsSync(origin.file), `sourceRoot must resolve on disk, got ${origin.file}`);
+  assert.ok(fs.existsSync(origin.file), `the source must resolve on disk, got ${origin.file}`);
   assert.strictEqual(origin.line, 5);
 });
 
@@ -127,7 +127,7 @@ test("a source file reads what every map says about it", () => {
   fs.writeFileSync(source, "say a\n\n\n\nschedule function ~/ 1t replace\ncompute bolt float (1+1)\n");
   fs.writeFileSync(generated, "say a\nschedule function t:probe 1 replace\ncompute default float 2\n");
   fs.writeFileSync(`${generated}.map`, JSON.stringify({
-    version: 3, sources: ["src/tick.mcfunction"], sourceRoot: "../../../../",
+    version: 3, sources: ["src/tick.mcfunction"],
     mappings: "AAAA;AAIA,kBAAkB,OAAE;AACpB", x_stewbeet_bolt: [0], x_stewbeet_opaque: [[0, 5, 8]],
   }));
   clearCache();

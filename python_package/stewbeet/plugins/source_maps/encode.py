@@ -98,7 +98,7 @@ def build_mappings(mappings: Iterable[LineMapping], generated_lines: int) -> str
 def to_json(source_map: FunctionSourceMap, generated_lines: int) -> JsonDict:
 	""" Serialise a source map to the Source Map v3 JSON shape.
 
-	`sourcesContent` is omitted entirely: it is optional in the standard, consumers read sources from disk through `sourceRoot`,
+	`sourcesContent` is omitted entirely: it is optional in the standard, consumers find sources on disk from the project root,
 	and inlining would duplicate the whole project into the build.
 	What only an editor needs travels in `x_` fields, which the standard leaves to vendors and every other consumer ignores.
 	"""
@@ -110,7 +110,6 @@ def to_json(source_map: FunctionSourceMap, generated_lines: int) -> JsonDict:
 	return {
 		"version": 3,
 		"file": source_map.file,
-		"sourceRoot": source_map.source_root,
 		"sources": list(source_map.sources),
 		"names": [],
 		"mappings": build_mappings(source_map.mappings, generated_lines),

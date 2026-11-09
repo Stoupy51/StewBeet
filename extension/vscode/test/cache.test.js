@@ -26,7 +26,7 @@ function writePack(mappings, source = "src/one.bolt", body = "say generated\n") 
   const generated = path.join(functions, "alpha.mcfunction");
   fs.writeFileSync(generated, body);
   fs.writeFileSync(`${generated}.map`, JSON.stringify({
-    version: 3, file: "alpha.mcfunction", sourceRoot: "../../../../..",
+    version: 3, file: "alpha.mcfunction",
     sources: [source], names: [], mappings,
   }));
   return { root, generated, mapPath: `${generated}.map` };
@@ -42,7 +42,7 @@ test("a rebuilt map is read again after the cache is dropped", () => {
 
   // A rebuild moves the origin to line 2 and changes the source file.
   fs.writeFileSync(mapPath, JSON.stringify({
-    version: 3, file: "alpha.mcfunction", sourceRoot: "../../../../..",
+    version: 3, file: "alpha.mcfunction",
     sources: ["src/two.bolt"], names: [], mappings: "AAEA",
   }));
   sourcemap.clearCache();
@@ -59,7 +59,7 @@ test("the derived origins are dropped with the map they came from", () => {
   assert.equal(sourcemap.originsOf(generated).length, 1);
 
   fs.writeFileSync(mapPath, JSON.stringify({
-    version: 3, file: "alpha.mcfunction", sourceRoot: "../../../../..",
+    version: 3, file: "alpha.mcfunction",
     sources: ["src/one.bolt", "src/two.bolt"], names: [], mappings: "AAAA;ACAA",
   }));
   sourcemap.clearCache();
@@ -78,7 +78,7 @@ test("the reverse index is dropped with the maps", () => {
   assert.equal(sourcemap.originLinesFor([mapPath], two).size, 0);
 
   fs.writeFileSync(mapPath, JSON.stringify({
-    version: 3, file: "alpha.mcfunction", sourceRoot: "../../../../..",
+    version: 3, file: "alpha.mcfunction",
     sources: ["src/two.bolt"], names: [], mappings: "AAAA",
   }));
   sourcemap.clearCache();

@@ -149,7 +149,7 @@ def write_maps(ctx: Context) -> int:
 
 def write_merged_sidecar(ctx: Context, path: str, func: Function, mapped: dict[int, SourceOrigin] | None) -> int:
 	""" Write a function's map over any the capture half wrote, and return 1 when one was written. """
-	rendered: str | None = render_sidecar(path, func, mapped, *pack_layout(ctx)) if mapped else None
+	rendered: str | None = render_sidecar(path, func, mapped, pack_layout(ctx)) if mapped else None
 	if rendered is None:
 		return 0
 	store_sidecar(ctx, path, rendered)

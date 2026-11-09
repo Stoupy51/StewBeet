@@ -73,11 +73,9 @@ def beet_default(ctx: Context) -> Iterator[None]:
 			f"generated header line {index} ({generated[index]!r}) must be unmapped, it has no author"
 
 	# Every real command still reaches the write_function call that wrote it.
-	resolved_root: str = os.path.normpath(os.path.join(
-		os.path.dirname(os.path.join("build", str(ctx.data.name), map_path)), data["sourceRoot"]))
 	for index, (source_index, source_line, _) in decoded.items():
-		source_file: str = os.path.join(resolved_root, data["sources"][source_index])
-		assert os.path.isfile(source_file), f"source {source_file} must resolve from sourceRoot"
+		source_file: str = data["sources"][source_index]
+		assert os.path.isfile(source_file), f"source {source_file} must resolve from the project root"
 		with open(source_file, encoding="utf-8") as file:
 			lines: list[str] = file.read().split("\n")
 		assert source_line < len(lines), f"generated line {index} maps past the end of {source_file}"

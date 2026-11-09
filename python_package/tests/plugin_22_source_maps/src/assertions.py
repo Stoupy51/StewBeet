@@ -89,11 +89,8 @@ def check_map_format(ctx: Context, path: str, data: JsonDict) -> None:
 	assert data["sources"], f"{path}: a map with no sources should not have been written"
 	assert data["file"].endswith(".mcfunction"), f"{path}: file must name the generated function"
 
-	# sourceRoot climbs from the map's real on-disk directory to the project root
-	on_disk: str = os.path.join("build", str(ctx.data.name), path)
-	expected: int = len(os.path.dirname(on_disk).replace(os.sep, "/").split("/"))
-	assert data["sourceRoot"] == "/".join([".."] * expected), \
-		f"{path}: sourceRoot must climb from {os.path.dirname(on_disk)} to the project root"
+	# The standard sourceRoot would be resolved by Sniffer itself, so the maps carry none
+	assert "sourceRoot" not in data, f"{path}: sourceRoot must not be written"
 
 	# G5: never a library file
 	sources: list[str] = data["sources"]
@@ -101,7 +98,7 @@ def check_map_format(ctx: Context, path: str, data: JsonDict) -> None:
 		normalized: str = source.replace(os.sep, "/")
 		for marker in LIBRARY_MARKERS:
 			assert marker not in normalized, f"{path}: source '{source}' leaks library path '{marker}'"
-		assert not os.path.isabs(source), f"{path}: source '{source}' must be relative to sourceRoot"
+		assert not os.path.isabs(source), f"{path}: source '{source}' must be relative to the project root"
 
 	# G2: mapped lines strictly increasing
 	mappings: str = data["mappings"]
@@ -122,12 +119,9 @@ def check_root_mapping(ctx: Context, maps: dict[str, JsonDict]) -> None:
 	link_source: str = root_sources[decoded[min(decoded)][0]]
 	assert link_source.endswith("link.py"), f"root's first mapping must come from link.py, got {link_source}"
 
-	root_on_disk: str = os.path.join("build", str(ctx.data.name), f"data/{ns}/function/root.mcfunction.map")
-	resolved: str = os.path.normpath(os.path.join(
-		os.path.dirname(root_on_disk), root_map["sourceRoot"], link_source))
-	assert os.path.isfile(resolved), f"sourceRoot + sources must resolve on disk, got {resolved}"
+	assert os.path.isfile(link_source), f"sources must resolve on disk from the project root, got {link_source}"
 
-	with open(resolved, encoding="utf-8") as file:
+	with open(link_source, encoding="utf-8") as file:
 		source_lines: list[str] = file.read().split("\n")
 	first_line: int = decoded[min(decoded)][1]
 	assert "write_function" in source_lines[first_line], \
