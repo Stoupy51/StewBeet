@@ -11,6 +11,7 @@
 // The rewriting itself is a pure function over plain {file, line} records, kept apart from the
 // vscode plumbing so it can be unit-tested under `node --test`.
 
+const fs = require("fs");
 const path = require("path");
 const sourcemap = require("./sourcemap");
 
@@ -188,12 +189,42 @@ function searchFor(configured) {
   return { base: null, glob: `${trimmed.replace(/\\/g, "/")}/${glob}` };
 }
 
-/** @param {{ base: string | null, glob: string }} where @returns {Promise<string[]>} */
+/**
+ * Walks the disk instead of calling `findFiles`, which skips what `.gitignore` lists, and a build
+ * output is exactly what a project ignores.
+ *
+ * @param {{ base: string | null, glob: string }} where
+ * @returns {Promise<string[]>}
+ */
 async function search(where) {
   const vscode = api();
-  const pattern = where.base ? new vscode.RelativePattern(where.base, where.glob) : where.glob;
-  const found = await vscode.workspace.findFiles(pattern, "**/node_modules/**");
-  return found.map(uri => uri.fsPath);
+  const inside = where.glob.slice(0, where.glob.length - `**/*${sourcemap.MAP_SUFFIX}`.length);
+  const roots = where.base
+    ? [where.base]
+    : (vscode.workspace.workspaceFolders ?? []).map(folder => path.join(folder.uri.fsPath, inside));
+  const found = [];
+
+  /** @param {string} dir */
+  async function walk(dir) {
+    /** @type {import("fs").Dirent[]} */
+    let entries;
+    try {
+      entries = await fs.promises.readdir(dir, { withFileTypes: true });
+    } catch {
+      return;
+    }
+    await Promise.all(entries.map(async entry => {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        if (entry.name !== "node_modules" && entry.name !== ".git") await walk(full);
+      } else if (entry.name.endsWith(sourcemap.MAP_SUFFIX)) {
+        found.push(full);
+      }
+    }));
+  }
+
+  await Promise.all(roots.map(walk));
+  return found;
 }
 
 /** Forget which maps exist, so the next lookup searches the workspace again. */
