@@ -1,0 +1,14 @@
+🚚 migrate
+==================
+
+.. automodule:: stewbeet.core.migrate
+
+packs
+----------
+
+.. automodule:: stewbeet.core.migrate.packs
+
+plan
+--------
+
+.. automodule:: stewbeet.core.migrate.plan

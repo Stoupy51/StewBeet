@@ -1,0 +1,14 @@
+📤 copy_to_destination
+==========================================
+
+.. automodule:: stewbeet.plugins.copy_to_destination
+
+sftp
+--------
+
+.. automodule:: stewbeet.plugins.copy_to_destination.sftp
+
+silent
+------------
+
+.. automodule:: stewbeet.plugins.copy_to_destination.silent

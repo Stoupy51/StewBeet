@@ -1,0 +1,9 @@
+🧬 datapack
+====================
+
+.. automodule:: stewbeet.plugins.merge_smithed_weld.datapack
+
+silent
+------------
+
+.. automodule:: stewbeet.plugins.merge_smithed_weld.datapack.silent

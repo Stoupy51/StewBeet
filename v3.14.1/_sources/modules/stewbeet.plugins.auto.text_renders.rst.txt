@@ -1,0 +1,29 @@
+🖋️ text_renders
+==============================
+
+.. automodule:: stewbeet.plugins.auto.text_renders
+
+config
+------------
+
+.. automodule:: stewbeet.plugins.auto.text_renders.config
+
+confirm
+--------------
+
+.. automodule:: stewbeet.plugins.auto.text_renders.confirm
+
+emit
+--------
+
+.. automodule:: stewbeet.plugins.auto.text_renders.emit
+
+scan
+--------
+
+.. automodule:: stewbeet.plugins.auto.text_renders.scan
+
+silent
+------------
+
+.. automodule:: stewbeet.plugins.auto.text_renders.silent

@@ -1,0 +1,40 @@
+💾 io
+========
+
+.. automodule:: stewbeet.core.utils.io
+
+deprecated
+--------------------
+
+.. automodule:: stewbeet.core.utils.io.deprecated
+   :members: convert_to_serializable, write_function_tag
+
+dicts
+----------
+
+.. automodule:: stewbeet.core.utils.io.dicts
+   :members: super_merge_dict
+
+files
+----------
+
+.. automodule:: stewbeet.core.utils.io.files
+   :members: JsonFileT, set_json_encoder, texture_mcmeta
+
+functions
+------------------
+
+.. automodule:: stewbeet.core.utils.io.functions
+   :members: McFunction, read_function, write_function, write_load_file, write_scheduled_function, write_tag, write_tick_file, write_unload_file, write_versioned_function
+
+json_resources
+----------------------------
+
+.. automodule:: stewbeet.core.utils.io.json_resources
+   :members: write_advancement, write_enchantment, write_json_resource, write_predicate
+
+model_cache
+----------------------
+
+.. automodule:: stewbeet.core.utils.io.model_cache
+   :members: EXACT_JSON_TYPES, MODEL_CACHE_MAX_AGE, MODEL_CACHE_MIN_SIZE, MODEL_CACHE_NAME, ModelSerializationCache, active_model_cache, set_model_encoder, setup_model_cache, to_plain_builtin

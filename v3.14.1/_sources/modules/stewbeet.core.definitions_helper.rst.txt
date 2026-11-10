@@ -1,0 +1,46 @@
+🧱 definitions_helper
+========================================
+
+.. automodule:: stewbeet.core.definitions_helper
+
+completion
+--------------------
+
+.. automodule:: stewbeet.core.definitions_helper.completion
+   :members: add_item_model_component, add_item_name_and_lore_if_missing, add_private_custom_data_for_namespace, add_smithed_ignore_vanilla_behaviours_convention, export_all_definitions_to_json, resolve_use_remainders, set_manual_components
+
+equipments
+--------------------
+
+.. automodule:: stewbeet.core.definitions_helper.equipments
+   :members: INVERSE_SLOTS, SLOTS, UNIQUE_SLOTS_VALUES, DefaultOre, EquipmentsConfig, VanillaEquipments, format_attributes
+
+materials
+------------------
+
+.. automodule:: stewbeet.core.definitions_helper.materials
+   :members: ARMOR, ARMOR_MATERIALS, TOOLS, Gear, Material, add_recipes_for_all_dusts, add_recipes_for_dust, copy_armor_layer, dust_recipes, generate_everything_about_these_materials, generate_everything_about_this_material, ingredient_recipes, refined_recipes, write_armor, write_equipment_asset, write_ingredient, write_placeable, write_tool
+
+records
+--------------
+
+.. automodule:: stewbeet.core.definitions_helper.records
+   :members: clean_record_name, generate_custom_records, records_to_generate, register_record_song
+
+simplenergy
+----------------------
+
+.. automodule:: stewbeet.core.definitions_helper.simplenergy
+   :members: add_energy_lore_to_definitions, create_energy_lore, format_energy_number
+
+smart_ore_generation
+----------------------------------------
+
+.. automodule:: stewbeet.core.definitions_helper.smart_ore_generation
+   :members: CustomOreGeneration
+
+text
+--------
+
+.. automodule:: stewbeet.core.definitions_helper.text
+   :members: create_gradient_text, gradient_text_to_string, rainbow_gradient_text

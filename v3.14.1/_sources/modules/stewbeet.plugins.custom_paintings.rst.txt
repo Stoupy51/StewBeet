@@ -1,0 +1,9 @@
+🖼️ custom_paintings
+======================================
+
+.. automodule:: stewbeet.plugins.custom_paintings
+
+silent
+------------
+
+.. automodule:: stewbeet.plugins.custom_paintings.silent
