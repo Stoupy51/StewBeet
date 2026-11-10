@@ -21,6 +21,7 @@ from zipfile import ZIP_DEFLATED
 
 import stouputils as stp
 from beet import Cache, Context, DataPack, ProjectCache, ResourcePack
+from beet.core.utils import JsonDict
 from stouputils.ctx import Muffle
 
 from ...core.utils.libs import lib_archives
@@ -146,9 +147,12 @@ def weld_to(ctx: Context, sources: list[str], dest_path: str, pack_type: str) ->
 			) as zip_file:
 				merged.dump(zip_file)
 
-				# Add the fixed pack.mcmeta with constant_time
+				# Weld renames the overlay folders, so only the entries of its own pack.mcmeta match what the archive holds
 				if hasattr(local, "mcmeta") and local.mcmeta:
-					zip_file.force_writestr("pack.mcmeta", local.mcmeta.text.encode("utf-8"))
+					mcmeta: JsonDict = {key: value for key, value in local.mcmeta.data.items() if key != "overlays"}
+					if "overlays" in merged.mcmeta.data:
+						mcmeta["overlays"] = merged.mcmeta.data["overlays"]
+					zip_file.force_writestr("pack.mcmeta", local.mcmeta.encoder(mcmeta).encode("utf-8"))
 
 				# Check if pack.png exists and add it if it does
 				pack_png_path = find_pack_png()
