@@ -20,7 +20,7 @@ from pathlib import Path
 from zipfile import ZIP_DEFLATED
 
 import stouputils as stp
-from beet import Context, DataPack, ProjectCache, ResourcePack
+from beet import Cache, Context, DataPack, ProjectCache, ResourcePack
 from stouputils.ctx import Muffle
 
 from ...core.utils.libs import lib_archives
@@ -127,6 +127,9 @@ def weld_to(ctx: Context, sources: list[str], dest_path: str, pack_type: str) ->
 	# and a cache dir shared across projects breaks concurrent `stewbeet` runs.
 	cache_dir: str = tempfile.mkdtemp(prefix="stewbeet_weld_cache_")
 	weld_cache = ProjectCache(directory=Path(cache_dir) / "beet_cache", generated_directory=Path(cache_dir) / "generated")
+
+	# Weld reads the vanilla pack to solve a conflict, and downloading then unpacking the client jar takes over ten seconds.
+	weld_cache["vanilla"] = Cache(ctx.cache[CACHE_NAME].directory / f"vanilla_{pack_type}")
 	try:
 		with run_weld(sources, cache=weld_cache) as weld_ctx:
 			merged: DataPack | ResourcePack = weld_ctx.data if pack_type == "datapack" else weld_ctx.assets
