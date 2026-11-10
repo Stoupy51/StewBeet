@@ -1,0 +1,9 @@
+🎁 loot_tables
+==========================
+
+.. automodule:: stewbeet.plugins.datapack.loot_tables
+
+silent
+------------
+
+.. automodule:: stewbeet.plugins.datapack.loot_tables.silent

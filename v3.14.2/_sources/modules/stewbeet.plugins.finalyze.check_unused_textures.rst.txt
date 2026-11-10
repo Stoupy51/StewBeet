@@ -1,0 +1,9 @@
+↪️ check_unused_textures
+================================================
+
+.. automodule:: stewbeet.plugins.finalyze.check_unused_textures
+
+silent
+------------
+
+.. automodule:: stewbeet.plugins.finalyze.check_unused_textures.silent

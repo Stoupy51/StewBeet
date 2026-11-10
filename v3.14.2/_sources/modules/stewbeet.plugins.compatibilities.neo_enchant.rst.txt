@@ -1,0 +1,9 @@
+⛏️ neo_enchant
+============================
+
+.. automodule:: stewbeet.plugins.compatibilities.neo_enchant
+
+silent
+------------
+
+.. automodule:: stewbeet.plugins.compatibilities.neo_enchant.silent

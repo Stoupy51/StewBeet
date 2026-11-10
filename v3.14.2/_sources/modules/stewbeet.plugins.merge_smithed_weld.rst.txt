@@ -1,0 +1,20 @@
+🧬 merge_smithed_weld
+========================================
+
+.. automodule:: stewbeet.plugins.merge_smithed_weld
+
+.. toctree::
+   :maxdepth: 1
+
+   stewbeet.plugins.merge_smithed_weld.datapack
+   stewbeet.plugins.merge_smithed_weld.resource_pack
+
+silent
+------------
+
+.. automodule:: stewbeet.plugins.merge_smithed_weld.silent
+
+weld
+--------
+
+.. automodule:: stewbeet.plugins.merge_smithed_weld.weld
