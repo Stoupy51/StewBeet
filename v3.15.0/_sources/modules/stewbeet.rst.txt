@@ -1,0 +1,34 @@
+API reference
+==========================
+
+.. automodule:: stewbeet
+
+.. toctree::
+   :maxdepth: 1
+
+   stewbeet.all
+   stewbeet.continuous_delivery
+   stewbeet.contrib
+   stewbeet.core
+   stewbeet.dependencies
+   stewbeet.plugins
+
+cli
+------
+
+.. automodule:: stewbeet.cli
+
+silent
+------------
+
+.. automodule:: stewbeet.silent
+
+telemetry
+------------------
+
+.. automodule:: stewbeet.telemetry
+
+utils
+----------
+
+.. automodule:: stewbeet.utils

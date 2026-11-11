@@ -1,0 +1,7 @@
+contrib
+==============
+
+.. toctree::
+   :maxdepth: 1
+
+   stewbeet.contrib.simplenergy

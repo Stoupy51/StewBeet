@@ -1,0 +1,12 @@
+finalyze
+================
+
+.. toctree::
+   :maxdepth: 1
+
+   stewbeet.plugins.finalyze.basic_datapack_structure
+   stewbeet.plugins.finalyze.check_unused_textures
+   stewbeet.plugins.finalyze.custom_blocks_ticking
+   stewbeet.plugins.finalyze.dependencies
+   stewbeet.plugins.finalyze.last_final
+   stewbeet.plugins.finalyze.unload

@@ -1,0 +1,29 @@
+🗂️ types
+================
+
+.. automodule:: stewbeet.plugins.ingame_manual.recipes.types
+
+awakened_forge
+----------------------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.recipes.types.awakened_forge
+
+furnace
+--------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.recipes.types.furnace
+
+linear
+------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.recipes.types.linear
+
+shaped
+------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.recipes.types.shaped
+
+smithing
+----------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.recipes.types.smithing

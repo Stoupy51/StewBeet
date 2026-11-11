@@ -33,6 +33,11 @@ persistent_entities
 
 .. automodule:: stewbeet.core.utils.persistent_entities
 
+post_effects
+------------------------
+
+.. automodule:: stewbeet.core.utils.post_effects
+
 sounds
 ------------
 
