@@ -145,6 +145,12 @@ export const DocumentationPage: React.FC = () => {
                     pathEn: '4_equations/en.md',
                     pathFr: '4_equations/fr.md',
                 },
+                {
+                    title: t('documentation.postEffects'),
+                    description: t('documentation.postEffectsDesc'),
+                    pathEn: '12_post_effects/en.md',
+                    pathFr: '12_post_effects/fr.md',
+                },
             ],
         },
     ];

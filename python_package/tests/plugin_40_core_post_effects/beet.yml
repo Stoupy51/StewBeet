@@ -1,0 +1,32 @@
+
+# Test: stewbeet.core.utils.post_effects
+# Verifies that a timed chain never samples the target it writes, keeps the caller's
+# passes and samplers in order, and ships its clock shaders in the project namespace.
+
+id: "tns"
+name: "Test Core Post Effects"
+version: "1.0.0"
+author: "test"
+minecraft: "26.3"
+
+directory: "."
+output: "build"
+
+require:
+    - "stewbeet"
+
+data_pack:
+    name: "datapack"
+    load: ["src"]
+
+resource_pack:
+    name: "resource_pack"
+    load: ["src"]
+
+pipeline:
+    - "src.assertions"
+
+meta:
+    stewbeet:
+        source_lore: "auto"
+

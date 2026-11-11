@@ -301,6 +301,15 @@ from .utils.models import (
 from .utils.persistent_entities import (
 	persistent_item_display as persistent_item_display,
 )
+from .utils.post_effects import (
+	POST_CLOCK_FSH as POST_CLOCK_FSH,
+	POST_CLOCK_GLSL as POST_CLOCK_GLSL,
+	POST_COPY_FSH as POST_COPY_FSH,
+	POST_SHADER_HEADER as POST_SHADER_HEADER,
+	SCREENQUAD_VERTEX_SHADER as SCREENQUAD_VERTEX_SHADER,
+	post_uniform as post_uniform,
+	timed_post_effect as timed_post_effect,
+)
 from .utils.sounds import (
 	add_sound as add_sound,
 )
