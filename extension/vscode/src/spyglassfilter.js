@@ -60,7 +60,7 @@ function registerSpyglassFilter(context, onBuild) {
     // The source map index is cached from the first list it is given, so it is never asked before the maps are found.
     const maps = navigation.knownMaps();
     const verdict = !isBuildOutput(uri.fsPath, outputs)
-      && ((maps.length > 0 && sourcemap.isBoltSource(maps, uri.fsPath)) || looksLikeBolt(readText(uri.fsPath)));
+      && ((maps.length > 0 && sourcemap.isBoltSource(uri.fsPath)) || looksLikeBolt(readText(uri.fsPath)));
     verdicts.set(uri.fsPath, verdict);
     return verdict;
   }

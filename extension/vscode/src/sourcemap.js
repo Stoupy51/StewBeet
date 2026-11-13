@@ -291,7 +291,8 @@ function clearCache() {
   resolvedMaps.clear();
   origins.clear();
   stats.clear();
-  reverseIndex = null;
+  reverseIndex = new Map();
+  indexing = null;
 }
 
 // Lookup: generated to source
@@ -379,8 +380,8 @@ const origins = new Map();
 
 // Lookup: source to generated
 
-/** What every known map says about each source file, built by scanning all of them once. @type {Map<string, SourceView> | null} */
-let reverseIndex = null;
+/** What every known map says about each source file, built by scanning all of them once. @type {Map<string, SourceView>} */
+let reverseIndex = new Map();
 
 /**
  * Everything the maps say about one source file, in the lines of the build that wrote them.
@@ -406,12 +407,10 @@ let reverseIndex = null;
  * Keyed by the line each call sits on now, not by the line it sat on when the build ran, so a
  * lens follows its own block while the file is edited around it. A line deleted since is absent.
  *
- * @param {string[]} mapPaths
  * @param {string} pythonPath
  * @returns {Map<number, { file: string, line: number }[]>}
  */
-function originLinesFor(mapPaths, pythonPath) {
-  if (!reverseIndex) reverseIndex = buildReverseIndex(mapPaths);
+function originLinesFor(pythonPath) {
 
   const lines = new Map();
   for (const [line, locations] of reverseIndex.get(fileKey(pythonPath))?.produced ?? []) {
@@ -428,13 +427,11 @@ function originLinesFor(mapPaths, pythonPath) {
  * The maps only run one way, so this needs an index built by reading all of them. Several
  * generated lines routinely share one source line (G7), which is why the result is a list.
  *
- * @param {string[]} mapPaths  Every .mcfunction.map to index, from the build output.
  * @param {string} pythonPath  Absolute path of the Python file.
  * @param {number} line  0-based Python line, as it sits in the buffer now.
  * @returns {{ file: string, line: number }[]}
  */
-function generatedFrom(mapPaths, pythonPath, line) {
-  if (!reverseIndex) reverseIndex = buildReverseIndex(mapPaths);
+function generatedFrom(pythonPath, line) {
   const built = drift.buildLineOf(pythonPath, line);
   if (built === null) return [];
   return (reverseIndex.get(fileKey(pythonPath))?.produced.get(built) ?? []).slice();
@@ -442,31 +439,26 @@ function generatedFrom(mapPaths, pythonPath, line) {
 
 /**
  * The source view of one file, from an index built on first use.
- * @param {string[]} mapPaths  Every .mcfunction.map to index.
  * @param {string} sourcePath
  * @returns {SourceView | undefined}
  */
-function viewOf(mapPaths, sourcePath) {
-  if (!reverseIndex) reverseIndex = buildReverseIndex(mapPaths);
+function viewOf(sourcePath) {
   return reverseIndex.get(fileKey(sourcePath));
 }
 
 /**
  * Whether a build compiled the file as bolt or mecha syntax, which no vanilla parser reads.
- * @param {string[]} mapPaths
  * @param {string} sourcePath
  */
-function isBoltSource(mapPaths, sourcePath) {
-  return viewOf(mapPaths, sourcePath)?.bolt ?? false;
+function isBoltSource(sourcePath) {
+  return viewOf(sourcePath)?.bolt ?? false;
 }
 
 /**
  * Every source a build compiled as bolt or mecha syntax, spelled as the maps resolve it.
- * @param {string[]} mapPaths
  * @returns {string[]}
  */
-function boltSources(mapPaths) {
-  if (!reverseIndex) reverseIndex = buildReverseIndex(mapPaths);
+function boltSources() {
   return [...reverseIndex.values()].filter(view => view.bolt).map(view => view.path);
 }
 
@@ -478,14 +470,13 @@ function boltSources(mapPaths) {
  * `~/` between two points becomes the resource location between the same two points of the build.
  * Only the first generated line of a source line is kept, as `generatedText` does.
  *
- * @param {string[]} mapPaths
  * @param {string} sourcePath
  * @returns {Map<number, { text: string, points: { generated: number, column: number }[] }>}
  */
-function compiledColumns(mapPaths, sourcePath) {
+function compiledColumns(sourcePath) {
   /** @type {Map<number, { text: string, points: { generated: number, column: number }[] }>} */
   const found = new Map();
-  for (const [line, { file, line: generatedLine, points }] of viewOf(mapPaths, sourcePath)?.columns ?? []) {
+  for (const [line, { file, line: generatedLine, points }] of viewOf(sourcePath)?.columns ?? []) {
     const current = drift.currentLineOf(sourcePath, line);
     const text = linesOf(file)?.[generatedLine];
     if (current !== null && typeof text === "string") found.set(current, { text, points });
@@ -496,33 +487,34 @@ function compiledColumns(mapPaths, sourcePath) {
 /**
  * Where syntax a plugin added to mecha begins, as source line now to column.
  * The build accepted it, so a vanilla parser's opinion of the rest of that command is not worth showing.
- * @param {string[]} mapPaths
  * @param {string} sourcePath
  * @returns {Map<number, number>}
  */
-function opaqueStarts(mapPaths, sourcePath) {
+function opaqueStarts(sourcePath) {
   /** @type {Map<number, number>} */
   const found = new Map();
-  for (const [line, column] of viewOf(mapPaths, sourcePath)?.opaque ?? []) {
+  for (const [line, column] of viewOf(sourcePath)?.opaque ?? []) {
     const current = drift.currentLineOf(sourcePath, line);
     if (current !== null) found.set(current, column);
   }
   return found;
 }
 
+/** The index `indexMaps` is filling, which `clearCache` or a newer call abandons. @type {Map<string, SourceView> | null} */
+let indexing = null;
+
 /**
- * Source file to source line to what that line generated.
+ * Build the reverse index of the maps a search found, handing the extension host back before each
+ * map: reading a pack's thousands of maps in one go blocks the editor for a second after each build.
  *
  * Nested by file rather than keyed by a `file:line` string so that asking about one file is a
  * lookup instead of a walk over every mapped line in the project. A pack of two thousand
  * functions has tens of thousands of entries, and the lens provider asks on every keystroke.
  *
  * @param {string[]} mapPaths
- * @returns {Map<string, SourceView>}
  */
-function buildReverseIndex(mapPaths) {
-  /** @type {Map<string, SourceView>} */
-  const index = new Map();
+async function indexMaps(mapPaths) {
+  const index = indexing = new Map();
   /** @param {string} file */
   const viewFor = file => {
     let view = index.get(fileKey(file));
@@ -531,6 +523,8 @@ function buildReverseIndex(mapPaths) {
   };
 
   for (const mapPath of mapPaths) {
+    await new Promise(resolve => setImmediate(resolve));
+    if (indexing !== index) return;
     const map = load(mapPath);
     if (!map) continue;
     const generatedPath = mapPath.slice(0, -".map".length);
@@ -559,7 +553,7 @@ function buildReverseIndex(mapPaths) {
     for (const source of map.bolt) if (files[source] !== undefined) viewFor(files[source]).bolt = true;
     for (const [source, line, column] of map.opaque) if (files[source] !== undefined) viewFor(files[source]).opaque.set(line, column);
   }
-  return index;
+  reverseIndex = index;
 }
 
 /**
@@ -570,16 +564,15 @@ function buildReverseIndex(mapPaths) {
  * Only the first generated location is read: a line that expanded into several commands has
  * no single answer, and the first one is the one whose text still anchors the line's literals.
  *
- * @param {string[]} mapPaths
  * @param {string} pythonPath
  * @param {number} from  First 0-based Python line, inclusive.
  * @param {number} to  Last 0-based Python line, inclusive.
  * @returns {Map<number, string>}
  */
-function generatedText(mapPaths, pythonPath, from, to) {
+function generatedText(pythonPath, from, to) {
   /** @type {Map<number, string>} */
   const found = new Map();
-  const produced = viewOf(mapPaths, pythonPath)?.produced;
+  const produced = viewOf(pythonPath)?.produced;
   if (!produced) return found;
   for (let line = from; line <= to; line++) {
     const built = drift.buildLineOf(pythonPath, line);
@@ -605,6 +598,7 @@ module.exports = {
   load,
   linesOf,
   clearCache,
+  indexMaps,
   originOf,
   originsOf,
   generatedFrom,

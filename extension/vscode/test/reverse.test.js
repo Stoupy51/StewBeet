@@ -13,7 +13,7 @@ const fs = require("fs");
 const os = require("os");
 const path = require("path");
 
-const { originLinesFor, generatedFrom, clearCache } = require("../src/sourcemap");
+const { originLinesFor, generatedFrom, clearCache, indexMaps } = require("../src/sourcemap");
 const { lensAnchors } = require("../src/lenses");
 
 /** A pack laid out the way a build writes one, with maps beside their functions. */
@@ -40,35 +40,37 @@ function writeMap(functions, name, sources, mappings) {
   }));
 }
 
-test("a source line finds what it generated, across several maps", () => {
+test("a source line finds what it generated, across several maps", async () => {
   clearCache();
   const { root, functions } = makePack();
   // alpha line 0 comes from one.bolt line 0; beta line 0 comes from two.bolt line 0.
   writeMap(functions, "alpha", ["src/one.bolt"], "AAAA");
   writeMap(functions, "beta", ["src/two.bolt"], "AAAA");
   const maps = ["alpha", "beta"].map(n => path.join(functions, `${n}.mcfunction.map`));
+  await indexMaps(maps);
 
-  const fromOne = generatedFrom(maps, path.join(root, "src", "one.bolt"), 0);
+  const fromOne = generatedFrom(path.join(root, "src", "one.bolt"), 0);
   assert.strictEqual(fromOne.length, 1);
   assert.ok(fromOne[0].file.endsWith("alpha.mcfunction"), fromOne[0].file);
 
-  const fromTwo = generatedFrom(maps, path.join(root, "src", "two.bolt"), 0);
+  const fromTwo = generatedFrom(path.join(root, "src", "two.bolt"), 0);
   assert.ok(fromTwo[0].file.endsWith("beta.mcfunction"), fromTwo[0].file);
 
-  assert.deepStrictEqual(generatedFrom(maps, path.join(root, "src", "one.bolt"), 9), [],
+  assert.deepStrictEqual(generatedFrom(path.join(root, "src", "one.bolt"), 9), [],
     "a line that generated nothing has no answer, and never the nearest one");
   clearCache();
 });
 
-test("one source file feeding several functions lists each of them once", () => {
+test("one source file feeding several functions lists each of them once", async () => {
   clearCache();
   const { root, functions } = makePack();
   // Both functions come from one.bolt: alpha from line 0, beta from line 1.
   writeMap(functions, "alpha", ["src/one.bolt"], "AAAA");
   writeMap(functions, "beta", ["src/one.bolt"], "AACA");
   const maps = ["alpha", "beta"].map(n => path.join(functions, `${n}.mcfunction.map`));
+  await indexMaps(maps);
 
-  const origins = originLinesFor(maps, path.join(root, "src", "one.bolt"));
+  const origins = originLinesFor(path.join(root, "src", "one.bolt"));
   assert.deepStrictEqual([...origins.keys()].sort((a, b) => a - b), [0, 1]);
 
   const anchors = lensAnchors(origins);
@@ -77,52 +79,56 @@ test("one source file feeding several functions lists each of them once", () => 
   clearCache();
 });
 
-test("many lines feeding one function get a single lens, at the first of them", () => {
+test("many lines feeding one function get a single lens, at the first of them", async () => {
   clearCache();
   const { root, functions } = makePack();
   // Three generated lines, from source lines 0, 1 and 1 again: one loop, one function.
   writeMap(functions, "alpha", ["src/one.bolt"], "AAAA;AACA;AAAA");
   const maps = [path.join(functions, "alpha.mcfunction.map")];
+  await indexMaps(maps);
 
-  const anchors = lensAnchors(originLinesFor(maps, path.join(root, "src", "one.bolt")));
+  const anchors = lensAnchors(originLinesFor(path.join(root, "src", "one.bolt")));
   assert.strictEqual(anchors.length, 1, "a lens per line would be twenty lenses on one function");
   assert.strictEqual(anchors[0].line, 0, "the first contributing line is where the lens belongs");
   clearCache();
 });
 
-test("a generated file is not a source, so it gets no lens of this kind", () => {
+test("a generated file is not a source, so it gets no lens of this kind", async () => {
   clearCache();
   const { functions } = makePack();
   writeMap(functions, "alpha", ["src/one.bolt"], "AAAA");
   const maps = [path.join(functions, "alpha.mcfunction.map")];
+  await indexMaps(maps);
 
-  const origins = originLinesFor(maps, path.join(functions, "alpha.mcfunction"));
+  const origins = originLinesFor(path.join(functions, "alpha.mcfunction"));
   assert.strictEqual(origins.size, 0);
   clearCache();
 });
 
-test("the index is keyed by file, so one file's lookup ignores every other map", () => {
+test("the index is keyed by file, so one file's lookup ignores every other map", async () => {
   clearCache();
   const { root, functions } = makePack();
   for (let i = 0; i < 50; i++) writeMap(functions, `f${i}`, ["src/two.bolt"], "AAAA");
   writeMap(functions, "mine", ["src/one.bolt"], "AAAA");
   const maps = fs.readdirSync(functions).filter(f => f.endsWith(".map")).map(f => path.join(functions, f));
+  await indexMaps(maps);
 
-  const origins = originLinesFor(maps, path.join(root, "src", "one.bolt"));
+  const origins = originLinesFor(path.join(root, "src", "one.bolt"));
   assert.strictEqual(origins.size, 1, "only this file's lines come back");
   assert.ok(origins.get(0)?.[0].file.endsWith("mine.mcfunction"));
   clearCache();
 });
 
-test("a line that wrote several functions gets one lens naming all of them", () => {
+test("a line that wrote several functions gets one lens naming all of them", async () => {
   clearCache();
   const { root, functions } = makePack();
   // machines.py's `for item, fuel in (...)` loop: one write_function call, two functions.
   writeMap(functions, "consume_dust", ["src/one.bolt"], "AAAA");
   writeMap(functions, "consume_block", ["src/one.bolt"], "AAAA");
   const maps = ["consume_dust", "consume_block"].map(n => path.join(functions, `${n}.mcfunction.map`));
+  await indexMaps(maps);
 
-  const anchors = lensAnchors(originLinesFor(maps, path.join(root, "src", "one.bolt")));
+  const anchors = lensAnchors(originLinesFor(path.join(root, "src", "one.bolt")));
   assert.strictEqual(anchors.length, 1, "one lens on the line, not one per function stacked on it");
   assert.strictEqual(anchors[0].targets.length, 2, "and it carries both, so the peek can list them");
   assert.deepStrictEqual(
@@ -131,14 +137,15 @@ test("a line that wrote several functions gets one lens naming all of them", () 
   clearCache();
 });
 
-test("a file whose functions come from different lines still gets a lens each", () => {
+test("a file whose functions come from different lines still gets a lens each", async () => {
   clearCache();
   const { root, functions } = makePack();
   writeMap(functions, "alpha", ["src/one.bolt"], "AAAA");
   writeMap(functions, "beta", ["src/one.bolt"], "AACA");
   const maps = ["alpha", "beta"].map(n => path.join(functions, `${n}.mcfunction.map`));
+  await indexMaps(maps);
 
-  const anchors = lensAnchors(originLinesFor(maps, path.join(root, "src", "one.bolt")));
+  const anchors = lensAnchors(originLinesFor(path.join(root, "src", "one.bolt")));
   assert.deepStrictEqual(anchors.map(a => a.line), [0, 1]);
   assert.deepStrictEqual(anchors.map(a => a.targets.length), [1, 1]);
   clearCache();

@@ -28,6 +28,9 @@ const CFG_KEY = "StewBeet";
 
 const GENERATED_SUFFIX = ".mcfunction";
 
+/** Folders the map search skips. `.claude` holds agent worktrees, each with a build of its own. */
+const NOT_OUTPUT = new Set(["node_modules", ".git", ".venv", ".beet_cache", ".claude"]);
+
 // Shape normalisation
 
 /**
@@ -147,12 +150,14 @@ let discovery = null;
  *
  * The result is cached because the projection now asks for it on every keystroke, and a
  * workspace-wide `findFiles` per character typed is not something an editor survives.
+ * It resolves once the maps are indexed, so no caller builds the reverse index on the spot.
  *
  * @returns {Promise<string[]>}
  */
 function findMaps() {
   if (!discovery) {
-    const current = discover().then(found => {
+    const current = discover().then(async found => {
+      await sourcemap.indexMaps(found);
       if (discovery === current) discovered = found;
       return found;
     }, e => {
@@ -225,7 +230,7 @@ async function search(where) {
     await Promise.all(entries.map(async entry => {
       const full = path.join(dir, entry.name);
       if (entry.isDirectory()) {
-        if (entry.name !== "node_modules" && entry.name !== ".git") await walk(full);
+        if (!NOT_OUTPUT.has(entry.name)) await walk(full);
       } else if (entry.name.endsWith(sourcemap.MAP_SUFFIX)) {
         found.push(full);
       }

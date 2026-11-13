@@ -69,22 +69,24 @@ test("the derived origins are dropped with the map they came from", () => {
   sourcemap.clearCache();
 });
 
-test("the reverse index is dropped with the maps", () => {
+test("the reverse index is dropped with the maps", async () => {
   sourcemap.clearCache();
   const { root, mapPath } = writePack("AAAA");
   const one = path.join(root, "src", "one.bolt");
   const two = path.join(root, "src", "two.bolt");
-  assert.equal(sourcemap.originLinesFor([mapPath], one).size, 1);
-  assert.equal(sourcemap.originLinesFor([mapPath], two).size, 0);
+  await sourcemap.indexMaps([mapPath]);
+  assert.equal(sourcemap.originLinesFor(one).size, 1);
+  assert.equal(sourcemap.originLinesFor(two).size, 0);
 
   fs.writeFileSync(mapPath, JSON.stringify({
     version: 3, file: "alpha.mcfunction",
     sources: ["src/two.bolt"], names: [], mappings: "AAAA",
   }));
   sourcemap.clearCache();
+  await sourcemap.indexMaps([mapPath]);
 
-  assert.equal(sourcemap.originLinesFor([mapPath], one).size, 0, "the old source still claims the line");
-  assert.equal(sourcemap.originLinesFor([mapPath], two).size, 1, "the new one does not");
+  assert.equal(sourcemap.originLinesFor(one).size, 0, "the old source still claims the line");
+  assert.equal(sourcemap.originLinesFor(two).size, 1, "the new one does not");
   sourcemap.clearCache();
 });
 

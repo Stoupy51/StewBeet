@@ -312,10 +312,11 @@ function writePack() {
   return { source, generated, mapPath: `${generated}.map` };
 }
 
-test("the maps answer where a line is now, not where the build left it", () => {
+test("the maps answer where a line is now, not where the build left it", async () => {
   drift.clear();
   sourcemap.clearCache();
   const { source, generated, mapPath } = writePack();
+  await sourcemap.indexMaps([mapPath]);
   assert.deepEqual(sourcemap.originOf(generated, 0), { file: source, line: 3, column: 0 });
 
   buffer("", source); // the tracker is fed the real file below
@@ -323,22 +324,23 @@ test("the maps answer where a line is now, not where the build left it", () => {
   doc.deleteLines(0, 2);
 
   assert.equal(sourcemap.originOf(generated, 0)?.line, 1, "two lines above it went");
-  assert.deepEqual([...sourcemap.originLinesFor([mapPath], source).keys()], [1, 2, 3]);
-  assert.deepEqual(sourcemap.generatedFrom([mapPath], source, 1), [{ file: generated, line: 0 }]);
+  assert.deepEqual([...sourcemap.originLinesFor(source).keys()], [1, 2, 3]);
+  assert.deepEqual(sourcemap.generatedFrom(source, 1), [{ file: generated, line: 0 }]);
   drift.clear();
   sourcemap.clearCache();
 });
 
-test("a line the author deleted stops answering, rather than answering a neighbour", () => {
+test("a line the author deleted stops answering, rather than answering a neighbour", async () => {
   drift.clear();
   sourcemap.clearCache();
   const { source, generated, mapPath } = writePack();
+  await sourcemap.indexMaps([mapPath]);
 
   buffer(fs.readFileSync(source, "utf8"), source).deleteLines(3, 1); // the origin of line 0
 
   assert.equal(sourcemap.originOf(generated, 0), null, "no lens, no jump, no diagnostic on it");
   assert.equal(sourcemap.originsOf(generated).length, 0);
-  assert.deepEqual([...sourcemap.originLinesFor([mapPath], source).keys()], [3, 4],
+  assert.deepEqual([...sourcemap.originLinesFor(source).keys()], [3, 4],
     "the two lines that survived still lead to what they wrote");
   drift.clear();
   sourcemap.clearCache();

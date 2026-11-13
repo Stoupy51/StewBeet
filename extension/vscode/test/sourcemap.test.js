@@ -17,7 +17,7 @@ const path = require("path");
 const os = require("os");
 
 const {
-  decode, decodeVlq, originOf, clearCache, isBoltSource, boltSources, compiledColumns, opaqueStarts, originLinesFor,
+  decode, decodeVlq, originOf, clearCache, indexMaps, isBoltSource, boltSources, compiledColumns, opaqueStarts, originLinesFor,
 } = require("../src/sourcemap");
 
 const REFERENCE = path.resolve(
@@ -118,7 +118,7 @@ test("the x_ fields are read, and a map without them has none", () => {
   assert.deepStrictEqual([decode({ mappings: "AAAA" }).bolt, decode({ mappings: "AAAA" }).opaque], [[], []]);
 });
 
-test("a source file reads what every map says about it", () => {
+test("a source file reads what every map says about it", async () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "stewbeet-sourcemap-"));
   const source = path.join(root, "src", "tick.mcfunction");
   const generated = path.join(root, "build", "data", "t", "function", "tick.mcfunction");
@@ -132,14 +132,15 @@ test("a source file reads what every map says about it", () => {
   }));
   clearCache();
   const maps = [`${generated}.map`];
+  await indexMaps(maps);
 
-  assert.ok(isBoltSource(maps, source));
-  assert.ok(!isBoltSource(maps, path.join(root, "src", "other.mcfunction")));
-  assert.deepStrictEqual(boltSources(maps), [source], "spelled as on disk, which is what an exclusion pattern is matched against");
-  assert.deepStrictEqual([...originLinesFor(maps, source).keys()], [0, 4, 5], "every line a command was compiled from");
-  assert.deepStrictEqual(compiledColumns(maps, source).get(4),
+  assert.ok(isBoltSource(source));
+  assert.ok(!isBoltSource(path.join(root, "src", "other.mcfunction")));
+  assert.deepStrictEqual(boltSources(), [source], "spelled as on disk, which is what an exclusion pattern is matched against");
+  assert.deepStrictEqual([...originLinesFor(source).keys()], [0, 4, 5], "every line a command was compiled from");
+  assert.deepStrictEqual(compiledColumns(source).get(4),
     { text: "schedule function t:probe 1 replace", points: [{ generated: 18, column: 18 }, { generated: 25, column: 20 }] });
-  assert.deepStrictEqual([...opaqueStarts(maps, source)], [[5, 8]]);
+  assert.deepStrictEqual([...opaqueStarts(source)], [[5, 8]]);
   fs.rmSync(root, { recursive: true, force: true });
   clearCache();
 });

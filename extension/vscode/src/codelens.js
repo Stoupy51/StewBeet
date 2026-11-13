@@ -65,7 +65,7 @@ const codeLensProvider = {
     // is every line of the block, so reading the map alone puts a lens on all twenty lines of
     // a function. The blocks say which call each of them feeds, and that call is the one place
     // a reader wants the link, whether the commands sit in the call or in a variable above it.
-    const origins = sourcemap.originLinesFor(maps, doc.uri.fsPath);
+    const origins = sourcemap.originLinesFor(doc.uri.fsPath);
     if (origins.size === 0) return [];
 
     const lenses = [];
@@ -113,7 +113,7 @@ const boltLensProvider = {
 
     // A generated file is not a source of anything, so it never appears in the reverse index
     // and this costs one lookup before returning nothing.
-    const origins = sourcemap.originLinesFor(maps, doc.uri.fsPath);
+    const origins = sourcemap.originLinesFor(doc.uri.fsPath);
     if (origins.size === 0) return [];
 
     return lensAnchors(origins, holdsText(doc)).map(({ line, targets }) => lensFor(line, targets));

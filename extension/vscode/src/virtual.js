@@ -88,13 +88,13 @@ function scanOf(doc) {
  */
 function boltScan(doc, text, maps) {
   const file = doc.uri.scheme === "file" && maps.length > 0 ? doc.uri.fsPath : null;
-  const commands = commandsOf(text, file ? new Set(sourcemap.originLinesFor(maps, file).keys()) : new Set());
+  const commands = commandsOf(text, file ? new Set(sourcemap.originLinesFor(file).keys()) : new Set());
   const blocks = commandBlocks(commands).map(({ from, to }) => {
     const start = doc.offsetAt(new vscode.Position(from, 0));
     const end = doc.offsetAt(doc.lineAt(to).range.end);
     return { start, end, contentStart: start, contentEnd: end, from, to };
   });
-  return { blocks, commands, opaque: file ? sourcemap.opaqueStarts(maps, file) : new Map() };
+  return { blocks, commands, opaque: file ? sourcemap.opaqueStarts(file) : new Map() };
 }
 
 /** @param {vscode.TextDocument} doc */
@@ -241,7 +241,7 @@ function buildViewOf(doc, scan) {
   const view = generatedFor(doc).then(generated => ({
     generated,
     known: generated && !isBolt(doc) ? learn(scan.text, scan.blocks, generated) : new Map(),
-    columns: generated && isBolt(doc) ? sourcemap.compiledColumns(navigation.knownMaps(), doc.uri.fsPath) : null,
+    columns: generated && isBolt(doc) ? sourcemap.compiledColumns(doc.uri.fsPath) : null,
   }));
   buildViews.set(key, { version: doc.version, view });
   return view;
@@ -271,7 +271,7 @@ async function generatedFor(doc) {
 
   const maps = await navigation.findMaps();
   if (maps.length === 0) return null;
-  return sourcemap.generatedText(maps, doc.uri.fsPath, 0, doc.lineCount - 1);
+  return sourcemap.generatedText(doc.uri.fsPath, 0, doc.lineCount - 1);
 }
 
 const contentProvider = {

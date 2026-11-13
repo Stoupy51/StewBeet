@@ -214,8 +214,8 @@ function registerBoltDetection(context) {
     // beside it says so, and older builds say so in a trailing comment looksLikeBolt reads.
     if (isBuildOutput(doc.uri.fsPath, outputs)) return;
     // The build knows which files it compiled as bolt, and the text is only a guess for a project not built yet.
-    const maps = await navigation.findMaps();
-    if (!sourcemap.isBoltSource(maps, doc.uri.fsPath) && !looksLikeBolt(doc.getText())) return;
+    await navigation.findMaps();
+    if (!sourcemap.isBoltSource(doc.uri.fsPath) && !looksLikeBolt(doc.getText())) return;
     if (handled.has(doc.uri.fsPath)) return;
 
     handled.add(doc.uri.fsPath);
@@ -413,8 +413,8 @@ async function goToGenerated(target) {
   const editor = vscode.window.activeTextEditor;
   if (!editor || !virtual.isProjected(editor.document)) return;
 
-  const maps = await navigation.findMaps();
-  const found = sourcemap.generatedFrom(maps, editor.document.uri.fsPath, editor.selection.active.line);
+  await navigation.findMaps();
+  const found = sourcemap.generatedFrom(editor.document.uri.fsPath, editor.selection.active.line);
   if (found.length === 0) {
     vscode.window.setStatusBarMessage("StewBeet: this line generated nothing in the current build", 3000);
     return;
