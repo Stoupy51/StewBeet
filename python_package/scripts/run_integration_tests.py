@@ -1,6 +1,7 @@
 
 # Imports
 import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -48,6 +49,8 @@ def run_test(test_dir: Path) -> bool:
 	)
 	if result.returncode == 0:
 		stp.info(f"PASSED: {test_dir.name}")
+		for generated in ("build", ".beet_cache"):
+			shutil.rmtree(test_dir / generated, ignore_errors=True)
 		return True
 	stp.error(f"FAILED: {test_dir.name}")
 	for output in (result.stdout.strip(), result.stderr.strip()):

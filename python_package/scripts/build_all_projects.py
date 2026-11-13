@@ -2,6 +2,7 @@
 # Imports
 import os
 import runpy
+import shutil
 import subprocess
 import sys
 import time
@@ -110,6 +111,8 @@ def main() -> None:
 		sys.exit(1)
 	stp.info(f"\nAll {len(projects)} project(s) built successfully!")
 	runpy.run_path(str(REPOSITORY / "scripts" / "zip_templates.py"), run_name="__main__")
+	for cache in TEMPLATES_FOLDER.glob("*/.beet_cache"):
+		shutil.rmtree(cache, ignore_errors=True)
 
 
 if __name__ == "__main__":
