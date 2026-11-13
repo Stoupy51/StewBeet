@@ -238,7 +238,7 @@ async function search(where) {
   }
 
   await Promise.all(roots.map(walk));
-  return found;
+  return found.sort();
 }
 
 /** Forget which maps exist, so the next lookup searches the workspace again. */
