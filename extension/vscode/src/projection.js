@@ -56,18 +56,24 @@ function project(text, start, end, interpolationSpans = [], generatedLines = nul
   const masked = new Map();
   /** @type {Map<string, string | null>} */
   const observed = new Map();
-  const pieces = text.split("\n");
   /** What replaces a character that is Python spelling. @type {Map<number, string>} */
   const replaced = new Map([
     ...blanked.map(offset => /** @type {[number, string]} */ ([offset, " "])),
     ...continuations.map(offset => /** @type {[number, string]} */ ([offset, "\\"])),
   ]);
+  // Only the lines the block touches are walked: a keystroke reprojects every block of the document,
+  // and the lines around each are sliced from one blanked copy of it.
+  const first = text.lastIndexOf("\n", start - 1) + 1;
+  const after = text.indexOf("\n", end);
+  const last = after === -1 ? text.length : after;
+  const pieces = text.slice(first, last).split("\n");
   const projected = [];
-  let lineStart = 0;
+  let lineStart = first;
   let spanIdx = 0;
+  let line = 0;
+  for (let at = text.indexOf("\n"); at !== -1 && at < first; at = text.indexOf("\n", at + 1)) line++;
 
-  for (let line = 0; line < pieces.length; line++) {
-    const piece = pieces[line];
+  for (const piece of pieces) {
     const carriage = piece.endsWith("\r");
     const body = carriage ? piece.slice(0, -1) : piece;
     const lineEnd = lineStart + body.length;
@@ -88,9 +94,26 @@ function project(text, start, end, interpolationSpans = [], generatedLines = nul
 
     projected.push(substituted + (carriage ? "\r" : ""));
     lineStart += piece.length + 1;
+    line++;
   }
 
-  return { text: projected.join("\n"), table, masked, observed };
+  const blank = blankOf(text);
+  return { text: blank.slice(0, first) + projected.join("\n") + blank.slice(last), table, masked, observed };
+}
+
+/** The last document blanked whole, which every block of one version slices its surroundings from. */
+let lastBlank = { text: "", blank: "" };
+
+/**
+ * A document with every line made spaces, its line breaks kept, offset for offset.
+ * @param {string} text
+ */
+function blankOf(text) {
+  if (lastBlank.text !== text) {
+    const blank = text.split("\n").map(piece => (piece.endsWith("\r") ? `${" ".repeat(piece.length - 1)}\r` : " ".repeat(piece.length))).join("\n");
+    lastBlank = { text, blank };
+  }
+  return lastBlank.blank;
 }
 
 /**

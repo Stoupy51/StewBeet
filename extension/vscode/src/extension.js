@@ -2,7 +2,6 @@
 "use strict";
 
 const vscode = require("vscode");
-const { findBlockOffsets } = require("./blocks");
 const {
   TRIGGER_CHARACTERS,
   completionProvider,
@@ -117,7 +116,7 @@ function activate(context) {
 
   registerLanguageFeatures(context);
   registerSemanticTokens(context, builds.event);
-  registerPainting(context, findBlockOffsets);
+  registerPainting(context, virtual.blocksOf);
   registerSourceMaps(context);
   registerCodeLenses(context);
   registerHeaderNavigation(context);
@@ -152,7 +151,7 @@ function registerSpyglassOffer(context) {
       suggest: config.get("suggestSpyglass", true),
       languageFeatures: config.get("languageFeatures", true),
       asked,
-      blocks: findBlockOffsets(doc.getText()).length,
+      blocks: virtual.blocksOf(doc).length,
     })) return;
 
     asked = true;
@@ -470,13 +469,12 @@ async function reveal(uri, line, column) {
 // Block detection
 
 /**
- * Find all mcfunction string blocks in a Python document.
- * Scanning logic lives in ./blocks.js (pure, unit-tested).
+ * Find all mcfunction string blocks in a Python document, from the scan ./virtual.js keeps per version.
  * @param {vscode.TextDocument} doc
  * @returns {{ startLine:number, startChar:number, endLine:number, endChar:number, multiline:boolean }[]}
  */
 function findBlocks(doc) {
-  return findBlockOffsets(doc.getText()).map(({ start, end }) => {
+  return virtual.blocksOf(doc).map(({ start, end }) => {
     const startPos = doc.positionAt(start);
     const endPos   = doc.positionAt(end);
     return {

@@ -134,6 +134,9 @@ function resolve(answers) {
 /** The last discovery, reused until a map is written or deleted. @type {string[] | null} */
 let discovered = null;
 
+/** The discovery running or done, which every caller shares: the lenses, the relay and each block's projection all ask at activation. @type {Promise<string[]> | null} */
+let discovery = null;
+
 /**
  * Every `.mcfunction.map` in the workspace's build output.
  *
@@ -147,27 +150,33 @@ let discovered = null;
  *
  * @returns {Promise<string[]>}
  */
-async function findMaps() {
-  if (discovered) return discovered;
+function findMaps() {
+  if (!discovery) {
+    const current = discover().then(found => {
+      if (discovery === current) discovered = found;
+      return found;
+    }, e => {
+      if (discovery === current) discovery = null;
+      console.debug("[StewBeet] source map discovery failed", e);
+      return [];
+    });
+    discovery = current;
+  }
+  return discovery;
+}
 
+/** @returns {Promise<string[]>} */
+async function discover() {
   const vscode = api();
   const configured = String(vscode.workspace.getConfiguration(CFG_KEY).get("buildOutput", ""));
-  try {
-    discovered = await search(searchFor(configured));
-    // A setting naming nowhere is otherwise silent: every lens, every jump and every resolved
-    // interpolation stops at once, which reads as a broken extension rather than as one word
-    // wrong in a settings file.
-    if (discovered.length === 0 && configured) {
-      discovered = await search(searchFor(""));
-      if (discovered.length > 0) {
-        console.debug(`[StewBeet] no maps under "${configured}", searched the workspace instead`);
-      }
-    }
-    return discovered;
-  } catch (e) {
-    console.debug("[StewBeet] source map discovery failed", e);
-    return [];
-  }
+  const found = await search(searchFor(configured));
+  // A setting naming nowhere is otherwise silent: every lens, every jump and every resolved
+  // interpolation stops at once, which reads as a broken extension rather than as one word
+  // wrong in a settings file.
+  if (found.length > 0 || !configured) return found;
+  const everywhere = await search(searchFor(""));
+  if (everywhere.length > 0) console.debug(`[StewBeet] no maps under "${configured}", searched the workspace instead`);
+  return everywhere;
 }
 
 /**
@@ -230,6 +239,7 @@ async function search(where) {
 /** Forget which maps exist, so the next lookup searches the workspace again. */
 function forgetMaps() {
   discovered = null;
+  discovery = null;
 }
 
 /** No map found yet, one array so a caller can tell by identity that nothing changed. @type {string[]} */

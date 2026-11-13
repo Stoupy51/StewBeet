@@ -109,8 +109,12 @@ function paintsOf(tokenizer, text, blocks, memo = new Map()) {
   for (const line of lines) starts.push(starts[starts.length - 1] + line.length + 1);
   /** @param {number} offset */
   const positionOf = offset => {
-    let line = 0;
-    while (starts[line + 1] <= offset) line++;
+    let [line, above] = [0, lines.length - 1];
+    while (line < above) {
+      const middle = (line + above + 1) >> 1;
+      if (starts[middle] <= offset) line = middle;
+      else above = middle - 1;
+    }
     return { line, character: offset - starts[line] };
   };
 
@@ -311,7 +315,7 @@ function themeRules(theme, uiTheme, custom, colorCustomizations) {
  * block is what VS Code shows anyway, and a wrong colour is worse than none.
  *
  * @param {import("vscode").ExtensionContext} context
- * @param {(text: string) => { start:number, contentStart:number, contentEnd:number, callStart?:number }[]} blocksOf
+ * @param {(doc: import("vscode").TextDocument) => { start:number, contentStart:number, contentEnd:number, callStart?:number }[]} blocksOf
  */
 function registerPainting(context, blocksOf) {
   const vscode = api();
@@ -329,12 +333,12 @@ function registerPainting(context, blocksOf) {
     const ranges = new Map([...styles.keys()].map(key => [key, []]));
     if (tokenizer) {
       if (memo.size > MEMO_LIMIT) memo.clear();
-      const text = editor.document.getText();
-      for (const { line, from, to, metadata } of paintsOf(tokenizer, text, blocksOf(text), memo)) {
+      for (const { line, from, to, metadata } of paintsOf(tokenizer, editor.document.getText(), blocksOf(editor.document), memo)) {
         const { color, fontStyle } = styleOf(metadata, tokenizer.colorMap);
         const key = `${color}|${fontStyle}`;
         if (!styles.has(key)) styles.set(key, decorationFor(color, fontStyle));
-        ranges.set(key, [...(ranges.get(key) ?? []), new vscode.Range(line, from, line, to)]);
+        if (!ranges.has(key)) ranges.set(key, []);
+        ranges.get(key)?.push(new vscode.Range(line, from, line, to));
       }
     }
     for (const [key, list] of ranges) editor.setDecorations(/** @type {any} */ (styles.get(key)), list);

@@ -579,8 +579,11 @@ function buildReverseIndex(mapPaths) {
 function generatedText(mapPaths, pythonPath, from, to) {
   /** @type {Map<number, string>} */
   const found = new Map();
+  const produced = viewOf(mapPaths, pythonPath)?.produced;
+  if (!produced) return found;
   for (let line = from; line <= to; line++) {
-    const [target] = generatedFrom(mapPaths, pythonPath, line);
+    const built = drift.buildLineOf(pythonPath, line);
+    const target = built === null ? undefined : produced.get(built)?.[0];
     if (!target) continue;
     const text = linesOf(target.file)?.[target.line];
     if (typeof text === "string") found.set(line, text);

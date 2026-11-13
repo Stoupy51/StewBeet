@@ -47,12 +47,13 @@ const NO_SUBSTITUTION = new Map();
 // Block lookup
 
 /** Cache of the block scan, keyed by document URI.
- *  @type {Map<string, { version:number, maps:string[], blocks:any[], commands: Map<number, any> | null, opaque: Map<number, number> }>} */
+ *  @type {Map<string, { version:number, maps:string[], text:string, blocks:any[], commands: Map<number, any> | null, opaque: Map<number, number> }>} */
 const blockCache = new Map();
 
 /**
- * The blocks of a document and, for a bolt file, its command lines. Rescanned when the
+ * The text and blocks of a document and, for a bolt file, its command lines. Rescanned when the
  * document's version changes, and for a bolt file when another build's maps are found.
+ * The text is kept because `getText()` joins every line again, and each block's projection reads it.
  * @param {vscode.TextDocument} doc
  */
 function scanOf(doc) {
@@ -65,7 +66,7 @@ function scanOf(doc) {
   const scanned = isBolt(doc)
     ? boltScan(doc, text, maps)
     : { blocks: findBlockOffsets(text), commands: null, opaque: new Map() };
-  const entry = { version: doc.version, maps, ...scanned };
+  const entry = { version: doc.version, maps, text, ...scanned };
   blockCache.set(key, entry);
   return entry;
 }
@@ -161,6 +162,9 @@ const served = new Map();
  *  @type {Map<string, { version:number, text:string, table:typeof NO_SUBSTITUTION, masked:Map<number, {start:number,end:number}[]> }>} */
 const projections = new Map();
 
+/** The maps the last reprojection was for. @type {string[] | null} */
+let reprojectedFor = null;
+
 /** @param {string} sourceUri @param {number} blockIndex */
 function projectionKey(sourceUri, blockIndex) {
   return `${sourceUri}#${blockIndex}`;
@@ -184,11 +188,15 @@ async function projectionFor(doc, blockIndex) {
 
   // The content range, not the block range: the quotes belong to Python, and handing them to a
   // datapack parser earns a diagnostic saying `"""` is not a command.
-  const text = doc.getText();
+  const text = scan.text;
   const build = await buildViewOf(doc, scan);
   // The first search for the build ran while waiting, and a bolt file's lines depend on what it found.
+  // Every block waiting on it wakes here, and one reprojection serves them all.
   if (navigation.knownMaps() !== maps) {
-    reproject();
+    if (reprojectedFor !== navigation.knownMaps()) {
+      reprojectedFor = navigation.knownMaps();
+      reproject();
+    }
     return projectionFor(doc, blockIndex);
   }
   const { text: projected, table, masked } = isBolt(doc)
@@ -207,8 +215,9 @@ async function projectionFor(doc, blockIndex) {
   return entry;
 }
 
-/** What the build says about a document, computed once per version.
- *  @type {Map<string, { version:number, generated:Map<number, string> | null, known:Map<string, string>, columns:ReturnType<typeof sourcemap.compiledColumns> | null }>} */
+/** What the build says about a document, computed once per version. Kept as the promise, since a
+ *  keystroke asks for every block of the document at once and each would otherwise learn from all of them.
+ *  @type {Map<string, { version:number, view:Promise<{ generated:Map<number, string> | null, known:Map<string, string>, columns:ReturnType<typeof sourcemap.compiledColumns> | null }> }>} */
 const buildViews = new Map();
 
 /**
@@ -222,23 +231,20 @@ const buildViews = new Map();
  * A bolt file also gets the columns mecha placed each node at, which resolve a masked run exactly.
  *
  * @param {vscode.TextDocument} doc
- * @param {{ blocks: any[] }} scan
- * @returns {Promise<{ version:number, generated:Map<number, string> | null, known:Map<string, string>, columns:ReturnType<typeof sourcemap.compiledColumns> | null }>}
+ * @param {{ text: string, blocks: any[] }} scan
  */
-async function buildViewOf(doc, scan) {
+function buildViewOf(doc, scan) {
   const key = doc.uri.toString();
   const cached = buildViews.get(key);
-  if (cached && cached.version === doc.version) return cached;
+  if (cached && cached.version === doc.version) return cached.view;
 
-  const generated = await generatedFor(doc);
-  const entry = {
-    version: doc.version,
+  const view = generatedFor(doc).then(generated => ({
     generated,
-    known: generated && !isBolt(doc) ? learn(doc.getText(), scan.blocks, generated) : new Map(),
+    known: generated && !isBolt(doc) ? learn(scan.text, scan.blocks, generated) : new Map(),
     columns: generated && isBolt(doc) ? sourcemap.compiledColumns(navigation.knownMaps(), doc.uri.fsPath) : null,
-  };
-  buildViews.set(key, entry);
-  return entry;
+  }));
+  buildViews.set(key, { version: doc.version, view });
+  return view;
 }
 
 /**
@@ -289,7 +295,6 @@ const contentProvider = {
 /** @param {vscode.TextDocument} doc */
 function invalidate(doc) {
   const key = doc.uri.toString();
-  blockCache.delete(key);
   for (const { sourceUri, uri } of served.values()) {
     if (sourceUri === key) onDidChangeEmitter.fire(uri);
   }
