@@ -1,9 +1,222 @@
 {
 	"criteria": {
-		"requirement": {
-			"trigger": "minecraft:inventory_changed"
+		"0": {
+			"trigger": "minecraft:inventory_changed",
+			"conditions": {
+				"items": [
+					{
+						"items": [
+							"minecraft:beetroot",
+							"minecraft:blue_egg",
+							"minecraft:brown_egg",
+							"minecraft:coal",
+							"minecraft:cobblestone",
+							"minecraft:compass",
+							"minecraft:deepslate",
+							"minecraft:egg",
+							"minecraft:furnace",
+							"minecraft:glass",
+							"minecraft:item_frame",
+							"minecraft:stone",
+							"minecraft:string"
+						]
+					}
+				]
+			}
+		},
+		"1": {
+			"trigger": "minecraft:inventory_changed",
+			"conditions": {
+				"items": [
+					{
+						"predicates": {
+							"minecraft:custom_data": {
+								"_your_namespace": {
+									"stone_stick": true
+								}
+							}
+						}
+					}
+				]
+			}
+		},
+		"2": {
+			"trigger": "minecraft:inventory_changed",
+			"conditions": {
+				"items": [
+					{
+						"predicates": {
+							"minecraft:custom_data": {
+								"_your_namespace": {
+									"stone_rod": true
+								}
+							}
+						}
+					}
+				]
+			}
+		},
+		"3": {
+			"trigger": "minecraft:inventory_changed",
+			"conditions": {
+				"items": [
+					{
+						"predicates": {
+							"minecraft:custom_data": {
+								"_your_namespace": {
+									"super_stone": true
+								}
+							}
+						}
+					}
+				]
+			}
+		},
+		"4": {
+			"trigger": "minecraft:inventory_changed",
+			"conditions": {
+				"items": [
+					{
+						"predicates": {
+							"minecraft:custom_data": {
+								"_your_namespace": {
+									"stewbeet_painting": true
+								}
+							}
+						}
+					}
+				]
+			}
+		},
+		"5": {
+			"trigger": "minecraft:inventory_changed",
+			"conditions": {
+				"items": [
+					{
+						"predicates": {
+							"minecraft:custom_data": {
+								"_your_namespace": {
+									"vb_no_facing": true
+								}
+							}
+						}
+					}
+				]
+			}
+		},
+		"6": {
+			"trigger": "minecraft:inventory_changed",
+			"conditions": {
+				"items": [
+					{
+						"predicates": {
+							"minecraft:custom_data": {
+								"_your_namespace": {
+									"vb_visual_facing": true
+								}
+							}
+						}
+					}
+				]
+			}
+		},
+		"7": {
+			"trigger": "minecraft:inventory_changed",
+			"conditions": {
+				"items": [
+					{
+						"predicates": {
+							"minecraft:custom_data": {
+								"_your_namespace": {
+									"vb_block_facing": true
+								}
+							}
+						}
+					}
+				]
+			}
+		},
+		"8": {
+			"trigger": "minecraft:inventory_changed",
+			"conditions": {
+				"items": [
+					{
+						"predicates": {
+							"minecraft:custom_data": {
+								"_your_namespace": {
+									"vb_block_states": true
+								}
+							}
+						}
+					}
+				]
+			}
+		},
+		"9": {
+			"trigger": "minecraft:inventory_changed",
+			"conditions": {
+				"items": [
+					{
+						"predicates": {
+							"minecraft:custom_data": {
+								"_your_namespace": {
+									"vb_contents": true
+								}
+							}
+						}
+					}
+				]
+			}
+		},
+		"10": {
+			"trigger": "minecraft:inventory_changed",
+			"conditions": {
+				"items": [
+					{
+						"predicates": {
+							"minecraft:custom_data": {
+								"_your_namespace": {
+									"vb_contents_player": true
+								}
+							}
+						}
+					}
+				]
+			}
+		},
+		"11": {
+			"trigger": "minecraft:inventory_changed",
+			"conditions": {
+				"items": [
+					{
+						"predicates": {
+							"minecraft:custom_data": {
+								"_your_namespace": {
+									"vb_contents_frame": true
+								}
+							}
+						}
+					}
+				]
+			}
 		}
 	},
+	"requirements": [
+		[
+			"0",
+			"1",
+			"2",
+			"3",
+			"4",
+			"5",
+			"6",
+			"7",
+			"8",
+			"9",
+			"10",
+			"11"
+		]
+	],
 	"rewards": {
 		"function": "_your_namespace:advancements/unlock_recipes"
 	}
