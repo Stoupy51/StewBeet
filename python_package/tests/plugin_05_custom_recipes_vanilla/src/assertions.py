@@ -56,6 +56,9 @@ def beet_default(ctx: Context):
 	# Unlock_recipes advancement + function
 	assert "unlock_recipes" in ctx.data[ns].advancements, \
 		"unlock_recipes advancement must be generated"
+	unlock_criteria: JsonDict = ctx.data[ns].advancements["unlock_recipes"].data["criteria"]
+	assert all(len(criterion["conditions"]["items"]) == 1 for criterion in unlock_criteria.values()), \
+		"each unlock_recipes criterion must test only the changed stack, through a single item predicate"
 	assert f"{ns}:utils/get_all_recipes" in ctx.data.functions, \
 		"utils/get_all_recipes function must be generated"
 	get_all_content: str = ctx.data.functions[f"{ns}:utils/get_all_recipes"].text

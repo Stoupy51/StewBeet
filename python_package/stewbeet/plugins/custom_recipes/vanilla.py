@@ -71,8 +71,19 @@ class VanillaRecipeHandler:
 			for ingr_str in Ingr.get_ingredients_from_vanilla_recipe(recipe):
 				ingredients.setdefault(ingr_str, set()).add(recipe_name)
 
+		# A single item predicate tests only the stack that changed: the function runs when an ingredient or result enters a slot
+		results: dict[str, None] = dict.fromkeys(item for _, item in self.vanilla_generated_recipes)
+		held: list[JsonDict] = [
+			{"items": sorted(ingredients)},
+			*({"predicates": {"minecraft:custom_data": {ns: {item: True}}}} for item in results),
+		]
+		criteria: JsonDict = {
+			str(i): {"trigger": "minecraft:inventory_changed", "conditions": {"items": [predicate]}}
+			for i, predicate in enumerate(held)
+		}
 		adv_json: JsonDict = {
-			"criteria": {"requirement": {"trigger": "minecraft:inventory_changed"}},
+			"criteria": criteria,
+			"requirements": [list(criteria)],
 			"rewards": {"function": f"{ns}:advancements/unlock_recipes"}
 		}
 		Mem.ctx.data[f"{ns}:unlock_recipes"] = set_json_encoder(Advancement(adv_json), max_level=-1)
