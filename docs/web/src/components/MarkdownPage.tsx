@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, isValidElement } from 'react';
+import { useEffect, useRef, useState, useMemo, isValidElement } from 'react';
 import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -153,10 +153,12 @@ export const MarkdownPage: React.FC = () => {
     const { language } = useLanguage();
     const { t } = useTranslation();
     const src = searchParams.get('src');
-    // ssrContent is non-null when pre-rendered by the SSR server (server.tsx)
-    const ssrContent = useMarkdownContent();
-    const [content, setContent] = useState<string>(ssrContent ?? '');
-    const [loading, setLoading] = useState<boolean>(ssrContent === null);
+    const prerendered = useMarkdownContent();
+    // Only for the page server.tsx rendered: once the reader moves on, the embedded markdown belongs to another page
+    const initialContent = prerendered?.src === src ? prerendered.content : null;
+    const [content, setContent] = useState<string>(initialContent ?? '');
+    const [loading, setLoading] = useState<boolean>(initialContent === null);
+    const prerenderedSrc = useRef(initialContent === null ? null : src);
     const [error, setError] = useState<string | null>(null);
     const [tocOpen, setTocOpen] = useState<boolean>(false);
     
@@ -259,6 +261,10 @@ export const MarkdownPage: React.FC = () => {
             setLoading(false);
             return;
         }
+
+        // Already on screen from the embedded markdown: fetching it again would swap the page for the spinner
+        if (src === prerenderedSrc.current) return;
+        prerenderedSrc.current = null;
 
         const fetchMarkdown = async () => {
             setLoading(true);
