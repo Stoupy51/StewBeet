@@ -4,8 +4,10 @@ export const translations = {
     en: {
         // Navbar
         nav: {
+            main: 'Main',
+            menu: 'Menu',
             documentation: 'Docs',
-            plugins: 'Plugins',
+            showcase: 'Showcase',
             playground: 'Playground',
             tools: 'Tools',
             switchLanguage: 'Passer en français',
@@ -19,20 +21,30 @@ export const translations = {
             releasedDaysAgo: 'released {n} days ago',
             releasedToday: 'released today',
             releasedYesterday: 'released yesterday',
-            license: 'MIT',
-            title: 'Minecraft datapacks, generated from Python',
-            subtitle: 'A beet framework: declare an item once, and its models, recipes, loot tables, translations and in-game manual page are written on every build.',
-            getStarted: 'Get started',
-            tryPlayground: 'Try it in the browser',
+            license: 'MIT licensed',
+            title: 'Custom items and blocks without writing every file',
+            subtitle: 'Define an item or a block once. StewBeet writes its models, recipes, loot tables, translations and manual page on every build. The commands you still write by hand are checked by Spyglass in VS Code.',
+            readQuickstart: 'Read the quickstart',
+            browseDocs: 'Browse the docs',
+            newToPython: 'New to Python?',
+            newToPythonText: 'A definition is a name, some values and a recipe. If you can read datapack JSON, you can read one.',
+            proofTitle: 'One block, defined once',
             codeCaption: 'definitions/additions/equipments.py',
-            outputCaption: 'build/',
-            outputSummary: '{count} of {total} files',
-            snippetTabs: 'Code shown',
-            outputBack: 'Back to the tree',
-            outputRealPath: 'Real path:',
-            outputLoading: 'Loading the generated file...',
-            outputUnavailable: 'That file could not be loaded.',
-            outputNote: 'Placement, destruction, the Silk Touch branch, the recipe and its drawn crafting grid, world generation, models and textures. The manual page and the translation keys come with it.',
+            writtenByBuild: 'Written by the build:',
+            blockFunctions: 'Block functions: {n}',
+            crafterRecipes: 'Smithed Crafter recipes: {n}',
+            lootTables: 'Loot tables: {n}',
+            manualPages: 'Manual pages: {n}',
+            resourcePackFiles: 'Resource pack files: {n}',
+            proofCaption: '{n} files from this one definition. The first slot holds the render the build makes for the in-game manual.',
+            replay: 'Play the build again',
+        },
+
+        // A user quote, beside the objection it answers
+        testimonial: {
+            casperQuote: "I didn't know any Python, but thanks to a lot of trial and error I was able to figure it out, and it's been great.",
+            casperCaption: 'made their first custom blocks with StewBeet',
+            translated: '',
         },
 
         // Copy buttons
@@ -327,12 +339,29 @@ export const translations = {
 
         // Markdown Page
         markdown: {
-            back: 'Back',
-            contents: 'Contents',
-            viewOnGithub: 'View on GitHub',
-            error: 'Error',
-            loading: 'Loading...',
-            noPlugin: 'No plugin specified. Please provide a "src" parameter.',
+            pages: 'Pages',
+            onThisPage: 'On this page',
+            thisPage: 'This page',
+            editOnGithub: 'Edit on GitHub',
+            readMarkdown: 'Read as Markdown',
+            breadcrumb: 'Breadcrumb',
+            filter: 'Filter pages',
+            filterPlaceholder: 'recipe, manual, sounds',
+            noMatch: 'No page title matches.',
+            pluginsCount: '{n} plugins, grouped by what they produce',
+            pluginsShort: '{n} plugins',
+            previous: 'Previous',
+            next: 'Next',
+            close: 'Close',
+            error: 'This page could not be shown',
+            loading: 'Loading the page...',
+            noPage: 'No page given. Pick one from the list of pages.',
+            notFound: 'There is no page at this address.',
+            unreachable: 'The page could not be loaded. Check your connection, then reload.',
+        },
+
+        code: {
+            terminal: 'Terminal',
         },
 
         // 404 Page
@@ -450,7 +479,7 @@ export const translations = {
 
         // Search
         search: {
-            button: 'Search',
+            button: 'Search docs',
             placeholder: 'Search the documentation, plugins and API...',
             hint: 'Type a keyword to search every guide, plugin page and Python symbol.',
             loading: 'Loading the search index...',
@@ -582,10 +611,12 @@ export const translations = {
     fr: {
         // Navbar
         nav: {
+            main: 'Principale',
+            menu: 'Menu',
             documentation: 'Docs',
-            plugins: 'Plugins',
-            playground: 'Bac à sable',
-            tools: 'Outils',
+            showcase: 'Showcase',
+            playground: 'Playground',
+            tools: 'Tools',
             switchLanguage: 'Switch to English',
             themeSystem: 'Thème : celui du système',
             themeLight: 'Thème : clair',
@@ -597,20 +628,30 @@ export const translations = {
             releasedDaysAgo: 'publiée il y a {n} jours',
             releasedToday: "publiée aujourd'hui",
             releasedYesterday: 'publiée hier',
-            license: 'MIT',
-            title: 'Des datapacks Minecraft, générés depuis Python',
-            subtitle: 'Un framework beet : déclarez un item une fois, et ses models, recipes, loot tables, traductions et sa page de manuel sont écrits à chaque build.',
-            getStarted: 'Commencer',
-            tryPlayground: 'Essayer dans le navigateur',
+            license: 'licence MIT',
+            title: 'Des items et blocks custom sans écrire chaque fichier',
+            subtitle: "Définissez un item ou un block une fois. StewBeet écrit ses models, recipes, loot tables, traductions et sa page de manuel à chaque build. Les commandes que vous écrivez encore à la main sont vérifiées par Spyglass dans VS Code.",
+            readQuickstart: 'Lire le démarrage rapide',
+            browseDocs: 'Parcourir la doc',
+            newToPython: 'Nouveau en Python ?',
+            newToPythonText: "Une définition, c'est un nom, quelques valeurs et une recipe. Si vous savez lire le JSON d'un datapack, vous savez en lire une.",
+            proofTitle: 'Un block, défini une fois',
             codeCaption: 'definitions/additions/equipments.py',
-            outputCaption: 'build/',
-            outputSummary: '{count} fichiers sur {total}',
-            snippetTabs: 'Code affiché',
-            outputBack: 'Retour à l\'arborescence',
-            outputRealPath: 'Chemin réel :',
-            outputLoading: 'Chargement du fichier généré...',
-            outputUnavailable: 'Ce fichier n\'a pas pu être chargé.',
-            outputNote: 'Placement, destruction, la branche Silk Touch, la recipe et sa grille de craft dessinée, la génération dans le monde, les models et les textures. La page de manuel et les clés de traduction viennent avec.',
+            writtenByBuild: 'Écrit par le build :',
+            blockFunctions: 'Fonctions du block : {n}',
+            crafterRecipes: 'Recipes Smithed Crafter : {n}',
+            lootTables: 'Loot tables : {n}',
+            manualPages: 'Pages de manuel : {n}',
+            resourcePackFiles: 'Fichiers du resource pack : {n}',
+            proofCaption: '{n} fichiers à partir de cette seule définition. La première case contient le rendu que le build fait pour le manuel en jeu.',
+            replay: 'Rejouer le build',
+        },
+
+        // A user quote, beside the objection it answers
+        testimonial: {
+            casperQuote: "Je ne connaissais pas du tout Python, mais à force d'essais et d'erreurs j'ai fini par comprendre, et c'est génial.",
+            casperCaption: 'a fait ses premiers blocks custom avec StewBeet',
+            translated: "traduit de l'anglais",
         },
 
         // Copy buttons
@@ -905,12 +946,29 @@ export const translations = {
 
         // Markdown Page
         markdown: {
-            back: 'Retour',
-            contents: 'Contenu',
-            viewOnGithub: 'Voir sur GitHub',
-            error: 'Erreur',
-            loading: 'Chargement...',
-            noPlugin: 'Aucun plugin spécifié. Veuillez fournir un paramètre "src".',
+            pages: 'Pages',
+            onThisPage: 'Sur cette page',
+            thisPage: 'Cette page',
+            editOnGithub: 'Modifier sur GitHub',
+            readMarkdown: 'Lire en Markdown',
+            breadcrumb: "Fil d'Ariane",
+            filter: 'Filtrer les pages',
+            filterPlaceholder: 'recipe, manuel, sons',
+            noMatch: 'Aucun titre de page ne correspond.',
+            pluginsCount: "{n} plugins, rangés par ce qu'ils produisent",
+            pluginsShort: '{n} plugins',
+            previous: 'Précédent',
+            next: 'Suivant',
+            close: 'Fermer',
+            error: "Cette page n'a pas pu s'afficher",
+            loading: 'Chargement de la page...',
+            noPage: 'Aucune page demandée. Choisissez-en une dans la liste des pages.',
+            notFound: "Il n'y a pas de page à cette adresse.",
+            unreachable: "La page n'a pas pu être chargée. Vérifiez votre connexion, puis rechargez.",
+        },
+
+        code: {
+            terminal: 'Terminal',
         },
 
         // 404 Page

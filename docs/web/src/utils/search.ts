@@ -295,7 +295,7 @@ function buildSnippet(entry: IndexedEntry, terms: string[]): Segment[] {
 /**
  * Rank the index against a query. Every term must match somewhere in an entry, so
  * additional words narrow the results rather than widening them. Results come back
- * grouped by type following TYPE_ORDER, scored within each group.
+ * grouped by type, the group with the best match first, scored within each group.
  *
  * `types` restricts the search to the enabled categories.
  */
@@ -339,10 +339,16 @@ export function search(query: string, index: SearchIndex, types?: ReadonlySet<En
         scored.push({ entry, score: total });
     }
 
-    // Group first, score second: the sections are what the reader scans
-    scored.sort((a, b) =>
-        TYPE_ORDER.indexOf(a.entry.entry.t) - TYPE_ORDER.indexOf(b.entry.entry.t) || b.score - a.score,
-    );
+    // Group first, score second: the sections are what the reader scans. A group comes in the order
+    // of its best match, so the page the query names is never under another group's results.
+    const groupBest = new Map<EntryType, number>();
+    for (const { entry, score } of scored) groupBest.set(entry.entry.t, Math.max(groupBest.get(entry.entry.t) ?? 0, score));
+    const rank = (type: EntryType) => [groupBest.get(type) ?? 0, TYPE_ORDER.indexOf(type)];
+    scored.sort((a, b) => {
+        const [bestA, orderA] = rank(a.entry.entry.t);
+        const [bestB, orderB] = rank(b.entry.entry.t);
+        return bestB - bestA || orderA - orderB || b.score - a.score;
+    });
 
     const results: SearchResult[] = [];
     const perDocument = new Map<string, number>();

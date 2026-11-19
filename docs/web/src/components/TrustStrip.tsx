@@ -29,12 +29,11 @@ export const TrustStrip = ({ className = '' }: { className?: string }) => {
     ];
 
     return (
-        // Stacked columns on phones, where three inline pairs would wrap unevenly.
-        <ul aria-label={t('trust.label')} className={`grid grid-cols-3 gap-3 sm:flex sm:flex-wrap sm:items-baseline sm:justify-center sm:gap-x-8 sm:gap-y-2 ${className}`}>
+        <ul aria-label={t('trust.label')} className={`gap-10 ${className}`}>
             {metrics.map(({ value, label }) => (
-                <li key={label} className="flex flex-col items-center gap-0.5 sm:flex-row sm:items-baseline sm:gap-2">
-                    <span className="font-mono text-lg text-ink-50 tabular-nums">{value}</span>
-                    <span className="text-xs sm:text-sm text-ink-400 leading-snug">{label}</span>
+                <li key={label}>
+                    <span className="block font-pixel text-[1.375rem] leading-none tabular-nums">{value}</span>
+                    <span className="block mt-1.5 text-[0.8125rem] text-text-muted">{label}</span>
                 </li>
             ))}
         </ul>

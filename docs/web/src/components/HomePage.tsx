@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Navbar } from './Navbar';
 import { Hero } from './Hero';
+import { Testimonial } from './Testimonial';
 import { Gains } from './Gains';
 import { Spotlights } from './Spotlights';
 import { BuiltWith } from './BuiltWith';
@@ -36,22 +37,24 @@ function HomePage() {
     }
   }, [location, navigate]);
 
-  // Proof before pitch: the hero holds the build and the adoption numbers, then what StewBeet
-  // does beyond files, the gain in detail, the packs built with it, what it stands on, how to start,
-  // and last, for a visitor who has never heard of beet, who makes which of the tools involved.
+  // The hero and the quote are the redesigned top of the page; the sections below keep a flat
+  // page colour over the grid until their turn comes.
   return (
-    <div className={`min-h-screen bg-ink-950 text-ink-200 ${SELECTION_BRAND}`}>
+    <div className={`min-h-screen ${SELECTION_BRAND}`}>
       <Navbar />
 
       <main>
         <Hero />
-        <Spotlights />
-        <Gains />
-        <BuiltWith />
-        <StandingOnGiants />
-        <Installation />
-        <StackSection />
-        <FinalCTA />
+        <Testimonial />
+        <div className="bg-surface text-ink-200">
+          <Spotlights />
+          <Gains />
+          <BuiltWith />
+          <StandingOnGiants />
+          <Installation />
+          <StackSection />
+          <FinalCTA />
+        </div>
       </main>
 
       <Footer />

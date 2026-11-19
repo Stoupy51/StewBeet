@@ -17,12 +17,16 @@ import { isEmbeddedMcfunction } from './mcfunctionBlocks';
  * comments, numbers and keywords keep the colours the grammar already resolved correctly.
  */
 
-/** Dark Plus semantic colours, matching what Pylance produces in VS Code. */
-const CONSTANT = '#4FC1FF';
-const TYPE = '#4EC9B0';
-const FUNCTION = '#DCDCAA';
+/** Dark+ and Light+ semantic colours, matching what Pylance produces in VS Code. */
+interface SemanticColor {
+    dark: string;
+    light: string;
+}
+const CONSTANT: SemanticColor = { dark: '#4FC1FF', light: '#0070C1' };
+const TYPE: SemanticColor = { dark: '#4EC9B0', light: '#267F99' };
+const FUNCTION: SemanticColor = { dark: '#DCDCAA', light: '#795E26' };
 
-/** Colours the grammar assigns to unresolved identifiers, and which we may reassign. */
+/** Dark+ colours the grammar assigns to unresolved identifiers, and which we may reassign. */
 const PLAIN = new Set(['#D4D4D4', '#9CDCFE']);
 
 /** Builtin types the grammar only recognises in some positions, e.g. `dict` in an annotation. */
@@ -40,7 +44,7 @@ const KEYWORDS = new Set([
 
 const IDENTIFIER = /[A-Za-z_][A-Za-z0-9_]*/g;
 
-function classify(name: string, followedByCall: boolean): string | null {
+function classify(name: string, followedByCall: boolean): SemanticColor | null {
     if (KEYWORDS.has(name)) return null;
     if (BUILTIN_TYPES.has(name)) return TYPE;
     // SCREAMING_SNAKE_CASE: module constants and enum members alike.
@@ -67,7 +71,11 @@ function splitToken(token: ThemedToken): ThemedToken[] {
         if (start > cursor) {
             pieces.push({ ...token, content: text.slice(cursor, start), offset: token.offset + cursor });
         }
-        pieces.push({ ...token, content: name, offset: token.offset + start, color });
+        // With two themes, Shiki keeps colours in `htmlStyle`: the inline Dark+ one and the Light+ one in `--shiki-light`
+        const colored = token.htmlStyle
+            ? { htmlStyle: { ...token.htmlStyle, color: color.dark, '--shiki-light': color.light } }
+            : { color: color.dark };
+        pieces.push({ ...token, content: name, offset: token.offset + start, ...colored });
         cursor = start + name.length;
     }
 
@@ -89,7 +97,10 @@ export const pythonSemantics: ShikiTransformer = {
         if (this.options.lang !== 'python') return;
         return lines.map((line) =>
             // Commands inside a Python string are coloured by the mcfunction grammar, not by shape.
-            line.flatMap((token) => (token.color && PLAIN.has(token.color) && !isEmbeddedMcfunction(token) ? splitToken(token) : [token])),
+            line.flatMap((token) => {
+                const color = token.htmlStyle?.color ?? token.color;
+                return color && PLAIN.has(color) && !isEmbeddedMcfunction(token) ? splitToken(token) : [token];
+            }),
         );
     },
 };

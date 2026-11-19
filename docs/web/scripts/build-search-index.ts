@@ -2,9 +2,8 @@
  * Search index builder: run with Bun before `vite` (dev) and `vite build`.
  *
  * Emits public/search-index.en.json and public/search-index.fr.json, one entry per
- * markdown heading section plus one entry per Python API symbol. The site itself
- * fetches markdown from GitHub at view time, so this is the only place where the
- * documentation text is available to the client-side search.
+ * markdown heading section of the pages in src/docsPages.ts, plus one entry per Python API
+ * symbol, so the client-side search needs no server.
  *
  * Landing-page sections are NOT indexed here: SearchModal matches them directly
  * against the i18n translations, which are already bundled.
@@ -12,11 +11,12 @@
  * Also emits public/sitemap.xml, since walking the documentation tree is exactly the
  * work a complete sitemap needs and a hand-maintained one listed 5 of the 37 pages.
  */
-import { readdirSync, readFileSync, statSync, writeFileSync } from 'fs';
+import { readdirSync, readFileSync, writeFileSync } from 'fs';
 import { join, relative, sep } from 'path';
 import { inflateSync } from 'zlib';
 import { headingTextToSlug } from '../src/utils/slugify';
 import { SITE_ORIGIN, STATIC_ROUTE_META } from '../src/utils/pageMeta';
+import { DOC_PAGES, docSrc, srcHref } from '../src/docsPages';
 
 interface Entry {
     /** Entry kind: markdown guide, plugin page, or Python API symbol. */
@@ -94,50 +94,16 @@ function sectionize(markdown: string, base: Omit<Entry, 'h' | 'a' | 'b'>): Entry
     return entries;
 }
 
-/** Collect plugin pages: English only, so they go into every language index. */
-function collectPlugins(): Entry[] {
-    const dir = join(docsDir, 'plugins');
-    const entries: Entry[] = [];
-    for (const file of readdirSync(dir)) {
-        if (!file.endsWith('.md')) continue;
-        const name = file.slice(0, -3);
-        const markdown = readFileSync(join(dir, file), 'utf-8');
-        entries.push(...sectionize(markdown, { t: 'plugin', p: `plugins/${file}`, d: name }));
-    }
-    return entries;
-}
-
-/** Collect the numbered guides for one language (`<n>_<name>/<lang>.md`). */
-function collectGuides(lang: 'en' | 'fr'): Entry[] {
-    const entries: Entry[] = [];
-    for (const item of readdirSync(docsDir, { withFileTypes: true })) {
-        if (!item.isDirectory() || !/^\d+_/.test(item.name)) continue;
-        const path = join(docsDir, item.name, `${lang}.md`);
-        try {
-            statSync(path);
-        } catch {
-            continue;
-        }
-        const markdown = readFileSync(path, 'utf-8');
-        entries.push(...sectionize(markdown, { t: 'doc', p: `${item.name}/${lang}.md`, d: item.name }));
-
-        // Guides split by mode keep their parts in subdirectories, one file per language.
-        for (const child of readdirSync(join(docsDir, item.name), { withFileTypes: true })) {
-            if (!child.isDirectory()) continue;
-            const nested = join(docsDir, item.name, child.name, `${lang}.md`);
-            try {
-                statSync(nested);
-            } catch {
-                continue;
-            }
-            entries.push(...sectionize(readFileSync(nested, 'utf-8'), {
-                t: 'doc',
-                p: `${item.name}/${child.name}/${lang}.md`,
-                d: `${item.name}/${child.name}`,
-            }));
-        }
-    }
-    return entries;
+/**
+ * Every page of the page list, under the title the list gives it, so a result reads "Custom blocks"
+ * and not the plugin's module path. A page with no French file goes into the French index in English,
+ * as the site shows it.
+ */
+function collectPages(lang: 'en' | 'fr'): Entry[] {
+    return DOC_PAGES.flatMap((page) => {
+        const src = docSrc(page, lang);
+        return sectionize(readFileSync(join(docsDir, src), 'utf-8'), { t: page.section === 'plugins' ? 'plugin' : 'doc', p: src, d: page.title[lang] });
+    });
 }
 
 // ── Python API───────────────
@@ -238,11 +204,6 @@ async function collectApiSymbols(): Promise<Entry[]> {
 
 // ── Sitemap──────────────────
 
-/** Same encoding the site's own links use, so a crawler never sees two URLs for one page. */
-function srcToUrl(src: string): string {
-    return `${SITE_ORIGIN}/markdown?src=${encodeURIComponent(src)}`.replace(/&/g, '&amp;');
-}
-
 function writeSitemap(docSrcs: Set<string>): void {
     const lastmod = new Date().toISOString().slice(0, 10);
     const urls: { loc: string; changefreq: string; priority: string }[] = [
@@ -254,7 +215,7 @@ function writeSitemap(docSrcs: Set<string>): void {
                 priority: meta.path === '/' ? '1.0' : meta.path === '/documentation' ? '0.9' : '0.5',
             })),
         ...[...docSrcs].sort().map((src) => ({
-            loc: srcToUrl(src),
+            loc: `${SITE_ORIGIN}${srcHref(src)}`.replace(/&/g, '&amp;'),
             changefreq: 'weekly',
             priority: '0.7',
         })),
@@ -277,20 +238,19 @@ function writeSitemap(docSrcs: Set<string>): void {
 
 // ── Output───────────────────
 
-const plugins: Entry[] = collectPlugins();
 const api: Entry[] = await collectApiSymbols();
-const docSrcs = new Set<string>(plugins.map((entry) => entry.p));
+const docSrcs = new Set<string>();
 
 for (const lang of ['en', 'fr'] as const) {
-    const guides = collectGuides(lang);
-    for (const entry of guides) docSrcs.add(entry.p);
-    const entries = [...guides, ...plugins, ...api];
+    const pages = collectPages(lang);
+    for (const entry of pages) docSrcs.add(entry.p);
+    const entries = [...pages, ...api];
     const path = join(outDir, `search-index.${lang}.json`);
     const json = JSON.stringify({ generated: new Date().toISOString(), apiBase: SPHINX_BASE, entries });
     writeFileSync(path, json);
     console.log(
         `[search-index] ${lang}: ${entries.length} entries ` +
-        `(${guides.length} guide, ${plugins.length} plugin, ${api.length} api) ` +
+        `(${pages.length} page, ${api.length} api) ` +
         `-> ${(json.length / 1024).toFixed(0)} KB`,
     );
 }

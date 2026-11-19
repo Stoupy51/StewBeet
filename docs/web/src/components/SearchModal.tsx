@@ -14,11 +14,12 @@ const DEBOUNCE_MS = 120;
 const FILTERS_STORAGE_KEY = 'search-filters';
 
 /** Per-category colors, used by both the filter chips and the section headers. */
+/** The colours of the docs sections in DESIGN.md: guides blue, plugins gold, reference purple for the API. */
 const TYPE_STYLES: Record<EntryType, { active: string; text: string }> = {
-    doc: { active: 'bg-beet-500/20 text-beet-300 border-beet-500/40', text: 'text-beet-300' },
-    api: { active: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40', text: 'text-emerald-300' },
-    plugin: { active: 'bg-beet-300/20 text-beet-300 border-beet-300/40', text: 'text-beet-300' },
-    site: { active: 'bg-sky-500/20 text-sky-300 border-sky-500/40', text: 'text-sky-300' },
+    doc: { active: 'bg-section-guides/10 text-section-guides border-section-guides', text: 'text-section-guides' },
+    api: { active: 'bg-section-reference/10 text-section-reference border-section-reference', text: 'text-section-reference' },
+    plugin: { active: 'bg-section-plugins/10 text-section-plugins border-section-plugins', text: 'text-section-plugins' },
+    site: { active: 'bg-section-understand/10 text-section-understand border-section-understand', text: 'text-section-understand' },
 };
 
 const SECTION_KEYS: Record<EntryType, string> = {
@@ -187,7 +188,7 @@ export const SearchModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 })}
                 onClick={(event) => event.stopPropagation()}
                 onKeyDown={handleKeyDown}
-                className="w-full max-w-2xl h-fit max-h-[80vh] flex flex-col bg-ink-900 border border-ink-700 rounded-panel overflow-hidden shadow-[0_32px_80px_-16px_rgba(0,0,0,0.7)]"
+                className="w-full max-w-2xl h-fit max-h-[80vh] flex flex-col bg-surface border border-border overflow-hidden"
             >
                 {/* Input */}
                 <div className="flex items-center gap-3 px-4 py-3 border-b border-ink-800">
@@ -216,7 +217,7 @@ export const SearchModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                             key={type}
                             onClick={() => toggleFilter(type)}
                             aria-pressed={filters.has(type)}
-                            className={`px-2.5 py-1 rounded-full border text-xs font-medium transition-colors ${
+                            className={`min-h-8 px-2.5 border text-xs font-medium transition-colors ${
                                 filters.has(type)
                                     ? TYPE_STYLES[type].active
                                     : 'bg-transparent border-ink-800 text-ink-400 hover:text-ink-300'
@@ -265,7 +266,7 @@ export const SearchModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                                     <p className="text-xs text-ink-400 leading-relaxed line-clamp-2">
                                         {result.snippet.map((segment, segmentIndex) =>
                                             segment.hit
-                                                ? <mark key={segmentIndex} className="bg-beet-500/30 text-beet-300 rounded px-0.5">{segment.text}</mark>
+                                                ? <mark key={segmentIndex} className="bg-link/15 text-text px-0.5">{segment.text}</mark>
                                                 : <span key={segmentIndex}>{segment.text}</span>,
                                         )}
                                     </p>

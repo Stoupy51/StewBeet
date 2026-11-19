@@ -1,34 +1,30 @@
-import { useEffect, useRef, useState, useMemo, isValidElement } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, isValidElement } from 'react';
 import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
-import ReactMarkdown from 'react-markdown';
+import ReactMarkdown, { type Components, type Options } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { remarkAlert } from 'remark-github-blockquote-alert';
 import rehypeRaw from 'rehype-raw';
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
-import { motion, AnimatePresence } from 'framer-motion';
-import { HiArrowLeft, HiExternalLink, HiMenu, HiX } from 'react-icons/hi';
+import type { Element } from 'hast';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 import { ZoomableImage } from './ZoomableImage';
+import { CodeBlock, CodeTabs } from './DocCode';
+import { Breadcrumb, DocBar, PageAside, PageList, PagesPanel, PreviousNext, SourceLinks, type TocHeading } from './DocNav';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../i18n/useTranslation';
 import { useMarkdownContent } from '../context/MarkdownContentContext';
-import { useShiki } from '../hooks/useShiki';
+import { SECTIONS, docSrc, findDocPage, srcHref } from '../docsPages';
+import { markdownPageMeta } from '../utils/pageMeta';
 import { headingTextToSlug, slugify } from '../utils/slugify';
-import { LOADER_ACCENT, PAGE, SELECTION_BRAND } from '../theme';
-
-interface Heading {
-    id: string;
-    text: string;
-    level: number;
-}
+import { metaValue, rehypeCodeTabs, rehypeSteps, rehypeTableLabels, remarkCodeMeta, textOf } from '../utils/docMarkdown';
 
 const ALERT_TYPES = ['note', 'tip', 'important', 'warning', 'caution'];
 
 /**
  * GitHub's schema, plus the `<video>` a guide needs to show a recording rather than describe it,
- * and the classes remark-github-blockquote-alert puts on a `> [!TIP]` block (its icon is SVG,
- * which the schema drops, so the title keeps only its text).
+ * the classes remark-github-blockquote-alert puts on a `> [!TIP]` block (its icon is SVG, which the
+ * schema drops, so the title keeps only its text), and the text after a fence's language.
  */
 const MARKDOWN_SCHEMA = {
     ...defaultSchema,
@@ -38,32 +34,24 @@ const MARKDOWN_SCHEMA = {
         video: ['src', 'controls', 'loop', 'muted', 'playsInline', 'preload', 'width', 'height'],
         div: [...(defaultSchema.attributes?.div ?? []), ['className', 'markdown-alert', ...ALERT_TYPES.map((type) => `markdown-alert-${type}`)]],
         p: [...(defaultSchema.attributes?.p ?? []), ['className', 'markdown-alert-title']],
+        code: [...(defaultSchema.attributes?.code ?? []), 'dataMeta'],
     },
 };
+
+const REMARK_PLUGINS: Options['remarkPlugins'] = [remarkGfm, remarkAlert, remarkCodeMeta];
+const REHYPE_PLUGINS: Options['rehypePlugins'] = [rehypeRaw, [rehypeSanitize, MARKDOWN_SCHEMA], rehypeCodeTabs, rehypeSteps, rehypeTableLabels];
 
 const DOC_SRC_PATTERN = /^(?:[A-Za-z0-9._-]+\/)*[A-Za-z0-9._-]+\.md$/;
 const FETCH_TIMEOUT_MS = 7000;
 /** How long to keep an anchor aligned while Shiki finishes highlighting the code blocks. */
 const SCROLL_SETTLE_MS = 4000;
-const MAX_MARKDOWN_CHARS = 500_000;
-/** Marks a fenced block: react-markdown puts the language on the <code>, and both the <pre> and <code> renderers key off it. */
+/** Marks a fenced block: react-markdown puts the language on the <code>. */
 const LANGUAGE_CLASS = /language-([A-Za-z0-9_-]+)/;
+/** Where a relative link to something other than a page leads: the file in the repository. */
+const REPO_DOCS_URL = 'https://github.com/Stoupy51/StewBeet/blob/main/docs/web/public/docs/';
 
 function isValidDocSrc(src: string): boolean {
     return DOC_SRC_PATTERN.test(src) && !src.includes('..');
-}
-
-function srcToGithubUrl(src: string): string {
-    return `https://github.com/Stoupy51/StewBeet/blob/main/docs/web/public/docs/${src}`;
-}
-
-/**
- * Documentation is served by this site from public/docs, so a page always matches the build
- * it shipped with. `srcToGithubUrl` is still used for the "View on GitHub" link and as the
- * fetch target for external sources.
- */
-function srcToBundledUrl(src: string): string {
-    return `/docs/${src}`;
 }
 
 /**
@@ -71,7 +59,7 @@ function srcToBundledUrl(src: string): string {
  * guides and plugin pages stay on the site: `2_writing_to_files/en.md` +
  * `../1_definitions_setup/en.md#-resource-locations` -> `1_definitions_setup/en.md`.
  * Returns null for anything that escapes docs/ or is not a markdown page (images, source
- * files...), which the caller then sends to GitHub as before.
+ * files...), which the caller then sends to GitHub.
  */
 function resolveDocSrc(currentSrc: string, href: string): { src: string; hash: string } | null {
     const [path, hash = ''] = href.split('#');
@@ -91,60 +79,33 @@ function resolveDocSrc(currentSrc: string, href: string): { src: string; hash: s
     return isValidDocSrc(src) ? { src, hash } : null;
 }
 
-function githubToRawUrl(githubUrl: string): string {
-    return githubUrl
-        .replace('github.com/', 'raw.githubusercontent.com/')
-        .replace('/blob/', '/')
-        .replace('/raw/refs/heads/', '/');
-}
-
 /** Plain text of a rendered node: headings may contain <strong>, <code>, links... */
 function getNodeText(node: React.ReactNode): string {
-    if (typeof node === 'string' || typeof node === 'number') {
-        return String(node);
-    }
-    if (Array.isArray(node)) {
-        return node.map(getNodeText).join('');
-    }
-    if (isValidElement<{ children?: React.ReactNode }>(node)) {
-        return getNodeText(node.props.children);
-    }
+    if (typeof node === 'string' || typeof node === 'number') return String(node);
+    if (Array.isArray(node)) return node.map(getNodeText).join('');
+    if (isValidElement<{ children?: React.ReactNode }>(node)) return getNodeText(node.props.children);
     return '';
 }
 
-/** Heading renderer that gives every level an anchor id matching the search index. */
+/** Heading renderer that gives every level an anchor id matching the search index. A step's heading arrives with its id already set. */
 function makeHeading(Tag: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6') {
-    const Heading = ({ children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
-        <Tag id={slugify(getNodeText(children))} {...props}>{children}</Tag>
+    const Heading = ({ children, id, style }: React.HTMLAttributes<HTMLHeadingElement>) => (
+        <Tag id={id ?? slugify(getNodeText(children))} style={style}>{children}</Tag>
     );
     Heading.displayName = `Markdown${Tag.toUpperCase()}`;
     return Heading;
 }
 
-const HEADING_COMPONENTS = {
-    h1: makeHeading('h1'),
-    h2: makeHeading('h2'),
-    h3: makeHeading('h3'),
-    h4: makeHeading('h4'),
-    h5: makeHeading('h5'),
-    h6: makeHeading('h6'),
-};
-
-const ShikiCodeBlock: React.FC<{ code: string; language: string }> = ({ code, language }) => {
-    const highlighted = useShiki(code, language, 'dark-plus');
-
-    if (!highlighted) {
-        return (
-            <pre className="code-dark">
-                <code>{code}</code>
-            </pre>
-        );
-    }
-
-    // Padding, size and the panel around it all come from `.markdown-body .md-code` in index.css,
-    // so a highlighted block and the plain one above measure the same before and after Shiki runs.
-    return <div className="md-code code-dark" dangerouslySetInnerHTML={{ __html: highlighted }} />;
-};
+/** The fenced block inside a `<pre>`: its code, its language and the text after the language. */
+function fencedCode(pre: Element) {
+    const code = pre.children.find((child): child is Element => child.type === 'element' && child.tagName === 'code');
+    const className = (code?.properties.className as string[] | undefined)?.join(' ') ?? '';
+    return {
+        code: code ? textOf(code).replace(/\n$/, '') : '',
+        language: LANGUAGE_CLASS.exec(className)?.[1] ?? 'text',
+        meta: code?.properties.dataMeta as string | undefined,
+    };
+}
 
 export const MarkdownPage: React.FC = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -160,28 +121,21 @@ export const MarkdownPage: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(initialContent === null);
     const prerenderedSrc = useRef(initialContent === null ? null : src);
     const [error, setError] = useState<string | null>(null);
-    const [tocOpen, setTocOpen] = useState<boolean>(false);
-    
-    // Handle language change - update URL if it ends with /en.md or /fr.md
+    const [pagesOpen, setPagesOpen] = useState(false);
+    const validSrc = src && isValidDocSrc(src) ? src : null;
+    const page = validSrc ? findDocPage(validSrc) : undefined;
+
+    // A page follows the reader to the other language when it is written in it
     useEffect(() => {
-        if (!src) return;
-        
-        const currentLang = src.endsWith('/en.md') ? 'en' : src.endsWith('/fr.md') ? 'fr' : null;
-        
-        if (currentLang && currentLang !== language) {
-            // Replace the language in the URL
-            const newSrc = src.replace(new RegExp(`/${currentLang}\\.md$`), `/${language}.md`);
-            setSearchParams({ src: newSrc });
-        }
-    }, [language, src, setSearchParams]);
-    
+        if (page && docSrc(page, language) !== validSrc) setSearchParams({ src: docSrc(page, language) });
+    }, [language, page, validSrc, setSearchParams]);
+
     // A bare <a href="#id"> is a same-document jump: it fires hashchange, which the router
     // does not listen to, so useLocation().hash would never update and the scroll effect
     // below would never run. Going through navigate() keeps both in sync.
-    const goToHeading = (id: string) => (event: React.MouseEvent) => {
+    const goToHeading = useCallback((id: string) => (event: React.MouseEvent) => {
         if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
         event.preventDefault();
-        setTocOpen(false);
 
         // Re-clicking the current heading leaves the hash untouched, so the effect would
         // not re-run; by now the layout has settled and a plain scroll is enough.
@@ -190,123 +144,58 @@ export const MarkdownPage: React.FC = () => {
             return;
         }
         navigate({ search, hash: `#${id}` });
-    };
+    }, [hash, navigate, search]);
 
-    const handleBack = () => {
-        // Check if there's history to go back to
-        if (window.history.length > 1) {
-            navigate(-1);
-        } else {
-            // No history, go to plugins section
-            navigate('/#plugins');
-        }
-    };
-
-    const isExternalUrl = (s: string) => s.startsWith('https://') || s.startsWith('http://');
-    const hasValidSrc = src ? (isExternalUrl(src) || isValidDocSrc(src))  : false;
-    
-    // Construct the full URL
-    const fullUrl = src && hasValidSrc ? (isExternalUrl(src) ? src : srcToGithubUrl(src)) : null;
-    
-    // Convert to raw URL for fetching
-    const rawUrl = fullUrl ? githubToRawUrl(fullUrl) : null;
-
-    // Repo documentation is served by this site; external sources still come from their host.
-    const bundledUrl = src && hasValidSrc && !isExternalUrl(src) ? srcToBundledUrl(src) : null;
-    
-    // Extract the base path for relative links (directory containing the markdown file)
-    const basePath = rawUrl
-        ? rawUrl.substring(0, rawUrl.lastIndexOf('/'))
-        : null;
-
-    // Only a document from the repo's own docs/ folder can resolve its links to site routes
-    const localSrc = src && hasValidSrc && !isExternalUrl(src) ? src : null;
-
-    // Extract headings for table of contents
-    const headings = useMemo(() => {
-        if (!content) return [];
-        
-        // Remove code blocks first to avoid matching # inside them
-        const contentWithoutCodeBlocks = content.replace(/```[\s\S]*?```/g, '');
-        
-        const headingRegex = /^(#{1,6})\s+(.+)$/gm;
-        const matches: Heading[] = [];
-        let match;
-        
-        while ((match = headingRegex.exec(contentWithoutCodeBlocks)) !== null) {
-            const level = match[1].length;
-            let text = match[2].trim();
-
-            // The id must come from the original heading, since that is what the renderer uses
-            const id = headingTextToSlug(text);
-
-            // Remove HTML tags from text
-            text = text.replace(/<[^>]*>/g, '');
-
-            // Remove markdown bold markers
-            text = text.replace(/\*\*/g, '');
-
-            // The document's own H1 is the label; it used to be swapped for the src path,
-            // which showed the reader `5_dependencies/en` instead of the page title.
-
-            matches.push({ id, text, level });
-        }
-        
-        return matches;
+    // The H2s, for "On this page": deeper levels would turn a long guide's list into a second page.
+    const headings = useMemo<TocHeading[]>(() => {
+        const withoutCode = content.replace(/```[\s\S]*?```/g, '');
+        return [...withoutCode.matchAll(/^##\s+(.+)$/gm)].map(([, text]) => ({
+            id: headingTextToSlug(text.trim()),
+            text: text.replace(/<[^>]*>/g, '').replace(/\*\*|`/g, '').trim(),
+        }));
     }, [content]);
 
     useEffect(() => {
-        if (!src) {
-            setError(t('markdown.noPlugin'));
+        if (!validSrc) {
+            setError(t('markdown.noPage'));
             setLoading(false);
             return;
         }
 
-        // Already on screen from the embedded markdown: fetching it again would swap the page for the spinner
-        if (src === prerenderedSrc.current) return;
+        // Already on screen from the embedded markdown: fetching it again would swap the page for the loading state
+        if (validSrc === prerenderedSrc.current) return;
         prerenderedSrc.current = null;
 
-        const fetchMarkdown = async () => {
-            setLoading(true);
-            setError(null);
+        const controller = new AbortController();
+        let timedOut = false;
+        const timeoutId = window.setTimeout(() => {
+            timedOut = true;
+            controller.abort();
+        }, FETCH_TIMEOUT_MS);
+        setLoading(true);
+        setError(null);
 
-            const controller = new AbortController();
-            const timeoutId = window.setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+        (async () => {
             try {
-                if (!rawUrl) {
-                    throw new Error('Invalid source URL');
-                }
-
-                let response = await fetch(bundledUrl ?? rawUrl, { signal: controller.signal });
-
-                // A page that has not been translated yet should read in English, not 404.
-                if (!response.ok && bundledUrl?.endsWith('/fr.md')) {
-                    response = await fetch(bundledUrl.replace(/\/fr\.md$/, '/en.md'), { signal: controller.signal });
-                }
-
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch plugin documentation (${response.status})`);
-                }
-
-                const text = await response.text();
-                if (text.length > MAX_MARKDOWN_CHARS) {
-                    throw new Error('Documentation is too large to display safely.');
-                }
-                setContent(text);
-            } catch (err) {
-                if (err instanceof Error && err.name === 'AbortError') {
-                    setError('Request timed out while loading plugin documentation.');
-                    return;
-                }
-                setError(err instanceof Error ? err.message : 'Failed to load plugin documentation');
+                const response = await fetch(`/docs/${validSrc}`, { signal: controller.signal });
+                if (response.ok) setContent(await response.text());
+                else setError(t('markdown.notFound'));
+                setLoading(false);
+            } catch {
+                // Aborted by the cleanup: the reader moved on, and the next run owns the state
+                if (controller.signal.aborted && !timedOut) return;
+                setError(t('markdown.unreachable'));
+                setLoading(false);
             } finally {
                 window.clearTimeout(timeoutId);
-                setLoading(false);
             }
-        };
+        })();
 
-        fetchMarkdown();
-    }, [src, rawUrl, bundledUrl, t]);
+        return () => {
+            window.clearTimeout(timeoutId);
+            controller.abort();
+        };
+    }, [validSrc, t]);
 
     // Scroll to the heading targeted by the URL hash (search results, shared links).
     // The content arrives asynchronously, so this cannot rely on the browser's own handling.
@@ -323,9 +212,8 @@ export const MarkdownPage: React.FC = () => {
         const scroll = () => document.getElementById(id)?.scrollIntoView();
         scroll();
 
-        // Shiki replaces every code block with taller highlighted markup one grammar at a
-        // time, pushing later headings down long after the first paint. Re-align on each
-        // layout change until it settles, or a deep anchor lands hundreds of pixels short.
+        // Images and highlighting can still change the height above the heading after the first
+        // paint. Re-align on each layout change until it settles, or a deep anchor lands short.
         const observer = new ResizeObserver(scroll);
         observer.observe(document.body);
 
@@ -345,252 +233,132 @@ export const MarkdownPage: React.FC = () => {
         };
     }, [loading, content, hash]);
 
-    // Set page title
+    // Same title as the one server.tsx writes into the head
     useEffect(() => {
-        // The document's own H1, falling back to the source path only if it has none
-        // a browser tab reading `5_dependencies/en` tells the reader nothing.
-        const heading = content.match(/^#\s+(.+)$/m)?.[1].replace(/[*`]/g, '').trim();
-        const label = heading || (src && hasValidSrc ? src.replace('.md', '') : 'Documentation');
-
-        document.title = `${label} | StewBeet`;
-        
-        // Reset title when component unmounts
+        document.title = markdownPageMeta(validSrc, content).title;
         return () => {
             document.title = 'StewBeet';
         };
-    }, [src, hasValidSrc, content]);
+    }, [validSrc, content]);
 
-    const tocLinks = (
-        <nav className="flex flex-col border-l border-ink-800">
-            {headings.filter((heading) => heading.level > 1).map((heading, idx) => (
+    const components = useMemo<Components>(() => ({
+        h1: makeHeading('h1'),
+        h2: makeHeading('h2'),
+        h3: makeHeading('h3'),
+        h4: makeHeading('h4'),
+        h5: makeHeading('h5'),
+        h6: makeHeading('h6'),
+        pre({ node, style }) {
+            return node ? <CodeBlock {...fencedCode(node)} style={style} /> : null;
+        },
+        div({ node, ...props }) {
+            if (node?.properties.dataTabs === undefined) return <div {...props} />;
+            const tabs = node.children
+                .filter((child): child is Element => child.type === 'element' && child.tagName === 'pre')
+                .map((pre) => {
+                    const { code, language: lang, meta } = fencedCode(pre);
+                    return { code, language: lang, label: metaValue(meta, 'tab') ?? lang };
+                });
+            return <CodeTabs tabs={tabs} style={props.style} />;
+        },
+        img({ src: imageSrc, alt, width, height }) {
+            // Relative images are served by this site, beside the page that shows them
+            const resolved = imageSrc && validSrc && !/^https?:/.test(imageSrc)
+                ? new URL(imageSrc, `https://site/docs/${validSrc}`).pathname
+                : imageSrc;
+            return (
+                <ZoomableImage
+                    src={resolved ?? ''}
+                    alt={alt ?? ''}
+                    width={width}
+                    height={height}
+                    frameClassName="max-w-full align-top"
+                    className="max-w-full h-auto"
+                />
+            );
+        },
+        a({ href, children }) {
+            const isAnchor = href?.startsWith('#');
+            const isExternal = !href || /^[a-z]+:/i.test(href);
+            const target = !isAnchor && !isExternal && validSrc ? resolveDocSrc(validSrc, href) : null;
+            const internalHref = target ? `${srcHref(target.src)}${target.hash ? `#${target.hash}` : ''}` : null;
+            // Anything relative that is not a page, like a source file, opens in the repository
+            const linkHref = internalHref ?? (!isAnchor && !isExternal && validSrc ? new URL(href, REPO_DOCS_URL + validSrc).href : href);
+            const opensAway = /^https?:/.test(linkHref ?? '');
+
+            return (
                 <a
-                    key={idx}
-                    href={`#${heading.id}`}
-                    onClick={goToHeading(heading.id)}
-                    className={`-ml-px border-l py-1 text-sm leading-snug transition-colors ${
-                        hash === `#${heading.id}` ? 'border-beet-400 text-ink-50' : 'border-transparent text-ink-400 hover:text-ink-100 hover:border-ink-500'
-                    } ${heading.level === 2 ? 'pl-3' : 'pl-6'}`}
+                    href={linkHref}
+                    target={opensAway ? '_blank' : undefined}
+                    rel={opensAway ? 'noopener noreferrer' : undefined}
+                    onClick={
+                        isAnchor && href ? goToHeading(decodeURIComponent(href.slice(1)))
+                        : internalHref ? (event) => {
+                            // Let the browser keep ctrl/cmd-click opening a new tab
+                            if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+                            event.preventDefault();
+                            navigate(internalHref);
+                        }
+                        : undefined
+                    }
                 >
-                    {heading.text.replace(/`/g, '')}
+                    {children}
                 </a>
-            ))}
-        </nav>
-    );
+            );
+        },
+    }), [validSrc, goToHeading, navigate]);
+
+    const accent = page ? SECTIONS[page.section].border : 'border-text';
 
     return (
-        // pt-14 makes room for the fixed navbar, so the toolbar's place in the flow matches where it is pinned.
-        <div className={`doc-page min-h-screen pt-14 bg-ink-950 text-ink-200 ${SELECTION_BRAND}`}>
-            <Navbar />
+        <div className="doc-page min-h-screen">
+            <Navbar subbar={<DocBar headings={headings} onOpenPages={() => setPagesOpen(true)} onJump={goToHeading} />} />
+            {pagesOpen && <PagesPanel current={page} onClose={() => setPagesOpen(false)} />}
 
-            {/* Toolbar, kept to one line: it is pinned over the document for the whole read. */}
-            <div className="sticky top-14 z-30 border-b border-ink-800 bg-ink-950/90 backdrop-blur-md">
-                <div className={`${PAGE} h-11 flex items-center justify-between`}>
-                    <button onClick={handleBack} className="group flex items-center gap-2 text-sm text-ink-300 hover:text-ink-50 transition-colors">
-                        <HiArrowLeft className="group-hover:-translate-x-0.5 transition-transform" aria-hidden="true" />
-                        {t('markdown.back')}
-                    </button>
+            <div className="pt-[6.5rem] lg:pt-16">
+                <div className="frame frame-wide lg:grid lg:grid-cols-[16.5rem_minmax(0,1fr)] xl:grid-cols-[16.5rem_minmax(0,1fr)_13.5rem]">
+                    <aside className="hidden lg:block sticky top-16 self-start h-[calc(100vh-4rem)] overflow-y-auto py-7 px-5 border-r border-border [scrollbar-width:thin]">
+                        <PageList current={page} variant="sidebar" />
+                    </aside>
 
-                    <div className="flex items-center gap-4">
-                        {headings.length > 0 && (
-                            <button
-                                onClick={() => setTocOpen(!tocOpen)}
-                                className="lg:hidden flex items-center gap-1.5 text-sm text-ink-300 hover:text-ink-50 transition-colors"
-                            >
-                                <HiMenu aria-hidden="true" />
-                                {t('markdown.contents')}
-                            </button>
+                    <main className="min-w-0 px-4 pt-6 pb-12 lg:px-12 lg:pt-9 lg:pb-16">
+                        <Breadcrumb page={page} />
+
+                        {loading && <p className="mt-6 label" role="status">{t('markdown.loading')}</p>}
+
+                        {error && (
+                            <div className="mt-6 max-w-[40rem] border-l-2 border-section-plugins pl-4">
+                                <p className="font-bold">{t('markdown.error')}</p>
+                                <p className="mt-1 text-text-muted">{error}</p>
+                            </div>
                         )}
-                        {fullUrl && (
-                            <a
-                                href={fullUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center gap-1.5 text-sm text-ink-400 hover:text-ink-100 transition-colors"
-                            >
-                                {t('markdown.viewOnGithub')}
-                                <HiExternalLink aria-hidden="true" />
-                            </a>
-                        )}
-                    </div>
-                </div>
-            </div>
 
-            <div className={`${PAGE} py-10 md:py-14`}>
-                <div className="flex gap-12 xl:gap-16 items-start">
-                    {headings.length > 0 && (
-                        <aside className="hidden lg:block sticky top-[calc(var(--doc-header)_+_2rem)] w-60 shrink-0 self-start max-h-[calc(100vh_-_var(--doc-header)_-_4rem)] overflow-y-auto pb-6 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
-                            <p className="mb-3 font-mono text-xs uppercase tracking-wider text-ink-500">{t('markdown.contents')}</p>
-                            {tocLinks}
+                        {!loading && !error && content && (
+                            <>
+                                {/* Every size and margin lives in `.markdown-body` in index.css. */}
+                                <article className="markdown-body max-w-[52rem]">
+                                    <ReactMarkdown
+                                        remarkPlugins={REMARK_PLUGINS}
+                                        rehypePlugins={REHYPE_PLUGINS}
+                                        components={components}
+                                    >
+                                        {content}
+                                    </ReactMarkdown>
+                                </article>
+                                {page && <PreviousNext page={page} />}
+                                {validSrc && <SourceLinks src={validSrc} className="xl:hidden mt-8 flex gap-5 text-sm" />}
+                            </>
+                        )}
+                    </main>
+
+                    {validSrc && (
+                        <aside className="hidden xl:block sticky top-16 self-start max-h-[calc(100vh-4rem)] overflow-y-auto py-9 pl-5 pr-6 border-l border-border [scrollbar-width:thin]">
+                            <PageAside headings={headings} src={validSrc} accent={accent} onJump={goToHeading} />
                         </aside>
                     )}
-
-                    <div className="flex-1 min-w-0 max-w-[48rem]">
-                {loading && (
-                    <div className="flex items-center justify-center py-20">
-                        <div className={`animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 ${LOADER_ACCENT}`}></div>
-                    </div>
-                )}
-
-                {error && (
-                    <div className="rounded-panel border border-mc-gold/30 bg-mc-gold/5 p-8">
-                        <p className="text-mc-gold text-lg font-semibold mb-2">{t('markdown.error')}</p>
-                        <p className="text-ink-300 text-lg">{error}</p>
-                    </div>
-                )}
-
-                {!loading && !error && content && (
-                    <div>
-                        {/* Every size and margin lives in `.markdown-body` in index.css. */}
-                        <article className="markdown-body">
-                        <ReactMarkdown
-                            remarkPlugins={[remarkGfm, remarkAlert]}
-                            rehypePlugins={[rehypeRaw, [rehypeSanitize, MARKDOWN_SCHEMA]]}
-                            components={{
-                                pre({ children }: React.HTMLAttributes<HTMLPreElement>) {
-                                    // The child is the `code` renderer below, still unrendered, so the language class is the only way to tell it apart here.
-                                    // A fenced block becomes a ShikiCodeBlock, which draws its own panel and must not be wrapped in a second one.
-                                    if (isValidElement<{ className?: string }>(children) && LANGUAGE_CLASS.test(children.props.className ?? '')) {
-                                        return children;
-                                    }
-                                    return <pre className="code-dark">{children}</pre>;
-                                },
-                                code({ inline, className, children }: React.HTMLAttributes<HTMLElement> & { inline?: boolean }) {
-                                    const match = LANGUAGE_CLASS.exec(className || '');
-                                    const language = match ? match[1] : '';
-                                    const code = String(children).replace(/\n$/, '');
-
-                                    return !inline && language ? (
-                                        <ShikiCodeBlock code={code} language={language} />
-                                    ) : (
-                                        // The rest of react-markdown's props are not spread here: they carry the hast `node`, which React writes out as node="[object Object]".
-                                        <code className={className}>
-                                            {children}
-                                        </code>
-                                    );
-                                },
-                                    ...HEADING_COMPONENTS,
-                                img({ src, alt }: React.ImgHTMLAttributes<HTMLImageElement>) {
-                                    // Convert relative GitHub image paths to absolute URLs
-                                    let imageSrc = src;
-                                    
-                                    if (src && !src.startsWith('http') && basePath) {
-                                        // Relative path - resolve based on current document location
-                                        if (src.startsWith('img/')) {
-                                            imageSrc = `${basePath}/${src}`;
-                                        } else if (src.startsWith('./') || src.startsWith('../')) {
-                                            // Handle relative paths
-                                            imageSrc = `${basePath}/${src}`;
-                                        } else {
-                                            imageSrc = `${basePath}/${src}`;
-                                        }
-                                    }
-                                    
-                                    // Check if this is a badge/shield image
-                                    const isBadge = src?.includes('shields.io') || src?.includes('img.shields.io') || 
-                                                   src?.includes('badge') || src?.includes('github.com/workflows');
-                                    
-                                    if (isBadge) return <img src={imageSrc} alt={alt} className="inline-block h-6 mr-2 my-1" />;
-                                    return (
-                                        <ZoomableImage
-                                            src={imageSrc ?? ''}
-                                            alt={alt ?? ''}
-                                            frameClassName="max-w-full align-top"
-                                            className="max-w-full h-auto rounded-control"
-                                        />
-                                    );
-                                },
-                                a({ href, children }: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
-                                    // Keep anchor links as-is
-                                    const isAnchor = href?.startsWith('#');
-                                    const isExternal = href?.startsWith('http');
-                                    const isRelative = !isAnchor && !isExternal && !!href && !!basePath;
-
-                                    // A link to another documentation page keeps the reader on the site
-                                    const target = isRelative && localSrc ? resolveDocSrc(localSrc, href) : null;
-                                    const internalHref = target
-                                        ? `/markdown?src=${encodeURIComponent(target.src)}${target.hash ? `#${target.hash}` : ''}`
-                                        : null;
-
-                                    let linkHref = internalHref ?? href;
-                                    if (isRelative && !internalHref) {
-                                        // Anything else (images, source files) still points at GitHub.
-                                        // Convert basePath from raw.githubusercontent to github.com/blob format
-                                        const viewBasePath = basePath.replace(
-                                            'https://raw.githubusercontent.com/',
-                                            'https://github.com/'
-                                        ).replace('/main/', '/blob/main/');
-
-                                        linkHref = `${viewBasePath}/${href}`;
-                                    }
-
-                                    // Leaving the site: including the GitHub fallback built just above
-                                    const opensAway = linkHref?.startsWith('http') ?? false;
-
-                                    return (
-                                        <a
-                                            href={linkHref}
-                                            target={opensAway ? '_blank' : undefined}
-                                            rel={opensAway ? 'noopener noreferrer' : undefined}
-                                            onClick={
-                                                // In-page links need the same settle handling as the contents panel
-                                                isAnchor && href ? goToHeading(decodeURIComponent(href.slice(1)))
-                                                : internalHref ? (event) => {
-                                                    // Let the browser keep ctrl/cmd-click opening a new tab
-                                                    if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
-                                                    event.preventDefault();
-                                                    navigate(internalHref);
-                                                }
-                                                : undefined
-                                            }
-                                        >
-                                            {children}
-                                        </a>
-                                    );
-                                }
-                            }}
-                        >
-                            {content}
-                        </ReactMarkdown>
-                    </article>
-                    </div>
-                )}
-                    </div>
                 </div>
             </div>
 
-            {/* Mobile TOC Overlay */}
-            <AnimatePresence>
-                {tocOpen && (
-                    <>
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.2 }}
-                            onClick={() => setTocOpen(false)}
-                            className="fixed inset-0 bg-black/60 z-40 lg:hidden"
-                        />
-                        <motion.div
-                            initial={{ x: '100%' }}
-                            animate={{ x: 0 }}
-                            exit={{ x: '100%' }}
-                            transition={{ type: 'tween', duration: 0.3 }}
-                            className="fixed top-0 right-0 bottom-0 w-80 bg-ink-950 border-l border-ink-800 z-50 overflow-y-auto lg:hidden"
-                        >
-                            <div className="p-6">
-                                <div className="flex items-center justify-between mb-6">
-                                    <p className="font-mono text-xs uppercase tracking-wider text-ink-500">{t('markdown.contents')}</p>
-                                    <button onClick={() => setTocOpen(false)} aria-label={t('search.close')} className="p-2 rounded-control hover:bg-ink-850 transition-colors">
-                                        <HiX className="text-xl text-ink-400" />
-                                    </button>
-                                </div>
-                                {tocLinks}
-                            </div>
-                        </motion.div>
-                    </>
-                )}
-            </AnimatePresence>
-            
             <Footer />
         </div>
     );

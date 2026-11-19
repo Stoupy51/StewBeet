@@ -14,15 +14,20 @@ colors:
   grid: "rgba(17, 18, 20, 0.07)"
   grid-dark: "rgba(255, 255, 255, 0.06)"
   primary: "#c42340"
+  primary-hover: "#9e1a33"
   on-primary: "#ffffff"
   link: "#b81d39"
   link-dark: "#ff6b7d"
   generated: "#2b7a19"
   generated-dark: "#7fd35b"
-  code-surface: "#111317"
+  code-surface: "#ffffff"
   code-surface-dark: "#15171b"
-  code-border: "#23262c"
-  code-text: "#e6e7ea"
+  code-border: "#e3e4e8"
+  code-border-dark: "#2a2d34"
+  code-text: "#1f2328"
+  code-text-dark: "#e6e7ea"
+  code-text-muted: "#565964"
+  code-text-muted-dark: "#9aa0aa"
   section-start: "#1f7a2a"
   section-start-dark: "#63d96b"
   section-guides: "#3045c0"
@@ -110,7 +115,7 @@ The signature is a 16 px pixel grid visible in the page margins, behind a conten
 
 ## Colors
 
-The light page is pure white and the dark page a neutral near-black: no cream, no brown tint, grey neutrals only. Beet red is the only accent, kept for the one primary button of a screen and for links; white on `primary` is 5.9:1. Leaf green marks generated output and success. Code panels stay dark in both themes.
+The light page is pure white and the dark page a neutral near-black: no cream, no brown tint, grey neutrals only. Beet red is the only accent, kept for the one primary button of a screen and for links; white on `primary` is 5.9:1, and a pressed or hovered button darkens to `primary-hover`. Leaf green marks generated output and success. Code follows the page: a white panel framed by its border in the light theme, a raised near-black one in the dark theme, highlighted with VS Code's Light+ and Dark+. A light page with dark code blocks makes the eye adapt at every block, and dark text on a light background reads better.
 
 Each docs section has a color taken from Minecraft's text colors and darkened for the light theme, all at 4.5:1 or more: Start here green, Guides blue, Plugins gold, Reference purple, Understand cyan. A section's color appears wherever the section does: its sidebar label with an 8 px square, the current page marker, the breadcrumb, the docs home and the search results.
 
@@ -153,7 +158,7 @@ In French, keywords stay English (Showcase, Tools, Playground, item, block, reci
 ## Components
 
 - `button-primary`: one per screen, beet red, square, 48 px high.
-- `code-panel`: a dark panel titled by its file name or "Terminal", with a copy button.
+- `code-panel`: a panel in the page's theme, titled by its file name or "Terminal", with a copy button.
 - `step-marker`: a 30 px framed number, "01" to "09".
 - `mc-tooltip`: the game's item tooltip, its border going from `#5000ff` to `#28007f`.
 

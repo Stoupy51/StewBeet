@@ -1,135 +1,68 @@
 
-# stewbeet.plugins.datapack.custom_blocks
+# Custom blocks
 
-The `datapack.custom_blocks` plugin enables custom blocks functionality in your datapack.<br>
-It automatically generates placement, destruction, and management systems for custom blocks<br>
-using vanilla blocks as the base, with support for Smithed Custom Block library integration,<br>
-rotation mechanics, statistics tracking, and ore break detection.
+Makes every `Block` of your definitions placeable. A vanilla block holds its place in the world, and an item display draws your model over it.
 
-**Required**: `Your definition plugin` with `vanilla_block` configuration (see [`definitions_setup.md`](../1_definitions_setup/en.md) for details)  
-**Automatic**: Smithed Custom Block library (auto-detected and linked)  
-**Automatic**: Common Signals library (for efficient custom ore break detection)  
-**Automatic**: Furnace NBT Recipes library (for custom blocks that are custom furnace, e.g. Electric Furnace)
+It runs in the `basic` and `extensive` templates as `stewbeet.plugins.datapack.custom_blocks`, and reads the blocks you [declared](../items_and_blocks/en.md) with no configuration. [Source](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/datapack/custom_blocks/__init__.py)
 
-### <u>Some Features Showcase</u>
+## Every file one block gets
 
-**Advanced stats function:**<br>
-<img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/datapack.custom_blocks.stats.jpg">
+The Life Crystal Block of Stardust Fragment, declared once, ends up as 14 files:
 
-**Complete file tree (ticking, placement, destroy, convention tags, etc.):**<br>
-<img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/datapack.custom_blocks.complete_file_tree.jpg">
+| Files | Written by |
+|---|---|
+| 4 functions in `custom_blocks/life_crystal_block/` | this plugin |
+| The crafting recipe, for Smithed Crafter | [Recipes](custom_recipes.md) |
+| `loot_table/i/life_crystal_block.json` | [Loot tables](datapack.loot_tables.md) |
+| The manual page, and the block and recipe drawn for it | [In-game manual](../7_ingame_manual/en.md) |
+| The item model, its definition, the texture and its `.mcmeta` | [Item models](resource_pack.item_models.md) |
+| The name in `lang/en_us.json` | [Lang file](auto.lang_file.md) |
 
-**Source Code**: [`stewbeet/plugins/datapack/custom_blocks/__init__.py`](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/datapack/custom_blocks/__init__.py)
+## What this plugin writes
 
+For each block, in `function/custom_blocks/<id>/`:
 
-## What it does
+- `place_main` sets the vanilla block and summons the item display.
+- `place_secondary` names the display and gives it the block's model.
+- `destroy` runs once the vanilla block is gone, and removes the display.
+- `replace_item` turns the dropped vanilla item into yours.
 
-- Creates custom block placement and destruction systems
-- Handles block rotation and facing mechanics
-- Provides statistics tracking for custom blocks
-- Optimizes performance with scoreboard-based counting
-- Supports custom ore blocks with silk touch detection
-- Enables player head-based custom blocks
-- Integrates with Smithed Custom Block library
+Once per pack, in `function/custom_blocks/`:
 
-## Configuration
+- `place` and `on_place` find which of your blocks the Smithed Custom Block library just placed.
+- `destroy` and `_groups/<vanilla block>` send a display whose vanilla block is gone to that block's `destroy`.
+- `get_rotation`, `check_light` and `compute_brightness` turn the display and match its light to the world.
 
-### Basic Example Configuration
-```yaml
-pipeline:
-  - ...
-  - src.setup_definitions  # Load item definitions into memory
-  - ...
-  - stewbeet.plugins.datapack.custom_blocks # < This plugin
-  - ...
-# No specific configuration required - works with item definitions
-```
+`/function <namespace>:_stats_custom_blocks` counts the blocks placed in the world, per block and per vanilla block:
 
-### Configuration Options in item definitions
+<img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/datapack.custom_blocks.stats.jpg" alt="Chat output of the stats function, one line per block" width="680" height="331">
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `vanilla_block.id` | string | **Required** | The vanilla block ID to use as the base block |
-| `vanilla_block.block_facing` | `False` \| `"player"` | `False` | Whether to rotate the placed block based on player facing |
-| `vanilla_block.visual_facing` | `"none"` \| `"player"` \| `"item_frame"` | `"none"` | Source of the visual orientation for the display entity |
-| `vanilla_block.half` | `"click"` \| `None` | `None` | Slab, stairs or trapdoor host placed on the half the player clicked |
-| `vanilla_block.interaction` | `Interaction` \| `None` | `None` | Interaction entity breaking an invisible host when hit, with hit count, sounds, particles and an optional seat |
-| `vanilla_block.uvlock` | bool | `False` | Show turned copies of the model instead of turning the display, textures keeping the world grid |
-| `vanilla_block.margin` | float | `1.002` | Scale of the displayed model about the block's center, so it is drawn in front of the host. 1.0 leaves its size |
-| `vanilla_block.machine_speed` | float or None | `None` | Speed factor of a furnace, smoker, blast furnace or brewing stand host |
-| `mining` | `Mining` \| `None` | `None` | Tool level needed to get the item, enforced by a host of that level or checked by StewBeet |
-| `item_model` | string | Optional | Custom item model for the block display entity |
-| `no_silk_touch_drop` | string \| dict \| LootTable | Optional | Alternative drop when mined without silk touch (for ores), including dynamic drops via beet `LootTable` |
-| `custom_data` | object | Optional | Custom NBT data for player head blocks |
+## Options
 
-Check extensive template [examples in `setup_definitions.py`](https://github.com/Stoupy51/StewBeet/blob/main/templates/extensive/src/setup_definitions.py)!
+Set on the block's `vanilla_block=VanillaBlock(...)`, or on the `Block` itself for the last two.
 
-## Features
+| Option | Default | What it does |
+|---|---|---|
+| `id` | required | The vanilla block that holds the place, such as `"minecraft:iron_block"` |
+| `block_facing` | `False` | `"player"` turns the vanilla block the way vanilla turns it, towards the player for a furnace |
+| `visual_facing` | `"none"` | `"player"` turns the model towards the player, `"item_frame"` as the frame holding it |
+| `half` | `None` | `"click"` places a slab, stairs or trapdoor on the half the player clicked |
+| `interaction` | `None` | An `Interaction` for an invisible host such as a barrier: hits to break, sounds, particles, a seat |
+| `uvlock` | `False` | Turns copies of the model instead of the display, so textures stay on the world grid |
+| `margin` | `1.002` | Scale of the model about the block's centre, so it is drawn in front of the host |
+| `machine_speed` | `None` | How many times faster a furnace, smoker, blast furnace or brewing stand host works |
+| `contents` | `False` | An item frame instead of a vanilla block |
+| `Block.mining` | `None` | The tool level needed to get the item back |
+| `Block.no_silk_touch_drop` | `None` | What an ore drops without Silk Touch, with optional experience |
 
-### Block Placement System
-Automatically generates placement functions for each custom block:
-- ✅ Handles block replacement with vanilla blocks
-- 🔄 Applies rotation and facing mechanics when configured
-- 🎯 Summons item display entities for visual representation
-- 📊 Updates statistics and optimization scoreboards
+## Limits
 
-### Rotation and Facing Mechanics
-Implements smart rotation detection for directional blocks:
-- 🧭 Player rotation-based placement (north, east, south, west)
-- 🎯 Predicate-based facing detection for existing blocks
-- ⚙️ Automatic block state application with facing parameters
-
-### Item Display Configuration
-Sets up item display entities with proper visual settings:
-- 🏷️ Applies convention tags (smithed.entity, smithed.block)
-- ✨ Sets custom names and model overrides
-- 💡 Configures brightness, the display scaled by `margin`
-- 🔄 Applies rotation transformations for directional blocks
-- 🪜 Follows every second the corner of a stairs host and the burning of a furnace, smoker or blast furnace host (`{block}/follow_host`)
-
-### Smithed Custom Block Integration
-Automatically integrates with Smithed Custom Block library when needed:
-- 🔗 Links placement functions to library events
-- 📦 Handles block API data storage integration
-- ⚡ Optimizes placement detection and execution
-
-### Block Destruction Detection
-Implements multi-layered destruction detection system:
-- ⚡ Every 2 ticks: Fast detection for most blocks
-- 🔍 Every 1 second: Advanced predicate-based detection
-- 🛡️ Every 5 seconds: Cleanup including ores
-- 🎯 Block tag and predicate-based optimization
-
-### Custom Ore Support
-Special handling for custom ore blocks with advanced drop mechanics:
-- 🔨 Silk touch detection and handling
-- 💎 Alternative drops when mined without silk touch
-- ✨ Experience orbs dropped with them (`NoSilkTouchDrop.experience`)
-- 📊 Item count preservation and transfer
-- 🔗 Integration with Common Signals library
-
-### Player Head Custom Blocks (e.g. cables from SimplEnergy)
-Support for player head-based custom blocks with advancement triggers:
-- 🏆 Advancement-based placement detection
-- 🔍 Area search within "configurable" radius
-- 📦 Custom NBT data preservation
-- ⚡ Automatic advancement revocation
-
-### Statistics and Performance
-Statistics tracking and performance optimization:
-- 📈 Total custom blocks count
-- 🧱 Per-block type statistics
-- 🎯 Vanilla block usage tracking
-- ⚡ Scoreboard-based performance optimization
-
-### Special Integrations
-- **🔥 Furnace NBT Recipes**: Auto-summons markers for furnace blocks
-- **🏷️ Block Tags**: Creates optimized block tags for detection
-- **🎯 Predicates**: Generates performance-optimized predicates
+- A block with no `vanilla_block` cannot be placed. The build says which ones.
+- A broken block's display goes within 2 ticks, and an ore's as soon as it drops its item. A check every 5 seconds catches anything missed.
+- The display is an entity: thousands of placed blocks cost what thousands of entities cost. The [Performance](../10_performance/en.md) guide covers the ticking ones.
 
 ## Next steps
 
-- [Defining items and blocks](../1_definitions_setup/en.md): where the items this plugin reads are declared.
-- [All plugins](README.md): the rest of the pipeline, in the order it runs.
-- [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.
+- [Definitions](../1_definitions_setup/en.md#vanillablock-configuration): every `VanillaBlock` option in detail.
+- [Recipes](custom_recipes.md): how the recipe of a block becomes a Smithed Crafter recipe.
 

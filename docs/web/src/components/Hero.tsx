@@ -1,20 +1,21 @@
-import { HiArrowNarrowRight, HiArrowRight } from 'react-icons/hi';
-import { useLayoutEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { HiRefresh } from 'react-icons/hi';
 import { useTranslation } from '../i18n/useTranslation';
-import { introWillPlay, useIntro } from '../hooks/useIntro';
-import { useOverflowFade } from '../hooks/useOverflowFade';
-import { HeroOutputPanel } from './HeroOutputPanel';
-import { CodeTab } from './CodeTab';
-import { CopyCommand } from './CopyCommand';
+import { useIntro } from '../hooks/useIntro';
 import { TrustStrip } from './TrustStrip';
 import type { FileNode } from './FileTree';
+import { DOC_PAGES, docHref } from '../docsPages';
 import heroCode from '../generated/heroCode.json';
 import heroOutput from '../generated/heroOutput.json';
 import stats from '../generated/stats.json';
-import { BTN_PRIMARY, PAGE } from '../theme';
 
 const RELEASES_URL = 'https://github.com/Stoupy51/StewBeet/releases';
+const BLOCK_RENDER = '/generated/hero/resource_pack__assets__stardust__textures__font__high_res__life_crystal_block.png';
+const CRYSTAL_TEXTURE = '/img/hero/life_crystal.png';
+
+/** The name and lore of the block, as `playground/hero/src/definitions.py` gives them and the game shows them. */
+const BLOCK_NAME = 'Life Crystal Block';
+const BLOCK_LORE = 'Break it to get the crystal back';
 
 function daysSince(iso: string): number {
     return Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000));
@@ -26,192 +27,123 @@ function releaseAge(days: number, t: (key: string) => string): string {
     return t('hero.releasedDaysAgo').replace('{n}', String(days));
 }
 
-/**
- * Counts up to the number of generated files while they stream into the tree.
- *
- * The text is written through a ref rather than state, so the rendered output always matches the
- * prerendered markup and a visitor who is not shown the intro never sees a rewind. Only the first
- * label counts up: a later one (another tab, another language) is written as is.
- */
-const FileCounter = ({ label }: { label: string }) => {
-    const node = useRef<HTMLSpanElement>(null);
-    const initial = useRef(label);
-    const counted = useRef(false);
-
-    useLayoutEffect(() => {
-        const total = Number(label.match(/\d+/)?.[0] ?? 0);
-        const element = node.current;
-        if (!element) return;
-        // The count below replaces the text node React rendered, so React can no longer update it.
-        element.textContent = label;
-        if (!total || counted.current || label !== initial.current || !introWillPlay()) return;
-
-        // Matches the row cascade in index.css: 760ms before the first file, 42ms apart.
-        const START = 760;
-        const STEP = 42;
-        const write = (value: number) => {
-            element.textContent = label.replace(String(total), String(value));
-        };
-
-        write(0);
-        let frame = 0;
-        const begun = performance.now();
-        const tick = () => {
-            const landed = Math.max(0, Math.min(total, Math.floor((performance.now() - begun - START) / STEP)));
-            write(landed);
-            if (landed < total) frame = requestAnimationFrame(tick);
-            else counted.current = true;
-        };
-        frame = requestAnimationFrame(tick);
-        return () => cancelAnimationFrame(frame);
-    }, [label]);
-
-    return <span ref={node} className="font-mono text-xs text-leaf-400 tabular-nums">{label}</span>;
-};
-
-const step = (index: number) => ({ '--step': index }) as React.CSSProperties;
-
-/** Files of the tree that the given snippet produces. */
-function filesFrom(nodes: FileNode[], snippet: string): number {
-    return nodes.reduce((total, node) => total + (node.children ? filesFrom(node.children, snippet) : Number(node.snippet === snippet)), 0);
+function leaves(nodes: FileNode[]): FileNode[] {
+    return nodes.flatMap((node) => node.children ? leaves(node.children) : [node]);
 }
 
-const tree = heroOutput.tree as FileNode[];
+/** The files the build wrote from the block definition, as python_package/scripts/build_hero_output.py recorded them. */
+const blockFiles = leaves(heroOutput.tree as FileNode[]).filter((leaf) => leaf.snippet === 'block');
+const count = (part: string) => blockFiles.filter((leaf) => leaf.path?.includes(part)).length;
+const TOOLTIP_ROWS: [string, number][] = [
+    ['hero.blockFunctions', count('/function/custom_blocks/')],
+    ['hero.crafterRecipes', count('/smithed_crafter/')],
+    ['hero.lootTables', count('/loot_table/')],
+    ['hero.manualPages', count('/dialog/manual/')],
+    ['hero.resourcePackFiles', count('resource_pack/')],
+];
 
-/** Code panel showing the longest snippet: 2px of border, the 2.5rem tab, 2rem of padding and 0.75rem lines at 1.55. */
-const CODE_HEIGHT = `calc(${Math.max(...heroCode.snippets.map(({ lines }) => lines))} * 1.1625rem + 4.5rem + 2px)`;
+const quickstart = DOC_PAGES.find((page) => page.src.en === 'quickstart/en.md')!;
 
-export const Hero: React.FC = () => {
-    const { t, language } = useTranslation();
-    const gettingStarted = `/markdown?src=${encodeURIComponent(language === 'fr' ? '0_getting_started/fr.md' : '0_getting_started/en.md')}`;
-    useIntro();
-    const [active, setActive] = useState(heroCode.snippets[0].id);
-    // Only a tab click fades the code in, so the first paint and the intro are left untouched.
-    const [switched, setSwitched] = useState(false);
-    const snippet = heroCode.snippets.find(({ id }) => id === active) ?? heroCode.snippets[0];
-    const codeScroll = useOverflowFade();
+/** Starts the build animation over: the attribute comes off, the browser forgets the animations, and it goes back on. */
+function replayBuild() {
+    const root = document.documentElement;
+    delete root.dataset.intro;
+    void root.offsetWidth;
+    root.dataset.intro = 'play';
+}
+
+/**
+ * The definition of a real block, and what the build made of it: its items dropping into
+ * inventory slots and the game's item tooltip listing the files. On a desktop it sits beside the
+ * headline, overlapping its code panel; on a phone it is the section under the hero.
+ */
+const BuildProof = () => {
+    const { t } = useTranslation();
+    const block = heroCode.snippets.find(({ id }) => id === 'block') ?? heroCode.snippets[0];
 
     return (
-        <section id="hero" className="pt-14">
-            <div className={`${PAGE} pt-8 md:pt-10 short:pt-5 pb-12`}>
-                <div className="text-center">
-                    <a
-                        href={RELEASES_URL}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="intro-step inline-flex items-center gap-2 font-mono text-xs text-ink-400 hover:text-ink-100 transition-colors"
-                        style={step(0)}
-                    >
-                        <span className="w-1.5 h-1.5 bg-leaf-400" aria-hidden="true" />
+        <div className="mt-16 lg:mt-0 min-w-0 flex flex-col">
+            <h2 className="text-2xl leading-tight font-bold lg:sr-only">{t('hero.proofTitle')}</h2>
+
+            <div className="mt-3.5 lg:mt-0 bg-code-surface border border-code-border text-code-text">
+                <p className="flex items-center h-9 lg:h-10 px-3 lg:px-3.5 border-b border-code-border font-mono text-xs text-code-text-muted">{t('hero.codeCaption')}</p>
+                <div className="hero-code" dangerouslySetInnerHTML={{ __html: block.html }} />
+            </div>
+
+            <div className="mt-5 lg:-mt-[18px] lg:ml-16 flex flex-col lg:flex-row lg:items-start gap-2.5 lg:gap-3.5">
+                <div className="mc-panel self-start flex gap-0.5 p-3 lg:p-2.5 outline outline-4 outline-surface">
+                    <div className="mc-slot"><img src={BLOCK_RENDER} alt={BLOCK_NAME} width={32} height={32} className="build-drop" style={{ '--slot': 0 } as React.CSSProperties} /></div>
+                    <div className="mc-slot"><img src={CRYSTAL_TEXTURE} alt="Life Crystal" width={32} height={32} className="pixelated build-drop" style={{ '--slot': 1 } as React.CSSProperties} /></div>
+                    <div className="mc-slot" />
+                    <div className="mc-slot" />
+                    <div className="mc-slot lg:hidden" />
+                    <div className="mc-slot lg:hidden" />
+                </div>
+                <div className="mc-tooltip self-start ml-[26px] lg:ml-0 lg:mt-[26px] px-2.5 py-2" role="note">
+                    <p className="text-white">{BLOCK_NAME}</p>
+                    <p className="text-mc-lore italic">{BLOCK_LORE}</p>
+                    <p className="mt-2 build-rise" style={{ '--row': 0 } as React.CSSProperties}>{t('hero.writtenByBuild')}</p>
+                    {TOOLTIP_ROWS.map(([key, value], index) => (
+                        <p key={key} className="build-rise" style={{ '--row': index + 1 } as React.CSSProperties}>
+                            {t(key).replace('{n}', String(value))}
+                        </p>
+                    ))}
+                </div>
+            </div>
+
+            <p className="mt-3 lg:mt-4 text-[0.8125rem] leading-normal text-text-muted">
+                {t('hero.proofCaption').replace('{n}', String(blockFiles.length))}{' '}
+                <button type="button" onClick={replayBuild} className="motion-reduce:hidden inline-flex items-center gap-1 min-h-6 text-link hover:text-text transition-colors">
+                    <HiRefresh className="w-3.5 h-3.5" aria-hidden="true" />
+                    {t('hero.replay')}
+                </button>
+            </p>
+        </div>
+    );
+};
+
+export const Hero = () => {
+    const { t, language } = useTranslation();
+    useIntro();
+
+    return (
+        <section id="hero" className="pt-14 lg:pt-16">
+            <div className="frame px-4 pt-7 pb-10 lg:px-12 lg:py-16 lg:grid lg:grid-cols-[minmax(0,1fr)_35rem] lg:gap-14">
+                <div className="flex flex-col">
+                    <a href={RELEASES_URL} target="_blank" rel="noopener noreferrer" className="self-start inline-flex items-center min-h-6 font-pixel text-[0.6875rem] lg:text-[0.8125rem] text-text-muted hover:text-text transition-colors">
                         v{stats.version}
                         {/* The age is computed again in the browser, days after the prerender, so the text may differ. */}
-                        {stats.releasedAt && <span suppressHydrationWarning> · {releaseAge(daysSince(stats.releasedAt), t)}</span>}
-                        {' · '}{t('hero.license')}
+                        {stats.releasedAt && <span suppressHydrationWarning>, {releaseAge(daysSince(stats.releasedAt), t)}</span>}
+                        , {t('hero.license')}
                     </a>
 
-                    <h1
-                        className="intro-step mt-4 short:mt-3 text-[2rem] sm:text-5xl lg:text-[2.875rem] font-semibold tracking-[-0.025em] leading-[1.08] text-ink-50 text-balance"
-                        style={step(1)}
-                    >
+                    <h1 className="mt-3.5 lg:mt-4 text-[2.25rem] leading-[1.15] lg:text-[3.25rem] lg:leading-[1.12] font-bold text-balance">
                         {t('hero.title')}
                     </h1>
 
-                    <p className="intro-step mt-4 short:mt-3 max-w-2xl mx-auto text-base sm:text-lg text-ink-300 leading-relaxed text-pretty" style={step(2)}>
+                    <p className="mt-[18px] lg:mt-[22px] text-[1.0625rem] lg:text-[1.1875rem] leading-normal text-text-muted text-pretty">
                         {t('hero.subtitle')}
                     </p>
 
-                    <div className="intro-step mt-6 short:mt-5 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3" style={step(3)}>
-                        <Link to={gettingStarted} className={`${BTN_PRIMARY} h-11 px-5`}>
-                            {t('hero.getStarted')}
-                            <HiArrowRight aria-hidden="true" />
+                    <div className="mt-6 lg:mt-7 flex flex-col lg:flex-row gap-1.5 lg:gap-3">
+                        <Link to={docHref(quickstart, language)} className="flex items-center justify-center h-12 lg:px-[22px] bg-primary hover:bg-primary-hover text-on-primary font-semibold transition-colors active:scale-[0.98]">
+                            {t('hero.readQuickstart')}
                         </Link>
-                        <CopyCommand command="pip install stewbeet" />
-                        <Link
-                            to="/playground"
-                            className="group inline-flex items-center gap-1.5 h-11 px-3 text-sm font-medium text-ink-200 hover:text-ink-50 transition-colors"
-                        >
-                            {t('hero.tryPlayground')}
-                            <HiArrowRight className="text-ink-400 group-hover:translate-x-0.5 transition-transform" aria-hidden="true" />
+                        <Link to="/documentation" className="flex items-center justify-center h-11 lg:h-12 lg:px-[22px] lg:border lg:border-border text-link lg:text-text font-semibold hover:text-text lg:hover:border-ink-600 transition-colors">
+                            {t('hero.browseDocs')}
                         </Link>
                     </div>
 
-                    <div className="intro-step mt-6 short:mt-4" style={step(4)}>
-                        <TrustStrip />
+                    <p className="mt-[18px] lg:mt-[22px] pt-4 lg:pt-0 border-t border-border lg:border-0 text-[0.9375rem] leading-normal text-text-muted">
+                        <strong className="font-semibold text-text">{t('hero.newToPython')}</strong> {t('hero.newToPythonText')}
+                    </p>
+
+                    <div className="hidden lg:flex flex-1 flex-col justify-end pt-10">
+                        <TrustStrip className="flex pt-6 border-t border-border" />
                     </div>
                 </div>
 
-                {/* Side by side from lg, not xl: 1920x1080 at 150% leaves ~1265px once the
-                    scrollbar is counted, and the output must not fall under the fold there.
-                    The height is the longest snippet's, capped at the room left under the header
-                    (26.25rem, 23.25rem on short screens) plus a margin, and the minmax row keeps
-                    the taller file tree from stretching it. */}
-                <div
-                    className="mt-7 short:mt-5 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_1.5rem_minmax(0,1fr)] lg:grid-rows-[minmax(0,1fr)] gap-3 lg:gap-2 lg:h-[min(var(--code-height),clamp(16rem,calc(100svh-26.25rem),32.5rem))] lg:short:h-[min(var(--code-height),clamp(15rem,calc(100svh-23.25rem),32.5rem))]"
-                    style={{ '--code-height': CODE_HEIGHT } as React.CSSProperties}
-                >
-                    <div className="intro-panel min-w-0 min-h-[var(--code-height)] lg:min-h-0 max-h-[31rem] lg:max-h-none" style={step(0)}>
-                        <CodeTab
-                            className="code-dark"
-                            path={t('hero.codeCaption')}
-                            accessory={
-                                <div role="group" aria-label={t('hero.snippetTabs')} className="flex items-center gap-1">
-                                    {heroCode.snippets.map(({ id, label }) => (
-                                        <button
-                                            key={id}
-                                            onClick={() => {
-                                                setActive(id);
-                                                setSwitched(true);
-                                            }}
-                                            aria-pressed={id === active}
-                                            className={`h-6 px-2 rounded-control font-mono text-[0.6875rem] transition-colors ${
-                                                id === active ? 'bg-ink-800 text-ink-50' : 'text-ink-400 hover:text-ink-100'
-                                            }`}
-                                        >
-                                            {label}
-                                        </button>
-                                    ))}
-                                </div>
-                            }
-                        >
-                            <div ref={codeScroll} className="relative flex-1 min-h-0 p-4 overflow-auto custom-scrollbar">
-                                <div
-                                    aria-hidden="true"
-                                    className="intro-scan pointer-events-none absolute inset-x-0 top-0 h-16 opacity-0 bg-gradient-to-b from-transparent via-beet-500/20 to-transparent"
-                                />
-                                {/* Keyed on the tab so each switch remounts it and replays the fade, matching the dimming of the tree. */}
-                                <div
-                                    key={snippet.id}
-                                    dangerouslySetInnerHTML={{ __html: snippet.html }}
-                                    className={`${switched ? 'code-swap ' : ''}font-mono text-[0.75rem] leading-[1.55] [&>pre]:!bg-transparent [&>pre]:[tab-size:4] [&>pre]:!m-0 [&>pre]:!p-0 [&_code]:font-mono`}
-                                />
-                            </div>
-                        </CodeTab>
-                    </div>
-
-                    <div className="flex items-center justify-center text-ink-500" aria-hidden="true">
-                        <HiArrowNarrowRight className="text-xl rotate-90 lg:rotate-0" />
-                    </div>
-
-                    <div
-                        className="intro-panel min-w-0 min-h-0 max-h-[30rem] lg:max-h-none"
-                        // --row-start holds the tree back until the scan has passed over the definition.
-                        style={{ ...step(1), '--row-start': '760ms' } as React.CSSProperties}
-                    >
-                        <CodeTab
-                            className="code-dark"
-                            path={t('hero.outputCaption')}
-                            accessory={
-                                <FileCounter
-                                    label={t('hero.outputSummary')
-                                        .replace('{count}', String(filesFrom(tree, active)))
-                                        .replace('{total}', String(heroOutput.fileCount))}
-                                />
-                            }
-                        >
-                            <HeroOutputPanel nodes={tree} active={active} />
-                        </CodeTab>
-                    </div>
-                </div>
+                <BuildProof />
             </div>
         </section>
     );

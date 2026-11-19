@@ -44,7 +44,7 @@ export const Footer = memo(() => {
             ],
         },
     ];
-    const linkClass = 'text-sm text-ink-400 hover:text-ink-50 transition-colors';
+    const linkClass = 'inline-flex items-center min-h-6 text-sm text-ink-400 hover:text-ink-50 transition-colors';
 
     return (
         <footer className="border-t border-ink-800 bg-ink-950">
@@ -57,13 +57,13 @@ export const Footer = memo(() => {
                         </div>
                         <p className="mt-4 max-w-xs text-sm text-ink-400 leading-relaxed">{t('footer.tagline')}</p>
                         <div className="mt-5 flex items-center gap-4 text-ink-400">
-                            <a href="https://github.com/Stoupy51/StewBeet" target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="hover:text-ink-50 transition-colors">
+                            <a href="https://github.com/Stoupy51/StewBeet" target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="p-1 -m-1 hover:text-ink-50 transition-colors">
                                 <SiGithub className="w-5 h-5" aria-hidden="true" />
                             </a>
-                            <a href="https://discord.gg/anxzu6rA9F" target="_blank" rel="noopener noreferrer" aria-label="Discord" className="hover:text-ink-50 transition-colors">
+                            <a href="https://discord.gg/anxzu6rA9F" target="_blank" rel="noopener noreferrer" aria-label="Discord" className="p-1 -m-1 hover:text-ink-50 transition-colors">
                                 <SiDiscord className="w-5 h-5" aria-hidden="true" />
                             </a>
-                            <a href="https://marketplace.visualstudio.com/items?itemName=stoupy.stewbeet" target="_blank" rel="noopener noreferrer" aria-label="VS Code" className="hover:text-ink-50 transition-colors">
+                            <a href="https://marketplace.visualstudio.com/items?itemName=stoupy.stewbeet" target="_blank" rel="noopener noreferrer" aria-label="VS Code" className="p-1 -m-1 hover:text-ink-50 transition-colors">
                                 <VscodeMark className="w-5 h-5" aria-hidden="true" />
                             </a>
                         </div>
@@ -72,7 +72,7 @@ export const Footer = memo(() => {
                     {columns.map((column) => (
                         <div key={column.title}>
                             <h3 className="font-mono text-xs uppercase tracking-wider text-ink-500">{column.title}</h3>
-                            <ul className="mt-4 space-y-2.5">
+                            <ul className="mt-4 space-y-1">
                                 {column.links.map((link) => (
                                     <li key={link.label}>
                                         {link.internal

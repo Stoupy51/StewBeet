@@ -2,19 +2,32 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Subset to Latin-1 from Monocraft 4.2, under the OFL 1.1 in public/fonts/Monocraft-OFL.txt. */
+@font-face {
+  font-family: 'Monocraft';
+  src: url('/fonts/monocraft-latin.woff2') format('woff2');
+  font-display: swap;
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
-    @apply bg-ink-950;
   }
 
+  /* The 16 px grid is drawn on the page and shows wherever a column does not cover it. Centred, so a
+     column whose width is a multiple of 16 px has its borders on grid lines. */
   body {
-    @apply m-0 bg-ink-950 text-ink-200 font-sans antialiased;
+    @apply m-0 bg-surface text-text font-sans antialiased;
+    background-image:
+      linear-gradient(to right, var(--grid) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
+    background-size: 16px 16px;
+    background-position: center top;
   }
 
   #root {
-    @apply min-h-screen bg-ink-950;
+    @apply min-h-screen;
   }
 
   code, kbd, pre, samp {
@@ -26,8 +39,13 @@
     @apply text-ink-200;
   }
 
+  ::selection {
+    background: rgb(196 35 64 / 0.28);
+  }
+
   :focus-visible {
-    @apply outline-none ring-2 ring-beet-400 ring-offset-2 ring-offset-ink-950;
+    outline: 2px solid rgb(var(--link));
+    outline-offset: 2px;
   }
 
   ::-webkit-scrollbar {
@@ -35,13 +53,53 @@
     height: 10px;
   }
   ::-webkit-scrollbar-track {
-    @apply bg-ink-950;
+    @apply bg-surface;
   }
   ::-webkit-scrollbar-thumb {
-    @apply bg-ink-700 rounded-full border-2 border-solid border-ink-950;
+    @apply bg-ink-700 border-2 border-solid border-surface;
   }
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-ink-600;
+  }
+}
+
+@layer components {
+  /* The page column: framed by 1 px borders, with the grid in the margins. */
+  .frame {
+    width: min(75rem, calc(100% - 2rem));
+    margin-inline: auto;
+    @apply bg-surface border-x border-border;
+  }
+  @supports (width: round(down, 100%, 1rem)) {
+    .frame { width: min(75rem, round(down, calc(100% - 2rem), 1rem)); }
+  }
+  /* The docs need three columns on a desktop, so their frame runs wider than the 1200 px page. */
+  @media (min-width: 1024px) {
+    .frame-wide { width: min(100rem, calc(100% - 3.5rem)); }
+    @supports (width: round(down, 100%, 1rem)) {
+      .frame-wide { width: min(100rem, round(down, calc(100% - 3.5rem), 1rem)); }
+    }
+  }
+
+  /* Uppercase mono labels, for navigation and code panels only. */
+  .label {
+    @apply font-mono text-[0.6875rem] uppercase tracking-[0.08em] text-text-muted;
+  }
+
+  /* A slot of the game's inventory: inset, dark top-left edge, light bottom-right one. */
+  .mc-panel {
+    @apply bg-mc-panel border-2 border-black;
+    box-shadow: inset 2px 2px 0 #ffffff, inset -2px -2px 0 #555555;
+  }
+  .mc-slot {
+    @apply flex items-center justify-center w-9 h-9 bg-mc-slot;
+    box-shadow: inset 2px 2px 0 #373737, inset -2px -2px 0 #ffffff;
+  }
+  .mc-tooltip {
+    border: 2px solid transparent;
+    background: linear-gradient(#100010, #100010) padding-box, linear-gradient(#5000ff, #28007f) border-box;
+    box-shadow: 0 0 0 2px #100010;
+    @apply font-pixel text-[0.8125rem] leading-[1.55] text-[#aaaaaa];
   }
 }
 
@@ -55,7 +113,7 @@
     background: transparent;
   }
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    @apply bg-ink-500/40 rounded-full border-0;
+    @apply bg-ink-500/40 border-0;
   }
   .custom-scrollbar:hover::-webkit-scrollbar-thumb {
     @apply bg-ink-500/70;
@@ -64,123 +122,208 @@
   .pixelated {
     image-rendering: pixelated;
   }
-
-  /* Set by useOverflowFade while content remains below the visible area. */
-  [data-more] {
-    mask-image: linear-gradient(to bottom, #000 calc(100% - 3rem), transparent);
-  }
 }
 
 /*
- * Height of everything pinned to the top of a documentation page: the 3.5rem navbar, plus the
- * toolbar holding Back and View on GitHub. Every sticky offset and scroll anchor derives from it.
+ * Documentation body. 17 px Archivo at 1.5, prose held to about 75 characters, code panels free to
+ * use the whole column.
  */
-.doc-page { --doc-header: 6.25rem; }
+.doc-page {
+  /* What can cover the top of the text: on a phone the 56 px header, back when the reader scrolls
+     up, over the 48 px page bar; on a desktop the 64 px header. */
+  --doc-header: 6.5rem;
+}
+@media (min-width: 1024px) {
+  .doc-page { --doc-header: 4rem; }
+}
 
-/*
- * Documentation body. Metrics follow github-markdown-css (16px/1.6 body, 16px between blocks,
- * 24px above a heading, 85% code), because GitHub is where readers compare the same file.
- */
 .markdown-body {
-  font-size: 16px;
-  line-height: 1.65;
-  word-wrap: break-word;
-  @apply text-ink-300;
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  overflow-wrap: break-word;
+  @apply text-text;
 }
+
+.markdown-body :is(p, ul, ol, blockquote, dl, details, .markdown-alert) { max-width: 40rem; }
 
 .markdown-body :is(h1, h2, h3, h4, h5, h6) {
-  margin: 32px 0 12px;
-  font-weight: 600;
-  line-height: 1.25;
-  letter-spacing: -0.01em;
-  scroll-margin-top: calc(var(--doc-header, 6.25rem) + 1rem);
-  @apply text-ink-50;
+  margin: 2.5rem 0 0.75rem;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: 0;
+  text-wrap: balance;
+  scroll-margin-top: calc(var(--doc-header) + 1.5rem);
+  @apply text-text;
 }
-.markdown-body h1 { font-size: 2.25em; margin-top: 0; letter-spacing: -0.02em; }
-.markdown-body h2 { font-size: 1.5em; padding-top: 24px; @apply border-t border-ink-800; }
-.markdown-body h3 { font-size: 1.2em; }
-.markdown-body h4 { font-size: 1em; }
-.markdown-body h5 { font-size: 0.875em; }
-.markdown-body h6 { font-size: 0.85em; @apply text-ink-400; }
+.markdown-body h1 { font-size: 2.125rem; line-height: 1.15; margin-top: 0.625rem; }
+.markdown-body h2 { font-size: 1.5rem; margin-top: 3rem; }
+.markdown-body h3 { font-size: 1.1875rem; }
+.markdown-body h4 { font-size: 1.0625rem; }
+.markdown-body :is(h5, h6) { font-size: 0.9375rem; @apply text-text-muted; }
+@media (min-width: 1024px) {
+  .markdown-body h1 { font-size: 2.625rem; line-height: 1.12; }
+}
 
-.markdown-body :is(p, blockquote, ul, ol, dl, table, pre, details) { margin: 0 0 16px; }
+.markdown-body :is(p, blockquote, ul, ol, dl, table, details, .md-code) { margin: 0 0 1rem; }
+.markdown-body p { text-wrap: pretty; }
 .markdown-body blockquote > :first-child { margin-top: 0; }
 .markdown-body :is(li, blockquote) > :last-child { margin-bottom: 0; }
 
-.markdown-body a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; @apply text-beet-400 decoration-beet-400/40 transition-colors; }
-.markdown-body a:hover { @apply text-beet-300 decoration-beet-300; }
-.markdown-body strong { font-weight: 600; @apply text-ink-100; }
+/* The paragraph under the H1 says what the page gives the reader. */
+.markdown-body h1 + p { margin-top: 0.75rem; font-size: 1.125rem; }
+
+.markdown-body a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; @apply text-link decoration-link/40 transition-colors; }
+.markdown-body a:hover { @apply text-text decoration-text; }
+.markdown-body strong { font-weight: 650; }
 .markdown-body em { font-style: italic; }
 
-.markdown-body :is(ul, ol) { padding-left: 1.5em; }
-.markdown-body ul { list-style: disc; }
+.markdown-body :is(ul, ol) { padding-left: 1.375em; }
+.markdown-body ul { list-style: square; }
 .markdown-body ol { list-style: decimal; }
-.markdown-body li::marker { @apply text-ink-500; }
-.markdown-body ol > li::marker { @apply font-mono text-ink-400; }
-.markdown-body li + li { margin-top: 0.3em; }
-.markdown-body li > p { margin-top: 16px; }
-.markdown-body :is(ul, ol) :is(ul, ol) { margin: 0; }
+.markdown-body li::marker { @apply text-text-muted; }
+.markdown-body ol > li::marker { @apply font-mono text-[0.875em]; }
+.markdown-body li + li { margin-top: 0.375em; }
+.markdown-body li > p { margin-top: 1rem; }
+.markdown-body :is(ul, ol) :is(ul, ol) { margin: 0.375em 0 0; }
 
 .markdown-body blockquote {
-  padding: 0.75em 1em;
-  border-left: 3px solid;
-  border-radius: 0 6px 6px 0;
-  @apply border-l-beet-500 bg-ink-900 text-ink-300;
+  padding: 0.25em 0 0.25em 1em;
+  border-left: 2px solid;
+  @apply border-l-border text-text-muted;
 }
 
 /* GitHub alerts (`> [!TIP]`), from remark-github-blockquote-alert. */
 .markdown-body .markdown-alert {
-  margin: 0 0 16px;
   padding: 0.75em 1em;
-  border-left: 3px solid;
-  border-radius: 0 6px 6px 0;
-  @apply border-l-sky-400 bg-ink-900 text-ink-300;
+  border-left: 2px solid;
+  @apply border-l-section-guides bg-text/[0.04];
 }
 .markdown-body .markdown-alert > :last-child { margin-bottom: 0; }
-.markdown-body .markdown-alert-title { margin-bottom: 4px; font-weight: 600; @apply font-mono text-xs uppercase tracking-wider text-sky-300; }
-.markdown-body .markdown-alert-tip { @apply border-l-leaf-400; }
-.markdown-body .markdown-alert-tip .markdown-alert-title { @apply text-leaf-400; }
-.markdown-body .markdown-alert-important { @apply border-l-beet-400; }
-.markdown-body .markdown-alert-important .markdown-alert-title { @apply text-beet-300; }
-.markdown-body :is(.markdown-alert-warning, .markdown-alert-caution) { @apply border-l-mc-gold; }
-.markdown-body :is(.markdown-alert-warning, .markdown-alert-caution) .markdown-alert-title { @apply text-mc-gold; }
+.markdown-body .markdown-alert-title { margin-bottom: 4px; @apply label text-section-guides; }
+.markdown-body .markdown-alert-tip { @apply border-l-generated; }
+.markdown-body .markdown-alert-tip .markdown-alert-title { @apply text-generated; }
+.markdown-body .markdown-alert-important { @apply border-l-link; }
+.markdown-body .markdown-alert-important .markdown-alert-title { @apply text-link; }
+.markdown-body :is(.markdown-alert-warning, .markdown-alert-caution) { @apply border-l-section-plugins; }
+.markdown-body :is(.markdown-alert-warning, .markdown-alert-caution) .markdown-alert-title { @apply text-section-plugins; }
 
 .markdown-body code {
-  padding: 0.15em 0.4em;
-  font-size: 85%;
-  border-radius: 4px;
-  @apply bg-ink-800 text-ink-100 font-mono;
+  padding: 0.1em 0.3em;
+  font-size: 0.875em;
+  @apply bg-text/[0.06] font-mono;
 }
-.markdown-body a code { @apply text-beet-400; }
+.markdown-body a code { @apply text-link bg-transparent p-0; }
 
-.markdown-body pre {
-  padding: 16px;
-  overflow: auto;
-  font-size: 85%;
-  line-height: 1.55;
-  border-radius: 8px;
-  @apply bg-ink-900 border border-ink-800 font-mono;
-}
-.markdown-body pre code { padding: 0; font-size: inherit; border-radius: 0; background: transparent; @apply text-ink-200; }
-
-/* Shiki writes its own background onto the <pre> inline, so the panel is drawn on the wrapper. */
+/*
+ * Code panels: dark in both themes, titled by their file name or "Terminal", with a copy button.
+ * Lines wrap on a phone, where sideways scrolling inside a panel goes unnoticed, and scroll on a desktop.
+ */
 .markdown-body .md-code {
-  margin-bottom: 16px;
-  border-radius: 8px;
-  overflow: hidden;
-  @apply bg-ink-900 border border-ink-800;
+  @apply bg-code-surface border border-code-border text-code-text;
 }
-.markdown-body .md-code > pre { margin: 0; border: 0; border-radius: 0; background: transparent !important; }
+.md-code-head {
+  @apply flex items-center h-10 pl-3.5 border-b border-code-border font-mono text-xs text-code-text-muted;
+}
+.markdown-body .md-code { position: relative; }
+.markdown-body pre {
+  margin: 0;
+  padding: 0.875rem;
+  font-size: 0.75rem;
+  line-height: 1.6;
+  tab-size: 2;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background: transparent !important;
+  @apply font-mono text-code-text;
+}
+@media (min-width: 1024px) {
+  .markdown-body pre { font-size: 0.8125rem; tab-size: 4; white-space: pre; overflow-wrap: normal; overflow-x: auto; }
+}
+.markdown-body pre code { padding: 0; font-size: inherit; background: transparent; }
+/* Code highlighted with both themes carries Dark+ inline and Light+ in `--shiki-light`; the light page takes the second. */
+:root[data-theme='light'] .shiki-themes,
+:root[data-theme='light'] .shiki-themes span { color: var(--shiki-light) !important; }
 
-.markdown-body table { display: block; width: max-content; max-width: 100%; overflow: auto; border-collapse: collapse; font-size: 0.9375em; }
-.markdown-body :is(th, td) { padding: 8px 14px; @apply border border-ink-800; }
-.markdown-body th { font-weight: 600; text-align: left; @apply bg-ink-900 text-ink-100; }
-.markdown-body tbody tr:nth-child(2n) { @apply bg-ink-50/[0.015]; }
+/* Generated content, so selecting and copying the commands leaves the prompt out. */
+.md-shell .line:not(:empty)::before { content: '$ '; @apply text-code-text-muted; }
+.md-shell-ps .line:not(:empty)::before { content: '> '; }
 
-.markdown-body hr { height: 1px; padding: 0; margin: 32px 0; border: 0; @apply bg-ink-800; }
-.markdown-body img { max-width: 100%; box-sizing: content-box; }
-.markdown-body video { max-width: 100%; height: auto; margin: 0 0 16px; @apply rounded-panel border border-ink-800; }
-.markdown-body summary { cursor: pointer; font-weight: 600; @apply text-ink-100; }
+.markdown-body table { display: block; width: max-content; max-width: 100%; overflow: auto; border-collapse: collapse; font-size: 0.9375rem; }
+.markdown-body :is(th, td) { padding: 0.5rem 0.875rem; text-align: left; vertical-align: top; @apply border border-border; }
+.markdown-body th { font-weight: 650; @apply bg-text/[0.04]; }
+
+/* On a phone each row becomes a block headed by its first cell, the others labelled with their column by rehypeTableLabels. */
+@media (max-width: 639px) {
+  .markdown-body table, .markdown-body tbody, .markdown-body tr, .markdown-body td { display: block; width: auto; }
+  .markdown-body table { border: 0; }
+  .markdown-body thead { display: none; }
+  .markdown-body tr { padding: 0.625rem 0; @apply border-t border-border; }
+  .markdown-body tr:last-child { @apply border-b; }
+  .markdown-body td { padding: 0.125rem 0; border: 0; }
+  .markdown-body td:first-child { font-weight: 650; }
+  .markdown-body td:not(:first-child)[data-label]::before { content: attr(data-label) ': '; @apply text-text-muted; }
+}
+
+.markdown-body hr { height: 1px; padding: 0; margin: 2.5rem 0; border: 0; @apply bg-border; }
+.markdown-body img { max-width: 100%; height: auto; box-sizing: content-box; }
+.markdown-body video { max-width: 100%; height: auto; margin: 0 0 1rem; @apply border border-border; }
+.markdown-body summary { cursor: pointer; font-weight: 650; }
+
+/*
+ * Numbered steps, grouped by rehypeSteps: a framed "01" beside the heading. A step whose code fits
+ * a narrow panel puts its text on the left and its code on the right from 1280 px; the `order` it
+ * writes on each child keeps the source order wherever the two columns stack.
+ */
+.md-step {
+  position: relative;
+  padding-bottom: 1.75rem;
+}
+.md-step-marker {
+  position: absolute;
+  left: 0;
+  top: 0;
+  @apply flex items-center justify-center w-[1.875rem] h-[1.875rem] border border-border bg-surface font-mono text-[0.6875rem] font-semibold;
+}
+/* On a phone the marker sits beside the heading, so the code below gets the whole column. */
+.markdown-body .md-step h2 { display: flex; align-items: center; min-height: 1.875rem; margin: 0 0 0.75rem; padding-left: 2.75rem; font-size: 1.1875rem; }
+@media (min-width: 640px) {
+  .md-step { padding-left: 2.875rem; }
+  .markdown-body .md-step h2 { padding-left: 0; }
+  .md-step::before {
+    content: '';
+    position: absolute;
+    left: 0.9375rem;
+    top: 2.25rem;
+    bottom: 0.25rem;
+    width: 1px;
+    @apply bg-border;
+  }
+  .md-step:last-of-type::before { display: none; }
+}
+.md-step-text, .md-step-code { display: contents; }
+.md-step-body { display: flex; flex-direction: column; }
+@media (min-width: 1280px) {
+  .md-step[data-layout='split'] .md-step-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 26rem); gap: 0 1.5rem; align-items: start; }
+  .md-step[data-layout='split'] :is(.md-step-text, .md-step-code) { display: block; }
+}
+/* A command beside its step is short enough to wrap without losing its shape. */
+.md-step[data-layout='split'] pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+
+/* The definition in the home page hero, highlighted at build time by scripts/prehighlight.ts. */
+.hero-code pre {
+  margin: 0;
+  padding: 0.75rem;
+  font-size: 0.75rem;
+  line-height: 1.6;
+  tab-size: 2;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background: transparent !important;
+}
+.hero-code code { @apply font-mono; }
+@media (min-width: 1024px) {
+  .hero-code pre { padding: 1rem; font-size: 0.8125rem; tab-size: 4; white-space: pre; overflow-x: auto; }
+}
 
 /*
  * Commands inside a Python string, boxed the way the VS Code extension boxes them, with its default
@@ -202,7 +345,6 @@
 /* Last, because these tie with the rules above on specificity. */
 .markdown-body > *:first-child { margin-top: 0; }
 .markdown-body > *:last-child { margin-bottom: 0; }
-.markdown-body > h2:first-child { border-top: 0; padding-top: 0; }
 
 /*
  * Section reveal. useReveal marks what is already on screen as risen, then sets data-motion, so
@@ -210,71 +352,53 @@
  */
 @media (prefers-reduced-motion: no-preference) {
   html[data-motion='on'] [data-rise] {
-    transition: opacity 500ms cubic-bezier(0.2, 0.8, 0.2, 1), transform 500ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    transition: opacity 400ms cubic-bezier(0.16, 1, 0.3, 1), transform 400ms cubic-bezier(0.16, 1, 0.3, 1);
   }
   html[data-motion='on'] [data-rise]:not([data-risen]) {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(16px);
   }
 }
 
 /*
- * Entrance animation: "the build runs". A compile scan sweeps down the definition and the files it
- * produces stream into the panel beside it while the counter climbs. Transform and opacity only.
+ * The build plays on the home page: the definition's lines light up one after the other, the items
+ * drop into their slots and the tooltip lists what the build wrote. About two seconds, transform and
+ * opacity only, and the code stays readable from the first frame.
  *
- * All of it hangs off [data-intro="play"], which index.html writes before the first paint and only
- * when the visitor has not asked for reduced motion. Without it the page renders finished, which is
- * what the prerendered HTML already contains.
+ * It hangs off [data-intro="play"], which index.html writes before the first paint when the visitor
+ * has not asked for reduced motion, and which the replay button writes again. Without it the page
+ * renders finished, which is what the prerendered HTML contains.
  */
-
-@keyframes intro-rise {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: none; }
-}
-
-/* The scan travels a little past both edges so it enters and leaves cleanly. */
-@keyframes intro-scan {
-  0%   { opacity: 0; transform: translateY(-30%); }
-  12%  { opacity: 1; }
-  88%  { opacity: 1; }
-  100% { opacity: 0; transform: translateY(560%); }
-}
-
-/* Hero code tabs: same 200ms as the opacity transition dimming the file tree beside it. */
-@keyframes code-swap {
-  from { opacity: 0; }
+@keyframes build-line {
+  from { opacity: 0.5; }
   to   { opacity: 1; }
 }
-
-@keyframes intro-row {
-  from { opacity: 0; transform: translateX(-8px); }
+@keyframes build-drop {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes build-rise {
+  from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: none; }
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  [data-intro='play'] .intro-step {
-    animation: intro-rise 560ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-    animation-delay: calc(var(--step, 0) * 80ms);
+  [data-intro='play'] .hero-code .line {
+    animation: build-line 400ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: calc(var(--line, 0) * 60ms);
+  }
+  [data-intro='play'] .build-drop {
+    animation: build-drop 400ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: calc(1000ms + var(--slot, 0) * 120ms);
+  }
+  [data-intro='play'] .build-rise {
+    animation: build-rise 400ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: calc(1250ms + var(--row, 0) * 70ms);
   }
 
-  [data-intro='play'] .intro-panel {
-    animation: intro-rise 640ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-    animation-delay: calc(320ms + var(--step, 0) * 100ms);
-  }
-
-  .code-swap {
-    animation: code-swap 200ms cubic-bezier(0.4, 0, 0.2, 1) both;
-  }
-
-  [data-intro='play'] .intro-scan {
-    animation: intro-scan 900ms cubic-bezier(0.4, 0, 0.5, 1) 640ms both;
-  }
-
-  /* `--row-start` holds the hero tree until its scan has passed; a tree opened by a click starts at once.
-     `--row-step` comes from FileTree, which shrinks it so a long tree still lands within a second. */
-  [data-intro='play'] .intro-row,
+  /* A tree opened by a click lists its rows one after the other, within about a second. */
   [data-reveal] .intro-row {
-    animation: intro-row 320ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-    animation-delay: calc(var(--row-start, 0ms) + var(--row, 0) * var(--row-step, 42ms));
+    animation: build-rise 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: calc(var(--row, 0) * var(--row-step, 42ms));
   }
 }

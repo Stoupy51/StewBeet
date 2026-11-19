@@ -3,20 +3,15 @@
 
 Three commands, from nothing to a datapack you can load. The last one writes a zip.
 
-**Requires** [uv](https://docs.astral.sh/uv/). Nothing else, not even Python: uv installs the
-3.14 the template asks for.
+Requires [uv](https://docs.astral.sh/uv/), nothing else. uv installs the Python 3.14 the template asks for. Already have a datapack? [Migrate it](../9_migration/en.md) instead of starting from a template.
 
 ## 1. Install uv
 
-Windows:
-
-```powershell
+```powershell tab="Windows"
 powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
-macOS and Linux:
-
-```bash
+```bash tab="macOS and Linux"
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
@@ -26,8 +21,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 uvx stewbeet init
 ```
 
-Type `basic` when it asks which template to use, then press Enter.<br>
-`uvx` runs StewBeet straight from PyPI, so there is nothing to install first.
+Type `basic` when it asks which template to use, then press Enter. `uvx` runs StewBeet straight from PyPI, so there is nothing to install first.
 
 ## 3. Build
 
@@ -35,29 +29,12 @@ Type `basic` when it asks which template to use, then press Enter.<br>
 uv run stewbeet build
 ```
 
-The template ships a `pyproject.toml`, so this first run creates `.venv/`, fetches Python 3.14 if
-you do not have it and installs StewBeet into the project. Every later run starts building right away.
+The first run creates `.venv/`, fetches Python 3.14 if you do not have it and installs StewBeet into the project. Every later run starts building right away.
 
 ## What you got
 
-```
-build/
-├── BasicTemplate_datapack.zip          <- drop this in .minecraft/saves/<world>/datapacks/
-├── BasicTemplate_resource_pack.zip     <- drop this in .minecraft/resourcepacks/
-├── datapack/
-│   └── data/basic_template/
-│       ├── function/enjoy.mcfunction
-│       ├── function/_give_all.mcfunction        every item, in named chests
-│       └── function/v0.0.1/                     load, tick, second, minute, unload
-└── resource_pack/
-```
+- `build/BasicTemplate_datapack.zip` goes in `.minecraft/saves/<world>/datapacks/`.
+- `build/BasicTemplate_resource_pack.zip` goes in `.minecraft/resourcepacks/`.
 
-32 files, from the six you can see in `src/`. Load the world, run `/reload`, and
-`/function basic_template:_give_all` puts everything the pack defines in front of you.
-
-## Next steps
-
-- [Migrate an existing pack](../9_migration/en.md): start from a datapack you already have instead of a template.
-- [Tutorial: build your first datapack](../0_getting_started/en.md): the same ground at
-  walking pace, adding a custom item and a custom block of your own.
+Load the world and run `/reload`. `/function basic_template:_give_all` then puts every item of the pack in front of you, in named chests. Beside the zips, `build/` holds the same packs unzipped: 32 files, written from the six you can see in `src/`.
 

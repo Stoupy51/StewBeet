@@ -5,9 +5,10 @@ scripts/prehighlight.ts extracts the regions, dedents them and runs Shiki over t
 and python_package/scripts/build_hero_output.py builds this project, records every file it produced
 and checks that each file of the hero tree names the region it comes from.
 
-Lines inside the regions are kept under 66 columns once dedented. The snippet sits in half the hero
-and anything longer is cut mid-string on a 1280px screen, which reads as a rendering bug rather
-than as scrollable code. prehighlight.ts enforces that budget and fails the build if it is broken.
+Lines inside the regions are kept under 66 columns once dedented, which prehighlight.ts enforces,
+because the snippet sits in half the hero on a desktop.
+A call whose arguments would not fit a phone is split over several lines,
+since the phone wraps code and a wrapped call loses its shape.
 
 The hero panel shows a tab as 4 columns, which is also what prehighlight.ts counts against the width budget.
 
@@ -33,15 +34,20 @@ def beet_default(ctx: Context):
 	# region hero-block
 	Block(
 		id="life_crystal_block",
-		vanilla_block=VanillaBlock(id="minecraft:glass"),
+		vanilla_block=VanillaBlock(
+			id="minecraft:glass",
+		),
 		manual_category="equipment",
 		components={
 			"item_name": {"text": "Life Crystal Block"},
 			"lore": [{"text": "Break it to get the crystal back"}],
 		},
-		no_silk_touch_drop=NoSilkTouchDrop(id="life_crystal"),
+		no_silk_touch_drop=NoSilkTouchDrop(
+			id="life_crystal",
+		),
 		recipes=[CraftingShapelessRecipe(
-			category="equipment", result_count=1,
+			category="equipment",
+			result_count=1,
 			ingredients=8 * [Ingr("minecraft:glass")]
 				+ [Ingr("life_crystal")],
 		)],

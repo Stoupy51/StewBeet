@@ -12,15 +12,20 @@
  * python_package/scripts/build_hero_output.py builds for real, so the code shown and the files
  * shown beside it come from the same source and cannot disagree.
  */
-import { codeToHtml, createHighlighter } from 'shiki';
+import { codeToHtml, type ShikiTransformer } from 'shiki';
 import { writeFileSync, mkdirSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { pythonSemantics } from '../src/utils/pythonSemantics';
-import { MCFUNCTION_LANGUAGE } from '../src/langs/mcfunction';
 
 /** The snippet sits in half the hero; past this a 1280px screen cuts it mid-string. */
 const MAX_COLUMNS = 66;
 const SOURCE = join(import.meta.dir, '..', 'playground', 'hero', 'src', 'definitions.py');
+/** Numbers each line from 0 in `--line`, which staggers the build animation in index.css. */
+const LINE_INDEX: ShikiTransformer = {
+    line(node, line) {
+        node.properties.style = `--line:${line - 1}`;
+    },
+};
 const REGION_MARKER = /^\s*# region (hero-[\w-]+)\s*$/gm;
 
 /**
@@ -74,7 +79,7 @@ const snippets = await Promise.all(names.map(async (name) => {
         id: name.slice('hero-'.length),
         label: code.match(/^[A-Za-z_]\w*/)?.[0] ?? name,
         lines: code.split('\n').length,
-        html: await codeToHtml(code, { lang: 'python', theme: 'dark-plus', transformers: [pythonSemantics] }),
+        html: await codeToHtml(code, { lang: 'python', themes: { dark: 'dark-plus', light: 'light-plus' }, defaultColor: 'dark', transformers: [pythonSemantics, LINE_INDEX] }),
     };
 }));
 
@@ -82,28 +87,4 @@ const outputDir = join(import.meta.dir, '..', 'src', 'generated');
 mkdirSync(outputDir, { recursive: true });
 writeFileSync(join(outputDir, 'heroCode.json'), `${JSON.stringify({ snippets }, null, 4)}\n`);
 
-/**
- * The generated files the output panel shows are highlighted here too, for the same reason the
- * snippet is: the landing page must not load a highlighter. They go to their own file, which the
- * panel imports dynamically, so this markup only ever reaches a reader who clicked a file.
- *
- * build_hero_output.py writes the raw bodies and is the source of truth; this derives from them.
- *
- * Same grammar, same theme and same transformer as src/hooks/useShiki.ts, so a .mcfunction in the
- * hero and a .mcfunction in the features section below it are colored identically.
- */
-const bodies: Record<string, string> = JSON.parse(readFileSync(join(outputDir, 'heroContents.json'), 'utf-8'));
-const highlighter = await createHighlighter({ themes: ['dark-plus'], langs: [MCFUNCTION_LANGUAGE, 'json'] });
-const highlighted: Record<string, string> = {};
-for (const [path, body] of Object.entries(bodies)) {
-    highlighted[path] = highlighter.codeToHtml(body, {
-        lang: path.endsWith('.mcfunction') ? 'mcfunction' : 'json',
-        theme: 'dark-plus',
-        transformers: [pythonSemantics],
-    });
-}
-writeFileSync(join(outputDir, 'heroContentsHtml.json'), `${JSON.stringify(highlighted, null, 4)}\n`);
-
-const bytes = Object.values(highlighted).reduce((total, item) => total + item.length, 0);
 console.log(`[prehighlight] ${snippets.length} hero snippets highlighted (${snippets.map((snippet) => snippet.id).join(', ')})`);
-console.log(`[prehighlight] ${Object.keys(highlighted).length} generated files highlighted (${bytes} bytes)`);

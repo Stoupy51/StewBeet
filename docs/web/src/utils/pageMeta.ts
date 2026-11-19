@@ -6,6 +6,8 @@
  * ships the landing page's head: one duplicated <title> across the whole site, and a
  * shared link showing the homepage blurb whatever page was actually shared.
  */
+import { findDocPage, srcHref } from '../docsPages';
+
 export const SITE_ORIGIN = 'https://stewbeet.paralya.fr';
 
 export interface PageMeta {
@@ -128,14 +130,16 @@ function leadParagraph(markdown: string): string {
 export function markdownPageMeta(src: string | null, markdown: string): PageMeta {
     if (!src || !markdown) return STATIC_ROUTE_META['/markdown'];
 
+    // The page list's title, so a plugin page is named in words and not by its module path
+    const page = findDocPage(src);
     const heading = /^#\s+(.+)$/m.exec(markdown);
-    const name = toPlainText(heading ? heading[1] : src.replace(/\.md$/, ''));
+    const name = page ? page.title[src.endsWith('/fr.md') ? 'fr' : 'en'] : toPlainText(heading ? heading[1] : src.replace(/\.md$/, ''));
     const description = leadParagraph(markdown);
 
     return {
         title: `${name} | StewBeet`,
         description: description ? truncate(description) : `${name}: StewBeet documentation.`,
-        path: `/markdown?src=${encodeURIComponent(src)}`,
+        path: srcHref(src),
     };
 }
 

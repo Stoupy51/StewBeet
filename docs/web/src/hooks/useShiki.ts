@@ -37,11 +37,21 @@ function escapeHtml(input: string): string {
         .replace(/>/g, '&gt;');
 }
 
+/** Same structure as Shiki's output, one `.line` per line, so the highlighted block replaces it without moving anything. */
 function plainPreHtml(code: string): string {
-    return `<pre class="shiki" style="background-color:transparent"><code>${escapeHtml(code)}</code></pre>`;
+    const lines = code.split('\n').map((line) => `<span class="line">${escapeHtml(line)}</span>`).join('\n');
+    return `<pre class="shiki" style="background-color:transparent"><code>${lines}</code></pre>`;
 }
 
-export function useShiki(code: string, language: string | LanguageRegistration, theme = 'dark-plus') {
+/** One theme, or a light and a dark one written into the same markup for index.css to choose from. */
+export type CodeTheme = string | { dark: string; light: string };
+
+/** Dark+ colours go inline, so the page reads right before its theme is known, and the light ones into `--shiki-light`. */
+function themeOptions(theme: CodeTheme) {
+    return typeof theme === 'string' ? { theme } : { themes: theme, defaultColor: 'dark' as const };
+}
+
+export function useShiki(code: string, language: string | LanguageRegistration, theme: CodeTheme = 'dark-plus') {
     const [html, setHtml] = useState(() => plainPreHtml(code));
 
     useEffect(() => {
@@ -51,16 +61,17 @@ export function useShiki(code: string, language: string | LanguageRegistration, 
         const langName = (isCustomLang
             ? (resolvedLanguage as LanguageRegistration).name
             : resolvedLanguage) ?? 'text';
+        const themes = typeof theme === 'string' ? [theme] : [theme.dark, theme.light];
 
         const isPython = langName === 'python';
 
         getSingletonHighlighter({
-            themes: [theme],
+            themes,
             langs: isPython ? PYTHON_WITH_MCFUNCTION : [resolvedLanguage],
         })
             .then((highlighter) => highlighter.codeToHtml(code, {
                 lang: langName,
-                theme,
+                ...themeOptions(theme),
                 // Python strings holding commands are highlighted like the VS Code extension does.
                 includeExplanation: isPython ? 'scopeName' : false,
                 transformers: [mcfunctionBlocks, pythonSemantics],
@@ -77,12 +88,12 @@ export function useShiki(code: string, language: string | LanguageRegistration, 
                 }
                 // If a language is unsupported, gracefully render as plain text.
                 getSingletonHighlighter({
-                    themes: [theme],
+                    themes,
                     langs: ['text'],
                 })
                     .then((highlighter) => highlighter.codeToHtml(code, {
                         lang: 'text',
-                        theme,
+                        ...themeOptions(theme),
                     }))
                     .then((result) => {
                         if (isActive) setHtml(result);

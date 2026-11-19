@@ -71,15 +71,18 @@ interface ZoomableImageProps extends LightboxImage {
     frameClassName?: string;
     className?: string;
     loading?: 'lazy' | 'eager';
+    /** The image's own size, which reserves its box before it loads so nothing below it moves. */
+    width?: number | string;
+    height?: number | string;
 }
 
 /** An image that opens in the lightbox when clicked. */
-export const ZoomableImage = ({ src, alt, pixelated, frameClassName = '', className = '', loading }: ZoomableImageProps) => {
+export const ZoomableImage = ({ src, alt, pixelated, frameClassName = '', className = '', loading, width, height }: ZoomableImageProps) => {
     const [open, setOpen] = useState(false);
     return (
         <>
             <button type="button" onClick={() => setOpen(true)} aria-label={alt} className={`cursor-zoom-in ${frameClassName}`}>
-                <img src={src} alt={alt} loading={loading} decoding="async" className={className} />
+                <img src={src} alt={alt} width={width} height={height} loading={loading} decoding="async" className={className} />
             </button>
             <ImageLightbox image={open ? { src, alt, pixelated } : null} onClose={() => setOpen(false)} />
         </>

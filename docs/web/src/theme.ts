@@ -1,6 +1,6 @@
 /**
- * Class tokens shared by several components. Colours live in tailwind.config.js, named after
- * the part of the logo they come from (ink, beet, leaf).
+ * Class tokens shared by the components not yet redesigned. Colours live in tailwind.config.js,
+ * which takes its values from DESIGN.md.
  *
  * One accent only: beet. Filled beet is reserved for the one primary action on a screen, and a
  * hover goes darker rather than lighter, since white on beet-500 drops under 4.5:1.
