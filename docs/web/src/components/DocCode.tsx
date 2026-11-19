@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { HiCheck, HiOutlineClipboard } from 'react-icons/hi';
-import { useShiki } from '../hooks/useShiki';
+import { PAGE_THEMES, useShiki } from '../hooks/useShiki';
 import { useClipboard } from '../hooks/useClipboard';
 import { useTranslation } from '../i18n/useTranslation';
 import { metaValue } from '../utils/docMarkdown';
@@ -10,9 +10,6 @@ const PROMPTS: Record<string, string> = {
     bash: 'md-shell', sh: 'md-shell', shell: 'md-shell', zsh: 'md-shell', console: 'md-shell',
     powershell: 'md-shell md-shell-ps', ps1: 'md-shell md-shell-ps', pwsh: 'md-shell md-shell-ps', cmd: 'md-shell md-shell-ps',
 };
-
-/** Both themes go into the markup, and index.css picks the one matching the page. */
-const THEMES = { dark: 'dark-plus', light: 'light-plus' };
 
 export interface CodeSample {
     code: string;
@@ -36,7 +33,7 @@ const CopyButton = ({ text }: { text: string }) => {
 };
 
 const Highlighted = ({ code, language, hidden, className = '' }: CodeSample & { hidden?: boolean; className?: string }) => {
-    const html = useShiki(code, language, THEMES);
+    const html = useShiki(code, language, PAGE_THEMES);
     return <div hidden={hidden} className={`${PROMPTS[language] ?? ''} ${className}`} dangerouslySetInnerHTML={{ __html: html }} />;
 };
 

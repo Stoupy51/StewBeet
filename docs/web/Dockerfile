@@ -39,7 +39,10 @@ RUN bun install --frozen-lockfile
 #     the OpenGL context behind it, is never reached.
 #   build-search-index.ts reads ../../docs and ../../python_package, and fetches objects.inv for
 #     the API symbols. It warns without failing when that is unreachable.
-#   prehighlight.ts highlights the hero output written by the step above.
+#   build-media-sizes.ts reads the size of every image and video the docs show, the ones in
+#     ../../docs/plugins/img included.
+#   highlight-docs.ts highlights the code of every doc page, so readers never load a highlighter.
+#   prehighlight.ts highlights the hero code that `bun run hero` built.
 RUN bun run build
 
 

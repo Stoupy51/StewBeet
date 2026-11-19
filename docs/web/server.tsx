@@ -90,7 +90,10 @@ Bun.serve({
         if (pathname === '/markdown') {
             const src = url.searchParams.get('src') ?? '';
             const file = isValidDocSrc(src) ? Bun.file(join(distDir, 'docs', src)) : null;
-            const doc = file && (await file.exists()) ? { src, content: await file.text() } : null;
+            const highlighted = Bun.file(join(distDir, 'highlighted', `${src}.json`));
+            const doc = file && (await file.exists())
+                ? { src, content: (await file.text()).replace(/\r\n?/g, '\n'), highlighted: (await highlighted.exists()) ? await highlighted.json() : {} }
+                : null;
 
             const location = pathname + url.search;
             const { prelude } = await prerender(

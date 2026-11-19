@@ -1,12 +1,14 @@
 import { useState, useEffect, useCallback, memo, lazy, Suspense } from 'react';
+import { flushSync } from 'react-dom';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { HiDesktopComputer, HiMenu, HiMoon, HiSearch, HiSun, HiX } from 'react-icons/hi';
 import { SiDiscord, SiGithub } from 'react-icons/si';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { useLanguage } from '../context/LanguageContext';
+import { useLanguage, type Language } from '../context/LanguageContext';
 import { useTranslation } from '../i18n/useTranslation';
 import { useTheme, type ThemePreference } from '../hooks/useTheme';
 import { loadIndex } from '../utils/search';
+import { readingPosition, restoreReadingPosition, withViewTransition } from '../utils/pageTransition';
 import { VscodeMark } from './VscodeMark';
 import stats from '../generated/stats.json';
 
@@ -71,8 +73,11 @@ function useScrollingDown(enabled: boolean): boolean {
  *
  * `subbar` is a doc page's 48 px bar, shown under the header below 1024 px. With one, the header
  * slides away while the reader scrolls down and the bar takes its place at the top.
+ *
+ * A language change crossfades the page and keeps the reader in the same section. A page that has
+ * to load its text in the other language first passes `onLanguageChange` to do it all itself.
  */
-export const Navbar = memo(({ subbar }: { subbar?: React.ReactNode }) => {
+export const Navbar = memo(({ subbar, onLanguageChange }: { subbar?: React.ReactNode; onLanguageChange?: (language: Language) => void }) => {
     const prefersReducedMotion = useReducedMotion();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -143,7 +148,15 @@ export const Navbar = memo(({ subbar }: { subbar?: React.ReactNode }) => {
         goToPage(path);
     };
 
-    const toggleLanguage = () => setLanguage(language === 'en' ? 'fr' : 'en');
+    const toggleLanguage = () => {
+        const next = language === 'en' ? 'fr' : 'en';
+        if (onLanguageChange) return onLanguageChange(next);
+        const position = readingPosition();
+        withViewTransition('language', () => {
+            flushSync(() => setLanguage(next));
+            restoreReadingPosition(position);
+        });
+    };
     const isCurrent = (routes: string[]) => routes.includes(location.pathname);
 
     const languageLabel = (
@@ -156,7 +169,7 @@ export const Navbar = memo(({ subbar }: { subbar?: React.ReactNode }) => {
 
     return (
         <>
-            <div className={`fixed top-0 inset-x-0 z-50 transition-transform duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] ${hidden ? '-translate-y-14 lg:translate-y-0' : ''}`}>
+            <div className={`site-header fixed top-0 inset-x-0 z-50 transition-transform duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] ${hidden ? '-translate-y-14 lg:translate-y-0' : ''}`}>
                 <header className="h-14 lg:h-16 bg-surface border-b border-border">
                     <nav aria-label={t('nav.main')} className="h-full flex items-center gap-1 pl-4 pr-1.5 lg:px-7">
                         <a

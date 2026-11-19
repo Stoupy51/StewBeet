@@ -114,6 +114,12 @@ export function srcHref(src: string): string {
     return `/markdown?src=${encodeURIComponent(src)}`;
 }
 
+/** The page a path of this site leads to, the reverse of `srcHref`. */
+export function hrefSrc(path: string): string | null {
+    const url = new URL(path, 'https://site');
+    return url.pathname === '/markdown' ? url.searchParams.get('src') : null;
+}
+
 export function docHref(page: DocPage, language: Language): string {
     return srcHref(docSrc(page, language));
 }

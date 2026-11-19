@@ -12,7 +12,7 @@ import { STACK_PALETTES, STACK_SIZE, STACK_TEXT, stackDiagramSvg } from '../src/
 import type { Language } from '../src/context/LanguageContext';
 
 const OUTPUT_DIR: string = join(import.meta.dir, '..', 'public', 'img', 'stack');
-const FONT_PATH: string = join(import.meta.dir, '..', 'node_modules', '@fontsource-variable', 'ibm-plex-sans', 'files', 'ibm-plex-sans-latin-wght-normal.woff2');
+const FONT_PATH: string = join(import.meta.dir, '..', 'node_modules', '@fontsource-variable', 'archivo', 'files', 'archivo-latin-wght-normal.woff2');
 
 const BROWSER_CANDIDATES: string[] = [
     process.env.CHROME_PATH ?? '',
@@ -23,7 +23,7 @@ const BROWSER_CANDIDATES: string[] = [
     '/usr/bin/chromium',
 ];
 
-const fontFaceCss = `@font-face { font-family: 'IBM Plex Sans Variable'; font-weight: 100 700; src: url(data:font/woff2;base64,${readFileSync(FONT_PATH).toString('base64')}) format('woff2'); }`;
+const fontFaceCss = `@font-face { font-family: 'Archivo Variable'; font-weight: 100 900; src: url(data:font/woff2;base64,${readFileSync(FONT_PATH).toString('base64')}) format('woff2'); }`;
 const browser = BROWSER_CANDIDATES.find((path) => path && existsSync(path));
 
 mkdirSync(OUTPUT_DIR, { recursive: true });

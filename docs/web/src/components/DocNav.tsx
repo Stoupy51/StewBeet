@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { HiChevronDown, HiChevronRight, HiExternalLink, HiMenuAlt2, HiX } from 'react-icons/hi';
 import { useTranslation } from '../i18n/useTranslation';
@@ -30,34 +30,49 @@ const SectionLabel = ({ section, className = '' }: { section: Section; className
 
 /**
  * Every page, grouped by section. The desktop sidebar has 34 px rows on a rule, the phone panel
- * 44 px rows, which a thumb can hit.
+ * 44 px rows, which a thumb can hit. In the sidebar, the current page's marker glides to the next
+ * page's row during a page transition.
  */
 export const PageList = ({ current, variant, filter = '', onNavigate }: {
     current?: DocPage;
     variant: 'sidebar' | 'panel';
     filter?: string;
-    onNavigate?: () => void;
+    onNavigate?: (page: DocPage) => void;
 }) => {
     const { t, language } = useTranslation();
     const compact = variant === 'sidebar';
     const [pluginsOpen, setPluginsOpen] = useState(current?.section === 'plugins');
+    const [openedFor, setOpenedFor] = useState(current);
+    const currentRow = useRef<HTMLAnchorElement>(null);
     const query = fold(filter.trim());
     const shown = DOC_PAGES.filter((page) => !query || fold(page.title[language]).includes(query));
     const pluginCount = DOC_PAGES.filter((page) => page.section === 'plugins').length;
 
+    // Arriving on a plugin page opens its group, in the same render, so the marker has a row to land on
+    if (current !== openedFor) {
+        setOpenedFor(current);
+        if (current?.section === 'plugins') setPluginsOpen(true);
+    }
+
+    // The sidebar scrolls on its own, and the current page stays in it in sight
+    useLayoutEffect(() => {
+        if (compact) currentRow.current?.scrollIntoView({ block: 'nearest' });
+    }, [compact, current]);
+
     const row = (page: DocPage) => {
         const isCurrent = page === current;
-        const accent = SECTIONS[page.section].border;
         return (
             <Link
                 key={page.src.en}
+                ref={isCurrent ? currentRow : undefined}
                 to={docHref(page, language)}
-                onClick={onNavigate}
+                onClick={() => onNavigate?.(page)}
                 aria-current={isCurrent ? 'page' : undefined}
                 className={compact
-                    ? `flex items-center min-h-[2.125rem] py-1.5 pl-3 text-sm leading-snug border-l transition-colors ${isCurrent ? `border-l-2 ${accent} text-text font-bold` : 'border-border text-text-muted hover:text-text'}`
-                    : `flex items-center min-h-11 py-2 px-3 text-[0.9375rem] leading-snug border-l-2 ${isCurrent ? `${accent} bg-text/5 font-bold` : 'border-transparent'} text-text`}
+                    ? `relative flex items-center min-h-[2.125rem] py-1.5 pl-3 text-sm leading-snug border-l border-border transition-colors ${isCurrent ? 'text-text font-bold' : 'text-text-muted hover:text-text'}`
+                    : `flex items-center min-h-11 py-2 px-3 text-[0.9375rem] leading-snug border-l-2 ${isCurrent ? `${SECTIONS[page.section].border} bg-text/5 font-bold` : 'border-transparent'} text-text`}
             >
+                {compact && isCurrent && <span className={`doc-marker absolute -left-px inset-y-0 w-0.5 ${SECTIONS[page.section].bg}`} aria-hidden="true" />}
                 {page.title[language]}
             </Link>
         );
@@ -121,7 +136,7 @@ export const PageList = ({ current, variant, filter = '', onNavigate }: {
     );
 };
 
-/** The phone's full-screen list of pages, with a filter at the top. */
+/** The phone's full-screen list of pages, with a filter at the top. It stays open until the page picked is ready, which closes it. */
 export const PagesPanel = ({ current, onClose }: { current?: DocPage; onClose: () => void }) => {
     const { t } = useTranslation();
     const [filter, setFilter] = useState('');
@@ -138,7 +153,7 @@ export const PagesPanel = ({ current, onClose }: { current?: DocPage; onClose: (
     }, [onClose]);
 
     return (
-        <div role="dialog" aria-modal="true" aria-label={t('markdown.pages')} className="lg:hidden fixed inset-0 z-[60] flex flex-col bg-surface">
+        <div role="dialog" aria-modal="true" aria-label={t('markdown.pages')} className="doc-panel lg:hidden fixed inset-0 z-[60] flex flex-col bg-surface">
             <div className="h-14 flex-shrink-0 flex items-center justify-between pl-4 pr-1.5 border-b border-border">
                 <span className="text-[1.375rem] font-bold">{t('markdown.pages')}</span>
                 <button type="button" onClick={onClose} aria-label={t('markdown.close')} className="flex items-center justify-center w-11 h-11 text-text">
@@ -158,7 +173,7 @@ export const PagesPanel = ({ current, onClose }: { current?: DocPage; onClose: (
                             className="mt-1.5 w-full h-11 px-3 bg-transparent border border-border text-[0.9375rem] text-text placeholder:text-text-muted/70"
                         />
                     </div>
-                    <PageList current={current} variant="panel" filter={filter} onNavigate={onClose} />
+                    <PageList current={current} variant="panel" filter={filter} onNavigate={(page) => page === current && onClose()} />
                 </div>
             </div>
         </div>

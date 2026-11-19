@@ -10,8 +10,10 @@
 }
 
 @layer base {
+  /* The gutter stays when a dialog locks the scroll, so the page never shifts sideways. */
   html {
     scroll-behavior: smooth;
+    scrollbar-gutter: stable;
     -webkit-text-size-adjust: 100%;
   }
 
@@ -145,6 +147,8 @@
 }
 
 .markdown-body :is(p, ul, ol, blockquote, dl, details, .markdown-alert) { max-width: 40rem; }
+/* The stack diagram is drawn at 1200 px: it takes the whole column, or its text gets too small to read. */
+.markdown-body p:has(> .stack-diagram) { max-width: none; }
 
 .markdown-body :is(h1, h2, h3, h4, h5, h6) {
   margin: 2.5rem 0 0.75rem;
@@ -215,7 +219,7 @@
 .markdown-body a code { @apply text-link bg-transparent p-0; }
 
 /*
- * Code panels: dark in both themes, titled by their file name or "Terminal", with a copy button.
+ * Code panels in the page's theme, titled by their file name or "Terminal", with a copy button.
  * Lines wrap on a phone, where sideways scrolling inside a panel goes unnoticed, and scroll on a desktop.
  */
 .markdown-body .md-code {
@@ -345,6 +349,71 @@
 /* Last, because these tie with the rules above on specificity. */
 .markdown-body > *:first-child { margin-top: 0; }
 .markdown-body > *:last-child { margin-bottom: 0; }
+
+/*
+ * Moving between doc pages, a view transition run by MarkdownPage: the page column leaves towards
+ * the side the next page sits on in the page list, then the next one comes in from the other, while
+ * the current-page marker glides to its new row. A language change fades the screen out and in
+ * where it stands, and a page picked in the phone's page list shows as the list slides away.
+ * The column keeps its new position all along, so `--doc-shift`, how far it moved on screen, puts
+ * the old picture back where the reader saw it. The header is a group of its own, or the column
+ * scrolled under it would be drawn over it.
+ */
+.doc-main { view-transition-name: doc-main; }
+.doc-marker { view-transition-name: doc-marker; }
+.doc-panel { view-transition-name: doc-panel; }
+.site-header { view-transition-name: site-header; }
+
+html[data-transition='forward'] { --doc-leave: -2rem; --doc-enter: 3rem; }
+html[data-transition='back'] { --doc-leave: 2rem; --doc-enter: -3rem; }
+
+@keyframes doc-leave {
+  from { transform: translateY(var(--doc-shift, 0px)); }
+  to   { opacity: 0; transform: translate(var(--doc-leave, 0px), var(--doc-shift, 0px)); }
+}
+@keyframes doc-enter {
+  from { opacity: 0; transform: translateX(var(--doc-enter, 0px)); }
+}
+@keyframes doc-panel-close {
+  to { opacity: 0; transform: translateY(2rem); }
+}
+
+::view-transition-group(doc-main) { animation: none; }
+::view-transition-old(doc-main) { animation: doc-leave 150ms cubic-bezier(0.4, 0, 1, 1) both; }
+::view-transition-new(doc-main) { animation: doc-enter 400ms cubic-bezier(0.16, 1, 0.3, 1) 120ms both; }
+::view-transition-group(doc-marker) { animation-duration: 400ms; animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); }
+::view-transition-old(doc-panel) { animation: doc-panel-close 250ms cubic-bezier(0.4, 0, 1, 1) both; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: 200ms; }
+html[data-transition='language']::view-transition-old(doc-main) { animation-duration: 180ms; }
+html[data-transition='language']::view-transition-new(doc-main) { animation-duration: 240ms; animation-delay: 100ms; }
+html[data-transition='language']::view-transition-old(root),
+html[data-transition='language']::view-transition-new(root),
+html[data-transition='language']::view-transition-group(site-header) { animation-duration: 300ms; }
+html[data-transition='panel']::view-transition-old(doc-main) { animation: none; opacity: 0; }
+html[data-transition='panel']::view-transition-new(doc-main) { animation: none; }
+
+/* A page that takes more than 150 ms to arrive shows a bar running along the top of the screen. */
+.doc-progress {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 70;
+  height: 2px;
+  overflow: hidden;
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .doc-progress::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgb(var(--link));
+    transform: translateX(-100%);
+    animation: doc-progress 1100ms cubic-bezier(0.4, 0, 0.2, 1) 150ms infinite;
+  }
+}
+@keyframes doc-progress {
+  to { transform: translateX(100%); }
+}
 
 /*
  * Section reveal. useReveal marks what is already on screen as risen, then sets data-motion, so

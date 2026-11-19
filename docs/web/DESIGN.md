@@ -145,7 +145,7 @@ Corners are square everywhere. Avatars are circles. Minecraft elements keep the 
 
 ## Motion
 
-Three moments move and nothing else does. On the home page the build plays: the definition's lines light up, their files drop, and the last frame is a real in-game capture. The 8 hand-written files crack like a mined block and drop one definition. The Showcase strip fills chest slots the way `_give_all` does. Smaller details: the inventory hover overlay on cards, a view transition between doc pages, manual pages turned with a swipe.
+Three moments move and nothing else does. On the home page the build plays: the definition's lines light up, their files drop, and the last frame is a real in-game capture. The 8 hand-written files crack like a mined block and drop one definition. The Showcase strip fills chest slots the way `_give_all` does. Smaller details: the inventory hover overlay on cards, manual pages turned with a swipe, the stack diagram building itself when its page opens, and a view transition between doc pages. In that transition the page column slides towards the side the next page sits on in the page list, and the current-page marker glides to its row. A language change fades the screen in place and keeps the reader in the same section.
 
 Nothing makes the visitor wait. Text is readable before and during every animation. The build plays once in about 2 seconds and replays on a tap, and a page entrance lasts 0.6 seconds at most. Only `transform` and `opacity` animate, and reduced motion shows the final frame. A press takes 150 ms on `cubic-bezier(0.4, 0, 0.2, 1)`, an entrance 400 ms on `cubic-bezier(0.16, 1, 0.3, 1)`.
 

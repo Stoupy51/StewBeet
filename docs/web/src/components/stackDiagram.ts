@@ -26,16 +26,16 @@ export interface StackPalette {
 /** Channel values mirror THEMED in tailwind.config.js, which the files cannot read at runtime. */
 export const STACK_PALETTES = {
     dark: {
-        background: '#0e0d0c', panel: '#161412', border: '#353029',
-        strong: '#f8f5f0', body: '#c4bbb0', muted: '#a0978c',
-        stewbeet: '#f25c70', stewbeetTint: 'rgba(242, 92, 112, 0.10)',
-        team: '#7fd35b', teamTint: 'rgba(127, 211, 91, 0.07)',
+        background: '#141518', panel: '#0c0d0f', border: '#383b42',
+        strong: '#f2f3f5', body: '#b8bcc4', muted: '#a3a7b0',
+        stewbeet: '#ff6b7d', stewbeetTint: 'rgba(255, 107, 125, 0.08)',
+        team: '#7fd35b', teamTint: 'rgba(127, 211, 91, 0.06)',
     },
     light: {
-        background: '#f4f0ea', panel: '#fbf9f6', border: '#d3ccc2',
-        strong: '#161412', body: '#4b453e', muted: '#615950',
-        stewbeet: '#c42340', stewbeetTint: 'rgba(196, 35, 64, 0.07)',
-        team: '#33701a', teamTint: 'rgba(51, 112, 26, 0.07)',
+        background: '#f7f7f8', panel: '#ffffff', border: '#d0d2d7',
+        strong: '#111214', body: '#3d4047', muted: '#565964',
+        stewbeet: '#b81d39', stewbeetTint: 'rgba(184, 29, 57, 0.08)',
+        team: '#2b7a19', teamTint: 'rgba(43, 122, 25, 0.06)',
     },
     /** Follows the page's theme switch through the variables tailwind.config.js defines. */
     page: {
@@ -105,7 +105,7 @@ export const STACK_TEXT: Record<Language, StackText> = {
 
 export const STACK_SIZE = { width: 1200, height: 630 } as const;
 
-const SANS = "'IBM Plex Sans Variable', 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif";
+const SANS = "'Archivo Variable', Archivo, ui-sans-serif, system-ui, sans-serif";
 const MONO = "'JetBrains Mono Variable', ui-monospace, Consolas, monospace";
 
 const escapeXml = (text: string) => text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -126,13 +126,13 @@ const step = (delay: number, content: string, motion = 'stk-rise') =>
 /** A label on a pill, sized from an estimate of the text width. */
 const pill = (x: number, y: number, label: string, color: string, fill: string, fontSize: number) => {
     const width = Math.round(label.length * fontSize * 0.52 + 24);
-    return `<rect x="${x}" y="${y - 13}" width="${width}" height="26" rx="13" fill="${fill}" stroke="${color}" stroke-width="1.25"/>`
+    return `<rect x="${x}" y="${y - 13}" width="${width}" height="26" fill="${fill}" stroke="${color}" stroke-width="1.25"/>`
         + `<text x="${x + width / 2}" y="${y + 5}" text-anchor="middle" font-size="${fontSize}" font-weight="600" fill="${color}">${escapeXml(label)}</text>`;
 };
 
 const box = (x: number, y: number, width: number, height: number, name: string, lines: Lines, color: string, tint: string, p: StackPalette) =>
-    `<rect x="${x}" y="${y}" width="${width}" height="${height}" rx="10" fill="${p.panel}"/>`
-    + `<rect x="${x}" y="${y}" width="${width}" height="${height}" rx="10" fill="${tint}" stroke="${color}" stroke-width="1.5"/>`
+    `<rect x="${x}" y="${y}" width="${width}" height="${height}" fill="${p.panel}"/>`
+    + `<rect x="${x}" y="${y}" width="${width}" height="${height}" fill="${tint}" stroke="${color}" stroke-width="1.5"/>`
     + `<text x="${x + 24}" y="${y + 38}" font-size="24" font-weight="650" fill="${p.strong}">${escapeXml(name)}</text>`
     + textBlock(lines, x + 24, y + 66, 22, `font-size="16" fill="${p.body}"`);
 
@@ -168,7 +168,7 @@ export function stackDiagramSvg({ language, palette: p, autoplay, fontFaceCss = 
         const y = 222 + index * 118;
         const color = index === 1 ? p.stewbeet : p.team;
         return step(2.3 + index * 0.25,
-            `<rect x="812" y="${y - 17}" width="3" height="${lines.length * 24 - 4}" rx="1.5" fill="${color}"/>`
+            `<rect x="812" y="${y - 17}" width="3" height="${lines.length * 24 - 4}" fill="${color}"/>`
             + textBlock(lines, 832, y, 24, `font-size="17" fill="${p.strong}"`));
     }).join('');
 
@@ -184,7 +184,7 @@ ${step(0.5, `<path d="M400 552 v18 m-6 -6 l6 6 l6 -6" fill="none" stroke="${p.mu
     + `<text x="400" y="596" text-anchor="middle" font-size="15" fill="${p.muted}">${escapeXml(text.output)}</text>`, 'stk-fade')}
 ${step(0.8, box(72, 314, 320, 102, 'bolt', text.bolt, p.team, p.teamTint, p))}
 ${step(0.95, box(408, 314, 320, 102, 'mecha', text.mecha, p.team, p.teamTint, p))}
-${step(1.4, `<rect x="48" y="290" width="704" height="258" rx="16" fill="none" stroke="${p.team}" stroke-width="1.5" stroke-dasharray="7 6"/>`
+${step(1.4, `<rect x="48" y="290" width="704" height="258" fill="none" stroke="${p.team}" stroke-width="1.5" stroke-dasharray="7 6"/>`
     + pill(72, 290, text.team, p.team, p.background, 14), 'stk-fade')}
 ${step(1.9, box(60, 146, 680, 108, 'StewBeet', text.stewbeet, p.stewbeet, p.stewbeetTint, p)
     + pill(740 - 24 - Math.round(text.stewbeetTag.length * 14 * 0.52 + 24), 176, text.stewbeetTag, p.stewbeet, p.panel, 14)

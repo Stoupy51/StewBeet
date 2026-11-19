@@ -5,6 +5,8 @@ import type { ReactNode } from 'react';
 export interface PrerenderedDoc {
     src: string;
     content: string;
+    /** Its code highlighted at build time, by `codeKey`. */
+    highlighted: Record<string, string>;
 }
 
 const MarkdownContentContext = createContext<PrerenderedDoc | null>(null);

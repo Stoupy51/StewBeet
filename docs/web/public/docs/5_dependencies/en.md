@@ -196,10 +196,10 @@ When the world loads, the generated functions run in this sequence:
 3. **`valid_dependencies`**: waits for a player entity, reads `DataVersion` to verify the Minecraft version (against the minimum from `mc_supports`), then sends `tellraw @a` with clickable error links if anything fails. Calls `confirm_load` only when all checks pass.
 
 **In-game error messages when dependencies are missing:**<br>
-<img src="../plugins/img/finalyze.dependencies.ingame_errors.jpg">
+<img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/finalyze.dependencies.ingame_errors.jpg">
 
 **Generated `check_dependencies` function:**<br>
-<img src="../plugins/img/finalyze.dependencies.check_function.jpg">
+<img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/finalyze.dependencies.check_function.jpg">
 
 ---
 
