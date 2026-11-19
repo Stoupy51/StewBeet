@@ -1,3 +1,4 @@
 
 Doc: Everything you don't need to think about
+Doc: Contrib, a docs section of its own, saying what each stewbeet.contrib module gives. First simplenergy: keep_energy_for_batteries (a broken battery keeps its energy), setup_energy_balancing, energy_cables_models, item_cables_models, servo_mechanisms_models, setup_wrench and setup_gui_in_resource_packs, each shown with its call in SimplEnergy's src/link.py
 
