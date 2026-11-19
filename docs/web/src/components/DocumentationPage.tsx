@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { srcHref } from '../docsPages';
 import { HiArrowRight } from 'react-icons/hi';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
@@ -176,7 +177,7 @@ export const DocumentationPage: React.FC = () => {
                             {group.items.map((doc) => (
                                 <li key={doc.pathEn}>
                                     <Link
-                                        to={`/markdown?src=${encodeURIComponent(language === 'fr' ? doc.pathFr : doc.pathEn)}`}
+                                        to={srcHref(language === 'fr' ? doc.pathFr : doc.pathEn)}
                                         className={`group flex items-start justify-between gap-4 h-full p-5 ${CARD} ${HOVER_CARD}`}
                                     >
                                         <div>

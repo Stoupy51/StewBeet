@@ -21,14 +21,15 @@ export function AppRoutes() {
         <Suspense fallback={null}>
             <Routes>
                 <Route path="/" element={<HomePage />} />
-                <Route path="/documentation" element={<DocumentationPage />} />
-                <Route path="/markdown" element={<MarkdownPage />} />
-                <Route path="/markdown_to_pmc_bbcode" element={<MarkdownToBBCodePage />} />
+                <Route path="/docs" element={<DocumentationPage />} />
+                <Route path="/docs/*" element={<MarkdownPage />} />
+                <Route path="/fr/docs/*" element={<MarkdownPage />} />
                 <Route path="/tools" element={<ToolsPage />} />
+                <Route path="/tools/playground" element={<PlaygroundPage />} />
+                <Route path="/tools/auto_headers" element={<AutoHeadersPage />} />
+                <Route path="/tools/bbcode" element={<MarkdownToBBCodePage />} />
                 <Route path="/credits" element={<CreditsPage />} />
                 <Route path="/telemetry" element={<TelemetryPage />} />
-                <Route path="/playground" element={<PlaygroundPage />} />
-                <Route path="/auto_headers" element={<AutoHeadersPage />} />
                 <Route path="*" element={<NotFoundPage />} />
             </Routes>
         </Suspense>

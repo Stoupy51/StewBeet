@@ -29,9 +29,9 @@ const THEME_STEPS = {
 
 /** Routes that light up each entry of the navigation. Showcase has no page of its own yet. */
 const SECTIONS = [
-    { key: 'nav.documentation', path: '/documentation', routes: ['/documentation', '/markdown'] },
+    { key: 'nav.documentation', path: '/docs', routes: ['/docs', '/fr/docs'] },
     { key: 'nav.showcase', path: '/#built-with', routes: [] },
-    { key: 'nav.tools', path: '/tools', routes: ['/tools', '/playground', '/auto_headers', '/markdown_to_pmc_bbcode'] },
+    { key: 'nav.tools', path: '/tools', routes: ['/tools'] },
 ];
 
 /** Past this much scrolling down, a doc page on a phone gives the header's height back to the text. */
@@ -157,7 +157,7 @@ export const Navbar = memo(({ subbar, onLanguageChange }: { subbar?: React.React
             restoreReadingPosition(position);
         });
     };
-    const isCurrent = (routes: string[]) => routes.includes(location.pathname);
+    const isCurrent = (routes: string[]) => routes.some((route) => location.pathname === route || location.pathname.startsWith(`${route}/`));
 
     const languageLabel = (
         <span className="font-mono text-xs">

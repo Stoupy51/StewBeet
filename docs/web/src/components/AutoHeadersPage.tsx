@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { srcHref } from '../docsPages';
 import { unzipSync } from 'fflate';
 import { HiArrowRight, HiDownload, HiPlay, HiPuzzle, HiUpload } from 'react-icons/hi';
 import { Navbar } from './Navbar';
@@ -14,7 +15,7 @@ import { HEADERS_LIMITS, MAX_PACK_BYTES } from '../api/sandboxLimits';
 import { BTN_SECONDARY, TEXT_ACCENT } from '../theme';
 
 /**
- * /auto_headers: upload a datapack, get it back with a header on every function.
+ * /tools/auto_headers: upload a datapack, get it back with a header on every function.
  *
  * A successful response is the rewritten archive itself, not a description of one, so the download
  * button is a blob URL the browser already holds: there is no second round trip and the server keeps
@@ -95,7 +96,7 @@ function toBase64(bytes: Uint8Array): string {
 }
 
 /** The plugin's own page, linked from the header and from the panel at the bottom. */
-const PLUGIN_DOC = `/markdown?src=${encodeURIComponent('plugins/auto.headers.md')}`;
+const PLUGIN_DOC = srcHref('plugins/auto.headers.md');
 
 /** `MyPack.zip` -> `MyPack_headers.zip`, so the result never overwrites the upload it came from. */
 function downloadName(uploaded: string): string {

@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { srcHref } from '../docsPages';
 import { HiArrowRight } from 'react-icons/hi';
 import { useTranslation } from '../i18n/useTranslation';
 import { PAGE, SECTION_LEAD, TEXT_ACCENT_HOVER } from '../theme';
@@ -44,7 +45,7 @@ export const StandingOnGiants: React.FC = () => {
                             <HiArrowRight className="group-hover:translate-x-0.5 transition-transform" aria-hidden="true" />
                         </Link>
                         <Link
-                            to={`/markdown?src=${encodeURIComponent(DEPENDENCIES_DOC[language])}`}
+                            to={srcHref(DEPENDENCIES_DOC[language])}
                             className="text-sm text-ink-400 hover:text-ink-100 transition-colors"
                         >
                             {t('giants.readDocs')}

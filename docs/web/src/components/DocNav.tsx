@@ -307,7 +307,7 @@ export const Breadcrumb = ({ page }: { page?: DocPage }) => {
     const { t, language } = useTranslation();
     return (
         <nav aria-label={t('markdown.breadcrumb')} className="label flex flex-wrap items-center gap-x-1.5">
-            <Link to="/documentation" className="inline-flex items-center min-h-6 hover:text-text transition-colors">{t('nav.documentation')}</Link>
+            <Link to="/docs" className="inline-flex items-center min-h-6 hover:text-text transition-colors">{t('nav.documentation')}</Link>
             {page && (
                 <>
                     <span aria-hidden="true">/</span>

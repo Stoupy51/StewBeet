@@ -6,7 +6,8 @@
  * ships the landing page's head: one duplicated <title> across the whole site, and a
  * shared link showing the homepage blurb whatever page was actually shared.
  */
-import { findDocPage, srcHref } from '../docsPages';
+import { docHref, findDocPage, srcHref } from '../docsPages';
+import type { Language } from '../context/LanguageContext';
 
 export const SITE_ORIGIN = 'https://stewbeet.paralya.fr';
 
@@ -14,10 +15,12 @@ export interface PageMeta {
     /** Full <title>, reused for og:title and twitter:title. */
     title: string;
     description: string;
-    /** Absolute path including its query string, e.g. `/markdown?src=plugins%2Farchive.md`. */
+    /** Absolute path, e.g. `/docs/plugins/archive`. */
     path: string;
     /** Keeps a page out of the index without hiding it from crawlers following its links. */
     noindex?: boolean;
+    /** The page's address in each language it is written in, for search engines to pair them. */
+    alternates?: Partial<Record<Language, string>>;
 }
 
 /** Longest description before truncation: beyond this both Google and Discord cut it themselves. */
@@ -34,11 +37,11 @@ export const STATIC_ROUTE_META: Record<string, PageMeta> = {
         description: SITE_DESCRIPTION,
         path: '/',
     },
-    '/documentation': {
+    '/docs': {
         title: 'Documentation | StewBeet',
         description:
             'Guides and plugin reference for StewBeet: getting started, defining items and blocks, writing to files, beet configuration, equations, dependencies, continuous delivery and the in-game manual.',
-        path: '/documentation',
+        path: '/docs',
     },
     '/tools': {
         title: 'Tools | StewBeet',
@@ -57,26 +60,20 @@ export const STATIC_ROUTE_META: Record<string, PageMeta> = {
             'What StewBeet reports after a successful build: its own version, the Python version and how long the build took. Nothing else, no identifiers, and one environment variable turns it off.',
         path: '/telemetry',
     },
-    '/playground': {
+    '/tools/playground': {
         title: 'Playground | StewBeet',
         description: 'Write a StewBeet definitions module in the browser and see the datapack and resource pack files it generates: models, recipes, loot tables, predicates and translations.',
-        path: '/playground',
+        path: '/tools/playground',
     },
-    '/auto_headers': {
+    '/tools/auto_headers': {
         title: 'Auto Headers | StewBeet',
         description: 'Upload a Minecraft datapack and get it back with a generated header on every function: who calls it, the execution context it runs in, and the type of every macro argument. Runs the standalone auto.headers beet plugin.',
-        path: '/auto_headers',
+        path: '/tools/auto_headers',
     },
-    '/markdown_to_pmc_bbcode': {
+    '/tools/bbcode': {
         title: 'Markdown to BBCode Converter | StewBeet',
         description: 'Convert Markdown to PlanetMinecraft BBCode in the browser: badges, lists, tables, code blocks and spoilers, with a live preview and diff.',
-        path: '/markdown_to_pmc_bbcode',
-    },
-    '/markdown': {
-        title: 'Documentation viewer | StewBeet',
-        description: 'Reads a StewBeet documentation page from the repository. Pick a page from the documentation index.',
-        path: '/markdown',
-        noindex: true,
+        path: '/tools/bbcode',
     },
     '/404': {
         title: 'Page not found | StewBeet',
@@ -126,9 +123,17 @@ function leadParagraph(markdown: string): string {
     return '';
 }
 
-/** Metadata for `/markdown?src=...`, derived from the document the SSR server just fetched. */
+/** What a doc address that leads to no page says about itself. */
+const MISSING_DOC_META: PageMeta = {
+    title: 'Page not found | StewBeet',
+    description: 'This page does not exist on the StewBeet documentation site.',
+    path: '/docs',
+    noindex: true,
+};
+
+/** Metadata for a doc page, derived from the document the SSR server just read. */
 export function markdownPageMeta(src: string | null, markdown: string): PageMeta {
-    if (!src || !markdown) return STATIC_ROUTE_META['/markdown'];
+    if (!src || !markdown) return MISSING_DOC_META;
 
     // The page list's title, so a plugin page is named in words and not by its module path
     const page = findDocPage(src);
@@ -140,6 +145,7 @@ export function markdownPageMeta(src: string | null, markdown: string): PageMeta
         title: `${name} | StewBeet`,
         description: description ? truncate(description) : `${name}: StewBeet documentation.`,
         path: srcHref(src),
+        alternates: page?.src.fr ? { en: docHref(page, 'en'), fr: docHref(page, 'fr') } : undefined,
     };
 }
 
@@ -174,6 +180,9 @@ export function applyPageMeta(html: string, meta: PageMeta): string {
     }
 
     const injected = [`    <link rel="canonical" href="${escapeAttribute(url)}" />`];
+    for (const [language, path] of Object.entries(meta.alternates ?? {})) {
+        injected.push(`    <link rel="alternate" hreflang="${language}" href="${escapeAttribute(SITE_ORIGIN + path)}" />`);
+    }
     if (meta.noindex) injected.push('    <meta name="robots" content="noindex, follow" />');
     return output.replace('</head>', `${injected.join('\n')}\n  </head>`);
 }

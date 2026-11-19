@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { srcHref } from '../docsPages';
 import {
     HiCog,
     HiVolumeUp,
@@ -117,7 +118,7 @@ export const PluginsTable: React.FC = () => {
     const { t, language } = useTranslation();
     const plugins = getPlugins(t);
     const docLink = (plugin: Plugin) =>
-        `/markdown?src=${encodeURIComponent(plugin.docSrc?.replace('{lang}', language) ?? `plugins/${plugin.name}.md`)}`;
+        srcHref(plugin.docSrc?.replace('{lang}', language) ?? `plugins/${plugin.name}.md`);
     const [selectedImage, setSelectedImage] = useState<LightboxImage | null>(null);
 
     return (

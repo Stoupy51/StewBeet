@@ -19,8 +19,8 @@ export const Footer = memo(() => {
         {
             title: t('footer.product'),
             links: [
-                { label: t('nav.documentation'), url: '/documentation', internal: true },
-                { label: t('nav.playground'), url: '/playground', internal: true },
+                { label: t('nav.documentation'), url: '/docs', internal: true },
+                { label: t('nav.playground'), url: '/tools/playground', internal: true },
                 { label: t('nav.tools'), url: '/tools', internal: true },
                 { label: t('footer.vscode'), url: 'https://marketplace.visualstudio.com/items?itemName=stoupy.stewbeet' },
             ],

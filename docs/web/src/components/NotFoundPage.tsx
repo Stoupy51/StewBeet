@@ -31,7 +31,7 @@ export const NotFoundPage: React.FC = () => {
                         <Link to="/" className={`px-6 py-3 rounded-panel font-medium transition-all ${BTN_PRIMARY}`}>
                             {t('notFound.backHome')}
                         </Link>
-                        <Link to="/documentation" className={`flex items-center gap-2 px-6 py-3 font-medium group ${TEXT_ACCENT_HOVER}`}>
+                        <Link to="/docs" className={`flex items-center gap-2 px-6 py-3 font-medium group ${TEXT_ACCENT_HOVER}`}>
                             {t('notFound.browseDocs')}
                             <HiArrowRight className="group-hover:translate-x-1 transition-transform" />
                         </Link>

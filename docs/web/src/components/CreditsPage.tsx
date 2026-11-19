@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { srcHref } from '../docsPages';
 import { motion } from 'framer-motion';
 import { HiArrowLeft, HiExternalLink } from 'react-icons/hi';
 import { Navbar } from './Navbar';
@@ -81,7 +82,7 @@ export const CreditsPage: React.FC = () => {
 
                         <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-3">
                             <Link
-                                to={`/markdown?src=${encodeURIComponent(DEPENDENCIES_DOC[language])}`}
+                                to={srcHref(DEPENDENCIES_DOC[language])}
                                 className={`inline-flex items-center gap-2 text-sm ${TEXT_ACCENT_HOVER} underline-offset-4 hover:underline`}
                             >
                                 {t('credits.docsLink')}

@@ -276,7 +276,7 @@ export const PlaygroundPage: React.FC = () => {
                                 .replace('{total}', String(SANDBOX_LIMITS.totalMiB))}
                         </p>
                         <p className="text-sm">
-                            <a href="/documentation" className={`${TEXT_ACCENT} hover:underline`}>
+                            <a href="/docs" className={`${TEXT_ACCENT} hover:underline`}>
                                 {t('playground.fullOutput')}
                             </a>
                         </p>

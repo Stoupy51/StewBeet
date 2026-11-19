@@ -1,8 +1,8 @@
 /**
- * Every documentation page, in reading order: its title in each language, the section it belongs
- * to and the markdown file it is written in. The page list, the breadcrumb, previous and next, and
- * the search index are all built from this list, and `docHref` is the one place a page's address
- * is made.
+ * Every documentation page, in reading order: its address, its title in each language, the section
+ * it belongs to and the markdown file it is written in. The page list, the breadcrumb, previous and
+ * next, and the search index are all built from this list, and `docHref` is the one place a page's
+ * address is made: /docs/<slug>, under /fr for a page written in French.
  */
 import type { Language } from './context/LanguageContext';
 
@@ -11,6 +11,8 @@ export type Section = 'start' | 'guides' | 'plugins' | 'reference';
 export type PluginGroup = 'items' | 'recipes' | 'resourcePack' | 'text' | 'build' | 'compatibility';
 
 export interface DocPage {
+    /** Its address under /docs, the same in both languages, with `_` and never `-`. A plugin's is its module name. */
+    slug: string;
     /** Path under public/docs. A page with no French file is shown in English to French readers. */
     src: { en: string; fr?: string };
     title: Record<Language, string>;
@@ -42,13 +44,15 @@ export const API_REFERENCE = {
     title: { en: 'API reference', fr: 'Référence de l\'API' },
 } as const;
 
-const guide = (folder: string, section: Section, en: string, fr: string): DocPage => ({
+const guide = (folder: string, slug: string, section: Section, en: string, fr: string): DocPage => ({
+    slug,
     src: { en: `${folder}/en.md`, fr: `${folder}/fr.md` },
     title: { en, fr },
     section,
 });
 
 const plugin = (name: string, group: PluginGroup, en: string, fr: string): DocPage => ({
+    slug: `plugins/${name}`,
     src: { en: `plugins/${name}.md` },
     title: { en, fr },
     section: 'plugins',
@@ -56,20 +60,20 @@ const plugin = (name: string, group: PluginGroup, en: string, fr: string): DocPa
 });
 
 export const DOC_PAGES: DocPage[] = [
-    guide('quickstart', 'start', 'Quickstart', 'Démarrage rapide'),
-    guide('0_getting_started', 'start', 'Tutorial: build your first datapack', 'Tutoriel : votre premier datapack'),
-    guide('9_migration', 'start', 'Migrate an existing pack', 'Migrer un pack existant'),
-    guide('8_editor', 'start', 'VS Code editor', 'Éditeur VS Code'),
+    guide('quickstart', 'quickstart', 'start', 'Quickstart', 'Démarrage rapide'),
+    guide('0_getting_started', 'tutorial', 'start', 'Tutorial: build your first datapack', 'Tutoriel : votre premier datapack'),
+    guide('9_migration', 'migrate', 'start', 'Migrate an existing pack', 'Migrer un pack existant'),
+    guide('8_editor', 'editor', 'start', 'VS Code editor', 'Éditeur VS Code'),
 
-    { src: { en: 'items_and_blocks/en.md' }, title: { en: 'Items and blocks', fr: 'Items et blocks' }, section: 'guides' },
-    guide('2_writing_to_files', 'guides', 'Functions and files', 'Fonctions et fichiers'),
-    guide('2_writing_to_files/cookbook', 'guides', 'Cookbook', 'Cookbook'),
-    guide('5_dependencies', 'guides', 'Datapack libraries', 'Bibliothèques de datapacks'),
-    guide('7_ingame_manual', 'guides', 'In-game manual', 'Manuel en jeu'),
-    guide('6_continuous_delivery', 'guides', 'Publishing releases', 'Publier des releases'),
-    guide('10_performance', 'guides', 'Performance', 'Performance'),
-    guide('11_testing', 'guides', 'Testing with Ward', 'Tester avec Ward'),
-    guide('12_post_effects', 'guides', 'Timed post effects', 'Post effects chronométrés'),
+    { slug: 'items_and_blocks', src: { en: 'items_and_blocks/en.md' }, title: { en: 'Items and blocks', fr: 'Items et blocks' }, section: 'guides' },
+    guide('2_writing_to_files', 'writing_files', 'guides', 'Functions and files', 'Fonctions et fichiers'),
+    guide('2_writing_to_files/cookbook', 'cookbook', 'guides', 'Cookbook', 'Cookbook'),
+    guide('5_dependencies', 'libraries', 'guides', 'Datapack libraries', 'Bibliothèques de datapacks'),
+    guide('7_ingame_manual', 'manual', 'guides', 'In-game manual', 'Manuel en jeu'),
+    guide('6_continuous_delivery', 'publishing', 'guides', 'Publishing releases', 'Publier des releases'),
+    guide('10_performance', 'performance', 'guides', 'Performance', 'Performance'),
+    guide('11_testing', 'testing', 'guides', 'Testing with Ward', 'Tester avec Ward'),
+    guide('12_post_effects', 'post_effects', 'guides', 'Timed post effects', 'Post effects chronométrés'),
 
     plugin('datapack.custom_blocks', 'items', 'Custom blocks', 'Blocks custom'),
     plugin('finalyze.custom_blocks_ticking', 'items', 'Block ticking', 'Ticking des blocks'),
@@ -98,35 +102,49 @@ export const DOC_PAGES: DocPage[] = [
     plugin('compatibilities.simpledrawer', 'compatibility', 'SimpleDrawer', 'SimpleDrawer'),
     plugin('compatibilities.neo_enchant', 'compatibility', 'NeoEnchant', 'NeoEnchant'),
 
-    guide('1_definitions_setup', 'reference', 'Definitions', 'Définitions'),
-    guide('2_writing_to_files/reference', 'reference', 'Helpers', 'Helpers'),
-    guide('3_beet_config', 'reference', 'beet.yml', 'beet.yml'),
-    guide('4_equations', 'reference', 'Equations', 'Équations'),
+    guide('1_definitions_setup', 'definitions', 'reference', 'Definitions', 'Définitions'),
+    guide('2_writing_to_files/reference', 'reference/helpers', 'reference', 'Helpers', 'Helpers'),
+    guide('3_beet_config', 'reference/beet_yml', 'reference', 'beet.yml', 'beet.yml'),
+    guide('4_equations', 'reference/equations', 'reference', 'Equations', 'Équations'),
 ];
+
+/** The index of every plugin, the landing page of their section, kept out of the page list. */
+export const PLUGIN_INDEX: DocPage = { slug: 'plugins', src: { en: 'plugins/README.md' }, title: { en: 'Plugins', fr: 'Plugins' }, section: 'plugins' };
+
+const EVERY_PAGE = [...DOC_PAGES, PLUGIN_INDEX];
 
 /** The file a reader of `language` gets for this page. */
 export function docSrc(page: DocPage, language: Language): string {
     return language === 'fr' ? page.src.fr ?? page.src.en : page.src.en;
 }
 
-/** The address of the page written in `src`. */
-export function srcHref(src: string): string {
-    return `/markdown?src=${encodeURIComponent(src)}`;
-}
-
-/** The page a path of this site leads to, the reverse of `srcHref`. */
-export function hrefSrc(path: string): string | null {
-    const url = new URL(path, 'https://site');
-    return url.pathname === '/markdown' ? url.searchParams.get('src') : null;
-}
-
+/** The address of a page for a reader of `language`. A page with no French file has only its English address. */
 export function docHref(page: DocPage, language: Language): string {
-    return srcHref(docSrc(page, language));
+    return `${language === 'fr' && page.src.fr ? '/fr' : ''}/docs/${page.slug}`;
 }
 
 /** The page written in `src`, in either language. */
 export function findDocPage(src: string): DocPage | undefined {
-    return DOC_PAGES.find((page) => page.src.en === src || page.src.fr === src);
+    return EVERY_PAGE.find((page) => page.src.en === src || page.src.fr === src);
+}
+
+/** The address of the page written in `src`, in the language of that file. An unknown file leads to the docs home. */
+export function srcHref(src: string): string {
+    const page = findDocPage(src);
+    return page ? docHref(page, src === page.src.fr ? 'fr' : 'en') : '/docs';
+}
+
+/** The page at a path of this site, and the language the path asks for. */
+export function pageAt(pathname: string): { page: DocPage; language: Language } | null {
+    const match = /^(\/fr)?\/docs\/(.+?)\/?$/.exec(pathname);
+    const page = match && EVERY_PAGE.find((candidate) => candidate.slug === match[2]);
+    return page ? { page, language: match[1] ? 'fr' : 'en' } : null;
+}
+
+/** The file a path of this site shows, the reverse of `srcHref`. */
+export function hrefSrc(path: string): string | null {
+    const target = pageAt(new URL(path, 'https://site').pathname);
+    return target ? docSrc(target.page, target.language) : null;
 }
 
 /** The pages before and after this one within its section, or within its group for a plugin. */

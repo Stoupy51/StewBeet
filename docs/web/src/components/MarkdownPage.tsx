@@ -1,6 +1,6 @@
 import { createContext, memo, useCallback, useContext, useEffect, useEffectEvent, useMemo, useRef, useState, isValidElement } from 'react';
 import { flushSync } from 'react-dom';
-import { useSearchParams, useNavigate, useLocation, useNavigationType } from 'react-router-dom';
+import { useNavigate, useLocation, useNavigationType } from 'react-router-dom';
 import ReactMarkdown, { type Components, type Options } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { remarkAlert } from 'remark-github-blockquote-alert';
@@ -13,11 +13,11 @@ import { ZoomableImage } from './ZoomableImage';
 import { CodeBlock, CodeTabs } from './DocCode';
 import { Breadcrumb, DocBar, PageAside, PageList, PagesPanel, PreviousNext, SourceLinks, type TocHeading } from './DocNav';
 import { STACK_PALETTES, stackDiagramSvg } from './stackDiagram';
-import { useLanguage, type Language } from '../context/LanguageContext';
+import { savedLanguage, useLanguage, type Language } from '../context/LanguageContext';
 import { useTranslation } from '../i18n/useTranslation';
 import { useMarkdownContent } from '../context/MarkdownContentContext';
 import { PrehighlightedCode } from '../hooks/useShiki';
-import { DOC_PAGES, SECTIONS, docSrc, findDocPage, hrefSrc, srcHref } from '../docsPages';
+import { DOC_PAGES, SECTIONS, docHref, docSrc, findDocPage, hrefSrc, pageAt, srcHref } from '../docsPages';
 import { markdownPageMeta } from '../utils/pageMeta';
 import { headingTextToSlug, slugify } from '../utils/slugify';
 import { metaValue, rehypeCodeTabs, rehypeSteps, rehypeTableLabels, remarkCodeMeta, textOf } from '../utils/docMarkdown';
@@ -294,18 +294,18 @@ interface ShownDoc extends Doc {
 }
 
 export const MarkdownPage: React.FC = () => {
-    const [searchParams, setSearchParams] = useSearchParams();
-    const { hash } = useLocation();
+    const { pathname, hash } = useLocation();
+    const navigate = useNavigate();
     const navigationType = useNavigationType();
     const { language, setLanguage } = useLanguage();
     const { t } = useTranslation();
     const goToHeading = useHeadingJump();
     const main = useRef<HTMLElement>(null);
-    const src = searchParams.get('src');
-    const validSrc = src && isValidDocSrc(src) ? src : null;
+    const requested = pageAt(pathname);
+    const validSrc = requested ? docSrc(requested.page, requested.language) : null;
     const prerendered = useMarkdownContent();
     // Only for the page server.tsx rendered: once the reader moves on, the embedded markdown belongs to another page
-    const [shown, setShown] = useState<ShownDoc>(() => prerendered?.src === src
+    const [shown, setShown] = useState<ShownDoc>(() => prerendered?.src === validSrc
         ? { ...prerendered, error: null }
         : { src: null, content: '', highlighted: {}, error: null });
     const [pagesOpen, setPagesOpen] = useState(false);
@@ -317,10 +317,10 @@ export const MarkdownPage: React.FC = () => {
     }, [prerendered]);
 
     // The address follows the reader's language, without a history entry, or Back would switch it back
-    const requestedPage = validSrc ? findDocPage(validSrc) : undefined;
+    const requestedHref = requested && docHref(requested.page, language);
     useEffect(() => {
-        if (requestedPage && docSrc(requestedPage, language) !== validSrc) setSearchParams({ src: docSrc(requestedPage, language) }, { replace: true });
-    }, [language, requestedPage, validSrc, setSearchParams]);
+        if (requestedHref && requestedHref !== pathname) navigate(requestedHref, { replace: true });
+    }, [requestedHref, pathname, navigate]);
 
     const isShown = useEffectEvent((src: string) => src === shown.src);
     const showDoc = useEffectEvent((next: ShownDoc & { src: string }) => {
@@ -375,6 +375,13 @@ export const MarkdownPage: React.FC = () => {
             restoreReadingPosition(position);
         });
     };
+
+    // A reader who picked a language and opens the page in the other one, from a link someone posted, is moved to theirs
+    const openInReaderLanguage = useEffectEvent(() => {
+        const chosen = savedLanguage();
+        if (chosen && chosen !== language) changeLanguage(chosen);
+    });
+    useEffect(() => openInReaderLanguage(), []);
 
     // A page is fetched when the pointer rests on a link to it, or when the link is pressed or focused
     useEffect(() => {

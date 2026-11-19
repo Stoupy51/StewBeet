@@ -6,6 +6,7 @@
  * derived from the i18n translations, which are already in the bundle.
  */
 import type { Language } from '../context/LanguageContext';
+import { srcHref } from '../docsPages';
 import { translations } from '../i18n/translations';
 
 export type EntryType = 'doc' | 'plugin' | 'api' | 'site';
@@ -141,8 +142,8 @@ const SITE_ROUTES: Record<string, string> = {
     templates: '/#templates',
     giants: '/#standing-on-giants',
     showcase: '/#plugins',
-    pluginsTable: '/documentation#plugins',
-    documentation: '/documentation',
+    pluginsTable: '/docs#plugins',
+    documentation: '/docs',
     tools: '/tools',
     credits: '/credits',
 };
@@ -245,7 +246,7 @@ function resolveUrl(entry: SearchEntry, apiBase: string): { url: string; externa
         return { url: apiBase + entry.p.replace('$', fullName), external: true };
     }
     const anchor = entry.a ? `#${entry.a}` : '';
-    return { url: `/markdown?src=${encodeURIComponent(entry.p)}${anchor}`, external: false };
+    return { url: `${srcHref(entry.p)}${anchor}`, external: false };
 }
 
 /** Cut a readable excerpt around the first match and flag every term occurrence. */

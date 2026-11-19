@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useReducedMotion } from 'framer-motion';
 import { HiArrowRight, HiCheck } from 'react-icons/hi';
 import { Link } from 'react-router-dom';
+import { srcHref } from '../docsPages';
 import { useTranslation } from '../i18n/useTranslation';
 import { VscodeMark } from './VscodeMark';
 import { BTN_SECONDARY, PAGE, SECTION_LEAD, SECTION_TITLE, TEXT_ACCENT_HOVER } from '../theme';
@@ -79,7 +80,7 @@ const Spotlight = ({ ns, video, poster, frame, videoFirst = false, children }: S
 
 export const Spotlights: React.FC = () => {
     const { t, language } = useTranslation();
-    const doc = (path: string) => `/markdown?src=${encodeURIComponent(`${path}/${language === 'fr' ? 'fr' : 'en'}.md`)}`;
+    const doc = (path: string) => srcHref(`${path}/${language === 'fr' ? 'fr' : 'en'}.md`);
 
     return (
         <section className="py-14 md:py-28 border-t border-ink-800">

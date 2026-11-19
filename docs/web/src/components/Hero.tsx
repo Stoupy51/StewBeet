@@ -129,7 +129,7 @@ export const Hero = () => {
                         <Link to={docHref(quickstart, language)} className="flex items-center justify-center h-12 lg:px-[22px] bg-primary hover:bg-primary-hover text-on-primary font-semibold transition-colors active:scale-[0.98]">
                             {t('hero.readQuickstart')}
                         </Link>
-                        <Link to="/documentation" className="flex items-center justify-center h-11 lg:h-12 lg:px-[22px] lg:border lg:border-border text-link lg:text-text font-semibold hover:text-text lg:hover:border-ink-600 transition-colors">
+                        <Link to="/docs" className="flex items-center justify-center h-11 lg:h-12 lg:px-[22px] lg:border lg:border-border text-link lg:text-text font-semibold hover:text-text lg:hover:border-ink-600 transition-colors">
                             {t('hero.browseDocs')}
                         </Link>
                     </div>

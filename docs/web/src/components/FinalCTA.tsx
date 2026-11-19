@@ -1,5 +1,6 @@
 import { HiArrowRight } from 'react-icons/hi';
 import { Link } from 'react-router-dom';
+import { srcHref } from '../docsPages';
 import { useTranslation } from '../i18n/useTranslation';
 import { CopyCommand } from './CopyCommand';
 import { BTN_PRIMARY, PAGE } from '../theme';
@@ -7,7 +8,7 @@ import { BTN_PRIMARY, PAGE } from '../theme';
 /** The safety net for a visitor who read the whole page: one line, one action, the install command. */
 export const FinalCTA: React.FC = () => {
     const { t, language } = useTranslation();
-    const gettingStarted = `/markdown?src=${encodeURIComponent(language === 'fr' ? '0_getting_started/fr.md' : '0_getting_started/en.md')}`;
+    const gettingStarted = srcHref(language === 'fr' ? '0_getting_started/fr.md' : '0_getting_started/en.md');
 
     return (
         <section className="border-t border-ink-800 bg-ink-900">

@@ -212,7 +212,7 @@ function writeSitemap(docSrcs: Set<string>): void {
             .map((meta) => ({
                 loc: `${SITE_ORIGIN}${meta.path}`,
                 changefreq: 'weekly',
-                priority: meta.path === '/' ? '1.0' : meta.path === '/documentation' ? '0.9' : '0.5',
+                priority: meta.path === '/' ? '1.0' : meta.path === '/docs' ? '0.9' : '0.5',
             })),
         ...[...docSrcs].sort().map((src) => ({
             loc: `${SITE_ORIGIN}${srcHref(src)}`.replace(/&/g, '&amp;'),

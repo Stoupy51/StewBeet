@@ -70,7 +70,7 @@ def sounds_settings(stewbeet_meta: JsonDict) -> tuple[str, list[str]]:
 	stp.warning(
 		"'meta.stewbeet.sounds_folder' is deprecated. "
 		"Please migrate to 'meta.stewbeet.sounds.folder' instead. "
-		"(See https://stewbeet.paralya.fr/markdown?src=plugins/resource_pack.sounds.md)"
+		"(See https://stewbeet.paralya.fr/docs/plugins/resource_pack.sounds)"
 	)
 	return stp.relative_path(old_sounds_folder), []
 

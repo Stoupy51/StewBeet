@@ -26,9 +26,9 @@ export const ToolsPage: React.FC = () => {
     const { t } = useTranslation();
 
     const tools: ToolItem[] = [
-        { title: t('tools.playground'), description: t('tools.playgroundDesc'), where: t('tools.whereServer'), path: '/playground' },
-        { title: t('tools.autoHeaders'), description: t('tools.autoHeadersDesc'), where: t('tools.whereServer'), path: '/auto_headers' },
-        { title: t('tools.markdownToBBCode'), description: t('tools.markdownToBBCodeDesc'), where: t('tools.whereBrowser'), path: '/markdown_to_pmc_bbcode' },
+        { title: t('tools.playground'), description: t('tools.playgroundDesc'), where: t('tools.whereServer'), path: '/tools/playground' },
+        { title: t('tools.autoHeaders'), description: t('tools.autoHeadersDesc'), where: t('tools.whereServer'), path: '/tools/auto_headers' },
+        { title: t('tools.markdownToBBCode'), description: t('tools.markdownToBBCodeDesc'), where: t('tools.whereBrowser'), path: '/tools/bbcode' },
         { title: t('tools.extension'), description: t('tools.extensionDesc'), where: t('tools.whereEditor'), path: 'https://marketplace.visualstudio.com/items?itemName=stoupy.stewbeet' },
     ];
 

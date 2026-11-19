@@ -38,9 +38,9 @@ export interface TelemetryStream {
  */
 export const TELEMETRY_STREAMS = [
     { id: 'cli',                source: 'server', dimensions: ['versions', 'pythonVersions', DURATION_DIMENSION], href: '' },
-    { id: 'playground',         source: 'server', dimensions: ['outcomes', DURATION_DIMENSION],                   href: '/playground' },
-    { id: 'auto_headers',       source: 'server', dimensions: ['outcomes', 'packSizes', DURATION_DIMENSION],      href: '/auto_headers' },
-    { id: 'markdown_to_bbcode', source: 'client', dimensions: ['actions', 'inputSizes'],                          href: '/markdown_to_pmc_bbcode' },
+    { id: 'playground',         source: 'server', dimensions: ['outcomes', DURATION_DIMENSION],                   href: '/tools/playground' },
+    { id: 'auto_headers',       source: 'server', dimensions: ['outcomes', 'packSizes', DURATION_DIMENSION],      href: '/tools/auto_headers' },
+    { id: 'markdown_to_bbcode', source: 'client', dimensions: ['actions', 'inputSizes'],                          href: '/tools/bbcode' },
 ] as const satisfies readonly TelemetryStream[];
 
 /**
