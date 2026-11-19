@@ -10,7 +10,8 @@ import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { fromMarkdown } from 'mdast-util-from-markdown';
 import type { Code, Nodes } from 'mdast';
-import { PAGE_THEMES, codeKey, highlightCode } from '../src/hooks/useShiki';
+import { PAGE_THEMES, codeKey } from '../src/hooks/useShiki';
+import { highlightCode } from '../src/utils/highlightCode';
 
 const DOCS = join(import.meta.dir, '..', 'public', 'docs');
 const OUTPUT = join(import.meta.dir, '..', 'public', 'highlighted');
