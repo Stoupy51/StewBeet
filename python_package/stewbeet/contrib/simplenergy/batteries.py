@@ -5,7 +5,7 @@ from stouputils.lazy import ALWAYS_LAZY
 __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
-from ...core import BlockFunctions, Mem, write_function
+from ...core import BlockFunctions, McFunction, Mem, write_function
 
 
 # Setup functions for keeping energy for batteries
@@ -55,7 +55,7 @@ data modify entity @s Item.components set from storage energy:temp list[0].compo
 
 
 	## Setup energy lore functions
-	content: str = f"""
+	content: McFunction = f"""
 # Stop if not from the datapack
 execute unless data storage energy:temp list[0].components."minecraft:custom_data".{ns} run return 0
 
