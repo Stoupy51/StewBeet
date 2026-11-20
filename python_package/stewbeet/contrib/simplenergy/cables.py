@@ -47,6 +47,8 @@ ITEM_CABLE_TEXTURES: tuple[tuple[str, str], ...] = (("0", "center"), ("1", "pill
 # Setup energy cables work and visuals
 def energy_cables_models(cables: list[str]) -> None:
 	""" Setup energy cables models and functions for SimplEnergy.
+	# TODO: Cables connected to solar panels do not looks normal, the face connected to the solar panel is missing therefore we can see a hole. Fix it.
+	https://media.discordapp.net/attachments/1573002195358585043/1573002195690070187/image.png?ex=6b006bf4&is=6aff1a74&hm=cc581679b569afbfb8136c91d5be5fc170fd88a82a28f18e5dca566519e7ea12&format=webp&quality=lossless&width=1536&height=922
 
 	Args:
 		cables: List of cables to setup. (e.g. ["simple_cable", "advanced_cable", "elite_cable"])
