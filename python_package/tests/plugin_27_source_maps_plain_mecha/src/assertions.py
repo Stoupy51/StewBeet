@@ -75,11 +75,9 @@ def beet_default(ctx: Context) -> Iterator[None]:
 			f"a file that compiles to itself maps each command to its own line, got {generated_line} -> {source_line}"
 		)
 
-	# sourceRoot plus sources resolves, or navigation lands nowhere.
-	resolved: str = os.path.normpath(os.path.join(
-		"build", str(ctx.data.name), os.path.dirname(on_disk_path),
-		str(on_disk["sourceRoot"]), str(next(iter(on_disk["sources"])))))
-	assert os.path.isfile(resolved), f"sourceRoot + sources must resolve on disk, got {resolved}"
+	# Sources are relative to the project root, or navigation lands nowhere.
+	resolved: str = str(next(iter(on_disk["sources"])))
+	assert os.path.isfile(resolved), f"sources must resolve from the project root, got {resolved}"
 
 	# A Function assembled in Python maps to the line that assembled it. Its AST positions index into that string,
 	# and any of them is a valid position in some project file, which a careless emitter would map it onto instead.

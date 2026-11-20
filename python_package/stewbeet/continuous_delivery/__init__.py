@@ -37,6 +37,7 @@ from .modrinth import (
 	Release as Release,
 	convert_datapack_to_mod as convert_datapack_to_mod,
 	existing_packs as existing_packs,
+	explicit_files as explicit_files,
 	generate_fabric_metadata as generate_fabric_metadata,
 	generate_forge_metadata as generate_forge_metadata,
 	generate_quilt_metadata as generate_quilt_metadata,
