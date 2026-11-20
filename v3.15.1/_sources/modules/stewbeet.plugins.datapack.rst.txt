@@ -1,0 +1,10 @@
+datapack
+================
+
+.. toctree::
+   :maxdepth: 1
+
+   stewbeet.plugins.datapack.custom_blocks
+   stewbeet.plugins.datapack.loading
+   stewbeet.plugins.datapack.loot_tables
+   stewbeet.plugins.datapack.sorters

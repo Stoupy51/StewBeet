@@ -1,0 +1,9 @@
+🔢 scoreboard_constants
+============================================
+
+.. automodule:: stewbeet.plugins.auto.scoreboard_constants
+
+silent
+------------
+
+.. automodule:: stewbeet.plugins.auto.scoreboard_constants.silent

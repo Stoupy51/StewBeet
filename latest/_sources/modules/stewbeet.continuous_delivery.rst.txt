@@ -19,7 +19,7 @@ modrinth
 ----------------
 
 .. automodule:: stewbeet.continuous_delivery.modrinth
-   :members: MOD_PLATFORMS, MODRINTH_API_URL, PROJECT_ENDPOINT, PROJECT_FALLBACKS, VERSION_ENDPOINT, Release, convert_datapack_to_mod, existing_packs, generate_fabric_metadata, generate_forge_metadata, generate_quilt_metadata, get_file_parts, get_project, handle_existing_version, mod_metadata, mod_platforms, set_resource_pack_required, update_project_description, upload_mods, upload_to_modrinth
+   :members: MOD_PLATFORMS, MODRINTH_API_URL, PROJECT_ENDPOINT, PROJECT_FALLBACKS, VERSION_ENDPOINT, Release, convert_datapack_to_mod, existing_packs, explicit_files, generate_fabric_metadata, generate_forge_metadata, generate_quilt_metadata, get_file_parts, get_project, handle_existing_version, mod_metadata, mod_platforms, set_resource_pack_required, update_project_description, upload_mods, upload_to_modrinth
 
 pmc
 ------

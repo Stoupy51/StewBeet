@@ -73,8 +73,8 @@ For complete installation instructions, tutorials, and comprehensive documentati
 ### 🌐 **[stewbeet.paralya.fr](https://stewbeet.paralya.fr)**
 
 Quick links:
-- 🚀 [Getting Started Guide](https://stewbeet.paralya.fr/documentation)
-- 📖 [Full Documentation](https://stewbeet.paralya.fr/documentation)
+- 🚀 [Getting Started Guide](https://stewbeet.paralya.fr/docs/quickstart)
+- 📖 [Full Documentation](https://stewbeet.paralya.fr/docs)
 - 💬 [Discord Community](https://discord.gg/anxzu6rA9F)
 
 

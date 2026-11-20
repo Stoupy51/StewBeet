@@ -1,0 +1,9 @@
+💤 verify_definitions
+========================================
+
+.. automodule:: stewbeet.plugins.verify_definitions
+
+silent
+------------
+
+.. automodule:: stewbeet.plugins.verify_definitions.silent
