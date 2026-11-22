@@ -13,6 +13,7 @@ import shutil
 import sys
 import tempfile
 import time
+import traceback
 from collections.abc import Generator
 from dataclasses import dataclass
 from glob import glob
@@ -360,13 +361,24 @@ def weld_pack_types(ctx: Context, pack_types: tuple[str, ...]) -> None:
 
 	# Run the welds in parallel, since they are independent and the zlib work releases the GIL.
 	# Weld logs failures through the "weld" logger instead of raising, so its noisy output is captured and replayed only on error.
-	@stp.handle_error
-	def run_weld_task(task: WeldTask) -> None:
-		weld_to(ctx, task.sources, task.destination, task.pack_type)
+	def run_weld_task(task: WeldTask) -> Exception | None:
+		try:
+			weld_to(ctx, task.sources, task.destination, task.pack_type)
+		except Exception as failure:
+			return failure
 		written = os.stat(task.destination)
 		merges[task.destination] = [task.signature, written.st_size, written.st_mtime_ns]
+		return None
 
 	with Muffle(mute_stderr=True, replay_on_error=True, error_log_level=logging.ERROR, watch_loggers=["weld"]):
-		stp.multithreading(run_weld_task, tasks, max_workers=len(tasks))
+		failures: list[Exception | None] = stp.multithreading(run_weld_task, tasks, max_workers=len(tasks))
 	cache.json["merges"] = merges
+
+	# Reported once Muffle gave the streams back, which would otherwise swallow the error
+	for task, failure in zip(tasks, failures, strict=True):
+		if failure is not None:
+			stp.error(
+				f"Welding '{os.path.basename(task.destination)}' failed, the archive there is from an earlier build:\n"
+				+ "".join(traceback.format_exception(failure))
+			)
 

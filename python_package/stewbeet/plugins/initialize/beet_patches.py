@@ -10,7 +10,9 @@ from stouputils.lazy import ALWAYS_LAZY
 __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
+import logging
 import os
+import sys
 from collections.abc import Callable, Iterator
 from pathlib import Path
 from typing import Any
@@ -145,6 +147,22 @@ def stable_png_incremental_save(save: Callable[..., None]) -> Callable[..., None
 	return wrapper
 
 
+def console_safe_emit(emit: Callable[[Any, logging.LogRecord], None]) -> Callable[[Any, logging.LogRecord], None]:
+	""" Wrap beet's `LogHandler.emit`, which draws through prompt_toolkit, to print the plain message where that raises.
+
+	prompt_toolkit needs a real Windows console. In Git Bash or a redirected output it raises, and a caller swallowing the error
+	(such as a weld run under `Muffle`) then fails without a word.
+	"""
+	from prompt_toolkit.output.win32 import NoConsoleScreenBufferError
+
+	def wrapper(self: Any, record: logging.LogRecord, /) -> None:
+		try:
+			emit(self, record)
+		except NoConsoleScreenBufferError:
+			print(f"{record.levelname:<7}| {self.format(record)}")
+	return wrapper
+
+
 def apply_beet_patches() -> None:
 	""" Install every beet monkey patch, once per process. """
 	global patches_applied
@@ -166,4 +184,9 @@ def apply_beet_patches() -> None:
 	incremental_save: Callable[..., None] | None = getattr(output_plugin, "incremental_save", None)
 	if incremental_save is not None:
 		output_plugin.incremental_save = stable_png_incremental_save(incremental_save)  # pyright: ignore[reportAttributeAccessIssue]
+
+	# Only a Windows output can lack the console prompt_toolkit wants (see console_safe_emit)
+	if sys.platform == "win32":
+		from beet.toolchain.cli import LogHandler
+		LogHandler.emit = console_safe_emit(LogHandler.emit) # pyright: ignore[reportAttributeAccessIssue]
 
