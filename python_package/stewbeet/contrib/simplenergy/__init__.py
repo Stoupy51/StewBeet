@@ -16,11 +16,14 @@ from .batteries import (
 	keep_energy_for_batteries as keep_energy_for_batteries,
 )
 from .cables import (
-	ENERGY_CABLE_FACES as ENERGY_CABLE_FACES,
-	ENERGY_CABLE_MODELS_FOLDER as ENERGY_CABLE_MODELS_FOLDER,
+	ENERGY_CABLE_SIDES as ENERGY_CABLE_SIDES,
+	ENERGY_CABLE_TILES as ENERGY_CABLE_TILES,
 	ITEM_CABLE_SIDES as ITEM_CABLE_SIDES,
 	ITEM_CABLE_TEXTURES as ITEM_CABLE_TEXTURES,
+	EnergyCableSide as EnergyCableSide,
 	copy_block_texture as copy_block_texture,
+	energy_cable_centre_face as energy_cable_centre_face,
+	energy_cable_elements as energy_cable_elements,
 	energy_cable_variant as energy_cable_variant,
 	energy_cables_models as energy_cables_models,
 	item_cables_models as item_cables_models,
@@ -30,7 +33,6 @@ from .cables import (
 	servo_mechanisms_models as servo_mechanisms_models,
 	servo_toggle as servo_toggle,
 	write_cable_update as write_cable_update,
-	write_energy_cable_variants as write_energy_cable_variants,
 	write_item_cable_variant as write_item_cable_variant,
 	write_servo_functions as write_servo_functions,
 )

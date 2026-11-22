@@ -8,6 +8,7 @@ __lazy_modules__ = ALWAYS_LAZY
 # Imports
 import os
 from collections.abc import Iterable
+from dataclasses import dataclass
 
 import stouputils as stp
 from beet import ItemModel, Model, Texture
@@ -29,11 +30,46 @@ from ...core import (
 	write_load_file,
 )
 
-# Constants
-ENERGY_CABLE_MODELS_FOLDER: str = stp.get_root_path(__file__) + "/energy_cable_models"
 
-ENERGY_CABLE_FACES: tuple[tuple[str, int], ...] = (("u", 2), ("d", 1), ("n", 4), ("s", 8), ("e", 32), ("w", 16))
-""" Each face of an energy cable in the order its variant name lists them, and its bit in the `energy.data` model score. """
+# Classes
+@dataclass(frozen=True)
+class EnergyCableSide:
+	""" A side an energy cable connects by, and the arm its model draws there when connected. """
+	letter: str
+	""" Its letter in the variant names. """
+	bit: int
+	""" Its bit in the `energy.data` model score. """
+	face: str
+	axis: int
+	""" The model axis it points along, 0 for x. """
+	u_axis: int
+	""" The model axis the texture's u coordinate follows on its face. """
+	edges: str
+	""" The letters of the sides at the top, right, bottom and left edges of its face. """
+	arm_from: list[int]
+	arm_to: list[int]
+
+
+# Constants
+ENERGY_CABLE_SIDES: tuple[EnergyCableSide, ...] = (
+	EnergyCableSide(letter="u", bit=2,  face="up",    axis=1, u_axis=0, edges="nesw", arm_from=[4, 12, 4], arm_to=[12, 16, 12]),
+	EnergyCableSide(letter="d", bit=1,  face="down",  axis=1, u_axis=0, edges="senw", arm_from=[4, -4, 4], arm_to=[12, 4, 12]),
+	EnergyCableSide(letter="n", bit=4,  face="north", axis=2, u_axis=0, edges="uwde", arm_from=[4, 4, 0],  arm_to=[12, 12, 4]),
+	EnergyCableSide(letter="s", bit=8,  face="south", axis=2, u_axis=0, edges="uedw", arm_from=[4, 4, 12], arm_to=[12, 12, 16]),
+	EnergyCableSide(letter="e", bit=32, face="east",  axis=0, u_axis=2, edges="unds", arm_from=[12, 4, 4], arm_to=[16, 12, 12]),
+	EnergyCableSide(letter="w", bit=16, face="west",  axis=0, u_axis=2, edges="usdn", arm_from=[0, 4, 4],  arm_to=[4, 12, 12]),
+)
+""" The sides of an energy cable in the order its variant names list them. The down arm reaches 4 pixels lower. """
+
+ENERGY_CABLE_TILES: dict[str, list[int]] = {
+	"0000": [12, 12, 16, 16],
+	"1000": [12, 1, 16, 5],
+	"1010": [12, 1, 16, 5],
+	"0011": [8, 8, 12, 12],
+	"0111": [12, 8, 16, 12],
+	"1111": [8, 12, 12, 16],
+}
+""" The texture tile of a centre face, by which of its top, right, bottom and left edges meet an arm, before rotation. """
 
 ITEM_CABLE_SIDES: tuple[tuple[str, str], ...] = (
 	("u", "top"), ("d", "bottom"), ("n", "north"), ("s", "south"), ("e", "east"), ("w", "west")
@@ -47,8 +83,6 @@ ITEM_CABLE_TEXTURES: tuple[tuple[str, str], ...] = (("0", "center"), ("1", "pill
 # Setup energy cables work and visuals
 def energy_cables_models(cables: list[str]) -> None:
 	""" Setup energy cables models and functions for SimplEnergy.
-	# TODO: Cables connected to solar panels do not looks normal, the face connected to the solar panel is missing therefore we can see a hole. Fix it.
-	https://media.discordapp.net/attachments/1573002195358585043/1573002195690070187/image.png?ex=6b006bf4&is=6aff1a74&hm=cc581679b569afbfb8136c91d5be5fc170fd88a82a28f18e5dca566519e7ea12&format=webp&quality=lossless&width=1536&height=922
 
 	Args:
 		cables: List of cables to setup. (e.g. ["simple_cable", "advanced_cable", "elite_cable"])
@@ -62,11 +96,15 @@ def energy_cables_models(cables: list[str]) -> None:
 	Mem.ctx.assets[ns].models["block/cable_base"] = set_json_encoder(Model(parent_model))
 
 	for cable in cables:
-		write_energy_cable_variants(cable)
-		entries: list[JsonDict] = [
-			{"threshold": i, "model":{"type": "minecraft:model", "model": f"{ns}:block/{cable}/{energy_cable_variant(i)}"}}
-			for i in range(64)
-		]
+		entries: list[JsonDict] = []
+		for i in range(64):
+			model: str = f"{ns}:block/{cable}/{energy_cable_variant(i)}"
+			Mem.ctx.assets.models[model] = set_json_encoder(Model({
+				"parent": f"{ns}:block/cable_base",
+				"textures": {"0": f"{ns}:block/{cable}", "particle": f"{ns}:block/{cable}"},
+				"elements": energy_cable_elements(i),
+			}), max_level=3)
+			entries.append({"threshold": i, "model": {"type": "minecraft:model", "model": model}})
 		Mem.ctx.assets[ns].item_models[cable] = set_json_encoder(ItemModel(model_dispatch(entries)), max_level=3)
 		Mem.ctx.assets[ns].textures[f"block/{cable}"] = texture_mcmeta(f"{textures_folder}/{cable}.png")
 		write_function(BlockFunctions(cable).place_secondary, f"""
@@ -77,28 +115,44 @@ tag @s add {ns}.cable
 	write_cable_update(cables, family="energy", score="energy.data", tag="energy:v1/cable_update")
 
 
-def write_energy_cable_variants(cable: str) -> None:
-	""" Write the cable's model of every connection variant, from the shapes under `ENERGY_CABLE_MODELS_FOLDER`. """
-	ns: str = Mem.ctx.project_id
-	for root, dirs, files in os.walk(ENERGY_CABLE_MODELS_FOLDER):
-		dirs.sort()
-		for file in sorted(f for f in files if f.endswith(".json")):
-			new_json: JsonDict = {
-				"parent": f"{ns}:block/cable_base",
-				"textures": {"0": f"{ns}:block/{cable}", "particle": f"{ns}:block/{cable}"},
-			}
-			new_json.update(stp.json_load(f"{root}/{file}"))
-			variant: str = os.path.splitext(file)[0]
-			Mem.ctx.assets[ns].models[f"block/{cable}/{variant}"] = set_json_encoder(Model(new_json), max_level=3)
+def energy_cable_elements(i: int) -> list[JsonDict]:
+	""" The model elements of an energy cable connected on the sides the bits of `i` set: its centre, and one arm per connection. """
+	connected: list[EnergyCableSide] = [side for side in ENERGY_CABLE_SIDES if i & side.bit]
+	letters: str = "".join(side.letter for side in connected)
+	centre_faces: JsonDict = {
+		side.face: energy_cable_centre_face("".join("1" if letter in letters else "0" for letter in side.edges))
+		for side in ENERGY_CABLE_SIDES if side not in connected
+	}
+	arms: list[JsonDict] = [
+		{"from": arm.arm_from, "to": arm.arm_to, "faces": {
+			side.face: (
+				{"uv": [12, 12, 16, 16], "texture": "#0"} if side == arm
+				else {"uv": [12, 5, 16, 6], "rotation": 90 if side.u_axis == arm.axis else 0, "texture": "#0"}
+			)
+			for side in ENERGY_CABLE_SIDES if side == arm or side.axis != arm.axis
+		}}
+		for arm in connected
+	]
+	return [{"from": [4, 4, 4], "to": [12, 12, 12], "faces": centre_faces}, *arms]
+
+
+def energy_cable_centre_face(edges: str) -> JsonDict:
+	""" The face of the cable's centre whose top, right, bottom and left edges meet an arm where `edges` holds a 1.
+
+	>>> energy_cable_centre_face("0110")
+	{'uv': [8, 8, 12, 12], 'rotation': 270, 'texture': '#0'}
+	"""
+	turns: int = next(k for k in range(4) if edges[k:] + edges[:k] in ENERGY_CABLE_TILES)
+	return {"uv": ENERGY_CABLE_TILES[edges[turns:] + edges[:turns]], "rotation": 90 * turns, "texture": "#0"}
 
 
 def energy_cable_variant(i: int) -> str:
-	""" The variant model of an energy cable connected on the faces the bits of `i` set.
+	""" The variant model of an energy cable connected on the sides the bits of `i` set.
 
 	>>> energy_cable_variant(0), energy_cable_variant(1 | 2 | 32)
 	('variant', 'variant_ude')
 	"""
-	return ("variant_" + "".join(face for face, bit in ENERGY_CABLE_FACES if i & bit)).removesuffix("_")
+	return ("variant_" + "".join(side.letter for side in ENERGY_CABLE_SIDES if i & side.bit)).removesuffix("_")
 
 
 def write_cable_update(cables: Iterable[str], family: str, score: str, tag: str) -> None:
